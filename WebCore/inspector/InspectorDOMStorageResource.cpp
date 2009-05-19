@@ -35,10 +35,9 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "InspectorFrontend.h"
 #include "JSONObject.h"
-#include "ScriptFunctionCall.h"
 #include "ScriptObjectQuarantine.h"
-#include "ScriptValue.h"
 #include "Storage.h"
 
 using namespace JSC;
@@ -58,28 +57,20 @@ bool InspectorDOMStorageResource::isSameHostAndType(Frame* frame, bool isLocalSt
     return equalIgnoringCase(m_frame->document()->securityOrigin()->host(), frame->document()->securityOrigin()->host()) && m_isLocalStorage == isLocalStorage;
 }
 
-void InspectorDOMStorageResource::bind(ScriptState* scriptState, const ScriptObject& webInspector)
+void InspectorDOMStorageResource::bind(InspectorFrontend* frontend)
 {
     if (m_scriptObjectCreated)
         return;
 
-    ASSERT(scriptState);
-    ASSERT(!webInspector.hasNoValue());
-    if (!scriptState || webInspector.hasNoValue())
-        return;
-    
-    JSONObject jsonObject = JSONObject::createNew(scriptState);
+    JSONObject jsonObject = frontend->newJSONObject();
     ScriptObject domStorage;
     if (!getQuarantinedScriptObject(m_frame.get(), m_domStorage.get(), domStorage))
         return;
     jsonObject.set("domStorage", domStorage);
     jsonObject.set("host", m_frame->document()->securityOrigin()->host());
     jsonObject.set("isLocalStorage", m_isLocalStorage);
-
-    ScriptFunctionCall addDOMStorage(scriptState, webInspector, "addDOMStorage");
-    addDOMStorage.appendArgument(jsonObject.scriptObject());
-    addDOMStorage.call();
-    m_scriptObjectCreated = true;
+    if (frontend->addDOMStorage(jsonObject))
+        m_scriptObjectCreated = true;
 }
 
 void InspectorDOMStorageResource::unbind()

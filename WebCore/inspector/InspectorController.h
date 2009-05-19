@@ -31,7 +31,6 @@
 
 #include "Console.h"
 #include "PlatformString.h"
-#include "ScriptObject.h"
 #include "ScriptState.h"
 #include "StringHash.h"
 #include "Timer.h"
@@ -58,6 +57,7 @@ class DocumentLoader;
 class GraphicsContext;
 class HitTestResult;
 class InspectorClient;
+class InspectorFrontend;
 class JavaScriptCallFrame;
 class StorageArea;
 class Node;
@@ -66,6 +66,7 @@ struct ResourceRequest;
 class ResourceResponse;
 class ResourceError;
 class ScriptCallStack;
+class ScriptObject;
 class ScriptString;
 class SharedBuffer;
 
@@ -269,7 +270,6 @@ public:
 
 private:
     InspectorController(Page*, InspectorClient*);
-    bool hasWebInspector() const { return m_scriptState && !m_webInspector.hasNoValue(); }
     void focusNode();
 
     void addConsoleMessage(ScriptState*, ConsoleMessage*);
@@ -285,6 +285,7 @@ private:
 
     Page* m_inspectedPage;
     InspectorClient* m_client;
+    OwnPtr<InspectorFrontend> m_frontend;
     Page* m_page;
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResource> m_mainResource;
@@ -300,7 +301,6 @@ private:
 #if ENABLE(DOM_STORAGE)
     DOMStorageResourcesSet m_domStorageResources;
 #endif
-    ScriptObject m_webInspector;
     ScriptState* m_scriptState;
     bool m_windowVisible;
     SpecialPanels m_showAfterVisible;

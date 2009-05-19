@@ -2,6 +2,99 @@
 
         Reviewed by Timothy Hatcher.
 
+        Split InspectorController into InspectorController and InspectorFrontend. Latter encapsulates all frontend interaction and is the only entity allowed to make ScriptFunctionCalls. The further plan is to serialize these script function calls.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25419
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToConsole):
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::inspect):
+        (WebCore::InspectorController::focusNode):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::addConsoleMessage):
+        (WebCore::InspectorController::setAttachedWindow):
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::showPanel):
+        (WebCore::InspectorController::close):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::resetScriptObjects):
+        (WebCore::InspectorController::pruneResources):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didReceiveContentLength):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorController::scriptImported):
+        (WebCore::InspectorController::didOpenDatabase):
+        (WebCore::InspectorController::didUseDOMStorage):
+        (WebCore::InspectorController::addScriptProfile):
+        (WebCore::InspectorController::toggleRecordButton):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::enableDebugger):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::didParseSource):
+        (WebCore::InspectorController::failedToParseSource):
+        (WebCore::InspectorController::didPause):
+        (WebCore::InspectorController::didContinue):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorDOMStorageResource.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorFrontend.cpp: Added.
+        (WebCore::callSimpleFunction):
+        (WebCore::InspectorFrontend::InspectorFrontend):
+        (WebCore::InspectorFrontend::~InspectorFrontend):
+        (WebCore::InspectorFrontend::newJSONObject):
+        (WebCore::InspectorFrontend::addMessageToConsole):
+        (WebCore::InspectorFrontend::addResource):
+        (WebCore::InspectorFrontend::updateResource):
+        (WebCore::InspectorFrontend::removeResource):
+        (WebCore::InspectorFrontend::updateFocusedNode):
+        (WebCore::InspectorFrontend::setAttachedWindow):
+        (WebCore::InspectorFrontend::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorFrontend::showPanel):
+        (WebCore::InspectorFrontend::populateInterface):
+        (WebCore::InspectorFrontend::reset):
+        (WebCore::InspectorFrontend::debuggerWasEnabled):
+        (WebCore::InspectorFrontend::debuggerWasDisabled):
+        (WebCore::InspectorFrontend::profilerWasEnabled):
+        (WebCore::InspectorFrontend::profilerWasDisabled):
+        (WebCore::InspectorFrontend::parsedScriptSource):
+        (WebCore::InspectorFrontend::failedToParseScriptSource):
+        (WebCore::InspectorFrontend::addProfile):
+        (WebCore::InspectorFrontend::setRecordingProfile):
+        (WebCore::InspectorFrontend::pausedScript):
+        (WebCore::InspectorFrontend::resumedScript):
+        (WebCore::InspectorFrontend::addDatabase):
+        (WebCore::InspectorFrontend::addDOMStorage):
+        * inspector/InspectorFrontend.h: Added.
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::createScriptObject):
+        (WebCore::InspectorResource::updateScriptObject):
+        (WebCore::InspectorResource::releaseScriptObject):
+        * inspector/InspectorResource.h:
+
+2009-05-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Introduce JSONObject that wraps ScriptObject and ScriptState* for further serialization
 
         https://bugs.webkit.org/show_bug.cgi?id=25419

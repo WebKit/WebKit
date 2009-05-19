@@ -47,6 +47,7 @@ namespace WebCore {
 
     class CachedResource;
     class DocumentLoader;
+    class InspectorFrontend;
     class Frame;
     class ResourceResponse;
 
@@ -76,9 +77,9 @@ namespace WebCore {
 
         ~InspectorResource();
 
-        void createScriptObject(ScriptState*, const ScriptObject& webInspector);
-        void updateScriptObject(ScriptState*, const ScriptObject& webInspector);
-        void releaseScriptObject(ScriptState*, const ScriptObject& webInspector, bool callRemoveResource);
+        void createScriptObject(InspectorFrontend* frontend);
+        void updateScriptObject(InspectorFrontend* frontend);
+        void releaseScriptObject(InspectorFrontend* frontend, bool callRemoveResource);
 
         void updateRequest(const ResourceRequest&);
         void updateResponse(const ResourceResponse&);

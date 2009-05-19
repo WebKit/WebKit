@@ -42,7 +42,8 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
+    class InspectorFrontend;
+    
     class InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
     public:
         static PassRefPtr<InspectorDatabaseResource> create(Database* database, const String& domain, const String& name, const String& version)
@@ -50,7 +51,7 @@ namespace WebCore {
             return adoptRef(new InspectorDatabaseResource(database, domain, name, version));
         }
 
-        void bind(ScriptState*, const ScriptObject& webInspector);
+        void bind(InspectorFrontend* frontend);
         void unbind();
 
     private:

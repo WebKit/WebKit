@@ -802,6 +802,7 @@ SOURCES += \
     inspector/InspectorDatabaseResource.cpp \
     inspector/InspectorDOMStorageResource.cpp \
     inspector/InspectorController.cpp \
+    inspector/InspectorFrontend.cpp \
     inspector/InspectorResource.cpp \
     inspector/JavaScriptCallFrame.cpp \
     inspector/JavaScriptDebugServer.cpp \
