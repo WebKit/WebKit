@@ -1,10 +1,11 @@
-2009-05-19  Jessie Berlin  <jberlin@apple.com>
+2009-05-19  Nate Chapin  <japhet@google.com>
 
-        Reviewed by Mark Rowe.
+        Reviewed by Darin Fisher.
 
-        Windows Build Fix.
+        Upstream V8 bindings for CanvasRenderingContext2D.
+        https://bugs.webkit.org/show_bug.cgi?id=25858
 
-        * WebCore.vcproj/WebCore.vcproj: Copy accessibility headers from WebCore.
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp: Moved bindings from v8_custom.cpp.
 
 2009-05-19  Timothy Hatcher  <timothy@apple.com>
 

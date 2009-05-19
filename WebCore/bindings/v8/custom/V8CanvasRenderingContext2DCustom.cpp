@@ -34,11 +34,15 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasStyle.h"
+#include "ExceptionCode.h"
+#include "FloatRect.h"
 
 #include "V8Binding.h"
 #include "V8CanvasGradient.h"
 #include "V8CanvasPattern.h"
 #include "V8CustomBinding.h"
+#include "V8HTMLCanvasElement.h"
+#include "V8HTMLImageElement.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -90,6 +94,332 @@ ACCESSOR_SETTER(CanvasRenderingContext2DFillStyle)
 {
     CanvasRenderingContext2D* impl = V8Proxy::DOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     impl->setFillStyle(toCanvasStyle(value));
+}
+
+// TODO: SetStrokeColor and SetFillColor are similar except function names,
+// consolidate them into one.
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetStrokeColor)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.setStrokeColor()");
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    switch (args.Length()) {
+    case 1:
+        if (args[0]->IsString())
+            context->setStrokeColor(ToWebCoreString(args[0]));
+        else
+            context->setStrokeColor(toFloat(args[0]));
+        break;
+    case 2:
+        if (args[0]->IsString())
+            context->setStrokeColor(ToWebCoreString(args[0]), toFloat(args[1]));
+        else
+            context->setStrokeColor(toFloat(args[0]), toFloat(args[1]));
+        break;
+    case 4:
+        context->setStrokeColor(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]));
+        break;
+    case 5:
+        context->setStrokeColor(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]));
+        break;
+    default:
+        V8Proxy::ThrowError(V8Proxy::SYNTAX_ERROR, "setStrokeColor: Invalid number of arguments");
+        break;
+    }
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetFillColor)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.setFillColor()");
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    switch (args.Length()) {
+    case 1:
+        if (args[0]->IsString())
+            context->setFillColor(ToWebCoreString(args[0]));
+        else 
+            context->setFillColor(toFloat(args[0]));
+        break;
+    case 2:
+        if (args[0]->IsString())
+            context->setFillColor(ToWebCoreString(args[0]), toFloat(args[1]));
+        else
+            context->setFillColor(toFloat(args[0]), toFloat(args[1]));
+        break;
+    case 4:
+        context->setFillColor(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]));
+        break;
+    case 5:
+        context->setFillColor(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]));
+        break;
+    default:
+        V8Proxy::ThrowError(V8Proxy::SYNTAX_ERROR, "setFillColor: Invalid number of arguments");
+        break;
+    }
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeRect)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.strokeRect()");
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    if (args.Length() == 5)
+        context->strokeRect(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]));
+    else if (args.Length() == 4)
+        context->strokeRect(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]));
+    else {
+        V8Proxy::SetDOMException(INDEX_SIZE_ERR);
+        return notHandledByInterceptor();
+    }
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetShadow)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.setShadow()");
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+
+    switch (args.Length()) {
+    case 3:
+        context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]));
+        break;
+    case 4:
+        if (args[3]->IsString())
+            context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), ToWebCoreString(args[3]));
+        else
+            context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]));
+        break;
+    case 5:
+        if (args[3]->IsString())
+            context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), ToWebCoreString(args[3]), toFloat(args[4]));
+        else
+            context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]));
+        break;
+    case 7:
+        context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), toFloat(args[5]), toFloat(args[6]));
+        break;
+    case 8:
+        context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), toFloat(args[5]), toFloat(args[6]), toFloat(args[7]));
+        break;
+    default:
+        V8Proxy::ThrowError(V8Proxy::SYNTAX_ERROR, "setShadow: Invalid number of arguments");
+        break;
+    }
+
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.drawImage()");
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+
+    v8::Handle<v8::Value> arg = args[0];
+
+    if (V8HTMLImageElement::HasInstance(arg)) {
+        ExceptionCode ec = 0;
+        HTMLImageElement* image_element = V8Proxy::DOMWrapperToNode<HTMLImageElement>(arg);
+        switch (args.Length()) {
+        case 3:
+            context->drawImage(image_element, toFloat(args[1]), toFloat(args[2]));
+            break;
+        case 5:
+            context->drawImage(image_element, toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), ec);
+            if (ec != 0) {
+                V8Proxy::SetDOMException(ec);
+                return notHandledByInterceptor();
+            }
+            break;
+        case 9:
+            context->drawImage(image_element, 
+                FloatRect(toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4])), 
+                FloatRect(toFloat(args[5]), toFloat(args[6]), toFloat(args[7]), toFloat(args[8])),
+                ec);
+            if (ec != 0) {
+                V8Proxy::SetDOMException(ec);
+                return notHandledByInterceptor();
+            }
+            break;
+        default:
+            V8Proxy::ThrowError(V8Proxy::SYNTAX_ERROR, "drawImage: Invalid number of arguments");
+            return v8::Undefined();
+        }
+        return v8::Undefined();
+    }
+
+    // HTMLCanvasElement
+    if (V8HTMLCanvasElement::HasInstance(arg)) {
+        ExceptionCode ec = 0;
+        HTMLCanvasElement* canvas_element = V8Proxy::DOMWrapperToNode<HTMLCanvasElement>(arg);
+        switch (args.Length()) {
+        case 3:
+            context->drawImage(canvas_element, toFloat(args[1]), toFloat(args[2]));
+            break;
+        case 5:
+            context->drawImage(canvas_element, toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), ec);
+            if (ec != 0) {
+                V8Proxy::SetDOMException(ec);
+                return notHandledByInterceptor();
+            }
+            break;
+        case 9:
+            context->drawImage(canvas_element,
+                FloatRect(toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4])),
+                FloatRect(toFloat(args[5]), toFloat(args[6]), toFloat(args[7]), toFloat(args[8])),
+                ec);
+            if (ec != 0) {
+                V8Proxy::SetDOMException(ec);
+                return notHandledByInterceptor();
+            }
+            break;
+        default:
+            V8Proxy::ThrowError(V8Proxy::SYNTAX_ERROR, "drawImage: Invalid number of arguments");
+            return v8::Undefined();
+        }
+        return v8::Undefined();
+    }
+
+    V8Proxy::SetDOMException(TYPE_MISMATCH_ERR);
+    return notHandledByInterceptor();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImageFromRect)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.drawImageFromRect()");
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+
+    v8::Handle<v8::Value> arg = args[0];
+
+    if (V8HTMLImageElement::HasInstance(arg)) {
+        HTMLImageElement* image_element = V8Proxy::DOMWrapperToNode<HTMLImageElement>(arg);
+        context->drawImageFromRect(image_element,  toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), toFloat(args[5]), toFloat(args[6]), toFloat(args[7]), toFloat(args[8]), ToWebCoreString(args[9]));
+    } else
+        V8Proxy::ThrowError(V8Proxy::TYPE_ERROR, "drawImageFromRect: Invalid type of arguments");
+
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DCreatePattern)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.createPattern()");
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+
+    v8::Handle<v8::Value> arg = args[0];
+
+    if (V8HTMLImageElement::HasInstance(arg)) {
+        HTMLImageElement* image_element = V8Proxy::DOMWrapperToNode<HTMLImageElement>(arg);
+        ExceptionCode ec = 0;
+        RefPtr<CanvasPattern> pattern = context->createPattern(image_element, valueToStringWithNullCheck(args[1]), ec);
+        if (ec != 0) {
+            V8Proxy::SetDOMException(ec);
+            return notHandledByInterceptor();
+        }
+        return V8Proxy::ToV8Object(V8ClassIndex::CANVASPATTERN, pattern.get());
+    }
+
+    if (V8HTMLCanvasElement::HasInstance(arg)) {
+        HTMLCanvasElement* canvas_element = V8Proxy::DOMWrapperToNode<HTMLCanvasElement>(arg);
+        ExceptionCode ec = 0;
+        RefPtr<CanvasPattern> pattern = context->createPattern(canvas_element, valueToStringWithNullCheck(args[1]), ec);
+        if (ec != 0) {
+            V8Proxy::SetDOMException(ec);
+            return notHandledByInterceptor();
+        }
+        return V8Proxy::ToV8Object(V8ClassIndex::CANVASPATTERN, pattern.get());
+    }
+
+    V8Proxy::SetDOMException(TYPE_MISMATCH_ERR);
+    return notHandledByInterceptor();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DFillText)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.fillText()");
+
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+
+    // Two forms:
+    // * fillText(text, x, y)
+    // * fillText(text, x, y, maxWidth)
+    if (args.Length() < 3 || args.Length() > 4) {
+        V8Proxy::SetDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    String text = ToWebCoreString(args[0]);
+    float x = toFloat(args[1]);
+    float y = toFloat(args[2]);
+
+    if (args.Length() == 4) {
+        float maxWidth = toFloat(args[3]);
+        context->fillText(text, x, y, maxWidth);
+    } else
+        context->fillText(text, x, y);
+
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeText)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.strokeText()");
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+
+    // Two forms:
+    // * strokeText(text, x, y)
+    // * strokeText(text, x, y, maxWidth)
+    if (args.Length() < 3 || args.Length() > 4) {
+        V8Proxy::SetDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    String text = ToWebCoreString(args[0]);
+    float x = toFloat(args[1]);
+    float y = toFloat(args[2]);
+
+    if (args.Length() == 4) {
+        float maxWidth = toFloat(args[3]);
+        context->strokeText(text, x, y, maxWidth);
+    } else
+        context->strokeText(text, x, y);
+
+    return v8::Undefined();
+}
+
+CALLBACK_FUNC_DECL(CanvasRenderingContext2DPutImageData)
+{
+    INC_STATS("DOM.CanvasRenderingContext2D.putImageData()");
+
+    // Two froms:
+    // * putImageData(ImageData, x, y)
+    // * putImageData(ImageData, x, y, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+    if (args.Length() != 3 && args.Length() != 7) {
+        V8Proxy::SetDOMException(SYNTAX_ERR);
+        return notHandledByInterceptor();
+    }
+
+    CanvasRenderingContext2D* context = V8Proxy::ToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+
+    ImageData* imageData = 0;
+
+    // Need to check that the argument is of the correct type, since
+    // ToNativeObject() expects it to be correct. If the argument was incorrect
+    // we leave it null, and putImageData() will throw the correct exception
+    // (TYPE_MISMATCH_ERR).
+    if (V8Proxy::IsWrapperOfType(args[0], V8ClassIndex::IMAGEDATA))
+        imageData = V8Proxy::ToNativeObject<ImageData>(V8ClassIndex::IMAGEDATA, args[0]);
+
+    ExceptionCode ec = 0;
+
+    if (args.Length() == 7)
+        context->putImageData(imageData, toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), toFloat(args[5]), toFloat(args[6]), ec);
+    else
+        context->putImageData(imageData, toFloat(args[1]), toFloat(args[2]), ec);
+
+    if (ec != 0) {
+        V8Proxy::SetDOMException(ec);
+        return notHandledByInterceptor();
+    }
+
+    return v8::Undefined();
 }
 
 } // namespace WebCore
