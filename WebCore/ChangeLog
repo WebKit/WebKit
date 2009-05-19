@@ -2,7 +2,7 @@
 
         Reviewed by Darin Adler and Brady Eidson.
 
-        REGRESSION (r42446?): UA Profiler in http://stevesouders.com/ua/ stalls
+        <rdar://problem/6900582> REGRESSION (r42446?): UA Profiler in http://stevesouders.com/ua/ stalls
 
         The problem was that Document::removeAllEventListeners() was called for a wrong document
         when a CachedFrame was destroyed.
