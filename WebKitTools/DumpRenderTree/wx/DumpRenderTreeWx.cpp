@@ -223,7 +223,7 @@ static void runTest(const wxString testPathOrURL)
 {
     done = false;
     time(&startTime);
-    string pathOrURLString(testPathOrURL.fn_str());
+    string pathOrURLString(testPathOrURL.char_str());
     string pathOrURL(pathOrURLString);
     string expectedPixelHash;
 

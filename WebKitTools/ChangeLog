@@ -1,3 +1,15 @@
+2009-05-19  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wxMSW build fixes for DRT.
+
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (runTest):
+        * DumpRenderTree/wx/WorkQueueItemWx.cpp:
+        (LoadItem::invoke):
+        (ReloadItem::invoke):
+        (ScriptItem::invoke):
+        (BackForwardItem::invoke):
+
 2009-05-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Bug 24569: Add some cookies tests
