@@ -118,6 +118,7 @@
         Reviewed by George Staikos.
 
         Change ScriptElement to support XHTMLMP in a better way
+        https://bugs.webkit.org/show_bug.cgi?id=23452
 
         * dom/ScriptElement.h:
         * html/HTMLScriptElement.h:
@@ -135,6 +136,7 @@
         Reviewed by George Staikos (and others).
 
         Add XHTMLMP support to Webkit
+        https://bugs.webkit.org/show_bug.cgi?id=23452
         XHTMLMP is a strict subset of XHTML 1.1. It extends XHTML Basic and add enhanced
         functionality. Most of the functionalities have already been implemented by Webkit.
         
