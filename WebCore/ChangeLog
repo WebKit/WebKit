@@ -1,3 +1,26 @@
+2009-05-19  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        The Qt port has code that disables scrolling optimizations
+        when the root contains native windows, such as windowed plugins.
+
+        This code broke when detaching iframes containing windowed
+        plugins.
+
+        Each ScrollView now knows how many native windows it and its
+        children contain, and when it is detached, that number is
+        substracted from its old parents.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollContents):
+        (WebCore::ScrollView::setParent):
+        * platform/ScrollView.h:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::adjustWidgetsPreventingBlittingCount):
+        (WebCore::ScrollView::platformAddChild):
+        (WebCore::ScrollView::platformRemoveChild):
+
 2009-05-18  David Kilzer  <ddkilzer@apple.com>
 
         Tiger build fix for r43850

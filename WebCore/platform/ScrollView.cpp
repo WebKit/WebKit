@@ -493,7 +493,7 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
        hostWindow()->scroll(-scrollDelta, scrollViewRect, clipRect);
     } else { 
        // We need to go ahead and repaint the entire backing store.  Do it now before moving the
-       // plugins.
+       // windowed plugins.
        hostWindow()->repaint(updateRect, true, false, true); // Invalidate the backing store and repaint it synchronously
     }
 
@@ -574,8 +574,16 @@ void ScrollView::setParent(ScrollView* parentView)
     if (m_scrollbarsAvoidingResizer && parent())
         parent()->adjustScrollbarsAvoidingResizerCount(-m_scrollbarsAvoidingResizer);
 
+#if PLATFORM(QT)
+    if (m_widgetsPreventingBlitting && parent())
+        parent()->adjustWidgetsPreventingBlittingCount(-m_widgetsPreventingBlitting);
+
+    if (m_widgetsPreventingBlitting && parentView)
+        parentView->adjustWidgetsPreventingBlittingCount(m_widgetsPreventingBlitting);
+#endif
+
     Widget::setParent(parentView);
-    
+
     if (m_scrollbarsAvoidingResizer && parent())
         parent()->adjustScrollbarsAvoidingResizerCount(m_scrollbarsAvoidingResizer);
 }

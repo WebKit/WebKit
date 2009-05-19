@@ -295,9 +295,11 @@ private:
 #endif
 
 #if PLATFORM(QT)
+public:
+    void adjustWidgetsPreventingBlittingCount(int delta);
 private:
-    bool rootPreventsBlitting() const { return root()->m_widgetsThatPreventBlitting > 0; }
-    unsigned m_widgetsThatPreventBlitting;
+    bool rootPreventsBlitting() const { return root()->m_widgetsPreventingBlitting > 0; }
+    unsigned m_widgetsPreventingBlitting;
 #else
     bool rootPreventsBlitting() const { return false; }
 #endif
