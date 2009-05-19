@@ -39,6 +39,10 @@
 #import "SecurityOrigin.h"
 #import "WebCoreSystemInterface.h"
 
+#ifdef BUILDING_ON_TIGER
+typedef unsigned NSUInteger;
+#endif
+
 namespace WebCore {
 
 ClipboardMac::ClipboardMac(bool forDragging, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, Frame *frame)

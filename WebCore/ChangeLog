@@ -1,4 +1,11 @@
-2009-05-17  Eric Seidel  <eric@webkit.org>
+2009-05-18  David Kilzer  <ddkilzer@apple.com>
+
+        Tiger build fix for r43850
+
+        * platform/mac/ClipboardMac.mm: Added typedef for NSUinteger
+        when building on Tiger.
+
+2009-05-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.
 
