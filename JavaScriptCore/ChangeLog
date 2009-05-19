@@ -1,3 +1,18 @@
+2009-05-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Gavin Barraclough.
+        
+        - speed up string comparison, especially for short strings
+        
+        ~1% on SunSpider
+
+        * JavaScriptCore.exp:
+        * runtime/UString.cpp:
+        * runtime/UString.h:
+        (JSC::operator==): Inline UString's operator==, since it is called from
+        hot places in the runtime. Also, specialize 2-char strings in a similar way to
+        1-char, since we're taking the hit of a switch anyway.
+
 2009-05-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Gavin Barraclough.

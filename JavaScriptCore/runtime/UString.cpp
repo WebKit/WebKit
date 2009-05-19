@@ -1566,19 +1566,6 @@ UString UString::substr(int pos, int len) const
     return UString(Rep::create(m_rep, pos, len));
 }
 
-bool operator==(const UString& s1, const UString& s2)
-{
-    int size = s1.size();
-    switch (size) {
-        case 0:
-            return !s2.size();
-        case 1:
-            return s2.size() == 1 && s1.data()[0] == s2.data()[0];
-        default:
-            return s2.size() == size && memcmp(s1.data(), s2.data(), size * sizeof(UChar)) == 0;
-    }
-}
-
 bool operator==(const UString& s1, const char *s2)
 {
     if (s2 == 0)

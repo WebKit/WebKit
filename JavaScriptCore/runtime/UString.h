@@ -355,7 +355,26 @@ namespace JSC {
     PassRefPtr<UString::Rep> concatenate(UString::Rep*, int);
     PassRefPtr<UString::Rep> concatenate(UString::Rep*, double);
 
-    bool operator==(const UString&, const UString&);
+    inline bool operator==(const UString& s1, const UString& s2)
+    {
+        int size = s1.size();
+        switch (size) {
+        case 0:
+            return !s2.size();
+        case 1:
+            return s2.size() == 1 && s1.data()[0] == s2.data()[0];
+        case 2: {
+            if (s2.size() != 2)
+                return false;
+            const UChar* d1 = s1.data();
+            const UChar* d2 = s2.data();
+            return (d1[0] == d2[0]) & (d1[1] == d2[1]);
+        }
+        default:
+            return s2.size() == size && memcmp(s1.data(), s2.data(), size * sizeof(UChar)) == 0;
+        }
+    }
+
 
     inline bool operator!=(const UString& s1, const UString& s2)
     {
