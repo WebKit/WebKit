@@ -820,7 +820,7 @@ String AccessibilityRenderObject::ariaAccessiblityName(const String& s) const
         if (idElement) {
             String nameFragment = accessibleNameForNode(idElement);
             ariaLabel.append(nameFragment.characters(), nameFragment.length());
-            for (Node* n = idElement->firstChild(); n; n = n->traverseNextNode(idElement->nextSibling())) {
+            for (Node* n = idElement->firstChild(); n; n = n->traverseNextNode(idElement)) {
                 nameFragment = accessibleNameForNode(n);
                 ariaLabel.append(nameFragment.characters(), nameFragment.length());
             }
@@ -1580,8 +1580,7 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
         if (obj) {
             RefPtr<AccessibilityObject> axobj = document->axObjectCache()->getOrCreate(obj);
             ASSERT(axobj);
-            ASSERT(axobj->roleValue() == WebCoreLinkRole);
-            if (!axobj->accessibilityIsIgnored())
+            if (!axobj->accessibilityIsIgnored() && axobj->isLink())
                 result.append(axobj);
         } else {
             Node* parent = curr->parent();

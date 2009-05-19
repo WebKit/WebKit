@@ -1,3 +1,22 @@
+2009-05-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25872: aria-labeledby appends all siblings instead of all children to aria name
+        https://bugs.webkit.org/show_bug.cgi?id=25872
+
+        When setting the aria-labeledby text it should stay within the element identified by the id
+        when searching through the sibling list.
+  
+        This also removes an outdated assert in getDocumentLinks. Its possible for the document to
+        think an element is a link, but accessibility can treat it differently (eg. its ARIA role is different).
+
+        Test: accessibility/aria-labelledby-stay-within.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaAccessiblityName):
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+
 2009-05-19  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler).

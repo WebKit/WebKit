@@ -1,3 +1,15 @@
+2009-05-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 25872: aria-labeledby appends all siblings instead of all children to aria name
+        https://bugs.webkit.org/show_bug.cgi?id=25872
+
+        * accessibility/aria-labelledby-stay-within.html: Added.
+        * platform/mac/accessibility/aria-describedby-on-input-expected.txt:
+        * platform/mac/accessibility/aria-labelledby-on-input-expected.txt:
+        * platform/mac/accessibility/aria-labelledby-stay-within-expected.txt: Added.
+
 2009-05-19  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.
