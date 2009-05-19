@@ -363,14 +363,15 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
             cp webview.py $WEBKITOUTPUTDIR/webview.py
                                    
             PY_INCLUDE=`python -c "import sys,distutils.sysconfig; sys.stdout.write(distutils.sysconfig.get_python_inc())"`
-            PY_LIB=`python -c "import sys; sys.stdout.write('python' + sys.version[:3])"`
-            PY_LIBDIR=`python -c "import distutils.sysconfig; import sys; sys.stdout.write(distutils.sysconfig.PREFIX)"`
             
             if [ "${OSTYPE:0:6}" == "cygwin" ]; then
+                PY_LIBDIR=`python -c "import distutils.sysconfig; import sys; sys.stdout.write(distutils.sysconfig.PREFIX)"`
                 PY_LIBDIR="$PY_LIBDIR\\Libs"
+                PY_LIB=`python -c "import sys; sys.stdout.write('python' + sys.version[:3])"`
                 PY_LIB=`python -c "sys.stdout.write('$PY_LIB'.replace('.', ''))"`
             else
-                PY_LIBDIR="$PY_LIBDIR/lib"
+                PY_LIB=`python-config --libs`
+                PY_LIBDIR=`python-config --ldflags`
             fi
             
             do_make $WK_ROOT/WebKit/wx/bindings/python "-DBUILDING_WX__=1 -DWXUSINGDLL=1 -DWXUSINGDLL_WEBKIT=1 -I$PY_INCLUDE -I$WX_PREFIX/wxPython/include -I$WX_PREFIX/../wxPython/include $WXGC_DEFINE $EXTRA_CPPFLAGS" \

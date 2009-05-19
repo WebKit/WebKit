@@ -1,5 +1,11 @@
 2009-05-18  Kevin Ollivier  <kevino@theolliviers.com>
 
+        wx build fix. Use python-config to get Python linking info on Unix OSes. 
+
+        * wx/build-wxwebkit:
+
+2009-05-18  Kevin Ollivier  <kevino@theolliviers.com>
+
         wx build fix, initialize variable that doesn't get set on Windows.
 
         * DumpRenderTree/wx/DumpRenderTreeWx.cpp:

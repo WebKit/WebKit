@@ -1,3 +1,9 @@
+2009-05-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Use python-config to get Python linking info on Unix OSes. 
+
+        * bindings/python/wxwebkit-py.bkl:
+
 2009-03-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Maciej Stachowiak.
