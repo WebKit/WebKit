@@ -1,3 +1,45 @@
+2009-05-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed and tweaked by David Kilzer.
+
+        Bug 24569: Add some cookies tests
+        <https://bugs.webkit.org/show_bug.cgi?id=24569>
+
+        This modification adds a cookie framework to check setting cookies.
+        It is a simple modification over the js test framework. It uses some XHRs and custom server-side script
+        to set / get / clear cookies.
+
+        It also adds some very basic tests to check that everything works.
+
+        * http/tests/cookies: Added.
+        * http/tests/cookies/multiple-cookies-expected.txt: Added.
+        * http/tests/cookies/multiple-cookies.html: Added.
+        * http/tests/cookies/resources: Added.
+        * http/tests/cookies/resources/TEMPLATE.html: Copied from LayoutTests/fast/js/resources/TEMPLATE.html.
+        * http/tests/cookies/resources/clearCookies.cgi: Added.
+        * http/tests/cookies/resources/cookies-test-post.js: Copied from LayoutTests/fast/js/resources/js-test-post.js.
+        * http/tests/cookies/resources/cookies-test-pre.js: Copied from LayoutTests/fast/js/resources/js-test-pre.js.
+        (setCookies): Internal method to set a cookie (multiple cookies are not supported).
+        (testCookies): Internal method to check if the cookie were set.
+
+        (clearAllCookies): Used to clear all pre-existing cookies for this domain.
+        (clearCookies): Used to clear the cookies set with cookiesShouldBe.
+        (cookiesShouldBe): Used to set a cookie and check the "Cookie" header sent. It is inspired from shouldBe from the js test framework.
+
+        * http/tests/cookies/resources/cookies-test-style.css: Copied from LayoutTests/fast/js/resources/js-test-style.css.
+        * http/tests/cookies/resources/getCookies.cgi: Added.
+        * http/tests/cookies/resources/multiple-cookies.js: Added.
+        * http/tests/cookies/resources/setCookies.cgi: Added.
+        * http/tests/cookies/resources/simple-cookies-expired.js: Added.
+        * http/tests/cookies/resources/simple-cookies-max-age.js: Added.
+        * http/tests/cookies/simple-cookies-expired-expected.txt: Added.
+        * http/tests/cookies/simple-cookies-expired.html: Added.
+        * http/tests/cookies/simple-cookies-max-age-expected.txt: Added.
+        * http/tests/cookies/simple-cookies-max-age.html: Added.
+        * platform/mac-tiger/Skipped: Added
+        http/tests/cookies/simple-cookies-max-age.html since CFNetwork
+        on Tiger doesn't support expiring cookies with Max-Age=0.
+
 2009-05-18  David Kilzer  <ddkilzer@apple.com>
 
         Bug 20652: WebKit doesn't display favicons with MIME type image/vnd.microsoft.icon

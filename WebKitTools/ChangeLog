@@ -1,3 +1,14 @@
+2009-05-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Bug 24569: Add some cookies tests
+
+        <https://bugs.webkit.org/show_bug.cgi?id=24569>
+
+        Patch by David Kilzer.
+
+        * Scripts/make-js-test-wrappers: Added regex to skip
+        cookies-test-(post|pre).js files.
+
 2009-05-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Use python-config to get Python linking info on Unix OSes. 
