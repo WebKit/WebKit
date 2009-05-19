@@ -1,3 +1,21 @@
+2009-05-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - Improve code generation for access to prototype properties
+        
+        ~0.4% speedup on SunSpider.
+        
+        Based on a suggestion from Geoff Garen.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+
 2009-05-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Gavin Barraclough.

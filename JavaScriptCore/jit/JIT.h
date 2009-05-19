@@ -388,7 +388,7 @@ namespace JSC {
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
 
         void compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset);
-        void compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID result, size_t cachedOffset);
+        void compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset);
         void compilePutDirectOffset(RegisterID base, RegisterID value, Structure* structure, size_t cachedOffset);
 
         // Arithmetic Ops

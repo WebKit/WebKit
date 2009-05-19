@@ -323,15 +323,12 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, Structure* 
     loadPtr(Address(base, offset), result);
 }
 
-void JIT::compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID result, size_t cachedOffset)
+void JIT::compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset)
 {
     if (base->isUsingInlineStorage())
         loadPtr(static_cast<void*>(&base->m_inlineStorage[cachedOffset]), result);
-    else {
-        PropertyStorage* protoPropertyStorage = &base->m_externalStorage;
-        loadPtr(static_cast<void*>(protoPropertyStorage), temp);
-        loadPtr(Address(temp, cachedOffset * sizeof(JSValue)), result);
-    } 
+    else
+        loadPtr(static_cast<void*>(&base->m_externalStorage[cachedOffset]), result);
 }
 
 static JSObject* resizePropertyStorage(JSObject* baseObject, int32_t oldSize, int32_t newSize)
@@ -528,7 +525,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
 #endif
 
     // Checks out okay! - getDirectOffset
-    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
+    compileGetDirectOffset(protoObject, regT0, cachedOffset);
 
     Jump success = jump();
 
@@ -601,7 +598,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 #endif
 
     // Checks out okay! - getDirectOffset
-    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
+    compileGetDirectOffset(protoObject, regT0, cachedOffset);
 
     Jump success = jump();
 
@@ -655,7 +652,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     }
     ASSERT(protoObject);
 
-    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
+    compileGetDirectOffset(protoObject, regT0, cachedOffset);
     Jump success = jump();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
@@ -711,7 +708,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     }
     ASSERT(protoObject);
 
-    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
+    compileGetDirectOffset(protoObject, regT0, cachedOffset);
     Jump success = jump();
 
     void* code = m_assembler.executableCopy(m_codeBlock->executablePool());
