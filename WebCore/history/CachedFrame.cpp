@@ -122,6 +122,9 @@ void CachedFrame::clear()
 
     if (m_document->inPageCache()) {
         Frame::clearTimers(m_view.get(), m_document.get());
+
+        // FIXME: Why do we need to call removeAllEventListeners here? When the document is in page cache, this method won't work
+        // fully anyway, because the document won't be able to access its DOMWindow object (due to being frameless).
         m_document->removeAllEventListeners();
 
         m_document->setInPageCache(false);

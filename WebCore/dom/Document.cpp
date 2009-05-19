@@ -2710,6 +2710,12 @@ DOMWindow* Document::domWindow() const
 {
     if (!frame())
         return 0;
+
+    // The m_frame pointer is not (not always?) zeroed out when the document is put into b/f cache, so the frame can hold an unrelated document/window pair.
+    // FIXME: We should always zero out the frame pointer on navigation to avoid accidentally accessing the new frame content.
+    if (m_frame->document() != this)
+        return 0;
+
     return frame()->domWindow();
 }
 

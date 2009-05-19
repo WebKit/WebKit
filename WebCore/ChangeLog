@@ -1,3 +1,19 @@
+2009-05-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler and Brady Eidson.
+
+        REGRESSION (r42446?): UA Profiler in http://stevesouders.com/ua/ stalls
+
+        The problem was that Document::removeAllEventListeners() was called for a wrong document
+        when a CachedFrame was destroyed.
+
+        Cannot be tested automatically, because DRT doesn't have a b/f cache.
+
+        * dom/Document.cpp: (WebCore::Document::domWindow): Make sure that this doesn't return an
+        unrelated window even if document's m_frame pointer is stale.
+
+        * history/CachedFrame.cpp: (WebCore::CachedFrame::clear): Added a FIXME about strange behavior.
+
 2009-05-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
