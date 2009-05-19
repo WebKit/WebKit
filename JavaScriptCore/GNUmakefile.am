@@ -194,19 +194,13 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/StructureChain.h \
 	JavaScriptCore/runtime/StructureTransitionTable.h \
 	JavaScriptCore/runtime/TypeInfo.h \
-	JavaScriptCore/wrec/CharacterClass.cpp \
 	JavaScriptCore/wrec/CharacterClass.h \
-	JavaScriptCore/wrec/CharacterClassConstructor.cpp \
 	JavaScriptCore/wrec/CharacterClassConstructor.h \
 	JavaScriptCore/wrec/Escapes.h \
 	JavaScriptCore/wrec/Quantifier.h \
-	JavaScriptCore/wrec/WREC.cpp \
 	JavaScriptCore/wrec/WREC.h \
-	JavaScriptCore/wrec/WRECFunctors.cpp \
 	JavaScriptCore/wrec/WRECFunctors.h \
-	JavaScriptCore/wrec/WRECGenerator.cpp \
 	JavaScriptCore/wrec/WRECGenerator.h \
-	JavaScriptCore/wrec/WRECParser.cpp \
 	JavaScriptCore/wrec/WRECParser.h \
 	JavaScriptCore/wtf/ASCIICType.h \
 	JavaScriptCore/wtf/AVLTree.h \
@@ -278,8 +272,11 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp \
 	JavaScriptCore/wtf/unicode/icu/UnicodeIcu.h \
 	JavaScriptCore/wtf/VMTags.h \
+	JavaScriptCore/yarr/RegexCompiler.cpp \
 	JavaScriptCore/yarr/RegexCompiler.h \
+	JavaScriptCore/yarr/RegexInterpreter.cpp \
 	JavaScriptCore/yarr/RegexInterpreter.h \
+	JavaScriptCore/yarr/RegexJIT.cpp \
 	JavaScriptCore/yarr/RegexJIT.h \
 	JavaScriptCore/yarr/RegexParser.h \
 	JavaScriptCore/yarr/RegexPattern.h

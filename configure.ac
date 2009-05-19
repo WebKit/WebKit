@@ -498,7 +498,8 @@ if test "$enable_jit" = "yes"; then
     case "$host_cpu" in
         i*86|x86_64)
             AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
-            AC_DEFINE([ENABLE_WREC], [1], [Define to enable WREC])
+            AC_DEFINE([ENABLE_YARR], [1], [Define to enable YARR])
+            AC_DEFINE([ENABLE_YARR_JIT], [1], [Define to enable YARR JIT])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_CALL], [1], [Define to enable optimizing calls])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS], [1], [Define to enable optimized property access])
             AC_DEFINE([ENABLE_JIT_OPTIMIZE_ARITHMETIC], [1], [Define to enable optimized arithmetic])
