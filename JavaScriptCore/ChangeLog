@@ -1,5 +1,15 @@
 2009-05-18  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Gavin Barraclough.
+        
+        - for polymorphic prototype lookups, increase the number of slots from 4 to 8
+        
+        ~4% faster on v8 raytrace benchmark
+
+        * bytecode/Instruction.h:
+
+2009-05-18  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Oliver Hunt.
         
         - tighten up the code for the load_varargs stub

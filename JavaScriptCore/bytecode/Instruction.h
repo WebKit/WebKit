@@ -34,7 +34,7 @@
 #include "Structure.h"
 #include <wtf/VectorTraits.h>
 
-#define POLYMORPHIC_LIST_CACHE_SIZE 4
+#define POLYMORPHIC_LIST_CACHE_SIZE 8
 
 namespace JSC {
 
