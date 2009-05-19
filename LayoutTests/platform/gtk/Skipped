@@ -5941,3 +5941,10 @@ webarchive/test-script-src.html
 webarchive/test-table-background.html
 webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
+
+# Add XHTMLMP to webkit, ignore these tests since haven't been verified
+fast/xhtmlmp/check-doctype-declaration.xhtml
+fast/xhtmlmp/check-rootelement.xhtml
+fast/xhtmlmp/noscript.xhtml
+fast/xhtmlmp/noscript-in-multiscripts.xhtml
+fast/xhtmlmp/noscript-nested.xhtml

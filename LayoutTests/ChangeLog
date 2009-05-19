@@ -1,3 +1,21 @@
+2009-05-19  Yichao Yin  <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+        
+        Add the XHTML MP tests but put them in skipped since they are not active
+        by default on any platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=23452
+
+        * fast/xhtmlmp: Added.
+        * fast/xhtmlmp/check-doctype-declaration.xhtml: Added.
+        * fast/xhtmlmp/check-rootelement.xhtml: Added.
+        * fast/xhtmlmp/noscript-in-multiscripts.xhtml: Added.
+        * fast/xhtmlmp/noscript-nested.xhtml: Added.
+        * fast/xhtmlmp/noscript.xhtml: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2009-05-18  David Kilzer  <ddkilzer@apple.com>
 
         Added cookie test to Skipped list for Windows

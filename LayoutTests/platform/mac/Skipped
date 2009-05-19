@@ -66,3 +66,10 @@ svg/hixie/perf/002.xml
 
 # <rdar://problem/6710625> Test media/video-error-abort.html doesn't work
 media/video-error-abort.html
+
+# Add XHTMLMP to webkit, ignore these tests since haven't been verified
+fast/xhtmlmp/check-doctype-declaration.xhtml
+fast/xhtmlmp/check-rootelement.xhtml
+fast/xhtmlmp/noscript.xhtml
+fast/xhtmlmp/noscript-in-multiscripts.xhtml
+fast/xhtmlmp/noscript-nested.xhtml

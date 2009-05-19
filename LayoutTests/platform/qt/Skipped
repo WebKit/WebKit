@@ -4401,3 +4401,10 @@ fast/forms/mailto/post-text-plain.html
 
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator
+
+# Add XHTMLMP to webkit, ignore these tests since haven't been verified
+fast/xhtmlmp/check-doctype-declaration.xhtml
+fast/xhtmlmp/check-rootelement.xhtml
+fast/xhtmlmp/noscript.xhtml
+fast/xhtmlmp/noscript-in-multiscripts.xhtml
+fast/xhtmlmp/noscript-nested.xhtml
