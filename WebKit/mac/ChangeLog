@@ -1,3 +1,14 @@
+2009-05-18  Sam Weinig  <sam@webkit.org>
+
+        <rdar://problem/6899044> Can't see Apple ad on nytimes.com unless I spoof the user agent
+        
+        Add user agent hack for pointroll.com.
+
+        Reviewed by Steve Falkenburg.
+
+        * WebView/WebView.mm:
+        (-[WebView WebCore::_userAgentForURL:WebCore::]):
+
 2009-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig and Dan Bernstein.
