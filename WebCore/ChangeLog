@@ -1,3 +1,13 @@
+2009-05-18  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Bug 25859: Need to upstream ScriptController.* for v8.
+        https://bugs.webkit.org/show_bug.cgi?id=25859
+
+        * bindings/v8/ScriptController.cpp: Added.
+        * bindings/v8/ScriptController.h: Added.
+
 2009-05-18  Yichao Yin  <yichao.yin@torchmobile.com.cn>
 
         Reviewed by George Staikos.
