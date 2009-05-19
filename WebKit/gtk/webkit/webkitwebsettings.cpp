@@ -430,8 +430,12 @@ static void webkit_web_settings_init(WebKitWebSettings* web_settings)
 static void free_spell_checking_language(gpointer data, gpointer user_data)
 {
     SpellLanguage* language = static_cast<SpellLanguage*>(data);
-    enchant_broker_free_dict(language->config, language->speller);
-    enchant_broker_free(language->config);
+    if (language->config) {
+        if (language->speller)
+            enchant_broker_free_dict(language->config, language->speller);
+
+        enchant_broker_free(language->config);
+    }
     g_slice_free(SpellLanguage, language);
 }
 

@@ -1,3 +1,13 @@
+2009-05-19  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Do not try to free enchant broker and dictionary if they do not
+        exist, those functions aren't NULL-safe.
+
+        * webkit/webkitwebsettings.cpp:
+        (free_spell_checking_language):
+
 2009-05-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Jan Alonzo.
