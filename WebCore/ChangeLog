@@ -1,3 +1,48 @@
+2009-05-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Refactor InpectorController so that it does not instantiate resource/console/database/domresource javascript objects. Move instantiation into the javascript.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25419
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToConsole):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didReceiveContentLength):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorController::scriptImported):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::InspectorDOMStorageResource):
+        (WebCore::InspectorDOMStorageResource::bind):
+        (WebCore::InspectorDOMStorageResource::unbind):
+        * inspector/InspectorDOMStorageResource.h:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorDatabaseResource::bind):
+        (WebCore::InspectorDatabaseResource::unbind):
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorResource.cpp:
+        (WebCore::InspectorResource::InspectorResource):
+        (WebCore::populateHeadersObject):
+        (WebCore::InspectorResource::createScriptObject):
+        (WebCore::InspectorResource::updateScriptObject):
+        (WebCore::InspectorResource::releaseScriptObject):
+        * inspector/InspectorResource.h:
+        * inspector/front-end/Console.js:
+        (WebInspector.ConsoleMessage):
+        * inspector/front-end/inspector.js:
+        (WebInspector.addResource):
+        (WebInspector.updateResource):
+        (WebInspector.removeResource):
+        (WebInspector.addDatabase):
+        (WebInspector.addDOMStorage):
+        (WebInspector.reset):
+        (WebInspector.addMessageToConsole):
+
 2009-05-19  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Ariya Hidayat.

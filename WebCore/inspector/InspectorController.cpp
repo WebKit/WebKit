@@ -891,7 +891,7 @@ void InspectorController::didReceiveResponse(DocumentLoader*, unsigned long iden
     resource->markResponseReceivedTime();
 
     if (windowVisible())
-        resource->updateScriptObject(m_scriptState);
+        resource->updateScriptObject(m_scriptState, m_webInspector);
 }
 
 void InspectorController::didReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived)
@@ -906,7 +906,7 @@ void InspectorController::didReceiveContentLength(DocumentLoader*, unsigned long
     resource->addLength(lengthReceived);
 
     if (windowVisible())
-        resource->updateScriptObject(m_scriptState);
+        resource->updateScriptObject(m_scriptState, m_webInspector);
 }
 
 void InspectorController::didFinishLoading(DocumentLoader*, unsigned long identifier)
@@ -925,7 +925,7 @@ void InspectorController::didFinishLoading(DocumentLoader*, unsigned long identi
     addResource(resource.get());
 
     if (windowVisible())
-        resource->updateScriptObject(m_scriptState);
+        resource->updateScriptObject(m_scriptState, m_webInspector);
 }
 
 void InspectorController::didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError& /*error*/)
@@ -945,7 +945,7 @@ void InspectorController::didFailLoading(DocumentLoader*, unsigned long identifi
     addResource(resource.get());
 
     if (windowVisible())
-        resource->updateScriptObject(m_scriptState);
+        resource->updateScriptObject(m_scriptState, m_webInspector);
 }
 
 void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString)
@@ -960,7 +960,7 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
     resource->setXMLHttpResponseText(sourceString);
 
     if (windowVisible())
-        resource->updateScriptObject(m_scriptState);
+        resource->updateScriptObject(m_scriptState, m_webInspector);
 }
 
 void InspectorController::scriptImported(unsigned long identifier, const String& sourceString)
@@ -977,7 +977,7 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
     resource->setXMLHttpResponseText(ScriptString(sourceString));
     
     if (windowVisible())
-        resource->updateScriptObject(m_scriptState);
+        resource->updateScriptObject(m_scriptState, m_webInspector);
 }
 
 

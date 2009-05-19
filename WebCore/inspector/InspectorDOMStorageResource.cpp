@@ -48,6 +48,7 @@ InspectorDOMStorageResource::InspectorDOMStorageResource(Storage* domStorage, bo
     : m_domStorage(domStorage)
     , m_isLocalStorage(isLocalStorage)
     , m_frame(frame)
+    , m_scriptObjectCreated(false)
 {
 }
 
@@ -58,36 +59,31 @@ bool InspectorDOMStorageResource::isSameHostAndType(Frame* frame, bool isLocalSt
 
 void InspectorDOMStorageResource::bind(ScriptState* scriptState, const ScriptObject& webInspector)
 {
-    if (!m_scriptObject.hasNoValue())
+    if (m_scriptObjectCreated)
         return;
 
     ASSERT(scriptState);
     ASSERT(!webInspector.hasNoValue());
     if (!scriptState || webInspector.hasNoValue())
         return;
-
-    ScriptFunctionCall resourceConstructor(scriptState, webInspector, "DOMStorage");
+    
+    ScriptObject scriptObject = ScriptObject::createNew(scriptState);
     ScriptObject domStorage;
     if (!getQuarantinedScriptObject(m_frame.get(), m_domStorage.get(), domStorage))
         return;
-
-    resourceConstructor.appendArgument(domStorage);
-    resourceConstructor.appendArgument(m_frame->document()->securityOrigin()->host());
-    resourceConstructor.appendArgument(m_isLocalStorage);
-
-    bool hadException = false;
-    m_scriptObject = resourceConstructor.construct(hadException);
-    if (hadException)
-        return;
+    scriptObject.set(scriptState, "domStorage", domStorage);
+    scriptObject.set(scriptState, "host", m_frame->document()->securityOrigin()->host());
+    scriptObject.set(scriptState, "isLocalStorage", m_isLocalStorage);
 
     ScriptFunctionCall addDOMStorage(scriptState, webInspector, "addDOMStorage");
-    addDOMStorage.appendArgument(m_scriptObject);
-    addDOMStorage.call(hadException);
+    addDOMStorage.appendArgument(scriptObject);
+    addDOMStorage.call();
+    m_scriptObjectCreated = true;
 }
 
 void InspectorDOMStorageResource::unbind()
 {
-    m_scriptObject = ScriptObject();
+    m_scriptObjectCreated = false;
 }
 
 } // namespace WebCore

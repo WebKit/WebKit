@@ -46,12 +46,13 @@ InspectorDatabaseResource::InspectorDatabaseResource(Database* database, const S
     , m_domain(domain)
     , m_name(name)
     , m_version(version)
+    , m_scriptObjectCreated(false)
 {
 }
 
 void InspectorDatabaseResource::bind(ScriptState* scriptState, const ScriptObject& webInspector)
 {
-    if (!m_scriptObject.hasNoValue())
+    if (m_scriptObjectCreated)
         return;
 
     ASSERT(scriptState);
@@ -59,29 +60,24 @@ void InspectorDatabaseResource::bind(ScriptState* scriptState, const ScriptObjec
     if (!scriptState || webInspector.hasNoValue())
         return;
 
-    ScriptFunctionCall resourceConstructor(scriptState, webInspector, "Database");
+    ScriptObject scriptObject = ScriptObject::createNew(scriptState);
     ScriptObject database;
     if (!getQuarantinedScriptObject(m_database.get(), database))
         return;
-
-    resourceConstructor.appendArgument(database);
-    resourceConstructor.appendArgument(m_domain);
-    resourceConstructor.appendArgument(m_name);
-    resourceConstructor.appendArgument(m_version);
-
-    bool hadException = false;
-    m_scriptObject = resourceConstructor.construct(hadException);
-    if (hadException)
-        return;
-
+    scriptObject.set(scriptState, "database", database);
+    scriptObject.set(scriptState, "domain", m_domain);
+    scriptObject.set(scriptState, "name", m_name);
+    scriptObject.set(scriptState, "version", m_version);
+    
     ScriptFunctionCall addDatabase(scriptState, webInspector, "addDatabase");
-    addDatabase.appendArgument(m_scriptObject);
-    addDatabase.call(hadException);
+    addDatabase.appendArgument(scriptObject);
+    addDatabase.call();
+    m_scriptObjectCreated = true;
 }
 
 void InspectorDatabaseResource::unbind()
 {
-    m_scriptObject = ScriptObject();
+    m_scriptObjectCreated = false;
 }
 
 } // namespace WebCore

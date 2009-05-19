@@ -41,7 +41,7 @@ var Preferences = {
 }
 
 var WebInspector = {
-    resources: [],
+    resources: {},
     resourceURLMap: {},
     missingLocalizedStrings: {},
 
@@ -771,9 +771,18 @@ WebInspector.showDatabasesPanel = function()
     this.currentPanel = this.panels.databases;
 }
 
-WebInspector.addResource = function(resource)
+WebInspector.addResource = function(identifier, payload)
 {
-    this.resources.push(resource);
+    var resource = new WebInspector.Resource(
+        payload.requestHeaders,
+        payload.requestURL,
+        payload.host,
+        payload.path,
+        payload.lastPathComponent,
+        identifier,
+        payload.isMainResource,
+        payload.cached);
+    this.resources[identifier] = resource;
     this.resourceURLMap[resource.url] = resource;
 
     if (resource.mainResource) {
@@ -785,24 +794,83 @@ WebInspector.addResource = function(resource)
         this.panels.resources.addResource(resource);
 }
 
-WebInspector.removeResource = function(resource)
+WebInspector.updateResource = function(identifier, payload)
 {
+    var resource = this.resources[identifier];
+    if (!resource)
+        return;
+
+    if (payload.didRequestChange) {
+        resource.url = payload.url;
+        resource.domain = payload.domain;
+        resource.path = payload.path;
+        resource.lastPathComponent = payload.lastPathComponent;
+        resource.requestHeaders = payload.requestHeaders;
+        resource.mainResource = payload.mainResource;
+    }
+
+    if (payload.didResponseChange) {
+        resource.mimeType = payload.mimeType;
+        resource.suggestedFilename = payload.suggestedFilename;
+        resource.expectedContentLength = payload.expectedContentLength;
+        resource.statusCode = payload.statusCode;
+        resource.suggestedFilename = payload.suggestedFilename;
+        resource.responseHeaders = payload.responseHeaders;
+    }
+
+    if (payload.didTypeChange) {
+        resource.type = payload.type;
+    }
+    
+    if (payload.didLengthChange) {
+        resource.contentLength = payload.contentLength;
+    }
+
+    if (payload.didCompletionChange) {
+        resource.failed = payload.failed;
+        resource.finished = payload.finished;
+    }
+
+    if (payload.didTimingChange) {
+        if (payload.startTime)
+            resource.startTime = payload.startTime;
+        if (payload.responseReceivedTime)
+            resource.responseReceivedTime = payload.responseReceivedTime;
+        if (payload.endTime)
+            resource.endTime = payload.endTime;
+    }
+}
+
+WebInspector.removeResource = function(identifier)
+{
+    var resource = this.resources[identifier];
+    if (!resource)
+        return;
+
     resource.category.removeResource(resource);
     delete this.resourceURLMap[resource.url];
-
-    this.resources.remove(resource, true);
+    delete this.resources[identifier];
 
     if (this.panels.resources)
         this.panels.resources.removeResource(resource);
 }
 
-WebInspector.addDatabase = function(database)
+WebInspector.addDatabase = function(payload)
 {
+    var database = new WebInspector.Database(
+        payload.database,
+        payload.domain,
+        payload.name,
+        payload.version);
     this.panels.databases.addDatabase(database);
 }
 
-WebInspector.addDOMStorage = function(domStorage)
+WebInspector.addDOMStorage = function(payload)
 {
+    var domStorage = new WebInspector.DOMStorage(
+        payload.domStorage,
+        payload.host,
+        payload.isLocalStorage);
     this.panels.databases.addDOMStorage(domStorage);
 }
 
@@ -866,7 +934,7 @@ WebInspector.reset = function()
     for (var category in this.resourceCategories)
         this.resourceCategories[category].removeAllResources();
 
-    this.resources = [];
+    this.resources = {};
     this.resourceURLMap = {};
     this.hoveredDOMNode = null;
 
@@ -886,9 +954,17 @@ WebInspector.resourceURLChanged = function(resource, oldURL)
     this.resourceURLMap[resource.url] = resource;
 }
 
-WebInspector.addMessageToConsole = function(msg)
+WebInspector.addMessageToConsole = function(payload)
 {
-    this.console.addMessage(msg);
+    var consoleMessage = new WebInspector.ConsoleMessage(
+        payload.source,
+        payload.level,
+        payload.line,
+        payload.url,
+        payload.groupLevel,
+        payload.repeatCount);
+    consoleMessage.setMessageBody(Array.prototype.slice.call(arguments, 1));
+    this.console.addMessage(consoleMessage);
 }
 
 WebInspector.addProfile = function(profile)

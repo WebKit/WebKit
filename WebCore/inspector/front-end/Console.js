@@ -577,31 +577,36 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel, rep
     this.url = url;
     this.groupLevel = groupLevel;
     this.repeatCount = repeatCount;
-
-    switch (this.level) {
-        case WebInspector.ConsoleMessage.MessageLevel.Trace:
-            var span = document.createElement("span");
-            span.addStyleClass("console-formatted-trace");
-            var stack = Array.prototype.slice.call(arguments, 6);
-            var funcNames = stack.map(function(f) {
-                return f || WebInspector.UIString("(anonymous function)");
-            });
-            span.appendChild(document.createTextNode(funcNames.join("\n")));
-            this.formattedMessage = span;
-            break;
-        case WebInspector.ConsoleMessage.MessageLevel.Object:
-            this.formattedMessage = this._format(["%O", arguments[6]]);
-            break;
-        default:
-            this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 6));
-            break;
-    }
-
-    // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
-    this.message = this.formattedMessage.textContent;
+    if (arguments.length > 6)
+        this.setMessageBody(Array.prototype.slice.call(arguments, 6));
 }
 
 WebInspector.ConsoleMessage.prototype = {
+    setMessageBody: function(args)
+    {
+        switch (this.level) {
+            case WebInspector.ConsoleMessage.MessageLevel.Trace:
+                var span = document.createElement("span");
+                span.addStyleClass("console-formatted-trace");
+                var stack = Array.prototype.slice.call(args);
+                var funcNames = stack.map(function(f) {
+                    return f || WebInspector.UIString("(anonymous function)");
+                });
+                span.appendChild(document.createTextNode(funcNames.join("\n")));
+                this.formattedMessage = span;
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.Object:
+                this.formattedMessage = this._format(["%O", args[0]]);
+                break;
+            default:
+                this.formattedMessage = this._format(args);
+                break;
+        }
+
+        // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
+        this.message = this.formattedMessage.textContent;
+    },
+
     isErrorOrWarning: function()
     {
         return (this.level === WebInspector.ConsoleMessage.MessageLevel.Warning || this.level === WebInspector.ConsoleMessage.MessageLevel.Error);

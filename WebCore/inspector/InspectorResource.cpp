@@ -47,6 +47,7 @@ InspectorResource::InspectorResource(long long identifier, DocumentLoader* loade
     : m_identifier(identifier)
     , m_loader(loader)
     , m_frame(loader->frame())
+    , m_scriptObjectCreated(false)
     , m_expectedContentLength(0)
     , m_cached(false)
     , m_finished(false)
@@ -104,58 +105,46 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
     m_changes.set(TypeChange);
 }
 
-static ScriptObject createHeadersObject(ScriptState* scriptState, const HTTPHeaderMap& headers, bool hadException)
+static void populateHeadersObject(ScriptState* scriptState, ScriptObject* object, const HTTPHeaderMap& headers)
 {
-    ScriptObject object = ScriptObject::createNew(scriptState);
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it) {
-        if (!object.set(scriptState, it->first.string(), it->second)) {
-            hadException = true;
-            break;
-        }
+        object->set(scriptState, it->first.string(), it->second);
     }
-
-    return object;
 }
 
 void InspectorResource::createScriptObject(ScriptState* scriptState, const ScriptObject& webInspector)
 {
-    if (m_scriptObject.hasNoValue()) {
+    if (!m_scriptObjectCreated) {
         bool hadException = false;
 
-        ScriptFunctionCall resourceConstructor(scriptState, webInspector, "Resource");
-        ScriptObject requestHeaders = createHeadersObject(scriptState, m_requestHeaderFields, hadException);
-        if (hadException)
-            return;
-
-        resourceConstructor.appendArgument(requestHeaders);
-        resourceConstructor.appendArgument(requestURL());
-        resourceConstructor.appendArgument(m_requestURL.host());
-        resourceConstructor.appendArgument(m_requestURL.path());
-        resourceConstructor.appendArgument(m_requestURL.lastPathComponent());
-        resourceConstructor.appendArgument(m_identifier);
-        resourceConstructor.appendArgument(m_isMainResource);
-        resourceConstructor.appendArgument(m_cached);
-
-        m_scriptObject = resourceConstructor.construct(hadException);
-        if (hadException)
-            return;
-
+        ScriptObject scriptObject = ScriptObject::createNew(scriptState);
+        ScriptObject requestHeaders = ScriptObject::createNew(scriptState);
+        populateHeadersObject(scriptState, &requestHeaders, m_requestHeaderFields);
+        scriptObject.set(scriptState, "requestHeaders", requestHeaders);
+        scriptObject.set(scriptState, "requestURL", requestURL());
+        scriptObject.set(scriptState, "host", m_requestURL.host());
+        scriptObject.set(scriptState, "path", m_requestURL.path());
+        scriptObject.set(scriptState, "lastPathComponent", m_requestURL.lastPathComponent());
+        scriptObject.set(scriptState, "isMainResource", m_isMainResource);
+        scriptObject.set(scriptState, "cached", m_cached);
+        
         ScriptFunctionCall addResource(scriptState, webInspector, "addResource");
-        addResource.appendArgument(m_scriptObject);
+        addResource.appendArgument(m_identifier);
+        addResource.appendArgument(scriptObject);
         addResource.call(hadException);
         if (hadException)
             return;
 
+        m_scriptObjectCreated = true;
         m_changes.clear(RequestChange);
     }
-
-    updateScriptObject(scriptState);
+    updateScriptObject(scriptState, webInspector);
 }
 
-void InspectorResource::updateScriptObject(ScriptState* scriptState)
+void InspectorResource::updateScriptObject(ScriptState* scriptState, const ScriptObject& webInspector)
 {
-    if (m_scriptObject.hasNoValue())
+    if (!m_scriptObjectCreated)
         return;
 
     if (m_changes.hasChange(NoChange))
@@ -163,96 +152,81 @@ void InspectorResource::updateScriptObject(ScriptState* scriptState)
 
     bool hadException = false;
 
+    ScriptObject scriptObject = ScriptObject::createNew(scriptState);
     if (m_changes.hasChange(RequestChange)) {
-        if (!m_scriptObject.set(scriptState, "url", requestURL()))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "domain", m_requestURL.host()))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "path", m_requestURL.path()))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "lastPathComponent", m_requestURL.lastPathComponent()))
-            return;
-
-        ScriptObject requestHeaders = createHeadersObject(scriptState, m_requestHeaderFields, hadException);
-        if (hadException)
-            return;
-
-        if (!m_scriptObject.set(scriptState, "requestHeaders", requestHeaders))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "mainResource", m_isMainResource))
-            return;
+        scriptObject.set(scriptState, "url", requestURL());
+        scriptObject.set(scriptState, "domain", m_requestURL.host());
+        scriptObject.set(scriptState, "path", m_requestURL.path());
+        scriptObject.set(scriptState, "lastPathComponent", m_requestURL.lastPathComponent());
+        ScriptObject requestHeaders = ScriptObject::createNew(scriptState);
+        populateHeadersObject(scriptState, &requestHeaders, m_requestHeaderFields);
+        scriptObject.set(scriptState, "requestHeaders", requestHeaders);
+        scriptObject.set(scriptState, "mainResource", m_isMainResource);
+        scriptObject.set(scriptState, "didRequestChange", true);
     }
 
     if (m_changes.hasChange(ResponseChange)) {
-        if (!m_scriptObject.set(scriptState, "mimeType", m_mimeType))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "suggestedFilename", m_suggestedFilename))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "expectedContentLength", m_expectedContentLength))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "statusCode", m_responseStatusCode))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "suggestedFilename", m_suggestedFilename))
-            return;
-
-        ScriptObject responseHeaders = createHeadersObject(scriptState, m_responseHeaderFields, hadException);
-        if (hadException)
-            return;
-
-        if (!m_scriptObject.set(scriptState, "responseHeaders", responseHeaders))
-            return;
+        scriptObject.set(scriptState, "mimeType", m_mimeType);
+        scriptObject.set(scriptState, "suggestedFilename", m_suggestedFilename);
+        scriptObject.set(scriptState, "expectedContentLength", m_expectedContentLength);
+        scriptObject.set(scriptState, "statusCode", m_responseStatusCode);
+        scriptObject.set(scriptState, "suggestedFilename", m_suggestedFilename);
+        ScriptObject responseHeaders = ScriptObject::createNew(scriptState);
+        populateHeadersObject(scriptState, &responseHeaders, m_responseHeaderFields);
+        scriptObject.set(scriptState, "responseHeaders", responseHeaders);
+        scriptObject.set(scriptState, "didResponseChange", true);
     }
 
-    if (m_changes.hasChange(TypeChange) && !m_scriptObject.set(scriptState, "type", static_cast<int>(type())))
-        return;
-
-    if (m_changes.hasChange(LengthChange) && !m_scriptObject.set(scriptState, "contentLength", m_length))
-        return;
+    if (m_changes.hasChange(TypeChange)) {
+        scriptObject.set(scriptState, "type", static_cast<int>(type()));
+        scriptObject.set(scriptState, "didTypeChange", true);
+    }
+    
+    if (m_changes.hasChange(LengthChange)) {
+        scriptObject.set(scriptState, "contentLength", m_length);
+        scriptObject.set(scriptState, "didLengthChange", true);
+    }
 
     if (m_changes.hasChange(CompletionChange)) {
-        if (!m_scriptObject.set(scriptState, "failed", m_failed))
-            return;
-
-        if (!m_scriptObject.set(scriptState, "finished", m_finished))
-            return;
+        scriptObject.set(scriptState, "failed", m_failed);
+        scriptObject.set(scriptState, "finished", m_finished);
+        scriptObject.set(scriptState, "didCompletionChange", true);
     }
 
     if (m_changes.hasChange(TimingChange)) {
-        if (m_startTime > 0 && !m_scriptObject.set(scriptState, "startTime", m_startTime))
-            return;
-        if (m_responseReceivedTime > 0 && !m_scriptObject.set(scriptState, "responseReceivedTime", m_responseReceivedTime))
-            return;
-        if (m_endTime > 0 &&  !m_scriptObject.set(scriptState, "endTime", m_endTime))
-            return;
+        if (m_startTime > 0)
+            scriptObject.set(scriptState, "startTime", m_startTime);
+        if (m_responseReceivedTime > 0)
+            scriptObject.set(scriptState, "responseReceivedTime", m_responseReceivedTime);
+        if (m_endTime > 0)
+            scriptObject.set(scriptState, "endTime", m_endTime);
+        scriptObject.set(scriptState, "didTimingChange", true);
     }
+    
+    ScriptFunctionCall updateResource(scriptState, webInspector, "updateResource");
+    updateResource.appendArgument(m_identifier);
+    updateResource.appendArgument(scriptObject);
+    updateResource.call(hadException);
+    if (hadException)
+        return;
 
     m_changes.clearAll();
 }
 
 void InspectorResource::releaseScriptObject(ScriptState* scriptState, const ScriptObject& webInspector, bool callRemoveResource)
 {
-    if (m_scriptObject.hasNoValue())
+    if (!m_scriptObjectCreated)
         return;
 
-    ScriptObject scriptObject = m_scriptObject;
-    m_scriptObject = ScriptObject();
+    m_scriptObjectCreated = false;
     m_changes.setAll();
 
     if (!callRemoveResource)
         return;
 
     ScriptFunctionCall removeResource(scriptState, webInspector, "removeResource");
-    removeResource.appendArgument(scriptObject);
-    bool hadException;
-    removeResource.call(hadException);
+    removeResource.appendArgument(m_identifier);
+    removeResource.call();
 }
 
 InspectorResource::Type InspectorResource::type() const

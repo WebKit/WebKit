@@ -77,7 +77,7 @@ namespace WebCore {
         ~InspectorResource();
 
         void createScriptObject(ScriptState*, const ScriptObject& webInspector);
-        void updateScriptObject(ScriptState*);
+        void updateScriptObject(ScriptState*, const ScriptObject& webInspector);
         void releaseScriptObject(ScriptState*, const ScriptObject& webInspector, bool callRemoveResource);
 
         void updateRequest(const ResourceRequest&);
@@ -142,7 +142,7 @@ namespace WebCore {
         HTTPHeaderMap m_responseHeaderFields;
         String m_mimeType;
         String m_suggestedFilename;
-        ScriptObject m_scriptObject;
+        bool m_scriptObjectCreated;
         long long m_expectedContentLength;
         bool m_cached;
         bool m_finished;

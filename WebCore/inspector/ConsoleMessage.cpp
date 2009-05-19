@@ -76,31 +76,26 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageLevel l, ScriptCallStack*
 
 void ConsoleMessage::addToConsole(ScriptState* scriptState, const ScriptObject& webInspector)
 {
-    ScriptFunctionCall messageConstructor(scriptState, webInspector, "ConsoleMessage");
-    messageConstructor.appendArgument(static_cast<unsigned int>(m_source));
-    messageConstructor.appendArgument(static_cast<unsigned int>(m_level));
-    messageConstructor.appendArgument(m_line);
-    messageConstructor.appendArgument(m_url);
-    messageConstructor.appendArgument(m_groupLevel);
-    messageConstructor.appendArgument(m_repeatCount);
-
+    ScriptObject messageObj = ScriptObject::createNew(scriptState);
+    messageObj.set(scriptState, "source", static_cast<int>(m_source));
+    messageObj.set(scriptState, "level", static_cast<int>(m_level));
+    messageObj.set(scriptState, "line", static_cast<int>(m_line));
+    messageObj.set(scriptState, "url", m_url);
+    messageObj.set(scriptState, "groupLevel", static_cast<int>(m_groupLevel));
+    messageObj.set(scriptState, "repeatCount", static_cast<int>(m_repeatCount));
+    
+    ScriptFunctionCall function(scriptState, webInspector, "addMessageToConsole");
+    function.appendArgument(messageObj);
     if (!m_frames.isEmpty()) {
         for (unsigned i = 0; i < m_frames.size(); ++i)
-            messageConstructor.appendArgument(m_frames[i]);
+            function.appendArgument(m_frames[i]);
     } else if (!m_wrappedArguments.isEmpty()) {
         for (unsigned i = 0; i < m_wrappedArguments.size(); ++i)
-            messageConstructor.appendArgument(m_wrappedArguments[i]);
-    } else
-        messageConstructor.appendArgument(m_message);
-
-    bool hadException = false;
-    ScriptObject message = messageConstructor.construct(hadException, false);
-    if (hadException)
-        return;
-
-    ScriptFunctionCall addMessageToConsole(scriptState, webInspector, "addMessageToConsole");
-    addMessageToConsole.appendArgument(message);
-    addMessageToConsole.call(hadException, false);
+            function.appendArgument(m_wrappedArguments[i]);
+    } else {
+        function.appendArgument(m_message);
+    }
+    function.call();
 }
 
 bool ConsoleMessage::isEqual(ScriptState* state, ConsoleMessage* msg) const
