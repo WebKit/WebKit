@@ -28,361 +28,142 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScriptController.h"
+#ifndef ScriptController_h
+#define ScriptController_h
 
-#include "ChromiumBridge.h"
-#include "CString.h"
-#include "Document.h"
-#include "DOMWindow.h"
-#include "Event.h"
-#include "EventListener.h"
-#include "EventNames.h"
-#include "Frame.h"
-#include "Node.h"
-#include "NotImplemented.h"
-#include "npruntime_priv.h"
-#include "NPV8Object.h"
-#include "ScriptSourceCode.h"
-#include "ScriptState.h"
-#include "Widget.h"
+#include "ScriptInstance.h"
+#include "ScriptValue.h"
 
-#include "V8Binding.h"
-#include "V8NPObject.h"
 #include "V8Proxy.h"
 
+#include <v8.h>
+
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
+    class Event;
+    class Frame;
+    class HTMLPlugInElement;
+    class ScriptSourceCode;
+    class ScriptState;
+    class String;
+    class Widget;
 
-void ScriptController::setFlags(const char* string, int length)
-{
-    v8::V8::SetFlagsFromString(string, length);
-}
+    class ScriptController {
+    public:
+        ScriptController(Frame*);
+        ~ScriptController();
 
-Frame* ScriptController::retrieveFrameForEnteredContext()
-{
-    return V8Proxy::retrieveFrameForEnteredContext();
-}
+        // FIXME: V8Proxy should either be folded into ScriptController
+        // or this accessor should be made JSProxy*
+        V8Proxy* proxy() { return m_proxy.get(); }
 
-Frame* ScriptController::retrieveFrameForCurrentContext()
-{
-    return V8Proxy::retrieveFrameForCurrentContext();
-}
+        // Evaluate a script file in the environment of this proxy.
+        // If succeeded, 'succ' is set to true and result is returned
+        // as a string.
+        ScriptValue evaluate(const ScriptSourceCode&);
 
-bool ScriptController::isSafeScript(Frame* target)
-{
-    return V8Proxy::CanAccessFrame(target, true);
-}
+        // Executes JavaScript in a new context associated with the web frame. The
+        // script gets its own global scope and its own prototypes for intrinsic
+        // JavaScript objects (String, Array, and so-on). It shares the wrappers for
+        // all DOM nodes and DOM constructors.
+        void evaluateInNewContext(const Vector<ScriptSourceCode>&);
 
-void ScriptController::gcProtectJSWrapper(void* domObject)
-{
-    V8Proxy::GCProtect(domObject);
-}
+        // JSC has a WindowShell object, but for V8, the ScriptController
+        // is the WindowShell.
+        bool haveWindowShell() const { return true; }
 
-void ScriptController::gcUnprotectJSWrapper(void* domObject)
-{
-    V8Proxy::GCUnprotect(domObject);
-}
+        // Masquerade 'this' as the windowShell.
+        // This is a bit of a hack, but provides reasonable compatibility
+        // with what JSC does as well.
+        ScriptController* windowShell() { return this; }
 
-ScriptController::ScriptController(Frame* frame)
-    : m_frame(frame)
-    , m_sourceURL(0)
-    , m_processingTimerCallback(false)
-    , m_paused(false)
-    , m_scriptState(new ScriptState(frame))
-    , m_proxy(new V8Proxy(frame))
+        ScriptState* state() const { return m_scriptState.get(); }
+
+        void collectGarbage();
+
+        // Creates a property of the global object of a frame.
+        void bindToWindowObject(Frame*, const String& key, NPObject*);
+
+        PassScriptInstance createScriptInstanceForWidget(Widget*);
+
+        void disconnectFrame();
+
+        // Check if the javascript engine has been initialized.
+        bool haveInterpreter() const;
+
+        bool isEnabled() const;
+
+        // FIXME: void* is a compile hack.
+        void attachDebugger(void*);
+
+        // --- Static methods assume we are running VM in single thread, ---
+        // --- and there is only one VM instance.                        ---
+
+        // Returns the frame for the entered context. See comments in
+        // V8Proxy::retrieveFrameForEnteredContext() for more information.
+        static Frame* retrieveFrameForEnteredContext();
+
+        // Returns the frame for the current context. See comments in
+        // V8Proxy::retrieveFrameForEnteredContext() for more information.
+        static Frame* retrieveFrameForCurrentContext();
+
+        // Check whether it is safe to access a frame in another domain.
+        static bool isSafeScript(Frame*);
+
+        // Pass command-line flags to the JS engine.
+        static void setFlags(const char* string, int length);
+
+        // Protect and unprotect the JS wrapper from garbage collected.
+        static void gcProtectJSWrapper(void*);
+        static void gcUnprotectJSWrapper(void*);
+
+        void finishedWithEvent(Event*);
+        void setEventHandlerLineNumber(int lineNumber);
+
+        void setProcessingTimerCallback(bool processingTimerCallback) { m_processingTimerCallback = processingTimerCallback; }
+        bool processingUserGesture() const;
+
+        void setPaused(bool paused) { m_paused = paused; }
+        bool isPaused() const { return m_paused; }
+
+        const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script.
+
+        void clearWindowShell();
+        void updateDocument();
+
+        void updateSecurityOrigin();
+        void clearScriptObjects();
+        void updatePlatformScriptObjects();
+        void cleanupScriptObjectsForPlugin(void*);
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    , m_windowScriptNPObject(0)
+        NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
+        NPObject* windowScriptNPObject();
 #endif
-{
-}
 
-ScriptController::~ScriptController()
-{
-}
+    private:
+        Frame* m_frame;
+        const String* m_sourceURL;
 
-void ScriptController::clearScriptObjects()
-{
-    PluginObjectMap::iterator it = m_pluginObjects.begin();
-    for (; it != m_pluginObjects.end(); ++it) {
-        _NPN_UnregisterObject(it->second);
-        NPN_ReleaseObject(it->second);
-    }
-    m_pluginObjects.clear();
+        bool m_processingTimerCallback;
+        bool m_paused;
 
+        OwnPtr<ScriptState> m_scriptState;
+        OwnPtr<V8Proxy> m_proxy;
+        typedef HashMap<void*, NPObject*> PluginObjectMap;
+
+        // A mapping between Widgets and their corresponding script object.
+        // This list is used so that when the plugin dies, we can immediately
+        // invalidate all sub-objects which are associated with that plugin.
+        // The frame keeps a NPObject reference for each item on the list.
+        PluginObjectMap m_pluginObjects;
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    if (m_windowScriptNPObject) {
-        // Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release the window
-        // script object properly.
-        // This shouldn't cause any problems for plugins since they should have already been stopped and destroyed at this point.
-        _NPN_DeallocateObject(m_windowScriptNPObject);
-        m_windowScriptNPObject = 0;
-    }
+        NPObject* m_windowScriptNPObject;
 #endif
-}
-
-void ScriptController::updateSecurityOrigin()
-{
-    m_proxy->updateSecurityOrigin();
-}
-
-void ScriptController::updatePlatformScriptObjects()
-{
-    notImplemented();
-}
-
-// Disconnect the proxy from its owner frame.
-void ScriptController::disconnectFrame()
-{
-    m_proxy->disconnectFrame();
-}
-
-bool ScriptController::processingUserGesture() const
-{
-    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    // No script is running, so it must be run by users.
-    if (!activeFrame)
-        return true;
-
-    V8Proxy* activeProxy = activeFrame->script()->proxy();
-
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(activeFrame);
-    // FIXME: find all cases context can be empty:
-    //  1) JS is disabled;
-    //  2) page is NULL;
-    if (context.IsEmpty())
-        return true;
-
-    v8::Context::Scope scope(context);
-
-    v8::Handle<v8::Object> global = context->Global();
-    v8::Handle<v8::Value> jsEvent = global->Get(v8::String::NewSymbol("event"));
-    Event* event = V8Proxy::ToNativeEvent(jsEvent);
-
-    // Based on code from kjs_bindings.cpp.
-    // Note: This is more liberal than Firefox's implementation.
-    if (event) {
-        const AtomicString& type = event->type();
-        bool eventOk =
-            // mouse events
-            type == eventNames().clickEvent || type == eventNames().mousedownEvent || type == eventNames().mouseupEvent || type == eventNames().dblclickEvent
-            // keyboard events
-            || type == eventNames().keydownEvent || type == eventNames().keypressEvent || type == eventNames().keyupEvent
-            // other accepted events
-            || type == eventNames().selectEvent || type == eventNames().changeEvent || type == eventNames().focusEvent || type == eventNames().blurEvent || type == eventNames().submitEvent;
-
-        if (eventOk)
-            return true;
-    } else if (activeProxy->inlineCode() && !activeProxy->timerCallback()) {
-        // This is the <a href="javascript:window.open('...')> case -> we let it through.
-        return true;
-    }
-
-    // This is the <script>window.open(...)</script> case or a timer callback -> block it.
-    return false;
-}
-
-void ScriptController::evaluateInNewContext(const Vector<ScriptSourceCode>& sources)
-{
-    m_proxy->evaluateInNewContext(sources);
-}
-
-// Evaluate a script file in the environment of this proxy.
-ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
-{
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(m_proxy->frame());
-    if (context.IsEmpty())
-        return ScriptValue();
-
-    v8::Context::Scope scope(context);
-    v8::Local<v8::Value> object = m_proxy->evaluate(sourceCode, 0);
-
-    if (object.IsEmpty() || object->IsUndefined())
-        return ScriptValue();
-
-    return ScriptValue(object);
-}
-
-void ScriptController::setEventHandlerLineNumber(int lineNumber)
-{
-    m_proxy->setEventHandlerLineno(lineNumber);
-}
-
-void ScriptController::finishedWithEvent(Event* event)
-{
-    m_proxy->finishedWithEvent(event);
-}
-
-// Create a V8 object with an interceptor of NPObjectPropertyGetter.
-void ScriptController::bindToWindowObject(Frame* frame, const String& key, NPObject* object)
-{
-    v8::HandleScope handleScope;
-
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(frame);
-    if (context.IsEmpty())
-        return;
-
-    v8::Context::Scope scope(context);
-
-    v8::Handle<v8::Object> value = CreateV8ObjectForNPObject(object, 0);
-
-    // Attach to the global object.
-    v8::Handle<v8::Object> global = context->Global();
-    global->Set(v8String(key), value);
-}
-
-void ScriptController::collectGarbage()
-{
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(m_proxy->frame());
-    if (context.IsEmpty())
-        return;
-
-    v8::Context::Scope scope(context);
-
-    m_proxy->evaluate(ScriptSourceCode("if (window.gc) void(gc());"), 0);
-}
-
-bool ScriptController::haveInterpreter() const
-{
-    return m_proxy->ContextInitialized();
-}
-
-bool ScriptController::isEnabled() const
-{
-    return m_proxy->isEnabled();
-}
-
-PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)
-{
-    ASSERT(widget);
-
-    if (widget->isFrameView())
-        return 0;
-
-    NPObject* npObject = ChromiumBridge::pluginScriptableObject(widget);
-    if (!npObject)
-        return 0;
-
-    // Frame Memory Management for NPObjects
-    // -------------------------------------
-    // NPObjects are treated differently than other objects wrapped by JS.
-    // NPObjects can be created either by the browser (e.g. the main
-    // window object) or by the plugin (the main plugin object
-    // for a HTMLEmbedElement). Further, unlike most DOM Objects, the frame
-    // is especially careful to ensure NPObjects terminate at frame teardown because
-    // if a plugin leaks a reference, it could leak its objects (or the browser's objects).
-    //
-    // The Frame maintains a list of plugin objects (m_pluginObjects)
-    // which it can use to quickly find the wrapped embed object.
-    //
-    // Inside the NPRuntime, we've added a few methods for registering
-    // wrapped NPObjects. The purpose of the registration is because
-    // javascript garbage collection is non-deterministic, yet we need to
-    // be able to tear down the plugin objects immediately. When an object
-    // is registered, javascript can use it. When the object is destroyed,
-    // or when the object's "owning" object is destroyed, the object will
-    // be un-registered, and the javascript engine must not use it.
-    //
-    // Inside the javascript engine, the engine can keep a reference to the
-    // NPObject as part of its wrapper. However, before accessing the object
-    // it must consult the NPN_Registry.
-
-    v8::Local<v8::Object> wrapper = CreateV8ObjectForNPObject(npObject, 0);
-
-    // Track the plugin object. We've been given a reference to the object.
-    m_pluginObjects.set(widget, npObject);
-
-    return V8ScriptInstance::create(wrapper);
-}
-
-void ScriptController::cleanupScriptObjectsForPlugin(void* nativeHandle)
-{
-    PluginObjectMap::iterator it = m_pluginObjects.find(nativeHandle);
-    if (it == m_pluginObjects.end())
-        return;
-    _NPN_UnregisterObject(it->second);
-    NPN_ReleaseObject(it->second);
-    m_pluginObjects.remove(it);
-}
-
-static NPObject* createNoScriptObject()
-{
-    notImplemented();
-    return 0;
-}
-
-static NPObject* createScriptObject(Frame* frame)
-{
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(frame);
-    if (context.IsEmpty())
-        return createNoScriptObject();
-
-    v8::Context::Scope scope(context);
-    DOMWindow* window = frame->domWindow();
-    v8::Handle<v8::Value> global = V8Proxy::ToV8Object(V8ClassIndex::DOMWINDOW, window);
-    ASSERT(global->IsObject());
-    return npCreateV8ScriptObject(0, v8::Handle<v8::Object>::Cast(global), window);
-}
-
-NPObject* ScriptController::windowScriptNPObject()
-{
-    if (m_windowScriptNPObject)
-        return m_windowScriptNPObject;
-
-    if (isEnabled()) {
-        // JavaScript is enabled, so there is a JavaScript window object.
-        // Return an NPObject bound to the window object.
-        m_windowScriptNPObject = createScriptObject(m_frame);
-        _NPN_RegisterObject(m_windowScriptNPObject, 0);
-    } else {
-        // JavaScript is not enabled, so we cannot bind the NPObject to the
-        // JavaScript window object. Instead, we create an NPObject of a
-        // different class, one which is not bound to a JavaScript object.
-        m_windowScriptNPObject = createNoScriptObject();
-    }
-    return m_windowScriptNPObject;
-}
-
-NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement* plugin)
-{
-    // Can't create NPObjects when JavaScript is disabled.
-    if (!isEnabled())
-        return createNoScriptObject();
-
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(m_frame);
-    if (context.IsEmpty())
-        return createNoScriptObject();
-    v8::Context::Scope scope(context);
-
-    DOMWindow* window = m_frame->domWindow();
-    v8::Handle<v8::Value> v8plugin = V8Proxy::ToV8Object(V8ClassIndex::HTMLEMBEDELEMENT, plugin);
-    if (!v8plugin->IsObject())
-        return createNoScriptObject();
-
-    return npCreateV8ScriptObject(0, v8::Handle<v8::Object>::Cast(v8plugin), window);
-}
-
-
-void ScriptController::clearWindowShell()
-{
-    // V8 binding expects ScriptController::clearWindowShell only be called
-    // when a frame is loading a new page. V8Proxy::clearForNavigation
-    // creates a new context for the new page.
-    m_proxy->clearForNavigation();
-}
-
-void ScriptController::attachDebugger(void*)
-{
-    notImplemented();
-}
-
-void ScriptController::updateDocument()
-{
-    m_proxy->updateDocument();
-}
+    };
 
 } // namespace WebCore
+
+#endif // ScriptController_h
