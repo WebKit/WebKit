@@ -206,11 +206,20 @@ typedef enum {
 
 /*!
 Could be worth adding to the API.
- @method loadItemsFromOtherView:
+ @method _loadBackForwardListFromOtherView:
  @abstract Loads the view with the contents of the other view, including its backforward list.
  @param otherView   The WebView from which to copy contents.
  */
 - (void)_loadBackForwardListFromOtherView:(WebView *)otherView;
+
+
+/*!
+ @method _dispatchPendingLoadRequests:
+ @abstract Dispatches any pending load requests that have been scheduled because of recent DOM additions or style changes.
+ @discussion You only need to call this method if you require synchronous notification of loads through the resource load delegate.
+ Otherwise the resource load delegate will be notified about loads during a future run loop iteration.
+ */
+- (void)_dispatchPendingLoadRequests;
 
 + (NSArray *)_supportedFileExtensions;
 

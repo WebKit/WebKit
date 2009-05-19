@@ -735,6 +735,11 @@ static bool runningTigerMail()
     return NO;    
 }
 
+- (void)_dispatchPendingLoadRequests
+{
+    cache()->loader()->servePendingRequests();
+}
+
 - (void)_registerDraggedTypes
 {
     NSArray *editableTypes = [WebHTMLView _insertablePasteboardTypes];

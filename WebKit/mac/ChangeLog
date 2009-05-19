@@ -1,3 +1,17 @@
+2009-05-19  Timothy Hatcher  <timothy@apple.com>
+
+        Add a new private API method that will dispatch pending loads that have been scheduled
+        because of recent DOM additions or style changes.
+
+        <rdar://problem/6889218> REGRESSION: Some iChat transcript resources are not
+        loaded because willSendRequest doesn't happen immediately
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebView.mm:
+        (-[WebView _dispatchPendingLoadRequests]): Call Loader::servePendingRequests().
+        * WebView/WebViewPrivate.h: Added _dispatchPendingLoadRequests.
+
 2009-05-18  Sam Weinig  <sam@webkit.org>
 
         <rdar://problem/6899044> Can't see Apple ad on nytimes.com unless I spoof the user agent
