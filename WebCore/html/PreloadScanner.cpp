@@ -226,8 +226,8 @@ unsigned PreloadScanner::consumeEntity(SegmentedString& source, bool& notEnoughC
             else if (cc >= 'A' && cc <= 'F')
                 result = 10 + cc - 'A';
             else {
-                source.push(seenChars[1]);
                 source.push('#');
+                source.push(seenChars[1]);
                 return 0;
             }
             entityState = Hex;
@@ -281,8 +281,8 @@ unsigned PreloadScanner::consumeEntity(SegmentedString& source, bool& notEnoughC
             if (seenChars.size() == 2)
                 source.push(seenChars[0]);
             else if (seenChars.size() == 3) {
-                source.push(seenChars[1]);
                 source.push(seenChars[0]);
+                source.push(seenChars[1]);
             } else
                 source.prepend(SegmentedString(String(seenChars.data(), seenChars.size() - 1)));
             return 0;

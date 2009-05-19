@@ -1,3 +1,12 @@
+2009-05-19  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/6902674> REGRESSION: Query parameters are sometimes incorrect in URL (23135)
+
+        * fast/tokenizer/preload-scanner-entities-expected.txt: Added.
+        * fast/tokenizer/preload-scanner-entities.html: Added.
+
 2009-05-19  Yichao Yin  <yichao.yin@torchmobile.com.cn>
 
         Reviewed by George Staikos.

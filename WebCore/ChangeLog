@@ -1,3 +1,16 @@
+2009-05-19  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler).
+        
+        <rdar://problem/6902674> REGRESSION: Query parameters are sometimes incorrect in URL (23135)
+        
+        Push characters back in correct order when entity parsing fails after 3 characters.
+
+        Test: fast/tokenizer/preload-scanner-entities.html
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::consumeEntity):
+
 2009-05-19  Paul Godavari  <paul@chromium.org>
 
         Reviewed by Dimitri Glazkov.
