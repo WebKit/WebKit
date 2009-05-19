@@ -271,7 +271,7 @@ void DocLoader::setAutoLoadImages(bool enable)
 
 CachePolicy DocLoader::cachePolicy() const
 {
-    return frame() ? frame()->loader()->cachePolicy() : CachePolicyVerify;
+    return frame() ? frame()->loader()->subresourceCachePolicy() : CachePolicyVerify;
 }
 
 void DocLoader::removeCachedResource(CachedResource* resource) const

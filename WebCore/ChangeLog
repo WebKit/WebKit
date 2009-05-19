@@ -1,3 +1,26 @@
+2009-05-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Antti Koivisto. 
+
+        <rdar://problem/6886382> REGRESSION (Safari 4PB -> ToT): HTTP cache revalidation broken.
+
+        This was caused in http://trac.webkit.org/changeset/41425, which fixed an image caching bug
+        in QuickLooks (rdar://problem/6619630).
+
+        We need to respect the DocumentLoader's request cache policy when deciding the cache policy
+        for subresources, but the check (originally removed in r39304 and added back in in the same
+        place in r41424) needs to be tweaked and relocated a bit.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy): Renamed from cachePolicy().  Move checking
+          the DocumentLoader's request to a more appropriate place. Add code to handle the recently 
+          added FIXME regarding POSTs. Add a new FIXME describing a great way to make this code 
+          cleaner in the future.
+        * loader/FrameLoader.h:
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::cachePolicy): Calls the newly renamed subresourceCachePolicy().
+
 2009-05-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

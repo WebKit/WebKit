@@ -3238,21 +3238,27 @@ FrameLoadType FrameLoader::loadType() const
     return m_loadType;
 }
     
-CachePolicy FrameLoader::cachePolicy() const
+CachePolicy FrameLoader::subresourceCachePolicy() const
 {
     if (m_isComplete)
         return CachePolicyVerify;
 
-    // FIXME: This will return CachePolicyReload for any subresource of a document resulting from a POST request,
-    // making WebCore cache malfunction for such documents (see DocLoader::checkForReload()).
-    if (m_loadType == FrameLoadTypeReloadFromOrigin || documentLoader()->request().cachePolicy() == ReloadIgnoringCacheData)
+    if (m_loadType == FrameLoadTypeReloadFromOrigin)
         return CachePolicyReload;
 
     if (Frame* parentFrame = m_frame->tree()->parent()) {
-        CachePolicy parentCachePolicy = parentFrame->loader()->cachePolicy();
+        CachePolicy parentCachePolicy = parentFrame->loader()->subresourceCachePolicy();
         if (parentCachePolicy != CachePolicyVerify)
             return parentCachePolicy;
     }
+
+    // FIXME: POST documents are always Reloads, but their subresources should still be Revalidate.
+    // If we bring the CachePolicy.h and ResourceRequest cache policy enums in sync with each other and
+    // remember "Revalidate" in ResourceRequests, we can remove this "POST" check and return either "Reload" 
+    // or "Revalidate" if the DocumentLoader was requested with either.
+    const ResourceRequest& request(documentLoader()->request());
+    if (request.cachePolicy() == ReloadIgnoringCacheData && !equalIgnoringCase(request.httpMethod(), "post"))
+        return CachePolicyRevalidate;
 
     if (m_loadType == FrameLoadTypeReload)
         return CachePolicyRevalidate;

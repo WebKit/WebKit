@@ -228,7 +228,7 @@ namespace WebCore {
         void didChangeTitle(DocumentLoader*);
 
         FrameLoadType loadType() const;
-        CachePolicy cachePolicy() const;
+        CachePolicy subresourceCachePolicy() const;
 
         void didFirstLayout();
         bool firstLayoutDone() const;
