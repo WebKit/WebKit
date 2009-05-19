@@ -15670,6 +15670,14 @@
 				RelativePath="..\inspector\JavaScriptProfileNode.h"
 				>
 			</File>
+			<File
+				RelativePath="..\inspector\JSONObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\JSONObject.h"
+				>
+			</File>
 			<Filter
 				Name="front-end"
 				>

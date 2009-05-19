@@ -35,6 +35,7 @@
 #include "DocLoader.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "JSONObject.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptFunctionCall.h"
@@ -105,11 +106,11 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
     m_changes.set(TypeChange);
 }
 
-static void populateHeadersObject(ScriptState* scriptState, ScriptObject* object, const HTTPHeaderMap& headers)
+static void populateHeadersObject(JSONObject* object, const HTTPHeaderMap& headers)
 {
     HTTPHeaderMap::const_iterator end = headers.end();
     for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it) {
-        object->set(scriptState, it->first.string(), it->second);
+        object->set(it->first.string(), it->second);
     }
 }
 
@@ -118,20 +119,20 @@ void InspectorResource::createScriptObject(ScriptState* scriptState, const Scrip
     if (!m_scriptObjectCreated) {
         bool hadException = false;
 
-        ScriptObject scriptObject = ScriptObject::createNew(scriptState);
-        ScriptObject requestHeaders = ScriptObject::createNew(scriptState);
-        populateHeadersObject(scriptState, &requestHeaders, m_requestHeaderFields);
-        scriptObject.set(scriptState, "requestHeaders", requestHeaders);
-        scriptObject.set(scriptState, "requestURL", requestURL());
-        scriptObject.set(scriptState, "host", m_requestURL.host());
-        scriptObject.set(scriptState, "path", m_requestURL.path());
-        scriptObject.set(scriptState, "lastPathComponent", m_requestURL.lastPathComponent());
-        scriptObject.set(scriptState, "isMainResource", m_isMainResource);
-        scriptObject.set(scriptState, "cached", m_cached);
+        JSONObject jsonObject = JSONObject::createNew(scriptState);
+        JSONObject requestHeaders = JSONObject::createNew(scriptState);
+        populateHeadersObject(&requestHeaders, m_requestHeaderFields);
+        jsonObject.set("requestHeaders", requestHeaders);
+        jsonObject.set("requestURL", requestURL());
+        jsonObject.set("host", m_requestURL.host());
+        jsonObject.set("path", m_requestURL.path());
+        jsonObject.set("lastPathComponent", m_requestURL.lastPathComponent());
+        jsonObject.set("isMainResource", m_isMainResource);
+        jsonObject.set("cached", m_cached);
         
         ScriptFunctionCall addResource(scriptState, webInspector, "addResource");
         addResource.appendArgument(m_identifier);
-        addResource.appendArgument(scriptObject);
+        addResource.appendArgument(jsonObject.scriptObject());
         addResource.call(hadException);
         if (hadException)
             return;
@@ -152,60 +153,60 @@ void InspectorResource::updateScriptObject(ScriptState* scriptState, const Scrip
 
     bool hadException = false;
 
-    ScriptObject scriptObject = ScriptObject::createNew(scriptState);
+    JSONObject jsonObject = JSONObject::createNew(scriptState);
     if (m_changes.hasChange(RequestChange)) {
-        scriptObject.set(scriptState, "url", requestURL());
-        scriptObject.set(scriptState, "domain", m_requestURL.host());
-        scriptObject.set(scriptState, "path", m_requestURL.path());
-        scriptObject.set(scriptState, "lastPathComponent", m_requestURL.lastPathComponent());
-        ScriptObject requestHeaders = ScriptObject::createNew(scriptState);
-        populateHeadersObject(scriptState, &requestHeaders, m_requestHeaderFields);
-        scriptObject.set(scriptState, "requestHeaders", requestHeaders);
-        scriptObject.set(scriptState, "mainResource", m_isMainResource);
-        scriptObject.set(scriptState, "didRequestChange", true);
+        jsonObject.set("url", requestURL());
+        jsonObject.set("domain", m_requestURL.host());
+        jsonObject.set("path", m_requestURL.path());
+        jsonObject.set("lastPathComponent", m_requestURL.lastPathComponent());
+        JSONObject requestHeaders = JSONObject::createNew(scriptState);
+        populateHeadersObject(&requestHeaders, m_requestHeaderFields);
+        jsonObject.set("requestHeaders", requestHeaders);
+        jsonObject.set("mainResource", m_isMainResource);
+        jsonObject.set("didRequestChange", true);
     }
 
     if (m_changes.hasChange(ResponseChange)) {
-        scriptObject.set(scriptState, "mimeType", m_mimeType);
-        scriptObject.set(scriptState, "suggestedFilename", m_suggestedFilename);
-        scriptObject.set(scriptState, "expectedContentLength", m_expectedContentLength);
-        scriptObject.set(scriptState, "statusCode", m_responseStatusCode);
-        scriptObject.set(scriptState, "suggestedFilename", m_suggestedFilename);
-        ScriptObject responseHeaders = ScriptObject::createNew(scriptState);
-        populateHeadersObject(scriptState, &responseHeaders, m_responseHeaderFields);
-        scriptObject.set(scriptState, "responseHeaders", responseHeaders);
-        scriptObject.set(scriptState, "didResponseChange", true);
+        jsonObject.set("mimeType", m_mimeType);
+        jsonObject.set("suggestedFilename", m_suggestedFilename);
+        jsonObject.set("expectedContentLength", m_expectedContentLength);
+        jsonObject.set("statusCode", m_responseStatusCode);
+        jsonObject.set("suggestedFilename", m_suggestedFilename);
+        JSONObject responseHeaders = JSONObject::createNew(scriptState);
+        populateHeadersObject(&responseHeaders, m_responseHeaderFields);
+        jsonObject.set("responseHeaders", responseHeaders);
+        jsonObject.set("didResponseChange", true);
     }
 
     if (m_changes.hasChange(TypeChange)) {
-        scriptObject.set(scriptState, "type", static_cast<int>(type()));
-        scriptObject.set(scriptState, "didTypeChange", true);
+        jsonObject.set("type", static_cast<int>(type()));
+        jsonObject.set("didTypeChange", true);
     }
     
     if (m_changes.hasChange(LengthChange)) {
-        scriptObject.set(scriptState, "contentLength", m_length);
-        scriptObject.set(scriptState, "didLengthChange", true);
+        jsonObject.set("contentLength", m_length);
+        jsonObject.set("didLengthChange", true);
     }
 
     if (m_changes.hasChange(CompletionChange)) {
-        scriptObject.set(scriptState, "failed", m_failed);
-        scriptObject.set(scriptState, "finished", m_finished);
-        scriptObject.set(scriptState, "didCompletionChange", true);
+        jsonObject.set("failed", m_failed);
+        jsonObject.set("finished", m_finished);
+        jsonObject.set("didCompletionChange", true);
     }
 
     if (m_changes.hasChange(TimingChange)) {
         if (m_startTime > 0)
-            scriptObject.set(scriptState, "startTime", m_startTime);
+            jsonObject.set("startTime", m_startTime);
         if (m_responseReceivedTime > 0)
-            scriptObject.set(scriptState, "responseReceivedTime", m_responseReceivedTime);
+            jsonObject.set("responseReceivedTime", m_responseReceivedTime);
         if (m_endTime > 0)
-            scriptObject.set(scriptState, "endTime", m_endTime);
-        scriptObject.set(scriptState, "didTimingChange", true);
+            jsonObject.set("endTime", m_endTime);
+        jsonObject.set("didTimingChange", true);
     }
     
     ScriptFunctionCall updateResource(scriptState, webInspector, "updateResource");
     updateResource.appendArgument(m_identifier);
-    updateResource.appendArgument(scriptObject);
+    updateResource.appendArgument(jsonObject.scriptObject());
     updateResource.call(hadException);
     if (hadException)
         return;

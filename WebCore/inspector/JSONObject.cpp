@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,58 +28,68 @@
  */
 
 #include "config.h"
-#if ENABLE(DATABASE)
-#include "InspectorDatabaseResource.h"
-
-#include "Database.h"
-#include "Document.h"
-#include "Frame.h"
 #include "JSONObject.h"
-#include "ScriptFunctionCall.h"
-#include "ScriptObjectQuarantine.h"
-#include "ScriptValue.h"
+
+#include "PlatformString.h"
+#include "ScriptObject.h"
+#include "ScriptState.h"
 
 namespace WebCore {
 
-InspectorDatabaseResource::InspectorDatabaseResource(Database* database, const String& domain, const String& name, const String& version)
-    : m_database(database)
-    , m_domain(domain)
-    , m_name(name)
-    , m_version(version)
-    , m_scriptObjectCreated(false)
+JSONObject::JSONObject(ScriptState* scriptState)
+    : m_scriptState(scriptState)
 {
+    m_scriptObject = ScriptObject::createNew(scriptState);
 }
 
-void InspectorDatabaseResource::bind(ScriptState* scriptState, const ScriptObject& webInspector)
+bool JSONObject::set(const String& name, const String& value)
 {
-    if (m_scriptObjectCreated)
-        return;
-
-    ASSERT(scriptState);
-    ASSERT(!webInspector.hasNoValue());
-    if (!scriptState || webInspector.hasNoValue())
-        return;
-
-    JSONObject jsonObject = JSONObject::createNew(scriptState);
-    ScriptObject database;
-    if (!getQuarantinedScriptObject(m_database.get(), database))
-        return;
-    jsonObject.set("database", database);
-    jsonObject.set("domain", m_domain);
-    jsonObject.set("name", m_name);
-    jsonObject.set("version", m_version);
-    
-    ScriptFunctionCall addDatabase(scriptState, webInspector, "addDatabase");
-    addDatabase.appendArgument(jsonObject.scriptObject());
-    addDatabase.call();
-    m_scriptObjectCreated = true;
+    return m_scriptObject.set(m_scriptState, name, value);
 }
 
-void InspectorDatabaseResource::unbind()
+bool JSONObject::set(const char* name, const ScriptObject& value)
 {
-    m_scriptObjectCreated = false;
+    return m_scriptObject.set(m_scriptState, name, value);
+}
+
+bool JSONObject::set(const char* name, const JSONObject& value)
+{
+    return set(name, value.scriptObject());
+}
+
+bool JSONObject::set(const char* name, const String& value)
+{
+    return m_scriptObject.set(m_scriptState, name, value);
+}
+
+bool JSONObject::set(const char* name, double value)
+{
+    return m_scriptObject.set(m_scriptState, name, value);
+}
+
+bool JSONObject::set(const char* name, long long value)
+{
+    return m_scriptObject.set(m_scriptState, name, value);
+}
+
+bool JSONObject::set(const char* name, int value)
+{
+    return m_scriptObject.set(m_scriptState, name, value);
+}
+
+bool JSONObject::set(const char* name, bool value)
+{
+    return m_scriptObject.set(m_scriptState, name, value);
+}
+
+ScriptObject JSONObject::scriptObject() const
+{
+    return m_scriptObject;
+}
+
+JSONObject JSONObject::createNew(ScriptState* scriptState)
+{
+    return JSONObject(scriptState);
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DATABASE)

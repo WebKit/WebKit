@@ -807,6 +807,7 @@ SOURCES += \
     inspector/JavaScriptDebugServer.cpp \
     inspector/JavaScriptProfile.cpp \
     inspector/JavaScriptProfileNode.cpp \
+    inspector/JSONObject.cpp \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \

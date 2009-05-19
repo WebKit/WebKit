@@ -652,6 +652,7 @@ This file contains the list of files needed to build WebCore.
         inspector/JavaScriptDebugServer.cpp
         inspector/JavaScriptProfile.cpp
         inspector/JavaScriptProfileNode.cpp
+        inspector/JSONObject.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_LOADER">

@@ -2,6 +2,36 @@
 
         Reviewed by Timothy Hatcher.
 
+        Introduce JSONObject that wraps ScriptObject and ScriptState* for further serialization
+
+        https://bugs.webkit.org/show_bug.cgi?id=25419
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToConsole):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorResource.cpp:
+        (WebCore::populateHeadersObject):
+        (WebCore::InspectorResource::createScriptObject):
+        (WebCore::InspectorResource::updateScriptObject):
+        * inspector/JSONObject.cpp: Added.
+        (WebCore::JSONObject::JSONObject):
+        (WebCore::JSONObject::set):
+        (WebCore::JSONObject::scriptObject):
+        (WebCore::JSONObject::createNew):
+        * inspector/JSONObject.h: Added.
+
+2009-05-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         Refactor InpectorController so that it does not instantiate resource/console/database/domresource javascript objects. Move instantiation into the javascript.
 
         https://bugs.webkit.org/show_bug.cgi?id=25419

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ConsoleMessage.h"
 
+#include "JSONObject.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallFrame.h"
 #include "ScriptFunctionCall.h"
@@ -76,16 +77,16 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageLevel l, ScriptCallStack*
 
 void ConsoleMessage::addToConsole(ScriptState* scriptState, const ScriptObject& webInspector)
 {
-    ScriptObject messageObj = ScriptObject::createNew(scriptState);
-    messageObj.set(scriptState, "source", static_cast<int>(m_source));
-    messageObj.set(scriptState, "level", static_cast<int>(m_level));
-    messageObj.set(scriptState, "line", static_cast<int>(m_line));
-    messageObj.set(scriptState, "url", m_url);
-    messageObj.set(scriptState, "groupLevel", static_cast<int>(m_groupLevel));
-    messageObj.set(scriptState, "repeatCount", static_cast<int>(m_repeatCount));
-    
+    JSONObject jsonObj = JSONObject::createNew(scriptState);
+    jsonObj.set("source", static_cast<int>(m_source));
+    jsonObj.set("level", static_cast<int>(m_level));
+    jsonObj.set("line", static_cast<int>(m_line));
+    jsonObj.set("url", m_url);
+    jsonObj.set("groupLevel", static_cast<int>(m_groupLevel));
+    jsonObj.set("repeatCount", static_cast<int>(m_repeatCount));
+
     ScriptFunctionCall function(scriptState, webInspector, "addMessageToConsole");
-    function.appendArgument(messageObj);
+    function.appendArgument(jsonObj.scriptObject());
     if (!m_frames.isEmpty()) {
         for (unsigned i = 0; i < m_frames.size(); ++i)
             function.appendArgument(m_frames[i]);

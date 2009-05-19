@@ -35,6 +35,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "JSONObject.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObjectQuarantine.h"
 #include "ScriptValue.h"
@@ -67,16 +68,16 @@ void InspectorDOMStorageResource::bind(ScriptState* scriptState, const ScriptObj
     if (!scriptState || webInspector.hasNoValue())
         return;
     
-    ScriptObject scriptObject = ScriptObject::createNew(scriptState);
+    JSONObject jsonObject = JSONObject::createNew(scriptState);
     ScriptObject domStorage;
     if (!getQuarantinedScriptObject(m_frame.get(), m_domStorage.get(), domStorage))
         return;
-    scriptObject.set(scriptState, "domStorage", domStorage);
-    scriptObject.set(scriptState, "host", m_frame->document()->securityOrigin()->host());
-    scriptObject.set(scriptState, "isLocalStorage", m_isLocalStorage);
+    jsonObject.set("domStorage", domStorage);
+    jsonObject.set("host", m_frame->document()->securityOrigin()->host());
+    jsonObject.set("isLocalStorage", m_isLocalStorage);
 
     ScriptFunctionCall addDOMStorage(scriptState, webInspector, "addDOMStorage");
-    addDOMStorage.appendArgument(scriptObject);
+    addDOMStorage.appendArgument(jsonObject.scriptObject());
     addDOMStorage.call();
     m_scriptObjectCreated = true;
 }
