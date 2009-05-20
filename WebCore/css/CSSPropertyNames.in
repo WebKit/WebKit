@@ -136,10 +136,6 @@ word-spacing
 word-wrap
 z-index
 zoom
--wap-marquee-dir
--wap-marquee-loop
--wap-marquee-speed
--wap-marquee-style
 -webkit-animation
 -webkit-animation-delay
 -webkit-animation-direction

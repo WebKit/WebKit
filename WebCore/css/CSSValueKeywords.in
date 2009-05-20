@@ -258,7 +258,6 @@ table-column-group
 table-column
 table-cell
 table-caption
--wap-marquee
 -webkit-box
 -webkit-inline-box
 #none

@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -197,12 +196,6 @@ void RenderMarquee::updateMarqueePosition()
     if (activate) {
         EMarqueeBehavior behavior = m_layer->renderer()->style()->marqueeBehavior();
         m_start = computePosition(direction(), behavior == MALTERNATE);
-#if ENABLE(WCSS)
-        // As to the specification WAP-239-WCSS-20011026-a.pdf, if the '-wap-marquee-loop' is '0', no looping occurs.
-        if (m_totalLoops == 0)
-            m_end = m_start;
-        else 
-#endif
         m_end = computePosition(reverseDirection(), behavior == MALTERNATE || behavior == MSLIDE);
         if (!m_stopped)
             start();
@@ -305,10 +298,6 @@ void RenderMarquee::timerFired(Timer<RenderMarquee>*)
         m_currentLoop++;
         if (m_totalLoops > 0 && m_currentLoop >= m_totalLoops)
             m_timer.stop();
-#if ENABLE(WCSS)
-        else if (m_totalLoops == 0 && m_timer.isActive())
-            m_timer.stop();
-#endif
         else if (s->marqueeBehavior() != MALTERNATE)
             m_reset = true;
     }
