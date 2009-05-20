@@ -1,5 +1,26 @@
 2009-05-20  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by Sam Weinig
+
+        At all call sites that check if a KURL has either the http or https protocol,
+        use the KURL::protocolInHTTPFamily() accessor, instead.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::iconURL):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::open):
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::requestIsHTTPOrHTTPSGet):
+
+        * loader/loader.cpp:
+        (WebCore::Loader::load):
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
+2009-05-20  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix <rdar://problem/6904941> and https://bugs.webkit.org/show_bug.cgi?id=25300

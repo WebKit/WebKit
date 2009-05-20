@@ -101,8 +101,7 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
 
     Host* host;
     KURL url(resource->url());
-    bool isHTTP = url.protocolIs("http") || url.protocolIs("https");
-    if (isHTTP) {
+    if (url.protocolInHTTPFamily()) {
         AtomicString hostName = url.host();
         host = m_hosts.get(hostName.impl());
         if (!host) {
@@ -117,7 +116,7 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
     host->addRequest(request, priority);
     docLoader->incrementRequestCount();
 
-    if (priority > Low || !isHTTP || !hadRequests) {
+    if (priority > Low || !url.protocolInHTTPFamily() || !hadRequests) {
         // Try to request important resources immediately
         host->servePendingRequests(priority);
     } else {

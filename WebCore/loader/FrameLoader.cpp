@@ -698,7 +698,7 @@ KURL FrameLoader::iconURL()
         return KURL(m_frame->document()->iconURL());
 
     // Don't return a favicon iconURL unless we're http or https
-    if (!m_URL.protocolIs("http") && !m_URL.protocolIs("https"))
+    if (!m_URL.protocolInHTTPFamily())
         return KURL();
 
     KURL url;
@@ -734,7 +734,7 @@ bool FrameLoader::didOpenURL(const KURL& url)
         m_frame->setJSDefaultStatusBarText(String());
     }
     m_URL = url;
-    if ((m_URL.protocolIs("http") || m_URL.protocolIs("https")) && !m_URL.host().isEmpty() && m_URL.path().isEmpty())
+    if (m_URL.protocolInHTTPFamily() && !m_URL.host().isEmpty() && m_URL.path().isEmpty())
         m_URL.setPath("/");
     m_workingURL = m_URL;
 
@@ -3056,7 +3056,7 @@ void FrameLoader::open(CachedFrame& cachedFrame)
 
     KURL url = cachedFrame.url();
 
-    if ((url.protocolIs("http") || url.protocolIs("https")) && !url.host().isEmpty() && url.path().isEmpty())
+    if (url.protocolInHTTPFamily() && !url.host().isEmpty() && url.path().isEmpty())
         url.setPath("/");
     
     m_URL = url;
