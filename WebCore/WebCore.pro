@@ -377,7 +377,6 @@ IDL_BINDINGS += \
     html/HTMLUListElement.idl \
     html/ImageData.idl \
     html/TextMetrics.idl \
-    inspector/JavaScriptCallFrame.idl \
     inspector/InspectorController.idl \
     page/BarInfo.idl \
     page/Console.idl \
@@ -392,14 +391,10 @@ IDL_BINDINGS += \
     page/PositionError.idl \
     page/Screen.idl \
     page/WebKitPoint.idl \
-    page/WorkerNavigator.idl \
     plugins/Plugin.idl \
     plugins/MimeType.idl \
     plugins/PluginArray.idl \
     plugins/MimeTypeArray.idl \
-    workers/Worker.idl \
-    workers/WorkerContext.idl \
-    workers/WorkerLocation.idl \
     xml/DOMParser.idl \
     xml/XMLHttpRequest.idl \
     xml/XMLHttpRequestException.idl \
@@ -451,7 +446,6 @@ SOURCES += \
     bindings/js/JSGeolocationCustom.cpp \
     bindings/js/JSHTMLAllCollection.cpp \
     bindings/js/JSHistoryCustom.cpp \
-    bindings/js/JSJavaScriptCallFrameCustom.cpp \
     bindings/js/JSHTMLAppletElementCustom.cpp \
     bindings/js/JSHTMLCollectionCustom.cpp \
     bindings/js/JSHTMLDocumentCustom.cpp \
@@ -806,10 +800,6 @@ SOURCES += \
     inspector/InspectorController.cpp \
     inspector/InspectorFrontend.cpp \
     inspector/InspectorResource.cpp \
-    inspector/JavaScriptCallFrame.cpp \
-    inspector/JavaScriptDebugServer.cpp \
-    inspector/JavaScriptProfile.cpp \
-    inspector/JavaScriptProfileNode.cpp \
     inspector/JSONObject.cpp \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
@@ -849,7 +839,6 @@ SOURCES += \
     loader/TextDocument.cpp \
     loader/TextResourceDecoder.cpp \
     loader/ThreadableLoader.cpp \
-    loader/WorkerThreadableLoader.cpp \
     page/animation/AnimationBase.cpp \
     page/animation/AnimationController.cpp \
     page/animation/CompositeAnimation.cpp \
@@ -1366,12 +1355,19 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
 contains(DEFINES, ENABLE_WORKERS=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_WORKERS=1
 
+    IDL_BINDINGS += \
+        page/WorkerNavigator.idl \
+        workers/Worker.idl \
+        workers/WorkerContext.idl \
+        workers/WorkerLocation.idl
+
     SOURCES += \
         bindings/js/JSWorkerConstructor.cpp \
         bindings/js/JSWorkerContextBase.cpp \
         bindings/js/JSWorkerContextCustom.cpp \
         bindings/js/JSWorkerCustom.cpp \
         bindings/js/WorkerScriptController.cpp \
+        loader/WorkerThreadableLoader.cpp \
         page/WorkerNavigator.cpp \
         workers/Worker.cpp \
         workers/WorkerContext.cpp \
@@ -1972,6 +1968,16 @@ SOURCES += \
 
 contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_JAVASCRIPT_DEBUGGER=1
+
+    IDL_BINDINGS += \
+        inspector/JavaScriptCallFrame.idl
+
+    SOURCES += \
+        bindings/js/JSJavaScriptCallFrameCustom.cpp \
+        inspector/JavaScriptCallFrame.cpp \
+        inspector/JavaScriptDebugServer.cpp \
+        inspector/JavaScriptProfile.cpp \
+        inspector/JavaScriptProfileNode.cpp
 }
 
 contains(DEFINES, ENABLE_OFFLINE_WEB_APPLICATIONS=1) {
