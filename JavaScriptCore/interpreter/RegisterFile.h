@@ -156,6 +156,9 @@ namespace JSC {
         JSGlobalObject* m_globalObject; // The global object whose vars are currently stored in the register file.
     };
 
+    // FIXME: Add a generic getpagesize() to WTF, then move this function to WTF as well.
+    inline bool isPageAligned(size_t size) { return size != 0 && size % (8 * 1024) == 0; }
+
     inline RegisterFile::RegisterFile(size_t capacity, size_t maxGlobals)
         : m_numGlobals(0)
         , m_maxGlobals(maxGlobals)
@@ -165,6 +168,10 @@ namespace JSC {
         , m_buffer(0)
         , m_globalObject(0)
     {
+        // Verify that our values will play nice with mmap and VirtualAlloc.
+        ASSERT(isPageAligned(maxGlobals));
+        ASSERT(isPageAligned(capacity));
+
         size_t bufferLength = (capacity + maxGlobals) * sizeof(Register);
     #if HAVE(MMAP)
         m_buffer = static_cast<Register*>(mmap(0, bufferLength, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, VM_TAG_FOR_REGISTERFILE_MEMORY, 0));
@@ -196,9 +203,10 @@ namespace JSC {
 
     inline void RegisterFile::shrink(Register* newEnd)
     {
-        if (newEnd < m_end)
-            m_end = newEnd;
-        if (m_end == m_start && (m_maxUsed - m_start) > maxExcessCapacity) 
+        if (newEnd >= m_end)
+            return;
+        m_end = newEnd;
+        if (m_end == m_start && (m_maxUsed - m_start) > maxExcessCapacity)
             releaseExcessCapacity();
     }
 

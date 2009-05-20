@@ -1,3 +1,28 @@
+2009-05-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed <rdar://problem/6885680> CrashTracer: [USER] 1 crash in Install
+        Mac OS X at <unknown binary> • 0x9274241c
+        
+        (Original patch by Joe Sokol and Ronnie Misra.)
+        
+        SunSpider says 1.004x faster.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::releaseExcessCapacity): Instead of doing complicated
+        math that sometimes used to overflow, just release the full range of the
+        register file.
+
+        * interpreter/RegisterFile.h:
+        (JSC::isPageAligned):
+        (JSC::RegisterFile::RegisterFile): Added ASSERTs to verify that it's
+        safe to release the full range of the register file.
+
+        (JSC::RegisterFile::shrink): No need to releaseExcessCapacity() if the
+        new end is not smaller than the old end. (Also, doing so used to cause
+        numeric overflow, unmapping basically the whole process from memory.)
+
 2009-05-19  Oliver Hunt  <oliver@apple.com>
 
         RS=Mark Rowe.
