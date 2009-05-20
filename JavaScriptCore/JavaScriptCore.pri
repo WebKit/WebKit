@@ -21,6 +21,7 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR \
                $$PWD/jit \
                $$PWD/profiler \
                $$PWD/wrec \
+               $$PWD/yarr \
                $$PWD/API \
                $$PWD/.. \
                $$PWD/ForwardingHeaders \
@@ -50,7 +51,8 @@ win32-* {
 
 # Rules when JIT enabled
 contains(DEFINES, ENABLE_JIT=1) {
-    !contains(DEFINES, WREC=.): DEFINES += ENABLE_WREC=1
+    !contains(DEFINES, ENABLE_YARR=.): DEFINES += ENABLE_YARR=1
+    !contains(DEFINES, ENABLE_YARR_JIT=.): DEFINES += ENABLE_YARR_JIT=1
     !contains(DEFINES, ENABLE_JIT_OPTIMIZE_CALL=.): DEFINES += ENABLE_JIT_OPTIMIZE_CALL=1
     !contains(DEFINES, ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS=.): DEFINES += ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS=1
     !contains(DEFINES, ENABLE_JIT_OPTIMIZE_ARITHMETIC=.): DEFINES += ENABLE_JIT_OPTIMIZE_ARITHMETIC=1
@@ -127,12 +129,9 @@ SOURCES += \
     interpreter/Interpreter.cpp \
     bytecode/Opcode.cpp \
     bytecode/SamplingTool.cpp \
-    wrec/CharacterClass.cpp \
-    wrec/CharacterClassConstructor.cpp \
-    wrec/WREC.cpp \
-    wrec/WRECFunctors.cpp \
-    wrec/WRECGenerator.cpp \
-    wrec/WRECParser.cpp \
+    yarr/RegexCompiler.cpp \
+    yarr/RegexInterpreter.cpp \
+    yarr/RegexJIT.cpp \
     interpreter/RegisterFile.cpp
 
 win32-*: SOURCES += jit/ExecutableAllocatorWin.cpp

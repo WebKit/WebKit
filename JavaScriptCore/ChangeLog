@@ -1,3 +1,15 @@
+2009-05-19  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Replace WREC with YARR + YARR_JIT for the Qt port. This is only
+        used when compiled with JIT support for now, so it is a drop-in
+        replacement for the WREC usage. Still including the wrec headers
+        as they are being referred from RegExp.h, though the contents of
+        that header it protected by "#if ENABLE(WREC)".
+
+        * JavaScriptCore.pri:
+
 2009-05-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Eric Seidel.
