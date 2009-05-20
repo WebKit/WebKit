@@ -1200,8 +1200,6 @@ sub buildQMakeQtProject($$@)
 {
     my ($project, $clean, @buildArgs) = @_;
 
-    push @buildArgs, "CONFIG+=qt-port";
-
     return buildQMakeProject($clean, @buildArgs);
 }
 

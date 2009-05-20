@@ -68,7 +68,7 @@ include(JavaScriptCore.pri)
 
 QMAKE_EXTRA_TARGETS += generated_files
 
-qt-port: lessThan(QT_MINOR_VERSION, 4) {
+lessThan(QT_MINOR_VERSION, 4) {
     DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
 }
 

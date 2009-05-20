@@ -2,6 +2,15 @@
 
         Reviewed by George Staikos.
 
+        BUG 25843: [Qt] Remove qt-port build flag
+        <https://bugs.webkit.org/show_bug.cgi?id=25843>
+
+        * bridge/testbindings.pro:
+
+2009-05-20  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by George Staikos.
+
         https://bugs.webkit.org/show_bug.cgi?id=25824
 
         [Qt] Cleanup - move files exclusive to JAVASCRIPT_DEBUGGER
