@@ -1,3 +1,14 @@
+2009-05-20  David Levin  <levin@chromium.org>
+
+        Not Reviewed, build fix.
+
+        Change KURLGoogle.cpp to mirror the KURL.cpp changes done in
+        http://trac.webkit.org/changeset/43929.
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::protocolIsJavaScript):
+        (WebCore::protocolIs):
+
 2009-05-20  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig
