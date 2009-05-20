@@ -1,3 +1,10 @@
+2009-05-19  Antti Koivisto  <antti@apple.com>
+
+        I can't figure out how to make this not timing dependent, making it manual test instead.
+
+        * fast/tokenizer/preload-scanner-entities-expected.txt: Removed.
+        * fast/tokenizer/preload-scanner-entities.html: Removed.
+
 2009-05-19  Darin Adler  <darin@apple.com>
 
         Renamed test failing on many buildbots to disable it.

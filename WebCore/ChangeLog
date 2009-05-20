@@ -1,3 +1,9 @@
+2009-05-19  Antti Koivisto  <antti@apple.com>
+
+        I can't figure out how to make this not timing dependent, making it manual test instead.
+
+        * manual-tests/preload-scanner-entities.html: Added.
+
 2009-05-19  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Antti Koivisto. 

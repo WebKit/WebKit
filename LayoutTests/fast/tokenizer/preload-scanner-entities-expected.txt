@@ -1,9 +1,0 @@
-does_not_exist_here_just_to_trigger_preload_scanner.js - willSendRequest <NSURLRequest URL does_not_exist_here_just_to_trigger_preload_scanner.js, main document URL preload-scanner-entities.html> redirectResponse (null)
-non_existent_stylesheet1&ab- - willSendRequest <NSURLRequest URL non_existent_stylesheet1&ab-, main document URL preload-scanner-entities.html> redirectResponse (null)
-non_existent_stylesheet2& - willSendRequest <NSURLRequest URL non_existent_stylesheet2&, main document URL preload-scanner-entities.html> redirectResponse (null)
-non_existent_stylesheet3& - willSendRequest <NSURLRequest URL non_existent_stylesheet3&, main document URL preload-scanner-entities.html> redirectResponse (null)
-<unknown> - didFinishLoading
-non_existent_stylesheet1&ab- - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1100, failing URL "non_existent_stylesheet1&ab-">
-non_existent_stylesheet2& - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1100, failing URL "non_existent_stylesheet2&">
-non_existent_stylesheet3& - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1100, failing URL "non_existent_stylesheet3&">
-If you run this test outside the DRT, check with the web inspector that the page tried to load 3 stylesheet resources (and not more).
