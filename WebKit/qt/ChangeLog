@@ -1,3 +1,25 @@
+2009-05-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann and Holger Freyther.
+
+        [Qt] Add renderHints property to QWebView.
+
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::QWebViewPrivate):
+        (QWebView::renderHints):
+        (QWebView::setRenderHints):
+        (QWebView::setRenderHint):
+        (QWebView::paintEvent):
+        * Api/qwebview.h:
+        * tests/qwebview/qwebview.pro: Added.
+        * tests/qwebview/tst_qwebview.cpp: Added.
+        (tst_QWebView::tst_QWebView):
+        (tst_QWebView::~tst_QWebView):
+        (tst_QWebView::init):
+        (tst_QWebView::cleanup):
+        (tst_QWebView::renderHints):
+        * tests/tests.pro:
+
 2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

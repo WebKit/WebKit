@@ -34,6 +34,7 @@ public:
     QWebViewPrivate(QWebView *view)
         : view(view)
         , page(0)
+        , renderHints(QPainter::TextAntialiasing)
 #ifndef QT_NO_CURSOR
         , cursorSetByWebCore(false)
         , usesWebCoreCursor(true)
@@ -43,6 +44,7 @@ public:
     QWebView *view;
     QWebPage *page;
 
+    QPainter::RenderHints renderHints;
 
 #ifndef QT_NO_CURSOR
     /*
@@ -533,6 +535,47 @@ qreal QWebView::textSizeMultiplier() const
 }
 
 /*!
+    \property QWebView::renderHints
+    \since 4.6
+    \brief the default render hints for the view
+
+    These hints are used to initialize QPainter before painting the web page.
+
+    QPainter::TextAntialiasing is enabled by default.
+*/
+QPainter::RenderHints QWebView::renderHints() const
+{
+    return d->renderHints;
+}
+
+void QWebView::setRenderHints(QPainter::RenderHints hints)
+{
+    if (hints == d->renderHints)
+        return;
+    d->renderHints = hints;
+    update();
+}
+
+/*!
+    If \a enabled is true, the render hint \a hint is enabled; otherwise it
+    is disabled.
+
+    \since 4.6
+    \sa renderHints
+*/
+void QWebView::setRenderHint(QPainter::RenderHint hint, bool enabled)
+{
+    QPainter::RenderHints oldHints = d->renderHints;
+    if (enabled)
+        d->renderHints |= hint;
+    else
+        d->renderHints &= ~hint;
+    if (oldHints != d->renderHints)
+        update();
+}
+
+
+/*!
     Finds the next occurrence of the string, \a subString, in the page, using
     the given \a options. Returns true of \a subString was found and selects
     the match visually; otherwise returns false.
@@ -680,6 +723,7 @@ void QWebView::paintEvent(QPaintEvent *ev)
 
     QWebFrame *frame = d->page->mainFrame();
     QPainter p(this);
+    p.setRenderHints(d->renderHints);
 
     frame->render(&p, ev->region());
 
