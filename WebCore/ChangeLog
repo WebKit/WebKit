@@ -1,3 +1,19 @@
+2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24510
+
+        Fix a bug where the browserfuncs were not properly assigned,
+        make hasproperty use _NP_HasProperty and hasmethod _NP_HasMethod.
+
+        Test: plugins/netscape-invoke-browserfuncs.html
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::load): Fix assignment
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::load): Fix assignment
+
 2009-05-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Timothy Hatcher.

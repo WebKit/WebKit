@@ -1,3 +1,21 @@
+2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24510
+
+        Add a test case that Netscape Plugin can properly
+        determine if a given object has a specific method
+        and property.
+
+        The test will ask the plugin to call hasproperty and
+        hasmethod and will compare the result with what is
+        expected. This approach is taken from
+        netscape-get-property-return-value.html
+
+        * plugins/netscape-invoke-browserfuncs-expected.txt: Added.
+        * plugins/netscape-invoke-browserfuncs.html: Added.
+
 2009-05-20  Eric Seidel  <eric@webkit.org>
 
         Fix bug URL in ChangeLogs in r43903.

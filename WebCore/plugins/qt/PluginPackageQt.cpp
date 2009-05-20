@@ -150,8 +150,8 @@ bool PluginPackage::load()
     m_browserFuncs.getproperty = _NPN_GetProperty;
     m_browserFuncs.setproperty = _NPN_SetProperty;
     m_browserFuncs.removeproperty = _NPN_RemoveProperty;
-    m_browserFuncs.hasproperty = _NPN_HasMethod;
-    m_browserFuncs.hasmethod = _NPN_HasProperty;
+    m_browserFuncs.hasproperty = _NPN_HasProperty;
+    m_browserFuncs.hasmethod = _NPN_HasMethod;
     m_browserFuncs.setexception = _NPN_SetException;
     m_browserFuncs.enumerate = _NPN_Enumerate;
     m_browserFuncs.construct = _NPN_Construct;

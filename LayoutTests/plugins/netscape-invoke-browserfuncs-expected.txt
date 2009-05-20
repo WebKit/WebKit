@@ -1,0 +1,16 @@
+Test if the plugin can properly invoke the browserfuncs
+
+
+Testing hasmethod
+SUCCESS: internalFunction
+SUCCESS: doStuff
+SUCCESS: undefinedProperty
+
+Testing hasproperty
+SUCCESS: internalFunction
+SUCCESS: doStuff
+SUCCESS: stringProperty
+SUCCESS: nullProperty
+SUCCESS: undefinedProperty
+SUCCESS: notDefinedProperty
+

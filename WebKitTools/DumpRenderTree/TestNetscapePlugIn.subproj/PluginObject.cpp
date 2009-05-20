@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,25 +83,29 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
     "returnErrorFromNewStream",
 };
 
-#define ID_TEST_CALLBACK_METHOD     0
-#define ID_TEST_GETURL              1
-#define ID_REMOVE_DEFAULT_METHOD    2
-#define ID_TEST_DOM_ACCESS          3
-#define ID_TEST_GET_URL_NOTIFY      4
-#define ID_TEST_INVOKE_DEFAULT      5
-#define ID_DESTROY_STREAM           6
-#define ID_TEST_ENUMERATE           7
-#define ID_TEST_GETINTIDENTIFIER    8
-#define ID_TEST_GET_PROPERTY        9
-#define ID_TEST_EVALUATE            10
-#define ID_TEST_GET_PROPERTY_RETURN_VALUE 11
-#define ID_TEST_IDENTIFIER_TO_STRING 12
-#define ID_TEST_IDENTIFIER_TO_INT   13
-#define ID_TEST_POSTURL_FILE        14
-#define ID_TEST_CONSTRUCT           15
-#define ID_TEST_THROW_EXCEPTION_METHOD 16
-#define ID_DESTROY_NULL_STREAM 17
-#define NUM_METHOD_IDENTIFIERS      18
+enum {
+    ID_TEST_CALLBACK_METHOD = 0,
+    ID_TEST_GETURL,
+    ID_REMOVE_DEFAULT_METHOD,
+    ID_TEST_DOM_ACCESS,
+    ID_TEST_GET_URL_NOTIFY,
+    ID_TEST_INVOKE_DEFAULT,
+    ID_DESTROY_STREAM,
+    ID_TEST_ENUMERATE,
+    ID_TEST_GETINTIDENTIFIER,
+    ID_TEST_GET_PROPERTY,
+    ID_TEST_HAS_PROPERTY,
+    ID_TEST_HAS_METHOD,
+    ID_TEST_EVALUATE,
+    ID_TEST_GET_PROPERTY_RETURN_VALUE,
+    ID_TEST_IDENTIFIER_TO_STRING,
+    ID_TEST_IDENTIFIER_TO_INT,
+    ID_TEST_POSTURL_FILE,
+    ID_TEST_CONSTRUCT,
+    ID_TEST_THROW_EXCEPTION_METHOD,
+    ID_DESTROY_NULL_STREAM,
+    NUM_METHOD_IDENTIFIERS
+};
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
@@ -114,6 +119,8 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testEnumerate",
     "testGetIntIdentifier",
     "testGetProperty",
+    "testHasProperty",
+    "testHasMethod",
     "testEvaluate",
     "testGetPropertyReturnValue",
     "testIdentifierToString",
@@ -467,6 +474,36 @@ static bool testGetProperty(PluginObject* obj, const NPVariant* args, uint32_t a
     return false;
 }
 
+static bool testHasProperty(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (argCount != 2 || !NPVARIANT_IS_OBJECT(args[0]) || !NPVARIANT_IS_STRING(args[1]))
+        return false;
+
+    NPUTF8* propertyString = createCStringFromNPVariant(&args[1]);
+    NPIdentifier propertyIdentifier = browser->getstringidentifier(propertyString);
+    free(propertyString);
+
+    bool retval = browser->hasproperty(obj->npp, NPVARIANT_TO_OBJECT(args[0]), propertyIdentifier);
+
+    BOOLEAN_TO_NPVARIANT(retval, *result);
+    return true;
+}
+
+static bool testHasMethod(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (argCount != 2 || !NPVARIANT_IS_OBJECT(args[0]) || !NPVARIANT_IS_STRING(args[1]))
+        return false;
+
+    NPUTF8* propertyString = createCStringFromNPVariant(&args[1]);
+    NPIdentifier propertyIdentifier = browser->getstringidentifier(propertyString);
+    free(propertyString);
+
+    bool retval = browser->hasmethod(obj->npp, NPVARIANT_TO_OBJECT(args[0]), propertyIdentifier);
+
+    BOOLEAN_TO_NPVARIANT(retval, *result);
+    return true;
+}
+
 static bool testEvaluate(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     if (argCount != 1 || !NPVARIANT_IS_STRING(args[0]))
@@ -576,6 +613,10 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return testGetProperty(plugin, args, argCount, result);
     else if (name == pluginMethodIdentifiers[ID_TEST_GET_PROPERTY_RETURN_VALUE])
         return testGetPropertyReturnValue(plugin, args, argCount, result);
+    else if (name == pluginMethodIdentifiers[ID_TEST_HAS_PROPERTY])
+        return testHasProperty(plugin, args, argCount, result);
+    else if (name == pluginMethodIdentifiers[ID_TEST_HAS_METHOD])
+        return testHasMethod(plugin, args, argCount, result);
     else if (name == pluginMethodIdentifiers[ID_TEST_IDENTIFIER_TO_STRING])
         return testIdentifierToString(plugin, args, argCount, result);
     else if (name == pluginMethodIdentifiers[ID_TEST_IDENTIFIER_TO_INT])

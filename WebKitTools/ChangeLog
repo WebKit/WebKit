@@ -1,3 +1,21 @@
+2009-05-14  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24510 where
+
+        Add testHasProperty and testHasMethod to the existing functions
+        of the PluginObject to be able to test the browser hasproperty
+        and hasmethod implementation. Invoke them from pluginInvoke.
+
+        Change the defines to an enum to avoid manually updating
+        NUM_METHOD_IDENTIFIERS and assigning numbers.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp:
+        (testHasProperty): test hasproperty
+        (testHasMethod): test hasmethod
+        (pluginInvoke): invoke the two
+
 2009-05-20  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by George Staikos.
