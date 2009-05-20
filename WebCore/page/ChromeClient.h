@@ -124,7 +124,7 @@ namespace WebCore {
         virtual IntRect windowToScreen(const IntRect&) const = 0;
         virtual PlatformWidget platformWindow() const = 0;
         virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
-        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {} // Platforms other than Mac can implement this if it ever becomes necessary for them to do so.
+        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const = 0; // Currently only Mac has a non empty implementation.
         // End methods used by HostWindow.
 
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
@@ -157,11 +157,11 @@ namespace WebCore {
 
         // This is an asynchronous call. The ChromeClient can display UI asking the user for permission
         // to use Geolococation. The ChromeClient must call Geolocation::setShouldClearCache() appropriately.
-        virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*) { }
+        virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*) = 0;
             
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
 
-        virtual bool setCursor(PlatformCursorHandle) { return false; }
+        virtual bool setCursor(PlatformCursorHandle) = 0;
 
         // Notification that the given form element has changed. This function
         // will be called frequently, so handling should be very fast.
@@ -171,13 +171,13 @@ namespace WebCore {
 
 #if USE(ACCELERATED_COMPOSITING)
         // Pass 0 as the GraphicsLayer to detatch the root layer.
-        virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) { }
+        virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*) = 0;
         // Sets a flag to specify that the next time content is drawn to the window,
         // the changes appear on the screen in synchrony with updates to GraphicsLayers.
-        virtual void setNeedsOneShotDrawingSynchronization() { }
+        virtual void setNeedsOneShotDrawingSynchronization() = 0;
         // Sets a flag to specify that the view needs to be updated, so we need
         // to do an eager layout before the drawing.
-        virtual void scheduleViewUpdate() { }
+        virtual void scheduleViewUpdate() = 0;
 #endif
 
 #if PLATFORM(MAC)

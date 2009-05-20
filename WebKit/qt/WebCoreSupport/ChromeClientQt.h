@@ -122,6 +122,12 @@ namespace WebCore {
 
         virtual HTMLParserQuirks* createHTMLParserQuirks() { return 0; }
 
+        virtual bool setCursor(PlatformCursorHandle);
+
+        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const {}
+
+        virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
+
         QWebPage* m_webPage;
         WebCore::KURL lastHoverURL;
         WebCore::String lastHoverTitle;

@@ -106,6 +106,11 @@ namespace WebKit {
 
         virtual WebCore::HTMLParserQuirks* createHTMLParserQuirks() { return 0; }
 
+        virtual bool setCursor(WebCore::PlatformCursorHandle);
+
+        virtual void scrollRectIntoView(const WebCore::IntRect&, const WebCore::ScrollView*) const {}
+        virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
+
     private:
         WebKitWebView* m_webView;
         WebCore::KURL m_hoveredLinkURL;

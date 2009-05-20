@@ -483,4 +483,16 @@ void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
     gtk_widget_destroy(dialog);
 }
 
+bool ChromeClient::setCursor(PlatformCursorHandle)
+{
+    notImplemented();
+    return false;
+}
+
+void ChromeClient::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
+{
+    // See the comment in WebCore/page/ChromeClient.h
+    notImplemented();
+}
+
 }

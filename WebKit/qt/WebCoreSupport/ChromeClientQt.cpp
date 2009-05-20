@@ -431,4 +431,16 @@ void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileC
     }
 }
 
+bool ChromeClientQt::setCursor(PlatformCursorHandle)
+{
+    notImplemented();
+    return false;
+}
+
+void ChromeClientQt::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
+{
+    // See the comment in WebCore/page/ChromeClient.h
+    notImplemented();
+}
+
 }

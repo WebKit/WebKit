@@ -713,6 +713,12 @@ bool WebChromeClient::setCursor(PlatformCursorHandle cursor)
     return true;
 }
 
+void WebChromeClient::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
+{
+    // See the comment in WebCore/page/ChromeClient.h
+    notImplemented();
+}
+
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
 {
     COMPtr<IWebUIDelegate> delegate;
