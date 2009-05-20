@@ -1,3 +1,11 @@
+2009-05-19  Darin Adler  <darin@apple.com>
+
+        Renamed test failing on many buildbots to disable it.
+        Antti can move it back once he gets it working more consistently.
+
+        * fast/tokenizer/preload-scanner-entities.html: Removed.
+        * fast/tokenizer/preload-scanner-entities.html-disabled: Copied from fast/tokenizer/preload-scanner-entities.html.
+
 2009-05-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
