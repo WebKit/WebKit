@@ -1,5 +1,12 @@
 2009-05-19  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::releaseExcessCapacity): Copy-paste typo.
+
+2009-05-19  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Fixed <rdar://problem/6885680> CrashTracer: [USER] 1 crash in Install

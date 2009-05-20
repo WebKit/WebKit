@@ -47,7 +47,7 @@ void RegisterFile::releaseExcessCapacity()
 #if HAVE(MMAP) && HAVE(MADV_FREE) && !HAVE(VIRTUALALLOC)
     while (madvise(m_start, (m_max - m_start) * sizeof(Register), MADV_FREE) == -1 && errno == EAGAIN) { }
 #elif HAVE(VIRTUALALLOC)
-    VirtualFree(madvise(m_start, (m_max - m_start) * sizeof(Register), MEM_DECOMMIT);
+    VirtualFree(m_start, (m_max - m_start) * sizeof(Register), MEM_DECOMMIT);
     m_commitEnd = m_start;
 #endif
     m_maxUsed = m_start;
