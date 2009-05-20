@@ -1,3 +1,12 @@
+2009-05-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        More protocolInHTTPFamily() cleanup.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2009-05-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
