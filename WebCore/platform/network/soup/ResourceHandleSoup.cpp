@@ -53,10 +53,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#if PLATFORM(GTK)
-#define USE_GLIB_BASE64
-#endif
-
 namespace WebCore {
 
 class WebCoreSynchronousLoader : public ResourceHandleClient, Noncopyable {
@@ -400,20 +396,14 @@ static gboolean parseDataUrl(gpointer callback_data)
         if (d->m_cancelled)
             return false;
 
-        // Use the GLib Base64 if available, since WebCore's decoder isn't
+        // Use the GLib Base64, since WebCore's decoder isn't
         // general-purpose and fails on Acid3 test 97 (whitespace).
-#ifdef USE_GLIB_BASE64
         size_t outLength = 0;
         char* outData = 0;
         outData = reinterpret_cast<char*>(g_base64_decode(data.utf8().data(), &outLength));
         if (outData && outLength > 0)
             client->didReceiveData(handle, outData, outLength, 0);
         g_free(outData);
-#else
-        Vector<char> out;
-        if (base64Decode(data.latin1().data(), data.latin1().length(), out) && out.size() > 0)
-            client->didReceiveData(handle, out.data(), out.size(), 0);
-#endif
     } else {
         // We have to convert to UTF-16 early due to limitations in KURL
         data = decodeURLEscapeSequences(data, TextEncoding(charset));
