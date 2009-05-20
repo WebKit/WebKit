@@ -269,6 +269,13 @@ static AtkRole webkit_accessible_get_role(AtkObject* object)
     if (!AXObject)
         return ATK_ROLE_UNKNOWN;
 
+    // WebCore does not seem to have a role for list items
+    if (AXObject->isGroup()) {
+        AccessibilityObject* parent = AXObject->parentObjectUnignored();
+        if (parent && parent->isList())
+            return ATK_ROLE_LIST_ITEM;
+    }
+
     // WebCore does not know about paragraph role
     Node* node = static_cast<AccessibilityRenderObject*>(AXObject)->renderer()->node();
     if (node && node->hasTagName(HTMLNames::pTag))

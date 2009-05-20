@@ -5,6 +5,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=25414
         [GTK] ROLE_PANEL should not be used for paragraphs and list items.
 
+        Implement Atk list item role for list items.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_role):
+
+2009-05-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25414
+        [GTK] ROLE_PANEL should not be used for paragraphs and list items.
+
         Implement Atk paragraph role for paragraph elements.
 
         * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
