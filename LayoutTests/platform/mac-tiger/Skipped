@@ -47,3 +47,7 @@ fast/text/international/thai-baht-space.html
 # <rdar://problem/5524766> Set-Cookie header field (RFC 2109) not supported correctly (15128)
 # Tiger would need a new CFNetwork to support expiration of cookies using "Max-Age=0"
 http/tests/cookies/simple-cookies-max-age.html
+
+# <rdar://problem/5666078> Cookie parsing terminates at the first semicolon, ignoring quotes (16699)
+# Tiger would need a new CFNetwork to support setting cookies with double-quoted values containing semi-colons
+http/tests/cookies/double-quoted-value-with-semi-colon.html

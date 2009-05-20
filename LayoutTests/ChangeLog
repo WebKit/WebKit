@@ -1,3 +1,17 @@
+2009-05-20  David Kilzer  <ddkilzer@apple.com>
+
+        Test for <rdar://problem/5666078> Cookie parsing terminates at the first semicolon, ignoring quotes (16699)
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/cookies/double-quoted-value-with-semi-colon-expected.txt: Added.
+        * http/tests/cookies/double-quoted-value-with-semi-colon.html: Added.
+        * http/tests/cookies/resources/double-quoted-value-with-semi-colon.js: Added.
+        * platform/mac-tiger/Skipped: Added
+        double-quoted-value-with-semi-colon.html since CFNetwork on
+        Tiger stops parsing cookie values when it sees a semi-colon,
+        even inside double quotes.
+
 2009-05-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
