@@ -31,6 +31,7 @@
 #include "config.h"
 #include "Image.h"
 
+#include "ImageObserver.h"
 #include "BitmapImage.h"
 #include "FloatRect.h"
 #include "PlatformString.h"

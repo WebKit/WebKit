@@ -1,3 +1,9 @@
+2009-05-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Unreviewed Qt build fix, after r43892.
+
+        * platform/graphics/qt/ImageQt.cpp: included ImageObservser.h
+
 2009-05-20  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Simon Hausmann.
