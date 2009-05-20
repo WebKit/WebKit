@@ -39,6 +39,9 @@
 #if defined(Q_OS_WIN32)
 #include <windows.h>
 #endif
+#if defined(Q_WS_MAC)
+#include <CoreFoundation/CFBundle.h>
+#endif
 #endif
 
 #include <time.h>
