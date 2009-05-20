@@ -49,7 +49,7 @@ using namespace WTF;
 
 namespace JSC {
 
-static void substitute(UString& string, const UString& substring) JSC_FAST_CALL;
+static void substitute(UString& string, const UString& substring);
 
 // ------------------------------ ThrowableExpressionData --------------------------------
 

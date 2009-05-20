@@ -1,3 +1,64 @@
+2009-05-19  Oliver Hunt  <oliver@apple.com>
+
+        RS=Mark Rowe.
+
+        <rdar://problem/6888393> REGRESSION: Start Debugging JavaScript crashes browser (nightly builds only?)
+        <https://bugs.webkit.org/show_bug.cgi?id=25717>
+
+        Remove JSC_FAST_CALL as it wasn't gaining us anything, and was
+        resulting in weird bugs in the nightly builds.
+
+        * parser/Nodes.cpp:
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isNumber):
+        (JSC::ExpressionNode::isString):
+        (JSC::ExpressionNode::isNull):
+        (JSC::ExpressionNode::isPure):
+        (JSC::ExpressionNode::isLocation):
+        (JSC::ExpressionNode::isResolveNode):
+        (JSC::ExpressionNode::isBracketAccessorNode):
+        (JSC::ExpressionNode::isDotAccessorNode):
+        (JSC::ExpressionNode::isFuncExprNode):
+        (JSC::ExpressionNode::isSimpleArray):
+        (JSC::ExpressionNode::isAdd):
+        (JSC::ExpressionNode::resultDescriptor):
+        (JSC::StatementNode::firstLine):
+        (JSC::StatementNode::lastLine):
+        (JSC::StatementNode::isEmptyStatement):
+        (JSC::StatementNode::isReturnNode):
+        (JSC::StatementNode::isExprStatement):
+        (JSC::StatementNode::isBlock):
+        (JSC::NullNode::isNull):
+        (JSC::BooleanNode::isPure):
+        (JSC::NumberNode::value):
+        (JSC::NumberNode::setValue):
+        (JSC::NumberNode::isNumber):
+        (JSC::NumberNode::isPure):
+        (JSC::StringNode::isPure):
+        (JSC::StringNode::isString):
+        (JSC::ResolveNode::identifier):
+        (JSC::ResolveNode::isLocation):
+        (JSC::ResolveNode::isResolveNode):
+        (JSC::BracketAccessorNode::isLocation):
+        (JSC::BracketAccessorNode::isBracketAccessorNode):
+        (JSC::DotAccessorNode::base):
+        (JSC::DotAccessorNode::identifier):
+        (JSC::DotAccessorNode::isLocation):
+        (JSC::DotAccessorNode::isDotAccessorNode):
+        (JSC::TypeOfResolveNode::identifier):
+        (JSC::AddNode::isAdd):
+        (JSC::BlockNode::isBlock):
+        (JSC::EmptyStatementNode::isEmptyStatement):
+        (JSC::ExprStatementNode::isExprStatement):
+        (JSC::ReturnNode::isReturnNode):
+        (JSC::ScopeNode::sourceURL):
+        (JSC::ProgramNode::bytecode):
+        (JSC::EvalNode::bytecode):
+        (JSC::FunctionBodyNode::parameters):
+        (JSC::FunctionBodyNode::toSourceString):
+        (JSC::FunctionBodyNode::bytecode):
+        (JSC::FuncExprNode::isFuncExprNode):
+
 2009-05-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Gavin Barraclough.
