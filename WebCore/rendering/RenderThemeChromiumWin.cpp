@@ -802,14 +802,29 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
 
     const ThemeData& themeData = getThemeData(o);
 
+    // Fallback to white if the specified color object is invalid.
+    Color backgroundColor(Color::white);
+    if (o->style()->backgroundColor().isValid()) {
+        backgroundColor = o->style()->backgroundColor();
+    }
+
+    // If we have background-image, don't fill the content area to expose the
+    // parent's background. Also, we shouldn't fill the content area if the
+    // alpha of the color is 0. The API of Windows GDI ignores the alpha.
+    //
+    // Note that we should paint the content area white if we have neither the
+    // background color nor background image explicitly specified to keep the
+    // appearance of select element consistent with other browsers.
+    bool fillContentArea = !o->style()->hasBackgroundImage() && backgroundColor.alpha() != 0;
+
     WebCore::ThemePainter painter(i.context, r);
     ChromiumBridge::paintTextField(painter.context(),
                                    themeData.m_part,
                                    themeData.m_state,
                                    themeData.m_classicState,
                                    painter.drawRect(),
-                                   o->style()->backgroundColor(),
-                                   true,
+                                   backgroundColor,
+                                   fillContentArea,
                                    drawEdges);
     return false;
 }

@@ -1,3 +1,32 @@
+2009-05-20  Takeshi Yoshino <tyoshino@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 24539: Fix RenderThemeChromiumWin::paintTextFieldInternal() not to hide background image.
+        https://bugs.webkit.org/show_bug.cgi?id=24539
+
+        Fix RenderThemeChromiumWin::paintTextFieldInternal().
+
+        We shouldn't paint the content area of text fields when o->style() has
+        background image or transparent background color. paintTextFieldInternal() is
+        used for painting inner area of HTML option elements by Chromium.
+
+        When we pass fillContentArea = true to ChromiumBridge::paintTextField, it hides
+        the background image rendered by RenderBoxModelObject. So, we should set
+        fillContentArea = false in such case.
+
+        Besides, when background-color:transparent is specified for CSS property,
+        o->style().backgroundColor returns black color with alpha channel == 0. But
+        since ThemeEngine for Windows behind ChromiumBridge::paintTextField cannot
+        recognize alpha channel, it fills the rect with black. I made workaround to set
+        fillContentArea = false when alpha channel == 0 to avoid this.
+
+        And more, I'd like to fallback the color passed to ChromiumBridge to white when
+        o->style()->backgroundColor() is invalid.
+
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+
 2009-05-20  Shinichiro Hamaji  <hamaji@google.com>
 
         Reviewed by Eric Seidel.

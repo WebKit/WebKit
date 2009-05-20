@@ -1,3 +1,18 @@
+2009-05-20  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 24539: Fix RenderThemeChromiumWin::paintTextFieldInternal() not to hide background image.
+        https://bugs.webkit.org/show_bug.cgi?id=24539
+
+        Changed the test fast/forms/select-style.html to exercise the change on
+        RenderThemeChromiumWin::paintTextFieldInternal() on Chromium. Replaced expected results for
+        platform mac. Expected cases for the other platforms are to be replaced later.
+
+        * fast/forms/select-style.html:
+        * platform/mac/fast/forms/select-style-expected.checksum:
+        * platform/mac/fast/forms/select-style-expected.txt:
+
 2009-05-20  Shinichiro Hamaji  <hamaji@google.com>
 
         Reviewed by Eric Seidel.
