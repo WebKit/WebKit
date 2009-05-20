@@ -2,6 +2,15 @@
 
         Not Reviewed, build fix.
 
+        Need to disable this assert while the chormium code is fixed for it.
+
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::protocolIs):
+
+2009-05-20  David Levin  <levin@chromium.org>
+
+        Not Reviewed, build fix.
+
         Change KURLGoogle.cpp to mirror the KURL.cpp changes done in
         http://trac.webkit.org/changeset/43929.  Fix assert placement.
 
