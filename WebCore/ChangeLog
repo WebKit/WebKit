@@ -1,3 +1,16 @@
+2009-05-19  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Do not call the parent implementation (Widget::) in show() and hide()
+        of the PluginViewQt, as it always changes the visible state of the
+        platformWidget (equal to the platformPluginWidget in the Qt port),
+        thus ignoring the isParentVisible() test.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+
 2009-05-20  Yichao Yin  <yichao.yin@torchmobile.com.cn>
 
         Reviewed by George Staikos.
