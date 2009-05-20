@@ -2,6 +2,8 @@
 
         Test for <rdar://problem/5666078> Cookie parsing terminates at the first semicolon, ignoring quotes (16699)
 
+        <https://bugs.webkit.org/show_bug.cgi?id=16699>
+
         Reviewed by Brady Eidson.
 
         * http/tests/cookies/double-quoted-value-with-semi-colon-expected.txt: Added.
