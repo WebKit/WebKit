@@ -117,8 +117,6 @@ static AccessibilityObject* core(AtkImage* image)
     return core(ATK_OBJECT(image));
 }
 
-extern "C" {
-
 static const gchar* webkit_accessible_get_name(AtkObject* object)
 {
     return returnString(core(object)->stringValue());
@@ -969,8 +967,6 @@ void webkit_accessible_detach(WebKitAccessible* accessible)
     // provides default implementations to avoid repetitive null-checking after
     // detachment.
     accessible->m_object = fallbackObject();
-}
-
 }
 
 #endif // HAVE(ACCESSIBILITY)

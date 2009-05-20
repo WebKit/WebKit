@@ -1,5 +1,13 @@
 2009-05-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Rubber-stamped by Xan Lopez.
+
+        Remove misplaced extern "C"
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+
+2009-05-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Xan Lopez.
 
         [GTK] Expose password field with role of PASSWORD_TEXT
