@@ -1,3 +1,12 @@
+2009-05-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6905336> REGRESSION: "Clear History" does not save empty history to disk
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate data]): If there are no entries, return an empty NSData instead of nil.
+
 2009-05-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler and Kevin Decker.
