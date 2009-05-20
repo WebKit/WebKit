@@ -206,7 +206,7 @@ void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue, PutPrope
 {
 }
 
-static JSValue callObjCFallbackObject(ExecState* exec, JSObject* function, JSValue thisValue, const ArgList& args)
+static JSValue JSC_HOST_CALL callObjCFallbackObject(ExecState* exec, JSObject* function, JSValue thisValue, const ArgList& args)
 {
     if (!thisValue.isObject(&RuntimeObjectImp::s_info))
         return throwError(exec, TypeError);

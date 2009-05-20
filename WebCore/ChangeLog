@@ -1,3 +1,19 @@
+2009-05-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for <rdar://problem/6905475>
+        Office 2008: Entourage: Crash when you switch to "My Day" view
+
+        The host function callback callObjCFallbackObject was not annotated
+        with JSC_HOST_CALL which meant that when it was called by the JIT, which
+        expects the JSC_HOST_CALL calling convention, the arguments are not in the
+        expected places.
+
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject): Added missing JSC_HOST_CALL
+        annotation on callObjCFallbackObject.
+
 2009-05-20  David Levin  <levin@chromium.org>
 
         Not Reviewed, build fix.
