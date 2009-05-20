@@ -29,6 +29,10 @@
 #include "RegexCompiler.h"
 #include "RegexPattern.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 #if ENABLE(YARR)
 
 using namespace WTF;

@@ -1,3 +1,14 @@
+2009-05-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix GTK debug build.
+
+        The function dumpDisjunction, compiled with debug enabled, uses
+        printf, which needs stdio.h to be included.
+
+        * yarr/RegexInterpreter.cpp:
+
 2009-05-20  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by George Staikos.
