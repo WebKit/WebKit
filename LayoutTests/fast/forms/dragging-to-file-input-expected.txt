@@ -1,9 +1,0 @@
-This tests the ability to drag a file onto <input type="file">
-
-To test manually you need to attempt to drag a file onto the file input below
-
-
-
-PASS: Successfully dropped file on to file input
-PASS: Finished test
-

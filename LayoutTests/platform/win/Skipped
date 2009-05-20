@@ -181,8 +181,8 @@ svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
 http/tests/webarchive
 
-# <rdar://problem/5230396> layoutTestController.addFileToPasteboardOnDrag is unimplemented
-fast/forms/dragging-to-file-input.html
+# <rdar://problem/5230396> eventSender.beginDragWithFiles is unimplemented
+editing/pasteboard/file-input-files-access.html
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html

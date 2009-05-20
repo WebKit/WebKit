@@ -51,7 +51,6 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_dumpEditingCallbacks(false)
     , m_dumpResourceLoadCallbacks(false)
     , m_dumpFrameLoadCallbacks(false)
-    , m_addFileToPasteboardOnDrag(false)
     , m_callCloseOnWebViews(true)
     , m_canOpenWindows(false)
     , m_closeRemainingWindowsWhenComplete(true)
@@ -221,13 +220,6 @@ static JSValueRef testRepaintCallback(JSContextRef context, JSObjectRef function
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->setTestRepaint(true);
-    return JSValueMakeUndefined(context);
-}
-
-static JSValueRef addFileToPasteboardOnDragCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setAddFileToPasteboardOnDrag(true);
     return JSValueMakeUndefined(context);
 }
 
@@ -825,14 +817,12 @@ JSStaticValue* LayoutTestController::staticValues()
         { 0, 0, 0, 0 }
     };
     return staticValues;
-
 }
 
 JSStaticFunction* LayoutTestController::staticFunctions()
 {
     static JSStaticFunction staticFunctions[] = {
         { "addDisallowedURL", addDisallowedURLCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "addFileToPasteboardOnDrag", addFileToPasteboardOnDragCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "clearAllDatabases", clearAllDatabasesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "clearBackForwardList", clearBackForwardListCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "clearPersistentUserStyleSheet", clearPersistentUserStyleSheetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

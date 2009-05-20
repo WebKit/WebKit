@@ -1,3 +1,40 @@
+2009-05-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Remove layoutTestController.addFileToPasteboardOnDrag and add eventSender.beginDragWithFiles
+        https://bugs.webkit.org/show_bug.cgi?id=25852
+
+        Add new tests for multi-file dragging:
+        https://bugs.webkit.org/show_bug.cgi?id=25862
+
+        I've removed the old tests in fast/forms which used layoutTestController.addFileToPasteboardOnDrag
+        and have added a new test in editing/pasteboard/ (where all the other drag-drop tests are)
+        which tests more than the previous two tests did.
+
+        Mac was the only platform running the old layoutTestController.addFileToPasteboardOnDrag tests
+        I've updated all the Skipped files to skip this new test instead.
+
+        * editing/pasteboard/file-input-files-access-expected.txt: Added.
+        * editing/pasteboard/file-input-files-access.html: Added.
+        * editing/pasteboard/resources/File With Spaces! For Dragging?.gif: Copied from LayoutTests/fast/canvas/resources/apple.gif.
+        * editing/pasteboard/resources/apple.gif: Copied from LayoutTests/fast/canvas/resources/apple.gif.
+        * editing/pasteboard/resources/file-input-files-access.js: Added.
+        (moveMouseToCenterOfElement):
+        (dragFilesOntoInput):
+        (fileListShouldBe):
+        (filesShouldBe):
+        (draggingPathsShouldResultInFiles):
+        (runTest):
+        * editing/pasteboard/resources/mozilla.gif: Copied from LayoutTests/fast/dom/resources/mozilla.gif.
+        * fast/forms/dragging-to-disabled-file-input-expected.txt: Removed.
+        * fast/forms/dragging-to-disabled-file-input.html: Removed.
+        * fast/forms/dragging-to-file-input-expected.txt: Removed.
+        * fast/forms/dragging-to-file-input.html: Removed.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-05-19  Yichao Yin  <yichao.yin@torchmobile.com.cn>
 
         Reviewed by George Staikos.

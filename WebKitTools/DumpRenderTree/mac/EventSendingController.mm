@@ -33,6 +33,7 @@
 
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
+#import "DumpRenderTreeFileDraggingSource.h"
 
 #import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
 #import <WebKit/DOMPrivate.h>
@@ -118,16 +119,17 @@ BOOL replayingSavedEvents;
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
-    if (aSelector == @selector(mouseDown:)
-            || aSelector == @selector(mouseUp:)
+    if (aSelector == @selector(beginDragWithFiles:)
+            || aSelector == @selector(clearKillRing)
             || aSelector == @selector(contextClick)
-            || aSelector == @selector(scheduleAsynchronousClick)
-            || aSelector == @selector(mouseMoveToX:Y:)
-            || aSelector == @selector(leapForward:)
-            || aSelector == @selector(keyDown:withModifiers:)
             || aSelector == @selector(enableDOMUIEventLogging:)
             || aSelector == @selector(fireKeyboardEventsToElement:)
-            || aSelector == @selector(clearKillRing)
+            || aSelector == @selector(keyDown:withModifiers:)
+            || aSelector == @selector(leapForward:)
+            || aSelector == @selector(mouseDown:)
+            || aSelector == @selector(mouseMoveToX:Y:)
+            || aSelector == @selector(mouseUp:)
+            || aSelector == @selector(scheduleAsynchronousClick)
             || aSelector == @selector(textZoomIn)
             || aSelector == @selector(textZoomOut)
             || aSelector == @selector(zoomPageIn)
@@ -145,20 +147,22 @@ BOOL replayingSavedEvents;
 
 + (NSString *)webScriptNameForSelector:(SEL)aSelector
 {
+    if (aSelector == @selector(beginDragWithFiles:))
+        return @"beginDragWithFiles";
+    if (aSelector == @selector(enableDOMUIEventLogging:))
+        return @"enableDOMUIEventLogging";
+    if (aSelector == @selector(fireKeyboardEventsToElement:))
+        return @"fireKeyboardEventsToElement";
+    if (aSelector == @selector(keyDown:withModifiers:))
+        return @"keyDown";
+    if (aSelector == @selector(leapForward:))
+        return @"leapForward";
     if (aSelector == @selector(mouseDown:))
         return @"mouseDown";
     if (aSelector == @selector(mouseUp:))
         return @"mouseUp";
     if (aSelector == @selector(mouseMoveToX:Y:))
         return @"mouseMoveTo";
-    if (aSelector == @selector(leapForward:))
-        return @"leapForward";
-    if (aSelector == @selector(keyDown:withModifiers:))
-        return @"keyDown";
-    if (aSelector == @selector(enableDOMUIEventLogging:))
-        return @"enableDOMUIEventLogging";
-    if (aSelector == @selector(fireKeyboardEventsToElement:))
-        return @"fireKeyboardEventsToElement";
     if (aSelector == @selector(setDragMode:))
         return @"setDragMode";
     return nil;
@@ -236,6 +240,37 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
     }
     assert(0);
     return static_cast<NSEventType>(0);
+}
+
+- (void)beginDragWithFiles:(WebScriptObject*)jsFilePaths
+{
+    assert(!draggingInfo);
+    assert([jsFilePaths isKindOfClass:[WebScriptObject class]]);
+
+    NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
+    [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
+
+    NSURL *currentTestURL = [NSURL URLWithString:[[mainFrame webView] mainFrameURL]];
+
+    NSMutableArray *filePaths = [NSMutableArray array];
+    for (unsigned i = 0; [[jsFilePaths webScriptValueAtIndex:i] isKindOfClass:[NSString class]]; i++) {
+        NSString *filePath = (NSString *)[jsFilePaths webScriptValueAtIndex:i];
+        // Have NSURL encode the name so that we handle '?' in file names correctly.
+        NSURL *fileURL = [NSURL fileURLWithPath:filePath];
+        NSURL *absoluteFileURL = [NSURL URLWithString:[fileURL relativeString]  relativeToURL:currentTestURL];
+        [filePaths addObject:[absoluteFileURL path]];
+    }
+
+    [pboard setPropertyList:filePaths forType:NSFilenamesPboardType];
+    assert([pboard propertyListForType:NSFilenamesPboardType]); // setPropertyList will silently fail on error, assert that it didn't fail
+
+    // Provide a source, otherwise [DumpRenderTreeDraggingInfo draggingSourceOperationMask] defaults to NSDragOperationNone
+    DumpRenderTreeFileDraggingSource *source = [[[DumpRenderTreeFileDraggingSource alloc] init] autorelease];
+    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:nil offset:NSZeroSize pasteboard:pboard source:source];
+    [[mainFrame webView] draggingEntered:draggingInfo];
+
+    dragMode = NO; // dragMode saves events and then replays them later.  We don't need/want that.
+    leftMouseButtonDown = YES; // Make the rest of eventSender think a drag is in progress
 }
 
 - (void)updateClickCountForButton:(int)buttonNumber
@@ -339,7 +374,9 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
             [webView performDragOperation:draggingInfo];
         else
             [webView draggingExited:draggingInfo];
-        [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
+        // Per NSDragging.h: draggingSources may not implement draggedImage:endedAt:operation:
+        if ([[draggingInfo draggingSource] respondsToSelector:@selector(draggedImage:endedAt:operation:)])
+            [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
         [draggingInfo release];
         draggingInfo = nil;
     }
@@ -355,7 +392,6 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
         [invocation setArgument:&y atIndex:3];
         
         [EventSendingController saveEvent:invocation];
-        
         return;
     }
 
@@ -376,7 +412,9 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
         if (leftMouseButtonDown) {
             [subView mouseDragged:event];
             if (draggingInfo) {
-                [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] movedTo:lastMousePosition];
+                // Per NSDragging.h: draggingSources may not implement draggedImage:movedTo:
+                if ([[draggingInfo draggingSource] respondsToSelector:@selector(draggedImage:movedTo:)])
+                    [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] movedTo:lastMousePosition];
                 [[mainFrame webView] draggingUpdated:draggingInfo];
             }
         } else
@@ -476,7 +514,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
         charactersIgnoringModifiers = [character lowercaseString];
     }
 
-    if ([modifiers isKindOfClass:[WebScriptObject class]])
+    if ([modifiers isKindOfClass:[WebScriptObject class]]) {
         for (unsigned i = 0; [[modifiers webScriptValueAtIndex:i] isKindOfClass:[NSString class]]; i++) {
             NSString *modifier = (NSString *)[modifiers webScriptValueAtIndex:i];
             if ([modifier isEqual:@"ctrlKey"])
@@ -488,6 +526,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
             else if ([modifier isEqual:@"metaKey"])
                 modifierFlags |= NSCommandKeyMask;
         }
+    }
 
     [[[mainFrame frameView] documentView] layout];
 
@@ -617,9 +656,8 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
 // to work well enough that we can test that way instead.
 - (void)fireKeyboardEventsToElement:(WebScriptObject *)element {
     
-    if (![element isKindOfClass:[DOMHTMLElement class]]) {
+    if (![element isKindOfClass:[DOMHTMLElement class]])
         return;
-    }
     
     DOMHTMLElement *target = (DOMHTMLElement*)element;
     DOMDocument *document = [target ownerDocument];

@@ -122,9 +122,6 @@ public:
     bool dumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
     void setDumpFrameLoadCallbacks(bool dumpFrameLoadCallbacks) { m_dumpFrameLoadCallbacks = dumpFrameLoadCallbacks; }
 
-    bool addFileToPasteboardOnDrag() const { return m_addFileToPasteboardOnDrag; }
-    void setAddFileToPasteboardOnDrag(bool addFileToPasteboardOnDrag) { m_addFileToPasteboardOnDrag = addFileToPasteboardOnDrag; }
-
     bool callCloseOnWebViews() const { return m_callCloseOnWebViews; }
     void setCallCloseOnWebViews(bool callCloseOnWebViews) { m_callCloseOnWebViews = callCloseOnWebViews; }
 
@@ -177,7 +174,6 @@ private:
     bool m_dumpEditingCallbacks;
     bool m_dumpResourceLoadCallbacks;
     bool m_dumpFrameLoadCallbacks;
-    bool m_addFileToPasteboardOnDrag;
     bool m_callCloseOnWebViews;
     bool m_canOpenWindows;
     bool m_closeRemainingWindowsWhenComplete;

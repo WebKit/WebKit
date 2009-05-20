@@ -1230,6 +1230,7 @@ editing/pasteboard/drop-text-without-selection.html
 editing/pasteboard/emacs-cntl-y-001.html
 editing/pasteboard/emacs-ctrl-a-k-y.html
 editing/pasteboard/emacs-ctrl-k-y-001.html
+editing/pasteboard/file-input-files-access.html
 editing/pasteboard/innerText-inline-table.html
 editing/pasteboard/input-field-1.html
 editing/pasteboard/interchange-newline-1.html
@@ -1714,8 +1715,6 @@ fast/forms/check-box-enter-key.html
 fast/forms/display-none-in-onchange-keyboard.html
 fast/forms/drag-into-textarea.html
 fast/forms/drag-out-of-textarea.html
-fast/forms/dragging-to-disabled-file-input.html
-fast/forms/dragging-to-file-input.html
 fast/forms/enter-clicks-buttons.html
 fast/forms/focus2.html
 fast/forms/focus-control-to-page.html

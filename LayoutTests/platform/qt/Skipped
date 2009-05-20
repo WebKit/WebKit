@@ -10,6 +10,9 @@ fast/events/popup-blocking-click-in-iframe.html
 
 # -------- crashes
 
+# ------- missing eventSender.beginDragWithFiles
+editing/pasteboard/file-input-files-access.html
+
 # ------- failing editing tests
 editing/deleting/delete-to-end-of-paragraph.html
 editing/execCommand/enabling-and-selection-2.html
@@ -162,7 +165,6 @@ fast/forms/button-cannot-be-nested.html
 fast/forms/button-spacebar-click.html
 fast/forms/control-restrict-line-height.html
 fast/forms/drag-into-textarea.html
-fast/forms/dragging-to-file-input.html
 fast/forms/focus-control-to-page.html
 fast/forms/focus-selection-input.html
 fast/forms/focus-selection-textarea.html

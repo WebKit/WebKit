@@ -26,11 +26,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #import "DumpRenderTree.h"
 
 #import "AccessibilityController.h"
 #import "CheckedMalloc.h"
+#import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreePasteboard.h"
 #import "DumpRenderTreeWindow.h"
 #import "EditingDelegate.h"
@@ -1091,6 +1092,8 @@ static void runTest(const string& testPathOrURL)
 
     gLayoutTestController = new LayoutTestController(testURL, expectedPixelHash);
     topLoadingFrame = nil;
+    ASSERT(!draggingInfo); // the previous test should have called eventSender.mouseUp to drop!
+    releaseAndZero(&draggingInfo);
     done = NO;
 
     gLayoutTestController->setIconDatabaseEnabled(false);

@@ -1,8 +1,0 @@
-This tests that you can't drag a file onto a disabled <input type="file">
-
-To test manually you need to attempt to drag a file onto the file input below
-
-
-
-PASS: Could not drop file on to the disabled file input
-
