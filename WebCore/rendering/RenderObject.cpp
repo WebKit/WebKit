@@ -1022,34 +1022,6 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
                BSBottom, Color(oc), style->color(), os, ow, ow);
 }
 
-
-void RenderObject::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool)
-{
-    if (!firstChild()) {
-        FloatPoint absPos = localToAbsolute(FloatPoint());
-        absoluteRects(rects, absPos.x(), absPos.y());
-        return;
-    }
-
-    unsigned offset = start;
-    for (RenderObject* child = childAt(start); child && offset < end; child = child->nextSibling(), ++offset) {
-        FloatPoint absPos = child->localToAbsolute(FloatPoint());
-        child->absoluteRects(rects, absPos.x(), absPos.y());
-    }
-}
-
-void RenderObject::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start, unsigned end, bool)
-{
-    if (!firstChild()) {
-        absoluteQuads(quads);
-        return;
-    }
-
-    unsigned offset = start;
-    for (RenderObject* child = childAt(start); child && offset < end; child = child->nextSibling(), ++offset)
-        child->absoluteQuads(quads);
-}
-
 IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)
 {
     if (useTransforms) {

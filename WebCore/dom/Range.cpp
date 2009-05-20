@@ -1605,9 +1605,10 @@ void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight)
         RenderObject* r = node->renderer();
         if (!r || !r->isText())
             continue;
+        RenderText* renderText = toRenderText(r);
         int startOffset = node == startContainer ? m_start.offset() : 0;
         int endOffset = node == endContainer ? m_end.offset() : INT_MAX;
-        r->absoluteRectsForRange(rects, startOffset, endOffset, useSelectionHeight);
+        renderText->absoluteRectsForRange(rects, startOffset, endOffset, useSelectionHeight);
     }
 }
 

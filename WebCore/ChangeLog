@@ -1,3 +1,19 @@
+2009-05-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Make absoluteRectsForRange and absoluteQuadsForRange non-virtual
+        and only exist on RenderText.
+
+        * dom/Range.cpp:
+        (WebCore::Range::textRects):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight): Use absoluteQuads instead
+        of absoluteQuadsForRange since no range is being specifiec.
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderText.h:
+
 2009-05-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
