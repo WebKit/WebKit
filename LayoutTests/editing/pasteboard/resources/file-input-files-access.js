@@ -7,8 +7,8 @@ document.body.appendChild(fileInput);
 
 function moveMouseToCenterOfElement(element)
 {
-    var centerX = fileInput.offsetLeft + fileInput.offsetWidth / 2;
-    var centerY = fileInput.offsetTop + fileInput.offsetHeight / 2;
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
     eventSender.mouseMoveTo(centerX, centerY);
 }
 
@@ -83,7 +83,7 @@ function runTest()
 
     debug("Dragging a file with URL encoded characters to a file input control:")
     testDraggingFiles([
-        { 'path': 'resources/File With Spaces! For Drägging?.gif', 'name' : 'File With Spaces! For Drägging?.gif', 'size' : 1476 }
+        { 'path': 'resources/File With Spaces! For Dragging?.gif', 'name' : 'File With Spaces! For Dragging?.gif', 'size' : 1476 }
     ]);
 
     // Directory dragging behavior is covered by

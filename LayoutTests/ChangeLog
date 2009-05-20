@@ -1,3 +1,30 @@
+2009-05-20  Eric Seidel  <eric@webkit.org>
+
+        Build fix only, no review.
+
+        Fix windows and tiger builds after r43890
+
+        Commit r43890 caused:
+        svn: Can't convert string from 'UTF-8' to native encoding:
+        svn: LayoutTests/editing/pasteboard/resources/File With Spaces! For Dra?\204?\136gging?.gif
+        On both the windows and tiger buildbots.  According to:
+        http://svnbook.red-bean.com/en/1.2/svn.advanced.l10n.html
+        this is intentional behavior, and due to the fact that the default
+        LC_CTYPE for Tiger and Windows makes Subversion think the filesystems
+        do not support utf8.
+
+        The fix would be to execute:
+        export LC_CTYPE=en_US.UTF-8
+        On all affected machines.  But since that's not going to happen,
+        I'm removing the utf8 chars from this filename.
+
+        This makes the drag-drop test weaker, but I see no other option.
+
+        * editing/pasteboard/resources/File With Spaces! For Dragging?.gif: Renamed from "LayoutTests/editing/pasteboard/resources/File With Spaces! For Dra\314\210gging?.gif".
+        * editing/pasteboard/resources/file-input-files-access.js:
+        (moveMouseToCenterOfElement): use the unused argument
+        (runTest): fix to use the ansii name
+
 2009-05-20  Darin Adler  <darin@apple.com>
 
         Removed stray file left after some check-ins earlier today.

@@ -17,9 +17,9 @@ PASS fileInput.files.length is 1
 PASS fileInput.files[0].fileName is "apple.gif"
 PASS fileInput.files[0].fileSize is 1476
 Dragging a file with URL encoded characters to a file input control:
-PASS fileInput.value is "File With Spaces! For Drägging?.gif"
+PASS fileInput.value is "File With Spaces! For Dragging?.gif"
 PASS fileInput.files.length is 1
-PASS fileInput.files[0].fileName is "File With Spaces! For Drägging?.gif"
+PASS fileInput.files[0].fileName is "File With Spaces! For Dragging?.gif"
 PASS fileInput.files[0].fileSize is 1476
 Dragging a directory onto an file input control:
 FAIL fileInput.value should be . Was directory-for-dragging.
