@@ -1,3 +1,10 @@
+2009-05-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        CURL backend build fix. Make sure URL is always set.
+        
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+
 2009-05-20  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by George Staikos.
