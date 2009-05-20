@@ -36,6 +36,8 @@
 #include "V8CustomEventListener.h"
 #include "V8Proxy.h"
 
+#include "Base64.h"
+#include "ExceptionCode.h"
 #include "DOMTimer.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
@@ -43,16 +45,102 @@
 #include "HTMLCollection.h"
 #include "Page.h"
 #include "PlatformScreen.h"
+#include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
-
 
 // Horizontal and vertical offset, from the parent content area, around newly
 // opened popups that don't specify a location.
 static const int popupTilePixels = 10;
 
 namespace WebCore {
+
+v8::Handle<v8::Value> V8Custom::WindowSetTimeoutImpl(const v8::Arguments& args, bool singleShot)
+{
+    int argumentCount = args.Length();
+
+    if (argumentCount < 1)
+        return v8::Undefined();
+
+    DOMWindow* imp = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, args.Holder());
+
+    if (!imp->frame())
+        return v8::Undefined();
+
+    if (!V8Proxy::CanAccessFrame(imp->frame(), true))
+        return v8::Undefined();
+
+    ScriptExecutionContext* scriptContext = static_cast<ScriptExecutionContext*>(imp->frame()->document());
+
+    v8::Handle<v8::Value> function = args[0];
+
+    int32_t timeout = 0;
+    if (argumentCount >= 2) 
+        timeout = args[1]->Int32Value();
+
+    int id;
+    if (function->IsString()) {
+        // Don't allow setting timeouts to run empty functions!
+        // (Bug 1009597)
+        WebCore::String functionString = toWebCoreString(function);
+        if (functionString.length() == 0)
+            return v8::Undefined();
+
+        id = DOMTimer::install(scriptContext, new ScheduledAction(functionString), timeout, singleShot);
+    } else if (function->IsFunction()) {
+        int paramCount = argumentCount >= 2 ? argumentCount - 2 : 0;
+        v8::Local<v8::Value>* params = 0;
+        if (paramCount > 0) {
+            params = new v8::Local<v8::Value>[paramCount];
+            for (int i = 0; i < paramCount; i++)
+                // parameters must be globalized
+                params[i] = args[i+2];
+        }
+
+        // params is passed to action, and released in action's destructor
+        ScheduledAction* action = new ScheduledAction(v8::Handle<v8::Function>::Cast(function), paramCount, params);
+
+        delete[] params;
+
+        id = DOMTimer::install(scriptContext, action, timeout, singleShot);
+    } else
+        // FIXME(fqian): what's the right return value if failed.
+        return v8::Undefined();
+
+    return v8::Integer::New(id);
+}
+
+static bool isAscii(const String& str)
+{
+    for (size_t i = 0; i < str.length(); i++) {
+        if (str[i] > 0xFF)
+            return false;
+    }
+    return true;
+}
+
+static v8::Handle<v8::Value> convertBase64(const String& str, bool encode)
+{
+    if (!isAscii(str)) {
+        V8Proxy::SetDOMException(INVALID_CHARACTER_ERR);
+        return notHandledByInterceptor();
+    }
+
+    Vector<char> inputCharacters(str.length());
+    for (size_t i = 0; i < str.length(); i++)
+        inputCharacters[i] = static_cast<char>(str[i]);
+    Vector<char> outputCharacters;
+
+    if (encode)
+        base64Encode(inputCharacters, outputCharacters);
+    else {
+        if (!base64Decode(inputCharacters, outputCharacters))
+            return throwError("Cannot decode base64", V8Proxy::GENERAL_ERROR);
+    }
+
+    return v8String(String(outputCharacters.data(), outputCharacters.size()));
+}
 
 ACCESSOR_GETTER(DOMWindowEvent)
 {
@@ -66,7 +154,7 @@ ACCESSOR_GETTER(DOMWindowEvent)
 
 ACCESSOR_GETTER(DOMWindowCrypto)
 {
-    // TODO: Implement me.
+    // FIXME: Implement me.
     return v8::Undefined();
 }
 
@@ -120,7 +208,7 @@ CALLBACK_FUNC_DECL(DOMWindowAddEventListener)
     if (!doc)
         return v8::Undefined();
 
-    // TODO: Check if there is not enough arguments
+    // FIXME: Check if there is not enough arguments
     V8Proxy* proxy = V8Proxy::retrieve(imp->frame());
     if (!proxy)
         return v8::Undefined();
@@ -205,6 +293,136 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
     return v8::Undefined();
 }
 
+CALLBACK_FUNC_DECL(DOMWindowAtob)
+{
+    INC_STATS("DOM.DOMWindow.atob()");
+    DOMWindow* imp = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, args.Holder());
+
+    if (!V8Proxy::CanAccessFrame(imp->frame(), true))
+        return v8::Undefined();
+
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::SYNTAX_ERROR);
+
+    if (args[0]->IsNull())
+        return v8String("");
+
+    String str = toWebCoreString(args[0]);
+    return convertBase64(str, false);
+}
+
+CALLBACK_FUNC_DECL(DOMWindowBtoa)
+{
+    INC_STATS("DOM.DOMWindow.btoa()");
+    DOMWindow* imp = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, args.Holder());
+
+    if (!V8Proxy::CanAccessFrame(imp->frame(), true))
+        return v8::Undefined();
+
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::SYNTAX_ERROR);
+
+    if (args[0]->IsNull())
+        return v8String("");
+
+    String str = toWebCoreString(args[0]);
+    return convertBase64(str, true);
+}
+
+// FIXME(fqian): returning string is cheating, and we should
+// fix this by calling toString function on the receiver.
+// However, V8 implements toString in JavaScript, which requires
+// switching context of receiver. I consider it is dangerous.
+CALLBACK_FUNC_DECL(DOMWindowToString)
+{
+    INC_STATS("DOM.DOMWindow.toString()");
+    return args.This()->ObjectProtoToString();
+}
+
+CALLBACK_FUNC_DECL(DOMWindowNOP)
+{
+    INC_STATS("DOM.DOMWindow.nop()");
+    return v8::Undefined();
+}
+
+static String eventNameFromAttributeName(const String& name)
+{
+    ASSERT(name.startsWith("on"));
+    String eventType = name.substring(2);
+
+    if (eventType.startsWith("w")) {
+        switch(eventType[eventType.length() - 1]) {
+        case 't':
+            eventType = "webkitAnimationStart";
+            break;
+        case 'n':
+            eventType = "webkitAnimationIteration";
+            break;
+        case 'd':
+            ASSERT(eventType.length() > 7);
+            if (eventType[7] == 'a')
+                eventType = "webkitAnimationEnd";
+            else
+                eventType = "webkitTransitionEnd";
+            break;
+        }
+    }
+
+    return eventType;
+}
+
+ACCESSOR_SETTER(DOMWindowEventHandler)
+{
+    v8::Handle<v8::Object> holder = V8Proxy::LookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
+    if (holder.IsEmpty())
+        return;
+
+    DOMWindow* imp = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, holder);
+    if (!imp->frame())
+        return;
+
+    Document* doc = imp->frame()->document();
+    if (!doc)
+        return;
+
+    String key = toWebCoreString(name);
+    String eventType = eventNameFromAttributeName(key);
+
+    if (value->IsNull()) {
+        // Clear the event listener
+        imp->clearAttributeEventListener(eventType);
+    } else {
+        V8Proxy* proxy = V8Proxy::retrieve(imp->frame());
+        if (!proxy)
+            return;
+
+        RefPtr<EventListener> listener =
+            proxy->FindOrCreateV8EventListener(value, true);
+        if (listener)
+            imp->setAttributeEventListener(eventType, listener);
+    }
+}
+
+ACCESSOR_GETTER(DOMWindowEventHandler)
+{
+    v8::Handle<v8::Object> holder = V8Proxy::LookupDOMWrapper(V8ClassIndex::DOMWINDOW, info.This());
+    if (holder.IsEmpty())
+        return v8::Undefined();
+
+    DOMWindow* imp = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, holder);
+    if (!imp->frame())
+        return v8::Undefined();
+
+    Document* doc = imp->frame()->document();
+    if (!doc)
+        return v8::Undefined();
+
+    String key = toWebCoreString(name);
+    String eventType = eventNameFromAttributeName(key);
+
+    EventListener* listener = imp->getAttributeEventListener(eventType);
+    return V8Proxy::EventListenerToV8Object(listener);
+}
 
 static bool canShowModalDialogNow(const Frame* frame)
 {
@@ -646,6 +864,54 @@ CALLBACK_FUNC_DECL(DOMWindowClearInterval)
     INC_STATS("DOM.DOMWindow.clearInterval");
     ClearTimeoutImpl(args);
     return v8::Undefined();
+}
+
+NAMED_ACCESS_CHECK(DOMWindow)
+{
+    ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::DOMWINDOW);
+    v8::Handle<v8::Value> window = V8Proxy::LookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
+    if (window.IsEmpty())
+        return false;  // the frame is gone.
+
+    DOMWindow* targetWindow = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, window);
+
+    ASSERT(targetWindow);
+
+    Frame* target = targetWindow->frame();
+    if (!target)
+        return false;
+
+    if (key->IsString()) {
+        String name = toWebCoreString(key);
+
+        // Allow access of GET and HAS if index is a subframe.
+        if ((type == v8::ACCESS_GET || type == v8::ACCESS_HAS) && target->tree()->child(name))
+            return true;
+    }
+
+    return V8Proxy::CanAccessFrame(target, false);
+}
+
+INDEXED_ACCESS_CHECK(DOMWindow)
+{
+    ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::DOMWINDOW);
+    v8::Handle<v8::Value> window = V8Proxy::LookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
+    if (window.IsEmpty())
+        return false;
+
+    DOMWindow* targetWindow = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, window);
+
+    ASSERT(targetWindow);
+
+    Frame* target = targetWindow->frame();
+    if (!target)
+        return false;
+
+    // Allow access of GET and HAS if index is a subframe.
+    if ((type == v8::ACCESS_GET || type == v8::ACCESS_HAS) && target->tree()->child(index))
+        return true;
+
+    return V8Proxy::CanAccessFrame(target, false);
 }
 
 } // namespace WebCore

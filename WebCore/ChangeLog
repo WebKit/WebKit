@@ -1,3 +1,21 @@
+2009-05-20  Nate Chapin  <japhet@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstream V8 bindings for V8DomWindow.
+        https://bugs.webkit.org/show_bug.cgi?id=25869
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl): Moved from v8_custom.cpp.
+        (WebCore::isAscii): Moved from v8_custom.cpp.
+        (WebCore::convertBase64): Moved from v8_custom.cpp.
+        (WebCore::CALLBACK_FUNC_DECL): Moved from v8_custom.cpp.
+        (WebCore::eventNameFromAttributeName): Moved from v8_custom.cpp.
+        (WebCore::ACCESSOR_SETTER): Moved from v8_custom.cpp.
+        (WebCore::ACCESSOR_GETTER): Moved from v8_custom.cpp.
+        (WebCore::NAMED_ACCESS_CHECK): Moved from v8_custom.cpp.
+        (WebCore::INDEXED_ACCESS_CHECK): Moved from v8_custom.cpp.
+
 2009-05-21  Christian Dywan  <christian@twotoasts.de>
 
         Rubberstamped by Gustavo Noronha.
