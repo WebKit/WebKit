@@ -1,3 +1,12 @@
+2009-05-20  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha.
+
+        * GNUmakefile.am:
+        * platform/gtk/guriescape.c:
+        * platform/gtk/guriescape.h: Remove copies of g_uri_escape_string and
+        g_uri_unescape_string now that we require Glib 2.16.
+
 2009-05-20  David Levin  <levin@chromium.org>
 
         Not Reviewed, build fix.
