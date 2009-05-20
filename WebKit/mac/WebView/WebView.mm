@@ -3642,6 +3642,36 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return _private->currentNodeHighlight;
 }
 
+- (NSView *)previousValidKeyView
+{
+    NSView *result = [super previousValidKeyView];
+
+    // Work around AppKit bug 6905484. If the result is a view that's inside this one, it's
+    // possible it is the wrong answer, because the fact that it's a descendant causes the
+    // code that implements key view redirection to fail; this means we won't redirect to
+    // the toolbar, for example, when we hit the edge of a window. Since the bug is specific
+    // to cases where the receiver of previousValidKeyView is an ancestor of the last valid
+    // key view in the loop, we can sidestep it by walking along previous key views until
+    // we find one that is not a superview, then using that to call previousValidKeyView.
+
+    if (![result isDescendantOf:self])
+        return result;
+
+    // Use a visited set so we don't loop indefinitely when walking crazy key loops.
+    // AppKit uses such sets internally and we want our loop to be as robust as its loops.
+    RetainPtr<CFMutableSetRef> visitedViews = CFSetCreateMutable(0, 0, 0);
+    CFSetAddValue(visitedViews.get(), result);
+
+    NSView *previousView = self;
+    do {
+        CFSetAddValue(visitedViews.get(), previousView);
+        previousView = [previousView previousKeyView];
+        if (!previousView || CFSetGetValue(visitedViews.get(), previousView))
+            return result;
+    } while ([result isDescendantOf:previousView]);
+    return [previousView previousValidKeyView];
+}
+
 @end
 
 @implementation WebView (WebIBActions)
