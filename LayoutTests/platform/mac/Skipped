@@ -73,3 +73,9 @@ fast/xhtmlmp/check-rootelement.xhtml
 fast/xhtmlmp/noscript.xhtml
 fast/xhtmlmp/noscript-in-multiscripts.xhtml
 fast/xhtmlmp/noscript-nested.xhtml
+
+# Tests for WCSS marquee extension which is not verified
+fast/wcss/marquee-dir.xhtml
+fast/wcss/marquee-loop.xhtml
+fast/wcss/marquee-speed.xhtml
+fast/wcss/marquee-style.xhtml
