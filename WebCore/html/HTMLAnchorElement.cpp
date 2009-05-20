@@ -288,7 +288,7 @@ void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
                 if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
                     prefetchDNS(document()->completeURL(parsedURL).host());
             }
-            if (document()->page() && !document()->page()->javaScriptURLsAreAllowed() && protocolIs(parsedURL, "javascript")) {
+            if (document()->page() && !document()->page()->javaScriptURLsAreAllowed() && protocolIsJavaScript(parsedURL)) {
                 setIsLink(false);
                 attr->setValue(nullAtom);
             }

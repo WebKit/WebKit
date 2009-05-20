@@ -40,7 +40,7 @@ namespace WebCore {
 
 static inline bool allowSettingJavascriptURL(ExecState* exec, HTMLFrameElement* imp, const String& value)
 {
-    if (protocolIs(parseURL(value), "javascript")) {
+    if (protocolIsJavaScript(parseURL(value))) {
         if (!checkNodeSecurity(exec, imp->contentDocument()))
             return false;
     }

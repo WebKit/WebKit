@@ -191,7 +191,7 @@ static void appendQuotedURLAttributeValue(Vector<UChar>& result, const String& u
 {
     UChar quoteChar = '\"';
     String strippedURLString = urlString.stripWhiteSpace();
-    if (protocolIs(strippedURLString, "javascript")) {
+    if (protocolIsJavaScript(strippedURLString)) {
         // minimal escaping for javascript urls
         if (strippedURLString.contains('"')) {
             if (strippedURLString.contains('\''))

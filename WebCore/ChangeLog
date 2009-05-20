@@ -1,3 +1,55 @@
+2009-05-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <rdar://problem/6904941> and https://bugs.webkit.org/show_bug.cgi?id=25300
+
+        KURL parsing changes back in r30243 and r30815 made javascript urls that use the form
+        "javascript://" be detected as invalid hierarchical URLs.  When a KURL is marked as
+        invalid, you can no longer ask it a question such as "is your protocol javascript?"
+        Therefore FrameLoader wouldn't recognize them as javascript URLs and instead try to
+        navigated to them.
+
+        URL parsing rules aside, such URLs are in use in the wild (Microsoft's Virtual Earth 
+        being a high profile example) and actually represent valid javascript.
+
+        Whenever checking for javascript urls, the new protocolIsJavaScript() should be used
+        as it functions on a String which doesn't have to pass KURLs parsing rules. 
+
+        Test: fast/loader/javascript-url-hierarchical-execution.html
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::setValue): Use protocolIsJavaScript().
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation): Ditto.
+        (WebCore::createWindow): Ditto.
+        (WebCore::JSDOMWindow::open): Ditto.
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::allowSettingSrcToJavascriptURL): Ditto.
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        (WebCore::allowSettingJavascriptURL): Ditto.
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        (WebCore::JSHTMLIFrameElement::setSrc): Ditto.
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::navigateIfAllowed): Ditto.
+        (WebCore::JSLocation::reload): Ditto.
+        * editing/markup.cpp:
+        (WebCore::appendQuotedURLAttributeValue): Ditto.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseMappedAttribute): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFrame): Ditto.
+        (WebCore::FrameLoader::submitForm): Ditto.
+        (WebCore::FrameLoader::executeIfJavaScriptURL): Ditto.
+        
+        * platform/KURL.cpp:
+        (WebCore::KURL::init): Use protocolIsJavaScript().
+        (WebCore::KURL::protocolIs): ASSERT that the protocol being asked about is not javascript.
+           Such checks should go through protocolIsJavaScript() instead.
+        (WebCore::encodeRelativeString): Use protocolIsJavaScript().
+        (WebCore::protocolIsJavaScript):
+        * platform/KURL.h:
+
 2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Anders Carlsson.

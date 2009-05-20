@@ -444,7 +444,7 @@ bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String
     // Support for <frame src="javascript:string">
     KURL scriptURL;
     KURL url;
-    if (protocolIs(urlString, "javascript")) {
+    if (protocolIsJavaScript(urlString)) {
         scriptURL = completeURL(urlString); // completeURL() encodes the URL.
         url = blankURL();
     } else
@@ -530,7 +530,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     if (u.isEmpty())
         return;
 
-    if (u.protocolIs("javascript")) {
+    if (protocolIsJavaScript(u)) {
         m_isExecutingJavaScriptFormAction = true;
         executeIfJavaScriptURL(u, false, false);
         m_isExecutingJavaScriptFormAction = false;
@@ -762,7 +762,7 @@ void FrameLoader::didExplicitOpen()
 
 bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool replaceDocument)
 {
-    if (!url.protocolIs("javascript"))
+    if (!protocolIsJavaScript(url))
         return false;
 
     if (m_frame->page() && !m_frame->page()->javaScriptURLsAreAllowed())

@@ -343,7 +343,7 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
     // For compatibility with Win IE, treat backslashes as if they were slashes,
     // as long as we're not dealing with javascript: or data: URLs.
     String rel = relative;
-    if (rel.contains('\\') && !(protocolIs(rel, "javascript") || protocolIs(rel, "data")))
+    if (rel.contains('\\') && !(protocolIsJavaScript(rel) || protocolIs(rel, "data")))
         rel = substituteBackslashes(rel);
 
     String* originalString = &rel;
@@ -631,10 +631,16 @@ static void assertProtocolIsGood(const char* protocol)
 
 bool KURL::protocolIs(const char* protocol) const
 {
-    // Do the comparison without making a new string object.
     assertProtocolIsGood(protocol);
+
+    // JavaScript URLs are "valid" and should be executed even if KURL decides they are invalid.
+    // The free function protocolIsJavaScript() should be used instead. 
+    ASSERT(strcmp(protocol, "javascript") != 0);
+
     if (!m_isValid)
         return false;
+
+    // Do the comparison without making a new string object.
     for (int i = 0; i < m_schemeEnd; ++i) {
         if (!protocol[i] || toASCIILower(m_string[i]) != protocol[i])
             return false;
@@ -1549,7 +1555,7 @@ static void encodeRelativeString(const String& rel, const TextEncoding& encoding
     TextEncoding pathEncoding(UTF8Encoding()); // Path is always encoded as UTF-8; other parts may depend on the scheme.
 
     int pathEnd = -1;
-    if (encoding != pathEncoding && encoding.isValid() && !protocolIs(rel, "mailto") && !protocolIs(rel, "data") && !protocolIs(rel, "javascript")) {
+    if (encoding != pathEncoding && encoding.isValid() && !protocolIs(rel, "mailto") && !protocolIs(rel, "data") && !protocolIsJavaScript(rel)) {
         // Find the first instance of either # or ?, keep pathEnd at -1 otherwise.
         pathEnd = findFirstOf(s.data(), s.size(), 0, "#?");
     }
@@ -1613,6 +1619,11 @@ bool protocolIs(const String& url, const char* protocol)
         if (toASCIILower(url[i]) != protocol[i])
             return false;
     }
+}
+
+bool protocolIsJavaScript(const String& url)
+{
+    return protocolIs(url, "javascript");
 }
 
 String mimeTypeFromDataURL(const String& url)

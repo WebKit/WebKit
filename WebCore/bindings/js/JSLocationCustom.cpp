@@ -146,7 +146,7 @@ void JSLocation::defineGetter(ExecState* exec, const Identifier& propertyName, J
 static void navigateIfAllowed(ExecState* exec, Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
 {
     Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!url.protocolIs("javascript") || allowsAccessFromFrame(exec, frame)) {
+    if (!protocolIsJavaScript(url) || allowsAccessFromFrame(exec, frame)) {
         bool userGesture = activeFrame->script()->processingUserGesture();
         frame->loader()->scheduleLocationChange(url.string(), activeFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, userGesture);
     }
@@ -281,7 +281,7 @@ JSValue JSLocation::reload(ExecState* exec, const ArgList&)
     if (!window->allowsAccessFrom(exec))
         return jsUndefined();
 
-    if (!frame->loader()->url().protocolIs("javascript") || (window && window->allowsAccessFrom(exec))) {
+    if (!protocolIsJavaScript(frame->loader()->url()) || (window && window->allowsAccessFrom(exec))) {
         bool userGesture = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame()->script()->processingUserGesture();
         frame->loader()->scheduleRefresh(userGesture);
     }

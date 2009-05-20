@@ -251,8 +251,11 @@ const KURL& blankURL();
 
 // Functions to do URL operations on strings.
 // These are operations that aren't faster on a parsed URL.
+// These are also different from the KURL functions in that they don't require the string to be a valid and parsable URL.
+// This is especially important because valid javascript URLs are not necessarily considered valid by KURL.
 
 bool protocolIs(const String& url, const char* protocol);
+bool protocolIsJavaScript(const String& url);
 
 String mimeTypeFromDataURL(const String& url);
 

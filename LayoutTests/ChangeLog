@@ -1,3 +1,12 @@
+2009-05-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <rdar://problem/6904941> and https://bugs.webkit.org/show_bug.cgi?id=25300
+
+        * fast/loader/javascript-url-hierarchical-execution-expected.txt: Added.
+        * fast/loader/javascript-url-hierarchical-execution.html: Added.
+
 2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Anders Carlsson.
