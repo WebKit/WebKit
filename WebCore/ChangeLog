@@ -1,3 +1,14 @@
+2009-05-20  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25856
+        [Qt] notify an image has been drawn, to help Cache purge alive decoded data.
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::draw):
+
 2009-05-20  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY, layout tests fix.
