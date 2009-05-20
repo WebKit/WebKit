@@ -2,6 +2,20 @@
 
         Build fix only, no review.
 
+        Remove dragging subtest from 43890 which used ? char
+
+        ? is a reserved char on Windows. After removing both the ü and now the ? this 
+        subtest is now useless, so I'm removing it entirely.
+
+        * editing/pasteboard/file-input-files-access-expected.txt:
+        * editing/pasteboard/resources/File With Spaces! For Dragging?.gif: Removed.
+        * editing/pasteboard/resources/file-input-files-access.js:
+        (runTest):
+
+2009-05-20  Eric Seidel  <eric@webkit.org>
+
+        Build fix only, no review.
+
         Fix windows and tiger builds after r43890
 
         Commit r43890 caused:

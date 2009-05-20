@@ -81,11 +81,6 @@ function runTest()
         { 'path': 'resources/apple.gif', 'name' : 'apple.gif', 'size' : 1476 }
     ]);
 
-    debug("Dragging a file with URL encoded characters to a file input control:")
-    testDraggingFiles([
-        { 'path': 'resources/File With Spaces! For Dragging?.gif', 'name' : 'File With Spaces! For Dragging?.gif', 'size' : 1476 }
-    ]);
-
     // Directory dragging behavior is covered by
     // https://bugs.webkit.org/show_bug.cgi?id=25852
     debug("Dragging a directory onto an file input control:")
