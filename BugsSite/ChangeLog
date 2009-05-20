@@ -1,3 +1,12 @@
+2009-05-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Make PrettyPatch understand quoted filenames in git diffs.
+        https://bugs.webkit.org/show_bug.cgi?id=25881
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2009-05-15  Simon Fraser  <simon.fraser@apple.com>
 
         Carrying forwards Darin Adler's rubber stamp

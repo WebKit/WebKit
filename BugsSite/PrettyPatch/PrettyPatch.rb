@@ -29,7 +29,7 @@ public
 private
     DIFF_HEADER_FORMATS = [
         /^Index: (.*)\r?$/,
-        /^diff --git a\/.+ b\/(.+)\r?$/,
+        /^diff --git "?a\/.+"? "?b\/(.+)"?\r?$/,
         /^\+\+\+ ([^\t]+)(\t.*)?\r?$/
     ]
 
