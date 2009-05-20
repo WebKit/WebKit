@@ -1,8 +1,14 @@
 2009-05-20  Eric Seidel  <eric@webkit.org>
 
+        Fix bug URL in ChangeLogs in r43903.
+        https://bugs.webkit.org/show_bug.cgi?id=25742
+
+2009-05-20  Eric Seidel  <eric@webkit.org>
+
         No review, build fix only.
 
         Add files I missed in r43903.
+        https://bugs.webkit.org/show_bug.cgi?id=25742
 
         Takeshi's patch was right, I just failed to add the files when landing.
 
@@ -14,7 +20,7 @@
         Reviewed by Eric Seidel.
 
         Bug 24539: Fix RenderThemeChromiumWin::paintTextFieldInternal() not to hide background image.
-        https://bugs.webkit.org/show_bug.cgi?id=24539
+        https://bugs.webkit.org/show_bug.cgi?id=25742
 
         Changed the test fast/forms/select-style.html to exercise the change on
         RenderThemeChromiumWin::paintTextFieldInternal() on Chromium. Replaced expected results for

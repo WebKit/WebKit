@@ -1,9 +1,14 @@
+2009-05-20  Eric Seidel  <eric@webkit.org>
+
+        Fix bug URL in ChangeLogs in r43903.
+        https://bugs.webkit.org/show_bug.cgi?id=25742
+
 2009-05-20  Takeshi Yoshino <tyoshino@google.com>
 
         Reviewed by Eric Seidel.
 
         Bug 24539: Fix RenderThemeChromiumWin::paintTextFieldInternal() not to hide background image.
-        https://bugs.webkit.org/show_bug.cgi?id=24539
+        https://bugs.webkit.org/show_bug.cgi?id=25742
 
         Fix RenderThemeChromiumWin::paintTextFieldInternal().
 
