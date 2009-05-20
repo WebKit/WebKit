@@ -49,4 +49,18 @@ void AXObjectCache::handleFocusedUIElementChanged()
 {
 }
 
+void AXObjectCache::handleFocusedUIElementChangedWithRenderers(RenderObject* oldFocusedRender, RenderObject* newFocusedRender)
+{
+    RefPtr<AccessibilityObject> oldObject = getOrCreate(oldFocusedRender);
+    if (oldObject) {
+        g_signal_emit_by_name(oldObject->wrapper(), "focus-event", false);
+        g_signal_emit_by_name(oldObject->wrapper(), "state-change", "focused", false);
+    }
+    RefPtr<AccessibilityObject> newObject = getOrCreate(newFocusedRender);
+    if (newObject) {
+        g_signal_emit_by_name(newObject->wrapper(), "focus-event", true);
+        g_signal_emit_by_name(newObject->wrapper(), "state-change", "focused", true);
+    }
+}
+
 } // namespace WebCore

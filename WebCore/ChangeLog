@@ -1,3 +1,23 @@
+2009-05-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Implement AtkObject::focus-event and
+        AtkObject::state-changed:focused signal emission.
+
+        Adds a new handleFocusedUIElementChangedWithRenderers, only in the
+        GTK port, called at the same point than
+        handleFocusedUIElementChanged but with two parameters, the old and
+        the newly focused RenderObjects. We need this, since the ATK
+        signals require us to pass the objects involved in the focus
+        change as arguments.
+
+        * accessibility/AXObjectCache.h:
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::handleFocusedUIElementChangedWithRenderers):
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+
 2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.
