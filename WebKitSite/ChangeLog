@@ -1,3 +1,12 @@
+2009-05-20  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        Prevent search engines from getting creative in their descriptions of webkit.org content.
+
+        * blog/wp-content/themes/webkit/header.php:
+        * header.inc:
+
 2009-05-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.

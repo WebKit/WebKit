@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <meta name="robots" content="noodp">
 
     <title>The WebKit Open Source Project<?php if (isset($title)) { echo " - " . $title; } ?></title>
 
