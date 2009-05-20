@@ -1071,7 +1071,13 @@ public:
         IntRect clipRect(static_cast<FrameView*>(parentScrollView)->windowClipRect());
         clipRect.move(-windowRect.x(), -windowRect.y());
         clipRect.intersect(platformWidget()->rect());
-        platformWidget()->setMask(QRegion(clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height()));
+
+        QRegion clipRegion = QRegion(clipRect);
+        platformWidget()->setMask(clipRegion);
+
+        // if setMask is set with an empty QRegion, no clipping will
+        // be performed, so in that case we hide the platformWidget
+        platformWidget()->setVisible(!clipRegion.isEmpty());
     }
 };
 
