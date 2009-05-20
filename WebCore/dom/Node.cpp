@@ -90,6 +90,10 @@
 #include "SVGUseElement.h"
 #endif
 
+#if ENABLE(XHTMLMP)
+#include "HTMLNoScriptElement.h"
+#endif
+
 #define DUMP_NODE_STATISTICS 0
 
 using namespace std;
@@ -1298,8 +1302,14 @@ void Node::createRendererIfNeeded()
 
 PassRefPtr<RenderStyle> Node::styleForRenderer()
 {
-    if (isElementNode())
-        return document()->styleSelector()->styleForElement(static_cast<Element*>(this));
+    if (isElementNode()) {
+        bool allowSharing = true;
+#if ENABLE(XHTMLMP)
+        // noscript needs the display property protected - it's a special case
+        allowSharing = localName() != HTMLNames::noscriptTag.localName();
+#endif
+        return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, allowSharing);
+    }
     return parentNode() && parentNode()->renderer() ? parentNode()->renderer()->style() : 0;
 }
 

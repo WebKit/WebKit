@@ -426,11 +426,7 @@ public:
 
     virtual void willRemove();
     void createRendererIfNeeded();
-#if ENABLE(XHTMLMP)
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
-#else
     PassRefPtr<RenderStyle> styleForRenderer();
-#endif
     virtual bool rendererIsNeeded(RenderStyle*);
 #if ENABLE(SVG) || ENABLE(XHTMLMP)
     virtual bool childShouldCreateRenderer(Node*) const { return true; }

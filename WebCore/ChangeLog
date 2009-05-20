@@ -1,3 +1,19 @@
+2009-05-20  Yichao Yin  <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23452
+        Change the implementation of HTMLNoScriptElement to avoid the pain of 
+        adding virtual function for XHTMLMP support
+
+        Includes changes suggested by Simon Fraser.
+
+        * dom/Node.cpp:
+        (WebCore::Node::styleForRenderer):
+        * dom/Node.h:
+        * html/HTMLNoScriptElement.cpp:
+        * html/HTMLNoScriptElement.h:
+
 2009-05-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         CURL backend build fix. Make sure URL is always set.
