@@ -2,6 +2,15 @@
 
         Reviewed by George Staikos.
 
+        BUG 25845: [Qt] Fix QtWebKit pkgconfig dependencies
+        <https://bugs.webkit.org/show_bug.cgi?id=25845>
+
+        * WebCore.pro: Remove QtDBus; remove QtXml if Qt >= 4.4
+
+2009-05-20  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by George Staikos.
+
         BUG 25843: [Qt] Remove qt-port build flag
         <https://bugs.webkit.org/show_bug.cgi?id=25843>
 

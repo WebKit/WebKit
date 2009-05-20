@@ -29,7 +29,11 @@ CONFIG(QTDIR_build) {
 
 GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
 win32-*|wince*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
-unix:QMAKE_PKGCONFIG_REQUIRES = QtCore QtDBus QtGui QtNetwork QtXml
+
+unix {
+    QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
+    lessThan(QT_MINOR_VERSION, 4): QMAKE_PKGCONFIG_REQUIRES += QtXml
+}
 
 include($$OUTPUT_DIR/config.pri)
 
@@ -44,13 +48,6 @@ CONFIG(release):!CONFIG(QTDIR_build) {
 
 linux-*: DEFINES += HAVE_STDINT_H
 freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
-
-# PRE-BUILD: make the required config.h file
-#config_h.target = config.h
-#config_h.commands = cp config.h.qmake config.h
-#config_h.depends = config.h.qmake
-#QMAKE_EXTRA_TARGETS += config_h
-#PRE_TARGETDEPS += config.h
 
 DEFINES += BUILD_WEBKIT
 
