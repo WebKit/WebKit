@@ -1,3 +1,14 @@
+2009-05-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Eric Seidel.
+
+        Enable code that was commented out waiting for a way to get a
+        GdkPixbuf from an image, effectively enabling copying images to
+        the clipboard.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeImage):
+
 2009-05-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
