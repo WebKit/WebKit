@@ -115,6 +115,8 @@ public:
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
 
+    virtual bool setCursor(WebCore::PlatformCursorHandle) { return false; }
+
     virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WebCore::AtomicString& type,
         const WebCore::FloatRect& lineRect);
     virtual void paintCustomHighlight(WebCore::Node*, const WebCore::AtomicString& type,

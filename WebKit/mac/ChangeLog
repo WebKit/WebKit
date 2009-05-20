@@ -1,3 +1,10 @@
+2009-05-20  Dan Bernstein  <mitz@apple.com>
+
+        - fix the build after r43918
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::setCursor):
+
 2009-05-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
