@@ -1,3 +1,14 @@
+2009-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler and Kevin Decker.
+
+        WebKit side of <rdar://problem/6895072>
+        
+        Pass the localization as a launch property.
+        
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+
 2009-05-20  Dan Bernstein  <mitz@apple.com>
 
         - fix the build after r43918

@@ -107,9 +107,12 @@ bool NetscapePluginHostManager::spawnPluginHost(WebNetscapePluginPackage *packag
     NSString *pluginHostAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] pathForAuxiliaryExecutable:pluginHostAppName];
     NSString *pluginHostAppExecutablePath = [[NSBundle bundleWithPath:pluginHostAppPath] executablePath];
 
+    RetainPtr<CFStringRef> localization(AdoptCF, WKCopyCFLocalizationPreferredName(NULL));
+    
     NSDictionary *launchProperties = [[NSDictionary alloc] initWithObjectsAndKeys:
                                       pluginHostAppExecutablePath, @"pluginHostPath",
                                       [NSNumber numberWithInt:[package pluginHostArchitecture]], @"cpuType",
+                                      localization.get(), @"localization",
                                       nil];
 
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:launchProperties format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
