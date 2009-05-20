@@ -1,3 +1,14 @@
+2009-05-20  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
+        Add files I missed in r43903.
+
+        Takeshi's patch was right, I just failed to add the files when landing.
+
+        * platform/mac/fast/forms/search-styled-expected.checksum: Added.
+        * platform/mac/fast/forms/search-styled-expected.png: Added.
+
 2009-05-20  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Eric Seidel.
