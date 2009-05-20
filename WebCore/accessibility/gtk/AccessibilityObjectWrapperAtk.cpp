@@ -265,7 +265,16 @@ static AtkRole atkRole(AccessibilityRole role)
 
 static AtkRole webkit_accessible_get_role(AtkObject* object)
 {
-    return atkRole(core(object)->roleValue());
+    AccessibilityObject* AXObject = core(object);
+
+    if (!AXObject)
+        return ATK_ROLE_UNKNOWN;
+
+    // Note: Why doesn't WebCore have a password field for this
+    if (AXObject->isPasswordField())
+        return ATK_ROLE_PASSWORD_TEXT;
+
+    return atkRole(AXObject->roleValue());
 }
 
 static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkStateSet* stateSet)
