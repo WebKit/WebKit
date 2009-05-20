@@ -1,3 +1,15 @@
+2009-05-20  Shinichiro Hamaji  <hamaji@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25417
+        Map CompositeCopy to Skia's kSrc_Mode composite operation.
+
+        Test: fast/canvas/canvas-composite-alpha.html
+
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::):
+
 2009-05-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubber-stamped by Xan Lopez.

@@ -46,7 +46,7 @@ static const struct CompositOpToPorterDuffMode {
     uint8_t mPorterDuffMode;
 } gMapCompositOpsToPorterDuffModes[] = {
     { CompositeClear,           SkPorterDuff::kClear_Mode },
-    { CompositeCopy,            SkPorterDuff::kSrcOver_Mode },  // TODO
+    { CompositeCopy,            SkPorterDuff::kSrc_Mode },
     { CompositeSourceOver,      SkPorterDuff::kSrcOver_Mode },
     { CompositeSourceIn,        SkPorterDuff::kSrcIn_Mode },
     { CompositeSourceOut,       SkPorterDuff::kSrcOut_Mode },
@@ -58,7 +58,7 @@ static const struct CompositOpToPorterDuffMode {
     { CompositeXOR,             SkPorterDuff::kXor_Mode },
     { CompositePlusDarker,      SkPorterDuff::kDarken_Mode },
     { CompositeHighlight,       SkPorterDuff::kSrcOver_Mode },  // TODO
-    { CompositePlusLighter,     SkPorterDuff::kLighten_Mode }
+    { CompositePlusLighter,     SkPorterDuff::kAdd_Mode }
 };
 
 SkPorterDuff::Mode WebCoreCompositeToSkiaComposite(CompositeOperator op)

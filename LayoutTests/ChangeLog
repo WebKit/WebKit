@@ -1,3 +1,12 @@
+2009-05-20  Shinichiro Hamaji  <hamaji@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Layout tests for canvas' composite operations with alpha blending.
+
+        * fast/canvas/canvas-composite-alpha-expected.txt: Added.
+        * fast/canvas/canvas-composite-alpha.html: Added.
+
 2009-05-20  Eric Seidel  <eric@webkit.org>
 
         Build fix only, no review.
