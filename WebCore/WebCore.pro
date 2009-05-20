@@ -108,6 +108,7 @@ CONFIG(QTDIR_build) {
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 !contains(DEFINES, ENABLE_WML=.): DEFINES += ENABLE_WML=0
 !contains(DEFINES, ENABLE_WORKERS=.): DEFINES += ENABLE_WORKERS=1
+!contains(DEFINES, ENABLE_XHTMLMP=.): DEFINES += ENABLE_XHTMLMP=0
 
 # SVG support
 !contains(DEFINES, ENABLE_SVG=0) {
@@ -781,6 +782,7 @@ SOURCES += \
     html/HTMLPreElement.cpp \
     html/HTMLQuoteElement.cpp \
     html/HTMLScriptElement.cpp \
+    html/HTMLNoScriptElement.cpp \
     html/HTMLSelectElement.cpp \
     html/HTMLStyleElement.cpp \
     html/HTMLTableCaptionElement.cpp \
@@ -1542,6 +1544,10 @@ contains(DEFINES, ENABLE_WML=1) {
     wmlnames_b.CONFIG = target_predeps
     wmlnames_b.variable_out = GENERATED_SOURCES
     addExtraCompilerWithHeader(wmlnames_b)
+}
+
+contains(DEFINES, ENABLE_XHTMLMP=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_XHTMLMP=1
 }
 
 contains(DEFINES, ENABLE_SVG=1) {

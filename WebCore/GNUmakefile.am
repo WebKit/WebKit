@@ -1006,6 +1006,8 @@ webcore_sources += \
 	WebCore/html/HTMLQuoteElement.h \
 	WebCore/html/HTMLScriptElement.cpp \
 	WebCore/html/HTMLScriptElement.h \
+	WebCore/html/HTMLNoScriptElement.cpp \
+	WebCore/html/HTMLNoScriptElement.h \
 	WebCore/html/HTMLSelectElement.cpp \
 	WebCore/html/HTMLSelectElement.h \
 	WebCore/html/HTMLStyleElement.cpp \

@@ -1,3 +1,16 @@
+2009-05-19  Yichao Yin <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Add XHTMLMP support to Webkit
+        Update the configure files for building XHTMLMP-enabled WebKit on different platform
+        https://bugs.webkit.org/show_bug.cgi?id=23452
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCoreSources.bkl:
+
 2009-05-19  Antti Koivisto  <antti@apple.com>
 
         I can't figure out how to make this not timing dependent, making it manual test instead.

@@ -623,6 +623,7 @@ This file contains the list of files needed to build WebCore.
         html/HTMLPreElement.cpp
         html/HTMLQuoteElement.cpp
         html/HTMLScriptElement.cpp
+        html/HTMLNoScriptElement.cpp
         html/HTMLSelectElement.cpp
         html/HTMLStyleElement.cpp
         html/HTMLTableCaptionElement.cpp
