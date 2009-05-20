@@ -2,6 +2,22 @@
 
         Reviewed by Simon Hausmann.
 
+        Fix a bug where a non visible plugin would show it self in a
+        sibling frame. The problem was due to our clipping. In Qt,
+        if setMask is set with an empty QRegion, no clipping will
+        be performed, so in that case we hide the PluginContainer
+
+        Added manual test.
+
+        * plugins/qt/PluginContainerQt.cpp:
+        (PluginContainerQt::adjustGeometry):
+        * manual-tests/qt/plugin-sibling-frame-include.html
+        * manual-tests/qt/plugin-sibling-frame.html
+
+2009-05-19  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
         Do not call the parent implementation (Widget::) in show() and hide()
         of the PluginViewQt, as it always changes the visible state of the
         platformWidget (equal to the platformPluginWidget in the Qt port),
