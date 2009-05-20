@@ -1,3 +1,31 @@
+2009-05-19  Yichao Yin  <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by George Staikos.
+
+        Add WCSS marquee extension support to Webkit
+        refer to the specification: WAP-239-WCSS-20011026-a.pdf
+ 
+        Since WCSS is the companion of XHTML Mobile Profile (XHTML MP),
+        this change depends on https://bugs.webkit.org/show_bug.cgi?id=23452
+
+        https://bugs.webkit.org/show_bug.cgi?id=23727
+
+        Tests: fast/wcss/marquee-dir.xhtml
+               fast/wcss/marquee-loop.xhtml
+               fast/wcss/marquee-speed.xhtml
+               fast/wcss/marquee-style.xhtml
+
+        * WebCore.pro:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::updateMarqueePosition):
+        (WebCore::RenderMarquee::timerFired):
+
 2009-05-19  Yichao Yin <yichao.yin@torchmobile.com.cn>
 
         Reviewed by George Staikos.
