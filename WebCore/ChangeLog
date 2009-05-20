@@ -8,7 +8,7 @@
         "javascript://" be detected as invalid hierarchical URLs.  When a KURL is marked as
         invalid, you can no longer ask it a question such as "is your protocol javascript?"
         Therefore FrameLoader wouldn't recognize them as javascript URLs and instead try to
-        navigated to them.
+        navigate to them.
 
         URL parsing rules aside, such URLs are in use in the wild (Microsoft's Virtual Earth 
         being a high profile example) and actually represent valid javascript.
