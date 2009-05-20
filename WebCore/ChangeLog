@@ -1,3 +1,10 @@
+2009-05-21  Christian Dywan  <christian@twotoasts.de>
+
+        Rubberstamped by Gustavo Noronha.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl): Remove Gtk/ Glib Base64 decoding.
+
 2009-05-20  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha.
