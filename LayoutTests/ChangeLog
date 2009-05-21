@@ -1,5 +1,11 @@
 2009-05-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Disable 2 more tests that sometimes fail.
+
+        * platform/gtk/Skipped:
+
+2009-05-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Adding file I forgot to add to last commit.
 
         * http/tests/mime/resources/accept-all-text-types.cgi: Added.

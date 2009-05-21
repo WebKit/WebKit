@@ -4002,8 +4002,10 @@ http/tests/webarchive/test-preload-resources.html
 
 # Tests in media/ directory
 #   Tests failing
+media/audio-constructor-src.html
 media/audio-mpeg-supported.html
 media/broken-video.html
+media/media-startTime.html
 media/progress-event-total.html
 media/progress-event.html
 media/remove-from-document.html
