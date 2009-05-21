@@ -86,7 +86,7 @@ static int s_callingPlugin;
 
 static String scriptStringIfJavaScriptURL(const KURL& url)
 {
-    if (!url.protocolIs("javascript"))
+    if (!protocolIsJavaScript(url))
         return String();
 
     // This returns an unescaped string

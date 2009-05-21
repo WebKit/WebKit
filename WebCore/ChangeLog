@@ -1,3 +1,14 @@
+2009-05-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix some assertion failures in plug-in tests on the Windows debug build bot.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream): Switch to using protocolIsJavaScript.
+        * plugins/PluginView.cpp:
+        (WebCore::scriptStringIfJavaScriptURL): Ditto.
+
 2009-05-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
