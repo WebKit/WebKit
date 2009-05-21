@@ -1,3 +1,11 @@
+2009-05-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after method added to EditorClient.
+
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::getAutoCorrectSuggestionForMisspelledWord):
+        * WebKitSupport/EditorClientWx.h:
+
 2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.

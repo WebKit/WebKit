@@ -524,6 +524,12 @@ void EditorClientWx::getGuessesForWord(const String&, Vector<String>& guesses)
     notImplemented(); 
 }
 
+String EditorClientWx::getAutoCorrectSuggestionForMisspelledWord(const WebCore::String&)
+{
+    notImplemented();
+    return String();
+}
+
 void EditorClientWx::setInputMethodState(bool enabled)
 {
     notImplemented();
