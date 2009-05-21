@@ -1,3 +1,16 @@
+2009-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - speculative fix for <rdar://problem/6890716> crash at
+          FontCache::purgeInactiveFontData + 199
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontData): Deleting a SimpleFontData
+        can cause releaseFontData() to be called, which modifies
+        gInactiveFontData. Therefore, avoid deleting SimpleFontData instances
+        while iterating over gInactiveFontData and delete them afterwards.
+
 2009-05-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

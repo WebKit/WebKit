@@ -307,12 +307,13 @@ void FontCache::purgeInactiveFontData(int count)
 
     isPurging = true;
 
+    Vector<const SimpleFontData*, 20> fontDataToDelete;
     ListHashSet<const SimpleFontData*>::iterator end = gInactiveFontData->end();
     ListHashSet<const SimpleFontData*>::iterator it = gInactiveFontData->begin();
     for (int i = 0; i < count && it != end; ++it, ++i) {
         const SimpleFontData* fontData = *it.get();
         gFontDataCache->remove(fontData->platformData());
-        delete fontData;
+        fontDataToDelete.append(fontData);
     }
 
     if (it == end) {
@@ -322,6 +323,10 @@ void FontCache::purgeInactiveFontData(int count)
         for (int i = 0; i < count; ++i)
             gInactiveFontData->remove(gInactiveFontData->begin());
     }
+
+    size_t fontDataToDeleteCount = fontDataToDelete.size();
+    for (size_t i = 0; i < fontDataToDeleteCount; ++i)
+        delete fontDataToDelete[i];
 
     Vector<FontPlatformDataCacheKey> keysToRemove;
     keysToRemove.reserveInitialCapacity(gFontPlatformDataCache->size());
