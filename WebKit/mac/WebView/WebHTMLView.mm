@@ -455,6 +455,10 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL handlingMouseDownEvent;
     NSEvent *keyDownEvent; // Kept after handling the event.
 
+    // A WebHTMLView has a single input context, but we return nil when in non-editable content to avoid making input methods do their work.
+    // This state is saved each time selection changes, because computing it causes style recalc, which is not always safe to do.
+    BOOL exposeInputContext;
+
     NSPoint lastScrollPosition;
 
     WebPluginController *pluginController;
@@ -5493,16 +5497,12 @@ static BOOL isInPasswordField(Frame* coreFrame)
 
 - (NSTextInputContext *)inputContext
 {
-    Frame* coreFrame = core([self _frame]);
-    if (!isTextInput(coreFrame) || isInPasswordField(coreFrame))
-        return nil;
-    return [super inputContext];
+    return _private->exposeInputContext ? [super inputContext] : nil;
 }
 
 - (NSAttributedString *)textStorage
 {
-    Frame* coreFrame = core([self _frame]);
-    if (!isTextInput(coreFrame) || isInPasswordField(coreFrame)) {
+    if (!_private->exposeInputContext) {
         LOG(TextInput, "textStorage -> nil");
         return nil;
     }
@@ -5850,6 +5850,13 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
+
+    BOOL exposeInputContext = isTextInput(coreFrame) && !isInPasswordField(coreFrame);
+    if (exposeInputContext != _private->exposeInputContext) {
+        // Let AppKit cache a potentially input context.
+        _private->exposeInputContext = exposeInputContext;
+        [[NSApplication sharedApplication] updateWindows];
+    }
 
     if (!coreFrame->editor()->hasComposition())
         return;

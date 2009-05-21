@@ -2,6 +2,23 @@
 
         Reviewed by Darin Adler.
 
+        <rdar://problem/6907542> REGRESSION (r43143): Hang in RenderLineBoxList::dirtyLinesFromChangedChild
+        when clicking link to load Flash animation (http://www.roambi.com)
+
+        * WebCoreSupport/WebEditorClient.mm: (WebEditorClient::respondToChangedSelection):
+        Don't call -[NSApplication updateWindows] here, WebHTMLView can take care of this.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView inputContext]): Use a precomputed boolean stored in WebHTMLViewPrivate, as
+        calling isTextInput() is not always safe.
+        (-[WebHTMLView textStorage]): Ditto.
+        (-[WebHTMLView _updateSelectionForInputManager]): Update _private->exposeInputContext when
+        selection changes, and let AppKit update its cache if necessary.
+
+2009-05-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         <rdar://problem/5579292> REGRESSION (2-3): "Default default" encoding for Korean changed
         from Korean (Windows, DOS) to Korean (ISO 2022-KR), which breaks some sites
 
