@@ -1,3 +1,14 @@
+2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19357
+
+        [GTK] The Gtk+ port wants to have a themable
+        urlIcon too.
+
+        * loader/icon/IconDatabase.cpp:
+
 2009-05-20  Stephanie Lewis  <slewis@apple.com>
 
         Update the order files.  <rdar://problem/6881750> Generate new order files.

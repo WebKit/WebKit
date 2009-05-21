@@ -49,7 +49,7 @@
 #define IS_ICON_SYNC_THREAD() (m_syncThread == currentThread())
 #define ASSERT_ICON_SYNC_THREAD() ASSERT(IS_ICON_SYNC_THREAD())
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(GTK)
 #define CAN_THEME_URL_ICON
 #endif
 
