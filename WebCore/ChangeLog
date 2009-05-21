@@ -1,3 +1,17 @@
+2009-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Test for <rdar://problem/6910832> | https://bugs.webkit.org/show_bug.cgi?id=25907
+        Incorrect URL returned to the DOM while the user drags a file
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::tryDHTMLDrag): Don't base our decision on KURL,
+        since that only looks at the text of the document's URL. Do base our
+        decision on the securityOrigin(), which knows more about the document's
+        actual origin.
+
 2009-05-21  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

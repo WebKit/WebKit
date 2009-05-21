@@ -1,3 +1,15 @@
+2009-05-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Tests for <rdar://problem/6910832> | https://bugs.webkit.org/show_bug.cgi?id=25907
+        Incorrect URL returned to the DOM while the user drags a file
+
+        * http/tests/local/drag-over-remote-content-expected.txt: Added.
+        * http/tests/local/drag-over-remote-content.html: Added.
+        * http/tests/security/drag-over-remote-content-iframe-expected.txt: Added.
+        * http/tests/security/drag-over-remote-content-iframe.html: Added.
+
 2009-05-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fixing test to actually use the correct names for the frames.
