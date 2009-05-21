@@ -6,7 +6,7 @@
           Assertion failure in FrameLoader::transitionToCommitted on launch in
           Safari with r43985
 
-        Rolled out r43985.
+        Rolled out r43979.
 
         * platform/MIMETypeRegistry.cpp:
         (WebCore::initializeSupportedNonImageMimeTypes):
