@@ -1,3 +1,25 @@
+2009-05-21  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 25912: Harden NumberPrototype.cpp by removing use of strcpy()
+        <https://bugs.webkit.org/show_bug.cgi?id=25912>
+
+        This causes no change on SunSpider.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::integerPartNoExp): replace strcpy() with memcpy(), ASSERT that the
+        temporary buffer has sufficient space to store the result, and move the
+        explicit null-termination closer to the memcpy() for easier visual inspection
+        of the code.
+        (JSC::fractionalPartToString): replace strcpy() with memcpy(), and ASSERT
+        that the temporary buffer has sufficient space to store the result. There
+        is no explicit null-termination because this is done by the caller. The
+        same is already true for exponentialPartToString().
+        (JSC::numberProtoFuncToExponential): replace strcpy() with memcpy(), explicitly
+        null-terminate the result, and ASSERT that the temporary buffer has sufficient
+        space to store the result.
+
 2009-05-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

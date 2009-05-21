@@ -82,12 +82,13 @@ static UString integerPartNoExp(double d)
         Vector<char, 1024> buf(decimalPoint + 1);
 
         if (static_cast<int>(length) <= decimalPoint) {
-            strcpy(buf.data(), result);
+            ASSERT(decimalPoint < 1024);
+            memcpy(buf.data(), result, length);
             memset(buf.data() + length, '0', decimalPoint - length);
         } else
             strncpy(buf.data(), result, decimalPoint);
-
         buf[decimalPoint] = '\0';
+
         str.append(buf.data());
     }
 
@@ -277,7 +278,8 @@ static void fractionalPartToString(char* buf, int& i, const char* result, int re
             strncpy(buf + i, result + 1, fractionalDigits);
             i += fractionalDigits;
         } else {
-            strcpy(buf + i, result + 1);
+            ASSERT(i + resultLength - 1 < 80);
+            memcpy(buf + i, result + 1, resultLength - 1);
             i += static_cast<int>(resultLength) - 1;
         }
     }
@@ -354,9 +356,12 @@ JSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec, JSObject*, J
     if (sign)
         buf[i++] = '-';
 
-    if (decimalPoint == 999) // ? 9999 is the magical "result is Inf or NaN" value.  what's 999??
-        strcpy(buf + i, result);
-    else {
+    // ? 9999 is the magical "result is Inf or NaN" value.  what's 999??
+    if (decimalPoint == 999) {
+        ASSERT(i + resultLength < 80);
+        memcpy(buf + i, result, resultLength);
+        buf[i + resultLength] = '\0';
+    } else {
         buf[i++] = result[0];
 
         if (includeAllDigits)
