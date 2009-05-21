@@ -38,20 +38,6 @@
 
 using namespace WebCore;
 
-// This function loads resources from WebKit
-// This does not belong here and I'm not sure where
-// it should go
-// I don't know what the plans or design is
-// for none code resources
-Vector<char> loadResourceIntoArray(const char* resourceName)
-{
-    Vector<char> resource;
-    //if (strcmp(resourceName,"missingImage") == 0) {
-    //}
-    return resource;
-}
-
-
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
 /********************************************************/

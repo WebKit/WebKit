@@ -26,14 +26,51 @@
 #include "config.h"
 
 #include "BitmapImage.h"
+#include "CString.h"
+#include "GOwnPtr.h"
 
 #include <cairo.h>
 #include <gtk/gtk.h>
 
-// This function loads resources from WebKit
-Vector<char> loadResourceIntoArray(const char*);
+namespace WTF {
+
+template <> void freeOwnedGPtr<GtkIconInfo>(GtkIconInfo* info)
+{
+    if (info)
+        gtk_icon_info_free(info);
+}
+
+}
 
 namespace WebCore {
+
+static CString getIconFileNameOrFallback(const char* name, const char* fallback)
+{
+    GOwnPtr<GtkIconInfo> info(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(),
+                                                         name, 16, GTK_ICON_LOOKUP_NO_SVG));
+    if (!info)
+        return String::format("%s/webkit-1.0/images/%s.png", DATA_DIR, fallback).utf8();
+
+    return CString(gtk_icon_info_get_filename(info.get()));
+}
+
+static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(const char* name)
+{
+    CString fileName;
+
+    // Find the path for the image
+    if (strcmp("missingImage", name) == 0)
+        fileName = getIconFileNameOrFallback(GTK_STOCK_MISSING_IMAGE, "missingImage");
+    else
+        fileName = String::format("%s/webkit-1.0/images/%s.png", DATA_DIR, name).utf8();
+
+    GOwnPtr<gchar> content;
+    gsize length;
+    if (!g_file_get_contents(fileName.data(), &content.outPtr(), &length, 0))
+        return SharedBuffer::create();
+
+    return SharedBuffer::create(content.get(), length);
+}
 
 void BitmapImage::initPlatformData()
 {
@@ -43,12 +80,11 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-PassRefPtr<Image> Image::loadPlatformResource(const char *name)
+PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 {
-    Vector<char> arr = loadResourceIntoArray(name);
     RefPtr<BitmapImage> img = BitmapImage::create();
-    RefPtr<SharedBuffer> buffer = SharedBuffer::create(arr.data(), arr.size());
-    img->setData(buffer, true);
+    RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(name);
+    img->setData(buffer.release(), true);
     return img.release();
 }
 

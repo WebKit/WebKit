@@ -45,7 +45,8 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/rendering/style \
 	-I$(srcdir)/WebCore/workers \
 	-I$(srcdir)/WebCore/xml \
-	-I$(top_builddir)/WebCore/bindings/js
+	-I$(top_builddir)/WebCore/bindings/js \
+	-DDATA_DIR=\"${datadir}\"
 
 webcoregtk_cppflags += \
 	-DWTF_USE_SOUP=1 \
@@ -3200,6 +3201,15 @@ dist_webinspector_DATA = \
 webinspectorimagesdir = ${datadir}/webkit-1.0/webinspector/Images
 dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.png)
+
+webresourcesdir = ${datadir}/webkit-1.0/images
+dist_webresources_DATA = \
+	$(WebCore)/Resources/textAreaResizeCorner.png \
+	$(WebCore)/Resources/nullPlugin.png \
+	$(WebCore)/Resources/urlIcon.png \
+	$(WebCore)/Resources/missingImage.png \
+	$(WebCore)/Resources/panIcon.png \
+	$(WebCore)/Resources/deleteButton.png
 
 # Clean rules for WebCore
 

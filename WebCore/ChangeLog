@@ -2,6 +2,28 @@
 
         Reviewed by Gustavo Noronha.
 
+        [GTK] Implement Image::loadPlatformResource.
+
+        Install the four resources we are using. For the icons
+        where an icon name is specified by freedeskop.org try to
+        map the WebCore name to that name and fallback to the
+        internal icon. For everything else use the internal icon
+        name. Remove the temporary link stub as this is not
+        required any more.
+
+        * GNUmakefile.am: Install the png files, set DATA_DIR again
+        * Resources/panIcon.png: Copied from WebKit/win/WebKit.vcproj/panIcon.png.
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WTF::GtkIconInfo): Add template specialization for GtkIconInfo
+        (WebCore::getIconFileNameOrFallback): Use GtkIconTheme to get the icon
+        (WebCore::loadResourceIntoSharedBuffer):
+        (WebCore::Image::loadPlatformResource): Implement
+        * platform/gtk/TemporaryLinkStubs.cpp: Remove link stub
+
+2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Gustavo Noronha.
+
         https://bugs.webkit.org/show_bug.cgi?id=19357
 
         [GTK] The Gtk+ port wants to have a themable
