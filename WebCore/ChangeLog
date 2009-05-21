@@ -2,6 +2,46 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Clean up DragController
+        https://bugs.webkit.org/show_bug.cgi?id=25926
+
+        I renamed m_document to m_documentUnderMouse to better document what it does
+        I could call it m_lastDocumentUnderMouse to be most-accurate, but this seemed
+        long enough.
+
+        I also saw copy/paste code involving clearing the selection when moving out of
+        one document and into another.  I moved that code into a function called
+        mouseMovedIntoDocument.
+
+        I also got rid of a couple needless null-checks after confirming via source
+        inspection they were not ever possible.
+        In Mac WebKit it's not possible to have a Page that doesn't have a mainFrame()
+        I left an ASSERT(m_page->mainFrame()) in case some other port ever violates this.
+        It's also not possible to return a document from documentAtPoint that is not
+        in a frame (as such a document would not be rendered).
+
+        No functional changes, thus no tests.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+        (WebCore::DragController::dragIsMove):
+        (WebCore::DragController::dragExited):
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::mouseMovedIntoDocument):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::operationForLoad):
+        (WebCore::DragController::concludeEditDrag):
+        (WebCore::DragController::canProcessDrag):
+        (WebCore::DragController::tryDHTMLDrag):
+        (WebCore::DragController::placeDragCaret):
+        * page/DragController.h:
+        (WebCore::DragController::documentUnderMouse):
+
+2009-05-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
         Rename DragController::dragOperation() to sourceDragOperation() for clarity
         Remove unused setDragOperation()
 
