@@ -1,3 +1,12 @@
+2009-05-21  Darin Adler  <darin@apple.com>
+
+        Rolled the httpd changes out, since many machines (including the bots)
+        have an older version of Apache that does not support the Alias command.
+        Or maybe it's something else, but the bots are failing.
+
+        * Scripts/run-webkit-httpd: Rolled back.
+        * Scripts/run-webkit-tests: Ditto.
+
 2009-05-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Geoffrey Garen.
