@@ -1,3 +1,28 @@
+2009-05-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25890
+        Implement Network logging channel on Mac
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::setDefersLoading):
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connectionShouldUseCredentialStorage:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didCancelAuthenticationChallenge:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willStopBufferingData:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didSendBodyData:totalBytesWritten:totalBytesExpectedToWrite:]):
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]):
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]):
+        Added logging for async requests (as these are most interesting).
+
 2009-05-21  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by David Kilzer.
