@@ -463,7 +463,7 @@ void runInteractive(GlobalObject* globalObject)
     printf("\n");
 }
 
-static NO_RETURN void printUsageStatement(bool help = false)
+static NO_RETURN void printUsageStatement(JSGlobalData* globalData, bool help = false)
 {
     fprintf(stderr, "Usage: jsc [options] [files] [-- arguments]\n");
     fprintf(stderr, "  -d         Dumps bytecode (debug builds only)\n");
@@ -472,28 +472,30 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  -h|--help  Prints this help message\n");
     fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
     fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only)\n");
+
+    cleanupGlobalData(globalData);
     exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
-static void parseArguments(int argc, char** argv, Options& options)
+static void parseArguments(int argc, char** argv, Options& options, JSGlobalData* globalData)
 {
     int i = 1;
     for (; i < argc; ++i) {
         const char* arg = argv[i];
         if (strcmp(arg, "-f") == 0) {
             if (++i == argc)
-                printUsageStatement();
+                printUsageStatement(globalData);
             options.scripts.append(Script(true, argv[i]));
             continue;
         }
         if (strcmp(arg, "-e") == 0) {
             if (++i == argc)
-                printUsageStatement();
+                printUsageStatement(globalData);
             options.scripts.append(Script(false, argv[i]));
             continue;
         }
         if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0) {
-            printUsageStatement(true);
+            printUsageStatement(globalData, true);
         }
         if (strcmp(arg, "-i") == 0) {
             options.interactive = true;
@@ -531,7 +533,7 @@ int jscmain(int argc, char** argv, JSGlobalData* globalData)
     JSLock lock(false);
 
     Options options;
-    parseArguments(argc, argv, options);
+    parseArguments(argc, argv, options, globalData);
 
     GlobalObject* globalObject = new (globalData) GlobalObject(options.arguments);
     bool success = runWithScripts(globalObject, options.scripts, options.dump);
