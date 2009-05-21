@@ -1,3 +1,15 @@
+2009-05-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6883758> REGRESSION (r43143): First character typed with input method does
+        not go into inline hole (seen with Chinese & Kotoeri on top Chinese website www.baidu.com)
+
+        * WebCoreSupport/WebEditorClient.mm: (WebEditorClient::respondToChangedSelection):
+        Call -[NSApplication updateWindows] to make AppKit re-fetch the input context when selection
+        changes. Since we use SelectionController to check whether the view is editable, it is
+        important not to re-fetch the context too early, e.g. from a focus changed notification.
+
 2009-05-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
