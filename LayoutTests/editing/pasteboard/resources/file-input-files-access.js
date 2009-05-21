@@ -3,7 +3,8 @@ description("Tests for multi-file drag onto file input elements for https://bugs
 var fileInput = document.createElement("input");
 fileInput.type = 'file';
 fileInput.style.width = "100%"; // So that any manual testing will show full file names
-document.body.appendChild(fileInput);
+// Important that we put this at the top of the doc so that logging does not cause it to go out of view (where it can't be dragged to)
+document.body.insertBefore(fileInput, document.body.firstChild);
 
 function moveMouseToCenterOfElement(element)
 {
@@ -60,42 +61,45 @@ function testOrderedDraggingWithDirectory()
     debug("Dragging a file and a directory onto a " + inputType + " input control:")
     draggingPathsShouldResultInFiles(['resources/apple.gif', 'resources/directory-for-dragging'], []);
 
+    debug("FIXME: <input> elements should refuse drags including directories: https://bugs.webkit.org/show_bug.cgi?id=25879.  The page is given File objects corresponding to directories, but form submission will fail.");
+
     debug("Dragging a directory and a file onto a "  + inputType + " input control:")
     draggingPathsShouldResultInFiles(['resources/directory-for-dragging', 'resources/apple.gif'], []);
 }
 
 function runTest()
 {
-    debug("Dragging to a disabled file input control:")
+    debug("Dragging to a disabled file input control:");
     fileInput.disabled = true;
     draggingPathsShouldResultInFiles(['DRTFakeFile'], [])
     fileInput.disabled = false;
 
-    debug("Dragging a single (non-existant) file to a file input control:")
+    debug("Dragging a single (non-existant) file to a file input control:");
     testDraggingFiles([
         { 'path': 'DRTFakeFile', 'name' : 'DRTFakeFile', 'size' : 0 }
     ]);
 
-    debug("Dragging a real file to a file input control:")
+    debug("Dragging a real file to a file input control:");
     testDraggingFiles([
         { 'path': 'resources/apple.gif', 'name' : 'apple.gif', 'size' : 1476 }
     ]);
 
     // Directory dragging behavior is covered by
     // https://bugs.webkit.org/show_bug.cgi?id=25852
-    debug("Dragging a directory onto an file input control:")
+    debug("Dragging a directory onto an file input control:");
     draggingPathsShouldResultInFiles(['resources/directory-for-dragging'], []);
 
     // FIXME: Current behavior is to take the first file, but I expect that's
     // confusing to the user.  We should change this to expect drag failure.
+    debug("FIXME: Single-file input elements should refuse multi-file drags.  See https://bugs.webkit.org/show_bug.cgi?id=25913")
     debug("Dragging two files to a single-file input control:")
-    draggingPathsShouldResultInFiles(['resources/apple.gif', 'resources/mozilla.gif'], [{ 'name' : 'apple.gif', 'size' : 1476 }]);
+    draggingPathsShouldResultInFiles(['resources/apple.gif', 'resources/mozilla.gif'], []);
 
     testOrderedDraggingWithDirectory();
 
     fileInput.multiple = true;
 
-    debug("Dragging two files to a multi-file input control:")
+    debug("Dragging two files to a multi-file input control:");
     testDraggingFiles([
         { 'path': 'resources/apple.gif', 'name' : 'apple.gif', 'size' : 1476 },
         { 'path': 'resources/mozilla.gif', 'name' : 'mozilla.gif', 'size' : 2593 }

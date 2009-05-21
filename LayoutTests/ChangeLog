@@ -1,3 +1,16 @@
+2009-05-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix file-input-files-access which was passing for the wrong reasons.
+
+        The log was pushing the drop target off screen and the drops were failing!
+
+        * editing/pasteboard/file-input-files-access-expected.txt:
+        * editing/pasteboard/resources/file-input-files-access.js:
+        (testOrderedDraggingWithDirectory):
+        (runTest):
+
 2009-05-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         Skipping a new test.
