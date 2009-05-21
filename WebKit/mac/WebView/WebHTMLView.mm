@@ -3471,15 +3471,15 @@ done:
 {
     ASSERT(![self _webView] || [self _isTopHTMLView]);
     
-    Page *page = core([self _webView]);
-    
+    Page* page = core([self _webView]);
     if (!page)
         return NSDragOperationNone;
-    
-    if (page->dragController()->dragOperation() == DragOperationNone)
+
+    // FIXME: Why do we override the source provided operation here?  Why not in DragController::startDrag
+    if (page->dragController()->sourceDragOperation() == DragOperationNone)
         return NSDragOperationGeneric | NSDragOperationCopy;
-    
-    return (NSDragOperation)page->dragController()->dragOperation();
+
+    return (NSDragOperation)page->dragController()->sourceDragOperation();
 }
 
 - (void)draggedImage:(NSImage *)image movedTo:(NSPoint)screenLoc

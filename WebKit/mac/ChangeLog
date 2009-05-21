@@ -1,3 +1,12 @@
+2009-05-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rename DragController::dragOperation() to sourceDragOperation() for clarity
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):
+
 2009-05-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

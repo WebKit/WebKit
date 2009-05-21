@@ -64,8 +64,7 @@ namespace WebCore {
         bool didInitiateDrag() const { return m_didInitiateDrag; }
         void setIsHandlingDrag(bool handling) { m_isHandlingDrag = handling; }
         bool isHandlingDrag() const { return m_isHandlingDrag; }
-        void setDragOperation(DragOperation dragOp) { m_dragOperation = dragOp; }
-        DragOperation dragOperation() const { return m_dragOperation; }       
+        DragOperation sourceDragOperation() const { return m_sourceDragOperation; }
         void setDraggingImageURL(const KURL& url) { m_draggingImageURL = url; }
         const KURL& draggingImageURL() const { return m_draggingImageURL; }
         void setDragInitiator(Document* initiator) { m_dragInitiator = initiator; m_didInitiateDrag = true; }
@@ -120,10 +119,9 @@ namespace WebCore {
         DragSourceAction m_dragSourceAction;
         bool m_didInitiateDrag;
         bool m_isHandlingDrag;
-        DragOperation m_dragOperation;
+        DragOperation m_sourceDragOperation; // Set in startDrag when a drag starts from a mouse down within WebKit
         IntPoint m_dragOffset;
         KURL m_draggingImageURL;
-        
     };
 
 }

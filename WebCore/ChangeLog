@@ -1,3 +1,24 @@
+2009-05-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Rename DragController::dragOperation() to sourceDragOperation() for clarity
+        Remove unused setDragOperation()
+
+        There are two times DragOperation is used.  The source specifies
+        what drag operations it supports (in a mask) and the destination
+        picks a subset of those as DragOperations it supports if a drop were
+        to occur.  I was confused when I first saw this accessor as to which
+        it meant.  It turns out that this is only used when WebKit starts a
+        drag, and we keep it around so that we can provide this information
+        to other Mac OS X applications when they ask.  I've renamed the method
+        for clarity so the next person in this code will be less confused.
+
+        No functional changes, thus no tests.
+
+        * page/DragController.h:
+        (WebCore::DragController::sourceDragOperation):
+
 2009-05-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
