@@ -1,5 +1,13 @@
 2009-05-21  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Mark Rowe.
+
+        - correct a copyright header accidently reverted in r43964
+
+        * WebKitSystemInterface.h:
+
+2009-05-21  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         - WebKitSystemInterface part of <rdar://problem/6901751> REGRESSION
