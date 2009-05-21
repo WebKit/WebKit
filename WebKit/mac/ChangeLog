@@ -1,3 +1,15 @@
+2009-05-20  Siddhartha Chattopadhyaya  <sidchat@google.com>
+
+        Reviewed by Justin Garcia.
+        
+        Add automatic spell correction support in WebKit
+
+        https://bugs.webkit.org/show_bug.cgi?id=24953
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::getAutoCorrectSuggestionForMisspelledWord):
+
 2009-05-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

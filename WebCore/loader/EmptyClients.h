@@ -375,6 +375,7 @@ public:
     virtual void ignoreWordInSpellDocument(const String&) { }
     virtual void learnWord(const String&) { }
     virtual void checkSpellingOfString(const UChar*, int, int*, int*) { }
+    virtual String getAutoCorrectSuggestionForMisspelledWord(const String&) { return String(); }
     virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) { }
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     virtual void checkTextOfParagraph(const UChar*, int, uint64_t, Vector<TextCheckingResult>&) { };
@@ -453,3 +454,4 @@ public:
 }
 
 #endif // EmptyClients_h
+

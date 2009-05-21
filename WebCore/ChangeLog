@@ -1,3 +1,25 @@
+2009-05-20  Siddhartha Chattopadhyaya  <sidchat@google.com>
+
+        Reviewed by Justin Garcia.
+        
+        Add automatic spell correction support in WebKit
+
+        https://bugs.webkit.org/show_bug.cgi?id=24953
+
+        * editing/Editor.cpp:
+        (WebCore::findFirstMisspellingInRange):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        (WebCore::markAllMisspellingsInRange):
+        (WebCore::markMisspellingsOrBadGrammar):
+        (WebCore::Editor::markMisspellings):
+        (WebCore::Editor::markBadGrammar):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        * editing/Editor.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::getAutoCorrectSuggestionForMisspelledWord):
+        * page/EditorClient.h:
+
 2009-05-21  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Darin Adler.
