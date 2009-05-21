@@ -3996,6 +3996,7 @@ http/tests/webarchive/test-preload-resources.html
 media/audio-mpeg-supported.html
 media/broken-video.html
 media/progress-event-total.html
+media/progress-event.html
 media/remove-from-document.html
 media/video-append-source.html
 media/video-autoplay.html
