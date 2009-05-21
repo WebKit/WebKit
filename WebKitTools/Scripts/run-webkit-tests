@@ -142,8 +142,8 @@ my $timeoutSeconds = 15;
 my $useRemoteLinksToTests = 0;
 my @leaksFilenames;
 
-# Default to --no-http for Qt, Gtk and wx for now.
-$testHTTP = 0 if (isQt() || isGtk() || isWx());
+# Default to --no-http for Qt, and wx for now.
+$testHTTP = 0 if (isQt() || isWx());
 
 my $expectedTag = "expected";
 my $actualTag = "actual";

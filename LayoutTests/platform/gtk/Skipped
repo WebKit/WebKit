@@ -3718,6 +3718,10 @@ http/tests/appcache/wrong-content-type.html
 http/tests/appcache/wrong-signature-2.html
 http/tests/appcache/wrong-signature.html
 http/tests/appcache/xhr-foreign-resource.html
+http/tests/cookies/double-quoted-value-with-semi-colon.html
+http/tests/cookies/multiple-cookies.html
+http/tests/cookies/simple-cookies-expired.html
+http/tests/cookies/simple-cookies-max-age.html
 http/tests/history/back-to-post.php
 http/tests/history/redirect-200-refresh-2-seconds.pl
 http/tests/history/redirect-js-document-location-0-seconds.html
@@ -3750,6 +3754,7 @@ http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
 http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension.html
+http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html
 http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html
 http/tests/misc/acid3.html
 http/tests/misc/empty-cookie.html
@@ -3786,6 +3791,7 @@ http/tests/navigation/reload-subframe-object.html
 http/tests/navigation/target-frame-from-window.html
 http/tests/plugins/npapi-response-headers.html
 http/tests/plugins/post-url-file.html
+http/tests/security/credentials-in-referer.html
 http/tests/security/cross-frame-access-callback-explicit-domain-DENY.html
 http/tests/security/cross-frame-access-delete.html
 http/tests/security/cross-frame-access-history-put.html
@@ -3867,6 +3873,7 @@ http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/encode-request-url-2.html
 http/tests/xmlhttprequest/exceptions.html
 http/tests/xmlhttprequest/frame-load-cancelled-abort.html
+http/tests/xmlhttprequest/frame-unload-abort-crash.html
 http/tests/xmlhttprequest/get-dangerous-headers.html
 http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/methods-lower-case.html
@@ -3922,6 +3929,7 @@ http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html
 #   Tests timing out
 http/tests/xmlhttprequest/XMLHttpRequestException.html
 http/tests/xmlhttprequest/connection-error-sync.html
+http/tests/misc/favicon-as-image.html
 #   Tests crashing
 http/tests/misc/uncacheable-script-repeated.html
 http/tests/security/cross-origin-xsl-BLOCKED.html
