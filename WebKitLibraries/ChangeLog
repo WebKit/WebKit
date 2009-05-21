@@ -1,3 +1,14 @@
+2009-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - WebKitSystemInterface part of <rdar://problem/6901751> REGRESSION
+          (r35515): Tiger crash painting the selection on registration page of
+          car2go.com
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceTiger.a:
+
 2009-05-07  Simon Fraser  <simon.fraser@apple.com>
 
         Source changes reviewed by Darin Adler

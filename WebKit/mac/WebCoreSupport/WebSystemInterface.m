@@ -82,6 +82,7 @@ void InitWebCoreSystemInterface(void)
 #ifndef BUILDING_ON_TIGER
     INIT(GetGlyphsForCharacters);
 #else
+    INIT(CGContextIsSafeToClip);
     INIT(ClearGlyphVector);
     INIT(ConvertCharToGlyphs);
     INIT(CopyFullFontName);

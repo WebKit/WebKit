@@ -1,3 +1,35 @@
+2009-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - WebCore part of <rdar://problem/6901751> REGRESSION (r35515): Tiger
+          crash painting the selection on registration page of car2go.com
+
+        A bug in old versions of Core Graphics causes memory corruption to occur
+        when clipping under certain conditions. Make the clipping functions
+        fail silently under those conditions.
+
+        Test: fast/block/float/selection-gap-clip-out-tiger-crash.html
+
+        * WebCore.Tiger.exp: Added wkCGContextIsSafeToClip
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::safeCGContextClip): Added a wrapper around CGContextClip that,
+        on Tiger, bails out if wkCGContextIsSafeToClip() returns false.
+        (WebCore::safeCGContextEOClip): Ditto for CGContextEOClip.
+        (WebCore::safeCGContextClipToRect): Ditto for CGContextClipToRect.
+        (WebCore::GraphicsContext::fillPath): Changed to call the safe variants
+        of CGContextClip, CGContextEOClip and CGContextClipToRect.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        (WebCore::GraphicsContext::fillRect): Ditto.
+        (WebCore::GraphicsContext::clip): Ditto.
+        (WebCore::GraphicsContext::clipOut): Ditto.
+        (WebCore::GraphicsContext::clipOutEllipseInRect): Ditto.
+        (WebCore::GraphicsContext::clipPath): Ditto.
+        (WebCore::GraphicsContext::addInnerRoundedRectClip): Ditto.
+        (WebCore::GraphicsContext::strokeRect): Ditto.
+        * platform/mac/WebCoreSystemInterface.h: Added wkCGContextIsSafeToClip.
+        * platform/mac/WebCoreSystemInterface.mm: Added wkCGContextIsSafeToClip.
+
 2009-05-21  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.

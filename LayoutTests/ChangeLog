@@ -1,3 +1,13 @@
+2009-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - test for <rdar://problem/6901751> REGRESSION (r35515): Tiger crash
+          painting the selection on registration page of car2go.com
+
+        * fast/block/float/selection-gap-clip-out-tiger-crash-expected.txt: Added.
+        * fast/block/float/selection-gap-clip-out-tiger-crash.html: Added.
+
 2009-05-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

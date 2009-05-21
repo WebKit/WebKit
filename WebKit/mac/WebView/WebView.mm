@@ -1987,6 +1987,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f
 {
+    WebCoreThreadViolationCheckRoundTwo();
     WebCoreSetShouldUseFontSmoothing(f);
 }
 

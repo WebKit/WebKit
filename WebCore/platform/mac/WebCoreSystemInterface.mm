@@ -82,6 +82,7 @@ unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConn
 #ifndef BUILDING_ON_TIGER
 void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);
 #else
+BOOL (*wkCGContextIsSafeToClip)(CGContextRef);
 void (*wkClearGlyphVector)(void* glyphs);
 OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
 CFStringRef (*wkCopyFullFontName)(CGFontRef font);
