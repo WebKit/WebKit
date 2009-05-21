@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        <rdar://problem/5579292> REGRESSION (2-3): "Default default" encoding for Korean changed
+        from Korean (Windows, DOS) to Korean (ISO 2022-KR), which breaks some sites
+
+        * WebView/WebPreferences.mm:
+       (+[WebPreferences _setInitialDefaultTextEncodingToSystemEncoding]): Update the existing fix
+       for the changed result of CFStringConvertEncodingToIANACharSetName().
+
+2009-05-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
         <rdar://problem/6883758> REGRESSION (r43143): First character typed with input method does
         not go into inline hole (seen with Chinese & Kotoeri on top Chinese website www.baidu.com)
 

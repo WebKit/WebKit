@@ -1046,10 +1046,11 @@ static WebCacheModel cacheModelForMainBundle(void)
 {
     NSString *systemEncodingName = (NSString *)CFStringConvertEncodingToIANACharSetName([self _systemCFStringEncoding]);
 
-    // CFStringConvertEncodingToIANACharSetName() returns CP949 for kTextEncodingDOSKorean AKA "extended EUC-KR" AKA windows-939.
+    // CFStringConvertEncodingToIANACharSetName() returns cp949 for kTextEncodingDOSKorean AKA "extended EUC-KR" AKA windows-939.
     // ICU uses this name for a different encoding, so we need to change the name to a value that actually gives us windows-939.
     // In addition, this value must match what is used in Safari, see <rdar://problem/5579292>.
-    if ([systemEncodingName isEqualToString:@"CP949"])
+    // On some OS versions, the result is CP949 (uppercase).
+    if ([systemEncodingName _webkit_isCaseInsensitiveEqualToString:@"cp949"])
         systemEncodingName = @"ks_c_5601-1987";
     [[NSUserDefaults standardUserDefaults] registerDefaults:
         [NSDictionary dictionaryWithObject:systemEncodingName forKey:WebKitDefaultTextEncodingNamePreferenceKey]];
