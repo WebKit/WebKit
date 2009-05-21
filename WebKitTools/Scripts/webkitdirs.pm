@@ -1061,12 +1061,23 @@ sub autotoolsFlag($$)
 
 sub buildAutotoolsProject($@)
 {
-    my ($clean, @buildArgs) = @_;
+    my ($clean, @buildParams) = @_;
 
     my $make = 'make';
     my $dir = productDir();
     my $config = passedConfiguration() || configuration();
     my $prefix = $ENV{"WebKitInstallationPrefix"};
+
+    my @buildArgs = ();
+    my $makeArgs = $ENV{"WebKitMakeArguments"} || "";
+    for my $i (0 .. $#buildParams) {
+        my $opt = $buildParams[$i];
+        if ($opt =~ /^--makeargs=(.*)/i ) {
+            $makeArgs = $makeArgs . " " . $1;
+        } else {
+            push @buildArgs, $opt;
+        }
+    }
 
     push @buildArgs, "--prefix=" . $prefix if defined($prefix);
 
@@ -1109,8 +1120,6 @@ sub buildAutotoolsProject($@)
     if ($result ne 0) {
         die "Failed to setup build environment using 'autotools'!\n";
     }
-
-    my $makeArgs = $ENV{"WebKitMakeArguments"} || "";
 
     $result = system "$make $makeArgs";
     if ($result ne 0) {

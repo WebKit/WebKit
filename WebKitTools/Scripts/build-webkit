@@ -65,6 +65,7 @@ my $wmlSupport = 0;
 my $workersSupport = (isAppleWebKit() || isGtk()); # Enable by default for Apple's builds (mac/win) and Gtk+
 my $xpathSupport = 1;
 my $xsltSupport = 1;
+my $makeArgs = "";
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -77,6 +78,7 @@ Usage: $programName [options] [options to pass to build system]
   --gtk                             Build the GTK+ port
   --qt                              Build the Qt port
 
+  --makeargs=<arguments>            Optional Makefile flags
   --[no-]3d-rendering               Toggle 3D rendering support (default: $threeDRenderingSupport)
   --[no-]channel-messaging          Toggle MessageChannel and MessagePort support (default: $channelMessagingSupport)
   --[no-]database                   Toggle Database Support (default: $databaseSupport)
@@ -127,6 +129,7 @@ GetOptions(
            'workers!' => \$workersSupport,
            'xpath!' => \$xpathSupport,
            'xslt!' => \$xsltSupport,
+           'makeargs=s' => \$makeArgs,
 );
 
 $svgSupport = $svgSupport || $svgAnimationSupport || $svgAsImageSupport
@@ -194,6 +197,7 @@ if (isGtk()) {
     push @options, autotoolsFlag($workersSupport, "web-workers");
     push @options, autotoolsFlag($xpathSupport, "xpath");
     push @options, autotoolsFlag($xsltSupport, "xslt");
+    push @options, "--makeargs=" . $makeArgs;
 }
 
 if (isAppleMacWebKit()) {

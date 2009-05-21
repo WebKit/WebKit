@@ -1,3 +1,12 @@
+2009-05-21  Andre Pedralho  <andre.pedralho@openbossa.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Added --makeargs flag to the build script.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
 2009-05-14  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Anders Carlsson.
