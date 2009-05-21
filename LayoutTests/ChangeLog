@@ -1,5 +1,11 @@
 2009-05-20  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Skipping a new test.
+
+        * platform/gtk/Skipped:
+
+2009-05-20  Gustavo Noronha Silva  <gns@gnome.org>
+
         Skipping test that fails intermitently.
 
         * platform/gtk/Skipped:
