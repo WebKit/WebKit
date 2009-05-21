@@ -388,10 +388,17 @@ void TCMalloc_SystemRelease(void* start, size_t length)
     while (madvise(start, length, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
 }
 
-#elif HAVE(MADV_DONTNEED)
+#elif HAVE(MADV_FREE) || HAVE(MADV_DONTNEED)
 
 void TCMalloc_SystemRelease(void* start, size_t length)
 {
+    // MADV_FREE clears the modified bit on pages, which allows
+    // them to be discarded immediately.
+#if HAVE(MADV_FREE)
+    const int advice = MADV_FREE;
+#else
+    const int advice = MADV_DONTNEED;
+#endif
   if (FLAGS_malloc_devmem_start) {
     // It's not safe to use MADV_DONTNEED if we've been mapping
     // /dev/mem for heap memory
@@ -418,7 +425,7 @@ void TCMalloc_SystemRelease(void* start, size_t length)
     // Note -- ignoring most return codes, because if this fails it
     // doesn't matter...
     while (madvise(reinterpret_cast<char*>(new_start), new_end - new_start,
-                   MADV_DONTNEED) == -1 &&
+                   advice) == -1 &&
            errno == EAGAIN) {
       // NOP
     }
