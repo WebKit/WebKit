@@ -1,3 +1,10 @@
+2009-05-21  Darin Fisher  <darin@chromium.org>
+
+        Fix-up coding style.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::getAutoCorrectSuggestionForMisspelledWord):
+
 2009-05-20  Siddhartha Chattopadhyaya  <sidchat@google.com>
 
         Reviewed by Justin Garcia.

@@ -651,10 +651,11 @@ void WebEditorClient::checkSpellingOfString(const UChar* text, int length, int* 
         *misspellingLength = range.length;
 }
 
-String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& input_word) {
-  // This method can be implemented using customized algorithms for the particular browser.
-  // Currently, it computes an empty string.
-  return String();
+String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& inputWord)
+{
+    // This method can be implemented using customized algorithms for the particular browser.
+    // Currently, it computes an empty string.
+    return String();
 }
 
 void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector<GrammarDetail>& details, int* badGrammarLocation, int* badGrammarLength)
