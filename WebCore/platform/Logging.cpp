@@ -62,7 +62,7 @@ WTFLogChannel LogArchives =          { 0x04000000, "WebCoreLogLevel", WTFLogChan
 
 WTFLogChannel* getChannelFromName(const String& channelName)
 {
-    if (!channelName.length() >= 2)
+    if (!(channelName.length() >= 2))
         return 0;
 
     if (channelName == String("BackForward")) return &LogBackForward;

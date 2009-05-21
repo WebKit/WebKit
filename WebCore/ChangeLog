@@ -1,3 +1,10 @@
+2009-05-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Blind windows fix after last commit.
+
+        * platform/Logging.cpp:
+        (WebCore::getChannelFromName):
+
 2009-05-21  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
