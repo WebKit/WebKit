@@ -37,6 +37,7 @@
 #import "FrameView.h"
 #import "GraphicsContext.h"
 #import "KURL.h"
+#import "MIMETypeRegistry.h"
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
 #import <QTKit/QTKit.h>
@@ -967,6 +968,19 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
         if (!uti)
             continue;
         RetainPtr<CFStringRef> mime(AdoptCF, UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
+
+        // UTI types are missing many media related MIME types supported by QTKit, see rdar://6434168,
+        // and not all third party movie importers register their types, so if we didn't find a type for
+        // this extension look it up in the hard coded table in the MIME type regsitry.
+        if (!mime) {
+            // -movieFileTypes: returns both file extensions and OSTypes. The later are surrounded by single
+            // quotes, eg. 'MooV', so don't bother looking at those.
+            if (CFStringGetCharacterAtIndex(ext, 0) != '\'') {
+                String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(String(ext));
+                if (!mediaType.isEmpty())
+                    mime.adoptCF(mediaType.createCFString());
+            }
+        }
         if (!mime)
             continue;
         cache.add(mime.get());

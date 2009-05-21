@@ -207,9 +207,16 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
     String type = contentType.type();
     String codecs = contentType.parameter("codecs");
 
-    // if we don't know the MIME type, see if the path can help
-    if (type.isEmpty()) 
-        type = MIMETypeRegistry::getMIMETypeForPath(url);
+    // if we don't know the MIME type, see if the extension can help
+    if (type.isEmpty() || type == "application/octet-stream" || type == "text/plain") {
+        int pos = url.reverseFind('.');
+        if (pos >= 0) {
+            String extension = url.substring(pos + 1);
+            String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
+            if (!mediaType.isEmpty())
+                type = mediaType;
+        }
+    }
 
     MediaPlayerFactory* engine = chooseBestEngineForTypeAndCodecs(type, codecs);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008, 2009 Apple Inc.  All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,7 @@ static HashSet<String>* supportedImageMIMETypesForEncoding;
 static HashSet<String>* supportedJavaScriptMIMETypes;
 static HashSet<String>* supportedNonImageMIMETypes;
 static HashSet<String>* supportedMediaMIMETypes;
+static HashMap<String, String, CaseFoldingHash>* mediaMIMETypeForExtensionMap;
 
 static void initializeSupportedImageMIMETypes()
 {
@@ -216,6 +217,103 @@ static void initializeSupportedNonImageMimeTypes()
         supportedNonImageMIMETypes->add(types[i]);
 
     ArchiveFactory::registerKnownArchiveMIMETypes();
+}
+
+static void initializeMediaTypeMaps()
+{
+    struct TypeExtensionPair {
+        const char* type;
+        const char* extension;
+    };
+
+    // A table of common media MIME types and file extenstions used when a platform's
+    // specific MIME type lookup doens't have a match for a media file extension. While some
+    // file extensions are claimed by multiple MIME types, this table only includes one 
+    // for each because it is currently only used by getMediaMIMETypeForExtension. If we
+    // ever add a MIME type -> file extension mapping, the alternate MIME types will need
+    // to be added.
+    static const TypeExtensionPair pairs[] = {
+    
+        // Ogg
+        { "application/ogg", "ogg" },
+        { "application/ogg", "ogx" },
+        { "audio/ogg", "oga" },
+        { "video/ogg", "ogv" },
+
+        // Annodex
+        { "application/annodex", "anx" },
+        { "audio/annodex", "axa" },
+        { "video/annodex", "axv" },
+        { "audio/speex", "spx" },
+
+        // MPEG
+        { "audio/mpeg", "m1a" },
+        { "audio/mpeg", "m2a" },
+        { "audio/mpeg", "m1s" },
+        { "audio/mpeg", "mpa" },
+        { "video/mpeg", "mpg" },
+        { "video/mpeg", "m15" },
+        { "video/mpeg", "m1s" },
+        { "video/mpeg", "m1v" },
+        { "video/mpeg", "m75" },
+        { "video/mpeg", "mpa" },
+        { "video/mpeg", "mpeg" },
+        { "video/mpeg", "mpm" },
+        { "video/mpeg", "mpv" },
+
+        // MPEG playlist
+        { "audio/x-mpegurl", "m3url" },
+        { "application/x-mpegurl", "m3u8" },
+
+        // MPEG-4
+        { "video/x-m4v", "m4v" },
+        { "audio/x-m4a", "m4a" },
+        { "audio/x-m4b", "m4b" },
+        { "audio/x-m4p", "m4p" },
+ 
+        // MP3
+        { "audio/mp3", "mp3" },
+
+        // MPEG-2
+        { "video/x-mpeg2", "mp2" },
+        { "video/mpeg2", "vob" },
+        { "video/mpeg2", "mod" },
+        { "video/m2ts", "m2ts" },
+        { "video/x-m2ts", "m2t" },
+        { "video/x-m2ts", "ts" },
+
+        // 3GP/3GP2
+        { "audio/3gpp", "3gpp" }, 
+        { "audio/3gpp2", "3g2" }, 
+        { "application/x-mpeg", "amc" },
+
+        // AAC
+        { "audio/aac", "aac" },
+        { "audio/aac", "adts" },
+        { "audio/x-aac", "m4r" },
+
+        // CoreAudio File
+        { "audio/x-caf", "caf" },
+        { "audio/x-gsm", "gsm" }
+    };
+
+    mediaMIMETypeForExtensionMap = new HashMap<String, String, CaseFoldingHash>;
+    const unsigned numPairs = sizeof(pairs) / sizeof(pairs[0]);
+    for (unsigned ndx = 0; ndx < numPairs; ++ndx)
+        mediaMIMETypeForExtensionMap->set(pairs[ndx].extension, pairs[ndx].type);
+}
+
+String MIMETypeRegistry::getMediaMIMETypeForExtension(const String& ext)
+{
+    // Check with system specific implementation first.
+    String mimeType = getMIMETypeForExtension(ext);
+    if (!mimeType.isEmpty())
+        return mimeType;
+
+    // No match, look in the static mapping.
+    if (!mediaMIMETypeForExtensionMap)
+        initializeMediaTypeMaps();
+    return mediaMIMETypeForExtensionMap->get(ext);
 }
 
 static void initializeSupportedMediaMIMETypes()

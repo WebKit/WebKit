@@ -1,3 +1,29 @@
+2009-05-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by David Kilzer.
+
+        <rdar://problem/6902197> WebCore doesn't know about all of the MIME types supported by QTKit
+        
+        Add a static table to map from some common file extensions to their MIME types so it
+        is possible to detect support even when the platform mapping is incomplete. Use the
+        table to lookup types not found by UTI on the OSX, and when looking for a media engine
+        with a generic or missing type.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeMediaTypeMaps): New, initialize the mediaMIMETypeForExtensionMap.
+        (WebCore::MIMETypeRegistry::getMediaMIMETypeForExtension): New. Look for the specified
+        MIME type in the static mapping table if the platform specific getMIMETypeForExtension
+        doesn't find a match.
+        * platform/MIMETypeRegistry.h: Declare getMediaMIMETypeForExtension.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): When the type passed is empty, "application/octet-stream", or
+        "text/plain", try to look it up based on the file extension with getMediaMIMETypeForExtension.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::addFileTypesToCache): See if getMediaMIMETypeForExtension can map from file extension
+        to MIME type if UTI fails.
+
 2009-05-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
