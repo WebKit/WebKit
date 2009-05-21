@@ -190,8 +190,14 @@ static void initializeSupportedNonImageMimeTypes()
 {
     static const char* types[] = {
 #if ENABLE(WML)
+        "text/vnd.wap.wml",
         "application/vnd.wap.wmlc",
 #endif
+        "text/html",
+        "text/xml",
+        "text/xsl",
+        "text/plain",
+        "text/",
         "application/xml",
         "application/xhtml+xml",
 #if ENABLE(XHTMLMP)
@@ -383,8 +389,6 @@ bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
         return false;
-    if (mimeType.startsWith("text/"))
-        return true;
     if (!supportedNonImageMIMETypes)
         initializeMIMETypeRegistry();
     return supportedNonImageMIMETypes->contains(mimeType);

@@ -1,3 +1,17 @@
+2009-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=25947
+          Assertion failure in FrameLoader::transitionToCommitted on launch in
+          Safari with r43985
+
+        Rolled out r43985.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedNonImageMimeTypes):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+
 2009-05-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson and Mark Rowe.
