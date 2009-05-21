@@ -1,3 +1,11 @@
+2009-05-21  Darin Fisher  <darin@chromium.org>
+
+        Fix build bustage.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::getAutoCorrectSuggestionForMisspelledWord): Add stub for method.
+        * WebCoreSupport/EditorClientGtk.h:
+
 2009-05-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Darin Adler.
