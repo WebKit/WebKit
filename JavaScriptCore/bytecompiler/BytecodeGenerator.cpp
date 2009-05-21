@@ -332,8 +332,15 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
     } else
         emitOpcode(op_enter);
 
-     if (usesArguments)
+     if (usesArguments) {
         emitOpcode(op_init_arguments);
+
+        // The debugger currently retrieves the arguments object from an activation rather than pulling
+        // it from a call frame.  In the long-term it should stop doing that (<rdar://problem/6911886>),
+        // but for now we force eager creation of the arguments object when debugging.
+        if (m_shouldEmitDebugHooks)
+            emitOpcode(op_create_arguments);
+    }
 
     const DeclarationStacks::FunctionStack& functionStack = functionBody->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i) {
