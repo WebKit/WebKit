@@ -23,7 +23,6 @@
 #include "FileSystem.h"
 
 #include "GOwnPtr.h"
-#include "guriescape.h"
 #include "PlatformString.h"
 #include "CString.h"
 

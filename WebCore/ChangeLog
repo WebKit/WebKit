@@ -1,3 +1,15 @@
+2009-05-21  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25910
+        WebkitGTK r43960 cannot compile
+
+        Do not include local copy of guriescape header, which was
+        removed. We now use the copy in glib.
+
+        * platform/gtk/FileSystemGtk.cpp:
+
 2009-05-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
