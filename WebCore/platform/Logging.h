@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+    class String;
+
     extern WTFLogChannel LogNotYetImplemented;
     extern WTFLogChannel LogFrames;
     extern WTFLogChannel LogLoading;
@@ -57,6 +59,7 @@ namespace WebCore {
     extern WTFLogChannel LogArchives;
 
     void InitializeLoggingChannelsIfNecessary();
+    WTFLogChannel* getChannelFromName(const String& channelName);
 }
 
 #endif // Logging_h

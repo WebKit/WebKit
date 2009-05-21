@@ -1,3 +1,18 @@
+2009-05-21  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Use an environment variable to control which logs are on and off.
+        Also, make a generic function for translating channel name to its log.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25936
+
+        * platform/Logging.cpp:
+        (WebCore::getChannelFromName):
+        * platform/Logging.h:
+        * platform/wx/LoggingWx.cpp:
+        (WebCore::InitializeLoggingChannelsIfNecessary):
+
 2009-05-21  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Fisher.

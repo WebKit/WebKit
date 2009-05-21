@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "Logging.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
@@ -58,5 +59,34 @@ WTFLogChannel LogMedia =             { 0x01000000, "WebCoreLogLevel", WTFLogChan
 
 WTFLogChannel LogPlugin =            { 0x02000000, "WebCoreLogLevel", WTFLogChannelOff };
 WTFLogChannel LogArchives =          { 0x04000000, "WebCoreLogLevel", WTFLogChannelOff };
+
+WTFLogChannel* getChannelFromName(const String& channelName)
+{
+    if (!channelName.length() >= 2)
+        return 0;
+
+    if (channelName == String("BackForward")) return &LogBackForward;
+    if (channelName == String("Editing")) return &LogEditing;
+    if (channelName == String("Events")) return &LogEvents;
+    if (channelName == String("Frames")) return &LogFrames;
+    if (channelName == String("FTP")) return &LogFTP;
+    if (channelName == String("History")) return &LogHistory;
+    if (channelName == String("IconDatabase")) return &LogIconDatabase;
+    if (channelName == String("Loading")) return &LogLoading;
+    if (channelName == String("Media")) return &LogMedia;
+    if (channelName == String("Network")) return &LogNetwork;
+    if (channelName == String("NotYetImplemented")) return &LogNotYetImplemented;
+    if (channelName == String("PageCache")) return &LogPageCache;
+    if (channelName == String("PlatformLeaks")) return &LogPlatformLeaks;
+    if (channelName == String("Plugin")) return &LogPlugin;
+    if (channelName == String("PopupBlocking")) return &LogPopupBlocking;
+    if (channelName == String("SpellingAndGrammar")) return &LogSpellingAndGrammar;
+    if (channelName == String("SQLDatabase")) return &LogSQLDatabase;
+    if (channelName == String("StorageAPI")) return &LogStorageAPI;
+    if (channelName == String("TextConversion")) return &LogTextConversion;
+    if (channelName == String("Threading")) return &LogThreading;
+
+    return 0;
+}
 
 }
