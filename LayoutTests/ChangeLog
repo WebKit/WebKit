@@ -1,5 +1,14 @@
 2009-05-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Darin Adler.
+
+        Test that WebKit accepts any text/* type.
+
+        * http/tests/mime/accept-all-text-types-expected.txt: Added.
+        * http/tests/mime/accept-all-text-types.html: Added.
+
+2009-05-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Xan Lopez.
 
         Disable failing HTTP tests now that we are enabling HTTP on the
