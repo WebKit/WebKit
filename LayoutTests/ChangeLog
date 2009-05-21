@@ -1,3 +1,12 @@
+2009-05-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        Add GTK+-specific results for canvas-composite-alpha. This test
+        has 'failing' cases that pass on GTK+/cairo.
+
+        * platform/gtk/fast/canvas/canvas-composite-alpha-expected.txt: Added.
+
 2009-05-20  David Kilzer  <ddkilzer@apple.com>
 
         Test for <rdar://problem/5666078> Cookie parsing terminates at the first semicolon, ignoring quotes (16699)
