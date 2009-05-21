@@ -1,5 +1,11 @@
 2009-05-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Fixing test to actually use the correct names for the frames.
+
+        * http/tests/mime/accept-all-text-types.html:
+
+2009-05-21  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Disable 2 more tests that sometimes fail.
 
         * platform/gtk/Skipped:
