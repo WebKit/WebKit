@@ -1,3 +1,16 @@
+2009-05-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson and Mark Rowe.
+
+        Fix for <rdar://problem/6901522>
+        REGRESSION: Office 2008: Preview with browser is not shown, and Finder window is in the front of Safari
+
+        If the NSURLRequest is annotated with a "ForceHTMLMIMEType" property, force
+        the MIME type to be text/html.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+
 2009-05-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         Blind windows fix after last commit.

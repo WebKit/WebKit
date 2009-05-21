@@ -67,6 +67,14 @@ using namespace WebCore;
 - (NSData *)_bufferedData;
 @end
 
+@interface NSURLResponse (Details)
+- (void)_setMIMEType:(NSString *)type;
+@end
+
+@interface NSURLRequest (Details)
+- (id)_propertyForKey:(NSString *)key;
+@end
+
 #ifndef BUILDING_ON_TIGER
 
 @interface WebCoreSynchronousLoader : NSObject {
@@ -630,6 +638,9 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         oldNSURLResponseMIMETypeIMP = method_setImplementation(nsURLResponseMIMETypeMethod, (IMP)webNSURLResponseMIMEType);
     }
 #endif
+
+    if ([m_handle->request().nsURLRequest() _propertyForKey:@"ForceHTMLMIMEType"])
+        [r _setMIMEType:@"text/html"];
 
     m_handle->client()->didReceiveResponse(m_handle, r);
 }
