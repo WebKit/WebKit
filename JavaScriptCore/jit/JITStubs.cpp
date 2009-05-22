@@ -1733,7 +1733,7 @@ EncodedJSValue JITStubs::cti_op_resolve_global(STUB_ARGS_DECLARATION)
     PropertySlot slot(globalObject);
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue result = slot.getValue(callFrame, ident);
-        if (slot.isCacheable() && !globalObject->structure()->isDictionary()) {
+        if (slot.isCacheable() && !globalObject->structure()->isDictionary() && slot.slotBase() == globalObject) {
             GlobalResolveInfo& globalResolveInfo = callFrame->codeBlock()->globalResolveInfo(globalResolveInfoIndex);
             if (globalResolveInfo.structure)
                 globalResolveInfo.structure->deref();

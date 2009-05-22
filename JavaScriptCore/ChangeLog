@@ -1,3 +1,18 @@
+2009-05-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/6910264> REGRESSION: Cached DOM global object property access fails in browser (25921)
+        <https://bugs.webkit.org/show_bug.cgi?id=25921>
+
+        When caching properties on the global object we need to ensure that we're
+        not attempting to cache through a shell object.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveGlobal):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_resolve_global):
+
 2009-05-21  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

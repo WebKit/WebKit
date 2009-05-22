@@ -1,3 +1,13 @@
+2009-05-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add tests to ensure that we correctly cache (or do not cache) lookups
+        of global properties.
+
+        * fast/js/global-function-resolve.html: Added.
+        * fast/js/resources/global-function-resolve.js: Added.
+
 2009-05-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
