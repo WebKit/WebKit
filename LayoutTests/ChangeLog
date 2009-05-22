@@ -1,3 +1,17 @@
+2009-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - Made the global-function-resolve test independent of hashing order
+          by using a fixed set of properties. This also removes the need for us
+          to update this test every time we add something to the window object or
+          the js-test-pre.js family of scripts.
+
+        * fast/js/global-function-resolve-expected.txt: Updated.
+        * fast/js/resources/global-function-resolve.js: Use a fixed array instead
+        of using all property names from the global object; also made other small
+        changes that don't have an effect on the substance of the test.
+
 2009-05-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
