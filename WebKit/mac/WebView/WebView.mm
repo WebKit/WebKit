@@ -2784,6 +2784,39 @@ static bool needsWebViewInitThreadWorkaround()
     }
 }
 
+#ifndef BUILDING_ON_TIGER
+
+static bool needsUnwantedScrollBarWorkaround(WebView *view)
+{
+    // WebKit's automatic scroll bars are appearing in some cases where they should not.
+    // This is tracked by <https://bugs.webkit.org/show_bug.cgi?id=25969>.
+    // To work around this in What's New windows in some Apple applications, we set
+    // the main frame to not allow scrolling at all.
+
+    NSWindow *window = [view window];
+    if (!window)
+        return false;
+
+    // The applications in question all use distinctive class names for the window.
+    const char* windowClassName = class_getName([window class]);
+    if (strcmp(windowClassName, "WhatsNewPanel") != 0 && strcmp(windowClassName, "iLifeWelcomePanel") != 0)
+        return false;
+
+    // To guarantee this won't cause trouble for any non-Apple application, only do
+    // this if the bundle identifier is an Apple one.
+    return [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"com.apple."];
+}
+
+#else
+
+static inline bool needsUnwantedScrollBarWorkaround(WebView *)
+{
+    // The applications in question do not run on Tiger.
+    return false;
+}
+
+#endif
+
 - (void)viewDidMoveToWindow
 {
     // Don't do anything if we aren't initialized.  This happens
@@ -2792,7 +2825,10 @@ static bool needsWebViewInitThreadWorkaround()
     // initialized.  The stub views are discarded by WebView.
     if (!_private || _private->closed)
         return;
-        
+
+    if (needsUnwantedScrollBarWorkaround(self))
+        [[[self mainFrame] frameView] setAllowsScrolling:NO];
+
     if ([self window])
         _private->page->didMoveOnscreen();
 }

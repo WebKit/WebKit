@@ -1,3 +1,16 @@
+2009-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        - Fix <rdar://problem/6913765> REGRESSION (r42331-r42334): Extra scroll
+          bars appearing on Welcome panels of iLife '09 apps
+
+        * WebView/WebView.mm:
+        (needsUnwantedScrollBarWorkaround): Added. Checks if this is a panel
+        where scroll bars are unwanted. For safety, limited to only Apple applications. 
+        (-[WebView viewDidMoveToWindow]): If the workaround is needed, disallow
+        scrolling the main frame. This prevents scroll bars from appearing.
+
 2009-05-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
