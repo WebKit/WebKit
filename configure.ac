@@ -728,3 +728,8 @@ GTK+ configuration:
  GDK target                                               : $with_target
  Hildon UI extensions                                     : $with_hildon
 "
+if test "$with_unicode_backend" = "glib"; then
+   echo "     >> WARNING: the glib-based unicode backend is slow and incomplete <<"
+   echo
+   echo
+fi

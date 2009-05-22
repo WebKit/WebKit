@@ -121,7 +121,7 @@ dnl determine the Unicode backend
 AC_MSG_CHECKING([which Unicode backend to use])
 AC_ARG_WITH(unicode_backend,
             AC_HELP_STRING([--with-unicode-backend=@<:@icu/glib@:>@],
-                           [Select Unicode backend [default=icu]]),
+                           [Select Unicode backend (WARNING: the glib-based backend is slow, and incomplete) [default=icu]]),
             [],[with_unicode_backend="icu"])
 
 case "$with_unicode_backend" in

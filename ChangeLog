@@ -1,3 +1,13 @@
+2009-05-22  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Add big warnings about the glib unicode backend being slow and
+        incomplete, since it is a work in progress.
+
+        * autotools/webkit.m4:
+        * configure.ac:
+
 2009-05-22  Dominik Röttsches  <dominik.roettsches@access-company.com>
 
         Reviewed by Gustavo Noronha.
