@@ -1,3 +1,11 @@
+2009-05-22  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Skip tests depending on platform dependent results.
+
+        * platform/qt/Skipped:
+
 2009-05-22  Shinichiro Hamaji  <hamaji@google.com>
 
         Reviewed by Oliver Hunt.
