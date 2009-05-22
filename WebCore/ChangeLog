@@ -1,3 +1,10 @@
+2009-05-22  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Switch to CURL cookies so we can benefit from API updates.
+
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * webcore-wx.bkl:
+
 2009-05-22  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Fisher.

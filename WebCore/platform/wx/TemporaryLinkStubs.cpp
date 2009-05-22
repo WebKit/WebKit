@@ -97,11 +97,6 @@ DragImageRef Frame::dragImageForSelection() { notImplemented(); return 0; }
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }
 
-// cookies (we'll need a place to store these
-void WebCore::setCookies(Document* document, const KURL& url, const KURL& policyURL, const String& value) { notImplemented(); }
-String WebCore::cookies(const Document* document, const KURL& url) { notImplemented(); return String(); }
-bool WebCore::cookiesEnabled(const Document* document) { notImplemented(); return false; }
-
 /********************************************************/
 /* Completely empty stubs (mostly to allow DRT to run): */
 /********************************************************/

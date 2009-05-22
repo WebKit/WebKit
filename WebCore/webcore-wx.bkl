@@ -95,6 +95,7 @@ wxWebCore port Bakefile project file.
             platform/wx/ContextMenuItemWx.cpp
            
             <!-- files from other ports we currently rely on -->
+            platform/network/curl/CookieJarCurl.cpp
             platform/network/curl/FormDataStreamCurl.cpp
             platform/network/curl/ResourceHandleCurl.cpp
             platform/network/curl/ResourceHandleManager.cpp
