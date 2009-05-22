@@ -1,3 +1,13 @@
+2009-05-21  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6913680> Update image caching options.
+        Disable extra ImageIO cache because we already handle caching decoded image data.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::imageSourceOptions):
+
 2009-05-21  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Eric Seidel.
