@@ -1,3 +1,13 @@
+2009-05-22  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt build fix.
+
+        Provide dummy implementation of pure virtual EditorClient method.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::getAutoCorrectSuggestionForMisspelledWord):
+        * WebCoreSupport/EditorClientQt.h:
+
 2009-05-20  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann and Holger Freyther.

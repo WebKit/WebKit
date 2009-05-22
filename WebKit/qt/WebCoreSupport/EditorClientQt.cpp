@@ -547,6 +547,12 @@ void EditorClientQt::checkSpellingOfString(const UChar*, int, int*, int*)
     notImplemented();
 }
 
+String EditorClientQt::getAutoCorrectSuggestionForMisspelledWord(const String&)
+{
+    notImplemented();
+    return String();
+}
+
 void EditorClientQt::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
 {
     notImplemented();
