@@ -46,6 +46,8 @@
 #include "SkTypeface.h"
 #include "SkUtils.h"
 
+#include <wtf/Assertions.h>
+
 namespace WebCore {
 
 void FontCache::platformInit()
@@ -97,8 +99,26 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
 
 FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& description)
 {
-    static AtomicString arialStr("Arial");
-    return getCachedFontPlatformData(description, arialStr);
+    static const AtomicString sansStr("Sans");
+    static const AtomicString serifStr("Serif");
+    static const AtomicString monospaceStr("Monospace");
+
+    FontPlatformData* fontPlatformData = 0;
+    switch (description.genericFamily()) {
+    case FontDescription::SerifFamily:
+        fontPlatformData = getCachedFontPlatformData(description, serifStr);
+        break;
+    case FontDescription::MonospaceFamily:
+        fontPlatformData = getCachedFontPlatformData(description, monospaceStr);
+        break;
+    case FontDescription::SansSerifFamily:
+    default:
+        fontPlatformData = getCachedFontPlatformData(description, sansStr);
+        break;
+    }
+
+    ASSERT(fontPlatformData);
+    return fontPlatformData;
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName,

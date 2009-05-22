@@ -1,3 +1,14 @@
+2009-05-21  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Flesh out font fallback for Chromium's Skia port.
+        getLastResortFallbackFont should fall back on well-known fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=25860
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont): try known font names.
+
 2009-05-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
