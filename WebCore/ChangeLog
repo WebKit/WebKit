@@ -1,3 +1,15 @@
+2009-05-21  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Notify ImageObserver::didDraw to help the cache purge alive resources.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25942
+
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::drawPattern):
+
 2009-05-21  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.
