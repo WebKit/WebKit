@@ -1,3 +1,20 @@
+2009-05-21  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24818
+        [GTK] http auth dialog pops up twice after a cancelled atempt
+
+        Workaround libsoup bug
+        http://bugzilla.gnome.org/show_bug.cgi?id=583462, which made
+        libsoup emit the 'authenticate' signal more often than it was
+        expected.
+
+        We'll be able to remove this when we depend on libsoup > 2.26.2.
+
+        * webkit/webkitsoupauthdialog.c:
+        (session_authenticate):
+
 2009-05-21  Darin Fisher  <darin@chromium.org>
 
         Fix build bustage.

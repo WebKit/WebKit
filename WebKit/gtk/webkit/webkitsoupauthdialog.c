@@ -315,6 +315,13 @@ static void session_authenticate(SoupSession* session, SoupMessage* msg, SoupAut
     WebKitAuthData* authData;
     SoupSessionFeature* manager = (SoupSessionFeature*)user_data;
 
+    /* 
+     * Workaround for http://bugzilla.gnome.org/show_bug.cgi?id=583462
+     * FIXME: we can remove this once we depend on a libsoup newer than 2.26.2
+     */
+    if (msg->status_code == 0)
+        return;
+
     soup_session_pause_message(session, msg);
     /* We need to make sure the message sticks around when pausing it */
     g_object_ref(msg);
