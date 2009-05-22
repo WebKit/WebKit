@@ -1,3 +1,30 @@
+2009-05-22  Dominik Röttsches  <dominik.roettsches@access-company.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15914
+        [GTK] Implement Unicode functionality using GLib
+
+        Minor changes that allow building a hybrid version of WebKit
+        that has WTF Unicode backend based on GLib functions while
+        text codecs and TextBreakIterator remain based on ICU.
+
+        Fixed some includes that were assuming a WTF ICU backend and
+        introduced temporary usage of WTF_USE_GLIB_ICU_UNICODE_HYBRID
+        macro.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        (WebCore::ThreadGlobalData::~ThreadGlobalData):
+        * platform/ThreadGlobalData.h:
+        * platform/text/TextBoundariesICU.cpp:
+        * platform/text/TextCodecICU.h:
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+        (WebCore::extendTextCodecMaps):
+
 2009-05-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

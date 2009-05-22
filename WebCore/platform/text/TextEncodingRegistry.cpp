@@ -38,7 +38,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
 #include "TextCodecICU.h"
 #endif
 #if PLATFORM(MAC)
@@ -185,7 +185,7 @@ static void buildBaseTextCodecMaps()
     TextCodecUserDefined::registerEncodingNames(addToTextEncodingNameMap);
     TextCodecUserDefined::registerCodecs(addToTextCodecMap);
 
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
     TextCodecICU::registerBaseEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerBaseCodecs(addToTextCodecMap);
 #endif
@@ -193,7 +193,7 @@ static void buildBaseTextCodecMaps()
 
 static void extendTextCodecMaps()
 {
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
     TextCodecICU::registerExtendedEncodingNames(addToTextEncodingNameMap);
     TextCodecICU::registerExtendedCodecs(addToTextCodecMap);
 #endif

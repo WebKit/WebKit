@@ -31,7 +31,7 @@
 #include "PlatformString.h"
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
 #include <unicode/unorm.h>
 #elif USE(QT4_UNICODE)
 #include <QString>
@@ -83,7 +83,7 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
     if (!length)
         return "";
 
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
     // FIXME: What's the right place to do normalization?
     // It's a little strange to do it inside the encode function.
     // Perhaps normalization should be an explicit step done before calling encode.

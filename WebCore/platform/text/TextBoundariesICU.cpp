@@ -27,6 +27,7 @@
 #include "TextBoundaries.h"
 
 #include <unicode/ubrk.h>
+#include <unicode/uchar.h>
 
 #include "StringImpl.h"
 #include "TextBreakIterator.h"

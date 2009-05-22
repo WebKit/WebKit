@@ -120,17 +120,22 @@ AC_DEFUN([_WEBKIT_CHECK_UNICODE],
 dnl determine the Unicode backend
 AC_MSG_CHECKING([which Unicode backend to use])
 AC_ARG_WITH(unicode_backend,
-            AC_HELP_STRING([--with-unicode-backend=@<:@icu@:>@],
+            AC_HELP_STRING([--with-unicode-backend=@<:@icu/glib@:>@],
                            [Select Unicode backend [default=icu]]),
-            [],[unicode_backend="icu"])
+            [],[with_unicode_backend="icu"])
 
-case "$unicode_backend" in
-     icu) ;;
-     *) AC_MSG_ERROR([Invalid Unicode backend: must be icu.]) ;;
+case "$with_unicode_backend" in
+     icu|glib) ;;
+     *) AC_MSG_ERROR([Invalid Unicode backend: must be icu or glib.]) ;;
 esac
-AC_MSG_RESULT([$unicode_backend])
 
-if test "$unicode_backend" = "icu"; then
+AC_MSG_RESULT([$with_unicode_backend])
+
+# https://bugs.webkit.org/show_bug.cgi?id=15914
+# Splitting ICU removal patch into smaller portions. We compile a hybrid version
+# with the WTF Unicode backend being based on GLib while text codecs and TextBreakIterator
+# keep the ICU dependency. That's why we temporarily add icu headers and libs for glib config case as well.
+if test "$with_unicode_backend" = "icu" -o "$with_unicode_backend" = "glib"; then
 	if test "$os_darwin" = "yes"; then
 		UNICODE_CFLAGS="-I\$(srcdir)/JavaScriptCore/icu -I\$(srcdir)/WebCore/icu"
 		UNICODE_LIBS="-licucore"
@@ -150,6 +155,18 @@ if test "$unicode_backend" = "icu"; then
 		UNICODE_LIBS=`$icu_config --ldflags`
 	fi
 fi
+
+if test "$with_unicode_backend" = "glib"; then
+	# https://bugs.webkit.org/show_bug.cgi?id=15914
+	# Splitting ICU removal patch into smaller portions, that's why we
+	# temporarily retrieve flags & libs info for glib into UNICODEGLIB
+	# instead of UNICODE variable, then concatenate.
+	# Patch 3/4 of the above issue will rename the variable back to UNICODE.
+	PKG_CHECK_MODULES([UNICODEGLIB], [glib-2.0 pango >= 1.21.0])
+	UNICODE_CFLAGS="$UNICODE_CFLAGS $UNICODEGLIB_CFLAGS"
+	UNICODE_LIBS="$UNICODE_LIBS $UNICODEGLIB_LIBS"
+fi
+
 AC_SUBST([UNICODE_CFLAGS])
 AC_SUBST([UNICODE_LIBS])
 ])

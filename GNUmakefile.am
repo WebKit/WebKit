@@ -266,8 +266,25 @@ libwebkit_1_0_la_LIBADD = \
 global_cppflags += \
 	-DBUILDING_CAIRO__=1 \
 	-DBUILDING_GTK__=1 \
-	-DWTF_CHANGES \
+	-DWTF_CHANGES
+
+if USE_ICU_UNICODE
+global_cppflags += \
 	-DWTF_USE_ICU_UNICODE=1
+endif
+
+if USE_GLIB_UNICODE
+# https://bugs.webkit.org/show_bug.cgi?id=15914
+# In patch 1/4 we are compiling a hybrid version of GLib WTF Unicode
+# functionality mixed with ICU-based text codecs and TextBreakIterator.
+# For the transition, introducing an interim HYBRID macro.
+# This macro is required for compiling WTF with GLib Unicode backend,
+# but at the same time keeping ICU dependency for codecs and break iterator.
+# It will be removed with patch 3/4 of the above bug.
+global_cppflags += \
+	-DWTF_USE_GLIB_UNICODE=1 \
+	-DWTF_USE_GLIB_ICU_UNICODE_HYBRID=1
+endif
 
 if !ENABLE_FAST_MALLOC
 global_cppflags += \

@@ -30,6 +30,8 @@
 #include "TextCodec.h"
 #include "TextEncoding.h"
 
+#include <unicode/utypes.h>
+
 typedef struct UConverter UConverter;
 
 namespace WebCore {

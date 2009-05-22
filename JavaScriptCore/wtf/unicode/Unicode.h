@@ -28,6 +28,8 @@
 #include "qt4/UnicodeQt4.h"
 #elif USE(ICU_UNICODE)
 #include <wtf/unicode/icu/UnicodeIcu.h>
+#elif USE(GLIB_UNICODE)
+#include <wtf/unicode/glib/UnicodeGLib.h>
 #else
 #error "Unknown Unicode implementation"
 #endif

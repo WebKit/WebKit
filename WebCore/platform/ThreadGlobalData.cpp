@@ -32,7 +32,7 @@
 #include "ThreadTimers.h"
 #include <wtf/UnusedParam.h>
 
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
 #include "TextCodecICU.h"
 #endif
 
@@ -72,7 +72,7 @@ ThreadGlobalData::ThreadGlobalData()
     , m_atomicStringTable(new HashSet<StringImpl*>)
     , m_eventNames(new EventNames)
     , m_threadTimers(new ThreadTimers)
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
     , m_cachedConverterICU(new ICUConverterWrapper)
 #endif
 #if PLATFORM(MAC)
@@ -86,7 +86,7 @@ ThreadGlobalData::~ThreadGlobalData()
 #if PLATFORM(MAC)
     delete m_cachedConverterTEC;
 #endif
-#if USE(ICU_UNICODE)
+#if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
     delete m_cachedConverterICU;
 #endif
 

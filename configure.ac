@@ -640,6 +640,10 @@ AM_CONDITIONAL([TARGET_WIN32], [test "$with_target" = "win32"])
 AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_target" = "quartz"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 
+# Unicode backend conditionals
+AM_CONDITIONAL([USE_ICU_UNICODE], [test "$with_unicode_backend" = "icu"])
+AM_CONDITIONAL([USE_GLIB_UNICODE], [test "$with_unicode_backend" = "glib"])
+
 # Auth backend conditionals
 AM_CONDITIONAL([USE_GNOMEKEYRING], [test "$enable_gnomekeyring" = "yes"])
 
@@ -693,7 +697,7 @@ Build configuration:
  Enable debugging (slow)                                  : $enable_debug
  Enable GCC build optimization                            : $enable_optimizations
  Code coverage support                                    : $enable_coverage
- Unicode backend                                          : $unicode_backend
+ Unicode backend                                          : $with_unicode_backend
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
 Features:

@@ -1,3 +1,23 @@
+2009-05-22  Dominik Röttsches  <dominik.roettsches@access-company.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15914
+        [GTK] Implement Unicode functionality using GLib
+
+        Initial version of this patch by Jürg Billeter.
+
+        Adding options for --with-unicode-backend=icu|glib
+        and checking for pango version >= 1.21.0 if GLib backend
+        is selected. Temporarily, until remaining parts of
+        this patch are committed, introduce WTF_USE_GLIB_ICU_UNICODE_HYBRID
+        macro to allow for a mixed compilation with WTF Unicode
+        backend based on GLib while text codecs and TextBreakIterator
+        remain ICU dependent.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2009-05-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Gavin Barraclough.

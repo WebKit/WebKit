@@ -269,9 +269,28 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	JavaScriptCore/wtf/unicode/UTF8.cpp \
 	JavaScriptCore/wtf/unicode/UTF8.h \
-	JavaScriptCore/wtf/unicode/Unicode.h \
+	JavaScriptCore/wtf/unicode/Unicode.h
+
+# ----
+# icu unicode backend
+# ----
+if USE_ICU_UNICODE
+javascriptcore_sources += \
 	JavaScriptCore/wtf/unicode/icu/CollatorICU.cpp \
-	JavaScriptCore/wtf/unicode/icu/UnicodeIcu.h \
+	JavaScriptCore/wtf/unicode/icu/UnicodeIcu.h
+endif # USE_ICU_UNICODE
+
+# ----
+# glib unicode backend
+# ----
+if USE_GLIB_UNICODE
+javascriptcore_sources += \
+	JavaScriptCore/wtf/unicode/glib/UnicodeGLib.h \
+	JavaScriptCore/wtf/unicode/glib/UnicodeGLib.cpp \
+	JavaScriptCore/wtf/unicode/glib/UnicodeMacrosFromICU.h
+endif
+
+javascriptcore_sources += \
 	JavaScriptCore/wtf/VMTags.h \
 	JavaScriptCore/yarr/RegexCompiler.cpp \
 	JavaScriptCore/yarr/RegexCompiler.h \

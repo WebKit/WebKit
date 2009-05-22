@@ -1,3 +1,41 @@
+2009-05-22  Dominik Röttsches  <dominik.roettsches@access-company.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15914
+        [GTK] Implement Unicode functionality using GLib
+
+        Original patch by Jürg Billeter and Naiem Shaik.
+        Implementing WTF Unicode functionality based on GLib.
+
+        * GNUmakefile.am:
+        * wtf/unicode/Unicode.h:
+        * wtf/unicode/glib: Added.
+        * wtf/unicode/glib/UnicodeGLib.cpp: Added.
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::umemcasecmp):
+        * wtf/unicode/glib/UnicodeGLib.h: Added.
+        (WTF::Unicode::):
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::isArabicChar):
+        (WTF::Unicode::isFormatChar):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::category):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::digitValue):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::decompositionType):
+        * wtf/unicode/glib/UnicodeMacrosFromICU.h: Added.
+
 2009-05-21  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed build fix.
