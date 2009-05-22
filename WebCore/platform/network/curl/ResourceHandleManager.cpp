@@ -590,8 +590,11 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     if (kurl.isLocalFile()) {
         String query = kurl.query();
         // Remove any query part sent to a local file.
-        if (!query.isEmpty())
-            url = url.left(url.find(query));
+        if (!query.isEmpty()) {
+            int queryIndex = url.find(query);
+            if (queryIndex != -1)
+                url = url.left(queryIndex - 1);
+        }
         // Determine the MIME type based on the path.
         d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(url));
     }
