@@ -28,11 +28,11 @@
 #include "config.h"
 #include "CookieJar.h"
 
+#include "Document.h"
 #include "KURL.h"
 #include "PlatformString.h"
 
 #if QT_VERSION >= 0x040400
-#include "Document.h"
 #include "qwebpage.h"
 #include "qwebframe.h"
 #include "FrameLoaderClientQt.h"
@@ -61,10 +61,10 @@ static QNetworkCookieJar *cookieJar(const Document *document)
 }
 #endif
 
-void setCookies(Document* document, const KURL& url, const KURL& policyURL, const String& value)
+void setCookies(Document* document, const KURL& url, const String& value)
 {
     QUrl u(url);
-    QUrl p(policyURL);
+    QUrl p(document->firstPartyForCookies());
 #if QT_VERSION >= 0x040400
     QNetworkCookieJar* jar = cookieJar(document);
     if (!jar)

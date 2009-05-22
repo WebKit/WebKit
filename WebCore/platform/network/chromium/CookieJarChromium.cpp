@@ -36,10 +36,8 @@
 
 namespace WebCore {
 
-void setCookies(Document* document, const KURL& url, const KURL& firstPartyForCookies, const String& value)
+void setCookies(Document* document, const KURL& url, const String& value)
 {
-    // We ignore the policyURL and compute it directly ourselves to ensure
-    // consistency with the cookies() method below.
     ChromiumBridge::setCookies(url, document->firstPartyForCookies(), value);
 }
 

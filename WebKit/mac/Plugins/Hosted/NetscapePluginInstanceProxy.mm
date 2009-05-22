@@ -1308,7 +1308,7 @@ bool NetscapePluginInstanceProxy::setCookies(data_t urlData, mach_msg_type_numbe
         if (!cookieString)
             return false;
         
-        WebCore::setCookies(frame->document(), url, url, cookieString);
+        WebCore::setCookies(frame->document(), url, cookieString);
         return true;
     }
 

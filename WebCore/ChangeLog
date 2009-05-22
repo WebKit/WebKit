@@ -2,6 +2,37 @@
 
         Reviewed by Maciej Stachowiak.
 
+        https://bugs.webkit.org/show_bug.cgi?id=25955
+
+        Remove the policyBaseURL parameter from setCookie.  This parameter is
+        redundant with the document parameter.
+
+        * WebCore.base.exp:
+        * WebCore.order:
+        * dom/Document.cpp:
+        (WebCore::Document::setCookie):
+        * platform/CookieJar.h:
+        * platform/mac/CookieJar.mm:
+        (WebCore::setCookies):
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::setCookies):
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::setCookies):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookies):
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::setCookies):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookies):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies):
+
+2009-05-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25955
+
         Rename policyBaseURL and mainDocumentURL to firstPartyForCookies.  The
         previous names were confusing and inaccurate.
 
@@ -21,10 +52,6 @@
         * loader/FrameLoader.h:
         * loader/MainResourceLoader.cpp:
         (WebCore::MainResourceLoader::willSendRequest):
-        * platform/CookieJar.h:
-        * platform/mac/CookieJar.mm:
-        (WebCore::setCookies):
-        * platform/network/ResourceRequestBase.cpp:
         (WebCore::ResourceRequestBase::adopt):
         (WebCore::ResourceRequestBase::copyData):
         (WebCore::ResourceRequestBase::firstPartyForCookies):
@@ -39,6 +66,21 @@
         * platform/network/mac/ResourceRequestMac.mm:
         (WebCore::ResourceRequest::doUpdateResourceRequest):
         (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::firstPartyForCookies):
+        (WebCore::ResourceRequestBase::setFirstPartyForCookies):
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::setCookies):
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::setCookies):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookies):
+        * platform/network/win/CookieJarCFNetWin.cpp:
+        (WebCore::setCookies):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookies):
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::setCookies):
 
 2009-05-22  Pavel Feldman  <pfeldman@chromium.org>
 

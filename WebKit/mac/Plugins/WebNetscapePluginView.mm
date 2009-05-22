@@ -2210,7 +2210,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 break;
             
             if (Frame* frame = core([self webFrame])) {
-                setCookies(frame->document(), URL, URL, cookieString);
+                setCookies(frame->document(), URL, cookieString);
                 return NPERR_NO_ERROR;
             }
             

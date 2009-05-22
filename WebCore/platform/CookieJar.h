@@ -33,7 +33,7 @@ namespace WebCore {
     class Document;
 
     String cookies(const Document*, const KURL&);
-    void setCookies(Document*, const KURL&, const KURL& firstPartyForCookies, const String&);
+    void setCookies(Document*, const KURL&, const String&);
     bool cookiesEnabled(const Document*);
 
 }

@@ -165,14 +165,14 @@ const KURL& ResourceRequestBase::firstPartyForCookies() const
 {
     updateResourceRequest(); 
     
-    return m_firstPartyForCookies; 
+    return m_firstPartyForCookies;
 }
 
 void ResourceRequestBase::setFirstPartyForCookies(const KURL& firstPartyForCookies)
 { 
     updateResourceRequest(); 
     
-    m_firstPartyForCookies = firstPartyForCookies; 
+    m_firstPartyForCookies = firstPartyForCookies;
     
     m_platformRequestUpdated = false;
 }
