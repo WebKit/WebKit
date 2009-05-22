@@ -34,12 +34,8 @@
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 
-#include <cmath>
-#include <float.h>
+#include <math.h>
 #include <wtf/Assertions.h>
-
-using std::pow;
-using std::sqrt;
 
 namespace WebCore {
 
@@ -318,7 +314,7 @@ float SVGLength::PercentageOfViewport(float value, const SVGElement* context, SV
     else if (mode == LengthModeHeight)
         return value * height;
     else if (mode == LengthModeOther)
-        return value * sqrt(pow(width, 2.0f) + pow(height, 2.0f)) / sqrt(2.0f);
+        return value * sqrtf(powf(width, 2) + powf(height, 2)) / sqrtf(2.0f);
 
     return 0.0f;
 }
