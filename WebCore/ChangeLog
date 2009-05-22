@@ -1,3 +1,16 @@
+2009-05-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25928
+        Several errors detected by cppcheck
+
+        Fix all (the only one) problem in cross-platform code found by the tool. Port maintainers
+        should take a look at other reports.
+
+        * css/CSSParser.cpp: (WebCore::CSSParser::addProperty): Don't leak the property even if there
+        are billions of those.
+
 2009-05-22  Shinichiro Hamaji  <hamaji@google.com>
 
         Reviewed by Oliver Hunt.

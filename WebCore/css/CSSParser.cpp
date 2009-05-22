@@ -363,7 +363,7 @@ bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
 
 void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool important)
 {
-    CSSProperty* prop = new CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand);
+    auto_ptr<CSSProperty> prop(new CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand));
     if (m_numParsedProperties >= m_maxParsedProperties) {
         m_maxParsedProperties += 32;
         if (m_maxParsedProperties > UINT_MAX / sizeof(CSSProperty*))
@@ -371,7 +371,7 @@ void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool importa
         m_parsedProperties = static_cast<CSSProperty**>(fastRealloc(m_parsedProperties,
                                                        m_maxParsedProperties * sizeof(CSSProperty*)));
     }
-    m_parsedProperties[m_numParsedProperties++] = prop;
+    m_parsedProperties[m_numParsedProperties++] = prop.release();
 }
 
 void CSSParser::rollbackLastProperties(int num)
