@@ -21,6 +21,7 @@
 #include <QtTest/QtTest>
 
 #include <qwebpage.h>
+#include <qwebelement.h>
 #include <qwidget.h>
 #include <qwebview.h>
 #include <qwebframe.h>
@@ -2177,6 +2178,24 @@ void tst_QWebFrame::setHtmlWithResource()
     QCOMPARE(frame->evaluateJavaScript("document.images.length").toInt(), 1);
     QCOMPARE(frame->evaluateJavaScript("document.images[0].width").toInt(), 128);
     QCOMPARE(frame->evaluateJavaScript("document.images[0].height").toInt(), 128);
+
+    QString html2 =
+        "<html>"
+            "<head>"
+                "<link rel='stylesheet' href='qrc:/style.css' type='text/css' />"
+            "</head>"
+            "<body>"
+                "<p id='idP'>some text</p>"
+            "</body>"
+        "</html>";
+
+    // in few seconds, the CSS should be completey loaded
+    frame->setHtml(html2);
+    QTest::qWait(200);
+    QCOMPARE(spy.size(), 2);
+
+    QWebElement p = frame->documentElement().findAll("p").at(0);
+    QCOMPARE(p.styleProperty("color", QWebElement::RespectCascadingStyles), QLatin1String("red"));
 }
 
 class TestNetworkManager : public QNetworkAccessManager

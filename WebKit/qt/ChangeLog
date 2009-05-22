@@ -1,3 +1,13 @@
+2009-05-21  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Additional test for resource load (CSS file) for QWebFrame.
+
+        * tests/qwebframe/qwebframe.qrc:
+        * tests/qwebframe/style.css: Added.
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-05-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Qt build fix.
