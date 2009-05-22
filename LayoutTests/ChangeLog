@@ -1,3 +1,16 @@
+2009-05-22  Shinichiro Hamaji  <hamaji@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Remove optimization path alpha=0 case from GraphicContext(CG|Skia).
+        This optimization doesn't make sense for some composite mode (e.g., 'copy' operation).
+
+        https://bugs.webkit.org/show_bug.cgi?id=25956
+
+        * fast/canvas/canvas-composite-alpha-expected.txt:
+        * fast/canvas/canvas-composite-alpha.html:
+        * platform/gtk/fast/canvas/canvas-composite-alpha-expected.txt: Removed.
+
 2009-05-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

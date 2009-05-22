@@ -238,7 +238,7 @@
           return "rgba(" + [a[0], a[1], a[2], a[3] / 255.0].join(",") + ")";
       }
 
-      function draw()
+      function drawTable(drawPolicy)
       {
           var tableElement = document.createElement("table");
 
@@ -267,6 +267,9 @@
           }
 
           var resultsElement = document.getElementById("results");
+          var titleElement = document.createElement("h1");
+          titleElement.textContent = "Tests for " + drawPolicy.name;
+          resultsElement.appendChild(titleElement);
           resultsElement.appendChild(tableElement);
 
           for (var row = 0; row < compositeTypes.length; row++){
@@ -312,41 +315,50 @@
                   var ctx = expectedCanvasElement.getContext("2d");
                   // Draw expected image.
                   ctx.globalCompositeOperation = "copy";
-                  ctx.fillStyle = getRGBAString(expectedColor.source);
-                  ctx.fillRect(0, 0, 20, 20);
                   ctx.fillStyle = getRGBAString(expectedColor.destination);
-                  ctx.fillRect(5, 5, 20, 20);
+                  ctx.strokeStyle = getRGBAString(expectedColor.destination);
+                  drawPolicy.drawDestination(ctx);
+                  ctx.fillStyle = getRGBAString(expectedColor.source);
+                  ctx.strokeStyle = getRGBAString(expectedColor.source);
+                  drawPolicy.drawSource(ctx);
                   ctx.fillStyle = getRGBAString(expectedColor.composition);
-                  ctx.fillRect(5, 5, 15, 15);
+                  ctx.strokeStyle = getRGBAString(expectedColor.composition);
+                  drawPolicy.drawComposition(ctx);
 
                   ctx = actualCanvasElement.getContext("2d");
 
                   // Draw destination rectangle.
                   ctx.globalCompositeOperation = "copy";
                   ctx.fillStyle = getRGBAString(inputColor.destination);
-                  ctx.fillRect(5, 5, 20, 20);
+                  ctx.strokeStyle = getRGBAString(inputColor.destination);
+                  drawPolicy.drawDestination(ctx);
 
                   // Draw source rectangle.
                   ctx.globalCompositeOperation = type;
                   ctx.fillStyle = getRGBAString(inputColor.source);
-                  ctx.fillRect(0, 0, 20, 20);
+                  ctx.strokeStyle = getRGBAString(inputColor.source);
+                  drawPolicy.drawSource(ctx);
 
                   // Let's check if the results are expected or not.
+                  var errorSuffix = ", composite type: " + type + ", source: " + inputColor.source + ", destination: " + inputColor.destination + "<br>";
+
                   var results = "";
-                  var img = ctx.getImageData(0, 0, 1, 1).data;
+                  // Note that (0, 0) may be affected by anti-alias.
+                  var img = ctx.getImageData(1, 1, 1, 1).data;
                   var actualColor = [img[0], img[1], img[2], img[3]];
                   if (isDifferentColor(actualColor, expectedColor.source)) {
-                      results += "Unexpected source! expected: " + expectedColor.source + " actual: " + actualColor + "<br>";
+                      results += "Unexpected source! expected: " + expectedColor.source + " actual: " + actualColor + errorSuffix;
                   }
-                  img = ctx.getImageData(24, 24, 1, 1).data;
+                  // Note that (24, 24) may be affected by anti-alias.
+                  img = ctx.getImageData(23, 23, 1, 1).data;
                   actualColor = [img[0], img[1], img[2], img[3]];
                   if (isDifferentColor(actualColor, expectedColor.destination)) {
-                      results += "Unexpected destination! expected: " + expectedColor.destination + " actual: " + actualColor + "<br>";
+                      results += "Unexpected destination! expected: " + expectedColor.destination + " actual: " + actualColor + errorSuffix;
                   }
                   img = ctx.getImageData(12, 12, 1, 1).data;
                   actualColor = [img[0], img[1], img[2], img[3]];
                   if (isDifferentColor(actualColor, expectedColor.composition)) {
-                      results += "Unexpected composition! expected: " + expectedColor.composition + " actual: " + actualColor + "<br>";
+                      results += "Unexpected composition! expected: " + expectedColor.composition + " actual: " + actualColor + errorSuffix;
                   }
 
                   if (results == "") {
@@ -367,7 +379,60 @@
                   debugText.value += img[0] + "," + img[1] + "," + img[2] + "," + img[3] + "\n";
               }
           }
+      }
 
+      var useFillRect = {
+          drawSource: function(ctx) {
+              ctx.fillRect(0, 0, 20, 20);
+          },
+
+          drawDestination: function(ctx) {
+              ctx.fillRect(5, 5, 20, 20);
+          },
+
+          drawComposition: function(ctx) {
+              ctx.fillRect(5, 5, 15, 15);
+          },
+
+          name: "fill rect"
+      };
+
+      var usePathAndFill = {
+          drawSource: function(ctx) {
+              ctx.beginPath();
+              ctx.moveTo(0, 0);
+              ctx.lineTo(15, 0);
+              ctx.lineTo(15, 15);
+              ctx.lineTo(5, 15);
+              ctx.closePath();
+              ctx.fill();
+          },
+
+          drawDestination: function(ctx) {
+              ctx.beginPath();
+              ctx.moveTo(25, 25);
+              ctx.lineTo(10, 25);
+              ctx.lineTo(10, 10);
+              ctx.lineTo(20, 10);
+              ctx.closePath();
+              ctx.fill();
+          },
+
+          drawComposition: function(ctx) {
+              ctx.fillRect(10, 10, 5, 5);
+
+              ctx.beginPath();
+              ctx.closePath();
+              ctx.fill();
+          },
+
+          name: "path and fill"
+      };
+
+      function draw()
+      {
+          drawTable(useFillRect);
+          drawTable(usePathAndFill);
           layoutTestController.notifyDone();
       }
     </script>
