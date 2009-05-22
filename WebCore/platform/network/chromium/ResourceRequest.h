@@ -100,10 +100,6 @@ namespace WebCore {
         TargetType targetType() const { return m_targetType; }
         void setTargetType(TargetType type) { m_targetType = type; }
 
-        // The document's policy base url.
-        KURL policyURL() const { return m_policyURL; }
-        void setPolicyURL(const KURL& policyURL) { m_policyURL = policyURL; }
-
         // The process id of the process from which this request originated. In
         // the case of out-of-process plugins, this allows to link back the
         // request to the plugin process (as it is processed through a render
@@ -135,7 +131,6 @@ namespace WebCore {
         int m_appCacheContextID;
         TargetType m_targetType;
         CString m_securityInfo;
-        KURL m_policyURL;
     };
 
 } // namespace WebCore

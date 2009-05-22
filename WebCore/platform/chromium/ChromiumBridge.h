@@ -76,8 +76,8 @@ namespace WebCore {
         static void clipboardWriteImage(const NativeImageSkia*, const KURL&, const String&);
 
         // Cookies ------------------------------------------------------------
-        static void setCookies(const KURL& url, const KURL& policyURL, const String& value);
-        static String cookies(const KURL& url, const KURL& policyURL);
+        static void setCookies(const KURL& url, const KURL& firstPartyForCookies, const String& value);
+        static String cookies(const KURL& url, const KURL& firstPartyForCookies);
 
         // DNS ----------------------------------------------------------------
         static void prefetchDNS(const String& hostname);

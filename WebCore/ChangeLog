@@ -1,3 +1,17 @@
+2009-05-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25966
+
+        Remove redudant member from Chromium's ResourceRequest.  We already
+        have this data in the cross-platform ResourceRequestBase.  Also, rename
+        ChromiumBridge parameter to be consistant with the new name for this
+        piece of data.
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/network/chromium/ResourceRequest.h:
+
 2009-05-22  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
