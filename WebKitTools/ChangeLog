@@ -1,3 +1,13 @@
+2009-05-22  Zoltan Horvath  <horvath.zoltan.6@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Correcting error message on missing WEBKIT_TESTFONTS
+        environment varible in Qt-port.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
 2009-05-21  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by Antti Koivisto.

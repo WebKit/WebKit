@@ -99,11 +99,11 @@ int main(int argc, char* argv[])
     if (fontDir.isEmpty() || !QDir(fontDir).exists()) {
         fprintf(stderr,
                 "\n\n"
-                "--------------------------------------------------------------------\n"
+                "----------------------------------------------------------------------\n"
                 "WEBKIT_TESTFONTS environment variable is not set correctly.\n"
                 "This variable has to point to the directory containing the fonts\n"
-                "you can checkout from svn://labs.trolltech.com/svn/webkit/testfonts\n"
-                "--------------------------------------------------------------------\n"
+                "you can clone from git://gitorious.org/qtwebkit/qtwebkit-testfonts.git\n"
+                "----------------------------------------------------------------------\n"
 );
         exit(1);
     }
