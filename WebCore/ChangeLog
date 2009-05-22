@@ -1,3 +1,14 @@
+2009-05-21  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Only account for overhang for multi-character strings.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25961
+
+        * platform/wx/wxcode/win/fontprops.cpp:
+        (GetTextExtent):
+
 2009-05-22  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Switch to CURL cookies so we can benefit from API updates.

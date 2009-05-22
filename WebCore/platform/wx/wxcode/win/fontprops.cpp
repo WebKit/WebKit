@@ -91,7 +91,7 @@ void GetTextExtent( const wxFont& font, const wxString& str, wxCoord *width, wxC
     // accounts for under/overhang of the first/last character while we want
     // just the bounding rect for this string so adjust the width as needed
     // (using API not available in 2002 SDKs of WinCE)
-    if ( len > 0 )
+    if ( len > 1 )
     {
         ABC width;
         const wxChar chFirst = *str.begin();
