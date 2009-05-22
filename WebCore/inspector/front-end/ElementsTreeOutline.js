@@ -571,7 +571,7 @@ WebInspector.ElementsTreeElement.prototype = {
         parseContainerElement.innerHTML = "<span " + newText + "></span>";
         var parseElement = parseContainerElement.firstChild;
         if (!parseElement || !parseElement.hasAttributes()) {
-            editingCancelled(element, context);
+            this._editingCancelled(element, context);
             return;
         }
 

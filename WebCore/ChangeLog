@@ -1,3 +1,13 @@
+2009-05-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Fix the call to editingCancelled to be this._editingCancelled, since
+        editingCancelled doesn't exist and throws an exception.
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted):
+
 2009-05-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Eric Seidel.
