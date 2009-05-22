@@ -1,3 +1,14 @@
+2009-05-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/6915957> REGRESSION: Hang when leaving page with VLC
+        plug-in
+
+        Reviewed by Steve Falkenburg.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+        Look for the VLC plug-in's new name.
+
 2009-05-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

@@ -119,7 +119,7 @@ void PluginPackage::determineQuirks(const String& mimeType)
         m_quirks.add(PluginQuirkHasModalMessageLoop);
     }
 
-    if (name() == "VLC Multimedia Plugin") {
+    if (name() == "VLC Multimedia Plugin" || name() == "VLC Multimedia Plug-in") {
         // VLC hangs on NPP_Destroy if we call NPP_SetWindow with a null window handle
         m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
 
