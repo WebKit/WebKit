@@ -4,7 +4,7 @@
 
         Make Gtk build not bail out if gtk-doc-tools is not installed.
 
-        Warning message dumped instead.
+        Warning message shown instead.
 
         * autogen.sh:
 
