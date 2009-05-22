@@ -1,5 +1,15 @@
 2009-05-22  Xan Lopez  <xlopez@igalia.com>
 
+        Try to fix Windows build.
+
+        Apparently it can't tell if '1.0f' is float or double, so cast to
+        float.
+
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::pathForDecoration):
+
+2009-05-22  Xan Lopez  <xlopez@igalia.com>
+
         Try to fix breakage from the previous patch.
 
         * rendering/SVGInlineTextBox.cpp:
