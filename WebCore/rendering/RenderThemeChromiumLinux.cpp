@@ -27,7 +27,10 @@
 #include "ChromiumBridge.h"
 #include "CSSValueKeywords.h"
 #include "GraphicsContext.h"
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 #include "Image.h"
+#include "MediaControlElements.h"
 #include "PlatformContextSkia.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
@@ -52,7 +55,11 @@ static const int styledMenuListInternalPadding[4] = { 1, 4, 1, 4 };
 // The default variable-width font size.  We use this as the default font
 // size for the "system font", and as a base size (which we then shrink) for
 // form control fonts.
-static const float DefaultFontSize = 16.0;
+static const float defaultFontSize = 16.0;
+
+// The background for the media player controls should be a 60% opaque black rectangle. This
+// matches the UI mockups for the default UI theme.
+static const float defaultMediaControlOpacity = 0.6f;
 
 // These values all match Safari/Win.
 static const float defaultControlFontPixelSize = 13;
@@ -92,6 +99,20 @@ static const char* defaultGUIFont()
     return "Arial";
 }
 
+#if ENABLE(VIDEO)
+// Attempt to retrieve a HTMLMediaElement from a Node. Returns NULL if one cannot be found.
+static HTMLMediaElement* mediaElementParent(Node* node)
+{
+    if (!node)
+        return 0;
+    Node* mediaNode = node->shadowAncestorNode();
+    if (!mediaNode || (!mediaNode->hasTagName(HTMLNames::videoTag) && !mediaNode->hasTagName(HTMLNames::audioTag)))
+        return 0;
+
+    return static_cast<HTMLMediaElement*>(mediaNode);
+}
+#endif
+
 RenderTheme* theme()
 {
     static RenderThemeChromiumLinux theme;
@@ -113,6 +134,13 @@ String RenderThemeChromiumLinux::extraQuirksStyleSheet()
     return String(themeWinQuirksUserAgentStyleSheet, sizeof(themeWinQuirksUserAgentStyleSheet));
 }
 
+#if ENABLE(VIDEO)
+String RenderThemeChromiumLinux::extraMediaControlsStyleSheet()
+{
+    return String(mediaControlsChromiumUserAgentStyleSheet, sizeof(mediaControlsChromiumUserAgentStyleSheet));
+}
+#endif
+
 bool RenderThemeChromiumLinux::supportsFocusRing(const RenderStyle* style) const
 {
     return supportsFocus(style->appearance());
@@ -130,7 +158,7 @@ Color RenderThemeChromiumLinux::platformInactiveSelectionBackgroundColor() const
 
 Color RenderThemeChromiumLinux::platformActiveSelectionForegroundColor() const
 {
-    return Color(0, 0, 0);
+    return Color::black;
 }
 
 Color RenderThemeChromiumLinux::platformInactiveSelectionForegroundColor() const
@@ -156,7 +184,7 @@ double RenderThemeChromiumLinux::caretBlinkInterval() const
 
 void RenderThemeChromiumLinux::systemFont(int propId, FontDescription& fontDescription) const
 {
-    float fontSize = DefaultFontSize;
+    float fontSize = defaultFontSize;
 
     switch (propId) {
     case CSSValueWebkitMiniControl:
@@ -395,6 +423,64 @@ bool RenderThemeChromiumLinux::paintSearchFieldResultsButton(RenderObject* o, co
     return false;
 }
 
+bool RenderThemeChromiumLinux::paintMediaButtonInternal(GraphicsContext* context, const IntRect& rect, Image* image)
+{
+    context->beginTransparencyLayer(defaultMediaControlOpacity);
+
+    // Draw background.
+    Color oldFill = context->fillColor();
+    Color oldStroke = context->strokeColor();
+
+    context->setFillColor(Color::black);
+    context->setStrokeColor(Color::black);
+    context->drawRect(rect);
+
+    context->setFillColor(oldFill);
+    context->setStrokeColor(oldStroke);
+
+    // Create a destination rectangle for the image that is centered in the drawing rectangle, rounded left, and down.
+    IntRect imageRect = image->rect();
+    imageRect.setY(rect.y() + (rect.height() - image->height() + 1) / 2);
+    imageRect.setX(rect.x() + (rect.width() - image->width() + 1) / 2);
+
+    context->drawImage(image, imageRect, CompositeSourceAtop);
+    context->endTransparencyLayer();
+
+    return false;
+}
+
+bool RenderThemeChromiumLinux::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+#if ENABLE(VIDEO)
+    HTMLMediaElement* mediaElement = mediaElementParent(o->node());
+    if (!mediaElement)
+        return false;
+
+    static Image* mediaPlay = Image::loadPlatformResource("mediaPlay").releaseRef();
+    static Image* mediaPause = Image::loadPlatformResource("mediaPause").releaseRef();
+
+    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->paused() ? mediaPlay : mediaPause);
+#else
+    return false;
+#endif
+}
+
+bool RenderThemeChromiumLinux::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+#if ENABLE(VIDEO)
+    HTMLMediaElement* mediaElement = mediaElementParent(o->node());
+    if (!mediaElement)
+        return false;
+
+    static Image* soundFull = Image::loadPlatformResource("mediaSoundFull").releaseRef();
+    static Image* soundNone = Image::loadPlatformResource("mediaSoundNone").releaseRef();
+
+    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->muted() ? soundNone: soundFull);
+#else
+    return false;
+#endif
+}
+
 void RenderThemeChromiumLinux::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
 {
     // Height is locked to auto on all browsers.
@@ -487,7 +573,7 @@ Color RenderThemeChromiumLinux::activeListBoxSelectionBackgroundColor() const
 
 Color RenderThemeChromiumLinux::activeListBoxSelectionForegroundColor() const
 {
-    return Color(0, 0, 0);
+    return Color::black;
 }
 
 Color RenderThemeChromiumLinux::inactiveListBoxSelectionBackgroundColor() const

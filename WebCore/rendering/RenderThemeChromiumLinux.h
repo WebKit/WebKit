@@ -39,6 +39,9 @@ namespace WebCore {
 
         virtual String extraDefaultStyleSheet();
         virtual String extraQuirksStyleSheet();
+#if ENABLE(VIDEO)
+        virtual String extraMediaControlsStyleSheet();
+#endif
 
         // A method asking if the theme's controls actually care about redrawing when hovered.
         virtual bool supportsHover(const RenderStyle*) const { return true; }
@@ -85,6 +88,9 @@ namespace WebCore {
         virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
         virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
+        virtual bool paintMediaPlayButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+        virtual bool paintMediaMuteButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
         // MenuList refers to an unstyled menulist (meaning a menulist without
         // background-color or border set) and MenuListButton refers to a styled
         // menulist (a menulist with background-color or border set). They have
@@ -124,6 +130,7 @@ namespace WebCore {
 
     private:
         int menuListInternalPadding(RenderStyle*, int paddingType) const;
+        bool paintMediaButtonInternal(GraphicsContext*, const IntRect&, Image*);
     };
 
 } // namespace WebCore

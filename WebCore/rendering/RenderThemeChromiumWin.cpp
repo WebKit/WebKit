@@ -34,6 +34,9 @@
 #include "FontSelector.h"
 #include "FontUtilsChromiumWin.h"
 #include "GraphicsContext.h"
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
+#include "MediaControlElements.h"
 #include "RenderBox.h"
 #include "RenderSlider.h"
 #include "ScrollbarTheme.h"
@@ -54,6 +57,10 @@
 namespace WebCore {
 
 namespace {
+
+// The background for the media player controls should be a 60% opaque black rectangle. This
+// matches the UI mockups for the default UI theme.
+static const float defaultMediaControlOpacity = 0.6f;
 
 // These values all match Safari/Win.
 static const float defaultControlFontPixelSize = 13;
@@ -244,6 +251,20 @@ static double querySystemBlinkInterval(double defaultInterval)
     return blinkTime / 1000.0;
 }
 
+#if ENABLE(VIDEO)
+// Attempt to retrieve a HTMLMediaElement from a Node. Returns NULL if one cannot be found.
+static HTMLMediaElement* mediaElementParent(Node* node)
+{
+    if (!node)
+        return 0;
+    Node* mediaNode = node->shadowAncestorNode();
+    if (!mediaNode || (!mediaNode->hasTagName(HTMLNames::videoTag) && !mediaNode->hasTagName(HTMLNames::audioTag)))
+        return 0;
+
+    return static_cast<HTMLMediaElement*>(mediaNode);
+}
+#endif
+
 // Implement WebCore::theme() for getting the global RenderTheme.
 RenderTheme* theme()
 {
@@ -264,7 +285,7 @@ String RenderThemeChromiumWin::extraQuirksStyleSheet()
 #if ENABLE(VIDEO)
 String RenderThemeChromiumWin::extraMediaControlsStyleSheet()
 {
-    return String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet));
+    return String(mediaControlsChromiumUserAgentStyleSheet, sizeof(mediaControlsChromiumUserAgentStyleSheet));
 }
 #endif
 
@@ -280,25 +301,25 @@ bool RenderThemeChromiumWin::supportsFocusRing(const RenderStyle* style) const
 Color RenderThemeChromiumWin::platformActiveSelectionBackgroundColor() const
 {
     if (ChromiumBridge::layoutTestMode())
-        return Color("#0000FF");  // Royal blue.
+        return Color(0x00, 0x00, 0xff);  // Royal blue.
     COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
-    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 255);
+    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
 }
 
 Color RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor() const
 {
     if (ChromiumBridge::layoutTestMode())
-        return Color("#999999");  // Medium gray.
+        return Color(0x99, 0x99, 0x99);  // Medium gray.
     COLORREF color = GetSysColor(COLOR_GRAYTEXT);
-    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 255);
+    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
 }
 
 Color RenderThemeChromiumWin::platformActiveSelectionForegroundColor() const
 {
     if (ChromiumBridge::layoutTestMode())
-        return Color("#FFFFCC");  // Pale yellow.
+        return Color(0xff, 0xff, 0xcc);  // Pale yellow.
     COLORREF color = GetSysColor(COLOR_HIGHLIGHTTEXT);
-    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 255);
+    return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
 }
 
 Color RenderThemeChromiumWin::platformInactiveSelectionForegroundColor() const
@@ -308,12 +329,12 @@ Color RenderThemeChromiumWin::platformInactiveSelectionForegroundColor() const
 
 Color RenderThemeChromiumWin::platformActiveTextSearchHighlightColor() const
 {
-    return Color(255, 150, 50);  // Orange.
+    return Color(0xff, 0x96, 0x32);  // Orange.
 }
 
 Color RenderThemeChromiumWin::platformInactiveTextSearchHighlightColor() const
 {
-    return Color(255, 255, 150); // Yellow.
+    return Color(0xff, 0xff, 0x96); // Yellow.
 }
 
 double RenderThemeChromiumWin::caretBlinkInterval() const
@@ -572,6 +593,64 @@ bool RenderThemeChromiumWin::paintSearchFieldResultsButton(RenderObject* o, cons
     return false;
 }
 
+bool RenderThemeChromiumWin::paintMediaButtonInternal(GraphicsContext* context, const IntRect& rect, Image* image)
+{
+    context->beginTransparencyLayer(defaultMediaControlOpacity);
+
+    // Draw background.
+    Color oldFill = context->fillColor();
+    Color oldStroke = context->strokeColor();
+
+    context->setFillColor(Color::black);
+    context->setStrokeColor(Color::black);
+    context->drawRect(rect);
+
+    context->setFillColor(oldFill);
+    context->setStrokeColor(oldStroke);
+
+    // Create a destination rectangle for the image that is centered in the drawing rectangle, rounded left, and down.
+    IntRect imageRect = image->rect();
+    imageRect.setY(rect.y() + (rect.height() - image->height() + 1) / 2);
+    imageRect.setX(rect.x() + (rect.width() - image->width() + 1) / 2);
+
+    context->drawImage(image, imageRect, CompositeSourceAtop);
+    context->endTransparencyLayer();
+
+    return false;
+}
+
+bool RenderThemeChromiumWin::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+#if ENABLE(VIDEO)
+    HTMLMediaElement* mediaElement = mediaElementParent(o->node());
+    if (!mediaElement)
+        return false;
+
+    static Image* mediaPlay = Image::loadPlatformResource("mediaPlay").releaseRef();
+    static Image* mediaPause = Image::loadPlatformResource("mediaPause").releaseRef();
+
+    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->paused() ? mediaPlay : mediaPause);
+#else
+    return false;
+#endif
+}
+
+bool RenderThemeChromiumWin::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+{
+#if ENABLE(VIDEO)
+    HTMLMediaElement* mediaElement = mediaElementParent(o->node());
+    if (!mediaElement)
+        return false;
+
+    static Image* soundFull = Image::loadPlatformResource("mediaSoundFull").releaseRef();
+    static Image* soundNone = Image::loadPlatformResource("mediaSoundNone").releaseRef();
+
+    return paintMediaButtonInternal(paintInfo.context, rect, mediaElement->muted() ? soundNone: soundFull);
+#else
+    return false;
+#endif
+}
+
 void RenderThemeChromiumWin::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     // Height is locked to auto on all browsers.
@@ -682,7 +761,8 @@ int RenderThemeChromiumWin::buttonInternalPaddingBottom() const
 }
 
 // static
-void RenderThemeChromiumWin::setDefaultFontSize(int fontSize) {
+void RenderThemeChromiumWin::setDefaultFontSize(int fontSize)
+{
     defaultFontSize = static_cast<float>(fontSize);
 
     // Reset cached fonts.

@@ -1,3 +1,38 @@
+2009-05-21  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 25903: Create a default UI theme for media controls in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=25903
+
+        Implement a default UI for chromium.  Add a style sheet for Chromium
+        media controls with good defaults and implemented basic draw functions
+        for play/pause & mute buttons.
+
+        * css/mediaControlsChromium.css: Added.
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumWin::extraMediaControlsStyleSheet): Export
+        our custom media controls style sheet.
+        (WebCore::RenderThemeChromiumLinux::paintMediaButtonInternal): Paint
+        buttons respecting chromium media controls color scheme.
+        (WebCore::RenderThemeChromiumLinux::paintMediaPlayButton): Paint logic
+        specific to play/pause button.
+        (WebCore::RenderThemeChromiumLinux::paintMediaMuteButton): Paint
+        specific to mute button.
+        * rendering/RenderThemeChromiumLinux.h: Appropriate header changes.
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::extraMediaControlsStyleSheet): Export
+        our custom media controls style sheet.
+        (WebCore::RenderThemeChromiumWin::paintMediaButtonInternal): Paint
+        buttons respecting chromium media controls color scheme.
+        (WebCore::RenderThemeChromiumWin::paintMediaPlayButton): Paint logic
+        specific to play/pause button.
+        (WebCore::RenderThemeChromiumWin::paintMediaMuteButton): Paint specific
+        to mute button.
+        (WebCore::RenderThemeChromiumWin::setDefaultFontSize): Appropriate
+        header changes.
+        * rendering/RenderThemeChromiumWin.h:
+
 2009-05-21  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
