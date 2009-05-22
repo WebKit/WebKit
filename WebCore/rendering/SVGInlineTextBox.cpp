@@ -36,6 +36,7 @@
 #include "SVGRootInlineBox.h"
 #include "Text.h"
 
+#include <cmath>
 #include <float.h>
 
 using std::max;
@@ -489,7 +490,7 @@ static inline Path pathForDecoration(ETextDecoration decoration, RenderObject* o
     float thickness = SVGRenderStyle::cssPrimitiveToLength(object, object->style()->svgStyle()->strokeWidth(), 1.0f);
 
     const Font& font = object->style()->font();
-    thickness = max(thickness * powf(font.size(), 2.0f) / font.unitsPerEm(), 1.0f);
+    thickness = max(thickness * pow(font.size(), 2.0f) / font.unitsPerEm(), 1.0);
 
     if (decoration == UNDERLINE)
         y += thickness * 1.5f; // For compatibility with Batik/Opera

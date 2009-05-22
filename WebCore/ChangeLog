@@ -1,3 +1,19 @@
+2009-05-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25805
+        In debug build, mingw win32 build has problems with powf
+
+        Change C-style calls to powf and sqrtf to C++-style calls to
+        overloaded pow and sqrt. This solves also a problem with mingw
+        compiler during the debug build.
+
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::pathForDecoration):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::PercentageOfViewport):
+
 2009-05-21  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Mark Rowe.
