@@ -1,3 +1,45 @@
+2009-05-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Rename policyBaseURL and mainDocumentURL to firstPartyForCookies.  The
+        previous names were confusing and inaccurate.
+
+        * WebCore.order:
+        * dom/Document.cpp:
+        (WebCore::Document::setCookie):
+        * dom/Document.h:
+        (WebCore::Document::firstPartyForCookies):
+        (WebCore::Document::setFirstPartyForCookies):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::updateFirstPartyForCookies):
+        (WebCore::FrameLoader::setFirstPartyForCookies):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/FrameLoader.h:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willSendRequest):
+        * platform/CookieJar.h:
+        * platform/mac/CookieJar.mm:
+        (WebCore::setCookies):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        (WebCore::ResourceRequestBase::firstPartyForCookies):
+        (WebCore::ResourceRequestBase::setFirstPartyForCookies):
+        (WebCore::equalIgnoringHeaderFields):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::setCookies):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2009-05-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Fix the call to editingCancelled to be this._editingCancelled, since

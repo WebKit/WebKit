@@ -2858,7 +2858,7 @@ void Document::setCookie(const String& value)
     if (cookieURL.isEmpty())
         return;
 
-    setCookies(this, cookieURL, policyBaseURL(), value);
+    setCookies(this, cookieURL, firstPartyForCookies(), value);
 }
 
 String Document::referrer() const

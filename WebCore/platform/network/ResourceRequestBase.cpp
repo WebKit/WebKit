@@ -42,7 +42,7 @@ auto_ptr<ResourceRequest> ResourceRequestBase::adopt(auto_ptr<CrossThreadResourc
     request->setURL(data->m_url);
     request->setCachePolicy(data->m_cachePolicy);
     request->setTimeoutInterval(data->m_timeoutInterval);
-    request->setMainDocumentURL(data->m_mainDocumentURL);
+    request->setFirstPartyForCookies(data->m_firstPartyForCookies);
     request->setHTTPMethod(data->m_httpMethod);
 
     request->updateResourceRequest();
@@ -72,7 +72,7 @@ auto_ptr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
     data->m_url = url().copy();
     data->m_cachePolicy = cachePolicy();
     data->m_timeoutInterval = timeoutInterval();
-    data->m_mainDocumentURL = mainDocumentURL().copy();
+    data->m_firstPartyForCookies = firstPartyForCookies().copy();
     data->m_httpMethod = httpMethod().copy();
     data->m_httpHeaders.adopt(httpHeaderFields().copyData());
 
@@ -161,18 +161,18 @@ void ResourceRequestBase::setTimeoutInterval(double timeoutInterval)
         m_platformRequestUpdated = false;
 }
 
-const KURL& ResourceRequestBase::mainDocumentURL() const
+const KURL& ResourceRequestBase::firstPartyForCookies() const
 {
     updateResourceRequest(); 
     
-    return m_mainDocumentURL; 
+    return m_firstPartyForCookies; 
 }
 
-void ResourceRequestBase::setMainDocumentURL(const KURL& mainDocumentURL)
+void ResourceRequestBase::setFirstPartyForCookies(const KURL& firstPartyForCookies)
 { 
     updateResourceRequest(); 
     
-    m_mainDocumentURL = mainDocumentURL; 
+    m_firstPartyForCookies = firstPartyForCookies; 
     
     m_platformRequestUpdated = false;
 }
@@ -294,7 +294,7 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceReque
     if (a.timeoutInterval() != b.timeoutInterval())
         return false;
     
-    if (a.mainDocumentURL() != b.mainDocumentURL())
+    if (a.firstPartyForCookies() != b.firstPartyForCookies())
         return false;
     
     if (a.httpMethod() != b.httpMethod())

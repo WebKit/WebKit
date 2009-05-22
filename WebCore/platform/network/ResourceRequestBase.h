@@ -71,8 +71,8 @@ namespace WebCore {
         double timeoutInterval() const;
         void setTimeoutInterval(double timeoutInterval);
         
-        const KURL& mainDocumentURL() const;
-        void setMainDocumentURL(const KURL& mainDocumentURL);
+        const KURL& firstPartyForCookies() const;
+        void setFirstPartyForCookies(const KURL& firstPartyForCookies);
         
         const String& httpMethod() const;
         void setHTTPMethod(const String& httpMethod);
@@ -143,7 +143,7 @@ namespace WebCore {
 
         ResourceRequestCachePolicy m_cachePolicy;
         double m_timeoutInterval;
-        KURL m_mainDocumentURL;
+        KURL m_firstPartyForCookies;
         String m_httpMethod;
         HTTPHeaderMap m_httpHeaderFields;
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
@@ -167,7 +167,7 @@ namespace WebCore {
 
         ResourceRequestCachePolicy m_cachePolicy;
         double m_timeoutInterval;
-        KURL m_mainDocumentURL;
+        KURL m_firstPartyForCookies;
 
         String m_httpMethod;
         OwnPtr<CrossThreadHTTPHeaderMapData> m_httpHeaders;

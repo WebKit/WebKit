@@ -57,7 +57,7 @@ void ResourceRequest::doUpdateResourceRequest()
     m_url = [m_nsRequest.get() URL];
     m_cachePolicy = (ResourceRequestCachePolicy)[m_nsRequest.get() cachePolicy];
     m_timeoutInterval = [m_nsRequest.get() timeoutInterval];
-    m_mainDocumentURL = [m_nsRequest.get() mainDocumentURL];
+    m_firstPartyForCookies = [m_nsRequest.get() mainDocumentURL];
     
     if (NSString* method = [m_nsRequest.get() HTTPMethod])
         m_httpMethod = method;
@@ -110,7 +110,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
     if (timeoutInterval() != unspecifiedTimeoutInterval)
         [nsRequest setTimeoutInterval:timeoutInterval()];
-    [nsRequest setMainDocumentURL:mainDocumentURL()];
+    [nsRequest setMainDocumentURL:firstPartyForCookies()];
     if (!httpMethod().isEmpty())
         [nsRequest setHTTPMethod:httpMethod()];
     [nsRequest setHTTPShouldHandleCookies:allowHTTPCookies()];

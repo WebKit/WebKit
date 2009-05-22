@@ -972,7 +972,7 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
     m_frame->domWindow()->setURL(document->url());
     m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());
 
-    updatePolicyBaseURL();
+    updateFirstPartyForCookies();
 
     Settings* settings = document->settings();
     document->docLoader()->setAutoLoadImages(settings && settings->loadsImagesAutomatically());
@@ -2009,19 +2009,19 @@ bool FrameLoader::logCanCacheFrameDecision(int indentLevel)
 }
 #endif
 
-void FrameLoader::updatePolicyBaseURL()
+void FrameLoader::updateFirstPartyForCookies()
 {
     if (m_frame->tree()->parent())
-        setPolicyBaseURL(m_frame->tree()->parent()->document()->policyBaseURL());
+        setFirstPartyForCookies(m_frame->tree()->parent()->document()->firstPartyForCookies());
     else
-        setPolicyBaseURL(m_URL);
+        setFirstPartyForCookies(m_URL);
 }
 
-void FrameLoader::setPolicyBaseURL(const KURL& url)
+void FrameLoader::setFirstPartyForCookies(const KURL& url)
 {
-    m_frame->document()->setPolicyBaseURL(url);
+    m_frame->document()->setFirstPartyForCookies(url);
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->setPolicyBaseURL(url);
+        child->loader()->setFirstPartyForCookies(url);
 }
 
 // This does the same kind of work that didOpenURL does, except it relies on the fact
@@ -3090,7 +3090,7 @@ void FrameLoader::open(CachedFrame& cachedFrame)
 
     m_decoder = document->decoder();
 
-    updatePolicyBaseURL();
+    updateFirstPartyForCookies();
 
     cachedFrame.restore();
 }
@@ -3563,13 +3563,13 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
 {
     // Don't set the cookie policy URL if it's already been set.
     // But make sure to set it on all requests, as it has significance beyond the cookie policy for all protocols (<rdar://problem/6616664>).
-    if (request.mainDocumentURL().isEmpty()) {
+    if (request.firstPartyForCookies().isEmpty()) {
         if (mainResource && (isLoadingMainFrame() || cookiePolicyURLFromRequest))
-            request.setMainDocumentURL(request.url());
-        else if (Page* page = m_frame->page())
-            request.setMainDocumentURL(page->mainFrame()->loader()->url());
+            request.setFirstPartyForCookies(request.url());
+        else if (Document* document = m_frame->document())
+            request.setFirstPartyForCookies(document->firstPartyForCookies());
     }
-    
+
     // The remaining modifications are only necessary for HTTP and HTTPS.
     if (!request.url().isEmpty() && !request.url().protocolInHTTPFamily())
         return;
@@ -3690,7 +3690,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     addHTTPOriginIfNeeded(initialRequest, outgoingOrigin());
 
     if (Page* page = m_frame->page())
-        initialRequest.setMainDocumentURL(page->mainFrame()->loader()->documentLoader()->request().url());
+        initialRequest.setFirstPartyForCookies(page->mainFrame()->loader()->documentLoader()->request().url());
     initialRequest.setHTTPUserAgent(client()->userAgent(request.url()));
 
     unsigned long identifier = 0;    

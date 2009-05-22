@@ -654,8 +654,8 @@ public:
 
     const KURL& cookieURL() const { return m_cookieURL; }
 
-    const KURL& policyBaseURL() const { return m_policyBaseURL; }
-    void setPolicyBaseURL(const KURL& url) { m_policyBaseURL = url; }
+    const KURL& firstPartyForCookies() const { return m_firstPartyForCookies; }
+    void setFirstPartyForCookies(const KURL& url) { m_firstPartyForCookies = url; }
     
     // The following implements the rule from HTML 4 for what valid names are.
     // To get this right for all the XML cases, we probably have to improve this or move it
@@ -817,7 +817,7 @@ private:
     KURL m_baseURL;  // Node.baseURI: The URL to use when resolving relative URLs.
     KURL m_baseElementURL;  // The URL set by the <base> element.
     KURL m_cookieURL;  // The URL to use for cookie access.
-    KURL m_policyBaseURL;  // The policy URL for third-party cookie blocking.
+    KURL m_firstPartyForCookies; // The policy URL for third-party cookie blocking.
 
     // Document.documentURI:
     // Although URL-like, Document.documentURI can actually be set to any

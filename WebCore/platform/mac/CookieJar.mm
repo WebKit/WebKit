@@ -84,7 +84,7 @@ String cookies(const Document*, const KURL& url)
     return String();
 }
 
-void setCookies(Document*, const KURL& url, const KURL& policyBaseURL, const String& cookieStr)
+void setCookies(Document*, const KURL& url, const KURL& firstPartyForCookies, const String& cookieStr)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -99,7 +99,7 @@ void setCookies(Document*, const KURL& url, const KURL& policyBaseURL, const Str
 
     NSURL *cookieURL = url;    
     NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:cookieURL];
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:filterCookies(cookies).get() forURL:cookieURL mainDocumentURL:policyBaseURL];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:filterCookies(cookies).get() forURL:cookieURL mainDocumentURL:firstPartyForCookies];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
