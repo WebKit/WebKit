@@ -1431,8 +1431,30 @@ namespace JSC {
 
         virtual void mark() { }
 
+#if ENABLE(JIT)
+        JITCode& generatedJITCode()
+        {
+            ASSERT(m_jitCode);
+            return m_jitCode;
+        }
+
+        ExecutablePool* getExecutablePool()
+        {
+            return m_jitCode.getExecutablePool();
+        }
+
+        void setJITCode(const JITCode jitCode)
+        {
+            m_jitCode = jitCode;
+        }
+#endif
+
     protected:
         void setSource(const SourceCode& source) { m_source = source; }
+
+#if ENABLE(JIT)
+        JITCode m_jitCode;
+#endif
 
     private:
         OwnPtr<ScopeNodeData> m_data;
@@ -1451,11 +1473,24 @@ namespace JSC {
             return *m_code;
         }
 
+#if ENABLE(JIT)
+        JITCode& jitCode(ScopeChainNode* scopeChain)
+        {
+            if (!m_jitCode)
+                generateJITCode(scopeChain);
+            return m_jitCode;
+        }
+#endif
+
     private:
         ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
         void generateBytecode(ScopeChainNode*);
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
+
+#if ENABLE(JIT)
+        void generateJITCode(ScopeChainNode*);
+#endif
 
         OwnPtr<ProgramCodeBlock> m_code;
     };
@@ -1475,11 +1510,24 @@ namespace JSC {
 
         virtual void mark();
 
+#if ENABLE(JIT)
+        JITCode& jitCode(ScopeChainNode* scopeChain)
+        {
+            if (!m_jitCode)
+                generateJITCode(scopeChain);
+            return m_jitCode;
+        }
+#endif
+
     private:
         EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, const SourceCode&, CodeFeatures, int numConstants);
 
         void generateBytecode(ScopeChainNode*);
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
+
+#if ENABLE(JIT)
+        void generateJITCode(ScopeChainNode*);
+#endif
         
         OwnPtr<EvalCodeBlock> m_code;
     };
@@ -1509,7 +1557,7 @@ namespace JSC {
         bool isHostFunction() const
         {
 #if ENABLE(JIT)
-            return m_jitCode && !m_code;
+            return !!m_jitCode && !m_code;
 #else
             return true;
 #endif
@@ -1524,19 +1572,14 @@ namespace JSC {
 
         CodeBlock& bytecodeForExceptionInfoReparse(ScopeChainNode*, CodeBlock*);
 #if ENABLE(JIT)
-        JITCode generatedJITCode()
-        {
-            ASSERT(m_jitCode);
-            return m_jitCode;
-        }
-
-        JITCode jitCode(ScopeChainNode* scopeChain)
+        JITCode& jitCode(ScopeChainNode* scopeChain)
         {
             if (!m_jitCode)
                 generateJITCode(scopeChain);
             return m_jitCode;
         }
 #endif
+
         CodeBlock& bytecode(ScopeChainNode* scopeChain) 
         {
             ASSERT(scopeChain);
@@ -1558,8 +1601,6 @@ namespace JSC {
         void generateBytecode(ScopeChainNode*);
 #if ENABLE(JIT)
         void generateJITCode(ScopeChainNode*);
-        
-        JITCode m_jitCode;
 #endif
         Identifier* m_parameters;
         size_t m_parameterCount;

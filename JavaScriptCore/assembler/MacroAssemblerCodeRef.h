@@ -23,38 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CallFrameClosure_h
-#define CallFrameClosure_h
+#ifndef MacroAssemblerCodeRef_h
+#define MacroAssemblerCodeRef_h
+
+#include <wtf/Platform.h>
+
+#include "ExecutableAllocator.h"
+#include "PassRefPtr.h"
+#include "RefPtr.h"
+#include "UnusedParam.h"
+
+#if ENABLE(ASSEMBLER)
 
 namespace JSC {
 
-struct CallFrameClosure {
-    CallFrame* oldCallFrame;
-    CallFrame* newCallFrame;
-    JSFunction* function;
-    FunctionBodyNode* functionBody;
-    JSGlobalData* globalData;
-    Register* oldEnd;
-    ScopeChainNode* scopeChain;
-    int expectedParams;
-    int providedParams;
-    
-    void setArgument(int arg, JSValue value)
+// MacroAssemblerCodeRef:
+//
+// A reference to a section of JIT generated code.  A CodeRef consists of a
+// pointer to the code, and a ref pointer to the pool from within which it
+// was allocated.
+class MacroAssemblerCodeRef {
+public:
+    MacroAssemblerCodeRef()
+        : m_code(0)
+#ifndef NDEBUG
+        , m_size(0)
+#endif
     {
-        if (arg < expectedParams)
-            newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams] = value;
-        else
-            newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams - providedParams] = value;
     }
-    void resetCallFrame()
+
+    MacroAssemblerCodeRef(void* code, PassRefPtr<ExecutablePool> executablePool, size_t size)
+        : m_code(code)
+        , m_executablePool(executablePool)
     {
-        newCallFrame->setScopeChain(scopeChain);
-        newCallFrame->setCalleeArguments(0);
-        for (int i = providedParams; i < expectedParams; ++i)
-            newCallFrame[i - RegisterFile::CallFrameHeaderSize - expectedParams] = jsUndefined();
+#ifndef NDEBUG
+        m_size = size;
+#else
+        UNUSED_PARAM(size);
+#endif
     }
+
+    void* m_code;
+    RefPtr<ExecutablePool> m_executablePool;
+#ifndef NDEBUG
+    size_t m_size;
+#endif
 };
 
-}
+} // namespace JSC
 
-#endif
+#endif // ENABLE(ASSEMBLER)
+
+#endif // MacroAssemblerCodeRef_h

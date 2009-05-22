@@ -32,6 +32,7 @@
 
 #include "CallFrame.h"
 #include "JSValue.h"
+#include "MacroAssemblerCodeRef.h"
 #include "Profiler.h"
 
 namespace JSC {
@@ -40,20 +41,25 @@ namespace JSC {
     class RegisterFile;
 
     class JITCode {
+        typedef MacroAssemblerCodeRef CodeRef;
     public:
-        JITCode(void* code)
-            : code(code)
+        JITCode()
         {
         }
 
-        operator bool() const
+        JITCode(const CodeRef ref)
+            : m_ref(ref)
         {
-            return code != 0;
+        }
+
+        bool operator !() const
+        {
+            return !m_ref.m_code;
         }
 
         void* addressForCall()
         {
-            return code;
+            return m_ref.m_code;
         }
 
         // This function returns the offset in bytes of 'pointerIntoCode' into
@@ -61,7 +67,7 @@ namespace JSC {
         // block of code.  It is ASSERTed that no codeblock >4gb in size.
         unsigned offsetOf(void* pointerIntoCode)
         {
-            intptr_t result = reinterpret_cast<intptr_t>(pointerIntoCode) - reinterpret_cast<intptr_t>(code);
+            intptr_t result = reinterpret_cast<intptr_t>(pointerIntoCode) - reinterpret_cast<intptr_t>(m_ref.m_code);
             ASSERT(static_cast<intptr_t>(static_cast<unsigned>(result)) == result);
             return static_cast<unsigned>(result);
         }
@@ -73,11 +79,36 @@ namespace JSC {
 #if PLATFORM(X86_64)
                 0, 0, 0, 0, 0, 0,
 #endif
-                code, registerFile, callFrame, exception, Profiler::enabledProfilerReference(), globalData));
+                m_ref.m_code, registerFile, callFrame, exception, Profiler::enabledProfilerReference(), globalData));
+        }
+
+#ifndef NDEBUG
+        size_t size()
+        {
+            ASSERT(m_ref.m_code);
+            return m_ref.m_size;
+        }
+#endif
+
+        ExecutablePool* getExecutablePool()
+        {
+            return m_ref.m_executablePool.get();
+        }
+
+        // Host functions are a bit special; they have a m_code pointer but they
+        // do not individully ref the executable pool containing the trampoline.
+        static JITCode HostFunction(void* code)
+        {
+            return JITCode(code, 0, 0);
         }
 
     private:
-        void* code;
+        JITCode(void* code, PassRefPtr<ExecutablePool> executablePool, size_t size)
+            : m_ref(code, executablePool, size)
+        {
+        }
+
+        CodeRef m_ref;
     };
 
 };

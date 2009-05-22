@@ -1331,14 +1331,12 @@ public:
     {
         generate();
 
-        jitObject.m_executablePool = globalData->executableAllocator.poolForSize(size());
-        void* code = copyCode(jitObject.m_executablePool.get());
+        PatchBuffer patchBuffer(this, globalData->executableAllocator.poolForSize(size()));
 
-        PatchBuffer patchBuffer(code);
         for (unsigned i = 0; i < m_backtrackRecords.size(); ++i)
-            patchBuffer.patch(m_backtrackRecords[i].dataLabel, patchBuffer.trampolineAt(m_backtrackRecords[i].backtrackLocation));
+            patchBuffer.patch(m_backtrackRecords[i].dataLabel, patchBuffer.locationOf(m_backtrackRecords[i].backtrackLocation));
 
-        jitObject.m_jitCode = code;
+        jitObject.set(patchBuffer.finalizeCode());
     }
 
     bool generationFailed()
@@ -1367,23 +1365,16 @@ void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const 
     if (generator.generationFailed()) {
         JSRegExpIgnoreCaseOption ignoreCaseOption = ignoreCase ? JSRegExpIgnoreCase : JSRegExpDoNotIgnoreCase;
         JSRegExpMultilineOption multilineOption = multiline ? JSRegExpMultiline : JSRegExpSingleLine;
-        jitObject.m_pcreFallback = jsRegExpCompile(reinterpret_cast<const UChar*>(patternString.data()), patternString.size(), ignoreCaseOption, multilineOption, &numSubpatterns, &error);
+        jitObject.setFallback(jsRegExpCompile(reinterpret_cast<const UChar*>(patternString.data()), patternString.size(), ignoreCaseOption, multilineOption, &numSubpatterns, &error));
     }
 }
 
 int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output, int outputArraySize)
 {
-    if (jitObject.m_pcreFallback) {
-        int result = jsRegExpExecute(jitObject.m_pcreFallback, input, length, start, output, outputArraySize);
-        return (result < 0) ? -1 : output[0];
-    } else {
-#if PLATFORM(X86) && !COMPILER(MSVC)
-        typedef int (*RegexJITCode)(const UChar* input, unsigned start, unsigned length, int* output) __attribute__ ((regparm (3)));
-#else
-        typedef int (*RegexJITCode)(const UChar* input, unsigned start, unsigned length, int* output);
-#endif
-        return reinterpret_cast<RegexJITCode>(jitObject.m_jitCode)(input, start, length, output);
-    }
+    if (JSRegExp* fallback = jitObject.getFallback())
+        return (jsRegExpExecute(fallback, input, length, start, output, outputArraySize) < 0) ? -1 : output[0];
+
+    return jitObject.execute(input, start, length, output);
 }
 
 }}
