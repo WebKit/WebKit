@@ -30,19 +30,19 @@
 
 namespace WebCore {
 
-class ICOImageReader;
+    class ICOImageReader;
 
-// This class decodes the ICO and CUR image formats.
-class ICOImageDecoder : public ImageDecoder
-{
-public:
-    virtual String filenameExtension() const { return "ico"; }
+    // This class decodes the ICO and CUR image formats.
+    class ICOImageDecoder : public ImageDecoder
+    {
+    public:
+        virtual String filenameExtension() const { return "ico"; }
 
-    // Whether or not the size information has been decoded yet.
-    virtual bool isSizeAvailable() const;
+        // Whether or not the size information has been decoded yet.
+        virtual bool isSizeAvailable() const;
 
-    virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
-};
+        virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+    };
 
 }
 

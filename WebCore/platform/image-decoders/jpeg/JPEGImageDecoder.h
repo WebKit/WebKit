@@ -30,44 +30,44 @@
 
 namespace WebCore {
 
-class JPEGImageReader;
+    class JPEGImageReader;
 
-// This class decodes the JPEG image format.
-class JPEGImageDecoder : public ImageDecoder
-{
-public:
-    JPEGImageDecoder();
-    ~JPEGImageDecoder();
+    // This class decodes the JPEG image format.
+    class JPEGImageDecoder : public ImageDecoder
+    {
+    public:
+        JPEGImageDecoder();
+        ~JPEGImageDecoder();
 
-    virtual String filenameExtension() const { return "jpg"; }
+        virtual String filenameExtension() const { return "jpg"; }
 
-    // Take the data and store it.
-    virtual void setData(SharedBuffer* data, bool allDataReceived);
+        // Take the data and store it.
+        virtual void setData(SharedBuffer* data, bool allDataReceived);
 
-    // Whether or not the size information has been decoded yet.
-    virtual bool isSizeAvailable() const;
+        // Whether or not the size information has been decoded yet.
+        virtual bool isSizeAvailable() const;
 
-    virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
-    
-    virtual bool supportsAlpha() const { return false; }
+        virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+        
+        virtual bool supportsAlpha() const { return false; }
 
-    void decode(bool sizeOnly = false) const;
+        void decode(bool sizeOnly = false) const;
 
-    JPEGImageReader* reader() { return m_reader; }
+        JPEGImageReader* reader() { return m_reader; }
 
-    void setSize(int width, int height) {
-        if (!m_sizeAvailable) {
-            m_sizeAvailable = true;
-            m_size = IntSize(width, height);
+        void setSize(int width, int height) {
+            if (!m_sizeAvailable) {
+                m_sizeAvailable = true;
+                m_size = IntSize(width, height);
+            }
         }
-    }
 
-    bool outputScanlines();
-    void jpegComplete();
+        bool outputScanlines();
+        void jpegComplete();
 
-private:
-    mutable JPEGImageReader* m_reader;
-};
+    private:
+        mutable JPEGImageReader* m_reader;
+    };
 
 }
 

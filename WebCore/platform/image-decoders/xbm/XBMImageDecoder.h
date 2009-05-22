@@ -30,19 +30,19 @@
 
 namespace WebCore {
 
-class XBMImageReader;
+    class XBMImageReader;
 
-// This class decodes the XBM image format.
-class XBMImageDecoder : public ImageDecoder
-{
-public:
-    virtual String filenameExtension() const { return "xbm"; }
+    // This class decodes the XBM image format.
+    class XBMImageDecoder : public ImageDecoder
+    {
+    public:
+        virtual String filenameExtension() const { return "xbm"; }
 
-    // Whether or not the size information has been decoded yet.
-    virtual bool isSizeAvailable() const;
+        // Whether or not the size information has been decoded yet.
+        virtual bool isSizeAvailable() const;
 
-    virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
-};
+        virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+    };
 
 }
 

@@ -1,3 +1,59 @@
+2009-05-22  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part one
+        Indent contents of namespaces in header files, to comply with the
+        style guide.  No functional change.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::):
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::clear):
+        (WebCore::RGBA32Buffer::bytes):
+        (WebCore::RGBA32Buffer::rect):
+        (WebCore::RGBA32Buffer::height):
+        (WebCore::RGBA32Buffer::status):
+        (WebCore::RGBA32Buffer::duration):
+        (WebCore::RGBA32Buffer::disposalMethod):
+        (WebCore::RGBA32Buffer::hasAlpha):
+        (WebCore::RGBA32Buffer::setRect):
+        (WebCore::RGBA32Buffer::ensureHeight):
+        (WebCore::RGBA32Buffer::setStatus):
+        (WebCore::RGBA32Buffer::setDuration):
+        (WebCore::RGBA32Buffer::setDisposalMethod):
+        (WebCore::RGBA32Buffer::setHasAlpha):
+        (WebCore::RGBA32Buffer::setRGBA):
+        (WebCore::ImageDecoder::m_failed):
+        (WebCore::ImageDecoder::~ImageDecoder):
+        (WebCore::ImageDecoder::setData):
+        (WebCore::ImageDecoder::size):
+        (WebCore::ImageDecoder::frameCount):
+        (WebCore::ImageDecoder::repetitionCount):
+        (WebCore::ImageDecoder::supportsAlpha):
+        (WebCore::ImageDecoder::failed):
+        (WebCore::ImageDecoder::setFailed):
+        (WebCore::ImageDecoder::clearFrameBufferCache):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        (WebCore::BMPImageDecoder::filenameExtension):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        (WebCore::GIFImageDecoder::filenameExtension):
+        (WebCore::GIFImageDecoder::frameDurationAtIndex):
+        (WebCore::GIFImageDecoder::):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        (WebCore::ICOImageDecoder::filenameExtension):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        (WebCore::JPEGImageDecoder::filenameExtension):
+        (WebCore::JPEGImageDecoder::supportsAlpha):
+        (WebCore::JPEGImageDecoder::reader):
+        (WebCore::JPEGImageDecoder::setSize):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        (WebCore::PNGImageDecoder::filenameExtension):
+        (WebCore::PNGImageDecoder::reader):
+        (WebCore::PNGImageDecoder::decodingFailed):
+        * platform/image-decoders/xbm/XBMImageDecoder.h:
+        (WebCore::XBMImageDecoder::filenameExtension):
+
 2009-05-22  Dominik Röttsches  <dominik.roettsches@access-company.com>
 
         Reviewed by Gustavo Noronha.
