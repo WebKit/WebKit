@@ -1,3 +1,12 @@
+2009-05-22  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix breakage from the previous patch.
+
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::pathForDecoration):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::PercentageOfViewport):
+
 2009-05-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Maciej Stachowiak.
