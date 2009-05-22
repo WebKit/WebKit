@@ -1,3 +1,13 @@
+2009-05-22  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Make Gtk build not bail out if gtk-doc-tools is not installed.
+
+        Warning message dumped instead.
+
+        * autogen.sh:
+
 2009-05-22  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

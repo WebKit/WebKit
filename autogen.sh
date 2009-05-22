@@ -15,14 +15,6 @@ AUTOMAKE_FLAGS="--foreign --add-missing"
 
 DIE=0
 
-(gtkdocize --version) < /dev/null > /dev/null 2>&1 || {
-    echo
-    echo "You must have gtkdocize installed to compile $PROJECT."
-    echo "Install the appropriate package for your distribution,"
-    echo "or get the source tarball at http://ftp.gnome.org/pub/GNOME/sources/gtk-doc/"
-    DIE=1
-}
-
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "You must have autoconf installed to compile $PROJECT."
@@ -59,7 +51,7 @@ rm -rf $top_srcdir/autom4te.cache
 
 touch README INSTALL
 
-gtkdocize $GTKDOCIZE_FLAGS || exit $?
+gtkdocize $GTKDOCIZE_FLAGS > /dev/null 2>&1 || echo "Warning: not running gtk-docize."
 aclocal $ACLOCAL_FLAGS || exit $?
 $LIBTOOLIZE $LIBTOOLIZE_FLAGS || exit $?
 autoheader || exit $?
