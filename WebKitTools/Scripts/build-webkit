@@ -297,7 +297,9 @@ for my $dir (@projects) {
     if (isGtk()) {
         $result = buildGtkProject($dir, $clean,  @options);
     } elsif (isQt()) {
-        $result = buildQMakeQtProject($dir, $clean, @ARGV);
+        my @options = @ARGV;
+        push @options, "--makeargs=" . $makeArgs;
+        $result = buildQMakeQtProject($dir, $clean, @options);
     } elsif (isAppleMacWebKit()) {
         $result = buildXCodeProject($dir, $clean, @options, @ARGV);
     } elsif (isAppleWinWebKit()) {

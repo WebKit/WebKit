@@ -1,3 +1,11 @@
+2009-05-22  Andre Pedralho  <andre.pedralho@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Fixed --makeargs usage in Qt build.
+
+        * Scripts/build-webkit:
+
 2009-05-22  Zoltan Horvath  <horvath.zoltan.6@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.
