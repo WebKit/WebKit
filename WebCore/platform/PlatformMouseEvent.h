@@ -133,7 +133,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(WX)
-        PlatformMouseEvent(const wxMouseEvent&, const wxPoint& globalPoint);
+        PlatformMouseEvent(const wxMouseEvent&, const wxPoint& globalPoint, int clickCount);
 #endif
 
 

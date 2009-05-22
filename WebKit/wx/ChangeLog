@@ -1,3 +1,20 @@
+2009-05-22  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Triple-click support for wx port. Also, switch to allocating GraphicsContext
+        on the stack in OnPaint since we only need it within that function.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=25962
+
+        * WebView.cpp:
+        (wxWebView::OnPaint):
+        (getDoubleClickTime):
+        (wxWebView::OnMouseEvents):
+        (wxWebView::OnContextMenuEvents):
+        * WebView.h:
+        * WebViewPrivate.h:
+
 2009-05-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix after method added to EditorClient.

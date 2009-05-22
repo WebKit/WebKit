@@ -510,17 +510,16 @@ void wxWebView::OnPaint(wxPaintEvent& event)
             paintRect.Offset(offset.width(), offset.height());
 
 #if USE(WXGC)
-            WebCore::GraphicsContext* gc = new WebCore::GraphicsContext(&gcdc);
+            WebCore::GraphicsContext gc(&gcdc);
 #else
-            WebCore::GraphicsContext* gc = new WebCore::GraphicsContext((wxWindowDC*)&dc);
+            WebCore::GraphicsContext gc(&dc);
 #endif
-            if (gc && frame->contentRenderer()) {
+            if (frame->contentRenderer()) {
                 if (frame->view()->needsLayout())
                     frame->view()->layout();
 
-                frame->view()->paintContents(gc, paintRect);
+                frame->view()->paintContents(&gc, paintRect);
             }
-            delete gc;
         }
     }
 }
@@ -545,9 +544,21 @@ void wxWebView::OnSize(wxSizeEvent& event)
     event.Skip();
 }
 
+static int getDoubleClickTime()
+{
+#if __WXMSW__
+    return ::GetDoubleClickTime();
+#else
+    return 500;
+#endif
+}
+
 void wxWebView::OnMouseEvents(wxMouseEvent& event)
 {
     event.Skip();
+    
+    if (m_beingDestroyed)
+        return;
     
     if (!m_mainFrame)
         return; 
@@ -566,7 +577,20 @@ void wxWebView::OnMouseEvents(wxMouseEvent& event)
         return;
     }
     
-    WebCore::PlatformMouseEvent wkEvent(event, globalPoint);
+    int clickCount = event.ButtonDClick() ? 2 : 1;
+
+    if (clickCount == 1 && m_impl->tripleClickTimer.IsRunning()) {
+        wxPoint diff(event.GetPosition() - m_impl->tripleClickPos);
+        if (abs(diff.x) <= wxSystemSettings::GetMetric(wxSYS_DCLICK_X) &&
+            abs(diff.y) <= wxSystemSettings::GetMetric(wxSYS_DCLICK_Y)) {
+            clickCount = 3;
+        }
+    } else if (clickCount == 2) {
+        m_impl->tripleClickTimer.Start(getDoubleClickTime(), false);
+        m_impl->tripleClickPos = event.GetPosition();
+    }
+    
+    WebCore::PlatformMouseEvent wkEvent(event, globalPoint, clickCount);
 
     if (type == wxEVT_LEFT_DOWN || type == wxEVT_MIDDLE_DOWN || type == wxEVT_RIGHT_DOWN || 
                 type == wxEVT_LEFT_DCLICK || type == wxEVT_MIDDLE_DCLICK || type == wxEVT_RIGHT_DCLICK)
@@ -595,7 +619,7 @@ void wxWebView::OnContextMenuEvents(wxContextMenuEvent& event)
     wxMouseEvent mouseEvent(wxEVT_RIGHT_DOWN);
     mouseEvent.m_x = localEventPoint.x;
     mouseEvent.m_y = localEventPoint.y;
-    WebCore::PlatformMouseEvent wkEvent(mouseEvent, event.GetPosition());
+    WebCore::PlatformMouseEvent wkEvent(mouseEvent, event.GetPosition(), 1);
 
     bool handledEvent = focusedFrame->eventHandler()->sendContextMenuEvent(wkEvent);
     if (!handledEvent)

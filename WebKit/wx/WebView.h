@@ -108,7 +108,7 @@ public:
                 const wxString& name = wxWebViewNameStr); // For wxWebView internal data passing
     
 #ifndef SWIG
-    ~wxWebView();
+    virtual ~wxWebView();
 #endif
     
     void LoadURL(const wxString& url);
@@ -158,7 +158,7 @@ public:
     
     wxWebFrame* GetMainFrame() { return m_mainFrame; }
 
-    wxWebViewDOMElementInfo HitTest(const wxPoint& post) const;
+    wxWebViewDOMElementInfo HitTest(const wxPoint& pos) const;
 
 protected:
 
