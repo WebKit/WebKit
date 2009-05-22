@@ -83,6 +83,7 @@ if (-f "/tmp/WebKit/httpd.pid") {
 }
 
 my $testDirectory = getcwd() . "/LayoutTests";
+my $jsTestResourcesDirectory = $testDirectory . "/fast/js/resources";
 my $httpdPath = "/usr/sbin/httpd";
 $httpdPath = "/usr/sbin/apache2" if isDebianBased();
 my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
@@ -106,6 +107,8 @@ print "Press Ctrl+C to stop it.\n\n";
 my @args = (
     "-f", "$httpdConfig",
     "-C", "DocumentRoot \"$documentRoot\"",
+    # Setup a link to where the js test templates are stored, use -c so that mod_alias will already be laoded.
+    "-c", "Alias /js-test-resources \"$jsTestResourcesDirectory\"",
     "-C", "Listen $listen",
     "-c", "TypesConfig \"$typesConfig\"",
     "-c", "CustomLog |/usr/bin/tee common",

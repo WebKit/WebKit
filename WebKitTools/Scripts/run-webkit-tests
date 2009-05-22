@@ -1384,6 +1384,7 @@ sub openHTTPDIfNeeded()
         $httpdConfig = "$testDirectory/http/conf/apache2-httpd.conf" if `$httpdPath -v` =~ m|Apache/2|;
     }
     my $documentRoot = "$testDirectory/http/tests";
+    my $jsTestResourcesDirectory = $testDirectory . "/fast/js/resources";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $listen = "127.0.0.1:$httpdPort";
     my $absTestResultsDirectory = File::Spec->rel2abs(glob $testResultsDirectory);
@@ -1394,6 +1395,8 @@ sub openHTTPDIfNeeded()
     my @args = (
         "-f", "$httpdConfig",
         "-C", "DocumentRoot \"$documentRoot\"",
+        # Setup a link to where the js test templates are stored, use -c so that mod_alias will already be laoded.
+        "-c", "Alias /js-test-resources \"$jsTestResourcesDirectory\"",
         "-C", "Listen $listen",
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "CustomLog \"$absTestResultsDirectory/access_log.txt\" common",
