@@ -1,3 +1,15 @@
+2009-05-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - remove a test that was supposed to test the text/* change to MIME
+          types from r43979, since the change was rolled out, and the test seems
+          to be ineffective anyway, since it was passing on Mac after rolling
+          out the change.
+
+        * http/tests/mime/accept-all-text-types-expected.txt: Removed.
+        * http/tests/mime/accept-all-text-types.html: Removed.
+
 2009-05-22  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Simon Hausmann.
