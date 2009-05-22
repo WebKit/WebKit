@@ -1,3 +1,9 @@
+2009-05-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+
 2009-05-21  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Mark Rowe.
