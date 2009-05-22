@@ -1,3 +1,24 @@
+2009-05-22  Brent Fulgham <bfulgham@webkit.org>
+
+        Reviewed by Steve Falkenburg.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25950
+        JavaScriptCore Fails to build on Windows (Cairo) due to CoreFoundation
+        link requirement.
+
+        Modify project to add new Debug_CFLite and Release_CFLite targets.  These
+        use the new JavaScriptCoreCFLite.vsprops to link against CFLite.dll.
+        Existing projects are changed to use the new JavaScriptCoreCF.vsprops
+        to link against CoreFoundation.dll.
+
+        The JavaScriptCoreCommon.vsprops is modified to remove the link
+        against CoreFoundation.dll.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCF.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+
 2009-05-22  Dominik Röttsches  <dominik.roettsches@access-company.com>
 
         Reviewed by Gustavo Noronha.
