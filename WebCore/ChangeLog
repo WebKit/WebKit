@@ -1,3 +1,10 @@
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
+        Reformat WebCore::requiresContextForWordBoundary()
+
+        * platform/text/TextBoundaries.h:
+        (WebCore::requiresContextForWordBoundary):
+
 2009-05-23  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Not reviewed. Roll out ResourceHandle patch, that I accidently included in my last commit.
