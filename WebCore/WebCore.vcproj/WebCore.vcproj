@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -7593,10 +7593,42 @@
 			<File
 				RelativePath="..\rendering\RenderMediaControls.cpp"
 				>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\rendering\RenderMediaControls.h"
 				>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\rendering\RenderMenuList.cpp"
@@ -11939,6 +11971,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLNoScriptElement.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\HTMLNoScriptElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLObjectElement.cpp"
 				>
 				<FileConfiguration
@@ -12490,22 +12538,6 @@
 				RelativePath="..\html\HTMLScriptElement.h"
 				>
 			</File>
-            <File
-                RelativePath="..\html\HTMLNoScriptElement.cpp"
-                >
-                <FileConfiguration
-                    Name="Release_PGO|Win32"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                        WholeProgramOptimization="true"
-                    />
-                </FileConfiguration>
-            </File>
-            <File
-                RelativePath="..\html\HTMLNoScriptElement.h"
-                >
-            </File>
 			<File
 				RelativePath="..\html\HTMLSelectElement.cpp"
 				>

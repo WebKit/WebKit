@@ -28,12 +28,15 @@
 #include "HTMLElement.h"
 #include "HTMLSelectElement.h"
 #include "Icon.h"
-#include "RenderMediaControls.h"
 #include "RenderSlider.h"
 #include "Settings.h"
 #include "SoftLinking.h"
 #include "SystemInfo.h"
 #include "UserAgentStyleSheets.h"
+
+#if ENABLE(VIDEO)
+#include "RenderMediaControls.h"
+#endif
 
 #include <tchar.h>
 

@@ -1,3 +1,16 @@
+2009-05-22  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25971
+        Correct a handful of build errors in the Windows Cairo variant
+        due to missing VIDEO support.
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude RenderMediaControls for
+          the Cairo-based Windows target.
+        * rendering/RenderThemeWin.cpp: Avoid #include of RenderMediaControls
+          for non-VIDEO builds.
+
 2009-05-22  David Kilzer  <ddkilzer@apple.com>
 
         One <limits> is enough

@@ -1,3 +1,13 @@
+2009-05-22  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25971
+        Correct some build errors for Windows Cairo variant.
+
+        * WebKit.vcproj/WebKit.vcproj: Remove WTF.lib link commands as
+          the new JavaScriptCore.dll supplies this now.
+
 2009-05-22  Brent Fulgham <bfulgham@webkit.org>
 
         Reviewed by Steve Falkenburg.
