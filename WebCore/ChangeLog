@@ -1,5 +1,12 @@
 2009-05-23  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Not reviewed. Roll out ResourceHandle patch, that I accidently included in my last commit.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::shouldContentSniffURL):
+
+2009-05-23  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Darin Adler.
 
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=23808
