@@ -30,20 +30,23 @@ namespace JSC {
         UString::Rep* key;
         unsigned offset;
         unsigned attributes;
+        JSCell* specificValue;
         unsigned index;
 
-        PropertyMapEntry(UString::Rep* key, unsigned attributes)
+        PropertyMapEntry(UString::Rep* key, unsigned attributes, JSCell* specificValue)
             : key(key)
             , offset(0)
             , attributes(attributes)
+            , specificValue(specificValue)
             , index(0)
         {
         }
 
-        PropertyMapEntry(UString::Rep* key, unsigned offset, unsigned attributes, unsigned index)
+        PropertyMapEntry(UString::Rep* key, unsigned offset, unsigned attributes, JSCell* specificValue, unsigned index)
             : key(key)
             , offset(offset)
             , attributes(attributes)
+            , specificValue(specificValue)
             , index(index)
         {
         }

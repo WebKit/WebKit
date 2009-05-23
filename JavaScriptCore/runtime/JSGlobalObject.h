@@ -79,6 +79,7 @@ namespace JSC {
                 , numberPrototype(0)
                 , datePrototype(0)
                 , regExpPrototype(0)
+                , methodCallDummy(0)
             {
             }
             
@@ -119,6 +120,8 @@ namespace JSC {
             NumberPrototype* numberPrototype;
             DatePrototype* datePrototype;
             RegExpPrototype* regExpPrototype;
+
+            JSObject* methodCallDummy;
 
             RefPtr<Structure> argumentsStructure;
             RefPtr<Structure> arrayStructure;
@@ -200,6 +203,8 @@ namespace JSC {
         NumberPrototype* numberPrototype() const { return d()->numberPrototype; }
         DatePrototype* datePrototype() const { return d()->datePrototype; }
         RegExpPrototype* regExpPrototype() const { return d()->regExpPrototype; }
+
+        JSObject* methodCallDummy() const { return d()->methodCallDummy; }
 
         Structure* argumentsStructure() const { return d()->argumentsStructure.get(); }
         Structure* arrayStructure() const { return d()->arrayStructure.get(); }

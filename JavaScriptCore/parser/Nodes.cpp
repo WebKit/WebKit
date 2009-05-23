@@ -377,6 +377,7 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base);
     generator.emitExpressionInfo(divot() - m_subexpressionDivotOffset, startOffset() - m_subexpressionDivotOffset, m_subexpressionEndOffset);
+    generator.emitMethodCheck();
     RefPtr<RegisterID> function = generator.emitGetById(generator.tempDestination(dst), base.get(), m_ident);
     RefPtr<RegisterID> thisRegister = generator.emitMove(generator.newTemporary(), base.get());
     return generator.emitCall(generator.finalDestination(dst, function.get()), function.get(), thisRegister.get(), m_args, divot(), startOffset(), endOffset());

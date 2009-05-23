@@ -232,6 +232,8 @@ namespace JSC {
         static EncodedJSValue JIT_STUB cti_op_div(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_eq(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_get_by_id(STUB_ARGS_DECLARATION);
+        static EncodedJSValue JIT_STUB cti_op_get_by_id_method_check(STUB_ARGS_DECLARATION);
+        static EncodedJSValue JIT_STUB cti_op_get_by_id_method_check_second(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_get_by_id_array_fail(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_get_by_id_generic(STUB_ARGS_DECLARATION);
         static EncodedJSValue JIT_STUB cti_op_get_by_id_proto_fail(STUB_ARGS_DECLARATION);

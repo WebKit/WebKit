@@ -125,6 +125,12 @@ public:
     }
 
 
+    DataLabelPtr moveWithPatch(ImmPtr initialValue, RegisterID dest)
+    {
+        m_assembler.movl_i32r(initialValue.asIntptr(), dest);
+        return DataLabelPtr(this);
+    }
+
     Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
     {
         m_assembler.cmpl_ir_force32(initialRightValue.asIntptr(), left);

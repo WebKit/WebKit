@@ -156,6 +156,16 @@ namespace JSC {
         MacroAssembler::Label coldPathOther;
     };
 
+    struct MethodCallCompilationInfo {
+        MethodCallCompilationInfo(unsigned propertyAccessIndex)
+            : propertyAccessIndex(propertyAccessIndex)
+        {
+        }
+
+        MacroAssembler::DataLabelPtr structureToCompare;
+        unsigned propertyAccessIndex;
+    };
+
     void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction);
     void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, void* newCalleeFunction);
 
@@ -258,6 +268,10 @@ namespace JSC {
         static const int patchOffsetGetByIdSlowCaseCall = 38 + ctiArgumentInitSize;
 #endif
         static const int patchOffsetOpCallCompareToJump = 9;
+
+        static const int patchOffsetMethodCheckProtoObj = 20;
+        static const int patchOffsetMethodCheckProtoStruct = 30;
+        static const int patchOffsetMethodCheckPutFunction = 50;
 #else
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 7;
@@ -279,6 +293,10 @@ namespace JSC {
         static const int patchOffsetGetByIdSlowCaseCall = 21 + ctiArgumentInitSize;
 #endif
         static const int patchOffsetOpCallCompareToJump = 6;
+
+        static const int patchOffsetMethodCheckProtoObj = 11;
+        static const int patchOffsetMethodCheckProtoStruct = 18;
+        static const int patchOffsetMethodCheckPutFunction = 29;
 #endif
 
     public:
@@ -330,6 +348,7 @@ namespace JSC {
 
         static void patchGetByIdSelf(StructureStubInfo*, Structure*, size_t cachedOffset, ProcessorReturnAddress returnAddress);
         static void patchPutByIdReplace(StructureStubInfo*, Structure*, size_t cachedOffset, ProcessorReturnAddress returnAddress);
+        static void patchMethodCallProto(MethodCallLinkInfo&, JSFunction*, Structure*, JSObject*);
 
         static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, ProcessorReturnAddress returnAddress)
         {
@@ -372,10 +391,10 @@ namespace JSC {
         void addJump(Jump, int);
         void emitJumpSlowToHot(Jump, int);
 
+#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
         void compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned propertyAccessInstructionIndex);
-        void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex);
-        void compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, unsigned propertyAccessInstructionIndex);
-        void compilePutByIdSlowCase(int baseVReg, Identifier* ident, int valueVReg, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex);
+        void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex, bool isMethodCheck = false);
+#endif
         void compileOpCall(OpcodeID, Instruction* instruction, unsigned callLinkInfoIndex);
         void compileOpCallVarargs(Instruction* instruction);
         void compileOpCallInitializeCallFrame();
@@ -440,6 +459,7 @@ namespace JSC {
         void emit_op_new_func(Instruction*);
         void emit_op_call(Instruction*);
         void emit_op_call_eval(Instruction*);
+        void emit_op_method_check(Instruction*);
         void emit_op_load_varargs(Instruction*);
         void emit_op_call_varargs(Instruction*);
         void emit_op_construct(Instruction*);
@@ -525,6 +545,7 @@ namespace JSC {
         void emitSlow_op_instanceof(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call_eval(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_construct(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_jsnumber(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -648,6 +669,7 @@ namespace JSC {
         Vector<Label> m_labels;
         Vector<PropertyStubCompilationInfo> m_propertyAccessCompilationInfo;
         Vector<StructureStubCompilationInfo> m_callStructureStubCompilationInfo;
+        Vector<MethodCallCompilationInfo> m_methodCallCompilationInfo;
         Vector<JumpTable> m_jmpTable;
 
         unsigned m_bytecodeIndex;

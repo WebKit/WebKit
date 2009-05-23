@@ -147,6 +147,7 @@ namespace JSC {
         macro(op_tear_off_activation, 2) \
         macro(op_tear_off_arguments, 1) \
         macro(op_ret, 2) \
+        macro(op_method_check, 1) \
         \
         macro(op_construct, 7) \
         macro(op_construct_verify, 3) \

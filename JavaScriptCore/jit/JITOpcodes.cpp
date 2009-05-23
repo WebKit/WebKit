@@ -996,16 +996,6 @@ void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowC
     }
 }
 
-void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    compilePutByIdSlowCase(currentInstruction[1].u.operand, &(m_codeBlock->identifier(currentInstruction[2].u.operand)), currentInstruction[3].u.operand, iter, m_propertyAccessInstructionIndex++);
-}
-
-void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    compileGetByIdSlowCase(currentInstruction[1].u.operand, currentInstruction[2].u.operand, &(m_codeBlock->identifier(currentInstruction[3].u.operand)), iter, m_propertyAccessInstructionIndex++);
-}
-
 void JIT::emitSlow_op_loop_if_lesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned op2 = currentInstruction[2].u.operand;

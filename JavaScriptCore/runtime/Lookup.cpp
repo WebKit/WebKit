@@ -71,7 +71,8 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
 
     if (!location) {
         InternalFunction* function = new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), entry->functionLength(), propertyName, entry->function());
-        thisObj->putDirect(propertyName, function, entry->attributes());
+
+        thisObj->putDirectFunction(propertyName, function, entry->attributes());
         location = thisObj->getDirectLocation(propertyName);
     }
 

@@ -280,6 +280,8 @@ namespace JSC {
         RegisterID* emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
         RegisterID* emitResolveFunction(RegisterID* baseDst, RegisterID* funcDst, const Identifier& property);
 
+        void emitMethodCheck();
+
         RegisterID* emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property);
         RegisterID* emitPutById(RegisterID* base, const Identifier& property, RegisterID* value);
         RegisterID* emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier&);

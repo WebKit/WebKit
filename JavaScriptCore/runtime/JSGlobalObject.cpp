@@ -170,7 +170,7 @@ void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& proper
     if (!valueBefore) {
         JSValue valueAfter = getDirect(propertyName);
         if (valueAfter)
-            putDirect(propertyName, valueAfter, attributes);
+            JSObject::putWithAttributes(exec, propertyName, valueAfter, attributes);
     }
 }
 
@@ -239,6 +239,8 @@ void JSGlobalObject::reset(JSValue prototype)
     d()->regExpPrototype = new (exec) RegExpPrototype(exec, RegExpPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->regExpStructure = RegExpObject::createStructure(d()->regExpPrototype);
 
+    d()->methodCallDummy = constructEmptyObject(exec);
+
     ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, ErrorPrototype::createStructure(d()->objectPrototype), d()->prototypeFunctionStructure.get());
     d()->errorStructure = ErrorInstance::createStructure(errorPrototype);
 
@@ -253,13 +255,13 @@ void JSGlobalObject::reset(JSValue prototype)
 
     // Constructors
 
-    JSValue objectConstructor = new (exec) ObjectConstructor(exec, ObjectConstructor::createStructure(d()->functionPrototype), d()->objectPrototype);
-    JSValue functionConstructor = new (exec) FunctionConstructor(exec, FunctionConstructor::createStructure(d()->functionPrototype), d()->functionPrototype);
-    JSValue arrayConstructor = new (exec) ArrayConstructor(exec, ArrayConstructor::createStructure(d()->functionPrototype), d()->arrayPrototype);
-    JSValue stringConstructor = new (exec) StringConstructor(exec, StringConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->stringPrototype);
-    JSValue booleanConstructor = new (exec) BooleanConstructor(exec, BooleanConstructor::createStructure(d()->functionPrototype), d()->booleanPrototype);
-    JSValue numberConstructor = new (exec) NumberConstructor(exec, NumberConstructor::createStructure(d()->functionPrototype), d()->numberPrototype);
-    JSValue dateConstructor = new (exec) DateConstructor(exec, DateConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->datePrototype);
+    JSCell* objectConstructor = new (exec) ObjectConstructor(exec, ObjectConstructor::createStructure(d()->functionPrototype), d()->objectPrototype);
+    JSCell* functionConstructor = new (exec) FunctionConstructor(exec, FunctionConstructor::createStructure(d()->functionPrototype), d()->functionPrototype);
+    JSCell* arrayConstructor = new (exec) ArrayConstructor(exec, ArrayConstructor::createStructure(d()->functionPrototype), d()->arrayPrototype);
+    JSCell* stringConstructor = new (exec) StringConstructor(exec, StringConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->stringPrototype);
+    JSCell* booleanConstructor = new (exec) BooleanConstructor(exec, BooleanConstructor::createStructure(d()->functionPrototype), d()->booleanPrototype);
+    JSCell* numberConstructor = new (exec) NumberConstructor(exec, NumberConstructor::createStructure(d()->functionPrototype), d()->numberPrototype);
+    JSCell* dateConstructor = new (exec) DateConstructor(exec, DateConstructor::createStructure(d()->functionPrototype), d()->prototypeFunctionStructure.get(), d()->datePrototype);
 
     d()->regExpConstructor = new (exec) RegExpConstructor(exec, RegExpConstructor::createStructure(d()->functionPrototype), d()->regExpPrototype);
 
@@ -274,15 +276,15 @@ void JSGlobalObject::reset(JSValue prototype)
     d()->typeErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, typeErrorPrototype);
     d()->URIErrorConstructor = new (exec) NativeErrorConstructor(exec, nativeErrorStructure, URIErrorPrototype);
 
-    d()->objectPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, objectConstructor, DontEnum);
-    d()->functionPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, functionConstructor, DontEnum);
-    d()->arrayPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, arrayConstructor, DontEnum);
-    d()->booleanPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, booleanConstructor, DontEnum);
-    d()->stringPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, stringConstructor, DontEnum);
-    d()->numberPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, numberConstructor, DontEnum);
-    d()->datePrototype->putDirectWithoutTransition(exec->propertyNames().constructor, dateConstructor, DontEnum);
-    d()->regExpPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, d()->regExpConstructor, DontEnum);
-    errorPrototype->putDirectWithoutTransition(exec->propertyNames().constructor, d()->errorConstructor, DontEnum);
+    d()->objectPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, objectConstructor, DontEnum);
+    d()->functionPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, functionConstructor, DontEnum);
+    d()->arrayPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, arrayConstructor, DontEnum);
+    d()->booleanPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, booleanConstructor, DontEnum);
+    d()->stringPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, stringConstructor, DontEnum);
+    d()->numberPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, numberConstructor, DontEnum);
+    d()->datePrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, dateConstructor, DontEnum);
+    d()->regExpPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, d()->regExpConstructor, DontEnum);
+    errorPrototype->putDirectFunctionWithoutTransition(exec->propertyNames().constructor, d()->errorConstructor, DontEnum);
 
     evalErrorPrototype->putDirect(exec->propertyNames().constructor, d()->evalErrorConstructor, DontEnum);
     rangeErrorPrototype->putDirect(exec->propertyNames().constructor, d()->rangeErrorConstructor, DontEnum);
@@ -295,21 +297,21 @@ void JSGlobalObject::reset(JSValue prototype)
 
     // FIXME: These properties could be handled by a static hash table.
 
-    putDirectWithoutTransition(Identifier(exec, "Object"), objectConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "Function"), functionConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "Array"), arrayConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "Boolean"), booleanConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "String"), stringConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "Number"), numberConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "Date"), dateConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "RegExp"), d()->regExpConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "Error"), d()->errorConstructor, DontEnum);
-    putDirectWithoutTransition(Identifier(exec, "EvalError"), d()->evalErrorConstructor);
-    putDirectWithoutTransition(Identifier(exec, "RangeError"), d()->rangeErrorConstructor);
-    putDirectWithoutTransition(Identifier(exec, "ReferenceError"), d()->referenceErrorConstructor);
-    putDirectWithoutTransition(Identifier(exec, "SyntaxError"), d()->syntaxErrorConstructor);
-    putDirectWithoutTransition(Identifier(exec, "TypeError"), d()->typeErrorConstructor);
-    putDirectWithoutTransition(Identifier(exec, "URIError"), d()->URIErrorConstructor);
+    putDirectFunctionWithoutTransition(Identifier(exec, "Object"), objectConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "Function"), functionConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "Array"), arrayConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "Boolean"), booleanConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "String"), stringConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "Number"), numberConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "Date"), dateConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "RegExp"), d()->regExpConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "Error"), d()->errorConstructor, DontEnum);
+    putDirectFunctionWithoutTransition(Identifier(exec, "EvalError"), d()->evalErrorConstructor);
+    putDirectFunctionWithoutTransition(Identifier(exec, "RangeError"), d()->rangeErrorConstructor);
+    putDirectFunctionWithoutTransition(Identifier(exec, "ReferenceError"), d()->referenceErrorConstructor);
+    putDirectFunctionWithoutTransition(Identifier(exec, "SyntaxError"), d()->syntaxErrorConstructor);
+    putDirectFunctionWithoutTransition(Identifier(exec, "TypeError"), d()->typeErrorConstructor);
+    putDirectFunctionWithoutTransition(Identifier(exec, "URIError"), d()->URIErrorConstructor);
 
     // Set global values.
     GlobalPropertyInfo staticGlobals[] = {
@@ -386,6 +388,8 @@ void JSGlobalObject::mark()
     markIfNeeded(d()->numberPrototype);
     markIfNeeded(d()->datePrototype);
     markIfNeeded(d()->regExpPrototype);
+
+    markIfNeeded(d()->methodCallDummy);
 
     markIfNeeded(d()->errorStructure);
 

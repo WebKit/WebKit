@@ -690,6 +690,82 @@ EncodedJSValue JITStubs::cti_op_get_by_id(STUB_ARGS_DECLARATION)
     return JSValue::encode(result);
 }
 
+EncodedJSValue JITStubs::cti_op_get_by_id_method_check(STUB_ARGS_DECLARATION)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
+
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    PropertySlot slot(baseValue);
+    JSValue result = baseValue.get(callFrame, ident, slot);
+
+    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_method_check_second));
+
+    CHECK_FOR_EXCEPTION_AT_END();
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JITStubs::cti_op_get_by_id_method_check_second(STUB_ARGS_DECLARATION)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    CallFrame* callFrame = stackFrame.callFrame;
+    Identifier& ident = stackFrame.args[1].identifier();
+
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    PropertySlot slot(baseValue);
+    JSValue result = baseValue.get(callFrame, ident, slot);
+
+    CHECK_FOR_EXCEPTION();
+
+    // If we successfully got something, then the base from which it is being accessed must
+    // be an object.  (Assertion to ensure asObject() call below is safe, which comes after
+    // an isCacheable() chceck.
+    ASSERT(!slot.isCacheable() || slot.slotBase().isObject());
+
+    // Check that:
+    //   * We're dealing with a JSCell,
+    //   * the property is cachable,
+    //   * it's not a dictionary
+    //   * there is a function cached.
+    Structure* structure;
+    JSCell* specific;
+    if (baseValue.isCell()
+        && slot.isCacheable()
+        && !(structure = asCell(baseValue)->structure())->isDictionary()
+        && asObject(slot.slotBase())->getPropertySpecificValue(callFrame, ident, specific)
+        && specific
+        ) {
+
+        JSFunction* callee = (JSFunction*)specific;
+
+        // The result fetched should always be the callee!
+        ASSERT(result == JSValue(callee));
+        MethodCallLinkInfo& methodCallLinkInfo = callFrame->codeBlock()->getMethodCallLinkInfo(STUB_RETURN_ADDRESS);
+
+        // Check to see if the function is on the object's prototype.  Patch up the code to optimize.
+        if (slot.slotBase() == structure->prototypeForLookup(callFrame))
+            JIT::patchMethodCallProto(methodCallLinkInfo, callee, structure, asObject(slot.slotBase()));
+        // Check to see if the function is on the object itself.
+        // Since we generate the method-check to check both the structure and a prototype-structure (since this
+        // is the common case) we have a problem - we need to patch the prototype structure check to do something
+        // useful.  We could try to nop it out altogether, but that's a little messy, so lets do something simpler
+        // for now.  For now it performs a check on a special object on the global object only used for this
+        // purpose.  The object is in no way exposed, and as such the check will always pass.
+        else if (slot.slotBase() == baseValue)
+            JIT::patchMethodCallProto(methodCallLinkInfo, callee, structure, callFrame->scopeChain()->globalObject()->methodCallDummy());
+
+        // For now let any other case be cached as a normal get_by_id.
+    }
+
+    // Revert the get_by_id op back to being a regular get_by_id - allow it to cache like normal, if it needs to.
+    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id));
+
+    return JSValue::encode(result);
+}
+
 EncodedJSValue JITStubs::cti_op_get_by_id_second(STUB_ARGS_DECLARATION)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

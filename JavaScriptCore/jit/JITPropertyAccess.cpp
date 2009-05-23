@@ -45,16 +45,6 @@ using namespace std;
 
 namespace JSC {
 
-void JIT::emit_op_put_by_id(Instruction* currentInstruction)
-{
-    compilePutByIdHotPath(currentInstruction[1].u.operand, &(m_codeBlock->identifier(currentInstruction[2].u.operand)), currentInstruction[3].u.operand, m_propertyAccessInstructionIndex++);
-}
-
-void JIT::emit_op_get_by_id(Instruction* currentInstruction)
-{
-    compileGetByIdHotPath(currentInstruction[1].u.operand, currentInstruction[2].u.operand, &(m_codeBlock->identifier(currentInstruction[3].u.operand)), m_propertyAccessInstructionIndex++);
-}
-
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
@@ -151,31 +141,38 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
 
 /* ------------------------------ BEGIN: !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
 
-void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned)
+// Treat these as nops - the call will be handed as a regular get_by_id/op_call pair.
+void JIT::emit_op_method_check(Instruction*) {}
+void JIT::emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator&) { ASSERT_NOT_REACHED(); }
+#if ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
+#error "JIT_OPTIMIZE_METHOD_CALLS requires JIT_OPTIMIZE_PROPERTY_ACCESS"
+#endif
+
+void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 {
-    // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be patched.
-    // Additionally, for get_by_id we need patch the offset of the branch to the slow case (we patch this to jump
-    // to array-length / prototype access tranpolines, and finally we also the the property-map access offset as a label
-    // to jump back to if one of these trampolies finds a match.
+    unsigned resultVReg = currentInstruction[1].u.operand;
+    unsigned baseVReg = currentInstruction[2].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
 
     emitGetVirtualRegister(baseVReg, regT0);
-
     JITStubCall stubCall(this, JITStubs::cti_op_get_by_id_generic);
     stubCall.addArgument(regT0);
     stubCall.addArgument(ImmPtr(ident));
     stubCall.call(resultVReg);
+
+    m_propertyAccessInstructionIndex++;
 }
 
-void JIT::compileGetByIdSlowCase(int, int, Identifier*, Vector<SlowCaseEntry>::iterator&, unsigned)
+void JIT::emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&)
 {
     ASSERT_NOT_REACHED();
 }
 
-void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, unsigned)
+void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 {
-    // In order to be able to patch both the Structure, and the object offset, we store one pointer,
-    // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
-    // such that the Structure & offset are always at the same distance from this.
+    unsigned baseVReg = currentInstruction[1].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
+    unsigned valueVReg = currentInstruction[3].u.operand;
 
     emitGetVirtualRegisters(baseVReg, regT0, valueVReg, regT1);
 
@@ -184,9 +181,11 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier* ident, int valueVReg, 
     stubCall.addArgument(ImmPtr(ident));
     stubCall.addArgument(regT1);
     stubCall.call();
+
+    m_propertyAccessInstructionIndex++;
 }
 
-void JIT::compilePutByIdSlowCase(int, Identifier*, int, Vector<SlowCaseEntry>::iterator&, unsigned)
+void JIT::emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&)
 {
     ASSERT_NOT_REACHED();
 }
@@ -195,14 +194,90 @@ void JIT::compilePutByIdSlowCase(int, Identifier*, int, Vector<SlowCaseEntry>::i
 
 /* ------------------------------ BEGIN: ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
 
-void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier*, unsigned propertyAccessInstructionIndex)
+#if ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
+
+void JIT::emit_op_method_check(Instruction* currentInstruction)
+{
+    // Assert that the following instruction is a get_by_id.
+    ASSERT(m_interpreter->getOpcodeID((currentInstruction + OPCODE_LENGTH(op_method_check))->u.opcode) == op_get_by_id);
+
+    currentInstruction += OPCODE_LENGTH(op_method_check);
+    unsigned resultVReg = currentInstruction[1].u.operand;
+    unsigned baseVReg = currentInstruction[2].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
+
+    emitGetVirtualRegister(baseVReg, regT0);
+
+    // Do the method check - check the object & its prototype's structure inline (this is the common case).
+    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_propertyAccessInstructionIndex));
+    MethodCallCompilationInfo& info = m_methodCallCompilationInfo.last();
+    Jump notCell = emitJumpIfNotJSCell(regT0);
+    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, FIELD_OFFSET(JSCell, m_structure)), info.structureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
+    DataLabelPtr protoStructureToCompare, protoObj = moveWithPatch(ImmPtr(0), regT1);
+    Jump protoStructureCheck = branchPtrWithPatch(NotEqual, Address(regT1, FIELD_OFFSET(JSCell, m_structure)), protoStructureToCompare, ImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
+
+    // This will be relinked to load the function without doing a load.
+    DataLabelPtr putFunction = moveWithPatch(ImmPtr(0), regT0);
+    Jump match = jump();
+
+    ASSERT(differenceBetween(info.structureToCompare, protoObj) == patchOffsetMethodCheckProtoObj);
+    ASSERT(differenceBetween(info.structureToCompare, protoStructureToCompare) == patchOffsetMethodCheckProtoStruct);
+    ASSERT(differenceBetween(info.structureToCompare, putFunction) == patchOffsetMethodCheckPutFunction);
+
+    // Link the failure cases here.
+    notCell.link(this);
+    structureCheck.link(this);
+    protoStructureCheck.link(this);
+
+    // Do a regular(ish) get_by_id (the slow case will be link to
+    // cti_op_get_by_id_method_check instead of cti_op_get_by_id.
+    compileGetByIdHotPath(resultVReg, baseVReg, ident, m_propertyAccessInstructionIndex++);
+
+    match.link(this);
+    emitPutVirtualRegister(resultVReg);
+
+    // We've already generated the following get_by_id, so make sure it's skipped over.
+    m_bytecodeIndex += OPCODE_LENGTH(op_get_by_id);
+}
+
+void JIT::emitSlow_op_method_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    currentInstruction += OPCODE_LENGTH(op_method_check);
+    unsigned resultVReg = currentInstruction[1].u.operand;
+    unsigned baseVReg = currentInstruction[2].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
+
+    compileGetByIdSlowCase(resultVReg, baseVReg, ident, iter, m_propertyAccessInstructionIndex++, true);
+
+    // We've already generated the following get_by_id, so make sure it's skipped over.
+    m_bytecodeIndex += OPCODE_LENGTH(op_get_by_id);
+}
+
+#else //!ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
+
+// Treat these as nops - the call will be handed as a regular get_by_id/op_call pair.
+void JIT::emit_op_method_check(Instruction*) {}
+void JIT::emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator&) { ASSERT_NOT_REACHED(); }
+
+#endif
+
+void JIT::emit_op_get_by_id(Instruction* currentInstruction)
+{
+    unsigned resultVReg = currentInstruction[1].u.operand;
+    unsigned baseVReg = currentInstruction[2].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
+
+    emitGetVirtualRegister(baseVReg, regT0);
+    compileGetByIdHotPath(resultVReg, baseVReg, ident, m_propertyAccessInstructionIndex++);
+    emitPutVirtualRegister(resultVReg);
+}
+
+void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propertyAccessInstructionIndex)
 {
     // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be patched.
     // Additionally, for get_by_id we need patch the offset of the branch to the slow case (we patch this to jump
     // to array-length / prototype access tranpolines, and finally we also the the property-map access offset as a label
     // to jump back to if one of these trampolies finds a match.
-
-    emitGetVirtualRegister(baseVReg, regT0);
 
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
@@ -226,11 +301,18 @@ void JIT::compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier*, unsig
 
     Label putResult(this);
     ASSERT(differenceBetween(hotPathBegin, putResult) == patchOffsetGetByIdPutResult);
-    emitPutVirtualRegister(resultVReg);
 }
 
+void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned resultVReg = currentInstruction[1].u.operand;
+    unsigned baseVReg = currentInstruction[2].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
 
-void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex)
+    compileGetByIdSlowCase(resultVReg, baseVReg, ident, iter, m_propertyAccessInstructionIndex++, false);
+}
+
+void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex, bool isMethodCheck)
 {
     // As for the hot path of get_by_id, above, we ensure that we can use an architecture specific offset
     // so that we only need track one pointer into the slow case code - we track a pointer to the location
@@ -244,7 +326,7 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
 #ifndef NDEBUG
     Label coldPathBegin(this);
 #endif
-    JITStubCall stubCall(this, JITStubs::cti_op_get_by_id);
+    JITStubCall stubCall(this, isMethodCheck ? JITStubs::cti_op_get_by_id_method_check : JITStubs::cti_op_get_by_id);
     stubCall.addArgument(regT0);
     stubCall.addArgument(ImmPtr(ident));
     Call call = stubCall.call(resultVReg);
@@ -255,8 +337,13 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
     m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
 }
 
-void JIT::compilePutByIdHotPath(int baseVReg, Identifier*, int valueVReg, unsigned propertyAccessInstructionIndex)
+void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 {
+    unsigned baseVReg = currentInstruction[1].u.operand;
+    unsigned valueVReg = currentInstruction[3].u.operand;
+
+    unsigned propertyAccessInstructionIndex = m_propertyAccessInstructionIndex++;
+
     // In order to be able to patch both the Structure, and the object offset, we store one pointer,
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
     // such that the Structure & offset are always at the same distance from this.
@@ -285,8 +372,13 @@ void JIT::compilePutByIdHotPath(int baseVReg, Identifier*, int valueVReg, unsign
     ASSERT(differenceBetween(hotPathBegin, displacementLabel) == patchOffsetPutByIdPropertyMapOffset);
 }
 
-void JIT::compilePutByIdSlowCase(int baseVReg, Identifier* ident, int, Vector<SlowCaseEntry>::iterator& iter, unsigned propertyAccessInstructionIndex)
+void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    unsigned baseVReg = currentInstruction[1].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
+
+    unsigned propertyAccessInstructionIndex = m_propertyAccessInstructionIndex++;
+
     linkSlowCaseIfNotJSCell(iter, baseVReg);
     linkSlowCase(iter);
 
@@ -443,6 +535,18 @@ void JIT::patchGetByIdSelf(StructureStubInfo* stubInfo, Structure* structure, si
     // Patch the offset into the propoerty map to load from, then patch the Structure to look for.
     stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetGetByIdStructure).repatch(structure);
     stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetGetByIdPropertyMapOffset).repatch(offset);
+}
+
+void JIT::patchMethodCallProto(MethodCallLinkInfo& methodCallLinkInfo, JSFunction* callee, Structure* structure, JSObject* proto)
+{
+    ASSERT(!methodCallLinkInfo.cachedStructure);
+    methodCallLinkInfo.cachedStructure = structure;
+    structure->ref();
+
+    methodCallLinkInfo.structureLabel.repatch(structure);
+    methodCallLinkInfo.structureLabel.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoObj).repatch(proto);
+    methodCallLinkInfo.structureLabel.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoStruct).repatch(proto->structure());
+    methodCallLinkInfo.structureLabel.dataLabelPtrAtOffset(patchOffsetMethodCheckPutFunction).repatch(callee);
 }
 
 void JIT::patchPutByIdReplace(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ProcessorReturnAddress returnAddress)

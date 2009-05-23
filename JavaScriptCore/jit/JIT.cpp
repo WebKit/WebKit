@@ -216,6 +216,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_loop_if_lesseq)
         DEFINE_OP(op_loop_if_true)
         DEFINE_OP(op_lshift)
+        DEFINE_OP(op_method_check)
         DEFINE_OP(op_mod)
         DEFINE_OP(op_mov)
         DEFINE_OP(op_mul)
@@ -344,6 +345,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_lshift)
         DEFINE_SLOWCASE_OP(op_mod)
         DEFINE_SLOWCASE_OP(op_mul)
+        DEFINE_SLOWCASE_OP(op_method_check)
         DEFINE_SLOWCASE_OP(op_neq)
         DEFINE_SLOWCASE_OP(op_not)
         DEFINE_SLOWCASE_OP(op_nstricteq)
@@ -485,6 +487,13 @@ void JIT::privateCompile()
         info.coldPathOther = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].coldPathOther);
     }
 #endif
+    unsigned methodCallCount = m_methodCallCompilationInfo.size();
+    m_codeBlock->addMethodCallLinkInfos(methodCallCount);
+    for (unsigned i = 0; i < methodCallCount; ++i) {
+        MethodCallLinkInfo& info = m_codeBlock->methodCallLinkInfo(i);
+        info.structureLabel = patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare);
+        info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
+    }
 
     m_codeBlock->setJITCode(patchBuffer.finalizeCode());
 }

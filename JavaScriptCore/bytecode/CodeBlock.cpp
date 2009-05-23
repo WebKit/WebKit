@@ -827,6 +827,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] put_setter\t %s, %s, %s\n", location, registerName(r0).c_str(), idName(id0, m_identifiers[id0]).c_str(), registerName(r1).c_str());
             break;
         }
+        case op_method_check: {
+            printf("[%4d] op_method_check\n", location);
+            break;
+        }
         case op_del_by_id: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1308,6 +1312,11 @@ CodeBlock::~CodeBlock()
         CallLinkInfo* callLinkInfo = &m_callLinkInfos[i];
         if (callLinkInfo->isLinked())
             callLinkInfo->callee->removeCaller(callLinkInfo);
+    }
+
+    for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
+        if (Structure* structure = m_methodCallLinkInfos[i].cachedStructure)
+            structure->deref();
     }
 
     unlinkCallers();

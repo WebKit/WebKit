@@ -32,15 +32,15 @@
 namespace JSC {
     
     class JSObject;
+    class JSFunction;
     
     class PutPropertySlot {
     public:
-        enum Type { Invalid, ExistingProperty, NewProperty };
+        enum Type { Uncachable, ExistingProperty, NewProperty };
 
         PutPropertySlot()
-            : m_type(Invalid)
+            : m_type(Uncachable)
             , m_base(0)
-            , m_wasTransition(false)
         {
         }
 
@@ -61,18 +61,14 @@ namespace JSC {
         Type type() const { return m_type; }
         JSObject* base() const { return m_base; }
 
-        bool isCacheable() const { return m_type != Invalid; }
+        bool isCacheable() const { return m_type != Uncachable; }
         size_t cachedOffset() const {
             ASSERT(isCacheable());
             return m_offset;
         }
-        
-        bool wasTransition() const { return m_wasTransition; }
-        void setWasTransition(bool wasTransition) { m_wasTransition = wasTransition; }
     private:
         Type m_type;
         JSObject* m_base;
-        bool m_wasTransition;
         size_t m_offset;
     };
 

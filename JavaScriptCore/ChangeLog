@@ -1,3 +1,183 @@
+2009-05-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        op_method_check
+
+        Optimize method calls, by caching specific function values within the Structure.
+        The new opcode is used almost like an x86 opcode prefix byte to optimize op_get_by_id,
+        where the property access is being used to read a function to be passed to op-call (i.e.
+        'foo.bar();').  This patch modifies the Structure class such that when a property is
+        put to an object for the first time we will check if the value is a function.  If it is,
+        we will cache the function value on the Structure.  A Structure in such a state guarantees
+        that not only does a property with the given identifier exist on the object, but also that
+        its value is unchanged.  Upon any further attempt to put a property with the same identifier
+        (but a different value) to the object, it will transition back to a normal Structure (where
+        it will guarantee the presence but not the value of the property).
+
+        op_method_check makes use of the new information made available by the Structure, by
+        augmenting the functionality of op_get_by_id.  Upon generating a FunctionCallDotNode a
+        check will be emitted prior to the property access reading the function value, and the JIT
+        will generate an extra (initially unlinked but patchable) set of checks prior to the regular
+        JIT code for get_by_id.  The new code will do inline structure and prototype structure check
+        (unlike a regular get_by_id, which can only handle 'self' accesses inline), and then performs
+        an immediate load of the function value, rather than using memory accesses to load the value
+        from the obejct's property storage array.  If the method check fails it will revert, or if
+        the access is polymorphic, the op_get_by_id will continue to operate - and optimize itself -
+        just as any other regular op_get_by_id would.
+
+        ~2.5% on v8-tests, due to a ~9% progression on richards.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::put):
+        (JSC::::staticFunctionGetter):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeConstructor):
+        * JavaScriptCore.exp:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::differenceBetween):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::moveWithPatch):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::getMethodCallLinkInfoReturnLocation):
+        (JSC::CodeBlock::getMethodCallLinkInfo):
+        (JSC::CodeBlock::addMethodCallLinkInfos):
+        (JSC::CodeBlock::methodCallLinkInfo):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitMethodCheck):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::MethodCallCompilationInfo::MethodCallCompilationInfo):
+        * jit/JITOpcodes.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emitSlow_op_method_check):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::patchMethodCallProto):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_get_by_id_method_check):
+        (JSC::JITStubs::cti_op_get_by_id_method_check_second):
+        * jit/JITStubs.h:
+        * jsc.cpp:
+        (GlobalObject::GlobalObject):
+        * parser/Nodes.cpp:
+        (JSC::FunctionCallDotNode::emitBytecode):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::put):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::BooleanConstructor):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        (JSC::constructError):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::put):
+        (JSC::JSActivation::putWithAttributes):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::putWithAttributes):
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::mark):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        (JSC::JSGlobalObject::methodCallDummy):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::putWithAttributes):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        (JSC::JSObject::getPropertyAttributes):
+        (JSC::JSObject::getPropertySpecificFunction):
+        (JSC::JSObject::putDirectFunction):
+        (JSC::JSObject::putDirectFunctionWithoutTransition):
+        * runtime/JSObject.h:
+        (JSC::getJSFunction):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::parseObject):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::lookupPut):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        (JSC::NativeErrorConstructor::construct):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        * runtime/PrototypeFunction.cpp:
+        (JSC::PrototypeFunction::PrototypeFunction):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::):
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::setNewProperty):
+        (JSC::PutPropertySlot::setDespecifyFunctionProperty):
+        (JSC::PutPropertySlot::isCacheable):
+        (JSC::PutPropertySlot::cachedOffset):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::~Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::changeFunctionTransition):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        (JSC::Structure::put):
+        (JSC::Structure::remove):
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+        (JSC::Structure::specificFunction):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTableHashTraits::emptyValue):
+        * wtf/Platform.h:
+
 2009-05-22  Brent Fulgham <bfulgham@webkit.org>
 
         Reviewed by Steve Falkenburg.
