@@ -337,7 +337,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\OwnPtrCommon.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\OwnPtrWin.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\PassOwnPtr.h"
 			>
 		</File>
 		<File

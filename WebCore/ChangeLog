@@ -1,5 +1,18 @@
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
+        Part 1 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25495>
+
+        Reviewed by Oliver Hunt.
+
+        * ForwardingHeaders/wtf/OwnPtrCommon.h: Added.
+        * ForwardingHeaders/wtf/PassOwnPtr.h: Added.
+        * WebCore.vcproj/WebCore.vcproj: Added OwnPtrCommon.h and
+        PassOwnPtr.h.
+
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
         Fix Mac builds by backing out r44093
 
         * bindings/js/JSCustomPositionCallback.cpp:

@@ -15098,6 +15098,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\ForwardingHeaders\wtf\OwnPtrCommon.h"
+					>
+				</File>
+				<File
+					RelativePath="..\ForwardingHeaders\wtf\PassOwnPtr.h"
+					>
+				</File>
+				<File
 					RelativePath="..\ForwardingHeaders\wtf\PassRefPtr.h"
 					>
 				</File>

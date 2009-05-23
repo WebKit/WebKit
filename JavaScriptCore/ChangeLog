@@ -1,3 +1,45 @@
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
+        Part 1 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25495>
+
+        Reviewed by Oliver Hunt.
+
+        * GNUmakefile.am: Added OwnPtrCommon.h and PassOwnPtr.h.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr::OwnPtr): Added constructors that take a
+        PassOwnPtr.  Also added a copy constructor declaration that's
+        required when assigning a PassOwnPtr to a stack-based OwnPtr.
+        (WTF::operator=): Added assignment operator methods that take a
+        PassOwnPtr.
+        (WTF::swap): Reformatted.
+        (WTF::operator==): Whitespace changes.
+        (WTF::operator!=): Ditto.
+
+        * wtf/OwnPtrCommon.h: Added.
+        (WTF::deleteOwnedPtr):
+
+        * wtf/PassOwnPtr.h: Added.
+        (WTF::PassOwnPtr::PassOwnPtr):
+        (WTF::PassOwnPtr::~PassOwnPtr):
+        (WTF::PassOwnPtr::get):
+        (WTF::PassOwnPtr::clear):
+        (WTF::PassOwnPtr::release):
+        (WTF::PassOwnPtr::operator*):
+        (WTF::PassOwnPtr::operator->):
+        (WTF::PassOwnPtr::operator!):
+        (WTF::PassOwnPtr::operator UnspecifiedBoolType):
+        (WTF::::operator):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::static_pointer_cast):
+        (WTF::const_pointer_cast):
+        (WTF::getPtr):
+
 2009-05-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

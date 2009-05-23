@@ -1,5 +1,16 @@
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
+        Part 1 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25495>
+
+        Reviewed by Oliver Hunt.
+
+        * DumpRenderTree/ForwardingHeaders/wtf/OwnPtrCommon.h: Added.
+        * DumpRenderTree/ForwardingHeaders/wtf/PassOwnPtr.h: Added.
+
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
         resolve-ChangeLogs: Add missing newline to status message
 
         * Scripts/resolve-ChangeLogs: Added newline to status message

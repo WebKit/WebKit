@@ -237,6 +237,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/NotFound.h \
 	JavaScriptCore/wtf/OwnArrayPtr.h \
 	JavaScriptCore/wtf/OwnPtr.h \
+	JavaScriptCore/wtf/OwnPtrCommon.h \
+	JavaScriptCore/wtf/PassOwnPtr.h \
 	JavaScriptCore/wtf/PassRefPtr.h \
 	JavaScriptCore/wtf/Platform.h \
 	JavaScriptCore/wtf/PtrAndFlags.h \
