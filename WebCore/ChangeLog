@@ -1,3 +1,9 @@
+2009-05-22  David Kilzer  <ddkilzer@apple.com>
+
+        One <limits> is enough
+
+        * html/HTMLMediaElement.cpp: Removed duplicate #include <limits>.
+
 2009-05-22  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/6915957> REGRESSION: Hang when leaving page with VLC
