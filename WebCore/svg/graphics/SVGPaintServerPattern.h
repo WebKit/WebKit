@@ -36,6 +36,7 @@
 #include <memory>
 
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -56,7 +57,7 @@ namespace WebCore {
         FloatRect patternBoundaries() const;
 
         ImageBuffer* tile() const;
-        void setTile(std::auto_ptr<ImageBuffer>);
+        void setTile(PassOwnPtr<ImageBuffer>);
 
         TransformationMatrix patternTransform() const;
         void setPatternTransform(const TransformationMatrix&);

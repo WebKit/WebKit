@@ -29,6 +29,7 @@
 #include "IntPoint.h"
 #include "PlatformString.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
 #import <wtf/RetainPtr.h>
@@ -142,7 +143,7 @@ public:
 
     void addRedirectURL(const String&);
     Vector<String>* redirectURLs() const;
-    void setRedirectURLs(std::auto_ptr<Vector<String> >);
+    void setRedirectURLs(PassOwnPtr<Vector<String> >);
 
     bool isCurrentDocument(Document*) const;
     

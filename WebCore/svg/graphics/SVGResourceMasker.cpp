@@ -63,7 +63,7 @@ void SVGResourceMasker::invalidate()
 void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
 {
     if (!m_mask)
-        m_mask.set(m_ownerElement->drawMaskerContent(boundingBox, m_maskRect).release());
+        m_mask = m_ownerElement->drawMaskerContent(boundingBox, m_maskRect);
 
     if (!m_mask)
         return;
@@ -72,8 +72,8 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
     IntRect intImageRect(0, 0, imageSize.width(), imageSize.height());
 
     // Create new ImageBuffer to apply luminance
-    auto_ptr<ImageBuffer> luminancedImage(ImageBuffer::create(imageSize, false));
-    if (!luminancedImage.get())
+    OwnPtr<ImageBuffer> luminancedImage = ImageBuffer::create(imageSize, false);
+    if (!luminancedImage)
         return;
 
     PassRefPtr<CanvasPixelArray> srcPixelArray(m_mask->getImageData(intImageRect)->data());

@@ -137,7 +137,7 @@ public:
 
     virtual void formStateDidChange(const Node*) { }
 
-    virtual HTMLParserQuirks* createHTMLParserQuirks() { return 0; }
+    virtual PassOwnPtr<HTMLParserQuirks> createHTMLParserQuirks() { return 0; }
 
     virtual bool setCursor(PlatformCursorHandle) { return false; }
 

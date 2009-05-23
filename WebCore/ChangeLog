@@ -1,5 +1,108 @@
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
+        Part 2 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25495>
+
+        Reviewed by Oliver Hunt.
+
+        No test cases added since there is no change in behavior.
+
+        * WebCore.base.exp: Updated export for
+        HistoryItem::setRedirectURLs() which now takes a PassOwnPtr.
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes): Use NodeListsNodeData::create()
+        instead of new NodeListsNodeData.
+        (WebCore::Node::registerDynamicNodeList): Ditto.
+        (WebCore::Node::getElementsByTagNameNS): Ditto.
+        (WebCore::Node::getElementsByName): Ditto.
+        (WebCore::Node::getElementsByClassName): Ditto.
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::create): Added.  Implements
+        create() pattern popularized by RefCounted classes.
+        (WebCore::NodeListsNodeData::NodeListsNodeData): Declared
+        private constructor.
+        (WebCore::NodeRareData::setNodeLists): Now takes a PassOwnPtr<>
+        instead of an auto_ptr<>.
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setRedirectURLs): Ditto.
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::setRedirectURLs): Ditto.
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal): Use
+        OwnPtr<> instead of auto_ptr<> for stack variable.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer): Updated to use
+        assignment operator now that ImageBuffer::create() returns a
+        PassOwnPtr<>.
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::createHTMLParserQuirks): Return a
+        PassOwnPtr<> instead of a raw HTMLParserQuirks pointer.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::createHTMLParserQuirks): Ditto.
+        * platform/graphics/GeneratedImage.cpp:
+        (WebCore::GeneratedImage::drawPattern): Use OwnPtr<> instead of
+        auto_ptr<> for stack variable.
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create): Return PassOwnPtr<> instead of
+        auto_ptr<>.  Use OwnPtr<> instead of auto_ptr<> for stack
+        variable.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint): Use OwnPtr<> instead of
+        auto_ptr<> for stack variable.
+        * platform/text/TextCodec.h:
+        (WebCore::NewTextCodecFunction): Return PassOwnPtr<> instead of
+        auto_ptr<>.
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::newTextCodecICU): Ditto.
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::newStreamingTextDecoderWindowsLatin1): Ditto.
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::newStreamingTextDecoderUTF16LE): Ditto.
+        (WebCore::newStreamingTextDecoderUTF16BE): Ditto.
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::newStreamingTextDecoderUserDefined): Ditto.
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::newTextCodec): Ditto.
+        * platform/text/TextEncodingRegistry.h:
+        (WebCore::newTextCodec): Ditto.
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::newTextCodecMac): Ditto.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Use
+        OwnPtr<> instead of auto_ptr<> for stack variable.
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::drawMaskerContent): Ditto.  Return
+        OwnPtr<> instead of auto_ptr<>.
+        * svg/SVGMaskElement.h:
+        (WebCore::SVGMaskElement::drawMaskerContent): Return OwnPtr<>
+        instead of auto_ptr<>.
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::buildPattern): Use OwnPtr<> instead
+        of auto_ptr<> for stack variable.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame): Updated to use
+        assignment operator now that ImageBuffer::create() returns a
+        PassOwnPtr<>.
+        * svg/graphics/SVGPaintServerGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient): Use OwnPtr<>
+        instead of auto_ptr<> for stack variable.
+        * svg/graphics/SVGPaintServerPattern.cpp:
+        (WebCore::SVGPaintServerPattern::setTile): Updated to take a
+        PassOwnPtr<> instead of an auto_ptr<>.
+        (WebCore::SVGPaintServerPattern::setup): Use OwnPtr<> instead of
+        auto_ptr<> for stack variable.
+        * svg/graphics/SVGPaintServerPattern.h:
+        (WebCore::SVGPaintServerPattern::setTile): Updated to take a
+        PassOwnPtr<> instead of an auto_ptr<>.
+        * svg/graphics/SVGResourceMasker.cpp:
+        (WebCore::SVGResourceMasker::applyMask): Updated to use
+        assignment operator now that SVGMaskElement::drawMaskerContent()
+        returns a PassOwnPtr<>.  Use OwnPtr<> instead of auto_ptr<> for
+        stack variable.
+
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
         Part 1 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
 
         <https://bugs.webkit.org/show_bug.cgi?id=25495>

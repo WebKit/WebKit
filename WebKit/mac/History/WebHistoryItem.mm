@@ -382,10 +382,10 @@ static WebWindowWatcher *_windowWatcher = nil;
 
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey]) {
         NSUInteger size = [redirectURLs count];
-        std::auto_ptr<Vector<String> > redirectURLsVector(new Vector<String>(size));
+        OwnPtr<Vector<String> > redirectURLsVector(new Vector<String>(size));
         for (NSUInteger i = 0; i < size; ++i)
             (*redirectURLsVector)[i] = String([redirectURLs _webkit_stringAtIndex:i]);
-        core(_private)->setRedirectURLs(redirectURLsVector);
+        core(_private)->setRedirectURLs(redirectURLsVector.release());
     }
 
     NSArray *dailyCounts = [dict _webkit_arrayForKey:dailyVisitCountKey];

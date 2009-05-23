@@ -78,6 +78,7 @@
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include <wtf/HashSet.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/UnusedParam.h>
 
@@ -506,7 +507,7 @@ PassRefPtr<NodeList> Node::childNodes()
 {
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(NodeListsNodeData::create());
         document()->addNodeListCache();
     }
 
@@ -779,7 +780,7 @@ void Node::registerDynamicNodeList(DynamicNodeList* list)
 {
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(NodeListsNodeData::create());
         document()->addNodeListCache();
     } else if (!m_document->hasNodeListCaches()) {
         // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
@@ -1473,7 +1474,7 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceU
     
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(NodeListsNodeData::create());
         document()->addNodeListCache();
     }
 
@@ -1494,7 +1495,7 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
 {
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(NodeListsNodeData::create());
         document()->addNodeListCache();
     }
 
@@ -1509,7 +1510,7 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
 {
     NodeRareData* data = ensureRareData();
     if (!data->nodeLists()) {
-        data->setNodeLists(auto_ptr<NodeListsNodeData>(new NodeListsNodeData));
+        data->setNodeLists(NodeListsNodeData::create());
         document()->addNodeListCache();
     }
 

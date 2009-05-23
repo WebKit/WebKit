@@ -1,5 +1,23 @@
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
+        Part 2 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25495>
+
+        Reviewed by Oliver Hunt.
+
+        * History/WebHistory.mm:
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:]): Return
+        0 instead of an empty auto_ptr<>.
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): Use
+        OwnPtr<> instead of auto_ptr<> for stack variable.
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::createHTMLParserQuirks): Return a PassOwnPtr<>
+        instead of a raw HTMLParserQuirks pointer.
+
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
         Part 1 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
 
         <https://bugs.webkit.org/show_bug.cgi?id=25495>

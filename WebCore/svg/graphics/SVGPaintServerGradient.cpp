@@ -137,9 +137,9 @@ static inline bool createMaskAndSwapContextForTextGradient(
     IntSize maskSize(maskRect.width(), maskRect.height());
     clampImageBufferSizeToViewport(object->view()->frameView(), maskSize);
 
-    auto_ptr<ImageBuffer> maskImage = ImageBuffer::create(maskSize, false);
+    OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskSize, false);
 
-    if (!maskImage.get())
+    if (!maskImage)
         return false;
 
     GraphicsContext* maskImageContext = maskImage->context();

@@ -104,7 +104,7 @@ namespace WebKit {
 
         virtual void formStateDidChange(const WebCore::Node*) { }
 
-        virtual WebCore::HTMLParserQuirks* createHTMLParserQuirks() { return 0; }
+        virtual PassOwnPtr<WebCore::HTMLParserQuirks> createHTMLParserQuirks() { return 0; }
 
         virtual bool setCursor(WebCore::PlatformCursorHandle);
 

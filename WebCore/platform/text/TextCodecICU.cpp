@@ -34,10 +34,10 @@
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_cb.h>
 #include <wtf/Assertions.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 
-using std::auto_ptr;
 using std::min;
 
 namespace WebCore {
@@ -55,9 +55,9 @@ static UConverter*& cachedConverterICU()
     return threadGlobalData().cachedConverterICU().converter;
 }
 
-static auto_ptr<TextCodec> newTextCodecICU(const TextEncoding& encoding, const void*)
+static PassOwnPtr<TextCodec> newTextCodecICU(const TextEncoding& encoding, const void*)
 {
-    return auto_ptr<TextCodec>(new TextCodecICU(encoding));
+    return new TextCodecICU(encoding);
 }
 
 void TextCodecICU::registerBaseEncodingNames(EncodingNameRegistrar registrar)

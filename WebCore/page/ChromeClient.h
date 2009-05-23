@@ -24,9 +24,11 @@
 #include "Cursor.h"
 #include "FocusDirection.h"
 #include "GraphicsContext.h"
+#include "HTMLParserQuirks.h"
 #include "HostWindow.h"
 #include "ScrollTypes.h"
 #include <wtf/Forward.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -167,7 +169,7 @@ namespace WebCore {
         // will be called frequently, so handling should be very fast.
         virtual void formStateDidChange(const Node*) = 0;
 
-        virtual HTMLParserQuirks* createHTMLParserQuirks() = 0;
+        virtual PassOwnPtr<HTMLParserQuirks> createHTMLParserQuirks() = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
         // Pass 0 as the GraphicsLayer to detatch the root layer.

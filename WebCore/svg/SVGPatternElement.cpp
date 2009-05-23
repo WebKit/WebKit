@@ -214,9 +214,9 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
     IntSize imageSize(lroundf(patternBoundariesIncludingOverflow.width()), lroundf(patternBoundariesIncludingOverflow.height()));
     clampImageBufferSizeToViewport(document()->view(), imageSize);
 
-    auto_ptr<ImageBuffer> patternImage = ImageBuffer::create(imageSize, false);
+    OwnPtr<ImageBuffer> patternImage = ImageBuffer::create(imageSize, false);
 
-    if (!patternImage.get())
+    if (!patternImage)
         return;
 
     GraphicsContext* context = patternImage->context();
@@ -251,7 +251,7 @@ void SVGPatternElement::buildPattern(const FloatRect& targetRect) const
 
     m_resource->setPatternTransform(attributes.patternTransform());
     m_resource->setPatternBoundaries(patternBoundaries); 
-    m_resource->setTile(patternImage);
+    m_resource->setTile(patternImage.release());
 }
 
 RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*)

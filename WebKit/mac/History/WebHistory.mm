@@ -800,7 +800,7 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     if ([method length])
         item->setLastVisitWasHTTPNonGet([method caseInsensitiveCompare:@"GET"] && (![[url scheme] caseInsensitiveCompare:@"http"] || ![[url scheme] caseInsensitiveCompare:@"https"]));
 
-    item->setRedirectURLs(auto_ptr<Vector<String> >());
+    item->setRedirectURLs(0);
 
     NSArray *entries = [[NSArray alloc] initWithObjects:entry, nil];
     [self _sendNotification:WebHistoryItemsAddedNotification entries:entries];

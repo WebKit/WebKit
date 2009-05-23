@@ -393,8 +393,8 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         bufferRect.intersect(damageRect);
         bufferRect.move(-scrollbar->frameRect().x(), -scrollbar->frameRect().y());
         
-        auto_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(bufferRect.size(), false);
-        if (!imageBuffer.get())
+        OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(bufferRect.size(), false);
+        if (!imageBuffer)
             return true;
         
         HIThemeDrawTrack(&trackInfo, 0, imageBuffer->context()->platformContext(), kHIThemeOrientationNormal);

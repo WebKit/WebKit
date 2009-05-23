@@ -33,9 +33,9 @@
 #include "PlatformString.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 
-using std::auto_ptr;
 using std::min;
 
 namespace WebCore {
@@ -64,9 +64,9 @@ void TextCodecMac::registerEncodingNames(EncodingNameRegistrar registrar)
     }
 }
 
-static auto_ptr<TextCodec> newTextCodecMac(const TextEncoding&, const void* additionalData)
+static PassOwnPtr<TextCodec> newTextCodecMac(const TextEncoding&, const void* additionalData)
 {
-    return auto_ptr<TextCodec>(new TextCodecMac(*static_cast<const TECTextEncodingID*>(additionalData)));
+    return new TextCodecMac(*static_cast<const TECTextEncodingID*>(additionalData));
 }
 
 void TextCodecMac::registerCodecs(TextCodecRegistrar registrar)

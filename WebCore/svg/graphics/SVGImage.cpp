@@ -205,7 +205,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
     // frame cache, or better yet, not use a cache for tiled drawing at all, instead
     // having a tiled drawing callback (hopefully non-virtual).
     if (!m_frameCache) {
-        m_frameCache.set(ImageBuffer::create(size(), false).release());
+        m_frameCache = ImageBuffer::create(size(), false);
         if (!m_frameCache) // failed to allocate image
             return 0;
         renderSubtreeToImage(m_frameCache.get(), m_frame->contentRenderer());

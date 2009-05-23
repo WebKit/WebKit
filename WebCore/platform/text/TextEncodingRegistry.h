@@ -27,6 +27,7 @@
 #define TextEncodingRegistry_h
 
 #include <memory>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
@@ -36,7 +37,7 @@ namespace WebCore {
 
     // Use TextResourceDecoder::decode to decode resources, since it handles BOMs.
     // Use TextEncoding::encode to encode, since it takes care of normalization.
-    std::auto_ptr<TextCodec> newTextCodec(const TextEncoding&);
+    PassOwnPtr<TextCodec> newTextCodec(const TextEncoding&);
 
     // Only TextEncoding should use this function directly.
     const char* atomicCanonicalTextEncodingName(const char* alias);
