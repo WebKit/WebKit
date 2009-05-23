@@ -724,6 +724,8 @@ webcore_sources += \
 	WebCore/dom/ScriptElement.h \
 	WebCore/dom/ScriptExecutionContext.cpp \
 	WebCore/dom/ScriptExecutionContext.h \
+	WebCore/dom/SelectElement.cpp \
+	WebCore/dom/SelectElement.h \
 	WebCore/dom/SelectorNodeList.cpp \
 	WebCore/dom/SelectorNodeList.h \
 	WebCore/dom/StaticNodeList.cpp \

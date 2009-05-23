@@ -54,7 +54,7 @@ public:
     virtual bool formControlValueMatchesRenderer() const { return m_valueMatchesRenderer; }
     virtual void setFormControlValueMatchesRenderer(bool b) { m_valueMatchesRenderer = b; }
 
-    void onChange();
+    virtual void dispatchFormControlChangeEvent();
 
     bool disabled() const;
     void setDisabled(bool);

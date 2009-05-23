@@ -408,7 +408,7 @@ void RenderSlider::setValueForPosition(int position)
 
         // FIXME: It seems like this could send extra change events if the same value is set
         // multiple times with no layout in between.
-        element->onChange();
+        element->dispatchFormControlChangeEvent();
     }
 }
 

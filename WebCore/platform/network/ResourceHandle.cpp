@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include "ResourceHandleClient.h"
 #include "Timer.h"
+#include <wtf/StdLibExtras.h>
 #include <algorithm>
 
 namespace WebCore {
@@ -210,8 +211,22 @@ bool ResourceHandle::shouldContentSniff() const
 
 bool ResourceHandle::shouldContentSniffURL(const KURL& url)
 {
+    bool isLocalFile = url.isLocalFile();
+
+#if ENABLE(WML)
+    // Workaround for <rdar://problem/6917571>: The WML file extension ".wml" is not mapped to the
+    // right MIME type, work around that CFNetwork problem, to unbreak WML support for local files.
+    if (isLocalFile) {
+        const String& path = url.path();
+
+        DEFINE_STATIC_LOCAL(const String, wmlExt, (".wml"));
+        if (path.endsWith(wmlExt, false))
+            return true;
+    }
+#endif
+
     // We shouldn't content sniff file URLs as their MIME type should be established via their extension.
-    return !url.protocolIs("file");
+    return !isLocalFile;
 }
 
 } // namespace WebCore

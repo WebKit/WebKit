@@ -1,3 +1,118 @@
+2009-05-23  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=23808
+
+        After a long journey, add the last missing ABC to share form control element support with HTMLSelectElement.
+        RenderListBox/RenderMenuList operates on SelectElement instead of HTMLSelectElement now, querying selected index etc.
+        This makes it possible to use these render objects for ie. WML, as it's done before for input & option elements.
+
+        WMLSelectElement will be created soon, in a follow-up patch, adding more methods to SelectElement, sharing code between
+        HTMLSelectElement/WMLSelectElement.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::addChildren):
+        (WebCore::AccessibilityListBox::doAccessibilityHitTest):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::listBoxOptionIndex):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::actionElement):
+        * dom/Element.h:
+        (WebCore::Element::isFormControlElement):
+        (WebCore::Element::dispatchFormControlChangeEvent):
+        * dom/SelectElement.cpp: Added.
+        (WebCore::toSelectElement):
+        * dom/SelectElement.h: Added.
+        (WebCore::SelectElement::~SelectElement):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchFormControlChangeEvent):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::index):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::lastSelectedListIndex):
+        (WebCore::HTMLSelectElement::deselectItems):
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::length):
+        (WebCore::HTMLSelectElement::remove):
+        (WebCore::HTMLSelectElement::value):
+        (WebCore::HTMLSelectElement::setValue):
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::selectAll):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        (WebCore::HTMLSelectElement::listToOptionIndex):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        (WebCore::HTMLSelectElement::dispatchBlurEvent):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::menuListOnChange):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::typeAheadFind):
+        (WebCore::HTMLSelectElement::nextSelectableListIndex):
+        (WebCore::HTMLSelectElement::previousSelectableListIndex):
+        (WebCore::HTMLSelectElement::setLength):
+        (WebCore::HTMLSelectElement::checkListItems):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::size):
+        (WebCore::HTMLSelectElement::multiple):
+        (WebCore::HTMLSelectElement::listItems):
+        (WebCore::HTMLSelectElement::setActiveSelectionEndIndex):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::shouldContentSniffURL):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::valueChanged):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::scrollToRevealSelection):
+        (WebCore::RenderListBox::size):
+        (WebCore::RenderListBox::numItems):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::panScroll):
+        (WebCore::RenderListBox::autoscroll):
+        (WebCore::RenderListBox::stopAutoscroll):
+        (WebCore::RenderListBox::valueChanged):
+        (WebCore::RenderListBox::nodeAtPoint):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList):
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::updateFromElement):
+        (WebCore::RenderMenuList::setTextFromOption):
+        (WebCore::RenderMenuList::showPopup):
+        (WebCore::RenderMenuList::valueChanged):
+        (WebCore::RenderMenuList::itemText):
+        (WebCore::RenderMenuList::itemIsEnabled):
+        (WebCore::RenderMenuList::itemStyle):
+        (WebCore::RenderMenuList::itemBackgroundColor):
+        (WebCore::RenderMenuList::listSize):
+        (WebCore::RenderMenuList::selectedIndex):
+        (WebCore::RenderMenuList::itemIsSeparator):
+        (WebCore::RenderMenuList::itemIsLabel):
+        (WebCore::RenderMenuList::itemIsSelected):
+        (WebCore::RenderMenuList::setTextFromItem):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::setValueForPosition):
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Fix Gtk/Qt builds for PassOwnPtr

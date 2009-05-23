@@ -892,7 +892,7 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     // because it says only to fire change events at "lose focus" time, which is
     // definitely wrong in practice for these types of elements.
     if (sendChangeEvent && inDocument() && (inputType() != RADIO || nowChecked))
-        onChange();
+        dispatchFormControlChangeEvent();
 }
 
 void HTMLInputElement::setIndeterminate(bool _indeterminate)
@@ -1391,7 +1391,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         // Fire onChange for text fields.
         RenderObject* r = renderer();
         if (r && r->isTextField() && toRenderTextControl(r)->isEdited()) {
-            onChange();
+            dispatchFormControlChangeEvent();
             // Refetch the renderer since arbitrary JS code run during onchange can do anything, including destroying it.
             r = renderer();
             if (r && r->isTextField())

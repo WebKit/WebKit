@@ -109,7 +109,7 @@ int HTMLOptionElement::index() const
     // we won't forget to update a member variable in some cases...
     HTMLSelectElement* select = ownerSelectElement();
     if (select) {
-        const Vector<HTMLElement*>& items = select->listItems();
+        const Vector<Element*>& items = select->listItems();
         int l = items.size();
         int optionIndex = 0;
         for(int i = 0; i < l; i++) {

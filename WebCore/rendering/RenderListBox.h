@@ -36,11 +36,9 @@
 
 namespace WebCore {
 
-class HTMLSelectElement;
-
 class RenderListBox : public RenderBlock, private ScrollbarClient {
 public:
-    RenderListBox(HTMLSelectElement*);
+    RenderListBox(Element*);
     ~RenderListBox();
 
     virtual const char* renderName() const { return "RenderListBox"; }

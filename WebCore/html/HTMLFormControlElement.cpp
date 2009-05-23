@@ -163,7 +163,7 @@ void HTMLFormControlElement::setName(const AtomicString &value)
     setAttribute(nameAttr, value);
 }
 
-void HTMLFormControlElement::onChange()
+void HTMLFormControlElement::dispatchFormControlChangeEvent()
 {
     dispatchEvent(eventNames().changeEvent, true, false);
 }

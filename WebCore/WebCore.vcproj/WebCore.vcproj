@@ -9179,6 +9179,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\SelectElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\SelectElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\SelectorNodeList.cpp"
 				>
 			</File>

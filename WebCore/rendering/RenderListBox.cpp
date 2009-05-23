@@ -42,7 +42,6 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
-#include "HTMLSelectElement.h"
 #include "HitTestResult.h"
 #include "OptionGroupElement.h"
 #include "OptionElement.h"
@@ -51,6 +50,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Scrollbar.h"
+#include "SelectElement.h"
 #include "SelectionController.h"
 #include "NodeRenderStyle.h"
 #include <math.h>
@@ -72,7 +72,7 @@ const int maxDefaultSize = 10;
 // widget, but I'm not sure this is right for the new control.
 const int baselineAdjustment = 7;
 
-RenderListBox::RenderListBox(HTMLSelectElement* element)
+RenderListBox::RenderListBox(Element* element)
     : RenderBlock(element)
     , m_optionsChanged(true)
     , m_scrollToRevealSelectionAfterLayout(false)
@@ -96,12 +96,12 @@ void RenderListBox::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 void RenderListBox::updateFromElement()
 {
     if (m_optionsChanged) {
-        const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
+        const Vector<Element*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
         int size = numItems();
         
         float width = 0;
         for (int i = 0; i < size; ++i) {
-            HTMLElement* element = listItems[i];
+            Element* element = listItems[i];
             String text;
             Font itemFont = style()->font();
             if (OptionElement* optionElement = toOptionElement(element))
@@ -151,7 +151,7 @@ void RenderListBox::layout()
 
 void RenderListBox::scrollToRevealSelection()
 {    
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
 
     m_scrollToRevealSelectionAfterLayout = false;
 
@@ -197,7 +197,7 @@ void RenderListBox::calcPrefWidths()
 
 int RenderListBox::size() const
 {
-    int specifiedSize = static_cast<HTMLSelectElement*>(node())->size();
+    int specifiedSize = toSelectElement(static_cast<Element*>(node()))->size();
     if (specifiedSize > 1)
         return max(minSize, specifiedSize);
     return min(max(minSize, numItems()), maxDefaultSize);
@@ -211,7 +211,7 @@ int RenderListBox::numVisibleItems() const
 
 int RenderListBox::numItems() const
 {
-    return static_cast<HTMLSelectElement*>(node())->listItems().size();
+    return toSelectElement(static_cast<Element*>(node()))->listItems().size();
 }
 
 int RenderListBox::listHeight() const
@@ -293,9 +293,9 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, int listIndex)
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    const Vector<HTMLElement*>& listItems = select->listItems();
-    HTMLElement* element = listItems[listIndex];
+    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    const Vector<Element*>& listItems = select->listItems();
+    Element* element = listItems[listIndex];
     OptionElement* optionElement = toOptionElement(element);
 
     String itemText;
@@ -342,9 +342,9 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
 
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, int listIndex)
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
-    const Vector<HTMLElement*>& listItems = select->listItems();
-    HTMLElement* element = listItems[listIndex];
+    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
+    const Vector<Element*>& listItems = select->listItems();
+    Element* element = listItems[listIndex];
     OptionElement* optionElement = toOptionElement(element);
 
     Color backColor;
@@ -438,7 +438,7 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
         return;
 
     m_inAutoscroll = true;
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     select->updateListBoxSelection(!select->multiple());
     m_inAutoscroll = false;
 }
@@ -468,7 +468,7 @@ void RenderListBox::autoscroll()
 
     int endIndex = scrollToward(pos);
     if (endIndex >= 0) {
-        HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+        SelectElement* select = toSelectElement(static_cast<Element*>(node()));
         m_inAutoscroll = true;
 
         if (!select->multiple())
@@ -482,7 +482,7 @@ void RenderListBox::autoscroll()
 
 void RenderListBox::stopAutoscroll()
 {
-    static_cast<HTMLSelectElement*>(node())->listBoxOnChange();
+    toSelectElement(static_cast<Element*>(node()))->listBoxOnChange();
 }
 
 bool RenderListBox::scrollToRevealElementAtListIndex(int index)
@@ -515,9 +515,10 @@ bool RenderListBox::scroll(ScrollDirection direction, ScrollGranularity granular
 
 void RenderListBox::valueChanged(unsigned listIndex)
 {
-    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    Element* element = static_cast<Element*>(node());
+    SelectElement* select = toSelectElement(element);
     select->setSelectedIndex(select->listToOptionIndex(listIndex));
-    select->onChange();
+    element->dispatchFormControlChangeEvent();
 }
 
 void RenderListBox::valueChanged(Scrollbar*)
@@ -583,13 +584,13 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     if (!RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, hitTestAction))
         return false;
-    const Vector<HTMLElement*>& listItems = static_cast<HTMLSelectElement*>(node())->listItems();
+    const Vector<Element*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
     int size = numItems();
     tx += this->x();
     ty += this->y();
     for (int i = 0; i < size; ++i) {
         if (itemBoundingBoxRect(tx, ty, i).contains(x, y)) {
-            if (HTMLElement* node = listItems[i]) {
+            if (Element* node = listItems[i]) {
                 result.setInnerNode(node);
                 if (!result.innerNonSharedNode())
                     result.setInnerNonSharedNode(node);

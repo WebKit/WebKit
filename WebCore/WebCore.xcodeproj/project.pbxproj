@@ -58,6 +58,8 @@
 		083DAEA70F01A7FB00342754 /* RenderTextControlMultiLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */; };
 		083DAEA80F01A7FB00342754 /* RenderTextControlSingleLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */; };
 		083DAEA90F01A7FB00342754 /* RenderTextControlSingleLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */; };
+		084AEBE40FB505FA0038483E /* SelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084AEBE20FB505FA0038483E /* SelectElement.cpp */; };
+		084AEBE50FB505FA0038483E /* SelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 084AEBE30FB505FA0038483E /* SelectElement.h */; };
 		084CE5CB0F27DADC00E6240E /* WMLOptGroupElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CE5C70F27DADC00E6240E /* WMLOptGroupElement.cpp */; };
 		084CE5CC0F27DADC00E6240E /* WMLOptGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 084CE5C80F27DADC00E6240E /* WMLOptGroupElement.h */; };
 		084CE5CD0F27DADC00E6240E /* WMLOptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CE5C90F27DADC00E6240E /* WMLOptionElement.cpp */; };
@@ -4949,6 +4951,8 @@
 		083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlMultiLine.h; sourceTree = "<group>"; };
 		083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlSingleLine.cpp; sourceTree = "<group>"; };
 		083DAEA50F01A7FB00342754 /* RenderTextControlSingleLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlSingleLine.h; sourceTree = "<group>"; };
+		084AEBE20FB505FA0038483E /* SelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectElement.cpp; sourceTree = "<group>"; };
+		084AEBE30FB505FA0038483E /* SelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectElement.h; sourceTree = "<group>"; };
 		084CE5C70F27DADC00E6240E /* WMLOptGroupElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOptGroupElement.cpp; sourceTree = "<group>"; };
 		084CE5C80F27DADC00E6240E /* WMLOptGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOptGroupElement.h; sourceTree = "<group>"; };
 		084CE5C90F27DADC00E6240E /* WMLOptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOptionElement.cpp; sourceTree = "<group>"; };
@@ -14632,6 +14636,8 @@
 				08A484760E5272C500C3FE76 /* ScriptElement.h */,
 				E11C9DAF0EB3699500E409DB /* ScriptExecutionContext.cpp */,
 				E11C9D9A0EB3681200E409DB /* ScriptExecutionContext.h */,
+				084AEBE20FB505FA0038483E /* SelectElement.cpp */,
+				084AEBE30FB505FA0038483E /* SelectElement.h */,
 				BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */,
 				BC7FA67F0D1F167900DB22A9 /* SelectorNodeList.h */,
 				BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */,
@@ -16652,6 +16658,7 @@
 				BCD0E0FC0E972C3500265DEA /* SecurityOriginHash.h in Headers */,
 				371F4FFC0D25E7F300ECE0D5 /* SegmentedFontData.h in Headers */,
 				B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */,
+				084AEBE50FB505FA0038483E /* SelectElement.h in Headers */,
 				93309E0E099E64920056E581 /* SelectionController.h in Headers */,
 				BC7FA6810D1F167900DB22A9 /* SelectorNodeList.h in Headers */,
 				51E0BB230DA572A600A9E417 /* SessionStorage.h in Headers */,
@@ -18700,6 +18707,7 @@
 				BCD0E0FA0E972C3500265DEA /* SecurityOrigin.cpp in Sources */,
 				371F4FFD0D25E7F300ECE0D5 /* SegmentedFontData.cpp in Sources */,
 				B2C3DA2E0D006C1D00EF6F26 /* SegmentedString.cpp in Sources */,
+				084AEBE40FB505FA0038483E /* SelectElement.cpp in Sources */,
 				93309E0D099E64920056E581 /* SelectionController.cpp in Sources */,
 				4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */,
 				BC7FA6820D1F167900DB22A9 /* SelectorNodeList.cpp in Sources */,

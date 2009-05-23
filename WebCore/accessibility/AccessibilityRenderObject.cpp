@@ -556,8 +556,8 @@ Element* AccessibilityRenderObject::actionElement() const
         return static_cast<Element*>(m_renderer->node());
     
     if (m_renderer->isMenuList())
-        return static_cast<RenderMenuList*>(m_renderer)->selectElement();
-    
+        return static_cast<Element*>(m_renderer->node());
+
     Element* elt = anchorElement();
     if (!elt)
         elt = mouseButtonListener();

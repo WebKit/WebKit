@@ -27,6 +27,7 @@
 #include "CollectionCache.h"
 #include "Event.h"
 #include "HTMLFormControlElement.h"
+#include "SelectElement.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -35,7 +36,7 @@ class HTMLOptionElement;
 class HTMLOptionsCollection;
 class KeyboardEvent;
 
-class HTMLSelectElement : public HTMLFormControlElementWithState {
+class HTMLSelectElement : public HTMLFormControlElementWithState, public SelectElement {
 public:
     HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
@@ -56,8 +57,8 @@ public:
     
     virtual bool canStartSelection() const { return false; }
 
-    int selectedIndex() const;
-    void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false);
+    virtual int selectedIndex() const;
+    virtual void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false);
     int lastSelectedListIndex() const;
 
     virtual bool isEnumeratable() const { return true; }
@@ -66,9 +67,9 @@ public:
 
     int minWidth() const { return m_minwidth; }
 
-    int size() const { return m_size; }
+    virtual int size() const { return m_size; }
 
-    bool multiple() const { return m_multiple; }
+    virtual bool multiple() const { return m_multiple; }
 
     void add(HTMLElement* element, HTMLElement* before, ExceptionCode&);
     void remove(int index);
@@ -89,13 +90,13 @@ public:
     virtual bool appendFormData(FormDataList&, bool);
 
     // get the actual listbox index of the optionIndexth option
-    int optionToListIndex(int optionIndex) const;
+    virtual int optionToListIndex(int optionIndex) const;
     // reverse of optionToListIndex - get optionIndex from listboxIndex
-    int listToOptionIndex(int listIndex) const;
+    virtual int listToOptionIndex(int listIndex) const;
 
     void setRecalcListItems();
 
-    const Vector<HTMLElement*>& listItems() const
+    virtual const Vector<Element*>& listItems() const
     {
         if (m_recalcListItems)
             recalcListItems();
@@ -121,14 +122,14 @@ public:
 
     CollectionCache* collectionInfo() { return &m_collectionInfo; }
     
-    void setActiveSelectionAnchorIndex(int index);
-    void setActiveSelectionEndIndex(int index) { m_activeSelectionEndIndex = index; }
-    void updateListBoxSelection(bool deselectOtherOptions);
-    void listBoxOnChange();
-    void menuListOnChange();
+    virtual void setActiveSelectionAnchorIndex(int index);
+    virtual void setActiveSelectionEndIndex(int index) { m_activeSelectionEndIndex = index; }
+    virtual void updateListBoxSelection(bool deselectOtherOptions);
+    virtual void listBoxOnChange();
+    virtual void menuListOnChange();
     
-    int activeSelectionStartListIndex() const;
-    int activeSelectionEndListIndex() const;
+    virtual int activeSelectionStartListIndex() const;
+    virtual int activeSelectionEndListIndex() const;
     
     void scrollToSelection();
 
@@ -147,7 +148,7 @@ private:
 
     virtual void insertedIntoTree(bool);
 
-    mutable Vector<HTMLElement*> m_listItems;
+    mutable Vector<Element*> m_listItems;
     Vector<bool> m_cachedStateForActiveSelection;
     Vector<bool> m_lastOnChangeSelection;
     int m_minwidth;

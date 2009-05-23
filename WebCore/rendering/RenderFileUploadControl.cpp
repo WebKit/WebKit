@@ -85,12 +85,12 @@ void RenderFileUploadControl::styleDidChange(StyleDifference diff, const RenderS
 
 void RenderFileUploadControl::valueChanged()
 {
-    // onChange may destroy this renderer
+    // dispatchFormControlChangeEvent may destroy this renderer
     RefPtr<FileChooser> fileChooser = m_fileChooser;
 
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
     inputElement->setFileListFromRenderer(fileChooser->filenames());
-    inputElement->onChange();
+    inputElement->dispatchFormControlChangeEvent();
  
     // only repaint if it doesn't seem we have been destroyed
     if (!fileChooser->disconnected())
