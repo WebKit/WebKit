@@ -1,3 +1,15 @@
+2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha and Xan Lopez.
+
+        [Gtk] Enable database and localStorage support
+        https://bugs.webkit.org/show_bug.cgi?id=25629
+
+        Enable database and localStorage for running the storage/ tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Part 1 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr

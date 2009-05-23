@@ -230,6 +230,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
                  "enable-private-browsing", FALSE,
                  "enable-developer-extras", FALSE,
                  "enable-spell-checking", TRUE,
+                 "enable-html5-database", TRUE,
+                 "enable-html5-local-storage", TRUE,
                  NULL);
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);

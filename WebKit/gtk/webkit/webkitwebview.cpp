@@ -1979,7 +1979,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     gchar* defaultEncoding, *cursiveFontFamily, *defaultFontFamily, *fantasyFontFamily, *monospaceFontFamily, *sansSerifFontFamily, *serifFontFamily, *userStylesheetUri;
     gboolean autoLoadImages, autoShrinkImages, printBackgrounds,
         enableScripts, enablePlugins, enableDeveloperExtras, resizableTextAreas,
-        enablePrivateBrowsing, enableCaretBrowsing;
+        enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage;
 
     g_object_get(webSettings,
                  "default-encoding", &defaultEncoding,
@@ -1999,6 +1999,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-developer-extras", &enableDeveloperExtras,
                  "enable-private-browsing", &enablePrivateBrowsing,
                  "enable-caret-browsing", &enableCaretBrowsing,
+                 "enable-html5-database", &enableHTML5Database,
+                 "enable-html5-local-storage", &enableHTML5LocalStorage,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2018,6 +2020,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setDeveloperExtrasEnabled(enableDeveloperExtras);
     settings->setPrivateBrowsingEnabled(enablePrivateBrowsing);
     settings->setCaretBrowsingEnabled(enableCaretBrowsing);
+    settings->setDatabasesEnabled(enableHTML5Database);
+    settings->setLocalStorageEnabled(enableHTML5LocalStorage);
 
     g_free(defaultEncoding);
     g_free(cursiveFontFamily);
@@ -2090,6 +2094,10 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setPrivateBrowsingEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-caret-browsing"))
         settings->setCaretBrowsingEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-html5-database"))
+        settings->setDatabasesEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-html5-local-storage"))
+        settings->setLocalStorageEnabled(g_value_get_boolean(&value));
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);

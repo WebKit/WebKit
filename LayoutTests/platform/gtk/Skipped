@@ -4107,27 +4107,7 @@ security/block-test.html
 
 # Tests in storage/ directory
 #   Tests failing
-storage/close-during-stress-test.html
-storage/empty-statement.html
-storage/execute-sql-args.html
-storage/multiple-databases-garbage-collection.html
-storage/multiple-transactions.html
-storage/private-browsing-readonly.html
 storage/quota-tracking.html
-storage/sql-data-types.html
-storage/success-callback.html
-storage/transaction-callback-exception-crash.html
-storage/domstorage/window-attributes-exist.html
-storage/domstorage/localstorage/clear.html
-storage/domstorage/localstorage/delete-removal.html
-storage/domstorage/localstorage/enumerate-storage.html
-storage/domstorage/localstorage/iframe-events.html
-storage/domstorage/localstorage/index-get-and-set.html
-storage/domstorage/localstorage/onstorage-attribute-markup.html
-storage/domstorage/localstorage/onstorage-attribute-setattribute.html
-storage/domstorage/localstorage/private-browsing-affects-storage.html
-storage/domstorage/localstorage/simple-events.html
-storage/domstorage/localstorage/simple-usage.html
 storage/domstorage/localstorage/window-open.html
 storage/domstorage/sessionstorage/window-open.html
 

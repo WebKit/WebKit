@@ -78,6 +78,8 @@ struct _WebKitWebSettingsPrivate {
     gchar* spell_checking_languages;
     GSList* spell_checking_languages_list;
     gboolean enable_caret_browsing;
+    gboolean enable_html5_database;
+    gboolean enable_html5_local_storage;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -109,7 +111,9 @@ enum {
     PROP_ENABLE_PRIVATE_BROWSING,
     PROP_ENABLE_SPELL_CHECKING,
     PROP_SPELL_CHECKING_LANGUAGES,
-    PROP_ENABLE_CARET_BROWSING
+    PROP_ENABLE_CARET_BROWSING,
+    PROP_ENABLE_HTML5_DATABASE,
+    PROP_ENABLE_HTML5_LOCAL_STORAGE
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -418,6 +422,38 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether to enable accesibility enhanced keyboard navigation"),
                                                          FALSE,
                                                          flags));
+    /**
+    * WebKitWebSettings:enable-html5-database:
+    *
+    * Whether to enable HTML5 client-side SQL database support. Client-side
+    * SQL database allows web pages to store structured data and be able to
+    * use SQL to manipulate that data asynchronously.
+    *
+    * Since 1.1.8
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_HTML5_DATABASE,
+                                    g_param_spec_boolean("enable-html5-database",
+                                                         _("Enable HTML5 Database"),
+                                                         _("Whether to enable HTML5 database support"),
+                                                         TRUE,
+                                                         flags));
+
+    /**
+    * WebKitWebSettings:enable-html5-local-storage:
+    *
+    * Whether to enable HTML5 localStorage support. localStorage provides
+    * simple synchronous storage access.
+    *
+    * Since 1.1.8
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_HTML5_LOCAL_STORAGE,
+                                    g_param_spec_boolean("enable-html5-local-storage",
+                                                         _("Enable HTML5 Local Storage"),
+                                                         _("Whether to enable HTML5 Local Storage support"),
+                                                         TRUE,
+                                                         flags));
 
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
@@ -544,6 +580,12 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_CARET_BROWSING:
         priv->enable_caret_browsing = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_HTML5_DATABASE:
+        priv->enable_html5_database = g_value_get_boolean(value);
+        break;
+    case PROP_ENABLE_HTML5_LOCAL_STORAGE:
+        priv->enable_html5_local_storage = g_value_get_boolean(value);
+        break;
     case PROP_ENABLE_SPELL_CHECKING:
         priv->enable_spell_checking = g_value_get_boolean(value);
         break;
@@ -654,6 +696,12 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_ENABLE_CARET_BROWSING:
         g_value_set_boolean(value, priv->enable_caret_browsing);
         break;
+    case PROP_ENABLE_HTML5_DATABASE:
+        g_value_set_boolean(value, priv->enable_html5_database);
+        break;
+    case PROP_ENABLE_HTML5_LOCAL_STORAGE:
+        g_value_set_boolean(value, priv->enable_html5_local_storage);
+        break;
     case PROP_ENABLE_SPELL_CHECKING:
         g_value_set_boolean(value, priv->enable_spell_checking);
         break;
@@ -716,6 +764,8 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "spell-checking-languages", priv->spell_checking_languages,
                  "spell-checking-languages-list", priv->spell_checking_languages_list,
                  "enable-caret-browsing", priv->enable_caret_browsing,
+                 "enable-html5-database", priv->enable_html5_database,
+                 "enable-html5-local-storage", priv->enable_html5_local_storage,
                  NULL));
 
     return copy;

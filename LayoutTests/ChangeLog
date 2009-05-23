@@ -1,3 +1,14 @@
+2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha and Xan Lopez.
+
+        [Gtk] Enable database and localStorage support
+        https://bugs.webkit.org/show_bug.cgi?id=25629
+
+        Enable storage/ tests for Gtk.
+
+        * platform/gtk/Skipped:
+
 2009-05-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
