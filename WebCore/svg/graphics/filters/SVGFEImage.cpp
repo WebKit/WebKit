@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEImage.h"
 #include "SVGRenderTreeAsText.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -63,7 +64,7 @@ void FEImage::setCachedImage(CachedImage* image)
         m_cachedImage->addClient(this);
 }
 
-void FEImage::apply()
+void FEImage::apply(SVGResourceFilter*)
 {
 }
 

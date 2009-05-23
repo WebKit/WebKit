@@ -1,3 +1,82 @@
+2009-05-23  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebKit needs cross-platform filter system
+        [https://bugs.webkit.org/show_bug.cgi?id=19991]
+
+        Preparing Filter primitves for the new filter system.
+
+        No testcases were added. SVG filters are off by default.
+
+        * GNUmakefile.am:
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::apply):
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::apply):
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/FEComposite.h:
+        * svg/Filter.h:
+        * svg/FilterBuilder.h:
+        (WebCore::FilterBuilder::lastFilter):
+        * svg/FilterEffect.cpp:
+        (WebCore::FilterEffect::FilterEffect):
+        * svg/FilterEffect.h:
+        (WebCore::FilterEffect::xBoundingBoxMode):
+        (WebCore::FilterEffect::setXBoundingBoxMode):
+        (WebCore::FilterEffect::yBoundingBoxMode):
+        (WebCore::FilterEffect::setYBoundingBoxMode):
+        (WebCore::FilterEffect::widthBoundingBoxMode):
+        (WebCore::FilterEffect::setWidthBoundingBoxMode):
+        (WebCore::FilterEffect::heightBoundingBoxMode):
+        (WebCore::FilterEffect::setHeightBoundingBoxMode):
+        (WebCore::FilterEffect::subRegion):
+        (WebCore::FilterEffect::setSubRegion):
+        (WebCore::FilterEffect::resultImage):
+        (WebCore::FilterEffect::setEffectBuffer):
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::apply):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::apply):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::apply):
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::apply):
+        * svg/graphics/filters/SVGFEFlood.h:
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::apply):
+        * svg/graphics/filters/SVGFEGaussianBlur.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::apply):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::apply):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::FEMorphology::apply):
+        * svg/graphics/filters/SVGFEMorphology.h:
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::apply):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::FETurbulence::apply):
+        * svg/graphics/filters/SVGFETurbulence.h:
+
 2009-05-22  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed build-fix for gtk. Breakage caused by a wrong call of ImageBuffer.

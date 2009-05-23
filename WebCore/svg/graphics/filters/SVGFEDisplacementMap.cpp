@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEDisplacementMap.h"
 #include "SVGRenderTreeAsText.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -74,7 +75,7 @@ void FEDisplacementMap::setScale(float scale)
     m_scale = scale;
 }
 
-void FEDisplacementMap::apply()
+void FEDisplacementMap::apply(SVGResourceFilter*)
 {
 }
 

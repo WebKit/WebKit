@@ -23,9 +23,8 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "PlatformString.h"
 #include "FilterEffect.h"
-#include "Filter.h"
+#include "PlatformString.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -34,15 +33,21 @@ namespace WebCore {
     
     class FilterBuilder : public RefCounted<FilterBuilder> {
     public:
-        void add(const String& id, PassRefPtr<FilterEffect> effect) { m_namedEffects.set(id.impl(), effect); }
-        FilterEffect* getEffectById(const String& id) const { return m_namedEffects.get(id.impl()).get(); }
-        
-        PassRefPtr<Filter> filter() const { return m_filter; }
-        
+        FilterBuilder();
+
+        void add(const String& id, PassRefPtr<FilterEffect> effect);
+
+        FilterEffect* getEffectById(const String& id) const;
+        FilterEffect* lastFilter() const { return m_lastEffect.get(); }
+
+        void clearEffects();
+
     private:
-        HashMap<StringImpl*, RefPtr<FilterEffect> > m_namedEffects;
-        
-        RefPtr<Filter> m_filter;
+        HashMap<RefPtr<StringImpl>, RefPtr<FilterEffect> > m_namedEffects;
+
+        RefPtr<FilterEffect> m_lastEffect;
+        RefPtr<FilterEffect> m_sourceGraphic;
+        RefPtr<FilterEffect> m_sourceAlpha;
     };
     
 } //namespace WebCore

@@ -35,7 +35,7 @@ namespace WebCore {
         static PassRefPtr<Filter> create(FilterEffect*);
         
     private:
-        Filter(FilterEffect* effect);
+        Filter(FilterEffect*);
     
         RefPtr<FilterEffect> m_effect;
     };

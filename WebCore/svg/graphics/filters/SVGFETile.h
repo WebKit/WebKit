@@ -24,6 +24,7 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "FilterEffect.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
     
@@ -31,8 +32,8 @@ namespace WebCore {
     public:
         static PassRefPtr<FETile> create(FilterEffect*);
 
-        virtual void apply();
-        virtual void dump();
+        void apply(SVGResourceFilter*);
+        void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
         
     private:

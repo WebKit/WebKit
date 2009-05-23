@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFETurbulence.h"
 #include "SVGRenderTreeAsText.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -105,7 +106,7 @@ void FETurbulence::setStitchTiles(bool stitch)
     m_stitchTiles = stitch;
 }
 
-void FETurbulence::apply()
+void FETurbulence::apply(SVGResourceFilter*)
 {
 }
 

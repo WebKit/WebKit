@@ -24,6 +24,8 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "FEComposite.h"
 
+#include "SVGResourceFilter.h"
+
 namespace WebCore {
 
 FEComposite::FEComposite(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
@@ -95,7 +97,7 @@ void FEComposite::setK4(float k4)
     m_k4 = k4;
 }
 
-void FEComposite::apply()
+void FEComposite::apply(SVGResourceFilter*)
 {
 }
 

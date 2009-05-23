@@ -25,6 +25,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "PlatformString.h"
 #include "FilterEffect.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -50,8 +51,8 @@ namespace WebCore {
         float scale() const;
         void setScale(float scale);
 
-        virtual void apply();
-        virtual void dump();
+        void apply(SVGResourceFilter*);
+        void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
 
     private:

@@ -25,6 +25,8 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "FilterEffect.h"
 
+#include "SVGResourceFilter.h"
+
 namespace WebCore {
 
     enum BlendModeType {
@@ -46,8 +48,8 @@ namespace WebCore {
         BlendModeType blendMode() const;
         void setBlendMode(BlendModeType);
         
-        virtual void apply();
-        virtual void dump();
+        void apply(SVGResourceFilter*);
+        void dump();
 
     private:
         FEBlend(FilterEffect*, FilterEffect*, BlendModeType);

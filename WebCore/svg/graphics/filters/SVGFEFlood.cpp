@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEFlood.h"
 #include "SVGRenderTreeAsText.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ void FEFlood::setFloodOpacity(float floodOpacity)
     m_floodOpacity = floodOpacity;
 }
 
-void FEFlood::apply()
+void FEFlood::apply(SVGResourceFilter*)
 {
 }
 

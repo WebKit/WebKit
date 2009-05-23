@@ -24,8 +24,9 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "FilterEffect.h"
-#include "SVGFEDisplacementMap.h"
 
+#include "SVGFEDisplacementMap.h"
+#include "SVGResourceFilter.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -78,8 +79,8 @@ namespace WebCore {
         ComponentTransferFunction alphaFunction() const;
         void setAlphaFunction(const ComponentTransferFunction&);
         
-        virtual void apply();
-        virtual void dump();
+        void apply(SVGResourceFilter*);
+        void dump();
 
     private:
         FEComponentTransfer(FilterEffect*,const ComponentTransferFunction&, const ComponentTransferFunction&,
