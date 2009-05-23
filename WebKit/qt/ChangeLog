@@ -1,3 +1,17 @@
+2009-05-23  Jakob Truelsen  <antialize@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25863
+
+        Expose the default text encoding property to Qt.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::setDefaultTextEncoding):
+        (QWebSettings::defaultTextEncoding):
+        * Api/qwebsettings.h:
+
 2009-05-21  Antonio Gomes   <antonio.gomes@openbossa.org>
 
         Reviewed by Simon Hausmann.

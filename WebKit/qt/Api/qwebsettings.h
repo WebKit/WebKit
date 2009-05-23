@@ -96,6 +96,9 @@ public:
     void setUserStyleSheetUrl(const QUrl &location);
     QUrl userStyleSheetUrl() const;
 
+    void setDefaultTextEncoding(const QString &encoding);
+    QString defaultTextEncoding() const;
+
     static void setIconDatabasePath(const QString &location);
     static QString iconDatabasePath();
     static void clearIconDatabase();

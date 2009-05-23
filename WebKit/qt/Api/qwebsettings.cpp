@@ -52,6 +52,7 @@ public:
     QHash<int, int> fontSizes;
     QHash<int, bool> attributes;
     QUrl userStyleSheetLocation;
+    QString defaultTextEncoding;
     QString localStorageDatabasePath;
     QString offlineWebApplicationCachePath;
     qint64 offlineStorageDefaultQuota;
@@ -160,6 +161,9 @@ void QWebSettingsPrivate::apply()
 
         QUrl location = !userStyleSheetLocation.isEmpty() ? userStyleSheetLocation : global->userStyleSheetLocation;
         settings->setUserStyleSheetLocation(WebCore::KURL(location));
+
+        QString encoding = !defaultTextEncoding.isEmpty() ? defaultTextEncoding: global->defaultTextEncoding;
+        settings->setDefaultTextEncodingName(encoding);
 
         QString localStoragePath = !localStorageDatabasePath.isEmpty() ? localStorageDatabasePath : global->localStorageDatabasePath;
         settings->setLocalStorageDatabasePath(localStoragePath);
@@ -428,6 +432,33 @@ void QWebSettings::setUserStyleSheetUrl(const QUrl &location)
 QUrl QWebSettings::userStyleSheetUrl() const
 {
     return d->userStyleSheetLocation;
+}
+
+/*!
+    \since 4.6
+    Specifies the default text encoding system.
+
+    The \a encoding, must be a string describing an encoding such as "utf-8",
+    "iso-8859-1", etc. If left empty a default value will be used. For a more
+    extensive list of encoding names see \l{QTextCodec}
+
+    \sa defaultTextEncoding()
+*/
+void QWebSettings::setDefaultTextEncoding(const QString &encoding)
+{
+    d->defaultTextEncoding = encoding;
+    d->apply();
+}
+
+/*!
+    \since 4.6
+    Returns the default text encoding.
+
+    \sa setDefaultTextEncoding()
+*/
+QString QWebSettings::defaultTextEncoding() const
+{
+    return d->defaultTextEncoding;
 }
 
 /*!
