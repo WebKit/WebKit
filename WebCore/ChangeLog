@@ -1,3 +1,26 @@
+2009-05-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Add GEOLOCATION guards around Geolocation API code
+        https://bugs.webkit.org/show_bug.cgi?id=25756
+
+        * bindings/js/JSCustomPositionCallback.cpp:
+        * bindings/js/JSCustomPositionCallback.h:
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        * bindings/js/JSCustomPositionErrorCallback.h:
+        * bindings/js/JSGeolocationCustom.cpp:
+        * page/Geolocation.cpp:
+        * page/Geolocation.idl:
+        * page/Geoposition.cpp:
+        * page/Geoposition.h:
+        * page/Geoposition.idl:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::disconnectFrame):
+        (WebCore::Navigator::geolocation):
+        * page/PositionError.idl:
+        * platform/GeolocationService.cpp:
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Rename startupdateStyleIfNeededDispatcher to startUpdateStyleIfNeededDispatcher

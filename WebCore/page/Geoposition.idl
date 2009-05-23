@@ -25,7 +25,7 @@
 
 module core {
 
-    interface Geoposition {
+    interface [Conditional=GEOLOCATION] Geoposition {
         readonly attribute Coordinates coords;
         readonly attribute DOMTimeStamp timestamp;
 

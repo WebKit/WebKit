@@ -26,6 +26,8 @@
 #ifndef JSCustomPositionCallback_h
 #define JSCustomPositionCallback_h
 
+#if ENABLE(GEOLOCATION)
+
 #include "PositionCallback.h"
 #include <runtime/JSObject.h>
 #include <runtime/Protect.h>
@@ -54,5 +56,7 @@ private:
 };
     
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)
 
 #endif // JSCustomPositionCallback_h

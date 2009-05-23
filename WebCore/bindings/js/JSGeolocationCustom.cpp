@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSGeolocation.h"
 
+#if ENABLE(GEOLOCATION)
+
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
 #include "Geolocation.h"
@@ -148,3 +150,5 @@ JSValue JSGeolocation::watchPosition(ExecState* exec, const ArgList& args)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)

@@ -26,16 +26,11 @@
 #include "config.h"
 #include "GeolocationService.h"
 
+#if ENABLE(GEOLOCATION)
+
 #include <wtf/Assertions.h>
 
 namespace WebCore {
-
-#if !ENABLE(GEOLOCATION)
-GeolocationService* GeolocationService::create(GeolocationServiceClient*)
-{
-    return 0;
-}
-#endif
 
 GeolocationService::GeolocationService(GeolocationServiceClient* client)
     : m_geolocationServiceClient(client)
@@ -54,3 +49,5 @@ void GeolocationService::errorOccurred()
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)

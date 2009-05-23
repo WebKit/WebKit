@@ -26,7 +26,8 @@
 module core {
 
     interface [
-        GenerateConstructor
+        GenerateConstructor,
+        Conditional=GEOLOCATION
     ] PositionError {
         readonly attribute unsigned short code;
         readonly attribute DOMString message;
