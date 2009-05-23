@@ -1,5 +1,12 @@
 2009-05-22  Mark Rowe  <mrowe@apple.com>
 
+        Part two of an attempted Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-05-22  Mark Rowe  <mrowe@apple.com>
+
         Part one of an attempted Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
