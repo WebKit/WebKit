@@ -1,5 +1,13 @@
 2009-05-23  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed build-fix for gtk. Remove source input files
+        for SVG filter system from the build for the moment and
+        add them later again.
+
+        * GNUmakefile.am:
+
+2009-05-23  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Eric Seidel.
 
         WebKit needs cross-platform filter system
