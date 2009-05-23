@@ -247,7 +247,7 @@ static AtkRole atkRole(AccessibilityRole role)
     case ImageRole:
         return ATK_ROLE_IMAGE;
     case ListMarkerRole:
-        return ATK_ROLE_ROW_HEADER;
+        return ATK_ROLE_TEXT;
     case WebAreaRole:
         //return ATK_ROLE_HTML_CONTAINER; // Is this right?
         return ATK_ROLE_DOCUMENT_FRAME;

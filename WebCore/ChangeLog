@@ -1,3 +1,15 @@
+2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] ROLE_ROW_HEADER should not be used for list item bullets/numbers
+        https://bugs.webkit.org/show_bug.cgi?id=25900
+
+        Use ATK_ROLE_TEXT for ListMarkerRole.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole):
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Reformat WebCore::requiresContextForWordBoundary()
