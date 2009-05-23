@@ -1,3 +1,12 @@
+2009-05-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add an error message to a die statement in run-webkit-tests
+        I hit this die when two users tried to run-webkit-tests at the same time. :(
+
+        * Scripts/run-webkit-tests:
+
 2009-05-22  Andre Pedralho  <andre.pedralho@openbossa.org>
 
         Reviewed by Simon Hausmann.

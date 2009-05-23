@@ -1020,7 +1020,7 @@ for my $type ("match", "mismatch", "new", "timedout", "crash", "error") {
 
 mkpath $testResultsDirectory;
 
-open HTML, ">", $testResults or die;
+open HTML, ">", $testResults or die "Failed to open $testResults. $!";
 print HTML "<html>\n";
 print HTML "<head>\n";
 print HTML "<title>Layout Test Results</title>\n";
