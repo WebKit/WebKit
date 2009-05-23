@@ -5965,3 +5965,7 @@ fast/wcss/marquee-dir.xhtml
 fast/wcss/marquee-loop.xhtml
 fast/wcss/marquee-speed.xhtml
 fast/wcss/marquee-style.xhtml
+
+# Tests that failed because we don't have an eventSender implementation
+http/tests/local/drag-over-remote-content.html
+http/tests/security/drag-over-remote-content-iframe.html

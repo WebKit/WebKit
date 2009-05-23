@@ -1,3 +1,16 @@
+2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Unreviewed. Skip new tests introduced in r44010. These tests
+        require an eventSender implementation which the gtk port
+        currently do not have.
+
+        Also remove gtk-specific result for
+        fast/canvas/canvas-composite-alpha. The non-platform specific
+        result now works.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/canvas/canvas-composite-alpha-expected.txt: Removed.
+
 2009-05-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
