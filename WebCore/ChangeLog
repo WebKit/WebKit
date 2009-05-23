@@ -232,6 +232,8 @@
         Fix the call to editingCancelled to be this._editingCancelled, since
         editingCancelled doesn't exist and throws an exception.
 
+        <https://bugs.webkit.org/show_bug.cgi?id=24881>
+
         Reviewed by Timothy Hatcher.
 
         * inspector/front-end/ElementsTreeOutline.js:
