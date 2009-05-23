@@ -1,0 +1,11 @@
+Test for correct handling of exceptions from instanceof and 'new' expressions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new {}.undefined threw exception TypeError: Result of expression '{}.undefined' [undefined] is not a constructor..
+PASS 1 instanceof {}.undefined threw exception TypeError: Result of expression '{}.undefined' [undefined] is not a valid argument for 'instanceof'..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

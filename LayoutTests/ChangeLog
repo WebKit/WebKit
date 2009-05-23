@@ -1,3 +1,13 @@
+2009-05-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add tests to cover exceptions thrown from non-object results of get_by_id
+
+        * fast/js/exception-for-nonobject-expected.txt: Added.
+        * fast/js/exception-for-nonobject.html: Added.
+        * fast/js/resources/exception-for-nonobject.js: Added.
+
 2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Unreviewed. Skip new tests introduced in r44010. These tests
