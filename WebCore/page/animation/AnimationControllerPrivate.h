@@ -61,7 +61,7 @@ public:
     void updateAnimationTimer(bool callSetChanged = false);
 
     void updateStyleIfNeededDispatcherFired(Timer<AnimationControllerPrivate>*);
-    void startupdateStyleIfNeededDispatcher();
+    void startUpdateStyleIfNeededDispatcher();
     void addEventToDispatch(PassRefPtr<Element> element, const AtomicString& eventType, const String& name, double elapsedTime);
     void addNodeChangeToDispatch(PassRefPtr<Node>);
 

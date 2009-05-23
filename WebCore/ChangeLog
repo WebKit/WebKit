@@ -1,3 +1,20 @@
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
+        Rename startupdateStyleIfNeededDispatcher to startUpdateStyleIfNeededDispatcher
+
+        In r42377, startUpdateRenderingDispatcher() was renamed to
+        startupdateStyleIfNeededDispatcher(), but the camelCase "U" was
+        dropped.  This change restores it.
+
+        * WebCore.order:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::startUpdateStyleIfNeededDispatcher):
+        (WebCore::AnimationControllerPrivate::addEventToDispatch):
+        (WebCore::AnimationControllerPrivate::addNodeChangeToDispatch):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        * page/animation/AnimationControllerPrivate.h:
+
 2009-05-23  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build-fix for Qt. Disable SVG Filters.
