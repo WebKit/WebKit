@@ -162,7 +162,7 @@ void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, con
     IntRect imageSize = enclosingIntRect(tileRect);
     std::auto_ptr<ImageBuffer> imageSurface = ImageBuffer::create(imageSize.size(), false);
 
-    if (!imageSurface)
+    if (!imageSurface.get())
         return;
 
     if (tileRect.size() != size()) {

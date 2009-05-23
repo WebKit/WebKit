@@ -1,3 +1,10 @@
+2009-05-22  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed build-fix for gtk. Breakage caused by a wrong call of ImageBuffer.
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+
 2009-05-22  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Eric Seidel.
