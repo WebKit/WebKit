@@ -1,3 +1,22 @@
+2009-05-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - clean up ColorMac a little
+
+        * platform/graphics/mac/ColorMac.h: Whitespace change.
+        * platform/graphics/mac/ColorMac.mm: Removed redundant #import
+        statements and sorted the remaining ones.
+        (WebCore::makeRGBAFromNSColor): Replaced four Objective-C method calls
+        with a single call and removed redundant casts to int.
+        (WebCore::nsColor): Removed ".0f" from number literals used as CGFloats.
+        In one case, this avoids an intermediate conversion to float before
+        conversion to double on 64-bit.
+        (WebCore::CGColorFromNSColor): Replaced four Objective-C method calls
+        with a single call.
+        (WebCore::focusRingColor):
+        (+[WebCoreControlTintObserver controlTintDidChange]): Whitespace change.
+
 2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.

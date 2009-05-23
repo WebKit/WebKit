@@ -41,7 +41,7 @@ namespace WebCore {
     
     // These functions assume NSColors are in DeviceRGB colorspace
     Color colorFromNSColor(NSColor *);
-    NSColor* nsColor(const Color&);
+    NSColor *nsColor(const Color&);
 
     bool usesTestModeFocusRingColor();
     void setUsesTestModeFocusRingColor(bool);
