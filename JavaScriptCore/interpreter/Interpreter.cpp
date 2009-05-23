@@ -91,6 +91,7 @@ static int depth(CodeBlock* codeBlock, ScopeChain& sc)
     return sc.localDepth();
 }
 
+#if USE(INTERPRETER)
 NEVER_INLINE bool Interpreter::resolve(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
 {
     int dst = (vPC + 1)->u.operand;
@@ -280,6 +281,8 @@ NEVER_INLINE bool Interpreter::resolveBaseAndFunc(CallFrame* callFrame, Instruct
     return false;
 }
 
+#endif // USE(INTERPRETER)
+
 ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newCodeBlock, RegisterFile* registerFile, CallFrame* callFrame, size_t registerOffset, int argc)
 {
     Register* r = callFrame->registers();
@@ -317,6 +320,7 @@ ALWAYS_INLINE CallFrame* Interpreter::slideRegisterWindowForCall(CodeBlock* newC
     return CallFrame::create(r);
 }
 
+#if USE(INTERPRETER)
 static NEVER_INLINE bool isInvalidParamForIn(CallFrame* callFrame, CodeBlock* codeBlock, const Instruction* vPC, JSValue value, JSValue& exceptionData)
 {
     if (value.isObject())
@@ -332,6 +336,7 @@ static NEVER_INLINE bool isInvalidParamForInstanceOf(CallFrame* callFrame, CodeB
     exceptionData = createInvalidParamError(callFrame, "instanceof" , value, vPC - codeBlock->instructions().begin(), codeBlock);
     return true;
 }
+#endif
 
 NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* registerFile, Register* argv, int argc, int registerOffset, JSValue& exceptionValue)
 {
@@ -906,7 +911,8 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
             return;
     }
 }
-
+    
+#if USE(INTERPRETER)
 NEVER_INLINE ScopeChainNode* Interpreter::createExceptionScope(CallFrame* callFrame, const Instruction* vPC)
 {
     int dst = (++vPC)->u.operand;
@@ -1086,6 +1092,8 @@ NEVER_INLINE void Interpreter::uncacheGetByID(CodeBlock* codeBlock, Instruction*
     vPC[4] = 0;
 }
 
+#endif // USE(INTERPRETER)
+
 JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFile, CallFrame* callFrame, JSValue* exception)
 {
     // One-time initialization of our address tables. We have to put this code
@@ -1108,6 +1116,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
     // Currently with CTI enabled we never interpret functions
     ASSERT_NOT_REACHED();
 #endif
+#if !USE(INTERPRETER)
+    UNUSED_PARAM(registerFile);
+    UNUSED_PARAM(callFrame);
+    UNUSED_PARAM(exception);
+    return JSValue();
+#else
 
     JSGlobalData* globalData = &callFrame->globalData();
     JSValue exceptionValue;
@@ -3855,6 +3869,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 #if !HAVE(COMPUTED_GOTO)
     } // iterator loop ends
 #endif
+#endif // USE(INTERPRETER)
     #undef NEXT_INSTRUCTION
     #undef DEFINE_OPCODE
     #undef CHECK_FOR_EXCEPTION

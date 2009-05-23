@@ -119,17 +119,23 @@ namespace JSC {
         JSValue execute(EvalNode*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*, JSValue* exception);
 
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine);
-
+#if USE(INTERPRETER)
         NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE bool resolveSkip(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE bool resolveGlobal(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE void resolveBase(CallFrame*, Instruction* vPC);
         NEVER_INLINE bool resolveBaseAndProperty(CallFrame*, Instruction*, JSValue& exceptionValue);
+        NEVER_INLINE bool resolveBaseAndFunc(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE ScopeChainNode* createExceptionScope(CallFrame*, const Instruction* vPC);
+
+        void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
+        void uncacheGetByID(CodeBlock*, Instruction* vPC);
+        void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const PutPropertySlot&);
+        void uncachePutByID(CodeBlock*, Instruction* vPC);        
+#endif
 
         NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue, unsigned& bytecodeOffset, CodeBlock*&);
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset, bool);
-        NEVER_INLINE bool resolveBaseAndFunc(CallFrame*, Instruction*, JSValue& exceptionValue);
 
         static ALWAYS_INLINE CallFrame* slideRegisterWindowForCall(CodeBlock*, RegisterFile*, CallFrame*, size_t registerOffset, int argc);
 
@@ -139,11 +145,6 @@ namespace JSC {
 
         void dumpCallFrame(CallFrame*);
         void dumpRegisters(CallFrame*);
-
-        void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
-        void uncacheGetByID(CodeBlock*, Instruction* vPC);
-        void tryCachePutByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const PutPropertySlot&);
-        void uncachePutByID(CodeBlock*, Instruction* vPC);
         
         bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
 
