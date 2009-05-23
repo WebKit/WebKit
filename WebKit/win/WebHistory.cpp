@@ -740,7 +740,7 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
         entryPrivate->setLastVisitWasHTTPNonGet(!equalIgnoringCase(httpMethod, "GET") && url.protocolInHTTPFamily());
 
     COMPtr<WebHistoryItem> item(Query, entry);
-    item->historyItem()->setRedirectURLs(std::auto_ptr<Vector<String> >());
+    item->historyItem()->setRedirectURLs(0);
 
     CFDictionaryPropertyBag* userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsAddedNotification), entry);

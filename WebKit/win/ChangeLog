@@ -1,5 +1,17 @@
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
+        Windows build fix for PassOwnPtr
+
+        * WebHistory.cpp:
+        (WebHistory::visitedURL): Changed
+        std::auto_ptr<Vector<String> >() to 0.
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation): Changed type
+        of redirectURLsVector from std::auto_ptr<Vector<String> > to
+        OwnPtr<Vector<String> >.
+
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
         Part 2 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
 
         <https://bugs.webkit.org/show_bug.cgi?id=25495>
