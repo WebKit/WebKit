@@ -1,3 +1,11 @@
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
+        resolve-ChangeLogs: Add missing newline to status message
+
+        * Scripts/resolve-ChangeLogs: Added newline to status message
+        that is printed when the -c|--continue switch is used but there
+        are unmerged files remaining in the git working directory.
+
 2009-05-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.

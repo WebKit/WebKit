@@ -130,7 +130,7 @@ if (defined $fixMerged && length($fixMerged) > 0) {
 
 if ($gitRebaseContinue) {
     if (hasGitUnmergedFiles()) {
-        print "Unmerged files; skipping '$GIT rebase --continue'.";
+        print "Unmerged files; skipping '$GIT rebase --continue'.\n";
     } else {
         print "Running '$GIT rebase --continue'...\n";
         print `$GIT rebase --continue`;
