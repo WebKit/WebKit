@@ -1,3 +1,20 @@
+2009-05-22  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        Added the use of tileRect() for a correct drawing of
+        border-images.
+
+        Testcases for border-image are in fast/borders like
+        border-image-01.html and will be activated for cairo, once
+        gtk supports pixel tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19652
+        [CAIRO] wrong drawing of border-image
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+
 2009-05-22  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Maciej Stachowiak.

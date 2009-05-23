@@ -33,6 +33,7 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "TransformationMatrix.h"
 #include <cairo.h>
@@ -158,7 +159,18 @@ void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, con
     cairo_t* cr = context->platformContext();
     context->save();
 
-    // TODO: Make use of tileRect.
+    IntRect imageSize = enclosingIntRect(tileRect);
+    std::auto_ptr<ImageBuffer> imageSurface = ImageBuffer::create(imageSize.size(), false);
+
+    if (!imageSurface)
+        return;
+
+    if (tileRect.size() != size()) {
+        cairo_t* clippedImageContext = imageSurface->context()->platformContext();
+        cairo_set_source_surface(clippedImageContext, image, -tileRect.x(), -tileRect.y());
+        cairo_paint(clippedImageContext);
+        image = imageSurface.get()->image()->nativeImageForCurrentFrame();
+    }
 
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
     cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
@@ -167,7 +179,7 @@ void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, con
     cairo_pattern_set_filter(pattern, CAIRO_FILTER_NEAREST);
 
     cairo_matrix_t pattern_matrix = cairo_matrix_t(patternTransform);
-    cairo_matrix_t phase_matrix = {1, 0, 0, 1, phase.x(), phase.y()};
+    cairo_matrix_t phase_matrix = {1, 0, 0, 1, phase.x() + tileRect.x() * patternTransform.a(), phase.y() + tileRect.y() * patternTransform.d()};
     cairo_matrix_t combined;
     cairo_matrix_multiply(&combined, &pattern_matrix, &phase_matrix);
     cairo_matrix_invert(&combined);
