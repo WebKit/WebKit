@@ -1,3 +1,15 @@
+2009-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6916082> Incorrect handling of % as CSS value.
+
+        Test: fast/css/percent-character-as-value.html
+
+        * css/CSSGrammar.y: Make a stray % character reliably cause
+        CSS parsing to succeed, but the CSS value to be ignored because
+        of incorrect type. A type of 0 has this effect.
+
 2009-05-22  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

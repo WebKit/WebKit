@@ -1381,7 +1381,9 @@ term:
   | variable_reference maybe_space {
       $$ = $1;
   }
-  | '%' maybe_space {} /* Handle width: %; */
+  | '%' maybe_space { /* Handle width: %; */
+      $$.id = 0; $$.unit = 0;
+  }
   ;
 
 unary_term:

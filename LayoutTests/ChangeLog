@@ -1,3 +1,12 @@
+2009-05-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6916082> Incorrect handling of % as CSS value.
+
+        * fast/css/percent-character-as-value-expected.txt: Added.
+        * fast/css/percent-character-as-value.html: Added.
+
 2009-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
