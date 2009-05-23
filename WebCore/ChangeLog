@@ -1,3 +1,12 @@
+2009-05-23  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build-fix for Qt. Disable SVG Filters.
+
+        SVG Filters can not be built right now and Qt should not have
+        them enabled anyway as they do not carry out any filtering.
+
+        * WebCore.pro:
+
 2009-05-23  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed build-fix for gtk. Remove source input files
