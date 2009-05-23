@@ -1,4 +1,16 @@
-2009-05-22  Antonio Gomes   <antonio.gomes@openbossa.org>
+2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Various autotools build refactoring and fixes
+        https://bugs.webkit.org/show_bug.cgi?id=25286
+
+        Refactor library LIBS. Move third-party libs in libwebkit instead
+        of libWebCore.
+
+        * GNUmakefile.am:
+
+2009-05-22  Antonio Gomes  <antonio.gomes@openbossa.org>
 
         Reviewed by Gustavo Noronha.
 

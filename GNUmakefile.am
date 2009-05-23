@@ -203,28 +203,6 @@ libWebCore_la_CFLAGS = \
 libWebCore_la_CPPFLAGS = \
 	$(corekit_cppflags)
 
-libWebCore_la_LIBADD = \
-	libJavaScriptCore.la \
-	libWebCoreJS.la \
-	$(webcore_libadd) \
-	$(GLIB_LIBS) \
-	$(LIBXML_LIBS) \
-	$(CAIRO_LIBS) \
-	$(PANGO_LIBS) \
-	$(GTK_LIBS) \
-	$(XT_LIBS) \
-	$(LIBSOUP_LIBS) \
-	$(FREETYPE_LIBS) \
-	$(UNICODE_LIBS) \
-	$(SQLITE3_LIBS) \
-	$(GSTREAMER_LIBS) \
-	$(LIBXSLT_LIBS) \
-	$(HILDON_LIBS) \
-	$(JPEG_LIBS) \
-	$(PNG_LIBS) \
-	$(GEOCLUE_LIBS) \
-	-lpthread
-
 # WebKit
 nodist_libwebkit_1_0_la_SOURCES = \
 	$(webkitgtk_built_sources)
@@ -251,15 +229,35 @@ libwebkit_1_0_la_CPPFLAGS = \
 	$(HILDON_CPPFLAGS)
 
 libwebkit_1_0_la_LDFLAGS = \
-	$(COVERAGE_LDFLAGS) \
 	-version-info @LIBWEBKITGTK_VERSION@ \
 	$(version_script) \
 	$(no_undefined)
 
 libwebkit_1_0_la_LIBADD = \
+	-lpthread \
+	libJavaScriptCore.la \
 	libWebCore.la \
+	libWebCoreJS.la \
+	$(webcore_ldflags) \
+	$(CAIRO_LIBS) \
+	$(COVERAGE_LDFLAGS) \
 	$(ENCHANT_LIBS) \
-	$(GNOMEKEYRING_LIBS)
+	$(FREETYPE_LIBS) \
+	$(GEOCLUE_LIBS) \
+	$(GLIB_LIBS) \
+	$(GNOMEKEYRING_LIBS) \
+	$(GSTREAMER_LIBS) \
+	$(GTK_LIBS) \
+	$(HILDON_LIBS) \
+	$(JPEG_LIBS) \
+	$(LIBSOUP_LIBS) \
+	$(LIBXML_LIBS) \
+	$(LIBXSLT_LIBS) \
+	$(PANGO_LIBS) \
+	$(PNG_LIBS) \
+	$(SQLITE3_LIBS) \
+	$(UNICODE_LIBS) \
+	$(XT_LIBS)
 
 #
 # Extra checks and flags
