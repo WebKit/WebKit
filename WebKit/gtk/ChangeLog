@@ -1,5 +1,15 @@
 2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Rubber-stamped by Gustavo Noronha.
+
+        Break the switch once private browsing is selected.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+
+2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Gustavo Noronha and Xan Lopez.
 
         [Gtk] Enable database and localStorage support

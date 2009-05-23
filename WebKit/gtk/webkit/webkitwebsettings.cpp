@@ -577,6 +577,7 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
         break;
     case PROP_ENABLE_PRIVATE_BROWSING:
         priv->enable_private_browsing = g_value_get_boolean(value);
+        break;
     case PROP_ENABLE_CARET_BROWSING:
         priv->enable_caret_browsing = g_value_get_boolean(value);
         break;
@@ -693,6 +694,7 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_PRIVATE_BROWSING:
         g_value_set_boolean(value, priv->enable_private_browsing);
+        break;
     case PROP_ENABLE_CARET_BROWSING:
         g_value_set_boolean(value, priv->enable_caret_browsing);
         break;
