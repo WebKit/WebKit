@@ -1,5 +1,18 @@
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
+        Fix Gtk/Qt builds for PassOwnPtr
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern): Use an OwnPtr<ImageBuffer>
+        instead of an std::auto_ptr<ImageBuffer> to store the result of
+        ImageBuffer::create() now that it returns a
+        PassOwnPtr<ImageBuffer>.
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::strokeContains): Ditto.
+        (WebCore::Path::strokeBoundingRect): Ditto.
+
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
         Part 2 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
 
         <https://bugs.webkit.org/show_bug.cgi?id=25495>
