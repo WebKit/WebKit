@@ -65,6 +65,14 @@ static void webkit_network_request_init(WebKitNetworkRequest* request)
     request->priv = priv;
 }
 
+/**
+ * webkit_network_request_new:
+ * @uri: an URI
+ *
+ * Creates a new #WebKitNetworkRequest initialized with an URI.
+ *
+ * Returns: a new #WebKitNetworkRequest
+ */
 WebKitNetworkRequest* webkit_network_request_new(const gchar* uri)
 {
     g_return_val_if_fail(uri, NULL);
@@ -77,6 +85,13 @@ WebKitNetworkRequest* webkit_network_request_new(const gchar* uri)
     return request;
 }
 
+/**
+ * webkit_network_request_set_uri:
+ * @request: a #WebKitNetworkRequest
+ * @uri: an URI
+ *
+ * Sets the URI held and used by the given request.
+ */
 void webkit_network_request_set_uri(WebKitNetworkRequest* request, const gchar* uri)
 {
     g_return_if_fail(WEBKIT_IS_NETWORK_REQUEST(request));
