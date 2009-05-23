@@ -1,3 +1,17 @@
+2009-05-22  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25684
+
+        Ask the Scrollbar for the orientation.
+
+        Use Scrollbar::orientation to figure out the
+        direction of scrolling.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::valueChanged):
+
 2009-05-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

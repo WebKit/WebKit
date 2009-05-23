@@ -238,9 +238,9 @@ void ScrollView::valueChanged(Scrollbar* scrollbar)
     // Figure out if we really moved.
     IntSize newOffset = m_scrollOffset;
     if (scrollbar) {
-        if (scrollbar == m_horizontalScrollbar)
+        if (scrollbar->orientation() == HorizontalScrollbar)
             newOffset.setWidth(scrollbar->value());
-        else if (scrollbar == m_verticalScrollbar)
+        else if (scrollbar->orientation() == VerticalScrollbar)
             newOffset.setHeight(scrollbar->value());
     }
 
