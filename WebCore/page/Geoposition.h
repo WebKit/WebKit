@@ -26,8 +26,6 @@
 #ifndef Geoposition_h
 #define Geoposition_h
 
-#if ENABLE(GEOLOCATION)
-
 #include "Coordinates.h"
 #include "Event.h"
 #include "PlatformString.h"
@@ -58,7 +56,5 @@ private:
 };
     
 } // namespace WebCore
-
-#endif // ENABLE(GEOLOCATION)
 
 #endif // Geoposition_h

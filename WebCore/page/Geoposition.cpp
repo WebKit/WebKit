@@ -26,8 +26,6 @@
 #include "config.h"
 #include "Geoposition.h"
 
-#if ENABLE(GEOLOCATION)
-
 namespace WebCore {
 
 String Geoposition::toString() const
@@ -36,5 +34,3 @@ String Geoposition::toString() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(GEOLOCATION)

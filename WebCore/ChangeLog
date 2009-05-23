@@ -1,3 +1,24 @@
+2009-05-23  David Kilzer  <ddkilzer@apple.com>
+
+        Fix Mac builds by backing out r44093
+
+        * bindings/js/JSCustomPositionCallback.cpp:
+        * bindings/js/JSCustomPositionCallback.h:
+        * bindings/js/JSCustomPositionErrorCallback.cpp:
+        * bindings/js/JSCustomPositionErrorCallback.h:
+        * bindings/js/JSGeolocationCustom.cpp:
+        * page/Geolocation.cpp:
+        * page/Geolocation.idl:
+        * page/Geoposition.cpp:
+        * page/Geoposition.h:
+        * page/Geoposition.idl:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::disconnectFrame):
+        (WebCore::Navigator::geolocation):
+        * page/PositionError.idl:
+        * platform/GeolocationService.cpp:
+        (WebCore::GeolocationService::create):
+
 2009-05-23  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
