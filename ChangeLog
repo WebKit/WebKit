@@ -1,7 +1,7 @@
 2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Unreviewed build fix. Add gstreamer-video-0.10 libs to
-        GSTREAMER_LIBS to resolve am undefined reference to gst_video_get_size
+        GSTREAMER_LIBS to resolve an undefined reference to gst_video_get_size
         - symbol used in MediaPlayerPrivateGstreamer.
 
         * configure.ac:
