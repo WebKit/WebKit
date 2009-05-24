@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #import "WebNSObjectExtras.h"
 
+#import <wtf/Assertions.h>
 
 @interface WebMainThreadInvoker : NSProxy
 {
@@ -38,16 +39,15 @@
 
 @implementation WebMainThreadInvoker
 
-- (id)initWithTarget:(id)theTarget
+- (id)initWithTarget:(id)passedTarget
 {
-    target = theTarget;
+    target = passedTarget;
     return self;
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
     [invocation setTarget:target];
-    [invocation retainArguments];
     [invocation performSelectorOnMainThread:@selector(_webkit_invokeAndHandleException:) withObject:self waitUntilDone:YES];
     if (exception) {
         id exceptionToThrow = [exception autorelease];
@@ -61,13 +61,13 @@
     return [target methodSignatureForSelector:selector];
 }
 
-- (void)handleException:(id)e
+- (void)handleException:(id)passedException
 {
-    exception = [e retain];
+    ASSERT(!exception);
+    exception = [passedException retain];
 }
 
 @end
-
 
 @implementation NSInvocation (WebMainThreadInvoker)
 
@@ -75,13 +75,12 @@
 {
     @try {
         [self invoke];
-    } @catch (id e) {
-        [exceptionHandler handleException:e];
+    } @catch (id exception) {
+        [exceptionHandler handleException:exception];
     }
 }
 
 @end
-
 
 @implementation NSObject (WebNSObjectExtras)
 

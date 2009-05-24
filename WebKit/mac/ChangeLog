@@ -1,3 +1,18 @@
+2009-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein and Tim Hatcher.
+
+        <rdar://problem/6913045> New console message spewed by automator CLI after installing JetstreamLeo40B21a
+
+        * Misc/WebNSObjectExtras.mm:
+        (-[WebMainThreadInvoker initWithTarget:]): Tweaked argument name.
+        (-[WebMainThreadInvoker forwardInvocation:]): Removed call to retainArguments.
+        This was unneeded and in the case of a newly created but not yet fully initialized
+        NSView object it caused the abovementioned bug.
+        (-[WebMainThreadInvoker handleException:]): Tweaked argument name. Added assertion.
+        (-[NSInvocation _webkit_invokeAndHandleException:]): Tweaked name of local variable
+        that holds the exception.
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Part 2 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
