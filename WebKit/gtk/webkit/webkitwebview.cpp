@@ -1262,6 +1262,17 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * the #WebKitDownload helper object you must handle this signal,
      * and return %FALSE.
      *
+     * Also, keep in mind that the default policy for WebKitGTK+ is to
+     * ignore files with a MIME type that it does not know how to
+     * handle, which means this signal won't be emitted in the default
+     * setup. One way to trigger downloads is to connect to
+     * WebKitWebView::mime-type-policy-decision-requested and call
+     * webkit_web_policy_decision_download() on the
+     * #WebKitWebPolicyDecision in the parameter list for the kind of
+     * files you want your application to download (a common solution
+     * is to download anything that WebKit can't handle, which you can
+     * figure out by using webkit_web_view_can_show_mime_type()).
+     *
      * Since: 1.1.2
      */
     webkit_web_view_signals[DOWNLOAD_REQUESTED] = g_signal_new("download-requested",
