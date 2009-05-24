@@ -3,8 +3,22 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 45;
 	objects = {
+
+/* Begin PBXAggregateTarget section */
+		5DE79BC30F1C62450067BE08 /* Extract Sparkle */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5DE79BD80F1C629B0067BE08 /* Build configuration list for PBXAggregateTarget "Extract Sparkle" */;
+			buildPhases = (
+				5DE79BC20F1C62450067BE08 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Extract Sparkle";
+			productName = "Extract Sparkle";
+		};
+/* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
 		5D41141C0A50A9DE00C84CF0 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 5D41141B0A50A9DE00C84CF0 /* VERSION */; };
@@ -12,6 +26,9 @@
 		5D650F3609DB8B370075E9A8 /* WebKitNightlyEnabler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */; };
 		5D650F3A09DB8B410075E9A8 /* WebKitNightlyEnabler.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 5D650F3409DB8B280075E9A8 /* WebKitNightlyEnabler.dylib */; };
 		5D877FCD0A5795F200D0C67B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		5DA88F6D0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA88F6B0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h */; };
+		5DA88F6E0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA88F6C0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m */; };
+		5DA88F7A0FC813EB00AB2F62 /* WebKitNightlyEnabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA88F790FC813EB00AB2F62 /* WebKitNightlyEnabler.h */; };
 		5DB70525097B94CD009875EC /* webkit.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5DB70524097B94CD009875EC /* webkit.icns */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -25,20 +42,37 @@
 			remoteGlobalIDString = 5D650F3309DB8B280075E9A8;
 			remoteInfo = WebKitNightlyEnabler;
 		};
+		5DE79BC90F1C62850067BE08 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DE79BC30F1C62450067BE08;
+			remoteInfo = "Extract Sparkle";
+		};
+		5DE79BCB0F1C62890067BE08 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DE79BC30F1C62450067BE08;
+			remoteInfo = "Extract Sparkle";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		5D41141B0A50A9DE00C84CF0 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
 		5D4DF981097F89FB0083D5E5 /* start.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; path = start.html; sourceTree = "<group>"; };
 		5D650F3409DB8B280075E9A8 /* WebKitNightlyEnabler.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebKitNightlyEnabler.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebKitNightlyEnabler.m; sourceTree = "<group>"; };
-		5D650F7509DB8CB40075E9A8 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitNightlyEnabler.m; sourceTree = "<group>"; };
+		5DA88F6B0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNightlyEnablerSparkle.h; sourceTree = "<group>"; };
+		5DA88F6C0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitNightlyEnablerSparkle.m; sourceTree = "<group>"; };
+		5DA88F790FC813EB00AB2F62 /* WebKitNightlyEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNightlyEnabler.h; sourceTree = "<group>"; };
+		5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitLauncher.xcconfig; sourceTree = "<group>"; };
+		5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitNightlyEnabler.xcconfig; sourceTree = "<group>"; };
 		5DB70524097B94CD009875EC /* webkit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = webkit.icns; sourceTree = "<group>"; };
+		5DE79BEB0F1C63CC0067BE08 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* WebKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -63,13 +97,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		080E96DDFE201D6D7F000001 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Classes;
-			sourceTree = "<group>";
-		};
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -78,20 +105,10 @@
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
 		};
-		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
-				13E42FB307B3F0F600E4EEF1 /* CoreData.framework */,
-				5D650F7509DB8CB40075E9A8 /* CoreFoundation.framework */,
-				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				5DE79BEB0F1C63CC0067BE08 /* Sparkle.framework */,
 				8D1107320486CEB800E47090 /* WebKit.app */,
 				5D650F3409DB8B280075E9A8 /* WebKitNightlyEnabler.dylib */,
 			);
@@ -101,8 +118,8 @@
 		29B97314FDCFA39411CA2CEA /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
-				080E96DDFE201D6D7F000001 /* Classes */,
-				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97315FDCFA39411CA2CEA /* Source */,
+				5DA88F7D0FC8174E00AB2F62 /* Configurations */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -110,13 +127,16 @@
 			name = WebKit;
 			sourceTree = "<group>";
 		};
-		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+		29B97315FDCFA39411CA2CEA /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5DA88F790FC813EB00AB2F62 /* WebKitNightlyEnabler.h */,
 				5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */,
+				5DA88F6B0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h */,
+				5DA88F6C0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
-			name = "Other Sources";
+			name = Source;
 			sourceTree = "<group>";
 		};
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
@@ -134,9 +154,18 @@
 			isa = PBXGroup;
 			children = (
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
-				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5DA88F7D0FC8174E00AB2F62 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */,
+				5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */,
+				5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */,
+			);
+			path = Configurations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -146,6 +175,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DA88F6D0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h in Headers */,
+				5DA88F7A0FC813EB00AB2F62 /* WebKitNightlyEnabler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,6 +194,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5DE79BCC0F1C62890067BE08 /* PBXTargetDependency */,
 			);
 			name = WebKitNightlyEnabler;
 			productName = WebKitNightlyEnabler;
@@ -176,11 +208,13 @@
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
+				5DA892AC0FC8E3A100AB2F62 /* Copy Sparkle in to Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				5D650F4509DB8B830075E9A8 /* PBXTargetDependency */,
+				5DE79BCA0F1C62850067BE08 /* PBXTargetDependency */,
 			);
 			name = WebKit;
 			productInstallPath = "$(HOME)/Applications";
@@ -194,7 +228,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "WebKitLauncher" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* WebKit */;
 			projectDirPath = "";
@@ -202,6 +236,7 @@
 			targets = (
 				8D1107260486CEB800E47090 /* WebKit */,
 				5D650F3309DB8B280075E9A8 /* WebKitNightlyEnabler */,
+				5DE79BC30F1C62450067BE08 /* Extract Sparkle */,
 			);
 		};
 /* End PBXProject section */
@@ -220,12 +255,45 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		5DA892AC0FC8E3A100AB2F62 /* Copy Sparkle in to Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Sparkle in to Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${ENABLE_SPARKLE}\" == \"1\" ]]\nthen\n    ditto \"${CONFIGURATION_BUILD_DIR}/Sparkle.framework\" \"${CONFIGURATION_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework\"\n    cd \"${CONFIGURATION_BUILD_DIR}/Sparkle.framework/Resources\"\n    find . -name '*lproj' -not -name 'en.lproj' -print0 | xargs -0 rm -rf\nelse\n    rm -rf \"${CONFIGURATION_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework\"\nfi\n";
+		};
+		5DE79BC20F1C62450067BE08 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Sparkle.framework.tar.gz",
+			);
+			outputPaths = (
+				"$(CONFIGURATION_BUILD_DIR)/Sparkle.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${ENABLE_SPARKLE}\" == \"1\" ]]\nthen\n    tar -C \"${CONFIGURATION_BUILD_DIR}\" -xvzf \"${SRCROOT}/Sparkle.framework.tar.gz\"\n    cd \"${CONFIGURATION_BUILD_DIR}/Sparkle.framework/Resources\"\n    find . -name '*lproj' -not -name 'en.lproj' -print0 | xargs -0 rm -rf\nelse\n    rm -rf \"${CONFIGURATION_BUILD_DIR}/Sparkle.framework\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		5D650F3109DB8B280075E9A8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				5D650F3609DB8B370075E9A8 /* WebKitNightlyEnabler.m in Sources */,
+				5DA88F6E0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,80 +313,74 @@
 			target = 5D650F3309DB8B280075E9A8 /* WebKitNightlyEnabler */;
 			targetProxy = 5D650F4409DB8B830075E9A8 /* PBXContainerItemProxy */;
 		};
+		5DE79BCA0F1C62850067BE08 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DE79BC30F1C62450067BE08 /* Extract Sparkle */;
+			targetProxy = 5DE79BC90F1C62850067BE08 /* PBXContainerItemProxy */;
+		};
+		5DE79BCC0F1C62890067BE08 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DE79BC30F1C62450067BE08 /* Extract Sparkle */;
+			targetProxy = 5DE79BCB0F1C62890067BE08 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		5D650F3809DB8B370075E9A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
-				PRODUCT_NAME = WebKitNightlyEnabler;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
 		};
 		5D650F3909DB8B370075E9A8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F800FC8176100AB2F62 /* WebKitNightlyEnabler.xcconfig */;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
-				PRODUCT_NAME = WebKitNightlyEnabler;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Release;
+		};
+		5DE79BC40F1C62450067BE08 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Extract Sparkle";
+			};
+			name = Debug;
+		};
+		5DE79BC50F1C62450067BE08 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Extract Sparkle";
 			};
 			name = Release;
 		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = WebKit;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F7F0FC8176100AB2F62 /* WebKitLauncher.xcconfig */;
 			buildSettings = {
-				DEAD_CODE_STRIPPING = YES;
-				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = WebKit;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5DA88F7E0FC8176100AB2F62 /* Base.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};
@@ -330,6 +392,15 @@
 			buildConfigurations = (
 				5D650F3809DB8B370075E9A8 /* Debug */,
 				5D650F3909DB8B370075E9A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DE79BD80F1C629B0067BE08 /* Build configuration list for PBXAggregateTarget "Extract Sparkle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DE79BC40F1C62450067BE08 /* Debug */,
+				5DE79BC50F1C62450067BE08 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

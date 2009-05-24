@@ -1,3 +1,54 @@
+2009-05-23  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Land the updated version of WebKitLauncher that the nightly builds have been using.
+
+        Changes include:
+        1) Support for self-updating via Sparkle.
+        2) Now respects the "Open using Rosetta" preference.
+        3) Passes environment variables through to the spawned Safari process.
+        4) Logs a list of extensions that are detected to the system console.
+        5) Disables extensions that are known to cause crashes too early in the
+           launch process to be detected by the extension-detection code.
+
+        * WebKitLauncher/Configurations/Base.xcconfig: Added.
+        * WebKitLauncher/Configurations/WebKitLauncher.xcconfig: Added.
+        * WebKitLauncher/Configurations/WebKitNightlyEnabler.xcconfig: Added.
+        * WebKitLauncher/Info.plist:
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        * WebKitLauncher/WebKitNightlyEnabler.h: Added.
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (myBundleDidLoad):
+        (myApplicationWillFinishLaunching):
+        (poseAsWebKitApp):
+        (webKitLauncherBundle):
+        (enableWebKitNightlyBehaviour):
+        * WebKitLauncher/WebKitNightlyEnablerSparkle.h: Added.
+        * WebKitLauncher/WebKitNightlyEnablerSparkle.m: Added.
+        (initializeSparkle):
+        (updatePermissionPromptDescription):
+        (skipSignatureVerificationInDownloadDidFinish):
+        (updateAlertPanel):
+        (updateAlertInitForAlertPanel):
+        (-[NSAlert webKitHandleButtonPress:]):
+        (setMethodImplementation):
+        * WebKitLauncher/main.m:
+        (displayErrorAndQuit):
+        (getLastVersionShown):
+        (saveLastVersionShown):
+        (getPathForStartPage):
+        (getCurrentVersion):
+        (getShowStartPageVersion):
+        (startPageDisabled):
+        (addStartPageToArgumentsIfNeeded):
+        (preferredArchitecture):
+        (myExecve):
+        (locateSafariBundle):
+        (currentMacOSXVersion):
+        (checkFrameworkPath):
+        (main):
+
 2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha and Xan Lopez.

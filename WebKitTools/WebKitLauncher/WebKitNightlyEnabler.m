@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Graham Dennis.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution. 
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission. 
  *
@@ -28,6 +28,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "WebKitNightlyEnablerSparkle.h"
 
 static void enableWebKitNightlyBehaviour() __attribute__ ((constructor));
 
@@ -40,15 +41,12 @@ typedef enum {
     RunStateRunning
 } WKNERunStates;
 
+static char *webKitAppPath;
 static bool extensionBundlesWereLoaded = NO;
 static NSSet *extensionPaths = nil;
 
 static void myBundleDidLoad(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
-    // Break out early if we have already detected an extension
-    if (extensionBundlesWereLoaded)
-        return;
-
     NSBundle *bundle = (NSBundle *)object;
     NSString *bundlePath = [[bundle bundlePath] stringByAbbreviatingWithTildeInPath];
     NSString *bundleFileName = [bundlePath lastPathComponent];
@@ -62,11 +60,12 @@ static void myBundleDidLoad(CFNotificationCenterRef center, void *observer, CFSt
     // If the bundle lives inside a known extension path, flag it as an extension
     NSEnumerator *e = [extensionPaths objectEnumerator];
     NSString *path = nil;
-    while (path = [e nextObject]) {
+    while ((path = [e nextObject])) {
         if ([bundlePath length] < [path length])
             continue;
 
         if ([[bundlePath substringToIndex:[path length]] isEqualToString:path]) {
+            NSLog(@"Extension detected: %@", bundlePath);
             extensionBundlesWereLoaded = YES;
             break;
         }
@@ -88,6 +87,8 @@ static void myApplicationWillFinishLaunching(CFNotificationCenterRef center, voi
         NSRunInformationalAlertPanel(@"Safari extensions detected",
                                      @"Safari extensions were detected on your system.  Extensions are incompatible with nightly builds of WebKit, and may cause crashes or incorrect behavior.  Please disable them if you experience such behavior.", @"Continue",
                                      nil, nil);
+
+    initializeSparkle();
 }
 
 static void myApplicationWillTerminate(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
@@ -101,7 +102,7 @@ extern char **_CFGetProcessPath() __attribute__((weak));
 
 static void poseAsWebKitApp()
 {
-    char *webKitAppPath = getenv("WebKitAppPath");
+    webKitAppPath = strdup(getenv("WebKitAppPath"));
     if (!webKitAppPath || !_CFGetProcessPath)
         return;
 
@@ -119,20 +120,32 @@ static void poseAsWebKitApp()
     unsetenv("WebKitAppPath");
 }
 
+NSBundle *webKitLauncherBundle()
+{
+    NSString *executablePath = [NSString stringWithUTF8String:webKitAppPath];
+    NSRange appLocation = [executablePath rangeOfString:@".app/" options:NSBackwardsSearch];
+    NSString *appPath = [executablePath substringToIndex:appLocation.location + appLocation.length];
+    return [NSBundle bundleWithPath:appPath];
+}
+
 static void enableWebKitNightlyBehaviour()
 {
     unsetenv("DYLD_INSERT_LIBRARIES");
     poseAsWebKitApp();
 
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     extensionPaths = [[NSSet alloc] initWithObjects:@"~/Library/InputManagers/", @"/Library/InputManagers/",
                                                     @"~/Library/Application Support/SIMBL/Plugins/", @"/Library/Application Support/SIMBL/Plugins/",
                                                     @"~/Library/Application Enhancers/", @"/Library/Application Enhancers/",
                                                     nil];
 
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    // As of 2008-11 attempting to load Saft would cause a crash on launch, so prevent it from being loaded.
+    NSArray *disabledInputManagers = [NSArray arrayWithObjects:@"Saft", nil];
+
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *defaultPrefs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:RunStateShutDown], WKNERunState,
-                                                                            [NSNumber numberWithBool:YES], WKNEShouldMonitorShutdowns, nil];
+                                                                            [NSNumber numberWithBool:YES], WKNEShouldMonitorShutdowns,
+                                                                            disabledInputManagers, @"NSDisabledInputManagers", nil];
     [userDefaults registerDefaults:defaultPrefs];
     if ([userDefaults boolForKey:WKNEShouldMonitorShutdowns]) {
         WKNERunStates savedState = (WKNERunStates)[userDefaults integerForKey:WKNERunState];
@@ -161,5 +174,8 @@ static void enableWebKitNightlyBehaviour()
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), &myApplicationWillTerminate,
                                     myApplicationWillTerminate, (CFStringRef) NSApplicationWillTerminateNotification,
                                     NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+
+    NSLog(@"WebKit %@ initialized.", [webKitLauncherBundle() objectForInfoDictionaryKey:@"CFBundleShortVersionString"]);
+
     [pool release];
 }
