@@ -1,3 +1,10 @@
+2009-05-23  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix for Qt. Change signature to have PassOwnPtr.
+
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::newTextCodecQt):
+
 2009-05-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
