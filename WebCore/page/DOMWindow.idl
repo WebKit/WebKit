@@ -424,13 +424,11 @@ module window {
         attribute StorageEventConstructor StorageEvent;
 #endif
 
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-        attribute [CustomGetter] HTMLAudioElementConstructor Audio; // Usable with the new operator
-        attribute HTMLAudioElementConstructor HTMLAudioElement;
-        attribute HTMLMediaElementConstructor HTMLMediaElement;
-        attribute HTMLVideoElementConstructor HTMLVideoElement;
-        attribute MediaErrorConstructor MediaError;
-#endif
+        attribute [CustomGetter,Conditional=VIDEO] HTMLAudioElementConstructor Audio; // Usable with the new operator
+        attribute [Conditional=VIDEO] HTMLAudioElementConstructor HTMLAudioElement;
+        attribute [Conditional=VIDEO] HTMLMediaElementConstructor HTMLMediaElement;
+        attribute [Conditional=VIDEO] HTMLVideoElementConstructor HTMLVideoElement;
+        attribute [Conditional=VIDEO] MediaErrorConstructor MediaError;
 
 #if defined(ENABLE_XPATH) && ENABLE_XPATH
         attribute XPathEvaluatorConstructor XPathEvaluator;

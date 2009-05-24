@@ -1,3 +1,20 @@
+2009-05-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25612
+
+        Add support conditionals in the JSC bindings generator code for attributes,
+        by placing feature #ifdefs around the setters/getters.
+
+        Made the audio and video element specific DOM attributes conditional
+        in the generated code, by moving the #ifdefs from the IDL files into
+        the generated code. This allows for re-using the same generated code
+        with or without ENABLE(VIDEO).
+
+        * page/DOMWindow.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-05-23  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix for Qt. Change signature to have PassOwnPtr.

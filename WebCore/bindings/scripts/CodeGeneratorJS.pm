@@ -782,6 +782,7 @@ sub GenerateImplementation
         my @hashSpecials = ();
         my @hashValue1 = ();
         my @hashValue2 = ();
+        my %conditionals = ();
 
         my @entries = ();
 
@@ -805,6 +806,11 @@ sub GenerateImplementation
                 my $setter = "setJS" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
                 push(@hashValue2, $setter);
             }
+
+            my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
+            if ($conditional) {
+                $conditionals{$name} = $conditional;
+            }
         }
 
         if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
@@ -817,7 +823,8 @@ sub GenerateImplementation
 
         $object->GenerateHashTable($hashName, $hashSize,
                                    \@hashKeys, \@hashSpecials,
-                                   \@hashValue1, \@hashValue2);
+                                   \@hashValue1, \@hashValue2,
+                                   \%conditionals);
     }
 
     my $numConstants = @{$dataNode->constants};
@@ -1092,6 +1099,12 @@ sub GenerateImplementation
                 my $getFunctionName = "js" . $interfaceName .  $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
                 my $implGetterFunctionName = $codeGenerator->WK_lcfirst($name);
 
+                my $conditional = $attribute->signature->extendedAttributes->{"Conditional"};
+                if ($conditional) {
+                    $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+                    push(@implContent, "#if ${conditionalString}\n");
+                }
+
                 push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
                 push(@implContent, "{\n");
 
@@ -1166,7 +1179,13 @@ sub GenerateImplementation
                     push(@implContent, "    return result;\n");
                 }
 
-                push(@implContent, "}\n\n");
+                push(@implContent, "}\n");
+
+                if ($conditional) {
+                    push(@implContent, "#endif\n");
+                }
+
+                push(@implContent, "\n");
             }
 
             if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
@@ -1772,6 +1791,7 @@ sub GenerateHashTable
     my $specials = shift;
     my $value1 = shift;
     my $value2 = shift;
+    my $conditionals = shift;
 
     # Generate size data for two hash tables
     # - The 'perfect' size makes a table large enough for perfect hashing
@@ -1856,7 +1876,19 @@ tableSizeLoop:
     push(@implContent, "\nstatic const HashTableValue $nameEntries\[$count\] =\n\{\n");
     $i = 0;
     foreach my $key (@{$keys}) {
+        my $conditional;
+
+        if ($conditionals) {
+            $conditional = $conditionals->{$key};
+        }
+        if ($conditional) {
+            my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+            push(@implContent, "#if ${conditionalString}\n");
+        }
         push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)@$value1[$i], (intptr_t)@$value2[$i] },\n");
+        if ($conditional) {
+            push(@implContent, "#endif\n");
+        }
         ++$i;
     }
     push(@implContent, "    { 0, 0, 0, 0 }\n");
