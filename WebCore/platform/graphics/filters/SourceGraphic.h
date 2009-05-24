@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
-    
+                  2009 Dirk Schulze <krit@webkit.org>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -12,44 +13,36 @@
     Library General Public License for more details.
 
     You should have received a copy of the GNU Library General Public License
-    along with this library; see the file COPYING.LIB.  If not, write to
+    aint with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef FilterBuilder_h
-#define FilterBuilder_h
-
-#include "config.h"
+#ifndef SourceGraphic_h
+#define SourceGrahpic_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "FilterEffect.h"
-#include "PlatformString.h"
 
-#include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
+#include "PlatformString.h"
+#include "SVGResourceFilter.h"
 
 namespace WebCore {
+
+    class SourceGraphic : public FilterEffect {
+    public:        
+        static PassRefPtr<SourceGraphic> create();
+
+        static const AtomicString& effectName();
+
+        void apply(SVGResourceFilter*);
+        void dump();
     
-    class FilterBuilder : public RefCounted<FilterBuilder> {
-    public:
-        FilterBuilder();
-
-        void add(const AtomicString& id, RefPtr<FilterEffect> effect);
-
-        FilterEffect* getEffectById(const AtomicString& id) const;
-        FilterEffect* lastFilter() const { return m_lastEffect.get(); }
-
-        void clearEffects();
-
     private:
-        HashMap<RefPtr<AtomicStringImpl>, RefPtr<FilterEffect> > m_builtinEffects;
-        HashMap<RefPtr<AtomicStringImpl>, RefPtr<FilterEffect> > m_namedEffects;
-
-        RefPtr<FilterEffect> m_lastEffect;
+        SourceGraphic() { }
     };
-    
 } //namespace WebCore
 
 #endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#endif
+
+#endif // SourceGraphic_h

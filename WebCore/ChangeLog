@@ -1,3 +1,38 @@
+2009-05-24  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        WebKit needs cross-platform filter system
+        [https://bugs.webkit.org/show_bug.cgi?id=19991]
+
+        Added standard input for filter system.
+
+        No testcases were added. Filter system is still off.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/SourceAlpha.cpp: Added.
+        (WebCore::SourceAlpha::create):
+        (WebCore::SourceAlpha::effectName):
+        (WebCore::SourceAlpha::apply):
+        (WebCore::SourceAlpha::dump):
+        * platform/graphics/filters/SourceAlpha.h: Added.
+        (WebCore::SourceAlpha::SourceAlpha):
+        * platform/graphics/filters/SourceGraphic.cpp: Added.
+        (WebCore::SourceGraphic::create):
+        (WebCore::SourceGraphic::effectName):
+        (WebCore::SourceGraphic::apply):
+        (WebCore::SourceGraphic::dump):
+        * platform/graphics/filters/SourceGraphic.h: Added.
+        (WebCore::SourceGraphic::SourceGraphic):
+        * svg/FilterBuilder.cpp: Added.
+        (WebCore::FilterBuilder::FilterBuilder):
+        (WebCore::FilterBuilder::add):
+        (WebCore::FilterBuilder::getEffectById):
+        (WebCore::FilterBuilder::clearEffects):
+        * svg/FilterBuilder.h:
+
 2009-05-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Maciej Stachowiak.
