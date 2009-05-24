@@ -1,5 +1,13 @@
 2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Unreviewed build fix. Add gstreamer-video-0.10 libs to
+        GSTREAMER_LIBS to resolve am undefined reference to gst_video_get_size
+        - symbol used in MediaPlayerPrivateGstreamer.
+
+        * configure.ac:
+
+2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Reviewed by Xan Lopez.
 
         [Gtk] Various autotools build refactoring and fixes
