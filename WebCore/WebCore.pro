@@ -313,6 +313,7 @@ IDL_BINDINGS += \
     html/CanvasRenderingContext2D.idl \
     html/File.idl \
     html/FileList.idl \
+    html/HTMLAudioElement.idl \
     html/HTMLAnchorElement.idl \
     html/HTMLAppletElement.idl \
     html/HTMLAreaElement.idl \
@@ -349,6 +350,7 @@ IDL_BINDINGS += \
     html/HTMLLinkElement.idl \
     html/HTMLMapElement.idl \
     html/HTMLMarqueeElement.idl \
+    html/HTMLMediaElement.idl \
     html/HTMLMenuElement.idl \
     html/HTMLMetaElement.idl \
     html/HTMLModElement.idl \
@@ -363,6 +365,7 @@ IDL_BINDINGS += \
     html/HTMLQuoteElement.idl \
     html/HTMLScriptElement.idl \
     html/HTMLSelectElement.idl \
+    html/HTMLSourceElement.idl \
     html/HTMLStyleElement.idl \
     html/HTMLTableCaptionElement.idl \
     html/HTMLTableCellElement.idl \
@@ -373,8 +376,12 @@ IDL_BINDINGS += \
     html/HTMLTextAreaElement.idl \
     html/HTMLTitleElement.idl \
     html/HTMLUListElement.idl \
+    html/HTMLVideoElement.idl \
     html/ImageData.idl \
+    html/MediaError.idl \
     html/TextMetrics.idl \
+    html/TimeRanges.idl \
+    html/VoidCallback.idl \
     inspector/InspectorController.idl \
     page/BarInfo.idl \
     page/Console.idl \
@@ -1379,15 +1386,6 @@ contains(DEFINES, ENABLE_WORKERS=1) {
 
 contains(DEFINES, ENABLE_VIDEO=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO=1
-
-    IDL_BINDINGS += \
-        html/HTMLAudioElement.idl \
-        html/HTMLMediaElement.idl \
-        html/HTMLSourceElement.idl \
-        html/HTMLVideoElement.idl \
-        html/MediaError.idl \
-        html/TimeRanges.idl \
-        html/VoidCallback.idl 
 
     SOURCES += \
         html/HTMLAudioElement.cpp \
