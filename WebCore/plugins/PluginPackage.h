@@ -75,6 +75,7 @@ namespace WebCore {
         void determineQuirks(const String& mimeType);
 
         void determineModuleVersionFromDescription();
+        void initializeBrowserFuncs();
 
         bool m_isLoaded;
         int m_loadCount;
