@@ -4,6 +4,20 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=25988
 
+        Minor cleanup in PluginPackage::hash. Let the compiler
+        figure out the size of the array. Do not have it in the
+        definition and specially not the in the call to
+        StringImpl::hash.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::hash):
+
+2009-05-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25988
+
         Move ::hash, ::equal and ::compareFileVersion from
         the duplicated copies in PluginPackageQt.cpp and
         PluginPackageGtk to PluginPackage.cpp. We need to #ifdef

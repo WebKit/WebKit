@@ -296,12 +296,12 @@ void PluginPackage::initializeBrowserFuncs()
 #if ENABLE(PLUGIN_PACKAGE_SIMPLE_HASH)
 unsigned PluginPackage::hash() const
 {
-    unsigned hashCodes[2] = {
+    unsigned hashCodes[] = {
         m_path.impl()->hash(),
         m_lastModified
     };
 
-    return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 2 * sizeof(unsigned) / sizeof(UChar));
+    return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
 }
 
 bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)
