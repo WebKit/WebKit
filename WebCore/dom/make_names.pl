@@ -95,7 +95,8 @@ sub initializeTagPropertyHash
             # By default, the JSInterfaceName is the same as the interfaceName.
             'JSInterfaceName' => defaultInterfaceName($_[0]),
             'mapToTagName' => '',
-            'wrapperOnlyIfMediaIsAvailable' => 0);
+            'wrapperOnlyIfMediaIsAvailable' => 0,
+            'conditional' => 0);
 }
 
 sub initializeAttrPropertyHash
@@ -312,8 +313,18 @@ sub printConstructors
 
         $uniqueTags{$interfaceName} = '1';
 
+        my $conditional = $tags{$tagName}{"conditional"};
+        if ($conditional) {
+            my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+            print F "#if ${conditionalString}\n\n";
+        }
+
         printConstructorSignature($F, $tagName, $tagConstructorMap{$tagName}, "tagName");
         printConstructorInterior($F, $tagName, $interfaceName, "tagName");
+
+        if ($conditional) {
+            print F "#endif\n\n";
+        }
     }
 
     # Mapped tag name uses a special wrapper to keep their prefix and namespaceURI while using the mapped localname.
@@ -334,10 +345,21 @@ sub printFunctionInits
     my %tagConstructorMap = %$tagConstructorMap;
 
     for my $tagName (sort keys %tagConstructorMap) {
+
+        my $conditional = $tags{$tagName}{"conditional"};
+        if ($conditional) {
+            my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+            print F "#if ${conditionalString}\n";
+        }
+
         if ($tags{$tagName}{'mapToTagName'}) {
             print F "    addTag(${tagName}Tag, $tags{$tagName}{'mapToTagName'}To${tagName}Constructor);\n";
         } else {
             print F "    addTag(${tagName}Tag, $tagConstructorMap{$tagName}Constructor);\n";
+        }
+
+        if ($conditional) {
+            print F "#endif\n\n";
         }
     }
 }
@@ -846,6 +868,12 @@ sub printWrapperFunctions
         next if defined($tagsSeen{$JSInterfaceName}) || usesDefaultJSWrapper($tagName);
         $tagsSeen{$JSInterfaceName} = 1;
 
+        my $conditional = $tags{$tagName}{"conditional"};
+        if ($conditional) {
+            my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+            print F "#if ${conditionalString}\n\n";
+        }
+
         # Hack for the media tags
         if ($tags{$tagName}{"wrapperOnlyIfMediaIsAvailable"}) {
             print F <<END
@@ -867,6 +895,9 @@ static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, PassRefPtr<$para
 
 END
 ;
+        }
+        if ($conditional) {
+            print F "#endif\n\n";
         }
     }
 }
@@ -920,8 +951,18 @@ END
         # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
         next if usesDefaultJSWrapper($tag, \%tags);
 
+        my $conditional = $tags{$tag}{"conditional"};
+        if ($conditional) {
+            my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+            print F "#if ${conditionalString}\n";
+        }
+
         my $ucTag = $tags{$tag}{"JSInterfaceName"};
         print F "       map.set(${tag}Tag.localName().impl(), create${ucTag}Wrapper);\n";
+
+        if ($conditional) {
+            print F "#endif\n";
+        }
     }
 
     print F <<END

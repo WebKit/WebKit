@@ -8,9 +8,7 @@ acronym interfaceName=HTMLElement
 address interfaceName=HTMLElement
 applet
 area
-#if ENABLE_VIDEO
-audio wrapperOnlyIfMediaIsAvailable
-#endif
+audio wrapperOnlyIfMediaIsAvailable,conditional=VIDEO
 b interfaceName=HTMLElement
 base
 basefont interfaceName=HTMLBaseFontElement
@@ -92,9 +90,7 @@ samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser
 select constructorNeedsFormElement
 small interfaceName=HTMLElement
-#if ENABLE_VIDEO
-source wrapperOnlyIfMediaIsAvailable
-#endif
+source wrapperOnlyIfMediaIsAvailable,conditional=VIDEO
 span interfaceName=HTMLElement
 strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
@@ -114,8 +110,6 @@ tt interfaceName=HTMLElement
 u interfaceName=HTMLElement
 ul interfaceName=HTMLUListElement
 var interfaceName=HTMLElement
-#if ENABLE_VIDEO
-video wrapperOnlyIfMediaIsAvailable
-#endif
+video wrapperOnlyIfMediaIsAvailable,conditional=VIDEO
 wbr interfaceName=HTMLElement
 xmp interfaceName=HTMLPreElement
