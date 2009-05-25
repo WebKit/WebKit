@@ -1,3 +1,12 @@
+2009-05-25  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Maciej Stachowiak.
+
+        The functions written in assembly need to have a leading
+        underscore on Windows too.
+
+        * jit/JITStubs.cpp:
+
 2009-05-24  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix for experimental PGO Windows target.
