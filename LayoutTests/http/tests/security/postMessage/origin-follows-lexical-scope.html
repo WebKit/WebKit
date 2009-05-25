@@ -13,8 +13,10 @@ function listener(e) {
 
     log(msg);
 
-    if (e.data.match(/data="ready"/))
+    if (e.data.match(/ready/)) {
+        log("ready");
         frames[0].go();
+    }
 
     if (e.data.match(/data="done"/) && window.layoutTestController)
         layoutTestController.notifyDone();
