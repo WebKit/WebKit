@@ -1,3 +1,18 @@
+2009-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - WebCore side of <rdar://problem/6914001>.
+
+        Add a new m_allowPopupsFromPlugin flag.
+        
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::processingUserGesture):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::setAllowPopupsFromPlugin):
+        (WebCore::ScriptController::allowPopupsFromPlugin):
+
 2009-05-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

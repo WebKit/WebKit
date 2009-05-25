@@ -118,6 +118,7 @@
 #endif
 
 #if USE(PLUGIN_HOST_PROCESS)
+#import "NetscapePluginHostManager.h"
 #import "WebHostedNetscapePluginView.h"
 #endif
 
@@ -640,6 +641,12 @@ Frame* WebFrameLoaderClient::dispatchCreatePage()
                                                 createWebViewWithRequest:nil
                                                           windowFeatures:features];
     [features release];
+    
+#if USE(PLUGIN_HOST_PROCESS)
+    if (newWebView)
+        WebKit::NetscapePluginHostManager::shared().didCreateWindow();
+#endif
+        
     return core([newWebView mainFrame]);
 }
 

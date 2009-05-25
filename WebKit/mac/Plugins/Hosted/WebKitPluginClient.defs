@@ -120,7 +120,8 @@ simpleroutine PCEvaluate(clientPort :mach_port_t;
                        pluginID :uint32_t;
                        requestID :uint32_t;
                        objectID :uint32_t;
-                       script :data_t);
+                       script :data_t;
+                       allowPopups :boolean_t);
 
 simpleroutine PCInvoke(clientPort :mach_port_t;
                      pluginID :uint32_t;

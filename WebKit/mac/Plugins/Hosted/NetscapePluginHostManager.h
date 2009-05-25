@@ -49,6 +49,8 @@ public:
 
     static void createPropertyListFile(WebNetscapePluginPackage *);
     
+    void didCreateWindow();
+    
 private:
     NetscapePluginHostProxy* hostForPackage(WebNetscapePluginPackage *);
 

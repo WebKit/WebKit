@@ -72,24 +72,24 @@ namespace WebKit {
 
 class NetscapePluginInstanceProxy::PluginRequest {
 public:
-    PluginRequest(uint32_t requestID, NSURLRequest *request, NSString *frameName, bool didStartFromUserGesture)
+    PluginRequest(uint32_t requestID, NSURLRequest *request, NSString *frameName, bool allowPopups)
         : m_requestID(requestID)
         , m_request(request)
         , m_frameName(frameName)
-        , m_didStartFromUserGesture(didStartFromUserGesture)
+        , m_allowPopups(allowPopups)
     {
     }
     
     uint32_t requestID() const { return m_requestID; }
     NSURLRequest *request() const { return m_request.get(); }
     NSString *frameName() const { return m_frameName.get(); }
-    bool didStartFromUserGesture() const { return m_didStartFromUserGesture; }
+    bool allowPopups() const { return m_allowPopups; }
     
 private:
     uint32_t m_requestID;
     RetainPtr<NSURLRequest *> m_request;
     RetainPtr<NSString *> m_frameName;
-    bool m_didStartFromUserGesture;
+    bool m_allowPopups;
 };
 
 static uint32_t pluginIDCounter;
@@ -462,7 +462,7 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
         [request setHTTPBody:httpBody];
     }
     
-    return loadRequest(request, target, flags & CurrentEventIsUserGesture, streamID);
+    return loadRequest(request, target, flags & AllowPopups, streamID);
 }
 
 void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)
@@ -513,7 +513,7 @@ void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginReques
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     ASSERT(JSString);
     
-    NSString *result = [[m_pluginView webFrame] _stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:pluginRequest->didStartFromUserGesture()];
+    NSString *result = [[m_pluginView webFrame] _stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:pluginRequest->allowPopups()];
     
     // Don't continue if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.
     if (!m_pluginHostProxy)
@@ -553,7 +553,7 @@ void NetscapePluginInstanceProxy::requestTimerFired(Timer<NetscapePluginInstance
     delete request;
 }
     
-NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const char* cTarget, bool currentEventIsUserGesture, uint32_t& requestID)
+NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const char* cTarget, bool allowPopups, uint32_t& requestID)
 {
     NSURL *URL = [request URL];
 
@@ -601,7 +601,7 @@ NPError NetscapePluginInstanceProxy::loadRequest(NSURLRequest *request, const ch
             return NPERR_INVALID_PARAM;
         }
 
-        PluginRequest* pluginRequest = new PluginRequest(requestID, request, target, currentEventIsUserGesture);
+        PluginRequest* pluginRequest = new PluginRequest(requestID, request, target, allowPopups);
         m_pluginRequests.append(pluginRequest);
         m_requestTimer.startOneShot(0);
     } else {
@@ -675,7 +675,7 @@ void NetscapePluginInstanceProxy::releaseObject(uint32_t objectID)
     m_objects.remove(objectID);
 }
  
-bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& script, data_t& resultData, mach_msg_type_number_t& resultLength)
+bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& script, data_t& resultData, mach_msg_type_number_t& resultLength, bool allowPopups)
 {
     resultData = 0;
     resultLength = 0;
@@ -692,10 +692,15 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     ProtectedPtr<JSGlobalObject> globalObject = frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
 
+    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
+    frame->script()->setAllowPopupsFromPlugin(allowPopups);
+    
     globalObject->globalData()->timeoutChecker.start();
     Completion completion = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(script));
     globalObject->globalData()->timeoutChecker.stop();
     ComplType type = completion.complType();
+
+    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);
     
     JSValue result;
     if (type == Normal)

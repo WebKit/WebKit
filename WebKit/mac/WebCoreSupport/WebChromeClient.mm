@@ -69,6 +69,10 @@
 #import <WebCore/GraphicsLayer.h>
 #endif
 
+#if USE(PLUGIN_HOST_PROCESS)
+#import "NetscapePluginHostManager.h"
+#endif
+
 @interface NSView (WebNSViewDetails)
 - (NSView *)_findLastViewInKeyViewLoop;
 @end
@@ -225,6 +229,11 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& reques
     } else {
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), URLRequest);
     }
+
+#if USE(PLUGIN_HOST_PROCESS)
+    if (newWebView)
+        WebKit::NetscapePluginHostManager::shared().didCreateWindow();
+#endif
     
     return core(newWebView);
 }

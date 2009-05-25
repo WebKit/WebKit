@@ -290,6 +290,22 @@ void NetscapePluginHostManager::createPropertyListFile(WebNetscapePluginPackage 
     }
 }
     
+void NetscapePluginHostManager::didCreateWindow()
+{
+    // See if any of our hosts are in full-screen mode.
+    PluginHostMap::iterator end = m_pluginHosts.end();
+    for (PluginHostMap::iterator it = m_pluginHosts.begin(); it != end; ++it) {
+        NetscapePluginHostProxy* hostProxy = it->second;
+        
+        if (!hostProxy->isMenuBarVisible()) {
+            // Make ourselves the front process.
+            ProcessSerialNumber psn;
+            GetCurrentProcess(&psn);
+            SetFrontProcess(&psn);
+            return;
+        }
+    }
+}
 
 } // namespace WebKit
 

@@ -39,7 +39,7 @@ enum LoadURLFlags {
     IsPost = 1 << 0,
     PostDataIsFile = 1 << 1, 
     AllowHeadersInPostData = 1 << 2,
-    CurrentEventIsUserGesture = 1 << 3,
+    AllowPopups = 1 << 3,
 };
  
 enum InvokeType {

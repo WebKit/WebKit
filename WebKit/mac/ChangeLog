@@ -2,6 +2,50 @@
 
         Reviewed by Sam Weinig.
 
+        - WebKit side of <rdar://problem/6914001>.
+
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::didCreateWindow):
+        Iterate over all plug-in hosts. If one is in full-screen mode, make sure to activate the
+        WebKit app instead.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        (WebKit::NetscapePluginHostProxy::isMenuBarVisible):
+        Add getter.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCEvaluate):
+        Add allowPopups flag.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::PluginRequest):
+        (WebKit::NetscapePluginInstanceProxy::PluginRequest::allowPopups):
+        (WebKit::NetscapePluginInstanceProxy::loadURL):
+        (WebKit::NetscapePluginInstanceProxy::evaluateJavaScript):
+        (WebKit::NetscapePluginInstanceProxy::loadRequest):
+        (WebKit::NetscapePluginInstanceProxy::evaluate):
+        Use "allowPopups" instead of "userGesture".
+        
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        Add allowPopups argument to Evaluate.
+        
+        * Plugins/Hosted/WebKitPluginHostTypes.h:
+        Use "allowPopups" instead of "userGesture".
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+        Call didCreateWindow here.
+        
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchCreatePage):
+        Ditto.
+
+2009-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         - Fix <rdar://problem/6915849>.
         
         Release the placeholder window after -[NSApplication runModalForWindow] returns.
