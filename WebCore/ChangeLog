@@ -5,7 +5,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=26004
 
         The origin for postMessage should follow lexical scope, not dynamic
-        scope.  Yes, this is a super-obscure conner case.
+        scope.  Yes, this is a super-obscure corner case.
 
         Test: http/tests/security/postMessage/origin-follows-lexical-scope.html
 
