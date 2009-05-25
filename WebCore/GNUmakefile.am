@@ -158,6 +158,7 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLAnchorElement.idl \
 	WebCore/html/HTMLAppletElement.idl \
 	WebCore/html/HTMLAreaElement.idl \
+	WebCore/html/HTMLAudioElement.idl \
 	WebCore/html/HTMLBRElement.idl \
 	WebCore/html/HTMLBaseElement.idl \
 	WebCore/html/HTMLBaseFontElement.idl \
@@ -191,6 +192,8 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLLinkElement.idl \
 	WebCore/html/HTMLMapElement.idl \
 	WebCore/html/HTMLMarqueeElement.idl \
+	WebCore/html/HTMLMediaElement.idl \
+	WebCore/html/MediaError.idl \
 	WebCore/html/HTMLMenuElement.idl \
 	WebCore/html/HTMLMetaElement.idl \
 	WebCore/html/HTMLModElement.idl \
@@ -205,6 +208,7 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLQuoteElement.idl \
 	WebCore/html/HTMLScriptElement.idl \
 	WebCore/html/HTMLSelectElement.idl \
+	WebCore/html/HTMLSourceElement.idl \
 	WebCore/html/HTMLStyleElement.idl \
 	WebCore/html/HTMLTableCaptionElement.idl \
 	WebCore/html/HTMLTableCellElement.idl \
@@ -215,8 +219,10 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLTextAreaElement.idl \
 	WebCore/html/HTMLTitleElement.idl \
 	WebCore/html/HTMLUListElement.idl \
+	WebCore/html/HTMLVideoElement.idl \
 	WebCore/html/ImageData.idl \
 	WebCore/html/TextMetrics.idl \
+	WebCore/html/VoidCallback.idl \
 	WebCore/inspector/JavaScriptCallFrame.idl \
 	WebCore/inspector/InspectorController.idl \
 	WebCore/page/BarInfo.idl \
@@ -2104,13 +2110,7 @@ webcore_cppflags += -DGST_DISABLE_DEPRECATED
 endif # END ENABLE_DEBUG
 
 IDL_BINDINGS += \
-	WebCore/html/HTMLAudioElement.idl \
-	WebCore/html/HTMLMediaElement.idl \
-	WebCore/html/HTMLSourceElement.idl \
-	WebCore/html/HTMLVideoElement.idl \
-	WebCore/html/MediaError.idl \
-	WebCore/html/TimeRanges.idl \
-	WebCore/html/VoidCallback.idl
+	WebCore/html/TimeRanges.idl
 
 webcore_sources += \
 	WebCore/bindings/js/JSAudioConstructor.cpp \

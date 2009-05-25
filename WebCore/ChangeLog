@@ -1,5 +1,12 @@
 2009-05-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Fix the Gtk build when video is disabled.
+
+        * GNUmakefile.am: Always generate and compile the IDL files for the media
+        elements. They contain proper feature #ifdefs.
+
+2009-05-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Fix the Qt build when video is disabled.
 
         * WebCore.pro: Always generate the IDL files for the media elements. They
