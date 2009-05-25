@@ -4,6 +4,28 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=25988
 
+        Move ::hash, ::equal and ::compareFileVersion from
+        the duplicated copies in PluginPackageQt.cpp and
+        PluginPackageGtk to PluginPackage.cpp. We need to #ifdef
+        this for the PluginPackageWin version. Use the new style
+        ENABLE() for this feature/policy and enable it in the Gtk+
+        and Qt buildsystem.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::hash):
+        (WebCore::PluginPackage::equal):
+        (WebCore::PluginPackage::compareFileVersion):
+        * plugins/gtk/PluginPackageGtk.cpp:
+        * plugins/qt/PluginPackageQt.cpp:
+
+2009-05-24  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25988
+
         So far the initialization of the browserfuncs struct
         is done in PluginPackageQt, PluginPackageGtk and
         PluginPackageWin there is no need for this duplication.

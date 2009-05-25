@@ -293,4 +293,30 @@ void PluginPackage::initializeBrowserFuncs()
     m_browserFuncs.construct = _NPN_Construct;
 }
 
+#if ENABLE(PLUGIN_PACKAGE_SIMPLE_HASH)
+unsigned PluginPackage::hash() const
+{
+    unsigned hashCodes[2] = {
+        m_path.impl()->hash(),
+        m_lastModified
+    };
+
+    return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), 2 * sizeof(unsigned) / sizeof(UChar));
+}
+
+bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)
+{
+    return a.m_description == b.m_description;
+}
+
+int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersion) const
+{
+    // return -1, 0, or 1 if plug-in version is less than, equal to, or greater than
+    // the passed version
+    if (m_moduleVersion != compareVersion)
+        return m_moduleVersion > compareVersion ? 1 : -1;
+    return 0;
+}
+#endif
+
 }
