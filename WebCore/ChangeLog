@@ -1,3 +1,19 @@
+2009-05-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26004
+
+        The origin for postMessage should follow lexical scope, not dynamic
+        scope.  Yes, this is a super-obscure conner case.
+
+        Test: http/tests/security/postMessage/origin-follows-lexical-scope.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::postMessage):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-05-24  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Mark Rowe.

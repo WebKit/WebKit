@@ -260,7 +260,7 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
     INC_STATS("DOM.DOMWindow.postMessage()");
     DOMWindow* window = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, args.Holder());
 
-    DOMWindow* source = V8Proxy::retrieveFrameForEnteredContext()->domWindow();
+    DOMWindow* source = V8Proxy::retrieveFrameForCallingContext()->domWindow();
     ASSERT(source->frame());
 
     String uri = source->frame()->loader()->url().string();
@@ -269,24 +269,25 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
 
     String message = toWebCoreString(args[0]);
     MessagePort* port = 0;
-    String domain;
+    String targetOrigin;
 
     // This function has variable arguments and can either be:
-    //   postMessage(message, port, domain);
+    //   postMessage(message, port, targetOrigin);
     // or
-    //   postMessage(message, domain);
+    //   postMessage(message, targetOrigin);
     if (args.Length() > 2) {
         if (V8Proxy::IsWrapperOfType(args[1], V8ClassIndex::MESSAGEPORT))
             port = V8Proxy::ToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args[1]);
-        domain = valueToStringWithNullOrUndefinedCheck(args[2]);
-    } else
-        domain = valueToStringWithNullOrUndefinedCheck(args[1]);
+        targetOrigin = valueToStringWithNullOrUndefinedCheck(args[2]);
+    } else {
+        targetOrigin = valueToStringWithNullOrUndefinedCheck(args[1]);
+    }
 
     if (tryCatch.HasCaught())
         return v8::Undefined();
 
     ExceptionCode ec = 0;
-    window->postMessage(message, port, domain, source, ec);
+    window->postMessage(message, port, targetOrigin, source, ec);
     if (ec)
         V8Proxy::SetDOMException(ec);
 

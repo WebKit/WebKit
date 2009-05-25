@@ -1,3 +1,15 @@
+2009-05-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26004
+
+        Test that the origin for postMessage follows the lexical scope.
+
+        * http/tests/security/postMessage/origin-follows-lexical-scope-expected.txt: Added.
+        * http/tests/security/postMessage/origin-follows-lexical-scope.html: Added.
+        * http/tests/security/postMessage/resources/middle-frame-for-lexical.html: Added.
+
 2009-05-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha and Xan Lopez.
