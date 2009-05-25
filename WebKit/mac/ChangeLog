@@ -1,3 +1,15 @@
+2009-05-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - Fix <rdar://problem/6915849>.
+        
+        Release the placeholder window after -[NSApplication runModalForWindow] returns.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::beginModal):
+        (WebKit::NetscapePluginHostProxy::endModal):
+
 2009-05-24  Dan Bernstein  <mitz@apple.com>
 
         - revert an accidental change from r43964.

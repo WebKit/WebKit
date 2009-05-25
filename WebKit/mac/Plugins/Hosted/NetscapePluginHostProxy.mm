@@ -222,6 +222,9 @@ void NetscapePluginHostProxy::beginModal()
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
     
     [NSApp runModalForWindow:m_placeholderWindow.get()];
+    
+    [m_placeholderWindow.get() orderOut:nil];
+    m_placeholderWindow = 0;
 }
     
 void NetscapePluginHostProxy::endModal()
@@ -235,8 +238,6 @@ void NetscapePluginHostProxy::endModal()
     CFRunLoopRemoveSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSModalPanelRunLoopMode);
     
     [NSApp stopModal];
-    [m_placeholderWindow.get() orderOut:nil];
-    m_placeholderWindow = 0;
     
     // Make ourselves the front process.
     ProcessSerialNumber psn;
