@@ -504,6 +504,12 @@ bool allowsAccessFromFrame(ExecState* exec, Frame* frame, String& message)
     return window && window->allowsAccessFrom(exec, message);
 }
 
+bool shouldAllowNavigation(ExecState* exec, Frame* frame)
+{
+    Frame* lexicalFrame = toLexicalFrame(exec);
+    return lexicalFrame && lexicalFrame->loader()->shouldAllowNavigation(frame);
+}
+
 void printErrorMessageForFrame(Frame* frame, const String& message)
 {
     if (!frame)
@@ -511,6 +517,27 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
     if (JSDOMWindow* window = toJSDOMWindow(frame))
         window->printErrorMessage(message);
 }
+
+Frame* toLexicalFrame(ExecState* exec)
+{
+    return asJSDOMWindow(exec->lexicalGlobalObject())->impl()->frame();
+}
+
+bool processingUserGesture(ExecState* exec)
+{
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    return frame && frame->script()->processingUserGesture();
+}
+
+KURL completeURL(ExecState* exec, const String& relativeURL)
+{
+    // For histoical reasons, we need to complete the URL using the dynamic frame.
+    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    if (!frame)
+        return KURL();
+    return frame->loader()->completeURL(relativeURL);
+}
+
 
 JSValue objectToStringFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {

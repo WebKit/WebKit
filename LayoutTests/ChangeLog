@@ -1,3 +1,21 @@
+2009-05-25  Adam Barth  <abarth@webkit.og>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26006
+
+        Test our use of dynamicGlobalObject and lexicalGlobalObject for
+        window.location.
+
+        * http/tests/security/frameNavigation/context-for-location-assign-expected.txt: Added.
+        * http/tests/security/frameNavigation/context-for-location-assign.html: Added.
+        * http/tests/security/frameNavigation/context-for-location-expected.txt: Added.
+        * http/tests/security/frameNavigation/context-for-location-href-expected.txt: Added.
+        * http/tests/security/frameNavigation/context-for-location-href.html: Added.
+        * http/tests/security/frameNavigation/context-for-location.html: Added.
+        * http/tests/security/frameNavigation/resources/middle-frame-for-location.html: Added.
+        * http/tests/security/frameNavigation/resources/target-for-location.html: Added.
+
 2009-05-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

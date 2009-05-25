@@ -37,6 +37,7 @@
 #include "V8Proxy.h"
 
 #include <wtf/Assertions.h>
+#include "Frame.h"
 
 namespace WebCore {
 
@@ -69,6 +70,37 @@ void removeHiddenDependency(v8::Local<v8::Object> object, v8::Local<v8::Value> v
 
     // We should only get here if we try to remove an event listener that was never added.
     ASSERT_NOT_REACHED();
+}
+
+bool processingUserGesture()
+{
+    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
+    return frame && frame->script()->processingUserGesture();
+}
+
+bool shouldAllowNavigation(Frame* frame)
+{
+    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
+    return callingFrame && callingFrame->loader()->shouldAllowNavigation(frame);
+}
+
+KURL completeURL(const String& relativeURL)
+{
+    // For histoical reasons, we need to complete the URL using the dynamic frame.
+    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!frame)
+        return KURL();
+    return frame->loader()->completeURL(relativeURL);
+}
+
+void navigateIfAllowed(Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
+{
+    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
+    if (!callingFrame)
+        return;
+
+    if (!protocolIsJavaScript(url) || ScriptController::isSafeScript(frame))
+        frame->loader()->scheduleLocationChange(url.string(), callingFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture());
 }
 
 } // namespace WebCore

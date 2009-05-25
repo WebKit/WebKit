@@ -35,6 +35,7 @@
 #include "V8CustomBinding.h"
 #include "V8CustomEventListener.h"
 #include "V8Location.h"
+#include "V8Utilities.h"
 #include "V8Proxy.h"
 
 #include "PlatformString.h"
@@ -51,26 +52,11 @@ namespace WebCore {
 // This class is not very JS-engine specific.  If we can move a couple of
 // methods to the scriptController, we should be able to unify the code
 // between JSC and V8:
-//    retrieveActiveFrame()   - in JSC, this needs an ExecState.
+//    toCallingFrame()   - in JSC, this needs an ExecState.
 //    isSafeScript()
-// Since JSC and V8 have different mechanisms for getting at the ActiveFrame,
+// Since JSC and V8 have different mechanisms for getting at the calling frame,
 // we're just making all these custom for now.  The functionality is simple
 // and mirrors JSLocationCustom.cpp.
-
-static void navigateIfAllowed(Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
-{
-    if (url.isEmpty())
-        return;
-
-    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!activeFrame)
-        return;
-
-    if (!url.protocolIs("javascript") || ScriptController::isSafeScript(frame)) {
-        bool userGesture = activeFrame->script()->processingUserGesture();
-        frame->loader()->scheduleLocationChange(url.string(), activeFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, userGesture);
-    }
-}
 
 ACCESSOR_SETTER(LocationHash)
 {
@@ -137,20 +123,19 @@ ACCESSOR_SETTER(LocationHref)
     INC_STATS("DOM.Location.href._set");
     v8::Handle<v8::Object> holder = info.Holder();
     Location* imp = V8Proxy::ToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
-    String href = toWebCoreString(value);
 
     Frame* frame = imp->frame();
     if (!frame)
         return;
 
-    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!activeFrame)
+    if (!shouldAllowNavigation(frame))
         return;
 
-    if (!activeFrame->loader()->shouldAllowNavigation(frame))
+    KURL url = completeURL(toWebCoreString(value));
+    if (url.isNull())
         return;
 
-    navigateIfAllowed(frame, activeFrame->loader()->completeURL(href), false, false);
+    navigateIfAllowed(frame, url, false, false);
 }
 
 ACCESSOR_SETTER(LocationPathname)
@@ -285,18 +270,11 @@ CALLBACK_FUNC_DECL(LocationReload)
     Location* imp = V8Proxy::ToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
 
     Frame* frame = imp->frame();
-    if (!frame)
+    if (!frame || !ScriptController::isSafeScript(frame))
         return v8::Undefined();
 
-    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!activeFrame)
-        return v8::Undefined();
-
-    if (!ScriptController::isSafeScript(frame))
-        return v8::Undefined();
-
-    bool userGesture = activeFrame->script()->processingUserGesture();
-    frame->loader()->scheduleRefresh(userGesture);
+    if (!protocolIsJavaScript(frame->loader()->url()))
+        frame->loader()->scheduleRefresh(processingUserGesture());
     return v8::Undefined();
 }
 
@@ -305,20 +283,19 @@ CALLBACK_FUNC_DECL(LocationReplace)
     INC_STATS("DOM.Location.replace");
     v8::Handle<v8::Value> holder = args.Holder();
     Location* imp = V8Proxy::ToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
-    String url = toWebCoreString(args[0]);
 
     Frame* frame = imp->frame();
     if (!frame)
         return v8::Undefined();
 
-    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!activeFrame)
+    if (!shouldAllowNavigation(frame))
         return v8::Undefined();
 
-    if (!activeFrame->loader()->shouldAllowNavigation(frame))
+    KURL url = completeURL(toWebCoreString(args[0]));
+    if (url.isNull())
         return v8::Undefined();
 
-    navigateIfAllowed(frame, activeFrame->loader()->completeURL(url), true, true);
+    navigateIfAllowed(frame, url, true, true);
     return v8::Undefined();
 }
 
@@ -327,20 +304,19 @@ CALLBACK_FUNC_DECL(LocationAssign)
     INC_STATS("DOM.Location.assign");
     v8::Handle<v8::Value> holder = args.Holder();
     Location* imp = V8Proxy::ToNativeObject<Location>(V8ClassIndex::LOCATION, holder);
-    String url = toWebCoreString(args[0]);
 
     Frame* frame = imp->frame();
     if (!frame)
         return v8::Undefined();
 
-    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!activeFrame)
+    if (!shouldAllowNavigation(frame))
         return v8::Undefined();
 
-    if (!activeFrame->loader()->shouldAllowNavigation(frame))
+    KURL url = completeURL(toWebCoreString(args[0]));
+    if (url.isNull())
         return v8::Undefined();
 
-    navigateIfAllowed(frame, activeFrame->loader()->completeURL(url), false, false);
+    navigateIfAllowed(frame, url, false, false);
     return v8::Undefined();
 }
 

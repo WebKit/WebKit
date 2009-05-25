@@ -179,15 +179,15 @@ JSValue JSDOMWindow::location(ExecState* exec) const
 
 void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 {
-    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!activeFrame)
+    Frame* lexicalFrame = toLexicalFrame(exec);
+    if (!lexicalFrame)
         return;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // To avoid breaking old widgets, make "var location =" in a top-level frame create
     // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
-    if (Settings* settings = activeFrame->settings()) {
-        if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
+    if (Settings* settings = lexicalFrame->settings()) {
+        if (settings->usesDashboardBackwardCompatibilityMode() && !lexicalFrame->tree()->parent()) {
             if (allowsAccessFrom(exec))
                 putDirect(Identifier(exec, "location"), value);
             return;
@@ -195,13 +195,19 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     }
 #endif
 
-    if (!activeFrame->loader()->shouldAllowNavigation(impl()->frame()))
+    Frame* frame = impl()->frame();
+    ASSERT(frame);
+
+    if (!shouldAllowNavigation(exec, frame))
         return;
-    String dstUrl = activeFrame->loader()->completeURL(value.toString(exec)).string();
-    if (!protocolIsJavaScript(dstUrl) || allowsAccessFrom(exec)) {
-        bool userGesture = activeFrame->script()->processingUserGesture();
+
+    KURL url = completeURL(exec, value.toString(exec));
+    if (url.isNull())
+        return;
+
+    if (!protocolIsJavaScript(url) || allowsAccessFrom(exec)) {
         // We want a new history item if this JS was called via a user gesture
-        impl()->frame()->loader()->scheduleLocationChange(dstUrl, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
+        frame->loader()->scheduleLocationChange(url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, processingUserGesture(exec));
     }
 }
 

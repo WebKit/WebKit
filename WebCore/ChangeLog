@@ -1,3 +1,50 @@
+2009-05-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26006
+
+        Sort out our use of dynamicGlobalObject and lexicalGlobalObject for
+        window.location.  The correct use appears to be as follows:
+
+        1) Use dynamicGlobalObject to find the user gesture.
+        2) Use dynamicGlobalObject to complete URLs.
+        3) Use lexicalGlobalObject to find the referrer.
+        4) Use lexicalGlobalObject for the frame navigation checks.
+        5) Use lexicalGlobalObject for the XSS checks.
+
+        Tests: http/tests/security/frameNavigation/context-for-location-assign.html
+               http/tests/security/frameNavigation/context-for-location-href.html
+               http/tests/security/frameNavigation/context-for-location.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::shouldAllowNavigation):
+        (WebCore::toLexicalFrame):
+        (WebCore::processingUserGesture):
+        (WebCore::completeURL):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::navigateIfAllowed):
+        (WebCore::JSLocation::setHref):
+        (WebCore::JSLocation::replace):
+        (WebCore::JSLocation::reload):
+        (WebCore::JSLocation::assign):
+        (WebCore::JSLocation::toString):
+        (WebCore::JSLocationPrototype::customPut):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::processingUserGesture):
+        (WebCore::shouldAllowNavigation):
+        (WebCore::completeURL):
+        (WebCore::navigateIfAllowed):
+        * bindings/v8/V8Utilities.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetLocation):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-05-25  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Maciej Stachowiak.

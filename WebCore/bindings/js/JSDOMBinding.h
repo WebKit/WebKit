@@ -183,8 +183,13 @@ namespace WebCore {
     // because we do not want current property values involved at all.
     bool allowsAccessFromFrame(JSC::ExecState*, Frame*);
     bool allowsAccessFromFrame(JSC::ExecState*, Frame*, String& message);
+    bool shouldAllowNavigation(JSC::ExecState*, Frame*);
     void printErrorMessageForFrame(Frame*, const String& message);
     JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, const JSC::Identifier& propertyName, const JSC::PropertySlot&);
+
+    Frame* toLexicalFrame(JSC::ExecState*);
+    bool processingUserGesture(JSC::ExecState*);
+    KURL completeURL(JSC::ExecState*, const String& relativeURL);
 
 } // namespace WebCore
 

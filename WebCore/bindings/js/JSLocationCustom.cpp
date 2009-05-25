@@ -145,11 +145,12 @@ void JSLocation::defineGetter(ExecState* exec, const Identifier& propertyName, J
 
 static void navigateIfAllowed(ExecState* exec, Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
 {
-    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!protocolIsJavaScript(url) || allowsAccessFromFrame(exec, frame)) {
-        bool userGesture = activeFrame->script()->processingUserGesture();
-        frame->loader()->scheduleLocationChange(url.string(), activeFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, userGesture);
-    }
+    Frame* lexicalFrame = toLexicalFrame(exec);
+    if (!lexicalFrame)
+        return;
+
+    if (!protocolIsJavaScript(url) || allowsAccessFromFrame(exec, frame))
+        frame->loader()->scheduleLocationChange(url.string(), lexicalFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, processingUserGesture(exec));
 }
 
 void JSLocation::setHref(ExecState* exec, JSValue value)
@@ -157,13 +158,13 @@ void JSLocation::setHref(ExecState* exec, JSValue value)
     Frame* frame = impl()->frame();
     ASSERT(frame);
 
-    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!activeFrame)
-        return;
-    if (!activeFrame->loader()->shouldAllowNavigation(frame))
+    if (!shouldAllowNavigation(exec, frame))
         return;
 
-    KURL url = activeFrame->loader()->completeURL(value.toString(exec));
+    KURL url = completeURL(exec, value.toString(exec));
+    if (url.isNull())
+        return;
+
     navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
 }
 
@@ -261,30 +262,25 @@ JSValue JSLocation::replace(ExecState* exec, const ArgList& args)
     if (!frame)
         return jsUndefined();
 
-    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!activeFrame) 
-        return jsUndefined();
-    if (!activeFrame->loader()->shouldAllowNavigation(frame))
+    if (!shouldAllowNavigation(exec, frame))
         return jsUndefined();
 
-    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(0).toString(exec)), true, true);
+    KURL url = completeURL(exec, args.at(0).toString(exec));
+    if (url.isNull())
+        return jsUndefined();
+
+    navigateIfAllowed(exec, frame, url, true, true);
     return jsUndefined();
 }
 
 JSValue JSLocation::reload(ExecState* exec, const ArgList&)
 {
     Frame* frame = impl()->frame();
-    if (!frame)
+    if (!frame || !allowsAccessFromFrame(exec, frame))
         return jsUndefined();
 
-    JSDOMWindow* window = toJSDOMWindow(frame);
-    if (!window->allowsAccessFrom(exec))
-        return jsUndefined();
-
-    if (!protocolIsJavaScript(frame->loader()->url()) || (window && window->allowsAccessFrom(exec))) {
-        bool userGesture = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame()->script()->processingUserGesture();
-        frame->loader()->scheduleRefresh(userGesture);
-    }
+    if (!protocolIsJavaScript(frame->loader()->url()))
+        frame->loader()->scheduleRefresh(processingUserGesture(exec));
     return jsUndefined();
 }
 
@@ -294,23 +290,22 @@ JSValue JSLocation::assign(ExecState* exec, const ArgList& args)
     if (!frame)
         return jsUndefined();
 
-    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
-    if (!activeFrame)
+    if (!shouldAllowNavigation(exec, frame))
         return jsUndefined();
-    if (!activeFrame->loader()->shouldAllowNavigation(frame))
+
+    KURL url = completeURL(exec, args.at(0).toString(exec));
+    if (url.isNull())
         return jsUndefined();
 
     // We want a new history item if this JS was called via a user gesture
-    navigateIfAllowed(exec, frame, activeFrame->loader()->completeURL(args.at(0).toString(exec)), !frame->script()->anyPageIsProcessingUserGesture(), false);
+    navigateIfAllowed(exec, frame, url, !frame->script()->anyPageIsProcessingUserGesture(), false);
     return jsUndefined();
 }
 
 JSValue JSLocation::toString(ExecState* exec, const ArgList&)
 {
     Frame* frame = impl()->frame();
-    if (!frame)
-        return jsUndefined();
-    if (!allowsAccessFromFrame(exec, frame))
+    if (!frame || !allowsAccessFromFrame(exec, frame))
         return jsUndefined();
 
     return jsString(exec, impl()->toString());
@@ -318,9 +313,7 @@ JSValue JSLocation::toString(ExecState* exec, const ArgList&)
 
 bool JSLocationPrototype::customPut(ExecState* exec, const Identifier& propertyName, JSValue, PutPropertySlot&)
 {
-    if (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf)
-        return true;
-    return false;
+    return (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf);
 }
 
 void JSLocationPrototype::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
