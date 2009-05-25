@@ -1,3 +1,15 @@
+2009-05-25  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Maciej Stachowiak.
+
+        With Windows compilers older then MSVC 2005, the functions
+        gmtime_s and localtime_s don't exist. The gmtime and localtime are
+        on Windows always thread safe. So use them in the cases where
+        gmtime_s and localtime_s are not present.
+
+        * loader/FTPDirectoryDocument.cpp:
+        * loader/FTPDirectoryParser.cpp:
+
 2009-05-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

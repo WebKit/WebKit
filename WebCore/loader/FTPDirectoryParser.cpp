@@ -50,7 +50,11 @@ static struct tm *gmtimeQt(const time_t *const timep, struct tm *result)
 
 #define gmtime_r(x, y) gmtimeQt(x, y)
 #elif PLATFORM(WIN_OS) && !defined(gmtime_r)
+#if defined(_MSC_VER) && (_MSC_VER >= 1400) 
 #define gmtime_r(x, y) gmtime_s((y), (x))
+#else /* !_MSC_VER */ 
+#define gmtime_r(x,y) (gmtime(x)?(*(y)=*gmtime(x),(y)):0)
+#endif
 #endif
 
 FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& result)
