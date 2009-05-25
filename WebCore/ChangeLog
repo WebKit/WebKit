@@ -1,3 +1,15 @@
+2009-05-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
+        Follow up on r44120. PluginPackageMac.cpp is used
+        by Qt on Mac and contained a copy of the m_browserFunc
+        assignments and ::equal, ::hash and ::compareFileVersion.
+        Change it to use the ones from PluginPackage.cpp as well.
+
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::PluginPackage::load):
+
 2009-05-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Tor Arne Vestbø.
