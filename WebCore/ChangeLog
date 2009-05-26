@@ -1,3 +1,14 @@
+2009-05-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23649
+        Update V8 bindings to match SQLTransactionErrorCallback change.
+
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp:
+        (WebCore::V8CustomSQLTransactionErrorCallback::handleEvent): Changed to return void.
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.h: Ditto.
+
 2009-05-26  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
