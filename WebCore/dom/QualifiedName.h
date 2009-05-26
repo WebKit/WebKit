@@ -49,8 +49,9 @@ public:
         QualifiedNameImpl(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
             : m_prefix(prefix)
             , m_localName(localName)
-            , m_namespace(namespaceURI.isEmpty() ? nullAtom : namespaceURI)
+            , m_namespace(namespaceURI)
         {
+            ASSERT(!namespaceURI.isEmpty() || namespaceURI.isNull());
         }        
     };
 

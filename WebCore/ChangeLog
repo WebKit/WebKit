@@ -1,3 +1,13 @@
+2009-05-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6918671> REGRESSION (r41700): Crashes in debug DumpRenderTree at RefCountedBase::ref().
+
+        * dom/QualifiedName.cpp: (WebCore::QualifiedName::QualifiedName):
+        * dom/QualifiedName.h: (WebCore::QualifiedName::QualifiedNameImpl::QualifiedNameImpl):
+        Adjust empty namespace before QNameComponentsTranslator black magic, not after.
+
 2009-05-25  David Levin  <levin@chromium.org>
 
         Reviewed by Maciej Stachowiak and Oliver Hunt.
