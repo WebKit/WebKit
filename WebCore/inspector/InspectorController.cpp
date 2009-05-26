@@ -534,18 +534,26 @@ void InspectorController::scriptObjectReady()
     ScriptObject webInspectorObj;
     if (!ScriptGlobalObject::get(m_scriptState, "WebInspector", webInspectorObj))
         return;
-    m_frontend.set(new InspectorFrontend(m_scriptState, webInspectorObj));
+    setFrontendProxyObject(m_scriptState, webInspectorObj);
 
     // Make sure our window is visible now that the page loaded
     showWindow();
+}
+
+void InspectorController::setFrontendProxyObject(ScriptState* scriptState, ScriptObject webInspectorObj)
+{
+    m_frontend.set(new InspectorFrontend(scriptState, webInspectorObj));
 }
 
 void InspectorController::show()
 {
     if (!enabled())
         return;
-
+    
     if (!m_page) {
+        if (m_frontend.get())
+            return;  // We are using custom frontend - no need to create page.
+
         m_page = m_client->createPage();
         if (!m_page)
             return;
@@ -604,8 +612,8 @@ void InspectorController::closeWindow()
 
 void InspectorController::populateScriptObjects()
 {
-    ASSERT(m_scriptState);
-    if (!m_scriptState)
+    ASSERT(m_frontend);
+    if (!m_frontend.get())
         return;
 
     ResourcesMap::iterator resourcesEnd = m_resources.end();

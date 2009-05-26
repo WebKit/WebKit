@@ -32,6 +32,7 @@
 
 #include "JSONObject.h"
 #include "ScriptState.h"
+#include <wtf/PassOwnPtr.h>
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 namespace JSC {
@@ -45,6 +46,7 @@ namespace WebCore {
     class ConsoleMessage;
     class InspectorResource;
     class Node;
+    class ScriptFunctionCall;
     class ScriptString;
 
     class InspectorFrontend {
@@ -88,6 +90,8 @@ namespace WebCore {
 #endif
 
     private:
+        PassOwnPtr<ScriptFunctionCall> newFunctionCall(const String& functionName);
+        void callSimpleFunction(const String& functionName);
         ScriptState* m_scriptState;
         ScriptObject m_webInspector;
     };

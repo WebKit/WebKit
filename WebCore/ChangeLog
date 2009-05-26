@@ -1,3 +1,51 @@
+2009-05-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Serialize calls to WebInspector. This is the first step where method 
+        calls are being serialized to arrays (not yet JSON stringified ones) and 
+        are being dispatched on the client. This change also allows client to override 
+        InspectorFrontend, so that the serialized calls can be made on a given object
+        instead of in-process WebInspector global. This will be the main control flow
+        when InspectorController is decoupled from the in-process frontend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26010
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::overrideFrontendObject):
+        (WebCore::InspectorController::show):
+        (WebCore::InspectorController::populateScriptObjects):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::addMessageToConsole):
+        (WebCore::InspectorFrontend::addResource):
+        (WebCore::InspectorFrontend::updateResource):
+        (WebCore::InspectorFrontend::removeResource):
+        (WebCore::InspectorFrontend::updateFocusedNode):
+        (WebCore::InspectorFrontend::setAttachedWindow):
+        (WebCore::InspectorFrontend::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorFrontend::showPanel):
+        (WebCore::InspectorFrontend::populateInterface):
+        (WebCore::InspectorFrontend::reset):
+        (WebCore::InspectorFrontend::debuggerWasEnabled):
+        (WebCore::InspectorFrontend::debuggerWasDisabled):
+        (WebCore::InspectorFrontend::profilerWasEnabled):
+        (WebCore::InspectorFrontend::profilerWasDisabled):
+        (WebCore::InspectorFrontend::parsedScriptSource):
+        (WebCore::InspectorFrontend::failedToParseScriptSource):
+        (WebCore::InspectorFrontend::addProfile):
+        (WebCore::InspectorFrontend::setRecordingProfile):
+        (WebCore::InspectorFrontend::pausedScript):
+        (WebCore::InspectorFrontend::resumedScript):
+        (WebCore::InspectorFrontend::addDatabase):
+        (WebCore::InspectorFrontend::addDOMStorage):
+        (WebCore::InspectorFrontend::newFunctionCall):
+        (WebCore::InspectorFrontend::callSimpleFunction):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/inspector.js:
+        (WebInspector.dispatch):
+
 2009-05-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

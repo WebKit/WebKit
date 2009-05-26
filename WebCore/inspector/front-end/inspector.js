@@ -389,6 +389,12 @@ var windowLoaded = function()
 
 window.addEventListener("load", windowLoaded, false);
 
+WebInspector.dispatch = function() {
+    var methodName = arguments[0];
+    var parameters = Array.prototype.slice.call(arguments, 1);
+    WebInspector[methodName].apply(this, parameters);
+}
+
 WebInspector.windowUnload = function(event)
 {
     InspectorController.windowUnloading();
