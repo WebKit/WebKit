@@ -23,6 +23,7 @@
 #define WTF_HashTable_h
 
 #include "FastMalloc.h"
+#include "FastAllocBase.h"
 #include "HashTraits.h"
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>
@@ -280,7 +281,7 @@ namespace WTF {
     };
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    class HashTable {
+    class HashTable : public FastAllocBase {
     public:
         typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
         typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;

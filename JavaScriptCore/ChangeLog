@@ -1,3 +1,13 @@
+2009-05-26  Zoltan Horvath  <horvath.zoltan.6@stud.u-szeged.hu>
+
+        Reviewed by Maciej Stachowiak.
+
+        Inherite HashTable from FastAllocBase, because it has been instantiated by
+        'new' in JavaScriptCore/runtime/JSGlobalData.cpp.
+
+        * wtf/HashTable.h:
+        * wtf/FastAllocBase.h: Remove 'wtf' path from TypeTraits.h to allow use outside of wtf.
+
 2009-05-25  David Levin  <levin@chromium.org>
 
         Reviewed by Maciej Stachowiak and Oliver Hunt.
