@@ -1,3 +1,19 @@
+2009-05-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6922371> REGRESSION (r43973): Can't type first
+          character with an umlaut, circumflex, or accent in Mail or in a wiki
+
+        * WebView/WebHTMLView.mm:
+        (isTextInput): Moved here.
+        (isInPasswordField): Moved here.
+        (-[WebHTMLView becomeFirstResponder]): Update the exposeInputContext
+        flag and let NSApplication update the input manager with the new input
+        context if necessary.
+        (-[WebHTMLView _updateSelectionForInputManager]): Changed to use the
+        NSApp global instead of +[NSApplication sharedApplication].
+
 2009-05-26  Mark Rowe  <mrowe@apple.com>
 
         Fix the Tiger build.

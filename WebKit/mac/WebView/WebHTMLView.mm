@@ -3626,6 +3626,18 @@ noPromisedData:
     return YES;
 }
 
+// Utility function to make sure we don't return anything through the NSTextInput
+// API when an editable region is not currently focused.
+static BOOL isTextInput(Frame* coreFrame)
+{
+    return coreFrame && !coreFrame->selection()->isNone() && coreFrame->selection()->isContentEditable();
+}
+
+static BOOL isInPasswordField(Frame* coreFrame)
+{
+    return coreFrame && coreFrame->selection()->isInPasswordField();
+}
+
 - (BOOL)becomeFirstResponder
 {
     NSSelectionDirection direction = NSDirectSelection;
@@ -3638,7 +3650,13 @@ noPromisedData:
     Frame* frame = core([self _frame]);
     if (!frame)
         return YES;
-    
+
+    BOOL exposeInputContext = isTextInput(frame) && !isInPasswordField(frame);
+    if (exposeInputContext != _private->exposeInputContext) {
+        _private->exposeInputContext = exposeInputContext;
+        [NSApp updateWindows];
+    }
+
     frame->editor()->setStartNewKillRingSequence(true);
 
     if (direction == NSDirectSelection)
@@ -5483,18 +5501,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     return validAttributes;
 }
 
-// Utility function to make sure we don't return anything through the NSTextInput
-// API when an editable region is not currently focused.
-static BOOL isTextInput(Frame* coreFrame)
-{
-    return coreFrame && !coreFrame->selection()->isNone() && coreFrame->selection()->isContentEditable();
-}
-
-static BOOL isInPasswordField(Frame* coreFrame)
-{
-    return coreFrame && coreFrame->selection()->isInPasswordField();
-}
-
 - (NSTextInputContext *)inputContext
 {
     return _private->exposeInputContext ? [super inputContext] : nil;
@@ -5855,7 +5861,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (exposeInputContext != _private->exposeInputContext) {
         // Let AppKit cache a potentially input context.
         _private->exposeInputContext = exposeInputContext;
-        [[NSApplication sharedApplication] updateWindows];
+        [NSApp updateWindows];
     }
 
     if (!coreFrame->editor()->hasComposition())
