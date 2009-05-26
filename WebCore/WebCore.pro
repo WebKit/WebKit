@@ -1702,7 +1702,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGZoomEvent.cpp \
         rendering/PointerEventsHitRules.cpp \
         svg/FilterBuilder.cpp \
-        svg/FilterEffect.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/SVGImageLoader.cpp \
         svg/ColorDistance.cpp \
@@ -1840,6 +1839,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         platform/graphics/filters/FEColorMatrix.cpp \
         platform/graphics/filters/FEComponentTransfer.cpp \
         platform/graphics/filters/FEComposite.cpp \
+        platform/graphics/filters/FilterEffect.cpp \
         platform/graphics/filters/SourceAlpha.cpp \
         platform/graphics/filters/SourceGraphic.cpp \
         svg/graphics/filters/SVGFEConvolveMatrix.cpp \

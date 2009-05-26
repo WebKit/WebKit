@@ -1,3 +1,33 @@
+2009-05-26  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Move FilterEffect to platform/graphics/filters. First step to get an
+        SVG independent filter system.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/FilterEffect.cpp: Added.
+        (WebCore::FilterEffect::FilterEffect):
+        (WebCore::FilterEffect::~FilterEffect):
+        (WebCore::FilterEffect::externalRepresentation):
+        * platform/graphics/filters/FilterEffect.h: Added.
+        (WebCore::FilterEffect::xBoundingBoxMode):
+        (WebCore::FilterEffect::setXBoundingBoxMode):
+        (WebCore::FilterEffect::yBoundingBoxMode):
+        (WebCore::FilterEffect::setYBoundingBoxMode):
+        (WebCore::FilterEffect::widthBoundingBoxMode):
+        (WebCore::FilterEffect::setWidthBoundingBoxMode):
+        (WebCore::FilterEffect::heightBoundingBoxMode):
+        (WebCore::FilterEffect::setHeightBoundingBoxMode):
+        (WebCore::FilterEffect::subRegion):
+        (WebCore::FilterEffect::setSubRegion):
+        (WebCore::FilterEffect::resultImage):
+        (WebCore::FilterEffect::setEffectBuffer):
+        * svg/FilterEffect.cpp: Removed.
+        * svg/FilterEffect.h: Removed.
+
 2009-05-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Maciej Stachowiak.

@@ -1444,6 +1444,7 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FEColorMatrix.h \
 	WebCore/platform/graphics/filters/FEComponentTransfer.h \
 	WebCore/platform/graphics/filters/FEComposite.h \
+	WebCore/platform/graphics/filters/FilterEffect.h \
 	WebCore/platform/graphics/filters/SourceAlpha.h \
 	WebCore/platform/graphics/filters/SourceGraphic.h \
 	WebCore/platform/graphics/transforms/IdentityTransformOperation.h \
@@ -2543,6 +2544,7 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FEColorMatrix.cpp \
 	WebCore/platform/graphics/filters/FEComponentTransfer.cpp \
 	WebCore/platform/graphics/filters/FEComposite.cpp \
+	WebCore/platform/graphics/filters/FilterEffect.cpp \
 	WebCore/platform/graphics/filters/SourceAlpha.cpp \
 	WebCore/platform/graphics/filters/SourceGraphic.cpp \
 	WebCore/rendering/PointerEventsHitRules.cpp \
@@ -2600,8 +2602,6 @@ webcore_sources += \
 	WebCore/svg/Filter.h \
 	WebCore/svg/FilterBuilder.h \
 	WebCore/svg/FilterBuilder.cpp \
-	WebCore/svg/FilterEffect.cpp \
-	WebCore/svg/FilterEffect.h \
 	WebCore/svg/GradientAttributes.h \
 	WebCore/svg/LinearGradientAttributes.h \
 	WebCore/svg/PatternAttributes.h \
