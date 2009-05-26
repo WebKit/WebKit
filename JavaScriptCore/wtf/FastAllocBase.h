@@ -79,9 +79,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "FastMalloc.h"
+#include "TypeTraits.h"
 #include <wtf/Assertions.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/TypeTraits.h>
 
 namespace WTF {
 

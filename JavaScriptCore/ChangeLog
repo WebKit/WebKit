@@ -1,3 +1,9 @@
+2009-05-26  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix to correct r44161.
+
+        * wtf/FastAllocBase.h:
+
 2009-05-26  Zoltan Horvath  <horvath.zoltan.6@stud.u-szeged.hu>
 
         Reviewed by Maciej Stachowiak.
