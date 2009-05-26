@@ -46,19 +46,19 @@ JSCustomSQLTransactionErrorCallback::JSCustomSQLTransactionErrorCallback(JSObjec
 {
 }
     
-bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
+void JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
 {
     ASSERT(m_callback);
     ASSERT(m_frame);
-        
+
     if (!m_frame->script()->isEnabled())
-        return true;
-        
+        return;
+
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
-        
+
     JSC::JSLock lock(false);
-        
+
     JSValue function = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;
     CallType callType = function.getCallData(callData);
@@ -66,29 +66,26 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
         callType = m_callback->getCallData(callData);
         if (callType == CallTypeNone) {
             // FIXME: Should an exception be thrown here?
-            return true;
+            return;
         }
         function = m_callback;
     }
 
     RefPtr<JSCustomSQLTransactionErrorCallback> protect(this);
-        
+
     MarkedArgumentBuffer args;
     args.append(toJS(exec, error));
 
-    JSValue result;
     globalObject->globalData()->timeoutChecker.start();
-    result = call(exec, function, callType, callData, m_callback, args);
+    call(exec, function, callType, callData, m_callback, args);
     globalObject->globalData()->timeoutChecker.stop();
-        
+
     if (exec->hadException())
         reportCurrentException(exec);
-        
+
     Document::updateStyleForAllDocuments();
-    
-    return result.toBoolean(exec);
 }
-    
+
 }
 
 #endif // ENABLE(DATABASE)

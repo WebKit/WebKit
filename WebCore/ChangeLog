@@ -1,3 +1,25 @@
+2009-05-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23649
+        Update SQLTransactionErrorCallback to not return a value per changes in
+        HTML5 spec.
+
+        Test: storage/transaction-error-callback.html
+
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        (WebCore::SQLTransaction::handleTransactionError):
+        (WebCore::SQLTransaction::deliverTransactionErrorCallback):
+        (WebCore::SQLTransaction::cleanupAfterTransactionErrorCallback):
+        * storage/SQLTransaction.h:
+        * storage/SQLTransactionErrorCallback.h:
+
 2009-05-26  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

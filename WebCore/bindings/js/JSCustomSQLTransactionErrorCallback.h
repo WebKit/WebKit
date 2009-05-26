@@ -50,7 +50,7 @@ class JSCustomSQLTransactionErrorCallback : public SQLTransactionErrorCallback {
 public:
     static PassRefPtr<JSCustomSQLTransactionErrorCallback> create(JSC::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomSQLTransactionErrorCallback(callback, frame)); }
     
-    virtual bool handleEvent(SQLError*);
+    virtual void handleEvent(SQLError*);
 
 private:
     JSCustomSQLTransactionErrorCallback(JSC::JSObject* callback, Frame*);

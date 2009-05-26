@@ -119,7 +119,6 @@ private:
     RefPtr<SQLTransactionErrorCallback> m_errorCallback;
     RefPtr<SQLError> m_transactionError;
     bool m_shouldRetryCurrentStatement;
-    bool m_shouldCommitAfterErrorCallback;
     bool m_modifiedDatabase;
     
     Mutex m_statementMutex;
