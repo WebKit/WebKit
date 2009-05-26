@@ -1,3 +1,12 @@
+2009-05-26  Adam Barth  <abarth@webkit.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=26011
+
+        Unreviewed change to disable flaky test as requested by Sam Weinig.
+
+        * http/tests/security/postMessage/origin-follows-lexical-scope-expected.txt: Removed.
+        * http/tests/security/postMessage/origin-follows-lexical-scope.html: Removed.
+
 2009-05-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Maciej Stachowiak.

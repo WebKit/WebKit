@@ -1,7 +1,0 @@
-window.location.href = http://127.0.0.1:8000/security/postMessage/origin-follows-lexical-scope.html
-document.domain = 0.0.1
-waiting...
-Received message: data="ready" origin="http://127.0.0.1:8080"
-ready
-Received message: data="Received message: data="done" origin="http://127.0.0.1:8080"" origin="http://127.0.0.1:8080"
-
