@@ -48,7 +48,6 @@
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
     [invocation setTarget:target];
-    [invocation retainArguments];
     [invocation performSelectorOnMainThread:@selector(_webkit_invokeAndHandleException:) withObject:self waitUntilDone:YES];
     if (exception) {
         id exceptionToThrow = [exception autorelease];
