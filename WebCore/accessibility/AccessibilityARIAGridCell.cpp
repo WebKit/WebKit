@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "AccessibilityAriaGridCell.h"
+#include "AccessibilityARIAGridCell.h"
 
 #include "AccessibilityObject.h"
 #include "AccessibilityTableRow.h"
@@ -36,21 +36,21 @@ using namespace std;
 
 namespace WebCore {
     
-AccessibilityAriaGridCell::AccessibilityAriaGridCell(RenderObject* renderer)
+AccessibilityARIAGridCell::AccessibilityARIAGridCell(RenderObject* renderer)
     : AccessibilityTableCell(renderer)
 {
 }
 
-AccessibilityAriaGridCell::~AccessibilityAriaGridCell()
+AccessibilityARIAGridCell::~AccessibilityARIAGridCell()
 {
 }
 
-PassRefPtr<AccessibilityAriaGridCell> AccessibilityAriaGridCell::create(RenderObject* renderer)
+PassRefPtr<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityAriaGridCell(renderer));
+    return adoptRef(new AccessibilityARIAGridCell(renderer));
 }
 
-AccessibilityObject* AccessibilityAriaGridCell::parentTable() const
+AccessibilityObject* AccessibilityARIAGridCell::parentTable() const
 {
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent || !parent->isTableRow())
@@ -63,7 +63,7 @@ AccessibilityObject* AccessibilityAriaGridCell::parentTable() const
     return parent;
 }
     
-void AccessibilityAriaGridCell::rowIndexRange(pair<int, int>& rowRange)
+void AccessibilityARIAGridCell::rowIndexRange(pair<int, int>& rowRange)
 {
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent || !parent->isTableRow())
@@ -74,7 +74,7 @@ void AccessibilityAriaGridCell::rowIndexRange(pair<int, int>& rowRange)
     rowRange.second = 1;    
 }
 
-void AccessibilityAriaGridCell::columnIndexRange(pair<int, int>& columnRange)
+void AccessibilityARIAGridCell::columnIndexRange(pair<int, int>& columnRange)
 {
     AccessibilityObject* parent = parentObjectUnignored();
     if (!parent || !parent->isTableRow())

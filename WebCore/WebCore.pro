@@ -415,9 +415,9 @@ SOURCES += \
     accessibility/AccessibilityListBox.cpp \    
     accessibility/AccessibilityListBoxOption.cpp \    
     accessibility/AccessibilityRenderObject.cpp \    
-    accessibility/AccessibilityAriaGrid.cpp \    
-    accessibility/AccessibilityAriaGridCell.cpp \    
-    accessibility/AccessibilityAriaGridRow.cpp \    
+    accessibility/AccessibilityARIAGrid.cpp \    
+    accessibility/AccessibilityARIAGridCell.cpp \    
+    accessibility/AccessibilityARIAGridRow.cpp \    
     accessibility/AccessibilityTable.cpp \    
     accessibility/AccessibilityTableCell.cpp \    
     accessibility/AccessibilityTableColumn.cpp \    

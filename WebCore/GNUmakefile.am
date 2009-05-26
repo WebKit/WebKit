@@ -258,12 +258,12 @@ webcore_sources += \
 	WebCore/WebCorePrefix.h \
         WebCore/accessibility/AXObjectCache.cpp \
 	WebCore/accessibility/AXObjectCache.h \
-	WebCore/accessibility/AccessibilityAriaGrid.cpp \
-	WebCore/accessibility/AccessibilityAriaGrid.h \
-	WebCore/accessibility/AccessibilityAriaGridCell.cpp \
-	WebCore/accessibility/AccessibilityAriaGridCell.h \
-	WebCore/accessibility/AccessibilityAriaGridRow.cpp \
-	WebCore/accessibility/AccessibilityAriaGridRow.h \
+	WebCore/accessibility/AccessibilityARIAGrid.cpp \
+	WebCore/accessibility/AccessibilityARIAGrid.h \
+	WebCore/accessibility/AccessibilityARIAGridCell.cpp \
+	WebCore/accessibility/AccessibilityARIAGridCell.h \
+	WebCore/accessibility/AccessibilityARIAGridRow.cpp \
+	WebCore/accessibility/AccessibilityARIAGridRow.h \
 	WebCore/accessibility/AccessibilityImageMapLink.cpp \
 	WebCore/accessibility/AccessibilityImageMapLink.h \
 	WebCore/accessibility/AccessibilityList.cpp \

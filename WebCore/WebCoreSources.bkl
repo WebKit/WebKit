@@ -33,9 +33,9 @@ This file contains the list of files needed to build WebCore.
 
 <makefile>
     <set append="1" var="WEBCORE_SOURCES_ACCESSIBILITY">
-        accessibility/AccessibilityAriaGrid.cpp
-        accessibility/AccessibilityAriaGridCell.cpp
-        accessibility/AccessibilityAriaGridRow.cpp
+        accessibility/AccessibilityARIAGrid.cpp
+        accessibility/AccessibilityARIAGridCell.cpp
+        accessibility/AccessibilityARIAGridRow.cpp
         accessibility/AccessibilityImageMapLink.cpp
         accessibility/AccessibilityObject.cpp
         accessibility/AccessibilityList.cpp

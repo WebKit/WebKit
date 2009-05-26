@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "AccessibilityAriaGrid.h"
+#include "AccessibilityARIAGrid.h"
 
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
@@ -40,7 +40,7 @@ using namespace std;
 
 namespace WebCore {
 
-AccessibilityAriaGrid::AccessibilityAriaGrid(RenderObject* renderer)
+AccessibilityARIAGrid::AccessibilityARIAGrid(RenderObject* renderer)
     : AccessibilityTable(renderer)
 {
 #if ACCESSIBILITY_TABLES
@@ -50,16 +50,16 @@ AccessibilityAriaGrid::AccessibilityAriaGrid(RenderObject* renderer)
 #endif
 }
 
-AccessibilityAriaGrid::~AccessibilityAriaGrid()
+AccessibilityARIAGrid::~AccessibilityARIAGrid()
 {
 }
 
-PassRefPtr<AccessibilityAriaGrid> AccessibilityAriaGrid::create(RenderObject* renderer)
+PassRefPtr<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityAriaGrid(renderer));
+    return adoptRef(new AccessibilityARIAGrid(renderer));
 }
 
-void AccessibilityAriaGrid::addChild(AccessibilityObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
+void AccessibilityARIAGrid::addChild(AccessibilityObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
 {
     if (!child || !child->isTableRow() || child->ariaRoleAttribute() != RowRole)
         return;
@@ -79,7 +79,7 @@ void AccessibilityAriaGrid::addChild(AccessibilityObject* child, HashSet<Accessi
     appendedRows.add(row);
 }
     
-void AccessibilityAriaGrid::addChildren()
+void AccessibilityARIAGrid::addChildren()
 {
     ASSERT(!m_haveChildren); 
     
@@ -126,7 +126,7 @@ void AccessibilityAriaGrid::addChildren()
         m_children.append(headerContainerObject);
 }
     
-AccessibilityTableCell* AccessibilityAriaGrid::cellForColumnAndRow(unsigned column, unsigned row)
+AccessibilityTableCell* AccessibilityARIAGrid::cellForColumnAndRow(unsigned column, unsigned row)
 {
     if (!m_renderer)
         return 0;

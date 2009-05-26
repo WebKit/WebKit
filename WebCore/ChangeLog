@@ -1,3 +1,48 @@
+2009-05-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 25801: change AccessibilityAria -> AccessibilityARIA
+        https://bugs.webkit.org/show_bug.cgi?id=25801
+
+        * GNUmakefile.am:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        * accessibility/AccessibilityARIAGrid.cpp: Copied from WebCore/accessibility/AccessibilityAriaGrid.cpp.
+        (WebCore::AccessibilityARIAGrid::AccessibilityARIAGrid):
+        (WebCore::AccessibilityARIAGrid::~AccessibilityARIAGrid):
+        (WebCore::AccessibilityARIAGrid::create):
+        (WebCore::AccessibilityARIAGrid::addChild):
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        (WebCore::AccessibilityARIAGrid::cellForColumnAndRow):
+        * accessibility/AccessibilityARIAGrid.h: Copied from WebCore/accessibility/AccessibilityAriaGrid.h.
+        * accessibility/AccessibilityARIAGridCell.cpp: Copied from WebCore/accessibility/AccessibilityAriaGridCell.cpp.
+        (WebCore::AccessibilityARIAGridCell::AccessibilityARIAGridCell):
+        (WebCore::AccessibilityARIAGridCell::~AccessibilityARIAGridCell):
+        (WebCore::AccessibilityARIAGridCell::create):
+        (WebCore::AccessibilityARIAGridCell::parentTable):
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange):
+        (WebCore::AccessibilityARIAGridCell::columnIndexRange):
+        * accessibility/AccessibilityARIAGridCell.h: Copied from WebCore/accessibility/AccessibilityAriaGridCell.h.
+        * accessibility/AccessibilityARIAGridRow.cpp: Copied from WebCore/accessibility/AccessibilityAriaGridRow.cpp.
+        (WebCore::AccessibilityARIAGridRow::AccessibilityARIAGridRow):
+        (WebCore::AccessibilityARIAGridRow::~AccessibilityARIAGridRow):
+        (WebCore::AccessibilityARIAGridRow::create):
+        (WebCore::AccessibilityARIAGridRow::parentTable):
+        (WebCore::AccessibilityARIAGridRow::headerObject):
+        * accessibility/AccessibilityARIAGridRow.h: Copied from WebCore/accessibility/AccessibilityAriaGridRow.h.
+        * accessibility/AccessibilityAriaGrid.cpp: Removed.
+        * accessibility/AccessibilityAriaGrid.h: Removed.
+        * accessibility/AccessibilityAriaGridCell.cpp: Removed.
+        * accessibility/AccessibilityAriaGridCell.h: Removed.
+        * accessibility/AccessibilityAriaGridRow.cpp: Removed.
+        * accessibility/AccessibilityAriaGridRow.h: Removed.
+
 2009-05-26  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.

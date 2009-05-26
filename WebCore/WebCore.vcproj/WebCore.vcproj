@@ -1820,27 +1820,27 @@
 			Name="accessibility"
 			>
 			<File
-				RelativePath="..\accessibility\AccessibilityAriaGrid.cpp"
+				RelativePath="..\accessibility\AccessibilityARIAGrid.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\accessibility\AccessibilityAriaGrid.h"
+				RelativePath="..\accessibility\AccessibilityARIAGrid.h"
 				>
 			</File>
 			<File
-				RelativePath="..\accessibility\AccessibilityAriaGridCell.cpp"
+				RelativePath="..\accessibility\AccessibilityARIAGridCell.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\accessibility\AccessibilityAriaGridCell.h"
+				RelativePath="..\accessibility\AccessibilityARIAGridCell.h"
 				>
 			</File>
 			<File
-				RelativePath="..\accessibility\AccessibilityAriaGridRow.cpp"
+				RelativePath="..\accessibility\AccessibilityARIAGridRow.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\accessibility\AccessibilityAriaGridRow.h"
+				RelativePath="..\accessibility\AccessibilityARIAGridRow.h"
 				>
 			</File>
 			<File

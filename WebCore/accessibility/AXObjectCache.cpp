@@ -29,9 +29,9 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
-#include "AccessibilityAriaGrid.h"
-#include "AccessibilityAriaGridRow.h"
-#include "AccessibilityAriaGridCell.h"
+#include "AccessibilityARIAGrid.h"
+#include "AccessibilityARIAGridRow.h"
+#include "AccessibilityARIAGridCell.h"
 #include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
@@ -105,11 +105,11 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
         
         // aria tables
         else if (nodeIsAriaType(node, "grid"))
-            newObj = AccessibilityAriaGrid::create(renderer);
+            newObj = AccessibilityARIAGrid::create(renderer);
         else if (nodeIsAriaType(node, "row"))
-            newObj = AccessibilityAriaGridRow::create(renderer);
+            newObj = AccessibilityARIAGridRow::create(renderer);
         else if (nodeIsAriaType(node, "gridcell") || nodeIsAriaType(node, "columnheader") || nodeIsAriaType(node, "rowheader"))
-            newObj = AccessibilityAriaGridCell::create(renderer);
+            newObj = AccessibilityARIAGridCell::create(renderer);
 
         // standard tables
         else if (renderer->isTable())

@@ -26,50 +26,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "AccessibilityAriaGridRow.h"
+#ifndef AccessibilityARIAGridRow_h
+#define AccessibilityARIAGridRow_h
 
-#include "AccessibilityObject.h"
-#include "RenderObject.h"
-
-using namespace std;
+#include "AccessibilityTableRow.h"
 
 namespace WebCore {
     
-AccessibilityAriaGridRow::AccessibilityAriaGridRow(RenderObject* renderer)
-    : AccessibilityTableRow(renderer)
-{
-}
-
-AccessibilityAriaGridRow::~AccessibilityAriaGridRow()
-{
-}
-
-PassRefPtr<AccessibilityAriaGridRow> AccessibilityAriaGridRow::create(RenderObject* renderer)
-{
-    return adoptRef(new AccessibilityAriaGridRow(renderer));
-}
-
-AccessibilityObject* AccessibilityAriaGridRow::parentTable() const
-{
-    AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent->isDataTable())
-        return 0;
+class AccessibilityARIAGridRow : public AccessibilityTableRow {
     
-    return parent;
-}
-
-AccessibilityObject* AccessibilityAriaGridRow::headerObject()
-{
-    AccessibilityChildrenVector rowChildren = children();
-    unsigned childrenCount = rowChildren.size();
-    for (unsigned i = 0; i < childrenCount; ++i) {
-        AccessibilityObject* cell = rowChildren[i].get();
-        if (cell->ariaRoleAttribute() == RowHeaderRole)
-            return cell;
-    }
+private:
+    AccessibilityARIAGridRow(RenderObject*);
+public:
+    static PassRefPtr<AccessibilityARIAGridRow> create(RenderObject*);
+    virtual ~AccessibilityARIAGridRow();
     
-    return 0;
-}
+    virtual AccessibilityObject* headerObject();
+    virtual AccessibilityObject* parentTable() const;    
+}; 
+    
+} // namespace WebCore 
 
-} // namespace WebCore
+#endif // AccessibilityARIAGridRow_h

@@ -512,19 +512,19 @@
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
 		29A812260FBB9C1D00510293 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */; };
 		29A812270FBB9C1D00510293 /* AccessibilityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812090FBB9C1D00510293 /* AccessibilityTable.cpp */; };
-		29A812280FBB9C1D00510293 /* AccessibilityAriaGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8120A0FBB9C1D00510293 /* AccessibilityAriaGrid.cpp */; };
+		29A812280FBB9C1D00510293 /* AccessibilityARIAGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8120A0FBB9C1D00510293 /* AccessibilityARIAGrid.cpp */; };
 		29A812290FBB9C1D00510293 /* AccessibilityTableRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8120B0FBB9C1D00510293 /* AccessibilityTableRow.cpp */; };
 		29A8122A0FBB9C1D00510293 /* AccessibilityTableCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8120C0FBB9C1D00510293 /* AccessibilityTableCell.cpp */; };
 		29A8122B0FBB9C1D00510293 /* AccessibilityTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8120D0FBB9C1D00510293 /* AccessibilityTable.h */; };
 		29A8122C0FBB9C1D00510293 /* AccessibilityList.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A8120E0FBB9C1D00510293 /* AccessibilityList.h */; };
-		29A8122D0FBB9C1D00510293 /* AccessibilityAriaGridRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8120F0FBB9C1D00510293 /* AccessibilityAriaGridRow.cpp */; };
-		29A8122E0FBB9C1D00510293 /* AccessibilityAriaGridCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812100FBB9C1D00510293 /* AccessibilityAriaGridCell.h */; };
+		29A8122D0FBB9C1D00510293 /* AccessibilityARIAGridRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A8120F0FBB9C1D00510293 /* AccessibilityARIAGridRow.cpp */; };
+		29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812100FBB9C1D00510293 /* AccessibilityARIAGridCell.h */; };
 		29A8122F0FBB9C1D00510293 /* AccessibilityList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812110FBB9C1D00510293 /* AccessibilityList.cpp */; };
-		29A812300FBB9C1D00510293 /* AccessibilityAriaGridCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812120FBB9C1D00510293 /* AccessibilityAriaGridCell.cpp */; };
+		29A812300FBB9C1D00510293 /* AccessibilityARIAGridCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812120FBB9C1D00510293 /* AccessibilityARIAGridCell.cpp */; };
 		29A812310FBB9C1D00510293 /* AccessibilityTableRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812130FBB9C1D00510293 /* AccessibilityTableRow.h */; };
 		29A812320FBB9C1D00510293 /* AccessibilityTableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812140FBB9C1D00510293 /* AccessibilityTableCell.h */; };
-		29A812330FBB9C1D00510293 /* AccessibilityAriaGridRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812150FBB9C1D00510293 /* AccessibilityAriaGridRow.h */; };
-		29A812340FBB9C1D00510293 /* AccessibilityAriaGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812160FBB9C1D00510293 /* AccessibilityAriaGrid.h */; };
+		29A812330FBB9C1D00510293 /* AccessibilityARIAGridRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812150FBB9C1D00510293 /* AccessibilityARIAGridRow.h */; };
+		29A812340FBB9C1D00510293 /* AccessibilityARIAGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812160FBB9C1D00510293 /* AccessibilityARIAGrid.h */; };
 		29A812350FBB9C1D00510293 /* AccessibilityTableColumn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812170FBB9C1D00510293 /* AccessibilityTableColumn.cpp */; };
 		29A812360FBB9C1D00510293 /* AccessibilityObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A812180FBB9C1D00510293 /* AccessibilityObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29A812370FBB9C1D00510293 /* AXObjectCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A812190FBB9C1D00510293 /* AXObjectCache.cpp */; };
@@ -5438,19 +5438,19 @@
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
 		29A812080FBB9C1D00510293 /* AccessibilityRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityRenderObject.cpp; sourceTree = "<group>"; };
 		29A812090FBB9C1D00510293 /* AccessibilityTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTable.cpp; sourceTree = "<group>"; };
-		29A8120A0FBB9C1D00510293 /* AccessibilityAriaGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAriaGrid.cpp; sourceTree = "<group>"; };
+		29A8120A0FBB9C1D00510293 /* AccessibilityARIAGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGrid.cpp; sourceTree = "<group>"; };
 		29A8120B0FBB9C1D00510293 /* AccessibilityTableRow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableRow.cpp; sourceTree = "<group>"; };
 		29A8120C0FBB9C1D00510293 /* AccessibilityTableCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableCell.cpp; sourceTree = "<group>"; };
 		29A8120D0FBB9C1D00510293 /* AccessibilityTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTable.h; sourceTree = "<group>"; };
 		29A8120E0FBB9C1D00510293 /* AccessibilityList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityList.h; sourceTree = "<group>"; };
-		29A8120F0FBB9C1D00510293 /* AccessibilityAriaGridRow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAriaGridRow.cpp; sourceTree = "<group>"; };
-		29A812100FBB9C1D00510293 /* AccessibilityAriaGridCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAriaGridCell.h; sourceTree = "<group>"; };
+		29A8120F0FBB9C1D00510293 /* AccessibilityARIAGridRow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGridRow.cpp; sourceTree = "<group>"; };
+		29A812100FBB9C1D00510293 /* AccessibilityARIAGridCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityARIAGridCell.h; sourceTree = "<group>"; };
 		29A812110FBB9C1D00510293 /* AccessibilityList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityList.cpp; sourceTree = "<group>"; };
-		29A812120FBB9C1D00510293 /* AccessibilityAriaGridCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAriaGridCell.cpp; sourceTree = "<group>"; };
+		29A812120FBB9C1D00510293 /* AccessibilityARIAGridCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGridCell.cpp; sourceTree = "<group>"; };
 		29A812130FBB9C1D00510293 /* AccessibilityTableRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTableRow.h; sourceTree = "<group>"; };
 		29A812140FBB9C1D00510293 /* AccessibilityTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTableCell.h; sourceTree = "<group>"; };
-		29A812150FBB9C1D00510293 /* AccessibilityAriaGridRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAriaGridRow.h; sourceTree = "<group>"; };
-		29A812160FBB9C1D00510293 /* AccessibilityAriaGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityAriaGrid.h; sourceTree = "<group>"; };
+		29A812150FBB9C1D00510293 /* AccessibilityARIAGridRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityARIAGridRow.h; sourceTree = "<group>"; };
+		29A812160FBB9C1D00510293 /* AccessibilityARIAGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityARIAGrid.h; sourceTree = "<group>"; };
 		29A812170FBB9C1D00510293 /* AccessibilityTableColumn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableColumn.cpp; sourceTree = "<group>"; };
 		29A812180FBB9C1D00510293 /* AccessibilityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObject.h; sourceTree = "<group>"; };
 		29A812190FBB9C1D00510293 /* AXObjectCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AXObjectCache.cpp; sourceTree = "<group>"; };
@@ -9809,12 +9809,12 @@
 			isa = PBXGroup;
 			children = (
 				29A812050FBB9B5200510293 /* mac */,
-				29A8120A0FBB9C1D00510293 /* AccessibilityAriaGrid.cpp */,
-				29A812160FBB9C1D00510293 /* AccessibilityAriaGrid.h */,
-				29A812120FBB9C1D00510293 /* AccessibilityAriaGridCell.cpp */,
-				29A812100FBB9C1D00510293 /* AccessibilityAriaGridCell.h */,
-				29A8120F0FBB9C1D00510293 /* AccessibilityAriaGridRow.cpp */,
-				29A812150FBB9C1D00510293 /* AccessibilityAriaGridRow.h */,
+				29A8120A0FBB9C1D00510293 /* AccessibilityARIAGrid.cpp */,
+				29A812160FBB9C1D00510293 /* AccessibilityARIAGrid.h */,
+				29A812120FBB9C1D00510293 /* AccessibilityARIAGridCell.cpp */,
+				29A812100FBB9C1D00510293 /* AccessibilityARIAGridCell.h */,
+				29A8120F0FBB9C1D00510293 /* AccessibilityARIAGridRow.cpp */,
+				29A812150FBB9C1D00510293 /* AccessibilityARIAGridRow.h */,
 				29A8121C0FBB9C1D00510293 /* AccessibilityImageMapLink.cpp */,
 				29A8121D0FBB9C1D00510293 /* AccessibilityImageMapLink.h */,
 				29A812110FBB9C1D00510293 /* AccessibilityList.cpp */,
@@ -16953,11 +16953,11 @@
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				29A8122B0FBB9C1D00510293 /* AccessibilityTable.h in Headers */,
 				29A8122C0FBB9C1D00510293 /* AccessibilityList.h in Headers */,
-				29A8122E0FBB9C1D00510293 /* AccessibilityAriaGridCell.h in Headers */,
+				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
 				29A812310FBB9C1D00510293 /* AccessibilityTableRow.h in Headers */,
 				29A812320FBB9C1D00510293 /* AccessibilityTableCell.h in Headers */,
-				29A812330FBB9C1D00510293 /* AccessibilityAriaGridRow.h in Headers */,
-				29A812340FBB9C1D00510293 /* AccessibilityAriaGrid.h in Headers */,
+				29A812330FBB9C1D00510293 /* AccessibilityARIAGridRow.h in Headers */,
+				29A812340FBB9C1D00510293 /* AccessibilityARIAGrid.h in Headers */,
 				29A812360FBB9C1D00510293 /* AccessibilityObject.h in Headers */,
 				29A812380FBB9C1D00510293 /* AXObjectCache.h in Headers */,
 				29A812390FBB9C1D00510293 /* AccessibilityRenderObject.h in Headers */,
@@ -18974,12 +18974,12 @@
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				29A812260FBB9C1D00510293 /* AccessibilityRenderObject.cpp in Sources */,
 				29A812270FBB9C1D00510293 /* AccessibilityTable.cpp in Sources */,
-				29A812280FBB9C1D00510293 /* AccessibilityAriaGrid.cpp in Sources */,
+				29A812280FBB9C1D00510293 /* AccessibilityARIAGrid.cpp in Sources */,
 				29A812290FBB9C1D00510293 /* AccessibilityTableRow.cpp in Sources */,
 				29A8122A0FBB9C1D00510293 /* AccessibilityTableCell.cpp in Sources */,
-				29A8122D0FBB9C1D00510293 /* AccessibilityAriaGridRow.cpp in Sources */,
+				29A8122D0FBB9C1D00510293 /* AccessibilityARIAGridRow.cpp in Sources */,
 				29A8122F0FBB9C1D00510293 /* AccessibilityList.cpp in Sources */,
-				29A812300FBB9C1D00510293 /* AccessibilityAriaGridCell.cpp in Sources */,
+				29A812300FBB9C1D00510293 /* AccessibilityARIAGridCell.cpp in Sources */,
 				29A812350FBB9C1D00510293 /* AccessibilityTableColumn.cpp in Sources */,
 				29A812370FBB9C1D00510293 /* AXObjectCache.cpp in Sources */,
 				29A8123A0FBB9C1D00510293 /* AccessibilityImageMapLink.cpp in Sources */,

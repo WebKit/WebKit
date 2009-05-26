@@ -26,35 +26,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityAriaGrid_h
-#define AccessibilityAriaGrid_h
+#ifndef AccessibilityARIAGridCell_h
+#define AccessibilityARIAGridCell_h
 
-#include "AccessibilityTable.h"
+#include "AccessibilityTableCell.h"
 
 namespace WebCore {
     
-class String;
-class AccessibilityTableCell;
-class AccessibilityTableHeaderContainer;
-
-class AccessibilityAriaGrid : public AccessibilityTable {
+class AccessibilityARIAGridCell : public AccessibilityTableCell {
     
 private:
-    AccessibilityAriaGrid(RenderObject*);
+    AccessibilityARIAGridCell(RenderObject*);
 public:
-    static PassRefPtr<AccessibilityAriaGrid> create(RenderObject*);
-    virtual ~AccessibilityAriaGrid();
+    static PassRefPtr<AccessibilityARIAGridCell> create(RenderObject*);
+    virtual ~AccessibilityARIAGridCell();
     
-    virtual bool isAriaTable() const { return true; }    
+    // fills in the start location and row span of cell
+    virtual void rowIndexRange(pair<int, int>& rowRange);
+    // fills in the start location and column span of cell
+    virtual void columnIndexRange(pair<int, int>& columnRange);
     
-    virtual void addChildren();
+protected:
+    virtual AccessibilityObject* parentTable() const;
+}; 
     
-    virtual AccessibilityTableCell* cellForColumnAndRow(unsigned column, unsigned row);
-
-private:
-    void addChild(AccessibilityObject* object, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
-};
-
 } // namespace WebCore 
 
-#endif // AccessibilityAriaGrid_h
+#endif // AccessibilityARIAGridCell_h
