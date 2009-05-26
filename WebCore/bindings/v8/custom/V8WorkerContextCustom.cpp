@@ -35,7 +35,9 @@
 #include "WorkerContextExecutionProxy.h"
 
 #include "ExceptionCode.h"
+#include "DOMTimer.h"
 #include "NotImplemented.h"
+#include "ScheduledAction.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8Proxy.h"
@@ -95,21 +97,33 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
 {
     WorkerContext* workerContext = V8Proxy::ToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, args.Holder());
 
-    int delay = toInt32(args[1]);
+    int argumentCount = args.Length();
+    if (argumentCount < 1)
+        return v8::Undefined();
 
-    notImplemented();
+    v8::Handle<v8::Value> function = args[0];
+    int32_t timeout = argumentCount >= 2 ? args[1]->Int32Value() : 0;
+    int timerId;
 
-    return v8::Undefined();
-}
+    if (function->IsString()) {
+        WebCore::String stringFunction = ToWebCoreString(function);
+        timerId = DOMTimer::install(workerContext, new ScheduledAction(stringFunction, workerContext->url()), timeout, singleShot);
+    } else if (function->IsFunction()) {
+        size_t paramCount = argumentCount >= 2 ? argumentCount - 2 : 0;
+        v8::Local<v8::Value>* params = 0;
+        if (paramCount > 0) {
+            params = new v8::Local<v8::Value>[paramCount];
+            for (size_t i = 0; i < paramCount; ++i)
+                params[i] = args[i+2];
+        }
+        // ScheduledAction takes ownership of actual params and releases them in its destructor.
+        ScheduledAction* action = new ScheduledAction(v8::Handle<v8::Function>::Cast(function), paramCount, params);
+        delete [] params;
+        timerId = DOMTimer::install(workerContext, action, timeout, singleShot);
+    } else
+        return v8::Undefined();
 
-v8::Handle<v8::Value> ClearTimeoutOrInterval(const v8::Arguments& args)
-{
-    WorkerContext* workerContext = V8Proxy::ToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, args.Holder());
-
-    int timerId = toInt32(args[0]);
-    workerContext->removeTimeout(timerId);
-
-    return v8::Undefined();
+    return v8::Integer::New(timerId);
 }
 
 CALLBACK_FUNC_DECL(WorkerContextImportScripts)
@@ -125,20 +139,9 @@ CALLBACK_FUNC_DECL(WorkerContextSetTimeout)
     return SetTimeoutOrInterval(args, true);
 }
 
-CALLBACK_FUNC_DECL(WorkerContextClearTimeout) {
-    INC_STATS(L"DOM.WorkerContext.clearTimeout()");
-    return ClearTimeoutOrInterval(args);
-}
-
 CALLBACK_FUNC_DECL(WorkerContextSetInterval) {
     INC_STATS(L"DOM.WorkerContext.setInterval()");
     return SetTimeoutOrInterval(args, false);
-}
-
-CALLBACK_FUNC_DECL(WorkerContextClearInterval)
-{
-    INC_STATS(L"DOM.WorkerContext.clearInterval()");
-    return ClearTimeoutOrInterval(args);
 }
 
 CALLBACK_FUNC_DECL(WorkerContextAddEventListener)

@@ -1,3 +1,18 @@
+2009-05-26  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25974
+        Enable timers in Chromuim workers.
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute): Added function which can execute a callback using WorkerContext.
+        * bindings/v8/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction): added url parameter to capture the worker's location.
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::SetTimeoutOrInterval): replaced NotImplemented with code to create ScheduledAction and DOMTimer.
+        Also, removed declarations for clearTimeout/clearInterval callbacks since they are now directly generated from IDL.
+
 2009-05-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

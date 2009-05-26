@@ -39,14 +39,16 @@ namespace WebCore {
 
     class String;
     class ScriptExecutionContext;
+    class V8Proxy;
+    class WorkerContext;
 
     class ScheduledAction {
     public:
         ScheduledAction(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
-        explicit ScheduledAction(const WebCore::String& code)
+        explicit ScheduledAction(const WebCore::String& code, const KURL& url = KURL())
             : m_argc(0)
             , m_argv(0)
-            , m_code(code)
+            , m_code(code, url)
         {
         }
 
@@ -54,6 +56,11 @@ namespace WebCore {
         virtual void execute(ScriptExecutionContext*);
 
     private:
+        void ScheduledAction::execute(V8Proxy*);
+#if ENABLE(WORKERS)
+        void ScheduledAction::execute(WorkerContext*);
+#endif
+
         v8::Persistent<v8::Function> m_function;
         int m_argc;
         v8::Persistent<v8::Value>* m_argv;
