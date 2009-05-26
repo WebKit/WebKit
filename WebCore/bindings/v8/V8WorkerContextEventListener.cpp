@@ -62,7 +62,6 @@ void V8WorkerContextEventListener::handleEvent(Event* event, bool isWindowEvent)
     // See issue 889829.
     RefPtr<V8AbstractEventListener> protect(this);
 
-    v8::Locker locker;
     v8::HandleScope handleScope;
 
     v8::Handle<v8::Context> context = m_proxy->GetContext();
