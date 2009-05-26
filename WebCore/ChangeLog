@@ -1,3 +1,12 @@
+2009-05-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Maciej Stachowiak and Oliver Hunt.
+
+        Added forwarding headers.
+
+        * ForwardingHeaders/wtf/CrossThreadRefCounted.h: Added.
+        * ForwardingHeaders/wtf/OwnFastMallocPtr.h: Added.
+
 2009-05-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

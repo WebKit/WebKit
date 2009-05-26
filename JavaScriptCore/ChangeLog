@@ -1,3 +1,49 @@
+2009-05-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Maciej Stachowiak and Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25126
+        Allow the buffer underlying UString to be shared.
+
+        In order to not grow the underlying size of any structure,
+        there is a union in the Rep string which holds
+         + m_sharedBuffer -- a pointer to the shared ref counted buffer
+           if the class is BaseString and the buffer is being shared OR
+         + m_baseString -- the BaseString if the class is only UString::Rep
+           but not a UString::BaseString
+
+        Ideally, m_sharedBuffer would be a RefPtr, but it cannot be because
+        it is in a union.
+
+        No change in sunspider perf.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/UString.cpp:
+        (JSC::UString::Rep::share):
+        (JSC::UString::Rep::destroy):
+        (JSC::UString::BaseString::sharedBuffer):
+        (JSC::UString::BaseString::setSharedBuffer):
+        (JSC::UString::BaseString::slowIsBufferReadOnly):
+        (JSC::expandCapacity):
+        (JSC::UString::Rep::reserveCapacity):
+        (JSC::UString::expandPreCapacity):
+        (JSC::concatenate):
+        (JSC::UString::append):
+        * runtime/UString.h:
+        (JSC::UString::Rep::Rep):
+        (JSC::UString::Rep::):
+        (JSC::UString::BaseString::isShared):
+        (JSC::UString::BaseString::isBufferReadOnly):
+        (JSC::UString::Rep::baseString):
+        * wtf/CrossThreadRefCounted.h:
+        (WTF::CrossThreadRefCounted::isShared):
+        * wtf/OwnFastMallocPtr.h: Added.
+        (WTF::OwnFastMallocPtr::OwnFastMallocPtr):
+        (WTF::OwnFastMallocPtr::~OwnFastMallocPtr):
+        (WTF::OwnFastMallocPtr::get):
+        (WTF::OwnFastMallocPtr::release):
+
 2009-05-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

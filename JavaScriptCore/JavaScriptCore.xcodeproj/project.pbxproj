@@ -42,6 +42,8 @@
 		0B1F921D0F1753500036468E /* PtrAndFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B1F921B0F17502D0036468E /* PtrAndFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0B330C270F38C62300692DE3 /* TypeTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B330C260F38C62300692DE3 /* TypeTraits.cpp */; };
 		0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B4D7E620F319AC800AD7E58 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0BDFFAE00FC6192900D69EF4 /* CrossThreadRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140B7D1D0DC69AF7009C42B8 /* JSActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */; };
 		140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141211310A48794D00480255 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -455,6 +457,8 @@
 		0B1F921B0F17502D0036468E /* PtrAndFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrAndFlags.h; sourceTree = "<group>"; };
 		0B330C260F38C62300692DE3 /* TypeTraits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeTraits.cpp; sourceTree = "<group>"; };
 		0B4D7E620F319AC800AD7E58 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
+		0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnFastMallocPtr.h; sourceTree = "<group>"; };
+		0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadRefCounted.h; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
 		141211020A48780900480255 /* minidom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minidom.c; path = tests/minidom.c; sourceTree = "<group>"; };
 		1412110D0A48788700480255 /* minidom.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = minidom.js; path = tests/minidom.js; sourceTree = "<group>"; };
@@ -1161,6 +1165,7 @@
 				E1A596370DE3E1C300C17E37 /* AVLTree.h */,
 				A7A1F7AA0F252B3C00E184E2 /* ByteArray.cpp */,
 				A7A1F7AB0F252B3C00E184E2 /* ByteArray.h */,
+				0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */,
 				180B9AEF0F16C569009BDBC5 /* CurrentTime.cpp */,
 				180B9AF00F16C569009BDBC5 /* CurrentTime.h */,
 				5186111D0CC824830081412B /* Deque.h */,
@@ -1192,6 +1197,7 @@
 				9303F5690991190000AD71B8 /* Noncopyable.h */,
 				C0A2723F0E509F1E00E96E15 /* NotFound.h */,
 				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
+				0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */,
 				9303F567099118FA00AD71B8 /* OwnPtr.h */,
 				440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */,
 				44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */,
@@ -1829,6 +1835,8 @@
 				A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */,
 				93052C350FB792190048FDC3 /* ParserArena.h in Headers */,
 				960626960FB8EC02009798AB /* JITStubCall.h in Headers */,
+				0BDFFAE00FC6192900D69EF4 /* CrossThreadRefCounted.h in Headers */,
+				0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

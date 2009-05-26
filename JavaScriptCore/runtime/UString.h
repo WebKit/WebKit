@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- *  Copyright (c) 2009, Google Inc. All rights reserved.
+ *  Copyright (C) 2009 Google Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -27,6 +27,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <wtf/Assertions.h>
+#include <wtf/CrossThreadRefCounted.h>
+#include <wtf/OwnFastMallocPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/PtrAndFlags.h>
 #include <wtf/RefPtr.h>
@@ -75,6 +77,7 @@ namespace JSC {
         friend class JIT;
 
     public:
+        typedef CrossThreadRefCounted<OwnFastMallocPtr<UChar> > SharedUChar;
         struct BaseString;
         struct Rep : Noncopyable {
             friend class JIT;
@@ -100,6 +103,9 @@ namespace JSC {
             // Constructs a string from a UTF-8 string, using strict conversion (see comments in UTF8.h).
             // Returns UString::Rep::null for null input or conversion failure.
             static PassRefPtr<Rep> createFromUTF8(const char*);
+
+            // Uses SharedUChar to have joint ownership over the UChar*.
+            static PassRefPtr<Rep> share(UChar*, int, PassRefPtr<SharedUChar>);
 
             void destroy();
 
@@ -145,13 +151,13 @@ namespace JSC {
             bool reserveCapacity(int capacity);
 
         protected:
-            // constructor for use by BaseString subclass; they are their own bases
+            // Constructor for use by BaseString subclass; they use the union with m_baseString for another purpose.
             Rep(int length)
                 : offset(0)
                 , len(length)
                 , rc(1)
                 , _hash(0)
-                , m_baseString(static_cast<BaseString*>(this))
+                , m_baseString(0)
             {
             }
 
@@ -165,8 +171,12 @@ namespace JSC {
                 checkConsistency();
             }
 
-
-            BaseString* m_baseString;
+            union {
+                // If !baseIsSelf()
+                BaseString* m_baseString;
+                // If baseIsSelf()
+                SharedUChar* m_sharedBuffer;
+            };
 
         private:
             // For SmallStringStorage which allocates an array and does initialization manually.
@@ -180,7 +190,16 @@ namespace JSC {
 
 
         struct BaseString : public Rep {
-            bool isShared() { return rc != 1; }
+            bool isShared() { return rc != 1 || isBufferReadOnly(); }
+            void setSharedBuffer(PassRefPtr<SharedUChar>);
+            SharedUChar* sharedBuffer();
+
+            bool isBufferReadOnly()
+            {
+                if (!m_sharedBuffer)
+                    return false;
+                return slowIsBufferReadOnly();
+            }
 
             // potentially shared data.
             UChar* buf;
@@ -204,6 +223,8 @@ namespace JSC {
                 m_identifierTableAndFlags.setFlag(BaseStringFlag);
                 checkConsistency();
             }
+
+            bool slowIsBufferReadOnly();
 
             friend struct Rep;
             friend class SmallStringsStorage;
@@ -453,12 +474,12 @@ namespace JSC {
 
     inline UString::BaseString* UString::Rep::baseString()
     {
-        return m_baseString;
+        return !baseIsSelf() ? m_baseString : reinterpret_cast<BaseString*>(this) ;
     }
 
     inline const UString::BaseString* UString::Rep::baseString() const
     {
-        return m_baseString;
+        return const_cast<Rep*>(this)->baseString();
     }
 
 #ifdef NDEBUG

@@ -1,3 +1,14 @@
+2009-05-25  David Levin  <levin@chromium.org>
+
+        Reviewed by Maciej Stachowiak and Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25126
+
+        Added forwarding headers.
+
+        * ForwardingHeaders/wtf/CrossThreadRefCounted.h: Added.
+        * ForwardingHeaders/wtf/OwnFastMallocPtr.h: Added.
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Part 1 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr
