@@ -1,3 +1,11 @@
+2009-05-26  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Tiger build.
+
+        * Misc/WebNSObjectExtras.mm:
+        (-[NSInvocation _webkit_invokeAndHandleException:]): Rename the local variable so that
+        it doesn't conflict with a member variable on Tiger.
+
 2009-05-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

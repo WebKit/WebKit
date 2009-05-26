@@ -95,9 +95,9 @@ static bool returnTypeIsObject(NSInvocation *invocation)
     if (returnTypeIsObject(self)) {
         // Retain the return value on the main thread.
         // -[WebMainThreadInvoker forwardInvocation:] will autorelease it on the calling thread.
-        id returnValue;
-        [self getReturnValue:&returnValue];
-        [returnValue retain];
+        id value;
+        [self getReturnValue:&value];
+        [value retain];
     }
 }
 
