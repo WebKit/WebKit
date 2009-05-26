@@ -520,7 +520,7 @@
 #define HAVE_COMPUTED_GOTO 1
 #endif
 
-#if ENABLE(JIT) && (defined(NDEBUG) || defined(COVERAGE))
+#if ENABLE(JIT) && defined(COVERAGE)
     #define WTF_USE_INTERPRETER 0
 #else
     #define WTF_USE_INTERPRETER 1
