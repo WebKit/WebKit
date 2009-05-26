@@ -1,3 +1,19 @@
+2009-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6921835> REGRESSION (r44115): Crash in Leopard Mail viewing message
+
+        Fix case where we autorelease an object on the main thread that we are returning
+        to another thread when using our _webkit_invokeOnMainThread method.
+
+        * Misc/WebNSObjectExtras.mm:
+        (returnTypeIsObject): Added.
+        (-[WebMainThreadInvoker forwardInvocation:]): Autorelease the object on the calling
+        thread, balancing a retain done on the main thread.
+        (-[NSInvocation _webkit_invokeAndHandleException:]): Retain the object on the main
+        thread.
+
 2009-05-26  David Hyatt  <hyatt@apple.com>
 
         Back out the workaround for Mail crashing.  Darin is working on the real fix.

@@ -37,6 +37,13 @@
 }
 @end
 
+static bool returnTypeIsObject(NSInvocation *invocation)
+{
+    // Could use either _C_ID or NSObjCObjectType, but it seems that neither is
+    // both available and non-deprecated on all versions of Mac OS X we support.
+    return strchr([[invocation methodSignature] methodReturnType], '@');
+}
+
 @implementation WebMainThreadInvoker
 
 - (id)initWithTarget:(id)passedTarget
@@ -53,6 +60,12 @@
         id exceptionToThrow = [exception autorelease];
         exception = nil;
         @throw exceptionToThrow;
+    } else if (returnTypeIsObject(invocation)) {
+        // _webkit_invokeAndHandleException retained the return value on the main thread.
+        // Now autorelease it on the calling thread.
+        id returnValue;
+        [invocation getReturnValue:&returnValue];
+        [returnValue autorelease];
     }
 }
 
@@ -77,6 +90,14 @@
         [self invoke];
     } @catch (id exception) {
         [exceptionHandler handleException:exception];
+        return;
+    }
+    if (returnTypeIsObject(self)) {
+        // Retain the return value on the main thread.
+        // -[WebMainThreadInvoker forwardInvocation:] will autorelease it on the calling thread.
+        id returnValue;
+        [self getReturnValue:&returnValue];
+        [returnValue retain];
     }
 }
 
