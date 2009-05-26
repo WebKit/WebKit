@@ -1,3 +1,28 @@
+2009-05-26  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25969.
+
+        Stop using notifications for boundsChanged, since the notifications are being sent too late.
+        Since subviews get resized before parents do, the notification comes in telling the WebHTMLView
+        that its size has changed *before* we've done setNeedsLayout in the WebView size change callback.
+
+        Become more like the Windows platform and just do the bounds changed immediately as our size is
+        being altered by subclassing setFrameSize in WebView.
+
+        Also patch WebDynamicScrollbarsView to detect the case where neither axis is really spilling out
+        past the viewport, so that in shrinking situations we figure out that we don't need scrollbars
+        any more.
+
+        * WebView/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        * WebView/WebView.mm:
+        (-[WebView _boundsChangedToNewSize:]):
+        (-[WebView setFrameSize:]):
+        (-[WebView viewWillMoveToWindow:]):
+        (-[WebView viewDidMoveToWindow]):
+
 2009-05-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

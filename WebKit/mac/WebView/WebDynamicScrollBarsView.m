@@ -138,11 +138,19 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
     NSSize documentSize = [documentView frame].size;
     NSSize visibleSize = [self documentVisibleRect].size;
-    
-    if (hScroll == ScrollbarAuto)
+    NSSize frameSize = [self frame].size;
+
+    if (hScroll == ScrollbarAuto) {
         newHasHorizontalScroller = documentSize.width > visibleSize.width;
-    if (vScroll == ScrollbarAuto)
+        if (newHasHorizontalScroller && !inUpdateScrollersLayoutPass && documentSize.height <= frameSize.height && documentSize.width <= frameSize.width)
+            newHasHorizontalScroller = NO;
+    }
+    
+    if (vScroll == ScrollbarAuto) {
         newHasVerticalScroller = documentSize.height > visibleSize.height;
+        if (newHasVerticalScroller && !inUpdateScrollersLayoutPass && documentSize.height <= frameSize.height && documentSize.width <= frameSize.width)
+            newHasVerticalScroller = NO;
+    }
 
     // Unless in ScrollbarsAlwaysOn mode, if we ever turn one scrollbar off, always turn the other one off too.
     // Never ever try to both gain/lose a scrollbar in the same pass.

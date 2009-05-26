@@ -1,3 +1,17 @@
+2009-05-26  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25969
+
+        Detect the case where we can fit without scrollbars when the view shrinks, so that we don't mistakenly
+        continue to show scrollbars.
+
+        Added two tests in fast/dynamic.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2009-05-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Mark Rowe.

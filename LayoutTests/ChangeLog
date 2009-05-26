@@ -1,3 +1,19 @@
+2009-05-26  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for bug 25969, scrollbars remain after document shrinks.  Add a couple of layout tests
+        written by Dan that show various problems with scrollbars following resizes.
+
+        * fast/dynamic/window-resize-scrollbars-test.html: Added.
+        * fast/dynamic/window-scrollbars-test.html: Added.
+        * platform/mac/fast/dynamic/window-resize-scrollbars-test-expected.checksum: Added.
+        * platform/mac/fast/dynamic/window-resize-scrollbars-test-expected.png: Added.
+        * platform/mac/fast/dynamic/window-resize-scrollbars-test-expected.txt: Added.
+        * platform/mac/fast/dynamic/window-scrollbars-test-expected.checksum: Added.
+        * platform/mac/fast/dynamic/window-scrollbars-test-expected.png: Added.
+        * platform/mac/fast/dynamic/window-scrollbars-test-expected.txt: Added.
+
 2009-05-25  Adam Barth  <abarth@webkit.og>
 
         Reviewed by Sam Weinig.
