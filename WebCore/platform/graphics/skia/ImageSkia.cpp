@@ -304,7 +304,8 @@ void Image::drawPattern(GraphicsContext* context,
                         CompositeOperator compositeOp,
                         const FloatRect& destRect)
 {
-    if (destRect.isEmpty() || floatSrcRect.isEmpty())
+    FloatRect normSrcRect = normalizeRect(floatSrcRect);
+    if (destRect.isEmpty() || normSrcRect.isEmpty())
         return;  // nothing to draw
 
     NativeImageSkia* bitmap = nativeImageForCurrentFrame();
@@ -315,7 +316,7 @@ void Image::drawPattern(GraphicsContext* context,
     // it will internally reference the old bitmap's pixels, adjusting the row
     // stride so the extra pixels appear as padding to the subsetted bitmap.
     SkBitmap srcSubset;
-    SkIRect srcRect = enclosingIntRect(floatSrcRect);
+    SkIRect srcRect = enclosingIntRect(normSrcRect);
     bitmap->extractSubset(&srcSubset, srcRect);
 
     SkBitmap resampled;
@@ -362,9 +363,9 @@ void Image::drawPattern(GraphicsContext* context,
     // origin of the destination rect, which is what WebKit expects. Skia uses
     // the coordinate system origin as the base for the patter. If WebKit wants
     // a shifted image, it will shift it from there using the patternTransform.
-    float adjustedX = phase.x() + floatSrcRect.x() *
+    float adjustedX = phase.x() + normSrcRect.x() *
                       narrowPrecisionToFloat(patternTransform.a());
-    float adjustedY = phase.y() + floatSrcRect.y() *
+    float adjustedY = phase.y() + normSrcRect.y() *
                       narrowPrecisionToFloat(patternTransform.d());
     matrix.postTranslate(SkFloatToScalar(adjustedX),
                          SkFloatToScalar(adjustedY));

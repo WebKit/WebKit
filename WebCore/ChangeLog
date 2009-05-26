@@ -1,3 +1,15 @@
+2009-05-26  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26012
+
+        Fix the Skia path to normalize the given source rect when
+        drawing patterns, so it accepts negative width/height (as CG does).
+        Fixes Chromium bug http://www.crbug.com/6167.
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::Image::drawPattern):
+
 2009-05-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
