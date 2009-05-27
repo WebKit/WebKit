@@ -72,6 +72,10 @@ GetOptions('runs=i' => \$testRuns,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
+my $resultDirectory = "sunspider-results";
+$resultDirectory = "ubench-results" if ($ubench);
+$resultDirectory = "v8-results" if ($v8suite);
+
 $runShark = 1 if $runSharkCache;
 $runShark = 20 if $runShark20;
 $testRuns = 1 if $runShark;
@@ -136,15 +140,15 @@ sub loadTestsList()
 }
 
 my $timeString = strftime "%Y-%m-%d-%H.%M.%S", localtime $^T;
-my $prefixFile = "tmp/sunspider-test-prefix.js";
-my $resultsFile = "tmp/sunspider-results-$timeString.js";
+my $prefixFile = "$resultDirectory/sunspider-test-prefix.js";
+my $resultsFile = "$resultDirectory/sunspider-results-$timeString.js";
 
 sub writePrefixFile()
 {
     my $prefix = "var tests = [ " . join(", ", map { '"' . $_ . '"' } @tests) . " ];\n";
     $prefix .= "var categories = [ " . join(", ", map { '"' . $_ . '"' } @categories) . " ];\n";
 
-    mkdir "tmp";
+    mkdir "$resultDirectory";
     dumpToFile($prefix, $prefixFile);
 }
 
@@ -214,14 +218,14 @@ print "]\n";
 
 my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
 dumpToFile($output, $resultsFile);
-dumpToFile(File::Spec->rel2abs($resultsFile), "tmp/baseline-filename.txt") if $setBaseline;
+dumpToFile(File::Spec->rel2abs($resultsFile), "$resultDirectory/baseline-filename.txt") if $setBaseline;
 
 system("$jsShellPath", "-f", $prefixFile, "-f", $resultsFile, "-f", "resources/sunspider-analyze-results.js");
 
 if ($runShark) {
     my $newestMShark = newestFile(".", qr/\.mshark$/);
     if ($newestMShark) {
-        my $profileFile = "tmp/sunspider-profile-$timeString.mshark";
+        my $profileFile = "$resultDirectory/sunspider-profile-$timeString.mshark";
         rename $newestMShark, $profileFile or die;
         exec "/usr/bin/open", $profileFile;
     }

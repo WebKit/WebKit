@@ -1,3 +1,13 @@
+2009-05-26  Olivier DOLE  <odole@pleyo.com>
+
+        Reviewed by Maciej.
+
+        Store sunspider test suite results in a specific directory for each
+        different type of benchmark (sunspider, V8 or ubench).
+
+        * sunspider:
+        * sunspider-compare-results:
+
 2009-05-12  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

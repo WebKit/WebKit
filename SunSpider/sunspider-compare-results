@@ -29,16 +29,26 @@ use File::Basename;
 
 my $showHelp = 0;
 my $jsShellPath;
+my $ubench = 0;
+my $v8suite = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName --shell=[path] [options] FILE FILE
   --help        Show this help message
   --shell       Path to javascript shell
+  --ubench      Compare microbenchmark results
+  --v8-suite    Compare the V8 benchmark results
 EOF
 
 GetOptions('shell=s' => \$jsShellPath,
+           'ubench' => \$ubench,
+           'v8-suite' => \$v8suite,
            'help' => \$showHelp);
+
+my $resultDirectory = "sunspider-results";
+$resultDirectory = "ubench-results" if ($ubench);
+$resultDirectory = "v8-results" if ($v8suite);
 
 if ((scalar @ARGV != 0 && scalar @ARGV != 2) || !$jsShellPath || $showHelp) {
    print STDERR $usage;
@@ -130,13 +140,13 @@ if (scalar @ARGV == 2) {
     $file1 = $ARGV[0];
     $file2 = $ARGV[1];
 } else {
-    $file1 = readFile("tmp/baseline-filename.txt");
-    $file2 = newestFile("tmp", qr/sunspider-results-.+\.js$/);
+    $file1 = readFile("$resultDirectory/baseline-filename.txt");
+    $file2 = newestFile("$resultDirectory", qr/sunspider-results-.+\.js$/);
 }
 
 my $output = "var output1 = " . readResultsFile($file1) . ";\n";
 $output .= "var output2 = " . readResultsFile($file2) . ";\n";
 
-dumpToFile($output, "tmp/sunspider-comparison-data.js");
+dumpToFile($output, "$resultDirectory/sunspider-comparison-data.js");
 
-system($jsShellPath, "-f", "tmp/sunspider-test-prefix.js", "-f", "tmp/sunspider-comparison-data.js", "-f", "resources/sunspider-compare-results.js", "-f", "resources/sunspider-standalone-compare.js");
+system($jsShellPath, "-f", "$resultDirectory/sunspider-test-prefix.js", "-f", "$resultDirectory/sunspider-comparison-data.js", "-f", "resources/sunspider-compare-results.js", "-f", "resources/sunspider-standalone-compare.js");
