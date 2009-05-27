@@ -49,7 +49,6 @@ EXPORTS
     ?calculatedFunctionName@DebuggerCallFrame@JSC@@QBE?AVUString@2@XZ
     ?call@JSC@@YA?AVJSValue@1@PAVExecState@1@V21@W4CallType@1@ABTCallData@1@1ABVArgList@1@@Z
     ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
-    ?changeFunctionTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@@Z
     ?changePrototypeTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@VJSValue@2@@Z
     ?checkSameIdentifierTable@Identifier@JSC@@CAXPAVExecState@2@PAURep@UString@2@@Z
     ?checkSameIdentifierTable@Identifier@JSC@@CAXPAVJSGlobalData@2@PAURep@UString@2@@Z
@@ -95,6 +94,8 @@ EXPORTS
     ?deleteProperty@JSVariableObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deleteProperty@StringObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deleteTable@HashTable@JSC@@QBEXXZ
+    ?despecifyDictionaryFunction@Structure@JSC@@QAEXABVIdentifier@2@@Z
+    ?despecifyFunctionTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@@Z
     ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@Rep@UString@JSC@@QAEXXZ
     ?detach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
