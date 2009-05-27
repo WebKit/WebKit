@@ -1,3 +1,14 @@
+2009-05-27  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/6925482> repro crash in WebCore::DragController::dragExited dropping 
+        bookmarks (at least) over Top Sites (at least)
+
+        Reviewed by Kevin Decker
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited):
+        nil check m_documentUnderMouse and take the "local file" case if it's nil
+
 2009-05-27  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Gustavo Noronha.
