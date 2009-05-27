@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
- * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2007, 2009 Holger Hans Peter Freyther
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,6 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "IntRect.h"
-#include "NotImplemented.h"
 #include "RenderObject.h"
 
 #include <gdk/gdk.h>
@@ -99,9 +98,19 @@ void Widget::paint(GraphicsContext* context, const IntRect& rect)
 {
 }
 
-void Widget::setIsSelected(bool)
+void Widget::setIsSelected(bool isSelected)
 {
-    notImplemented();
+    if (!platformWidget())
+        return;
+
+    // See if the platformWidget has a webkit-widget-is-selected property
+    // and set it afterwards.
+    GParamSpec* spec = g_object_class_find_property(G_OBJECT_GET_CLASS(platformWidget()),
+                                                    "webkit-widget-is-selected");
+    if (!spec)
+        return;
+
+    g_object_set(platformWidget(), "webkit-widget-is-selected", isSelected, NULL);
 }
 
 IntRect Widget::frameRect() const

@@ -1,3 +1,17 @@
+2009-05-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25613.
+
+        Implement Widget::setIsSelected for Gtk+ by searching
+        for a property of the name "webkit-widget-is-selected" and if
+        such property exists we are going to set it. We expect
+        the property to take a boolean.
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::setIsSelected):
+
 2009-05-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
