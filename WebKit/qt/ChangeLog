@@ -1,3 +1,29 @@
+2009-05-26  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25823
+
+        Add an API to generate a QUrl out of a string correcting for errors and missing information.
+        See the API documentation for more details about the function.
+
+        Autotests: included
+
+        * Api/qwebview.cpp:
+        (QWebView::guessUrlFromString):
+        * Api/qwebview.h:
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::changeLocation):
+        * tests/qwebview/.gitignore: Added.
+        * tests/qwebview/qwebview.pro:
+        (tst_QWebView::initTestCase):
+        (tst_QWebView::cleanupTestCase):
+        (tst_QWebView::init):
+        (tst_QWebView::cleanup):
+        (tst_QWebView::guessUrlFromString_data):
+        (tst_QWebView::guessUrlFromString):
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Part 2 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr

@@ -27,6 +27,8 @@
 #include "qevent.h"
 #include "qpainter.h"
 #include "qprinter.h"
+#include "qdir.h"
+#include "qfile.h"
 
 class QWebViewPrivate
 {
@@ -247,11 +249,78 @@ void QWebView::setPage(QWebPage *page)
 }
 
 /*!
+    Returns a valid URL from a user supplied string if one can be deducted.
+    In the case that is not possible, an invalid QUrl() is returned.
+
+    \since 4.6
+
+    Most applications that can browse the web, allow the user to input a URL
+    in the form of a plain string. This string can be manually typed into
+    a location bar, obtained from the clipboard, or passed in via command
+    line arguments.
+
+    When the string is not already a valid URL, a best guess is performed,
+    making various web related assumptions.
+
+    In the case the string corresponds to a valid file path on the system,
+    a file:// URL is constructed, using QUrl::fromLocalFile().
+
+    If that is not the case, an attempt is made to turn the string into a
+    http:// or ftp:// URL. The latter in the case the string starts with
+    'ftp'. The result is then passed through QUrl's tolerant parser, and
+    in the case or success, a valid QUrl is returned, orelse a QUrl().
+
+    Examples
+    - webkit.org becomes http://webkit.org
+    - ftp.webkit.org becomes ftp://ftp.webkit.org
+    - localhost becomes http://localhost
+    - /home/user/test.html becomes file:///home/user/test.html (if exists)
+
+    Tips when dealing with URLs and strings
+    - When creating a QString from a QByteArray or a char*, always use
+      QString::fromUtf8().
+    - Do not use QUrl(string), nor QUrl::toString() anywhere where the URL might
+      be used, such as in the location bar, as those functions loose data.
+      Instead use QUrl::fromEncoded() and QUrl::toEncoded(), respectively.
+
+ */
+QUrl QWebView::guessUrlFromString(const QString &string)
+{
+    // Check the most common case of a valid url with scheme and host first
+    QUrl url = QUrl::fromEncoded(string.toUtf8(), QUrl::TolerantMode);
+    if (url.isValid() && !url.scheme().isEmpty() && !url.host().isEmpty())
+        return url;
+
+    // Absolute files that exists
+    if (QDir::isAbsolutePath(string) && QFile::exists(string))
+        return QUrl::fromLocalFile(string);
+
+    // If the string is missing the scheme or the scheme is not valid prepend a scheme
+    QString scheme = url.scheme();
+    if (scheme.isEmpty() || scheme.contains('.') || scheme == QLatin1String("localhost")) {
+        QString urlString = string.trimmed();
+        // Do not do anything for strings such as "foo", only "foo.com"
+        int dotIndex = urlString.indexOf(QLatin1Char('.'));
+        if (dotIndex != -1 || urlString.startsWith(QLatin1String("localhost"))) {
+            const QString hostscheme = urlString.left(dotIndex).toLower();
+            QByteArray scheme = (hostscheme == QLatin1String("ftp")) ? "ftp" : "http";
+            urlString = QLatin1String(scheme) + QLatin1String("://") + urlString;
+        }
+        url = QUrl::fromEncoded(urlString.toUtf8(), QUrl::TolerantMode);
+    }
+
+    if (url.isValid())
+        return url;
+
+    return QUrl();
+}
+
+/*!
     Loads the specified \a url and displays it.
 
     \note The view remains the same until enough data has arrived to display the new \a url.
 
-    \sa setUrl(), url(), urlChanged()
+    \sa setUrl(), url(), urlChanged(), guessUrlFromString()
 */
 void QWebView::load(const QUrl &url)
 {
