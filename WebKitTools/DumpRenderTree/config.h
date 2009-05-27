@@ -26,7 +26,7 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(WIN_OS)
+#if PLATFORM(WIN_OS) && !COMPILER(GCC)
 #define JS_EXPORTDATA __declspec(dllimport)
 #define WEBKIT_EXPORTDATA __declspec(dllimport)
 #else
