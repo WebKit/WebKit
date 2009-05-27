@@ -1,3 +1,13 @@
+2009-05-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix for the JPEGImageDecoder.
+
+        Revision 44167 removed stdio.h from the included headers and
+        this will lead to an error that FILE is not known inside the
+        jpeglib.h Put back the stdio.h include.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+
 2009-05-26  Yichao Yin  <yichao.yin@torchmobile.com.cn>
 
         Reviewed by Maciej Stachowiak.
