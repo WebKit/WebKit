@@ -273,16 +273,20 @@ bool Step::nodeMatches(Node* node) const
                 // Node test on the namespace axis is not implemented yet
                 return false;
             }
-            
-            if (name == "*")
-                return node->nodeType() == primaryNodeType(m_axis) && (namespaceURI.isEmpty() || namespaceURI == node->namespaceURI());
 
-            // We use tagQName here because we don't want the element name in uppercase 
-            // like we get with HTML elements.
-            // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace.
-            return node->nodeType() == Node::ELEMENT_NODE
-                    && static_cast<Element*>(node)->tagQName().localName() == name
-                    && ((node->isHTMLElement() && node->document()->isHTMLDocument() && namespaceURI.isNull()) || namespaceURI == node->namespaceURI());
+            // For other axes, the principal node type is element.
+            ASSERT(primaryNodeType(m_axis) == Node::ELEMENT_NODE);
+            if (node->nodeType() != Node::ELEMENT_NODE)
+                return false;
+
+            if (name == "*")
+                return namespaceURI.isEmpty() || namespaceURI == node->namespaceURI();
+
+            if (node->isHTMLElement() && node->document()->isHTMLDocument()) {
+                // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace. Names are compared case-insensitively.
+                return equalIgnoringCase(static_cast<Element*>(node)->localName(), name) && (namespaceURI.isNull() || namespaceURI == node->namespaceURI());
+            }
+            return static_cast<Element*>(node)->hasLocalName(name) && namespaceURI == node->namespaceURI();
         }
     }
     ASSERT_NOT_REACHED();

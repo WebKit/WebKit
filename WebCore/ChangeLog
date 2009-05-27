@@ -1,3 +1,15 @@
+2009-05-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17725
+        XPath should be case insensitive for HTML
+
+        Test: fast/xpath/node-name-case-sensitivity.html
+
+        * xml/XPathStep.cpp: (WebCore::XPath::Step::nodeMatches): Made node name check case insensitive
+        for HTML elements in HTML documents.
+
 2009-05-27  John Sullivan  <sullivan@apple.com>
 
         fixed <rdar://problem/6925482> repro crash in WebCore::DragController::dragExited dropping 
