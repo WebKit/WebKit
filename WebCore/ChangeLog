@@ -1,3 +1,11 @@
+2009-05-27  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Gustavo Noronha.
+
+        When building on window, consider Windows specific files.
+
+        * GNUmakefile.am:
+
 2009-05-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

@@ -83,7 +83,6 @@ javascriptcore_sources += \
 	JavaScriptCore/jit/JITPropertyAccess.cpp \
 	JavaScriptCore/jit/JITArithmetic.cpp \
 	JavaScriptCore/jit/ExecutableAllocator.cpp \
-	JavaScriptCore/jit/ExecutableAllocatorPosix.cpp \
 	JavaScriptCore/jit/JIT.h \
 	JavaScriptCore/jit/JITInlineMethods.h \
 	JavaScriptCore/jit/JITStubs.cpp \
@@ -272,6 +271,15 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/unicode/UTF8.cpp \
 	JavaScriptCore/wtf/unicode/UTF8.h \
 	JavaScriptCore/wtf/unicode/Unicode.h
+
+if TARGET_WIN32
+javascriptcore_sources += \
+	JavaScriptCore/wtf/ThreadSpecificWin.cpp \
+	JavaScriptCore/jit/ExecutableAllocatorWin.cpp
+else
+javascriptcore_sources += \
+	JavaScriptCore/jit/ExecutableAllocatorPosix.cpp
+endif
 
 # ----
 # icu unicode backend
