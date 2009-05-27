@@ -1,3 +1,13 @@
+2009-05-26  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Ada Chan and Oliver Hunt.
+
+        Remove WebView observers in during fast teardown.
+        <rdar://problem/6922619> REGRESSION (Tiger-only?): After restoring windows from the previous session, a crash occurs while attempting to quit Safari
+
+        * WebView/WebView.mm:
+        (-[WebView _closeWithFastTeardown]):
+
 2009-05-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

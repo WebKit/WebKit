@@ -1122,6 +1122,9 @@ static bool runningTigerMail()
 #endif
 
     _private->closed = YES;
+    
+    [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [self _closePluginDatabases];
 }
