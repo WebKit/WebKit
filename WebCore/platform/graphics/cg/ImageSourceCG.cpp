@@ -242,9 +242,17 @@ float ImageSource::frameDurationAtIndex(size_t index)
 
 bool ImageSource::frameHasAlphaAtIndex(size_t)
 {
-    // Might be interesting to do this optimization on Mac some day, but for now we're just using this
-    // for the Cairo source, since it uses our decoders, and our decoders can answer this question.
-    // FIXME: Could return false for JPEG and other non-transparent image formats.
+    if (!m_decoder)
+        return false;
+
+    CFStringRef imageType = CGImageSourceGetType(m_decoder);
+
+    // Return false if there is no image type or the image type is JPEG, because
+    // JPEG does not support alpha transparency.
+    if (!imageType || CFEqual(imageType, CFSTR("public.jpeg")))
+        return false;
+
+    // FIXME: Could return false for other non-transparent image formats.
     // FIXME: Could maybe return false for a GIF Frame if we have enough info in the GIF properties dictionary
     // to determine whether or not a transparent color was defined.
     return true;

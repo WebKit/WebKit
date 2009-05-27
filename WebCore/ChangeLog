@@ -1,3 +1,15 @@
+2009-05-26  Cameron Zwarich  <zwarich@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 26035: Make ImageSource::frameHasAlphaAtIndex() return false for JPEGs with CG
+        <https://bugs.webkit.org/show_bug.cgi?id=26035>
+        <rdar://problem/6924087>
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::frameHasAlphaAtIndex): return false if the image
+        is JPEG, there is no image type, or m_decoder is null.
+
 2009-05-26  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix for the JPEGImageDecoder.
