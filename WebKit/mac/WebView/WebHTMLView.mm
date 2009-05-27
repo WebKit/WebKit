@@ -5859,9 +5859,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     BOOL exposeInputContext = isTextInput(coreFrame) && !isInPasswordField(coreFrame);
     if (exposeInputContext != _private->exposeInputContext) {
-        // Let AppKit cache a potentially input context.
         _private->exposeInputContext = exposeInputContext;
-        [NSApp updateWindows];
+        // Let AppKit cache a potentially changed input context.
+        // WebCore routinely sets the selection to None when editing, and IMs become unhappy when an input context suddenly turns nil, see bug 26009.
+        if (!coreFrame || !coreFrame->selection()->isNone())
+            [NSApp updateWindows];
     }
 
     if (!coreFrame->editor()->hasComposition())

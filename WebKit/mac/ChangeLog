@@ -1,3 +1,15 @@
+2009-05-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26009
+        <rdar://problem/6925656> REGRESSION (r43973): Problems While Working With OpenVanilla
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateSelectionForInputManager]): Don't call updateWindows if the selection
+        is None. This routinely happens during editing, and it doesn't mean that we left an editable
+        area (in which case the selection changes to a non-editable one).
+
 2009-05-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
