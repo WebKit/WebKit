@@ -1,3 +1,15 @@
+2009-05-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver "pieces of eight" Hunt.
+
+        When reseting RegexPattern class, should fully reset the class, not just bits of it.
+        In particular, we delete the cached character classes (for wordchars, etc), but do
+        not reset the set of pointers to the cached classes.  In the case of a repeated parse
+        due to an illegal back-reference we will continue to use the deleted character class.
+
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::RegexPattern::reset):
+
 2009-05-26  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix to correct r44161.

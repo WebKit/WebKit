@@ -263,6 +263,14 @@ struct RegexPattern {
         m_numSubpatterns = 0;
         m_maxBackReference = 0;
 
+        newlineCached = 0;
+        digitsCached = 0;
+        spacesCached = 0;
+        wordcharCached = 0;
+        nondigitsCached = 0;
+        nonspacesCached = 0;
+        nonwordcharCached = 0;
+
         deleteAllValues(m_disjunctions);
         m_disjunctions.clear();
         deleteAllValues(m_userCharacterClasses);
