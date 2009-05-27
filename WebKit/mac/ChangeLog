@@ -1,3 +1,15 @@
+2009-05-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6901751> 
+        REGRESSION (r35515): Tiger crash painting the selection on registration page of car2go.com
+
+        Remove WKCGContextIsSafeToClip.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface):
+
 2009-05-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

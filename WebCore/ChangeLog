@@ -1,3 +1,29 @@
+2009-05-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6901751> 
+        REGRESSION (r35515): Tiger crash painting the selection on registration page of car2go.com
+        
+        Don't use the WKCGContextIsSafeToClip function; it wasn't working correctly. Instead, just disable
+        the improved selection drawing on Tiger.
+        
+        * WebCore.Tiger.exp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipOutEllipseInRect):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::fillSelectionGaps):
+
 2009-05-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

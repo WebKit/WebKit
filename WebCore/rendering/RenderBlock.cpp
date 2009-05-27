@@ -1996,6 +1996,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
+#ifndef BUILDING_ON_TIGER
 static void clipOutPositionedObjects(const RenderObject::PaintInfo* paintInfo, int tx, int ty, ListHashSet<RenderBox*>* positionedObjects)
 {
     if (!positionedObjects)
@@ -2007,10 +2008,12 @@ static void clipOutPositionedObjects(const RenderObject::PaintInfo* paintInfo, i
         paintInfo->context->clipOut(IntRect(tx + r->x(), ty + r->y(), r->width(), r->height()));
     }
 }
+#endif
 
 GapRects RenderBlock::fillSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
                                         int& lastTop, int& lastLeft, int& lastRight, const PaintInfo* paintInfo)
 {
+#ifndef BUILDING_ON_TIGER
     // IMPORTANT: Callers of this method that intend for painting to happen need to do a save/restore.
     // Clip out floating and positioned objects when painting selection gaps.
     if (paintInfo) {
@@ -2028,6 +2031,7 @@ GapRects RenderBlock::fillSelectionGaps(RenderBlock* rootBlock, int blockX, int 
             }
         }
     }
+#endif
 
     // FIXME: overflow: auto/scroll regions need more math here, since painting in the border box is different from painting in the padding box (one is scrolled, the other is
     // fixed).

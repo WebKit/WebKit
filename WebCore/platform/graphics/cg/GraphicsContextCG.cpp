@@ -46,10 +46,6 @@
 #define HAVE_CG_INTERPOLATION_MEDIUM 1
 #endif
 
-#ifdef BUILDING_ON_TIGER
-#include "WebCoreSystemInterface.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -486,36 +482,6 @@ static inline void fillPathWithFillRule(CGContextRef context, WindRule fillRule)
         CGContextFillPath(context);
 }
 
-// A bug in old versions of Core Graphics causes memory corruption to occur when clipping
-// under certain conditions. These functions check that it is safe to clip.
-
-static inline void safeCGContextClip(CGContextRef context)
-{
-#ifdef BUILDING_ON_TIGER
-    if (!wkCGContextIsSafeToClip(context))
-        return;
-#endif
-    CGContextClip(context);
-}
-
-static inline void safeCGContextEOClip(CGContextRef context)
-{
-#ifdef BUILDING_ON_TIGER
-    if (!wkCGContextIsSafeToClip(context))
-        return;
-#endif
-    CGContextEOClip(context);
-}
-
-static inline void safeCGContextClipToRect(CGContextRef context, CGRect rect)
-{
-#ifdef BUILDING_ON_TIGER
-    if (!wkCGContextIsSafeToClip(context))
-        return;
-#endif
-    CGContextClipToRect(context, rect);
-}
-
 void GraphicsContext::fillPath()
 {
     if (paintingDisabled())
@@ -533,9 +499,9 @@ void GraphicsContext::fillPath()
     case GradientColorSpace:
         CGContextSaveGState(context);
         if (fillRule() == RULE_EVENODD)
-            safeCGContextEOClip(context);
+            CGContextEOClip(context);
         else
-            safeCGContextClip(context);
+            CGContextClip(context);
         CGContextConcatCTM(context, m_common->state.fillGradient->gradientSpaceTransform());
         CGContextDrawShading(context, m_common->state.fillGradient->platformGradient());
         CGContextRestoreGState(context);
@@ -560,7 +526,7 @@ void GraphicsContext::strokePath()
     case GradientColorSpace:
         CGContextSaveGState(context);
         CGContextReplacePathWithStrokedPath(context);
-        safeCGContextClip(context);
+        CGContextClip(context);
         CGContextConcatCTM(context, m_common->state.strokeGradient->gradientSpaceTransform());
         CGContextDrawShading(context, m_common->state.strokeGradient->platformGradient());
         CGContextRestoreGState(context);
@@ -583,7 +549,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         break;
     case GradientColorSpace:
         CGContextSaveGState(context);
-        safeCGContextClipToRect(context, rect);
+        CGContextClipToRect(context, rect);
         CGContextConcatCTM(context, m_common->state.fillGradient->gradientSpaceTransform());
         CGContextDrawShading(context, m_common->state.fillGradient->platformGradient());
         CGContextRestoreGState(context);
@@ -625,7 +591,7 @@ void GraphicsContext::clip(const FloatRect& rect)
 {
     if (paintingDisabled())
         return;
-    safeCGContextClipToRect(platformContext(), rect);
+    CGContextClipToRect(platformContext(), rect);
     m_data->clip(rect);
 }
 
@@ -637,7 +603,7 @@ void GraphicsContext::clipOut(const IntRect& rect)
     CGRect rects[2] = { CGContextGetClipBoundingBox(platformContext()), rect };
     CGContextBeginPath(platformContext());
     CGContextAddRects(platformContext(), rects, 2);
-    safeCGContextEOClip(platformContext());
+    CGContextEOClip(platformContext());
 }
 
 void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
@@ -648,7 +614,7 @@ void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
     CGContextBeginPath(platformContext());
     CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
     CGContextAddEllipseInRect(platformContext(), rect);
-    safeCGContextEOClip(platformContext());
+    CGContextEOClip(platformContext());
 }
 
 void GraphicsContext::clipPath(WindRule clipRule)
@@ -660,9 +626,9 @@ void GraphicsContext::clipPath(WindRule clipRule)
 
     if (!CGContextIsPathEmpty(context)) {
         if (clipRule == RULE_EVENODD)
-            safeCGContextEOClip(context);
+            CGContextEOClip(context);
         else
-            safeCGContextClip(context);
+            CGContextClip(context);
     }
 }
 
@@ -680,7 +646,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     CGContextAddEllipseInRect(context, CGRectMake(rect.x() + thickness, rect.y() + thickness,
         rect.width() - (thickness * 2), rect.height() - (thickness * 2)));
     
-    safeCGContextEOClip(context);
+    CGContextEOClip(context);
 }
 
 void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer* imageBuffer)
@@ -821,7 +787,7 @@ void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
         setStrokeThickness(lineWidth);
         CGContextAddRect(context, r);
         CGContextReplacePathWithStrokedPath(context);
-        safeCGContextClip(context);
+        CGContextClip(context);
         CGContextDrawShading(context, m_common->state.strokeGradient->platformGradient());
         CGContextRestoreGState(context);
         break;
@@ -884,7 +850,7 @@ void GraphicsContext::clip(const Path& path)
     CGContextRef context = platformContext();
     CGContextBeginPath(context);
     CGContextAddPath(context, path.platformPath());
-    safeCGContextClip(context);
+    CGContextClip(context);
     m_data->clip(path);
 }
 
@@ -896,7 +862,7 @@ void GraphicsContext::clipOut(const Path& path)
     CGContextBeginPath(platformContext());
     CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
     CGContextAddPath(platformContext(), path.platformPath());
-    safeCGContextEOClip(platformContext());
+    CGContextEOClip(platformContext());
 }
 
 void GraphicsContext::scale(const FloatSize& size)
