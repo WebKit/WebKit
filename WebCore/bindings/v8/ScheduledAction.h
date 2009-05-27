@@ -56,9 +56,9 @@ namespace WebCore {
         virtual void execute(ScriptExecutionContext*);
 
     private:
-        void ScheduledAction::execute(V8Proxy*);
+        void execute(V8Proxy*);
 #if ENABLE(WORKERS)
-        void ScheduledAction::execute(WorkerContext*);
+        void execute(WorkerContext*);
 #endif
 
         v8::Persistent<v8::Function> m_function;
