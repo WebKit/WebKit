@@ -1790,7 +1790,6 @@ endif
 if TARGET_WIN32
 webcore_sources += \
 	WebCore/plugins/win/PluginDatabaseWin.cpp \
-	WebCore/plugins/win/PluginDatabaseWin.h \
 	WebCore/plugins/win/PluginMessageThrottlerWin.cpp \
 	WebCore/plugins/win/PluginMessageThrottlerWin.h
 endif

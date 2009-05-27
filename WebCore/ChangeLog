@@ -1,3 +1,11 @@
+2009-05-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed build fix.
+
+        Remove file that does not exist from the build.
+
+        * GNUmakefile.am:
+
 2009-05-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Darin Adler.
