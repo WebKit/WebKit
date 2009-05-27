@@ -1,3 +1,13 @@
+2009-05-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25996
+
+        [Qt] Dead-code stripping for unix
+
+        * WebCore.pro: Turn on GCC dead-code stripping flags for Unix
+
 2009-05-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Dave Hyatt.

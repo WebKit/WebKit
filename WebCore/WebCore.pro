@@ -39,6 +39,10 @@ include($$OUTPUT_DIR/config.pri)
 
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
+
+unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections 
+unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
+
 #QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
 
 CONFIG(release):!CONFIG(QTDIR_build) {
