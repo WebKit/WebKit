@@ -1,3 +1,24 @@
+2009-05-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/6924033> REGRESSION: Assertion failure due to forward references
+
+        Add a pattern type for forward references to ensure that we don't confuse the
+        quantifier alternatives assertion.
+
+        * yarr/RegexCompiler.cpp:
+        (JSC::Yarr::RegexPatternConstructor::atomBackReference):
+        (JSC::Yarr::RegexPatternConstructor::setupAlternativeOffsets):
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateTerm):
+        * yarr/RegexPattern.h:
+        (JSC::Yarr::PatternTerm::):
+        (JSC::Yarr::PatternTerm::PatternTerm):
+        (JSC::Yarr::PatternTerm::ForwardReference):
+
 2009-05-26  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

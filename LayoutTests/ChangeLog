@@ -1,3 +1,15 @@
+2009-05-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/6924033> REGRESSION: Assertion failure due to forward references
+
+        Add a few more test cases for invalid back references.
+
+        * fast/js/regexp-backreferences-expected.txt: Added.
+        * fast/js/regexp-backreferences.html: Added.
+        * fast/js/resources/regexp-backreferences.js: Added.
+
 2009-05-26  Adam Barth  <abarth@webkit.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=26011

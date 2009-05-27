@@ -78,6 +78,7 @@ struct PatternTerm {
         TypePatternCharacter,
         TypeCharacterClass,
         TypeBackReference,
+        TypeForwardReference,
         TypeParenthesesSubpattern,
         TypeParentheticalAssertion,
     } type;
@@ -141,6 +142,11 @@ struct PatternTerm {
         subpatternId = spatternId;
         quantityType = QuantifierFixedCount;
         quantityCount = 1;
+    }
+
+    static PatternTerm ForwardReference()
+    {
+        return PatternTerm(TypeForwardReference);
     }
 
     static PatternTerm BOL()

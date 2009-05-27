@@ -1555,6 +1555,9 @@ public:
 
                 case PatternTerm::TypeBackReference:
                     atomBackReference(term.subpatternId, term.inputPosition - currentCountAlreadyChecked, term.frameLocation, term.quantityCount, term.quantityType);
+                        break;
+
+                case PatternTerm::TypeForwardReference:
                     break;
 
                 case PatternTerm::TypeParenthesesSubpattern: {
