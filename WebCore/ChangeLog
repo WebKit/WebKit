@@ -1,3 +1,16 @@
+2009-05-27  David Levin  <levin@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 26029: FrameLoader::canLoad should allow calls with just a security origin
+        https://bugs.webkit.org/show_bug.cgi?id=26029
+
+        No functional changes, so no tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canLoad):
+        * loader/FrameLoader.h:
+
 2009-05-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build fix.

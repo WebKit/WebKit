@@ -2399,18 +2399,22 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
 bool FrameLoader::canLoad(const KURL& url, const String& referrer, const Document* doc)
 {
-    // We can always load any URL that isn't considered local (e.g. http URLs)
+    return canLoad(url, referrer, doc ? doc->securityOrigin() : 0);
+}
+
+bool FrameLoader::canLoad(const KURL& url, const String& referrer, const SecurityOrigin* securityOrigin)
+{
+    // We can always load any URL that isn't considered local (e.g. http URLs).
     if (!shouldTreatURLAsLocal(url.string()))
         return true;
 
     // If we were provided a document, we let its local file policy dictate the result,
     // otherwise we allow local loads only if the supplied referrer is also local.
-    if (doc)
-        return doc->securityOrigin()->canLoadLocalResources();
-    else if (!referrer.isEmpty())
+    if (securityOrigin)
+        return securityOrigin->canLoadLocalResources();
+    if (!referrer.isEmpty())
         return shouldTreatURLAsLocal(referrer);
-    else
-        return false;
+    return false;
 }
 
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
