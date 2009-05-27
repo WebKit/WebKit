@@ -1,3 +1,9 @@
+2009-05-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed make distcheck fix. One more missing file.
+
+        * GNUmakefile.am:
+
 2009-05-27  Antonio Gomes   <antonio.gomes@openbossa.org>
 
         Reviewed by Simon Hausmann.

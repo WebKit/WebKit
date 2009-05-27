@@ -1105,6 +1105,7 @@ webcore_sources += \
 	WebCore/inspector/JavaScriptProfileNode.cpp \
 	WebCore/inspector/JavaScriptProfileNode.h \
 	WebCore/inspector/JSONObject.cpp \
+	WebCore/inspector/JSONObject.h \
 	WebCore/loader/Cache.cpp \
 	WebCore/loader/Cache.h \
 	WebCore/loader/CachePolicy.h \
