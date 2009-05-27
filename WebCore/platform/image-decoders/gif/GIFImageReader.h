@@ -35,8 +35,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef _GIF_H_
-#define _GIF_H_
+#ifndef GIFImageReader_h
+#define GIFImageReader_h
 
 // Define ourselves as the clientPtr.  Mozilla just hacked their C++ callback class into this old C decoder,
 // so we will too.
@@ -168,7 +168,7 @@ struct GIFImageReader {
     unsigned screen_width;       /* Logical screen width & height */
     unsigned screen_height;
     int global_colormap_size;   /* Size of global colormap array. */
-    int images_decoded;         /* Counts completed frames for animated GIFs */
+    unsigned images_decoded;    /* Counts completed frames for animated GIFs */
     int images_count;           /* Counted all frames seen so far (including incomplete frames) */
     int loop_count;             /* Netscape specific extension block to control
                                    the number of animation loops a GIF renders. */
@@ -213,4 +213,3 @@ private:
 };
 
 #endif
-

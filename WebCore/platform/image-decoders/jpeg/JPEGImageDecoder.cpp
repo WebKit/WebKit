@@ -38,32 +38,14 @@
 #include "config.h"
 #include "JPEGImageDecoder.h"
 #include <assert.h>
-#include <stdio.h>
-
-#if PLATFORM(CAIRO) || PLATFORM(QT) || PLATFORM(WX)
-
-#if COMPILER(MSVC)
-// Remove warnings from warning level 4.
-#pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
-
-// if ADDRESS_TAG_BIT is dfined, INT32 has been declared as a typedef in the PlatformSDK (BaseTsd.h),
-// so we need to stop jpeglib.h from trying to #define it 
-// see here for more info: http://www.cygwin.com/ml/cygwin/2004-07/msg01051.html
-# if defined(ADDRESS_TAG_BIT) && !defined(XMD_H)
-#  define XMD_H
-#  define VTK_JPEG_XMD_H
-# endif
-#endif // COMPILER(MSVC)
 
 extern "C" {
 #include "jpeglib.h"
 }
 
 #if COMPILER(MSVC)
-# if defined(VTK_JPEG_XMD_H)
-#  undef VTK_JPEG_XMD_H
-#  undef XMD_H
-# endif
+// Remove warnings from warning level 4.
+#pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
 #endif // COMPILER(MSVC)
 
 #include <setjmp.h>
@@ -482,7 +464,7 @@ bool JPEGImageDecoder::outputScanlines()
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
         // Let's resize our buffer now to the correct width/height.
         RGBA32Array& bytes = buffer.bytes();
-        bytes.resize(m_size.width() * m_size.height());
+        bytes.resize(size().width() * size().height());
 
         // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
@@ -503,7 +485,7 @@ bool JPEGImageDecoder::outputScanlines()
         if (jpeg_read_scanlines(info, samples, 1) != 1)
             return false;
         JSAMPLE *j1 = samples[0];
-        for (unsigned i = 0; i < info->output_width; ++i) {
+        for (unsigned x = 0; x < info->output_width; ++x) {
             unsigned r = *j1++;
             unsigned g = *j1++;
             unsigned b = *j1++;
@@ -527,5 +509,3 @@ void JPEGImageDecoder::jpegComplete()
 }
 
 }
-
-#endif // PLATFORM(CAIRO)

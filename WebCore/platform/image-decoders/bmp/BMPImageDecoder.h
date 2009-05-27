@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BMP_DECODER_H_
-#define BMP_DECODER_H_
+#ifndef BMPImageDecoder_h
+#define BMPImageDecoder_h
 
 #include "ImageDecoder.h"
 
@@ -33,8 +33,7 @@ namespace WebCore {
     class BMPImageReader;
 
     // This class decodes the BMP image format.
-    class BMPImageDecoder : public ImageDecoder
-    {
+    class BMPImageDecoder : public ImageDecoder {
     public:
         virtual String filenameExtension() const { return "bmp"; }
 
@@ -44,6 +43,6 @@ namespace WebCore {
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
     };
 
-}
+} // namespace WebCore
 
 #endif

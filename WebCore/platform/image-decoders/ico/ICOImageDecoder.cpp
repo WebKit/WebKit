@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ICOImageDecoder.h"
 
-#if PLATFORM(CAIRO) || PLATFORM(QT) || PLATFORM(WX)
-
 namespace WebCore
 {
 
@@ -41,6 +39,4 @@ RGBA32Buffer* ICOImageDecoder::frameBufferAtIndex(size_t index)
     return 0;
 }
 
-}
-
-#endif // PLATFORM(CAIRO)
+} // namespace WebCore

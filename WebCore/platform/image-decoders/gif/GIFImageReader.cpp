@@ -78,8 +78,6 @@ mailing address.
 #include <string.h>
 #include "GIFImageDecoder.h"
 
-#if PLATFORM(CAIRO) || PLATFORM(QT) || PLATFORM(WX)
-
 using WebCore::GIFImageDecoder;
 
 // Define the Mozilla macro setup so that we can leave the macros alone.
@@ -939,5 +937,3 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
     clientptr->decodingHalted(0);
   return true;
 }
-
-#endif // PLATFORM(CAIRO)

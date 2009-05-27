@@ -72,9 +72,12 @@ class PNGImageReader
 {
 public:
     PNGImageReader(PNGImageDecoder* decoder)
-    : m_readOffset(0), m_decodingSizeOnly(false), m_interlaceBuffer(0), m_hasAlpha(0)
+        : m_readOffset(0)
+        , m_decodingSizeOnly(false)
+        , m_interlaceBuffer(0)
+        , m_hasAlpha(0)
     {
-        m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, decodingFailed, decodingWarning);
+        m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning);
         m_info = png_create_info_struct(m_png);
         png_set_progressive_read_fn(m_png, decoder, headerAvailable, rowAvailable, pngComplete);
     }
@@ -134,8 +137,9 @@ private:
 };
 
 PNGImageDecoder::PNGImageDecoder()
-: m_reader(0)
-{}
+    : m_reader(0)
+{
+}
 
 PNGImageDecoder::~PNGImageDecoder()
 {
@@ -169,7 +173,7 @@ bool PNGImageDecoder::isSizeAvailable() const
         decode(true);
     }
 
-    return !m_failed && ImageDecoder::isSizeAvailable();
+    return ImageDecoder::isSizeAvailable();
 }
 
 RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
@@ -305,8 +309,7 @@ void PNGImageDecoder::headerAvailable()
 void rowAvailable(png_structp png, png_bytep rowBuffer,
                   png_uint_32 rowIndex, int interlacePass)
 {
-    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->rowAvailable(
-        rowBuffer, rowIndex, interlacePass);
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->rowAvailable(rowBuffer, rowIndex, interlacePass);
 }
 
 void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass)

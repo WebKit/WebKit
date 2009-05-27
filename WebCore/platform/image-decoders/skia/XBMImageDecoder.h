@@ -31,7 +31,6 @@
 #ifndef XBMImageDecoder_h
 #define XBMImageDecoder_h
 
-#include "config.h"
 #include <string>
 #include "ImageDecoder.h"
 

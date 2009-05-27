@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ICO_DECODER_H_
-#define ICO_DECODER_H_
+#ifndef ICOImageDecoder_h
+#define ICOImageDecoder_h
 
 #include "ImageDecoder.h"
 
@@ -33,8 +33,7 @@ namespace WebCore {
     class ICOImageReader;
 
     // This class decodes the ICO and CUR image formats.
-    class ICOImageDecoder : public ImageDecoder
-    {
+    class ICOImageDecoder : public ImageDecoder {
     public:
         virtual String filenameExtension() const { return "ico"; }
 
@@ -44,6 +43,6 @@ namespace WebCore {
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
     };
 
-}
+} // namespace WebCore
 
 #endif

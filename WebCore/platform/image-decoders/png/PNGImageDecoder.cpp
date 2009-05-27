@@ -40,12 +40,10 @@
 #include "png.h"
 #include "assert.h"
 
-#if PLATFORM(CAIRO) || PLATFORM(QT) || PLATFORM(WX)
-
 #if COMPILER(MSVC)
 // Remove warnings from warning level 4.
 #pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
-#endif
+#endif // COMPILER(MSVC)
 
 namespace WebCore {
 
@@ -55,7 +53,7 @@ const double cDefaultGamma = 2.2;
 const double cInverseGamma = 0.45455;
 
 // Protect against large PNGs. See Mozilla's bug #251381 for more info.
-const long cMaxPNGSize = 1000000L;
+const unsigned long cMaxPNGSize = 1000000UL;
 
 // Called if the decoding of the image fails.
 static void PNGAPI decodingFailed(png_structp png_ptr, png_const_charp error_msg);
@@ -78,9 +76,12 @@ class PNGImageReader
 {
 public:
     PNGImageReader(PNGImageDecoder* decoder)
-    : m_readOffset(0), m_decodingSizeOnly(false), m_interlaceBuffer(0), m_hasAlpha(0)
+        : m_readOffset(0)
+        , m_decodingSizeOnly(false)
+        , m_interlaceBuffer(0)
+        , m_hasAlpha(0)
     {
-        m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, decodingFailed, decodingWarning);
+        m_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, decodingFailed, decodingWarning);
         m_info = png_create_info_struct(m_png);
         png_set_progressive_read_fn(m_png, decoder, headerAvailable, rowAvailable, pngComplete);
     }
@@ -92,8 +93,9 @@ public:
 
     void close() {
         if (m_png && m_info)
-            png_destroy_read_struct(&m_png, &m_info, 0);
+            png_destroy_read_struct(&m_png, &m_info, 0);  // Will zero the pointers.
         delete []m_interlaceBuffer;
+        m_interlaceBuffer = 0;
         m_readOffset = 0;
     }
 
@@ -139,7 +141,7 @@ private:
 };
 
 PNGImageDecoder::PNGImageDecoder()
-: m_reader(0)
+    : m_reader(0)
 {
     m_frameBufferCache.resize(1);
 }
@@ -222,6 +224,10 @@ void decodingWarning(png_structp png, png_const_charp warningMsg)
 void headerAvailable(png_structp png, png_infop info)
 {
     static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->headerAvailable();
+}
+
+void PNGImageDecoder::decodingFailed() {
+    m_failed = true;
 }
 
 void PNGImageDecoder::headerAvailable()
@@ -312,16 +318,16 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
         // Let's resize our buffer now to the correct width/height.
         RGBA32Array& bytes = buffer.bytes();
-        bytes.resize(m_size.width() * m_size.height());
+        bytes.resize(size().width() * size().height());
 
         // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
 
         // For PNGs, the frame always fills the entire image.
-        buffer.setRect(IntRect(0, 0, m_size.width(), m_size.height()));
+        buffer.setRect(IntRect(0, 0, size().width(), size().height()));
 
         if (reader()->pngPtr()->interlaced)
-            reader()->createInterlaceBuffer((reader()->hasAlpha() ? 4 : 3) * m_size.width() * m_size.height());
+            reader()->createInterlaceBuffer((reader()->hasAlpha() ? 4 : 3) * size().width() * size().height());
     }
 
     if (rowBuffer == 0)
@@ -361,17 +367,17 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     png_bytep row;
     png_bytep interlaceBuffer = reader()->interlaceBuffer();
     if (interlaceBuffer) {
-        row = interlaceBuffer + (rowIndex * colorChannels * m_size.width());
+        row = interlaceBuffer + (rowIndex * colorChannels * size().width());
         png_progressive_combine_row(png, row, rowBuffer);
     }
     else
         row = rowBuffer;
 
     // Copy the data into our buffer.
-    int width = m_size.width();
+    int width = size().width();
     unsigned* dst = buffer.bytes().data() + rowIndex * width;
     bool sawAlpha = false;
-    for (int i = 0; i < width; i++) {
+    for (int x = 0; x < width; x++) {
         unsigned red = *row++;
         unsigned green = *row++;
         unsigned blue = *row++;
@@ -398,6 +404,4 @@ void PNGImageDecoder::pngComplete()
     buffer.setStatus(RGBA32Buffer::FrameComplete);
 }
 
-}
-
-#endif // PLATFORM(CAIRO)
+} // namespace WebCore

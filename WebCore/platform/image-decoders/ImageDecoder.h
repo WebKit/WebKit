@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IMAGE_DECODER_H_
-#define IMAGE_DECODER_H_
+#ifndef ImageDecoder_h
+#define ImageDecoder_h
 
 #include "IntRect.h"
 #include "ImageSource.h"
@@ -38,22 +38,27 @@ namespace WebCore {
 
     // The RGBA32Buffer object represents the decoded image data in RGBA32 format.  This buffer is what all
     // decoders write a single frame into.  Frames are then instantiated for drawing by being handed this buffer.
-    class RGBA32Buffer
-    {
+    class RGBA32Buffer {
     public:
         enum FrameStatus { FrameEmpty, FramePartial, FrameComplete };
+
         enum FrameDisposalMethod {
             // If you change the numeric values of these, make sure you audit all
             // users, as some users may cast raw values to/from these constants.
-            DisposeNotSpecified = 0,       // Leave frame in framebuffer
-            DisposeKeep = 1,               // Leave frame in framebuffer
-            DisposeOverwriteBgcolor = 2,   // Clear frame to transparent
-            DisposeOverwritePrevious = 3,  // Clear frame to previous framebuffer contents
+            DisposeNotSpecified,       // Leave frame in framebuffer
+            DisposeKeep,               // Leave frame in framebuffer
+            DisposeOverwriteBgcolor,   // Clear frame to transparent
+            DisposeOverwritePrevious,  // Clear frame to previous framebuffer contents
         };
 
-        RGBA32Buffer() : m_height(0), m_status(FrameEmpty), m_duration(0),
-                         m_disposalMethod(DisposeNotSpecified), m_hasAlpha(false)
-        {} 
+        RGBA32Buffer()
+            : m_height(0)
+            , m_status(FrameEmpty)
+            , m_duration(0)
+            , m_disposalMethod(DisposeNotSpecified)
+            , m_hasAlpha(false)
+        {
+        } 
 
         void clear() {
           m_bytes.clear();
@@ -111,10 +116,14 @@ namespace WebCore {
     // The ImageDecoder class represents a base class for specific image format decoders
     // (e.g., GIF, JPG, PNG, ICO) to derive from.  All decoders decode into RGBA32 format
     // and the base class manages the RGBA32 frame cache.
-    class ImageDecoder
-    {
+    class ImageDecoder {
     public:
-        ImageDecoder() :m_sizeAvailable(false), m_failed(false) {}
+        ImageDecoder()
+            : m_sizeAvailable(false)
+            , m_failed(false)
+        {
+        }
+        
         virtual ~ImageDecoder() {}
 
         // The the filename extension usually associated with an undecoded image of this type.
@@ -164,6 +173,6 @@ namespace WebCore {
         IntSize m_size;
     };
 
-}
+} // namespace WebCore
 
 #endif

@@ -1,3 +1,91 @@
+2009-05-26  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part two
+        Mostly cosmetic changes, mainly to get image decoders for Cairo build to
+        comply with WebKit style guidelines:
+        * Fix header guard names
+        * Fix initializer list wrapping
+        * Fix class/function "{" wrapping
+        * Fix wrapping of long boolean expressions
+        * Fix whitespace around operators
+        * Eliminate whitespace on otherwise-blank lines
+        * No {} on single-line conditional arms
+        * Use 0 instead of NULL
+        * Don't #include "config.h" in headers
+
+        Also a few non-cosmetic changes:
+        * Remove unneeded #ifdef protecting the contents of these files.  The
+          platforms listed don't match who uses these files anymore (even
+          without considering Skia), and platforms which don't use them at all
+          (like CG) aren't harmed by the files, since they don't have
+          equivalently-named classes.  It's simpler to just ditch these.
+        * Convert a use of Vector<>& into SharedBuffer*, since that's how the
+          data is really stored anyway.
+        * Use size() instead of m_size, for consistency with Skia code, and
+          future-proofing (if a particular decoder wants to specialize this).
+        * Move an ASSERT that was slightly more aggressive than necessary.
+        * Change variable names/types for clarity/accuracy and to match Skia.
+        * Remove unnecessary macro magic to work around a problem which no
+          longer exists in the third-party JPEG headers.
+        * Stop silencing a portability warning about setjmp (the vcproj/vsprops
+          are the right place for this)
+        * In Skia code, don't explicitly check |m_failed| before calling
+          isSizeAvailable(), which itself checks |m_failed|.
+
+        * platform/image-decoders/ImageDecoder.h: Fix header guards, "{" wrapping.
+        (WebCore::RGBA32Buffer::):
+        (WebCore::RGBA32Buffer::RGBA32Buffer): Fix initializer list wrapping.
+        (WebCore::ImageDecoder::ImageDecoder): Fix initializer list wrapping.
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp: Remove unneeded #ifdef.
+        * platform/image-decoders/bmp/BMPImageDecoder.h: Fix header guards, "{" wrapping.
+        * platform/image-decoders/gif/GIFImageDecoder.cpp: Remove unneeded #ifdef, fix "{" wrapping.
+        (WebCore::GIFImageDecoderPrivate::GIFImageDecoderPrivate): Use an initializer instead of a block-level statement.
+        (WebCore::GIFImageDecoderPrivate::decode): Expect a SharedBuffer.
+        (WebCore::GIFImageDecoderPrivate::getColorMap):
+        (WebCore::GIFImageDecoder::GIFImageDecoder): Fix initializer list wrapping.
+        (WebCore::GIFImageDecoder::frameCount): Add comment.
+        (WebCore::GIFImageDecoder::frameBufferAtIndex): Explicitly cast, fix whitespace around operators.
+        (WebCore::GIFImageDecoder::decode): Pass a SharedBuffer.
+        (WebCore::GIFImageDecoder::initFrameBuffer): Use size() instead of m_size, move ASSERT, fix boolean wrapping, fix indenting.
+        (WebCore::GIFImageDecoder::prepEmptyFrameBuffer): Use size() instead of m_size.
+        (WebCore::GIFImageDecoder::haveDecodedRow): Use size() instead of m_size, eliminate unneeded whitespace, change variable name.
+        (WebCore::GIFImageDecoder::frameComplete): Use size() instead of m_size, no {} on single-line conditional arms, fix boolean wrapping.
+        * platform/image-decoders/gif/GIFImageDecoder.h: Fix header guards, "{" wrapping.
+        * platform/image-decoders/gif/GIFImageReader.cpp: Remove unneeded #ifdef.
+        (GIFImageReader::read):
+        * platform/image-decoders/gif/GIFImageReader.h: Fix header guards, change variable type.
+        * platform/image-decoders/ico/ICOImageDecoder.cpp: Remove unneeded #ifdef.
+        * platform/image-decoders/ico/ICOImageDecoder.h: Fix header guards, "{" wrapping.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp: Remove unneeded #ifdef, macro magic, silencing of warning.
+        (WebCore::JPEGImageDecoder::outputScanlines): Use size() instead of m_size, change variable name.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h: Fix header guards, "{" wrapping.
+        * platform/image-decoders/png/PNGImageDecoder.cpp: Remove unneeded #ifdef, silencing of warning, change variable type.
+        (WebCore::PNGImageReader::PNGImageReader): Fix initializer list wrapping.
+        (WebCore::PNGImageReader::close): Add comment, zero another member for consistency.
+        (WebCore::PNGImageDecoder::PNGImageDecoder): Fix indenting.
+        (WebCore::PNGImageDecoder::decodingFailed): Define in .cpp, not .h.
+        (WebCore::PNGImageDecoder::rowAvailable):
+        * platform/image-decoders/png/PNGImageDecoder.h: Fix header guards, "{" wrapping.
+        * platform/image-decoders/skia/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::isSizeAvailable): Don't check m_failed unnecessarily.
+        (WebCore::GIFImageDecoder::frameBufferAtIndex): Fix whitespace around operators.
+        * platform/image-decoders/skia/GIFImageReader.h: "unsigned" is sufficient to convey "unsigned int".
+        * platform/image-decoders/skia/ImageDecoder.h: Remove unnecessary #includes.
+        (WebCore::ImageDecoder::ImageDecoder): Fix initializer list wrapping.
+        * platform/image-decoders/skia/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::JPEGImageReader): Use 0 instead of NULL.
+        (WebCore::JPEGImageDecoder::isSizeAvailable): Don't check m_failed unnecessarily.
+        * platform/image-decoders/skia/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::PNGImageReader): Fix initializer list wrapping.
+        (WebCore::PNGImageDecoder::PNGImageDecoder): Fix indenting.
+        (WebCore::PNGImageDecoder::isSizeAvailable): Don't check m_failed unnecessarily.
+        (WebCore::rowAvailable):
+        * platform/image-decoders/skia/XBMImageDecoder.h: Don't #include config.h.
+        * platform/image-decoders/xbm/XBMImageDecoder.cpp: Remove unneeded #ifdef.
+        * platform/image-decoders/xbm/XBMImageDecoder.h: Fix header guards, "{" wrapping.
+
 2009-05-26  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

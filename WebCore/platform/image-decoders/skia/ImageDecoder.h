@@ -33,8 +33,6 @@
 #include "PlatformString.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -42,9 +40,8 @@
 
 namespace WebCore {
 
-    // The RGBA32Buffer object represents the decoded image data in RGBA32 format.
-    // This buffer is what all decoders write a single frame into.  Frames are then
-    // instantiated for drawing by being handed this buffer.
+    // The RGBA32Buffer object represents the decoded image data in RGBA32 format.  This buffer is what all
+    // decoders write a single frame into.  Frames are then instantiated for drawing by being handed this buffer.
     class RGBA32Buffer {
     public:
         enum FrameStatus { FrameEmpty, FramePartial, FrameComplete };
@@ -196,7 +193,12 @@ namespace WebCore {
     // and the base class manages the RGBA32 frame cache.
     class ImageDecoder {
     public:
-        ImageDecoder() : m_failed(false), m_sizeAvailable(false)  {}
+        ImageDecoder()
+            : m_failed(false)
+            , m_sizeAvailable(false)
+        {
+        }
+
         virtual ~ImageDecoder() {}
 
         // The the filename extension usually associated with an undecoded image of this type.

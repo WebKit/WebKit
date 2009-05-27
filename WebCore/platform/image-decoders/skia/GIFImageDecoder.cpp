@@ -126,7 +126,7 @@ bool GIFImageDecoder::isSizeAvailable() const
         decode(GIFSizeQuery, 0);
     }
 
-    return !m_failed && ImageDecoder::isSizeAvailable();
+    return ImageDecoder::isSizeAvailable();
 }
 
 // The total number of frames for the image.  Will scan the image data for the answer
@@ -183,7 +183,7 @@ RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
 
     RGBA32Buffer& frame = m_frameBufferCache[index];
     if (frame.status() != RGBA32Buffer::FrameComplete && m_reader)
-        decode(GIFFullQuery, index+1); // Decode this frame.
+        decode(GIFFullQuery, index + 1); // Decode this frame.
     return &frame;
 }
 
