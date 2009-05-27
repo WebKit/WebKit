@@ -1,3 +1,9 @@
+2009-05-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed (make distcheck) build fix; adding missing headers.
+
+        * GNUmakefile.am:
+
 2009-05-27  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben
