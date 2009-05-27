@@ -1,3 +1,11 @@
+2009-05-27  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fixed trunk build on Linux after r44126.
+
+        * WebCore.pro:
+
 2009-05-27  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.

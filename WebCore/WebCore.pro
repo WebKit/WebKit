@@ -384,7 +384,6 @@ IDL_BINDINGS += \
     html/ImageData.idl \
     html/MediaError.idl \
     html/TextMetrics.idl \
-    html/TimeRanges.idl \
     html/VoidCallback.idl \
     inspector/InspectorController.idl \
     page/BarInfo.idl \
@@ -1390,6 +1389,9 @@ contains(DEFINES, ENABLE_WORKERS=1) {
 
 contains(DEFINES, ENABLE_VIDEO=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_VIDEO=1
+
+    IDL_BINDINGS += \
+        html/TimeRanges.idl
 
     SOURCES += \
         html/HTMLAudioElement.cpp \
