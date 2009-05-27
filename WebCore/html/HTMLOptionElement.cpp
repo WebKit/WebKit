@@ -43,7 +43,6 @@ using namespace HTMLNames;
 
 HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
     : HTMLFormControlElement(tagName, doc, f)
-    , m_data(this)
     , m_style(0)
 {
     ASSERT(hasTagName(optionTag));
@@ -80,7 +79,7 @@ const AtomicString& HTMLOptionElement::formControlType() const
 
 String HTMLOptionElement::text() const
 {
-    return OptionElement::collectOptionText(m_data, document());
+    return OptionElement::collectOptionText(m_data, this);
 }
 
 void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)
@@ -137,7 +136,7 @@ void HTMLOptionElement::parseMappedAttribute(MappedAttribute *attr)
 
 String HTMLOptionElement::value() const
 {
-    return OptionElement::collectOptionValue(m_data, document());
+    return OptionElement::collectOptionValue(m_data, this);
 }
 
 void HTMLOptionElement::setValue(const String& value)
@@ -155,7 +154,7 @@ void HTMLOptionElement::setSelected(bool selected)
     if (m_data.selected() == selected)
         return;
 
-    OptionElement::setSelectedState(m_data, selected);
+    OptionElement::setSelectedState(m_data, this, selected);
 
     if (HTMLSelectElement* select = ownerSelectElement())
         select->setSelectedIndex(selected ? index() : -1, false);
@@ -163,7 +162,7 @@ void HTMLOptionElement::setSelected(bool selected)
 
 void HTMLOptionElement::setSelectedState(bool selected)
 {
-    OptionElement::setSelectedState(m_data, selected);
+    OptionElement::setSelectedState(m_data, this, selected);
 }
 
 void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -218,7 +217,7 @@ RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const
 
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 {
-    return OptionElement::collectOptionTextRespectingGroupLabel(m_data, document());
+    return OptionElement::collectOptionTextRespectingGroupLabel(m_data, this);
 }
 
 bool HTMLOptionElement::disabled() const

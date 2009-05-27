@@ -1,3 +1,32 @@
+2009-05-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=26033
+
+        OptionElementData saves an Element pointer, which is unnessary.
+        Just pass it to the static function calls directly.
+
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::setSelectedState):
+        (WebCore::OptionElement::collectOptionText):
+        (WebCore::OptionElement::collectOptionTextRespectingGroupLabel):
+        (WebCore::OptionElement::collectOptionValue):
+        (WebCore::OptionElementData::OptionElementData):
+        * dom/OptionElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::text):
+        (WebCore::HTMLOptionElement::value):
+        (WebCore::HTMLOptionElement::setSelected):
+        (WebCore::HTMLOptionElement::setSelectedState):
+        (WebCore::HTMLOptionElement::textIndentedToRespectGroupLabel):
+        * wml/WMLOptionElement.cpp:
+        (WebCore::WMLOptionElement::WMLOptionElement):
+        (WebCore::WMLOptionElement::setSelectedState):
+        (WebCore::WMLOptionElement::value):
+        (WebCore::WMLOptionElement::textIndentedToRespectGroupLabel):
+
 2009-05-27  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Maciej Stachowiak.

@@ -35,7 +35,6 @@ using namespace WMLNames;
 
 WMLOptionElement::WMLOptionElement(const QualifiedName& tagName, Document* doc)
     : WMLFormControlElement(tagName, doc)
-    , m_data(this)
 {
 }
 
@@ -137,17 +136,17 @@ bool WMLOptionElement::selected() const
 
 void WMLOptionElement::setSelectedState(bool selected)
 {
-    OptionElement::setSelectedState(m_data, selected);
+    OptionElement::setSelectedState(m_data, this, selected);
 }
 
 String WMLOptionElement::value() const
 {
-    return OptionElement::collectOptionValue(m_data, document());
+    return OptionElement::collectOptionValue(m_data, this);
 }
 
 String WMLOptionElement::textIndentedToRespectGroupLabel() const
 {
-    return OptionElement::collectOptionTextRespectingGroupLabel(m_data, document());
+    return OptionElement::collectOptionTextRespectingGroupLabel(m_data, this);
 }
 
 RenderStyle* WMLOptionElement::nonRendererRenderStyle() const
