@@ -1,3 +1,9 @@
+2009-05-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Adding new symbols index for 1.1.8.
+
+        * docs/webkitgtk-docs.sgml:
+
 2009-05-26  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Xan Lopez.
