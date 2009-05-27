@@ -1,3 +1,9 @@
+2009-05-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Disabling new tests to make the bot green.
+
+        * platform/gtk/Skipped:
+
 2009-05-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

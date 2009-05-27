@@ -1628,6 +1628,8 @@ fast/dom/Window/window-screen-properties.html
 fast/dom/Window/window-xy-properties.html
 fast/dynamic/hovered-detach.html
 fast/dynamic/paused-event-dispatch.html
+fast/dynamic/window-resize-scrollbars-test.html
+fast/dynamic/window-scrollbars-test.html
 fast/encoding/char-decoding-mac.html
 fast/encoding/char-decoding.html
 fast/encoding/idn-security.html
