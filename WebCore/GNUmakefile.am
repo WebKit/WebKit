@@ -1827,6 +1827,8 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/EventLoopGtk.cpp \
 	WebCore/platform/gtk/FileChooserGtk.cpp \
 	WebCore/platform/gtk/FileSystemGtk.cpp \
+	WebCore/platform/gtk/GtkPluginWidget.cpp \
+	WebCore/platform/gtk/GtkPluginWidget.h \
 	WebCore/platform/gtk/KURLGtk.cpp \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
 	WebCore/platform/gtk/KeyboardCodes.h \

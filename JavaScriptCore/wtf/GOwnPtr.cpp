@@ -56,4 +56,10 @@ template <> void freeOwnedGPtr<GDir>(GDir* ptr)
         g_dir_close(ptr);
 }
 
+template <> void freeOwnedGPtr<GHashTable>(GHashTable* ptr)
+{
+    if (ptr)
+        g_hash_table_unref(ptr);
+}
+
 } // namespace WTF

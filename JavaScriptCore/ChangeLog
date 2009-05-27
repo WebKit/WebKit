@@ -1,3 +1,17 @@
+2009-05-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25613
+
+        Be able to use GOwnPtr for GHashTable as well. The assumption
+        is that the hash table has been created with g_hash_table_new_full
+        and has proper destruction functions.
+
+        * wtf/GOwnPtr.cpp:
+        (WTF::GHashTable):
+        * wtf/GOwnPtr.h:
+
 2009-05-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

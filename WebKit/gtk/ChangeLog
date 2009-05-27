@@ -1,3 +1,19 @@
+2009-05-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Xan Lopez.
+
+        Add a new signal called "create-plugin-widget" and emit it from
+        within the FrameLoaderClientGtk::createPlugin method. If a
+        GtkWidget gets returned it will be embedded as a WebCore::Widget
+        using the new GtkPluginWidget.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createPlugin):
+        * webkit/webkitwebview.cpp:
+        (webkit_signal_accumulator_object_handled):
+        (webkit_web_view_class_init):
+        * webkitmarshal.list:
+
 2009-05-24  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark Rowe.

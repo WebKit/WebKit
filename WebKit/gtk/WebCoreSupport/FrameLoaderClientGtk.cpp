@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
- *  Copyright (C) 2007, 2008 Holger Hans Peter Freyther
+ *  Copyright (C) 2007, 2008, 2009 Holger Hans Peter Freyther
  *  Copyright (C) 2007 Christian Dywan <christian@twotoasts.de>
  *  Copyright (C) 2008 Collabora Ltd.  All rights reserved.
  *  Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
@@ -29,6 +29,8 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "FrameTree.h"
+#include "GOwnPtr.h"
+#include "GtkPluginWidget.h"
 #include "HTMLAppletElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"
@@ -444,6 +446,24 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
 
 Widget* FrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
+    /* Check if we want to embed a GtkWidget, fallback to plugins later */
+    CString urlString = url.string().utf8();
+    CString mimeTypeString = mimeType.utf8();
+
+    ASSERT(paramNames.size() == paramValues.size());
+    GOwnPtr<GHashTable> hash(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
+    for (unsigned i = 0; i < paramNames.size(); ++i) {
+        g_hash_table_insert(hash.get(),
+                            g_strdup(paramNames[i].utf8().data()),
+                            g_strdup(paramValues[i].utf8().data()));
+    }
+
+    GtkWidget* gtkWidget = 0;
+    g_signal_emit_by_name(getViewFromFrame(m_frame), "create-plugin-widget",
+                          mimeTypeString.data(), urlString.data(), hash.get(), &gtkWidget);
+    if (gtkWidget)
+        return new GtkPluginWidget(gtkWidget);
+
     PluginView* pluginView = PluginView::create(core(m_frame), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
 
     if (pluginView->status() == PluginStatusLoadedSuccessfully)
