@@ -1,3 +1,13 @@
+2009-05-26  Yichao Yin  <yichao.yin@torchmobile.com.cn>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix the crash issue while running layout tests after enalbed XHTMLMP
+        https://bugs.webkit.org/show_bug.cgi?id=26017
+
+        * dom/Document.cpp:
+        (WebCore::Document::isXHTMLMPDocument):
+
 2009-05-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

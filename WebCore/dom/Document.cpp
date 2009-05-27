@@ -4446,6 +4446,8 @@ void Document::displayBufferModifiedByEncoding(UChar* buffer, unsigned len) cons
 #if ENABLE(XHTMLMP)
 bool Document::isXHTMLMPDocument() const
 {
+    if (!frame() || !frame()->loader())
+        return false;
     // As per section 7.2 of OMA-WAP-XHTMLMP-V1_1-20061020-A.pdf, a conforming user agent
     // MUST accept XHTMLMP document identified as "application/vnd.wap.xhtml+xml"
     // and SHOULD accept it identified as "application/xhtml+xml"
