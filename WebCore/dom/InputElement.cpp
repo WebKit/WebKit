@@ -52,87 +52,94 @@ using namespace HTMLNames;
 const int InputElement::s_maximumLength = 524288;
 const int InputElement::s_defaultSize = 20;
 
-void InputElement::dispatchFocusEvent(InputElementData& data, Document* document)
+void InputElement::dispatchFocusEvent(InputElementData& data, InputElement* inputElement, Element* element)
 {
-    if (!data.inputElement()->isTextField())
+    if (!inputElement->isTextField())
         return;
 
-    updatePlaceholderVisibility(data, document);
+    updatePlaceholderVisibility(data, inputElement, element);
 
-    if (data.inputElement()->isPasswordField() && document->frame())
+    Document* document = element->document();
+    if (inputElement->isPasswordField() && document->frame())
         document->setUseSecureKeyboardEntryWhenActive(true);
 }
 
-void InputElement::dispatchBlurEvent(InputElementData& data, Document* document)
+void InputElement::dispatchBlurEvent(InputElementData& data, InputElement* inputElement, Element* element)
 {
-    if (!data.inputElement()->isTextField())
+    if (!inputElement->isTextField())
         return;
 
+    Document* document = element->document();
     Frame* frame = document->frame();
     if (!frame)
         return;
 
-    updatePlaceholderVisibility(data, document);
+    updatePlaceholderVisibility(data, inputElement, element);
 
-    if (data.inputElement()->isPasswordField())
+    if (inputElement->isPasswordField())
         document->setUseSecureKeyboardEntryWhenActive(false);
 
-    frame->textFieldDidEndEditing(data.element());
+    frame->textFieldDidEndEditing(element);
 }
 
-void InputElement::updatePlaceholderVisibility(InputElementData& data, Document* document, bool placeholderValueChanged)
+void InputElement::updatePlaceholderVisibility(InputElementData& data, InputElement* inputElement, Element* element, bool placeholderValueChanged)
 {
-    ASSERT(data.inputElement()->isTextField());
+    ASSERT(inputElement->isTextField());
+    Document* document = element->document();
 
     bool oldPlaceholderShouldBeVisible = data.placeholderShouldBeVisible();
-    Element* element = data.element();
-
-    data.setPlaceholderShouldBeVisible(data.inputElement()->value().isEmpty() 
+    data.setPlaceholderShouldBeVisible(inputElement->value().isEmpty() 
                                        && document->focusedNode() != element
-                                       && !data.inputElement()->placeholder().isEmpty());
+                                       && !inputElement->placeholder().isEmpty());
 
     if ((oldPlaceholderShouldBeVisible != data.placeholderShouldBeVisible() || placeholderValueChanged) && element->renderer())
         static_cast<RenderTextControlSingleLine*>(element->renderer())->updatePlaceholderVisibility();
 }
 
-void InputElement::updateFocusAppearance(InputElementData& data, Document* document, bool restorePreviousSelection)
+void InputElement::updateFocusAppearance(InputElementData& data, InputElement* inputElement, Element* element, bool restorePreviousSelection)
 {
-    ASSERT(data.inputElement()->isTextField());
+    ASSERT(inputElement->isTextField());
 
     if (!restorePreviousSelection || data.cachedSelectionStart() == -1)
-        data.inputElement()->select();
+        inputElement->select();
     else
         // Restore the cached selection.
-        updateSelectionRange(data, data.cachedSelectionStart(), data.cachedSelectionEnd());
+        updateSelectionRange(inputElement, element, data.cachedSelectionStart(), data.cachedSelectionEnd());
 
+    Document* document = element->document();
     if (document && document->frame())
         document->frame()->revealSelection();
 }
 
-void InputElement::updateSelectionRange(InputElementData& data, int start, int end)
+void InputElement::updateSelectionRange(InputElement* inputElement, Element* element, int start, int end)
 {
-    if (!data.inputElement()->isTextField())
+    if (!inputElement->isTextField())
         return;
 
-    if (RenderTextControl* renderer = toRenderTextControl(data.element()->renderer()))
+    if (RenderTextControl* renderer = toRenderTextControl(element->renderer()))
         renderer->setSelectionRange(start, end);
 }
 
-void InputElement::aboutToUnload(InputElementData& data, Document* document)
+void InputElement::aboutToUnload(InputElement* inputElement, Element* element)
 {
-    if (!data.inputElement()->isTextField() || !data.element()->focused() || !document->frame())
+    if (!inputElement->isTextField() || !element->focused())
         return;
 
-    document->frame()->textFieldDidEndEditing(data.element());
+    Document* document = element->document();
+    Frame* frame = document->frame();
+    if (!frame)
+        return;
+
+    frame->textFieldDidEndEditing(element);
 }
 
-void InputElement::setValueFromRenderer(InputElementData& data, Document* document, const String& value)
+void InputElement::setValueFromRenderer(InputElementData& data, InputElement* inputElement, Element* element, const String& value)
 {
     // Renderer and our event handler are responsible for constraining values.
-    ASSERT(value == data.inputElement()->constrainValue(value) || data.inputElement()->constrainValue(value).isEmpty());
+    ASSERT(value == inputElement->constrainValue(value) || inputElement->constrainValue(value).isEmpty());
 
-    if (data.inputElement()->isTextField())
-        updatePlaceholderVisibility(data, document);
+    if (inputElement->isTextField())
+        updatePlaceholderVisibility(data, inputElement, element);
 
     // Workaround for bug where trailing \n is included in the result of textContent.
     // The assert macro above may also be simplified to:  value == constrainValue(value)
@@ -142,12 +149,11 @@ void InputElement::setValueFromRenderer(InputElementData& data, Document* docume
     else
         data.setValue(value);
 
-    Element* element = data.element();
     element->setFormControlValueMatchesRenderer(true);
 
     // Fire the "input" DOM event
     element->dispatchEvent(eventNames().inputEvent, true, false);
-    notifyFormStateChanged(data, document);
+    notifyFormStateChanged(element);
 }
 
 static int numCharactersInGraphemeClusters(StringImpl* s, int numGraphemeClusters)
@@ -167,12 +173,12 @@ static int numCharactersInGraphemeClusters(StringImpl* s, int numGraphemeCluster
     return textBreakCurrent(it);
 }
 
-String InputElement::constrainValue(const InputElementData& data, const String& proposedValue, int maxLength)
+String InputElement::constrainValue(const InputElement* inputElement, const String& proposedValue, int maxLength)
 {
     String string = proposedValue;
-    if (!data.inputElement()->isTextField())
+    if (!inputElement->isTextField())
         return string;
-        
+
     string.replace("\r\n", " ");
     string.replace('\r', ' ');
     string.replace('\n', ' ');
@@ -209,12 +215,12 @@ static int numGraphemeClusters(StringImpl* s)
     return num;
 }
 
-void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, Document* document, Event* event)
+void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, InputElement* inputElement, Document* document, Event* event)
 {
     ASSERT(event->isBeforeTextInsertedEvent());
 
     // Make sure that the text to be inserted will not violate the maxLength.
-    int oldLength = numGraphemeClusters(data.inputElement()->value().impl());
+    int oldLength = numGraphemeClusters(inputElement->value().impl());
     ASSERT(oldLength <= data.maxLength());
     int selectionLength = numGraphemeClusters(plainText(document->frame()->selection()->selection().toNormalizedRange().get()).impl());
     ASSERT(oldLength >= selectionLength);
@@ -222,18 +228,18 @@ void InputElement::handleBeforeTextInsertedEvent(InputElementData& data, Documen
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
     BeforeTextInsertedEvent* textEvent = static_cast<BeforeTextInsertedEvent*>(event);
-    textEvent->setText(constrainValue(data, textEvent->text(), maxNewLength));
+    textEvent->setText(constrainValue(inputElement, textEvent->text(), maxNewLength));
 }
 
-void InputElement::parseSizeAttribute(InputElementData& data, MappedAttribute* attribute)
+void InputElement::parseSizeAttribute(InputElementData& data, Element* element, MappedAttribute* attribute)
 {
     data.setSize(attribute->isNull() ? InputElement::s_defaultSize : attribute->value().toInt());
 
-    if (RenderObject* renderer = data.element()->renderer())
+    if (RenderObject* renderer = element->renderer())
         renderer->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void InputElement::parseMaxLengthAttribute(InputElementData& data, MappedAttribute* attribute)
+void InputElement::parseMaxLengthAttribute(InputElementData& data, InputElement* inputElement, Element* element, MappedAttribute* attribute)
 {
     int maxLength = attribute->isNull() ? InputElement::s_maximumLength : attribute->value().toInt();
     if (maxLength <= 0 || maxLength > InputElement::s_maximumLength)
@@ -243,41 +249,38 @@ void InputElement::parseMaxLengthAttribute(InputElementData& data, MappedAttribu
     data.setMaxLength(maxLength);
 
     if (oldMaxLength != maxLength)
-        updateValueIfNeeded(data);
+        updateValueIfNeeded(data, inputElement);
 
-    data.element()->setNeedsStyleRecalc();
+    element->setNeedsStyleRecalc();
 }
 
-void InputElement::updateValueIfNeeded(InputElementData& data)
+void InputElement::updateValueIfNeeded(InputElementData& data, InputElement* inputElement)
 {
     String oldValue = data.value();
-    String newValue = data.inputElement()->constrainValue(oldValue);
+    String newValue = inputElement->constrainValue(oldValue);
     if (newValue != oldValue)
-        data.inputElement()->setValue(newValue);
+        inputElement->setValue(newValue);
 }
 
-void InputElement::notifyFormStateChanged(InputElementData& data, Document* document)
+void InputElement::notifyFormStateChanged(Element* element)
 {
+    Document* document = element->document();
     Frame* frame = document->frame();
     if (!frame)
         return;
 
     if (Page* page = frame->page())
-        page->chrome()->client()->formStateDidChange(data.element());
+        page->chrome()->client()->formStateDidChange(element);
 }
 
 // InputElementData
-InputElementData::InputElementData(InputElement* inputElement, Element* element)
-    : m_inputElement(inputElement)
-    , m_element(element)
-    , m_placeholderShouldBeVisible(false)
+InputElementData::InputElementData()
+    : m_placeholderShouldBeVisible(false)
     , m_size(InputElement::s_defaultSize)
     , m_maxLength(InputElement::s_maximumLength)
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)
 {
-    ASSERT(m_inputElement);
-    ASSERT(m_element);
 }
 
 InputElementData::~InputElementData()

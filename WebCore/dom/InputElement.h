@@ -66,30 +66,27 @@ public:
 protected:
     InputElement() { }
 
-    static void dispatchFocusEvent(InputElementData&, Document*);
-    static void dispatchBlurEvent(InputElementData&, Document*);
-    static void updatePlaceholderVisibility(InputElementData&, Document*, bool placeholderValueChanged = false);
-    static void updateFocusAppearance(InputElementData&, Document*, bool restorePreviousSelection);
-    static void updateSelectionRange(InputElementData&, int start, int end);
-    static void aboutToUnload(InputElementData&, Document*);
-    static void setValueFromRenderer(InputElementData&, Document*, const String&);
-    static String constrainValue(const InputElementData&, const String& proposedValue, int maxLength);
-    static void handleBeforeTextInsertedEvent(InputElementData&, Document*, Event*);
-    static void parseSizeAttribute(InputElementData&, MappedAttribute*);
-    static void parseMaxLengthAttribute(InputElementData&, MappedAttribute*);
-    static void updateValueIfNeeded(InputElementData&);
-    static void notifyFormStateChanged(InputElementData&, Document*);
+    static void dispatchFocusEvent(InputElementData&, InputElement*, Element*);
+    static void dispatchBlurEvent(InputElementData&, InputElement*, Element*);
+    static void updatePlaceholderVisibility(InputElementData&, InputElement*, Element*, bool placeholderValueChanged = false);
+    static void updateFocusAppearance(InputElementData&, InputElement*, Element*, bool restorePreviousSelection);
+    static void updateSelectionRange(InputElement*, Element*, int start, int end);
+    static void aboutToUnload(InputElement*, Element*);
+    static void setValueFromRenderer(InputElementData&, InputElement*, Element*, const String&);
+    static String constrainValue(const InputElement*, const String& proposedValue, int maxLength);
+    static void handleBeforeTextInsertedEvent(InputElementData&, InputElement*, Document*, Event*);
+    static void parseSizeAttribute(InputElementData&, Element*, MappedAttribute*);
+    static void parseMaxLengthAttribute(InputElementData&, InputElement*, Element*, MappedAttribute*);
+    static void updateValueIfNeeded(InputElementData&, InputElement*);
+    static void notifyFormStateChanged(Element*);
 };
 
 // HTML/WMLInputElement hold this struct as member variable
 // and pass it to the static helper functions in InputElement
 class InputElementData {
 public:
-    InputElementData(InputElement*, Element*);
+    InputElementData();
     ~InputElementData();
-
-    InputElement* inputElement() const { return m_inputElement; }
-    Element* element() const { return m_element; }
 
     bool placeholderShouldBeVisible() const { return m_placeholderShouldBeVisible; }
     void setPlaceholderShouldBeVisible(bool visible) { m_placeholderShouldBeVisible = visible; }
@@ -113,8 +110,6 @@ public:
     void setCachedSelectionEnd(int value) { m_cachedSelectionEnd = value; }
 
 private:
-    InputElement* m_inputElement;
-    Element* m_element;
     bool m_placeholderShouldBeVisible;
     AtomicString m_name;
     String m_value;
