@@ -1,3 +1,12 @@
+2009-05-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        Remove two unneeded protected constructors, these classes have pure-virtual functions, and can't be constructed anyway.
+
+        * dom/InputElement.h:
+        * dom/OptionGroupElement.h:
+
 2009-05-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
