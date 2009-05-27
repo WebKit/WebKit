@@ -1,3 +1,17 @@
+2009-05-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Fix for <rdar://problem/6916371>
+        iWeb 'Announce' button does nothing after publishing to MobileMe
+
+        Add linked-on-or-after check to allow older WebKit apps to use the
+        old behavior of sniffing everything (including file: urls)
+
+        * Misc/WebKitVersionChecks.h:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2009-05-26  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Ada Chan and Oliver Hunt.

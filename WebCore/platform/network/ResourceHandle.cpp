@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+static bool shouldForceContentSniffing;
+
 static bool portAllowed(const ResourceRequest&);
 
 ResourceHandle::ResourceHandle(const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading,
@@ -210,8 +212,17 @@ bool ResourceHandle::shouldContentSniff() const
 
 bool ResourceHandle::shouldContentSniffURL(const KURL& url)
 {
+#if PLATFORM(MAC)
+    if (shouldForceContentSniffing)
+        return true;
+#endif
     // We shouldn't content sniff file URLs as their MIME type should be established via their extension.
     return !url.protocolIs("file");
+}
+
+void ResourceHandle::forceContentSniffing()
+{
+    shouldForceContentSniffing = true;
 }
 
 } // namespace WebCore

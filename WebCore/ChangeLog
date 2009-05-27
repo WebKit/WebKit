@@ -1,3 +1,18 @@
+2009-05-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Fix for <rdar://problem/6916371>
+        iWeb 'Announce' button does nothing after publishing to MobileMe
+
+        Add ability to force content sniffing for all urls (including file: urls)
+
+        * WebCore.base.exp:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::shouldContentSniffURL):
+        (WebCore::ResourceHandle::forceContentSniffing):
+        * platform/network/ResourceHandle.h:
+
 2009-05-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Holger Freyther.
