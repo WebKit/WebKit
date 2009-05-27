@@ -218,7 +218,9 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
         }
     }
 
-    MediaPlayerFactory* engine = chooseBestEngineForTypeAndCodecs(type, codecs);
+    MediaPlayerFactory* engine = 0;
+    if (!type.isEmpty())
+        engine = chooseBestEngineForTypeAndCodecs(type, codecs);
 
     // if we didn't find an engine that claims the MIME type, just use the first engine
     if (!engine)

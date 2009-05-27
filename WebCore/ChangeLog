@@ -1,3 +1,12 @@
+2009-05-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6926046> REGRESSION (r43972): http://www.youtube.com/html5 crashes on open
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): Don't look for a media engine based on an empty MIME type.
+
 2009-05-27  David Levin  <levin@chromium.org>
 
         Reviewed by Maciej Stachowiak.
