@@ -1,3 +1,28 @@
+2009-05-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, demo content.
+        
+        - add Calendar demo.
+
+        * demos/calendar: Added.
+        * demos/calendar/Boom.aiff: Added.
+        * demos/calendar/Calendar.css: Added.
+        * demos/calendar/Calendar.html: Added.
+        * demos/calendar/Calendar.js: Added.
+        * demos/calendar/Calendar.manifest: Added.
+        * demos/calendar/CalendarApp.icns: Added.
+        * demos/calendar/Images: Added.
+        * demos/calendar/Images/AirPort4.png: Added.
+        * demos/calendar/Images/AirPortError.png: Added.
+        * demos/calendar/Images/disclosureTriangleSmallDown.png: Added.
+        * demos/calendar/Images/disclosureTriangleSmallRight.png: Added.
+        * demos/calendar/Images/statusbarBackground.png: Added.
+        * demos/calendar/Images/statusbarResizerVertical.png: Added.
+        * demos/calendar/LocationImage.js: Added.
+        * demos/calendar/Utilities.js: Added.
+        * demos/calendar/favicon.ico: Added.
+        * demos/calendar/mime.types: Added.
+
 2009-05-20  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Eric Seidel.
