@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -281,10 +282,6 @@ private:
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
     void platformRepaintContentRectangle(const IntRect&, bool now);
     bool platformIsOffscreen() const;
-    bool platformHandleHorizontalAdjustment(const IntSize&);
-    bool platformHandleVerticalAdjustment(const IntSize&);
-    bool platformHasHorizontalAdjustment() const;
-    bool platformHasVerticalAdjustment() const;
 
 #if PLATFORM(MAC) && defined __OBJC__
 public:

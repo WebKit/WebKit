@@ -1,3 +1,43 @@
+2009-05-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25646
+
+        [GTK] Send onscroll events for the main FrameView
+
+        WebKit/GTK+ is currently not sending any onscroll
+        events for a frame with external adjustments. This is
+        due the fact that the value-changed signal of the GtkAdjustment
+        is handled by WebCore::ScrollView directly and is not going through
+        the WebCore::Scrollbar -> WebCore::ScrollbarClient ->
+        WebCore::FrameView::valueChanged -> WebCore::ScrollView::valueChanged
+        path.
+
+        Fix the above problem by wrapping the GtkAdjustment we get
+        assigned from GTK+ in a ScrollbarGtk that will not have any
+        visual appearance. Remove code from ScrollView that knows
+        about adjustments and create a special case for
+        WebCore::ScrollView::createScrollbar that will create such
+        a special WebCore::ScrollbarGtk.
+
+        * platform/ScrollView.cpp: Remove adjustment code
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h: Remove adjustment code
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::platformDestroy):
+        (WebCore::ScrollView::createScrollbar):
+        (WebCore::ScrollView::setGtkAdjustments):
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::createScrollbar): Special case.
+        (ScrollbarGtk::ScrollbarGtk):  New ctor and work on the adjustment
+        (ScrollbarGtk::~ScrollbarGtk): Disconnect signal
+        (ScrollbarGtk::frameRectsChanged): Do nothing when we lack a platformWidget
+        * platform/gtk/ScrollbarGtk.h:
+
 2009-05-26  Cameron Zwarich  <zwarich@apple.com>
 
         Reviewed by Maciej Stachowiak.

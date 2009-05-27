@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2007 Holger Hans Peter Freyther zecke@selfish.org
+ *  Copyright (C) 2007, 2009 Holger Hans Peter Freyther zecke@selfish.org
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,11 @@ PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollbarClient* client, 
     return adoptRef(new ScrollbarGtk(client, orientation, size));
 }
 
+PassRefPtr<ScrollbarGtk> ScrollbarGtk::createScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, GtkAdjustment* adj)
+{
+    return adoptRef(new ScrollbarGtk(client, orientation, adj));
+}
+
 static gboolean gtkScrollEventCallback(GtkWidget* widget, GdkEventScroll* event, ScrollbarGtk*)
 {
     /* Scroll only if our parent rejects the scroll event. The rationale for
@@ -51,7 +56,8 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
                            gtk_hscrollbar_new(m_adjustment):
                            gtk_vscrollbar_new(m_adjustment);
     gtk_widget_show(scrollBar);
-    g_signal_connect(scrollBar, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
+    g_object_ref(m_adjustment);
+    g_signal_connect(m_adjustment, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
     g_signal_connect(scrollBar, "scroll-event", G_CALLBACK(gtkScrollEventCallback), this);
 
     setPlatformWidget(scrollBar);
@@ -62,6 +68,28 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
      */
     resize(ScrollbarTheme::nativeTheme()->scrollbarThickness(),
            ScrollbarTheme::nativeTheme()->scrollbarThickness());
+}
+
+// Create a ScrollbarGtk on top of an existing GtkAdjustment but do not create a
+// GtkScrollbar on top of this adjustment. The goal is to have a WebCore::Scrollbar
+// that will manipulate the GtkAdjustment properties, will react to the changed
+// value but will not consume any space on the screen and will not be painted
+// at all. It is achieved by not calling setPlatformWidget.
+ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orientation, GtkAdjustment* adjustment)
+    : Scrollbar(client, orientation, RegularScrollbar)
+    , m_adjustment(adjustment)
+{
+    g_object_ref(m_adjustment);
+    g_signal_connect(m_adjustment, "value-changed", G_CALLBACK(ScrollbarGtk::gtkValueChanged), this);
+
+    // We have nothing to show as we are solely operating on the GtkAdjustment
+    resize(0, 0);
+}
+
+ScrollbarGtk::~ScrollbarGtk()
+{
+    g_signal_handlers_disconnect_by_func(G_OBJECT(m_adjustment), (gpointer)ScrollbarGtk::gtkValueChanged, this);
+    g_object_unref(m_adjustment);
 }
 
 IntPoint ScrollbarGtk::getLocationInParentWindow(const IntRect& rect)
@@ -78,7 +106,7 @@ IntPoint ScrollbarGtk::getLocationInParentWindow(const IntRect& rect)
 
 void ScrollbarGtk::frameRectsChanged()
 {
-    if (!parent())
+    if (!parent() || !platformWidget())
         return;
 
     IntPoint loc = getLocationInParentWindow(frameRect());

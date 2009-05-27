@@ -78,7 +78,7 @@ void ScrollView::removeChild(Widget* child)
 
 void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 {
-    if (hasBar && !m_horizontalScrollbar && !platformHasHorizontalAdjustment()) {
+    if (hasBar && !m_horizontalScrollbar) {
         m_horizontalScrollbar = createScrollbar(HorizontalScrollbar);
         addChild(m_horizontalScrollbar.get());
     } else if (!hasBar && m_horizontalScrollbar) {
@@ -89,7 +89,7 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 
 void ScrollView::setHasVerticalScrollbar(bool hasBar)
 {
-    if (hasBar && !m_verticalScrollbar && !platformHasVerticalAdjustment()) {
+    if (hasBar && !m_verticalScrollbar) {
         m_verticalScrollbar = createScrollbar(VerticalScrollbar);
         addChild(m_verticalScrollbar.get());
     } else if (!hasBar && m_verticalScrollbar) {
@@ -98,10 +98,12 @@ void ScrollView::setHasVerticalScrollbar(bool hasBar)
     }
 }
 
+#if !PLATFORM(GTK)
 PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
     return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 }
+#endif
 
 void ScrollView::setScrollbarModes(ScrollbarMode horizontalMode, ScrollbarMode verticalMode)
 {
@@ -406,7 +408,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     IntSize scroll = desiredOffset.shrunkTo(maxScrollPosition);
     scroll.clampNegativeToZero();
  
-    if (!platformHandleHorizontalAdjustment(scroll) && m_horizontalScrollbar) {
+    if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
         m_horizontalScrollbar->setEnabled(contentsWidth() > clientWidth);
         int pageStep = (clientWidth - cAmountToKeepWhenPaging);
@@ -430,7 +432,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             m_horizontalScrollbar->setSuppressInvalidation(false); 
     } 
 
-    if (!platformHandleVerticalAdjustment(scroll) && m_verticalScrollbar) {
+    if (m_verticalScrollbar) {
         int clientHeight = visibleHeight();
         m_verticalScrollbar->setEnabled(contentsHeight() > clientHeight);
         int pageStep = (clientHeight - cAmountToKeepWhenPaging);
@@ -959,28 +961,5 @@ bool ScrollView::platformIsOffscreen() const
 
 #endif
 
-#if !PLATFORM(GTK)
-
-bool ScrollView::platformHandleHorizontalAdjustment(const IntSize&)
-{
-    return false;
 }
 
-bool ScrollView::platformHandleVerticalAdjustment(const IntSize&)
-{
-    return false;
-}
-
-bool ScrollView::platformHasHorizontalAdjustment() const
-{
-    return false;
-}
-
-bool ScrollView::platformHasVerticalAdjustment() const
-{
-    return false;
-}
-
-#endif
-
-}
