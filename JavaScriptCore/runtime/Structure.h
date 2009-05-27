@@ -65,7 +65,7 @@ namespace JSC {
         static PassRefPtr<Structure> addPropertyTransitionToExistingStructure(Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
         static PassRefPtr<Structure> removePropertyTransition(Structure*, const Identifier& propertyName, size_t& offset);
         static PassRefPtr<Structure> changePrototypeTransition(Structure*, JSValue prototype);
-        static PassRefPtr<Structure> changeFunctionTransition(Structure*, const Identifier&);        
+        static PassRefPtr<Structure> despecifyFunctionTransition(Structure*, const Identifier&);        
         static PassRefPtr<Structure> getterSetterTransition(Structure*);
         static PassRefPtr<Structure> toDictionaryTransition(Structure*);
         static PassRefPtr<Structure> fromDictionaryTransition(Structure*);
@@ -114,6 +114,7 @@ namespace JSC {
         bool isEmpty() const { return m_propertyTable ? !m_propertyTable->keyCount : m_offset == noOffset; }
 
         JSCell* specificValue() { return m_specificValueInPrevious; }
+        void despecifyDictionaryFunction(const Identifier& propertyName);
 
     private:
         Structure(JSValue prototype, const TypeInfo&);

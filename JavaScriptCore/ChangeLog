@@ -1,5 +1,36 @@
 2009-05-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Fix for: <rdar://problem/6918095> REGRESSION: jQuery load() issue (25981),
+        and also an ASSERT failure on http://ihasahotdog.com/.
+
+        When overwriting a property on a dictionary with a cached specific value,
+        clear the cache if new value being written is different.
+
+        * JavaScriptCore.exp:
+            Export the new symbols.
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_get_by_id_method_check_second):
+            Close dictionary prototypes upon caching a method access, as would happen when caching
+            a regular get_by_id.
+        * runtime/JSObject.h:
+        (JSC::JSObject::propertyStorage):
+        (JSC::JSObject::locationForOffset):
+            Make these methods private.
+        (JSC::JSObject::putDirectInternal):
+            When overwriting a property on a dictionary with a cached specific value,
+            clear the cache if new value being written is different.
+        * runtime/Structure.cpp:
+        (JSC::Structure::despecifyDictionaryFunction):
+            Reset the specific value field for a given property in a dictionary.
+        (JSC::Structure::despecifyFunctionTransition):
+            Rename of 'changeFunctionTransition' (this was already internally refered to as a despecification).
+        * runtime/Structure.h:
+            Declare new method.
+
+2009-05-26  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver "pieces of eight" Hunt.
 
         When reseting RegexPattern class, should fully reset the class, not just bits of it.

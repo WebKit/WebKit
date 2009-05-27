@@ -327,6 +327,52 @@ void Structure::growPropertyStorageCapacity()
         m_propertyStorageCapacity *= 2;
 }
 
+void Structure::despecifyDictionaryFunction(const Identifier& propertyName)
+{
+    const UString::Rep* rep = propertyName._ustring.rep();
+
+    materializePropertyMapIfNecessary();
+
+    ASSERT(m_isDictionary);
+    ASSERT(m_propertyTable);
+
+    unsigned i = rep->computedHash();
+
+#if DUMP_PROPERTYMAP_STATS
+    ++numProbes;
+#endif
+
+    unsigned entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
+    ASSERT(entryIndex != emptyEntryIndex);
+
+    if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
+        m_propertyTable->entries()[entryIndex - 1].specificValue = 0;
+        return;
+    }
+
+#if DUMP_PROPERTYMAP_STATS
+    ++numCollisions;
+#endif
+
+    unsigned k = 1 | doubleHash(rep->computedHash());
+
+    while (1) {
+        i += k;
+
+#if DUMP_PROPERTYMAP_STATS
+        ++numRehashes;
+#endif
+
+        entryIndex = m_propertyTable->entryIndices[i & m_propertyTable->sizeMask];
+        ASSERT(entryIndex != emptyEntryIndex);
+
+        if (rep == m_propertyTable->entries()[entryIndex - 1].key) {
+            m_propertyTable->entries()[entryIndex - 1].specificValue = 0;
+            return;
+        }
+    }
+}
+
 PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
     ASSERT(!structure->m_isDictionary);
@@ -440,7 +486,7 @@ PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure,
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::changeFunctionTransition(Structure* structure, const Identifier& replaceFunction)
+PassRefPtr<Structure> Structure::despecifyFunctionTransition(Structure* structure, const Identifier& replaceFunction)
 {
     RefPtr<Structure> transition = create(structure->storedPrototype(), structure->typeInfo());
 

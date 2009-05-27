@@ -84,9 +84,6 @@ namespace JSC {
         void setStructure(PassRefPtr<Structure>);
         Structure* inheritorID();
 
-        ConstPropertyStorage propertyStorage() const { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
-        PropertyStorage propertyStorage() { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
-
         virtual UString className() const;
 
         JSValue get(ExecState*, const Identifier& propertyName) const;
@@ -140,11 +137,6 @@ namespace JSC {
             return offset != WTF::notFound ? getDirectOffset(offset) : JSValue();
         }
 
-        size_t getOffset(const Identifier& propertyName)
-        {
-            return m_structure->get(propertyName);
-        }
-
         JSValue* getDirectLocation(const Identifier& propertyName)
         {
             size_t offset = m_structure->get(propertyName);
@@ -161,16 +153,6 @@ namespace JSC {
         size_t offsetForLocation(JSValue* location) const
         {
             return location - reinterpret_cast<const JSValue*>(propertyStorage());
-        }
-
-        const JSValue* locationForOffset(size_t offset) const
-        {
-            return reinterpret_cast<const JSValue*>(&propertyStorage()[offset]);
-        }
-
-        JSValue* locationForOffset(size_t offset)
-        {
-            return reinterpret_cast<JSValue*>(&propertyStorage()[offset]);
         }
 
         void transitionTo(Structure*);
@@ -223,6 +205,19 @@ namespace JSC {
         bool getOwnPropertySlotForWrite(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
 
     private:
+        ConstPropertyStorage propertyStorage() const { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
+        PropertyStorage propertyStorage() { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
+
+        const JSValue* locationForOffset(size_t offset) const
+        {
+            return reinterpret_cast<const JSValue*>(&propertyStorage()[offset]);
+        }
+
+        JSValue* locationForOffset(size_t offset)
+        {
+            return reinterpret_cast<JSValue*>(&propertyStorage()[offset]);
+        }
+
         void putDirectInternal(const Identifier& propertyName, JSValue value, unsigned attr, bool checkReadOnly, PutPropertySlot& slot, JSCell*);
         void putDirectInternal(JSGlobalData&, const Identifier& propertyName, JSValue value, unsigned attr, bool checkReadOnly, PutPropertySlot& slot);
         void putDirectInternal(JSGlobalData&, const Identifier& propertyName, JSValue value, unsigned attr = 0);
@@ -426,10 +421,13 @@ inline void JSObject::putDirectInternal(const Identifier& propertyName, JSValue 
         JSCell* currentSpecificFunction;
         size_t offset = m_structure->get(propertyName, currentAttributes, currentSpecificFunction);
         if (offset != WTF::notFound) {
+            if (currentSpecificFunction && (specificFunction != currentSpecificFunction))
+                m_structure->despecifyDictionaryFunction(propertyName);
             if (checkReadOnly && currentAttributes & ReadOnly)
                 return;
             putDirectOffset(offset, value);
-            slot.setExistingProperty(this, offset);
+            if (!specificFunction && !currentSpecificFunction)
+                slot.setExistingProperty(this, offset);
             return;
         }
 
@@ -469,7 +467,7 @@ inline void JSObject::putDirectInternal(const Identifier& propertyName, JSValue 
             return;
 
         if (currentSpecificFunction && (specificFunction != currentSpecificFunction)) {
-            setStructure(Structure::changeFunctionTransition(m_structure, propertyName));
+            setStructure(Structure::despecifyFunctionTransition(m_structure, propertyName));
             putDirectOffset(offset, value);
             // Function transitions are not currently cachable, so leave the slot in an uncachable state.
             return;
