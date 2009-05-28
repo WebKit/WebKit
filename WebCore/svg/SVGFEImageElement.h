@@ -23,7 +23,7 @@
 #ifndef SVGFEImageElement_h
 #define SVGFEImageElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "CachedResourceHandle.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGURIReference.h"

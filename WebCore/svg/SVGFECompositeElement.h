@@ -23,7 +23,7 @@
 #ifndef SVGFECompositeElement_h
 #define SVGFECompositeElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEComposite.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

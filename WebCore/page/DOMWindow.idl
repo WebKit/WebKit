@@ -453,9 +453,8 @@ module window {
         attribute SVGTransformConstructor SVGTransform;
         attribute SVGUnitTypesConstructor SVGUnitTypes;
 //      attribute SVGZoomAndPanConstructor SVGZoomAndPan;
-#endif
 
-#if defined(ENABLE_SVG_FILTERS) && ENABLE_SVG_FILTERS
+#if defined(ENABLE_FILTERS) && ENABLE_FILTERS
         attribute SVGComponentTransferFunctionElementConstructor SVGComponentTransferFunctionElement;
         attribute SVGFEBlendElementConstructor SVGFEBlendElement;
         attribute SVGFEColorMatrixElementConstructor SVGFEColorMatrixElement;
@@ -464,6 +463,7 @@ module window {
         attribute SVGFEDisplacementMapElementConstructor SVGFEDisplacementMapElement;
 //      attribute SVGFEMorphologyElementConstructor SVGFEMorphologyElement;
         attribute SVGFETurbulenceElementConstructor SVGFETurbulenceElement;
+#endif
 #endif
 
 #endif // defined(LANGUAGE_JAVASCRIPT)

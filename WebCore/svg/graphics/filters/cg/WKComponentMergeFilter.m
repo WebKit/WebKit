@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKComponentMergeFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *componentMergeFilter = nil;
 
@@ -67,4 +67,4 @@ static CIKernel *componentMergeFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

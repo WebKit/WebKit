@@ -34,7 +34,7 @@
 #include "SVGStyledElement.h"
 #include "TransformState.h"
 
-#if ENABLE(SVG_FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGResourceFilter.h"
 #endif
 
@@ -115,7 +115,7 @@ void RenderSVGRoot::layout()
 
 bool RenderSVGRoot::selfWillPaint() const
 {
-#if ENABLE(SVG_FILTERS)
+#if ENABLE(FILTERS)
     const SVGRenderStyle* svgStyle = style()->svgStyle();
     SVGResourceFilter* filter = getFilterById(document(), svgStyle->filter());
     if (filter)

@@ -22,7 +22,7 @@
 #ifndef SVGFELightElement_h
 #define SVGFELightElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGElement.h"
 #include "SVGLightSource.h"
 
@@ -56,5 +56,5 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)
 #endif

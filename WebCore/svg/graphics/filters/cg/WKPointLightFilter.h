@@ -25,7 +25,7 @@
 
 #import <QuartzCore/CoreImage.h>
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 @interface WKPointLightFilter : CIFilter {
     CIImage  *inputNormalMap;
@@ -35,4 +35,4 @@
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

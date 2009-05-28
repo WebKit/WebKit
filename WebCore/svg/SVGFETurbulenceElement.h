@@ -23,7 +23,7 @@
 #ifndef SVGFETurbulenceElement_h
 #define SVGFETurbulenceElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFETurbulence.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

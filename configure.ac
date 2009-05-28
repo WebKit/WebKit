@@ -404,7 +404,6 @@ AC_MSG_RESULT([$enable_web_workers])
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
    enable_svg_animation=no
-   enable_svg_filters=no
    enable_svg_fonts=no
    enable_svg_foreign_object=no
    enable_svg_as_image=no
@@ -419,13 +418,13 @@ AC_ARG_ENABLE(svg_animation,
               [],[enable_svg_animation="yes"])
 AC_MSG_RESULT([$enable_svg_animation])
 
-# check whether to enable support for SVG filters
-AC_MSG_CHECKING([whether to enable support for SVG filters])
-AC_ARG_ENABLE(svg_filters,
-              AC_HELP_STRING([--enable-svg-filters],
-                             [enable support for SVG filters (experimental) [default=no]]),
-              [],[enable_svg_filters="no"])
-AC_MSG_RESULT([$enable_svg_filters])
+# check whether to enable support for filters
+AC_MSG_CHECKING([whether to enable support for filters])
+AC_ARG_ENABLE(filters,
+              AC_HELP_STRING([--enable-filters],
+                             [enable support for filters (experimental) [default=no]]),
+              [],[enable_filters="no"])
+AC_MSG_RESULT([$enable_filters])
 
 # check whether to enable support for SVG fonts
 AC_MSG_CHECKING([whether to enable support for SVG fonts])
@@ -461,7 +460,6 @@ AC_MSG_RESULT([$enable_svg_use_element])
 
 # check for SVG features, enabling SVG if necessary
 if test "$enable_svg_animation" = "yes" || \
-   test "$enable_svg_filters" = "yes" || \
    test "$enable_svg_fonts" = "yes" || \
    test "$enable_svg_foreign_object" = "yes" || \
    test "$enable_svg_as_image" = "yes" || \
@@ -664,11 +662,11 @@ AM_CONDITIONAL([ENABLE_DATABASE],[test "$enable_database" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
+AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
-AM_CONDITIONAL([ENABLE_SVG_FILTERS],[test "$enable_svg_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FOREIGN_OBJECT],[test "$enable_svg_foreign_object" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
@@ -705,6 +703,7 @@ Features:
  3D Transforms                                            : $enable_3D_transforms
  JIT compilation                                          : $enable_jit
  Dashboard support                                        : $enable_dashboard_support
+ Filters support                                          : $enable_filters
  Geolocation support                                      : $enable_geolocation
  GNOME Keyring support                                    : $enable_gnomekeyring
  JavaScript debugger/profiler support                     : $enable_javascript_debugger
@@ -716,7 +715,6 @@ Features:
  Icon database support                                    : $enable_icon_database
  SVG support                                              : $enable_svg
  SVG animation support                                    : $enable_svg_animation
- SVG filters support                                      : $enable_svg_filters
  SVG fonts support                                        : $enable_svg_fonts
  SVG foreign object support                               : $enable_svg_foreign_object
  SVG as image support                                     : $enable_svg_as_image

@@ -20,7 +20,7 @@
 #ifndef SourceAlpha_h
 #define SourceAlpha_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 
 #include "PlatformString.h"
@@ -42,6 +42,6 @@ namespace WebCore {
     };
 } //namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(FILTERS)
 
 #endif // SourceAlpha_h

@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
 
 #include <wtf/PassRefPtr.h>
@@ -42,5 +42,5 @@ namespace WebCore {
     
 } //namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)
 #endif

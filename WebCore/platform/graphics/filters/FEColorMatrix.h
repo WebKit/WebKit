@@ -22,7 +22,7 @@
 #ifndef SVGFEColorMatrix_h
 #define SVGFEColorMatrix_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(FILTERS)
 #include "FilterEffect.h"
 
 #include "SVGResourceFilter.h"
@@ -61,6 +61,6 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(FILTERS)
 
 #endif // SVGFEColorMatrix_h

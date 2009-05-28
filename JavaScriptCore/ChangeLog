@@ -1,3 +1,11 @@
+2009-05-28  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Added new build flag --filters for Mac. More details in WebCore/ChangeLog.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2009-05-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

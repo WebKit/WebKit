@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKSpotLightFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *spotLightFilter = nil;
 
@@ -81,4 +81,4 @@ static CIKernel *spotLightFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

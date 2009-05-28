@@ -76,7 +76,7 @@ static bool isSVG10Feature(const String &feature)
     static bool initialized = false;
     DEFINE_STATIC_LOCAL(FeatureSet, svgFeatures, ());
     if (!initialized) {
-#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(SVG_FILTER) && ENABLE(SVG_FONTS)
+#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(FILTERS) && ENABLE(SVG_FONTS)
         addString(svgFeatures, "svg");
         addString(svgFeatures, "svg.static");
 #endif
@@ -84,7 +84,7 @@ static bool isSVG10Feature(const String &feature)
 //      addString(svgFeatures, "svg.dynamic");
 //      addString(svgFeatures, "svg.dom.animation");
 //      addString(svgFeatures, "svg.dom.dynamic");
-#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(SVG_FILTER) && ENABLE(SVG_FONTS)
+#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(FILTERS) && ENABLE(SVG_FONTS)
         addString(svgFeatures, "dom");
         addString(svgFeatures, "dom.svg");
         addString(svgFeatures, "dom.svg.static");
@@ -104,7 +104,7 @@ static bool isSVG11Feature(const String &feature)
         // Sadly, we cannot claim to implement any of the SVG 1.1 generic feature sets
         // lack of Font and Filter support.
         // http://bugs.webkit.org/show_bug.cgi?id=15480
-#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(SVG_FILTER) && ENABLE(SVG_FONTS)
+#if ENABLE(SVG_USE) && ENABLE(SVG_FOREIGN_OBJECT) && ENABLE(FILTERS) && ENABLE(SVG_FONTS)
         addString(svgFeatures, "SVG");
         addString(svgFeatures, "SVGDOM");
         addString(svgFeatures, "SVG-static");
@@ -141,7 +141,7 @@ static bool isSVG11Feature(const String &feature)
         addString(svgFeatures, "Clip");
         addString(svgFeatures, "BasicClip");
         addString(svgFeatures, "Mask");
-#if ENABLE(SVG_FILTER)
+#if ENABLE(FILTERS)
 //      addString(svgFeatures, "Filter");
         addString(svgFeatures, "BasicFilter");
 #endif

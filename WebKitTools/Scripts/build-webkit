@@ -55,7 +55,7 @@ my $svgSupport = 1;
 my $svgAnimationSupport = 1;
 my $svgAsImageSupport = 1;
 my $svgDOMObjCBindingsSupport = isAppleMacWebKit();
-my $svgFiltersSupport = 0;
+my $filtersSupport = 0;
 my $svgFontsSupport = 1;
 my $svgForeignObjectSupport = 1;
 my $svgUseSupport = 1;
@@ -83,6 +83,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]channel-messaging          Toggle MessageChannel and MessagePort support (default: $channelMessagingSupport)
   --[no-]database                   Toggle Database Support (default: $databaseSupport)
   --[no-]dom-storage                Toggle DOM Storage Support (default: $domStorageSupport)
+  --[no-]filters                    Toggle Filters support (default: $filtersSupport)
   --[no-]geolocation                Toggle Geolocation support (default: $geolocationSupport)
   --[no-]gnomekeyring               Toggle GNOME Keyring Support (GTK+ port only) (default: $gnomeKeyringSupport)
   --[no-]icon-database              Toggle Icon database support (default: $iconDatabaseSupport)
@@ -92,7 +93,6 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]svg-animation              Toggle SVG animation support (default: $svgAnimationSupport, implies SVG Support)
   --[no-]svg-as-image               Toggle SVG as Image support (default: $svgAsImageSupport, implies SVG Support)
   --[no-]svg-dom-objc-bindings      Toggle SVG DOM Objective-C bindings support (default: $svgDOMObjCBindingsSupport, implies SVG Support)
-  --[no-]svg-filters                Toggle SVG filters support (default: $svgFiltersSupport, implies SVG Support)
   --[no-]svg-fonts                  Toggle SVG fonts support (default: $svgFontsSupport, implies SVG Support)
   --[no-]svg-foreign-object         Toggle SVG foreign object support (default: $svgForeignObjectSupport, implies SVG Support)
   --[no-]svg-use                    Toggle SVG use element support (default: $svgUseSupport, implies SVG Support)
@@ -111,6 +111,7 @@ GetOptions(
            'channel-messaging!' => \$channelMessagingSupport,
            'database!' => \$databaseSupport,
            'dom-storage!' => \$domStorageSupport,
+           'filters!' => \$filtersSupport,
            'geolocation!' => \$geolocationSupport,
            'gnomekeyring!' => \$gnomeKeyringSupport,
            'icon-database!' => \$iconDatabaseSupport,
@@ -120,7 +121,6 @@ GetOptions(
            'svg-animation!' => \$svgAnimationSupport,
            'svg-as-image!' => \$svgAsImageSupport,
            'svg-dom-objc-bindings!' => \$svgDOMObjCBindingsSupport,
-           'svg-filters!' => \$svgFiltersSupport,
            'svg-fonts!' => \$svgFontsSupport,
            'svg-foreign-object!' => \$svgForeignObjectSupport,
            'svg-use!' => \$svgUseSupport,
@@ -133,7 +133,7 @@ GetOptions(
 );
 
 $svgSupport = $svgSupport || $svgAnimationSupport || $svgAsImageSupport
-    || $svgDOMObjCBindingsSupport || $svgFiltersSupport || $svgFontsSupport
+    || $svgDOMObjCBindingsSupport || $svgFontsSupport
     || $svgForeignObjectSupport || $svgUseSupport;
 
 if ($showHelp) {
@@ -180,6 +180,7 @@ if (isGtk()) {
     push @options, autotoolsFlag($channelMessagingSupport, "channel-messaging");
     push @options, autotoolsFlag($databaseSupport, "database");
     push @options, autotoolsFlag($domStorageSupport, "dom-storage");
+    push @options, autotoolsFlag($filtersSupport, "filters");
     push @options, autotoolsFlag($geolocationSupport, "geolocation");
     push @options, autotoolsFlag($gnomeKeyringSupport, "gnomekeyring");
     push @options, autotoolsFlag($iconDatabaseSupport, "icon-database");
@@ -188,7 +189,6 @@ if (isGtk()) {
     push @options, autotoolsFlag($svgSupport, "svg");
     push @options, autotoolsFlag($svgAnimationSupport, "svg-animation");
     push @options, autotoolsFlag($svgAsImageSupport, "svg-as-image");
-    push @options, autotoolsFlag($svgFiltersSupport, "svg-filters");
     push @options, autotoolsFlag($svgFontsSupport, "svg-fonts");
     push @options, autotoolsFlag($svgForeignObjectSupport, "svg-foreign-object");
     push @options, autotoolsFlag($svgUseSupport, "svg-use-element");
@@ -213,6 +213,7 @@ if (isAppleMacWebKit()) {
     push @options, option("ENABLE_CHANNEL_MESSAGING", $channelMessagingSupport);
     push @options, option("ENABLE_DATABASE", $databaseSupport);
     push @options, option("ENABLE_DOM_STORAGE", $domStorageSupport);
+    push @options, option("ENABLE_FILTERS", $filtersSupport);
     push @options, option("ENABLE_GEOLOCATION", $geolocationSupport);
     push @options, option("ENABLE_ICONDATABASE", $iconDatabaseSupport);
     push @options, option("ENABLE_JAVASCRIPT_DEBUGGER", $javaScriptDebuggerSupport);
@@ -221,7 +222,6 @@ if (isAppleMacWebKit()) {
     push @options, option("ENABLE_SVG_ANIMATION", $svgAnimationSupport);
     push @options, option("ENABLE_SVG_AS_IMAGE", $svgAsImageSupport);
     push @options, option("ENABLE_SVG_DOM_OBJC_BINDINGS", $svgDOMObjCBindingsSupport);
-    push @options, option("ENABLE_SVG_FILTERS", $svgFiltersSupport);
     push @options, option("ENABLE_SVG_FONTS", $svgFontsSupport);
     push @options, option("ENABLE_SVG_FOREIGN_OBJECT", $svgForeignObjectSupport);
     push @options, option("ENABLE_SVG_USE", $svgUseSupport);
@@ -347,12 +347,11 @@ if ($svgSupport) {
     print "\n NOTE: WebKit has been built with SVG support enabled.\n";
     print " $launcherName will have SVG viewing capabilities.\n";
 }
-if ($svgAnimationSupport or $svgAsImageSupport or $svgDOMObjCBindingsSupport or $svgFiltersSupport or $svgFontsSupport or $svgForeignObjectSupport or $svgUseSupport) {
+if ($svgAnimationSupport or $svgAsImageSupport or $svgDOMObjCBindingsSupport or $svgFontsSupport or $svgForeignObjectSupport or $svgUseSupport) {
     print " Your build supports the following (optional) SVG features: \n";
     print "  * Basic SVG animation.\n" if $svgAnimationSupport;
     print "  * SVG as image.\n" if $svgAsImageSupport;
     print "  * SVG DOM Objective-C bindings.\n" if $svgDOMObjCBindingsSupport;
-    print "  * SVG filters.\n" if $svgFiltersSupport;
     print "  * SVG fonts.\n" if $svgFontsSupport;
     print "  * SVG foreign object.\n" if $svgForeignObjectSupport;
     print "  * SVG <use> support.\n" if $svgUseSupport;

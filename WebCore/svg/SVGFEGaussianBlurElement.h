@@ -23,7 +23,7 @@
 #ifndef SVGFEGaussianBlurElement_h
 #define SVGFEGaussianBlurElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEGaussianBlur.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

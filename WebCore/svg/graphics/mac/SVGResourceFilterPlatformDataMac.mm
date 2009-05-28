@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 #include "SVGResourceFilterPlatformDataMac.h"
 #include <QuartzCore/CoreImage.h>
@@ -125,4 +125,4 @@ CIImage* SVGResourceFilterPlatformDataMac::inputImage(const SVGFilterEffect* fil
 
 }
 
-#endif // #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // #if ENABLE(SVG) && ENABLE(FILTERS)

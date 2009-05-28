@@ -22,7 +22,7 @@
 #ifndef SVGFESpecularLightingElement_h
 #define SVGFESpecularLightingElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFESpecularLighting.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKIdentityTransferFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 @implementation WKIdentityTransferFilter
 + (void)initialize
@@ -57,4 +57,4 @@
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

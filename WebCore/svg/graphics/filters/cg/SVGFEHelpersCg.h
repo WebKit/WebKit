@@ -19,7 +19,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 #include "BlockExceptions.h"
 #include "SVGFEDisplacementMap.h"
@@ -85,4 +85,4 @@ CIFilter* getNormalMap(CIImage* bumpMap, float scale);
     FE_QUARTZ_MAP_TO_SUBREGION_PREPARE(bbox); \
     FE_QUARTZ_MAP_TO_SUBREGION_APPLY(cropRect);
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

@@ -23,7 +23,7 @@
 #ifndef SVGSpotLightSource_h
 #define SVGSpotLightSource_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FloatPoint3D.h"
 #include "SVGLightSource.h"
 
@@ -57,6 +57,6 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)
 
 #endif // SVGSpotLightSource_h

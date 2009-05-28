@@ -30,7 +30,7 @@ definition_src
 defs
 desc
 ellipse
-#if ENABLE_SVG_FILTERS
+#if ENABLE_FILTERS
 feBlend
 feColorMatrix
 feComponentTransfer

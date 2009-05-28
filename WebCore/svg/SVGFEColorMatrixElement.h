@@ -23,7 +23,7 @@
 #ifndef SVGFEColorMatrixElement_h
 #define SVGFEColorMatrixElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEColorMatrix.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNumberList.h"

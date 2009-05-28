@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPointLightFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *pointLightFilter = nil;
 
@@ -70,4 +70,4 @@ static CIKernel *pointLightFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

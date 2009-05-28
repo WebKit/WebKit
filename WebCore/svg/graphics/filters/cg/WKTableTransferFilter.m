@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKTableTransferFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *tableTransferFilter = nil;
 
@@ -73,4 +73,4 @@ static CIKernel *tableTransferFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

@@ -23,7 +23,7 @@
 #ifndef SVGFEBlendElement_h
 #define SVGFEBlendElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEBlend.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

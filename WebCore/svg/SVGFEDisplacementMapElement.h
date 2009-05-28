@@ -20,7 +20,7 @@
 #ifndef SVGFEDisplacementMapElement_h
 #define SVGFEDisplacementMapElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEDisplacementMap.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

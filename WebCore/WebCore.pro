@@ -104,6 +104,7 @@ CONFIG(QTDIR_build) {
 }
 
 !contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=.): DEFINES += ENABLE_DASHBOARD_SUPPORT=0
+!contains(DEFINES, ENABLE_FILTERS=.): DEFINES += ENABLE_FILTERS=0
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
 !contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=0
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
@@ -119,10 +120,8 @@ CONFIG(QTDIR_build) {
     !contains(DEFINES, ENABLE_SVG_ANIMATION=.): DEFINES += ENABLE_SVG_ANIMATION=1
     !contains(DEFINES, ENABLE_SVG_AS_IMAGE=.): DEFINES += ENABLE_SVG_AS_IMAGE=1
     !contains(DEFINES, ENABLE_SVG_USE=.): DEFINES += ENABLE_SVG_USE=1
-    # disabled due svg filter rework
-    !contains(DEFINES, ENABLE_SVG_FILTERS=.): DEFINES += ENABLE_SVG_FILTERS=0
 } else {
-    DEFINES += ENABLE_SVG_FONTS=0 ENABLE_SVG_FILTERS=0 ENABLE_SVG_FOREIGN_OBJECT=0 ENABLE_SVG_ANIMATION=0 ENABLE_SVG_AS_IMAGE=0 ENABLE_SVG_USE=0
+    DEFINES += ENABLE_SVG_FONTS=0 ENABLE_SVG_FOREIGN_OBJECT=0 ENABLE_SVG_ANIMATION=0 ENABLE_SVG_AS_IMAGE=0 ENABLE_SVG_USE=0
 }
 
 # HTML5 media support
@@ -1487,6 +1486,19 @@ contains(DEFINES, ENABLE_XBL=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_XBL=1
 }
 
+contains(DEFINES, ENABLE_FILTERS=1) {
+    SOURCES += \
+        platform/graphics/filters/FEBlend.cpp \
+        platform/graphics/filters/FEColorMatrix.cpp \
+        platform/graphics/filters/FEComponentTransfer.cpp \
+        platform/graphics/filters/FEComposite.cpp \
+        platform/graphics/filters/FilterEffect.cpp \
+        platform/graphics/filters/SourceAlpha.cpp \
+        platform/graphics/filters/SourceGraphic.cpp
+
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_FILTERS=1
+}
+
 contains(DEFINES, ENABLE_WML=1) {
     SOURCES += \
         wml/WMLAElement.cpp \
@@ -1841,13 +1853,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/animation/SMILTime.cpp \
         svg/animation/SMILTimeContainer.cpp \
         svg/animation/SVGSMILElement.cpp \
-        platform/graphics/filters/FEBlend.cpp \
-        platform/graphics/filters/FEColorMatrix.cpp \
-        platform/graphics/filters/FEComponentTransfer.cpp \
-        platform/graphics/filters/FEComposite.cpp \
-        platform/graphics/filters/FilterEffect.cpp \
-        platform/graphics/filters/SourceAlpha.cpp \
-        platform/graphics/filters/SourceGraphic.cpp \
         svg/graphics/filters/SVGFEConvolveMatrix.cpp \
         svg/graphics/filters/SVGFEDiffuseLighting.cpp \
         svg/graphics/filters/SVGFEDisplacementMap.cpp \

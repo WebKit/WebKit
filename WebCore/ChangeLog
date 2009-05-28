@@ -1,3 +1,200 @@
+2009-05-28  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Added a new build flag --filters. This replaces the old --svg-filters and enables
+        other parts of WebKit to use some basic filters of platform/graphics/filters if needed.
+        This patch also fixes a bug in dom/DOMImplementation.cpp where we used SVG_FILTER. This flag
+        doesn't exist and was replaced by FILTERS as well as all SVG_FILTERS occurrences.
+        Filters are not working yet. This patch is just a preperation. Filters are deactivated by
+        default. 
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap):
+        * dom/DOMImplementation.cpp:
+        (WebCore::isSVG10Feature):
+        (WebCore::isSVG11Feature):
+        * page/DOMWindow.idl:
+        * platform/graphics/filters/FEBlend.cpp:
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEComposite.cpp:
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/FilterEffect.cpp:
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/SourceAlpha.cpp:
+        * platform/graphics/filters/SourceAlpha.h:
+        * platform/graphics/filters/SourceGraphic.cpp:
+        * platform/graphics/filters/SourceGraphic.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::selfWillPaint):
+        * rendering/RenderSVGModelObject.cpp:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::selfWillPaint):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+        (WebCore::SVGRenderBase::filterBoundingBoxForRenderer):
+        * svg/Filter.cpp:
+        * svg/Filter.h:
+        * svg/FilterBuilder.cpp:
+        * svg/FilterBuilder.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGComponentTransferFunctionElement.idl:
+        * svg/SVGFEBlendElement.cpp:
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEBlendElement.idl:
+        * svg/SVGFEColorMatrixElement.cpp:
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEColorMatrixElement.idl:
+        * svg/SVGFEComponentTransferElement.cpp:
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFEComponentTransferElement.idl:
+        * svg/SVGFECompositeElement.cpp:
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFECompositeElement.idl:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDiffuseLightingElement.idl:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDisplacementMapElement.idl:
+        * svg/SVGFEDistantLightElement.cpp:
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEDistantLightElement.idl:
+        * svg/SVGFEFloodElement.cpp:
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEFloodElement.idl:
+        * svg/SVGFEFuncAElement.cpp:
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncAElement.idl:
+        * svg/SVGFEFuncBElement.cpp:
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncBElement.idl:
+        * svg/SVGFEFuncGElement.cpp:
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncGElement.idl:
+        * svg/SVGFEFuncRElement.cpp:
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEFuncRElement.idl:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEGaussianBlurElement.idl:
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEImageElement.idl:
+        * svg/SVGFELightElement.cpp:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMergeElement.idl:
+        * svg/SVGFEMergeNodeElement.cpp:
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMergeNodeElement.idl:
+        * svg/SVGFEOffsetElement.cpp:
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFEOffsetElement.idl:
+        * svg/SVGFEPointLightElement.cpp:
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFEPointLightElement.idl:
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFESpecularLightingElement.idl:
+        * svg/SVGFESpotLightElement.cpp:
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFESpotLightElement.idl:
+        * svg/SVGFETileElement.cpp:
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETileElement.idl:
+        * svg/SVGFETurbulenceElement.cpp:
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFETurbulenceElement.idl:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/graphics/SVGResourceFilter.cpp:
+        * svg/graphics/SVGResourceFilter.h:
+        * svg/graphics/cairo/SVGResourceFilterCairo.cpp:
+        * svg/graphics/cg/SVGResourceFilterCg.cpp:
+        * svg/graphics/cg/SVGResourceFilterCg.mm:
+        * svg/graphics/filters/SVGDistantLightSource.h:
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        * svg/graphics/filters/SVGFEFlood.h:
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp:
+        * svg/graphics/filters/SVGFEGaussianBlur.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        * svg/graphics/filters/SVGFEMorphology.h:
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.cpp:
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        * svg/graphics/filters/SVGFETurbulence.h:
+        * svg/graphics/filters/SVGFilterEffect.cpp:
+        * svg/graphics/filters/SVGFilterEffect.h:
+        * svg/graphics/filters/SVGLightSource.cpp:
+        * svg/graphics/filters/SVGLightSource.h:
+        * svg/graphics/filters/SVGPointLightSource.h:
+        * svg/graphics/filters/SVGSpotLightSource.h:
+        * svg/graphics/filters/cg/SVGFEHelpersCg.h:
+        * svg/graphics/filters/cg/SVGFEHelpersCg.mm:
+        * svg/graphics/filters/cg/SVGFilterEffectCg.mm:
+        * svg/graphics/filters/cg/WKArithmeticFilter.h:
+        * svg/graphics/filters/cg/WKArithmeticFilter.m:
+        * svg/graphics/filters/cg/WKComponentMergeFilter.h:
+        * svg/graphics/filters/cg/WKComponentMergeFilter.m:
+        * svg/graphics/filters/cg/WKDiffuseLightingFilter.h:
+        * svg/graphics/filters/cg/WKDiffuseLightingFilter.m:
+        * svg/graphics/filters/cg/WKDiscreteTransferFilter.h:
+        * svg/graphics/filters/cg/WKDiscreteTransferFilter.m:
+        * svg/graphics/filters/cg/WKDisplacementMapFilter.h:
+        * svg/graphics/filters/cg/WKDisplacementMapFilter.m:
+        * svg/graphics/filters/cg/WKDistantLightFilter.h:
+        * svg/graphics/filters/cg/WKDistantLightFilter.m:
+        * svg/graphics/filters/cg/WKGammaTransferFilter.h:
+        * svg/graphics/filters/cg/WKGammaTransferFilter.m:
+        * svg/graphics/filters/cg/WKIdentityTransferFilter.h:
+        * svg/graphics/filters/cg/WKIdentityTransferFilter.m:
+        * svg/graphics/filters/cg/WKLinearTransferFilter.h:
+        * svg/graphics/filters/cg/WKLinearTransferFilter.m:
+        * svg/graphics/filters/cg/WKNormalMapFilter.h:
+        * svg/graphics/filters/cg/WKNormalMapFilter.m:
+        * svg/graphics/filters/cg/WKPointLightFilter.h:
+        * svg/graphics/filters/cg/WKPointLightFilter.m:
+        * svg/graphics/filters/cg/WKSpecularLightingFilter.h:
+        * svg/graphics/filters/cg/WKSpecularLightingFilter.m:
+        * svg/graphics/filters/cg/WKSpotLightFilter.h:
+        * svg/graphics/filters/cg/WKSpotLightFilter.m:
+        * svg/graphics/filters/cg/WKTableTransferFilter.h:
+        * svg/graphics/filters/cg/WKTableTransferFilter.m:
+        * svg/graphics/mac/SVGResourceFilterPlatformDataMac.h:
+        * svg/graphics/mac/SVGResourceFilterPlatformDataMac.mm:
+        * svg/graphics/qt/SVGResourceFilterQt.cpp:
+        * svg/graphics/skia/SVGResourceFilterSkia.cpp:
+        * svg/svgtags.in:
+
 2009-05-28  Brett Wilson  <brettw@chromium.org>
 
         Unreviewed, build fix.

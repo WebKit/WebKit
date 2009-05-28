@@ -23,7 +23,7 @@
 #ifndef SVGFEOffsetElement_h
 #define SVGFEOffsetElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFEOffset.h"
 

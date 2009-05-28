@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKArithmeticFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *arithmeticFilter = nil;
 
@@ -91,4 +91,4 @@ static CIKernel *arithmeticFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

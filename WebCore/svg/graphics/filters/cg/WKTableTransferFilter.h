@@ -25,7 +25,7 @@
 
 #import <QuartzCore/CoreImage.h>
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 @interface WKTableTransferFilter : CIFilter {
     CIImage *inputImage;

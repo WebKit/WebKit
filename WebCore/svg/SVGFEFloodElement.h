@@ -23,7 +23,7 @@
 #ifndef SVGFEFloodElement_h
 #define SVGFEFloodElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFEFlood.h"
 

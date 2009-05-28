@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGResourceFilter.h"
 
 #include "TransformationMatrix.h"
@@ -140,4 +140,4 @@ void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& 
 
 }
 
-#endif // ENABLE(SVG) ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) ENABLE(FILTERS)

@@ -22,7 +22,7 @@
 #ifndef SVGResourceFilter_h
 #define SVGResourceFilter_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGResource.h"
 #include "SVGFilterEffect.h"
 

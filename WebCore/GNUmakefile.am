@@ -1441,13 +1441,6 @@ webcore_sources += \
 	WebCore/platform/graphics/UnitBezier.h \
 	WebCore/platform/graphics/WidthIterator.cpp \
 	WebCore/platform/graphics/WidthIterator.h \
-	WebCore/platform/graphics/filters/FEBlend.h \
-	WebCore/platform/graphics/filters/FEColorMatrix.h \
-	WebCore/platform/graphics/filters/FEComponentTransfer.h \
-	WebCore/platform/graphics/filters/FEComposite.h \
-	WebCore/platform/graphics/filters/FilterEffect.h \
-	WebCore/platform/graphics/filters/SourceAlpha.h \
-	WebCore/platform/graphics/filters/SourceGraphic.h \
 	WebCore/platform/graphics/transforms/IdentityTransformOperation.h \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.cpp \
 	WebCore/platform/graphics/transforms/MatrixTransformOperation.h \
@@ -2348,6 +2341,36 @@ DerivedSources/WMLElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/wm
 endif # END ENABLE_WML
 
 # ----
+# Filters
+# ----
+if ENABLE_FILTERS
+
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_FILTERS=1
+webcore_cppflags += -DENABLE_FILTERS=1
+
+webcore_sources += \
+	WebCore/platform/graphics/filters/FEBlend.cpp \
+	WebCore/platform/graphics/filters/FEBlend.h \
+	WebCore/platform/graphics/filters/FEColorMatrix.cpp \
+	WebCore/platform/graphics/filters/FEColorMatrix.h \
+	WebCore/platform/graphics/filters/FEComponentTransfer.cpp \
+	WebCore/platform/graphics/filters/FEComponentTransfer.h \
+	WebCore/platform/graphics/filters/FEComposite.cpp \
+	WebCore/platform/graphics/filters/FEComposite.h \
+	WebCore/platform/graphics/filters/FilterEffect.cpp \
+	WebCore/platform/graphics/filters/FilterEffect.h \
+	WebCore/platform/graphics/filters/SourceAlpha.cpp \
+	WebCore/platform/graphics/filters/SourceAlpha.h \
+	WebCore/platform/graphics/filters/SourceGraphic.cpp \
+	WebCore/platform/graphics/filters/SourceGraphic.h
+
+if ENABLE_SVG
+SVG_FEATURES += ENABLE_FILTERS=1
+endif
+
+endif # END ENABLE_FILTERS
+
+# ----
 # Geolocation
 # ----
 if ENABLE_GEOLOCATION
@@ -2550,13 +2573,6 @@ webcore_sources += \
 	WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	WebCore/css/SVGCSSParser.cpp \
 	WebCore/css/SVGCSSStyleSelector.cpp \
-	WebCore/platform/graphics/filters/FEBlend.cpp \
-	WebCore/platform/graphics/filters/FEColorMatrix.cpp \
-	WebCore/platform/graphics/filters/FEComponentTransfer.cpp \
-	WebCore/platform/graphics/filters/FEComposite.cpp \
-	WebCore/platform/graphics/filters/FilterEffect.cpp \
-	WebCore/platform/graphics/filters/SourceAlpha.cpp \
-	WebCore/platform/graphics/filters/SourceGraphic.cpp \
 	WebCore/rendering/PointerEventsHitRules.cpp \
 	WebCore/rendering/PointerEventsHitRules.h \
 	WebCore/rendering/RenderForeignObject.cpp \
@@ -2969,12 +2985,6 @@ if ENABLE_SVG_FONTS
 FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_FONTS=1
 SVG_FEATURES += ENABLE_SVG_FONTS=1
 webcore_cppflags += -DENABLE_SVG_FONTS=1
-endif
-
-if ENABLE_SVG_FILTERS
-FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG_FILTERS=1
-SVG_FEATURES += ENABLE_SVG_FILTERS=1
-webcore_cppflags += -DENABLE_SVG_FILTERS=1
 endif
 
 if ENABLE_SVG_AS_IMAGE

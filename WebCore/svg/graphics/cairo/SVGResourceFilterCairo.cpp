@@ -18,7 +18,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 #include "NotImplemented.h"
 #include "SVGResourceFilter.h"

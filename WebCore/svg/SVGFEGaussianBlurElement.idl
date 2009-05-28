@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_FILTERS] SVGFEGaussianBlurElement : SVGElement,
+    interface [Conditional=SVG&FILTERS] SVGFEGaussianBlurElement : SVGElement,
                                                            SVGFilterPrimitiveStandardAttributes { 
         readonly attribute SVGAnimatedString in1;
         readonly attribute SVGAnimatedNumber stdDeviationX;

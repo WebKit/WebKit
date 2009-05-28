@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKDiffuseLightingFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *diffuseLightingFilter = nil;
 @implementation WKDiffuseLightingFilter
@@ -94,4 +94,4 @@ static CIKernel *diffuseLightingFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFilterEffect.h"
 
 #include "SVGRenderTreeAsText.h"
@@ -130,4 +130,4 @@ TextStream& operator<<(TextStream& ts, const SVGFilterEffect& e)
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

@@ -160,7 +160,7 @@ static void createElementClassMap()
     addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
     addElementClass(SVGNames::descTag, [DOMSVGDescElement class]);
     addElementClass(SVGNames::ellipseTag, [DOMSVGEllipseElement class]);
-#if ENABLE(SVG_FILTERS)
+#if ENABLE(FILTERS)
     addElementClass(SVGNames::feBlendTag, [DOMSVGFEBlendElement class]);
     addElementClass(SVGNames::feColorMatrixTag, [DOMSVGFEColorMatrixElement class]);
     addElementClass(SVGNames::feComponentTransferTag, [DOMSVGFEComponentTransferElement class]);

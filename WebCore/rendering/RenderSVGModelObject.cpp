@@ -38,7 +38,7 @@
 #include "RenderView.h"
 #include "SVGStyledElement.h"
 
-#if ENABLE(SVG_FILTERS)
+#if ENABLE(FILTERS)
 #include "SVGResourceFilter.h"
 #endif
 

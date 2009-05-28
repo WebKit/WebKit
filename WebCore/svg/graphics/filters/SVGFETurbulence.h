@@ -22,7 +22,7 @@
 #ifndef SVGFETurbulence_h
 #define SVGFETurbulence_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "SVGResourceFilter.h"
 
@@ -75,6 +75,6 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)
 
 #endif // SVGFETurbulence_h

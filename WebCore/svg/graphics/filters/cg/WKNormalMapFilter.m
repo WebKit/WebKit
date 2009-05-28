@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKNormalMapFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *convolveKernel = nil;
 static CIKernel *normalMapKernel = nil;
@@ -106,4 +106,4 @@ static CIKernel *normalMapKernel = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

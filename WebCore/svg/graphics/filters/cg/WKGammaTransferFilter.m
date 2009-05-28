@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKGammaTransferFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *gammaTransferFilter = nil;
 
@@ -82,4 +82,4 @@ static CIKernel *gammaTransferFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

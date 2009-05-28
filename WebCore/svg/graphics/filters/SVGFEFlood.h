@@ -22,7 +22,7 @@
 #ifndef SVGFEFlood_h
 #define SVGFEFlood_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "Color.h"
 #include "FilterEffect.h"
 #include "SVGResourceFilter.h"
@@ -52,6 +52,6 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)
 
 #endif // SVGFEFlood_h

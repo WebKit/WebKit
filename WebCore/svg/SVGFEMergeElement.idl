@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_FILTERS] SVGFEMergeElement : SVGElement,
+    interface [Conditional=SVG&FILTERS] SVGFEMergeElement : SVGElement,
                                                     SVGFilterPrimitiveStandardAttributes {
     };
 

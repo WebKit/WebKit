@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKDisplacementMapFilter.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 
 static CIKernel *displacementMapFilter = nil;
 
@@ -78,4 +78,4 @@ static CIKernel *displacementMapFilter = nil;
 
 @end
 
-#endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)

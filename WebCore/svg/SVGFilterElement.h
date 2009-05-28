@@ -24,7 +24,7 @@
 #ifndef SVGFilterElement_h
 #define SVGFilterElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGResourceFilter.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"

@@ -23,7 +23,7 @@
 #ifndef SVGFETileElement_h
 #define SVGFETileElement_h
 
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFETile.h"
 
