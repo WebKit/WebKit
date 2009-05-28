@@ -314,6 +314,9 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
     if (!window)
         return;
 
+    // We cannot use gdk_window_scroll here because it is only able to
+    // scroll the whole window at once, and we often need to scroll
+    // portions of the window only (think frames).
     GdkRectangle area = clipRect;
     GdkRectangle moveRect;
 
