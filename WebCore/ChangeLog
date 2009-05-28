@@ -1,3 +1,28 @@
+2009-05-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26041
+        Allow adding resource source to WebInspector.SourceFrame asynchronously.
+
+        Provide common implementation for InspectorController::addResourceSourceToFrame and
+        InspectorController::addSourceToFrame methods.
+
+        * bindings/js/JSInspectorControllerCustom.cpp:
+        * bindings/v8/custom/V8InspectorControllerCustom.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addResourceSourceToFrame):
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.idl:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.revealLine):
+        (WebInspector.SourceFrame.prototype.highlightLine):
+        (WebInspector.SourceFrame.prototype._loaded):
+        (WebInspector.SourceFrame.prototype._isContentLoaded):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.setupSourceFrameIfNeeded):
+        (WebInspector.SourceView.prototype._contentLoaded):
+
 2009-05-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Xan Lopez.

@@ -110,6 +110,11 @@ WebInspector.SourceFrame.prototype = {
 
     revealLine: function(lineNumber)
     {
+        if (!this._isContentLoaded()) {
+            this._lineNumberToReveal = lineNumber;
+            return;
+        }
+    
         var row = this.sourceRow(lineNumber);
         if (row)
             row.scrollIntoViewIfNeeded(true);
@@ -172,6 +177,11 @@ WebInspector.SourceFrame.prototype = {
 
     highlightLine: function(lineNumber)
     {
+        if (!this._isContentLoaded()) {
+            this._lineNumberToHighlight = lineNumber;
+            return;
+        }
+
         var sourceRow = this.sourceRow(lineNumber);
         if (!sourceRow)
             return;
@@ -238,6 +248,23 @@ WebInspector.SourceFrame.prototype = {
 
         if (this.autoSizesToFitContentHeight)
             this.sizeToFitContentHeight();
+            
+        if (this._lineNumberToReveal) {
+            this.revealLine(this._lineNumberToReveal);
+            delete this._lineNumberToReveal;
+        }
+    
+        if (this._lineNumberToHighlight) {
+            this.highlightLine(this._lineNumberToHighlight);
+            delete this._lineNumberToHighlight;
+        }
+        
+        this.dispatchEventToListeners("content loaded");
+    },
+    
+    _isContentLoaded: function() {
+        var doc = this.element.contentDocument;
+        return doc && doc.getElementsByTagName("table")[0];
     },
 
     _windowResized: function(event)

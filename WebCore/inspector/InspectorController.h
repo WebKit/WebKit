@@ -164,6 +164,7 @@ public:
     bool windowVisible();
     void setWindowVisible(bool visible = true, bool attached = false);
 
+    void addResourceSourceToFrame(long identifier, Node* frame);
     bool addSourceToFrame(const String& mimeType, const String& source, Node*);
     void addMessageToConsole(MessageSource, MessageLevel, ScriptCallStack*);
     void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);

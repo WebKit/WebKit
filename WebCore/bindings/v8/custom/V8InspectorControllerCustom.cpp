@@ -66,60 +66,6 @@ CALLBACK_FUNC_DECL(InspectorControllerHighlightDOMNode)
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(InspectorControllerAddResourceSourceToFrame)
-{
-    INC_STATS("InspectorController.addResourceSourceToFrame()");
-
-    if (args.Length() < 2)
-        return v8::Undefined();
-
-    if (!args[0]->IsNumber())
-        return v8::Undefined();
-
-    long long identifier = static_cast<long long>(args[0]->NumberValue());
-
-    InspectorController* inspectorController = V8Proxy::ToNativeObject<InspectorController>(V8ClassIndex::INSPECTORCONTROLLER, args.Holder());
-    RefPtr<InspectorResource> resource = inspectorController->resources().get(identifier);
-    ASSERT(resource);
-    if (!resource)
-        return v8::Undefined();
-
-    String sourceString = resource->sourceString();
-    if (sourceString.isEmpty())
-        return v8::Undefined();
-
-    Node* node = V8Proxy::DOMWrapperToNode<Node>(args[1]);
-    if (!node)
-        return v8::Undefined();
-
-    return v8Boolean(inspectorController->addSourceToFrame(resource->mimeType(), sourceString, node));
-}
-
-CALLBACK_FUNC_DECL(InspectorControllerAddSourceToFrame)
-{
-    INC_STATS("InspectorController.addSourceToFrame()");
-
-    if (args.Length() < 2)
-        return v8::Undefined();
-
-    v8::TryCatch exceptionCatcher;
-
-    String mimeType = toWebCoreStringWithNullCheck(args[0]);
-    if (mimeType.isEmpty() || exceptionCatcher.HasCaught())
-        return v8::Undefined();
-
-    String sourceString = toWebCoreStringWithNullCheck(args[1]);
-    if (sourceString.isEmpty() || exceptionCatcher.HasCaught())
-        return v8::Undefined();
-
-    Node* node = V8Proxy::DOMWrapperToNode<Node>(args[1]);
-    if (!node)
-        return v8::Undefined();
-
-    InspectorController* inspectorController = V8Proxy::ToNativeObject<InspectorController>(V8ClassIndex::INSPECTORCONTROLLER, args.Holder());
-    return v8Boolean(inspectorController->addSourceToFrame(mimeType, sourceString, node));
-}
-
 CALLBACK_FUNC_DECL(InspectorControllerGetResourceDocumentNode)
 {
     INC_STATS("InspectorController.getResourceDocumentNode()");

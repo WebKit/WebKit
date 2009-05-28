@@ -87,45 +87,6 @@ JSValue JSInspectorController::highlightDOMNode(JSC::ExecState*, const JSC::ArgL
     return jsUndefined();
 }
 
-JSValue JSInspectorController::addResourceSourceToFrame(ExecState*, const ArgList& args)
-{
-    if (args.size() < 2)
-        return jsUndefined();
-
-    double number;
-    if (!args.at(0).getNumber(number))
-        return jsUndefined();
-
-    long long identifier = static_cast<long long> (number);
-
-    RefPtr<InspectorResource> resource = impl()->resources().get(identifier);
-    ASSERT(resource);
-    if (!resource)
-        return jsUndefined();
-
-    String sourceString = resource->sourceString();
-    if (sourceString.isEmpty())
-        return jsUndefined();
-
-    return jsBoolean(impl()->addSourceToFrame(resource->mimeType(), sourceString, toNode(args.at(1))));
-}
-
-JSValue JSInspectorController::addSourceToFrame(ExecState* exec, const ArgList& args)
-{
-    if (args.size() < 3)
-        return jsUndefined();
-
-    String mimeType = args.at(0).toString(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    String sourceString = args.at(1).toString(exec);
-    if (exec->hadException())
-        return jsUndefined();
-
-    return jsBoolean(impl()->addSourceToFrame(mimeType, sourceString, toNode(args.at(2))));
-}
-
 JSValue JSInspectorController::getResourceDocumentNode(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 1)

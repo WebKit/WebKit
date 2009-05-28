@@ -481,6 +481,19 @@ void InspectorController::toggleSearchForNodeInPage()
         hideHighlight();
 }
 
+void InspectorController::addResourceSourceToFrame(long identifier, Node* frame)
+{
+    if (!enabled() || !m_frontend)
+        return;
+
+    RefPtr<InspectorResource> resource = resources().get(identifier);
+    if (resource) {
+        String sourceString = resource->sourceString();
+        if (!sourceString.isEmpty())
+            addSourceToFrame(resource->mimeType(), sourceString, frame);
+    }
+}
+
 void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
 {
     if (!enabled() || !m_searchingForNode)

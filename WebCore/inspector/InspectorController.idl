@@ -48,8 +48,8 @@ module core {
         [ImplementationFunction=windowVisible] boolean isWindowVisible();
         [ImplementationFunction=searchingForNodeInPage] boolean searchingForNode();
 
-        [Custom] void addResourceSourceToFrame(in long long identifier, in Node frame);
-        [Custom] void addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
+        void addResourceSourceToFrame(in long identifier, in Node frame);
+        boolean addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
         [Custom] Node getResourceDocumentNode(in long long identifier);
         [Custom] void search(in Node node, in DOMString query);
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
