@@ -1,3 +1,16 @@
+2009-05-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26039
+        [GTK] WebKitWebHistoryItem lifetime fixes
+
+        Delete the BackForwardList before the Page, otherwise the references
+        to the WebKitWebHistoryItems will be gone.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_dispose):
+
 2009-05-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.

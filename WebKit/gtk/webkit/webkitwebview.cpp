@@ -881,14 +881,6 @@ static void webkit_web_view_dispose(GObject* object)
 
     priv->disposing = TRUE;
 
-    if (priv->corePage) {
-        webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
-
-        core(priv->mainFrame)->loader()->detachFromParent();
-        delete priv->corePage;
-        priv->corePage = NULL;
-    }
-
     if (priv->horizontalAdjustment) {
         g_object_unref(priv->horizontalAdjustment);
         priv->horizontalAdjustment = NULL;
@@ -902,7 +894,17 @@ static void webkit_web_view_dispose(GObject* object)
     if (priv->backForwardList) {
         g_object_unref(priv->backForwardList);
         priv->backForwardList = NULL;
+    }
 
+    if (priv->corePage) {
+        webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
+
+        core(priv->mainFrame)->loader()->detachFromParent();
+        delete priv->corePage;
+        priv->corePage = NULL;
+    }
+
+    if (priv->webSettings) {
         g_signal_handlers_disconnect_by_func(priv->webSettings, (gpointer)webkit_web_view_settings_notify, webView);
         g_object_unref(priv->webSettings);
         priv->webSettings = NULL;
