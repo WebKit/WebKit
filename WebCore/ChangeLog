@@ -1,3 +1,14 @@
+2009-05-19  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo and Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        Implement atk_text_get_text_{at,after,before}_offset.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+
 2009-05-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by Darin Adler.

@@ -1,3 +1,14 @@
+2009-05-19  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo and Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        Add new test file for ATK.
+
+        * GNUmakefile.am:
+
 2009-05-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Xan Lopez.

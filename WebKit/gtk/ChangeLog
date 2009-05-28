@@ -1,3 +1,18 @@
+2009-05-19  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo and Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        New test file for ATK functionality.
+
+        * tests/testatk.c: Added.
+        (bail_out):
+        (test_get_text_function):
+        (test_webkit_atk_get_text_at_offset):
+        (main):
+
 2009-05-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.
