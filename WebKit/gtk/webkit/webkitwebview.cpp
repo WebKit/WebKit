@@ -1130,7 +1130,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @request: a #WebKitNetworkRequest
      * @navigation_action: a #WebKitWebNavigation
      * @policy_decision: a #WebKitWebPolicyDecision
-     * @return: TRUE if the signal will be handled, FALSE to have the
+     * @return: TRUE if a decision was made, FALSE to have the
      *          default behavior apply
      *
      * Emitted when @frame requests opening a new window. With this
@@ -1145,6 +1145,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * information of this new navigation context, without any
      * information about the action that made this new window to be
      * opened.
+     *
+     * Notice that if you return TRUE, meaning that you handled the
+     * signal, you are expected to have decided what to do, by calling
+     * webkit_web_policy_decision_ignore(),
+     * webkit_web_policy_decision_use(), or
+     * webkit_web_policy_decision_download() on the @policy_decision
+     * object.
      *
      * Since: 1.1.4
      */
@@ -1169,12 +1176,19 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @request: a #WebKitNetworkRequest
      * @navigation_action: a #WebKitWebNavigation
      * @policy_decision: a #WebKitWebPolicyDecision
-     * @return: TRUE if the signal will be handled, FALSE to have the
+     * @return: TRUE if a decision was made, FALSE to have the
      *          default behavior apply
      *
      * Emitted when @frame requests a navigation to another page.
      * If this signal is not handled, the default behavior is to allow the
      * navigation.
+     *
+     * Notice that if you return TRUE, meaning that you handled the
+     * signal, you are expected to have decided what to do, by calling
+     * webkit_web_policy_decision_ignore(),
+     * webkit_web_policy_decision_use(), or
+     * webkit_web_policy_decision_download() on the @policy_decision
+     * object.
      *
      * Since: 1.0.3
      */
@@ -1198,7 +1212,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @request: a WebKitNetworkRequest
      * @mimetype: the MIME type attempted to load
      * @policy_decision: a #WebKitWebPolicyDecision
-     * @return: TRUE if the signal will be handled, FALSE to have the
+     * @return: TRUE if a decision was made, FALSE to have the
      *          default behavior apply
      *
      * Decide whether or not to display the given MIME type.  If this
@@ -1206,6 +1220,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * content of the requested URI if WebKit can show this MIME
      * type; if WebKit is not able to show the MIME type nothing
      * happens.
+     *
+     * Notice that if you return TRUE, meaning that you handled the
+     * signal, you are expected to have decided what to do, by calling
+     * webkit_web_policy_decision_ignore(),
+     * webkit_web_policy_decision_use(), or
+     * webkit_web_policy_decision_download() on the @policy_decision
+     * object.
      *
      * Since: 1.0.3
      */
