@@ -58,7 +58,8 @@ namespace WebCore {
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
         virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
 
-        void clear();
+        // Called just before removing this window from the JSDOMWindowShell.
+        void willRemoveFromWindowShell();
 
         // Set a place to put a dialog return value when the window is cleared.
         void setReturnValueSlot(JSC::JSValue* slot);

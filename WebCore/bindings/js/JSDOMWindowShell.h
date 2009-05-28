@@ -55,7 +55,6 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
         DOMWindow* impl() const;
-        void clear();
 
         void* operator new(size_t);
 

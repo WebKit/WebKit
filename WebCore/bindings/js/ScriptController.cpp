@@ -128,7 +128,7 @@ void ScriptController::clearWindowShell()
     // Clear the debugger from the current window before setting the new window.
     attachDebugger(0);
 
-    m_windowShell->window()->clear();
+    m_windowShell->window()->willRemoveFromWindowShell();
     m_windowShell->setWindow(m_frame->domWindow());
 
     if (Page* page = m_frame->page()) {

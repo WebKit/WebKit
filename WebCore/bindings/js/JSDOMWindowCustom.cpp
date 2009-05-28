@@ -463,15 +463,17 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec, const ArgList& args)
     JSDOMWindow* dialogWindow = toJSDOMWindow(dialogFrame);
 
     // Get the return value either just before clearing the dialog window's
-    // properties (in JSDOMWindowBase::clear), or when on return from runModal.
+    // properties (in JSDOMWindowBase::willRemoveFromWindowShell), or when on
+    // return from runModal.
     JSValue returnValue;
     dialogWindow->setReturnValueSlot(&returnValue);
     dialogFrame->page()->chrome()->runModal();
     dialogWindow->setReturnValueSlot(0);
 
-    // If we don't have a return value, get it now.
-    // Either JSDOMWindowBase::clear was not called yet, or there was no return value,
-    // and in that case, there's no harm in trying again (no benefit either).
+    // If we don't have a return value, get it now. Either
+    // JSDOMWindowBase::willRemoveFromWindowShell was not called yet, or there
+    // was no return value, and in that case, there's no harm in trying again 
+    // (no benefit either).
     if (!returnValue)
         returnValue = dialogWindow->getDirect(Identifier(exec, "returnValue"));
 

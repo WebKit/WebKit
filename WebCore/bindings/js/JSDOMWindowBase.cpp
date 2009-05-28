@@ -238,7 +238,7 @@ bool JSDOMWindowBase::shouldInterruptScript() const
     return page->chrome()->shouldInterruptJavaScript();
 }
 
-void JSDOMWindowBase::clear()
+void JSDOMWindowBase::willRemoveFromWindowShell()
 {
     JSLock lock(false);
 
