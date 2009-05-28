@@ -1,3 +1,12 @@
+2009-05-27  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26056
+        XPath string() function can be very slow
+
+        * xml/XPathUtil.cpp: (WebCore::XPath::stringValue): Use an intermediate Vector when appending.
+
 2009-05-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
