@@ -383,8 +383,8 @@ webkitgtk_cppflags += \
 endif
 
 webkitgtk_cleanfiles += \
-	$(srcdir)/WebKit/gtk/docs/version.xml \
-	$(srcdir)/WebKit/gtk/docs/GNUmakefile \
+	$(top_builddir)/WebKit/gtk/docs/version.xml \
+	$(top_builddir)/WebKit/gtk/docs/GNUmakefile \
 	$(top_builddir)/Programs/GtkLauncher \
 	$(top_builddir)/WebKit/gtk/webkit-1.0.pc \
 	$(top_builddir)/WebKit/gtk/webkit/webkitenumtypes.h \

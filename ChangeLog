@@ -1,3 +1,12 @@
+2009-05-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        Fix webkitgtk_cleanfiles to clean gtk-doc-related files in the
+        correct directory, so that we pass make distcheck.
+
+        * GNUmakefile.am:
+
 2009-05-28  Xan Lopez  <xlopez@igalia.com>
 
         Bump version numbers in preparation for 1.1.8 release.
