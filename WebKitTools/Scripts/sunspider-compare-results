@@ -39,15 +39,21 @@ my $configuration = configuration();
 
 my $root;
 my $showHelp = 0;
+my $ubench = 0;
+my $v8 = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] FILE FILE
   --help        Show this help message
   --root        Path to root tools build
+  --ubench      Compare microbenchmark results
+  --v8          Compare the V8 benchmark results
 EOF
 
 GetOptions('root=s' => sub { my ($argName, $value); setConfigurationProductDir(Cwd::abs_path($value)); },
+           'ubench' => \$ubench,
+           'v8' => \$v8,
            'help' => \$showHelp);
 
 if ($showHelp) {
@@ -97,5 +103,7 @@ $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
 setupEnvironmentForExecution($productDir);
 my @args = ("--shell", jscPath($productDir));
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
+push @args, "--ubench" if $ubench;
+push @args, "--v8" if $v8;
 
 exec "./sunspider-compare-results", @args, @ARGV;
