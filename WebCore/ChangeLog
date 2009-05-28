@@ -1,3 +1,21 @@
+2009-05-28  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        When creating a linear or radial gradient with a single stop
+        at offset 1.0, the Skia layer was allocating 3 stops, but only
+        filling 2, leaving one uninitialized.  Only 2 stops are necessary
+        in this case, at offsets (0.0, 1.0).
+
+        http://bugs.webkit.org/show_bug.cgi?id=26063
+
+        Covered by: LayoutTests/svg/W3C-SVG-1.1/pservers-grad-16-b.svg
+                    LayoutTests/svg/custom/gradient-stop-corner-cases.svg
+                    LayoutTests/svg/custom/js-late-gradient-and-object-creation.svg
+
+        * platform/graphics/skia/GradientSkia.cpp:
+        (WebCore::totalStopsNeeded):
+
 2009-05-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.
