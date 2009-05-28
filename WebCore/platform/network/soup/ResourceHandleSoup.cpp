@@ -545,7 +545,7 @@ bool ResourceHandle::startHttp(String urlString)
     // other than identity, so force servers to do it our way. When
     // libsoup gets proper Content-Encoding support we will want to
     // use it here instead.
-    soup_message_headers_replace(d->m_msg->request_headers, "Accept-Encoding", "identity;q=1, *;q=0");
+    soup_message_headers_replace(d->m_msg->request_headers, "Accept-Encoding", "identity");
     soup_session_queue_message(session, d->m_msg, finishedCallback, this);
 
     return true;

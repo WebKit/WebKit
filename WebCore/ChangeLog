@@ -1,3 +1,14 @@
+2009-05-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Simplify the Accept-Encoding header we are sending out, for it
+        seems some servers do not enjoy parsing the full, explicit
+        version.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::startHttp):
+
 2009-05-28  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
