@@ -32,6 +32,8 @@
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
+using namespace std;
+
 namespace WebCore {
 
 inline RenderStyle* defaultStyle()
@@ -707,6 +709,58 @@ void RenderStyle::setBoxShadow(ShadowData* shadowData, bool add)
 
     shadowData->next = rareData->m_boxShadow.release();
     rareData->m_boxShadow.set(shadowData);
+}
+
+void RenderStyle::getBorderRadiiForRect(const IntRect& r, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const
+{
+    topLeft = surround->border.topLeft;
+    topRight = surround->border.topRight;
+    
+    bottomLeft = surround->border.bottomLeft;
+    bottomRight = surround->border.bottomRight;
+
+    // Constrain corner radii using CSS3 rules:
+    // http://www.w3.org/TR/css3-background/#the-border-radius
+    
+    float factor = 1;
+    unsigned radiiSum;
+
+    // top
+    radiiSum = static_cast<unsigned>(topLeft.width()) + static_cast<unsigned>(topRight.width()); // Casts to avoid integer overflow.
+    if (radiiSum > static_cast<unsigned>(r.width()))
+        factor = min(static_cast<float>(r.width()) / radiiSum, factor);
+
+    // bottom
+    radiiSum = static_cast<unsigned>(bottomLeft.width()) + static_cast<unsigned>(bottomRight.width());
+    if (radiiSum > static_cast<unsigned>(r.width()))
+        factor = min(static_cast<float>(r.width()) / radiiSum, factor);
+    
+    // left
+    radiiSum = static_cast<unsigned>(topLeft.height()) + static_cast<unsigned>(bottomLeft.height());
+    if (radiiSum > static_cast<unsigned>(r.height()))
+        factor = min(static_cast<float>(r.height()) / radiiSum, factor);
+    
+    // right
+    radiiSum = static_cast<unsigned>(topRight.height()) + static_cast<unsigned>(bottomRight.height());
+    if (radiiSum > static_cast<unsigned>(r.height()))
+        factor = min(static_cast<float>(r.height()) / radiiSum, factor);
+    
+    // Scale all radii by f if necessary.
+    if (factor < 1) {
+        // If either radius on a corner becomes zero, reset both radii on that corner.
+        topLeft.scale(factor);
+        if (!topLeft.width() || !topLeft.height())
+            topLeft = IntSize();
+        topRight.scale(factor);
+        if (!topRight.width() || !topRight.height())
+            topRight = IntSize();
+        bottomLeft.scale(factor);
+        if (!bottomLeft.width() || !bottomLeft.height())
+            bottomLeft = IntSize();
+        bottomRight.scale(factor);
+        if (!bottomRight.width() || !bottomRight.height())
+            bottomRight = IntSize();
+    }
 }
 
 const CounterDirectiveMap* RenderStyle::counterDirectives() const

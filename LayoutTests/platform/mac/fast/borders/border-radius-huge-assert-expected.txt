@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (246,18) size 4x18
           text run at (246,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 287x18
-          text run at (0,0) width 287: "There should be four identical squares below."
+        RenderText {#text} at (0,0) size 304x18
+          text run at (0,0) width 304: "There should be three squres and a circle below."
       RenderBlock {DIV} at (0,86) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
       RenderBlock {DIV} at (0,152) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]
       RenderBlock {DIV} at (0,218) size 56x56 [bgcolor=#C0C0C0] [border: (3px solid #000000)]

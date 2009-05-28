@@ -35,7 +35,7 @@
 #include <math.h>
 #include <wtf/MathExtras.h>
 
-const float QUARTER = 0.552f; // approximation of control point positions on a bezier
+static const float QUARTER = 0.552f; // approximation of control point positions on a bezier
                               // to simulate a quarter of a circle.
 namespace WebCore {
 

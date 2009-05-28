@@ -73,6 +73,12 @@ public:
         m_height += height;
     }
     
+    void scale(float scale)
+    {
+        m_width *= scale;
+        m_height *= scale;
+    }
+    
     IntSize expandedTo(const IntSize& other) const
     {
         return IntSize(m_width > other.m_width ? m_width : other.m_width,

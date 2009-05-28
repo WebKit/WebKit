@@ -759,6 +759,8 @@ public:
         setBorderBottomLeftRadius(s);
         setBorderBottomRightRadius(s);
     }
+    
+    void getBorderRadiiForRect(const IntRect&, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const;
 
     void setBorderLeftWidth(unsigned short v) { SET_VAR(surround, border.left.width, v) }
     void setBorderLeftStyle(EBorderStyle v) { SET_VAR(surround, border.left.m_style, v) }

@@ -311,11 +311,15 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool clippedToBorderRadius = false;
     if (style()->hasBorderRadius() && (includeLeftEdge || includeRightEdge)) {
         context->save();
-        context->addRoundedRectClip(IntRect(tx, ty, w, h),
-            includeLeftEdge ? style()->borderTopLeftRadius() : IntSize(),
-            includeRightEdge ? style()->borderTopRightRadius() : IntSize(),
-            includeLeftEdge ? style()->borderBottomLeftRadius() : IntSize(),
-            includeRightEdge ? style()->borderBottomRightRadius() : IntSize());
+
+        IntSize topLeft, topRight, bottomLeft, bottomRight;
+        IntRect borderRect(tx, ty, w, h);
+        style()->getBorderRadiiForRect(borderRect, topLeft, topRight, bottomLeft, bottomRight);
+
+        context->addRoundedRectClip(borderRect, includeLeftEdge ? topLeft : IntSize(),
+                                                includeRightEdge ? topRight : IntSize(),
+                                                includeLeftEdge ? bottomLeft : IntSize(),
+                                                includeRightEdge ? bottomRight : IntSize());
         clippedToBorderRadius = true;
     }
 
@@ -777,26 +781,29 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
     bool renderRight = rightStyle > BHIDDEN && end && !rightTransparent;
     bool renderBottom = bottomStyle > BHIDDEN && !bottomTransparent;
 
-    // Need sufficient width and height to contain border radius curves.  Sanity check our border radii
-    // and our width/height values to make sure the curves can all fit. If not, then we won't paint
-    // any border radii.
     bool renderRadii = false;
-    IntSize topLeft = style->borderTopLeftRadius();
-    IntSize topRight = style->borderTopRightRadius();
-    IntSize bottomLeft = style->borderBottomLeftRadius();
-    IntSize bottomRight = style->borderBottomRightRadius();
+    IntSize topLeft, topRight, bottomLeft, bottomRight;
 
-    if (style->hasBorderRadius() &&
-        static_cast<unsigned>(w) >= static_cast<unsigned>(topLeft.width()) + static_cast<unsigned>(topRight.width()) &&
-        static_cast<unsigned>(w) >= static_cast<unsigned>(bottomLeft.width()) + static_cast<unsigned>(bottomRight.width()) &&
-        static_cast<unsigned>(h) >= static_cast<unsigned>(topLeft.height()) + static_cast<unsigned>(bottomLeft.height()) &&
-        static_cast<unsigned>(h) >= static_cast<unsigned>(topRight.height()) + static_cast<unsigned>(bottomRight.height()))
+    if (style->hasBorderRadius()) {
+        IntRect borderRect = IntRect(tx, ty, w, h);
+
+        IntSize topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius;
+        style->getBorderRadiiForRect(borderRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+
+        if (begin) {
+            topLeft = topLeftRadius;
+            bottomLeft = bottomLeftRadius;
+        }
+        if (end) {
+            topRight = topRightRadius;
+            bottomRight = bottomRightRadius;
+        }
+
         renderRadii = true;
 
-    // Clip to the rounded rectangle.
-    if (renderRadii) {
+        // Clip to the rounded rectangle.
         graphicsContext->save();
-        graphicsContext->addRoundedRectClip(IntRect(tx, ty, w, h), topLeft, topRight, bottomLeft, bottomRight);
+        graphicsContext->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);
     }
 
     int firstAngleStart, secondAngleStart, firstAngleSpan, secondAngleSpan;
@@ -1126,10 +1133,14 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
         context->setShadow(shadowOffset, shadowBlur, shadow->color);
         if (hasBorderRadius) {
-            IntSize topLeft = begin ? s->borderTopLeftRadius() : IntSize();
-            IntSize topRight = end ? s->borderTopRightRadius() : IntSize();
-            IntSize bottomLeft = begin ? s->borderBottomLeftRadius() : IntSize();
-            IntSize bottomRight = end ? s->borderBottomRightRadius() : IntSize();
+            IntSize topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius;
+            s->getBorderRadiiForRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+
+            IntSize topLeft = begin ? topLeftRadius : IntSize();
+            IntSize topRight = end ? topRightRadius : IntSize();
+            IntSize bottomLeft = begin ? bottomLeftRadius : IntSize();
+            IntSize bottomRight = end ? bottomRightRadius : IntSize();
+
             if (!hasOpaqueBackground)
                 context->clipOutRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
             context->fillRoundedRect(fillRect, topLeft, topRight, bottomLeft, bottomRight, Color::black);

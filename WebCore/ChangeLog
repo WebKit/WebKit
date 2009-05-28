@@ -1,3 +1,56 @@
+2009-05-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=8736
+
+        Tests: fast/borders/border-radius-constraints.html
+               fast/borders/border-radius-split-inline.html
+               
+        When the sum of the corner radii on a side exceed the length of the side,
+        reduce the radii according to CSS 3 rules.
+        
+        Add RenderStyle::getBorderRadiiForRect() to fetch corner radii, applying
+        the constraints. Use that for painting borders, box-shadow, clipping replaced
+        elements
+
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::scale):
+        Add a scale method that scales by a float (using C rounding rules, like IntRect::scale()).
+
+        * platform/graphics/Path.cpp:
+        Make the QUARTER const static.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        Use getBorderRadiiForRect to fetch border radii.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Use getBorderRadiiForRect to fetch border radii.
+
+        (WebCore::RenderBoxModelObject::paintBorder):
+        Use getBorderRadiiForRect to fetch border radii, and fix a bug when drawing
+        borders for split inlines, which used to apply the radii for each segment,
+        and no longer does.
+
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        Use getBorderRadiiForRect to fetch border radii.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        Use getBorderRadiiForRect to fetch border radii for clipping.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        Use getBorderRadiiForRect to fetch border radii for clipping.
+
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getBorderRadiiForRect):
+        New bottleneck method to fetch corner radiil given a rect, applying the constraint
+        rules.
+
 2009-05-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
