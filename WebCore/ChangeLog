@@ -1,3 +1,29 @@
+2009-05-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Miscellaneous cleanup of DOMWindow related functions.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::~JSDOMGlobalObject): Fix poorly named variables.
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsProfiling): Don't jump through hoops
+        checking for null frames if the build does not support profiling.
+        (WebCore::JSDOMWindowBase::clear): Use setCurrentEvent(0) instead of calling
+        clearHelperObjectProperties().  It is clearer.
+        * bindings/js/JSDOMWindowBase.h:
+        Removed now unused clearHelperObjectProperties() function, empty disconnectFrame()
+        function, and the empty destructor.
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDOMWindowShell.h:
+        Remove disconnectFrame() which only called JSDOMWindowBase::disconnectFrame(), which
+        is a no-op.
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::pageDestroyed):
+        Remove calls to JSDOMWindowShell::disconnectFrame() which only called
+        JSDOMWindowBase::disconnectFrame(), which is a no-op.
+
 2009-05-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

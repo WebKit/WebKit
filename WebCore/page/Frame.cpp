@@ -185,9 +185,6 @@ Frame::~Frame()
     frameCounter.decrement();
 #endif
 
-    if (m_script.haveWindowShell())
-        m_script.windowShell()->disconnectFrame();
-
     disconnectOwnerElement();
     
     if (m_domWindow)
@@ -1580,11 +1577,6 @@ void Frame::pageDestroyed()
         page()->focusController()->setFocusedFrame(0);
 
     script()->clearWindowShell();
-
-    // This will stop any JS timers
-    if (script()->haveWindowShell())
-        script()->windowShell()->disconnectFrame();
-
     script()->clearScriptObjects();
     script()->updatePlatformScriptObjects();
 

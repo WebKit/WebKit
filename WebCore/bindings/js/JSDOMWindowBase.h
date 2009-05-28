@@ -50,14 +50,10 @@ namespace WebCore {
         JSDOMWindowBase(PassRefPtr<JSC::Structure>, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
 
     public:
-        virtual ~JSDOMWindowBase();
-
         void updateDocument();
 
         DOMWindow* impl() const { return d()->impl.get(); }
         virtual ScriptExecutionContext* scriptExecutionContext() const;
-
-        void disconnectFrame();
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
         virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
@@ -103,8 +99,6 @@ namespace WebCore {
         static JSC::JSValue childFrameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
         static JSC::JSValue indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
         static JSC::JSValue namedItemGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-
-        void clearHelperObjectProperties();
 
         bool allowsAccessFromPrivate(const JSC::JSGlobalObject*) const;
         String crossDomainAccessErrorMessage(const JSC::JSGlobalObject*) const;

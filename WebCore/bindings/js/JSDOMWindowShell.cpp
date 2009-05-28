@@ -147,11 +147,6 @@ DOMWindow* JSDOMWindowShell::impl() const
     return m_window->impl();
 }
 
-void JSDOMWindowShell::disconnectFrame()
-{
-    m_window->disconnectFrame();
-}
-
 void JSDOMWindowShell::clear()
 {
     m_window->clear();

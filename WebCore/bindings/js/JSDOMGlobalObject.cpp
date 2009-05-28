@@ -52,10 +52,10 @@ JSDOMGlobalObject::JSDOMGlobalObject(PassRefPtr<Structure> structure, JSDOMGloba
 
 JSDOMGlobalObject::~JSDOMGlobalObject()
 {
-    JSListenersMap::iterator i2 = d()->jsEventListeners.begin();
-    JSListenersMap::iterator e2 = d()->jsEventListeners.end();
-    for (; i2 != e2; ++i2)
-        i2->second->clearGlobalObject();
+    JSListenersMap::iterator it = d()->jsEventListeners.begin();
+    JSListenersMap::iterator end = d()->jsEventListeners.end();
+    for (; it != end; ++it)
+        it->second->clearGlobalObject();
 }
 
 void JSDOMGlobalObject::mark()
