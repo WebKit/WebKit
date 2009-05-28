@@ -144,6 +144,11 @@ String WMLOptionElement::value() const
     return OptionElement::collectOptionValue(m_data, this);
 }
 
+String WMLOptionElement::text() const
+{
+    return OptionElement::collectOptionText(m_data, this);
+}
+
 String WMLOptionElement::textIndentedToRespectGroupLabel() const
 {
     return OptionElement::collectOptionTextRespectingGroupLabel(m_data, this);

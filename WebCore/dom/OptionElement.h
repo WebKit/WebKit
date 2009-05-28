@@ -36,6 +36,7 @@ public:
     virtual bool selected() const = 0;
     virtual void setSelectedState(bool) = 0;
 
+    virtual String text() const = 0;
     virtual String textIndentedToRespectGroupLabel() const = 0;
     virtual String value() const = 0;
 

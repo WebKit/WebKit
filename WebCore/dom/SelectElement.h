@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http//www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,11 +21,19 @@
 #ifndef SelectElement_h
 #define SelectElement_h
 
+#include "Event.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Element;
+class Event;
+class FormDataList;
+class HTMLFormElement;
+class KeyboardEvent;
+class MappedAttribute;
+class SelectElementData;
+class String;
 
 class SelectElement {
 public:
@@ -52,6 +60,111 @@ public:
 
     virtual int selectedIndex() const = 0;
     virtual void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false) = 0;
+
+protected:
+    friend class SelectElementData;
+    static void selectAll(SelectElementData&, Element*);
+    static void saveLastSelection(SelectElementData&, Element*);
+    static int nextSelectableListIndex(SelectElementData&, Element*, int startIndex);
+    static int previousSelectableListIndex(SelectElementData&, Element*, int startIndex);
+    static void setActiveSelectionAnchorIndex(SelectElementData&, Element*, int index);
+    static void setActiveSelectionEndIndex(SelectElementData&, int index);
+    static void updateListBoxSelection(SelectElementData&, Element*, bool deselectOtherOptions);
+    static void listBoxOnChange(SelectElementData&, Element*);
+    static void menuListOnChange(SelectElementData&, Element*);
+    static void scrollToSelection(SelectElementData&, Element*);
+    static void recalcStyle(SelectElementData&, Element*);
+    static void setRecalcListItems(SelectElementData&, Element*);
+    static void recalcListItems(SelectElementData&, const Element*, bool updateSelectedStates = true);
+    static int selectedIndex(const SelectElementData&, const Element*);
+    static void setSelectedIndex(SelectElementData&, Element*, int optionIndex, bool deselect = true, bool fireOnChange = false);
+    static int optionToListIndex(const SelectElementData&, const Element*, int optionIndex);
+    static int listToOptionIndex(const SelectElementData&, const Element*, int listIndex);
+    static void dispatchFocusEvent(SelectElementData&, Element*);
+    static void dispatchBlurEvent(SelectElementData&, Element*);
+    static void deselectItems(SelectElementData&, Element*, Element* excludeElement = 0);
+    static bool saveFormControlState(const SelectElementData&, const Element*, String& value);
+    static void restoreFormControlState(SelectElementData&, Element*, const String& state);
+    static void parseMultipleAttribute(SelectElementData&, Element*, MappedAttribute*);
+    static bool appendFormData(SelectElementData&, Element*, FormDataList& list);
+    static void reset(SelectElementData&, Element*);
+    static void defaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement* htmlForm = 0);
+    static int lastSelectedListIndex(const SelectElementData&, const Element*);
+    static void typeAheadFind(SelectElementData&, Element*, KeyboardEvent*);
+    static void insertedIntoTree(SelectElementData&, Element*);
+
+private:
+    static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
+    static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
+};
+
+// HTML/WMLSelectElement hold this struct as member variable
+// and pass it to the static helper functions in SelectElement
+class SelectElementData {
+public:
+    SelectElementData();
+
+    bool multiple() const { return m_multiple; }
+    void setMultiple(bool value) { m_multiple = value; }
+
+    int size() const { return m_size; }
+    void setSize(int value) { m_size = value; }
+
+    bool usesMenuList() const { return !m_multiple && m_size <= 1; }
+
+    int lastOnChangeIndex() const { return m_lastOnChangeIndex; }
+    void setLastOnChangeIndex(int value) { m_lastOnChangeIndex = value; }
+
+    Vector<bool>& lastOnChangeSelection() { return m_lastOnChangeSelection; }
+
+    bool activeSelectionState() const { return m_activeSelectionState; }
+    void setActiveSelectionState(bool value) { m_activeSelectionState = value; }
+
+    int activeSelectionAnchorIndex() const { return m_activeSelectionAnchorIndex; }
+    void setActiveSelectionAnchorIndex(int value) { m_activeSelectionAnchorIndex = value; }
+
+    int activeSelectionEndIndex() const { return m_activeSelectionEndIndex; }
+    void setActiveSelectionEndIndex(int value) { m_activeSelectionEndIndex = value; }
+
+    Vector<bool>& cachedStateForActiveSelection() { return m_cachedStateForActiveSelection; }
+
+    bool shouldRecalcListItems() const { return m_recalcListItems; }
+    void setShouldRecalcListItems(bool value) { m_recalcListItems = value; }
+
+    Vector<Element*>& rawListItems() { return m_listItems; }
+    Vector<Element*>& listItems(const Element*);
+    const Vector<Element*>& listItems(const Element*) const;
+
+    UChar repeatingChar() const { return m_repeatingChar; }
+    void setRepeatingChar(const UChar& value) { m_repeatingChar = value; }
+
+    DOMTimeStamp lastCharTime() const { return m_lastCharTime; }
+    void setLastCharTime(const DOMTimeStamp& value) { m_lastCharTime = value; }
+
+    String& typedString() { return m_typedString; }
+    void setTypedString(const String& value) { m_typedString = value; }
+
+private:
+    void checkListItems(const Element*) const;
+
+    bool m_multiple;
+    int m_size;
+
+    int m_lastOnChangeIndex;
+    Vector<bool> m_lastOnChangeSelection;
+
+    bool m_activeSelectionState;
+    int m_activeSelectionAnchorIndex;
+    int m_activeSelectionEndIndex;
+    Vector<bool> m_cachedStateForActiveSelection;
+
+    bool m_recalcListItems;
+    Vector<Element*> m_listItems;
+
+    // Instance variables for type-ahead find
+    UChar m_repeatingChar;
+    DOMTimeStamp m_lastCharTime;
+    String m_typedString;
 };
 
 SelectElement* toSelectElement(Element*);

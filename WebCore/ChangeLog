@@ -1,3 +1,228 @@
+2009-05-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=26062
+
+        Refactor code from all virtual methods in HTMLSelectElement (that are also needed for WMLSelectElement)
+        in the recently introduced SelectElement abstract base class. Follow the same design sheme that InputElement uses.
+
+        A follow-up patch can now easily add WMLSelectElement.
+
+        * dom/OptionElement.h:
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::selectAll):
+        (WebCore::SelectElement::saveLastSelection):
+        (WebCore::isOptionElement):
+        (WebCore::isOptionGroupElement):
+        (WebCore::SelectElement::nextSelectableListIndex):
+        (WebCore::SelectElement::previousSelectableListIndex):
+        (WebCore::SelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::SelectElement::setActiveSelectionEndIndex):
+        (WebCore::SelectElement::updateListBoxSelection):
+        (WebCore::SelectElement::listBoxOnChange):
+        (WebCore::SelectElement::menuListOnChange):
+        (WebCore::SelectElement::scrollToSelection):
+        (WebCore::SelectElement::recalcStyle):
+        (WebCore::SelectElement::setRecalcListItems):
+        (WebCore::SelectElement::recalcListItems):
+        (WebCore::SelectElement::selectedIndex):
+        (WebCore::SelectElement::setSelectedIndex):
+        (WebCore::SelectElement::optionToListIndex):
+        (WebCore::SelectElement::listToOptionIndex):
+        (WebCore::SelectElement::dispatchFocusEvent):
+        (WebCore::SelectElement::dispatchBlurEvent):
+        (WebCore::SelectElement::deselectItems):
+        (WebCore::SelectElement::saveFormControlState):
+        (WebCore::SelectElement::restoreFormControlState):
+        (WebCore::SelectElement::parseMultipleAttribute):
+        (WebCore::SelectElement::appendFormData):
+        (WebCore::SelectElement::reset):
+        (WebCore::SelectElement::menuListDefaultEventHandler):
+        (WebCore::SelectElement::listBoxDefaultEventHandler):
+        (WebCore::SelectElement::defaultEventHandler):
+        (WebCore::SelectElement::lastSelectedListIndex):
+        (WebCore::stripLeadingWhiteSpace):
+        (WebCore::SelectElement::typeAheadFind):
+        (WebCore::SelectElement::insertedIntoTree):
+        (WebCore::SelectElementData::SelectElementData):
+        (WebCore::SelectElementData::checkListItems):
+        (WebCore::SelectElementData::listItems):
+        * dom/SelectElement.h:
+        (WebCore::SelectElementData::multiple):
+        (WebCore::SelectElementData::setMultiple):
+        (WebCore::SelectElementData::size):
+        (WebCore::SelectElementData::setSize):
+        (WebCore::SelectElementData::usesMenuList):
+        (WebCore::SelectElementData::lastOnChangeIndex):
+        (WebCore::SelectElementData::setLastOnChangeIndex):
+        (WebCore::SelectElementData::lastOnChangeSelection):
+        (WebCore::SelectElementData::activeSelectionState):
+        (WebCore::SelectElementData::setActiveSelectionState):
+        (WebCore::SelectElementData::activeSelectionAnchorIndex):
+        (WebCore::SelectElementData::setActiveSelectionAnchorIndex):
+        (WebCore::SelectElementData::activeSelectionEndIndex):
+        (WebCore::SelectElementData::setActiveSelectionEndIndex):
+        (WebCore::SelectElementData::cachedStateForActiveSelection):
+        (WebCore::SelectElementData::shouldRecalcListItems):
+        (WebCore::SelectElementData::setShouldRecalcListItems):
+        (WebCore::SelectElementData::rawListItems):
+        (WebCore::SelectElementData::repeatingChar):
+        (WebCore::SelectElementData::setRepeatingChar):
+        (WebCore::SelectElementData::lastCharTime):
+        (WebCore::SelectElementData::setLastCharTime):
+        (WebCore::SelectElementData::typedString):
+        (WebCore::SelectElementData::setTypedString):
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::formControlType):
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::deselectItems):
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::activeSelectionStartListIndex):
+        (WebCore::HTMLSelectElement::activeSelectionEndListIndex):
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        (WebCore::HTMLSelectElement::canSelectAll):
+        (WebCore::HTMLSelectElement::selectAll):
+        (WebCore::HTMLSelectElement::createRenderer):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        (WebCore::HTMLSelectElement::listToOptionIndex):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        (WebCore::HTMLSelectElement::dispatchBlurEvent):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::setActiveSelectionEndIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::menuListOnChange):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setOption):
+        (WebCore::HTMLSelectElement::scrollToSelection):
+        (WebCore::HTMLSelectElement::insertedIntoTree):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::size):
+        (WebCore::HTMLSelectElement::multiple):
+        (WebCore::HTMLSelectElement::listItems):
+        * wml/WMLOptionElement.cpp:
+        (WebCore::WMLOptionElement::text):
+        * wml/WMLOptionElement.h:
+
+
+        * dom/OptionElement.h:
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::selectAll):
+        (WebCore::SelectElement::saveLastSelection):
+        (WebCore::isOptionElement):
+        (WebCore::isOptionGroupElement):
+        (WebCore::SelectElement::nextSelectableListIndex):
+        (WebCore::SelectElement::previousSelectableListIndex):
+        (WebCore::SelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::SelectElement::setActiveSelectionEndIndex):
+        (WebCore::SelectElement::updateListBoxSelection):
+        (WebCore::SelectElement::listBoxOnChange):
+        (WebCore::SelectElement::menuListOnChange):
+        (WebCore::SelectElement::scrollToSelection):
+        (WebCore::SelectElement::recalcStyle):
+        (WebCore::SelectElement::setRecalcListItems):
+        (WebCore::SelectElement::recalcListItems):
+        (WebCore::SelectElement::selectedIndex):
+        (WebCore::SelectElement::setSelectedIndex):
+        (WebCore::SelectElement::optionToListIndex):
+        (WebCore::SelectElement::listToOptionIndex):
+        (WebCore::SelectElement::dispatchFocusEvent):
+        (WebCore::SelectElement::dispatchBlurEvent):
+        (WebCore::SelectElement::deselectItems):
+        (WebCore::SelectElement::saveFormControlState):
+        (WebCore::SelectElement::restoreFormControlState):
+        (WebCore::SelectElement::parseMultipleAttribute):
+        (WebCore::SelectElement::appendFormData):
+        (WebCore::SelectElement::reset):
+        (WebCore::SelectElement::menuListDefaultEventHandler):
+        (WebCore::SelectElement::listBoxDefaultEventHandler):
+        (WebCore::SelectElement::defaultEventHandler):
+        (WebCore::SelectElement::lastSelectedListIndex):
+        (WebCore::stripLeadingWhiteSpace):
+        (WebCore::SelectElement::typeAheadFind):
+        (WebCore::SelectElement::insertedIntoTree):
+        (WebCore::SelectElementData::SelectElementData):
+        (WebCore::SelectElementData::~SelectElementData):
+        (WebCore::SelectElementData::checkListItems):
+        (WebCore::SelectElementData::listItems):
+        * dom/SelectElement.h:
+        (WebCore::SelectElementData::multiple):
+        (WebCore::SelectElementData::setMultiple):
+        (WebCore::SelectElementData::size):
+        (WebCore::SelectElementData::setSize):
+        (WebCore::SelectElementData::usesMenuList):
+        (WebCore::SelectElementData::lastOnChangeIndex):
+        (WebCore::SelectElementData::setLastOnChangeIndex):
+        (WebCore::SelectElementData::lastOnChangeSelection):
+        (WebCore::SelectElementData::activeSelectionState):
+        (WebCore::SelectElementData::setActiveSelectionState):
+        (WebCore::SelectElementData::activeSelectionAnchorIndex):
+        (WebCore::SelectElementData::setActiveSelectionAnchorIndex):
+        (WebCore::SelectElementData::activeSelectionEndIndex):
+        (WebCore::SelectElementData::setActiveSelectionEndIndex):
+        (WebCore::SelectElementData::cachedStateForActiveSelection):
+        (WebCore::SelectElementData::shouldRecalcListItems):
+        (WebCore::SelectElementData::setShouldRecalcListItems):
+        (WebCore::SelectElementData::rawListItems):
+        (WebCore::SelectElementData::repeatingChar):
+        (WebCore::SelectElementData::setRepeatingChar):
+        (WebCore::SelectElementData::lastCharTime):
+        (WebCore::SelectElementData::setLastCharTime):
+        (WebCore::SelectElementData::typedString):
+        (WebCore::SelectElementData::setTypedString):
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        (WebCore::HTMLSelectElement::recalcStyle):
+        (WebCore::HTMLSelectElement::formControlType):
+        (WebCore::HTMLSelectElement::selectedIndex):
+        (WebCore::HTMLSelectElement::deselectItems):
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::activeSelectionStartListIndex):
+        (WebCore::HTMLSelectElement::activeSelectionEndListIndex):
+        (WebCore::HTMLSelectElement::saveFormControlState):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+        (WebCore::HTMLSelectElement::canSelectAll):
+        (WebCore::HTMLSelectElement::selectAll):
+        (WebCore::HTMLSelectElement::createRenderer):
+        (WebCore::HTMLSelectElement::appendFormData):
+        (WebCore::HTMLSelectElement::optionToListIndex):
+        (WebCore::HTMLSelectElement::listToOptionIndex):
+        (WebCore::HTMLSelectElement::recalcListItems):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        (WebCore::HTMLSelectElement::dispatchBlurEvent):
+        (WebCore::HTMLSelectElement::defaultEventHandler):
+        (WebCore::HTMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::HTMLSelectElement::setActiveSelectionEndIndex):
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::menuListOnChange):
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::saveLastSelection):
+        (WebCore::HTMLSelectElement::setOption):
+        (WebCore::HTMLSelectElement::scrollToSelection):
+        (WebCore::HTMLSelectElement::insertedIntoTree):
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::size):
+        (WebCore::HTMLSelectElement::multiple):
+        (WebCore::HTMLSelectElement::listItems):
+        * wml/WMLOptionElement.cpp:
+        (WebCore::WMLOptionElement::text):
+        * wml/WMLOptionElement.h:
+
 2009-05-28  Adam Roben  <aroben@apple.com>
 
         Don't try to use the new combobox parts on Vista in Classic mode

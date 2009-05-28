@@ -59,7 +59,6 @@ public:
 
     virtual int selectedIndex() const;
     virtual void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false);
-    int lastSelectedListIndex() const;
 
     virtual bool isEnumeratable() const { return true; }
 
@@ -67,9 +66,8 @@ public:
 
     int minWidth() const { return m_minwidth; }
 
-    virtual int size() const { return m_size; }
-
-    virtual bool multiple() const { return m_multiple; }
+    virtual int size() const { return m_data.size(); }
+    virtual bool multiple() const { return m_data.multiple(); }
 
     void add(HTMLElement* element, HTMLElement* before, ExceptionCode&);
     void remove(int index);
@@ -96,14 +94,7 @@ public:
 
     void setRecalcListItems();
 
-    virtual const Vector<Element*>& listItems() const
-    {
-        if (m_recalcListItems)
-            recalcListItems();
-        else
-            checkListItems();
-        return m_listItems;
-    }
+    virtual const Vector<Element*>& listItems() const { return m_data.listItems(this); }
     virtual void reset();
 
     virtual void defaultEventHandler(Event*);
@@ -121,9 +112,9 @@ public:
     Node* item(unsigned index);
 
     CollectionCache* collectionInfo() { return &m_collectionInfo; }
-    
+
     virtual void setActiveSelectionAnchorIndex(int index);
-    virtual void setActiveSelectionEndIndex(int index) { m_activeSelectionEndIndex = index; }
+    virtual void setActiveSelectionEndIndex(int index);
     virtual void updateListBoxSelection(bool deselectOtherOptions);
     virtual void listBoxOnChange();
     virtual void menuListOnChange();
@@ -135,47 +126,17 @@ public:
 
 private:
     void recalcListItems(bool updateSelectedStates = true) const;
-    void checkListItems() const;
 
     void deselectItems(HTMLOptionElement* excludeElement = 0);
-    bool usesMenuList() const { return !m_multiple && m_size <= 1; }
-    int nextSelectableListIndex(int startIndex);
-    int previousSelectableListIndex(int startIndex);
-    void menuListDefaultEventHandler(Event*);
-    void listBoxDefaultEventHandler(Event*);
     void typeAheadFind(KeyboardEvent*);
     void saveLastSelection();
 
     virtual void insertedIntoTree(bool);
 
-    mutable Vector<Element*> m_listItems;
-    Vector<bool> m_cachedStateForActiveSelection;
-    Vector<bool> m_lastOnChangeSelection;
+    SelectElementData m_data;
     int m_minwidth;
-    int m_size;
-    bool m_multiple;
-    mutable bool m_recalcListItems;
-    mutable int m_lastOnChangeIndex;
-
-    int m_activeSelectionAnchorIndex;
-    int m_activeSelectionEndIndex;
-    bool m_activeSelectionState;
-
-    // Instance variables for type-ahead find
-    UChar m_repeatingChar;
-    DOMTimeStamp m_lastCharTime;
-    String m_typedString;
-
     CollectionCache m_collectionInfo;
 };
-
-#ifdef NDEBUG
-
-inline void HTMLSelectElement::checkListItems() const
-{
-}
-
-#endif
 
 } // namespace
 
