@@ -282,20 +282,16 @@ JSValue JSDOMWindow::worker(ExecState* exec) const
 // Custom functions
 
 // Helper for window.open() and window.showModalDialog()
-static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicFrame,
-                           Frame* openerFrame, const String& url, const String& frameName, 
+static Frame* createWindow(ExecState* exec, Frame* activeFrame, Frame* openerFrame, 
+                           const String& url, const String& frameName, 
                            const WindowFeatures& windowFeatures, JSValue dialogArgs)
 {
-    ASSERT(lexicalFrame);
-    ASSERT(dynamicFrame);
+    ASSERT(activeFrame);
 
     ResourceRequest request;
 
-    // For whatever reason, Firefox uses the dynamicGlobalObject to determine
-    // the outgoingReferrer.  We replicate that behavior here.
-    String referrer = dynamicFrame->loader()->outgoingReferrer();
-    request.setHTTPReferrer(referrer);
-    FrameLoader::addHTTPOriginIfNeeded(request, dynamicFrame->loader()->outgoingOrigin());
+    request.setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
+    FrameLoader::addHTTPOriginIfNeeded(request, activeFrame->loader()->outgoingOrigin());
     FrameLoadRequest frameRequest(request, frameName);
 
     // FIXME: It's much better for client API if a new window starts with a URL, here where we
@@ -309,7 +305,7 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
     // We pass in the opener frame here so it can be used for looking up the frame name, in case the active frame
     // is different from the opener frame, and the name references a frame relative to the opener frame, for example
     // "_self" or "_parent".
-    Frame* newFrame = lexicalFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
+    Frame* newFrame = activeFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
     if (!newFrame)
         return 0;
 
@@ -322,13 +318,13 @@ static Frame* createWindow(ExecState* exec, Frame* lexicalFrame, Frame* dynamicF
         newWindow->putDirect(Identifier(exec, "dialogArguments"), dialogArgs);
 
     if (!protocolIsJavaScript(url) || newWindow->allowsAccessFrom(exec)) {
-        KURL completedURL = url.isEmpty() ? KURL("") : completeURL(exec, url);
-        bool userGesture = processingUserGesture(exec);
+        KURL completedURL = url.isEmpty() ? KURL("") : activeFrame->document()->completeURL(url);
+        bool userGesture = activeFrame->script()->processingUserGesture();
 
         if (created)
-            newFrame->loader()->changeLocation(completedURL, referrer, false, false, userGesture);
+            newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, false, userGesture);
         else if (!url.isEmpty())
-            newFrame->loader()->scheduleLocationChange(completedURL.string(), referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
+            newFrame->loader()->scheduleLocationChange(completedURL.string(), activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
     }
 
     return newFrame;
@@ -339,12 +335,9 @@ JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
     Frame* frame = impl()->frame();
     if (!frame)
         return jsUndefined();
-    Frame* lexicalFrame = toLexicalFrame(exec);
-    if (!lexicalFrame)
-        return jsUndefined();
-    Frame* dynamicFrame = toDynamicFrame(exec);
-    if (!dynamicFrame)
-        return jsUndefined();
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    if (!activeFrame)
+        return  jsUndefined();
 
     Page* page = frame->page();
 
@@ -353,7 +346,7 @@ JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
 
     // Because FrameTree::find() returns true for empty strings, we must check for empty framenames.
     // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
-    if (!DOMWindow::allowPopUp(lexicalFrame) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
+    if (!DOMWindow::allowPopUp(activeFrame) && (frameName.isEmpty() || !frame->tree()->find(frameName)))
         return jsUndefined();
 
     // Get the target frame for the special cases of _top and _parent.  In those
@@ -368,23 +361,17 @@ JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
         topOrParent = true;
     }
     if (topOrParent) {
-        if (!shouldAllowNavigation(exec, frame))
+        if (!activeFrame->loader()->shouldAllowNavigation(frame))
             return jsUndefined();
 
         String completedURL;
         if (!urlString.isEmpty())
-            completedURL = completeURL(exec, urlString).string();
+            completedURL = activeFrame->document()->completeURL(urlString).string();
 
         const JSDOMWindow* targetedWindow = toJSDOMWindow(frame);
         if (!completedURL.isEmpty() && (!protocolIsJavaScript(completedURL) || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
-            bool userGesture = processingUserGesture(exec);
-
-            // For whatever reason, Firefox uses the dynamicGlobalObject to
-            // determine the outgoingReferrer.  We replicate that behavior
-            // here.
-            String referrer = dynamicFrame->loader()->outgoingReferrer();
-
-            frame->loader()->scheduleLocationChange(completedURL, referrer, !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
+            bool userGesture = activeFrame->script()->processingUserGesture();
+            frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
         }
         return toJS(exec, frame->domWindow());
     }
@@ -400,7 +387,7 @@ JSValue JSDOMWindow::open(ExecState* exec, const ArgList& args)
     windowFeatures.height = windowRect.height();
     windowFeatures.width = windowRect.width();
 
-    frame = createWindow(exec, lexicalFrame, dynamicFrame, frame, urlString, frameName, windowFeatures, JSValue());
+    frame = createWindow(exec, activeFrame, frame, urlString, frameName, windowFeatures, JSValue());
 
     if (!frame)
         return jsUndefined();
@@ -413,14 +400,10 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec, const ArgList& args)
     Frame* frame = impl()->frame();
     if (!frame)
         return jsUndefined();
-    Frame* lexicalFrame = toLexicalFrame(exec);
-    if (!lexicalFrame)
-        return jsUndefined();
-    Frame* dynamicFrame = toDynamicFrame(exec);
-    if (!dynamicFrame)
-        return jsUndefined();
 
-    if (!DOMWindow::canShowModalDialogNow(frame) || !DOMWindow::allowPopUp(lexicalFrame))
+    Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+
+    if (!DOMWindow::canShowModalDialogNow(frame) || !DOMWindow::allowPopUp(activeFrame))
         return jsUndefined();
 
     String url = valueToStringWithUndefinedOrNullCheck(exec, args.at(0));
@@ -473,7 +456,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec, const ArgList& args)
     wargs.locationBarVisible = false;
     wargs.fullscreen = false;
 
-    Frame* dialogFrame = createWindow(exec, lexicalFrame, dynamicFrame, frame, url, "", wargs, dialogArgs);
+    Frame* dialogFrame = createWindow(exec, activeFrame, frame, url, "", wargs, dialogArgs);
     if (!dialogFrame)
         return jsUndefined();
 

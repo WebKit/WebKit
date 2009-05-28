@@ -264,6 +264,8 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
     DOMWindow* source = V8Proxy::retrieveFrameForCallingContext()->domWindow();
     ASSERT(source->frame());
 
+    String uri = source->frame()->loader()->url().string();
+
     v8::TryCatch tryCatch;
 
     String message = toWebCoreString(args[0]);
@@ -475,24 +477,17 @@ static HashMap<String, String> parseModalDialogFeatures(const String& featuresAr
 }
 
 
-static Frame* createWindow(Frame* callingFrame,
-                           Frame* enteredFrame,
-                           Frame* openerFrame,
+static Frame* createWindow(Frame* openerFrame,
                            const String& url,
                            const String& frameName,
                            const WindowFeatures& windowFeatures,
                            v8::Local<v8::Value> dialogArgs)
 {
-    ASSERT(callingFrame);
-    ASSERT(enteredFrame);
+    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
 
     ResourceRequest request;
-
-    // For whatever reason, Firefox uses the entered frame to determine
-    // the outgoingReferrer.  We replicate that behavior here.
-    String referrer = enteredFrame->loader()->outgoingReferrer();
-    request.setHTTPReferrer(referrer);
-    FrameLoader::addHTTPOriginIfNeeded(request, enteredFrame->loader()->outgoingOrigin());
+    if (activeFrame)
+        request.setHTTPReferrer(activeFrame->loader()->outgoingReferrer());
     FrameLoadRequest frameRequest(request, frameName);
 
     // FIXME: It's much better for client API if a new window starts with a URL,
@@ -509,7 +504,7 @@ static Frame* createWindow(Frame* callingFrame,
     // frame name, in case the active frame is different from the opener frame,
     // and the name references a frame relative to the opener frame, for example
     // "_self" or "_parent".
-    Frame* newFrame = callingFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
+    Frame* newFrame = activeFrame->loader()->createWindow(openerFrame->loader(), frameRequest, windowFeatures, created);
     if (!newFrame)
         return 0;
 
@@ -525,15 +520,16 @@ static Frame* createWindow(Frame* callingFrame,
         }
     }
 
-    if (protocolIsJavaScript(url) || ScriptController::isSafeScript(newFrame)) {
+    if (!parseURL(url).startsWith("javascript:", false)
+        || ScriptController::isSafeScript(newFrame)) {
         KURL completedUrl =
-            url.isEmpty() ? KURL("") : completeURL(url);
-        bool userGesture = processingUserGesture();
+            url.isEmpty() ? KURL("") : activeFrame->document()->completeURL(url);
+        bool userGesture = activeFrame->script()->processingUserGesture();
 
         if (created)
-            newFrame->loader()->changeLocation(completedUrl, referrer, false, false, userGesture);
+            newFrame->loader()->changeLocation(completedUrl, activeFrame->loader()->outgoingReferrer(), false, false, userGesture);
         else if (!url.isEmpty())
-            newFrame->loader()->scheduleLocationChange(completedUrl.string(), referrer, false, userGesture);
+            newFrame->loader()->scheduleLocationChange(completedUrl.string(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
     }
 
     return newFrame;
@@ -549,14 +545,6 @@ CALLBACK_FUNC_DECL(DOMWindowShowModalDialog)
     Frame* frame = window->frame();
 
     if (!frame || !V8Proxy::CanAccessFrame(frame, true)) 
-        return v8::Undefined();
-
-    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
-    if (!callingFrame)
-        return v8::Undefined();
-
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
         return v8::Undefined();
 
     if (!canShowModalDialogNow(frame) || !allowPopUp())
@@ -605,7 +593,7 @@ CALLBACK_FUNC_DECL(DOMWindowShowModalDialog)
     windowFeatures.locationBarVisible = false;
     windowFeatures.fullscreen = false;
 
-    Frame* dialogFrame = createWindow(callingFrame, enteredFrame, frame, url, "", windowFeatures, dialogArgs);
+    Frame* dialogFrame = createWindow(frame, url, "", windowFeatures, dialogArgs);
     if (!dialogFrame)
         return v8::Undefined();
 
@@ -636,20 +624,16 @@ CALLBACK_FUNC_DECL(DOMWindowOpen)
     DOMWindow* parent = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, args.Holder());
     Frame* frame = parent->frame();
 
-    if (!frame || !V8Proxy::CanAccessFrame(frame, true))
-        return v8::Undefined();
+    if (!V8Proxy::CanAccessFrame(frame, true))
+      return v8::Undefined();
 
-    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
-    if (!callingFrame)
-        return v8::Undefined();
-
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
-        return v8::Undefined();
+    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!activeFrame)
+      return v8::Undefined();
 
     Page* page = frame->page();
     if (!page)
-        return v8::Undefined();
+      return v8::Undefined();
 
     String urlString = valueToStringWithNullOrUndefinedCheck(args[0]);
     AtomicString frameName = (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1]));
@@ -674,22 +658,18 @@ CALLBACK_FUNC_DECL(DOMWindowOpen)
         topOrParent = true;
     }
     if (topOrParent) {
-        if (!shouldAllowNavigation(frame))
+        if (!activeFrame->loader()->shouldAllowNavigation(frame))
             return v8::Undefined();
     
         String completedUrl;
         if (!urlString.isEmpty())
-            completedUrl = completeURL(urlString);
+            completedUrl = activeFrame->document()->completeURL(urlString);
     
         if (!completedUrl.isEmpty() &&
-            (!protocolIsJavaScript(completedUrl) || ScriptController::isSafeScript(frame))) {
-            bool userGesture = processingUserGesture();
-
-            // For whatever reason, Firefox uses the entered frame to determine
-            // the outgoingReferrer.  We replicate that behavior here.
-            String referrer = enteredFrame->loader()->outgoingReferrer();
-
-            frame->loader()->scheduleLocationChange(completedUrl, referrer, false, userGesture);
+            (!parseURL(urlString).startsWith("javascript:", false)
+             || ScriptController::isSafeScript(frame))) {
+            bool userGesture = activeFrame->script()->processingUserGesture();
+            frame->loader()->scheduleLocationChange(completedUrl, activeFrame->loader()->outgoingReferrer(), false, userGesture);
         }
         return V8Proxy::ToV8Object(V8ClassIndex::DOMWINDOW, frame->domWindow());
     }
@@ -746,7 +726,7 @@ CALLBACK_FUNC_DECL(DOMWindowOpen)
         windowFeatures.ySet = false;
     }
 
-    frame = createWindow(callingFrame, enteredFrame, frame, urlString, frameName, windowFeatures, v8::Local<v8::Value>());
+    frame = createWindow(frame, urlString, frameName, windowFeatures, v8::Local<v8::Value>());
 
     if (!frame)
         return v8::Undefined();
