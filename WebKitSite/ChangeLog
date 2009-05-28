@@ -2,6 +2,14 @@
 
         Not reviewed, demo content.
         
+        - Add doctype to Calendar demo.
+
+        * demos/calendar/Calendar.html:
+
+2009-05-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, demo content.
+        
         - add Calendar demo.
 
         * demos/calendar: Added.
