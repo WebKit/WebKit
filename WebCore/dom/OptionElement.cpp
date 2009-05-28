@@ -103,10 +103,6 @@ OptionElementData::OptionElementData()
 {
 }
 
-OptionElementData::~OptionElementData()
-{
-}
-
 OptionElement* toOptionElement(Element* element)
 {
     if (element->isHTMLElement() && element->hasTagName(HTMLNames::optionTag))

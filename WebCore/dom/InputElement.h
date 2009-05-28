@@ -84,7 +84,6 @@ protected:
 class InputElementData {
 public:
     InputElementData();
-    ~InputElementData();
 
     bool placeholderShouldBeVisible() const { return m_placeholderShouldBeVisible; }
     void setPlaceholderShouldBeVisible(bool visible) { m_placeholderShouldBeVisible = visible; }

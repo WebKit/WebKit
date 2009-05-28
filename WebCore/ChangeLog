@@ -1,5 +1,16 @@
 2009-05-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Rubber-stamped by Darin Adler.
+
+        Remove unnecessary destructor from InputElementData/OptionElementData.
+
+        * dom/InputElement.cpp:
+        * dom/InputElement.h:
+        * dom/OptionElement.cpp:
+        * dom/OptionElement.h:
+
+2009-05-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Darin Adler.
 
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=26062
