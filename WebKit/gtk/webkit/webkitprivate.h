@@ -215,6 +215,9 @@ extern "C" {
 
     bool
     webkit_web_view_use_primary_for_paste(WebKitWebView* web_view);
+
+    GHashTable*
+    webkit_history_items(void);
 }
 
 #endif

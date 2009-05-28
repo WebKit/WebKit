@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Jan Michael C. Alonzo
+ * Copyright (C) 2009 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -79,37 +80,28 @@ static void webkit_web_history_item_set_property(GObject* object, guint prop_id,
 
 static void webkit_web_history_item_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec);
 
-static GHashTable* webkit_history_items()
+GHashTable* webkit_history_items()
 {
     static GHashTable* historyItems = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_object_unref);
     return historyItems;
 }
 
-static void webkit_history_item_add(WebKitWebHistoryItem* webHistoryItem, WebCore::HistoryItem* historyItem)
+void webkit_history_item_add(WebKitWebHistoryItem* webHistoryItem, WebCore::HistoryItem* historyItem)
 {
     g_return_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem));
 
     GHashTable* table = webkit_history_items();
-
-    g_hash_table_insert(table, historyItem, g_object_ref(webHistoryItem));
+    g_hash_table_insert(table, historyItem, webHistoryItem);
 }
 
 static void webkit_web_history_item_dispose(GObject* object)
 {
     WebKitWebHistoryItem* webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(object);
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
-    WebCore::HistoryItem* item = core(webHistoryItem);
 
     if (!priv->disposed) {
-        GHashTable* table = webkit_history_items();
-
-        g_hash_table_remove(table, item);
+        WebCore::HistoryItem* item = core(webHistoryItem);
         item->deref();
-
-        /* destroy table if empty */
-        if (!g_hash_table_size(table))
-            g_hash_table_destroy(table);
-
         priv->disposed = true;
     }
 
@@ -496,11 +488,8 @@ WebKitWebHistoryItem* WebKit::kit(PassRefPtr<WebCore::HistoryItem> historyItem)
     g_return_val_if_fail(historyItem, NULL);
 
     RefPtr<WebCore::HistoryItem> item = historyItem;
-
-    WebKitWebHistoryItem* webHistoryItem;
     GHashTable* table = webkit_history_items();
-
-    webHistoryItem = (WebKitWebHistoryItem*) g_hash_table_lookup(table, item.get());
+    WebKitWebHistoryItem* webHistoryItem = (WebKitWebHistoryItem*) g_hash_table_lookup(table, item.get());
 
     if (!webHistoryItem) {
         webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(g_object_new(WEBKIT_TYPE_WEB_HISTORY_ITEM, NULL));

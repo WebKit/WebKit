@@ -31,7 +31,7 @@ static void web_history_item_fixture_setup(WebHistoryItemFixture* fixture,
                                            gconstpointer data)
 {
     fixture->item = webkit_web_history_item_new_with_data("http://example.com/", "Example1");
-    g_assert_cmpint(G_OBJECT(fixture->item)->ref_count, == , 2);
+    g_assert_cmpint(G_OBJECT(fixture->item)->ref_count, == , 1);
     g_assert(fixture->item != NULL);
 }
 
@@ -39,8 +39,6 @@ static void web_history_item_fixture_teardown(WebHistoryItemFixture* fixture,
                                               gconstpointer data)
 {
     g_assert(fixture->item != NULL);
-    g_assert_cmpint(G_OBJECT(fixture->item)->ref_count, ==, 2);
-    g_object_unref(fixture->item);
     g_assert_cmpint(G_OBJECT(fixture->item)->ref_count, ==, 1);
 }
 

@@ -1,3 +1,39 @@
+2009-05-27  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26039
+        [GTK] WebKitWebHistoryItem lifetime fixes
+
+        Modify the management of history items by the BackForward list.
+
+        Having the objects add themselves to a hash table with an extra
+        reference made impossible for the cleanup code in the dispose
+        method to be ever called in normal conditions, since dispose is
+        called before getting rid of the last reference, which the objects
+        were making to themselves. Get rid of this extra reference and
+        move the responsibility of the cleanup to the BackForward list
+        itself, which effectively owns the WebKitWebHistoryItems now.
+
+        Also, update the tests to reflect this change.
+
+        * tests/testwebbackforwardlist.c:
+        (test_webkit_web_history_item_lifetime):
+        (test_webkit_web_back_forward_list_order):
+        (test_webkit_web_back_forward_list_add_item):
+        * tests/testwebhistoryitem.c:
+        (web_history_item_fixture_setup):
+        (web_history_item_fixture_teardown):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_dispose):
+        (webkit_web_back_forward_list_class_init):
+        * webkit/webkitwebhistoryitem.cpp:
+        (webkit_history_items):
+        (webkit_history_item_add):
+        (webkit_web_history_item_dispose):
+        (WebKit::kit):
+
 2009-05-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
