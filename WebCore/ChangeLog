@@ -1,3 +1,16 @@
+2009-05-28  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26068
+        V8: Remove the remaining b8::Locker usage in worker code.
+        This completes the fix for https://bugs.webkit.org/show_bug.cgi?id=25944,
+        since the patches for enabling timers and that bug have "crossed in the queue".
+        Existing LayoutTests/fast/workers/worker-timeout.html covers this fix (will start work in Chromium).
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+
 2009-05-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

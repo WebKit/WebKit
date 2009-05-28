@@ -133,7 +133,6 @@ void ScheduledAction::execute(WorkerContext* workerContext)
     WorkerScriptController* scriptController = workerContext->script();
 
     if (!m_function.IsEmpty() && m_function->IsFunction()) {
-        v8::Locker locked;
         v8::HandleScope handleScope;
         v8::Local<v8::Context> v8Context = scriptController->proxy()->GetContext();
         ASSERT(!v8Context.IsEmpty());
