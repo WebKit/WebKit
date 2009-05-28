@@ -1,4 +1,21 @@
 ================
+WebKitGTK+ 1.1.8
+================
+
+What's new in WebKitGTK+ 1.1.8?
+
+  - We found out that WebKitWebHistoryItems were being kept with a
+    reference count of 2 instead of 1 as they should; nobody should be
+    relying on that, but if you hit reference counting problems with
+    items you were creating yourself, this is for you.
+  - You can now copy images from the web page to the clipboard.
+  - Improvements were made to the Plugin handling code.
+  - Scroll events will now be correctly reported to web applications.
+  - You can now embed arbitrary widgets as if it was a plugin, with
+    the new "create-plugin-widget" signal.
+  - The usual stream of minor fixes and improvements, as always.
+
+================
 WebKitGTK+ 1.1.7
 ================
 
