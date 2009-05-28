@@ -1,3 +1,11 @@
+2009-05-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Mention the implementation of the new AtkText methods.
+
+        * NEWS:
+
 2009-05-19  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo and Gustavo Noronha.

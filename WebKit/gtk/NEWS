@@ -13,6 +13,9 @@ What's new in WebKitGTK+ 1.1.8?
   - Scroll events will now be correctly reported to web applications.
   - You can now embed arbitrary widgets as if it was a plugin, with
     the new "create-plugin-widget" signal.
+  - The atk_text_get_text_{at,after,before}_offset methods are now
+    implemented for all boundary types except LINE_AFTER and
+    LINE_BEFORE.
   - The usual stream of minor fixes and improvements, as always.
 
 ================
