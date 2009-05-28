@@ -1,3 +1,20 @@
+2009-05-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Xan Lopez.
+
+        After r44177 we had a problem when increasing the size
+        of the window the scrollbars stayed and were not hidden.
+        This was due WebCore giving up on the Scrollbar as it became
+        unnecessary but the GtkAdjustment remained unchanged.
+        So from the point of view of the GtkScrolledWindow scrolling
+        was still necessary and the GtkScrollbar kept being displayed.
+
+        Solve the issue by resetting the GtkAdjustment in the
+        destructor of ScrollbarGtk.
+
+        * platform/gtk/ScrollbarGtk.cpp:
+        (ScrollbarGtk::~ScrollbarGtk):
+
 2009-05-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

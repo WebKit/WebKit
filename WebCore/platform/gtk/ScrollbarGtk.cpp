@@ -89,6 +89,15 @@ ScrollbarGtk::ScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orienta
 ScrollbarGtk::~ScrollbarGtk()
 {
     g_signal_handlers_disconnect_by_func(G_OBJECT(m_adjustment), (gpointer)ScrollbarGtk::gtkValueChanged, this);
+
+    // For the case where we only operate on the GtkAdjustment it is best to
+    // reset the values so that the surrounding scrollbar gets updated, or
+    // e.g. for a GtkScrolledWindow the scrollbar gets hidden.
+    m_adjustment->lower = 0;
+    m_adjustment->upper = 0;
+    m_adjustment->value = 0;
+    gtk_adjustment_changed(m_adjustment);
+    gtk_adjustment_value_changed(m_adjustment);
     g_object_unref(m_adjustment);
 }
 
