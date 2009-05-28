@@ -1,3 +1,17 @@
+2009-05-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove the returnValueSlot concept from JSDOMWindowBase. Now that windows
+        are not cleared on navigation it is no longer necessary.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData):
+        (WebCore::JSDOMWindowBase::willRemoveFromWindowShell):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::showModalDialog):
+
 2009-05-19  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo and Gustavo Noronha.
