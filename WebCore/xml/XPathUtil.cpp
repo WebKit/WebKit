@@ -1,6 +1,6 @@
 /*
- * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright (C) 2006, 2009 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,7 @@ String stringValue(Node* node)
         default:
             if (isRootDomNode(node) || node->nodeType() == Node::ELEMENT_NODE) {
                 Vector<UChar> result;
+                result.reserveCapacity(1024);
 
                 for (Node* n = node->firstChild(); n; n = n->traverseNextNode(node)) {
                     if (n->isTextNode()) {

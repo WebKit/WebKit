@@ -1,6 +1,6 @@
 /*
- * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright (C) 2006, 2009 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,13 +61,13 @@ namespace WebCore {
                 NodeTest(Kind kind, const String& data, const String& namespaceURI) : m_kind(kind), m_data(data), m_namespaceURI(namespaceURI) {}
                 
                 Kind kind() const { return m_kind; }
-                const String data() const { return m_data; }
-                const String namespaceURI() const { return m_namespaceURI; }
+                const AtomicString& data() const { return m_data; }
+                const AtomicString& namespaceURI() const { return m_namespaceURI; }
                 
             private:
                 Kind m_kind;
-                String m_data;
-                String m_namespaceURI;
+                AtomicString m_data;
+                AtomicString m_namespaceURI;
             };
 
             Step(Axis, const NodeTest& nodeTest, const Vector<Predicate*>& predicates = Vector<Predicate*>());
@@ -86,9 +86,7 @@ namespace WebCore {
         private:
             void parseNodeTest(const String&);
             void nodesInAxis(Node* context, NodeSet&) const;
-            bool nodeMatches(Node*) const;
             String namespaceFromNodetest(const String& nodeTest) const;
-            Node::NodeType primaryNodeType(Axis) const;
 
             Axis m_axis;
             NodeTest m_nodeTest;

@@ -45,6 +45,8 @@ CHILD2 = DOM.getElementsByTagName("CHILD2")[0];
 ATTR2 = CHILD2.getAttributeNode("attr1");
 IDATTR2 = CHILD2.getAttributeNode('CODE')
 CHILD3 = DOM.getElementsByTagName("CHILD3")[0];
+if (!CHILD3)
+    CHILD3 = DOM.getElementsByTagName("foo:CHILD3")[0];
 text = CHILD1.lastChild;
 LANG = DOM.getElementsByTagName("lang")[0];
 NONASCIIQNAME = DOM.getElementsByTagName("f\xf6\xf8")[0];

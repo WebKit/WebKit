@@ -1,3 +1,37 @@
+2009-05-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26005
+        Optimization for XPath //* does not preserve context size
+
+        Test: fast/xpath/position.html
+
+        Fixed the bug by removing the incorrect optimization, and made enough micro-optimizations to
+        get a performance progression on my tests.
+
+        * xml/XPathPath.h: Removed broken optimizeStepPair().
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::LocationPath::evaluate): Style fix.
+        (WebCore::XPath::LocationPath::appendStep): Don't call optimizeStepPair().
+        (WebCore::XPath::LocationPath::insertFirstStep): Ditto.
+        (WebCore::XPath::Path::Path): Style fix.
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::primaryNodeType): Turned this member function into a static inline helper.
+        (WebCore::XPath::nodeMatches): Ditto. Don't check for namespace axis, which is unsupported
+        (and might never be).
+        (WebCore::XPath::Step::nodesInAxis): Updated for the new nodeMatches() signature.
+
+        * xml/XPathStep.h:
+        (WebCore::XPath::Step::NodeTest::data):
+        (WebCore::XPath::Step::NodeTest::namespaceURI):
+        Made these data members AtomicString to avoid repeated conversions. This is the biggest
+        performance win here.
+
+        * xml/XPathUtil.cpp: (WebCore::XPath::stringValue): Reserve some capacity upfront.
+
 2009-05-28  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.

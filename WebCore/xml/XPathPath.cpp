@@ -1,6 +1,6 @@
 /*
- * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright (C) 2006, 2009 Apple Inc.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -94,9 +94,8 @@ Value LocationPath::evaluate() const
 {
     EvaluationContext& evaluationContext = Expression::evaluationContext();
     EvaluationContext backupContext = evaluationContext;
-    /* For absolute location paths, the context node is ignored - the
-     * document's root node is used instead.
-     */
+    // For absolute location paths, the context node is ignored - the
+    // document's root node is used instead.
     Node* context = evaluationContext.node.get();
     if (m_absolute && context->nodeType() != Node::DOCUMENT_NODE) 
         context = context->ownerDocument();
@@ -133,49 +132,19 @@ void LocationPath::evaluate(NodeSet& nodes) const
     nodes.markSorted(false);
 }
 
-void LocationPath::optimizeStepPair(unsigned index)
-{
-    Step* first = m_steps[index];
-    
-    if (first->axis() == Step::DescendantOrSelfAxis
-        && first->nodeTest().kind() == Step::NodeTest::AnyNodeTest
-        && first->predicates().size() == 0) {
-
-        Step* second = m_steps[index + 1];
-        if (second->axis() == Step::ChildAxis
-            && second->nodeTest().namespaceURI().isEmpty()
-            && second->nodeTest().kind() == Step::NodeTest::NameTest
-            && second->nodeTest().data() == "*") {
-
-            // Optimize the common case of "//*" AKA descendant-or-self::node()/child::*.
-            first->setAxis(Step::DescendantAxis);
-            second->setAxis(Step::SelfAxis);
-            second->setNodeTest(Step::NodeTest::ElementNodeTest);
-            ASSERT(second->nodeTest().data().isEmpty());
-        }
-    }
-}
-
 void LocationPath::appendStep(Step* step)
 {
     m_steps.append(step);
-    
-    unsigned stepCount = m_steps.size();
-    if (stepCount > 1)
-        optimizeStepPair(stepCount - 2);
 }
 
 void LocationPath::insertFirstStep(Step* step)
 {
     m_steps.insert(0, step);
-
-    if (m_steps.size() > 1)
-        optimizeStepPair(0);
 }
 
 Path::Path(Filter* filter, LocationPath* path)
-    : m_filter(filter),
-    m_path(path)
+    : m_filter(filter)
+    , m_path(path)
 {
 }
 
