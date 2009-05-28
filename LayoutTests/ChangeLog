@@ -1,3 +1,13 @@
+2009-05-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6928025> Stack overflow in JSC::stringProtoFuncReplace() running jsFunFuzz
+
+        Add an additional exception check for stack overflow in String.replace
+
+        * fast/js/string-replace-exception-crash.html:
+
 2009-05-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

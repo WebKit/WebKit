@@ -1,3 +1,15 @@
+2009-05-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6928025> Stack overflow in JSC::stringProtoFuncReplace() running jsFunFuzz
+
+        We should always check for exceptions after creating a CachedCall, this wasn't being done in
+        the string replace logic.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+
 2009-05-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed (make distcheck) build fix; adding missing headers.

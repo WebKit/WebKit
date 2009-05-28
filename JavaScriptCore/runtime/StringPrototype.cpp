@@ -237,6 +237,8 @@ JSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue
             int argCount = reg->numSubpatterns() + 1 + 2;
             JSFunction* func = asFunction(replacement);
             CachedCall cachedCall(exec, func, argCount, exec->exceptionSlot());
+            if (exec->hadException())
+                return jsNull();
             while (true) {
                 int matchIndex;
                 int matchLen;

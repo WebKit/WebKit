@@ -53,7 +53,9 @@ try {
             bogus.property;
         });
     })();
-} catch(e) {
+    (function x() { return 'blargh'.replace(/a/g, x) })()
+} finally {
     log (message);
 }
+
 </script>
