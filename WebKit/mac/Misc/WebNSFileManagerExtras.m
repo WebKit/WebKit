@@ -246,12 +246,28 @@ static void *setMetaData(void* context)
     return [self directoryContentsAtPath:path];
 }
 
+- (NSString *)destinationOfSymbolicLinkAtPath:(NSString *)path error:(NSError **)error
+{
+    // We don't report errors via the NSError* output parameter, so ensure that the caller does not expect us to do so.
+    ASSERT_ARG(error, !error);
+
+    return [self pathContentOfSymbolicLinkAtPath:path];
+}
+
 - (NSDictionary *)attributesOfFileSystemForPath:(NSString *)path error:(NSError **)error
 {
     // We don't report errors via the NSError* output parameter, so ensure that the caller does not expect us to do so.
     ASSERT_ARG(error, !error);
 
     return [self fileSystemAttributesAtPath:path];
+}
+
+- (NSDictionary *)attributesOfItemAtPath:(NSString *)path error:(NSError **)error
+{
+    // We don't report errors via the NSError* output parameter, so ensure that the caller does not expect us to do so.
+    ASSERT_ARG(error, !error);
+
+    return [self fileAttributesAtPath:path traverseLink:NO];
 }
 
 - (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error

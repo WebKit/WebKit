@@ -1,3 +1,16 @@
+2009-05-28  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Build fix.  Move off a deprecated NSFileManager method.
+
+        * Misc/WebNSFileManagerExtras.h:
+        * Misc/WebNSFileManagerExtras.m:
+        (-[NSFileManager destinationOfSymbolicLinkAtPath:error:]): Implement a new-in-Leopard method for Tiger to use.
+        (-[NSFileManager attributesOfItemAtPath:error:]): Ditto.
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _initWithPath:]): Use the new non-deprecated methods.
+
 2009-05-28  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

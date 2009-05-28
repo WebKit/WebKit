@@ -31,6 +31,7 @@
 
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebNSFileManagerExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNetscapeDeprecatedFunctions.h"
 #import <WebCore/npruntime_impl.h>
@@ -216,7 +217,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     } else {
 #ifdef SUPPORT_CFM
         // Single-file plug-in with resource fork
-        type = [[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] fileHFSTypeCode];
+        NSString *destinationPath = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath:path error:0];
+        type = [[[NSFileManager defaultManager] attributesOfItemAtPath:destinationPath error:0] fileHFSTypeCode];
         isBundle = NO;
         isCFM = YES;
 #else
