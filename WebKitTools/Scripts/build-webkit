@@ -250,6 +250,14 @@ if (isAppleMacWebKit()) {
         system "ranlib", $lib;
     }
 
+    $srcLib = "WebKitLibraries/libWebKitSystemInterfaceSnowLeopard.a";
+    $lib = "$productDir/libWebKitSystemInterfaceSnowLeopard.a";
+    if (!-e $lib || -M $lib > -M $srcLib) {
+        print "Updating $lib\n";
+        system "ditto", $srcLib, $lib;
+        system "ranlib", $lib;
+    }
+
     my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
     my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
     if (!-e $header || -M $header > -M $srcHeader) {

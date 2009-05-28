@@ -1,3 +1,11 @@
+2009-05-27  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Update build-webkit to handle a new version of WebKitSystemInterface.
+
+        * Scripts/build-webkit:
+
 2009-05-27  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Maciej Stachowiak.
