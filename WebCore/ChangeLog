@@ -1,3 +1,24 @@
+2009-05-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Clean up window.open()'s use of lexical and dynamic scope.
+
+        Test: http/tests/security/frameNavigation/context-for-window-open.html
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::toDynamicFrame):
+        (WebCore::processingUserGesture):
+        (WebCore::completeURL):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::createWindow):
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::createWindow):
+
 2009-05-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.

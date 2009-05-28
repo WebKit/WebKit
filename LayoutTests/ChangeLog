@@ -1,3 +1,13 @@
+2009-05-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test whether lexical or dynamic scope is used for window.open().
+
+        * http/tests/security/frameNavigation/context-for-window-open-expected.txt: Added.
+        * http/tests/security/frameNavigation/context-for-window-open.html: Added.
+        * http/tests/security/frameNavigation/resources/middle-frame-for-location.html:
+
 2009-05-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
