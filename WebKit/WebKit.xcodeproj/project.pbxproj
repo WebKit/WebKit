@@ -1437,6 +1437,7 @@
 				5D0D54210E98631D0029E223 /* Check For Weak VTables */,
 				939811270824BF01008DF038 /* Frameworks */,
 				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
+				5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */,
 			);
 			buildRules = (
 			);
@@ -1554,6 +1555,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$PROJECT_DIR/mac/Info.plist\"\n";
+		};
+		5DE6D18C0FCF231B002DE28C /* Symlink WebKitPluginHost in to place */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Symlink WebKitPluginHost in to place";
+			outputPaths = (
+				"$(CONFIGURATION_BUILD_DIR)/WebKit.framework/WebKitPluginHost.app",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${MACOSX_DEPLOYMENT_TARGET}\" > \"10.5\" && \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then\n    if [[ ! -e \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\" ]]; then\n       ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n    fi\nfi\n";
 		};
 		9337D6540EBFE54D00DA3CB5 /* Check For Exit Time Destructors */ = {
 			isa = PBXShellScriptBuildPhase;
