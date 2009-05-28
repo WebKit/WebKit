@@ -523,21 +523,25 @@ Frame* toLexicalFrame(ExecState* exec)
     return asJSDOMWindow(exec->lexicalGlobalObject())->impl()->frame();
 }
 
+Frame* toDynamicFrame(ExecState* exec)
+{
+    return asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+}
+
 bool processingUserGesture(ExecState* exec)
 {
-    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = toDynamicFrame(exec);
     return frame && frame->script()->processingUserGesture();
 }
 
 KURL completeURL(ExecState* exec, const String& relativeURL)
 {
     // For histoical reasons, we need to complete the URL using the dynamic frame.
-    Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
+    Frame* frame = toDynamicFrame(exec);
     if (!frame)
         return KURL();
     return frame->loader()->completeURL(relativeURL);
 }
-
 
 JSValue objectToStringFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {
