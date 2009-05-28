@@ -1,3 +1,20 @@
+2009-05-28  Adam Roben  <aroben@apple.com>
+
+        Don't try to use the new combobox parts on Vista in Classic mode
+
+        Fixes:
+        <rdar://problem/6929277> REGRESSION (r42289+r42350): Windows Classic
+        theme: drop down lists in Preferences get a line/square
+        <rdar://problem/6929298> REGRESSION (r42289): Windows Classic: drop
+        down lists are black with a circle on many sites
+
+        Reviewed by Steve Falkenburg.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::paintMenuList): Only use the new combobox
+        parts when we have a theme (i.e., when we're not in Classic mode).
+        When we don't have a theme, fall back to the pre-r42289 code.
+
 2009-05-27  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Simon Fraser.
