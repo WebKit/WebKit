@@ -651,7 +651,7 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         setNeedsStyleRecalc();
     } else if (attr->name() == placeholderAttr) {
         if (isTextField())
-            InputElement::updatePlaceholderVisibility(m_data, this, this, true);
+            updatePlaceholderVisibility();
     } else if (attr->name() == autosaveAttr ||
              attr->name() == incrementalAttr ||
              attr->name() == minAttr ||

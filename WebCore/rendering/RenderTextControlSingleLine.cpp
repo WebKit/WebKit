@@ -502,9 +502,10 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const 
 {
     RefPtr<RenderStyle> textBlockStyle;
     if (placeholderShouldBeVisible()) {
-        RenderStyle* pseudoStyle = getCachedPseudoStyle(INPUT_PLACEHOLDER);
-        textBlockStyle = RenderStyle::clone(pseudoStyle);
-    } else {
+        if (RenderStyle* pseudoStyle = getCachedPseudoStyle(INPUT_PLACEHOLDER))
+            textBlockStyle = RenderStyle::clone(pseudoStyle);
+    } 
+    if (!textBlockStyle) {
         textBlockStyle = RenderStyle::create();   
         textBlockStyle->inheritFrom(startStyle);
     }

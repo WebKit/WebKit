@@ -1,3 +1,15 @@
+2009-05-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for <rdar://problem/6927761> <isindex> placeholder text is
+          unstylable and initially not visible
+
+        * fast/forms/isindex-placeholder.html: Added.
+        * platform/mac/fast/forms/isindex-placeholder-expected.checksum: Added.
+        * platform/mac/fast/forms/isindex-placeholder-expected.png: Added.
+        * platform/mac/fast/forms/isindex-placeholder-expected.txt: Added.
+
 2009-05-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

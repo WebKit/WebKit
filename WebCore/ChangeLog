@@ -1,3 +1,27 @@
+2009-05-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/6927761> <isindex> placeholder text is unstylable
+          and initially not visible
+
+        Test: fast/forms/isindex-placeholder.html
+
+        * css/html4.css: Added a default style for <isindex> placeholder text.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Changed to call
+        the new protected function updatePlaceholderVisibility().
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::updatePlaceholderVisibility): Added this
+        protected function to allow HTMLIsIndexElement::parseMappedAttribute()
+        to invoke InputElement::updatePlaceholderVisibility().
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::parseMappedAttribute): Call
+        updatePlaceholderVisibility() when parsing the placeholder attribute.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle): If there
+        is no placeholder pseudo-element style, use the normal style.
+
 2009-05-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

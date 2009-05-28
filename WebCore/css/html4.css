@@ -362,7 +362,7 @@ textarea {
     padding: 2px;
 }
 
-input::-webkit-input-placeholder {
+input::-webkit-input-placeholder, isindex::-webkit-input-placeholder {
     color: darkGray;
 }
 
