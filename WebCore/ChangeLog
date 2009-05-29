@@ -1,3 +1,13 @@
+2009-05-29  Darin Adler  <darin@apple.com>
+
+        Fix build; the new Cairo code compiled on Windows only.
+
+        * platform/graphics/gtk/FontPlatformData.h: Added syntheticBold
+        and syntheticOblique functions as in the Windows version to make it
+        easier to use this cross-platform. Later we can make data members
+        private as in the Windows version.
+        * platform/graphics/mac/FontPlatformData.h: Ditto.
+
 2009-05-29  Alexander Macdonald  <alexmac@adobe.com>
 
         Reviewed by Darin Adler.
