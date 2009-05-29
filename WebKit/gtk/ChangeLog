@@ -1,3 +1,17 @@
+2009-05-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26075
+        [GTK] Refactor key scrolling code
+
+        After the scrolling changes in r44177 we can now use the
+        FrameView::scroll method like the other ports, keeping the magic
+        constants for the scrolling amounts inside WebCore proper.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_real_move_cursor):
+
 2009-05-29  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Jan Alonzo.
