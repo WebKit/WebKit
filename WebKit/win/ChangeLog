@@ -1,3 +1,13 @@
+2009-05-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Correct Windows Cairo build error caused by @r42767.
+        http://bugs.webkit.org/show_bug.cgi?id=26082.
+
+        * WebError.cpp:
+        (WebError::localizedDescription):
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Windows build fix for PassOwnPtr
