@@ -1,3 +1,28 @@
+2009-05-29  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Darin Alder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26018
+
+        Fix behavior of the Element View of the Web Inspector for double
+        clicking the element outline tree.
+
+        Double clicking the element outline tree should
+        1) on attribute: enter attribute editing mode
+        2) on text: enter text editing mode
+        3) otherwise: change root node to the parent element of double clicked
+           element.
+
+        Now, 3) is broken. For example, clicking <html> clears the element
+        outline view.
+
+        rootDOMNode should be updated to this.representedObject.parentNode, not
+        this.parent.representedObject which is parent inside the element
+        outline tree itself.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.ondblclick):
+
 2009-05-29  David Moore  <davemoore@google.com>
 
         Reviewed by Darin Alder.

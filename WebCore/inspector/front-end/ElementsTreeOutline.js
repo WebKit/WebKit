@@ -487,7 +487,7 @@ WebInspector.ElementsTreeElement.prototype = {
             return;
 
         if (this.treeOutline.panel) {
-            this.treeOutline.rootDOMNode = this.parent.representedObject;
+            this.treeOutline.rootDOMNode = this.representedObject.parentNode;
             this.treeOutline.focusedDOMNode = this.representedObject;
         }
 
