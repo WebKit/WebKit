@@ -96,7 +96,7 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
     if (!page || page->settings()->privateBrowsingEnabled())
         readOnlyMode = true;
     
-    RefPtr<SQLStatement> statement = SQLStatement::create(sqlStatement.copy(), arguments, callback, callbackError, readOnlyMode);
+    RefPtr<SQLStatement> statement = SQLStatement::create(sqlStatement, arguments, callback, callbackError, readOnlyMode);
 
     if (m_database->deleted())
         statement->setDatabaseDeletedError();

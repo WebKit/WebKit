@@ -1,3 +1,15 @@
+2009-05-29  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Bug 26074: SQLTransaction::executeSQL does an unnecessary call to String::copy.
+        https://bugs.webkit.org/show_bug.cgi?id=26074
+
+        The constructor for SQLStatement already does a copy for this string.
+
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSQL):
+
 2009-05-29  Darin Adler  <darin@apple.com>
 
         Fix build; the new Cairo code compiled on Windows only.
