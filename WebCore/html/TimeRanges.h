@@ -27,11 +27,11 @@
 #define TimeRanges_h
 
 #include "ExceptionCode.h"
+
+#include <algorithm>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-
-using namespace std;
 
 namespace WebCore {
 
@@ -90,8 +90,8 @@ private:
         {
             Range ret;
 
-            ret.m_start = min(m_start, range.m_start);
-            ret.m_end = max(m_end, range.m_end);
+            ret.m_start = std::min(m_start, range.m_start);
+            ret.m_end = std::max(m_end, range.m_end);
 
             return ret;
         }

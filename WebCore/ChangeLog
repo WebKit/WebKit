@@ -1,3 +1,17 @@
+2009-05-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Build fix for Windows Cairo target.
+        https://bugs.webkit.org/show_bug.cgi?id=25972
+
+        Compiler mistakenly selects SMILTime min/max instead of STL version,
+        resulting in a build error.  This change makes the meaning of the
+        min/max explicit and avoids the problem.
+
+        * html/TimeRanges.h:
+        (WebCore::TimeRanges::Range::unionWithOverlappingOrContiguousRange):
+
 2009-05-29  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Jan Alonzo.
