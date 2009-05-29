@@ -3,6 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Rob Buis (rwlbuis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -183,37 +184,28 @@ void HTMLLinkElement::process()
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
     if (m_disabledState != 2 && m_isStyleSheet && document()->frame() && m_url.isValid()) {
-        // no need to load style sheets which aren't for the screen output
-        // ### there may be in some situations e.g. for an editor or script to manipulate
         // also, don't load style sheets for standalone documents
-        MediaQueryEvaluator allEval(true);
-        MediaQueryEvaluator screenEval("screen", true);
-        MediaQueryEvaluator printEval("print", true);
-        RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);
-        if (allEval.eval(media.get()) || screenEval.eval(media.get()) || printEval.eval(media.get())) {
+        // Add ourselves as a pending sheet, but only if we aren't an alternate 
+        // stylesheet.  Alternate stylesheets don't hold up render tree construction.
+        if (!isAlternate())
+            document()->addPendingSheet();
 
-            // Add ourselves as a pending sheet, but only if we aren't an alternate 
-            // stylesheet.  Alternate stylesheets don't hold up render tree construction.
-            if (!isAlternate())
-                document()->addPendingSheet();
+        String charset = getAttribute(charsetAttr);
+        if (charset.isEmpty() && document()->frame())
+            charset = document()->frame()->loader()->encoding();
 
-            String chset = getAttribute(charsetAttr);
-            if (chset.isEmpty() && document()->frame())
-                chset = document()->frame()->loader()->encoding();
-            
-            if (m_cachedSheet) {
-                if (m_loading)
-                    document()->removePendingSheet();
-                m_cachedSheet->removeClient(this);
-            }
-            m_loading = true;
-            m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(m_url.string(), chset);
-            if (m_cachedSheet)
-                m_cachedSheet->addClient(this);
-            else if (!isAlternate()) { // request may have been denied if stylesheet is local and document is remote.
-                m_loading = false;
+        if (m_cachedSheet) {
+            if (m_loading)
                 document()->removePendingSheet();
-            }
+            m_cachedSheet->removeClient(this);
+        }
+        m_loading = true;
+        m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(m_url, charset);
+        if (m_cachedSheet)
+            m_cachedSheet->addClient(this);
+        else if (!isAlternate()) { // The request may have been denied if stylesheet is local and document is remote.
+            m_loading = false;
+            document()->removePendingSheet();
         }
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed

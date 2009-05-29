@@ -1,3 +1,17 @@
+2009-05-29  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=22429
+        document.styleSheets collection ignores media=presentation
+
+        Ensure that stylesheets though <link> show up in document.styleSheets regardless of media attribute.
+
+        Test: fast/css/sheet-collection-link.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+
 2009-05-29  Itai Danan  <idanan@chromium.org>
 
         Reviewed by Jon Honeycutt.
