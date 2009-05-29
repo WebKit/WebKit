@@ -46,11 +46,7 @@ void AXObjectCache::attachWrapper(AccessibilityObject*)
     // software requests them via get_accChild.
 }
 
-void AXObjectCache::postNotification(RenderObject*, const String&)
-{
-}
-
-void AXObjectCache::postNotificationToElement(RenderObject*, const String&)
+void AXObjectCache::postPlatformNotification(AccessibilityObject*, const String&)
 {
 }
 

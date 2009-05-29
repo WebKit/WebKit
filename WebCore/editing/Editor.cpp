@@ -391,7 +391,7 @@ void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
     if (AXObjectCache::accessibilityEnabled()) {
         Node* node = endingSelection.start().node();
         if (node)
-            m_frame->document()->axObjectCache()->postNotification(node->renderer(), "AXValueChanged");
+            m_frame->document()->axObjectCache()->postNotification(node->renderer(), "AXValueChanged", false);
     }
     
     if (client())

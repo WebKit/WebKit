@@ -27,6 +27,8 @@
 #define AXObjectCache_h
 
 #include "AccessibilityObject.h"
+#include "EventHandler.h"
+#include "Timer.h"
 #include <limits.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -57,6 +59,7 @@ namespace WebCore {
 
     class AXObjectCache {
     public:
+        AXObjectCache();
         ~AXObjectCache();
         
         // to be used with render objects
@@ -73,8 +76,8 @@ namespace WebCore {
 
         void detachWrapper(AccessibilityObject*);
         void attachWrapper(AccessibilityObject*);
-        void postNotification(RenderObject*, const String&);
-        void postNotificationToElement(RenderObject*, const String&);
+        void postNotification(RenderObject*, const String&, bool postToElement);
+        void postPlatformNotification(AccessibilityObject*, const String&);
         void childrenChanged(RenderObject*);
         void selectedChildrenChanged(RenderObject*);
         void handleActiveDescendantChanged(RenderObject*);
@@ -100,6 +103,10 @@ namespace WebCore {
         
         HashSet<AXID> m_idsInUse;
         
+        Timer<AXObjectCache> m_notificationPostTimer;
+        Vector<pair<AccessibilityObject*, const String> > m_notificationsToPost;
+        void notificationPostTimerFired(Timer<AXObjectCache>*);
+        
         AXID getAXID(AccessibilityObject*);
         bool nodeIsAriaType(Node* node, String role);
     };
@@ -111,8 +118,8 @@ namespace WebCore {
     inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
     inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
-    inline void AXObjectCache::postNotification(RenderObject*, const String&) { }
-    inline void AXObjectCache::postNotificationToElement(RenderObject*, const String&) { }
+    inline void AXObjectCache::postNotification(RenderObject*, const String&, bool postToElement) { }
+    inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, const String&) { }
 #if PLATFORM(GTK)
     inline void AXObjectCache::handleFocusedUIElementChangedWithRenderers(RenderObject*, RenderObject*) { }
 #endif

@@ -51,33 +51,11 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     obj->setWrapper([[AccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
 }
 
-void AXObjectCache::postNotification(RenderObject* renderer, const String& message)
+void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, const String& message)
 {
-    if (!renderer)
+    if (!obj)
         return;
     
-    // notifications for text input objects are sent to that object
-    // all others are sent to the top WebArea
-    RefPtr<AccessibilityObject> obj = getOrCreate(renderer)->observableObject();
-    if (!obj)
-        obj = getOrCreate(renderer->document()->renderer());
-
-    if (!obj)
-        return;
-
-    NSAccessibilityPostNotification(obj->wrapper(), message);
-}
-
-void AXObjectCache::postNotificationToElement(RenderObject* renderer, const String& message)
-{
-    // send the notification to the specified element itself, not one of its ancestors
-    if (!renderer)
-        return;
-
-    RefPtr<AccessibilityObject> obj = getOrCreate(renderer);
-    if (!obj)
-        return;
-
     NSAccessibilityPostNotification(obj->wrapper(), message);
 }
 

@@ -1,3 +1,42 @@
+2009-05-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 26024: AX: possible to fail assertion because AXPostNotification calls accessibilityIsIgnored
+        https://bugs.webkit.org/show_bug.cgi?id=26024
+
+        AX notifications are posted after a one shot timer so that notifications are not performed mid-layout.
+        Consolidated postNotification and postNotificationToElement into one method.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedContents):
+        * editing/mac/SelectionControllerMac.mm:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setInnerTextValue):
+
 2009-05-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

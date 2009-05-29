@@ -37,14 +37,10 @@ void AXObjectCache::attachWrapper(AccessibilityObject* obj)
     g_object_unref(atkObj);
 }
 
-void AXObjectCache::postNotification(RenderObject*, const String&)
+void AXObjectCache::postPlatformNotification(AccessibilityObject*, const String&)
 {
 }
-
-void AXObjectCache::postNotificationToElement(RenderObject*, const String&)
-{
-}
-
+    
 void AXObjectCache::handleFocusedUIElementChanged()
 {
 }

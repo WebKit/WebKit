@@ -1669,7 +1669,7 @@ void Document::implicitClose()
 
 #if PLATFORM(MAC)
     if (f && renderer() && this == topDocument() && AXObjectCache::accessibilityEnabled())
-        axObjectCache()->postNotificationToElement(renderer(), "AXLoadComplete");
+        axObjectCache()->postNotification(renderer(), "AXLoadComplete", true);
 #endif
 
 #if ENABLE(SVG)

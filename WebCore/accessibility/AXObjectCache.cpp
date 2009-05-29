@@ -44,6 +44,7 @@
 #include "AccessibilityTableRow.h"
 #include "HTMLNames.h"
 #include "RenderObject.h"
+#include "RenderView.h"
 
 #include <wtf/PassRefPtr.h>
 
@@ -53,6 +54,11 @@ using namespace HTMLNames;
     
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
+
+AXObjectCache::AXObjectCache()
+    : m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
+{
+}
 
 AXObjectCache::~AXObjectCache()
 {
@@ -247,11 +253,68 @@ void AXObjectCache::childrenChanged(RenderObject* renderer)
     if (obj)
         obj->childrenChanged();
 }
+    
+void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
+{
+    m_notificationPostTimer.stop();
+
+    unsigned i = 0, count = m_notificationsToPost.size();
+    for (i = 0; i < count; ++i) {
+        AccessibilityObject* obj = m_notificationsToPost[i].first;
+#ifndef NDEBUG
+        // Make sure none of the render views are in the process of being layed out.
+        // Notifications should only be sent after the renderer has finished
+        if (obj->isAccessibilityRenderObject()) {
+            AccessibilityRenderObject* renderObj = static_cast<AccessibilityRenderObject*>(obj);
+            RenderObject* renderer = renderObj->renderer();
+            if (renderer && renderer->view())
+                ASSERT(!renderer->view()->layoutState());
+        }
+#endif
+        
+        postPlatformNotification(obj, m_notificationsToPost[i].second);
+    }
+    
+    m_notificationsToPost.clear();
+}
+    
+void AXObjectCache::postNotification(RenderObject* renderer, const String& message, bool postToElement)
+{
+    // Notifications for text input objects are sent to that object.
+    // All others are sent to the top WebArea.
+    if (!renderer)
+        return;
+    
+    // Get an accessibility object that already exists. One should not be created here
+    // because a render update may be in progress and creating an AX object can re-trigger a layout
+    RefPtr<AccessibilityObject> obj = get(renderer);
+    while (!obj && renderer) {
+        renderer = renderer->parent();
+        obj = get(renderer); 
+    }
+    
+    if (!renderer)
+        return;
+
+    if (obj && !postToElement)
+        obj = obj->observableObject();
+    
+    Document* document = renderer->document();
+    if (!obj && document)
+        obj = get(document->renderer());
+    
+    if (!obj)
+        return;
+
+    m_notificationsToPost.append(make_pair(obj.get(), message));
+    if (!m_notificationPostTimer.isActive())
+        m_notificationPostTimer.startOneShot(0);
+}
 
 #if HAVE(ACCESSIBILITY)
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
-    postNotificationToElement(renderer, "AXSelectedChildrenChanged");
+    postNotification(renderer, "AXSelectedChildrenChanged", true);
 }
 #endif
 
