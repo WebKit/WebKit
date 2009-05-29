@@ -1,3 +1,32 @@
+2009-05-29  Adam Roben  <aroben@apple.com>
+
+        Implement WebFrame::startDownload
+
+        Fixes Bug 25729: Alt-clicking a link doesn't start a download
+        <https://bugs.webkit.org/show_bug.cgi?id=25729>
+
+        Reviewed by Darin Adler.
+
+        * WebFrame.cpp:
+        (WebFrame::startDownload): Call through to WebView::downloadURL.
+
+2009-05-29  Adam Roben  <aroben@apple.com>
+
+        Move WebContextMenuClient's downloading code to WebView
+
+        This will allow other code to trigger downloads using this code, and
+        matches Mac.
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::downloadURL): Moved code from here...
+        * WebView.cpp:
+        (WebView::downloadURL): ...to here. Also tightened up the code a
+        little bit and removed an unnecessary LOG_ERROR.
+
+        * WebView.h: Added downloadURL.
+
 2009-05-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Darin Adler.
