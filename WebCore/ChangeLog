@@ -1,3 +1,43 @@
+2009-05-29  David Moore  <davemoore@google.com>
+
+        Reviewed by Darin Alder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26001
+        Change many of the uses of String::adopt() to String::createUninitialized().
+        This allows those strings to use an inlined buffer for their characters.
+
+        * dom/StyleElement.cpp:
+        Loop over nodes to precompute length of string and then
+        write the characters into the allocated inline buffer
+        (WebCore::StyleElement::process):
+        * dom/Text.cpp:
+        Loop over nodes to precompute length of string and then
+        write the characters into the allocated inline buffer
+        (WebCore::Text::wholeText):
+        (WebCore::Text::rendererIsNeeded):
+        (WebCore::Text::createRenderer):
+        (WebCore::Text::createWithLengthLimit):
+        (WebCore::Text::formatForDebugger):
+        * platform/text/String.cpp:
+        (WebCore::String::append):
+        (WebCore::String::insert):
+        (WebCore::String::truncate):
+        (WebCore::String::remove):
+        * platform/text/StringBuilder.cpp:
+        (WebCore::StringBuilder::toString):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::lower):
+        (WebCore::StringImpl::upper):
+        (WebCore::StringImpl::secure):
+        (WebCore::StringImpl::foldCase):
+        (WebCore::StringImpl::replace):
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::decode):
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::TextCodecUserDefined::decode):
+        * platform/win/Language.cpp:
+        (WebCore::localeInfo):
+
 2009-05-29  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Darin Alder.

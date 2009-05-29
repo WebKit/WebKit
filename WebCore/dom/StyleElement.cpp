@@ -61,13 +61,28 @@ void StyleElement::process(Element* e)
     if (!e || !e->inDocument())
         return;
 
-    Vector<UChar> text;
+    unsigned resultLength = 0;
+    for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
+        Node::NodeType nodeType = c->nodeType();
+        if (nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE || nodeType == Node::COMMENT_NODE)
+            resultLength += c->nodeValue().length();
+    }
+    UChar* text;
+    String sheetText = String::createUninitialized(resultLength, text);
 
-    for (Node* c = e->firstChild(); c; c = c->nextSibling())
-        if (c->nodeType() == Node::TEXT_NODE || c->nodeType() == Node::CDATA_SECTION_NODE || c->nodeType() == Node::COMMENT_NODE)
-            append(text, c->nodeValue());
+    UChar* p = text;
+    for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
+        Node::NodeType nodeType = c->nodeType();
+        if (nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE || nodeType == Node::COMMENT_NODE) {
+            String nodeValue = c->nodeValue();
+            unsigned nodeLength = nodeValue.length();
+            memcpy(p, nodeValue.characters(), nodeLength * sizeof(UChar));
+            p += nodeLength;
+        }
+    }
+    ASSERT(p == text + resultLength);
 
-    createSheet(e, String::adopt(text));
+    createSheet(e, sheetText);
 }
 
 void StyleElement::createSheet(Element* e, const String& text)

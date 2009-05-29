@@ -85,10 +85,12 @@ void String::append(const String& str)
     // call to fastMalloc every single time.
     if (str.m_impl) {
         if (m_impl) {
-            StringBuffer buffer(m_impl->length() + str.length());
-            memcpy(buffer.characters(), m_impl->characters(), m_impl->length() * sizeof(UChar));
-            memcpy(buffer.characters() + m_impl->length(), str.characters(), str.length() * sizeof(UChar));
-            m_impl = StringImpl::adopt(buffer);
+            UChar* data;
+            RefPtr<StringImpl> newImpl =
+                StringImpl::createUninitialized(m_impl->length() + str.length(), data);
+            memcpy(data, m_impl->characters(), m_impl->length() * sizeof(UChar));
+            memcpy(data + m_impl->length(), str.characters(), str.length() * sizeof(UChar));
+            m_impl = newImpl.release();
         } else
             m_impl = str.m_impl;
     }
@@ -101,10 +103,12 @@ void String::append(char c)
     // one String is pointing at this StringImpl, but even then it's going to require a
     // call to fastMalloc every single time.
     if (m_impl) {
-        StringBuffer buffer(m_impl->length() + 1);
-        memcpy(buffer.characters(), m_impl->characters(), m_impl->length() * sizeof(UChar));
-        buffer[m_impl->length()] = c;
-        m_impl = StringImpl::adopt(buffer);
+        UChar* data;
+        RefPtr<StringImpl> newImpl =
+            StringImpl::createUninitialized(m_impl->length() + 1, data);
+        memcpy(data, m_impl->characters(), m_impl->length() * sizeof(UChar));
+        data[m_impl->length()] = c;
+        m_impl = newImpl.release();
     } else
         m_impl = StringImpl::create(&c, 1);
 }
@@ -116,10 +120,12 @@ void String::append(UChar c)
     // one String is pointing at this StringImpl, but even then it's going to require a
     // call to fastMalloc every single time.
     if (m_impl) {
-        StringBuffer buffer(m_impl->length() + 1);
-        memcpy(buffer.characters(), m_impl->characters(), m_impl->length() * sizeof(UChar));
-        buffer[m_impl->length()] = c;
-        m_impl = StringImpl::adopt(buffer);
+        UChar* data;
+        RefPtr<StringImpl> newImpl =
+            StringImpl::createUninitialized(m_impl->length() + 1, data);
+        memcpy(data, m_impl->characters(), m_impl->length() * sizeof(UChar));
+        data[m_impl->length()] = c;
+        m_impl = newImpl.release();
     } else
         m_impl = StringImpl::create(&c, 1);
 }
@@ -170,10 +176,12 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
         return;
 
     ASSERT(charactersToAppend);
-    StringBuffer buffer(length() + lengthToAppend);
-    memcpy(buffer.characters(), characters(), length() * sizeof(UChar));
-    memcpy(buffer.characters() + length(), charactersToAppend, lengthToAppend * sizeof(UChar));
-    m_impl = StringImpl::adopt(buffer);
+    UChar* data;
+    RefPtr<StringImpl> newImpl =
+        StringImpl::createUninitialized(length() + lengthToAppend, data);
+    memcpy(data, characters(), length() * sizeof(UChar));
+    memcpy(data + length(), charactersToAppend, lengthToAppend * sizeof(UChar));
+    m_impl = newImpl.release();
 }
 
 void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, unsigned position)
@@ -189,11 +197,13 @@ void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, un
         return;
 
     ASSERT(charactersToInsert);
-    StringBuffer buffer(length() + lengthToInsert);
-    memcpy(buffer.characters(), characters(), position * sizeof(UChar));
-    memcpy(buffer.characters() + position, charactersToInsert, lengthToInsert * sizeof(UChar));
-    memcpy(buffer.characters() + position + lengthToInsert, characters() + position, (length() - position) * sizeof(UChar));
-    m_impl = StringImpl::adopt(buffer);
+    UChar* data;
+    RefPtr<StringImpl> newImpl =
+      StringImpl::createUninitialized(length() + lengthToInsert, data);
+    memcpy(data, characters(), position * sizeof(UChar));
+    memcpy(data + position, charactersToInsert, lengthToInsert * sizeof(UChar));
+    memcpy(data + position + lengthToInsert, characters() + position, (length() - position) * sizeof(UChar));
+    m_impl = newImpl.release();
 }
 
 UChar String::operator[](unsigned i) const
@@ -221,9 +231,10 @@ void String::truncate(unsigned position)
 {
     if (position >= length())
         return;
-    StringBuffer buffer(position);
-    memcpy(buffer.characters(), characters(), position * sizeof(UChar));
-    m_impl = StringImpl::adopt(buffer);
+    UChar* data;
+    RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(position, data);
+    memcpy(data, characters(), position * sizeof(UChar));
+    m_impl = newImpl.release();
 }
 
 void String::remove(unsigned position, int lengthToRemove)
@@ -234,11 +245,13 @@ void String::remove(unsigned position, int lengthToRemove)
         return;
     if (static_cast<unsigned>(lengthToRemove) > length() - position)
         lengthToRemove = length() - position;
-    StringBuffer buffer(length() - lengthToRemove);
-    memcpy(buffer.characters(), characters(), position * sizeof(UChar));
-    memcpy(buffer.characters() + position, characters() + position + lengthToRemove,
+    UChar* data;
+    RefPtr<StringImpl> newImpl =
+        StringImpl::createUninitialized(length() - lengthToRemove, data);
+    memcpy(data, characters(), position * sizeof(UChar));
+    memcpy(data + position, characters() + position + lengthToRemove,
         (length() - lengthToRemove - position) * sizeof(UChar));
-    m_impl = StringImpl::adopt(buffer);
+    m_impl = newImpl.release();
 }
 
 String String::substring(unsigned pos, unsigned len) const
