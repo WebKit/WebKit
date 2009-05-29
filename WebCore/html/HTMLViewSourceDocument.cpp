@@ -151,6 +151,17 @@ void HTMLViewSourceDocument::addViewSourceToken(Token* token)
                                 m_current = static_cast<Element*>(m_current->parent());
                         } else {
                             const String& value = attr->value().string();
+
+                            // Compare ignoring case since HTMLTokenizer doesn't
+                            // lower names when passing in tokens to
+                            // HTMLViewSourceDocument.
+                            if (equalIgnoringCase(token->tagName, "base") && equalIgnoringCase(attr->name().localName(), "href")) {
+                                // Catch the href attribute in the base element.
+                                // It will be used for rendering anchors created
+                                // by addLink() below.
+                                setBaseElementURL(KURL(url(), value));
+                            }
+
                             // FIXME: XML could use namespace prefixes and confuse us.
                             if (equalIgnoringCase(attr->name().localName(), "src") || equalIgnoringCase(attr->name().localName(), "href"))
                                 m_current = addLink(value, equalIgnoringCase(token->tagName, "a"));

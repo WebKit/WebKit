@@ -1,3 +1,23 @@
+2009-05-29  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Darin Alder.
+
+        Bug 25911: Apply href in base elements to anchors shown on the source viewer
+        https://bugs.webkit.org/show_bug.cgi?id=25911
+
+        In rendering HTML sources, parse base elements to apply the base URI to
+        anchors shown on the source viewer.
+
+        Add tests to verify this change.
+
+        This issue was originally reported to the Chromium issue tracker.
+        http://code.google.com/p/chromium/issues/detail?id=2418
+
+        * fast/frames/resources/viewsource-frame-3.html: Added.
+        * fast/frames/resources/viewsource-frame-4.html: Added.
+        * fast/frames/viewsource-link-on-href-value-expected.txt: Added.
+        * fast/frames/viewsource-link-on-href-value.html: Added.
+
 2009-05-29  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by David Hyatt.
