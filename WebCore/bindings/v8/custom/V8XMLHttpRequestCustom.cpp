@@ -323,12 +323,21 @@ CALLBACK_FUNC_DECL(XMLHttpRequestOpen)
     String urlstring = toWebCoreString(args[1]);
     ScriptExecutionContext* context = 0;
 #if ENABLE(WORKERS)
-    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
-    if (proxy)
-        context = proxy->workerContext();
-    else
+    WorkerContextExecutionProxy* workerContextProxy = WorkerContextExecutionProxy::retrieve();
+    if (workerContextProxy) {
+        context = workerContextProxy->workerContext();
+        ASSERT(context);
+    }
 #endif
-        context = V8Proxy::retrieve()->frame()->document();
+
+    if (!context) {
+        V8Proxy* proxy = V8Proxy::retrieve();
+        if (!proxy)
+            return v8::Undefined();
+        context = proxy->frame()->document();
+        ASSERT(context);
+    }
+
     KURL url = context->completeURL(urlstring);
 
     bool async = (args.Length() < 3) ? true : args[2]->BooleanValue();

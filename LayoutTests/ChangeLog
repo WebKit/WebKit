@@ -1,3 +1,14 @@
+2009-05-29  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26069
+        Test for the above bug.
+
+        * fast/xmlhttprequest/resources/xmlhttprequest-open-after-iframe-onload-remove-self-child.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-open-after-iframe-onload-remove-self-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-open-after-iframe-onload-remove-self.html: Added.
+
 2009-05-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Test fix).
