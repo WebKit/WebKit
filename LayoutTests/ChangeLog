@@ -1,3 +1,11 @@
+2009-05-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Test fix).
+
+        Fix error in test case i accidentally introduced.
+
+        * fast/js/string-replace-exception-crash.html:
+
 2009-05-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Oliver Hunt.
