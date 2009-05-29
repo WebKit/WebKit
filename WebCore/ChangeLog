@@ -1,3 +1,14 @@
+2009-05-29  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (build fix for windows).
+
+        http://trac.webkit.org/changeset/44279 left in a "Vector<WCHAR> localeNameBuf"
+        that it was trying to replace.  Resulting in this variable being defined twice (and
+        the second time incorrectly).
+
+        * platform/win/Language.cpp:
+        (WebCore::localeInfo):
+
 2009-05-29  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Darin Alder.
