@@ -127,12 +127,12 @@ static void webkit_web_navigation_action_class_init(WebKitWebNavigationActionCla
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
 
-    COMPILE_ASSERT(WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED == WebCore::NavigationTypeLinkClicked, navigation_type_link_clicked_enum_match);
-    COMPILE_ASSERT(WEBKIT_WEB_NAVIGATION_REASON_FORM_SUBMITTED == WebCore::NavigationTypeFormSubmitted, navigation_type_form_submitted_enum_match);
-    COMPILE_ASSERT(WEBKIT_WEB_NAVIGATION_REASON_BACK_FORWARD == WebCore::NavigationTypeBackForward, navigation_type_back_forward_enum_match);
-    COMPILE_ASSERT(WEBKIT_WEB_NAVIGATION_REASON_RELOAD == WebCore::NavigationTypeReload, navigation_type_reload_enum_match);
-    COMPILE_ASSERT(WEBKIT_WEB_NAVIGATION_REASON_FORM_RESUBMITTED == WebCore::NavigationTypeFormResubmitted, navigation_type_form_resubmitted_enum_match);
-    COMPILE_ASSERT(WEBKIT_WEB_NAVIGATION_REASON_OTHER == WebCore::NavigationTypeOther, navigation_type_other_enum_match);
+    COMPILE_ASSERT(static_cast<int>(WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED) == static_cast<int>(WebCore::NavigationTypeLinkClicked), navigation_type_link_clicked_enum_match);
+    COMPILE_ASSERT(static_cast<int>(WEBKIT_WEB_NAVIGATION_REASON_FORM_SUBMITTED) == static_cast<int>(WebCore::NavigationTypeFormSubmitted), navigation_type_form_submitted_enum_match);
+    COMPILE_ASSERT(static_cast<int>(WEBKIT_WEB_NAVIGATION_REASON_BACK_FORWARD) == static_cast<int>(WebCore::NavigationTypeBackForward), navigation_type_back_forward_enum_match);
+    COMPILE_ASSERT(static_cast<int>(WEBKIT_WEB_NAVIGATION_REASON_RELOAD) == static_cast<int>(WebCore::NavigationTypeReload), navigation_type_reload_enum_match);
+    COMPILE_ASSERT(static_cast<int>(WEBKIT_WEB_NAVIGATION_REASON_FORM_RESUBMITTED) == static_cast<int>(WebCore::NavigationTypeFormResubmitted), navigation_type_form_resubmitted_enum_match);
+    COMPILE_ASSERT(static_cast<int>(WEBKIT_WEB_NAVIGATION_REASON_OTHER) == static_cast<int>(WebCore::NavigationTypeOther), navigation_type_other_enum_match);
 
     objectClass->get_property = webkit_web_navigation_action_get_property;
     objectClass->set_property = webkit_web_navigation_action_set_property;
