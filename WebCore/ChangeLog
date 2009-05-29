@@ -1,3 +1,20 @@
+2009-05-29  Alexander Macdonald  <alexmac@adobe.com>
+
+        Reviewed by Darin Adler.
+
+        Added support for synthetic bold/oblique font rendering
+        on platforms that use cairo.
+
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2009-05-29  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

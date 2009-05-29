@@ -36,6 +36,8 @@
 #include "SimpleFontData.h"
 #include "TransformationMatrix.h"
 
+#define SYNTHETIC_OBLIQUE_ANGLE 14
+
 namespace WebCore {
 
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
@@ -48,14 +50,22 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
     GlyphBufferGlyph* glyphs = (GlyphBufferGlyph*)glyphBuffer.glyphs(from);
 
-    float offset = point.x();
+    float offset = 0.0f;
     for (int i = 0; i < numGlyphs; i++) {
         glyphs[i].x = offset;
-        glyphs[i].y = point.y();
+        glyphs[i].y = 0.0f;
         offset += glyphBuffer.advanceAt(from + i);
     }
 
     Color fillColor = context->fillColor();
+
+    // Synthetic Oblique
+    if(font->platformData().syntheticOblique()) {
+        cairo_matrix_t mat = {1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, point.x(), point.y()};
+        cairo_transform(cr, &mat);
+    } else {
+        cairo_translate(cr, point.x(), point.y());
+    }
 
     // Text shadow, inspired by FontMac
     IntSize shadowSize;
@@ -77,6 +87,12 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
         cairo_translate(cr, shadowSize.width(), shadowSize.height());
         cairo_show_glyphs(cr, glyphs, numGlyphs);
+        if (font->m_syntheticBoldOffset) {
+            cairo_save(cr);
+            cairo_translate(cr, font->m_syntheticBoldOffset, 0);
+            cairo_show_glyphs(cr, glyphs, numGlyphs);
+            cairo_restore(cr);
+        }
 
         cairo_restore(cr);
     }
@@ -103,6 +119,12 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
             cairo_set_source_rgba(cr, red, green, blue, alpha * context->getAlpha());
         }
         cairo_show_glyphs(cr, glyphs, numGlyphs);
+        if (font->m_syntheticBoldOffset) {
+            cairo_save(cr);
+            cairo_translate(cr, font->m_syntheticBoldOffset, 0);
+            cairo_show_glyphs(cr, glyphs, numGlyphs);
+            cairo_restore(cr);
+        }
     }
 
     if (context->textDrawingMode() & cTextStroke) {

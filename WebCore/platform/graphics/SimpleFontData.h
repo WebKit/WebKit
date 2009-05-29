@@ -183,7 +183,7 @@ public:
 
     mutable SimpleFontData* m_smallCapsFontData;
 
-#if PLATFORM(CG) || PLATFORM(WIN)
+#if PLATFORM(CG) || PLATFORM(CAIRO)
     float m_syntheticBoldOffset;
 #endif
 
