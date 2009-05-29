@@ -817,8 +817,6 @@ public:
     bool onGetObject(WPARAM, LPARAM, LRESULT&) const;
     static STDMETHODIMP AccessibleObjectFromWindow(HWND, DWORD objectID, REFIID, void** ppObject);
 
-    void downloadURL(const WebCore::KURL&);
-
 private:
     void setZoomMultiplier(float multiplier, bool isTextOnly);
     float zoomMultiplier(bool isTextOnly);

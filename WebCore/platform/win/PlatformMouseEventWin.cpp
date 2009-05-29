@@ -85,11 +85,6 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
     , m_eventType(messageToEventType(message))
     , m_modifierFlags(wParam)
 {
-    // The modifier flags Windows gives us never contain MK_ALT, but we need it to be present (see
-    // <https://bugs.webkit.org/show_bug.cgi?id=25729>).
-    if (m_altKey)
-        m_modifierFlags |= MK_ALT;
-
     m_timestamp = ::GetTickCount()*0.001; // GetTickCount returns milliseconds
 
     switch (message) {

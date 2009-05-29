@@ -32,7 +32,6 @@
 #include "MarshallingHelpers.h"
 #include "WebDatabaseManager.h"
 #include "WebDocumentLoader.h"
-#include "WebDownload.h"
 #include "WebEditorClient.h"
 #include "WebElementPropertyBag.h"
 #include "WebFrame.h"
@@ -5189,14 +5188,6 @@ HRESULT WebView::setJavaScriptURLsAreAllowed(BOOL areAllowed)
 {
     m_page->setJavaScriptURLsAreAllowed(areAllowed);
     return S_OK;
-}
-
-void WebView::downloadURL(const KURL& url)
-{
-    // Its the delegate's job to ref the WebDownload to keep it alive - otherwise it will be destroyed
-    // when this function returns.
-    COMPtr<WebDownload> download(AdoptCOM, WebDownload::createInstance(url, m_downloadDelegate.get()));
-    download->start();
 }
 
 class EnumTextMatches : public IEnumTextMatches
