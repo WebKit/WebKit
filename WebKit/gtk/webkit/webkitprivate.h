@@ -23,7 +23,8 @@
 #define WEBKIT_PRIVATE_H
 
 /*
- * This file knows the shared secret of WebKitWebView and WebKitWebFrame.
+ * This file knows the shared secret of WebKitWebView, WebKitWebFrame,
+ * and WebKitNetworkRequest.
  * They are using WebCore which musn't be exposed to the outer world.
  */
 
@@ -37,6 +38,7 @@
 #include <webkit/webkitwebsettings.h>
 #include <webkit/webkitwebwindowfeatures.h>
 #include <webkit/webkitwebbackforwardlist.h>
+#include <webkit/webkitnetworkrequest.h>
 
 #include "BackForwardList.h"
 #include <enchant.h>
@@ -47,10 +49,12 @@
 #include "InspectorClientGtk.h"
 #include "FrameLoaderClient.h"
 #include "ResourceHandle.h"
+#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "WindowFeatures.h"
 
 #include <glib.h>
+#include <libsoup/soup.h>
 
 class DownloadClient;
 
@@ -179,6 +183,13 @@ extern "C" {
 
     void
     webkit_web_policy_decision_cancel (WebKitWebPolicyDecision* decision);
+
+    WebKitNetworkRequest*
+    webkit_network_request_new_with_core_request(const WebCore::ResourceRequest& resourceRequest);
+
+    // FIXME: move this to webkitnetworkrequest.h once the API is agreed upon.
+    WEBKIT_API SoupMessage*
+    webkit_network_request_get_message(WebKitNetworkRequest* request);
 
     // FIXME: move this functionality into a 'WebKitWebDataSource' once implemented
     WEBKIT_API gchar*

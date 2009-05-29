@@ -1,3 +1,12 @@
+2009-05-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        Add a test-case for our HTTP backend, currently checking the
+        ref-counting of the SoupMessage.
+
+        * GNUmakefile.am:
+
 2009-05-28  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

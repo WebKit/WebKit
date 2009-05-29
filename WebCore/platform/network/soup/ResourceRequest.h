@@ -29,36 +29,64 @@
 
 #include "ResourceRequestBase.h"
 
+#include <libsoup/soup.h>
+
 namespace WebCore {
 
     struct ResourceRequest : ResourceRequestBase {
 
         ResourceRequest(const String& url)
             : ResourceRequestBase(KURL(url), UseProtocolCachePolicy)
+            , m_soupMessage(0)
         {
         }
 
         ResourceRequest(const KURL& url)
             : ResourceRequestBase(url, UseProtocolCachePolicy)
+            , m_soupMessage(0)
         {
         }
 
         ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
             : ResourceRequestBase(url, policy)
+            , m_soupMessage(0)
         {
             setHTTPReferrer(referrer);
         }
 
         ResourceRequest()
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
+            , m_soupMessage(0)
         {
         }
 
+        ResourceRequest(SoupMessage* soupMessage)
+            : ResourceRequestBase()
+            , m_soupMessage(soupMessage)
+        {
+            g_object_ref(soupMessage);
+        }
+
+        // We force copies of ResourceRequest to create their own
+        // SoupMessage, if needed.
+        ResourceRequest(const ResourceRequest& resourceRequest);
+
+        ~ResourceRequest()
+        {
+            if (m_soupMessage) {
+                g_object_unref(m_soupMessage);
+                m_soupMessage = 0;
+            }
+        }
+
+        SoupMessage* soupMessage() const;
+
     private:
+        SoupMessage* m_soupMessage;
         friend class ResourceRequestBase;
 
-        void doUpdatePlatformRequest() {}
-        void doUpdateResourceRequest() {}
+        void doUpdatePlatformRequest();
+        void doUpdateResourceRequest();
     };
 
 } // namespace WebCore

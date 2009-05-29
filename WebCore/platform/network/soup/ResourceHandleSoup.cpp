@@ -136,6 +136,9 @@ ResourceHandleInternal::~ResourceHandleInternal()
 
 ResourceHandle::~ResourceHandle()
 {
+    if (d->m_msg)
+        g_signal_handlers_disconnect_matched(d->m_msg, G_SIGNAL_MATCH_DATA,
+                                             0, 0, 0, 0, this);
 }
 
 static void fillResponseFromMessage(SoupMessage* msg, ResourceResponse* response)
@@ -256,7 +259,7 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
         && (!contentType || !g_ascii_strcasecmp(contentType, "text/plain")))
         return;
 
-    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
     if (!handle)
         return;
     ResourceHandleInternal* d = handle->getInternal();
@@ -267,8 +270,8 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
         return;
 
     fillResponseFromMessage(msg, &d->m_response);
-    client->didReceiveResponse(handle, d->m_response);
     d->m_reportedHeaders = true;
+    client->didReceiveResponse(handle.get(), d->m_response);
 }
 
 static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
@@ -465,20 +468,12 @@ bool ResourceHandle::startHttp(String urlString)
     SoupSession* session = defaultSession();
     ensureSessionIsInitialized(session);
 
-    SoupMessage* msg;
-    msg = soup_message_new(request().httpMethod().utf8().data(), urlString.utf8().data());
-    g_signal_connect(msg, "restarted", G_CALLBACK(restartedCallback), this);
-    g_signal_connect(msg, "got-headers", G_CALLBACK(gotHeadersCallback), this);
-    g_signal_connect(msg, "got-chunk", G_CALLBACK(gotChunkCallback), this);
+    d->m_msg = static_cast<SoupMessage*>(g_object_ref(request().soupMessage()));
+    g_signal_connect(d->m_msg, "restarted", G_CALLBACK(restartedCallback), this);
+    g_signal_connect(d->m_msg, "got-headers", G_CALLBACK(gotHeadersCallback), this);
+    g_signal_connect(d->m_msg, "got-chunk", G_CALLBACK(gotChunkCallback), this);
 
-    g_object_set_data(G_OBJECT(msg), "resourceHandle", reinterpret_cast<void*>(this));
-
-    HTTPHeaderMap customHeaders = d->m_request.httpHeaderFields();
-    if (!customHeaders.isEmpty()) {
-        HTTPHeaderMap::const_iterator end = customHeaders.end();
-        for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it)
-            soup_message_headers_append(msg->request_headers, it->first.string().utf8().data(), it->second.utf8().data());
-    }
+    g_object_set_data(G_OBJECT(d->m_msg), "resourceHandle", reinterpret_cast<void*>(this));
 
     FormData* httpBody = d->m_request.httpBody();
     if (httpBody && !httpBody->isEmpty()) {
@@ -488,7 +483,7 @@ bool ResourceHandle::startHttp(String urlString)
         if (numElements < 2) {
             Vector<char> body;
             httpBody->flatten(body);
-            soup_message_set_request(msg, d->m_request.httpContentType().utf8().data(),
+            soup_message_set_request(d->m_msg, d->m_request.httpContentType().utf8().data(),
                                      SOUP_MEMORY_COPY, body.data(), body.size());
         } else {
             /*
@@ -497,12 +492,12 @@ bool ResourceHandle::startHttp(String urlString)
              * copying into memory; TODO: support upload of non-local
              * (think sftp://) files by using GIO?
              */
-            soup_message_body_set_accumulate(msg->request_body, FALSE);
+            soup_message_body_set_accumulate(d->m_msg->request_body, FALSE);
             for (size_t i = 0; i < numElements; i++) {
                 const FormDataElement& element = httpBody->elements()[i];
 
                 if (element.m_type == FormDataElement::data)
-                    soup_message_body_append(msg->request_body, SOUP_MEMORY_TEMPORARY, element.m_data.data(), element.m_data.size());
+                    soup_message_body_append(d->m_msg->request_body, SOUP_MEMORY_TEMPORARY, element.m_data.data(), element.m_data.size());
                 else {
                     /*
                      * mapping for uploaded files code inspired by technique used in
@@ -516,28 +511,31 @@ bool ResourceHandle::startHttp(String urlString)
 
                     if (error) {
                         ResourceError resourceError(g_quark_to_string(SOUP_HTTP_ERROR),
-                                                    msg->status_code,
+                                                    d->m_msg->status_code,
                                                     urlString,
                                                     String::fromUTF8(error->message));
                         g_error_free(error);
 
                         d->client()->didFail(this, resourceError);
 
-                        g_object_unref(msg);
+                        g_signal_handlers_disconnect_matched(d->m_msg, G_SIGNAL_MATCH_DATA,
+                                                             0, 0, 0, 0, this);
+                        g_object_unref(d->m_msg);
+                        d->m_msg = 0;
+
                         return false;
                     }
 
                     SoupBuffer* soupBuffer = soup_buffer_new_with_owner(g_mapped_file_get_contents(fileMapping),
                                                                         g_mapped_file_get_length(fileMapping),
                                                                         fileMapping, reinterpret_cast<GDestroyNotify>(g_mapped_file_free));
-                    soup_message_body_append_buffer(msg->request_body, soupBuffer);
+                    soup_message_body_append_buffer(d->m_msg->request_body, soupBuffer);
                     soup_buffer_free(soupBuffer);
                 }
             }
         }
     }
 
-    d->m_msg = static_cast<SoupMessage*>(g_object_ref(msg));
     // balanced by a deref() in finishedCallback, which should always run
     ref();
 
@@ -546,6 +544,12 @@ bool ResourceHandle::startHttp(String urlString)
     // libsoup gets proper Content-Encoding support we will want to
     // use it here instead.
     soup_message_headers_replace(d->m_msg->request_headers, "Accept-Encoding", "identity");
+
+    // Balanced in ResourceRequest's destructor; we need to keep our
+    // own ref, because after queueing the message, the session owns
+    // the initial reference. We cannot ref the message in
+    // ResourceRequest because not all request objects are queued.
+    g_object_ref(d->m_msg);
     soup_session_queue_message(session, d->m_msg, finishedCallback, this);
 
     return true;

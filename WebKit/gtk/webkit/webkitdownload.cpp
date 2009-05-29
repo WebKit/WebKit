@@ -421,11 +421,8 @@ void webkit_download_start(WebKitDownload* download)
 
     if (priv->resourceHandle)
         priv->resourceHandle->setClient(priv->downloadClient);
-    else {
-        // FIXME: Use the actual request object when WebKitNetworkRequest is finished.
-        ResourceRequest request(webkit_network_request_get_uri(priv->networkRequest));
-        priv->resourceHandle = ResourceHandle::create(request, priv->downloadClient, 0, false, false, false);
-    }
+    else
+        priv->resourceHandle = ResourceHandle::create(ResourceRequest(webkit_network_request_get_message(priv->networkRequest)), priv->downloadClient, 0, false, false, false);
 
     priv->timer = g_timer_new();
     webkit_download_open_stream_for_uri(download, priv->destinationURI);

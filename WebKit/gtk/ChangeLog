@@ -1,3 +1,27 @@
+2009-05-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        Make NetworkRequest carry a reference of the SoupMessage used by
+        ResourceRequest, and use that to create new ResourceRequests where
+        needed, so that no information is lost while passing around
+        NetworkRequest objects.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClient::startDownload):
+        * webkit/webkitdownload.cpp:
+        (webkit_download_start):
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_finalize):
+        (webkit_network_request_new_with_core_request):
+        (webkit_network_request_new):
+        (webkit_network_request_get_message):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_load_request):
+
 2009-05-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

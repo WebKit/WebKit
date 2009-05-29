@@ -1,3 +1,26 @@
+2009-05-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        Make SoupMessage a member of ResourceRequest, instead of creating
+        it in startHttp. Implement updating of ResourceRequest from
+        SoupMessage, and vice versa.
+
+        * GNUmakefile.am:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::gotHeadersCallback):
+        (WebCore::ResourceHandle::startHttp):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::~ResourceRequest):
+        * platform/network/soup/ResourceRequestSoup.cpp: Added.
+        (WTF::SoupURI):
+        (WebCore::ResourceRequest::soupMessage):
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2009-05-28  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Dimitri Glazkov.

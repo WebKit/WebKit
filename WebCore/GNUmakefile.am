@@ -1879,6 +1879,7 @@ webcoregtk_sources += \
 	WebCore/platform/network/soup/DNSSoup.cpp \
 	WebCore/platform/network/soup/ResourceError.h \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
+	WebCore/platform/network/soup/ResourceRequestSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
 	WebCore/platform/network/soup/ResourceResponse.h \
 	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
