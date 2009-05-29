@@ -1101,12 +1101,13 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
 #if ENABLE(PAN_SCROLLING)
     Page* page = m_frame->page();
-    if (page && page->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) {
+    if (m_frame->settings()->usesStickyPanScroll()
+        && (page && page->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress)) {
         stopAutoscrollTimer();
         invalidateClick();
         return true;
     }
-    
+
     if (mouseEvent.button() == MiddleButton && !mev.isOverLink()) {
         RenderObject* renderer = mev.targetNode()->renderer();
 
@@ -1346,6 +1347,13 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     m_mousePressed = false;
     m_currentMousePosition = mouseEvent.pos();
+
+    if (!m_frame->settings()->usesStickyPanScroll()
+        && (m_frame->page() && m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress)) {
+        stopAutoscrollTimer();
+        invalidateClick();
+        return true;
+    }
 
 #if ENABLE(SVG)
     if (m_svgPan) {
