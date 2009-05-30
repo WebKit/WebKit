@@ -1304,6 +1304,7 @@ webcore_sources += \
 	WebCore/platform/GeolocationService.cpp \
 	WebCore/platform/GeolocationService.h \
 	WebCore/platform/HostWindow.h \
+	WebCore/platform/KeyboardCodes.h \
 	WebCore/platform/KURL.cpp \
 	WebCore/platform/KURL.h \
 	WebCore/platform/KURLHash.h \
@@ -1832,7 +1833,6 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/GtkPluginWidget.h \
 	WebCore/platform/gtk/KURLGtk.cpp \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
-	WebCore/platform/gtk/KeyboardCodes.h \
 	WebCore/platform/gtk/Language.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
 	WebCore/platform/gtk/LoggingGtk.cpp \
