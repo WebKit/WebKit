@@ -174,6 +174,8 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!_private->debuggerCallFrame)
         return [NSArray array];
 
+    JSLock lock(false);
+
     const ScopeChainNode* scopeChain = _private->debuggerCallFrame->scopeChain();
     if (!scopeChain->next)  // global frame
         return [NSArray arrayWithObject:_private->globalObject];

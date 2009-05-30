@@ -1,3 +1,17 @@
+2009-05-30  David Kilzer  <ddkilzer@apple.com>
+
+        Add JSLock to -[WebScriptCallFrame scopeChain]
+
+        Reviewed by Darin Adler.
+
+        In Debug builds of WebKit, Dashcode launching MobileSafari could
+        cause the ASSERT(JSLock::lockCount() > 0) assertion to fire in
+        JSC::Heap::heapAllocate() because the JSLock wasn't taken.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame scopeChain]): Take JSLock before calling
+        into JavaScriptCore.
+
 2009-05-28  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.
