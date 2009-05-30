@@ -27,6 +27,7 @@
 #include "HTMLOptionElement.h"
 #include "OptionGroupElement.h"
 #include "ScriptElement.h"
+#include "SelectElement.h"
 #include <wtf/Assertions.h>
 
 #if ENABLE(WML)
@@ -43,6 +44,27 @@ void OptionElement::setSelectedState(OptionElementData& data, Element* element, 
 
     data.setSelected(selected);
     element->setNeedsStyleRecalc();
+}
+
+int OptionElement::optionIndex(SelectElement* selectElement, const Element* element)
+{
+    if (!selectElement)
+        return 0;
+
+    // Let's do this dynamically. Might be a bit slow, but we're sure
+    // we won't forget to update a member variable in some cases...
+    const Vector<Element*>& items = selectElement->listItems();
+    int length = items.size();
+    int optionIndex = 0;
+    for (int i = 0; i < length; ++i) {
+        if (!isOptionElement(items[i]))
+            continue;
+        if (items[i] == element)
+            return optionIndex;
+        ++optionIndex;
+    }
+
+    return 0;
 }
 
 String OptionElement::collectOptionText(const OptionElementData& data, const Element* element)
@@ -114,6 +136,15 @@ OptionElement* toOptionElement(Element* element)
 #endif
 
     return 0;
+}
+
+bool isOptionElement(Element* element)
+{
+    return element->hasLocalName(HTMLNames::optionTag)
+#if ENABLE(WML)
+        || element->hasLocalName(WMLNames::optionTag)
+#endif
+        ;
 }
 
 }

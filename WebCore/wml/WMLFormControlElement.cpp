@@ -55,6 +55,26 @@ bool WMLFormControlElement::isFocusable() const
     return true;
 }
 
+void WMLFormControlElement::attach()
+{
+    ASSERT(!attached());
+    WMLElement::attach();
+
+    // The call to updateFromElement() needs to go after the call through
+    // to the base class's attach() because that can sometimes do a close
+    // on the renderer.
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
+void WMLFormControlElement::recalcStyle(StyleChange change)
+{
+    WMLElement::recalcStyle(change);
+
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
 }
 
 #endif

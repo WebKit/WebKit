@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card>
+<p>Very simple test, checking that select elements are rendered correctly</p>
+
+<select name="test1" title="title1" multiple="true">
+  <option value="test11">Test1</option>
+  <option value="test12">Test2</option>
+  <option value="test13">Test3</option>
+</select>
+
+<select name="test2" title="title2">
+  <option value="test21">Test1</option>
+  <option value="test22">Test2</option>
+  <option value="test23">Test3</option>
+</select>
+
+</card>
+</wml>

@@ -1,3 +1,15 @@
+2009-05-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Add simple WML testcase: select.wml, that demonstates rendering of <select> elements.
+        More testcases will follow, as soon as WML specific features are available.
+
+        * fast/wml/select.wml: Added.
+        * platform/mac/fast/wml/select-expected.checksum: Added.
+        * platform/mac/fast/wml/select-expected.png: Added.
+        * platform/mac/fast/wml/select-expected.txt: Added.
+
 2009-05-29  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Darin Alder.

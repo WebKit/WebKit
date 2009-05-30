@@ -104,22 +104,7 @@ void HTMLOptionElement::accessKeyAction(bool)
 
 int HTMLOptionElement::index() const
 {
-    // Let's do this dynamically. Might be a bit slow, but we're sure
-    // we won't forget to update a member variable in some cases...
-    HTMLSelectElement* select = ownerSelectElement();
-    if (select) {
-        const Vector<Element*>& items = select->listItems();
-        int l = items.size();
-        int optionIndex = 0;
-        for(int i = 0; i < l; i++) {
-            if (items[i]->hasLocalName(optionTag)) {
-                if (static_cast<HTMLOptionElement*>(items[i]) == this)
-                    return optionIndex;
-                optionIndex++;
-            }
-        }
-    }
-    return 0;
+    return OptionElement::optionIndex(ownerSelectElement(), this);
 }
 
 void HTMLOptionElement::parseMappedAttribute(MappedAttribute *attr)

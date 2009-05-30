@@ -46,4 +46,13 @@ OptionGroupElement* toOptionGroupElement(Element* element)
     return 0;
 }
 
+bool isOptionGroupElement(Element* element)
+{
+    return element->hasLocalName(HTMLNames::optgroupTag)
+#if ENABLE(WML)
+        || element->hasLocalName(WMLNames::optgroupTag)
+#endif
+        ;
+}
+
 }

@@ -16171,6 +16171,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wml\WMLSelectElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wml\WMLSelectElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wml\WMLSetvarElement.cpp"
 				>
 			</File>

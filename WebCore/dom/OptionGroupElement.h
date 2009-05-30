@@ -34,6 +34,7 @@ public:
 };
 
 OptionGroupElement* toOptionGroupElement(Element*);
+bool isOptionGroupElement(Element*);
 
 }
 

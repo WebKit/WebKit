@@ -1,3 +1,107 @@
+2009-05-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=26072
+
+        Add support for the last missing WML element: <select>. This patch adds WMLSelectElement, providing
+        the same functionality HTMLSelectElement has. The WML specific features will follow soon.
+    
+        Add simple testcase covering <select> element rendering: fast/wml/select.wml
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::optionIndex):
+        (WebCore::isOptionElement):
+        * dom/OptionElement.h:
+        * dom/OptionGroupElement.cpp:
+        (WebCore::isOptionGroupElement):
+        * dom/OptionGroupElement.h:
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::accessKeySetSelectedIndex):
+        (WebCore::toSelectElement):
+        * dom/SelectElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::index):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::accessKeySetSelectedIndex):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemIsEnabled):
+        (WebCore::RenderMenuList::itemIsLabel):
+        * wml/WMLFormControlElement.cpp:
+        (WebCore::WMLFormControlElement::attach):
+        (WebCore::WMLFormControlElement::recalcStyle):
+        * wml/WMLFormControlElement.h:
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::attach):
+        * wml/WMLOptGroupElement.cpp:
+        (WebCore::WMLOptGroupElement::insertBefore):
+        (WebCore::WMLOptGroupElement::replaceChild):
+        (WebCore::WMLOptGroupElement::removeChild):
+        (WebCore::WMLOptGroupElement::appendChild):
+        (WebCore::WMLOptGroupElement::removeChildren):
+        (WebCore::ownerSelectElement):
+        (WebCore::WMLOptGroupElement::accessKeyAction):
+        (WebCore::WMLOptGroupElement::childrenChanged):
+        (WebCore::WMLOptGroupElement::parseMappedAttribute):
+        (WebCore::WMLOptGroupElement::attach):
+        (WebCore::WMLOptGroupElement::detach):
+        (WebCore::WMLOptGroupElement::recalcSelectOptions):
+        * wml/WMLOptionElement.cpp:
+        (WebCore::ownerSelectElement):
+        (WebCore::WMLOptionElement::accessKeyAction):
+        (WebCore::WMLOptionElement::childrenChanged):
+        (WebCore::WMLOptionElement::parseMappedAttribute):
+        (WebCore::WMLOptionElement::attach):
+        (WebCore::WMLOptionElement::detach):
+        (WebCore::WMLOptionElement::insertedIntoDocument):
+        * wml/WMLSelectElement.cpp: Added.
+        (WebCore::WMLSelectElement::WMLSelectElement):
+        (WebCore::WMLSelectElement::~WMLSelectElement):
+        (WebCore::WMLSelectElement::formControlType):
+        (WebCore::WMLSelectElement::isKeyboardFocusable):
+        (WebCore::WMLSelectElement::isMouseFocusable):
+        (WebCore::WMLSelectElement::selectAll):
+        (WebCore::WMLSelectElement::recalcStyle):
+        (WebCore::WMLSelectElement::dispatchFocusEvent):
+        (WebCore::WMLSelectElement::dispatchBlurEvent):
+        (WebCore::WMLSelectElement::selectedIndex):
+        (WebCore::WMLSelectElement::setSelectedIndex):
+        (WebCore::WMLSelectElement::saveFormControlState):
+        (WebCore::WMLSelectElement::restoreFormControlState):
+        (WebCore::WMLSelectElement::childrenChanged):
+        (WebCore::WMLSelectElement::parseMappedAttribute):
+        (WebCore::WMLSelectElement::createRenderer):
+        (WebCore::WMLSelectElement::appendFormData):
+        (WebCore::WMLSelectElement::optionToListIndex):
+        (WebCore::WMLSelectElement::listToOptionIndex):
+        (WebCore::WMLSelectElement::reset):
+        (WebCore::WMLSelectElement::defaultEventHandler):
+        (WebCore::WMLSelectElement::accessKeyAction):
+        (WebCore::WMLSelectElement::setActiveSelectionAnchorIndex):
+        (WebCore::WMLSelectElement::setActiveSelectionEndIndex):
+        (WebCore::WMLSelectElement::updateListBoxSelection):
+        (WebCore::WMLSelectElement::listBoxOnChange):
+        (WebCore::WMLSelectElement::menuListOnChange):
+        (WebCore::WMLSelectElement::activeSelectionStartListIndex):
+        (WebCore::WMLSelectElement::activeSelectionEndListIndex):
+        (WebCore::WMLSelectElement::accessKeySetSelectedIndex):
+        (WebCore::WMLSelectElement::setRecalcListItems):
+        (WebCore::WMLSelectElement::scrollToSelection):
+        (WebCore::WMLSelectElement::insertedIntoTree):
+        * wml/WMLSelectElement.h: Added.
+        (WebCore::WMLSelectElement::canSelectAll):
+        (WebCore::WMLSelectElement::canStartSelection):
+        (WebCore::WMLSelectElement::size):
+        (WebCore::WMLSelectElement::multiple):
+        (WebCore::WMLSelectElement::listItems):
+        * wml/WMLTagNames.in:
+
 2009-05-29  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (build fix for windows).

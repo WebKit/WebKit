@@ -226,14 +226,7 @@ RenderObject* WMLInputElement::createRenderer(RenderArena* arena, RenderStyle*)
 
 void WMLInputElement::attach()
 {
-    ASSERT(!attached());
-    WMLElement::attach();
-
-    // The call to updateFromElement() needs to go after the call through
-    // to the base class's attach() because that can sometimes do a close
-    // on the renderer.
-    if (renderer())
-        renderer()->updateFromElement();
+    WMLFormControlElement::attach();
 
     // FIXME: maybe this is not a good place to do this since it is possible 
     // to cause unexpected several times initialise of <input> if we force the

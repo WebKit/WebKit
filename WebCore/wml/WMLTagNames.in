@@ -26,14 +26,10 @@ p
 postfield
 prev
 refresh
+select
 setvar
 table
 td interfaceName=WMLElement
 template
 timer
 tr interfaceName=WMLElement
-
-#if 0
-# These elements have a corresponding HTML*Element class, that we want to share code with.
-# select
-#endif

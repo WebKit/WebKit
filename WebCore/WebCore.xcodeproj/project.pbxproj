@@ -52,6 +52,8 @@
 		081D81320EE0E74D00D73689 /* WMLTimerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 081D81300EE0E74D00D73689 /* WMLTimerElement.h */; };
 		08203A9F0ED8C35300B8B61A /* WMLAccessElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08203A9D0ED8C35300B8B61A /* WMLAccessElement.cpp */; };
 		08203AA00ED8C35300B8B61A /* WMLAccessElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08203A9E0ED8C35300B8B61A /* WMLAccessElement.h */; };
+		082341C50FCF3A9500D75BD6 /* WMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */; };
+		082341C60FCF3A9500D75BD6 /* WMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 082341C40FCF3A9400D75BD6 /* WMLSelectElement.h */; };
 		0839476C0ECE4BD600027350 /* WMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */; };
 		0839476D0ECE4BD600027350 /* WMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FB84B10ECE373300DC064E /* WMLElementFactory.h */; };
 		083DAEA60F01A7FB00342754 /* RenderTextControlMultiLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083DAEA20F01A7FB00342754 /* RenderTextControlMultiLine.cpp */; };
@@ -4952,6 +4954,8 @@
 		081D81300EE0E74D00D73689 /* WMLTimerElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTimerElement.h; sourceTree = "<group>"; };
 		08203A9D0ED8C35300B8B61A /* WMLAccessElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLAccessElement.cpp; sourceTree = "<group>"; };
 		08203A9E0ED8C35300B8B61A /* WMLAccessElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLAccessElement.h; sourceTree = "<group>"; };
+		082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLSelectElement.cpp; sourceTree = "<group>"; };
+		082341C40FCF3A9400D75BD6 /* WMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLSelectElement.h; sourceTree = "<group>"; };
 		083DAEA20F01A7FB00342754 /* RenderTextControlMultiLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlMultiLine.cpp; sourceTree = "<group>"; };
 		083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlMultiLine.h; sourceTree = "<group>"; };
 		083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlSingleLine.cpp; sourceTree = "<group>"; };
@@ -10019,6 +10023,8 @@
 				08807B710ED709AB003F6975 /* WMLPrevElement.h */,
 				08807B720ED709AB003F6975 /* WMLRefreshElement.cpp */,
 				08807B730ED709AB003F6975 /* WMLRefreshElement.h */,
+				082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */,
+				082341C40FCF3A9400D75BD6 /* WMLSelectElement.h */,
 				08807B740ED709AB003F6975 /* WMLSetvarElement.cpp */,
 				08807B750ED709AB003F6975 /* WMLSetvarElement.h */,
 				08820BDC0EF5D381009099A8 /* WMLTableElement.cpp */,
@@ -16969,6 +16975,7 @@
 				84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */,
 				84A81F420FC7E02700955300 /* SourceGraphic.h in Headers */,
 				08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */,
+				082341C60FCF3A9500D75BD6 /* WMLSelectElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18993,6 +19000,7 @@
 				84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */,
 				84A81F410FC7E02700955300 /* SourceGraphic.cpp in Sources */,
 				08C925190FCC7C4A00480DEC /* FilterEffect.cpp in Sources */,
+				082341C50FCF3A9500D75BD6 /* WMLSelectElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

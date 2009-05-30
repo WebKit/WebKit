@@ -28,7 +28,7 @@ namespace WebCore {
 
 class WMLFormControlElement : public WMLElement {
 public:
-    WMLFormControlElement(const QualifiedName& tagName, Document* document);
+    WMLFormControlElement(const QualifiedName&, Document*);
     virtual ~WMLFormControlElement();
 
     virtual bool isFormControlElement() const { return true; }
@@ -39,6 +39,9 @@ public:
     virtual void setFormControlValueMatchesRenderer(bool b = true) { m_valueMatchesRenderer = b; }
 
     virtual bool isFocusable() const;
+
+    virtual void attach();
+    virtual void recalcStyle(StyleChange);
 
 private:
     bool m_valueMatchesRenderer;
