@@ -87,7 +87,7 @@ bool JSStorage::customPut(ExecState* exec, const Identifier& propertyName, JSVal
     if (prototype.isObject() && asObject(prototype)->hasProperty(exec, propertyName))
         return false;
     
-    String stringValue = valueToStringWithNullCheck(exec, value);
+    String stringValue = value.toString(exec);
     if (exec->hadException())
         return true;
     
