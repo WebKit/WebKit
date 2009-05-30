@@ -1,3 +1,16 @@
+2009-05-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6935193> REGRESSION (r42734): Celtic Kane JavaScript benchmark does not run:
+        "Maximum call stack size exceeded"
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString): Use the same recursion limit as the other recursion checks.
+        We need a limit of at least 100 to run the benchmark above.
+        (JSC::arrayProtoFuncToLocaleString): Ditto.
+        (JSC::arrayProtoFuncJoin): Ditto.
+
 2009-05-28  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
