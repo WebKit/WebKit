@@ -382,10 +382,12 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         }
     }
 
+    bool isRoot = this->isRoot();
+
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
     bool isOpaqueRoot = false;
-    if (isRoot()) {
+    if (isRoot) {
         isOpaqueRoot = true;
         if (!bgLayer->next() && !(bgColor.isValid() && bgColor.alpha() == 255) && view()->frameView()) {
             Element* ownerElement = document()->ownerElement();
@@ -438,7 +440,21 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         if (!destRect.isEmpty()) {
             phase += destRect.location() - destOrigin;
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
-            context->drawTiledImage(bg->image(this, tileSize), destRect, phase, tileSize, compositeOp);
+            RenderObject* clientForBackgroundImage = this;
+            // Check if this is the root element painting a background layer propagated from <body>,
+            // and pass the body's renderer as the client in that case.
+            if (isRoot && !style()->hasBackground()) {
+                ASSERT(node()->hasTagName(htmlTag));
+                HTMLElement* body = document()->body();
+                ASSERT(body);
+                ASSERT(body->hasLocalName(bodyTag));
+                ASSERT(body->renderer());
+                if (body) {
+                    if (RenderObject* bodyRenderer = body->renderer())
+                        clientForBackgroundImage = bodyRenderer;
+                }
+            }
+            context->drawTiledImage(bg->image(clientForBackgroundImage, tileSize), destRect, phase, tileSize, compositeOp);
         }
     }
 

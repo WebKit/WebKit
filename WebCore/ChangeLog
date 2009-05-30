@@ -1,3 +1,19 @@
+2009-05-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18445
+          <rdar://problem/5931174> Assertion failure in CSSGradientValue::image
+          with -webkit-gradient as body's background
+
+        Test: fast/backgrounds/body-generated-image-propagated-to-root.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Check if this
+        is the root element painting a background layer propagated from the
+        body, and if it is, use the body's renderer as the client to
+        StyleImage::image().
+
 2009-05-30  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed build fix for AXObjectCache.

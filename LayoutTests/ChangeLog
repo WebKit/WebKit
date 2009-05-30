@@ -1,3 +1,16 @@
+2009-05-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=18445
+          <rdar://problem/5931174> Assertion failure in CSSGradientValue::image
+          with -webkit-gradient as body's background
+
+        * fast/backgrounds/body-generated-image-propagated-to-root.html: Added.
+        * platform/mac/fast/backgrounds/body-generated-image-propagated-to-root-expected.checksum: Added.
+        * platform/mac/fast/backgrounds/body-generated-image-propagated-to-root-expected.png: Added.
+        * platform/mac/fast/backgrounds/body-generated-image-propagated-to-root-expected.txt: Added.
+
 2009-05-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.
