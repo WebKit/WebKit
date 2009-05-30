@@ -26,14 +26,9 @@
 #include "config.h"
 #include "ScrollbarThemeMac.h"
 
-#include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include "IntRect.h"
-#include "Page.h"
 #include "PlatformMouseEvent.h"
-#include "Scrollbar.h"
-#include "ScrollbarClient.h"
-#include "Settings.h"
+#include "ScrollView.h"
 #include <Carbon/Carbon.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
@@ -371,9 +366,11 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
     trackInfo.attributes = 0;
     if (scrollbar->orientation() == HorizontalScrollbar)
         trackInfo.attributes |= kThemeTrackHorizontal;
-    trackInfo.enableState = scrollbar->client()->isActive() ? kThemeTrackActive : kThemeTrackInactive;
+
     if (!scrollbar->enabled())
         trackInfo.enableState = kThemeTrackDisabled;
+    else
+        trackInfo.enableState = [[scrollbar->parent()->documentView() window] isKeyWindow] ? kThemeTrackActive : kThemeTrackInactive;
     if (hasThumb(scrollbar))
         trackInfo.attributes |= kThemeTrackShowThumb;
     else if (!hasButtons(scrollbar))

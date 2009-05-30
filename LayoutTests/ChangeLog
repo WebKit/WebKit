@@ -1,5 +1,17 @@
 2009-05-30  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/6935192> REGRESSION (Safari 3-TOT): Scroll
+          bars in key window draw as inactive if the WebView is not active
+
+        * platform/mac/scrollbars/key-window-not-first-responder-expected.checksum: Added.
+        * platform/mac/scrollbars/key-window-not-first-responder-expected.png: Added.
+        * platform/mac/scrollbars/key-window-not-first-responder-expected.txt: Added.
+        * platform/mac/scrollbars/key-window-not-first-responder.html: Added.
+
+2009-05-30  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Simon Fraser.
 
         - test for https://bugs.webkit.org/show_bug.cgi?id=18445

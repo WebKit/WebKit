@@ -1,5 +1,19 @@
 2009-05-30  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6935192> REGRESSION (Safari 3-TOT): Scroll
+          bars in key window draw as inactive if the WebView is not active
+
+        Test: platform/mac/scrollbars/key-window-not-first-responder.html
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint): Use the window's key state instead
+        of the WebView's first responder state to switch between active and
+        inactive state.
+
+2009-05-30  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Simon Fraser.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=18445
