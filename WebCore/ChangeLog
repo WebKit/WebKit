@@ -1,3 +1,12 @@
+2009-05-30  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed build fix for AXObjectCache.
+
+        For !HAVE(ACCESSIBILITY) postNotification was defined twice. Move
+        that into the #ifdef.
+
+        * accessibility/AXObjectCache.cpp:
+
 2009-05-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

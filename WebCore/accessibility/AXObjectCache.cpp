@@ -278,6 +278,7 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
     m_notificationsToPost.clear();
 }
     
+#if HAVE(ACCESSIBILITY)
 void AXObjectCache::postNotification(RenderObject* renderer, const String& message, bool postToElement)
 {
     // Notifications for text input objects are sent to that object.
@@ -311,7 +312,6 @@ void AXObjectCache::postNotification(RenderObject* renderer, const String& messa
         m_notificationPostTimer.startOneShot(0);
 }
 
-#if HAVE(ACCESSIBILITY)
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
     postNotification(renderer, "AXSelectedChildrenChanged", true);
