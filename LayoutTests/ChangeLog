@@ -1,3 +1,17 @@
+2009-05-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Sam Weinig.
+
+        LocalStorage and SessionStorage's implicit setters do not correctly
+        handle null.  The custom JS bindings should convert to strings
+        unconditionally and not try to handle null specially.
+        https://bugs.webkit.org/show_bug.cgi?id=25970
+
+        * storage/domstorage/localstorage/string-conversion-expected.txt: Added.
+        * storage/domstorage/localstorage/string-conversion.html: Added.
+        * storage/domstorage/sessionstorage/string-conversion-expected.txt: Added.
+        * storage/domstorage/sessionstorage/string-conversion.html: Added.
+
 2009-05-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
