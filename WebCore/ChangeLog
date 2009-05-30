@@ -1,3 +1,25 @@
+2009-05-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Bug 26097: REGRESSION (r44283): Tab key doesn't work when focus is on a <select> element
+
+        Test: fast/forms/focus-control-to-page.html
+
+        * dom/SelectElement.h: Made destructor protected. Tweaked a bit.
+
+        * html/HTMLSelectElement.cpp: Removed unneeded includes.
+        (WebCore::HTMLSelectElement::remove): Removed unneeded range check of the
+        result of optionToListIndex.
+        (WebCore::HTMLSelectElement::parseMappedAttribute): Removed code to set the
+        unused attribute, m_minwidth.
+        (WebCore::HTMLSelectElement::defaultEventHandler): The actual bug fix.
+        Call through to the base class defaultEventHandler if the event hasn't
+        been handled yet.
+
+        * html/HTMLSelectElement.h: Removed unneeded includes. Made a lot more functions
+        private. Removed unused minWidth function and m_minwidth data member.
+
 2009-05-30  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Holger Freyther.

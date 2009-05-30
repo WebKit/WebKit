@@ -1,3 +1,13 @@
+2009-05-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Bug 26097: REGRESSION (r44283): Tab key doesn't work when focus is on a <select> element
+
+        * fast/forms/focus-control-to-page-expected.txt: Updated.
+        * fast/forms/focus-control-to-page.html: Added test of <select>, <textarea>,
+        and <input type="password">, and made sure we can tab both in and out of each type.
+
 2009-05-30  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Sam Weinig.

@@ -1,29 +1,35 @@
 <head>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
 
 function log(str)
 {
-    document.getElementById("log").innerHTML += str + "<br>";
+    document.getElementById("log").innerHTML += str + " ";
 }
-function tabCycle()
+
+function runTest()
 {
-    if (window.eventSender) {
-        eventSender.keyDown("\t", Array());
-        eventSender.keyDown("\t", Array());
-        eventSender.keyDown("\t", Array());
-        eventSender.keyDown("\t", Array());
-    }
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    if (!window.eventSender)
+        return;
+
+    for (var i = 0; i < 7; ++i)
+        eventSender.keyDown("\t");
 }
+
 </script>
 </head>
-<body onload="tabCycle()">
-<p>This test checks whether you can tab between AppKit controls and engine-rendered controls or other focusable object in the page like contentEditable areas. As you tab through, select one, text, select two and contentEditable div should focus, in that order.</p>
-<input type="search" onfocus="log('FOCUS: select one')">
-<input type=text onfocus="log('FOCUS: text')" value="text">
-<input type="search" onfocus="log('FOCUS: select two')">
-<div style="display: inline-block" contentEditable="true" onfocus="log('FOCUS: contentEditable div')">contentEditable div</div>
-<pre id="log">
-</pre>
+<body onload="runTest()">
+<p>This test checks whether you can tab in and out of various focusable objects including pages and content-editable areas. As you tab through, each element will log its number in order.</p>
+<hr>
+<input type="search" onfocus="log(1)" value="search">
+<input type="text" onfocus="log(2)" value="text">
+<div style="display: inline-block" contentEditable="true" onfocus="log(3)">contentEditable</div>
+<select onfocus="log(4)"><option>select</option></select>
+<textarea onfocus="log(5)">textarea</textarea>
+<input type="password" onfocus="log(6)" value="password">
+<input type="text" onfocus="log(7)" value="text 2">
+<hr>
+<p id="log"></p>
 </body>
