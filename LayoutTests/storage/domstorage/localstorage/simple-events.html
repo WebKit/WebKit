@@ -40,7 +40,7 @@ function runTest()
         return;
     }
     
-    document.body.addEventListener("storage", handleStorageEvent, false);
+    window.addEventListener("storage", handleStorageEvent, false);
 
     window.localStorage.setItem("FOO", "BAR");
     window.localStorage.setItem("FU", "BAR");

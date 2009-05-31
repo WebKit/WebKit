@@ -36,7 +36,7 @@ function runTest()
         return;
     }
     
-    document.body.addEventListener("storage", handleStorageEvent, false);
+    window.addEventListener("storage", handleStorageEvent, false);
     
     log("Setting FOO using the index setter.");
     sessionStorage["FOO"] = "BAR";

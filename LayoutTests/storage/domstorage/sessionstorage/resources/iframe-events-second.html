@@ -23,7 +23,7 @@ function handleStorageEvent(e)
 
 </script>
 </head>
-<body onload="document.body.addEventListener('storage', handleStorageEvent, false);">
+<body onload="window.addEventListener('storage', handleStorageEvent, false);">
 This is the subframe which exists to make sure that both frames of a same security origin receive the event for that origin's sessionStorage object mutating
 </body>
 </html>

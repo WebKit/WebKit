@@ -1,3 +1,21 @@
+2009-05-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26091
+        Make storage events match the current spec.
+        - Storage event listeners are added to the window.
+        - Storage events are dispatched to the window.
+
+        * storage/domstorage/localstorage/iframe-events.html:
+        * storage/domstorage/localstorage/index-get-and-set.html:
+        * storage/domstorage/localstorage/resources/iframe-events-second.html:
+        * storage/domstorage/localstorage/simple-events.html:
+        * storage/domstorage/sessionstorage/iframe-events.html:
+        * storage/domstorage/sessionstorage/index-get-and-set.html:
+        * storage/domstorage/sessionstorage/resources/iframe-events-second.html:
+        * storage/domstorage/sessionstorage/simple-events.html:
+
 2009-05-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.

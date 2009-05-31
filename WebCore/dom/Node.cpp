@@ -2819,15 +2819,6 @@ void Node::dispatchProgressEvent(const AtomicString &eventType, bool lengthCompu
     dispatchEvent(ProgressEvent::create(eventType, lengthComputableArg, loadedArg, totalArg), ec);
 }
 
-void Node::dispatchStorageEvent(const AtomicString &eventType, const String& key, const String& oldValue, const String& newValue, Frame* source)
-{
-#if ENABLE(DOM_STORAGE)
-    ASSERT(!eventDispatchForbidden());
-    ExceptionCode ec = 0;
-    dispatchEvent(StorageEvent::create(eventType, key, oldValue, newValue, source->document()->documentURI(), source->domWindow()), ec);
-#endif
-}
-
 void Node::clearAttributeEventListener(const AtomicString& eventType)
 {
     if (!hasRareData())

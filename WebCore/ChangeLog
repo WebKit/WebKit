@@ -1,3 +1,26 @@
+2009-05-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26091
+        Make storage events match the current spec.
+        - Storage event listeners are added to the window.
+        - Storage events are dispatched to the window.
+
+        Updated existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::dispatchWindowEvent):
+        * dom/Document.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::dispatchStorageEvent):
+        * storage/SessionStorageArea.cpp:
+        (WebCore::SessionStorageArea::dispatchStorageEvent):
+
 2009-05-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.

@@ -39,7 +39,7 @@ function startTest()
         return;
     }
  
-    document.body.addEventListener("storage", handleStorageEvent, false);
+    window.addEventListener("storage", handleStorageEvent, false);
     log("Main frame about to change localStorage...");
     localStorage.setItem("Main Frame", "SET");
 }
