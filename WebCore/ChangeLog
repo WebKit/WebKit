@@ -5,6 +5,27 @@
         WebKit needs cross-platform filter system
         [https://bugs.webkit.org/show_bug.cgi?id=19991]
 
+        Adding 'in1' attribute support for <feFlood>, as specified in SVG 1.1.
+        This change helps creating test cases, once filters are activated.
+
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::SVGFEFloodElement):
+        (WebCore::SVGFEFloodElement::parseMappedAttribute):
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEFloodElement.idl:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::FEFlood):
+        (WebCore::FEFlood::create):
+        * svg/graphics/filters/SVGFEFlood.h:
+
+2009-05-31  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        WebKit needs cross-platform filter system
+        [https://bugs.webkit.org/show_bug.cgi?id=19991]
+
         Replace all occurrences of SVGResourceFilter by Filter. This is the last 
         step for a SVG independent filter system. Every other part of WebCore can
         use the filter system by creating a new Filter object.
