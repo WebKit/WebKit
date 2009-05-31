@@ -1,3 +1,15 @@
+2009-05-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26110
+        Update online/offline events to match the current spec.
+        - Also adds window.ononline and window.onoffline event handler
+          properties.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * platform/mac-leopard/fast/dom/Window/window-properties-expected.txt:
+
 2009-05-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -1537,6 +1537,26 @@ void DOMWindow::setOnmousewheel(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().mousewheelEvent, eventListener);
 }
 
+EventListener* DOMWindow::onoffline() const
+{
+    return getAttributeEventListener(eventNames().offlineEvent);
+}
+
+void DOMWindow::setOnoffline(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().offlineEvent, eventListener);
+}
+
+EventListener* DOMWindow::ononline() const
+{
+    return getAttributeEventListener(eventNames().onlineEvent);
+}
+
+void DOMWindow::setOnonline(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().onlineEvent, eventListener);
+}
+
 EventListener* DOMWindow::onreset() const
 {
     return getAttributeEventListener(eventNames().resetEvent);

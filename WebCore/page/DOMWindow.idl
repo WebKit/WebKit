@@ -188,6 +188,7 @@ module window {
 
         // Events
         attribute EventListener onabort;
+        attribute EventListener onbeforeunload;
         attribute EventListener onblur;
         attribute EventListener onchange;
         attribute EventListener onclick;
@@ -204,6 +205,8 @@ module window {
         attribute EventListener onmouseover;
         attribute EventListener onmouseup;
         attribute EventListener onmousewheel;
+        attribute EventListener onoffline;
+        attribute EventListener ononline;
         attribute EventListener onreset;
         attribute EventListener onresize;
         attribute EventListener onscroll;
@@ -211,10 +214,9 @@ module window {
         attribute EventListener onselect;
         attribute EventListener onsubmit;
         attribute EventListener onunload;
-        attribute EventListener onbeforeunload;
-        attribute EventListener onwebkitanimationstart;
-        attribute EventListener onwebkitanimationiteration;
         attribute EventListener onwebkitanimationend;
+        attribute EventListener onwebkitanimationiteration;
+        attribute EventListener onwebkitanimationstart;
         attribute EventListener onwebkittransitionend;
 
         // EventTarget interface

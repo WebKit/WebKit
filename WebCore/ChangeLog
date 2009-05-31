@@ -1,3 +1,22 @@
+2009-05-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26110
+        Update online/offline events to match the current spec.
+        - Also adds window.ononline and window.onoffline event handler
+          properties.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::onoffline):
+        (WebCore::DOMWindow::setOnoffline):
+        (WebCore::DOMWindow::ononline):
+        (WebCore::DOMWindow::setOnonline):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+
 2009-05-31  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

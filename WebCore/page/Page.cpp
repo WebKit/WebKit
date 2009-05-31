@@ -90,17 +90,8 @@ static void networkStateChanged()
     }
 
     AtomicString eventName = networkStateNotifier().onLine() ? eventNames().onlineEvent : eventNames().offlineEvent;
-    
-    for (unsigned i = 0; i < frames.size(); i++) {
-        Document* document = frames[i]->document();
-        
-        // If the document does not have a body the event should be dispatched to the document
-        Node* eventTarget = document->body();
-        if (!eventTarget)
-            eventTarget = document;
-        
-        eventTarget->dispatchEvent(eventName, false, false);
-    }
+    for (unsigned i = 0; i < frames.size(); i++)
+        frames[i]->document()->dispatchWindowEvent(eventName, false, false);
 }
 
 Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, EditorClient* editorClient, DragClient* dragClient, InspectorClient* inspectorClient)
