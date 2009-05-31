@@ -24,7 +24,7 @@
 #include "Image.h"
 #include "StringHash.h"
 
-#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -34,14 +34,15 @@ namespace WebCore {
 
     class Filter : public RefCounted<Filter> {
     public:
+        virtual ~Filter() { }
 
-        void setSourceImage(PassOwnPtr<Image> image) { m_image = image; }
+        void setSourceImage(PassRefPtr<Image> image) { m_image = image; }
         Image* sourceImage() { return m_image.get(); }
 
         virtual void calculateEffectSubRegion(FilterEffect*) = 0;
 
     private:
-        OwnPtr<Image> m_image;
+        RefPtr<Image> m_image;
     };
 
 } // namespace WebCore

@@ -36,15 +36,12 @@ namespace WebCore
         virtual ~SVGFEBlendElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
-        bool build(FilterBuilder*);
+        virtual bool build(SVGResourceFilter*);
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::inAttrString, String, In1, in1)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::in2AttrString, String, In2, in2)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::modeAttrString, int, Mode, mode)
-
-        mutable RefPtr<FEBlend> m_filterEffect;
     };
 
 } // namespace WebCore

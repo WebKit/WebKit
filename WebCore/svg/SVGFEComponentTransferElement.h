@@ -35,13 +35,10 @@ namespace WebCore {
         virtual ~SVGFEComponentTransferElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
-        bool build(FilterBuilder*);
+        virtual bool build(SVGResourceFilter*);
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEComponentTransferElement, SVGNames::feComponentTransferTagString, SVGNames::inAttrString, String, In1, in1)
-
-        mutable RefPtr<FEComponentTransfer> m_filterEffect;
     };
 
 } // namespace WebCore

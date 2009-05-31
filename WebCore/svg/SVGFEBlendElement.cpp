@@ -35,7 +35,6 @@ SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* doc
     , m_in1(this, SVGNames::inAttr)
     , m_in2(this, SVGNames::in2Attr)
     , m_mode(this, SVGNames::modeAttr, FEBLEND_MODE_NORMAL)
-    , m_filterEffect(0)
 {
 }
 
@@ -65,21 +64,16 @@ void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFilterEffect* SVGFEBlendElement::filterEffect(SVGResourceFilter* filter) const
+bool SVGFEBlendElement::build(SVGResourceFilter* filterResource)
 {
-    ASSERT_NOT_REACHED(); 
-    return 0;
-}
-
-bool SVGFEBlendElement::build(FilterBuilder* builder)
-{
-    FilterEffect* input1 = builder->getEffectById(in1());
-    FilterEffect* input2 = builder->getEffectById(in2());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
+    FilterEffect* input2 = filterResource->builder()->getEffectById(in2());
 
     if(!input1 || !input2)
         return false;
 
-    builder->add(result(), FEBlend::create(input1, input2, static_cast<BlendModeType> (mode())));
+    RefPtr<FilterEffect> effect = FEBlend::create(input1, input2, static_cast<BlendModeType>(mode()));
+    filterResource->addFilterEffect(this, effect.release());
 
     return true;
 }

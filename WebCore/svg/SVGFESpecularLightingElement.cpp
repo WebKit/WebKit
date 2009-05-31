@@ -42,7 +42,6 @@ SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& 
     , m_surfaceScale(this, SVGNames::surfaceScaleAttr, 1.0f)
     , m_kernelUnitLengthX(this, SVGNames::kernelUnitLengthAttr)
     , m_kernelUnitLengthY(this, SVGNames::kernelUnitLengthAttr)
-    , m_filterEffect(0)
 {
 }
 
@@ -71,12 +70,6 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFilterEffect* SVGFESpecularLightingElement::filterEffect(SVGResourceFilter* filter) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 LightSource* SVGFESpecularLightingElement::findLights() const
 {
     LightSource* light = 0;
@@ -93,9 +86,9 @@ LightSource* SVGFESpecularLightingElement::findLights() const
     return light;
 }
 
-bool SVGFESpecularLightingElement::build(FilterBuilder* builder)
+bool SVGFESpecularLightingElement::build(SVGResourceFilter* filterResource)
 {
-    FilterEffect* input1 = builder->getEffectById(in1());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
     
     if(!input1)
         return false;
@@ -104,9 +97,9 @@ bool SVGFESpecularLightingElement::build(FilterBuilder* builder)
     
     Color color = filterStyle->svgStyle()->lightingColor();
     
-    RefPtr<FilterEffect> addedEffect = FESpecularLighting::create(input1, color, surfaceScale(), specularConstant(), 
+    RefPtr<FilterEffect> effect = FESpecularLighting::create(input1, color, surfaceScale(), specularConstant(), 
                                         specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), findLights());
-    builder->add(result(), addedEffect.release());
+    filterResource->addFilterEffect(this, effect.release());
 
     return true;
 }

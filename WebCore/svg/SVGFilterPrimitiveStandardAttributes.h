@@ -25,13 +25,13 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterBuilder.h"
+#include "SVGResourceFilter.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
 
     extern char SVGFilterPrimitiveStandardAttributesIdentifier[];
 
-    class SVGFilterEffect;
     class SVGResourceFilter;
 
     class SVGFilterPrimitiveStandardAttributes : public SVGStyledElement {
@@ -42,13 +42,14 @@ namespace WebCore {
         virtual bool isFilterEffect() const { return true; }
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const = 0;
+        virtual bool build(SVGResourceFilter*) = 0;
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }
 
     protected:
+        friend class SVGResourceFilter;
+        void setStandardAttributes(SVGResourceFilter*, FilterEffect*) const;
         virtual const SVGElement* contextElement() const { return this; }
-        void setStandardAttributes(SVGFilterEffect*) const;
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGFilterPrimitiveStandardAttributesIdentifier, SVGNames::xAttrString, SVGLength, X, x)

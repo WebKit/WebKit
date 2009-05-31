@@ -35,7 +35,6 @@ namespace WebCore {
 SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_in1(this, SVGNames::inAttr)
-    , m_filterEffect(0)
 {
 }
 
@@ -52,20 +51,15 @@ void SVGFETileElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFilterEffect* SVGFETileElement::filterEffect(SVGResourceFilter* filter) const
+bool SVGFETileElement::build(SVGResourceFilter* filterResource)
 {
-   ASSERT_NOT_REACHED();
-   return 0;
-}
-
-bool SVGFETileElement::build(FilterBuilder* builder)
-{
-    FilterEffect* input1 = builder->getEffectById(in1());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
 
     if(!input1)
         return false;
 
-    builder->add(result(), FETile::create(input1));
+    RefPtr<FilterEffect> effect = FETile::create(input1);
+    filterResource->addFilterEffect(this, effect.release());
     
     return true;
 }

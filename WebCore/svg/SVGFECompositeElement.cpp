@@ -40,7 +40,6 @@ SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Docum
     , m_k2(this, SVGNames::k2Attr)
     , m_k3(this, SVGNames::k3Attr)
     , m_k4(this, SVGNames::k4Attr)
-    , m_filterEffect(0)
 {
 }
 
@@ -81,23 +80,17 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFilterEffect* SVGFECompositeElement::filterEffect(SVGResourceFilter* filter) const
+bool SVGFECompositeElement::build(SVGResourceFilter* filterResource)
 {
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-bool SVGFECompositeElement::build(FilterBuilder* builder)
-{
-    FilterEffect* input1 = builder->getEffectById(in1());
-    FilterEffect* input2 = builder->getEffectById(in2());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
+    FilterEffect* input2 = filterResource->builder()->getEffectById(in2());
     
     if(!input1 || !input2)
         return false;
     
-    RefPtr<FilterEffect> addedEffect = FEComposite::create(input1, input2, static_cast<CompositeOperationType> (_operator()),
+    RefPtr<FilterEffect> effect = FEComposite::create(input1, input2, static_cast<CompositeOperationType>(_operator()),
                                         k1(), k2(), k3(), k4());
-    builder->add(result(), addedEffect.release());
+    filterResource->addFilterEffect(this, effect.release());
 
     return true;
 }

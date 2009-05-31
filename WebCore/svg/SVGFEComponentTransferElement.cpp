@@ -40,7 +40,6 @@ namespace WebCore {
 SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
     , m_in1(this, SVGNames::inAttr)
-    , m_filterEffect(0)
 {
 }
 
@@ -57,15 +56,9 @@ void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFilterEffect* SVGFEComponentTransferElement::filterEffect(SVGResourceFilter* filter) const
+bool SVGFEComponentTransferElement::build(SVGResourceFilter* filterResource)
 {
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-bool SVGFEComponentTransferElement::build(FilterBuilder* builder)
-{
-    FilterEffect* input1 = builder->getEffectById(in1());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
     
     if(!input1)
         return false;
@@ -86,7 +79,8 @@ bool SVGFEComponentTransferElement::build(FilterBuilder* builder)
             alpha = static_cast<SVGFEFuncAElement*>(n)->transferFunction();
     }
     
-    builder->add(result(), FEComponentTransfer::create(input1, red, green, blue, alpha));
+    RefPtr<FilterEffect> effect = FEComponentTransfer::create(input1, red, green, blue, alpha);
+    filterResource->addFilterEffect(this, effect.release());
     
     return true;
 }

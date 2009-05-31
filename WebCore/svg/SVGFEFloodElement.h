@@ -36,13 +36,10 @@ namespace WebCore
         virtual ~SVGFEFloodElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
-        bool build(FilterBuilder*);
+        virtual bool build(SVGResourceFilter*);
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEFloodElement, SVGNames::feFloodTagString, SVGNames::inAttrString, String, In1, in1)
-
-        mutable RefPtr<FEFlood> m_filterEffect;
     };
 
 } // namespace WebCore

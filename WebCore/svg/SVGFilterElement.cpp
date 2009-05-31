@@ -27,7 +27,9 @@
 #include "SVGFilterElement.h"
 
 #include "Attr.h"
+#include "FilterBuilder.h"
 #include "MappedAttribute.h"
+#include "PlatformString.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -131,19 +133,18 @@ SVGResource* SVGFilterElement::canvasResource()
     bool primitiveBBoxMode = primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setEffectBoundingBoxMode(primitiveBBoxMode);
 
-    // TODO : use switch/case instead?
-    m_filter->clearEffects();
+    m_filter->builder()->clearEffects();
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         SVGElement* element = 0;
-        if (n->isSVGElement())
+        if (n->isSVGElement()) {
             element = static_cast<SVGElement*>(n);
-        if (element && element->isFilterEffect()) {
-            SVGFilterPrimitiveStandardAttributes* filterAttributes = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
-            SVGFilterEffect* filterEffect = filterAttributes->filterEffect(m_filter.get());
-            if (!filterEffect)
-                continue;
-
-            m_filter->addFilterEffect(filterEffect);
+            if (element->isFilterEffect()) {
+                SVGFilterPrimitiveStandardAttributes* effectElement = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
+                if (!effectElement->build(m_filter.get())) {
+                    m_filter->builder()->clearEffects();
+                    break;
+                }
+            }
         }
     }
 

@@ -32,7 +32,6 @@ namespace WebCore {
 
 SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_filterEffect(0)
 {
 }
 
@@ -40,18 +39,12 @@ SVGFEMergeElement::~SVGFEMergeElement()
 {
 }
 
-SVGFilterEffect* SVGFEMergeElement::filterEffect(SVGResourceFilter* filter) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-bool SVGFEMergeElement::build(FilterBuilder* builder)
+bool SVGFEMergeElement::build(SVGResourceFilter* filterResource)
 {
     Vector<FilterEffect*> mergeInputs;
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feMergeNodeTag)) {
-            FilterEffect* mergeEffect = builder->getEffectById(static_cast<SVGFEMergeNodeElement*>(n)->in1());
+            FilterEffect* mergeEffect = filterResource->builder()->getEffectById(static_cast<SVGFEMergeNodeElement*>(n)->in1());
             mergeInputs.append(mergeEffect);
         }
     }
@@ -59,7 +52,8 @@ bool SVGFEMergeElement::build(FilterBuilder* builder)
     if(mergeInputs.isEmpty())
         return false;
 
-    builder->add(result(), FEMerge::create(mergeInputs));
+    RefPtr<FilterEffect> effect = FEMerge::create(mergeInputs);
+    filterResource->addFilterEffect(this, effect.release());
 
     return true;
 }

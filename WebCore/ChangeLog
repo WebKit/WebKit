@@ -24,6 +24,106 @@
         WebKit needs cross-platform filter system
         [https://bugs.webkit.org/show_bug.cgi?id=19991]
 
+        Make use of the new filter system in WebCore for SVG. Deleted Mac bindings
+        and replace it by a platform independent code. Calculation of subRegions
+        is missing but needed for a first filter effect.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::~Filter):
+        (WebCore::Filter::setSourceImage):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+        * svg/FilterBuilder.h:
+        (WebCore::FilterBuilder::lastEffect):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::build):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::build):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::build):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::build):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::SVGFEFloodElement):
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::build):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        (WebCore::SVGFEImageElement::notifyFinished):
+        (WebCore::SVGFEImageElement::build):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::SVGFEMergeElement):
+        (WebCore::SVGFEMergeElement::build):
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        (WebCore::SVGFEOffsetElement::build):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::SVGFETileElement):
+        (WebCore::SVGFETileElement::build):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::build):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::canvasResource):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::contextElement):
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        (WebCore::SVGResourceFilter::addFilterEffect):
+        (WebCore::SVGResourceFilter::filterBBoxForItemBBox):
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        (WebCore::SVGResourceFilter::externalRepresentation):
+        * svg/graphics/SVGResourceFilter.h:
+        (WebCore::SVGResourceFilter::filterBoundingBox):
+        (WebCore::SVGResourceFilter::setFilterBoundingBox):
+        (WebCore::SVGResourceFilter::itemBoundingBox):
+        (WebCore::SVGResourceFilter::setItemBoundingBox):
+        (WebCore::SVGResourceFilter::builder):
+
+2009-05-31  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        WebKit needs cross-platform filter system
+        [https://bugs.webkit.org/show_bug.cgi?id=19991]
+
         Adding 'in1' attribute support for <feFlood>, as specified in SVG 1.1.
         This change helps creating test cases, once filters are activated.
 

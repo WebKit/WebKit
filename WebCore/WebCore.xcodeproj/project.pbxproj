@@ -3311,7 +3311,6 @@
 		B237C8A80D344D110013F707 /* SVGFontData.h in Headers */ = {isa = PBXBuildFile; fileRef = B237C8A60D344D110013F707 /* SVGFontData.h */; };
 		B24055650B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */; };
 		B24055660B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */; };
-		B25599350D00D8BA00BB825C /* SVGResourceFilterCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */; };
 		B25599400D00D8BA00BB825C /* SVGFEHelpersCg.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598A60D00D8B800BB825C /* SVGFEHelpersCg.h */; };
 		B25599410D00D8BA00BB825C /* SVGFEHelpersCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598A70D00D8B800BB825C /* SVGFEHelpersCg.mm */; };
 		B25599470D00D8BA00BB825C /* SVGFilterEffectCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598AD0D00D8B800BB825C /* SVGFilterEffectCg.mm */; };
@@ -3386,8 +3385,6 @@
 		B25599940D00D8BA00BB825C /* SVGLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598FA0D00D8B900BB825C /* SVGLightSource.h */; };
 		B25599950D00D8BA00BB825C /* SVGPointLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598FB0D00D8B900BB825C /* SVGPointLightSource.h */; };
 		B25599960D00D8BA00BB825C /* SVGSpotLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598FC0D00D8B900BB825C /* SVGSpotLightSource.h */; };
-		B25599970D00D8BA00BB825C /* SVGResourceFilterPlatformDataMac.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598FE0D00D8B900BB825C /* SVGResourceFilterPlatformDataMac.h */; };
-		B25599980D00D8BA00BB825C /* SVGResourceFilterPlatformDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598FF0D00D8B900BB825C /* SVGResourceFilterPlatformDataMac.mm */; };
 		B25599A30D00D8BA00BB825C /* SVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B255990B0D00D8B900BB825C /* SVGImage.cpp */; };
 		B25599A40D00D8BA00BB825C /* SVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990C0D00D8B900BB825C /* SVGImage.h */; };
 		B25599A50D00D8BA00BB825C /* EmptyClients.h in Headers */ = {isa = PBXBuildFile; fileRef = B255990D0D00D8B900BB825C /* EmptyClients.h */; };
@@ -8123,7 +8120,6 @@
 		B237C8A60D344D110013F707 /* SVGFontData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFontData.h; sourceTree = "<group>"; };
 		B24055630B5BE640002A28C0 /* DOMSVGElementInstanceInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceInternal.h; sourceTree = "<group>"; };
 		B24055640B5BE640002A28C0 /* DOMSVGElementInstanceListInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceListInternal.h; sourceTree = "<group>"; };
-		B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGResourceFilterCg.mm; sourceTree = "<group>"; };
 		B25598A60D00D8B800BB825C /* SVGFEHelpersCg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEHelpersCg.h; sourceTree = "<group>"; };
 		B25598A70D00D8B800BB825C /* SVGFEHelpersCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEHelpersCg.mm; sourceTree = "<group>"; };
 		B25598AD0D00D8B800BB825C /* SVGFilterEffectCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFilterEffectCg.mm; sourceTree = "<group>"; };
@@ -8198,8 +8194,6 @@
 		B25598FA0D00D8B900BB825C /* SVGLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGLightSource.h; sourceTree = "<group>"; };
 		B25598FB0D00D8B900BB825C /* SVGPointLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGPointLightSource.h; sourceTree = "<group>"; };
 		B25598FC0D00D8B900BB825C /* SVGSpotLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGSpotLightSource.h; sourceTree = "<group>"; };
-		B25598FE0D00D8B900BB825C /* SVGResourceFilterPlatformDataMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGResourceFilterPlatformDataMac.h; sourceTree = "<group>"; };
-		B25598FF0D00D8B900BB825C /* SVGResourceFilterPlatformDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGResourceFilterPlatformDataMac.mm; sourceTree = "<group>"; };
 		B255990B0D00D8B900BB825C /* SVGImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImage.cpp; sourceTree = "<group>"; };
 		B255990C0D00D8B900BB825C /* SVGImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGImage.h; sourceTree = "<group>"; };
 		B255990D0D00D8B900BB825C /* EmptyClients.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EmptyClients.h; sourceTree = "<group>"; };
@@ -13025,9 +13019,7 @@
 		B25598860D00D8B800BB825C /* graphics */ = {
 			isa = PBXGroup;
 			children = (
-				B255988F0D00D8B800BB825C /* cg */,
 				B255989C0D00D8B800BB825C /* filters */,
-				B25598FD0D00D8B900BB825C /* mac */,
 				B255990B0D00D8B900BB825C /* SVGImage.cpp */,
 				B255990C0D00D8B900BB825C /* SVGImage.h */,
 				B255990E0D00D8B900BB825C /* SVGPaintServer.cpp */,
@@ -13055,14 +13047,6 @@
 				B25599240D00D8B900BB825C /* SVGResourceMasker.h */,
 			);
 			path = graphics;
-			sourceTree = "<group>";
-		};
-		B255988F0D00D8B800BB825C /* cg */ = {
-			isa = PBXGroup;
-			children = (
-				B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */,
-			);
-			path = cg;
 			sourceTree = "<group>";
 		};
 		B255989C0D00D8B800BB825C /* filters */ = {
@@ -13155,15 +13139,6 @@
 				B25598D60D00D8B900BB825C /* WKTableTransferFilter.m */,
 			);
 			path = cg;
-			sourceTree = "<group>";
-		};
-		B25598FD0D00D8B900BB825C /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				B25598FE0D00D8B900BB825C /* SVGResourceFilterPlatformDataMac.h */,
-				B25598FF0D00D8B900BB825C /* SVGResourceFilterPlatformDataMac.mm */,
-			);
-			path = mac;
 			sourceTree = "<group>";
 		};
 		B27535290B053814002CE64F /* cg */ = {
@@ -16610,7 +16585,6 @@
 				B25599B30D00D8BA00BB825C /* SVGResource.h in Headers */,
 				B25599B50D00D8BA00BB825C /* SVGResourceClipper.h in Headers */,
 				B25599B70D00D8BA00BB825C /* SVGResourceFilter.h in Headers */,
-				B25599970D00D8BA00BB825C /* SVGResourceFilterPlatformDataMac.h in Headers */,
 				B25599B80D00D8BA00BB825C /* SVGResourceListener.h in Headers */,
 				B25599BA0D00D8BA00BB825C /* SVGResourceMarker.h in Headers */,
 				B25599BC0D00D8BA00BB825C /* SVGResourceMasker.h in Headers */,
@@ -18669,8 +18643,6 @@
 				B25599B20D00D8BA00BB825C /* SVGResource.cpp in Sources */,
 				B25599B40D00D8BA00BB825C /* SVGResourceClipper.cpp in Sources */,
 				B25599B60D00D8BA00BB825C /* SVGResourceFilter.cpp in Sources */,
-				B25599350D00D8BA00BB825C /* SVGResourceFilterCg.mm in Sources */,
-				B25599980D00D8BA00BB825C /* SVGResourceFilterPlatformDataMac.mm in Sources */,
 				B25599B90D00D8BA00BB825C /* SVGResourceMarker.cpp in Sources */,
 				B25599BB0D00D8BA00BB825C /* SVGResourceMasker.cpp in Sources */,
 				853CA9E80AEEC608002372DC /* SVGRootInlineBox.cpp in Sources */,

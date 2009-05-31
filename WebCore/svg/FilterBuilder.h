@@ -38,7 +38,7 @@ namespace WebCore {
         void add(const AtomicString& id, RefPtr<FilterEffect> effect);
 
         FilterEffect* getEffectById(const AtomicString& id) const;
-        FilterEffect* lastFilter() const { return m_lastEffect.get(); }
+        FilterEffect* lastEffect() const { return m_lastEffect.get(); }
 
         void clearEffects();
 

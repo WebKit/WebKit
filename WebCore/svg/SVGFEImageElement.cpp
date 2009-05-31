@@ -43,8 +43,6 @@ SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* doc
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
-    , m_cachedImage(0)
-    , m_filterEffect(0)
 {
 }
 
@@ -82,24 +80,17 @@ void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
-void SVGFEImageElement::notifyFinished(CachedResource* finishedObj)
+void SVGFEImageElement::notifyFinished(CachedResource*)
 {
-    if (finishedObj == m_cachedImage && m_filterEffect)
-        m_filterEffect->setCachedImage(m_cachedImage.get());
 }
 
-SVGFilterEffect* SVGFEImageElement::filterEffect(SVGResourceFilter* filter) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-bool SVGFEImageElement::build(FilterBuilder* builder)
+bool SVGFEImageElement::build(SVGResourceFilter* filterResource)
 {
     if(!m_cachedImage)
         return false;
 
-    builder->add(result(), FEImage::create(m_cachedImage.get()));
+    RefPtr<FilterEffect> effect = FEImage::create(m_cachedImage.get());
+    filterResource->addFilterEffect(this, effect.release());
 
     return true;
 }

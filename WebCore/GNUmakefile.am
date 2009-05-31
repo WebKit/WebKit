@@ -2399,9 +2399,6 @@ FEATURE_DEFINES_JAVASCRIPT += ENABLE_SVG=1
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in 
 WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
 
-webcoregtk_cppflags += \
-	-I$(srcdir)/WebCore/svg/graphics/cairo
-
 webcore_built_sources += \
 	DerivedSources/JSSVGElementWrapperFactory.cpp \
 	DerivedSources/SVGElementFactory.cpp \
@@ -2966,10 +2963,6 @@ webcore_sources += \
 	WebCore/svg/graphics/filters/SVGLightSource.h \
 	WebCore/svg/graphics/filters/SVGPointLightSource.h \
 	WebCore/svg/graphics/filters/SVGSpotLightSource.h
-
-webcoregtk_sources += \
-	WebCore/svg/graphics/cairo/SVGResourceFilterCairo.cpp
-
 
 # SVG Features
 if ENABLE_SVG_USE

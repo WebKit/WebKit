@@ -152,7 +152,6 @@ INCLUDEPATH += \
     $$PWD/platform/graphics/filters \
     $$PWD/platform/graphics/transforms \
     $$PWD/platform/graphics/qt \
-    $$PWD/svg/graphics/qt \
     $$PWD/page/qt \
     $$PWD/../WebKit/qt/WebCoreSupport \
 
@@ -1902,9 +1901,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/SVGInlineTextBox.cpp \
         rendering/SVGRenderSupport.cpp \
         rendering/SVGRootInlineBox.cpp
-
-SOURCES += \
-        svg/graphics/qt/SVGResourceFilterQt.cpp
 
 
         # GENERATOR 5-C:

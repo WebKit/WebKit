@@ -35,8 +35,7 @@ namespace WebCore {
         virtual ~SVGFECompositeElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
-        bool build(FilterBuilder*);
+        virtual bool build(SVGResourceFilter*);
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::inAttrString, String, In1, in1)
@@ -46,8 +45,6 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::k2AttrString, float, K2, k2)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::k3AttrString, float, K3, k3)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, SVGNames::feCompositeTagString, SVGNames::k4AttrString, float, K4, k4)
-
-        mutable RefPtr<FEComposite> m_filterEffect;
     };
 
 } // namespace WebCore

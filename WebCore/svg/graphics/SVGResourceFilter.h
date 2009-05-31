@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
+                  2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,21 +25,23 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGResource.h"
-#include "SVGFilterEffect.h"
 
+#include "Image.h"
+#include "ImageBuffer.h"
 #include "FloatRect.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
+class Filter;
+class FilterBuilder;
+class FilterEffect;
 class GraphicsContext;
-class SVGFilterEffect;
-    
-class SVGResourceFilterPlatformData {
-public:
-    virtual ~SVGResourceFilterPlatformData() {}
-};
+class SVGFilterPrimitiveStandardAttributes;
 
 class SVGResourceFilter : public SVGResource {
 public:
@@ -61,24 +64,24 @@ public:
     FloatRect filterRect() const { return m_filterRect; }
     void setFilterRect(const FloatRect& rect) { m_filterRect = rect; }
 
-    FloatRect filterBBoxForItemBBox(const FloatRect& itemBBox) const;
+    FloatRect filterBoundingBox() { return m_filterBBox; }
+    void setFilterBoundingBox(const FloatRect& rect) { m_filterBBox = rect; }
 
-    void clearEffects();
-    void addFilterEffect(SVGFilterEffect*);
+    FloatRect itemBoundingBox() { return m_itemBBox; }
+    void setItemBoundingBox(const FloatRect& rect) { m_itemBBox = rect; }
+
+    FloatRect filterBBoxForItemBBox(const FloatRect& itemBBox) const;
 
     virtual TextStream& externalRepresentation(TextStream&) const;
 
-    // To be implemented in platform specific code.
-    void prepareFilter(GraphicsContext*&, const FloatRect& bbox);
-    void applyFilter(GraphicsContext*&, const FloatRect& bbox);
-    
-    SVGResourceFilterPlatformData* platformData() { return m_platformData.get(); }
-    const Vector<SVGFilterEffect*>& effects() { return m_effects; }
+    void prepareFilter(GraphicsContext*&, const FloatRect&);
+    void applyFilter(GraphicsContext*&, const FloatRect&);
+
+    void addFilterEffect(SVGFilterPrimitiveStandardAttributes*, PassRefPtr<FilterEffect>);
+
+    FilterBuilder* builder() { return m_filterBuilder.get(); }
     
 private:
-    SVGResourceFilterPlatformData* createPlatformData();
-    
-    OwnPtr<SVGResourceFilterPlatformData> m_platformData;
 
     bool m_filterBBoxMode : 1;
     bool m_effectBBoxMode : 1;
@@ -87,7 +90,13 @@ private:
     bool m_yBBoxMode : 1;
 
     FloatRect m_filterRect;
-    Vector<SVGFilterEffect*> m_effects;
+
+    FloatRect m_filterBBox;
+    FloatRect m_itemBBox;
+
+    OwnPtr<FilterBuilder> m_filterBuilder;
+    GraphicsContext* m_savedContext;
+    OwnPtr<ImageBuffer> m_sourceGraphicBuffer;
 };
 
 SVGResourceFilter* getFilterById(Document*, const AtomicString&);

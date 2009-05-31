@@ -14814,30 +14814,6 @@
 					>
 				</File>
 				<Filter
-					Name="cg"
-					>
-					<File
-						RelativePath="..\svg\graphics\cg\SVGResourceFilterCg.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-				</Filter>
-				<Filter
 					Name="filters"
 					>
 					<File
@@ -14991,38 +14967,6 @@
 					<File
 						RelativePath="..\svg\graphics\filters\SVGSpotLightSource.h"
 						>
-					</File>
-				</Filter>
-				<Filter
-					Name="cairo"
-					>
-					<File
-						RelativePath="..\svg\graphics\cairo\SVGResourceFilterCairo.cpp"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug_Internal|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
 					</File>
 				</Filter>
 			</Filter>

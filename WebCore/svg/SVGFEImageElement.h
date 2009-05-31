@@ -47,17 +47,15 @@ namespace WebCore {
         virtual void notifyFinished(CachedResource*);
 
         virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
-        bool build(FilterBuilder*);
+        virtual bool build(SVGResourceFilter*);
 
     protected:
-        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGNames::feImageTagString, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
         CachedResourceHandle<CachedImage> m_cachedImage;
-        mutable RefPtr<FEImage> m_filterEffect;
     };
 
 } // namespace WebCore

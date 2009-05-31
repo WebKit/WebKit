@@ -34,7 +34,6 @@ SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& ta
     , m_xChannelSelector(this, SVGNames::xChannelSelectorAttr, CHANNEL_A)
     , m_yChannelSelector(this, SVGNames::yChannelSelectorAttr, CHANNEL_A)
     , m_scale(this, SVGNames::scaleAttr)
-    , m_filterEffect(0)
 {
 }
 
@@ -73,24 +72,18 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFilterEffect* SVGFEDisplacementMapElement::filterEffect(SVGResourceFilter* filter) const
+bool SVGFEDisplacementMapElement::build(SVGResourceFilter* filterResource)
 {
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-bool SVGFEDisplacementMapElement::build(FilterBuilder* builder)
-{
-    FilterEffect* input1 = builder->getEffectById(in1());
-    FilterEffect* input2 = builder->getEffectById(in2());
+    FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
+    FilterEffect* input2 = filterResource->builder()->getEffectById(in2());
     
     if(!input1 || !input2)
         return false;
         
     
-    RefPtr<FilterEffect> addedEffect = FEDisplacementMap::create(input1, input2, static_cast<ChannelSelectorType> (xChannelSelector()), 
-                                        static_cast<ChannelSelectorType> (yChannelSelector()), scale());
-    builder->add(result(), addedEffect.release());
+    RefPtr<FilterEffect> effect = FEDisplacementMap::create(input1, input2, static_cast<ChannelSelectorType>(xChannelSelector()), 
+                                        static_cast<ChannelSelectorType>(yChannelSelector()), scale());
+    filterResource->addFilterEffect(this, effect.release());
     
     return true;
 }

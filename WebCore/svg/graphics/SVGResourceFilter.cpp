@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
+                  2009 Dirk Schulze <krit@webkit.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,61 +25,94 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGResourceFilter.h"
 
+#include "FilterBuilder.h"
+#include "FilterEffect.h"
+#include "GraphicsContext.h"
+#include "ImageBuffer.h"
+#include "PlatformString.h"
+#include "SVGFilter.h"
 #include "SVGRenderTreeAsText.h"
-#include "SVGFilterEffect.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
 
 SVGResourceFilter::SVGResourceFilter()
-    : m_platformData(createPlatformData())
-    , m_filterBBoxMode(false)
+    : m_filterBBoxMode(false)
     , m_effectBBoxMode(false)
     , m_xBBoxMode(false)
     , m_yBBoxMode(false)
+    , m_savedContext(0)
+    , m_sourceGraphicBuffer(0)
 {
+    m_filterBuilder.set(new FilterBuilder());
 }
 
-void SVGResourceFilter::clearEffects()
+void SVGResourceFilter::addFilterEffect(SVGFilterPrimitiveStandardAttributes* effectAttributes, PassRefPtr<FilterEffect> effect)
 {
-    m_effects.clear();
-}
-
-void SVGResourceFilter::addFilterEffect(SVGFilterEffect* effect)
-{
-    ASSERT(effect);
-
-    if (effect) {
-        ASSERT(effect->filter() == this);
-        m_effects.append(effect);
-    }
+    effectAttributes->setStandardAttributes(this, effect.get());
+    builder()->add(effectAttributes->result(), effect);
 }
 
 FloatRect SVGResourceFilter::filterBBoxForItemBBox(const FloatRect& itemBBox) const
 {
     FloatRect filterBBox = filterRect();
 
-    float xOffset = 0.0f;
-    float yOffset = 0.0f;
-
-    if (!effectBoundingBoxMode()) {
-        xOffset = itemBBox.x();
-        yOffset = itemBBox.y();
-    }
-
-    if (filterBoundingBoxMode()) {
-        filterBBox = FloatRect(xOffset + filterBBox.x() * itemBBox.width(),
-                               yOffset + filterBBox.y() * itemBBox.height(),
+    if (filterBoundingBoxMode())
+        filterBBox = FloatRect(itemBBox.x() + filterBBox.x() * itemBBox.width(),
+                               itemBBox.y() + filterBBox.y() * itemBBox.height(),
                                filterBBox.width() * itemBBox.width(),
                                filterBBox.height() * itemBBox.height());
-    } else {
-        if (xBoundingBoxMode())
-            filterBBox.setX(xOffset + filterBBox.x());
-
-        if (yBoundingBoxMode())
-            filterBBox.setY(yOffset + filterBBox.y());
-    }
 
     return filterBBox;
+}
+
+void SVGResourceFilter::prepareFilter(GraphicsContext*& context, const FloatRect& itemRect)
+{
+    // Draw the content of the current element and it's childs to a imageBuffer to get the SourceGraphic.
+    // The size of the SourceGraphic must match the size of the element, the filter is aplied to.
+    IntSize bufferSize = IntSize(itemRect.width(), itemRect.height());
+    OwnPtr<ImageBuffer> sourceGraphic(ImageBuffer::create(bufferSize, false));
+    
+    if (!sourceGraphic.get())
+        return;
+
+    GraphicsContext* sourceGraphicContext = sourceGraphic->context();
+    sourceGraphicContext->translate(-itemRect.x(), -itemRect.y());
+    sourceGraphicContext->clearRect(FloatRect(0, 0, itemRect.width(), itemRect.height()));
+    m_sourceGraphicBuffer.set(sourceGraphic.release());
+    m_savedContext = context;
+
+    context = sourceGraphicContext;
+}
+
+void SVGResourceFilter::applyFilter(GraphicsContext*& context, const FloatRect& itemRect)
+{
+    if (!m_savedContext)
+        return;
+
+    FloatRect filterRect = filterBBoxForItemBBox(itemRect);
+
+    setFilterBoundingBox(filterRect);
+    setItemBoundingBox(itemRect);
+
+    context = m_savedContext;
+    m_savedContext = 0;
+
+    FilterEffect* lastEffect = m_filterBuilder->lastEffect();
+
+    if (lastEffect && !filterRect.isEmpty()) {
+        RefPtr<Filter> filter = SVGFilter::create(m_itemBBox, m_filterBBox, m_effectBBoxMode, m_filterBBoxMode);
+        filter->setSourceImage(m_sourceGraphicBuffer->image());
+        lastEffect->apply(filter.get());
+
+        context->clip(filterRect);
+
+        if (lastEffect->resultImage())
+            context->drawImage(lastEffect->resultImage()->image(), 
+                            lastEffect->subRegion());
+    }
+
+    m_sourceGraphicBuffer.clear();
 }
 
 TextStream& SVGResourceFilter::externalRepresentation(TextStream& ts) const
@@ -102,8 +136,6 @@ TextStream& SVGResourceFilter::externalRepresentation(TextStream& ts) const
         ts << " [bounding box mode=" << filterBoundingBoxMode() << "]";
     if (effectBoundingBoxMode()) // default is false
         ts << " [effect bounding box mode=" << effectBoundingBoxMode() << "]";
-    if (m_effects.size() > 0)
-        ts << " [effects=" << m_effects << "]";
 
     return ts;
 }

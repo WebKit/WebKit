@@ -25,9 +25,8 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
+#include "FilterEffect.h"
 #include "MappedAttribute.h"
-#include "SVGFilterEffect.h"
-#include "SVGFilterElement.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"
@@ -70,17 +69,17 @@ void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute*
         return SVGStyledElement::parseMappedAttribute(attr);
 }
 
-void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGFilterEffect* filterEffect) const
+void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGResourceFilter* resourceFilter, FilterEffect* filterEffect) const
 {
     ASSERT(filterEffect);
     if (!filterEffect)
         return;
 
-    ASSERT(filterEffect->filter());
+    ASSERT(resourceFilter);
 
     float _x, _y, _width, _height;
 
-    if (filterEffect->filter()->effectBoundingBoxMode()) {
+    if (resourceFilter->effectBoundingBoxMode()) {
         _x = x().valueAsPercentage();
         _y = y().valueAsPercentage();
         _width = width().valueAsPercentage();
@@ -121,7 +120,6 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGFilterEffect
     }
 
     filterEffect->setSubRegion(FloatRect(_x, _y, _width, _height));
-    filterEffect->setResult(result());
 }
 
 }
