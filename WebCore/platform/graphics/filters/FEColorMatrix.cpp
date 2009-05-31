@@ -24,7 +24,7 @@
 #if ENABLE(FILTERS)
 #include "FEColorMatrix.h"
 
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -61,7 +61,7 @@ void FEColorMatrix::setValues(const Vector<float> &values)
     m_values = values;
 }
 
-void FEColorMatrix::apply(SVGResourceFilter*)
+void FEColorMatrix::apply(Filter*)
 {
 }
 

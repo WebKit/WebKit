@@ -25,7 +25,7 @@
 #include "SVGLightSource.h"
 #include "SVGFEDiffuseLighting.h"
 #include "SVGRenderTreeAsText.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -113,7 +113,7 @@ void FEDiffuseLighting::setLightSource(LightSource* lightSource)
     m_lightSource = lightSource;
 }
 
-void FEDiffuseLighting::apply(SVGResourceFilter*)
+void FEDiffuseLighting::apply(Filter*)
 {
 }
 

@@ -24,7 +24,7 @@
 #include "FilterEffect.h"
 
 #include "PlatformString.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -34,7 +34,7 @@ namespace WebCore {
 
         static const AtomicString& effectName();
 
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
     
     private:

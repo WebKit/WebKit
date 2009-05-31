@@ -24,8 +24,8 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "Color.h"
+#include "Filter.h"
 #include "FilterEffect.h"
-#include "SVGResourceFilter.h"
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ namespace WebCore {
         float floodOpacity() const;
         void setFloodOpacity(float);
 
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
 

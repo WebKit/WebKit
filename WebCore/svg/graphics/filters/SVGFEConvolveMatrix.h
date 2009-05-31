@@ -26,7 +26,7 @@
 #include "FilterEffect.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -68,7 +68,7 @@ namespace WebCore {
         bool preserveAlpha() const;
         void setPreserveAlpha(bool);
 
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
 

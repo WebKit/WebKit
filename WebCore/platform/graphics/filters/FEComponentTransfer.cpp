@@ -24,7 +24,7 @@
 #if ENABLE(FILTERS)
 #include "FEComponentTransfer.h"
 
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -85,7 +85,7 @@ void FEComponentTransfer::setAlphaFunction(const ComponentTransferFunction& func
     m_alphaFunc = func;
 }
 
-void FEComponentTransfer::apply(SVGResourceFilter*)
+void FEComponentTransfer::apply(Filter*)
 {
 }
 

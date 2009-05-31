@@ -25,7 +25,7 @@
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"
 
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ namespace WebCore {
         BlendModeType blendMode() const;
         void setBlendMode(BlendModeType);
         
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
 
     private:

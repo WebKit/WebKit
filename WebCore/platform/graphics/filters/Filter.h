@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  *
- *  This library is free software; you can redistribute it and/or
+ *   This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
  *  License as published by the Free Software Foundation; either
  *  version 2 of the License, or (at your option) any later version.
@@ -17,38 +17,35 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
+#ifndef Filter_h
+#define Filter_h
 
 #if ENABLE(FILTERS)
-#include "SourceGraphic.h"
+#include "Image.h"
+#include "StringHash.h"
 
-#include "GraphicsContext.h"
-#include "PlatformString.h"
-#include "Filter.h"
-
-#include <wtf/StdLibExtras.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<SourceGraphic> SourceGraphic::create()
-{
-    return adoptRef(new SourceGraphic);
-}
+    class FilterEffect;
 
-const AtomicString& SourceGraphic::effectName()
-{
-    DEFINE_STATIC_LOCAL(const AtomicString, s_effectName, ("SourceGraphic"));
-    return s_effectName;
-}
+    class Filter : public RefCounted<Filter> {
+    public:
 
-void SourceGraphic::apply(Filter*)
-{
-}
+        void setSourceImage(PassOwnPtr<Image> image) { m_image = image; }
+        Image* sourceImage() { return m_image.get(); }
 
-void SourceGraphic::dump()
-{
-}
+        virtual void calculateEffectSubRegion(FilterEffect*) = 0;
+
+    private:
+        OwnPtr<Image> m_image;
+    };
 
 } // namespace WebCore
 
 #endif // ENABLE(FILTERS)
+
+#endif // Filter_h

@@ -26,7 +26,7 @@
 #include "Color.h"
 #include "FilterEffect.h"
 #include "SVGLightSource.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -57,7 +57,7 @@ namespace WebCore {
         const LightSource* lightSource() const;
         void setLightSource(LightSource*);
 
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
 

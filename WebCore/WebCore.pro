@@ -1866,6 +1866,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFESpecularLighting.cpp \
         svg/graphics/filters/SVGFETile.cpp \
         svg/graphics/filters/SVGFETurbulence.cpp \
+        svg/graphics/filters/SVGFilter.cpp \
         svg/graphics/filters/SVGFilterEffect.cpp \
         svg/graphics/filters/SVGLightSource.cpp \
         svg/graphics/SVGImage.cpp \

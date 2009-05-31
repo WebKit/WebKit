@@ -24,7 +24,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFESpecularLighting.h"
 #include "SVGRenderTreeAsText.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -125,7 +125,7 @@ void FESpecularLighting::setLightSource(LightSource* lightSource)
     m_lightSource = lightSource;
 }
 
-void FESpecularLighting::apply(SVGResourceFilter*)
+void FESpecularLighting::apply(Filter*)
 {
 }
 

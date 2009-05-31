@@ -24,7 +24,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ namespace WebCore {
         float radiusY() const;
         void setRadiusY(float);
 
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
 

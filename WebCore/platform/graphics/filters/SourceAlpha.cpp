@@ -24,7 +24,7 @@
 
 #include "GraphicsContext.h"
 #include "PlatformString.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 #include <wtf/StdLibExtras.h>
 
@@ -41,7 +41,7 @@ const AtomicString& SourceAlpha::effectName()
     return s_effectName;
 }
 
-void SourceAlpha::apply(SVGResourceFilter*)
+void SourceAlpha::apply(Filter*)
 {
 }
 

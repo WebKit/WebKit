@@ -1,3 +1,83 @@
+2009-05-31  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        WebKit needs cross-platform filter system
+        [https://bugs.webkit.org/show_bug.cgi?id=19991]
+
+        Replace all occurrences of SVGResourceFilter by Filter. This is the last 
+        step for a SVG independent filter system. Every other part of WebCore can
+        use the filter system by creating a new Filter object.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::apply):
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::apply):
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/Filter.h: Added.
+        (WebCore::Filter::setSourceImage):
+        (WebCore::Filter::sourceImage):
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::apply):
+        * platform/graphics/filters/SourceAlpha.h:
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::apply):
+        * platform/graphics/filters/SourceGraphic.h:
+        * svg/Filter.cpp: Removed.
+        * svg/Filter.h: Removed.
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::apply):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::apply):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::apply):
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::apply):
+        * svg/graphics/filters/SVGFEFlood.h:
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::apply):
+        * svg/graphics/filters/SVGFEGaussianBlur.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::apply):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::apply):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::FEMorphology::apply):
+        * svg/graphics/filters/SVGFEMorphology.h:
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::apply):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::FETurbulence::apply):
+        * svg/graphics/filters/SVGFETurbulence.h:
+        * svg/graphics/filters/SVGFilter.cpp: Added.
+        (WebCore::SVGFilter::SVGFilter):
+        (WebCore::SVGFilter::calculateEffectSubRegion):
+        (WebCore::SVGFilter::create):
+        * svg/graphics/filters/SVGFilter.h: Added.
+
 2009-05-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix for platforms without plugins support.

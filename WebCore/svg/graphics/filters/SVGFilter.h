@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  *
- *  This library is free software; you can redistribute it and/or
+ *   This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
  *  License as published by the Free Software Foundation; either
  *  version 2 of the License, or (at your option) any later version.
@@ -17,38 +17,37 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#include "config.h"
+#ifndef SVGFilter_h
+#define SVGFilter_h
 
-#if ENABLE(FILTERS)
-#include "SourceGraphic.h"
-
-#include "GraphicsContext.h"
-#include "PlatformString.h"
+#if ENABLE(SVG) && ENABLE(FILTERS)
 #include "Filter.h"
+#include "FilterEffect.h"
+#include "FloatRect.h"
 
-#include <wtf/StdLibExtras.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<SourceGraphic> SourceGraphic::create()
-{
-    return adoptRef(new SourceGraphic);
-}
+    class SVGFilter : public Filter {
+    public:
+        static PassRefPtr<SVGFilter> create(const FloatRect&, const FloatRect&, bool, bool);
 
-const AtomicString& SourceGraphic::effectName()
-{
-    DEFINE_STATIC_LOCAL(const AtomicString, s_effectName, ("SourceGraphic"));
-    return s_effectName;
-}
+        void calculateEffectSubRegion(FilterEffect*);
 
-void SourceGraphic::apply(Filter*)
-{
-}
+    private:
+        SVGFilter(const FloatRect& itemBox, const FloatRect& filterRect, bool itemBBoxMode, bool filterBBoxMode);
 
-void SourceGraphic::dump()
-{
-}
+        FloatRect m_itemBox;
+        FloatRect m_filterRect;
+        bool m_effectBBoxMode;
+        bool m_filterBBoxMode;
+    };
 
 } // namespace WebCore
 
-#endif // ENABLE(FILTERS)
+#endif // ENABLE(SVG) && ENABLE(FILTERS)
+
+#endif // SVGFilter_h

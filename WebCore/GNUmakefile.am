@@ -2359,6 +2359,7 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FEComponentTransfer.h \
 	WebCore/platform/graphics/filters/FEComposite.cpp \
 	WebCore/platform/graphics/filters/FEComposite.h \
+	WebCore/platform/graphics/filters/Filter.h \
 	WebCore/platform/graphics/filters/FilterEffect.cpp \
 	WebCore/platform/graphics/filters/FilterEffect.h \
 	WebCore/platform/graphics/filters/SourceAlpha.cpp \
@@ -2626,8 +2627,6 @@ webcore_sources += \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/ColorDistance.h \
 	WebCore/svg/ElementTimeControl.h \
-	WebCore/svg/Filter.cpp \
-	WebCore/svg/Filter.h \
 	WebCore/svg/FilterBuilder.h \
 	WebCore/svg/FilterBuilder.cpp \
 	WebCore/svg/GradientAttributes.h \
@@ -2959,6 +2958,8 @@ webcore_sources += \
 	WebCore/svg/graphics/filters/SVGFETile.h \
 	WebCore/svg/graphics/filters/SVGFETurbulence.cpp \
 	WebCore/svg/graphics/filters/SVGFETurbulence.h \
+	WebCore/svg/graphics/filters/SVGFilter.cpp \
+	WebCore/svg/graphics/filters/SVGFilter.h \
 	WebCore/svg/graphics/filters/SVGFilterEffect.cpp \
 	WebCore/svg/graphics/filters/SVGFilterEffect.h \
 	WebCore/svg/graphics/filters/SVGLightSource.cpp \

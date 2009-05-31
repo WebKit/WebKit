@@ -24,7 +24,7 @@
 #if ENABLE(FILTERS)
 #include "FEBlend.h"
 
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -61,7 +61,7 @@ void FEBlend::setBlendMode(BlendModeType mode)
     m_mode = mode;
 }
 
-void FEBlend::apply(SVGResourceFilter*)
+void FEBlend::apply(Filter*)
 {
 }
 

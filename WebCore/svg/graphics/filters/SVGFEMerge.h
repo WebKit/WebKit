@@ -24,7 +24,7 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -36,7 +36,7 @@ namespace WebCore {
         const Vector<FilterEffect*>& mergeInputs() const;
         void setMergeInputs(const Vector<FilterEffect*>& mergeInputs);
         
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
 

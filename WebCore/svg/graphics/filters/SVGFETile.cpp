@@ -22,7 +22,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFETile.h"
 #include "SVGRenderTreeAsText.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ PassRefPtr<FETile> FETile::create(FilterEffect* in)
     return adoptRef(new FETile(in));
 }
 
-void FETile::apply(SVGResourceFilter*)
+void FETile::apply(Filter*)
 {
 }
 

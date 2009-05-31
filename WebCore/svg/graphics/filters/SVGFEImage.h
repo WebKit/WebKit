@@ -27,7 +27,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "FilterEffect.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ namespace WebCore {
         CachedImage* cachedImage() const;
         void setCachedImage(CachedImage*);
         
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
         

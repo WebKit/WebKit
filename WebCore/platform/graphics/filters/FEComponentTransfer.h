@@ -26,7 +26,7 @@
 #include "FilterEffect.h"
 
 #include "SVGFEDisplacementMap.h"
-#include "SVGResourceFilter.h"
+#include "Filter.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -79,7 +79,7 @@ namespace WebCore {
         ComponentTransferFunction alphaFunction() const;
         void setAlphaFunction(const ComponentTransferFunction&);
         
-        void apply(SVGResourceFilter*);
+        void apply(Filter*);
         void dump();
 
     private:
