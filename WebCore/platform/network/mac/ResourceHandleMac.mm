@@ -43,6 +43,7 @@
 #import "SharedBuffer.h"
 #import "SubresourceLoader.h"
 #import "WebCoreSystemInterface.h"
+#import "WebCoreURLResponse.h"
 #import <wtf/UnusedParam.h>
 
 #ifndef BUILDING_ON_TIGER
@@ -641,6 +642,22 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
     if ([m_handle->request().nsURLRequest() _propertyForKey:@"ForceHTMLMIMEType"])
         [r _setMIMEType:@"text/html"];
+
+#if ENABLE(WML)
+    const KURL& url = [r URL];
+    if (url.isLocalFile()) {
+        // FIXME: Workaround for <rdar://problem/6917571>: The WML file extension ".wml" is not mapped to
+        // the right MIME type, work around that CFNetwork problem, to unbreak WML support for local files.
+        const String& path = url.path();
+  
+        DEFINE_STATIC_LOCAL(const String, wmlExt, (".wml"));
+        if (path.endsWith(wmlExt, false)) {
+            static NSString* defaultMIMETypeString = [(NSString*) defaultMIMEType() retain];
+            if ([[r _webcore_MIMEType] isEqualToString:defaultMIMETypeString])
+                [r _setMIMEType:@"text/vnd.wap.wml"];
+        }
+    }
+#endif
 
     m_handle->client()->didReceiveResponse(m_handle, r);
 }

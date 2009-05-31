@@ -1,3 +1,15 @@
+2009-05-30  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Darin Adler.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=25979
+
+        Fix regression, local WML files won't load anymore, as the mimetype isn't correctly detected.    
+        Bug filed at <rdar://problem/6917571> to cover this CFNetwork limitation.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+
 2009-05-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
