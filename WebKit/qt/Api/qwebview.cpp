@@ -286,27 +286,28 @@ void QWebView::setPage(QWebPage *page)
  */
 QUrl QWebView::guessUrlFromString(const QString &string)
 {
+    QString trimmedString = string.trimmed();
+
     // Check the most common case of a valid url with scheme and host first
-    QUrl url = QUrl::fromEncoded(string.toUtf8(), QUrl::TolerantMode);
+    QUrl url = QUrl::fromEncoded(trimmedString.toUtf8(), QUrl::TolerantMode);
     if (url.isValid() && !url.scheme().isEmpty() && !url.host().isEmpty())
         return url;
 
     // Absolute files that exists
-    if (QDir::isAbsolutePath(string) && QFile::exists(string))
-        return QUrl::fromLocalFile(string);
+    if (QDir::isAbsolutePath(trimmedString) && QFile::exists(trimmedString))
+        return QUrl::fromLocalFile(trimmedString);
 
     // If the string is missing the scheme or the scheme is not valid prepend a scheme
     QString scheme = url.scheme();
     if (scheme.isEmpty() || scheme.contains(QLatin1Char('.')) || scheme == QLatin1String("localhost")) {
-        QString urlString = string.trimmed();
         // Do not do anything for strings such as "foo", only "foo.com"
-        int dotIndex = urlString.indexOf(QLatin1Char('.'));
-        if (dotIndex != -1 || urlString.startsWith(QLatin1String("localhost"))) {
-            const QString hostscheme = urlString.left(dotIndex).toLower();
+        int dotIndex = trimmedString.indexOf(QLatin1Char('.'));
+        if (dotIndex != -1 || trimmedString.startsWith(QLatin1String("localhost"))) {
+            const QString hostscheme = trimmedString.left(dotIndex).toLower();
             QByteArray scheme = (hostscheme == QLatin1String("ftp")) ? "ftp" : "http";
-            urlString = QLatin1String(scheme) + QLatin1String("://") + urlString;
+            trimmedString = QLatin1String(scheme) + QLatin1String("://") + trimmedString;
         }
-        url = QUrl::fromEncoded(urlString.toUtf8(), QUrl::TolerantMode);
+        url = QUrl::fromEncoded(trimmedString.toUtf8(), QUrl::TolerantMode);
     }
 
     if (url.isValid())

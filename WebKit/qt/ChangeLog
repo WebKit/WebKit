@@ -2,6 +2,17 @@
 
         Rubber-stamped by Gustavo Noronha.
 
+        Before guessing the url trim the string to remove whitespace added to the start/end by the user.
+
+        * Api/qwebview.cpp:
+        (QWebView::guessUrlFromString):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::guessUrlFromString_data):
+
+2009-06-01  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Rubber-stamped by Gustavo Noronha.
+
         Use QLatin1Char() to compile when QT_NO_CAST_FROM_ASCII and QT_NO_CAST_TO_ASCII is defined
 
         * Api/qwebview.cpp:
