@@ -1,2 +1,1 @@
-XPathResult_invalidIteratorState_ORDERED_NODE_ITERATOR_TYPE
-true: assertTrue failed
+XPathResult_invalidIteratorState_ORDERED_NODE_ITERATOR_TYPE: Success

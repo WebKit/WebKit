@@ -1,6 +1,6 @@
 /*
- * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,7 @@
 
 #if ENABLE(XPATH)
 
-#include "EventListener.h"
-#include "EventNames.h"
+#include "Document.h"
 #include "Node.h"
 #include "ExceptionCode.h"
 #include "XPathEvaluator.h"
@@ -40,22 +39,9 @@ namespace WebCore {
 
 using namespace XPath;
 
-class InvalidatingEventListener : public EventListener {
-public:
-    static PassRefPtr<InvalidatingEventListener> create(XPathResult* result) { return adoptRef(new InvalidatingEventListener(result)); }
-    virtual void handleEvent(Event*, bool) { m_result->invalidateIteratorState(); }
-
-private:
-    InvalidatingEventListener(XPathResult* result) : m_result(result) { }
-    XPathResult* m_result;
-};
-
-XPathResult::XPathResult(Node* eventTarget, const Value& value)
+XPathResult::XPathResult(Document* document, const Value& value)
     : m_value(value)
-    , m_eventTarget(eventTarget)
 {
-    m_eventListener = InvalidatingEventListener::create(this);
-    m_eventTarget->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener, false);
     switch (m_value.type()) {
         case Value::BooleanValue:
             m_resultType = BOOLEAN_TYPE;
@@ -70,7 +56,8 @@ XPathResult::XPathResult(Node* eventTarget, const Value& value)
             m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
             m_nodeSetPosition = 0;
             m_nodeSet = m_value.toNodeSet();
-            m_invalidIteratorState = false;
+            m_document = document;
+            m_domTreeVersion = document->domTreeVersion();
             return;
     }
     ASSERT_NOT_REACHED();
@@ -78,8 +65,6 @@ XPathResult::XPathResult(Node* eventTarget, const Value& value)
 
 XPathResult::~XPathResult()
 {
-    if (m_eventTarget)
-        m_eventTarget->removeEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
 }
 
 void XPathResult::convertTo(unsigned short type, ExceptionCode& ec)
@@ -174,24 +159,13 @@ Node* XPathResult::singleNodeValue(ExceptionCode& ec) const
         return nodes.anyNode();
 }
 
-void XPathResult::invalidateIteratorState()
-{ 
-    m_invalidIteratorState = true;
-    
-    ASSERT(m_eventTarget);
-    ASSERT(m_eventListener);
-    
-    m_eventTarget->removeEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
-    
-    m_eventTarget = 0;
-}
-
 bool XPathResult::invalidIteratorState() const
 {
     if (resultType() != UNORDERED_NODE_ITERATOR_TYPE && resultType() != ORDERED_NODE_ITERATOR_TYPE)
         return false;
-    
-    return m_invalidIteratorState;
+
+    ASSERT(m_document);
+    return m_document->domTreeVersion() != m_domTreeVersion;
 }
 
 unsigned long XPathResult::snapshotLength(ExceptionCode& ec) const
@@ -211,7 +185,7 @@ Node* XPathResult::iterateNext(ExceptionCode& ec)
         return 0;
     }
     
-    if (m_invalidIteratorState) {
+    if (invalidIteratorState()) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
