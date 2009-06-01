@@ -70,6 +70,7 @@ EXPORTS
     ?create@FunctionBodyNode@JSC@@SA?AV?$PassRefPtr@VFunctionBodyNode@JSC@@@WTF@@PAVJSGlobalData@2@PAVSourceElements@2@PAV?$Vector@U?$pair@VIdentifier@JSC@@I@std@@$0A@@4@PAV?$Vector@PAVFuncDeclNode@JSC@@$0A@@4@ABVSourceCode@2@IH@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@_N@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
+    ?create@Rep@UString@JSC@@SA?AV?$PassRefPtr@URep@UString@JSC@@@WTF@@PA_WHV?$PassRefPtr@V?$CrossThreadRefCounted@V?$OwnFastMallocPtr@_W@WTF@@@WTF@@@5@@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createInheritorID@JSObject@JSC@@AAEPAVStructure@2@XZ
     ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@XZ
@@ -211,6 +212,7 @@ EXPORTS
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z
     ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z
+    ?sharedBuffer@BaseString@UString@JSC@@QAEPAV?$CrossThreadRefCounted@V?$OwnFastMallocPtr@_W@WTF@@@WTF@@XZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?startIgnoringLeaks@Structure@JSC@@SAXXZ

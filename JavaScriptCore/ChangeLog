@@ -1,5 +1,15 @@
 2009-06-01  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY (windows build fix).
+
+        Add exports for windows (corresponding to the JavaScriptCore.exp modification
+        in the previous change).
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-06-01  David Levin  <levin@chromium.org>
+
         Reviewed by Darin Alder and Maciej Stachowiak.
 
         Bug 26057: StringImpl should share buffers with UString.
