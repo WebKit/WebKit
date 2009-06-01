@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef FilterBuilder_h
-#define FilterBuilder_h
+#ifndef SVGFilterBuilder_h
+#define SVGFilterBuilder_h
 
 #include "config.h"
 
@@ -31,9 +31,9 @@
 
 namespace WebCore {
     
-    class FilterBuilder : public RefCounted<FilterBuilder> {
+    class SVGFilterBuilder : public RefCounted<SVGFilterBuilder> {
     public:
-        FilterBuilder();
+        SVGFilterBuilder();
 
         void add(const AtomicString& id, RefPtr<FilterEffect> effect);
 

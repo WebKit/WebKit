@@ -38,9 +38,9 @@
 namespace WebCore {
 
 class Filter;
-class FilterBuilder;
 class FilterEffect;
 class GraphicsContext;
+class SVGFilterBuilder;
 class SVGFilterPrimitiveStandardAttributes;
 
 class SVGResourceFilter : public SVGResource {
@@ -79,7 +79,7 @@ public:
 
     void addFilterEffect(SVGFilterPrimitiveStandardAttributes*, PassRefPtr<FilterEffect>);
 
-    FilterBuilder* builder() { return m_filterBuilder.get(); }
+    SVGFilterBuilder* builder() { return m_filterBuilder.get(); }
     
 private:
 
@@ -94,7 +94,7 @@ private:
     FloatRect m_filterBBox;
     FloatRect m_itemBBox;
 
-    OwnPtr<FilterBuilder> m_filterBuilder;
+    OwnPtr<SVGFilterBuilder> m_filterBuilder;
     GraphicsContext* m_savedContext;
     OwnPtr<ImageBuffer> m_sourceGraphicBuffer;
 };

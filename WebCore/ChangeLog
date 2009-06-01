@@ -1,3 +1,32 @@
+2009-05-31  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        WebKit needs cross-platform filter system
+        [https://bugs.webkit.org/show_bug.cgi?id=19991]
+
+        A short clean-up. FilterBuilder is SVG specific. Move it
+        to svg/graphics/filters and rename it to SVGFilterBuilder. 
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/FilterBuilder.cpp: Removed.
+        * svg/FilterBuilder.h: Removed.
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::SVGResourceFilter):
+        * svg/graphics/SVGResourceFilter.h:
+        (WebCore::SVGResourceFilter::builder):
+        * svg/graphics/filters/SVGFilterBuilder.cpp: Added.
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder):
+        (WebCore::SVGFilterBuilder::add):
+        (WebCore::SVGFilterBuilder::getEffectById):
+        (WebCore::SVGFilterBuilder::clearEffects):
+        * svg/graphics/filters/SVGFilterBuilder.h: Added.
+        (WebCore::SVGFilterBuilder::lastEffect):
+
 2009-05-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

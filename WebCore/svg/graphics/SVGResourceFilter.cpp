@@ -25,12 +25,12 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGResourceFilter.h"
 
-#include "FilterBuilder.h"
 #include "FilterEffect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PlatformString.h"
 #include "SVGFilter.h"
+#include "SVGFilterBuilder.h"
 #include "SVGRenderTreeAsText.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -44,7 +44,7 @@ SVGResourceFilter::SVGResourceFilter()
     , m_savedContext(0)
     , m_sourceGraphicBuffer(0)
 {
-    m_filterBuilder.set(new FilterBuilder());
+    m_filterBuilder.set(new SVGFilterBuilder());
 }
 
 void SVGResourceFilter::addFilterEffect(SVGFilterPrimitiveStandardAttributes* effectAttributes, PassRefPtr<FilterEffect> effect)

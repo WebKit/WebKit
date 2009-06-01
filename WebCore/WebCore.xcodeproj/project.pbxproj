@@ -50,6 +50,8 @@
 		0818AEE30EDB86BC00647B66 /* WMLEventHandlingElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0818AEE10EDB86BC00647B66 /* WMLEventHandlingElement.h */; };
 		081D81310EE0E74D00D73689 /* WMLTimerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 081D812F0EE0E74D00D73689 /* WMLTimerElement.cpp */; };
 		081D81320EE0E74D00D73689 /* WMLTimerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 081D81300EE0E74D00D73689 /* WMLTimerElement.h */; };
+		081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 081EBF380FD34F4100DA7559 /* SVGFilterBuilder.cpp */; };
+		081EBF3B0FD34F4100DA7559 /* SVGFilterBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 081EBF390FD34F4100DA7559 /* SVGFilterBuilder.h */; };
 		08203A9F0ED8C35300B8B61A /* WMLAccessElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08203A9D0ED8C35300B8B61A /* WMLAccessElement.cpp */; };
 		08203AA00ED8C35300B8B61A /* WMLAccessElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08203A9E0ED8C35300B8B61A /* WMLAccessElement.h */; };
 		082341C50FCF3A9500D75BD6 /* WMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */; };
@@ -744,7 +746,6 @@
 		4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */; };
 		4E19592D0A39DACC00220FE5 /* MediaQueryExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */; };
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
-		50A5DF760E1A13C9000A03AE /* FilterBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 50A5DF740E1A13C9000A03AE /* FilterBuilder.h */; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
 		5116D9770CF177BD00C2B84D /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5116D9750CF177BD00C2B84D /* DatabaseDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -999,7 +1000,6 @@
 		845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 845E72F90FD2623900A87D79 /* SVGFilter.cpp */; };
 		845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72FA0FD2623900A87D79 /* SVGFilter.h */; };
 		849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 849F77750EFEC6200090849D /* StrokeStyleApplier.h */; };
-		84A81F3A0FC7DFCC00955300 /* FilterBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84A81F390FC7DFCC00955300 /* FilterBuilder.cpp */; };
 		84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */; };
 		84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A81F3C0FC7DFF000955300 /* SourceAlpha.h */; };
 		84A81F410FC7E02700955300 /* SourceGraphic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84A81F3F0FC7E02700955300 /* SourceGraphic.cpp */; };
@@ -4949,6 +4949,8 @@
 		0818AEE10EDB86BC00647B66 /* WMLEventHandlingElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLEventHandlingElement.h; sourceTree = "<group>"; };
 		081D812F0EE0E74D00D73689 /* WMLTimerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTimerElement.cpp; sourceTree = "<group>"; };
 		081D81300EE0E74D00D73689 /* WMLTimerElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTimerElement.h; sourceTree = "<group>"; };
+		081EBF380FD34F4100DA7559 /* SVGFilterBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilterBuilder.cpp; sourceTree = "<group>"; };
+		081EBF390FD34F4100DA7559 /* SVGFilterBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilterBuilder.h; sourceTree = "<group>"; };
 		08203A9D0ED8C35300B8B61A /* WMLAccessElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLAccessElement.cpp; sourceTree = "<group>"; };
 		08203A9E0ED8C35300B8B61A /* WMLAccessElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLAccessElement.h; sourceTree = "<group>"; };
 		082341C30FCF3A9400D75BD6 /* WMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLSelectElement.cpp; sourceTree = "<group>"; };
@@ -5709,7 +5711,6 @@
 		4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryEvaluator.h; sourceTree = "<group>"; };
 		4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExp.cpp; sourceTree = "<group>"; };
 		4E1959280A39DACC00220FE5 /* MediaQueryExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryExp.h; sourceTree = "<group>"; };
-		50A5DF740E1A13C9000A03AE /* FilterBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterBuilder.h; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
 		5116D9750CF177BD00C2B84D /* DatabaseDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseDetails.h; sourceTree = "<group>"; };
@@ -5988,7 +5989,6 @@
 		845E72F90FD2623900A87D79 /* SVGFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFilter.cpp; sourceTree = "<group>"; };
 		845E72FA0FD2623900A87D79 /* SVGFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFilter.h; sourceTree = "<group>"; };
 		849F77750EFEC6200090849D /* StrokeStyleApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrokeStyleApplier.h; sourceTree = "<group>"; };
-		84A81F390FC7DFCC00955300 /* FilterBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilterBuilder.cpp; sourceTree = "<group>"; };
 		84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourceAlpha.cpp; path = filters/SourceAlpha.cpp; sourceTree = "<group>"; };
 		84A81F3C0FC7DFF000955300 /* SourceAlpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceAlpha.h; path = filters/SourceAlpha.h; sourceTree = "<group>"; };
 		84A81F3F0FC7E02700955300 /* SourceGraphic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourceGraphic.cpp; path = filters/SourceGraphic.cpp; sourceTree = "<group>"; };
@@ -12582,14 +12582,12 @@
 		B22277CA0D00BF1E0071B782 /* svg */ = {
 			isa = PBXGroup;
 			children = (
-				84A81F390FC7DFCC00955300 /* FilterBuilder.cpp */,
 				E46E97860DAAD61B0071E894 /* animation */,
 				B25598860D00D8B800BB825C /* graphics */,
 				B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */,
 				B22277CC0D00BF1F0071B782 /* ColorDistance.h */,
 				E415F1830D9A1A830033CE97 /* ElementTimeControl.h */,
 				E415F10C0D9A05870033CE97 /* ElementTimeControl.idl */,
-				50A5DF740E1A13C9000A03AE /* FilterBuilder.h */,
 				B22277CD0D00BF1F0071B782 /* GradientAttributes.h */,
 				B22277CE0D00BF1F0071B782 /* LinearGradientAttributes.h */,
 				B22277DB0D00BF1F0071B782 /* PatternAttributes.h */,
@@ -13050,8 +13048,6 @@
 		B255989C0D00D8B800BB825C /* filters */ = {
 			isa = PBXGroup;
 			children = (
-				845E72F90FD2623900A87D79 /* SVGFilter.cpp */,
-				845E72FA0FD2623900A87D79 /* SVGFilter.h */,
 				B255989D0D00D8B800BB825C /* cg */,
 				B25598D70D00D8B900BB825C /* SVGDistantLightSource.h */,
 				B25598E00D00D8B900BB825C /* SVGFEConvolveMatrix.cpp */,
@@ -13078,6 +13074,10 @@
 				B25598F40D00D8B900BB825C /* SVGFETile.h */,
 				B25598F50D00D8B900BB825C /* SVGFETurbulence.cpp */,
 				B25598F60D00D8B900BB825C /* SVGFETurbulence.h */,
+				845E72F90FD2623900A87D79 /* SVGFilter.cpp */,
+				845E72FA0FD2623900A87D79 /* SVGFilter.h */,
+				081EBF380FD34F4100DA7559 /* SVGFilterBuilder.cpp */,
+				081EBF390FD34F4100DA7559 /* SVGFilterBuilder.h */,
 				B25598F70D00D8B900BB825C /* SVGFilterEffect.cpp */,
 				B25598F80D00D8B900BB825C /* SVGFilterEffect.h */,
 				B25598F90D00D8B900BB825C /* SVGLightSource.cpp */,
@@ -15649,7 +15649,6 @@
 				BCDBB8AC0E088CA500C60FF6 /* FileList.h in Headers */,
 				514B3F730C722047000530DF /* FileSystem.h in Headers */,
 				BC5EB69F0E81DAEB00B25965 /* FillLayer.h in Headers */,
-				50A5DF760E1A13C9000A03AE /* FilterBuilder.h in Headers */,
 				A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */,
 				BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */,
 				B27535690B053814002CE64F /* FloatPoint.h in Headers */,
@@ -16950,6 +16949,7 @@
 				082341C60FCF3A9500D75BD6 /* WMLSelectElement.h in Headers */,
 				845E72F80FD261EE00A87D79 /* Filter.h in Headers */,
 				845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */,
+				081EBF3B0FD34F4100DA7559 /* SVGFilterBuilder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18967,12 +18967,12 @@
 				29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */,
 				29A8124A0FBB9CA900510293 /* AccessibilityObjectWrapper.mm in Sources */,
 				29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */,
-				84A81F3A0FC7DFCC00955300 /* FilterBuilder.cpp in Sources */,
 				84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */,
 				84A81F410FC7E02700955300 /* SourceGraphic.cpp in Sources */,
 				08C925190FCC7C4A00480DEC /* FilterEffect.cpp in Sources */,
 				082341C50FCF3A9500D75BD6 /* WMLSelectElement.cpp in Sources */,
 				845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */,
+				081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

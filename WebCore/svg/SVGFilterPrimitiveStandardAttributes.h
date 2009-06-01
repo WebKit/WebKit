@@ -24,7 +24,7 @@
 #define SVGFilterPrimitiveStandardAttributes_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "FilterBuilder.h"
+#include "SVGFilterBuilder.h"
 #include "SVGResourceFilter.h"
 #include "SVGStyledElement.h"
 

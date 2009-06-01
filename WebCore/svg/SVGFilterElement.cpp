@@ -27,7 +27,7 @@
 #include "SVGFilterElement.h"
 
 #include "Attr.h"
-#include "FilterBuilder.h"
+#include "SVGFilterBuilder.h"
 #include "MappedAttribute.h"
 #include "PlatformString.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"

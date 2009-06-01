@@ -21,7 +21,7 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "FilterBuilder.h"
+#include "SVGFilterBuilder.h"
 
 #include "FilterEffect.h"
 #include "PlatformString.h"
@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-FilterBuilder::FilterBuilder()
+SVGFilterBuilder::SVGFilterBuilder()
 {
     m_builtinEffects.add(SourceGraphic::effectName().impl(), SourceGraphic::create());
     m_builtinEffects.add(SourceAlpha::effectName().impl(), SourceAlpha::create());
 }
 
-void FilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
+void SVGFilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
 {
     if (id.isEmpty()) {
         m_lastEffect = effect.get();
@@ -56,7 +56,7 @@ void FilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
     m_namedEffects.set(idImpl, m_lastEffect);
 }
 
-FilterEffect* FilterBuilder::getEffectById(const AtomicString& id) const
+FilterEffect* SVGFilterBuilder::getEffectById(const AtomicString& id) const
 {
     bool idIsEmpty = id.isEmpty();
 
@@ -74,7 +74,7 @@ FilterEffect* FilterBuilder::getEffectById(const AtomicString& id) const
     return m_namedEffects.get(idImpl).get();
 }
 
-void FilterBuilder::clearEffects()
+void SVGFilterBuilder::clearEffects()
 {
     m_lastEffect = 0;
     m_namedEffects.clear();
