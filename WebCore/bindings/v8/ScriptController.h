@@ -88,8 +88,6 @@ namespace WebCore {
 
         PassScriptInstance createScriptInstanceForWidget(Widget*);
 
-        void disconnectFrame();
-
         // Check if the javascript engine has been initialized.
         bool haveInterpreter() const;
 

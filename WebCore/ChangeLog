@@ -1,3 +1,14 @@
+2009-06-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        V8 bindings follow-up to to DOMWindow-related cleanup:
+        http://trac.webkit.org/changeset/44215
+
+        * bindings/v8/ScriptController.cpp: Removed disconnectFrame(), relocated
+            its body to destructor.
+        * bindings/v8/ScriptController.h: Removed disconnectFrame() decl.
+
 2009-05-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.

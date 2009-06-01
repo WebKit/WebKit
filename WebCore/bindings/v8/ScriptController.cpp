@@ -98,6 +98,7 @@ ScriptController::ScriptController(Frame* frame)
 
 ScriptController::~ScriptController()
 {
+    m_proxy->disconnectFrame();
 }
 
 void ScriptController::clearScriptObjects()
@@ -128,12 +129,6 @@ void ScriptController::updateSecurityOrigin()
 void ScriptController::updatePlatformScriptObjects()
 {
     notImplemented();
-}
-
-// Disconnect the proxy from its owner frame.
-void ScriptController::disconnectFrame()
-{
-    m_proxy->disconnectFrame();
 }
 
 bool ScriptController::processingUserGesture() const
