@@ -1,3 +1,15 @@
+2009-05-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        - implement LayoutTestController::clearAllDatabases() on
+          Windows.
+
+        Needed for storage/transaction-error-callback.html.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::clearAllDatabases):
+
 2009-05-28  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -657,7 +657,14 @@ bool LayoutTestController::isCommandEnabled(JSStringRef /*name*/)
 
 void LayoutTestController::clearAllDatabases()
 {
-    printf("ERROR: LayoutTestController::clearAllDatabases() not implemented\n");
+    COMPtr<IWebDatabaseManager> databaseManager;
+    COMPtr<IWebDatabaseManager> tmpDatabaseManager;
+    if (FAILED(WebKitCreateInstance(CLSID_WebDatabaseManager, 0, IID_IWebDatabaseManager, (void**)&tmpDatabaseManager)))
+        return;
+    if (FAILED(tmpDatabaseManager->sharedWebDatabaseManager(&databaseManager)))
+        return;
+
+    databaseManager->deleteAllDatabases();
 }
 
 void LayoutTestController::setDatabaseQuota(unsigned long long quota)
