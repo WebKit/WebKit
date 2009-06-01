@@ -1,3 +1,17 @@
+2009-06-01  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Adler.  Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25750
+
+        Test: fast/transforms/bounding-rect-zoom.html
+
+        Make getClientRects and getBoundingClientRect account for ther zoom
+        factor.
+
+        * fast/transforms/bounding-rect-zoom.html: Added.
+        * platform/mac/fast/transforms/bounding-rect-zoom-expected.txt: Added.
+
 2009-06-01  Nate Chapin  <japhet@google.com>
 
         Reviewed by Dimitri Glazkov.  Landed by Adam Barth.

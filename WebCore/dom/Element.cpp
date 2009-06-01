@@ -289,6 +289,31 @@ static int adjustForAbsoluteZoom(int value, RenderObject* renderer)
     return static_cast<int>(value / zoomFactor);
 }
 
+static FloatPoint adjustFloatPointForAbsoluteZoom(const FloatPoint& point, RenderObject* renderer)
+{
+    // The result here is in floats, so we don't need the truncation hack from the integer version above.
+    float zoomFactor = renderer->style()->effectiveZoom();
+    if (zoomFactor == 1)
+        return point;
+    return FloatPoint(point.x() / zoomFactor, point.y() / zoomFactor);
+}
+
+static void adjustFloatQuadForAbsoluteZoom(FloatQuad& quad, RenderObject* renderer)
+{
+    quad.setP1(adjustFloatPointForAbsoluteZoom(quad.p1(), renderer));
+    quad.setP2(adjustFloatPointForAbsoluteZoom(quad.p2(), renderer));
+    quad.setP3(adjustFloatPointForAbsoluteZoom(quad.p3(), renderer));
+    quad.setP4(adjustFloatPointForAbsoluteZoom(quad.p4(), renderer));
+}
+
+static void adjustIntRectForAbsoluteZoom(IntRect& rect, RenderObject* renderer)
+{
+    rect.setX(adjustForAbsoluteZoom(rect.x(), renderer));
+    rect.setY(adjustForAbsoluteZoom(rect.y(), renderer));
+    rect.setWidth(adjustForAbsoluteZoom(rect.width(), renderer));
+    rect.setHeight(adjustForAbsoluteZoom(rect.height(), renderer));
+}
+
 int Element::offsetLeft()
 {
     document()->updateLayoutIgnorePendingStylesheets();
@@ -447,8 +472,10 @@ PassRefPtr<ClientRectList> Element::getClientRects() const
 
     if (FrameView* view = document()->view()) {
         IntRect visibleContentRect = view->visibleContentRect();
-        for (size_t i = 0; i < quads.size(); ++i)
+        for (size_t i = 0; i < quads.size(); ++i) {
             quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
+            adjustFloatQuadForAbsoluteZoom(quads[i], renderBoxModelObject);
+        }
     }
 
     return ClientRectList::create(quads);
@@ -475,6 +502,8 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
         IntRect visibleContentRect = view->visibleContentRect();
         result.move(-visibleContentRect.x(), -visibleContentRect.y());
     }
+
+    adjustIntRectForAbsoluteZoom(result, renderBoxModelObject);
 
     return ClientRect::create(result);
 }
