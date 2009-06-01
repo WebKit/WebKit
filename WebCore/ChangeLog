@@ -1,3 +1,41 @@
+2009-06-01  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Alder and Maciej Stachowiak.
+
+        Bug 26057: StringImpl should share buffers with UString.
+        https://bugs.webkit.org/show_bug.cgi?id=26057
+
+        This change results in the following performance improvements:
+        On http://www.hixie.ch/tests/adhoc/perf/dom/artificial/core/001.html
+        the time went from 78ms to 40ms for append (other times remained constant).
+
+        On http://www.hixie.ch/tests/adhoc/perf/dom/artificial/core/002.html,
+        the time went from 3900ms to 2600ms.
+
+        For http://dromaeo.com/?dom, the time for DomModification improved by ~6%.
+        Other tests in dom seemed to be faster across several runs but within the
+        margin of error (except DOM Attributes which was slightly ~1.5% worse).
+
+        Existing tests cover this code and there is no new functionality
+        that is exposed to test.
+
+        * platform/text/AtomicString.cpp:
+        (WebCore::AtomicString::add):
+        * platform/text/String.cpp:
+        (WebCore::String::String):
+        (WebCore::String::operator UString):
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl):
+        (WebCore::StringImpl::~StringImpl):
+        (WebCore::StringImpl::create): Consumes a shared buffer.
+        (WebCore::StringImpl::ustring): Shares the StringImpl's buffer with the UString.
+        (WebCore::StringImpl::sharedBuffer): Exposes the buffer that may be shared.
+        * platform/text/StringImpl.h:
+        (WebCore::StringImpl::hasTerminatingNullCharacter):
+        (WebCore::StringImpl::inTable):
+        (WebCore::StringImpl::setInTable): Converted the bools to be inside of PtrAndFlags
+        to avoid growing StringImpl in size.
+
 2009-06-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

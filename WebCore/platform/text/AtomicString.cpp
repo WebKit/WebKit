@@ -206,7 +206,7 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
 
 PassRefPtr<StringImpl> AtomicString::add(StringImpl* r)
 {
-    if (!r || r->m_inTable)
+    if (!r || r->inTable())
         return r;
 
     if (r->length() == 0)
@@ -214,7 +214,7 @@ PassRefPtr<StringImpl> AtomicString::add(StringImpl* r)
     
     StringImpl* result = *stringTable().add(r).first;
     if (result == r)
-        r->m_inTable = true;
+        r->setInTable();
     return result;
 }
 

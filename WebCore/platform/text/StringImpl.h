@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,10 +25,17 @@
 
 #include <limits.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/CrossThreadRefCounted.h>
+#include <wtf/OwnFastMallocPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/PtrAndFlags.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
+
+#if USE(JSC)
+#include <runtime/UString.h>
+#endif
 
 #if PLATFORM(CF) || (PLATFORM(QT) && PLATFORM(DARWIN))
 typedef const struct __CFString * CFStringRef;
@@ -72,6 +80,8 @@ private:
     StringImpl(const UChar*, unsigned length, unsigned hash);
     StringImpl(const char*, unsigned length, unsigned hash);
 
+    typedef CrossThreadRefCounted<OwnFastMallocPtr<UChar> > SharedUChar;
+
 public:
     ~StringImpl();
 
@@ -85,11 +95,19 @@ public:
     static PassRefPtr<StringImpl> createStrippingNullCharacters(const UChar*, unsigned length);
     static PassRefPtr<StringImpl> adopt(StringBuffer&);
     static PassRefPtr<StringImpl> adopt(Vector<UChar>&);
+#if USE(JSC)
+    static PassRefPtr<StringImpl> create(const JSC::UString&);
+    JSC::UString ustring();
+#endif
 
+    SharedUChar* sharedBuffer();
     const UChar* characters() { return m_data; }
     unsigned length() { return m_length; }
 
-    bool hasTerminatingNullCharacter() { return m_hasTerminatingNullCharacter; }
+    bool hasTerminatingNullCharacter() const { return m_sharedBufferAndFlags.isFlagSet(HasTerminatingNullCharacter); }
+
+    bool inTable() const { return m_sharedBufferAndFlags.isFlagSet(InTable); }
+    void setInTable() { return m_sharedBufferAndFlags.setFlag(InTable); }
 
     unsigned hash() { if (m_hash == 0) m_hash = computeHash(m_data, m_length); return m_hash; }
     unsigned existingHash() const { ASSERT(m_hash); return m_hash; }
@@ -177,11 +195,16 @@ private:
 
     static PassRefPtr<StringImpl> createStrippingNullCharactersSlowCase(const UChar*, unsigned length);
 
+    enum StringImplFlags {
+        HasTerminatingNullCharacter,
+        InTable,
+    };
+
     unsigned m_length;
     const UChar* m_data;
     mutable unsigned m_hash;
-    bool m_inTable;
-    bool m_hasTerminatingNullCharacter;
+    PtrAndFlags<SharedUChar, StringImplFlags> m_sharedBufferAndFlags;
+
     // In some cases, we allocate the StringImpl struct and its data
     // within a single heap buffer. In this case, the m_data pointer
     // is an "internal buffer", and does not need to be deallocated.

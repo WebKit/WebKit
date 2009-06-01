@@ -105,7 +105,7 @@ namespace JSC {
             static PassRefPtr<Rep> createFromUTF8(const char*);
 
             // Uses SharedUChar to have joint ownership over the UChar*.
-            static PassRefPtr<Rep> share(UChar*, int, PassRefPtr<SharedUChar>);
+            static PassRefPtr<Rep> create(UChar*, int, PassRefPtr<SharedUChar>);
 
             void destroy();
 

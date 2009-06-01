@@ -1,3 +1,19 @@
+2009-06-01  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Alder and Maciej Stachowiak.
+
+        Bug 26057: StringImpl should share buffers with UString.
+        https://bugs.webkit.org/show_bug.cgi?id=26057
+
+        * JavaScriptCore.exp:
+        * runtime/UString.cpp:
+        (JSC::UString::Rep::create):
+        (JSC::UString::BaseString::sharedBuffer): Only do the sharing when
+        the buffer exceeds a certain size.  The size was tuned by running
+        various dom benchmarks with numbers ranging from 20 to 800 and finding
+        a place that seemed to do the best overall.
+        * runtime/UString.h:
+
 2009-05-31  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Olliej "you just need to change NativeFunctionWrapper.h" Hunt.

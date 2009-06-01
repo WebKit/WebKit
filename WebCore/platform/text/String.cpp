@@ -650,21 +650,21 @@ String::String(const Identifier& str)
 {
     if (str.isNull())
         return;
-    m_impl = StringImpl::create(str.data(), str.size());
+    m_impl = StringImpl::create(str.ustring());
 }
 
 String::String(const UString& str)
 {
     if (str.isNull())
         return;
-    m_impl = StringImpl::create(str.data(), str.size());
+    m_impl = StringImpl::create(str);
 }
 
 String::operator UString() const
 {
     if (!m_impl)
         return UString();
-    return UString(m_impl->characters(), m_impl->length());
+    return m_impl->ustring();
 }
 #endif
 
