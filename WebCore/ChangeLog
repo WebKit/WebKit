@@ -2,7 +2,8 @@
 
         Reviewed by Dave Hyatt.
 
-        Fix Chromium build by adding an #ifdef.
+        Fix Chromium build by adding an #ifdef, restoring the code path to that
+        before http://trac.webkit.org/changeset/44287.
 
         * platform/mac/ScrollbarThemeMac.mm:
         (WebCore::ScrollbarThemeMac::paint): Added an #ifdef.
@@ -11,7 +12,7 @@
 
         Reviewed by Nikolas Zimmermann.
 
-        Remove last pieces of the old SVG filte system. They are not
+        Remove last pieces of the old SVG filter system. They are not
         usable with our current filter system. The new filter effects
         will replace the functionality step by step.
 
