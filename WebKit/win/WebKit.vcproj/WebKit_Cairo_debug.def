@@ -1,4 +1,4 @@
-LIBRARY    "WebKit_debug"
+LIBRARY	"WebKit_debug"
 
 EXPORTS
         DllGetClassObject   PRIVATE
@@ -7,14 +7,40 @@ EXPORTS
         DllUnregisterServer PRIVATE
         RunAsLocalServer    PRIVATE
         LocalServerDidDie   PRIVATE
+        setUseOpenSourceWebKit
+        shutDownWebKit
+        progIDForClass
+        WebLocalizedStringUTF8
+        WebLocalizedLPCTSTRUTF8
+        ; Safari-specific Calls we don't export
+        ;WebDrawText
+        ;FontMetrics
+        ;TextFloatWidth
+        ;CenterTruncateStringToWidth
+        ;RightTruncateStringToWidth
+        ;WebKitSetShouldUseFontSmoothing
+        ;WebKitShouldUseFontSmoothing
+        WebKitCreateInstance
+		
+        ; These functions are deprecated
+        WebLocalizedString
+        WebLocalizedLPCTSTR
+        SetWebLocalizedStringMainBundle
+
+		; Deprecated re-exports from JavaScriptCore
         JSCheckScriptSyntax
         JSClassCreate
         JSClassRelease
         JSClassRetain
         JSContextGetGlobalObject
+        JSContextGetGroup
+        JSContextGroupCreate
+        JSContextGroupRelease
+        JSContextGroupRetain
         JSEvaluateScript
         JSGarbageCollect
         JSGlobalContextCreate
+        JSGlobalContextCreateInGroup
         JSGlobalContextRelease
         JSGlobalContextRetain
         JSObjectCallAsConstructor
@@ -32,6 +58,7 @@ EXPORTS
         JSObjectMakeArray
         JSObjectMakeConstructor
         JSObjectMakeDate
+        JSObjectMakeError
         JSObjectMakeFunction
         JSObjectMakeFunctionWithCallback
         JSObjectMakeRegExp
@@ -80,22 +107,6 @@ EXPORTS
         JSValueToObject
         JSValueToStringCopy
         JSValueUnprotect
-;       KJS_JSCreateNativeJSObject
-;       KJS_JSObject_JSFinalize
-;       KJS_JSObject_JSObjectCall
-;       KJS_JSObject_JSObjectEval
-;       KJS_JSObject_JSObjectGetMember
-;       KJS_JSObject_JSObjectGetSlot
-;       KJS_JSObject_JSObjectRemoveMember
-;       KJS_JSObject_JSObjectSetMember
-;       KJS_JSObject_JSObjectSetSlot
-;       KJS_JSObject_JSObjectToString
-        setUseOpenSourceWebKit
-        shutDownWebKit
-        progIDForClass
-        WebLocalizedStringUTF8
-        WebLocalizedLPCTSTRUTF8
-        WebDrawText
         ?fastMalloc@WTF@@YAPAXI@Z
         ?fastZeroedMalloc@WTF@@YAPAXI@Z
         ?fastFree@WTF@@YAXPAX@Z
@@ -113,21 +124,14 @@ EXPORTS
         ?initializeThreading@WTF@@YAXXZ
         ?isMainThread@WTF@@YA_NXZ
         ?lock@Mutex@WTF@@QAEXXZ
-        ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ        
+        ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         ?signal@ThreadCondition@WTF@@QAEXXZ
+        ?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z
+        ?tlsKeyCount@WTF@@YAAAJXZ
+        ?tlsKeys@WTF@@YAPAKXZ
         ?tryLock@Mutex@WTF@@QAE_NXZ
         ?unlock@Mutex@WTF@@QAEXXZ
         ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
-        WTFLog
-        WTFReportArgumentAssertionFailure
-        WTFReportAssertionFailure
-        WTFReportAssertionFailureWithMessage
-        WTFReportError
-
-        ; These functions are deprecated
-        WebLocalizedString
-        WebLocalizedLPCTSTR
-        SetWebLocalizedStringMainBundle
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z

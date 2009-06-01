@@ -1,3 +1,11 @@
+2009-06-01  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix for Cairo Windows target.  Windows link definition
+        files were out of sync with the Apple Windows link files.
+
+        * WebKit.vcproj/WebKit_Cairo.def:
+        * WebKit.vcproj/WebKit_Cairo_debug.def:
+
 2009-05-29  Adam Roben  <aroben@apple.com>
 
         Implement WebFrame::startDownload
