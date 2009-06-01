@@ -212,6 +212,7 @@ module window {
         attribute EventListener onscroll;
         attribute EventListener onsearch;
         attribute EventListener onselect;
+        attribute EventListener onstorage;
         attribute EventListener onsubmit;
         attribute EventListener onunload;
         attribute EventListener onwebkitanimationend;

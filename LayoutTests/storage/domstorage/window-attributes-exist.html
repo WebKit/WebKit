@@ -24,25 +24,41 @@ function testStorage(name, storage)
         log("Storage object " + name + " has removeItem");
 }
 
+function testOnstorage()
+{
+    window.onstorage = function(event)
+    {
+        log("The onstorage property works when a storage event is fired.");
+    }
+    
+    window.localStorage["test"] = "test";
+}
+
 function runTest()
 {
-    if (window.sessionStorage) {
+    if ("sessionStorage" in window) {
         log("window.sessionStorage exists");
         testStorage("sessionStorage", window.sessionStorage);
     } else
         log("window.sessionStorage DOES NOT exist");
 
-    if (window.localStorage) {
+    if ("localStorage" in window) {
         log("window.localStorage exists");
         testStorage("localStorage", window.localStorage);
     } else
         log("window.localStorage DOES NOT exist");
+
+    if ("onstorage" in window) {
+        log("window.onstorage exists");
+        testOnstorage();
+    } else
+        log("window.onstorage DOES NOT exist");
 }
 
 </script>
 </head>
 <body onload="runTest();">
-This test checks to see if window.localStorage and window.sessionStorage exist.<br>
+This test checks to see if window.localStorage, window.sessionStorage and window.onstorage exist.<br>
 <div id="logger"></div>
 </body>
 </html>

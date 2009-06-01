@@ -1607,6 +1607,16 @@ void DOMWindow::setOnselect(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().selectEvent, eventListener);
 }
 
+EventListener* DOMWindow::onstorage() const
+{
+    return getAttributeEventListener(eventNames().storageEvent);
+}
+
+void DOMWindow::setOnstorage(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().storageEvent, eventListener);
+}
+
 EventListener* DOMWindow::onsubmit() const
 {
     return getAttributeEventListener(eventNames().submitEvent);

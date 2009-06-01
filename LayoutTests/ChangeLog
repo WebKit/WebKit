@@ -1,5 +1,18 @@
 2009-05-31  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Part of https://bugs.webkit.org/show_bug.cgi?id=26100
+        Add missing event handler properties to the DOMWindow
+
+        Add missing onstorage event handler to the DOMWindow.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * storage/domstorage/window-attributes-exist-expected.txt:
+        * storage/domstorage/window-attributes-exist.html:
+
+2009-05-31  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Mark Rowe.
 
         Remove duplicate file. The version of window-properties-expected.txt in the
