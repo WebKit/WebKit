@@ -44,6 +44,23 @@ WebInspector.PanelEnablerView = function(identifier, headingText, disclaimerText
     this.headerElement.textContent = headingText;
     this.choicesForm.appendChild(this.headerElement);
 
+    var self = this;
+    function enableOption(text, checked) {
+        var label = document.createElement("label");
+        var option = document.createElement("input");
+        option.type = "radio";
+        option.name = "enable-option";
+        if (checked)
+            option.checked = true;
+        label.appendChild(option);
+        label.appendChild(document.createTextNode(text));
+        self.choicesForm.appendChild(label);
+        return option;
+    };
+
+    this.enabledForSession = enableOption(WebInspector.UIString("Only enable for this session"), true);
+    this.enabledAlways = enableOption(WebInspector.UIString("Always enable"));
+
     this.disclaimerElement = document.createElement("div");
     this.disclaimerElement.className = "panel-enabler-disclaimer";
     this.disclaimerElement.textContent = disclaimerText;
@@ -70,6 +87,10 @@ WebInspector.PanelEnablerView.prototype = {
 
         if (this.element.offsetWidth < (this.choicesForm.offsetWidth + this.imageElement.offsetWidth))
             this.imageElement.addStyleClass("hidden");
+    },
+
+    get alwaysEnabled() {
+        return this.enabledAlways.checked;
     }
 }
 

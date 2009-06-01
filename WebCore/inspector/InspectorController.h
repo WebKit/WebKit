@@ -106,6 +106,12 @@ public:
         {
         }
 
+        explicit Setting(bool value)
+            : m_type(BooleanType)
+        {
+            m_simpleContent.m_boolean = value;
+        }
+
         Type type() const { return m_type; }
 
         String string() const { ASSERT(m_type == StringType); return m_string; }
@@ -204,6 +210,10 @@ public:
     void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
     void scriptImported(unsigned long identifier, const String& sourceString);
 
+    void enableResourceTracking(bool always = false);
+    void disableResourceTracking(bool always = false);
+    bool resourceTrackingEnabled() const { return m_resourceTrackingEnabled; }
+
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
 #endif
@@ -241,12 +251,12 @@ public:
     void stopUserInitiatedProfiling();
     void toggleRecordButton(bool);
 
-    void enableProfiler(bool skipRecompile = false);
-    void disableProfiler();
+    void enableProfiler(bool always = false, bool skipRecompile = false);
+    void disableProfiler(bool always = false);
     bool profilerEnabled() const { return enabled() && m_profilerEnabled; }
 
-    void enableDebugger();
-    void disableDebugger();
+    void enableDebugger(bool always = false);
+    void disableDebugger(bool always = false);
     bool debuggerEnabled() const { return m_debuggerEnabled; }
 
     JavaScriptCallFrame* currentCallFrame() const;
@@ -272,6 +282,7 @@ public:
 
 private:
     InspectorController(Page*, InspectorClient*);
+
     void focusNode();
 
     void addConsoleMessage(ScriptState*, ConsoleMessage*);
@@ -311,6 +322,8 @@ private:
     unsigned m_groupLevel;
     bool m_searchingForNode;
     ConsoleMessage* m_previousMessage;
+    bool m_resourceTrackingEnabled;
+    bool m_resourceTrackingSettingsLoaded;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     bool m_debuggerEnabled;
     bool m_attachDebuggerWhenShown;

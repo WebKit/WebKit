@@ -880,6 +880,16 @@ WebInspector.addDOMStorage = function(payload)
     this.panels.databases.addDOMStorage(domStorage);
 }
 
+WebInspector.resourceTrackingWasEnabled = function()
+{
+    this.panels.resources.resourceTrackingWasEnabled();
+}
+
+WebInspector.resourceTrackingWasDisabled = function()
+{
+    this.panels.resources.resourceTrackingWasDisabled();
+}
+
 WebInspector.debuggerWasEnabled = function()
 {
     this.panels.scripts.debuggerWasEnabled();

@@ -68,6 +68,9 @@ namespace WebCore {
         void populateInterface();
         void reset();
 
+        void resourceTrackingWasEnabled();
+        void resourceTrackingWasDisabled();
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         void debuggerWasEnabled();
         void debuggerWasDisabled();

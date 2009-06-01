@@ -35,7 +35,6 @@ WebInspector.ResourcesPanel = function()
 
     this.viewsContainerElement = document.createElement("div");
     this.viewsContainerElement.id = "resource-views";
-    this.element.appendChild(this.viewsContainerElement);
 
     this.containerElement = document.createElement("div");
     this.containerElement.id = "resources-container";
@@ -126,6 +125,20 @@ WebInspector.ResourcesPanel = function()
 
     this.resourcesTreeElement.expand();
 
+    var panelEnablerHeading = WebInspector.UIString("You need to enable resource tracking to use the this panel.");
+    var panelEnablerDisclaimer = WebInspector.UIString("Enabling resource tracking will reload the page and make page loading slower.");
+    var panelEnablerButton = WebInspector.UIString("Enable resource tracking");
+
+    this.panelEnablerView = new WebInspector.PanelEnablerView("resources", panelEnablerHeading, panelEnablerDisclaimer, panelEnablerButton);
+    this.panelEnablerView.addEventListener("enable clicked", this._enableResourceTracking, this);
+
+    this.element.appendChild(this.panelEnablerView.element);
+    this.element.appendChild(this.viewsContainerElement);
+
+    this.enableToggleButton = document.createElement("button");
+    this.enableToggleButton.className = "enable-toggle-status-bar-item status-bar-item";
+    this.enableToggleButton.addEventListener("click", this._toggleResourceTracking.bind(this), false);
+
     this.largerResourcesButton = document.createElement("button");
     this.largerResourcesButton.id = "resources-larger-resources-status-bar-item";
     this.largerResourcesButton.className = "status-bar-item toggled-on";
@@ -151,7 +164,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.largerResourcesButton, this.sortingSelectElement];
+        return [this.enableToggleButton, this.largerResourcesButton, this.sortingSelectElement];
     },
 
     show: function()
@@ -358,6 +371,16 @@ WebInspector.ResourcesPanel.prototype = {
         this._updateSummaryGraph();
     },
 
+    resourceTrackingWasEnabled: function()
+    {
+        this.reset();
+    },
+
+    resourceTrackingWasDisabled: function()
+    {
+        this.reset();
+    },
+
     reset: function()
     {
         this.closeVisibleResource();
@@ -394,6 +417,20 @@ WebInspector.ResourcesPanel.prototype = {
         this._updateGraphDividersIfNeeded(true);
 
         this._drawSummaryGraph(); // draws an empty graph
+
+        if (InspectorController.resourceTrackingEnabled()) {
+            this.enableToggleButton.title = WebInspector.UIString("Resource tracking enabled. Click to disable.");
+            this.enableToggleButton.addStyleClass("toggled-on");
+            this.largerResourcesButton.removeStyleClass("hidden");
+            this.sortingSelectElement.removeStyleClass("hidden");
+            this.panelEnablerView.visible = false;
+        } else {
+            this.enableToggleButton.title = WebInspector.UIString("Resource tracking disabled. Click to enable.");
+            this.enableToggleButton.removeStyleClass("toggled-on");
+            this.largerResourcesButton.addStyleClass("hidden");
+            this.sortingSelectElement.addStyleClass("hidden");
+            this.panelEnablerView.visible = true;
+        }
     },
 
     addResource: function(resource)
@@ -1085,6 +1122,26 @@ WebInspector.ResourcesPanel.prototype = {
         var visibleView = this.visibleView;
         if (visibleView && "resize" in visibleView)
             visibleView.resize();
+    },
+
+    _enableResourceTracking: function()
+    {
+        if (InspectorController.resourceTrackingEnabled())
+            return;
+        this._toggleResourceTracking(this.panelEnablerView.alwaysEnabled);
+    },
+
+    _toggleResourceTracking: function(optionalAlways)
+    {
+        if (InspectorController.resourceTrackingEnabled()) {
+            this.largerResourcesButton.visible = false;
+            this.sortingSelectElement.visible = false;
+            InspectorController.disableResourceTracking(true);
+        } else {
+            this.largerResourcesButton.visible = true;
+            this.sortingSelectElement.visible = true;
+            InspectorController.enableResourceTracking(!!optionalAlways);
+        }
     }
 }
 

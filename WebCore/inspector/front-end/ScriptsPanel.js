@@ -771,19 +771,19 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (InspectorController.debuggerEnabled())
             return;
-        this._toggleDebugging();
+        this._toggleDebugging(this.panelEnablerView.alwaysEnabled);
     },
 
-    _toggleDebugging: function()
+    _toggleDebugging: function(optionalAlways)
     {
         this._paused = false;
         this._waitingToPause = false;
         this._stepping = false;
 
         if (InspectorController.debuggerEnabled())
-            InspectorController.disableDebugger();
+            InspectorController.disableDebugger(true);
         else
-            InspectorController.enableDebugger();
+            InspectorController.enableDebugger(!!optionalAlways);
     },
 
     _togglePauseOnExceptions: function()

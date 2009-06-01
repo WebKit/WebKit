@@ -64,10 +64,13 @@ module core {
         [ImplementationFunction=moveWindowBy] void moveByUnrestricted(in float x, in float y);
         void setAttachedWindowHeight(in unsigned long height);
         [Custom] DOMObject wrapCallback(in DOMObject callback);
+        boolean resourceTrackingEnabled();
+        void enableResourceTracking(in boolean always);
+        void disableResourceTracking(in boolean always);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        void enableDebugger();
-        void disableDebugger();
+        void enableDebugger(in boolean always);
+        void disableDebugger(in boolean always);
         void pauseInDebugger();
         void resumeDebugger();
         void stepOverStatementInDebugger();
@@ -78,8 +81,8 @@ module core {
         boolean profilerEnabled();
         [ImplementationFunction=startUserInitiatedProfiling] void startProfiling();
         [ImplementationFunction=stopUserInitiatedProfiling] void stopProfiling();
-        void enableProfiler();
-        void disableProfiler();
+        void enableProfiler(in boolean always);
+        void disableProfiler(in boolean always);
         [Custom] DOMObject currentCallFrame();
         void setPauseOnExceptions(in boolean pauseOnExceptions);
         void addBreakpoint(in unsigned long sourceID, in unsigned long lineNumber);

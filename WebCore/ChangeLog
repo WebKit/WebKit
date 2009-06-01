@@ -1,3 +1,68 @@
+2009-05-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        - Add panel enabler to the resources panel.
+        - Add session / always options into the panel enabler.
+        - Make enabled status for three panels sticky (globally).
+        - Persist enabled status using InspectorController::Settings
+        - Make InspectorController produce no network-related overhead when
+          resources panel is not enabled.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26046
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::setWindowVisible):
+        (WebCore::InspectorController::populateScriptObjects):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didReceiveContentLength):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorController::scriptImported):
+        (WebCore::InspectorController::enableResourceTracking):
+        (WebCore::InspectorController::disableResourceTracking):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::enableDebugger):
+        (WebCore::InspectorController::disableDebugger):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::Setting::Setting):
+        (WebCore::InspectorController::resourceTrackingEnabled):
+        * inspector/InspectorController.idl:
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::resourceTrackingWasEnabled):
+        (WebCore::InspectorFrontend::resourceTrackingWasDisabled):
+        * inspector/InspectorFrontend.h:
+        * inspector/front-end/PanelEnablerView.js:
+        (WebInspector.PanelEnablerView.enableOption):
+        (WebInspector.PanelEnablerView):
+        (WebInspector.PanelEnablerView.prototype._windowResized):
+        (WebInspector.PanelEnablerView.prototype.alwaysWasChosen):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._enableProfiling):
+        (WebInspector.ProfilesPanel.prototype._toggleProfiling):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.get statusBarItems):
+        (WebInspector.ResourcesPanel.prototype.resourceTrackingWasEnabled):
+        (WebInspector.ResourcesPanel.prototype.resourceTrackingWasDisabled):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype._updateSidebarWidth):
+        (WebInspector.ResourcesPanel.prototype._enableResourceTracking):
+        (WebInspector.ResourcesPanel.prototype._toggleResourceTracking):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._enableDebugging):
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.resourceTrackingWasEnabled):
+        (WebInspector.resourceTrackingWasDisabled):
+
 2009-06-01  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Darin Adler.  Landed (and tweaked) by Adam Barth.
