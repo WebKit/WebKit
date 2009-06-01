@@ -1,3 +1,11 @@
+2009-05-31  Dan Bernstein  <mitz@apple.com>
+
+        - add Windows results for fast/forms/isindex-placeholder.html
+
+        * platform/win/fast/forms/isindex-placeholder-expected.checksum: Added.
+        * platform/win/fast/forms/isindex-placeholder-expected.png: Added.
+        * platform/win/fast/forms/isindex-placeholder-expected.txt: Added.
+
 2009-05-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
