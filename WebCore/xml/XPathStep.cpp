@@ -76,8 +76,8 @@ void optimizeStepPair(Step* first, Step* second, bool& dropSecondStep)
 
     if (first->m_axis == Step::DescendantOrSelfAxis
         && first->m_nodeTest.kind() == Step::NodeTest::AnyNodeTest
-        && first->m_predicates.size() == 0
-        && first->m_nodeTest.mergedPredicates().size() == 0) {
+        && !first->m_predicates.size()
+        && !first->m_nodeTest.mergedPredicates().size()) {
 
         ASSERT(first->m_nodeTest.data().isEmpty());
         ASSERT(first->m_nodeTest.namespaceURI().isEmpty());

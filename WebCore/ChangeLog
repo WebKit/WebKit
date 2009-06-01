@@ -5,6 +5,33 @@
         https://bugs.webkit.org/show_bug.cgi?id=13233
         Need to implement an optimizing XPath evaluator
 
+        Avoid sorting results of hierarchical paths that are natuarlly sorted. On a flat data structure
+        with 128K nodes and a simple XPath expression, this changes evaluation time from 1.5 minutes
+        to 33 ms.
+
+        * xml/XPathNodeSet.h: Keep track of whether subtrees rooted at nodes in set are disjoint,
+        which is useful for optimization.
+        (WebCore::XPath::NodeSet::NodeSet): Removed, it was identical to compiler generated one.
+        (WebCore::XPath::NodeSet::operator=): Ditto.
+        (WebCore::XPath::NodeSet::swap): Ditto.
+        (WebCore::XPath::NodeSet::isSorted): Single element sets are always sorted, even if sort()
+        was never called.
+        (WebCore::XPath::NodeSet::markSubtreesDisjoint): Just like being sorted, the new flag is
+        maintained by callers.
+        (WebCore::XPath::NodeSet::subtreesAreDisjoint): A single element set only has one subtree.
+        Currently, the only way for a set to gain this flag is to be produced from a single element
+        set with a hierarchical location path.
+
+        * xml/XPathPath.cpp: (WebCore::XPath::LocationPath::evaluate): Use the new flag to avoid
+        maintaining a set of unique nodes, and to avoid sorting the result.
+
+2009-05-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=13233
+        Need to implement an optimizing XPath evaluator
+
         This patch adds some infrastructure and simple optimizations. Namely,
         - we now avoid building a full NodeSet just to evaluate a predicate in some cases;
         - "/descendant-or-self::node()/child::" is optimized to iterate the tree once when possible;

@@ -114,18 +114,33 @@ Value LocationPath::evaluate() const
 
 void LocationPath::evaluate(NodeSet& nodes) const
 {
+    bool resultIsSorted = nodes.isSorted();
+
     for (unsigned i = 0; i < m_steps.size(); i++) {
         Step* step = m_steps[i];
         NodeSet newNodes;
         HashSet<Node*> newNodesSet;
 
+        bool needToCheckForDuplicateNodes = !nodes.subtreesAreDisjoint() || (step->axis() != Step::ChildAxis && step->axis() != Step::SelfAxis
+            && step->axis() != Step::DescendantAxis && step->axis() != Step::DescendantOrSelfAxis && step->axis() != Step::AttributeAxis);
+
+        if (needToCheckForDuplicateNodes)
+            resultIsSorted = false;
+
+        // This is a simplified check that can be improved to handle more cases.
+        if (nodes.subtreesAreDisjoint() && (step->axis() == Step::ChildAxis || step->axis() == Step::SelfAxis))
+            newNodes.markSubtreesDisjoint(true);
+
         for (unsigned j = 0; j < nodes.size(); j++) {
             NodeSet matches;
             step->evaluate(nodes[j], matches);
-            
+
+            if (!matches.isSorted())
+                resultIsSorted = false;
+
             for (size_t nodeIndex = 0; nodeIndex < matches.size(); ++nodeIndex) {
                 Node* node = matches[nodeIndex];
-                if (newNodesSet.add(node).second)
+                if (!needToCheckForDuplicateNodes || newNodesSet.add(node).second)
                     newNodes.append(node);
             }
         }
@@ -133,7 +148,7 @@ void LocationPath::evaluate(NodeSet& nodes) const
         nodes.swap(newNodes);
     }
 
-    nodes.markSorted(false);
+    nodes.markSorted(resultIsSorted);
 }
 
 void LocationPath::appendStep(Step* step)

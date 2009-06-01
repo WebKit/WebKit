@@ -81,6 +81,7 @@ namespace WebCore {
 
             void evaluate(Node* context, NodeSet&) const;
 
+            Axis axis() const { return m_axis; }
             const NodeTest& nodeTest() const { return m_nodeTest; }
 
         private:
