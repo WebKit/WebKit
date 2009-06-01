@@ -47,8 +47,9 @@ SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
 {
 }
 
-void SVGFEGaussianBlurElement::setStdDeviation(float stdDeviationX, float stdDeviationY)
+void SVGFEGaussianBlurElement::setStdDeviation(float, float)
 {
+    // FIXME: Needs an implementation.
 }
 
 void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute* attr)

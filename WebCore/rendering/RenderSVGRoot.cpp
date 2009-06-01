@@ -163,7 +163,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     RenderBox::paint(childPaintInfo, 0, 0);
 
     if (childPaintInfo.phase == PaintPhaseForeground)
-        finishRenderSVGContent(this, childPaintInfo, boundingBox, filter, paintInfo.context);
+        finishRenderSVGContent(this, childPaintInfo, filter, paintInfo.context);
 
     childPaintInfo.context->restore();
 

@@ -30,9 +30,9 @@ namespace WebCore {
 
 FEFlood::FEFlood(FilterEffect* in, const Color& floodColor, const float& floodOpacity)
     : FilterEffect()
+    , m_in(in)
     , m_floodColor(floodColor)
     , m_floodOpacity(floodOpacity)
-    , m_in(in)
 {
 }
 

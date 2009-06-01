@@ -171,8 +171,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
             adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio());
 
         paintInfo.context->drawImage(image(), destRect, srcRect);
-
-        finishRenderSVGContent(this, paintInfo, m_localBounds, filter, savedInfo.context);
+        finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
     }
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())

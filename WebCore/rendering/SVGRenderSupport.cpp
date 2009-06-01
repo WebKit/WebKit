@@ -138,10 +138,9 @@ void SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
         svgElement->document()->accessSVGExtensions()->addPendingResource(maskerId, styledElement);
 }
 
-void SVGRenderBase::finishRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, const FloatRect& boundingBox, SVGResourceFilter*& filter, GraphicsContext* savedContext)
+void SVGRenderBase::finishRenderSVGContent(RenderObject* object, RenderObject::PaintInfo& paintInfo, SVGResourceFilter*& filter, GraphicsContext* savedContext)
 {
 #if !ENABLE(FILTERS)
-    UNUSED_PARAM(boundingBox);
     UNUSED_PARAM(filter);
     UNUSED_PARAM(savedContext);
 #endif

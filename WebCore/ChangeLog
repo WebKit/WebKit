@@ -1,3 +1,29 @@
+2009-06-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix --filters enabled build on Mac.
+        Remove unnecessary 'boundingBox' parameter from finishRenderSVGContent() method.
+        Kill several warnings, to make build pass.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::paint):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBoxPaintWalker::chunkEndCallback):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::setStdDeviation):
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::FEFlood):
+
 2009-06-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Dave Hyatt.

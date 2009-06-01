@@ -198,7 +198,7 @@ void RenderPath::paint(PaintInfo& paintInfo, int, int)
         if (static_cast<SVGStyledElement*>(node())->supportsMarkers())
             m_markerBounds = drawMarkersIfNeeded(paintInfo.context, paintInfo.rect, m_path);
 
-        finishRenderSVGContent(this, paintInfo, boundingBox, filter, savedInfo.context);
+        finishRenderSVGContent(this, paintInfo, filter, savedInfo.context);
     }
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())

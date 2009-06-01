@@ -121,7 +121,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
         child->paint(childPaintInfo, 0, 0);
 
     if (paintInfo.phase == PaintPhaseForeground)
-        finishRenderSVGContent(this, childPaintInfo, boundingBox, filter, paintInfo.context);
+        finishRenderSVGContent(this, childPaintInfo, filter, paintInfo.context);
 
     childPaintInfo.context->restore();
 
