@@ -297,7 +297,7 @@ QUrl QWebView::guessUrlFromString(const QString &string)
 
     // If the string is missing the scheme or the scheme is not valid prepend a scheme
     QString scheme = url.scheme();
-    if (scheme.isEmpty() || scheme.contains('.') || scheme == QLatin1String("localhost")) {
+    if (scheme.isEmpty() || scheme.contains(QLatin1Char('.')) || scheme == QLatin1String("localhost")) {
         QString urlString = string.trimmed();
         // Do not do anything for strings such as "foo", only "foo.com"
         int dotIndex = urlString.indexOf(QLatin1Char('.'));

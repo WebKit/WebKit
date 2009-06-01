@@ -2,6 +2,15 @@
 
         Rubber-stamped by Gustavo Noronha.
 
+        Use QLatin1Char() to compile when QT_NO_CAST_FROM_ASCII and QT_NO_CAST_TO_ASCII is defined
+
+        * Api/qwebview.cpp:
+        (QWebView::guessUrlFromString):
+
+2009-06-01  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Rubber-stamped by Gustavo Noronha.
+
         Cleanup autotest file
         - use proper includes
         - remove useless constructor and destructor
