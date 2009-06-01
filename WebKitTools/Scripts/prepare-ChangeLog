@@ -1198,7 +1198,6 @@ sub findOriginalFileFromSvn($)
     while (<INFO>) {
         if (/^URL: (.+)/) {
             $baseUrl = $1;
-            last;
         }
     }
     close INFO;
@@ -1207,7 +1206,6 @@ sub findOriginalFileFromSvn($)
     while (<INFO>) {
         if (/^Copied From URL: (.+)/) {
             $sourceFile = File::Spec->abs2rel($1, $baseUrl);
-            last;
         }
     }
     close INFO;

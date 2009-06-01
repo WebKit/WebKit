@@ -1,3 +1,16 @@
+2009-06-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        svn-create-patch displays confusing "Broken pipe" errors from Subversion
+        when files have been renamed in local working copy.  This was happening
+        because we invoke 'svn info' to determine the URL that the file was copied
+        from, but we were closing the pipe to the subprocess before SVN had finished
+        writing its output.
+
+        * Scripts/prepare-ChangeLog: Consume all 'svn info' output before closing the file handle.
+        * Scripts/svn-create-patch: Ditto.
+
 2009-05-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

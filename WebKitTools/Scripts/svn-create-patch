@@ -152,7 +152,6 @@ sub findBaseUrl($)
     while (<INFO>) {
         if (/^URL: (.+)/) {
             $baseUrl = $1;
-            last;
         }
     }
     close INFO;
