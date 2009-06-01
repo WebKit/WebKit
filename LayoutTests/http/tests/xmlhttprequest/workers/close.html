@@ -1,0 +1,72 @@
+<body>
+<p>Tests invoking close() in the middle of an XMLHttpRequest.</p>
+<div id=result></div>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function log(message)
+    {
+        document.getElementById("result").innerHTML += message + "<br>";
+    }
+
+    var timeout = 0;
+    // Start with async tests
+    testAsync();
+
+    function testAsync() {
+        var worker = new Worker('resources/close.js');
+        worker.onerror = handleException;
+        worker.postMessage("async");
+        worker.onmessage = function(evt)
+        {
+            if (/DONE/.test(evt.data)) {
+                // Give worker a chance to complete the shutdown
+                setTimeout(function() {
+                    log("PASS: Async test");
+                    testSync();
+                }, 1000);
+            } else {
+                log("ERROR");
+                done();
+            }
+        }
+    }
+
+    function testSync() {
+        var worker = new Worker('resources/close.js');
+        worker.onerror = handleException;
+        worker.postMessage("sync");
+        worker.onmessage = function(evt)
+        {
+            if (/DONE/.test(evt.data)) {
+                // Give worker a chance to complete the shutdown
+                setTimeout(function() {
+                    log("PASS: sync test");
+                    log("DONE");
+                    done();
+                }, 1000);
+            } else {
+                log("ERROR");
+                done();
+            }
+        }
+    }
+
+   function done()
+    {
+        clearTimeout(timeout);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    function handleException(evt)
+    {
+        log("ERROR - exception thrown: " + evt.message);
+        done();
+    }
+</script>
+</body>
+</html>

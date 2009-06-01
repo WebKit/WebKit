@@ -84,6 +84,7 @@ namespace WebCore {
         // WorkerGlobalScope
         WorkerContext* self() { return this; }
         WorkerLocation* location() const;
+        void close();
 
         // WorkerUtils
         void importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode&);
@@ -142,6 +143,8 @@ namespace WebCore {
 
         RefPtr<EventListener> m_onmessageListener;
         EventListenersMap m_eventListeners;
+
+        bool m_closing;
     };
 
 } // namespace WebCore

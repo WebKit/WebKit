@@ -40,7 +40,7 @@ module threads {
                  attribute [Replaceable] WorkerContext self;
 #endif
                  attribute [Replaceable] WorkerLocation location;
-        // void close();
+        void close();
         //         attribute EventListener onclose;
         //         attribute EventListener onerror;
 

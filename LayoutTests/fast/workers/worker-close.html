@@ -1,0 +1,101 @@
+<body>
+<p>Test WorkerContext.close functionality. Should print a series of PASS messages, followed with DONE.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController)
+{
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var worker = new Worker('resources/worker-close.js');
+var timeout = 0;
+
+worker.postMessage("typeofClose");
+worker.onmessage = testTypeofClose;
+
+function testTypeofClose(evt)
+{
+    if (evt.data == "typeof close: function")
+        log("PASS: " + evt.data);
+    else
+        log("FAIL: " + evt.data);
+    worker.onmessage = testMessageAfterClose;
+    worker.postMessage("ping");
+}
+
+function testMessageAfterClose(evt) {
+    if (evt.data == "pong")
+        log("PASS: received message before close");
+    else
+        log("FAIL: received unknown response: " + evt.data);
+
+    // Tell the worker to close, then send a followup message
+    // which should not be delivered.
+    worker.postMessage("close");
+    worker.onmessage = function(evt) {
+        log("FAIL: Received message after worker closed: " + evt.data);
+        done();
+    };
+    // Make sure that messages don't arrive at the remote end - since they
+    // can't send back response messages, we'll have the worker throw an
+    // exception instead (errors are still propagated to the caller even after
+    // close()).
+    worker.postMessage("throw");
+    worker.onerror = function(evt) {
+        log("FAIL: message delivered after close(): " + evt.message);
+        done();
+    }
+    timeout = setTimeout(testPendingEvents, 1000);
+}
+
+function testPendingEvents()
+{
+    log("PASS: messages sent after close() are ignored");
+
+    // Now test that workers do not deliver pending events
+    worker = new Worker('resources/worker-close.js');
+    worker.postMessage("closeWithPendingEvents");
+    worker.onmessage = function(evt) {
+        log("FAIL: pending events should not fire:" + evt.data);
+        done();
+    }
+    worker.onerror = function(evt) {
+        log("FAIL: pending events should not fire:" + evt.message);
+        done();
+    }
+    timeout = setTimeout(testTerminateAfterClose, 500);
+}
+
+function testTerminateAfterClose()
+{
+    log("PASS: close() did not dispatch pending events");
+    worker = new Worker('resources/worker-class.js');
+    worker.postMessage("close");
+    worker.onmessage = function(evt) {
+        log("FAIL: Received message after worker closed: " + evt.data);
+        done();
+    };
+    // Give worker a chance to close first, then terminate it.
+    timeout = setTimeout(function() {
+        worker.terminate();
+        done();
+    }, 500);
+}
+
+function done() {
+    if (timeout)
+        clearTimeout(timeout);
+    log("DONE");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</body>
+</html>
+
