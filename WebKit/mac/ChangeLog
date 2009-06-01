@@ -1,5 +1,10 @@
 2009-06-01  Darin Adler  <darin@apple.com>
 
+        * WebView/WebTextCompletionController.mm: Fix Tiger build by adding import
+        of WebTypesInternal.h.
+
+2009-06-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Bug 26113: break WebTextCompletionController out into its own source file
