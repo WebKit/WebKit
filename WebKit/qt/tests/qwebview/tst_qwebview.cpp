@@ -18,7 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <QtTest/QtTest>
+#include <qtest.h>
 
 #include <qpainter.h>
 #include <qwebview.h>
@@ -29,10 +29,6 @@
 class tst_QWebView : public QObject
 {
     Q_OBJECT
-
-public:
-    tst_QWebView();
-    virtual ~tst_QWebView();
 
 public slots:
     void initTestCase();
@@ -45,14 +41,6 @@ private slots:
     void guessUrlFromString_data();
     void guessUrlFromString();
 };
-
-tst_QWebView::tst_QWebView()
-{
-}
-
-tst_QWebView::~tst_QWebView()
-{
-}
 
 // This will be called before the first test function is executed.
 // It is only called once.
@@ -173,3 +161,4 @@ void tst_QWebView::guessUrlFromString()
 
 QTEST_MAIN(tst_QWebView)
 #include "tst_qwebview.moc"
+

@@ -2,6 +2,17 @@
 
         Rubber-stamped by Gustavo Noronha.
 
+        Cleanup autotest file
+        - use proper includes
+        - remove useless constructor and destructor
+        - add missing newline at the end of the file
+
+        * tests/qwebview/tst_qwebview.cpp:
+
+2009-06-01  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Rubber-stamped by Gustavo Noronha.
+
         Add a missing space between two words in the documentation.
 
         * Api/qwebview.cpp:
