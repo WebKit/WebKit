@@ -1,3 +1,22 @@
+2009-06-01  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by Maciej Stachowiak.  Landed by Adam Barth.
+
+        Add an additional test for bug 23786 (mistreatment of CR/LF 
+        as zero-width characters in Chromium port).  Tests using Bidi text were
+        added when the fix was checked in. Without the patch, Chromium used
+        to fail the same way with LTR complex scripts as well. (that is,
+        CR and LF were treated as zero-width space). To prevent a potential
+        regression in the future, a new test with Hindi (a LTR complex script)
+        is added. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=25698
+
+        * fast/text/international/hindi-whitespace.html: Added.
+        * platform/mac/fast/text/international/hindi-whitespace-expected.checksum: Added.
+        * platform/mac/fast/text/international/hindi-whitespace-expected.png: Added.
+        * platform/mac/fast/text/international/hindi-whitespace-expected.txt: Added.
+
 2009-06-01  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Darin Adler.  Landed by Adam Barth.
