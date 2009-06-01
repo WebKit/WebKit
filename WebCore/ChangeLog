@@ -5,7 +5,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=13233
         Need to implement an optimizing XPath evaluator
 
-        Avoid sorting results of hierarchical paths that are natuarlly sorted. On a flat data structure
+        Avoid sorting results of hierarchical paths that are naturally sorted. On a flat data structure
         with 128K nodes and a simple XPath expression, this changes evaluation time from 1.5 minutes
         to 33 ms.
 
