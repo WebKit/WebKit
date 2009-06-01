@@ -1,6 +1,6 @@
 /*
- * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
+ * Copyright (C) 2006, 2009 Apple Inc.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,110 +74,157 @@ static HashMap<String, FunctionRec>* functionMap;
 
 class FunLast : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
+public:
+    FunLast() { setIsContextSizeSensitive(true); }
 };
 
 class FunPosition : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
+public:
+    FunPosition() { setIsContextPositionSensitive(true); }
 };
 
 class FunCount : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
 };
 
 class FunId : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NodeSetValue; }
 };
 
 class FunLocalName : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
+public:
+    FunLocalName() { setIsContextNodeSensitive(true); } // local-name() with no arguments uses context node. 
 };
 
 class FunNamespaceURI : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
+public:
+    FunNamespaceURI() { setIsContextNodeSensitive(true); } // namespace-uri() with no arguments uses context node. 
 };
 
 class FunName : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
+public:
+    FunName() { setIsContextNodeSensitive(true); } // name() with no arguments uses context node. 
 };
 
 class FunString : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
+public:
+    FunString() { setIsContextNodeSensitive(true); } // string() with no arguments uses context node. 
 };
 
 class FunConcat : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
 };
 
 class FunStartsWith : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::BooleanValue; }
 };
 
 class FunContains : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::BooleanValue; }
 };
 
 class FunSubstringBefore : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
 };
 
 class FunSubstringAfter : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
 };
 
 class FunSubstring : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
 };
 
 class FunStringLength : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
+public:
+    FunStringLength() { setIsContextNodeSensitive(true); } // string-length() with no arguments uses context node. 
 };
 
 class FunNormalizeSpace : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
+public:
+    FunNormalizeSpace() { setIsContextNodeSensitive(true); } // normalize-space() with no arguments uses context node. 
 };
 
 class FunTranslate : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::StringValue; }
 };
 
 class FunBoolean : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::BooleanValue; }
 };
 
 class FunNot : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::BooleanValue; }
 };
 
 class FunTrue : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::BooleanValue; }
 };
 
 class FunFalse : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::BooleanValue; }
 };
 
 class FunLang : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::BooleanValue; }
+public:
+    FunLang() { setIsContextNodeSensitive(true); } // lang() always works on context node. 
 };
 
 class FunNumber : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
+public:
+    FunNumber() { setIsContextNodeSensitive(true); } // number() with no arguments uses context node. 
 };
 
 class FunSum : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
 };
 
 class FunFloor : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
 };
 
 class FunCeiling : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
 };
 
 class FunRound : public Function {
     virtual Value evaluate() const;
+    virtual Value::Type resultType() const { return Value::NumberValue; }
 public:
     static double round(double);
 };
@@ -246,8 +293,13 @@ inline bool Interval::contains(int value) const
 
 void Function::setArguments(const Vector<Expression*>& args)
 {
-    Vector<Expression*>::const_iterator end = args.end();
+    ASSERT(!subExprCount());
 
+    // Some functions use context node as implicit argument, so when explicit arguments are added, they may no longer be context node sensitive.
+    if (m_name != "lang" && !args.isEmpty())
+        setIsContextNodeSensitive(false);
+
+    Vector<Expression*>::const_iterator end = args.end();
     for (Vector<Expression*>::const_iterator it = args.begin(); it != end; it++)
         addSubExpression(*it);
 }

@@ -11,7 +11,7 @@
 <script>
 
 var ROOT = document.createElement('div');
-ROOT.innerHTML = '<p>a</p><div><span></span><span></span><span></span></div>';
+ROOT.innerHTML = '<p>a</p><div><span id="21"></span><span id="22"></span><span id="23"></span></div>';
 var CHILD1 = ROOT.firstChild;
 var CHILD1TEXT = CHILD1.firstChild;
 var CHILD2 = ROOT.lastChild;
@@ -66,6 +66,12 @@ var CHILD23 = CHILD22.nextSibling;
 
     result = document.evaluate("ancestor-or-self::node()[3]", CHILD21, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     checkSnapshot("ancestor-or-self::node()[3]", result, [ROOT]);
+
+    result = document.evaluate("preceding::span[1]", CHILD23, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("preceding::span[1]", result, [CHILD22]);
+
+    result = document.evaluate("(preceding::span)[1]", CHILD23, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("(preceding::span)[1]", result, [CHILD21]);
 
 var ROOT2 = document.createElement('div');
 ROOT2.innerHTML = '<p num="1"></p><p num="2" type="warning"></p><p num="3" type="warning"></p><p num="4" type="warning"></p><p num="5" type="warning"></p><p num="6" type="warning"></p>';

@@ -47,6 +47,8 @@ namespace WebCore {
             virtual Value evaluate() const;
 
         private:
+            virtual Value::Type resultType() const { return m_expr->resultType(); }
+
             Expression* m_expr;
             Vector<Predicate*> m_predicates;
         };
@@ -55,7 +57,7 @@ namespace WebCore {
         public:
             LocationPath();
             virtual ~LocationPath();
-            void setAbsolute(bool value) { m_absolute = value; }
+            void setAbsolute(bool value) { m_absolute = value; setIsContextNodeSensitive(!m_absolute); }
 
             virtual Value evaluate() const;
             void evaluate(NodeSet& nodes) const; // nodes is an input/output parameter
@@ -64,6 +66,8 @@ namespace WebCore {
             void insertFirstStep(Step* step);
 
         private:
+            virtual Value::Type resultType() const { return Value::NodeSetValue; }
+
             Vector<Step*> m_steps;
             bool m_absolute;
         };
@@ -77,6 +81,8 @@ namespace WebCore {
             virtual Value evaluate() const;
 
         private:
+            virtual Value::Type resultType() const { return Value::NodeSetValue; }
+
             Filter* m_filter;
             LocationPath* m_path;
         };

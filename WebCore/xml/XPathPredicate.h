@@ -41,6 +41,8 @@ namespace WebCore {
             Number(double);
         private:
             virtual Value evaluate() const;
+            virtual Value::Type resultType() const { return Value::NumberValue; }
+
             Value m_value;
         };
 
@@ -49,12 +51,15 @@ namespace WebCore {
             StringExpression(const String&);
         private:
             virtual Value evaluate() const;
+            virtual Value::Type resultType() const { return Value::StringValue; }
+
             Value m_value;
         };
 
         class Negative : public Expression {
         private:
             virtual Value evaluate() const;
+            virtual Value::Type resultType() const { return Value::NumberValue; }
         };
 
         class NumericOp : public Expression {
@@ -65,6 +70,8 @@ namespace WebCore {
             NumericOp(Opcode, Expression* lhs, Expression* rhs);
         private:
             virtual Value evaluate() const;
+            virtual Value::Type resultType() const { return Value::NumberValue; }
+
             Opcode m_opcode;
         };
 
@@ -74,7 +81,9 @@ namespace WebCore {
             EqTestOp(Opcode, Expression* lhs, Expression* rhs);
             virtual Value evaluate() const;
         private:
+            virtual Value::Type resultType() const { return Value::BooleanValue; }
             bool compare(const Value&, const Value&) const;
+
             Opcode m_opcode;
         };
 
@@ -83,14 +92,17 @@ namespace WebCore {
             enum Opcode { OP_And, OP_Or };
             LogicalOp(Opcode, Expression* lhs, Expression* rhs);
         private:
+            virtual Value::Type resultType() const { return Value::BooleanValue; }
             bool shortCircuitOn() const;
             virtual Value evaluate() const;
+
             Opcode m_opcode;
         };
 
         class Union : public Expression {
         private:
             virtual Value evaluate() const;
+            virtual Value::Type resultType() const { return Value::NodeSetValue; }
         };
 
         class Predicate : Noncopyable {
@@ -98,6 +110,10 @@ namespace WebCore {
             Predicate(Expression*);
             ~Predicate();
             bool evaluate() const;
+
+            bool isContextPositionSensitive() const { return m_expr->isContextPositionSensitive() || m_expr->resultType() == Value::NumberValue; }
+            bool isContextSizeSensitive() const { return m_expr->isContextSizeSensitive(); }
+
         private:
             Expression* m_expr;
         };

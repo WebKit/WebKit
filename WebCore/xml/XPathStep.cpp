@@ -51,14 +51,74 @@ Step::Step(Axis axis, const NodeTest& nodeTest, const Vector<Predicate*>& predic
 Step::~Step()
 {
     deleteAllValues(m_predicates);
+    deleteAllValues(m_nodeTest.mergedPredicates());
+}
+
+void Step::optimize()
+{
+    // Evaluate predicates as part of node test if possible to avoid building unnecessary NodeSets.
+    // E.g., there is no need to build a set of all "foo" nodes to evaluate "foo[@bar]", we can check the predicate while enumerating.
+    // This optimization can be applied to predicates that are not context node list sensitive, or to first predicate that is only context position sensitive, e.g. foo[position() mod 2 = 0].
+    Vector<Predicate*> remainingPredicates;
+    for (size_t i = 0; i < m_predicates.size(); ++i) {
+        Predicate* predicate = m_predicates[i];
+        if ((!predicate->isContextPositionSensitive() || m_nodeTest.mergedPredicates().isEmpty()) && !predicate->isContextSizeSensitive() && remainingPredicates.isEmpty()) {
+            m_nodeTest.mergedPredicates().append(predicate);
+        } else
+            remainingPredicates.append(predicate);
+    }
+    swap(remainingPredicates, m_predicates);
+}
+
+void optimizeStepPair(Step* first, Step* second, bool& dropSecondStep)
+{
+    dropSecondStep = false;
+
+    if (first->m_axis == Step::DescendantOrSelfAxis
+        && first->m_nodeTest.kind() == Step::NodeTest::AnyNodeTest
+        && first->m_predicates.size() == 0
+        && first->m_nodeTest.mergedPredicates().size() == 0) {
+
+        ASSERT(first->m_nodeTest.data().isEmpty());
+        ASSERT(first->m_nodeTest.namespaceURI().isEmpty());
+
+        // Optimize the common case of "//" AKA /descendant-or-self::node()/child::NodeTest to /descendant::NodeTest.
+        if (second->m_axis == Step::ChildAxis && second->predicatesAreContextListInsensitive()) {
+            first->m_axis = Step::DescendantAxis;
+            first->m_nodeTest = Step::NodeTest(second->m_nodeTest.kind(), second->m_nodeTest.data(), second->m_nodeTest.namespaceURI());
+            swap(second->m_nodeTest.mergedPredicates(), first->m_nodeTest.mergedPredicates());
+            swap(second->m_predicates, first->m_predicates);
+            first->optimize();
+            dropSecondStep = true;
+        }
+    }
+}
+
+bool Step::predicatesAreContextListInsensitive() const
+{
+    for (size_t i = 0; i < m_predicates.size(); ++i) {
+        Predicate* predicate = m_predicates[i];
+        if (predicate->isContextPositionSensitive() || predicate->isContextSizeSensitive())
+            return false;
+    }
+
+    for (size_t i = 0; i < m_nodeTest.mergedPredicates().size(); ++i) {
+        Predicate* predicate = m_nodeTest.mergedPredicates()[i];
+        if (predicate->isContextPositionSensitive() || predicate->isContextSizeSensitive())
+            return false;
+    }
+
+    return true;
 }
 
 void Step::evaluate(Node* context, NodeSet& nodes) const
 {
-    nodesInAxis(context, nodes);
-    
     EvaluationContext& evaluationContext = Expression::evaluationContext();
-    
+    evaluationContext.position = 0;
+
+    nodesInAxis(context, nodes);
+
+    // Check predicates that couldn't be merged into node test.
     for (unsigned i = 0; i < m_predicates.size(); i++) {
         Predicate* predicate = m_predicates[i];
 
@@ -69,7 +129,7 @@ void Step::evaluate(Node* context, NodeSet& nodes) const
         for (unsigned j = 0; j < nodes.size(); j++) {
             Node* node = nodes[j];
 
-            Expression::evaluationContext().node = node;
+            evaluationContext.node = node;
             evaluationContext.size = nodes.size();
             evaluationContext.position = j + 1;
             if (predicate->evaluate())
@@ -92,7 +152,8 @@ static inline Node::NodeType primaryNodeType(Step::Axis axis)
     }
 }
 
-static inline bool nodeMatches(Node* node, Step::Axis axis, const Step::NodeTest& nodeTest)
+// Evaluate NodeTest without considering merged predicates.
+static inline bool nodeMatchesBasicTest(Node* node, Step::Axis axis, const Step::NodeTest& nodeTest)
 {
     switch (nodeTest.kind()) {
         case Step::NodeTest::TextNodeTest:
@@ -103,8 +164,6 @@ static inline bool nodeMatches(Node* node, Step::Axis axis, const Step::NodeTest
             const AtomicString& name = nodeTest.data();
             return node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE && (name.isEmpty() || node->nodeName() == name);
         }
-        case Step::NodeTest::ElementNodeTest:
-            return node->isElementNode();
         case Step::NodeTest::AnyNodeTest:
             return true;
         case Step::NodeTest::NameTest: {
@@ -146,6 +205,30 @@ static inline bool nodeMatches(Node* node, Step::Axis axis, const Step::NodeTest
     return false;
 }
 
+static inline bool nodeMatches(Node* node, Step::Axis axis, const Step::NodeTest& nodeTest)
+{
+    if (!nodeMatchesBasicTest(node, axis, nodeTest))
+        return false;
+
+    EvaluationContext& evaluationContext = Expression::evaluationContext();
+
+    // Only the first merged predicate may depend on position.
+    ++evaluationContext.position;
+
+    const Vector<Predicate*>& mergedPredicates = nodeTest.mergedPredicates();
+    for (unsigned i = 0; i < mergedPredicates.size(); i++) {
+        Predicate* predicate = mergedPredicates[i];
+
+        evaluationContext.node = node;
+        // No need to set context size - we only get here when evaluating predicates that do not depend on it.
+        if (!predicate->evaluate())
+            return false;
+    }
+
+    return true;
+}
+
+// Result nodes are ordered in axis order. Node test (including merged predicates) is applied.
 void Step::nodesInAxis(Node* context, NodeSet& nodes) const
 {
     ASSERT(nodes.isEmpty());
@@ -249,8 +332,10 @@ void Step::nodesInAxis(Node* context, NodeSet& nodes) const
             // Avoid lazily creating attribute nodes for attributes that we do not need anyway.
             if (m_nodeTest.kind() == NodeTest::NameTest && m_nodeTest.data() != starAtom) {
                 RefPtr<Node> n = static_cast<Element*>(context)->getAttributeNodeNS(m_nodeTest.namespaceURI(), m_nodeTest.data());
-                if (n && n->namespaceURI() != "http://www.w3.org/2000/xmlns/") // In XPath land, namespace nodes are not accessible on the attribute axis.
-                    nodes.append(n.release());
+                if (n && n->namespaceURI() != "http://www.w3.org/2000/xmlns/") { // In XPath land, namespace nodes are not accessible on the attribute axis.
+                    if (nodeMatches(n.get(), AttributeAxis, m_nodeTest)) // Still need to check merged predicates.
+                        nodes.append(n.release());
+                }
                 return;
             }
             

@@ -1,3 +1,123 @@
+2009-05-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=13233
+        Need to implement an optimizing XPath evaluator
+
+        This patch adds some infrastructure and simple optimizations. Namely,
+        - we now avoid building a full NodeSet just to evaluate a predicate in some cases;
+        - "/descendant-or-self::node()/child::" is optimized to iterate the tree once when possible;
+
+        * xml/XPathExpressionNode.cpp:
+        (WebCore::XPath::Expression::Expression):
+        * xml/XPathExpressionNode.h:
+        (WebCore::XPath::Expression::addSubExpression):
+        (WebCore::XPath::Expression::isContextNodeSensitive):
+        (WebCore::XPath::Expression::isContextPositionSensitive):
+        (WebCore::XPath::Expression::isContextSizeSensitive):
+        (WebCore::XPath::Expression::setIsContextNodeSensitive):
+        (WebCore::XPath::Expression::setIsContextPositionSensitive):
+        (WebCore::XPath::Expression::setIsContextSizeSensitive):
+        XPath expression now knows its result type, and whether evaluation depends on context.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLast::resultType):
+        (WebCore::XPath::FunLast::FunLast):
+        (WebCore::XPath::FunPosition::resultType):
+        (WebCore::XPath::FunPosition::FunPosition):
+        (WebCore::XPath::FunCount::resultType):
+        (WebCore::XPath::FunId::resultType):
+        (WebCore::XPath::FunLocalName::resultType):
+        (WebCore::XPath::FunLocalName::FunLocalName):
+        (WebCore::XPath::FunNamespaceURI::resultType):
+        (WebCore::XPath::FunNamespaceURI::FunNamespaceURI):
+        (WebCore::XPath::FunName::resultType):
+        (WebCore::XPath::FunName::FunName):
+        (WebCore::XPath::FunString::resultType):
+        (WebCore::XPath::FunString::FunString):
+        (WebCore::XPath::FunConcat::resultType):
+        (WebCore::XPath::FunStartsWith::resultType):
+        (WebCore::XPath::FunContains::resultType):
+        (WebCore::XPath::FunSubstringBefore::resultType):
+        (WebCore::XPath::FunSubstringAfter::resultType):
+        (WebCore::XPath::FunSubstring::resultType):
+        (WebCore::XPath::FunStringLength::resultType):
+        (WebCore::XPath::FunStringLength::FunStringLength):
+        (WebCore::XPath::FunNormalizeSpace::resultType):
+        (WebCore::XPath::FunNormalizeSpace::FunNormalizeSpace):
+        (WebCore::XPath::FunTranslate::resultType):
+        (WebCore::XPath::FunBoolean::resultType):
+        (WebCore::XPath::FunNot::resultType):
+        (WebCore::XPath::FunTrue::resultType):
+        (WebCore::XPath::FunFalse::resultType):
+        (WebCore::XPath::FunLang::resultType):
+        (WebCore::XPath::FunLang::FunLang):
+        (WebCore::XPath::FunNumber::resultType):
+        (WebCore::XPath::FunNumber::FunNumber):
+        (WebCore::XPath::FunSum::resultType):
+        (WebCore::XPath::FunFloor::resultType):
+        (WebCore::XPath::FunCeiling::resultType):
+        (WebCore::XPath::FunRound::resultType):
+        (WebCore::XPath::Function::setArguments):
+        Set optimization details for the expression. Normally, a function does not introduce context
+        node set dependency, but some use context node as default argument, or otherwise use the context.
+
+        * xml/XPathFunctions.h: Tweaked style.
+
+        * xml/XPathPath.cpp:
+        (WebCore::XPath::Filter::Filter): A filter is as context node set sensitive as its expression is.
+        (WebCore::XPath::LocationPath::LocationPath): A location path can only be context node sensitive,
+        and only if the path relative.
+        (WebCore::XPath::LocationPath::appendStep): Invoke compile-time Step optimizations.
+        (WebCore::XPath::LocationPath::insertFirstStep): Ditto.
+        (WebCore::XPath::Path::Path): A path is as context node set sensitive as its filter is.
+
+        * xml/XPathPath.h:
+        (WebCore::XPath::Filter::resultType): Result type of a filter is the same as of its expression
+        (useful filters return NodeSets, of course).
+        (WebCore::XPath::LocationPath::setAbsolute): An absolute location path if context node set
+        insensitive.
+        (WebCore::XPath::LocationPath::resultType): A path's result is always a node set.
+        (WebCore::XPath::Path::resultType): Ditto.
+
+        * xml/XPathPredicate.h:
+        (WebCore::XPath::Number::resultType): Return a proper result type.
+        (WebCore::XPath::StringExpression::resultType): Ditto.
+        (WebCore::XPath::Negative::resultType): Ditto.
+        (WebCore::XPath::NumericOp::resultType): Ditto.
+        (WebCore::XPath::EqTestOp::resultType): Ditto.
+        (WebCore::XPath::LogicalOp::resultType): Ditto.
+        (WebCore::XPath::Union::resultType): Ditto.
+        (WebCore::XPath::Predicate::isContextPositionSensitive): A predicate can be context position
+        sensitive even if its expression is not, because e.g. [5] is a shortcut for [position()=5].
+        (WebCore::XPath::Predicate::isContextSizeSensitive): This matches expression result.
+
+        * xml/XPathStep.h:
+        (WebCore::XPath::Step::NodeTest::Kind): Removed unused ElementNodeTest, which was previously
+        borrowed from XPath 2.0 to express some optimizations.
+        (WebCore::XPath::Step::NodeTest::mergedPredicates): To avoid building a huge node set and
+        filtering it with predicates, we now try to apply predicates while enumerating an axis.
+        (WebCore::XPath::Step::nodeTest): Expose m_nodeTest.
+
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::~Step): The step owns NodeTest merged predicates, so it is still
+        possible to copy NodeTests.
+        (WebCore::XPath::Step::optimize): Merge predicates into NodeTest if possible.
+        (WebCore::XPath::optimizeStepPair): Optimize some expressions containing "//".
+        (WebCore::XPath::Step::predicatesAreContextListInsensitive): The above optimization is only
+        possible if there are no context sensitive predicates for "//".
+        (WebCore::XPath::Step::evaluate): Track context position for the first merged predicate.
+        (WebCore::XPath::nodeMatchesBasicTest): Check whether the node matches node test, ignoring
+        merged predicates.
+        (WebCore::XPath::nodeMatches): Additionally check merged predicates, and update position.
+        (WebCore::XPath::Step::nodesInAxis): Check merged predicates in optimized attribute code
+        path.
+
+        * xml/XPathVariableReference.h: (WebCore::XPath::VariableReference::resultType): Variable
+        references are not used with XPathEvaluator, so we'll only need them if we decide to
+        reimplement XSLT. The type of variable reference is not known at compile time.
+
 2009-05-31  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.

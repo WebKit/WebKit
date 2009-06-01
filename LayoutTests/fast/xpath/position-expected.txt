@@ -14,6 +14,8 @@ PASS preceding::node()/*[3]
 PASS ancestor::node()[2]
 PASS ancestor-or-self::node()[2]
 PASS ancestor-or-self::node()[3]
+PASS preceding::span[1]
+PASS (preceding::span)[1]
 PASS document.evaluate('p[@type="warning"][5]/@num', ROOT2, null, XPathResult.STRING_TYPE, null).stringValue is '6'
 PASS document.evaluate('p[5][@type="warning"]/@num', ROOT2, null, XPathResult.STRING_TYPE, null).stringValue is '5'
 PASS successfullyParsed is true
