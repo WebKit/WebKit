@@ -268,7 +268,7 @@ void QWebView::setPage(QWebPage *page)
     If that is not the case, an attempt is made to turn the string into a
     http:// or ftp:// URL. The latter in the case the string starts with
     'ftp'. The result is then passed through QUrl's tolerant parser, and
-    in the case or success, a valid QUrl is returned, orelse a QUrl().
+    in the case or success, a valid QUrl is returned, or else a QUrl().
 
     Examples
     - webkit.org becomes http://webkit.org
