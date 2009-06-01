@@ -1022,8 +1022,8 @@ void PopupListBox::updateFromElement()
     // mouse to get away from the select box. In that case, updateFromElement
     // is called before abandon, which causes discarding of the select result.    
     if (m_willAcceptOnAbandon) {
-        m_popupClient->valueChanged(m_selectedIndex);
         m_willAcceptOnAbandon = false;
+        m_popupClient->valueChanged(m_selectedIndex);
     }
 
     clear();

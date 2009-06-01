@@ -1,7 +1,22 @@
+2009-06-01  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.  Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26026
+
+        Fix an infinite loop when using the keyboard in Chromium select
+        popups.
+
+        Not testable since it involves sending a keyboard event to
+        the popup, which is not possible (eventSender sends the key
+        events through webview, we want to go through the webwidget).
+
+        * platform/chromium/PopupMenuChromium.cpp:
+
 2009-06-01  Nate Chapin  <japhet@google.com>
 
         Reviewed by Dimitri Glazkov.  Landed by Adam Barth.
-        
+
         If a url with an anchor is being loaded, ensure that the anchor remains locked in view until the page
         has finished loading compeltely or the user has manually scrolled.  Refreshing an anchor url after
         scrolling to a new location on the page will still result in jumping to the new location.
