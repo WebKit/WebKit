@@ -2956,8 +2956,6 @@ webcore_sources += \
 	WebCore/svg/graphics/filters/SVGFilter.h \
 	WebCore/svg/graphics/filters/SVGFilterBuilder.h \
 	WebCore/svg/graphics/filters/SVGFilterBuilder.cpp \
-	WebCore/svg/graphics/filters/SVGFilterEffect.cpp \
-	WebCore/svg/graphics/filters/SVGFilterEffect.h \
 	WebCore/svg/graphics/filters/SVGLightSource.cpp \
 	WebCore/svg/graphics/filters/SVGLightSource.h \
 	WebCore/svg/graphics/filters/SVGPointLightSource.h \

@@ -14941,14 +14941,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFilterEffect.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\svg\graphics\filters\SVGFilterEffect.h"
-						>
-					</File>
-					<File
 						RelativePath="..\svg\graphics\filters\SVGLightSource.cpp"
 						>
 					</File>

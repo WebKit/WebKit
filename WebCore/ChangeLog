@@ -1,3 +1,75 @@
+2009-06-01  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Remove last pieces of the old SVG filte system. They are not
+        usable with our current filter system. The new filter effects
+        will replace the functionality step by step.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/graphics/cairo: Removed.
+        * svg/graphics/cairo/SVGResourceFilterCairo.cpp: Removed.
+        * svg/graphics/cg: Removed.
+        * svg/graphics/cg/SVGResourceFilterCg.cpp: Removed.
+        * svg/graphics/cg/SVGResourceFilterCg.mm: Removed.
+        * svg/graphics/filters/SVGFilterEffect.cpp: Removed.
+        * svg/graphics/filters/SVGFilterEffect.h: Removed.
+        * svg/graphics/filters/cg: Removed.
+        * svg/graphics/filters/cg/SVGFEHelpersCg.h: Removed.
+        * svg/graphics/filters/cg/SVGFEHelpersCg.mm: Removed.
+        * svg/graphics/filters/cg/SVGFilterEffectCg.mm: Removed.
+        * svg/graphics/filters/cg/WKArithmeticFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKArithmeticFilter.h: Removed.
+        * svg/graphics/filters/cg/WKArithmeticFilter.m: Removed.
+        * svg/graphics/filters/cg/WKComponentMergeFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKComponentMergeFilter.h: Removed.
+        * svg/graphics/filters/cg/WKComponentMergeFilter.m: Removed.
+        * svg/graphics/filters/cg/WKDiffuseLightingFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKDiffuseLightingFilter.h: Removed.
+        * svg/graphics/filters/cg/WKDiffuseLightingFilter.m: Removed.
+        * svg/graphics/filters/cg/WKDiscreteTransferFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKDiscreteTransferFilter.h: Removed.
+        * svg/graphics/filters/cg/WKDiscreteTransferFilter.m: Removed.
+        * svg/graphics/filters/cg/WKDisplacementMapFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKDisplacementMapFilter.h: Removed.
+        * svg/graphics/filters/cg/WKDisplacementMapFilter.m: Removed.
+        * svg/graphics/filters/cg/WKDistantLightFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKDistantLightFilter.h: Removed.
+        * svg/graphics/filters/cg/WKDistantLightFilter.m: Removed.
+        * svg/graphics/filters/cg/WKGammaTransferFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKGammaTransferFilter.h: Removed.
+        * svg/graphics/filters/cg/WKGammaTransferFilter.m: Removed.
+        * svg/graphics/filters/cg/WKIdentityTransferFilter.h: Removed.
+        * svg/graphics/filters/cg/WKIdentityTransferFilter.m: Removed.
+        * svg/graphics/filters/cg/WKLinearTransferFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKLinearTransferFilter.h: Removed.
+        * svg/graphics/filters/cg/WKLinearTransferFilter.m: Removed.
+        * svg/graphics/filters/cg/WKNormalMapFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKNormalMapFilter.h: Removed.
+        * svg/graphics/filters/cg/WKNormalMapFilter.m: Removed.
+        * svg/graphics/filters/cg/WKPointLightFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKPointLightFilter.h: Removed.
+        * svg/graphics/filters/cg/WKPointLightFilter.m: Removed.
+        * svg/graphics/filters/cg/WKSpecularLightingFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKSpecularLightingFilter.h: Removed.
+        * svg/graphics/filters/cg/WKSpecularLightingFilter.m: Removed.
+        * svg/graphics/filters/cg/WKSpotLightFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKSpotLightFilter.h: Removed.
+        * svg/graphics/filters/cg/WKSpotLightFilter.m: Removed.
+        * svg/graphics/filters/cg/WKTableTransferFilter.cikernel: Removed.
+        * svg/graphics/filters/cg/WKTableTransferFilter.h: Removed.
+        * svg/graphics/filters/cg/WKTableTransferFilter.m: Removed.
+        * svg/graphics/mac: Removed.
+        * svg/graphics/mac/SVGResourceFilterPlatformDataMac.h: Removed.
+        * svg/graphics/mac/SVGResourceFilterPlatformDataMac.mm: Removed.
+        * svg/graphics/qt: Removed.
+        * svg/graphics/qt/SVGResourceFilterQt.cpp: Removed.
+        * svg/graphics/skia: Removed.
+        * svg/graphics/skia/SVGResourceFilterSkia.cpp: Removed.
+
 2009-06-01  Dmitry Titov  <dimich@chromium.org>
 
         Fix the previous checkin (ttp://trac.webkit.org/changeset/44327).
