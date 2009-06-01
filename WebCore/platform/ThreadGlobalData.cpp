@@ -97,6 +97,10 @@ ThreadGlobalData::~ThreadGlobalData()
     delete m_atomicStringTable;
     delete m_threadTimers;
 
+    // Using member variable m_isMainThread instead of calling WTF::isMainThread() directly
+    // to avoid issues described in https://bugs.webkit.org/show_bug.cgi?id=25973.
+    // In short, some pthread-based platforms and ports can not use WTF::CurrentThread() and WTF::isMainThread()
+    // in destructors of thread-specific data.
     ASSERT(m_isMainThread || m_emptyString->hasOneRef()); // We intentionally don't clean up static data on application quit, so there will be many strings remaining on the main thread.
 
     delete m_emptyString;

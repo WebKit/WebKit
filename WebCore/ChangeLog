@@ -1,5 +1,13 @@
 2009-06-01  Dmitry Titov  <dimich@chromium.org>
 
+        Fix the previous checkin (ttp://trac.webkit.org/changeset/44327).
+        This adds a comment suggested during review.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::~ThreadGlobalData): Add comment clarifying the change.
+
+2009-06-01  Dmitry Titov  <dimich@chromium.org>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=25973
