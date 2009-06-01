@@ -62,6 +62,10 @@ namespace WebCore {
         EventNames* m_eventNames;
         ThreadTimers* m_threadTimers;
 
+#ifndef NDEBUG
+        bool m_isMainThread;
+#endif
+
 #if USE(ICU_UNICODE) || USE(GLIB_ICU_UNICODE_HYBRID)
         ICUConverterWrapper* m_cachedConverterICU;
 #endif
