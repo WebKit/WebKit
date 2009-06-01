@@ -13478,10 +13478,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSEventTargetBase.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSGeolocationCustom.cpp"
 					>
 				</File>

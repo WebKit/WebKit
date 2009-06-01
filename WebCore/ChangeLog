@@ -1,5 +1,16 @@
 2009-05-31  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Remove unused JSEventTargetBase.h
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventTargetBase.h: Removed.
+
+2009-05-31  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Part of https://bugs.webkit.org/show_bug.cgi?id=26100
