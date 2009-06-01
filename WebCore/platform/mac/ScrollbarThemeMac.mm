@@ -369,8 +369,14 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
 
     if (!scrollbar->enabled())
         trackInfo.enableState = kThemeTrackDisabled;
-    else
+    else {
+#if PLATFORM(CHROMIUM)
+        trackInfo.enableState = scrollbar->client()->isActive() ? kThemeTrackActive : kThemeTrackInactive;
+#else
+        // FIXME: We should fix isActive to work correctly rather than using AppKit directly.
         trackInfo.enableState = [[scrollbar->parent()->documentView() window] isKeyWindow] ? kThemeTrackActive : kThemeTrackInactive;
+#endif
+    }
     if (hasThumb(scrollbar))
         trackInfo.attributes |= kThemeTrackShowThumb;
     else if (!hasButtons(scrollbar))
