@@ -1,3 +1,11 @@
+2009-06-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        * platform/KeyboardCodes.h: Integrated contents of platform/chromium/KeyboardCodes.h
+            with a stern FIXME.
+        * platform/chromium/KeyboardCodes.h: Removed.
+
 2009-06-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric Seidel.

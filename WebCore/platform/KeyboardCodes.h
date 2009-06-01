@@ -32,6 +32,17 @@
 
 namespace WebCore {
 
+// FIXME: We should get rid of these Chromium-related ifdefs.
+#if PLATFORM(CHROMIUM)
+
+#if PLATFORM(WIN_OS)
+#include "KeyboardCodesWin.h"
+#else
+#include "KeyboardCodesPosix.h"
+#endif
+
+#else
+
 #if !PLATFORM(WIN_OS)
 // VK_LBUTTON (01) Left mouse button
 // VK_RBUTTON (02) Right mouse button
@@ -555,6 +566,8 @@ const int VK_OEM_CLEAR = 0xFE;
 const int VK_UNKNOWN = 0;
 
 #endif // PLATFORM(WIN_OS)
+
+#endif // PLATFORM(CHROMIUM)
 
 }
 
