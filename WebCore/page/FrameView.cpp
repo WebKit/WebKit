@@ -111,6 +111,7 @@ FrameView::FrameView(Frame* frame)
     , m_shouldUpdateWhileOffscreen(true)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
+    , m_lockedToAnchor(false)
 {
     init();
     show();
@@ -138,6 +139,7 @@ FrameView::FrameView(Frame* frame, const IntSize& initialSize)
     , m_shouldUpdateWhileOffscreen(true)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
+    , m_lockedToAnchor(false)
 {
     init();
     Widget::setFrameRect(IntRect(x(), y(), initialSize.width(), initialSize.height()));
@@ -199,6 +201,7 @@ void FrameView::reset()
     m_isPainting = false;
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
+    m_lockedToAnchor = false;
 }
 
 bool FrameView::isFrameView() const 
@@ -650,6 +653,9 @@ void FrameView::layout(bool allowSubtree)
         ASSERT(m_enqueueEvents);
     }
 
+    if (lockedToAnchor())
+        m_frame->loader()->gotoAnchor();
+
     m_nestedLayoutCount--;
 }
 
@@ -736,6 +742,7 @@ void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
 {
     bool wasInProgrammaticScroll = m_inProgrammaticScroll;
     m_inProgrammaticScroll = true;
+    setLockedToAnchor(false);
     ScrollView::scrollRectIntoViewRecursively(r);
     m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
@@ -744,6 +751,7 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
     bool wasInProgrammaticScroll = m_inProgrammaticScroll;
     m_inProgrammaticScroll = true;
+    setLockedToAnchor(false);
     ScrollView::setScrollPosition(scrollPoint);
     m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
@@ -1330,6 +1338,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
 {
     if (m_inProgrammaticScroll)
         return;
+    setLockedToAnchor(false);
     m_wasScrolledByUser = wasScrolledByUser;
 }
 
