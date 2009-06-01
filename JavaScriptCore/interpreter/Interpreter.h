@@ -65,7 +65,7 @@ namespace JSC {
 
     enum { MaxMainThreadReentryDepth = 256, MaxSecondaryThreadReentryDepth = 32 };
 
-    class Interpreter {
+    class Interpreter : public WTF::FastAllocBase {
         friend class JIT;
         friend class JITStubs;
         friend class CachedCall;
