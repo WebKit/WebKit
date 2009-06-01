@@ -1,5 +1,77 @@
 2009-05-31  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Part of https://bugs.webkit.org/show_bug.cgi?id=26100
+        Add missing event handler properties to the DOMWindow
+
+        Add missing oncanplay, oncanplaythrough, ondurationchange, onemptied,
+        onended, onloadeddata, onloadedmetadata, onpause, onplay, onplaying,
+        onratechange, onseeked, onseeking, ontimeupdate, onvolumechange,
+        onwaiting, onloadstart, onprogress, onstalled, onsuspend, ondrag,
+        ondragend, ondragenter, ondragleave, ondragover, ondragstart and 
+        ondrop event handlers to the DOMWindow.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::ondrag):
+        (WebCore::DOMWindow::setOndrag):
+        (WebCore::DOMWindow::ondragend):
+        (WebCore::DOMWindow::setOndragend):
+        (WebCore::DOMWindow::ondragenter):
+        (WebCore::DOMWindow::setOndragenter):
+        (WebCore::DOMWindow::ondragleave):
+        (WebCore::DOMWindow::setOndragleave):
+        (WebCore::DOMWindow::ondragover):
+        (WebCore::DOMWindow::setOndragover):
+        (WebCore::DOMWindow::ondragstart):
+        (WebCore::DOMWindow::setOndragstart):
+        (WebCore::DOMWindow::ondrop):
+        (WebCore::DOMWindow::setOndrop):
+        (WebCore::DOMWindow::oncanplay):
+        (WebCore::DOMWindow::setOncanplay):
+        (WebCore::DOMWindow::oncanplaythrough):
+        (WebCore::DOMWindow::setOncanplaythrough):
+        (WebCore::DOMWindow::ondurationchange):
+        (WebCore::DOMWindow::setOndurationchange):
+        (WebCore::DOMWindow::onemptied):
+        (WebCore::DOMWindow::setOnemptied):
+        (WebCore::DOMWindow::onended):
+        (WebCore::DOMWindow::setOnended):
+        (WebCore::DOMWindow::onloadeddata):
+        (WebCore::DOMWindow::setOnloadeddata):
+        (WebCore::DOMWindow::onloadedmetadata):
+        (WebCore::DOMWindow::setOnloadedmetadata):
+        (WebCore::DOMWindow::onpause):
+        (WebCore::DOMWindow::setOnpause):
+        (WebCore::DOMWindow::onplay):
+        (WebCore::DOMWindow::setOnplay):
+        (WebCore::DOMWindow::onplaying):
+        (WebCore::DOMWindow::setOnplaying):
+        (WebCore::DOMWindow::onratechange):
+        (WebCore::DOMWindow::setOnratechange):
+        (WebCore::DOMWindow::onseeked):
+        (WebCore::DOMWindow::setOnseeked):
+        (WebCore::DOMWindow::onseeking):
+        (WebCore::DOMWindow::setOnseeking):
+        (WebCore::DOMWindow::ontimeupdate):
+        (WebCore::DOMWindow::setOntimeupdate):
+        (WebCore::DOMWindow::onvolumechange):
+        (WebCore::DOMWindow::setOnvolumechange):
+        (WebCore::DOMWindow::onwaiting):
+        (WebCore::DOMWindow::setOnwaiting):
+        (WebCore::DOMWindow::onloadstart):
+        (WebCore::DOMWindow::setOnloadstart):
+        (WebCore::DOMWindow::onprogress):
+        (WebCore::DOMWindow::setOnprogress):
+        (WebCore::DOMWindow::onstalled):
+        (WebCore::DOMWindow::setOnstalled):
+        (WebCore::DOMWindow::onsuspend):
+        (WebCore::DOMWindow::setOnsuspend):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
+2009-05-31  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Part of https://bugs.webkit.org/show_bug.cgi?id=26100

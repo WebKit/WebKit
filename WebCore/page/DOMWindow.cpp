@@ -1417,6 +1417,76 @@ void DOMWindow::setOndblclick(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().dblclickEvent, eventListener);
 }
 
+EventListener* DOMWindow::ondrag() const
+{
+    return getAttributeEventListener(eventNames().dragEvent);
+}
+
+void DOMWindow::setOndrag(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().dragEvent, eventListener);
+}
+
+EventListener* DOMWindow::ondragend() const
+{
+    return getAttributeEventListener(eventNames().dragendEvent);
+}
+
+void DOMWindow::setOndragend(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().dragendEvent, eventListener);
+}
+
+EventListener* DOMWindow::ondragenter() const
+{
+    return getAttributeEventListener(eventNames().dragenterEvent);
+}
+
+void DOMWindow::setOndragenter(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().dragenterEvent, eventListener);
+}
+
+EventListener* DOMWindow::ondragleave() const
+{
+    return getAttributeEventListener(eventNames().dragleaveEvent);
+}
+
+void DOMWindow::setOndragleave(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().dragleaveEvent, eventListener);
+}
+
+EventListener* DOMWindow::ondragover() const
+{
+    return getAttributeEventListener(eventNames().dragoverEvent);
+}
+
+void DOMWindow::setOndragover(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().dragoverEvent, eventListener);
+}
+
+EventListener* DOMWindow::ondragstart() const
+{
+    return getAttributeEventListener(eventNames().dragstartEvent);
+}
+
+void DOMWindow::setOndragstart(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().dragstartEvent, eventListener);
+}
+
+EventListener* DOMWindow::ondrop() const
+{
+    return getAttributeEventListener(eventNames().dropEvent);
+}
+
+void DOMWindow::setOndrop(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().dropEvent, eventListener);
+}
+
 EventListener* DOMWindow::onerror() const
 {
     return getAttributeEventListener(eventNames().errorEvent);
@@ -1685,6 +1755,206 @@ EventListener* DOMWindow::onwebkittransitionend() const
 void DOMWindow::setOnwebkittransitionend(PassRefPtr<EventListener> eventListener)
 {
     setAttributeEventListener(eventNames().webkitTransitionEndEvent, eventListener);
+}
+
+EventListener* DOMWindow::oncanplay() const
+{
+    return getAttributeEventListener(eventNames().canplayEvent);
+}
+
+void DOMWindow::setOncanplay(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().canplayEvent, eventListener);
+}
+
+EventListener* DOMWindow::oncanplaythrough() const
+{
+    return getAttributeEventListener(eventNames().canplaythroughEvent);
+}
+
+void DOMWindow::setOncanplaythrough(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().canplaythroughEvent, eventListener);
+}
+
+EventListener* DOMWindow::ondurationchange() const
+{
+    return getAttributeEventListener(eventNames().durationchangeEvent);
+}
+
+void DOMWindow::setOndurationchange(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().durationchangeEvent, eventListener);
+}
+
+EventListener* DOMWindow::onemptied() const
+{
+    return getAttributeEventListener(eventNames().emptiedEvent);
+}
+
+void DOMWindow::setOnemptied(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().emptiedEvent, eventListener);
+}
+
+EventListener* DOMWindow::onended() const
+{
+    return getAttributeEventListener(eventNames().endedEvent);
+}
+
+void DOMWindow::setOnended(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().endedEvent, eventListener);
+}
+
+EventListener* DOMWindow::onloadeddata() const
+{
+    return getAttributeEventListener(eventNames().loadeddataEvent);
+}
+
+void DOMWindow::setOnloadeddata(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().loadeddataEvent, eventListener);
+}
+
+EventListener* DOMWindow::onloadedmetadata() const
+{
+    return getAttributeEventListener(eventNames().loadedmetadataEvent);
+}
+
+void DOMWindow::setOnloadedmetadata(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().loadedmetadataEvent, eventListener);
+}
+
+EventListener* DOMWindow::onpause() const
+{
+    return getAttributeEventListener(eventNames().pauseEvent);
+}
+
+void DOMWindow::setOnpause(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().pauseEvent, eventListener);
+}
+
+EventListener* DOMWindow::onplay() const
+{
+    return getAttributeEventListener(eventNames().playEvent);
+}
+
+void DOMWindow::setOnplay(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().playEvent, eventListener);
+}
+
+EventListener* DOMWindow::onplaying() const
+{
+    return getAttributeEventListener(eventNames().playingEvent);
+}
+
+void DOMWindow::setOnplaying(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().playingEvent, eventListener);
+}
+
+EventListener* DOMWindow::onratechange() const
+{
+    return getAttributeEventListener(eventNames().ratechangeEvent);
+}
+
+void DOMWindow::setOnratechange(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().ratechangeEvent, eventListener);
+}
+
+EventListener* DOMWindow::onseeked() const
+{
+    return getAttributeEventListener(eventNames().seekedEvent);
+}
+
+void DOMWindow::setOnseeked(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().seekedEvent, eventListener);
+}
+
+EventListener* DOMWindow::onseeking() const
+{
+    return getAttributeEventListener(eventNames().seekingEvent);
+}
+
+void DOMWindow::setOnseeking(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().seekingEvent, eventListener);
+}
+
+EventListener* DOMWindow::ontimeupdate() const
+{
+    return getAttributeEventListener(eventNames().timeupdateEvent);
+}
+
+void DOMWindow::setOntimeupdate(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().timeupdateEvent, eventListener);
+}
+
+EventListener* DOMWindow::onvolumechange() const
+{
+    return getAttributeEventListener(eventNames().volumechangeEvent);
+}
+
+void DOMWindow::setOnvolumechange(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().volumechangeEvent, eventListener);
+}
+
+EventListener* DOMWindow::onwaiting() const
+{
+    return getAttributeEventListener(eventNames().waitingEvent);
+}
+
+void DOMWindow::setOnwaiting(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().waitingEvent, eventListener);
+}
+
+EventListener* DOMWindow::onloadstart() const
+{
+    return getAttributeEventListener(eventNames().loadstartEvent);
+}
+
+void DOMWindow::setOnloadstart(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().loadstartEvent, eventListener);
+}
+
+EventListener* DOMWindow::onprogress() const
+{
+    return getAttributeEventListener(eventNames().progressEvent);
+}
+
+void DOMWindow::setOnprogress(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().progressEvent, eventListener);
+}
+
+EventListener* DOMWindow::onstalled() const
+{
+    return getAttributeEventListener(eventNames().stalledEvent);
+}
+
+void DOMWindow::setOnstalled(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().stalledEvent, eventListener);
+}
+
+EventListener* DOMWindow::onsuspend() const
+{
+    return getAttributeEventListener(eventNames().suspendEvent);
+}
+
+void DOMWindow::setOnsuspend(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().suspendEvent, eventListener);
 }
 
 void DOMWindow::captureEvents()

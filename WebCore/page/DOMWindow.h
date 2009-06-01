@@ -240,7 +240,7 @@ namespace WebCore {
         const RegisteredEventListenerVector& eventListeners() const { return m_eventListeners; }
         bool hasEventListener(const AtomicString& eventType);
         void removeAllEventListeners();
-        
+
         EventListener* onabort() const;
         void setOnabort(PassRefPtr<EventListener>);
         EventListener* onblur() const;
@@ -251,6 +251,20 @@ namespace WebCore {
         void setOnclick(PassRefPtr<EventListener>);
         EventListener* ondblclick() const;
         void setOndblclick(PassRefPtr<EventListener>);
+        EventListener* ondrag() const;
+        void setOndrag(PassRefPtr<EventListener>);
+        EventListener* ondragend() const;
+        void setOndragend(PassRefPtr<EventListener>);
+        EventListener* ondragenter() const;
+        void setOndragenter(PassRefPtr<EventListener>);
+        EventListener* ondragleave() const;
+        void setOndragleave(PassRefPtr<EventListener>);
+        EventListener* ondragover() const;
+        void setOndragover(PassRefPtr<EventListener>);
+        EventListener* ondragstart() const;
+        void setOndragstart(PassRefPtr<EventListener>);
+        EventListener* ondrop() const;
+        void setOndrop(PassRefPtr<EventListener>);
         EventListener* onerror() const;
         void setOnerror(PassRefPtr<EventListener>);
         EventListener* onfocus() const;
@@ -305,6 +319,46 @@ namespace WebCore {
         void setOnwebkitanimationend(PassRefPtr<EventListener>);
         EventListener* onwebkittransitionend() const;
         void setOnwebkittransitionend(PassRefPtr<EventListener>);
+        EventListener* oncanplay() const;
+        void setOncanplay(PassRefPtr<EventListener>);
+        EventListener* oncanplaythrough() const;
+        void setOncanplaythrough(PassRefPtr<EventListener>);
+        EventListener* ondurationchange() const;
+        void setOndurationchange(PassRefPtr<EventListener>);
+        EventListener* onemptied() const;
+        void setOnemptied(PassRefPtr<EventListener>);
+        EventListener* onended() const;
+        void setOnended(PassRefPtr<EventListener>);
+        EventListener* onloadeddata() const;
+        void setOnloadeddata(PassRefPtr<EventListener>);
+        EventListener* onloadedmetadata() const;
+        void setOnloadedmetadata(PassRefPtr<EventListener>);
+        EventListener* onpause() const;
+        void setOnpause(PassRefPtr<EventListener>);
+        EventListener* onplay() const;
+        void setOnplay(PassRefPtr<EventListener>);
+        EventListener* onplaying() const;
+        void setOnplaying(PassRefPtr<EventListener>);
+        EventListener* onratechange() const;
+        void setOnratechange(PassRefPtr<EventListener>);
+        EventListener* onseeked() const;
+        void setOnseeked(PassRefPtr<EventListener>);
+        EventListener* onseeking() const;
+        void setOnseeking(PassRefPtr<EventListener>);
+        EventListener* ontimeupdate() const;
+        void setOntimeupdate(PassRefPtr<EventListener>);
+        EventListener* onvolumechange() const;
+        void setOnvolumechange(PassRefPtr<EventListener>);
+        EventListener* onwaiting() const;
+        void setOnwaiting(PassRefPtr<EventListener>);
+        EventListener* onloadstart() const;
+        void setOnloadstart(PassRefPtr<EventListener>);
+        EventListener* onprogress() const;
+        void setOnprogress(PassRefPtr<EventListener>);
+        EventListener* onstalled() const;
+        void setOnstalled(PassRefPtr<EventListener>);
+        EventListener* onsuspend() const;
+        void setOnsuspend(PassRefPtr<EventListener>);
 
         void captureEvents();
         void releaseEvents();

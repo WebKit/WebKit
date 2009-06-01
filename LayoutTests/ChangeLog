@@ -1,5 +1,21 @@
 2009-05-31  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Part of https://bugs.webkit.org/show_bug.cgi?id=26100
+        Add missing event handler properties to the DOMWindow
+
+        Add missing oncanplay, oncanplaythrough, ondurationchange, onemptied,
+        onended, onloadeddata, onloadedmetadata, onpause, onplay, onplaying,
+        onratechange, onseeked, onseeking, ontimeupdate, onvolumechange,
+        onwaiting, onloadstart, onprogress, onstalled, onsuspend, ondrag,
+        ondragend, ondragenter, ondragleave, ondragover, ondragstart and 
+        ondrop event handlers to the DOMWindow.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
+2009-05-31  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Part of https://bugs.webkit.org/show_bug.cgi?id=26100
