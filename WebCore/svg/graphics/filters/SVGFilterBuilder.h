@@ -23,6 +23,7 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "AtomicStringHash.h"
 #include "FilterEffect.h"
 #include "PlatformString.h"
 
@@ -43,8 +44,8 @@ namespace WebCore {
         void clearEffects();
 
     private:
-        HashMap<RefPtr<AtomicStringImpl>, RefPtr<FilterEffect> > m_builtinEffects;
-        HashMap<RefPtr<AtomicStringImpl>, RefPtr<FilterEffect> > m_namedEffects;
+        HashMap<AtomicString, RefPtr<FilterEffect> > m_builtinEffects;
+        HashMap<AtomicString, RefPtr<FilterEffect> > m_namedEffects;
 
         RefPtr<FilterEffect> m_lastEffect;
     };

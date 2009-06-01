@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Fix assertion error in --filters enabled debug builds.
+        Instead of using RefPtr<AtomicStringImpl> as keys for the hash maps in SVGFilterBuilder, just use AtomicString objects.
+
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder):
+        (WebCore::SVGFilterBuilder::add):
+        (WebCore::SVGFilterBuilder::getEffectById):
+        * svg/graphics/filters/SVGFilterBuilder.h:
+
+2009-06-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric Seidel.
+
         Fix --filters enabled build on Mac.
         Remove unnecessary 'boundingBox' parameter from finishRenderSVGContent() method.
         Kill several warnings, to make build pass.
