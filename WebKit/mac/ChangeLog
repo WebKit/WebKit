@@ -1,3 +1,28 @@
+2009-06-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 26113: break WebTextCompletionController out into its own source file
+        https://bugs.webkit.org/show_bug.cgi?id=26113
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]): Updated for new name.
+        (-[WebHTMLViewPrivate clear]): Ditto.
+        (-[WebHTMLView _frameOrBoundsChanged]): Ditto.
+        (-[WebHTMLView menuForEvent:]): Ditto.
+        (-[WebHTMLView windowDidResignKey:]): Ditto.
+        (-[WebHTMLView windowWillClose:]): Ditto.
+        (-[WebHTMLView mouseDown:]): Ditto.
+        (-[WebHTMLView resignFirstResponder]): Ditto.
+        (-[WebHTMLView keyDown:]): Ditto.
+        (-[WebHTMLView complete:]): Ditto. Also pass WebView to init method.
+        (-[WebHTMLView _interceptEditingKeyEvent:shouldSaveCommand:]): Ditto.
+
+        * WebView/WebTextCompletionController.h: Copied from mac/WebView/WebHTMLView.mm.
+        * WebView/WebTextCompletionController.mm: Copied from mac/WebView/WebHTMLView.mm.
+        Changed initializer to pass in a spearate WebView and WebHTMLView, to smooth the
+        way for handling viewless mode properly in the future.
+
 2009-05-30  David Kilzer  <ddkilzer@apple.com>
 
         Add JSLock to -[WebScriptCallFrame scopeChain]

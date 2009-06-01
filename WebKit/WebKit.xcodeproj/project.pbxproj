@@ -122,6 +122,8 @@
 		934C11670D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 934C11660D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h */; };
 		934C4A910F01406C009372C0 /* WebNSObjectExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 934C4A900F01406C009372C0 /* WebNSObjectExtras.mm */; };
 		934C4AA00F0141F7009372C0 /* WebResourceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 934C4A9F0F0141F7009372C0 /* WebResourceInternal.h */; };
+		936A2DE80FD2D08000D312DB /* WebTextCompletionController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 936A2DE70FD2D08000D312DB /* WebTextCompletionController.mm */; };
+		936A2DEA0FD2D08400D312DB /* WebTextCompletionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 936A2DE90FD2D08400D312DB /* WebTextCompletionController.h */; };
 		939810110824BF01008DF038 /* WebBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607D020F50ED0ECA1767 /* WebBackForwardList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810120824BF01008DF038 /* WebHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = F520FB190221DEFD01C1A525 /* WebHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810130824BF01008DF038 /* WebHistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3944607F020F50ED0ECA1767 /* WebHistoryItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -537,6 +539,8 @@
 		934C11660D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDynamicScrollBarsViewInternal.h; sourceTree = "<group>"; };
 		934C4A900F01406C009372C0 /* WebNSObjectExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSObjectExtras.mm; sourceTree = "<group>"; };
 		934C4A9F0F0141F7009372C0 /* WebResourceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceInternal.h; sourceTree = "<group>"; };
+		936A2DE70FD2D08000D312DB /* WebTextCompletionController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextCompletionController.mm; sourceTree = "<group>"; };
+		936A2DE90FD2D08400D312DB /* WebTextCompletionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTextCompletionController.h; sourceTree = "<group>"; };
 		939811320824BF01008DF038 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = SOURCE_ROOT; tabWidth = 8; usesTabs = 1; };
 		939811330824BF01008DF038 /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93AEB17D032C1735008635CE /* WebKitLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLogging.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1064,6 +1068,8 @@
 				7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */,
 				C0167BF60D7F5DD00028696E /* WebScriptDebugger.h */,
 				C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */,
+				936A2DE90FD2D08400D312DB /* WebTextCompletionController.h */,
+				936A2DE70FD2D08000D312DB /* WebTextCompletionController.mm */,
 				F834AAD50E64B1C700E2737C /* WebTextIterator.h */,
 				F834AAD60E64B1C700E2737C /* WebTextIterator.mm */,
 				515E27CC0458C86500CA2D3A /* WebUIDelegate.h */,
@@ -1416,6 +1422,7 @@
 				AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */,
 				0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */,
 				0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */,
+				936A2DEA0FD2D08400D312DB /* WebTextCompletionController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1742,6 +1749,7 @@
 				0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */,
 				0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */,
 				E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */,
+				936A2DE80FD2D08000D312DB /* WebTextCompletionController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
