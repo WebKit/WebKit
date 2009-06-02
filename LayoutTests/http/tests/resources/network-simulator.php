@@ -47,6 +47,78 @@ function contentType($path)
     return "text/plain";
 }
 
+function generateNoCacheHTTPHeader()
+{
+    header("Expires: Thu, 01 Dec 2003 16:00:00 GMT");
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+    header("Pragma: no-cache");
+}
+
+function generateResponse($path)
+{
+    $state = getState($stateFile);
+    if ($state == "Offline") {
+        header('HTTP/1.1 307 Temporary Redirect');
+        # Simulate a network error by redirecting to self.
+        header('Location: ' . $_SERVER['REQUEST_URI']);
+    } else {
+        // A little securuty checking can't hurt.
+        if (strstr($path, ".."))
+            exit;
+
+        if ($path[0] == '/')
+            $path = '..' . $path;
+
+        generateNoCacheHTTPHeader();    
+
+        if (file_exists($path)) {
+            header("Last-Modified: " . gmdate("D, d M Y H:i:s T", filemtime($path)));
+            header("Content-Type: " . contentType($path));
+        
+            print file_get_contents($path);
+        } else {
+            header('HTTP/1.1 404 Not Found');
+        }
+    }
+}
+
+function handleIncreaseResourceCountCommand($path)
+{
+    $resourceCountFile = sys_get_temp_dir() . "/resource-count";
+    $resourceCount = getState($resourceCountFile);
+    $pieces = explode(" ", $resourceCount);
+    $count = 0;
+    if (count($pieces) == 2 && $pieces[0] == $path) {
+        $count = 1 + $pieces[1];
+    } else {
+        $count = 1;
+    }
+    file_put_contents($resourceCountFile, $path . " " . $count);
+    generateResponse($path);
+}
+
+function handleResetResourceCountCommand()
+{
+    $resourceCountFile = sys_get_temp_dir() . "/resource-count";
+    file_put_contents($resourceCountFile, 0);
+    generateNoCacheHTTPHeader();
+    header('HTTP/1.1 200 OK');
+}
+
+function handleGetResourceCountCommand($path)
+{
+    $resourceCountFile = sys_get_temp_dir() . "/resource-count";
+    $resourceCount = getState($resourceCountFile);
+    $pieces = explode(" ", $resourceCount);
+    generateNoCacheHTTPHeader();
+    header('HTTP/1.1 200 OK');
+    if (count($pieces) == 2 && $pieces[0] == $path) {
+        echo $pieces[1];
+    } else {
+        echo 0;
+    }
+}
+
 $stateFile = sys_get_temp_dir() . "/network-simulator-state";
 $command = $_GET['command'];
 if ($command) {
@@ -54,36 +126,17 @@ if ($command) {
         setState("Online", $stateFile);
     else if ($command == "disconnect")
         setState("Offline", $stateFile);
+    else if ($command == "increase-resource-count")
+        handleIncreaseResourceCountCommand($_GET['path']);
+    else if ($command == "reset-resource-count")
+        handleResetResourceCountCommand();
+    else if ($command == "get-resource-count")
+        handleGetResourceCountCommand($_GET['path']);
     else
         echo "Unknown command: " . $command . "\n";
     exit();
 }
 
 $requestedPath = $_GET['path'];
-$state = getState($stateFile);
-if ($state == "Offline") {
-    header('HTTP/1.1 307 Temporary Redirect');
-    # Simulate a network error by redirecting to self.
-    header('Location: ' . $_SERVER['REQUEST_URI']);
-} else {
-    // A little securuty checking can't hurt.
-    if (strstr($requestedPath, ".."))
-        exit;
-
-    if ($requestedPath[0] == '/')
-        $requestedPath = '..' . $requestedPath;
-
-    header("Expires: Thu, 01 Dec 2003 16:00:00 GMT");
-    header("Cache-Control: no-cache, no-store, must-revalidate");
-    header("Pragma: no-cache");
-
-    if (file_exists($requestedPath)) {
-        header("Last-Modified: " . gmdate("D, d M Y H:i:s T", filemtime($requestedPath)));
-        header("Content-Type: " . contentType($requestedPath));
-    
-        print file_get_contents($requestedPath);
-    } else {
-        header('HTTP/1.1 404 Not Found');
-    }
-}
+generateResponse($requestedPath);
 ?>

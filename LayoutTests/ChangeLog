@@ -1,3 +1,16 @@
+2009-06-02  Johnny Ding  <johnnyding.webkit@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.  Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24747
+
+        Add a test case for multiple requests for same sub-resource due to preload.
+
+        * http/tests/loading/preload-img-test-expected.txt: Added.
+        * http/tests/loading/preload-img-test.html: Added.
+        * http/tests/loading/resources/preload-test.jpg: Added.
+        * http/tests/resources/network-simulator.php:
+
 2009-06-01  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Darin Adler.  Landed by Adam Barth.
