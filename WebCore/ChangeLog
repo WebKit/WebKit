@@ -1,3 +1,11 @@
+2009-06-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add list of unimplemented event handlers to DOMWindow.
+
+        * page/DOMWindow.idl:
+
 2009-06-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.
