@@ -1162,7 +1162,8 @@ sub buildQMakeProject($@)
         push @buildArgs, "CONFIG+=debug";
     } else {
         push @buildArgs, "CONFIG+=release";
-        if (!isDarwin() || passedConfiguration() =~ m/release/i) {
+        my $passedConfig = passedConfiguration() || "";
+        if (!isDarwin() || $passedConfig =~ m/release/i) {
             push @buildArgs, "CONFIG-=debug";
         } else {
             push @buildArgs, "CONFIG+=debug_and_release";

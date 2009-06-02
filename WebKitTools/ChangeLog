@@ -1,5 +1,13 @@
 2009-06-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Rubber-stamped by Adam Roben.
+
+        [Qt] Fix Perl warning about uninitialized value (passedConfiguration())
+
+        * Scripts/webkitdirs.pm:
+
+2009-06-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Rubber-stamped by Simon Hausmann.
 
         Use File::Spec->tmpdir instead of hardcoded paths for tempfile() dir
