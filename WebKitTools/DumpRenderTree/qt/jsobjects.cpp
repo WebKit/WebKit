@@ -394,6 +394,20 @@ void EventSender::keyDown(const QString &string, const QStringList &modifiers)
                 code = Qt::Key_End;
                 modifs &= ~Qt::MetaModifier;
             }
+        } else if (code == 0xf700) {
+            s = QString();
+            code = Qt::Key_Up;
+            if (modifs & Qt::MetaModifier) {
+                code = Qt::Key_PageUp;
+                modifs &= ~Qt::MetaModifier;
+            }
+        } else if (code == 0xf701) {
+            s = QString();
+            code = Qt::Key_Down;
+            if (modifs & Qt::MetaModifier) {
+                code = Qt::Key_PageDown;
+                modifs &= ~Qt::MetaModifier;
+            }
         } else if (code == 'a' && modifs == Qt::ControlModifier) {
             s = QString();
             code = Qt::Key_Home;

@@ -1,3 +1,15 @@
+2009-06-01  Yongjun Zhang  <yongjun.zhang@nokia.com>>
+
+        Reviewed by Holger Freyther.  Landed by Adam Barth.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=26070>
+
+        [Qt] EventSender.keyDown doesn't support Arrow Up and Down keys.
+        Add Down and Up key support.
+        
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (EventSender::keyDown):
+
 2009-06-01  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
