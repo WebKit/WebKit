@@ -1,0 +1,26 @@
+<head>
+</head>
+<body>
+<keygen id="keys">
+</keygen>
+<p>This test verifies that list-box-style select form control for keygen works properly when selecting from option element.
+<p>You should see one element ID below, and the word "SUCCESS":
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function test(elementId)
+{
+    var testKeygenElement = document.getElementById(elementId);
+    var result = "FAILED";
+    testKeygenElement.lastChild.selected = "selected";
+    if (testKeygenElement.selectedIndex != 0)
+    {
+        result = "SUCCESS";
+    }
+    document.writeln("<p>" + elementId + ": " + result + "</p>");
+}
+test("keys");
+</script>
+</body>
+</html>
