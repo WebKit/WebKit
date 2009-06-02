@@ -1,3 +1,49 @@
+2009-06-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Remove Range::compareBoundaryPoints(Position, Position) per Darin's suggestion in bug 25056
+        https://bugs.webkit.org/show_bug.cgi?id=25500
+
+        Darin indicated the Range should deal only with primitive DOM node/offset
+        pairs, and that Position (which is a more robust editing construct) should have
+        its own comparison functions and that Range.h should not mention Position at all.
+
+        Turns out that Position already has a comparePositions() function (which knows
+        how to additionally handled positions in shadow trees).  So I've just changed
+        all callers of compareBoundaryPoints(Position, Position) to use the existing
+        comparePositions() function.  I've also added a comparePositions which takes
+        VisiblePositions for convenience.
+
+        * dom/Range.cpp:
+        * dom/Range.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::updateStartEnd):
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToRange):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::nodeFullySelected):
+        (WebCore::ApplyStyleCommand::nodeFullyUnselected):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::toNormalizedRange):
+        * editing/htmlediting.cpp:
+        (WebCore::comparePositions):
+        * editing/htmlediting.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+
 2009-06-02  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Dimitri Glazkov.

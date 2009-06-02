@@ -342,7 +342,7 @@ ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnl
 
 void ApplyStyleCommand::updateStartEnd(const Position& newStart, const Position& newEnd)
 {
-    ASSERT(Range::compareBoundaryPoints(newEnd, newStart) >= 0);
+    ASSERT(comparePositions(newEnd, newStart) >= 0);
 
     if (!m_useEndingSelection && (newStart != m_start || newEnd != m_end))
         m_useEndingSelection = true;
@@ -408,7 +408,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     // get positions we want to use for applying style
     Position start = startPosition();
     Position end = endPosition();
-    if (Range::compareBoundaryPoints(end, start) < 0) {
+    if (comparePositions(end, start) < 0) {
         Position swap = start;
         start = end;
         end = swap;
@@ -484,7 +484,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
     
     Position start = startPosition();
     Position end = endPosition();
-    if (Range::compareBoundaryPoints(end, start) < 0) {
+    if (comparePositions(end, start) < 0) {
         Position swap = start;
         start = end;
         end = swap;
@@ -719,7 +719,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
     // adjust to the positions we want to use for applying style
     Position start = startPosition();
     Position end = endPosition();
-    if (Range::compareBoundaryPoints(end, start) < 0) {
+    if (comparePositions(end, start) < 0) {
         Position swap = start;
         start = end;
         end = swap;
@@ -780,7 +780,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
         RefPtr<CSSMutableStyleDeclaration> embeddingStyle = CSSMutableStyleDeclaration::create();
         embeddingStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueEmbed);
         embeddingStyle->setProperty(CSSPropertyDirection, static_cast<CSSPrimitiveValue*>(direction.get())->getIdent());
-        if (Range::compareBoundaryPoints(embeddingRemoveStart, embeddingRemoveEnd) <= 0)
+        if (comparePositions(embeddingRemoveStart, embeddingRemoveEnd) <= 0)
             removeInlineStyle(embeddingStyle, embeddingRemoveStart, embeddingRemoveEnd);
 
         RefPtr<CSSMutableStyleDeclaration> styleWithoutEmbedding = style->copy();
@@ -876,7 +876,7 @@ void ApplyStyleCommand::applyInlineStyleToRange(CSSMutableStyleDeclaration* styl
     if (start.deprecatedEditingOffset() >= caretMaxOffset(start.node())) {
         node = node->traverseNextNode();
         Position newStart = Position(node, 0);
-        if (!node || Range::compareBoundaryPoints(end, newStart) < 0)
+        if (!node || comparePositions(end, newStart) < 0)
             rangeIsEmpty = true;
     }
 
@@ -1208,7 +1208,7 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>
     ASSERT(end.isNotNull());
     ASSERT(start.node()->inDocument());
     ASSERT(end.node()->inDocument());
-    ASSERT(Range::compareBoundaryPoints(start, end) <= 0);
+    ASSERT(comparePositions(start, end) <= 0);
     
     RefPtr<CSSValue> textDecorationSpecialProperty = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
 
@@ -1272,8 +1272,7 @@ bool ApplyStyleCommand::nodeFullySelected(Node *node, const Position &start, con
     ASSERT(node->isElementNode());
 
     Position pos = Position(node, node->childNodeCount()).upstream();
-    return Range::compareBoundaryPoints(node, 0, start.node(), start.deprecatedEditingOffset()) >= 0 &&
-        Range::compareBoundaryPoints(pos, end) <= 0;
+    return comparePositions(Position(node, 0), start) >= 0 && comparePositions(pos, end) <= 0;
 }
 
 bool ApplyStyleCommand::nodeFullyUnselected(Node *node, const Position &start, const Position &end) const
@@ -1282,8 +1281,8 @@ bool ApplyStyleCommand::nodeFullyUnselected(Node *node, const Position &start, c
     ASSERT(node->isElementNode());
 
     Position pos = Position(node, node->childNodeCount()).upstream();
-    bool isFullyBeforeStart = Range::compareBoundaryPoints(pos, start) < 0;
-    bool isFullyAfterEnd = Range::compareBoundaryPoints(node, 0, end.node(), end.deprecatedEditingOffset()) > 0;
+    bool isFullyBeforeStart = comparePositions(pos, start) < 0;
+    bool isFullyAfterEnd = comparePositions(Position(node, 0), end) > 0;
 
     return isFullyBeforeStart || isFullyAfterEnd;
 }

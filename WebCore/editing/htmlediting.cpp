@@ -126,6 +126,11 @@ int comparePositions(const Position& a, const Position& b)
     return result ? result : bias;
 }
 
+int comparePositions(const VisiblePosition& a, const VisiblePosition& b)
+{
+    return comparePositions(a.deepEquivalent(), b.deepEquivalent());
+}
+
 Node* highestEditableRoot(const Position& position)
 {
     Node* node = position.node();

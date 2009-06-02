@@ -138,11 +138,12 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
             break;
         
         // If we're going to expand to include the startSpecialContainer, it must be fully selected.
-        if (startSpecialContainer && !endSpecialContainer && Range::compareBoundaryPoints(positionAfterNode(startSpecialContainer), end) > -1)
+
+        if (startSpecialContainer && !endSpecialContainer && comparePositions(positionAfterNode(startSpecialContainer), end) > -1)
             break;
 
-        // If we're going to expand to include the endSpecialContainer, it must be fully selected.         
-        if (endSpecialContainer && !startSpecialContainer && Range::compareBoundaryPoints(start, positionBeforeNode(endSpecialContainer)) > -1)
+        // If we're going to expand to include the endSpecialContainer, it must be fully selected.
+        if (endSpecialContainer && !startSpecialContainer && comparePositions(start, positionBeforeNode(endSpecialContainer)) > -1)
             break;
         
         if (startSpecialContainer && startSpecialContainer->isDescendantOf(endSpecialContainer))
@@ -462,7 +463,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         
         // handle deleting all nodes that are completely selected
         while (node && node != m_downstreamEnd.node()) {
-            if (Range::compareBoundaryPoints(Position(node.get(), 0), m_downstreamEnd) >= 0) {
+            if (comparePositions(Position(node.get(), 0), m_downstreamEnd) >= 0) {
                 // traverseNextSibling just blew past the end position, so stop deleting
                 node = 0;
             } else if (!m_downstreamEnd.node()->isDescendantOf(node.get())) {
@@ -560,7 +561,7 @@ void DeleteSelectionCommand::mergeParagraphs()
          return;
          
     // FIXME: The deletion algorithm shouldn't let this happen.
-    if (Range::compareBoundaryPoints(m_upstreamStart, m_downstreamEnd) > 0)
+    if (comparePositions(m_upstreamStart, m_downstreamEnd) > 0)
         return;
         
     // There's nothing to merge.

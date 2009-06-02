@@ -169,7 +169,7 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
         ASSERT(isRange());
         s = m_start.downstream();
         e = m_end.upstream();
-        if (Range::compareBoundaryPoints(s.node(), s.deprecatedEditingOffset(), e.node(), e.deprecatedEditingOffset()) > 0) {
+        if (comparePositions(s, e) > 0) {
             // Make sure the start is before the end.
             // The end can wind up before the start if collapsed whitespace is the only thing selected.
             Position tmp = s;

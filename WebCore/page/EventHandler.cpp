@@ -42,12 +42,12 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "HitTestRequest.h"
-#include "HitTestResult.h"
-#include "HTMLFrameSetElement.h"
 #include "HTMLFrameElementBase.h"
+#include "HTMLFrameSetElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
 #include "Image.h"
 #include "InspectorController.h"
 #include "KeyboardEvent.h"
@@ -58,12 +58,13 @@
 #include "PlatformWheelEvent.h"
 #include "RenderFrameSet.h"
 #include "RenderTextControlSingleLine.h"
-#include "RenderWidget.h"
 #include "RenderView.h"
+#include "RenderWidget.h"
 #include "Scrollbar.h"
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextEvent.h"
+#include "htmlediting.h" // for comparePositions()
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(SVG)
@@ -304,8 +305,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         // was created right-to-left
         Position start = newSelection.start();
         Position end = newSelection.end();
-        short before = Range::compareBoundaryPoints(pos.node(), pos.deprecatedEditingOffset(), start.node(), start.deprecatedEditingOffset());
-        if (before <= 0)
+        if (comparePositions(pos, start) <= 0)
             newSelection = VisibleSelection(pos, end);
         else
             newSelection = VisibleSelection(start, pos);

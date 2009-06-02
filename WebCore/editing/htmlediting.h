@@ -37,9 +37,9 @@ class HTMLElement;
 class Node;
 class Position;
 class Range;
-class VisibleSelection;
 class String;
 class VisiblePosition;
+class VisibleSelection;
 
 Position rangeCompliantEquivalent(const Position&);
 Position rangeCompliantEquivalent(const VisiblePosition&);
@@ -51,6 +51,7 @@ Node* highestEditableRoot(const Position&);
 VisiblePosition firstEditablePositionAfterPositionInRoot(const Position&, Node*);
 VisiblePosition lastEditablePositionBeforePositionInRoot(const Position&, Node*);
 int comparePositions(const Position&, const Position&);
+int comparePositions(const VisiblePosition&, const VisiblePosition&);
 Node* lowestEditableAncestor(Node*);
 bool isContentEditable(const Node*);
 Position nextCandidate(const Position&);
