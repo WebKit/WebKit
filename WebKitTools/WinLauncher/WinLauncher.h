@@ -26,7 +26,7 @@
 #pragma once
 
 #include "resource.h"
-#include "WebKit.h"
+#include <WebKit/WebKit.h>
 
 class WinLauncherWebHost : public IWebFrameLoadDelegate
 {

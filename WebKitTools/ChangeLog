@@ -1,3 +1,17 @@
+2009-06-02  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Update WinLauncher for WebKitCreateInstance.
+        https://bugs.webkit.org/show_bug.cgi?id=26136
+
+        * WinLauncher/WinLauncher.cpp: Revise implementation to
+          use WebKitCreateInstance (rather than CoCreateInstance).
+        * WinLauncher/WinLauncher.h: Modify include path for
+          WebKit.h to match DumpRenderTree style.
+        * WinLauncher/WinLauncher.vcproj: Remove unnecessary
+          WebKit.tlb and EmbeddedIDL flags from build.
+
 2009-06-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Adam Roben.

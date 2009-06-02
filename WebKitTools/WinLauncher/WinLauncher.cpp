@@ -25,7 +25,7 @@
 
 #include "stdafx.h"
 #include "WinLauncher.h"
-#include "WebKit.h"
+#include <WebKit/WebKitCOMAPI.h>
 
 #include <commctrl.h>
 #include <objbase.h>
@@ -177,7 +177,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     SetWindowLong(hURLBarWnd, GWL_WNDPROC,(long)MyEditProc);
     SetFocus(hURLBarWnd);
 
-    HRESULT hr = CoCreateInstance(CLSID_WebView, 0, CLSCTX_ALL, IID_IWebView, (void**)&gWebView);
+    HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, (void**)&gWebView);
     if (FAILED(hr))
         goto exit;
 
@@ -201,9 +201,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     hr = gWebView->mainFrame(&frame);
     if (FAILED(hr))
         goto exit;
-    static BSTR defaultHTML = 0;
-    if (!defaultHTML)
-        defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
+
+    static BSTR defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
     frame->loadHTMLString(defaultHTML, 0);
     frame->Release();
 
@@ -211,6 +210,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     hr = gWebView->QueryInterface(IID_IWebViewPrivate, (void**)&viewExt);
     if (FAILED(hr))
         goto exit;
+
     hr = viewExt->viewWindow((OLE_HANDLE*) &gViewWindow);
     viewExt->Release();
     if (FAILED(hr) || !gViewWindow)
@@ -241,7 +241,7 @@ exit:
     // Shut down COM.
     OleUninitialize();
     
-    return (int) msg.wParam;
+    return static_cast<int>(msg.wParam);
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
@@ -324,7 +324,7 @@ LRESULT CALLBACK MyEditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 {
     switch (message) {
         case WM_CHAR:
-            if( wParam == 13 ) { // Enter Key
+            if (wParam == 13) { // Enter Key
                 wchar_t strPtr[MAX_URL_LENGTH];
                 *((LPWORD)strPtr) = MAX_URL_LENGTH; 
                 int strLen = SendMessage(hDlg, EM_GETLINE, 0, (LPARAM)strPtr);
@@ -367,10 +367,9 @@ static void loadURL(BSTR urlBStr)
 {
     IWebFrame* frame = 0;
     IWebMutableURLRequest* request = 0;
-    static BSTR methodBStr = 0;
 
-    if (!methodBStr)
-        methodBStr = SysAllocString(TEXT("GET"));
+
+    static BSTR methodBStr = SysAllocString(TEXT("GET"));
 
     if (urlBStr && urlBStr[0] && (PathFileExists(urlBStr) || PathIsUNC(urlBStr))) {
         TCHAR fileURL[INTERNET_MAX_URL_LENGTH];
@@ -383,7 +382,7 @@ static void loadURL(BSTR urlBStr)
     if (FAILED(hr))
         goto exit;
 
-    hr = CoCreateInstance(CLSID_WebMutableURLRequest, 0, CLSCTX_ALL, IID_IWebMutableURLRequest, (void**)&request);
+    hr = WebKitCreateInstance(CLSID_WebMutableURLRequest, 0, IID_IWebMutableURLRequest, (void**)&request);
     if (FAILED(hr))
         goto exit;
 

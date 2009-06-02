@@ -74,8 +74,8 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile="$(WebKitOutputDir)\lib\WebKit.tlb"
-				ComponentFileName="WebKit$(WebKitDLLConfigSuffix)"
+				TypeLibraryFile=""
+				ComponentFileName=""
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -156,8 +156,8 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile="$(WebKitOutputDir)\lib\WebKit.tlb"
-				ComponentFileName="WebKit$(WebKitDLLConfigSuffix)"
+				TypeLibraryFile=""
+				ComponentFileName=""
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -237,8 +237,8 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile="$(WebKitOutputDir)\lib\WebKit.tlb"
-				ComponentFileName="WebKit$(WebKitDLLConfigSuffix)"
+				TypeLibraryFile=""
+				ComponentFileName=""
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
