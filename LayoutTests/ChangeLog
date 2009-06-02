@@ -1,3 +1,15 @@
+2009-06-02  Chris Marrin  <ap@webkit.org>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Moved CSSMatrix tests into root of LayoutTests/transforms so both the
+        2D and 3D versions are always valid.
+
+        * transforms/2d/cssmatrix-interface.xhtml: Removed.
+        * transforms/3d/cssmatrix-3d-interface.xhtml: Removed.
+        * transforms/cssmatrix-2d-interface.xhtml: Added.
+        * transforms/cssmatrix-3d-interface.xhtml: Added.
+
 2009-06-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
