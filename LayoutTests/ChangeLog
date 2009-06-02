@@ -1,3 +1,10 @@
+2009-06-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Land correct results for a test I just added (forgot to regenerate them after adding new
+        test cases).
+
+        * fast/xpath/py-dom-xpath/expressions-expected.txt:
+
 2009-06-02  Chris Marrin  <ap@webkit.org>
 
         Rubber-stamped by Maciej Stachowiak.

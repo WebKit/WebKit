@@ -11,6 +11,8 @@ PASS doc.evaluate("/doc/(item[@id = 2] | item[@id = 6])/@id", doc.documentElemen
 PASS doc.evaluate('"monty"/anaconda', doc.documentElement, null, XPathResult.ANY_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
 PASS doc.evaluate('/doc/string(item[@id = 2])/@id', doc.documentElement, null, XPathResult.ANY_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
 PASS doc.evaluate('(1)[1]', doc.documentElement, null, XPathResult.ANY_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS (1)
+PASS ((1 + 1))
 PASS 1 or 1
 PASS 1 or 0
 PASS 0 or 1
