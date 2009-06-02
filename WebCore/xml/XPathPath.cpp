@@ -56,9 +56,6 @@ Value Filter::evaluate() const
 {
     Value v = m_expr->evaluate();
     
-    if (!v.isNodeSet()) 
-        return v;
-
     NodeSet& nodes = v.modifiableNodeSet();
     nodes.sort();
 

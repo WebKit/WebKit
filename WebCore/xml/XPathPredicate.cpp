@@ -233,8 +233,6 @@ Value Union::evaluate() const
 {
     Value lhsResult = subExpr(0)->evaluate();
     Value rhs = subExpr(1)->evaluate();
-    if (!lhsResult.isNodeSet() || !rhs.isNodeSet())
-        return NodeSet();
     
     NodeSet& resultSet = lhsResult.modifiableNodeSet();
     const NodeSet& rhsNodes = rhs.toNodeSet();

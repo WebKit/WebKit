@@ -1,3 +1,33 @@
+2009-06-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26133
+        Adapt and import py-dom-xpath tests
+
+        * fast/xpath/xpath-test-pre.js: (test): Added a new helper function.
+
+        * fast/xpath/py-dom-xpath: Added.
+        * fast/xpath/py-dom-xpath/abbreviations-expected.txt: Added.
+        * fast/xpath/py-dom-xpath/abbreviations.html: Added.
+        * fast/xpath/py-dom-xpath/axes-expected.txt: Added.
+        * fast/xpath/py-dom-xpath/axes.html: Added.
+        * fast/xpath/py-dom-xpath/data-expected.txt: Added.
+        * fast/xpath/py-dom-xpath/data.html: Added.
+        * fast/xpath/py-dom-xpath/expressions-expected.txt: Added.
+        * fast/xpath/py-dom-xpath/expressions.html: Added.
+        * fast/xpath/py-dom-xpath/nodetests-expected.txt: Added.
+        * fast/xpath/py-dom-xpath/nodetests.html: Added.
+        * fast/xpath/py-dom-xpath/paths-expected.txt: Added.
+        * fast/xpath/py-dom-xpath/paths.html: Added.
+        * fast/xpath/py-dom-xpath/predicates-expected.txt: Added.
+        * fast/xpath/py-dom-xpath/predicates.html: Added.
+        All these tests pass now (sometimes, with adaptations, see comments inside).
+
+        * fast/xpath/py-dom-xpath/functions-expected.txt: Added.
+        * fast/xpath/py-dom-xpath/functions.html: Added.
+        id() function fails because of bug 12971.
+
 2009-06-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

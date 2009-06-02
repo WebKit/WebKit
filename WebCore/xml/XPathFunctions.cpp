@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "NamedNodeMap.h"
+#include "ProcessingInstruction.h"
 #include "XMLNames.h"
 #include "XPathUtil.h"
 #include "XPathValue.h"
@@ -362,70 +363,66 @@ Value FunId::evaluate() const
     return Value(result, Value::adopt);
 }
 
+static inline String expandedNameLocalPart(Node* node)
+{
+    // The local part of an XPath expanded-name matches DOM local name for most node types, except for namespace nodes and processing instruction nodes.
+    ASSERT(node->nodeType() != Node::XPATH_NAMESPACE_NODE); // Not supported yet.
+    if (node->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
+        return static_cast<ProcessingInstruction*>(node)->target();
+    return node->localName().string();
+}
+
+static inline String expandedName(Node* node)
+{
+    const AtomicString& prefix = node->prefix();
+    return prefix.isEmpty() ? expandedNameLocalPart(node) : prefix + ":" + expandedNameLocalPart(node);
+}
+
 Value FunLocalName::evaluate() const
 {
-    Node* node = 0;
     if (argCount() > 0) {
         Value a = arg(0)->evaluate();
         if (!a.isNodeSet())
             return "";
 
-        node = a.toNodeSet().firstNode();
-        if (!node)
-            return "";
+        Node* node = a.toNodeSet().firstNode();
+        return node ? expandedNameLocalPart(node) : "";
     }
 
-    if (!node)
-        node = evaluationContext().node.get();
-
-    return node->localName().string();
+    return expandedNameLocalPart(evaluationContext().node.get());
 }
 
 Value FunNamespaceURI::evaluate() const
 {
-    Node* node = 0;
     if (argCount() > 0) {
         Value a = arg(0)->evaluate();
         if (!a.isNodeSet())
             return "";
 
-        node = a.toNodeSet().firstNode();
-        if (!node)
-            return "";
+        Node* node = a.toNodeSet().firstNode();
+        return node ? node->namespaceURI().string() : "";
     }
 
-    if (!node)
-        node = evaluationContext().node.get();
-
-    return node->namespaceURI().string();
+    return evaluationContext().node->namespaceURI().string();
 }
 
 Value FunName::evaluate() const
 {
-    Node* node = 0;
     if (argCount() > 0) {
         Value a = arg(0)->evaluate();
         if (!a.isNodeSet())
             return "";
 
-        node = a.toNodeSet().firstNode();
-        if (!node)
-            return "";
+        Node* node = a.toNodeSet().firstNode();
+        return node ? expandedName(node) : "";
     }
 
-    if (!node)
-        node = evaluationContext().node.get();
-
-    const AtomicString& prefix = node->prefix();
-    return prefix.isEmpty() ? node->localName().string() : prefix + ":" + node->localName();
+    return expandedName(evaluationContext().node.get());
 }
 
 Value FunCount::evaluate() const
 {
     Value a = arg(0)->evaluate();
-    
-    if (!a.isNodeSet())
-        return 0.0;
     
     return double(a.toNodeSet().size());
 }

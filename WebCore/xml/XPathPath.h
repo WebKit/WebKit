@@ -47,7 +47,7 @@ namespace WebCore {
             virtual Value evaluate() const;
 
         private:
-            virtual Value::Type resultType() const { return m_expr->resultType(); }
+            virtual Value::Type resultType() const { return Value::NodeSetValue; }
 
             Expression* m_expr;
             Vector<Predicate*> m_predicates;

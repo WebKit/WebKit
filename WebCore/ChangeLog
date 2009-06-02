@@ -1,3 +1,68 @@
+2009-06-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26133
+        Adapt and import py-dom-xpath tests
+
+        Tests: fast/xpath/py-dom-xpath/abbreviations.html
+               fast/xpath/py-dom-xpath/axes.html
+               fast/xpath/py-dom-xpath/data.html
+               fast/xpath/py-dom-xpath/expressions.html
+               fast/xpath/py-dom-xpath/functions.html
+               fast/xpath/py-dom-xpath/nodetests.html
+               fast/xpath/py-dom-xpath/paths.html
+               fast/xpath/py-dom-xpath/predicates.html
+
+        Fix bugs found with this test suite:
+        - name and local-name were incorrect for processing instructions (XPath expanded-name
+        doesn't match DOM exactly);
+        - name, local-name and namespace functions should crash on attribute nodes;
+        - attemps to make node sets from other types were not detected as errors.
+
+        No performance impact.
+
+        * xml/XPathExpressionNode.h: Track type conversion errors that happen during evaluation.
+        An error won't stop evaluation, but an exception will be raised afterwards. We could also
+        detect conversion errors at compile time, but not if we're going to support XPath variables
+        (which is unnecessary for XPathEvaluator, but will be necessary if we decide to make our own
+        XSLT one day).
+
+        * xml/XPathExpression.cpp: (WebCore::XPathExpression::evaluate): Check whether a type
+        conversion exception occurred during evaluation, and raise an excpetion if it did.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::expandedNameLocalPart):
+        (WebCore::XPath::expandedName):
+        XPath name(), local-name() and namespace-uri() functions are defined in terms of expanded-name,
+        which doesn't match anything available via DOM exactly. Calculate the expanded name properly.
+        (WebCore::XPath::FunNamespaceURI::evaluate): This function could crash if used with an
+        attribute node, because it released what was possibly the only reference to attribute node
+        before using it. Changed the function to avoid such situation.
+        (WebCore::XPath::FunLocalName::evaluate): Ditto. Also, used the new expandedNameLocalPart()
+        to work properly with processing instruction nodes.
+        (WebCore::XPath::FunName::evaluate): Ditto (using expandedName()).
+        (WebCore::XPath::FunCount::evaluate): Signal an error if the argument is not a node-set
+        (by using toNodeSet unconditionally, which will raise an error, and return an empty set).
+
+        * xml/XPathPath.cpp: (WebCore::XPath::Filter::evaluate): Signal an error if the expression
+        evaluation result is not a node-set.
+
+        * xml/XPathPath.h: (WebCore::XPath::Filter::resultType): A Filter's result is actually
+        always a node-set (this is not so for FilterExpr production in the spec, but is for us,
+        because we don't naively map BNF productions to classes).
+
+        * xml/XPathPredicate.cpp: (WebCore::XPath::Union::evaluate): Signal an error if either side
+        is not a node-set.
+
+        * xml/XPathStep.cpp: Removed an unnecesary include.
+
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::toNodeSet): Signal an error if conversion fails.
+        (WebCore::XPath::Value::modifiableNodeSet): Ditto.
+        (WebCore::XPath::Value::toNumber): Don't allow inputs that don't match XPath Number production
+        (in particular, those using exponential notation).
+
 2009-06-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

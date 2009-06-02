@@ -40,13 +40,12 @@ namespace WebCore {
     namespace XPath {
         
         struct EvaluationContext {
-            EvaluationContext() : node(0), size(0), position(0) { }
-
             RefPtr<Node> node;
             unsigned long size;
             unsigned long position;
             HashMap<String, String> variableBindings;
 
+            bool hadTypeConversionError;
         };
 
         class ParseNode {
