@@ -1,3 +1,12 @@
+2009-06-02  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Sam Weinig.
+
+        Use C-style comments in Platform.h so it can be included from C
+        files.
+
+        * wtf/Platform.h:
+
 2009-06-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
