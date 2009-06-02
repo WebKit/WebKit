@@ -1,15 +1,3 @@
-2009-06-02  Grace Kloba  <klobag@gmail.com>
-
-        Reviewed by Darin Adler.  Landed by Adam Barth.
-
-        https://bugs.webkit.org/show_bug.cgi?id=26016
-
-        As HTMLKeygenElement is derived from HTMLSelectElement, HTMLOptionElement::ownerSelectElement() needs to check both selectTag and keygenTag. Added layout test to make sure set selected on option will affect keygen element.
-
-        * fast/dom/HTMLKeygenElement: Added.
-        * fast/dom/HTMLKeygenElement/keygen-option-select-expected.txt: Added.
-        * fast/dom/HTMLKeygenElement/keygen-option-select.html: Added.
-
 2009-06-02  Johnny Ding  <johnnyding.webkit@gmail.com>
 
         Reviewed by Alexey Proskuryakov.  Landed by Adam Barth.
