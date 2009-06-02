@@ -217,7 +217,7 @@ extern "C" {
 #else // JIT_STUB_ARGUMENT_VA_LIST or JIT_STUB_ARGUMENT_STACK
 #error "JIT_STUB_ARGUMENT configuration not supported."
 #endif
-            call cti_vm_throw;
+            call JITStubs::cti_vm_throw;
             add esp, 0x1c;
             pop ebx;
             pop edi;
@@ -470,7 +470,7 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 
 namespace JITStubs {
 
-#define DEFINE_STUB_FUNCTION(rtype, op) rtype cti_##op(STUB_ARGS_DECLARATION)
+#define DEFINE_STUB_FUNCTION(rtype, op) rtype JIT_STUB cti_##op(STUB_ARGS_DECLARATION)
 
 DEFINE_STUB_FUNCTION(JSObject*, op_convert_this)
 {

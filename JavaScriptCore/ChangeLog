@@ -1,5 +1,12 @@
 2009-06-01  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY - speculative windows build fix (errm, for the other patch!).
+
+        * jit/JITStubs.cpp:
+        (JSC::):
+
+2009-06-01  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY - speculative windows build fix.
 
         * assembler/AbstractMacroAssembler.h:
