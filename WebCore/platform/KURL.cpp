@@ -310,8 +310,6 @@ KURL::KURL(const char* url)
 
 KURL::KURL(const String& url)
 {
-    checkEncodedString(url);
-
     parse(url);
     ASSERT(url == m_string);
 }

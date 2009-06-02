@@ -1,3 +1,13 @@
+2009-06-01  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.  Landed by Adam Barth.
+
+        Remove a redundant checkEncodedString call when constructing a
+        KURL object from a string.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::KURL):
+
 2009-06-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.
