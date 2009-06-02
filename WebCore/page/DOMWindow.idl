@@ -194,6 +194,7 @@ module window {
         attribute EventListener oncanplaythrough;
         attribute EventListener onchange;
         attribute EventListener onclick;
+        attribute EventListener oncontextmenu;
         attribute EventListener ondblclick;
         attribute EventListener ondrag;
         attribute EventListener ondragend;
@@ -207,12 +208,15 @@ module window {
         attribute EventListener onended;
         attribute EventListener onerror;
         attribute EventListener onfocus;
+        attribute EventListener oninput;
         attribute EventListener onkeydown;
         attribute EventListener onkeypress;
         attribute EventListener onkeyup;
         attribute EventListener onload;
         attribute EventListener onloadeddata;
         attribute EventListener onloadedmetadata;
+        attribute EventListener onloadstart;
+        attribute EventListener onmessage;
         attribute EventListener onmousedown;
         attribute EventListener onmousemove;
         attribute EventListener onmouseout;
@@ -224,20 +228,26 @@ module window {
         attribute EventListener onpause;
         attribute EventListener onplay;
         attribute EventListener onplaying;
+        attribute EventListener onprogress;
         attribute EventListener onratechange;
-        attribute EventListener onreset;
         attribute EventListener onresize;
         attribute EventListener onscroll;
-        attribute EventListener onsearch;
         attribute EventListener onseeked;
         attribute EventListener onseeking;
         attribute EventListener onselect;
+        attribute EventListener onstalled;
         attribute EventListener onstorage;
         attribute EventListener onsubmit;
+        attribute EventListener onsuspend;
         attribute EventListener ontimeupdate;
         attribute EventListener onunload;
         attribute EventListener onvolumechange;
         attribute EventListener onwaiting;
+        
+
+        // Webkit extensions
+        attribute EventListener onreset;
+        attribute EventListener onsearch;
         attribute EventListener onwebkitanimationend;
         attribute EventListener onwebkitanimationiteration;
         attribute EventListener onwebkitanimationstart;

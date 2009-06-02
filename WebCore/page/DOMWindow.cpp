@@ -1957,6 +1957,36 @@ void DOMWindow::setOnsuspend(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().suspendEvent, eventListener);
 }
 
+EventListener* DOMWindow::oninput() const
+{
+    return getAttributeEventListener(eventNames().inputEvent);
+}
+
+void DOMWindow::setOninput(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().inputEvent, eventListener);
+}
+
+EventListener* DOMWindow::onmessage() const
+{
+    return getAttributeEventListener(eventNames().messageEvent);
+}
+
+void DOMWindow::setOnmessage(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().messageEvent, eventListener);
+}
+
+EventListener* DOMWindow::oncontextmenu() const
+{
+    return getAttributeEventListener(eventNames().contextmenuEvent);
+}
+
+void DOMWindow::setOncontextmenu(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().contextmenuEvent, eventListener);
+}
+
 void DOMWindow::captureEvents()
 {
     // Not implemented.
