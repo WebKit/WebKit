@@ -970,13 +970,13 @@ typename AbstractMacroAssembler<AssemblerType>::CodeLocationDataLabel32 Abstract
 }
 
 template <class AssemblerType>
-AbstractMacroAssembler<AssemblerType>::CodeLocationCall::CodeLocationCall(AbstractMacroAssembler<AssemblerType>::ProcessorReturnAddress* ra)
+AbstractMacroAssembler<AssemblerType>::CodeLocationCall::CodeLocationCall(typename AbstractMacroAssembler<AssemblerType>::ProcessorReturnAddress* ra)
     : CodeLocationCommon(ra->m_location)
 {
 }
 
 template <class AssemblerType>
-AbstractMacroAssembler<AssemblerType>::CodeLocationNearCall::CodeLocationNearCall(AbstractMacroAssembler<AssemblerType>::ProcessorReturnAddress* ra)
+AbstractMacroAssembler<AssemblerType>::CodeLocationNearCall::CodeLocationNearCall(typename AbstractMacroAssembler<AssemblerType>::ProcessorReturnAddress* ra)
     : CodeLocationCommon(ra->m_location)
 {
 }

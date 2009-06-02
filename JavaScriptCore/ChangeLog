@@ -1,5 +1,13 @@
 2009-06-01  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY - speculative windows build fix.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::::CodeLocationCall::CodeLocationCall):
+        (JSC::::CodeLocationNearCall::CodeLocationNearCall):
+
+2009-06-01  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Olliej Hunt.
 
         Change JITStub functions from being static members on the JITStub class to be
