@@ -244,7 +244,7 @@ sub readHeaderValues()
  
     my ($fh, $tempFile) = tempfile(
         basename($0) . "-XXXXXXXX",
-        DIR => ($ENV{'TMPDIR'} || "/tmp"),
+        DIR => File::Spec->tmpdir,
         SUFFIX => ".in",
         UNLINK => 0,
     );

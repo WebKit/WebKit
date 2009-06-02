@@ -1,3 +1,13 @@
+2009-06-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Use File::Spec->tmpdir instead of hardcoded paths for tempfile() dir
+        
+        This fixes the Windows-build if the user does not have a /tmp directory.
+
+        * Scripts/bisect-builds:
+
 2009-06-01  Yongjun Zhang  <yongjun.zhang@nokia.com>>
 
         Reviewed by Holger Freyther.  Landed by Adam Barth.

@@ -1,3 +1,13 @@
+2009-06-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Use File::Spec->tmpdir instead of hardcoded paths for tempfile() dir
+        
+        This fixes the Windows-build if the user does not have a /tmp directory.
+
+        * pcre/dftables:
+
 2009-06-02  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver ">>" Hunt.

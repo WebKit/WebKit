@@ -209,7 +209,7 @@ sub createTempFile($)
 
     my ($fh, $tempFile) = tempfile(
         basename($0) . "-XXXXXXXX",
-        DIR => ($ENV{'TMPDIR'} || "/tmp"),
+        DIR => File::Spec->tmpdir,
         SUFFIX => ".html",
         UNLINK => 0,
     );
