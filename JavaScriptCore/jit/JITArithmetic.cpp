@@ -105,6 +105,7 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
     unsigned op2 = currentInstruction[3].u.operand;
 
     if (isOperandConstantImmediateInt(op2)) {
+        // isOperandConstantImmediateInt(op2) => 1 SlowCase
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
         // Mask with 0x1f as per ecma-262 11.7.2 step 7.
@@ -118,21 +119,25 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
         if (supportsFloatingPoint()) {
             Jump lhsIsInt = emitJumpIfImmediateInteger(regT0);
 #if USE(ALTERNATE_JSIMMEDIATE)
+            // supportsFloatingPoint() && USE(ALTERNATE_JSIMMEDIATE) => 3 SlowCases
             addSlowCase(emitJumpIfNotImmediateNumber(regT0));
             movePtrToDouble(regT0, fpRegT0);
+            addSlowCase(branchTruncateDoubleToInt32(fpRegT0, regT0));
 #else
+            // supportsFloatingPoint() && !USE(ALTERNATE_JSIMMEDIATE) => 5 SlowCases (of which 1 IfNotJSCell)
             emitJumpSlowCaseIfNotJSCell(regT0, op1);
             addSlowCase(checkStructure(regT0, m_globalData->numberStructure.get()));
             loadDouble(Address(regT0, FIELD_OFFSET(JSNumberCell, m_value)), fpRegT0);
-#endif
             addSlowCase(branchTruncateDoubleToInt32(fpRegT0, regT0));
-#if !USE(ALTERNATE_JSIMMEDIATE)
             addSlowCase(branchAdd32(Overflow, regT0, regT0));
 #endif
             lhsIsInt.link(this);
-        } else
+            emitJumpSlowCaseIfNotImmediateInteger(regT2);
+        } else {
+            // !supportsFloatingPoint() => 2 SlowCases
             emitJumpSlowCaseIfNotImmediateInteger(regT0);
-        emitJumpSlowCaseIfNotImmediateInteger(regT2);
+            emitJumpSlowCaseIfNotImmediateInteger(regT2);
+        }
         emitFastArithImmToInt(regT2);
 #if !PLATFORM(X86)
         // Mask with 0x1f as per ecma-262 11.7.2 step 7.
@@ -159,22 +164,25 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-    linkSlowCase(iter);
     JITStubCall stubCall(this, JITStubs::cti_op_rshift);
 
     if (isOperandConstantImmediateInt(op2)) {
+        linkSlowCase(iter);
         stubCall.addArgument(regT0);
         stubCall.addArgument(op2, regT2);
     } else {
         if (supportsFloatingPoint()) {
 #if USE(ALTERNATE_JSIMMEDIATE)
             linkSlowCase(iter);
+            linkSlowCase(iter);
+            linkSlowCase(iter);
 #else
             linkSlowCaseIfNotJSCell(iter, op1);
             linkSlowCase(iter);
             linkSlowCase(iter);
-#endif
             linkSlowCase(iter);
+            linkSlowCase(iter);
+#endif
             // We're reloading op1 to regT0 as we can no longer guarantee that
             // we have not munged the operand.  It may have already been shifted
             // correctly, but it still will not have been tagged.

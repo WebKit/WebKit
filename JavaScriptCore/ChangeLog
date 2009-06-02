@@ -1,3 +1,14 @@
+2009-06-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver ">>" Hunt.
+
+        emitSlow_op_rshift is linking the wrong number of slow cases, if !supportsFloatingPoint().
+        Fixerate, and refactor/comment the code a little to make it clearer what is going on.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+
 2009-06-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY - speculative windows build fix (errm, for the other patch!).
