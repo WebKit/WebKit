@@ -1,3 +1,13 @@
+2009-06-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/6940747> Search field’s focus ring is outset
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustSearchFieldStyle): Set the focused
+        search field outline offset to -2.
+
 2009-06-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

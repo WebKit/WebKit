@@ -21,13 +21,10 @@
 #include "config.h"
 #include "RenderThemeWin.h"
 
-#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
-#include "Document.h"
+#include "Element.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
-#include "HTMLElement.h"
-#include "HTMLSelectElement.h"
-#include "Icon.h"
 #include "RenderSlider.h"
 #include "Settings.h"
 #include "SoftLinking.h"
@@ -791,6 +788,8 @@ void RenderThemeWin::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderSt
     style->setPaddingRight(Length(padding, Fixed));
     style->setPaddingTop(Length(padding, Fixed));
     style->setPaddingBottom(Length(padding, Fixed));
+    if (e && e->focused() && e->document()->frame()->selection()->isFocusedAndActive())
+        style->setOutlineOffset(-2);
 }
 
 bool RenderThemeWin::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
