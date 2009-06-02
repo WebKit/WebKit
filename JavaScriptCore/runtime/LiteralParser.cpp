@@ -100,24 +100,10 @@ LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
             token.end = ++m_ptr;
             return TokColon;
         case '"':
-        case '\'':
             return lexString(token);
 
-        // Numbers are trickier so we only allow the most basic form, basically
-        // * [1-9][0-9]*(\.[0-9]*)?
-        // * \.[0-9]*
-        // * 0(\.[0-9]*)?
+        case '-':
         case '0':
-            // If a number starts with 0 it's expected to be octal.  It seems silly
-            // to attempt to handle this case, so we abort
-            if (m_ptr < m_end - 1 && isASCIIDigit(m_ptr[1]))
-                return TokError;
-            return lexNumber(token);
-        case '.':
-            // If a number starts with a '.' it must be followed by a digit
-            if (!(m_ptr < m_end - 1 && isASCIIDigit(m_ptr[1])))
-                return TokError;
-            return lexNumber(token);
         case '1':
         case '2':
         case '3':
@@ -134,11 +120,10 @@ LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
 
 LiteralParser::TokenType LiteralParser::Lexer::lexString(LiteralParserToken& token)
 {
-    UChar terminator = *m_ptr;
     ++m_ptr;
-    while (m_ptr < m_end && isSafeStringCharacter(*m_ptr) && *m_ptr != terminator)
+    while (m_ptr < m_end && isSafeStringCharacter(*m_ptr) && *m_ptr != '"')
         ++m_ptr;
-    if (m_ptr >= m_end || *m_ptr != terminator) {
+    if (m_ptr >= m_end || *m_ptr != '"') {
         token.type = TokError;
         token.end = ++m_ptr;
         return TokError;
@@ -150,23 +135,63 @@ LiteralParser::TokenType LiteralParser::Lexer::lexString(LiteralParserToken& tok
 
 LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& token)
 {
-    bool beginsWithDot = *m_ptr == '.';
-    ++m_ptr;
-    while (m_ptr < m_end && isASCIIDigit(*m_ptr))
-        ++m_ptr;
+    // ES5 and json.org define numbers as
+    // number
+    //     int
+    //     int frac? exp?
+    //
+    // int
+    //     -? 0
+    //     -? digit1-9 digits?
+    //
+    // digits
+    //     digit digits?
+    //
+    // -?(0 | [1-9][0-9]*) ('.' [0-9]+)? ([eE][+-]? [0-9]+)?
 
-    if (!beginsWithDot && m_ptr < m_end - 1 && *m_ptr == '.') {
+    if (m_ptr < m_end && *m_ptr == '-') // -?
+        ++m_ptr;
+    
+    // (0 | [1-9][0-9]*)
+    if (m_ptr < m_end && *m_ptr == '0') // 0
+        ++m_ptr;
+    else if (m_ptr < m_end && *m_ptr >= '1' && *m_ptr <= '9') { // [1-9]
+        ++m_ptr;
+        // [0-9]*
+        while (m_ptr < m_end && isASCIIDigit(*m_ptr))
+            ++m_ptr;
+    } else
+        return TokError;
+
+    // ('.' [0-9]+)?
+    if (m_ptr < m_end && *m_ptr == '.') {
+        ++m_ptr;
+        // [0-9]+
+        if (m_ptr >= m_end && !isASCIIDigit(*m_ptr))
+            return TokError;
+
         ++m_ptr;
         while (m_ptr < m_end && isASCIIDigit(*m_ptr))
             ++m_ptr;
     }
 
-    if (m_ptr < m_end) {
-        if (*m_ptr == 'x' || *m_ptr == 'X' || *m_ptr == 'e' || *m_ptr == 'E') {
-            token.type = TokError;
+    //  ([eE][+-]? [0-9]+)?
+    if (m_ptr < m_end && (*m_ptr == 'e' || *m_ptr == 'E')) { // [eE]
+        ++m_ptr;
+
+        // [-+]?
+        if (m_ptr < m_end && (*m_ptr == '-' || *m_ptr == '+'))
+            ++m_ptr;
+
+        // [0-9]+
+        if (m_ptr >= m_end && !isASCIIDigit(*m_ptr))
             return TokError;
-        }
+        
+        ++m_ptr;
+        while (m_ptr < m_end && isASCIIDigit(*m_ptr))
+            ++m_ptr;
     }
+    
     token.type = TokNumber;
     token.end = m_ptr;
     return TokNumber;

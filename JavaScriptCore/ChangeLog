@@ -1,3 +1,18 @@
+2009-06-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Tidy up the literal parser.
+
+        Make the number lexing in the LiteralParser exactly match the JSON spec, which
+        makes us cover more cases, but also more strict.  Also made string lexing only
+        allow double-quoted strings.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::Lexer::lex):
+        (JSC::LiteralParser::Lexer::lexString):
+        (JSC::LiteralParser::Lexer::lexNumber):
+
 2009-06-01  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam "WX" Weinig.
