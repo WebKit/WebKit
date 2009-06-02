@@ -238,9 +238,6 @@ namespace WebCore {
         void setDownloadableBinaryFontsEnabled(bool);
         bool downloadableBinaryFontsEnabled() const { return m_downloadableBinaryFontsEnabled; }
 
-        void setUsesStickyPanScroll(bool usesStickyPanScroll) { m_usesStickyPanScroll = usesStickyPanScroll; }
-        bool usesStickyPanScroll() const { return m_usesStickyPanScroll; }
-
     private:
         Page* m_page;
         
@@ -298,7 +295,6 @@ namespace WebCore {
         bool m_enforceCSSMIMETypeInStrictMode : 1;
         bool m_usesEncodingDetector : 1;
         bool m_allowScriptsToCloseWindows : 1;
-        bool m_usesStickyPanScroll : 1;
         unsigned m_editingBehavior : 1;
         bool m_downloadableBinaryFontsEnabled : 1;
 

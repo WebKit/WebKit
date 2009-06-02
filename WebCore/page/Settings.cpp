@@ -93,7 +93,6 @@ Settings::Settings(Page* page)
     , m_enforceCSSMIMETypeInStrictMode(true)
     , m_usesEncodingDetector(false)
     , m_allowScriptsToCloseWindows(false)
-    , m_usesStickyPanScroll(true)
     , m_editingBehavior(
 #if PLATFORM(MAC)
         EditingMacBehavior
