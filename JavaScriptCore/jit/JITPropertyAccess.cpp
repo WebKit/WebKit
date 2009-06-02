@@ -530,7 +530,7 @@ void JIT::patchGetByIdSelf(StructureStubInfo* stubInfo, Structure* structure, si
     // If we're patching to use inline storage, convert the initial load to a lea; this avoids the extra load
     // and makes the subsequent load's offset automatically correct
     if (structure->isUsingInlineStorage())
-        stubInfo->hotPathBegin.instructionAtOffset(patchOffsetGetByIdExternalLoad + patchLengthGetByIdExternalLoadPrefix).patchLoadToLEA();
+        stubInfo->hotPathBegin.instructionAtOffset(patchOffsetGetByIdExternalLoad + patchLengthGetByIdExternalLoadPrefix).repatchLoadToLEA();
 
     // Patch the offset into the propoerty map to load from, then patch the Structure to look for.
     stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetGetByIdStructure).repatch(structure);
@@ -560,7 +560,7 @@ void JIT::patchPutByIdReplace(StructureStubInfo* stubInfo, Structure* structure,
     // If we're patching to use inline storage, convert the initial load to a lea; this avoids the extra load
     // and makes the subsequent load's offset automatically correct
     if (structure->isUsingInlineStorage())
-        stubInfo->hotPathBegin.instructionAtOffset(patchOffsetPutByIdExternalLoad + patchLengthPutByIdExternalLoadPrefix).patchLoadToLEA();
+        stubInfo->hotPathBegin.instructionAtOffset(patchOffsetPutByIdExternalLoad + patchLengthPutByIdExternalLoadPrefix).repatchLoadToLEA();
 
     // Patch the offset into the propoerty map to load from, then patch the Structure to look for.
     stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetPutByIdStructure).repatch(structure);

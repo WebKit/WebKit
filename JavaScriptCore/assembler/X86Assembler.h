@@ -41,8 +41,6 @@ inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(sign
 #if PLATFORM(X86_64)
 inline bool CAN_SIGN_EXTEND_32_64(intptr_t value) { return value == (intptr_t)(int32_t)value; }
 inline bool CAN_SIGN_EXTEND_U32_64(intptr_t value) { return value == (intptr_t)(uint32_t)value; }
-
-#define REPTACH_OFFSET_CALL_R11 3
 #endif
 
 namespace X86 {
@@ -1355,80 +1353,85 @@ public:
     }
 
     // Linking & patching:
+    //
+    // 'link' and 'patch' methods are for use on unprotected code - such as the code
+    // within the AssemblerBuffer, and code being patched by the patch buffer.  Once
+    // code has been finalized it is (platform support permitting) within a non-
+    // writable region of memory; to modify the code in an execute-only execuable
+    // pool the 'repatch' and 'relink' methods should be used.
 
     void linkJump(JmpSrc from, JmpDst to)
     {
-        ASSERT(to.m_offset != -1);
         ASSERT(from.m_offset != -1);
+        ASSERT(to.m_offset != -1);
+
+        char* code = reinterpret_cast<char*>(m_formatter.data());
+        patchRel32(code + from.m_offset, code + to.m_offset);
+    }
+    
+    void linkCall(JmpSrc from, JmpDst to)
+    {
+        ASSERT(from.m_offset != -1);
+        ASSERT(to.m_offset != -1);
         
-        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(m_formatter.data()) + from.m_offset)[-1] = to.m_offset - from.m_offset;
+        char* code = reinterpret_cast<char*>(m_formatter.data());
+        patchRel32(code + from.m_offset, code + to.m_offset);
     }
     
     static void linkJump(void* code, JmpSrc from, void* to)
     {
         ASSERT(from.m_offset != -1);
-        ptrdiff_t linkOffset = reinterpret_cast<ptrdiff_t>(to) - (reinterpret_cast<ptrdiff_t>(code) + from.m_offset);
-        ASSERT(linkOffset == static_cast<int>(linkOffset));
-        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(code) + from.m_offset)[-1] = linkOffset;
+
+        patchRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
     }
 
-    static void patchLoadToLEA(intptr_t where)
-    {
-        unsigned char* ptr = reinterpret_cast<unsigned char*>(where);
-        ptr[0] = static_cast<unsigned char>(OP_LEA);
-    }
-    
-    static void patchJump(intptr_t where, void* destination)
-    {
-        intptr_t offset = reinterpret_cast<intptr_t>(destination) - where;
-        ASSERT(offset == static_cast<int32_t>(offset));
-        reinterpret_cast<int32_t*>(where)[-1] = static_cast<int32_t>(offset);
-    }
-    
-#if PLATFORM(X86_64)
-    // FIXME: transition these functions out of here - the assembler
-    // shouldn't know that that this is mov/call pair using r11. :-/
-    static void patchMacroAssemblerCall(intptr_t where, void* destination)
-    {
-        patchAddress(reinterpret_cast<void*>(where - REPTACH_OFFSET_CALL_R11), JmpDst(0), destination);
-    }
-#else
-    static void patchMacroAssemblerCall(intptr_t where, void* destination)
-    {
-        intptr_t offset = reinterpret_cast<intptr_t>(destination) - where;
-        ASSERT(offset == static_cast<int32_t>(offset));
-        reinterpret_cast<int32_t*>(where)[-1] = static_cast<int32_t>(offset);
-    }
-#endif
-
-    void linkCall(JmpSrc from, JmpDst to)
-    {
-        ASSERT(to.m_offset != -1);
-        ASSERT(from.m_offset != -1);
-        
-        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(m_formatter.data()) + from.m_offset)[-1] = to.m_offset - from.m_offset;
-    }
-    
     static void linkCall(void* code, JmpSrc from, void* to)
     {
         ASSERT(from.m_offset != -1);
-        ptrdiff_t linkOffset = reinterpret_cast<ptrdiff_t>(to) - (reinterpret_cast<ptrdiff_t>(code) + from.m_offset);
-        ASSERT(linkOffset == static_cast<int>(linkOffset));
-        reinterpret_cast<int*>(reinterpret_cast<ptrdiff_t>(code) + from.m_offset)[-1] = linkOffset;
+
+        patchRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
     }
 
-    static void patchCall(intptr_t where, void* destination)
+    static void patchPointer(void* where, void* value)
     {
-        intptr_t offset = reinterpret_cast<intptr_t>(destination) - where;
-        ASSERT(offset == static_cast<int32_t>(offset));
-        reinterpret_cast<int32_t*>(where)[-1] = static_cast<int32_t>(offset);
+        reinterpret_cast<void**>(where)[-1] = value;
     }
 
-    static void patchAddress(void* code, JmpDst position, void* value)
+    static void patchPointer(void* code, JmpDst where, void* value)
     {
-        ASSERT(position.m_offset != -1);
-        
-        reinterpret_cast<void**>(reinterpret_cast<ptrdiff_t>(code) + position.m_offset)[-1] = value;
+        ASSERT(where.m_offset != -1);
+
+        patchPointer(reinterpret_cast<char*>(code) + where.m_offset, value);
+    }
+
+    static void relinkJump(void* from, void* to)
+    {
+        ExecutableAllocator::MakeWritable unprotect(reinterpret_cast<char*>(from) - sizeof(int32_t), sizeof(int32_t));
+        patchRel32(from, to);
+    }
+    
+    static void relinkCall(void* from, void* to)
+    {
+        ExecutableAllocator::MakeWritable unprotect(reinterpret_cast<char*>(from) - sizeof(int32_t), sizeof(int32_t));
+        patchRel32(from, to);
+    }
+
+    static void repatchInt32(void* where, int32_t value)
+    {
+        ExecutableAllocator::MakeWritable unprotect(reinterpret_cast<char*>(where) - sizeof(int32_t), sizeof(int32_t));
+        patchInt32(where, value);
+    }
+
+    static void repatchPointer(void* where, void* value)
+    {
+        ExecutableAllocator::MakeWritable unprotect(reinterpret_cast<char*>(where) - sizeof(void*), sizeof(void*));
+        patchPointer(where, value);
+    }
+
+    static void repatchLoadToLEA(void* where)
+    {
+        ExecutableAllocator::MakeWritable unprotect(where, 1);
+        *reinterpret_cast<unsigned char*>(where) = static_cast<unsigned char>(OP_LEA);
     }
     
     static unsigned getCallReturnOffset(JmpSrc call)
@@ -1464,16 +1467,6 @@ public:
         return dst.m_offset - src.m_offset;
     }
     
-    static void patchImmediate(intptr_t where, int32_t value)
-    {
-        reinterpret_cast<int32_t*>(where)[-1] = value;
-    }
-    
-    static void patchPointer(intptr_t where, intptr_t value)
-    {
-        reinterpret_cast<intptr_t*>(where)[-1] = value;
-    }
-    
     void* executableCopy(ExecutablePool* allocator)
     {
         void* copy = m_formatter.executableCopy(allocator);
@@ -1482,6 +1475,19 @@ public:
     }
 
 private:
+
+    static void patchInt32(void* where, int32_t value)
+    {
+        reinterpret_cast<int32_t*>(where)[-1] = value;
+    }
+
+    static void patchRel32(void* from, void* to)
+    {
+        intptr_t offset = reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from);
+        ASSERT(offset == static_cast<int32_t>(offset));
+
+        patchInt32(from, offset);
+    }
 
     class X86InstructionFormatter {
 

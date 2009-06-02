@@ -1,3 +1,68 @@
+2009-06-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam "WX" Weinig.
+
+        Allow the JIT to operate without relying on use of RWX memory, on platforms where this is supported.
+
+        This patch adds a switch to Platform.h (ENABLE_ASSEMBLER_WX_EXCLUSIVE) which enables this mode of operation.
+        When this flag is set, all executable memory will be allocated RX, and switched to RW only whilst being
+        modified.  Upon completion of code generation the protection is switched back to RX to allow execution.
+
+        Further optimization will be required before it is desirable to enable this mode of operation by default;
+        enabling this presently incurs a 5%-10% regression.
+
+        (Submitting disabled - no performance impact).
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CodeLocationInstruction::repatchLoadToLEA):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::fromFunctionPointer):
+        (JSC::AbstractMacroAssembler::CodeLocationJump::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationNearCall::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabel32::repatch):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabelPtr::repatch):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkCallerToTrampoline):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkCallerToFunction):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkNearCallerToTrampoline):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkNearCallerToFunction):
+        (JSC::AbstractMacroAssembler::PatchBuffer::PatchBuffer):
+        (JSC::AbstractMacroAssembler::PatchBuffer::~PatchBuffer):
+        (JSC::AbstractMacroAssembler::PatchBuffer::link):
+        (JSC::AbstractMacroAssembler::PatchBuffer::patch):
+        (JSC::AbstractMacroAssembler::PatchBuffer::performFinalization):
+        (JSC::::CodeLocationCommon::nearCallAtOffset):
+        (JSC::::CodeLocationCall::CodeLocationCall):
+        (JSC::::CodeLocationNearCall::CodeLocationNearCall):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::executableCopy):
+        * assembler/X86Assembler.h:
+        (JSC::CAN_SIGN_EXTEND_U32_64):
+        (JSC::X86Assembler::linkJump):
+        (JSC::X86Assembler::linkCall):
+        (JSC::X86Assembler::patchPointer):
+        (JSC::X86Assembler::relinkJump):
+        (JSC::X86Assembler::relinkCall):
+        (JSC::X86Assembler::repatchInt32):
+        (JSC::X86Assembler::repatchPointer):
+        (JSC::X86Assembler::repatchLoadToLEA):
+        (JSC::X86Assembler::patchInt32):
+        (JSC::X86Assembler::patchRel32):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::):
+        (JSC::ExecutableAllocator::makeWritable):
+        (JSC::ExecutableAllocator::makeExecutable):
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        * jit/ExecutableAllocatorPosix.cpp:
+        (JSC::ExecutablePool::systemAlloc):
+        (JSC::ExecutablePool::systemRelease):
+        (JSC::ExecutableAllocator::reprotectRegion):
+        * jit/ExecutableAllocatorWin.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        * wtf/Platform.h:
+
 2009-05-29 Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.

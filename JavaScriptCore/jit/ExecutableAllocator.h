@@ -36,6 +36,14 @@
 #define JIT_ALLOCATOR_PAGE_SIZE (ExecutableAllocator::pageSize)
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (ExecutableAllocator::pageSize * 4)
 
+#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
+#define PROTECTION_FLAGS_RW (PROT_READ | PROT_WRITE)
+#define PROTECTION_FLAGS_RX (PROT_READ | PROT_EXEC)
+#define INITIAL_PROTECTION_FLAGS PROTECTION_FLAGS_RX
+#else
+#define INITIAL_PROTECTION_FLAGS (PROT_READ | PROT_WRITE | PROT_EXEC)
+#endif
+
 namespace JSC {
 
 inline size_t roundUpAllocationSize(size_t request, size_t granularity)
@@ -112,6 +120,8 @@ private:
 };
 
 class ExecutableAllocator {
+    enum ProtectionSeting { Writable, Executable };
+
 public:
     static size_t pageSize;
     ExecutableAllocator()
@@ -141,7 +151,40 @@ public:
         return pool.release();
     }
 
+#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
+    static void makeWritable(void* start, size_t size) { reprotectRegion(start, size, Writable); }
+    static void makeExecutable(void* start, size_t size) { reprotectRegion(start, size, Executable); }
+
+    class MakeWritable {
+    public:
+        MakeWritable(void* start, size_t size)
+            : m_start(start)
+            , m_size(size)
+        {
+            makeWritable(start, size);
+        }
+
+        ~MakeWritable()
+        {
+            makeExecutable(m_start, m_size);
+        }
+
+    private:
+        void* m_start;
+        size_t m_size;
+    };
+#else
+    static void makeWritable(void*, size_t) {}
+    static void makeExecutable(void*, size_t) {}
+    class MakeWritable { public: MakeWritable(void*, size_t) {} };
+#endif
+
 private:
+
+#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
+    static void reprotectRegion(void*, size_t, ProtectionSeting);
+#endif
+
     RefPtr<ExecutablePool> m_smallAllocationPool;
     static void intializePageSize();
 };

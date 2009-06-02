@@ -34,6 +34,11 @@
 
 #if ENABLE(ASSEMBLER)
 
+// FIXME: keep transitioning this out into MacroAssemblerX86_64.
+#if PLATFORM(X86_64)
+#define REPTACH_OFFSET_CALL_R11 3
+#endif
+
 namespace JSC {
 
 template <class AssemblerType>
@@ -47,6 +52,7 @@ public:
     class CodeLocationLabel;
     class CodeLocationJump;
     class CodeLocationCall;
+    class CodeLocationNearCall;
     class CodeLocationDataLabel32;
     class CodeLocationDataLabelPtr;
     class ProcessorReturnAddress;
@@ -421,6 +427,7 @@ public:
         CodeLocationLabel labelAtOffset(int offset);
         CodeLocationJump jumpAtOffset(int offset);
         CodeLocationCall callAtOffset(int offset);
+        CodeLocationNearCall nearCallAtOffset(int offset);
         CodeLocationDataLabelPtr dataLabelPtrAtOffset(int offset);
         CodeLocationDataLabel32 dataLabel32AtOffset(int offset);
 
@@ -446,8 +453,9 @@ public:
         {
         }
 
-        void patchLoadToLEA() {
-            AssemblerType::patchLoadToLEA(reinterpret_cast<intptr_t>(this->m_location));
+        void repatchLoadToLEA()
+        {
+            AssemblerType::repatchLoadToLEA(this->m_location);
         }
 
     private:
@@ -463,6 +471,8 @@ public:
     class CodeLocationLabel : public CodeLocationCommon {
         friend class CodeLocationCommon;
         friend class CodeLocationJump;
+        friend class CodeLocationCall;
+        friend class CodeLocationNearCall;
         friend class PatchBuffer;
         friend class ProcessorReturnAddress;
 
@@ -474,6 +484,12 @@ public:
         void* addressForSwitch() { return this->m_location; }
         void* addressForExceptionHandler() { return this->m_location; }
         void* addressForJSR() { return this->m_location; }
+
+        template<typename FunctionSig>
+        static CodeLocationLabel fromFunctionPointer(FunctionSig* function)
+        {
+            return CodeLocationLabel(reinterpret_cast<void*>(function));
+        }
 
     private:
         explicit CodeLocationLabel(void* location)
@@ -497,7 +513,7 @@ public:
 
         void relink(CodeLocationLabel destination)
         {
-            AssemblerType::patchJump(reinterpret_cast<intptr_t>(this->m_location), destination.m_location);
+            AssemblerType::relinkJump(this->m_location, destination.m_location);
         }
 
     private:
@@ -518,10 +534,21 @@ public:
         {
         }
 
+        CodeLocationCall(ProcessorReturnAddress*);
+
+        void relink(CodeLocationLabel destination)
+        {
+#if PLATFORM(X86_64)
+            CodeLocationCommon::dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).repatch(destination.m_location);
+#else
+            AssemblerType::relinkCall(this->m_location, destination.m_location);
+#endif
+        }
+
         template<typename FunctionSig>
         void relink(FunctionSig* function)
         {
-            AssemblerType::patchMacroAssemblerCall(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(function));
+            relink(CodeLocationLabel::fromFunctionPointer(function));
         }
 
         // This methods returns the value that will be set as the return address
@@ -549,10 +576,17 @@ public:
         {
         }
 
+        CodeLocationNearCall(ProcessorReturnAddress*);
+
+        void relink(CodeLocationLabel destination)
+        {
+            AssemblerType::relinkCall(this->m_location, destination.m_location);
+        }
+
         template<typename FunctionSig>
         void relink(FunctionSig* function)
         {
-            AssemblerType::patchCall(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(function));
+            relink(CodeLocationLabel::fromFunctionPointer(function));
         }
 
         // This methods returns the value that will be set as the return address
@@ -582,7 +616,7 @@ public:
 
         void repatch(int32_t value)
         {
-            AssemblerType::patchImmediate(reinterpret_cast<intptr_t>(this->m_location), value);
+            AssemblerType::repatchInt32(this->m_location, value);
         }
 
     private:
@@ -605,7 +639,7 @@ public:
 
         void repatch(void* value)
         {
-            AssemblerType::patchPointer(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<intptr_t>(value));
+            AssemblerType::repatchPointer(this->m_location, value);
         }
 
     private:
@@ -619,6 +653,8 @@ public:
     //
     // This class can be used to relink a call identified by its return address.
     class ProcessorReturnAddress {
+        friend class CodeLocationCall;
+        friend class CodeLocationNearCall;
     public:
         ProcessorReturnAddress(void* location)
             : m_location(location)
@@ -627,19 +663,24 @@ public:
 
         void relinkCallerToTrampoline(CodeLocationLabel label)
         {
-            AssemblerType::patchMacroAssemblerCall(reinterpret_cast<intptr_t>(this->m_location), label.getJumpDestination());
+            CodeLocationCall(this).relink(label);
         }
         
         template<typename FunctionSig>
         void relinkCallerToFunction(FunctionSig* newCalleeFunction)
         {
-            AssemblerType::patchMacroAssemblerCall(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(newCalleeFunction));
+            relinkCallerToTrampoline(CodeLocationLabel::fromFunctionPointer(newCalleeFunction));
+        }
+        
+        void relinkNearCallerToTrampoline(CodeLocationLabel label)
+        {
+            CodeLocationNearCall(this).relink(label);
         }
         
         template<typename FunctionSig>
         void relinkNearCallerToFunction(FunctionSig* newCalleeFunction)
         {
-            AssemblerType::patchCall(reinterpret_cast<intptr_t>(this->m_location), reinterpret_cast<void*>(newCalleeFunction));
+            relinkNearCallerToTrampoline(CodeLocationLabel::fromFunctionPointer(newCalleeFunction));
         }
         
         operator void*()
@@ -680,6 +721,7 @@ public:
     public:
         PatchBuffer(AbstractMacroAssembler<AssemblerType>* masm, PassRefPtr<ExecutablePool> executablePool)
             : m_ref(0, executablePool, masm->m_assembler.size())
+            , m_size(masm->m_assembler.size())
 #ifndef NDEBUG
             , m_completed(false)
 #endif
@@ -687,12 +729,10 @@ public:
             m_ref.m_code = masm->m_assembler.executableCopy(m_ref.m_executablePool.get());
         }
 
-#ifndef NDEBUG
         ~PatchBuffer()
         {
             ASSERT(m_completed);
         }
-#endif
 
         // These methods are used to link or set values at code generation time.
 
@@ -701,15 +741,12 @@ public:
         {
             ASSERT(call.isFlagSet(Call::Linkable));
 #if PLATFORM(X86_64)
-            if (call.isFlagSet(Call::Near))
-                AssemblerType::linkCall(code(), call.m_jmp, reinterpret_cast<void*>(function));
-            else {
-                intptr_t callLocation = reinterpret_cast<intptr_t>(AssemblerType::getRelocatedAddress(code(), call.m_jmp));
-                AssemblerType::patchMacroAssemblerCall(callLocation, reinterpret_cast<void*>(function));
-            }
-#else
-            AssemblerType::linkCall(code(), call.m_jmp, reinterpret_cast<void*>(function));
+            if (!call.isFlagSet(Call::Near)) {
+                intptr_t callLocation = reinterpret_cast<intptr_t>(AssemblerType::getRelocatedAddress(code(), call.m_jmp)) - REPTACH_OFFSET_CALL_R11;
+                AssemblerType::patchPointer(reinterpret_cast<void*>(callLocation), reinterpret_cast<void*>(function));
+            } else
 #endif
+            AssemblerType::linkCall(code(), call.m_jmp, reinterpret_cast<void*>(function));
         }
         
         template<typename FunctionSig>
@@ -738,12 +775,12 @@ public:
 
         void patch(DataLabelPtr label, void* value)
         {
-            AssemblerType::patchAddress(code(), label.m_label, value);
+            AssemblerType::patchPointer(code(), label.m_label, value);
         }
 
         void patch(DataLabelPtr label, CodeLocationLabel value)
         {
-            AssemblerType::patchAddress(code(), label.m_label, value.getJumpDestination());
+            AssemblerType::patchPointer(code(), label.m_label, value.getJumpDestination());
         }
 
         // These methods are used to obtain handles to allow the code to be relinked / repatched later.
@@ -815,9 +852,12 @@ public:
             ASSERT(!m_completed);
             m_completed = true;
 #endif
+
+            ExecutableAllocator::makeExecutable(m_ref.m_code, m_size);
         }
 
         CodeRef m_ref;
+        size_t m_size;
 #ifndef NDEBUG
         bool m_completed;
 #endif
@@ -912,6 +952,12 @@ typename AbstractMacroAssembler<AssemblerType>::CodeLocationCall AbstractMacroAs
 }
 
 template <class AssemblerType>
+typename AbstractMacroAssembler<AssemblerType>::CodeLocationNearCall AbstractMacroAssembler<AssemblerType>::CodeLocationCommon::nearCallAtOffset(int offset)
+{
+    return typename AbstractMacroAssembler::CodeLocationNearCall(reinterpret_cast<char*>(m_location) + offset);
+}
+
+template <class AssemblerType>
 typename AbstractMacroAssembler<AssemblerType>::CodeLocationDataLabelPtr AbstractMacroAssembler<AssemblerType>::CodeLocationCommon::dataLabelPtrAtOffset(int offset)
 {
     return typename AbstractMacroAssembler::CodeLocationDataLabelPtr(reinterpret_cast<char*>(m_location) + offset);
@@ -923,6 +969,17 @@ typename AbstractMacroAssembler<AssemblerType>::CodeLocationDataLabel32 Abstract
     return typename AbstractMacroAssembler::CodeLocationDataLabel32(reinterpret_cast<char*>(m_location) + offset);
 }
 
+template <class AssemblerType>
+AbstractMacroAssembler<AssemblerType>::CodeLocationCall::CodeLocationCall(AbstractMacroAssembler<AssemblerType>::ProcessorReturnAddress* ra)
+    : CodeLocationCommon(ra->m_location)
+{
+}
+
+template <class AssemblerType>
+AbstractMacroAssembler<AssemblerType>::CodeLocationNearCall::CodeLocationNearCall(AbstractMacroAssembler<AssemblerType>::ProcessorReturnAddress* ra)
+    : CodeLocationCommon(ra->m_location)
+{
+}
 
 } // namespace JSC
 
