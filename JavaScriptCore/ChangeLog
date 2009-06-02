@@ -1,3 +1,49 @@
+2009-06-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Olliej Hunt.
+
+        Change JITStub functions from being static members on the JITStub class to be
+        global extern "C" functions, and switch their the function signature declaration
+        in the definition of the functions to be C-macro generated.  This makes it easier
+        to work with the stub functions from assembler code (since the names no longer
+        require mangling), and by delaring the functions with a macro we can look at
+        also auto-generating asm thunks to wrap the JITStub functions to perform the
+        work currently in 'restoreArgumentReference' (as a memory saving).
+
+        Making this change also forces us to be a bit more realistic about what is private
+        on the Register and CallFrame objects.  Presently most everything on these classes
+        is private, and the classes have plenty of friends.  We could befriend all the
+        global functions to perpetuate the delusion of encapsulation, but using friends is
+        a bit of a sledgehammer solution here - since friends can poke around with all of
+        the class's privates, and since all the major classes taht operate on Regsiters are
+        currently friends, right there is currently in practice very little protection at
+        all.  Better to start removing friend delclarations, and exposing just the parts
+        that need to be exposed.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::returnPC):
+        (JSC::ExecState::setCallerFrame):
+        (JSC::ExecState::returnValueRegister):
+        (JSC::ExecState::setArgumentCount):
+        (JSC::ExecState::setCallee):
+        (JSC::ExecState::setCodeBlock):
+        * interpreter/Interpreter.h:
+        * interpreter/Register.h:
+        (JSC::Register::Register):
+        (JSC::Register::i):
+        * jit/JITStubs.cpp:
+        (JSC::):
+        (JSC::JITThunks::JITThunks):
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::JITStubs::):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::nativeFunction):
+        (JSC::JSFunction::classInfo):
+        * runtime/JSGlobalData.h:
+
 2009-06-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

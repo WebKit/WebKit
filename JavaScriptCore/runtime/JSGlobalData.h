@@ -116,7 +116,7 @@ namespace JSC {
         Parser* parser;
         Interpreter* interpreter;
 #if ENABLE(JIT)
-        JITStubs jitStubs;
+        JITThunks jitStubs;
         FunctionBodyNode* nativeFunctionThunk()
         {
             if (!lazyNativeFunctionThunk)

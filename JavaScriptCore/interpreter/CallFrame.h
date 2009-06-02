@@ -95,14 +95,6 @@ namespace JSC  {
         static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->globalData().regExpConstructorTable; }
         static const HashTable* stringTable(CallFrame* callFrame) { return callFrame->globalData().stringTable; }
 
-    private:
-        friend class Arguments;
-        friend class JSActivation;
-        friend class JSGlobalObject;
-        friend class Interpreter;
-        friend class JITStubs;
-        friend struct CallFrameClosure;
-
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }
         Register* registers() { return this; }
 
@@ -111,13 +103,9 @@ namespace JSC  {
         CallFrame* callerFrame() const { return this[RegisterFile::CallerFrame].callFrame(); }
         Arguments* optionalCalleeArguments() const { return this[RegisterFile::OptionalCalleeArguments].arguments(); }
         Instruction* returnPC() const { return this[RegisterFile::ReturnPC].vPC(); }
-        int returnValueRegister() const { return this[RegisterFile::ReturnValueRegister].i(); }
 
-        void setArgumentCount(int count) { this[RegisterFile::ArgumentCount] = count; }
-        void setCallee(JSFunction* callee) { this[RegisterFile::Callee] = callee; }
         void setCalleeArguments(Arguments* arguments) { this[RegisterFile::OptionalCalleeArguments] = arguments; }
         void setCallerFrame(CallFrame* callerFrame) { this[RegisterFile::CallerFrame] = callerFrame; }
-        void setCodeBlock(CodeBlock* codeBlock) { this[RegisterFile::CodeBlock] = codeBlock; }
         void setScopeChain(ScopeChainNode* scopeChain) { this[RegisterFile::ScopeChain] = scopeChain; }
 
         ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, ScopeChainNode* scopeChain,
@@ -134,6 +122,19 @@ namespace JSC  {
             setCallee(function);
             setCalleeArguments(0);
         }
+
+    private:
+        friend class Arguments;
+        friend class JSActivation;
+        friend class JSGlobalObject;
+        friend class Interpreter;
+        friend struct CallFrameClosure;
+
+        int returnValueRegister() const { return this[RegisterFile::ReturnValueRegister].i(); }
+
+        void setArgumentCount(int count) { this[RegisterFile::ArgumentCount] = count; }
+        void setCallee(JSFunction* callee) { this[RegisterFile::Callee] = callee; }
+        void setCodeBlock(CodeBlock* codeBlock) { this[RegisterFile::CodeBlock] = codeBlock; }
 
         static const intptr_t HostCallFrameFlag = 1;
 
