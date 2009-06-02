@@ -30,8 +30,6 @@
 
 #include <wtf/Platform.h>
 
-namespace WebCore {
-
 // FIXME: We should get rid of these Chromium-related ifdefs.
 #if PLATFORM(CHROMIUM)
 
@@ -42,6 +40,8 @@ namespace WebCore {
 #endif
 
 #else
+
+namespace WebCore {
 
 #if !PLATFORM(WIN_OS)
 // VK_LBUTTON (01) Left mouse button
@@ -567,8 +567,8 @@ const int VK_UNKNOWN = 0;
 
 #endif // PLATFORM(WIN_OS)
 
-#endif // PLATFORM(CHROMIUM)
-
 }
+
+#endif // PLATFORM(CHROMIUM)
 
 #endif

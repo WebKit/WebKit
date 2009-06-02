@@ -2,6 +2,16 @@
 
         Unreviewed, build fix.
 
+        Reposition platform guard, improperly placed by http://trac.webkit.org/changeset/44340
+        Bad Dimitri.
+
+        * platform/KeyboardCodes.h: Repositioned the guard to avoid nested
+            WebCore namespace declarations.
+
+2009-06-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
         * platform/KeyboardCodes.h: Integrated contents of platform/chromium/KeyboardCodes.h
             with a stern FIXME.
         * platform/chromium/KeyboardCodes.h: Removed.
