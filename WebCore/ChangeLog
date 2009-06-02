@@ -2,6 +2,25 @@
 
         Reviewed by Maciej Stachowiak.
 
+        Add a compareBoundaryPoints which takes RangeBoundaryPoints
+        https://bugs.webkit.org/show_bug.cgi?id=25500
+
+        I noticed the need for this function when removing compareBoundaryPoints(Position, Position)
+        This patch is almost entirely minus lines.
+
+        No functional changes, thus no tests.
+
+        * dom/Range.cpp:
+        (WebCore::Range::setStart):
+        (WebCore::Range::setEnd):
+        (WebCore::Range::compareBoundaryPoints):
+        (WebCore::Range::boundaryPointsValid):
+        * dom/Range.h:
+
+2009-06-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
         Remove Range::compareBoundaryPoints(Position, Position) per Darin's suggestion in bug 25056
         https://bugs.webkit.org/show_bug.cgi?id=25500
 

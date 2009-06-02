@@ -208,7 +208,7 @@ void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
     if (startRootContainer != endRootContainer)
         collapse(true, ec);
     // check if new start after end
-    else if (compareBoundaryPoints(m_start.container(), m_start.offset(), m_end.container(), m_end.offset()) > 0)
+    else if (compareBoundaryPoints(m_start, m_end) > 0)
         collapse(true, ec);
 }
 
@@ -246,7 +246,7 @@ void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
     if (startRootContainer != endRootContainer)
         collapse(false, ec);
     // check if new end before start
-    if (compareBoundaryPoints(m_start.container(), m_start.offset(), m_end.container(), m_end.offset()) > 0)
+    if (compareBoundaryPoints(m_start, m_end) > 0)
         collapse(false, ec);
 }
 
@@ -418,17 +418,13 @@ short Range::compareBoundaryPoints(CompareHow how, const Range* sourceRange, Exc
 
     switch (how) {
         case START_TO_START:
-            return compareBoundaryPoints(m_start.container(), m_start.offset(),
-                sourceRange->m_start.container(), sourceRange->m_start.offset());
+            return compareBoundaryPoints(m_start, sourceRange->m_start);
         case START_TO_END:
-            return compareBoundaryPoints(m_end.container(), m_end.offset(),
-                sourceRange->m_start.container(), sourceRange->m_start.offset());
+            return compareBoundaryPoints(m_end, sourceRange->m_start);
         case END_TO_END:
-            return compareBoundaryPoints(m_end.container(), m_end.offset(),
-                sourceRange->m_end.container(), sourceRange->m_end.offset());
+            return compareBoundaryPoints(m_end, sourceRange->m_end);
         case END_TO_START:
-            return compareBoundaryPoints(m_start.container(), m_start.offset(),
-                sourceRange->m_end.container(), sourceRange->m_end.offset());
+            return compareBoundaryPoints(m_start, sourceRange->m_end);
     }
 
     ec = SYNTAX_ERR;
@@ -526,9 +522,14 @@ short Range::compareBoundaryPoints(Node* containerA, int offsetA, Node* containe
     return 0;
 }
 
+short Range::compareBoundaryPoints(const RangeBoundaryPoint& boundaryA, const RangeBoundaryPoint& boundaryB)
+{
+    return compareBoundaryPoints(boundaryA.container(), boundaryA.offset(), boundaryB.container(), boundaryB.offset());
+}
+
 bool Range::boundaryPointsValid() const
 {
-    return m_start.container() && compareBoundaryPoints(m_start.container(), m_start.offset(), m_end.container(), m_end.offset()) <= 0;
+    return m_start.container() && compareBoundaryPoints(m_start, m_end) <= 0;
 }
 
 void Range::deleteContents(ExceptionCode& ec)

@@ -66,6 +66,7 @@ public:
     enum CompareHow { START_TO_START, START_TO_END, END_TO_END, END_TO_START };
     short compareBoundaryPoints(CompareHow, const Range* sourceRange, ExceptionCode&) const;
     static short compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB);
+    static short compareBoundaryPoints(const RangeBoundaryPoint& boundaryA, const RangeBoundaryPoint& boundaryB);
     bool boundaryPointsValid() const;
     bool intersectsNode(Node* refNode, ExceptionCode&);
     void deleteContents(ExceptionCode&);
