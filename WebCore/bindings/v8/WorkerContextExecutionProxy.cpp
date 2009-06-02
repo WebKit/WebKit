@@ -173,7 +173,7 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
 
     // Create a new JS object and use it as the prototype for the shadow global object.
     v8::Handle<v8::Function> workerContextConstructor = GetConstructor(V8ClassIndex::WORKERCONTEXT);
-    v8::Local<v8::Object> jsWorkerContext = SafeAllocation::NewInstance(workerContextConstructor);
+    v8::Local<v8::Object> jsWorkerContext = SafeAllocation::newInstance(workerContextConstructor);
     // Bail out if allocation failed.
     if (jsWorkerContext.IsEmpty()) {
         dispose();
@@ -318,7 +318,7 @@ v8::Local<v8::Object> WorkerContextExecutionProxy::toV8(V8ClassIndex::V8WrapperT
     else
         function = V8Proxy::GetTemplate(descType)->GetFunction();
 
-    v8::Local<v8::Object> instance = SafeAllocation::NewInstance(function);
+    v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
     if (!instance.IsEmpty()) {
         // Avoid setting the DOM wrapper for failed allocations.
         V8Proxy::SetDOMWrapper(instance, V8ClassIndex::ToInt(cptrType), impl);

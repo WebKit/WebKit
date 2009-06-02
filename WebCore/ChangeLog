@@ -1,3 +1,24 @@
+2009-06-02  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25595
+        Upstream v8_utility.h functions into V8Utilities.h.  This patch has
+        some transitional code to make upstreaming easier.  This code will
+        be deleted in a few days.
+
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::construct): NewInstance -> newInstance.
+        * bindings/v8/V8Utilities.h:
+        (WebCore::AllowAllocation::AllowAllocation): Function added.
+        (WebCore::AllowAllocation::~AllowAllocation): Function added.
+        (WebCore::SafeAllocation::NewInstance): Function added.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+        NewInstance -> newInstance.
+        (WebCore::WorkerContextExecutionProxy::toV8): NewInstance ->
+        newInstance.
+
 2009-06-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
