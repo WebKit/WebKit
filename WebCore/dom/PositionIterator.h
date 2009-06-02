@@ -37,16 +37,16 @@ namespace WebCore {
 class PositionIterator {
 public:
     PositionIterator()
-        : m_parent(0)
-        , m_child(0)
-        , m_offset(0)
+        : m_anchorNode(0)
+        , m_nodeAfterPositionInAnchor(0)
+        , m_offsetInAnchor(0)
     {
     }
 
     PositionIterator(const Position& pos)
-        : m_parent(pos.node())
-        , m_child(m_parent->childNode(pos.deprecatedEditingOffset()))
-        , m_offset(m_child ? 0 : pos.deprecatedEditingOffset())
+        : m_anchorNode(pos.anchorNode())
+        , m_nodeAfterPositionInAnchor(m_anchorNode->childNode(pos.deprecatedEditingOffset()))
+        , m_offsetInAnchor(m_nodeAfterPositionInAnchor ? 0 : pos.deprecatedEditingOffset())
     {
     }
     operator Position() const;
@@ -54,8 +54,8 @@ public:
     void increment();
     void decrement();
 
-    Node* node() const { return m_parent; }
-    int offsetInLeafNode() const { return m_offset; }
+    Node* node() const { return m_anchorNode; }
+    int offsetInLeafNode() const { return m_offsetInAnchor; }
 
     bool atStart() const;
     bool atEnd() const;
@@ -64,9 +64,9 @@ public:
     bool isCandidate() const;
 
 private:
-    Node* m_parent;
-    Node* m_child;
-    int m_offset;
+    Node* m_anchorNode;
+    Node* m_nodeAfterPositionInAnchor; // If this is non-null, m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode;
+    int m_offsetInAnchor;
 };
 
 } // namespace WebCore

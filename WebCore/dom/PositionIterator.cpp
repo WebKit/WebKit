@@ -36,111 +36,111 @@ using namespace HTMLNames;
 
 PositionIterator::operator Position() const
 {
-    if (m_child) {
-        ASSERT(m_child->parentNode() == m_parent);
-        return positionBeforeNode(m_child);
+    if (m_nodeAfterPositionInAnchor) {
+        ASSERT(m_nodeAfterPositionInAnchor->parentNode() == m_anchorNode);
+        return positionBeforeNode(m_nodeAfterPositionInAnchor);
     }
-    if (m_parent->hasChildNodes())
-        return lastDeepEditingPositionForNode(m_parent);
-    return Position(m_parent, m_offset);
+    if (m_anchorNode->hasChildNodes())
+        return lastDeepEditingPositionForNode(m_anchorNode);
+    return Position(m_anchorNode, m_offsetInAnchor);
 }
 
 void PositionIterator::increment()
 {
-    if (!m_parent)
+    if (!m_anchorNode)
         return;
 
-    if (m_child) {
-        m_parent = m_child;
-        m_child = m_parent->firstChild();
-        m_offset = 0;
+    if (m_nodeAfterPositionInAnchor) {
+        m_anchorNode = m_nodeAfterPositionInAnchor;
+        m_nodeAfterPositionInAnchor = m_anchorNode->firstChild();
+        m_offsetInAnchor = 0;
         return;
     }
 
-    if (!m_parent->hasChildNodes() && m_offset < lastOffsetForEditing(m_parent))
-        m_offset = Position::uncheckedNextOffset(m_parent, m_offset);
+    if (!m_anchorNode->hasChildNodes() && m_offsetInAnchor < lastOffsetForEditing(m_anchorNode))
+        m_offsetInAnchor = Position::uncheckedNextOffset(m_anchorNode, m_offsetInAnchor);
     else {
-        m_child = m_parent;
-        m_parent = m_child->parentNode();
-        m_child = m_child->nextSibling();
-        m_offset = 0;
+        m_nodeAfterPositionInAnchor = m_anchorNode;
+        m_anchorNode = m_nodeAfterPositionInAnchor->parentNode();
+        m_nodeAfterPositionInAnchor = m_nodeAfterPositionInAnchor->nextSibling();
+        m_offsetInAnchor = 0;
     }
 }
 
 void PositionIterator::decrement()
 {
-    if (!m_parent)
+    if (!m_anchorNode)
         return;
 
-    if (m_child) {
-        m_parent = m_child->previousSibling();
-        if (m_parent) {
-            m_child = 0;
-            m_offset = m_parent->hasChildNodes() ? 0 : lastOffsetForEditing(m_parent);
+    if (m_nodeAfterPositionInAnchor) {
+        m_anchorNode = m_nodeAfterPositionInAnchor->previousSibling();
+        if (m_anchorNode) {
+            m_nodeAfterPositionInAnchor = 0;
+            m_offsetInAnchor = m_anchorNode->hasChildNodes() ? 0 : lastOffsetForEditing(m_anchorNode);
         } else {
-            m_child = m_child->parentNode();
-            m_parent = m_child->parentNode();
-            m_offset = 0;
+            m_nodeAfterPositionInAnchor = m_nodeAfterPositionInAnchor->parentNode();
+            m_anchorNode = m_nodeAfterPositionInAnchor->parentNode();
+            m_offsetInAnchor = 0;
         }
         return;
     }
 
-    if (m_offset) {
-        m_offset = Position::uncheckedPreviousOffset(m_parent, m_offset);
+    if (m_offsetInAnchor) {
+        m_offsetInAnchor = Position::uncheckedPreviousOffset(m_anchorNode, m_offsetInAnchor);
     } else {
-        if (m_parent->hasChildNodes()) {
-            m_parent = m_parent->lastChild();
-            if (!m_parent->hasChildNodes())
-                m_offset = lastOffsetForEditing(m_parent);
+        if (m_anchorNode->hasChildNodes()) {
+            m_anchorNode = m_anchorNode->lastChild();
+            if (!m_anchorNode->hasChildNodes())
+                m_offsetInAnchor = lastOffsetForEditing(m_anchorNode);
         } else {
-            m_child = m_parent;
-            m_parent = m_parent->parentNode();
+            m_nodeAfterPositionInAnchor = m_anchorNode;
+            m_anchorNode = m_anchorNode->parentNode();
         }
     }
 }
 
 bool PositionIterator::atStart() const
 {
-    if (!m_parent)
+    if (!m_anchorNode)
         return true;
-    if (m_parent->parentNode())
+    if (m_anchorNode->parentNode())
         return false;
-    return (!m_parent->hasChildNodes() && !m_offset) || (m_child && !m_child->previousSibling());
+    return (!m_anchorNode->hasChildNodes() && !m_offsetInAnchor) || (m_nodeAfterPositionInAnchor && !m_nodeAfterPositionInAnchor->previousSibling());
 }
 
 bool PositionIterator::atEnd() const
 {
-    if (!m_parent)
+    if (!m_anchorNode)
         return true;
-    if (m_child)
+    if (m_nodeAfterPositionInAnchor)
         return false;
-    return !m_parent->parentNode() && (m_parent->hasChildNodes() || m_offset >= lastOffsetForEditing(m_parent));
+    return !m_anchorNode->parentNode() && (m_anchorNode->hasChildNodes() || m_offsetInAnchor >= lastOffsetForEditing(m_anchorNode));
 }
 
 bool PositionIterator::atStartOfNode() const
 {
-    if (!m_parent)
+    if (!m_anchorNode)
         return true;
-    if (!m_child)
-        return !m_parent->hasChildNodes() && !m_offset;
-    return !m_child->previousSibling();
+    if (!m_nodeAfterPositionInAnchor)
+        return !m_anchorNode->hasChildNodes() && !m_offsetInAnchor;
+    return !m_nodeAfterPositionInAnchor->previousSibling();
 }
 
 bool PositionIterator::atEndOfNode() const
 {
-    if (!m_parent)
+    if (!m_anchorNode)
         return true;
-    if (m_child)
+    if (m_nodeAfterPositionInAnchor)
         return false;
-    return m_parent->hasChildNodes() || m_offset >= lastOffsetForEditing(m_parent);
+    return m_anchorNode->hasChildNodes() || m_offsetInAnchor >= lastOffsetForEditing(m_anchorNode);
 }
 
 bool PositionIterator::isCandidate() const
 {
-    if (!m_parent)
+    if (!m_anchorNode)
         return false;
 
-    RenderObject* renderer = m_parent->renderer();
+    RenderObject* renderer = m_anchorNode->renderer();
     if (!renderer)
         return false;
     
@@ -148,17 +148,17 @@ bool PositionIterator::isCandidate() const
         return false;
 
     if (renderer->isBR())
-        return !m_offset && !Position::nodeIsUserSelectNone(m_parent->parent());
+        return !m_offsetInAnchor && !Position::nodeIsUserSelectNone(m_anchorNode->parent());
 
     if (renderer->isText())
-        return Position(*this).inRenderedText() && !Position::nodeIsUserSelectNone(m_parent);
+        return Position(*this).inRenderedText() && !Position::nodeIsUserSelectNone(m_anchorNode);
 
-    if (isTableElement(m_parent) || editingIgnoresContent(m_parent))
-        return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_parent->parent());
+    if (isTableElement(m_anchorNode) || editingIgnoresContent(m_anchorNode))
+        return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(m_anchorNode->parent());
 
-    if (!m_parent->hasTagName(htmlTag) && renderer->isBlockFlow() && !Position::hasRenderedNonAnonymousDescendantsWithHeight(renderer) &&
-       (toRenderBlock(renderer)->height() || m_parent->hasTagName(bodyTag)))
-        return atStartOfNode() && !Position::nodeIsUserSelectNone(m_parent);
+    if (!m_anchorNode->hasTagName(htmlTag) && renderer->isBlockFlow() && !Position::hasRenderedNonAnonymousDescendantsWithHeight(renderer) &&
+       (toRenderBlock(renderer)->height() || m_anchorNode->hasTagName(bodyTag)))
+        return atStartOfNode() && !Position::nodeIsUserSelectNone(m_anchorNode);
     
     return false;
 }

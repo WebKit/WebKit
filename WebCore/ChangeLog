@@ -1,3 +1,31 @@
+2009-06-02  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename PositionIterator members in hope of futher clarity
+        https://bugs.webkit.org/show_bug.cgi?id=24854
+
+        Rename m_parent to m_anchorNode (since although it's always the parent
+        of the previous m_child member, it is not always the parent of the effective position)
+        Rename m_child to m_nodeAfterPositionInAnchor to make clear that it's the node
+        directly following the position.  This member is often NULL, but is always
+        a child of m_parent, now m_anchorNode if set.
+        Rename m_offset to m_offsetInAnchor (since it's interpreted relative to m_anchorNode)
+
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::operator Position):
+        (WebCore::PositionIterator::increment):
+        (WebCore::PositionIterator::decrement):
+        (WebCore::PositionIterator::atStart):
+        (WebCore::PositionIterator::atEnd):
+        (WebCore::PositionIterator::atStartOfNode):
+        (WebCore::PositionIterator::atEndOfNode):
+        (WebCore::PositionIterator::isCandidate):
+        * dom/PositionIterator.h:
+        (WebCore::PositionIterator::PositionIterator):
+        (WebCore::PositionIterator::node):
+        (WebCore::PositionIterator::offsetInLeafNode):
+
 2009-06-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.
