@@ -1,3 +1,18 @@
+2009-06-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 17167: Failures in fast/dom/Node/initial-values.html
+
+        Added some more tests to show that the compatibility issue is only
+        partly solved.
+
+        Also updated the new passing result and removed the associated comment
+        inside the initial-values.js.
+
+        * fast/dom/Node/initial-values-expected.txt:
+        * fast/dom/Node/resources/initial-values.js:
+
 2009-06-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

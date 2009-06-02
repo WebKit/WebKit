@@ -80,11 +80,32 @@ FAIL element.namespaceURI should be null (of type object). Was http://www.w3.org
 PASS element.prefix is null
 PASS element.nodeValue is null
 PASS element.attributes.toString() is '[object NamedNodeMap]'
-Element creation using createElementNS on an HTML doc:
-FAIL element.nodeName should be html:pre. Was PRE.
+Prefixed element creation using createElementNS on an HTML doc:
+PASS element.nodeName is 'html:pre'
 PASS element.localName is 'pre'
 PASS element.namespaceURI is 'http://www.w3.org/1999/xhtml'
 PASS element.prefix is 'html'
+PASS element.nodeValue is null
+PASS element.attributes.toString() is '[object NamedNodeMap]'
+SVG Element creation using createElementNS on an HTML doc:
+PASS element.nodeName is 'svg'
+PASS element.localName is 'svg'
+PASS element.namespaceURI is 'http://www.w3.org/2000/svg'
+PASS element.prefix is null
+PASS element.nodeValue is null
+PASS element.attributes.toString() is '[object NamedNodeMap]'
+Unknown Element creation using createElementNS on an HTML doc:
+PASS element.nodeName is 'foo:svg'
+PASS element.localName is 'svg'
+PASS element.namespaceURI is 'http://www.webkit.org'
+PASS element.prefix is 'foo'
+PASS element.nodeValue is null
+PASS element.attributes.toString() is '[object NamedNodeMap]'
+Element creation using createElementNS on an HTML doc:
+FAIL element.nodeName should be pre. Was PRE.
+PASS element.localName is 'pre'
+PASS element.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS element.prefix is null
 PASS element.nodeValue is null
 PASS element.attributes.toString() is '[object NamedNodeMap]'
 Element creation using createElement on an XHTML doc:

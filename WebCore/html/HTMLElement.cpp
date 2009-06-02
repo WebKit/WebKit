@@ -69,7 +69,8 @@ String HTMLElement::nodeName() const
 {
     // FIXME: Would be nice to have an atomicstring lookup based off uppercase chars that does not have to copy
     // the string on a hit in the hash.
-    if (document()->isHTMLDocument())
+    // FIXME: We should have a way to detect XHTML elements and replace the hasPrefix() check with it.
+    if (document()->isHTMLDocument() && !tagQName().hasPrefix())
         return tagQName().localName().string().upper();
     return Element::nodeName();
 }

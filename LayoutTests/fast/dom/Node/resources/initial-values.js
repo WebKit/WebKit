@@ -108,12 +108,41 @@ shouldBe("element.prefix", "null");
 shouldBe("element.nodeValue", "null");
 shouldBe("element.attributes.toString()", "'[object NamedNodeMap]'");
 
-debug("Element creation using createElementNS on an HTML doc:")
+debug("Prefixed element creation using createElementNS on an HTML doc:")
 element = document.createElementNS("http://www.w3.org/1999/xhtml", "html:pre");
 shouldBe("element.nodeName", "'html:pre'");
 shouldBe("element.localName", "'pre'");
 shouldBe("element.namespaceURI", "'http://www.w3.org/1999/xhtml'");
 shouldBe("element.prefix", "'html'");
+shouldBe("element.nodeValue", "null");
+shouldBe("element.attributes.toString()", "'[object NamedNodeMap]'");
+
+debug("SVG Element creation using createElementNS on an HTML doc:")
+element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+shouldBe("element.nodeName", "'svg'");
+shouldBe("element.localName", "'svg'");
+shouldBe("element.namespaceURI", "'http://www.w3.org/2000/svg'");
+shouldBe("element.prefix", "null");
+shouldBe("element.nodeValue", "null");
+shouldBe("element.attributes.toString()", "'[object NamedNodeMap]'");
+
+debug("Unknown Element creation using createElementNS on an HTML doc:")
+element = document.createElementNS("http://www.webkit.org", "foo:svg");
+shouldBe("element.nodeName", "'foo:svg'");
+shouldBe("element.localName", "'svg'");
+shouldBe("element.namespaceURI", "'http://www.webkit.org'");
+shouldBe("element.prefix", "'foo'");
+shouldBe("element.nodeValue", "null");
+shouldBe("element.attributes.toString()", "'[object NamedNodeMap]'");
+
+debug("Element creation using createElementNS on an HTML doc:")
+element = document.createElementNS("http://www.w3.org/1999/xhtml", "pre");
+// Spec: http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-104682815 (element.tagName)
+// FF and Opera returns "pre" for nodeName as it is an XHTML element, WebKit returns "PRE".
+shouldBe("element.nodeName", "'pre'");
+shouldBe("element.localName", "'pre'");
+shouldBe("element.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+shouldBe("element.prefix", "null");
 shouldBe("element.nodeValue", "null");
 shouldBe("element.attributes.toString()", "'[object NamedNodeMap]'");
 
@@ -129,8 +158,6 @@ shouldBe("element.attributes.toString()", "'[object NamedNodeMap]'");
 
 debug("Element creation using createElementNS on an XHTML doc:")
 element = xmlDoc.createElementNS("http://www.w3.org/1999/xhtml", "html:pre");
-// Spec: http://www.w3.org/TR/DOM-Level-2-Core/core.html#Level-2-Core-DOM-createElementNS
-// WebKit currently returns "PRE" instead of "html:pre"
 shouldBe("element.nodeName", "'html:pre'");
 shouldBe("element.localName", "'pre'");
 shouldBe("element.namespaceURI", "'http://www.w3.org/1999/xhtml'");

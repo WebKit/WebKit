@@ -1,3 +1,22 @@
+2009-06-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 17167: Failures in fast/dom/Node/initial-values.html
+
+        This partly solve a compatibility issue with other browsers. It will also
+        make us more consistent while handling XHTML element.
+
+        The issue is that when we create an XHTML element inside an HTML document
+        (as it is the case when calling createElementNS), we default to the HTML
+        behaviour in nodeName. As we cannot test if an HTMLElement is an XHTML
+        element, our fix is to check whether it has a prefix and then default
+        to XML behaviour for nodeName.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::nodeName): Add a prefix check before
+        returning the uppercase tagName (HTML behaviour).
+
 2009-06-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.
