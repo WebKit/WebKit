@@ -1,3 +1,14 @@
+2009-06-02  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add workaround for crash in Linux Flash Player when hosted by
+        another toolkit than GTK+. Bug fixed at the Flash Player bugzilla,
+        issue (FP-2140).
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setNPWindowIfNeeded):
+
 2009-06-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Simon Hausmann.

@@ -186,22 +186,27 @@ void PluginView::setNPWindowIfNeeded()
         return;
     m_hasPendingGeometryChange = false;
 
-    m_npWindow.x = m_windowRect.x();
-    m_npWindow.y = m_windowRect.y();
-    m_npWindow.width = m_windowRect.width();
-    m_npWindow.height = m_windowRect.height();
-
-    m_npWindow.clipRect.left = m_clipRect.x();
-    m_npWindow.clipRect.top = m_clipRect.y();
-    m_npWindow.clipRect.right = m_clipRect.width();
-    m_npWindow.clipRect.bottom = m_clipRect.height();
-
     ASSERT(platformPluginWidget());
     platformPluginWidget()->setGeometry(m_windowRect);
     // if setMask is set with an empty QRegion, no clipping will
     // be performed, so in that case we hide the plugin view
     platformPluginWidget()->setVisible(!m_clipRect.isEmpty());
     platformPluginWidget()->setMask(QRegion(m_clipRect));
+
+    // FLASH WORKAROUND: Only set initially. Multiple calls to
+    // setNPWindow() cause the plugin to crash.
+    if (m_npWindow.width == -1 || m_npWindow.height == -1) {
+        m_npWindow.width = m_windowRect.width();
+        m_npWindow.height = m_windowRect.height();
+    }
+
+    m_npWindow.x = m_windowRect.x();
+    m_npWindow.y = m_windowRect.y();
+
+    m_npWindow.clipRect.left = m_clipRect.x();
+    m_npWindow.clipRect.top = m_clipRect.y();
+    m_npWindow.clipRect.right = m_clipRect.width();
+    m_npWindow.clipRect.bottom = m_clipRect.height();
 
     PluginView::setCurrentPluginView(this);
     JSC::JSLock::DropAllLocks dropAllLocks(false);
@@ -497,6 +502,8 @@ void PluginView::init()
 
     m_npWindow.type = NPWindowTypeWindow;
     m_npWindow.window = (void*)platformPluginWidget()->winId();
+    m_npWindow.width = -1;
+    m_npWindow.height = -1;
 
     if (!(m_plugin->quirks().contains(PluginQuirkDeferFirstSetWindowCall))) {
         updatePluginWidget();
