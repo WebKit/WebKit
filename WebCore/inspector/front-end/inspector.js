@@ -890,6 +890,11 @@ WebInspector.resourceTrackingWasDisabled = function()
     this.panels.resources.resourceTrackingWasDisabled();
 }
 
+WebInspector.attachDebuggerWhenShown = function()
+{
+    this.panels.scripts.attachDebuggerWhenShown();
+}
+
 WebInspector.debuggerWasEnabled = function()
 {
     this.panels.scripts.debuggerWasEnabled();

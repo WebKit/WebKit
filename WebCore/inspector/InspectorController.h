@@ -256,7 +256,8 @@ public:
     void disableProfiler(bool always = false);
     bool profilerEnabled() const { return enabled() && m_profilerEnabled; }
 
-    void enableDebugger(bool always = false);
+    void enableDebuggerFromFrontend(bool always);
+    void enableDebugger();
     void disableDebugger(bool always = false);
     bool debuggerEnabled() const { return m_debuggerEnabled; }
 

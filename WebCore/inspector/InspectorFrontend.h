@@ -72,6 +72,7 @@ namespace WebCore {
         void resourceTrackingWasDisabled();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+        void attachDebuggerWhenShown();
         void debuggerWasEnabled();
         void debuggerWasDisabled();
         void profilerWasEnabled();

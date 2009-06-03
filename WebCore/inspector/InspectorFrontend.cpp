@@ -188,6 +188,11 @@ void InspectorFrontend::resourceTrackingWasDisabled()
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+void InspectorFrontend::attachDebuggerWhenShown()
+{
+    callSimpleFunction("attachDebuggerWhenShown");
+}
+
 void InspectorFrontend::debuggerWasEnabled()
 {
     callSimpleFunction("debuggerWasEnabled");

@@ -69,7 +69,7 @@ module core {
         void disableResourceTracking(in boolean always);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        void enableDebugger(in boolean always);
+        void enableDebuggerFromFrontend(in boolean always);
         void disableDebugger(in boolean always);
         void pauseInDebugger();
         void resumeDebugger();

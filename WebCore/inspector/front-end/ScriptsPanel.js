@@ -205,6 +205,10 @@ WebInspector.ScriptsPanel.prototype = {
                 continue;
             view.visible = false;
         }
+        if (this._attachDebuggerWhenShown) {
+            InspectorController.enableDebuggerFromFrontend(false);
+            delete this._attachDebuggerWhenShown;
+        }
     },
 
     get searchableViews()
@@ -366,6 +370,15 @@ WebInspector.ScriptsPanel.prototype = {
         this._stepping = false;
 
         this._clearInterface();
+    },
+
+    attachDebuggerWhenShown: function()
+    {
+        if (this.element.parentElement) {
+            InspectorController.enableDebuggerFromFrontend(false);
+        } else {
+            this._attachDebuggerWhenShown = true;
+        }
     },
 
     debuggerWasEnabled: function()
@@ -783,7 +796,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (InspectorController.debuggerEnabled())
             InspectorController.disableDebugger(true);
         else
-            InspectorController.enableDebugger(!!optionalAlways);
+            InspectorController.enableDebuggerFromFrontend(!!optionalAlways);
     },
 
     _togglePauseOnExceptions: function()
