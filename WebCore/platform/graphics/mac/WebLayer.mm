@@ -32,7 +32,6 @@
 #import "GraphicsContext.h"
 #import "GraphicsLayer.h"
 #import <QuartzCore/QuartzCore.h>
-#import "WebCoreTextRenderer.h"
 #import <wtf/UnusedParam.h>
 
 using namespace WebCore;

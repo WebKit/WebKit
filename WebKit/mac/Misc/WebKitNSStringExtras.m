@@ -28,16 +28,24 @@
 
 #import "WebKitNSStringExtras.h"
 
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSFileManagerExtras.h>
-
+#import <WebCore/Font.h>
+#import <WebCore/GraphicsContext.h>
 #import <WebCore/WebCoreNSStringExtras.h>
-#import <WebCore/WebCoreTextRenderer.h>
-
+#import <WebKit/WebNSFileManagerExtras.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <unicode/uchar.h>
 #import <sys/param.h>
 
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
+
+static inline CGFloat webkit_CGCeiling(CGFloat value)
+{
+    if (sizeof(value) == sizeof(float))
+        return ceilf(value);
+    return ceil(value);
+}
+
+using namespace WebCore;
 
 @implementation NSString (WebKitExtras)
 
@@ -56,28 +64,50 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 {
     // FIXME: Would be more efficient to change this to C++ and use Vector<UChar, 2048>.
     unsigned length = [self length];
-    UniChar *buffer = malloc(sizeof(UniChar) * length);
+    Vector<UniChar, 2048> buffer(length);
 
-    [self getCharacters:buffer];
+    [self getCharacters:buffer.data()];
     
-    if (canUseFastRenderer(buffer, length)) {
+    if (canUseFastRenderer(buffer.data(), length)) {
         // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
         // It's probably incorrect for high DPI.
         // If you change this, be sure to test all the text drawn this way in Safari, including
         // the status bar, bookmarks bar, tab bar, and activity window.
-        point.y = ceilf(point.y);
-        WebCoreDrawTextAtPoint(buffer, length, point, font, textColor);
+        point.y = webkit_CGCeiling(point.y);
+
+        NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
+        CGContextRef cgContext = static_cast<CGContextRef>([nsContext graphicsPort]);
+        GraphicsContext graphicsContext(cgContext);    
+
+        // Safari doesn't flip the NSGraphicsContext before calling WebKit, yet WebCore requires a flipped graphics context.
+        BOOL flipped = [nsContext isFlipped];
+        if (!flipped)
+            CGContextScaleCTM(cgContext, 1, -1);
+
+        Font webCoreFont(FontPlatformData(font), ![nsContext isDrawingToScreen]);
+        TextRun run(buffer.data(), length);
+        run.disableRoundingHacks();
+
+        CGFloat red;
+        CGFloat green;
+        CGFloat blue;
+        CGFloat alpha;
+        [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
+        graphicsContext.setFillColor(makeRGBA(red * 255, green * 255, blue * 255, alpha * 255));
+
+        webCoreFont.drawText(&graphicsContext, run, FloatPoint(point.x, (flipped ? point.y : (-1 * point.y))));
+
+        if (!flipped)
+            CGContextScaleCTM(cgContext, 1, -1);
     } else {
-        // WebTextRenderer assumes drawing from baseline.
+        // The given point is on the baseline.
         if ([[NSView focusView] isFlipped])
             point.y -= [font ascender];
-        else {
+        else
             point.y += [font descender];
-        }
+
         [self drawAtPoint:point withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, textColor, NSForegroundColorAttributeName, nil]];
     }
-
-    free(buffer);
 }
 
 - (void)_web_drawDoubledAtPoint:(NSPoint)textPoint
@@ -87,7 +117,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 {
     // turn off font smoothing so translucent text draws correctly (Radar 3118455)
     [NSGraphicsContext saveGraphicsState];
-    CGContextSetShouldSmoothFonts([[NSGraphicsContext currentContext] graphicsPort], false);
+    CGContextSetShouldSmoothFonts(static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]), false);
     [self _web_drawAtPoint:textPoint
                       font:font
                  textColor:bottomColor];
@@ -102,19 +132,18 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 - (float)_web_widthWithFont:(NSFont *)font
 {
     unsigned length = [self length];
-    float width;
-    UniChar *buffer = (UniChar *)malloc(sizeof(UniChar) * length);
+    Vector<UniChar, 2048> buffer(length);
 
-    [self getCharacters:buffer];
+    [self getCharacters:buffer.data()];
 
-    if (canUseFastRenderer(buffer, length))
-        width = WebCoreTextFloatWidth(buffer, length, font);
-    else
-        width = [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
-    
-    free(buffer);
-    
-    return width;
+    if (canUseFastRenderer(buffer.data(), length)) {
+        Font webCoreFont(FontPlatformData(font), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+        TextRun run(buffer.data(), length);
+        run.disableRoundingHacks();
+        return webCoreFont.floatWidth(run);
+    }
+
+    return [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
 }
 
 - (NSString *)_web_stringByAbbreviatingWithTildeInPath

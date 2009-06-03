@@ -1,3 +1,25 @@
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - eliminate WebCoreTextRenderer
+
+        * WebCore.base.exp: Updated.
+        * WebCore.xcodeproj/project.pbxproj: Removed WebCoreTextRenderer.{h,mm}
+            and promoted WebFontCache.h to private.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::setShouldUseSmoothing): Added this static setter for
+            a new file-static boolean.
+        (WebCore::Font::shouldUseSmoothing): Added this static getter.
+        * platform/graphics/Font.h: Decleared setShouldUseSmoothing() and
+            shouldUseSmoothing().
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs): Use Font::shouldUseSmoothing() instead of
+        WebCoreShouldUseFontSmoothing().
+        * platform/graphics/mac/WebLayer.mm: Removed unneeded #import.
+        * platform/mac/WebCoreTextRenderer.h: Removed.
+        * platform/mac/WebCoreTextRenderer.mm: Removed.
+
 2009-06-03  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,12 @@
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - WebKit project part of eliminating WebCoreTextRenderer
+
+        * WebKit.xcodeproj/project.pbxproj: Changed WebKitNSStringExtras.m to
+            compile as Objective-C++.
+
 2009-06-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej Stachowiak.

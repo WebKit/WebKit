@@ -28,7 +28,6 @@
 #import "Logging.h"
 #import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
-#import "WebCoreTextRenderer.h"
 #import <AppKit/AppKit.h>
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14
@@ -53,7 +52,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     CGContextRef cgContext = context->platformContext();
 
     bool originalShouldUseFontSmoothing = wkCGContextGetShouldSmoothFonts(cgContext);
-    bool newShouldUseFontSmoothing = WebCoreShouldUseFontSmoothing();
+    bool newShouldUseFontSmoothing = shouldUseSmoothing();
     
     if (originalShouldUseFontSmoothing != newShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, newShouldUseFontSmoothing);

@@ -3797,7 +3797,6 @@
 		BC02A5400E099C5A004B6D2B /* CSSParserValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02A53F0E099C5A004B6D2B /* CSSParserValues.cpp */; };
 		BC02A63C0E09A9CF004B6D2B /* CSSFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02A63B0E09A9CF004B6D2B /* CSSFunctionValue.h */; };
 		BC02A6460E09AAE9004B6D2B /* CSSFunctionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02A6450E09AAE9004B6D2B /* CSSFunctionValue.cpp */; };
-		BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */; };
 		BC06ED070BFD5BAE00856E9D /* JSHTMLTableSectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */; };
 		BC06ED9D0BFD660600856E9D /* JSHTMLTableColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06ED990BFD660600856E9D /* JSHTMLTableColElement.cpp */; };
@@ -4009,7 +4008,7 @@
 		BC6D44EC0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D44EA0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp */; };
 		BC6D44ED0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D44EB0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h */; };
 		BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6E2509AF943500F59759 /* ScrollView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */; };
+		BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC6DADF90A19602B00E5CD14 /* WebFontCache.mm */; };
 		BC6DC7A10C1A4BFA004E2017 /* JSHTMLAllCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6DC7A00C1A4BFA004E2017 /* JSHTMLAllCollection.h */; };
 		BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */; };
@@ -4244,7 +4243,6 @@
 		BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F75097A2E1A00BA703D /* Arena.h */; };
 		BCFE2F110C1B58370020235F /* JSRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFE2F0F0C1B58370020235F /* JSRect.cpp */; };
 		BCFE2F120C1B58380020235F /* JSRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFE2F100C1B58370020235F /* JSRect.h */; };
-		BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCFE8E310A02A1D30009E61D /* WebCoreTextRenderer.mm */; };
 		BCFF64910EAD15C200C1D6F7 /* LengthBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFF64900EAD15C200C1D6F7 /* LengthSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C091588A0DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C09158840DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp */; };
@@ -8560,7 +8558,6 @@
 		BC02A53F0E099C5A004B6D2B /* CSSParserValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSParserValues.cpp; sourceTree = "<group>"; };
 		BC02A63B0E09A9CF004B6D2B /* CSSFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFunctionValue.h; sourceTree = "<group>"; };
 		BC02A6450E09AAE9004B6D2B /* CSSFunctionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFunctionValue.cpp; sourceTree = "<group>"; };
-		BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreTextRenderer.h; sourceTree = "<group>"; };
 		BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableSectionElement.cpp; sourceTree = "<group>"; };
 		BC06ED050BFD5BAE00856E9D /* JSHTMLTableSectionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableSectionElement.h; sourceTree = "<group>"; };
 		BC06ED990BFD660600856E9D /* JSHTMLTableColElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableColElement.cpp; sourceTree = "<group>"; };
@@ -9036,7 +9033,6 @@
 		BCFB2F75097A2E1A00BA703D /* Arena.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Arena.h; sourceTree = "<group>"; };
 		BCFE2F0F0C1B58370020235F /* JSRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRect.cpp; sourceTree = "<group>"; };
 		BCFE2F100C1B58370020235F /* JSRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRect.h; sourceTree = "<group>"; };
-		BCFE8E310A02A1D30009E61D /* WebCoreTextRenderer.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextRenderer.mm; sourceTree = "<group>"; };
 		BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthBox.h; sourceTree = "<group>"; };
 		BCFF64900EAD15C200C1D6F7 /* LengthSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthSize.h; sourceTree = "<group>"; };
 		BE855F7F0701E83500239769 /* WebCoreView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -10216,8 +10212,6 @@
 				B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */,
 				93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */,
 				93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */,
-				BC066F6C09FEB2FA00C589A7 /* WebCoreTextRenderer.h */,
-				BCFE8E310A02A1D30009E61D /* WebCoreTextRenderer.mm */,
 				BE855F7F0701E83500239769 /* WebCoreView.h */,
 				BE8560510701F91100239769 /* WebCoreView.m */,
 				BC6DADEE0A195FDF00E5CD14 /* WebFontCache.h */,
@@ -16664,7 +16658,6 @@
 				DD05FE0D0B8BA3C6009ACDFE /* WebCoreObjCExtras.h in Headers */,
 				EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */,
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
-				BC066F6F09FEB2FA00C589A7 /* WebCoreTextRenderer.h in Headers */,
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199B308245E59001E9ABC /* WebCoreViewFactory.h in Headers */,
@@ -18668,7 +18661,6 @@
 				934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */,
 				B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */,
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,
-				BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */,
 				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				93F19A5F08245E59001E9ABC /* WebCoreViewFactory.m in Sources */,

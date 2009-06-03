@@ -129,7 +129,6 @@
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
 #import <WebCore/Widget.h>
 #import <WebKit/DOM.h>
@@ -1097,7 +1096,7 @@ static bool runningTigerMail()
 
 + (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f
 {
-    WebCoreSetAlwaysUsesComplexTextCodePath(f);
+    Font::setCodePath(f ? Font::Complex : Font::Auto);
 }
 
 + (BOOL)canCloseAllWebViews
@@ -2029,12 +2028,12 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f
 {
-    WebCoreSetShouldUseFontSmoothing(f);
+    Font::setShouldUseSmoothing(f);
 }
 
 + (BOOL)_shouldUseFontSmoothing
 {
-    return WebCoreShouldUseFontSmoothing();
+    return Font::shouldUseSmoothing();
 }
 
 + (void)_setUsesTestModeFocusRingColor:(BOOL)f

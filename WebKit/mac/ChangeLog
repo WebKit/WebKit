@@ -1,5 +1,31 @@
 2009-06-03  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        - WebKit part of eliminating WebCoreTextRenderer
+
+        * Misc/WebKitNSStringExtras.m:
+        (webkit_CGCeiling): Added.
+        (-[NSString _web_drawAtPoint:font:textColor:]): Replaced the malloc()ed
+            string buffer with a Vector. Moved code from
+            WebCoreDrawTextAtPoint() to here.
+        (-[NSString _web_drawDoubledAtPoint:withTopColor:bottomColor:font:]):
+        (-[NSString _web_widthWithFont:]): Replaced the malloc()ed string buffer
+            with a Vector. Moved code from WebCoreTextFloatWidth() to here.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _addToStyle:fontA:fontB:]): Replaced call to
+            WebCoreFindFont() with use of
+            +[WebFontCache fontWithFamily:traits:weight:size:].
+        * WebView/WebView.mm:
+        (+[WebView _setAlwaysUsesComplexTextCodePath:]): Changed to call
+            Font::setCodePath() directly.
+        (+[WebView _setShouldUseFontSmoothing:]): Changed to call
+            Font::setShouldUseSmoothing().
+        (+[WebView _shouldUseFontSmoothing]): Changed to call 
+            Font::shouldUseSmoothing().
+
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Mark Rowe.
 
         - remove a private method that was used only by Safari 3.0.

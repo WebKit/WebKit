@@ -107,7 +107,7 @@
 #import <WebCore/SimpleFontData.h>
 #import <WebCore/Text.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebCore/WebCoreTextRenderer.h>
+#import <WebCore/WebFontCache.h>
 #import <WebCore/markup.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
@@ -4340,7 +4340,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
         
         // Find the font the same way the rendering code would later if it encountered this CSS.
         NSFontTraitMask traits = aIsItalic ? NSFontItalicTrait : 0;
-        NSFont *foundFont = WebCoreFindFont(aFamilyName, traits, aWeight, aPointSize);
+        NSFont *foundFont = [WebFontCache fontWithFamily:aFamilyName traits:traits weight:aWeight size:aPointSize];
 
         // If we don't find a font with the same Postscript name, then we'll have to use the
         // Postscript name to make the CSS specific enough.
