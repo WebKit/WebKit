@@ -65,7 +65,6 @@ PluginContainerQt::PluginContainerQt(PluginView* view, QWidget* parent)
     : QX11EmbedContainer(parent)
     , m_pluginView(view)
     , m_clientWrapper(0)
-    , m_hasPendingGeometryChange(false)
 {
     connect(this, SIGNAL(clientClosed()), this, SLOT(on_clientClosed()));
     connect(this, SIGNAL(clientIsEmbedded()), this, SLOT(on_clientIsEmbedded()));
@@ -130,27 +129,6 @@ bool PluginContainerQt::x11Event(XEvent* event)
     }
 
     return QX11EmbedContainer::x11Event(event);
-}
-
-void PluginContainerQt::requestGeometry(const QRect& rect, const QRegion& clip)
-{
-    if (m_windowRect != rect || m_clipRegion != clip) {
-        m_windowRect = rect;
-        m_clipRegion = clip;
-        m_hasPendingGeometryChange = true;
-    }
-}
-
-void PluginContainerQt::adjustGeometry()
-{
-    if (m_hasPendingGeometryChange) {
-        setGeometry(m_windowRect);
-        // if setMask is set with an empty QRegion, no clipping will
-        // be performed, so in that case we hide the PluginContainer
-        setVisible(!m_clipRegion.isEmpty());
-        setMask(m_clipRegion);
-        m_hasPendingGeometryChange = false;
-    }
 }
 
 void PluginContainerQt::focusInEvent(QFocusEvent* event)

@@ -1,3 +1,34 @@
+2009-06-01  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Refactor the Qt plugin code to use NPP_SetWindow correctly,
+        to make resizing of plugins work.
+
+        Attention was paid to make sure that the windowed plugins scroll
+        synchronized with the page view. A manual test has been added.
+
+        * manual-tests/qt/plugin-iframe.html: Added.
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameRect):
+        (WebCore::PluginView::frameRectsChanged):
+        * plugins/PluginView.h:
+        * plugins/qt/PluginContainerQt.cpp:
+        (PluginContainerQt::PluginContainerQt):
+        * plugins/qt/PluginContainerQt.h:
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::load):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::init):
+
 2009-06-02  Darin Adler  <darin@apple.com>
 
         Reviewed by David Hyatt.
