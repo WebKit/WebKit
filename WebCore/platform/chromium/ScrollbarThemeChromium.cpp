@@ -93,20 +93,6 @@ IntRect ScrollbarThemeChromium::forwardButtonRect(Scrollbar* scrollbar, Scrollba
     return IntRect(x, y, size.width(), size.height());
 }
 
-IntRect ScrollbarThemeChromium::trackRect(Scrollbar* scrollbar, bool)
-{
-    IntSize bs = buttonSize(scrollbar);
-    int thickness = scrollbarThickness(scrollbar->controlSize());
-    if (scrollbar->orientation() == HorizontalScrollbar) {
-        if (scrollbar->width() < 2 * thickness)
-            return IntRect();
-        return IntRect(scrollbar->x() + bs.width(), scrollbar->y(), scrollbar->width() - 2 * bs.width(), thickness);
-    }
-    if (scrollbar->height() < 2 * thickness)
-        return IntRect();
-    return IntRect(scrollbar->x(), scrollbar->y() + bs.height(), thickness, scrollbar->height() - 2 * bs.height());
-}
-
 void ScrollbarThemeChromium::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
 {
     // Just assume a forward track part.  We only paint the track as a single piece when there is no thumb.

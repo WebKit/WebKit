@@ -1,3 +1,21 @@
+2009-06-02  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        The previous code was assuming that we'll be painting buttons on the scrollbar
+        which isn't true on Linux. To reproduce, resize a page with scrollbars until
+        they are less than two widths high.
+
+        This will need pixel test baselines to be updated in the Chromium tree.
+
+        * platform/chromium/ScrollbarThemeChromium.cpp: move this function...
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromium::trackRect): ... to here
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromium::trackRect): add an alternative which
+        doesn't remove the track when the scrollbar is less than two widths
+        high.
+
 2009-06-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.
