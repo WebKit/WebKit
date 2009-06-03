@@ -2,6 +2,23 @@
 
         Reviewed by Eric Seidel.
 
+        Make the scrollbar thumb size twice the width for Chromium Linux. This
+        matches Firefox on Linux.
+
+        This will need layout test pixel results to be rebaselined in the
+        Chromium tree.
+
+        http://code.google.com/p/chromium/issues/detail?id=12602
+        https://bugs.webkit.org/show_bug.cgi?id=26176
+
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromiumLinux::minimumThumbLength):
+        * platform/chromium/ScrollbarThemeChromiumLinux.h:
+
+2009-06-03  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
         Change Chromium scrollbar theme code to use different classes on
         Windows and Linux rather than suppling symbols. The ScrollbarTheme
         class is already using virtual dispatch, so there's no reason not to.

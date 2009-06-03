@@ -152,4 +152,10 @@ IntSize ScrollbarThemeChromiumLinux::buttonSize(Scrollbar* scrollbar)
     return IntSize(0, 0);
 }
 
+int ScrollbarThemeChromiumLinux::minimumThumbLength(Scrollbar* scrollbar)
+{
+    // This matches Firefox on Linux.
+    return 2 * scrollbarThickness(scrollbar->controlSize());
+}
+
 } // namespace WebCore
