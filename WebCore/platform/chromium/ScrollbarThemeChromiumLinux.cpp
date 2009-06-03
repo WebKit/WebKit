@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "ScrollbarThemeChromium.h"
+#include "ScrollbarThemeChromiumLinux.h"
 
 #include "PlatformContextSkia.h"
 #include "PlatformMouseEvent.h"
@@ -38,14 +38,15 @@
 
 namespace WebCore {
 
-int ScrollbarThemeChromium::scrollbarThickness(ScrollbarControlSize controlSize)
+ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
-    return 15;
+    static ScrollbarThemeChromiumLinux theme;
+    return &theme;
 }
 
-bool ScrollbarThemeChromium::invalidateOnMouseEnterExit()
+int ScrollbarThemeChromiumLinux::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-    return false;
+    return 15;
 }
 
 static void drawVertLine(SkCanvas* canvas, int x, int y1, int y2, const SkPaint& paint)
@@ -81,13 +82,7 @@ IntRect ScrollbarThemeChromium::trackRect(Scrollbar* scrollbar, bool)
     return IntRect(scrollbar->x(), scrollbar->y() + bs.height(), thickness, scrollbar->height());
 }
 
-bool ScrollbarThemeChromium::shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&)
-{
-    return false;
-}
-
-void ScrollbarThemeChromium::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar,
-                                             const IntRect& rect, ScrollbarPart partType)
+void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart partType)
 {
     SkCanvas* const canvas = gc->platformContext()->canvas();
     SkPaint paint;
@@ -101,13 +96,12 @@ void ScrollbarThemeChromium::paintTrackPiece(GraphicsContext* gc, Scrollbar* scr
     drawBox(canvas, rect, paint);
 }
 
-void ScrollbarThemeChromium::paintButton(GraphicsContext* gc, Scrollbar* scrollbar,
-                                         const IntRect& rect, ScrollbarPart part)
+void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
     // We don't use buttons
 }
 
-void ScrollbarThemeChromium::paintThumb(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect)
+void ScrollbarThemeChromiumLinux::paintThumb(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect)
 {
     const bool hovered = scrollbar->hoveredPart() == ThumbPart;
     const int midx = rect.x() + rect.width() / 2;
@@ -150,6 +144,12 @@ void ScrollbarThemeChromium::paintThumb(GraphicsContext* gc, Scrollbar* scrollba
         drawHorizLine(canvas, midx - 1, midx + 3, midy - 3, paint);
         drawHorizLine(canvas, midx - 1, midx + 3, midy + 3, paint);
     }
+}
+
+IntSize ScrollbarThemeChromiumLinux::buttonSize(Scrollbar* scrollbar)
+{
+    // On Linux, we don't use buttons
+    return IntSize(0, 0);
 }
 
 } // namespace WebCore

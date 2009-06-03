@@ -40,24 +40,6 @@
 
 namespace WebCore {
 
-ScrollbarTheme* ScrollbarTheme::nativeTheme()
-{
-    static ScrollbarThemeChromium theme;
-    return &theme;
-}
-
-ScrollbarThemeChromium::ScrollbarThemeChromium()
-{
-}
-
-ScrollbarThemeChromium::~ScrollbarThemeChromium()
-{
-}
-
-void ScrollbarThemeChromium::themeChanged()
-{
-}
-
 bool ScrollbarThemeChromium::hasThumb(Scrollbar* scrollbar)
 {
     // This method is just called as a paint-time optimization to see if
@@ -149,38 +131,6 @@ void ScrollbarThemeChromium::paintScrollCorner(ScrollView* view, GraphicsContext
 bool ScrollbarThemeChromium::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
 {
     return evt.shiftKey() && evt.button() == LeftButton;
-}
-
-IntSize ScrollbarThemeChromium::buttonSize(Scrollbar* scrollbar)
-{
-#if defined(__linux__)
-    // On Linux, we don't use buttons
-    return IntSize(0, 0);
-#endif
-
-    // Our desired rect is essentially thickness by thickness.
-
-    // Our actual rect will shrink to half the available space when we have < 2
-    // times thickness pixels left.  This allows the scrollbar to scale down
-    // and function even at tiny sizes.
-
-    int thickness = scrollbarThickness(scrollbar->controlSize());
-
-    // In layout test mode, we force the button "girth" (i.e., the length of
-    // the button along the axis of the scrollbar) to be a fixed size.
-    // FIXME: This is retarded!  scrollbarThickness is already fixed in layout
-    // test mode so that should be enough to result in repeatable results, but
-    // preserving this hack avoids having to rebaseline pixel tests.
-    const int kLayoutTestModeGirth = 17;
-    int girth = ChromiumBridge::layoutTestMode() ? kLayoutTestModeGirth : thickness;
-
-    if (scrollbar->orientation() == HorizontalScrollbar) {
-        int width = scrollbar->width() < 2 * girth ? scrollbar->width() / 2 : girth;
-        return IntSize(width, thickness);
-    }
-
-    int height = scrollbar->height() < 2 * girth ? scrollbar->height() / 2 : girth;
-    return IntSize(thickness, height);
 }
 
 } // namespace WebCore

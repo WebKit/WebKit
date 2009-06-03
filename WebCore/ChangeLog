@@ -1,3 +1,39 @@
+2009-06-03  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Change Chromium scrollbar theme code to use different classes on
+        Windows and Linux rather than suppling symbols. The ScrollbarTheme
+        class is already using virtual dispatch, so there's no reason not to.
+
+        This should not affect any layout tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26174
+
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        * platform/chromium/ScrollbarThemeChromium.h:
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeChromiumLinux::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumLinux::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumLinux::paintButton):
+        (WebCore::ScrollbarThemeChromiumLinux::paintThumb):
+        (WebCore::ScrollbarThemeChromiumLinux::buttonSize):
+        * platform/chromium/ScrollbarThemeChromiumLinux.h: Added.
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeChromiumWin::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumWin::invalidateOnMouseEnterExit):
+        (WebCore::ScrollbarThemeChromiumWin::shouldSnapBackToDragOrigin):
+        (WebCore::ScrollbarThemeChromiumWin::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumWin::paintButton):
+        (WebCore::ScrollbarThemeChromiumWin::paintThumb):
+        (WebCore::ScrollbarThemeChromiumWin::getThemeState):
+        (WebCore::ScrollbarThemeChromiumWin::getThemeArrowState):
+        (WebCore::ScrollbarThemeChromiumWin::getClassicThemeState):
+        (WebCore::ScrollbarThemeChromiumWin::buttonSize):
+        * platform/chromium/ScrollbarThemeChromiumWin.h: Added.
+
 2009-06-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
