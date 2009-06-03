@@ -202,7 +202,8 @@ void InsertListCommand::doApply()
     }
     if (!listChildNode || switchListType || m_forceCreateList) {
         // Create list.
-        VisiblePosition start = startOfParagraph(endingSelection().visibleStart());
+        VisiblePosition originalStart = endingSelection().visibleStart();
+        VisiblePosition start = startOfParagraph(originalStart);
         VisiblePosition end = endOfParagraph(endingSelection().visibleEnd());
         
         // Check for adjoining lists.
@@ -251,12 +252,17 @@ void InsertListCommand::doApply()
             Node* listChild = enclosingListChild(insertionPos.node());
             if (listChild && listChild->hasTagName(liTag))
                 insertionPos = positionBeforeNode(listChild);
-                
+
             insertNodeAt(listElement, insertionPos);
+
+            // We inserted the list at the start of the content we're about to move
+            // Update the start of content, so we don't try to move the list into itself.  bug 19066
+            if (insertionPos == start.deepEquivalent())
+                start = startOfParagraph(originalStart);
         }
         moveParagraph(start, end, VisiblePosition(Position(placeholder.get(), 0)), true);
         if (nextList && previousList)
-            mergeIdenticalElements(static_cast<Element*>(previousList), static_cast<Element*>(nextList));
+            mergeIdenticalElements(previousList, nextList);
     }
 }
 

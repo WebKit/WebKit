@@ -1,8 +1,26 @@
 2009-06-02  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Insert*List on an stand-alone image in a content editable region ASSERTS
+        ASSERTION FAILED: isStartOfParagraph(startOfParagraphToMove)
+        https://bugs.webkit.org/show_bug.cgi?id=19066
+
+        Attempt to fix this by noticing that we inserted the list inside
+        the selection which includes the image, and re-adjust the selection
+        to not include the list before trying to move the image into
+        the list item.
+        
+        Test: editing/execCommand/list-wrapping-image-crash.html
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+
+2009-06-02  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Darin Adler.
 
-        Rename PositionIterator members in hope of futher clarity
+        Rename PositionIterator members in hope of further clarity
         https://bugs.webkit.org/show_bug.cgi?id=24854
 
         Rename m_parent to m_anchorNode (since although it's always the parent
