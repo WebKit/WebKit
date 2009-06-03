@@ -1,3 +1,11 @@
+2009-06-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        Fix appcache/fallback.html test broken by network simulator changes made for a preloading test.
+
+        * http/tests/resources/network-simulator.php: Tell PHP that a variable is global.
+
 2009-06-02  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.

@@ -56,6 +56,7 @@ function generateNoCacheHTTPHeader()
 
 function generateResponse($path)
 {
+    global $stateFile;
     $state = getState($stateFile);
     if ($state == "Offline") {
         header('HTTP/1.1 307 Temporary Redirect');
