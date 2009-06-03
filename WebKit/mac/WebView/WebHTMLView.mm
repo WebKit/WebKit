@@ -377,11 +377,6 @@ static CachedResourceClient* promisedDataClient()
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
 @end
 
-@class NSTextInputContext;
-@interface NSResponder (AppKitDetails)
-- (NSTextInputContext *)inputContext;
-@end
-
 @interface NSObject (NSTextInputContextDetails)
 - (BOOL)wantsToHandleMouseEvents;
 - (BOOL)handleMouseEvent:(NSEvent *)event;

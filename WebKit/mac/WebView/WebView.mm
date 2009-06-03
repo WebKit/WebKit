@@ -335,6 +335,13 @@ static WebView *lastMouseoverView;
 static const char webViewIsOpen[] = "At least one WebView is still open.";
 #endif
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+@interface NSObject (NSTextInputContextDetails)
+- (BOOL)wantsToHandleMouseEvents;
+- (BOOL)handleMouseEvent:(NSEvent *)event;
+@end
+#endif
+
 @interface NSObject (WebValidateWithoutDelegate)
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item;
 @end
