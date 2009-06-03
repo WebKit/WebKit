@@ -2,6 +2,14 @@
 
         Reviewed by Anders Carlsson.
 
+        - fix a regression from the previous patch
+
+        * platform/graphics/Font.cpp: Initialize shouldUseFontSmoothing to true.
+
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         - eliminate WebCoreTextRenderer
 
         * WebCore.base.exp: Updated.

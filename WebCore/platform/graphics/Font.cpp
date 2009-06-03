@@ -282,7 +282,7 @@ FontSelector* Font::fontSelector() const
     return m_fontList ? m_fontList->fontSelector() : 0;
 }
 
-static bool shouldUseFontSmoothing;
+static bool shouldUseFontSmoothing = true;
 
 void Font::setShouldUseSmoothing(bool shouldUseSmoothing)
 {
