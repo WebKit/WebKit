@@ -30,7 +30,6 @@
 
 #include "CachedPage.h"
 #include "DocumentLoader.h"
-#include "EmptyClients.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -47,6 +46,11 @@
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
+
+// Moving this #include above FrameLoader.h causes the Windows build to fail due to warnings about
+// alignment in Timer<FrameLoader>. It seems that the definition of EmptyFrameLoaderClient is what
+// causes this (removing that definition fixes the warnings), but it isn't clear why.
+#include "EmptyClients.h"
 
 namespace WebCore {
 

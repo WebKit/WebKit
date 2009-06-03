@@ -1,3 +1,10 @@
+2009-06-03  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r44379
+
+        * svg/graphics/SVGImage.cpp: Move EmptyClients.h back down below the
+        other #includes to fix a compiler warning on Windows.
+
 2009-06-02  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Simon Hausmann.
