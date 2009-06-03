@@ -52,9 +52,9 @@ ImplicitAnimation::ImplicitAnimation(const Animation* transition, int animatingP
 
 ImplicitAnimation::~ImplicitAnimation()
 {
-    // Do the cleanup here instead of in the base class so the specialized methods get called
+    // // Make sure to tell the renderer that we are ending. This will make sure any accelerated animations are removed.
     if (!postActive())
-        updateStateMachine(AnimationStateInputEndAnimation, -1);
+        endAnimation(true);
 }
 
 bool ImplicitAnimation::shouldSendEventForListener(Document::ListenerType inListenerType) const

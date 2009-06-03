@@ -1,3 +1,27 @@
+2009-06-03  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser <simonfr@apple.com>.
+
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=26162
+
+        This corrects an error when destroying an animation
+        or transition where endAnimation was never getting
+        called and therefore the hardware animation was never
+        getting removed.
+
+        This includes a manual-test since it's really impossible
+        to make a meaningful automatic test for an animation
+        bug like this.
+
+        This has no effect unless accelerated compositing is 
+        enabled.
+
+        * manual-tests/interrupted-compound-transform.html: Added.
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::~ImplicitAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::~KeyframeAnimation):
+
 2009-06-03  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.

@@ -56,9 +56,9 @@ KeyframeAnimation::KeyframeAnimation(const Animation* animation, RenderObject* r
 
 KeyframeAnimation::~KeyframeAnimation()
 {
-    // Do the cleanup here instead of in the base class so the specialized methods get called
+    // Make sure to tell the renderer that we are ending. This will make sure any accelerated animations are removed.
     if (!postActive())
-        updateStateMachine(AnimationStateInputEndAnimation, -1);
+        endAnimation(true);
 }
 
 void KeyframeAnimation::getKeyframeAnimationInterval(const RenderStyle*& fromStyle, const RenderStyle*& toStyle, double& prog) const
