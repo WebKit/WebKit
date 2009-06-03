@@ -1,5 +1,11 @@
 2009-06-03  Dan Bernstein  <mitz@apple.com>
 
+        - build fix
+
+        * WebView/WebHTMLView.mm:
+
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         - build fix
