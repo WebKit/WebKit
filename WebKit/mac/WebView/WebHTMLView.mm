@@ -101,7 +101,6 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
-#import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/Range.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/SharedBuffer.h>
@@ -238,7 +237,6 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 
 @interface NSWindow (WebNSWindowDetails)
 - (id)_newFirstResponderAfterResigning;
-- (void)_setForceActiveControls:(BOOL)flag;
 @end
 
 @interface NSAttributedString (WebNSAttributedStringDetails)
@@ -1414,8 +1412,8 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     //      when there is HTML overlapping the view, see bug 4361626)
     //   4) NSAccessibilityHitTest relies on this for checking the cursor position.
     //      Our check for that is whether the event is NSFlagsChanged.  This works
-    //      for VoiceOver's cntl-opt-f5 command (move focus to item under cursor)
-    //      and Dictionary's cmd-cntl-D (open dictionary popup for item under cursor).
+    //      for VoiceOver's Control-Option-F5 command (move focus to item under cursor)
+    //      and Dictionary's Command-Control-D (open dictionary popup for item under cursor).
     //      This is of course a hack.
 
     BOOL captureHitsOnSubviews;
@@ -1584,18 +1582,18 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     if (lastHitView != view && lastHitView && [lastHitView _frame]) {
         // If we are moving out of a view (or frame), let's pretend the mouse moved
         // all the way out of that view. But we have to account for scrolling, because
-        // khtml doesn't understand our clipping.
+        // WebCore doesn't understand our clipping.
         NSRect visibleRect = [[[[lastHitView _frame] frameView] _scrollView] documentVisibleRect];
         float yScroll = visibleRect.origin.y;
         float xScroll = visibleRect.origin.x;
 
-        event = [NSEvent mouseEventWithType:NSMouseMoved
-                         location:NSMakePoint(-1 - xScroll, -1 - yScroll )
-                         modifierFlags:[[NSApp currentEvent] modifierFlags]
-                         timestamp:[NSDate timeIntervalSinceReferenceDate]
-                         windowNumber:[[view window] windowNumber]
-                         context:[[NSApp currentEvent] context]
-                         eventNumber:0 clickCount:0 pressure:0];
+        NSEvent *event = [NSEvent mouseEventWithType:NSMouseMoved
+            location:NSMakePoint(-1 - xScroll, -1 - yScroll)
+            modifierFlags:[[NSApp currentEvent] modifierFlags]
+            timestamp:[NSDate timeIntervalSinceReferenceDate]
+            windowNumber:[[view window] windowNumber]
+            context:[[NSApp currentEvent] context]
+            eventNumber:0 clickCount:0 pressure:0];
         if (Frame* lastHitCoreFrame = core([lastHitView _frame]))
             lastHitCoreFrame->eventHandler()->mouseMoved(event);
     }
@@ -1769,7 +1767,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     return [[self _webView] smartInsertDeleteEnabled] && [[pasteboard types] containsObject:WebSmartPastePboardType];
 }
 
-- (void)_startAutoscrollTimer: (NSEvent *)triggerEvent
+- (void)_startAutoscrollTimer:(NSEvent *)triggerEvent
 {
     if (_private->autoscrollTimer == nil) {
         _private->autoscrollTimer = [[NSTimer scheduledTimerWithTimeInterval:AUTOSCROLL_INTERVAL
@@ -3076,7 +3074,7 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     _private->handlingMouseDownEvent = YES;
     page->contextMenuController()->clearContextMenu();
     coreFrame->eventHandler()->mouseDown(event);
-    BOOL handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event));
+    BOOL handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(event);
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
@@ -3368,12 +3366,13 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
     if (hitHTMLView) {
         bool result = false;
-        if ([hitHTMLView _isSelectionEvent:event])
+        if ([hitHTMLView _isSelectionEvent:event]) {
             if (Frame* coreFrame = core([hitHTMLView _frame])) {
                 [hitHTMLView _setMouseDownEvent:event];
                 result = coreFrame->eventHandler()->eventMayStartDrag(event);
                 [hitHTMLView _setMouseDownEvent:nil];
             }
+        }
         return result;
     }
     return [hitView shouldDelayWindowOrderingForEvent:event];

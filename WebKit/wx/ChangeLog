@@ -1,3 +1,11 @@
+2009-06-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::transitionToCommittedForNewPage): Use FrameView::create
+        and RefPtr instead of the old "crazy" reference counting.
+
 2009-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Part 2 of 2: Bug 25495: Implement PassOwnPtr and replace uses of std::auto_ptr

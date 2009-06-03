@@ -38,24 +38,22 @@
 
 #ifdef __cplusplus
 namespace WebCore {
-    class KeyboardEvent;
+    class Frame;
     class KURL;
+    class KeyboardEvent;
     class Page;
     class String;
 }
-typedef WebCore::KeyboardEvent WebCoreKeyboardEvent;
-typedef WebCore::Page WebCorePage;
-#else
-@class WebCoreKeyboardEvent;
-@class WebCorePage;
 #endif
 
 @class WebBasePluginPackage;
 @class WebDownload;
 @class WebNodeHighlight;
 
+#ifdef __cplusplus
+
 @interface WebView (WebViewEditingExtras)
-- (BOOL)_interceptEditingKeyEvent:(WebCoreKeyboardEvent *)event shouldSaveCommand:(BOOL)shouldSave;
+- (BOOL)_interceptEditingKeyEvent:(WebCore::KeyboardEvent*)event shouldSaveCommand:(BOOL)shouldSave;
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
 @end
 
@@ -66,17 +64,46 @@ typedef WebCore::Page WebCorePage;
 @end
 
 @interface WebView (WebViewInternal)
-#ifdef __cplusplus
+
+- (WebCore::Frame*)_mainCoreFrame;
+
 - (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url;
 - (WebCore::KeyboardUIMode)_keyboardUIMode;
+
+- (BOOL)_becomingFirstResponderFromOutside;
+
+- (void)_registerForIconNotification:(BOOL)listen;
+- (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
+
+- (void)_setMouseDownEvent:(NSEvent *)event;
+- (void)_cancelUpdateMouseoverTimer;
+- (void)_stopAutoscrollTimer;
+- (void)_updateMouseoverWithFakeEvent;
+- (void)_selectionChanged;
+- (void)_setToolTip:(NSString *)toolTip;
+
+#if USE(ACCELERATED_COMPOSITING)
+- (BOOL)_needsOneShotDrawingSynchronization;
+- (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
+- (void)_startedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
+- (void)_stoppedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
+- (void)_scheduleViewUpdate;
 #endif
+
 @end
 
-@interface WebView (WebViewMiscInternal)
+#endif
+
+// FIXME: Temporary way to expose methods that are in the wrong category inside WebView.
+@interface WebView (WebViewOtherInternal)
 
 + (void)_setCacheModel:(WebCacheModel)cacheModel;
 + (WebCacheModel)_cacheModel;
-- (WebCorePage*)page;
+
+#ifdef __cplusplus
+- (WebCore::Page*)page;
+#endif
+
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 - (id)_UIDelegateForwarder;
 - (id)_editingDelegateForwarder;
@@ -123,12 +150,8 @@ typedef WebCore::Page WebCorePage;
 - (void)_addObject:(id)object forIdentifier:(unsigned long)identifier;
 - (id)_objectForIdentifier:(unsigned long)identifier;
 - (void)_removeObjectForIdentifier:(unsigned long)identifier;
-- (BOOL)_becomingFirstResponderFromOutside;
 
-- (void)_registerForIconNotification:(BOOL)listen;
-- (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
-
-- (void)_setZoomMultiplier:(float)m isTextOnly:(BOOL)isTextOnly;
+- (void)_setZoomMultiplier:(float)multiplier isTextOnly:(BOOL)isTextOnly;
 - (float)_zoomMultiplier:(BOOL)isTextOnly;
 - (float)_realZoomMultiplier;
 - (BOOL)_realZoomMultiplierIsTextOnly;
@@ -144,19 +167,13 @@ typedef WebCore::Page WebCorePage;
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 
-#if USE(ACCELERATED_COMPOSITING)
-- (BOOL)_needsOneShotDrawingSynchronization;
-- (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
-- (void)_startedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
-- (void)_stoppedAcceleratedCompositingForFrame:(WebFrame*)webFrame;
-- (void)_scheduleViewUpdate;
-#endif
-
 - (void)_setInsertionPasteboard:(NSPasteboard *)pasteboard;
 
 @end
 
-typedef struct _WebResourceDelegateImplementationCache {
+#ifdef __cplusplus
+
+struct WebResourceDelegateImplementationCache {
     IMP didCancelAuthenticationChallengeFunc;
     IMP didReceiveAuthenticationChallengeFunc;
     IMP identifierForRequestFunc;
@@ -169,9 +186,9 @@ typedef struct _WebResourceDelegateImplementationCache {
     IMP willCacheResponseFunc;
     IMP plugInFailedWithErrorFunc;
     IMP shouldUseCredentialStorageFunc;
-} WebResourceDelegateImplementationCache;
+};
 
-typedef struct _WebFrameLoadDelegateImplementationCache {
+struct WebFrameLoadDelegateImplementationCache {
     IMP didClearWindowObjectForFrameFunc;
     IMP windowScriptObjectAvailableFunc;
     IMP didHandleOnloadEventsForFrameFunc;
@@ -190,9 +207,9 @@ typedef struct _WebFrameLoadDelegateImplementationCache {
     IMP didFirstVisuallyNonEmptyLayoutInFrameFunc;
     IMP didReceiveIconForFrameFunc;
     IMP didFinishDocumentLoadForFrameFunc;
-} WebFrameLoadDelegateImplementationCache;
+};
 
-typedef struct _WebScriptDebugDelegateImplementationCache {
+struct WebScriptDebugDelegateImplementationCache {
     BOOL didParseSourceExpectsBaseLineNumber;
     IMP didParseSourceFunc;
     IMP failedToParseSourceFunc;
@@ -200,13 +217,11 @@ typedef struct _WebScriptDebugDelegateImplementationCache {
     IMP willExecuteStatementFunc;
     IMP willLeaveCallFrameFunc;
     IMP exceptionWasRaisedFunc;
-} WebScriptDebugDelegateImplementationCache;
+};
 
-WebResourceDelegateImplementationCache* WebViewGetResourceLoadDelegateImplementations(WebView *webView);
-WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementations(WebView *webView);
-WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplementations(WebView *webView);
-
-#ifdef __cplusplus
+WebResourceDelegateImplementationCache* WebViewGetResourceLoadDelegateImplementations(WebView *);
+WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementations(WebView *);
+WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplementations(WebView *);
 
 id CallFormDelegate(WebView *, SEL, id, id);
 id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id object3, id object4, id object5);

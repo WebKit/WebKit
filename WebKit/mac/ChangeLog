@@ -1,3 +1,144 @@
+2009-06-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Bug 26112: viewless WebKit -- make events work
+        https://bugs.webkit.org/show_bug.cgi?id=26112
+
+        One change here is to make the -[WebFrame frameView] function assert if ever called
+        in viewless mode, and fix many callers that would trip that assertion.
+
+        A major change is to put some methods and data in WebView that are currently in
+        WebHTMLView, used only in viewless mode. A next step will be to use the WebView
+        methods whenever possible, even when not in the viewless mode.
+
+        Also fix FrameView to do normal reference counting instead of a strange model with
+        an explicit deref near creation time.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scrollRectIntoView): Add code to start in the appropriate place
+        when dealing with viewless mode. This gets triggered when visiting the Google home page.
+        (WebChromeClient::setToolTip): Changed to call WebView instead of WebHTMLView.
+        (WebChromeClient::print): Changed to use a new selector that doesn't require a
+        WebFrameView if present. Also don't even try to use the old selector in viewless mode.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::respondToChangedSelection): Changed to call WebView instead of WebHTMLView.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage): Added more code paths for
+        viewless mode to skip things we can't do in that mode, with appropriate FIXME.
+        Use Frame::create and RefPtr and eliminate the strange reference counting of FrameView.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _receivedData:]): Added a _usesDocumentViews guard around code that's
+        specific to document views.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]): Added a _usesDocumentViews
+        guard around code that's specific to document views.
+        (-[WebFrame _hasSelection]): Added an implementation for viewless mode.
+        (-[WebFrame _clearSelection]): Assert we're not in viewless mode; it doesn't really
+        make sense to clear the selection in only one frame in viewless mode. Later we can
+        decide what to do.
+        (-[WebFrame _dragSourceMovedTo:]): Assert we're not in viewless mode; the dragging
+        code for viewless mode shouldn't have to involve the WebFrame object at all.
+        (-[WebFrame _dragSourceEndedAt:operation:]): Ditto.
+        (-[WebFrame frameView]): Assert we're not in viewless mode. This assertion fires
+        often, but it's a great pointer to code that needs to be changed.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView hitTest:]): Tweaked a comment.
+        (-[WebHTMLView _updateMouseoverWithEvent:]): Fixed a bug where the fake event for
+        moving the mouse out of the old view ended up overwriting the event for moving
+        the mouse within the new view.
+        (-[WebHTMLView mouseDown:]): Got rid of explicit conversion of event to
+        PlatformMouseEvent in call to sendContextMenuEvent; that's no longer possible
+        without passing another argument, and it's now handled in EventHandler.
+
+        * WebView/WebTextCompletionController.h: Copied from WebKit/mac/WebView/WebHTMLView.mm.
+        Removed everything except for the WebTextCompletionController class.
+        * WebView/WebTextCompletionController.mm: Copied from WebKit/mac/WebView/WebHTMLView.mm.
+        Ditto.
+
+        * WebView/WebUIDelegatePrivate.h: Added webView:printFrame: method.
+
+        * WebView/WebView.mm: Moved includes and fields in from WebHTMLView.
+        (-[WebView _usesDocumentViews]): Updated for name change from useDocumentViews
+        to usesDocumentViews.
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]): Ditto.
+        (-[WebView drawSingleRect:]): Ditto.
+        (-[WebView isFlipped]): Ditto.
+        (-[WebView setFrameSize:]): Ditto. Also changed to use _mainCoreFrame method.
+        (-[WebView _viewWillDrawInternal]): Ditto.
+        (-[WebView viewWillDraw]): Ditto.
+        (-[WebView drawRect:]): Ditto.
+        (-[WebView _close]): Added code to nil out the lastMouseoverView global.
+        (-[WebView _dashboardRegions]): Use _mainCoreFrame.
+        (-[WebView setProhibitsMainFrameScrolling:]): Ditto.
+        (-[WebView _setInViewSourceMode:]): Ditto.
+        (-[WebView _inViewSourceMode]): Ditto.
+        (-[WebView _attachScriptDebuggerToAllFrames]): Ditto.
+        (-[WebView _detachScriptDebuggerFromAllFrames]): Ditto.
+        (-[WebView textIteratorForRect:]): Ditto.
+        (-[WebView _executeCoreCommandByName:value:]): Ditto.
+        (-[WebView addWindowObserversForWindow:]): Ditto.
+        (-[WebView removeWindowObservers]): Ditto.
+        (-[WebView _updateFocusedAndActiveState]): Ditto.
+        (-[WebView _updateFocusedAndActiveStateForFrame:]): Turned into a class method.
+        Added code to handle the viewless case without calling frameView.
+        (-[WebView _windowDidBecomeKey:]): Updated for name change from useDocumentViews
+        to usesDocumentViews.
+        (-[WebView _windowDidResignKey:]): Ditto.
+        (-[WebView _windowWillOrderOnScreen:]): Ditto.
+        (-[WebView mainFrame]): Tweaked.
+        (-[WebView selectedFrame]): Added a conditional to avoid trying to get at the
+        frame view in viewless case.
+        (-[WebView _setZoomMultiplier:isTextOnly:]): Use _mainCoreFrame.
+        (-[WebView setCustomTextEncodingName:]): Ditto.
+        (-[WebView windowScriptObject]): Ditto.
+        (-[WebView setHostWindow:]): Ditto. Also put some code that's needed only for
+        document views inside _private->usesDocumentViews.
+        (-[WebView _hitTest:dragTypes:]): Tweaked.
+        (-[WebView acceptsFirstResponder]): Added case for viewless mode along with a
+        FIXME, since it's not complete.
+        (-[WebView becomeFirstResponder]): Ditto.
+        (-[WebView _webcore_effectiveFirstResponder]): Put the body of this inside
+        a usesDocumentView check, because we don't need the first responder forwarding
+        in viewless mode.
+        (-[WebView setNextKeyView:]): Ditto.
+        (-[WebView mouseDown:]): Added. Copied from WebHTMLView. FIXME in here suggests
+        that we make WebHTMLView share this one soon, which I think is practical.
+        (-[WebView mouseUp:]): Ditto.
+        (-[WebView setHoverFeedbackSuspended:]): Added a code path for viewless mode.
+        (-[WebView shouldClose]): Use _mainCoreFrame.
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]): Ditto.
+        (-[WebView setEditable:]): Ditto.
+        (-[WebView _frameViewAtWindowPoint:]): Added an assertion that we're not in
+        viewless mode since this method makes no sense in that mode.
+        (-[WebView _setMouseDownEvent:]): Added. Copied from WebHTMLView. I plan to
+        eliminate the one in WebHTMLView soon.
+        (-[WebView _cancelUpdateMouseoverTimer]): Ditto.
+        (-[WebView _stopAutoscrollTimer]): Ditto.
+        (+[WebView _updateMouseoverWithEvent:]): Ditto.
+        (-[WebView _updateMouseoverWithFakeEvent]): Ditto.
+        (-[WebView _setToolTip:]): Added. Calls through to the WebHTMLView version.
+        (-[WebView _selectionChanged]): Ditto.
+        (-[WebView _mainCoreFrame]): Added.
+        (-[WebView _needsOneShotDrawingSynchronization]): Moved into the WebInternal
+        category.
+        (-[WebView _setNeedsOneShotDrawingSynchronization:]): Ditto.
+        (-[WebView _startedAcceleratedCompositingForFrame:]): Ditto.
+        (-[WebView _stoppedAcceleratedCompositingForFrame:]): Ditto.
+        (viewUpdateRunLoopObserverCallBack): Ditto.
+        (-[WebView _scheduleViewUpdate]): Ditto.
+
+        * WebView/WebViewInternal.h: Made most of the file not compile at all when
+        included from non-C++ source files, elminating some excess declarations and
+        typedefs. Moved more methods into the real internal category. Added new
+        methods _setMouseDownEvent, _cancelUpdateMouseoverTimer, _stopAutoscrollTimer,
+        _updateMouseoverWithFakeEvent, _selectionChanged, and _setToolTip:.
+
 2009-06-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.

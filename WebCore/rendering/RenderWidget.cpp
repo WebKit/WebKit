@@ -1,9 +1,7 @@
-/**
- * This file is part of the HTML widget for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,13 +25,8 @@
 
 #include "AnimationController.h"
 #include "AXObjectCache.h"
-#include "Document.h"
-#include "Element.h"
-#include "Event.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "RenderLayer.h"
 #include "RenderView.h"
 
 using namespace std;
@@ -47,14 +40,11 @@ static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()
 }
 
 RenderWidget::RenderWidget(Node* node)
-      : RenderReplaced(node)
-      , m_widget(0)
-      , m_refCount(0)
+    : RenderReplaced(node)
+    , m_widget(0)
+    , m_frameView(node->document()->view())
+    , m_refCount(0)
 {
-    // a replaced element doesn't support being anonymous
-    ASSERT(node);
-    m_view = node->document()->view();
-
     view()->addWidget(this);
 
     // Reference counting is used to prevent the widget from being
@@ -82,8 +72,8 @@ void RenderWidget::destroy()
     remove();
 
     if (m_widget) {
-        if (m_view)
-            m_view->removeChild(m_widget);
+        if (m_frameView)
+            m_frameView->removeChild(m_widget);
         widgetRendererMap().remove(m_widget);
     }
     
@@ -110,7 +100,7 @@ void RenderWidget::destroy()
 RenderWidget::~RenderWidget()
 {
     ASSERT(m_refCount <= 0);
-    deleteWidget();
+    clearWidget();
 }
 
 void RenderWidget::setWidgetGeometry(const IntRect& frame)
@@ -129,7 +119,7 @@ void RenderWidget::setWidget(Widget* widget)
         if (m_widget) {
             m_widget->removeFromParent();
             widgetRendererMap().remove(m_widget);
-            deleteWidget();
+            clearWidget();
         }
         m_widget = widget;
         if (m_widget) {
@@ -145,7 +135,7 @@ void RenderWidget::setWidget(Widget* widget)
                 else
                     m_widget->show();
             }
-            m_view->addChild(m_widget);
+            m_frameView->addChild(m_widget);
         }
     }
 }
@@ -184,7 +174,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
     }
 
-    if (!m_view || paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE)
+    if (!m_frameView || paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE)
         return;
 
 #if PLATFORM(MAC)
@@ -284,9 +274,17 @@ void RenderWidget::setSelectionState(SelectionState state)
     }
 }
 
-void RenderWidget::deleteWidget()
+void RenderWidget::clearWidget()
 {
-    delete m_widget;
+    Widget* widget = m_widget;
+    m_widget = 0;
+    if (widget)
+        deleteWidget(widget);
+}
+
+void RenderWidget::deleteWidget(Widget* widget)
+{
+    delete widget;
 }
 
 RenderWidget* RenderWidget::find(const Widget* widget)

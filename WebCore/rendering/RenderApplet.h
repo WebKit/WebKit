@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,8 +32,10 @@ namespace WebCore {
     class RenderApplet : public RenderWidget {
     public:
         RenderApplet(HTMLAppletElement*, const HashMap<String, String>& args);
-        virtual ~RenderApplet();
 
+        void createWidgetIfNecessary();
+
+    private:
         virtual const char* renderName() const { return "RenderApplet"; }
 
         virtual bool isApplet() const { return true; }
@@ -41,9 +43,6 @@ namespace WebCore {
         virtual void layout();
         virtual IntSize intrinsicSize() const;
 
-        void createWidgetIfNecessary();
-
-    private:
         HashMap<String, String> m_args;
     };
 

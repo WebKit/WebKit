@@ -21,6 +21,7 @@
 #include "FrameTree.h"
 
 #include "Frame.h"
+#include "FrameView.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include <stdarg.h>

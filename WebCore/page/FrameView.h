@@ -48,12 +48,12 @@ class String;
 
 template <typename T> class Timer;
 
-class FrameView : public ScrollView {
+class FrameView : public ScrollView, public RefCounted<FrameView> {
 public:
     friend class RenderView;
 
-    FrameView(Frame*);
-    FrameView(Frame*, const IntSize& initialSize);
+    static PassRefPtr<FrameView> create(Frame*);
+    static PassRefPtr<FrameView> create(Frame*, const IntSize& initialSize);
 
     virtual ~FrameView();
 
@@ -63,10 +63,6 @@ public:
 
     Frame* frame() const { return m_frame.get(); }
     void clearFrame();
-
-    void ref() { ++m_refCount; }
-    void deref() { if (!--m_refCount) delete this; }
-    bool hasOneRef() { return m_refCount == 1; }
 
     int marginWidth() const { return m_margins.width(); } // -1 means default
     int marginHeight() const { return m_margins.height(); } // -1 means default
@@ -193,6 +189,8 @@ public:
 
 
 private:
+    FrameView(Frame*);
+
     void reset();
     void init();
 
@@ -225,7 +223,6 @@ private:
     
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 
-    unsigned m_refCount;
     IntSize m_size;
     IntSize m_margins;
     OwnPtr<HashSet<RenderPartObject*> > m_widgetUpdateSet;

@@ -68,12 +68,12 @@ static int clickCountForEvent(NSEvent *event)
     }
 }
 
-IntPoint globalPoint(const NSPoint& windowPoint, NSWindow* window)
+IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
 {
     return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint], screenForWindow(window)));
 }
 
-IntPoint pointForEvent(NSEvent *event)
+IntPoint pointForEvent(NSEvent *event, NSView *windowView)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
@@ -86,11 +86,14 @@ IntPoint pointForEvent(NSEvent *event)
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
         case NSMouseMoved:
-        case NSScrollWheel:
-            // Note: This has its origin at the bottom left of the window.
-            // The Y coordinate gets flipped by ScrollView::viewportToContents.
-            // We should probably change both this and that to not use "bottom left origin" coordinates at all.
-            return IntPoint([event locationInWindow]);
+        case NSScrollWheel: {
+            // Note: This will have its origin at the bottom left of the window unless windowView is flipped.
+            // In those cases, the Y coordinate gets flipped by Widget::convertFromContainingWindow.
+            NSPoint location = [event locationInWindow];
+            if (windowView)
+                location = [windowView convertPoint:location fromView:nil];
+            return IntPoint(location);
+        }
         default:
             return IntPoint();
     }
@@ -139,8 +142,8 @@ static MouseEventType mouseEventForNSEvent(NSEvent* event)
     }
 }
 
-PlatformMouseEvent::PlatformMouseEvent(NSEvent* event)
-    : m_position(pointForEvent(event))
+PlatformMouseEvent::PlatformMouseEvent(NSEvent* event, NSView *windowView)
+    : m_position(pointForEvent(event, windowView))
     , m_globalPosition(globalPointForEvent(event))
     , m_button(mouseButtonForEvent(event))
     , m_eventType(mouseEventForNSEvent(event))

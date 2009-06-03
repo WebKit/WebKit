@@ -1,3 +1,172 @@
+2009-06-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Bug 26112: viewless WebKit -- make events work
+        https://bugs.webkit.org/show_bug.cgi?id=26112
+
+        The main fix here is to make mouse and wheel event coordinates in the coordinate
+        system of the top level NSView rather than the NSWindow when in the viewless mode.
+        This is the design Hyatt chose, but the event part of it wasn't done yet.
+
+        Also fix FrameView to do normal reference counting instead of a strange model with
+        an explicit deref near creation time.
+
+        * WebCore.base.exp: Updated.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventLoopHandleMouseUp): Moved this function into the file
+        to reduce conditionals in the header.
+        (WebCore::EventHandler::eventLoopHandleMouseDragged): Ditto.
+
+        * page/EventHandler.h: Reduced includes. Fixed formatting of Objective-C types.
+        Made currentNSEvent a static member function. Added sendContextMenuEvent and
+        eventMayStartDrag functions that takes NSEvent * so the conversion to PlatformMouseEvent
+        can be done here rather than in WebKit. Reduced #if by making eventLoopHandleMouseUp and
+        eventLoopHandleMouseDragged unconditional.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setView): Made this take a PassRefPtr since it takes ownership.
+        (WebCore::Frame::createView): Changed to use RefPtr and FrameView::create and remove
+        the explicit deref.
+
+        * page/Frame.h: Changed setView to take a PassRefPtr.
+
+        * page/FrameTree.cpp: Added newly-needed include.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Got rid of one of the two constructors, and removed
+        the initialization of m_refCount and call to show from the reamining one.
+        (WebCore::FrameView::create): Added two create functions that do what the two
+        constructors did before, except that they return a PassRefPtr to make sure the
+        reference counting is handled correctly.
+        (WebCore::FrameView::~FrameView): Removed assertion from when FrameView implemented
+        its own reference counting.
+
+        * page/FrameView.h: Inherit from RefCounted for reference counting. Made the
+        constructor private and added create functions. Got rid of the hand-implemented
+        reference counting in this class.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::currentNSEventSlot): Renamed currentEvent to currentNSEventSlot to
+        make it more clear how it relates to currentNSEvent.
+        (WebCore::EventHandler::currentNSEvent): Updated.
+        (WebCore::CurrentEventScope::CurrentEventScope): Added. Use to set/reset the
+        current event in a foolproof way.
+        (WebCore::CurrentEventScope::~CurrentEventScope): Ditto.
+        (WebCore::EventHandler::wheelEvent): Use CurrentEventScope. Pass the platform
+        window in when constructing the PlatformWheelEvent.
+        (WebCore::EventHandler::keyEvent): Use CurrentEventScope.
+        (WebCore::lastEventIsMouseUp): Use currentNSEvent.
+        (WebCore::EventHandler::passMouseDownEventToWidget): Ditto.
+        (WebCore::EventHandler::eventLoopHandleMouseDragged): Ditto.
+        (WebCore::EventHandler::eventLoopHandleMouseUp): Ditto.
+        (WebCore::EventHandler::passSubframeEventToSubframe): Use
+        currentPlatformMouseEvent to get a mouse event that has the appropriate
+        platform window passed to create it.
+        (WebCore::EventHandler::passWheelEventToWidget): Ditto.
+        (WebCore::EventHandler::mouseDown): Ditto.
+        (WebCore::EventHandler::mouseDragged): Ditto.
+        (WebCore::EventHandler::mouseUp): Ditto.
+        (WebCore::EventHandler::mouseMoved): Ditto.
+        (WebCore::EventHandler::currentPlatformMouseEvent): Added. Passes the
+        platform window that's now needed to create a PlatformMouseEvent.
+        (WebCore::EventHandler::sendContextMenuEvent): Added.
+        (WebCore::EventHandler::eventMayStartDrag): Added.
+
+        * platform/HostWindow.h: Removed unneeded includes and constructor definition.
+
+        * platform/PlatformMouseEvent.h: Sorted things in alphabetical order.
+        Changed Mac constructor to take a windowView as well as the event. This is
+        needed in viewless mode, since the "window" is actually an NSView, so the
+        event has to know which view to compute the coordinates with. Made the
+        same change to pointForEvent.
+        * platform/PlatformWheelEvent.h: Ditto.
+
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::pointForEvent): Convert point from window coordinates to view
+        coordinates if a windowView is passed in. This is used in viewless mode.
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent): Ditto.
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent): Ditto.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::convertFromContainingWindow): Fixed case where there
+        is no platform widget and no parent. Before it would yield unpredictable
+        results because of dispatching to a nil object and returning a structure.
+        Now it returns the point without changing coordinates at all, which is what
+        we need for this case in viewless mode.
+
+        * rendering/RenderApplet.cpp: Removed unneeded includes.
+        (WebCore::RenderApplet::intrinsicSize): Use widget function.
+        (WebCore::RenderApplet::createWidgetIfNecessary): Ditto.
+
+        * rendering/RenderApplet.h: Make more things private. Get rid of unneeded
+        explicit destructor.
+
+        * rendering/RenderFrame.cpp: Removed unneeded includes.
+        (WebCore::RenderFrame::edgeInfo): Updated to use node function so header
+        doesn't have to define element function.
+        (WebCore::RenderFrame::viewCleared): Ditto. Also changed to use widget
+        function.
+
+        * rendering/RenderFrame.h: Removed unneeded includes. Made some things
+        private. Got rid of element function.
+
+        * rendering/RenderPart.cpp: Removed unneeded includes.
+        (WebCore::RenderPart::~RenderPart): Changed to use clearWidget function.
+        (WebCore::RenderPart::setWidget): Changed to use widget function.
+        (WebCore::RenderPart::deleteWidget): Changed to use passed-in widget.
+        This is now only called by the clearWidget function.
+
+        * rendering/RenderPart.h: Removed unneeded forward declarations.
+        Made more functions private. Updated deleteWidget to take widget argument.
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::~RenderPartObject): use frameView function
+        instead of getting at m_view directly.
+        (WebCore::RenderPartObject::updateWidget): Ditto.
+        (WebCore::RenderPartObject::layout): Ditto. Same for widget and m_widget.
+        (WebCore::RenderPartObject::viewCleared): Ditto.
+
+        * rendering/RenderPartObject.h: Made some functions private.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::RenderWidget): Initialize m_frameView with
+        construction syntax instead of assignment.
+        (WebCore::RenderWidget::destroy): Updated for name change of m_view
+        to m_frameView.
+        (WebCore::RenderWidget::~RenderWidget): Use clearWidget to delete
+        the widget.
+        (WebCore::RenderWidget::setWidget): Use clearWidget.
+        (WebCore::RenderWidget::paint): Updated for name change of m_view
+        to m_frameView.
+        (WebCore::RenderWidget::deleteWidget): Changed to use passed-in widget.
+
+        * rendering/RenderWidget.h: Made many functions protected, others
+        private and made all data members private.
+
+        * svg/animation/SMILTime.h: Removed unhelpful max and min functions. These
+        just do what std::max and std::min will already do automatically for this
+        type, so they are not helpful.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::SVGImage): Removed unneeded initial values for types
+        that initialize to zero without anything explicit.
+        (WebCore::SVGImage::~SVGImage): Update since m_frame and m_frameView are
+        no longer stored.
+        (WebCore::SVGImage::setContainerSize): Ditto.
+        (WebCore::SVGImage::usesContainerSize): Ditto.
+        (WebCore::SVGImage::size): Ditto.
+        (WebCore::SVGImage::hasRelativeWidth): Ditto.
+        (WebCore::SVGImage::hasRelativeHeight): Ditto.
+        (WebCore::SVGImage::draw): Ditto.
+        (WebCore::SVGImage::nativeImageForCurrentFrame): Ditto.
+        (WebCore::SVGImage::dataChanged): Ditto.
+
+        * svg/graphics/SVGImage.h: Removed unneeded includes and unneeded data
+        members m_document, m_frame, m_frameView, and m_minSize.
+
 2009-06-02  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.

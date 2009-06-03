@@ -221,7 +221,7 @@ FrameView* Frame::view() const
     return m_view.get();
 }
 
-void Frame::setView(FrameView* view)
+void Frame::setView(PassRefPtr<FrameView> view)
 {
     // Detach the document now, so any onUnload handlers get run - if
     // we wait until the view is destroyed, then things won't be
@@ -1751,20 +1751,18 @@ void Frame::createView(const IntSize& viewportSize,
 
     setView(0);
 
-    FrameView* frameView;
+    RefPtr<FrameView> frameView;
     if (isMainFrame) {
-        frameView = new FrameView(this, viewportSize);
+        frameView = FrameView::create(this, viewportSize);
         frameView->setFixedLayoutSize(fixedLayoutSize);
         frameView->setUseFixedLayout(useFixedLayout);
     } else
-        frameView = new FrameView(this);
+        frameView = FrameView::create(this);
 
     frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode);
     frameView->updateDefaultScrollbarState();
 
     setView(frameView);
-    // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
-    frameView->deref();
 
     if (backgroundColor.isValid())
         frameView->updateBackgroundRecursively(backgroundColor, transparent);
@@ -1773,7 +1771,7 @@ void Frame::createView(const IntSize& viewportSize,
         frameView->setParentVisible(true);
 
     if (ownerRenderer())
-        ownerRenderer()->setWidget(frameView);
+        ownerRenderer()->setWidget(frameView.get());
 
     if (HTMLFrameOwnerElement* owner = ownerElement())
         view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);

@@ -280,9 +280,7 @@ void WebEditorClient::respondToChangedContents()
 
 void WebEditorClient::respondToChangedSelection()
 {
-    NSView <WebDocumentView> *view = [[[m_webView selectedFrame] frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)view _selectionChanged];
+    [m_webView _selectionChanged];
 
     // FIXME: This quirk is needed due to <rdar://problem/5009625> - We can phase it out once Aperture can adopt the new behavior on their end
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Aperture"])

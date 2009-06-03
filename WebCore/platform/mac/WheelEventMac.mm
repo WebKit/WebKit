@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-PlatformWheelEvent::PlatformWheelEvent(NSEvent* event)
-    : m_position(pointForEvent(event))
+PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
+    : m_position(pointForEvent(event, windowView))
     , m_globalPosition(globalPointForEvent(event))
     , m_granularity(ScrollByPixelWheelEvent)
     , m_isAccepted(false)

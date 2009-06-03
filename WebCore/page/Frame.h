@@ -5,7 +5,7 @@
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
@@ -91,7 +91,7 @@ public:
     {
         return adoptRef(new Frame(page, ownerElement, client));
     }
-    void setView(FrameView*);
+    void setView(PassRefPtr<FrameView>);
     ~Frame();
     
     void init();

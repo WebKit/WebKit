@@ -62,8 +62,6 @@ namespace WebCore {
     inline bool operator>=(const SMILTime& a, const SMILTime& b) { return a.value() > b.value() || operator==(a, b); }
     inline bool operator<=(const SMILTime& a, const SMILTime& b) { return a.value() < b.value() || operator==(a, b); }
 
-    inline SMILTime max(const SMILTime& a, const SMILTime& b) { return std::max(a.value(), b.value()); }
-    inline SMILTime min(const SMILTime& a, const SMILTime& b) { return std::min(a.value(), b.value()); }
     SMILTime operator+(const SMILTime&, const SMILTime&);
     SMILTime operator-(const SMILTime&, const SMILTime&);
     // So multiplying times does not make too much sense but SMIL defines it for duration * repeatCount

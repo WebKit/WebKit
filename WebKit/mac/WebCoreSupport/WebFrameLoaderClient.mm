@@ -1037,28 +1037,30 @@ void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cac
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
 {
-    WebFrameView *v = m_webFrame->_private->webFrameView;
-    WebDataSource *ds = [m_webFrame.get() _dataSource];
+    WebView *webView = getWebView(m_webFrame.get());
+    WebDataSource *dataSource = [m_webFrame.get() _dataSource];
+    bool usesDocumentViews = [webView _usesDocumentViews];
 
-    bool willProduceHTMLView = [[WebFrameView class] _viewClassForMIMEType:[ds _responseMIMEType]] == [WebHTMLView class];
-    bool canSkipCreation = core(m_webFrame.get())->loader()->committingFirstRealLoad() && willProduceHTMLView;
-    if (canSkipCreation) {
-        [[v documentView] setDataSource:ds];
-        return;
+    if (usesDocumentViews) {
+        // FIXME (Viewless): I assume we want the equivalent of this optimization for viewless mode too.
+        bool willProduceHTMLView = [[WebFrameView class] _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];
+        bool canSkipCreation = core(m_webFrame.get())->loader()->committingFirstRealLoad() && willProduceHTMLView;
+        if (canSkipCreation) {
+            [[m_webFrame->_private->webFrameView documentView] setDataSource:dataSource];
+            return;
+        }
+
+        // Don't suppress scrollbars before the view creation if we're making the view for a non-HTML view.
+        if (!willProduceHTMLView)
+            [[m_webFrame->_private->webFrameView _scrollView] setScrollBarsSuppressed:NO repaintOnUnsuppress:NO];
     }
-
-    // Don't suppress scrollbars before the view creation if we're making the view for a non-HTML view.
-    if (!willProduceHTMLView)
-        [[v _scrollView] setScrollBarsSuppressed:NO repaintOnUnsuppress:NO];
     
     // clean up webkit plugin instances before WebHTMLView gets freed.
-    WebView *webView = getWebView(m_webFrame.get());
     [webView removePluginInstanceViewsFor:(m_webFrame.get())];
     
-    BOOL useDocumentViews = [webView _usesDocumentViews];
     NSView <WebDocumentView> *documentView = nil;
-    if (useDocumentViews) {
-        documentView = [v _makeDocumentViewForDataSource:ds];
+    if (usesDocumentViews) {
+        documentView = [m_webFrame->_private->webFrameView _makeDocumentViewForDataSource:dataSource];
         if (!documentView)
             return;
     }
@@ -1072,28 +1074,29 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (isMainFrame && coreFrame->view())
         coreFrame->view()->setParentVisible(false);
     coreFrame->setView(0);
-    FrameView* coreView;
-    if (useDocumentViews)
-        coreView = new FrameView(coreFrame);
+    RefPtr<FrameView> coreView;
+    if (usesDocumentViews)
+        coreView = FrameView::create(coreFrame);
     else
-        coreView = new FrameView(coreFrame, IntSize([webView bounds].size));
+        coreView = FrameView::create(coreFrame, IntSize([webView bounds].size));
     coreFrame->setView(coreView);
-    coreView->deref(); // FIXME: Eliminate this crazy refcounting!
 
     [m_webFrame.get() _updateBackgroundAndUpdatesWhileOffscreen];
 
-    [v _install];
+    if (usesDocumentViews)
+        [m_webFrame->_private->webFrameView _install];
 
     if (isMainFrame)
         coreView->setParentVisible(true);
 
-    // Call setDataSource on the document view after it has been placed in the view hierarchy.
-    // This what we for the top-level view, so should do this for views in subframes as well.
-    [documentView setDataSource:ds];
+    if (usesDocumentViews) {
+        // Call setDataSource on the document view after it has been placed in the view hierarchy.
+        // This what we for the top-level view, so should do this for views in subframes as well.
+        [documentView setDataSource:dataSource];
+    }
     
     if (HTMLFrameOwnerElement* owner = coreFrame->ownerElement())
         coreFrame->view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
-    
 }
 
 RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)

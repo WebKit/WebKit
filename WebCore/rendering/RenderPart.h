@@ -1,9 +1,7 @@
 /*
- * This file is part of the KDE project.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,28 +27,24 @@
 
 namespace WebCore {
 
-class Frame;
-class HTMLFrameOwnerElement;
-
 class RenderPart : public RenderWidget {
 public:
     RenderPart(Element*);
     virtual ~RenderPart();
     
-    virtual bool isRenderPart() const { return true; }
-    virtual const char* renderName() const { return "RenderPart"; }
-
-    virtual void setWidget(Widget*);
-
     bool hasFallbackContent() const { return m_hasFallbackContent; }
 
+    virtual void setWidget(Widget*);
     virtual void viewCleared();
 
 protected:
     bool m_hasFallbackContent;
 
 private:
-    virtual void deleteWidget();
+    virtual bool isRenderPart() const { return true; }
+    virtual const char* renderName() const { return "RenderPart"; }
+
+    virtual void deleteWidget(Widget*);
 };
 
 }

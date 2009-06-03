@@ -318,22 +318,24 @@ WebView *getWebView(WebFrame *webFrame)
 
     Frame* coreFrame = _private->coreFrame;
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
-        WebFrame *webFrame = kit(frame);
-        // Don't call setDrawsBackground:YES here because it may be NO because of a load
-        // in progress; WebFrameLoaderClient keeps it set to NO during the load process.
-        if (!drawsBackground)
-            [[[webFrame frameView] _scrollView] setDrawsBackground:NO];
-        [[[webFrame frameView] _scrollView] setBackgroundColor:backgroundColor];
-        id documentView = [[webFrame frameView] documentView];
-        if ([documentView respondsToSelector:@selector(setDrawsBackground:)])
-            [documentView setDrawsBackground:drawsBackground];
-        if ([documentView respondsToSelector:@selector(setBackgroundColor:)])
-            [documentView setBackgroundColor:backgroundColor];
-        if (frame && frame->view()) {
-            frame->view()->setTransparent(!drawsBackground);
-            Color color = colorFromNSColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
-            frame->view()->setBaseBackgroundColor(color);
-            frame->view()->setShouldUpdateWhileOffscreen([webView shouldUpdateWhileOffscreen]);
+        if ([webView _usesDocumentViews]) {
+            // Don't call setDrawsBackground:YES here because it may be NO because of a load
+            // in progress; WebFrameLoaderClient keeps it set to NO during the load process.
+            WebFrame *webFrame = kit(frame);
+            if (!drawsBackground)
+                [[[webFrame frameView] _scrollView] setDrawsBackground:NO];
+            [[[webFrame frameView] _scrollView] setBackgroundColor:backgroundColor];
+            id documentView = [[webFrame frameView] documentView];
+            if ([documentView respondsToSelector:@selector(setDrawsBackground:)])
+                [documentView setDrawsBackground:drawsBackground];
+            if ([documentView respondsToSelector:@selector(setBackgroundColor:)])
+                [documentView setBackgroundColor:backgroundColor];
+        }
+
+        if (FrameView* view = frame->view()) {
+            view->setTransparent(!drawsBackground);
+            view->setBaseBackgroundColor(colorFromNSColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]));
+            view->setShouldUpdateWhileOffscreen([webView shouldUpdateWhileOffscreen]);
         }
     }
 }
@@ -370,21 +372,27 @@ WebView *getWebView(WebFrame *webFrame)
 
 - (BOOL)_hasSelection
 {
-    id documentView = [_private->webFrameView documentView];    
+    if ([getWebView(self) _usesDocumentViews]) {
+        id documentView = [_private->webFrameView documentView];    
 
-    // optimization for common case to avoid creating potentially large selection string
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        if (Frame* coreFrame = _private->coreFrame)
-            return coreFrame->selection()->isRange();
+        // optimization for common case to avoid creating potentially large selection string
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            if (Frame* coreFrame = _private->coreFrame)
+                return coreFrame->selection()->isRange();
 
-    if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
-        return [[documentView selectedString] length] > 0;
-    
-    return NO;
+        if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
+            return [[documentView selectedString] length] > 0;
+        
+        return NO;
+    }
+
+    Frame* coreFrame = _private->coreFrame;
+    return coreFrame && coreFrame->selection()->isRange();
 }
 
 - (void)_clearSelection
 {
+    ASSERT([getWebView(self) _usesDocumentViews]);
     id documentView = [_private->webFrameView documentView];    
     if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
         [documentView deselectAll];
@@ -910,6 +918,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     FrameView* view = _private->coreFrame->view();
     if (!view)
         return;
+    ASSERT([getWebView(self) _usesDocumentViews]);
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [view->platformWidget() window]),
         LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
@@ -923,6 +932,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     FrameView* view = _private->coreFrame->view();
     if (!view)
         return;
+    ASSERT([getWebView(self) _usesDocumentViews]);
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     PlatformMouseEvent event(IntPoint(windowLoc), globalPoint(windowLoc, [view->platformWidget() window]),
         LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
@@ -1179,6 +1189,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (WebFrameView *)frameView
 {
+    ASSERT(!getWebView(self) || [getWebView(self) _usesDocumentViews]);
     return _private->webFrameView;
 }
 

@@ -1,9 +1,7 @@
 /*
- * This file is part of the KDE project.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,22 +23,22 @@
 #ifndef RenderFrame_h
 #define RenderFrame_h
 
-#include "HTMLFrameElement.h"
 #include "RenderPart.h"
 #include "RenderFrameSet.h"
 
 namespace WebCore {
 
+class HTMLFrameElement;
+
 class RenderFrame : public RenderPart {
 public:
     RenderFrame(HTMLFrameElement*);
 
+    FrameEdgeInfo edgeInfo() const;
+
+private:
     virtual const char* renderName() const { return "RenderFrame"; }
     virtual bool isFrame() const { return true; }
-
-    HTMLFrameElement* element() const { return static_cast<HTMLFrameElement*>(RenderPart::node()); }
-
-    FrameEdgeInfo edgeInfo() const;
 
     virtual void viewCleared();
 };

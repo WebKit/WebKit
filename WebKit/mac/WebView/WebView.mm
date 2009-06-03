@@ -87,6 +87,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebScriptDebugDelegate.h"
 #import "WebSystemInterface.h"
+#import "WebTextCompletionController.h"
 #import "WebTextIterator.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
@@ -152,6 +153,26 @@
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
 #endif
+
+@class NSTextInputContext;
+
+@interface NSResponder (WebNSResponderDetails)
+- (NSTextInputContext *)inputContext;
+@end
+
+@interface NSSpellChecker (WebNSSpellCheckerDetails)
+- (void)_preflightChosenSpellServer;
+@end
+
+@interface NSView (WebNSViewDetails)
+- (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types;
+- (void)_autoscrollForDraggingInfo:(id)dragInfo timeDelta:(NSTimeInterval)repeatDelta;
+- (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
+@end
+
+@interface NSWindow (WebNSWindowDetails) 
+- (id)_oldFirstResponderBeforeBecoming;
+@end
 
 using namespace WebCore;
 using namespace JSC;
@@ -302,32 +323,19 @@ macro(yankAndSelect) \
 #define UsingAcceleratedCompositingProperty @"_isUsingAcceleratedCompositing"
 #endif            
 
-
 static BOOL s_didSetCacheModel;
 static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 
 static BOOL applicationIsTerminating;
 static int pluginDatabaseClientCount = 0;
 
+static WebView *lastMouseoverView;
+
 #ifndef NDEBUG
 static const char webViewIsOpen[] = "At least one WebView is still open.";
 #endif
 
-@interface NSSpellChecker (AppKitSecretsIKnow)
-- (void)_preflightChosenSpellServer;
-@end
-
-@interface NSView (AppKitSecretsIKnow)
-- (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types;
-- (void)_autoscrollForDraggingInfo:(id)dragInfo timeDelta:(NSTimeInterval)repeatDelta;
-- (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
-@end
-
-@interface NSWindow (AppKitSecretsIKnow) 
-- (id)_oldFirstResponderBeforeBecoming;
-@end
-
-@interface NSObject (ValidateWithoutDelegate)
+@interface NSObject (WebValidateWithoutDelegate)
 - (BOOL)validateUserInterfaceItemWithoutDelegate:(id <NSValidatedUserInterfaceItem>)item;
 @end
 
@@ -421,7 +429,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     BOOL shouldUpdateWhileOffscreen;
     
     // When this flag is set, we will not make any subviews underneath this WebView.  This means no WebFrameViews and no WebHTMLViews.
-    BOOL useDocumentViews;
+    BOOL usesDocumentViews;
     
 #if USE(ACCELERATED_COMPOSITING)
     // When this flag is set, next time a WebHTMLView draws, it needs to temporarily disable screen updates
@@ -436,6 +444,19 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
     NSPasteboard *insertionPasteboard;
             
     NSSize lastLayoutSize;
+
+    BOOL ignoringMouseDraggedEvents;
+
+    NSEvent *mouseDownEvent; // Kept after handling the event.
+    BOOL handlingMouseDownEvent;
+    NSEvent *keyDownEvent; // Kept after handling the event.
+
+    WebTextCompletionController *completionController;
+
+    NSTimer *autoscrollTimer;
+    NSEvent *autoscrollTriggerEvent;
+
+    CFRunLoopTimerRef updateMouseoverTimer;
 }
 @end
 
@@ -753,7 +774,7 @@ static bool runningTigerMail()
 
 - (BOOL)_usesDocumentViews
 {
-    return _private->useDocumentViews;
+    return _private->usesDocumentViews;
 }
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
@@ -772,10 +793,10 @@ static bool runningTigerMail()
     _private->mainFrameDocumentReady = NO;
     _private->drawsBackground = YES;
     _private->backgroundColor = [[NSColor colorWithDeviceWhite:1 alpha:1] retain];
-    _private->useDocumentViews = usesDocumentViews;
+    _private->usesDocumentViews = usesDocumentViews;
 
     WebFrameView *frameView = nil;
-    if (_private->useDocumentViews) {
+    if (_private->usesDocumentViews) {
         NSRect f = [self frame];
         frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
         [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -899,7 +920,7 @@ static bool runningTigerMail()
 
 - (void)drawSingleRect:(NSRect)rect
 {
-    ASSERT(!_private->useDocumentViews);
+    ASSERT(!_private->usesDocumentViews);
     
     [NSGraphicsContext saveGraphicsState];
     NSRectClip(rect);
@@ -923,18 +944,18 @@ static bool runningTigerMail()
 
 - (BOOL)isFlipped 
 {
-    return _private && !_private->useDocumentViews;
+    return _private && !_private->usesDocumentViews;
 }
 
 - (void)setFrameSize:(NSSize)size
 {
     if (!NSEqualSizes(_private->lastLayoutSize, size)) {
-        Frame* frame = core([self mainFrame]);
+        Frame* frame = [self _mainCoreFrame];
         // FIXME: Viewless WebKit is broken with Safari banners (e.g., the Find banner).  We'll have to figure out a way for
         // Safari to communicate that this space is being consumed.  For WebKit with document views, there's no
         // need to do an explicit resize, since WebFrameViews have auto resizing turned on and will handle changing
         // their bounds automatically. See <rdar://problem/6835573> for details.
-        if (!_private->useDocumentViews)
+        if (!_private->usesDocumentViews)
             frame->view()->resize(IntSize(size));
         frame->view()->setNeedsLayout();
         [self setNeedsDisplay:YES];
@@ -945,19 +966,21 @@ static bool runningTigerMail()
 }
 
 #if USE(ACCELERATED_COMPOSITING) || !defined(BUILDING_ON_TIGER)
+
 - (void)_viewWillDrawInternal
 {
-    Frame* frame = core([self mainFrame]);
+    Frame* frame = [self _mainCoreFrame];
     if (frame && frame->view())
         frame->view()->layoutIfNeededRecursive();
 }
+
 #endif
 
 #ifndef BUILDING_ON_TIGER
 
 - (void)viewWillDraw
 {
-    if (!_private->useDocumentViews)
+    if (!_private->usesDocumentViews)
         [self _viewWillDrawInternal];
     [super viewWillDraw];
 }
@@ -967,7 +990,7 @@ static bool runningTigerMail()
 
 - (void)drawRect:(NSRect)rect
 {
-    if (_private->useDocumentViews)
+    if (_private->usesDocumentViews)
         return [super drawRect:rect];
     
     ASSERT_MAIN_THREAD();
@@ -1159,6 +1182,9 @@ static bool fastDocumentTeardownEnabled()
     if (!_private || _private->closed)
         return;
 
+    if (lastMouseoverView == self)
+        lastMouseoverView = nil;
+
 #ifndef NDEBUG
     WTF::RefCountedLeakCounter::cancelMessageSuppression(webViewIsOpen);
 #endif
@@ -1170,7 +1196,7 @@ static bool fastDocumentTeardownEnabled()
         return;
     }
 
-    if (Frame* mainFrame = core([self mainFrame]))
+    if (Frame* mainFrame = [self _mainCoreFrame])
         mainFrame->loader()->detachFromParent();
 
     [self _removeFromAllWebViewsSet];
@@ -1930,7 +1956,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 - (NSDictionary *)_dashboardRegions
 {
     // Only return regions from main frame.
-    Frame* mainFrame = core([self mainFrame]);
+    Frame* mainFrame = [self _mainCoreFrame];
     if (!mainFrame)
         return nil;
     NSMutableDictionary *regions = mainFrame->dashboardRegionsDictionary();
@@ -2050,8 +2076,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 
 - (void)setProhibitsMainFrameScrolling:(BOOL)prohibits
 {
-    Frame* mainFrame = core([self mainFrame]);
-    if (mainFrame)
+    if (Frame* mainFrame = [self _mainCoreFrame])
         mainFrame->view()->setProhibitsScrolling(prohibits);
 }
 
@@ -2063,14 +2088,13 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 
 - (void)_setInViewSourceMode:(BOOL)flag
 {
-    Frame* mainFrame = core([self mainFrame]);
-    if (mainFrame)
+    if (Frame* mainFrame = [self _mainCoreFrame])
         mainFrame->setInViewSourceMode(flag);
 }
 
 - (BOOL)_inViewSourceMode
 {
-    Frame* mainFrame = core([self mainFrame]);
+    Frame* mainFrame = [self _mainCoreFrame];
     return mainFrame && mainFrame->inViewSourceMode();
 }
 
@@ -2113,13 +2137,13 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 
 - (void)_attachScriptDebuggerToAllFrames
 {
-    for (Frame* frame = core([self mainFrame]); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree()->traverseNext())
         [kit(frame) _attachScriptDebugger];
 }
 
 - (void)_detachScriptDebuggerFromAllFrames
 {
-    for (Frame* frame = core([self mainFrame]); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = [self _mainCoreFrame]; frame; frame = frame->tree()->traverseNext())
         [kit(frame) _detachScriptDebugger];
 }
 
@@ -2182,7 +2206,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
     IntPoint rectStart(rect.origin.x, rect.origin.y);
     IntPoint rectEnd(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
     
-    Frame* coreFrame = core([self mainFrame]);
+    Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return nil;
     
@@ -2216,7 +2240,7 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 
 - (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value
 {
-    Frame* coreFrame = core([self mainFrame]);
+    Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return;
     coreFrame->editor()->command(name).execute(value);
@@ -2272,42 +2296,6 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
 {
     return handCursor().impl();
 }
-
-#if USE(ACCELERATED_COMPOSITING)
-
-- (BOOL)_needsOneShotDrawingSynchronization
-{
-    return _private->needsOneShotDrawingSynchronization;
-}
-
-- (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization
-{
-    _private->needsOneShotDrawingSynchronization = needsSynchronization;
-}
-
-- (void)_startedAcceleratedCompositingForFrame:(WebFrame*)webFrame
-{
-    BOOL entering = _private->acceleratedFramesCount == 0;
-    if (entering)
-        [self willChangeValueForKey:UsingAcceleratedCompositingProperty];
-    ++_private->acceleratedFramesCount;
-    if (entering)
-        [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
-}
-
-- (void)_stoppedAcceleratedCompositingForFrame:(WebFrame*)webFrame
-{
-    BOOL leaving = _private->acceleratedFramesCount == 1;
-    ASSERT(_private->acceleratedFramesCount > 0);
-    
-    if (leaving)
-        [self willChangeValueForKey:UsingAcceleratedCompositingProperty];
-    --_private->acceleratedFramesCount;
-    if (leaving)
-        [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
-}
-
-#endif    
 
 - (BOOL)_isUsingAcceleratedCompositing
 {
@@ -2713,7 +2701,7 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
-    if (!_private->useDocumentViews && window) {
+    if (!_private->usesDocumentViews && window) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidBecomeKey:)
             name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidResignKey:)
@@ -2726,7 +2714,7 @@ static bool needsWebViewInitThreadWorkaround()
 - (void)removeWindowObservers
 {
     NSWindow *window = [self window];
-    if (!_private->useDocumentViews && window) {
+    if (!_private->usesDocumentViews && window) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -2779,7 +2767,7 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)_updateFocusedAndActiveState
 {
-    ASSERT(!_private->useDocumentViews);
+    ASSERT(!_private->usesDocumentViews);
     [self _updateFocusedAndActiveStateForFrame:[self mainFrame]];
 }
 
@@ -2789,30 +2777,30 @@ static bool needsWebViewInitThreadWorkaround()
     if (!frame)
         return;
     
-    Page* page = frame->page();
-    if (!page)
-        return;
-
     NSWindow *window = [self window];
     BOOL windowIsKey = [window isKeyWindow];
-    BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
 
-    WebFrameView *mainFrameView = [[self mainFrame] frameView];
-    id <WebDocumentView> documentView = [mainFrameView documentView];
-    BOOL documentViewIsResigningFirstResponder = [documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isResigningFirstResponder];
-        
+    NSView *contentView = _private->usesDocumentViews ? (NSView *)[[self mainFrame] frameView] : self;
     NSResponder *firstResponder = [window firstResponder];
-    if ([firstResponder isKindOfClass:[NSView class]] 
-        && [(NSView *)firstResponder isDescendantOf:mainFrameView])
-        page->focusController()->setActive(windowIsKey && !documentViewIsResigningFirstResponder);
+    if ([firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:contentView]) {
+        BOOL documentViewIsResigningFirstResponder;
+        if (!_private->usesDocumentViews) {
+            // FIXME: WebView probably needs a "resigning first responder" state just as WebHTMLView has.
+            documentViewIsResigningFirstResponder = NO;
+        } else {
+            id <WebDocumentView> documentView = [[[self mainFrame] frameView] documentView];
+            documentViewIsResigningFirstResponder = [documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isResigningFirstResponder];
+        }
+        _private->page->focusController()->setActive(windowIsKey && !documentViewIsResigningFirstResponder);
+    }
 
-    Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
-    frame->selection()->setFocused(frame == focusedFrame && windowOrSheetIsKey);
+    BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
+    frame->selection()->setFocused(frame == _private->page->focusController()->focusedOrMainFrame() && windowOrSheetIsKey);
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
 {
-    ASSERT(!_private->useDocumentViews);
+    ASSERT(!_private->usesDocumentViews);
     NSWindow *keyWindow = [notification object];
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
         [self _updateFocusedAndActiveState];
@@ -2820,7 +2808,7 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)_windowDidResignKey:(NSNotification *)notification
 {
-    ASSERT(!_private->useDocumentViews);
+    ASSERT(!_private->usesDocumentViews);
     NSWindow *formerKeyWindow = [notification object];
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
         [self _updateFocusedAndActiveState];
@@ -2828,7 +2816,7 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)_windowWillOrderOnScreen:(NSNotification *)notification
 {
-    ASSERT(!_private->useDocumentViews);
+    ASSERT(!_private->usesDocumentViews);
     if (![self shouldUpdateWhileOffscreen])
         [self setNeedsDisplay:YES];
 }
@@ -2949,21 +2937,21 @@ static bool needsWebViewInitThreadWorkaround()
 - (WebFrame *)mainFrame
 {
     // This can be called in initialization, before _private has been set up (3465613)
-    if (!_private)
-        return nil;
-    if (!_private->page)
+    if (!_private || !_private->page)
         return nil;
     return kit(_private->page->mainFrame());
 }
 
 - (WebFrame *)selectedFrame
 {
-    // If the first responder is a view in our tree, we get the frame containing the first responder.
-    // This is faster than searching the frame hierarchy, and will give us a result even in the case
-    // where the focused frame doesn't actually contain a selection.
-    WebFrame *focusedFrame = [self _focusedFrame];
-    if (focusedFrame)
-        return focusedFrame;
+    if (_private->usesDocumentViews) {
+        // If the first responder is a view in our tree, we get the frame containing the first responder.
+        // This is faster than searching the frame hierarchy, and will give us a result even in the case
+        // where the focused frame doesn't actually contain a selection.
+        WebFrame *focusedFrame = [self _focusedFrame];
+        if (focusedFrame)
+            return focusedFrame;
+    }
     
     // If the first responder is outside of our view tree, we search for a frame containing a selection.
     // There should be at most only one of these.
@@ -2979,7 +2967,7 @@ static bool needsWebViewInitThreadWorkaround()
     return kit(_private->page->backForwardList());
 }
 
-- (void)setMaintainsBackForwardList: (BOOL)flag
+- (void)setMaintainsBackForwardList:(BOOL)flag
 {
     if (!_private->page)
         return;
@@ -3031,7 +3019,7 @@ static bool needsWebViewInitThreadWorkaround()
     
     // FIXME: it would be nice to rework this code so that _private->zoomMultiplier doesn't exist and callers
     // all access _private->page->settings().
-    Frame* coreFrame = core([self mainFrame]);
+    Frame* coreFrame = [self _mainCoreFrame];
     if (coreFrame)
         coreFrame->setZoomFactor(m, isTextOnly);
 }
@@ -3178,7 +3166,7 @@ static bool needsWebViewInitThreadWorkaround()
     NSString *oldEncoding = [self customTextEncodingName];
     if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding])
         return;
-    if (Frame* mainFrame = core([self mainFrame]))
+    if (Frame* mainFrame = [self _mainCoreFrame])
         mainFrame->loader()->reloadWithOverrideEncoding(encoding);
 }
 
@@ -3219,7 +3207,7 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (WebScriptObject *)windowScriptObject
 {
-    Frame* coreFrame = core([self mainFrame]);
+    Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return nil;
     return coreFrame->script()->windowScriptObject();
@@ -3238,17 +3226,21 @@ static bool needsWebViewInitThreadWorkaround()
     if (hostWindow == _private->hostWindow)
         return;
 
-    Frame* coreFrame = core([self mainFrame]);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
-        [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (_private->usesDocumentViews) {
+        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+            [[[kit(frame) frameView] documentView] viewWillMoveToHostWindow:hostWindow];
+    }
     if (_private->hostWindow && [self window] != _private->hostWindow)
         [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:_private->hostWindow];
     if (hostWindow)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:NSWindowWillCloseNotification object:hostWindow];
     [_private->hostWindow release];
     _private->hostWindow = [hostWindow retain];
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
-        [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
+    if (_private->usesDocumentViews) {
+        for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+            [[[kit(frame) frameView] documentView] viewDidMoveToHostWindow];
+    }
 }
 
 - (NSWindow *)hostWindow
@@ -3284,7 +3276,7 @@ static bool needsWebViewInitThreadWorkaround()
     return [self _elementAtWindowPoint:[self convertPoint:point toView:nil]];
 }
 
-// The following 2 internal NSView methods are called on the drag destination by make scrolling while dragging work.
+// The following 2 internal NSView methods are called on the drag destination to make scrolling while dragging work.
 // Scrolling while dragging will only work if the drag destination is in a scroll view. The WebView is the drag destination. 
 // When dragging to a WebView, the document subview should scroll, but it doesn't because it is not the drag destination. 
 // Forward these calls to the document subview to make its scroll view scroll.
@@ -3353,87 +3345,98 @@ static bool needsWebViewInitThreadWorkaround()
     return core(self)->dragController()->performDrag(&dragData);
 }
 
-- (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types
+- (NSView *)_hitTest:(NSPoint *)point dragTypes:(NSSet *)types
 {
-    NSView *hitView = [super _hitTest:aPoint dragTypes:types];
-    if (!hitView && [[self superview] mouse:*aPoint inRect:[self frame]]) {
+    NSView *hitView = [super _hitTest:point dragTypes:types];
+    if (!hitView && [[self superview] mouse:*point inRect:[self frame]])
         return self;
-    } else {
-        return hitView;
-    }
+    return hitView;
 }
 
 - (BOOL)acceptsFirstResponder
 {
-    return [[[self mainFrame] frameView] acceptsFirstResponder];
+    if (_private->usesDocumentViews)
+        return [[[self mainFrame] frameView] acceptsFirstResponder];
+
+    // FIXME (Viewless): Need more code from WebHTMLView here.
+    return YES;
 }
 
 - (BOOL)becomeFirstResponder
 {
-    if (_private->becomingFirstResponder) {
-        // Fix for unrepro infinite recursion reported in radar 4448181. If we hit this assert on
-        // a debug build, we should figure out what causes the problem and do a better fix.
-        ASSERT_NOT_REACHED();
-        return NO;
-    }
-    
-    // This works together with setNextKeyView to splice the WebView into
-    // the key loop similar to the way NSScrollView does this. Note that
-    // WebFrameView has very similar code.
-    NSWindow *window = [self window];
-    WebFrameView *mainFrameView = [[self mainFrame] frameView];
+    if (_private->usesDocumentViews) {
+        if (_private->becomingFirstResponder) {
+            // Fix for unrepro infinite recursion reported in Radar 4448181. If we hit this assert on
+            // a debug build, we should figure out what causes the problem and do a better fix.
+            ASSERT_NOT_REACHED();
+            return NO;
+        }
+        
+        // This works together with setNextKeyView to splice the WebView into
+        // the key loop similar to the way NSScrollView does this. Note that
+        // WebFrameView has very similar code.
+        NSWindow *window = [self window];
+        WebFrameView *mainFrameView = [[self mainFrame] frameView];
 
-    NSResponder *previousFirstResponder = [[self window] _oldFirstResponderBeforeBecoming];
-    BOOL fromOutside = ![previousFirstResponder isKindOfClass:[NSView class]] || (![(NSView *)previousFirstResponder isDescendantOf:self] && previousFirstResponder != self);
-    
-    if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
-        NSView *previousValidKeyView = [self previousValidKeyView];
-        if ((previousValidKeyView != self) && (previousValidKeyView != mainFrameView)) {
+        NSResponder *previousFirstResponder = [[self window] _oldFirstResponderBeforeBecoming];
+        BOOL fromOutside = ![previousFirstResponder isKindOfClass:[NSView class]] || (![(NSView *)previousFirstResponder isDescendantOf:self] && previousFirstResponder != self);
+
+        if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
+            NSView *previousValidKeyView = [self previousValidKeyView];
+            if (previousValidKeyView != self && previousValidKeyView != mainFrameView) {
+                _private->becomingFirstResponder = YES;
+                _private->becomingFirstResponderFromOutside = fromOutside;
+                [window makeFirstResponder:previousValidKeyView];
+                _private->becomingFirstResponderFromOutside = NO;
+                _private->becomingFirstResponder = NO;
+                return YES;
+            }
+            return NO;
+        }
+
+        if ([mainFrameView acceptsFirstResponder]) {
             _private->becomingFirstResponder = YES;
             _private->becomingFirstResponderFromOutside = fromOutside;
-            [window makeFirstResponder:previousValidKeyView];
+            [window makeFirstResponder:mainFrameView];
             _private->becomingFirstResponderFromOutside = NO;
             _private->becomingFirstResponder = NO;
             return YES;
-        } else {
-            return NO;
-        }
+        } 
+
+        return NO;
     }
-    
-    if ([mainFrameView acceptsFirstResponder]) {
-        _private->becomingFirstResponder = YES;
-        _private->becomingFirstResponderFromOutside = fromOutside;
-        [window makeFirstResponder:mainFrameView];
-        _private->becomingFirstResponderFromOutside = NO;
-        _private->becomingFirstResponder = NO;
-        return YES;
-    } 
-    
-    return NO;
+
+    // FIXME (Viewless): Need more code from WebHTMLView here.
+    return YES;
 }
 
 - (NSView *)_webcore_effectiveFirstResponder
 {
-    WebFrameView *frameView = [[self mainFrame] frameView];
-    return frameView ? [frameView _webcore_effectiveFirstResponder] : [super _webcore_effectiveFirstResponder];
-}
-
-- (void)setNextKeyView:(NSView *)aView
-{
-    // This works together with becomeFirstResponder to splice the WebView into
-    // the key loop similar to the way NSScrollView does this. Note that
-    // WebFrameView has very similar code.
-    WebFrameView *mainFrameView = [[self mainFrame] frameView];
-    if (mainFrameView != nil) {
-        [mainFrameView setNextKeyView:aView];
-    } else {
-        [super setNextKeyView:aView];
+    if (_private && _private->usesDocumentViews) {
+        if (WebFrameView *frameView = [[self mainFrame] frameView])
+            return [frameView _webcore_effectiveFirstResponder];
     }
+    return [super _webcore_effectiveFirstResponder];
 }
 
-static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
+- (void)setNextKeyView:(NSView *)view
 {
-    Frame* coreFrame = core(curr);
+    if (_private && _private->usesDocumentViews) {
+        // This works together with becomeFirstResponder to splice the WebView into
+        // the key loop similar to the way NSScrollView does this. Note that
+        // WebFrameView has similar code.
+        if (WebFrameView *mainFrameView = [[self mainFrame] frameView]) {
+            [mainFrameView setNextKeyView:view];
+            return;
+        }
+    }
+
+    [super setNextKeyView:view];
+}
+
+static WebFrame *incrementFrame(WebFrame *frame, BOOL forward, BOOL wrapFlag)
+{
+    Frame* coreFrame = core(frame);
     return kit(forward
         ? coreFrame->tree()->traverseNextWithWrap(wrapFlag)
         : coreFrame->tree()->traversePreviousWithWrap(wrapFlag));
@@ -3474,7 +3477,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     if (!_private->page)
         return 0.0;
-
     return _private->page->progress()->estimatedProgress();
 }
 
@@ -3640,6 +3642,87 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             return result;
     } while ([result isDescendantOf:previousView]);
     return [previousView previousValidKeyView];
+}
+
+- (void)mouseDown:(NSEvent *)event
+{
+    // FIXME (Viewless): This method should be shared with WebHTMLView, which needs to
+    // do the same work in the usesDocumentViews case. We don't want to maintain two
+    // duplicate copies of this method.
+
+    if (_private->usesDocumentViews) {
+        [super mouseDown:event];
+        return;
+    }
+    
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    RetainPtr<WebView> protector = self;
+    if ([[self inputContext] wantsToHandleMouseEvents] && [[self inputContext] handleMouseEvent:event])
+        return;
+
+    _private->handlingMouseDownEvent = YES;
+
+    // Record the mouse down position so we can determine drag hysteresis.
+    [self _setMouseDownEvent:event];
+
+    NSInputManager *currentInputManager = [NSInputManager currentInputManager];
+    if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
+        goto done;
+
+    [_private->completionController endRevertingChange:NO moveLeft:NO];
+
+    // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
+    // We don't want to pass them along to KHTML a second time.
+    if (!([event modifierFlags] & NSControlKeyMask)) {
+        _private->ignoringMouseDraggedEvents = NO;
+
+        // Don't do any mouseover while the mouse is down.
+        [self _cancelUpdateMouseoverTimer];
+
+        // Let WebCore get a chance to deal with the event. This will call back to us
+        // to start the autoscroll timer if appropriate.
+        if (Frame* frame = [self _mainCoreFrame])
+            frame->eventHandler()->mouseDown(event);
+    }
+
+done:
+    _private->handlingMouseDownEvent = NO;
+}
+
+- (void)mouseUp:(NSEvent *)event
+{
+    // FIXME (Viewless): This method should be shared with WebHTMLView, which needs to
+    // do the same work in the usesDocumentViews case. We don't want to maintain two
+    // duplicate copies of this method.
+
+    if (_private->usesDocumentViews) {
+        [super mouseUp:event];
+        return;
+    }
+
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    [self _setMouseDownEvent:nil];
+
+    NSInputManager *currentInputManager = [NSInputManager currentInputManager];
+    if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
+        return;
+
+    [self retain];
+
+    [self _stopAutoscrollTimer];
+    if (Frame* frame = [self _mainCoreFrame])
+        frame->eventHandler()->mouseUp(event);
+    [self _updateMouseoverWithFakeEvent];
+
+    [self release];
 }
 
 @end
@@ -3936,15 +4019,21 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return;
     
     _private->hoverFeedbackSuspended = newValue;
-    id <WebDocumentView> documentView = [[[self mainFrame] frameView] documentView];
-    // FIXME: in a perfect world we'd do this in a general way that worked with any document view,
-    // such as by calling a protocol method or using respondsToSelector or sending a notification.
-    // But until there is any need for these more general solutions, we'll just hardwire it to work
-    // with WebHTMLView.
-    // Note that _hoverFeedbackSuspendedChanged needs to be called only on the main WebHTMLView, not
-    // on each subframe separately.
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _hoverFeedbackSuspendedChanged];
+
+    if (_private->usesDocumentViews) {
+        id <WebDocumentView> documentView = [[[self mainFrame] frameView] documentView];
+        // FIXME: in a perfect world we'd do this in a general way that worked with any document view,
+        // such as by calling a protocol method or using respondsToSelector or sending a notification.
+        // But until there is any need for these more general solutions, we'll just hardwire it to work
+        // with WebHTMLView.
+        // Note that _hoverFeedbackSuspendedChanged needs to be called only on the main WebHTMLView, not
+        // on each subframe separately.
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)documentView _hoverFeedbackSuspendedChanged];
+        return;
+    }
+
+    [self _updateMouseoverWithFakeEvent];
 }
 
 - (BOOL)isHoverFeedbackSuspended
@@ -4002,7 +4091,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)shouldClose
 {
-    Frame* coreFrame = core([self mainFrame]);
+    Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return YES;
     return coreFrame->shouldClose();
@@ -4065,7 +4154,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script
 {
-    Frame* coreFrame = core([self mainFrame]);
+    Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return nil;
     if (!coreFrame->document())
@@ -4440,7 +4529,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
         _private->editable = flag;
         if (!_private->tabKeyCyclesThroughElementsChanged && _private->page)
             _private->page->setTabKeyCyclesThroughElements(!flag);
-        Frame* mainFrame = core([self mainFrame]);
+        Frame* mainFrame = [self _mainCoreFrame];
         if (mainFrame) {
             if (flag) {
                 mainFrame->applyEditingStyleToBodyElement();
@@ -5117,6 +5206,7 @@ static WebFrameView *containingFrameView(NSView *view)
 {
     if (_private->closed)
         return nil;
+    ASSERT(_private->usesDocumentViews);
     NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
     if (![view isDescendantOf:[[self mainFrame] frameView]])
         return nil;
@@ -5361,6 +5451,184 @@ static WebFrameView *containingFrameView(NSView *view)
 {
     _private->insertionPasteboard = pasteboard;
 }
+
+- (void)_setMouseDownEvent:(NSEvent *)event
+{
+    ASSERT(!event || [event type] == NSLeftMouseDown || [event type] == NSRightMouseDown || [event type] == NSOtherMouseDown);
+
+    if (event == _private->mouseDownEvent)
+        return;
+
+    [event retain];
+    [_private->mouseDownEvent release];
+    _private->mouseDownEvent = event;
+}
+
+- (void)_cancelUpdateMouseoverTimer
+{
+    if (_private->updateMouseoverTimer) {
+        CFRunLoopTimerInvalidate(_private->updateMouseoverTimer);
+        CFRelease(_private->updateMouseoverTimer);
+        _private->updateMouseoverTimer = NULL;
+    }
+}
+
+- (void)_stopAutoscrollTimer
+{
+    NSTimer *timer = _private->autoscrollTimer;
+    _private->autoscrollTimer = nil;
+    [_private->autoscrollTriggerEvent release];
+    _private->autoscrollTriggerEvent = nil;
+    [timer invalidate];
+    [timer release];
+}
+
++ (void)_updateMouseoverWithEvent:(NSEvent *)event
+{
+    WebView *oldView = lastMouseoverView;
+
+    lastMouseoverView = nil;
+
+    NSView *contentView = [[event window] contentView];
+    NSPoint locationForHitTest = [[contentView superview] convertPoint:[event locationInWindow] fromView:nil];
+    for (NSView *hitView = [contentView hitTest:locationForHitTest]; hitView; hitView = [hitView superview]) {
+        if ([hitView isKindOfClass:[WebView class]]) {
+            lastMouseoverView = static_cast<WebView *>(hitView);
+            break;
+        }
+    }
+
+    if (lastMouseoverView && lastMouseoverView->_private->hoverFeedbackSuspended)
+        lastMouseoverView = nil;
+
+    if (lastMouseoverView != oldView) {
+        if (Frame* oldCoreFrame = [oldView _mainCoreFrame]) {
+            NSEvent *oldViewEvent = [NSEvent mouseEventWithType:NSMouseMoved
+                location:NSMakePoint(-1, -1)
+                modifierFlags:[[NSApp currentEvent] modifierFlags]
+                timestamp:[NSDate timeIntervalSinceReferenceDate]
+                windowNumber:[[oldView window] windowNumber]
+                context:[[NSApp currentEvent] context]
+                eventNumber:0 clickCount:0 pressure:0];
+            oldCoreFrame->eventHandler()->mouseMoved(oldViewEvent);
+        }
+    }
+
+    if (!lastMouseoverView)
+        return;
+
+    if (Frame* coreFrame = core([lastMouseoverView mainFrame]))
+        coreFrame->eventHandler()->mouseMoved(event);
+}
+
+- (void)_updateMouseoverWithFakeEvent
+{
+    [self _cancelUpdateMouseoverTimer];
+    
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
+        location:[[self window] convertScreenToBase:[NSEvent mouseLocation]]
+        modifierFlags:[[NSApp currentEvent] modifierFlags]
+        timestamp:[NSDate timeIntervalSinceReferenceDate]
+        windowNumber:[[self window] windowNumber]
+        context:[[NSApp currentEvent] context]
+        eventNumber:0 clickCount:0 pressure:0];
+    
+    [[self class] _updateMouseoverWithEvent:fakeEvent];
+}
+
+- (void)_setToolTip:(NSString *)toolTip
+{
+    if (_private->usesDocumentViews) {
+        id documentView = [[[self selectedFrame] frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [documentView _setToolTip:toolTip];
+        return;
+    }
+
+    // FIXME (Viewless): Code to handle tooltips needs to move into WebView.
+}
+
+- (void)_selectionChanged
+{
+    if (_private->usesDocumentViews) {
+        id documentView = [[[self selectedFrame] frameView] documentView];
+        if ([documentView isKindOfClass:[WebHTMLView class]])
+            [documentView _selectionChanged];
+        return;
+    }
+
+    // FIXME (Viewless): We'll need code here.
+}
+
+- (Frame*)_mainCoreFrame
+{
+    return (_private && _private->page) ? _private->page->mainFrame() : 0;
+}
+
+#if USE(ACCELERATED_COMPOSITING)
+
+- (BOOL)_needsOneShotDrawingSynchronization
+{
+    return _private->needsOneShotDrawingSynchronization;
+}
+
+- (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization
+{
+    _private->needsOneShotDrawingSynchronization = needsSynchronization;
+}
+
+- (void)_startedAcceleratedCompositingForFrame:(WebFrame*)webFrame
+{
+    BOOL entering = _private->acceleratedFramesCount == 0;
+    if (entering)
+        [self willChangeValueForKey:UsingAcceleratedCompositingProperty];
+    ++_private->acceleratedFramesCount;
+    if (entering)
+        [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
+}
+
+- (void)_stoppedAcceleratedCompositingForFrame:(WebFrame*)webFrame
+{
+    BOOL leaving = _private->acceleratedFramesCount == 1;
+    ASSERT(_private->acceleratedFramesCount > 0);
+    
+    if (leaving)
+        [self willChangeValueForKey:UsingAcceleratedCompositingProperty];
+    --_private->acceleratedFramesCount;
+    if (leaving)
+        [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
+}
+
+static void viewUpdateRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
+{
+    WebView* webView = reinterpret_cast<WebView*>(info);
+    [webView _viewWillDrawInternal];
+    [webView->_private _clearViewUpdateRunLoopObserver];
+}
+
+- (void)_scheduleViewUpdate
+{
+    // This is the compositing equivalent of -viewWillDraw. When we know that compositing layers
+    // have been set as needing display, we have to make an eager layout happen before the
+    // layers get committed by CoreAnimation.
+
+    if (_private->viewUpdateRunLoopObserver)
+        return;
+
+    // Run before AppKit does its window update.
+    const CFIndex runLoopOrder = NSDisplayWindowRunLoopOrdering - 1;
+
+    // The WebView always outlives the observer, so no need to retain/release.
+    CFRunLoopObserverContext context = { 0, self, 0, 0, 0 };
+
+    _private->viewUpdateRunLoopObserver = CFRunLoopObserverCreate(NULL,
+        kCFRunLoopBeforeWaiting | kCFRunLoopExit, FALSE /* one shot */,
+        runLoopOrder, viewUpdateRunLoopObserverCallBack, &context);
+
+    CFRunLoopAddObserver(CFRunLoopGetCurrent(), _private->viewUpdateRunLoopObserver, kCFRunLoopCommonModes);
+}
+
+#endif
 
 @end
 
@@ -5892,37 +6160,6 @@ BOOL CallFormDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, 
     }
     return result;
 }
-
-#if USE(ACCELERATED_COMPOSITING)
-static void viewUpdateRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
-{
-    WebView* webView = reinterpret_cast<WebView*>(info);
-    [webView _viewWillDrawInternal];
-    [webView->_private _clearViewUpdateRunLoopObserver];
-}
-
-- (void)_scheduleViewUpdate
-{
-    // This is the compositing equivalent of -viewWillDraw. When we know that compositing layers
-    // have been set as needing display, we have to make an eager layout happen before the
-    // layers get committed by CA.
-    if (!_private->viewUpdateRunLoopObserver) {
-        const CFIndex runLoopOrder = NSDisplayWindowRunLoopOrdering-1; // Run before AppKit does its window update
-        CFRunLoopObserverContext context = {
-            0,
-            reinterpret_cast<void*>(self),
-            NULL,   // The WebView always outlives the observer, so no need to retain/release.
-            NULL,
-            NULL
-        };
-        _private->viewUpdateRunLoopObserver = CFRunLoopObserverCreate(NULL, kCFRunLoopBeforeWaiting | kCFRunLoopExit, false /* one shot */,
-                                                        runLoopOrder, viewUpdateRunLoopObserverCallBack, &context);
-
-        CFRunLoopAddObserver(CFRunLoopGetCurrent(), _private->viewUpdateRunLoopObserver, kCFRunLoopCommonModes);
-    }
-    
-}
-#endif
 
 @end
 

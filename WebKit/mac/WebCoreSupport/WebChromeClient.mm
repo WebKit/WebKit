@@ -477,16 +477,20 @@ void WebChromeClient::scrollRectIntoView(const IntRect& r, const ScrollView* scr
     // FIXME: This scrolling behavior should be under the control of the embedding client (rather than something
     // we just do ourselves).
     
-    // We have to convert back to document view coordinates in order to let the flipping conversion take place.  It just
-    // doesn't make sense for the scrollRectIntoView API to take document view coordinates.
     IntRect scrollRect = r;
-    scrollRect.move(scrollView->scrollOffset());
+    NSView *startView = m_webView;
+    if ([m_webView _usesDocumentViews]) {
+        // We have to convert back to document view coordinates.
+        // It doesn't make sense for the scrollRectIntoView API to take document view coordinates.
+        scrollRect.move(scrollView->scrollOffset());
+        startView = [[[m_webView mainFrame] frameView] documentView];
+    }
     NSRect rect = scrollRect;
-    for (NSView *view = [[[m_webView mainFrame] frameView] documentView]; view; view = [view superview]) { 
+    for (NSView *view = startView; view; view = [view superview]) { 
         if ([view isKindOfClass:[NSClipView class]]) { 
             NSClipView *clipView = (NSClipView *)view; 
             NSView *documentView = [clipView documentView]; 
-            [documentView scrollRectToVisible:[documentView convertRect:rect fromView:[[[m_webView mainFrame] frameView] documentView]]]; 
+            [documentView scrollRectToVisible:[documentView convertRect:rect fromView:startView]]; 
         } 
     }
 }
@@ -502,13 +506,16 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsig
 
 void WebChromeClient::setToolTip(const String& toolTip)
 {
-    [(WebHTMLView *)[[[m_webView mainFrame] frameView] documentView] _setToolTip:toolTip];
+    [m_webView _setToolTip:toolTip];
 }
 
 void WebChromeClient::print(Frame* frame)
 {
-    WebFrameView* frameView = [kit(frame) frameView];
-    CallUIDelegate(m_webView, @selector(webView:printFrameView:), frameView);
+    WebFrame *webFrame = kit(frame);
+    if ([[m_webView UIDelegate] respondsToSelector:@selector(webView:printFrame:)])
+        CallUIDelegate(m_webView, @selector(webView:printFrame:), webFrame);
+    else if ([m_webView _usesDocumentViews])
+        CallUIDelegate(m_webView, @selector(webView:printFrameView:), [webFrame frameView]);
 }
 
 #if ENABLE(DATABASE)
@@ -649,15 +656,16 @@ String WebChromeClient::generateReplacementFile(const String& path)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebFrameView *frameView = [kit(frame) frameView];
-    WebHTMLView *docView = (WebHTMLView *)[frameView documentView];
+    WebHTMLView *documentView = (WebHTMLView *)[frameView documentView];
     if (graphicsLayer)
-        [docView attachRootLayer:graphicsLayer->nativeLayer()];
+        [documentView attachRootLayer:graphicsLayer->nativeLayer()];
     else
-        [docView detachRootLayer];
+        [documentView detachRootLayer];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -674,6 +682,7 @@ void WebChromeClient::scheduleViewUpdate()
     [m_webView _scheduleViewUpdate];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+
 #endif
 
 void WebChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)

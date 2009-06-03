@@ -27,18 +27,13 @@
 #define HostWindow_h
 
 #include <wtf/Noncopyable.h>
-#include "IntRect.h"
 #include "Widget.h"
 
 namespace WebCore {
 
-class IntPoint;
-class IntRect;
-
 class HostWindow : Noncopyable {
 public:
-    HostWindow() {}
-    virtual ~HostWindow() {}
+    virtual ~HostWindow() { }
 
     // The repaint method asks the host window to repaint a rect in the window's coordinate space.  The
     // contentChanged boolean indicates whether or not the Web page content actually changed (or if a repaint

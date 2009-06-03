@@ -1,8 +1,6 @@
-/**
- * This file is part of the HTML widget for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,13 +22,10 @@
 #include "config.h"
 #include "RenderApplet.h"
 
-#include "Document.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "HTMLAppletElement.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
-#include "Widget.h"
 
 namespace WebCore {
 
@@ -43,23 +38,19 @@ RenderApplet::RenderApplet(HTMLAppletElement* applet, const HashMap<String, Stri
     setInline(true);
 }
 
-RenderApplet::~RenderApplet()
-{
-}
-
 IntSize RenderApplet::intrinsicSize() const
 {
     // FIXME: This doesn't make sense. We can't just start returning
     // a different size once we've created the widget and expect
     // layout and sizing to be correct. We should remove this and
     // pass the appropriate intrinsic size in the constructor.
-    return m_widget ? IntSize(50, 50) : IntSize(150, 150);
+    return widget() ? IntSize(50, 50) : IntSize(150, 150);
 }
 
 void RenderApplet::createWidgetIfNecessary()
 {
     HTMLAppletElement* element = static_cast<HTMLAppletElement*>(node());
-    if (m_widget || !element->isFinishedParsingChildren())
+    if (widget() || !element->isFinishedParsingChildren())
         return;
 
     // FIXME: Java applets can't be resized (this is a bug in Apple's Java implementation).

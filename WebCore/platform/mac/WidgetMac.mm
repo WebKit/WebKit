@@ -285,7 +285,9 @@ void Widget::afterMouseDown(NSView *view, Widget* widget)
 
 IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
 {
-    if (!platformWidget() && parent()) {
+    if (!platformWidget()) {
+        if (!parent())
+            return point;
         IntPoint result = parent()->convertFromContainingWindow(point);
         result.move(parent()->scrollX() - x(), parent()->scrollY() - y());
         return result;
@@ -300,7 +302,9 @@ IntPoint Widget::convertFromContainingWindow(const IntPoint& point) const
 
 IntRect Widget::convertFromContainingWindow(const IntRect& rect) const
 {
-    if (!platformWidget() && parent()) {
+    if (!platformWidget()) {
+        if (!parent())
+            return rect;
         IntRect result = parent()->convertFromContainingWindow(rect);
         result.move(parent()->scrollX() - x(), parent()->scrollY() - y());
         return result;

@@ -890,15 +890,14 @@ void FrameLoaderClientWx::transitionToCommittedForNewPage()
 
     m_frame->setView(0);
 
-    FrameView* frameView;
+    RefPtr<FrameView> frameView;
     if (isMainFrame)
-        frameView = new FrameView(m_frame, IntRect(m_webView->GetRect()).size());
+        frameView = FrameView::create(m_frame, IntRect(m_webView->GetRect()).size());
     else
-        frameView = new FrameView(m_frame);
+        frameView = FrameView::create(m_frame);
 
     ASSERT(frameView);
     m_frame->setView(frameView);
-    frameView->deref(); // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
 
     frameView->setPlatformWidget(m_webView);
 

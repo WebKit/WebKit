@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
- * Copyright (C) 2008 Apple, Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,14 @@
 
 #include "CachedPage.h"
 #include "DocumentLoader.h"
+#include "EmptyClients.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLFormElement.h"
+#include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "Page.h"
 #include "RenderView.h"
@@ -45,8 +47,6 @@
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
-
-#include "EmptyClients.h"
 
 namespace WebCore {
 
@@ -76,36 +76,33 @@ private:
 
 SVGImage::SVGImage(ImageObserver* observer)
     : Image(observer)
-    , m_document(0)
-    , m_chromeClient(0)
-    , m_page(0)
-    , m_frame(0)
-    , m_frameView(0)
 {
 }
 
 SVGImage::~SVGImage()
 {
-    if (m_frame)
-        m_frame->loader()->frameDetached(); // Break both the loader and view references to the frame
+    if (m_page) {
+        m_page->mainFrame()->loader()->frameDetached(); // Break both the loader and view references to the frame
 
-    // Clear these manually so we can safely delete the ChromeClient afterwards
-    m_frameView.clear();
-    m_frame.clear();
-    m_page.clear();
-    
+        // Clear explicitly because we want to delete the page before the ChromeClient.
+        // FIXME: I believe that's already guaranteed by C++ object destruction rules,
+        // so this may matter only for the assertion below.
+        m_page.clear();
+    }
+
     // Verify that page teardown destroyed the Chrome
     ASSERT(!m_chromeClient->image());
 }
 
 void SVGImage::setContainerSize(const IntSize& containerSize)
 {
-    if (containerSize.width() <= 0 || containerSize.height() <= 0)
+    if (containerSize.isEmpty())
         return;
 
-    if (!m_frame)
+    if (!m_page)
         return;
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
     if (!rootElement)
         return;
 
@@ -114,9 +111,10 @@ void SVGImage::setContainerSize(const IntSize& containerSize)
 
 bool SVGImage::usesContainerSize() const
 {
-    if (!m_frame)
+    if (!m_page)
         return false;
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
     if (!rootElement)
         return false;
 
@@ -125,10 +123,10 @@ bool SVGImage::usesContainerSize() const
 
 IntSize SVGImage::size() const
 {
-    if (!m_frame)
+    if (!m_page)
         return IntSize();
-    
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(frame->document())->rootElement();
     if (!rootElement)
         return IntSize();
     
@@ -151,9 +149,9 @@ IntSize SVGImage::size() const
 
 bool SVGImage::hasRelativeWidth() const
 {
-    if (!m_frame)
+    if (!m_page)
         return false;
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_page->mainFrame()->document())->rootElement();
     if (!rootElement)
         return false;
 
@@ -162,9 +160,9 @@ bool SVGImage::hasRelativeWidth() const
 
 bool SVGImage::hasRelativeHeight() const
 {
-    if (!m_frame)
+    if (!m_page)
         return false;
-    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_frame->document())->rootElement();
+    SVGSVGElement* rootElement = static_cast<SVGDocument*>(m_page->mainFrame()->document())->rootElement();
     if (!rootElement)
         return false;
 
@@ -173,22 +171,24 @@ bool SVGImage::hasRelativeHeight() const
 
 void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp)
 {
-    if (!m_frame)
+    if (!m_page)
         return;
-    
+
+    FrameView* view = m_page->mainFrame()->view();
+
     context->save();
     context->setCompositeOperation(compositeOp);
     context->clip(enclosingIntRect(dstRect));
     if (compositeOp != CompositeSourceOver)
-        context->beginTransparencyLayer(1.0f);
+        context->beginTransparencyLayer(1);
     context->translate(dstRect.location().x(), dstRect.location().y());
-    context->scale(FloatSize(dstRect.width()/srcRect.width(), dstRect.height()/srcRect.height()));
+    context->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
 
-    m_frame->view()->resize(size());
+    view->resize(size());
 
-    if (m_frame->view()->needsLayout())
-        m_frame->view()->layout();
-    m_frame->view()->paint(context, enclosingIntRect(srcRect));
+    if (view->needsLayout())
+        view->layout();
+    view->paint(context, enclosingIntRect(srcRect));
 
     if (compositeOp != CompositeSourceOver)
         context->endTransparencyLayer();
@@ -205,20 +205,22 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
     // frame cache, or better yet, not use a cache for tiled drawing at all, instead
     // having a tiled drawing callback (hopefully non-virtual).
     if (!m_frameCache) {
+        if (!m_page)
+            return 0;
         m_frameCache = ImageBuffer::create(size(), false);
         if (!m_frameCache) // failed to allocate image
             return 0;
-        renderSubtreeToImage(m_frameCache.get(), m_frame->contentRenderer());
+        renderSubtreeToImage(m_frameCache.get(), m_page->mainFrame()->contentRenderer());
     }
     return m_frameCache->image()->nativeImageForCurrentFrame();
 }
 
 bool SVGImage::dataChanged(bool allDataReceived)
 {
-    int length = m_data->size();
-    if (!length) // if this was an empty image
+    // Don't do anything if is an empty image.
+    if (!m_data->size())
         return true;
-    
+
     if (allDataReceived) {
         static FrameLoaderClient* dummyFrameLoaderClient =  new EmptyFrameLoaderClient;
         static EditorClient* dummyEditorClient = new EmptyEditorClient;
@@ -228,28 +230,29 @@ bool SVGImage::dataChanged(bool allDataReceived)
 
         m_chromeClient.set(new SVGImageChromeClient(this));
         
-        // FIXME: If this SVG ends up loading itself, we'll leak this Frame (and associated DOM & render trees).
-        // The Cache code does not know about CachedImages holding Frames and won't know to break the cycle.
+        // FIXME: If this SVG ends up loading itself, we might leak the world.
+        // THe comment said that the Cache code does not know about CachedImages
+        // holding Frames and won't know to break the cycle. But 
         m_page.set(new Page(m_chromeClient.get(), dummyContextMenuClient, dummyEditorClient, dummyDragClient, dummyInspectorClient));
         m_page->settings()->setJavaScriptEnabled(false);
         m_page->settings()->setPluginsEnabled(false);
 
-        m_frame = Frame::create(m_page.get(), 0, dummyFrameLoaderClient);
-        m_frameView = new FrameView(m_frame.get());
-        m_frameView->deref(); // FIXME: FrameView starts with a refcount of 1
-        m_frame->setView(m_frameView.get());
-        m_frame->init();
+        RefPtr<Frame> frame = Frame::create(m_page.get(), 0, dummyFrameLoaderClient);
+        frame->setView(FrameView::create(frame.get()));
+        frame->init();
         ResourceRequest fakeRequest(KURL(""));
-        m_frame->loader()->load(fakeRequest, false); // Make sure the DocumentLoader is created
-        m_frame->loader()->cancelContentPolicyCheck(); // cancel any policy checks
-        m_frame->loader()->commitProvisionalLoad(0);
-        m_frame->loader()->setResponseMIMEType("image/svg+xml");
-        m_frame->loader()->begin(KURL()); // create the empty document
-        m_frame->loader()->write(m_data->data(), m_data->size());
-        m_frame->loader()->end();
-        m_frameView->setTransparent(true); // SVG Images are transparent.
+        FrameLoader* loader = frame->loader();
+        loader->load(fakeRequest, false); // Make sure the DocumentLoader is created
+        loader->cancelContentPolicyCheck(); // cancel any policy checks
+        loader->commitProvisionalLoad(0);
+        loader->setResponseMIMEType("image/svg+xml");
+        loader->begin(KURL()); // create the empty document
+        loader->write(m_data->data(), m_data->size());
+        loader->end();
+        frame->view()->setTransparent(true); // SVG Images are transparent.
     }
-    return m_frameView;
+
+    return m_page;
 }
 
 }
