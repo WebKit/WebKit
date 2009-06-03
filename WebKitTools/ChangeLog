@@ -1,3 +1,14 @@
+2009-06-02  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Add "replace" behavior so that it shows the addition part of the
+        replacement of the file first, and then shows the changes.
+        
+        Future: Add in showing the removal part of the replacement.
+
+        * Scripts/svn-create-patch:
+
 2009-06-02  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

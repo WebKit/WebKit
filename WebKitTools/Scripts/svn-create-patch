@@ -174,7 +174,7 @@ sub findModificationType($)
     my ($stat) = @_;
     my $fileStat = substr($stat, 0, 1);
     my $propertyStat = substr($stat, 1, 1);
-    if ($fileStat eq "A") {
+    if ($fileStat eq "A" || $fileStat eq "R") {
         my $additionWithHistory = substr($stat, 3, 1);
         return $additionWithHistory eq "+" ? "additionWithHistory" : "addition";
     }
