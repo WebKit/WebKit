@@ -1,3 +1,11 @@
+2009-06-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Remove workaround that was added to address <rdar://problem/5488678> as it no longer affects our Tiger builds.
+
+        * Configurations/Base.xcconfig:
+
 2009-06-01  Darin Adler  <darin@apple.com>
 
         * WebView/WebTextCompletionController.mm: Fix Tiger build by adding import
