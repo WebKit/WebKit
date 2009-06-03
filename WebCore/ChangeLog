@@ -2,6 +2,17 @@
 
         Reviewed by Timothy Hatcher.
 
+        Reorder ResourcesPanel components initialization to unfreeze resource list scroller.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26159
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+
+2009-06-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
         - Fix for crash (preceded by assertion) in InspectorController::didCommitLoad
           when reloading or navigating with the Inspector open.
         - Fix for Inspector's Elements panel being empty when Inspector first appears.

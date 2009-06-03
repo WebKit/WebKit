@@ -35,6 +35,7 @@ WebInspector.ResourcesPanel = function()
 
     this.viewsContainerElement = document.createElement("div");
     this.viewsContainerElement.id = "resource-views";
+    this.element.appendChild(this.viewsContainerElement);
 
     this.containerElement = document.createElement("div");
     this.containerElement.id = "resources-container";
@@ -133,7 +134,6 @@ WebInspector.ResourcesPanel = function()
     this.panelEnablerView.addEventListener("enable clicked", this._enableResourceTracking, this);
 
     this.element.appendChild(this.panelEnablerView.element);
-    this.element.appendChild(this.viewsContainerElement);
 
     this.enableToggleButton = document.createElement("button");
     this.enableToggleButton.className = "enable-toggle-status-bar-item status-bar-item";
