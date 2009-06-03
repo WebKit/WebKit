@@ -1,3 +1,21 @@
+2009-06-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        - Fix for crash (preceded by assertion) in InspectorController::didCommitLoad
+          when reloading or navigating with the Inspector open.
+        - Fix for Inspector's Elements panel being empty when Inspector first appears.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26134
+        https://bugs.webkit.org/show_bug.cgi?id=26135
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::scriptObjectReady):
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::ensureResourceTrackingSettingsLoaded):
+        * inspector/InspectorController.h:
+
 2009-06-03  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r44379

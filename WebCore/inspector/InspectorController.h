@@ -213,6 +213,7 @@ public:
     void enableResourceTracking(bool always = false);
     void disableResourceTracking(bool always = false);
     bool resourceTrackingEnabled() const { return m_resourceTrackingEnabled; }
+    void ensureResourceTrackingSettingsLoaded();
 
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
