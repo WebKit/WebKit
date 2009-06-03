@@ -1,3 +1,16 @@
+2009-06-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        v8's ScriptController::evaluate should protect the Frame like the jsc version.
+        https://bugs.webkit.org/show_bug.cgi?id=26172
+
+        This change is simply copying protections done for Frame in the method
+        WebCore::ScriptController::evaluate in the file js/ScriptController.cpp.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+
 2009-06-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

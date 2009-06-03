@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -191,7 +192,14 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
         return ScriptValue();
 
     v8::Context::Scope scope(context);
+
+    RefPtr<Frame> protect(m_frame);
+
     v8::Local<v8::Value> object = m_proxy->evaluate(sourceCode, 0);
+
+    // Evaluating the JavaScript could cause the frame to be deallocated
+    // so we start the keep alive timer here.
+    m_frame->keepAlive();
 
     if (object.IsEmpty() || object->IsUndefined())
         return ScriptValue();
