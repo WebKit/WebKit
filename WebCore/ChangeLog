@@ -1,3 +1,20 @@
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/6841120> Use CTFontManager notifications instead
+          of ATS notifications
+
+        * platform/graphics/FontCache.h: Made it an error to destroy a
+        FontCache instance.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::fontCacheRegisteredFontsChangedNotificationCallback): Added
+        this notification callback for the
+        kCTFontManagerRegisteredFontsChangedNotification, which calls
+        invalidate().
+        (WebCore::FontCache::platformInit): Register for
+        kCTFontManagerRegisteredFontsChangedNotification.
+
 2009-06-03  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

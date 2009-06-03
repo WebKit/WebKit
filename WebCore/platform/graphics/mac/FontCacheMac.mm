@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,16 +44,30 @@ typedef int NSInteger;
 
 namespace WebCore {
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)
+{
+    ASSERT_UNUSED(observer, observer == fontCache());
+    ASSERT_UNUSED(name, CFEqual(name, kCTFontManagerRegisteredFontsChangedNotification));
+    fontCache()->invalidate();
+}
+#else
 static void fontCacheATSNotificationCallback(ATSFontNotificationInfoRef, void*)
 {
     fontCache()->invalidate();
 }
+#endif
 
 void FontCache::platformInit()
 {
     wkSetUpFontCache();
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
+#else
+    // kCTFontManagerRegisteredFontsChangedNotification does not exist on Leopard and earlier.
     // FIXME: Passing kATSFontNotifyOptionReceiveWhileSuspended may be an overkill and does not seem to work anyway.
     ATSFontNotificationSubscribe(fontCacheATSNotificationCallback, kATSFontNotifyOptionReceiveWhileSuspended, 0, 0);
+#endif
 }
 
 static int toAppKitFontWeight(FontWeight fontWeight)
