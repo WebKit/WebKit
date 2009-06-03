@@ -2047,12 +2047,6 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
     return usesTestModeFocusRingColor();
 }
 
-// This is only used by versions of Safari up to and including 3.0 and should be removed in a future release. 
-+ (NSString *)_minimumRequiredSafariBuildNumber
-{
-    return @"420+";
-}
-
 - (void)setAlwaysShowVerticalScroller:(BOOL)flag
 {
     WebDynamicScrollBarsView *scrollview = [[[self mainFrame] frameView] _scrollView];

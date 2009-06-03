@@ -1,5 +1,14 @@
 2009-06-03  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Mark Rowe.
+
+        - remove a private method that was used only by Safari 3.0.
+
+        * WebView/WebView.mm: Removed +_minimumRequiredSafariBuildNumber.
+        * WebView/WebViewPrivate.h: Ditto.
+
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
         - build fix
 
         * WebView/WebHTMLView.mm:
