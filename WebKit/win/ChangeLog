@@ -1,3 +1,10 @@
+2009-06-03  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix for Windows Cairo.
+
+        * WebKit.vcproj/WebKit.vcproj: Remove unneeded giflib.lib
+          link command.
+
 2009-06-01  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix for Cairo Windows target.  Windows link definition
