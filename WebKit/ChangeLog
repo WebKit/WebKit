@@ -1,3 +1,11 @@
+2009-06-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add WebViewInternal.mm.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-06-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

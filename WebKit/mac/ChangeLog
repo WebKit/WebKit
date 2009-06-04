@@ -1,5 +1,19 @@
 2009-06-03  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Move WebViewPrivate structure to WebViewInternal.h/mm.
+
+        * WebView/WebView.mm:
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewInternal.mm: Added.
+        (+[WebViewPrivate initialize]):
+        (-[WebViewPrivate init]):
+        (-[WebViewPrivate dealloc]):
+        (-[WebViewPrivate finalize]):
+
+2009-06-03  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Small cleanup in WebView.
