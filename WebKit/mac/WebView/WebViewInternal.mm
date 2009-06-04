@@ -32,6 +32,7 @@
 #import "WebKitLogging.h"
 #import "WebPreferenceKeysPrivate.h"
 #import <WebCore/WebCoreObjCExtras.h>
+#import <objc/objc-auto.h>
 #import <runtime/InitializeThreading.h>
 
 BOOL applicationIsTerminating = NO;

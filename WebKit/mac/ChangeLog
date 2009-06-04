@@ -1,3 +1,9 @@
+2009-06-04  Dan Bernstein  <mitz@apple.com>
+
+        - build fix
+
+        * WebView/WebViewInternal.mm:
+
 2009-06-03  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
