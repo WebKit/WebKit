@@ -9659,6 +9659,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\editing\ReplaceNodeWithSpanCommand.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\editing\ReplaceNodeWithSpanCommand.h"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\ReplaceSelectionCommand.cpp"
 				>
 			</File>
