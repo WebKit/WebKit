@@ -309,6 +309,8 @@
 		AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
 		BC542A9A0FD73A5E00D8AB5D /* WebViewInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC542A990FD73A5E00D8AB5D /* WebViewInternal.mm */; };
+		BC542C420FD7766F00D8AB5D /* WebDelegateImplementationCaching.h in Headers */ = {isa = PBXBuildFile; fileRef = BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */; };
+		BC542C430FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */; };
 		C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = C0167BF60D7F5DD00028696E /* WebScriptDebugger.h */; };
 		C0167BF90D7F5DD00028696E /* WebScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
@@ -562,6 +564,8 @@
 		AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMOperationsInternal.h; sourceTree = "<group>"; };
 		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC542A990FD73A5E00D8AB5D /* WebViewInternal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewInternal.mm; sourceTree = "<group>"; };
+		BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDelegateImplementationCaching.h; sourceTree = "<group>"; };
+		BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDelegateImplementationCaching.mm; sourceTree = "<group>"; };
 		BE4FBECB0653DF47005EDE15 /* WebEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39904C62C4E004D0EF6 /* WebNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSURLExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1029,6 +1033,8 @@
 				39446071020F50ED0ECA1767 /* WebDataSource.mm */,
 				658A40950A14853B005E6987 /* WebDataSourceInternal.h */,
 				39446072020F50ED0ECA1767 /* WebDataSourcePrivate.h */,
+				BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */,
+				BC542C410FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm */,
 				35081DAE02B6D4F50ACA2ACA /* WebDocument.h */,
 				ED21B9810528F7AA003299AC /* WebDocumentInternal.h */,
 				65FFB7FA0AD0B7D30048CD05 /* WebDocumentLoaderMac.h */,
@@ -1426,6 +1432,7 @@
 				0AEBFF630F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.h in Headers */,
 				0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */,
 				936A2DEA0FD2D08400D312DB /* WebTextCompletionController.h in Headers */,
+				BC542C420FD7766F00D8AB5D /* WebDelegateImplementationCaching.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1754,6 +1761,7 @@
 				E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */,
 				936A2DE80FD2D08000D312DB /* WebTextCompletionController.mm in Sources */,
 				BC542A9A0FD73A5E00D8AB5D /* WebViewInternal.mm in Sources */,
+				BC542C430FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

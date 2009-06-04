@@ -2,6 +2,20 @@
 
         Reviewed by Mark Rowe.
 
+        Move delegate implementation caching logic into its own files.
+
+        * WebView/WebDelegateImplementationCaching.h: Copied from mac/WebView/WebViewInternal.h.
+        * WebView/WebDelegateImplementationCaching.mm: Copied from mac/WebView/WebView.mm.
+        (WebViewGetResourceLoadDelegateImplementations):
+        (WebViewGetFrameLoadDelegateImplementations):
+        (WebViewGetScriptDebugDelegateImplementations):
+        * WebView/WebView.mm:
+        * WebView/WebViewInternal.h:
+
+2009-06-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
         Move WebViewPrivate structure to WebViewInternal.h/mm.
 
         * WebView/WebView.mm:
