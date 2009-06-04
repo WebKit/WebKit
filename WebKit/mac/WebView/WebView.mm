@@ -2555,19 +2555,6 @@ static bool needsWebViewInitThreadWorkaround()
         _private->page->didMoveOnscreen();
 }
 
-- (void)_updateFocusedStateForFrame:(WebFrame *)webFrame
-{
-    if (!_private->page)
-        return;
-    
-    Frame* frame = [self _mainCoreFrame];
-    if (!frame)
-        return;
-
-    Frame* focusedFrame = _private->page->focusController()->focusedFrame();
-    frame->selection()->setFocused(frame == focusedFrame);
-}
-
 - (void)_windowDidBecomeKey:(NSNotification *)notification
 {
     NSWindow *keyWindow = [notification object];

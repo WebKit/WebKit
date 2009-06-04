@@ -35,6 +35,7 @@
 #include "Element.h"
 #include "Event.h"
 #include "EventHandler.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "FrameTree.h"
@@ -65,13 +66,17 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
     if (m_focusedFrame == frame)
         return;
 
-    if (m_focusedFrame && m_focusedFrame->view())
+    if (m_focusedFrame && m_focusedFrame->view()) {
         m_focusedFrame->selection()->setFocused(false);
+        m_focusedFrame->document()->dispatchWindowEvent(eventNames().blurEvent, false, false);
+    }
 
     m_focusedFrame = frame;
 
-    if (m_focusedFrame && m_focusedFrame->view())
+    if (m_focusedFrame && m_focusedFrame->view()) {
         m_focusedFrame->selection()->setFocused(true);
+        m_focusedFrame->document()->dispatchWindowEvent(eventNames().focusEvent, false, false);
+    }
 }
 
 Frame* FocusController::focusedOrMainFrame()
@@ -316,6 +321,9 @@ void FocusController::setActive(bool active)
     }
 
     focusedOrMainFrame()->selection()->pageActivationChanged();
+    
+    if (m_focusedFrame)
+        m_focusedFrame->document()->dispatchWindowEvent(active ? eventNames().focusEvent : eventNames().blurEvent, false, false);
 }
 
 } // namespace WebCore

@@ -1,3 +1,19 @@
+2009-06-04  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove _updateFocusedStateForFrame, since it's actually not even necessary now that I made
+        setFocusedFrame get called explicitly from become/ResignFirstResponder.  setFocusedFrame does
+        the work of focusing the selection already.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView becomeFirstResponder]):
+        (-[WebHTMLView resignFirstResponder]):
+        * WebView/WebView.mm:
+        * WebView/WebViewInternal.h:
+
 2009-06-04  Dan Bernstein  <mitz@apple.com>
 
         - build fix

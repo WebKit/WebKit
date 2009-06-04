@@ -3573,7 +3573,6 @@ static BOOL isInPasswordField(Frame* coreFrame)
     if (![[self _webView] _isPerformingProgrammaticFocus])
         direction = [[self window] keyViewSelectionDirection];
 
-    [[self _webView] _updateFocusedStateForFrame:[self _frame]];
     [self _updateFontPanel];
     
     Frame* frame = core([self _frame]);
@@ -3623,8 +3622,6 @@ static BOOL isInPasswordField(Frame* coreFrame)
                 page->focusController()->setFocusedFrame(0);
             }
         }
-
-        [[self _webView] _updateFocusedStateForFrame:[self _frame]];
     }
     return resign;
 }

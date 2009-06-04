@@ -1,3 +1,16 @@
+2009-06-04  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix the Window focus test to not resign first responder, since that actually made the test
+        incorrect.  An unfocused WebHTMLView's DOM window should not receive focus/blur events when the activation
+        changes.
+
+        Now the test just checks that a first responder WebHTMLView will actually fire focus/blur on the DOM window
+        as the window gains/loses key.
+
+        * fast/dom/Window/window-onFocus.html:
+
 2009-06-05  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by Eric Seidel.

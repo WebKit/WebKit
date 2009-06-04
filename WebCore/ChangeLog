@@ -1,3 +1,17 @@
+2009-06-04  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move DOM window focus/blur out of SelectionController and into FocusController.  Make sure it
+        fires on the focused frame when the page activation state changes also.  This is covered by an existing
+        layout test (albeit badly).  I have modified the test to be correct.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setFocused):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedFrame):
+        (WebCore::FocusController::setActive):
+
 2009-06-04  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Eric Seidel.
