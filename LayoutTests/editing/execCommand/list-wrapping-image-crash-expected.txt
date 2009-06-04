@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: line 9: Error: HIERARCHY_REQUEST_ERR: DOM Exception 3
-
+PASSED - this test case didn't ASSERT, bug 19066
