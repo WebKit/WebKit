@@ -1,3 +1,19 @@
+2009-06-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26015
+
+        [Qt] Single-threaded QtWebKit configuration
+
+        Turn off Database, DOM storage, icon database and Web Workers support
+        when ENABLE_SINGLE_THREADED is turned on.
+
+        Set SQLITE_THREADSAFE to false to turn off SQLite mutexes
+        when ENABLE_SINGLE_THREADED is turned on.
+
+        * WebCore.pro:
+
 2009-06-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

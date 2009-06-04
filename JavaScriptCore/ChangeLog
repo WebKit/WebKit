@@ -1,3 +1,17 @@
+2009-06-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Single-threaded QtWebKit configuration
+        <https://bugs.webkit.org/show_bug.cgi?id=26015>
+
+        * JavaScriptCore.pri: Use ThreadingNone.cpp instead of
+        ThreadingQt.cpp and make sure ENABLE_JSC_MULTIPLE_THREADS is turned off
+        when ENABLE_SINGLE_THREADED is tuned on
+        * wtf/ThreadingNone.cpp:
+        (WTF::ThreadCondition::wait): Fix compilation warning.
+        (WTF::ThreadCondition::timedWait): Ditto.
+
 2009-06-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.

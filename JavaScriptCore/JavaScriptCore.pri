@@ -221,8 +221,14 @@ SOURCES += \
     profiler/TreeProfile.cpp \
     wtf/FastMalloc.cpp \
     wtf/Threading.cpp \
-    wtf/qt/ThreadingQt.cpp \
     wtf/qt/MainThreadQt.cpp
+
+!contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
+    SOURCES += wtf/qt/ThreadingQt.cpp
+} else {
+    DEFINES += ENABLE_JSC_MULTIPLE_THREADS=0
+    SOURCES += wtf/ThreadingNone.cpp
+}
 
 # GENERATOR 1-A: LUT creator
 lut.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.lut.h

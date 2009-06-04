@@ -85,6 +85,10 @@ CONFIG(QTDIR_build) {
 
 # Optional components (look for defs in config.h and included files!)
 
+contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
+    DEFINES+=ENABLE_DATABASE=0 ENABLE_DOM_STORAGE=0 ENABLE_ICONDATABASE=0 ENABLE_WORKERS=0
+}
+
 # turn off SQLITE support if we do not have sqlite3 available
 !CONFIG(QTDIR_build):win32-*:!exists( $${SQLITE3SRCDIR}/sqlite3.c ): DEFINES += ENABLE_SQLITE=0 ENABLE_DATABASE=0 ENABLE_ICONDATABASE=0 ENABLE_OFFLINE_WEB_APPLICATIONS=0 ENABLE_DOM_STORAGE=0
 
@@ -1272,6 +1276,9 @@ contains(DEFINES, ENABLE_SQLITE=1) {
             # we have source - use it
             CONFIG(release, debug|release):DEFINES *= NDEBUG
             DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE 
+            contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
+                DEFINES+=SQLITE_THREADSAFE=0
+            }
             INCLUDEPATH += $${SQLITE3SRCDIR}
             SOURCES += $${SQLITE3SRCDIR}/sqlite3.c
         } else {
