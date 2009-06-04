@@ -100,12 +100,17 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 - (void)startObservingWebView
 {
+    [self stopObservingWebView];
     [[self webView] addObserver:self forKeyPath:@"_isUsingAcceleratedCompositing" options:0 context:0];
+    observingWebView = YES;
 }
 
 - (void)stopObservingWebView
 {
+    if (!observingWebView)
+        return;
     [[self webView] removeObserver:self forKeyPath:@"_isUsingAcceleratedCompositing"];
+    observingWebView = NO;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context

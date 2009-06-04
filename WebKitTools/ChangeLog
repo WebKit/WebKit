@@ -1,3 +1,16 @@
+2009-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Fix crashes due to unbalanced start/stop observer calls.
+
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h: Added observingWebView.
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow startObservingWebView]): Call stopObservingWebView
+        in case we're already observing some other WebView. Set observingWebView.
+        (-[DumpRenderTreeWindow stopObservingWebView]): Do nothing if
+        observingWebView is already NO. Clear observingWebView.
+
 2009-06-03  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
