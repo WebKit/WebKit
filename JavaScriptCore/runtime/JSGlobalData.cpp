@@ -103,13 +103,13 @@ VPtrSet::VPtrSet()
 JSGlobalData::JSGlobalData(bool isShared, const VPtrSet& vptrSet)
     : isSharedInstance(isShared)
     , clientData(0)
-    , arrayTable(new HashTable(JSC::arrayTable))
-    , dateTable(new HashTable(JSC::dateTable))
-    , mathTable(new HashTable(JSC::mathTable))
-    , numberTable(new HashTable(JSC::numberTable))
-    , regExpTable(new HashTable(JSC::regExpTable))
-    , regExpConstructorTable(new HashTable(JSC::regExpConstructorTable))
-    , stringTable(new HashTable(JSC::stringTable))
+    , arrayTable(fastNew<HashTable>(JSC::arrayTable))
+    , dateTable(fastNew<HashTable>(JSC::dateTable))
+    , mathTable(fastNew<HashTable>(JSC::mathTable))
+    , numberTable(fastNew<HashTable>(JSC::numberTable))
+    , regExpTable(fastNew<HashTable>(JSC::regExpTable))
+    , regExpConstructorTable(fastNew<HashTable>(JSC::regExpConstructorTable))
+    , stringTable(fastNew<HashTable>(JSC::stringTable))
     , activationStructure(JSActivation::createStructure(jsNull()))
     , interruptedExecutionErrorStructure(JSObject::createStructure(jsNull()))
     , staticScopeStructure(JSStaticScopeObject::createStructure(jsNull()))
@@ -164,13 +164,13 @@ JSGlobalData::~JSGlobalData()
     lazyNativeFunctionThunk.clear();
 #endif
 
-    delete arrayTable;
-    delete dateTable;
-    delete mathTable;
-    delete numberTable;
-    delete regExpTable;
-    delete regExpConstructorTable;
-    delete stringTable;
+    fastDelete(const_cast<HashTable*>(arrayTable));
+    fastDelete(const_cast<HashTable*>(dateTable));
+    fastDelete(const_cast<HashTable*>(mathTable));
+    fastDelete(const_cast<HashTable*>(numberTable));
+    fastDelete(const_cast<HashTable*>(regExpTable));
+    fastDelete(const_cast<HashTable*>(regExpConstructorTable));
+    fastDelete(const_cast<HashTable*>(stringTable));
 
     delete parser;
     delete lexer;

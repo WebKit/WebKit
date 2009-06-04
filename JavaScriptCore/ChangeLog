@@ -1,3 +1,20 @@
+2009-06-04  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        HashTable class (JavaScriptCore/wtf/HashTable.h) doesn't instantiated by 'new', so 
+        inheritance was removed. HashTable struct has been instantiated by operator new in
+        JSGlobalData.cpp:106.
+        HashTable couldn't inherited from FastAllocBase since struct with inheritance is 
+        no longer POD, so HashTable struct has been instantiated by fastNew, destroyed by
+        fastDelete.
+
+        * interpreter/Interpreter.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * wtf/HashTable.h:
+
 2009-06-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

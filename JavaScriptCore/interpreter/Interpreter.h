@@ -35,6 +35,7 @@
 #include "JSObject.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
+#include <wtf/FastAllocBase.h>
 #include <wtf/HashMap.h>
 
 namespace JSC {
