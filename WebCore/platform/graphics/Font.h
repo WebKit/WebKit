@@ -115,7 +115,9 @@ public:
     int spaceWidth() const { return (int)ceilf(primaryFont()->m_adjustedSpaceWidth + m_letterSpacing); }
     int tabWidth() const { return 8 * spaceWidth(); }
 
-    const SimpleFontData* primaryFont() const {
+    const SimpleFontData* primaryFont() const
+    {
+        ASSERT(isMainThread());
         if (!m_cachedPrimaryFont)
             cachePrimaryFont();
         return m_cachedPrimaryFont;

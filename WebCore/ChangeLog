@@ -1,5 +1,18 @@
 2009-06-03  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - add some assertions that Font methods are used on the main thread
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::setShouldUseSmoothing):
+        * platform/graphics/Font.h:
+        (WebCore::Font::primaryFont):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
         - Windows build fix
 
         Rolled out apparently-accidental changes to config.h from r44398. These

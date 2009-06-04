@@ -41,6 +41,8 @@ namespace WebCore {
 
 GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCaps) const
 {
+    ASSERT(isMainThread());
+
     bool useSmallCapsFont = forceSmallCaps;
     if (m_fontDescription.smallCaps()) {
         UChar32 upperC = toUpper(c);
