@@ -96,4 +96,12 @@ void FontCache::removeClient(FontSelector*)
 {
 }
 
+void FontCache::invalidate()
+{
+    if (!gFontPlatformDataCache)
+        return;
+
+    gFontPlatformDataCache->clear();
+}
+
 } // namespace WebCore

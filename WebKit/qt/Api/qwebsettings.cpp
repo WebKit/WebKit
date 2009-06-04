@@ -24,6 +24,8 @@
 #include "qwebpage_p.h"
 
 #include "Cache.h"
+#include "CrossOriginPreflightResultCache.h"
+#include "FontCache.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "Settings.h"
@@ -562,6 +564,38 @@ void QWebSettings::setWebGraphic(WebGraphic type, const QPixmap &graphic)
 QPixmap QWebSettings::webGraphic(WebGraphic type)
 {
     return graphics()->value(type);
+}
+
+/*!
+    Frees up as much memory as possible by cleaning all memory caches such
+    as page, object and font cache.
+
+    \since 4.6
+ */
+void QWebSettings::clearMemoryCaches()
+{
+    // Turn the cache on and off.  Disabling the object cache will remove all
+    // resources from the cache.  They may still live on if they are referenced
+    // by some Web page though.
+    if (!WebCore::cache()->disabled()) {
+        WebCore::cache()->setDisabled(true);
+        WebCore::cache()->setDisabled(false);
+    }
+
+    int pageCapacity = WebCore::pageCache()->capacity();
+    // Setting size to 0, makes all pages be released.
+    WebCore::pageCache()->setCapacity(0);
+    WebCore::pageCache()->releaseAutoreleasedPagesNow();
+    WebCore::pageCache()->setCapacity(pageCapacity);
+
+    // Invalidating the font cache and freeing all inactive font data.
+    WebCore::fontCache()->invalidate();
+
+    // Empty the application cache.
+    WebCore::cacheStorage().empty();
+
+    // Empty the Cross-Origin Preflight cache
+    WebCore::CrossOriginPreflightResultCache::shared().empty();
 }
 
 /*!

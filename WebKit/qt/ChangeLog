@@ -1,3 +1,14 @@
+2009-06-03  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Add API to make it possible to clear all memory caches used by
+        QtWebKit.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::clearMemoryCaches):
+        * Api/qwebsettings.h:
+
 2009-06-01  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
 
         Rubber-stamped by Gustavo Noronha.
