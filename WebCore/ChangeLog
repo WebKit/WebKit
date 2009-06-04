@@ -1,3 +1,12 @@
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
+        - Windows build fix
+
+        Rolled out apparently-accidental changes to config.h from r44398. These
+        were not part of the patch as reviewed.
+
+        * config.h:
+
 2009-06-03  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, Chromium build fix.

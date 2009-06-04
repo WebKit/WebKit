@@ -24,7 +24,7 @@
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(WIN_OS) && !defined(BUILDING_WX__)
+#if PLATFORM(WIN_OS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
 #if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
 #define JS_EXPORTDATA __declspec(dllexport)
 #else
@@ -66,11 +66,11 @@
 #endif
 
 // CURL needs winsock, so don't prevent inclusion of it
-//#if !USE(CURL)
+#if !USE(CURL)
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
 #endif
-//#endif
+#endif
 
 #endif /* PLATFORM(WIN_OS) */
 
@@ -107,20 +107,12 @@
 #endif
 
 #if PLATFORM(WIN)
-#define WTF_PLATFORM_CF 1
-#if 0
 #define WTF_PLATFORM_CG 1
 #undef WTF_PLATFORM_CAIRO
 #define WTF_USE_CFNETWORK 1
-#undef WTF_USE_CURL
-#else
-#undef WTF_PLATFORM_CG
-#define WTF_PLATFORM_CAIRO 1
-#undef WTF_USE_CFNETWORK
-#define WTF_USE_CURL 1
-#endif
-#undef WTF_USE_PTHREADS
 #undef WTF_USE_WININET
+#define WTF_PLATFORM_CF 1
+#define WTF_USE_PTHREADS 0
 #endif
 
 #if PLATFORM(MAC)
