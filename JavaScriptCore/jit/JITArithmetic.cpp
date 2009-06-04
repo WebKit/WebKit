@@ -1078,11 +1078,6 @@ void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 /* ------------------------------ BEGIN: !ENABLE(JIT_OPTIMIZE_ARITHMETIC) (OP_ADD, OP_SUB, OP_MUL) ------------------------------ */
 
-typedef X86Assembler::JmpSrc JmpSrc;
-typedef X86Assembler::JmpDst JmpDst;
-typedef X86Assembler::XMMRegisterID XMMRegisterID;
-
-
 void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes types)
 {
     Structure* numberStructure = m_globalData->numberStructure.get();
