@@ -30,13 +30,13 @@
 #define Interpreter_h
 
 #include "ArgList.h"
+#include "FastAllocBase.h"
+#include "HashMap.h"
 #include "JSCell.h"
 #include "JSValue.h"
 #include "JSObject.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
-#include <wtf/FastAllocBase.h>
-#include <wtf/HashMap.h>
 
 namespace JSC {
 
