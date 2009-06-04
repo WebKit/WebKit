@@ -1,3 +1,34 @@
+2009-06-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Wrap the code that plants pushes/pops planted by JIT in explanatorily named
+        methods; move property storage reallocation into a standard stub function.
+
+        ~No performance impact (possible <1% progression on x86-64, likely just noise).
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+            Wrap calls to push/pop.
+        * jit/JIT.h:
+            Declare the new wrapper methods.
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::preverveReturnAddressAfterCall):
+        (JSC::JIT::restoreReturnAddressBeforeReturn):
+            Define the new wrapper methods.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_ret):
+            Wrap calls to push/pop.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+            Move property storage reallocation into a standard stub function.
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::JITStubs::):
+
 2009-06-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Ariya Hidayat.

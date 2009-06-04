@@ -389,7 +389,7 @@ void JIT::privateCompile()
 #endif
 
     // Could use a pop_m, but would need to offset the following instruction if so.
-    pop(regT2);
+    preverveReturnAddressAfterCall(regT2);
     emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
 
     Jump slowRegisterFileCheck;
@@ -538,10 +538,6 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     ret();
 #endif
 
-#if !(PLATFORM(X86) || PLATFORM(X86_64))
-#error "This code is less portable than it looks this code assumes that regT3 is callee preserved, which happens to be true on x86/x86-64."
-#endif
-
     // (3) Trampolines for the slow cases of op_call / op_call_eval / op_construct.
     
     Label virtualCallPreLinkBegin = align();
@@ -553,17 +549,17 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // If m_code is null and m_jitCode is not, then we have a native function, so arity is irrelevant
     loadPtr(Address(regT3, FIELD_OFFSET(FunctionBodyNode, m_jitCode)), regT0);
     Jump isNativeFunc1 = branchTestPtr(NonZero, regT0);
-    pop(regT3);
+    preverveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callJSFunction1 = call();
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
-    push(regT3);
+    restoreReturnAddressBeforeReturn(regT3);
     hasCodeBlock1.link(this);
 
     // Check argCount matches callee arity.
     Jump arityCheckOkay1 = branch32(Equal, Address(regT0, FIELD_OFFSET(CodeBlock, m_numParameters)), regT1);
-    pop(regT3);
+    preverveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     emitPutJITStubArg(regT0, 4);
     restoreArgumentReference();
@@ -571,18 +567,18 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     move(regT1, callFrameRegister);
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
-    push(regT3);
+    restoreReturnAddressBeforeReturn(regT3);
     arityCheckOkay1.link(this);
     isNativeFunc1.link(this);
     
     compileOpCallInitializeCallFrame();
 
-    pop(regT3);
+    preverveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     restoreArgumentReference();
     Call callDontLazyLinkCall = call();
     emitGetJITStubArg(1, regT2);
-    push(regT3);
+    restoreReturnAddressBeforeReturn(regT3);
 
     jump(regT0);
 
@@ -595,17 +591,17 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // If m_code is null and m_jitCode is not, then we have a native function, so arity is irrelevant
     loadPtr(Address(regT3, FIELD_OFFSET(FunctionBodyNode, m_jitCode)), regT0);
     Jump isNativeFunc2 = branchTestPtr(NonZero, regT0);
-    pop(regT3);
+    preverveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callJSFunction2 = call();
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
-    push(regT3);
+    restoreReturnAddressBeforeReturn(regT3);
     hasCodeBlock2.link(this);
 
     // Check argCount matches callee arity.
     Jump arityCheckOkay2 = branch32(Equal, Address(regT0, FIELD_OFFSET(CodeBlock, m_numParameters)), regT1);
-    pop(regT3);
+    preverveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     emitPutJITStubArg(regT0, 4);
     restoreArgumentReference();
@@ -613,17 +609,17 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     move(regT1, callFrameRegister);
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
-    push(regT3);
+    restoreReturnAddressBeforeReturn(regT3);
     arityCheckOkay2.link(this);
     isNativeFunc2.link(this);
 
     compileOpCallInitializeCallFrame();
 
-    pop(regT3);
+    preverveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     restoreArgumentReference();
     Call callLazyLinkCall = call();
-    push(regT3);
+    restoreReturnAddressBeforeReturn(regT3);
 
     jump(regT0);
 
@@ -636,18 +632,18 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // If m_code is null and m_jitCode is not, then we have a native function, so arity is irrelevant
     loadPtr(Address(regT3, FIELD_OFFSET(FunctionBodyNode, m_jitCode)), regT0);
     Jump isNativeFunc3 = branchTestPtr(NonZero, regT0);
-    pop(regT3);
+    preverveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callJSFunction3 = call();
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
-    push(regT3);
+    restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT2, FIELD_OFFSET(JSFunction, m_body)), regT3); // reload the function body nody, so we can reload the code pointer.
     hasCodeBlock3.link(this);
 
     // Check argCount matches callee arity.
     Jump arityCheckOkay3 = branch32(Equal, Address(regT0, FIELD_OFFSET(CodeBlock, m_numParameters)), regT1);
-    pop(regT3);
+    preverveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     emitPutJITStubArg(regT0, 4);
     restoreArgumentReference();
@@ -655,7 +651,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     move(regT1, callFrameRegister);
     emitGetJITStubArg(1, regT2);
     emitGetJITStubArg(3, regT1);
-    push(regT3);
+    restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT2, FIELD_OFFSET(JSFunction, m_body)), regT3); // reload the function body nody, so we can reload the code pointer.
     arityCheckOkay3.link(this);
     // load ctiCode from the new codeBlock.
@@ -667,7 +663,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     
     Label nativeCallThunk = align();
-    pop(regT0);
+    preverveReturnAddressAfterCall(regT0);
     emitPutToCallFrameHeader(regT0, RegisterFile::ReturnPC); // Push return address
 
     // Load caller frame's scope chain into this callframe so that whatever we call can
@@ -818,7 +814,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
     
     // Return.
-    push(regT1);
+    restoreReturnAddressBeforeReturn(regT1);
     ret();
 
     // Handle an exception
@@ -830,7 +826,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     move(ImmPtr(reinterpret_cast<void*>(ctiVMThrowTrampoline)), regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
     poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
-    push(regT2);
+    restoreReturnAddressBeforeReturn(regT2);
     ret();
     
 

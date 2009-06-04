@@ -184,6 +184,8 @@ namespace JSC {
         // a register is specified) emitPutVirtualRegister() will store
         // the value from regT0.
         //
+        // regT3 is required to be callee-preserved.
+        //
         // tempRegister2 is has no such dependencies.  It is important that
         // on x86/x86-64 it is ecx for performance reasons, since the
         // MacroAssembler will need to plant register swaps if it is not -
@@ -201,7 +203,6 @@ namespace JSC {
         static const RegisterID regT0 = X86::eax;
         static const RegisterID regT1 = X86::edx;
         static const RegisterID regT2 = X86::ecx;
-        // NOTE: privateCompileCTIMachineTrampolines() relies on this being callee preserved; this should be considered non-interface.
         static const RegisterID regT3 = X86::ebx;
 
         static const FPRegisterID fpRegT0 = X86::xmm0;
@@ -220,7 +221,6 @@ namespace JSC {
         static const RegisterID regT0 = X86::eax;
         static const RegisterID regT1 = X86::edx;
         static const RegisterID regT2 = X86::ecx;
-        // NOTE: privateCompileCTIMachineTrampolines() relies on this being callee preserved; this should be considered non-interface.
         static const RegisterID regT3 = X86::ebx;
 
         static const FPRegisterID fpRegT0 = X86::xmm0;
@@ -630,6 +630,9 @@ namespace JSC {
         void restoreArgumentReferenceForTrampoline();
 
         Call emitNakedCall(void* function);
+        void preverveReturnAddressAfterCall(RegisterID);
+        void restoreReturnAddressBeforeReturn(RegisterID);
+        void restoreReturnAddressBeforeReturn(Address);
 
         void emitGetVariableObjectRegister(RegisterID variableObject, int index, RegisterID dst);
         void emitPutVariableObjectRegister(RegisterID src, RegisterID variableObject, int index);

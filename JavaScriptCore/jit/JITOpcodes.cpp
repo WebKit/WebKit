@@ -65,7 +65,7 @@ void JIT::emit_op_end(Instruction* currentInstruction)
         JITStubCall(this, JITStubs::cti_op_end).call();
     ASSERT(returnValueRegister != callFrameRegister);
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
-    push(Address(callFrameRegister, RegisterFile::ReturnPC * static_cast<int>(sizeof(Register))));
+    restoreReturnAddressBeforeReturn(Address(callFrameRegister, RegisterFile::ReturnPC * static_cast<int>(sizeof(Register))));
     ret();
 }
 
@@ -303,7 +303,7 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
 
     // Return.
-    push(regT1);
+    restoreReturnAddressBeforeReturn(regT1);
     ret();
 
 }

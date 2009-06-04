@@ -676,6 +676,21 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_fail)
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_put_by_id_transition_realloc)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    JSValue baseValue = stackFrame.args[0].jsValue();
+    int32_t oldSize = stackFrame.args[1].int32();
+    int32_t newSize = stackFrame.args[2].int32();
+
+    ASSERT(baseValue.isObject());
+    asObject(baseValue)->allocatePropertyStorage(oldSize, newSize);
+
+    return JSValue::encode(baseValue);
+}
+
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

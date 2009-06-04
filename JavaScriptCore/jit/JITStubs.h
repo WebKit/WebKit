@@ -268,6 +268,7 @@ namespace JITStubs { extern "C" {
     EncodedJSValue JIT_STUB cti_op_get_by_val(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_val_byte_array(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_get_by_val_string(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_put_by_id_transition_realloc(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_in(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_instanceof(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_is_boolean(STUB_ARGS_DECLARATION);
