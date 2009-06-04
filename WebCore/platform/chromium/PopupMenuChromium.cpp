@@ -155,6 +155,7 @@ private:
         , m_selectedIndex(0)
         , m_willAcceptOnAbandon(false)
         , m_visibleRows(0)
+        , m_baseWidth(0)
         , m_popupClient(client)
         , m_repeatingChar(0)
         , m_lastCharTime(0)
@@ -350,6 +351,7 @@ void PopupContainer::showExternal(const IntRect& rect, FrameView* v, int index)
     if (!listBox())
         return;
 
+    listBox()->setBaseWidth(rect.width());
     listBox()->updateFromElement();
 
     if (listBox()->numItems() < 1) {

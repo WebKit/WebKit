@@ -1,3 +1,23 @@
+2009-06-04  Paul Godavari  <paul@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Initialize the width of PopupMenuListBox properly for Mac Chromium.
+
+        Added a test that works only with this patch applied. The test is
+        a manual one, since the hit testing infrastructure in the layout
+        tests sends keyboard and mouse events to the main window and not
+        the cocoa control that implements the popup up, which means we can't
+        select items from the popup up.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25904
+
+
+        * manual-tests/select-narrow-width.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::PopupListBox):
+        (WebCore::PopupContainer::showExternal):
+
 2009-06-04  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed Windows build correction.
