@@ -201,7 +201,13 @@ ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
     push(address);
 }
 
-#if USE(JIT_STUB_ARGUMENT_REGISTER)
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+ALWAYS_INLINE void JIT::restoreArgumentReference()
+{
+    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
+}
+ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
+#else
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     move(stackPointerRegister, firstArgumentRegister);
@@ -215,19 +221,6 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
     addPtr(Imm32(sizeof(void*)), firstArgumentRegister);
 #endif
 }
-#elif USE(JIT_STUB_ARGUMENT_STACK)
-ALWAYS_INLINE void JIT::restoreArgumentReference()
-{
-    poke(stackPointerRegister);
-    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
-}
-ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
-#else // JIT_STUB_ARGUMENT_VA_LIST
-ALWAYS_INLINE void JIT::restoreArgumentReference()
-{
-    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
-}
-ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
 #endif
 
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)

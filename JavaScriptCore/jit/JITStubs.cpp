@@ -100,16 +100,10 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 asm(
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-#if USE(JIT_STUB_ARGUMENT_VA_LIST)
-    "call " SYMBOL_STRING(cti_vm_throw) "\n"
-#else
-#if USE(JIT_STUB_ARGUMENT_REGISTER)
+#if !USE(JIT_STUB_ARGUMENT_VA_LIST)
     "movl %esp, %ecx" "\n"
-#else // JIT_STUB_ARGUMENT_STACK
-    "movl %esp, 0(%esp)" "\n"
 #endif
     "call " SYMBOL_STRING(cti_vm_throw) "\n"
-#endif
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
@@ -119,6 +113,10 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 );
     
 #elif COMPILER(GCC) && PLATFORM(X86_64)
+
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+#error "JIT_STUB_ARGUMENT_VA_LIST not supported on x86-64."
+#endif
 
 // These ASSERTs remind you that, if you change the layout of JITStackFrame, you
 // need to change the assembly trampolines below to match.
@@ -161,12 +159,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 asm(
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-#if USE(JIT_STUB_ARGUMENT_REGISTER)
     "movq %rsp, %rdi" "\n"
     "call " SYMBOL_STRING(cti_vm_throw) "\n"
-#else // JIT_STUB_ARGUMENT_VA_LIST or JIT_STUB_ARGUMENT_STACK
-#error "JIT_STUB_ARGUMENT configuration not supported."
-#endif
     "addq $0x48, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r15" "\n"
@@ -178,6 +172,10 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 );
 
 #elif COMPILER(MSVC)
+
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+#error "JIT_STUB_ARGUMENT_VA_LIST configuration not supported on MSVC."
+#endif
 
 // These ASSERTs remind you that, if you change the layout of JITStackFrame, you
 // need to change the assembly trampolines below to match.
@@ -212,11 +210,7 @@ extern "C" {
     __declspec(naked) void ctiVMThrowTrampoline()
     {
         __asm {
-#if USE(JIT_STUB_ARGUMENT_REGISTER)
             mov ecx, esp;
-#else // JIT_STUB_ARGUMENT_VA_LIST or JIT_STUB_ARGUMENT_STACK
-#error "JIT_STUB_ARGUMENT configuration not supported."
-#endif
             call JITStubs::cti_vm_throw;
             add esp, 0x1c;
             pop ebx;
@@ -379,7 +373,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
 #define SETUP_VA_LISTL_ARGS va_list vl_args; va_start(vl_args, args)
-#else // JIT_STUB_ARGUMENT_REGISTER or JIT_STUB_ARGUMENT_STACK
+#else
 #define SETUP_VA_LISTL_ARGS
 #endif
 

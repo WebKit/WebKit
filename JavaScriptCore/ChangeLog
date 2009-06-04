@@ -1,5 +1,28 @@
 2009-06-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Remove 'JIT_STUB_ARGUMENT_STACK' this is unused and untested.
+
+        This just leaves JIT_STUB_ARGUMENT_REGISTER and JIT_STUB_ARGUMENT_VA_LIST.
+        Since JIT_STUB_ARGUMENT_REGISTER is the sensible configuration on most platforms,
+        remove this define and make this the default behaviour.
+        Platforms must now define JIT_STUB_ARGUMENT_VA_LIST to get crazy va_list voodoo,
+        if they so desire.
+
+        (Refactoring of #ifdefs only, no functional change, no performance impact.)
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReference):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        * jit/JITStubs.cpp:
+        (JSC::):
+        * jit/JITStubs.h:
+        * wtf/Platform.h:
+
+2009-06-04  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamped by Sam Weinig.
 
         * jit/JITArithmetic.cpp:

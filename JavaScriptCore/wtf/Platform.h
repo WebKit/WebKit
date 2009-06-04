@@ -476,7 +476,6 @@
 /* The JIT is tested & working on x86_64 Mac */
 #if PLATFORM(X86_64) && PLATFORM(MAC)
     #define ENABLE_JIT 1
-    #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
 /* The JIT is tested & working on x86 Mac */
 #elif PLATFORM(X86) && PLATFORM(MAC)
     #define ENABLE_JIT 1
@@ -484,23 +483,12 @@
 /* The JIT is tested & working on x86 Windows */
 #elif PLATFORM(X86) && PLATFORM(WIN)
     #define ENABLE_JIT 1
-    #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
 #endif
     #define ENABLE_JIT_OPTIMIZE_CALL 1
     #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
     #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
     #define ENABLE_JIT_OPTIMIZE_ARITHMETIC 1
     #define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 1
-#endif
-
-#if ENABLE(JIT)
-#if !(USE(JIT_STUB_ARGUMENT_VA_LIST) || USE(JIT_STUB_ARGUMENT_REGISTER) || USE(JIT_STUB_ARGUMENT_STACK))
-#error Please define one of the JIT_STUB_ARGUMENT settings.
-#elif (USE(JIT_STUB_ARGUMENT_VA_LIST) && USE(JIT_STUB_ARGUMENT_REGISTER)) \
-   || (USE(JIT_STUB_ARGUMENT_VA_LIST) && USE(JIT_STUB_ARGUMENT_STACK)) \
-   || (USE(JIT_STUB_ARGUMENT_REGISTER) && USE(JIT_STUB_ARGUMENT_STACK))
-#error Please do not define more than one of the JIT_STUB_ARGUMENT settings.
-#endif
 #endif
 
 #if PLATFORM(X86_64)
