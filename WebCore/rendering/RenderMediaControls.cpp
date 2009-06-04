@@ -76,8 +76,9 @@ void RenderMediaControls::adjustMediaSliderThumbSize(RenderObject* o)
     if (o->style()->appearance() != MediaSliderThumbPart)
         return;
 
-    o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
-    o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
+    float zoomLevel = o->style()->effectiveZoom();
+    o->style()->setWidth(Length(static_cast<int>(mediaSliderThumbWidth * zoomLevel), Fixed));
+    o->style()->setHeight(Length(static_cast<int>(mediaSliderThumbHeight * zoomLevel), Fixed));
 }
 
 static HTMLMediaElement* parentMediaElement(RenderObject* o)
