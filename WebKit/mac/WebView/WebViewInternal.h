@@ -168,7 +168,7 @@ namespace WebCore {
 - (IBAction)_resetZoom:(id)sender isTextOnly:(BOOL)isTextOnly;
 
 - (BOOL)_mustDrawUnionedRect:(NSRect)rect singleRects:(const NSRect *)rects count:(NSInteger)count;
-- (void)_updateFocusedAndActiveStateForFrame:(WebFrame *)webFrame;
+- (void)_updateFocusedStateForFrame:(WebFrame *)webFrame;
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request forMainFrame:(BOOL)forMainFrame;
 

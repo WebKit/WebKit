@@ -1,3 +1,62 @@
+2009-06-03  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Reworking of focus and active state updating for WebHTMLViews so that it actually works instead of reporting wrong answers.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        WebHTMLViews become first responders before they are able to reach their Frames/Pages.  This happens because the NSClipView
+        becomes first responder when the WebHTMLView gets destroyed, and then we transfer the responder state back to the new WebHTMLView
+        when it is first connected.  Once we have transitioned to a new page and have the Frame/Page available, go ahead and explicitly
+        focus the frame in WebCore and update our focused state.  This change allows us to remove the updateFocusedActive timer and the
+        code from viewDidMoveToWindow.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView close]):
+        (-[WebHTMLView addWindowObservers]):
+        (-[WebHTMLView viewWillMoveToWindow:]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView _removeWindowObservers]):
+        Remove all the updateFocusedActiveState timer code, since it no longer exists.
+
+        (-[WebHTMLView windowDidBecomeKey:]):
+        (-[WebHTMLView windowDidResignKey:]):
+        Active state updating is no longer done by WebHTMLViews.   It is handled by the WebView instead.
+    
+        (-[WebHTMLView becomeFirstResponder]):
+        (-[WebHTMLView resignFirstResponder]):
+        Reworking of WebHTMLView's code for gaining/losing responder status.  No longer update active state here, since the active state
+        can never change just because of responder changes.  Make sure that the focused frame gets updated properly (and most importantly
+        actually cleared when a WebHTMLView resigns responder status).
+
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+        State updating for focused and active states has been made independent.
+
+        * WebView/WebView.mm:
+        (-[WebView _updateActiveState]):
+        WebView now handles updating of active state in _updateActiveState.  It is now purely based off whether the window is key and nothing
+        else.
+
+        (-[WebView addWindowObserversForWindow:]):
+        (-[WebView removeWindowObservers]):
+        Start listening for the window becoming/losing key even in the usesDocumentViews case.
+
+        (-[WebView _updateFocusedStateForFrame:]):
+        Focused state updating is split into its own method now and called when WebHTMLViews gain and lose responder status.
+
+        (-[WebView _windowDidBecomeKey:]):
+        (-[WebView _windowDidResignKey:]):
+        Make sure to call _updateActiveState as the window gains/loses key.
+
+        (-[WebView _windowWillOrderOnScreen:]):
+        Run this code now that WebHTMLView no longer does it.
+
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+        Updating for the split of focused and active state updating into separate methods.
+
 2009-06-04  Mark Rowe  <mrowe@apple.com>
 
         Speculative Tiger build fix.

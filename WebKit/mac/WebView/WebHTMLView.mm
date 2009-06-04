@@ -423,7 +423,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL observingMouseMovedNotifications;
     BOOL observingSuperviewNotifications;
     BOOL observingWindowNotifications;
-    BOOL resigningFirstResponder;
     
     id savedSubviews;
     BOOL subviewsSetAside;
@@ -470,7 +469,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     WebDataSource *dataSource;
     WebCore::CachedImage* promisedDragTIFFDataSource;
     
-    CFRunLoopTimerRef updateFocusedAndActiveStateTimer;
     CFRunLoopTimerRef updateMouseoverTimer;
 
     SEL selectorForDoCommandBySelector;
@@ -535,7 +533,6 @@ static NSCellStateValue kit(TriState state)
 
     ASSERT(!autoscrollTimer);
     ASSERT(!autoscrollTriggerEvent);
-    ASSERT(!updateFocusedAndActiveStateTimer);
     ASSERT(!updateMouseoverTimer);
     
     [mouseDownEvent release];
@@ -871,7 +868,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [notificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
     [notificationCenter removeObserver:self name:NSWindowWillCloseNotification object:window];
-    [notificationCenter removeObserver:self name:WKWindowWillOrderOnScreenNotification() object:window];
     
     _private->observingWindowNotifications = false;
 }
@@ -985,15 +981,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     [event retain];
     [_private->mouseDownEvent release];
     _private->mouseDownEvent = event;
-}
-
-- (void)_cancelUpdateFocusedAndActiveStateTimer
-{
-    if (_private->updateFocusedAndActiveStateTimer) {
-        CFRunLoopTimerInvalidate(_private->updateFocusedAndActiveStateTimer);
-        CFRelease(_private->updateFocusedAndActiveStateTimer);
-        _private->updateFocusedAndActiveStateTimer = NULL;
-    }
 }
 
 - (void)_cancelUpdateMouseoverTimer
@@ -1941,13 +1928,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     [_private->highlighters removeObjectForKey:type];
 }
 
-- (void)_updateFocusedAndActiveState
-{
-    [self _cancelUpdateFocusedAndActiveStateTimer];
-
-    [[self _webView] _updateFocusedAndActiveStateForFrame:[self _frame]];
-}
-
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
     ASSERT([self _hasSelection]);
@@ -1977,7 +1957,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     _private->closed = YES;
 
     [self _cancelUpdateMouseoverTimer];
-    [self _cancelUpdateFocusedAndActiveStateTimer];
     [self _clearLastHitViewIfSelf];
     [self _removeMouseMovedObserverUnconditionally];
     [self _removeWindowObservers];
@@ -2871,7 +2850,6 @@ WEBCORE_COMMAND(yankAndSelect)
     [notificationCenter addObserver:self selector:@selector(windowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(windowDidResignKey:) name:NSWindowDidResignKeyNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:window];
-    [notificationCenter addObserver:self selector:@selector(windowWillOrderOnScreen:) name:WKWindowWillOrderOnScreenNotification() object:window];
     
     _private->observingWindowNotifications = true;
 }
@@ -2885,12 +2863,6 @@ WEBCORE_COMMAND(yankAndSelect)
 {
     if ([self superview] != nil)
         [self addSuperviewObservers];
-}
-
-static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, void *info)
-{
-    WebHTMLView *view = (WebHTMLView *)info;
-    [view _updateFocusedAndActiveState];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -2907,7 +2879,6 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     [self _removeWindowObservers];
     [self _removeSuperviewObservers];
     [self _cancelUpdateMouseoverTimer];
-    [self _cancelUpdateFocusedAndActiveStateTimer];
     
     [[self _pluginController] stopAllPlugins];
 }
@@ -2928,19 +2899,6 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
         [self addSuperviewObservers];
         [self addMouseMovedObserver];
 
-        // Schedule this update, rather than making the call right now.
-        // The reason is that placing the caret in the just-installed view requires
-        // the HTML/XML document to be available on the WebCore side, but it is not
-        // at the time this code is running. However, it will be there on the next
-        // crank of the run loop. Doing this helps to make a blinking caret appear 
-        // in a new, empty window "automatic".
-        if (!_private->updateFocusedAndActiveStateTimer) {
-            CFRunLoopTimerContext context = { 0, self, NULL, NULL, NULL };
-            _private->updateFocusedAndActiveStateTimer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent(), 0, 0, 0,
-                                                                    _updateFocusedAndActiveStateTimerCallback, &context);
-            CFRunLoopAddTimer(CFRunLoopGetCurrent(), _private->updateFocusedAndActiveStateTimer, kCFRunLoopDefaultMode);
-        }
-        
         [[self _pluginController] startAllPlugins];
 
         _private->lastScrollPosition = NSZeroPoint;
@@ -3268,9 +3226,6 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
     if (keyWindow == [self window])
         [self addMouseMovedObserver];
-
-    if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
-        [self _updateFocusedAndActiveState];
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification
@@ -3285,10 +3240,8 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     if (formerKeyWindow == [self window])
         [self removeMouseMovedObserver];
 
-    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
-        [self _updateFocusedAndActiveState];
+    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
         [_private->completionController endRevertingChange:NO moveLeft:NO];
-    }
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -3300,12 +3253,6 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
     [_private->completionController endRevertingChange:NO moveLeft:NO];
     [[self _pluginController] destroyAllPlugins];
-}
-
-- (void)windowWillOrderOnScreen:(NSNotification *)notification
-{
-    if (![[self _webView] shouldUpdateWhileOffscreen])
-        [self setNeedsDisplay:YES];
 }
 
 - (void)scrollWheel:(NSEvent *)event
@@ -3626,7 +3573,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     if (![[self _webView] _isPerformingProgrammaticFocus])
         direction = [[self window] keyViewSelectionDirection];
 
-    [self _updateFocusedAndActiveState];
+    [[self _webView] _updateFocusedStateForFrame:[self _frame]];
     [self _updateFontPanel];
     
     Frame* frame = core([self _frame]);
@@ -3641,14 +3588,16 @@ static BOOL isInPasswordField(Frame* coreFrame)
 
     frame->editor()->setStartNewKillRingSequence(true);
 
-    if (direction == NSDirectSelection)
-        return YES;
-
     Page* page = frame->page();
     if (!page)
         return YES;
 
-    page->focusController()->setFocusedFrame(frame);
+    if (![[self _webView] _isPerformingProgrammaticFocus])
+        page->focusController()->setFocusedFrame(frame);
+
+    if (direction == NSDirectSelection)
+        return YES;
+
     if (Document* document = frame->document())
         document->setFocusedNode(0);
     page->focusController()->setInitialFocus(direction == NSSelectingNext ? FocusDirectionForward : FocusDirectionBackward,
@@ -3660,15 +3609,22 @@ static BOOL isInPasswordField(Frame* coreFrame)
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
-        _private->resigningFirstResponder = YES;
         [_private->completionController endRevertingChange:NO moveLeft:NO];
         if (![self maintainsInactiveSelection]) { 
             [self deselectAll];
-            if (![[self _webView] _isPerformingProgrammaticFocus])
+            if (![[self _webView] _isPerformingProgrammaticFocus]) {
                 [self clearFocus];
+                Frame* coreFrame = core([self _frame]);
+                if (!coreFrame)
+                    return resign;
+                Page* page = coreFrame->page();
+                if (!page)
+                    return resign;
+                page->focusController()->setFocusedFrame(0);
+            }
         }
-        [self _updateFocusedAndActiveState];
-        _private->resigningFirstResponder = NO;
+
+        [[self _webView] _updateFocusedStateForFrame:[self _frame]];
     }
     return resign;
 }
@@ -5415,11 +5371,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (void) _destroyAllWebPlugins
 {
     [[self _pluginController] destroyAllPlugins];
-}
-
-- (BOOL)_isResigningFirstResponder
-{
-    return _private->resigningFirstResponder;
 }
 
 - (BOOL)_needsLayout

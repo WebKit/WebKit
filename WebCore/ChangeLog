@@ -1,3 +1,33 @@
+2009-06-03  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Improvements in how selection behaves with focus/activation and a reversion back to using isActive
+        in the scrollbar theme code to remove a Chromium ifdef.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::SelectionController):
+        Make the controller set its focused state correctly upon initial creation.
+
+        (WebCore::SelectionController::setSelection):
+        Make selection willing to shift the focus node if the selection is focused even if the
+        selection is not active.  Whether or not the Page is active is irrelevant to focus changes.
+
+        (WebCore::SelectionController::setFocused):
+        * editing/SelectionController.h:
+        (WebCore::SelectionController::isFocused):
+        Add a new isFocused() method so that code can check if the Selection is focused without caring
+        about the active state.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setFocusedNodeIfNeeded):
+        Allow focus shifts even when the selection is not active.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        Revert Dan's change to directly talk to AppKit for checking active state.  Now that the WebCore isActive
+        method works, ditch the Chromium-specific #ifdef and go back to the original code.
+
 2009-06-04  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Darin Adler.

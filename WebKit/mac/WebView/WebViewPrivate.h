@@ -257,6 +257,9 @@ Could be worth adding to the API.
 // until callers can be weaned off of it.
 - (void)_close;
 
+// SPI for DumpRenderTree
+- (void)_updateActiveState;
+
 /*!
     @method _registerViewClass:representationClass:forURLScheme:
     @discussion Register classes that implement WebDocumentView and WebDocumentRepresentation respectively.

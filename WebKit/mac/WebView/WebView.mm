@@ -2081,6 +2081,13 @@ static inline IMP getMethod(id o, SEL s)
     return _private ? _private->insertionPasteboard : nil;
 }
 
+
+- (void)_updateActiveState
+{
+    if (_private && _private->page)
+        _private->page->focusController()->setActive([[self window] isKeyWindow]);
+}
+
 @end
 
 @implementation _WebSafeForwarder
@@ -2484,7 +2491,7 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
-    if (!_private->usesDocumentViews && window) {
+    if (window) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidBecomeKey:)
             name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidResignKey:)
@@ -2497,7 +2504,7 @@ static bool needsWebViewInitThreadWorkaround()
 - (void)removeWindowObservers
 {
     NSWindow *window = [self window];
-    if (!_private->usesDocumentViews && window) {
+    if (window) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowDidBecomeKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -2548,58 +2555,35 @@ static bool needsWebViewInitThreadWorkaround()
         _private->page->didMoveOnscreen();
 }
 
-- (void)_updateFocusedAndActiveState
+- (void)_updateFocusedStateForFrame:(WebFrame *)webFrame
 {
-    ASSERT(!_private->usesDocumentViews);
-    [self _updateFocusedAndActiveStateForFrame:[self mainFrame]];
-}
-
-- (void)_updateFocusedAndActiveStateForFrame:(WebFrame *)webFrame
-{
-    Frame* frame = core(webFrame);
-    if (!frame)
+    if (!_private->page)
         return;
     
-    NSWindow *window = [self window];
-    BOOL windowIsKey = [window isKeyWindow];
+    Frame* frame = [self _mainCoreFrame];
+    if (!frame)
+        return;
 
-    NSView *contentView = _private->usesDocumentViews ? (NSView *)[[self mainFrame] frameView] : self;
-    NSResponder *firstResponder = [window firstResponder];
-    if ([firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:contentView]) {
-        BOOL documentViewIsResigningFirstResponder;
-        if (!_private->usesDocumentViews) {
-            // FIXME: WebView probably needs a "resigning first responder" state just as WebHTMLView has.
-            documentViewIsResigningFirstResponder = NO;
-        } else {
-            id <WebDocumentView> documentView = [[[self mainFrame] frameView] documentView];
-            documentViewIsResigningFirstResponder = [documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isResigningFirstResponder];
-        }
-        _private->page->focusController()->setActive(windowIsKey && !documentViewIsResigningFirstResponder);
-    }
-
-    BOOL windowOrSheetIsKey = windowIsKey || [[window attachedSheet] isKeyWindow];
-    frame->selection()->setFocused(frame == _private->page->focusController()->focusedOrMainFrame() && windowOrSheetIsKey);
+    Frame* focusedFrame = _private->page->focusController()->focusedFrame();
+    frame->selection()->setFocused(frame == focusedFrame);
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
 {
-    ASSERT(!_private->usesDocumentViews);
     NSWindow *keyWindow = [notification object];
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
-        [self _updateFocusedAndActiveState];
+        [self _updateActiveState];
 }
 
 - (void)_windowDidResignKey:(NSNotification *)notification
 {
-    ASSERT(!_private->usesDocumentViews);
     NSWindow *formerKeyWindow = [notification object];
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
-        [self _updateFocusedAndActiveState];
+        [self _updateActiveState];
 }
 
 - (void)_windowWillOrderOnScreen:(NSNotification *)notification
 {
-    ASSERT(!_private->usesDocumentViews);
     if (![self shouldUpdateWhileOffscreen])
         [self setNeedsDisplay:YES];
 }

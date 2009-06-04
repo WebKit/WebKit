@@ -1,3 +1,19 @@
+2009-06-03  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didCommitLoadForFrame:]):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMainFrameIsFirstResponder):
+        Remove explicit calls to _updateFocusedActiveState when the view is made first responder.
+        Focused state already properly updates when views become first responders, so these calls
+        are unnecessary.
+
+        (LayoutTestController::setWindowIsKey):
+        Explicitly call _updateActiveState when our window becomes key, since we're just faking it
+        and the notification won't be sent.
+
 2009-06-02  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Mark Rowe.

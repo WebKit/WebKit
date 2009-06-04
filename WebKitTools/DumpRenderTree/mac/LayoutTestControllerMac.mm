@@ -237,9 +237,6 @@ void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
     
     NSResponder *firstResponder = flag ? documentView : nil;
     [[[mainFrame webView] window] makeFirstResponder:firstResponder];
-        
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateFocusedAndActiveState];
 }
 
 void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
@@ -288,9 +285,7 @@ void LayoutTestController::clearPersistentUserStyleSheet()
 void LayoutTestController::setWindowIsKey(bool windowIsKey)
 {
     m_windowIsKey = windowIsKey;
-    NSView *documentView = [[mainFrame frameView] documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateFocusedAndActiveState];
+    [[mainFrame webView] _updateActiveState];
 }
 
 void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)

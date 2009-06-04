@@ -168,8 +168,6 @@
     gLayoutTestController->setWindowIsKey(true);
     NSView *documentView = [[mainFrame frameView] documentView];
     [[[mainFrame webView] window] makeFirstResponder:documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)documentView _updateFocusedAndActiveState];
 }
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame

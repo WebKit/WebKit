@@ -568,7 +568,7 @@ static bool isFrameElement(const Node *n)
 
 void Frame::setFocusedNodeIfNeeded()
 {
-    if (selection()->isNone() || !selection()->isFocusedAndActive())
+    if (selection()->isNone() || !selection()->isFocused())
         return;
 
     bool caretBrowsing = settings() && settings()->caretBrowsingEnabled();
