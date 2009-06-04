@@ -1,3 +1,14 @@
+2009-06-04  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26148
+        Adding in empty files to stage the extract of RenderThemeChromiumSkia
+        from RenderThemeChromiumLinux and RenderThemeChromiumWindows.
+
+        * rendering/RenderThemeChromiumSkia.cpp: Added.
+        * rendering/RenderThemeChromiumSkia.h: Added.
+
 2009-06-04  Andrei Popescu <andreip@google.com>
 
         Reviewed by Alexey Proskuryakov.
