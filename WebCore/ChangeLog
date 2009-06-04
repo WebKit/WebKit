@@ -1,3 +1,15 @@
+2009-06-04  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test: media/before-load-member-access.html
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26081
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::played): Ensure that if m_playedTimeRanges,
+        is not initialized we return a valid range, and don't attempt to use it.
+
 2009-06-03  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Simon Hausmann.

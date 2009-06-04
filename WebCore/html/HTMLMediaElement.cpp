@@ -1295,6 +1295,10 @@ PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
 
 PassRefPtr<TimeRanges> HTMLMediaElement::played() const
 {
+    if (!m_playedTimeRanges) {
+        // We are not yet loaded
+        return TimeRanges::create();
+    }
     if (m_playing) {
         float time = currentTime();
         if (m_lastSeekTime < time)
