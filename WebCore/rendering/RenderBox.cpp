@@ -663,13 +663,24 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int my, int mh, int 
     // Figure out if we need to push a transparency layer to render our mask.
     bool pushTransparencyLayer = false;
     StyleImage* maskBoxImage = style()->maskBoxImage().image();
-    if ((maskBoxImage && style()->maskLayers()->hasImage()) || style()->maskLayers()->next())
+    if (maskBoxImage && style()->maskLayers()->hasImage()) {
+        pushTransparencyLayer = true;
+    } else {
         // We have to use an extra image buffer to hold the mask. Multiple mask images need
         // to composite together using source-over so that they can then combine into a single unified mask that
         // can be composited with the content using destination-in.  SVG images need to be able to set compositing modes
         // as they draw images contained inside their sub-document, so we paint all our images into a separate buffer
         // and composite that buffer as the mask.
-        pushTransparencyLayer = true;
+        // We have to check that the mask images to be rendered contain at least one image that can be actually used in rendering
+        // before pushing the transparency layer.
+        for (const FillLayer* fillLayer = style()->maskLayers()->next(); fillLayer; fillLayer = fillLayer->next()) {
+            if (fillLayer->hasImage() && fillLayer->image()->canRender(style()->effectiveZoom())) {
+                pushTransparencyLayer = true;
+                // We found one image that can be used in rendering, exit the loop
+                break;
+            }
+        }
+    }
     
     CompositeOperator compositeOp = CompositeDestinationIn;
     if (pushTransparencyLayer) {
