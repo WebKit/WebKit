@@ -1,3 +1,9 @@
+2009-06-04  Mark Rowe  <mrowe@apple.com>
+
+        Speculative Tiger build fix.
+
+        * WebView/WebDelegateImplementationCaching.h:
+
 2009-06-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
