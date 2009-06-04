@@ -1,3 +1,15 @@
+2009-06-04  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        Added Qt-specific expected result for Canvas pointInPath's test.
+
+        Qt's QPainterPath::contains(point) returns false if the point is
+        exactly along one of the edges (except the origin). Until we
+        find a workaround for this, compensate it in the expected result.
+
+        * platform/qt/fast/canvas/pointInPath-expected.txt: Added.
+
 2009-06-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Mark Rowe.

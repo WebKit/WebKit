@@ -1,0 +1,48 @@
+Series of tests for Canvas.isPointInPath
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Rectangle at (0,0) 20x20
+PASS ctx.isPointInPath(5, 5) is true
+PASS ctx.isPointInPath(10, 10) is true
+PASS ctx.isPointInPath(19, 19) is true
+PASS ctx.isPointInPath(30, 30) is false
+PASS ctx.isPointInPath(-1, 10) is false
+PASS ctx.isPointInPath(10, -1) is false
+Translate context (10,10)
+PASS ctx.isPointInPath(5, 5) is true
+PASS ctx.isPointInPath(10, 10) is true
+PASS ctx.isPointInPath(19, 19) is true
+PASS ctx.isPointInPath(30, 30) is false
+PASS ctx.isPointInPath(-1, 10) is false
+PASS ctx.isPointInPath(10, -1) is false
+Collapse ctm to non-invertible matrix
+PASS ctx.isPointInPath(5, 5) is false
+PASS ctx.isPointInPath(10, 10) is false
+PASS ctx.isPointInPath(20, 20) is false
+PASS ctx.isPointInPath(30, 30) is false
+PASS ctx.isPointInPath(-1, 10) is false
+PASS ctx.isPointInPath(10, -1) is false
+Resetting context to a clean state
+Translate context (10,10)
+Rectangle at (0,0) 20x20
+PASS ctx.isPointInPath(5, 5) is false
+PASS ctx.isPointInPath(10, 10) is true
+PASS ctx.isPointInPath(20, 20) is true
+PASS ctx.isPointInPath(29, 29) is true
+PASS ctx.isPointInPath(-1, 10) is false
+PASS ctx.isPointInPath(10, -1) is false
+Translate context (10,20)
+Transform context (1, 0, 0, -1, 0, 0)
+Rectangle at (0,0) 20x20
+PASS ctx.isPointInPath(5, 5) is false
+FAIL ctx.isPointInPath(10, 0) should be true. Was false.
+FAIL ctx.isPointInPath(29, 0) should be true. Was false.
+PASS ctx.isPointInPath(10, 19) is true
+PASS ctx.isPointInPath(21, 10) is true
+PASS ctx.isPointInPath(29, 19) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
