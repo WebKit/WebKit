@@ -1,3 +1,60 @@
+2009-06-04  Andrei Popescu <andreip@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25562
+        Potential crash after ApplicationCacheStorage::storeNewestCache() fails
+
+              Fix the crash by checking the return value of cacheStorage().storeNewestCache(this)
+              in WebCore::ApplicationCacheGroup::checkIfLoadIsComplete. If storeNewestCache failed,
+              we run the cache failure steps:
+
+        1. Fire the error events to all pending master entries, as well any other cache hosts
+           currently associated with a cache in this group.
+        2. Disassociate the pending master entries from the failed new cache.
+        3. Reinstate the old "newest cache", if there was one.
+
+        We also introduce two other changes:
+
+        1. a mechanism to rollback storageID changes to the in-memory resource
+           objects when the storing of an ApplicationCache object fails.
+
+        2. defer removing the pending master entries from the list of pending master entries
+           until the entire load is complete. This matches the HTML 5 spec better. To track
+           if the load is complete we now introduce a counter for those pending master entries
+           that haven't yet finshed downloading.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup): initializes the new counter to 0
+        (WebCore::ApplicationCacheGroup::selectCache): increments the counter when a new pending
+        master entry is added.
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource): decrements the counter
+        instead of removing the pending master entry.
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource): decrements the counter
+        instead of removing the pending master entry.
+        (WebCore::ApplicationCacheGroup::setNewestCache): removes an assertion that no longer
+        holds true. In particular, the newest cache is not necessarily new anymore. We can
+        set an old cache as the new cache. This can happen if we failed to store a newly
+        downloaded cache to the database and we are now reinstating the former newest cache.
+        (WebCore::ApplicationCacheGroup::manifestNotFound): resets the counter to 0.
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete): check if the loading is complete
+        based on the counter instead of the list of pending master entries. Empty the list of
+        master entries if the load is complete.
+        * loader/appcache/ApplicationCacheGroup.h: add the new counter.
+        * loader/appcache/ApplicationCacheStorage.cpp: introduce the journaling mechanism for
+        in-memory resource objects.
+        (WebCore::ResourceStorageIDJournal::~ResourceStorageIDJournal):
+        (WebCore::ResourceStorageIDJournal::add):
+        (WebCore::ResourceStorageIDJournal::commit):
+        (WebCore::ResourceStorageIDJournal::Record::Record):
+        (WebCore::ResourceStorageIDJournal::Record::restore):
+        (WebCore::ApplicationCacheStorage::store): log the changes to the in-memory resource
+        objects.
+        (WebCore::ApplicationCacheStorage::storeNewestCache): create the journal object.
+        * loader/appcache/ApplicationCacheStorage.h:  modify the signature of
+        bool store(ApplicationCache*) to add a pointer to the logger object used to
+        trace the changes to the storageID of the resource objects.
+
 2009-06-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.

@@ -47,6 +47,7 @@ namespace WebCore {
 ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL, bool isCopy)
     : m_manifestURL(manifestURL)
     , m_updateStatus(Idle)
+    , m_downloadingPendingMasterResourceLoadersCount(0)
     , m_frame(0)
     , m_storageID(0)
     , m_isObsolete(false)
@@ -166,6 +167,7 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& manifestURL)
 
     documentLoader->setCandidateApplicationCacheGroup(group);
     group->m_pendingMasterResourceLoaders.add(documentLoader);
+    group->m_downloadingPendingMasterResourceLoadersCount++;
 
     ASSERT(!group->m_cacheBeingUpdated || group->m_updateStatus != Idle);
     group->update(frame, ApplicationCacheUpdateWithBrowsingContext);
@@ -232,7 +234,7 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
         break;
     }
 
-    m_pendingMasterResourceLoaders.remove(loader);
+    m_downloadingPendingMasterResourceLoadersCount--;
     checkIfLoadIsComplete();
 }
 
@@ -276,7 +278,7 @@ void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
         break;
     }
 
-    m_pendingMasterResourceLoaders.remove(loader);
+    m_downloadingPendingMasterResourceLoadersCount--;
     checkIfLoadIsComplete();
 }
 
@@ -347,8 +349,6 @@ void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
 
 void ApplicationCacheGroup::setNewestCache(PassRefPtr<ApplicationCache> newestCache)
 {
-    ASSERT(!m_caches.contains(newestCache.get()));
-
     m_newestCache = newestCache;
 
     m_caches.add(m_newestCache.get());
@@ -681,6 +681,7 @@ void ApplicationCacheGroup::manifestNotFound()
         m_pendingMasterResourceLoaders.remove(it);
     }
 
+    m_downloadingPendingMasterResourceLoadersCount = 0;
     m_updateStatus = Idle;    
     m_frame = 0;
     
@@ -693,7 +694,7 @@ void ApplicationCacheGroup::manifestNotFound()
 
 void ApplicationCacheGroup::checkIfLoadIsComplete()
 {
-    if (m_manifestHandle || !m_pendingEntries.isEmpty() || !m_pendingMasterResourceLoaders.isEmpty())
+    if (m_manifestHandle || !m_pendingEntries.isEmpty() || m_downloadingPendingMasterResourceLoadersCount)
         return;
     
     // We're done, all resources have finished downloading (successfully or not).
@@ -732,16 +733,43 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
         RefPtr<ApplicationCache> oldNewestCache = (m_newestCache == m_cacheBeingUpdated) ? 0 : m_newestCache;
 
         setNewestCache(m_cacheBeingUpdated.release());
-        cacheStorage().storeNewestCache(this);
+        if (cacheStorage().storeNewestCache(this)) {
+            // New cache stored, now remove the old cache.
+            if (oldNewestCache)
+                cacheStorage().remove(oldNewestCache.get());
+            // Fire the success events.
+            postListenerTask(isUpgradeAttempt ? &DOMApplicationCache::callUpdateReadyListener : &DOMApplicationCache::callCachedListener, m_associatedDocumentLoaders);
+        } else {
+            // Run the "cache failure steps"
+            // Fire the error events to all pending master entries, as well any other cache hosts
+            // currently associated with a cache in this group.
+            postListenerTask(&DOMApplicationCache::callErrorListener, m_associatedDocumentLoaders);
+            // Disassociate the pending master entries from the failed new cache. Note that
+            // all other loaders in the m_associatedDocumentLoaders are still associated with
+            // some other cache in this group. They are not associated with the failed new cache.
 
-        if (oldNewestCache)
-            cacheStorage().remove(oldNewestCache.get());
+            // Need to copy loaders, because the cache group may be destroyed at the end of iteration.
+            Vector<DocumentLoader*> loaders;
+            copyToVector(m_pendingMasterResourceLoaders, loaders);
+            size_t count = loaders.size();
+            for (size_t i = 0; i != count; ++i)
+                disassociateDocumentLoader(loaders[i]); // This can delete this group.
 
-        postListenerTask(isUpgradeAttempt ? &DOMApplicationCache::callUpdateReadyListener : &DOMApplicationCache::callCachedListener, m_associatedDocumentLoaders);
+            // Reinstate the oldNewestCache, if there was one.
+            if (oldNewestCache) {
+                // This will discard the failed new cache.
+                setNewestCache(oldNewestCache.release());
+            } else {
+                // We must have been deleted by the last call to disassociateDocumentLoader().
+                return;
+            }
+        }
         break;
     }
     }
 
+    // Empty cache group's list of pending master entries.
+    m_pendingMasterResourceLoaders.clear();
     m_completionType = None;
     m_updateStatus = Idle;
     m_frame = 0;

@@ -40,6 +40,7 @@ class ApplicationCache;
 class ApplicationCacheGroup;
 class ApplicationCacheResource;
 class KURL;
+class ResourceStorageIDJournal;
     
 class ApplicationCacheStorage {
 public:
@@ -69,7 +70,7 @@ private:
     ApplicationCacheGroup* loadCacheGroup(const KURL& manifestURL);
     
     bool store(ApplicationCacheGroup*);
-    bool store(ApplicationCache*);
+    bool store(ApplicationCache*, ResourceStorageIDJournal*);
     bool store(ApplicationCacheResource*, unsigned cacheStorageID);
 
     void loadManifestHostHashes();
