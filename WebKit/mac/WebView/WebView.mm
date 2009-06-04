@@ -474,6 +474,9 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 + (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
+#if USE(ACCELERATED_COMPOSITING)
+- (void)_clearViewUpdateRunLoopObserver;
+#endif
 @end
 
 @interface WebView (WebCallDelegateFunctions)
@@ -555,38 +558,29 @@ static BOOL automaticSpellingCorrectionEnabled;
 #endif
 }
 
-- init 
+- (id)init 
 {
     self = [super init];
     if (!self)
         return nil;
-    JSC::initializeThreading();
+
     allowsUndo = YES;
+    usesPageCache = YES;
+    shouldUpdateWhileOffscreen = YES;
+
     zoomMultiplier = 1;
+
 #if ENABLE(DASHBOARD_SUPPORT)
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif
+
     shouldCloseWithWindow = objc_collecting_enabled();
 
     smartInsertDeleteEnabled = ![[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled]
         || [[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled];
-    continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
-#ifndef BUILDING_ON_TIGER
-    grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
-#endif
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    automaticQuoteSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticQuoteSubstitutionEnabled];
-    automaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
-    automaticDashSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticDashSubstitutionEnabled];
-    automaticTextReplacementEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticTextReplacementEnabled];
-    automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
-#endif
 
-    usesPageCache = YES;
 
     pluginDatabaseClientCount++;
-
-    shouldUpdateWhileOffscreen = YES;
 
     return self;
 }
@@ -599,17 +593,13 @@ static BOOL automaticSpellingCorrectionEnabled;
 
     [applicationNameForUserAgent release];
     [backgroundColor release];
-    
     [inspector release];
     [currentNodeHighlight release];
-
     [hostWindow release];
-
     [policyDelegateForwarder release];
     [UIDelegateForwarder release];
     [frameLoadDelegateForwarder release];
     [editingDelegateForwarder release];
-    
     [mediaStyle release];
 
     [super dealloc];
@@ -618,22 +608,10 @@ static BOOL automaticSpellingCorrectionEnabled;
 - (void)finalize
 {
     ASSERT_MAIN_THREAD();
-
     ASSERT(!insertionPasteboard);
 
     [super finalize];
 }
-
-#if USE(ACCELERATED_COMPOSITING)
-- (void)_clearViewUpdateRunLoopObserver
-{
-    if (viewUpdateRunLoopObserver) {
-        CFRunLoopObserverInvalidate(viewUpdateRunLoopObserver);
-        CFRelease(viewUpdateRunLoopObserver);
-        viewUpdateRunLoopObserver = 0;
-    }
-}
-#endif
 
 @end
 
@@ -1236,7 +1214,7 @@ static bool fastDocumentTeardownEnabled()
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    [_private _clearViewUpdateRunLoopObserver];
+    [self _clearViewUpdateRunLoopObserver];
 #endif
     
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
@@ -2369,6 +2347,19 @@ WebScriptDebugDelegateImplementationCache* WebViewGetScriptDebugDelegateImplemen
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];    
+
+    continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
+#ifndef BUILDING_ON_TIGER
+    grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
+#endif
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    automaticQuoteSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticQuoteSubstitutionEnabled];
+    automaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
+    automaticDashSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticDashSubstitutionEnabled];
+    automaticTextReplacementEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticTextReplacementEnabled];
+    automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
+#endif
 }
 
 + (void)_applicationWillTerminate
@@ -5312,6 +5303,18 @@ static WebFrameView *containingFrameView(NSView *view)
 
     (void)HISearchWindowShow((CFStringRef)selectedString, kNilOptions);
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+- (void)_clearViewUpdateRunLoopObserver
+{
+    if (!_private->viewUpdateRunLoopObserver)
+        return;
+
+    CFRunLoopObserverInvalidate(_private->viewUpdateRunLoopObserver);
+    CFRelease(_private->viewUpdateRunLoopObserver);
+    _private->viewUpdateRunLoopObserver = 0;
+}
+#endif
 @end
 
 @implementation WebView (WebViewInternal)
@@ -5603,7 +5606,7 @@ static void viewUpdateRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopAct
 {
     WebView* webView = reinterpret_cast<WebView*>(info);
     [webView _viewWillDrawInternal];
-    [webView->_private _clearViewUpdateRunLoopObserver];
+    [webView _clearViewUpdateRunLoopObserver];
 }
 
 - (void)_scheduleViewUpdate

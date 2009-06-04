@@ -1,3 +1,22 @@
+2009-06-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Small cleanup in WebView.
+        - Move global data initialization to WebView's initialization method.
+        - Move _clearViewUpdateRunLoopObserver from WebViewPrivate to WebView (FileInternal)
+
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]): Remove global initializers.
+        (-[WebViewPrivate dealloc]): Cleanup whitespace.
+        (-[WebViewPrivate finalize]): Ditto.
+        (-[WebView _close]): Call [self _clearViewUpdateRunLoopObserver] instead of
+        [_private _clearViewUpdateRunLoopObserver]
+        (+[WebView initialize]): Move global initializers here.
+        (-[WebView _clearViewUpdateRunLoopObserver]): Moved from WebViewPrivate.
+        (viewUpdateRunLoopObserverCallBack): Call [self _clearViewUpdateRunLoopObserver]
+        instead of [_private _clearViewUpdateRunLoopObserver]
+
 2009-06-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
