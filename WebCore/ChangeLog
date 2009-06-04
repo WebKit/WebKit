@@ -1,3 +1,15 @@
+2009-06-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26180
+        Add a fast path for SecurityOrigin::equal. If "other == this" (where
+        other is the other security origin), then we really don't need to do
+        all the other (expensive) comparisons. We know it's equal.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::equal):
+
 2009-06-03  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
