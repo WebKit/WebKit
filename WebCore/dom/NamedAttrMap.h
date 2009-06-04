@@ -63,6 +63,7 @@ public:
 
     PassRefPtr<Node> item(unsigned index) const;
     size_t length() const { return m_attributes.size(); }
+    bool isEmpty() const { return !length(); }
 
     // Internal interface.
 

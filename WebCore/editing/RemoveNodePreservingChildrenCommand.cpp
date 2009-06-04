@@ -32,7 +32,8 @@
 namespace WebCore {
 
 RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRefPtr<Node> node)
-    : CompositeEditCommand(node->document()), m_node(node)
+    : CompositeEditCommand(node->document())
+    , m_node(node)
 {
     ASSERT(m_node);
 }

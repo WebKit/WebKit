@@ -1,3 +1,43 @@
+2009-02-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        Make sure execCommand("bold") on <b style="text-decoration: underline">test</b>
+        only removes the bold and not the underline.
+        https://bugs.webkit.org/show_bug.cgi?id=23496
+
+        Test: editing/execCommand/convert-style-elements-to-spans.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleDeclaration.h:
+        (WebCore::CSSStyleDeclaration::isEmpty):
+        * dom/NamedAttrMap.h:
+        (WebCore::NamedAttrMap::isEmpty):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::isUnstyledStyleSpan):
+        (WebCore::isSpanWithoutAttributesOrUnstyleStyleSpan):
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::implicitlyStyledElementShouldBeRemovedWhenApplyingStyle):
+        (WebCore::ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes):
+        (WebCore::ApplyStyleCommand::removeCSSStyle):
+        (WebCore::ApplyStyleCommand::applyTextDecorationStyle):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/ApplyStyleCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceNodeWithSpanPreservingChildrenAndAttributes):
+        * editing/CompositeEditCommand.h:
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand):
+        * editing/ReplaceNodeWithSpanCommand.cpp: Added.
+        (WebCore::ReplaceNodeWithSpanCommand::ReplaceNodeWithSpanCommand):
+        (WebCore::swapInNodePreservingAttributesAndChildren):
+        (WebCore::ReplaceNodeWithSpanCommand::doApply):
+        (WebCore::ReplaceNodeWithSpanCommand::doUnapply):
+        * editing/ReplaceNodeWithSpanCommand.h: Added.
+        (WebCore::ReplaceNodeWithSpanCommand::create):
+
 2009-06-04  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix for Windows Cairo target.

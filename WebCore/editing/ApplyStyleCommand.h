@@ -62,8 +62,8 @@ private:
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
     // style-removal helpers
-    bool isHTMLStyleNode(CSSMutableStyleDeclaration*, HTMLElement*);
-    void removeHTMLStyleNode(HTMLElement*);
+    bool implicitlyStyledElementShouldBeRemovedWhenApplyingStyle(HTMLElement*, CSSMutableStyleDeclaration*);
+    void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
     void removeHTMLFontStyle(CSSMutableStyleDeclaration*, HTMLElement*);
     void removeHTMLBidiEmbeddingStyle(CSSMutableStyleDeclaration*, HTMLElement*);
     void removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*);

@@ -50,6 +50,7 @@
 #include "RemoveCSSPropertyCommand.h"
 #include "RemoveNodeCommand.h"
 #include "RemoveNodePreservingChildrenCommand.h"
+#include "ReplaceNodeWithSpanCommand.h"
 #include "ReplaceSelectionCommand.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
@@ -213,6 +214,20 @@ void CompositeEditCommand::removeNodeAndPruneAncestors(PassRefPtr<Node> node)
     RefPtr<Node> parent = node->parentNode();
     removeNode(node);
     prune(parent.release());
+}
+
+HTMLElement* CompositeEditCommand::replaceNodeWithSpanPreservingChildrenAndAttributes(PassRefPtr<Node> node)
+{
+    // It would also be possible to implement all of ReplaceNodeWithSpanCommand
+    // as a series of existing smaller edit commands.  Someone who wanted to
+    // reduce the number of edit commands could do so here.
+    RefPtr<ReplaceNodeWithSpanCommand> command = ReplaceNodeWithSpanCommand::create(node);
+    applyCommandToComposite(command);
+    // Returning a raw pointer here is OK because the command is retained by
+    // applyCommandToComposite (thus retaining the span), and the span is also
+    // in the DOM tree, and thus alive whie it has a parent.
+    ASSERT(command->spanElement()->inDocument());
+    return command->spanElement();
 }
 
 static bool hasARenderedDescendant(Node* node)
