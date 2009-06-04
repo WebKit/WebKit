@@ -246,12 +246,13 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
         return create(KURL());
         
     // Make sure there's a second separator
-    int separator2 = databaseIdentifier.find(SeparatorCharacter, separator1 + 1);
+    int separator2 = databaseIdentifier.reverseFind(SeparatorCharacter);
     if (separator2 == -1)
         return create(KURL());
         
-    // Make sure there's not a third separator
-    if (databaseIdentifier.reverseFind(SeparatorCharacter) != separator2)
+    // Ensure there were at least 2 seperator characters. Some hostnames on intranets have
+    // underscores in them, so we'll assume that any additional underscores are part of the host.
+    if (separator1 != separator2)
         return create(KURL());
         
     // Make sure the port section is a valid port number or doesn't exist
