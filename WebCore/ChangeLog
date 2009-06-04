@@ -1,3 +1,16 @@
+2009-06-03  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, Chromium build fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26177
+        Reverting 'private' to 'protected' on 2 classes.
+        Chromium glue layer (not yet in Webkit tree) relies on ability to derive
+        Chromium-specific platform classes and access the data members.
+        See bug for more details.
+
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+
 2009-06-03  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser <simonfr@apple.com>.
