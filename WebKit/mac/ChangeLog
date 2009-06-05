@@ -1,3 +1,14 @@
+2009-06-05  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26220
+
+        Update a WebView's active state when it moves to a different window.
+
+        * WebView/WebView.mm:
+        (-[WebView viewDidMoveToWindow]):
+
 2009-06-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice Liu.

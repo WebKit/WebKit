@@ -2554,6 +2554,8 @@ static bool needsWebViewInitThreadWorkaround()
 
     if ([self window])
         _private->page->didMoveOnscreen();
+    
+    [self _updateActiveState];
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
