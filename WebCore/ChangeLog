@@ -1,3 +1,11 @@
+2009-06-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Make sure the correct config.h is included when shadowbuilding
+
+        * WebCore.pro:
+
 2009-06-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
