@@ -78,12 +78,12 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
     if (bufferLength > GlyphPage::size)
         return false;
 
-    if (!fontData->m_font.m_font || fontData->m_font.m_font == reinterpret_cast<PangoFont*>(-1))
+    if (!fontData->platformData().m_font || fontData->platformData().m_font == reinterpret_cast<PangoFont*>(-1))
         return false;
 
     bool haveGlyphs = false;
     for (unsigned i = 0; i < length; i++) {
-        Glyph glyph = pango_font_get_glyph(fontData->m_font.m_font, fontData->m_font.m_context, buffer[i]);
+        Glyph glyph = pango_font_get_glyph(fontData->platformData().m_font, fontData->platformData().m_context, buffer[i]);
         if (!glyph)
             setGlyphDataForIndex(offset + i, 0, 0);
         else {

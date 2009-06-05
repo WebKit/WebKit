@@ -1,5 +1,12 @@
 2009-06-05  Xan Lopez  <xlopez@igalia.com>
 
+        More build fixes.
+
+        * platform/graphics/gtk/GlyphPageTreeNodePango.cpp:
+        (WebCore::GlyphPage::fill):
+
+2009-06-05  Xan Lopez  <xlopez@igalia.com>
+
         Fix the GTK+ build.
 
         * GNUmakefile.am:
