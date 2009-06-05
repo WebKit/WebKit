@@ -381,8 +381,8 @@ static void jscGeneratedNativeCode()
 struct StackHack {
     ALWAYS_INLINE StackHack(JITStackFrame& stackFrame) 
         : stackFrame(stackFrame)
+        , savedReturnAddress(*stackFrame.returnAddressSlot())
     {
-        savedReturnAddress = *stackFrame.returnAddressSlot();
         *stackFrame.returnAddressSlot() = reinterpret_cast<void*>(jscGeneratedNativeCode);
     }
 
@@ -395,14 +395,14 @@ struct StackHack {
     void* savedReturnAddress;
 };
 
-#define STUB_INIT_STACK_FRAME(stackFrame) SETUP_VA_LISTL_ARGS; JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS); StackHack stackHack(stackFrame);
+#define STUB_INIT_STACK_FRAME(stackFrame) SETUP_VA_LISTL_ARGS; JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS); StackHack stackHack(stackFrame)
 #define STUB_SET_RETURN_ADDRESS(returnAddress) stackHack.savedReturnAddress = returnAddress
 #define STUB_RETURN_ADDRESS stackHack.savedReturnAddress
 
 #else
 
-#define STUB_INIT_STACK_FRAME(stackFrame) SETUP_VA_LISTL_ARGS; JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS);
-#define STUB_SET_RETURN_ADDRESS(returnAddress) *stackFrame.returnAddressSlot() = returnAddress;
+#define STUB_INIT_STACK_FRAME(stackFrame) SETUP_VA_LISTL_ARGS; JITStackFrame& stackFrame = *reinterpret_cast<JITStackFrame*>(STUB_ARGS)
+#define STUB_SET_RETURN_ADDRESS(returnAddress) *stackFrame.returnAddressSlot() = returnAddress
 #define STUB_RETURN_ADDRESS *stackFrame.returnAddressSlot()
 
 #endif

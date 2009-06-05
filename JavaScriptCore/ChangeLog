@@ -1,3 +1,13 @@
+2009-06-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Minor tidy up in JITStubs.
+
+        * jit/JITStubs.cpp:
+        (JSC::StackHack::StackHack):
+        * jit/JITStubs.h:
+
 2009-06-05  Koen Kooi <koen@dominion.thruhere.net>
 
         Reviewed by Xan Lopez.

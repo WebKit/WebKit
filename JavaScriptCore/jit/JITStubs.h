@@ -94,7 +94,7 @@ namespace JSC {
         // When JIT code makes a call, it pushes its return address just below the rest of the stack.
         void** returnAddressSlot() { return reinterpret_cast<void**>(this) - 1; }
     };
-#else
+#elif PLATFORM(X86)
     struct JITStackFrame {
         JITStubArg padding; // Unused
         JITStubArg args[6];
@@ -115,6 +115,8 @@ namespace JSC {
         // When JIT code makes a call, it pushes its return address just below the rest of the stack.
         void** returnAddressSlot() { return reinterpret_cast<void**>(this) - 1; }
     };
+#else
+#error "JITStackFrame not defined for this platform."
 #endif
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
@@ -130,14 +132,12 @@ namespace JSC {
     #define STUB_ARGS_DECLARATION void** args
     #define STUB_ARGS (args)
 
-    #if PLATFORM(X86_64)
-    #define JIT_STUB
-    #elif COMPILER(MSVC)
+    #if PLATFORM(X86) && COMPILER(MSVC)
     #define JIT_STUB __fastcall
-    #elif COMPILER(GCC)
+    #elif PLATFORM(X86) && COMPILER(GCC)
     #define JIT_STUB  __attribute__ ((fastcall))
     #else
-    #error Need to support register calling convention in this compiler
+    #define JIT_STUB
     #endif
 #endif
 
