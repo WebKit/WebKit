@@ -177,12 +177,12 @@ ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
     // FIXME: #ifndef NDEBUG, Write the correct m_type to the register.
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedCall(void* function)
+ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
 {
     ASSERT(m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
 
     Call nakedCall = nearCall();
-    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, function));
+    m_calls.append(CallRecord(nakedCall, m_bytecodeIndex, function.executableAddress()));
     return nakedCall;
 }
 

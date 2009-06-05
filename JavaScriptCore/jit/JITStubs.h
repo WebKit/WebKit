@@ -29,8 +29,10 @@
 #ifndef JITStubs_h
 #define JITStubs_h
 
-#include "Register.h"
 #include <wtf/Platform.h>
+
+#include "MacroAssemblerCodeRef.h"
+#include "Register.h"
 
 #if ENABLE(JIT)
 
@@ -172,22 +174,22 @@ namespace JSC {
         static void tryCacheGetByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
         static void tryCachePutByID(CallFrame*, CodeBlock*, void* returnAddress, JSValue baseValue, const PutPropertySlot&);
         
-        void* ctiArrayLengthTrampoline() { return m_ctiArrayLengthTrampoline; }
-        void* ctiStringLengthTrampoline() { return m_ctiStringLengthTrampoline; }
-        void* ctiVirtualCallPreLink() { return m_ctiVirtualCallPreLink; }
-        void* ctiVirtualCallLink() { return m_ctiVirtualCallLink; }
-        void* ctiVirtualCall() { return m_ctiVirtualCall; }
-        void* ctiNativeCallThunk() { return m_ctiNativeCallThunk; }
+        MacroAssemblerCodePtr ctiArrayLengthTrampoline() { return m_ctiArrayLengthTrampoline; }
+        MacroAssemblerCodePtr ctiStringLengthTrampoline() { return m_ctiStringLengthTrampoline; }
+        MacroAssemblerCodePtr ctiVirtualCallPreLink() { return m_ctiVirtualCallPreLink; }
+        MacroAssemblerCodePtr ctiVirtualCallLink() { return m_ctiVirtualCallLink; }
+        MacroAssemblerCodePtr ctiVirtualCall() { return m_ctiVirtualCall; }
+        MacroAssemblerCodePtr ctiNativeCallThunk() { return m_ctiNativeCallThunk; }
 
     private:
         RefPtr<ExecutablePool> m_executablePool;
 
-        void* m_ctiArrayLengthTrampoline;
-        void* m_ctiStringLengthTrampoline;
-        void* m_ctiVirtualCallPreLink;
-        void* m_ctiVirtualCallLink;
-        void* m_ctiVirtualCall;
-        void* m_ctiNativeCallThunk;
+        MacroAssemblerCodePtr m_ctiArrayLengthTrampoline;
+        MacroAssemblerCodePtr m_ctiStringLengthTrampoline;
+        MacroAssemblerCodePtr m_ctiVirtualCallPreLink;
+        MacroAssemblerCodePtr m_ctiVirtualCallLink;
+        MacroAssemblerCodePtr m_ctiVirtualCall;
+        MacroAssemblerCodePtr m_ctiNativeCallThunk;
     };
 
 namespace JITStubs { extern "C" {

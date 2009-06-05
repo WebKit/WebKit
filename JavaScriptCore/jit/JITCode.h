@@ -42,6 +42,7 @@ namespace JSC {
 
     class JITCode {
         typedef MacroAssemblerCodeRef CodeRef;
+        typedef MacroAssemblerCodePtr CodePtr;
     public:
         JITCode()
         {
@@ -54,10 +55,10 @@ namespace JSC {
 
         bool operator !() const
         {
-            return !m_ref.m_code;
+            return !m_ref.m_code.executableAddress();
         }
 
-        void* addressForCall()
+        CodePtr addressForCall()
         {
             return m_ref.m_code;
         }
@@ -67,7 +68,7 @@ namespace JSC {
         // block of code.  It is ASSERTed that no codeblock >4gb in size.
         unsigned offsetOf(void* pointerIntoCode)
         {
-            intptr_t result = reinterpret_cast<intptr_t>(pointerIntoCode) - reinterpret_cast<intptr_t>(m_ref.m_code);
+            intptr_t result = reinterpret_cast<intptr_t>(pointerIntoCode) - reinterpret_cast<intptr_t>(m_ref.m_code.executableAddress());
             ASSERT(static_cast<intptr_t>(static_cast<unsigned>(result)) == result);
             return static_cast<unsigned>(result);
         }
@@ -79,13 +80,13 @@ namespace JSC {
 #if PLATFORM(X86_64)
                 0, 0, 0, 0, 0, 0,
 #endif
-                m_ref.m_code, registerFile, callFrame, exception, Profiler::enabledProfilerReference(), globalData));
+                m_ref.m_code.executableAddress(), registerFile, callFrame, exception, Profiler::enabledProfilerReference(), globalData));
         }
 
 #ifndef NDEBUG
         size_t size()
         {
-            ASSERT(m_ref.m_code);
+            ASSERT(m_ref.m_code.executableAddress());
             return m_ref.m_size;
         }
 #endif
@@ -97,9 +98,9 @@ namespace JSC {
 
         // Host functions are a bit special; they have a m_code pointer but they
         // do not individully ref the executable pool containing the trampoline.
-        static JITCode HostFunction(void* code)
+        static JITCode HostFunction(CodePtr code)
         {
-            return JITCode(code, 0, 0);
+            return JITCode(code.dataLocation(), 0, 0);
         }
 
     private:

@@ -68,12 +68,12 @@ public:
     JSRegExp* getFallback() { return m_fallback; }
     void setFallback(JSRegExp* fallback) { m_fallback = fallback; }
 
-    bool operator!() { return !m_ref.m_code; }
+    bool operator!() { return !m_ref.m_code.executableAddress(); }
     void set(MacroAssembler::CodeRef ref) { m_ref = ref; }
 
     int execute(const UChar* input, unsigned start, unsigned length, int* output)
     {
-        return reinterpret_cast<RegexJITCode>(m_ref.m_code)(input, start, length, output);
+        return reinterpret_cast<RegexJITCode>(m_ref.m_code.executableAddress())(input, start, length, output);
     }
 
 private:

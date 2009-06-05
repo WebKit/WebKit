@@ -63,6 +63,12 @@ using namespace std;
 namespace JSC {
 
 
+#if PLATFORM(DARWIN) || PLATFORM(WIN_OS)
+#define SYMBOL_STRING(name) "_" #name
+#else
+#define SYMBOL_STRING(name) #name
+#endif
+
 #if COMPILER(GCC) && PLATFORM(X86)
 
 // These ASSERTs remind you that, if you change the layout of JITStackFrame, you
@@ -70,12 +76,6 @@ namespace JSC {
 COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x38, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
 COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x30, JITStackFrame_code_offset_matches_ctiTrampoline);
 COMPILE_ASSERT(offsetof(struct JITStackFrame, savedEBX) == 0x1c, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
-
-#if PLATFORM(DARWIN) || PLATFORM(WIN_OS)
-#define SYMBOL_STRING(name) "_" #name
-#else
-#define SYMBOL_STRING(name) #name
-#endif
 
 asm(
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
@@ -123,12 +123,6 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x90, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
 COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x80, JITStackFrame_code_offset_matches_ctiTrampoline);
 COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x48, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
-
-#if PLATFORM(DARWIN) || PLATFORM(WIN_OS)
-#define SYMBOL_STRING(name) "_" #name
-#else
-#define SYMBOL_STRING(name) #name
-#endif
 
 asm(
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
@@ -232,12 +226,6 @@ extern "C" {
 #endif
 
 JITThunks::JITThunks(JSGlobalData* globalData)
-    : m_ctiArrayLengthTrampoline(0)
-    , m_ctiStringLengthTrampoline(0)
-    , m_ctiVirtualCallPreLink(0)
-    , m_ctiVirtualCallLink(0)
-    , m_ctiVirtualCall(0)
-    , m_ctiNativeCallThunk(0)
 {
     JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiArrayLengthTrampoline, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallPreLink, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
 }
@@ -253,7 +241,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        ctiPatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(JITStubs::cti_op_put_by_id_generic));
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(JITStubs::cti_op_put_by_id_generic));
         return;
     }
     
@@ -261,13 +249,13 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
     Structure* structure = baseCell->structure();
 
     if (structure->isDictionary()) {
-        ctiPatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(JITStubs::cti_op_put_by_id_generic));
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(JITStubs::cti_op_put_by_id_generic));
         return;
     }
 
     // If baseCell != base, then baseCell must be a proxy for another object.
     if (baseCell != slot.base()) {
-        ctiPatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(JITStubs::cti_op_put_by_id_generic));
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(JITStubs::cti_op_put_by_id_generic));
         return;
     }
 
@@ -295,7 +283,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
     // FIXME: Cache property access for immediates.
     if (!baseValue.isCell()) {
-        ctiPatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(JITStubs::cti_op_get_by_id_generic));
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(JITStubs::cti_op_get_by_id_generic));
         return;
     }
     
@@ -315,7 +303,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        ctiPatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(JITStubs::cti_op_get_by_id_generic));
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(JITStubs::cti_op_get_by_id_generic));
         return;
     }
 
@@ -323,7 +311,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     Structure* structure = baseCell->structure();
 
     if (structure->isDictionary()) {
-        ctiPatchCallByReturnAddress(returnAddress, reinterpret_cast<void*>(JITStubs::cti_op_get_by_id_generic));
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(JITStubs::cti_op_get_by_id_generic));
         return;
     }
 
@@ -642,7 +630,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id)
     PutPropertySlot slot;
     stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
 
-    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_id_second));
+    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_id_second));
 
     CHECK_FOR_EXCEPTION_AT_END();
 }
@@ -696,7 +684,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id)
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
 
-    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_second));
+    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_second));
 
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
@@ -713,7 +701,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
 
-    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_method_check_second));
+    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_method_check_second));
 
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
@@ -779,7 +767,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check_second)
     }
 
     // Revert the get_by_id op back to being a regular get_by_id - allow it to cache like normal, if it needs to.
-    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id));
+    ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id));
 
     return JSValue::encode(result);
 }
@@ -840,9 +828,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
         JIT::compileGetByIdSelfList(callFrame->scopeChain()->globalData, codeBlock, stubInfo, polymorphicStructureList, listIndex, asCell(baseValue)->structure(), slot.cachedOffset());
 
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
-            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_generic));
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_generic));
     } else {
-        ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_generic));
+        ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_generic));
     }
     return JSValue::encode(result);
 }
@@ -889,7 +877,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
     CHECK_FOR_EXCEPTION();
 
     if (!baseValue.isCell() || !slot.isCacheable() || asCell(baseValue)->structure()->isDictionary()) {
-        ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_fail));
+        ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
         return JSValue::encode(result);
     }
 
@@ -901,7 +889,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
     JSObject* slotBaseObject = asObject(slot.slotBase());
 
     if (slot.slotBase() == baseValue)
-        ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_fail));
+        ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
     else if (slot.slotBase() == asCell(baseValue)->structure()->prototypeForLookup(callFrame)) {
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
@@ -914,16 +902,16 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         JIT::compileGetByIdProtoList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, slotBaseObject->structure(), slot.cachedOffset());
 
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
-            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_list_full));
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_list_full));
     } else if (size_t count = countPrototypeChainEntriesAndCheckForProxies(callFrame, baseValue, slot)) {
         int listIndex;
         PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(stubInfo, listIndex);
         JIT::compileGetByIdChainList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, structure->prototypeChain(callFrame), count, slot.cachedOffset());
 
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
-            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_list_full));
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_list_full));
     } else
-        ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_id_proto_fail));
+        ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
 
     return JSValue::encode(result);
 }
@@ -1130,7 +1118,7 @@ DEFINE_STUB_FUNCTION(void*, vm_dontLazyLinkCall)
 
     ctiPatchNearCallByReturnAddress(stackFrame.args[1].returnAddress(), globalData->jitStubs.ctiVirtualCallLink());
 
-    return callee->body()->generatedJITCode().addressForCall();
+    return callee->body()->generatedJITCode().addressForCall().executableAddress();
 }
 
 DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
@@ -1147,7 +1135,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(stackFrame.args[1].returnAddress());
     JIT::linkCall(callee, codeBlock, jitCode, callLinkInfo, stackFrame.args[2].int32());
 
-    return jitCode.addressForCall();
+    return jitCode.addressForCall().executableAddress();
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_push_activation)
@@ -1385,11 +1373,11 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
                 result = jsArray->JSArray::get(callFrame, i);
         } else if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_string));
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val_string));
             result = asString(baseValue)->getIndex(stackFrame.globalData, i);
         } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val_byte_array));
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val_byte_array));
             return JSValue::encode(asByteArray(baseValue)->getIndex(callFrame, i));
         } else
             result = baseValue.get(callFrame, i);
@@ -1421,7 +1409,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_string)
         else {
             result = baseValue.get(callFrame, i);
             if (!isJSString(globalData, baseValue))
-                ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val));
+                ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val));
         }
     } else {
         Identifier property(callFrame, subscript.toString(callFrame));
@@ -1454,7 +1442,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_byte_array)
 
         result = baseValue.get(callFrame, i);
         if (!isJSByteArray(globalData, baseValue))
-            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_get_by_val));
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_val));
     } else {
         Identifier property(callFrame, subscript.toString(callFrame));
         result = baseValue.get(callFrame, property);
@@ -1547,7 +1535,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
                 jsArray->JSArray::put(callFrame, i, value);
         } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             JSByteArray* jsByteArray = asByteArray(baseValue);
-            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_val_byte_array));
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_val_byte_array));
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             if (value.isInt32Fast()) {
                 jsByteArray->setIndex(i, value.getInt32Fast());
@@ -1631,7 +1619,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val_byte_array)
         }
 
         if (!isJSByteArray(globalData, baseValue))
-            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, reinterpret_cast<void*>(cti_op_put_by_val));
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_val));
         baseValue.put(callFrame, i, value);
     } else {
         Identifier property(callFrame, subscript.toString(callFrame));

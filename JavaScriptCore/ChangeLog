@@ -1,3 +1,112 @@
+2009-06-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Encapsulate many uses of void* in the assembler & jit with types that provide
+        more semantic information.  The new types are:
+        
+            * MacroAssemblerCodePtr - this wraps a pointer into JIT generated code.
+            * FunctionPtr - this wraps a pointer to a C/C++ function in JSC.
+            * ReturnAddressPtr - this wraps a return address resulting from a 'call' instruction.
+
+        Wrapping these types allows for stronger type-checking than is possible with everything
+        represented a void*.  For example, it is now enforced by the type system that near
+        calls can only be linked to JIT code and not to C functions in JSC (this was previously
+        required, but could not be enforced on the interface).
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::CodeLocationCommon):
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::dataLocation):
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::executableAddress):
+        (JSC::AbstractMacroAssembler::CodeLocationCommon::reset):
+        (JSC::AbstractMacroAssembler::CodeLocationInstruction::repatchLoadToLEA):
+        (JSC::AbstractMacroAssembler::CodeLocationInstruction::CodeLocationInstruction):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForSwitch):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForExceptionHandler):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::addressForJSR):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::operator!):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::reset):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::CodeLocationLabel):
+        (JSC::AbstractMacroAssembler::CodeLocationLabel::getJumpDestination):
+        (JSC::AbstractMacroAssembler::CodeLocationJump::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationJump::CodeLocationJump):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::calleeReturnAddressValue):
+        (JSC::AbstractMacroAssembler::CodeLocationCall::CodeLocationCall):
+        (JSC::AbstractMacroAssembler::CodeLocationNearCall::relink):
+        (JSC::AbstractMacroAssembler::CodeLocationNearCall::calleeReturnAddressValue):
+        (JSC::AbstractMacroAssembler::CodeLocationNearCall::CodeLocationNearCall):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabel32::repatch):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabel32::CodeLocationDataLabel32):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabelPtr::repatch):
+        (JSC::AbstractMacroAssembler::CodeLocationDataLabelPtr::CodeLocationDataLabelPtr):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkCallerToTrampoline):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkCallerToFunction):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::relinkNearCallerToTrampoline):
+        (JSC::AbstractMacroAssembler::ProcessorReturnAddress::addressForLookup):
+        (JSC::AbstractMacroAssembler::trampolineAt):
+        (JSC::AbstractMacroAssembler::PatchBuffer::link):
+        (JSC::AbstractMacroAssembler::PatchBuffer::performFinalization):
+        (JSC::::CodeLocationCommon::instructionAtOffset):
+        (JSC::::CodeLocationCommon::labelAtOffset):
+        (JSC::::CodeLocationCommon::jumpAtOffset):
+        (JSC::::CodeLocationCommon::callAtOffset):
+        (JSC::::CodeLocationCommon::nearCallAtOffset):
+        (JSC::::CodeLocationCommon::dataLabelPtrAtOffset):
+        (JSC::::CodeLocationCommon::dataLabel32AtOffset):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+        (JSC::FunctionPtr::value):
+        (JSC::FunctionPtr::executableAddress):
+        (JSC::ReturnAddressPtr::ReturnAddressPtr):
+        (JSC::ReturnAddressPtr::value):
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        (JSC::MacroAssemblerCodePtr::executableAddress):
+        (JSC::MacroAssemblerCodePtr::dataLocation):
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::patchPointerForCall):
+        * jit/JIT.cpp:
+        (JSC::ctiPatchNearCallByReturnAddress):
+        (JSC::ctiPatchCallByReturnAddress):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        (JSC::JIT::compileCTIMachineTrampolines):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCode.h:
+        (JSC::JITCode::operator !):
+        (JSC::JITCode::addressForCall):
+        (JSC::JITCode::offsetOf):
+        (JSC::JITCode::execute):
+        (JSC::JITCode::size):
+        (JSC::JITCode::HostFunction):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitNakedCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::JITThunks::ctiArrayLengthTrampoline):
+        (JSC::JITThunks::ctiStringLengthTrampoline):
+        (JSC::JITThunks::ctiVirtualCallPreLink):
+        (JSC::JITThunks::ctiVirtualCallLink):
+        (JSC::JITThunks::ctiVirtualCall):
+        (JSC::JITThunks::ctiNativeCallThunk):
+        * yarr/RegexJIT.h:
+        (JSC::Yarr::RegexCodeBlock::operator!):
+        (JSC::Yarr::RegexCodeBlock::execute):
+
 2009-06-05  Antti Koivisto  <antti@apple.com>
 
         Try to unbreak Windows build.
