@@ -201,7 +201,19 @@ bool Page::goForward()
 void Page::goToItem(HistoryItem* item, FrameLoadType type)
 {
     // Abort any current load if we're going to a history item
-    m_mainFrame->loader()->stopAllLoaders();
+
+    // Define what to do with any open database connections. By default we stop them and terminate the database thread.
+    DatabasePolicy databasePolicy = DatabasePolicyStop;
+
+#if ENABLE(DATABASE)
+    // If we're navigating the history via a fragment on the same document, then we do not want to stop databases.
+    const KURL& currentURL = m_mainFrame->loader()->url();
+    const KURL& newURL = item->url();
+
+    if (newURL.hasRef() && equalIgnoringRef(currentURL, newURL))
+        databasePolicy = DatabasePolicyContinue;
+#endif
+    m_mainFrame->loader()->stopAllLoaders(databasePolicy);
     m_mainFrame->loader()->goToItem(item, type);
 }
 

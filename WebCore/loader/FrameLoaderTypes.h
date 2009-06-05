@@ -66,6 +66,11 @@ namespace WebCore {
         NavigationTypeOther
     };
 
+    enum DatabasePolicy {
+        DatabasePolicyStop,    // The database thread should be stopped and database connections closed.
+        DatabasePolicyContinue
+    };
+
     enum ObjectContentType {
         ObjectContentNone,
         ObjectContentImage,
