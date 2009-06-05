@@ -184,7 +184,7 @@ namespace JSC {
         bool m_isPinnedPropertyTable : 1;
         bool m_hasGetterSetterProperties : 1;
         bool m_usingSingleTransitionSlot : 1;
-        unsigned m_attributesInPrevious : 5;
+        unsigned m_attributesInPrevious : 7;
     };
 
     inline size_t Structure::get(const Identifier& propertyName)

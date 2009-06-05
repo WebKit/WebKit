@@ -64,5 +64,8 @@ o8.__proto__.__defineSetter__('x', function() { this.numSets++; })
 o8.x = 20;
 shouldBe("o8.numSets", "0");
 
+({getter:"foo", b:"bar"});
+testObj=({get getter(){return 'getter was called.'}, b: 'bar'})
+shouldBe("typeof testObj.getter", "'string'");
 
 var successfullyParsed = true;

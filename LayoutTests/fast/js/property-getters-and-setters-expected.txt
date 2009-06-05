@@ -29,6 +29,7 @@ Defining a setter should also define a getter for the same property which return
 PASS o7.x is undefined.
 If an object has a property and its prototype has a setter function for that property, then setting the property should set the property directly and not call the setter function.
 PASS o8.numSets is 0
+PASS typeof testObj.getter is 'string'
 PASS successfullyParsed is true
 
 TEST COMPLETE

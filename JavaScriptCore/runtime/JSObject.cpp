@@ -311,7 +311,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
 
     PutPropertySlot slot;
     GetterSetter* getterSetter = new (exec) GetterSetter;
-    putDirectInternal(exec->globalData(), propertyName, getterSetter, None, true, slot);
+    putDirectInternal(exec->globalData(), propertyName, getterSetter, Getter, true, slot);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure
@@ -338,7 +338,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
 
     PutPropertySlot slot;
     GetterSetter* getterSetter = new (exec) GetterSetter;
-    putDirectInternal(exec->globalData(), propertyName, getterSetter, None, true, slot);
+    putDirectInternal(exec->globalData(), propertyName, getterSetter, Setter, true, slot);
 
     // putDirect will change our Structure if we add a new property. For
     // getters and setters, though, we also need to change our Structure

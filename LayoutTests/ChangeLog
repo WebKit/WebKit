@@ -1,3 +1,12 @@
+2009-06-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug in property caching of getters and setters.
+
+        * fast/js/property-getters-and-setters-expected.txt:
+        * fast/js/resources/property-getters-and-setters.js:
+
 2009-02-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin Garcia.

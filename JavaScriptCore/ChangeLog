@@ -1,3 +1,21 @@
+2009-06-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Bug in property caching of getters and setters.
+
+        Make sure that the transition logic accounts for getters and setters.
+        If we don't we end up screwing up the transition tables so that some
+        transitions will start incorrectly believing that they need to check
+        for getters and setters. 
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        * runtime/JSObject.h:
+        (JSC::):
+        * runtime/Structure.h:
+
 2009-06-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
