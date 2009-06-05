@@ -1,3 +1,17 @@
+2009-06-05  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Bug 26160: Compile fails in MacOSX when GNU fileutils are installed
+
+        <https://bugs.webkit.org/show_bug.cgi?id=26160>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use /bin/ln instead of ln for cases where this command is used with -h option.
+        As this option is not supported by GNU fileutils, this change helps users 
+        who have GNU fileutils in their PATH.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2009-06-03  Ben Murdoch  <benm@google.com>
 
         <https://bugs.webkit.org/show_bug.cgi?id=25710> HTML5 Database stops executing transactions if the URL hash changes while a transaction is open and an XHR is in progress.
