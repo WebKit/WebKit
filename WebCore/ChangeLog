@@ -1,3 +1,14 @@
+2009-06-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add ononline and onoffline attributes for the <body> element. 
+
+        * html/HTMLAttributeNames.in: Added ononlineAttr and onofflineAttr.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute): Map ononlineAttr
+        and onofflineAttr to window event listeners.
+
 2009-06-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

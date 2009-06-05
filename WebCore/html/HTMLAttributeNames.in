@@ -141,6 +141,8 @@ onmouseout
 onmouseover
 onmouseup
 onmousewheel
+ononline
+onoffline
 onpaste
 onreset
 onresize
