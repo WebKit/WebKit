@@ -1,3 +1,10 @@
+2009-06-05  Antti Koivisto  <antti@apple.com>
+
+        Try to unbreak Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
 2009-06-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Kilzer.
