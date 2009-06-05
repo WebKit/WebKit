@@ -2,6 +2,25 @@
 
         Reviewed by Oliver Hunt.
 
+        Remove DoubleNotEqual floating point comparison condition for now -
+        it is not used, and it is unclear the semantics are correct (I think
+        this comparison would actually give you not-equal-or-unordered, which
+        might be what is wanted... we can revisit this interface & get it
+        right when required).
+
+        Also, fix asserts in branchArith32 ops.  All adds & subs can check
+        for Signed, multiply only sets OF so can only check for overflow.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::branchMul32):
+        (JSC::MacroAssemblerX86Common::branchSub32):
+
+2009-06-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Minor tidy up in JITStubs.
 
         * jit/JITStubs.cpp:

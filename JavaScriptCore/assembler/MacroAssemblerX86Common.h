@@ -57,7 +57,6 @@ public:
 
     enum DoubleCondition {
         DoubleEqual = X86Assembler::ConditionE,
-        DoubleNotEqual = X86Assembler::ConditionNE,
         DoubleGreaterThan = X86Assembler::ConditionA,
         DoubleGreaterThanOrEqual = X86Assembler::ConditionAE,
         DoubleLessThan = X86Assembler::ConditionB,
@@ -601,35 +600,35 @@ public:
 
     Jump branchAdd32(Condition cond, Imm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         add32(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchMul32(Condition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        ASSERT(cond == Overflow);
         mul32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchMul32(Condition cond, Imm32 imm, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        ASSERT(cond == Overflow);
         mul32(imm, src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchSub32(Condition cond, RegisterID src, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchSub32(Condition cond, Imm32 imm, RegisterID dest)
     {
-        ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
