@@ -1,5 +1,20 @@
 2009-06-04  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Minor tweak to PatchBuffer, change it so it no longer holds a CodeRef, and instead
+        holds a separate code pointer and executable pool.  Since it now always holds its
+        own copy of the code size, and to simplify the construction sequence, it's neater
+        this way.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::PatchBuffer::PatchBuffer):
+        (JSC::AbstractMacroAssembler::PatchBuffer::finalizeCode):
+        (JSC::AbstractMacroAssembler::PatchBuffer::code):
+        (JSC::AbstractMacroAssembler::PatchBuffer::performFinalization):
+
+2009-06-04  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Remove 'JIT_STUB_ARGUMENT_STACK' this is unused and untested.
