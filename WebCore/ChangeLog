@@ -1,5 +1,12 @@
 2009-06-04  Dan Bernstein  <mitz@apple.com>
 
+        - try to fix the Windows build
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+
+2009-06-04  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         - make SimpleFontData's data members private

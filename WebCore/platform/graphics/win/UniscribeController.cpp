@@ -265,16 +265,16 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
     Vector<int> roundingHackWordBoundaries(glyphs.size());
     roundingHackWordBoundaries.fill(-1);
 
-    const float cLogicalScale = fontData->m_font.useGDI() ? 1.0f : 32.0f;
-    unsigned logicalSpaceWidth = fontData->m_spaceWidth * cLogicalScale;
-    float roundedSpaceWidth = roundf(fontData->m_spaceWidth);
+    const float cLogicalScale = fontData->platformData().useGDI() ? 1.0f : 32.0f;
+    unsigned logicalSpaceWidth = fontData->spaceWidth() * cLogicalScale;
+    float roundedSpaceWidth = roundf(fontData->spaceWidth());
 
     for (int k = 0; k < len; k++) {
         UChar ch = *(str + k);
         if (Font::treatAsSpace(ch)) {
             // Substitute in the space glyph at the appropriate place in the glyphs
             // array.
-            glyphs[clusters[k]] = fontData->m_spaceGlyph;
+            glyphs[clusters[k]] = fontData->spaceGlyph();
             advances[clusters[k]] = logicalSpaceWidth;
             spaceCharacters[clusters[k]] = m_currentCharacter + k + item.iCharPos;
         }
@@ -307,15 +307,15 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
             offsetY = roundf(offsetY);
         }
 
-        advance += fontData->m_syntheticBoldOffset;
+        advance += fontData->syntheticBoldOffset();
 
         // We special case spaces in two ways when applying word rounding.
         // First, we round spaces to an adjusted width in all fonts.
         // Second, in fixed-pitch fonts we ensure that all glyphs that
         // match the width of the space glyph have the same width as the space glyph.
-        if (roundedAdvance == roundedSpaceWidth && (fontData->m_treatAsFixedPitch || glyph == fontData->m_spaceGlyph) &&
+        if (roundedAdvance == roundedSpaceWidth && (fontData->pitch() == FixedPitch || glyph == fontData->spaceGlyph()) &&
             m_run.applyWordRounding())
-            advance = fontData->m_adjustedSpaceWidth;
+            advance = fontData->adjustedSpaceWidth();
 
         if (hasExtraSpacing) {
             // If we're a glyph with an advance, go ahead and add in letter-spacing.
@@ -324,7 +324,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
                 advance += m_font.letterSpacing();
 
             // Handle justification and word-spacing.
-            if (glyph == fontData->m_spaceGlyph) {
+            if (glyph == fontData->spaceGlyph()) {
                 // Account for padding. WebCore uses space padding to justify text.
                 // We distribute the specified padding over the available spaces in the run.
                 if (m_padding) {
