@@ -1,5 +1,18 @@
 2009-06-04  Roland Steiner <rolandsteiner@google.com>
 
+        Reviewed by Eric Seidel
+
+        Bug 26203: Move parsing of 'attr(X)' values to own method
+        https://bugs.webkit.org/show_bug.cgi?id=26203
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAttr): new method
+        (WebCore::CSSParser::parseContent): use new parseAttr method
+        * css/CSSParser.h:
+        (WebCore::CSSParser::parseAttr): new method
+
+2009-06-04  Roland Steiner <rolandsteiner@google.com>
+
         Reviewed by Eric Seidel.
 
         Bug 26205: RenderTableSection::addChild : correct comment

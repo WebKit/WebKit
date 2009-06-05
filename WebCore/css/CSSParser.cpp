@@ -2007,20 +2007,9 @@ bool CSSParser::parseContent(int propId, bool important)
             if (!args)
                 return false;
             if (equalIgnoringCase(val->function->name, "attr(")) {
-                if (args->size() != 1)
+                parsedValue = parseAttr(args);
+                if (!parsedValue)
                     return false;
-                CSSParserValue* a = args->current();
-                if (a->unit != CSSPrimitiveValue::CSS_IDENT)
-                    return false;
-                String attrName = a->string;
-                // CSS allows identifiers with "-" at the start, like "-webkit-mask-image".
-                // But HTML attribute names can't have those characters, and we should not
-                // even parse them inside attr().
-                if (attrName[0] == '-')
-                    return false;
-                if (document()->isHTMLDocument())
-                    attrName = attrName.lower();
-                parsedValue = CSSPrimitiveValue::create(attrName, CSSPrimitiveValue::CSS_ATTR);
             } else if (equalIgnoringCase(val->function->name, "counter(")) {
                 parsedValue = parseCounterContent(args, false);
                 if (!parsedValue)
@@ -2059,6 +2048,29 @@ bool CSSParser::parseContent(int propId, bool important)
     }
 
     return false;
+}
+
+PassRefPtr<CSSValue> CSSParser::parseAttr(CSSParserValueList* args)
+{
+    if (args->size() != 1)
+        return 0;
+
+    CSSParserValue* a = args->current();
+
+    if (a->unit != CSSPrimitiveValue::CSS_IDENT)
+        return 0;
+
+    String attrName = a->string;
+    // CSS allows identifiers with "-" at the start, like "-webkit-mask-image".
+    // But HTML attribute names can't have those characters, and we should not
+    // even parse them inside attr().
+    if (attrName[0] == '-')
+        return 0;
+
+    if (document()->isHTMLDocument())
+        attrName = attrName.lower();
+    
+    return CSSPrimitiveValue::create(attrName, CSSPrimitiveValue::CSS_ATTR);
 }
 
 PassRefPtr<CSSValue> CSSParser::parseBackgroundColor()
