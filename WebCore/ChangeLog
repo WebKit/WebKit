@@ -1,3 +1,23 @@
+2009-06-04  Roland Steiner <rolandsteiner@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 26204: RenderBlock : simplify handleSpecialChild, comment correction
+        https://bugs.webkit.org/show_bug.cgi?id=26204
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::handleSpecialChild): simplify usage
+        (WebCore::RenderBlock::handlePositionedChild): simplify usage
+        (WebCore::RenderBlock::handleFloatingChild): simplify usage
+        (WebCore::RenderBlock::handleRunInChild): simplify usage
+        (WebCore::RenderBlock::layoutBlock): correct comment
+        (WebCore::RenderBlock::layoutBlockChildren): simplify loop, change call to handleSpecialChild
+        * rendering/RenderBlock.h: 
+        (WebCore::RenderBlock::handleSpecialChild): change signature
+        (WebCore::RenderBlock::handlePositionedChild): change signature
+        (WebCore::RenderBlock::handleFloatingChild): change signature
+        (WebCore::RenderBlock::handleRunInChild): change signature
+
 2009-06-04  Dan Bernstein  <mitz@apple.com>
 
         - retry to fix the Tiger build

@@ -739,7 +739,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     m_overflowHeight = 0;
 
-    // We use four values, maxTopPos, maxPosNeg, maxBottomPos, and maxBottomNeg, to track
+    // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
     // are collapsed with adjacent blocks, so for example, if you have block A and B
     // collapsing together, then you'd take the maximal positive margin from both A and B
@@ -934,52 +934,42 @@ void RenderBlock::adjustFloatingBlock(const MarginInfo& marginInfo)
     setHeight(height() - marginOffset);
 }
 
-RenderBox* RenderBlock::handleSpecialChild(RenderBox* child, const MarginInfo& marginInfo, bool& handled)
+bool RenderBlock::handleSpecialChild(RenderBox* child, const MarginInfo& marginInfo)
 {
-    // Handle positioned children first.
-    RenderBox* next = handlePositionedChild(child, marginInfo, handled);
-    if (handled) return next;
-    
-    // Handle floating children next.
-    next = handleFloatingChild(child, marginInfo, handled);
-    if (handled) return next;
-
-    // Finally, see if we have a run-in element.
-    return handleRunInChild(child, handled);
+    // Handle in the given order
+    return handlePositionedChild(child, marginInfo)
+        || handleFloatingChild(child, marginInfo)
+        || handleRunInChild(child);
 }
 
 
-RenderBox* RenderBlock::handlePositionedChild(RenderBox* child, const MarginInfo& marginInfo, bool& handled)
+bool RenderBlock::handlePositionedChild(RenderBox* child, const MarginInfo& marginInfo)
 {
     if (child->isPositioned()) {
-        handled = true;
         child->containingBlock()->insertPositionedObject(child);
         adjustPositionedBlock(child, marginInfo);
-        return child->nextSiblingBox();
+        return true;
     }
-
-    return 0;
+    return false;
 }
 
-RenderBox* RenderBlock::handleFloatingChild(RenderBox* child, const MarginInfo& marginInfo, bool& handled)
+bool RenderBlock::handleFloatingChild(RenderBox* child, const MarginInfo& marginInfo)
 {
     if (child->isFloating()) {
-        handled = true;
         insertFloatingObject(child);
         adjustFloatingBlock(marginInfo);
-        return child->nextSiblingBox();
+        return true;
     }
-    
-    return 0;
+    return false;
 }
 
-RenderBox* RenderBlock::handleRunInChild(RenderBox* child, bool& handled)
+bool RenderBlock::handleRunInChild(RenderBox* child)
 {
     // See if we have a run-in element with inline children.  If the
     // children aren't inline, then just treat the run-in as a normal
     // block.
     if (!child->isRunIn() || !child->childrenInline() && !child->isReplaced())
-        return 0;
+        return false;
 
     RenderBlock* blockRunIn = toRenderBlock(child);
     // Get the next non-positioned/non-floating RenderBlock.
@@ -988,16 +978,11 @@ RenderBox* RenderBlock::handleRunInChild(RenderBox* child, bool& handled)
         curr = curr->nextSibling();
 
     if (!curr || !curr->isRenderBlock() || !curr->childrenInline() || curr->isRunIn())
-        return 0;
+        return false;
 
     RenderBlock* currBlock = toRenderBlock(curr);
 
-    // The block acts like an inline, so just null out its
-    // position.
-    handled = true;
-    
     // Remove the old child.
-    RenderBox* next = blockRunIn->nextSiblingBox();
     children()->removeChildNode(this, blockRunIn);
 
     // Create an inline.
@@ -1026,7 +1011,10 @@ RenderBox* RenderBlock::handleRunInChild(RenderBox* child, bool& handled)
     // Destroy the block run-in.
     blockRunIn->destroy();
 
-    return next;
+    // The block acts like an inline, so just null out its
+    // position.
+    
+    return true;
 }
 
 int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
@@ -1311,12 +1299,14 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
     int previousFloatBottom = 0;
     maxFloatBottom = 0;
 
-    RenderBox* child = firstChildBox();
-    while (child) {
-        if (legend == child) {
-            child = child->nextSiblingBox();
+    RenderBox* next = firstChildBox();
+
+    while (next) {
+        RenderBox* child = next;
+        next = child->nextSiblingBox();
+
+        if (legend == child)
             continue; // Skip the legend, since it has already been positioned up in the fieldset's border.
-        }
 
         int oldTopPosMargin = maxTopPosMargin();
         int oldTopNegMargin = maxTopNegMargin();
@@ -1333,12 +1323,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
 
         // Handle the four types of special elements first.  These include positioned content, floating content, compacts and
         // run-ins.  When we encounter these four types of objects, we don't actually lay them out as normal flow blocks.
-        bool handled = false;
-        RenderBox* next = handleSpecialChild(child, marginInfo, handled);
-        if (handled) {
-            child = next;
+        if (handleSpecialChild(child, marginInfo))
             continue;
-        }
 
         // The child is a normal flow object.  Compute its vertical margins now.
         child->calcVerticalMargins();
@@ -1454,7 +1440,6 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
             child->repaint();
 
         ASSERT(oldLayoutDelta == view()->layoutDelta());
-        child = child->nextSiblingBox();
     }
 
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
