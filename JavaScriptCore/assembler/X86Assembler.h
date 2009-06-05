@@ -1383,11 +1383,6 @@ public:
         patchRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
     }
 
-    static void patchPointer(void* where, void* value)
-    {
-        reinterpret_cast<void**>(where)[-1] = value;
-    }
-
 #if PLATFORM(X86_64)
     static void patchPointerForCall(void* where, void* value)
     {
@@ -1473,6 +1468,11 @@ public:
     }
 
 private:
+
+    static void patchPointer(void* where, void* value)
+    {
+        reinterpret_cast<void**>(where)[-1] = value;
+    }
 
     static void patchInt32(void* where, int32_t value)
     {

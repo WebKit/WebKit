@@ -145,7 +145,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    DataLabelPtr storePtrWithPatch(Address address)
+    DataLabelPtr storePtrWithPatch(ImplicitAddress address)
     {
         m_assembler.movl_i32m(0, address.offset, address.base);
         return DataLabelPtr(this);

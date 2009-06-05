@@ -2,6 +2,22 @@
 
         Reviewed by Oliver Hunt.
 
+        3 tiny cleanups:
+
+        * assembler/MacroAssemblerX86.h:
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storePtrWithPatch):
+            store*() methods should take an ImplicitAddress, rather than an Address.
+        * assembler/X86Assembler.h:
+            Make patchPointer private.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_ret):
+            Remove empty line at end of function.
+
+2009-06-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Encapsulate many uses of void* in the assembler & jit with types that provide
         more semantic information.  The new types are:
         

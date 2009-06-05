@@ -305,7 +305,6 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     // Return.
     restoreReturnAddressBeforeReturn(regT1);
     ret();
-
 }
 
 void JIT::emit_op_new_array(Instruction* currentInstruction)
