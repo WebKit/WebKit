@@ -66,7 +66,7 @@ static bool initFontData(SimpleFontData* fontData)
     if (ATSUCreateStyle(&fontStyle) != noErr)
         return false;
 
-    ATSUFontID fontId = fontData->m_platformData.m_atsuFontID;
+    ATSUFontID fontId = fontData->platformData().m_atsuFontID;
     if (!fontId) {
         ATSUDisposeStyle(fontStyle);
         return false;

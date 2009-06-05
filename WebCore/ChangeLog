@@ -1,5 +1,12 @@
 2009-06-04  Dan Bernstein  <mitz@apple.com>
 
+        - retry to fix the Tiger build
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::initFontData):
+
+2009-06-04  Dan Bernstein  <mitz@apple.com>
+
         - try to fix the Tiger build
 
         * platform/graphics/SimpleFontData.h:
