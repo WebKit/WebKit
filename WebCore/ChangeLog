@@ -1,3 +1,22 @@
+2009-06-05  Antti Koivisto  <antti@apple.com>
+
+        Try to fix Windows (and possibly other platforms) build.
+
+        Restore ResourceResponseBase::lastModifiedDate() and setLastModifiedDate() removed in previous commit.
+        for now since PluginStream used on some platforms expects them and calculations differ from plain 
+        Last-modified header value.
+        
+        Also include <wtf/MathExtras.h> to get isfinite().
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        (WebCore::ResourceResponseBase::setLastModifiedDate):
+        (WebCore::ResourceResponseBase::lastModifiedDate):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2009-06-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Kilzer.

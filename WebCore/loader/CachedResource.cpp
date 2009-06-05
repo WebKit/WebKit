@@ -33,6 +33,7 @@
 #include "PurgeableBuffer.h"
 #include "Request.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/MathExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Vector.h>
 
