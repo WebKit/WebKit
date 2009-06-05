@@ -54,11 +54,11 @@ static inline float scaleEmToUnits(float x, int unitsPerEm)
 void SimpleFontData::platformInit()
 {
     HDC dc = GetDC(0);
-    HGDIOBJ oldFont = SelectObject(dc, m_font.hfont());
+    HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
     TEXTMETRIC textMetric = {0};
     if (!GetTextMetrics(dc, &textMetric)) {
-        if (ChromiumBridge::ensureFontLoaded(m_font.hfont())) {
+        if (ChromiumBridge::ensureFontLoaded(m_platformData.hfont())) {
             // Retry GetTextMetrics.
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
@@ -107,7 +107,7 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
 {
     if (!m_smallCapsFontData) {
         LOGFONT winFont;
-        GetObject(m_font.hfont(), sizeof(LOGFONT), &winFont);
+        GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winFont);
         float smallCapsSize = 0.70f * fontDescription.computedSize();
         // Unlike WebKit trunk, we don't multiply the size by 32.  That seems
         // to be some kind of artifact of their CG backend, or something.
@@ -130,13 +130,13 @@ void SimpleFontData::determinePitch()
 {
     // TEXTMETRICS have this.  Set m_treatAsFixedPitch based off that.
     HDC dc = GetDC(0);
-    HGDIOBJ oldFont = SelectObject(dc, m_font.hfont());
+    HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
     // Yes, this looks backwards, but the fixed pitch bit is actually set if the font
     // is *not* fixed pitch.  Unbelievable but true.
     TEXTMETRIC textMetric = {0};
     if (!GetTextMetrics(dc, &textMetric)) {
-        if (ChromiumBridge::ensureFontLoaded(m_font.hfont())) {
+        if (ChromiumBridge::ensureFontLoaded(m_platformData.hfont())) {
             // Retry GetTextMetrics.
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
@@ -154,12 +154,12 @@ void SimpleFontData::determinePitch()
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     HDC dc = GetDC(0);
-    HGDIOBJ oldFont = SelectObject(dc, m_font.hfont());
+    HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
     int width = 0;
     if (!GetCharWidthI(dc, glyph, 1, 0, &width)) {
         // Ask the browser to preload the font and retry.
-        if (ChromiumBridge::ensureFontLoaded(m_font.hfont())) {
+        if (ChromiumBridge::ensureFontLoaded(m_platformData.hfont())) {
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
             if (!GetCharWidthI(dc, glyph, 1, 0, &width))

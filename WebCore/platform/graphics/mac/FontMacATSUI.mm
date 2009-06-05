@@ -127,7 +127,7 @@ static void initializeATSUStyle(const SimpleFontData* fontData)
 
     ATSUFontID fontID = fontData->platformData().m_atsuFontID;
     if (!fontID) {
-        LOG_ERROR("unable to get ATSUFontID for %@", fontData->m_font.font());
+        LOG_ERROR("unable to get ATSUFontID for %@", fontData->platformData().font());
         return;
     }
 
@@ -137,7 +137,7 @@ static void initializeATSUStyle(const SimpleFontData* fontData)
         LOG_ERROR("ATSUCreateStyle failed (%d)", status);
 
     CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
-    if (fontData->m_font.m_syntheticOblique)
+    if (fontData->platformData().m_syntheticOblique)
         transform = CGAffineTransformConcat(transform, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0));
     Fixed fontSize = FloatToFixed(fontData->platformData().m_size);
     ByteCount styleSizes[4] = { sizeof(Fixed), sizeof(ATSUFontID), sizeof(CGAffineTransform), sizeof(Fract) };
@@ -195,7 +195,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef
             float width;
             if (nextCh == zeroWidthSpace || Font::treatAsZeroWidthSpace(nextCh) && !Font::treatAsSpace(nextCh)) {
                 width = 0;
-                layoutRecords[i-1].glyphID = renderer->m_spaceGlyph;
+                layoutRecords[i-1].glyphID = renderer->spaceGlyph();
             } else {
                 width = FixedToFloat(layoutRecords[i].realPos - lastNativePos);
                 if (renderer != lastRenderer && width) {
@@ -205,15 +205,15 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef
                     // does in any of its device-metrics modes.
                     shouldRound = renderer->platformData().roundsGlyphAdvances();
                     if (syntheticBoldPass)
-                        syntheticBoldOffset = FloatToFixed(renderer->m_syntheticBoldOffset);
+                        syntheticBoldOffset = FloatToFixed(renderer->syntheticBoldOffset());
                     if (params->m_fallbackFonts && renderer != params->m_font->primaryFont())
                         params->m_fallbackFonts->add(renderer);
                 }
                 if (shouldRound)
                     width = roundf(width);
-                width += renderer->m_syntheticBoldOffset;
-                if (renderer->m_treatAsFixedPitch ? width == renderer->m_spaceWidth : (layoutRecords[i-1].flags & kATSGlyphInfoIsWhiteSpace))
-                    width = renderer->m_adjustedSpaceWidth;
+                width += renderer->syntheticBoldOffset();
+                if (renderer->pitch() == FixedPitch ? width == renderer->spaceWidth() : (layoutRecords[i-1].flags & kATSGlyphInfoIsWhiteSpace))
+                    width = renderer->adjustedSpaceWidth();
             }
             lastNativePos = layoutRecords[i].realPos;
 
@@ -261,7 +261,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef
                 if (syntheticBoldOffset)
                     layoutRecords[i-1].realPos += syntheticBoldOffset;
                 else
-                    layoutRecords[i-1].glyphID = renderer->m_spaceGlyph;
+                    layoutRecords[i-1].glyphID = renderer->spaceGlyph();
             }
             layoutRecords[i].realPos = FloatToFixed(lastAdjustedPos);
         }
@@ -463,7 +463,7 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
                 }
             } else
                 m_fonts[i] = r;
-            if (m_fonts[i]->m_syntheticBoldOffset)
+            if (m_fonts[i]->syntheticBoldOffset())
                 m_hasSyntheticBold = true;
         }
         substituteOffset += substituteLength;

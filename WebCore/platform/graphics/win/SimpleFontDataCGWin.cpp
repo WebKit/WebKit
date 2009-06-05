@@ -52,27 +52,27 @@ static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return unitsP
 
 void SimpleFontData::platformInit()
 {
-    m_syntheticBoldOffset = m_font.syntheticBold() ? 1.0f : 0.f;
+    m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
     m_isSystemFont = false;
 
-    if (m_font.useGDI())
+    if (m_platformData.useGDI())
        return initGDIFont();
 
-    CGFontRef font = m_font.cgFont();
+    CGFontRef font = m_platformData.cgFont();
     int iAscent = CGFontGetAscent(font);
     int iDescent = CGFontGetDescent(font);
     int iLineGap = CGFontGetLeading(font);
     m_unitsPerEm = CGFontGetUnitsPerEm(font);
-    float pointSize = m_font.size();
+    float pointSize = m_platformData.size();
     float fAscent = scaleEmToUnits(iAscent, m_unitsPerEm) * pointSize;
     float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;
     float fLineGap = scaleEmToUnits(iLineGap, m_unitsPerEm) * pointSize;
 
     if (!isCustomFont()) {
         HDC dc = GetDC(0);
-        HGDIOBJ oldFont = SelectObject(dc, m_font.hfont());
+        HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
         int faceLength = GetTextFace(dc, 0, 0);
         Vector<TCHAR> faceName(faceLength);
         GetTextFace(dc, faceLength, faceName.data());
@@ -119,7 +119,7 @@ void SimpleFontData::platformInit()
 void SimpleFontData::platformCharWidthInit()
 {
     // GDI Fonts init charwidths in initGDIFont.
-    if (!m_font.useGDI()) {
+    if (!m_platformData.useGDI()) {
         m_avgCharWidth = 0.f;
         m_maxCharWidth = 0.f;
         initCharWidths();
@@ -133,11 +133,11 @@ void SimpleFontData::platformDestroy()
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
-    if (m_font.useGDI())
+    if (m_platformData.useGDI())
        return widthForGDIGlyph(glyph);
 
-    CGFontRef font = m_font.cgFont();
-    float pointSize = m_font.size();
+    CGFontRef font = m_platformData.cgFont();
+    float pointSize = m_platformData.size();
     CGSize advance;
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
  

@@ -48,7 +48,7 @@ void SimpleFontData::platformInit()
 {
     cairo_font_extents_t font_extents;
     cairo_text_extents_t text_extents;
-    cairo_scaled_font_extents(m_font.m_scaledFont, &font_extents);
+    cairo_scaled_font_extents(m_platformData.m_scaledFont, &font_extents);
     m_ascent = static_cast<int>(font_extents.ascent);
     m_descent = static_cast<int>(font_extents.descent);
     m_lineSpacing = static_cast<int>(font_extents.height);
@@ -59,12 +59,12 @@ void SimpleFontData::platformInit()
     // while we figure out what's going on.
     if (m_lineSpacing < m_ascent + m_descent)
         m_lineSpacing = m_ascent + m_descent;
-    cairo_scaled_font_text_extents(m_font.m_scaledFont, "x", &text_extents);
+    cairo_scaled_font_text_extents(m_platformData.m_scaledFont, "x", &text_extents);
     m_xHeight = text_extents.height;
-    cairo_scaled_font_text_extents(m_font.m_scaledFont, " ", &text_extents);
+    cairo_scaled_font_text_extents(m_platformData.m_scaledFont, " ", &text_extents);
     m_spaceWidth =  static_cast<int>(text_extents.x_advance);
     m_lineGap = m_lineSpacing - m_ascent - m_descent;
-    m_syntheticBoldOffset = m_font.syntheticBold() ? 1.0f : 0.f;
+    m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 }
 
 void SimpleFontData::platformCharWidthInit()
@@ -95,7 +95,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
 {
     bool result = true;
 
-    PangoCoverage* coverage = pango_font_get_coverage(m_font.m_font, pango_language_get_default());
+    PangoCoverage* coverage = pango_font_get_coverage(m_platformData.m_font, pango_language_get_default());
 
     for (int i = 0; i < length; i++) {
         if (PANGO_COVERAGE_NONE == pango_coverage_get(coverage, characters[i])) {
@@ -116,19 +116,19 @@ void SimpleFontData::determinePitch()
         return;
     }
 
-    m_treatAsFixedPitch = m_font.isFixedPitch();
+    m_treatAsFixedPitch = m_platformData.isFixedPitch();
 }
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
-    ASSERT(m_font.m_scaledFont);
+    ASSERT(m_platformData.m_scaledFont);
 
     cairo_glyph_t cglyph = { glyph, 0, 0 };
     cairo_text_extents_t extents;
-    cairo_scaled_font_glyph_extents(m_font.m_scaledFont, &cglyph, 1, &extents);
+    cairo_scaled_font_glyph_extents(m_platformData.m_scaledFont, &cglyph, 1, &extents);
 
     float w = (float)m_spaceWidth;
-    if (cairo_scaled_font_status(m_font.m_scaledFont) == CAIRO_STATUS_SUCCESS && extents.x_advance != 0)
+    if (cairo_scaled_font_status(m_platformData.m_scaledFont) == CAIRO_STATUS_SUCCESS && extents.x_advance != 0)
         w = (float)extents.x_advance;
     return w;
 }
@@ -136,7 +136,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 void SimpleFontData::setFont(cairo_t* cr) const
 {
     ASSERT(cr);
-    m_font.setFont(cr);
+    m_platformData.setFont(cr);
 }
 
 }

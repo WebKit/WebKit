@@ -87,9 +87,9 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
         cairo_translate(cr, shadowSize.width(), shadowSize.height());
         cairo_show_glyphs(cr, glyphs, numGlyphs);
-        if (font->m_syntheticBoldOffset) {
+        if (font->syntheticBoldOffset()) {
             cairo_save(cr);
-            cairo_translate(cr, font->m_syntheticBoldOffset, 0);
+            cairo_translate(cr, font->syntheticBoldOffset(), 0);
             cairo_show_glyphs(cr, glyphs, numGlyphs);
             cairo_restore(cr);
         }
@@ -119,9 +119,9 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
             cairo_set_source_rgba(cr, red, green, blue, alpha * context->getAlpha());
         }
         cairo_show_glyphs(cr, glyphs, numGlyphs);
-        if (font->m_syntheticBoldOffset) {
+        if (font->syntheticBoldOffset()) {
             cairo_save(cr);
-            cairo_translate(cr, font->m_syntheticBoldOffset, 0);
+            cairo_translate(cr, font->syntheticBoldOffset(), 0);
             cairo_show_glyphs(cr, glyphs, numGlyphs);
             cairo_restore(cr);
         }

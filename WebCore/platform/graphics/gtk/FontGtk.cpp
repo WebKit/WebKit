@@ -144,14 +144,14 @@ static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int fro
 static void setPangoAttributes(const Font* font, const TextRun& run, PangoLayout* layout)
 {
 #if defined(USE_FREETYPE)
-    if (font->primaryFont()->m_font.m_pattern) {
-        PangoFontDescription* desc = pango_fc_font_description_from_pattern(font->primaryFont()->m_font.m_pattern, FALSE);
+    if (font->primaryFont()->platformData().m_pattern) {
+        PangoFontDescription* desc = pango_fc_font_description_from_pattern(font->primaryFont()->platformData().m_pattern, FALSE);
         pango_layout_set_font_description(layout, desc);
         pango_font_description_free(desc);
     }
 #elif defined(USE_PANGO)
-    if (font->primaryFont()->m_font.m_font) {
-        PangoFontDescription* desc = pango_font_describe(font->primaryFont()->m_font.m_font);
+    if (font->primaryFont()->platformData().m_font) {
+        PangoFontDescription* desc = pango_font_describe(font->primaryFont()->platformData().m_font);
         pango_layout_set_font_description(layout, desc);
         pango_font_description_free(desc);
     }

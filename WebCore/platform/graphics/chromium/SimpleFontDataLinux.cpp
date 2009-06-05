@@ -56,12 +56,12 @@ void SimpleFontData::platformInit()
     SkPaint paint;
     SkPaint::FontMetrics metrics;
 
-    m_font.setupPaint(&paint);
+    m_platformData.setupPaint(&paint);
     paint.getFontMetrics(&metrics);
-    const SkFontID fontID = m_font.uniqueID();
+    const SkFontID fontID = m_platformData.uniqueID();
 
     static const uint32_t vdmxTag = SkSetFourByteTag('V', 'D', 'M', 'X');
-    int pixelSize = m_font.size() + 0.5;
+    int pixelSize = m_platformData.size() + 0.5;
     int vdmxAscent, vdmxDescent;
     bool isVDMXValid = false;
 
@@ -101,7 +101,7 @@ void SimpleFontData::platformInit()
     // m_avgCharWidth in order for text entry widgets to be sized correctly.
 
     SkScalar xRange = metrics.fXMax - metrics.fXMin;
-    m_maxCharWidth = SkScalarRound(xRange * SkScalarRound(m_font.size()));
+    m_maxCharWidth = SkScalarRound(xRange * SkScalarRound(m_platformData.size()));
 
     if (metrics.fAvgCharWidth)
         m_avgCharWidth = SkScalarRound(metrics.fAvgCharWidth);
@@ -135,7 +135,7 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
 {
     if (!m_smallCapsFontData) {
         const float smallCapsSize = lroundf(fontDescription.computedSize() * smallCapsFraction);
-        m_smallCapsFontData = new SimpleFontData(FontPlatformData(m_font, smallCapsSize));
+        m_smallCapsFontData = new SimpleFontData(FontPlatformData(m_platformData, smallCapsSize));
     }
 
     return m_smallCapsFontData;
@@ -147,7 +147,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
     static const unsigned maxBufferCount = 64;
     uint16_t glyphs[maxBufferCount];
 
-    m_font.setupPaint(&paint);
+    m_platformData.setupPaint(&paint);
     paint.setTextEncoding(SkPaint::kUTF16_TextEncoding);
 
     while (length > 0) {
@@ -178,7 +178,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 
     SkPaint paint;
 
-    m_font.setupPaint(&paint);
+    m_platformData.setupPaint(&paint);
 
     paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
     SkScalar width = paint.measureText(&glyph, 2);

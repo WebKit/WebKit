@@ -58,7 +58,7 @@ static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x * (c
 
 static bool initFontData(SimpleFontData* fontData)
 {
-    if (!fontData->m_font.cgFont())
+    if (!fontData->platformData().cgFont())
         return false;
 
 #ifdef BUILDING_ON_TIGER
@@ -66,7 +66,7 @@ static bool initFontData(SimpleFontData* fontData)
     if (ATSUCreateStyle(&fontStyle) != noErr)
         return false;
 
-    ATSUFontID fontId = fontData->m_font.m_atsuFontID;
+    ATSUFontID fontId = fontData->m_platformData.m_atsuFontID;
     if (!fontId) {
         ATSUDisposeStyle(fontStyle);
         return false;
@@ -153,7 +153,7 @@ void SimpleFontData::platformInit()
     m_shapesArabic = false;
 #endif
 
-    m_syntheticBoldOffset = m_font.m_syntheticBold ? 1.0f : 0.f;
+    m_syntheticBoldOffset = m_platformData.m_syntheticBold ? 1.0f : 0.f;
 
     bool failedSetup = false;
     if (!initFontData(this)) {
@@ -165,7 +165,7 @@ void SimpleFontData::platformInit()
         // It overrides the normal "Times" family font.
         // It also appears to have a corrupt regular variant.
         NSString *fallbackFontFamily;
-        if ([[m_font.font() familyName] isEqual:@"Times"])
+        if ([[m_platformData.font() familyName] isEqual:@"Times"])
             fallbackFontFamily = @"Times New Roman";
         else
             fallbackFontFamily = webFallbackFontFamily();
@@ -173,12 +173,12 @@ void SimpleFontData::platformInit()
         // Try setting up the alternate font.
         // This is a last ditch effort to use a substitute font when something has gone wrong.
 #if !ERROR_DISABLED
-        RetainPtr<NSFont> initialFont = m_font.font();
+        RetainPtr<NSFont> initialFont = m_platformData.font();
 #endif
-        if (m_font.font())
-            m_font.setFont([[NSFontManager sharedFontManager] convertFont:m_font.font() toFamily:fallbackFontFamily]);
+        if (m_platformData.font())
+            m_platformData.setFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toFamily:fallbackFontFamily]);
         else
-            m_font.setFont([NSFont fontWithName:fallbackFontFamily size:m_font.size()]);
+            m_platformData.setFont([NSFont fontWithName:fallbackFontFamily size:m_platformData.size()]);
 #if !ERROR_DISABLED
         NSString *filePath = pathFromFont(initialFont.get());
         if (!filePath)
@@ -188,7 +188,7 @@ void SimpleFontData::platformInit()
             if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
                 // OK, couldn't setup Times New Roman as an alternate to Times, fallback
                 // on the system font.  If this fails we have no alternative left.
-                m_font.setFont([[NSFontManager sharedFontManager] convertFont:m_font.font() toFamily:webFallbackFontFamily()]);
+                m_platformData.setFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toFamily:webFallbackFontFamily()]);
                 if (!initFontData(this)) {
                     // We tried, Times, Times New Roman, and the system font. No joy. We have to give up.
                     LOG_ERROR("unable to initialize with font %@ at %@", initialFont.get(), filePath);
@@ -203,14 +203,14 @@ void SimpleFontData::platformInit()
 
         // Report the problem.
         LOG_ERROR("Corrupt font detected, using %@ in place of %@ located at \"%@\".",
-            [m_font.font() familyName], [initialFont.get() familyName], filePath);
+            [m_platformData.font() familyName], [initialFont.get() familyName], filePath);
     }
 
     // If all else fails, try to set up using the system font.
     // This is probably because Times and Times New Roman are both unavailable.
     if (failedSetup) {
-        m_font.setFont([NSFont systemFontOfSize:[m_font.font() pointSize]]);
-        LOG_ERROR("failed to set up font, using system font %s", m_font.font());
+        m_platformData.setFont([NSFont systemFontOfSize:[m_platformData.font() pointSize]]);
+        LOG_ERROR("failed to set up font, using system font %s", m_platformData.font());
         initFontData(this);
     }
     
@@ -218,15 +218,15 @@ void SimpleFontData::platformInit()
     int iDescent;
     int iLineGap;
 #ifdef BUILDING_ON_TIGER
-    wkGetFontMetrics(m_font.cgFont(), &iAscent, &iDescent, &iLineGap, &m_unitsPerEm);
+    wkGetFontMetrics(m_platformData.cgFont(), &iAscent, &iDescent, &iLineGap, &m_unitsPerEm);
 #else
-    iAscent = CGFontGetAscent(m_font.cgFont());
-    iDescent = CGFontGetDescent(m_font.cgFont());
-    iLineGap = CGFontGetLeading(m_font.cgFont());
-    m_unitsPerEm = CGFontGetUnitsPerEm(m_font.cgFont());
+    iAscent = CGFontGetAscent(m_platformData.cgFont());
+    iDescent = CGFontGetDescent(m_platformData.cgFont());
+    iLineGap = CGFontGetLeading(m_platformData.cgFont());
+    m_unitsPerEm = CGFontGetUnitsPerEm(m_platformData.cgFont());
 #endif
 
-    float pointSize = m_font.m_size;
+    float pointSize = m_platformData.m_size;
     float fAscent = scaleEmToUnits(iAscent, m_unitsPerEm) * pointSize;
     float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;
     float fLineGap = scaleEmToUnits(iLineGap, m_unitsPerEm) * pointSize;
@@ -236,7 +236,7 @@ void SimpleFontData::platformInit()
     // web standard. The AppKit adjustment of 20% is too big and is
     // incorrectly added to line spacing, so we use a 15% adjustment instead
     // and add it to the ascent.
-    NSString *familyName = [m_font.font() familyName];
+    NSString *familyName = [m_platformData.font() familyName];
     if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
         fAscent += floorf(((fAscent + fDescent) * 0.15f) + 0.5f);
     else if ([familyName isEqualToString:@"Geeza Pro"]) {
@@ -264,14 +264,14 @@ void SimpleFontData::platformInit()
     GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
     NSGlyph xGlyph = glyphPageZero ? glyphPageZero->glyphDataForCharacter('x').glyph : 0;
     if (xGlyph) {
-        NSRect xBox = [m_font.font() boundingRectForGlyph:xGlyph];
+        NSRect xBox = [m_platformData.font() boundingRectForGlyph:xGlyph];
         // Use the maximum of either width or height because "x" is nearly square
         // and web pages that foolishly use this metric for width will be laid out
         // poorly if we return an accurate height. Classic case is Times 13 point,
         // which has an "x" that is 7x6 pixels.
         m_xHeight = MAX(NSMaxX(xBox), NSMaxY(xBox));
     } else
-        m_xHeight = [m_font.font() xHeight];
+        m_xHeight = [m_platformData.font() xHeight];
 }
 
 void SimpleFontData::platformCharWidthInit()
@@ -302,8 +302,8 @@ void SimpleFontData::platformCharWidthInit()
     }
 
     m_maxCharWidth = 0.f;
-    if (m_font.font())
-        m_maxCharWidth = [m_font.font() maximumAdvancement].width;
+    if (m_platformData.font())
+        m_maxCharWidth = [m_platformData.font() maximumAdvancement].width;
 
     // Fallback to a cross-platform estimate, which will populate these values if they are non-positive.
     initCharWidths();
@@ -325,13 +325,13 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
 {
     if (!m_smallCapsFontData) {
         if (isCustomFont()) {
-            FontPlatformData smallCapsFontData(m_font);
+            FontPlatformData smallCapsFontData(m_platformData);
             smallCapsFontData.m_size = smallCapsFontData.m_size * smallCapsFontSizeMultiplier;
             m_smallCapsFontData = new SimpleFontData(smallCapsFontData, true, false);
         } else {
             BEGIN_BLOCK_OBJC_EXCEPTIONS;
-            float size = [m_font.font() pointSize] * smallCapsFontSizeMultiplier;
-            FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_font.font() toSize:size]);
+            float size = [m_platformData.font() pointSize] * smallCapsFontSizeMultiplier;
+            FontPlatformData smallCapsFont([[NSFontManager sharedFontManager] convertFont:m_platformData.font() toSize:size]);
             
             // AppKit resets the type information (screen/printer) when you convert a font to a different size.
             // We have to fix up the font that we're handed back.
@@ -339,11 +339,11 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
 
             if (smallCapsFont.font()) {
                 NSFontManager *fontManager = [NSFontManager sharedFontManager];
-                NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_font.font()];
+                NSFontTraitMask fontTraits = [fontManager traitsOfFont:m_platformData.font()];
 
-                if (m_font.m_syntheticBold)
+                if (m_platformData.m_syntheticBold)
                     fontTraits |= NSBoldFontMask;
-                if (m_font.m_syntheticOblique)
+                if (m_platformData.m_syntheticOblique)
                     fontTraits |= NSItalicFontMask;
 
                 NSFontTraitMask smallCapsFontTraits = [fontManager traitsOfFont:smallCapsFont.font()];
@@ -361,7 +361,7 @@ SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDes
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(characters) length:length freeWhenDone:NO];
-    NSCharacterSet *set = [[m_font.font() coveredCharacterSet] invertedSet];
+    NSCharacterSet *set = [[m_platformData.font() coveredCharacterSet] invertedSet];
     bool result = set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
     [string release];
     return result;
@@ -369,7 +369,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
 
 void SimpleFontData::determinePitch()
 {
-    NSFont* f = m_font.font();
+    NSFont* f = m_platformData.font();
     // Special case Osaka-Mono.
     // According to <rdar://problem/3999467>, we should treat Osaka-Mono as fixed pitch.
     // Note that the AppKit does not report Osaka-Mono as fixed pitch.
@@ -391,11 +391,11 @@ void SimpleFontData::determinePitch()
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
-    NSFont* font = m_font.font();
-    float pointSize = m_font.m_size;
+    NSFont* font = m_platformData.font();
+    float pointSize = m_platformData.m_size;
     CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
-    if (!wkGetGlyphTransformedAdvances(m_font.cgFont(), font, &m, &glyph, &advance)) {
+    if (!wkGetGlyphTransformedAdvances(m_platformData.cgFont(), font, &m, &glyph, &advance)) {
         LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
         advance.width = 0;
     }
@@ -409,9 +409,9 @@ void SimpleFontData::checkShapesArabic() const
 
     m_checkedShapesArabic = true;
     
-    ATSUFontID fontID = m_font.m_atsuFontID;
+    ATSUFontID fontID = m_platformData.m_atsuFontID;
     if (!fontID) {
-        LOG_ERROR("unable to get ATSUFontID for %@", m_font.font());
+        LOG_ERROR("unable to get ATSUFontID for %@", m_platformData.font());
         return;
     }
 
@@ -439,7 +439,7 @@ CTFontRef SimpleFontData::getCTFont() const
     if (getNSFont())
         return toCTFontRef(getNSFont());
     if (!m_CTFont)
-        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_font.cgFont(), m_font.size(), NULL, NULL));
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_platformData.cgFont(), m_platformData.size(), NULL, NULL));
     return m_CTFont.get();
 }
 
