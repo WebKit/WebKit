@@ -128,34 +128,28 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     } else if (child->isTableSection()) {
         switch (child->style()->display()) {
             case TABLE_HEADER_GROUP:
-                if (child->isTableSection()) {
-                    resetSectionPointerIfNotBefore(m_head, beforeChild);
-                    if (!m_head) {
-                        m_head = static_cast<RenderTableSection*>(child);
-                    } else {
-                        resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
-                        if (!m_firstBody) 
-                            m_firstBody = static_cast<RenderTableSection*>(child);
-                    }
+                resetSectionPointerIfNotBefore(m_head, beforeChild);
+                if (!m_head) {
+                    m_head = static_cast<RenderTableSection*>(child);
+                } else {
+                    resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
+                    if (!m_firstBody) 
+                        m_firstBody = static_cast<RenderTableSection*>(child);
                 }
                 wrapInAnonymousSection = false;
                 break;
             case TABLE_FOOTER_GROUP:
-                if (child->isTableSection()) {
-                    resetSectionPointerIfNotBefore(m_foot, beforeChild);
-                    if (!m_foot) {
-                        m_foot = static_cast<RenderTableSection*>(child);
-                        wrapInAnonymousSection = false;
-                        break;
-                    }
+                resetSectionPointerIfNotBefore(m_foot, beforeChild);
+                if (!m_foot) {
+                    m_foot = static_cast<RenderTableSection*>(child);
+                    wrapInAnonymousSection = false;
+                    break;
                 }
                 // Fall through.
             case TABLE_ROW_GROUP:
-                if (child->isTableSection()) {
-                    resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
-                    if (!m_firstBody)
-                        m_firstBody = static_cast<RenderTableSection*>(child);
-                }
+                resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
+                if (!m_firstBody)
+                    m_firstBody = static_cast<RenderTableSection*>(child);
                 wrapInAnonymousSection = false;
                 break;
             default:
