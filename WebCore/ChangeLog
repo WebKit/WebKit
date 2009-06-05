@@ -1,3 +1,14 @@
+2009-06-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Remove some dead code (MenuEventProxy)
+
+        * WebCore.pro:
+        * platform/ContextMenu.h:
+        * platform/qt/ContextMenuQt.cpp:
+        * platform/qt/MenuEventProxy.h: Removed.
+
 2009-06-05  Xan Lopez  <xlopez@igalia.com>
 
         More build fixes.
