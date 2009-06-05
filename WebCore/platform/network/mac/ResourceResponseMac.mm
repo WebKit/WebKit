@@ -74,12 +74,6 @@ void ResourceResponse::platformLazyInit()
     m_textEncodingName = [m_nsResponse.get() textEncodingName];
     m_suggestedFilename = [m_nsResponse.get() suggestedFilename];
     
-    const time_t maxTime = std::numeric_limits<time_t>::max();
-    
-    NSTimeInterval expiration = [m_nsResponse.get() _calculatedExpiration];
-    expiration += kCFAbsoluteTimeIntervalSince1970;
-    m_expirationDate = expiration > maxTime ? maxTime : static_cast<time_t>(expiration);
-    
     if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
         

@@ -78,24 +78,15 @@ public:
 
     bool isAttachment() const;
 
-    void setExpirationDate(time_t);
-    time_t expirationDate() const;
-
-    void setLastModifiedDate(time_t);
-    time_t lastModifiedDate() const;
-
-    bool cacheControlContainsNoCache() const
-    {
-        if (!m_haveParsedCacheControl)
-            parseCacheControlDirectives();
-        return m_cacheControlContainsNoCache;
-    }
-    bool cacheControlContainsMustRevalidate() const
-    {
-        if (!m_haveParsedCacheControl)
-            parseCacheControlDirectives();
-        return m_cacheControlContainsMustRevalidate;
-    }
+    // These functions return parsed values of the corresponding response headers.
+    // NaN means that the header was not present or had invalid value.
+    bool cacheControlContainsNoCache() const;
+    bool cacheControlContainsMustRevalidate() const;
+    double cacheControlMaxAge() const;
+    double date() const;
+    double age() const;
+    double expires() const;
+    double lastModified() const;
 
     // The ResourceResponse subclass may "shadow" this method to provide platform-specific memory usage information
     unsigned memoryUsage() const
@@ -107,29 +98,8 @@ public:
     static bool compare(const ResourceResponse& a, const ResourceResponse& b);
 
 protected:
-    ResourceResponseBase()  
-        : m_expectedContentLength(0)
-        , m_httpStatusCode(0)
-        , m_expirationDate(0)
-        , m_lastModifiedDate(0)
-        , m_isNull(true)
-        , m_haveParsedCacheControl(false)
-    {
-    }
-
-    ResourceResponseBase(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
-        : m_url(url)
-        , m_mimeType(mimeType)
-        , m_expectedContentLength(expectedLength)
-        , m_textEncodingName(textEncodingName)
-        , m_suggestedFilename(filename)
-        , m_httpStatusCode(0)
-        , m_expirationDate(0)
-        , m_lastModifiedDate(0)
-        , m_isNull(false)
-        , m_haveParsedCacheControl(false)
-    {
-    }
+    ResourceResponseBase();
+    ResourceResponseBase(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename);
 
     void lazyInit() const;
 
@@ -147,16 +117,26 @@ protected:
     int m_httpStatusCode;
     String m_httpStatusText;
     HTTPHeaderMap m_httpHeaderFields;
-    time_t m_expirationDate;
-    time_t m_lastModifiedDate;
-    bool m_isNull : 1;
 
+    bool m_isNull : 1;
+    
 private:
     void parseCacheControlDirectives() const;
 
-    mutable bool m_haveParsedCacheControl : 1;
-    mutable bool m_cacheControlContainsMustRevalidate : 1;
+    mutable bool m_haveParsedCacheControlHeader : 1;
+    mutable bool m_haveParsedAgeHeader : 1;
+    mutable bool m_haveParsedDateHeader : 1;
+    mutable bool m_haveParsedExpiresHeader : 1;
+    mutable bool m_haveParsedLastModifiedHeader : 1;
+
     mutable bool m_cacheControlContainsNoCache : 1;
+    mutable bool m_cacheControlContainsMustRevalidate : 1;
+    mutable double m_cacheControlMaxAge;
+
+    mutable double m_age;
+    mutable double m_date;
+    mutable double m_expires;
+    mutable double m_lastModified;
 };
 
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
@@ -171,11 +151,6 @@ struct CrossThreadResourceResponseData {
     int m_httpStatusCode;
     String m_httpStatusText;
     OwnPtr<CrossThreadHTTPHeaderMapData> m_httpHeaders;
-    time_t m_expirationDate;
-    time_t m_lastModifiedDate;
-    bool m_haveParsedCacheControl : 1;
-    bool m_cacheControlContainsMustRevalidate : 1;
-    bool m_cacheControlContainsNoCache : 1;
 };
 
 } // namespace WebCore

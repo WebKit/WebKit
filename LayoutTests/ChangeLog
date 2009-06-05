@@ -1,3 +1,26 @@
+2009-06-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=13128
+        Safari not obeying cache header
+        
+        Test subresource caching and expiration.
+
+        * http/tests/cache: Added.
+        * http/tests/cache/resources: Added.
+        * http/tests/cache/resources/cache-simulator.cgi: Added.
+        * http/tests/cache/resources/subresource-test.js: Added.
+        (frame1.onload):
+        (frame2.onload):
+        (loadTestFrame.scr.onload):
+        (nextTest):
+        (testComplete):
+        (runTests):
+        * http/tests/cache/resources/test-frame.html: Added.
+        * http/tests/cache/subresource-expiration-expected.txt: Added.
+        * http/tests/cache/subresource-expiration.html: Added.
+
 2009-06-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

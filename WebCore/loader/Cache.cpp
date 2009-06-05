@@ -211,7 +211,7 @@ void Cache::revalidationSucceeded(CachedResource* revalidatingResource, const Re
     ASSERT(!m_resources.get(resource->url()));
     m_resources.set(resource->url(), resource);
     resource->setInCache(true);
-    resource->setExpirationDate(response.expirationDate());
+    resource->updateResponseAfterRevalidation(response);
     insertInLRUList(resource);
     int delta = resource->size();
     if (resource->decodedSize() && resource->hasClients())

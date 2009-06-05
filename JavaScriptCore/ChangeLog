@@ -1,3 +1,15 @@
+2009-06-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=13128
+        Safari not obeying cache header
+        
+        Export JSC::parseDate()
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2009-06-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

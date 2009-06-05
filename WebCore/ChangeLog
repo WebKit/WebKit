@@ -1,3 +1,48 @@
+2009-06-03  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=13128
+        Safari not obeying cache header
+        
+        Implement RFC 2616 cache expiration calculations in WebKit instead of
+        relying on the networking layer.
+
+        * ForwardingHeaders/runtime/DateMath.h: Added.
+        * WebCore.base.exp:
+        * loader/Cache.cpp:
+        (WebCore::Cache::revalidationSucceeded):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::isExpired):
+        (WebCore::CachedResource::currentAge):
+        (WebCore::CachedResource::freshnessLifetime):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::updateResponseAfterRevalidation):
+        (WebCore::CachedResource::mustRevalidate):
+        * loader/CachedResource.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives):
+        (WebCore::ResourceResponseBase::cacheControlContainsNoCache):
+        (WebCore::ResourceResponseBase::cacheControlContainsMustRevalidate):
+        (WebCore::ResourceResponseBase::cacheControlMaxAge):
+        (WebCore::parseDateValueInHeader):
+        (WebCore::ResourceResponseBase::date):
+        (WebCore::ResourceResponseBase::age):
+        (WebCore::ResourceResponseBase::expires):
+        (WebCore::ResourceResponseBase::lastModified):
+        (WebCore::ResourceResponseBase::isAttachment):
+        (WebCore::ResourceResponseBase::compare):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2009-06-04  Roland Steiner <rolandsteiner@google.com>
 
         Reviewed by Eric Seidel.
