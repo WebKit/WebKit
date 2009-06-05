@@ -698,6 +698,7 @@ SOURCES += \
     editing/RemoveFormatCommand.cpp \
     editing/RemoveNodeCommand.cpp \
     editing/RemoveNodePreservingChildrenCommand.cpp \
+    editing/ReplaceNodeWithSpanCommand.cpp \
     editing/ReplaceSelectionCommand.cpp \
     editing/SelectionController.cpp \
     editing/SetNodeAttributeCommand.cpp \
