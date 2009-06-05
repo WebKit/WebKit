@@ -220,12 +220,24 @@ if (condition) doIt();
 </pre>
 </li>
 
-<li>An <code>else</code> statement should go on the same line as a preceding close brace.
+<li>An <code>else</code> statement should go on the same line as a preceding close brace if one is present,
+else it should line up with the <code>if</code> statement.
 <h4 class="right">Right:</h4>
 <pre class="code">
 if (condition) {
     ...
 } else {
+    ...
+}
+
+if (condition)
+    doSomething();
+else
+    doSomethingElse();
+
+if (condition)
+    doSomething();
+else {
     ...
 }
 </pre>
@@ -236,6 +248,12 @@ if (condition) {
     ...
 }
 else {
+    ...
+}
+
+if (condition) doSomething(); else doSomethingElse();
+
+if (condition) doSomething(); else {
     ...
 }
 </pre>
@@ -308,11 +326,22 @@ class MyClass
     ...
 };
 </pre>
-<li>One-line control clauses should not use braces
+<li>One-line control clauses should not use braces unless comments are included
+or a single statement spans multiple lines.
 <h4 class="right">Right:</h4>
 <pre class="code">
 if (condition)
     doIt();
+
+if (condition) {
+    // Some comment
+    doIt();
+}
+
+if (condition) {
+    myFunction(reallyLongParam1, reallyLongParam2, ...
+        reallyLongParam5);
+}
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
@@ -320,6 +349,14 @@ if (condition)
 if (condition) {
     doIt();
 }
+
+if (condition)
+    // Some comment
+    doIt();
+
+if (condition)
+    myFunction(reallyLongParam1, reallyLongParam2, ...
+        reallyLongParam5);
 </pre>
 </li>
 
