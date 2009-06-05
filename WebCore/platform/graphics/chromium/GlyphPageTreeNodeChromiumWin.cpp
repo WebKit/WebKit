@@ -72,7 +72,7 @@ static bool fillBMPGlyphs(unsigned offset,
                           bool recurse)
 {
     HDC dc = GetDC((HWND)0);
-    HGDIOBJ oldFont = SelectObject(dc, fontData->m_font.hfont());
+    HGDIOBJ oldFont = SelectObject(dc, fontData->platformData().hfont());
 
     TEXTMETRIC tm = {0};
     if (!GetTextMetrics(dc, &tm)) {
@@ -80,7 +80,7 @@ static bool fillBMPGlyphs(unsigned offset,
         ReleaseDC(0, dc);
 
         if (recurse) {
-            if (ChromiumBridge::ensureFontLoaded(fontData->m_font.hfont()))
+            if (ChromiumBridge::ensureFontLoaded(fontData->platformData().hfont()))
                 return fillBMPGlyphs(offset, length, buffer, page, fontData, false);
             else {
                 fillEmptyGlyphs(page);
@@ -191,9 +191,9 @@ static bool fillNonBMPGlyphs(unsigned offset,
     bool haveGlyphs = false;
 
     UniscribeHelperTextRun state(buffer, length * 2, false,
-                                 fontData->m_font.hfont(),
-                                 fontData->m_font.scriptCache(),
-                                 fontData->m_font.scriptFontProperties());
+                                 fontData->platformData().hfont(),
+                                 fontData->platformData().scriptCache(),
+                                 fontData->platformData().scriptFontProperties());
     state.setInhibitLigate(true);
     state.setDisableFontFallback(true);
     state.init();

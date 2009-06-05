@@ -1,3 +1,14 @@
+2009-06-05  Fumitoshi Ukai  <ukai@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26215
+        Try to fix the Chromium build.
+
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::fillBMPGlyphs):
+        (WebCore::fillNonBMPGlyphs):
+
 2009-06-05  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Bug 26160: Compile fails in MacOSX when GNU fileutils are installed
