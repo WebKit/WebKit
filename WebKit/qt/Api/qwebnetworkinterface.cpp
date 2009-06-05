@@ -19,6 +19,7 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "config.h"
 #include <qglobal.h>
 #if QT_VERSION < 0x040400
 #include "qwebframe.h"

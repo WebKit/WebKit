@@ -6,6 +6,7 @@
  *
  */
 
+#include "config.h"
 #include "ICOHandler.h"
 
 #include <cstring>

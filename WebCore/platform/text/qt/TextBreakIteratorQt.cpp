@@ -20,6 +20,7 @@
  *
  */
 
+#include "config.h"
 #include "TextBreakIterator.h"
 
 #if QT_VERSION >= 0x040400

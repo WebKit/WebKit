@@ -17,7 +17,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-
+#include "config.h"
 #include "qcookiejar.h"
 #include <QCoreApplication>
 uint qHash(const QUrl&);

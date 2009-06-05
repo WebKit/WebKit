@@ -1,3 +1,12 @@
+2009-06-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Add missing includes of config.h
+
+        * platform/qt/QWebPopup.cpp:
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+
 2009-06-05  Fumitoshi Ukai  <ukai@google.com>
 
         Reviewed by Dimitri Glazkov.
