@@ -195,10 +195,11 @@ private:
     float m_syntheticBoldOffset;
 #endif
 
-#if PLATFORM(MAC)
 #ifdef BUILDING_ON_TIGER
+public:
     void* m_styleGroup;
-#endif
+
+private:
 #endif
 
 #if USE(ATSUI)

@@ -1,5 +1,11 @@
 2009-06-04  Dan Bernstein  <mitz@apple.com>
 
+        - try to fix the Tiger build
+
+        * platform/graphics/SimpleFontData.h:
+
+2009-06-04  Dan Bernstein  <mitz@apple.com>
+
         - try to fix the Leopard and Tiger builds
 
         * platform/graphics/SimpleFontData.h:
