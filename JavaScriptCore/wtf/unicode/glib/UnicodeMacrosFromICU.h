@@ -41,6 +41,17 @@
 #define U16_IS_SURROGATE(c) U_IS_SURROGATE(c)
 #define U16_IS_SURROGATE_LEAD(c) (((c)&0x400)==0)
 
+#define U16_PREV(s, start, i, c) { \
+    (c)=(s)[--(i)]; \
+    if(U16_IS_TRAIL(c)) { \
+        uint16_t __c2; \
+        if((i)>(start) && U16_IS_LEAD(__c2=(s)[(i)-1])) { \
+            --(i); \
+            (c)=U16_GET_SUPPLEMENTARY(__c2, (c)); \
+        } \
+    } \
+}
+
 #define U16_NEXT(s, i, length, c) { \
     (c)=(s)[(i)++]; \
     if(U16_IS_LEAD(c)) { \

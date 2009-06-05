@@ -1,3 +1,11 @@
+2009-06-05  Koen Kooi <koen@dominion.thruhere.net>
+
+        Reviewed by Xan Lopez.
+
+        Build fix for glib unicode backend.
+
+        * wtf/unicode/glib/UnicodeMacrosFromICU.h:
+
 2009-06-05  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
