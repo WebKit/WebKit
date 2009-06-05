@@ -136,7 +136,6 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode load
     , m_redirected(false)
     , m_responseSent(false)
     , m_loadMode(loadMode)
-    , m_startTime(0)
     , m_shouldStart(true)
     , m_shouldFinish(false)
     , m_shouldSendResponse(false)
@@ -292,7 +291,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     }
 
     if (isLocalFileReply)
-        response.setExpirationDate(m_startTime);
+        response.setHTTPHeaderField(QString::fromAscii("Cache-Control"), QString::fromAscii("no-cache"));
 
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
     if (redirection.isValid()) {
@@ -354,8 +353,6 @@ void QNetworkReplyHandler::start()
     if (m_method == QNetworkAccessManager::PostOperation
         && (!url.toLocalFile().isEmpty() || url.scheme() == QLatin1String("data")))
         m_method = QNetworkAccessManager::GetOperation;
-
-    m_startTime = QDateTime::currentDateTime().toTime_t();
 
     switch (m_method) {
         case QNetworkAccessManager::GetOperation:
