@@ -39,7 +39,6 @@
 #endif
 
 namespace WebCore {
-class MenuEventProxy;
 
     class ContextMenuController;
 

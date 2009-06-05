@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "ContextMenu.h"
-#include "MenuEventProxy.h"
 
 #include <wtf/Assertions.h>
 
