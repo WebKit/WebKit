@@ -28,6 +28,7 @@
 
 #import "WebContextMenuClient.h"
 
+#import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"

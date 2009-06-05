@@ -29,6 +29,7 @@
 #import "WebPDFView.h"
 
 #import "WebDataSourceInternal.h"
+#import "WebDelegateImplementationCaching.h"
 #import "WebDocumentInternal.h"
 #import "WebDocumentPrivate.h"
 #import "WebFrame.h"

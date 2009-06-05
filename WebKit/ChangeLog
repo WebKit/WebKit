@@ -1,3 +1,11 @@
+2009-06-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice Liu.
+
+        Move WebView internal data into WebViewData.h/mm.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-06-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

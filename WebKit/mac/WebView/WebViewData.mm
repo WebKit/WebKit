@@ -27,7 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebViewInternal.h"
+#import "WebViewData.h"
 
 #import "WebKitLogging.h"
 #import "WebPreferenceKeysPrivate.h"

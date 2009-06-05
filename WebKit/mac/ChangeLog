@@ -1,3 +1,16 @@
+2009-06-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice Liu.
+
+        Move WebView internal data into WebViewData.h/mm.
+
+        * WebView/WebDelegateImplementationCaching.mm:
+        * WebView/WebView.mm:
+        * WebView/WebViewData.h: Copied from mac/WebView/WebViewInternal.h.
+        * WebView/WebViewData.mm: Copied from mac/WebView/WebViewInternal.mm.
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewInternal.mm: Removed.
+
 2009-06-04  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

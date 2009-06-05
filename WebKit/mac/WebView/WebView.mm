@@ -28,6 +28,7 @@
  */
 
 #import "WebViewInternal.h"
+#import "WebViewData.h"
 
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMNodeInternal.h"

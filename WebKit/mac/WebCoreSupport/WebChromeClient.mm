@@ -31,6 +31,7 @@
 
 #import "DOMNodeInternal.h"
 #import "WebDefaultUIDelegate.h"
+#import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"

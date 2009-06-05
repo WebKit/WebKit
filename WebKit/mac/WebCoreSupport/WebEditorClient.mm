@@ -37,6 +37,7 @@
 #import "DOMRangeInternal.h"
 #import "WebArchive.h"
 #import "WebDataSourceInternal.h"
+#import "WebDelegateImplementationCaching.h"
 #import "WebDocument.h"
 #import "WebEditingDelegatePrivate.h"
 #import "WebFormDelegate.h"

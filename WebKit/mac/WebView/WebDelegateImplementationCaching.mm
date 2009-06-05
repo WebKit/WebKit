@@ -30,7 +30,8 @@
 #import "WebDelegateImplementationCaching.h"
 
 #import "WebKitLogging.h"
-#import "WebViewInternal.h"
+#import "WebView.h"
+#import "WebViewData.h"
 #import <objc/objc-runtime.h>
 
 @implementation WebView (WebDelegateImplementationCaching)

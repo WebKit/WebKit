@@ -39,6 +39,7 @@
 #import "WebDOMOperationsInternal.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
+#import "WebDelegateImplementationCaching.h"
 #import "WebDocumentInternal.h"
 #import "WebDynamicScrollBarsView.h"
 #import "WebEditingDelegate.h"
