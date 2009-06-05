@@ -1,3 +1,13 @@
+2009-06-05  Xan Lopez  <xlopez@igalia.com>
+
+        Fix the GTK+ build.
+
+        * GNUmakefile.am:
+        * platform/graphics/gtk/FontCacheGtk.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/gtk/GlyphPageTreeNodeGtk.cpp:
+        (WebCore::GlyphPage::fill):
+
 2009-06-05  Antti Koivisto  <antti@apple.com>
 
         Try to fix Windows (and possibly other platforms) build.

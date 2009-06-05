@@ -828,6 +828,8 @@ webcore_sources += \
 	WebCore/editing/RemoveNodeCommand.h \
 	WebCore/editing/RemoveNodePreservingChildrenCommand.cpp \
 	WebCore/editing/RemoveNodePreservingChildrenCommand.h \
+	WebCore/editing/ReplaceNodeWithSpanCommand.cpp \
+	WebCore/editing/ReplaceNodeWithSpanCommand.h \
 	WebCore/editing/ReplaceSelectionCommand.cpp \
 	WebCore/editing/ReplaceSelectionCommand.h \
 	WebCore/editing/SelectionController.cpp \
