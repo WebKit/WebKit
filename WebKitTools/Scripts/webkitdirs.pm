@@ -1022,7 +1022,8 @@ sub retrieveQMakespecVar
             # open the included mkspec
             my $oldcwd = getcwd();
             (my $volume, my $directories, my $file) = File::Spec->splitpath($mkspec);
-            chdir "$volume$directories";
+            my $newcwd = "$volume$directories";
+            chdir $newcwd if $newcwd;
             $compiler = retrieveQMakespecVar($1, $varname);
             chdir $oldcwd;
         } elsif ($_ =~ /$varname\s*=\s*([^\s]+)/) {

@@ -1,3 +1,14 @@
+2009-06-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Fix Perl warning when calling chdir with an empty/undefined path
+        
+        This happened when the included makespec was in the same directory as
+        the parent makespec, so the relative path between the two was empty.
+
+        * Scripts/webkitdirs.pm:
+
 2009-06-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.
