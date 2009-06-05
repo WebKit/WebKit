@@ -143,6 +143,16 @@ if (isInitial) { \
     return;\
 }
 
+#define HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(prop, Prop) \
+HANDLE_INHERIT_AND_INITIAL(prop, Prop) \
+if (primitiveValue) \
+    m_style->set##Prop(*primitiveValue);
+
+#define HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(prop, Prop, Value) \
+HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
+if (primitiveValue) \
+    m_style->set##Prop(*primitiveValue);
+
 #define HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(layerType, LayerType, prop, Prop) \
 if (isInherit) { \
     FillLayer* currChild = m_style->access##LayerType##Layers(); \
@@ -2909,26 +2919,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 return;
         }
         return;
-        
     case CSSPropertyBorderTopStyle:
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(borderTopStyle, BorderTopStyle, BorderStyle)
-        if (primitiveValue)
-            m_style->setBorderTopStyle(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(borderTopStyle, BorderTopStyle, BorderStyle)
         return;
     case CSSPropertyBorderRightStyle:
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(borderRightStyle, BorderRightStyle, BorderStyle)
-        if (primitiveValue)
-            m_style->setBorderRightStyle(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(borderRightStyle, BorderRightStyle, BorderStyle)
         return;
     case CSSPropertyBorderBottomStyle:
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(borderBottomStyle, BorderBottomStyle, BorderStyle)
-        if (primitiveValue)
-            m_style->setBorderBottomStyle(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(borderBottomStyle, BorderBottomStyle, BorderStyle)
         return;
     case CSSPropertyBorderLeftStyle:
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(borderLeftStyle, BorderLeftStyle, BorderStyle)
-        if (primitiveValue)
-            m_style->setBorderLeftStyle(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(borderLeftStyle, BorderLeftStyle, BorderStyle)
         return;
     case CSSPropertyOutlineStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(outlineStyle, OutlineStyle, BorderStyle)
@@ -2940,49 +2941,23 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     case CSSPropertyCaptionSide:
-    {
-        HANDLE_INHERIT_AND_INITIAL(captionSide, CaptionSide)
-        if (primitiveValue)
-            m_style->setCaptionSide(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(captionSide, CaptionSide)
         return;
-    }
     case CSSPropertyClear:
-    {
-        HANDLE_INHERIT_AND_INITIAL(clear, Clear)
-        if (primitiveValue)
-            m_style->setClear(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(clear, Clear)
         return;
-    }
     case CSSPropertyDirection:
-    {
-        HANDLE_INHERIT_AND_INITIAL(direction, Direction)
-        if (primitiveValue)
-            m_style->setDirection(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(direction, Direction)
         return;
-    }
     case CSSPropertyDisplay:
-    {
-        HANDLE_INHERIT_AND_INITIAL(display, Display)
-        if (primitiveValue)
-            m_style->setDisplay(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(display, Display)
         return;
-    }
-
     case CSSPropertyEmptyCells:
-    {
-        HANDLE_INHERIT_AND_INITIAL(emptyCells, EmptyCells)
-        if (primitiveValue)
-            m_style->setEmptyCells(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(emptyCells, EmptyCells)
         return;
-    }
     case CSSPropertyFloat:
-    {
-        HANDLE_INHERIT_AND_INITIAL(floating, Floating)
-        if (primitiveValue)
-            m_style->setFloating(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(floating, Floating)
         return;
-    }
-
     case CSSPropertyFontStyle:
     {
         FontDescription fontDescription = m_style->fontDescription();
@@ -3093,21 +3068,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
         
     case CSSPropertyListStylePosition:
-    {
-        HANDLE_INHERIT_AND_INITIAL(listStylePosition, ListStylePosition)
-        if (primitiveValue)
-            m_style->setListStylePosition(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(listStylePosition, ListStylePosition)
         return;
-    }
-
     case CSSPropertyListStyleType:
-    {
-        HANDLE_INHERIT_AND_INITIAL(listStyleType, ListStyleType)
-        if (primitiveValue)
-            m_style->setListStyleType(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(listStyleType, ListStyleType)
         return;
-    }
-
     case CSSPropertyOverflow:
     {
         if (isInherit) {
@@ -3130,35 +3095,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 
     case CSSPropertyOverflowX:
-    {
-        HANDLE_INHERIT_AND_INITIAL(overflowX, OverflowX)
-        m_style->setOverflowX(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(overflowX, OverflowX)
         return;
-    }
-
     case CSSPropertyOverflowY:
-    {
-        HANDLE_INHERIT_AND_INITIAL(overflowY, OverflowY)
-        m_style->setOverflowY(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(overflowY, OverflowY)
         return;
-    }
-
     case CSSPropertyPageBreakBefore:
-    {
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(pageBreakBefore, PageBreakBefore, PageBreak)
-        if (primitiveValue)
-            m_style->setPageBreakBefore(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakBefore, PageBreakBefore, PageBreak)
         return;
-    }
-
     case CSSPropertyPageBreakAfter:
-    {
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(pageBreakAfter, PageBreakAfter, PageBreak)
-        if (primitiveValue)
-            m_style->setPageBreakAfter(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakAfter, PageBreakAfter, PageBreak)
         return;
-    }
-
     case CSSPropertyPageBreakInside: {
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(pageBreakInside, PageBreakInside, PageBreak)
         if (!primitiveValue)
@@ -3170,13 +3117,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
         
     case CSSPropertyPosition:
-    {
-        HANDLE_INHERIT_AND_INITIAL(position, Position)
-        if (primitiveValue)
-            m_style->setPosition(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(position, Position)
         return;
-    }
-
     case CSSPropertyTableLayout: {
         HANDLE_INHERIT_AND_INITIAL(tableLayout, TableLayout)
 
@@ -3188,26 +3130,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
         
-    case CSSPropertyUnicodeBidi: {
-        HANDLE_INHERIT_AND_INITIAL(unicodeBidi, UnicodeBidi)
-        m_style->setUnicodeBidi(*primitiveValue);
+    case CSSPropertyUnicodeBidi: 
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(unicodeBidi, UnicodeBidi)
         return;
-    }
-    case CSSPropertyTextTransform: {
-        HANDLE_INHERIT_AND_INITIAL(textTransform, TextTransform)
-        m_style->setTextTransform(*primitiveValue);
+    case CSSPropertyTextTransform: 
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textTransform, TextTransform)
         return;
-    }
-
     case CSSPropertyVisibility:
-    {
-        HANDLE_INHERIT_AND_INITIAL(visibility, Visibility)
-        m_style->setVisibility(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(visibility, Visibility)
         return;
-    }
     case CSSPropertyWhiteSpace:
-        HANDLE_INHERIT_AND_INITIAL(whiteSpace, WhiteSpace)
-        m_style->setWhiteSpace(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(whiteSpace, WhiteSpace)
         return;
 
     case CSSPropertyBackgroundPosition:
@@ -3500,38 +3433,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSSPropertyWordBreak: {
-        HANDLE_INHERIT_AND_INITIAL(wordBreak, WordBreak)
-        m_style->setWordBreak(*primitiveValue);
+    case CSSPropertyWordBreak:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wordBreak, WordBreak)
         return;
-    }
-
-    case CSSPropertyWordWrap: {
-        HANDLE_INHERIT_AND_INITIAL(wordWrap, WordWrap)
-        m_style->setWordWrap(*primitiveValue);
+    case CSSPropertyWordWrap:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wordWrap, WordWrap)
         return;
-    }
-
     case CSSPropertyWebkitNbspMode:
-    {
-        HANDLE_INHERIT_AND_INITIAL(nbspMode, NBSPMode)
-        m_style->setNBSPMode(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(nbspMode, NBSPMode)
         return;
-    }
-
     case CSSPropertyWebkitLineBreak:
-    {
-        HANDLE_INHERIT_AND_INITIAL(khtmlLineBreak, KHTMLLineBreak)
-        m_style->setKHTMLLineBreak(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(khtmlLineBreak, KHTMLLineBreak)
         return;
-    }
-
     case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
-    {
-        HANDLE_INHERIT_AND_INITIAL(matchNearestMailBlockquoteColor, MatchNearestMailBlockquoteColor)
-        m_style->setMatchNearestMailBlockquoteColor(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(matchNearestMailBlockquoteColor, MatchNearestMailBlockquoteColor)
         return;
-    }
 
     case CSSPropertyResize:
     {
@@ -4650,19 +4566,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setBackfaceVisibility((primitiveValue->getIdent() == CSSValueVisible) ? BackfaceVisibilityVisible : BackfaceVisibilityHidden);
         return;
     case CSSPropertyWebkitBoxDirection:
-        HANDLE_INHERIT_AND_INITIAL(boxDirection, BoxDirection)
-        if (primitiveValue)
-            m_style->setBoxDirection(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxDirection, BoxDirection)
         return;
     case CSSPropertyWebkitBoxLines:
-        HANDLE_INHERIT_AND_INITIAL(boxLines, BoxLines)
-        if (primitiveValue)
-            m_style->setBoxLines(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxLines, BoxLines)
         return;
     case CSSPropertyWebkitBoxOrient:
-        HANDLE_INHERIT_AND_INITIAL(boxOrient, BoxOrient)
-        if (primitiveValue)
-            m_style->setBoxOrient(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxOrient, BoxOrient)
         return;
     case CSSPropertyWebkitBoxPack:
     {
@@ -4744,19 +4654,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyWebkitColumnRuleStyle:
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnRuleStyle, ColumnRuleStyle, BorderStyle)
-        m_style->setColumnRuleStyle(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnRuleStyle, ColumnRuleStyle, BorderStyle)
         return;
-    case CSSPropertyWebkitColumnBreakBefore: {
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakBefore, ColumnBreakBefore, PageBreak)
-        m_style->setColumnBreakBefore(*primitiveValue);
+    case CSSPropertyWebkitColumnBreakBefore:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnBreakBefore, ColumnBreakBefore, PageBreak)
         return;
-    }
-    case CSSPropertyWebkitColumnBreakAfter: {
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakAfter, ColumnBreakAfter, PageBreak)
-        m_style->setColumnBreakAfter(*primitiveValue);
+    case CSSPropertyWebkitColumnBreakAfter:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnBreakAfter, ColumnBreakAfter, PageBreak)
         return;
-    }
     case CSSPropertyWebkitColumnBreakInside: {
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(columnBreakInside, ColumnBreakInside, PageBreak)
         EPageBreak pb = *primitiveValue;
@@ -4853,36 +4758,22 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-    case CSSPropertyWebkitMarqueeStyle: {
-        HANDLE_INHERIT_AND_INITIAL(marqueeBehavior, MarqueeBehavior)      
-        if (primitiveValue)
-            m_style->setMarqueeBehavior(*primitiveValue);
+    case CSSPropertyWebkitMarqueeStyle:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeBehavior, MarqueeBehavior)      
         return;
-    }
-    case CSSPropertyWebkitMarqueeDirection: {
-        HANDLE_INHERIT_AND_INITIAL(marqueeDirection, MarqueeDirection)
-        if (primitiveValue)
-            m_style->setMarqueeDirection(*primitiveValue);
+    case CSSPropertyWebkitMarqueeDirection:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeDirection, MarqueeDirection)
         return;
-    }
-    case CSSPropertyWebkitUserDrag: {
-        HANDLE_INHERIT_AND_INITIAL(userDrag, UserDrag)      
-        if (primitiveValue)
-            m_style->setUserDrag(*primitiveValue);
+    case CSSPropertyWebkitUserDrag:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(userDrag, UserDrag)      
         return;
-    }
-    case CSSPropertyWebkitUserModify: {
-        HANDLE_INHERIT_AND_INITIAL(userModify, UserModify)      
-        if (primitiveValue)
-            m_style->setUserModify(*primitiveValue);
+    case CSSPropertyWebkitUserModify:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(userModify, UserModify)      
         return;
-    }
-    case CSSPropertyWebkitUserSelect: {
-        HANDLE_INHERIT_AND_INITIAL(userSelect, UserSelect)      
-        if (primitiveValue)
-            m_style->setUserSelect(*primitiveValue);
+    case CSSPropertyWebkitUserSelect:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(userSelect, UserSelect)      
         return;
-    }
+
     case CSSPropertyTextOverflow: {
         // This property is supported by WinIE, and so we leave off the "-webkit-" in order to
         // work with WinIE-specific pages that use the property.
@@ -4903,18 +4794,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-    case CSSPropertyWebkitMarginTopCollapse: {
-        HANDLE_INHERIT_AND_INITIAL(marginTopCollapse, MarginTopCollapse)
-        if (primitiveValue)
-            m_style->setMarginTopCollapse(*primitiveValue);
+
+    case CSSPropertyWebkitMarginTopCollapse:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marginTopCollapse, MarginTopCollapse)
         return;
-    }
-    case CSSPropertyWebkitMarginBottomCollapse: {
-        HANDLE_INHERIT_AND_INITIAL(marginBottomCollapse, MarginBottomCollapse)
-        if (primitiveValue)
-            m_style->setMarginBottomCollapse(*primitiveValue);
+    case CSSPropertyWebkitMarginBottomCollapse:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marginBottomCollapse, MarginBottomCollapse)
         return;
-    }
 
     // Apple-specific changes.  Do not merge these properties into KHTML.
     case CSSPropertyWebkitLineClamp: {
@@ -4947,12 +4833,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_fontDirty = true;
         return;
     }
-    case CSSPropertyWebkitTextSecurity: {
-        HANDLE_INHERIT_AND_INITIAL(textSecurity, TextSecurity)
-        if (primitiveValue)
-            m_style->setTextSecurity(*primitiveValue);
+    case CSSPropertyWebkitTextSecurity:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textSecurity, TextSecurity)
         return;
-    }
+
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
