@@ -1,3 +1,18 @@
+2009-06-05  WANG Lu  <coolwanglu@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [Gtk] WebKit GTK with libsoup won't recognize proxies
+        https://bugs.webkit.org/show_bug.cgi?id=25263
+
+        If libsoup-gnome is enabled, proper parameters are added when creating
+        a new soup session, in order to enable GNOME-specific features of
+        libsoup.
+
+        * GNUmakefile.am:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupSession):
+
 2009-06-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

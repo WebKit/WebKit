@@ -1,3 +1,16 @@
+2009-06-05  WANG Lu  <coolwanglu@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [Gtk] WebKit GTK with libsoup won't recognize proxies
+        https://bugs.webkit.org/show_bug.cgi?id=25263
+
+        Added --with-libsoup-gnome (default=no) to enable GNOME-specific
+        features of libsoup, an important one of which is the proxy-resolver
+        feature.
+
+        * configure.ac:
+
 2009-05-29  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Jan Alonzo.
