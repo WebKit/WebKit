@@ -1,5 +1,14 @@
 2009-06-05  Gavin Barraclough  <barraclough@apple.com>
 
+        Rudder stamped by Sam Weinig.
+
+        Add missing ASSERT.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::getRelocatedAddress):
+
+2009-06-05  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Switch storePtrWithPatch to take the initial immediate value as an argument.
