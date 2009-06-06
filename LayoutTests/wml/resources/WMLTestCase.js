@@ -81,6 +81,11 @@ function triggerUpdate(x, y) {
 }
 
 function startTest(x, y) {
+    // Initialize variable state
+    // In a regular WML document, this would happen after the parsing finished.
+    // Though as we dynamically create testcases, we have to take care of initializing WML variable state manually.
+    testDocument.initializeWMLPageState();
+
     // Assure first layout finished
     window.setTimeout("triggerUpdate(" + x + ", " + y + ")", 0);
 }

@@ -1,3 +1,29 @@
+2009-06-05  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix WMLInputElement initialization code. Don't call initialize() on attach(), let
+        WMLCardElement handle initialization once, after the document has been parsed.
+
+        To keep layout tests working introduce a new function in Document.idl: initializeWMLPageState().
+        WMLTestCase.js (the wml/ layout test framework) will use it to simulate a regular WML document,
+        whose variable state gets initialized on WMLDocument::finishedParsing(). Force initialization
+        of the WML variable state, right after the dynamically created elements have been inserted into the tree.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initializeWMLPageState):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::handleIntrinsicEventIfNeeded):
+        * wml/WMLDocument.cpp:
+        (WebCore::WMLDocument::finishedParsing):
+        (WebCore::WMLDocument::initialize):
+        * wml/WMLDocument.h:
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::initialize):
+        * wml/WMLInputElement.h:
+
 2009-06-05  WANG Lu  <coolwanglu@gmail.com>
 
         Reviewed by Jan Alonzo.

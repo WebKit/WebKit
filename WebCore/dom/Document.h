@@ -1029,6 +1029,7 @@ public:
 
 #if ENABLE(WML)
     void resetWMLPageState();
+    void initializeWMLPageState();
 #endif
 
 protected:

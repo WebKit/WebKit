@@ -61,6 +61,12 @@ void WMLDocument::finishedParsing()
     // Remember that we'e successfully entered the deck
     wmlPageState->setNeedCheckDeckAccess(false);
 
+    initialize();
+    Document::finishedParsing();
+}
+
+void WMLDocument::initialize()
+{
     // Notify the existance of templates to all cards of the current deck
     WMLTemplateElement::registerTemplatesInDocument(this);
 
@@ -77,8 +83,6 @@ void WMLDocument::finishedParsing()
 
     // Handle card-level intrinsic event
     card->handleIntrinsicEventIfNeeded();
-
-    Document::finishedParsing();
 }
 
 WMLPageState* wmlPageStateForDocument(Document* doc)

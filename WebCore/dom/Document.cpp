@@ -4269,6 +4269,14 @@ void Document::resetWMLPageState()
     if (WMLPageState* pageState = wmlPageStateForDocument(this))
         pageState->reset();
 }
+
+void Document::initializeWMLPageState()
+{
+    if (!isWMLDocument())
+        return;
+
+    static_cast<WMLDocument*>(this)->initialize();
+}
 #endif
 
 void Document::attachRange(Range* range)

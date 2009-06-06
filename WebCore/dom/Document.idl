@@ -242,6 +242,7 @@ module core {
 #if defined(ENABLE_WML) && ENABLE_WML
         // Only used from within WML layout tests, WML doesn't have JS support at all.
         void resetWMLPageState();
+        void initializeWMLPageState();
 #endif
     };
 

@@ -40,6 +40,8 @@ public:
     virtual bool isWMLDocument() const { return true; }
     virtual void finishedParsing();
 
+    void initialize();
+
 private:
     WMLDocument(Frame*);
 };

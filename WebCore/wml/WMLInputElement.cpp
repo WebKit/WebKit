@@ -224,18 +224,6 @@ RenderObject* WMLInputElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderTextControlSingleLine(this);
 }
 
-void WMLInputElement::attach()
-{
-    WMLFormControlElement::attach();
-
-    // FIXME: maybe this is not a good place to do this since it is possible 
-    // to cause unexpected several times initialise of <input> if we force the
-    // node to be reattached. But placing it here can ensure the run-webkit-tests
-    // get expected result,i.e. multiple-times initialise is expected when making
-    // layout test for WMLInputElement 
-    init();
-}  
-
 void WMLInputElement::detach()
 {
     WMLElement::detach();
@@ -352,7 +340,7 @@ void WMLInputElement::didMoveToNewOwnerDocument()
     WMLElement::didMoveToNewOwnerDocument();
 }
 
-void WMLInputElement::init()
+void WMLInputElement::initialize()
 {
     String nameVariable = formControlName();
     String variableValue;
