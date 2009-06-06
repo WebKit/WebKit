@@ -429,9 +429,9 @@ public:
         return branchPtr(cond, left, scratchRegister);
     }
 
-    DataLabelPtr storePtrWithPatch(ImplicitAddress address)
+    DataLabelPtr storePtrWithPatch(ImmPtr initialValue, ImplicitAddress address)
     {
-        DataLabelPtr label = moveWithPatch(ImmPtr(0), scratchRegister);
+        DataLabelPtr label = moveWithPatch(initialValue, scratchRegister);
         storePtr(scratchRegister, address);
         return label;
     }

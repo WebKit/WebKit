@@ -252,7 +252,7 @@ class RegexGenerator : private MacroAssembler {
 
     DataLabelPtr storeToFrameWithPatch(unsigned frameLocation)
     {
-        return storePtrWithPatch(Address(stackPointerRegister, frameLocation * sizeof(void*)));
+        return storePtrWithPatch(ImmPtr(0), Address(stackPointerRegister, frameLocation * sizeof(void*)));
     }
 
     void loadFromFrame(unsigned frameLocation, RegisterID reg)

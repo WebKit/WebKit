@@ -2,6 +2,19 @@
 
         Reviewed by Sam Weinig.
 
+        Switch storePtrWithPatch to take the initial immediate value as an argument.
+
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::storePtrWithPatch):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::storePtrWithPatch):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jsr):
+
+2009-06-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Remove patchLength..tByIdExternalLoadPrefix magic numbers from JIT.h.
 
         These aren't really suitable values to be tracking within common code
