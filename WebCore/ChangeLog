@@ -1,3 +1,25 @@
+2009-06-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Fix for <rdar://problem/6936235>
+        Need to support StorageEvent.storageArea to meet the Web Storage spec
+
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::dispatchStorageEvent): Pass the localStorage for
+        the frame being dispatched to.
+        * storage/SessionStorageArea.cpp:
+        (WebCore::SessionStorageArea::dispatchStorageEvent): Ditto, only for sessionStorage.
+
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::StorageEvent):
+        (WebCore::StorageEvent::initStorageEvent):
+        * storage/StorageEvent.h:
+        (WebCore::StorageEvent::create):
+        (WebCore::StorageEvent::storageArea):
+        * storage/StorageEvent.idl:
+        Add storageArea member.
+
 2009-06-05  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Anders Carlsson.

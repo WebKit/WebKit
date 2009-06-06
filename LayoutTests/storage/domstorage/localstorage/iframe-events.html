@@ -13,6 +13,11 @@ function log(a)
     document.getElementById("logger").innerHTML += a + "<br>";
 }
 
+function normalizeURL(url)
+{
+    return url.substring(url.lastIndexOf("LayoutTests"));
+}
+
 function finish()
 {
     if (window.layoutTestController)
@@ -25,6 +30,9 @@ function handleStorageEvent(e)
     log("Key           - " + e.key);
     log("New Value     - " + e.newValue);
     log("Old Value     - " + e.oldValue);
+    log("URI           - " + normalizeURL(e.uri));
+    log("Source        - " + normalizeURL(e.source.location.href));
+    log("Storage Area  - " + ((e.storageArea == window.localStorage) ? "This window's window.localStorage" : "Another window's window.localStorage"));
     log("");
     
     if (e.key == "Subframe")
@@ -38,7 +46,7 @@ function startTest()
         finish();
         return;
     }
- 
+
     window.addEventListener("storage", handleStorageEvent, false);
     log("Main frame about to change localStorage...");
     localStorage.setItem("Main Frame", "SET");

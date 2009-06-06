@@ -5,21 +5,33 @@ Main Frame received StorageEvent:
 Key - Main Frame
 New Value - SET
 Old Value - null
+URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Storage Area - This window's window.sessionStorage
 
 Subframe received storage event:
 Key - Main Frame
 New Value - SET
 Old Value - null
+URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Storage Area - This window's window.sessionStorage
 
 Subframe about to change sessionStorage...
 Main Frame received StorageEvent:
 Key - Subframe
 New Value - SET
 Old Value - null
+URI - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
+Source - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
+Storage Area - This window's window.sessionStorage
 
 Subframe received storage event:
 Key - Subframe
 New Value - SET
 Old Value - null
+URI - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
+Source - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
+Storage Area - This window's window.sessionStorage
 
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SessionStorageArea.h"
 
+#include "DOMWindow.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
@@ -82,7 +83,7 @@ void SessionStorageArea::dispatchStorageEvent(const String& key, const String& o
     }
 
     for (unsigned i = 0; i < frames.size(); ++i)
-        frames[i]->document()->dispatchWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->documentURI(), sourceFrame->domWindow()));
+        frames[i]->document()->dispatchWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->documentURI(), sourceFrame->domWindow(), frames[i]->domWindow()->sessionStorage()));
 }
 
 } // namespace WebCore

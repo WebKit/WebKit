@@ -1,3 +1,19 @@
+2009-06-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Update tests for <rdar://problem/6936235>
+        Need to support StorageEvent.storageArea to meet the Web Storage spec
+
+        Test StorageEvent.uri, StorageEvent.source and StorageEvent.storageArea.
+
+        * storage/domstorage/localstorage/iframe-events-expected.txt:
+        * storage/domstorage/localstorage/iframe-events.html:
+        * storage/domstorage/localstorage/resources/iframe-events-second.html:
+        * storage/domstorage/sessionstorage/iframe-events-expected.txt:
+        * storage/domstorage/sessionstorage/iframe-events.html:
+        * storage/domstorage/sessionstorage/resources/iframe-events-second.html:
+
 2009-06-05  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Anders Carlsson.

@@ -13,6 +13,11 @@ function log(a)
     document.getElementById("logger").innerHTML += a + "<br>";
 }
 
+function normalizeURL(url)
+{
+    return url.substring(url.lastIndexOf("LayoutTests"));
+}
+
 function finish()
 {
     if (window.layoutTestController)
@@ -25,6 +30,9 @@ function handleStorageEvent(e)
     log("Key           - " + e.key);
     log("New Value     - " + e.newValue);
     log("Old Value     - " + e.oldValue);
+    log("URI           - " + normalizeURL(e.uri));
+    log("Source        - " + normalizeURL(e.source.location.href));
+    log("Storage Area  - " + ((e.storageArea == window.sessionStorage) ? "This window's window.sessionStorage" : "Another window's window.sessionStorage"));
     log("");
     
     if (e.key == "Subframe")
