@@ -1421,8 +1421,13 @@ public:
         patchPointer(where, value);
     }
 
-    static void repatchLoadToLEA(void* where)
+    static void repatchLoadPtrToLEA(void* where)
     {
+#if PLATFORM(X86_64)
+        // On x86-64 pointer memory accesses require a 64-bit operand, and as such a REX prefix.
+        // Skip over the prefix byte.
+        where = reinterpret_cast<char*>(where) + 1;
+#endif
         ExecutableAllocator::MakeWritable unprotect(where, 1);
         *reinterpret_cast<unsigned char*>(where) = static_cast<unsigned char>(OP_LEA);
     }

@@ -459,9 +459,9 @@ public:
         {
         }
 
-        void repatchLoadToLEA()
+        void repatchLoadPtrToLEA()
         {
-            AssemblerType::repatchLoadToLEA(this->dataLocation());
+            AssemblerType::repatchLoadPtrToLEA(this->dataLocation());
         }
 
     private:

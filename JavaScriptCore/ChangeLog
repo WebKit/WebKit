@@ -1,3 +1,24 @@
+2009-06-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove patchLength..tByIdExternalLoadPrefix magic numbers from JIT.h.
+
+        These aren't really suitable values to be tracking within common code
+        of the JIT, since they are not (and realistically cannot) be checked
+        by ASSERTs, as the other repatch offsets are.  Move this functionality
+        (skipping the REX prefix when patching load instructions to LEAs on
+        x86-64) into the X86Assembler.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CodeLocationInstruction::repatchLoadPtrToLEA):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::repatchLoadPtrToLEA):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+
 2009-06-05  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Bug 26160: Compile fails in MacOSX when GNU fileutils are installed
