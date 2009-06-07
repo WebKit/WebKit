@@ -1,5 +1,14 @@
 2009-06-06  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Detect when XHTML MP and WCSS are disabled and skip their associated regression tests.
+
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+
+2009-06-06  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Brady Eidson.
 
         <rdar://problem/6778101> Four SSL-related test failures

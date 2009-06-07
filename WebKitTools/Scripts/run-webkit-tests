@@ -364,14 +364,6 @@ if (checkWebCoreSVGSupport(0)) {
     $ignoredLocalDirectories{'svg'} = 1;
 }
 
-if (checkWebCoreWMLSupport(0)) { 
-    $supportedFileExtensions{'wml'} = 1;
-} else {
-    $ignoredDirectories{'http/tests/wml'} = 1;
-    $ignoredDirectories{'fast/wml'} = 1;
-    $ignoredDirectories{'wml'} = 1;
-}
-
 if (!$testHTTP) {
     $ignoredDirectories{'http'} = 1;
 }
@@ -388,6 +380,22 @@ if (!checkWebCoreAcceleratedCompositingSupport(0)) {
 if (!checkWebCore3DRenderingSupport(0)) {
     $ignoredDirectories{'animations/3d'} = 1;
     $ignoredDirectories{'transforms/3d'} = 1;
+}
+
+if (checkWebCoreWMLSupport(0)) { 
+    $supportedFileExtensions{'wml'} = 1;
+} else {
+    $ignoredDirectories{'http/tests/wml'} = 1;
+    $ignoredDirectories{'fast/wml'} = 1;
+    $ignoredDirectories{'wml'} = 1;
+}
+
+if (!checkWebCoreXHTMLMPSupport(0)) {
+    $ignoredDirectories{'fast/xhtmlmp'} = 1;
+}
+
+if (!checkWebCoreWCSSSupport(0)) {
+    $ignoredDirectories{'fast/wcss'} = 1;
 }
 
 if ($ignoreTests) {

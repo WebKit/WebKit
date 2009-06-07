@@ -661,6 +661,54 @@ sub checkWebCoreWMLSupport
     return $hasWML;
 }
 
+sub hasXHTMLMPSupport
+{
+    return 0 if isCygwin();
+
+    my $path = shift;
+
+    my $hasXHTMLMP = 0;
+    if (-e $path) {
+        open NM, "-|", "nm", $path or die;
+        while (<NM>) {
+            $hasXHTMLMP = 1 if /isXHTMLMPDocument/;
+        }
+        close NM;
+    }
+    return $hasXHTMLMP;
+}
+
+sub checkWebCoreXHTMLMPSupport
+{
+    my $required = shift;
+    my $framework = "WebCore";
+    my $path = builtDylibPathForName($framework);
+    my $hasXHTMLMP = hasXHTMLMPSupport($path);
+    if ($required && !$hasXHTMLMP) {
+        die "$framework at \"$path\" does not include XHTML MP Support\n";
+    }
+    return $hasXHTMLMP;
+}
+
+sub hasWCSSSupport
+{
+    # FIXME: When WCSS support is landed this should be updated to check for WCSS
+    # being enabled in a manner similar to how we check for XHTML MP above.
+    return 0;
+}
+
+sub checkWebCoreWCSSSupport
+{
+    my $required = shift;
+    my $framework = "WebCore";
+    my $path = builtDylibPathForName($framework);
+    my $hasWCSS = hasWCSSSupport($path);
+    if ($required && !$hasWCSS) {
+        die "$framework at \"$path\" does not include WCSS Support\n";
+    }
+    return $hasWCSS;
+}
+
 sub isQt()
 {
     determineIsQt();

@@ -1,5 +1,18 @@
 2009-06-06  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Remove XHTML MP and WCSS tests from the skipped lists as run-webkit-tests
+        now treats them like our other optional features and will skip them automatically
+        when the feature is not compiled in.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2009-06-06  Mark Rowe  <mrowe@apple.com>
+
         Unskip two more tests that now pass.
 
         * platform/mac-snowleopard/Skipped:
