@@ -177,7 +177,7 @@
         printf ("%s\n", [string UTF8String]);
     }
 
-    if ([error domain] == NSURLErrorDomain && [error code] == NSURLErrorServerCertificateHasUnknownRoot) {
+    if ([error domain] == NSURLErrorDomain && ([error code] == NSURLErrorServerCertificateHasUnknownRoot || [error code] == NSURLErrorServerCertificateUntrusted)) {
         NSURL *failedURL = [[error userInfo] objectForKey:@"NSErrorFailingURLKey"];
         [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[failedURL _web_hostString]];
         [frame loadRequest:[[[[frame provisionalDataSource] request] mutableCopy] autorelease]];

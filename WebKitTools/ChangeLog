@@ -1,3 +1,16 @@
+2009-06-06  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/6778101> Four SSL-related test failures
+
+        With newer versions of CFNetwork we receive a NSURLErrorServerCertificateUntrusted error
+        code rather than the more specific NSURLErrorServerCertificateHasUnknownRoot that DumpRenderTree
+        was looking for.  Update DumpRenderTree to accommodate the different error code.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+
 2009-06-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.

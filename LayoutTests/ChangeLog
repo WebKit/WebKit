@@ -1,3 +1,11 @@
+2009-06-06  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/6778101> Four SSL-related test failures
+
+        * platform/mac-snowleopard/Skipped: Unskip the tests.
+
 2009-06-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
