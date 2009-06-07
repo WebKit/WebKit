@@ -1,5 +1,13 @@
 2009-06-06  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Factor out the code to check whether a library contains a given symbol in to a helper function.
+
+        * Scripts/webkitdirs.pm:
+
+2009-06-06  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Detect when XHTML MP and WCSS are disabled and skip their associated regression tests.

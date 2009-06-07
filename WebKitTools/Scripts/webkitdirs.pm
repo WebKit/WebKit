@@ -508,10 +508,29 @@ sub checkFrameworks
     }
 }
 
+sub libraryContainsSymbol
+{
+    my $path = shift;
+    my $symbol = shift;
+
+    if (isCygwin()) {
+        # FIXME: Implement this for Windows.
+        return 0;
+    }
+
+    my $foundSymbol = 0;
+    if (-e $path) {
+        open NM, "-|", "nm", $path or die;
+        while (<NM>) {
+            $foundSymbol = 1 if /$symbol/;
+        }
+        close NM;
+    }
+    return $foundSymbol;
+}
+
 sub hasSVGSupport
 {
-    return 0 if isCygwin();
-
     my $path = shift;
 
     if (isQt()) {
@@ -522,15 +541,7 @@ sub hasSVGSupport
         return 0;
     }
 
-    my $hasSVGSupport = 0;
-    if (-e $path) {
-        open NM, "-|", "nm", $path or die;
-        while (<NM>) {
-            $hasSVGSupport = 1 if /SVGElement/;
-        }
-        close NM;
-    }
-    return $hasSVGSupport;
+    return libraryContainsSymbol($path, "SVGElement");
 }
 
 sub removeLibraryDependingOnSVG
@@ -562,16 +573,7 @@ sub hasAcceleratedCompositingSupport
     return 0 if isCygwin() || isQt();
 
     my $path = shift;
-
-    my $useAcceleratedCompositing = 0;
-    if (-e $path) {
-        open NM, "-|", "nm", $path or die;
-        while (<NM>) {
-            $useAcceleratedCompositing = 1 if /GraphicsLayer/;
-        }
-        close NM;
-    }
-    return $useAcceleratedCompositing;
+    return libraryContainsSymbol($path, "GraphicsLayer");
 }
 
 sub checkWebCoreAcceleratedCompositingSupport
@@ -588,19 +590,10 @@ sub checkWebCoreAcceleratedCompositingSupport
 
 sub has3DRenderingSupport
 {
-    return 0 if isCygwin() || isQt();
+    return 0 if isQt();
 
     my $path = shift;
-
-    my $has3DRenderingSupport = 0;
-    if (-e $path) {
-        open NM, "-|", "nm", $path or die;
-        while (<NM>) {
-            $has3DRenderingSupport = 1 if /WebCoreHas3DRendering/;
-        }
-        close NM;
-    }
-    return $has3DRenderingSupport;
+    return libraryContainsSymbol($path, "WebCoreHas3DRendering");
 }
 
 sub checkWebCore3DRenderingSupport
@@ -617,24 +610,8 @@ sub checkWebCore3DRenderingSupport
 
 sub hasWMLSupport
 {
-    return 0 if isCygwin();
-
     my $path = shift;
-
-    if (isQt()) {
-        # FIXME: Check built library for WML support, just like Gtk does it below.
-        return 0;
-    }
-
-    my $hasWMLSupport = 0;
-    if (-e $path) {
-        open NM, "-|", "nm", $path or die;
-        while (<NM>) {
-            $hasWMLSupport = 1 if /WMLElement/;
-        }
-        close NM;
-    }
-    return $hasWMLSupport;
+    return libraryContainsSymbol($path, "WMLElement");
 }
 
 sub removeLibraryDependingOnWML
@@ -663,19 +640,8 @@ sub checkWebCoreWMLSupport
 
 sub hasXHTMLMPSupport
 {
-    return 0 if isCygwin();
-
     my $path = shift;
-
-    my $hasXHTMLMP = 0;
-    if (-e $path) {
-        open NM, "-|", "nm", $path or die;
-        while (<NM>) {
-            $hasXHTMLMP = 1 if /isXHTMLMPDocument/;
-        }
-        close NM;
-    }
-    return $hasXHTMLMP;
+    return libraryContainsSymbol($path, "isXHTMLMPDocument");
 }
 
 sub checkWebCoreXHTMLMPSupport
