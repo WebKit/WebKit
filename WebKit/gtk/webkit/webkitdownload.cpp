@@ -280,7 +280,11 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     /**
      * WebKitDownload:progress:
      *
-     * Determines the current progress of the download.
+     * Determines the current progress of the download. Notice that,
+     * although the progress changes are reported as soon as possible,
+     * the emission of the notify signal for this property is
+     * throttled, for the benefit of download managers. If you care
+     * about every update, use WebKitDownload:current-size.
      *
      * Since: 1.1.2
      */
@@ -770,9 +774,23 @@ static void webkit_download_received_data(WebKitDownload* download, const gchar*
     if (priv->currentSize > priv->networkResponse->expectedContentLength())
         g_object_notify(G_OBJECT(download), "total-size");
 
-    // FIXME: Throttle the number of updates? Should we remove the
-    // previous g_object_notify()s if we are going to throttle the
-    // progress updates?
+    gdouble lastProgress = webkit_download_get_progress(download);
+
+    // Throttle progress notification to not consume high amounts of
+    // CPU on fast links, except when the progress is >= 3%, or we
+    // reached the end.
+    static gdouble lastElapsed = 0;
+    gdouble currentElapsed = g_timer_elapsed(priv->timer, NULL);
+
+    if (lastElapsed
+        && (currentElapsed - lastElapsed) < 0.1
+        && (webkit_download_get_progress(download) - lastProgress) < 0.03
+        && webkit_download_get_progress(download) < 1.0) {
+        lastElapsed = currentElapsed;
+        return;
+    }
+    lastElapsed = currentElapsed;
+
     g_object_notify(G_OBJECT(download), "progress");
 }
 

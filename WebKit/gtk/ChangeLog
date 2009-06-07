@@ -1,3 +1,19 @@
+2009-06-06  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26175
+        [GTK] Download progress notification should be throttled, for the benefit of download managers
+
+        Throttle notifications for the 'progress' property of the Download
+        object, and update documentation to note the fact that this is
+        being done, and how to get all notifications if you really care
+        about them.
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_class_init):
+        (webkit_download_received_data):
+
 2009-05-29  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.
