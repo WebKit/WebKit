@@ -1,5 +1,11 @@
 2009-06-06  Mark Rowe  <mrowe@apple.com>
 
+        Unskip some tests now that they pass.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-06-06  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Brady Eidson.
 
         <rdar://problem/6778101> Four SSL-related test failures

@@ -4,21 +4,12 @@ plugins/netscape-throw-exception.html
 # <rdar://problem/6877291> media/video-size-intrinsic-scale.html test fails
 media/video-size-intrinsic-scale.html
 
-# <rdar://problem/6719019&6719106&6719597&6719661> Incorrect MIME type for some local files
-http/tests/misc/createElementNamespace1.xml
-tables/mozilla/bugs/bug3037-1.html
-webarchive/loading/cache-expired-subresource.html
-webarchive/test-xml-stylesheet.xml
-
 # <rdar://problem/6733642> Mistimed NPP_SetWindow log messages
 plugins/netscape-plugin-setwindow-size.html
 plugins/netscape-plugin-setwindow-size-2.html
 
 # <rdar://problem/6778137> post-goback-repost-policy.html is failing
 http/tests/navigation/post-goback-repost-policy.html
-
-# <rdar://problem/6877633> - Re-enable fast/images/favicon-as-image.html
-fast/images/favicon-as-image.html
 
 # Radar bugs needed for these
 fast/canvas/set-colors.html
