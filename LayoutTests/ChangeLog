@@ -1,5 +1,11 @@
 2009-06-06  Mark Rowe  <mrowe@apple.com>
 
+        Unskip two more tests that now pass.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-06-06  Mark Rowe  <mrowe@apple.com>
+
         Unskip some tests now that they pass.
 
         * platform/mac-snowleopard/Skipped:
