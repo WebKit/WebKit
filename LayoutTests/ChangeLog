@@ -1,5 +1,15 @@
 2009-06-06  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Test for <rdar://problem/6930540>
+        REGRESSION (r43797): Serif and fantasy font-family names are wrong in result of getComputedStyle
+
+        * fast/css/font-family-builtins-expected.txt: Added.
+        * fast/css/font-family-builtins.html: Added.
+
+2009-06-06  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Brady Eidson.
 
         Update tests for <rdar://problem/6936235>

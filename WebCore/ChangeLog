@@ -1,5 +1,18 @@
 2009-06-06  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6930540>
+        REGRESSION (r43797): Serif and fantasy font-family names are wrong in result of getComputedStyle
+
+        Test: fast/css/font-family-builtins.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::identifierForFamily): Fix typo. Fantasy family should be
+        -webkit-fantasy not, -webkit-serif.
+
+2009-06-06  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Brady Eidson.
 
         Fix for <rdar://problem/6936235>
