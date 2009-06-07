@@ -106,6 +106,7 @@
 - (void)dealloc
 {
     delete gcController;
+    delete accessibilityController;
     [super dealloc];
 }
 
