@@ -1,3 +1,18 @@
+2009-06-07  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26106
+        [GTK] Crashes when you keep a combo open during a page transition, then close it
+
+        Hide the combo popup and disconnect from its signals during
+        PopupMenu destruction to handle this exceptional case with no
+        crash.
+
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::~PopupMenu):
+        (WebCore::PopupMenu::menuUnmapped):
+
 2009-06-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

@@ -41,8 +41,11 @@ PopupMenu::PopupMenu(PopupMenuClient* client)
 
 PopupMenu::~PopupMenu()
 {
-    if (m_popup)
+    if (m_popup) {
+        g_signal_handlers_disconnect_matched(m_popup, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        hide();
         g_object_unref(m_popup);
+    }
 }
 
 void PopupMenu::show(const IntRect& rect, FrameView* view, int index)
