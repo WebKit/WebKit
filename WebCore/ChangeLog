@@ -1,3 +1,15 @@
+2009-06-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Build fix when NETSCAPE_PLUGIN_API support is turned off
+        https://bugs.webkit.org/show_bug.cgi?id=26244
+
+        * WebCore.pro: Define PLUGIN_PACKAGE_SIMPLE_HASH only if
+        NETSCAPE_PLUGIN_API is turned on
+        * plugins/PluginPackage.cpp: Guard initializeBrowserFuncs()
+        * plugins/PluginViewNone.cpp: Match guards with PluginView.h
+
 2009-06-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
