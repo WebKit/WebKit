@@ -1,5 +1,12 @@
 2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, projectile-fixing Windows build.
+
+        * runtime/DateConversion.cpp: Added StringExtras include.
+        * wtf/DateMath.cpp: Replaced math with algorithm include (looking for std::min def for Windows).
+
+2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, Windows build fix.
 
         * runtime/DateConstructor.cpp: Changed to use WTF namespace.

@@ -49,8 +49,8 @@
 #include "MathExtras.h"
 #include "StringExtras.h"
 
+#include <algorithm>
 #include <limits>
-#include <math.h>
 #include <stdint.h>
 #include <time.h>
 
