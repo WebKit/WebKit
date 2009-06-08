@@ -6,6 +6,13 @@
 
 2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, another Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, projectile-fixing Windows build.
 
         * runtime/DateConversion.cpp: Added StringExtras include.
