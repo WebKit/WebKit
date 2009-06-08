@@ -1,3 +1,13 @@
+2009-06-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Use $QMAKE_PATH_SEP instead of hardcoded / to fix Windows build
+
+        * JavaScriptCore.pri:
+        * JavaScriptCore.pro:
+        * jsc.pro:
+
 2009-06-07  Gavin Barraclough  <barraclough@apple.com>
 
         RS by Sam Weinig.

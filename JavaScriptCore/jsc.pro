@@ -19,8 +19,7 @@ CONFIG(debug, debug|release) {
 } else { # Release
     OBJECTS_DIR = obj/release
 }
-OBJECTS_DIR_WTR = $$OBJECTS_DIR/
-win32-*: OBJECTS_DIR_WTR ~= s|/|\|
+OBJECTS_DIR_WTR = $$OBJECTS_DIR$${QMAKE_DIR_SEP}
 include($$PWD/JavaScriptCore.pri)
 
 lessThan(QT_MINOR_VERSION, 4) {

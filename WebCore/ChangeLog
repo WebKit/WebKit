@@ -1,3 +1,11 @@
+2009-06-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Use $QMAKE_PATH_SEP instead of hardcoded / to fix Windows build
+
+        * WebCore.pro:
+
 2009-06-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Ariya Hidayat.

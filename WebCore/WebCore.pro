@@ -17,18 +17,17 @@ CONFIG(QTDIR_build) {
     !static: DEFINES += QT_MAKEDLL
 
     CONFIG(debug, debug|release) {
-        isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated/debug
+        isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated$${QMAKE_DIR_SEP}debug
         OBJECTS_DIR = obj/debug
     } else { # Release
-        isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated/release
+        isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated$${QMAKE_DIR_SEP}release
         OBJECTS_DIR = obj/release
     }
 
     DESTDIR = $$OUTPUT_DIR/lib
 }
 
-GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
-win32-*|wince*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
+GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR${QMAKE_DIR_SEP}
 
 unix {
     QMAKE_PKGCONFIG_REQUIRES = QtCore QtGui QtNetwork
@@ -1553,17 +1552,17 @@ contains(DEFINES, ENABLE_WML=1) {
 
     WML_NAMES = $$PWD/wml/WMLTagNames.in
 
-    wmlnames_a.output = $$GENERATED_SOURCES_DIR/WMLNames.cpp
+    wmlnames_a.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}WMLNames.cpp
     wmlnames_a.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/wml/WMLTagNames.in --attrs $$PWD/wml/WMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$GENERATED_SOURCES_DIR
     wmlnames_a.input = WML_NAMES
     wmlnames_a.dependency_type = TYPE_C
     wmlnames_a.CONFIG = target_predeps
     wmlnames_a.variable_out = GENERATED_SOURCES
     addExtraCompilerWithHeader(wmlnames_a)
-    wmlnames_b.output = $$GENERATED_SOURCES_DIR/WMLElementFactory.cpp
+    wmlnames_b.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}WMLElementFactory.cpp
     wmlnames_b.commands = @echo -n ''
     wmlnames_b.input = SVG_NAMES
-    wmlnames_b.depends = $$GENERATED_SOURCES_DIR/WMLNames.cpp
+    wmlnames_b.depends = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}WMLNames.cpp
     wmlnames_b.CONFIG = target_predeps
     wmlnames_b.variable_out = GENERATED_SOURCES
     addExtraCompilerWithHeader(wmlnames_b)
@@ -1915,37 +1914,37 @@ contains(DEFINES, ENABLE_SVG=1) {
 
 
         # GENERATOR 5-C:
-        svgnames_a.output = $$GENERATED_SOURCES_DIR/SVGNames.cpp
+        svgnames_a.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}SVGNames.cpp
         svgnames_a.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\" --factory --wrapperFactory --outputDir $$GENERATED_SOURCES_DIR
         svgnames_a.input = SVG_NAMES
         svgnames_a.dependency_type = TYPE_C
         svgnames_a.CONFIG = target_predeps
         svgnames_a.variable_out = GENERATED_SOURCES
         addExtraCompilerWithHeader(svgnames_a)
-        svgnames_b.output = $$GENERATED_SOURCES_DIR/SVGElementFactory.cpp
+        svgnames_b.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}SVGElementFactory.cpp
         svgnames_b.commands = @echo -n ''
         svgnames_b.input = SVG_NAMES
-        svgnames_b.depends = $$GENERATED_SOURCES_DIR/SVGNames.cpp
+        svgnames_b.depends = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}SVGNames.cpp
         svgnames_b.CONFIG = target_predeps
         svgnames_b.variable_out = GENERATED_SOURCES
         addExtraCompilerWithHeader(svgnames_b)
-        svgelementwrapper.output = $$GENERATED_SOURCES_DIR/JSSVGElementWrapperFactory.cpp
+        svgelementwrapper.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}JSSVGElementWrapperFactory.cpp
         svgelementwrapper.commands = @echo -n ''
         svgelementwrapper.input = SVG_NAMES
-        svgelementwrapper.depends = $$GENERATED_SOURCES_DIR/SVGNames.cpp
+        svgelementwrapper.depends = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}SVGNames.cpp
         svgelementwrapper.CONFIG = target_predeps
         svgelementwrapper.variable_out = GENERATED_SOURCES
         addExtraCompiler(svgelementwrapper)
-        svgelementwrapper_header.output = $$GENERATED_SOURCES_DIR/JSSVGElementWrapperFactory.h
+        svgelementwrapper_header.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}JSSVGElementWrapperFactory.h
         svgelementwrapper_header.commands = @echo -n ''
         svgelementwrapper_header.input = SVG_NAMES
-        svgelementwrapper_header.depends = $$GENERATED_SOURCES_DIR/SVGNames.cpp
+        svgelementwrapper_header.depends = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}SVGNames.cpp
         svgelementwrapper_header.CONFIG = target_predeps
         svgelementwrapper_header.variable_out = GENERATED_FILES
         addExtraCompiler(svgelementwrapper_header)
 
         # GENERATOR 5-D:
-        xlinknames.output = $$GENERATED_SOURCES_DIR/XLinkNames.cpp
+        xlinknames.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}XLinkNames.cpp
         xlinknames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/svg/xlinkattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$GENERATED_SOURCES_DIR
         xlinknames.input = XLINK_NAMES
         xlinknames.dependency_type = TYPE_C
@@ -1954,33 +1953,33 @@ contains(DEFINES, ENABLE_SVG=1) {
         addExtraCompilerWithHeader(xlinknames)
 
     # GENERATOR 6-A:
-    cssprops.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
+    cssprops.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
     cssprops.input = WALDOCSSPROPS
-    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES $$SVGCSSPROPERTIES > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES $$SVGCSSPROPERTIES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
     cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES SVGCSSPROPERTIES
     addExtraCompilerWithHeader(cssprops)
 
     # GENERATOR 6-B:
-    cssvalues.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.c
+    cssvalues.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.c
     cssvalues.input = WALDOCSSVALUES
-    cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSVALUES > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
+    cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSVALUES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
     cssvalues.depend = ${QMAKE_FILE_NAME} SVGCSSVALUES
     addExtraCompilerWithHeader(cssvalues)
 } else {
     # GENERATOR 6-A:
-    cssprops.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
+    cssprops.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
     cssprops.input = WALDOCSSPROPS
-    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
+    cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
     cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES
     addExtraCompilerWithHeader(cssprops)
 
     # GENERATOR 6-B:
-    cssvalues.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.c
+    cssvalues.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.c
     cssvalues.input = WALDOCSSVALUES
-    cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} > $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
+    cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
     cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssvalues)
@@ -2017,7 +2016,7 @@ SOURCES += \
 }
 
 # GENERATOR 1: IDL compiler
-idl.output = $$GENERATED_SOURCES_DIR/JS${QMAKE_FILE_BASE}.cpp
+idl.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}JS${QMAKE_FILE_BASE}.cpp
 idl.variable_out = GENERATED_SOURCES
 idl.input = IDL_BINDINGS
 idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
@@ -2025,7 +2024,7 @@ idl.CONFIG += target_predeps
 addExtraCompilerWithHeader(idl)
 
 # GENERATOR 2-A: LUT creator
-domlut.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.lut.h
+domlut.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.lut.h
 domlut.commands = perl $$PWD/../JavaScriptCore/create_hash_table ${QMAKE_FILE_NAME} -n WebCore > ${QMAKE_FILE_OUT}
 domlut.depend = ${QMAKE_FILE_NAME}
 domlut.input = DOMLUT_FILES
@@ -2033,7 +2032,7 @@ domlut.CONFIG += no_link
 addExtraCompiler(domlut)
 
 # GENERATOR 3: tokenizer (flex)
-tokenizer.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
+tokenizer.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
 tokenizer.commands = flex -t < ${QMAKE_FILE_NAME} | perl $$PWD/css/maketokenizer > ${QMAKE_FILE_OUT}
 tokenizer.dependency_type = TYPE_C
 tokenizer.input = TOKENIZER
@@ -2041,8 +2040,8 @@ tokenizer.CONFIG += target_predeps no_link
 addExtraCompiler(tokenizer)
 
 # GENERATOR 4: CSS grammar
-cssbison.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
-cssbison.commands = perl $$PWD/css/makegrammar.pl ${QMAKE_FILE_NAME} $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}
+cssbison.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
+cssbison.commands = perl $$PWD/css/makegrammar.pl ${QMAKE_FILE_NAME} $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}
 cssbison.depend = ${QMAKE_FILE_NAME}
 cssbison.input = CSSBISON
 cssbison.CONFIG = target_predeps
@@ -2051,7 +2050,7 @@ cssbison.variable_out = GENERATED_SOURCES
 addExtraCompilerWithHeader(cssbison)
 
 # GENERATOR 5-A:
-htmlnames.output = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
+htmlnames.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}HTMLNames.cpp
 htmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --preprocessor \"$${QMAKE_MOC} -E\"  --factory --wrapperFactory --outputDir $$GENERATED_SOURCES_DIR
 htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
@@ -2059,26 +2058,26 @@ htmlnames.CONFIG = target_predeps
 htmlnames.variable_out = GENERATED_SOURCES
 addExtraCompilerWithHeader(htmlnames)
 
-htmlelementfactory.output = $$GENERATED_SOURCES_DIR/HTMLElementFactory.cpp
+htmlelementfactory.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}HTMLElementFactory.cpp
 htmlelementfactory.commands = @echo -n ''
 htmlelementfactory.input = HTML_NAMES
-htmlelementfactory.depends = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
+htmlelementfactory.depends = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}HTMLNames.cpp
 htmlelementfactory.CONFIG = target_predeps
 htmlelementfactory.variable_out = GENERATED_SOURCES
 htmlelementfactory.clean += ${QMAKE_FILE_OUT}
 addExtraCompilerWithHeader(htmlelementfactory)
 
-elementwrapperfactory.output = $$GENERATED_SOURCES_DIR/JSHTMLElementWrapperFactory.cpp
+elementwrapperfactory.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}JSHTMLElementWrapperFactory.cpp
 elementwrapperfactory.commands = @echo -n ''
 elementwrapperfactory.input = HTML_NAMES
-elementwrapperfactory.depends = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
+elementwrapperfactory.depends = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}HTMLNames.cpp
 elementwrapperfactory.CONFIG = target_predeps
 elementwrapperfactory.variable_out = GENERATED_SOURCES
 elementwrapperfactory.clean += ${QMAKE_FILE_OUT}
 addExtraCompilerWithHeader(elementwrapperfactory)
 
 # GENERATOR 5-B:
-xmlnames.output = $$GENERATED_SOURCES_DIR/XMLNames.cpp
+xmlnames.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}XMLNames.cpp
 xmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/xml/xmlattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$GENERATED_SOURCES_DIR
 xmlnames.input = XML_NAMES
 xmlnames.dependency_type = TYPE_C
@@ -2087,8 +2086,8 @@ xmlnames.variable_out = GENERATED_SOURCES
 addExtraCompilerWithHeader(xmlnames)
 
 # GENERATOR 8-A:
-entities.output = $$GENERATED_SOURCES_DIR/HTMLEntityNames.c
-entities.commands = gperf -a -L ANSI-C -C -G -c -o -t --key-positions="*" -N findEntity -D -s 2 < $$PWD/html/HTMLEntityNames.gperf > $$GENERATED_SOURCES_DIR/HTMLEntityNames.c
+entities.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}HTMLEntityNames.c
+entities.commands = gperf -a -L ANSI-C -C -G -c -o -t --key-positions="*" -N findEntity -D -s 2 < $$PWD/html/HTMLEntityNames.gperf > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}HTMLEntityNames.c
 entities.input = ENTITIES_GPERF
 entities.dependency_type = TYPE_C
 entities.CONFIG = target_predeps no_link
@@ -2096,7 +2095,7 @@ entities.clean = ${QMAKE_FILE_OUT}
 addExtraCompiler(entities)
 
 # GENERATOR 8-B:
-doctypestrings.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
+doctypestrings.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
 doctypestrings.input = DOCTYPESTRINGS
 doctypestrings.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > ${QMAKE_FILE_OUT} && echo // bogus >> ${QMAKE_FILE_OUT} && gperf -CEot -L ANSI-C --key-positions="*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
 doctypestrings.dependency_type = TYPE_C
@@ -2105,14 +2104,14 @@ doctypestrings.clean = ${QMAKE_FILE_OUT}
 addExtraCompiler(doctypestrings)
 
 # GENERATOR 8-C:
-colordata.output = $$GENERATED_SOURCES_DIR/ColorData.c
+colordata.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}ColorData.c
 colordata.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > ${QMAKE_FILE_OUT} && echo // bogus >> ${QMAKE_FILE_OUT} && gperf -CDEot -L ANSI-C --key-positions="*" -N findColor -D -s 2 < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
 colordata.input = COLORDAT_GPERF
 colordata.CONFIG = target_predeps no_link
 addExtraCompiler(colordata)
 
 # GENERATOR 9:
-stylesheets.output = $$GENERATED_SOURCES_DIR/UserAgentStyleSheetsData.cpp
+stylesheets.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}UserAgentStyleSheetsData.cpp
 stylesheets.commands = perl $$PWD/css/make-css-file-arrays.pl --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}UserAgentStyleSheets.h ${QMAKE_FILE_OUT} $$STYLESHEETS_EMBED
 STYLESHEETS_EMBED_GENERATOR_SCRIPT = $$PWD/css/make-css-file-arrays.pl
 stylesheets.input = STYLESHEETS_EMBED_GENERATOR_SCRIPT
@@ -2120,11 +2119,11 @@ stylesheets.depends = $$STYLESHEETS_EMBED
 stylesheets.CONFIG = target_predeps
 stylesheets.variable_out = GENERATED_SOURCES
 stylesheets.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}UserAgentStyleSheets.h
-addExtraCompilerWithHeader(stylesheets, $$GENERATED_SOURCES_DIR/UserAgentStyleSheets.h)
+addExtraCompilerWithHeader(stylesheets, $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}UserAgentStyleSheets.h)
 
 # GENERATOR 10: XPATH grammar
-xpathbison.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
-xpathbison.commands = bison -d -p xpathyy ${QMAKE_FILE_NAME} -o $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.tab.c && $(MOVE) $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.tab.c $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp && $(MOVE) $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.tab.h $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
+xpathbison.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
+xpathbison.commands = bison -d -p xpathyy ${QMAKE_FILE_NAME} -o $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c && $(MOVE) $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp && $(MOVE) $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.h $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.h
 xpathbison.depend = ${QMAKE_FILE_NAME}
 xpathbison.input = XPATHBISON
 xpathbison.CONFIG = target_predeps

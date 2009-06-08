@@ -2,10 +2,10 @@
 VPATH += $$PWD
 
 CONFIG(debug, debug|release) {
-    isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated/debug
+    isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated$${QMAKE_DIR_SEP}debug
     OBJECTS_DIR = obj/debug
 } else { # Release
-    isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated/release
+    isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = generated$${QMAKE_DIR_SEP}release
     OBJECTS_DIR = obj/release
 }
 
@@ -30,9 +30,8 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR \
 
 DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF
 
-GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
+GENERATED_SOURCES_DIR_SLASH = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}
 win32-* {
-    GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
     LIBS += -lwinmm
 }
 
@@ -231,7 +230,7 @@ SOURCES += \
 }
 
 # GENERATOR 1-A: LUT creator
-lut.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.lut.h
+lut.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.lut.h
 lut.commands = perl $$PWD/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 lut.depend = ${QMAKE_FILE_NAME}
 lut.input = LUT_FILES
@@ -239,7 +238,7 @@ lut.CONFIG += no_link
 addExtraCompiler(lut)
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
-keywordlut.output = $$GENERATED_SOURCES_DIR/Lexer.lut.h
+keywordlut.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}Lexer.lut.h
 keywordlut.commands = perl $$PWD/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
 keywordlut.depend = ${QMAKE_FILE_NAME}
 keywordlut.input = KEYWORDLUT_FILES
@@ -247,8 +246,8 @@ keywordlut.CONFIG += no_link
 addExtraCompiler(keywordlut)
 
 # GENERATOR 2: bison grammar
-jscbison.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.cpp
-jscbison.commands = bison -d -p jscyy ${QMAKE_FILE_NAME} -o $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.tab.c && $(MOVE) $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && $(MOVE) $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.tab.h $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.h
+jscbison.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.cpp
+jscbison.commands = bison -d -p jscyy ${QMAKE_FILE_NAME} -o $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c && $(MOVE) $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.c ${QMAKE_FILE_OUT} && $(MOVE) $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.tab.h $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.h
 jscbison.depend = ${QMAKE_FILE_NAME}
 jscbison.input = JSCBISON
 jscbison.variable_out = GENERATED_SOURCES
