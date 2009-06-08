@@ -147,7 +147,6 @@
 		930754D008B0F74600AB3056 /* pcre_tables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930754CE08B0F74500AB3056 /* pcre_tables.cpp */; };
 		930754EB08B0F78500AB3056 /* pcre_exec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930754E908B0F78500AB3056 /* pcre_exec.cpp */; settings = {COMPILER_FLAGS = "-fno-move-loop-invariants"; }; };
 		932F5BD30822A1C700736975 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
-		932F5BD40822A1C700736975 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A63D04B3B69F008AE952 /* CoreServices.framework */; };
 		932F5BD50822A1C700736975 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		932F5BD60822A1C700736975 /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */; };
 		932F5BD70822A1C700736975 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9322A00306C341D3009067BB /* libicucore.dylib */; };
@@ -577,7 +576,6 @@
 		6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCSystemAlloc.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = TCSystemAlloc.h; sourceTree = "<group>"; tabWidth = 8; };
 		6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
-		6560A63D04B3B69F008AE952 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		65621E6B089E859700760F35 /* PropertySlot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertySlot.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		65621E6C089E859700760F35 /* PropertySlot.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PropertySlot.h; sourceTree = "<group>"; tabWidth = 8; };
 		657EB7450B708F540063461B /* ListHashSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ListHashSet.h; sourceTree = "<group>"; };
@@ -908,7 +906,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				932F5BD30822A1C700736975 /* CoreFoundation.framework in Frameworks */,
-				932F5BD40822A1C700736975 /* CoreServices.framework in Frameworks */,
 				932F5BD50822A1C700736975 /* Foundation.framework in Frameworks */,
 				932F5BD70822A1C700736975 /* libicucore.dylib in Frameworks */,
 				932F5BD60822A1C700736975 /* libobjc.dylib in Frameworks */,
@@ -986,7 +983,6 @@
 			isa = PBXGroup;
 			children = (
 				6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */,
-				6560A63D04B3B69F008AE952 /* CoreServices.framework */,
 				51F0EB6105C86C6B00E6DF1B /* Foundation.framework */,
 				5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */,
 				9322A00306C341D3009067BB /* libicucore.dylib */,

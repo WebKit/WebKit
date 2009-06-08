@@ -1,3 +1,38 @@
+2009-06-07  David Kilzer  <ddkilzer@apple.com>
+
+        Make JavaScriptCore compile for iPhone and iPhone Simulator
+
+        Reviewed by Gavin Barraclough.
+
+        * Configurations/Base.xcconfig: Split GCC_ENABLE_OBJC_GC on
+        $(REAL_PLATFORM_NAME).  Added $(ARCHS_UNIVERSAL_IPHONE_OS) to
+        VALID_ARCHS.  Added REAL_PLATFORM_NAME_iphoneos,
+        REAL_PLATFORM_NAME_iphonesimulator, HAVE_DTRACE_iphoneos and
+        HAVE_DTRACE_iphonesimulator variables.
+        * Configurations/DebugRelase.xcconfig: Split ARCHS definition on
+        $(REAL_PLATFORM_NAME).
+        * Configurations/JavaScriptCore.xcconfig: Added
+        EXPORTED_SYMBOLS_FILE_armv6 and EXPORTED_SYMBOLS_FILE_armv7
+        variables.  Split OTHER_LDFLAGS into OTHER_LDFLAGS_BASE and
+        OTHER_LDFLAGS_$(REAL_PLATFORM_NAME) since CoreServices.framework
+        is only linked to on Mac OS X.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed references
+        to CoreServices.framework since it's linked using OTHER_LDFLAGS
+        in JavaScriptCore.xcconfig.
+        * profiler/ProfilerServer.mm: Added #import for iPhone
+        Simulator.
+        (-[ProfilerServer init]): Conditionalize use of
+        NSDistributedNotificationCenter to non-iPhone or iPhone
+        Simulator.
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMallocStats::): Build fix for iPhone and iPhone
+        Simulator.
+        * wtf/Platform.h: Defined PLATFORM(IPHONE) and
+        PLATFORM(IPHONE_SIMULATOR).
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::setThreadNameInternal): Build fix for iPhone and iPhone
+        Simulator.
+
 2009-06-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

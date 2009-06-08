@@ -28,8 +28,11 @@
 
 #import "JSProfilerPrivate.h"
 #import "JSRetainPtr.h"
-
 #import <Foundation/Foundation.h>
+
+#if PLATFORM(IPHONE_SIMULATOR)
+#import <Foundation/NSDistributedNotificationCenter.h>
+#endif
 
 @interface ProfilerServer : NSObject {
 @private
@@ -62,16 +65,22 @@
     if ([defaults boolForKey:@"EnableJSProfiling"])
         [self startProfiling];
 
+#if !PLATFORM(IPHONE) || PLATFORM(IPHONE_SIMULATOR)
+    // FIXME: <rdar://problem/6546135>
     // The catch-all notifications
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(startProfiling) name:@"ProfilerServerStartNotification" object:nil];
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(stopProfiling) name:@"ProfilerServerStopNotification" object:nil];
+#endif
 
     // The specific notifications
     NSProcessInfo *processInfo = [NSProcessInfo processInfo];
     _serverName = [[NSString alloc] initWithFormat:@"ProfilerServer-%d", [processInfo processIdentifier]];
 
+#if !PLATFORM(IPHONE) || PLATFORM(IPHONE_SIMULATOR)
+    // FIXME: <rdar://problem/6546135>
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(startProfiling) name:[_serverName stringByAppendingString:@"-Start"] object:nil];
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(stopProfiling) name:[_serverName stringByAppendingString:@"-Stop"] object:nil];
+#endif
 
     [pool drain];
 
