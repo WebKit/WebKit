@@ -43,6 +43,7 @@
 #include "config.h"
 #include "DateConversion.h"
 
+#include "UString.h"
 #include <wtf/DateMath.h>
 
 using namespace WTF;

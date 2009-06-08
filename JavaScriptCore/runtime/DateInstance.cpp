@@ -26,6 +26,8 @@
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 
+using namespace WTF;
+
 namespace JSC {
 
 struct DateInstance::Cache {
@@ -58,13 +60,13 @@ void DateInstance::msToGregorianDateTime(double milli, bool outputIsUTC, Gregori
 
     if (outputIsUTC) {
         if (m_cache->m_gregorianDateTimeUTCCachedForMS != milli) {
-            WTF::msToGregorianDateTime(milli, true, m_cache->m_cachedGregorianDateTimeUTC);
+            msToGregorianDateTime(milli, true, m_cache->m_cachedGregorianDateTimeUTC);
             m_cache->m_gregorianDateTimeUTCCachedForMS = milli;
         }
         t.copyFrom(m_cache->m_cachedGregorianDateTimeUTC);
     } else {
         if (m_cache->m_gregorianDateTimeCachedForMS != milli) {
-            WTF::msToGregorianDateTime(milli, false, m_cache->m_cachedGregorianDateTime);
+            msToGregorianDateTime(milli, false, m_cache->m_cachedGregorianDateTime);
             m_cache->m_gregorianDateTimeCachedForMS = milli;
         }
         t.copyFrom(m_cache->m_cachedGregorianDateTime);

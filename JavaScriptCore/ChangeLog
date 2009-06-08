@@ -1,5 +1,14 @@
 2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, Windows build fix.
+
+        * runtime/DateConstructor.cpp: Changed to use WTF namespace.
+        * runtime/DateConversion.cpp: Added UString include.
+        * runtime/DateInstance.cpp: Changed to use WTF namespace.
+        * wtf/DateMath.cpp: Added math include.
+
+2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=26238

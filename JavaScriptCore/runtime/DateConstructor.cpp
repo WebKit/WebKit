@@ -43,7 +43,7 @@
 #include <sys/timeb.h>
 #endif
 
-using WTF::GregorianDateTime;
+using namespace WTF;
 
 namespace JSC {
 
