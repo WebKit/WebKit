@@ -22,8 +22,8 @@
 #include "config.h"
 #include "DateConstructor.h"
 
+#include "DateConversion.h"
 #include "DateInstance.h"
-#include "DateMath.h"
 #include "DatePrototype.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -32,6 +32,7 @@
 #include "PrototypeFunction.h"
 #include <math.h>
 #include <time.h>
+#include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 
 #if HAVE(SYS_TIME_H)
@@ -41,6 +42,8 @@
 #if HAVE(SYS_TIMEB_H)
 #include <sys/timeb.h>
 #endif
+
+using WTF::GregorianDateTime;
 
 namespace JSC {
 

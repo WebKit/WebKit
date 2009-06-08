@@ -152,8 +152,8 @@ SOURCES += \
     runtime/ConstructData.cpp \
     wtf/CurrentTime.cpp \
     runtime/DateConstructor.cpp \
+    runtime/DateConversion.cpp \
     runtime/DateInstance.cpp \
-    runtime/DateMath.cpp \
     runtime/DatePrototype.cpp \
     debugger/Debugger.cpp \
     debugger/DebuggerCallFrame.cpp \
@@ -218,6 +218,7 @@ SOURCES += \
     profiler/ProfileNode.cpp \
     profiler/Profiler.cpp \
     profiler/TreeProfile.cpp \
+    wtf/DateMath.cpp \
     wtf/FastMalloc.cpp \
     wtf/Threading.cpp \
     wtf/qt/MainThreadQt.cpp

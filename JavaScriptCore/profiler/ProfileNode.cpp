@@ -29,9 +29,9 @@
 #include "config.h"
 #include "ProfileNode.h"
 
-#include "DateMath.h"
 #include "Profiler.h"
 #include <stdio.h>
+#include <wtf/DateMath.h>
 
 #if PLATFORM(WIN_OS)
 #include <windows.h>
@@ -49,7 +49,7 @@ static double getCount()
     QueryPerformanceCounter(&counter);
     return static_cast<double>(counter.QuadPart) / frequency.QuadPart;
 #else
-    return getCurrentUTCTimeWithMicroseconds();
+    return WTF::getCurrentUTCTimeWithMicroseconds();
 #endif
 }
 

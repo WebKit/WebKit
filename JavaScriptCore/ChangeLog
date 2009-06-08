@@ -1,3 +1,35 @@
+2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26238
+        Move most of runtime/DateMath functions to wtf/DateMath, and split off conversion-related
+        helpers to DateConversion.
+
+        * AllInOneFile.cpp: Changed DateMath->DateConversion.
+        * GNUmakefile.am: Ditto and added DateMath.
+        * JavaScriptCore.exp: Ditto.
+        * JavaScriptCore.pri: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Added DateMath.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * JavaScriptCoreSources.bkl: Ditto.
+        * pcre/pcre_exec.cpp: Changed to use DateMath.
+        * profiler/ProfileNode.cpp:
+        (JSC::getCount): Changed to use DateConversion.
+        * runtime/DateConstructor.cpp: Ditto.
+        * runtime/DateConversion.cpp: Copied from JavaScriptCore/runtime/DateMath.cpp.
+        (JSC::parseDate): Refactored to use null-terminated characters as input.
+        * runtime/DateConversion.h: Copied from JavaScriptCore/runtime/DateMath.h.
+        * runtime/DateInstance.cpp: Changed to use wtf/DateMath.
+        * runtime/DateInstance.h: Ditto.
+        * runtime/DateMath.cpp: Removed.
+        * runtime/DateMath.h: Removed.
+        * runtime/DatePrototype.cpp: Ditto.
+        * runtime/InitializeThreading.cpp: Ditto.
+        * wtf/DateMath.cpp: Copied from JavaScriptCore/runtime/DateMath.cpp.
+        * wtf/DateMath.h: Copied from JavaScriptCore/runtime/DateMath.h.
+
 2009-06-08  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.

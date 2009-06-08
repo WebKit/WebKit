@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
- * 
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ *
  * The Original Code is Mozilla Communicator client code, released
  * March 31, 1998.
  *
@@ -42,15 +43,16 @@
 #include "config.h"
 #include "DateMath.h"
 
-#include "JSNumberCell.h"
-#include <math.h>
+#include "Assertions.h"
+#include "ASCIICType.h"
+#include "CurrentTime.h"
+#include "MathExtras.h"
+#include "StringExtras.h"
+
+#include <limits>
 #include <stdint.h>
 #include <time.h>
-#include <wtf/ASCIICType.h>
-#include <wtf/Assertions.h>
-#include <wtf/CurrentTime.h>
-#include <wtf/MathExtras.h>
-#include <wtf/StringExtras.h>
+
 
 #if HAVE(ERRNO_H)
 #include <errno.h>
@@ -68,9 +70,9 @@
 #include <sys/timeb.h>
 #endif
 
-using namespace WTF;
+#define NaN std::numeric_limits<double>::quiet_NaN()
 
-namespace JSC {
+namespace WTF {
 
 /* Constants */
 
@@ -496,7 +498,7 @@ void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
     tm.timeZone = NULL;
 }
 
-void initDateMath()
+void initializeDates()
 {
 #ifndef NDEBUG
     static bool alreadyInitialized;
@@ -592,7 +594,7 @@ static bool parseLong(const char* string, char** stopPosition, int base, long* r
     return true;
 }
 
-double parseDate(const UString &date)
+double parseDateFromNullTerminatedCharacters(const char* dateString)
 {
     // This parses a date in the form:
     //     Tuesday, 09-Nov-99 23:12:40 GMT
@@ -607,9 +609,6 @@ double parseDate(const UString &date)
     //     [Wednesday] January 09 23:12:40 GMT 1999
     //
     // We ignore the weekday.
-
-    CString dateCString = date.UTF8String();
-    const char *dateString = dateCString.c_str();
      
     // Skip leading space
     skipSpacesAndComments(dateString);
@@ -715,7 +714,7 @@ double parseDate(const UString &date)
         if (!parseLong(dateString, &newPosStr, 10, &year))
             return NaN;
     }
-    
+
     // Don't fail if the time is missing.
     long hour = 0;
     long minute = 0;
@@ -772,7 +771,7 @@ double parseDate(const UString &date)
                 if (!parseLong(dateString, &newPosStr, 10, &second))
                     return NaN;
                 dateString = newPosStr;
-            
+
                 if (second < 0 || second > 59)
                     return NaN;
             }
@@ -848,9 +847,9 @@ double parseDate(const UString &date)
             return NaN;
         dateString = newPosStr;
     }
-     
+
     skipSpacesAndComments(dateString);
-     
+
     // Trailing garbage
     if (*dateString)
         return NaN;
@@ -890,46 +889,5 @@ double timeClip(double t)
     return trunc(t);
 }
 
-UString formatDate(const GregorianDateTime &t)
-{
-    char buffer[100];
-    snprintf(buffer, sizeof(buffer), "%s %s %02d %04d",
-        weekdayName[(t.weekDay + 6) % 7],
-        monthName[t.month], t.monthDay, t.year + 1900);
-    return buffer;
-}
 
-UString formatDateUTCVariant(const GregorianDateTime &t)
-{
-    char buffer[100];
-    snprintf(buffer, sizeof(buffer), "%s, %02d %s %04d",
-        weekdayName[(t.weekDay + 6) % 7],
-        t.monthDay, monthName[t.month], t.year + 1900);
-    return buffer;
-}
-
-UString formatTime(const GregorianDateTime &t, bool utc)
-{
-    char buffer[100];
-    if (utc) {
-        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.hour, t.minute, t.second);
-    } else {
-        int offset = abs(gmtoffset(t));
-        char timeZoneName[70];
-        struct tm gtm = t;
-        strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
-
-        if (timeZoneName[0]) {
-            snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d (%s)",
-                t.hour, t.minute, t.second,
-                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, timeZoneName);
-        } else {
-            snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
-                t.hour, t.minute, t.second,
-                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
-        }
-    }
-    return UString(buffer);
-}
-
-} // namespace JSC
+} // namespace WTF

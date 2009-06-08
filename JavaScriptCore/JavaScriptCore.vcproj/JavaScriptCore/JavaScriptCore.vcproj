@@ -596,11 +596,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\DateMath.cpp"
+				RelativePath="..\..\runtime\DateConversion.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\DateMath.h"
+				RelativePath="..\..\runtime\DateConversion.h"
 				>
 			</File>
 			<File

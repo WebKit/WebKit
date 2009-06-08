@@ -31,11 +31,11 @@
 
 #include "JSImmediate.h"
 #include "Collector.h"
-#include "DateMath.h"
 #include "dtoa.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "UString.h"
+#include <wtf/DateMath.h>
 #include <wtf/Threading.h>
 
 using namespace WTF;
@@ -52,7 +52,7 @@ static void initializeThreadingOnce()
     initializeUString();
 #if ENABLE(JSC_MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
-    initDateMath();
+    WTF::initializeDates();
 #endif
 }
 

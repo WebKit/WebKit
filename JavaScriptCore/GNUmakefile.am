@@ -368,10 +368,10 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/ConstructData.h \
 	JavaScriptCore/runtime/DateConstructor.cpp \
 	JavaScriptCore/runtime/DateConstructor.h \
+	JavaScriptCore/runtime/DateConversion.cpp \
+	JavaScriptCore/runtime/DateConversion.h \
 	JavaScriptCore/runtime/DateInstance.cpp \
 	JavaScriptCore/runtime/DateInstance.h \
-	JavaScriptCore/runtime/DateMath.cpp \
-	JavaScriptCore/runtime/DateMath.h \
 	JavaScriptCore/runtime/DatePrototype.cpp \
 	JavaScriptCore/runtime/DatePrototype.h \
 	JavaScriptCore/runtime/Error.cpp \
@@ -477,6 +477,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
+	JavaScriptCore/wtf/DateMath.cpp \
+	JavaScriptCore/wtf/DateMath.h \
 	JavaScriptCore/wtf/FastAllocBase.h \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/FastMalloc.h \

@@ -1,3 +1,18 @@
+2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26238
+        Add parseDate helper to HTTPParsers, which uses WTF::parseDateFromNullTerminatedCharacters.
+
+        * ForwardingHeaders/runtime/DateMath.h: Removed.
+        * ForwardingHeaders/wtf/DateMath.h: Copied from WebCore/ForwardingHeaders/runtime/DateMath.h.
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseDate): Added.
+        * platform/network/HTTPParsers.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::parseDateValueInHeader): Changed to use the new helper.
+
 2009-06-08  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Siedel.

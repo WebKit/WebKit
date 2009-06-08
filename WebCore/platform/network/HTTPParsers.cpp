@@ -31,7 +31,11 @@
 #include "config.h"
 #include "HTTPParsers.h"
 
+#include "CString.h"
 #include "PlatformString.h"
+#include <wtf/DateMath.h>
+
+using namespace WTF;
 
 namespace WebCore {
 
@@ -101,6 +105,11 @@ bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& del
         url = refresh.substring(urlStartPos, urlEndPos - urlStartPos).stripWhiteSpace();
         return true;
     }
+}
+
+double parseDate(const String& value)
+{
+    return parseDateFromNullTerminatedCharacters(value.utf8().data());
 }
 
 String filenameFromHTTPContentDisposition(const String& value)

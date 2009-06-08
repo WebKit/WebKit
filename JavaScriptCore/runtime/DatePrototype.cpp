@@ -22,7 +22,7 @@
 #include "config.h"
 #include "DatePrototype.h"
 
-#include "DateMath.h"
+#include "DateConversion.h"
 #include "Error.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
@@ -38,6 +38,7 @@
 #include <math.h>
 #include <time.h>
 #include <wtf/Assertions.h>
+#include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -45,12 +46,11 @@
 #include <string.h>
 #include <wtf/Noncopyable.h>
 
-namespace JSC {
+namespace WTF {
 
-class UString;
 struct GregorianDateTime;
 
-void initDateMath();
+void initializeDates();
 void msToGregorianDateTime(double, bool outputIsUTC, GregorianDateTime&);
 double gregorianDateTimeToMS(const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset();
@@ -60,12 +60,8 @@ double getCurrentUTCTimeWithMicroseconds();
 void getLocalTime(const time_t*, tm*);
 
 // Not really math related, but this is currently the only shared place to put these.  
-double parseDate(const UString&);
+double parseDateFromNullTerminatedCharacters(const char*);
 double timeClip(double);
-UString formatDate(const GregorianDateTime&);
-UString formatDateUTCVariant(const GregorianDateTime&);
-UString formatTime(const GregorianDateTime&, bool inputIsUTC);
-
 
 const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
@@ -186,6 +182,6 @@ static inline int gmtoffset(const GregorianDateTime& t)
     return t.utcOffset;
 }
 
-} // namespace JSC
+} // namespace WTF
 
 #endif // DateMath_h

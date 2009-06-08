@@ -50,7 +50,7 @@ the JavaScript specification. There are also some supporting functions. */
 #include <wtf/Vector.h>
 
 #if REGEXP_HISTOGRAM
-#include <parser/DateMath.h>
+#include <wtf/DateMath.h>
 #include <runtime/UString.h>
 #endif
 
