@@ -182,7 +182,7 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x30, JITStackFrame_code_
 COMPILE_ASSERT(offsetof(struct JITStackFrame, savedEBX) == 0x1c, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
 extern "C" {
-    
+
     __declspec(naked) EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValue* exception, Profiler**, JSGlobalData*)
     {
         __asm {
@@ -204,7 +204,7 @@ extern "C" {
             ret;
         }
     }
-    
+
     __declspec(naked) void ctiVMThrowTrampoline()
     {
         __asm {
@@ -218,8 +218,7 @@ extern "C" {
             ret;
         }
     }
-    
-    
+
     __declspec(naked) void ctiOpThrowNotCaught()
     {
         __asm {

@@ -1,5 +1,14 @@
 2009-06-07  Gavin Barraclough  <barraclough@apple.com>
 
+        RS by Sam Weinig.
+
+        Remove bonus bogus \n from last commit.
+
+        * jit/JITStubs.cpp:
+        (JSC::):
+
+2009-06-07  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Change the implementation of op_throw so the stub function always modifies its
