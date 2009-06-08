@@ -1,3 +1,11 @@
+2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, fix my previous fix.
+
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::msToGregorianDateTime): Use WTF namespace qualifier to
+            disambiguate func signatures.
+
 2009-06-08  Mark Rowe  <mrowe@apple.com>
 
         Attempt to fix the Tiger build.

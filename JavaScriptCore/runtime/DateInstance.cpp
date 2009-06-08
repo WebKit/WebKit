@@ -60,13 +60,13 @@ void DateInstance::msToGregorianDateTime(double milli, bool outputIsUTC, Gregori
 
     if (outputIsUTC) {
         if (m_cache->m_gregorianDateTimeUTCCachedForMS != milli) {
-            msToGregorianDateTime(milli, true, m_cache->m_cachedGregorianDateTimeUTC);
+            WTF::msToGregorianDateTime(milli, true, m_cache->m_cachedGregorianDateTimeUTC);
             m_cache->m_gregorianDateTimeUTCCachedForMS = milli;
         }
         t.copyFrom(m_cache->m_cachedGregorianDateTimeUTC);
     } else {
         if (m_cache->m_gregorianDateTimeCachedForMS != milli) {
-            msToGregorianDateTime(milli, false, m_cache->m_cachedGregorianDateTime);
+            WTF::msToGregorianDateTime(milli, false, m_cache->m_cachedGregorianDateTime);
             m_cache->m_gregorianDateTimeCachedForMS = milli;
         }
         t.copyFrom(m_cache->m_cachedGregorianDateTime);
