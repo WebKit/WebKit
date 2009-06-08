@@ -1,3 +1,16 @@
+2009-06-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26240
+        [GTK] Try again button loses query strings
+
+        Only trigger reload, when try again is clicked, this way we do not
+        lose the query strings, like we did when also triggering a form
+        submission.
+
+        * resources/error.html:
+
 2009-06-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.
