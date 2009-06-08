@@ -1,3 +1,9 @@
+2009-06-08  Mark Rowe  <mrowe@apple.com>
+
+        Attempt to fix the Tiger build.
+
+        * wtf/Platform.h: Only test the value of the macro once we know it is defined.
+
 2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, projectile-fixing Windows build.
