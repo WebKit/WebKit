@@ -1,3 +1,9 @@
+2009-06-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+
 2009-06-07  David Kilzer  <ddkilzer@apple.com>
 
         Make JavaScriptCore compile for iPhone and iPhone Simulator
