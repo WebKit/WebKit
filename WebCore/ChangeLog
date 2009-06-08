@@ -1,3 +1,29 @@
+2009-06-08  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Siedel.
+
+        Chromium Linux ignored the background color on <select>s. Rather
+        than encode magic colours, we start with a base color (specified
+        via CSS) and derive the other colors from it. Thus, setting the
+        CSS background-color now correctly changes the colour of the
+        control.
+
+        This should not change the appearence controls without
+        background-colors. However, <select>s with a background-color
+        will now renderer correctly, which may require rebaselining
+        pixel tests in the Chromium tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26030
+        http://code.google.com/p/chromium/issues/detail?id=12596
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::getHSL): new member
+        * platform/graphics/Color.h:
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::systemColor):
+        (WebCore::brightenColor):
+        (WebCore::paintButtonLike):
+
 2009-06-08  Victor Wang <victorw@chromium.org>
 
         Reviewed by Dimitri Glazkov.

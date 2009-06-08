@@ -123,10 +123,20 @@ RenderThemeChromiumLinux::RenderThemeChromiumLinux()
 {
 }
 
+Color RenderThemeChromiumLinux::systemColor(int cssValueId) const
+{
+    static const Color linuxButtonGrayColor(0xffdddddd);
+
+    if (cssValueId == CSSValueButtonface)
+        return linuxButtonGrayColor;
+    return RenderTheme::systemColor(cssValueId);
+}
+
 // Use the Windows style sheets to match their metrics.
 String RenderThemeChromiumLinux::extraDefaultStyleSheet()
 {
-    return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet));
+    return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet)) +
+           String(themeChromiumLinuxUserAgentStyleSheet, sizeof(themeChromiumLinuxUserAgentStyleSheet));
 }
 
 String RenderThemeChromiumLinux::extraQuirksStyleSheet()
@@ -253,16 +263,36 @@ void RenderThemeChromiumLinux::setRadioSize(RenderStyle* style) const
     setCheckboxSize(style);
 }
 
-static void paintButtonLike(RenderTheme* theme, RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect) {
+static SkColor brightenColor(double h, double s, double l, float brightenAmount)
+{
+    l += brightenAmount;
+    if (l > 1.0)
+        l = 1.0;
+    if (l < 0.0)
+        l = 0.0;
+
+    return makeRGBAFromHSLA(h, s, l, 1.0);
+}
+
+static void paintButtonLike(RenderTheme* theme, RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+{
     SkCanvas* const canvas = i.context->platformContext()->canvas();
     SkPaint paint;
     SkRect skrect;
     const int right = rect.x() + rect.width();
     const int bottom = rect.y() + rect.height();
+    SkColor baseColor = SkColorSetARGB(0xff, 0xdd, 0xdd, 0xdd);
+    if (o->style()->hasBackground())
+        baseColor = o->style()->backgroundColor().rgb();
+    double h, s, l;
+    Color(baseColor).getHSL(h, s, l);
+    // Our standard gradient is from 0xdd to 0xf8. This is the amount of
+    // increased luminance between those values.
+    SkColor lightColor(brightenColor(h, s, l, 0.105));
 
     // If the button is too small, fallback to drawing a single, solid color
     if (rect.width() < 5 || rect.height() < 5) {
-        paint.setARGB(0xff, 0xe9, 0xe9, 0xe9);
+        paint.setColor(baseColor);
         skrect.set(rect.x(), rect.y(), right, bottom);
         canvas->drawRect(skrect, paint);
         return;
@@ -282,20 +312,20 @@ static void paintButtonLike(RenderTheme* theme, RenderObject* o, const RenderObj
     p[lightEnd].set(SkIntToScalar(rect.x()), SkIntToScalar(rect.y()));
     p[darkEnd].set(SkIntToScalar(rect.x()), SkIntToScalar(bottom - 1));
     SkColor colors[2];
-    colors[0] = SkColorSetARGB(0xff, 0xf8, 0xf8, 0xf8);
-    colors[1] = SkColorSetARGB(0xff, 0xdd, 0xdd, 0xdd);
+    colors[0] = lightColor;
+    colors[1] = baseColor;
 
-    SkShader* s = SkGradientShader::CreateLinear(
+    SkShader* shader = SkGradientShader::CreateLinear(
         p, colors, NULL, 2, SkShader::kClamp_TileMode, NULL);
     paint.setStyle(SkPaint::kFill_Style);
-    paint.setShader(s);
-    s->unref();
+    paint.setShader(shader);
+    shader->unref();
 
     skrect.set(rect.x() + 1, rect.y() + 1, right - 1, bottom - 1);
     canvas->drawRect(skrect, paint);
 
     paint.setShader(NULL);
-    paint.setARGB(0xff, 0xce, 0xce, 0xce);
+    paint.setColor(brightenColor(h, s, l, -0.0588));
     canvas->drawPoint(rect.x() + 1, rect.y() + 1, paint);
     canvas->drawPoint(right - 2, rect.y() + 1, paint);
     canvas->drawPoint(rect.x() + 1, bottom - 2, paint);
