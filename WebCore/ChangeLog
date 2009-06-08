@@ -1,3 +1,37 @@
+2009-06-08  victorw  <victorw@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26087
+        Bug 26087: Removing element in JS crashes Chrome tab if it fired the change event
+
+        Fix tab crash caused by destroying the popup list that fired the change event on abandon.
+
+        If a popup list is abandoned (press a key to jump to an item
+        and then use tab or mouse to get away from the select box),
+        the current code fires a change event in PopupListBox::updateFromElemt().
+        The JS that listens to this event may destroy the object and cause the
+        rest of popup list code crashes.
+
+        The updateFromElement() is called before abandon() and this causes
+        the selected index to be discarded after updateFromElement(). From
+        the code comments, this appears to be the reason why valueChanged is
+        called in updateFromElement.
+
+        Fix the issue by removing the valueChanged call in updateFromElement,
+        saving the selected index that we should accept on abandon and pass
+        it to the valueChange in abandon().
+
+        A manual test has been added.
+
+        * manual-tests/chromium: Added.
+        * manual-tests/chromium/onchange-reload-popup.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::PopupListBox):
+        (WebCore::PopupListBox::handleKeyEvent):
+        (WebCore::PopupListBox::abandon):
+        (WebCore::PopupListBox::updateFromElement):
+
 2009-06-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -153,7 +153,7 @@ private:
         : m_settings(settings)
         , m_originalIndex(0)
         , m_selectedIndex(0)
-        , m_willAcceptOnAbandon(false)
+        , m_acceptedIndexOnAbandon(-1)
         , m_visibleRows(0)
         , m_baseWidth(0)
         , m_popupClient(client)
@@ -223,11 +223,11 @@ private:
     // enter yet however.
     int m_selectedIndex;
 
-    // True if we should accept the selectedIndex as chosen, even if the popup
-    // is "abandoned".  This is used for keyboard navigation, where we want the
+    // If >= 0, this is the index we should accept if the popup is "abandoned".
+    // This is used for keyboard navigation, where we want the
     // selection to change immediately, and is only used if the settings
     // acceptOnAbandon field is true.
-    bool m_willAcceptOnAbandon;
+    int m_acceptedIndexOnAbandon;
 
     // This is the number of rows visible in the popup. The maximum number visible at a time is
     // defined as being kMaxVisibleRows. For a scrolled popup, this can be thought of as the
@@ -650,7 +650,7 @@ bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
         // IE).  We change the original index so we revert to that when the
         // popup is closed.
         if (m_settings.acceptOnAbandon)
-            m_willAcceptOnAbandon = true;
+            m_acceptedIndexOnAbandon = m_selectedIndex;
 
         setOriginalIndex(m_selectedIndex);
         if (m_settings.setTextOnIndexChange)
@@ -840,8 +840,10 @@ void PopupListBox::abandon()
 
     m_popupClient->hidePopup();
 
-    if (m_willAcceptOnAbandon)
-        m_popupClient->valueChanged(m_selectedIndex);
+    if (m_acceptedIndexOnAbandon >= 0) {
+        m_popupClient->valueChanged(m_acceptedIndexOnAbandon);
+        m_acceptedIndexOnAbandon = -1;
+    }
 }
 
 int PopupListBox::pointToRowIndex(const IntPoint& point)
@@ -1020,14 +1022,6 @@ void PopupListBox::adjustSelectedIndex(int delta)
 
 void PopupListBox::updateFromElement()
 {
-    // It happens when pressing a key to jump to an item, then use tab or
-    // mouse to get away from the select box. In that case, updateFromElement
-    // is called before abandon, which causes discarding of the select result.    
-    if (m_willAcceptOnAbandon) {
-        m_willAcceptOnAbandon = false;
-        m_popupClient->valueChanged(m_selectedIndex);
-    }
-
     clear();
 
     int size = m_popupClient->listSize();
