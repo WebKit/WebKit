@@ -2,6 +2,14 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Disable a few warnings on Windows
+
+        * WebCore.pro:
+
+2009-06-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Don't enable ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH on Windows
         
         This define was brought in after refactoring some code from

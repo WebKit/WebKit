@@ -39,6 +39,10 @@ include($$OUTPUT_DIR/config.pri)
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
 
+# Disable a few warnings on Windows. The warnings are also
+# disabled in WebKitLibraries/win/tools/vsprops/common.vsprops
+win32-*: QMAKE_CXXFLAGS += -wd4291 -wd4344
+
 unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections 
 unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
 
