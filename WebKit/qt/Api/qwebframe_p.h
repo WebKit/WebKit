@@ -27,6 +27,7 @@
 #include "EventHandler.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include "qwebelement.h"
 #include "wtf/RefPtr.h"
 #include "Frame.h"
 
@@ -38,7 +39,6 @@ namespace WebCore
     class Scrollbar;
 }
 class QWebPage;
-
 
 class QWebFrameData
 {
@@ -101,7 +101,7 @@ public:
 
     QPoint pos;
     QRect boundingRect;
-    QRect enclosingBlock;
+    QWebElement enclosingBlock;
     QString title;
     QString linkText;
     QUrl linkUrl;

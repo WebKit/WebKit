@@ -1,3 +1,22 @@
+2009-06-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Renamed QWebElement::enclosingBlock to enclosingBlockElement
+        and changed the return type to QWebElement, as discussed in
+        the API review. This API is more generic and through
+        QWebElement's geometry() it is possible to retrieve the
+        same information.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::QWebElement):
+        * Api/qwebelement.h:
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        (QWebHitTestResult::enclosingBlockElement):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+
 2009-06-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

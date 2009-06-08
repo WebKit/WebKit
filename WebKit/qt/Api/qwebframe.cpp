@@ -1279,14 +1279,7 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
         && innerNonSharedNode->document()->frame())
         frame = QWebFramePrivate::kit(innerNonSharedNode->document()->frame());
 
-    if (Node *block = WebCore::enclosingBlock(innerNode.get())) {
-        RenderObject *renderBlock = block->renderer();
-        while (renderBlock && renderBlock->isListItem())
-            renderBlock = renderBlock->containingBlock();
-
-        if (renderBlock)
-            enclosingBlock = renderBlock->absoluteClippedOverflowRect();
-    }
+    enclosingBlock = QWebElement(WebCore::enclosingBlock(innerNode.get()));
 }
 
 /*!
@@ -1364,12 +1357,16 @@ QRect QWebHitTestResult::boundingRect() const
 
 /*!
     \since 4.6
-    Returns the rect of the smallest enclosing block element.
+    Returns the block element that encloses the element hit.
+
+    A block element is an element that is rendered using the
+    CSS "block" style. This includes for example text
+    paragraphs.
 */
-QRect QWebHitTestResult::enclosingBlock() const
+QWebElement QWebHitTestResult::enclosingBlockElement() const
 {
     if (!d)
-        return QRect();
+        return QWebElement();
     return d->enclosingBlock;
 }
 

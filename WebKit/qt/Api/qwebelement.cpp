@@ -92,25 +92,41 @@ public:
     Constructs a null web element.
 */
 QWebElement::QWebElement()
-    : d(0), m_element(0)
+    : d(0)
+    , m_element(0)
 {
 }
 
 /*!
     \internal
 */
-QWebElement::QWebElement(WebCore::Element *domElement)
-    : d(0), m_element(domElement)
+QWebElement::QWebElement(WebCore::Element* domElement)
+    : d(0)
+    , m_element(domElement)
 {
     if (m_element)
         m_element->ref();
 }
 
 /*!
+    \internal
+*/
+QWebElement::QWebElement(WebCore::Node* node)
+    : d(0)
+    , m_element(0)
+{
+    if (node && node->isHTMLElement()) {
+        m_element = static_cast<HTMLElement*>(node);
+        m_element->ref();
+    }
+}
+
+/*!
     Constructs a copy of \a other.
 */
 QWebElement::QWebElement(const QWebElement &other)
-    : d(0), m_element(other.m_element)
+    : d(0)
+    , m_element(other.m_element)
 {
     if (m_element)
         m_element->ref();

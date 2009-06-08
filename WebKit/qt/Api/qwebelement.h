@@ -28,6 +28,7 @@
 #include "qwebkitglobal.h"
 namespace WebCore {
     class Element;
+    class Node;
 }
 
 class QWebFrame;
@@ -138,10 +139,12 @@ public:
     QString computedStyleProperty(const QString &name) const;
 
 private:
-    QWebElement(WebCore::Element *domElement);
+    explicit QWebElement(WebCore::Element *domElement);
+    explicit QWebElement(WebCore::Node *node);
 
     friend class QWebFrame;
     friend class QWebHitTestResult;
+    friend class QWebHitTestResultPrivate;
 
     QWebElementPrivate *d;
     WebCore::Element *m_element;
