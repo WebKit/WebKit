@@ -59,11 +59,6 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/WebCore/platform/gtk \
 	-I$(srcdir)/WebCore/platform/network/soup
 
-if USE_SOUP_GNOME
-webcoregtk_cppflags += \
-    -DWTF_USE_SOUP_GNOME=1
-endif
-
 webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
 	DerivedSources/tokenizer.cpp \

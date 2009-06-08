@@ -48,15 +48,10 @@
 #include <fcntl.h>
 #include <gio/gio.h>
 #include <gtk/gtk.h>
+#include <libsoup/soup.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#if USE(SOUP_GNOME)
-#include <libsoup/soup-gnome.h>
-#else
-#include <libsoup/soup.h>
-#endif
 
 namespace WebCore {
 
@@ -445,11 +440,7 @@ bool ResourceHandle::startData(String urlString)
 
 static SoupSession* createSoupSession()
 {
-#if USE(SOUP_GNOME)
-    return soup_session_async_new_with_options(SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_GNOME_FEATURES_2_26, NULL);
-#else
     return soup_session_async_new();
-#endif
 }
 
 static void ensureSessionIsInitialized(SoupSession* session)

@@ -548,23 +548,10 @@ else
    CFLAGS="$CFLAGS -O0"
 fi
 
-# check whether to use libsoup-gnome
-AC_MSG_CHECKING([whether to use GNOME-specific features of libsoup])
-AC_ARG_WITH(libsoup_gnome,
-            AC_HELP_STRING([--with-libsoup-gnome],
-                           [using GNOME-specific features of libsoup [default=no]]),
-            [],[with_libsoup_gnome="no"])
-AC_MSG_RESULT([$with_libsoup_gnome])
-
-if test "$with_libsoup_gnome" = "yes"; then
-    PKG_CHECK_MODULES([LIBSOUP],
-                      [libsoup-gnome-2.4 >= $LIBSOUP_REQUIRED_VERSION])
-else
-    PKG_CHECK_MODULES([LIBSOUP],
-                      [libsoup-2.4 >= $LIBSOUP_REQUIRED_VERSION])
-fi
-AC_SUBST(LIBSOUP_CFLAGS)
-AC_SUBST(LIBSOUP_LIBS)
+PKG_CHECK_MODULES([LIBSOUP],
+                  [libsoup-2.4 >= $LIBSOUP_REQUIRED_VERSION])
+AC_SUBST([LIBSOUP_CFLAGS])
+AC_SUBST([LIBSOUP_LIBS])
 
 if test "$enable_gnomekeyring" = "yes"; then
    PKG_CHECK_MODULES([GNOMEKEYRING],
@@ -663,9 +650,6 @@ AM_CONDITIONAL([USE_GNOMEKEYRING], [test "$enable_gnomekeyring" = "yes"])
 AM_CONDITIONAL([USE_FREETYPE], [test "$with_font_backend" = "freetype"])
 AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 
-# libsoup-gnome conditionals
-AM_CONDITIONAL([USE_SOUP_GNOME], [test "$with_libsoup_gnome" = "yes"])
-
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_DASHBOARD_SUPPORT],[test "$enable_dashboard_support" = "yes"])
@@ -715,7 +699,6 @@ Build configuration:
  Unicode backend                                          : $with_unicode_backend
  Font backend                                             : $with_font_backend
  Optimized memory allocator                               : $enable_fast_malloc
- Using GNOME-specific features of libsoup                 : $with_libsoup_gnome
 Features:
  3D Transforms                                            : $enable_3D_transforms
  JIT compilation                                          : $enable_jit
