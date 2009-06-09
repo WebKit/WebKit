@@ -1,3 +1,14 @@
+2009-06-09  Darin Fisher  <darin@chromium.org>
+
+        Fix Chromium build bustage.
+        
+        CachedResource.cpp no longer compiles if USE(JSC) is not defined.  The
+        problem is that this file is using a macro from StdLibExtras.h without
+        including that file.  It just happenes to get that file via a JSC
+        specific include.
+
+        * loader/CachedResource.cpp:
+
 2009-06-09  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Oliver Hunt.
