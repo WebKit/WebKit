@@ -1,3 +1,11 @@
+2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build, the time functions moved into the WTF namespace.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+        (JSC::Bindings::convertQVariantToValue):
+
 2009-06-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Antti Koivisto
