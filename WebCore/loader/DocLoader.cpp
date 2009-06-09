@@ -61,6 +61,9 @@ DocLoader::DocLoader(Document* doc)
 
 DocLoader::~DocLoader()
 {
+    if (m_requestCount)
+        m_cache->loader()->cancelRequests(this);
+
     clearPreloads();
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it)
