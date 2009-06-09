@@ -5074,3 +5074,6 @@ fast/forms/mailto/post-text-plain.html
 
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator
+
+# Needed to cover the fix for <rdar://problem/6727495>
+http/tests/loading/deleted-host-in-resource-load-delegate-callback.html: Added.

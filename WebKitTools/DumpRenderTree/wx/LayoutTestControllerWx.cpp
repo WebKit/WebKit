@@ -63,6 +63,11 @@ JSStringRef LayoutTestController::copyEncodedHostName(JSStringRef name)
     return 0;
 }
 
+void LayoutTestController::dispatchPendingLoadRequests()
+{
+    // FIXME: Implement for testing fix for 6727495
+}
+
 void LayoutTestController::display()
 {
 }

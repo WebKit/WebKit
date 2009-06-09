@@ -1,3 +1,32 @@
+2009-06-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        <rdar://problem/6727495> Repro crash in WebCore::Loader::Host::servePendingRequests() and dupes.
+
+        Test: http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
+
+        Loader::Host objects were manually managed via new/delete.
+        There's a variety of circumstances where a Host might've been deleted while it was still in the middle
+        of a resource load delegate callback.
+        Changing them to be RefCounted then adding protectors in the callbacks makes this possibility disappear.
+
+        At the same time, remove ProcessingResource which was an earlier fix for this same problem that wasn't
+        fully implemented.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader):
+        (WebCore::Loader::load):
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::resumePendingRequests):
+        (WebCore::Loader::cancelRequests):
+        (WebCore::Loader::Host::didFinishLoading):
+        (WebCore::Loader::Host::didFail):
+        (WebCore::Loader::Host::didReceiveResponse):
+        (WebCore::Loader::Host::didReceiveData):
+        * loader/loader.h:
+        (WebCore::Loader::Host::create):
+
 2009-06-08  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

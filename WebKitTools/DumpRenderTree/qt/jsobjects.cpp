@@ -302,6 +302,11 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return qt_drt_numberOfActiveAnimations(frame);
 }
 
+void LayoutTestController::dispatchPendingLoadRequests()
+{
+    // FIXME: Implement for testing fix for 6727495
+}
+
 EventSender::EventSender(QWebPage *parent)
     : QObject(parent)
 {

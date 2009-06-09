@@ -5938,3 +5938,6 @@ webarchive/test-xml-stylesheet.xml
 # Tests that failed because we don't have an eventSender implementation
 http/tests/local/drag-over-remote-content.html
 http/tests/security/drag-over-remote-content-iframe.html
+
+# Needed to cover the fix for <rdar://problem/6727495>
+http/tests/loading/deleted-host-in-resource-load-delegate-callback.html: Added.

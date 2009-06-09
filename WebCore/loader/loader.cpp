@@ -57,10 +57,10 @@ static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
 #endif
 
 Loader::Loader()
-    : m_nonHTTPProtocolHost(AtomicString(), maxRequestsInFlightForNonHTTPProtocols)
-    , m_requestTimer(this, &Loader::requestTimerFired)
+    : m_requestTimer(this, &Loader::requestTimerFired)
     , m_isSuspendingPendingRequests(false)
 {
+    m_nonHTTPProtocolHost = Host::create(AtomicString(), maxRequestsInFlightForNonHTTPProtocols);
     maxRequestsInFlightPerHost = initializeMaximumHTTPConnectionCountPerHost();
 }
 
@@ -99,17 +99,17 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
     ASSERT(docLoader);
     Request* request = new Request(docLoader, resource, incremental, skipCanLoadCheck, sendResourceLoadCallbacks);
 
-    Host* host;
+    RefPtr<Host> host;
     KURL url(resource->url());
     if (url.protocolInHTTPFamily()) {
         AtomicString hostName = url.host();
         host = m_hosts.get(hostName.impl());
         if (!host) {
-            host = new Host(hostName, maxRequestsInFlightPerHost);
+            host = Host::create(hostName, maxRequestsInFlightPerHost);
             m_hosts.add(hostName.impl(), host);
         }
     } else 
-        host = &m_nonHTTPProtocolHost;
+        host = m_nonHTTPProtocolHost;
     
     bool hadRequests = host->hasRequests();
     Priority priority = determinePriority(resource);
@@ -143,17 +143,20 @@ void Loader::servePendingRequests(Priority minimumPriority)
 
     m_requestTimer.stop();
     
-    m_nonHTTPProtocolHost.servePendingRequests(minimumPriority);
+    m_nonHTTPProtocolHost->servePendingRequests(minimumPriority);
 
     Vector<Host*> hostsToServe;
-    copyValuesToVector(m_hosts, hostsToServe);
+    HostMap::iterator i = m_hosts.begin();
+    HostMap::iterator end = m_hosts.end();
+    for (;i != end; ++i)
+        hostsToServe.append(i->second.get());
+        
     for (unsigned n = 0; n < hostsToServe.size(); ++n) {
         Host* host = hostsToServe[n];
         if (host->hasRequests())
             host->servePendingRequests(minimumPriority);
         else if (!host->processingResource()){
             AtomicString name = host->name();
-            delete host;
             m_hosts.remove(name.impl());
         }
     }
@@ -169,7 +172,7 @@ void Loader::resumePendingRequests()
 {
     ASSERT(m_isSuspendingPendingRequests);
     m_isSuspendingPendingRequests = false;
-    if (!m_hosts.isEmpty() || m_nonHTTPProtocolHost.hasRequests())
+    if (!m_hosts.isEmpty() || m_nonHTTPProtocolHost->hasRequests())
         scheduleServePendingRequests();
 }
 
@@ -177,11 +180,15 @@ void Loader::cancelRequests(DocLoader* docLoader)
 {
     docLoader->clearPendingPreloads();
 
-    if (m_nonHTTPProtocolHost.hasRequests())
-        m_nonHTTPProtocolHost.cancelRequests(docLoader);
+    if (m_nonHTTPProtocolHost->hasRequests())
+        m_nonHTTPProtocolHost->cancelRequests(docLoader);
     
     Vector<Host*> hostsToCancel;
-    copyValuesToVector(m_hosts, hostsToCancel);
+    HostMap::iterator i = m_hosts.begin();
+    HostMap::iterator end = m_hosts.end();
+    for (;i != end; ++i)
+        hostsToCancel.append(i->second.get());
+
     for (unsigned n = 0; n < hostsToCancel.size(); ++n) {
         Host* host = hostsToCancel[n];
         if (host->hasRequests())
@@ -293,12 +300,12 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
 
 void Loader::Host::didFinishLoading(SubresourceLoader* loader)
 {
+    RefPtr<Host> myProtector(this);
+
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
         return;
     
-    ProcessingResource processingResource(this);
-
     Request* request = i->second;
     m_requestsLoading.remove(i);
     DocLoader* docLoader = request->docLoader();
@@ -339,13 +346,13 @@ void Loader::Host::didFail(SubresourceLoader* loader, const ResourceError&)
 
 void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
 {
+    RefPtr<Host> myProtector(this);
+
     loader->clearClient();
 
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
         return;
-
-    ProcessingResource processingResource(this);
     
     Request* request = i->second;
     m_requestsLoading.remove(i);
@@ -379,6 +386,8 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
 
 void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
 {
+    RefPtr<Host> protector(this);
+
     Request* request = m_requestsLoading.get(loader);
     
     // FIXME: This is a workaround for <rdar://problem/5236843>
@@ -440,6 +449,8 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
 
 void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, int size)
 {
+    RefPtr<Host> protector(this);
+
     Request* request = m_requestsLoading.get(loader);
     if (!request)
         return;
@@ -449,9 +460,7 @@ void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, i
     
     if (resource->errorOccurred())
         return;
-    
-    ProcessingResource processingResource(this);
-    
+        
     if (resource->response().httpStatusCode() / 100 == 4) {
         // Treat a 4xx response like a network error for all resources but images (which will ignore the error and continue to load for 
         // legacy compatibility).

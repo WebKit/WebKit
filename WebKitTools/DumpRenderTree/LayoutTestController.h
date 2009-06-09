@@ -46,6 +46,7 @@ public:
     void clearPersistentUserStyleSheet();
     JSStringRef copyDecodedHostName(JSStringRef name);
     JSStringRef copyEncodedHostName(JSStringRef name);
+    void dispatchPendingLoadRequests();
     void display();
     void execCommand(JSStringRef name, JSStringRef value);
     bool isCommandEnabled(JSStringRef name);

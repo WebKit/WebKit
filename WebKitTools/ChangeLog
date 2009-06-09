@@ -1,3 +1,26 @@
+2009-06-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        Add dispatchPendingLoadRequests() to test fix for <rdar://problem/6727495>
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (dispatchPendingLoadRequestsCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::dispatchPendingLoadRequests): Implement using [WebView _dispatchPendingLoadRequests] SPI
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::dispatchPendingLoadRequests): Need implementations.
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::dispatchPendingLoadRequests): Ditto.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::dispatchPendingLoadRequests): Ditto.
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::dispatchPendingLoadRequests): Ditto.
+
 2009-06-07  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Cameron Zwarich.

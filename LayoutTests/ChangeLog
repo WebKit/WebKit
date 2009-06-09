@@ -1,3 +1,21 @@
+2009-06-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Antti Koivisto
+
+        <rdar://problem/6727495> Repro crash in WebCore::Loader::Host::servePendingRequests() and dupes.
+
+        Note this "Loader::Host deleted while still in use" could come up in a variety of ways but this layout
+        test only covers the single most reproducible way we know that *could* be tested by DRT.
+
+        * http/tests/loading/deleted-host-in-resource-load-delegate-callback-expected.txt: Added.
+        * http/tests/loading/deleted-host-in-resource-load-delegate-callback.html: Added.
+        * http/tests/loading/resources/snow-shoes-vs-pie-copy.png: Added.
+        * http/tests/loading/resources/snow-shoes-vs-pie.png: Added.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-06-06  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
