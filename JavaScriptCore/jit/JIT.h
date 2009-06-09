@@ -228,6 +228,22 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = X86::xmm0;
         static const FPRegisterID fpRegT1 = X86::xmm1;
         static const FPRegisterID fpRegT2 = X86::xmm2;
+#elif PLATFORM(ARM_V7)
+        static const RegisterID returnValueRegister = ARM::r0;
+        static const RegisterID cachedResultRegister = ARM::r0;
+        static const RegisterID firstArgumentRegister = ARM::r0;
+
+        static const RegisterID regT0 = ARM::r0;
+        static const RegisterID regT1 = ARM::r1;
+        static const RegisterID regT2 = ARM::r2;
+        static const RegisterID regT3 = ARM::r4;
+
+        static const RegisterID callFrameRegister = ARM::r5;
+        static const RegisterID timeoutCheckRegister = ARM::r6;
+
+        static const FPRegisterID fpRegT0 = ARM::d0;
+        static const FPRegisterID fpRegT1 = ARM::d1;
+        static const FPRegisterID fpRegT2 = ARM::d2;
 #else
     #error "JIT not supported on this platform."
 #endif
@@ -260,7 +276,7 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 20;
         static const int patchOffsetMethodCheckProtoStruct = 30;
         static const int patchOffsetMethodCheckPutFunction = 50;
-#else
+#elif PLATFORM(X86)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 7;
         static const int patchOffsetPutByIdExternalLoad = 13;
@@ -287,6 +303,29 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 11;
         static const int patchOffsetMethodCheckProtoStruct = 18;
         static const int patchOffsetMethodCheckPutFunction = 29;
+#elif PLATFORM(ARM_V7)
+        // These architecture specific value are used to enable patching - see comment on op_put_by_id.
+        static const int patchOffsetPutByIdStructure = 10;
+        static const int patchOffsetPutByIdExternalLoad = 20;
+        static const int patchLengthPutByIdExternalLoad = 12;
+        static const int patchOffsetPutByIdPropertyMapOffset = 40;
+        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
+        static const int patchOffsetGetByIdStructure = 10;
+        static const int patchOffsetGetByIdBranchToSlowCase = 20;
+        static const int patchOffsetGetByIdExternalLoad = 20;
+        static const int patchLengthGetByIdExternalLoad = 12;
+        static const int patchOffsetGetByIdPropertyMapOffset = 40;
+        static const int patchOffsetGetByIdPutResult = 44;
+#if ENABLE(OPCODE_SAMPLING)
+        static const int patchOffsetGetByIdSlowCaseCall = 0; // FIMXE
+#else
+        static const int patchOffsetGetByIdSlowCaseCall = 28;
+#endif
+        static const int patchOffsetOpCallCompareToJump = 10;
+
+        static const int patchOffsetMethodCheckProtoObj = 18;
+        static const int patchOffsetMethodCheckProtoStruct = 28;
+        static const int patchOffsetMethodCheckPutFunction = 46;
 #endif
 
     public:

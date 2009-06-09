@@ -169,6 +169,81 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ret" "\n"
 );
 
+#elif COMPILER(GCC) && PLATFORM(ARM_V7)
+
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+#error "JIT_STUB_ARGUMENT_VA_LIST not supported on ARMv7."
+#endif
+
+COMPILE_ASSERT(offsetof(struct JITStackFrame, preservedReturnAddress) == 0x20, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, preservedR4) == 0x24, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, preservedR5) == 0x28, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, preservedR6) == 0x2c, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
+
+COMPILE_ASSERT(offsetof(struct JITStackFrame, registerFile) == 0x30, JITStackFrame_registerFile_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x34, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, exception) == 0x38, JITStackFrame_exception_offset_matches_ctiTrampoline);
+// The fifth argument is the first item already on the stack.
+COMPILE_ASSERT(offsetof(struct JITStackFrame, enabledProfilerReference) == 0x3c, JITStackFrame_enabledProfilerReference_offset_matches_ctiTrampoline);
+
+asm volatile  (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+".thumb" "\n"
+".thumb_func " SYMBOL_STRING(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "sub sp, sp, #0x3c" "\n"
+    "str lr, [sp, #0x20]" "\n"
+    "str r4, [sp, #0x24]" "\n"
+    "str r5, [sp, #0x28]" "\n"
+    "str r6, [sp, #0x2c]" "\n"
+    "str r1, [sp, #0x30]" "\n"
+    "str r2, [sp, #0x34]" "\n"
+    "str r3, [sp, #0x38]" "\n"
+    "cpy r5, r2" "\n"
+    "mov r6, #512" "\n"
+    "blx r0" "\n"
+    "ldr r6, [sp, #0x2c]" "\n"
+    "ldr r5, [sp, #0x28]" "\n"
+    "ldr r4, [sp, #0x24]" "\n"
+    "ldr lr, [sp, #0x20]" "\n"
+    "add sp, sp, #0x3c" "\n"
+    "bx lr" "\n"
+);
+
+asm volatile (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+".thumb" "\n"
+".thumb_func " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+    "cpy r0, sp" "\n"
+    "bl " SYMBOL_STRING(cti_vm_throw) "\n"
+    "ldr r6, [sp, #0x2c]" "\n"
+    "ldr r5, [sp, #0x28]" "\n"
+    "ldr r4, [sp, #0x24]" "\n"
+    "ldr lr, [sp, #0x20]" "\n"
+    "add sp, sp, #0x3c" "\n"
+    "bx lr" "\n"
+);
+
+asm volatile (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+".thumb" "\n"
+".thumb_func " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "ldr r6, [sp, #0x2c]" "\n"
+    "ldr r5, [sp, #0x28]" "\n"
+    "ldr r4, [sp, #0x24]" "\n"
+    "ldr lr, [sp, #0x20]" "\n"
+    "add sp, sp, #0x3c" "\n"
+    "bx lr" "\n"
+);
+
 #elif COMPILER(MSVC)
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
@@ -467,7 +542,31 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 
 namespace JITStubs {
 
+#if PLATFORM(ARM_V7)
+
+COMPILE_ASSERT(offsetof(struct JITStackFrame, thunkReturnAddress) == 0x1C, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
+
+#define DEFINE_STUB_FUNCTION(rtype, op) \
+    extern "C" { \
+        rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
+    }; \
+    asm volatile ( \
+        ".text" "\n" \
+        ".align 2" "\n" \
+        ".globl " SYMBOL_STRING(cti_##op) "\n" \
+        ".thumb" "\n" \
+        ".thumb_func " SYMBOL_STRING(cti_##op) "\n" \
+        SYMBOL_STRING(cti_##op) ":" "\n" \
+        "str lr, [sp, #0x1c]" "\n" \
+        "bl " SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        "ldr lr, [sp, #0x1c]" "\n" \
+        "bx lr" "\n" \
+        ); \
+    rtype JITStubThunked_##op(STUB_ARGS_DECLARATION) \
+
+#else
 #define DEFINE_STUB_FUNCTION(rtype, op) rtype JIT_STUB cti_##op(STUB_ARGS_DECLARATION)
+#endif
 
 DEFINE_STUB_FUNCTION(JSObject*, op_convert_this)
 {

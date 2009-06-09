@@ -186,6 +186,8 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
     return nakedCall;
 }
 
+#if PLATFORM(X86) || PLATFORM(X86_64)
+
 ALWAYS_INLINE void JIT::preverveReturnAddressAfterCall(RegisterID reg)
 {
     pop(reg);
@@ -201,6 +203,25 @@ ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
     push(address);
 }
 
+#elif PLATFORM(ARM_V7)
+
+ALWAYS_INLINE void JIT::preverveReturnAddressAfterCall(RegisterID reg)
+{
+    move(linkRegister, reg);
+}
+
+ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(RegisterID reg)
+{
+    move(reg, linkRegister);
+}
+
+ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
+{
+    loadPtr(address, linkRegister);
+}
+
+#endif
+
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
@@ -215,11 +236,13 @@ ALWAYS_INLINE void JIT::restoreArgumentReference()
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
-    // In the trampoline on x86-64, the first argument register is not overwritten.
-#if !PLATFORM(X86_64)
+#if PLATFORM(X86)
+    // Within a trampoline the return address will be on the stack at this point.
+    addPtr(Imm32(sizeof(void*)), stackPointerRegister, firstArgumentRegister);
+#elif PLATFORM(ARM_V7)
     move(stackPointerRegister, firstArgumentRegister);
-    addPtr(Imm32(sizeof(void*)), firstArgumentRegister);
 #endif
+    // In the trampoline on x86-64, the first argument register is not overwritten.
 }
 #endif
 

@@ -519,29 +519,42 @@
 #elif PLATFORM(X86) && PLATFORM(MAC)
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
+#elif PLATFORM(ARM_V7) && PLATFORM(IPHONE) 
+    /* Under development, temporarily disabled until 16Mb link range limit in assembler is fixed. */
+    #define ENABLE_JIT 0
+    #define ENABLE_JIT_OPTIMIZE_CALL 0
+    #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
+    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 0
+    #define ENABLE_JIT_OPTIMIZE_ARITHMETIC 0
+    #define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 0
 /* The JIT is tested & working on x86 Windows */
 #elif PLATFORM(X86) && PLATFORM(WIN)
     #define ENABLE_JIT 1
 #endif
-    #define ENABLE_JIT_OPTIMIZE_CALL 1
-    #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
-    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
-    #define ENABLE_JIT_OPTIMIZE_ARITHMETIC 1
-    #define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 1
 #endif
 
-#if PLATFORM(X86_64)
-    #define JSC_HOST_CALL
-#elif COMPILER(MSVC)
-    #define JSC_HOST_CALL __fastcall
-#elif COMPILER(GCC) && PLATFORM(X86)
-    #define JSC_HOST_CALL __attribute__ ((fastcall))
+#ifndef ENABLE_JIT_OPTIMIZE_CALL
+#define ENABLE_JIT_OPTIMIZE_CALL 1
+#endif
+#ifndef ENABLE_JIT_OPTIMIZE_NATIVE_CALL
+#define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
+#endif
+#ifndef ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS
+#define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
+#endif
+#ifndef ENABLE_JIT_OPTIMIZE_ARITHMETIC
+#define ENABLE_JIT_OPTIMIZE_ARITHMETIC 1
+#endif
+#ifndef ENABLE_JIT_OPTIMIZE_METHOD_CALLS
+#define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 1
+#endif
+
+#if PLATFORM(X86) && COMPILER(MSVC)
+#define JSC_HOST_CALL __fastcall
+#elif PLATFORM(X86) && COMPILER(GCC)
+#define JSC_HOST_CALL __attribute__ ((fastcall))
 #else
-    #if ENABLE(JIT)
-    #error Need to support register calling convention in this compiler
-    #else
-    #define JSC_HOST_CALL
-    #endif
+#define JSC_HOST_CALL
 #endif
 
 #if COMPILER(GCC) && !ENABLE(JIT)

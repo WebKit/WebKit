@@ -1,3 +1,38 @@
+2009-06-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Enable JS language JIT for ARM thumb2 platforms.  Add ARMv7 specific
+        asm & constants, add appropriate configuration switches to Platform.h.
+
+        Landing this disabled until jump linking is completed (see YARR jit patch).
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load32):
+            Fix: should load pointer with ImmPtr not Imm32.
+        (JSC::MacroAssemblerARMv7::store32):
+            Fix: should load pointer with ImmPtr not Imm32.
+        (JSC::MacroAssemblerARMv7::move):
+            Fix: When moving an Imm32 that is actually a pointer, should call movT3()
+            not mov(), to ensure code generation is repeatable (for exception handling).
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+            Disable JIT_OPTIMIZE_NATIVE_CALL specific code generation if the optimization is not enabled.
+        * jit/JIT.h:
+            Add ARMv7 specific values of constants & register names.
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::preverveReturnAddressAfterCall):
+        (JSC::JIT::restoreReturnAddressBeforeReturn):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+            Implement for ARMv7 (move value to/from lr).
+        * jit/JITStubs.cpp:
+            Add JIT entry/thow trampolines, add macro to add thunk wrapper around stub routines.
+        * jit/JITStubs.h:
+        (JSC::JITStackFrame::returnAddressSlot):
+            Add ARMv7 stack frame object.
+        * wtf/Platform.h:
+            Add changes necessary to allow JIT to build on this platform, disabled.
+
 2009-06-08  Mark Rowe  <mrowe@apple.com>
 
         Speculative GTK build fix.

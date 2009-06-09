@@ -714,7 +714,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     call(Address(X86::esi, FIELD_OFFSET(JSFunction, m_data)));
     
     addPtr(Imm32(sizeof(ArgList)), stackPointerRegister);
-#else
+#elif PLATFORM(X86)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
 
     /* We have two structs that we use to describe the stackframe we set up for our
@@ -806,6 +806,10 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // so pull them off now
     addPtr(Imm32(NativeCallFrameSize - sizeof(NativeFunctionCalleeSignature)), stackPointerRegister);
 
+#elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
+#error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
+#else
+    breakpoint();
 #endif
 
     // Check for an exception
