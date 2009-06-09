@@ -436,6 +436,13 @@ public:
         return label;
     }
 
+    Label loadPtrWithPatchToLEA(Address address, RegisterID dest)
+    {
+        Label label(this);
+        loadPtr(address, dest);
+        return label;
+    }
+
     bool supportsFloatingPoint() const { return true; }
 };
 

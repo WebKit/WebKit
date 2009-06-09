@@ -1,3 +1,36 @@
+2009-06-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe & Geoff Garen.
+
+        Enable JIT_OPTIMIZE_PROPERTY_ACCESS on ARMv7 platforms.
+
+        Firm up interface for planting load intructions that will be repatched by
+        repatchLoadPtrToLEA().  This method should now no longer be applied to just
+        any loadPtr instruction.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadPtrWithPatchToLEA):
+            Implement loadPtrWithPatchToLEA interface (plants a load with a fixed width address).
+        (JSC::MacroAssemblerARMv7::move):
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::moveWithPatch):
+        (JSC::MacroAssemblerARMv7::tailRecursiveCall):
+            Switch to use common method 'moveFixedWidthEncoding()' to perform fixed width (often patchable) loads.
+        (JSC::MacroAssemblerARMv7::moveFixedWidthEncoding):
+            Move an immediate to a register, always plants movT3/movt instruction pair.
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::loadPtrWithPatchToLEA):
+            Implement loadPtrWithPatchToLEA interface (just a regular 32-bit load on x86).
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::loadPtrWithPatchToLEA):
+            Implement loadPtrWithPatchToLEA interface (just a regular 64-bit load on x86_64).
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        * wtf/Platform.h:
+            Change to enable JIT_OPTIMIZE_PROPERTY_ACCESS.
+
 2009-06-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

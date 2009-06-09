@@ -290,8 +290,7 @@ void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propert
     ASSERT(differenceBetween(hotPathBegin, structureToCompare) == patchOffsetGetByIdStructure);
     ASSERT(differenceBetween(hotPathBegin, structureCheck) == patchOffsetGetByIdBranchToSlowCase);
 
-    Label externalLoad(this);
-    loadPtr(Address(regT0, FIELD_OFFSET(JSObject, m_externalStorage)), regT0);
+    Label externalLoad = loadPtrWithPatchToLEA(Address(regT0, FIELD_OFFSET(JSObject, m_externalStorage)), regT0);
     Label externalLoadComplete(this);
     ASSERT(differenceBetween(hotPathBegin, externalLoad) == patchOffsetGetByIdExternalLoad);
     ASSERT(differenceBetween(externalLoad, externalLoadComplete) == patchLengthGetByIdExternalLoad);
@@ -362,8 +361,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     ASSERT(differenceBetween(hotPathBegin, structureToCompare) == patchOffsetPutByIdStructure);
 
     // Plant a load from a bogus ofset in the object's property map; we will patch this later, if it is to be used.
-    Label externalLoad(this);
-    loadPtr(Address(regT0, FIELD_OFFSET(JSObject, m_externalStorage)), regT0);
+    Label externalLoad = loadPtrWithPatchToLEA(Address(regT0, FIELD_OFFSET(JSObject, m_externalStorage)), regT0);
     Label externalLoadComplete(this);
     ASSERT(differenceBetween(hotPathBegin, externalLoad) == patchOffsetPutByIdExternalLoad);
     ASSERT(differenceBetween(externalLoad, externalLoadComplete) == patchLengthPutByIdExternalLoad);
