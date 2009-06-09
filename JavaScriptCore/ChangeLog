@@ -1,3 +1,9 @@
+2009-06-08  Mark Rowe  <mrowe@apple.com>
+
+        Speculative GTK build fix.
+
+        * wtf/DateMath.cpp:
+
 2009-06-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Mark Rowe.
