@@ -130,6 +130,7 @@ public:
     WebCore::StrokeStyle getStrokeStyle() const;
     float getStrokeThickness() const;
     int getTextDrawingMode() const;
+    float getAlpha() const;
 
     void beginPath();
     void addPath(const SkPath&);

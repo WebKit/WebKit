@@ -1,3 +1,15 @@
+2009-06-09  Anand K. Mistry  <amistry@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26037
+        Test the globalAlpha property of canvas contexts.
+
+        * fast/canvas/drawImage-with-globalAlpha.html: Added.
+        * platform/mac/fast/canvas/drawImage-with-globalAlpha-expected.checksum: Added.
+        * platform/mac/fast/canvas/drawImage-with-globalAlpha-expected.png: Added.
+        * platform/mac/fast/canvas/drawImage-with-globalAlpha-expected.txt: Added.
+
 2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.

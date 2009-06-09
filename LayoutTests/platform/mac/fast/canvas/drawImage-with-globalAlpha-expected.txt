@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 620x18
+        text run at (0,0) width 620: "There should be a green square, followed by 6 squares of shades of green from white to full green."
+      RenderBR {BR} at (620,14) size 0x0
+      RenderHTMLCanvas {CANVAS} at (0,18) size 700x100
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
