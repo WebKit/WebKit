@@ -36,13 +36,61 @@ using namespace std;
 
 namespace WebCore {
 
+static cairo_t* createCairoContextWithHDC(HDC hdc, bool hasAlpha)
+{
+    // Put the HDC In advanced mode so it will honor affine transforms.
+    SetGraphicsMode(hdc, GM_ADVANCED);
+    
+    HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
+
+    BITMAP info;
+    GetObject(bitmap, sizeof(info), &info);
+    ASSERT(info.bmBitsPixel == 32);
+
+    cairo_surface_t* image = cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
+                                               CAIRO_FORMAT_ARGB32,
+                                               info.bmWidth,
+                                               info.bmHeight,
+                                               info.bmWidthBytes);
+
+    cairo_t* context = cairo_create(image);
+    cairo_surface_destroy(image);
+
+    return context;
+}
+
+static BITMAPINFO bitmapInfoForSize(const IntSize& size)
+{
+    BITMAPINFO bitmapInfo;
+    bitmapInfo.bmiHeader.biSize          = sizeof(BITMAPINFOHEADER);
+    bitmapInfo.bmiHeader.biWidth         = size.width(); 
+    bitmapInfo.bmiHeader.biHeight        = size.height();
+    bitmapInfo.bmiHeader.biPlanes        = 1;
+    bitmapInfo.bmiHeader.biBitCount      = 32;
+    bitmapInfo.bmiHeader.biCompression   = BI_RGB;
+    bitmapInfo.bmiHeader.biSizeImage     = 0;
+    bitmapInfo.bmiHeader.biXPelsPerMeter = 0;
+    bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
+    bitmapInfo.bmiHeader.biClrUsed       = 0;
+    bitmapInfo.bmiHeader.biClrImportant  = 0;
+
+    return bitmapInfo;
+}
+
+static void fillWithClearColor(HBITMAP bitmap)
+{
+    BITMAP bmpInfo;
+    GetObject(bitmap, sizeof(bmpInfo), &bmpInfo);
+    int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
+    memset(bmpInfo.bmBits, 0, bufferSize);
+}
+
 GraphicsContext::GraphicsContext(HDC dc, bool hasAlpha)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate)
 {
     if (dc) {
-        cairo_surface_t* surface = cairo_win32_surface_create(dc);
-        m_data->cr = cairo_create(surface);
+        m_data->cr = createCairoContextWithHDC(dc, hasAlpha);
         m_data->m_hdc = dc;
     } else {
         setPaintingDisabled(true);
@@ -59,52 +107,95 @@ GraphicsContext::GraphicsContext(HDC dc, bool hasAlpha)
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    // FIXME:  We aren't really doing anything with the 'mayCreateBitmap' flag.  This needs
-    // to be addressed.
-    if (dstRect.isEmpty())
-       return 0;
+    // FIXME: Should a bitmap be created also when a shadow is set?
+    if (mayCreateBitmap && inTransparencyLayer()) {
+        if (dstRect.isEmpty())
+            return 0;
 
-    // This is probably wrong, and definitely out of date.  Pulled from old SVN
-    cairo_surface_t* surface = cairo_get_target(platformContext());
-    HDC hdc = cairo_win32_surface_get_dc(surface);   
-    SaveDC(hdc);
+        // Create a bitmap DC in which to draw.
+        BITMAPINFO bitmapInfo = bitmapInfoForSize(dstRect.size());
 
-    // FIXME: We need to make sure a clip is really set on the HDC.
-    // Call SetWorldTransform to honor the current Cairo transform.
-    SetGraphicsMode(hdc, GM_ADVANCED); // We need this call for themes to honor world transforms.
-    cairo_matrix_t mat;
-    cairo_get_matrix(platformContext(), &mat);
-    XFORM xform;
-    xform.eM11 = mat.xx;
-    xform.eM12 = mat.xy;
-    xform.eM21 = mat.yx;
-    xform.eM22 = mat.yy;
-    xform.eDx = mat.x0;
-    xform.eDy = mat.y0;
-    ::SetWorldTransform(hdc, &xform);
+        void* pixels = 0;
+        HBITMAP bitmap = ::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
+        if (!bitmap)
+            return 0;
 
-    return hdc;
+        HDC bitmapDC = ::CreateCompatibleDC(m_data->m_hdc);
+        ::SelectObject(bitmapDC, bitmap);
+
+        // Fill our buffer with clear if we're going to alpha blend.
+        if (supportAlphaBlend)
+           fillWithClearColor(bitmap);
+
+        // Make sure we can do world transforms.
+        SetGraphicsMode(bitmapDC, GM_ADVANCED);
+
+        // Apply a translation to our context so that the drawing done will be at (0,0) of the bitmap.
+        XFORM xform;
+        xform.eM11 = 1.0f;
+        xform.eM12 = 0.0f;
+        xform.eM21 = 0.0f;
+        xform.eM22 = 1.0f;
+        xform.eDx = -dstRect.x();
+        xform.eDy = -dstRect.y();
+        ::SetWorldTransform(bitmapDC, &xform);
+
+        return bitmapDC;
+    }
+
+    cairo_surface_t* surface = cairo_win32_surface_create(m_data->m_hdc);
+    cairo_surface_flush(surface);
+    cairo_surface_destroy(surface);
+
+    m_data->save();
+
+    return m_data->m_hdc;
 }
 
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    // FIXME:  We aren't really doing anything with the 'mayCreateBitmap' flag.  This needs
-    // to be addressed.
-    if (dstRect.isEmpty())
-       return;
+    if (!mayCreateBitmap || !hdc || !inTransparencyLayer()) {
+        m_data->restore();
+        return;
+    }
 
-    cairo_surface_t* surface = cairo_get_target(platformContext());
-    HDC hdc2 = cairo_win32_surface_get_dc(surface);
-    RestoreDC(hdc2, -1);
-    cairo_surface_mark_dirty(surface);
+    if (dstRect.isEmpty())
+        return;
+
+    HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
+
+    BITMAP info;
+    GetObject(bitmap, sizeof(info), &info);
+    ASSERT(info.bmBitsPixel == 32);
+
+    // Need to make a cairo_surface_t out of the bitmap's pixel buffer and then draw
+    // it into our context.
+    cairo_surface_t* image = cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
+                                            CAIRO_FORMAT_ARGB32,
+                                            info.bmWidth,
+                                            info.bmHeight,
+                                            info.bmWidthBytes);
+
+    // Scale the target surface to the new image size, and flip it
+    // so that when we set the srcImage as the surface it will draw
+    // right-side-up.
+    cairo_translate(m_data->cr, 0, dstRect.height());
+    cairo_scale(m_data->cr, dstRect.width(), -dstRect.height());
+    cairo_set_source_surface (m_data->cr, image, dstRect.x(), dstRect.y());
+
+    if (m_data->layers.size())
+        cairo_paint_with_alpha(m_data->cr, m_data->layers.last());
+    else
+        cairo_paint(m_data->cr);
+     
+    // Delete all our junk.
+    cairo_surface_destroy(image);
+    ::DeleteDC(hdc);
+    ::DeleteObject(bitmap);
 }
 
 void GraphicsContextPlatformPrivate::concatCTM(const TransformationMatrix& transform)
 {
-    cairo_surface_t* surface = cairo_get_target(cr);
-    HDC hdc = cairo_win32_surface_get_dc(surface);   
-    SaveDC(hdc);
-
     const cairo_matrix_t* matrix = reinterpret_cast<const cairo_matrix_t*>(&transform);
 
     XFORM xform;
@@ -115,7 +206,15 @@ void GraphicsContextPlatformPrivate::concatCTM(const TransformationMatrix& trans
     xform.eDx = matrix->x0;
     xform.eDy = matrix->y0;
 
-    ModifyWorldTransform(hdc, &xform, MWT_LEFTMULTIPLY);
+    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
+}
+
+void GraphicsContextPlatformPrivate::syncContext(PlatformGraphicsContext* cr)
+{
+    cairo_surface_t* surface = cairo_get_target(cr);
+    m_hdc = cairo_win32_surface_get_dc(surface);   
+
+    SetGraphicsMode(m_hdc, GM_ADVANCED); // We need this call for themes to honor world transforms.
 }
 
 }

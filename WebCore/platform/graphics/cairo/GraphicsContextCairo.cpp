@@ -92,6 +92,7 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* cr)
     , m_data(new GraphicsContextPlatformPrivate)
 {
     m_data->cr = cairo_reference(cr);
+    m_data->syncContext(cr);
     setPaintingDisabled(!cr);
 }
 

@@ -190,13 +190,13 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
 
     // Cairo does not like zero height images.
     // If we have a zero height image, just pretend we don't have enough data yet.
-    if (!buffer->height())
+    if (!size().height())
         return 0;
 
     return cairo_image_surface_create_for_data((unsigned char*)buffer->bytes().data(),
                                                CAIRO_FORMAT_ARGB32,
                                                size().width(),
-                                               buffer->height(),
+                                               size().height(),
                                                size().width()*4);
 }
 

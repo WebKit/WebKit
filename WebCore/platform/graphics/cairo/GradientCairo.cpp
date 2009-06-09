@@ -80,11 +80,11 @@ void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 {
     cairo_t* cr = context->platformContext();
 
-    cairo_save(cr);
+    context->save();
     cairo_set_source(cr, platformGradient());
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill(cr);
-    cairo_restore(cr);
+    context->restore();
 }
 
 } //namespace

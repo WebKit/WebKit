@@ -73,6 +73,7 @@ public:
     void concatCTM(const TransformationMatrix&);
     void beginTransparencyLayer() { m_transparencyCount++; }
     void endTransparencyLayer() { m_transparencyCount--; }
+    void syncContext(PlatformGraphicsContext* cr);
 #else
     // On everything else, we do nothing.
     void save() {}
@@ -85,6 +86,7 @@ public:
     void concatCTM(const TransformationMatrix&) {}
     void beginTransparencyLayer() {}
     void endTransparencyLayer() {}
+    void syncContext(PlatformGraphicsContext* cr) {}
 #endif
 
     cairo_t* cr;

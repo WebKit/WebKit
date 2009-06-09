@@ -1,3 +1,43 @@
+2009-06-09  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=22891
+        Scrolling in Windows Cairo Broken if no background color set.
+
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::fill):  Use the GraphicsContext save and restore
+          methods (rather than the Cairo-only functions) so that the Windows
+          device context is kept in sync.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::GraphicsContext): Add new constructor call
+          to sync Windows HDC with Cairo surface.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::syncContext): Provide
+          declaration for Windows HDC sync method (and stub for non-Windows
+          Cairo implementations).
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw): Use GraphicsContext save and restore
+          methods (rather than the Cairo-only functions) so that the Windows
+          device context is kept in sync.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::CairoContextWithHDC): New method to create a valid Cairo
+          context for a given HDC.
+        (WebCore::GraphicsContext::GraphicsContext): Modify constructor to
+          use new CairoContextWithHDC call.
+        (WebCore::GraphicsContext::getWindowsContext): Revise to match
+          behavior of CG implementation.
+        (WebCore::GraphicsContext::releaseWindowsContext): Revise to match
+          behavior of CG implementation.
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM): Get rid of
+          incorrect new HDC, and use object's HDC member for dealing with
+          concatCTM operations.
+        (WebCore::GraphicsContextPlatformPrivate::syncContext): New method
+          to sync Windows HDC with Cairo context.
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize): Revise implementation to
+          match CG behavior.
+
 2009-06-09  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
