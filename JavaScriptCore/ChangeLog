@@ -1,3 +1,17 @@
+2009-06-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Previous patch caused a regression.
+
+        Restructure so no new (empty, inline) function calls are added on x86.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::makeWritable):
+        (JSC::ExecutableAllocator::makeExecutable):
+        (JSC::ExecutableAllocator::reprotectRegion):
+        (JSC::ExecutableAllocator::cacheFlush):
+
 2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, GTK build fix (thanks, bdash).
