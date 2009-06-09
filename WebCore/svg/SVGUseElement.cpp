@@ -836,7 +836,11 @@ SVGElementInstance* SVGUseElement::instanceForShadowTreeElement(Node* element, S
 {
     ASSERT(element);
     ASSERT(instance);
-    ASSERT(instance->shadowTreeElement());
+
+    // We're dispatching a mutation event during shadow tree construction
+    // this instance hasn't yet been associated to a shadowTree element.
+    if (!instance->shadowTreeElement())
+        return 0;
 
     if (element == instance->shadowTreeElement())
         return instance;

@@ -1,3 +1,12 @@
+2009-06-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix ASSERT seen in shadow tree testing
+        https://bugs.webkit.org/show_bug.cgi?id=25092
+
+        * svg/custom/use-mutation-event-crash.svg: Added.
+
 2009-06-09  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
