@@ -1,5 +1,16 @@
 2009-06-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Enable JIT_OPTIMIZE_CALL & JIT_OPTIMIZE_METHOD_CALLS on ARMv7 platforms.
+
+        These optimizations function correctly with no further changes.
+
+        * wtf/Platform.h:
+            Change to enable JIT_OPTIMIZE_CALL & JIT_OPTIMIZE_METHOD_CALLS.
+
+2009-06-09  Gavin Barraclough  <barraclough@apple.com>
+
         Not Reviewed, build fix.
 
         * assembler/MacroAssemblerARMv7.h:
