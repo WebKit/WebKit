@@ -40,7 +40,7 @@
 #include "ResourceResponse.h"
 #include "ThreadableLoader.h"
 #include "WorkerContext.h"
-#include "WorkerMessagingProxy.h"
+#include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <memory>
 #include <wtf/OwnPtr.h>
@@ -53,13 +53,11 @@ namespace WebCore {
 
 static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMode";
 
-// FIXME: The assumption that we can upcast worker object proxy to WorkerMessagingProxy will not be true in multi-process implementation.
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, LoadCallbacks callbacksSetting,
                                                ContentSniff contentSniff, StoredCredentials storedCredentials)
     : m_workerContext(workerContext)
     , m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client))
-    , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, *(static_cast<WorkerMessagingProxy*>(m_workerContext->thread()->workerObjectProxy())), taskMode, request, callbacksSetting,
-                                      contentSniff, storedCredentials)))
+    , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, m_workerContext->thread()->workerLoaderProxy(), taskMode, request, callbacksSetting, contentSniff, storedCredentials)))
 {
 }
 
@@ -92,14 +90,14 @@ void WorkerThreadableLoader::cancel()
     m_bridge.cancel();
 }
 
-WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, WorkerMessagingProxy& messagingProxy, const String& taskMode,
+WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, WorkerLoaderProxy& loaderProxy, const String& taskMode,
                                                            const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials)
     : m_workerClientWrapper(workerClientWrapper)
-    , m_messagingProxy(messagingProxy)
+    , m_loaderProxy(loaderProxy)
     , m_taskMode(taskMode.copy())
 {
     ASSERT(m_workerClientWrapper.get());
-    m_messagingProxy.postTaskToWorkerObject(createCallbackTask(&MainThreadBridge::mainThreadCreateLoader, this, request, callbacksSetting, contentSniff, storedCredentials));
+    m_loaderProxy.postTaskToLoader(createCallbackTask(&MainThreadBridge::mainThreadCreateLoader, this, request, callbacksSetting, contentSniff, storedCredentials));
 }
 
 WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
@@ -108,15 +106,8 @@ WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
 
 void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExecutionContext* context, MainThreadBridge* thisPtr, auto_ptr<CrossThreadResourceRequestData> requestData, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials)
 {
-    // FIXME: This assert fails for nested workers.  Removing the assert would allow it to work,
-    // but then there would be one WorkerThreadableLoader in every intermediate worker simply
-    // chaining the requests, which is not very good. Instead, the postTaskToWorkerObject should be a
-    // postTaskToDocumentContext.
     ASSERT(isMainThread());
     ASSERT(context->isDocument());
-
-    if (thisPtr->m_messagingProxy.askedToTerminate())
-        return;
 
     // FIXME: the created loader has no knowledge of the origin of the worker doing the load request.
     // Basically every setting done in SubresourceLoader::create (including the contents of addExtraFieldsToRequest)
@@ -142,7 +133,7 @@ void WorkerThreadableLoader::MainThreadBridge::destroy()
     clearClientWrapper();
 
     // "delete this" and m_mainThreadLoader::deref() on the worker object's thread.
-    m_messagingProxy.postTaskToWorkerObject(createCallbackTask(&MainThreadBridge::mainThreadDestroy, this));
+    m_loaderProxy.postTaskToLoader(createCallbackTask(&MainThreadBridge::mainThreadDestroy, this));
 }
 
 void WorkerThreadableLoader::MainThreadBridge::mainThreadCancel(ScriptExecutionContext* context, MainThreadBridge* thisPtr)
@@ -158,7 +149,7 @@ void WorkerThreadableLoader::MainThreadBridge::mainThreadCancel(ScriptExecutionC
 
 void WorkerThreadableLoader::MainThreadBridge::cancel()
 {
-    m_messagingProxy.postTaskToWorkerObject(createCallbackTask(&MainThreadBridge::mainThreadCancel, this));
+    m_loaderProxy.postTaskToLoader(createCallbackTask(&MainThreadBridge::mainThreadCancel, this));
     ThreadableLoaderClientWrapper* clientWrapper = static_cast<ThreadableLoaderClientWrapper*>(m_workerClientWrapper.get());
     if (!clientWrapper->done()) {
         // If the client hasn't reached a termination state, then transition it by sending a cancellation error.
@@ -183,7 +174,7 @@ static void workerContextDidSendData(ScriptExecutionContext* context, RefPtr<Thr
 
 void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidSendData, m_workerClientWrapper, bytesSent, totalBytesToBeSent), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidSendData, m_workerClientWrapper, bytesSent, totalBytesToBeSent), m_taskMode);
 }
 
 static void workerContextDidReceiveResponse(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
@@ -195,7 +186,7 @@ static void workerContextDidReceiveResponse(ScriptExecutionContext* context, Ref
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(const ResourceResponse& response)
 {
-    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveResponse, m_workerClientWrapper, response), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveResponse, m_workerClientWrapper, response), m_taskMode);
 }
 
 static void workerContextDidReceiveData(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<Vector<char> > vectorData)
@@ -208,7 +199,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, 
 {
     auto_ptr<Vector<char> > vector(new Vector<char>(lengthReceived)); // needs to be an auto_ptr for usage with createCallbackTask.
     memcpy(vector->data(), data, lengthReceived);
-    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector), m_taskMode);
 }
 
 static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier)
@@ -219,7 +210,7 @@ static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPt
 
 void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long identifier)
 {
-    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFinishLoading, m_workerClientWrapper, identifier), m_taskMode);
 }
 
 static void workerContextDidFail(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, const ResourceError& error)
@@ -230,7 +221,7 @@ static void workerContextDidFail(ScriptExecutionContext* context, RefPtr<Threada
 
 void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& error)
 {
-    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFail, m_workerClientWrapper, error), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFail, m_workerClientWrapper, error), m_taskMode);
 }
 
 static void workerContextDidFailRedirectCheck(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper)
@@ -241,7 +232,7 @@ static void workerContextDidFailRedirectCheck(ScriptExecutionContext* context, R
 
 void WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck()
 {
-    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFailRedirectCheck, m_workerClientWrapper), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFailRedirectCheck, m_workerClientWrapper), m_taskMode);
 }
 
 static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, auto_ptr<CrossThreadResourceResponseData> responseData)
@@ -253,7 +244,7 @@ static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionCon
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveAuthenticationCancellation(const ResourceResponse& response)
 {
-    m_messagingProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveAuthenticationCancellation, m_workerClientWrapper, response), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveAuthenticationCancellation, m_workerClientWrapper, response), m_taskMode);
 }
 
 } // namespace WebCore

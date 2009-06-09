@@ -1,3 +1,81 @@
+2009-06-08  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26126
+        Refactor methods of WorkerMessagingProxy used to talk to main-thread loader into new interface.
+
+        Split a couple of methods used to schedule cross-thread tasks between worker thread and loader thread
+        implemented on WorkerMessagingProxy into a separate interface so the loading can be implemented in
+        Chromium's workers.
+
+        No changes in functionality so no tests added.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added WorkerLoaderProxy.h to the bulid.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate): WorkerThread::workerObjectProxy() now returns & instead of *
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate): same.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::~WorkerContext): same.
+        (WebCore::WorkerContext::reportException): same.
+        (WebCore::WorkerContext::addMessage): same.
+        (WebCore::WorkerContext::postMessage): same.
+
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::destroy):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::cancel):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveAuthenticationCancellation):
+        Use WorkerLoaderProxy instead of WorkerMessagingProxy for the MainThreadBridge.
+        Mostly rename.
+
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+        In addition to using WorkerLoaderProxy instead of WorkerMessagingProxy, the check for
+        AskedToTerminate is removed. It seems to be an optimization for a very small number of cases
+        when worker termination is requested a very short time before the request to load something
+        (XHR or importScript) was dispatched on the main thread.
+
+        * loader/WorkerThreadableLoader.h:
+        Now keeps a pointer to WorkerLoaderProxy rather then to a WorkerMessagingProxy. This allows
+        to implement WorkerThreadableLoader for Chromium.
+
+        * workers/WorkerLoaderProxy.h: Added.
+        (WebCore::WorkerLoaderProxy::~WorkerLoaderProxy):
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerContext):
+        (WebCore::WorkerMessagingProxy::postTaskToLoader): Added ASSERT since this needs to be implemented for nested workers.
+        * workers/WorkerMessagingProxy.h:
+        Derived from WorkerLoaderProxy, the methods for posting tasks cross-thread are now virtual.
+        Removed unused postTaskToWorkerContext() method.
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::create):
+        (WebCore::WorkerThread::WorkerThread):
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::workerLoaderProxy):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::create):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::workerLoaderProxy):
+        (WebCore::WorkerThread::workerObjectProxy):
+        WorkerThread gets a new member of type WorkerLoaderProxy&, and accessor.
+        Also, existing WorkerObjectProxy* member is now WorkerObjectProxy& because it can't be null.
+
 2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

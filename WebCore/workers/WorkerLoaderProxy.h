@@ -28,68 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WorkerLoaderProxy_h
+#define WorkerLoaderProxy_h
 
 #if ENABLE(WORKERS)
 
-#include "WorkerScriptController.h"
-
-#include <v8.h>
-
-#include "ScriptSourceCode.h"
-#include "ScriptValue.h"
-#include "DOMTimer.h"
-#include "V8DOMMap.h"
-#include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
-#include "WorkerObjectProxy.h"
-#include "WorkerThread.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
-    : m_workerContext(workerContext)
-    , m_proxy(new WorkerContextExecutionProxy(workerContext))
-    , m_executionForbidden(false)
-{
-}
+    class ScriptExecutionContext::Task;
+    class String;
 
-WorkerScriptController::~WorkerScriptController()
-{
-    removeAllDOMObjectsInCurrentThread();
-}
+    // A proxy to talk to the loader context. Normally, the document on the main thread
+    // provides loading services for the subordinate workers. This interface provides 2-way
+    // communications to the Document context and back to the worker.
+    // Note that in multi-process browsers, the Worker object context and the Document
+    // context can be distinct.
+    class WorkerLoaderProxy {
+    public:
+        virtual ~WorkerLoaderProxy() { }
 
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
-{
-    {
-        MutexLocker lock(m_sharedDataMutex);
-        if (m_executionForbidden)
-            return ScriptValue();
-    }
+        // Posts a task to the thread which runs the loading code (normally, the main thread).
+        virtual void postTaskToLoader(PassRefPtr<ScriptExecutionContext::Task>) = 0;
 
-    v8::Local<v8::Value> result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startLine() - 1);
-    m_workerContext->thread()->workerObjectProxy().reportPendingActivity(m_workerContext->hasPendingActivity());
-    return ScriptValue();
-}
-
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* /* exception */)
-{
-    // FIXME: Need to return an exception.
-    return evaluate(sourceCode);
-}
-
-void WorkerScriptController::forbidExecution()
-{
-    // This function is called from another thread.
-    MutexLocker lock(m_sharedDataMutex);
-    m_executionForbidden = true;
-}
-
-void WorkerScriptController::setException(ScriptValue /* exception */)
-{
-    notImplemented();
-}
+        // Posts callbacks from loading code to the WorkerContext. The 'mode' is used to differentiate
+        // specific synchronous loading requests so they can be 'nested', per spec.
+        virtual void postTaskForModeToWorkerContext(PassRefPtr<ScriptExecutionContext::Task>, const String& mode) = 0;
+    };
 
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
+
+#endif // WorkerLoaderProxy_h

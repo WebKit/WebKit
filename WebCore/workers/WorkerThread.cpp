@@ -62,13 +62,14 @@ WorkerThreadStartupData::WorkerThreadStartupData(const KURL& scriptURL, const St
 {
 }
 
-PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerObjectProxy* workerObjectProxy)
+PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy)
 {
-    return adoptRef(new WorkerThread(scriptURL, userAgent, sourceCode, workerObjectProxy));
+    return adoptRef(new WorkerThread(scriptURL, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy));
 }
 
-WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerObjectProxy* workerObjectProxy)
+WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy)
     : m_threadID(0)
+    , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerObjectProxy(workerObjectProxy)
     , m_startupData(WorkerThreadStartupData::create(scriptURL, userAgent, sourceCode))
 {
@@ -115,7 +116,7 @@ void* WorkerThread::workerThread()
     // WorkerThread::~WorkerThread happens on a different thread where it was created.
     m_startupData.clear();
 
-    m_workerObjectProxy->reportPendingActivity(m_workerContext->hasPendingActivity());
+    m_workerObjectProxy.reportPendingActivity(m_workerContext->hasPendingActivity());
 
     // Blocks until terminated.
     m_runLoop.run(m_workerContext.get());

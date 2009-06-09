@@ -67,7 +67,7 @@ WorkerContext::~WorkerContext()
 {
     ASSERT(currentThread() == m_thread->threadID());
 
-    m_thread->workerObjectProxy()->workerContextDestroyed();
+    m_thread->workerObjectProxy().workerContextDestroyed();
 }
 
 ScriptExecutionContext* WorkerContext::scriptExecutionContext() const
@@ -136,12 +136,12 @@ bool WorkerContext::hasPendingActivity() const
 
 void WorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
-    m_thread->workerObjectProxy()->postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
+    m_thread->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
 void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
-    m_thread->workerObjectProxy()->postConsoleMessageToWorkerObject(destination, source, level, message, lineNumber, sourceURL);
+    m_thread->workerObjectProxy().postConsoleMessageToWorkerObject(destination, source, level, message, lineNumber, sourceURL);
 }
 
 void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const ScriptString&)
@@ -161,7 +161,7 @@ void WorkerContext::postMessage(const String& message)
     if (m_closing)
         return;
 
-    m_thread->workerObjectProxy()->postMessageToWorkerObject(message);
+    m_thread->workerObjectProxy().postMessageToWorkerObject(message);
 }
 
 void WorkerContext::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)

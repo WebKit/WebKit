@@ -2271,6 +2271,7 @@ webcore_sources += \
 	WebCore/workers/WorkerContext.cpp \
 	WebCore/workers/WorkerContext.h \
 	WebCore/workers/WorkerContextProxy.h \
+	WebCore/workers/WorkerLoaderProxy.h \
 	WebCore/workers/WorkerLocation.cpp \
 	WebCore/workers/WorkerLocation.h \
 	WebCore/workers/WorkerMessagingProxy.cpp \

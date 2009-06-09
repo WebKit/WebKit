@@ -9367,6 +9367,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\WorkerLoaderProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\WorkerLocation.cpp"
 				>
 			</File>
