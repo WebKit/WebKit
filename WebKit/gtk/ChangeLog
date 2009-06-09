@@ -1,3 +1,21 @@
+2009-06-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26104
+        [GTK] Make NetworkRequest a proper GObject and expose SoupMessage
+
+        Refactor how SoupMessage is handled, so that our ResourceRequest
+        object doesn't have to store it as a member, which complicates
+        managing ResourceRequest's lifetime.
+
+        * tests/testhttpbackend.c:
+        (navigation_policy_decision_requested_cb):
+        (test_soup_message_lifetime):
+        * webkit/webkitnetworkrequest.cpp:
+        (WTF::SoupMessage):
+        (webkit_network_request_new_with_core_request):
+
 2009-06-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Jan Alonzo.

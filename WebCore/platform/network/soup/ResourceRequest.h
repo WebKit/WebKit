@@ -37,56 +37,39 @@ namespace WebCore {
 
         ResourceRequest(const String& url)
             : ResourceRequestBase(KURL(url), UseProtocolCachePolicy)
-            , m_soupMessage(0)
         {
         }
 
         ResourceRequest(const KURL& url)
             : ResourceRequestBase(url, UseProtocolCachePolicy)
-            , m_soupMessage(0)
         {
         }
 
         ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
             : ResourceRequestBase(url, policy)
-            , m_soupMessage(0)
         {
             setHTTPReferrer(referrer);
         }
 
         ResourceRequest()
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
-            , m_soupMessage(0)
         {
         }
 
         ResourceRequest(SoupMessage* soupMessage)
-            : ResourceRequestBase()
-            , m_soupMessage(soupMessage)
+            : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
         {
-            g_object_ref(soupMessage);
+            updateFromSoupMessage(soupMessage);
         }
 
-        // We force copies of ResourceRequest to create their own
-        // SoupMessage, if needed.
-        ResourceRequest(const ResourceRequest& resourceRequest);
-
-        ~ResourceRequest()
-        {
-            if (m_soupMessage) {
-                g_object_unref(m_soupMessage);
-                m_soupMessage = 0;
-            }
-        }
-
-        SoupMessage* soupMessage() const;
+        SoupMessage* toSoupMessage() const;
+        void updateFromSoupMessage(SoupMessage* soupMessage);
 
     private:
-        SoupMessage* m_soupMessage;
-        friend class ResourceRequestBase;
+        friend struct ResourceRequestBase;
 
-        void doUpdatePlatformRequest();
-        void doUpdateResourceRequest();
+        void doUpdatePlatformRequest() {};
+        void doUpdateResourceRequest() {};
     };
 
 } // namespace WebCore

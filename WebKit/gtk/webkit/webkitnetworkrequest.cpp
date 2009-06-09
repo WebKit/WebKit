@@ -22,8 +22,21 @@
 #include "webkitnetworkrequest.h"
 
 #include "CString.h"
+#include "GOwnPtr.h"
 #include "ResourceRequest.h"
 #include "webkitprivate.h"
+
+#include <glib/gi18n-lib.h>
+
+namespace WTF {
+
+template <> void freeOwnedGPtr<SoupMessage>(SoupMessage* soupMessage)
+{
+    if (soupMessage)
+        g_object_unref(soupMessage);
+}
+
+}
 
 /**
  * SECTION:webkitnetworkrequest
@@ -81,9 +94,9 @@ WebKitNetworkRequest* webkit_network_request_new_with_core_request(const WebCore
     WebKitNetworkRequest* request = WEBKIT_NETWORK_REQUEST(g_object_new(WEBKIT_TYPE_NETWORK_REQUEST, NULL));
     WebKitNetworkRequestPrivate* priv = request->priv;
 
-    SoupMessage* soupMessage = resourceRequest.soupMessage();
+    GOwnPtr<SoupMessage> soupMessage(resourceRequest.toSoupMessage());
     if (soupMessage)
-        priv->message = SOUP_MESSAGE(g_object_ref(soupMessage));
+        priv->message = SOUP_MESSAGE(g_object_ref(soupMessage.get()));
     priv->uri = g_strdup(resourceRequest.url().string().utf8().data());
 
     return request;

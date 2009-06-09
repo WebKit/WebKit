@@ -468,7 +468,7 @@ bool ResourceHandle::startHttp(String urlString)
     SoupSession* session = defaultSession();
     ensureSessionIsInitialized(session);
 
-    d->m_msg = static_cast<SoupMessage*>(g_object_ref(request().soupMessage()));
+    d->m_msg = request().toSoupMessage();
     g_signal_connect(d->m_msg, "restarted", G_CALLBACK(restartedCallback), this);
     g_signal_connect(d->m_msg, "got-headers", G_CALLBACK(gotHeadersCallback), this);
     g_signal_connect(d->m_msg, "got-chunk", G_CALLBACK(gotChunkCallback), this);
@@ -545,10 +545,9 @@ bool ResourceHandle::startHttp(String urlString)
     // use it here instead.
     soup_message_headers_replace(d->m_msg->request_headers, "Accept-Encoding", "identity");
 
-    // Balanced in ResourceRequest's destructor; we need to keep our
-    // own ref, because after queueing the message, the session owns
-    // the initial reference. We cannot ref the message in
-    // ResourceRequest because not all request objects are queued.
+    // Balanced in ResourceHandleInternal's destructor; we need to
+    // keep our own ref, because after queueing the message, the
+    // session owns the initial reference.
     g_object_ref(d->m_msg);
     soup_session_queue_message(session, d->m_msg, finishedCallback, this);
 
