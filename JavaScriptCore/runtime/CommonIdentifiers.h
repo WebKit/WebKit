@@ -59,7 +59,6 @@
     macro(test) \
     macro(toExponential) \
     macro(toFixed) \
-    macro(toJSON) \
     macro(toLocaleString) \
     macro(toPrecision) \
     macro(toString) \
