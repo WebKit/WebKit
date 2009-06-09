@@ -1,3 +1,14 @@
+2009-06-09  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Make sure the graphics backends are in sync with the canvas lineWidth state.
+        https://bugs.webkit.org/show_bug.cgi?id=26187
+
+        * fast/canvas/canvas-lineWidth.html: Added.
+        * fast/canvas/canvas-lineWidth.js: Added.
+        (compareRows):
+
 2009-06-09  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Eric Seidel.
