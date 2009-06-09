@@ -934,7 +934,7 @@ public:
 
     DataLabelPtr moveWithPatch(ImmPtr imm, RegisterID dst)
     {
-        moveFixedWidthEncoding(imm, dst);
+        moveFixedWidthEncoding(Imm32(imm), dst);
         return DataLabelPtr(this);
     }
 
@@ -963,7 +963,7 @@ public:
     Call tailRecursiveCall()
     {
         // Like a normal call, but don't link.
-        moveFixedWidthEncoding(Imm32(0), dst);
+        moveFixedWidthEncoding(Imm32(0), dataTempRegister);
         return Call(m_assembler.bx(dataTempRegister), Call::Linkable);
     }
 

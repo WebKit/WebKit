@@ -1,5 +1,11 @@
 2009-06-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Not Reviewed, build fix.
+
+        * assembler/MacroAssemblerARMv7.h:
+
+2009-06-09  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Enable JIT_OPTIMIZE_ARITHMETIC on ARMv7 platforms.
