@@ -1,3 +1,14 @@
+2009-06-09  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Test case on internal -webkit-media overload.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26190
+
+        * media/controls-css-overload-expected.txt: Added.
+        * media/controls-css-overload.html: Added.
+
 2009-06-09  Ryosuke Niwa  <rniwa@google.com>
 
         Reviewed by Eric Seidel.

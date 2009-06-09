@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+    <title>Testing that overloading some controls doesn't crash the browser</title>
+        <style>
+            .nocontrols::-webkit-media-controls-panel{
+                display:none;
+            }
+            .notimeline::-webkit-media-controls-timeline-container{
+                display:none;
+            }
+        </style>
+    <script src=video-test.js></script>
+</head>
+<body>
+    <video class="nocontrols" width=300 height=200 controls></video>
+    <video class="notimeline" width=300 height=200 controls></video>
+    <script>
+    consoleWrite("I did not crash");
+    endTest();
+    </script>
+</body>
+</html>

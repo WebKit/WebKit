@@ -269,15 +269,19 @@ void RenderMedia::updateControls()
     if (!m_controlsShadowRoot) {
         createControlsShadowRoot();
         createPanel();
-        createMuteButton();
-        createPlayButton();
-        createTimelineContainer();
-        createTimeline();
-        createSeekBackButton();
-        createSeekForwardButton();
-        createCurrentTimeDisplay();
-        createTimeRemainingDisplay();
-        createFullscreenButton();
+        if (m_panel && m_panel->renderer()) {
+            createMuteButton();
+            createPlayButton();
+            createTimelineContainer();
+            createSeekBackButton();
+            createSeekForwardButton();
+            createFullscreenButton();            
+        }
+        if (m_timelineContainer && m_timelineContainer->renderer()) {
+            createCurrentTimeDisplay();
+            createTimeline();
+            createTimeRemainingDisplay();
+        }
     }
 
     if (media->canPlay()) {

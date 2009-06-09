@@ -1,3 +1,14 @@
+2009-06-09  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26190
+
+        Test: media/controls-css-overload.html
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateControls): Prevent NULL dereference in case containers gets hidden.
+
 2009-06-08  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
