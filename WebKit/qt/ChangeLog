@@ -2,6 +2,20 @@
 
         Reviewed by Ariya Hidayat.
 
+        Merged useFixedLayout property with fixedLayoutSize and
+        renamed the latter to fixedContentsSize.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::fixedContentsSize):
+        (QWebPage::setFixedContentsSize):
+        * Api/qwebpage.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+
+2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
         Renamed QWebHitTestResult::linkTarget to linkElement() and made it return
         a QWebElement. The link target itself is always the target DOM attribute.
 

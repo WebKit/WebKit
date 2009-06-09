@@ -1,3 +1,11 @@
+2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Adjusted Qt fixed layout testcase to LayoutController API change.
+
+        * platform/qt/view/fixed-layout-size.html:
+
 2009-06-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Antti Koivisto

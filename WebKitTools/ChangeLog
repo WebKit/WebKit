@@ -1,5 +1,16 @@
 2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by Ariya Hidayat.
+
+        Removed setUseFixedLayout and renamed setFixedLayoutSize to
+        setFixedContentsSize.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::setFixedContentsSize):
+        * DumpRenderTree/qt/jsobjects.h:
+
+2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Fix the Qt build, add missing function declaration.
 
         * DumpRenderTree/qt/jsobjects.h:
