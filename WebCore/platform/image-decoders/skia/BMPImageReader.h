@@ -251,9 +251,7 @@ namespace WebCore {
         // Like setI(), but with the individual component values specified.
         inline void setRGBA(unsigned red, unsigned green, unsigned blue, unsigned alpha)
         {
-            RGBA32Buffer::setRGBA(
-                m_frameBufferCache.first().bitmap().getAddr32(m_coord.x(), m_coord.y()),
-                red, green, blue, alpha);
+            m_frameBufferCache.first().setRGBA(m_coord.x(), m_coord.y(), red, green, blue, alpha);
             m_coord.move(1, 0);
         }
 

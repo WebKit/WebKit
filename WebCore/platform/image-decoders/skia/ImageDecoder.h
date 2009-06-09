@@ -128,8 +128,11 @@ namespace WebCore {
             // otherwise.
             ASSERT(m_bitmap.width() == 0 && m_bitmap.height() == 0);
             m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, width, height);
-            if (!m_bitmap.allocPixels())
-                return false;  // Allocation failure, maybe the bitmap was too big.
+            if (!m_bitmap.allocPixels()) {
+                // Allocation failure, maybe the bitmap was too big.
+                setStatus(FrameComplete);
+                return false;
+            }
 
             // Clear the image.
             m_bitmap.eraseARGB(0, 0, 0, 0);
@@ -272,22 +275,15 @@ namespace WebCore {
         mutable bool m_failed;
 
     private:
-        // This function allows us to make sure the image is not too large. Very
-        // large images, even if the allocation succeeds, can take a very long time
-        // to process, giving the appearance of a DoS.
-        //
-        // WebKit also seems to like to ask for the size before data is available
-        // and in some cases when the failed flag is set. Some of these code paths
-        // such as BitmapImage::resetAnimation then compute the size of the image
-        // based on the width and height. Because of this, our total computed image
-        // byte size must never overflow an int.
+        // Some code paths compute the size of the image as "width * height * 4"
+        // and return it as a (signed) int.  Avoid overflow.
         static bool isOverSize(unsigned width, unsigned height)
         {
+            // width * height must not exceed (2 ^ 29) - 1, so that we don't
+            // overflow when we multiply by 4.
             unsigned long long total_size = static_cast<unsigned long long>(width)
                                           * static_cast<unsigned long long>(height);
-            if (total_size > 32 * 1024 * 1024)  // 32M = 128MB memory total (32 bpp).
-                return true;
-            return false;
+            return total_size > ((1 << 29) - 1);
         }
 
         IntSize m_size;

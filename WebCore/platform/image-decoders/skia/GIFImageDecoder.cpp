@@ -279,8 +279,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     
     if (frameIndex == 0) {
         // This is the first frame, so we're not relying on any previous data.
-        if (!prepEmptyFrameBuffer(buffer)) {
-            buffer->setStatus(RGBA32Buffer::FrameComplete);
+        if (!buffer->setSize(size().width(), size().height())) {
             m_failed = true;
             return false;
         }
@@ -307,10 +306,6 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
                 (prevMethod == RGBA32Buffer::DisposeKeep)) {
             // Preserve the last frame as the starting state for this frame.
             buffer->copyBitmapData(*prevBuffer);
-            // This next line isn't currently necessary since the alpha state is
-            // currently carried along in the Skia bitmap data, but it's safe,
-            // future-proof, and parallel to the Cairo code.
-            buffer->setHasAlpha(prevBuffer->hasAlpha());
         } else {
             // We want to clear the previous frame to transparent, without
             // affecting pixels in the image outside of the frame.
@@ -319,16 +314,16 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
                 || prevRect.contains(IntRect(IntPoint(0, 0), size()))) {
                 // Clearing the first frame, or a frame the size of the whole
                 // image, results in a completely empty image.
-                prepEmptyFrameBuffer(buffer);
+                if (!buffer->setSize(size().width(), size().height())) {
+                    m_failed = true;
+                    return false;
+                }
             } else {
               // Copy the whole previous buffer, then clear just its frame.
               buffer->copyBitmapData(*prevBuffer);
-              // Unnecessary (but safe); see comments on the similar call above.
-              buffer->setHasAlpha(prevBuffer->hasAlpha());
-              SkBitmap& bitmap = buffer->bitmap();
               for (int y = prevRect.y(); y < prevRect.bottom(); ++y) {
                   for (int x = prevRect.x(); x < prevRect.right(); ++x)
-                      buffer->setRGBA(bitmap.getAddr32(x, y), 0, 0, 0, 0);
+                      buffer->setRGBA(x, y, 0, 0, 0, 0);
               }
               if ((prevRect.width() > 0) && (prevRect.height() > 0))
                   buffer->setHasAlpha(true);
@@ -341,17 +336,6 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 
     // Reset the alpha pixel tracker for this frame.
     m_currentBufferSawAlpha = false;
-    return true;
-}
-
-bool GIFImageDecoder::prepEmptyFrameBuffer(RGBA32Buffer* buffer) const
-{
-    if (!buffer->setSize(size().width(), size().height()))
-        return false;
-    // This next line isn't currently necessary since Skia's eraseARGB() sets
-    // this for us, but we do it for similar reasons to the setHasAlpha() calls
-    // in initFrameBuffer() above.
-    buffer->setHasAlpha(true);
     return true;
 }
 
@@ -416,14 +400,14 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
     if (repeatCount > 1) {
         // Copy the row |repeatCount|-1 times.
         unsigned num = currDst - dst;
-        unsigned data_size = num * sizeof(unsigned);
+        unsigned dataSize = num * sizeof(unsigned);
         unsigned width = size().width();
         unsigned* end = buffer.bitmap().getAddr32(0, 0) + width * size().height();
         currDst = dst + width;
         for (unsigned i = 1; i < repeatCount; i++) {
             if (currDst + num > end) // Protect against a buffer overrun from a bogus repeatCount.
                 break;
-            memcpy(currDst, dst, data_size);
+            memcpy(currDst, dst, dataSize);
             currDst += width;
         }
     }

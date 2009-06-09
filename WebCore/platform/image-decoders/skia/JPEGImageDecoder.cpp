@@ -465,17 +465,15 @@ bool JPEGImageDecoder::outputScanlines()
         // also initialize it to transparent.
         if (!buffer.setSize(size().width(), size().height())) {
             m_failed = true;
-            buffer.setStatus(RGBA32Buffer::FrameComplete);
             return false;
         }
 
         // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
+        buffer.setHasAlpha(false);
 
         // For JPEGs, the frame always fills the entire image.
         buffer.setRect(IntRect(0, 0, size().width(), size().height()));
-
-        // We don't have alpha (this is the default when the buffer is constructed).
     }
 
     jpeg_decompress_struct* info = m_reader->info();

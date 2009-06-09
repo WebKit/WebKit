@@ -86,7 +86,6 @@ RGBA32Buffer* XBMImageDecoder::frameBufferAtIndex(size_t index)
         frame.status() == RGBA32Buffer::FrameEmpty) {
         if (!frame.setSize(size().width(), size().height())) {
             m_failed = true;
-            frame.setStatus(RGBA32Buffer::FrameComplete);
             return 0;
         }
         frame.setStatus(RGBA32Buffer::FramePartial);

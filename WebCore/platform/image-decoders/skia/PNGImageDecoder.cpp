@@ -224,7 +224,8 @@ void headerAvailable(png_structp png, png_infop info)
     static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->headerAvailable();
 }
 
-void PNGImageDecoder::decodingFailed() {
+void PNGImageDecoder::decodingFailed()
+{
     m_failed = true;
 }
 
@@ -330,6 +331,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
         // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
+        buffer.setHasAlpha(false);
 
         // For PNGs, the frame always fills the entire image.
         buffer.setRect(IntRect(0, 0, size().width(), size().height()));

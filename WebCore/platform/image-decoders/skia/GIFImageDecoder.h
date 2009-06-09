@@ -78,10 +78,6 @@ namespace WebCore {
         // this will mark the image as failed.
         bool initFrameBuffer(unsigned frameIndex);
 
-        // A helper for initFrameBuffer(), this sets the size of the buffer, and
-        // fills it with transparent pixels.
-        bool prepEmptyFrameBuffer(RGBA32Buffer*) const;
-
         bool m_frameCountValid;
         bool m_currentBufferSawAlpha;
         mutable int m_repetitionCount;

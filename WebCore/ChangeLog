@@ -1,3 +1,35 @@
+2009-06-08  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part three
+        Various minor cleanups to the Skia files.  Mostly non-functional, except
+        for two specific changes:
+        * JPEGs and PNGs were always marked as transparent; now they are only
+          marked as transparent when they actually are.  I doubt this has much
+          of an effect but in theory it could be used to optimize their display.
+        * Instead of arbitrarily disallowing images over 32 * 1024 * 1024 px^2,
+          only disallow images which are so large they will cause overflow in
+          other parts of the code.  This should fix the testcase on
+          http://code.google.com/p/chromium/issues/detail?id=3643.
+
+        * platform/image-decoders/skia/BMPImageReader.h:
+        (WebCore::BMPImageReader::setRGBA): Use simpler non-static setRGBA() form
+        * platform/image-decoders/skia/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::initFrameBuffer): Remove unneeded code, use more readable setRGBA() form
+        (WebCore::GIFImageDecoder::haveDecodedRow): Fix style violation
+        * platform/image-decoders/skia/GIFImageDecoder.h: Remove unneeded code
+        * platform/image-decoders/skia/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::setSize): setSize() should just setStatus() when it fails since all callers were doing it
+        (WebCore::ImageDecoder::isOverSize): Ease "oversized" image constraints to allow any image that won't overflow
+        * platform/image-decoders/skia/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::outputScanlines): Remove unneeded code, mark JPEGs as non-transparent
+        * platform/image-decoders/skia/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::decodingFailed): Fix style violation
+        (WebCore::PNGImageDecoder::rowAvailable): Mark un-decoded PNGs as non-transparent (this will get reset later as needed)
+        * platform/image-decoders/skia/XBMImageDecoder.cpp:
+        (WebCore::XBMImageDecoder::frameBufferAtIndex): Remove unneeded code
+
 2009-06-09  Darin Fisher  <darin@chromium.org>
 
         Fix Chromium build bustage.
