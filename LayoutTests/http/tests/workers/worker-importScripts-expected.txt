@@ -4,6 +4,8 @@ Test started.
 PASS: importScripts(), exists, is a function, and doesn't throw when not given any arguments
 Loaded message from different origin
 PASS: executed script from different origin
+Loaded message from different origin
+PASS: executed script from different origin through a redirect
 Testing single argument:
 Loaded resource 1
 PASS: loaded first source

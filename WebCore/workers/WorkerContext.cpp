@@ -42,12 +42,12 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
-#include "ThreadableLoader.h"
 #include "WorkerImportScriptsClient.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
+#include "WorkerThreadableLoader.h"
 #include "XMLHttpRequestException.h"
 #include <wtf/RefPtr.h>
 
@@ -278,7 +278,7 @@ void WorkerContext::importScripts(const Vector<String>& urls, const String& call
         request.setHTTPMethod("GET");
         request.setHTTPOrigin(securityOrigin);
         WorkerImportScriptsClient client(scriptExecutionContext(), *it, callerURL, callerLine);
-        ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, client, AllowStoredCredentials);
+        WorkerThreadableLoader::loadResourceSynchronously(this, request, client, AllowStoredCredentials, AllowDifferentRedirectOrigin);
         
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
         if (client.failed()) {

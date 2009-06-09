@@ -45,7 +45,7 @@ namespace WebCore {
     class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private SubresourceLoaderClient  {
     public:
         static void loadResourceSynchronously(Document*, const ResourceRequest&, ThreadableLoaderClient&, StoredCredentials);
-        static PassRefPtr<DocumentThreadableLoader> create(Document*, ThreadableLoaderClient*, const ResourceRequest&, LoadCallbacks, ContentSniff, StoredCredentials);
+        static PassRefPtr<DocumentThreadableLoader> create(Document*, ThreadableLoaderClient*, const ResourceRequest&, LoadCallbacks, ContentSniff, StoredCredentials, RedirectOriginCheck);
         virtual ~DocumentThreadableLoader();
 
         virtual void cancel();
@@ -58,7 +58,7 @@ namespace WebCore {
         virtual void derefThreadableLoader() { deref(); }
 
     private:
-        DocumentThreadableLoader(Document*, ThreadableLoaderClient*, const ResourceRequest&, LoadCallbacks, ContentSniff, StoredCredentials);
+        DocumentThreadableLoader(Document*, ThreadableLoaderClient*, const ResourceRequest&, LoadCallbacks, ContentSniff, StoredCredentials, RedirectOriginCheck);
         virtual void willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
         virtual void didSendData(SubresourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
 
@@ -76,6 +76,7 @@ namespace WebCore {
         Document* m_document;
         bool m_allowStoredCredentials;
         bool m_sameOriginRequest;
+        bool m_checkRedirectOrigin;
     };
 
 } // namespace WebCore

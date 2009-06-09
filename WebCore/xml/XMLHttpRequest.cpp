@@ -674,7 +674,7 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
     if (m_upload)
         request.setReportUploadProgress(true);
 
-    m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, callbacks, DoNotSniffContent, storedCredentials);
+    m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, callbacks, DoNotSniffContent, storedCredentials, RequireSameRedirectOrigin);
 
     if (m_loader) {
         // Neither this object nor the JavaScript wrapper should be deleted while

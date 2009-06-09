@@ -7,6 +7,7 @@ postMessage("PASS: importScripts(), exists, is a function, and doesn't throw whe
 var source1 = "worker-importScripts-source1.js";
 var source2 = "worker-importScripts-source2.js";
 var differentOrigin = "http://localhost:8000/workers/resources/worker-importScripts-differentOrigin.js";
+var differentRedirectOrigin = "/resources/redirect.php?url=http://localhost:8000/workers/resources/worker-importScripts-differentOrigin.js";
 var syntaxErrorSource = "worker-importScripts-syntaxError.js";
 var fakeSource = "nonexistant";
 var loadedSource1 = false;
@@ -26,6 +27,18 @@ try {
 }
 if (differentOriginLoaded)
     postMessage("PASS: executed script from different origin");
+
+resetLoadFlags();
+
+try {
+    importScripts(differentRedirectOrigin)
+} catch(e) {
+    postMessage("FAIL: Threw " + e + " when attempting load from different origin through a redirect");
+}
+if (differentOriginLoaded)
+    postMessage("PASS: executed script from different origin through a redirect");
+else
+    postMessage("FAIL: did not load script from different origin through a redirect");
 
 resetLoadFlags();
 

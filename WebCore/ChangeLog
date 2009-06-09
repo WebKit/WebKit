@@ -1,3 +1,38 @@
+2009-06-09  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Bug 26196: Fix the problem that worker's importScripts fails if the
+        script URL is redirected from different origin.
+        https://bugs.webkit.org/show_bug.cgi?id=26196
+
+        Test: http/tests/workers/worker-importScripts.html
+
+        The fix is to pass an additional enum parameter to the loader in
+        order to tell it to perform the redirect origin check or not.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::create):
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::willSendRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create):
+        (WebCore::ThreadableLoader::loadResourceSynchronously):
+        * loader/ThreadableLoader.h:
+        (WebCore::):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::create):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScripts):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+
 2009-06-09  Anand K. Mistry  <amistry@google.com>
 
         Reviewed by Dimitri Glazkov.

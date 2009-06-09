@@ -40,18 +40,18 @@
 
 namespace WebCore {
 
-PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials) 
+PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials, RedirectOriginCheck redirectOriginCheck) 
 {
     ASSERT(client);
     ASSERT(context);
 
 #if ENABLE(WORKERS)
     if (context->isWorkerContext())
-        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, WorkerRunLoop::defaultMode(), request, callbacksSetting, contentSniff, storedCredentials);
+        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, WorkerRunLoop::defaultMode(), request, callbacksSetting, contentSniff, storedCredentials, redirectOriginCheck);
 #endif // ENABLE(WORKERS)
 
     ASSERT(context->isDocument());
-    return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, callbacksSetting, contentSniff, storedCredentials);
+    return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, callbacksSetting, contentSniff, storedCredentials, redirectOriginCheck);
 }
 
 void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client, StoredCredentials storedCredentials)
@@ -60,7 +60,7 @@ void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context
 
 #if ENABLE(WORKERS)
     if (context->isWorkerContext()) {
-        WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(context), request, client, storedCredentials);
+        WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(context), request, client, storedCredentials, RequireSameRedirectOrigin);
         return;
     }
 #endif // ENABLE(WORKERS)
