@@ -40,6 +40,8 @@ private
 
     BINARY_FILE_MARKER_FORMAT = /^(?:Cannot display: file marked as a binary type.)|(?:GIT binary patch)$/
 
+    IMAGE_FILE_MARKER_FORMAT = /^svn:mime-type = image\/png$/
+
     START_OF_SECTION_FORMAT = /^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@\s*(.*)/
 
     START_OF_EXTENT_STRING = "%c" % 0
@@ -142,6 +144,10 @@ h1 :hover {
     white-space: pre-wrap;
 }
 
+.image {
+    border: 2px solid black;
+}
+
 .context, .context .lineNumber {
     color: #849;
     background-color: #fef;
@@ -191,17 +197,25 @@ EOF
                     break
                 when BINARY_FILE_MARKER_FORMAT
                     @binary = true
+                    if (IMAGE_FILE_MARKER_FORMAT.match(lines[i + 1])) then
+                        @image = true
+                        startOfSections = i + 2
+                    end
                     break
                 end
             end
-            @sections = DiffSection.parse(lines[startOfSections...lines.length]) unless @binary
+            lines_with_contents = lines[startOfSections...lines.length]
+            @sections = DiffSection.parse(lines_with_contents) unless @binary
+            @image_url = "data:image/png;base64," + lines_with_contents.join if @image
             nil
         end
 
         def to_html
             str = "<div class='FileDiff'>\n"
             str += "<h1>#{PrettyPatch.linkifyFilename(@filename)}</h1>\n"
-            if @binary then
+            if @image then
+                str += "<img class='image' src='" + @image_url + "' />"
+            elsif @binary then
                 str += "<span class='text'>Binary file, nothing to see here</span>"
             else
                 str += @sections.collect{ |section| section.to_html }.join("<br>\n") unless @sections.nil?

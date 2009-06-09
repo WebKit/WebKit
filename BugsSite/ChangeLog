@@ -1,3 +1,15 @@
+2009-06-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add support for displaying added png files in PrettyPatch diffs
+        https://bugs.webkit.org/show_bug.cgi?id=26210
+
+        Currently this is SVN only (git-send-bugzilla patches exclude binary data)
+        and only works for PNG files but could easily be made to work for other images as needed.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2009-05-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.
