@@ -2326,7 +2326,8 @@ void tst_QWebFrame::hitTestContent()
     page.setViewportSize(QSize(200, 0)); //no height so link is not visible
     QWebHitTestResult result = frame->hitTestContent(QPoint(10, 100));
     QCOMPARE(result.linkText(), QString("link text"));
-    QCOMPARE(result.linkTarget(), QString("_foo"));
+    QWebElement link = result.linkElement();
+    QCOMPARE(link.attribute("target"), QString("_foo"));
 }
 
 void tst_QWebFrame::jsByteArray()

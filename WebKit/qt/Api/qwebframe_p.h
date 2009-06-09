@@ -107,7 +107,7 @@ public:
     QUrl linkUrl;
     QString linkTitle;
     QPointer<QWebFrame> linkTargetFrame;
-    QString linkTarget;
+    QWebElement linkElement;
     QString alternateText;
     QUrl imageUrl;
     QPixmap pixmap;

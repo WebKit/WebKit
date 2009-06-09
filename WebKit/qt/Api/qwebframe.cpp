@@ -1267,9 +1267,7 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
     WebCore::Frame *wframe = hitTest.targetFrame();
     if (wframe)
         linkTargetFrame = QWebFramePrivate::kit(wframe);
-    Element* urlElement = hitTest.URLElement();
-    if (urlElement)
-        linkTarget = urlElement->target();
+    linkElement = QWebElement(hitTest.URLElement());
 
     isContentEditable = hitTest.isContentEditable();
     isContentSelected = hitTest.isSelected();
@@ -1412,21 +1410,21 @@ QUrl QWebHitTestResult::linkTitle() const
 
 /*!
   \since 4.6
-  Returns the name of the target frame that will load the link if it is activated.
+  Returns the element that represents the link.
 
   \sa linkTargetFrame()
 */
-QString QWebHitTestResult::linkTarget() const
+QWebElement QWebHitTestResult::linkElement() const
 {
     if (!d)
-        return 0;
-    return d->linkTarget;
+        return QWebElement();
+    return d->linkElement;
 }
 
 /*!
     Returns the frame that will load the link if it is activated.
 
-    \sa linkTarget()
+    \sa linkElement()
 */
 QWebFrame *QWebHitTestResult::linkTargetFrame() const
 {
