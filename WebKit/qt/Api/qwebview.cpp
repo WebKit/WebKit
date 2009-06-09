@@ -249,7 +249,7 @@ void QWebView::setPage(QWebPage *page)
 }
 
 /*!
-    Returns a valid URL from a user supplied string if one can be deducted.
+    Returns a valid URL from a user supplied \a string if one can be deducted.
     In the case that is not possible, an invalid QUrl() is returned.
 
     \since 4.6
