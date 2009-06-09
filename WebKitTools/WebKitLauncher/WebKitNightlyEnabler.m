@@ -128,8 +128,33 @@ NSBundle *webKitLauncherBundle()
     return [NSBundle bundleWithPath:appPath];
 }
 
+static BOOL insideSafariOnTigerTrampoline()
+{
+    SInt32 version;
+    if (Gestalt(gestaltSystemVersion, &version) != noErr)
+        return NO;
+
+    // If we're not on Tiger then we can't be in the trampoline state.
+    if ((version & 0xFFF0) != 0x1040)
+        return NO;
+
+    const char* frameworkPath = getenv("DYLD_FRAMEWORK_PATH");
+    if (!frameworkPath)
+        frameworkPath = "";
+
+    // If the framework search path is empty or otherwise does not contain the Safari
+    // framework's Frameworks directory then we are in the trampoline state.
+    const char safariFrameworkSearchPath[] = "/System/Library/PrivateFrameworks/Safari.framework/Frameworks";
+    return strstr(frameworkPath, safariFrameworkSearchPath) == 0;
+}
+
 static void enableWebKitNightlyBehaviour()
 {
+    // If we're inside Safari in its trampoline state, it will very shortly relaunch itself.
+    // We bail out here so that we'll be called again in the freshly-launched Safari process.
+    if (insideSafariOnTigerTrampoline())
+        return;
+
     unsetenv("DYLD_INSERT_LIBRARIES");
     poseAsWebKitApp();
 

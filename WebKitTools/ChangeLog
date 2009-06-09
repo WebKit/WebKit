@@ -1,3 +1,17 @@
+2009-06-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=24642>.
+        Bug 24642: REGRESSION: Nightly builds sometimes erroneously display a message about failing to launch successfully
+
+        Safari 4 on Tiger plays some shenanigans during launch that can confuse the nightly launcher application
+        in to running its initialization code too soon.
+
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (insideSafariOnTigerTrampoline): Detect these shenanigans.
+        (enableWebKitNightlyBehaviour): Delay initialization when needed.
+
 2009-06-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Antti Koivisto
