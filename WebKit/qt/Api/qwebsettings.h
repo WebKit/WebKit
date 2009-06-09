@@ -64,7 +64,7 @@ public:
         OfflineStorageDatabaseEnabled,
         OfflineWebApplicationCacheEnabled,
         LocalStorageDatabaseEnabled,
-        AllowUniversalAccessFromFileUrls
+        LocalContentCanAccessRemoteUrls
     };
     enum WebGraphic {
         MissingImageGraphic,

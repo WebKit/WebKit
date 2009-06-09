@@ -2,6 +2,18 @@
 
         Reviewed by Ariya Hidayat.
 
+        Renamed QWebSettings::AllowUniversalAccessFromFileUrls to
+        LocalContentCanAccessRemoteUrls, as discussed in the API review.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::QWebSettings):
+        * Api/qwebsettings.h:
+
+2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
         Merged useFixedLayout property with fixedLayoutSize and
         renamed the latter to fixedContentsSize.
 
