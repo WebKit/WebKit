@@ -1,3 +1,11 @@
+2009-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        - updated the project after giving Objective-C++ the .mm extension
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2009-06-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Alice Liu.

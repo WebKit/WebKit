@@ -1,3 +1,22 @@
+2009-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        - gave Objective-C++ files the .mm extension
+
+        * Carbon/HIWebView.m: Removed.
+        * Carbon/HIWebView.mm: Copied from WebKit/mac/Carbon/HIWebView.m.
+        * Misc/WebKitNSStringExtras.m: Removed.
+        * Misc/WebKitNSStringExtras.mm: Copied from WebKit/mac/Misc/WebKitNSStringExtras.m.
+        * Misc/WebStringTruncator.m: Removed.
+        * Misc/WebStringTruncator.mm: Copied from WebKit/mac/Misc/WebStringTruncator.m.
+        * WebInspector/WebNodeHighlight.m: Removed.
+        * WebInspector/WebNodeHighlight.mm: Copied from WebKit/mac/WebInspector/WebNodeHighlight.m.
+        * WebInspector/WebNodeHighlightView.m: Removed.
+        * WebInspector/WebNodeHighlightView.mm: Copied from WebKit/mac/WebInspector/WebNodeHighlightView.m.
+        * WebView/WebDynamicScrollBarsView.m: Removed.
+        * WebView/WebDynamicScrollBarsView.mm: Copied from WebKit/mac/WebView/WebDynamicScrollBarsView.m.
+
 2009-06-05  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Mark Rowe.
