@@ -1,6 +1,6 @@
 2009-06-09  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
-        Rubber-stamped by Tor Arne Vestbø.
+        Rubber-stamped by Simon Hausmann.
 
         Fix qdoc warning, function parameter string must be referred.
 
