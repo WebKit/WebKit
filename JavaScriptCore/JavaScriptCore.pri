@@ -110,6 +110,7 @@ SOURCES += \
     runtime/JSVariableObject.cpp \
     runtime/JSActivation.cpp \
     runtime/JSNotAnObject.cpp \
+    runtime/JSONObject.cpp \
     runtime/LiteralParser.cpp \
     runtime/TimeoutChecker.cpp \
     bytecode/CodeBlock.cpp \

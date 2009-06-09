@@ -1,3 +1,22 @@
+2009-06-07  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 26249: Support JSON.stringify
+        <https://bugs.webkit.org/show_bug.cgi?id=26249>
+        
+        Add test coverage for JSON.stringify -- covers use of replacer function,
+        replacer array, no replacer, numeric and string gaps.  Also tests call
+        sequencing (toJSON, toString, replacer functions, and getters).
+
+        * fast/js/JSON-stringify-expected.txt: Added.
+        * fast/js/JSON-stringify.html: Added.
+        * fast/js/resources/JSON-stringify.js: Added.
+        * fast/js/resources/json2-es5-compat.js: Added.
+           Modified version of json2.js to force strict es5 semantics on stringify
+           to allow us to compare our results to the expected without having to 
+           stuff large arbitrary strings into the testcase
+
 2009-06-08  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Antti Koivisto

@@ -1,0 +1,297 @@
+function (jsonObject) {
+        return jsonObject.stringify({get Foo() { return "bar"; }});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({get Foo() { this.foo="wibble"; return "bar"; }});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var count = 0;
+        jsonObject.stringify({get Foo() { count++; return "bar"; }});
+        return count;
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var count = 0;
+        return jsonObject.stringify({get Foo() { count++; delete this.bar; return "bar"; }, bar: "wibble"});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var count = 0;
+        return jsonObject.stringify({a:"1", b:"2", c:"3", 5:4, 4:5, 2:6, 1:7});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        jsonObject.stringify({a:"1", b:"2", c:"3", 5:4, 4:5, 2:6, 1:7}, function(k,v){allString = allString && (typeof k == "string"); return v});
+        return allString;
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        jsonObject.stringify([1,2,3,4,5], function(k,v){allString = allString && (typeof k == "string"); return v});
+        return allString;
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        var array = [];
+        return jsonObject.stringify({a:"1", b:"2", c:"3", 5:4, 4:5, 2:6, 1:7}, array);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        var array = ["a"];
+        return jsonObject.stringify({get a(){return 1;array[1]="b";array[2]="c"}, b:"2", c:"3"}, array);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        var array = [{toString:function(){array[0]='a'; array[1]='c'; array[2]='b'; return 'a'}}];
+        return jsonObject.stringify(simpleObject, array);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        var array = [1,2,3];
+        return jsonObject.stringify({1:'a', 2:'b', 3:'c'}, array);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        var array = ["1","2","3"];
+        return jsonObject.stringify({1:'a', 2:'b', 3:'c'}, array);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        var array = ["1","2","3"];
+        return jsonObject.stringify(simpleArray, array);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(simpleArray, null, "  ");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(simpleArray, null, 4);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(simpleArray, null, "ab");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(simpleArray, null, 4);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(simpleObject, null, "  ");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(simpleObject, null, 4);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(simpleObject, null, "ab");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(simpleObject, null, 4);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(complexArray, null, "  ");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(complexArray, null, 4);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(complexArray, null, "ab");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(complexArray, null, 4);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(complexObject, null, "  ");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(complexObject, null, 4);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(complexObject, null, "ab");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(complexObject, null, 4);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        replaceTracker = "";
+        jsonObject.stringify([1,2,3,,,,4,5,6], replaceFunc);
+        return replaceTracker;
+    }
+PASS tests[i](nativeJSON) is tests[i].expected
+function (jsonObject) {
+        replaceTracker = "";
+        jsonObject.stringify({a:"a", b:"b", c:"c", 3: "d", 2: "e", 1: "f"}, replaceFunc);
+        return replaceTracker;
+    }
+PASS tests[i](nativeJSON) is tests[i].expected
+function (jsonObject) {
+        var count = 0;
+        var array = [{toString:function(){count++; array[0]='a'; array[1]='c'; array[2]='b'; return 'a'}}];
+        jsonObject.stringify(simpleObject, array);
+        return count;
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var allString = true;
+        var array = [{toString:function(){array[0]='a'; array[1]='c'; array[2]='b'; return 'a'}}, 'b', 'c'];
+        return jsonObject.stringify(simpleObject, array);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var count = 0;
+        var array = [{toString:function(){count++; array[0]='a'; array[1]='c'; array[2]='b'; return 'a'}}, 'b', 'c'];
+        jsonObject.stringify(simpleObject, array);
+        return count;
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({a:"1", get b() { this.a="foo"; return "getter"; }, c:"3"});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({a:"1", get b() { this.c="foo"; return "getter"; }, c:"3"});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var setterCalled = false;
+        jsonObject.stringify({a:"1", set b(s) { setterCalled = true; return "setter"; }, c:"3"});
+        return setterCalled;
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({a:"1", get b(){ return "getter"; }, set b(s) { return "setter"; }, c:"3"});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new Array(10));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify([undefined,,null,0,false]);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({p1:undefined,p2:null,p3:0,p4:false});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        cycleTracker = "";
+        return jsonObject.stringify(cyclicObject);
+    }
+PASS tests[i](nativeJSON) threw exception TypeError: Type error.
+function (jsonObject) {
+        cycleTracker = "";
+        try { jsonObject.stringify(cyclicObject); } catch(e) { cycleTracker += " -> exception" }
+        return cycleTracker;
+    }
+PASS tests[i](nativeJSON) is tests[i].expected
+function (jsonObject) {
+        cycleTracker = "";
+        return jsonObject.stringify(cyclicArray);
+    }
+PASS tests[i](nativeJSON) threw exception TypeError: Type error.
+function (jsonObject) {
+        cycleTracker = "";
+        try { jsonObject.stringify(cyclicArray); } catch(e) { cycleTracker += " -> exception" }
+        return cycleTracker;
+    }
+PASS tests[i](nativeJSON) is tests[i].expected
+function (jsonObject) {
+        getterCalls = 0;
+        return jsonObject.stringify(magicObject) + " :: getter calls = " + getterCalls;
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(undefined);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(null);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({toJSON:function(){ return undefined; }});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({toJSON:function(){ return null; }});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify([{toJSON:function(){ return undefined; }}]);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify([{toJSON:function(){ return null; }}]);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({a:{toJSON:function(){ return undefined; }}});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({a:{toJSON:function(){ return null; }}});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var deepObject = {};
+        for (var i = 0; i < 1600; i++)
+            deepObject = {next:deepObject};
+        return jsonObject.stringify(deepObject);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        var deepArray = [];
+        for (var i = 0; i < 1600; i++)
+            deepArray = [deepArray];
+        return jsonObject.stringify(deepArray);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        function toInfiniteJSONObject() {
+            var r = {};
+            r.toJSON = toInfiniteJSONObject;
+            return {recurse: r};
+        }
+        return jsonObject.stringify(toInfiniteJSONObject());
+    }
+PASS tests[i](nativeJSON) threw exception RangeError: Maximum call stack size exceeded..
+function (jsonObject) {
+        function toInfiniteJSONArray() {
+            var r = [];
+            r.toJSON = toInfiniteJSONArray;
+            return [r];
+        }
+        return jsonObject.stringify(toInfiniteJSONArray());
+    }
+PASS tests[i](nativeJSON) threw exception RangeError: Maximum call stack size exceeded..
+function (jsonObject) {
+        return jsonObject.stringify(fullCharsetString);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

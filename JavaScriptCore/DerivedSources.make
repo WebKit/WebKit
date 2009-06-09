@@ -40,6 +40,7 @@ all : \
     chartables.c \
     DatePrototype.lut.h \
     Grammar.cpp \
+    JSONObject.lut.h \
     Lexer.lut.h \
     MathObject.lut.h \
     NumberConstructor.lut.h \
