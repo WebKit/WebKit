@@ -1,3 +1,12 @@
+2009-06-09  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Changing editing/deleting/4866671.html to use a dumpAsText test instead of a pixel test
+        so as to remove the platform dependency.
+
+        * editing/deleting/4866671.html:
+
 2009-06-09  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Oliver Hunt.
