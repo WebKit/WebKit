@@ -213,6 +213,8 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	JavaScriptCore/wtf/CurrentTime.cpp \
 	JavaScriptCore/wtf/CurrentTime.h \
+	JavaScriptCore/wtf/DateMath.cpp \
+	JavaScriptCore/wtf/DateMath.h \
 	JavaScriptCore/wtf/Deque.h \
 	JavaScriptCore/wtf/DisallowCType.h \
 	JavaScriptCore/wtf/Forward.h \
@@ -477,8 +479,6 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
-	JavaScriptCore/wtf/DateMath.cpp \
-	JavaScriptCore/wtf/DateMath.h \
 	JavaScriptCore/wtf/FastAllocBase.h \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/FastMalloc.h \

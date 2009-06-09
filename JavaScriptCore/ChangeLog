@@ -1,3 +1,9 @@
+2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, GTK build fix (thanks, bdash).
+
+        * GNUmakefile.am: Moved DateMath with all other wtf kin.
+
 2009-06-08  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
