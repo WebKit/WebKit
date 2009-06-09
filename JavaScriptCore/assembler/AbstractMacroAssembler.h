@@ -181,17 +181,32 @@ public:
     struct Imm32 {
         explicit Imm32(int32_t value)
             : m_value(value)
+#if PLATFORM(ARM_V7)
+            , m_isPointer(false)
+#endif
         {
         }
 
 #if !PLATFORM(X86_64)
         explicit Imm32(ImmPtr ptr)
             : m_value(ptr.asIntptr())
+#if PLATFORM(ARM_V7)
+            , m_isPointer(true)
+#endif
         {
         }
 #endif
 
         int32_t m_value;
+#if PLATFORM(ARM_V7)
+        // We rely on being able to regenerate code to recover exception handling
+        // information.  Since ARMv7 supports 16-bit immediates there is a danger
+        // that if pointer values change the layout of the generated code will change.
+        // To avoid this problem, always generate pointers (and thus Imm32s constructed
+        // from ImmPtrs) with a code sequence that is able  to represent  any pointer
+        // value - don't use a more compact form in these cases.
+        bool m_isPointer;
+#endif
     };
 
 
@@ -528,7 +543,7 @@ public:
 
         void relink(CodeLocationLabel destination)
         {
-            AssemblerType::relinkJump(this->dataLocation(), destination.executableAddress());
+            AssemblerType::relinkJump(this->dataLocation(), destination.dataLocation());
         }
 
     private:
@@ -786,13 +801,13 @@ public:
         
         void link(Jump jump, CodeLocationLabel label)
         {
-            AssemblerType::linkJump(code(), jump.m_jmp, label.executableAddress());
+            AssemblerType::linkJump(code(), jump.m_jmp, label.dataLocation());
         }
 
         void link(JumpList list, CodeLocationLabel label)
         {
             for (unsigned i = 0; i < list.m_jumps.size(); ++i)
-                AssemblerType::linkJump(code(), list.m_jumps[i].m_jmp, label.executableAddress());
+                AssemblerType::linkJump(code(), list.m_jumps[i].m_jmp, label.dataLocation());
         }
 
         void patch(DataLabelPtr label, void* value)

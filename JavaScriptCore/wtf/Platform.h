@@ -228,6 +228,9 @@
 #define WTF_PLATFORM_FORCE_PACK 1
 #endif
 #endif
+#if defined(__ARM_ARCH_7A__)
+#define WTF_PLATFORM_ARM_V7 1
+#endif
 
 /* PLATFORM(X86) */
 #if   defined(__i386__) \
@@ -555,6 +558,8 @@
 /* YARR supports x86 & x86-64, and has been tested on Mac and Windows. */
 #if (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(MAC)) \
  || (!defined(ENABLE_YARR_JIT) && PLATFORM(X86_64) && PLATFORM(MAC)) \
+ /* Under development, temporarily disabled until 16Mb link range limit in assembler is fixed. */ \
+ || (!defined(ENABLE_YARR_JIT) && PLATFORM(ARM_V7) && PLATFORM(IPHONE) && 0) \
  || (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(WIN))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
@@ -569,7 +574,11 @@
 #endif
 /* Setting this flag prevents the assembler from using RWX memory; this may improve
    security but currectly comes at a significant performance cost. */
+#if PLATFORM(ARM_V7) && PLATFORM(IPHONE)
+#define ENABLE_ASSEMBLER_WX_EXCLUSIVE 1
+#else
 #define ENABLE_ASSEMBLER_WX_EXCLUSIVE 0
+#endif
 
 #if !defined(ENABLE_PAN_SCROLLING) && PLATFORM(WIN_OS)
 #define ENABLE_PAN_SCROLLING 1

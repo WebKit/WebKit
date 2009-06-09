@@ -128,6 +128,8 @@
 		869083160E6518D7000D36ED /* WREC.h in Headers */ = {isa = PBXBuildFile; fileRef = 869083140E6518D7000D36ED /* WREC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 869EBCB60E8C6D4A008722CC /* ResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
+		86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */; };
+		86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */; };
 		86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */; };
 		86CC85A10EE79A4700288682 /* JITInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CC85A00EE79A4700288682 /* JITInlineMethods.h */; };
 		86CC85A30EE79B7400288682 /* JITCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CC85A20EE79B7400288682 /* JITCall.cpp */; };
@@ -627,6 +629,8 @@
 		869083140E6518D7000D36ED /* WREC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WREC.h; sourceTree = "<group>"; };
 		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
+		86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMv7Assembler.h; sourceTree = "<group>"; };
+		86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARMv7.h; sourceTree = "<group>"; };
 		86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssembler.h; sourceTree = "<group>"; };
 		86CC85A00EE79A4700288682 /* JITInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITInlineMethods.h; sourceTree = "<group>"; };
 		86CC85A20EE79B7400288682 /* JITCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCall.cpp; sourceTree = "<group>"; };
@@ -1531,8 +1535,10 @@
 			isa = PBXGroup;
 			children = (
 				860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */,
+				86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */,
 				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
 				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
+				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
 				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */,
 				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
@@ -1840,6 +1846,8 @@
 				960626960FB8EC02009798AB /* JITStubCall.h in Headers */,
 				0BDFFAE00FC6192900D69EF4 /* CrossThreadRefCounted.h in Headers */,
 				0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */,
+				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
+				86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

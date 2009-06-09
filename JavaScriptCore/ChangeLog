@@ -1,3 +1,58 @@
+2009-06-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add (incomplete) support to YARR for running with the jit enabled
+        on Arm thumb2 platforms.  Adds new Assembler/MacroAssembler classes,
+        along with cache flushing support, tweaks to MacroAssemblerCodePtr
+        to support decorated thumb code pointers, and new enter/exit code
+        to YARR jit for the platform.
+
+        Support for this platform is still under development - the assembler
+        currrently only supports planting and linking jumps with a 16Mb range.
+        As such, initially commiting in a disabled state.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            Add new assembler files.
+        * assembler/ARMv7Assembler.h: Added.
+            Add new Assembler.
+        * assembler/AbstractMacroAssembler.h:
+            Tweaks to ensure sizes of pointer values planted in JIT code do not change.
+        * assembler/MacroAssembler.h:
+            On ARMv7 platforms use MacroAssemblerARMv7.
+        * assembler/MacroAssemblerARMv7.h: Added.
+            Add new MacroAssembler.
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::FunctionPtr::FunctionPtr):
+            Add better ASSERT.
+        (JSC::ReturnAddressPtr::ReturnAddressPtr):
+            Add better ASSERT.
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+            On ARMv7, MacroAssemblerCodePtr's mush be 'decorated' with a low bit set,
+            to indicate to the processor that the code is thumb code, not traditional
+            32-bit ARM.
+        (JSC::MacroAssemblerCodePtr::dataLocation):
+            On ARMv7, decoration must be removed.
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::makeWritable):
+            Reformatted, no change.
+        (JSC::ExecutableAllocator::makeExecutable):
+            When marking code executable also cache flush it, where necessary.
+        (JSC::ExecutableAllocator::MakeWritable::MakeWritable):
+            Only use the null implementation of this class if both !ASSEMBLER_WX_EXCLUSIVE
+            and running on x86(_64) - on other platforms we may also need ensure that
+            makeExecutable is called at the end to flush caches.
+        (JSC::ExecutableAllocator::reprotectRegion):
+            Reformatted, no change.
+        (JSC::ExecutableAllocator::cacheFlush):
+            Cache flush a region of memory, or platforms where this is necessary.
+        * wtf/Platform.h:
+            Add changes necessary to allow YARR jit to build on this platform, disabled.
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateEnter):
+        (JSC::Yarr::RegexGenerator::generateReturn):
+            Add support to these methods for ARMv7.
+
 2009-06-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, fix my previous fix.

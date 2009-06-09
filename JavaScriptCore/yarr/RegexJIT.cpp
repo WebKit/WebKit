@@ -43,6 +43,17 @@ namespace JSC { namespace Yarr {
 class RegexGenerator : private MacroAssembler {
     friend void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
+#if PLATFORM(ARM_V7)
+    static const RegisterID input = ARM::r0;
+    static const RegisterID index = ARM::r1;
+    static const RegisterID length = ARM::r2;
+
+    static const RegisterID output = ARM::r4;
+    static const RegisterID regT0 = ARM::r5;
+    static const RegisterID regT1 = ARM::r6;
+
+    static const RegisterID returnRegister = ARM::r0;
+#endif
 #if PLATFORM(X86)
     static const RegisterID input = X86::eax;
     static const RegisterID index = X86::edx;
@@ -1278,34 +1289,47 @@ class RegexGenerator : private MacroAssembler {
 
     void generateEnter()
     {
-        // On x86 edi & esi are callee preserved registers.
+#if PLATFORM(X86_64)
         push(X86::ebp);
         move(stackPointerRegister, X86::ebp);
-#if PLATFORM(X86)
+#elif PLATFORM(X86)
+        push(X86::ebp);
+        move(stackPointerRegister, X86::ebp);
         // TODO: do we need spill registers to fill the output pointer if there are no sub captures?
         push(X86::ebx);
         push(X86::edi);
         push(X86::esi);
         // load output into edi (2 = saved ebp + return address).
-#if COMPILER(MSVC)
+    #if COMPILER(MSVC)
         loadPtr(Address(X86::ebp, 2 * sizeof(void*)), input);
         loadPtr(Address(X86::ebp, 3 * sizeof(void*)), index);
         loadPtr(Address(X86::ebp, 4 * sizeof(void*)), length);
         loadPtr(Address(X86::ebp, 5 * sizeof(void*)), output);
-#else
+    #else
         loadPtr(Address(X86::ebp, 2 * sizeof(void*)), output);
-#endif
+    #endif
+#elif PLATFORM(ARM_V7)
+        push(ARM::r4);
+        push(ARM::r5);
+        push(ARM::r6);
+        move(ARM::r3, output);
 #endif
     }
 
     void generateReturn()
     {
-#if PLATFORM(X86)
+#if PLATFORM(X86_64)
+        pop(X86::ebp);
+#elif PLATFORM(X86)
         pop(X86::esi);
         pop(X86::edi);
         pop(X86::ebx);
-#endif
         pop(X86::ebp);
+#elif PLATFORM(ARM_V7)
+        pop(ARM::r6);
+        pop(ARM::r5);
+        pop(ARM::r4);
+#endif
         ret();
     }
 

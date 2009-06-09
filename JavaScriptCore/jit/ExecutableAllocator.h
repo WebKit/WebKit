@@ -26,12 +26,17 @@
 #ifndef ExecutableAllocator_h
 #define ExecutableAllocator_h
 
+#include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
-#include <limits>
+#if PLATFORM(IPHONE)
+#include <libkern/OSCacheControl.h>
+#include <sys/mman.h>
+#endif
 
 #define JIT_ALLOCATOR_PAGE_SIZE (ExecutableAllocator::pageSize)
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (ExecutableAllocator::pageSize * 4)
@@ -151,10 +156,23 @@ public:
         return pool.release();
     }
 
-#if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
-    static void makeWritable(void* start, size_t size) { reprotectRegion(start, size, Writable); }
-    static void makeExecutable(void* start, size_t size) { reprotectRegion(start, size, Executable); }
+    static void makeWritable(void* start, size_t size)
+    {
+        reprotectRegion(start, size, Writable);
+    }
 
+    static void makeExecutable(void* start, size_t size)
+    {
+        reprotectRegion(start, size, Executable);
+        cacheFlush(start, size);
+    }
+
+#if !ENABLE(ASSEMBLER_WX_EXCLUSIVE) && (PLATFORM(X86) || PLATFORM(X86_64))
+    // If ASSEMBLER_WX_EXCLUSIVE protection is turned off, and if we're running
+    // on x86, then MakeWritable has nothing to do.  On non-x86 platforms we need
+    // to track start & size so we can cache-flush at the end.
+    class MakeWritable { public: MakeWritable(void*, size_t) {} };
+#else
     class MakeWritable {
     public:
         MakeWritable(void* start, size_t size)
@@ -173,17 +191,28 @@ public:
         void* m_start;
         size_t m_size;
     };
-#else
-    static void makeWritable(void*, size_t) {}
-    static void makeExecutable(void*, size_t) {}
-    class MakeWritable { public: MakeWritable(void*, size_t) {} };
 #endif
 
 private:
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
     static void reprotectRegion(void*, size_t, ProtectionSeting);
+#else
+    static void reprotectRegion(void*, size_t, ProtectionSeting) {}
 #endif
+
+   static void cacheFlush(void* code, size_t size)
+    {
+#if PLATFORM(X86) || PLATFORM(X86_64)
+        UNUSED_PARAM(code);
+        UNUSED_PARAM(size);
+#elif PLATFORM(ARM_V7) && PLATFORM(IPHONE)
+        sys_dcache_flush(code, size);
+        sys_icache_invalidate(code, size);
+#else
+#error "ExecutableAllocator::cacheFlush not implemented on this platform."
+#endif
+    }
 
     RefPtr<ExecutablePool> m_smallAllocationPool;
     static void intializePageSize();

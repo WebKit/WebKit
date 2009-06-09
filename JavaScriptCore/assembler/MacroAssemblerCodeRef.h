@@ -35,6 +35,22 @@
 
 #if ENABLE(ASSEMBLER)
 
+// ASSERT_VALID_CODE_POINTER checks that ptr is a non-null pointer, and that it is a valid
+// instruction address on the platform (for example, check any alignment requirements).
+#if PLATFORM(ARM_V7)
+// ARM/thumb instructions must be 16-bit aligned, but all code pointers to be loaded
+// into the processor are decorated with the bottom bit set, indicating that this is
+// thumb code (as oposed to 32-bit traditional ARM).  The first test checks for both
+// decorated and undectorated null, and the second test ensures that the pointer is
+// decorated.
+#define ASSERT_VALID_CODE_POINTER(ptr) \
+    ASSERT(reinterpret_cast<intptr_t>(ptr) & ~1); \
+    ASSERT(reinterpret_cast<intptr_t>(ptr) & 1)
+#else
+#define ASSERT_VALID_CODE_POINTER(ptr) \
+    ASSERT(ptr)
+#endif
+
 namespace JSC {
 
 // FunctionPtr:
@@ -52,7 +68,7 @@ public:
     explicit FunctionPtr(FunctionType* value)
         : m_value(reinterpret_cast<void*>(value))
     {
-        ASSERT(m_value);
+        ASSERT_VALID_CODE_POINTER(m_value);
     }
 
     void* value() const { return m_value; }
@@ -79,7 +95,7 @@ public:
     explicit ReturnAddressPtr(void* value)
         : m_value(value)
     {
-        ASSERT(m_value);
+        ASSERT_VALID_CODE_POINTER(m_value);
     }
 
     void* value() const { return m_value; }
@@ -99,19 +115,29 @@ public:
     }
 
     explicit MacroAssemblerCodePtr(void* value)
+#if PLATFORM(ARM_V7)
+        // Decorate the pointer as a thumb code pointer.
+        : m_value(reinterpret_cast<char*>(value) + 1)
+#else
         : m_value(value)
+#endif
     {
-        ASSERT(m_value);
+        ASSERT_VALID_CODE_POINTER(m_value);
     }
 
     explicit MacroAssemblerCodePtr(ReturnAddressPtr ra)
         : m_value(ra.value())
     {
-        ASSERT(m_value);
+        ASSERT_VALID_CODE_POINTER(m_value);
     }
 
     void* executableAddress() const { return m_value; }
-    void* dataLocation() const { ASSERT(m_value); return m_value; }
+#if PLATFORM(ARM_V7)
+    // To use this pointer as a data address remove the decoration.
+    void* dataLocation() const { ASSERT_VALID_CODE_POINTER(m_value); return reinterpret_cast<char*>(m_value) - 1; }
+#else
+    void* dataLocation() const { ASSERT_VALID_CODE_POINTER(m_value); return m_value; }
+#endif
 
 private:
     void* m_value;
