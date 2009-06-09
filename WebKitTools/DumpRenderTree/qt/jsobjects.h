@@ -94,6 +94,7 @@ public slots:
     bool pauseAnimationAtTimeOnElementWithId(const QString &animationName, double time, const QString &elementId);
     bool pauseTransitionAtTimeOnElementWithId(const QString &propertyName, double time, const QString &elementId);
     unsigned numberOfActiveAnimations() const;
+    void dispatchPendingLoadRequests();
 
 private slots:
     void processWork();

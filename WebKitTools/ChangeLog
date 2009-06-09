@@ -1,3 +1,9 @@
+2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build, add missing function declaration.
+
+        * DumpRenderTree/qt/jsobjects.h:
+
 2009-06-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.
