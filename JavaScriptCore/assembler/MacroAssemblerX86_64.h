@@ -444,6 +444,8 @@ public:
     }
 
     bool supportsFloatingPoint() const { return true; }
+    // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
+    bool supportsFloatingPointTruncate() const { return true; }
 };
 
 } // namespace JSC

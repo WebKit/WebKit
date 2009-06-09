@@ -116,7 +116,7 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
 #endif
     } else {
         emitGetVirtualRegisters(op1, regT0, op2, regT2);
-        if (supportsFloatingPoint()) {
+        if (supportsFloatingPointTruncate()) {
             Jump lhsIsInt = emitJumpIfImmediateInteger(regT0);
 #if USE(ALTERNATE_JSIMMEDIATE)
             // supportsFloatingPoint() && USE(ALTERNATE_JSIMMEDIATE) => 3 SlowCases
@@ -171,7 +171,7 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
         stubCall.addArgument(regT0);
         stubCall.addArgument(op2, regT2);
     } else {
-        if (supportsFloatingPoint()) {
+        if (supportsFloatingPointTruncate()) {
 #if USE(ALTERNATE_JSIMMEDIATE)
             linkSlowCase(iter);
             linkSlowCase(iter);

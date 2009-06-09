@@ -524,7 +524,6 @@
     #define ENABLE_JIT 0
     #define ENABLE_JIT_OPTIMIZE_CALL 0
     #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
-    #define ENABLE_JIT_OPTIMIZE_ARITHMETIC 0
     #define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 0
 /* The JIT is tested & working on x86 Windows */
 #elif PLATFORM(X86) && PLATFORM(WIN)

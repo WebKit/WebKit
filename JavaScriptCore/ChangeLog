@@ -1,5 +1,43 @@
 2009-06-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Enable JIT_OPTIMIZE_ARITHMETIC on ARMv7 platforms.
+
+        Temporarily split support for 'branchTruncateDoubleToInt32' onto its own switch
+        ('supportsFloatingPointTruncate').  See comment in MacroAssemblerARMv7, we need
+        to work out wherther we are going to be able to support the current interface on
+        all platforms, or whether this should be refactored.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::supportsFloatingPoint):
+            Add implementation of supportsFloatingPointTruncate (returns true).
+        (JSC::MacroAssemblerARMv7::supportsFloatingPointTruncate):
+            Add implementation of supportsFloatingPointTruncate (returns false).
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::storeDouble):
+        (JSC::MacroAssemblerARMv7::addDouble):
+        (JSC::MacroAssemblerARMv7::subDouble):
+        (JSC::MacroAssemblerARMv7::mulDouble):
+        (JSC::MacroAssemblerARMv7::convertInt32ToDouble):
+        (JSC::MacroAssemblerARMv7::branchDouble):
+            Implement FP code genertion operations.
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::supportsFloatingPointTruncate):
+            Add implementation of supportsFloatingPointTruncate (returns true).
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::supportsFloatingPointTruncate):
+            Add implementation of supportsFloatingPointTruncate (returns true).
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_rshift):
+            Changed to call supportsFloatingPointTruncate().
+        (JSC::JIT::emitSlow_op_rshift):
+            Changed to call supportsFloatingPointTruncate().
+        * wtf/Platform.h:
+            Change to enable JIT_OPTIMIZE_ARITHMETIC.
+
+2009-06-09  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Mark Rowe & Geoff Garen.
 
         Enable JIT_OPTIMIZE_PROPERTY_ACCESS on ARMv7 platforms.
