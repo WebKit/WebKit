@@ -14,6 +14,23 @@
         (webkit_accessible_text_get_text_after_offset):
         (webkit_accessible_text_get_text_at_offset):
 
+2009-06-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        Pass a PangoLayout to the GailTextUtil function calls.
+
+        It's needed for LINE boundary calls to work correctly.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (updateLayout):
+        (getPangoLayoutForAtk):
+        (webkit_accessible_text_get_text_after_offset):
+        (webkit_accessible_text_get_text_at_offset):
+
 2009-06-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix: include <stdio.h> as it is required in jpeglib.h

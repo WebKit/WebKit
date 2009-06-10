@@ -41,6 +41,7 @@
 #include "Editor.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HostWindow.h"
 #include "HTMLNames.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
@@ -503,19 +504,58 @@ static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
     return gailTextUtil;
 }
 
+// We can use the same callback for both 'style-set' and
+// 'direction-changed', since we don't care about neither of their
+// second parameters.
+static void updateLayout(GtkWidget* widget, gpointer dummy, gpointer userData)
+{
+   gpointer data = g_object_get_data(G_OBJECT(userData), "webkit-accessible-pango-layout");
+   if (!data)
+       return;
+
+   pango_layout_context_changed(static_cast<PangoLayout*>(data));
+}
+
+static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
+{
+    gpointer data = g_object_get_data(G_OBJECT(textObject), "webkit-accessible-pango-layout");
+    if (data)
+        return static_cast<PangoLayout*>(data);
+
+    String text;
+    AccessibilityObject* coreObject = core(textObject);
+
+    if (coreObject->isTextControl())
+        text = coreObject->text();
+    else
+        text = coreObject->textUnderElement();
+
+    HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
+    if (!hostWindow)
+        return 0;
+    PlatformWidget webView = hostWindow->platformWindow();
+    if (!webView)
+        return 0;
+    g_signal_connect(webView, "style-set", G_CALLBACK(updateLayout), textObject);
+    g_signal_connect(webView, "direction-changed", G_CALLBACK(updateLayout), textObject);
+    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), text.utf8().data());
+    g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-pango-layout", layout, g_object_unref);
+    return layout;
+}
+
 static gchar* webkit_accessible_text_get_text_after_offset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
-    return gail_text_util_get_text(getGailTextUtilForAtk(text), NULL, GAIL_AFTER_OFFSET, boundaryType, offset, startOffset, endOffset);
+    return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AFTER_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
 static gchar* webkit_accessible_text_get_text_at_offset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
-    return gail_text_util_get_text(getGailTextUtilForAtk(text), NULL, GAIL_AT_OFFSET, boundaryType, offset, startOffset, endOffset);
+    return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AT_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
 static gchar* webkit_accessible_text_get_text_before_offset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
-    return gail_text_util_get_text(getGailTextUtilForAtk(text), NULL, GAIL_BEFORE_OFFSET, boundaryType, offset, startOffset, endOffset);
+    return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_BEFORE_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
 static gunichar webkit_accessible_text_get_character_at_offset(AtkText* text, gint offset)
