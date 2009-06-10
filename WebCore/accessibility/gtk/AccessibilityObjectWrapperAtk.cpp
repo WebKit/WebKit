@@ -377,8 +377,7 @@ static void webkit_accessible_finalize(GObject* object)
     // This is a good time to clear the return buffer.
     returnString(String());
 
-    if (G_OBJECT_CLASS(webkit_accessible_parent_class)->finalize)
-        G_OBJECT_CLASS(webkit_accessible_parent_class)->finalize(object);
+    G_OBJECT_CLASS(webkit_accessible_parent_class)->finalize(object);
 }
 
 static void webkit_accessible_class_init(AtkObjectClass* klass)

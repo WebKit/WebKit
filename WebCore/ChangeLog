@@ -1,3 +1,13 @@
+2009-06-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Do not check if our parent class has the finalize method, it's
+        guaranteed to be there.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_finalize):
+
 2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Build correct for Windows Cairo targets.
