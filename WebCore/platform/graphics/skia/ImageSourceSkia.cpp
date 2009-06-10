@@ -185,9 +185,8 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
         return 0;
 
     // Copy the bitmap.  The pixel data is refcounted internally by SkBitmap, so
-    // this doesn't cost much.  This pointer will be owned by the BitmapImage
-    // and freed in FrameData::clear().
-    return new NativeImageSkia(buffer->bitmap());
+    // this doesn't cost much.  
+    return buffer->asNewNativeImage();
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)

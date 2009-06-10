@@ -1,3 +1,28 @@
+2009-06-10  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part five
+        Rewrite users of ImageDecoder.h to use "safe" API calls, Skia side.
+        This tweaks the RGBA32Buffer interfaces to be implementable by Cairo as
+        well and modifies Skia's usage of those interfaces accordingly.  Once a
+        similar change lands on the Cairo side, the Skia and Cairo decoders
+        should be identical except for the implementation of RGBA32Buffer.
+
+        * platform/graphics/skia/ImageSourceSkia.cpp:
+        (WebCore::ImageSource::createFrameAtIndex): Use new RGBA32Buffer::asNewNativeImage() function.
+        * platform/image-decoders/skia/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::processNonRLEData): Use new RGBA32Buffer::zeroFill() function.
+        * platform/image-decoders/skia/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow): Rewrite to use RGBA32Buffer::setRGBA(x, y, ...) calls as well as other RGBA32Buffer interface calls instead of knowing the underlying types inside the buffer; also try and add clarity.
+        * platform/image-decoders/skia/ImageDecoder.h: Removed bitmap(), width(), and height().
+        (WebCore::RGBA32Buffer::zeroFill): Added.
+        (WebCore::RGBA32Buffer::copyBitmapData): Avoid using bitmap(), which is going away.
+        (WebCore::RGBA32Buffer::copyRowNTimes): Added.
+        (WebCore::RGBA32Buffer::setSize): Use new zeroFill() function.
+        (WebCore::RGBA32Buffer::asNewNativeImage): Added.
+        (WebCore::RGBA32Buffer::setRGBA): Condensed two versions into one that takes coordinates instead of a raw pointer.
+
 2009-06-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

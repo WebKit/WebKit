@@ -105,6 +105,11 @@ namespace WebCore {
             // other metadata out of this frame later.
         }
 
+        void zeroFill()
+        {
+            m_bitmap.eraseARGB(0, 0, 0, 0);
+        }
+
         // This function creates a new copy of the image data in |other|, so the
         // two images can be modified independently.
         void copyBitmapData(const RGBA32Buffer& other)
@@ -113,12 +118,26 @@ namespace WebCore {
                 return;
 
             m_bitmap.reset();
-            const NativeImageSkia& otherBitmap = other.bitmap();
+            const NativeImageSkia& otherBitmap = other.m_bitmap;
             otherBitmap.copyTo(&m_bitmap, otherBitmap.config());
         }
 
-        NativeImageSkia& bitmap() { return m_bitmap; }
-        const NativeImageSkia& bitmap() const { return m_bitmap; }
+        // This function copies [(startX, startY), (endX, startY)) to the same
+        // X-coordinates on each subsequent row up to but not including endY.
+        //
+        // NOTE: This function does not sanity-check its arguments!  Callers
+        // MUST not pass invalid values or this will corrupt memory.
+        void copyRowNTimes(int startX, int endX, int startY, int endY)
+        {
+            ASSERT(startX < m_bitmap.width());
+            ASSERT(endX <= m_bitmap.width());
+            ASSERT(startY < m_bitmap.height());
+            ASSERT(endY <= m_bitmap.height());
+            const int rowBytes = (endX - startX) * sizeof uint32_t;
+            const uint32_t* const startAddr = m_bitmap.getAddr32(startX, startY);
+            for (int destY = startY + 1; destY < endY; ++destY)
+                memcpy(m_bitmap.getAddr32(startX, destY), startAddr, rowBytes);
+        }
 
         // Must be called before any pixels are written. Will return true on
         // success, false if the memory allocation fails.
@@ -134,14 +153,19 @@ namespace WebCore {
                 return false;
             }
 
-            // Clear the image.
-            m_bitmap.eraseARGB(0, 0, 0, 0);
+            // Zero the image.
+            zeroFill();
 
             return true;
         }
 
-        int width() const { return m_bitmap.width(); }
-        int height() const { return m_bitmap.height(); }
+        // To be used by ImageSource::createFrameAtIndex().  Returns a pointer
+        // to the underlying native image data.  This pointer will be owned by
+        // the BitmapImage and freed in FrameData::clear().
+        NativeImagePtr asNewNativeImage()
+        {
+            return new NativeImageSkia(m_bitmap);
+        }
 
         const IntRect& rect() const { return m_rect; }
         FrameStatus status() const { return m_status; }
@@ -160,8 +184,10 @@ namespace WebCore {
         void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
         void setHasAlpha(bool alpha) { m_bitmap.setIsOpaque(!alpha); }
 
-        static void setRGBA(uint32_t* dest, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        void setRGBA(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
         {
+            uint32_t* const dest = m_bitmap.getAddr32(x, y);
+
             // We store this data pre-multiplied.
             if (a == 0)
                 *dest = 0;
@@ -174,11 +200,6 @@ namespace WebCore {
                 }
                 *dest = (a << 24 | r << 16 | g << 8 | b);
             }
-        }
-
-        void setRGBA(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-        {
-            setRGBA(m_bitmap.getAddr32(x, y), r, g, b, a);
         }
 
     private:
