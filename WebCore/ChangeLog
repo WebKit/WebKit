@@ -1,3 +1,20 @@
+2009-06-10  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Justin Garcia.
+
+        Bug 26214: RenderTextControl: Remove ASSERT for checking that visiblePositionForIndex()'s return is not null.
+        https://bugs.webkit.org/show_bug.cgi?id=26214
+
+        visiblePositionForIndex can return an instance that returns true for
+        isNotNull(). One of common case is when the corresponding input element has
+        "-webkit-user-select: none" style attribute. We should allow the case instead
+        of putting ASSERT.
+
+        Test: fast/forms/input-select-webkit-user-select-none.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setSelectionRange):
+
 2009-06-10  Roland Steiner <rolandsteiner@google.com>
 
         Reviewed by Eric Seidel.

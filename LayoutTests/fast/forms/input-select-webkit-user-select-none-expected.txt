@@ -1,0 +1,5 @@
+Tests behavior of select() in case "-webkit-user-select: none" attribute is specified to the input element. The field should not be selected.
+
+
+
+PASS

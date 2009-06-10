@@ -248,9 +248,11 @@ void RenderTextControl::setSelectionRange(int start, int end)
     else
         endPosition = visiblePositionForIndex(end);
 
-    ASSERT(startPosition.isNotNull() && endPosition.isNotNull());
-    ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
-
+    // startPosition and endPosition can be null position for example when
+    // "-webkit-user-select: none" style attribute is specified.
+    if (startPosition.isNotNull() && endPosition.isNotNull()) {
+        ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
+    }
     VisibleSelection newSelection = VisibleSelection(startPosition, endPosition);
 
     if (Frame* frame = document()->frame())
