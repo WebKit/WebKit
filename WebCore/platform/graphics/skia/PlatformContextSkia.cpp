@@ -170,7 +170,6 @@ SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
 // Danger: canvas can be NULL.
 PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
     : m_canvas(canvas)
-    , m_stateStack(sizeof(State))
 #if PLATFORM(WIN_OS)
     , m_drawingToImageBuffer(false)
 #endif

@@ -1,3 +1,25 @@
+2009-06-10  Roland Steiner <rolandsteiner@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 26197: Incorrect variable initialization in PlatformContextSkia.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=26197
+
+        The PlatformContextSkia constructor does a (very likely) wrong size
+        initialization for its m_stateStack member:
+
+            m_stateStack(sizeof(State))
+
+        The intended initialization is probably rather
+
+            m_stateStack(1)
+
+        However, since this doesn't buy much (see also comment #4),
+        I removed the initialization completely.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::PlatformContextSkia): remove member initialization
+
 2009-06-10  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Eric Seidel.
