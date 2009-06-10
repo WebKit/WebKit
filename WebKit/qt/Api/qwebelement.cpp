@@ -878,6 +878,34 @@ QStringList QWebElement::scriptableProperties() const
 }
 
 /*!
+    \enum QWebElement::ResolveRule
+    \since 4.6
+
+    This enum describes how QWebElement's styleProperty resolves the given
+    property name.
+
+    \value IgnoreCascadingStyles Return the property value as it is defined
+    in the element, without respecting style inheritance and other CSS rules.
+    \value RespectCascadingStyles The property's value is determined using
+    the inheritance and importance rules defined in the document's stylesheet.
+*/
+
+/*!
+    \enum QWebElement::StylePriority
+    \since 4.6
+
+    This enum describes the priority newly set CSS properties should have when
+    set using QWebElement::setStyleProperty().
+
+    \value NormalStylePriority Define the property without important
+    priority even if "!important" is explicitly set in \a value.
+    \value DeclaredStylePriority Define the property respecting the
+    priority specified in \a value.
+    \value ImportantStylePriority Define the property to have
+    an important priority, this is equal to appending "!important" to the value.
+*/
+
+/*!
     Returns the value of the style named \a name or an empty string if such one
     does not exist.
 
@@ -896,7 +924,7 @@ QStringList QWebElement::scriptableProperties() const
     highest priority, unless other declarations also use the !important
     declaration, in which the last !important declaration takes predecence.
 */
-QString QWebElement::styleProperty(const QString &name, const ResolveRule rule) const
+QString QWebElement::styleProperty(const QString &name, ResolveRule rule) const
 {
     if (!m_element || !m_element->isStyledElement())
         return QString();
@@ -958,9 +986,13 @@ QString QWebElement::styleProperty(const QString &name, const ResolveRule rule) 
     This syntax is supported when using DeclaredStylePriority as \a priority.
 
     Using NormalStylePriority as \a priority, the property will have normal
-    priority, and any "!important" declaration will be ignored.
+    priority, and any "!important" declaration will be ignored. On the other
+    hand, using ImportantStylePriority sets the important priority even when
+    not explicit passed in \a value.
+    By using DeclaredStylePriority as \a priority the property will respect the
+    priority specified in \a value.
 */
-void QWebElement::setStyleProperty(const QString &name, const QString &value, const StylePriority priority)
+void QWebElement::setStyleProperty(const QString &name, const QString &value, StylePriority priority)
 {
     if (!m_element || !m_element->isStyledElement())
         return;

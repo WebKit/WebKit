@@ -1,3 +1,17 @@
+2009-06-10  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Documented ResolveRule and StylePriority enum values as well as their use in
+        QWebElement::styleProperty and QWebElement::setStyleProperty methods.
+
+        Based on the work of Simon Hausmann.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+        (QWebElement::setStyleProperty):
+        * Api/qwebelement.h:
+
 2009-06-09  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
