@@ -215,6 +215,9 @@ extern "C" {
     WEBKIT_API unsigned int
     webkit_web_frame_number_of_active_animations(WebKitWebFrame* frame);
 
+    WEBKIT_API void
+    webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame);
+
     WEBKIT_API gchar*
     webkit_web_view_get_selected_text (WebKitWebView* web_view);
 

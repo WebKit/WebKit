@@ -1,3 +1,15 @@
+2009-06-09  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Clear the frame name before we run each tests so we don't get
+        "someFloaString" or "3" in the target frame name.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_clear_main_frame_name):
+
+
 2009-06-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
