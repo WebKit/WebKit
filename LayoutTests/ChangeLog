@@ -1,3 +1,11 @@
+2009-06-09  Brent Fulgham  <bfulgham@webkit.org>
+
+        No review, build fix only.
+        Correct DOS line-endings in expected file.
+        https://bugs.webkit.org/show_bug.cgi?id=26187.
+
+        * fast/canvas/canvas-lineWidth-expected.txt:
+
 2009-06-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
