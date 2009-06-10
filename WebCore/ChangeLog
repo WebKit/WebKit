@@ -1,3 +1,11 @@
+2009-06-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build.
+
+        ImageDecoderQt needs m_size and m_sizeAvailable to be protected.
+
+        * platform/image-decoders/ImageDecoder.h:
+
 2009-06-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
