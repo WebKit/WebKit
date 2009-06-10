@@ -1,3 +1,13 @@
+2009-06-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Clear the frame name before we run each tests so we don't get
+        "someFloaString" or "3" in the target frame name.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2009-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

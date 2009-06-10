@@ -58,6 +58,7 @@ extern gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame);
 extern gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame);
 extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
 extern gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
+extern void webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame);
 }
 
 volatile bool done;
@@ -233,6 +234,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
                  "enable-html5-database", TRUE,
                  "enable-html5-local-storage", TRUE,
                  NULL);
+
+    webkit_web_frame_clear_main_frame_name(mainFrame);
 
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
     g_object_set(G_OBJECT(inspector), "javascript-profiling-enabled", FALSE, NULL);
