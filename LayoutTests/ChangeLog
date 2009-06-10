@@ -1,3 +1,11 @@
+2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+        Add two missing 'expected results' files.
+
+        * fast/gradients/crash-on-zero-radius-expected.txt: Added.
+        * fast/gradients/simple-gradients-expected.txt: Added.
+
 2009-06-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
