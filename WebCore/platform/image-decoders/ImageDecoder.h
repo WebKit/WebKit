@@ -30,6 +30,8 @@
 #include "ImageSource.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
+#include <wtf/Assertions.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -52,8 +54,7 @@ namespace WebCore {
         };
 
         RGBA32Buffer()
-            : m_height(0)
-            , m_status(FrameEmpty)
+            : m_status(FrameEmpty)
             , m_duration(0)
             , m_disposalMethod(DisposeNotSpecified)
             , m_hasAlpha(false)
@@ -69,17 +70,42 @@ namespace WebCore {
           // metadata out of this frame later.
         }
 
+        // This function creates a new copy of the image data in |other|, so the
+        // two images can be modified independently.
+        void copyBitmapData(const RGBA32Buffer& other)
+        {
+            if (this == &other)
+                return;
+
+            m_bytes = other.m_bytes;
+            m_hasAlpha = other.m_hasAlpha;
+        }
+
         const RGBA32Array& bytes() const { return m_bytes; }
         RGBA32Array& bytes() { return m_bytes; }
+
+        // Must be called before any pixels are written. Will return true on
+        // success, false if the memory allocation fails.
+        bool setSize(int width, int height)
+        {
+            // NOTE: This has no way to check for allocation failure if the
+            // requested size was too big...
+            m_bytes.resize(width * height);
+
+            // Clear the image.
+            m_bytes.fill(0);
+            m_hasAlpha = true;
+
+            return true;
+        }
+
         const IntRect& rect() const { return m_rect; }
-        unsigned height() const { return m_height; }
         FrameStatus status() const { return m_status; }
         unsigned duration() const { return m_duration; }
         FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
         bool hasAlpha() const { return m_hasAlpha; }
 
         void setRect(const IntRect& r) { m_rect = r; }
-        void ensureHeight(unsigned rowIndex) { if (rowIndex > m_height) m_height = rowIndex; }
         void setStatus(FrameStatus s) { m_status = s; }
         void setDuration(unsigned duration) { m_duration = duration; }
         void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
@@ -106,7 +132,6 @@ namespace WebCore {
         IntRect m_rect;    // The rect of the original specified frame within the overall buffer.
                            // This will always just be the entire buffer except for GIF frames
                            // whose original rect was smaller than the overall image size.
-        unsigned m_height; // The height (the number of rows we've fully decoded).
         FrameStatus m_status; // Whether or not this frame is completely finished decoding.
         unsigned m_duration; // The animation delay.
         FrameDisposalMethod m_disposalMethod; // What to do with this frame's data when initializing the next frame.
@@ -119,11 +144,11 @@ namespace WebCore {
     class ImageDecoder {
     public:
         ImageDecoder()
-            : m_sizeAvailable(false)
-            , m_failed(false)
+            : m_failed(false)
+            , m_sizeAvailable(false)
         {
         }
-        
+
         virtual ~ImageDecoder() {}
 
         // The the filename extension usually associated with an undecoded image of this type.
@@ -132,11 +157,22 @@ namespace WebCore {
         // All specific decoder plugins must do something with the data they are given.
         virtual void setData(SharedBuffer* data, bool allDataReceived) { m_data = data; }
 
-        // Whether or not the size information has been decoded yet.
-        virtual bool isSizeAvailable() const = 0;
+        // Whether or not the size information has been decoded yet. This default
+        // implementation just returns true if the size has been set and we have not
+        // seen a failure. Decoders may want to override this to lazily decode
+        // enough of the image to get the size.
+        virtual bool isSizeAvailable() const
+        {
+            return !m_failed && m_sizeAvailable; 
+        }
 
         // Requests the size.
-        virtual IntSize size() const { return m_size; }
+        virtual IntSize size() const
+        {
+            // Requesting the size of an invalid bitmap is meaningless.
+            ASSERT(!m_failed);
+            return m_size;
+        }
 
         // The total number of frames for the image.  Classes that support multiple frames
         // will scan the image data for the answer if they need to (without necessarily
@@ -166,11 +202,39 @@ namespace WebCore {
         virtual void clearFrameBufferCache(size_t clearBeforeFrame) { }
 
     protected:
+        // Called by the image decoders to set their decoded size, this also check
+        // the size for validity. It will return true if the size was set, or false
+        // if there is an error. On error, the m_failed flag will be set and the
+        // caller should immediately stop decoding.
+        bool setSize(unsigned width, unsigned height)
+        {
+            if (isOverSize(width, height)) {
+                m_failed = true;
+                return false;
+            }
+            m_size = IntSize(width, height);
+            m_sizeAvailable = true;
+            return true;
+        }
+
         RefPtr<SharedBuffer> m_data; // The encoded data.
         Vector<RGBA32Buffer> m_frameBufferCache;
-        bool m_sizeAvailable;
         mutable bool m_failed;
+
+    private:
+        // Some code paths compute the size of the image as "width * height * 4"
+        // and return it as a (signed) int.  Avoid overflow.
+        static bool isOverSize(unsigned width, unsigned height)
+        {
+            // width * height must not exceed (2 ^ 29) - 1, so that we don't
+            // overflow when we multiply by 4.
+            unsigned long long total_size = static_cast<unsigned long long>(width)
+                                          * static_cast<unsigned long long>(height);
+            return total_size > ((1 << 29) - 1);
+        }
+
         IntSize m_size;
+        bool m_sizeAvailable;
     };
 
 } // namespace WebCore

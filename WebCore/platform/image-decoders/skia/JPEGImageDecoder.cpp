@@ -473,7 +473,7 @@ bool JPEGImageDecoder::outputScanlines()
         buffer.setHasAlpha(false);
 
         // For JPEGs, the frame always fills the entire image.
-        buffer.setRect(IntRect(0, 0, size().width(), size().height()));
+        buffer.setRect(IntRect(IntPoint(), size()));
     }
 
     jpeg_decompress_struct* info = m_reader->info();

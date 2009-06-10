@@ -38,16 +38,10 @@
 #include "config.h"
 #include "JPEGImageDecoder.h"
 #include <assert.h>
-#include <stdio.h>
 
 extern "C" {
 #include "jpeglib.h"
 }
-
-#if COMPILER(MSVC)
-// Remove warnings from warning level 4.
-#pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
-#endif // COMPILER(MSVC)
 
 #include <setjmp.h>
 
@@ -219,7 +213,10 @@ public:
                 m_state = JPEG_START_DECOMPRESS;
 
                 // We can fill in the size now that the header is available.
-                m_decoder->setSize(m_info.image_width, m_info.image_height);
+                if (!m_decoder->setSize(m_info.image_width, m_info.image_height)) {
+                    m_state = JPEG_ERROR;
+                    return false;
+                }
 
                 if (m_decodingSizeOnly) {
                     // We can stop here.
@@ -414,7 +411,7 @@ void JPEGImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 bool JPEGImageDecoder::isSizeAvailable() const
 {
     // If we have pending data to decode, send it to the JPEG reader now.
-    if (!m_sizeAvailable && m_reader) {
+    if (!ImageDecoder::isSizeAvailable() && m_reader) {
         if (m_failed)
             return false;
 
@@ -423,7 +420,7 @@ bool JPEGImageDecoder::isSizeAvailable() const
         decode(true);
     }
 
-    return m_sizeAvailable;
+    return ImageDecoder::isSizeAvailable();
 }
 
 RGBA32Buffer* JPEGImageDecoder::frameBufferAtIndex(size_t index)
@@ -463,23 +460,25 @@ bool JPEGImageDecoder::outputScanlines()
     // Resize to the width and height of the image.
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
-        // Let's resize our buffer now to the correct width/height.
-        RGBA32Array& bytes = buffer.bytes();
-        bytes.resize(size().width() * size().height());
+        // Let's resize our buffer now to the correct width/height. This will
+        // also initialize it to transparent.
+        if (!buffer.setSize(size().width(), size().height())) {
+            m_failed = true;
+            return false;
+        }
 
         // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
+        buffer.setHasAlpha(false);
 
         // For JPEGs, the frame always fills the entire image.
-        buffer.setRect(IntRect(0, 0, m_size.width(), m_size.height()));
-
-        // We don't have alpha (this is the default when the buffer is constructed).
+        buffer.setRect(IntRect(IntPoint(), size()));
     }
 
     jpeg_decompress_struct* info = m_reader->info();
     JSAMPARRAY samples = m_reader->samples();
 
-    unsigned* dst = buffer.bytes().data() + info->output_scanline * m_size.width();
+    unsigned* dst = buffer.bytes().data() + info->output_scanline * size().width();
    
     while (info->output_scanline < info->output_height) {
         /* Request one scanline.  Returns 0 or 1 scanlines. */
@@ -492,8 +491,6 @@ bool JPEGImageDecoder::outputScanlines()
             unsigned b = *j1++;
             RGBA32Buffer::setRGBA(*dst++, r, g, b, 0xFF);
         }
-
-        buffer.ensureHeight(info->output_scanline);
     }
 
     return true;

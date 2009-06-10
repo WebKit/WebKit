@@ -54,17 +54,11 @@ namespace WebCore {
 
         JPEGImageReader* reader() { return m_reader; }
 
-        void setSize(int width, int height) {
-            if (!m_sizeAvailable) {
-                m_sizeAvailable = true;
-                m_size = IntSize(width, height);
-            }
-        }
-
         bool outputScanlines();
         void jpegComplete();
 
     private:
+        friend class JPEGImageReader;
         mutable JPEGImageReader* m_reader;
     };
 

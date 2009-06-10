@@ -116,7 +116,7 @@ void GIFImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 bool GIFImageDecoder::isSizeAvailable() const
 {
     // If we have pending data to decode, send it to the GIF reader now.
-    if (!m_sizeAvailable && m_reader) {
+    if (!ImageDecoder::isSizeAvailable() && m_reader) {
         if (m_failed)
             return false;
 
@@ -125,7 +125,7 @@ bool GIFImageDecoder::isSizeAvailable() const
         decode(GIFSizeQuery, 0);
     }
 
-    return m_sizeAvailable;
+    return ImageDecoder::isSizeAvailable();
 }
 
 // The total number of frames for the image.  Will scan the image data for the answer
@@ -251,10 +251,9 @@ void GIFImageDecoder::decode(GIFQuery query, unsigned haltAtFrame) const
 }
 
 // Callbacks from the GIF reader.
-void GIFImageDecoder::sizeNowAvailable(unsigned width, unsigned height)
+bool GIFImageDecoder::sizeNowAvailable(unsigned width, unsigned height)
 {
-    m_size = IntSize(width, height);
-    m_sizeAvailable = true;
+    return setSize(width, height);
 }
 
 void GIFImageDecoder::decodingHalted(unsigned bytesLeft)
@@ -262,7 +261,7 @@ void GIFImageDecoder::decodingHalted(unsigned bytesLeft)
     m_reader->setReadOffset(m_data->size() - bytesLeft);
 }
 
-void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
+bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 {
     // Initialize the frame rect in our buffer.
     IntRect frameRect(m_reader->frameXOffset(), m_reader->frameYOffset(),
@@ -279,7 +278,10 @@ void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     
     if (frameIndex == 0) {
         // This is the first frame, so we're not relying on any previous data.
-        prepEmptyFrameBuffer(buffer);
+        if (!buffer->setSize(size().width(), size().height())) {
+            m_failed = true;
+            return false;
+        }
     } else {
         // The starting state for this frame depends on the previous frame's
         // disposal method.
@@ -302,8 +304,7 @@ void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
         if ((prevMethod == RGBA32Buffer::DisposeNotSpecified) ||
                 (prevMethod == RGBA32Buffer::DisposeKeep)) {
             // Preserve the last frame as the starting state for this frame.
-            buffer->bytes() = prevBuffer->bytes();
-            buffer->setHasAlpha(prevBuffer->hasAlpha());
+            buffer->copyBitmapData(*prevBuffer);
         } else {
             // We want to clear the previous frame to transparent, without
             // affecting pixels in the image outside of the frame.
@@ -312,14 +313,16 @@ void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
                 || prevRect.contains(IntRect(IntPoint(0, 0), size()))) {
                 // Clearing the first frame, or a frame the size of the whole
                 // image, results in a completely empty image.
-                prepEmptyFrameBuffer(buffer);
+                if (!buffer->setSize(size().width(), size().height())) {
+                    m_failed = true;
+                    return false;
+                }
             } else {
               // Copy the whole previous buffer, then clear just its frame.
-              buffer->bytes() = prevBuffer->bytes();
-              buffer->setHasAlpha(prevBuffer->hasAlpha());
+              buffer->copyBitmapData(*prevBuffer);
               for (int y = prevRect.y(); y < prevRect.bottom(); ++y) {
                   unsigned* const currentRow =
-                      buffer->bytes().data() + (y * m_size.width());
+                      buffer->bytes().data() + (y * size().width());
                   for (int x = prevRect.x(); x < prevRect.right(); ++x)
                       buffer->setRGBA(*(currentRow + x), 0, 0, 0, 0);
               }
@@ -334,13 +337,7 @@ void GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 
     // Reset the alpha pixel tracker for this frame.
     m_currentBufferSawAlpha = false;
-}
-
-void GIFImageDecoder::prepEmptyFrameBuffer(RGBA32Buffer* buffer) const
-{
-    buffer->bytes().resize(size().width() * size().height());
-    buffer->bytes().fill(0);
-    buffer->setHasAlpha(true);
+    return true;
 }
 
 void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
@@ -352,8 +349,8 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
 {
     // Initialize the frame if necessary.
     RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
-    if (buffer.status() == RGBA32Buffer::FrameEmpty)
-        initFrameBuffer(frameIndex);
+    if ((buffer.status() == RGBA32Buffer::FrameEmpty) && !initFrameBuffer(frameIndex))
+        return;
 
     // Do nothing for bogus data.
     if (rowBuffer == 0 || static_cast<int>(m_reader->frameYOffset() + rowNumber) >= size().height())
@@ -404,21 +401,17 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
     if (repeatCount > 1) {
         // Copy the row |repeatCount|-1 times.
         unsigned num = currDst - dst;
-        unsigned data_size = num * sizeof(unsigned);
+        unsigned dataSize = num * sizeof(unsigned);
         unsigned width = size().width();
         unsigned* end = buffer.bytes().data() + width * size().height();
         currDst = dst + width;
         for (unsigned i = 1; i < repeatCount; i++) {
             if (currDst + num > end) // Protect against a buffer overrun from a bogus repeatCount.
                 break;
-            memcpy(currDst, dst, data_size);
+            memcpy(currDst, dst, dataSize);
             currDst += width;
         }
     }
-
-    // Our partial height is rowNumber + 1, e.g., row 2 is the 3rd row, so that's a height of 3.
-    // Adding in repeatCount - 1 to rowNumber + 1 works out to just be rowNumber + repeatCount.
-    buffer.ensureHeight(rowNumber + repeatCount);
 }
 
 void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod)
@@ -426,10 +419,9 @@ void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
     // Initialize the frame if necessary.  Some GIFs insert do-nothing frames,
     // in which case we never reach haveDecodedRow() before getting here.
     RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
-    if (buffer.status() == RGBA32Buffer::FrameEmpty)
-        initFrameBuffer(frameIndex);
+    if ((buffer.status() == RGBA32Buffer::FrameEmpty) && !initFrameBuffer(frameIndex))
+        return;
 
-    buffer.ensureHeight(m_size.height());
     buffer.setStatus(RGBA32Buffer::FrameComplete);
     buffer.setDuration(frameDuration);
     buffer.setDisposalMethod(disposalMethod);

@@ -1,3 +1,53 @@
+2009-06-09  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part four
+        Most of the remaining Cairo changes needed before merging Skia/Cairo
+        image decoders.  Most of these involve plumbing more error detection and
+        handling (or, in some cases, merely the capability to detect errors, as
+        e.g. Skia detects and handles image allocation failure while Cairo
+        currently doesn't).  There is also some general cleanup and
+        simplification; RGBA32Buffer::m_height and all associated functions have
+        been removed (set but never used) and some places now rely on superclass
+        implementations.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::RGBA32Buffer): Remove m_height, ensureHeight() and associated stuff
+        (WebCore::RGBA32Buffer::copyBitmapData): Add API function so refcounted backing stores (like Skia uses) can be used with GIFs
+        (WebCore::RGBA32Buffer::setSize): Zero-fill image to avoid garbage
+        (WebCore::RGBA32Buffer::height): Remove
+        (WebCore::RGBA32Buffer::ensureHeight): Remove
+        (WebCore::ImageDecoder::ImageDecoder): Keep member initialization in order, force subclasses to go through size() instead of accessing m_size directly
+        (WebCore::ImageDecoder::isSizeAvailable): Check that decoding hasn't failed
+        (WebCore::ImageDecoder::size): Check that decoding hasn't failed
+        (WebCore::ImageDecoder::setSize): Protect against integer overflow
+        (WebCore::ImageDecoder::isOverSize): Protect against integer overflow
+        * platform/image-decoders/gif/GIFImageDecoder.cpp: Remove prepEmptyFrameBuffer()
+        (WebCore::GIFImageDecoder::isSizeAvailable): Rely on superclass isSizeAvailable() for better failure handling
+        (WebCore::GIFImageDecoder::sizeNowAvailable): Add return values for better failure handling, rely on superclass setSize() for overflow protection
+        (WebCore::GIFImageDecoder::initFrameBuffer): Add return values for better failure handling, remove prepEmptyFrameBuffer(), use RGBA32Buffer::setSize() to handle potential allocation failures (won't happen with Cairo port, can in Skia), use RGBA32Buffer::copyBitmapData() so backing store can be refcounted internally (Cairo won't be, Skia is), rely on superclass size() for better failure handling
+        (WebCore::GIFImageDecoder::haveDecodedRow): Fix style violation, remove RGBA32Buffer::ensureHeight()
+        (WebCore::GIFImageDecoder::frameComplete): Remove RGBA32Buffer::ensureHeight()
+        * platform/image-decoders/gif/GIFImageDecoder.h: Remove prepEmptyFrameBuffer(), add return values for better failure handling
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::do_lzw): Protect against array overflow, add comments
+        (GIFImageReader::read): Protect against array overflow, be more tolerant of bad data, better failure handling
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp: Remove MSVC-specific warning disable (bfulgham will move into build files)
+        (WebCore::JPEGImageReader::decode): Better failure handling
+        (WebCore::JPEGImageDecoder::isSizeAvailable): Rely on superclass isSizeAvailable() for better failure handling
+        (WebCore::JPEGImageDecoder::outputScanlines): Use RGBA32Buffer::setSize() to handle potential allocation failures (won't happen with Cairo port, can in Skia), rely on superclass size() for better failure handling, remove RGBA32Buffer::ensureHeight()
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h: Rely on superclass setSize() for overflow protection
+        * platform/image-decoders/png/PNGImageDecoder.cpp: Remove MSVC-specific warning disable (bfulgham will move into build files)
+        (WebCore::PNGImageDecoder::PNGImageDecoder): Don't allocate a slot in the framebuffer cache until it's needed
+        (WebCore::PNGImageDecoder::isSizeAvailable): Rely on superclass isSizeAvailable() for better failure handling
+        (WebCore::PNGImageDecoder::frameBufferAtIndex): Don't allocate a slot in the framebuffer cache until it's needed
+        (WebCore::PNGImageDecoder::decode): Don't allocate a slot in the framebuffer cache until it's needed
+        (WebCore::PNGImageDecoder::decodingFailed): Fix style violation
+        (WebCore::PNGImageDecoder::headerAvailable): Rely on superclass isSizeAvailable() and setSize() for overflow protection and better failure handling
+        (WebCore::PNGImageDecoder::rowAvailable): Don't allocate a slot in the framebuffer cache until it's needed, use RGBA32Buffer::setSize() to handle potential allocation failures (won't happen with Cairo port, can in Skia), remove RGBA32Buffer::ensureHeight()
+        (WebCore::PNGImageDecoder::pngComplete): Don't allocate a slot in the framebuffer cache until it's needed
+
 2009-06-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, adding JSCore/assembler to the list of include dirs, and

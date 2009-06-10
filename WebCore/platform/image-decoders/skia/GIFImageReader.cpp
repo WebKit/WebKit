@@ -518,10 +518,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
       screen_height = GETINT16(q + 2);
 
       // CALLBACK: Inform the decoderplugin of our size.
-      if (clientptr) {
-        if (!clientptr->sizeNowAvailable(screen_width, screen_height))
-          return false;
-      }
+      if (clientptr && !clientptr->sizeNowAvailable(screen_width, screen_height))
+        return false;
       
       screen_bgcolor = q[5];
       global_colormap_size = 2<<(q[4]&0x07);
@@ -746,8 +744,8 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         y_offset = 0;
 
         // CALLBACK: Inform the decoderplugin of our size.
-        if (clientptr)
-          clientptr->sizeNowAvailable(screen_width, screen_height);
+        if (clientptr && !clientptr->sizeNowAvailable(screen_width, screen_height))
+          return false;
       }
 
       /* Work around more broken GIF files that have zero image
