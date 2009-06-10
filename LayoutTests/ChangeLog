@@ -1,3 +1,14 @@
+2009-06-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+        
+        Tests that typing works after enabling a disabled, empty textarea.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26296
+
+        * fast/forms/empty-textarea-toggle-disabled-expected.txt: Copied from BugsSite/data/mail.
+        * fast/forms/empty-textarea-toggle-disabled.html: Added.
+
 2009-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

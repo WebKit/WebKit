@@ -1,3 +1,20 @@
+2009-06-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        The shadow node inside empty textareas gets collapsed in disabled
+        textareas. This is a regression from moving the overflow from
+        the shadow node to it's parent. The fix is to return true in
+        RenderBlock::hasLineIfEmpty for textarea shadow nodes as we 
+        currently do for input shadow nodes.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26296
+        
+        Test: fast/forms/empty-textarea-toggle-disabled.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasLineIfEmpty):
+
 2009-06-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

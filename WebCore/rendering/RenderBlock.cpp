@@ -4366,8 +4366,16 @@ void RenderBlock::calcBlockPrefWidths()
 
 bool RenderBlock::hasLineIfEmpty() const
 {
-    return node() && ((node()->isContentEditable() && node()->rootEditableElement() == node()) ||
-            (node()->isShadowNode() && node()->shadowParentNode()->hasTagName(inputTag)));
+    if (!node())
+        return false;
+    
+    if (node()->isContentEditable() && node()->rootEditableElement() == node())
+        return true;
+    
+    if (node()->isShadowNode() && (node()->shadowParentNode()->hasTagName(inputTag) || node()->shadowParentNode()->hasTagName(textareaTag)))
+        return true;
+    
+    return false;
 }
 
 int RenderBlock::lineHeight(bool firstLine, bool isRootLineBox) const
