@@ -1,3 +1,13 @@
+2009-06-10  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a test case for a radial gradient with a zero radius.
+        https://bugs.webkit.org/show_bug.cgi?id=26059
+
+        * fast/gradients/crash-on-zero-radius.html: Added.
+        * fast/gradients/simple-gradients.html: Fix an extraneous } in the css.
+
 2009-06-09  Brent Fulgham  <bfulgham@webkit.org>
 
         No review, build fix only.

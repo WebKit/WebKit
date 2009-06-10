@@ -158,14 +158,20 @@ SkShader* Gradient::platformGradient()
         // circle" (m_p1/m_r1).
         // See http://webkit.org/blog/175/introducing-css-gradients/ for a
         // description of the expected behavior.
+        
+        // The radius we give to Skia must be positive (and non-zero).  If
+        // we're given a zero radius, just ask for a very small radius so
+        // Skia will still return an object.
+        SkScalar radius = m_r1 > 0 ? WebCoreFloatToSkScalar(m_r1) : SK_ScalarMin;
         m_gradient = SkGradientShader::CreateRadial(m_p1,
-            WebCoreFloatToSkScalar(m_r1), colors, pos,
-            static_cast<int>(countUsed), tile);
+            radius, colors, pos, static_cast<int>(countUsed), tile);
     } else {
         SkPoint pts[2] = { m_p0, m_p1 };
         m_gradient = SkGradientShader::CreateLinear(pts, colors, pos,
             static_cast<int>(countUsed), tile);
     }
+
+    ASSERT(m_gradient);
 
     SkMatrix matrix = m_gradientSpaceTransformation;
     m_gradient->setLocalMatrix(matrix);

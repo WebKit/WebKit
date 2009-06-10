@@ -1,3 +1,15 @@
+2009-06-10  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix a crash for radial gradients with a zero radius.
+        https://bugs.webkit.org/show_bug.cgi?id=26059
+
+        Test: fast/gradients/crash-on-zero-radius.html
+
+        * platform/graphics/skia/GradientSkia.cpp:
+        (WebCore::Gradient::platformGradient):
+
 2009-06-10  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
