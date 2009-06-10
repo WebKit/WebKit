@@ -618,8 +618,18 @@ static gint webkit_accessible_text_get_n_selections(AtkText* text)
 
 static gchar* webkit_accessible_text_get_selection(AtkText* text, gint selection_num, gint* start_offset, gint* end_offset)
 {
-    notImplemented();
-    return NULL;
+    if (selection_num != 0) {
+        // WebCore does not support multiple selection, so anything but 0 does not make sense for now.
+        *start_offset = *end_offset = 0;
+        return NULL;
+    }
+
+    AccessibilityObject* coreObject = core(text);
+    VisibleSelection selection = coreObject->selection();
+    *start_offset = selection.start().offsetInContainerNode();
+    *end_offset = selection.end().offsetInContainerNode();
+
+    return webkit_accessible_text_get_text(text, *start_offset, *end_offset);
 }
 
 static gboolean webkit_accessible_text_add_selection(AtkText* text, gint start_offset, gint end_offset)

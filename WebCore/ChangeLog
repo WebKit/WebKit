@@ -2,6 +2,18 @@
 
         Reviewed by Gustavo Noronha.
 
+        https://bugs.webkit.org/show_bug.cgi?id=25609
+        [GTK] Implement support for get_selection and get_n_selections
+
+        Implement atk_text_get_selection.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_get_selection):
+
+2009-06-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Do not check if our parent class has the finalize method, it's
         guaranteed to be there.
 
