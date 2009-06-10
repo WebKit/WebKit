@@ -1,3 +1,12 @@
+2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correct for Windows Cairo targets.
+
+        * WebCore.vcproj/WebCore.vcproj: Disable warning 4611 (interaction
+          between '_setjmp' and C++ object destruction is non-portable) for
+          the two Cairo targets.  This used to be disabled in a #pragma,
+          but recent refactoring removed these lines.
+
 2009-06-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
