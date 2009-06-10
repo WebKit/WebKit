@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        Add Android port files to WebCore/platform (part 4).
+        https://bugs.webkit.org/show_bug.cgi?id=23296
+
+        * platform/android/KeyEventAndroid.cpp: Added.
+        * platform/android/KeyboardCodes.h: Added.
+
+2009-06-10  Feng Qian  <feng@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add Android port files to WebCore/platform (part 3).
         https://bugs.webkit.org/show_bug.cgi?id=23296
 
