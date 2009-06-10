@@ -490,16 +490,8 @@ static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
     if (data)
         return static_cast<GailTextUtil*>(data);
 
-    String text;
-    AccessibilityObject* coreObject = core(textObject);
-
-    if (coreObject->isTextControl())
-        text = coreObject->text();
-    else
-        text = coreObject->textUnderElement();
-
     GailTextUtil* gailTextUtil = gail_text_util_new();
-    gail_text_util_text_setup(gailTextUtil, text.utf8().data());
+    gail_text_util_text_setup(gailTextUtil, webkit_accessible_text_get_text(textObject, 0, -1));
     g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-gail-text-util", gailTextUtil, g_object_unref);
     return gailTextUtil;
 }
@@ -522,13 +514,7 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     if (data)
         return static_cast<PangoLayout*>(data);
 
-    String text;
     AccessibilityObject* coreObject = core(textObject);
-
-    if (coreObject->isTextControl())
-        text = coreObject->text();
-    else
-        text = coreObject->textUnderElement();
 
     HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
     if (!hostWindow)
@@ -536,9 +522,10 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     PlatformWidget webView = hostWindow->platformWindow();
     if (!webView)
         return 0;
+
     g_signal_connect(webView, "style-set", G_CALLBACK(updateLayout), textObject);
     g_signal_connect(webView, "direction-changed", G_CALLBACK(updateLayout), textObject);
-    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), text.utf8().data());
+    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), webkit_accessible_text_get_text(textObject, 0, -1));
     g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-pango-layout", layout, g_object_unref);
     return layout;
 }
