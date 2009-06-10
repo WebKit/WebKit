@@ -2,6 +2,16 @@
 
         Reviewed by Eric Seidel.
 
+        Add Android specific files.
+        https://bugs.webkit.org/show_bug.cgi?id=26280
+
+        * platform/text/android: Added.
+        * platform/text/android/TextBreakIteratorInternalICU.cpp: Added.
+
+2009-06-10  Feng Qian  <feng@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Add Android specific file to WebCore/platform/android (part 9).
         https://bugs.webkit.org/show_bug.cgi?id=26266
 
