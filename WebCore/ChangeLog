@@ -1,3 +1,12 @@
+2009-06-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Mark Rowe and Eric Seidel.
+
+        Update WebInspector localizedStrings.js with new resource tracking strings
+        https://bugs.webkit.org/show_bug.cgi?id=26247
+
+        * English.lproj/localizedStrings.js:
+
 2009-06-10  Feng Qian  <feng@chromium.org>
 
         Reviewed by Eric Seidel.
