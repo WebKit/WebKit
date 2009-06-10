@@ -1,3 +1,14 @@
+2009-06-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Mark Rowe.
+
+        Tidy up a couple of comments.
+
+        * assembler/ARMv7Assembler.h:
+            Fix date in copyright, neaten up a couple of comments.
+        * assembler/MacroAssemblerARMv7.h:
+            Fix date in copyright.
+
 2009-06-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
