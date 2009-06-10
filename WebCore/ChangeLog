@@ -1,3 +1,20 @@
+2009-06-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Update main resource meta-data when resource tracking is disabled.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26253
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getTrackedResource):
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didReceiveContentLength):
+        (WebCore::InspectorController::didFinishLoading):
+        (WebCore::InspectorController::didFailLoading):
+        * inspector/InspectorController.h:
+
 2009-06-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
