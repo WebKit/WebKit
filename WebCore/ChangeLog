@@ -1,3 +1,14 @@
+2009-06-10  Feng Qian  <feng@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add Android port files to WebCore/platform (part 2).
+        https://bugs.webkit.org/show_bug.cgi?id=23296
+
+        * platform/android/CursorAndroid.cpp: Added.
+        * platform/android/DragDataAndroid.cpp: Added.
+        * platform/android/EventLoopAndroid.cpp: Added.
+
 2009-06-10  Nate Chapin  <japhet@google.com>
 
         Reviewed by David Levin.
