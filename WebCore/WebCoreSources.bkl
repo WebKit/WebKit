@@ -527,6 +527,7 @@ This file contains the list of files needed to build WebCore.
         editing/RemoveFormatCommand.cpp
         editing/RemoveNodeCommand.cpp
         editing/RemoveNodePreservingChildrenCommand.cpp
+        editing/ReplaceNodeWithSpanCommand.cpp
         editing/ReplaceSelectionCommand.cpp
         editing/SelectionController.cpp
         editing/SmartReplace.cpp

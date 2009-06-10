@@ -1,3 +1,9 @@
+2009-06-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix, adding JSCore/assembler to the list of include dirs.
+
+        * presets/wxwebkit.bkl:
+
 2009-06-03  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix, remove no longer needed function call.
