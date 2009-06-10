@@ -83,7 +83,7 @@ sub setupEnvironmentForExecution($)
     # FIXME: Other platforms may wish to augment this method to use LD_LIBRARY_PATH, etc.
 }
 
-sub jscPath($)
+sub pathToBuiltJSC($)
 {
     my ($productDir) = @_;
     my $jscName = "jsc";
@@ -91,17 +91,35 @@ sub jscPath($)
     return "$productDir/$jscName";
 }
 
-buildJSC();
+sub pathToSystemJSC()
+{
+    my $path = "/System/Library/Frameworks/JavaScriptCore.framework/Resources/jsc";
+    if (-f $path) {
+        return $path;
+    }
+    return undef;
+}
 
+sub pathToJSC()
+{
+    my $path = pathToSystemJSC();
+    return $path if defined $path;
+
+    buildJSC();
+
+    my $productDir = productDir();
+    # FIXME: This hack should be pushed down into productDir()
+    $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
+
+    setupEnvironmentForExecution($productDir);
+    return pathToBuiltJSC($productDir);
+}
+
+my $jscPath = pathToJSC();
 chdirWebKit();
 chdir("SunSpider");
 
-my $productDir = productDir();
-# FIXME: This hack should be pushed down into productDir()
-$productDir .= "/JavaScriptCore" if (isQt() or isGtk());
-
-setupEnvironmentForExecution($productDir);
-my @args = ("--shell", jscPath($productDir));
+my @args = ("--shell", $jscPath);
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
 push @args, "--ubench" if $ubench;
 push @args, "--v8" if $v8;

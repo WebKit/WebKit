@@ -1,3 +1,13 @@
+2009-06-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Have sunspider-compare-results use the system version of the jsc
+        command line binary as there's no good reason to rebuild from source
+        to simply compare results.
+
+        * Scripts/sunspider-compare-results:
+
 2009-06-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.
