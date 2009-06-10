@@ -1,3 +1,9 @@
+2009-06-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix: include <stdio.h> as it is required in jpeglib.h
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+
 2009-06-09  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
