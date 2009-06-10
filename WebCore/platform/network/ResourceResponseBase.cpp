@@ -42,12 +42,20 @@ static void parseCacheHeader(const String& header, Vector<pair<String, String> >
 ResourceResponseBase::ResourceResponseBase()  
     : m_expectedContentLength(0)
     , m_httpStatusCode(0)
+    , m_lastModifiedDate(0)
     , m_isNull(true)
     , m_haveParsedCacheControlHeader(false)
     , m_haveParsedAgeHeader(false)
     , m_haveParsedDateHeader(false)
     , m_haveParsedExpiresHeader(false)
     , m_haveParsedLastModifiedHeader(false)
+    , m_cacheControlContainsNoCache(false)
+    , m_cacheControlContainsMustRevalidate(false)
+    , m_cacheControlMaxAge(0.0)
+    , m_age(0.0)
+    , m_date(0.0)
+    , m_expires(0.0)
+    , m_lastModified(0.0)
 {
 }
 
@@ -58,12 +66,20 @@ ResourceResponseBase::ResourceResponseBase(const KURL& url, const String& mimeTy
     , m_textEncodingName(textEncodingName)
     , m_suggestedFilename(filename)
     , m_httpStatusCode(0)
+    , m_lastModifiedDate(0)
     , m_isNull(false)
     , m_haveParsedCacheControlHeader(false)
     , m_haveParsedAgeHeader(false)
     , m_haveParsedDateHeader(false)
     , m_haveParsedExpiresHeader(false)
     , m_haveParsedLastModifiedHeader(false)
+    , m_cacheControlContainsNoCache(false)
+    , m_cacheControlContainsMustRevalidate(false)
+    , m_cacheControlMaxAge(0.0)
+    , m_age(0.0)
+    , m_date(0.0)
+    , m_expires(0.0)
+    , m_lastModified(0.0)
 {
 }
 
