@@ -33,11 +33,11 @@
 #if ENABLE(DATABASE)
 
 #include "v8_binding.h"
-#include "v8_custom.h"
 #include "v8_proxy.h"
 
 #include "Database.h"
 #include "SQLValue.h"
+#include "V8CustomBinding.h"
 #include "V8CustomSQLStatementCallback.h"
 #include "V8CustomSQLStatementErrorCallback.h"
 #include <wtf/Vector.h>

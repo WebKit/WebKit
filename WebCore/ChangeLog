@@ -1,3 +1,24 @@
+2009-06-10  Nate Chapin  <japhet@google.com>
+
+        Reviewed by David Levin.
+
+        Finish moving V8Custom from src.chromium.org to svn.webkit.org.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26258
+
+        * bindings/v8/custom/V8CustomBinding.cpp: Finished upstreaming.
+        (WebCore::ACCESSOR_GETTER): Moved from v8_custom.cpp.
+        (WebCore::INDEXED_ACCESS_CHECK): Moved from v8_custom.cpp.
+        (WebCore::NAMED_ACCESS_CHECK): Moved from v8_custom.cpp.
+        (WebCore::V8Custom::GetTargetFrame): Moved from v8_custom.cpp.
+        (WebCore::V8Custom::DowncastSVGPathSeg): Moved from v8_custom.cpp.
+        * bindings/v8/custom/V8CustomBinding.h: Finished upstreaming.
+        * bindings/v8/custom/V8DatabaseCustom.cpp: Updated includes.
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp: Updated includes.
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp: Updated includes.
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL): Moved from v8_custom.cpp.
+
 2009-06-10  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Justin Garcia.

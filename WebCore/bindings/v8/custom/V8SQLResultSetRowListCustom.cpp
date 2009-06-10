@@ -33,10 +33,10 @@
 #if ENABLE(DATABASE)
 
 #include "v8_binding.h"
-#include "v8_custom.h"
 #include "v8_proxy.h"
 
 #include "SQLResultSetRowList.h"
+#include "V8CustomBinding.h"
 
 namespace WebCore {
 
