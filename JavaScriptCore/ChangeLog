@@ -1,3 +1,11 @@
+2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build fix for Windows target.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+          Correct missing </File> tag after @r44550 that prevents the
+          project from being loaded in the Visual Studio IDE.
+
 2009-06-09  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Mark Rowe.

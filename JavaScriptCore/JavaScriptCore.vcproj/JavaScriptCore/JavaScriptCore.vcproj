@@ -794,6 +794,7 @@
 			<File
 				RelativePath="..\..\runtime\JSNumberCell.h"
 				>
+			</File>
 			<File
 				RelativePath="..\..\runtime\JSONObject.cpp"
 				>
