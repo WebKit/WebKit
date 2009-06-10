@@ -1,3 +1,14 @@
+2009-06-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - updated test to cover <rdar://problem/6958664> REGRESSION (r42665):
+          When I drag to pan a Google map in iPhoto Places, it drags a map tile
+          instead
+
+        * fast/dom/HTMLScriptElement/nested-execution.html:
+        * fast/dom/HTMLScriptElement/resources/nested-execution.js:
+
 2009-06-10  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Justin Garcia.

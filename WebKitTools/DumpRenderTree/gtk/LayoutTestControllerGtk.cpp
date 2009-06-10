@@ -286,6 +286,11 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     // FIXME: implement
 }
 
+void LayoutTestController::setCacheModel(int)
+{
+    // FIXME: implement
+}
+
 bool LayoutTestController::isCommandEnabled(JSStringRef /*name*/)
 {
     // FIXME: implement

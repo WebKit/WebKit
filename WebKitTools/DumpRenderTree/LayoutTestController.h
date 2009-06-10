@@ -61,6 +61,7 @@ public:
     void queueReload();
     void setAcceptsEditing(bool acceptsEditing);
     void setAuthorAndUserStylesEnabled(bool);
+    void setCacheModel(int);
     void setCustomPolicyDelegate(bool setDelegate, bool permissive);
     void setDatabaseQuota(unsigned long long quota);
     void setIconDatabaseEnabled(bool iconDatabaseEnabled);

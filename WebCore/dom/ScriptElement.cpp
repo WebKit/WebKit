@@ -201,13 +201,14 @@ void ScriptElementData::execute(CachedScript* cachedScript)
         evaluateScript(ScriptSourceCode(cachedScript));
         m_scriptElement->dispatchLoadEvent();
     }
+    cachedScript->removeClient(this);
 }
 
 void ScriptElementData::notifyFinished(CachedResource* o)
 {
     ASSERT_UNUSED(o, o == m_cachedScript);
     m_element->document()->executeScriptSoon(this, m_cachedScript);
-    stopLoadRequest();
+    m_cachedScript = 0;
 }
 
 bool ScriptElementData::ignoresLoadRequest() const

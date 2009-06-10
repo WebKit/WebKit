@@ -352,6 +352,11 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     [[mainFrame webView] _executeCoreCommandByName:nameNS value:valueNS];
 }
 
+void LayoutTestController::setCacheModel(int cacheModel)
+{
+    [[WebPreferences standardPreferences] setCacheModel:cacheModel];
+}
+
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));

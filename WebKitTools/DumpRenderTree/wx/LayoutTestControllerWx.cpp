@@ -229,6 +229,11 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return false;
 }
 
+void LayoutTestController::setCacheModel(int)
+{
+    // FIXME: implement
+}
+
 bool LayoutTestController::isCommandEnabled(JSStringRef /*name*/)
 {
     // FIXME: implement

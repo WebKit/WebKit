@@ -1,3 +1,29 @@
+2009-06-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - add a LayoutTestController method for temporarily changing the WebKit
+          cache model
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setCacheModelCallback): Added. Calls
+        LayoutTestController::setCacheModel() with the first argument as an
+        integer.
+        (LayoutTestController::staticFunctions): Added setCacheModel.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setCacheModel):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting): Reset the cache model to
+        WebCacheModelDocumentBrowser.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setCacheModel): Added. Calls -[WebPreferences
+        setCacheModel:].
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setCacheModel):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setCacheModel):
+
 2009-06-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

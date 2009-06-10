@@ -1,3 +1,22 @@
+2009-06-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix <rdar://problem/6958664> REGRESSION (r42665): When I drag to pan a
+          Google map in iPhoto Places, it drags a map tile instead
+
+        Calling stopLoadRequest() from notifyFinished() removed the
+        ScriptElementData from the CachedScript's client set, which could make
+        it eligible for purging. The fix is to call removeClient() only after
+        executing the script, which protects it from being purged while it is
+        in the document's queue of scripts to execute soon.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElementData::execute): Call removeClient() here.
+        (WebCore::ScriptElementData::notifyFinished): Instead of calling
+        stopLoadRequest(), which calls removeClient(), just reset
+        m_cachedScript.
+
 2009-06-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe and Eric Seidel.
