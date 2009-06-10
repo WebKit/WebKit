@@ -60,6 +60,7 @@ class InspectorClient;
 class InspectorFrontend;
 class JavaScriptCallFrame;
 class StorageArea;
+class KURL;
 class Node;
 class Page;
 struct ResourceRequest;
@@ -297,6 +298,7 @@ private:
 
     void showWindow();
 
+    bool isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl);
 
     Page* m_inspectedPage;
     InspectorClient* m_client;

@@ -1,3 +1,17 @@
+2009-06-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        When checking if the loader is the main resource loader make sure that the loader's frame is the main frame. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=26218
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorController::identifierForInitialRequest):
+        (WebCore::InspectorController::isMainResourceLoader):
+        * inspector/InspectorController.h:
+
 2009-06-09  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Eric Seidel.
