@@ -35,6 +35,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/Lexer.lut.h \
 	JavaScriptCore/runtime/ArrayPrototype.lut.h \
 	JavaScriptCore/runtime/DatePrototype.lut.h \
+	JavaScriptCore/runtime/JSONObject.lut.h \
 	JavaScriptCore/runtime/MathObject.lut.h \
 	JavaScriptCore/runtime/NumberConstructor.lut.h \
 	JavaScriptCore/runtime/RegExpConstructor.lut.h \
@@ -182,6 +183,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/JSGlobalData.h \
 	JavaScriptCore/runtime/JSNotAnObject.cpp \
 	JavaScriptCore/runtime/JSNotAnObject.h \
+	JavaScriptCore/runtime/JSONObject.cpp \
+	JavaScriptCore/runtime/JSONObject.h \
 	JavaScriptCore/runtime/JSPropertyNameIterator.cpp \
 	JavaScriptCore/runtime/JSPropertyNameIterator.h \
 	JavaScriptCore/runtime/LiteralParser.cpp \
@@ -590,6 +593,7 @@ javascriptcore_dist += \
 CLEANFILES += \
 	JavaScriptCore/runtime/ArrayPrototype.lut.h \
 	JavaScriptCore/runtime/DatePrototype.lut.h \
+	JavaScriptCore/runtime/JSONObject.lut.h \
 	JavaScriptCore/runtime/MathObject.lut.h \
 	JavaScriptCore/runtime/NumberConstructor.lut.h \
 	JavaScriptCore/runtime/RegExpConstructor.lut.h \

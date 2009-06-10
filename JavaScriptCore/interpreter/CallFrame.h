@@ -89,6 +89,7 @@ namespace JSC  {
 #endif
         static const HashTable* arrayTable(CallFrame* callFrame) { return callFrame->globalData().arrayTable; }
         static const HashTable* dateTable(CallFrame* callFrame) { return callFrame->globalData().dateTable; }
+        static const HashTable* jsonTable(CallFrame* callFrame) { return callFrame->globalData().jsonTable; }
         static const HashTable* mathTable(CallFrame* callFrame) { return callFrame->globalData().mathTable; }
         static const HashTable* numberTable(CallFrame* callFrame) { return callFrame->globalData().numberTable; }
         static const HashTable* regExpTable(CallFrame* callFrame) { return callFrame->globalData().regExpTable; }
