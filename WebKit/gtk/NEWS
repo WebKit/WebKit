@@ -1,4 +1,20 @@
 ================
+WebKitGTK+ 1.1.9
+================
+
+What's new in WebKitGTK+ 1.1.9?
+
+  - Scrolling once again received a lot of love, and many subtle
+    problems and bugs were killed, and we now get correct behavior in
+    acid2; a number of smaller improvements are in the queue.
+  - Accessibility keeps gaining better support. On this release a lot
+    of work was done on the AtkText interface implementation.
+  - WebKitNetworkRequest now carries with it all the information
+    regarding the request, not only the URI. This means you will no
+    longer miss headers such as Referer when passing NetworkRequest
+    objects from a callback to webkit_web_frame_load_request.
+
+================
 WebKitGTK+ 1.1.8
 ================
 
