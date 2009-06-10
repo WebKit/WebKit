@@ -1,3 +1,16 @@
+2009-06-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix the build of PluginView on Qt with 64-bit where we disable plugins
+        at compile time.
+
+        Use the FooNone.cpp files at compile-time.
+
+        * plugins/PluginPackageNone.cpp:
+        * plugins/mac/PluginPackageMac.cpp:
+        * plugins/mac/PluginViewMac.cpp:
+
 2009-06-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build.

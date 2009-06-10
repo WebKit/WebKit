@@ -306,4 +306,8 @@ abort:
 
 } // namespace WebCore
 
+#else
+
+#include "../PluginPackageNone.cpp"
+
 #endif // !__LP64__

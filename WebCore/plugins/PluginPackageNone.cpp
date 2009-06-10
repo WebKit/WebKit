@@ -52,6 +52,7 @@ bool PluginPackage::load()
     return false;
 }
 
+#if !ENABLE(PLUGIN_PACKAGE_SIMPLE_HASH)
 unsigned PluginPackage::hash() const
 { 
     notImplemented();
@@ -70,5 +71,7 @@ int PluginPackage::compareFileVersion(const PlatformModuleVersion&) const
     notImplemented();
     return 0;
 }
+
+#endif
 
 }
