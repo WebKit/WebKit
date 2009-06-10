@@ -1,3 +1,11 @@
+2009-06-10  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Use absolute path for install_name on Mac
+
+        * WebCore.pro:
+
 2009-06-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

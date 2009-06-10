@@ -25,6 +25,7 @@ CONFIG(QTDIR_build) {
     }
 
     DESTDIR = $$OUTPUT_DIR/lib
+    macx:CONFIG += absolute_library_soname
 }
 
 GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR${QMAKE_DIR_SEP}
