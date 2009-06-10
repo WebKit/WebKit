@@ -1,3 +1,15 @@
+2009-06-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25671
+        [GTK] Implement support for set_caret_offset
+
+        Make an implementation that actually works.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_text_set_caret_offset):
+
 2009-06-10  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

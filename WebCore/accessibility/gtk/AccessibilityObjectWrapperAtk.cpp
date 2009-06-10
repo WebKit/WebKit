@@ -652,10 +652,18 @@ static gboolean webkit_accessible_text_set_selection(AtkText* text, gint selecti
 
 static gboolean webkit_accessible_text_set_caret_offset(AtkText* text, gint offset)
 {
-    // TODO: Verify
-    //core(text)->setSelectedTextRange(PlainTextRange(offset, 0));
     AccessibilityObject* coreObject = core(text);
-    coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(offset, 0)));
+
+    // FIXME: We need to reimplement visiblePositionRangeForRange here
+    // because the actual function checks the offset is within the
+    // boundaries of text().length(), but text() only works for text
+    // controls...
+    VisiblePosition startPosition = coreObject->visiblePositionForIndex(offset);
+    startPosition.setAffinity(DOWNSTREAM);
+    VisiblePosition endPosition = coreObject->visiblePositionForIndex(offset);
+    VisiblePositionRange range = VisiblePositionRange(startPosition, endPosition);
+
+    coreObject->setSelectedVisiblePositionRange(range);
     return TRUE;
 }
 
