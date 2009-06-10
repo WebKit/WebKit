@@ -33,8 +33,10 @@
 #include "NativeImageSkia.h"
 #include "TransformationMatrix.h"
 
-#include "SkShader.h"
 #include "SkCanvas.h"
+#include "SkColor.h"
+#include "SkColorShader.h"
+#include "SkShader.h"
 
 namespace WebCore {
 
@@ -49,6 +51,10 @@ PlatformPatternPtr Pattern::createPlatformPattern(const TransformationMatrix& pa
     // LayoutTests/svg/W3C-SVG-1.1/pservers-grad-06-b.svg
 
     SkBitmap* bm = m_tileImage->nativeImageForCurrentFrame();
+    // If we don't have a bitmap, return a transparent shader.
+    if (!bm)
+        return new SkColorShader(SkColorSetARGB(0, 0, 0, 0));
+
     if (m_repeatX && m_repeatY)
         return SkShader::CreateBitmapShader(*bm, SkShader::kRepeat_TileMode, SkShader::kRepeat_TileMode);
 
