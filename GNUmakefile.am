@@ -84,6 +84,7 @@ corekit_cflags += \
 	-fno-strict-aliasing \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
+	$(GAIL_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GNOMEKEYRING_CFLAGS) \
@@ -243,6 +244,7 @@ libwebkit_1_0_la_LIBADD = \
 	$(COVERAGE_LDFLAGS) \
 	$(ENCHANT_LIBS) \
 	$(FREETYPE_LIBS) \
+	$(GAIL_LIBS) \
 	$(GEOCLUE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GNOMEKEYRING_LIBS) \

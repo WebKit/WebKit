@@ -148,7 +148,7 @@ static void test_webkit_atk_get_text_at_offset(void)
                            5, " a", 7, 9);
 
     test_get_text_function(text_obj, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_END,
-                           4, " is", 4, 7);
+                           4, " a", 7, 9);
 
     test_get_text_function(text_obj, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END,
                            58, " third", 57, 63);
@@ -192,7 +192,7 @@ static void test_webkit_atk_get_text_at_offset(void)
                            0, " This is the second sentence.", 15, 44);
 
     test_get_text_function(text_obj, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_SENTENCE_END,
-                           15, " This is the second sentence.", 15, 44);
+                           15, " And this the third.", 44, 64);
 
     test_get_text_function(text_obj, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_SENTENCE_END,
                            16, "This is a test.", 0, 15);
@@ -206,15 +206,16 @@ static void test_webkit_atk_get_text_at_offset(void)
     test_get_text_function(text_obj, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_SENTENCE_END,
                            44, " This is the second sentence.", 15, 44);
 
+    /* It's trick to test these properly right now, since our a11y
+       implementation splits different lines in different a11y
+       items */
     /* ATK_TEXT_BOUNDARY_LINE_START */
-    /* TODO */
     test_get_text_function(text_obj, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START,
-                           0, "", 0, 0);
+                           0, "This is a test. This is the second sentence. And this the third.", 0, 64);
 
     /* ATK_TEXT_BOUNDARY_LINE_END */
-    /* TODO */
     test_get_text_function(text_obj, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END,
-                           0, "", 0, 0);
+                           0, "This is a test. This is the second sentence. And this the third.", 0, 64);
 
     g_object_unref(webView);
 }

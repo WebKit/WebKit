@@ -1,3 +1,16 @@
+2009-06-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        Update test for new implementation (it fixes two bugs and adds
+        actual implementations for LINE boundaries).
+
+        * tests/testatk.c:
+        (test_webkit_atk_get_text_at_offset):
+
 2009-06-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

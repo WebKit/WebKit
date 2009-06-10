@@ -48,6 +48,7 @@
 #include <atk/atk.h>
 #include <glib.h>
 #include <glib/gprintf.h>
+#include <libgail-util/gail-util.h>
 #include <pango/pango.h>
 
 using namespace WebCore;
@@ -482,225 +483,39 @@ static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, g
     return g_strdup(ret.utf8().data());
 }
 
-enum GetTextFunctionType {
-    AfterOffset,
-    AtOffset,
-    BeforeOffset
-};
-
-typedef bool (*isCharacterAttribute) (PangoLogAttr* attr);
-
-static inline bool isWordStart(PangoLogAttr* attr)
+static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
 {
-    return attr->is_word_start;
-}
+    gpointer data = g_object_get_data(G_OBJECT(textObject), "webkit-accessible-gail-text-util");
+    if (data)
+        return static_cast<GailTextUtil*>(data);
 
-static inline bool isWordEnd(PangoLogAttr* attr)
-{
-    return attr->is_word_end;
-}
-
-static inline bool isSentenceStart(PangoLogAttr* attr)
-{
-    return attr->is_sentence_start;
-}
-
-static inline bool isSentenceEnd(PangoLogAttr* attr)
-{
-    return attr->is_sentence_end;
-}
-
-enum Direction {
-    DirectionForward,
-    DirectionBackwards
-};
-
-static bool findCharacterAttribute(isCharacterAttribute predicateFunction, PangoLogAttr* attributes, Direction direction, int startOffset, int attrsLength, int* resultOffset)
-{
-    int advanceBy = direction == DirectionForward ? 1 : -1;
-
-    *resultOffset = -1;
-
-    for (int i = startOffset; i >= 0 && i < attrsLength; i += advanceBy) {
-        if (predicateFunction(attributes + i)) {
-            *resultOffset = i;
-            return true;
-        }
-    }
-
-    return false;
-}
-
-static bool findCharacterAttributeSkip(isCharacterAttribute predicateFunction, unsigned skip, PangoLogAttr* attributes, Direction direction, int startOffset, int attrsLength, int* resultOffset)
-{
-    int tmpOffset;
-
-    bool retValue = findCharacterAttribute(predicateFunction, attributes, direction, startOffset, attrsLength, &tmpOffset);
-    if (skip == 0) {
-        *resultOffset = tmpOffset;
-        return retValue;
-    }
-
-    if (direction == DirectionForward)
-        tmpOffset++;
-    else
-        tmpOffset--;
-
-    return findCharacterAttributeSkip(predicateFunction, skip - 1, attributes, direction, tmpOffset, attrsLength, resultOffset);
-}
-
-static isCharacterAttribute oppositePredicate(isCharacterAttribute predicate)
-{
-    if (predicate == isWordStart)
-        return isWordEnd;
-    if (predicate == isWordEnd)
-        return isWordStart;
-    if (predicate == isSentenceStart)
-        return isSentenceEnd;
-    if (predicate == isSentenceEnd)
-        return isSentenceStart;
-
-    g_assert_not_reached();
-}
-
-static gchar* getTextHelper(GetTextFunctionType getTextFunctionType, AtkText* textObject, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
-{
-    AccessibilityObject* coreObject = core(textObject);
     String text;
-
-    *startOffset = *endOffset = -1;
+    AccessibilityObject* coreObject = core(textObject);
 
     if (coreObject->isTextControl())
         text = coreObject->text();
     else
         text = coreObject->textUnderElement();
 
-    char* cText = g_strdup(text.utf8().data());
-    glong textLength = g_utf8_strlen(cText, -1);
-
-    if (boundaryType == ATK_TEXT_BOUNDARY_CHAR) {
-        int effectiveOffset;
-
-        switch (getTextFunctionType) {
-        case AfterOffset:
-            effectiveOffset = offset + 1;
-            break;
-        case BeforeOffset:
-            effectiveOffset = offset - 1;
-            break;
-        case AtOffset:
-            effectiveOffset = offset;
-            break;
-        default:
-            g_assert_not_reached();
-        }
-
-        *startOffset = effectiveOffset;
-        *endOffset = effectiveOffset + 1;
-    } else {
-        PangoLogAttr* attrs = g_new(PangoLogAttr, textLength + 1);
-        PangoLanguage* language = pango_language_get_default();
-        pango_get_log_attrs(cText, -1, -1, language, attrs, textLength + 1);
-      
-        isCharacterAttribute predicate;
-
-        if (boundaryType == ATK_TEXT_BOUNDARY_WORD_START)
-            predicate = isWordStart;
-        else if (boundaryType == ATK_TEXT_BOUNDARY_WORD_END)
-            predicate = isWordEnd;
-        else if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_START)
-            predicate = isSentenceStart;
-        else if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_END)
-            predicate = isSentenceEnd;
-        else
-            // FIXME: bail out for now, since we are missing the LINE
-            // boundary implementations
-            goto out;
-
-        switch (boundaryType) {
-        case ATK_TEXT_BOUNDARY_WORD_START:
-        case ATK_TEXT_BOUNDARY_SENTENCE_START:
-            if (getTextFunctionType == AfterOffset) {
-                // Take the item after the current one in any case
-                findCharacterAttribute(predicate, attrs, DirectionForward, offset + 1, textLength + 1, startOffset);
-                findCharacterAttributeSkip(predicate, 1, attrs, DirectionForward, offset + 1, textLength + 1, endOffset);
-            } else if (getTextFunctionType == AtOffset) {
-                // Take the item at point if the offset is in an item or
-                // the item before otherwise
-                findCharacterAttribute(predicate, attrs, DirectionBackwards, offset, textLength + 1, startOffset);
-                if (!findCharacterAttribute(predicate, attrs, DirectionForward, offset + 1, textLength + 1, endOffset)) {
-                    findCharacterAttribute(oppositePredicate(predicate), attrs, DirectionForward, offset + 1, textLength + 1, endOffset);
-                    // We want to include the actual end boundary
-                    // here, since *_START would have done so. Advance
-                    // until the end of the string if possible
-                    if (*endOffset != -1 && *endOffset < textLength)
-                        *endOffset = textLength;
-                }
-            } else {
-                // Take the item before the point if the offset is in an
-                // item, or the the item before that one otherwise
-                findCharacterAttributeSkip(predicate, 1, attrs, DirectionBackwards, offset, textLength + 1, startOffset);
-                findCharacterAttribute(predicate, attrs, DirectionBackwards, offset, textLength + 1, endOffset);
-            }
-            break;
-        case ATK_TEXT_BOUNDARY_WORD_END:
-        case ATK_TEXT_BOUNDARY_SENTENCE_END:
-            if (getTextFunctionType == AfterOffset) {
-                // Take the item after the current item if the offset is
-                // in a item, or the item after that otherwise
-                findCharacterAttribute(predicate, attrs, DirectionForward, offset, textLength + 1, startOffset);
-                findCharacterAttributeSkip(predicate, 1, attrs, DirectionForward, offset, textLength + 1, endOffset);
-            } else if (getTextFunctionType == AtOffset) {
-                // Take the item at point if the offset is in a item or
-                // the item after otherwise
-                if (!findCharacterAttribute(predicate, attrs, DirectionBackwards, offset, textLength + 1, startOffset))
-                    // No match before offset, take the first opposite match at or before the offset
-                    findCharacterAttribute(oppositePredicate(predicate), attrs, DirectionBackwards, offset, textLength + 1, startOffset);
-                findCharacterAttribute(predicate, attrs, DirectionForward, offset + 1, textLength + 1, endOffset);
-            } else {
-                // Take the item before the point in any case
-                if (!findCharacterAttributeSkip(predicate, 1, attrs, DirectionBackwards, offset, textLength + 1, startOffset)) {
-                    int tmpOffset;
-                    // No match before offset, take the first opposite match at or before the offset
-                    findCharacterAttribute(predicate, attrs, DirectionBackwards, offset, textLength + 1, &tmpOffset);
-                    findCharacterAttribute(oppositePredicate(predicate), attrs, DirectionBackwards, tmpOffset - 1, textLength + 1, startOffset);
-                }
-                findCharacterAttribute(predicate, attrs, DirectionBackwards, offset, textLength + 1, endOffset);
-            }
-            break;
-        default:
-            g_assert_not_reached();
-        }
-
-        g_free(attrs);
-    }
-
- out:
-    if (*startOffset < 0 || *endOffset < 0) {
-        *startOffset = *endOffset = 0;
-        return g_strdup("");
-    }
-
-    char* start = g_utf8_offset_to_pointer(cText, (glong)*startOffset);
-    char* end = g_utf8_offset_to_pointer(cText, (glong)*endOffset);
-    char* resultText = g_strndup(start, end - start);
-    g_free(cText);
-    return resultText;
+    GailTextUtil* gailTextUtil = gail_text_util_new();
+    gail_text_util_text_setup(gailTextUtil, text.utf8().data());
+    g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-gail-text-util", gailTextUtil, g_object_unref);
+    return gailTextUtil;
 }
 
 static gchar* webkit_accessible_text_get_text_after_offset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
-    return getTextHelper(AfterOffset, text, offset, boundaryType, startOffset, endOffset);
+    return gail_text_util_get_text(getGailTextUtilForAtk(text), NULL, GAIL_AFTER_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
 static gchar* webkit_accessible_text_get_text_at_offset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
-    return getTextHelper(AtOffset, text, offset, boundaryType, startOffset, endOffset);
+    return gail_text_util_get_text(getGailTextUtilForAtk(text), NULL, GAIL_AT_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
 static gchar* webkit_accessible_text_get_text_before_offset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
-    return getTextHelper(BeforeOffset, text, offset, boundaryType, startOffset, endOffset);
+    return gail_text_util_get_text(getGailTextUtilForAtk(text), NULL, GAIL_BEFORE_OFFSET, boundaryType, offset, startOffset, endOffset);
 }
 
 static gunichar webkit_accessible_text_get_character_at_offset(AtkText* text, gint offset)
