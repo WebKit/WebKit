@@ -1,5 +1,13 @@
 2009-06-10  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        Version bump in preparation for 1.1.9 release.
+
+        * configure.ac:
+
+2009-06-10  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Jan Alonzo.
 
         https://bugs.webkit.org/show_bug.cgi?id=25415
