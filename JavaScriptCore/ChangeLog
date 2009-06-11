@@ -1,3 +1,14 @@
+2009-06-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix compilation warnings
+        <https://bugs.webkit.org/show_bug.cgi?id=26015>
+
+        * wtf/ThreadingNone.cpp:
+        (WTF::ThreadCondition::wait): Fix compilation warning.
+        (WTF::ThreadCondition::timedWait): Ditto.
+
 2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix for Windows target.
