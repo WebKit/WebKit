@@ -316,7 +316,7 @@ HTMLTokenizer::State HTMLTokenizer::processListing(SegmentedString list, State s
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString& src, State state)
+HTMLTokenizer::State HTMLTokenizer::parseNonHTMLText(SegmentedString& src, State state)
 {
     ASSERT(state.inTextArea() || state.inTitle() || state.inIFrame() || !state.hasEntityState());
     ASSERT(!state.hasTagState());
@@ -1477,6 +1477,9 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
             RefPtr<Node> n = processToken();
             m_cBufferPos = cBufferPos;
             if (n || inViewSourceMode()) {
+                State savedState = state;
+                SegmentedString savedSrc = src;
+                long savedLineno = m_lineNumber;
                 if ((tagName == preTag || tagName == listingTag) && !inViewSourceMode()) {
                     if (beginTag)
                         state.setDiscardLF(true); // Discard the first LF after we open a pre.
@@ -1489,7 +1492,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                         m_searchStopper = scriptEnd;
                         m_searchStopperLength = 8;
                         state.setInScript(true);
-                        state = parseSpecial(src, state);
+                        state = parseNonHTMLText(src, state);
                     } else if (isSelfClosingScript) { // Handle <script src="foo"/>
                         state.setInScript(true);
                         state = scriptHandler(state);
@@ -1499,52 +1502,49 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                         m_searchStopper = styleEnd;
                         m_searchStopperLength = 7;
                         state.setInStyle(true);
-                        state = parseSpecial(src, state);
+                        state = parseNonHTMLText(src, state);
                     }
                 } else if (tagName == textareaTag) {
                     if (beginTag) {
                         m_searchStopper = textareaEnd;
                         m_searchStopperLength = 10;
                         state.setInTextArea(true);
-                        state = parseSpecial(src, state);
+                        state = parseNonHTMLText(src, state);
                     }
                 } else if (tagName == titleTag) {
                     if (beginTag) {
                         m_searchStopper = titleEnd;
                         m_searchStopperLength = 7;
-                        State savedState = state;
-                        SegmentedString savedSrc = src;
-                        long savedLineno = m_lineNumber;
                         state.setInTitle(true);
-                        state = parseSpecial(src, state);
-                        if (state.inTitle() && src.isEmpty()) {
-                            // We just ate the rest of the document as the title #text node!
-                            // Reset the state then retokenize without special title handling.
-                            // Let the parser clean up the missing </title> tag.
-                            // FIXME: This is incorrect, because src.isEmpty() doesn't mean we're
-                            // at the end of the document unless m_noMoreData is also true. We need
-                            // to detect this case elsewhere, and save the state somewhere other
-                            // than a local variable.
-                            state = savedState;
-                            src = savedSrc;
-                            m_lineNumber = savedLineno;
-                            m_scriptCodeSize = 0;
-                        }
+                        state = parseNonHTMLText(src, state);
                     }
                 } else if (tagName == xmpTag) {
                     if (beginTag) {
                         m_searchStopper = xmpEnd;
                         m_searchStopperLength = 5;
                         state.setInXmp(true);
-                        state = parseSpecial(src, state);
+                        state = parseNonHTMLText(src, state);
                     }
                 } else if (tagName == iframeTag) {
                     if (beginTag) {
                         m_searchStopper = iframeEnd;
                         m_searchStopperLength = 8;
                         state.setInIFrame(true);
-                        state = parseSpecial(src, state);
+                        state = parseNonHTMLText(src, state);
                     }
+                }
+                if (src.isEmpty() && (state.inTitle() || inViewSourceMode()) && !state.inComment() && !(state.inScript() && m_currentScriptTagStartLineNumber)) {
+                    // We just ate the rest of the document as the #text node under the special tag!
+                    // Reset the state then retokenize without special handling.
+                    // Let the parser clean up the missing close tag.
+                    // FIXME: This is incorrect, because src.isEmpty() doesn't mean we're
+                    // at the end of the document unless m_noMoreData is also true. We need
+                    // to detect this case elsewhere, and save the state somewhere other
+                    // than a local variable.
+                    state = savedState;
+                    src = savedSrc;
+                    m_lineNumber = savedLineno;
+                    m_scriptCodeSize = 0;
                 }
             }
             if (tagName == plaintextTag)
@@ -1661,8 +1661,8 @@ void HTMLTokenizer::write(const SegmentedString& str, bool appendData)
                 state = parseEntity(m_src, m_dest, state, m_cBufferPos, false, state.hasTagState());
             else if (state.inPlainText())
                 state = parseText(m_src, state);
-            else if (state.inAnySpecial())
-                state = parseSpecial(m_src, state);
+            else if (state.inAnyNonHTMLText())
+                state = parseNonHTMLText(m_src, state);
             else if (state.inComment())
                 state = parseComment(m_src, state);
             else if (state.inDoctype())

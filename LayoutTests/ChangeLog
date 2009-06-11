@@ -1,3 +1,25 @@
+2009-06-11  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25512
+        Handle texts after unfinished special tags (i.e., script, style, textarea,
+        title, xmp, and iframe) as the text node under the tags in view-source mode.
+        Before this change, all texts in unfinished special tags cannot be seen even in view-source mode.
+
+        This was already done only for title. This change allows other special tags to be handled as well.
+
+        The test case verifies if the texts in the unfinished special tags are visible in view-source mode. Also, fixed window-shadow-location-using-* tests so that they don't use unfinished iframe anymore.
+
+        * fast/dom/Window/Location/window-shadow-location-using-js-object-with-toString-expected.txt:
+        * fast/dom/Window/Location/window-shadow-location-using-js-object-with-toString.html:
+        * fast/dom/Window/Location/window-shadow-location-using-string-expected.txt:
+        * fast/dom/Window/Location/window-shadow-location-using-string.html:
+        * fast/frames/resources/viewsource-frame-unfinished-script.html: Added.
+        * fast/frames/resources/viewsource-frame-unfinished-textarea.html: Added.
+        * fast/frames/viewsource-unfinished-tags-expected.txt: Added.
+        * fast/frames/viewsource-unfinished-tags.html: Added.
+
 2009-06-10  Brent Fulgham  <bfulgham@gmail.com>
 
         Unreviewed build fix.

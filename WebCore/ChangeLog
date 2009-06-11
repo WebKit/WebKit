@@ -1,3 +1,23 @@
+2009-06-11  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25512
+        Handle texts after unfinished special tags (i.e., script, style, textarea,
+        title, xmp, and iframe) as the text node under the tags in view-source mode.
+        Before this change, all texts in unfinished special tags cannot be seen even in view-source mode.
+
+        This was already done only for title. This change allows other special tags to be handled as well.
+
+        Test: fast/frames/viewsource-unfinished-tags.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseNonHTMLText):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::write):
+        * html/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::State::inAnyNonHTMLText):
+
 2009-06-11  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Ariya Hidayat.
