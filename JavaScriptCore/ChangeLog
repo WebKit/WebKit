@@ -1,3 +1,13 @@
+2009-06-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Lower stringify recursion limit to deal with small windows stack.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::):
+
 2009-06-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Holger Freyther.

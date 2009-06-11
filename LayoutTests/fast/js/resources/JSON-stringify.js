@@ -240,13 +240,13 @@ function createTests() {
     });
     result.push(function(jsonObject){
         var deepObject = {};
-        for (var i = 0; i < 1600; i++)
+        for (var i = 0; i < 512; i++)
             deepObject = {next:deepObject};
         return jsonObject.stringify(deepObject);
     });
     result.push(function(jsonObject){
         var deepArray = [];
-        for (var i = 0; i < 1600; i++)
+        for (var i = 0; i < 512; i++)
             deepArray = [deepArray];
         return jsonObject.stringify(deepArray);
     });

@@ -1,3 +1,12 @@
+2009-06-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (build-fix).
+
+        Lower stringify recursion limit to deal with small windows stack.
+
+        * fast/js/resources/JSON-stringify.js:
+        * fast/js/JSON-expected.txt:
+
 2009-06-11  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Adam Barth.
