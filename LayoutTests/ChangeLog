@@ -1,6 +1,19 @@
 2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.
+
+        Clean up some stupid test mistakes, add pixel-level Mac tests
+        for the new zero-radius gradient test.
+
+        * fast/gradients/crash-on-zero-radius-expected.txt: Removed.
+        * fast/gradients/simple-gradients-expected.txt: Removed.
+        * platform/mac/fast/gradients/crash-on-zero-radius-expected.checksum: Added.
+        * platform/mac/fast/gradients/crash-on-zero-radius-expected.png: Added.
+        * platform/mac/fast/gradients/crash-on-zero-radius-expected.txt: Copied from fast/gradients/crash-on-zero-radius-expected.txt.
+
+2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
         Add two missing 'expected results' files.
 
         * fast/gradients/crash-on-zero-radius-expected.txt: Added.
