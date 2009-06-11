@@ -762,6 +762,7 @@ editing/deleting/smart-editing-disabled.html
 editing/deleting/type-delete-after-quote-2.html
 editing/execCommand/4128080-2.html
 editing/execCommand/5939887.html
+editing/execCommand/convert-style-elements-to-spans.html
 editing/execCommand/copy-without-selection.html
 editing/execCommand/createLink.html
 editing/execCommand/enabling-and-selection-2.html
@@ -1575,6 +1576,7 @@ editing/unsupported-content/table-type-before.html
 # Tests in fast/ directory
 #   Tests failing
 fast/canvas/canvas-bg-zoom.html
+fast/canvas/canvas-empty-image-pattern.html
 fast/canvas/canvas-getImageData.html
 fast/canvas/canvas-gradient-addStop-error.html
 fast/canvas/canvas-transform-identity.html
@@ -1827,6 +1829,7 @@ fast/backgrounds/background-origin-root-element.html
 fast/backgrounds/background-position-1.html
 fast/backgrounds/background-position-rounding.html
 fast/backgrounds/bgCompositeCopy.html
+fast/backgrounds/body-generated-image-propagated-to-root.html
 fast/backgrounds/mask-composite.html
 fast/backgrounds/opacity-on-document-element.html
 fast/backgrounds/solid-color-context-restore.html
@@ -2183,7 +2186,9 @@ fast/borders/border-image-border-radius.html
 fast/borders/border-image-omit-right-slice.html
 fast/borders/border-image-rotate-transform.html
 fast/borders/border-image-scale-transform.html
+fast/borders/border-radius-constraints.html
 fast/borders/border-radius-huge-assert.html
+fast/borders/border-radius-split-inline.html
 fast/borders/borderRadiusAllStylesAllCorners.html
 fast/borders/borderRadiusArcs01.html
 fast/borders/borderRadiusDashed01.html
@@ -2229,6 +2234,7 @@ fast/canvas/canvas-text-alignment.html
 fast/canvas/canvas-text-baseline.html
 fast/canvas/canvas-transforms-during-path.html
 fast/canvas/canvasDrawingIntoSelf.html
+fast/canvas/drawImage-with-globalAlpha.html
 fast/canvas/drawImage.html
 fast/canvas/fill-stroke-clip-reset-path.html
 fast/canvas/fillrect-gradient-zero-stops.html
@@ -2534,6 +2540,7 @@ fast/dynamic/012.html
 fast/dynamic/013.html
 fast/dynamic/014.html
 fast/dynamic/015.html
+fast/dynamic/anchor-lock.html
 fast/dynamic/anonymous-block-layer-lost.html
 fast/dynamic/anonymous-block-orphaned-lines.html
 fast/dynamic/containing-block-change.html
@@ -2644,6 +2651,7 @@ fast/forms/control-clip-overflow.html
 fast/forms/control-clip.html
 fast/forms/control-restrict-line-height.html
 fast/forms/disabled-select-change-index.html
+fast/forms/empty-textarea-toggle-disabled.html
 fast/forms/encoding-test.html
 fast/forms/fieldset-align.html
 fast/forms/fieldset-with-float.html
@@ -2701,6 +2709,7 @@ fast/forms/input-type-change.html
 fast/forms/input-type-text-min-width.html
 fast/forms/input-value.html
 fast/forms/input-width.html
+fast/forms/isindex-placeholder.html
 fast/forms/linebox-overflow-in-textarea-padding.html
 fast/forms/listbox-clip.html
 fast/forms/listbox-deselect-scroll.html
@@ -2810,6 +2819,7 @@ fast/frames/viewsource-attribute.html
 fast/gradients/background-clipped.html
 fast/gradients/border-image-gradient-sides-and-corners.html
 fast/gradients/border-image-gradient.html
+fast/gradients/crash-on-zero-radius.html
 fast/gradients/generated-gradients.html
 fast/gradients/list-item-gradient.html
 fast/gradients/simple-gradients.html
@@ -3647,6 +3657,7 @@ fast/tokenizer/missing-title-end-tag-1.html
 fast/tokenizer/missing-title-end-tag-2.html
 fast/tokenizer/script-after-frameset.html
 fast/tokenizer/script_extra_close.html
+fast/transforms/bounding-rect-zoom.html
 fast/transforms/diamond.html
 fast/transforms/identity-matrix.html
 fast/transforms/matrix-01.html
@@ -3746,10 +3757,13 @@ http/tests/incremental/slow-utf8-text.pl
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
 http/tests/loading/basic.html
+# Needed to cover the fix for <rdar://problem/6727495>
+http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 http/tests/loading/empty-subframe.html
 http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/location-hash-reload-cycle.html
 http/tests/loading/onload-vs-immediate-refresh.pl
+http/tests/loading/preload-img-test.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/media/video-play-stall-seek.html
@@ -5939,5 +5953,3 @@ webarchive/test-xml-stylesheet.xml
 http/tests/local/drag-over-remote-content.html
 http/tests/security/drag-over-remote-content-iframe.html
 
-# Needed to cover the fix for <rdar://problem/6727495>
-http/tests/loading/deleted-host-in-resource-load-delegate-callback.html: Added.

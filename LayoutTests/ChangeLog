@@ -1,3 +1,10 @@
+2009-06-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Disabling new tests, and tests that use features of DRT we don't
+        currently implement.
+
+        * platform/gtk/Skipped:
+
 2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.
