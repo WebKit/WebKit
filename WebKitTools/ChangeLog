@@ -1,3 +1,16 @@
+2009-06-10  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Jan Alonzo.
+
+        [gtk] Change DumpRenderTree to use a GtkScrolledWindow instead of GtkFixed
+
+        Change the code to use GtkScrolledWindow and resize the GtkScrolledWindow
+        to pass more tests. Make sure the content is bigger than a thumbnail.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest):
+        (main):
+
 2009-06-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.

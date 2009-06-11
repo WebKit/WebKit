@@ -68,6 +68,7 @@ static int dumpTree = 1;
 
 LayoutTestController* gLayoutTestController = 0;
 static WebKitWebView* webView;
+static GtkWidget* container;
 WebKitWebFrame* mainFrame = 0;
 WebKitWebFrame* topLoadingFrame = 0;
 guint waitToDumpWatchdog = 0;
@@ -371,7 +372,7 @@ static void runTest(const string& testPathOrURL)
     GtkAllocation size;
     size.width = isSVGW3CTest ? 480 : maxViewWidth;
     size.height = isSVGW3CTest ? 360 : maxViewHeight;
-    gtk_widget_size_allocate(GTK_WIDGET(webView), &size);
+    gtk_widget_size_allocate(container, &size);
 
     if (prevTestBFItem)
         g_object_unref(prevTestBFItem);
@@ -539,13 +540,15 @@ int main(int argc, char* argv[])
         }
 
     GtkWidget* window = gtk_window_new(GTK_WINDOW_POPUP);
-    GtkContainer* container = GTK_CONTAINER(gtk_fixed_new());
-    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(container));
+    container = GTK_WIDGET(gtk_scrolled_window_new(NULL, NULL));
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(container), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_container_add(GTK_CONTAINER(window), container);
     gtk_widget_realize(window);
 
     webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    gtk_container_add(container, GTK_WIDGET(webView));
+    gtk_container_add(GTK_CONTAINER(container), GTK_WIDGET(webView));
     gtk_widget_realize(GTK_WIDGET(webView));
+    gtk_widget_show_all(container);
     mainFrame = webkit_web_view_get_main_frame(webView);
 
     g_signal_connect(G_OBJECT(webView), "load-started", G_CALLBACK(webViewLoadStarted), 0);
