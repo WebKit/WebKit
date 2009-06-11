@@ -2,6 +2,19 @@
 
         Reviewed by Xan Lopez.
 
+        Add a test to perform an actual download.
+
+        * tests/testdownload.c:
+        (navigation_policy_decision_requested_cb):
+        (notify_status_cb):
+        (download_requested_cb):
+        (test_webkit_download_perform):
+        (main):
+
+2009-06-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
         Fix crash when downloading, caused by assuming SoupMessage would
         be there. This change factors the logic required to create a
         ResourceRequest from a WebKitNetworkRequest into a core()
