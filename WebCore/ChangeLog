@@ -1,3 +1,17 @@
+2009-06-11  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Ariya Hidayat.
+
+        Removed obsolete and unmaintained files from the old Symbian port.
+
+        * platform/symbian/FloatPointSymbian.cpp: Removed.
+        * platform/symbian/FloatRectSymbian.cpp: Removed.
+        * platform/symbian/IntPointSymbian.cpp: Removed.
+        * platform/symbian/IntRectSymbian.cpp: Removed.
+        * platform/symbian/IntSizeSymbian.cpp: Removed.
+        * platform/text/symbian/StringImplSymbian.cpp: Removed.
+        * platform/text/symbian/StringSymbian.cpp: Removed.
+
 2009-06-10  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
