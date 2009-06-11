@@ -1,0 +1,47 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (12,12) size 776x543
+      RenderBlock {P} at (0,0) size 776x31
+        RenderText {#text} at (0,0) size 280x30
+          text run at (0,0) width 280: "Zoomed video with controls."
+      RenderVideo {VIDEO} at (45,76) size 240x180
+layer at (57,88) size 240x180
+  RenderBlock (relative positioned) {DIV} at (0,0) size 240x180
+layer at (57,88) size 240x180
+  RenderBlock (positioned) {DIV} at (0,0) size 240x180
+    RenderButton {INPUT} at (0,0) size 240x31
+layer at (57,244) size 25x24
+  RenderButton {INPUT} at (0,156) size 25x24
+layer at (81,244) size 25x24
+  RenderButton {INPUT} at (24,156) size 25x24
+layer at (105,244) size 144x24
+  RenderBlock (positioned) {DIV} at (48,156) size 144x24
+layer at (105,244) size 144x24
+  RenderSlider {INPUT} at (0,0) size 144x24
+    RenderBlock {DIV} at (3,1) size 19x21
+layer at (248,244) size 25x24
+  RenderButton {INPUT} at (191,156) size 25x24
+layer at (272,244) size 25x24
+  RenderButton {INPUT} at (215,156) size 25x24
+layer at (57,313) size 240x180
+  RenderVideo {VIDEO} at (45,301) size 240x180
+layer at (57,313) size 240x180
+  RenderBlock (relative positioned) {DIV} at (0,0) size 240x180
+layer at (57,313) size 240x180
+  RenderBlock (positioned) {DIV} at (0,0) size 240x180
+    RenderButton {INPUT} at (0,0) size 240x31
+layer at (57,469) size 25x24
+  RenderButton {INPUT} at (0,156) size 25x24
+layer at (81,469) size 25x24
+  RenderButton {INPUT} at (24,156) size 25x24
+layer at (105,469) size 144x24
+  RenderBlock (positioned) {DIV} at (48,156) size 144x24
+layer at (105,469) size 144x24
+  RenderSlider {INPUT} at (0,0) size 144x24
+    RenderBlock {DIV} at (3,1) size 19x21
+layer at (248,469) size 25x24
+  RenderButton {INPUT} at (191,156) size 25x24
+layer at (272,469) size 25x24
+  RenderButton {INPUT} at (215,156) size 25x24

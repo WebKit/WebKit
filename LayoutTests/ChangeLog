@@ -1,3 +1,17 @@
+2009-06-05 Pierre d'Herbemont <pdherbemont@apple.com> 
+
+        Reviewed by Eric Seidel.
+
+        Re-enable the video-zoom-controls test on Windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25465
+
+        * platform/win/Skipped:
+        * platform/win/media: Added.
+        * platform/win/media/video-zoom-controls-expected.checksum: Added.
+        * platform/win/media/video-zoom-controls-expected.png: Added.
+        * platform/win/media/video-zoom-controls-expected.txt: Added.
+
 2009-06-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         Disabling new tests, and tests that use features of DRT we don't
