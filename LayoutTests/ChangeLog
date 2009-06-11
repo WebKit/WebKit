@@ -1,3 +1,11 @@
+2009-06-10  Brent Fulgham  <bfulgham@gmail.com>
+
+        Unreviewed build fix.
+        Reverted change to skip file, as Windows build is
+        still failing.
+
+        * platform/win/Skipped:
+
 2009-06-05 Pierre d'Herbemont <pdherbemont@apple.com> 
 
         Reviewed by Eric Seidel.
