@@ -21,6 +21,7 @@
 #define WEBKIT_NETWORK_REQUEST_H
 
 #include <glib-object.h>
+#include <libsoup/soup.h>
 
 #include <webkit/webkitdefines.h>
 
@@ -64,6 +65,9 @@ webkit_network_request_set_uri  (WebKitNetworkRequest *request,
 
 WEBKIT_API G_CONST_RETURN gchar *
 webkit_network_request_get_uri  (WebKitNetworkRequest *request);
+
+WEBKIT_API SoupMessage *
+webkit_network_request_get_message(WebKitNetworkRequest* request);
 
 G_END_DECLS
 

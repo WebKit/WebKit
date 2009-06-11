@@ -510,7 +510,14 @@ void webkit_web_frame_load_request(WebKitWebFrame* frame, WebKitNetworkRequest* 
     if (!coreFrame)
         return;
 
-    coreFrame->loader()->load(ResourceRequest(webkit_network_request_get_message(request)), false);
+    SoupMessage* soupMessage = webkit_network_request_get_message(request);
+    if (soupMessage) {
+        coreFrame->loader()->load(ResourceRequest(soupMessage), false);
+        return;
+    }
+
+    KURL url = KURL(KURL(), String::fromUTF8(webkit_network_request_get_uri(request)));
+    coreFrame->loader()->load(ResourceRequest(url), false);
 }
 
 /**

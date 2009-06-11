@@ -1,3 +1,11 @@
+2009-06-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        Add unit tests for our WebKitNetworkRequest object.
+
+        * GNUmakefile.am:
+
 2009-06-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

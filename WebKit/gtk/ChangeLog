@@ -1,3 +1,27 @@
+2009-06-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        Make WebKitNetworkRequest a proper GObject, making URI and
+        SoupMessage properties. Also adding unit tests for creation and
+        destruction.
+
+        * tests/testnetworkrequest.c: Added.
+        (test_network_request_create_destroy):
+        (test_network_request_properties):
+        (main):
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_get_property):
+        (webkit_network_request_set_property):
+        (webkit_network_request_class_init):
+        (webkit_network_request_init):
+        (webkit_network_request_constructor):
+        (webkit_network_request_new_with_core_request):
+        (webkit_network_request_new):
+        (webkit_network_request_set_uri):
+        (webkit_network_request_get_uri):
+        * webkit/webkitnetworkrequest.h:
+
 2009-06-10  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez.

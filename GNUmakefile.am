@@ -526,6 +526,7 @@ webkit_tests_ldflags = \
 	-no-fast-install
 
 TEST_PROGS += Programs/unittests/testhttpbackend \
+	Programs/unittests/testnetworkrequest \
 	Programs/unittests/testwebframe \
 	Programs/unittests/testwebbackforwardlist \
 	Programs/unittests/testwebhistoryitem \
@@ -537,6 +538,11 @@ Programs_unittests_testhttpbackend_SOURCES = WebKit/gtk/tests/testhttpbackend.c
 Programs_unittests_testhttpbackend_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testhttpbackend_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testhttpbackend_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testnetworkrequest_SOURCES = WebKit/gtk/tests/testnetworkrequest.c
+Programs_unittests_testnetworkrequest_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testnetworkrequest_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testnetworkrequest_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testwebframe_SOURCES = WebKit/gtk/tests/testwebframe.c
 Programs_unittests_testwebframe_CFLAGS = $(webkit_tests_cflags)
