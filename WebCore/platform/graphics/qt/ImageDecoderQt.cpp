@@ -217,9 +217,7 @@ void ImageDecoderQt::reset()
     m_failed = false;
     m_imageList.clear();
     m_pixmapCache.clear();
-    m_sizeAvailable = false;
     m_loopCount = cAnimationNone;
-    m_size = IntSize(-1, -1);
 }
 
 void ImageDecoderQt::setData(const IncomingData &data, bool allDataReceived)
@@ -247,8 +245,8 @@ void ImageDecoderQt::setData(const IncomingData &data, bool allDataReceived)
     case ReadContext::ReadComplete:
         // Did we read anything - try to set the size.
         if (hasFirstImageHeader()) {
-            m_sizeAvailable = true;
-            m_size = m_imageList[0].m_image.size();
+            QSize imgSize = m_imageList[0].m_image.size();
+            setSize(imgSize.width(), imgSize.height());
 
             if (readContext.reader()->supportsAnimation()) {
                 if (readContext.reader()->loopCount() != -1)
@@ -265,8 +263,8 @@ void ImageDecoderQt::setData(const IncomingData &data, bool allDataReceived)
 bool ImageDecoderQt::isSizeAvailable() const
 {
     if (debugImageDecoderQt)
-        qDebug() << " ImageDecoderQt::isSizeAvailable() returns" << m_sizeAvailable;
-    return m_sizeAvailable;
+        qDebug() << " ImageDecoderQt::isSizeAvailable() returns" << ImageDecoder::isSizeAvailable();
+    return ImageDecoder::isSizeAvailable();
 }
 
 int ImageDecoderQt::frameCount() const

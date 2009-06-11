@@ -1,3 +1,18 @@
+2009-06-11  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26291
+
+        [Qt] build break in ImageDecoderQt.cpp.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::reset):
+        (WebCore::ImageDecoderQt::setData):
+        (WebCore::ImageDecoderQt::isSizeAvailable):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::setSize):
+
 2009-06-11  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Ariya Hidayat.
