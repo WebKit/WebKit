@@ -2,8 +2,11 @@
 
 
 isEmpty(OUTPUT_DIR) {
-    CONFIG(release):OUTPUT_DIR=$$PWD/WebKitBuild/Release
-    CONFIG(debug):OUTPUT_DIR=$$PWD/WebKitBuild/Debug
+    CONFIG(debug, debug|release) {
+        OUTPUT_DIR=$$PWD/WebKitBuild/Debug
+    } else { # Release
+        OUTPUT_DIR=$$PWD/WebKitBuild/Release
+    }
 }
 
 DEFINES += BUILDING_QT__=1
@@ -25,7 +28,7 @@ building-libs {
 }
 
 DEFINES += USE_SYSTEM_MALLOC
-CONFIG(release) {
+CONFIG(release, debug|release) {
     DEFINES += NDEBUG
 }
 
