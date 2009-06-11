@@ -111,21 +111,23 @@ void BMPImageReader::decodeBMP(SharedBuffer* data)
     if (m_needToProcessColorTable && !processColorTable(data))
         return;
 
-    // Initialize frame buffer state, if needed.
-    if (m_frameBufferCache.first().status() == RGBA32Buffer::FrameEmpty) {
-        m_frameBufferCache.first().setRect(IntRect(IntPoint(), size()));
-        m_frameBufferCache.first().setStatus(RGBA32Buffer::FramePartial);
-        if (!m_frameBufferCache.first().setSize(m_infoHeader.biWidth,
-                                                m_infoHeader.biHeight)) {
+    // Initialize the framebuffer if needed.
+    RGBA32Buffer& buffer = m_frameBufferCache.first();
+    if (buffer.status() == RGBA32Buffer::FrameEmpty) {
+        if (!buffer.setSize(size().width(), size().height())) {
             // Unable to allocate.
             m_failed = true;
             return;
         }
-
+        buffer.setStatus(RGBA32Buffer::FramePartial);
         // setSize() calls eraseARGB(), which resets the alpha flag, so we force
         // it back to false here.  We'll set it true below in all cases where
         // these 0s could actually show through.
-        m_frameBufferCache.first().setHasAlpha(false);
+        buffer.setHasAlpha(false);
+
+        // For BMPs, the frame always fills the entire image.
+        buffer.setRect(IntRect(IntPoint(), size()));
+
         if (!m_isTopDown)
             m_coord.setY(size().height() - 1);
     }
@@ -143,8 +145,7 @@ void BMPImageReader::decodeBMP(SharedBuffer* data)
 
     // If the image has an AND mask and there was no alpha data, process the
     // mask.
-    if ((m_andMaskState == NotYetDecoded)
-        && !m_frameBufferCache.first().hasAlpha()) {
+    if ((m_andMaskState == NotYetDecoded) && !buffer.hasAlpha()) {
         // Reset decoding coordinates to start of image.
         m_coord.setX(0);
         m_coord.setY(m_isTopDown ? 0 : (size().height() - 1));
@@ -158,7 +159,7 @@ void BMPImageReader::decodeBMP(SharedBuffer* data)
         return;
 
     // Done!
-    m_frameBufferCache.first().setStatus(RGBA32Buffer::FrameComplete);
+    buffer.setStatus(RGBA32Buffer::FrameComplete);
 }
 
 bool BMPImageReader::getInfoHeaderSize(SharedBuffer* data)
@@ -605,6 +606,7 @@ bool BMPImageReader::processRLEData(SharedBuffer* data)
 
     // Impossible to decode row-at-a-time, so just do things as a stream of
     // bytes.
+    RGBA32Buffer& buffer = m_frameBufferCache.first();
     while (true) {
         // Every entry takes at least two bytes; bail if there isn't enough
         // data.
@@ -626,7 +628,7 @@ bool BMPImageReader::processRLEData(SharedBuffer* data)
             case 0:  // Magic token: EOL
                 // Skip any remaining pixels in this row.
                 if (m_coord.x() < size().width())
-                    m_frameBufferCache.first().setHasAlpha(true);
+                    buffer.setHasAlpha(true);
                 moveBufferToNextRow();
 
                 m_decodedOffset += 2;
@@ -636,7 +638,7 @@ bool BMPImageReader::processRLEData(SharedBuffer* data)
                 // Skip any remaining pixels in the image.
                 if ((m_coord.x() < size().width())
                     || (m_isTopDown ? (m_coord.y() < (size().height() - 1)) : (m_coord.y() > 0)))
-                    m_frameBufferCache.first().setHasAlpha(true);
+                    buffer.setHasAlpha(true);
                 return true;
 
             case 2: {  // Magic token: Delta
@@ -650,7 +652,7 @@ bool BMPImageReader::processRLEData(SharedBuffer* data)
                 const uint8_t dx = data->data()[m_decodedOffset + 2];
                 const uint8_t dy = data->data()[m_decodedOffset + 3];
                 if ((dx != 0) || (dy != 0))
-                    m_frameBufferCache.first().setHasAlpha(true);
+                    buffer.setHasAlpha(true);
                 if (((m_coord.x() + dx) > size().width()) ||
                     pastEndOfImage(dy)) {
                     m_failed = true;
@@ -746,6 +748,7 @@ bool BMPImageReader::processNonRLEData(SharedBuffer* data, bool inRLE, int numPi
 
     // Decode as many rows as we can.  (For RLE, where we only want to decode
     // one row, we've already checked that this condition is true.)
+    RGBA32Buffer& buffer = m_frameBufferCache.first();
     while (!pastEndOfImage(0)) {
         // Bail if we don't have enough data for the desired number of pixels.
         if ((data->size() - m_decodedOffset) < paddedNumBytes)
@@ -769,7 +772,7 @@ bool BMPImageReader::processNonRLEData(SharedBuffer* data, bool inRLE, int numPi
                         // web will not be doing a lot of inverting.
                         if (colorIndex) {
                             setRGBA(0, 0, 0, 0);
-                            m_frameBufferCache.first().setHasAlpha(true);
+                            buffer.setHasAlpha(true);
                         } else
                             m_coord.move(1, 0);
                     } else {
@@ -803,10 +806,10 @@ bool BMPImageReader::processNonRLEData(SharedBuffer* data, bool inRLE, int numPi
                 } else {
                     m_seenNonZeroAlphaPixel = true;
                     if (m_seenZeroAlphaPixel) {
-                        m_frameBufferCache.first().zeroFill();
+                        buffer.zeroFill();
                         m_seenZeroAlphaPixel = false;
                     } else if (alpha != 255)
-                        m_frameBufferCache.first().setHasAlpha(true);
+                        buffer.setHasAlpha(true);
                 }
 
                 setRGBA(getComponent(pixel, 0), getComponent(pixel, 1),

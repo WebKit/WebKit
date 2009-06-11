@@ -70,32 +70,35 @@ bool XBMImageDecoder::isSizeAvailable() const
 
 RGBA32Buffer* XBMImageDecoder::frameBufferAtIndex(size_t index)
 {
-    // Allocate a framebuffer if necessary. New framebuffers have their status
-    // initialized to RGBA32Buffer::FrameEmpty.
+    if (index)
+        return 0;
+
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.resize(1);
-
-    RGBA32Buffer& frame = m_frameBufferCache[0];
 
     // Attempt to get the size if we don't have it yet.
     if (!ImageDecoder::isSizeAvailable())
         decodeXBM(true);
     
-    // Size the framebuffer once we know the right size.
-    if (ImageDecoder::isSizeAvailable() &&
-        frame.status() == RGBA32Buffer::FrameEmpty) {
-        if (!frame.setSize(size().width(), size().height())) {
+    // Initialize the framebuffer if needed.
+    RGBA32Buffer& buffer = m_frameBufferCache[0];
+    if (!failed() && ImageDecoder::isSizeAvailable()
+        && (buffer.status() == RGBA32Buffer::FrameEmpty)) {
+        if (!buffer.setSize(size().width(), size().height())) {
             m_failed = true;
             return 0;
         }
-        frame.setStatus(RGBA32Buffer::FramePartial);
+        buffer.setStatus(RGBA32Buffer::FramePartial);
+
+        // For XBMs, the frame always fills the entire image.
+        buffer.setRect(IntRect(IntPoint(), size()));
     }
-    
+        
     // Keep trying to decode until we've got the entire image.
-    if (frame.status() != RGBA32Buffer::FrameComplete)
+    if (buffer.status() == RGBA32Buffer::FramePartial)
         decodeXBM(false);
 
-    return &frame;
+    return &buffer;
 }
 
 bool XBMImageDecoder::decodeHeader()

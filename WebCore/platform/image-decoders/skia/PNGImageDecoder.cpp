@@ -318,18 +318,14 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     if (m_frameBufferCache.isEmpty())
         return;
 
-    // Resize to the width and height of the image.
+    // Initialize the framebuffer if needed.
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
-        // Let's resize our buffer now to the correct width/height.
         if (!buffer.setSize(size().width(), size().height())) {
-            // Error allocating the bitmap. We should not continue.
             static_cast<PNGImageDecoder*>(png_get_progressive_ptr(reader()->pngPtr()))->decodingFailed();
             longjmp(reader()->pngPtr()->jmpbuf, 1);
             return;
         }
-
-        // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
         buffer.setHasAlpha(false);
 

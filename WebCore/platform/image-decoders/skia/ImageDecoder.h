@@ -133,7 +133,7 @@ namespace WebCore {
             ASSERT(endX <= m_bitmap.width());
             ASSERT(startY < m_bitmap.height());
             ASSERT(endY <= m_bitmap.height());
-            const int rowBytes = (endX - startX) * sizeof uint32_t;
+            const int rowBytes = (endX - startX) * sizeof(uint32_t);
             const uint32_t* const startAddr = m_bitmap.getAddr32(startX, startY);
             for (int destY = startY + 1; destY < endY; ++destY)
                 memcpy(m_bitmap.getAddr32(startX, destY), startAddr, rowBytes);

@@ -310,7 +310,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
             // affecting pixels in the image outside of the frame.
             const IntRect& prevRect = prevBuffer->rect();
             if ((frameIndex == 0)
-                || prevRect.contains(IntRect(IntPoint(0, 0), size()))) {
+                || prevRect.contains(IntRect(IntPoint(), size()))) {
                 // Clearing the first frame, or a frame the size of the whole
                 // image, results in a completely empty image.
                 if (!buffer->setSize(size().width(), size().height())) {
@@ -429,7 +429,7 @@ void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
     if (!m_currentBufferSawAlpha) {
         // The whole frame was non-transparent, so it's possible that the entire
         // resulting buffer was non-transparent, and we can setHasAlpha(false).
-        if (buffer.rect().contains(IntRect(IntPoint(0, 0), size())))
+        if (buffer.rect().contains(IntRect(IntPoint(), size())))
             buffer.setHasAlpha(false);
         else if (frameIndex > 0) {
             // Tricky case.  This frame does not have alpha only if everywhere

@@ -1,3 +1,37 @@
+2009-06-10  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part six
+        Miscellaneous tiny changes.  The important bits here are the ANSI C++
+        compliance fix in skia/ImageDecoders.h (needed to compile this file on
+        non-MSVC) and some behavioral fixes for the XBM decoder that Chromium
+        unit tests partly exposed.  Other changes are mostly cosmetic.
+
+        * platform/image-decoders/ImageDecoder.h: Make some variables private again.  This will break QTWebKit but those guys have agreed to wait on my finishing the ImageDecoder changes.
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::initFrameBuffer): Use IntPoint() instead of the redundant IntPoint(0, 0).
+        (WebCore::GIFImageDecoder::frameComplete): Use IntPoint() instead of the redundant IntPoint(0, 0).
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::outputScanlines): Remove obvious comments.
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable): Remove obvious comments.
+        * platform/image-decoders/skia/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::decodeBMP): Make more in line with other decoders' comments and structure, use a ref to decrease verbosity.
+        (WebCore::BMPImageReader::processRLEData): Use a ref to decrease verbosity.
+        (WebCore::BMPImageReader::processNonRLEData): Use a ref to decrease verbosity.
+        * platform/image-decoders/skia/GIFImageDecoder.cpp: Use IntPoint() instead of the redundant IntPoint(0, 0).
+        (WebCore::GIFImageDecoder::initFrameBuffer): Use IntPoint() instead of the redundant IntPoint(0, 0).
+        (WebCore::GIFImageDecoder::frameComplete): Use IntPoint() instead of the redundant IntPoint(0, 0).
+        * platform/image-decoders/skia/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::copyRowNTimes): Fix ANSI violation that MSVC let me compile (!).
+        * platform/image-decoders/skia/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::outputScanlines): Remove obvious comments.
+        * platform/image-decoders/skia/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable): Remove obvious comments.
+        * platform/image-decoders/skia/XBMImageDecoder.cpp:
+        (WebCore::XBMImageDecoder::frameBufferAtIndex): Return 0 for non-zero indexes, don't try to decode unnecessarily after failure or when the size couldn't be computed, make more in line with other decoders' comments and structure, call RGBA32Buffer::setRect() appropriately.
+
 2009-06-10  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

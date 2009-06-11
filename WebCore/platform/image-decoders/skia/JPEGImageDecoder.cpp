@@ -458,17 +458,13 @@ bool JPEGImageDecoder::outputScanlines()
     if (m_frameBufferCache.isEmpty())
         return false;
 
-    // Resize to the width and height of the image.
+    // Initialize the framebuffer if needed.
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
-        // Let's resize our buffer now to the correct width/height. This will
-        // also initialize it to transparent.
         if (!buffer.setSize(size().width(), size().height())) {
             m_failed = true;
             return false;
         }
-
-        // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
         buffer.setHasAlpha(false);
 
