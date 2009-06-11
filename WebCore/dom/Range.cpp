@@ -95,8 +95,8 @@ PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, const Positi
 
 Range::~Range()
 {
-    if (m_start.container())
-        m_ownerDocument->detachRange(this);
+    // Always detach (even if we've already detached) to fix https://bugs.webkit.org/show_bug.cgi?id=26044
+    m_ownerDocument->detachRange(this);
 
 #ifndef NDEBUG
     rangeCounter.decrement();
@@ -378,7 +378,6 @@ Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec)
         return NODE_INSIDE; // ends inside the range
     }
 }
-
 
 short Range::compareBoundaryPoints(CompareHow how, const Range* sourceRange, ExceptionCode& ec) const
 {
@@ -1070,6 +1069,7 @@ PassRefPtr<DocumentFragment> Range::createContextualFragment(const String& marku
 
 void Range::detach(ExceptionCode& ec)
 {
+    // Check first to see if we've already detached:
     if (!m_start.container()) {
         ec = INVALID_STATE_ERR;
         return;

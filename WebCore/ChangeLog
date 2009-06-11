@@ -1,3 +1,48 @@
+2009-06-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Crash at Node::nodeIndex()
+        https://bugs.webkit.org/show_bug.cgi?id=26044
+
+        This crash seems to be caused by calling nodeIndex() on
+        and invalid Node pointer.  As far as I can tell, the most likely
+        explanation is that the Range holding the node is actually
+        deleted already (thus the memory is junk).  Looking at the code
+        Range changes m_start.container() in its destructor to tell if
+        the range is detached or not.  If somehow m_start.container() was
+        cleared, the range will never be detached and the Document will end
+        up with pointers to deleted ranges.  I don't know how to reproduce this
+        any reproduction I could think of would hit ASSERTS in Debug mode.
+        One reproduction I tried, did not crash in Release mode, even though it
+        did in Debug mode.
+
+        I'm making a speculative fix by always detaching the Range from the document
+        during ~Range.  This is safer, and all we lose is an ASSERT to prevent double-detach.
+        
+        Another solution would be to instead store an m_attached bool on the Range object, or
+        expose a Document::isRangeAttached(range) call.  Either of those solutions
+        could affect performance, so I went with this solution for now.
+
+        I also removed the RangeBoundaryPoint default constructor
+        as it is not used anywhere (and is more likely to cause confusion).
+
+        Since I can't reproduce the crash, no test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detachRange):
+        * dom/Range.cpp:
+        (WebCore::Range::~Range):
+        (WebCore::Range::detach):
+        * dom/RangeBoundaryPoint.h:
+        (WebCore::RangeBoundaryPoint::RangeBoundaryPoint):
+          RangeBoundaryPoints always have an m_containerNode, ASSERT that.
+        (WebCore::RangeBoundaryPoint::set):
+          ASSERT(container) to match all the other functions.
+          All callers already ASSERT(container).  Since we only
+          have reports if this crash from Release mode, I can only
+          assume that those ASSERTs would have been hit in a Debug reproduction.
+
 2009-06-11  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Adam Barth.

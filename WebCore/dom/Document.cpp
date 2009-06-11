@@ -4287,7 +4287,8 @@ void Document::attachRange(Range* range)
 
 void Document::detachRange(Range* range)
 {
-    ASSERT(m_ranges.contains(range));
+    // We don't ASSERT m_ranges.contains(range) to allow us to call this
+    // unconditionally to fix: https://bugs.webkit.org/show_bug.cgi?id=26044
     m_ranges.remove(range);
 }
 
