@@ -426,7 +426,7 @@ void webkit_download_start(WebKitDownload* download)
     if (priv->resourceHandle)
         priv->resourceHandle->setClient(priv->downloadClient);
     else
-        priv->resourceHandle = ResourceHandle::create(ResourceRequest(webkit_network_request_get_message(priv->networkRequest)), priv->downloadClient, 0, false, false, false);
+        priv->resourceHandle = ResourceHandle::create(core(priv->networkRequest), priv->downloadClient, 0, false, false, false);
 
     priv->timer = g_timer_new();
     webkit_download_open_stream_for_uri(download, priv->destinationURI);

@@ -99,6 +99,16 @@ WebCore::NavigationType core(WebKitWebNavigationReason type)
     return (WebCore::NavigationType)type;
 }
 
+WebCore::ResourceRequest core(WebKitNetworkRequest* request)
+{
+    SoupMessage* soupMessage = webkit_network_request_get_message(request);
+    if (soupMessage)
+        return ResourceRequest(soupMessage);
+
+    KURL url = KURL(KURL(), String::fromUTF8(webkit_network_request_get_uri(request)));
+    return ResourceRequest(url);
+}
+
 } /** end namespace WebKit */
 
 static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMessage* message, gpointer userData)

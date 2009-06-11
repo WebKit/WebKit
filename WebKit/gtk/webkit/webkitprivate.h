@@ -74,6 +74,8 @@ namespace WebKit {
 
     WebKitWebNavigationReason kit(WebCore::NavigationType type);
     WebCore::NavigationType core(WebKitWebNavigationReason reason);
+
+    WebCore::ResourceRequest core(WebKitNetworkRequest* request);
 }
 
 typedef struct {

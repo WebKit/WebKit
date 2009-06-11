@@ -1,3 +1,20 @@
+2009-06-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        Fix crash when downloading, caused by assuming SoupMessage would
+        be there. This change factors the logic required to create a
+        ResourceRequest from a WebKitNetworkRequest into a core()
+        function, like we have for some other classes.
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_start):
+        * webkit/webkitprivate.cpp:
+        (WebKit::core):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_load_request):
+
 2009-06-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Xan Lopez.
