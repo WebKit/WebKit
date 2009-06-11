@@ -1,3 +1,14 @@
+2009-06-11  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Steve Falkenburg.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26306
+
+        Revert 42565 as it leads to DumpRenderTree crashing on startup because
+        Windows can't find CFURLCacheCopySharedURLCache in CoreNetwork.dll.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+
 2009-06-10  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Jan Alonzo.
