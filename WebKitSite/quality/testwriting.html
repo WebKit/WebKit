@@ -30,6 +30,12 @@ for the output to be written out as plain text rather than as a render tree dump
 This is useful for tests that are testing something other than layout. The event creation test mentioned above is a good example of 
 how to do this and when it makes sense.</p>
 
+<p>Some tests require pixel-level comparisons.  For these tests, you must generate expected output for a specific
+machine type, operating system, and color profile.  When you add such a test, you can generate new expected output
+automatically using the <tt>run-webkit-tests --pixel</tt> command.  This will automatically
+configure the color profile, and place the resulting rendered image (and checksum) in the appropriate platform
+directory for checkin.</p>
+
 <p><a href="http://www.hixie.ch/resources/fonts/">The Ahem font</a> is useful in testing text layout, since its
 glyphs&rsquo; metrics are well known, and it is always available to tests running
 in the layout test tool. However, if you want to view tests that use Ahem in Safari,
