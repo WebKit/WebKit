@@ -1,3 +1,22 @@
+2009-06-11  Eric Seidel  <eric@webkit.org>
+
+        Rubber stamped by Dave Levin.
+
+        Add missing pixel results
+
+        * platform/mac/editing/style/apply-through-end-of-document-expected.checksum: Added.
+        * platform/mac/editing/style/apply-through-end-of-document-expected.png: Added.
+        * platform/mac/fast/canvas/canvas-empty-image-pattern-expected.checksum: Copied from LayoutTests/platform/mac-tiger/svg/custom/mask-excessive-malloc-expected.checksum.
+        * platform/mac/fast/canvas/canvas-empty-image-pattern-expected.png: Copied from LayoutTests/platform/mac/dom/xhtml/level3/core/canonicalform08-expected.png.
+        * platform/mac/fast/css/compare-content-style-expected.checksum: Added.
+        * platform/mac/fast/css/compare-content-style-expected.png: Added.
+        * platform/mac/fast/dynamic/anchor-lock-expected.checksum: Added.
+        * platform/mac/fast/dynamic/anchor-lock-expected.png: Added.
+        * platform/mac/fast/transforms/bounding-rect-zoom-expected.checksum: Added.
+        * platform/mac/fast/transforms/bounding-rect-zoom-expected.png: Added.
+        * platform/mac/webarchive/test-link-rel-icon-expected.checksum: Copied from LayoutTests/platform/mac-tiger/svg/custom/mask-excessive-malloc-expected.checksum.
+        * platform/mac/webarchive/test-link-rel-icon-expected.png: Copied from LayoutTests/platform/mac/dom/xhtml/level3/core/canonicalform08-expected.png.
+
 2009-06-11  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (build-fix).
