@@ -111,6 +111,11 @@ h1 + p, h2 + p, h3 + p, h4 + p, b + p {
     margin: 4px 0px;
 }
 
+.datestamp {
+    color: rgb(119, 119, 119);
+    font-size: smaller;
+}
+
 /* Links */
 a {
     text-decoration: none;

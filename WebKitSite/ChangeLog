@@ -1,3 +1,35 @@
+2009-06-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver Hunt
+
+        Add a page indexing the various demo applications we have posted.
+
+        * demos/index.html: Added.
+        * nav.inc: Add a link to the demos page on the side bar
+        * css/main.css:  Add a style for date stamps based on the blog.
+
+        * demos/calendar/index.html: Added to redirect to Calendar.html.  I'm not moving Calendar.html to
+          index.html as the Calendar.html url has already been published and we should keep it working.
+
+        Move the drosera test code to /misc, as it is no longer a meaningful demo:
+        * demos/drosera: Removed.
+        * demos/drosera/demo.js: Removed.
+        * demos/drosera/drosera.png: Removed.
+        * demos/drosera/index.html: Removed.
+        * misc/drosera: Copied from demos/drosera.
+
+        Move the sticky notes example into /demos:
+        * demos/sticky-notes: Added.
+        * demos/sticky-notes/StickyNotes.manifest: Copied from misc/DatabaseExample.manifest.
+        * demos/sticky-notes/deleteButton.png: Copied from misc/deleteButton.png.
+        * demos/sticky-notes/deleteButtonPressed.png: Copied from misc/deleteButtonPressed.png.
+        * demos/sticky-notes/index.html: Copied from misc/DatabaseExample.html.
+        * misc/DatabaseExample.html: Changed to redirect to demos/sticky-notes/index.html.  I'm not removing
+          it altogether as the misc/DatabaseExample.html url has already been published and we should keep it working.
+        * misc/DatabaseExample.manifest: Removed.
+        * misc/deleteButton.png: Removed.
+        * misc/deleteButtonPressed.png: Removed.
+
 2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Eric Seidel.
