@@ -47,7 +47,6 @@ void SimpleFontData::platformInit()
     m_scriptCache = 0;
     m_scriptFontProperties = 0;
     m_isSystemFont = false;
-    m_syntheticBoldOffset = 0;
 
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 
@@ -95,16 +94,6 @@ void SimpleFontData::platformInit()
 void SimpleFontData::platformCharWidthInit()
 {
     // charwidths are set in platformInit.
-}
-
-void SimpleFontData::platformDestroy()
-{
-    cairo_font_face_destroy(m_platformData.fontFace());
-    cairo_scaled_font_destroy(m_platformData.scaledFont());
-
-    DeleteObject(m_platformData.hfont());
-
-    platformCommonDestroy();
 }
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const

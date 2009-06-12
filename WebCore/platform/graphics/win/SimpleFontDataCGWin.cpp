@@ -126,11 +126,6 @@ void SimpleFontData::platformCharWidthInit()
     }
 }
 
-void SimpleFontData::platformDestroy()
-{
-    platformCommonDestroy();
-}
-
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
     if (m_platformData.useGDI())

@@ -1,3 +1,28 @@
+2009-06-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26353
+        Corrects handling of Cairo fonts that were getting out of
+        sync due to default copy construction.  Also refactors
+        some incorrect platform font destruction code that belongs
+        in the font object's destructor.
+
+        * platform/graphics/win/FontPlatformData.h:
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::setFont):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+
 2009-06-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

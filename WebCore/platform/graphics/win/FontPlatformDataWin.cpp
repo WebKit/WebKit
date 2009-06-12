@@ -85,8 +85,4 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
 {
 }
 
-FontPlatformData::~FontPlatformData()
-{
-}
-
 }

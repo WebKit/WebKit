@@ -89,7 +89,7 @@ void SimpleFontData::initGDIFont()
      return;
 }
 
-void SimpleFontData::platformCommonDestroy()
+void SimpleFontData::platformDestroy()
 {
     // We don't hash this on Win32, so it's effectively owned by us.
     delete m_smallCapsFontData;

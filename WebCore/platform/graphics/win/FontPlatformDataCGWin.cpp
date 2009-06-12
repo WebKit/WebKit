@@ -137,4 +137,8 @@ FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool
 {
 }
 
+FontPlatformData::~FontPlatformData()
+{
+}
+
 }

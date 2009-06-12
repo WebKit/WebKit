@@ -64,6 +64,7 @@ public:
     FontPlatformData(HFONT, CGFontRef, float size, bool bold, bool oblique, bool useGDI);
 #elif PLATFORM(CAIRO)
     FontPlatformData(cairo_font_face_t*, float size, bool bold, bool oblique);
+    FontPlatformData(const FontPlatformData&);
 #endif
     ~FontPlatformData();
 
