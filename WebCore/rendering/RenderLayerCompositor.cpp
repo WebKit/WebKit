@@ -629,7 +629,7 @@ void RenderLayerCompositor::willMoveOffscreen()
 void RenderLayerCompositor::updateRootLayerPosition()
 {
     if (m_rootPlatformLayer)
-        m_rootPlatformLayer->setSize(FloatSize(m_renderView->docWidth(), m_renderView->docHeight()));
+        m_rootPlatformLayer->setSize(FloatSize(m_renderView->overflowWidth(), m_renderView->overflowHeight()));
 }
 
 bool RenderLayerCompositor::has3DContent() const
@@ -768,7 +768,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
         return;
 
     m_rootPlatformLayer = GraphicsLayer::createGraphicsLayer(0);
-    m_rootPlatformLayer->setSize(FloatSize(m_renderView->docWidth(), m_renderView->docHeight()));
+    m_rootPlatformLayer->setSize(FloatSize(m_renderView->overflowWidth(), m_renderView->overflowHeight()));
     m_rootPlatformLayer->setPosition(FloatPoint(0, 0));
 
     if (GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)

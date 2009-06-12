@@ -1,3 +1,19 @@
+2009-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix build when ACCELERATED_COMPOSITING is defined.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::attachRootGraphicsLayer):
+        (WebCore::EmptyChromeClient::setNeedsOneShotDrawingSynchronization):
+        (WebCore::EmptyChromeClient::scheduleViewUpdate):
+        Add stubs for the compositing-related ChromeClient methods.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        docWidth()/docHeight() became private. Use overflowWidth()/overflowHeight() instead, which
+        matches what is used to size the WebHTMLView.
+
 2009-06-12  jorlow  <jorlow@chromium.org>
 
         Reviewed by David Levin.
