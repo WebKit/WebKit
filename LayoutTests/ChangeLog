@@ -1,3 +1,18 @@
+2009-06-11  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=2628i
+        Converted LayoutTests\editing\deleting\4875189.html from a pixel test to dumpAsText test
+        since it only checks whether the result contains exactly two paragraphs or not.
+
+        * editing/deleting/4875189-expected.txt: Added.
+        * editing/deleting/4875189.html:
+        * platform/mac/editing/deleting/4875189-expected.checksum: Removed.
+        * platform/mac/editing/deleting/4875189-expected.png: Removed.
+        * platform/mac/editing/deleting/4875189-expected.txt: Removed.
+        * platform/qt/editing/deleting/4875189-expected.txt: Removed.
+
 2009-06-11  Eric Seidel  <eric@webkit.org>
 
         Rubber stamped by Dave Levin.
