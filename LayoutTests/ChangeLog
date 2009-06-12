@@ -1,3 +1,12 @@
+2009-06-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        Enable test that uses the now implemented dumpStatusCallbacks()
+        call.
+
+        * platform/gtk/Skipped:
+
 2009-06-11  Ryosuke Niwa  <rniwa@google.com>
 
         Reviewed by Eric Seidel.

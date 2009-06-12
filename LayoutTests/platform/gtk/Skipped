@@ -1594,7 +1594,6 @@ fast/css/text-align.html
 fast/css/zoom-body-scroll.html
 fast/css/getComputedStyle/computed-style-without-renderer.html
 fast/css/getComputedStyle/computed-style.html
-fast/dom/assign-to-window-status.html
 fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
