@@ -1,3 +1,9 @@
+2009-06-12  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Adding JSONObject.cpp to the build.
+
+        * JavaScriptCoreSources.bkl:
+
 2009-06-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Jan Michael Alonzo.

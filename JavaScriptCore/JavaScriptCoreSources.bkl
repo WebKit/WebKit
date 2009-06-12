@@ -116,6 +116,7 @@ Source files for JSCore.
         runtime/JSNotAnObject.cpp
         runtime/JSNumberCell.cpp
         runtime/JSObject.cpp
+        runtime/JSONObject.cpp
         runtime/JSPropertyNameIterator.cpp
         runtime/JSStaticScopeObject.cpp
         runtime/JSString.cpp
