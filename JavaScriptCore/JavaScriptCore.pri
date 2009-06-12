@@ -69,6 +69,7 @@ include(pcre/pcre.pri)
 
 LUT_FILES += \
     runtime/DatePrototype.cpp \
+    runtime/JSONObject.cpp \
     runtime/NumberConstructor.cpp \
     runtime/StringPrototype.cpp \
     runtime/ArrayPrototype.cpp \
