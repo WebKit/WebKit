@@ -1,3 +1,17 @@
+2009-06-12  Nate Chapin  <japhet@google.com>
+
+        Reviewed by David Levin.
+
+        Upstream V8Helpers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26332
+
+        * bindings/v8/V8Helpers.cpp: Added.
+        (wrapNPObject): Moved from v8_helpers.cpp.
+        (toV8Context): Moved from v8_helpers.cpp.
+        (toV8Proxy): Moved from v8_helpers.cpp.
+        * bindings/v8/V8Helpers.h: Added.
+
 2009-06-12  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Mark Rowe.
