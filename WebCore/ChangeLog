@@ -1,3 +1,23 @@
+2009-06-12  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24792
+        rdar://problem/6933055
+
+        Changes the radius in which cursor movement around the 4 arrow icon
+        while pan-scrolling does not cause scrolling from around 10 pixels to
+        15 pixels, similar to what is found in IE and Firefox.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::setPanScrollCursor):
+        Factor out the no-pan-scroll radius.
+        * platform/ScrollView.h:
+        Create a constant for the no-pan-scroll radius.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::panScrollFromPoint):
+        Factor out the no-pan-scroll radius.
+
 2009-06-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

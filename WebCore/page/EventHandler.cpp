@@ -661,11 +661,10 @@ void EventHandler::setPanScrollCursor()
 
     // At the original click location we draw a 4 arrowed icon. Over this icon there won't be any scroll
     // So we don't want to change the cursor over this area
-    const int noScrollRadius = 9;
-    bool east = m_panScrollStartPos.x() < (m_currentMousePosition.x() - noScrollRadius);
-    bool west = m_panScrollStartPos.x() > (m_currentMousePosition.x() + noScrollRadius);
-    bool north = m_panScrollStartPos.y() > (m_currentMousePosition.y() + noScrollRadius);
-    bool south = m_panScrollStartPos.y() < (m_currentMousePosition.y() - noScrollRadius);
+    bool east = m_panScrollStartPos.x() < (m_currentMousePosition.x() - ScrollView::noPanScrollRadius);
+    bool west = m_panScrollStartPos.x() > (m_currentMousePosition.x() + ScrollView::noPanScrollRadius);
+    bool north = m_panScrollStartPos.y() > (m_currentMousePosition.y() + ScrollView::noPanScrollRadius);
+    bool south = m_panScrollStartPos.y() < (m_currentMousePosition.y() - ScrollView::noPanScrollRadius);
          
     if (north) {
         if (east)
