@@ -1,5 +1,14 @@
 2009-06-12  Brent Fulgham  <bfulgham@webkit.org>
 
+        Unreviewed build correction.
+
+        Revert accidental configuration checkin.  Was not meant to
+        be part of the last changeset.
+
+        * config.h:
+
+2009-06-12  Brent Fulgham  <bfulgham@webkit.org>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=26353
