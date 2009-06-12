@@ -16230,7 +16230,7 @@
         (WebCore::TextResourceDecoder::checkForHeadCharset): Correct the length passed to
         findIgnoringCase().
 
-2008-05-29  Peter Kasting  <zerodpx@gmail.com>
+2008-05-29  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dave Hyatt.
 
@@ -63513,7 +63513,7 @@ element is when the element reports itself to the screen reader. So all of these
         directories to the plugin paths.
         (WebCore::PluginDatabaseWin::defaultPluginPaths):
 
-2007-12-20  Peter Kasting  <zerodpx@gmail.com>
+2007-12-20  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Alp Toker.
 
@@ -71115,7 +71115,7 @@ element is when the element reports itself to the screen reader. So all of these
         width among columns, skip those whose effective (rather than
         specified) width is auto and contain only empty cells.
 
-2007-11-28  Peter Kasting  <zerodpx@gmail.com>
+2007-11-28  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Alp Toker.
 
@@ -71349,7 +71349,7 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::DatabaseTracker::defaultOriginQuota):
         * storage/DatabaseTracker.h:
 
-2007-11-26  Peter Kasting  <zerodpx@gmail.com>
+2007-11-26  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Alp Toker.
 
@@ -72529,7 +72529,7 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::XMLHttpRequest::getResponseXML):
         * xml/XMLHttpRequest.h:
 
-2007-11-19  Peter Kasting  <zerodpx@gmail.com>
+2007-11-19  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Adler.
 
@@ -74725,7 +74725,7 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::ContextMenu::appendItem):
         (WebCore::ContextMenu::itemCount):
 
-2007-11-09  Peter Kasting  <zerodpx@gmail.com>
+2007-11-09  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Mark Rowe.
 
@@ -76617,7 +76617,7 @@ element is when the element reports itself to the screen reader. So all of these
         * platform/network/ResourceResponse.cpp:
         (WebCore::ResourceResponse::isAttachment):
 
-2007-11-01  Peter Kasting  <zerodpx@gmail.com>
+2007-11-01  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Dave Hyatt.
 
@@ -82084,7 +82084,7 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::renderSubtreeToImage):
         * rendering/SVGRenderSupport.h:
 
-2007-10-14  Peter Kasting  <zerodpx@gmail.com>
+2007-10-14  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Maciej.
 
@@ -82180,7 +82180,7 @@ element is when the element reports itself to the screen reader. So all of these
         not added into generated after content. Also made adding a child before
         a table caption work correctly instead of adding the child after the caption.
 
-2007-10-14  Peter Kasting  <zerodpx@gmail.com>
+2007-10-14  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Maciej.
 
@@ -82191,7 +82191,7 @@ element is when the element reports itself to the screen reader. So all of these
         * platform/image-decoders/gif/GIFImageReader.cpp:
         (GIFImageReader::read):
 
-2007-10-14  Peter Kasting  <zerodpx@gmail.com>
+2007-10-14  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Maciej.
 

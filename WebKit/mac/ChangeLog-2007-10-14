@@ -8810,7 +8810,7 @@
         (WebFrameLoaderClient::dispatchDidReceiveResponse):
         (WebFrameLoaderClient::incrementProgress):
 
-2007-01-04  Don Gibson  <dgibson77@gmail.com>
+2007-01-04  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Alexey.
 
@@ -9937,7 +9937,7 @@
         * WebView/WebUnarchivingState.m:
         (-[WebUnarchivingState archivedResourceForURL:]):
 
-2006-12-08  Don Gibson  <dgibson77@gmail.com>
+2006-12-08  Peter Kasting  <pkasting@google.com>
 
         Reviewed and landed by Alexey.
 
@@ -10135,7 +10135,7 @@
 
         * WebView/WebView.mm: (-[WebView selectedFrame]): Removed extra return statement.
 
-2006-12-04  Don Gibson  <dgibson77@gmail.com>
+2006-12-04  Peter Kasting  <pkasting@google.com>
 
         Reviewed and landed by Alexey.
 
@@ -10196,7 +10196,7 @@
 
         * WebKit.xcodeproj/project.pbxproj: Xcode wants what it wants.
 
-2006-12-01  Don Gibson  <dgibson77@gmail.com>
+2006-12-01  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Mitz.
 
@@ -10517,7 +10517,7 @@
         * WebView/WebHTMLViewInternal.h: Add _lookUpInDictionaryFromMenu
         * WebView/WebViewInternal.h: Add _searchWithSpotlightFromMenu
 
-2006-11-18  Don Gibson  <dgibson77@gmail.com>
+2006-11-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Sam Weinig.
 
@@ -10541,7 +10541,7 @@
         (+[WebView initialize]):
         (-[WebView setPreferences:]):
 
-2006-11-16  Don Gibson  <dgibson77@gmail.com>
+2006-11-16  Peter Kasting  <pkasting@google.com>
 
         Reviewed and landed by ap.
 
@@ -14851,7 +14851,7 @@
         (-[WebFrameLoader loadDataSource:withLoadType:formState:]): Added a local variable to avoid
         calling _documentLoadState over and over again.
 
-2006-10-07  Don Gibson  <dgibson77@gmail.com>
+2006-10-07  Peter Kasting  <pkasting@google.com>
 
         Reviewed/landed by Adam.
 
@@ -15245,7 +15245,7 @@
         (WebFrame::loadDataSource):
         (WebFrame::receivedResponse):
 
-2006-10-05  Don Gibson  <dgibson77@gmail.com>
+2006-10-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin, landed by Adam.
 

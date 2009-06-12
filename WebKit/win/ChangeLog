@@ -1,3 +1,9 @@
+2009-06-12  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        * ChangeLog: Update my email address.
+
 2009-06-03  Brent Fulgham  <bfulgham@webkit.org>
 
         Build fix for Windows Cairo.
@@ -12645,7 +12651,7 @@ ks2008-12-08  Dan Bernstein  <mitz@apple.com>
         * WebView.cpp:
         (WebView::userAgentForKURL):
 
-2007-08-15  Peter Kasting  <zerodpx@gmail.org>
+2007-08-15  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin Adler.
         

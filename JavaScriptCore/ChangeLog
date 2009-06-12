@@ -1,3 +1,9 @@
+2009-06-12  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        * ChangeLog-2007-10-14: Change pseudonym "Don Gibson" to me (was used while Google Chrome was not public); update my email address.
+
 2009-06-12  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Adding JSONObject.cpp to the build.

@@ -9453,7 +9453,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::ArrayImpl::operator==):
         Fixed typo so that correct variable is used in equality comparison.
 
-2007-08-29  Peter Kasting  <zerodpx@gmail.com>
+2007-08-29  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Maciej.
 
@@ -9469,7 +9469,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         * platform/image-decoders/gif/GIFImageReader.cpp:
         (GIFImageReader::read):
 
-2007-08-29  Peter Kasting  <zerodpx@gmail.com>
+2007-08-29  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Maciej.
 
@@ -9485,7 +9485,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::PNGImageDecoder::rowAvailable):
         (WebCore::PNGImageDecoder::pngComplete):
 
-2007-08-29  Peter Kasting  <zerodpx@gmail.com>
+2007-08-29  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Maciej.
 
@@ -9793,7 +9793,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
           Only restricts hit testing if the placeholder text is visible.
         * rendering/RenderTextControl.h: (WebCore::RenderTextControl::placeholderIsVisible): Added. 
 
-2007-08-25  Peter Kasting <zerodpx@gmail.org>
+2007-08-25  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Sam Weinig.
 
@@ -10975,7 +10975,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::StyleRareInheritedData::operator==):
         (WebCore::RenderStyle::diff):
 
-2007-08-15  Peter Kasting  <zerodpx@gmail.org>
+2007-08-15  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin.
         
@@ -15750,7 +15750,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         <script> quirk in cases where the / appears in a mangled attribtue
         value.
 
-2007-07-17  Peter Kasting  <zerodpx@gmail.com>
+2007-07-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Hyatt.
 

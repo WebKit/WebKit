@@ -756,7 +756,7 @@
 
         * wtf/Platform.h: Also test if __arm__ is defined.
 
-2007-08-25  Peter Kasting <zerodpx@gmail.org>
+2007-08-25  Peter Kasting <pkasting@google.com>
 
         Reviewed by Maciej Stachowiak.
 
@@ -766,7 +766,7 @@
         * wtf/Vector.h:
         (WTF::Vector::operator[]): Only provide versions of operator[] that takes a size_t argument.
 
-2007-08-25  Peter Kasting <zerodpx@gmail.org>
+2007-08-25  Peter Kasting <pkasting@google.com>
 
         Reviewed by Sam Weinig.
 
@@ -786,7 +786,7 @@
 
         * kjs/object.cpp:
 
-2007-08-15  Peter Kasting  <zerodpx@gmail.org>
+2007-08-15  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin.
         
@@ -4435,7 +4435,7 @@
         Interestingly, even the single-threaded testkjs shows a speed gain
         from removing the pthread_is_threaded_np() short-circuit. Not sure why.
 
-2007-03-04  Don Gibson  <dgibson77@gmail.com>
+2007-03-04  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Nikolas Zimmermann.
 
