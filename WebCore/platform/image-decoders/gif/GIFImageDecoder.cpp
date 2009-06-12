@@ -321,10 +321,8 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
               // Copy the whole previous buffer, then clear just its frame.
               buffer->copyBitmapData(*prevBuffer);
               for (int y = prevRect.y(); y < prevRect.bottom(); ++y) {
-                  unsigned* const currentRow =
-                      buffer->bytes().data() + (y * size().width());
                   for (int x = prevRect.x(); x < prevRect.right(); ++x)
-                      buffer->setRGBA(*(currentRow + x), 0, 0, 0, 0);
+                      buffer->setRGBA(x, y, 0, 0, 0, 0);
               }
               if ((prevRect.width() > 0) && (prevRect.height() > 0))
                   buffer->setHasAlpha(true);
@@ -341,47 +339,43 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 }
 
 void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
-                                     unsigned char* rowBuffer,   // Pointer to single scanline temporary buffer
+                                     unsigned char* rowBuffer,
                                      unsigned char* rowEnd,
-                                     unsigned rowNumber,  // The row index
-                                     unsigned repeatCount,  // How many times to repeat the row
+                                     unsigned rowNumber,
+                                     unsigned repeatCount,
                                      bool writeTransparentPixels)
 {
-    // Initialize the frame if necessary.
-    RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
-    if ((buffer.status() == RGBA32Buffer::FrameEmpty) && !initFrameBuffer(frameIndex))
+    // The pixel data and coordinates supplied to us are relative to the frame's
+    // origin within the entire image size, i.e.
+    // (m_reader->frameXOffset(), m_reader->frameYOffset()).
+    int x = m_reader->frameXOffset();
+    const int y = m_reader->frameYOffset() + rowNumber;
+
+    // Sanity-check the arguments.
+    if ((rowBuffer == 0) || (y >= size().height()))
         return;
 
-    // Do nothing for bogus data.
-    if (rowBuffer == 0 || static_cast<int>(m_reader->frameYOffset() + rowNumber) >= size().height())
-        return;
-
+    // Get the colormap.
     unsigned colorMapSize;
     unsigned char* colorMap;
     m_reader->getColorMap(colorMap, colorMapSize);
     if (!colorMap)
         return;
 
-    // The buffers that we draw are the entire image's width and height, so a final output frame is
-    // width * height RGBA32 values in size.
-    //
-    // A single GIF frame, however, can be smaller than the entire image, i.e., it can represent some sub-rectangle
-    // within the overall image.  The rows we are decoding are within this
-    // sub-rectangle.  This means that if the GIF frame's sub-rectangle is (x,y,w,h) then row 0 is really row
-    // y, and each row goes from x to x+w.
-    unsigned dstPos = (m_reader->frameYOffset() + rowNumber) * size().width() + m_reader->frameXOffset();
-    unsigned* dst = buffer.bytes().data() + dstPos;
-    unsigned* dstEnd = dst + size().width() - m_reader->frameXOffset();
-    unsigned* currDst = dst;
-    unsigned char* currentRowByte = rowBuffer;
+    // Initialize the frame if necessary.
+    RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
+    if ((buffer.status() == RGBA32Buffer::FrameEmpty) && !initFrameBuffer(frameIndex))
+        return;
 
-    while (currentRowByte != rowEnd && currDst < dstEnd) {
-        if ((!m_reader->isTransparent() || *currentRowByte != m_reader->transparentPixel()) && *currentRowByte < colorMapSize) {
-            unsigned colorIndex = *currentRowByte * 3;
-            unsigned red = colorMap[colorIndex];
-            unsigned green = colorMap[colorIndex + 1];
-            unsigned blue = colorMap[colorIndex + 2];
-            RGBA32Buffer::setRGBA(*currDst, red, green, blue, 255);
+    // Write one row's worth of data into the frame.  There is no guarantee that
+    // (rowEnd - rowBuffer) == (size().width() - m_reader->frameXOffset()), so
+    // we must ensure we don't run off the end of either the source data or the
+    // row's X-coordinates.
+    for (unsigned char* sourceAddr = rowBuffer; (sourceAddr != rowEnd) && (x < size().width()); ++sourceAddr, ++x) {
+        const unsigned char sourceValue = *sourceAddr;
+        if ((!m_reader->isTransparent() || (sourceValue != m_reader->transparentPixel())) && (sourceValue < colorMapSize)) {
+            const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
+            buffer.setRGBA(x, y, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
         } else {
             m_currentBufferSawAlpha = true;
             // We may or may not need to write transparent pixels to the buffer.
@@ -392,26 +386,13 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
             // beyond the first, or the initial passes will "show through" the
             // later ones.
             if (writeTransparentPixels)
-                RGBA32Buffer::setRGBA(*currDst, 0, 0, 0, 0);
+                buffer.setRGBA(x, y, 0, 0, 0, 0);
         }
-        currDst++;
-        currentRowByte++;
     }
 
-    if (repeatCount > 1) {
-        // Copy the row |repeatCount|-1 times.
-        unsigned num = currDst - dst;
-        unsigned dataSize = num * sizeof(unsigned);
-        unsigned width = size().width();
-        unsigned* end = buffer.bytes().data() + width * size().height();
-        currDst = dst + width;
-        for (unsigned i = 1; i < repeatCount; i++) {
-            if (currDst + num > end) // Protect against a buffer overrun from a bogus repeatCount.
-                break;
-            memcpy(currDst, dst, dataSize);
-            currDst += width;
-        }
-    }
+    // Tell the frame to copy the row data if need be.
+    if (repeatCount > 1)
+        buffer.copyRowNTimes(m_reader->frameXOffset(), x, y, std::min(y + static_cast<int>(repeatCount), size().height()));
 }
 
 void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod)

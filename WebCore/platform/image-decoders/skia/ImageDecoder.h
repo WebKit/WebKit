@@ -45,7 +45,6 @@ namespace WebCore {
     class RGBA32Buffer {
     public:
         enum FrameStatus { FrameEmpty, FramePartial, FrameComplete };
-
         enum FrameDisposalMethod {
             // If you change the numeric values of these, make sure you audit all
             // users, as some users may cast raw values to/from these constants.
@@ -54,6 +53,7 @@ namespace WebCore {
             DisposeOverwriteBgcolor,   // Clear frame to transparent
             DisposeOverwritePrevious,  // Clear frame to previous framebuffer contents
         };
+        typedef uint32_t PixelData;
 
         RGBA32Buffer()
             : m_status(FrameEmpty)
@@ -64,35 +64,12 @@ namespace WebCore {
 
         // This constructor doesn't create a new copy of the image data, it only
         // increases the ref count of the existing bitmap.
+        //
+        // This exists because ImageDecoder keeps a Vector<RGBA32Buffer>, and
+        // Vector requires this constructor.
         RGBA32Buffer(const RGBA32Buffer& other)
         {
             operator=(other);
-        }
-
-        ~RGBA32Buffer()
-        {
-        }
-
-        // Initialize with another buffer.  This function doesn't create a new copy
-        // of the image data, it only increases the refcount of the existing bitmap.
-        //
-        // Normal callers should not generally be using this function.  If you want
-        // to create a copy on which you can modify the image data independently,
-        // use copyBitmapData() instead.
-        RGBA32Buffer& operator=(const RGBA32Buffer& other)
-        {
-            if (this == &other)
-                return *this;
-
-            m_bitmap = other.m_bitmap;
-            // Keep the pixels locked since we will be writing directly into the
-            // bitmap throughout this object's lifetime.
-            m_bitmap.lockPixels();
-            setRect(other.rect());
-            setStatus(other.status());
-            setDuration(other.duration());
-            setDisposalMethod(other.disposalMethod());
-            return *this;
         }
 
         void clear()
@@ -129,14 +106,14 @@ namespace WebCore {
         // MUST not pass invalid values or this will corrupt memory.
         void copyRowNTimes(int startX, int endX, int startY, int endY)
         {
-            ASSERT(startX < m_bitmap.width());
-            ASSERT(endX <= m_bitmap.width());
-            ASSERT(startY < m_bitmap.height());
-            ASSERT(endY <= m_bitmap.height());
-            const int rowBytes = (endX - startX) * sizeof(uint32_t);
-            const uint32_t* const startAddr = m_bitmap.getAddr32(startX, startY);
+            ASSERT(startX < width());
+            ASSERT(endX <= width());
+            ASSERT(startY < height());
+            ASSERT(endY <= height());
+            const int rowBytes = (endX - startX) * sizeof(PixelData);
+            const PixelData* const startAddr = getAddr(startX, startY);
             for (int destY = startY + 1; destY < endY; ++destY)
-                memcpy(m_bitmap.getAddr32(startX, destY), startAddr, rowBytes);
+                memcpy(getAddr(startX, startY), startAddr, rowBytes);
         }
 
         // Must be called before any pixels are written. Will return true on
@@ -145,7 +122,7 @@ namespace WebCore {
         {
             // This function should only be called once, it will leak memory
             // otherwise.
-            ASSERT(m_bitmap.width() == 0 && m_bitmap.height() == 0);
+            ASSERT(width() == 0 && height() == 0);
             m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, width, height);
             if (!m_bitmap.allocPixels()) {
                 // Allocation failure, maybe the bitmap was too big.
@@ -162,32 +139,66 @@ namespace WebCore {
         // To be used by ImageSource::createFrameAtIndex().  Returns a pointer
         // to the underlying native image data.  This pointer will be owned by
         // the BitmapImage and freed in FrameData::clear().
-        NativeImagePtr asNewNativeImage()
+        NativeImagePtr asNewNativeImage() const
         {
             return new NativeImageSkia(m_bitmap);
         }
 
+        bool hasAlpha() const { return !m_bitmap.isOpaque(); }
         const IntRect& rect() const { return m_rect; }
         FrameStatus status() const { return m_status; }
         unsigned duration() const { return m_duration; }
         FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
-        bool hasAlpha() const { return !m_bitmap.isOpaque(); }
 
+        void setHasAlpha(bool alpha) { m_bitmap.setIsOpaque(!alpha); }
         void setRect(const IntRect& r) { m_rect = r; }
         void setStatus(FrameStatus s)
         {
+            m_status = s;
             if (s == FrameComplete)
                 m_bitmap.setDataComplete();  // Tell the bitmap it's done.
-            m_status = s;
         }
         void setDuration(unsigned duration) { m_duration = duration; }
         void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
-        void setHasAlpha(bool alpha) { m_bitmap.setIsOpaque(!alpha); }
 
-        void setRGBA(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        inline void setRGBA(int x, int y, unsigned r, unsigned g, unsigned b, unsigned a)
         {
-            uint32_t* const dest = m_bitmap.getAddr32(x, y);
+            setRGBA(getAddr(x, y), r, g, b, a);
+        }
 
+    private:
+        // Initialize with another buffer.  This function doesn't create a new copy
+        // of the image data, it only increases the refcount of the existing bitmap.
+        //
+        // Normal callers should not generally be using this function.  If you want
+        // to create a copy on which you can modify the image data independently,
+        // use copyBitmapData() instead.
+        RGBA32Buffer& operator=(const RGBA32Buffer& other)
+        {
+            if (this == &other)
+                return *this;
+
+            m_bitmap = other.m_bitmap;
+            // Keep the pixels locked since we will be writing directly into the
+            // bitmap throughout this object's lifetime.
+            m_bitmap.lockPixels();
+            setRect(other.rect());
+            setStatus(other.status());
+            setDuration(other.duration());
+            setDisposalMethod(other.disposalMethod());
+            return *this;
+        }
+
+        inline int width() const { return m_bitmap.width(); }
+        inline int height() const { return m_bitmap.height(); }
+
+        inline PixelData* getAddr(int x, int y)
+        {
+            return m_bitmap.getAddr32(x, y);
+        }
+
+        inline void setRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
+        {
             // We store this data pre-multiplied.
             if (a == 0)
                 *dest = 0;
@@ -202,14 +213,14 @@ namespace WebCore {
             }
         }
 
-    private:
         NativeImageSkia m_bitmap;
-        IntRect m_rect;    // The rect of the original specified frame within the overall buffer.
-                           // This will always just be the entire buffer except for GIF frames
-                           // whose original rect was smaller than the overall image size.
+        IntRect m_rect;       // The rect of the original specified frame within the overall buffer.
+                              // This will always just be the entire buffer except for GIF frames
+                              // whose original rect was smaller than the overall image size.
         FrameStatus m_status; // Whether or not this frame is completely finished decoding.
-        unsigned m_duration; // The animation delay.
-        FrameDisposalMethod m_disposalMethod; // What to do with this frame's data when initializing the next frame.
+        unsigned m_duration;  // The animation delay.
+        FrameDisposalMethod m_disposalMethod;
+                              // What to do with this frame's data when initializing the next frame.
     };
 
     // The ImageDecoder class represents a base class for specific image format decoders

@@ -39,6 +39,7 @@
 #include "config.h"
 #include "JPEGImageDecoder.h"
 #include <assert.h>
+#include <stdio.h>  // Needed by jpeglib.h for FILE.
 
 extern "C" {
 #include "jpeglib.h"

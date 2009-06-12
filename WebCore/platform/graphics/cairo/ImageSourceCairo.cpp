@@ -193,11 +193,7 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
     if (!size().height())
         return 0;
 
-    return cairo_image_surface_create_for_data((unsigned char*)buffer->bytes().data(),
-                                               CAIRO_FORMAT_ARGB32,
-                                               size().width(),
-                                               size().height(),
-                                               size().width()*4);
+    return buffer->asNewNativeImage();
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)

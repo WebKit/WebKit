@@ -38,7 +38,7 @@
 #include "config.h"
 #include "JPEGImageDecoder.h"
 #include <assert.h>
-#include <stdio.h>
+#include <stdio.h>  // Needed by jpeglib.h for FILE.
 
 extern "C" {
 #include "jpeglib.h"
@@ -475,8 +475,6 @@ bool JPEGImageDecoder::outputScanlines()
     jpeg_decompress_struct* info = m_reader->info();
     JSAMPARRAY samples = m_reader->samples();
 
-    unsigned* dst = buffer.bytes().data() + info->output_scanline * size().width();
-   
     while (info->output_scanline < info->output_height) {
         /* Request one scanline.  Returns 0 or 1 scanlines. */
         if (jpeg_read_scanlines(info, samples, 1) != 1)
@@ -486,7 +484,9 @@ bool JPEGImageDecoder::outputScanlines()
             unsigned r = *j1++;
             unsigned g = *j1++;
             unsigned b = *j1++;
-            RGBA32Buffer::setRGBA(*dst++, r, g, b, 0xFF);
+            // read_scanlines has increased the scanline counter, so we
+            // actually mean the previous one.
+            buffer.setRGBA(x, info->output_scanline - 1, r, g, b, 0xFF);
         }
     }
 
