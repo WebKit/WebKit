@@ -1,3 +1,21 @@
+2009-06-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25609
+        [GTK] Implement support for get_selection and get_n_selections
+
+        Only use the VisibleSelection object if it actually belongs to the
+        object we are using.
+
+        This is pretty hacky-ish, but I can't seem to find a direct API to
+        get the VisibleSelection for a given object, only the global one.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (selectionBelongsToObject):
+        (webkit_accessible_text_get_n_selections):
+        (webkit_accessible_text_get_selection):
+
 2009-06-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.

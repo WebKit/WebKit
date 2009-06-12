@@ -610,6 +610,15 @@ static gint webkit_accessible_text_get_offset_at_point(AtkText* text, gint x, gi
     return range.start;
 }
 
+static bool selectionBelongsToObject(AccessibilityObject *coreObject, VisibleSelection& selection)
+{
+    if (!coreObject->isAccessibilityRenderObject())
+        return false;
+
+    Node* node = static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->node();
+    return node == selection.base().containerNode();
+}
+
 static gint webkit_accessible_text_get_n_selections(AtkText* text)
 {
     AccessibilityObject* coreObject = core(text);
@@ -617,19 +626,28 @@ static gint webkit_accessible_text_get_n_selections(AtkText* text)
 
     // We don't support multiple selections for now, so there's only
     // two possibilities
-    return selection.isNone() ? 0 : 1;
+    // Also, we don't want to do anything if the selection does not
+    // belong to the currently selected object. We have to check since
+    // there's no way to get the selection for a given object, only
+    // the global one (the API is a bit confusing)
+    return !selectionBelongsToObject(coreObject, selection) || selection.isNone() ? 0 : 1;
 }
 
 static gchar* webkit_accessible_text_get_selection(AtkText* text, gint selection_num, gint* start_offset, gint* end_offset)
 {
-    if (selection_num != 0) {
-        // WebCore does not support multiple selection, so anything but 0 does not make sense for now.
+    AccessibilityObject* coreObject = core(text);
+    VisibleSelection selection = coreObject->selection();
+
+    // WebCore does not support multiple selection, so anything but 0 does not make sense for now.
+    // Also, we don't want to do anything if the selection does not
+    // belong to the currently selected object. We have to check since
+    // there's no way to get the selection for a given object, only
+    // the global one (the API is a bit confusing)
+    if (selection_num != 0 || !selectionBelongsToObject(coreObject, selection)) {
         *start_offset = *end_offset = 0;
         return NULL;
     }
 
-    AccessibilityObject* coreObject = core(text);
-    VisibleSelection selection = coreObject->selection();
     *start_offset = selection.start().offsetInContainerNode();
     *end_offset = selection.end().offsetInContainerNode();
 
