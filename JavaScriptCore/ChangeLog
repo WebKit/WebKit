@@ -1,3 +1,13 @@
+2009-06-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26191
+        Remove xmath include in MathExtras.h, because it is not needed and also
+        breaks VS2008 builds with TR1 turned on.
+
+        * wtf/MathExtras.h: Removed xmath include.
+
 2009-06-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
