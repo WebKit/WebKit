@@ -217,7 +217,7 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::V8Wr
     if (type == V8ClassIndex::WORKERCONTEXT)
         return WorkerContextToV8Object(static_cast<WorkerContext*>(impl));
 
-    if (type == V8ClassIndex::WORKER) {
+    if (type == V8ClassIndex::WORKER || type == V8ClassIndex::XMLHTTPREQUEST) {
         v8::Persistent<v8::Object> result = getActiveDOMObjectMap().get(impl);
         if (!result.IsEmpty())
             return result;
@@ -292,6 +292,10 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::EventTargetToV8Object(EventTa
     Worker* worker = target->toWorker();
     if (worker)
         return ToV8Object(V8ClassIndex::WORKER, worker);
+
+    XMLHttpRequest* xhr = target->toXMLHttpRequest();
+    if (xhr)
+        return ToV8Object(V8ClassIndex::XMLHTTPREQUEST, xhr);
 
     ASSERT_NOT_REACHED();
     return v8::Handle<v8::Value>();

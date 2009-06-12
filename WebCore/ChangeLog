@@ -1,3 +1,15 @@
+2009-06-12  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26359
+        [v8] Add XMLHttpRequest to WorkerContextExecutionProxy.
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::ToV8Object): Add type == V8ClassIndex::XMLHTTPREQUEST to the convertable types.
+        (WebCore::WorkerContextExecutionProxy::EventTargetToV8Object): same.
+        * bindings/v8/WorkerContextExecutionProxy.h: fix typo in the comment.
+
 2009-06-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
