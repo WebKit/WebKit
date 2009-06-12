@@ -6304,7 +6304,7 @@
 
         * config.h:
 
-2006-12-08  Peter Kasting  <pkasting@chromium.org>
+2006-12-08  Peter Kasting  <pkasting@google.com>
 
         Reviewed and landed by Alexey.
 
@@ -6577,7 +6577,7 @@
         * platform/PlatformKeyboardEvent.h:
         (WebCore::PlatformKeyboardEvent::setIsAutoRepeat):
 
-2006-12-07  Peter Kasting  <pkasting@chromium.org>
+2006-12-07  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin.
 
@@ -7421,7 +7421,7 @@
         Fix obvious-in-retrospect copy and paste error -- call
         passMouseDownEventToWidget instead of passWheelEventToWidget.
 
-2006-12-04  Peter Kasting  <pkasting@chromium.org>
+2006-12-04  Peter Kasting  <pkasting@google.com>
 
         Reviewed and landed by Alexey.
 
@@ -7468,7 +7468,7 @@
         (WebCore::FrameLoader::createFrame):
         (WebCore::FrameLoaderClientWin::setTitle):
 
-2006-12-04  Peter Kasting  <pkasting@chromium.org>
+2006-12-04  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Mitz.
 
@@ -7970,7 +7970,7 @@
         now calls out to both findFirstMisspellingInRange and findFirstBadGrammarInRange separately
         instead of trying to interweave the spelling and grammar logic
 
-2006-12-01  Peter Kasting  <pkasting@chromium.org>
+2006-12-01  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Mitz.
 
@@ -9946,7 +9946,7 @@
         * loader/FrameLoader.cpp:
         (WebCore::FrameLoader::gotoAnchor):
 
-2006-11-18  Peter Kasting  <pkasting@chromium.org>
+2006-11-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Sam Weinig.
 
@@ -10415,7 +10415,7 @@
         (WebCore::createMarkup):
         Add null-checks for the frame, it might not exist for all documents.
         
-2006-11-16  Peter Kasting  <pkasting@chromium.org>
+2006-11-16  Peter Kasting  <pkasting@google.com>
 
         Reviewed and landed by ap.
 
@@ -24148,7 +24148,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * ksvg2/svg/SVGPathSegMovetoAbs.idl:
         * ksvg2/svg/SVGPathSegMovetoRel.idl:
 
-2006-10-09  Peter Kasting  <pkasting@chromium.org>
+2006-10-09  Peter Kasting  <pkasting@google.com>
 
         Unreviewed build fix.
 
@@ -25062,7 +25062,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::Frame::stopAutoscrollTimer):
         * page/Frame.h:
 
-2006-10-05  Peter Kasting  <pkasting@chromium.org>
+2006-10-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric.
 
@@ -25284,7 +25284,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * rendering/RenderLayer.cpp:
         (WebCore::RenderLayer::RenderLayer):
 
-2006-10-05  Peter Kasting  <pkasting@chromium.org>
+2006-10-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Darin, landed by Adam.
 
@@ -25416,7 +25416,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::RenderObject::NodeInfo::scrollbar):
         (WebCore::RenderObject::NodeInfo::setScrollbar):
 
-2006-10-05  Peter Kasting  <pkasting@chromium.org>
+2006-10-05  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Adam.
 

@@ -43567,7 +43567,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::RenderObject::verticalPositionHint):
         (WebCore::RenderObject::firstLineStyle):
 
-2007-04-20  Peter Kasting  <pkasting@chromium.org>
+2007-04-20  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Oliver.
 
@@ -60245,7 +60245,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         non-obvious side-effect of setting the focused frame.
         * WebCore.xcodeproj/project.pbxproj: Version wars.
 
-2007-01-27  Peter Kasting  <pkasting@chromium.org>
+2007-01-27  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Maciej.
 
@@ -69463,7 +69463,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::contextMenuItemTagRightToLeft):
             Added missing stubs.
 
-2007-01-04  Peter Kasting  <pkasting@chromium.org>
+2007-01-04  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Alexey.
 
