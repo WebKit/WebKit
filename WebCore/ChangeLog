@@ -1,3 +1,16 @@
+2009-06-12  jorlow  <jorlow@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26356
+        http://crbug.com/14006
+        Create custom bindings for v8.  The rest of these files are still
+        forked (so the review is happening on the chromium review site).
+        These bindings have been tested on a hacked up Chromium instance
+        (also running --single-process) and Android.
+
+        * bindings/v8/custom/V8StorageCustom.cpp: Added.
+
 2009-06-12  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
