@@ -891,7 +891,8 @@ This file contains the list of files needed to build WebCore.
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_BMP">
-        platform/image-decoders/bmp/BMPImageDecoder.cpp
+      platform/image-decoders/bmp/BMPImageDecoder.cpp
+      platform/image-decoders/bmp/BMPImageReader.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_ICO">
