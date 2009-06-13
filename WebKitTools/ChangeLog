@@ -1,3 +1,12 @@
+2009-06-13  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Eric Seidel.  Landed by Adam Barth.
+
+        Removed dead file.
+        https://bugs.webkit.org/show_bug.cgi?id=26308
+
+        * DumpRenderTree/win/TestNetscapePlugin/main.c: Removed.
+
 2009-06-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.
