@@ -126,18 +126,22 @@ void detachThread(ThreadIdentifier);
 
 #if USE(PTHREADS)
 typedef pthread_mutex_t PlatformMutex;
+typedef pthread_rwlock_t PlatformReadWriteLock;
 typedef pthread_cond_t PlatformCondition;
 #elif PLATFORM(GTK)
 typedef GOwnPtr<GMutex> PlatformMutex;
+typedef void* PlatformReadWriteLock; // FIXME: Implement.
 typedef GOwnPtr<GCond> PlatformCondition;
 #elif PLATFORM(QT)
 typedef QT_PREPEND_NAMESPACE(QMutex)* PlatformMutex;
+typedef void* PlatformReadWriteLock; // FIXME: Implement.
 typedef QT_PREPEND_NAMESPACE(QWaitCondition)* PlatformCondition;
 #elif PLATFORM(WIN_OS)
 struct PlatformMutex {
     CRITICAL_SECTION m_internalMutex;
     size_t m_recursionCount;
 };
+typedef void* PlatformReadWriteLock; // FIXME: Implement.
 struct PlatformCondition {
     size_t m_waitersGone;
     size_t m_waitersBlocked;
@@ -151,6 +155,7 @@ struct PlatformCondition {
 };
 #else
 typedef void* PlatformMutex;
+typedef void* PlatformReadWriteLock;
 typedef void* PlatformCondition;
 #endif
     
@@ -170,6 +175,23 @@ private:
 };
 
 typedef Locker<Mutex> MutexLocker;
+
+class ReadWriteLock : Noncopyable {
+public:
+    ReadWriteLock();
+    ~ReadWriteLock();
+
+    void readLock();
+    bool tryReadLock();
+
+    void writeLock();
+    bool tryWriteLock();
+    
+    void unlock();
+
+private:
+    PlatformReadWriteLock m_readWriteLock;
+};
 
 class ThreadCondition : Noncopyable {
 public:

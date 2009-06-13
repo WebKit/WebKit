@@ -267,6 +267,61 @@ void Mutex::unlock()
     ASSERT_UNUSED(result, !result);
 }
 
+
+ReadWriteLock::ReadWriteLock()
+{
+    pthread_rwlock_init(&m_readWriteLock, NULL);
+}
+
+ReadWriteLock::~ReadWriteLock()
+{
+    pthread_rwlock_destroy(&m_readWriteLock);
+}
+
+void ReadWriteLock::readLock()
+{
+    int result = pthread_rwlock_rdlock(&m_readWriteLock);
+    ASSERT_UNUSED(result, !result);
+}
+
+bool ReadWriteLock::tryReadLock()
+{
+    int result = pthread_rwlock_tryrdlock(&m_readWriteLock);
+
+    if (result == 0)
+        return true;
+    if (result == EBUSY || result == EAGAIN)
+        return false;
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void ReadWriteLock::writeLock()
+{
+    int result = pthread_rwlock_wrlock(&m_readWriteLock);
+    ASSERT_UNUSED(result, !result);
+}
+
+bool ReadWriteLock::tryWriteLock()
+{
+    int result = pthread_rwlock_trywrlock(&m_readWriteLock);
+
+    if (result == 0)
+        return true;
+    if (result == EBUSY || result == EAGAIN)
+        return false;
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void ReadWriteLock::unlock()
+{
+    int result = pthread_rwlock_unlock(&m_readWriteLock);
+    ASSERT_UNUSED(result, !result);
+}
+
 ThreadCondition::ThreadCondition()
 { 
     pthread_cond_init(&m_condition, NULL);

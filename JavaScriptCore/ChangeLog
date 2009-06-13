@@ -1,3 +1,24 @@
+2009-06-12  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26373
+
+        Add a new class to Threading in wtf called ReadWriteLock that handles single writer/multiple reader locking.
+        Provide a pthreads-only implementation of the lock for now, as this class is only going to be used
+        on Snow Leopard at first.
+
+        * wtf/Threading.h:
+        (WTF::ReadWriteLock::impl):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::ReadWriteLock::ReadWriteLock):
+        (WTF::ReadWriteLock::~ReadWriteLock):
+        (WTF::ReadWriteLock::readLock):
+        (WTF::ReadWriteLock::tryReadLock):
+        (WTF::ReadWriteLock::writeLock):
+        (WTF::ReadWriteLock::tryWriteLock):
+        (WTF::ReadWriteLock::unlock):
+
 2009-06-12  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
