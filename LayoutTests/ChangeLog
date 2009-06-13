@@ -1,3 +1,11 @@
+2009-06-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] Enable more http/tests/navigation tests
+
+        * platform/gtk/Skipped:
+
 2009-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein

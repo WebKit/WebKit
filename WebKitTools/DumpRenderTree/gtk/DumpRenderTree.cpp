@@ -159,7 +159,7 @@ static void dumpHistoryItem(WebKitWebHistoryItem* item, int indent, bool current
         putchar(' ');
     printf("%s", webkit_web_history_item_get_uri(item));
     const gchar* target = webkit_web_history_item_get_target(item);
-    if (target && g_utf8_strlen(target, 0) > 0)
+    if (target && strlen(target) > 0)
         printf(" (in frame \"%s\")", target);
     if (webkit_web_history_item_is_target_item(item))
         printf("  **nav target**");

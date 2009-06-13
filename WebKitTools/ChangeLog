@@ -1,3 +1,12 @@
+2009-06-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [Gtk] use strlen instead of g_utf8_strlen so we can enable more tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpHistoryItem):
+
 2009-06-12  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Jan Alonzo.
