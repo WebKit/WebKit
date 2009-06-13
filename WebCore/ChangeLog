@@ -1,3 +1,13 @@
+2009-06-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix: include cstdio so we can use sscanf
+
+        Gtk/Win Cairo build fix: use isASCIISpace instead of isspace
+        Suggested by Brent Fulgham
+
+        * platform/image-decoders/xbm/XBMImageDecoder.cpp:
+        (WebCore::XBMImageDecoder::decodeDatum):
+
 2009-06-12  Peter Kasting  <pkasting@google.com>
 
         Yet another Skia bustage fix.

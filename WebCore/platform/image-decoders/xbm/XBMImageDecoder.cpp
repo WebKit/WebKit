@@ -31,7 +31,10 @@
 #include "config.h"
 #include "XBMImageDecoder.h"
 
+#include "ASCIICType.h"
+
 #include <algorithm>
+#include <cstdio>
 
 namespace WebCore {
 
@@ -196,7 +199,7 @@ bool XBMImageDecoder::decodeDatum(uint16_t* result)
         return false;
 
     // Skip whitespace
-    while (*endPtr && isspace(*endPtr))
+    while (*endPtr && isASCIISpace(*endPtr))
         ++endPtr;
 
     // Out of input, don't know what comes next.
