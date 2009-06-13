@@ -32,13 +32,13 @@
 #include "Document.h"
 
 #include "ExceptionCode.h"
-#include "JSXPathNSResolver.h"
 #include "Node.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
 
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
+#include "V8CustomXPathNSResolver.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8XPathNSResolver.h"
@@ -63,7 +63,7 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     if (V8XPathNSResolver::HasInstance(args[2]))
         resolver = V8Proxy::ToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, args[2]);
     else if (args[2]->IsObject())
-        resolver = new JSXPathNSResolver(args[2]->ToObject());
+        resolver = new V8CustomXPathNSResolver(args[2]->ToObject());
     else if (!args[2]->IsNull() && !args[2]->IsUndefined())
         return throwError(TYPE_MISMATCH_ERR);
 
