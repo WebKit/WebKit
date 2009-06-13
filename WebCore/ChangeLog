@@ -1,3 +1,12 @@
+2009-06-12  Peter Kasting  <pkasting@google.com>
+
+        Fix Chromium and some of Cairo build bustage, fallout from
+        https://bugs.webkit.org/show_bug.cgi?id=25709 changes.
+
+        * WebCore.vcproj/WebCore.vcproj: Add missing XBM decoder files.
+        * platform/image-decoders/skia/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::copyRowNTimes): Fix typo that broke Skia GIF decoding.
+
 2009-06-12  Simon Fraser  <simon.fraser@apple.com>
 
         Fix build when ACCELERATED_COMPOSITING is defined.
