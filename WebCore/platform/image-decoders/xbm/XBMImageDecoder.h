@@ -31,7 +31,6 @@
 #ifndef XBMImageDecoder_h
 #define XBMImageDecoder_h
 
-#include <string>
 #include "ImageDecoder.h"
 
 namespace WebCore {
@@ -68,7 +67,10 @@ namespace WebCore {
         bool decodeData();
         void decodeXBM(bool sizeOnly);
 
-        std::string m_xbmString;  // Null-terminated copy of the XBM data.
+        // FIXME: Copying all the XBM data just so we can NULL-terminate, just
+        // so we can use sscanf() and friends, is lame.  The decoder should be
+        // rewritten to operate on m_data directly.
+        Vector<char> m_xbmString;  // Null-terminated copy of the XBM data.
         size_t m_decodeOffset;    // The current offset in m_xbmString for decoding.
         bool m_allDataReceived;
         bool m_decodedHeader;

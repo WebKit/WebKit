@@ -47,10 +47,8 @@ XBMImageDecoder::XBMImageDecoder()
 void XBMImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 {
     ImageDecoder::setData(data, allDataReceived);
-
-    const Vector<char>& buf = m_data->buffer();
-    if (buf.size() > m_xbmString.size())
-        m_xbmString.append(&buf[m_xbmString.size()], buf.size() - m_xbmString.size());
+    m_xbmString = data->buffer();
+    m_xbmString.append('\0');
 
     m_allDataReceived = allDataReceived;
 }
@@ -106,7 +104,7 @@ bool XBMImageDecoder::decodeHeader()
     ASSERT(m_decodeOffset <= m_xbmString.size());
     ASSERT(!m_decodedHeader);
 
-    const char* input = m_xbmString.c_str();
+    const char* input = m_xbmString.data();
 
     // At least 2 "#define <string> <unsigned>" sequences are required. These
     // specify the width and height of the image.
@@ -185,7 +183,7 @@ bool XBMImageDecoder::decodeHeader()
 // The checks after strtoul are based on Mozilla's nsXBMDecoder.cpp.
 bool XBMImageDecoder::decodeDatum(uint16_t* result)
 {
-    const char* input = m_xbmString.c_str();
+    const char* input = m_xbmString.data();
     char* endPtr;
     const uint16_t value = strtoul(&input[m_decodeOffset], &endPtr, 0);
 

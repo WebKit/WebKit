@@ -1,3 +1,15 @@
+2009-06-12  Peter Kasting  <pkasting@google.com>
+
+        Fix remaining Cairo build bustage from
+        https://bugs.webkit.org/show_bug.cgi?id=25709 changes.  Use
+        Vector<char> in place of std::string.
+
+        * platform/image-decoders/xbm/XBMImageDecoder.cpp:
+        (WebCore::XBMImageDecoder::setData):
+        (WebCore::XBMImageDecoder::decodeHeader):
+        (WebCore::XBMImageDecoder::decodeDatum):
+        * platform/image-decoders/xbm/XBMImageDecoder.h:
+
 2009-06-12  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
