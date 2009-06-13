@@ -9,6 +9,24 @@
 
 2009-06-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=26095
+        
+        Fix crash when a renderer for an anonymous node is composited
+        by null-checking renderer()->node().
+        
+        Test: compositing/generated-content.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::rendererHasBackground):
+        (WebCore::RenderLayerBacking::rendererBackgroundColor):
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
+2009-06-12  Simon Fraser  <simon.fraser@apple.com>
+
         Fix build when ACCELERATED_COMPOSITING is defined.
 
         * loader/EmptyClients.h:

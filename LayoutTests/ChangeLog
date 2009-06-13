@@ -1,3 +1,14 @@
+2009-06-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        https://bugs.webkit.org/show_bug.cgi?id=26095
+        
+        Testcase for creating accelerated compositing layers for anonymous content.
+        
+        * compositing/generated-content.html: Added.
+        * platform/mac/compositing/generated-content-expected.txt: Added.
+
 2009-06-12  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Jan Alonzo.
