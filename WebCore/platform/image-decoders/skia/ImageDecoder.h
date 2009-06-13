@@ -118,12 +118,12 @@ namespace WebCore {
 
         // Must be called before any pixels are written. Will return true on
         // success, false if the memory allocation fails.
-        bool setSize(int width, int height)
+        bool setSize(int new_width, int new_height)
         {
             // This function should only be called once, it will leak memory
             // otherwise.
             ASSERT(width() == 0 && height() == 0);
-            m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, width, height);
+            m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, new_width, new_height);
             if (!m_bitmap.allocPixels()) {
                 // Allocation failure, maybe the bitmap was too big.
                 setStatus(FrameComplete);
