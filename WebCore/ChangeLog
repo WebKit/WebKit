@@ -1,3 +1,21 @@
+2009-06-13  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Cleanup of the new MidpointState class.  Turn it into a struct instead.  Fix a mistaken
+        assertion removal and some unintentional whitespace changes.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::MidpointState::reset):
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp:
+        (WebCore::BidiRun::operator delete):
+        (WebCore::chopMidpointsAt):
+        (WebCore::checkMidpoints):
+        (WebCore::addMidpoint):
+        (WebCore::appendRunsForObject):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2009-06-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

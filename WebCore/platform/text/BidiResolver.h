@@ -29,9 +29,7 @@
 
 namespace WebCore {
 
-template <class Iterator> class MidpointState
-{
-public:
+template <class Iterator> struct MidpointState {
     MidpointState()
     {
         reset();
@@ -39,18 +37,18 @@ public:
     
     void reset()
     {
-        m_numMidpoints = 0;
-        m_currentMidpoint = 0;
-        m_betweenMidpoints = false;
+        numMidpoints = 0;
+        currentMidpoint = 0;
+        betweenMidpoints = false;
     }
     
     // The goal is to reuse the line state across multiple
     // lines so we just keep an array around for midpoints and never clear it across multiple
     // lines.  We track the number of items and position using the two other variables.
-    Vector<Iterator> m_midpoints;
-    unsigned m_numMidpoints;
-    unsigned m_currentMidpoint;
-    bool m_betweenMidpoints;
+    Vector<Iterator> midpoints;
+    unsigned numMidpoints;
+    unsigned currentMidpoint;
+    bool betweenMidpoints;
 };
 
 // The BidiStatus at a given position (typically the end of a line) can
