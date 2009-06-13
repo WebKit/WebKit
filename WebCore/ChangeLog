@@ -1,3 +1,30 @@
+2009-06-13  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part nine
+        Factor Cairo-specific implementation out of ImageDecoder.h into
+        ImageDecoderCairo.cpp.  Add some comments to functions declared
+        in ImageDecoder.h.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/image-decoders/ImageDecoder.h:
+        * platform/image-decoders/cairo: Added.
+        * platform/image-decoders/cairo/ImageDecoderCairo.cpp: Added.
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::clear):
+        (WebCore::RGBA32Buffer::zeroFill):
+        (WebCore::RGBA32Buffer::copyBitmapData):
+        (WebCore::RGBA32Buffer::setSize):
+        (WebCore::RGBA32Buffer::asNewNativeImage):
+        (WebCore::RGBA32Buffer::hasAlpha):
+        (WebCore::RGBA32Buffer::setHasAlpha):
+        (WebCore::RGBA32Buffer::operator=):
+        (WebCore::RGBA32Buffer::width):
+        (WebCore::RGBA32Buffer::height):
+        (WebCore::RGBA32Buffer::getAddr):
+
 2009-06-13  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

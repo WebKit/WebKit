@@ -1864,6 +1864,7 @@ webcoregtk_sources += \
 	WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
 	WebCore/platform/image-decoders/bmp/BMPImageReader.cpp \
 	WebCore/platform/image-decoders/bmp/BMPImageReader.h \
+	WebCore/platform/image-decoders/cairo/ImageDecoderCairo.cpp \
 	WebCore/platform/image-decoders/gif/GIFImageDecoder.cpp \
 	WebCore/platform/image-decoders/gif/GIFImageDecoder.h \
 	WebCore/platform/image-decoders/gif/GIFImageReader.cpp \
