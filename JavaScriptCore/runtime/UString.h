@@ -107,6 +107,7 @@ namespace JSC {
             // Uses SharedUChar to have joint ownership over the UChar*.
             static PassRefPtr<Rep> create(UChar*, int, PassRefPtr<SharedUChar>);
 
+            SharedUChar* sharedBuffer();
             void destroy();
 
             bool baseIsSelf() const { return m_identifierTableAndFlags.isFlagSet(BaseStringFlag); }
@@ -192,7 +193,6 @@ namespace JSC {
         struct BaseString : public Rep {
             bool isShared() { return rc != 1 || isBufferReadOnly(); }
             void setSharedBuffer(PassRefPtr<SharedUChar>);
-            SharedUChar* sharedBuffer();
 
             bool isBufferReadOnly()
             {
@@ -224,6 +224,7 @@ namespace JSC {
                 checkConsistency();
             }
 
+            SharedUChar* sharedBuffer();
             bool slowIsBufferReadOnly();
 
             friend struct Rep;

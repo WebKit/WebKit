@@ -1026,7 +1026,7 @@ PassRefPtr<StringImpl> StringImpl::create(const char* string)
 #if USE(JSC)
 PassRefPtr<StringImpl> StringImpl::create(const JSC::UString& str)
 {
-    SharedUChar* sharedBuffer = const_cast<JSC::UString*>(&str)->rep()->baseString()->sharedBuffer();
+    SharedUChar* sharedBuffer = const_cast<JSC::UString*>(&str)->rep()->sharedBuffer();
     if (sharedBuffer) {
         PassRefPtr<StringImpl> impl = adoptRef(new StringImpl(const_cast<UChar*>(str.data()), str.size(), AdoptBuffer()));
         sharedBuffer->ref();

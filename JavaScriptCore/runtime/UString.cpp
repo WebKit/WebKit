@@ -63,7 +63,7 @@ extern const double NaN;
 extern const double Inf;
 
 // This number must be at least 2 to avoid sharing empty, null as well as 1 character strings from SmallStrings.
-static const int minLengthToShare = 30;
+static const int minLengthToShare = 10;
 
 static inline size_t overflowIndicator() { return std::numeric_limits<size_t>::max(); }
 static inline size_t maxUChars() { return std::numeric_limits<size_t>::max() / sizeof(UChar); }
@@ -243,6 +243,15 @@ PassRefPtr<UString::Rep> UString::Rep::create(UChar* string, int length, PassRef
     return rep;
 }
 
+UString::SharedUChar* UString::Rep::sharedBuffer()
+{
+    UString::BaseString* base = baseString();
+    if (len < minLengthToShare)
+        return 0;
+
+    return base->sharedBuffer();
+}
+
 void UString::Rep::destroy()
 {
     checkConsistency();
@@ -385,10 +394,6 @@ void UString::Rep::checkConsistency() const
 
 UString::SharedUChar* UString::BaseString::sharedBuffer()
 {
-
-    if (len < minLengthToShare)
-        return 0;
-
     if (!m_sharedBuffer)
         setSharedBuffer(SharedUChar::create(new OwnFastMallocPtr<UChar>(buf)));
     return m_sharedBuffer;

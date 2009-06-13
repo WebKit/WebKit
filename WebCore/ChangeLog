@@ -1,3 +1,18 @@
+2009-06-12  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        UString shouldn't create sharedBuffer for SmallStrings.
+        https://bugs.webkit.org/show_bug.cgi?id=26347
+
+        Change the call to use the method UString::Rep::sharedBuffer due
+        to changes in UString.
+
+        No noticable change in behavior, so no test.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::create):
+
 2009-06-12  Peter Kasting  <pkasting@google.com>
 
         Fix Chromium and some of Cairo build bustage, fallout from

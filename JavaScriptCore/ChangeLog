@@ -1,3 +1,26 @@
+2009-06-12  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        UString shouldn't create sharedBuffer for SmallStrings.
+        https://bugs.webkit.org/show_bug.cgi?id=26360
+
+        The methods changed are not used by JSC, so there is no JS perf impact.  However,
+        there is a potential DOM perf impact, so I re-ran several of the tests that
+        I ran previously and ensured that the perf stay the same which caused me to
+        adjust the minLengthToShare.
+
+        * JavaScriptCore.exp:
+        * runtime/UString.cpp:
+        (JSC::UString::Rep::sharedBuffer):
+            Determines if the buffer being shared is big enough before doing so.
+            Previously, BaseString::sharedBuffer was called but it would only know
+            the length of the base string (BaseString::len) which may not be the same
+            as the string being shared (Rep::len).
+        (JSC::UString::BaseString::sharedBuffer):
+            This is now only be used by Rep::sharedBuffer. which does the length check.
+        * runtime/UString.h:
+
 2009-06-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
