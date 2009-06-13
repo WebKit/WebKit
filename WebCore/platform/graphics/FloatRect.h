@@ -132,11 +132,6 @@ public:
     FloatRect(const QRectF&);
     operator QRectF() const;
 #endif
-#if PLATFORM(SYMBIAN)
-    FloatRect(const TRect&);
-    operator TRect() const;
-    TRect rect() const;
-#endif
 
 #if PLATFORM(WX) && USE(WXGC)
     FloatRect(const wxRect2DDouble&);

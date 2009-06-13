@@ -51,9 +51,6 @@ QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 typedef struct _GdkPoint GdkPoint;
 #endif
-#if PLATFORM(SYMBIAN)
-class TPoint;
-#endif
 
 #if PLATFORM(WX)
 class wxPoint;
@@ -118,10 +115,6 @@ public:
 #elif PLATFORM(GTK)
     IntPoint(const GdkPoint&);
     operator GdkPoint() const;
-#endif
-#if PLATFORM(SYMBIAN)
-    IntPoint(const TPoint&);
-    operator TPoint() const;
 #endif
 
 #if PLATFORM(WX)

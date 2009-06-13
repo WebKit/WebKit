@@ -50,9 +50,6 @@ QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 typedef struct _GdkRectangle GdkRectangle;
 #endif
-#if PLATFORM(SYMBIAN)
-class TRect;
-#endif
 
 #if PLATFORM(WX)
 class wxRect;
@@ -147,11 +144,6 @@ public:
 #elif PLATFORM(GTK)
     IntRect(const GdkRectangle&);
     operator GdkRectangle() const;
-#endif
-#if PLATFORM(SYMBIAN)
-    IntRect(const TRect&);
-    operator TRect() const;
-    TRect Rect() const;
 #endif
 
 #if PLATFORM(CG)

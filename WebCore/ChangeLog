@@ -1,3 +1,16 @@
+2009-06-13  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Mark Rowe.  Landed by Adam Barth.
+
+        Remove obsolete declarations for old Symbian port
+        https://bugs.webkit.org/show_bug.cgi?id=26339
+
+        * platform/graphics/FloatPoint.h: Remove declarations for native SYMBIAN adaptation.
+        * platform/graphics/FloatRect.h: Ditto.
+        * platform/graphics/IntPoint.h: Ditto.
+        * platform/graphics/IntRect.h: Ditto.
+        * platform/graphics/IntSize.h: Ditto.
+
 2009-06-13  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel.
