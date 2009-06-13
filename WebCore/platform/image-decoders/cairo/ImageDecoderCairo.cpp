@@ -115,9 +115,4 @@ int RGBA32Buffer::height() const {
     return m_size.height();
 }
 
-RGBA32Buffer::PixelData* RGBA32Buffer::getAddr(int x, int y)
-{
-    return m_bytes.data() + (y * width()) + x;
-}
-
 } // namespace WebCore

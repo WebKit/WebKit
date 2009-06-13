@@ -120,10 +120,15 @@ namespace WebCore {
     private:
         RGBA32Buffer& operator=(const RGBA32Buffer& other);
 
-        inline int width() const;
-        inline int height() const;
+        int width() const;
+        int height() const;
 
-        inline PixelData* getAddr(int x, int y);
+        inline PixelData* getAddr(int x, int y)
+        {
+#if PLATFORM(CAIRO)
+            return m_bytes.data() + (y * width()) + x;
+#endif
+        }
 
         inline void setRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
         {

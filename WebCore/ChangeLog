@@ -1,5 +1,13 @@
 2009-06-13  Peter Kasting  <pkasting@google.com>
 
+        GTK bustage fix.  "inline" is handled differently by different compilers.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::getAddr):
+        * platform/image-decoders/cairo/ImageDecoderCairo.cpp:
+
+2009-06-13  Peter Kasting  <pkasting@google.com>
+
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=25709 part nine
