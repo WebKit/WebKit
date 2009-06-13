@@ -33,8 +33,45 @@ SVGFilter::SVGFilter(const FloatRect& itemBox, const FloatRect& filterRect, bool
 {
 }
 
-void SVGFilter::calculateEffectSubRegion(FilterEffect*)
+void SVGFilter::calculateEffectSubRegion(FilterEffect* effect)
 {
+    FloatRect subRegionBBox = effect->subRegion();
+    FloatRect useBBox = effect->unionOfChildEffectSubregions();
+
+    FloatRect newSubRegion = subRegionBBox;
+
+    if (m_effectBBoxMode) {
+        newSubRegion = useBBox;
+
+        if (effect->hasX())
+            newSubRegion.setX(m_itemBox.x() + subRegionBBox.x() * m_itemBox.width());
+
+        if (effect->hasY())
+            newSubRegion.setY(m_itemBox.y() + subRegionBBox.y() * m_itemBox.height());
+
+        if (effect->hasWidth())
+            newSubRegion.setWidth(subRegionBBox.width() * m_itemBox.width());
+
+        if (effect->hasHeight())
+            newSubRegion.setHeight(subRegionBBox.height() * m_itemBox.height());
+    } else {
+        if (effect->xBoundingBoxMode())
+            newSubRegion.setX(useBBox.x() + subRegionBBox.x() * useBBox.width());
+
+        if (effect->yBoundingBoxMode())
+            newSubRegion.setY(useBBox.y() + subRegionBBox.y() * useBBox.height());
+
+        if (effect->widthBoundingBoxMode())
+            newSubRegion.setWidth(subRegionBBox.width() * useBBox.width());
+
+        if (effect->heightBoundingBoxMode())
+            newSubRegion.setHeight(subRegionBBox.height() * useBBox.height());
+    }
+
+    // clip every filter effect to the filter region
+    newSubRegion.intersect(m_filterRect);
+
+    effect->setSubRegion(newSubRegion);
 }
 
 PassRefPtr<SVGFilter> SVGFilter::create(const FloatRect& itemBox, const FloatRect& filterRect, bool effectBBoxMode, bool filterBBoxMode)

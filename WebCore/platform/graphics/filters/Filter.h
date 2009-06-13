@@ -21,7 +21,8 @@
 #define Filter_h
 
 #if ENABLE(FILTERS)
-#include "Image.h"
+#include "FloatRect.h"
+#include "ImageBuffer.h"
 #include "StringHash.h"
 
 #include <wtf/PassRefPtr.h>
@@ -36,13 +37,18 @@ namespace WebCore {
     public:
         virtual ~Filter() { }
 
-        void setSourceImage(PassRefPtr<Image> image) { m_image = image; }
-        Image* sourceImage() { return m_image.get(); }
+        void setSourceImage(PassOwnPtr<ImageBuffer> sourceImage) { m_sourceImage = sourceImage; }
+        ImageBuffer* sourceImage() { return m_sourceImage.get(); }
 
+        virtual FloatRect sourceImageRect() = 0;
+        virtual FloatRect filterRegion() = 0;
+
+        // SVG specific
         virtual void calculateEffectSubRegion(FilterEffect*) = 0;
+        virtual bool effectBoundingBoxMode() = 0;
 
     private:
-        RefPtr<Image> m_image;
+        OwnPtr<ImageBuffer> m_sourceImage;
     };
 
 } // namespace WebCore

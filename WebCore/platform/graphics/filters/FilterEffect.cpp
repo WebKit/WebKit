@@ -29,11 +29,34 @@ FilterEffect::FilterEffect()
     , m_yBBoxMode(false)
     , m_widthBBoxMode(false)
     , m_heightBBoxMode(false)
+    , m_hasX(false)
+    , m_hasY(false)
+    , m_hasWidth(false)
+    , m_hasHeight(false)
 {
 }
 
 FilterEffect::~FilterEffect()
 {
+}
+
+FloatRect FilterEffect::calculateUnionOfChildEffectSubregions(Filter* filter, FilterEffect* in)
+{
+    return in->calculateEffectRect(filter);
+}
+
+FloatRect FilterEffect::calculateUnionOfChildEffectSubregions(Filter* filter, FilterEffect* in, FilterEffect* in2)
+{
+    FloatRect uniteEffectRect = in->calculateEffectRect(filter);
+    uniteEffectRect.unite(in2->calculateEffectRect(filter));
+    return uniteEffectRect;
+}
+
+FloatRect FilterEffect::calculateEffectRect(Filter* filter)
+{
+    setUnionOfChildEffectSubregions(uniteChildEffectSubregions(filter));
+    filter->calculateEffectSubRegion(this);
+    return subRegion();
 }
 
 TextStream& FilterEffect::externalRepresentation(TextStream& ts) const

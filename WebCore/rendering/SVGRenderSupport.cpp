@@ -120,7 +120,7 @@ void SVGRenderBase::prepareToRenderSVGContent(RenderObject* object, RenderObject
 #if ENABLE(FILTERS)
     if (filter) {
         filter->addClient(styledElement);
-        filter->prepareFilter(paintInfo.context, object->objectBoundingBox());
+        filter->prepareFilter(paintInfo.context, object);
     } else if (!filterId.isEmpty())
         svgElement->document()->accessSVGExtensions()->addPendingResource(filterId, styledElement);
 #endif
@@ -152,7 +152,7 @@ void SVGRenderBase::finishRenderSVGContent(RenderObject* object, RenderObject::P
 
 #if ENABLE(FILTERS)
     if (filter) {
-        filter->applyFilter(paintInfo.context, object->objectBoundingBox());
+        filter->applyFilter(paintInfo.context, object);
         paintInfo.context = savedContext;
     }
 #endif

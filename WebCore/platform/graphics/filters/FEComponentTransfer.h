@@ -78,7 +78,8 @@ namespace WebCore {
 
         ComponentTransferFunction alphaFunction() const;
         void setAlphaFunction(const ComponentTransferFunction&);
-        
+
+        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
 

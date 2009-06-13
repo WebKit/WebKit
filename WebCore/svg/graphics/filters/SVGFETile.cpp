@@ -21,8 +21,9 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFETile.h"
-#include "SVGRenderTreeAsText.h"
+
 #include "Filter.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
@@ -35,6 +36,12 @@ FETile::FETile(FilterEffect* in)
 PassRefPtr<FETile> FETile::create(FilterEffect* in)
 {
     return adoptRef(new FETile(in));
+}
+
+FloatRect FETile::uniteChildEffectSubregions(Filter* filter)
+{
+    m_in->calculateEffectRect(filter);
+    return filter->filterRegion();
 }
 
 void FETile::apply(Filter*)

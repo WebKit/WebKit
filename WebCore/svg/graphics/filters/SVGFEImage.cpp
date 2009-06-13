@@ -32,6 +32,7 @@ FEImage::FEImage(CachedImage* cachedImage)
     : FilterEffect()
     , m_cachedImage(cachedImage)
 {
+    m_cachedImage->addClient(this);
 }
 
 PassRefPtr<FEImage> FEImage::create(CachedImage* cachedImage)

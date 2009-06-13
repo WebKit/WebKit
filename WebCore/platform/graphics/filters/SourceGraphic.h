@@ -24,8 +24,8 @@
 #if ENABLE(FILTERS)
 #include "FilterEffect.h"
 
-#include "PlatformString.h"
 #include "Filter.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
@@ -35,6 +35,7 @@ namespace WebCore {
 
         static const AtomicString& effectName();
 
+        virtual FloatRect calculateEffectRect(Filter*);
         void apply(Filter*);
         void dump();
     

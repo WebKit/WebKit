@@ -1,3 +1,94 @@
+2009-06-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Added subRegion calculation to SVG filter. Every filter effect is
+        clipped to the filter region (according to the spec). This makes
+        ImageBuffers for filter effects smaller and we just need to take
+        care about big filter regions.
+        SVGFEImage needed a correction, to avoid an ASSERT. The two filter
+        effects feOffset and feFlood help to test the new subRegion code.
+
+        Tests: svg/filters/subRegion-one-effect.svg
+               svg/filters/subRegion-two-effects.svg
+
+        * platform/graphics/filters/FEBlend.h:
+        (WebCore::FEBlend::uniteChildEffectSubregions):
+        * platform/graphics/filters/FEColorMatrix.h:
+        (WebCore::FEColorMatrix::uniteChildEffectSubregions):
+        * platform/graphics/filters/FEComponentTransfer.h:
+        (WebCore::FEComponentTransfer::uniteChildEffectSubregions):
+        * platform/graphics/filters/FEComposite.h:
+        (WebCore::FEComposite::uniteChildEffectSubregions):
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::setSourceImage):
+        (WebCore::Filter::sourceImage):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::FilterEffect):
+        (WebCore::FilterEffect::calculateUnionOfChildEffectSubregions):
+        (WebCore::FilterEffect::calculateEffectRect):
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::setUnionOfChildEffectSubregions):
+        (WebCore::FilterEffect::unionOfChildEffectSubregions):
+        (WebCore::FilterEffect::hasX):
+        (WebCore::FilterEffect::setHasX):
+        (WebCore::FilterEffect::hasY):
+        (WebCore::FilterEffect::setHasY):
+        (WebCore::FilterEffect::hasWidth):
+        (WebCore::FilterEffect::setHasWidth):
+        (WebCore::FilterEffect::hasHeight):
+        (WebCore::FilterEffect::setHasHeight):
+        (WebCore::FilterEffect::setEffectBuffer):
+        (WebCore::FilterEffect::uniteChildEffectSubregions):
+        * platform/graphics/filters/SourceAlpha.h:
+        (WebCore::SourceAlpha::calculateEffectRect):
+        * platform/graphics/filters/SourceGraphic.cpp:
+        (WebCore::SourceGraphic::calculateEffectRect):
+        (WebCore::SourceGraphic::apply):
+        * platform/graphics/filters/SourceGraphic.h:
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::prepareToRenderSVGContent):
+        (WebCore::SVGRenderBase::finishRenderSVGContent):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::prepareFilter):
+        (WebCore::SVGResourceFilter::applyFilter):
+        * svg/graphics/SVGResourceFilter.h:
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        (WebCore::FEConvolveMatrix::uniteChildEffectSubregions):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        (WebCore::FEDiffuseLighting::uniteChildEffectSubregions):
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        (WebCore::FEDisplacementMap::uniteChildEffectSubregions):
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::apply):
+        * svg/graphics/filters/SVGFEGaussianBlur.h:
+        (WebCore::FEGaussianBlur::uniteChildEffectSubregions):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::uniteEffectRect):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.h:
+        (WebCore::FEMorphology::uniteChildEffectSubregions):
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+        * svg/graphics/filters/SVGFEOffset.h:
+        (WebCore::FEOffset::uniteChildEffectSubregions):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        (WebCore::FESpecularLighting::uniteEffectRect):
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::uniteChildEffectSubregions):
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::calculateEffectSubRegion):
+        * svg/graphics/filters/SVGFilter.h:
+        (WebCore::SVGFilter::effectBoundingBoxMode):
+        (WebCore::SVGFilter::filterRegion):
+        (WebCore::SVGFilter::sourceImageRect):
+
 2009-06-13  Peter Kasting  <pkasting@google.com>
 
         Bustage: Fix broken GIFs on Cairo due to subtle typo.  Fix a warning.

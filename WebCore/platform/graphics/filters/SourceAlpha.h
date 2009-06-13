@@ -34,6 +34,7 @@ namespace WebCore {
 
         static const AtomicString& effectName();
 
+        virtual FloatRect calculateEffectRect(Filter* filter) { return filter->sourceImageRect(); }
         void apply(Filter*);
         void dump();
     

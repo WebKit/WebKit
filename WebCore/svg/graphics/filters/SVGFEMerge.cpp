@@ -49,6 +49,19 @@ void FEMerge::setMergeInputs(const Vector<FilterEffect*>& mergeInputs)
     m_mergeInputs = mergeInputs;
 }
 
+FloatRect FEMerge::uniteEffectRect(Filter* filter)
+{
+    if (m_mergeInputs.isEmpty())
+        return FloatRect();
+
+    FloatRect uniteEffectRect = m_mergeInputs[0]->calculateEffectRect(filter);
+
+    for (unsigned i = 1; i < m_mergeInputs.size(); i++)
+        uniteEffectRect.unite(m_mergeInputs[i]->calculateEffectRect(filter));
+
+    return uniteEffectRect;
+}
+
 void FEMerge::apply(Filter*)
 {
 }

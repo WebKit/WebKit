@@ -79,6 +79,15 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(SVGResourceFilt
 
     float _x, _y, _width, _height;
 
+    if (this->hasAttribute(SVGNames::xAttr))
+        filterEffect->setHasX(true);
+    if (this->hasAttribute(SVGNames::yAttr))
+        filterEffect->setHasY(true);
+    if (this->hasAttribute(SVGNames::widthAttr))
+        filterEffect->setHasWidth(true);
+    if (this->hasAttribute(SVGNames::heightAttr))
+        filterEffect->setHasHeight(true);
+
     if (resourceFilter->effectBoundingBoxMode()) {
         _x = x().valueAsPercentage();
         _y = y().valueAsPercentage();

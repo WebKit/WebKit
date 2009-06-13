@@ -47,7 +47,8 @@ namespace WebCore {
 
         const Vector<float>& values() const;
         void setValues(const Vector<float>&);
-        
+
+        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
 

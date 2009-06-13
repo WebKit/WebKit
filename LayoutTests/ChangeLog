@@ -1,3 +1,20 @@
+2009-06-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Added tests for the new subRgion-code on SVG filters.
+
+        * platform/mac/svg/filters: Added.
+        * platform/mac/svg/filters/subRegion-one-effect-expected.checksum: Added.
+        * platform/mac/svg/filters/subRegion-one-effect-expected.png: Added.
+        * platform/mac/svg/filters/subRegion-one-effect-expected.txt: Added.
+        * platform/mac/svg/filters/subRegion-two-effects-expected.checksum: Added.
+        * platform/mac/svg/filters/subRegion-two-effects-expected.png: Added.
+        * platform/mac/svg/filters/subRegion-two-effects-expected.txt: Added.
+        * svg/filters: Added.
+        * svg/filters/subRegion-one-effect.svg: Added.
+        * svg/filters/subRegion-two-effects.svg: Added.
+
 2009-06-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha.

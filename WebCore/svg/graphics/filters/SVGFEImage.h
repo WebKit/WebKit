@@ -41,7 +41,7 @@ namespace WebCore {
 
         CachedImage* cachedImage() const;
         void setCachedImage(CachedImage*);
-        
+
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;

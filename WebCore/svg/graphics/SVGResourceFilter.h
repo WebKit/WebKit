@@ -29,11 +29,13 @@
 #include "Image.h"
 #include "ImageBuffer.h"
 #include "FloatRect.h"
+#include "RenderObject.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -74,8 +76,8 @@ public:
 
     virtual TextStream& externalRepresentation(TextStream&) const;
 
-    void prepareFilter(GraphicsContext*&, const FloatRect&);
-    void applyFilter(GraphicsContext*&, const FloatRect&);
+    void prepareFilter(GraphicsContext*&, const RenderObject*);
+    void applyFilter(GraphicsContext*&, const RenderObject*);
 
     void addFilterEffect(SVGFilterPrimitiveStandardAttributes*, PassRefPtr<FilterEffect>);
 
@@ -97,6 +99,7 @@ private:
     OwnPtr<SVGFilterBuilder> m_filterBuilder;
     GraphicsContext* m_savedContext;
     OwnPtr<ImageBuffer> m_sourceGraphicBuffer;
+    RefPtr<Filter> m_filter;
 };
 
 SVGResourceFilter* getFilterById(Document*, const AtomicString&);

@@ -57,6 +57,7 @@ namespace WebCore {
         const LightSource* lightSource() const;
         void setLightSource(LightSource*);
 
+        virtual FloatRect uniteEffectRect(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;

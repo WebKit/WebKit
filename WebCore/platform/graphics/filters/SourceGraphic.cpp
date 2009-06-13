@@ -41,8 +41,29 @@ const AtomicString& SourceGraphic::effectName()
     return s_effectName;
 }
 
-void SourceGraphic::apply(Filter*)
+FloatRect SourceGraphic::calculateEffectRect(Filter* filter)
 {
+    FloatRect clippedSourceRect = filter->sourceImageRect();
+    if (filter->sourceImageRect().x() < filter->filterRegion().x())
+        clippedSourceRect.setX(filter->filterRegion().x());
+    if (filter->sourceImageRect().y() < filter->filterRegion().y())
+        clippedSourceRect.setY(filter->filterRegion().y());
+    setSubRegion(clippedSourceRect);
+    return filter->filterRegion();
+}
+
+void SourceGraphic::apply(Filter* filter)
+{
+    IntRect bufferRect = enclosingIntRect(subRegion());
+    OwnPtr<ImageBuffer> filterGraphic(ImageBuffer::create(bufferRect.size(), false));
+
+    if (!filterGraphic.get())
+        return;
+
+    GraphicsContext* filterContext = filterGraphic->context();
+    filterContext->drawImage(filter->sourceImage()->image(), IntPoint());
+
+    setEffectBuffer(filterGraphic.release());
 }
 
 void SourceGraphic::dump()

@@ -35,6 +35,10 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGFilter> create(const FloatRect&, const FloatRect&, bool, bool);
 
+        bool effectBoundingBoxMode() { return m_effectBBoxMode; }
+
+        FloatRect filterRegion() { return m_filterRect; }
+        FloatRect sourceImageRect() { return m_itemBox; }
         void calculateEffectSubRegion(FilterEffect*);
 
     private:

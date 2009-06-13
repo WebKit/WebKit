@@ -32,6 +32,7 @@ namespace WebCore {
     public:
         static PassRefPtr<FETile> create(FilterEffect*);
 
+        virtual FloatRect uniteChildEffectSubregions(Filter*);
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;

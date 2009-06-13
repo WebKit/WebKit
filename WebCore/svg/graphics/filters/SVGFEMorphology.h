@@ -46,6 +46,7 @@ namespace WebCore {
         float radiusY() const;
         void setRadiusY(float);
 
+        virtual FloatRect uniteChildEffectSubregions(Filter* filter) { return calculateUnionOfChildEffectSubregions(filter, m_in.get()); }
         void apply(Filter*);
         void dump();
         TextStream& externalRepresentation(TextStream& ts) const;
