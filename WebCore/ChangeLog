@@ -1,3 +1,14 @@
+2009-06-12  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Build fix for Qt. After recent ImageDeocder.h changes. I want
+        the original change to be backed out as the whole Skia merging
+        is going in the wrong direction. The discussion will happen in
+        the bugtracker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709.
+
+        * platform/image-decoders/ImageDecoder.h:
+
 2009-06-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix: include cstdio so we can use sscanf
