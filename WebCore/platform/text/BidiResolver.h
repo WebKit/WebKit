@@ -29,6 +29,30 @@
 
 namespace WebCore {
 
+template <class Iterator> class MidpointState
+{
+public:
+    MidpointState()
+    {
+        reset();
+    }
+    
+    void reset()
+    {
+        m_numMidpoints = 0;
+        m_currentMidpoint = 0;
+        m_betweenMidpoints = false;
+    }
+    
+    // The goal is to reuse the line state across multiple
+    // lines so we just keep an array around for midpoints and never clear it across multiple
+    // lines.  We track the number of items and position using the two other variables.
+    Vector<Iterator> m_midpoints;
+    unsigned m_numMidpoints;
+    unsigned m_currentMidpoint;
+    bool m_betweenMidpoints;
+};
+
 // The BidiStatus at a given position (typically the end of a line) can
 // be cached and then used to restart bidi resolution at that position.
 struct BidiStatus {
@@ -135,6 +159,8 @@ public :
     const BidiStatus& status() const { return m_status; }
     void setStatus(const BidiStatus s) { m_status = s; }
 
+    MidpointState<Iterator>& midpointState() { return m_midpointState; }
+
     void embed(WTF::Unicode::Direction);
     void commitExplicitEmbedding();
 
@@ -172,6 +198,7 @@ protected:
     Run* m_lastRun;
     Run* m_logicallyLastRun;
     unsigned m_runCount;
+    MidpointState<Iterator> m_midpointState;
 
 private:
     void raiseExplicitEmbeddingLevel(WTF::Unicode::Direction from, WTF::Unicode::Direction to);

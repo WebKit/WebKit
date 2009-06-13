@@ -1,3 +1,36 @@
+2009-06-12  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26367
+
+        Remove the global variables in bidi.cpp.  Make a new struct, MidpointState, that holds all of the
+        midpoint information.  Add the remaining global variables as arguments passed down through functions
+        as needed.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::MidpointState::MidpointState):
+        (WebCore::MidpointState::reset):
+        (WebCore::BidiResolver::midpointState):
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp:
+        (WebCore::BidiRun::operator delete):
+        (WebCore::chopMidpointsAt):
+        (WebCore::checkMidpoints):
+        (WebCore::addMidpoint):
+        (WebCore::appendRunsForObject):
+        (WebCore::RenderBlock::bidiReorderLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::shouldCollapseWhiteSpace):
+        (WebCore::requiresLineBox):
+        (WebCore::RenderBlock::generatesLineBoxesForInlineChild):
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2009-06-12  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Build fix for Qt. After recent ImageDeocder.h changes. I want

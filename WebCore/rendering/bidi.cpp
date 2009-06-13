@@ -78,17 +78,6 @@ public:
     int nextBreakablePosition;
 };
 
-// Midpoint globals.  The goal is not to do any allocation when dealing with
-// these midpoints, so we just keep an array around and never clear it.  We track
-// the number of items and position using the two other variables.
-static Vector<InlineIterator>* smidpoints;
-static unsigned sNumMidpoints;
-static unsigned sCurrMidpoint;
-static bool betweenMidpoints;
-
-static bool isLineEmpty = true;
-static bool previousLineBrokeCleanly = true;
-
 static int getBorderPaddingMargin(RenderBoxModelObject* child, bool endOfInline)
 {
     bool leftSide = (child->style()->direction() == LTR) ? !endOfInline : endOfInline;
@@ -147,7 +136,7 @@ void BidiRun::operator delete(void* ptr, size_t sz)
 #ifndef NDEBUG
     bidiRunCounter.decrement();
 #endif
-    ASSERT(inBidiRunDestroy);
+    //ASSERT(inBidiRunDestroy);
 
     // Stash size where destroy() can find it.
     *(size_t*)ptr = sz;
@@ -327,35 +316,35 @@ ALWAYS_INLINE Direction InlineIterator::direction() const
 
 // -------------------------------------------------------------------------------------------------
 
-static void chopMidpointsAt(RenderObject* obj, unsigned pos)
+static void chopMidpointsAt(LineMidpointState& lineMidpointState, RenderObject* obj, unsigned pos)
 {
-    if (!sNumMidpoints)
+    if (!lineMidpointState.m_numMidpoints)
         return;
-    InlineIterator* midpoints = smidpoints->data();
-    for (int i = sNumMidpoints - 1; i >= 0; i--) {
+    InlineIterator* midpoints = lineMidpointState.m_midpoints.data();
+    for (int i = lineMidpointState.m_numMidpoints - 1; i >= 0; i--) {
         const InlineIterator& point = midpoints[i];
         if (point.obj == obj && point.pos == pos) {
-            sNumMidpoints = i;
+            lineMidpointState.m_numMidpoints = i;
             break;
         }
     }
 }
 
-static void checkMidpoints(InlineIterator& lBreak)
+static void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator& lBreak)
 {
     // Check to see if our last midpoint is a start point beyond the line break.  If so,
     // shave it off the list, and shave off a trailing space if the previous end point doesn't
     // preserve whitespace.
-    if (lBreak.obj && sNumMidpoints && sNumMidpoints % 2 == 0) {
-        InlineIterator* midpoints = smidpoints->data();
-        InlineIterator& endpoint = midpoints[sNumMidpoints-2];
-        const InlineIterator& startpoint = midpoints[sNumMidpoints-1];
+    if (lBreak.obj && lineMidpointState.m_numMidpoints && !(lineMidpointState.m_numMidpoints % 2)) {
+        InlineIterator* midpoints = lineMidpointState.m_midpoints.data();
+        InlineIterator& endpoint = midpoints[lineMidpointState.m_numMidpoints - 2];
+        const InlineIterator& startpoint = midpoints[lineMidpointState.m_numMidpoints - 1];
         InlineIterator currpoint = endpoint;
         while (!currpoint.atEnd() && currpoint != startpoint && currpoint != lBreak)
             currpoint.increment();
         if (currpoint == lBreak) {
             // We hit the line break before the start point.  Shave off the start point.
-            sNumMidpoints--;
+            lineMidpointState.m_numMidpoints--;
             if (endpoint.obj->style()->collapseWhiteSpace()) {
                 if (endpoint.obj->isText()) {
                     // Don't shave a character off the endpoint if it was from a soft hyphen.
@@ -375,13 +364,13 @@ static void checkMidpoints(InlineIterator& lBreak)
     }    
 }
 
-static void addMidpoint(const InlineIterator& midpoint)
+static void addMidpoint(LineMidpointState& lineMidpointState, const InlineIterator& midpoint)
 {
-    if (smidpoints->size() <= sNumMidpoints)
-        smidpoints->grow(sNumMidpoints + 10);
+    if (lineMidpointState.m_midpoints.size() <= lineMidpointState.m_numMidpoints)
+        lineMidpointState.m_midpoints.grow(lineMidpointState.m_numMidpoints + 10);
 
-    InlineIterator* midpoints = smidpoints->data();
-    midpoints[sNumMidpoints++] = midpoint;
+    InlineIterator* midpoints = lineMidpointState.m_midpoints.data();
+    midpoints[lineMidpointState.m_numMidpoints++] = midpoint;
 }
 
 static void appendRunsForObject(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
@@ -390,18 +379,19 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, InlineBid
         (obj->isPositioned() && !obj->style()->hasStaticX() && !obj->style()->hasStaticY() && !obj->container()->isRenderInline()))
         return;
 
-    bool haveNextMidpoint = (sCurrMidpoint < sNumMidpoints);
+    LineMidpointState& lineMidpointState = resolver.midpointState();
+    bool haveNextMidpoint = (lineMidpointState.m_currentMidpoint < lineMidpointState.m_numMidpoints);
     InlineIterator nextMidpoint;
     if (haveNextMidpoint)
-        nextMidpoint = smidpoints->at(sCurrMidpoint);
-    if (betweenMidpoints) {
+        nextMidpoint = lineMidpointState.m_midpoints[lineMidpointState.m_currentMidpoint];
+    if (lineMidpointState.m_betweenMidpoints) {
         if (!(haveNextMidpoint && nextMidpoint.obj == obj))
             return;
         // This is a new start point. Stop ignoring objects and 
         // adjust our start.
-        betweenMidpoints = false;
+        lineMidpointState.m_betweenMidpoints = false;
         start = nextMidpoint.pos;
-        sCurrMidpoint++;
+        lineMidpointState.m_currentMidpoint++;
         if (start < end)
             return appendRunsForObject(start, end, obj, resolver);
     } else {
@@ -413,8 +403,8 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, InlineBid
         // An end midpoint has been encountered within our object.  We
         // need to go ahead and append a run with our endpoint.
         if (static_cast<int>(nextMidpoint.pos + 1) <= end) {
-            betweenMidpoints = true;
-            sCurrMidpoint++;
+            lineMidpointState.m_betweenMidpoints = true;
+            lineMidpointState.m_currentMidpoint++;
             if (nextMidpoint.pos != UINT_MAX) { // UINT_MAX means stop at the object and don't include any of it.
                 if (static_cast<int>(nextMidpoint.pos + 1) > start)
                     resolver.addRun(new (obj->renderArena())
@@ -791,7 +781,7 @@ void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox, BidiRu
 }
 
 // collects one line of the paragraph and transforms it to visual order
-void RenderBlock::bidiReorderLine(InlineBidiResolver& resolver, const InlineIterator& end)
+void RenderBlock::bidiReorderLine(InlineBidiResolver& resolver, const InlineIterator& end, bool previousLineBrokeCleanly)
 {
     resolver.createBidiRunsForLine(end, style()->visuallyOrdered(), previousLineBrokeCleanly);
 }
@@ -874,7 +864,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         InlineBidiResolver resolver;
         unsigned floatIndex;
         bool firstLine = true;
-        RootInlineBox* startLine = determineStartPosition(firstLine, fullLayout, resolver, floats, floatIndex);
+        bool previousLineBrokeCleanly = true;
+        RootInlineBox* startLine = determineStartPosition(firstLine, fullLayout, previousLineBrokeCleanly, resolver, floats, floatIndex);
 
         if (fullLayout && !selfNeedsLayout()) {
             setNeedsLayout(true, false);  // Mark ourselves as needing a full layout. This way we'll repaint like
@@ -891,11 +882,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
         FloatingObject* lastFloat = m_floatingObjects ? m_floatingObjects->last() : 0;
 
-        if (!smidpoints)
-            smidpoints = new Vector<InlineIterator>();
-
-        sNumMidpoints = 0;
-        sCurrMidpoint = 0;
+        LineMidpointState& lineMidpointState = resolver.midpointState();
 
         // We also find the first clean line and extract these lines.  We will add them back
         // if we determine that we're able to synchronize after handling all our dirty lines.
@@ -943,16 +930,19 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         bool checkForFloatsFromLastLine = false;
         int lastHeight = height();
 
+        bool isLineEmpty = true;
+
         while (!end.atEnd()) {
             // FIXME: Is this check necessary before the first iteration or can it be moved to the end?
             if (checkForEndLineMatch && (endLineMatched = matchedEndLine(resolver, cleanLineStart, cleanLineBidiStatus, endLine, endLineYPos, repaintBottom, repaintTop)))
                 break;
 
-            betweenMidpoints = false;
+            lineMidpointState.reset();
+            
             isLineEmpty = true;
             
             EClear clear = CNONE;
-            end = findNextLineBreak(resolver, firstLine, &clear);
+            end = findNextLineBreak(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, &clear);
             if (resolver.position().atEnd()) {
                 resolver.deleteRuns();
                 checkForFloatsFromLastLine = true;
@@ -961,7 +951,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             ASSERT(end != resolver.position());
 
             if (!isLineEmpty) {
-                bidiReorderLine(resolver, end);
+                bidiReorderLine(resolver, end, previousLineBrokeCleanly);
                 ASSERT(resolver.position() == end);
 
                 BidiRun* trailingSpaceRun = 0;
@@ -1075,8 +1065,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             }
 
             lastHeight = height();
-            sNumMidpoints = 0;
-            sCurrMidpoint = 0;
+            lineMidpointState.reset();
             resolver.setPosition(end);
         }
 
@@ -1133,9 +1122,6 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         }
     }
 
-    sNumMidpoints = 0;
-    sCurrMidpoint = 0;
-
     // Now add in the bottom border/padding.
     setHeight(height() + toAdd);
 
@@ -1154,7 +1140,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         checkLinesForTextOverflow();
 }
 
-RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLayout, InlineBidiResolver& resolver, Vector<FloatWithRect>& floats, unsigned& numCleanFloats)
+RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLayout, bool& previousLineBrokeCleanly, 
+                                                   InlineBidiResolver& resolver, Vector<FloatWithRect>& floats, unsigned& numCleanFloats)
 {
     RootInlineBox* curr = 0;
     RootInlineBox* last = 0;
@@ -1385,7 +1372,7 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
     return false;
 }
 
-static inline bool skipNonBreakingSpace(const InlineIterator& it)
+static inline bool skipNonBreakingSpace(const InlineIterator& it, bool isLineEmpty, bool previousLineBrokeCleanly)
 {
     if (it.obj->style()->nbspMode() != SPACE || it.current() != noBreakSpace)
         return false;
@@ -1401,7 +1388,7 @@ static inline bool skipNonBreakingSpace(const InlineIterator& it)
     return true;
 }
 
-static inline bool shouldCollapseWhiteSpace(const RenderStyle* style)
+static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, bool isLineEmpty, bool previousLineBrokeCleanly)
 {
     return style->collapseWhiteSpace() || (style->whiteSpace() == PRE_WRAP && (!isLineEmpty || !previousLineBrokeCleanly));
 }
@@ -1424,7 +1411,7 @@ static bool inlineFlowRequiresLineBox(RenderInline* flow)
     return !flow->firstChild() && flow->hasHorizontalBordersPaddingOrMargin();
 }
 
-static inline bool requiresLineBox(const InlineIterator& it)
+static inline bool requiresLineBox(const InlineIterator& it, bool isLineEmpty, bool previousLineBrokeCleanly)
 {
     if (it.obj->isFloatingOrPositioned())
         return false;
@@ -1432,19 +1419,20 @@ static inline bool requiresLineBox(const InlineIterator& it)
     if (it.obj->isRenderInline() && !inlineFlowRequiresLineBox(toRenderInline(it.obj)))
         return false;
 
-    if (!shouldCollapseWhiteSpace(it.obj->style()) || it.obj->isBR())
+    if (!shouldCollapseWhiteSpace(it.obj->style(), isLineEmpty, previousLineBrokeCleanly) || it.obj->isBR())
         return true;
 
     UChar current = it.current();
-    return current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || shouldPreserveNewline(it.obj)) && !skipNonBreakingSpace(it);
+    return current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || shouldPreserveNewline(it.obj)) 
+            && !skipNonBreakingSpace(it, isLineEmpty, previousLineBrokeCleanly);
 }
 
-bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
+bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj, bool isLineEmpty, bool previousLineBrokeCleanly)
 {
     ASSERT(inlineObj->parent() == this);
 
     InlineIterator it(this, inlineObj, 0);
-    while (!it.atEnd() && !requiresLineBox(it))
+    while (!it.atEnd() && !requiresLineBox(it, isLineEmpty, previousLineBrokeCleanly))
         it.increment();
 
     return !it.atEnd();
@@ -1456,9 +1444,9 @@ bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
 // object iteration process.
 // NB. this function will insert any floating elements that would otherwise
 // be skipped but it will not position them.
-void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator)
+void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator, bool isLineEmpty, bool previousLineBrokeCleanly)
 {
-    while (!iterator.atEnd() && !requiresLineBox(iterator)) {
+    while (!iterator.atEnd() && !requiresLineBox(iterator, isLineEmpty, previousLineBrokeCleanly)) {
         RenderObject* object = iterator.obj;
         if (object->isFloating()) {
             insertFloatingObject(toRenderBox(object));
@@ -1489,10 +1477,10 @@ void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator)
     }
 }
 
-int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstLine)
+int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly)
 {
     int availableWidth = lineWidth(height(), firstLine);
-    while (!resolver.position().atEnd() && !requiresLineBox(resolver.position())) {
+    while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), isLineEmpty, previousLineBrokeCleanly)) {
         RenderObject* object = resolver.position().obj;
         if (object->isFloating()) {
             insertFloatingObject(toRenderBox(object));
@@ -1529,14 +1517,14 @@ int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstL
 
 // This is currently just used for list markers and inline flows that have line boxes. Neither should 
 // have an effect on whitespace at the start of the line. 
-static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObject* o)
+static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObject* o, LineMidpointState& lineMidpointState)
 {
     RenderObject* next = bidiNext(block, o);
     if (next && !next->isBR() && next->isText() && toRenderText(next)->textLength() > 0) {
         RenderText* nextText = toRenderText(next);
         UChar nextChar = nextText->characters()[0];
         if (nextText->style()->isCollapsibleWhiteSpace(nextChar)) {
-            addMidpoint(InlineIterator(0, o, 0));
+            addMidpoint(lineMidpointState, InlineIterator(0, o, 0));
             return true;
         }
     }
@@ -1575,13 +1563,15 @@ static inline unsigned textWidth(RenderText* text, unsigned from, unsigned len, 
     return font.width(TextRun(text->characters() + from, len, !collapseWhiteSpace, xPos));
 }
 
-InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine, EClear* clear)
+InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine,  bool& isLineEmpty, bool& previousLineBrokeCleanly, 
+                                              EClear* clear)
 {
     ASSERT(resolver.position().block == this);
 
     bool appliedStartWidth = resolver.position().pos > 0;
-
-    int width = skipLeadingWhitespace(resolver, firstLine);
+    LineMidpointState& lineMidpointState = resolver.midpointState();
+    
+    int width = skipLeadingWhitespace(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly);
 
     int w = 0;
     int tmpW = 0;
@@ -1706,8 +1696,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     ignoreStart.obj = o;
                     ignoreStart.pos = 0;
                     if (ignoringSpaces) {
-                        addMidpoint(ignoreStart); // Stop ignoring spaces.
-                        addMidpoint(ignoreStart); // Start ignoring again.
+                        addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring spaces.
+                        addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
                     }
                     
                 }
@@ -1726,10 +1716,10 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 isLineEmpty = false;
                 if (ignoringSpaces) {
                     trailingSpaceObject = 0;
-                    addMidpoint(InlineIterator(0, o, 0)); // Stop ignoring spaces.
-                    addMidpoint(InlineIterator(0, o, 0)); // Start ignoring again.
+                    addMidpoint(lineMidpointState, InlineIterator(0, o, 0)); // Stop ignoring spaces.
+                    addMidpoint(lineMidpointState, InlineIterator(0, o, 0)); // Start ignoring again.
                 } else if (style()->collapseWhiteSpace() && resolver.position().obj == o
-                    && shouldSkipWhitespaceAfterStartObject(this, o)) {
+                    && shouldSkipWhitespaceAfterStartObject(this, o, lineMidpointState)) {
                     // Like with list markers, we start ignoring spaces to make sure that any 
                     // additional spaces we see will be discarded.
                     currentCharacterIsSpace = true;
@@ -1753,7 +1743,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             }
 
             if (ignoringSpaces)
-                addMidpoint(InlineIterator(0, o, 0));
+                addMidpoint(lineMidpointState, InlineIterator(0, o, 0));
 
             isLineEmpty = false;
             ignoringSpaces = false;
@@ -1764,7 +1754,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             // Optimize for a common case. If we can't find whitespace after the list
             // item, then this is all moot. -dwh
             if (o->isListMarker() && !static_cast<RenderListMarker*>(o)->isInside()) {
-                if (style()->collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(this, o)) {
+                if (style()->collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(this, o, lineMidpointState)) {
                     // Like with inline flows, we start ignoring spaces to make sure that any 
                     // additional spaces we see will be discarded.
                     currentCharacterIsSpace = true;
@@ -1827,10 +1817,11 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         else
                             beforeSoftHyphen = InlineIterator(0, last, last->isText() ? toRenderText(last)->textLength() - 1 : 0);
                         // Two consecutive soft hyphens. Avoid overlapping midpoints.
-                        if (sNumMidpoints && smidpoints->at(sNumMidpoints - 1).obj == o && smidpoints->at(sNumMidpoints - 1).pos == pos)
-                            sNumMidpoints--;
+                        if (lineMidpointState.m_numMidpoints && lineMidpointState.m_midpoints[lineMidpointState.m_numMidpoints - 1].obj == o && 
+                            lineMidpointState.m_midpoints[lineMidpointState.m_numMidpoints - 1].pos == pos)
+                            lineMidpointState.m_numMidpoints--;
                         else
-                            addMidpoint(beforeSoftHyphen);
+                            addMidpoint(lineMidpointState, beforeSoftHyphen);
 
                         // Add the width up to but not including the hyphen.
                         tmpW += textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
@@ -1842,7 +1833,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
                         InlineIterator afterSoftHyphen(0, o, pos);
                         afterSoftHyphen.increment();
-                        addMidpoint(afterSoftHyphen);
+                        addMidpoint(lineMidpointState, afterSoftHyphen);
                     }
 
                     pos++;
@@ -1873,7 +1864,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                             ignoringSpaces = false;
                             lastSpaceWordSpacing = 0;
                             lastSpace = pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                            addMidpoint(InlineIterator(0, o, pos));
+                            addMidpoint(lineMidpointState, InlineIterator(0, o, pos));
                             stoppedIgnoringSpaces = true;
                         } else {
                             // Just keep ignoring these spaces.
@@ -1911,15 +1902,15 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                                 lBreak.obj = o;
                                 lBreak.pos = pos;
                                 lBreak.nextBreakablePosition = nextBreakable;
-                                skipTrailingWhitespace(lBreak);
+                                skipTrailingWhitespace(lBreak, isLineEmpty, previousLineBrokeCleanly);
                             }
                         }
                         if (lineWasTooWide || w + tmpW > width) {
                             if (lBreak.obj && shouldPreserveNewline(lBreak.obj) && lBreak.obj->isText() && !toRenderText(lBreak.obj)->isWordBreak() && toRenderText(lBreak.obj)->characters()[lBreak.pos] == '\n') {
                                 if (!stoppedIgnoringSpaces && pos > 0) {
                                     // We need to stop right before the newline and then start up again.
-                                    addMidpoint(InlineIterator(0, o, pos - 1)); // Stop
-                                    addMidpoint(InlineIterator(0, o, pos)); // Start
+                                    addMidpoint(lineMidpointState, InlineIterator(0, o, pos - 1)); // Stop
+                                    addMidpoint(lineMidpointState, InlineIterator(0, o, pos)); // Start
                                 }
                                 lBreak.increment();
                                 previousLineBrokeCleanly = true;
@@ -1937,8 +1928,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     if (c == '\n' && preserveNewline) {
                         if (!stoppedIgnoringSpaces && pos > 0) {
                             // We need to stop right before the newline and then start up again.
-                            addMidpoint(InlineIterator(0, o, pos - 1)); // Stop
-                            addMidpoint(InlineIterator(0, o, pos)); // Start
+                            addMidpoint(lineMidpointState, InlineIterator(0, o, pos - 1)); // Stop
+                            addMidpoint(lineMidpointState, InlineIterator(0, o, pos)); // Start
                         }
                         lBreak.obj = o;
                         lBreak.pos = pos;
@@ -1984,7 +1975,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                             // We just entered a mode where we are ignoring
                             // spaces. Create a midpoint to terminate the run
                             // before the second space. 
-                            addMidpoint(ignoreStart);
+                            addMidpoint(lineMidpointState, ignoreStart);
                         }
                     }
                 } else if (ignoringSpaces) {
@@ -1993,7 +1984,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     ignoringSpaces = false;
                     lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
                     lastSpace = pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                    addMidpoint(InlineIterator(0, o, pos));
+                    addMidpoint(lineMidpointState, InlineIterator(0, o, pos));
                 }
 
                 if (currentCharacterIsSpace && !previousCharacterIsSpace) {
@@ -2145,15 +2136,15 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         lBreak.increment();
 
     // Sanity check our midpoints.
-    checkMidpoints(lBreak);
+    checkMidpoints(lineMidpointState, lBreak);
         
     if (trailingSpaceObject) {
         // This object is either going to be part of the last midpoint, or it is going
         // to be the actual endpoint.  In both cases we just decrease our pos by 1 level to
         // exclude the space, allowing it to - in effect - collapse into the newline.
-        if (sNumMidpoints%2==1) {
-            InlineIterator* midpoints = smidpoints->data();
-            midpoints[sNumMidpoints-1].pos--;
+        if (lineMidpointState.m_numMidpoints % 2) {
+            InlineIterator* midpoints = lineMidpointState.m_midpoints.data();
+            midpoints[lineMidpointState.m_numMidpoints - 1].pos--;
         }
         //else if (lBreak.pos > 0)
         //    lBreak.pos--;
@@ -2163,7 +2154,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             unsigned length = text->textLength();
             unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
             InlineIterator endMid(0, trailingSpaceObject, pos);
-            addMidpoint(endMid);
+            addMidpoint(lineMidpointState, endMid);
         }
     }
 
@@ -2179,9 +2170,9 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     if (lBreak.obj && lBreak.pos >= 2 && lBreak.obj->isText()) {
         // For soft hyphens on line breaks, we have to chop out the midpoints that made us
         // ignore the hyphen so that it will render at the end of the line.
-        UChar c = toRenderText(lBreak.obj)->characters()[lBreak.pos-1];
+        UChar c = toRenderText(lBreak.obj)->characters()[lBreak.pos - 1];
         if (c == softHyphen)
-            chopMidpointsAt(lBreak.obj, lBreak.pos-2);
+            chopMidpointsAt(lineMidpointState, lBreak.obj, lBreak.pos - 2);
     }
     
     return lBreak;
