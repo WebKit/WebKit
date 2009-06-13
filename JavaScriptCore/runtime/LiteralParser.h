@@ -37,21 +37,22 @@ namespace JSC {
         LiteralParser(ExecState* exec, const UString& s)
             : m_exec(exec)
             , m_lexer(s)
-            , m_depth(0)
-            , m_aborted(false)
         {
         }
         
         JSValue tryLiteralParse()
         {
             m_lexer.next();
-            JSValue result = parseStatement();
-            if (m_aborted || m_lexer.currentToken().type != TokEnd)
+            JSValue result = parse(StartParseStatement);
+            if (m_lexer.currentToken().type != TokEnd)
                 return JSValue();
             return result;
         }
     private:
-        
+        enum ParserState { StartParseObject, StartParseArray, StartParseExpression, 
+                           StartParseStatement, StartParseStatementEndStatement, 
+                           DoParseObjectStartExpression, DoParseObjectEndExpression,
+                           DoParseArrayStartExpression, DoParseArrayEndExpression };
         enum TokenType { TokLBracket, TokRBracket, TokLBrace, TokRBrace, 
                          TokString, TokIdentifier, TokNumber, TokColon, 
                          TokLParen, TokRParen, TokComma, TokEnd, TokError };
@@ -91,21 +92,10 @@ namespace JSC {
         };
         
         class StackGuard;
-        JSValue parseStatement();
-        JSValue parseExpression();
-        JSValue parseArray();
-        JSValue parseObject();
-
-        JSValue abortParse()
-        {
-            m_aborted = true;
-            return JSValue();
-        }
+        JSValue parse(ParserState);
 
         ExecState* m_exec;
         LiteralParser::Lexer m_lexer;
-        int m_depth;
-        bool m_aborted;
     };
 }
 

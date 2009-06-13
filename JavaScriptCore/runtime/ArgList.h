@@ -44,7 +44,8 @@ namespace JSC {
         // Constructor for a read-write list, to which you may append values.
         // FIXME: Remove all clients of this API, then remove this API.
         MarkedArgumentBuffer()
-            : m_markSet(0)
+            : m_isUsingInlineBuffer(true)
+            , m_markSet(0)
 #ifndef NDEBUG
             , m_isReadOnly(false)
 #endif
@@ -57,6 +58,7 @@ namespace JSC {
         MarkedArgumentBuffer(Register* buffer, size_t size)
             : m_buffer(buffer)
             , m_size(size)
+            , m_isUsingInlineBuffer(true)
             , m_markSet(0)
 #ifndef NDEBUG
             , m_isReadOnly(true)
@@ -103,7 +105,7 @@ namespace JSC {
         {
             ASSERT(!m_isReadOnly);
             
-            if (m_size < inlineCapacity) {
+            if (m_isUsingInlineBuffer && m_size < inlineCapacity) {
                 m_vector.uncheckedAppend(v);
                 ++m_size;
             } else {
@@ -111,9 +113,23 @@ namespace JSC {
                 // the performance of the fast "just append to inline buffer" case.
                 slowAppend(v);
                 ++m_size;
+                m_isUsingInlineBuffer = false;
             }
         }
 
+        void removeLast()
+        { 
+            ASSERT(m_size);
+            m_size--;
+            m_vector.removeLast();
+        }
+
+        JSValue last() 
+        {
+            ASSERT(m_size);
+            return m_buffer[m_size - 1].jsValue();
+        }
+        
         iterator begin() { return m_buffer; }
         iterator end() { return m_buffer + m_size; }
 
@@ -127,6 +143,7 @@ namespace JSC {
         
         Register* m_buffer;
         size_t m_size;
+        bool m_isUsingInlineBuffer;
 
         VectorType m_vector;
         ListSet* m_markSet;

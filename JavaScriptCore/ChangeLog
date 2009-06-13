@@ -1,3 +1,28 @@
+2009-06-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Make LiteralParser non-recursive
+
+        Convert LiteralParser from using a simple recursive descent parser
+        to a hand rolled PDA.  Relatively simple conversion, but required
+        modifications to MarkedArgumentBuffer to make it more suitable as
+        a generic marked vector.   I'll refactor and rename MarkedArgumentBuffer
+        in future as there are many other cases where it will be useful to
+        have such a class.
+
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::MarkedArgumentBuffer):
+        (JSC::MarkedArgumentBuffer::append):
+        (JSC::MarkedArgumentBuffer::removeLast):
+        (JSC::MarkedArgumentBuffer::last):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::parse):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::LiteralParser):
+        (JSC::LiteralParser::tryLiteralParse):
+        (JSC::LiteralParser::):
+
 2009-06-12  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (build fix for windows).
