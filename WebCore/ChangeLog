@@ -1,3 +1,29 @@
+2009-06-13  Victor Wang <victorw@chromium.org>
+
+        Reviewed by Eric Seidel.  Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26333
+        Alert during a dragenter event handler will crash the renderer
+        
+        This crash is casued by calling NULL pointer m_documentUnderMouse in
+        DragController::tryDocumentDrag()
+
+        tryDHTMLDrag fires dragenter event. The event listener that listens
+        to this event may create a nested message loop (open a modal dialog),
+        which could process dragleave event and reset m_documentUnderMouse in
+        dragExited.
+
+        Fix the crash by checking m_documentUnderMouse after tryDHTMLDrag and
+        do not continue if the pointer has been set to NULL.
+
+        Test: DRT does not show alerts so add a manual test:
+              manual-tests/drag-enter-alert.html
+
+        * manual-tests/drag-enter-alert.html: Added.
+        * manual-tests/resources/drag-image.png: Added.
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag):
+
 2009-06-13  Nate Chapin  <japhet@google.com>
 
         Reviewed by Dimitri Glazkov.  Landed by Adam Barth.

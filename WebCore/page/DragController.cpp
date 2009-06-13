@@ -264,8 +264,16 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
         return DragOperationNone;
     
     DragOperation operation = DragOperationNone;
-    if (actionMask & DragDestinationActionDHTML)
+    if (actionMask & DragDestinationActionDHTML) {
         operation = tryDHTMLDrag(dragData);
+        // Do not continue if m_documentUnderMouse has been reset by tryDHTMLDrag.
+        // tryDHTMLDrag fires dragenter event. The event listener that listens
+        // to this event may create a nested message loop (open a modal dialog),
+        // which could process dragleave event and reset m_documentUnderMouse in
+        // dragExited.
+        if (!m_documentUnderMouse)
+            return DragOperationNone;
+    }
     m_isHandlingDrag = operation != DragOperationNone; 
 
     RefPtr<FrameView> frameView = m_documentUnderMouse->view();
