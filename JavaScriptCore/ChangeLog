@@ -1,5 +1,15 @@
 2009-06-12  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY (build fix for windows).
+
+        Adjust the exports for JSC on Windows like what was done for OSX in
+        the previous commit.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-06-12  David Levin  <levin@chromium.org>
+
         Reviewed by Darin Adler.
 
         UString shouldn't create sharedBuffer for SmallStrings.

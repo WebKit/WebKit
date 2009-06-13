@@ -213,7 +213,7 @@ EXPORTS
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z
     ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z
-    ?sharedBuffer@BaseString@UString@JSC@@QAEPAV?$CrossThreadRefCounted@V?$OwnFastMallocPtr@_W@WTF@@@WTF@@XZ
+    ?sharedBuffer@Rep@UString@JSC@@QAEPAV?$CrossThreadRefCounted@V?$OwnFastMallocPtr@_W@WTF@@@WTF@@XZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?startIgnoringLeaks@Structure@JSC@@SAXXZ
