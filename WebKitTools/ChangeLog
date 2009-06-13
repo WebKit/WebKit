@@ -1,3 +1,11 @@
+2009-06-13  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Mark "Snowy" Rowe.
+
+        Update iExploder/htdocs/cssproperties.in by running update-iexploder-cssproperties.
+
+        * iExploder/htdocs/cssproperties.in:
+
 2009-06-13  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Eric Seidel.  Landed by Adam Barth.
