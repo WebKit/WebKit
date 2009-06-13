@@ -470,7 +470,7 @@ bool BMPImageReader::processBitmasks(SharedBuffer* data)
         // we read the info header.
 
         // Fail if we don't have enough file space for the bitmasks.
-        static const int SIZEOF_BITMASKS = 12;
+        static const size_t SIZEOF_BITMASKS = 12;
         if (((m_headerOffset + m_infoHeader.biSize + SIZEOF_BITMASKS) < (m_headerOffset + m_infoHeader.biSize))
             || (m_imgDataOffset && (m_imgDataOffset < (m_headerOffset + m_infoHeader.biSize + SIZEOF_BITMASKS)))) {
             m_failed = true;

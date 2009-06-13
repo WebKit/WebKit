@@ -86,7 +86,7 @@ namespace WebCore {
             const int rowBytes = (endX - startX) * sizeof(PixelData);
             const PixelData* const startAddr = getAddr(startX, startY);
             for (int destY = startY + 1; destY < endY; ++destY)
-                memcpy(getAddr(startX, endY), startAddr, rowBytes);
+                memcpy(getAddr(startX, destY), startAddr, rowBytes);
         }
 
         // Allocates space for the pixel data.  Must be called before any pixels

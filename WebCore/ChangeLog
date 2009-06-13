@@ -1,5 +1,14 @@
 2009-06-13  Peter Kasting  <pkasting@google.com>
 
+        Bustage: Fix broken GIFs on Cairo due to subtle typo.  Fix a warning.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::copyRowNTimes):
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::processBitmasks):
+
+2009-06-13  Peter Kasting  <pkasting@google.com>
+
         GTK bustage fix.  "inline" is handled differently by different compilers.
 
         * platform/image-decoders/ImageDecoder.h:
