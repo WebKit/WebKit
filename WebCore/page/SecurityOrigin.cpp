@@ -32,6 +32,7 @@
 #include "CString.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include "StringHash.h"
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
