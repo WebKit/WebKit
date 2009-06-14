@@ -115,14 +115,7 @@ public:
     int spaceWidth() const { return (int)ceilf(primaryFont()->adjustedSpaceWidth() + m_letterSpacing); }
     int tabWidth() const { return 8 * spaceWidth(); }
 
-    const SimpleFontData* primaryFont() const
-    {
-        ASSERT(isMainThread());
-        if (!m_cachedPrimaryFont)
-            cachePrimaryFont();
-        return m_cachedPrimaryFont;
-    }
-
+    const SimpleFontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
     GlyphData glyphDataForCharacter(UChar32, bool mirror, bool forceSmallCaps = false) const;
     // Used for complex text, and does not utilize the glyph map cache.
@@ -160,7 +153,6 @@ private:
     float floatWidthForComplexText(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0) const;
     int offsetForPositionForComplexText(const TextRun&, int position, bool includePartialGlyphs) const;
     FloatRect selectionRectForComplexText(const TextRun&, const IntPoint&, int h, int from, int to) const;
-    void cachePrimaryFont() const;
 
     friend struct WidthIterator;
 
@@ -191,9 +183,6 @@ public:
 private:
     FontDescription m_fontDescription;
     mutable RefPtr<FontFallbackList> m_fontList;
-    mutable HashMap<int, GlyphPageTreeNode*> m_pages;
-    mutable GlyphPageTreeNode* m_pageZero;
-    mutable const SimpleFontData* m_cachedPrimaryFont;
     short m_letterSpacing;
     short m_wordSpacing;
     bool m_isPlatformFont;

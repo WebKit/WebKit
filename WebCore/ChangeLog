@@ -1,3 +1,30 @@
+2009-06-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Move all of the mutable member variables from Font into the refcounted FontFallbackList.  This makes
+        copying of Fonts more efficient and also effectively makes all of the mutations of a Font object happen
+        inside the FontFallbackList.
+
+        * WebCore.base.exp:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::primaryFont):
+        (WebCore::Font::update):
+        * platform/graphics/Font.h:
+        (WebCore::Font::setWordSpacing):
+        (WebCore::Font::setLetterSpacing):
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::FontFallbackList):
+        (WebCore::FontFallbackList::invalidate):
+        (WebCore::FontFallbackList::determinePitch):
+        * platform/graphics/FontFallbackList.h:
+        (WebCore::FontFallbackList::primarySimpleFontData):
+        (WebCore::FontFallbackList::primaryFontData):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+
 2009-06-14  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler

@@ -24,6 +24,7 @@
 
 #include "CharacterNames.h"
 #include "FontCache.h"
+#include "FontFallbackList.h"
 #include "FloatRect.h"
 #include "GlyphBuffer.h"
 #include "GlyphPageTreeNode.h"
@@ -57,13 +58,13 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCap
 
     unsigned pageNumber = (c / GlyphPage::size);
 
-    GlyphPageTreeNode* node = pageNumber ? m_pages.get(pageNumber) : m_pageZero;
+    GlyphPageTreeNode* node = pageNumber ? m_fontList->m_pages.get(pageNumber) : m_fontList->m_pageZero;
     if (!node) {
         node = GlyphPageTreeNode::getRootChild(fontDataAt(0), pageNumber);
         if (pageNumber)
-            m_pages.set(pageNumber, node);
+            m_fontList->m_pages.set(pageNumber, node);
         else
-            m_pageZero = node;
+            m_fontList->m_pageZero = node;
     }
 
     GlyphPage* page;
@@ -82,9 +83,9 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCap
             // Proceed with the fallback list.
             node = node->getChild(fontDataAt(node->level()), pageNumber);
             if (pageNumber)
-                m_pages.set(pageNumber, node);
+                m_fontList->m_pages.set(pageNumber, node);
             else
-                m_pageZero = node;
+                m_fontList->m_pageZero = node;
         }
     } else {
         while (true) {
@@ -118,9 +119,9 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCap
             // Proceed with the fallback list.
             node = node->getChild(fontDataAt(node->level()), pageNumber);
             if (pageNumber)
-                m_pages.set(pageNumber, node);
+                m_fontList->m_pages.set(pageNumber, node);
             else
-                m_pageZero = node;
+                m_fontList->m_pageZero = node;
         }
     }
 
