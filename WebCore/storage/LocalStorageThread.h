@@ -26,6 +26,8 @@
 #ifndef LocalStorageThread_h
 #define LocalStorageThread_h
 
+#if ENABLE(DOM_STORAGE)
+
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
 #include <wtf/PassRefPtr.h>
@@ -70,5 +72,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // ENABLE(DOM_STORAGE)
 
 #endif // LocalStorageThread_h

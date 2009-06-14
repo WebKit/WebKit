@@ -26,6 +26,8 @@
 #ifndef Storage_h
 #define Storage_h
 
+#if ENABLE(DOM_STORAGE)
+
 #include "StorageArea.h"
 
 #include <wtf/Forward.h>
@@ -61,5 +63,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // ENABLE(DOM_STORAGE)
 
 #endif // Storage_h

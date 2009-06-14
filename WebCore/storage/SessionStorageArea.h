@@ -26,6 +26,8 @@
 #ifndef SessionStorageArea_h
 #define SessionStorageArea_h
 
+#if ENABLE(DOM_STORAGE)
+
 #include "StorageArea.h"
 
 namespace WebCore {
@@ -53,5 +55,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // ENABLE(DOM_STORAGE)
 
 #endif // SessionStorageArea_h

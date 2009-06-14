@@ -26,6 +26,8 @@
 #include "config.h"
 #include "LocalStorageArea.h"
 
+#if ENABLE(DOM_STORAGE)
+
 #include "CString.h"
 #include "DOMWindow.h"
 #include "EventNames.h"
@@ -450,3 +452,6 @@ void LocalStorageArea::performSync()
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DOM_STORAGE)
+

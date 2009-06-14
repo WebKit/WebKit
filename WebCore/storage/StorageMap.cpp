@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StorageMap.h"
 
+#if ENABLE(DOM_STORAGE)
+
 namespace WebCore {
 
 PassRefPtr<StorageMap> StorageMap::create()
@@ -156,3 +158,6 @@ void StorageMap::importItem(const String& key, const String& value) const
 }
 
 }
+
+#endif // ENABLE(DOM_STORAGE)
+

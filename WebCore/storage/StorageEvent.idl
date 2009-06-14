@@ -26,7 +26,8 @@
 module storage {
 
     interface [
-        GenerateConstructor
+        GenerateConstructor,
+        Conditional=DOM_STORAGE
     ] StorageEvent : Event {
         readonly attribute DOMString key;
         readonly attribute [ConvertNullStringTo=Null] DOMString oldValue;

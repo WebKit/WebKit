@@ -26,6 +26,8 @@
 #ifndef LocalStorage_h
 #define LocalStorage_h
 
+#if ENABLE(DOM_STORAGE)
+
 #include "LocalStorageArea.h"
 #include "LocalStorageTask.h"
 #include "LocalStorageThread.h"
@@ -77,5 +79,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // ENABLE(DOM_STORAGE)
 
 #endif // LocalStorage_h

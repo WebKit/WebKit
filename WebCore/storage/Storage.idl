@@ -30,7 +30,8 @@ module storage {
         HasNameGetter,
         CustomDeleteProperty,
         CustomGetPropertyNames,
-        CustomPutFunction
+        CustomPutFunction,
+        Conditional=DOM_STORAGE
     ] Storage {
         readonly attribute [DontEnum] unsigned long length;
         [DontEnum] DOMString key(in unsigned long index) 

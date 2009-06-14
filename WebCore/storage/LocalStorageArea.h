@@ -26,6 +26,8 @@
 #ifndef LocalStorageArea_h
 #define LocalStorageArea_h
 
+#if ENABLE(DOM_STORAGE)
+
 #include "SQLiteDatabase.h"
 #include "StorageArea.h"
 #include "StringHash.h"
@@ -96,5 +98,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // ENABLE(DOM_STORAGE)
 
 #endif // LocalStorageArea_h
