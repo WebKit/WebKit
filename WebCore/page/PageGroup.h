@@ -68,7 +68,9 @@ namespace WebCore {
 
     private:
         void addVisitedLink(LinkHash stringHash);
-
+#if ENABLE(DOM_STORAGE)
+        bool hasLocalStorage() { return m_localStorage; }
+#endif
         String m_name;
 
         HashSet<Page*> m_pages;

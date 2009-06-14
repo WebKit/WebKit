@@ -97,8 +97,8 @@ void PageGroup::closeLocalStorage()
     PageGroupMap::iterator end = pageGroups->end();
 
     for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
-        if (LocalStorage* localStorage = it->second->localStorage())
-            localStorage->close();
+        if (it->second->hasLocalStorage())
+            it->second->localStorage()->close();
     }
 #endif
 }
@@ -108,10 +108,6 @@ void PageGroup::addPage(Page* page)
     ASSERT(page);
     ASSERT(!m_pages.contains(page));
     m_pages.add(page);
-#if ENABLE(DOM_STORAGE)
-    if (!m_localStorage)
-        m_localStorage = LocalStorage::localStorage(page->settings()->localStorageDatabasePath());
-#endif
 }
 
 void PageGroup::removePage(Page* page)
@@ -187,6 +183,13 @@ void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)
 #if ENABLE(DOM_STORAGE)
 LocalStorage* PageGroup::localStorage()
 {
+    if (!m_localStorage) {
+        // Need a page in this page group to query the settings for the local storage database path.
+        Page* page = *m_pages.begin();
+        ASSERT(page);
+        m_localStorage = LocalStorage::localStorage(page->settings()->localStorageDatabasePath());
+    }
+
     return m_localStorage.get();
 }
 #endif

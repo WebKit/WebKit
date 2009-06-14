@@ -1,5 +1,24 @@
 2009-06-13  Ben Murdoch  <benm@google.com>
 
+        Reviewed by David Kilzer.  Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26189
+
+        This patch changes the way PageGroups create their localStorage
+        objects. Rather than creating a local storage object for the page group
+        when a page is added to the group, the local storage object is now
+        created lazily when the local storage object is requested by the
+        DOMWindow.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::closeLocalStorage): Before attempting to close a local storage object for a page group, ensure one has been created.
+        (WebCore::PageGroup::addPage): Do not automatically try to create a local storage object when a page is added to the group.
+        (WebCore::PageGroup::localStorage): Create a local storage object if one does not exist and return it.
+        * page/PageGroup.h: Add private hasLocalStorage method to PageGroup.
+
+
+2009-06-13  Ben Murdoch  <benm@google.com>
+
         Reviewed by Eric Seidel.  Landed by Adam Barth.
 
         https://bugs.webkit.org/show_bug.cgi?id=26189
