@@ -26,7 +26,14 @@
 #include "config.h"
 #include "ImageDecoder.h"
 
-#include <cairo.h>
+// FIXME: Are all these needed?
+#include <wx/defs.h>
+#include <wx/bitmap.h>
+#if USE(WXGC)
+#include <wx/graphics.h>
+#endif
+#include <wx/image.h>
+#include <wx/rawbmp.h>
 
 namespace WebCore {
 
@@ -78,10 +85,51 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 
 NativeImagePtr RGBA32Buffer::asNewNativeImage() const
 {
-    return cairo_image_surface_create_for_data(
-        reinterpret_cast<unsigned char*>(const_cast<PixelData*>(
-            m_bytes.data())), CAIRO_FORMAT_ARGB32, width(), height(),
-        width() * sizeof(PixelData));
+    const unsigned char* bytes = (const unsigned char*)m_bytes.data();
+    
+    typedef wxPixelData<wxBitmap, wxAlphaPixelFormat> WxPixelData;
+
+    wxBitmap* bmp = new wxBitmap(width(), height(), 32);
+    WxPixelData data(*bmp);
+    
+    int rowCounter = 0;
+    long pixelCounter = 0;
+    
+    WxPixelData::Iterator p(data);
+    
+    WxPixelData::Iterator rowStart = p; 
+    
+    // NB: It appears that the data is in BGRA format instead of RGBA format.
+    // This code works properly on both ppc and intel, meaning the issue is
+    // likely not an issue of byte order getting mixed up on different archs. 
+    for (long i = 0; i < m_bytes.size() * sizeof(PixelData); i += sizeof(PixelData)) {
+        p.Red() = bytes[i+2];
+        p.Green() = bytes[i+1];
+        p.Blue() = bytes[i+0];
+        p.Alpha() = bytes[i+3];
+        
+        p++;
+
+        pixelCounter++;
+        if ( (pixelCounter % width() ) == 0 ) {
+            rowCounter++;
+            p = rowStart;
+            p.MoveTo(data, 0, rowCounter);
+        }
+
+    }
+#if !wxCHECK_VERSION(2,9,0)
+    bmp->UseAlpha();
+#endif
+    ASSERT(bmp->IsOk());
+
+#if USE(WXGC)
+    wxGraphicsBitmap* bitmap =  new wxGraphicsBitmap(wxGraphicsRenderer::GetDefaultRenderer()->CreateBitmap(*bmp));
+    delete bmp;
+    return bitmap;
+#else
+    return bmp;
+#endif
 }
 
 bool RGBA32Buffer::hasAlpha() const

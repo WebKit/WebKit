@@ -45,56 +45,58 @@ wxWebCore port Bakefile project file.
         <include>$(WK_ROOT)/WebKitLibraries</include>
         
         <sources>
-            bindings/js/ScriptControllerWx.cpp
+          bindings/js/ScriptControllerWx.cpp
 
-            editing/wx/EditorWx.cpp
+          editing/wx/EditorWx.cpp
 
-            page/wx/DragControllerWx.cpp
-            page/wx/EventHandlerWx.cpp
-           
-            platform/graphics/wx/TransformationMatrixWx.cpp
-            platform/graphics/wx/ColorWx.cpp
-            platform/graphics/wx/FloatRectWx.cpp
-            platform/graphics/wx/GradientWx.cpp
-            platform/graphics/wx/GraphicsContextWx.cpp
-            platform/graphics/wx/ImageBufferWx.cpp
-            platform/graphics/wx/ImageSourceWx.cpp
-            platform/graphics/wx/ImageWx.cpp
-            platform/graphics/wx/IntPointWx.cpp
-            platform/graphics/wx/IntRectWx.cpp
-            platform/graphics/wx/PathWx.cpp
-            platform/graphics/wx/PenWx.cpp
-            
-            platform/wx/TemporaryLinkStubs.cpp
-            platform/wx/ClipboardWx.cpp
-            platform/wx/CursorWx.cpp
-            platform/wx/DragDataWx.cpp
-            platform/wx/DragImageWx.cpp
-            platform/wx/EventLoopWx.cpp
-            platform/wx/FileSystemWx.cpp
-            platform/wx/PopupMenuWx.cpp
-            platform/graphics/wx/FontCacheWx.cpp
-            platform/graphics/wx/FontPlatformDataWx.cpp
-            platform/graphics/wx/FontWx.cpp             
-            platform/graphics/wx/GlyphMapWx.cpp
-            platform/graphics/wx/SimpleFontDataWx.cpp
-            platform/wx/KeyboardEventWx.cpp
-            platform/wx/LocalizedStringsWx.cpp
-            platform/wx/LoggingWx.cpp
-            platform/wx/MimeTypeRegistryWx.cpp
-            platform/wx/MouseEventWx.cpp
-            platform/wx/MouseWheelEventWx.cpp
-            platform/wx/PasteboardWx.cpp
-            platform/wx/RenderThemeWx.cpp
-            platform/wx/ScreenWx.cpp
-            platform/wx/ScrollViewWx.cpp
-            platform/wx/SoundWx.cpp
-            platform/text/wx/StringWx.cpp
-            platform/wx/WidgetWx.cpp
-            platform/wx/ContextMenuWx.cpp
-            platform/wx/ContextMenuItemWx.cpp
-           
-            <!-- files from other ports we currently rely on -->
+          page/wx/DragControllerWx.cpp
+          page/wx/EventHandlerWx.cpp
+
+          platform/graphics/wx/TransformationMatrixWx.cpp
+          platform/graphics/wx/ColorWx.cpp
+          platform/graphics/wx/FloatRectWx.cpp
+          platform/graphics/wx/GradientWx.cpp
+          platform/graphics/wx/GraphicsContextWx.cpp
+          platform/graphics/wx/ImageBufferWx.cpp
+          platform/graphics/wx/ImageSourceWx.cpp
+          platform/graphics/wx/ImageWx.cpp
+          platform/graphics/wx/IntPointWx.cpp
+          platform/graphics/wx/IntRectWx.cpp
+          platform/graphics/wx/PathWx.cpp
+          platform/graphics/wx/PenWx.cpp
+
+          platform/image-decoders/wx/ImageDecoderWx.cpp
+
+          platform/wx/TemporaryLinkStubs.cpp
+          platform/wx/ClipboardWx.cpp
+          platform/wx/CursorWx.cpp
+          platform/wx/DragDataWx.cpp
+          platform/wx/DragImageWx.cpp
+          platform/wx/EventLoopWx.cpp
+          platform/wx/FileSystemWx.cpp
+          platform/wx/PopupMenuWx.cpp
+          platform/graphics/wx/FontCacheWx.cpp
+          platform/graphics/wx/FontPlatformDataWx.cpp
+          platform/graphics/wx/FontWx.cpp
+          platform/graphics/wx/GlyphMapWx.cpp
+          platform/graphics/wx/SimpleFontDataWx.cpp
+          platform/wx/KeyboardEventWx.cpp
+          platform/wx/LocalizedStringsWx.cpp
+          platform/wx/LoggingWx.cpp
+          platform/wx/MimeTypeRegistryWx.cpp
+          platform/wx/MouseEventWx.cpp
+          platform/wx/MouseWheelEventWx.cpp
+          platform/wx/PasteboardWx.cpp
+          platform/wx/RenderThemeWx.cpp
+          platform/wx/ScreenWx.cpp
+          platform/wx/ScrollViewWx.cpp
+          platform/wx/SoundWx.cpp
+          platform/text/wx/StringWx.cpp
+          platform/wx/WidgetWx.cpp
+          platform/wx/ContextMenuWx.cpp
+          platform/wx/ContextMenuItemWx.cpp
+
+          <!-- files from other ports we currently rely on -->
             platform/network/curl/CookieJarCurl.cpp
             platform/network/curl/FormDataStreamCurl.cpp
             platform/network/curl/ResourceHandleCurl.cpp

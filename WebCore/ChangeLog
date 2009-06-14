@@ -1,3 +1,40 @@
+2009-06-13  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Kevin Ollivier.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part eleven
+        Write a wx implementation so the wx port can compile.  For now this is
+        mostly a copy of the Cairo port, but in the future it can be changed to
+        use a wxBitmap as the storage type everywhere (just as Cairo can
+        probably be changed).
+        
+        Also ASSERT for any other ports who call getAddr() (I don't think there
+        are any, and besides, they probably won't link, but this doesn't hurt).
+        
+        Also fixes a dumb Cairo build bustage typo introduced in part ten.
+
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::getAddr):
+        * platform/image-decoders/cairo/ImageDecoderCairo.cpp:
+        (WebCore::RGBA32Buffer::setStatus):
+        * platform/image-decoders/wx: Added.
+        * platform/image-decoders/wx/ImageDecoderWx.cpp: Added.
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::clear):
+        (WebCore::RGBA32Buffer::zeroFill):
+        (WebCore::RGBA32Buffer::copyBitmapData):
+        (WebCore::RGBA32Buffer::setSize):
+        (WebCore::RGBA32Buffer::asNewNativeImage):
+        (WebCore::RGBA32Buffer::hasAlpha):
+        (WebCore::RGBA32Buffer::setHasAlpha):
+        (WebCore::RGBA32Buffer::setStatus):
+        (WebCore::RGBA32Buffer::operator=):
+        (WebCore::RGBA32Buffer::width):
+        (WebCore::RGBA32Buffer::height):
+        * webcore-wx.bkl:
+
 2009-06-13  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Dimitri Glazkov.  Landed by Adam Barth.

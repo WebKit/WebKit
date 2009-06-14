@@ -134,10 +134,13 @@ namespace WebCore {
 
         inline PixelData* getAddr(int x, int y)
         {
-#if PLATFORM(CAIRO)
+#if PLATFORM(CAIRO) || PLATFORM(WX)
             return m_bytes.data() + (y * width()) + x;
 #elif PLATFORM(SKIA)
             return m_bitmap.getAddr32(x, y);
+#else
+            ASSERT_NOT_REACHED();
+            return 0;
 #endif
         }
 
@@ -157,7 +160,7 @@ namespace WebCore {
             }
         }
 
-#if PLATFORM(CAIRO)
+#if PLATFORM(CAIRO) || PLATFORM(WX)
         Vector<PixelData> m_bytes;
         IntSize m_size;       // The size of the buffer.  This should be the
                               // same as ImageDecoder::m_size.
