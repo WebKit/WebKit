@@ -1,3 +1,19 @@
+2009-06-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric Seidel.  Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26281
+
+        REGRESSION: Copying from TextEdit/OmniGraffle and pasting into editable
+        region loses images
+        
+        Prefer RTFD (RTF with inline images) over RTF.  In
+        http://trac.webkit.org/changeset/19745 I accidently reversed their
+        order.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:]): 
+
 2009-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

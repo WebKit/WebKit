@@ -703,16 +703,16 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                              subresources:0]))
         return fragment;
     
-    if ([types containsObject:NSRTFPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSRTFPboardType
-                                                inContext:context
-                                             subresources:0]))
-        return fragment;
-
     if ([types containsObject:NSRTFDPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSRTFDPboardType
+                                                inContext:context
+                                             subresources:0]))
+        return fragment;
+    
+    if ([types containsObject:NSRTFPboardType] &&
+        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
+                                                  forType:NSRTFPboardType
                                                 inContext:context
                                              subresources:0]))
         return fragment;
