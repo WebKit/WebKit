@@ -30,6 +30,7 @@
 #include "SecurityOrigin.h"
 
 #include "CString.h"
+#include "FrameLoader.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "StringHash.h"
