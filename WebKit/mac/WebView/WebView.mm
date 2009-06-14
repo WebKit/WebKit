@@ -126,6 +126,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
+#import <WebCore/SecurityOrigin.h>
 #import <WebCore/SelectionController.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TextResourceDecoder.h>
@@ -2285,7 +2286,7 @@ static inline IMP getMethod(id o, SEL s)
 
 + (void)registerURLSchemeAsLocal:(NSString *)protocol
 {
-    FrameLoader::registerURLSchemeAsLocal(protocol);
+    SecurityOrigin::registerURLSchemeAsLocal(protocol);
 }
 
 - (id)_initWithArguments:(NSDictionary *) arguments

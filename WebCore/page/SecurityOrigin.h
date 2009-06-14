@@ -128,6 +128,13 @@ namespace WebCore {
         // (and whether it was set) but considering the host. It is used for postMessage.
         bool isSameSchemeHostPort(const SecurityOrigin*) const;
 
+        static void registerURLSchemeAsLocal(const String&);
+        static bool shouldTreatURLAsLocal(const String&);
+        static bool shouldTreatURLSchemeAsLocal(const String&);
+
+        static void registerURLSchemeAsNoAccess(const String&);
+        static bool shouldTreatURLSchemeAsNoAccess(const String&);
+
     private:
         explicit SecurityOrigin(const KURL&);
         explicit SecurityOrigin(const SecurityOrigin*);

@@ -30,12 +30,41 @@
 #include "SecurityOrigin.h"
 
 #include "CString.h"
-#include "FrameLoader.h"
 #include "KURL.h"
 #include "PlatformString.h"
+#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
+
+typedef HashSet<String, CaseFoldingHash> URLSchemesMap;
+
+static URLSchemesMap& localSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, localSchemes, ());
+
+    if (localSchemes.isEmpty()) {
+        localSchemes.add("file");
+#if PLATFORM(MAC)
+        localSchemes.add("applewebdata");
+#endif
+#if PLATFORM(QT)
+        localSchemes.add("qrc");
+#endif
+    }
+
+    return localSchemes;
+}
+
+static URLSchemesMap& noAccessSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, noAccessSchemes, ());
+
+    if (noAccessSchemes.isEmpty())
+        noAccessSchemes.add("data");
+
+    return noAccessSchemes;
+}
 
 static bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
 {
@@ -66,7 +95,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
         m_protocol = "";
 
     // Some URLs are not allowed access to anything other than themselves.
-    if (FrameLoader::shouldTreatURLSchemeAsNoAccess(m_protocol))
+    if (shouldTreatURLSchemeAsNoAccess(m_protocol))
         m_noAccess = true;
 
     // document.domain starts as m_host, but can be set by the DOM.
@@ -193,7 +222,7 @@ void SecurityOrigin::grantUniversalAccess()
 
 bool SecurityOrigin::isLocal() const
 {
-    return FrameLoader::shouldTreatURLSchemeAsLocal(m_protocol);
+    return shouldTreatURLSchemeAsLocal(m_protocol);
 }
 
 bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
@@ -305,6 +334,64 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const
         return false;
 
     return true;
+}
+
+// static
+void SecurityOrigin::registerURLSchemeAsLocal(const String& scheme)
+{
+    localSchemes().add(scheme);
+}
+
+// static
+bool SecurityOrigin::shouldTreatURLAsLocal(const String& url)
+{
+    // This avoids an allocation of another String and the HashSet contains()
+    // call for the file: and http: schemes.
+    if (url.length() >= 5) {
+        const UChar* s = url.characters();
+        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p' && s[4] == ':')
+            return false;
+        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e' && s[4] == ':')
+            return true;
+    }
+
+    int loc = url.find(':');
+    if (loc == -1)
+        return false;
+
+    String scheme = url.left(loc);
+    return localSchemes().contains(scheme);
+}
+
+// static
+bool SecurityOrigin::shouldTreatURLSchemeAsLocal(const String& scheme)
+{
+    // This avoids an allocation of another String and the HashSet contains()
+    // call for the file: and http: schemes.
+    if (scheme.length() == 4) {
+        const UChar* s = scheme.characters();
+        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p')
+            return false;
+        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e')
+            return true;
+    }
+
+    if (scheme.isEmpty())
+        return false;
+
+    return localSchemes().contains(scheme);
+}
+
+// static
+void SecurityOrigin::registerURLSchemeAsNoAccess(const String& scheme)
+{
+    noAccessSchemes().add(scheme);
+}
+
+// static
+bool SecurityOrigin::shouldTreatURLSchemeAsNoAccess(const String& scheme)
+{
+    return noAccessSchemes().contains(scheme);
 }
 
 } // namespace WebCore

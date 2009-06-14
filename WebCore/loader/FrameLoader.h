@@ -365,13 +365,6 @@ namespace WebCore {
         static bool restrictAccessToLocal();
         static bool allowSubstituteDataAccessToLocal();
 
-        static void registerURLSchemeAsLocal(const String&);
-        static bool shouldTreatURLAsLocal(const String&);
-        static bool shouldTreatURLSchemeAsLocal(const String&);
-
-        static void registerURLSchemeAsNoAccess(const String&);
-        static bool shouldTreatURLSchemeAsNoAccess(const String&);
-
         bool committingFirstRealLoad() const { return !m_creatingInitialEmptyDocument && !m_committedFirstRealDocumentLoad; }
 
         void iconLoadDecisionAvailable();

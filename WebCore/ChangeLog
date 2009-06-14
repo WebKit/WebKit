@@ -1,3 +1,29 @@
+2009-06-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24492
+
+        Moved registerURLSchemeAsLocal and registerURLSchemeAsNoAccess from
+        FrameLoader to SecurityOrigin.
+
+        * WebCore.base.exp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::canLoad):
+        * loader/FrameLoader.h:
+        * page/SecurityOrigin.cpp:
+        (WebCore::localSchemes):
+        (WebCore::noAccessSchemes):
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isLocal):
+        (WebCore::SecurityOrigin::registerURLSchemeAsLocal):
+        (WebCore::SecurityOrigin::shouldTreatURLAsLocal):
+        (WebCore::SecurityOrigin::shouldTreatURLSchemeAsLocal):
+        (WebCore::SecurityOrigin::registerURLSchemeAsNoAccess):
+        (WebCore::SecurityOrigin::shouldTreatURLSchemeAsNoAccess):
+        * page/SecurityOrigin.h:
+
 2009-06-13  Ben Murdoch  <benm@google.com>
 
         Reviewed by David Kilzer.  Landed by Adam Barth.

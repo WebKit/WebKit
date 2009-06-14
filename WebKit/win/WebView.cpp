@@ -96,6 +96,7 @@
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ScriptValue.h>
 #include <WebCore/ScrollbarTheme.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SelectionController.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SimpleFontData.h>
@@ -3218,7 +3219,7 @@ HRESULT STDMETHODCALLTYPE WebView::registerURLSchemeAsLocal(
     if (!scheme)
         return E_POINTER;
 
-    FrameLoader::registerURLSchemeAsLocal(String(scheme, ::SysStringLen(scheme)));
+    SecurityOrigin::registerURLSchemeAsLocal(String(scheme, ::SysStringLen(scheme)));
 
     return S_OK;
 }

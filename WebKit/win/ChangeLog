@@ -1,3 +1,14 @@
+2009-06-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24492
+
+        Move registerURLSchemeAsLocal from FrameLoader to SecurityOrigin.
+
+        * WebView.cpp:
+        (WebView::registerURLSchemeAsLocal):
+
 2009-06-12  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

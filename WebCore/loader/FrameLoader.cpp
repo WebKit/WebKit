@@ -115,35 +115,6 @@ using namespace SVGNames;
 #endif
 using namespace HTMLNames;
 
-typedef HashSet<String, CaseFoldingHash> URLSchemesMap;
-
-static URLSchemesMap& localSchemes()
-{
-    DEFINE_STATIC_LOCAL(URLSchemesMap, localSchemes, ());
-
-    if (localSchemes.isEmpty()) {
-        localSchemes.add("file");
-#if PLATFORM(MAC)
-        localSchemes.add("applewebdata");
-#endif
-#if PLATFORM(QT)
-        localSchemes.add("qrc");
-#endif
-    }
-
-    return localSchemes;
-}
-
-static URLSchemesMap& noAccessSchemes()
-{
-    DEFINE_STATIC_LOCAL(URLSchemesMap, noAccessSchemes, ());
-
-    if (noAccessSchemes.isEmpty())
-        noAccessSchemes.add("data");
-
-    return noAccessSchemes;
-}
-
 struct ScheduledRedirection {
     enum Type { redirection, locationChange, historyNavigation, formSubmission };
 
@@ -2196,7 +2167,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
         referrer = m_outgoingReferrer;
 
     ASSERT(frame()->document());
-    if (shouldTreatURLAsLocal(url.string()) && !isFeedWithNestedProtocolInHTTPFamily(url)) {
+    if (SecurityOrigin::shouldTreatURLAsLocal(url.string()) && !isFeedWithNestedProtocolInHTTPFamily(url)) {
         if (!canLoad(url, String(), frame()->document()) && !canLoad(url, referrer)) {
             FrameLoader::reportLocalLoadFailed(m_frame, url.string());
             return;
@@ -2411,7 +2382,7 @@ bool FrameLoader::canLoad(const KURL& url, const String& referrer, const Documen
 bool FrameLoader::canLoad(const KURL& url, const String& referrer, const SecurityOrigin* securityOrigin)
 {
     // We can always load any URL that isn't considered local (e.g. http URLs).
-    if (!shouldTreatURLAsLocal(url.string()))
+    if (!SecurityOrigin::shouldTreatURLAsLocal(url.string()))
         return true;
 
     // If we were provided a document, we let its local file policy dictate the result,
@@ -2419,7 +2390,7 @@ bool FrameLoader::canLoad(const KURL& url, const String& referrer, const Securit
     if (securityOrigin)
         return securityOrigin->canLoadLocalResources();
     if (!referrer.isEmpty())
-        return shouldTreatURLAsLocal(referrer);
+        return SecurityOrigin::shouldTreatURLAsLocal(referrer);
     return false;
 }
 
@@ -5138,59 +5109,6 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
         m_client->setMainFrameDocumentReady(true); // update observers with new DOMDocument
         m_client->dispatchDidReceiveTitle(loader->title());
     }
-}
-
-void FrameLoader::registerURLSchemeAsLocal(const String& scheme)
-{
-    localSchemes().add(scheme);
-}
-
-bool FrameLoader::shouldTreatURLAsLocal(const String& url)
-{
-    // This avoids an allocation of another String and the HashSet contains()
-    // call for the file: and http: schemes.
-    if (url.length() >= 5) {
-        const UChar* s = url.characters();
-        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p' && s[4] == ':')
-            return false;
-        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e' && s[4] == ':')
-            return true;
-    }
-
-    int loc = url.find(':');
-    if (loc == -1)
-        return false;
-
-    String scheme = url.left(loc);
-    return localSchemes().contains(scheme);
-}
-
-bool FrameLoader::shouldTreatURLSchemeAsLocal(const String& scheme)
-{
-    // This avoids an allocation of another String and the HashSet contains()
-    // call for the file: and http: schemes.
-    if (scheme.length() == 4) {
-        const UChar* s = scheme.characters();
-        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p')
-            return false;
-        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e')
-            return true;
-    }
-
-    if (scheme.isEmpty())
-        return false;
-
-    return localSchemes().contains(scheme);
-}
-
-void FrameLoader::registerURLSchemeAsNoAccess(const String& scheme)
-{
-    noAccessSchemes().add(scheme);
-}
-
-bool FrameLoader::shouldTreatURLSchemeAsNoAccess(const String& scheme)
-{
-    return noAccessSchemes().contains(scheme);
 }
 
 void FrameLoader::dispatchDidCommitLoad()
