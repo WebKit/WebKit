@@ -1,3 +1,24 @@
+2009-06-13  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Dimitri Glazkov.  Landed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26320
+
+        Some minor code cleanup for chromium/skia port.  Removed #ifdef's
+        around skia API changes, since the new version seems solid and we
+        don't need to go back.  Added some comments to
+        TransparencyWin.h, as requested by Brett in
+        https://bugs.webkit.org/show_bug.cgi?id=24584.
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/chromium/TransparencyWin.h:
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::boundingRect):
+        (WebCore::boundingBoxForCurrentStroke):
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::SkPathContainsPoint):
+
 2009-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

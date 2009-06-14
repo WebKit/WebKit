@@ -165,13 +165,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     if (fontDescription.italic())
         style |= SkTypeface::kItalic;
 
-    // FIXME:  This #ifdef can go away once we're firmly using the new Skia.
-    // During the transition, this makes the code compatible with both versions.
-#ifdef SK_USE_OLD_255_TO_256
     SkTypeface* tf = SkTypeface::CreateFromName(name, static_cast<SkTypeface::Style>(style));
-#else
-    SkTypeface* tf = SkTypeface::Create(name, static_cast<SkTypeface::Style>(style));
-#endif
     if (!tf)
         return 0;
 

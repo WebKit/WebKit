@@ -150,14 +150,7 @@ bool SkPathContainsPoint(SkPath* originalPath, const FloatPoint& point, SkPath::
     SkPath scaledPath;
     int scale = 1;
 
-    SkRect bounds;
-    // FIXME:  This #ifdef can go away once we're firmly using the new Skia.
-    // During the transition, this makes the code compatible with both versions.
-#ifdef SK_USE_OLD_255_TO_256
-    bounds = originalPath->getBounds();
-#else
-    originalPath->computeBounds(&bounds, SkPath::kFast_BoundsType);
-#endif
+    SkRect bounds = originalPath->getBounds();
 
     // We can immediately return false if the point is outside the bounding rect
     if (!bounds.contains(SkFloatToScalar(point.x()), SkFloatToScalar(point.y())))

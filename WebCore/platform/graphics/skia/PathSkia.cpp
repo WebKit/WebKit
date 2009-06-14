@@ -81,15 +81,7 @@ void Path::translate(const FloatSize& size)
 
 FloatRect Path::boundingRect() const
 {
-    // FIXME:  This #ifdef can go away once we're firmly using the new Skia.
-    // During the transition, this makes the code compatible with both versions.
-#ifdef SK_USE_OLD_255_TO_256
     return m_path->getBounds();
-#else
-    SkRect rect;
-    m_path->computeBounds(&rect, SkPath::kExact_BoundsType);
-    return rect;
-#endif
 }
 
 void Path::moveTo(const FloatPoint& point)
@@ -281,15 +273,7 @@ static FloatRect boundingBoxForCurrentStroke(const GraphicsContext* context)
     context->platformContext()->setupPaintForStroking(&paint, 0, 0);
     SkPath boundingPath;
     paint.getFillPath(context->platformContext()->currentPathInLocalCoordinates(), &boundingPath);
-    // FIXME:  This #ifdef can go away once we're firmly using the new Skia.
-    // During the transition, this makes the code compatible with both versions.
-#ifdef SK_USE_OLD_255_TO_256
     return boundingPath.getBounds();
-#else
-    SkRect r;
-    boundingPath.computeBounds(&r, SkPath::kExact_BoundsType);
-    return r;
-#endif
 }
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)

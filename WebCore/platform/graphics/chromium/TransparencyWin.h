@@ -135,6 +135,9 @@ public:
               const IntRect& region);
 
     // Combines the source and destination bitmaps using the given mode.
+    // Calling this function before the destructor runs is mandatory in most
+    // cases, and harmless otherwise.  The mandatory cases are:
+    //       (m_layerMode != NoLayer) || (m_transformMode == ScaleTransform)
     void composite();
 
     // Returns the context for drawing into, which may be the destination
