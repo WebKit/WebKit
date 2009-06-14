@@ -1077,15 +1077,6 @@ public:
     void setLastChildState() { m_lastChildState = true; }
     unsigned childIndex() const { return m_childIndex; }
     void setChildIndex(unsigned index) { m_childIndex = index; }
-    
-    bool pseudoClassStateEquivalent(const RenderStyle* style) const
-    {
-        return m_affectedByEmpty == style->affectedByEmpty()
-            && (!m_affectedByEmpty || m_emptyState == style->emptyState())
-            && m_firstChildState == style->firstChildState()
-            && m_lastChildState == style->lastChildState()
-            && m_childIndex == style->childIndex();
-    }
 
     // Initial values for all the properties
     static bool initialBorderCollapse() { return false; }

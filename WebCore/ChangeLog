@@ -1,5 +1,22 @@
 2009-06-14  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26362
+
+        Back out Simon's fix and replace it with a better one that doesn't needlessly destroy RenderObjects.
+        Use NoInherit rather than Detach for child index changes, and don't worry about other pseudo-class state
+        changes, since they were handled already with setNeedsStyleRecalcs on the affected objects themselves.
+
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setChildIndex):
+
+2009-06-14  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Move all of the mutable member variables from Font into the refcounted FontFallbackList.  This makes

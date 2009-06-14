@@ -293,7 +293,7 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
     EDisplay display2 = s2 ? s2->display() : NONE;
     bool fl2 = s2 && s2->hasPseudoStyle(FIRST_LETTER);
         
-    if (display1 != display2 || fl1 != fl2 || (s1 && s2 && (!s1->contentDataEquivalent(s2) || !s1->pseudoClassStateEquivalent(s2))))
+    if (display1 != display2 || fl1 != fl2 || (s1 && s2 && !s1->contentDataEquivalent(s2)))
         ch = Detach;
     else if (!s1 || !s2)
         ch = Inherit;
@@ -302,6 +302,12 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
     else if (s1->inheritedNotEqual(s2))
         ch = Inherit;
     
+    // For nth-child and other positional rules, treat styles as different if they have
+    // changed positionally in the DOM. This way subsequent sibling resolutions won't be confused
+    // by the wrong child index and evaluate to incorrect results.
+    if (ch == NoChange && s1->childIndex() != s2->childIndex())
+        ch = NoInherit;
+
     // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
     // because setStyle will do the right thing with anything else.
     if (ch == NoChange && s1->hasPseudoStyle(BEFORE)) {
