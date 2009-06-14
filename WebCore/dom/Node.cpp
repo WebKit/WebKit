@@ -282,7 +282,7 @@ void Node::stopIgnoringLeaks()
 #endif
 }
 
-Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 )
+Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
 {
     // FIXME: The behavior of this function is just totally wrong.  It doesn't handle
     // explicit inheritance of non-inherited properties and so you end up not re-resolving
@@ -293,7 +293,7 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 )
     EDisplay display2 = s2 ? s2->display() : NONE;
     bool fl2 = s2 && s2->hasPseudoStyle(FIRST_LETTER);
         
-    if (display1 != display2 || fl1 != fl2 || (s1 && s2 && !s1->contentDataEquivalent(s2)))
+    if (display1 != display2 || fl1 != fl2 || (s1 && s2 && (!s1->contentDataEquivalent(s2) || !s1->pseudoClassStateEquivalent(s2))))
         ch = Detach;
     else if (!s1 || !s2)
         ch = Inherit;

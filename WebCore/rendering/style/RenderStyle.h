@@ -301,10 +301,10 @@ public:
 
     void inheritFrom(const RenderStyle* inheritParent);
 
-    PseudoId styleType() { return static_cast<PseudoId>(noninherited_flags._styleType); }
+    PseudoId styleType() const { return static_cast<PseudoId>(noninherited_flags._styleType); }
     void setStyleType(PseudoId styleType) { noninherited_flags._styleType = styleType; }
 
-    RenderStyle* getCachedPseudoStyle(PseudoId);
+    RenderStyle* getCachedPseudoStyle(PseudoId) const;
     RenderStyle* addCachedPseudoStyle(PassRefPtr<RenderStyle>);
 
     bool affectedByHoverRules() const { return noninherited_flags._affectedByHover; }
@@ -1025,7 +1025,7 @@ public:
     const CounterDirectiveMap* counterDirectives() const;
     CounterDirectiveMap& accessCounterDirectives();
 
-    bool inheritedNotEqual(RenderStyle*) const;
+    bool inheritedNotEqual(const RenderStyle*) const;
 
     StyleDifference diff(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
 
@@ -1077,6 +1077,15 @@ public:
     void setLastChildState() { m_lastChildState = true; }
     unsigned childIndex() const { return m_childIndex; }
     void setChildIndex(unsigned index) { m_childIndex = index; }
+    
+    bool pseudoClassStateEquivalent(const RenderStyle* style) const
+    {
+        return m_affectedByEmpty == style->affectedByEmpty()
+            && (!m_affectedByEmpty || m_emptyState == style->emptyState())
+            && m_firstChildState == style->firstChildState()
+            && m_lastChildState == style->lastChildState()
+            && m_childIndex == style->childIndex();
+    }
 
     // Initial values for all the properties
     static bool initialBorderCollapse() { return false; }

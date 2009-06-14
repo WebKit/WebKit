@@ -206,7 +206,7 @@ void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
     noninherited_flags._pseudoBits |= pseudoBit(pseudo);
 }
 
-RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid)
+RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
 {
     if (!m_cachedPseudoStyle || styleType() != NOPSEUDO)
         return 0;
@@ -225,7 +225,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
     return m_cachedPseudoStyle.get();
 }
 
-bool RenderStyle::inheritedNotEqual(RenderStyle* other) const
+bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
 {
     return inherited_flags != other->inherited_flags ||
            inherited != other->inherited ||
