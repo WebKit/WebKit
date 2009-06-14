@@ -34,6 +34,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(SKIA)
+#include "NativeImageSkia.h"
+#include "SkBitmap.h"
+#endif
+
 namespace WebCore {
 
     // The RGBA32Buffer object represents the decoded image data in RGBA32 format.  This buffer is what all
@@ -49,7 +54,11 @@ namespace WebCore {
             DisposeOverwriteBgcolor,   // Clear frame to transparent
             DisposeOverwritePrevious,  // Clear frame to previous framebuffer contents
         };
+#if PLATFORM(SKIA)
+        typedef uint32_t PixelData;
+#else
         typedef unsigned PixelData;
+#endif
 
         RGBA32Buffer();
 
@@ -93,7 +102,7 @@ namespace WebCore {
         // are written. Will return true on success, false if the memory
         // allocation fails.  Calling this multiple times is undefined and may
         // leak memory.
-        bool setSize(int width, int height);
+        bool setSize(int newWidth, int newHeight);
 
         // To be used by ImageSource::createFrameAtIndex().  Returns a pointer
         // to the underlying native image data.  This pointer will be owned by
@@ -108,7 +117,7 @@ namespace WebCore {
 
         void setHasAlpha(bool alpha);
         void setRect(const IntRect& r) { m_rect = r; }
-        void setStatus(FrameStatus s) { m_status = s; }
+        void setStatus(FrameStatus status);
         void setDuration(unsigned duration) { m_duration = duration; }
         void setDisposalMethod(FrameDisposalMethod method) { m_disposalMethod = method; }
 
@@ -127,6 +136,8 @@ namespace WebCore {
         {
 #if PLATFORM(CAIRO)
             return m_bytes.data() + (y * width()) + x;
+#elif PLATFORM(SKIA)
+            return m_bitmap.getAddr32(x, y);
 #endif
         }
 
@@ -151,6 +162,8 @@ namespace WebCore {
         IntSize m_size;       // The size of the buffer.  This should be the
                               // same as ImageDecoder::m_size.
         bool m_hasAlpha;      // Whether or not any of the pixels in the buffer have transparency.
+#elif PLATFORM(SKIA)
+        NativeImageSkia m_bitmap;
 #endif
         IntRect m_rect;       // The rect of the original specified frame within the overall buffer.
                               // This will always just be the entire buffer except for GIF frames

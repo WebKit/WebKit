@@ -1,3 +1,35 @@
+2009-06-13  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25709 part ten
+        Make Skia use the root directory ImageDecoder.h and factor out most
+        Skia-specific bits into skia/ImageDecoderSkia.cpp.  Also fix a pair of
+        style violations in ImageDecoderCairo.cpp.  This is the last patch for
+        this bug, everything beyond this is an enhancement rather than
+        unforking.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::getAddr):
+        * platform/image-decoders/cairo/ImageDecoderCairo.cpp:
+        (WebCore::RGBA32Buffer::hasAlpha):
+        (WebCore::RGBA32Buffer::setHasAlpha):
+        (WebCore::setStatus):
+        * platform/image-decoders/skia/ImageDecoder.h: Removed.
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp: Added.
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::clear):
+        (WebCore::RGBA32Buffer::zeroFill):
+        (WebCore::RGBA32Buffer::copyBitmapData):
+        (WebCore::RGBA32Buffer::setSize):
+        (WebCore::RGBA32Buffer::asNewNativeImage):
+        (WebCore::RGBA32Buffer::hasAlpha):
+        (WebCore::RGBA32Buffer::setHasAlpha):
+        (WebCore::RGBA32Buffer::setStatus):
+        (WebCore::RGBA32Buffer::operator=):
+        (WebCore::RGBA32Buffer::width):
+        (WebCore::RGBA32Buffer::height):
+
 2009-06-13  Victor Wang <victorw@chromium.org>
 
         Reviewed by Eric Seidel.  Landed by Adam Barth.
