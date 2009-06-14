@@ -1,4 +1,4 @@
-// Copyright 2008 Google Inc. All Rights Reserved.
+// Copyright 2008 the V8 project authors. All rights reserved.
 // Copyright 1996 John Maloney and Mario Wolczko.
 
 // This program is free software; you can redistribute it and/or modify
@@ -16,10 +16,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-// This implementation of the DeltaBlue benchmark is derived 
-// from the Smalltalk implementation by John Maloney and Mario 
-// Wolczko. Some parts have been translated directly, whereas 
-// others have been modified more aggresively to make it feel 
+// This implementation of the DeltaBlue benchmark is derived
+// from the Smalltalk implementation by John Maloney and Mario
+// Wolczko. Some parts have been translated directly, whereas
+// others have been modified more aggresively to make it feel
 // more like a JavaScript program.
 
 /**

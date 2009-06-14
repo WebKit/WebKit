@@ -1,3 +1,18 @@
+2009-06-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Update V8 benchmark to version 4.
+        
+        Reviewed by Cameron Zwarich.
+
+        * tests/LIST-V8:
+        * tests/v8-crypto.js:
+        * tests/v8-deltablue.js:
+        * tests/v8-earley-boyer.js:
+        * tests/v8-raytrace.js:
+        * tests/v8-regexp.js: Added.
+        * tests/v8-richards.js:
+        * tests/v8-splay.js: Added.
+
 2009-05-26  Olivier DOLE  <odole@pleyo.com>
 
         Reviewed by Maciej.
