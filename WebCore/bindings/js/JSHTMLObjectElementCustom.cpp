@@ -33,12 +33,12 @@ namespace WebCore {
 
 using namespace JSC;
 
-bool JSHTMLObjectElement::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSHTMLObjectElement::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, this);
 }
 
-bool JSHTMLObjectElement::customPut(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+bool JSHTMLObjectElement::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     return runtimeObjectCustomPut(exec, propertyName, value, impl(), slot);
 }

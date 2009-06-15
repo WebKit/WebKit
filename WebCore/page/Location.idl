@@ -32,12 +32,12 @@ module window {
 #if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif
-        CustomGetOwnPropertySlot,
-        CustomPutFunction,
+        DelegatingGetOwnPropertySlot,
+        DelegatingPutFunction,
         CustomDeleteProperty,
         CustomGetPropertyNames,
         CustomDefineGetter,
-        CustomPrototypePutFunction,
+        DelegatingPrototypePutFunction,
         CustomPrototypeDefineGetter
     ] Location {
                  attribute [DoNotCheckDomainSecurityOnSet, CustomSetter, V8DisallowShadowing] DOMString href;

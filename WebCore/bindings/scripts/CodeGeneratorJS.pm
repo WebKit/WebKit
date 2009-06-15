@@ -328,8 +328,8 @@ sub GenerateGetOwnPropertySlotBody
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
-        push(@getOwnPropertySlotImpl, "    if (customGetOwnPropertySlot(exec, propertyName, slot))\n");
+    if ($dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"}) {
+        push(@getOwnPropertySlotImpl, "    if (getOwnPropertySlotDelegate(exec, propertyName, slot))\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
     }
 
@@ -439,13 +439,14 @@ sub GenerateHeader
     # Prototype
     push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
 
-    $implIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"} || $dataNode->extendedAttributes->{"CustomPutFunction"};
+    $implIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"CustomHeader"} || $dataNode->extendedAttributes->{"CustomPutFunction"} || $dataNode->extendedAttributes->{"DelegatingPutFunction"};
 
     my $hasGetter = $numAttributes > 0 
                  || $dataNode->extendedAttributes->{"GenerateConstructor"} 
                  || $dataNode->extendedAttributes->{"HasIndexGetter"}
                  || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}
                  || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
+                 || $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"}
                  || $dataNode->extendedAttributes->{"HasNameGetter"}
                  || $dataNode->extendedAttributes->{"HasOverridingNameGetter"};
 
@@ -453,7 +454,7 @@ sub GenerateHeader
     if ($hasGetter) {
         push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);\n");
         push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"};
-        push(@headerContent, "    bool customGetOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
+        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"};
     }
 
     # Check if we have any writable properties
@@ -466,13 +467,14 @@ sub GenerateHeader
 
     my $hasSetter = $hasReadWriteProperties
                  || $dataNode->extendedAttributes->{"CustomPutFunction"}
+                 || $dataNode->extendedAttributes->{"DelegatingPutFunction"}
                  || $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
 
     # Getters
     if ($hasSetter) {
         push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    virtual void put(JSC::ExecState*, unsigned propertyName, JSC::JSValue);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
-        push(@headerContent, "    bool customPut(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomPutFunction"};
+        push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingPutFunction"};
     }
 
     # Class info
@@ -620,7 +622,7 @@ sub GenerateHeader
 
     push(@headerContent, "};\n\n");
 
-    if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
+    if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)\n");
         push(@headerContent, "{\n");
         push(@headerContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
@@ -664,9 +666,9 @@ sub GenerateHeader
     }
     push(@headerContent, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
-    if ($numFunctions > 0 || $numConstants > 0 || $dataNode->extendedAttributes->{"CustomPrototypeGetOwnPropertySlot"}) {
+    if ($numFunctions > 0 || $numConstants > 0 || $dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"}) {
         push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
-        push(@headerContent, "    bool customGetOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomPrototypeGetOwnPropertySlot"};
+        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"};
 
         push(@headerContent,
             "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)\n" .
@@ -674,9 +676,9 @@ sub GenerateHeader
             "        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType));\n" .
             "    }\n");
     }
-    if ($dataNode->extendedAttributes->{"CustomPrototypePutFunction"}) {
+    if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-        push(@headerContent, "    bool customPut(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n");
+        push(@headerContent, "    bool putDelegate(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSC::PutPropertySlot&);\n");
     }
 
     # Custom defineGetter function
@@ -924,12 +926,12 @@ sub GenerateImplementation
         push(@implContent, "    return getDOMPrototype<${className}>(exec, globalObject);\n");
         push(@implContent, "}\n\n");
     }
-    if ($numConstants > 0 || $numFunctions > 0 || $dataNode->extendedAttributes->{"CustomPrototypeGetOwnPropertySlot"}) {
+    if ($numConstants > 0 || $numFunctions > 0 || $dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"}) {
         push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
         push(@implContent, "{\n");
 
-        if ($dataNode->extendedAttributes->{"CustomPrototypeGetOwnPropertySlot"}) {
-            push(@implContent, "    if (customGetOwnPropertySlot(exec, propertyName, slot))\n");
+        if ($dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"}) {
+            push(@implContent, "    if (getOwnPropertySlotDelegate(exec, propertyName, slot))\n");
             push(@implContent, "        return true;\n");
         }
 
@@ -945,10 +947,10 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if ($dataNode->extendedAttributes->{"CustomPrototypePutFunction"}) {
+    if ($dataNode->extendedAttributes->{"DelegatingPrototypePutFunction"}) {
         push(@implContent, "void ${className}Prototype::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    if (customPut(exec, propertyName, value, slot))\n");
+        push(@implContent, "    if (putDelegate(exec, propertyName, value, slot))\n");
         push(@implContent, "        return;\n");
         push(@implContent, "    Base::put(exec, propertyName, value, slot);\n");
         push(@implContent, "}\n\n");
@@ -1063,13 +1065,14 @@ sub GenerateImplementation
                  || $dataNode->extendedAttributes->{"GenerateConstructor"} 
                  || $dataNode->extendedAttributes->{"HasIndexGetter"}
                  || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}
+                 || $dataNode->extendedAttributes->{"DelegatingGetOwnPropertySlot"}
                  || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
                  || $dataNode->extendedAttributes->{"HasNameGetter"}
                  || $dataNode->extendedAttributes->{"HasOverridingNameGetter"};
 
     # Attributes
     if ($hasGetter) {
-        if (!$dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
+        if (!$dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
             push(@implContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
@@ -1205,31 +1208,33 @@ sub GenerateImplementation
         }
 
         my $hasSetter = $hasReadWriteProperties
-                     || $dataNode->extendedAttributes->{"CustomPutFunction"}
+                     || $dataNode->extendedAttributes->{"DelegatingPutFunction"}
                      || $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
 
         if ($hasSetter) {
-            push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
-            push(@implContent, "{\n");
-            if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
-                push(@implContent, "    bool ok;\n");
-                push(@implContent, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
-                push(@implContent, "    if (ok) {\n");
-                push(@implContent, "        indexSetter(exec, index, value);\n");
-                push(@implContent, "        return;\n");
-                push(@implContent, "    }\n");
-            }
-            if ($dataNode->extendedAttributes->{"CustomPutFunction"}) {
-                push(@implContent, "    if (customPut(exec, propertyName, value, slot))\n");
-                push(@implContent, "        return;\n");
-            }
+            if (!$dataNode->extendedAttributes->{"CustomPutFunction"}) {
+                push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)\n");
+                push(@implContent, "{\n");
+                if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
+                    push(@implContent, "    bool ok;\n");
+                    push(@implContent, "    unsigned index = propertyName.toUInt32(&ok, false);\n");
+                    push(@implContent, "    if (ok) {\n");
+                    push(@implContent, "        indexSetter(exec, index, value);\n");
+                    push(@implContent, "        return;\n");
+                    push(@implContent, "    }\n");
+                }
+                if ($dataNode->extendedAttributes->{"DelegatingPutFunction"}) {
+                    push(@implContent, "    if (putDelegate(exec, propertyName, value, slot))\n");
+                    push(@implContent, "        return;\n");
+                }
 
-            if ($hasReadWriteProperties) {
-                push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, " . hashTableAccessor($dataNode->extendedAttributes->{"NoStaticTables"}, $className) . ", this, slot);\n");
-            } else {
-                push(@implContent, "    Base::put(exec, propertyName, value, slot);\n");
+                if ($hasReadWriteProperties) {
+                    push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, " . hashTableAccessor($dataNode->extendedAttributes->{"NoStaticTables"}, $className) . ", this, slot);\n");
+                } else {
+                    push(@implContent, "    Base::put(exec, propertyName, value, slot);\n");
+                }
+                push(@implContent, "}\n\n");
             }
-            push(@implContent, "}\n\n");
 
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                 push(@implContent, "void ${className}::put(ExecState* exec, unsigned propertyName, JSValue value)\n");

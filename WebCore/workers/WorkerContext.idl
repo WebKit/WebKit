@@ -28,7 +28,7 @@ module threads {
 
     interface [
         Conditional=WORKERS,
-        CustomGetOwnPropertySlot,
+        DelegatingGetOwnPropertySlot,
         CustomMarkFunction,
         ExtendsDOMGlobalObject,
         LegacyParent=JSWorkerContextBase,

@@ -125,7 +125,7 @@ bool JSCSSStyleDeclaration::canGetItemsForName(ExecState*, CSSStyleDeclaration*,
     return isCSSPropertyName(propertyName);
 }
 
-// FIXME: You can get these properties, and set them (see customPut below),
+// FIXME: You can get these properties, and set them (see putDelegate below),
 // but you should also be able to enumerate them.
 JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
@@ -156,7 +156,7 @@ JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, const Identifier& pro
 }
 
 
-bool JSCSSStyleDeclaration::customPut(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
+bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
     if (!isCSSPropertyName(propertyName))
         return false;

@@ -30,7 +30,7 @@ module storage {
         HasNameGetter,
         CustomDeleteProperty,
         CustomGetPropertyNames,
-        CustomPutFunction,
+        DelegatingPutFunction,
         Conditional=DOM_STORAGE
     ] Storage {
         readonly attribute [DontEnum] unsigned long length;

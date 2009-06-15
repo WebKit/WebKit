@@ -52,7 +52,7 @@ static JSValue nonCachingStaticAssignFunctionGetter(ExecState* exec, const Ident
     return new (exec) PrototypeFunction(exec, 1, propertyName, jsLocationPrototypeFunctionAssign);
 }
 
-bool JSLocation::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     Frame* frame = impl()->frame();
     if (!frame) {
@@ -61,7 +61,7 @@ bool JSLocation::customGetOwnPropertySlot(ExecState* exec, const Identifier& pro
     }
 
     // When accessing Location cross-domain, functions are always the native built-in ones.
-    // See JSDOMWindow::customGetOwnPropertySlot for additional details.
+    // See JSDOMWindow::getOwnPropertySlotDelegate for additional details.
 
     // Our custom code is only needed to implement the Window cross-domain scheme, so if access is
     // allowed, return false so the normal lookup will take place.
@@ -93,7 +93,7 @@ bool JSLocation::customGetOwnPropertySlot(ExecState* exec, const Identifier& pro
     return true;
 }
 
-bool JSLocation::customPut(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+bool JSLocation::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -311,7 +311,7 @@ JSValue JSLocation::toString(ExecState* exec, const ArgList&)
     return jsString(exec, impl()->toString());
 }
 
-bool JSLocationPrototype::customPut(ExecState* exec, const Identifier& propertyName, JSValue, PutPropertySlot&)
+bool JSLocationPrototype::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue, PutPropertySlot&)
 {
     return (propertyName == exec->propertyNames().toString || propertyName == exec->propertyNames().valueOf);
 }

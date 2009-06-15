@@ -22,8 +22,8 @@ module html {
 
     interface [
         GenerateConstructor,
-        CustomPutFunction,
-        CustomGetOwnPropertySlot,
+        DelegatingPutFunction,
+        DelegatingGetOwnPropertySlot,
         CustomCall,
         HasOverridingNameGetter,
         InterfaceUUID=18f9bd58-6bb3-4b5c-aa30-6da13adfc91e,

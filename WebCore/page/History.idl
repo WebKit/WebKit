@@ -29,8 +29,8 @@ module window {
 #if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif
-        CustomGetOwnPropertySlot,
-        CustomPutFunction,
+        DelegatingGetOwnPropertySlot,
+        DelegatingPutFunction,
         CustomDeleteProperty,
         CustomGetPropertyNames
     ] History {

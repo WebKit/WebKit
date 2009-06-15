@@ -66,7 +66,7 @@ void JSWorkerContext::mark()
     }
 }
 
-bool JSWorkerContext::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSWorkerContext::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // Look for overrides before looking at any of our own properties.
     if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot))

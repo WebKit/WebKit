@@ -42,7 +42,7 @@ JSC::JSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, const JSC::Ide
     return new (exec) JSC::PrototypeFunction(exec, length, propertyName, nativeFunction);
 }
 
-ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
+ALWAYS_INLINE bool JSDOMWindow::getOwnPropertySlotDelegate(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
 {
     // When accessing a Window cross-domain, functions are always the native built-in ones, and they
     // are not affected by properties changed on the Window or anything in its prototype chain.
@@ -128,7 +128,7 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, c
     return false;
 }
 
-inline bool JSDOMWindow::customPut(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue value, JSC::PutPropertySlot& slot)
+inline bool JSDOMWindow::putDelegate(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue value, JSC::PutPropertySlot& slot)
 {
     if (!impl()->frame())
         return true;

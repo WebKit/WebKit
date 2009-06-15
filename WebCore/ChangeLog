@@ -1,3 +1,50 @@
+2009-06-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Rename the CustomGetOwnPropertySlot and CustomPutFunction extended attributes
+        to DelegatingGetOwnPropertySlot and DelegatingPutFunction to more clearly describe
+        their functionality (customGetOwnPropertySlot and customPut member functions have
+        been renamed getOwnPropertySlotDelegate and putDelegate).  CustomGetOwnPropertySlot 
+        and CustomPutFunction have been repurposed to mean a complete custom implementation
+        of the function which is inline with other extended attributes prefixed with Custom.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::putDelegate):
+        * bindings/js/JSDOMWindowCustom.h:
+        (WebCore::JSDOMWindow::getOwnPropertySlotDelegate):
+        (WebCore::JSDOMWindow::putDelegate):
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::getOwnPropertySlotDelegate):
+        (WebCore::JSHTMLAppletElement::putDelegate):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::getOwnPropertySlotDelegate):
+        (WebCore::JSHTMLEmbedElement::putDelegate):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::getOwnPropertySlotDelegate):
+        (WebCore::JSHTMLObjectElement::putDelegate):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertySlotDelegate):
+        (WebCore::JSHistory::putDelegate):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate):
+        (WebCore::JSLocation::putDelegate):
+        (WebCore::JSLocationPrototype::putDelegate):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::putDelegate):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::getOwnPropertySlotDelegate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSStyleDeclaration.idl:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLObjectElement.idl:
+        * page/DOMWindow.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * storage/Storage.idl:
+        * workers/WorkerContext.idl:
+
 2009-06-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

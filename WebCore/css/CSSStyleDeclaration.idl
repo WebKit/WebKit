@@ -23,7 +23,7 @@ module css {
     // Introduced in DOM Level 2:
     interface [
         GenerateConstructor,
-        CustomPutFunction,
+        DelegatingPutFunction,
         HasNameGetter,
         HasIndexGetter,
         InterfaceUUID=9989b2c3-a2b6-449b-abf9-c60d2260b1d7,
