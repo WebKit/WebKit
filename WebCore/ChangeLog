@@ -1,3 +1,30 @@
+2009-06-14  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 26399: REGRESSION: java applet accessibility broken
+        https://bugs.webkit.org/show_bug.cgi?id=26399
+ 
+        Accessibility could not access the elements in a java applet 
+        when going down the AX hierarchy.
+
+        Test: DRT does not allow java applets so add a manual test:
+              manual-tests/accessibility/java-applet.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::doAccessibilityHitTest):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper attachmentView]):
+        * manual-tests/accessibility: Added.
+        * manual-tests/accessibility/java-applet.html: Added.
+        * manual-tests/accessibility/resources: Added.
+        * manual-tests/accessibility/resources/AppletTest.class: Added.
+        * manual-tests/accessibility/resources/AppletTest.java: Added.
+        (AppletTest):
+        (AppletTest.init):
+
 2009-06-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

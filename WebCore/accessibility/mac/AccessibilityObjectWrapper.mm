@@ -167,7 +167,7 @@ typedef unsigned NSUInteger;
     Widget* widget = m_object->widgetForAttachmentView();
     if (!widget)
         return nil;
-    return widget->platformWidget();
+    return NSAccessibilityUnignoredDescendant(widget->platformWidget());
 }
 
 static WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition& visiblePos)

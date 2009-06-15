@@ -1993,7 +1993,7 @@ AccessibilityObject* AccessibilityRenderObject::doAccessibilityHitTest(const Int
     if (!obj)
         return 0;
     
-    AccessibilityObject *result = obj->document()->axObjectCache()->getOrCreate(obj);
+    AccessibilityObject* result = obj->document()->axObjectCache()->getOrCreate(obj);
 
     if (obj->isListBox())
         return static_cast<AccessibilityListBox*>(result)->doAccessibilityHitTest(point);
