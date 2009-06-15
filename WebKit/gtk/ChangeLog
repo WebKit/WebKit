@@ -1,3 +1,16 @@
+2009-06-15  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26377
+        [GTK] Confusion about range of 'progress' property
+
+        Range for the progress property is 0.0 .. 1.0, don't multiply it
+        by 100 to make it a percentage.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_progress):
+
 2009-06-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed. Add new symbols list for 1.1.10 release.
