@@ -1,3 +1,10 @@
+2009-06-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed. Adding new documented API to the generated
+        documentation.
+
+        * docs/webkitgtk-sections.txt:
+
 2009-06-15  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
