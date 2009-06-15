@@ -1,3 +1,72 @@
+2009-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Add Core Animation movie plug-in example.
+        
+        * NetscapeCoreAnimationMoviePlugin: Added.
+        * NetscapeCoreAnimationMoviePlugin/English.lproj: Added.
+        * NetscapeCoreAnimationMoviePlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeCoreAnimationMoviePlugin/Info.plist: Added.
+        * NetscapeCoreAnimationMoviePlugin/MovieControllerLayer.h: Added.
+        * NetscapeCoreAnimationMoviePlugin/MovieControllerLayer.m: Added.
+        (createImageNamed):
+        (-[MovieControllerLayer init]):
+        (-[MovieControllerLayer dealloc]):
+        (-[MovieControllerLayer _playPauseButtonRect]):
+        (-[MovieControllerLayer _sliderRect]):
+        (-[MovieControllerLayer _sliderThumbRect]):
+        (-[MovieControllerLayer _innerSliderRect]):
+        (-[MovieControllerLayer _drawPlayPauseButtonInContext:]):
+        (-[MovieControllerLayer _drawSliderInContext:]):
+        (-[MovieControllerLayer drawInContext:]):
+        (-[MovieControllerLayer _currentTime]):
+        (-[MovieControllerLayer _duration]):
+        (-[MovieControllerLayer _isPlaying]):
+        (-[MovieControllerLayer _updateTime:]):
+        (-[MovieControllerLayer _rateDidChange:]):
+        (-[MovieControllerLayer _timeDidChange:]):
+        (-[MovieControllerLayer actionForKey:]):
+        (-[MovieControllerLayer setMovie:]):
+        (-[MovieControllerLayer _setNewTimeForThumbCenterX:]):
+        (-[MovieControllerLayer handleMouseDown:]):
+        (-[MovieControllerLayer handleMouseUp:]):
+        (-[MovieControllerLayer handleMouseDragged:]):
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj: Added.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeCoreAnimationMoviePlugin/Pause.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/Play.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/SliderTrackCenter.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/SliderTrackLeft.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/SliderTrackRight.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/Thumb.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/main.m: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleMouseDown):
+        (togglePlayPause):
+        (handleMouseUp):
+        (handleMouseDragged):
+        (handleMouseEntered):
+        (handleMouseExited):
+        (handleKeyDown):
+        (handleScrollEvent):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeCoreAnimationMoviePlugin/test.html: Added.
+
 2009-04-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
