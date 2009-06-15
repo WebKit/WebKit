@@ -1,3 +1,20 @@
+2009-06-15  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=26312>.
+        Bug 26312: Multiple copies of Safari opened with WebKit nightly and Safari 3.2.3
+
+        Skip the trampoline detection for versions of Safari < 4.0 as they don't play these
+        tricks, and having WebKitNightlyEnabler assume that we were in the trampoline was
+        preventing our LaunchServices trickery from being run.  This led to fresh copies of
+        WebKit.app being launched when a URL or file was opened from an external application
+        rather than the existing instance being reused.
+
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (insideSafari4OnTigerTrampoline):
+        (enableWebKitNightlyBehaviour):
+
 2009-06-13  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Mark "Snowy" Rowe.

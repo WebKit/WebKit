@@ -128,14 +128,20 @@ NSBundle *webKitLauncherBundle()
     return [NSBundle bundleWithPath:appPath];
 }
 
-static BOOL insideSafariOnTigerTrampoline()
+static BOOL insideSafari4OnTigerTrampoline()
 {
-    SInt32 version;
-    if (Gestalt(gestaltSystemVersion, &version) != noErr)
+    SInt32 systemVersion;
+    if (Gestalt(gestaltSystemVersion, &systemVersion) != noErr)
         return NO;
 
     // If we're not on Tiger then we can't be in the trampoline state.
-    if ((version & 0xFFF0) != 0x1040)
+    if ((systemVersion & 0xFFF0) != 0x1040)
+        return NO;
+
+    // If we're running Safari < 4.0 then we can't be in the trampoline state.
+    CFBundleRef safariBundle = CFBundleGetMainBundle();
+    CFStringRef safariVersion = CFBundleGetValueForInfoDictionaryKey(safariBundle, CFSTR("CFBundleShortVersionString"));
+    if ([(NSString *)safariVersion intValue] < 4)
         return NO;
 
     const char* frameworkPath = getenv("DYLD_FRAMEWORK_PATH");
@@ -152,7 +158,7 @@ static void enableWebKitNightlyBehaviour()
 {
     // If we're inside Safari in its trampoline state, it will very shortly relaunch itself.
     // We bail out here so that we'll be called again in the freshly-launched Safari process.
-    if (insideSafariOnTigerTrampoline())
+    if (insideSafari4OnTigerTrampoline())
         return;
 
     unsetenv("DYLD_INSERT_LIBRARIES");
