@@ -1,5 +1,11 @@
 2009-06-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed. Add new symbols list for 1.1.10 release.
+
+        * docs/webkitgtk-docs.sgml:
+
+2009-06-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Rubber-stamped by Xan Lopez.
 
         Fix Since tags for the new uri and message properties.
