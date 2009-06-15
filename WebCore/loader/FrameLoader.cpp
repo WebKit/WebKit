@@ -3024,6 +3024,7 @@ void FrameLoader::open(CachedPage& cachedPage)
     }
 
     open(*cachedPage.cachedMainFrame());
+    cachedPage.restore(m_frame->page());
 
     checkCompleted();
 }

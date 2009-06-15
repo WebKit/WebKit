@@ -1,3 +1,17 @@
+2009-06-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=26395
+          <rdar://problem/6971333> REGRESSION (r40813-r40884): No caret after
+          going back/forward to page with focused text field
+
+        No test, since the back/forward cache is disabled in DumpRenderTree
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open): Added a call to CachedPage::restore(),
+        which was removed in r40870.
+
 2009-06-14  Darin Adler  <darin@apple.com>
 
         * editing/TextIterator.cpp:
