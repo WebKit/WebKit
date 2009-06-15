@@ -1,3 +1,15 @@
+2009-06-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/6968125> Profiler 'Call' count is incorrect in Heavy
+        view (26418)
+
+        - Removed code that copied call and time data from it's ancestor.
+
+        * inspector/front-end/BottomUpProfileDataGridTree.js:
+        (WebInspector.BottomUpProfileDataGridNode.prototype._populate):
+
 2009-06-15  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser  <simon.fraser@apple.com>.

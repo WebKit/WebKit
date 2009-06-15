@@ -222,16 +222,8 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
                     child.totalTime += focusNode.totalTime;
             } else {
                 // If not, add it as a true ancestor.
-                // In heavy mode, we take our visual identity from ancestor node...
-                var child = new WebInspector.BottomUpProfileDataGridNode(this.profileView, ancestor, this.tree);
-
-                if (ancestor !== focusNode) {
-                    // but the actual statistics from the "root" node (bottom of the callstack).
-                    child.selfTime = focusNode.selfTime;
-                    child.totalTime = focusNode.totalTime;
-                    child.numberOfCalls = focusNode.numberOfCalls;
-                }
-
+                // In heavy mode, we take our visual identity and statistics from ancestor node.
+                child = new WebInspector.BottomUpProfileDataGridNode(this.profileView, ancestor, this.tree);
                 this.appendChild(child);
             }
 
