@@ -1,3 +1,14 @@
+2009-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - updated results after changing source view to use the default
+          monospace font family and size
+
+        * platform/mac/fast/frames/viewsource-attribute-expected.checksum:
+        * platform/mac/fast/frames/viewsource-attribute-expected.png:
+        * platform/mac/fast/frames/viewsource-attribute-expected.txt:
+
 2009-06-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

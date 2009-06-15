@@ -165,6 +165,10 @@ Page* WebInspectorClient::createPage()
         return 0;
     if (FAILED(preferences->setMinimumLogicalFontSize(9)))
         return 0;
+    if (FAILED(preferences->setFixedFontFamily(BString(L"Courier New"))))
+        return 0;
+    if (FAILED(preferences->setDefaultFixedFontSize(13)))
+        return 0;
 
     if (FAILED(m_webView->setPreferences(preferences.get())))
         return 0;

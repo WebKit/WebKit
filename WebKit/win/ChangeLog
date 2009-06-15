@@ -1,3 +1,14 @@
+    2009-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - use a nice source code font in the Web Inspector
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::createPage): Set the default monospace font to
+            13px Courier New, which is the default source code font in Visual
+            Studio.
+
 2009-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

@@ -175,6 +175,13 @@ void WebInspectorClient::updateWindowTitle() const
     [preferences setTabsToLinks:NO];
     [preferences setMinimumFontSize:0];
     [preferences setMinimumLogicalFontSize:9];
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    [preferences setFixedFontFamily:@"Menlo"];
+    [preferences setDefaultFixedFontSize:11];
+#else
+    [preferences setFixedFontFamily:@"Monaco"];
+    [preferences setDefaultFixedFontSize:10];
+#endif
 
     _webView = [[WebView alloc] init];
     [_webView setPreferences:preferences];

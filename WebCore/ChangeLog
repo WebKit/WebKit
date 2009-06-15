@@ -1,3 +1,14 @@
+2009-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - allow the source code font in the Web Inspector to be customized
+
+        * css/view-source.css: Use the default monospace font family and size
+            for source code.
+        * inspector/front-end/inspector.css: Use the default monospace font
+            family and size for console I/O.
+
 2009-06-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by and done with Tor Arne Vestbø.

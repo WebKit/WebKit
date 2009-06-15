@@ -444,8 +444,8 @@ body.console-visible #console {
     left: 0;
     right: 0;
     bottom: 23px;
-    font-size: 10px;
-    font-family: Monaco, Lucida Console, monospace;
+    font-size: initial;
+    font-family: monospace;
     padding: 2px 0;
     overflow-y: overlay;
     -webkit-user-select: text;
@@ -1811,8 +1811,8 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
 }
 
 .storage-view.query {
-    font-size: 10px;
-    font-family: Monaco, Lucida Console, monospace;
+    font-size: initial;
+    font-family: monospace;
     padding: 2px 0;
     overflow-y: overlay;
     overflow-x: hidden;

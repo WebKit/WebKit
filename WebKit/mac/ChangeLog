@@ -1,3 +1,13 @@
+2009-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - make the source code font in the Web Inspector match Mac defaults
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController init]): Set the default monospace font
+        to 11px Menlo, except on Leopard and Tiger where it is 10px Monaco.
+
 2009-06-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric Seidel.  Landed by Adam Barth.

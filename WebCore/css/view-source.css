@@ -33,8 +33,8 @@ table {
     white-space: pre-wrap !important;
     margin: 0;
     word-break: break-word;
-    font-size: 10px;
-    font-family: Monaco, Lucida Console, monospace;
+    font-size: initial;
+    font-family: monospace;
 }
 
 td {
