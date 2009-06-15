@@ -1,3 +1,13 @@
+2009-06-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Adam Treat.
+
+        Fix the logic for disabling the fixed layout feature, when an invalid
+        QSize is set.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::setFixedContentsSize):
+
 2009-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.
