@@ -58,7 +58,7 @@ void FontFallbackList::releaseFontData()
 
 void FontFallbackList::determinePitch(const WebCore::Font* font) const
 {
-    const FontData* fontData = primaryFont(font);
+    const FontData* fontData = primaryFontData(font);
     if (!fontData->isSegmented())
         m_pitch = static_cast<const SimpleFontData*>(fontData)->pitch();
     else {
@@ -101,7 +101,7 @@ const FontData* FontFallbackList::fontDataAt(const WebCore::Font* _font, unsigne
 
 const FontData* FontFallbackList::fontDataForCharacters(const WebCore::Font* font, const UChar*, int) const
 {
-    return primaryFont(font);
+    return primaryFontData(font);
 }
 
 void FontFallbackList::setPlatformFont(const WebCore::FontPlatformData& platformData)
