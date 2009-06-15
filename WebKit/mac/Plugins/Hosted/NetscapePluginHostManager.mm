@@ -75,13 +75,16 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPackage(WebNetscapePl
         return result.first->second;
         
     mach_port_t clientPort;
-    if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &clientPort) != KERN_SUCCESS)
+    if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &clientPort) != KERN_SUCCESS) {
+        m_pluginHosts.remove(result.first);
         return 0;
+    }
     
     mach_port_t pluginHostPort;
     ProcessSerialNumber pluginHostPSN;
     if (!spawnPluginHost(package, clientPort, pluginHostPort, pluginHostPSN)) {
         mach_port_destroy(mach_task_self(), clientPort);
+        m_pluginHosts.remove(result.first);
         return 0;
     }
     
