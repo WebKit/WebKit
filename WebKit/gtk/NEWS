@@ -1,3 +1,17 @@
+=================
+WebKitGTK+ 1.1.10
+=================
+
+What's new in WebKitGTK+ 1.1.10?
+
+  - WebKitNetworkRequest has now GObject properties for its URI and
+    the SoupMessage that backs it up.
+  - Fix AtkText methods get_selection and get_n_selections to not use
+    the global selection but only the selection that belongs to the
+    object being used.
+  - Fix a crasher when emitting the a11y signal 'text-caret-moved' in
+    some situations with debug builds.
+
 ================
 WebKitGTK+ 1.1.9
 ================
