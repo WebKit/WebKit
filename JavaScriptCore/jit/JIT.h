@@ -153,7 +153,6 @@ namespace JSC {
         MacroAssembler::DataLabelPtr hotPathBegin;
         MacroAssembler::Call hotPathOther;
         MacroAssembler::Call callReturnLocation;
-        MacroAssembler::Label coldPathOther;
     };
 
     struct MethodCallCompilationInfo {
@@ -385,7 +384,7 @@ namespace JSC {
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        static void linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode&, CallLinkInfo*, int callerArgCount);
+        static void linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode&, CallLinkInfo*, int callerArgCount, JSGlobalData*);
         static void unlinkCall(CallLinkInfo*);
 
     private:

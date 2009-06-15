@@ -285,60 +285,32 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
         emitGetVirtualRegister(callee, regT2);
     }
 
-    move(Imm32(argCount), regT1);
-
     // Speculatively roll the callframe, assuming argCount will match the arity.
     storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
     addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
+    move(Imm32(argCount), regT1);
 
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation =
-        emitNakedCall(m_globalData->jitStubs.ctiVirtualCallPreLink());
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_globalData->jitStubs.ctiVirtualCallPreLink());
 
-    Jump storeResultForFirstRun = jump();
+    // Put the return value in dst.
+    emitPutVirtualRegister(dst);
+    sampleCodeBlock(m_codeBlock);
 
-    // This is the address for the cold path *after* the first run (which tries to link the call).
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].coldPathOther = MacroAssembler::Label(this);
+    // If not, we need an extra case in the if below!
+    ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_call_eval));
 
-    // The arguments have been set up on the hot path for op_call_eval
-    if (opcodeID == op_call)
-        compileOpCallSetupArgs(instruction);
-    else if (opcodeID == op_construct)
-        compileOpConstructSetupArgs(instruction);
-
-    // Check for JSFunctions.
-    Jump isNotObject = emitJumpIfNotJSCell(regT2);
-    Jump isJSFunction = branchPtr(Equal, Address(regT2), ImmPtr(m_globalData->jsFunctionVPtr));
+    // Done! - return back to the hot path.
+    if (opcodeID == op_construct)
+        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_construct));
+    else
+        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_call));
 
     // This handles host functions
-    isNotObject.link(this);
     callLinkFailNotObject.link(this);
     callLinkFailNotJSFunction.link(this);
-    JITStubCall stubCall(this, opcodeID == op_construct ? JITStubs::cti_op_construct_NotJSConstruct : JITStubs::cti_op_call_NotJSFunction);
-    stubCall.call();
-    Jump wasNotJSFunction = jump();
+    JITStubCall(this, opcodeID == op_construct ? JITStubs::cti_op_construct_NotJSConstruct : JITStubs::cti_op_call_NotJSFunction).call();
 
-    // Next, handle JSFunctions...
-    isJSFunction.link(this);
-
-    // First, in the case of a construct, allocate the new object.
-    if (opcodeID == op_construct) {
-        JITStubCall stubCall(this, JITStubs::cti_op_construct_JSConstruct);
-        stubCall.call(registerOffset - RegisterFile::CallFrameHeaderSize - argCount);
-        emitGetVirtualRegister(callee, regT2);
-    }
-
-    // Speculatively roll the callframe, assuming argCount will match the arity.
-    storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
-    addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
-    move(Imm32(argCount), regT1);
-
-    emitNakedCall(m_globalData->jitStubs.ctiVirtualCall());
-
-    // Put the return value in dst. In the interpreter, op_ret does this.
-    wasNotJSFunction.link(this);
-    storeResultForFirstRun.link(this);
     emitPutVirtualRegister(dst);
-
     sampleCodeBlock(m_codeBlock);
 }
 

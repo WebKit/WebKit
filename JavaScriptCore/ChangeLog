@@ -1,3 +1,25 @@
+2009-06-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Hunt & Oliver Garen.
+
+        We are currently generating two copies of the slow path for op_call for no reason.  Stop that.
+
+        Originally op_call used two slow paths since the first set up the pointer to the CallLinkInfo
+        for use when linking.  However this is now looked up using the return address (as we do for
+        property accesses) so the two paths are now identical.
+
+        No performance impact, reduces memory footprint.
+
+        * bytecode/CodeBlock.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::linkCall):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+
 2009-06-12  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.
