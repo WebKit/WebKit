@@ -1,5 +1,14 @@
 2009-06-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Rubber-stamped by Xan Lopez.
+
+        Fix Since tags for the new uri and message properties.
+
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_class_init):
+
+2009-06-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Adding new documented API to the generated
         documentation.
 

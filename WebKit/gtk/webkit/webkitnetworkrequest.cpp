@@ -128,7 +128,7 @@ static void webkit_network_request_class_init(WebKitNetworkRequestClass* request
      *
      * The URI to which the request will be made.
      *
-     * Since: 1.1.9
+     * Since: 1.1.10
      */
     g_object_class_install_property(objectClass, PROP_URI,
                                     g_param_spec_string("uri",
@@ -142,7 +142,7 @@ static void webkit_network_request_class_init(WebKitNetworkRequestClass* request
      *
      * The #SoupMessage that backs the request.
      *
-     * Since: 1.1.9
+     * Since: 1.1.10
      */
     g_object_class_install_property(objectClass, PROP_MESSAGE,
                                     g_param_spec_object("message",
