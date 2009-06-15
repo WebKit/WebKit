@@ -55,6 +55,7 @@ my $sourceDir;
 my $currentSVNRevision;
 my $osXVersion;
 my $isQt;
+my %qtFeatureDefaults;
 my $isGtk;
 my $isWx;
 my @wxArgs;
@@ -679,6 +680,25 @@ sub isQt()
 {
     determineIsQt();
     return $isQt;
+}
+
+sub qtFeatureDefaults()
+{
+    determineQtFeatureDefaults();
+    return %qtFeatureDefaults;
+}
+
+sub determineQtFeatureDefaults()
+{
+    return if %qtFeatureDefaults;
+    my $originalCwd = getcwd();
+    chdir File::Spec->catfile(sourceDir(), "WebCore");
+    my $defaults = `qmake CONFIG+=compute_defaults 2>&1`;
+    chdir $originalCwd;
+
+    while ($defaults =~ m/(\S*?)=(.*?)( |$)/gi) {
+        $qtFeatureDefaults{$1}=$2;
+    }
 }
 
 sub checkForArgumentAndRemoveFromARGV

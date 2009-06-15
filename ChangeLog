@@ -1,3 +1,18 @@
+2009-06-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Xan Lopez.
+
+        Refactor handling of options in the build-webkit script
+        
+        Options are now defined in one place, and then reused when creating
+        the usage help text, the arguments to GetOptions(), and when passing
+        the options on to the underlying port-dependent build systems.
+        
+        This allows the Qt port to read the defaults for the options from the
+        pro file (dynamically), and to pass the options on to qmake at build.
+
+        * configure.ac:
+
 2009-06-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Holger Freyther.

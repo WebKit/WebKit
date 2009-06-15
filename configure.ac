@@ -400,11 +400,11 @@ AC_MSG_RESULT([$enable_wml])
 
 # check whether to enable Web Workers support
 AC_MSG_CHECKING([whether to enable Web Workers support])
-AC_ARG_ENABLE(web_workers,
-              AC_HELP_STRING([--enable-web-workers],
+AC_ARG_ENABLE(workers,
+              AC_HELP_STRING([--enable-workers],
                              [enable support for Web Workers [default=yes]]),
-              [],[enable_web_workers="yes"])
-AC_MSG_RESULT([$enable_web_workers])
+              [],[enable_workers="yes"])
+AC_MSG_RESULT([$enable_workers])
 
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
@@ -412,7 +412,7 @@ if test "$enable_svg" = "no"; then
    enable_svg_fonts=no
    enable_svg_foreign_object=no
    enable_svg_as_image=no
-   enable_svg_use_element=no
+   enable_svg_use=no
 fi
 
 # check whether to enable support for SVG animation
@@ -457,18 +457,18 @@ AC_MSG_RESULT([$enable_svg_as_image])
 
 # check whether to enable SVG USE element support
 AC_MSG_CHECKING([whether to enable support for SVG use element])
-AC_ARG_ENABLE(svg_use_element,
-              AC_HELP_STRING([--enable-svg-use-element],
+AC_ARG_ENABLE(svg_use,
+              AC_HELP_STRING([--enable-svg-use],
                              [enable SVG use element support (experimental) [default=yes]]),
-              [],[enable_svg_use_element="yes"])
-AC_MSG_RESULT([$enable_svg_use_element])
+              [],[enable_svg_use="yes"])
+AC_MSG_RESULT([$enable_svg_use])
 
 # check for SVG features, enabling SVG if necessary
 if test "$enable_svg_animation" = "yes" || \
    test "$enable_svg_fonts" = "yes" || \
    test "$enable_svg_foreign_object" = "yes" || \
    test "$enable_svg_as_image" = "yes" || \
-   test "$enable_svg_use_element" = "yes"; then
+   test "$enable_svg_use" = "yes"; then
    svg_flags=yes
    if test "$enable_svg" = "no"; then
        AC_MSG_WARN([SVG feature(s) requested but SVG is disabled.. Enabling SVG support])
@@ -675,11 +675,11 @@ AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FOREIGN_OBJECT],[test "$enable_svg_foreign_object" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_AS_IMAGE],[test "$enable_svg_as_image" = "yes"])
-AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use_element" = "yes"])
+AM_CONDITIONAL([ENABLE_SVG_USE],[test "$enable_svg_use" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WML],[test "$enable_wml" = "yes"])
-AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_web_workers" = "yes"])
+AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 
@@ -723,9 +723,9 @@ Features:
  SVG fonts support                                        : $enable_svg_fonts
  SVG foreign object support                               : $enable_svg_foreign_object
  SVG as image support                                     : $enable_svg_as_image
- SVG use element support                                  : $enable_svg_use_element
+ SVG use element support                                  : $enable_svg_use
  WML support                                              : $enable_wml
- Web Workers support                                      : $enable_web_workers
+ Web Workers support                                      : $enable_workers
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
 GTK+ configuration:
