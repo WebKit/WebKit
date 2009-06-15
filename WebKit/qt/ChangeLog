@@ -1,3 +1,16 @@
+2009-06-15  Andre Pedralho  <andre.pedralho@openbossa.org>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26351
+        Remove bool QWebHitTestResult::isScrollBar() const and make sure a null QWebHitTestResult is returned instead.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::hitTestContent):
+        * Api/qwebframe.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::updatePositionDependentActions):
+
 2009-06-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Adam Treat.

@@ -93,8 +93,6 @@ public:
 
     QWebFrame *frame() const;
 
-    bool isScrollBar() const;
-
 private:
     QWebHitTestResult(QWebHitTestResultPrivate *priv);
     QWebHitTestResultPrivate *d;

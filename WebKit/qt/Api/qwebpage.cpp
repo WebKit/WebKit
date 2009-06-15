@@ -2217,7 +2217,10 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
     HitTestResult result = focusedFrame->eventHandler()->hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos), /*allowShadowContent*/ false);
 
-    d->hitTestResult = QWebHitTestResult(new QWebHitTestResultPrivate(result));
+    if (result.scrollbar())
+        d->hitTestResult = QWebHitTestResult();
+    else
+        d->hitTestResult = QWebHitTestResult(new QWebHitTestResultPrivate(result));
     WebCore::ContextMenu menu(result);
     menu.populate();
     if (d->page->inspectorController()->enabled())
