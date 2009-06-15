@@ -97,6 +97,113 @@ private:
 
 // --------
 
+BitStack::BitStack()
+    : m_size(0)
+{
+}
+
+void BitStack::push(bool bit)
+{
+    unsigned index = m_size / 0x20;
+    unsigned shift = m_size & 0x1F;
+    if (!shift && index == m_words.size())
+        m_words.grow(index + 1);
+    unsigned& word = m_words[index];
+    unsigned mask = 1U << shift;
+    if (bit)
+        word |= mask;
+    else
+        word &= ~mask;
+    ++m_size;
+}
+
+void BitStack::pop()
+{
+    if (m_size)
+        --m_size;
+}
+
+bool BitStack::top() const
+{
+    if (!m_size)
+        return false;
+    unsigned shift = (m_size - 1) & 0x1F;
+    return m_words.last() & (1U << shift);
+}
+
+unsigned BitStack::size() const
+{
+    return m_size;
+}
+
+// --------
+
+static inline Node* parentOrShadowParent(Node* node)
+{
+    if (Node* parent = node->parentNode())
+        return parent;
+    return node->shadowParentNode();
+}
+
+#ifndef NDEBUG
+
+static unsigned depthCrossingShadowBoundaries(Node* node)
+{
+    unsigned depth = 0;
+    for (Node* parent = parentOrShadowParent(node); parent; parent = parentOrShadowParent(parent))
+        ++depth;
+    return depth;
+}
+
+#endif
+
+static inline bool fullyClipsContents(Node* node)
+{
+    RenderObject* renderer = node->renderer();
+    if (!renderer || !renderer->isBox())
+        return false;
+    RenderStyle* style = renderer->style();
+    if (style->overflowX() == OVISIBLE && style->overflowY() == OVISIBLE)
+        return false;
+    return toRenderBox(renderer)->size().isEmpty();
+}
+
+static inline bool ignoresContainerClip(Node* node)
+{
+    RenderObject* renderer = node->renderer();
+    if (!renderer || renderer->isText())
+        return false;
+    EPosition position = renderer->style()->position();
+    return position == AbsolutePosition || position == FixedPosition;
+}
+
+static void pushFullyClippedState(BitStack& stack, Node* node)
+{
+    ASSERT(stack.size() == depthCrossingShadowBoundaries(node));
+
+    // Push true if this node full clips its contents, or if a parent already has fully
+    // clipped and this is not a node that ignores its container's clip.
+    stack.push(fullyClipsContents(node) || stack.top() && !ignoresContainerClip(node));
+}
+
+static void setUpFullyClippedStack(BitStack& stack, Node* node)
+{
+    // Put the nodes in a vector so we can iterate in reverse order.
+    Vector<Node*, 100> ancestry;
+    for (Node* parent = parentOrShadowParent(node); parent; parent = parentOrShadowParent(parent))
+        ancestry.append(parent);
+
+    // Call pushFullyClippedState on each node starting with the earliest ancestor.
+    size_t size = ancestry.size();
+    for (size_t i = 0; i < size; ++i)
+        pushFullyClippedState(stack, ancestry[size - i - 1]);
+    pushFullyClippedState(stack, node);
+
+    ASSERT(stack.size() == 1 + depthCrossingShadowBoundaries(node));
+}
+
+// --------
+
 TextIterator::TextIterator()
     : m_startContainer(0)
     , m_startOffset(0)
@@ -112,8 +219,7 @@ TextIterator::TextIterator()
 }
 
 TextIterator::TextIterator(const Range* r, bool emitCharactersBetweenAllVisiblePositions, bool enterTextControls) 
-    : m_inShadowContent(false)
-    , m_startContainer(0) 
+    : m_startContainer(0) 
     , m_startOffset(0)
     , m_endContainer(0)
     , m_endOffset(0)
@@ -144,17 +250,11 @@ TextIterator::TextIterator(const Range* r, bool emitCharactersBetweenAllVisibleP
     m_endContainer = endContainer;
     m_endOffset = endOffset;
 
-    for (Node* n = startContainer; n; n = n->parentNode()) {
-        if (n->isShadowNode()) {
-            m_inShadowContent = true;
-            break;
-        }
-    }
-
     // set up the current node for processing
     m_node = r->firstNode();
-    if (m_node == 0)
+    if (!m_node)
         return;
+    setUpFullyClippedStack(m_fullyClippedStack, m_node);
     m_offset = m_node == m_startContainer ? m_startOffset : 0;
     m_handledNode = false;
     m_handledChildren = false;
@@ -219,7 +319,7 @@ void TextIterator::advance()
             return;
         }
         
-        RenderObject *renderer = m_node->renderer();
+        RenderObject* renderer = m_node->renderer();
         if (!renderer) {
             m_handledNode = true;
             m_handledChildren = true;
@@ -241,27 +341,20 @@ void TextIterator::advance()
 
         // find a new current node to handle in depth-first manner,
         // calling exitNode() as we come back thru a parent node
-        Node *next = m_handledChildren ? 0 : m_node->firstChild();
+        Node* next = m_handledChildren ? 0 : m_node->firstChild();
         m_offset = 0;
         if (!next) {
             next = m_node->nextSibling();
             if (!next) {
                 bool pastEnd = m_node->traverseNextNode() == m_pastEndNode;
-                Node* parentNode = m_node->parentNode();
-                if (!parentNode && m_inShadowContent) {
-                    m_inShadowContent = false;
-                    parentNode = m_node->shadowParentNode();
-                }
+                Node* parentNode = parentOrShadowParent(m_node);
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(parentNode))
                         return;
                     bool haveRenderer = m_node->renderer();
                     m_node = parentNode;
-                    parentNode = m_node->parentNode();
-                    if (!parentNode && m_inShadowContent) {
-                        m_inShadowContent = false;
-                        parentNode = m_node->shadowParentNode();
-                    }
+                    m_fullyClippedStack.pop();
+                    parentNode = parentOrShadowParent(m_node);
                     if (haveRenderer)
                         exitNode();
                     if (m_positionNode) {
@@ -272,10 +365,13 @@ void TextIterator::advance()
                     next = m_node->nextSibling();
                 }
             }
+            m_fullyClippedStack.pop();            
         }
 
         // set the new current node
         m_node = next;
+        if (m_node)
+            pushFullyClippedState(m_fullyClippedStack, m_node);
         m_handledNode = false;
         m_handledChildren = false;
 
@@ -285,13 +381,16 @@ void TextIterator::advance()
     }
 }
 
-static inline bool compareBoxStart(const InlineTextBox *first, const InlineTextBox *second)
+static inline bool compareBoxStart(const InlineTextBox* first, const InlineTextBox* second)
 {
     return first->start() < second->start();
 }
 
 bool TextIterator::handleTextNode()
 {
+    if (m_fullyClippedStack.top())
+        return false;
+
     RenderText* renderer = toRenderText(m_node->renderer());
     if (renderer->style()->visibility() != VISIBLE)
         return false;
@@ -325,7 +424,7 @@ bool TextIterator::handleTextNode()
     // Used when text boxes are out of order (Hebrew/Arabic w/ embeded LTR text)
     if (renderer->containsReversedText()) {
         m_sortedTextBoxes.clear();
-        for (InlineTextBox * textBox = renderer->firstTextBox(); textBox; textBox = textBox->nextTextBox()) {
+        for (InlineTextBox* textBox = renderer->firstTextBox(); textBox; textBox = textBox->nextTextBox()) {
             m_sortedTextBoxes.append(textBox);
         }
         std::sort(m_sortedTextBoxes.begin(), m_sortedTextBoxes.end(), compareBoxStart); 
@@ -339,7 +438,7 @@ bool TextIterator::handleTextNode()
 
 void TextIterator::handleTextBox()
 {    
-    RenderText *renderer = toRenderText(m_node->renderer());
+    RenderText* renderer = toRenderText(m_node->renderer());
     String str = renderer->text();
     int start = m_offset;
     int end = (m_node == m_endContainer) ? m_endOffset : INT_MAX;
@@ -348,7 +447,7 @@ void TextIterator::handleTextBox()
         int runStart = max(textBoxStart, start);
 
         // Check for collapsed space at the start of this run.
-        InlineTextBox *firstTextBox = renderer->containsReversedText() ? m_sortedTextBoxes[0] : renderer->firstTextBox();
+        InlineTextBox* firstTextBox = renderer->containsReversedText() ? m_sortedTextBoxes[0] : renderer->firstTextBox();
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace
             || (m_textBox == firstTextBox && textBoxStart == runStart && runStart > 0);
         if (needSpace && !isCollapsibleWhitespace(m_lastCharacter) && m_lastCharacter) {
@@ -365,7 +464,7 @@ void TextIterator::handleTextBox()
         int runEnd = min(textBoxEnd, end);
         
         // Determine what the next text box will be, but don't advance yet
-        InlineTextBox *nextTextBox = 0;
+        InlineTextBox* nextTextBox = 0;
         if (renderer->containsReversedText()) {
             if (m_sortedTextBoxesPosition + 1 < m_sortedTextBoxes.size())
                 nextTextBox = m_sortedTextBoxes[m_sortedTextBoxesPosition + 1];
@@ -411,6 +510,9 @@ void TextIterator::handleTextBox()
 
 bool TextIterator::handleReplacedElement()
 {
+    if (m_fullyClippedStack.top())
+        return false;
+
     RenderObject* renderer = m_node->renderer();
     if (renderer->style()->visibility() != VISIBLE)
         return false;
@@ -422,8 +524,8 @@ bool TextIterator::handleReplacedElement()
 
     if (m_enterTextControls && renderer->isTextControl()) {
         m_node = toRenderTextControl(renderer)->innerTextElement();
+        pushFullyClippedState(m_fullyClippedStack, m_node);
         m_offset = 0;
-        m_inShadowContent = true;
         return false;
     }
 
@@ -698,7 +800,7 @@ void TextIterator::exitNode()
         emitCharacter(' ', baseNode->parentNode(), baseNode, 1, 1);
 }
 
-void TextIterator::emitCharacter(UChar c, Node *textNode, Node *offsetBaseNode, int textStartOffset, int textEndOffset)
+void TextIterator::emitCharacter(UChar c, Node* textNode, Node* offsetBaseNode, int textStartOffset, int textEndOffset)
 {
     m_haveEmitted = true;
     
@@ -778,7 +880,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator() : m_positionN
 {
 }
 
-SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range *r)
+SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r)
 {
     m_positionNode = 0;
 
@@ -806,6 +908,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range *r)
     }
 
     m_node = endNode;
+    setUpFullyClippedStack(m_fullyClippedStack, m_node);    
     m_offset = endOffset;
     m_handledNode = false;
     m_handledChildren = endOffset == 0;
@@ -845,7 +948,7 @@ void SimplifiedBackwardsTextIterator::advance()
     while (m_node && m_node != m_pastStartNode) {
         // Don't handle node if we start iterating at [node, 0].
         if (!m_handledNode && !(m_node == m_endNode && m_endOffset == 0)) {
-            RenderObject *renderer = m_node->renderer();
+            RenderObject* renderer = m_node->renderer();
             if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) {
                 // FIXME: What about CDATA_SECTION_NODE?
                 if (renderer->style()->visibility() == VISIBLE && m_offset > 0)
@@ -877,9 +980,11 @@ void SimplifiedBackwardsTextIterator::advance()
             // Exit all other containers.
             next = m_node->previousSibling();
             while (!next) {
-                if (!m_node->parentNode())
+                Node* parentNode = parentOrShadowParent(m_node);
+                if (!parentNode)
                     break;
-                m_node = m_node->parentNode();
+                m_node = parentNode;
+                m_fullyClippedStack.pop();
                 exitNode();
                 if (m_positionNode) {
                     m_handledNode = true;
@@ -888,9 +993,12 @@ void SimplifiedBackwardsTextIterator::advance()
                 }
                 next = m_node->previousSibling();
             }
+            m_fullyClippedStack.pop();
         }
         
         m_node = next;
+        if (m_node)
+            pushFullyClippedState(m_fullyClippedStack, m_node);
         m_offset = m_node ? caretMaxOffset(m_node) : 0;
         m_handledNode = false;
         m_handledChildren = false;
@@ -904,7 +1012,7 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
 {
     m_lastTextNode = m_node;
 
-    RenderText *renderer = toRenderText(m_node->renderer());
+    RenderText* renderer = toRenderText(m_node->renderer());
     String str = renderer->text();
 
     if (!renderer->firstTextBox() && str.length() > 0)
@@ -960,7 +1068,7 @@ void SimplifiedBackwardsTextIterator::exitNode()
         emitCharacter('\n', m_node, 0, 0);
 }
 
-void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node *node, int startOffset, int endOffset)
+void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node* node, int startOffset, int endOffset)
 {
     m_singleCharacterBuffer = c;
     m_positionNode = node;
@@ -988,7 +1096,7 @@ CharacterIterator::CharacterIterator()
 {
 }
 
-CharacterIterator::CharacterIterator(const Range *r, bool emitCharactersBetweenAllVisiblePositions, bool enterTextControls)
+CharacterIterator::CharacterIterator(const Range* r, bool emitCharactersBetweenAllVisiblePositions, bool enterTextControls)
     : m_offset(0)
     , m_runOffset(0)
     , m_atBreak(true)
@@ -1167,15 +1275,17 @@ void BackwardsCharacterIterator::advance(int count)
 // --------
 
 WordAwareIterator::WordAwareIterator()
-: m_previousText(0), m_didLookAhead(false)
+    : m_previousText(0)
+    , m_didLookAhead(false)
 {
 }
 
-WordAwareIterator::WordAwareIterator(const Range *r)
-: m_previousText(0), m_didLookAhead(false), m_textIterator(r)
+WordAwareIterator::WordAwareIterator(const Range* r)
+    : m_previousText(0)
+    , m_didLookAhead(true) // so we consider the first chunk from the text iterator
+    , m_textIterator(r)
 {
-    m_didLookAhead = true;  // so we consider the first chunk from the text iterator
-    advance();              // get in position over the first chunk of text
+    advance(); // get in position over the first chunk of text
 }
 
 // We're always in one of these modes:
@@ -1185,7 +1295,7 @@ WordAwareIterator::WordAwareIterator(const Range *r)
 //      (we looked ahead to the next chunk and found a word boundary)
 // - We built up our own chunk of text from many chunks from the text iterator
 
-// FIXME: Perf could be bad for huge spans next to each other that don't fall on word boundaries
+// FIXME: Performance could be bad for huge spans next to each other that don't fall on word boundaries.
 
 void WordAwareIterator::advance()
 {
@@ -1507,7 +1617,7 @@ size_t SearchBuffer::length() const
 
 // --------
 
-int TextIterator::rangeLength(const Range *r, bool forSelectionPreservation)
+int TextIterator::rangeLength(const Range* r, bool forSelectionPreservation)
 {
     int length = 0;
     for (TextIterator it(r, forSelectionPreservation); !it.atEnd(); it.advance())
@@ -1522,7 +1632,7 @@ PassRefPtr<Range> TextIterator::subrange(Range* entireRange, int characterOffset
     return characterSubrange(entireRangeIterator, characterOffset, characterCount);
 }
 
-PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element *scope, int rangeLocation, int rangeLength, bool forSelectionPreservation)
+PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, bool forSelectionPreservation)
 {
     RefPtr<Range> resultRange = scope->document()->createRange();
 

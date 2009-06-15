@@ -1,3 +1,49 @@
+2009-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 26364: Search can find text that's hidden by overflow:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=26364
+        <rdar://problem/6952081>
+
+        Test: fast/text/find-hidden-text.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::BitStack::BitStack): Added.
+        (WebCore::BitStack::push): Added.
+        (WebCore::BitStack::pop): Added.
+        (WebCore::BitStack::top): Added.
+        (WebCore::BitStack::size): Added.
+        (WebCore::parentOrShadowParent): Added. Helper function for walking up
+        the parent node chain, crossing shadow tree boundaries.
+        (WebCore::depthCrossingShadowBoundaries): Added for use in assertions.
+        Counts the depth of a node using the parentOrShadowParent function.
+        (WebCore::fullyClipsContents): Added. Returns true for an element that
+        fully clips its contents, currently defined as a box that has zero width
+        or height and hides overflow. We can add other cases here later.
+        (WebCore::ignoresContainerClip): Added. Returns true for an element that
+        ignores its container clip, currently defined as an element with absolute
+        or fixed positioning.
+        (WebCore::pushFullyClippedState): Added. Pushes a bit on the stack indicating
+        if the node in question fully clips its contents.
+        (WebCore::setUpFullyClippedStack): Added. Pushes a bit for each ancestor of
+        a node. Used when creating an iterator.
+        (WebCore::TextIterator::TextIterator): Removed code to initialize
+        m_inShadowContent. Call setUpFullyClippedStack.
+        (WebCore::TextIterator::advance): Use parentOrShadowParent. Call pop when moving
+        up to a parent node, and also one extra time when moving to a sibling node.
+        Call pushFullyClippedState when moving to a child node, or when moving to a
+        sibling node after the aforementioned call to pop.
+        (WebCore::TextIterator::handleTextNode): Return early if the node is fully clipped.
+        (WebCore::TextIterator::handleReplacedElement): Ditto.
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        Call setUpFullyClippedStack.
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Same changes as
+        TextIterator::advance above.
+
+        * editing/TextIterator.h: Added BitStack class and added m_fullyClippedStack to both
+        TextIterator and SimplifiedBackwardsTextIterator. Removed unneeded m_inShadowContent.
+
 2009-06-14  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
