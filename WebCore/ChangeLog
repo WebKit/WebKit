@@ -1,3 +1,44 @@
+2009-06-15  Joe Ligman  <joseph.ligman@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix build break
+        Rename JSONObject to InspectorJSONObject
+
+        https://bugs.webkit.org/show_bug.cgi?id=26340
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToConsole):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::newInspectorJSONObject):
+        (WebCore::InspectorFrontend::addMessageToConsole):
+        (WebCore::InspectorFrontend::addResource):
+        (WebCore::InspectorFrontend::updateResource):
+        (WebCore::InspectorFrontend::addDatabase):
+        (WebCore::InspectorFrontend::addDOMStorage):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorJSONObject.cpp: Copied from WebCore/inspector/JSONObject.cpp.
+        (WebCore::InspectorJSONObject::InspectorJSONObject):
+        (WebCore::InspectorJSONObject::set):
+        (WebCore::InspectorJSONObject::scriptObject):
+        (WebCore::InspectorJSONObject::createNew):
+        * inspector/InspectorJSONObject.h: Copied from WebCore/inspector/JSONObject.h.
+        * inspector/InspectorResource.cpp:
+        (WebCore::populateHeadersObject):
+        (WebCore::InspectorResource::createScriptObject):
+        (WebCore::InspectorResource::updateScriptObject):
+        * inspector/JSONObject.cpp: Removed.
+        * inspector/JSONObject.h: Removed.
+
 2009-06-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

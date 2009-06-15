@@ -33,7 +33,7 @@
 #include "ConsoleMessage.h"
 #include "Frame.h"
 #include "InspectorController.h"  // TODO(pfeldman): Extract SpecialPanels to remove include.
-#include "JSONObject.h"
+#include "InspectorJSONObject.h"
 #include "Node.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
@@ -61,11 +61,11 @@ InspectorFrontend::~InspectorFrontend()
     m_webInspector = ScriptObject();
 }
 
-JSONObject InspectorFrontend::newJSONObject() {
-    return JSONObject::createNew(m_scriptState);
+InspectorJSONObject InspectorFrontend::newInspectorJSONObject() {
+    return InspectorJSONObject::createNew(m_scriptState);
 }
 
-void InspectorFrontend::addMessageToConsole(const JSONObject& messageObj, const Vector<ScriptString>& frames, const Vector<ScriptValue> wrappedArguments, const String& message)
+void InspectorFrontend::addMessageToConsole(const InspectorJSONObject& messageObj, const Vector<ScriptString>& frames, const Vector<ScriptValue> wrappedArguments, const String& message)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("addMessageToConsole"));
     function->appendArgument(messageObj.scriptObject());
@@ -80,7 +80,7 @@ void InspectorFrontend::addMessageToConsole(const JSONObject& messageObj, const 
     function->call();
 }
 
-bool InspectorFrontend::addResource(long long identifier, const JSONObject& resourceObj)
+bool InspectorFrontend::addResource(long long identifier, const InspectorJSONObject& resourceObj)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("addResource"));
     function->appendArgument(identifier);
@@ -90,7 +90,7 @@ bool InspectorFrontend::addResource(long long identifier, const JSONObject& reso
     return !hadException;
 }
 
-bool InspectorFrontend::updateResource(long long identifier, const JSONObject& resourceObj)
+bool InspectorFrontend::updateResource(long long identifier, const InspectorJSONObject& resourceObj)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("updateResource"));
     function->appendArgument(identifier);
@@ -260,7 +260,7 @@ void InspectorFrontend::resumedScript()
 #endif
 
 #if ENABLE(DATABASE)
-bool InspectorFrontend::addDatabase(const JSONObject& dbObject)
+bool InspectorFrontend::addDatabase(const InspectorJSONObject& dbObject)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("addDatabase"));
     function->appendArgument(dbObject.scriptObject());
@@ -271,7 +271,7 @@ bool InspectorFrontend::addDatabase(const JSONObject& dbObject)
 #endif
 
 #if ENABLE(DOM_STORAGE)
-bool InspectorFrontend::addDOMStorage(const JSONObject& domStorageObj)
+bool InspectorFrontend::addDOMStorage(const InspectorJSONObject& domStorageObj)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("addDOMStorage"));
     function->appendArgument(domStorageObj.scriptObject());

@@ -28,8 +28,8 @@
  */
 
 
-#ifndef JSONObject_h
-#define JSONObject_h
+#ifndef InspectorJSONObject_h
+#define InspectorJSONObject_h
 
 #include "ScriptObject.h"
 #include "ScriptState.h"
@@ -37,10 +37,10 @@
 namespace WebCore {
     class String;
 
-    class JSONObject {
+    class InspectorJSONObject {
     public:
         bool set(const String& name, const String&);
-        bool set(const char* name, const JSONObject&);
+        bool set(const char* name, const InspectorJSONObject&);
         bool set(const char* name, const ScriptObject&);
         bool set(const char* name, const String&);
         bool set(const char* name, double);
@@ -49,12 +49,12 @@ namespace WebCore {
         bool set(const char* name, bool);
         ScriptObject scriptObject() const;
 
-        static JSONObject createNew(ScriptState* scriptState);
+        static InspectorJSONObject createNew(ScriptState* scriptState);
     private:
-        JSONObject(ScriptState* scriptState);
+        InspectorJSONObject(ScriptState* scriptState);
         ScriptState* m_scriptState;
         ScriptObject m_scriptObject;
     };
 }
 
-#endif // JSONObject_h
+#endif // InspectorJSONObject.h

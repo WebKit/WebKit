@@ -36,7 +36,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "InspectorFrontend.h"
-#include "JSONObject.h"
+#include "InspectorJSONObject.h"
 #include "ScriptObjectQuarantine.h"
 
 
@@ -56,7 +56,7 @@ void InspectorDatabaseResource::bind(InspectorFrontend* frontend)
     if (m_scriptObjectCreated)
         return;
 
-    JSONObject jsonObject = frontend->newJSONObject();
+    InspectorJSONObject jsonObject = frontend->newInspectorJSONObject();
     ScriptObject database;
     if (!getQuarantinedScriptObject(m_database.get(), database))
         return;

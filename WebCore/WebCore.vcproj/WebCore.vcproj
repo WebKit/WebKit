@@ -15867,11 +15867,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\JSONObject.cpp"
+				RelativePath="..\inspector\InspectorJSONObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\JSONObject.h"
+				RelativePath="..\inspector\InspectorJSONObject.h"
 				>
 			</File>
 			<Filter
