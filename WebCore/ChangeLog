@@ -1,5 +1,11 @@
 2009-06-14  Darin Adler  <darin@apple.com>
 
+        * editing/TextIterator.cpp:
+        (WebCore::BitStack::push): Use named constant instead of hardcoded numbers.
+        (WebCore::BitStack::top): Ditto.
+
+2009-06-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Bug 26364: Search can find text that's hidden by overflow:hidden

@@ -97,6 +97,9 @@ private:
 
 // --------
 
+static const unsigned bitsInWord = sizeof(unsigned) * 8;
+static const unsigned bitInWordMask = bitsInWord - 1;
+
 BitStack::BitStack()
     : m_size(0)
 {
@@ -104,8 +107,8 @@ BitStack::BitStack()
 
 void BitStack::push(bool bit)
 {
-    unsigned index = m_size / 0x20;
-    unsigned shift = m_size & 0x1F;
+    unsigned index = m_size / bitsInWord;
+    unsigned shift = m_size & bitInWordMask;
     if (!shift && index == m_words.size())
         m_words.grow(index + 1);
     unsigned& word = m_words[index];
@@ -127,7 +130,7 @@ bool BitStack::top() const
 {
     if (!m_size)
         return false;
-    unsigned shift = (m_size - 1) & 0x1F;
+    unsigned shift = (m_size - 1) & bitInWordMask;
     return m_words.last() & (1U << shift);
 }
 
