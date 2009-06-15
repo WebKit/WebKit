@@ -1,3 +1,14 @@
+2009-06-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by and done with Tor Arne Vestbø.
+
+        Fix initialization of uninitialized members in FontFallbackListQt, leading
+        to random crashes when rendering text.
+
+        * platform/graphics/qt/FontFallbackListQt.cpp:
+        (WebCore::FontFallbackList::FontFallbackList):
+        (WebCore::FontFallbackList::invalidate):
+
 2009-06-15  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Holger Freyther.
