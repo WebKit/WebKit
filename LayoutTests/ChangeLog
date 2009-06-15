@@ -1,3 +1,14 @@
+2009-06-15  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser  <simon.fraser@apple.com>.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26163
+
+        Testcase to detect transitions that are still running after removal
+
+        * transitions/cancel-transition-expected.txt: Added.
+        * transitions/cancel-transition.html: Added.
+
 2009-06-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Tim Hatcher.

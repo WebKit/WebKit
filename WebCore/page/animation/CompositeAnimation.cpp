@@ -67,91 +67,114 @@ void CompositeAnimation::clearRenderer()
 
 void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
-    RefPtr<RenderStyle> modifiedCurrentStyle;
-    
-    // If currentStyle is null, we don't do transitions
-    if (!currentStyle || !targetStyle->transitions())
+    // If currentStyle is null or there are no old or new transitions, just skip it
+    if (!currentStyle || (!targetStyle->transitions() && m_transitions.isEmpty()))
         return;
 
+    // Mark all existing transitions as no longer active. We will mark the still active ones
+    // in the next loop and then toss the ones that didn't get marked.
+    CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
+    for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it)
+        it->second->setActive(false);
+        
+    RefPtr<RenderStyle> modifiedCurrentStyle;
+    
     // Check to see if we need to update the active transitions
-    for (size_t i = 0; i < targetStyle->transitions()->size(); ++i) {
-        const Animation* anim = targetStyle->transitions()->animation(i);
-        bool isActiveTransition = anim->duration() || anim->delay() > 0;
+    if (targetStyle->transitions()) {
+        for (size_t i = 0; i < targetStyle->transitions()->size(); ++i) {
+            const Animation* anim = targetStyle->transitions()->animation(i);
+            bool isActiveTransition = anim->duration() || anim->delay() > 0;
 
-        int prop = anim->property();
+            int prop = anim->property();
 
-        if (prop == cAnimateNone)
-            continue;
+            if (prop == cAnimateNone)
+                continue;
 
-        bool all = prop == cAnimateAll;
+            bool all = prop == cAnimateAll;
 
-        // Handle both the 'all' and single property cases. For the single prop case, we make only one pass
-        // through the loop.
-        for (int propertyIndex = 0; propertyIndex < AnimationBase::getNumProperties(); ++propertyIndex) {
-            if (all) {
-                // Get the next property which is not a shorthand.
-                bool isShorthand;
-                prop = AnimationBase::getPropertyAtIndex(propertyIndex, isShorthand);
-                if (isShorthand)
-                    continue;
-            }
-
-            // ImplicitAnimations are always hashed by actual properties, never cAnimateAll
-            ASSERT(prop >= firstCSSProperty && prop < (firstCSSProperty + numCSSProperties));
-
-            // If there is a running animation for this property, the transition is overridden
-            // and we have to use the unanimatedStyle from the animation. We do the test
-            // against the unanimated style here, but we "override" the transition later.
-            RefPtr<KeyframeAnimation> keyframeAnim = getAnimationForProperty(prop);
-            RenderStyle* fromStyle = keyframeAnim ? keyframeAnim->unanimatedStyle() : currentStyle;
-
-            // See if there is a current transition for this prop
-            ImplicitAnimation* implAnim = m_transitions.get(prop).get();
-            bool equal = true;
-
-            if (implAnim) {
-                // This might be a transition that is just finishing. That would be the case
-                // if it were postActive. But we still need to check for equality because
-                // it could be just finishing AND changing to a new goal state.
-                //
-                // This implAnim might also not be an already running transition. It might be
-                // newly added to the list in a previous iteration. This would happen if
-                // you have both an explicit transition-property and 'all' in the same
-                // list. In this case, the latter one overrides the earlier one, so we
-                // behave as though this is a running animation being replaced.
-                if (!implAnim->isTargetPropertyEqual(prop, targetStyle)) {
-#if USE(ACCELERATED_COMPOSITING)
-                    // For accelerated animations we need to return a new RenderStyle with the _current_ value
-                    // of the property, so that restarted transitions use the correct starting point.
-                    if (AnimationBase::animationOfPropertyIsAccelerated(prop) && !implAnim->isFallbackAnimating()) {
-                        if (!modifiedCurrentStyle)
-                            modifiedCurrentStyle = RenderStyle::clone(currentStyle);
-
-                        implAnim->blendPropertyValueInStyle(prop, modifiedCurrentStyle.get());
-                    }
-#endif
-                    m_transitions.remove(prop);
-                    equal = false;
+            // Handle both the 'all' and single property cases. For the single prop case, we make only one pass
+            // through the loop.
+            for (int propertyIndex = 0; propertyIndex < AnimationBase::getNumProperties(); ++propertyIndex) {
+                if (all) {
+                    // Get the next property which is not a shorthand.
+                    bool isShorthand;
+                    prop = AnimationBase::getPropertyAtIndex(propertyIndex, isShorthand);
+                    if (isShorthand)
+                        continue;
                 }
-            } else {
-                // We need to start a transition if it is active and the properties don't match
-                equal = !isActiveTransition || AnimationBase::propertiesEqual(prop, fromStyle, targetStyle);
-            }
 
-            // We can be in this loop with an inactive transition (!isActiveTransition). We need
-            // to do that to check to see if we are canceling a transition. But we don't want to
-            // start one of the inactive transitions. So short circuit that here. (See
-            // <https://bugs.webkit.org/show_bug.cgi?id=24787>
-            if (!equal && isActiveTransition) {
-                // Add the new transition
-                m_transitions.set(prop, ImplicitAnimation::create(const_cast<Animation*>(anim), prop, renderer, this, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle));
+                // ImplicitAnimations are always hashed by actual properties, never cAnimateAll
+                ASSERT(prop >= firstCSSProperty && prop < (firstCSSProperty + numCSSProperties));
+
+                // If there is a running animation for this property, the transition is overridden
+                // and we have to use the unanimatedStyle from the animation. We do the test
+                // against the unanimated style here, but we "override" the transition later.
+                RefPtr<KeyframeAnimation> keyframeAnim = getAnimationForProperty(prop);
+                RenderStyle* fromStyle = keyframeAnim ? keyframeAnim->unanimatedStyle() : currentStyle;
+
+                // See if there is a current transition for this prop
+                ImplicitAnimation* implAnim = m_transitions.get(prop).get();
+                bool equal = true;
+
+                if (implAnim) {
+                    implAnim->setActive(true);
+                    
+                    // This might be a transition that is just finishing. That would be the case
+                    // if it were postActive. But we still need to check for equality because
+                    // it could be just finishing AND changing to a new goal state.
+                    //
+                    // This implAnim might also not be an already running transition. It might be
+                    // newly added to the list in a previous iteration. This would happen if
+                    // you have both an explicit transition-property and 'all' in the same
+                    // list. In this case, the latter one overrides the earlier one, so we
+                    // behave as though this is a running animation being replaced.
+                    if (!implAnim->isTargetPropertyEqual(prop, targetStyle)) {
+    #if USE(ACCELERATED_COMPOSITING)
+                        // For accelerated animations we need to return a new RenderStyle with the _current_ value
+                        // of the property, so that restarted transitions use the correct starting point.
+                        if (AnimationBase::animationOfPropertyIsAccelerated(prop) && !implAnim->isFallbackAnimating()) {
+                            if (!modifiedCurrentStyle)
+                                modifiedCurrentStyle = RenderStyle::clone(currentStyle);
+
+                            implAnim->blendPropertyValueInStyle(prop, modifiedCurrentStyle.get());
+                        }
+    #endif
+                        m_transitions.remove(prop);
+                        equal = false;
+                    }
+                } else {
+                    // We need to start a transition if it is active and the properties don't match
+                    equal = !isActiveTransition || AnimationBase::propertiesEqual(prop, fromStyle, targetStyle);
+                }
+
+                // We can be in this loop with an inactive transition (!isActiveTransition). We need
+                // to do that to check to see if we are canceling a transition. But we don't want to
+                // start one of the inactive transitions. So short circuit that here. (See
+                // <https://bugs.webkit.org/show_bug.cgi?id=24787>
+                if (!equal && isActiveTransition) {
+                    // Add the new transition
+                    m_transitions.set(prop, ImplicitAnimation::create(const_cast<Animation*>(anim), prop, renderer, this, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle));
+                }
+                
+                // We only need one pass for the single prop case
+                if (!all)
+                    break;
             }
-            
-            // We only need one pass for the single prop case
-            if (!all)
-                break;
         }
     }
+
+    // Make a list of transitions to be removed
+    Vector<int> toBeRemoved;
+    end = m_transitions.end();
+    for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it) {
+        ImplicitAnimation* anim = it->second.get();
+        if (!anim->active())
+            toBeRemoved.append(anim->animatingProperty());
+    }
+
+    // Now remove the transitions from the list
+    for (size_t j = 0; j < toBeRemoved.size(); ++j)
+        m_transitions.remove(toBeRemoved[j]);
 }
 
 void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
