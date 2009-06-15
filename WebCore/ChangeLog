@@ -1,3 +1,18 @@
+2009-06-15  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25895
+        [Gtk] Segfault when deleting the last/only character in an entry if a11y is enabled
+
+        Use computeOffsetInContainerNode instead of the inline
+        offsetInContainerNode to return the caret offset, since the former
+        can handle all types of anchoring. Otherwise we'll hit an ASSERT
+        in some situations in debug builds, and crash.
+
+        * editing/gtk/SelectionControllerGtk.cpp:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+
 2009-06-15  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Simon Hausmann.
