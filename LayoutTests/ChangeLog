@@ -1,3 +1,18 @@
+2009-06-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Updating test for:
+        <rdar://problem/6907228> Pasting a paragraph as quotation leaves you typing in blue instead of black; repros
+
+        This test case covered inserting a newline after a blockquote, but outside of the blockquote.  I added some 
+        text insertion to verify that the newline doesn't get any old styles copied from the blockquote.
+
+        * editing/pasteboard/5368833.html:
+        * platform/mac/editing/pasteboard/5368833-expected.checksum:
+        * platform/mac/editing/pasteboard/5368833-expected.png:
+        * platform/mac/editing/pasteboard/5368833-expected.txt:
+
 2009-06-15  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser  <simon.fraser@apple.com>.

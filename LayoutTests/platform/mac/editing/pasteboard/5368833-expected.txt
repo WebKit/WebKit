@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 435: "We copy and paste a blockquoted paragraph plus a paragraph break. "
           text run at (435,0) width 349: "The paragraph break shouldn't be inside the blockquote"
           text run at (0,18) width 60: "on paste. "
-          text run at (60,18) width 600: "You should see 'hello' (blockquoted), empty paragraph, 'hello' (blockquoted), empty paragraph."
+          text run at (60,18) width 687: "You should see 'hello' (blockquoted), 'world' (not quoted, black text), 'hello' (blockquoted), empty paragraph."
       RenderBlock {DIV} at (0,52) size 784x72
         RenderBlock {BLOCKQUOTE} at (0,0) size 784x18 [color=#0000FF] [border: (2px solid #0000FF)]
           RenderText {#text} at (7,0) size 31x18
@@ -16,12 +16,12 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (38,14) size 0x0
         RenderBlock (anonymous) at (0,18) size 784x0
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderInline {FONT} at (0,0) size 0x18 [color=#0000FF]
-            RenderBR {BR} at (0,0) size 0x18
+          RenderText {#text} at (0,0) size 37x18
+            text run at (0,0) width 37: "world"
         RenderBlock {BLOCKQUOTE} at (0,36) size 784x18 [color=#0000FF] [border: (2px solid #0000FF)]
           RenderText {#text} at (7,0) size 31x18
             text run at (7,0) width 31: "hello"
           RenderBR {BR} at (38,14) size 0x0
         RenderBlock (anonymous) at (0,54) size 784x18
           RenderBR {BR} at (0,0) size 0x18
-caret: position 0 of child 0 {BR} of child 0 {FONT} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

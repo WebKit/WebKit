@@ -1,3 +1,12 @@
+2009-06-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/6907228> Pasting a paragraph as quotation leaves you typing in blue instead of black; repros
+
+        * editing/InsertParagraphSeparatorCommand.cpp: (WebCore::InsertParagraphSeparatorCommand::doApply):
+        When inserting a newline after the blockquote, we don't want to apply the original style after the insertion.
+
 2009-06-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
