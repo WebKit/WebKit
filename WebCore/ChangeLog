@@ -1,3 +1,17 @@
+2009-06-16  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Xan Lopez.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26447
+        Fix animated GIF breakage in Cairo/wx ports.
+
+        * platform/image-decoders/cairo/ImageDecoderCairo.cpp:
+        (WebCore::RGBA32Buffer::copyBitmapData):
+        (WebCore::RGBA32Buffer::operator=):
+        * platform/image-decoders/wx/ImageDecoderWx.cpp:
+        (WebCore::RGBA32Buffer::copyBitmapData):
+        (WebCore::RGBA32Buffer::operator=):
+
 2009-06-16  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by John Sullivan

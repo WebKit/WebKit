@@ -60,6 +60,7 @@ void RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
         return;
 
     m_bytes = other.m_bytes;
+    m_size = other.m_size;
     setHasAlpha(other.m_hasAlpha);
 }
 
@@ -104,9 +105,7 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
     if (this == &other)
         return *this;
 
-    m_bytes = other.m_bytes;
-    m_size = other.m_size;
-    setHasAlpha(other.hasAlpha());
+    copyBitmapData(other);
     setRect(other.rect());
     setStatus(other.status());
     setDuration(other.duration());
