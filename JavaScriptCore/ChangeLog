@@ -2,6 +2,58 @@
 
         Reviewed by Sam Weinig.
 
+        Having moved most of their functionality into the RepatchBuffer class,
+        we can simplify the CodeLocation* classes.
+
+        The CodeLocation* classes are currently a tangle of templatey and friendly
+        badness, burried in the middle of AbstractMacroAssembler.  Having moved
+        the ability to repatch out into RepatchBufer they are now do-nothing wrappers
+        on CodePtr (MacroAssemblerCodePtr), that only exist to provide type-safety.
+
+        Simplify the code, and move them off into their own header.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::PatchBuffer::patch):
+        * assembler/CodeLocation.h: Copied from assembler/AbstractMacroAssembler.h.
+        (JSC::CodeLocationCommon::CodeLocationCommon):
+        (JSC::CodeLocationInstruction::CodeLocationInstruction):
+        (JSC::CodeLocationLabel::CodeLocationLabel):
+        (JSC::CodeLocationJump::CodeLocationJump):
+        (JSC::CodeLocationCall::CodeLocationCall):
+        (JSC::CodeLocationNearCall::CodeLocationNearCall):
+        (JSC::CodeLocationDataLabel32::CodeLocationDataLabel32):
+        (JSC::CodeLocationDataLabelPtr::CodeLocationDataLabelPtr):
+        (JSC::CodeLocationCommon::instructionAtOffset):
+        (JSC::CodeLocationCommon::labelAtOffset):
+        (JSC::CodeLocationCommon::jumpAtOffset):
+        (JSC::CodeLocationCommon::callAtOffset):
+        (JSC::CodeLocationCommon::nearCallAtOffset):
+        (JSC::CodeLocationCommon::dataLabelPtrAtOffset):
+        (JSC::CodeLocationCommon::dataLabel32AtOffset):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::operator!):
+        * bytecode/CodeBlock.h:
+        (JSC::getStructureStubInfoReturnLocation):
+        (JSC::getCallLinkInfoReturnLocation):
+        (JSC::getMethodCallLinkInfoReturnLocation):
+        * bytecode/Instruction.h:
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::ctiForValue):
+        (JSC::SimpleJumpTable::ctiForValue):
+        * bytecode/StructureStubInfo.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCatch):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+        (JSC::JITStubs::getPolymorphicAccessStructureListSlot):
+
+2009-06-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Having introduced the RepatchBuffer, ProcessorReturnAddress is now a do-nothing
         wrapper around ReturnAddressPtr.  Remove it.  In tugging on this piece of string
         it made sense to roll out the use of ReturnAddressPtr a little further into

@@ -136,6 +136,7 @@
 		86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */; };
 		86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CCEFDD0F413F8900FD7F9E /* JITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */; };
+		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; };
 		86EAC4950F93E8D1008EC948 /* RegexCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EAC48D0F93E8D1008EC948 /* RegexCompiler.cpp */; };
 		86EAC4960F93E8D1008EC948 /* RegexCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EAC48E0F93E8D1008EC948 /* RegexCompiler.h */; };
 		86EAC4970F93E8D1008EC948 /* RegexInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EAC48F0F93E8D1008EC948 /* RegexInterpreter.cpp */; };
@@ -641,6 +642,7 @@
 		86CCEFDD0F413F8900FD7F9E /* JITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCode.h; sourceTree = "<group>"; };
 		86DB645F0F954E9100D7D921 /* ExecutableAllocatorWin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorWin.cpp; sourceTree = "<group>"; };
 		86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorFixedVMPool.cpp; sourceTree = "<group>"; };
+		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
 		86EAC48D0F93E8D1008EC948 /* RegexCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegexCompiler.cpp; path = yarr/RegexCompiler.cpp; sourceTree = "<group>"; };
 		86EAC48E0F93E8D1008EC948 /* RegexCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegexCompiler.h; path = yarr/RegexCompiler.h; sourceTree = "<group>"; };
 		86EAC48F0F93E8D1008EC948 /* RegexInterpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegexInterpreter.cpp; path = yarr/RegexInterpreter.cpp; sourceTree = "<group>"; };
@@ -1546,6 +1548,7 @@
 				860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */,
 				86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */,
 				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
+				86E116B00FE75AC800B512BC /* CodeLocation.h */,
 				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
 				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
 				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
@@ -1859,6 +1862,7 @@
 				A7F9949B0FD746A300A0B2D0 /* JSONObject.lut.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */,
+				86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
