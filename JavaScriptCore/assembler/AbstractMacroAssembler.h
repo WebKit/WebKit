@@ -49,6 +49,7 @@ public:
 
     class Jump;
     class PatchBuffer;
+    class RepatchBuffer;
     class CodeLocationInstruction;
     class CodeLocationLabel;
     class CodeLocationJump;
@@ -428,6 +429,8 @@ public:
     // Base type for other CodeLocation* types.  A postion in the JIT genertaed
     // instruction stream, without any semantic information.
     class CodeLocationCommon {
+        friend class RepatchBuffer;
+
     public:
         CodeLocationCommon()
         {
@@ -468,18 +471,11 @@ public:
     //
     // An arbitrary instruction in the JIT code.
     class CodeLocationInstruction : public CodeLocationCommon {
-        friend class CodeLocationCommon;
     public:
         CodeLocationInstruction()
         {
         }
 
-        void repatchLoadPtrToLEA()
-        {
-            AssemblerType::repatchLoadPtrToLEA(this->dataLocation());
-        }
-
-    private:
         explicit CodeLocationInstruction(void* location)
             : CodeLocationCommon(CodePtr(location))
         {
@@ -495,6 +491,7 @@ public:
         friend class CodeLocationCall;
         friend class CodeLocationNearCall;
         friend class PatchBuffer;
+        friend class RepatchBuffer;
         friend class ProcessorReturnAddress;
 
     public:
@@ -541,12 +538,6 @@ public:
         {
         }
 
-        void relink(CodeLocationLabel destination)
-        {
-            AssemblerType::relinkJump(this->dataLocation(), destination.dataLocation());
-        }
-
-    private:
         explicit CodeLocationJump(void* location)
             : CodeLocationCommon(CodePtr(location))
         {
@@ -557,40 +548,11 @@ public:
     //
     // A point in the JIT code at which there is a call instruction.
     class CodeLocationCall : public CodeLocationCommon {
-        friend class CodeLocationCommon;
-        friend class PatchBuffer;
-        friend class ProcessorReturnAddress;
     public:
         CodeLocationCall()
         {
         }
 
-        void relink(CodeLocationLabel destination)
-        {
-#if PLATFORM(X86_64)
-            CodeLocationCommon::dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).repatch(destination.executableAddress());
-#else
-            AssemblerType::relinkCall(this->dataLocation(), destination.executableAddress());
-#endif
-        }
-
-        void relink(FunctionPtr destination)
-        {
-#if PLATFORM(X86_64)
-            CodeLocationCommon::dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).repatch(destination.executableAddress());
-#else
-            AssemblerType::relinkCall(this->dataLocation(), destination.executableAddress());
-#endif
-        }
-
-        // This methods returns the value that will be set as the return address
-        // within a function that has been called from this call instruction.
-        void* calleeReturnAddressValue()
-        {
-            return this->executableAddress();
-        }
-
-    private:
         explicit CodeLocationCall(CodePtr location)
             : CodeLocationCommon(location)
         {
@@ -600,34 +562,6 @@ public:
             : CodeLocationCommon(CodePtr(location))
         {
         }
-    };
-
-    // CodeLocationNearCall:
-    //
-    // A point in the JIT code at which there is a call instruction with near linkage.
-    class CodeLocationNearCall : public CodeLocationCommon {
-        friend class CodeLocationCommon;
-        friend class PatchBuffer;
-        friend class ProcessorReturnAddress;
-    public:
-        CodeLocationNearCall()
-        {
-        }
-
-        void relink(CodePtr destination)
-        {
-            AssemblerType::relinkCall(this->dataLocation(), destination.executableAddress());
-        }
-
-        void relink(CodeLocationLabel destination)
-        {
-            AssemblerType::relinkCall(this->dataLocation(), destination.executableAddress());
-        }
-
-        void relink(FunctionPtr destination)
-        {
-            AssemblerType::relinkCall(this->dataLocation(), destination.executableAddress());
-        }
 
         // This methods returns the value that will be set as the return address
         // within a function that has been called from this call instruction.
@@ -636,7 +570,17 @@ public:
             return this->executableAddress();
         }
 
-    private:
+    };
+
+    // CodeLocationNearCall:
+    //
+    // A point in the JIT code at which there is a call instruction with near linkage.
+    class CodeLocationNearCall : public CodeLocationCommon {
+    public:
+        CodeLocationNearCall()
+        {
+        }
+
         explicit CodeLocationNearCall(CodePtr location)
             : CodeLocationCommon(location)
         {
@@ -646,25 +590,24 @@ public:
             : CodeLocationCommon(CodePtr(location))
         {
         }
+
+        // This methods returns the value that will be set as the return address
+        // within a function that has been called from this call instruction.
+        void* calleeReturnAddressValue()
+        {
+            return this->executableAddress();
+        }
     };
 
     // CodeLocationDataLabel32:
     //
     // A point in the JIT code at which there is an int32_t immediate that may be repatched.
     class CodeLocationDataLabel32 : public CodeLocationCommon {
-        friend class CodeLocationCommon;
-        friend class PatchBuffer;
     public:
         CodeLocationDataLabel32()
         {
         }
 
-        void repatch(int32_t value)
-        {
-            AssemblerType::repatchInt32(this->dataLocation(), value);
-        }
-
-    private:
         explicit CodeLocationDataLabel32(void* location)
             : CodeLocationCommon(CodePtr(location))
         {
@@ -675,19 +618,11 @@ public:
     //
     // A point in the JIT code at which there is a void* immediate that may be repatched.
     class CodeLocationDataLabelPtr : public CodeLocationCommon {
-        friend class CodeLocationCommon;
-        friend class PatchBuffer;
     public:
         CodeLocationDataLabelPtr()
         {
         }
 
-        void repatch(void* value)
-        {
-            AssemblerType::repatchPointer(this->dataLocation(), value);
-        }
-
-    private:
         explicit CodeLocationDataLabelPtr(void* location)
             : CodeLocationCommon(CodePtr(location))
         {
@@ -698,37 +633,10 @@ public:
     //
     // This class can be used to relink a call identified by its return address.
     class ProcessorReturnAddress {
-        friend class CodeLocationCall;
-        friend class CodeLocationNearCall;
     public:
         ProcessorReturnAddress(void* location)
             : m_location(location)
         {
-        }
-
-        void relinkCallerToTrampoline(CodeLocationLabel label)
-        {
-            CodeLocationCall(CodePtr(m_location)).relink(label);
-        }
-        
-        void relinkCallerToTrampoline(CodePtr newCalleeFunction)
-        {
-            relinkCallerToTrampoline(CodeLocationLabel(newCalleeFunction));
-        }
-
-        void relinkCallerToFunction(FunctionPtr function)
-        {
-            CodeLocationCall(CodePtr(m_location)).relink(function);
-        }
-        
-        void relinkNearCallerToTrampoline(CodeLocationLabel label)
-        {
-            CodeLocationNearCall(CodePtr(m_location)).relink(label);
-        }
-        
-        void relinkNearCallerToTrampoline(CodePtr newCalleeFunction)
-        {
-            relinkNearCallerToTrampoline(CodeLocationLabel(newCalleeFunction));
         }
 
         void* addressForLookup()
@@ -736,7 +644,6 @@ public:
             return m_location.value();
         }
 
-    private:
         ReturnAddressPtr m_location;
     };
 
@@ -899,6 +806,91 @@ public:
 #ifndef NDEBUG
         bool m_completed;
 #endif
+    };
+
+    class RepatchBuffer {
+    public:
+        RepatchBuffer()
+        {
+        }
+
+        void relink(CodeLocationJump jump, CodeLocationLabel destination)
+        {
+            AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
+        }
+
+        void relink(CodeLocationCall call, CodeLocationLabel destination)
+        {
+#if PLATFORM(X86_64)
+            repatch(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11), destination.executableAddress());
+#else
+            AssemblerType::relinkCall(call.dataLocation(), destination.executableAddress());
+#endif
+        }
+
+        void relink(CodeLocationCall call, FunctionPtr destination)
+        {
+#if PLATFORM(X86_64)
+            repatch(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11), destination.executableAddress());
+#else
+            AssemblerType::relinkCall(call.dataLocation(), destination.executableAddress());
+#endif
+        }
+
+        void relink(CodeLocationNearCall nearCall, CodePtr destination)
+        {
+            AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
+        }
+
+        void relink(CodeLocationNearCall nearCall, CodeLocationLabel destination)
+        {
+            AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
+        }
+
+        void relink(CodeLocationNearCall nearCall, FunctionPtr destination)
+        {
+            AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
+        }
+
+        void repatch(CodeLocationDataLabel32 dataLabel32, int32_t value)
+        {
+            AssemblerType::repatchInt32(dataLabel32.dataLocation(), value);
+        }
+
+        void repatch(CodeLocationDataLabelPtr dataLabelPtr, void* value)
+        {
+            AssemblerType::repatchPointer(dataLabelPtr.dataLocation(), value);
+        }
+
+        void relinkCallerToTrampoline(ProcessorReturnAddress returnAddress, CodeLocationLabel label)
+        {
+            relink(CodeLocationCall(CodePtr(returnAddress.m_location)), label);
+        }
+        
+        void relinkCallerToTrampoline(ProcessorReturnAddress returnAddress, CodePtr newCalleeFunction)
+        {
+            relinkCallerToTrampoline(returnAddress, CodeLocationLabel(newCalleeFunction));
+        }
+
+        void relinkCallerToFunction(ProcessorReturnAddress returnAddress, FunctionPtr function)
+        {
+            relink(CodeLocationCall(CodePtr(returnAddress.m_location)), function);
+        }
+        
+        void relinkNearCallerToTrampoline(ProcessorReturnAddress returnAddress, CodeLocationLabel label)
+        {
+            relink(CodeLocationNearCall(CodePtr(returnAddress.m_location)), label);
+        }
+        
+        void relinkNearCallerToTrampoline(ProcessorReturnAddress returnAddress, CodePtr newCalleeFunction)
+        {
+            relinkNearCallerToTrampoline(returnAddress, CodeLocationLabel(newCalleeFunction));
+        }
+
+        void repatchLoadPtrToLEA(CodeLocationInstruction instruction)
+        {
+            AssemblerType::repatchLoadPtrToLEA(instruction.dataLocation());
+        }
     };
 
 

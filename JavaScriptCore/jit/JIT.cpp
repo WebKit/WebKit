@@ -48,17 +48,20 @@ namespace JSC {
 
 void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, MacroAssemblerCodePtr newCalleeFunction)
 {
-    returnAddress.relinkNearCallerToTrampoline(newCalleeFunction);
+    MacroAssembler::RepatchBuffer repatchBuffer;
+    repatchBuffer.relinkNearCallerToTrampoline(returnAddress, newCalleeFunction);
 }
 
 void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, MacroAssemblerCodePtr newCalleeFunction)
 {
-    returnAddress.relinkCallerToTrampoline(newCalleeFunction);
+    MacroAssembler::RepatchBuffer repatchBuffer;
+    repatchBuffer.relinkCallerToTrampoline(returnAddress, newCalleeFunction);
 }
 
 void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, FunctionPtr newCalleeFunction)
 {
-    returnAddress.relinkCallerToFunction(newCalleeFunction);
+    MacroAssembler::RepatchBuffer repatchBuffer;
+    repatchBuffer.relinkCallerToFunction(returnAddress, newCalleeFunction);
 }
 
 JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
@@ -902,11 +905,14 @@ void JIT::unlinkCall(CallLinkInfo* callLinkInfo)
     // When the JSFunction is deleted the pointer embedded in the instruction stream will no longer be valid
     // (and, if a new JSFunction happened to be constructed at the same location, we could get a false positive
     // match).  Reset the check so it no longer matches.
-    callLinkInfo->hotPathBegin.repatch(JSValue::encode(JSValue()));
+    RepatchBuffer repatchBuffer;
+    repatchBuffer.repatch(callLinkInfo->hotPathBegin, JSValue::encode(JSValue()));
 }
 
 void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode& code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
 {
+    RepatchBuffer repatchBuffer;
+
     // Currently we only link calls with the exact number of arguments.
     // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
     if (!calleeCodeBlock || callerArgCount == calleeCodeBlock->m_numParameters) {
@@ -915,12 +921,12 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode& code
         if (calleeCodeBlock)
             calleeCodeBlock->addCaller(callLinkInfo);
     
-        callLinkInfo->hotPathBegin.repatch(callee);
-        callLinkInfo->hotPathOther.relink(code.addressForCall());
+        repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
+        repatchBuffer.relink(callLinkInfo->hotPathOther, code.addressForCall());
     }
 
     // patch the call so we do not continue to try to link.
-    callLinkInfo->callReturnLocation.relink(globalData->jitStubs.ctiVirtualCall());
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs.ctiVirtualCall());
 }
 
 } // namespace JSC

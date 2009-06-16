@@ -1,5 +1,49 @@
 2009-06-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Move repatching methods into a set of methods on a class.  This will allow us to
+        coallesce memory reprotection calls.  Really, we want this class to be called
+        PatchBuffer, we want the class PatchBuffer to be called LinkBuffer, we want both
+        to be memblers of MacroAssembler rather then AbstractMacroAssembler, we don't
+        want the CodeLocationFoo types anymore (they are now only really there to provide
+        type safety, and that is completely undermined by the way we use offsets).  Then
+        the link & patch buffers should delegate the actual patching calls to the
+        architecture-specific layer of the MacroAssembler.  Landing all these changes as a
+        sequence of patches.
+
+        No performance impact.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CodeLocationCall::CodeLocationCall):
+        (JSC::AbstractMacroAssembler::CodeLocationNearCall::CodeLocationNearCall):
+        (JSC::AbstractMacroAssembler::CodeLocationNearCall::calleeReturnAddressValue):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::RepatchBuffer):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::relink):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::repatch):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::relinkCallerToTrampoline):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::relinkCallerToFunction):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::relinkNearCallerToTrampoline):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::repatchLoadPtrToLEA):
+        * jit/JIT.cpp:
+        (JSC::ctiPatchNearCallByReturnAddress):
+        (JSC::ctiPatchCallByReturnAddress):
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::linkCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchMethodCallProto):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+
+2009-06-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Hunt & Oliver Garen.
 
         We are currently generating two copies of the slow path for op_call for no reason.  Stop that.
