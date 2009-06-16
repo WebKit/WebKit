@@ -782,6 +782,7 @@ editing/pasteboard/19644-1.html
 editing/pasteboard/19644-2.html
 editing/pasteboard/4744008.html
 editing/pasteboard/4922709.html
+editing/pasteboard/5368833.html
 editing/pasteboard/5665299.html
 editing/pasteboard/5761530-1.html
 editing/pasteboard/5780697-2.html
@@ -4812,6 +4813,8 @@ svg/custom/visibility-override.svg
 svg/custom/width-full-percentage.svg
 svg/custom/xhtml-no-svg-renderer.xhtml
 svg/custom/xml-stylesheet.svg
+svg/filters/subRegion-one-effect.svg
+svg/filters/subRegion-two-effect.svg
 svg/hixie/cascade/001-broken.xml
 svg/hixie/cascade/002.xml
 svg/hixie/data-types/001.xml

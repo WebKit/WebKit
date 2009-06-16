@@ -1,1 +1,7 @@
+2009-06-16  Xan Lopez  <xlopez@igalia.com>
+
+        Disable new tests.
+
+        * platform/gtk/Skipped:
+
 == Rolled over to ChangeLog-2009-06-16 ==
