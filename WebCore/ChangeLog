@@ -1,3 +1,13 @@
+2009-06-16  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Use consistent GUID comparison functions.
+        https://bugs.webkit.org/show_bug.cgi?id=26427
+
+        * platform/win/WCDataObject.cpp:
+        (WebCore::WCDataObject::QueryInterface):
+
 2009-06-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
