@@ -1,3 +1,24 @@
+2009-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Move entire custom implementation of getOwnPropertySlot and put
+        for JSDOMWindow into JSDOMWindowCustom, eliminating the bit in
+        JSDOMWindowBase.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::nonCachingStaticFunctionGetter):
+        (WebCore::childFrameGetter):
+        (WebCore::indexGetter):
+        (WebCore::namedItemGetter):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::put):
+        (WebCore::JSDOMWindow::getPropertyAttributes):
+        * bindings/js/JSDOMWindowCustom.h:
+        * page/DOMWindow.idl:
+
 2009-06-15  Jeremy Orlow (jorlow@chromium.org)
 
         Reviewed by Dimitri Glazkov.

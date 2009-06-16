@@ -21,7 +21,6 @@
 
 #include "JSDOMWindow.h"
 #include "JSDOMWindowShell.h"
-#include <runtime/PrototypeFunction.h>
 #include <wtf/AlwaysInline.h>
 
 namespace WebCore {
@@ -34,121 +33,6 @@ inline JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject* globalObject)
 inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
 {
     return static_cast<const JSDOMWindow*>(globalObject);
-}
-
-template<JSC::NativeFunction nativeFunction, int length>
-JSC::JSValue nonCachingStaticFunctionGetter(JSC::ExecState* exec, const JSC::Identifier& propertyName, const JSC::PropertySlot&)
-{
-    return new (exec) JSC::PrototypeFunction(exec, length, propertyName, nativeFunction);
-}
-
-ALWAYS_INLINE bool JSDOMWindow::getOwnPropertySlotDelegate(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
-{
-    // When accessing a Window cross-domain, functions are always the native built-in ones, and they
-    // are not affected by properties changed on the Window or anything in its prototype chain.
-    // This is consistent with the behavior of Firefox.
-
-    const JSC::HashEntry* entry;
-
-    // We don't want any properties other than "close" and "closed" on a closed window.
-    if (!impl()->frame()) {
-        // The following code is safe for cross-domain and same domain use.
-        // It ignores any custom properties that might be set on the DOMWindow (including a custom prototype).
-        entry = s_info.propHashTable(exec)->entry(exec, propertyName);
-        if (entry && !(entry->attributes() & JSC::Function) && entry->propertyGetter() == jsDOMWindowClosed) {
-            slot.setCustom(this, entry->propertyGetter());
-            return true;
-        }
-        entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-        if (entry && (entry->attributes() & JSC::Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
-            slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
-            return true;
-        }
-
-        // FIXME: We should have a message here that explains why the property access/function call was
-        // not allowed. 
-        slot.setUndefined();
-        return true;
-    }
-
-    // We need to check for cross-domain access here without printing the generic warning message
-    // because we always allow access to some function, just different ones depending whether access
-    // is allowed.
-    bool allowsAccess = allowsAccessFromNoErrorMessage(exec);
-
-    // Look for overrides before looking at any of our own properties, but ignore overrides completely
-    // if this is cross-domain access.
-    if (allowsAccess && JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot))
-        return true;
-
-    // We need this code here because otherwise JSC::Window will stop the search before we even get to the
-    // prototype due to the blanket same origin (allowsAccessFrom) check at the end of getOwnPropertySlot.
-    // Also, it's important to get the implementation straight out of the DOMWindow prototype regardless of
-    // what prototype is actually set on this object.
-    entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-    if (entry) {
-        if (entry->attributes() & JSC::Function) {
-            if (entry->function() == jsDOMWindowPrototypeFunctionBlur) {
-                if (!allowsAccess) {
-                    slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
-                    return true;
-                }
-            } else if (entry->function() == jsDOMWindowPrototypeFunctionClose) {
-                if (!allowsAccess) {
-                    slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
-                    return true;
-                }
-            } else if (entry->function() == jsDOMWindowPrototypeFunctionFocus) {
-                if (!allowsAccess) {
-                    slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
-                    return true;
-                }
-            } else if (entry->function() == jsDOMWindowPrototypeFunctionPostMessage) {
-                if (!allowsAccess) {
-                    slot.setCustom(this, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
-                    return true;
-                }
-            } else if (entry->function() == jsDOMWindowPrototypeFunctionShowModalDialog) {
-                if (!DOMWindow::canShowModalDialog(impl()->frame())) {
-                    slot.setUndefined();
-                    return true;
-                }
-            }
-        }
-    } else {
-        // Allow access to toString() cross-domain, but always Object.prototype.toString.
-        if (propertyName == exec->propertyNames().toString) {
-            if (!allowsAccess) {
-                slot.setCustom(this, objectToStringFunctionGetter);
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-inline bool JSDOMWindow::putDelegate(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue value, JSC::PutPropertySlot& slot)
-{
-    if (!impl()->frame())
-        return true;
-
-    // Optimization: access JavaScript global variables directly before involving the DOM.
-    JSC::PropertySlot getSlot;
-    bool slotIsWriteable;
-    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, getSlot, slotIsWriteable)) {
-        if (allowsAccessFrom(exec)) {
-            if (slotIsWriteable) {
-                getSlot.putValue(value);
-                if (getSlot.isCacheable())
-                    slot.setExistingProperty(this, getSlot.cachedOffset());
-            } else
-                JSGlobalObject::put(exec, propertyName, value, slot);
-        }
-        return true;
-    }
-
-    return false;
 }
 
 inline bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* other) const

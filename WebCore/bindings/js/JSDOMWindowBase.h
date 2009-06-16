@@ -52,9 +52,6 @@ namespace WebCore {
         DOMWindow* impl() const { return d()->impl.get(); }
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
-        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue, JSC::PutPropertySlot&);
-
         // Called just before removing this window from the JSDOMWindowShell.
         void willRemoveFromWindowShell();
 
@@ -62,15 +59,12 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
         virtual JSC::ExecState* globalExec();
-        
         virtual bool supportsProfiling() const;
-
         virtual bool shouldInterruptScript() const;
 
         bool allowsAccessFrom(JSC::ExecState*) const;
         bool allowsAccessFromNoErrorMessage(JSC::ExecState*) const;
         bool allowsAccessFrom(JSC::ExecState*, String& message) const;
-
         void printErrorMessage(const String&) const;
 
         // Don't call this version of allowsAccessFrom -- it's a slightly incorrect implementation used only by WebScriptObject
@@ -88,10 +82,6 @@ namespace WebCore {
             RefPtr<DOMWindow> impl;
             JSDOMWindowShell* shell;
         };
-
-        static JSC::JSValue childFrameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-        static JSC::JSValue indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
-        static JSC::JSValue namedItemGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
         bool allowsAccessFromPrivate(const JSC::JSGlobalObject*) const;
         String crossDomainAccessErrorMessage(const JSC::JSGlobalObject*) const;
