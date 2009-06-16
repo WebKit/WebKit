@@ -1,3 +1,13 @@
+2009-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Update WebKitSystemInterface for <rdar://problem/6937882>.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2009-06-02  Anders Carlsson  <andersca@apple.com>
 
         Rubber-stamped by Mark Rowe.
