@@ -1,3 +1,13 @@
+2009-06-16  Morten Engvoldsen  <morten.engvoldsen@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Clearifying QWebFrame docs
+
+        Adding docs to toHtml() and toPlainText()
+
+        * Api/qwebframe.cpp:
+
 2009-06-15  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
 
         Reviewed by Adam Treat.
