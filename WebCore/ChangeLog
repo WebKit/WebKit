@@ -1,3 +1,28 @@
+2009-06-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Make WebInspector's console evaluation/completion asynchronous.
+        This way of evaluation allows serializing calls between 
+        InspectorController and its frontend.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26350
+
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype.completions):
+        (WebInspector.Console.prototype._reportCompletions):
+        (WebInspector.Console.prototype._evalInInspectedWindow):
+        (WebInspector.Console.prototype._enterKeyPressed.printResult):
+        (WebInspector.Console.prototype._enterKeyPressed):
+        * inspector/front-end/DatabaseQueryView.js:
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.evaluateExpression):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.complete):
+        (WebInspector.TextPrompt.prototype._completionsReady):
+
 2009-06-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim Hatcher.

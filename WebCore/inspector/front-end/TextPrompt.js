@@ -140,7 +140,6 @@ WebInspector.TextPrompt.prototype = {
     complete: function(auto)
     {
         this.clearAutoComplete(true);
-
         var selection = window.getSelection();
         if (!selection.rangeCount)
             return;
@@ -150,16 +149,24 @@ WebInspector.TextPrompt.prototype = {
             return;
         if (auto && !this.isCaretAtEndOfPrompt())
             return;
-
         var wordPrefixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, this.completionStopCharacters, this.element, "backward");
-        var completions = this.completions(wordPrefixRange, auto);
+        this.completions(wordPrefixRange, auto, this._completionsReady.bind(this, selection, auto, wordPrefixRange));
+    },
 
+    _completionsReady: function(selection, auto, originalWordPrefixRange, completions)
+    {
         if (!completions || !completions.length)
             return;
+
+        var selectionRange = selection.getRangeAt(0);
+        var wordPrefixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, this.completionStopCharacters, this.element, "backward");
 
         var fullWordRange = document.createRange();
         fullWordRange.setStart(wordPrefixRange.startContainer, wordPrefixRange.startOffset);
         fullWordRange.setEnd(selectionRange.endContainer, selectionRange.endOffset);
+
+        if (originalWordPrefixRange.toString() != fullWordRange.toString())
+            return;
 
         if (completions.length === 1 || selection.isCollapsed || auto) {
             var completionText = completions[0];

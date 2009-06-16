@@ -316,17 +316,36 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.removeBreakpoint(breakpoint);
     },
 
-    evaluateInSelectedCallFrame: function(code, updateInterface)
+    evaluateInSelectedCallFrame: function(code, updateInterface, callback)
     {
         var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
         if (!this._paused || !selectedCallFrame)
             return;
+
         if (typeof updateInterface === "undefined")
             updateInterface = true;
-        var result = selectedCallFrame.evaluate(code);
-        if (updateInterface)
-            this.sidebarPanes.scopechain.update(selectedCallFrame);
-        return result;
+
+        var self = this;
+        function updatingCallbackWrapper(result)
+        {
+            callback(result);
+            if (updateInterface)
+                self.sidebarPanes.scopechain.update(selectedCallFrame);
+        }        
+        this.doEvalInCallFrame(selectedCallFrame, code, updatingCallbackWrapper);
+    },
+
+    doEvalInCallFrame: function(callFrame, code, callback)
+    {
+        function delayedEvaluation()
+        {
+            try {
+                callback(callFrame.evaluate(code));
+            } catch (e) {
+                callback(e, true);
+            }
+        }
+        setTimeout(delayedEvaluation, 0);
     },
 
     variablesInScopeForSelectedCallFrame: function()

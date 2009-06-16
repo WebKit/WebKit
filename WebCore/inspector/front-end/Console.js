@@ -241,7 +241,7 @@ WebInspector.Console.prototype = {
         delete this.previousMessage;
     },
 
-    completions: function(wordRange, bestMatchOnly)
+    completions: function(wordRange, bestMatchOnly, completionsReadyCallback)
     {
         // Pass less stop characters to rangeOfWord so the range will be a more complete expression.
         const expressionStopCharacters = " =:{;";
@@ -259,22 +259,20 @@ WebInspector.Console.prototype = {
         if (!expressionString && !prefix)
             return;
 
-        var result;
+        var reportCompletions = this._reportCompletions.bind(this, bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix);
         if (expressionString) {
-            try {
-                result = this._evalInInspectedWindow(expressionString);
-            } catch(e) {
-                // Do nothing, the prefix will be considered a window property.
-            }
+            this._evalInInspectedWindow(expressionString, reportCompletions);
         } else {
             // There is no expressionString, so the completion should happen against global properties.
             // Or if the debugger is paused, against properties in scope of the selected call frame.
             if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
-                result = WebInspector.panels.scripts.variablesInScopeForSelectedCallFrame();
+                reportCompletions(WebInspector.panels.scripts.variablesInScopeForSelectedCallFrame());
             else
-                result = InspectorController.inspectedWindow();
+                reportCompletions(InspectorController.inspectedWindow());
         }
-
+    },
+    
+    _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result) {
         if (bracketNotation) {
             if (prefix.length && prefix[0] === "'")
                 var quoteUsed = "'";
@@ -305,8 +303,7 @@ WebInspector.Console.prototype = {
             if (bestMatchOnly)
                 break;
         }
-
-        return results;
+        setTimeout(completionsReadyCallback, 0, results);
     },
 
     _toggleButtonClicked: function()
@@ -394,12 +391,18 @@ WebInspector.Console.prototype = {
         event.stopPropagation();
     },
 
-    _evalInInspectedWindow: function(expression)
+    _evalInInspectedWindow: function(expression, callback)
     {
-        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
-            return WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression);
+        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
+            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, callback);
+            return;
+        }
 
-        var inspectedWindow = InspectorController.inspectedWindow();
+        this.doEvalInWindow(expression, callback);
+    },
+    
+    _ensureCommandLineAPIInstalled: function(inspectedWindow)
+    {
         if (!inspectedWindow._inspectorCommandLineAPI) {
             inspectedWindow.eval("window._inspectorCommandLineAPI = { \
                 $: function() { return document.getElementById.apply(document, arguments) }, \
@@ -424,12 +427,26 @@ WebInspector.Console.prototype = {
 
             inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(this.clearMessages.bind(this));
         }
-
+    },
+    
+    doEvalInWindow: function(expression, callback)
+    {
         // Surround the expression in with statements to inject our command line API so that
         // the window object properties still take more precedent than our API functions.
         expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
 
-        return inspectedWindow.eval(expression);
+        var self = this;
+        function delayedEvaluation()
+        {
+            var inspectedWindow = InspectorController.inspectedWindow();
+            self._ensureCommandLineAPIInstalled(inspectedWindow);
+            try {
+                callback(inspectedWindow.eval(expression));
+            } catch (e) {
+                callback(e, true);
+            }
+        }
+        setTimeout(delayedEvaluation, 0);
     },
 
     _enterKeyPressed: function(event)
@@ -449,20 +466,15 @@ WebInspector.Console.prototype = {
         var commandMessage = new WebInspector.ConsoleCommand(str);
         this.addMessage(commandMessage);
 
-        var result;
-        var exception = false;
-        try {
-            result = this._evalInInspectedWindow(str);
-        } catch(e) {
-            result = e;
-            exception = true;
+        var self = this;
+        function printResult(result, exception)
+        {
+            self.prompt.history.push(str);
+            self.prompt.historyOffset = 0;
+            self.prompt.text = "";
+            self.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
         }
-
-        this.prompt.history.push(str);
-        this.prompt.historyOffset = 0;
-        this.prompt.text = "";
-
-        this.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
+        this._evalInInspectedWindow(str, printResult);
     },
 
     _format: function(output, forceObjectFormat)
