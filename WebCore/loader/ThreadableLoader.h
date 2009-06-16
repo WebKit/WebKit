@@ -58,9 +58,9 @@ namespace WebCore {
         DoNotAllowStoredCredentials
     };
 
-    enum RedirectOriginCheck {
-        RequireSameRedirectOrigin,
-        AllowDifferentRedirectOrigin
+    enum CrossOriginRedirectPolicy {
+        DenyCrossOriginRedirect,
+        AllowCrossOriginRedirect
     };
 
     // Useful for doing loader operations from any thread (not threadsafe, 
@@ -68,7 +68,7 @@ namespace WebCore {
     class ThreadableLoader : Noncopyable {
     public:
         static void loadResourceSynchronously(ScriptExecutionContext*, const ResourceRequest&, ThreadableLoaderClient&, StoredCredentials);
-        static PassRefPtr<ThreadableLoader> create(ScriptExecutionContext*, ThreadableLoaderClient*, const ResourceRequest&, LoadCallbacks, ContentSniff, StoredCredentials, RedirectOriginCheck);
+        static PassRefPtr<ThreadableLoader> create(ScriptExecutionContext*, ThreadableLoaderClient*, const ResourceRequest&, LoadCallbacks, ContentSniff, StoredCredentials, CrossOriginRedirectPolicy);
 
         virtual void cancel() = 0;
         void ref() { refThreadableLoader(); }

@@ -40,18 +40,18 @@
 
 namespace WebCore {
 
-PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials, RedirectOriginCheck redirectOriginCheck) 
+PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* context, ThreadableLoaderClient* client, const ResourceRequest& request, LoadCallbacks callbacksSetting, ContentSniff contentSniff, StoredCredentials storedCredentials, CrossOriginRedirectPolicy crossOriginRedirectPolicy) 
 {
     ASSERT(client);
     ASSERT(context);
 
 #if ENABLE(WORKERS)
     if (context->isWorkerContext())
-        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, WorkerRunLoop::defaultMode(), request, callbacksSetting, contentSniff, storedCredentials, redirectOriginCheck);
+        return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, WorkerRunLoop::defaultMode(), request, callbacksSetting, contentSniff, storedCredentials, crossOriginRedirectPolicy);
 #endif // ENABLE(WORKERS)
 
     ASSERT(context->isDocument());
-    return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, callbacksSetting, contentSniff, storedCredentials, redirectOriginCheck);
+    return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, callbacksSetting, contentSniff, storedCredentials, crossOriginRedirectPolicy);
 }
 
 void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client, StoredCredentials storedCredentials)
@@ -60,7 +60,7 @@ void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context
 
 #if ENABLE(WORKERS)
     if (context->isWorkerContext()) {
-        WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(context), request, client, storedCredentials, RequireSameRedirectOrigin);
+        WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(context), request, client, storedCredentials, DenyCrossOriginRedirect);
         return;
     }
 #endif // ENABLE(WORKERS)

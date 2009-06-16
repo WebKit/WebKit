@@ -274,7 +274,7 @@ void WorkerContext::importScripts(const Vector<String>& urls, const String& call
 
     for (Vector<KURL>::const_iterator it = completedURLs.begin(); it != end; ++it) {
         WorkerScriptLoader scriptLoader;
-        scriptLoader.loadSynchronously(scriptExecutionContext(), *it, AllowDifferentRedirectOrigin);
+        scriptLoader.loadSynchronously(scriptExecutionContext(), *it, AllowCrossOriginRedirect);
 
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
         if (scriptLoader.failed()) {

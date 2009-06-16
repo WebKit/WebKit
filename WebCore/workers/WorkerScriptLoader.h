@@ -45,8 +45,8 @@ namespace WebCore {
     public:
         WorkerScriptLoader();
 
-        void loadSynchronously(ScriptExecutionContext*, const String& url, RedirectOriginCheck);
-        void loadAsynchronously(ScriptExecutionContext*, const String& url, RedirectOriginCheck, WorkerScriptLoaderClient*);
+        void loadSynchronously(ScriptExecutionContext*, const String& url, CrossOriginRedirectPolicy);
+        void loadAsynchronously(ScriptExecutionContext*, const String& url, CrossOriginRedirectPolicy, WorkerScriptLoaderClient*);
 
         const String& script() const { return m_script; }
         bool failed() const { return m_failed; }

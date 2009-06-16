@@ -47,16 +47,16 @@ WorkerScriptLoader::WorkerScriptLoader()
 {
 }
 
-void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, RedirectOriginCheck redirectOriginCheck)
+void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, CrossOriginRedirectPolicy crossOriginRedirectPolicy)
 {
     ResourceRequest request(url);
     request.setHTTPMethod("GET");
 
     ASSERT(scriptExecutionContext->isWorkerContext());
-    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), request, *this, AllowStoredCredentials, redirectOriginCheck);
+    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), request, *this, AllowStoredCredentials, crossOriginRedirectPolicy);
 }
     
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, RedirectOriginCheck redirectOriginCheck, WorkerScriptLoaderClient* client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, CrossOriginRedirectPolicy crossOriginRedirectPolicy, WorkerScriptLoaderClient* client)
 {
     ASSERT(client);
     m_client = client;
@@ -64,7 +64,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     ResourceRequest request(url);
     request.setHTTPMethod("GET");
 
-    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, request, DoNotSendLoadCallbacks, DoNotSniffContent, AllowStoredCredentials, redirectOriginCheck);
+    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, request, DoNotSendLoadCallbacks, DoNotSniffContent, AllowStoredCredentials, crossOriginRedirectPolicy);
 }
     
 void WorkerScriptLoader::didReceiveResponse(const ResourceResponse& response)
