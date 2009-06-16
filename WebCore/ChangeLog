@@ -2,6 +2,14 @@
 
         Reviewed by Anders Carlsson.
 
+        Remove outdated comment.
+
+        * bindings/js/JSDOMWindowBase.h:
+
+2009-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Bring CustomGetPropertyNames more inline with the other
         extended attributes prefixed with Custom, by making it 
         require a complete implementation.
