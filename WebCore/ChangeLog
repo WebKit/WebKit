@@ -1,3 +1,17 @@
+2009-06-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        Test: fast/multicol/columns-shorthand-parsing.html 
+
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=26453.
+        Null Cairo contextwill crash Windows Cairo build.
+
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::syncContext):
+          Add a check for null context before attempting to
+          retrieve the Cairo surface.
+
 2009-06-16  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Xan Lopez.
