@@ -98,6 +98,12 @@ public:
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
+    explicit ReturnAddressPtr(FunctionPtr function)
+        : m_value(function.value())
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
     void* value() const { return m_value; }
 
 private:

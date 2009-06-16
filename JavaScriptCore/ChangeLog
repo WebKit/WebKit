@@ -1,3 +1,54 @@
+2009-06-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Having introduced the RepatchBuffer, ProcessorReturnAddress is now a do-nothing
+        wrapper around ReturnAddressPtr.  Remove it.  In tugging on this piece of string
+        it made sense to roll out the use of ReturnAddressPtr a little further into
+        JITStubs (which had always been the intention).
+
+        No performance impact.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::RepatchBuffer::relinkCallerToTrampoline):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::relinkCallerToFunction):
+        (JSC::AbstractMacroAssembler::RepatchBuffer::relinkNearCallerToTrampoline):
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::ReturnAddressPtr::ReturnAddressPtr):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getStubInfo):
+        (JSC::CodeBlock::getCallLinkInfo):
+        (JSC::CodeBlock::getMethodCallLinkInfo):
+        (JSC::CodeBlock::getBytecodeIndex):
+        * interpreter/Interpreter.cpp:
+        (JSC::bytecodeOffsetForPC):
+        * jit/JIT.cpp:
+        (JSC::ctiPatchNearCallByReturnAddress):
+        (JSC::ctiPatchCallByReturnAddress):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdTransition):
+        (JSC::JIT::compilePatchGetArrayLength):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::StackHack::StackHack):
+        (JSC::returnToThrowTrampoline):
+        (JSC::throwStackOverflowError):
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::):
+        (JSC::JITStackFrame::returnAddressSlot):
+        * runtime/JSGlobalData.h:
+
 2009-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.

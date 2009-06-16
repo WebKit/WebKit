@@ -131,7 +131,7 @@ namespace JSC {
 
         JSValue exception;
 #if ENABLE(JIT)
-        void* exceptionLocation;
+        ReturnAddressPtr exceptionLocation;
 #endif
 
         const Vector<Instruction>& numericCompareFunction(ExecState*);

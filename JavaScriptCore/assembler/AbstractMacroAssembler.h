@@ -57,7 +57,6 @@ public:
     class CodeLocationNearCall;
     class CodeLocationDataLabel32;
     class CodeLocationDataLabelPtr;
-    class ProcessorReturnAddress;
 
     typedef typename AssemblerType::RegisterID RegisterID;
     typedef typename AssemblerType::FPRegisterID FPRegisterID;
@@ -492,7 +491,6 @@ public:
         friend class CodeLocationNearCall;
         friend class PatchBuffer;
         friend class RepatchBuffer;
-        friend class ProcessorReturnAddress;
 
     public:
         CodeLocationLabel()
@@ -627,24 +625,6 @@ public:
             : CodeLocationCommon(CodePtr(location))
         {
         }
-    };
-
-    // ProcessorReturnAddress:
-    //
-    // This class can be used to relink a call identified by its return address.
-    class ProcessorReturnAddress {
-    public:
-        ProcessorReturnAddress(void* location)
-            : m_location(location)
-        {
-        }
-
-        void* addressForLookup()
-        {
-            return m_location.value();
-        }
-
-        ReturnAddressPtr m_location;
     };
 
 
@@ -862,27 +842,27 @@ public:
             AssemblerType::repatchPointer(dataLabelPtr.dataLocation(), value);
         }
 
-        void relinkCallerToTrampoline(ProcessorReturnAddress returnAddress, CodeLocationLabel label)
+        void relinkCallerToTrampoline(ReturnAddressPtr returnAddress, CodeLocationLabel label)
         {
-            relink(CodeLocationCall(CodePtr(returnAddress.m_location)), label);
+            relink(CodeLocationCall(CodePtr(returnAddress)), label);
         }
         
-        void relinkCallerToTrampoline(ProcessorReturnAddress returnAddress, CodePtr newCalleeFunction)
+        void relinkCallerToTrampoline(ReturnAddressPtr returnAddress, CodePtr newCalleeFunction)
         {
             relinkCallerToTrampoline(returnAddress, CodeLocationLabel(newCalleeFunction));
         }
 
-        void relinkCallerToFunction(ProcessorReturnAddress returnAddress, FunctionPtr function)
+        void relinkCallerToFunction(ReturnAddressPtr returnAddress, FunctionPtr function)
         {
-            relink(CodeLocationCall(CodePtr(returnAddress.m_location)), function);
+            relink(CodeLocationCall(CodePtr(returnAddress)), function);
         }
         
-        void relinkNearCallerToTrampoline(ProcessorReturnAddress returnAddress, CodeLocationLabel label)
+        void relinkNearCallerToTrampoline(ReturnAddressPtr returnAddress, CodeLocationLabel label)
         {
-            relink(CodeLocationNearCall(CodePtr(returnAddress.m_location)), label);
+            relink(CodeLocationNearCall(CodePtr(returnAddress)), label);
         }
         
-        void relinkNearCallerToTrampoline(ProcessorReturnAddress returnAddress, CodePtr newCalleeFunction)
+        void relinkNearCallerToTrampoline(ReturnAddressPtr returnAddress, CodePtr newCalleeFunction)
         {
             relinkNearCallerToTrampoline(returnAddress, CodeLocationLabel(newCalleeFunction));
         }

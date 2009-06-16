@@ -46,19 +46,19 @@ using namespace std;
 
 namespace JSC {
 
-void ctiPatchNearCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, MacroAssemblerCodePtr newCalleeFunction)
+void ctiPatchNearCallByReturnAddress(ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction)
 {
     MacroAssembler::RepatchBuffer repatchBuffer;
     repatchBuffer.relinkNearCallerToTrampoline(returnAddress, newCalleeFunction);
 }
 
-void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, MacroAssemblerCodePtr newCalleeFunction)
+void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction)
 {
     MacroAssembler::RepatchBuffer repatchBuffer;
     repatchBuffer.relinkCallerToTrampoline(returnAddress, newCalleeFunction);
 }
 
-void ctiPatchCallByReturnAddress(MacroAssembler::ProcessorReturnAddress returnAddress, FunctionPtr newCalleeFunction)
+void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction)
 {
     MacroAssembler::RepatchBuffer repatchBuffer;
     repatchBuffer.relinkCallerToFunction(returnAddress, newCalleeFunction);

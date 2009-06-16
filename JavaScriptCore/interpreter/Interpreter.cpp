@@ -76,7 +76,7 @@ namespace JSC {
 static ALWAYS_INLINE unsigned bytecodeOffsetForPC(CallFrame* callFrame, CodeBlock* codeBlock, void* pc)
 {
 #if ENABLE(JIT)
-    return codeBlock->getBytecodeIndex(callFrame, pc);
+    return codeBlock->getBytecodeIndex(callFrame, ReturnAddressPtr(pc));
 #else
     UNUSED_PARAM(callFrame);
     return static_cast<Instruction*>(pc) - codeBlock->instructions().begin();
