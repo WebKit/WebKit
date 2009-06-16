@@ -944,12 +944,11 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
             TextRun textRun(text.characters(), text.length());
             const Color color(255, 0, 0);
             context->scale(FloatSize(1.0f, -1.0f));    
-            context->setFont(styleToUse->font());
             context->setStrokeColor(color);
             context->setStrokeStyle(SolidStroke);
             context->setStrokeThickness(1.0f);
             context->setFillColor(color);
-            context->drawText(textRun, IntPoint(2, -3));
+            context->drawText(styleToUse->font(), textRun, IntPoint(2, -3));
         }
     }
 #endif
