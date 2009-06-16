@@ -328,17 +328,19 @@ void FontCache::purgeInactiveFontData(int count)
     for (size_t i = 0; i < fontDataToDeleteCount; ++i)
         delete fontDataToDelete[i];
 
-    Vector<FontPlatformDataCacheKey> keysToRemove;
-    keysToRemove.reserveInitialCapacity(gFontPlatformDataCache->size());
-    FontPlatformDataCache::iterator platformDataEnd = gFontPlatformDataCache->end();
-    for (FontPlatformDataCache::iterator platformData = gFontPlatformDataCache->begin(); platformData != platformDataEnd; ++platformData) {
-        if (platformData->second && !gFontDataCache->contains(*platformData->second))
-            keysToRemove.append(platformData->first);
+    if (gFontPlatformDataCache) {
+        Vector<FontPlatformDataCacheKey> keysToRemove;
+        keysToRemove.reserveInitialCapacity(gFontPlatformDataCache->size());
+        FontPlatformDataCache::iterator platformDataEnd = gFontPlatformDataCache->end();
+        for (FontPlatformDataCache::iterator platformData = gFontPlatformDataCache->begin(); platformData != platformDataEnd; ++platformData) {
+            if (platformData->second && !gFontDataCache->contains(*platformData->second))
+                keysToRemove.append(platformData->first);
+        }
+        
+        size_t keysToRemoveCount = keysToRemove.size();
+        for (size_t i = 0; i < keysToRemoveCount; ++i)
+            delete gFontPlatformDataCache->take(keysToRemove[i]);
     }
-
-    size_t keysToRemoveCount = keysToRemove.size();
-    for (size_t i = 0; i < keysToRemoveCount; ++i)
-        delete gFontPlatformDataCache->take(keysToRemove[i]);
 
     isPurging = false;
 }

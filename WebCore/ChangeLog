@@ -1,3 +1,17 @@
+2009-06-15  Andre Boule  <aboule@apple.com>
+
+        Reviewed by Cameron Zwarich and Dan Bernstein.
+
+        - fix <rdar://problem/6967975> crash with NSString drawAtPoint
+
+        No test possible because this crash can only occur if the client uses
+        WebKit text drawing without ever using WebCore text, and DumpRenderTree
+        cannot do either.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontData): Null-check
+            gFontPlatformDataCache.
+
 2009-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.
