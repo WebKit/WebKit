@@ -36,7 +36,6 @@
 
 #include "ExceptionCode.h"
 #include "DOMTimer.h"
-#include "NotImplemented.h"
 #include "ScheduledAction.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
@@ -129,7 +128,29 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
 CALLBACK_FUNC_DECL(WorkerContextImportScripts)
 {
     INC_STATS(L"DOM.WorkerContext.importScripts()");
-    notImplemented();
+    if (!args.Length())
+        return v8::Undefined();
+
+    String callerURL = V8Proxy::GetSourceName();
+    int callerLine = V8Proxy::GetSourceLineNumber() + 1;
+
+    Vector<String> urls;
+    for (int i = 0; i < args.Length(); i++) {
+        v8::TryCatch tryCatch;
+        v8::Handle<v8::String> scriptUrl = args[i]->ToString();
+        if (tryCatch.HasCaught() || scriptUrl.IsEmpty())
+            return v8::Undefined();
+        urls.append(toWebCoreString(scriptUrl));
+    }
+
+    WorkerContext* workerContext = V8Proxy::ToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, args.Holder());
+
+    ExceptionCode ec = 0;
+    workerContext->importScripts(urls, callerURL, callerLine, ec);
+
+    if (ec)
+        return throwError(ec);
+
     return v8::Undefined();
 }
 

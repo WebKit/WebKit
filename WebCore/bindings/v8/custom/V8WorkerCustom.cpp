@@ -87,6 +87,9 @@ CALLBACK_FUNC_DECL(WorkerConstructor)
     ExceptionCode ec = 0;
     RefPtr<Worker> obj = Worker::create(toWebCoreString(scriptUrl), context, ec);
 
+    if (ec)
+        return throwError(ec);
+
     // Setup the standard wrapper object internal fields.
     v8::Handle<v8::Object> wrapperObject = args.Holder();
     V8Proxy::SetDOMWrapper(wrapperObject, V8ClassIndex::WORKER, obj.get());
