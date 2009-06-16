@@ -2328,7 +2328,10 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_throw)
 
     if (!handler) {
         *stackFrame.exception = exceptionValue;
+#if !(PLATFORM(x86) || PLATFORM(x86_64))
+        // Termporarily disable this on x86 platforms.
         STUB_SET_RETURN_ADDRESS(reinterpret_cast<void*>(ctiOpThrowNotCaught));
+#endif
         return JSValue::encode(jsNull());
     }
 
