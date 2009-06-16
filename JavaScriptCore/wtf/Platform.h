@@ -608,4 +608,15 @@
 #define WTF_USE_FONT_FAST_PATH 1
 #endif
 
+/* Accelerated compositing */
+#if PLATFORM(MAC)
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#define WTF_USE_ACCELERATED_COMPOSITING 1
+#endif
+#endif
+
+#if PLATFORM(IPHONE)
+#define WTF_USE_ACCELERATED_COMPOSITING 1
+#endif
+
 #endif /* WTF_Platform_h */

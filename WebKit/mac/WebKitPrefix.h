@@ -78,11 +78,6 @@ typedef float CGFloat;
 #define WTF_USE_PLUGIN_HOST_PROCESS 1
 #endif
 
-// Accelerated compositing (also needs to be set in WebCore/config.h)
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-#define WTF_USE_ACCELERATED_COMPOSITING 0
-#endif
-
 /* WebKit has no way to pull settings from WebCore/config.h for now */
 /* so we assume WebKit is always being compiled on top of JavaScriptCore */
 #define WTF_USE_JSC 1

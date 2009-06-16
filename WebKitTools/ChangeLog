@@ -1,3 +1,13 @@
+2009-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        <rdar://problem/6974857>
+        
+        Build with ENABLE_3D_RENDERING turned on by default on SnowLeopard.
+
+        * Scripts/build-webkit:
+
 2009-06-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Mark Rowe.

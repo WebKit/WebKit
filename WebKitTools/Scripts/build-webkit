@@ -53,7 +53,7 @@ my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $domSto
 
 my @features = (
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
-      define => "ENABLE_3D_RENDERING", default => 0, value => \$threeDRenderingSupport },
+      define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && isSnowLeopard()), value => \$threeDRenderingSupport },
 
     { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 0, value => \$channelMessagingSupport },

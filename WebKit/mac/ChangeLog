@@ -1,3 +1,15 @@
+2009-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6974857>
+        
+        Define ENABLE_3D_RENDERING when building on 10.6, and move ENABLE_3D_RENDERING
+        switch from config.h to wtf/Platform.h.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebKitPrefix.h:
+
 2009-06-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
