@@ -2,6 +2,15 @@
 
         Reviewed by Anders Carlsson.
 
+        Remove commented out ondataunavailable attribute event listener which
+        has now been removed from HTML 5.
+
+        * page/DOMWindow.idl:
+
+2009-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Move entire custom implementation of getOwnPropertySlot and put
         for JSDOMWindow into JSDOMWindowCustom, eliminating the bit in
         JSDOMWindowBase.

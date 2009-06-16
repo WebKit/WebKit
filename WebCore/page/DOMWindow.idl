@@ -247,7 +247,6 @@ module window {
         // Not implemented yet.
         // attribute EventListener onafterprint;
         // attribute EventListener onbeforeprint;
-        // attribute EventListener ondataunavailable;
         // attribute EventListener onformchange;
         // attribute EventListener onforminput;
         // attribute EventListener onhashchange;
