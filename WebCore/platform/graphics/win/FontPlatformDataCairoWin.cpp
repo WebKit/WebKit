@@ -83,12 +83,17 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
 FontPlatformData::FontPlatformData(const FontPlatformData& source)
     : m_font(source.m_font)
     , m_size(source.m_size)
-    , m_fontFace(cairo_font_face_reference(source.m_fontFace))
-    , m_scaledFont(cairo_scaled_font_reference(source.m_scaledFont))
+    , m_fontFace(0)
+    , m_scaledFont(0)
     , m_syntheticBold(source.m_syntheticBold)
     , m_syntheticOblique(source.m_syntheticOblique)
     , m_useGDI(source.m_useGDI)
 {
+    if (source.m_fontFace)
+        m_fontFace = cairo_font_face_reference(source.m_fontFace);
+
+    if (source.m_scaledFont)
+        m_scaledFont = cairo_scaled_font_reference(source.m_scaledFont);
 }
 
 void FontPlatformData::setFont(cairo_t* cr) const
@@ -102,6 +107,33 @@ FontPlatformData::~FontPlatformData()
 {
     cairo_scaled_font_destroy(m_scaledFont);
     cairo_font_face_destroy(m_fontFace);
+}
+
+FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
+{
+    // Check for self-assignment.
+    if (this == &other)
+        return *this;
+
+    m_font = other.m_font;
+    m_size = other.m_size;
+    m_syntheticBold = other.m_syntheticBold;
+    m_syntheticOblique = other.m_syntheticOblique;
+    m_useGDI = other.m_useGDI;
+
+    if (other.m_fontFace)
+        cairo_font_face_reference(other.m_fontFace);
+    if (m_fontFace)
+        cairo_font_face_destroy(m_fontFace);
+    m_fontFace = other.m_fontFace;
+
+    if (other.m_scaledFont)
+        cairo_scaled_font_reference(other.m_scaledFont);
+    if (m_scaledFont)
+        cairo_scaled_font_destroy(m_scaledFont);
+    m_scaledFont = other.m_scaledFont;
+
+    return *this;
 }
 
 }
