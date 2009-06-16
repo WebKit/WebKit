@@ -15,6 +15,13 @@
 
 2009-06-16  Xan Lopez  <xlopez@igalia.com>
 
+        editing/deleting/4875189.html was changed from pixel to
+        dumpAsText, so remove it from Skipped list.
+
+        * platform/gtk/Skipped:
+
+2009-06-16  Xan Lopez  <xlopez@igalia.com>
+
         Fix typo in test name.
 
         * platform/gtk/Skipped:
