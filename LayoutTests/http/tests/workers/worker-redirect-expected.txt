@@ -1,0 +1,4 @@
+Test that loading the worker's script does not allow a cross origin redirect (bug 26146)
+
+SUCCESS: threw error when attempting to redirected cross origin while loading the worker script.
+

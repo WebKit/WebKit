@@ -31,25 +31,25 @@
 
 #include "AtomicStringHash.h"
 #include "ActiveDOMObject.h"
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
 #include "EventListener.h"
 #include "EventTarget.h"
+#include "KURL.h"
+#include "WorkerScriptLoaderClient.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class CachedResource;
-    class CachedScript;
     class ScriptExecutionContext;
     class String;
     class WorkerContextProxy;
+    class WorkerScriptLoader;
 
     typedef int ExceptionCode;
 
-    class Worker : public RefCounted<Worker>, public ActiveDOMObject, private CachedResourceClient, public EventTarget {
+    class Worker : public RefCounted<Worker>, public ActiveDOMObject, private WorkerScriptLoaderClient, public EventTarget {
     public:
         static PassRefPtr<Worker> create(const String& url, ScriptExecutionContext* context, ExceptionCode& ec) { return adoptRef(new Worker(url, context, ec)); }
         ~Worker();
@@ -89,13 +89,13 @@ namespace WebCore {
     private:
         Worker(const String&, ScriptExecutionContext*, ExceptionCode&);
 
-        virtual void notifyFinished(CachedResource*);
+        virtual void notifyFinished();
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
 
         KURL m_scriptURL;
-        CachedResourceHandle<CachedScript> m_cachedScript;
+        OwnPtr<WorkerScriptLoader> m_scriptLoader;
 
         WorkerContextProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
 

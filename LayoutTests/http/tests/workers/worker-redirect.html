@@ -1,0 +1,28 @@
+<body>
+<p>Test that loading the worker's script does not allow a cross origin redirect (<a href="https://bugs.webkit.org/show_bug.cgi?id=26146">bug 26146</a>)</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var worker = new Worker('/resources/redirect.php?url=http://localhost:8000/workers/resources/worker-redirect-target.js');
+worker.onerror = function(evt) {
+    log("SUCCESS: threw error when attempting to redirected cross origin while loading the worker script.");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+worker.onmessage = function(evt) {
+    log("FAIL: executed script when redirect cross origin.");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</body>
+</html>

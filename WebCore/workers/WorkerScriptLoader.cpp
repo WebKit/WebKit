@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,22 +29,54 @@
 
 #if ENABLE(WORKERS)
 
-#include "WorkerImportScriptsClient.h"
+#include "WorkerScriptLoader.h"
 
+#include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
+#include "WorkerContext.h"
+#include "WorkerScriptLoaderClient.h"
+#include "WorkerThreadableLoader.h"
 
 namespace WebCore {
 
-void WorkerImportScriptsClient::didReceiveResponse(const ResourceResponse& response)
+WorkerScriptLoader::WorkerScriptLoader()
+    : m_client(0)
+    , m_failed(false)
+    , m_identifier(0)
 {
-    if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode() != 0) {
+}
+
+void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, RedirectOriginCheck redirectOriginCheck)
+{
+    ResourceRequest request(url);
+    request.setHTTPMethod("GET");
+
+    ASSERT(scriptExecutionContext->isWorkerContext());
+    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), request, *this, AllowStoredCredentials, redirectOriginCheck);
+}
+    
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, RedirectOriginCheck redirectOriginCheck, WorkerScriptLoaderClient* client)
+{
+    ASSERT(client);
+    m_client = client;
+
+    ResourceRequest request(url);
+    request.setHTTPMethod("GET");
+
+    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, request, DoNotSendLoadCallbacks, DoNotSniffContent, AllowStoredCredentials, redirectOriginCheck);
+}
+    
+void WorkerScriptLoader::didReceiveResponse(const ResourceResponse& response)
+{
+    if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode()) {
         m_failed = true;
         return;
     }
     m_responseEncoding = response.textEncodingName();
 }
 
-void WorkerImportScriptsClient::didReceiveData(const char* data, int len)
+void WorkerScriptLoader::didReceiveData(const char* data, int len)
 {
     if (m_failed)
         return;
@@ -64,33 +97,42 @@ void WorkerImportScriptsClient::didReceiveData(const char* data, int len)
     m_script += m_decoder->decode(data, len);
 }
 
-void WorkerImportScriptsClient::didFinishLoading(unsigned long identifier)
+void WorkerScriptLoader::didFinishLoading(unsigned long identifier)
 {
     if (m_failed)
         return;
 
     if (m_decoder)
         m_script += m_decoder->flush();
+
+    m_identifier = identifier;
+    notifyFinished();
+}
+
+void WorkerScriptLoader::didFail(const ResourceError&)
+{
+    m_failed = true;
+    notifyFinished();
+}
+
+void WorkerScriptLoader::didFailRedirectCheck()
+{
+    m_failed = true;
+    notifyFinished();
+}
+
+void WorkerScriptLoader::didReceiveAuthenticationCancellation(const ResourceResponse&)
+{
+    m_failed = true;
+    notifyFinished();
+}
     
-    m_scriptExecutionContext->scriptImported(identifier, m_script);
-    m_scriptExecutionContext->addMessage(InspectorControllerDestination, JSMessageSource, LogMessageLevel, "Worker script imported: \"" + m_url + "\".", m_callerLineNumber, m_callerURL);
-}
-
-void WorkerImportScriptsClient::didFail(const ResourceError&)
+void WorkerScriptLoader::notifyFinished()
 {
-    m_failed = true;
+    if (m_client)
+        m_client->notifyFinished();
 }
 
-void WorkerImportScriptsClient::didFailRedirectCheck()
-{
-    m_failed = true;
-}
-
-void WorkerImportScriptsClient::didReceiveAuthenticationCancellation(const ResourceResponse&)
-{
-    m_failed = true;
-}
-
-}
+} // namespace WebCore
 
 #endif // ENABLE(WORKERS)

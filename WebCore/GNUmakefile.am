@@ -2282,10 +2282,11 @@ webcore_sources += \
 	WebCore/workers/WorkerObjectProxy.h \
 	WebCore/workers/WorkerRunLoop.cpp \
 	WebCore/workers/WorkerRunLoop.h \
+	WebCore/workers/WorkerScriptLoader.cpp \
+	WebCore/workers/WorkerScriptLoader.h \
+	WebCore/workers/WorkerScriptLoaderClient.h \
 	WebCore/workers/WorkerThread.cpp \
-	WebCore/workers/WorkerThread.h \
-	WebCore/workers/WorkerImportScriptsClient.cpp \
-	WebCore/workers/WorkerImportScriptsClient.h
+	WebCore/workers/WorkerThread.h
 endif
 
 # ----

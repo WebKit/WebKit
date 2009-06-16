@@ -38,14 +38,13 @@
 #include "EventException.h"
 #include "MessageEvent.h"
 #include "NotImplemented.h"
-#include "ResourceRequest.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
-#include "WorkerImportScriptsClient.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerObjectProxy.h"
+#include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
 #include "WorkerThreadableLoader.h"
 #include "XMLHttpRequestException.h"
@@ -274,20 +273,20 @@ void WorkerContext::importScripts(const Vector<String>& urls, const String& call
     Vector<KURL>::const_iterator end = completedURLs.end();
 
     for (Vector<KURL>::const_iterator it = completedURLs.begin(); it != end; ++it) {
-        ResourceRequest request(*it);
-        request.setHTTPMethod("GET");
-        request.setHTTPOrigin(securityOrigin);
-        WorkerImportScriptsClient client(scriptExecutionContext(), *it, callerURL, callerLine);
-        WorkerThreadableLoader::loadResourceSynchronously(this, request, client, AllowStoredCredentials, AllowDifferentRedirectOrigin);
-        
+        WorkerScriptLoader scriptLoader;
+        scriptLoader.loadSynchronously(scriptExecutionContext(), *it, AllowDifferentRedirectOrigin);
+
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
-        if (client.failed()) {
+        if (scriptLoader.failed()) {
             ec = XMLHttpRequestException::NETWORK_ERR;
             return;
         }
 
+        scriptExecutionContext()->scriptImported(scriptLoader.identifier(), scriptLoader.script());
+        scriptExecutionContext()->addMessage(InspectorControllerDestination, JSMessageSource, LogMessageLevel, "Worker script imported: \"" + *it + "\".", callerLine, callerURL);
+
         ScriptValue exception;
-        m_script->evaluate(ScriptSourceCode(client.script(), *it), &exception);
+        m_script->evaluate(ScriptSourceCode(scriptLoader.script(), *it), &exception);
         if (!exception.hasNoValue()) {
             m_script->setException(exception);
             return;

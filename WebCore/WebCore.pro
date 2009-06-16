@@ -1404,7 +1404,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
         workers/WorkerMessagingProxy.cpp \
         workers/WorkerRunLoop.cpp \
         workers/WorkerThread.cpp \
-        workers/WorkerImportScriptsClient.cpp
+        workers/WorkerScriptLoader.cpp
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {

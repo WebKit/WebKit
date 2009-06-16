@@ -9539,14 +9539,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\workers\WorkerImportScriptsClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\workers\WorkerImportScriptsClient.h"
-				>
-			</File>
-			<File
 				RelativePath="..\workers\WorkerLoaderProxy.h"
 				>
 			</File>
@@ -9576,6 +9568,18 @@
 			</File>
 			<File
 				RelativePath="..\workers\WorkerRunLoop.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerScriptLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerScriptLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\WorkerScriptLoaderClient.h"
 				>
 			</File>
 			<File

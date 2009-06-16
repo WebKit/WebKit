@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,35 +25,34 @@
  *
  */
 
-#ifndef WorkerImportScriptsClient_h
-#define WorkerImportScriptsClient_h
+#ifndef WorkerScriptLoader_h
+#define WorkerScriptLoader_h
 
 #if ENABLE(WORKERS)
 
 #include "ResourceResponse.h"
 #include "ScriptString.h"
 #include "TextResourceDecoder.h"
+#include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 
 namespace WebCore {
 
     class ScriptExecutionContext;
-    
-    class WorkerImportScriptsClient : public ThreadableLoaderClient {
+    class WorkerScriptLoaderClient;
+
+    class WorkerScriptLoader : public ThreadableLoaderClient {
     public:
-        WorkerImportScriptsClient(ScriptExecutionContext* scriptExecutionContext, const String& url, const String& callerURL, int callerLineNumber)
-            : m_scriptExecutionContext(scriptExecutionContext)
-            , m_url(url)
-            , m_callerURL(callerURL)
-            , m_callerLineNumber(callerLineNumber)
-            , m_failed(false)
-        {
-        }
+        WorkerScriptLoader();
+
+        void loadSynchronously(ScriptExecutionContext*, const String& url, RedirectOriginCheck);
+        void loadAsynchronously(ScriptExecutionContext*, const String& url, RedirectOriginCheck, WorkerScriptLoaderClient*);
 
         const String& script() const { return m_script; }
         bool failed() const { return m_failed; }
+        unsigned long identifier() const { return m_identifier; }
 
-        virtual void didReceiveResponse(const ResourceResponse& response);
+        virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char* data, int lengthReceived);
         virtual void didFinishLoading(unsigned long identifier);
         virtual void didFail(const ResourceError&);
@@ -60,18 +60,19 @@ namespace WebCore {
         virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
 
     private:
-        ScriptExecutionContext* m_scriptExecutionContext;
-        String m_url;
-        String m_callerURL;
-        int m_callerLineNumber;
+        void notifyFinished();
+
+        WorkerScriptLoaderClient* m_client;
+        RefPtr<ThreadableLoader> m_threadableLoader;
         String m_responseEncoding;        
         RefPtr<TextResourceDecoder> m_decoder;
         String m_script;
         bool m_failed;
+        unsigned long m_identifier;
     };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(WORKERS)
-#endif
 
+#endif // WorkerScriptLoader_h

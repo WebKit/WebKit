@@ -31,7 +31,6 @@
 
 #include "Worker.h"
 
-#include "CachedScript.h"
 #include "DOMWindow.h"
 #include "DocLoader.h"
 #include "Document.h"
@@ -45,6 +44,7 @@
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
 #include "WorkerContextProxy.h"
+#include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 
@@ -65,18 +65,9 @@ Worker::Worker(const String& url, ScriptExecutionContext* context, ExceptionCode
         return;
     }
 
-    // FIXME: Nested workers need loading support. Consider adopting ThreadableLoader here.
-    ASSERT(scriptExecutionContext()->isDocument());
-    Document* document = static_cast<Document*>(scriptExecutionContext());
-
-    m_cachedScript = document->docLoader()->requestScript(m_scriptURL, "UTF-8");
-    if (!m_cachedScript) {
-        dispatchErrorEvent();
-        return;
-    }
-
+    m_scriptLoader = new WorkerScriptLoader();
+    m_scriptLoader->loadAsynchronously(scriptExecutionContext(), m_scriptURL, RequireSameRedirectOrigin, this);
     setPendingActivity(this);  // The worker context does not exist while loading, so we must ensure that the worker object is not collected, as well as its event listeners.
-    m_cachedScript->addClient(this);
 }
 
 Worker::~Worker()
@@ -112,17 +103,14 @@ bool Worker::hasPendingActivity() const
     return m_contextProxy->hasPendingActivity() || ActiveDOMObject::hasPendingActivity();
 }
 
-void Worker::notifyFinished(CachedResource* unusedResource)
+void Worker::notifyFinished()
 {
-    ASSERT_UNUSED(unusedResource, unusedResource == m_cachedScript);
-
-    if (m_cachedScript->errorOccurred())
+    if (m_scriptLoader->failed())
         dispatchErrorEvent();
     else
-        m_contextProxy->startWorkerContext(m_scriptURL, scriptExecutionContext()->userAgent(m_scriptURL), m_cachedScript->script());
+        m_contextProxy->startWorkerContext(m_scriptURL, scriptExecutionContext()->userAgent(m_scriptURL), m_scriptLoader->script());
 
-    m_cachedScript->removeClient(this);
-    m_cachedScript = 0;
+    m_scriptLoader = 0;
 
     unsetPendingActivity(this);
 }
