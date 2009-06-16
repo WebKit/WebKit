@@ -1,5 +1,11 @@
 2009-06-16  Xan Lopez  <xlopez@igalia.com>
 
+        Fix typo in test name.
+
+        * platform/gtk/Skipped:
+
+2009-06-16  Xan Lopez  <xlopez@igalia.com>
+
         Disable new tests.
 
         * platform/gtk/Skipped:
