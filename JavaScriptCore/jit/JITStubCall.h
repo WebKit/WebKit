@@ -107,9 +107,8 @@ namespace JSC {
 
         JIT::Call call()
         {
-            ASSERT(m_jit->m_bytecodeIndex != (unsigned)-1); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-
 #if ENABLE(OPCODE_SAMPLING)
+            ASSERT(m_jit->m_bytecodeIndex != (unsigned)-1);
             m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, true);
 #endif
 

@@ -1,1 +1,23 @@
+2009-06-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Initialize m_bytecodeIndex to -1 in JIT, and correctly initialize
+        it for each type of stub using the return address to find the correct
+        offset.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdTransition):
+        (JSC::JIT::compileCTIMachineTrampolines):
+        (JSC::JIT::compilePatchGetArrayLength):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::call):
+
 == Rolled over to ChangeLog-2009-06-16 ==
