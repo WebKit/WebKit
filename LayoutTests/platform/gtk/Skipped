@@ -1588,6 +1588,7 @@ fast/canvas/canvas-transform-skewed.html
 fast/canvas/pointInPath.html
 fast/canvas/set-colors.html
 fast/canvas/toDataURL-supportedTypes.html
+fast/css/compare-content-style.html
 fast/css/hover-affects-child.html
 fast/css/invalid-percentage-property.html
 fast/css/text-align.html
