@@ -2,6 +2,24 @@
 
         Reviewed by Anders Carlsson.
 
+        Bring CustomGetPropertyNames more inline with the other
+        extended attributes prefixed with Custom, by making it 
+        require a complete implementation.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getPropertyNames):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getPropertyNames):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getPropertyNames):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::getPropertyNames):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2009-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Remove commented out ondataunavailable attribute event listener which
         has now been removed from HTML 5.
 

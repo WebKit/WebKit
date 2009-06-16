@@ -305,12 +305,12 @@ bool JSDOMWindow::deleteProperty(ExecState* exec, const Identifier& propertyName
     return Base::deleteProperty(exec, propertyName);
 }
 
-bool JSDOMWindow::customGetPropertyNames(ExecState* exec, PropertyNameArray&)
+void JSDOMWindow::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     // Only allow the window to enumerated by frames in the same origin.
     if (!allowsAccessFrom(exec))
-        return true;
-    return false;
+        return;
+    Base::getPropertyNames(exec, propertyNames);
 }
 
 bool JSDOMWindow::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const

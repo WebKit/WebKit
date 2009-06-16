@@ -510,7 +510,6 @@ sub GenerateHeader
 
     # Custom getPropertyNames function
     push(@headerContent, "    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n") if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"});
-    push(@headerContent, "    bool customGetPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n") if $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
 
     # Custom getPropertyAttributes function
     push(@headerContent, "    virtual bool getPropertyAttributes(JSC::ExecState*, const JSC::Identifier&, unsigned& attributes) const;\n") if $dataNode->extendedAttributes->{"CustomGetPropertyAttributes"};
@@ -1320,13 +1319,9 @@ sub GenerateImplementation
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
+    if (($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) && !$dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
         push(@implContent, "void ${className}::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)\n");
         push(@implContent, "{\n");
-        if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"}) {
-            push(@implContent, "    if (customGetPropertyNames(exec, propertyNames))\n");
-            push(@implContent, "        return;\n");
-        }
         if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
             push(@implContent, "    for (unsigned i = 0; i < static_cast<${implClassName}*>(impl())->length(); ++i)\n");
             push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");

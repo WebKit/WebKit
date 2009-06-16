@@ -108,12 +108,12 @@ bool JSHistory::deleteProperty(ExecState* exec, const Identifier& propertyName)
     return Base::deleteProperty(exec, propertyName);
 }
 
-bool JSHistory::customGetPropertyNames(ExecState* exec, PropertyNameArray&)
+void JSHistory::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
     // Only allow the history object to enumerated by frames in the same origin.
     if (!allowsAccessFromFrame(exec, impl()->frame()))
-        return true;
-    return false;
+        return;
+    Base::getPropertyNames(exec, propertyNames);
 }
 
 } // namespace WebCore
