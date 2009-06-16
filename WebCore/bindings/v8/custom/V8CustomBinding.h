@@ -450,6 +450,16 @@ namespace WebCore {
 
         DECLARE_INDEXED_PROPERTY_GETTER(ClientRectList);
 
+#if ENABLE(DOM_STORAGE)
+        DECLARE_INDEXED_PROPERTY_GETTER(Storage);
+        DECLARE_INDEXED_PROPERTY_SETTER(Storage);
+        DECLARE_INDEXED_PROPERTY_DELETER(Storage);
+        DECLARE_NAMED_PROPERTY_GETTER(Storage);
+        DECLARE_NAMED_PROPERTY_SETTER(Storage);
+        DECLARE_NAMED_PROPERTY_DELETER(Storage);
+        static v8::Handle<v8::Array> v8StorageNamedPropertyEnumerator(const v8::AccessorInfo& info);
+#endif
+
 #if ENABLE(SVG)
         DECLARE_PROPERTY_ACCESSOR_GETTER(SVGLengthValue);
         DECLARE_CALLBACK(SVGLengthConvertToSpecifiedUnits);

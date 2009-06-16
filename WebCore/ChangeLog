@@ -1,3 +1,14 @@
+2009-06-15  Jeremy Orlow (jorlow@chromium.org)
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26356
+        Define the functions in V8CustomBindings.h.  "Forgot" this in my
+        earlier patch since it wasn't fully upstreamed when I wrote the
+        patch.
+
+        * bindings/v8/custom/V8CustomBinding.h:
+
 2009-06-15  Andre Boule  <aboule@apple.com>
 
         Reviewed by Cameron Zwarich and Dan Bernstein.
