@@ -1,3 +1,14 @@
+2009-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26437
+
+        Make the commit-log-editor match the ambient line endings in commit
+        messages.
+
+        * Scripts/commit-log-editor:
+
 2009-06-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

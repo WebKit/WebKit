@@ -36,6 +36,8 @@ use lib $FindBin::Bin;
 use VCSUtils;
 use webkitdirs;
 
+sub normalizeLineEndings($$);
+
 my $log = $ARGV[0];
 
 my $baseDir = baseProductDir();
@@ -80,6 +82,13 @@ while (<LOG>) {
     push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && (/^M....(.*ChangeLog)$/ || /^#\tmodified:   (.*ChangeLog)/) && !/-ChangeLog/;
 }
 close LOG;
+
+# We want to match the line endings of the existing log file in case they're
+# different from perl's line endings.
+my $endl = "\n";
+if ($logContents =~ /(\r?\n)/g) {
+    $endl = $1;
+}
 
 # Don't change anything if there's already a log message
 # (as can happen with git-commit --amend)
@@ -134,11 +143,11 @@ open NEWLOG, ">$log.edit" or die;
 for my $sortKey (sort keys %changeLogSort) {
     my $label = $changeLogSort{$sortKey};
     if (keys %changeLogSort > 1) {
-        print NEWLOG "\n" if !$first;
+        print NEWLOG normalizeLineEndings("\n", $endl) if !$first;
         $first = 0;
-        print NEWLOG "$label:\n\n";
+        print NEWLOG normalizeLineEndings("$label:\n\n", $endl);
     }
-    print NEWLOG $changeLogContents{$label};
+    print NEWLOG normalizeLineEndings($changeLogContents{$label}, $endl);
 }
 print NEWLOG $logContents;
 close NEWLOG;
@@ -186,4 +195,11 @@ sub topLevelSourceDirectory
         $path =~ s/^\/?(branches\/[^\/]*|trunk)\/?//;
         return File::Spec->rel2abs(File::Spec->catdir(map { ".." } File::Spec->splitdir($path)));
     }
+}
+
+sub normalizeLineEndings($$)
+{
+    my ($string, $endl) = @_;
+    $string =~ s/\r?\n/$endl/g;
+    return $string;
 }
