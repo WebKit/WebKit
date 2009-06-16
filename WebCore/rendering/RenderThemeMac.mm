@@ -1478,12 +1478,10 @@ bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const RenderObject::P
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
 
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
-    if (!mediaElement)
-        return false;
-    
-    LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(mediaElement->muted() ? MediaUnMuteButton : MediaMuteButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
+    if (MediaControlPlayButtonElement* btn = static_cast<MediaControlPlayButtonElement*>(node)) {
+        LocalCurrentGraphicsContext localContext(paintInfo.context);
+        wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
+    }
     return false;
 }
 
@@ -1494,12 +1492,10 @@ bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const RenderObject::P
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
 
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
-    if (!mediaElement)
-        return false;
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(mediaElement->canPlay() ? MediaPlayButton : MediaPauseButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
+    if (MediaControlPlayButtonElement* btn = static_cast<MediaControlPlayButtonElement*>(node)) {
+        LocalCurrentGraphicsContext localContext(paintInfo.context);
+        wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
+    }
     return false;
 }
 

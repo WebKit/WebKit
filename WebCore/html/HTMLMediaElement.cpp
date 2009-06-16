@@ -1130,6 +1130,14 @@ bool HTMLMediaElement::canPlay() const
     return paused() || ended() || m_readyState < HAVE_METADATA;
 }
 
+float HTMLMediaElement::percentLoaded() const
+{
+    if (!m_player)
+        return 0;
+    float duration = m_player->duration();
+    return duration ? m_player->maxTimeBuffered() / duration : 0;
+}
+
 bool HTMLMediaElement::havePotentialSourceChild()
 {
     // Stash the current <source> node so we can restore it after checking

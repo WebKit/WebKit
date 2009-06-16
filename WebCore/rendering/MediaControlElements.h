@@ -93,6 +93,7 @@ public:
     void update();
     void updateStyle();
     bool hitTest(const IntPoint& absPoint);
+    MediaControlElementType displayType() const { return m_displayType; }
 
 protected:
     virtual void updateDisplayType() { }

@@ -131,6 +131,8 @@ public:
 
     bool canPlay() const;
 
+    float percentLoaded() const;
+
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
     void deliverNotification(MediaPlayerProxyNotificationType notification);

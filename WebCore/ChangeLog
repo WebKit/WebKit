@@ -1,3 +1,25 @@
+2009-06-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for <rdar://problem/6890126> Theme code should fetch the MediaControlElementType from 
+        the MediaControlInputElement, rather than computing it again
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::percentLoaded): New, utility function for controller implementation.
+        * html/HTMLMediaElement.h:
+
+        * rendering/MediaControlElements.h:
+        (WebCore::MediaControlInputElement::displayType): New, return m_displayType.
+
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart): Stop using MediaPlayer object, get button
+        state from the button itself and get movie state from HTMLMediaElement.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMediaMuteButton): Get state from button instead of MediaPlayer.
+        (WebCore::RenderThemeMac::paintMediaPlayButton): Ditto.
+
 2009-06-16  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
