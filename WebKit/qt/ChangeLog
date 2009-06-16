@@ -1,3 +1,13 @@
+2009-06-15  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Support the back/forward/stop/refresh multimedia keys and accept the
+        event when handling backspace and shift backspace as we should.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::keyPressEvent):
+
 2009-06-15  Andre Pedralho  <andre.pedralho@openbossa.org>
 
         Reviewed by Adam Treat.
