@@ -429,7 +429,7 @@ void JIT::privateCompile()
 
     ASSERT(m_jmpTable.isEmpty());
 
-    PatchBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()));
+    LinkBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()));
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -851,7 +851,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #endif
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    PatchBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()));
+    LinkBuffer patchBuffer(this, m_globalData->executableAllocator.poolForSize(m_assembler.size()));
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     patchBuffer.link(array_failureCases1Call, FunctionPtr(JITStubs::cti_op_get_by_id_array_fail));

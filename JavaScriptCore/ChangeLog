@@ -1,5 +1,41 @@
 2009-06-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber Stamped by Sam Weinig.
+
+        Rename PatchBuffer to LinkBuffer.  Previously our terminology has been a little
+        mixed up, but we have decided to fix on refering to the process that takes place
+        at the end of code generation as 'linking', and on any modifications that take
+        place later (and once the code has potentially already been executed) as 'patching'.
+
+        However, the term 'PatchBuffer' is already in use, and needs to be repurposed.
+
+        To try to minimize confusion, we're going to switch the terminology over in stages,
+        so for now we'll refer to later modifications as 'repatching'.  This means that the
+        new 'PatchBuffer' has been introduced with the name 'RepatchBuffer' instead.
+
+        This patch renames the old 'PatchBuffer' to 'LinkBuffer'.  We'll leave ToT in this
+        state for a week or so to try to avoid to much overlap of the meaning of the term
+        'PatchBuffer', then will come back and rename 'RepatchBuffer'.
+
+        * assembler/ARMv7Assembler.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::LinkBuffer::LinkBuffer):
+        (JSC::AbstractMacroAssembler::LinkBuffer::~LinkBuffer):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::compile):
+
+2009-06-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Having moved most of their functionality into the RepatchBuffer class,

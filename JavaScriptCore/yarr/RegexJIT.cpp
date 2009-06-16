@@ -1358,7 +1358,7 @@ public:
     {
         generate();
 
-        PatchBuffer patchBuffer(this, globalData->executableAllocator.poolForSize(size()));
+        LinkBuffer patchBuffer(this, globalData->executableAllocator.poolForSize(size()));
 
         for (unsigned i = 0; i < m_backtrackRecords.size(); ++i)
             patchBuffer.patch(m_backtrackRecords[i].dataLabel, patchBuffer.locationOf(m_backtrackRecords[i].backtrackLocation));

@@ -1520,7 +1520,7 @@ public:
         linkWithOffset(location, relative);
     }
 
-    // bah, this mathod should really be static, since it is used by the PatchBuffer.
+    // bah, this mathod should really be static, since it is used by the LinkBuffer.
     // return a bool saying whether the link was successful?
     static void linkCall(void* code, JmpSrc from, void* to)
     {
