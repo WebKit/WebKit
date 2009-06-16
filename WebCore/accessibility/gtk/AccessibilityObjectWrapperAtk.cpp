@@ -96,11 +96,6 @@ static AccessibilityObject* core(AtkAction* action)
     return core(ATK_OBJECT(action));
 }
 
-static AccessibilityObject* core(AtkStreamableContent* streamable)
-{
-    return core(ATK_OBJECT(streamable));
-}
-
 static AccessibilityObject* core(AtkText* text)
 {
     return core(ATK_OBJECT(text));
@@ -784,40 +779,6 @@ static void atk_editable_text_interface_init(AtkEditableTextIface* iface)
     iface->paste_text = webkit_accessible_editable_text_paste_text;
 }
 
-// StreamableContent
-
-static gint webkit_accessible_streamable_content_get_n_mime_types(AtkStreamableContent* streamable)
-{
-    notImplemented();
-    return 0;
-}
-
-static G_CONST_RETURN gchar* webkit_accessible_streamable_content_get_mime_type(AtkStreamableContent* streamable, gint i)
-{
-    notImplemented();
-    return "";
-}
-
-static GIOChannel* webkit_accessible_streamable_content_get_stream(AtkStreamableContent* streamable, const gchar* mime_type)
-{
-    notImplemented();
-    return NULL;
-}
-
-static G_CONST_RETURN gchar* webkit_accessible_streamable_content_get_uri(AtkStreamableContent* streamable, const gchar* mime_type)
-{
-    notImplemented();
-    return NULL;
-}
-
-static void atk_streamable_content_interface_init(AtkStreamableContentIface* iface)
-{
-    iface->get_n_mime_types = webkit_accessible_streamable_content_get_n_mime_types;
-    iface->get_mime_type = webkit_accessible_streamable_content_get_mime_type;
-    iface->get_stream = webkit_accessible_streamable_content_get_stream;
-    iface->get_uri = webkit_accessible_streamable_content_get_uri;
-}
-
 static void contentsToAtk(AccessibilityObject* coreObject, AtkCoordType coordType, IntRect rect, gint* x, gint* y, gint* width = 0, gint* height = 0)
 {
     FrameView* frameView = coreObject->documentFrameView();
@@ -922,8 +883,6 @@ static void atk_image_interface_init(AtkImageIface* iface)
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_action_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
-    {(GInterfaceInitFunc)atk_streamable_content_interface_init,
-     (GInterfaceFinalizeFunc) NULL, NULL},
     {(GInterfaceInitFunc)atk_editable_text_interface_init,
      (GInterfaceFinalizeFunc) NULL, NULL},
     {(GInterfaceInitFunc)atk_text_interface_init,
@@ -936,7 +895,6 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
 
 enum WAIType {
     WAI_ACTION,
-    WAI_STREAMABLE,
     WAI_EDITABLE_TEXT,
     WAI_TEXT,
     WAI_COMPONENT,
@@ -948,8 +906,6 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
   switch (type) {
   case WAI_ACTION:
       return ATK_TYPE_ACTION;
-  case WAI_STREAMABLE:
-      return ATK_TYPE_STREAMABLE_CONTENT;
   case WAI_EDITABLE_TEXT:
       return ATK_TYPE_EDITABLE_TEXT;
   case WAI_TEXT:
@@ -966,9 +922,6 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
 static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
 {
     guint16 interfaceMask = 0;
-
-    // Streamable is always supported (FIXME: This is wrong)
-    interfaceMask |= 1 << WAI_STREAMABLE;
 
     // Component interface is always supported
     interfaceMask |= 1 << WAI_COMPONENT;

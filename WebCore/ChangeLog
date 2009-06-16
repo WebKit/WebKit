@@ -1,1 +1,14 @@
+2009-06-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Remove dummy AtkStreamableContent implementation.
+
+        It's completely empty, we'll add it back (and conditionally
+        instead of unconditionally) when it does something.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (GetAtkInterfaceTypeFromWAIType):
+        (getInterfaceMaskFromObject):
+
 == Rolled over to ChangeLog-2009-06-16 ==
