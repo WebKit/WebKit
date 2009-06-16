@@ -1,0 +1,1350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang=en>
+ <head>
+  <title>CSS Transitions Module Level 3</title>
+  <link href=default.css rel=stylesheet type="text/css">
+
+  <style type="text/css">
+    .rhs { white-space: pre-wrap; }
+    code { font-size: inherit; }
+    #box-shadow-samples td { background: white; color: black; }
+    
+    table {
+      border-collapse: collapse;
+    }
+    td {
+      padding: 0.2em 1em;
+      border: 1px solid black;
+    }
+  </style>
+  <link href="http://www.w3.org/StyleSheets/TR/W3C-ED.css" rel=stylesheet
+  type="text/css">
+
+ <body>
+  <div class=head> <!--begin-logo-->
+   <p><a href="http://www.w3.org/"><img alt=W3C height=48
+    src="http://www.w3.org/Icons/w3c_home" width=72></a> <!--end-logo-->
+
+   <h1>CSS Transitions Module Level 3</h1>
+
+   <h2 class="no-num no-toc" id=longstatus-date>Editor's Draft 14 April 2009</h2>
+
+   <dl>
+    <dt>This version:
+
+    <dd> <a href="http://www.w3.org/TR/2009/ED-css3-transitions-20090414">
+     http://dev.w3.org/csswg/css3-transitions/</a>
+     <!--http://www.w3.org/TR/2009/WD-css3-transitions-20090414-->
+
+    <dt>Latest version:
+
+    <dd><a href="http://www.w3.org/TR/css3-transitions">
+     http://www.w3.org/TR/css3-transitions</a>
+
+    <dt>Previous version:
+
+    <dd><a href="http://www.w3.org/TR/2009/WD-css3-transitions-20090320/">
+     http://www.w3.org/TR/2009/WD-css3-transitions-20090320/</a>
+
+    <dt id=editors-list>Editors:
+
+    <dd><a href="mailto:dino@apple.com">Dean Jackson</a> (<a
+     href="http://www.apple.com/">Apple Inc</a>)
+
+    <dd><a href="mailto:hyatt@apple.com">David Hyatt</a> (<a
+     href="http://www.apple.com/">Apple Inc</a>)
+
+    <dd><a href="mailto:cmarrin@apple.com">Chris Marrin</a> (<a
+     href="http://www.apple.com/">Apple Inc</a>)
+   </dl>
+   <!--begin-copyright-->
+   <p class=copyright><a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright"
+    rel=license>Copyright</a> &copy; 2009 <a
+    href="http://www.w3.org/"><acronym title="World Wide Web
+    Consortium">W3C</acronym></a><sup>&reg;</sup> (<a
+    href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute
+    of Technology">MIT</acronym></a>, <a
+    href="http://www.ercim.org/"><acronym title="European Research Consortium
+    for Informatics and Mathematics">ERCIM</acronym></a>, <a
+    href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+    <a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+    and <a
+    href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+    use</a> rules apply.</p>
+   <!--end-copyright-->
+   <hr title="Separator for header">
+  </div>
+
+  <h2 class="no-num no-toc" id=abstract>Abstract</h2>
+
+  <p>CSS Transitions allows property changes in CSS values to occur smoothly
+   over a specified duration.
+
+  <h2 class="no-num no-toc" id=status>Status of this document</h2>
+  <!--begin-status-->
+
+  <p>This is a public copy of the editors' draft. It is provided for
+   discussion only and may change at any moment. Its publication here does
+   not imply endorsement of its contents by W3C. Don't cite this document
+   other than as work in progress.
+
+  <p>The (<a
+   href="http://lists.w3.org/Archives/Public/www-style/">archived</a>) public
+   mailing list <a href="mailto:www-style@w3.org">www-style@w3.org</a> (see
+   <a href="http://www.w3.org/Mail/Request">instructions</a>) is preferred
+   for discussion of this specification. When sending e-mail, please put the
+   text &#8220;css3-transitions&#8221; in the subject, preferably like this:
+   &#8220;[<!---->css3-transitions<!---->] <em>&hellip;summary of
+   comment&hellip;</em>&#8221;
+
+  <p>This document was produced by the <a href="/Style/CSS/members">CSS
+   Working Group</a> (part of the <a href="/Style/">Style Activity</a>).
+
+  <p>This document was produced by a group operating under the <a
+   href="/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent
+   Policy</a>. W3C maintains a <a href="/2004/01/pp-impl/32061/status"
+   rel=disclosure>public list of any patent disclosures</a> made in
+   connection with the deliverables of the group; that page also includes
+   instructions for disclosing a patent. An individual who has actual
+   knowledge of a patent which the individual believes contains <a
+   href="/Consortium/Patent-Policy-20040205/#def-essential">Essential
+   Claim(s)</a> must disclose the information in accordance with <a
+   href="/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the
+   W3C Patent Policy</a>.</p>
+  <!--end-status-->
+
+  <h2 class="no-num no-toc" id=contents>Table of contents</h2>
+  <!--begin-toc-->
+
+  <ul class=toc>
+   <li><a href="#introduction"><span class=secno>1 </span>Introduction</a>
+
+   <li><a href="#transitions-"><span class=secno>2 </span> Transitions </a>
+    <ul class=toc>
+     <li><a href="#the-transition-property-property-"><span class=secno>2.1
+      </span> The <span class=prop-name>&lsquo;<code
+      class=property>transition-property</code>&rsquo;</span> Property </a>
+
+     <li><a href="#the-transition-duration-property-"><span class=secno>2.2
+      </span> The <span class=prop-name>&lsquo;<code
+      class=property>transition-duration</code>&rsquo;</span> Property </a>
+
+     <li><a href="#transition-timing-function_tag"><span class=secno>2.3
+      </span> The <span class=prop-name>&lsquo;<code
+      class=property>transition-timing-function</code>&rsquo;</span> Property
+      </a>
+
+     <li><a href="#the-transition-delay-property-"><span class=secno>2.4
+      </span> The <span class=prop-name>&lsquo;<code
+      class=property>transition-delay</code>&rsquo;</span> Property </a>
+
+     <li><a href="#the-transition-shorthand-property-"><span class=secno>2.5
+      </span> The <span class=prop-name>&lsquo;<code
+      class=property>transition</code>&rsquo;</span> Shorthand Property </a>
+    </ul>
+
+   <li><a href="#transition-events-"><span class=secno>3 </span> Transition
+    Events </a>
+
+   <li><a href="#animation-of-property-types-"><span class=secno>4 </span>
+    Animation of property types </a>
+
+   <li><a href="#animatable-properties-"><span class=secno>5 </span>
+    Animatable properties </a>
+    <ul class=toc>
+     <li><a href="#properties-from-css-"><span class=secno>5.1 </span>
+      Properties from CSS </a>
+
+     <li><a href="#properties-from-svg-"><span class=secno>5.2 </span>
+      Properties from SVG </a>
+    </ul>
+
+   <li><a href="#references"><span class=secno>6 </span>References</a>
+    <ul class=toc>
+     <li class=no-num><a href="#normative-references">Normative
+      references</a>
+
+     <li class=no-num><a href="#other-references">Other references</a>
+    </ul>
+
+   <li class=no-num><a href="#property-index">Property index</a>
+
+   <li class=no-num><a href="#index">Index</a>
+  </ul>
+  <!--end-toc-->
+
+  <h2 id=introduction><span class=secno>1 </span>Introduction</h2>
+
+  <p><em>This section is not normative.</em>
+
+  <p> This document introduces new CSS features to enable <em>implicit
+   transitions</em>, which describe how CSS properties can be made to change
+   smoothly from one value to another over a given duration.
+
+  <h2 id=transitions-><span class=secno>2 </span> Transitions</h2>
+
+  <p> Normally when the value of a CSS property changes, the rendered result
+   is instantly updated, with the affected elements immediately changing from
+   the old property value to the new property value. This section describes a
+   way to specify transitions using new CSS properties. These properties are
+   used to animate smoothly from the old state to the new state over time.
+
+  <p> For example, suppose that transitions of one second have been defined
+   on the <span class=prop-name>&lsquo;<code
+   class=property>left</code>&rsquo;</span> and <span
+   class=prop-name>&lsquo;<code
+   class=property>background-color</code>&rsquo;</span> properties. The
+   following diagram illustrates the effect of updating those properties on
+   an element, in this case moving it to the right and changing the
+   background from red to blue. This assumes other transition parameters
+   still have their default values.
+
+  <div class=figure> <img alt="" src=transition1.png></div>
+
+  <p class=caption> Transitions of <span class=prop-name>&lsquo;<code
+   class=property>left</code>&rsquo;</span> and <span
+   class=prop-name>&lsquo;<code
+   class=property>background-color</code>&rsquo;</span>
+
+  <p> Transitions are a presentational effect. The computed value of a
+   property transitions over time from the old value to the new value.
+   Therefore if a script queries the computed style of a property as it is
+   transitioning, it will see an intermediate value that represents the
+   current animated value of the property.
+
+  <p> Only animatable CSS properties can be transitioned. See the table at
+   the end of this document for a list of properties that are animatable.
+
+  <p> The transition for a property is defined using a number of new
+   properties. For example:
+
+  <div class=example>
+   <p style="display:none"> Example(s):</p>
+
+   <pre>
+  div {
+    transition-property: opacity;
+    transition-duration: 2s;
+  }
+  </pre>
+   The above example defines a transition on the <span
+   class=prop-name>&lsquo;<code class=property>opacity</code>&rsquo;</span>
+   property that, when a new value is assigned to it, will cause a smooth
+   change between the old value and the new value over a period of two
+   seconds.</div>
+
+  <p> Each of the transition properties accepts a comma-separated list,
+   allowing multiple transitions to be defined, each acting on a different
+   property. In this case, the individual transitions take their parameters
+   from the same index in all the lists. For example:
+
+  <div class=example>
+   <p style="display:none"> Example(s):</p>
+
+   <pre>
+  div {
+    transition-property: opacity, left;
+    transition-duration: 2s, 4s;
+  }
+
+  </pre>
+   This will cause the <span class=prop-name>&lsquo;<code
+   class=property>opacity</code>&rsquo;</span> property to transition over a
+   period of two seconds and the left property to transition over a period of
+   four seconds.</div>
+  <!-- ======================================================================================================= -->
+
+  <h3 id=the-transition-property-property-><span class=secno>2.1 </span> The
+   <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-property">transition-property</a></code>&rsquo;</span>
+   Property</h3>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-property">transition-property</a></code>&rsquo;</span>
+   property specifies the name of the CSS property to which the transition is
+   applied.
+
+  <div class=issue> We may ultimately want to support a keypath syntax for
+   this property. A keypath syntax would enable different transitions to be
+   specified for components of a property. For example the blur of a shadow
+   could have a different transition than the color of a shadow.</div>
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=transition-property>transition-property</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> none | all | [ &lt;IDENT&gt; ] [ &lsquo;<code
+      class=css>,</code>&rsquo; &lt;IDENT&gt; ]*
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> all
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> N/A
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+
+  <p> A value of &lsquo;<code class=property>none</code>&rsquo; means that no
+   property will transition. A value of &lsquo;<code
+   class=property>all</code>&rsquo; means that every property that is able to
+   undergo a transition will do so. Otherwise, a list of properties to be
+   transitioned is given.
+
+  <div class=issue> We need to generate a list of properties that can be
+   transitioned.</div>
+
+  <div class=issue> Is "none" even a useful value if the initial value is
+   "all"? The syntax is more elegant if transition-duration defaults to 0 and
+   this property defaults to "all", but another option is to default this
+   property to "none" and duration to something reasonable, e.g., 250ms. This
+   would force an author to specify transition-property in the shorthand all
+   the time though.</div>
+  <!-- ======================================================================================================= -->
+
+  <h3 id=the-transition-duration-property-><span class=secno>2.2 </span> The
+   <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-duration">transition-duration</a></code>&rsquo;</span>
+   Property</h3>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-duration">transition-duration</a></code>&rsquo;</span>
+   property defines the length of time that a transition takes.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=transition-duration>transition-duration</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> &lt;time&gt; [, &lt;time&gt;]*
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> 0
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> N/A
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+
+  <p> This property specifies how long the transition from the old value to
+   the new value should take. By default the value is &lsquo;<code
+   class=css>0</code>&rsquo;, meaning that the transition is immediate (i.e.
+   there will be no animation). A negative value for <a class=prop-name
+   href="#transition-duration">transition-duration</a> is treated as
+   &lsquo;<code class=css>0</code>&rsquo;.</p>
+  <!-- =======================================================================================================   
+        -->
+
+  <h3 id="transition-timing-function_tag"><span class=secno>2.3 </span> The
+   <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-timing-function">transition-timing-function</a></code>&rsquo;</span>
+   Property</h3>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-timing-function">transition-timing-function</a></code>&rsquo;</span>
+   property describes how the intermediate values used during a transition
+   will be calculated. It allows for a transition to change speed over its
+   duration. These effects are commonly called <em>easing</em> functions. In
+   either case, a mathematical function that provides a smooth curve is used.
+   
+
+  <p> The timing function is specified using a <a
+   href="http://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B.C3.A9zier_curves">cubic
+   bezier curve</a>, which is defined by four control points, P<sub>0</sub>
+   through P<sub>3</sub> (see Figure 1). P<sub>0</sub> and P<sub>3</sub> are
+   always set to (0,0) and (1,1). The <span class=prop-name>&lsquo;<code
+   class=property><a
+   href="#transition-timing-function">transition-timing-function</a></code>&rsquo;</span>
+   property is used to specify the values for points P<sub>1</sub> and
+   P<sub>2</sub>. These can be set to preset values using the keywords listed
+   below, or can be set to specific values using the <span
+   class=prop-value>&lsquo;<code
+   class=property>cubic-bezier</code>&rsquo;</span> function. In the <span
+   class=prop-value>&lsquo;<code
+   class=property>cubic-bezier</code>&rsquo;</span> function, P<sub>1</sub>
+   and P<sub>2</sub> are each specified by both an X and Y value.
+
+  <div class=figure> <img alt="The timing function is a smooth curve from
+   point P0 = (0,0) to point P3 = (1,1). The length and orientation of the
+   line segment P0-P1 determines the tangent and the curvature of the curve
+   at P0 and the line segment P2-P3 does the same at P3."
+   src=TimingFunction.png></div>
+
+  <p class=caption> Timing Function Control Points
+
+  <p> The timing function takes as its input the current elapsed percentage
+   of the transition duration and outputs a percentage that determines how
+   close the transition is to its goal state.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=transition-timing-function>transition-timing-function</dfn>
+      
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> ease | linear | ease-in | ease-out | ease-in-out |
+      cubic-bezier(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;,
+      &lt;number&gt;) [, ease | linear | ease-in | ease-out | ease-in-out |
+      cubic-bezier(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;,
+      &lt;number&gt;)]*
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> ease
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> N/A
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+
+  <p> The timing functions have the following definitions.
+
+  <dl>
+   <dt> ease
+
+   <dd> The ease function is equivalent to cubic-bezier(0.25, 0.1, 0.25,
+    1.0).
+
+   <dt> linear
+
+   <dd> The linear function is equivalent to cubic-bezier(0.0, 0.0, 1.0,
+    1.0).
+
+   <dt> ease-in
+
+   <dd> The ease-in function is equivalent to cubic-bezier(0.42, 0, 1.0,
+    1.0).
+
+   <dt> ease-out
+
+   <dd> The ease-out function is equivalent to cubic-bezier(0, 0, 0.58, 1.0).
+    
+
+   <dt> ease-in-out
+
+   <dd> The ease-in-out function is equivalent to cubic-bezier(0.42, 0, 0.58,
+    1.0)
+
+   <dt> cubic-bezier
+
+   <dd> Specifies a <a
+    href="http://en.wikipedia.org/wiki/B%C3%A9zier_curve">cubic-bezier
+    curve</a>. The four values specify points P<sub>1</sub> and P<sub>2</sub>
+    of the curve as (x1, y1, x2, y2). All values must be in the range [0, 1]
+    or the definition is invalid.
+  </dl>
+  <!-- ======================================================================================================= -->
+
+  <h3 id=the-transition-delay-property-><span class=secno>2.4 </span> The
+   <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-delay">transition-delay</a></code>&rsquo;</span>
+   Property</h3>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-delay">transition-delay</a></code>&rsquo;</span>
+   property defines when the transition will start. It allows a transition to
+   begin execution some some period of time from when it is applied. A <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#transition-delay">transition-delay</a></code>&rsquo;</span> value
+   of &lsquo;<code class=css>0</code>&rsquo; means the transition will
+   execute as soon as the property is changed. Otherwise, the value specifies
+   an offset from the moment the property is changed, and the transition will
+   delay execution by that offset.
+
+  <p> If the value for <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition-delay">transition-delay</a></code>&rsquo;</span> is a
+   negative time offset then the transition will execute the moment the
+   property is changed, but will appear to have begun execution at the
+   specified offset. That is, the transition will appear to begin part-way
+   through its play cycle. In the case where a transition has implied
+   starting values and a negative <span class=prop-name>&lsquo;<code
+   class=property><a
+   href="#transition-delay">transition-delay</a></code>&rsquo;</span>, the
+   starting values are taken from the moment the property is changed.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=transition-delay>transition-delay</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> &lt;time&gt; [, &lt;time&gt;]*
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> 0
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> N/A
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+  <!-- ======================================================================================================= -->
+
+  <h3 id=the-transition-shorthand-property-><span class=secno>2.5 </span> The
+   <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition">transition</a></code>&rsquo;</span> Shorthand Property</h3>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#transition">transition</a></code>&rsquo;</span> shorthand property
+   combines the four properties described above into a single property.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=transition>transition</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> [&lt;transition-property&gt; || &lt;transition-duration&gt; ||
+      &lt;transition-timing-function&gt; || &lt;transition-delay&gt; [,
+      [&lt;transition-property&gt; || &lt;transition-duration&gt; ||
+      &lt;transition-timing-function&gt; || &lt;transition-delay&gt;]]*
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> see individual properties
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> N/A
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+
+  <div class=issue> What should happen when a value is changed midway through
+   a transition? One option is to simply begin a new transition from the
+   current position. However things get interesting when from/to values are
+   being flipped. For example you'd like symmetry on fade-in/fade-out hover
+   effects if the user rolls over the object and rolls out before the
+   animation finishes. This implies that there needs to be a convenient and
+   straightforward rule for running transitions in reverse under certain
+   circumstances. This could be controlled via a new property, or could
+   perhaps be done simply by detecting when the from/to values are flipped.</div>
+
+  <h2 id=transition-events-><span class=secno>3 </span> Transition Events</h2>
+
+  <p> The completion of a CSS Transition generates a corresponding <a
+   href="http://www.w3.org/TR/DOM-Level-2-Events/events.html">DOM Event</a>.
+   An event is fired for each property that undergoes a transition. This
+   allows a content developer to perform actions that synchronize with the
+   completion of a transition.
+
+  <p> Each event provides the name of the property the transition is
+   associated with as well as the duration of the transition.
+
+  <dl>
+   <dt> <b>Interface <i><a id=Events-TransitionEvent
+    name=Events-TransitionEvent>TransitionEvent</a></i></b>
+
+   <dd>
+    <p> The <code>TransitionEvent</code> interface provides specific
+     contextual information associated with transitions.</p>
+
+    <dl>
+     <dt> <b>IDL Definition</b>
+
+     <dd>
+      <div class=idl-code>
+       <pre>
+  interface TransitionEvent : Event {
+    readonly attribute DOMString          propertyName;
+    readonly attribute float              elapsedTime;
+    void               initTransitionEvent(in DOMString typeArg, 
+                                          in boolean canBubbleArg, 
+                                          in boolean cancelableArg, 
+                                          in DOMString propertyNameArg,
+                                          in float elapsedTimeArg);
+  };
+  </pre>
+      </div>
+
+     <dt> <b>Attributes</b>
+
+     <dd>
+      <dl>
+       <dt> <code class=attribute-name><a
+        id=Events-TransitionEvent-propertyName
+        name=Events-TransitionEvent-propertyName>propertyName</a></code> of
+        type <code>DOMString</code>, readonly
+
+       <dd> The name of the CSS property associated with the transition.
+      </dl>
+
+      <dl>
+       <dt> <code class=attribute-name><a
+        id=Events-TransitionEvent-elapsedTime
+        name=Events-TransitionEvent-elapsedTime>elapsedTime</a></code> of
+        type <code>float</code>, readonly
+
+       <dd> The amount of time the transition has been running, in seconds,
+        when this event fired. Note that this value is not affected by the
+        value of <a class=prop-name
+        href="#transition-delay">transition-delay</a>.
+      </dl>
+
+     <dt> <b>Methods</b>
+
+     <dd>
+      <dl>
+       <dt> <code class=method-name><a
+        id=Events-TransitionEvent-initTransitionEvent
+        name=Events-TransitionEvent-initTransitionEvent>initTransitionEvent</a></code>
+        
+
+       <dd>
+        <div class=method> The <code>initTransitionEvent</code> method is
+         used to initialize the value of a <code>TransitionEvent</code>
+         created through the <a
+         href="http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-DocumentEvent"><code>DocumentEvent</code></a>
+         interface. This method may only be called before the
+         <code>TransitionEvent</code> has been dispatched via the
+         <code>dispatchEvent</code> method, though it may be called multiple
+         times during that phase if necessary. If called multiple times, the
+         final invocation takes precedence.
+         <div class=parameters> <b>Parameters</b>
+          <div class=paramtable>
+           <dl>
+            <dt> <code class=parameter-name>typeArg</code> of type
+             <code>DOMString</code>
+
+            <dd> Specifies the event type.<br>
+
+            <dt> <code class=parameter-name>canBubbleArg</code> of type
+             <code>boolean</code>
+
+            <dd> Specifies whether or not the event can bubble.<br>
+
+            <dt> <code class=parameter-name>cancelableArg</code> of type
+             <code>boolean</code>
+
+            <dd> Specifies whether or not the event's default action can be
+             prevented.<br>
+
+            <dt> <code class=parameter-name>propertyNameArg</code> of type
+             <code>DOMString</code>
+
+            <dd> Specifies the name of the property associated with the <a
+             href="http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-Event"><code>Event</code></a>
+             
+
+            <dt> <code class=parameter-name>elapsedTimeArg</code> of type
+             <code>float</code>
+
+            <dd> Specifies the amount of time, in seconds, the transition has
+             been running at the time of initialization.
+           </dl>
+          </div>
+         </div>
+         <!-- parameters -->
+         <div> <b>No Return Value</b></div>
+
+         <div> <b>No Exceptions</b></div>
+        </div>
+        <!-- method -->
+      </dl>
+    </dl>
+  </dl>
+
+  <p> There is one type of transition event available.
+
+  <dl>
+   <dt> <b>transitionend</b>
+
+   <dd> The &lsquo;<code class=property>transitionend</code>&rsquo; event
+    occurs at the completion of the transition
+    <ul>
+     <li>Bubbles: Yes
+
+     <li>Cancelable: Yes
+
+     <li>Context Info: propertyName
+    </ul>
+  </dl>
+
+  <h2 id=animation-of-property-types-><span class=secno>4 </span> Animation
+   of property types</h2>
+
+  <p> The following describes how each property type undergoes transition or
+   animation.
+
+  <ul>
+   <li> <strong>color</strong>: interpolated via red, green, blue and alpha
+    components (treating each as a number, see below).
+
+   <li> <strong>length</strong>: interpolated as real numbers.
+
+   <li> <strong>percentage</strong>: interpolated as real numbers.
+
+   <li> <strong>integer</strong>: interpolated via discrete steps (whole
+    numbers). The interpolation happens in real number space and is converted
+    to an integer using <code>floor()</code>.
+
+   <li> <strong>number</strong>: interpolated as real (floating point)
+    numbers.
+
+   <li> <strong>transform list</strong>: see CSS Transforms specification <a
+    href="#CSS3-2D-TRANSFORMS"
+    rel=biblioentry>[CSS3-2D-TRANSFORMS]<!--{{!CSS3-2D-TRANSFORMS}}--></a>.
+
+   <li> <strong>rectangle</strong>: interpolated via the x, y, width and
+    height components (treating each as a number).
+
+   <li> <strong>visibility</strong>: interpolated via a discrete step. The
+    interpolation happens in real number space between 0 and 1, where 1 is
+    "visible" and all other values are "hidden".
+
+   <li> <strong>shadow</strong>: interpolated via the color, x, y and blur
+    components (treating them as color and numbers where appropriate).
+
+   <li> <strong>gradient</strong>: interpolated via the positions and colors
+    of each stop. They must have the same type (radial or linear) and same
+    number of stops in order to be animated.
+
+   <li> <strong>paint server</strong> (SVG): interpolation is only supported
+    between: gradient to gradient and color to color. They then work as
+    above.
+
+   <li> <strong>space-separated list of above</strong>: each item in the list
+    is interpolated using the rules above.
+  </ul>
+
+  <h2 id=animatable-properties-><span class=secno>5 </span> Animatable
+   properties</h2>
+
+  <h3 id=properties-from-css-><span class=secno>5.1 </span> Properties from
+   CSS</h3>
+
+  <table>
+   <tbody>
+    <tr>
+     <th>Property Name
+
+     <th>Type
+
+    <tr>
+     <td>background-color
+
+     <td>color
+
+    <tr>
+     <td>background-image
+
+     <td>only gradients
+
+    <tr>
+     <td>background-position
+
+     <td>percentage, length
+
+    <tr>
+     <td>border-bottom-color
+
+     <td>color
+
+    <tr>
+     <td>border-bottom-width
+
+     <td>length
+
+    <tr>
+     <td>border-color
+
+     <td>color
+
+    <tr>
+     <td>border-left-color
+
+     <td>color
+
+    <tr>
+     <td>border-left-width
+
+     <td>length
+
+    <tr>
+     <td>border-right-color
+
+     <td>color
+
+    <tr>
+     <td>border-right-width
+
+     <td>length
+
+    <tr>
+     <td>border-spacing
+
+     <td>length
+
+    <tr>
+     <td>border-top-color
+
+     <td>color
+
+    <tr>
+     <td>border-top-width
+
+     <td>length
+
+    <tr>
+     <td>border-width
+
+     <td>length
+
+    <tr>
+     <td>bottom
+
+     <td>length, percentage
+
+    <tr>
+     <td>color
+
+     <td>color
+
+    <tr>
+     <td>crop
+
+     <td>rectangle
+
+    <tr>
+     <td>font-size
+
+     <td>length, percentage
+
+    <tr>
+     <td>font-weight
+
+     <td>number
+
+    <tr>
+     <td>grid-*
+
+     <td>various
+
+    <tr>
+     <td>height
+
+     <td>length, percentage
+
+    <tr>
+     <td>left
+
+     <td>length, percentage
+
+    <tr>
+     <td>letter-spacing
+
+     <td>length
+
+    <tr>
+     <td>line-height
+
+     <td>number, length, percentage
+
+    <tr>
+     <td>margin-bottom
+
+     <td>length
+
+    <tr>
+     <td>margin-left
+
+     <td>length
+
+    <tr>
+     <td>margin-right
+
+     <td>length
+
+    <tr>
+     <td>margin-top
+
+     <td>length
+
+    <tr>
+     <td>max-height
+
+     <td>length, percentage
+
+    <tr>
+     <td>max-width
+
+     <td>length, percentage
+
+    <tr>
+     <td>min-height
+
+     <td>length, percentage
+
+    <tr>
+     <td>min-width
+
+     <td>length, percentage
+
+    <tr>
+     <td>opacity
+
+     <td>number
+
+    <tr>
+     <td>outline-color
+
+     <td>color
+
+    <tr>
+     <td>outline-offset
+
+     <td>integer
+
+    <tr>
+     <td>outline-width
+
+     <td>length
+
+    <tr>
+     <td>padding-bottom
+
+     <td>length
+
+    <tr>
+     <td>padding-left
+
+     <td>length
+
+    <tr>
+     <td>padding-right
+
+     <td>length
+
+    <tr>
+     <td>padding-top
+
+     <td>length
+
+    <tr>
+     <td>right
+
+     <td>length, percentage
+
+    <tr>
+     <td>text-indent
+
+     <td>length, percentage
+
+    <tr>
+     <td>text-shadow
+
+     <td>shadow
+
+    <tr>
+     <td>top
+
+     <td>length, percentage
+
+    <tr>
+     <td>vertical-align
+
+     <td>keywords, length, percentage
+
+    <tr>
+     <td>visibility
+
+     <td>visibility
+
+    <tr>
+     <td>width
+
+     <td>length, percentage
+
+    <tr>
+     <td>word-spacing
+
+     <td>length, percentage
+
+    <tr>
+     <td>z-index
+
+     <td>integer
+
+    <tr>
+     <td>zoom
+
+     <td>number
+  </table>
+
+  <h3 id=properties-from-svg-><span class=secno>5.2 </span> Properties from
+   SVG</h3>
+
+  <table>
+   <tbody>
+    <tr>
+     <th>Property Name
+
+     <th>Type
+
+    <tr>
+     <td>stop-color
+
+     <td>color
+
+    <tr>
+     <td>stop-opacity
+
+     <td>float
+
+    <tr>
+     <td>fill
+
+     <td>paint server
+
+    <tr>
+     <td>fill-opacity
+
+     <td>float
+
+    <tr>
+     <td>stroke
+
+     <td>paint server
+
+    <tr>
+     <td>stroke-dasharray
+
+     <td>list of numbers
+
+    <tr>
+     <td>stroke-dashoffset
+
+     <td>number
+
+    <tr>
+     <td>stroke-miterlimit
+
+     <td>number
+
+    <tr>
+     <td>stroke-opacity
+
+     <td>float
+
+    <tr>
+     <td>stroke-width
+
+     <td>float
+
+    <tr>
+     <td>viewport-fill
+
+     <td>color
+
+    <tr>
+     <td>viewport-fill-opacity
+
+     <td>color
+  </table>
+
+  <h2 id=references><span class=secno>6 </span>References</h2>
+
+  <h3 class=no-num id=normative-references>Normative references</h3>
+  <!--begin-normative-->
+  <!-- Sorted by label -->
+
+  <dl class=bibliography>
+   <dt style="display: none"><!-- keeps the doc valid if the DL is empty -->
+    <!---->
+
+   <dt id=CSS3-2D-TRANSFORMS>[CSS3-2D-TRANSFORMS]
+
+   <dd>Dean Jackson; David Hyatt; Chris Marrin. <a
+    href="http://www.w3.org/TR/2009/WD-css3-2d-transforms-20090320"><cite>CSS
+    2D Transforms Module Level 3.</cite></a> 20 March 2009. W3C Working
+    Draft. (Work in progress.) URL: <a
+    href="http://www.w3.org/TR/2009/WD-css3-2d-transforms-20090320">http://www.w3.org/TR/2009/WD-css3-2d-transforms-20090320</a>
+    </dd>
+   <!---->
+  </dl>
+  <!--end-normative-->
+
+  <h3 class=no-num id=other-references>Other references</h3>
+  <!--begin-informative-->
+  <!-- Sorted by label -->
+
+  <dl class=bibliography>
+   <dt style="display: none"><!-- keeps the doc valid if the DL is empty -->
+    <!---->
+  </dl>
+  <!--end-informative-->
+
+  <h2 class=no-num id=property-index>Property index</h2>
+  <!--begin-properties-->
+
+  <table class=proptable>
+   <thead>
+    <tr>
+     <th>Property
+
+     <th>Values
+
+     <th>Initial
+
+     <th>Applies&nbsp;to
+
+     <th>Inh.
+
+     <th>Percentages
+
+     <th>Media
+
+   <tbody>
+    <tr valign=baseline>
+     <td><a class=property href="#transition">transition</a>
+
+     <td>[&lt;transition-property&gt; || &lt;transition-duration&gt; ||
+      &lt;transition-timing-function&gt; || &lt;transition-delay&gt; [,
+      [&lt;transition-property&gt; || &lt;transition-duration&gt; ||
+      &lt;transition-timing-function&gt; || &lt;transition-delay&gt;]]*
+
+     <td>see individual properties
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>N/A
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property href="#transition-delay">transition-delay</a>
+
+     <td>&lt;time&gt; [, &lt;time&gt;]*
+
+     <td>0
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>N/A
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property
+      href="#transition-duration">transition-duration</a>
+
+     <td>&lt;time&gt; [, &lt;time&gt;]*
+
+     <td>0
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>N/A
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property
+      href="#transition-property">transition-property</a>
+
+     <td>none | all | [ &lt;IDENT&gt; ] [ &lsquo;,&rsquo; &lt;IDENT&gt; ]*
+
+     <td>all
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>N/A
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property
+      href="#transition-timing-function">transition-timing-function</a>
+
+     <td>ease | linear | ease-in | ease-out | ease-in-out |
+      cubic-bezier(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;,
+      &lt;number&gt;) [, ease | linear | ease-in | ease-out | ease-in-out |
+      cubic-bezier(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;,
+      &lt;number&gt;)]*
+
+     <td>ease
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>N/A
+
+     <td>visual
+  </table>
+  <!--end-properties-->
+
+  <h2 class=no-num id=index>Index</h2>
+  <!--begin-index-->
+
+  <ul class=indexlist>
+   <li>transition, <a href="#transition"
+    title=transition><strong>2.5</strong></a>
+
+   <li>transition-delay, <a href="#transition-delay"
+    title=transition-delay><strong>2.4</strong></a>
+
+   <li>transition-duration, <a href="#transition-duration"
+    title=transition-duration><strong>2.2</strong></a>
+
+   <li>transition-property, <a href="#transition-property"
+    title=transition-property><strong>2.1</strong></a>
+
+   <li>transition-timing-function, <a href="#transition-timing-function"
+    title=transition-timing-function><strong>2.3</strong></a>
+  </ul>
+  <!--end-index-->
+</html>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-default-doctype-name:"html"
+sgml-minimize-attributes:t
+End:
+-->

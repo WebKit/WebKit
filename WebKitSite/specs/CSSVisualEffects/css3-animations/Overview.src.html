@@ -1,0 +1,1458 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01//EN'
+  'http://www.w3.org/TR/html4/strict.dtd'>
+
+<html lang="en">
+<head>
+  <title>CSS Animations Module Level 3</title>
+  <link rel="stylesheet" type="text/css" href="default.css">
+  <style type="text/css">
+    .rhs { white-space: pre-wrap; }
+    code { font-size: inherit; }
+    #box-shadow-samples td { background: white; color: black; }
+    
+    table {
+      border-collapse: collapse;
+    }
+    td {
+      padding: 0.2em 1em;
+      border: 1px solid black;
+    }
+  </style>
+  <link rel="stylesheet" type="text/css"
+  href="http://www.w3.org/StyleSheets/TR/W3C-WD.css">
+</head>
+
+<body>
+
+<div class="head">
+<!--logo-->
+
+<h1>CSS Animations Module Level 3</h1>
+
+<h2 class="no-num no-toc">[LONGSTATUS] [DATE]</h2>
+<dl>
+  <dt>This version:
+    <dd><a href="[VERSION]">http://dev.w3.org/csswg/css3-animations/</a>
+    <!--http://www.w3.org/TR/[YEAR]/WD-[SHORTNAME]-[CDATE]-->
+  <dt>Latest version:
+    <dd><a
+      href="http://www.w3.org/TR/css3-animations">[LATEST]</a>
+  <dt>Previous version:
+    <dd><a href="http://www.w3.org/TR/2009/WD-css3-animations-20090320/">
+      http://www.w3.org/TR/2009/WD-css3-animations-20090320/</a>
+  <dt id="editors-list">Editors:
+    <dd><a href="mailto:dino@apple.com">Dean Jackson</a> (<a
+      href="http://www.apple.com/">Apple Inc</a>)
+    <dd><a href="mailto:hyatt@apple.com">David Hyatt</a> (<a
+      href="http://www.apple.com/">Apple Inc</a>)
+    <dd><a href="mailto:cmarrin@apple.com">Chris Marrin</a> (<a
+      href="http://www.apple.com/">Apple Inc</a>)
+</dl>
+
+<!--copyright-->
+
+<hr title="Separator for header">
+</div>
+
+<h2 class="no-num no-toc" id="abstract">Abstract</h2>
+
+<p>CSS Animations allow an author to modify CSS property values over
+  time.
+
+<h2 class="no-num no-toc" id="status">Status of this document</h2>
+<!--status-->
+
+
+<h2 class="no-num no-toc" id="contents">Table of contents</h2>
+<!--toc-->
+
+
+<h2 id="introduction">Introduction</h2>
+
+<p><em>This section is not normative.</em>
+
+      <p>
+        This document introduces new CSS features to enable animation.
+      </p>
+      <p>
+        Animation is currently possible in languages like SVG, but no system exists for the native animation of CSS styles. This proposal introduces <em>defined animations</em>, which specify the values that CSS properties will take over a given time interval.
+      </p>
+      <p>
+        This specification is an extension to CSS Transitions
+        [[!CSS3-TRANSITIONS]].
+      </p>
+      <h2>
+        Keyframes
+      </h2>
+      <p>
+        In a simple transition, since both the starting value and ending value
+        are known, a single timing function and duration determine the
+        intermediate values of the animating property. If finer control of the
+        intermediate values is required, keyframes can be used.
+      </p>
+      <p>
+        Keyframes are specified using a specialized CSS at-rule. A <span
+        class="prop-name">@keyframes</span> rule consists of the keyword
+        "@keyframes", followed by an identifier giving a name for the animation
+        (which will be referenced using <span
+        class="prop-name">'animation-name'</span>), followed by a set of style
+        rules (delimited by curly braces).
+      </p>
+      <p>
+        The <i>keyframe selector</i> for a keyframe style rule consists of a
+        comma-separated list of percentage values or the keywords 'from' or
+        'to'. The selector is used to specify the percentage along the duration
+        of the animation that the keyframe represents. The
+        keyframe itself is specified by the block of property values declared on
+        the selector. The keyword 'from' is equivalent to the value 0. The
+        keyword 'to' is equivalent to the value 100%. Note that the percentage
+        unit specifier must be used on percentage values. Therefore, "0" is an
+        invalid keyframe selector.
+      </p>
+      <p>
+        Keyframes can be specified in any order. The selector determines 
+        the placement of the keyframe in the animation.
+      </p>
+      <p>
+        Every keyframe declaration must have a keyframe rule for 
+        0% or 100%, possibly defined using "from" or "to". A keyframe
+        declaration without these keyframe selectors is invalid and will not
+        be available for animation.
+      </p>
+      <p>
+        The <i>keyframe declaration</i> for a keyframe rule consists of
+        properties and values. Properties that are unable to be
+        animated are ignored in these rules, with the exception of <span
+        class="prop-name">animation-timing-function'</span>, the behavior 
+        of which is described below.
+      </p>
+      <p>
+        The @keyframes rule that is used by an animation will be the last one encountered in sorted rules order that matches the name of the animation. <span class="prop-name">@keyframes</span> rules do not cascade; therefore an animation will never derive keyframes from more than one <span class="prop-name">@keyframes</span> rule.
+      </p>
+      <p>
+        To determine the set of keyframes, all of the values in selectors are sorted in increasing order by time. If there are any duplicates, then the last keyframe specified inside the <span class="prop-name">@keyframes</span> rule will be used to provide the keyframe information for that time. There is no cascading within a <span class="prop-name">@keyframes</span> rule if multiple keyframes specify the same keyframe selector values.
+      </p>
+      <div class="example">
+        <p style="display:none">
+          Example(s):
+        </p>
+        <pre>
+  @keyframes 'wobble' {
+
+    0% {
+      left: 100px;
+    }
+
+    40% {
+      left: 150px;
+    }
+
+    60% {
+      left: 75px;
+    }
+
+    100% {
+      left: 100px;
+    }
+
+  }
+
+  </pre>Four keyframes are specified for the animation named "wobble". In the first keyframe, shown at the beginning of the animation cycle, the 'left' value of the animation is 100px. By 40% of the animation duration, 'left' value has animated to 150px. At 60% of the animation duration, the 'left' value has animated back to 75px. At the end of the animation cycle, the 'left' value has returned to 100px. The diagram below shows the state of the animation if it were given a duration of 10s.
+        <div class="figure">
+          <img src="animation1.png" alt="">
+        </div>
+        <p class="caption">
+          Animations states specified by keyframes
+        </p>
+      </div>
+
+      <p>
+        The following is the grammar for the keyframes rule.
+      </p>
+
+      <pre>
+        keyframes-rule: '@keyframes' IDENT '{' keyframes-blocks '}';
+
+        keyframes-blocks: [ keyframe-selectors block ]* ;
+
+        keyframe-selectors: [ 'from' | 'to' | PERCENTAGE ] [ ',' [ 'from' | 'to' | PERCENTAGE ] ]*;
+      </pre>
+      <!-- ======================================================================================================= -->
+      <h3>
+        Timing functions for keyframes
+      </h3>
+      <p>
+        A keyframe style rule may also declare the timing function that is to be used as the animation moves to the next keyframe.
+      </p>
+      <div class="example">
+        <p style="display:none">
+          Example(s):
+        </p>
+        <pre>
+  @keyframes 'bounce' {
+
+    from {
+      top: 100px;
+      animation-timing-function: ease-out;
+    }
+
+    25% {
+      top: 50px;
+      animation-timing-function: ease-in;
+    }
+
+    50% {
+      top: 100px;
+      animation-timing-function: ease-out;
+    }
+
+    75% {
+      top: 75px;
+      animation-timing-function: ease-in;
+    }
+
+    to {
+      top: 100px;
+    }
+
+  }
+
+  </pre>Five keyframes are specified for the animation named "bounce". Between the first and second keyframe (ie. between 0 and 25%) an "ease-out" timing function is used. Between the second and third keyframe (ie. between 25% and 50%) an "ease-in" timing function is used. And so on. The effect will appear as an element that moves up the page 50px, slowing down as it reaches its highest point then speeding up as it falls back to 100px. The second half of the animation behaves in a similar manner, but only moves the element 25px units up the page.
+      </div>
+      <p>
+        See <a href="#animation-timing-function_tag">the <span class="prop-name">'animation-timing-function'</span> property</a> for more information.
+      </p><!-- ======================================================================================================= -->
+      <h2>
+        Animations
+      </h2>
+      <p>
+        Animations are similar to transitions in that they change the presentational value of CSS properties over time. The principal difference is that while transitions trigger <i>implicitly</i> when property values change, animations are <i>explicitly</i> executed when the animation properties are applied. Because of this, animations require explicit values for the properties being animated. These values are specified using animation keyframes, described above.
+      </p>
+      <p>
+        Many aspects of the animation can be controlled, including how many times the animation iterates, whether or not it alternates between the begin and end values, and whether or not the animation should be running or paused. An animation can also delay its start time.
+      </p>
+      <div class="example">
+        <p style="display:none">
+          Example(s):
+        </p>
+        <pre>
+  div {
+    animation-name: 'diagonal-slide';
+    animation-duration: 5s;
+    animation-iteration-count: 10;
+  }
+
+  @keyframes 'diagonal-slide' {
+
+    from {
+      left: 0;
+      top: 0;
+    }
+
+    to {
+      left: 100px;
+      top: 100px;
+    }
+
+  }
+
+  </pre>This will produce an animation that moves an element from (0, 0) to (100px, 100px) over five seconds and repeats itself nine times (for a total of ten iterations).
+      </div>
+      <!-- ======================================================================================================= -->
+      <h3>
+        Animation behavior
+      </h3>
+
+      <p>
+        CSS Animations affect computed property values. During the execution of an animation, the
+        computed value for a property is controlled by the animation. This overrides the value
+        specified in the normal styling system.
+      </p>
+
+      <p>
+        In the case of multiple animations specifying behavior for the same property, the animation
+        defined last will override the previously defined animations.
+      </p>
+
+      <p>
+        An animation does not affect the computed value before the application of the animation,
+        before the animation delay has expired, and after the end of the animation.
+      </p>
+
+      <div class="figure">
+        <img src="sandwich.png" alt="">
+      </div>
+      <p class="caption">
+        Computation of animated property values
+      </p>
+
+      <p>
+        The diagram above shows how property values are computed. The intrinsic style is shown at the
+        top of the diagram. The computed value is derived from intrinsic style at the times when an
+        animation is not running and also when an animation is delayed (see below for specification of
+        animation delay). During an animation, the computed style is derived from the animated value.
+      </p>
+
+      <p>
+        The start time of an animation is the latter of two moments: the time at which the style is
+        resolved that specifies the animation, or the time the document's load event is fired.
+        Therefore, an animation specified in the document stylesheet will begin at the document load.
+        An animation specified on an element by modifying the style after the document has loaded will
+        start when the style is resolved. That may be immediately in the case of a pseudo style rule
+        such as hover, or may be when the scripting engine returns control to the browser (in the case
+        of style applied by script).
+      </p>
+
+      <p>
+        An animation applies to an element if the element has a value for
+        <span class="prop-name">'animation-name'</span> that references a valid
+        keyframes rule. Once an animation has started it continues until it ends
+        or the <span class="prop-name">'animation-name'</span> is removed. The values
+        used for the keyframes and animation properties are snapshotted at the
+        time the animation starts. Changing them during the execution of the
+        animation has no effect. Note also, that changing the value of 
+        <span class="prop-name">'animation-name'</span> does not necessarily
+        restart an animation (e.g. if a list of animations are applied and
+        one is removed from the list, only that animation will stop; The other
+        animations will continue). In order to restart an animation, it must be
+        removed then reapplied. 
+      </p>
+
+      <!-- ======================================================================================================= -->
+      <h3>
+        The <span class="prop-name">'animation-name'</span> Property
+      </h3>
+      <p>
+        The <span class="prop-name">'animation-name'</span> property defines a
+        list of animations that apply. Each name is used to select the keyframe at-rule
+        that provides the property values for the animation. If the name does
+        not match any keyframe at-rule, there are no properties to be animated
+        and the animation will not execute. Furthermore, if the animation name
+        is 'none' then there will be no animation. This can be used to override
+        any animations coming from the cascade.
+      </p>
+      <table class="propdef">
+        <tbody>
+          <tr>
+            <td>
+              <em>Name:</em>
+            </td>
+            <td>
+              <dfn id="animation-name">animation-name</dfn>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Value:</em>
+            </td>
+            <td>
+              none | IDENT [, none | IDENT ]*
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Initial:</em>
+            </td>
+            <td>
+              none
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Applies&nbsp;to:</em>
+            </td>
+            <td>
+              block-level and inline-level elements
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Inherited:</em>
+            </td>
+            <td>
+              no
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Percentages:</em>
+            </td>
+            <td>
+              N/A
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Media:</em>
+            </td>
+            <td>
+              visual
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Computed value:</em>
+            </td>
+            <td>
+              Same as specified value.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!--
+      <p>
+        It is possible for elements to have multiple animations running that change the same property or properties. In this case the animations combine in a manner defined by the property. For example, animations on <span class="prop-name">opacity</span> will add together and animations on <span class="prop-name">transform</span> will have their transformation matrices multiplied.
+      </p>
+      <div class="example">
+        <p style="display:none">
+          Example(s):
+        </p>
+        <pre>
+        @keyframes 'border-bloat' {
+          from {
+            border-width: 0;
+          }
+          to {
+            border-width: 10px;
+          }
+        }
+
+        @keyframes 'border-diet' {
+          from {
+            border-width: 4px;
+          }
+          to {
+            border-width: 2px;
+          }
+        }
+
+        div {
+          animation-name: 'border-bloat', 'border-diet';
+          animation-duration: 10s, 4s;
+        }
+      </pre>
+      <p>
+      The above example has two animations executing on the same property, <span class="prop-name">border-width</span>. The animations are additive. That is, the 
+      resulting value for the property will be the addition of the values from the
+      two animations.
+      </p>
+      <p>
+        At time '0s' the element's border will be 4px wide (0px from 'border-bloat' plus 4px from 'border-diet'). 
+        At time '4s' the element's border will be 6px wide (4px from 'border-bloat' plus 2px from 'border-diet').
+        At time '10s' the element's border will be 10px wide (10px from 'border-bloat' and no addition from
+        'border-diet' as it is no longer executing).
+      </p>
+    </div>
+  -->
+
+
+      <!-- ======================================================================================================= -->
+      <h3>
+        The <span class="prop-name">'animation-duration'</span> Property
+      </h3>
+      <p>
+        The <span class="prop-name">'animation-duration'</span> property defines the length of time that an animation takes to complete one cycle.
+      </p>
+      <table class="propdef">
+        <tbody>
+          <tr>
+            <td>
+              <em>Name:</em>
+            </td>
+            <td>
+              <dfn id="animation-duration">animation-duration</dfn>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Value:</em>
+            </td>
+            <td>
+              &lt;time&gt; [, &lt;time&gt;]*
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Initial:</em>
+            </td>
+            <td>
+              0
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Applies&nbsp;to:</em>
+            </td>
+            <td>
+              block-level and inline-level elements
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Inherited:</em>
+            </td>
+            <td>
+              no
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Percentages:</em>
+            </td>
+            <td>
+              N/A
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Media:</em>
+            </td>
+            <td>
+              visual
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Computed value:</em>
+            </td>
+            <td>
+              Same as specified value.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        By default the value is '0', meaning that the animation cycle is immediate (i.e. there will be no animation). A negative value for <span class="prop-name">animation-duration</span> is treated as '0'.
+      </p>
+
+      <!-- ======================================================================================================= -->
+      <h3 id="animation-timing-function_tag">
+        The <span class="prop-name">'animation-timing-function'</span> Property
+      </h3>
+      <p>
+        The <span class="prop-name">'animation-timing-function'</span> property describes how the animation will progress over one cycle of its duration. See the <span class="prop-name">'transition-timing-function'</span> property [[!CSS3-TRANSITIONS]] for a complete description of timing function calculation.
+      </p>
+      <table class="propdef">
+        <tbody>
+          <tr>
+            <td>
+              <em>Name:</em>
+            </td>
+            <td>
+              <dfn id="animation-timing-function">animation-timing-function</dfn>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Value:</em>
+            </td>
+            <td>
+              ease | linear | ease-in | ease-out | ease-in-out | cubic-bezier(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;) [, ease | linear | ease-in | ease-out | ease-in-out | cubic-bezier(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;)]*
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Initial:</em>
+            </td>
+            <td>
+              ease
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Applies&nbsp;to:</em>
+            </td>
+            <td>
+              block-level and inline-level elements
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Inherited:</em>
+            </td>
+            <td>
+              no
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Percentages:</em>
+            </td>
+            <td>
+              N/A
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Media:</em>
+            </td>
+            <td>
+              visual
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Computed value:</em>
+            </td>
+            <td>
+              Same as specified value.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        For a keyframed animation, the <span class="prop-name">'animation-timing-function'</span> applies
+        between keyframes, not over the entire animation. For example, in the case of an ease-in-out timing function, an animation will ease in at the start of the keyframe and ease out at the end of the keyframe. A <span class="prop-name">'animation-timing-function'</span> defined within a keyframe block applies to that keyframe, otherwise the timing function specified for the animation is used.
+      </p>
+
+      <!-- ======================================================================================================= -->
+      <h3>
+        The <span class="prop-name">'animation-iteration-count'</span> Property
+      </h3>
+      <p>
+        The <span class="prop-name">'animation-iteration-count'</span> property defines the number of times an animation cycle is played. The default value is one, meaning the animation will play from beginning to end once. A value of <span class="prop-value">'infinite'</span> will cause the animation to repeat forever. Non-integer numbers will cause the animation to end part-way through a cycle. Negative values for <span class="prop-name">'animation-iteration-count'</span> are treated as zero. This property is often used with an <span class="prop-name">'animation-direction'</span> value of <span class="prop-value">'alternate'</span>, which will cause the animation to play in reverse on alternate cycles.
+      </p>
+      <table class="propdef">
+        <tbody>
+          <tr>
+            <td>
+              <em>Name:</em>
+            </td>
+            <td>
+              <dfn id="animation-iteration-count">animation-iteration-count</dfn>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Value:</em>
+            </td>
+            <td>
+              infinite | &lt;number&gt; [, infinite | &lt;number&gt;]*
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Initial:</em>
+            </td>
+            <td>
+              1
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Applies&nbsp;to:</em>
+            </td>
+            <td>
+              block-level and inline-level elements
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Inherited:</em>
+            </td>
+            <td>
+              no
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Percentages:</em>
+            </td>
+            <td>
+              N/A
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Media:</em>
+            </td>
+            <td>
+              visual
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Computed value:</em>
+            </td>
+            <td>
+              Same as specified value.
+            </td>
+          </tr>
+        </tbody>
+      </table><!-- ======================================================================================================= -->
+      <h3>
+        The <span class="prop-name">'animation-direction'</span> Property
+      </h3>
+      <p>
+        The <span class="prop-name">'animation-direction'</span> property defines whether or not the animation should play in reverse on alternate cycles. If <span class="prop-value">'alternate'</span> is specified, the animation cycle iterations that are odd counts are played in the normal direction, and the animation cycle iterations that are even counts are played in a reverse direction. When an animation is played in reverse the timing functions are also reversed. For example, when played in reverse an ease-in animation would appear to be an ease-out animation.
+      </p>
+      <table class="propdef">
+        <tbody>
+          <tr>
+            <td>
+              <em>Name:</em>
+            </td>
+            <td>
+              <dfn id="animation-direction">animation-direction</dfn>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Value:</em>
+            </td>
+            <td>
+              normal | alternate [, normal | alternate]*
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Initial:</em>
+            </td>
+            <td>
+              normal
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Applies&nbsp;to:</em>
+            </td>
+            <td>
+              block-level and inline-level elements
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Inherited:</em>
+            </td>
+            <td>
+              no
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Percentages:</em>
+            </td>
+            <td>
+              N/A
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Media:</em>
+            </td>
+            <td>
+              visual
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Computed value:</em>
+            </td>
+            <td>
+              Same as specified value.
+            </td>
+          </tr>
+        </tbody>
+      </table><!-- ======================================================================================================= -->
+      <h3>
+        The <span class="prop-name">'animation-play-state'</span> Property
+      </h3>
+
+      <div class="issue">
+        We are considering removing 'animation-play-state' since its behaviour can
+        be replicated using other techniques. For example, by querying the 
+        computed style, removing the animation and then setting style.
+      </div>
+
+      <p>
+        The <span class="prop-name">'animation-play-state'</span> property defines whether the animation is running or paused. A running animation can be paused by setting this property to <span class="prop-value">'paused'</span>. To continue running a paused animation this property can be set to <span class="prop-value">'running'</span>. A paused animation will continue to display the current value of the animation in a static state, as if the time of the animation is constant. When a paused animation is resumed, it restarts from the current value, not necessarily from the beginning of the animation.
+      </p>
+      <table class="propdef">
+        <tbody>
+          <tr>
+            <td>
+              <em>Name:</em>
+            </td>
+            <td>
+              <dfn id="animation-play-state">animation-play-state</dfn>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Value:</em>
+            </td>
+            <td>
+              running | paused [, running | paused]*
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Initial:</em>
+            </td>
+            <td>
+              running
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Applies&nbsp;to:</em>
+            </td>
+            <td>
+              block-level and inline-level elements
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Inherited:</em>
+            </td>
+            <td>
+              no
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Percentages:</em>
+            </td>
+            <td>
+              N/A
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Media:</em>
+            </td>
+            <td>
+              visual
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Computed value:</em>
+            </td>
+            <td>
+              Same as specified value.
+            </td>
+          </tr>
+        </tbody>
+      </table><!-- ======================================================================================================= -->
+      <h3>
+        The <span class="prop-name">'animation-delay'</span> Property
+      </h3>
+      <p>
+        The <span class="prop-name">'animation-delay'</span> property defines when the animation will start. It allows an animation to begin execution some time after it is applied. An <span class="prop-name">'animation-delay'</span> value of '0' means the animation will execute as soon as it is applied. Otherwise, the value specifies an offset from the moment the animation is applied, and the animation will delay execution by that offset.
+      </p>
+      <p>
+        If the value for <span class="prop-name">'animation-delay'</span> is a negative time offset then the animation will execute the moment it is applied, but will appear to have begun execution at the specified offset. That is, the animation will appear to begin part-way through its play cycle. In the case where an animation has implied starting values and a negative <span class="prop-name">'animation-delay'</span>, the starting values are taken from the moment the animation is applied.
+      </p>
+      <table class="propdef">
+        <tbody>
+          <tr>
+            <td>
+              <em>Name:</em>
+            </td>
+            <td>
+              <dfn id="animation-trigger">animation-delay</dfn>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Value:</em>
+            </td>
+            <td>
+              &lt;time&gt; [, &lt;time&gt;]*
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Initial:</em>
+            </td>
+            <td>
+              0
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Applies&nbsp;to:</em>
+            </td>
+            <td>
+              block-level and inline-level elements
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Inherited:</em>
+            </td>
+            <td>
+              no
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Percentages:</em>
+            </td>
+            <td>
+              N/A
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Media:</em>
+            </td>
+            <td>
+              visual
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Computed value:</em>
+            </td>
+            <td>
+              Same as specified value.
+            </td>
+          </tr>
+        </tbody>
+      </table><!-- ======================================================================================================= -->
+      <h3>
+        The <span class="prop-name">'animation'</span> Shorthand Property
+      </h3>
+      <p>
+        The <span class="prop-name">'animation'</span> shorthand property combines six of the animation properties into a single property.
+      </p>
+      <table class="propdef">
+        <tbody>
+          <tr>
+            <td>
+              <em>Name:</em>
+            </td>
+            <td>
+              <dfn id="animation">animation</dfn>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Value:</em>
+            </td>
+            <td>
+              [&lt;animation-name&gt; || 
+              &lt;animation-duration&gt; ||
+              &lt;animation-timing-function&gt; ||
+              &lt;animation-delay&gt; ||
+              &lt;animation-iteration-count&gt; ||
+              &lt;animation-direction&gt;]
+              [, [&lt;animation-name&gt; ||
+              &lt;animation-duration&gt; ||
+              &lt;animation-timing-function&gt; ||
+              &lt;animation-delay&gt; ||
+              &lt;animation-iteration-count&gt; ||
+              &lt;animation-direction&gt;] ]*
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Initial:</em>
+            </td>
+            <td>
+              see individual properties
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Applies&nbsp;to:</em>
+            </td>
+            <td>
+              block-level and inline-level elements
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Inherited:</em>
+            </td>
+            <td>
+              no
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Percentages:</em>
+            </td>
+            <td>
+              N/A
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Media:</em>
+            </td>
+            <td>
+              visual
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <em>Computed value:</em>
+            </td>
+            <td>
+              Same as specified value.
+            </td>
+          </tr>
+        </tbody>
+      </table><!-- ======================================================================================================= -->
+      <h2>
+        Animation Events
+      </h2>
+      <p>
+        Several animation related events are available through the <a
+        href="http://www.w3.org/TR/DOM-Level-2-Events/events.html">DOM Event
+        system</a>. The start and end of an animation, and the end of each
+        iteration of an animation all generate DOM events. An element can have
+        multiple properties being animated simultaneously. This can occur either
+        with a single <span class="prop-name">animation-name</span> value with
+        keyframes containing multiple properties, or with multiple <span
+        class="prop-name">animation-name</span> values. For the purposes of
+        events, each <span class="prop-name">animation-name</span> specifies a
+        single animation. Therefore an event will be generated for each <span
+        class="prop-name">animation-name</span> value and not necessarily for
+        each property being animated.
+      </p>
+      <p>
+        The time the animation has been running is sent with each event
+        generated. This allows the event handler to determine the current
+        iteration of a looping animation or the current position of an
+        alternating animation. This time does not include any time the animation
+        was in the <code>paused</code> play state.
+      </p>
+      <dl>
+        <dt>
+          <b>Interface <i><a id="Events-AnimationEvent" name='Events-AnimationEvent'>AnimationEvent</a></i></b>
+        </dt>
+        <dd>
+          <p>
+            The <code>AnimationEvent</code> interface provides specific contextual information associated with Animation events.
+          </p>
+          <dl>
+            <dt>
+              <br>
+              <b>IDL Definition</b>
+            </dt>
+            <dd>
+              <div class='idl-code'>
+                <pre>
+  interface AnimationEvent : Event {
+    readonly attribute DOMString          animationName;
+    readonly attribute float              elapsedTime;
+    void               initAnimationEvent(in DOMString typeArg, 
+                                          in boolean canBubbleArg, 
+                                          in boolean cancelableArg, 
+                                          in DOMString animationNameArg,
+                                          in float elapsedTimeArg);
+  };
+  </pre>
+              </div>
+            </dd>
+            <dt>
+              <b>Attributes</b>
+            </dt>
+            <dd>
+              <dl>
+                <dt>
+                  <code class='attribute-name'><a id="Events-AnimationEvent-animationName" name='Events-AnimationEvent-animationName'>animationName</a></code> of type <code>DOMString</code>, readonly
+                </dt>
+                <dd>
+                  The value of the <span class="prop-name">animation-name</span> property of the animation that fired the event.
+                </dd>
+              </dl>
+              <dl>
+                <dt>
+                  <code class='attribute-name'><a id="Events-AnimationEvent-elapsedTime" name='Events-AnimationEvent-elapsedTime'>elapsedTime</a></code> of type <code>float</code>, readonly
+                </dt>
+                <dd>
+                  The amount of time the animation has been running, in seconds, when this event fired, excluding any time the animation was paused. Note that this value is not affected by the value of <span class="prop-name">animation-delay</span>. For an "animationstart" event, the elapsedTime is always zero.
+                </dd>
+              </dl>
+            </dd>
+            <dt>
+              <b>Methods</b>
+            </dt>
+            <dd>
+              <dl>
+                <dt>
+                  <code class='method-name'><a id="Events-AnimationEvent-initAnimationEvent" name='Events-AnimtionEvent-initAnimationEvent'>initAnimationEvent</a></code>
+                </dt>
+                <dd>
+                  <div class='method'>
+                    The <code>initAnimationEvent</code> method is used to initialize the value of an <code>AnimationEvent</code> created through the <a href='http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-DocumentEvent'><code>DocumentEvent</code></a> interface. This method may only be called before the <code>AnimationEvent</code> has been dispatched via the <code>dispatchEvent</code> method, though it may be called multiple times during that phase if necessary. If called multiple times, the final invocation takes precedence.
+                    <div class='parameters'>
+                      <b>Parameters</b>
+                      <div class='paramtable'>
+                        <dl>
+                          <dt>
+                            <code class='parameter-name'>typeArg</code> of type <code>DOMString</code>
+                          </dt>
+                          <dd>
+                            Specifies the event type.<br>
+                          </dd>
+                          <dt>
+                            <code class='parameter-name'>canBubbleArg</code> of type <code>boolean</code>
+                          </dt>
+                          <dd>
+                            Specifies whether or not the event can bubble.<br>
+                          </dd>
+                          <dt>
+                            <code class='parameter-name'>cancelableArg</code> of type <code>boolean</code>
+                          </dt>
+                          <dd>
+                            Specifies whether or not the event's default action can be prevented.
+                          </dd>
+                          <dt>
+                            <code class='parameter-name'>animationNameArg</code> of type <code>DOMString</code>
+                          </dt>
+                          <dd>
+                            Specifies the <a href='http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-Event'><code>Event</code></a>'s animation name.<br>
+                          </dd>
+                          <dt>
+                            <code class='parameter-name'>elapsedTimeArg</code> of type <code>float</code>
+                          </dt>
+                          <dd>
+                            Specifies the amount of time, in seconds, the animation has been running at the time of initialization.
+                          </dd>
+                        </dl>
+                      </div>
+                    </div><!-- parameters -->
+                    <div>
+                      <b>No Return Value</b>
+                    </div>
+                    <div>
+                      <b>No Exceptions</b>
+                    </div>
+                  </div><!-- method -->
+                </dd>
+              </dl>
+            </dd>
+          </dl>
+        </dd>
+      </dl>
+      <p>
+        The different types of Animation events that can occur are:
+      </p>
+      <dl>
+        <dt>
+          <b>animationstart</b>
+        </dt>
+        <dd>
+          The 'animationstart' event occurs at the start of the animation
+          <ul>
+            <li>Bubbles: Yes
+            </li>
+            <li>Cancelable: Yes
+            </li>
+            <li>Context Info: animationName
+            </li>
+          </ul>
+        </dd>
+        <dt>
+          <b>animationend</b>
+        </dt>
+        <dd>
+          The 'animationend' event occurs when the animation finishes.
+          <ul>
+            <li>Bubbles: Yes
+            </li>
+            <li>Cancelable: Yes
+            </li>
+            <li>Context Info: animationName, elapsedTime
+            </li>
+          </ul>
+        </dd>
+        <dt>
+          <b>animationiteration</b>
+        </dt>
+        <dd>
+          The 'animationiteration' event occurs at the end of each iteration of an animation for which <code>animation-iteration-count</code> is greater than one. This event does not occur for animations with an iteration count of one.
+          <ul>
+            <li>Bubbles: Yes
+            </li>
+            <li>Cancelable: Yes
+            </li>
+            <li>Context Info: animationName, elapsedTime
+            </li>
+          </ul>
+        </dd>
+      </dl>
+      <!-- ======================================================================================================= -->
+        <h2>
+          DOM Interfaces
+        </h2>
+        <p>
+          CSS animation is exposed to the CSSOM through a pair of new interfaces
+          describing the keyframes.
+        </p>
+        <dl>
+          <dt>
+            <b>Interface <i><a id="DOM-CSSRule" name='DOM-CSSRule'>CSSRule</a></i></b>
+          </dt>
+          <dd>
+            <p>
+              The following 2 rule types are added to the <code>CSSRule</code> interface. They provide identification for the new keyframe and keyframes rules.
+            </p>
+            <dl>
+
+              <dt>
+                <b>IDL Definition</b>
+              </dt>
+              <dd>
+                <div class='idl-code'>
+                  <pre>
+    interface CSSRule {
+      ...
+      const unsigned short KEYFRAMES_RULE = 7;
+      const unsigned short KEYFRAME_RULE = 8;
+      ...
+    };</pre>
+                </div>
+              </dd> <!-- IDL -->
+            </dl>
+          </dd>
+
+          <dt>
+            <b>Interface <i><a id="DOM-CSSKeyframeRule" name='DOM-CSSKeyframeRule'>CSSKeyframeRule</a></i></b>
+          </dt>
+          <dd>
+            <p>
+              The <code>CSSKeyframeRule</code> interface represents the style rule for a single key.
+            </p>
+            <dl>
+              <dt>
+                <br>
+                <b>IDL Definition</b>
+              </dt>
+              <dd>
+                <div class='idl-code'>
+                  <pre>
+    interface CSSKeyframeRule : CSSRule {
+        attribute DOMString keyText;
+        readonly attribute CSSStyleDeclaration style;
+    };
+    </pre>
+                </div><br>
+              </dd>
+              <dt>
+                <b>Attributes</b>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <code class='attribute-name'><a id="DOM-CSSKeyframeRule-keyText" name='DOM-CSSKeyframeRule-keyText'>keyText</a></code> of type <code>DOMString</code>
+                  </dt>
+                  <dd>
+                    This attribute represents the key as the string representation of a floating point number between 0 and 1. If the value 
+                    in the CSS style is <code>from</code> this value will be 0, and if the value in the CSS style is <code>to</code> this 
+                    value will be 1.<br>
+                  </dd>
+                </dl>
+              </dd>
+              <dd>
+                <dl>
+                  <dt>
+                    <code class='attribute-name'><a id="DOM-CSSKeyframeRule-style" name='DOM-CSSKeyframeRule-style'>style</a></code> of type <code>CSSStyleDeclaration</code>
+                  </dt>
+                  <dd>
+                    This attribute represents the style associated with this keyframe.<br>
+                  </dd>
+                </dl>
+              </dd>
+              <dt>
+                <b>No Methods</b>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+        <dl>
+          <dt>
+            <b>Interface <i><a id="DOM-CSSKeyframesRule" name='DOM-CSSKeyframesRule'>CSSKeyframesRule</a></i></b>
+          </dt>
+          <dd>
+            <p>
+              The <code>CSSKeyframesRule</code> interface represents a complete set of keyframes for a single animation.
+            </p>
+            <dl>
+              <dt>
+                <br>
+                <b>IDL Definition</b>
+              </dt>
+              <dd>
+                <div class='idl-code'>
+                  <pre>
+    interface CSSKeyframesRule : CSSRule {
+        attribute          DOMString   name;
+        readonly attribute CSSRuleList cssRules;
+
+        void               insertRule(in DOMString rule);
+        void               deleteRule(in DOMString key);
+        CSSKeyframeRule    findRule(in DOMString key);
+    };
+    </pre>
+                </div><br>
+              </dd>
+              <dt>
+                <b>Attributes</b>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <code class='attribute-name'><a id="DOM-CSSKeyframesRule-name" name='DOM-CSSKeyframesRule-name'>name</a></code> of type <code>DOMString</code>
+                  </dt>
+                  <dd>
+                    This attribute is the name of the keyframes, used by the <code>animation-name</code> property.<br>
+                  </dd>
+                </dl>
+              </dd>
+              <dd>
+                <dl>
+                  <dt>
+                    <code class='attribute-name'><a id="DOM-CSSKeyframeRules-cssRules" name='DOM-CSSKeyframeRules-cssRules'>cssRules</a></code> of type <code>CSSRuleList</code>
+                  </dt>
+                  <dd>
+                    This attribute gives access to the keyframes in the list.<br>
+                  </dd>
+                </dl>
+              </dd>
+              <dt>
+                <b>Methods</b>
+                <dd>
+                  <dl>
+                    <!-- ======================================================================================================= -->
+                    <dt>
+                      <code class='method-name'><a id="DOM-CSSKeyframesRule-insertRule" name='DOM-CSSKeyframesRule-insertRule'>insertRule</a></code>
+                    </dt>
+                    <dd>
+                      <div class='method'>
+                        The <code>insertRule</code> method inserts the passed CSSKeyframeRule into the list at the passed key.
+                        <div class='parameters'>
+                          <b>Parameters</b>
+                          <div class='paramtable'>
+                            <dl>
+                               <dt>
+                                <code class='parameter-name'>rule</code> of type <code>DOMString</code>
+                              </dt>
+                              <dd>
+                                The rule to be inserted, expressed in the same syntax as one entry in the
+                                <code>@keyframes</code> rule. The key is included in the rule string, which described the
+                                point at which the rule should be inserted. If a rule with the same key already exists in
+                                the list, it is replaced with this rule.
+                              </dd>
+                            </dl>
+                          </div>
+                        </div><!-- parameters -->
+                        <div class='return-value'>
+                          <b>No Return Value</b>
+                        </div>
+                        <div>
+                          <b>No Exceptions</b>
+                        </div>
+                      </div><!-- ======================================================================================================= -->
+                    </dd>
+                    <dt>
+                      <code class='method-name'><a id="DOM-CSSKeyframesRule-deleteRule" name='DOM-CSSKeyframesRule-deleteRule'>deleteRule</a></code>
+                    </dt>
+                    <dd>
+                      <div class='method'>
+                        The <code>deleteRule</code> method deletes the CSSKeyframeRule with the passed key. If a rule with this key
+                        does not exist, the method does nothing.
+                        <div class='parameters'>
+                          <b>Parameters</b>
+                          <div class='paramtable'>
+                            <dl>
+                              <dt>
+                                <code class='parameter-name'>key</code> of type <code>DOMString</code>
+                              </dt>
+                              <dd>
+                                The key which describes the rule to be deleted. The key must
+                                resolve to a number between 0 and 1, or the rule is ignored.<br>
+                              </dd>
+                            </dl>
+                          </div>
+                        </div><!-- parameters -->
+                        <div class='return-value'>
+                          <b>No Return Value</b>
+                        </div>
+                        <div>
+                          <b>No Exceptions</b>
+                        </div>
+                      </div><!-- ======================================================================================================= -->
+                    </dd>
+                    <dt>
+                      <code class='method-name'><a id="DOM-CSSKeyframesRule-findRule" name='DOM-CSSKeyframesRule-findRule'>findRule</a></code>
+                    </dt>
+                    <dd>
+                      <div class='method'>
+                        The <code>findRule</code> method returns the rule with a key matching the passed key. If no such rule
+                        exists, a null value is returned.
+                        <div class='parameters'>
+                          <b>Parameters</b>
+                          <div class='paramtable'>
+                            <dl>
+                              <dt>
+                                <code class='parameter-name'>key</code> of type <code>DOMString</code>
+                              </dt>
+                              <dd>
+                                The key which described the rule to find. The key must
+                                resolve to a number between 0 and 1, or the rule is ignored.<br>
+                              </dd>
+                            </dl>
+                          </div>
+                        </div><!-- parameters -->
+                        <div class='return-value'>
+                          <b>Return Value</b>
+                          <div class='returnvalue'>
+                            <dl>
+                              <dt>
+                                <code>CSSKeyframeRule</code>
+                              </dt>
+                              <dd>
+                                The found rule.<br>
+                              </dd>
+                            </dl>
+                          </div>
+                        </div>
+                        <div>
+                          <b>No Exceptions</b>
+                        </div>
+                      </div><!-- ======================================================================================================= -->
+                    </dd>
+                  </dl><!-- method -->
+                </dd>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+
+<h2>References</h2>
+
+<h3 class="no-num">Normative references</h3>
+<!--normative-->
+
+<h3 class="no-num">Other references</h3>
+<!--informative-->
+
+
+
+<h2 class="no-num">Property index</h2>
+<!-- properties -->
+
+
+
+<h2 class="no-num" id="index">Index</h2>
+<!--index-->
+
+</body>
+</html>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-default-doctype-name:"html"
+sgml-minimize-attributes:t
+End:
+-->

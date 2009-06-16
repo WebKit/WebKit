@@ -1,0 +1,1539 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang=en>
+ <head>
+  <title>CSS 3D Transforms Module Level 3</title>
+  <link href=default.css rel=stylesheet type="text/css">
+
+  <style type="text/css">
+    .rhs { white-space: pre-wrap; }
+    code { font-size: inherit; }
+    #box-shadow-samples td { background: white; color: black; }
+  </style>
+  <link href="http://www.w3.org/StyleSheets/TR/W3C-ED.css" rel=stylesheet
+  type="text/css">
+
+ <body>
+  <div class=head> <!--begin-logo-->
+   <p><a href="http://www.w3.org/"><img alt=W3C height=48
+    src="http://www.w3.org/Icons/w3c_home" width=72></a> <!--end-logo-->
+
+   <h1>CSS 3D Transforms Module Level 3</h1>
+
+   <h2 class="no-num no-toc" id=longstatus-date>Editor's Draft 14 April 2009</h2>
+
+   <dl>
+    <dt>This version:
+
+    <dd> <a
+     href="http://www.w3.org/TR/2009/ED-css3-3d-transforms-20090414">http://dev.w3.org/csswg/css3-3d-transforms/</a>
+     <!--http://www.w3.org/TR/2009/WD-css3-3d-transforms-20090414-->
+
+    <dt>Latest version:
+
+    <dd><a
+     href="http://www.w3.org/TR/css3-3d-transforms/">http://www.w3.org/TR/css3-3d-transforms</a>
+     
+
+    <dt>Previous version:
+
+    <dd><a href="http://www.w3.org/TR/2009/WD-css3-3d-transforms-20090320/">
+     http://www.w3.org/TR/2009/WD-css3-3d-transforms-20090320/</a>
+
+    <dt id=editors-list>Editors:
+
+    <dd><a href="mailto:dino@apple.com">Dean Jackson</a> (<a
+     href="http://www.apple.com/">Apple Inc</a>)
+
+    <dd><a href="mailto:hyatt@apple.com">David Hyatt</a> (<a
+     href="http://www.apple.com/">Apple Inc</a>)
+
+    <dd><a href="mailto:cmarrin@apple.com">Chris Marrin</a> (<a
+     href="http://www.apple.com/">Apple Inc</a>)
+   </dl>
+   <!--begin-copyright-->
+   <p class=copyright><a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright"
+    rel=license>Copyright</a> &copy; 2009 <a
+    href="http://www.w3.org/"><acronym title="World Wide Web
+    Consortium">W3C</acronym></a><sup>&reg;</sup> (<a
+    href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute
+    of Technology">MIT</acronym></a>, <a
+    href="http://www.ercim.org/"><acronym title="European Research Consortium
+    for Informatics and Mathematics">ERCIM</acronym></a>, <a
+    href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+    <a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+    and <a
+    href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+    use</a> rules apply.</p>
+   <!--end-copyright-->
+   <hr title="Separator for header">
+  </div>
+
+  <h2 class="no-num no-toc" id=abstract>Abstract</h2>
+
+  <p>CSS 3D Transforms extends CSS Transforms to allow elements rendered by
+   CSS to be transformed in three-dimensional space.
+
+  <h2 class="no-num no-toc" id=status>Status of this document</h2>
+  <!--begin-status-->
+
+  <p>This is a public copy of the editors' draft. It is provided for
+   discussion only and may change at any moment. Its publication here does
+   not imply endorsement of its contents by W3C. Don't cite this document
+   other than as work in progress.
+
+  <p>The (<a
+   href="http://lists.w3.org/Archives/Public/www-style/">archived</a>) public
+   mailing list <a href="mailto:www-style@w3.org">www-style@w3.org</a> (see
+   <a href="http://www.w3.org/Mail/Request">instructions</a>) is preferred
+   for discussion of this specification. When sending e-mail, please put the
+   text &#8220;css3-3d-transforms&#8221; in the subject, preferably like
+   this: &#8220;[<!---->css3-3d-transforms<!---->] <em>&hellip;summary of
+   comment&hellip;</em>&#8221;
+
+  <p>This document was produced by the <a href="/Style/CSS/members">CSS
+   Working Group</a> (part of the <a href="/Style/">Style Activity</a>).
+
+  <p>This document was produced by a group operating under the <a
+   href="/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent
+   Policy</a>. W3C maintains a <a href="/2004/01/pp-impl/32061/status"
+   rel=disclosure>public list of any patent disclosures</a> made in
+   connection with the deliverables of the group; that page also includes
+   instructions for disclosing a patent. An individual who has actual
+   knowledge of a patent which the individual believes contains <a
+   href="/Consortium/Patent-Policy-20040205/#def-essential">Essential
+   Claim(s)</a> must disclose the information in accordance with <a
+   href="/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the
+   W3C Patent Policy</a>.</p>
+  <!--end-status-->
+
+  <h2 class="no-num no-toc" id=contents>Table of contents</h2>
+  <!--begin-toc-->
+
+  <ul class=toc>
+   <li><a href="#introduction"><span class=secno>1 </span>Introduction</a>
+
+   <li><a href="#transform-property"><span class=secno>2 </span> The <span
+    class=prop-name>&lsquo;<code
+    class=property>transform</code>&rsquo;</span> Property </a>
+
+   <li><a href="#transform-origin-property"><span class=secno>3 </span> The
+    <span class=prop-name>&lsquo;<code
+    class=property>transform-origin</code>&rsquo;</span> Property </a>
+
+   <li><a href="#transform-style-property"><span class=secno>4 </span> The
+    <span class=prop-name>&lsquo;<code
+    class=property>transform-style</code>&rsquo;</span> Property </a>
+
+   <li><a href="#perspective-property"><span class=secno>5 </span> The <span
+    class=prop-name>&lsquo;<code
+    class=property>perspective</code>&rsquo;</span> Property </a>
+
+   <li><a href="#perspective-origin-property"><span class=secno>6 </span> The
+    <span class=prop-name>&lsquo;<code
+    class=property>perspective-origin</code>&rsquo;</span> Property </a>
+
+   <li><a href="#backface-visibility-property"><span class=secno>7 </span>
+    The <span class=prop-name>&lsquo;<code
+    class=property>backface-visibility</code>&rsquo;</span> Property </a>
+
+   <li><a href="#transform-functions"><span class=secno>8 </span> The
+    Transformation Functions </a>
+
+   <li><a href="#animation"><span class=secno>9 </span> Transitions and
+    animations between transform values </a>
+
+   <li><a href="#dom-interfaces"><span class=secno>10 </span> DOM Interfaces
+    </a>
+    <ul class=toc>
+     <li><a href="#cssmatrix-interface"><span class=secno>10.1 </span> 10.1
+      CSSMatrix </a>
+
+     <li><a href="#csstransformvalue-interface"><span class=secno>10.2
+      </span> 10.2 CSSTransformValue </a>
+    </ul>
+
+   <li><a href="#references"><span class=secno>11 </span>References</a>
+    <ul class=toc>
+     <li class=no-num><a href="#normative-references">Normative
+      references</a>
+
+     <li class=no-num><a href="#other-references">Other references</a>
+    </ul>
+
+   <li class=no-num><a href="#property-index">Property index</a>
+
+   <li class=no-num><a href="#index">Index</a>
+  </ul>
+  <!--end-toc-->
+
+  <h2 id=introduction><span class=secno>1 </span>Introduction</h2>
+
+  <p><em>This section is not normative.</em>
+
+  <p> This is an enhancement to the CSS Transforms specification which
+   provides transforms in three dimensions. It should be read in conjunction
+   with that specification.
+
+  <p> This coordinate space can be modified with the <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#effects">transform</a></code>&rsquo;</span> property. Using
+   transform, elements can be translated, rotated and scaled in two or three
+   dimensional space. A perspective transform can also be applied to give a
+   sense of depth to the way elements are displayed. In three dimensions, a Z
+   axis is added, with positive z values conceptually rising perpendicularly
+   out of the window toward the user and negative z values falling into the
+   window away from the user.
+
+  <p> Any value other than &lsquo;<code class=property>none</code>&rsquo; for
+   the transform results in the creation of both a stacking context and a
+   containing block. The object acts as though position: relative has been
+   specified, but also acts as a containing block for fixed positioned
+   descendants. The position on the Z axis of a transformed element does not
+   affect the order within a stacking context. With elements at the same
+   z-index, objects are drawn in order of increasing z position.
+
+  <p> Note that while <span class=prop-name>&lsquo;<code class=property><a
+   href="#effects">transform</a></code>&rsquo;</span> uses a
+   three-dimensional coordinate system, the elements themselves are not
+   three-dimensional objects. Instead, they exist on a two-dimensional plane
+   (a flat surface) and have no depth.
+
+  <h2 id=transform-property><span class=secno>2 </span> The <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#effects">transform</a></code>&rsquo;</span> Property</h2>
+
+  <p> A 2D or 3D transformation is applied to an element through the <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#effects">transform</a></code>&rsquo;</span> property. This property
+   contains a list of <a href="#transform-functions">transform functions</a>.
+   The final transformation value for an element is obtained by performing a
+   matrix concatenation of each entry in the list. The set of transform
+   functions is similar to those allowed by SVG. There are additional
+   functions to support 3D transformations.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=effects>transform</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> none | &lt;transform-function&gt; [ &lt;transform-function&gt; ]*
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> none
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> refer to the size of the element's box
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+  <!-- ======================================================================================================= -->
+
+  <h2 id=transform-origin-property><span class=secno>3 </span> The <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#transform-origin">transform-origin</a></code>&rsquo;</span>
+   Property</h2>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#transform-origin">transform-origin</a></code>&rsquo;</span>
+   property establishes the origin of transformation for an element. This
+   property is applied by first translating the element by the negated value
+   of the property, then applying the element's transform, then translating
+   by the property value. This effectively moves the desired transformation
+   origin of the element to (0,0,0) in the local coordinate system, then
+   applies the element's transform, then moves the element back to its
+   original position.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=transform-origin>transform-origin</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> [ [ [ &lt;percentage&gt; | &lt;length&gt; | left | center | right ]
+      [ &lt;percentage&gt; | &lt;length&gt; | top | center | bottom ]? ]
+      &lt;length&gt; ] | [ [ [ left | center | right ] || [ top | center |
+      bottom ] ] &lt;length&gt; ]
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> 50% 50% 0
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> refer to the size of the element's box
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> For &lt;length&gt; the absolute value, otherwise a percentage
+  </table>
+  <!-- ======================================================================================================= -->
+
+  <h2 id=transform-style-property><span class=secno>4 </span> The <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#transform-style">transform-style</a></code>&rsquo;</span> Property</h2>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#transform-style">transform-style</a></code>&rsquo;</span> property
+   defines how nested elements are rendered in 3D space. If the <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#transform-style">transform-style</a></code>&rsquo;</span> is <span
+   class=prop-value>&lsquo;<code class=property>flat</code>&rsquo;</span>,
+   all children of this element are rendered flattened into the 2D plane of
+   the element. Therefore, rotating the element about the X or Y axes will
+   cause children positioned at positive or negative Z positions to appear on
+   the element's plane, rather than in front of or behind it. If the <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#transform-style">transform-style</a></code>&rsquo;</span> is <span
+   class=prop-value>&lsquo;<code class=css>preserve-3d</code>&rsquo;</span>,
+   this flattening is not performed, so children maintain their position in
+   3D space.
+
+  <p> This flattening takes place at each element, so preserving a hierarchy
+   of elements in 3D space requires that each ancestor in the hierarchy have
+   the value <span class=prop-value>&lsquo;<code
+   class=css>preserve-3d</code>&rsquo;</span> for <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#transform-style">transform-style</a></code>&rsquo;</span>. But
+   since <span class=prop-name>&lsquo;<code class=property><a
+   href="#transform-style">transform-style</a></code>&rsquo;</span> affects
+   only an element's children, the leaf nodes in a hierarchy do not require
+   the perspective style.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=transform-style>transform-style</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> flat | preserve-3d
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> flat
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> N/A
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+
+  <p> For some effects, the author will have to ensure that an ancestor
+   element to a subtree using <span class=prop-value>&lsquo;<code
+   class=css>preserve-3d</code>&rsquo;</span> has a <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#transform-style">transform-style</a></code>&rsquo;</span> of <span
+   class=prop-value>&lsquo;<code class=property>flat</code>&rsquo;</span> (or
+   the default). Otherwise, the elements in the 3D tree may be located behind
+   ancestor elements and, thus, invisible (hidden behind an ancestor's
+   background).
+
+  <p> Note that while &lsquo;<code class=css>preserve-3d</code>&rsquo; can be
+   specified on an element, the effect may not be possible. Elements that
+   have <span class=prop-name>&lsquo;<code
+   class=property>overflow</code>&rsquo;</span> set to <span
+   class=prop-value>&lsquo;<code class=property>hidden</code>&rsquo;</span>
+   are unable to keep their children in 3D. In this case the element will
+   behave as if the property was set to <span class=prop-value>&lsquo;<code
+   class=property>flat</code>&rsquo;</span>.
+
+  <div class=issue> Does transform-style: preserve-3d need to establish a
+   stacking context and containing block like transform does?</div>
+  <!-- ======================================================================================================= -->
+
+  <h2 id=perspective-property><span class=secno>5 </span> The <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#perspective">perspective</a></code>&rsquo;</span> Property</h2>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#perspective">perspective</a></code>&rsquo;</span> property applies
+   the same transform as the <span
+   class=prop-value>perspective(&lt;number&gt;)</span> transform function,
+   except that it applies only to the positioned or transformed children of
+   the element, not to the transform on the element itself.
+
+  <p> If the value is <span class=prop-value>&lsquo;<code
+   class=property>none</code>&rsquo;</span>, less than or equal to 0 no
+   perspective transform is applied.
+
+  <p> The use of this property with any value other than &lsquo;<code
+   class=property>none</code>&rsquo; establishes a stacking context. It also
+   establishes a containing block (somewhat similar to position:relative),
+   just like the &lsquo;<code class=property><a
+   href="#effects">transform</a></code>&rsquo; property does.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=perspective>perspective</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> none | &lt;number&gt;
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> none
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> N/A
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+  <!-- ======================================================================================================= -->
+
+  <h2 id=perspective-origin-property><span class=secno>6 </span> The <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#perspective-origin">perspective-origin</a></code>&rsquo;</span>
+   Property</h2>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#perspective-origin">perspective-origin</a></code>&rsquo;</span>
+   property establishes the origin for the <em><a
+   href="#perspective">perspective</a></em> property. It effectively sets the
+   X and Y position at which the viewer appears to be looking at the children
+   of the element.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=perspective-origin>perspective-origin</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> [ [ &lt;percentage&gt; | &lt;length&gt; | left | center | right ] [
+      &lt;percentage&gt; | &lt;length&gt; | top | center | bottom ]? ] | [ [
+      left | center | right ] || [ top | center | bottom ] ]
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> 50% 50%
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> refer to the size of the box itself
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+  <!-- ======================================================================================================= -->
+
+  <h2 id=backface-visibility-property><span class=secno>7 </span> The <span
+   class=prop-name>&lsquo;<code class=property><a
+   href="#backface-visibility">backface-visibility</a></code>&rsquo;</span>
+   Property</h2>
+
+  <p> The <span class=prop-name>&lsquo;<code class=property><a
+   href="#backface-visibility">backface-visibility</a></code>&rsquo;</span>
+   property determines whether or not the "back" side of a transformed
+   element is visible when facing the viewer. With an identity transform, the
+   front side of an element faces the viewer. Applying a rotation about Y of
+   180 degrees (for instance) would cause the back side of the element to
+   face the viewer.
+
+  <p> This property is useful when you place two elements back-to-back, as
+   you would to create a playing card. Without this property, the front and
+   back elements could switch places at times during an animation to flip the
+   card. Another example is creating a box out of 6 elements, but where you
+   want to see the inside faces of the box. This is useful when creating the
+   backdrop for a 3 dimensional stage.
+
+  <table class=propdef>
+   <tbody>
+    <tr>
+     <td> <em>Name:</em>
+
+     <td> <dfn id=backface-visibility>backface-visibility</dfn>
+
+    <tr>
+     <td> <em>Value:</em>
+
+     <td> visible | hidden
+
+    <tr>
+     <td> <em>Initial:</em>
+
+     <td> visible
+
+    <tr>
+     <td> <em>Applies&nbsp;to:</em>
+
+     <td> block-level and inline-level elements
+
+    <tr>
+     <td> <em>Inherited:</em>
+
+     <td> no
+
+    <tr>
+     <td> <em>Percentages:</em>
+
+     <td> N/A
+
+    <tr>
+     <td> <em>Media:</em>
+
+     <td> visual
+
+    <tr>
+     <td> <em>Computed value:</em>
+
+     <td> Same as specified value.
+  </table>
+  <!-- ======================================================================================================= -->
+
+  <h2 id=transform-functions><span class=secno>8 </span> The Transformation
+   Functions</h2>
+
+  <p> The value of the <a class=prop-name href="#effects">transform</a>
+   property is a list of &lt;transform-functions&gt;, applied in the order
+   provided. The individual transform functions are separated by whitespace.
+   The following is a list of allowed transform functions. In this list the
+   type &lt;translation-value&gt; is defined as a &lt;length&gt; or
+   &lt;percentage&gt; value, and the &lt;angle&gt; type is defined by <a
+   href="http://www.w3.org/TR/css3-values/">CSS Values and Units.</a>
+
+  <dl>
+   <dt> <span class=prop-value>matrix(&lt;number&gt;, &lt;number&gt;,
+    &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;)</span>
+
+   <dd> specifies a 2D transformation in the form of a <a
+    href="http://www.w3.org/TR/SVG/coords.html#TransformMatrixDefined">transformation
+    matrix</a> of six values. <span
+    class=prop-value>matrix(a,b,c,d,e,f)</span> is equivalent to matrix3d(a,
+    b, 0, 0, c, d, 0, 0, 0, 0, 1, 0, e, f, 0, 1).
+
+   <dt> <span class=prop-value>matrix3d(&lt;number&gt;, &lt;number&gt;,
+    &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;,
+    &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;,
+    &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;,
+    &lt;number&gt;, &lt;number&gt;)</span>
+
+   <dd> specifies a 3D transformation as a 4x4 homogeneous matrix of 16
+    values in column-major order.
+
+   <dt> <span class=prop-value>translate(&lt;translation-value&gt;[,
+    &lt;translation-value&gt;])</span>
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">2D
+    translation</a> by the vector [tx, ty], where tx is the first
+    translation-value parameter and ty is the optional second
+    translation-value parameter. If <em>&lt;ty&gt;</em> is not provided, ty
+    has zero as a value.
+
+   <dt> <span class=prop-value>translate3d(&lt;translation-value&gt;,
+    &lt;translation-value&gt;, &lt;translation-value&gt;)</span>
+
+   <dd> specifies a 3D translation by the vector [tx,ty,tz], with tx, ty and
+    tz being the first, second and third translation-value parameters
+    respectively.
+
+   <dt> <span class=prop-value>translateX(&lt;translation-value&gt;)</span>
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">translation</a>
+    by the given amount in the X direction.
+
+   <dt> <span class=prop-value>translateY(&lt;translation-value&gt;)</span>
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">translation</a>
+    by the given amount in the Y direction.
+
+   <dt> <span class=prop-value>translateZ(&lt;translation-value&gt;)</span>
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">translation</a>
+    by the given amount in the Z direction. Note that percentage values are
+    not allowed in the translateZ translation-value, and if present are
+    evaluated as 0.
+
+   <dt> <span class=prop-value>scale(&lt;number&gt;[, &lt;number&gt;])</span>
+    
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#ScalingDefined">2D scale</a>
+    operation by the [sx,sy] scaling vector described by the 2 parameters. If
+    the second parameter is not provided, it is takes a value equal to the
+    first.
+
+   <dt> <span class=prop-value>scale3d(&lt;number&gt;, &lt;number&gt;,
+    &lt;number&gt;)</span>
+
+   <dd> specifies a 3D scale operation by the [sx,sy,sz] scaling vector
+    described by the 3 parameters.
+
+   <dt> <span class=prop-value>scaleX(&lt;number&gt;)</span>
+
+   <dd> specifies a scale operation using the [sx,1,1] scaling vector, where
+    sx is given as the parameter.
+
+   <dt> <span class=prop-value>scaleY(&lt;number&gt;)</span>
+
+   <dd> specifies a scale operation using the [1,sy,1] scaling vector, where
+    sy is given as the parameter.
+
+   <dt> <span class=prop-value>scaleZ(&lt;number&gt;)</span>
+
+   <dd> specifies a scale operation using the [1,1,sz] scaling vector, where
+    sz is given as the parameter.
+
+   <dt> <span class=prop-value>rotate(&lt;angle&gt;)</span>
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#RotationDefined">2D
+    rotation</a> by the angle specified in the parameter about the origin of
+    the element, as defined by the <em><a
+    href="#transform-origin">transform-origin</a></em> property.
+
+   <dt> <span class=prop-value>rotate3d(&lt;number&gt;, &lt;number&gt;,
+    &lt;number&gt;, &lt;angle&gt;)</span>
+
+   <dd> specifies a clockwise 3D rotation by the angle specified in last
+    parameter about the [x,y,z] direction vector described by the first 3
+    parameters. If the direction vector is not of unit length, it will be
+    normalized. A direction vector that cannot be normalized, such as [0, 0,
+    0], will cause the rotation to not be applied. This function is
+    equivalent to <code>matrix3d(1 + (1-cos(angle))*(x*x-1),
+    -z*sin(angle)+(1-cos(angle))*x*y, y*sin(angle)+(1-cos(angle))*x*z, 0,
+    z*sin(angle)+(1-cos(angle))*x*y, 1 + (1-cos(angle))*(y*y-1),
+    -x*sin(angle)+(1-cos(angle))*y*z, 0, -y*sin(angle)+(1-cos(angle))*x*z,
+    x*sin(angle)+(1-cos(angle))*y*z, 1 + (1-cos(angle))*(z*z-1), 0, 0, 0, 0,
+    1)</code>.
+
+   <dt> <span class=prop-value>rotateX(&lt;angle&gt;)</span>
+
+   <dd> specifies a clockwise rotation by the given angle about the X axis.
+
+   <dt> <span class=prop-value>rotateY(&lt;angle&gt;)</span>
+
+   <dd> specifies a clockwise rotation by the given angle about the Y axis.
+
+   <dt> <span class=prop-value>rotateZ(&lt;angle&gt;)</span>
+
+   <dd> specifies a clockwise rotation by the given angle about the Z axis.
+
+   <dt> <span class=prop-value>skewX(&lt;angle&gt;)</span>
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#SkewXDefined">skew
+    transformation along the X axis</a> by the given angle.
+
+   <dt> <span class=prop-value>skewY(&lt;angle&gt;)</span>
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#SkewYDefined">skew
+    transformation along the Y axis</a> by the given angle.
+
+   <dt> <span class=prop-value>skew(&lt;angle&gt; [, &lt;angle&gt;])</span>
+
+   <dd> specifies a <a
+    href="http://www.w3.org/TR/SVG/coords.html#SkewXDefined">skew
+    transformation along the X and Y axes</a>. The first angle parameter
+    specifies the skew on the X axis. The second angle parameter specifies
+    the skew on the Y axis. If the second parameter is not given then a value
+    of 0 is used for the Y angle (ie. no skew on the Y axis).
+
+   <dt> <span class=prop-value>perspective(&lt;number&gt;)</span>
+
+   <dd> specifies a perspective projection matrix. This matrix maps a
+    <em>viewing cube</em> onto a pyramid whose base is infinitely far away
+    from the viewer and whose peak represents the viewer's position. The
+    viewable area is the region bounded by the four edges of the viewport
+    (the portion of the browser window used for rendering the webpage between
+    the viewer's position and a point at a distance of infinity from the
+    viewer). The <em>depth</em>, given as the parameter to the function,
+    represents the distance of the z=0 plane from the viewer. Lower values
+    give a more flattened pyramid and therefore a more pronounced perspective
+    effect. The value is given in pixels, so a value of 1000 gives a moderate
+    amount of foreshortening and a value of 200 gives an extreme amount. The
+    matrix is computed by starting with an identity matrix and replacing the
+    value at row 3, column 4 with the value -1/depth. The value for depth
+    must be greater than zero, otherwise the function is invalid.
+  </dl>
+  <!-- ======================================================================================================= -->
+
+  <h2 id=animation><span class=secno>9 </span> Transitions and animations
+   between transform values</h2>
+
+  <p> When animating or transitioning the value of a transform property the
+   rules described below are applied. The &lsquo;<code
+   class=property>from</code>&rsquo; transform is the transform at the start
+   of the transition or current keyframe. The &lsquo;<code
+   class=property>end</code>&rsquo; transform is the transform at the end of
+   the transition or current keyframe.
+
+  <ul>
+   <li> If the &lsquo;<code class=property>from</code>&rsquo; and
+    &lsquo;<code class=property>to</code>&rsquo; transforms are both single
+    functions of the same type:
+    <ul>
+     <li> For translate, translate3d, translateX, translateY, translateZ,
+      scale, scale3d, scaleX, scaleY, scaleZ, rotate, rotateX, rotateY,
+      rotateZ, skewX and skewY functions:
+      <ul>
+       <li> the individual components of the function are interpolated
+        numerically.
+      </ul>
+
+     <li> For perspective, matrix, matrix3d and rotate3d:
+      <ul>
+       <li> the values are first converted to a 4x4 matrix, then decomposed
+        using <a href="http://tog.acm.org/GraphicsGems/gemsii/unmatrix.c">the
+        method described by unmatrix</a> into separate translation, scale,
+        rotation, skew and perspective matrices, then each decomposed matrix
+        is interpolated numerically, and finally combined in order to produce
+        a resulting 4x4 matrix.
+      </ul>
+    </ul>
+
+   <li> If both the &lsquo;<code class=property>from</code>&rsquo; and
+    &lsquo;<code class=property>to</code>&rsquo; transforms are "none":
+    <ul>
+     <li> There is no interpolation necessary
+    </ul>
+
+   <li> If one of the &lsquo;<code class=property>from</code>&rsquo; or
+    &lsquo;<code class=property>to</code>&rsquo; transforms is "none":
+    <ul>
+     <li> The &lsquo;<code class=property>none</code>&rsquo; is replaced by
+      an equivalent identity function list for the corresponding transform
+      function list.
+      <p> For example, if the &lsquo;<code class=property>from</code>&rsquo;
+       transform is "scale(2)" and the &lsquo;<code
+       class=property>to</code>&rsquo; transform is "none" then the value
+       "scale(1)" will be used as the &lsquo;<code
+       class=property>to</code>&rsquo; value, and animation will proceed
+       using the rule above. Similarly, if the &lsquo;<code
+       class=property>from</code>&rsquo; transform is "none" and the
+       &lsquo;<code class=property>to</code>&rsquo; transform is "scale(2)
+       rotate(50deg)" then the animation will execute as if the &lsquo;<code
+       class=property>from</code>&rsquo; value is "scale(1) rotate(0)".</p>
+
+      <p> The identity functions are translate(0), translate3d(0, 0, 0),
+       translateX(0), translateY(0), translateZ(0), scale(1), scale3d(1, 1,
+       1), scaleX(1), scaleY(1), scaleZ(1), rotate(0), rotate3d(1, 1, 1, 0),
+       rotateX(0), rotateY(0), rotateZ(0), skewX(0), skewY(0), matrix(1, 0,
+       0, 1, 0, 0) and matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+       1).</p>
+    </ul>
+
+   <li> If both the &lsquo;<code class=property>from</code>&rsquo; and
+    &lsquo;<code class=property>to</code>&rsquo; transforms have the same
+    number of transform functions and corresponding functions in each
+    transform list are of the same type:
+    <ul>
+     <li> Each transform function is animated with its corresponding
+      destination function in isolation using the rules described above. The
+      individual values are then applied as a list to produce resulting
+      transform value.
+    </ul>
+
+   <li> Otherwise:
+    <ul>
+     <li> The transform function lists are each converted into the equivalent
+      matrix3d value and animation proceeds using the rule for a single
+      function above.
+    </ul>
+  </ul>
+  <!-- ======================================================================================================= -->
+
+  <h2 id=dom-interfaces><span class=secno>10 </span> DOM Interfaces</h2>
+
+  <p> This section describes the interfaces and functionality added to the
+   DOM to support runtime access to the functionality described above.</p>
+  <!-- ============================================================ -->
+
+  <h3 id=cssmatrix-interface><span class=secno>10.1 </span> 10.1 CSSMatrix</h3>
+
+  <dl>
+   <dt> <b>Interface <i><a id=DOM-CSSMatrix
+    name=DOM-CSSMatrix>CSSMatrix</a></i></b>
+
+   <dd>
+    <p> The <code>CSSMatrix</code> interface represents a 4x4 homogeneous
+     matrix.</p>
+
+    <dl>
+     <dt> <b>IDL Definition</b>
+
+     <dd>
+      <div class=idl-code>
+       <pre>
+  interface CSSMatrix {
+      attribute float m11;
+      attribute float m12;
+      attribute float m13;
+      attribute float m14;
+      attribute float m21;
+      attribute float m22;
+      attribute float m23;
+      attribute float m24;
+      attribute float m31;
+      attribute float m32;
+      attribute float m33;
+      attribute float m34;
+      attribute float m41;
+      attribute float m42;
+      attribute float m43;
+      attribute float m44;
+
+      void        setMatrixValue(in DOMString string) raises(DOMException);
+      CSSMatrix   multiply(in CSSMatrix secondMatrix);
+      CSSMatrix   inverse() raises(DOMException);
+      CSSMatrix   translate(in float x, in float y, in float z);
+      CSSMatrix   scale(in float scaleX, in float scaleY, in float scaleZ);
+      CSSMatrix   rotate(in float rotX, in float rotY, in float rotZ);
+      CSSMatrix   rotateAxisAngle(in float x, in float y, in float z, in float angle);
+  };</pre>
+      </div>
+      <br>
+     </dd>
+     <!-- IDL -->
+
+     <dt> <b>Attributes</b>
+
+     <dd>
+      <dl>
+       <dt> <code class=attribute-name><a id=DOM-CSSMatrix-matrix
+        name=DOM-CSSMatrix-matrix>m11-m44</a></code> of type
+        <code>float</code>
+
+       <dd> Each of these attributes represents one of the values in the 4x4
+        matrix. For instance m12 represents the value in the 2nd column of
+        the first row.<br>
+      </dl>
+     </dd>
+     <!-- Attributes -->
+
+     <dt> <b>Methods</b>
+
+     <dd>
+      <dl><!-- ===================================================== -->
+
+       <dt> <code class=method-name><a id=DOM-CSSMatrix-setMatrixValue
+        name=DOM-CSSMatrix-setMatrixValue>setMatrixValue</a></code>
+
+       <dd>
+        <div class=method> The <code>setMatrixValue</code> method replaces
+         the existing matrix with one computed from parsing the passed string
+         as though it had been assigned to the transform property in a CSS
+         style rule.
+         <div class=parameters> <b>Parameters</b>
+          <div class=paramtable>
+           <dl>
+            <dt> <code class=parameter-name>string</code> of type
+             <code>DOMString</code>
+
+            <dd> The string to parse.<br>
+           </dl>
+          </div>
+         </div>
+         <!-- parameters -->
+         <div class=return-value> <b>No Return Value</b></div>
+
+         <div> <b>Exceptions</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>SYNTAX_ERR</code>
+
+            <dd> Thrown when the provided string can not be parsed into a
+             CSSMatrix.
+           </dl>
+          </div>
+         </div>
+        </div>
+       </dd>
+       <!-- setMatrixValue -->
+       <!-- ===================================================== -->
+
+       <dt> <code class=method-name><a id=DOM-CSSMatrix-multiply
+        name=DOM-CSSMatrix-multiply>multiply</a></code>
+
+       <dd>
+        <div class=method> The <code>multiply</code> method returns a new
+         CSSMatrix which is the result of this matrix multiplied by the
+         passed matrix, with the passed matrix to the right. This matrix is
+         not modified.
+         <div class=parameters> <b>Parameters</b>
+          <div class=paramtable>
+           <dl>
+            <dt> <code class=parameter-name>secondMatrix</code> of type
+             <code>CSSMatrix</code>
+
+            <dd> The matrix to multipy.<br>
+           </dl>
+          </div>
+         </div>
+         <!-- parameters -->
+         <div class=return-value> <b>Return Value</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>CSSMatrix</code>
+
+            <dd> The result matrix.<br>
+           </dl>
+          </div>
+         </div>
+
+         <div> <b>No Exceptions</b></div>
+        </div>
+       </dd>
+       <!-- multiply() -->
+       <!-- ===================================================== -->
+
+       <dt> <code class=method-name><a id=DOM-CSSMatrix-inverse
+        name=DOM-CSSMatrix-inverse>inverse</a></code>
+
+       <dd>
+        <div class=method> The <code>inverse</code> method returns a new
+         matrix which is the inverse of this matrix. This matrix is not
+         modified.
+         <div class=parameters> <b>No Parameters</b></div>
+         <!-- parameters -->
+         <div class=return-value> <b>Return Value</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>CSSMatrix</code>
+
+            <dd> The inverted matrix.<br>
+           </dl>
+          </div>
+         </div>
+
+         <div> <b>Exceptions</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>NOT_SUPPORTED_ERROR</code>
+
+            <dd> Thrown when the CSSMatrix can not be inverted.
+           </dl>
+          </div>
+         </div>
+        </div>
+        <!-- ======================================================================================================= -->
+        </dd>
+       <!-- inverse() -->
+       <!-- ===================================================== -->
+
+       <dt> <code class=method-name><a id=DOM-CSSMatrix-translate
+        name=DOM-CSSMatrix-translate>translate</a></code>
+
+       <dd>
+        <div class=method> The <code>translate</code> method returns a new
+         matrix which is this matrix post multiplied by a translation matrix
+         containing the passed values. If the z component is undefined, a 0
+         value is used in its place. This matrix is not modified.
+         <div class=parameters> <b>Parameters</b>
+          <div class=paramtable>
+           <dl>
+            <dt> <code class=parameter-name>x</code> of type
+             <code>float</code>
+
+            <dd> The X component of the translation value.<br>
+
+            <dt> <code class=parameter-name>y</code> of type
+             <code>float</code>
+
+            <dd> The Y component of the translation value.<br>
+
+            <dt> <code class=parameter-name>z</code> of type
+             <code>float</code>
+
+            <dd> The (optional) Z component of the translation value.<br>
+           </dl>
+          </div>
+         </div>
+         <!-- parameters -->
+         <div class=return-value> <b>Return Value</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>CSSMatrix</code>
+
+            <dd> The result matrix.<br>
+           </dl>
+          </div>
+         </div>
+
+         <div> <b>No Exceptions</b></div>
+        </div>
+        <!-- ======================================================================================================= -->
+        </dd>
+       <!-- translate() -->
+       <!-- ===================================================== -->
+
+       <dt> <code class=method-name><a id=DOM-CSSMatrix-scale
+        name=DOM-CSSMatrix-scale>scale</a></code>
+
+       <dd>
+        <div class=method> The <code>scale</code> method returns a new matrix
+         which is this matrix post multiplied by a scale matrix containing
+         the passed values. If the z component is undefined, a 1 value is
+         used in its place. If the y component is undefined, the x component
+         value is used in its place. This matrix is not modified.
+         <div class=parameters> <b>Parameters</b>
+          <div class=paramtable>
+           <dl>
+            <dt> <code class=parameter-name>scaleX</code> of type
+             <code>float</code>
+
+            <dd> The X component of the scale value.<br>
+
+            <dt> <code class=parameter-name>scaleY</code> of type
+             <code>float</code>
+
+            <dd> The (optional) Y component of the scale value.<br>
+
+            <dt> <code class=parameter-name>scaleZ</code> of type
+             <code>float</code>
+
+            <dd> The (optional) Z component of the scale value.<br>
+           </dl>
+          </div>
+         </div>
+         <!-- parameters -->
+         <div class=return-value> <b>Return Value</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>CSSMatrix</code>
+
+            <dd> The result matrix.<br>
+           </dl>
+          </div>
+         </div>
+
+         <div> <b>No Exceptions</b></div>
+        </div>
+        <!-- ======================================================================================================= -->
+        </dd>
+       <!-- scale() -->
+       <!-- ===================================================== -->
+
+       <dt> <code class=method-name><a id=DOM-CSSMatrix-rotate
+        name=DOM-CSSMatrix-rotate>rotate</a></code>
+
+       <dd>
+        <div class=method> The <code>rotate</code> method returns a new
+         matrix which is this matrix post multiplied by each of 3 rotation
+         matrices about the major axes, first X, then Y, then Z. If the y and
+         z components are undefined, the x value is used to rotate the object
+         about the z axis, as though the vector (0,0,x) were passed. All
+         rotation values are in degrees. This matrix is not modified.
+         <div class=parameters> <b>Parameters</b>
+          <div class=paramtable>
+           <dl>
+            <dt> <code class=parameter-name>rotX</code> of type
+             <code>float</code>
+
+            <dd> The X component of the rotation value, or the Z component if
+             the rotY and rotZ parameters are undefined.<br>
+
+            <dt> <code class=parameter-name>rotY</code> of type
+             <code>float</code>
+
+            <dd> The (optional) Y component of the rotation value.<br>
+
+            <dt> <code class=parameter-name>rotZ</code> of type
+             <code>float</code>
+
+            <dd> The (optional) Z component of the rotation value.<br>
+           </dl>
+          </div>
+         </div>
+         <!-- parameters -->
+         <div class=return-value> <b>Return Value</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>CSSMatrix</code>
+
+            <dd> The result matrix.<br>
+           </dl>
+          </div>
+         </div>
+
+         <div> <b>No Exceptions</b></div>
+        </div>
+        <!-- ======================================================================================================= -->
+        </dd>
+       <!-- rotate() -->
+       <!-- ===================================================== -->
+
+       <dt> <code class=method-name><a id=DOM-CSSMatrix-rotateAxisAngle
+        name=DOM-CSSMatrix-rotateAxisAngle>rotateAxisAngle</a></code>
+
+       <dd>
+        <div class=method> The <code>rotateAxisAngle</code> method returns a
+         new matrix which is this matrix post multiplied by a rotation matrix
+         with the given axis and angle. The <a
+         href="http://en.wikipedia.org/wiki/Right-hand_rule">right-hand
+         rule</a> is used to determine the direction of rotation. All
+         rotation values are in degrees. This matrix is not modified.
+         <div class=parameters> <b>Parameters</b>
+          <div class=paramtable>
+           <dl>
+            <dt> <code class=parameter-name>x</code> of type
+             <code>float</code>
+
+            <dd> The X component of the axis vector.<br>
+
+            <dt> <code class=parameter-name>y</code> of type
+             <code>float</code>
+
+            <dd> The Y component of the axis vector.<br>
+
+            <dt> <code class=parameter-name>z</code> of type
+             <code>float</code>
+
+            <dd> The Z component of the axis vector.<br>
+
+            <dt> <code class=parameter-name>angle</code> of type
+             <code>float</code>
+
+            <dd> The angle of rotation about the axis vector, in degrees.<br>
+           </dl>
+          </div>
+         </div>
+         <!-- parameters -->
+         <div class=return-value> <b>Return Value</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>CSSMatrix</code>
+
+            <dd> The result matrix.<br>
+           </dl>
+          </div>
+         </div>
+
+         <div> <b>No Exceptions</b></div>
+        </div>
+       </dd>
+       <!-- rotateAxisAngle -->
+      </dl>
+      <!-- methods -->
+    </dl>
+   </dd>
+   <!-- Interface CSSMatrix -->
+  </dl>
+  <!-- ============================================================ -->
+
+  <h3 id=csstransformvalue-interface><span class=secno>10.2 </span> 10.2
+   CSSTransformValue</h3>
+
+  <dl>
+   <dt> <b>Interface <i><a id=DOM-CSSTransformValue
+    name=DOM-CSSTransformValue>CSSTransformValue</a></i></b>
+
+   <dd>
+    <p> The <code>CSSTransformValue</code> interface represents one transform
+     function in the transform property. The <code>operationType</code>
+     defines which operation is represented. The object also contains a list
+     of values, which are the parameters of the function, in the same order
+     in which they appear in the transform functions.</p>
+
+    <dl>
+     <dt> <b>IDL Definition</b>
+
+     <dd>
+      <div class=idl-code>
+       <pre>
+  interface CSSTransformValue : CSSValueList {
+
+      // 2D OperationTypes
+      const unsigned short CSS_TRANSLATE   = 1;
+      const unsigned short CSS_TRANSLATEX  = 2;
+      const unsigned short CSS_TRANSLATEY  = 3;
+      const unsigned short CSS_ROTATE      = 4;
+      const unsigned short CSS_SCALE       = 5;
+      const unsigned short CSS_SCALEX      = 6;
+      const unsigned short CSS_SCALEY      = 7;
+      const unsigned short CSS_SKEW        = 8;
+      const unsigned short CSS_SKEWX       = 9;
+      const unsigned short CSS_SKEWY       = 10;
+      const unsigned short CSS_MATRIX      = 11;
+
+      // 3D OperationTypes
+      const unsigned short CSS_TRANSLATEZ  = 12;
+      const unsigned short CSS_TRANSLATE3D = 13;
+      const unsigned short CSS_ROTATEX     = 14;
+      const unsigned short CSS_ROTATEY     = 15;
+      const unsigned short CSS_ROTATEZ     = 16;
+      const unsigned short CSS_ROTATE3D    = 17;
+      const unsigned short CSS_SCALEZ      = 18;
+      const unsigned short CSS_SCALE3D     = 19;
+      const unsigned short CSS_PERSPECTIVE = 20;
+      const unsigned short CSS_MATRIX3D    = 21;
+
+      attribute unsigned short operationType;
+
+      CSSMatrix getCSSMatrix() raises(DOMException);
+  };    
+  </pre>
+      </div>
+     </dd>
+     <!-- IDL -->
+
+     <dt> <b>Attributes</b>
+
+     <dd>
+      <dl>
+       <dt> <code class=attribute-name><a
+        id=DOM-CSSTransformValue-operationType
+        name=DOM-CSSTransformValue-operationType>operationType</a></code> of
+        type <code>unsigned short</code>
+
+       <dd> One of the listed operation types.<br>
+      </dl>
+     </dd>
+     <!-- Attributes -->
+
+     <dt> <b>Methods</b>
+
+     <dd>
+      <dl><!-- ===================================================== -->
+
+       <dt> <code class=method-name><a id=DOM-CSSTransformValue-getCSSMatrix
+        name=DOM-CSSTransformValue-getCSSMatrix>getCSSMatrix</a></code>
+
+       <dd>
+        <div class=method> The <code>getCSSMatrix</code> method returns a
+         CSSMatrix object representing this transform.
+         <div class=parameters> <b>No Parameters</b></div>
+         <!-- parameters -->
+         <div class=return-value> <b>Return Value</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>CSSMatrix</code>
+
+            <dd> The result matrix.
+           </dl>
+          </div>
+         </div>
+
+         <div> <b>Exceptions</b>
+          <div class=returnvalue>
+           <dl>
+            <dt> <code>NOT_SUPPORTED_ERROR</code>
+
+            <dd> Thrown when the CSSTranformValue can not be converted into a
+             CSSMatrix, such as when the CSSTransformValue contains
+             percentage units and is being called on an object with unknown
+             dimensions.
+           </dl>
+          </div>
+         </div>
+        </div>
+       </dd>
+       <!-- setMatrixValue -->
+      </dl>
+     </dd>
+     <!-- methods -->
+    </dl>
+   </dd>
+   <!-- Interface CSSTransformValue -->
+  </dl>
+
+  <p> In addition to the interfaces listed above, the
+   <code>getComputedStyle</code> method of the <code>Window</code> object has
+   been updated. The <code><a href="#effects">transform</a></code> property
+   of the style object returned by <code>getComputedStyle</code> contains a
+   single CSSTransformValue with a type of CSS_MATRIX3D. The 16 parameters
+   represent the 4x4 matrix that is the result of applying the individual
+   functions listed in the <code><a href="#effects">transform</a></code>
+   property.
+
+  <h2 id=references><span class=secno>11 </span>References</h2>
+
+  <h3 class=no-num id=normative-references>Normative references</h3>
+  <!--begin-normative-->
+  <!-- Sorted by label -->
+
+  <dl class=bibliography>
+   <dt style="display: none"><!-- keeps the doc valid if the DL is empty -->
+    <!---->
+  </dl>
+  <!--end-normative-->
+
+  <h3 class=no-num id=other-references>Other references</h3>
+  <!--begin-informative-->
+  <!-- Sorted by label -->
+
+  <dl class=bibliography>
+   <dt style="display: none"><!-- keeps the doc valid if the DL is empty -->
+    <!---->
+  </dl>
+  <!--end-informative-->
+
+  <h2 class=no-num id=property-index>Property index</h2>
+  <!--begin-properties-->
+
+  <table class=proptable>
+   <thead>
+    <tr>
+     <th>Property
+
+     <th>Values
+
+     <th>Initial
+
+     <th>Applies&nbsp;to
+
+     <th>Inh.
+
+     <th>Percentages
+
+     <th>Media
+
+   <tbody>
+    <tr valign=baseline>
+     <td><a class=property
+      href="#backface-visibility">backface-visibility</a>
+
+     <td>visible | hidden
+
+     <td>visible
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>N/A
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property href="#perspective">perspective</a>
+
+     <td>none | &lt;number&gt;
+
+     <td>none
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>N/A
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property href="#perspective-origin">perspective-origin</a>
+
+     <td>[ [ &lt;percentage&gt; | &lt;length&gt; | left | center | right ] [
+      &lt;percentage&gt; | &lt;length&gt; | top | center | bottom ]? ] | [ [
+      left | center | right ] || [ top | center | bottom ] ]
+
+     <td>50% 50%
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>refer to the size of the box itself
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property href="#effects">transform</a>
+
+     <td>none | &lt;transform-function&gt; [ &lt;transform-function&gt; ]*
+
+     <td>none
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>refer to the size of the element's box
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property href="#transform-origin">transform-origin</a>
+
+     <td>[ [ [ &lt;percentage&gt; | &lt;length&gt; | left | center | right ]
+      [ &lt;percentage&gt; | &lt;length&gt; | top | center | bottom ]? ]
+      &lt;length&gt; ] | [ [ [ left | center | right ] || [ top | center |
+      bottom ] ] &lt;length&gt; ]
+
+     <td>50% 50% 0
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>refer to the size of the element's box
+
+     <td>visual
+
+    <tr valign=baseline>
+     <td><a class=property href="#transform-style">transform-style</a>
+
+     <td>flat | preserve-3d
+
+     <td>flat
+
+     <td>block-level and inline-level elements
+
+     <td>no
+
+     <td>N/A
+
+     <td>visual
+  </table>
+  <!--end-properties-->
+
+  <h2 class=no-num id=index>Index</h2>
+  <!--begin-index-->
+
+  <ul class=indexlist>
+   <li>backface-visibility, <a href="#backface-visibility"
+    title=backface-visibility><strong>7</strong></a>
+
+   <li>perspective, <a href="#perspective"
+    title=perspective><strong>5</strong></a>
+
+   <li>perspective-origin, <a href="#perspective-origin"
+    title=perspective-origin><strong>6</strong></a>
+
+   <li>transform, <a href="#effects" title=transform><strong>2</strong></a>
+
+   <li>transform-origin, <a href="#transform-origin"
+    title=transform-origin><strong>3</strong></a>
+
+   <li>transform-style, <a href="#transform-style"
+    title=transform-style><strong>4</strong></a>
+  </ul>
+  <!--end-index-->
+</html>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-default-doctype-name:"html"
+sgml-minimize-attributes:t
+End:
+-->

@@ -1,5 +1,16 @@
 2009-06-16  Chris Marrin  <cmarrin@apple.com>
 
+        Added spec directories from http://dev.w3.org/cvsweb/csswg/
+        which is where they will live. We will edit them here and
+        then push them to the W3C cvs server.
+        
+        css3-2d-transforms/:
+        css3-3d-transforms/:
+        css3-animations/:
+        css3-transitions/:
+
+2009-06-16  Chris Marrin  <cmarrin@apple.com>
+
         Removed all the specs because they are stale
         
         index.html: Redirected to point at w3c site
