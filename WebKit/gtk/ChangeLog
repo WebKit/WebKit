@@ -1,3 +1,13 @@
+2009-06-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Do not use g_assert_cmpint to test for NULL pointer, just
+        g_assert.
+
+        * tests/testnetworkrequest.c:
+        (test_network_request_create_destroy):
+
 2009-06-15  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
