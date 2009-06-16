@@ -2143,10 +2143,12 @@ bool QWebPage::isContentEditable() const
 
 /*!
     \property QWebPage::forwardUnsupportedContent
-    \brief whether QWebPage should forward unsupported content through the
-    unsupportedContent signal
+    \brief whether QWebPage should forward unsupported content
 
-    If disabled the download of such content is aborted immediately.
+    If enabled, the unsupportedContent() signal is emitted with a network reply that
+    can be used to read the content.
+
+    If disabled, the download of such content is aborted immediately.
 
     By default unsupported content is not forwarded.
 */

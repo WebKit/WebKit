@@ -96,7 +96,8 @@
 
     Since WebKit supports the Netscape Plugin API, Qt applications can display
     Web pages that embed common plugins, as long as the user has the appropriate
-    binary files for those plugins installed.
+    binary files for those plugins installed and the \l{QWebSettings::PluginsEnabled}
+    attribute is set for the application.
 
     The following locations are searched for plugins:
 

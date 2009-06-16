@@ -223,16 +223,24 @@ QWebSettings *QWebSettings::globalSettings()
     Each QWebPage object has its own QWebSettings object, which configures the
     settings for that page. If a setting is not configured, then it is looked
     up in the global settings object, which can be accessed using
-    QWebSettings::globalSettings().
+    globalSettings().
 
-    QWebSettings allows configuring font properties such as font size and font
-    family, the location of a custom stylesheet, and generic attributes like java
-    script, plugins, etc. The \l{QWebSettings::WebAttribute}{WebAttribute}
-    enum further describes this.
+    QWebSettings allows configuration of browser properties, such as font sizes and
+    families, the location of a custom style sheet, and generic attributes like
+    JavaScript and plugins. Individual attributes are set using the setAttribute()
+    function. The \l{QWebSettings::WebAttribute}{WebAttribute} enum further describes
+    each attribute.
 
-    QWebSettings also configures global properties such as the web page memory
-    cache and the web page icon database, local database storage and offline
+    QWebSettings also configures global properties such as the Web page memory
+    cache and the Web page icon database, local database storage and offline
     applications storage.
+
+    \section1 Enabling Plugins
+
+    Support for browser plugins can enabled by setting the
+    \l{QWebSettings::PluginsEnabled}{PluginsEnabled} attribute. For many applications,
+    this attribute is enabled for all pages by setting it on the
+    \l{globalSettings()}{global settings object}.
 
     \section1 Web Application Support
 

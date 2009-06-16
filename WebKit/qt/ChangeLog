@@ -1,3 +1,14 @@
+2009-06-16  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon Hausmann.
+
+        Doc: Fixed QWebPage::forwardUnsupportedContent documentation and added
+        more information about Web plugins.
+
+        * Api/qwebpage.cpp:
+        * Api/qwebsettings.cpp:
+        * docs/qtwebkit.qdoc:
+
 2009-06-16  Morten Engvoldsen  <morten.engvoldsen@nokia.com>
 
         Reviewed by Ariya Hidayat.
