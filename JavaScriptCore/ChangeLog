@@ -1,5 +1,12 @@
 2009-06-16  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+
+2009-06-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Initialize m_bytecodeIndex to -1 in JIT, and correctly initialize
