@@ -87,7 +87,7 @@ notify_load_status_cb (WebKitWebView* web_view, GParamSpec* pspec, gpointer data
 static void
 notify_progress_cb (WebKitWebView* web_view, GParamSpec* pspec, gpointer data)
 {
-    load_progress = webkit_web_view_get_progress (web_view);
+    load_progress = webkit_web_view_get_progress (web_view) * 100;
     update_title (GTK_WINDOW (main_window));
 }
 

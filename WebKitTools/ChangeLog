@@ -1,3 +1,12 @@
+2009-06-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Update GtkLauncher to recent API changes in the progress property,
+        which now goes from 0.0 to 1.0.
+
+        * GtkLauncher/main.c:
+
 2009-06-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
