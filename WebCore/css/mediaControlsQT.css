@@ -88,7 +88,7 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     top: auto;
     bottom: 6px;
     left: 0px;
-    height: 13px;
+    height: 14px;
     width: 45px;
 }
 
@@ -106,7 +106,7 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     top: auto;
     bottom: 6px;
     right: 0px;
-    height: 13px;
+    height: 14px;
     width: 45px;
 }
 
