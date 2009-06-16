@@ -86,6 +86,8 @@ sub get_function_line_ranges_for_javascript($$);
 sub method_decl_to_selector($);
 sub processPaths(\@);
 sub reviewerAndDescriptionForGitCommit($);
+sub normalizeLineEndings($$);
+sub normalizePath($);
 
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
@@ -300,28 +302,34 @@ foreach my $prefix (sort keys %files) {
     # to read it while we prepend to it later, but I like doing this part first.
     my @old_change_log = <OLD_CHANGE_LOG>;
     close OLD_CHANGE_LOG;
+    # We want to match the ChangeLog's line endings in case it doesn't match
+    # the native line endings for this version of perl.
+    my $endl = "\n";
+    if ($old_change_log[0] =~ /(\r?\n)/g) {
+        $endl = "$1";
+    }
     open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
-    print CHANGE_LOG "$date  $name  <$email_address>\n\n";
+    print CHANGE_LOG normalizeLineEndings("$date  $name  <$email_address>\n\n", $endl);
 
     my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
     $reviewer = "NOBODY (OO" . "PS!)" if !$reviewer;
 
-    print CHANGE_LOG "        Reviewed by $reviewer.\n\n";
-    print CHANGE_LOG $description . "\n" if $description;
+    print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
+    print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         if ($didChangeRegressionTests) {
-            print CHANGE_LOG testListForChangeLog(sort @addedRegressionTests);
+            print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @addedRegressionTests), $endl);
         } else {
-            print CHANGE_LOG "        WARNING: NO TEST CASES ADDED OR CHANGED\n\n";
+            print CHANGE_LOG normalizeLineEndings("        WARNING: NO TEST CASES ADDED OR CHANGED\n\n", $endl);
         }
     }
 
     foreach my $file (sort @{$files{$prefix}}) {
-        my $file_stem = substr $file, length $prefix;
-        print CHANGE_LOG "        * $file_stem:$function_lists{$file}\n";
+        my $file_stem = normalizePath(substr $file, length $prefix);
+        print CHANGE_LOG normalizeLineEndings("        * $file_stem:$function_lists{$file}\n", $endl);;
     }
-    print CHANGE_LOG "\n", @old_change_log;
+    print CHANGE_LOG normalizeLineEndings("\n", $endl), @old_change_log;
     close CHANGE_LOG;
 }
 
@@ -1451,4 +1459,18 @@ sub reviewerAndDescriptionForGitCommit($)
     }
 
     return ($reviewer, $description);
+}
+
+sub normalizeLineEndings($$)
+{
+    my ($string, $endl) = @_;
+    $string =~ s/\r?\n/$endl/g;
+    return $string;
+}
+
+sub normalizePath($)
+{
+    my ($path) = @_;
+    $path =~ s/\\/\//g;
+    return $path;
 }

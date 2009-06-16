@@ -1,1 +1,16 @@
+2009-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Alder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26000
+
+        Teach prepare-ChangeLog to match the line ends that are already present
+        in ChangeLog files.  This helps folks whose use cygwin perl with CR LF
+        line endings on Windows.
+
+        Also, teach prepare-ChangeLog to normalize backslashes in paths.  This
+        helps folks who use Windows SVN prepare correct ChangeLogs.
+
+        * Scripts/prepare-ChangeLog:
+
 == Rolled over to ChangeLog-2009-06-16 ==
