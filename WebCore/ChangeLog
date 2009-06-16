@@ -2,6 +2,15 @@
 
         Reviewed by Gustavo Noronha.
 
+        Fix compiler warning.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_class_init):
+
+2009-06-16  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
         Remove dummy AtkStreamableContent implementation.
 
         It's completely empty, we'll add it back (and conditionally

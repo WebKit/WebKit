@@ -391,6 +391,7 @@ static void webkit_accessible_class_init(AtkObjectClass* klass)
     klass->ref_child = webkit_accessible_ref_child;
     klass->get_role = webkit_accessible_get_role;
     klass->ref_state_set = webkit_accessible_ref_state_set;
+    klass->get_index_in_parent = webkit_accessible_get_index_in_parent;
 }
 
 GType
