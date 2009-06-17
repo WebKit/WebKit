@@ -1,3 +1,14 @@
+2009-06-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add WebKit Security Policy and member list of the WebKit Security Group.
+
+        * nav.inc:
+        * security: Added.
+        * security/security-group-members.html: Added.
+        * security/security-policy.html: Added.
+
 2009-06-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver Hunt
