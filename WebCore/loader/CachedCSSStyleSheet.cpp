@@ -49,10 +49,8 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 {
 }
 
-void CachedCSSStyleSheet::addClient(CachedResourceClient *c)
+void CachedCSSStyleSheet::didAddClient(CachedResourceClient *c)
 {
-    CachedResource::addClient(c);
-
     if (!m_loading)
         c->setCSSStyleSheet(m_url, m_decoder->encoding().name(), this);
 }

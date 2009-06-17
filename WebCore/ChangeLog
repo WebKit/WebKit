@@ -1,3 +1,40 @@
+2009-06-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/6660037> CrashTracer: [USER] 46 crashes in Safari at com.apple.WebCore • WebCore::CachedCSSStyleSheet::addClient + 53
+        
+        When revalidating a resource, calling addClient() on one client might cause another to get removed.
+        
+        - made CachedResource::addClient() non-virtual and added virtual didAddClient()
+        - in CachedResource::switchClientsToRevalidatedResource() add all clients to the client set of the revalidated resource first
+        - check if the client is still in the set before invoking didAddClient() for it
+        
+        No test case, I didn't manage to construct one. You need some combination of 304 revalidation, stylesheets that
+        reference each other via @imports and reloading.
+
+        * WebCore.base.exp:
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::didAddClient):
+        * loader/CachedFont.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::addClient):
+        (WebCore::CachedResource::addClientToSet):
+        (WebCore::CachedResource::switchClientsToRevalidatedResource):
+        * loader/CachedResource.h:
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::didAddClient):
+        * loader/CachedScript.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::didAddClient):
+        * loader/CachedXSLStyleSheet.h:
+
 2009-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         No Review

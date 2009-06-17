@@ -71,10 +71,8 @@ void CachedFont::load(DocLoader*)
     m_loading = true;
 }
 
-void CachedFont::addClient(CachedResourceClient* c)
+void CachedFont::didAddClient(CachedResourceClient* c)
 {
-    CachedResource::addClient(c);
-    
     if (!m_loading)
         c->fontLoaded(this);
 }

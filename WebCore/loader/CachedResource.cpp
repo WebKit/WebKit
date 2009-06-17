@@ -173,7 +173,13 @@ void CachedResource::setRequest(Request* request)
         delete this;
 }
 
-void CachedResource::addClient(CachedResourceClient *c)
+void CachedResource::addClient(CachedResourceClient* client)
+{
+    addClientToSet(client);
+    didAddClient(client);
+}
+
+void CachedResource::addClientToSet(CachedResourceClient* client)
 {
     ASSERT(!isPurgeable());
 
@@ -187,7 +193,7 @@ void CachedResource::addClient(CachedResourceClient *c)
     }
     if (!hasClients() && inCache())
         cache()->addToLiveResourcesSize(this);
-    m_clients.add(c);
+    m_clients.add(client);
 }
 
 void CachedResource::removeClient(CachedResourceClient *c)
@@ -330,10 +336,15 @@ void CachedResource::switchClientsToRevalidatedResource()
     }
     // Equivalent of calling removeClient() for all clients
     m_clients.clear();
-    
+
     unsigned moveCount = clientsToMove.size();
     for (unsigned n = 0; n < moveCount; ++n)
-        m_resourceToRevalidate->addClient(clientsToMove[n]);
+        m_resourceToRevalidate->addClientToSet(clientsToMove[n]);
+    for (unsigned n = 0; n < moveCount; ++n) {
+        // Calling didAddClient for a client may end up removing another client. In that case it won't be in the set anymore.
+        if (m_resourceToRevalidate->m_clients.contains(clientsToMove[n]))
+            m_resourceToRevalidate->didAddClient(clientsToMove[n]);
+    }
 }
     
 void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& validatingResponse)

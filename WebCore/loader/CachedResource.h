@@ -87,7 +87,7 @@ public:
     const String &url() const { return m_url; }
     Type type() const { return m_type; }
 
-    virtual void addClient(CachedResourceClient*);
+    void addClient(CachedResourceClient*);
     void removeClient(CachedResourceClient*);
     bool hasClients() const { return !m_clients.isEmpty(); }
     void deleteIfPossible();
@@ -100,7 +100,8 @@ public:
     };
     PreloadResult preloadResult() const { return m_preloadResult; }
     void setRequestedFromNetworkingLayer() { m_requestedFromNetworkingLayer = true; }
-        
+
+    virtual void didAddClient(CachedResourceClient*) = 0;
     virtual void allClientsRemoved() { }
 
     unsigned count() const { return m_clients.size(); }
@@ -204,6 +205,8 @@ protected:
     bool m_errorOccurred;
 
 private:
+    void addClientToSet(CachedResourceClient*);
+                                        
     // These are called by the friendly Cache only
     void setResourceToRevalidate(CachedResource*);
     void switchClientsToRevalidatedResource();

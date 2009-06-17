@@ -86,10 +86,8 @@ void CachedImage::load(DocLoader* docLoader)
         m_loading = false;
 }
 
-void CachedImage::addClient(CachedResourceClient* c)
+void CachedImage::didAddClient(CachedResourceClient* c)
 {
-    CachedResource::addClient(c);
-
     if (m_decodedDataDeletionTimer.isActive())
         m_decodedDataDeletionTimer.stop();
     

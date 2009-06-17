@@ -49,9 +49,8 @@ CachedScript::~CachedScript()
 {
 }
 
-void CachedScript::addClient(CachedResourceClient* c)
+void CachedScript::didAddClient(CachedResourceClient* c)
 {
-    CachedResource::addClient(c);
     if (!m_loading)
         c->notifyFinished(this);
 }

@@ -42,7 +42,7 @@ namespace WebCore {
 
         const String sheetText(bool enforceMIMEType = true) const;
 
-        virtual void addClient(CachedResourceClient*);
+        virtual void didAddClient(CachedResourceClient*);
         
         virtual void allClientsRemoved();
 
