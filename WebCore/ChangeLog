@@ -1,5 +1,15 @@
 2009-06-17  Adam Roben  <aroben@apple.com>
 
+        Remove unnecessary 6th parameter from SOFT_LINK_OPTIONAL
+
+        Reviewed by Mark Rowe.
+
+        * platform/graphics/win/ColorSafari.cpp: Removed the 6th parameter and
+        an unnecessary parameter name.
+        * platform/win/SoftLinking.h: Removed the unused 6th parameter.
+
+2009-06-17  Adam Roben  <aroben@apple.com>
+
         Make Settings::shouldPaintNativeControls default to true
 
         This matches the default up in WebKit (that was changed in r43318).

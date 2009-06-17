@@ -45,7 +45,7 @@ SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
 SOFT_LINK_LIBRARY(SafariTheme)
 #endif
 
-SOFT_LINK_OPTIONAL(SafariTheme, STCopyThemeColor, CGColorRef, APIENTRY, (unsigned color, SafariTheme::ThemeControlState state), (color, state));
+SOFT_LINK_OPTIONAL(SafariTheme, STCopyThemeColor, CGColorRef, APIENTRY, (unsigned color, SafariTheme::ThemeControlState));
 
 static const unsigned stFocusRingColorID = 4;
 
