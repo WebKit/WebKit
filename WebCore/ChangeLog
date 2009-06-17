@@ -1,3 +1,15 @@
+2009-06-17  Adam Roben  <aroben@apple.com>
+
+        Add all the generated JS*.cpp files back to WebCore.vcproj
+
+        They are not compiled by the vcproj directly. Instead they are
+        compiled as part of DerivedSources.cpp. Having them listed in the
+        vcproj makes them be included in Project Find, etc.
+
+        Rubber-stamped in advance by Steve Falkenburg.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-06-17  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.
