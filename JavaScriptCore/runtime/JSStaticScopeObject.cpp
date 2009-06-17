@@ -76,9 +76,4 @@ inline bool JSStaticScopeObject::getOwnPropertySlot(ExecState*, const Identifier
     return symbolTableGet(propertyName, slot);
 }
 
-inline bool JSStaticScopeObject::getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot& slot, bool& slotIsWriteable)
-{
-    return symbolTableGet(propertyName, slot, slotIsWriteable);
-}
-
 }

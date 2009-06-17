@@ -169,7 +169,7 @@ namespace JSC {
         virtual void mark();
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
+        virtual bool hasOwnPropertyForWrite(ExecState*, const Identifier&);
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue value, unsigned attributes);
 
@@ -325,10 +325,12 @@ namespace JSC {
         return symbolTableGet(propertyName, slot);
     }
 
-    inline bool JSGlobalObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, bool& slotIsWriteable)
+    inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, const Identifier& propertyName)
     {
-        if (JSVariableObject::getOwnPropertySlotForWrite(exec, propertyName, slot, slotIsWriteable))
+        PropertySlot slot;
+        if (JSVariableObject::getOwnPropertySlot(exec, propertyName, slot))
             return true;
+        bool slotIsWriteable;
         return symbolTableGet(propertyName, slot, slotIsWriteable);
     }
 

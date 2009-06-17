@@ -1,3 +1,25 @@
+2009-06-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6974175> ASSERT in JITStubs.cpp at appsaccess.apple.com
+
+        JSDOMWindowCustom was using PropertySlot::putValue, however this interface
+        appears to be fundaementally incorrect - PropertySlots are only used to get
+        values, all puts use PutPropertySlot.  However PutPropertySlot cannot be
+        used in the fashion desired here - it only reports the caching type of a
+        write that has been performed.
+
+        (This caused a bug where the put should have triggered a transition, and
+        failed to do so.)
+
+        Removing the faulty case from the optimization leads to a ~0.5% progression
+        on in-browser SunSpider (presumably the very first case was not being hit
+        often, and the simplification here is beneficial).
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+
 2009-06-17  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY, layout tests fix.

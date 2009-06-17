@@ -203,9 +203,6 @@ namespace JSC {
             return Structure::create(prototype, TypeInfo(ObjectType, HasStandardGetOwnPropertySlot));
         }
 
-    protected:
-        bool getOwnPropertySlotForWrite(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
-
     private:
         ConstPropertyStorage propertyStorage() const { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
         PropertyStorage propertyStorage() { return (isUsingInlineStorage() ? m_inlineStorage : m_externalStorage); }
@@ -322,30 +319,6 @@ ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Ide
     // non-standard Netscape extension
     if (propertyName == exec->propertyNames().underscoreProto) {
         slot.setValue(prototype());
-        return true;
-    }
-
-    return false;
-}
-
-ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, bool& slotIsWriteable)
-{
-    unsigned attributes;
-    if (JSValue* location = getDirectLocation(propertyName, attributes)) {
-        if (m_structure->hasGetterSetterProperties() && location[0].isGetterSetter()) {
-            slotIsWriteable = false;
-            fillGetterPropertySlot(slot, location);
-        } else {
-            slotIsWriteable = !(attributes & ReadOnly);
-            slot.setValueSlot(this, location, offsetForLocation(location));
-        }
-        return true;
-    }
-
-    // non-standard Netscape extension
-    if (propertyName == exec->propertyNames().underscoreProto) {
-        slot.setValue(prototype());
-        slotIsWriteable = false;
         return true;
     }
 

@@ -1,3 +1,21 @@
+2009-06-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6974175> ASSERT in JITStubs.cpp at appsaccess.apple.com
+
+        Remove PropertySlot::putValue - PropertySlots should only be used for getting,
+        not putting.  Rename JSGlobalObject::getOwnPropertySlot to hasOwnPropertyForWrite,
+        which is what it really was being used to ask, and remove some other getOwnPropertySlot
+        & getOwnPropertySlotForWrite methods, which were unused and likely to lead to confusion.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::hasOwnPropertyForWrite):
+        * runtime/JSObject.h:
+        * runtime/JSStaticScopeObject.cpp:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/PropertySlot.h:
+
 2009-06-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver hunt.

@@ -79,16 +79,6 @@ namespace JSC {
             return m_offset;
         }
 
-        void putValue(JSValue value)
-        { 
-            if (m_getValue == JSC_VALUE_SLOT_MARKER) {
-                *m_data.valueSlot = value;
-                return;
-            }
-            ASSERT(m_getValue == JSC_REGISTER_SLOT_MARKER);
-            *m_data.registerSlot = JSValue(value);
-        }
-
         void setValueSlot(JSValue* valueSlot) 
         {
             ASSERT(valueSlot);

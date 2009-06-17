@@ -276,17 +276,9 @@ void JSDOMWindow::put(ExecState* exec, const Identifier& propertyName, JSValue v
         return;
 
     // Optimization: access JavaScript global variables directly before involving the DOM.
-    PropertySlot getSlot;
-    bool slotIsWriteable;
-    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, getSlot, slotIsWriteable)) {
-        if (allowsAccessFrom(exec)) {
-            if (slotIsWriteable) {
-                getSlot.putValue(value);
-                if (getSlot.isCacheable())
-                    slot.setExistingProperty(this, getSlot.cachedOffset());
-            } else
-                JSGlobalObject::put(exec, propertyName, value, slot);
-        }
+    if (JSGlobalObject::hasOwnPropertyForWrite(exec, propertyName)) {
+        if (allowsAccessFrom(exec))
+            JSGlobalObject::put(exec, propertyName, value, slot);
         return;
     }
 
