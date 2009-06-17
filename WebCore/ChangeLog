@@ -1,3 +1,14 @@
+2009-06-16  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        In ImageSource::setData, delete the old m_encoder before replacing it with a new one.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26458
+
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::setData):
+
 2009-06-16  David Levin  <levin@chromium.org>
 
         Reviewed by David Hyatt.
