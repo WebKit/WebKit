@@ -1,3 +1,16 @@
+2009-06-17  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Don't fire redundant 'change' events for a file upload form.
+        https://bugs.webkit.org/show_bug.cgi?id=26471
+
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::chooseFiles): Suppress change event if the
+        existing selected files and the incoming selected files are equal.
+        (WebCore::FileChooser::chooseIcon): Returns 0 if there is no selected
+        files.
+
 2009-06-17  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
