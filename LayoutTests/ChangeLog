@@ -1,3 +1,11 @@
+2009-06-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Update window properties layout test for HTMLDataGridElement addition.
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2009-06-17  Adam Roben  <aroben@apple.com>
 
         Fix Skipped file format after r44519

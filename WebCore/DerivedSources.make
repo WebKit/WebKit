@@ -110,6 +110,7 @@ DOM_CLASSES = \
     HTMLButtonElement \
     HTMLCanvasElement \
     HTMLCollection \
+    HTMLDataGridElement \
     HTMLDListElement \
     HTMLDirectoryElement \
     HTMLDivElement \

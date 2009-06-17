@@ -3840,6 +3840,10 @@
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1DEA4F0E268EB60083A73F /* JSDocumentFragmentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */; };
 		BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */; };
+		BC212A1F0FE8333200EC3708 /* HTMLDataGridElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC212A1E0FE8333200EC3708 /* HTMLDataGridElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC212A240FE8345D00EC3708 /* HTMLDataGridElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC212A230FE8345D00EC3708 /* HTMLDataGridElement.idl */; };
+		BC212A410FE83A1800EC3708 /* JSHTMLDataGridElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC212A3F0FE83A1800EC3708 /* JSHTMLDataGridElement.cpp */; };
+		BC212A420FE83A1800EC3708 /* JSHTMLDataGridElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC212A400FE83A1800EC3708 /* JSHTMLDataGridElement.h */; };
 		BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272860E82E70700E7F975 /* StyleReflection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272A10E82E87C00E7F975 /* CursorData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2272AD0E82E8F300E7F975 /* CursorList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2272AC0E82E8F300E7F975 /* CursorList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8613,6 +8617,10 @@
 		BC1A37AA097C715F0019F3D8 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMViews.h; sourceTree = "<group>"; };
 		BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragmentCustom.cpp; sourceTree = "<group>"; };
 		BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValueCustom.cpp; sourceTree = "<group>"; };
+		BC212A1E0FE8333200EC3708 /* HTMLDataGridElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataGridElement.h; sourceTree = "<group>"; };
+		BC212A230FE8345D00EC3708 /* HTMLDataGridElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataGridElement.idl; sourceTree = "<group>"; };
+		BC212A3F0FE83A1800EC3708 /* JSHTMLDataGridElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataGridElement.cpp; sourceTree = "<group>"; };
+		BC212A400FE83A1800EC3708 /* JSHTMLDataGridElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataGridElement.h; sourceTree = "<group>"; };
 		BC2272860E82E70700E7F975 /* StyleReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleReflection.h; path = style/StyleReflection.h; sourceTree = "<group>"; };
 		BC2272A10E82E87C00E7F975 /* CursorData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorData.h; path = style/CursorData.h; sourceTree = "<group>"; };
 		BC2272AC0E82E8F300E7F975 /* CursorList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorList.h; path = style/CursorList.h; sourceTree = "<group>"; };
@@ -11611,6 +11619,8 @@
 				A8DF3FC9097FA0FB0052981B /* HTMLCollection.cpp */,
 				A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */,
 				85DF2F690AA3C74300AD64C5 /* HTMLCollection.idl */,
+				BC212A1E0FE8333200EC3708 /* HTMLDataGridElement.h */,
+				BC212A230FE8345D00EC3708 /* HTMLDataGridElement.idl */,
 				A8EA79E90A1916DF00A8EF5F /* HTMLDListElement.cpp */,
 				A8EA79EB0A1916DF00A8EF5F /* HTMLDListElement.h */,
 				1A85B1D10A1B235B00D8C87C /* HTMLDListElement.idl */,
@@ -11878,6 +11888,8 @@
 				938E666109F09B87008A48EC /* JSHTMLCanvasElement.h */,
 				BCCBAD3E0C18C14200CE890F /* JSHTMLCollection.cpp */,
 				BCCBAD3F0C18C14200CE890F /* JSHTMLCollection.h */,
+				BC212A3F0FE83A1800EC3708 /* JSHTMLDataGridElement.cpp */,
+				BC212A400FE83A1800EC3708 /* JSHTMLDataGridElement.h */,
 				1A85B1E20A1B240500D8C87C /* JSHTMLDListElement.cpp */,
 				1A85B1E30A1B240500D8C87C /* JSHTMLDListElement.h */,
 				1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */,
@@ -16796,6 +16808,8 @@
 				18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */,
 				A89CCC530F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h in Headers */,
 				2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */,
+				BC212A1F0FE8333200EC3708 /* HTMLDataGridElement.h in Headers */,
+				BC212A420FE83A1800EC3708 /* JSHTMLDataGridElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16898,6 +16912,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				BC212A240FE8345D00EC3708 /* HTMLDataGridElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18789,6 +18804,7 @@
 				845E72FB0FD2623900A87D79 /* SVGFilter.cpp in Sources */,
 				081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */,
 				A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */,
+				BC212A410FE83A1800EC3708 /* JSHTMLDataGridElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

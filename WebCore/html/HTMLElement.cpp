@@ -861,6 +861,7 @@ static HashSet<AtomicStringImpl*>* inlineTagList()
         tagList.add(inputTag.localName().impl());
         tagList.add(keygenTag.localName().impl());
         tagList.add(selectTag.localName().impl());
+        tagList.add(datagridTag.localName().impl());
         tagList.add(textareaTag.localName().impl());
         tagList.add(labelTag.localName().impl());
         tagList.add(buttonTag.localName().impl());

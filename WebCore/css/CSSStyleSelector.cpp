@@ -1520,7 +1520,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
     // Button, legend, input, select and textarea all consider width values of 'auto' to be 'intrinsic'.
     // This will be important when we use block flows for all form controls.
     if (e && (e->hasTagName(legendTag) || e->hasTagName(buttonTag) || e->hasTagName(inputTag) ||
-              e->hasTagName(selectTag) || e->hasTagName(textareaTag)
+              e->hasTagName(selectTag) || e->hasTagName(textareaTag) || e->hasTagName(datagridTag)
 #if ENABLE(WML)
               || e->hasTagName(WMLNames::insertedLegendTag)
               || e->hasTagName(WMLNames::inputTag)

@@ -84,6 +84,7 @@ bool canHaveChildrenForEditing(const Node* node)
            !node->hasTagName(embedTag) &&
            !node->hasTagName(appletTag) &&
            !node->hasTagName(selectTag) &&
+           !node->hasTagName(datagridTag) &&
 #if ENABLE(WML)
            !node->hasTagName(WMLNames::doTag) &&
 #endif

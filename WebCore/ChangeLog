@@ -1,3 +1,27 @@
+2009-06-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben and Anders Carlsson.
+
+        Stub out the HTMLDataGridElement.
+
+        * DerivedSources.make:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * editing/htmlediting.cpp:
+        (WebCore::canHaveChildrenForEditing):
+        * html/HTMLDataGridElement.h: Added.
+        (WebCore::HTMLDataGridElement::HTMLDataGridElement):
+        (WebCore::HTMLDataGridElement::tagPriority):
+        * html/HTMLDataGridElement.idl: Added.
+        * html/HTMLElement.cpp:
+        (WebCore::inlineTagList):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::isAffectedByResidualStyle):
+        * html/HTMLTagNames.in:
+
 2009-06-17  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (chromium build fix).

@@ -25,6 +25,7 @@ cite interfaceName=HTMLElement
 code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
+datagrid interfaceName=HTMLDataGridElement
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
 dfn interfaceName=HTMLElement
