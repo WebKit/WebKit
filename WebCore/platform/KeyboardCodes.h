@@ -485,7 +485,7 @@ const int VK_MEDIA_LAUNCH_APP2 = 0xB7;
 
 #endif // !PLATFORM(WIN_OS)
 
-#if !PLATFORM(WIN_OS) || PLATFORM(WIN_CE)
+#if !PLATFORM(WIN_OS) || PLATFORM(WINCE)
 
 // VK_OEM_1 (BA) Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the ';:' key
 const int VK_OEM_1 = 0xBA;
@@ -523,7 +523,7 @@ const int VK_OEM_7 = 0xDE;
 // VK_OEM_8 (DF) Used for miscellaneous characters; it can vary by keyboard.
 const int VK_OEM_8 = 0xDF;
 
-#endif // !PLATFORM(WIN_OS) || PLATFORM(WIN_CE)
+#endif // !PLATFORM(WIN_OS) || PLATFORM(WINCE)
 
 #if !PLATFORM(WIN_OS)
 
