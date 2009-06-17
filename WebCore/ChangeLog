@@ -1,3 +1,12 @@
+2009-06-17  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (chromium build fix).
+
+        Fix typo in previous changes.
+
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::defaultGUIFont):
+
 2009-06-17  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Eric Seidel.
