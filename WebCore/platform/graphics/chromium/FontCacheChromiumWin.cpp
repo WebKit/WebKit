@@ -288,7 +288,7 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     if (count == 0 && ChromiumBridge::ensureFontLoaded(hfont))
         count = GetFontUnicodeRanges(hdc, 0);
     if (count == 0) {
-        ASSERT_NOT_REACHED();
+        LOG_ERROR("Unable to get the font unicode range after second attempt");
         SelectObject(hdc, oldFont);
         ReleaseDC(0, hdc);
         return true;
