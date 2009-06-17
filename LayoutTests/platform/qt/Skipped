@@ -5076,4 +5076,4 @@ fast/forms/mailto/post-text-plain.html
 editing/text-iterator
 
 # Needed to cover the fix for <rdar://problem/6727495>
-http/tests/loading/deleted-host-in-resource-load-delegate-callback.html: Added.
+http/tests/loading/deleted-host-in-resource-load-delegate-callback.html

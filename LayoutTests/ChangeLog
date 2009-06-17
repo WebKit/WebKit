@@ -1,3 +1,11 @@
+2009-06-17  Adam Roben  <aroben@apple.com>
+
+        Fix Skipped file format after r44519
+
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        Removed bogus ": Added."s in these files.
+
 2009-06-17  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY, layout tests fix.

@@ -613,5 +613,5 @@ fast/replaced/table-percent-height-text-controls.html
 # Bug 25861: LayoutTests/http/tests/cookies/simple-cookies-expired.html fails on Windows <https://bugs.webkit.org/show_bug.cgi?id=25861>
 http/tests/cookies/simple-cookies-expired.html
 
-# Needed to cover the fix for <rdar://problem/6727495>
-http/tests/loading/deleted-host-in-resource-load-delegate-callback.html: Added.
+# Bug 26481: Implement layoutTestController.dispatchPendingLoadRequests <https://bugs.webkit.org/show_bug.cgi?id=26481>
+http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
