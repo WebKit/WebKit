@@ -105,6 +105,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_settings(new Settings(this))
     , m_progress(new ProgressTracker)
     , m_backForwardList(BackForwardList::create(this))
+    , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(editorClient)
     , m_frameCount(0)
     , m_tabKeyCyclesThroughElements(true)
@@ -121,7 +122,6 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_debugger(0)
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
-    , m_theme(RenderTheme::themeForPage(this))
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;

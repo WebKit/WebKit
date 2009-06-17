@@ -1,3 +1,11 @@
+2009-06-17  Adam Roben  <aroben@apple.com>
+
+        Speculative Mac build fix
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Change the initializer order to match the
+        declaration order.
+
 2009-06-16  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Simon Hausmann.
