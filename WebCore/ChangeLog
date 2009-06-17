@@ -2,6 +2,19 @@
 
         Speculative Mac build fix
 
+        * page/Page.h: Forward-declare RenderTheme instead of including
+        RenderTheme.h so that we don't need to make RenderTheme.h a private
+        header for WebKit's benefit.
+
+        * editing/SelectionController.cpp:
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderObject.cpp:
+        Added #includes of RenderTheme.h.
+
+2009-06-17  Adam Roben  <aroben@apple.com>
+
+        Speculative Mac build fix
+
         * rendering/RenderThemeMac.mm:
         (WebCore::RenderTheme::create): Added.
 

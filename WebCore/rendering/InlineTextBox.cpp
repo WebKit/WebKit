@@ -32,6 +32,7 @@
 #include "Page.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderTheme.h"
 #include "Text.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>

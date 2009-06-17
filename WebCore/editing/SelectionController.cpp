@@ -45,6 +45,7 @@
 #include "HitTestResult.h"
 #include "Page.h"
 #include "Range.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"

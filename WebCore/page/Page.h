@@ -27,7 +27,6 @@
 #include "FrameLoaderTypes.h"
 #include "LinkHash.h"
 #include "PlatformString.h"
-#include "RenderTheme.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -61,6 +60,7 @@ namespace WebCore {
     class PageGroup;
     class PluginData;
     class ProgressTracker;
+    class RenderTheme;
     class VisibleSelection;
     class SelectionController;
 #if ENABLE(DOM_STORAGE)
