@@ -3,6 +3,13 @@
         Speculative Mac build fix
 
         * rendering/RenderThemeMac.mm:
+        (WebCore::RenderTheme::create): Added.
+
+2009-06-17  Adam Roben  <aroben@apple.com>
+
+        Speculative Mac build fix
+
+        * rendering/RenderThemeMac.mm:
         (WebCore::RenderTheme::themeForPage): Remove the name of an unused
         parameter.
 

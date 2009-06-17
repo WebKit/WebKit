@@ -107,6 +107,11 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page*)
     return rt;
 }
 
+PassRefPtr<RenderTheme> RenderThemeMac::create()
+{
+    return adoptRef(new RenderThemeMac);
+}
+
 RenderThemeMac::RenderThemeMac()
     : m_isSliderThumbHorizontalPressed(false)
     , m_isSliderThumbVerticalPressed(false)
