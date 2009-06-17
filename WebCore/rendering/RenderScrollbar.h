@@ -70,7 +70,6 @@ public:
     IntRect trackPieceRectWithMargins(ScrollbarPart, const IntRect&);
 
     int minimumThumbLength();
-    virtual bool isCustomScrollbar() const { return true; }
 
 private:
     PassRefPtr<RenderStyle> getScrollbarPseudoStyle(ScrollbarPart, PseudoId);

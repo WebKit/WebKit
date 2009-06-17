@@ -6,7 +6,6 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
- * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -227,30 +226,6 @@ void FrameView::init()
         if (marginHeight != -1)
             setMarginHeight(marginHeight);
     }
-}
-
-void FrameView::detachCustomScrollbars()
-{
-    if (!m_frame)
-        return;
-
-    Document* document = m_frame->document();
-    if (!document)
-        return;
-
-    Element* body = document->body();
-    if (!body)
-        return;
-
-    RenderBox* renderBox = body->renderBox();
-
-    Scrollbar* horizontalBar = horizontalScrollbar();
-    if (horizontalBar && horizontalBar->isCustomScrollbar() && reinterpret_cast<RenderScrollbar*>(horizontalBar)->owningRenderer() == renderBox)
-        setHasHorizontalScrollbar(false);
-
-    Scrollbar* verticalBar = verticalScrollbar();
-    if (verticalBar && verticalBar->isCustomScrollbar() && reinterpret_cast<RenderScrollbar*>(verticalBar)->owningRenderer() == renderBox)
-        setHasVerticalScrollbar(false);
 }
 
 void FrameView::clear()

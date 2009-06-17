@@ -1,3 +1,22 @@
+2009-06-17  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY, layout tests fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26326
+        This reverts commit r44751.
+
+        Once that change was checked scrollbars/scrollbar-orientation.html started
+        crashing on Windows.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * platform/Scrollbar.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderScrollbar.h:
+
 2009-06-16  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

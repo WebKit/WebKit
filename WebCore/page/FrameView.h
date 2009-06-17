@@ -105,7 +105,6 @@ public:
     void willMoveOffscreen();
 
     void resetScrollbars();
-    void detachCustomScrollbars();
 
     void clear();
 
