@@ -1,3 +1,20 @@
+2009-06-17  Adam Roben  <aroben@apple.com>
+
+        Add a SOFT_LINK_OPTIONAL macro
+
+        This macro is useful when soft-linking functions that are present in
+        only some versions of a particular library (e.g., APIs added in
+        Windows Vista that aren't available on Windows XP).
+
+        Reviewed by Ada Chan.
+
+        * platform/graphics/win/ColorSafari.cpp:
+        (WebCore::focusRingColor):
+        Use the SoftLinking.h macros instead of doing the soft-link ourselves.
+        Also removed an unused call to focusRingColor.isValid().
+
+        * platform/win/SoftLinking.h: Added SOFT_LINK_OPTIONAL.
+
 2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Gustavo Noronha.

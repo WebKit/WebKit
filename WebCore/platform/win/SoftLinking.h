@@ -49,7 +49,7 @@
     \
     static resultType callingConvention init##functionName parameterDeclarations \
     { \
-        softLink##functionName = (resultType (callingConvention*) parameterDeclarations) GetProcAddress(library##Library(), #functionName); \
+        softLink##functionName = reinterpret_cast<resultType (callingConvention*) parameterDeclarations>(GetProcAddress(library##Library(), #functionName)); \
         ASSERT(softLink##functionName); \
         return softLink##functionName parameterNames; \
     }\
@@ -58,5 +58,20 @@
     {\
         return softLink##functionName parameterNames; \
     }
+
+#define SOFT_LINK_OPTIONAL(library, functionName, resultType, callingConvention, parameterDeclarations, parameterNames) \
+    typedef resultType (callingConvention *functionName##PtrType) parameterDeclarations; \
+    static functionName##PtrType functionName##Ptr() \
+    { \
+        static functionName##PtrType ptr; \
+        static bool initialized; \
+        \
+        if (initialized) \
+            return ptr; \
+        initialized = true; \
+        \
+        ptr = reinterpret_cast<functionName##PtrType>(GetProcAddress(library##Library(), #functionName)); \
+        return ptr; \
+    }\
 
 #endif // SoftLinking_h

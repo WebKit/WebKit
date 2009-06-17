@@ -29,6 +29,7 @@
 #include "config.h"
 #include "Color.h"
 
+#include "SoftLinking.h"
 #include <CoreGraphics/CGColor.h>
 #include <SafariTheme/SafariTheme.h>
 #include <wtf/Assertions.h>
@@ -38,7 +39,14 @@ using namespace SafariTheme;
 
 namespace WebCore {
 
-typedef CGColorRef (APIENTRY*stCopyThemeColorPtr)(unsigned, SafariTheme::ThemeControlState);
+#if !defined(NDEBUG) && defined(USE_DEBUG_SAFARI_THEME)
+SOFT_LINK_DEBUG_LIBRARY(SafariTheme)
+#else
+SOFT_LINK_LIBRARY(SafariTheme)
+#endif
+
+SOFT_LINK_OPTIONAL(SafariTheme, STCopyThemeColor, CGColorRef, APIENTRY, (unsigned color, SafariTheme::ThemeControlState state), (color, state));
+
 static const unsigned stFocusRingColorID = 4;
 
 static const unsigned aquaFocusRingColor = 0xFF7DADD9;
@@ -52,14 +60,12 @@ static RGBA32 makeRGBAFromCGColor(CGColorRef c)
 Color focusRingColor()
 {
     static Color focusRingColor;
-    focusRingColor.isValid();
 
     if (!focusRingColor.isValid()) {
-        if (HMODULE module = LoadLibrary(SAFARITHEMEDLL))
-            if (stCopyThemeColorPtr stCopyThemeColor = (stCopyThemeColorPtr)GetProcAddress(module, "STCopyThemeColor")) {
-                RetainPtr<CGColorRef> c(AdoptCF, stCopyThemeColor(stFocusRingColorID, SafariTheme::ActiveState));
-                focusRingColor = makeRGBAFromCGColor(c.get());
-            }
+        if (STCopyThemeColorPtr()) {
+            RetainPtr<CGColorRef> c(AdoptCF, STCopyThemeColorPtr()(stFocusRingColorID, SafariTheme::ActiveState));
+            focusRingColor = makeRGBAFromCGColor(c.get());
+        }
         if (!focusRingColor.isValid())
             focusRingColor = aquaFocusRingColor;
     }
