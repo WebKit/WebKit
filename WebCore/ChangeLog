@@ -3,6 +3,72 @@
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=26148
+        Move RenderThemeChromiumSkia into its own file.  This is purely a code move.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        * rendering/RenderThemeChromiumLinux.h:
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::):
+        (WebCore::setSizeIfAuto):
+        (WebCore::mediaElementParent):
+        (WebCore::RenderThemeChromiumSkia::defaultGUIFont):
+        (WebCore::RenderThemeChromiumSkia::RenderThemeChromiumSkia):
+        (WebCore::RenderThemeChromiumSkia::~RenderThemeChromiumSkia):
+        (WebCore::RenderThemeChromiumSkia::extraDefaultStyleSheet):
+        (WebCore::RenderThemeChromiumSkia::extraQuirksStyleSheet):
+        (WebCore::RenderThemeChromiumSkia::extraMediaControlsStyleSheet):
+        (WebCore::RenderThemeChromiumSkia::supportsHover):
+        (WebCore::RenderThemeChromiumSkia::supportsFocusRing):
+        (WebCore::RenderThemeChromiumSkia::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumSkia::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumSkia::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumSkia::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumSkia::platformTextSearchHighlightColor):
+        (WebCore::RenderThemeChromiumSkia::caretBlinkInterval):
+        (WebCore::RenderThemeChromiumSkia::systemFont):
+        (WebCore::RenderThemeChromiumSkia::minimumMenuListSize):
+        (WebCore::RenderThemeChromiumSkia::paintCheckbox):
+        (WebCore::RenderThemeChromiumSkia::setCheckboxSize):
+        (WebCore::RenderThemeChromiumSkia::paintRadio):
+        (WebCore::RenderThemeChromiumSkia::setRadioSize):
+        (WebCore::brightenColor):
+        (WebCore::paintButtonLike):
+        (WebCore::RenderThemeChromiumSkia::paintButton):
+        (WebCore::RenderThemeChromiumSkia::paintTextField):
+        (WebCore::RenderThemeChromiumSkia::paintTextArea):
+        (WebCore::RenderThemeChromiumSkia::paintSearchField):
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeChromiumSkia::paintMediaButtonInternal):
+        (WebCore::RenderThemeChromiumSkia::paintMediaPlayButton):
+        (WebCore::RenderThemeChromiumSkia::paintMediaMuteButton):
+        (WebCore::RenderThemeChromiumSkia::adjustMenuListStyle):
+        (WebCore::RenderThemeChromiumSkia::paintMenuList):
+        (WebCore::RenderThemeChromiumSkia::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeChromiumSkia::paintMenuListButton):
+        (WebCore::RenderThemeChromiumSkia::popupInternalPaddingLeft):
+        (WebCore::RenderThemeChromiumSkia::popupInternalPaddingRight):
+        (WebCore::RenderThemeChromiumSkia::popupInternalPaddingTop):
+        (WebCore::RenderThemeChromiumSkia::popupInternalPaddingBottom):
+        (WebCore::RenderThemeChromiumSkia::buttonInternalPaddingLeft):
+        (WebCore::RenderThemeChromiumSkia::buttonInternalPaddingRight):
+        (WebCore::RenderThemeChromiumSkia::buttonInternalPaddingTop):
+        (WebCore::RenderThemeChromiumSkia::buttonInternalPaddingBottom):
+        (WebCore::RenderThemeChromiumSkia::caretBlinkIntervalInternal):
+        (WebCore::RenderThemeChromiumSkia::menuListInternalPadding):
+        * rendering/RenderThemeChromiumSkia.h:
+        (WebCore::RenderThemeChromiumSkia::supportsControlTints):
+
+2009-06-17  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26148
         Extract RenderThemeChromiumSkia out of RenderThemeChromiumLinux.  This
         is mostly a code shuffle.  The non-suffle changes are:
            1) Creation of a caretBlinkIntervalInternal.
