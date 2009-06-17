@@ -195,24 +195,6 @@ static void setCursor(NSWindow* self, SEL cmd, NSPoint point)
 
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-
-@interface WebLayerHostingView : NSView
-@end
-
-@implementation WebLayerHostingView
-
-// Empty NSViews intercept rightMouseDown: to do context menu handling, but we need the WebLayerHostingView to
-// let right mouse clicks through.
-- (void)rightMouseDown:(NSEvent *)event
-{
-    [[self nextResponder] performSelector:_cmd withObject:event];
-}
-
-@end
-
-#endif // USE(ACCELERATED_COMPOSITING)
-
 extern "C" {
 
 // Need to declare these attribute names because AppKit exports them but does not make them available in API or SPI headers.
@@ -1417,8 +1399,12 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
             || [event type] == NSFlagsChanged);
     }
 
-    if (!captureHitsOnSubviews)
-        return [super hitTest:point];
+    if (!captureHitsOnSubviews) {
+        NSView* hitView = [super hitTest:point];
+        if (_private && hitView == _private->layerHostingView)
+            hitView = self;
+        return hitView;
+    }
     if ([[self superview] mouse:point inRect:[self frame]])
         return self;
     return nil;
@@ -5380,7 +5366,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 - (void)attachRootLayer:(CALayer*)layer
 {
     if (!_private->layerHostingView) {
-        WebLayerHostingView* hostingView = [[WebLayerHostingView alloc] initWithFrame:[self bounds]];
+        NSView* hostingView = [[NSView alloc] initWithFrame:[self bounds]];
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
         [self addSubview:hostingView];
         [hostingView release];

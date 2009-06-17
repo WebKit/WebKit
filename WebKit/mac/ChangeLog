@@ -1,3 +1,18 @@
+2009-06-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        <rdar://problem/6976766> Control-click on pages with accelerated compositing
+        content does not work.
+        
+        Remove the WebLayerHostingView subclass of NSView, with its attempts to
+        forward events to the WebHTMLView, and just fix -[WebHTMLView hitTest:]
+        to ignore the layerHostingView.
+        
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView hitTest:]):
+        (-[WebHTMLView attachRootLayer:]):
+
 2009-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe.
