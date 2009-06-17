@@ -1,3 +1,16 @@
+2009-06-16  David Levin  <levin@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        REGRESSION: When the main page (ScrollView) has a custom scrollbar, it crashes on destruction.
+        https://bugs.webkit.org/show_bug.cgi?id=26326
+
+        Test that refreshing an iframe with custom scrollbars works without crashing.
+
+        * scrollbars/resources/page-with-custom-scrollbars.html: Added.
+        * scrollbars/scrollbar-crash-on-refresh-expected.txt: Added.
+        * scrollbars/scrollbar-crash-on-refresh.html: Added.
+
 2009-06-16  Xan Lopez  <xlopez@igalia.com>
 
         Disable another new test.

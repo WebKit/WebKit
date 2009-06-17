@@ -1,3 +1,29 @@
+2009-06-16  David Levin  <levin@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        REGRESSION: When the main page (ScrollView) has a custom scrollbar, it crashes on destruction.
+        https://bugs.webkit.org/show_bug.cgi?id=26326
+
+        Test: scrollbars/scrollbar-crash-on-refresh.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        Gives the FrameView a change to do any necessary cleanup on
+        Document::detach() which is where the renderArena gets detroyed.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::detachCustomScrollbars):
+        Gets rid of any custom scrollbars (if the docment supplied them).
+        * page/FrameView.h:
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::isCustomScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        Removed the check for document()->frame().  If frame() is 0 in this code,
+        then the call to animation() is also incorrect (since it does document()->frame()->animation()).
+        * rendering/RenderScrollbar.h:
+        (WebCore::RenderScrollbar::isCustomScrollbar):
+
 2009-06-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adele Peterson.
