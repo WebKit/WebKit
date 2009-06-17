@@ -1,3 +1,14 @@
+2009-06-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Move security policy to security/index.html so that
+        webkit.org/security/ works.
+
+        * nav.inc:
+        * security/index.html: Copied from security/security-policy.html.
+        * security/security-policy.html: Removed.
+
 2009-06-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Timothy Hatcher.
