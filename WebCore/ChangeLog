@@ -1,3 +1,15 @@
+2009-06-17  George Staikos  <george.staikos@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23155
+        Move WIN_CE -> WINCE as previously discussed with Qt WINCE folks.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        * platform/win/SystemTimeWin.cpp:
+        (WebCore::userIdleTime):
+
 2009-06-17  Adam Roben  <aroben@apple.com>
 
         Speculative Mac build fix

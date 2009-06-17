@@ -39,7 +39,7 @@
 #endif
 
 #if COMPILER(MSVC)
-#if PLATFORM(WIN_CE)
+#if PLATFORM(WINCE)
 #include <stdlib.h>
 #endif
 #include <limits>

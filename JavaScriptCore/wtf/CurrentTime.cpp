@@ -107,7 +107,7 @@ static double highResUpTime()
 
 static double lowResUTCTime()
 {
-#if PLATFORM(WIN_CE)
+#if PLATFORM(WINCE)
     SYSTEMTIME systemTime;
     GetSystemTime(&systemTime);
     struct tm tmtime;
@@ -120,11 +120,11 @@ static double lowResUTCTime()
     tmtime.tm_sec = systemTime.wSecond;
     time_t timet = mktime(&tmtime);
     return timet * msPerSecond + systemTime.wMilliseconds;
-#else // PLATFORM(WIN_CE)
+#else
     struct _timeb timebuffer;
     _ftime(&timebuffer);
     return timebuffer.time * msPerSecond + timebuffer.millitm;
-#endif // PLATFORM(WIN_CE)
+#endif
 }
 
 static bool qpcAvailable()

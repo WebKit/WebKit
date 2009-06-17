@@ -37,7 +37,7 @@ namespace WebCore {
 
 float userIdleTime()
 {
-#if !PLATFORM(WIN_CE)
+#if !PLATFORM(WINCE)
     LASTINPUTINFO lastInputInfo = {0};
     lastInputInfo.cbSize = sizeof(LASTINPUTINFO);
     if (::GetLastInputInfo(&lastInputInfo))

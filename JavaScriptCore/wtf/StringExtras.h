@@ -45,7 +45,7 @@ inline int snprintf(char* buffer, size_t count, const char* format, ...)
     return result;
 }
 
-#if COMPILER(MSVC7) || PLATFORM(WIN_CE)
+#if COMPILER(MSVC7) || PLATFORM(WINCE)
 
 inline int vsnprintf(char* buffer, size_t count, const char* format, va_list args)
 {
@@ -54,7 +54,7 @@ inline int vsnprintf(char* buffer, size_t count, const char* format, va_list arg
 
 #endif
 
-#if PLATFORM(WIN_CE)
+#if PLATFORM(WINCE)
 
 inline int strnicmp(const char* string1, const char* string2, size_t count)
 {

@@ -300,7 +300,7 @@ double getCurrentUTCTimeWithMicroseconds()
 
 void getLocalTime(const time_t* localTime, struct tm* localTM)
 {
-#if COMPILER(MSVC7) || COMPILER(MINGW) || PLATFORM(WIN_CE)
+#if COMPILER(MSVC7) || COMPILER(MINGW) || PLATFORM(WINCE)
     *localTM = *localtime(localTime);
 #elif COMPILER(MSVC)
     localtime_s(localTM, localTime);

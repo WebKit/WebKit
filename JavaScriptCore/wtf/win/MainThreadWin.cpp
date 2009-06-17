@@ -31,7 +31,7 @@
 
 #include "Assertions.h"
 #include "Threading.h"
-#if !PLATFORM(WIN_CE)
+#if !PLATFORM(WINCE)
 #include <windows.h>
 #endif
 

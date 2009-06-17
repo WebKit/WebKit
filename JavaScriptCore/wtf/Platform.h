@@ -56,12 +56,12 @@
 #define WTF_PLATFORM_WIN_OS 1
 #endif
 
-/* PLATFORM(WIN_CE) */
+/* PLATFORM(WINCE) */
 /* Operating system level dependencies for Windows CE that should be used */
 /* regardless of operating environment */
 /* Note that for this platform PLATFORM(WIN_OS) is also defined. */
 #if defined(_WIN32_WCE)
-#define WTF_PLATFORM_WIN_CE 1
+#define WTF_PLATFORM_WINCE 1
 #endif
 
 /* PLATFORM(LINUX) */
@@ -258,12 +258,12 @@
 #define WTF_PLATFORM_BIG_ENDIAN 1
 #endif
 
-/* PLATFORM(WIN_CE) && PLATFORM(QT)
+/* PLATFORM(WINCE) && PLATFORM(QT)
    We can not determine the endianess at compile time. For
    Qt for Windows CE the endianess is specified in the
    device specific makespec
 */
-#if PLATFORM(WIN_CE) && PLATFORM(QT)
+#if PLATFORM(WINCE) && PLATFORM(QT)
 #   include <QtGlobal>
 #   undef WTF_PLATFORM_BIG_ENDIAN
 #   undef WTF_PLATFORM_MIDDLE_ENDIAN
@@ -406,7 +406,7 @@
 #elif PLATFORM(WIN_OS)
 
 #define HAVE_FLOAT_H 1
-#if PLATFORM(WIN_CE)
+#if PLATFORM(WINCE)
 #define HAVE_ERRNO_H 0
 #else
 #define HAVE_SYS_TIMEB_H 1

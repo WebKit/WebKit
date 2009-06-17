@@ -52,7 +52,7 @@
 #include <signal.h>
 #endif
 
-#if COMPILER(MSVC) && !PLATFORM(WIN_CE)
+#if COMPILER(MSVC) && !PLATFORM(WINCE)
 #include <crtdbg.h>
 #include <windows.h>
 #include <mmsystem.h>

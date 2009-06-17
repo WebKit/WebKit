@@ -1,3 +1,24 @@
+2009-06-17  George Staikos  <george.staikos@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23155
+        Move WIN_CE -> WINCE as previously discussed with Qt WINCE folks.
+
+        * config.h:
+        * jsc.cpp:
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/CurrentTime.cpp:
+        (WTF::lowResUTCTime):
+        * wtf/DateMath.cpp:
+        (WTF::getLocalTime):
+        * wtf/MathExtras.h:
+        * wtf/Platform.h:
+        * wtf/StringExtras.h:
+        * wtf/Threading.h:
+        * wtf/win/MainThreadWin.cpp:
+
 2009-06-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
