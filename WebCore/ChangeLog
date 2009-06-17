@@ -1,3 +1,75 @@
+2009-06-17  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26148
+        Extract RenderThemeChromiumSkia out of RenderThemeChromiumLinux.  This
+        is mostly a code shuffle.  The non-suffle changes are:
+           1) Creation of a caretBlinkIntervalInternal.
+           2) Moving of some inline functions into the implementation files.
+           3) Changing of defaultGUIFont into a static class constant from a
+              static function.  Also the type is changed to String.
+           4) Changing of defaultFontSize into a static class constant from a
+              static variable in the file scope.
+           5) The static supportsFocus function was collapsed into
+              supportsFocusRing.
+           6) Split the extraDefaultStyleSheet into Skia and Linux versions.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumSkia::defaultGUIFont):
+        (WebCore::RenderThemeChromiumSkia::RenderThemeChromiumSkia):
+        (WebCore::RenderThemeChromiumSkia::~RenderThemeChromiumSkia):
+        (WebCore::RenderThemeChromiumSkia::extraDefaultStyleSheet):
+        (WebCore::RenderThemeChromiumSkia::extraQuirksStyleSheet):
+        (WebCore::RenderThemeChromiumSkia::extraMediaControlsStyleSheet):
+        (WebCore::RenderThemeChromiumSkia::supportsHover):
+        (WebCore::RenderThemeChromiumSkia::supportsFocusRing):
+        (WebCore::RenderThemeChromiumSkia::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumSkia::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumSkia::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumSkia::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumSkia::platformTextSearchHighlightColor):
+        (WebCore::RenderThemeChromiumSkia::caretBlinkInterval):
+        (WebCore::RenderThemeChromiumSkia::systemFont):
+        (WebCore::RenderThemeChromiumSkia::minimumMenuListSize):
+        (WebCore::RenderThemeChromiumSkia::paintCheckbox):
+        (WebCore::RenderThemeChromiumSkia::setCheckboxSize):
+        (WebCore::RenderThemeChromiumSkia::paintRadio):
+        (WebCore::RenderThemeChromiumSkia::setRadioSize):
+        (WebCore::RenderThemeChromiumSkia::paintButton):
+        (WebCore::RenderThemeChromiumSkia::paintTextField):
+        (WebCore::RenderThemeChromiumSkia::paintTextArea):
+        (WebCore::RenderThemeChromiumSkia::paintSearchField):
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumSkia::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeChromiumSkia::paintMediaButtonInternal):
+        (WebCore::RenderThemeChromiumSkia::paintMediaPlayButton):
+        (WebCore::RenderThemeChromiumSkia::paintMediaMuteButton):
+        (WebCore::RenderThemeChromiumSkia::adjustMenuListStyle):
+        (WebCore::RenderThemeChromiumSkia::paintMenuList):
+        (WebCore::RenderThemeChromiumSkia::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeChromiumSkia::paintMenuListButton):
+        (WebCore::RenderThemeChromiumSkia::popupInternalPaddingLeft):
+        (WebCore::RenderThemeChromiumSkia::popupInternalPaddingRight):
+        (WebCore::RenderThemeChromiumSkia::popupInternalPaddingTop):
+        (WebCore::RenderThemeChromiumSkia::popupInternalPaddingBottom):
+        (WebCore::RenderThemeChromiumSkia::buttonInternalPaddingLeft):
+        (WebCore::RenderThemeChromiumSkia::buttonInternalPaddingRight):
+        (WebCore::RenderThemeChromiumSkia::buttonInternalPaddingTop):
+        (WebCore::RenderThemeChromiumSkia::buttonInternalPaddingBottom):
+        (WebCore::RenderThemeChromiumSkia::caretBlinkIntervalInternal):
+        (WebCore::RenderThemeChromiumLinux::RenderThemeChromiumLinux):
+        (WebCore::RenderThemeChromiumLinux::~RenderThemeChromiumLinux):
+        (WebCore::RenderThemeChromiumLinux::systemColor):
+        (WebCore::RenderThemeChromiumLinux::extraDefaultStyleSheet):
+        (WebCore::RenderThemeChromiumSkia::menuListInternalPadding):
+        * rendering/RenderThemeChromiumLinux.h:
+
 2009-06-17  Adam Roben  <aroben@apple.com>
 
         Add a SOFT_LINK_OPTIONAL macro

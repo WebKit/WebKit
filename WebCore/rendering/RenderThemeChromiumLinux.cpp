@@ -53,11 +53,6 @@ enum PaddingType {
 
 static const int styledMenuListInternalPadding[4] = { 1, 4, 1, 4 };
 
-// The default variable-width font size.  We use this as the default font
-// size for the "system font", and as a base size (which we then shrink) for
-// form control fonts.
-static const float defaultFontSize = 16.0;
-
 // The background for the media player controls should be a 60% opaque black rectangle. This
 // matches the UI mockups for the default UI theme.
 static const float defaultMediaControlOpacity = 0.6f;
@@ -72,32 +67,12 @@ static const float minSearchFieldResultsDecorationSize = 9;
 static const float maxSearchFieldResultsDecorationSize = 30;
 static const float defaultSearchFieldResultsButtonWidth = 18;
 
-static bool supportsFocus(ControlPart appearance)
-{
-    // This causes WebKit to draw the focus rings for us.
-    return false;
-}
-
 static void setSizeIfAuto(RenderStyle* style, const IntSize& size)
 {
     if (style->width().isIntrinsicOrAuto())
         style->setWidth(Length(size.width(), Fixed));
     if (style->height().isAuto())
         style->setHeight(Length(size.height(), Fixed));
-}
-
-// We aim to match IE here.
-// -IE uses a font based on the encoding as the default font for form controls.
-// -Gecko uses MS Shell Dlg (actually calls GetStockObject(DEFAULT_GUI_FONT),
-// which returns MS Shell Dlg)
-// -Safari uses Lucida Grande.
-//
-// FIXME: The only case where we know we don't match IE is for ANSI encodings.
-// IE uses MS Shell Dlg there, which we render incorrectly at certain pixel
-// sizes (e.g. 15px). So, for now we just use Arial.
-static const char* defaultGUIFont()
-{
-    return "Arial";
 }
 
 #if ENABLE(VIDEO)
@@ -114,91 +89,96 @@ static HTMLMediaElement* mediaElementParent(Node* node)
 }
 #endif
 
-PassRefPtr<RenderTheme> RenderThemeChromiumLinux::create()
+// We aim to match IE here.
+// -IE uses a font based on the encoding as the default font for form controls.
+// -Gecko uses MS Shell Dlg (actually calls GetStockObject(DEFAULT_GUI_FONT),
+// which returns MS Shell Dlg)
+// -Safari uses Lucida Grande.
+//
+// FIXME: The only case where we know we don't match IE is for ANSI encodings.
+// IE uses MS Shell Dlg there, which we render incorrectly at certain pixel
+// sizes (e.g. 15px). So, for now we just use Arial.
+const String& RenderThemeChromiumSkia::defaultGUIFont()
 {
-    return adoptRef(new RenderThemeChromiumLinux());
+    DEFINE_STATIC_LOCAL(String, fontface, ("Arial"));
+    return fontFace;
 }
 
-PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
-{
-    static RenderTheme* rt = RenderThemeChromiumLinux::create().releaseRef();
-    return rt;
-}
+float RenderThemeChromiumSkia::defaultFontSize = 16.0;
 
-RenderThemeChromiumLinux::RenderThemeChromiumLinux()
+RenderThemeChromiumSkia::RenderThemeChromiumSkia()
 {
 }
 
-Color RenderThemeChromiumLinux::systemColor(int cssValueId) const
+RenderThemeChromiumSkia::~RenderThemeChromiumSkia()
 {
-    static const Color linuxButtonGrayColor(0xffdddddd);
-
-    if (cssValueId == CSSValueButtonface)
-        return linuxButtonGrayColor;
-    return RenderTheme::systemColor(cssValueId);
 }
 
 // Use the Windows style sheets to match their metrics.
-String RenderThemeChromiumLinux::extraDefaultStyleSheet()
+String RenderThemeChromiumSkia::extraDefaultStyleSheet()
 {
-    return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet)) +
-           String(themeChromiumLinuxUserAgentStyleSheet, sizeof(themeChromiumLinuxUserAgentStyleSheet));
+    return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet));
 }
 
-String RenderThemeChromiumLinux::extraQuirksStyleSheet()
+String RenderThemeChromiumSkia::extraQuirksStyleSheet()
 {
     return String(themeWinQuirksUserAgentStyleSheet, sizeof(themeWinQuirksUserAgentStyleSheet));
 }
 
 #if ENABLE(VIDEO)
-String RenderThemeChromiumLinux::extraMediaControlsStyleSheet()
+String RenderThemeChromiumSkia::extraMediaControlsStyleSheet()
 {
     return String(mediaControlsChromiumUserAgentStyleSheet, sizeof(mediaControlsChromiumUserAgentStyleSheet));
 }
 #endif
 
-bool RenderThemeChromiumLinux::supportsFocusRing(const RenderStyle* style) const
+bool RenderThemeChromiumSkia::supportsHover(const RenderStyle*) const
 {
-    return supportsFocus(style->appearance());
+    return true;
 }
 
-Color RenderThemeChromiumLinux::platformActiveSelectionBackgroundColor() const
+bool RenderThemeChromiumSkia::supportsFocusRing(const RenderStyle*) const
+{
+    // This causes WebKit to draw the focus rings for us.
+    return false;
+}
+
+Color RenderThemeChromiumSkia::platformActiveSelectionBackgroundColor() const
 {
     return Color(0x1e, 0x90, 0xff);
 }
 
-Color RenderThemeChromiumLinux::platformInactiveSelectionBackgroundColor() const
+Color RenderThemeChromiumSkia::platformInactiveSelectionBackgroundColor() const
 {
     return Color(0xc8, 0xc8, 0xc8);
 }
 
-Color RenderThemeChromiumLinux::platformActiveSelectionForegroundColor() const
+Color RenderThemeChromiumSkia::platformActiveSelectionForegroundColor() const
 {
     return Color::black;
 }
 
-Color RenderThemeChromiumLinux::platformInactiveSelectionForegroundColor() const
+Color RenderThemeChromiumSkia::platformInactiveSelectionForegroundColor() const
 {
     return Color(0x32, 0x32, 0x32);
 }
 
-Color RenderThemeChromiumLinux::platformTextSearchHighlightColor() const
+Color RenderThemeChromiumSkia::platformTextSearchHighlightColor() const
 {
     return Color(0xff, 0xff, 0x96);
 }
 
-double RenderThemeChromiumLinux::caretBlinkInterval() const
+double RenderThemeChromiumSkia::caretBlinkInterval() const
 {
     // Disable the blinking caret in layout test mode, as it introduces
     // a race condition for the pixel tests. http://b/1198440
     if (ChromiumBridge::layoutTestMode())
         return 0;
 
-    // We cache the interval so we don't have to repeatedly request it from gtk.
-    return 0.5;
+    return caretBlinkIntervalInternal();
 }
 
-void RenderThemeChromiumLinux::systemFont(int propId, FontDescription& fontDescription) const
+void RenderThemeChromiumSkia::systemFont(int propId, FontDescription& fontDescription) const
 {
     float fontSize = defaultFontSize;
 
@@ -223,12 +203,12 @@ void RenderThemeChromiumLinux::systemFont(int propId, FontDescription& fontDescr
     fontDescription.setItalic(false);
 }
 
-int RenderThemeChromiumLinux::minimumMenuListSize(RenderStyle* style) const
+int RenderThemeChromiumSkia::minimumMenuListSize(RenderStyle* style) const
 {
     return 0;
 }
 
-bool RenderThemeChromiumLinux::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+bool RenderThemeChromiumSkia::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     static Image* const checkedImage = Image::loadPlatformResource("linuxCheckboxOn").releaseRef();
     static Image* const uncheckedImage = Image::loadPlatformResource("linuxCheckboxOff").releaseRef();
@@ -238,7 +218,7 @@ bool RenderThemeChromiumLinux::paintCheckbox(RenderObject* o, const RenderObject
     return false;
 }
 
-void RenderThemeChromiumLinux::setCheckboxSize(RenderStyle* style) const
+void RenderThemeChromiumSkia::setCheckboxSize(RenderStyle* style) const
 {
     // If the width and height are both specified, then we have nothing to do.
     if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
@@ -253,7 +233,7 @@ void RenderThemeChromiumLinux::setCheckboxSize(RenderStyle* style) const
     setSizeIfAuto(style, size);
 }
 
-bool RenderThemeChromiumLinux::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+bool RenderThemeChromiumSkia::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     static Image* const checkedImage = Image::loadPlatformResource("linuxRadioOn").releaseRef();
     static Image* const uncheckedImage = Image::loadPlatformResource("linuxRadioOff").releaseRef();
@@ -263,7 +243,7 @@ bool RenderThemeChromiumLinux::paintRadio(RenderObject* o, const RenderObject::P
     return false;
 }
 
-void RenderThemeChromiumLinux::setRadioSize(RenderStyle* style) const
+void RenderThemeChromiumSkia::setRadioSize(RenderStyle* style) const
 {
     // Use same sizing for radio box as checkbox.
     setCheckboxSize(style);
@@ -338,18 +318,28 @@ static void paintButtonLike(RenderTheme* theme, RenderObject* o, const RenderObj
     canvas->drawPoint(right - 2, bottom - 2, paint);
 }
 
-bool RenderThemeChromiumLinux::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+bool RenderThemeChromiumSkia::paintButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     paintButtonLike(this, o, i, rect);
     return false;
 }
 
-bool RenderThemeChromiumLinux::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+bool RenderThemeChromiumSkia::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     return true;
 }
 
-void RenderThemeChromiumLinux::adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+bool RenderThemeChromiumSkia::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    return paintTextField(o, i, r);
+}
+
+bool RenderThemeChromiumSkia::paintSearchField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    return paintTextField(o, i, r);
+}
+
+void RenderThemeChromiumSkia::adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     // Scale the button size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
@@ -358,17 +348,17 @@ void RenderThemeChromiumLinux::adjustSearchFieldCancelButtonStyle(CSSStyleSelect
     style->setHeight(Length(cancelButtonSize, Fixed));
 }
 
-bool RenderThemeChromiumLinux::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumSkia::paintSearchFieldCancelButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o->parent());
     if (!o->parent() || !o->parent()->isBox())
         return false;
-    
+
     RenderBox* parentRenderBox = toRenderBox(o->parent());
 
     IntRect parentBox = parentRenderBox->absoluteContentBox();
-    
+
     // Make sure the scaled button stays square and will fit in its parent's box
     bounds.setHeight(std::min(parentBox.width(), std::min(parentBox.height(), bounds.height())));
     bounds.setWidth(bounds.height());
@@ -383,14 +373,14 @@ bool RenderThemeChromiumLinux::paintSearchFieldCancelButton(RenderObject* o, con
     return false;
 }
 
-void RenderThemeChromiumLinux::adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     IntSize emptySize(1, 11);
     style->setWidth(Length(emptySize.width(), Fixed));
     style->setHeight(Length(emptySize.height(), Fixed));
 }
 
-void RenderThemeChromiumLinux::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     // Scale the decoration size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
@@ -400,16 +390,16 @@ void RenderThemeChromiumLinux::adjustSearchFieldResultsDecorationStyle(CSSStyleS
     style->setHeight(Length(magnifierSize, Fixed));
 }
 
-bool RenderThemeChromiumLinux::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumSkia::paintSearchFieldResultsDecoration(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o->parent());
     if (!o->parent() || !o->parent()->isBox())
         return false;
-    
+
     RenderBox* parentRenderBox = toRenderBox(o->parent());
     IntRect parentBox = parentRenderBox->absoluteContentBox();
-    
+
     // Make sure the scaled decoration stays square and will fit in its parent's box
     bounds.setHeight(std::min(parentBox.width(), std::min(parentBox.height(), bounds.height())));
     bounds.setWidth(bounds.height());
@@ -417,13 +407,13 @@ bool RenderThemeChromiumLinux::paintSearchFieldResultsDecoration(RenderObject* o
     // Center the decoration vertically.  Round up though, so if it has to be one pixel off-center, it will
     // be one pixel closer to the bottom of the field.  This tends to look better with the text.
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
-    
+
     static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").releaseRef();
     i.context->drawImage(magnifierImage, bounds);
     return false;
 }
 
-void RenderThemeChromiumLinux::adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeChromiumSkia::adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     // Scale the button size based on the font size
     float fontScale = style->fontSize() / defaultControlFontPixelSize;
@@ -434,7 +424,7 @@ void RenderThemeChromiumLinux::adjustSearchFieldResultsButtonStyle(CSSStyleSelec
     style->setHeight(Length(magnifierHeight, Fixed));
 }
 
-bool RenderThemeChromiumLinux::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+bool RenderThemeChromiumSkia::paintSearchFieldResultsButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     IntRect bounds = r;
     ASSERT(o->parent());
@@ -442,10 +432,10 @@ bool RenderThemeChromiumLinux::paintSearchFieldResultsButton(RenderObject* o, co
         return false;
     if (!o->parent() || !o->parent()->isBox())
         return false;
-    
+
     RenderBox* parentRenderBox = toRenderBox(o->parent());
     IntRect parentBox = parentRenderBox->absoluteContentBox();
-    
+
     // Make sure the scaled decoration will fit in its parent's box
     bounds.setHeight(std::min(parentBox.height(), bounds.height()));
     bounds.setWidth(std::min(parentBox.width(), static_cast<int>(bounds.height() * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize)));
@@ -459,7 +449,7 @@ bool RenderThemeChromiumLinux::paintSearchFieldResultsButton(RenderObject* o, co
     return false;
 }
 
-bool RenderThemeChromiumLinux::paintMediaButtonInternal(GraphicsContext* context, const IntRect& rect, Image* image)
+bool RenderThemeChromiumSkia::paintMediaButtonInternal(GraphicsContext* context, const IntRect& rect, Image* image)
 {
     context->beginTransparencyLayer(defaultMediaControlOpacity);
 
@@ -485,7 +475,7 @@ bool RenderThemeChromiumLinux::paintMediaButtonInternal(GraphicsContext* context
     return false;
 }
 
-bool RenderThemeChromiumLinux::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeChromiumSkia::paintMediaPlayButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement = mediaElementParent(o->node());
@@ -501,7 +491,7 @@ bool RenderThemeChromiumLinux::paintMediaPlayButton(RenderObject* o, const Rende
 #endif
 }
 
-bool RenderThemeChromiumLinux::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeChromiumSkia::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement = mediaElementParent(o->node());
@@ -517,13 +507,13 @@ bool RenderThemeChromiumLinux::paintMediaMuteButton(RenderObject* o, const Rende
 #endif
 }
 
-void RenderThemeChromiumLinux::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+void RenderThemeChromiumSkia::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
 {
     // Height is locked to auto on all browsers.
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-bool RenderThemeChromiumLinux::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+bool RenderThemeChromiumSkia::paintMenuList(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     SkCanvas* const canvas = i.context->platformContext()->canvas();
     const int right = rect.x() + rect.width();
@@ -546,55 +536,94 @@ bool RenderThemeChromiumLinux::paintMenuList(RenderObject* o, const RenderObject
     return false;
 }
 
-void RenderThemeChromiumLinux::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+void RenderThemeChromiumSkia::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     adjustMenuListStyle(selector, style, e);
 }
 
 // Used to paint styled menulists (i.e. with a non-default border)
-bool RenderThemeChromiumLinux::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
+bool RenderThemeChromiumSkia::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& rect)
 {
     return paintMenuList(o, i, rect);
 }
 
-int RenderThemeChromiumLinux::popupInternalPaddingLeft(RenderStyle* style) const
+int RenderThemeChromiumSkia::popupInternalPaddingLeft(RenderStyle* style) const
 {
     return menuListInternalPadding(style, LeftPadding);
 }
 
-int RenderThemeChromiumLinux::popupInternalPaddingRight(RenderStyle* style) const
+int RenderThemeChromiumSkia::popupInternalPaddingRight(RenderStyle* style) const
 {
     return menuListInternalPadding(style, RightPadding);
 }
 
-int RenderThemeChromiumLinux::popupInternalPaddingTop(RenderStyle* style) const
+int RenderThemeChromiumSkia::popupInternalPaddingTop(RenderStyle* style) const
 {
     return menuListInternalPadding(style, TopPadding);
 }
 
-int RenderThemeChromiumLinux::popupInternalPaddingBottom(RenderStyle* style) const
+int RenderThemeChromiumSkia::popupInternalPaddingBottom(RenderStyle* style) const
 {
     return menuListInternalPadding(style, BottomPadding);
 }
 
-int RenderThemeChromiumLinux::buttonInternalPaddingLeft() const
+int RenderThemeChromiumSkia::buttonInternalPaddingLeft() const
 {
     return 3;
 }
 
-int RenderThemeChromiumLinux::buttonInternalPaddingRight() const
+int RenderThemeChromiumSkia::buttonInternalPaddingRight() const
 {
     return 3;
 }
 
-int RenderThemeChromiumLinux::buttonInternalPaddingTop() const
+int RenderThemeChromiumSkia::buttonInternalPaddingTop() const
 {
     return 1;
 }
 
-int RenderThemeChromiumLinux::buttonInternalPaddingBottom() const
+int RenderThemeChromiumSkia::buttonInternalPaddingBottom() const
 {
     return 1;
+}
+
+double RenderThemeChromiumSkia::caretBlinkIntervalInternal() const
+{
+    return RenderTheme::caretBlinkInterval();
+}
+
+PassRefPtr<RenderTheme> RenderThemeChromiumLinux::create()
+{
+    return adoptRef(new RenderThemeChromiumLinux());
+}
+
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+{
+    static RenderTheme* rt = RenderThemeChromiumLinux::create().releaseRef();
+    return rt;
+}
+
+RenderThemeChromiumLinux::RenderThemeChromiumLinux()
+{
+}
+
+RenderThemeChromiumLinux::~RenderThemeChromiumLinux()
+{
+}
+
+Color RenderThemeChromiumLinux::systemColor(int cssValueId) const
+{
+    static const Color linuxButtonGrayColor(0xffdddddd);
+
+    if (cssValueId == CSSValueButtonface)
+        return linuxButtonGrayColor;
+    return RenderTheme::systemColor(cssValueId);
+}
+
+String RenderThemeChromiumLinux::extraDefaultStyleSheet()
+{
+    return RenderThemeChromiumSkia::extraDefaultStyleSheet() +
+           String(themeChromiumLinuxUserAgentStyleSheet, sizeof(themeChromiumLinuxUserAgentStyleSheet));
 }
 
 bool RenderThemeChromiumLinux::controlSupportsTints(const RenderObject* o) const
@@ -622,7 +651,7 @@ Color RenderThemeChromiumLinux::inactiveListBoxSelectionForegroundColor() const
     return Color(0x32, 0x32, 0x32);
 }
 
-int RenderThemeChromiumLinux::menuListInternalPadding(RenderStyle* style, int paddingType) const
+int RenderThemeChromiumSkia::menuListInternalPadding(RenderStyle* style, int paddingType) const
 {
     // This internal padding is in addition to the user-supplied padding.
     // Matches the FF behavior.
@@ -633,11 +662,11 @@ int RenderThemeChromiumLinux::menuListInternalPadding(RenderStyle* style, int pa
     // RenderMenuList to lay out the individual items in the popup.
     // If the MenuList actually has appearance "NoAppearance", then that means
     // we don't draw a button, so don't reserve space for it.
-    const int bar_type = style->direction() == LTR ? RightPadding : LeftPadding;
-    if (paddingType == bar_type && style->appearance() != NoControlPart)
+    const int barType = style->direction() == LTR ? RightPadding : LeftPadding;
+    if (paddingType == barType && style->appearance() != NoControlPart)
         padding += ScrollbarTheme::nativeTheme()->scrollbarThickness();
 
     return padding;
 }
 
-}  // namespace WebCore
+} // namespace WebCore

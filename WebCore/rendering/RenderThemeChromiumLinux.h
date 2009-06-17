@@ -33,9 +33,8 @@
 
 namespace WebCore {
 
-    class RenderThemeChromiumLinux : public RenderTheme {
+    class RenderThemeChromiumSkia : public RenderTheme {
     public:
-        static PassRefPtr<RenderTheme> create();
 
         virtual String extraDefaultStyleSheet();
         virtual String extraQuirksStyleSheet();
@@ -44,7 +43,7 @@ namespace WebCore {
 #endif
 
         // A method asking if the theme's controls actually care about redrawing when hovered.
-        virtual bool supportsHover(const RenderStyle*) const { return true; }
+        virtual bool supportsHover(const RenderStyle*) const;
 
         // A method asking if the theme is able to draw the focus ring.
         virtual bool supportsFocusRing(const RenderStyle*) const;
@@ -56,11 +55,11 @@ namespace WebCore {
         virtual Color platformInactiveSelectionForegroundColor() const;
         virtual Color platformTextSearchHighlightColor() const;
 
+        // To change the blink interval, override caretBlinkIntervalInternal instead of this one so that we may share layout test code an intercepts.
         virtual double caretBlinkInterval() const;
 
         // System fonts.
         virtual void systemFont(int propId, FontDescription&) const;
-        virtual Color systemColor(int cssValidId) const;
 
         virtual int minimumMenuListSize(RenderStyle*) const;
 
@@ -74,9 +73,9 @@ namespace WebCore {
 
         virtual bool paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
-        virtual bool paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return paintTextField(o, i, r); }
+        virtual bool paintTextArea(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
-        virtual bool paintSearchField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r) { return paintTextField(o, i, r); }
+        virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
         virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
         virtual bool paintSearchFieldCancelButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
@@ -117,11 +116,36 @@ namespace WebCore {
         virtual int buttonInternalPaddingTop() const;
         virtual int buttonInternalPaddingBottom() const;
 
-        // A method asking if the control changes its tint when the window has focus or not.
-        virtual bool controlSupportsTints(const RenderObject*) const;
-
         // A general method asking if any control tinting is supported at all.
         virtual bool supportsControlTints() const { return true; }
+
+    protected:
+        static const String& defaultGUIFont();
+
+        // The default variable-width font size.  We use this as the default font
+        // size for the "system font", and as a base size (which we then shrink) for
+        // form control fonts.
+        static float defaultFontSize;
+
+        virtual double caretBlinkIntervalInternal() const;
+
+    private:
+        RenderThemeChromiumSkia();
+        virtual ~RenderThemeChromiumSkia();
+
+        int menuListInternalPadding(RenderStyle*, int paddingType) const;
+        bool paintMediaButtonInternal(GraphicsContext*, const IntRect&, Image*);
+    };
+
+    class RenderThemeChromiumLinux : public RenderThemeChromiumSkia {
+    public:
+        static PassRefPtr<RenderTheme> create();
+        virtual String extraDefaultStyleSheet();
+
+        virtual Color systemColor(int cssValidId) const;
+
+        // A method asking if the control changes its tint when the window has focus or not.
+        virtual bool controlSupportsTints(const RenderObject*) const;
 
         // List Box selection color
         virtual Color activeListBoxSelectionBackgroundColor() const;
@@ -131,10 +155,7 @@ namespace WebCore {
 
     private:
         RenderThemeChromiumLinux();
-        ~RenderThemeChromiumLinux() { }
-
-        int menuListInternalPadding(RenderStyle*, int paddingType) const;
-        bool paintMediaButtonInternal(GraphicsContext*, const IntRect&, Image*);
+        virtual ~RenderThemeChromiumLinux();
     };
 
 } // namespace WebCore
