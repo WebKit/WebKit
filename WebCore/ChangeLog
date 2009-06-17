@@ -1,3 +1,15 @@
+2009-06-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix of <rdar://6967547> Ctrl-C copies null value erasing text in clipboard in Safari.
+        This patch kept the way events were firing as they were before, and Windows events are
+        consistent with Mac.       
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::tryDHTMLCopy): Added check for canCopy() before clearing PasteBoard
+        (WebCore::Editor::tryDHTMLCut): Added check for canCut() before clearing PasteBoard
+
 2009-06-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Brady Eidson.

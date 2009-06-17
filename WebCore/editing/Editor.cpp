@@ -340,9 +340,10 @@ bool Editor::tryDHTMLCopy()
     if (m_frame->selection()->isInPasswordField())
         return false;
 
-    // Must be done before oncopy adds types and data to the pboard,
-    // also done for security, as it erases data from the last copy/paste.
-    Pasteboard::generalPasteboard()->clear();
+    if (canCopy())
+        // Must be done before oncopy adds types and data to the pboard,
+        // also done for security, as it erases data from the last copy/paste.
+        Pasteboard::generalPasteboard()->clear();
 
     return !dispatchCPPEvent(eventNames().copyEvent, ClipboardWritable);
 }
@@ -351,10 +352,11 @@ bool Editor::tryDHTMLCut()
 {
     if (m_frame->selection()->isInPasswordField())
         return false;
-
-    // Must be done before oncut adds types and data to the pboard,
-    // also done for security, as it erases data from the last copy/paste.
-    Pasteboard::generalPasteboard()->clear();
+    
+    if (canCut())
+        // Must be done before oncut adds types and data to the pboard,
+        // also done for security, as it erases data from the last copy/paste.
+        Pasteboard::generalPasteboard()->clear();
 
     return !dispatchCPPEvent(eventNames().cutEvent, ClipboardWritable);
 }
