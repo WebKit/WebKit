@@ -1401,8 +1401,10 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
     if (!captureHitsOnSubviews) {
         NSView* hitView = [super hitTest:point];
+#if USE(ACCELERATED_COMPOSITING)
         if (_private && hitView == _private->layerHostingView)
             hitView = self;
+#endif
         return hitView;
     }
     if ([[self superview] mouse:point inRect:[self frame]])
