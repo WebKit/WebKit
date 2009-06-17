@@ -46,6 +46,7 @@
 #include "PluginData.h"
 #include "ProgressTracker.h"
 #include "RenderWidget.h"
+#include "RenderTheme.h"
 #include "ScriptController.h"
 #include "SelectionController.h"
 #include "Settings.h"
@@ -120,6 +121,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_debugger(0)
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
+    , m_theme(RenderTheme::themeForPage(this))
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;

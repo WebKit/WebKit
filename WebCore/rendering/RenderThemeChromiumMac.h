@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2005 Apple Computer, Inc.
  * Copyright (C) 2008, 2009 Google, Inc.
+ * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,8 +42,7 @@ namespace WebCore {
 
     class RenderThemeChromiumMac : public RenderTheme {
     public:
-        RenderThemeChromiumMac();
-        virtual ~RenderThemeChromiumMac();
+        static PassRefPtr<RenderTheme> create();
 
         // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
         // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
@@ -140,6 +140,9 @@ namespace WebCore {
         virtual bool paintMediaSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
     private:
+        RenderThemeChromiumMac();
+        virtual ~RenderThemeChromiumMac();
+
         IntRect inflateRect(const IntRect&, const IntSize&, const int* margins, float zoomLevel = 1.0f) const;
 
         // Get the control size based off the font.  Used by some of the controls (like buttons).

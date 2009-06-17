@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Apple Inc.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,13 +35,18 @@
 
 namespace WebCore {
 
-RenderTheme* theme()
+PassRefPtr<RenderTheme> RenderThemeGtk::create()
 {
-    static RenderThemeGtk gtkTheme;
-    return &gtkTheme;
+    return adoptRef(new RenderThemeGtk());
 }
 
-static bool mozGtkInitialized = false;
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+{
+    static RenderTheme* rt = RenderThemeGtk::create().releaseRef();
+    return rt;
+}
+
+static int mozGtkRefCount = 0;
 
 RenderThemeGtk::RenderThemeGtk()
     : m_gtkWindow(0)
@@ -48,18 +54,18 @@ RenderThemeGtk::RenderThemeGtk()
     , m_gtkEntry(0)
     , m_gtkTreeView(0)
 {
-    if (!mozGtkInitialized) {
-        mozGtkInitialized = true;
+    if (!mozGtkRefCount)
         moz_gtk_init();
-    }
+
+    ++mozGtkRefCount;
 }
 
 RenderThemeGtk::~RenderThemeGtk()
 {
-    if (mozGtkInitialized) {
+    --mozGtkRefCount;
+
+    if (!mozGtkRefCount)
         moz_gtk_shutdown();
-        mozGtkInitialized = false;
-    }
 }
 
 static bool supportsFocus(ControlPart appearance)
@@ -470,7 +476,7 @@ GtkWidget* RenderThemeGtk::gtkEntry() const
         return m_gtkEntry;
 
     m_gtkEntry = gtk_entry_new();
-    g_signal_connect(m_gtkEntry, "style-set", G_CALLBACK(gtkStyleSetCallback), theme());
+    g_signal_connect(m_gtkEntry, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
     gtk_container_add(gtkContainer(), m_gtkEntry);
     gtk_widget_realize(m_gtkEntry);
 
@@ -483,7 +489,7 @@ GtkWidget* RenderThemeGtk::gtkTreeView() const
         return m_gtkTreeView;
 
     m_gtkTreeView = gtk_tree_view_new();
-    g_signal_connect(m_gtkTreeView, "style-set", G_CALLBACK(gtkStyleSetCallback), theme());
+    g_signal_connect(m_gtkTreeView, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
     gtk_container_add(gtkContainer(), m_gtkTreeView);
     gtk_widget_realize(m_gtkTreeView);
 

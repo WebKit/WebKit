@@ -1,3 +1,114 @@
+2009-06-16  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Dave Hyatt and Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26278
+        Patch that make WebCore have a RenderTheme per page
+
+
+        Create a different RenderTheme per page, so that RenderTheme has
+        access to page specific theming. This is needed for the Qt port, as Qt
+        supports setting the theme (style) per widget.
+
+        This change was suggested and discussed with Dave Hyatt.
+
+        More detailed:
+
+        1) Create a theme per page or one global one, depending on the needs
+           of the platform.
+        2) Add an accesser to the theme from RenderObject.
+        3) Change all uses of the theming to access the theme through
+           RenderObject, using the global default theme as fallback, when the
+           document of RenderObject has no page.
+           When we don't have access to a RenderObject, use the default theme.
+        4) Modify all RenderTheme platform implementations to work with the
+           above changes, still creating only one global theme.
+
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::loadFullDefaultStyle):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::setActive):
+        (WebCore::ContainerNode::setHovered):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::focusedOrActiveStateChanged):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::parseMappedAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateControlTints):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::theme):
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::paintRow):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::create):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::RenderThemeGtk::~RenderThemeGtk):
+        (WebCore::RenderThemeGtk::gtkEntry):
+        (WebCore::RenderThemeGtk::gtkTreeView):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::create):
+        (WebCore::RenderTheme::themeForPage):
+        * platform/qt/RenderThemeQt.h:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::determineState):
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::hitTest):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::theme):
+        * rendering/RenderObject.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::defaultTheme):
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeChromiumLinux.h:
+        (WebCore::RenderThemeChromiumLinux::~RenderThemeChromiumLinux):
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeChromiumWin.h:
+        (WebCore::RenderThemeChromiumWin::RenderThemeChromiumWin):
+        (WebCore::RenderThemeChromiumWin::~RenderThemeChromiumWin):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeSafari.h:
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeWin.h:
+
 2009-06-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

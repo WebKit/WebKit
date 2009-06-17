@@ -45,7 +45,6 @@
 #include "HitTestResult.h"
 #include "Page.h"
 #include "Range.h"
-#include "RenderTheme.h"
 #include "RenderView.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
@@ -1267,7 +1266,7 @@ void SelectionController::focusedOrActiveStateChanged()
         node->setNeedsStyleRecalc();
         if (RenderObject* renderer = node->renderer())
             if (renderer && renderer->style()->hasAppearance())
-                theme()->stateChanged(renderer, FocusState);
+                renderer->theme()->stateChanged(renderer, FocusState);
     }
 
     // Secure keyboard entry is set by the active frame.

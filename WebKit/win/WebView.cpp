@@ -1855,7 +1855,7 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
         case WM_XP_THEMECHANGED:
             if (Frame* coreFrame = core(mainFrameImpl)) {
                 webView->deleteBackingStore();
-                theme()->themeChanged();
+                coreFrame->page()->theme()->themeChanged();
                 ScrollbarTheme::nativeTheme()->themeChanged();
                 RECT windowRect;
                 ::GetClientRect(hWnd, &windowRect);

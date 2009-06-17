@@ -39,8 +39,7 @@ class RenderStyle;
 
 class RenderThemeMac : public RenderTheme {
 public:
-    RenderThemeMac();
-    virtual ~RenderThemeMac();
+    static PassRefPtr<RenderTheme> create();
 
     // A method asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject*) const;
@@ -134,6 +133,9 @@ protected:
 #endif
 
 private:
+    RenderThemeMac();
+    virtual ~RenderThemeMac();
+
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins, float zoomLevel = 1.0f) const;
 
     FloatRect convertToPaintingRect(const RenderObject* inputRenderer, const RenderObject* partRenderer, const FloatRect& inputRect, const IntRect& r) const;

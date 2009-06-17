@@ -44,8 +44,7 @@ namespace WebCore {
 
     class RenderThemeChromiumWin : public RenderTheme {
     public:
-        RenderThemeChromiumWin() { }
-        ~RenderThemeChromiumWin() { }
+        static PassRefPtr<RenderTheme> create();
 
         virtual String extraDefaultStyleSheet();
         virtual String extraQuirksStyleSheet();
@@ -141,6 +140,9 @@ namespace WebCore {
         static void setDefaultFontSize(int);
 
     private:
+        RenderThemeChromiumWin() { }
+        ~RenderThemeChromiumWin() { }
+
         unsigned determineState(RenderObject*);
         unsigned determineSliderThumbState(RenderObject*);
         unsigned determineClassicState(RenderObject*);

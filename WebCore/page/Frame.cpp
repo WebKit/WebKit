@@ -622,7 +622,7 @@ void Frame::selectionLayoutChanged()
     // Start blinking with a black caret. Be sure not to restart if we're
     // already blinking in the right location.
     if (shouldBlink && !m_caretBlinkTimer.isActive()) {
-        if (double blinkInterval = theme()->caretBlinkInterval())
+        if (double blinkInterval = page()->theme()->caretBlinkInterval())
             m_caretBlinkTimer.startRepeating(blinkInterval);
 
         if (!m_caretPaint) {

@@ -798,7 +798,7 @@ void ContainerNode::setActive(bool down, bool pause)
         if (reactsToPress)
             setNeedsStyleRecalc();
         if (renderer() && renderer()->style()->hasAppearance()) {
-            if (theme()->stateChanged(renderer(), PressedState))
+            if (renderer()->theme()->stateChanged(renderer(), PressedState))
                 reactsToPress = true;
         }
         if (reactsToPress && pause) {
@@ -840,7 +840,7 @@ void ContainerNode::setHovered(bool over)
         if (renderer()->style()->affectedByHoverRules())
             setNeedsStyleRecalc();
         if (renderer() && renderer()->style()->hasAppearance())
-            theme()->stateChanged(renderer(), HoverState);
+            renderer()->theme()->stateChanged(renderer(), HoverState);
     }
 }
 

@@ -1,3 +1,28 @@
+2009-06-16  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        Create a different RenderTheme per page, so that RenderTheme has
+        access to page specific theming. This is needed for the Qt port, as Qt
+        supports setting the theme (style) per widget.
+
+        This change was suggested and discussed with Dave Hyatt.
+
+        More detailed:
+
+        1) Create a theme per page or one global one, depending on the needs
+           of the platform.
+        2) Add an accesser to the theme from RenderObject.
+        3) Change all uses of the theming to access the theme through
+           RenderObject, using the global default theme as fallback, when the
+           document of RenderObject has no page.
+           When we don't have access to a RenderObject, use the default theme.
+        4) Modify all RenderTheme platform implementations to work with the
+           above changes, still creating only one global theme.
+
+        * WebView.cpp:
+        (WebViewWndProc): Get the theme from the associated page.
+
 2009-06-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

@@ -5,6 +5,7 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2009 Kenneth Rohde Christiansen
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -34,9 +35,12 @@
 namespace WebCore {
 
 class RenderThemeGtk : public RenderTheme {
-public:
+private:
     RenderThemeGtk();
     virtual ~RenderThemeGtk();
+
+public:
+    static PassRefPtr<RenderTheme> create();
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle* style) const { return true; }

@@ -1296,10 +1296,10 @@ void FrameView::updateControlTints()
     // to define when controls get the tint and to call this function when that changes.
     
     // Optimize the common case where we bring a window to the front while it's still empty.
-    if (!m_frame || m_frame->loader()->url().isEmpty()) 
+    if (!m_frame || m_frame->loader()->url().isEmpty())
         return;
-    
-    if (theme()->supportsControlTints() && m_frame->contentRenderer()) {
+
+    if (m_frame->contentRenderer() && m_frame->contentRenderer()->theme()->supportsControlTints()) {
         if (needsLayout())
             layout();
         PlatformGraphicsContext* const noContext = 0;

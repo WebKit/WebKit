@@ -2,6 +2,7 @@
  * This file is part of the WebKit project.
  *
  * Copyright (C) 2006, 2008 Apple Computer, Inc.
+ * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,8 +49,7 @@ struct ThemeData {
 
 class RenderThemeWin : public RenderTheme {
 public:
-    RenderThemeWin();
-    ~RenderThemeWin();
+    static PassRefPtr<RenderTheme> create();
 
     virtual String extraDefaultStyleSheet();
     virtual String extraQuirksStyleSheet();
@@ -135,6 +135,9 @@ public:
 #endif
 
 private:
+    RenderThemeWin();
+    ~RenderThemeWin();
+
     void addIntrinsicMargins(RenderStyle*) const;
     void close();
 

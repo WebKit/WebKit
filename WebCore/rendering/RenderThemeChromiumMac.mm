@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Google, Inc.
+ * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -124,10 +125,15 @@ IntRect NSRectToIntRect(const NSRect & rect)
     return IntRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 }
 
-RenderTheme* theme()
+PassRefPtr<RenderTheme> RenderThemeChromiumMac::create()
 {
-    static RenderThemeChromiumMac* macTheme = new RenderThemeChromiumMac;
-    return macTheme;
+    return adoptRef(new RenderThemeChromiumMac);
+}
+
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+{
+    static RenderTheme* rt = RenderThemeChromiumMac::create().releaseRef();
+    return rt;
 }
 
 RenderThemeChromiumMac::RenderThemeChromiumMac()

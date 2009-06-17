@@ -43,7 +43,6 @@
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
-#include "RenderTheme.h"
 #include "RenderView.h"
 #include "TransformState.h"
 #include <algorithm>
@@ -212,6 +211,13 @@ RenderObject::~RenderObject()
     ASSERT(!m_hasAXObject);
     renderObjectCounter.decrement();
 #endif
+}
+
+RenderTheme* RenderObject::theme() const
+{
+    ASSERT(document()->page());
+
+    return document()->page()->theme();
 }
 
 bool RenderObject::isDescendantOf(const RenderObject* obj) const

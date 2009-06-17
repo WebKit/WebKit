@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc.
+ * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,8 +47,7 @@ class RenderStyle;
 
 class RenderThemeSafari : public RenderTheme {
 public:
-    RenderThemeSafari();
-    virtual ~RenderThemeSafari();
+    static PassRefPtr<RenderTheme> create();
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
@@ -137,6 +137,9 @@ protected:
 #endif
 
 private:
+    RenderThemeSafari();
+    virtual ~RenderThemeSafari();
+
     IntRect inflateRect(const IntRect&, const IntSize&, const int* margins) const;
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).

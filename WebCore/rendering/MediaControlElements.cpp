@@ -159,7 +159,7 @@ void MediaControlInputElement::updateStyle()
 bool MediaControlInputElement::hitTest(const IntPoint& absPoint)
 {
     if (renderer() && renderer()->style()->hasAppearance())
-        return theme()->hitTestMediaControlPart(renderer(), absPoint);
+        return renderer()->theme()->hitTestMediaControlPart(renderer(), absPoint);
 
     return false;
 }

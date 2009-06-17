@@ -62,7 +62,7 @@ void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, El
     else if (style->display() == COMPACT || style->display() == RUN_IN || style->display() == LIST_ITEM || style->display() == TABLE)
         style->setDisplay(BLOCK);
 
-    if (UAHasAppearance && theme()->isControlStyled(style, border, background, backgroundColor)) {
+    if (UAHasAppearance && isControlStyled(style, border, background, backgroundColor)) {
         if (part == MenulistPart) {
             style->setAppearance(MenulistButtonPart);
             part = MenulistButtonPart;

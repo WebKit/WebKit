@@ -526,13 +526,13 @@ static void loadFullDefaultStyle()
     }
 
     // Strict-mode rules.
-    String defaultRules = String(html4UserAgentStyleSheet, sizeof(html4UserAgentStyleSheet)) + theme()->extraDefaultStyleSheet();
+    String defaultRules = String(html4UserAgentStyleSheet, sizeof(html4UserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraDefaultStyleSheet();
     CSSStyleSheet* defaultSheet = parseUASheet(defaultRules);
     defaultStyle->addRulesFromSheet(defaultSheet, screenEval());
     defaultPrintStyle->addRulesFromSheet(defaultSheet, printEval());
 
     // Quirks-mode rules.
-    String quirksRules = String(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)) + theme()->extraQuirksStyleSheet();
+    String quirksRules = String(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraQuirksStyleSheet();
     CSSStyleSheet* quirksSheet = parseUASheet(quirksRules);
     defaultQuirksStyle->addRulesFromSheet(quirksSheet, screenEval());
 }
@@ -1138,7 +1138,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     static bool loadedMediaStyleSheet;
     if (!loadedMediaStyleSheet && (e->hasTagName(videoTag) || e->hasTagName(audioTag))) {
         loadedMediaStyleSheet = true;
-        String mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + theme()->extraMediaControlsStyleSheet();
+        String mediaRules = String(mediaControlsUserAgentStyleSheet, sizeof(mediaControlsUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraMediaControlsStyleSheet();
         CSSStyleSheet* mediaControlsSheet = parseUASheet(mediaRules);
         defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
@@ -1589,7 +1589,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
 
     // Let the theme also have a crack at adjusting the style.
     if (style->hasAppearance())
-        theme()->adjustStyle(this, style, e, m_hasUAAppearance, m_borderData, m_backgroundData, m_backgroundColor);
+        RenderTheme::defaultTheme()->adjustStyle(this, style, e, m_hasUAAppearance, m_borderData, m_backgroundData, m_backgroundColor);
 
 #if ENABLE(SVG)
     if (e && e->isSVGElement()) {
@@ -4292,7 +4292,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_lineHeightValue = 0;
             
             FontDescription fontDescription;
-            theme()->systemFont(primitiveValue->getIdent(), fontDescription);
+            RenderTheme::defaultTheme()->systemFont(primitiveValue->getIdent(), fontDescription);
  
             // Double-check and see if the theme did anything.  If not, don't bother updating the font.
             if (fontDescription.isAbsoluteSize()) {
@@ -5695,7 +5695,7 @@ static Color colorForCSSValue(int cssValueId)
         if (col->cssValueId == cssValueId)
             return col->color;
     }
-    return theme()->systemColor(cssValueId);
+    return RenderTheme::defaultTheme()->systemColor(cssValueId);
 }
 
 Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue)

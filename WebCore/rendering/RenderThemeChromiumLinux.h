@@ -7,6 +7,7 @@
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008, 2009 Google, Inc.
  * All rights reserved.
+ * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,8 +35,7 @@ namespace WebCore {
 
     class RenderThemeChromiumLinux : public RenderTheme {
     public:
-        RenderThemeChromiumLinux();
-        ~RenderThemeChromiumLinux() { }
+        static PassRefPtr<RenderTheme> create();
 
         virtual String extraDefaultStyleSheet();
         virtual String extraQuirksStyleSheet();
@@ -130,6 +130,9 @@ namespace WebCore {
         virtual Color inactiveListBoxSelectionForegroundColor() const;
 
     private:
+        RenderThemeChromiumLinux();
+        ~RenderThemeChromiumLinux() { }
+
         int menuListInternalPadding(RenderStyle*, int paddingType) const;
         bool paintMediaButtonInternal(GraphicsContext*, const IntRect&, Image*);
     };

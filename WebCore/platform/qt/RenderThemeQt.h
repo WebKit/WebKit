@@ -38,9 +38,12 @@ class HTMLMediaElement;
 
 class RenderThemeQt : public RenderTheme
 {
-public:
+private:
     RenderThemeQt();
     virtual ~RenderThemeQt();
+
+public:
+    static PassRefPtr<RenderTheme> create(Page*);
 
     virtual bool supportsHover(const RenderStyle*) const;
     virtual bool supportsFocusRing(const RenderStyle* style) const;

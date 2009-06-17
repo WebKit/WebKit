@@ -101,10 +101,10 @@ enum {
     leftPadding
 };
 
-RenderTheme* theme()
+PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderThemeMac* macTheme = new RenderThemeMac;
-    return macTheme;
+    static RenderTheme* rt = RenderThemeMac::create().releaseRef();
+    return rt;
 }
 
 RenderThemeMac::RenderThemeMac()
