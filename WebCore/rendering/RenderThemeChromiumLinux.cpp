@@ -85,4 +85,9 @@ Color RenderThemeChromiumLinux::inactiveListBoxSelectionForegroundColor() const
     return Color(0x32, 0x32, 0x32);
 }
 
+bool RenderThemeChromiumLinux::supportsControlTints() const
+{
+    return true;
+}
+
 } // namespace WebCore

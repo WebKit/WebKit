@@ -3,6 +3,37 @@
         Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=26148
+        Remove common code from RenderThemeChromiumWin that is shared with
+        RenderThemeChromiumSkia.
+
+        Also move supportsControlTints to RenderThemeChromiumLinux since it
+        is linux specific.
+
+        There are no tests changed because this just removes functions with
+        duplicate implementations between the base and derived classes.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::supportsControlTints):
+        * rendering/RenderThemeChromiumLinux.h:
+        * rendering/RenderThemeChromiumSkia.cpp:
+        * rendering/RenderThemeChromiumSkia.h:
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::):
+        (WebCore::getNonClientMetrics):
+        (WebCore::RenderThemeChromiumWin::RenderThemeChromiumWin):
+        (WebCore::RenderThemeChromiumWin::~RenderThemeChromiumWin):
+        (WebCore::RenderThemeChromiumWin::systemFont):
+        (WebCore::RenderThemeChromiumWin::paintCheckbox):
+        (WebCore::RenderThemeChromiumWin::paintRadio):
+        (WebCore::RenderThemeChromiumWin::paintSliderThumb):
+        (WebCore::RenderThemeChromiumWin::caretBlinkIntervalInternal):
+        * rendering/RenderThemeChromiumWin.h:
+
+2009-06-17  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26148
         Move RenderThemeChromiumSkia into its own file.  This is purely a code move.
 
         * rendering/RenderThemeChromiumLinux.cpp:

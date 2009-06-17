@@ -162,11 +162,6 @@ Color RenderThemeChromiumSkia::platformInactiveSelectionForegroundColor() const
     return Color(0x32, 0x32, 0x32);
 }
 
-Color RenderThemeChromiumSkia::platformTextSearchHighlightColor() const
-{
-    return Color(0xff, 0xff, 0x96);
-}
-
 double RenderThemeChromiumSkia::caretBlinkInterval() const
 {
     // Disable the blinking caret in layout test mode, as it introduces

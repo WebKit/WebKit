@@ -52,6 +52,9 @@ namespace WebCore {
     private:
         RenderThemeChromiumLinux();
         virtual ~RenderThemeChromiumLinux();
+
+        // A general method asking if any control tinting is supported at all.
+        virtual bool supportsControlTints() const;
     };
 
 } // namespace WebCore
