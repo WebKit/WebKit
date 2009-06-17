@@ -1,3 +1,13 @@
+2009-06-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6981193> Crash in MediaControlInputElement::attachToParent
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaTextDisplayElement::attachToParent): NULL check element renderer or parent renderer.
+        (WebCore::MediaControlInputElement::attachToParent): Ditto.
+
 2009-06-17  David Hyatt  <hyatt@apple.com>
 
         Fix Windows build.  There's no HTMLDataGridElement.cpp file yet.
