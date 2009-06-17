@@ -157,6 +157,10 @@ void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, con
     if (!image) // If it's too early we won't have an image yet.
         return;
 
+    // Avoid NaN
+    if (!isfinite(phase.x()) || !isfinite(phase.y()))
+       return;
+
     cairo_t* cr = context->platformContext();
     context->save();
 

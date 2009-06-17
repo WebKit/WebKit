@@ -1,3 +1,21 @@
+2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=26470.
+        The use of zero-width or zero-height rectangles in generating
+        gradients caused Windows Cairo to crash, and webkitgtk to
+        produce invalid images.
+
+        We now test for NaN in the phase argument, which is calculated
+        using fmodf and can blow up when the width/height values passed
+        are zero.
+
+        Test: fast/gradients/border-image-gradient-sides-and-corners.html
+
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+
 2009-06-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dimitri Glazkov.
