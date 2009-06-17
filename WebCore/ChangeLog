@@ -1,3 +1,17 @@
+2009-06-17  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26482
+        <rdar://problem/6978590> When setting playback rate to 0, the audio element stops 
+        playing (doesn't resume later)
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::setRate): Always set the rate, even when "paused".
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::setRate): Ditto.
+
 2009-06-17  Adam Roben  <aroben@apple.com>
 
         Add all the generated JS*.cpp files back to WebCore.vcproj

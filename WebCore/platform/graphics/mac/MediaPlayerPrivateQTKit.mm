@@ -607,8 +607,7 @@ void MediaPlayerPrivate::setRate(float rate)
 {
     if (!metaDataAvailable())
         return;
-    if (!paused())
-        [m_qtMovie.get() setRate:rate];
+    [m_qtMovie.get() setRate:rate];
 }
 
 int MediaPlayerPrivate::dataRate() const
