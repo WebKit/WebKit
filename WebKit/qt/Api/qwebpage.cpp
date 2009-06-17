@@ -2592,8 +2592,12 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
 
     QChar securityStrength(QLatin1Char('N'));
 #if !defined(QT_NO_OPENSSL)
-    if (QSslSocket::supportsSsl())
-        securityStrength = QLatin1Char('U');
+    // we could check QSslSocket::supportsSsl() here, but this makes
+    // OpenSSL, certificates etc being loaded in all cases were QWebPage
+    // is used. This loading is not needed for non-https.
+    securityStrength = QLatin1Char('U');
+    // this may lead to a false positive: We indicate SSL since it is
+    // compiled in even though supportsSsl() might return false
 #endif
     ua = ua.arg(securityStrength);
 

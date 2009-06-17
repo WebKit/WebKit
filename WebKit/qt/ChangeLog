@@ -1,3 +1,17 @@
+2009-06-17  Markus Goetz <Markus.Goetz@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        QWebPage: Don't call supportsSsl()
+
+        This stops QWebPage from loading the OpenSSL libs,
+        certificates etc. when they are not needed for the non-HTTPS case.
+
+        Loading the SSL libraries can be a very slow operation.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+
 2009-06-16  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon Hausmann.
