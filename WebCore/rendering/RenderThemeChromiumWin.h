@@ -92,8 +92,8 @@ namespace WebCore {
         virtual double caretBlinkIntervalInternal() const;
 
     private:
-        RenderThemeChromiumWin();
-        virtual ~RenderThemeChromiumWin();
+        RenderThemeChromiumWin() { }
+        virtual ~RenderThemeChromiumWin() { }
 
         unsigned determineState(RenderObject*);
         unsigned determineSliderThumbState(RenderObject*);

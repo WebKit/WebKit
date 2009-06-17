@@ -1,3 +1,14 @@
+2009-06-17  David Levin  <levin@chromium.org>
+
+        Fix chromium windows build.
+
+        A mistake that happened during the complicated merge for
+        landing r44775, r44776, r44777.
+
+        * rendering/RenderThemeChromiumWin.h:
+        (WebCore::RenderThemeChromiumWin::RenderThemeChromiumWin):
+        (WebCore::RenderThemeChromiumWin::~RenderThemeChromiumWin):
+
 2009-06-17  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
