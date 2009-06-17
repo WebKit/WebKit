@@ -75,6 +75,10 @@ PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
     static RenderTheme* safariTheme = RenderThemeSafari::create().releaseRef();
     static RenderTheme* windowsTheme = RenderThemeWin::create().releaseRef();
+
+    // FIXME: This is called before Settings has been initialized by WebKit, so will return a
+    // potentially wrong answer the very first time it's called (see
+    // <https://bugs.webkit.org/show_bug.cgi?id=26493>).
     if (Settings::shouldPaintNativeControls())
         return windowsTheme; // keep the reference of one.
     return safariTheme; // keep the reference of one.

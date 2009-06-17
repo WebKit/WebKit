@@ -1,3 +1,24 @@
+2009-06-17  Adam Roben  <aroben@apple.com>
+
+        Make Settings::shouldPaintNativeControls default to true
+
+        This matches the default up in WebKit (that was changed in r43318).
+
+        Fixes Bug 26493: REGRESSION (r44758): First tab always uses Mac-style
+        form controls
+        <https://bugs.webkit.org/show_bug.cgi?id=26493>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        No test possible since DRT always uses Mac-style form controls.
+
+        * page/Settings.cpp: Changed the initial value of
+        gShouldPaintNativeControls to true.
+
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderTheme::themeForPage): Added a FIXME about the design
+        flaw here involving querying Settings before it's been initialized.
+
 2009-06-17  David Levin  <levin@chromium.org>
 
         Fix chromium windows build.

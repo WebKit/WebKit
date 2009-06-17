@@ -44,7 +44,7 @@ static void setNeedsReapplyStylesInAllFrames(Page* page)
 }
 
 #if USE(SAFARI_THEME)
-bool Settings::gShouldPaintNativeControls = false;
+bool Settings::gShouldPaintNativeControls = true;
 #endif
 
 Settings::Settings(Page* page)
