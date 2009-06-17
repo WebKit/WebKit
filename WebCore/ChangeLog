@@ -1,5 +1,11 @@
 2009-06-17  David Hyatt  <hyatt@apple.com>
 
+        Fix Windows build.  There's no HTMLDataGridElement.cpp file yet.
+
+        * html/HTMLElementsAllInOne.cpp:
+
+2009-06-17  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Adam Roben and Anders Carlsson.
 
         Stub out the HTMLDataGridElement.
