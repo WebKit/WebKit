@@ -344,6 +344,7 @@ IDL_BINDINGS += \
     html/HTMLButtonElement.idl \
     html/HTMLCanvasElement.idl \
     html/HTMLCollection.idl \
+    html/HTMLDataGridElement.idl \
     html/HTMLDirectoryElement.idl \
     html/HTMLDivElement.idl \
     html/HTMLDListElement.idl \

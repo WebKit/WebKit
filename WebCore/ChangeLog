@@ -1,3 +1,9 @@
+2009-06-18  Jakub Wieczorek  <faw217@gmail.com>
+
+        [Qt] Fix build. Add HTMLDataGridElement.
+
+        * WebCore.pro:
+
 2009-06-18  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix.
