@@ -5,6 +5,32 @@
         The following pixel tests have been converted into dumpastext tests. This
         fixes the bug 26336 partially.
 
+        * editing/execCommand/5207369-expected.txt: Added.
+        * editing/execCommand/5207369.html:
+        * editing/execCommand/5210032-expected.txt: Added.
+        * editing/execCommand/5210032.html:
+        * editing/execCommand/5432254-1-expected.txt: Added.
+        * editing/execCommand/5432254-1.html:
+        * platform/mac/editing/execCommand/5207369-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/5207369-expected.png: Removed.
+        * platform/mac/editing/execCommand/5207369-expected.txt: Removed.
+        * platform/mac/editing/execCommand/5210032-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/5210032-expected.png: Removed.
+        * platform/mac/editing/execCommand/5210032-expected.txt: Removed.
+        * platform/mac/editing/execCommand/5432254-1-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/5432254-1-expected.png: Removed.
+        * platform/mac/editing/execCommand/5432254-1-expected.txt: Removed.
+        * platform/qt/editing/execCommand/5207369-expected.txt: Removed.
+        * platform/qt/editing/execCommand/5210032-expected.txt: Removed.
+        * platform/qt/editing/execCommand/5432254-1-expected.txt: Removed.
+
+2009-06-18  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        The following pixel tests have been converted into dumpastext tests. This
+        fixes the bug 26336 partially.
+
         * editing/execCommand/5142012-3-expected.txt: Added.
         * editing/execCommand/5142012-3.html:
         * editing/execCommand/5144139-1-expected.txt: Added.

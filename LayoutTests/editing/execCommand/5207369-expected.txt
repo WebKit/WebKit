@@ -1,0 +1,9 @@
+This tests for a crash when trying to flatten a list containing a sub-list at the end. You shouldn't get a crash and there should be a single level list below.
+
+One
+Two
+Three
+Four
+<ul><li>One</li><li>Two</li><li>Three</li><li>Four</li></ul>
+
+PASS
