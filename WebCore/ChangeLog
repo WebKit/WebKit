@@ -1,3 +1,9 @@
+2009-06-18  Peter Kasting  <pkasting@google.com>
+
+        Fix build bustage.
+
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+
 2009-06-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver Hunt.

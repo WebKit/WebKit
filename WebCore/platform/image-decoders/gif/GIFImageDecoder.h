@@ -61,7 +61,7 @@ namespace WebCore {
 
         enum GIFQuery { GIFFullQuery, GIFSizeQuery, GIFFrameCountQuery };
 
-        void decode(GIFQuery, unsigned haltAtFrame) const;
+        void decode(GIFQuery, unsigned haltAtFrame);
 
         // Callbacks from the GIF reader.
         bool sizeNowAvailable(unsigned width, unsigned height);
