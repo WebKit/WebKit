@@ -763,7 +763,7 @@ void FrameLoaderClient::dispatchDidFirstLayout()
 
 void FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
 {
-    notImplemented();
+    notifyStatus(m_frame, WEBKIT_LOAD_FIRST_VISUALLY_NON_EMPTY_LAYOUT);
 }
 
 void FrameLoaderClient::dispatchShow()

@@ -59,9 +59,27 @@ struct _WebKitWebFrameClass {
     void (*_webkit_reserved6) (void);
 };
 
+/**
+ * WebKitLoadStatus
+ * @WEBKIT_LOAD_PROVISIONAL: No data has been received yet, empty
+ * structures have been allocated to perform the load; the load may
+ * still fail for transport issues such as not being able to resolve a
+ * name, or connect to a port.
+ * @WEBKIT_LOAD_COMMITTED: The first data chunk has arrived, meaning
+ * that the necessary transport requirements are stabilished, and the
+ * load is being performed.
+ * @WEBKIT_LOAD_FIRST_VISUALLY_NON_EMPTY_LAYOUT: The first layout with
+ * actual visible content happened; one or more layouts may have
+ * happened before that caused nothing to be visible on the screen,
+ * because the data available at the time was not significant enough.
+ * @WEBKIT_LOAD_FINISHED: This state means either that everything that
+ * was required to display the page has been loaded, or that an error
+ * has happened.
+ */
 typedef enum {
     WEBKIT_LOAD_PROVISIONAL,
     WEBKIT_LOAD_COMMITTED,
+    WEBKIT_LOAD_FIRST_VISUALLY_NON_EMPTY_LAYOUT,
     WEBKIT_LOAD_FINISHED
 } WebKitLoadStatus;
 

@@ -1,5 +1,16 @@
 2009-06-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Reviewed by Xan Lopez and Christian Dywan.
+
+        Add a new load status to report that the first visually non-empty
+        layout has been done.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+        * webkit/webkitwebframe.h:
+
+2009-06-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Reviewed by Xan Lopez.
 
         Fix parameters of navigation-policy-decision-requested callback,
