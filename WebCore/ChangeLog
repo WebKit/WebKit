@@ -1,5 +1,19 @@
 2009-06-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the Leopard build where USE(ACCELERATED_COMPOSITING) is not defined, and
+        the Tiger build where QTMovieLayer does not exist.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieLayer):
+        (WebCore::MediaPlayerPrivate::destroyQTMovieLayer):
+        (WebCore::MediaPlayerPrivate::currentRenderingMode):
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivate::tearDownVideoRendering):
+        (WebCore::MediaPlayerPrivate::hasSetUpVideoRendering):
+
+2009-06-18  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the Leopard build where USE(ACCELERATED_COMPOSITING) is not defined.
 
         * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:

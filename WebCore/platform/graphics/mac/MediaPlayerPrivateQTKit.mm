@@ -410,9 +410,9 @@ void MediaPlayerPrivate::destroyQTVideoRenderer()
     m_qtVideoRenderer = nil;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
 void MediaPlayerPrivate::createQTMovieLayer()
 {
+#if USE(ACCELERATED_COMPOSITING)
     if (!m_qtMovie)
         return;
 
@@ -434,18 +434,20 @@ void MediaPlayerPrivate::createQTMovieLayer()
         if (videoGraphicsLayer)
             videoGraphicsLayer->setContentsToVideo((PlatformLayer *)m_qtVideoLayer.get());
     }
+#endif
 }
 
 void MediaPlayerPrivate::destroyQTMovieLayer()
 {
+#if USE(ACCELERATED_COMPOSITING)
     if (!m_qtVideoLayer)
         return;
 
     // disassociate our movie from our instance of QTMovieLayer
     [m_qtVideoLayer.get() setMovie:nil];    
     m_qtVideoLayer = nil;
-}
 #endif
+}
 
 MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::currentRenderingMode() const
 {
@@ -455,10 +457,8 @@ MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::currentRenderingMode(
     if (m_qtVideoRenderer)
         return MediaRenderingSoftwareRenderer;
     
-#if USE(ACCELERATED_COMPOSITING)
     if (m_qtVideoLayer)
         return MediaRenderingMovieLayer;
-#endif
     
     return MediaRenderingNone;
 }
@@ -498,12 +498,10 @@ void MediaPlayerPrivate::setUpVideoRendering()
     case MediaRenderingSoftwareRenderer:
         createQTVideoRenderer();
         break;
-#if USE(ACCELERATED_COMPOSITING)
     case MediaRenderingMovieLayer:
         createQTMovieLayer();
         break;
     }
-#endif
 }
 
 void MediaPlayerPrivate::tearDownVideoRendering()
@@ -512,18 +510,14 @@ void MediaPlayerPrivate::tearDownVideoRendering()
         detachQTMovieView();
     else if (m_qtVideoRenderer)
         destroyQTVideoRenderer();
-#if USE(ACCELERATED_COMPOSITING)
     else
         destroyQTMovieLayer();
-#endif
 }
 
 bool MediaPlayerPrivate::hasSetUpVideoRendering() const
 {
     return m_qtMovieView
-#if USE(ACCELERATED_COMPOSITING)
         || m_qtVideoLayer
-#endif
         || m_qtVideoRenderer;
 }
 
