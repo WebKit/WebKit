@@ -1,3 +1,39 @@
+2009-06-18  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26460 part one
+        Make isSizeAvailable non-const, since it's not logically const (it
+        triggers lazy decoding), and simplify all the implementations (without
+        changing behavior; just make less verbose).  Remove some other
+        inappropriate consts, which enables the removal of all the mutable
+        declarations in the decoders.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::isSizeAvailable):
+        (WebCore::ImageDecoder::setSize): Make public to avoid needing a friend declaration in the JPEG decoder, and because the ICO/BMP decoders will soon need this.
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::isSizeAvailable):
+        (WebCore::GIFImageDecoder::repetitionCount):
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::isSizeAvailable):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::isSizeAvailable):
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::isSizeAvailable):
+        (WebCore::PNGImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        * platform/image-decoders/xbm/XBMImageDecoder.cpp:
+        (WebCore::XBMImageDecoder::isSizeAvailable):
+        (WebCore::XBMImageDecoder::frameBufferAtIndex):
+        (WebCore::XBMImageDecoder::decode):
+        * platform/image-decoders/xbm/XBMImageDecoder.h: Rename decodeXBM() to decode() for consistency with the JPEG/PNG decoders, and in the future the ICO/BMP decoders.
+
 2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Eric Seidel.

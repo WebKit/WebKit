@@ -45,7 +45,7 @@ namespace WebCore {
 
         virtual void setData(SharedBuffer* data, bool allDataReceived);
         // Whether or not the size information has been decoded yet.
-        virtual bool isSizeAvailable() const;
+        virtual bool isSizeAvailable();
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
     private:
@@ -65,7 +65,7 @@ namespace WebCore {
         bool decodeHeader();
         bool decodeDatum(uint16_t* result);
         bool decodeData();
-        void decodeXBM(bool sizeOnly);
+        void decode(bool sizeOnly);
 
         // FIXME: Copying all the XBM data just so we can NULL-terminate, just
         // so we can use sscanf() and friends, is lame.  The decoder should be

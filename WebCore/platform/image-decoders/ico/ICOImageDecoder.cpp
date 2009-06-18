@@ -80,7 +80,7 @@ RGBA32Buffer* ICOImageDecoder::frameBufferAtIndex(size_t index)
         BMPImageReader::frameBufferAtIndex(0);
 }
 
-bool ICOImageDecoder::isSizeAvailable() const
+bool ICOImageDecoder::isSizeAvailable()
 {
     return (m_imageType == PNG) ? m_pngDecoder.isSizeAvailable() :
         BMPImageReader::isSizeAvailable();

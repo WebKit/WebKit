@@ -160,17 +160,10 @@ void PNGImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 }
 
 // Whether or not the size information has been decoded yet.
-bool PNGImageDecoder::isSizeAvailable() const
+bool PNGImageDecoder::isSizeAvailable()
 {
-    // If we have pending data to decode, send it to the PNG reader now.
-    if (!ImageDecoder::isSizeAvailable() && m_reader) {
-        if (m_failed)
-            return false;
-
-        // The decoder will go ahead and aggressively consume everything up until the
-        // size is encountered.
-        decode(true);
-    }
+    if (!ImageDecoder::isSizeAvailable() && !failed() && m_reader)
+         decode(true);
 
     return ImageDecoder::isSizeAvailable();
 }
@@ -191,7 +184,7 @@ RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
 }
 
 // Feed data to the PNG reader.
-void PNGImageDecoder::decode(bool sizeOnly) const
+void PNGImageDecoder::decode(bool sizeOnly)
 {
     if (m_failed)
         return;

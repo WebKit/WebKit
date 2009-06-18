@@ -200,7 +200,7 @@ namespace WebCore {
         // implementation just returns true if the size has been set and we have not
         // seen a failure. Decoders may want to override this to lazily decode
         // enough of the image to get the size.
-        virtual bool isSizeAvailable() const
+        virtual bool isSizeAvailable()
         {
             return !m_failed && m_sizeAvailable; 
         }
@@ -211,6 +211,21 @@ namespace WebCore {
             // Requesting the size of an invalid bitmap is meaningless.
             ASSERT(!m_failed);
             return m_size;
+        }
+
+        // Called by the image decoders to set their decoded size, this also check
+        // the size for validity. It will return true if the size was set, or false
+        // if there is an error. On error, the m_failed flag will be set and the
+        // caller should immediately stop decoding.
+        virtual bool setSize(unsigned width, unsigned height)
+        {
+            if (isOverSize(width, height)) {
+                m_failed = true;
+                return false;
+            }
+            m_size = IntSize(width, height);
+            m_sizeAvailable = true;
+            return true;
         }
 
         // The total number of frames for the image.  Classes that support multiple frames
@@ -241,24 +256,9 @@ namespace WebCore {
         virtual void clearFrameBufferCache(size_t clearBeforeFrame) { }
 
     protected:
-        // Called by the image decoders to set their decoded size, this also check
-        // the size for validity. It will return true if the size was set, or false
-        // if there is an error. On error, the m_failed flag will be set and the
-        // caller should immediately stop decoding.
-        bool setSize(unsigned width, unsigned height)
-        {
-            if (isOverSize(width, height)) {
-                m_failed = true;
-                return false;
-            }
-            m_size = IntSize(width, height);
-            m_sizeAvailable = true;
-            return true;
-        }
-
         RefPtr<SharedBuffer> m_data; // The encoded data.
         Vector<RGBA32Buffer> m_frameBufferCache;
-        mutable bool m_failed;
+        bool m_failed;
 
     private:
         // Some code paths compute the size of the image as "width * height * 4"

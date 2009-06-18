@@ -113,17 +113,10 @@ void GIFImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
 }
 
 // Whether or not the size information has been decoded yet.
-bool GIFImageDecoder::isSizeAvailable() const
+bool GIFImageDecoder::isSizeAvailable()
 {
-    // If we have pending data to decode, send it to the GIF reader now.
-    if (!ImageDecoder::isSizeAvailable() && m_reader) {
-        if (m_failed)
-            return false;
-
-        // The decoder will go ahead and aggressively consume everything up until the first
-        // size is encountered.
-        decode(GIFSizeQuery, 0);
-    }
+    if (!ImageDecoder::isSizeAvailable() && !failed() && m_reader)
+         decode(GIFSizeQuery, 0);
 
     return ImageDecoder::isSizeAvailable();
 }
@@ -152,7 +145,7 @@ int GIFImageDecoder::frameCount()
 }
 
 // The number of repetitions to perform for an animation loop.
-int GIFImageDecoder::repetitionCount() const
+int GIFImageDecoder::repetitionCount()
 {
     // This value can arrive at any point in the image data stream.  Most GIFs
     // in the wild declare it near the beginning of the file, so it usually is
@@ -237,7 +230,7 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
 }
 
 // Feed data to the GIF reader.
-void GIFImageDecoder::decode(GIFQuery query, unsigned haltAtFrame) const
+void GIFImageDecoder::decode(GIFQuery query, unsigned haltAtFrame)
 {
     if (m_failed)
         return;

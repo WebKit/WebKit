@@ -44,11 +44,11 @@ namespace WebCore {
         virtual void setData(SharedBuffer* data, bool allDataReceived);
 
         // Whether or not the size information has been decoded yet.
-        virtual bool isSizeAvailable() const;
+        virtual bool isSizeAvailable();
 
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
-        void decode(bool sizeOnly = false) const;
+        void decode(bool sizeOnly = false);
 
         PNGImageReader* reader() { return m_reader; }
 
@@ -59,7 +59,7 @@ namespace WebCore {
         void pngComplete();
 
     private:
-        mutable PNGImageReader* m_reader;
+        PNGImageReader* m_reader;
     };
 
 } // namespace WebCore

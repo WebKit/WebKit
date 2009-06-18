@@ -56,17 +56,12 @@ void XBMImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
     m_allDataReceived = allDataReceived;
 }
 
-bool XBMImageDecoder::isSizeAvailable() const
+bool XBMImageDecoder::isSizeAvailable()
 {
-    // This method should either (a) not be const, or (b) not be expected to
-    // do anything that changes m_sizeAvailable. The png and jpeg decoders
-    // get around this with callbacks from external libraries.
-    //
-    // FIXME: Find out if we can patch webkit to take care of this.
     if (!ImageDecoder::isSizeAvailable() && !m_failed)
-        const_cast<XBMImageDecoder*>(this)->decodeXBM(true);
+        decode(true);
 
-    return !m_failed && ImageDecoder::isSizeAvailable();
+    return ImageDecoder::isSizeAvailable();
 }
 
 RGBA32Buffer* XBMImageDecoder::frameBufferAtIndex(size_t index)
@@ -79,7 +74,7 @@ RGBA32Buffer* XBMImageDecoder::frameBufferAtIndex(size_t index)
 
     // Attempt to get the size if we don't have it yet.
     if (!ImageDecoder::isSizeAvailable())
-        decodeXBM(true);
+        decode(true);
     
     // Initialize the framebuffer if needed.
     RGBA32Buffer& buffer = m_frameBufferCache[0];
@@ -97,7 +92,7 @@ RGBA32Buffer* XBMImageDecoder::frameBufferAtIndex(size_t index)
         
     // Keep trying to decode until we've got the entire image.
     if (buffer.status() == RGBA32Buffer::FramePartial)
-        decodeXBM(false);
+        decode(false);
 
     return &buffer;
 }
@@ -261,7 +256,7 @@ bool XBMImageDecoder::decodeData()
 }
 
 // Decode as much as we can of the XBM file.
-void XBMImageDecoder::decodeXBM(bool sizeOnly)
+void XBMImageDecoder::decode(bool sizeOnly)
 {
     if (failed())
         return;

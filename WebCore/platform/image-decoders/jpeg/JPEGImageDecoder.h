@@ -44,13 +44,13 @@ namespace WebCore {
         virtual void setData(SharedBuffer* data, bool allDataReceived);
 
         // Whether or not the size information has been decoded yet.
-        virtual bool isSizeAvailable() const;
+        virtual bool isSizeAvailable();
 
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
         
         virtual bool supportsAlpha() const { return false; }
 
-        void decode(bool sizeOnly = false) const;
+        void decode(bool sizeOnly = false);
 
         JPEGImageReader* reader() { return m_reader; }
 
@@ -58,8 +58,7 @@ namespace WebCore {
         void jpegComplete();
 
     private:
-        friend class JPEGImageReader;
-        mutable JPEGImageReader* m_reader;
+        JPEGImageReader* m_reader;
     };
 
 } // namespace WebCore

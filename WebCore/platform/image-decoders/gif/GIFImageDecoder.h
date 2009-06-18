@@ -44,14 +44,14 @@ namespace WebCore {
         virtual void setData(SharedBuffer* data, bool allDataReceived);
 
         // Whether or not the size information has been decoded yet.
-        virtual bool isSizeAvailable() const;
+        virtual bool isSizeAvailable();
 
         // The total number of frames for the image.  Will scan the image data for the answer
         // (without necessarily decoding all of the individual frames).
         virtual int frameCount();
 
         // The number of repetitions to perform for an animation loop.
-        virtual int repetitionCount() const;
+        virtual int repetitionCount();
 
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
@@ -79,8 +79,8 @@ namespace WebCore {
 
         bool m_frameCountValid;
         bool m_currentBufferSawAlpha;
-        mutable int m_repetitionCount;
-        mutable GIFImageDecoderPrivate* m_reader;
+        int m_repetitionCount;
+        GIFImageDecoderPrivate* m_reader;
     };
 
 } // namespace WebCore
