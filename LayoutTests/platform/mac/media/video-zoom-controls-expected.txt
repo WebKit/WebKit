@@ -6,7 +6,8 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 776x28
         RenderText {#text} at (0,0) size 280x28
           text run at (0,0) width 280: "Zoomed video with controls."
-      RenderVideo {VIDEO} at (45,73) size 240x180
+layer at (57,85) size 240x180
+  RenderVideo {VIDEO} at (45,73) size 240x180
 layer at (57,85) size 240x180
   RenderBlock (relative positioned) {DIV} at (0,0) size 240x180
 layer at (57,85) size 240x180

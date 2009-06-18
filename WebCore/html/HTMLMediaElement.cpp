@@ -710,7 +710,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         scheduleEvent(eventNames().loadedmetadataEvent);
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if (renderer() && !renderer()->isImage()) {
+        if (renderer() && renderer()->isVideo()) {
             static_cast<RenderVideo*>(renderer())->videoSizeChanged();
         }
 #endif        
@@ -1256,7 +1256,7 @@ void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer*)
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (renderer()) {
         renderer()->updateFromElement();
-        if (!renderer()->isImage())
+        if (renderer()->isVideo())
             static_cast<RenderVideo*>(renderer())->videoSizeChanged();
     }
 #endif        
@@ -1276,7 +1276,7 @@ void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
 {
     beginProcessingMediaPlayerCallback();
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    if (renderer() && !renderer()->isImage())
+    if (renderer() && renderer()->isVideo())
         static_cast<RenderVideo*>(renderer())->videoSizeChanged();
 #endif        
     endProcessingMediaPlayerCallback();
