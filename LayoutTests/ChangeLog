@@ -1,3 +1,18 @@
+2009-06-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test and updated result for <rdar://problem/6913221>
+          REGRESSION (Safari 3-4): Search field on apple.com cuts entered text
+
+        * fast/forms/search-vertical-alignment.html: Added.
+        * platform/mac/fast/forms/search-vertical-alignment-expected.checksum: Added.
+        * platform/mac/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/mac/fast/forms/search-vertical-alignment-expected.txt: Added.
+        * platform/mac/fast/forms/search-zoomed-expected.checksum:
+        * platform/mac/fast/forms/search-zoomed-expected.png:
+        * platform/mac/fast/forms/search-zoomed-expected.txt:
+
 2009-06-18  Chris Evans  <scarybeasts@gmail.com>
 
         Reviewed by Adam Barth.

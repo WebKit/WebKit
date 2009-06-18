@@ -223,17 +223,12 @@ void RenderTextControlSingleLine::layout()
     int desiredHeight = textBlockHeight();
     int currentHeight = innerTextRenderer->height();
 
-    if (m_innerBlock || currentHeight > height()) {
+    if (currentHeight > height()) {
         if (desiredHeight != currentHeight)
             relayoutChildren = true;
         innerTextRenderer->style()->setHeight(Length(desiredHeight, Fixed));
-    }
-
-    if (m_innerBlock) {
-        ASSERT(innerBlockRenderer);
-        if (desiredHeight != innerBlockRenderer->height())
-            relayoutChildren = true;
-        innerBlockRenderer->style()->setHeight(Length(desiredHeight, Fixed));
+        if (m_innerBlock)
+            innerBlockRenderer->style()->setHeight(Length(desiredHeight, Fixed));
     }
 
     // Set the text block width
@@ -251,13 +246,11 @@ void RenderTextControlSingleLine::layout()
 
     RenderBlock::layoutBlock(relayoutChildren);
 
-    // For text fields, center the inner text vertically
-    // Don't do this for search fields, since we don't honor height for them
-    if (!m_innerBlock) {
-        currentHeight = innerTextRenderer->height();
-        if (currentHeight < height())
-            innerTextRenderer->setLocation(innerTextRenderer->x(), (height() - currentHeight) / 2);
-    }
+    // Center the child block vertically
+    RenderBox* childBlock = innerBlockRenderer ? innerBlockRenderer : innerTextRenderer;
+    currentHeight = childBlock->height();
+    if (currentHeight < height())
+        childBlock->setLocation(childBlock->x(), (height() - currentHeight) / 2);
 }
 
 bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int xPos, int yPos, int tx, int ty, HitTestAction hitTestAction)

@@ -1,3 +1,16 @@
+2009-06-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6913221> REGRESSION (Safari 3-4): Search field on
+          apple.com cuts entered text
+
+        Test: fast/forms/search-vertical-alignment.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout): Vertically center the
+            the search field's inner block.
+
 2009-06-18  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Simon Hausmann.
