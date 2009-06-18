@@ -121,6 +121,7 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
 #if USE(ALTERNATE_JSIMMEDIATE)
             // supportsFloatingPoint() && USE(ALTERNATE_JSIMMEDIATE) => 3 SlowCases
             addSlowCase(emitJumpIfNotImmediateNumber(regT0));
+            addPtr(tagTypeNumberRegister, regT0);
             movePtrToDouble(regT0, fpRegT0);
             addSlowCase(branchTruncateDoubleToInt32(fpRegT0, regT0));
 #else

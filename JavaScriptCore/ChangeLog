@@ -1,3 +1,16 @@
+2009-06-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/6947426> sunspider math-cordic.js exhibits different intermediate results running 32-bit vs. 64-bit
+
+        On 64-bit, NaN-encoded values must be detagged before they can be used in rshift.
+
+        No performance impact.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_rshift):
+
 2009-06-17  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.

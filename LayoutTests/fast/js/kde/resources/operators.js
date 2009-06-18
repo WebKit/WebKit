@@ -70,6 +70,34 @@ shouldBe("Math.pow(2, 32) >> 1", "0");
 shouldBe("Math.pow(2, 32) << 1", "0");
 shouldBe("Math.pow(2, 32) >>> 1", "0");
 
+// Try shifting by variables, to test non-constant-folded cases.
+var one = 1;
+var two = 2;
+var twentyFour = 24;
+
+shouldBe("1 << two", "4");
+shouldBe("8 >> one", "4");
+shouldBe("1 >> two", "0");
+shouldBe("-8 >> twentyFour", "-1");
+shouldBe("8 >>> two", "2");
+shouldBe("-8 >>> twentyFour", "255");
+shouldBe("(-2200000000 >> one) << one", "2094967296");
+shouldBe("Infinity >> one", "0");
+shouldBe("Infinity << one", "0");
+shouldBe("Infinity >>> one", "0");
+shouldBe("NaN >> one", "0");
+shouldBe("NaN << one", "0");
+shouldBe("NaN >>> one", "0");
+shouldBe("888.1 >> one", "444");
+shouldBe("888.1 << one", "1776");
+shouldBe("888.1 >>> one", "444");
+shouldBe("888.9 >> one", "444");
+shouldBe("888.9 << one", "1776");
+shouldBe("888.9 >>> one", "444");
+shouldBe("Math.pow(2, 32) >> one", "0");
+shouldBe("Math.pow(2, 32) << one", "0");
+shouldBe("Math.pow(2, 32) >>> one", "0");
+
 // addition
 shouldBe("1+2", "3");
 shouldBe("'a'+'b'", "'ab'");
