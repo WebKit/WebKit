@@ -1,5 +1,18 @@
 2009-06-17  Gavin Barraclough  <barraclough@apple.com>
 
+        Rubber Stamped by Mark Rowe.
+
+        Fully revert r44492 & r44748 while we fix a bug they cause on internal builds <rdar://problem/6955963>.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw):
+        * jit/JITStubs.cpp:
+        (JSC::):
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+
+2009-06-17  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Mark Rowe.
 
         <rdar://problem/6947426> sunspider math-cordic.js exhibits different intermediate results running 32-bit vs. 64-bit

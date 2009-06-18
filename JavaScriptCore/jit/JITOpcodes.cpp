@@ -622,7 +622,6 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
     stubCall.addArgument(currentInstruction[1].u.operand, regT2);
     stubCall.call();
     ASSERT(regT0 == returnValueRegister);
-    // Temporarily bring these back on x86 platforms while we fix a bug.
 #if PLATFORM(X86_64)
     addPtr(Imm32(0x48), X86::esp);
     pop(X86::ebx);
@@ -632,17 +631,13 @@ void JIT::emit_op_throw(Instruction* currentInstruction)
     pop(X86::r12);
     pop(X86::ebp);
     ret();
-#elif PLATFORM(X86)
+#else
     addPtr(Imm32(0x1c), X86::esp);
     pop(X86::ebx);
     pop(X86::edi);
     pop(X86::esi);
     pop(X86::ebp);
     ret();
-#elif !defined(NDEBUG)
-    // cti_op_throw SHOULD always change it's return address,
-    // this point in the code should never be reached.
-    breakpoint();
 #endif
 }
 
