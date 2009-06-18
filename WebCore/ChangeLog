@@ -1,3 +1,28 @@
+2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move some common functions out of platform files and into
+        the common implementation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26425.
+        Add a new platform context method (flush) so that the
+        getWindowsContext method can be consolidated into the common
+        GraphicsContextWin.cpp file.
+         
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        (WebCore::GraphicsContextPlatformPrivate::flush):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::flush):
+        * platform/graphics/win/GraphicsContextCGWin.cpp: Remove
+          getWindowContext method.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp: Remove
+          getWindowContext method and fillWithClearColor methods.
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::fillWithClearColor): Moved from *CairoWin.cpp
+        (WebCore::GraphicsContext::getWindowsContext): Moved
+          from *CairoWin.cpp
+
 2009-06-18  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Oliver Hunt.

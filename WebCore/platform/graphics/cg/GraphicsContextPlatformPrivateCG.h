@@ -50,6 +50,7 @@ public:
     // These methods do nothing on Mac.
     void save() {}
     void restore() {}
+    void flush() {}
     void clip(const FloatRect&) {}
     void clip(const Path&) {}
     void scale(const FloatSize&) {}
@@ -64,6 +65,7 @@ public:
     // On Windows, we need to update the HDC for form controls to draw in the right place.
     void save();
     void restore();
+    void flush();
     void clip(const FloatRect&);
     void clip(const Path&);
     void scale(const FloatSize&);

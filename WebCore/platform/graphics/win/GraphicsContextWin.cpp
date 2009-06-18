@@ -32,6 +32,7 @@
 #include "GraphicsContextPlatformPrivateCairo.h"
 #endif
 
+#include "BitmapInfo.h"
 #include "TransformationMatrix.h"
 #include "NotImplemented.h"
 #include "Path.h"
@@ -43,6 +44,14 @@ namespace WebCore {
 
 class SVGResourceImage;
 
+static void fillWithClearColor(HBITMAP bitmap)
+{
+    BITMAP bmpInfo;
+    GetObject(bitmap, sizeof(bmpInfo), &bmpInfo);
+    int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
+    memset(bmpInfo.bmBits, 0, bufferSize);
+}
+
 bool GraphicsContext::inTransparencyLayer() const { return m_data->m_transparencyCount; }
 
 void GraphicsContext::setShouldIncludeChildWindows(bool include)
@@ -53,6 +62,45 @@ void GraphicsContext::setShouldIncludeChildWindows(bool include)
 bool GraphicsContext::shouldIncludeChildWindows() const
 {
     return m_data->m_shouldIncludeChildWindows;
+}
+
+HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
+{
+    // FIXME: Should a bitmap be created also when a shadow is set?
+    if (mayCreateBitmap && inTransparencyLayer()) {
+        if (dstRect.isEmpty())
+            return 0;
+
+        // Create a bitmap DC in which to draw.
+        BitmapInfo bitmapInfo = BitmapInfo::create(dstRect.size());
+
+        void* pixels = 0;
+        HBITMAP bitmap = ::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
+        if (!bitmap)
+            return 0;
+
+        HDC bitmapDC = ::CreateCompatibleDC(m_data->m_hdc);
+        ::SelectObject(bitmapDC, bitmap);
+
+        // Fill our buffer with clear if we're going to alpha blend.
+        if (supportAlphaBlend)
+           fillWithClearColor(bitmap);
+
+        // Make sure we can do world transforms.
+        SetGraphicsMode(bitmapDC, GM_ADVANCED);
+
+        // Apply a translation to our context so that the drawing done will be at (0,0) of the bitmap.
+        TransformationMatrix translate(1.0f, 0.0f, 0.0f, 1.0f, -dstRect.x(), -dstRect.y());
+        XFORM xform = translate;
+
+        ::SetWorldTransform(bitmapDC, &xform);
+
+        return bitmapDC;
+    }
+
+    m_data->flush();
+    m_data->save();
+    return m_data->m_hdc;
 }
 
 void GraphicsContextPlatformPrivate::save()

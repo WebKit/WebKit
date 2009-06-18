@@ -26,7 +26,6 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "BitmapInfo.h"
 #include "TransformationMatrix.h"
 #include "Path.h"
 
@@ -60,14 +59,6 @@ static cairo_t* createCairoContextWithHDC(HDC hdc, bool hasAlpha)
     return context;
 }
 
-static void fillWithClearColor(HBITMAP bitmap)
-{
-    BITMAP bmpInfo;
-    GetObject(bitmap, sizeof(bmpInfo), &bmpInfo);
-    int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
-    memset(bmpInfo.bmBits, 0, bufferSize);
-}
-
 GraphicsContext::GraphicsContext(HDC dc, bool hasAlpha)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate)
@@ -86,50 +77,6 @@ GraphicsContext::GraphicsContext(HDC dc, bool hasAlpha)
         setPlatformFillColor(fillColor());
         setPlatformStrokeColor(strokeColor());
     }
-}
-
-HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
-{
-    // FIXME: Should a bitmap be created also when a shadow is set?
-    if (mayCreateBitmap && inTransparencyLayer()) {
-        if (dstRect.isEmpty())
-            return 0;
-
-        // Create a bitmap DC in which to draw.
-        BitmapInfo bitmapInfo = BitmapInfo::create(dstRect.size());
-
-        void* pixels = 0;
-        HBITMAP bitmap = ::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
-        if (!bitmap)
-            return 0;
-
-        HDC bitmapDC = ::CreateCompatibleDC(m_data->m_hdc);
-        ::SelectObject(bitmapDC, bitmap);
-
-        // Fill our buffer with clear if we're going to alpha blend.
-        if (supportAlphaBlend)
-           fillWithClearColor(bitmap);
-
-        // Make sure we can do world transforms.
-        SetGraphicsMode(bitmapDC, GM_ADVANCED);
-
-        // Apply a translation to our context so that the drawing done will be at (0,0) of the bitmap.
-        TransformationMatrix translate(1.0f, 0.0f, 0.0f, 1.0f, -dstRect.x(), -dstRect.y());
-
-        XFORM xform = translate;
-
-        ::SetWorldTransform(bitmapDC, &xform);
-
-        return bitmapDC;
-    }
-
-    cairo_surface_t* surface = cairo_win32_surface_create(m_data->m_hdc);
-    cairo_surface_flush(surface);
-    cairo_surface_destroy(surface);
-
-    m_data->save();
-
-    return m_data->m_hdc;
 }
 
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
@@ -183,6 +130,13 @@ void GraphicsContextPlatformPrivate::syncContext(PlatformGraphicsContext* cr)
     m_hdc = cairo_win32_surface_get_dc(surface);   
 
     SetGraphicsMode(m_hdc, GM_ADVANCED); // We need this call for themes to honor world transforms.
+}
+
+void GraphicsContextPlatformPrivate::flush()
+{
+    cairo_surface_t* surface = cairo_win32_surface_create(m_hdc);
+    cairo_surface_flush(surface);
+    cairo_surface_destroy(surface);
 }
 
 }
