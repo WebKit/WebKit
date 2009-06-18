@@ -2195,6 +2195,7 @@ HEADERS += $$WEBKIT_API_HEADERS
 
 CONFIG(QTDIR_build):isEqual(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 4) {
     # start with 4.5
+    # Remove the following 2 lines if you want debug information in WebCore
     CONFIG -= separate_debug_info
     CONFIG += no_debug_info
 }

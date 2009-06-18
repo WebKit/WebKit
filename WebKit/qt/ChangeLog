@@ -1,3 +1,11 @@
+2009-06-18  Markus Goetz <Markus.Goetz@nokia.com>
+
+        Reviewed by Simon Hausman.
+
+        Clarify in docs how to compile with debug information.
+
+        * docs/qtwebkit.qdoc:
+
 2009-06-17  Markus Goetz <Markus.Goetz@nokia.com>
 
         Reviewed by Simon Hausmann.
