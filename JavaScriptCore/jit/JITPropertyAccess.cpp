@@ -413,12 +413,15 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, Structure* 
     loadPtr(Address(base, offset), result);
 }
 
-void JIT::compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset)
+void JIT::compileGetDirectOffset(JSObject* base, RegisterID temp, RegisterID result, size_t cachedOffset)
 {
     if (base->isUsingInlineStorage())
         loadPtr(static_cast<void*>(&base->m_inlineStorage[cachedOffset]), result);
-    else
-        loadPtr(static_cast<void*>(&base->m_externalStorage[cachedOffset]), result);
+    else {
+        PropertyStorage* protoPropertyStorage = &base->m_externalStorage;
+        loadPtr(static_cast<void*>(protoPropertyStorage), temp);
+        loadPtr(Address(temp, cachedOffset * sizeof(JSValue)), result);
+    } 
 }
 
 void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress)
@@ -614,7 +617,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
 #endif
 
     // Checks out okay! - getDirectOffset
-    compileGetDirectOffset(protoObject, regT0, cachedOffset);
+    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
 
     Jump success = jump();
 
@@ -689,7 +692,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 #endif
 
     // Checks out okay! - getDirectOffset
-    compileGetDirectOffset(protoObject, regT0, cachedOffset);
+    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
 
     Jump success = jump();
 
@@ -743,7 +746,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     }
     ASSERT(protoObject);
 
-    compileGetDirectOffset(protoObject, regT0, cachedOffset);
+    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
     Jump success = jump();
 
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
@@ -796,7 +799,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     }
     ASSERT(protoObject);
 
-    compileGetDirectOffset(protoObject, regT0, cachedOffset);
+    compileGetDirectOffset(protoObject, regT1, regT0, cachedOffset);
     Jump success = jump();
 
     LinkBuffer patchBuffer(this, m_codeBlock->executablePool());

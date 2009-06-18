@@ -1,3 +1,21 @@
+2009-06-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/6974140> REGRESSION(r43849): Crash in cti_op_call_NotJSFunction when getting directions on maps.google.com
+
+        Roll out r43849 as it appears that we cannot rely on the address of
+        an objects property storage being constant even if the structure is
+        unchanged.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+
 2009-06-17  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Mark Rowe.
