@@ -1,3 +1,23 @@
+2009-06-17  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15189
+        Adds the HTML5 input event support for textarea.
+        
+        Also, moves the oninput attribute parse handling to HTMLElement so that
+        it can be set on any HTML element so that bubbling events can be handled
+        using HTML attribute handlers.
+
+        Test: fast/forms/textarea-input-event.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::subtreeHasChanged):
+
 2009-06-18  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

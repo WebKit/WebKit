@@ -632,8 +632,6 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         setAttributeEventListener(eventNames().selectEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onchangeAttr) {
         setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attr));
-    } else if (attr->name() == oninputAttr) {
-        setAttributeEventListener(eventNames().inputEvent, createAttributeEventListener(this, attr));
     }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.

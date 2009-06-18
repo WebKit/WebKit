@@ -48,6 +48,9 @@ void RenderTextControlMultiLine::subtreeHasChanged()
     if (!node()->focused())
         return;
 
+    // Fire the "input" DOM event
+    node()->dispatchEvent(eventNames().inputEvent, true, false);
+
     if (Frame* frame = document()->frame())
         frame->textDidChangeInTextArea(static_cast<Element*>(node()));
 }

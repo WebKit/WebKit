@@ -1,3 +1,16 @@
+2009-06-17  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15189
+        Test case for textarea input event.
+
+        * fast/forms/resources/textarea-input-event.js: Added.
+        (handleDivOnInput):
+        (handleTextareaOnInput):
+        * fast/forms/textarea-input-event-expected.txt: Added.
+        * fast/forms/textarea-input-event.html: Added.
+
 2009-06-18  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Niko.
