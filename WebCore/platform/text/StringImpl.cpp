@@ -486,6 +486,11 @@ uint64_t StringImpl::toUInt64Strict(bool* ok, int base)
     return charactersToUInt64Strict(m_data, m_length, ok, base);
 }
 
+intptr_t StringImpl::toIntPtrStrict(bool* ok, int base)
+{
+    return charactersToIntPtrStrict(m_data, m_length, ok, base);
+}
+
 int StringImpl::toInt(bool* ok)
 {
     return charactersToInt(m_data, m_length, ok);
@@ -504,6 +509,11 @@ int64_t StringImpl::toInt64(bool* ok)
 uint64_t StringImpl::toUInt64(bool* ok)
 {
     return charactersToUInt64(m_data, m_length, ok);
+}
+
+intptr_t StringImpl::toIntPtr(bool* ok)
+{
+    return charactersToIntPtr(m_data, m_length, ok);
 }
 
 double StringImpl::toDouble(bool* ok)

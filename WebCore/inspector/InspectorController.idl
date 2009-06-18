@@ -85,8 +85,8 @@ module core {
         void disableProfiler(in boolean always);
         [Custom] DOMObject currentCallFrame();
         void setPauseOnExceptions(in boolean pauseOnExceptions);
-        void addBreakpoint(in unsigned long sourceID, in unsigned long lineNumber);
-        void removeBreakpoint(in unsigned long sourceID, in unsigned long lineNumber);
+        void addBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
+        void removeBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
 
         [Custom] Array profiles();
 #endif

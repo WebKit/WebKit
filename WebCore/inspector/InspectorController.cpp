@@ -1294,14 +1294,16 @@ void InspectorController::stepOutOfFunctionInDebugger()
     JavaScriptDebugServer::shared().stepOutOfFunction();
 }
 
-void InspectorController::addBreakpoint(intptr_t sourceID, unsigned lineNumber)
+void InspectorController::addBreakpoint(const String& sourceID, unsigned lineNumber)
 {
-    JavaScriptDebugServer::shared().addBreakpoint(sourceID, lineNumber);
+    intptr_t sourceIDValue = sourceID.toIntPtr();
+    JavaScriptDebugServer::shared().addBreakpoint(sourceIDValue, lineNumber);
 }
 
-void InspectorController::removeBreakpoint(intptr_t sourceID, unsigned lineNumber)
+void InspectorController::removeBreakpoint(const String& sourceID, unsigned lineNumber)
 {
-    JavaScriptDebugServer::shared().removeBreakpoint(sourceID, lineNumber);
+    intptr_t sourceIDValue = sourceID.toIntPtr();
+    JavaScriptDebugServer::shared().removeBreakpoint(sourceIDValue, lineNumber);
 }
 
 // JavaScriptDebugListener functions

@@ -264,8 +264,8 @@ public:
 
     JavaScriptCallFrame* currentCallFrame() const;
 
-    void addBreakpoint(intptr_t sourceID, unsigned lineNumber);
-    void removeBreakpoint(intptr_t sourceID, unsigned lineNumber);
+    void addBreakpoint(const String& sourceID, unsigned lineNumber);
+    void removeBreakpoint(const String& sourceID, unsigned lineNumber);
 
     bool pauseOnExceptions();
     void setPauseOnExceptions(bool pause);

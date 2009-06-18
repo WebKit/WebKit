@@ -1,3 +1,33 @@
+2009-06-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6940880> REGRESSION: Breakpoints don't break in 64-bit
+
+        Convert intptr_t to Strings so that we don't loose bits in the
+        conversion to JS.  Previously they were being put into 32bit ints.
+
+        * inspector/InspectorController.cpp: Convert the String back to an
+        intptr_t.
+        (WebCore::InspectorController::addBreakpoint):
+        (WebCore::InspectorController::removeBreakpoint):
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.idl: Use strings in JS to avoid 32bit
+        truncation.
+        * inspector/InspectorFrontend.cpp: Make the intptr_t into a String.
+        (WebCore::InspectorFrontend::parsedScriptSource):
+        * platform/text/PlatformString.h: Implemented the necessary conversion
+        functions to be able to convert to and from an intptr_t.
+        * platform/text/String.cpp: Ditto.
+        (WebCore::String::toIntPtrStrict):
+        (WebCore::String::toIntPtr):
+        (WebCore::charactersToIntPtrStrict):
+        (WebCore::charactersToIntPtr):
+        * platform/text/StringImpl.cpp: Ditto.
+        (WebCore::StringImpl::toIntPtrStrict):
+        (WebCore::StringImpl::toIntPtr):
+        * platform/text/StringImpl.h: Ditto.
+
 2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Eric Seidel.

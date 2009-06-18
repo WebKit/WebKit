@@ -176,11 +176,13 @@ public:
     unsigned toUIntStrict(bool* ok = 0, int base = 10) const;
     int64_t toInt64Strict(bool* ok = 0, int base = 10) const;
     uint64_t toUInt64Strict(bool* ok = 0, int base = 10) const;
+    intptr_t toIntPtrStrict(bool* ok = 0, int base = 10) const;
 
     int toInt(bool* ok = 0) const;
     unsigned toUInt(bool* ok = 0) const;
     int64_t toInt64(bool* ok = 0) const;
     uint64_t toUInt64(bool* ok = 0) const;
+    intptr_t toIntPtr(bool* ok = 0) const;
     double toDouble(bool* ok = 0) const;
     float toFloat(bool* ok = 0) const;
 
@@ -276,11 +278,13 @@ int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
 uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
+intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 
 int charactersToInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 unsigned charactersToUInt(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 int64_t charactersToInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
+intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 
 double charactersToDouble(const UChar*, size_t, bool* ok = 0);
 float charactersToFloat(const UChar*, size_t, bool* ok = 0);

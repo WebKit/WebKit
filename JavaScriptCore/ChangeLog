@@ -1,3 +1,13 @@
+2009-06-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6940880> REGRESSION: Breakpoints don't break in 64-bit
+
+        - Exposed functions now needed by WebCore.
+
+        * JavaScriptCore.exp:
+
 2009-06-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -216,7 +216,7 @@ void InspectorFrontend::profilerWasDisabled()
 void InspectorFrontend::parsedScriptSource(const JSC::SourceCode& source)
 {
     OwnPtr<ScriptFunctionCall> function(newFunctionCall("parsedScriptSource"));
-    function->appendArgument(static_cast<long long>(source.provider()->asID()));
+    function->appendArgument(JSC::UString(JSC::UString::from(source.provider()->asID())));
     function->appendArgument(source.provider()->url());
     function->appendArgument(JSC::UString(source.data(), source.length()));
     function->appendArgument(source.firstLine());
