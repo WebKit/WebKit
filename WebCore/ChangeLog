@@ -1,5 +1,15 @@
 2009-06-18  Jakub Wieczorek  <faw217@gmail.com>
 
+        Reviewed by Simon Hausmann.
+
+        [Qt] When writing an URL to the clipboard, save the corresponding title
+        in the mime data as well.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::writeURL):
+
+2009-06-18  Jakub Wieczorek  <faw217@gmail.com>
+
         [Qt] Fix build. Add HTMLDataGridElement.
 
         * WebCore.pro:
