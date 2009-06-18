@@ -1145,7 +1145,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Emitted when @frame requests opening a new window. With this
      * signal the browser can use the context of the request to decide
      * about the new window. If the request is not handled the default
-     * behavior is to allow opening the new window to load the url,
+     * behavior is to allow opening the new window to load the URI,
      * which will cause a create-web-view signal emission where the
      * browser handles the new window action but without information
      * of the context that caused the navigation. The following
@@ -1693,7 +1693,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView::create-plugin-widget:
      * @web_view: the object which received the signal
      * @mime_type: the mimetype of the requested object
-     * @url: the url to load
+     * @uri: the URI to load
      * @param: a #GHashTable with additional attributes (strings)
      *
      * The #WebKitWebView::create-plugin signal will be emitted to

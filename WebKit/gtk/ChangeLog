@@ -1,3 +1,13 @@
+2009-06-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        Be consistent in always using the term URI instead of URL in the
+        documentation of WebKitWebView signals.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+
 2009-06-16  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
