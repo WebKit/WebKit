@@ -261,7 +261,6 @@ void NetscapePluginInstanceProxy::windowFocusChanged(bool hasFocus)
 void NetscapePluginInstanceProxy::windowFrameChanged(NSRect frame)
 {
     _WKPHPluginInstanceWindowFrameChanged(m_pluginHostProxy->port(), m_pluginID, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height,
-                                          // FIXME: Is it always correct to pass the rect of the first screen here?
                                           NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]));
 }
     
@@ -287,7 +286,6 @@ void NetscapePluginInstanceProxy::mouseEvent(NSView *pluginView, NSEvent *event,
                                   type, [event modifierFlags],
                                   pluginPoint.x, pluginPoint.y,
                                   screenPoint.x, screenPoint.y,
-                                  // FIXME: Is it always correct to pass the rect of the first screen here?
                                   NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]),
                                   [event buttonNumber], clickCount, 
                                   [event deltaX], [event deltaY], [event deltaZ]);

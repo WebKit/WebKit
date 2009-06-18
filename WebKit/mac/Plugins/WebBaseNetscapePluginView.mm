@@ -692,7 +692,7 @@ using namespace WebCore;
             break;
             
         case NPCoordinateSpaceFlippedScreen:
-            sourcePoint.y = [[[self currentWindow] screen] frame].size.height - sourcePoint.y;
+            sourcePoint.y = [[[NSScreen screens] objectAtIndex:0] frame].size.height - sourcePoint.y;
             sourcePointInScreenSpace = sourcePoint;
             break;
         default:
@@ -723,7 +723,7 @@ using namespace WebCore;
             
         case NPCoordinateSpaceFlippedScreen:
             destPoint = sourcePointInScreenSpace;
-            destPoint.y = [[[self currentWindow] screen] frame].size.height - destPoint.y;
+            destPoint.y = [[[NSScreen screens] objectAtIndex:0] frame].size.height - destPoint.y;
             break;
             
         default:

@@ -1,3 +1,18 @@
+2009-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6926859>
+        NPN_ConvertPoint doesn't give the right value when converting to/from NPCoordinateSpaceFlippedScreen
+        
+        When inverting Y, use the height of the first screen instead of the screen the window is on.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::windowFrameChanged):
+        (WebKit::NetscapePluginInstanceProxy::mouseEvent):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView convertFromX:andY:space:toX:andY:space:]):
+
 2009-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
