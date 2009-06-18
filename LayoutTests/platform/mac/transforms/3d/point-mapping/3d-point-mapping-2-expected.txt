@@ -36,25 +36,25 @@ layer at (30,500) size 314x90
       RenderText {#text} at (0,72) size 314x18
         text run at (0,72) width 314: "PASS: event at (594, 86) hit box12 at offset (2, 2)"
     RenderBR {BR} at (314,86) size 0x0
-layer at (42,42) size 173x181
+layer at (42,42) size 140x141
   RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
-layer at (63,63) size 152x161
+layer at (63,63) size 100x161
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#81AA8A] [border: (1px solid #000000)]
-layer at (104,104) size 111x111
+layer at (104,104) size 100x111
   RenderBlock (relative positioned) {DIV} at (41,41) size 100x100 [border: (1px solid #000000)]
 layer at (125,125) size 90x90
   RenderBlock {DIV} at (21,21) size 90x90 [bgcolor=#0000FF] [border: (1px solid #000000)]
-layer at (288,42) size 153x141
+layer at (288,42) size 140x141
   RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
-layer at (309,63) size 132x121
+layer at (309,63) size 100x121
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#81AA8A] [border: (1px solid #000000)]
-layer at (330,84) size 111x100
+layer at (330,84) size 100x100
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
 layer at (351,85) size 90x90
   RenderBlock {DIV} at (21,1) size 90x90 [bgcolor=#0000FF] [border: (1px solid #000000)]
-layer at (534,42) size 153x141
+layer at (534,42) size 140x141
   RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
-layer at (555,63) size 132x121
+layer at (555,63) size 121x121
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#81AA8A] [border: (1px solid #000000)]
     RenderBlock {DIV} at (21,21) size 100x100 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
 layer at (597,85) size 90x90

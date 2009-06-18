@@ -1,3 +1,32 @@
+2009-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+        
+        Update results after enabling 3d rendering on SnowLeopard.
+
+        * platform/mac-leopard/fast/media/mq-transform-02-expected.checksum: Copied from LayoutTests/platform/mac/fast/media/mq-transform-02-expected.checksum.
+        * platform/mac-leopard/fast/media/mq-transform-02-expected.png: Copied from LayoutTests/platform/mac/fast/media/mq-transform-02-expected.png.
+        * platform/mac-leopard/fast/media/mq-transform-02-expected.txt: Copied from LayoutTests/platform/mac/fast/media/mq-transform-02-expected.txt.
+        * platform/mac-leopard/fast/media/mq-transform-03-expected.checksum: Copied from LayoutTests/platform/mac/fast/media/mq-transform-03-expected.checksum.
+        * platform/mac-leopard/fast/media/mq-transform-03-expected.png: Copied from LayoutTests/platform/mac/fast/media/mq-transform-03-expected.png.
+        * platform/mac-leopard/fast/media/mq-transform-03-expected.txt: Copied from LayoutTests/platform/mac/fast/media/mq-transform-03-expected.txt.
+        Copy the old "mac" results to "mac-leopard" since 3d-rendering is disabled there.
+        
+        * platform/mac/fast/media/mq-transform-02-expected.checksum:
+        * platform/mac/fast/media/mq-transform-02-expected.png:
+        * platform/mac/fast/media/mq-transform-02-expected.txt:
+        * platform/mac/fast/media/mq-transform-03-expected.checksum:
+        * platform/mac/fast/media/mq-transform-03-expected.png:
+        * platform/mac/fast/media/mq-transform-03-expected.txt:
+        New "mac" results for 3d rendering enabled.
+        
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-2-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-deep-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-origins-expected.txt:
+        * platform/mac/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.txt:
+        Update the results now that these tests are active.
+
 2009-06-17  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.

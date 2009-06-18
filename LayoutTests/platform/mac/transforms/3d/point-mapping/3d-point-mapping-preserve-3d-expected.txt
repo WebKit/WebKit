@@ -105,28 +105,28 @@ layer at (309,63) size 111x111
     RenderBlock {DIV} at (21,21) size 90x90 [bgcolor=#0000FF] [border: (1px solid #000000)]
 layer at (534,42) size 140x141
   RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
-layer at (555,63) size 111x111
+layer at (555,63) size 100x111
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#81AA8A] [border: (1px solid #000000)]
 layer at (576,84) size 90x90
   RenderBlock (relative positioned) {DIV} at (21,21) size 90x90 [bgcolor=#0000FF] [border: (1px solid #000000)]
-layer at (42,288) size 162x181
+layer at (42,288) size 140x141
   RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
-layer at (63,309) size 141x161
+layer at (63,309) size 100x161
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#81AA8A] [border: (1px solid #000000)]
 layer at (104,350) size 100x100
   RenderBlock (relative positioned) {DIV} at (41,41) size 100x100 [border: (1px solid #000000)]
-layer at (288,288) size 173x181
+layer at (288,288) size 140x141
   RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
-layer at (309,309) size 152x161
+layer at (309,309) size 100x161
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#81AA8A] [border: (1px solid #000000)]
 layer at (350,350) size 111x111
   RenderBlock (relative positioned) {DIV} at (41,41) size 100x100 [border: (1px solid #000000)]
     RenderBlock {DIV} at (21,21) size 90x90 [bgcolor=#0000FF] [border: (1px solid #000000)]
-layer at (534,288) size 214x201
+layer at (534,288) size 140x141
   RenderBlock {DIV} at (21,21) size 140x140 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
-layer at (555,309) size 193x181
+layer at (555,309) size 100x161
   RenderBlock (relative positioned) {DIV} at (21,21) size 100x100 [bgcolor=#81AA8A] [border: (1px solid #000000)]
-layer at (596,350) size 152x161
+layer at (596,350) size 100x161
   RenderBlock (relative positioned) {DIV} at (41,41) size 100x100 [border: (1px solid #000000)]
 layer at (637,391) size 111x111
   RenderBlock (relative positioned) {DIV} at (41,41) size 100x100 [bgcolor=#AA7994] [border: (1px solid #000000)]
