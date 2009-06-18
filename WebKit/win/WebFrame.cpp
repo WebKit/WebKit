@@ -1670,14 +1670,11 @@ void WebFrame::windowObjectCleared()
 
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
     if (SUCCEEDED(d->webView->frameLoadDelegate(&frameLoadDelegate))) {
-        COMPtr<IWebFrameLoadDelegate2> frameLoadDelegate2(Query, frameLoadDelegate);
-
         JSContextRef context = toRef(coreFrame->script()->globalObject()->globalExec());
         JSObjectRef windowObject = toRef(coreFrame->script()->globalObject());
         ASSERT(windowObject);
 
-        if (!frameLoadDelegate2 || 
-            FAILED(frameLoadDelegate2->didClearWindowObject(d->webView, context, windowObject, this)))
+        if (FAILED(frameLoadDelegate->didClearWindowObject(d->webView, context, windowObject, this)))
             frameLoadDelegate->windowScriptObjectAvailable(d->webView, context, windowObject);
     }
 }
@@ -1774,12 +1771,9 @@ void WebFrame::headerAndFooterHeights(float* headerHeight, float* footerHeight)
     COMPtr<IWebUIDelegate> ui;
     if (FAILED(d->webView->uiDelegate(&ui)))
         return;
-    COMPtr<IWebUIDelegate2> ui2;
-    if (FAILED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
-        return;
-    if (headerHeight && SUCCEEDED(ui2->webViewHeaderHeight(d->webView, &height)))
+    if (headerHeight && SUCCEEDED(ui->webViewHeaderHeight(d->webView, &height)))
         *headerHeight = height;
-    if (footerHeight && SUCCEEDED(ui2->webViewFooterHeight(d->webView, &height)))
+    if (footerHeight && SUCCEEDED(ui->webViewFooterHeight(d->webView, &height)))
         *footerHeight = height;
 }
 
@@ -1790,12 +1784,9 @@ IntRect WebFrame::printerMarginRect(HDC printDC)
     COMPtr<IWebUIDelegate> ui;
     if (FAILED(d->webView->uiDelegate(&ui)))
         return emptyRect;
-    COMPtr<IWebUIDelegate2> ui2;
-    if (FAILED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
-        return emptyRect;
 
     RECT rect;
-    if (FAILED(ui2->webViewPrintingMarginRect(d->webView, &rect)))
+    if (FAILED(ui->webViewPrintingMarginRect(d->webView, &rect)))
         return emptyRect;
 
     rect.left = MulDiv(rect.left, ::GetDeviceCaps(printDC, LOGPIXELSX), 1000);
@@ -1896,10 +1887,6 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
     COMPtr<IWebUIDelegate> ui;
     if (FAILED(d->webView->uiDelegate(&ui)))
         return E_FAIL;
-    // FIXME: we can return early after the updated app is released
-    COMPtr<IWebUIDelegate2> ui2;
-    if (FAILED(ui->QueryInterface(IID_IWebUIDelegate2, (void**) &ui2)))
-        ui2 = 0;
 
     float headerHeight = 0, footerHeight = 0;
     headerAndFooterHeights(&headerHeight, &footerHeight);
@@ -1929,21 +1916,19 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
 
         coreFrame->view()->paintContents(&spoolCtx, pageRect);
 
-        if (ui2) {
-            CGContextTranslateCTM(pctx, CGFloat(pageRect.x()), CGFloat(pageRect.y())-headerHeight);
+        CGContextTranslateCTM(pctx, CGFloat(pageRect.x()), CGFloat(pageRect.y())-headerHeight);
 
-            int x = pageRect.x();
-            int y = 0;
-            if (headerHeight) {
-                RECT headerRect = {x, y, x+pageRect.width(), y+(int)headerHeight};
-                ui2->drawHeaderInRect(d->webView, &headerRect, (OLE_HANDLE)(LONG64)pctx);
-            }
+        int x = pageRect.x();
+        int y = 0;
+        if (headerHeight) {
+            RECT headerRect = {x, y, x+pageRect.width(), y+(int)headerHeight};
+            ui->drawHeaderInRect(d->webView, &headerRect, (OLE_HANDLE)(LONG64)pctx);
+        }
 
-            if (footerHeight) {
-                y = max((int)headerHeight+pageRect.height(), m_pageHeight-(int)footerHeight);
-                RECT footerRect = {x, y, x+pageRect.width(), y+(int)footerHeight};
-                ui2->drawFooterInRect(d->webView, &footerRect, (OLE_HANDLE)(LONG64)pctx, ii+1, pageCount);
-            }
+        if (footerHeight) {
+            y = max((int)headerHeight+pageRect.height(), m_pageHeight-(int)footerHeight);
+            RECT footerRect = {x, y, x+pageRect.width(), y+(int)footerHeight};
+            ui->drawFooterInRect(d->webView, &footerRect, (OLE_HANDLE)(LONG64)pctx, ii+1, pageCount);
         }
 
         CGContextEndPage(pctx);

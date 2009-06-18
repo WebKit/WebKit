@@ -117,8 +117,8 @@ bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader* loader, un
     if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
         return true;
 
-    COMPtr<IWebResourceLoadDelegatePrivate2> resourceLoadDelegatePrivate;
-    if (FAILED(resourceLoadDelegate->QueryInterface(IID_IWebResourceLoadDelegatePrivate2, reinterpret_cast<void**>(&resourceLoadDelegatePrivate))))
+    COMPtr<IWebResourceLoadDelegatePrivate> resourceLoadDelegatePrivate;
+    if (FAILED(resourceLoadDelegate->QueryInterface(IID_IWebResourceLoadDelegatePrivate, reinterpret_cast<void**>(&resourceLoadDelegatePrivate))))
         return true;
 
     BOOL shouldUse;
@@ -237,7 +237,7 @@ bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, unsigned 
     if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
         return true;
 
-    COMPtr<IWebResourceLoadDelegatePrivate3> resourceLoadDelegatePrivate(Query, resourceLoadDelegate);
+    COMPtr<IWebResourceLoadDelegatePrivate> resourceLoadDelegatePrivate(Query, resourceLoadDelegate);
     if (!resourceLoadDelegatePrivate)
         return true;
 
@@ -354,11 +354,8 @@ void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegatePrivate> frameLoadDelegatePrivate;
-    if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePrivate)) && frameLoadDelegatePrivate) {
-        COMPtr<IWebFrameLoadDelegatePrivate2> frameLoadDelegatePrivate2(Query, frameLoadDelegatePrivate);
-        if (frameLoadDelegatePrivate2)
-            frameLoadDelegatePrivate2->didFirstVisuallyNonEmptyLayoutInFrame(webView, m_webFrame);
-    }
+    if (SUCCEEDED(webView->frameLoadDelegatePrivate(&frameLoadDelegatePrivate)) && frameLoadDelegatePrivate)
+        frameLoadDelegatePrivate->didFirstVisuallyNonEmptyLayoutInFrame(webView, m_webFrame);
 }
 
 Frame* WebFrameLoaderClient::dispatchCreatePage()
@@ -625,7 +622,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugIn
 
     COMPtr<IWebUIDelegate> ui;
     if (SUCCEEDED(webView->uiDelegate(&ui)) && ui) {
-        COMPtr<IWebUIDelegatePrivate4> uiPrivate(Query, ui);
+        COMPtr<IWebUIDelegatePrivate> uiPrivate(Query, ui);
 
         if (uiPrivate) {
             // Assemble the view arguments in a property bag.

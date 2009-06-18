@@ -35,7 +35,7 @@
 
 class DRTUndoManager;
 
-class UIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate3 {
+class UIDelegate : public IWebUIDelegate, IWebUIDelegatePrivate {
 public:
     UIDelegate();
 
@@ -247,6 +247,81 @@ public:
     virtual HRESULT STDMETHODCALLTYPE canRedo( 
         /* [retval][out] */ BOOL *result);
 
+    virtual HRESULT STDMETHODCALLTYPE printFrame( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame);
+    
+    virtual HRESULT STDMETHODCALLTYPE ftpDirectoryTemplatePath( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ BSTR *path);
+    
+    virtual HRESULT STDMETHODCALLTYPE webViewHeaderHeight( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ float *result);
+    
+    virtual HRESULT STDMETHODCALLTYPE webViewFooterHeight( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ float *result);
+    
+    virtual HRESULT STDMETHODCALLTYPE drawHeaderInRect( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ RECT *rect,
+        /* [in] */ OLE_HANDLE drawingContext);
+    
+    virtual HRESULT STDMETHODCALLTYPE drawFooterInRect( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ RECT *rect,
+        /* [in] */ OLE_HANDLE drawingContext,
+        /* [in] */ UINT pageIndex,
+        /* [in] */ UINT pageCount);
+    
+    virtual HRESULT STDMETHODCALLTYPE webViewPrintingMarginRect( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ RECT *rect);
+    
+    virtual HRESULT STDMETHODCALLTYPE canRunModal( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ BOOL *canRunBoolean);
+    
+    virtual HRESULT STDMETHODCALLTYPE createModalDialog( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebURLRequest *request,
+        /* [retval][out] */ IWebView **newWebView);
+    
+    virtual HRESULT STDMETHODCALLTYPE runModal( 
+        /* [in] */ IWebView *webView);
+    
+    virtual HRESULT STDMETHODCALLTYPE isMenuBarVisible( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ BOOL *visible);
+    
+    virtual HRESULT STDMETHODCALLTYPE setMenuBarVisible( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ BOOL visible);
+    
+    virtual HRESULT STDMETHODCALLTYPE runDatabaseSizeLimitPrompt( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ BSTR displayName,
+        /* [in] */ IWebFrame *initiatedByFrame,
+        /* [retval][out] */ BOOL *allowed);
+    
+    virtual HRESULT STDMETHODCALLTYPE paintCustomScrollbar( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ HDC hDC,
+        /* [in] */ RECT rect,
+        /* [in] */ WebScrollBarControlSize size,
+        /* [in] */ WebScrollbarControlState state,
+        /* [in] */ WebScrollbarControlPart pressedPart,
+        /* [in] */ BOOL vertical,
+        /* [in] */ float value,
+        /* [in] */ float proportion,
+        /* [in] */ WebScrollbarControlPartMask parts);
+    
+    virtual HRESULT STDMETHODCALLTYPE paintCustomScrollCorner( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ HDC hDC,
+        /* [in] */ RECT rect);
+
 protected:
     // IWebUIDelegatePrivate
 
@@ -298,18 +373,30 @@ protected:
         /* [in] */ UINT keyCode,
         /* [retval][out] */ LONG_PTR *code);
 
-    // IWebUIDelegatePrivate2
-
     virtual HRESULT STDMETHODCALLTYPE webViewPainted( 
         /* [in] */ IWebView *sender);
-
-    // IWebUIDelegatePrivate3
 
     virtual HRESULT STDMETHODCALLTYPE exceededDatabaseQuota( 
         /* [in] */ IWebView *sender,
         /* [in] */ IWebFrame *frame,
         /* [in] */ IWebSecurityOrigin *origin,
         /* [in] */ BSTR databaseIdentifier);
+
+    virtual HRESULT STDMETHODCALLTYPE embeddedViewWithArguments( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebFrame *frame,
+        /* [in] */ IPropertyBag *arguments,
+        /* [retval][out] */ IWebEmbeddedView **view);
+        
+    virtual HRESULT STDMETHODCALLTYPE webViewClosing( 
+        /* [in] */ IWebView *sender);
+    
+    virtual HRESULT STDMETHODCALLTYPE webViewSetCursor( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ OLE_HANDLE cursor);
+    
+    virtual HRESULT STDMETHODCALLTYPE webViewDidInvalidate( 
+        /* [in] */ IWebView *sender);
 
     ULONG                   m_refCount;
 

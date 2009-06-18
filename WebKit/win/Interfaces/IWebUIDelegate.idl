@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -182,7 +182,7 @@ interface IWebOpenPanelResultListener : IUnknown
 [
     object,
     oleautomation,
-    uuid(2452A889-A74A-4fbc-9617-326A0A953630),
+    uuid(042B7EE3-A5A4-4a8f-8C33-775CD9E89C7C),
     pointer_default(unique)
 ]
 interface IWebUIDelegate : IUnknown
@@ -680,20 +680,7 @@ interface IWebUIDelegate : IUnknown
         @abstract Returns whether there's anything on the redo stack to be redone
     */
     HRESULT canRedo([out, retval] BOOL* result);
-}
 
-/*!
-    @category WebUIDelegate2
-    @discussion A class that supplements the IWebUIDelegate interface
-*/
-[
-    object,
-    oleautomation,
-    uuid(C6FF73E1-304D-4129-A60C-66326C2578DB),
-    pointer_default(unique)
-]
-interface IWebUIDelegate2 : IWebUIDelegate
-{
 /*!
     @method webView:printFrame:
     @abstract Informs that a WebFrame needs to be printed
@@ -758,40 +745,13 @@ interface IWebUIDelegate2 : IWebUIDelegate
     HRESULT drawFooterInRect([in] IWebView* webView, [in] RECT* rect, [in] OLE_HANDLE drawingContext, [in] UINT pageIndex, [in] UINT pageCount);
 
     HRESULT webViewPrintingMarginRect([in] IWebView* webView, [out, retval] RECT* rect);
-}
 
-/*!
-    @category WebUIDelegate3
-    @discussion A class that supplements the IWebUIDelegate interface
-*/
-[
-    object,
-    oleautomation,
-    uuid(DD544D90-C233-4562-8EFD-A8D3A0DEBC19),
-    pointer_default(unique)
-]
-interface IWebUIDelegate3 : IWebUIDelegate2
-{
     HRESULT canRunModal([in] IWebView* webView, [out, retval] BOOL* canRunBoolean);
     HRESULT createModalDialog([in] IWebView* sender, [in] IWebURLRequest* request, [out, retval] IWebView** newWebView);
     HRESULT runModal([in] IWebView* webView);
     HRESULT isMenuBarVisible([in] IWebView* webView, [out, retval] BOOL* visible);
     HRESULT setMenuBarVisible([in] IWebView* webView, [in] BOOL visible);
     HRESULT runDatabaseSizeLimitPrompt([in] IWebView* webView, [in] BSTR displayName, [in] IWebFrame* initiatedByFrame, [out, retval] BOOL* allowed);
-}
-
-/*!
-    @category WebUIDelegate4
-    @discussion A class that supplements the IWebUIDelegate interface
-*/
-[
-    object,
-    oleautomation,
-    uuid(042B7EE3-A5A4-4a8f-8C33-775CD9E89C7C),
-    pointer_default(unique)
-]
-interface IWebUIDelegate4 : IWebUIDelegate3
-{
     HRESULT paintCustomScrollbar([in] IWebView* webView, [in] HDC hDC, [in] RECT rect, [in] WebScrollBarControlSize size, [in] WebScrollbarControlState state, 
                                  [in] WebScrollbarControlPart pressedPart, [in] BOOL vertical, [in] float value, [in] float proportion, [in] WebScrollbarControlPartMask parts);
     HRESULT paintCustomScrollCorner([in] IWebView* webView, [in] HDC hDC, [in] RECT rect);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +58,7 @@ interface IWebView;
 [
     object,
     oleautomation,
-    uuid(4CD809C2-73A5-44ee-B0D7-D1863DFE9F57),
+    uuid(3354665B-84BA-4fdf-B35E-BF5CF9D96026),
     pointer_default(unique)
 ]
 interface IWebFrameLoadDelegate : IUnknown
@@ -209,15 +209,6 @@ interface IWebFrameLoadDelegate : IUnknown
         - (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject;
     */
     [local] HRESULT windowScriptObjectAvailable([in] IWebView* webView, [in] JSContextRef context, [in] JSObjectRef windowScriptObject);
-}
 
-[
-    object,
-    oleautomation,
-    uuid(3354665B-84BA-4fdf-B35E-BF5CF9D96026),
-    pointer_default(unique)
-]
-interface IWebFrameLoadDelegate2 : IWebFrameLoadDelegate
-{
     [local] HRESULT didClearWindowObject([in] IWebView* webView, [in] JSContextRef context, [in] JSObjectRef windowScriptObject, [in] IWebFrame* frame);
 }

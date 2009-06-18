@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ interface IWebView;
 [
     object,
     oleautomation,
-    uuid(176711F1-822F-446b-BE9A-64BB38C562F5),
+    uuid(df3b4283-6868-4a1f-97f6-baf0b33f239c),
     pointer_default(unique)
 ]
 interface IWebUIDelegatePrivate : IUnknown
@@ -57,50 +57,10 @@ interface IWebUIDelegatePrivate : IUnknown
     HRESULT webViewLostFocus([in] IWebView* sender, [in] OLE_HANDLE loseFocusToHWnd);
     HRESULT doDragDrop([in] IWebView* sender, [in] IDataObject* dataObject, [in] IDropSource* dropSource, [in] DWORD okEffect, [out, retval] DWORD* performedEffect);
     HRESULT webViewGetDlgCode([in] IWebView* sender, [in] UINT keyCode, [out, retval] LONG_PTR* code);
-}
-
-[
-    object,
-    oleautomation,
-    uuid(7518FCCE-EC47-43b9-8C49-51E91C05C944),
-    pointer_default(unique)
-]
-interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
-{
     HRESULT webViewPainted([in] IWebView* sender);
-}
-
-[
-    object,
-    oleautomation,
-    uuid(4E7AECB6-C017-4e98-8FD5-4131C4BAB923),
-    pointer_default(unique)
-]
-interface IWebUIDelegatePrivate3 : IWebUIDelegatePrivate2
-{
     HRESULT exceededDatabaseQuota([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] BSTR databaseIdentifier);
-}
-
-[
-    object,
-    oleautomation,
-    uuid(88566775-C003-4EDF-8900-2872AC7EA44F),
-    pointer_default(unique)
-]
-interface IWebUIDelegatePrivate4 : IWebUIDelegatePrivate3
-{
     HRESULT embeddedViewWithArguments([in] IWebView* sender, [in] IWebFrame* frame, [in] IPropertyBag* arguments, [out, retval] IWebEmbeddedView** view);
     HRESULT webViewSendResizeMessage([in] UINT uMsg, [in] WPARAM wParam, [in] LPARAM lParam);
-}
-
-[
-    object,
-    oleautomation,
-    uuid(df3b4283-6868-4a1f-97f6-baf0b33f239c),
-    pointer_default(unique)
-]
-interface IWebUIDelegatePrivate5 : IWebUIDelegatePrivate4
-{
     HRESULT webViewClosing([in] IWebView* sender);
     HRESULT webViewSetCursor([in] IWebView* sender, [in] OLE_HANDLE cursor);
     HRESULT webViewDidInvalidate([in] IWebView* sender);

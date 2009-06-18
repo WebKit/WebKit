@@ -1,3 +1,26 @@
+2009-06-17  Steve Falkenburg  <sfalken@apple.com>
+
+        Consolidate WebKit COM interfaces.
+        Moved IID from the highest numbered COM interface to the first interface and combined all methods.
+
+        Numbered interfaces can be combined since the latest shipping Safari 4 supports the latest interfaces.
+        
+        Reviewed by Adam Roben.
+
+        * Interfaces/IWebFrameLoadDelegate.idl:
+        * Interfaces/IWebFrameLoadDelegatePrivate.idl:
+        * Interfaces/IWebResourceLoadDelegatePrivate.idl:
+        * Interfaces/IWebUIDelegate.idl:
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        * Interfaces/WebKit.idl:
+        * WebCoreSupport/WebChromeClient.cpp:
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebCoreSupport/WebInspectorDelegate.h:
+        * WebFrame.cpp:
+        * WebView.cpp:
+
 2009-06-16  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Adam Roben.

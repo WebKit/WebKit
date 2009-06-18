@@ -42,7 +42,7 @@ interface IWebURLRequest;
 [
     object,
     oleautomation,
-    uuid(1AE2968D-D756-47e8-8493-EA1040FAA725),
+    uuid(099DC3C1-34B5-4169-ABBF-0C63CBC25605),
     pointer_default(unique)
 ]
 interface IWebResourceLoadDelegatePrivate : IUnknown
@@ -57,26 +57,8 @@ interface IWebResourceLoadDelegatePrivate : IUnknown
         - (id)webView:(WebView *)sender didLoadResourceFromMemoryCache:(NSURLRequest *)request response:(NSURLResponse *)response length:(NSInteger)length fromDataSource:(WebDataSource *)dataSource
     */
     HRESULT didLoadResourceFromMemoryCache([in] IWebView* webView, [in] IWebURLRequest* request, [in] IWebURLResponse* response, [in] UINT length, [in] IWebDataSource* dataSource);
-}
 
-[
-    object,
-    oleautomation,
-    uuid(E7B724A4-F0E5-4e11-9AC5-5F60AC09301E),
-    pointer_default(unique)
-]
-interface IWebResourceLoadDelegatePrivate2 : IWebResourceLoadDelegatePrivate
-{
     HRESULT shouldUseCredentialStorage([in] IWebView* webView, [in] unsigned long identifier, [in] IWebDataSource* dataSource, [out, retval] BOOL* shouldUse);
-}
 
-[
-    object,
-    oleautomation,
-    uuid(099DC3C1-34B5-4169-ABBF-0C63CBC25605),
-    pointer_default(unique)
-]
-interface IWebResourceLoadDelegatePrivate3 : IWebResourceLoadDelegatePrivate2
-{
     HRESULT shouldCacheResponse([in] IWebView* webView, [in] unsigned long identifier, [in] IWebURLResponse* response, [in] const char* data, [in] unsigned long long length, [in] IWebDataSource* dataSource, [out, retval] BOOL* shouldCache);
 }

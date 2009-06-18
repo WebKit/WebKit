@@ -1,3 +1,15 @@
+2009-06-17  Steve Falkenburg  <sfalken@apple.com>
+
+        Updated for consolidated WebKit COM interfaces.
+        
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        * DumpRenderTree/win/UIDelegate.h:
+        * WinLauncher/WinLauncher.h:
+
 2009-06-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

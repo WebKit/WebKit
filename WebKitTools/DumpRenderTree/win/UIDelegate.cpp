@@ -176,10 +176,6 @@ HRESULT STDMETHODCALLTYPE UIDelegate::QueryInterface(REFIID riid, void** ppvObje
         *ppvObject = static_cast<IWebUIDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate))
         *ppvObject = static_cast<IWebUIDelegatePrivate*>(this);
-    else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate2))
-        *ppvObject = static_cast<IWebUIDelegatePrivate2*>(this);
-    else if (IsEqualGUID(riid, IID_IWebUIDelegatePrivate3))
-        *ppvObject = static_cast<IWebUIDelegatePrivate3*>(this);
     else
         return E_NOINTERFACE;
 
@@ -272,6 +268,142 @@ HRESULT STDMETHODCALLTYPE UIDelegate::canRedo(
 
     *result = m_undoManager->canRedo();
     return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::printFrame( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ IWebFrame *frame)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::ftpDirectoryTemplatePath( 
+    /* [in] */ IWebView *webView,
+    /* [retval][out] */ BSTR *path)
+{
+    if (!path)
+        return E_POINTER;
+    *path = 0;
+    return E_NOTIMPL;
+}
+
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewHeaderHeight( 
+    /* [in] */ IWebView *webView,
+    /* [retval][out] */ float *result)
+{
+    if (!result)
+        return E_POINTER;
+    *result = 0;
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewFooterHeight( 
+    /* [in] */ IWebView *webView,
+    /* [retval][out] */ float *result)
+{
+    if (!result)
+        return E_POINTER;
+    *result = 0;
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::drawHeaderInRect( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ RECT *rect,
+    /* [in] */ OLE_HANDLE drawingContext)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::drawFooterInRect( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ RECT *rect,
+    /* [in] */ OLE_HANDLE drawingContext,
+    /* [in] */ UINT pageIndex,
+    /* [in] */ UINT pageCount)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewPrintingMarginRect( 
+    /* [in] */ IWebView *webView,
+    /* [retval][out] */ RECT *rect)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::canRunModal( 
+    /* [in] */ IWebView *webView,
+    /* [retval][out] */ BOOL *canRunBoolean)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::createModalDialog( 
+    /* [in] */ IWebView *sender,
+    /* [in] */ IWebURLRequest *request,
+    /* [retval][out] */ IWebView **newWebView)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::runModal( 
+    /* [in] */ IWebView *webView)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::isMenuBarVisible( 
+    /* [in] */ IWebView *webView,
+    /* [retval][out] */ BOOL *visible)
+{
+    if (!visible)
+        return E_POINTER;
+    *visible = false;
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::setMenuBarVisible( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ BOOL visible)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::runDatabaseSizeLimitPrompt( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ BSTR displayName,
+    /* [in] */ IWebFrame *initiatedByFrame,
+    /* [retval][out] */ BOOL *allowed)
+{
+    if (!allowed)
+        return E_POINTER;
+    *allowed = false;
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::paintCustomScrollbar( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ HDC hDC,
+    /* [in] */ RECT rect,
+    /* [in] */ WebScrollBarControlSize size,
+    /* [in] */ WebScrollbarControlState state,
+    /* [in] */ WebScrollbarControlPart pressedPart,
+    /* [in] */ BOOL vertical,
+    /* [in] */ float value,
+    /* [in] */ float proportion,
+    /* [in] */ WebScrollbarControlPartMask parts)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::paintCustomScrollCorner( 
+    /* [in] */ IWebView *webView,
+    /* [in] */ HDC hDC,
+    /* [in] */ RECT rect)
+{
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE UIDelegate::setFrame( 
@@ -435,6 +567,36 @@ HRESULT STDMETHODCALLTYPE UIDelegate::exceededDatabaseQuota(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE UIDelegate::embeddedViewWithArguments( 
+    /* [in] */ IWebView *sender,
+    /* [in] */ IWebFrame *frame,
+    /* [in] */ IPropertyBag *arguments,
+    /* [retval][out] */ IWebEmbeddedView **view)
+{
+    if (!view)
+        return E_POINTER;
+    *view = 0;
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewClosing( 
+    /* [in] */ IWebView *sender)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewSetCursor( 
+    /* [in] */ IWebView *sender,
+    /* [in] */ OLE_HANDLE cursor)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT STDMETHODCALLTYPE UIDelegate::webViewDidInvalidate( 
+    /* [in] */ IWebView *sender)
+{
+    return E_NOTIMPL;
+}
 
 HRESULT STDMETHODCALLTYPE UIDelegate::setStatusText(IWebView*, BSTR text)
 { 

@@ -248,6 +248,81 @@ public:
     virtual HRESULT STDMETHODCALLTYPE canRedo( 
         /* [retval][out] */ BOOL*) { return E_NOTIMPL; }
 
+    virtual HRESULT STDMETHODCALLTYPE printFrame( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ IWebFrame *frame) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE ftpDirectoryTemplatePath( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ BSTR *path) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE webViewHeaderHeight( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ float *result) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE webViewFooterHeight( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ float *result) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE drawHeaderInRect( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ RECT *rect,
+        /* [in] */ OLE_HANDLE drawingContext) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE drawFooterInRect( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ RECT *rect,
+        /* [in] */ OLE_HANDLE drawingContext,
+        /* [in] */ UINT pageIndex,
+        /* [in] */ UINT pageCount) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE webViewPrintingMarginRect( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ RECT *rect) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE canRunModal( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ BOOL *canRunBoolean) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE createModalDialog( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebURLRequest *request,
+        /* [retval][out] */ IWebView **newWebView) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE runModal( 
+        /* [in] */ IWebView *webView) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE isMenuBarVisible( 
+        /* [in] */ IWebView *webView,
+        /* [retval][out] */ BOOL *visible) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE setMenuBarVisible( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ BOOL visible) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE runDatabaseSizeLimitPrompt( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ BSTR displayName,
+        /* [in] */ IWebFrame *initiatedByFrame,
+        /* [retval][out] */ BOOL *allowed) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE paintCustomScrollbar( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ HDC hDC,
+        /* [in] */ RECT rect,
+        /* [in] */ WebScrollBarControlSize size,
+        /* [in] */ WebScrollbarControlState state,
+        /* [in] */ WebScrollbarControlPart pressedPart,
+        /* [in] */ BOOL vertical,
+        /* [in] */ float value,
+        /* [in] */ float proportion,
+        /* [in] */ WebScrollbarControlPartMask parts) { return E_NOTIMPL; }
+    
+    virtual HRESULT STDMETHODCALLTYPE paintCustomScrollCorner( 
+        /* [in] */ IWebView *webView,
+        /* [in] */ HDC hDC,
+        /* [in] */ RECT rect) { return E_NOTIMPL; }
+
 private:
     WebInspectorDelegate();
 

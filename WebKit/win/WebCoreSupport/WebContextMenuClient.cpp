@@ -59,11 +59,6 @@ static bool isPreInspectElementTagSafari(IWebUIDelegate* uiDelegate)
     if (!uiDelegate)
         return false;
 
-    // We assume anyone who implements IWebUIDelegate2 also knows about the Inspect Element item.
-    COMPtr<IWebUIDelegate2> uiDelegate2;
-    if (SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegate2, (void**)&uiDelegate2)))
-        return false;
-
     TCHAR modulePath[MAX_PATH];
     DWORD length = ::GetModuleFileName(0, modulePath, _countof(modulePath));
     if (!length)

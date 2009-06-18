@@ -153,7 +153,7 @@ void WebChromeClient::takeFocus(FocusDirection direction)
 Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& features)
 {
     if (features.dialog) {
-        COMPtr<IWebUIDelegate3> delegate = uiDelegate3();
+        COMPtr<IWebUIDelegate> delegate = uiDelegate();
         if (!delegate)
             return 0;
         COMPtr<IWebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance(frameLoadRequest.resourceRequest()));
@@ -193,14 +193,14 @@ void WebChromeClient::show()
 bool WebChromeClient::canRunModal()
 {
     BOOL result = FALSE;
-    if (COMPtr<IWebUIDelegate3> delegate = uiDelegate3())
+    if (COMPtr<IWebUIDelegate> delegate = uiDelegate())
         delegate->canRunModal(m_webView, &result);
     return result;
 }
 
 void WebChromeClient::runModal()
 {
-    if (COMPtr<IWebUIDelegate3> delegate = uiDelegate3())
+    if (COMPtr<IWebUIDelegate> delegate = uiDelegate())
         delegate->runModal(m_webView);
 }
 
@@ -263,7 +263,7 @@ bool WebChromeClient::scrollbarsVisible()
 
 void WebChromeClient::setMenubarVisible(bool visible)
 {
-    COMPtr<IWebUIDelegate3> delegate = uiDelegate3();
+    COMPtr<IWebUIDelegate> delegate = uiDelegate();
     if (!delegate)
         return;
     delegate->setMenuBarVisible(m_webView, visible);
@@ -271,7 +271,7 @@ void WebChromeClient::setMenubarVisible(bool visible)
 
 bool WebChromeClient::menubarVisible()
 {
-    COMPtr<IWebUIDelegate3> delegate = uiDelegate3();
+    COMPtr<IWebUIDelegate> delegate = uiDelegate();
     if (!delegate)
         return true;
     BOOL result = true;
@@ -502,10 +502,8 @@ void WebChromeClient::setToolTip(const String& toolTip)
 void WebChromeClient::print(Frame* frame)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
-    COMPtr<IWebUIDelegate2> uiDelegate2;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate)))
-        if (SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegate2, (void**)&uiDelegate2)))
-            uiDelegate2->printFrame(m_webView, kit(frame));
+        uiDelegate->printFrame(m_webView, kit(frame));
 }
 
 #if ENABLE(DATABASE)
@@ -514,9 +512,9 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(frame->document()->securityOrigin()));
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        COMPtr<IWebUIDelegatePrivate3> uiDelegatePrivate3(Query, uiDelegate);
-        if (uiDelegatePrivate3)
-            uiDelegatePrivate3->exceededDatabaseQuota(m_webView, kit(frame), origin.get(), BString(databaseIdentifier));
+        COMPtr<IWebUIDelegatePrivate> uiDelegatePrivate(Query, uiDelegate);
+        if (uiDelegatePrivate)
+            uiDelegatePrivate->exceededDatabaseQuota(m_webView, kit(frame), origin.get(), BString(databaseIdentifier));
         else {
             // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
             TCHAR path[MAX_PATH];
@@ -560,7 +558,7 @@ bool WebChromeClient::paintCustomScrollbar(GraphicsContext* context, const Float
     if (context->paintingDisabled())
         return false;
 
-    COMPtr<IWebUIDelegate4> delegate = uiDelegate4();
+    COMPtr<IWebUIDelegate> delegate = uiDelegate();
     if (!delegate)
         return false;
 
@@ -627,7 +625,7 @@ bool WebChromeClient::paintCustomScrollCorner(GraphicsContext* context, const Fl
     if (context->paintingDisabled())
         return false;
 
-    COMPtr<IWebUIDelegate4> delegate = uiDelegate4();
+    COMPtr<IWebUIDelegate> delegate = uiDelegate();
     if (!delegate)
         return false;
 
@@ -702,7 +700,7 @@ bool WebChromeClient::setCursor(PlatformCursorHandle cursor)
         return false;
 
     if (COMPtr<IWebUIDelegate> delegate = uiDelegate()) {
-        COMPtr<IWebUIDelegatePrivate5> delegatePrivate(Query, delegate);
+        COMPtr<IWebUIDelegatePrivate> delegatePrivate(Query, delegate);
         if (delegatePrivate) {
             if (SUCCEEDED(delegatePrivate->webViewSetCursor(m_webView, reinterpret_cast<OLE_HANDLE>(cursor))))
                 return true;
@@ -724,19 +722,4 @@ COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
     COMPtr<IWebUIDelegate> delegate;
     m_webView->uiDelegate(&delegate);
     return delegate;
-}
-
-COMPtr<IWebUIDelegate2> WebChromeClient::uiDelegate2()
-{
-    return COMPtr<IWebUIDelegate2>(Query, uiDelegate());
-}
-
-COMPtr<IWebUIDelegate3> WebChromeClient::uiDelegate3()
-{
-    return COMPtr<IWebUIDelegate3>(Query, uiDelegate());
-}
-
-COMPtr<IWebUIDelegate4> WebChromeClient::uiDelegate4()
-{
-    return COMPtr<IWebUIDelegate4>(Query, uiDelegate());
 }

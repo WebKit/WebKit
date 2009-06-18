@@ -99,8 +99,6 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::QueryInterface(REFIID riid, void** 
         *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegate))
         *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
-    else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegate2))
-        *ppvObject = static_cast<IWebFrameLoadDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebFrameLoadDelegatePrivate))
         *ppvObject = static_cast<IWebFrameLoadDelegatePrivate*>(this);
     else
@@ -304,5 +302,12 @@ HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didHandleOnloadEventsForFrame(
         printf("%s - didHandleOnloadEventsForFrame\n",
                 descriptionSuitableForTestResult(frame).c_str());
 
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFirstVisuallyNonEmptyLayoutInFrame( 
+    /* [in] */ IWebView *sender,
+    /* [in] */ IWebFrame *frame)
+{
     return S_OK;
 }

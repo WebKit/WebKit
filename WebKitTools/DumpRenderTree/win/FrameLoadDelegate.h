@@ -35,7 +35,7 @@
 class AccessibilityController;
 class GCController;
 
-class FrameLoadDelegate : public IWebFrameLoadDelegate2, public IWebFrameLoadDelegatePrivate {
+class FrameLoadDelegate : public IWebFrameLoadDelegate, public IWebFrameLoadDelegatePrivate {
 public:
     FrameLoadDelegate();
     virtual ~FrameLoadDelegate();
@@ -108,6 +108,12 @@ public:
         /* [in] */ JSContextRef context,
         /* [in] */ JSObjectRef windowObject) { return E_NOTIMPL; }
 
+    virtual /* [local] */ HRESULT STDMETHODCALLTYPE didClearWindowObject( 
+        /* [in] */ IWebView* webView,
+        /* [in] */ JSContextRef context,
+        /* [in] */ JSObjectRef windowObject,
+        /* [in] */ IWebFrame* frame);
+
     // IWebFrameLoadDelegatePrivate
     virtual HRESULT STDMETHODCALLTYPE didFinishDocumentLoadForFrame( 
         /* [in] */ IWebView *sender,
@@ -121,12 +127,9 @@ public:
         /* [in] */ IWebView *sender,
         /* [in] */ IWebFrame *frame);
 
-    // IWebFrameLoadDelegate2
-    virtual /* [local] */ HRESULT STDMETHODCALLTYPE didClearWindowObject( 
-        /* [in] */ IWebView* webView,
-        /* [in] */ JSContextRef context,
-        /* [in] */ JSObjectRef windowObject,
-        /* [in] */ IWebFrame* frame);
+    virtual HRESULT STDMETHODCALLTYPE didFirstVisuallyNonEmptyLayoutInFrame( 
+        /* [in] */ IWebView *sender,
+        /* [in] */ IWebFrame *frame);
 
 protected:
     void locationChangeDone(IWebError*, IWebFrame*);
