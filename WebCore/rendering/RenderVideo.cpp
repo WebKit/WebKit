@@ -35,6 +35,11 @@
 #include "HTMLVideoElement.h"
 #include "MediaPlayer.h"
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -139,6 +144,10 @@ void RenderVideo::updatePlayer()
         mediaPlayer->setVisible(false);
         return;
     }
+
+#if USE(ACCELERATED_COMPOSITING)
+    layer()->rendererContentChanged();
+#endif
     
     IntRect videoBounds = videoBox(); 
     mediaPlayer->setFrameView(document()->view());
@@ -245,6 +254,32 @@ void RenderVideo::calcPrefWidths()
 
     setPrefWidthsDirty(false);
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+bool RenderVideo::supportsAcceleratedRendering() const
+{
+    MediaPlayer* p = player();
+    if (p)
+        return p->supportsAcceleratedRendering();
+
+    return false;
+}
+
+void RenderVideo::acceleratedRenderingStateChanged()
+{
+    MediaPlayer* p = player();
+    if (p)
+        p->acceleratedRenderingStateChanged();
+}
+
+GraphicsLayer* RenderVideo::videoGraphicsLayer() const
+{
+    if (hasLayer() && layer()->isComposited())
+        return layer()->backing()->graphicsLayer();
+
+    return 0;
+}
+#endif  // USE(ACCELERATED_COMPOSITING)
 
 } // namespace WebCore
 

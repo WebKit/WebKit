@@ -456,6 +456,18 @@ void MediaPlayer::setMediaPlayerProxy(WebMediaPlayerProxy* proxy)
 }
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+void MediaPlayer::acceleratedRenderingStateChanged()
+{
+    m_private->acceleratedRenderingStateChanged();
+}
+
+bool MediaPlayer::supportsAcceleratedRendering() const
+{
+    return m_private->supportsAcceleratedRendering();
+}
+#endif // USE(ACCELERATED_COMPOSITING)
+
 void MediaPlayer::networkStateChanged()
 {
     if (m_mediaPlayerClient)

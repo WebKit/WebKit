@@ -229,6 +229,10 @@ RenderLayerCompositor* RenderLayer::compositor() const
 
 void RenderLayer::rendererContentChanged()
 {
+    // This can get called when video becomes accelerated, so the layers may change.
+    if (compositor()->updateLayerCompositingState(this))
+        compositor()->setCompositingLayersNeedUpdate();
+
     if (m_backing)
         m_backing->rendererContentChanged();
 }

@@ -570,11 +570,15 @@ bool RenderLayerBacking::canUseDirectCompositing() const
     RenderObject* renderObject = renderer();
     
     // Reject anything that isn't an image
-    if (!renderObject->isImage())
+    if (!renderObject->isImage() && !renderObject->isVideo())
         return false;
     
     if (renderObject->hasMask() || renderObject->hasReflection())
         return false;
+
+    // Video can use an inner layer even if it has box decorations; we draw those into another layer.
+    if (renderObject->isVideo())
+        return true;
     
     // Reject anything that would require the image to be drawn via the GraphicsContext,
     // like border, shadows etc. Solid background color is OK.
@@ -657,7 +661,15 @@ IntRect RenderLayerBacking::contentsBox(const GraphicsLayer*)
     if (!renderer()->isBox())
         return IntRect();
 
-    IntRect contentsRect = toRenderBox(renderer())->contentBoxRect();
+    IntRect contentsRect;
+#if ENABLE(VIDEO)
+    if (renderer()->isVideo()) {
+        RenderVideo* videoRenderer = static_cast<RenderVideo*>(renderer());
+        contentsRect = videoRenderer->videoBox();
+    } else
+#endif
+        contentsRect = toRenderBox(renderer())->contentBoxRect();
+
     IntSize contentOffset = contentOffsetInCompostingLayer();
     contentsRect.move(contentOffset);
     return contentsRect;

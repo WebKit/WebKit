@@ -49,6 +49,10 @@ class MediaPlayer;
 class MediaPlayerPrivateInterface;
 class String;
 
+#if USE(ACCELERATED_COMPOSITING)
+class GraphicsLayer;
+#endif
+
 class MediaPlayerClient {
 public:
     virtual ~MediaPlayerClient() { }
@@ -65,22 +69,31 @@ public:
     // time has jumped, eg. not as a result of normal playback
     virtual void mediaPlayerTimeChanged(MediaPlayer*) { }
     
-    // a new frame of video is available
-    virtual void mediaPlayerRepaint(MediaPlayer*) { }
-
     // the media file duration has changed, or is now known
     virtual void mediaPlayerDurationChanged(MediaPlayer*) { }
     
     // the playback rate has changed
     virtual void mediaPlayerRateChanged(MediaPlayer*) { }
 
-    // the movie size has changed
-    virtual void mediaPlayerSizeChanged(MediaPlayer*) { }
-
     // The MediaPlayer has found potentially problematic media content.
     // This is used internally to trigger swapping from a <video>
     // element to an <embed> in standalone documents
     virtual void mediaPlayerSawUnsupportedTracks(MediaPlayer*) { }
+
+// Presentation-related methods
+    // a new frame of video is available
+    virtual void mediaPlayerRepaint(MediaPlayer*) { }
+
+    // the movie size has changed
+    virtual void mediaPlayerSizeChanged(MediaPlayer*) { }
+
+#if USE(ACCELERATED_COMPOSITING)
+    // whether the rendering system can accelerate the display of this MediaPlayer.
+    virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) { return false; }
+
+    // return the GraphicsLayer that will host the presentation for this MediaPlayer.
+    virtual GraphicsLayer* mediaPlayerGraphicsLayer(MediaPlayer*) { return 0; }
+#endif
 };
 
 class MediaPlayer : Noncopyable {
@@ -166,6 +179,13 @@ public:
     void setPoster(const String& url);
     void deliverNotification(MediaPlayerProxyNotificationType notification);
     void setMediaPlayerProxy(WebMediaPlayerProxy* proxy);
+#endif
+
+#if USE(ACCELERATED_COMPOSITING)
+    // whether accelerated rendering is supported by the media engine for the current media.
+    bool supportsAcceleratedRendering() const;
+    // called when the rendering system flips the into or out of accelerated rendering mode.
+    void acceleratedRenderingStateChanged();
 #endif
 
 private:

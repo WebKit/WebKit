@@ -33,6 +33,9 @@ namespace WebCore {
 #define PROFILE_LAYER_REBUILD 0
 
 class GraphicsLayer;
+#if ENABLE(VIDEO)
+class RenderVideo;
+#endif
 
 // RenderLayerCompositor manages the hierarchy of
 // composited RenderLayers. It determines which RenderLayers
@@ -97,6 +100,11 @@ public:
     void willMoveOffscreen();
 
     void updateRootLayerPosition();
+    
+#if ENABLE(VIDEO)
+    // Use by RenderVideo to ask if it should try to use accelerated compositing.
+    bool canAccelerateVideoRendering(RenderVideo*) const;
+#endif
 
     // Walk the tree looking for layers with 3d transforms. Useful in case you need
     // to know if there is non-affine content, e.g. for drawing into an image.
@@ -127,6 +135,7 @@ private:
     // Whether a running transition or animation enforces the need for a compositing layer.
     static bool requiresCompositingForAnimation(RenderObject*);
     static bool requiresCompositingForTransform(RenderObject*);
+    bool requiresCompositingForVideo(RenderObject*) const;
 
 private:
     RenderView* m_renderView;

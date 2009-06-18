@@ -1,3 +1,120 @@
+2009-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26499
+        
+        Support hardware-accelerationed rendering of video elements.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerSawUnsupportedTracks):
+        (WebCore::HTMLMediaElement::mediaPlayerRepaint):
+        Just move these methods to group the render-related methods together.
+        
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated):
+        Call out method to ask the RenderLayerCompositor if presentation of this video
+        can be acclerated. It might say no, if, for example, the video has a reflection.
+        
+        (WebCore::HTMLMediaElement::mediaPlayerGraphicsLayer):
+        Fetch the GraphicsLayer from the RenderVideo that will host the movie layer.
+        
+        * html/HTMLMediaElement.h:
+        Reordered the rendering-related methods, and added two methods related to video
+        acceleration.
+        
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::acceleratedRenderingStateChanged):
+        Called by the rendering system when it determines that the video must go into, or
+        fall off of the hardware-accelerated path.
+        
+        (WebCore::MediaPlayer::supportsAcceleratedRendering):
+        Method to say whether the media engine supports accelerated rendering.
+        
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerRepaint):
+        (WebCore::MediaPlayerClient::mediaPlayerSizeChanged):
+        Moved.
+        
+        (WebCore::MediaPlayerClient::mediaPlayerRenderingCanBeAccelerated):
+        (WebCore::MediaPlayerClient::mediaPlayerGraphicsLayer):
+        New methods to ask the client if the rendering system can support accelerated
+        rendering, and to get a GraphicsLayer to plug the movie layer into.
+        
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::supportsAcceleratedRendering):
+        (WebCore::MediaPlayerPrivateInterface::acceleratedRenderingStateChanged):
+        Forwarding methods from MediaPlayer.
+        
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        Some new methods related to using a QTMovieLayer, and to simplify the rendering mode logic.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieLayer):
+        (WebCore::MediaPlayerPrivate::destroyQTMovieLayer):
+        Methods to create and destroy the QTMovieLayer.
+        
+        (WebCore::MediaPlayerPrivate::currentRenderingMode):
+        (WebCore::MediaPlayerPrivate::preferredRenderingMode):
+        Methods to clarify the code that decides which of the 3 rendering modes to use.
+        
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+        Changed to use the new rendering mode methods.
+        
+        (WebCore::MediaPlayerPrivate::tearDownVideoRendering):
+        Destroy the layer if we have one.
+        
+        (WebCore::MediaPlayerPrivate::hasSetUpVideoRendering):
+        Small utility method.
+        
+        (WebCore::MediaPlayerPrivate::updateStates):
+        Move the call to setUpVideoRendering() to before we send out the state notifications,
+        so that we will have created the rendering objects already.
+        
+        (WebCore::MediaPlayerPrivate::supportsAcceleratedRendering):
+        Return true if we have QTMovieLayer.
+        
+        (WebCore::MediaPlayerPrivate::acceleratedRenderingStateChanged):
+        We've been told that we went into or out of accelerated mode; maybe reset
+        the renderer, and set the layer if we have to.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::rendererContentChanged):
+        We may need to udpate compositing layers if the video went into accelerated mode.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::canUseDirectCompositing):
+        Add smarts to deal with video, which allows us to avoid extra backing store.
+        
+        (WebCore::RenderLayerBacking::contentsBox):
+        Use the videoBox to use the content layer for video layers.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        Poke the RenderVideo if the state changed.
+        
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        Handle an edge case when the video element itself is a stacking context
+        because of opacity or transform.
+        
+        (WebCore::RenderLayerCompositor::canAccelerateVideoRendering):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo):
+        Allow video to throw us into compositing mode if the media engine supports it.
+        
+        * rendering/RenderLayerCompositor.h:
+        New methods related to video.
+        
+        * rendering/RenderVideo.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+        Call rendererContentChanged() to give the compositor a change to throw the video into
+        compositing mode.
+        
+        (WebCore::RenderVideo::supportsAcceleratedRendering):
+        (WebCore::RenderVideo::acceleratedRenderingStateChanged):
+        (WebCore::RenderVideo::videoGraphicsLayer):
+        Methods to allow the MediaPlayer to do rendering-related stuff via the media element.
+
 2009-06-18  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Niko.
