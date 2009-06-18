@@ -66,17 +66,12 @@ void FEFlood::setFloodOpacity(float floodOpacity)
 
 void FEFlood::apply(Filter*)
 {
-    IntRect bufferRect = enclosingIntRect(subRegion());
-    OwnPtr<ImageBuffer> filterGraphic(ImageBuffer::create(bufferRect.size(), false));
-
-    if (!filterGraphic)
+    GraphicsContext* filterContext = getEffectContext();
+    if (!filterContext)
         return;
 
     Color color = colorWithOverrideAlpha(floodColor().rgb(), floodOpacity());
-    GraphicsContext* filterContext = filterGraphic->context();
     filterContext->fillRect(FloatRect(FloatPoint(), subRegion().size()), color);
-
-    setEffectBuffer(filterGraphic.release());
 }
 
 void FEFlood::dump()

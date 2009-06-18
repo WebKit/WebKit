@@ -54,16 +54,11 @@ FloatRect SourceGraphic::calculateEffectRect(Filter* filter)
 
 void SourceGraphic::apply(Filter* filter)
 {
-    IntRect bufferRect = enclosingIntRect(subRegion());
-    OwnPtr<ImageBuffer> filterGraphic(ImageBuffer::create(bufferRect.size(), false));
-
-    if (!filterGraphic.get())
+    GraphicsContext* filterContext = getEffectContext();
+    if (!filterContext)
         return;
 
-    GraphicsContext* filterContext = filterGraphic->context();
     filterContext->drawImage(filter->sourceImage()->image(), IntPoint());
-
-    setEffectBuffer(filterGraphic.release());
 }
 
 void SourceGraphic::dump()

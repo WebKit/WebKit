@@ -59,6 +59,20 @@ FloatRect FilterEffect::calculateEffectRect(Filter* filter)
     return subRegion();
 }
 
+FloatRect FilterEffect::calculateDrawingRect(const FloatRect& srcRect)
+{
+    FloatPoint startPoint = FloatPoint(srcRect.x() - subRegion().x(), srcRect.y() - subRegion().y());
+    FloatRect drawingRect = FloatRect(startPoint, srcRect.size());
+    return drawingRect;
+}
+
+GraphicsContext* FilterEffect::getEffectContext()
+{
+    IntRect bufferRect = enclosingIntRect(subRegion());
+    m_effectBuffer = ImageBuffer::create(bufferRect.size(), false);
+    return m_effectBuffer->context();
+}
+
 TextStream& FilterEffect::externalRepresentation(TextStream& ts) const
 {
     return ts;
