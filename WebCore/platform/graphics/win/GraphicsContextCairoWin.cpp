@@ -114,13 +114,10 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
         SetGraphicsMode(bitmapDC, GM_ADVANCED);
 
         // Apply a translation to our context so that the drawing done will be at (0,0) of the bitmap.
-        XFORM xform;
-        xform.eM11 = 1.0f;
-        xform.eM12 = 0.0f;
-        xform.eM21 = 0.0f;
-        xform.eM22 = 1.0f;
-        xform.eDx = -dstRect.x();
-        xform.eDy = -dstRect.y();
+        TransformationMatrix translate(1.0f, 0.0f, 0.0f, 1.0f, -dstRect.x(), -dstRect.y());
+
+        XFORM xform = translate;
+
         ::SetWorldTransform(bitmapDC, &xform);
 
         return bitmapDC;
@@ -175,21 +172,6 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     cairo_surface_destroy(image);
     ::DeleteDC(hdc);
     ::DeleteObject(bitmap);
-}
-
-void GraphicsContextPlatformPrivate::concatCTM(const TransformationMatrix& transform)
-{
-    const cairo_matrix_t* matrix = reinterpret_cast<const cairo_matrix_t*>(&transform);
-
-    XFORM xform;
-    xform.eM11 = matrix->xx;
-    xform.eM12 = matrix->xy;
-    xform.eM21 = matrix->yx;
-    xform.eM22 = matrix->yy;
-    xform.eDx = matrix->x0;
-    xform.eDy = matrix->y0;
-
-    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
 void GraphicsContextPlatformPrivate::syncContext(PlatformGraphicsContext* cr)

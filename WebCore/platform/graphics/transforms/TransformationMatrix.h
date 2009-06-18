@@ -303,6 +303,10 @@ public:
     operator wxGraphicsMatrix() const;
 #endif
 
+#if PLATFORM(WIN)
+    operator XFORM() const;
+#endif
+
 private:
     // multiply passed 2D point by matrix (assume z=0)
     void multVecMatrix(double x, double y, double& dstX, double& dstY) const;

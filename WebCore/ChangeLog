@@ -1,5 +1,30 @@
 2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Refactor a few common routines in the various Windows ports
+        and reduce some duplicated code.
+
+        (1) Create TransformationMatrix XFORM casting operator, and
+            switch various XFORM structure uses to utilize it.
+        (2) Push concatCTM call to GraphicsContextWin now that the
+            TransformationMatrix can directly create XFORM (rather
+            than converting to CGAffineTransform/cairo_matrix_t first.)
+
+        * WebCore.vcproj/WebCore.vcproj: Add new BitmapInfo structure.
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::scale):
+        (WebCore::GraphicsContextPlatformPrivate::rotate):
+        (WebCore::GraphicsContextPlatformPrivate::translate):
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        * platform/graphics/win/TransformationMatrixWin.cpp: Added.
+        (WebCore::TransformationMatrix::operator XFORM): New operator
+
+2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
+
         Non-CG Windows build fix after @r44758.
 
         * rendering/RenderThemeWin.cpp:

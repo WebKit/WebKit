@@ -85,13 +85,10 @@ void GraphicsContextPlatformPrivate::scale(const FloatSize& size)
 {
     if (!m_hdc)
         return;
-    XFORM xform;
-    xform.eM11 = size.width();
-    xform.eM12 = 0.0f;
-    xform.eM21 = 0.0f;
-    xform.eM22 = size.height();
-    xform.eDx = 0.0f;
-    xform.eDy = 0.0f;
+
+    TransformationMatrix scale(size.width(), 0.0f, 0.0f, size.height(), 0.0f, 0.0f);
+
+    XFORM xform = scale;
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
@@ -102,13 +99,10 @@ void GraphicsContextPlatformPrivate::rotate(float degreesAngle)
     float radiansAngle = degreesAngle * deg2rad;
     float cosAngle = cosf(radiansAngle);
     float sinAngle = sinf(radiansAngle);
-    XFORM xform;
-    xform.eM11 = cosAngle;
-    xform.eM12 = -sinAngle;
-    xform.eM21 = sinAngle;
-    xform.eM22 = cosAngle;
-    xform.eDx = 0.0f;
-    xform.eDy = 0.0f;
+
+    TransformationMatrix rotate(cosAngle, -sinAngle, sinAngle, cosAngle, 0.0f, 0.0f);
+
+    XFORM xform = rotate;
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
@@ -116,13 +110,20 @@ void GraphicsContextPlatformPrivate::translate(float x , float y)
 {
     if (!m_hdc)
         return;
-    XFORM xform;
-    xform.eM11 = 1.0f;
-    xform.eM12 = 0.0f;
-    xform.eM21 = 0.0f;
-    xform.eM22 = 1.0f;
-    xform.eDx = x;
-    xform.eDy = y;
+
+    TransformationMatrix translate(1.0f, 0.0f, 0.0f, 1.0f, x, y);
+
+    XFORM xform = translate;
+    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
+}
+
+void GraphicsContextPlatformPrivate::concatCTM(const TransformationMatrix& transform)
+{
+    if (!m_hdc)
+        return;
+
+    XFORM xform = transform;
+
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 

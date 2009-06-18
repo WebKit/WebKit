@@ -108,13 +108,8 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
         SetGraphicsMode(bitmapDC, GM_ADVANCED);
 
         // Apply a translation to our context so that the drawing done will be at (0,0) of the bitmap.
-        XFORM xform;
-        xform.eM11 = 1.0f;
-        xform.eM12 = 0.0f;
-        xform.eM21 = 0.0f;
-        xform.eM22 = 1.0f;
-        xform.eDx = -dstRect.x();
-        xform.eDy = -dstRect.y();
+        TransformationMatrix translate(1.0f, 0.0f, 0.0f, 1.0f, -dstRect.x(), -dstRect.y());
+        XFORM xform = translate;
         ::SetWorldTransform(bitmapDC, &xform);
 
         return bitmapDC;
@@ -205,23 +200,6 @@ void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& po
     RetainPtr<CGImageRef> cgImage(AdoptCF, CGImageCreate(image->size().width(), image->size().height(), 8, 32, image->bytesPerRow(), deviceRGB.get(),
                                                          kCGBitmapByteOrder32Little | kCGImageAlphaFirst, dataProvider.get(), 0, true, kCGRenderingIntentDefault));
     CGContextDrawImage(m_data->m_cgContext, CGRectMake(point.x(), point.y(), image->size().width(), image->size().height()), cgImage.get());   
-}
-
-void GraphicsContextPlatformPrivate::concatCTM(const TransformationMatrix& transform)
-{
-    if (!m_hdc)
-        return;
-
-    CGAffineTransform mat = transform;
-    XFORM xform;
-    xform.eM11 = mat.a;
-    xform.eM12 = mat.b;
-    xform.eM21 = mat.c;
-    xform.eM22 = mat.d;
-    xform.eDx = mat.tx;
-    xform.eDy = mat.ty;
-
-    ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
 void GraphicsContext::drawFocusRing(const Color& color)
