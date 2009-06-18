@@ -26,7 +26,6 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#include "BitmapInfo.h"
 #include "TransformationMatrix.h"
 #include "Path.h"
 
@@ -111,41 +110,6 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     }
 
     m_data->restore();
-}
-
-GraphicsContext::WindowsBitmap::WindowsBitmap(HDC hdc, IntSize size)
-    : m_hdc(0)
-    , m_size(size)
-{
-    BitmapInfo bitmapInfo = BitmapInfo::create(m_size);
-
-    m_bitmap = CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_bitmapBuffer), 0, 0);
-    if (!m_bitmap)
-        return;
-
-    m_hdc = CreateCompatibleDC(hdc);
-    SelectObject(m_hdc, m_bitmap);
-
-    BITMAP bmpInfo;
-    GetObject(m_bitmap, sizeof(bmpInfo), &bmpInfo);
-    m_bytesPerRow = bmpInfo.bmWidthBytes;
-    m_bitmapBufferLength = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
-
-    SetGraphicsMode(m_hdc, GM_ADVANCED);
-}
-
-GraphicsContext::WindowsBitmap::~WindowsBitmap()
-{
-    if (!m_bitmap)
-        return;
-
-    DeleteDC(m_hdc);
-    DeleteObject(m_bitmap);
-}
-
-GraphicsContext::WindowsBitmap* GraphicsContext::createWindowsBitmap(IntSize size)
-{
-    return new WindowsBitmap(m_data->m_hdc, size);
 }
 
 void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& point)

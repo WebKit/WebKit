@@ -64,6 +64,41 @@ bool GraphicsContext::shouldIncludeChildWindows() const
     return m_data->m_shouldIncludeChildWindows;
 }
 
+GraphicsContext::WindowsBitmap::WindowsBitmap(HDC hdc, IntSize size)
+    : m_hdc(0)
+    , m_size(size)
+{
+    BitmapInfo bitmapInfo = BitmapInfo::create(m_size);
+
+    m_bitmap = CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_bitmapBuffer), 0, 0);
+    if (!m_bitmap)
+        return;
+
+    m_hdc = CreateCompatibleDC(hdc);
+    SelectObject(m_hdc, m_bitmap);
+
+    BITMAP bmpInfo;
+    GetObject(m_bitmap, sizeof(bmpInfo), &bmpInfo);
+    m_bytesPerRow = bmpInfo.bmWidthBytes;
+    m_bitmapBufferLength = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
+
+    SetGraphicsMode(m_hdc, GM_ADVANCED);
+}
+
+GraphicsContext::WindowsBitmap::~WindowsBitmap()
+{
+    if (!m_bitmap)
+        return;
+
+    DeleteDC(m_hdc);
+    DeleteObject(m_bitmap);
+}
+
+GraphicsContext::WindowsBitmap* GraphicsContext::createWindowsBitmap(IntSize size)
+{
+    return new WindowsBitmap(m_data->m_hdc, size);
+}
+
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
     // FIXME: Should a bitmap be created also when a shadow is set?
@@ -90,8 +125,7 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
         SetGraphicsMode(bitmapDC, GM_ADVANCED);
 
         // Apply a translation to our context so that the drawing done will be at (0,0) of the bitmap.
-        TransformationMatrix translate(1.0f, 0.0f, 0.0f, 1.0f, -dstRect.x(), -dstRect.y());
-        XFORM xform = translate;
+        XFORM xform = TransformationMatrix().translate(-dstRect.x(), -dstRect.y());
 
         ::SetWorldTransform(bitmapDC, &xform);
 
@@ -134,9 +168,7 @@ void GraphicsContextPlatformPrivate::scale(const FloatSize& size)
     if (!m_hdc)
         return;
 
-    TransformationMatrix scale(size.width(), 0.0f, 0.0f, size.height(), 0.0f, 0.0f);
-
-    XFORM xform = scale;
+    XFORM xform = TransformationMatrix().scaleNonUniform(size.width(), size.height());
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
@@ -144,13 +176,7 @@ static const double deg2rad = 0.017453292519943295769; // pi/180
 
 void GraphicsContextPlatformPrivate::rotate(float degreesAngle)
 {
-    float radiansAngle = degreesAngle * deg2rad;
-    float cosAngle = cosf(radiansAngle);
-    float sinAngle = sinf(radiansAngle);
-
-    TransformationMatrix rotate(cosAngle, -sinAngle, sinAngle, cosAngle, 0.0f, 0.0f);
-
-    XFORM xform = rotate;
+    XFORM xform = TransformationMatrix().rotate(degreesAngle);
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
@@ -159,9 +185,7 @@ void GraphicsContextPlatformPrivate::translate(float x , float y)
     if (!m_hdc)
         return;
 
-    TransformationMatrix translate(1.0f, 0.0f, 0.0f, 1.0f, x, y);
-
-    XFORM xform = translate;
+    XFORM xform = TransformationMatrix().translate(x, y);
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
@@ -171,7 +195,6 @@ void GraphicsContextPlatformPrivate::concatCTM(const TransformationMatrix& trans
         return;
 
     XFORM xform = transform;
-
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 

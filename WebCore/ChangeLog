@@ -1,3 +1,26 @@
+2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Final cleanups in this refactoring:
+        (1) Move WindowsBitmap implementation from CG-specific file to
+            the platform-common GraphicsContextWin.cpp, since it is
+            equally useful on both platforms.
+        (2) Revise the TransformationMatrix logic as suggested by
+            Adam Roben in his review comments to Part #2 of this
+            refactoring.
+
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::WindowsBitmap::WindowsBitmap):
+        (WebCore::GraphicsContext::WindowsBitmap::~WindowsBitmap):
+        (WebCore::GraphicsContext::createWindowsBitmap):
+        (WebCore::GraphicsContext::getWindowsContext):
+        (WebCore::GraphicsContextPlatformPrivate::scale):
+        (WebCore::GraphicsContextPlatformPrivate::rotate):
+        (WebCore::GraphicsContextPlatformPrivate::translate):
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+
 2009-06-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.
