@@ -167,6 +167,7 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLButtonElement.idl \
 	WebCore/html/HTMLCanvasElement.idl \
 	WebCore/html/HTMLCollection.idl \
+	WebCore/html/HTMLDataGridElement.idl \
 	WebCore/html/HTMLDListElement.idl \
 	WebCore/html/HTMLDirectoryElement.idl \
 	WebCore/html/HTMLDivElement.idl \
@@ -918,6 +919,7 @@ webcore_sources += \
 	WebCore/html/HTMLCanvasElement.h \
 	WebCore/html/HTMLCollection.cpp \
 	WebCore/html/HTMLCollection.h \
+	WebCore/html/HTMLDataGridElement.h \
 	WebCore/html/HTMLDListElement.cpp \
 	WebCore/html/HTMLDListElement.h \
 	WebCore/html/HTMLDirectoryElement.cpp \
