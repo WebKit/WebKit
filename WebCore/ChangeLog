@@ -1,3 +1,13 @@
+2009-06-18  David Levin  <levin@chromium.org>
+
+        Fix chromium linux build.
+
+        Fixes a mistake that happened during the complicated merge for
+        landing r44775, r44776, r44777.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::create):
+
 2009-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

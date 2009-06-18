@@ -26,10 +26,16 @@
 #include "RenderThemeChromiumLinux.h"
 
 #include "Color.h"
+#include "CSSValueKeywords.h"
 #include "RenderObject.h"
 #include "UserAgentStyleSheets.h"
 
 namespace WebCore {
+
+PassRefPtr<RenderTheme> RenderThemeChromiumLinux::create()
+{
+    return adoptRef(new RenderThemeChromiumLinux());
+}
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
