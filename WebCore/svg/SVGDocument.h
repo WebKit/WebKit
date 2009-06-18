@@ -52,6 +52,8 @@ namespace WebCore {
         void startPan(const FloatPoint& start);
         void updatePan(const FloatPoint& pos) const;
 
+        virtual bool childShouldCreateRenderer(Node*) const;
+
     private:
         SVGDocument(Frame*);
 

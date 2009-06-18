@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" requiredFeatures="unknown_feature">
+  <text x="20" y="20">This should not be visible</text>
+</svg>
