@@ -54,8 +54,10 @@ namespace JSC {
     class Lexer;
     class Parser;
     class ScopeNode;
+    class Stringifier;
     class Structure;
     class UString;
+
     struct HashTable;
     struct VPtrSet;
 
@@ -146,6 +148,7 @@ namespace JSC {
         HashSet<JSObject*> arrayVisitedElements;
 
         ScopeNode* scopeNodeBeingReparsed;
+        Stringifier* firstStringifierToMark;
 
     private:
         JSGlobalData(bool isShared, const VPtrSet&);

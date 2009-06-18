@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003,2007 Apple Computer, Inc
+ *  Copyright (C) 2003, 2007, 2009 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -76,6 +76,7 @@ namespace JSC {
 
     public:
         const Identifier nullIdentifier;
+        const Identifier emptyIdentifier;
         const Identifier underscoreProto;
         const Identifier thisIdentifier;
 

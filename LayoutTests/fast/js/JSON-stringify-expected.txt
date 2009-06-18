@@ -257,36 +257,41 @@ function (jsonObject) {
 PASS tests[i](nativeJSON) is tests[i](JSON)
 function (jsonObject) {
         var deepObject = {};
-        for (var i = 0; i < 512; i++)
+        for (var i = 0; i < 2048; i++)
             deepObject = {next:deepObject};
         return jsonObject.stringify(deepObject);
     }
 PASS tests[i](nativeJSON) is tests[i](JSON)
 function (jsonObject) {
         var deepArray = [];
-        for (var i = 0; i < 512; i++)
+        for (var i = 0; i < 2048; i++)
             deepArray = [deepArray];
         return jsonObject.stringify(deepArray);
     }
 PASS tests[i](nativeJSON) is tests[i](JSON)
 function (jsonObject) {
-        function toInfiniteJSONObject() {
+        var depth = 0;
+        function toDeepVirtualJSONObject() {
+            if (++depth >= 2048)
+                return {};
             var r = {};
-            r.toJSON = toInfiniteJSONObject;
+            r.toJSON = toDeepVirtualJSONObject;
             return {recurse: r};
         }
-        return jsonObject.stringify(toInfiniteJSONObject());
+        return jsonObject.stringify(toDeepVirtualJSONObject());
     }
-PASS tests[i](nativeJSON) threw exception RangeError: Maximum call stack size exceeded..
+PASS tests[i](nativeJSON) is tests[i](JSON)
 function (jsonObject) {
-        function toInfiniteJSONArray() {
+        var depth = 0;
+        function toDeepVirtualJSONArray() {
+            if (++depth >= 2048)
+                return [];
             var r = [];
-            r.toJSON = toInfiniteJSONArray;
+            r.toJSON = toDeepJSONArray;
             return [r];
         }
-        return jsonObject.stringify(toInfiniteJSONArray());
+        return jsonObject.stringify(toDeepVirtualJSONArray());
     }
-PASS tests[i](nativeJSON) threw exception RangeError: Maximum call stack size exceeded..
 function (jsonObject) {
         return jsonObject.stringify(fullCharsetString);
     }

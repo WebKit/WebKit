@@ -70,9 +70,9 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
     CFRange arrayRange = CFRangeMake(0, CFArrayGetCount(openWindowsRef));
     CFIndex i = CFArrayGetFirstIndexOfValue(openWindowsRef, arrayRange, self);
-    assert(i != -1);
-    CFArrayRemoveValueAtIndex(openWindowsRef, i);
-    
+    if (i != kCFNotFound)
+        CFArrayRemoveValueAtIndex(openWindowsRef, i);
+
     [super close];
 }
 

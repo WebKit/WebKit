@@ -1,3 +1,18 @@
+2009-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 26429: Make JSON.stringify non-recursive so it can handle objects
+        of arbitrary complexity
+        https://bugs.webkit.org/show_bug.cgi?id=26429
+
+        * fast/js/JSON-stringify-expected.txt: Updated.
+        * fast/js/resources/JSON-stringify.js: Changed the infinite object and
+        infinite array tests to instead just test something a fixed number of
+        levels deep. Otherwise we end up with an infinite loop in the test,
+        which would lead to the slow-script dialog in the production web browser.
+        Also raised the number from 512 to 2048 since there's no fixed limit any more.
+
 2009-06-17  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Adele Peterson.

@@ -240,34 +240,38 @@ function createTests() {
     });
     result.push(function(jsonObject){
         var deepObject = {};
-        for (var i = 0; i < 512; i++)
+        for (var i = 0; i < 2048; i++)
             deepObject = {next:deepObject};
         return jsonObject.stringify(deepObject);
     });
     result.push(function(jsonObject){
         var deepArray = [];
-        for (var i = 0; i < 512; i++)
+        for (var i = 0; i < 2048; i++)
             deepArray = [deepArray];
         return jsonObject.stringify(deepArray);
     });
     result.push(function(jsonObject){
-        function toInfiniteJSONObject() {
+        var depth = 0;
+        function toDeepVirtualJSONObject() {
+            if (++depth >= 2048)
+                return {};
             var r = {};
-            r.toJSON = toInfiniteJSONObject;
+            r.toJSON = toDeepVirtualJSONObject;
             return {recurse: r};
         }
-        return jsonObject.stringify(toInfiniteJSONObject());
+        return jsonObject.stringify(toDeepVirtualJSONObject());
     });
-    result[result.length - 1].throws = true;
     result.push(function(jsonObject){
-        function toInfiniteJSONArray() {
+        var depth = 0;
+        function toDeepVirtualJSONArray() {
+            if (++depth >= 2048)
+                return [];
             var r = [];
-            r.toJSON = toInfiniteJSONArray;
+            r.toJSON = toDeepJSONArray;
             return [r];
         }
-        return jsonObject.stringify(toInfiniteJSONArray());
+        return jsonObject.stringify(toDeepVirtualJSONArray());
     });
-    result[result.length - 1].throws = true;
     var fullCharsetString = "";
     for (var i = 0; i < 65536; i++)
         fullCharsetString += String.fromCharCode(i);

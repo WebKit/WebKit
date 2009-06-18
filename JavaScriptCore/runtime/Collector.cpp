@@ -27,6 +27,7 @@
 #include "Interpreter.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
+#include "JSONObject.h"
 #include "JSString.h"
 #include "JSValue.h"
 #include "Nodes.h"
@@ -991,6 +992,8 @@ bool Heap::collect()
     m_globalData->smallStrings.mark();
     if (m_globalData->scopeNodeBeingReparsed)
         m_globalData->scopeNodeBeingReparsed->mark();
+    if (m_globalData->firstStringifierToMark)
+        JSONObject::markStringifiers(m_globalData->firstStringifierToMark);
 
     JAVASCRIPTCORE_GC_MARKED();
 

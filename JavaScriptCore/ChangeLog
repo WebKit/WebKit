@@ -1,3 +1,67 @@
+2009-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 26429: Make JSON.stringify non-recursive so it can handle objects
+        of arbitrary complexity
+        https://bugs.webkit.org/show_bug.cgi?id=26429
+
+        For marking I decided not to use gcProtect, because this is inside the engine
+        so it's easy enough to just do marking. And that darned gcProtect does locking!
+        Oliver tried to convince me to used MarkedArgumentBuffer, but the constructor
+        for that class says "FIXME: Remove all clients of this API, then remove this API."
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::collect): Add a call to JSONObject::markStringifiers.
+
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers): Added emptyIdentifier.
+        * runtime/CommonIdentifiers.h: Ditto.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): Initialize firstStringifierToMark to 0.
+        * runtime/JSGlobalData.h: Added firstStringifierToMark.
+
+        * runtime/JSONObject.cpp: Cut down the includes to the needed ones only.
+        (JSC::unwrapNumberOrString): Added. Helper for unwrapping number and string
+        objects to get their number and string values.
+        (JSC::ReplacerPropertyName::ReplacerPropertyName): Added. The class is used
+        to wrap an identifier or integer so we don't have to do any work unless we
+        actually call a replacer.
+        (JSC::ReplacerPropertyName::value): Added.
+        (JSC::gap): Added. Helper function for the Stringifier constructor.
+        (JSC::PropertyNameForFunctionCall::PropertyNameForFunctionCall): Added.
+        The class is used to wrap an identifier or integer so we don't have to
+        allocate a number or string until we actually call toJSON or a replacer.
+        (JSC::PropertyNameForFunctionCall::asJSValue): Added.
+        (JSC::Stringifier::Stringifier): Updated and moved out of the class
+        definition. Added code to hook this into a singly linked list for marking.
+        (JSC::Stringifier::~Stringifier): Remove from the singly linked list.
+        (JSC::Stringifier::mark): Mark all the objects in the holder stacks.
+        (JSC::Stringifier::stringify): Updated.
+        (JSC::Stringifier::appendQuotedString): Tweaked and streamlined a bit.
+        (JSC::Stringifier::toJSON): Renamed from toJSONValue.
+        (JSC::Stringifier::appendStringifiedValue): Renamed from stringify.
+        Added code to use the m_holderStack to do non-recursive stringify of
+        objects and arrays. This code also uses the timeout checker since in
+        pathological cases it could be slow even without calling into the
+        JavaScript virtual machine.
+        (JSC::Stringifier::willIndent): Added.
+        (JSC::Stringifier::indent): Added.
+        (JSC::Stringifier::unindent): Added.
+        (JSC::Stringifier::startNewLine): Added.
+        (JSC::Stringifier::Holder::Holder): Added.
+        (JSC::Stringifier::Holder::appendNextProperty): Added. This is the
+        function that handles the format of arrays and objects.
+        (JSC::JSONObject::getOwnPropertySlot): Moved this down to the bottom
+        of the file so the JSONObject class is not interleaved with the
+        Stringifier class.
+        (JSC::JSONObject::markStringifiers): Added. Calls mark.
+        (JSC::JSONProtoFuncStringify): Streamlined the code here. The code
+        to compute the gap string is now a separate function.
+
+        * runtime/JSONObject.h: Made everything private. Added markStringifiers.
+
 2009-06-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
