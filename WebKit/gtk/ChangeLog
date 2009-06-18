@@ -1,3 +1,15 @@
+2009-06-18  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Gustavo Noronha.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::loadDone):
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::FrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::FrameLoaderClient::dispatchDidFailLoad): Introduce the static
+        function loadDone to emit "load-done" and update the status and update
+        the relevent places. We missed some status notifications before.
+
 2009-06-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Rubber-stamped by Xan Lopez.
