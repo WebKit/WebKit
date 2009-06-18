@@ -1,3 +1,16 @@
+2009-06-18  Janne Koskinen  <janne.p.koskinen@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix compilation with Symbian WINSCW compiler, which produced
+        multiple definitions of the CSSPrimitiveValue conversion operators.
+
+        It turns out that they are defined inline but not declared inline.
+
+        Adding the inline keyword to the declaration fixes the build.
+
+        * css/CSSPrimitiveValue.h:
+
 2009-06-18  Markus Goetz <Markus.Goetz@nokia.com>
 
         Reviewed by Simon Hausman.
