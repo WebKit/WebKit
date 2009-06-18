@@ -143,7 +143,7 @@ PassRefPtr<RenderTheme> RenderThemeWin::create()
 #if !USE(SAFARI_THEME)
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderThemeWin* winTheme = RenderThemeWin::create().releaseRef();
+    static RenderTheme* winTheme = RenderThemeWin::create().releaseRef();
     return winTheme;
 }
 #endif

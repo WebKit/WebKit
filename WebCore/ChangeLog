@@ -1,5 +1,12 @@
 2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
 
+        Non-CG Windows build fix after @r44758.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderTheme::themeForPage):
+
+2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
+
         Reviewed by Adam Roben.
 
         Refactor a few common routines in the various Windows ports
