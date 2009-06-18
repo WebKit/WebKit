@@ -32,7 +32,8 @@ SoupMessage* webkit_network_request_get_message(WebKitNetworkRequest* request);
 static gboolean navigation_policy_decision_requested_cb(WebKitWebView* web_view,
                                                         WebKitWebFrame* web_frame,
                                                         WebKitNetworkRequest* request,
-                                                        WebKitWebNavigationAction action,
+                                                        WebKitWebNavigationAction* action,
+                                                        WebKitWebPolicyDecision* decision,
                                                         gpointer data)
 {
     SoupMessage* message = webkit_network_request_get_message(request);

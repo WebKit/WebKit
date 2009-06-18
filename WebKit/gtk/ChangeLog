@@ -1,3 +1,13 @@
+2009-06-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Xan Lopez.
+
+        Fix parameters of navigation-policy-decision-requested callback,
+        to be correct in number and type
+
+        * tests/testhttpbackend.c:
+        (navigation_policy_decision_requested_cb):
+
 2009-06-18  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Gustavo Noronha.
