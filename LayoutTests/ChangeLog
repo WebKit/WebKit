@@ -5,6 +5,26 @@
         The following pixel tests have been converted into dumpastext tests. This
         fixes the bug 26336 partially.
 
+        * editing/execCommand/insertHTML-expected.txt: Added.
+        * editing/execCommand/insertHTML.html:
+        * editing/execCommand/switch-list-type-expected.txt: Added.
+        * editing/execCommand/switch-list-type.html:
+        * platform/mac/editing/execCommand/insertHTML-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/insertHTML-expected.png: Removed.
+        * platform/mac/editing/execCommand/insertHTML-expected.txt: Removed.
+        * platform/mac/editing/execCommand/switch-list-type-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/switch-list-type-expected.png: Removed.
+        * platform/mac/editing/execCommand/switch-list-type-expected.txt: Removed.
+        * platform/qt/editing/execCommand/insertHTML-expected.txt: Removed.
+        * platform/qt/editing/execCommand/switch-list-type-expected.txt: Removed.
+
+2009-06-18  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        The following pixel tests have been converted into dumpastext tests. This
+        fixes the bug 26336 partially.
+
         * editing/execCommand/5207369-expected.txt: Added.
         * editing/execCommand/5207369.html:
         * editing/execCommand/5210032-expected.txt: Added.

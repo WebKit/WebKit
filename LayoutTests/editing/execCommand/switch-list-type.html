@@ -1,9 +1,11 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+}
 </script>
 <p>This test checks to see if InsertOrderedList can switch the list type of list items.</p>
-<div contenteditable="true">
+<div id="div" contenteditable="true">
 <ol style="border: 1px solid red;">
     <li>This should be in an ordered list.</li>
     <span id="item1">This should be in an unordered list.</span>
@@ -17,8 +19,17 @@ if (window.layoutTestController)
 </ol>
 This should not be in a list.
 <li><span id="item4">This should be in an ordered list.</span></li>
+</div>
+<p id="console"></p>
 
 <script>
+
+function log(message) {
+    var console = document.getElementById("console");
+    var text = document.createTextNode(message);
+    console.appendChild(text);
+}
+
 var s = window.getSelection();
 s.setPosition(document.getElementById("item1"), 0);
 document.execCommand("InsertUnorderedList", false, "Moo");
@@ -28,4 +39,7 @@ s.setPosition(document.getElementById("item3"), 0);
 document.execCommand("InsertUnorderedList", false, "Gai");
 s.setPosition(document.getElementById("item4"), 0);
 document.execCommand("InsertOrderedList", false, "Noodles");
+
+log(div.innerHTML);
+
 </script>

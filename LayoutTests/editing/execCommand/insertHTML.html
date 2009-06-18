@@ -2,6 +2,10 @@
 <head>
 <script src=../editing.js language="JavaScript" type="text/JavaScript"></script>
 <script>
+
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+
 function log(message) {
     var console = document.getElementById("console");
     var li = document.createElement("li");
@@ -17,6 +21,8 @@ function editingTest() {
     selectAllCommand();
     deleteCommand();
     insertHTMLCommand(html);
+    
+    log(d.innerHTML);
 }
 </script>
 </head>
