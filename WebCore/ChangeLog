@@ -1,3 +1,14 @@
+2009-06-18  Chris Evans  <scarybeasts@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Fix 8-digit long hex entities. Fixes bug 26454
+        https://bugs.webkit.org/show_bug.cgi?id=26454
+
+        Test: fast/parser/eightdigithexentity.html
+
+        * html/HTMLTokenizer.cpp: fix off-by-ones.
+
 2009-06-18  David Levin  <levin@chromium.org>
 
         Fix chromium linux build.
