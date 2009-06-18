@@ -1,3 +1,12 @@
+2009-06-18  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Remove code that I accidentally committed in r44811.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup):
+
 2009-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

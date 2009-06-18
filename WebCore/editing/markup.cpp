@@ -999,7 +999,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     
     // Add a wrapper span with the styles that all of the nodes in the markup inherit.
     Node* parentOfLastClosed = lastClosed ? lastClosed->parentNode() : 0;
-    if (!specialCommonAncestor && parentOfLastClosed && parentOfLastClosed->renderer()) {
+    if (parentOfLastClosed && parentOfLastClosed->renderer()) {
         RefPtr<CSSMutableStyleDeclaration> style = computedStyle(parentOfLastClosed)->copyInheritableProperties();
 
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
