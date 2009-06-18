@@ -1,3 +1,13 @@
+2009-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26499
+        
+        New expected results after making <video> elements get RenderLayers.
+
+        * platform/mac/fast/replaced/border-radius-clip-expected.txt:
+
 2009-06-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
