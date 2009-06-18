@@ -1,3 +1,32 @@
+2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Refactor a few common routines in the various Windows ports
+        and reduce some duplicated code.
+        https://bugs.webkit.org/show_bug.cgi?id=26425.
+
+        Refactor use of BITMAPINFO for the new BitmapInfo structure.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/win/BitmapInfo.cpp: Added.
+        (WebCore::bitmapInfoForSize):
+        (WebCore::BitmapInfo::create):
+        (WebCore::BitmapInfo::createBottomUp):
+        * platform/win/BitmapInfo.h: Added.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        * platform/graphics/win/TransformationMatrixWin.cpp: Added.
+        (WebCore::TransformationMatrix::operator XFORM): New operator
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::allocImage):
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::allocImage):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+
 2009-06-17  Adam Roben  <aroben@apple.com>
 
         Remove unnecessary 6th parameter from SOFT_LINK_OPTIONAL

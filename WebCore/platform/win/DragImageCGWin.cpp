@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DragImage.h"
 
+#include "BitmapInfo.h"
 #include "CachedImage.h"
 #include "GraphicsContext.h"
 #include "Image.h"
@@ -44,16 +45,10 @@ void deallocContext(CGContextRef target)
 
 HBITMAP allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
 {
-    HBITMAP hbmp;
-    BITMAPINFO bmpInfo = {0};
-    bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmpInfo.bmiHeader.biWidth = size.width();
-    bmpInfo.bmiHeader.biHeight = size.height();
-    bmpInfo.bmiHeader.biPlanes = 1;
-    bmpInfo.bmiHeader.biBitCount = 32;
-    bmpInfo.bmiHeader.biCompression = BI_RGB;
+    BitmapInfo bmpInfo = BitmapInfo::create(size);
+
     LPVOID bits;
-    hbmp = CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0);
+    HBITMAP hbmp = CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0);
 
     if (!targetRef)
         return hbmp;

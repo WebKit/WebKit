@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
+#include "BitmapInfo.h"
 #include "TransformationMatrix.h"
 #include "Path.h"
 
@@ -57,24 +58,6 @@ static cairo_t* createCairoContextWithHDC(HDC hdc, bool hasAlpha)
     cairo_surface_destroy(image);
 
     return context;
-}
-
-static BITMAPINFO bitmapInfoForSize(const IntSize& size)
-{
-    BITMAPINFO bitmapInfo;
-    bitmapInfo.bmiHeader.biSize          = sizeof(BITMAPINFOHEADER);
-    bitmapInfo.bmiHeader.biWidth         = size.width(); 
-    bitmapInfo.bmiHeader.biHeight        = size.height();
-    bitmapInfo.bmiHeader.biPlanes        = 1;
-    bitmapInfo.bmiHeader.biBitCount      = 32;
-    bitmapInfo.bmiHeader.biCompression   = BI_RGB;
-    bitmapInfo.bmiHeader.biSizeImage     = 0;
-    bitmapInfo.bmiHeader.biXPelsPerMeter = 0;
-    bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
-    bitmapInfo.bmiHeader.biClrUsed       = 0;
-    bitmapInfo.bmiHeader.biClrImportant  = 0;
-
-    return bitmapInfo;
 }
 
 static void fillWithClearColor(HBITMAP bitmap)
@@ -113,7 +96,7 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
             return 0;
 
         // Create a bitmap DC in which to draw.
-        BITMAPINFO bitmapInfo = bitmapInfoForSize(dstRect.size());
+        BitmapInfo bitmapInfo = BitmapInfo::create(dstRect.size());
 
         void* pixels = 0;
         HBITMAP bitmap = ::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
