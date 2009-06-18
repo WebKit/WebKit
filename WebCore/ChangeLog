@@ -1,3 +1,12 @@
+2009-06-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Leopard build where USE(ACCELERATED_COMPOSITING) is not defined.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::currentRenderingMode):
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivate::tearDownVideoRendering):
+
 2009-06-17  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Adele Peterson.

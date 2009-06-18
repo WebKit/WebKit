@@ -455,8 +455,10 @@ MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::currentRenderingMode(
     if (m_qtVideoRenderer)
         return MediaRenderingSoftwareRenderer;
     
+#if USE(ACCELERATED_COMPOSITING)
     if (m_qtVideoLayer)
         return MediaRenderingMovieLayer;
+#endif
     
     return MediaRenderingNone;
 }
@@ -496,10 +498,12 @@ void MediaPlayerPrivate::setUpVideoRendering()
     case MediaRenderingSoftwareRenderer:
         createQTVideoRenderer();
         break;
+#if USE(ACCELERATED_COMPOSITING)
     case MediaRenderingMovieLayer:
         createQTMovieLayer();
         break;
     }
+#endif
 }
 
 void MediaPlayerPrivate::tearDownVideoRendering()
@@ -508,8 +512,10 @@ void MediaPlayerPrivate::tearDownVideoRendering()
         detachQTMovieView();
     else if (m_qtVideoRenderer)
         destroyQTVideoRenderer();
+#if USE(ACCELERATED_COMPOSITING)
     else
         destroyQTMovieLayer();
+#endif
 }
 
 bool MediaPlayerPrivate::hasSetUpVideoRendering() const
