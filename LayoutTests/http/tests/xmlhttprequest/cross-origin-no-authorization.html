@@ -1,0 +1,161 @@
+<button onclick="presetAuthorization()">Start</button>
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.setCanOpenWindows();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function presetAuthorization()
+{
+    window.addEventListener("message", test, false);
+    window.open("http://localhost:8000/xmlhttprequest/resources/cross-origin-preset-authorization-frame.html");
+}
+
+function test()
+{
+    log("Trying different ways to access a password protected resource from another origin. The UA already has login and password for this protection space.\n")
+    log("You should see several PASS messages followed by a DONE\n");
+    log("SCRIPT SRC='...' Should succeed, since authorization is sent for cross-origin subresource loads.");
+    var scriptElement = document.createElement("script");
+    scriptElement.setAttribute("src", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php");
+    scriptElement.setAttribute("onload", "test_sync_auth_stored()");
+    scriptElement.setAttribute("onerror", "test_sync_auth_stored()");
+    document.body.appendChild(scriptElement);
+}
+
+function test_sync_auth_stored()
+{
+    log("Cross-origin XMLHttpRequest (sync), authorization will not be sent, because withCredentials is false.");
+    
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", false);
+    try {
+        req.send();
+        log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
+    } catch (ex) {
+        log("PASS: Got an exception. " + ex);
+    }
+    test_sync_auth_stored_with_credentials();
+}
+
+function test_sync_auth_stored_with_credentials()
+{
+    log("Cross-origin XMLHttpRequest (sync), testing authorization that's not allowed by the server (withCredentials is true, but access control headers are not set).");
+    
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", false);
+    req.withCredentials = true;
+    try {
+        req.send();
+        log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
+    } catch (ex) {
+        log("PASS: Got an exception. " + ex);
+    }
+    test_sync_cookies();
+}
+
+function test_sync_cookies()
+{
+    log("Cross-origin XMLHttpRequest (sync), testing cookies.");
+    
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.php", false);
+    req.send();
+    log(req.responseText.match(/WK\-cross\-origin/) ? "FAIL" : "PASS");
+    test_async_auth_stored();
+}
+
+function test_async_auth_stored()
+{
+    log("Cross-origin XMLHttpRequest (async), authorization will not be sent, because withCredentials is false.");
+
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", true);
+    req.send();
+    req.onload = function() {
+        log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
+        test_async_auth_stored_with_credentials();
+    }
+    req.onerror = function() {
+        log("PASS: Received error event.");
+        test_async_auth_stored_with_credentials();
+    }
+}
+
+function test_async_auth_stored_with_credentials()
+{
+    log("Cross-origin XMLHttpRequest (async), testing authorization that's not allowed by the server (withCredentials is true, but access control headers are not set).");
+
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", true);
+    req.withCredentials = true;
+    req.send();
+    req.onload = function() {
+        log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
+        test_async_cookies();
+    }
+    req.onerror = function() {
+        log("PASS: Received error event.");
+        test_async_cookies();
+    }
+}
+
+function test_async_cookies()
+{
+    log("Cross-origin XMLHttpRequest (async), testing cookies.");
+
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-check-cookies.php", true);
+    req.send();
+    req.onload = function() {
+        log(req.responseText.match(/WK\-cross\-origin/) ? "FAIL" : "PASS");
+        test_sync_auth_explicit();
+    }
+}
+
+function test_sync_auth_explicit()
+{
+    log("Cross-origin XMLHttpRequest (sync), testing authorization with explicitly provided credentials that should be ignored.");
+    
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", false, "test", "test");
+    try {
+        req.send();
+        log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
+    } catch (ex) {
+        log("PASS: Got an exception. " + ex);
+    }
+    test_async_auth_explicit();
+}
+
+
+function test_async_auth_explicit()
+{
+    log("Cross-origin XMLHttpRequest (async), testing authorization with explicitly provided credentials that should be ignored.");
+
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-no-authorization.php", true, "test", "test");
+    req.send();
+    req.onload = function() {
+        log((req.status == 401) ? "PASS: 401 Authorization required" : "FAIL: Loaded");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    req.onerror = function() {
+        log("PASS: Received error event.");
+        log("DONE");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
+
+if (window.layoutTestController)
+    presetAuthorization();
+</script>

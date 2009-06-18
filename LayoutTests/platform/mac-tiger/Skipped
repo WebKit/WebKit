@@ -51,3 +51,6 @@ http/tests/cookies/simple-cookies-max-age.html
 # <rdar://problem/5666078> Cookie parsing terminates at the first semicolon, ignoring quotes (16699)
 # Tiger would need a new CFNetwork to support setting cookies with double-quoted values containing semi-colons
 http/tests/cookies/double-quoted-value-with-semi-colon.html
+
+# Tiger does not support connectionShouldUseCredentialStorage: delegate call.
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
