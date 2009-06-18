@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderInline {A} at (0,0) size 149x18 [color=#0000EE]
+          RenderText {#text} at (0,0) size 149x18
+            text run at (0,0) width 149: "rdar://problem/6983207"
+        RenderText {#text} at (149,0) size 396x18
+          text run at (149,0) width 396: "Should not leave blue box behind after moving to the top right."
+layer at (8,42) size 502x102
+  RenderBlock (relative positioned) {DIV} at (0,34) size 502x102 [border: (1px solid #000000)]
+layer at (9,143) size 250x100
+  RenderBlock (positioned) {DIV} at (1,101) size 250x100 [bgcolor=#0000FF]
+layer at (9,43) size 50x50
+  RenderBlock (positioned) {DIV} at (1,1) size 50x50 [bgcolor=#000000]

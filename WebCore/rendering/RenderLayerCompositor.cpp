@@ -352,10 +352,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
     layer->setMustOverlayCompositedLayers(ioCompState.m_subtreeIsCompositing);
     
     const bool willBeComposited = needsToBeComposited(layer);
-    // If we are going to become composited, repaint the old rendering destination
-    if (!layer->isComposited() && willBeComposited)
-        repaintOnCompositingChange(layer);
-
     ioCompState.m_subtreeIsCompositing = willBeComposited;
 
     CompositingState childState = ioCompState;
@@ -426,6 +422,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
     // Subsequent layers in the parent stacking context also need to composite.
     if (childState.m_subtreeIsCompositing)
         ioCompState.m_subtreeIsCompositing = true;
+
+    // If the layer is going into compositing mode, repaint its old location.
+    if (!layer->isComposited() && needsToBeComposited(layer))
+        repaintOnCompositingChange(layer);
 
     // Set the flag to say that this SC has compositing children.
     // this can affect the answer to needsToBeComposited() when clipping,

@@ -1,5 +1,23 @@
 2009-06-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6983207> Non-layer content is not re-rendered when transition
+        starts sometimes (with hardware acceleration).
+        
+        When deciding which RenderLayers should be composited, when a layer goes into
+        compositing mode we repaint the old location. However, we did that before
+        we'd looked at all the factors that may force a layer to composite, so missed
+        some cases. Fix by doing the repaint once we really know whether it's going
+        to composite.
+
+        Test: compositing/repaint/become-overlay-composited-layer.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
+2009-06-18  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the Leopard build where USE(ACCELERATED_COMPOSITING) is not defined, and
         the Tiger build where QTMovieLayer does not exist.
 
