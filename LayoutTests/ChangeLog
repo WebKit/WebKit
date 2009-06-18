@@ -1,3 +1,29 @@
+2009-06-18  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        The following pixel tests have been converted into dumpastext tests. This
+        fixes the bug 26336 partially.
+
+        * editing/execCommand/4916583-expected.txt: Added.
+        * editing/execCommand/4916583.html:
+        * editing/execCommand/5119244-expected.txt: Added.
+        * editing/execCommand/5119244.html:
+        * editing/execCommand/5120591-expected.txt: Added.
+        * editing/execCommand/5120591.html:
+        * platform/mac/editing/execCommand/4916583-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/4916583-expected.png: Removed.
+        * platform/mac/editing/execCommand/4916583-expected.txt: Removed.
+        * platform/mac/editing/execCommand/5119244-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/5119244-expected.png: Removed.
+        * platform/mac/editing/execCommand/5119244-expected.txt: Removed.
+        * platform/mac/editing/execCommand/5120591-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/5120591-expected.png: Removed.
+        * platform/mac/editing/execCommand/5120591-expected.txt: Removed.
+        * platform/qt/editing/execCommand/4916583-expected.txt: Removed.
+        * platform/qt/editing/execCommand/5119244-expected.txt: Removed.
+        * platform/qt/editing/execCommand/5120591-expected.txt: Removed.
+
 2009-06-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

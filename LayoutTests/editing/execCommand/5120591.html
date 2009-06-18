@@ -2,9 +2,15 @@
 <div contenteditable="true" id="div">This should be a link.</div>
 
 <script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 var div = document.getElementById("div");
 div.addEventListener('DOMSubtreeModified', function () {;});
 div.focus();
 document.execCommand("SelectAll");
 document.execCommand("CreateLink", false, "#");
 </script>
+
+PASS

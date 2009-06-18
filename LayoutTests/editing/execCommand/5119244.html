@@ -2,8 +2,14 @@
 <div id="div" contenteditable="true"><table contenteditable="false"><tr><td>&#x21D2;</td><td contenteditable="true" style="background-color: #f81;">ToDo content</td></tr></table></div>
 
 <script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 var sel = window.getSelection();
 var div = document.getElementById("div");
 sel.setPosition(div, 0);
 document.execCommand("Indent");
 </script>
+
+PASS
