@@ -52,6 +52,7 @@ EXPORTS
     ?changePrototypeTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@VJSValue@2@@Z
     ?checkSameIdentifierTable@Identifier@JSC@@CAXPAVExecState@2@PAURep@UString@2@@Z
     ?checkSameIdentifierTable@Identifier@JSC@@CAXPAVJSGlobalData@2@PAURep@UString@2@@Z
+    ?checkSyntax@JSC@@YA?AVCompletion@1@PAVExecState@1@ABVSourceCode@1@@Z
     ?classInfo@InternalFunction@JSC@@UBEPBUClassInfo@2@XZ
     ?classInfo@JSCell@JSC@@UBEPBUClassInfo@2@XZ
     ?className@JSObject@JSC@@UBE?AVUString@2@XZ
