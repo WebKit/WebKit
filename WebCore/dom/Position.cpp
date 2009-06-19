@@ -922,18 +922,18 @@ static bool isNonTextLeafChild(RenderObject* object)
 
 static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
 {
-    InlineTextBox* match = 0;
-    int minOffset = INT_MAX;
     RenderBlock* container = renderer->containingBlock();
     RenderObject* next = renderer;
     while ((next = next->nextInPreOrder(container))) {
         if (next->isRenderBlock())
-            break;
+            return 0;
         if (next->isBR())
-            break;
+            return 0;
         if (isNonTextLeafChild(next))
-            break;
+            return 0;
         if (next->isText()) {
+            InlineTextBox* match = 0;
+            int minOffset = INT_MAX;
             for (InlineTextBox* box = toRenderText(next)->firstTextBox(); box; box = box->nextTextBox()) {
                 int caretMinOffset = box->caretMinOffset();
                 if (caretMinOffset < minOffset) {
@@ -941,9 +941,11 @@ static InlineTextBox* searchAheadForBetterMatch(RenderObject* renderer)
                     minOffset = caretMinOffset;
                 }
             }
+            if (match)
+                return match;
         }
     }
-    return match;
+    return 0;
 }
 
 void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDirection, InlineBox*& inlineBox, int& caretOffset) const

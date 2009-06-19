@@ -1,3 +1,20 @@
+2009-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6967596> Safari hung using 100% CPU when I tried
+          to look up a word in Dictionary using command-control-d
+
+        Test: editing/selection/move-by-line-005.html
+
+        The root cause of this bug was searchAheadForBetterMatch() continuing
+        past the first rendered text object after the given object. While we
+        want to skip non-rendered text and empty containers, when we encounter
+        rendered text object, we must return a text box for that object.
+
+        * dom/Position.cpp:
+        (WebCore::searchAheadForBetterMatch):
+
 2009-06-19  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by David Levin

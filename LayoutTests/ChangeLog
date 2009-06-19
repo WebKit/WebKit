@@ -1,5 +1,15 @@
 2009-06-19  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - text for <rdar://problem/6967596> Safari hung using 100% CPU when I
+          tried to look up a word in Dictionary using command-control-d
+
+        * editing/selection/move-by-line-005-expected.txt: Added.
+        * editing/selection/move-by-line-005.html: Added.
+
+2009-06-19  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         - update test results after r44806
