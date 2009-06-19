@@ -1,3 +1,14 @@
+2009-06-19  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26543
+        Windows CE uses 'GetLastError' instead of 'errno.'
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile):
+        (JSC::RegisterFile::grow):
+
 2009-06-19  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (Windows build fix).
