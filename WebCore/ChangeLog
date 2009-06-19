@@ -1,3 +1,63 @@
+2009-06-19  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26460 part three
+        Make BMPImageReader a standalone class that is used by ICOImageDecoder
+        and BMPImageDecoder to decode individual BMPs within a file.  These
+        decoders now inherit directly from ImageDecoder.
+        
+        This also makes these decoders decode on-demand in isSizeAvailable() and
+        frameBufferAtIndex(), like the other decoders, instead of when setData()
+        is called, like before.  This should provide a speedup on pages
+        containing BMPs that aren't immediately onscreen.
+
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::BMPImageDecoder):
+        (WebCore::BMPImageDecoder::setData):
+        (WebCore::BMPImageDecoder::isSizeAvailable):
+        (WebCore::BMPImageDecoder::frameBufferAtIndex):
+        (WebCore::BMPImageDecoder::decodeWithCheckForDataEnded):
+        (WebCore::BMPImageDecoder::decode):
+        (WebCore::BMPImageDecoder::processFileHeader):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        (WebCore::BMPImageDecoder::readUint32):
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::BMPImageReader):
+        (WebCore::BMPImageReader::decodeBMP):
+        (WebCore::BMPImageReader::readInfoHeaderSize):
+        (WebCore::BMPImageReader::processInfoHeader):
+        (WebCore::BMPImageReader::readInfoHeader):
+        (WebCore::BMPImageReader::processBitmasks):
+        (WebCore::BMPImageReader::processColorTable):
+        (WebCore::BMPImageReader::processRLEData):
+        (WebCore::BMPImageReader::processNonRLEData):
+        (WebCore::BMPImageReader::setFailed):
+        * platform/image-decoders/bmp/BMPImageReader.h:
+        (WebCore::BMPImageReader::readUint16):
+        (WebCore::BMPImageReader::readUint32):
+        (WebCore::BMPImageReader::setBuffer):
+        (WebCore::BMPImageReader::setData):
+        (WebCore::BMPImageReader::):
+        (WebCore::BMPImageReader::pastEndOfImage):
+        (WebCore::BMPImageReader::readCurrentPixel):
+        (WebCore::BMPImageReader::setRGBA):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::ICOImageDecoder):
+        (WebCore::ICOImageDecoder::setData):
+        (WebCore::ICOImageDecoder::isSizeAvailable):
+        (WebCore::ICOImageDecoder::size):
+        (WebCore::ICOImageDecoder::frameBufferAtIndex):
+        (WebCore::ICOImageDecoder::decodeWithCheckForDataEnded):
+        (WebCore::ICOImageDecoder::decode):
+        (WebCore::ICOImageDecoder::processDirectory):
+        (WebCore::ICOImageDecoder::processDirectoryEntries):
+        (WebCore::ICOImageDecoder::readDirectoryEntry):
+        (WebCore::ICOImageDecoder::processImageType):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        (WebCore::ICOImageDecoder::readUint16):
+        (WebCore::ICOImageDecoder::readUint32):
+
 2009-06-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

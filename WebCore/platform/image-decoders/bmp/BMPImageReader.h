@@ -36,23 +36,13 @@
 
 namespace WebCore {
 
-    // This class decodes a BMP image.  It is used as a base for the BMP and ICO
-    // decoders, which wrap it in the appropriate code to read file headers, etc.
-    class BMPImageReader : public ImageDecoder {
+    // This class decodes a BMP image.  It is used in the BMP and ICO decoders,
+    // which wrap it in the appropriate code to read file headers, etc.
+    class BMPImageReader {
     public:
-        BMPImageReader();
-
-        // Does the actual decoding.  |data| starts at the beginning of the file,
-        // but may be incomplete.
-        virtual void decodeImage(SharedBuffer* data) = 0;
-
-        // ImageDecoder
-        virtual void setData(SharedBuffer* data, bool allDataReceived);
-        virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
-
         // Read a value from |data[offset]|, converting from little to native
         // endianness.
-        static inline uint16_t readUint16Helper(SharedBuffer* data, int offset)
+        static inline uint16_t readUint16(SharedBuffer* data, int offset)
         {
             uint16_t result;
             memcpy(&result, &data->data()[offset], 2);
@@ -62,7 +52,7 @@ namespace WebCore {
             return result;
         }
 
-        static inline uint32_t readUint32Helper(SharedBuffer* data, int offset)
+        static inline uint32_t readUint32(SharedBuffer* data, int offset)
         {
             uint32_t result;
             memcpy(&result, &data->data()[offset], 4);
@@ -73,33 +63,22 @@ namespace WebCore {
             return result;
         }
 
-    protected:
-        enum AndMaskState {
-            None,
-            NotYetDecoded,
-            Decoding,
-        };
+        // |parent| is the decoder that owns us.
+        // |startOffset| points to the start of the BMP within the file.
+        // |buffer| points at an empty RGBA32Buffer that we'll initialize and
+        // fill with decoded data.
+        BMPImageReader(ImageDecoder* parent,
+                       size_t decodedAndHeaderOffset,
+                       size_t imgDataOffset,
+                       bool usesAndMask);
 
-        // Does the actual decoding.  Returns whether decoding succeeded.
-        bool decodeBMP(SharedBuffer* data);
+        void setBuffer(RGBA32Buffer* buffer) { m_buffer = buffer; }
+        void setData(SharedBuffer* data) { m_data = data; }
 
-        // An index into |m_data| representing how much we've already decoded.
-        size_t m_decodedOffset;
-
-        // The file offset at which the BMP info header starts.
-        size_t m_headerOffset;
-
-        // The file offset at which the actual image bits start.  When decoding
-        // ICO files, this is set to 0, since it's not stored anywhere in a
-        // header; the reader functions expect the image data to start
-        // immediately after the header and (if necessary) color table.
-        size_t m_imgDataOffset;
-
-        // ICOs store a 1bpp "mask" immediately after the main bitmap image data
-        // (and, confusingly, add its height to the biHeight value in the info
-        // header, thus doubling it).  This variable tracks whether we have such
-        // a mask and if we've started decoding it yet.
-        AndMaskState m_andMaskState;
+        // Does the actual decoding.  If |onlySize| is true, decoding only
+        // progresses as far as necessary to get the image size.  Returns
+        // whether decoding succeeded.
+        bool decodeBMP(bool onlySize);
 
     private:
         // The various BMP compression types.  We don't currently decode all
@@ -116,6 +95,11 @@ namespace WebCore {
             // OS/2 2.x-only
             HUFFMAN1D,  // Stored in file as 3
             RLE24,      // Stored in file as 4
+        };
+        enum AndMaskState {
+            None,
+            NotYetDecoded,
+            Decoding,
         };
 
         // These are based on the Windows BITMAPINFOHEADER and RGBTRIPLE
@@ -134,27 +118,27 @@ namespace WebCore {
             uint8_t rgbRed;
         };
 
-        inline uint16_t readUint16(SharedBuffer* data, int offset) const
+        inline uint16_t readUint16(int offset) const
         {
-            return readUint16Helper(data, m_decodedOffset + offset);
+            return readUint16(m_data.get(), m_decodedOffset + offset);
         }
 
-        inline uint32_t readUint32(SharedBuffer* data, int offset) const
+        inline uint32_t readUint32(int offset) const
         {
-            return readUint32Helper(data, m_decodedOffset + offset);
+            return readUint32(m_data.get(), m_decodedOffset + offset);
         }
 
         // Determines the size of the BMP info header.  Returns true if the size
         // is valid.
-        bool getInfoHeaderSize(SharedBuffer* data);
+        bool readInfoHeaderSize();
 
         // Processes the BMP info header.  Returns true if the info header could
         // be decoded.
-        bool processInfoHeader(SharedBuffer* data);
+        bool processInfoHeader();
 
         // Helper function for processInfoHeader() which does the actual reading
         // of header values from the byte stream.  Returns false on error.
-        bool readInfoHeader(SharedBuffer* data);
+        bool readInfoHeader();
 
         // Returns true if this is a Windows V4+ BMP.
         inline bool isWindowsV4Plus() const
@@ -169,15 +153,15 @@ namespace WebCore {
         // For BI_BITFIELDS images, initializes the m_bitMasks[] and
         // m_bitOffsets[] arrays.  processInfoHeader() will initialize these for
         // other compression types where needed.
-        bool processBitmasks(SharedBuffer* data);
+        bool processBitmasks();
 
         // For paletted images, allocates and initializes the m_colorTable[]
         // array.
-        bool processColorTable(SharedBuffer* data);
+        bool processColorTable();
 
         // Processes an RLE-encoded image.  Returns true if the entire image was
         // decoded.
-        bool processRLEData(SharedBuffer* data);
+        bool processRLEData();
 
         // Processes a set of non-RLE-compressed pixels.  Two cases:
         //   * inRLE = true: the data is inside an RLE-encoded bitmap.  Tries to
@@ -188,7 +172,7 @@ namespace WebCore {
         //     beginning of the next row to be decoded.  Tries to process as
         //     many complete rows as possible.  Returns true if the whole image
         //     was decoded.
-        bool processNonRLEData(SharedBuffer* data, bool inRLE, int numPixels);
+        bool processNonRLEData(bool inRLE, int numPixels);
 
         // Returns true if the current y-coordinate plus |numRows| would be past
         // the end of the image.  Here "plus" means "toward the end of the
@@ -196,7 +180,7 @@ namespace WebCore {
         inline bool pastEndOfImage(int numRows)
         {
             return m_isTopDown
-                ? ((m_coord.y() + numRows) >= size().height())
+                ? ((m_coord.y() + numRows) >= m_parent->size().height())
                 : ((m_coord.y() - numRows) < 0);
         }
 
@@ -205,20 +189,19 @@ namespace WebCore {
         // row.
         // NOTE: Only as many bytes of the return value as are needed to hold
         // the pixel data will actually be set.
-        inline uint32_t readCurrentPixel(SharedBuffer* data, int bytesPerPixel) const
+        inline uint32_t readCurrentPixel(int bytesPerPixel) const
         {
-            const int additionalOffset = m_coord.x() * bytesPerPixel;
+            const int offset = m_coord.x() * bytesPerPixel;
             switch (bytesPerPixel) {
             case 2:
-                return readUint16(data, additionalOffset);
+                return readUint16(offset);
 
             case 3: {
                 // It doesn't matter that we never set the most significant byte
                 // of the return value here in little-endian mode, the caller
                 // won't read it.
                 uint32_t pixel;
-                memcpy(&pixel,
-                       &data->data()[m_decodedOffset + additionalOffset], 3);
+                memcpy(&pixel, &m_data->data()[m_decodedOffset + offset], 3);
         #if PLATFORM(BIG_ENDIAN)
                 pixel = ((pixel & 0xff00) << 8) | ((pixel & 0xff0000) >> 8) |
                     ((pixel & 0xff000000) >> 24);
@@ -227,7 +210,7 @@ namespace WebCore {
             }
 
             case 4:
-                return readUint32(data, additionalOffset);
+                return readUint32(offset);
 
             default:
                 ASSERT_NOT_REACHED();
@@ -268,7 +251,8 @@ namespace WebCore {
                             unsigned blue,
                             unsigned alpha)
         {
-            m_frameBufferCache.first().setRGBA(m_coord.x(), m_coord.y(), red, green, blue, alpha);
+            m_buffer->setRGBA(m_coord.x(), m_coord.y(), red, green, blue,
+                              alpha);
             m_coord.move(1, 0);
         }
 
@@ -290,6 +274,32 @@ namespace WebCore {
         // of the "next" row, where "next" is above or below the current row
         // depending on the value of |m_isTopDown|.
         void moveBufferToNextRow();
+
+        // Sets the "decode failure" flag and clears any local storage.  For
+        // caller convenience (since so many callers want to return false after
+        // calling this), returns false to enable easy tailcalling.
+        bool setFailed();
+
+        // The decoder that owns us.
+        ImageDecoder* m_parent;
+
+        // The destination for the pixel data.
+        RGBA32Buffer* m_buffer;
+
+        // The file to decode.
+        RefPtr<SharedBuffer> m_data;
+
+        // An index into |m_data| representing how much we've already decoded.
+        size_t m_decodedOffset;
+
+        // The file offset at which the BMP info header starts.
+        size_t m_headerOffset;
+
+        // The file offset at which the actual image bits start.  When decoding
+        // ICO files, this is set to 0, since it's not stored anywhere in a
+        // header; the reader functions expect the image data to start
+        // immediately after the header and (if necessary) color table.
+        size_t m_imgDataOffset;
 
         // The BMP info header.
         BitmapInfoHeader m_infoHeader;
@@ -341,6 +351,12 @@ namespace WebCore {
         // these are used.
         bool m_seenNonZeroAlphaPixel;
         bool m_seenZeroAlphaPixel;
+
+        // ICOs store a 1bpp "mask" immediately after the main bitmap image data
+        // (and, confusingly, add its height to the biHeight value in the info
+        // header, thus doubling it).  This variable tracks whether we have such
+        // a mask and if we've started decoding it yet.
+        AndMaskState m_andMaskState;
     };
 
 } // namespace WebCore

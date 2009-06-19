@@ -31,6 +31,9 @@
 #include "config.h"
 #include "ICOImageDecoder.h"
 
+#include "BMPImageReader.h"
+#include "PNGImageDecoder.h"
+
 namespace WebCore {
 
 // Number of bits in .ICO/.CUR used to store the directory and its entries,
@@ -40,44 +43,105 @@ static const size_t sizeOfDirectory = 6;
 static const size_t sizeOfDirEntry = 16;
 
 ICOImageDecoder::ICOImageDecoder(const IntSize& preferredIconSize)
-    : BMPImageReader()
+    : ImageDecoder()
+    , m_allDataReceived(false)
+    , m_decodedOffset(0)
     , m_preferredIconSize(preferredIconSize)
     , m_imageType(Unknown)
 {
-    m_andMaskState = NotYetDecoded;
+}
+
+void ICOImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
+{
+    if (failed())
+        return;
+
+    ImageDecoder::setData(data, allDataReceived);
+    m_allDataReceived = allDataReceived;
+    if (m_bmpReader)
+        m_bmpReader->setData(data);
+    if (m_pngDecoder) {
+        // Copy out PNG data to a separate vector and send to the PNG decoder.
+        // FIXME: Save this copy by making the PNG decoder able to take an
+        // optional offset.
+        RefPtr<SharedBuffer> pngData(
+            SharedBuffer::create(&m_data->data()[m_dirEntry.dwImageOffset],
+                                 m_data->size() - m_dirEntry.dwImageOffset));
+        m_pngDecoder->setData(pngData.get(), m_allDataReceived);
+    }
 }
 
 bool ICOImageDecoder::isSizeAvailable()
 {
+    if (!ImageDecoder::isSizeAvailable() && !failed())
+        decodeWithCheckForDataEnded(true);
+
     return (m_imageType == PNG) ?
-        m_pngDecoder.isSizeAvailable() : BMPImageReader::isSizeAvailable();
+        m_pngDecoder->isSizeAvailable() : ImageDecoder::isSizeAvailable();
 }
 
 IntSize ICOImageDecoder::size() const
 {
-    return (m_imageType == PNG) ? m_pngDecoder.size() : BMPImageReader::size();
+    return (m_imageType == PNG) ? m_pngDecoder->size() : ImageDecoder::size();
 }
 
-void ICOImageDecoder::decodeImage(SharedBuffer* data)
+RGBA32Buffer* ICOImageDecoder::frameBufferAtIndex(size_t index)
+{
+    if (index)
+        return 0;
+
+    if (m_imageType == Unknown)
+        decodeWithCheckForDataEnded(true);
+
+    if (m_imageType == PNG) {
+        m_frameBufferCache.clear();
+        return m_pngDecoder->frameBufferAtIndex(index);
+    }
+
+    if (m_frameBufferCache.isEmpty())
+        m_frameBufferCache.resize(1);
+
+    RGBA32Buffer* buffer = &m_frameBufferCache.first();
+    if (buffer->status() != RGBA32Buffer::FrameComplete && (m_imageType == BMP)
+        && !failed())
+        decodeWithCheckForDataEnded(false);
+    return buffer;
+}
+
+void ICOImageDecoder::decodeWithCheckForDataEnded(bool onlySize)
+{
+    if (failed())
+        return;
+
+    // If we couldn't decode the image but we've received all the data, decoding
+    // has failed.
+    if (!decode(onlySize) && m_allDataReceived)
+        setFailed();
+}
+
+bool ICOImageDecoder::decode(bool onlySize)
 {
     // Read and process directory.
-    if ((m_decodedOffset < sizeOfDirectory) && !processDirectory(data))
-        return;
+    if ((m_decodedOffset < sizeOfDirectory) && !processDirectory())
+        return false;
 
     // Read and process directory entries.
     if ((m_decodedOffset <
             (sizeOfDirectory + (m_directory.idCount * sizeOfDirEntry)))
-        && !processDirectoryEntries(data))
-        return;
+        && !processDirectoryEntries())
+        return false;
 
     // Get the image type.
-    if ((m_imageType == Unknown) && !processImageType(data))
-        return;
+    if ((m_imageType == Unknown) && !processImageType())
+        return false;
 
-    // Decode selected entry.
-    if (m_imageType == PNG)
-        decodePNG(data);
-    else {
+    // Create the appropriate image decoder if need be.
+    if ((m_imageType == PNG) ? !m_pngDecoder : !m_bmpReader) {
+        if (m_imageType == PNG)
+            m_pngDecoder.set(new PNGImageDecoder());
+        else
+            m_bmpReader.set(new BMPImageReader(this, m_decodedOffset, 0, true));
+
         // Note that we don't try to limit the bytes we give to the decoder to
         // just the size specified in the icon directory.  If the size given in
         // the directory is insufficient to decode the whole image, the image is
@@ -85,24 +149,28 @@ void ICOImageDecoder::decodeImage(SharedBuffer* data)
         // (which we do here) is to simply aggressively consume bytes until we
         // run out of bytes, finish decoding, or hit a sequence that makes the
         // decoder fail.
-        decodeBMP(data);
+        setData(m_data.get(), m_allDataReceived);
     }
+
+    // For PNGs, we're now done; further decoding will happen when calling
+    // isSizeAvailable() or frameBufferAtIndex() on the PNG decoder.
+    if (m_imageType == PNG)
+        return true;
+
+    if (!m_frameBufferCache.isEmpty())
+        m_bmpReader->setBuffer(&m_frameBufferCache.first());
+
+    return m_bmpReader->decodeBMP(onlySize);
 }
 
-RGBA32Buffer* ICOImageDecoder::frameBufferAtIndex(size_t index)
-{
-    return (m_imageType == PNG) ? m_pngDecoder.frameBufferAtIndex(0) :
-        BMPImageReader::frameBufferAtIndex(0);
-}
-
-bool ICOImageDecoder::processDirectory(SharedBuffer* data)
+bool ICOImageDecoder::processDirectory()
 {
     // Read directory.
     ASSERT(!m_decodedOffset);
-    if (data->size() < sizeOfDirectory)
+    if (m_data->size() < sizeOfDirectory)
         return false;
-    const uint16_t fileType = readUint16(data, 2);
-    m_directory.idCount = readUint16(data, 4);
+    const uint16_t fileType = readUint16(2);
+    m_directory.idCount = readUint16(4);
     m_decodedOffset = sizeOfDirectory;
 
     // See if this is an icon filetype we understand, and make sure we have at
@@ -118,16 +186,16 @@ bool ICOImageDecoder::processDirectory(SharedBuffer* data)
     return !failed();
 }
 
-bool ICOImageDecoder::processDirectoryEntries(SharedBuffer* data)
+bool ICOImageDecoder::processDirectoryEntries()
 {
     // Read directory entries.
     ASSERT(m_decodedOffset == sizeOfDirectory);
-    if ((m_decodedOffset > data->size())
-        || ((data->size() - m_decodedOffset) <
+    if ((m_decodedOffset > m_data->size())
+        || ((m_data->size() - m_decodedOffset) <
             (m_directory.idCount * sizeOfDirEntry)))
         return false;
     for (int i = 0; i < m_directory.idCount; ++i) {
-        const IconDirectoryEntry dirEntry = readDirectoryEntry(data);
+        const IconDirectoryEntry dirEntry = readDirectoryEntry();
         if ((i == 0) || isBetterEntry(dirEntry))
             m_dirEntry = dirEntry;
     }
@@ -143,30 +211,29 @@ bool ICOImageDecoder::processDirectoryEntries(SharedBuffer* data)
     }
 
     // Ready to decode the image at the specified offset.
-    m_decodedOffset = m_headerOffset = m_dirEntry.dwImageOffset;
+    m_decodedOffset = m_dirEntry.dwImageOffset;
     return true;
 }
 
-ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry(
-    SharedBuffer* data)
+ICOImageDecoder::IconDirectoryEntry ICOImageDecoder::readDirectoryEntry()
 {
     // Read icon data.
     IconDirectoryEntry entry;
-    entry.bWidth = static_cast<uint8_t>(data->data()[m_decodedOffset]);
+    entry.bWidth = static_cast<uint8_t>(m_data->data()[m_decodedOffset]);
     if (entry.bWidth == 0)
         entry.bWidth = 256;
-    entry.bHeight = static_cast<uint8_t>(data->data()[m_decodedOffset + 1]);
+    entry.bHeight = static_cast<uint8_t>(m_data->data()[m_decodedOffset + 1]);
     if (entry.bHeight == 0)
         entry.bHeight = 256;
-    entry.wBitCount = readUint16(data, 6);
-    entry.dwImageOffset = readUint32(data, 12);
+    entry.wBitCount = readUint16(6);
+    entry.dwImageOffset = readUint32(12);
 
     // Some icons don't have a bit depth, only a color count.  Convert the
     // color count to the minimum necessary bit depth.  It doesn't matter if
     // this isn't quite what the bitmap info header says later, as we only use
     // this value to determine which icon entry is best.
     if (!entry.wBitCount) {
-        uint8_t colorCount = data->data()[m_decodedOffset + 2];
+        uint8_t colorCount = m_data->data()[m_decodedOffset + 2];
         if (colorCount) {
             for (--colorCount; colorCount; colorCount >>= 1)
                 ++entry.wBitCount;
@@ -207,42 +274,17 @@ bool ICOImageDecoder::isBetterEntry(const IconDirectoryEntry& entry) const
     return (entry.wBitCount > m_dirEntry.wBitCount);
 }
 
-bool ICOImageDecoder::processImageType(SharedBuffer* data)
+bool ICOImageDecoder::processImageType()
 {
     // Check if this entry is a BMP or a PNG; we need 4 bytes to check the magic
     // number.
     ASSERT(m_decodedOffset == m_dirEntry.dwImageOffset);
-    if ((m_decodedOffset > data->size())
-        || ((data->size() - m_decodedOffset) < 4))
+    if ((m_decodedOffset > m_data->size())
+        || ((m_data->size() - m_decodedOffset) < 4))
         return false;
     m_imageType =
-        strncmp(&data->data()[m_decodedOffset], "\x89PNG", 4) ? BMP : PNG;
+        strncmp(&m_data->data()[m_decodedOffset], "\x89PNG", 4) ? BMP : PNG;
     return true;
-}
-
-void ICOImageDecoder::decodePNG(SharedBuffer* data)
-{
-    // Copy out PNG data to a separate vector and instantiate PNG decoder.
-    // It would be nice to save this copy, if I could figure out how to just
-    // offset the perceived start of |data| by |m_dirEntry.dwImageOffset| when
-    // passing it to setData()...
-    RefPtr<SharedBuffer> pngData(
-        SharedBuffer::create(&data->data()[m_dirEntry.dwImageOffset],
-                             data->size() - m_dirEntry.dwImageOffset));
-    m_pngDecoder.setData(pngData.get(), true);
-
-    // Decode PNG as a side effect of asking for the frame.  Strangely, it's
-    // seemingly unsafe to call decode() or isSizeAvailable() before calling
-    // this, as this is the only function that enlarges the framebuffer to
-    // nonzero size, and before this happens any decoded image data is silently
-    // thrown away and never decoded again (!).
-    m_pngDecoder.frameBufferAtIndex(0);
-    m_failed = m_pngDecoder.failed();
-
-    // Sanity-check that the size is what we expected.
-    if (isSizeAvailable() && ((size().width() != m_dirEntry.bWidth) ||
-            (size().height() != m_dirEntry.bHeight)))
-        m_failed = true;
 }
 
 }
