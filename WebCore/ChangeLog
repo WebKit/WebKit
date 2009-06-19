@@ -1,3 +1,17 @@
+2009-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6988385> REGRESSION: In full page video player, movie's
+        video track becomes detached from its controller.
+        
+        When in the media document, the MediaPlayer should not report that it
+        is capable of hardware acceleration, because it renders via a QTMovieView
+        which is already accelerated.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::supportsAcceleratedRendering):
+
 2009-06-19  Kevin Ollivier  <kevino@theolliviers.com>
 
         Adding XSSAuditor.cpp to the wx build.

@@ -1246,7 +1246,8 @@ void MediaPlayerPrivate::sawUnsupportedTracks()
 #if USE(ACCELERATED_COMPOSITING)
 bool MediaPlayerPrivate::supportsAcceleratedRendering() const
 {
-    return getQTMovieLayerClass() != Nil;
+    // When in the media document we render via QTMovieView, which is already accelerated.
+    return getQTMovieLayerClass() != Nil && !m_player->inMediaDocument();
 }
 
 void MediaPlayerPrivate::acceleratedRenderingStateChanged()
