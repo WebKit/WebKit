@@ -40,6 +40,7 @@ namespace WebCore {
 
 ScriptCallStack::ScriptCallStack(const v8::Arguments& arguments, unsigned skipArgumentCount)
     : m_lastCaller(String(), V8Proxy::GetSourceName(), V8Proxy::GetSourceLineNumber() + 1, arguments, skipArgumentCount)
+    , m_scriptState(new ScriptState(V8Proxy::retrieveFrame()))
 {
 }
 

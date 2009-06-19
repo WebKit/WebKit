@@ -35,6 +35,7 @@
 #include "ScriptState.h"
 #include "ScriptValue.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 
 namespace v8 {
     class Arguments;
@@ -51,10 +52,10 @@ namespace WebCore {
         // FIXME: implement retrieving and storing call stack trace
         unsigned size() const { return 1; }
 
-        // FIXME: This method is obviously not implemented.
-        ScriptState* state() const { return 0; }
+        ScriptState* state() const { return m_scriptState.get(); }
 
     private:
+        OwnPtr<ScriptState> m_scriptState;
         ScriptCallFrame m_lastCaller;
     };
 
