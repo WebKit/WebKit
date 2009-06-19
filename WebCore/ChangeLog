@@ -1,3 +1,15 @@
+2009-06-19  Chris Evans  <scarybeasts@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        There is no new test because this cannot be tested deterministically.
+        I've not been able to cause a crash at all in the test framework, but
+        I have verified that this is happening in the wild and that the patch
+        fixes the likely cause in the debugger.
+
+        * loader/TextResourceDecoder.cpp: careful not to iterate off the end
+          of our input buffer looking for the end of the comment.
+
 2009-06-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
