@@ -1,3 +1,16 @@
+2009-06-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/6988973> ScopeChain leak in interpreter builds
+
+        Move the Scopechain destruction code in JSFunction outside of the ENABLE(JIT)
+        path.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::~JSFunction):
+        * wtf/Platform.h:
+
 2009-06-19  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by George Staikos.

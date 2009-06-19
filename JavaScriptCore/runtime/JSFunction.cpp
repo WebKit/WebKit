@@ -78,9 +78,9 @@ JSFunction::~JSFunction()
     // this memory is freed and may be reused (potentially for another, different JSFunction).
     if (m_body && m_body->isGenerated())
         m_body->generatedBytecode().unlinkCallers();
+#endif
     if (!isHostFunction())
         scopeChain().~ScopeChain();
-#endif
 }
 
 void JSFunction::mark()
