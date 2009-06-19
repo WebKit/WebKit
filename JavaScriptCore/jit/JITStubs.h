@@ -182,6 +182,7 @@ namespace JSC {
 #endif
 
     extern "C" void ctiVMThrowTrampoline();
+    extern "C" void ctiOpThrowNotCaught();
     extern "C" EncodedJSValue ctiTrampoline(
 #if PLATFORM(X86_64)
             // FIXME: (bug #22910) this will force all arguments onto the stack (regparm(0) does not appear to have any effect).

@@ -1,3 +1,27 @@
+2009-06-18  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Mark Rowe (originally reviewed by Sam Weinig).
+
+        (Reintroducing patch added in r44492, and reverted in r44796.)
+
+        Change the implementation of op_throw so the stub function always modifies its
+        return address - if it doesn't find a 'catch' it will switch to a trampoline
+        to force a return from JIT execution.  This saves memory, by avoiding the need
+        for a unique return for every op_throw.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw):
+            JITStubs::cti_op_throw now always changes its return address,
+            remove return code generated after the stub call (this is now
+            handled by ctiOpThrowNotCaught).
+        * jit/JITStubs.cpp:
+        (JSC::):
+            Add ctiOpThrowNotCaught definitions.
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+            Change cti_op_throw to always change its return address.
+        * jit/JITStubs.h:
+            Add ctiOpThrowNotCaught declaration.
+
 2009-06-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver Hunt.

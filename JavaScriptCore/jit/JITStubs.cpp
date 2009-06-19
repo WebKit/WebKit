@@ -77,7 +77,7 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x38, JITStackFrame_
 COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x30, JITStackFrame_code_offset_matches_ctiTrampoline);
 COMPILE_ASSERT(offsetof(struct JITStackFrame, savedEBX) == 0x1c, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
-asm(
+asm volatile (
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushl %ebp" "\n"
@@ -97,13 +97,24 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "ret" "\n"
 );
 
-asm(
+asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 #if !USE(JIT_STUB_ARGUMENT_VA_LIST)
     "movl %esp, %ecx" "\n"
 #endif
     "call " SYMBOL_STRING(cti_vm_throw) "\n"
+    "addl $0x1c, %esp" "\n"
+    "popl %ebx" "\n"
+    "popl %edi" "\n"
+    "popl %esi" "\n"
+    "popl %ebp" "\n"
+    "ret" "\n"
+);
+    
+asm volatile (
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "addl $0x1c, %esp" "\n"
     "popl %ebx" "\n"
     "popl %edi" "\n"
@@ -124,7 +135,7 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x90, JITStackFrame_
 COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x80, JITStackFrame_code_offset_matches_ctiTrampoline);
 COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x48, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
-asm(
+asm volatile (
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushq %rbp" "\n"
@@ -150,11 +161,24 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "ret" "\n"
 );
 
-asm(
+asm volatile (
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movq %rsp, %rdi" "\n"
     "call " SYMBOL_STRING(cti_vm_throw) "\n"
+    "addq $0x48, %rsp" "\n"
+    "popq %rbx" "\n"
+    "popq %r15" "\n"
+    "popq %r14" "\n"
+    "popq %r13" "\n"
+    "popq %r12" "\n"
+    "popq %rbp" "\n"
+    "ret" "\n"
+);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "addq $0x48, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r15" "\n"
@@ -182,7 +206,7 @@ COMPILE_ASSERT(offsetof(struct JITStackFrame, exception) == 0x38, JITStackFrame_
 // The fifth argument is the first item already on the stack.
 COMPILE_ASSERT(offsetof(struct JITStackFrame, enabledProfilerReference) == 0x3c, JITStackFrame_enabledProfilerReference_offset_matches_ctiTrampoline);
 
-asm volatile  (
+asm volatile (
 ".text" "\n"
 ".align 2" "\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
@@ -289,6 +313,18 @@ extern "C" {
             ret;
         }
     }
+     
+     __declspec(naked) void ctiOpThrowNotCaught()
+     {
+         __asm {
+             add esp, 0x1c;
+             pop ebx;
+             pop edi;
+             pop esi;
+             pop ebp;
+             ret;
+         }
+     }
 }
 
 #endif
@@ -2312,6 +2348,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_throw)
 
     if (!handler) {
         *stackFrame.exception = exceptionValue;
+        STUB_SET_RETURN_ADDRESS(reinterpret_cast<void*>(ctiOpThrowNotCaught));
         return JSValue::encode(jsNull());
     }
 
