@@ -1,5 +1,12 @@
 2009-06-18  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (Windows build fix).
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateUTCOffset):
+
+2009-06-18  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         Timezone calculation incorrect in Venezuela.
