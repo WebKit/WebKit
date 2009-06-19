@@ -1,0 +1,47 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+ 
+    <!-- This test makes sure that tables that are not exposed as tables do not have title ui elements incorrectly set  -->
+
+<TABLE>
+<tbody><tr><td colspan="6"><h2>ATS</h2></td></tr>
+<tr>
+<th>pass</th>
+<th>issue</th>
+<th>fail</th>
+<th>blocked</th>
+<th>skip</th>
+<th>test</th>
+</tr>
+</tbody>
+</tABLE>
+    
+    <div id="result"></div>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var pass = document.getElementById("body");
+            body.focus();
+            // get the <th>skip</th> element
+            var group = accessibilityController.focusedElement.childAtIndex(5);
+            var titleUI = group.titleUIElement();
+            var allAttributes = titleUI.allAttributes();
+
+            // verify it has no title ui element           
+            if (!allAttributes) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -134,6 +134,12 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     // case when the table is not appearing as an AXTable.)
     if (isTableCell() || !m_renderer || !m_renderer->isTableCell())
         return 0;
+
+    // Table cells that are th cannot have title ui elements, since by definition
+    // they are title ui elements
+    Node* node = m_renderer->node();
+    if (node && node->hasTagName(thTag))
+        return 0;
     
     RenderTableCell* renderCell = static_cast<RenderTableCell*>(m_renderer);
 

@@ -1,3 +1,15 @@
+2009-06-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 26522: In DOM mode, VoiceOver reads some mouseover text on web sites strangely
+        https://bugs.webkit.org/show_bug.cgi?id=26522
+
+        Test: accessibility/non-data-table-cell-title-ui-element.html
+
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::titleUIElement):
+
 2009-06-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix after recent RenderTheme changes.

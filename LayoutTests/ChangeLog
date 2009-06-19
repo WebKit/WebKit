@@ -1,3 +1,14 @@
+2009-06-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for Bug 26522: In DOM mode, VoiceOver reads some mouseover text on web sites strangely.
+        Strangely the layout output for another test changed, but the actual test was ok.
+
+        * accessibility/non-data-table-cell-title-ui-element-expected.txt: Added.
+        * accessibility/non-data-table-cell-title-ui-element.html: Added.
+        * platform/mac/accessibility/table-multi-bodies-expected.txt:
+
 2009-06-18  Ryosuke Niwa  <rniwa@google.com>
 
         Reviewed by Eric Seidel.
