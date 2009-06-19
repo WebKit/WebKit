@@ -1,3 +1,19 @@
+2009-06-18  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 26426: Canvas: rotation of 'no-repeat' pattern is weird
+        <https://bugs.webkit.org/show_bug.cgi?id=26426>
+
+        Use 1<<23-1 as steps of no-repeat patterns instead of 100000000.0f.
+        The original number cannot be represented by mantissa of float
+        (23bit) so that it caused some error.
+
+        Test: fast/canvas/image-object-in-canvas.html:
+
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+
 2009-06-19  abarth  <abarth@webkit.org>
 
         Unreviewed attempt to fix the Chromium build.

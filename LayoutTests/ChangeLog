@@ -1,3 +1,18 @@
+2009-06-18  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26426
+
+        Use 1<<23-1 as steps of no-repeat patterns instead of 100000000.0f.
+        The original number cannot be represented by mantissa of float
+        (23bit) so that it caused some error.
+
+        * fast/canvas/image-object-in-canvas.html:
+        * platform/mac/fast/canvas/image-object-in-canvas-expected.checksum:
+        * platform/mac/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/mac/fast/canvas/image-object-in-canvas-expected.txt:
+
 2009-06-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

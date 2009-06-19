@@ -1,22 +1,26 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x543
-  RenderBlock {HTML} at (0,0) size 800x543
-    RenderBody {BODY} at (8,16) size 784x514
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 779x36
-          text run at (0,0) width 779: "This tests that the Image JavaScript object works as expected when used in a canvas. If the test is successful, the Apple logo"
-          text run at (0,18) width 354: "should appear scaled, normal and finally tiled in a circle."
-      RenderBlock {DIV} at (0,52) size 784x154
+layer at (0,0) size 785x697
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x697
+  RenderBlock {HTML} at (0,0) size 785x697
+    RenderBody {BODY} at (8,16) size 769x668
+      RenderBlock {P} at (0,0) size 769x36
+        RenderText {#text} at (0,0) size 747x36
+          text run at (0,0) width 747: "This tests that the Image JavaScript object works as expected when used in a canvas. If the test is successful, the Apple"
+          text run at (0,18) width 386: "logo should appear scaled, normal and finally tiled in a circle."
+      RenderBlock {DIV} at (0,52) size 769x154
         RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
         RenderText {#text} at (150,136) size 117x18
           text run at (150,136) width 117: "Using drawImage."
-      RenderBlock {DIV} at (0,206) size 784x154
+      RenderBlock {DIV} at (0,206) size 769x154
         RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
         RenderText {#text} at (150,136) size 180x18
           text run at (150,136) width 180: "Using drawImageFromRect."
-      RenderBlock {DIV} at (0,360) size 784x154
+      RenderBlock {DIV} at (0,360) size 769x154
         RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
         RenderText {#text} at (150,136) size 129x18
           text run at (150,136) width 129: "Using ImagePattern."
-      RenderBlock {PRE} at (0,527) size 784x0
+      RenderBlock {DIV} at (0,514) size 769x154
+        RenderHTMLCanvas {CANVAS} at (0,0) size 150x150
+        RenderText {#text} at (150,136) size 208x18
+          text run at (150,136) width 208: "Using ImagePattern and rotation."
+      RenderBlock {PRE} at (0,681) size 769x0

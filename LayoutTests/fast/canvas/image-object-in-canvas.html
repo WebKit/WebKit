@@ -26,7 +26,15 @@ function imageLoaded() {
     c3.fillStyle = pattern;
     c3.arc(75, 75, 60, 0, 2*Math.PI, 0);
     c3.fill();
-    
+
+    var c4 = getContext('canvas4');
+    var pattern = c4.createPattern(i, 'no-repeat');
+    c4.fillStyle = pattern;
+    c4.translate(i.width / 2, i.height / 2);
+    c4.rotate(40.0 / 180 * Math.PI);
+    c4.translate(- i.width / 2, - i.height / 2);
+    c4.fillRect(0, 0, i.width, i.height);
+
     if (window.layoutTestController) { 
         layoutTestController.notifyDone();
     }
@@ -49,6 +57,7 @@ function runTests() {
 <div><canvas id="canvas1" width="150" height="150"></canvas>Using drawImage.</div>
 <div><canvas id="canvas2" width="150" height="150"></canvas>Using drawImageFromRect.</div>
 <div><canvas id="canvas3" width="150" height="150"></canvas>Using ImagePattern.</div>
+<div><canvas id="canvas4" width="150" height="150"></canvas>Using ImagePattern and rotation.</div>
 
 <pre id="console">
 </pre>
