@@ -1,3 +1,17 @@
+2009-06-19  Daniel Teske <qt-info@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Remove warnings for QString() constructions from const char *
+
+        By explicitly wrapping it with QLatin1String() / QLatin1Char()
+
+        * Api/qwebelement.cpp:
+        (QWebElement::classes): Use QLatin1String.
+        (QWebElement::addClass): Ditto.
+        (QWebElement::removeClass): Ditto.
+        (QWebElement::toggleClass): Ditto.
+
 2009-06-18  Friedemann Kleint  <Friedemann.Kleint@nokia.com>
 
         Reviewed by Simon Hausmann.
