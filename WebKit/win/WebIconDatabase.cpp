@@ -32,6 +32,7 @@
 #include "WebPreferences.h"
 #include "WebNotificationCenter.h"
 #pragma warning(push, 0)
+#include <WebCore/BitmapInfo.h>
 #include <WebCore/BString.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
@@ -262,18 +263,10 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::setEnabled(
 
 HBITMAP createDIB(LPSIZE size)
 {
-    HBITMAP result;
-
-    BITMAPINFO bmInfo = {0};
-    bmInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmInfo.bmiHeader.biWidth = size->cx;
-    bmInfo.bmiHeader.biHeight = size->cy;
-    bmInfo.bmiHeader.biPlanes = 1;
-    bmInfo.bmiHeader.biBitCount = 32;
-    bmInfo.bmiHeader.biCompression = BI_RGB;
+    BitmapInfo bmInfo = BitmapInfo::create(IntSize(*size));
 
     HDC dc = GetDC(0);
-    result = CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
+    HBITMAP result = CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
     ReleaseDC(0, dc);
 
     return result;

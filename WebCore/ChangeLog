@@ -1,3 +1,18 @@
+2009-06-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Dave Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26425
+        Final refactorings, picking up a few places where BitmapInfo
+        could be used.
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect):
+        * platform/win/CursorWin.cpp:
+        (WebCore::Cursor::Cursor):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::paint):
+
 2009-06-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

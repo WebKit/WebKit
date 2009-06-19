@@ -27,6 +27,7 @@
 #include "config.h"
 #include "Cursor.h"
 
+#include "BitmapInfo.h"
 #include "Image.h"
 #include "IntPoint.h"
 
@@ -54,13 +55,8 @@ static inline bool supportsAlphaCursors()
 Cursor::Cursor(Image* img, const IntPoint& hotspot) 
 { 
     static bool doAlpha = supportsAlphaCursors();
-    BITMAPINFO cursorImage = {0};
-    cursorImage.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    cursorImage.bmiHeader.biWidth = img->width();
-    cursorImage.bmiHeader.biHeight = img->height();
-    cursorImage.bmiHeader.biPlanes = 1;
-    cursorImage.bmiHeader.biBitCount = 32;
-    cursorImage.bmiHeader.biCompression = BI_RGB;
+    BitmapInfo cursorImage = BitmapInfo::create(IntSize(img->width(), img->height()));
+
     HDC dc = GetDC(0);
     HDC workingDC = CreateCompatibleDC(dc);
     if (doAlpha) {

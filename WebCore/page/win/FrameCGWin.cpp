@@ -55,7 +55,7 @@ static HBITMAP imageFromRect(const Frame* frame, IntRect& ir)
     HDC hdc = CreateCompatibleDC(0);
     int w = ir.width();
     int h = ir.height();
-    BITMAPINFO bmp = { { sizeof(BITMAPINFOHEADER), w, h, 1, 32 } };
+    BitmapInfo bmp = BitmapInfo::create(IntSize(w, h));
 
     HBITMAP hbmp = CreateDIBSection(0, &bmp, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0);
     HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc, hbmp));

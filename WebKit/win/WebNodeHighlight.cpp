@@ -31,6 +31,7 @@
 
 #include "WebView.h"
 #pragma warning(push, 0)
+#include <WebCore/BitmapInfo.h>
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
@@ -146,18 +147,7 @@ void WebNodeHighlight::update()
     size.cx = webViewRect.right - webViewRect.left;
     size.cy = webViewRect.bottom - webViewRect.top;
 
-    BITMAPINFO bitmapInfo;
-    bitmapInfo.bmiHeader.biSize          = sizeof(BITMAPINFOHEADER);
-    bitmapInfo.bmiHeader.biWidth         = size.cx;
-    bitmapInfo.bmiHeader.biHeight        = -size.cy;
-    bitmapInfo.bmiHeader.biPlanes        = 1;
-    bitmapInfo.bmiHeader.biBitCount      = 32;
-    bitmapInfo.bmiHeader.biCompression   = BI_RGB;
-    bitmapInfo.bmiHeader.biSizeImage     = 0;
-    bitmapInfo.bmiHeader.biXPelsPerMeter = 0;
-    bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
-    bitmapInfo.bmiHeader.biClrUsed       = 0;
-    bitmapInfo.bmiHeader.biClrImportant  = 0;
+    BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(size));
 
     void* pixels = 0;
     OwnPtr<HBITMAP> hbmp(::CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));

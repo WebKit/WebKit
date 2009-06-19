@@ -452,7 +452,7 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
         }
     }
     if (!m_bmp) {
-        BITMAPINFO bitmapInfo = BitmapInfo::createBottomUp(clientRect().size());
+        BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(clientRect().size());
 
         void* pixels = 0;
         m_bmp = ::CreateDIBSection(m_DC, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
