@@ -1,3 +1,11 @@
+2009-06-15  Andre Pedralho  <andre.pedralho@openbossa.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Only pass --makeargs along if an argument is given.
+
+        * Scripts/build-webkit:
+
 2009-06-19  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempt to fix Windows build.

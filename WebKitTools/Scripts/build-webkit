@@ -42,7 +42,7 @@ chdirWebKit();
 
 my $showHelp = 0;
 my $clean = 0;
-my $makeArgs = "";
+my $makeArgs;
 
 my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $domStorageSupport,
     $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
@@ -211,7 +211,7 @@ if (isGtk()) {
         push @options, autotoolsFlag(${$_->{value}}, $_->{option});
     }
 
-    push @options, "--makeargs=" . $makeArgs;
+    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
 } elsif (isAppleMacWebKit()) {
     push @options, XcodeOptions();
 
@@ -282,7 +282,7 @@ if (isGtk()) {
     (system("perl WebKitTools/Scripts/update-webkit-support-libs") == 0) or die;
 } elsif (isQt()) {
     @options = @ARGV;
-    push @options, "--makeargs=" . $makeArgs;
+    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
 
     foreach (@features) {
         push @options, "DEFINES+=$_->{define}=${$_->{value}}" if ${$_->{value}} != $_->{default};
