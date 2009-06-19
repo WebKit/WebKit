@@ -749,6 +749,7 @@ This file contains the list of files needed to build WebCore.
         page/SecurityOrigin.cpp
         page/Settings.cpp
         page/WindowFeatures.cpp
+        page/XSSAuditor.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_PLATFORM">
