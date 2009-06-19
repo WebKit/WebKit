@@ -1,3 +1,11 @@
+2009-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - update test results after r44806
+
+        * platform/mac/fast/replaced/width100percent-searchfield-expected.txt:
+
 2009-06-18  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Oliver Hunt.
