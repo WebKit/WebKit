@@ -1,3 +1,10 @@
+2009-06-19  Chris Marrin  <cmarrin@apple.com>
+
+        Fixed a build error, which only shows up in the i386 compile
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::animateTransform):
+
 2009-06-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Oliver Hunt.

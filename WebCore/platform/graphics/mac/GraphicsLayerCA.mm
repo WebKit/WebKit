@@ -1006,7 +1006,8 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
             }
         } else {
             // Is a transition
-            id fromValue, toValue;
+            id fromValue = 0;
+            id toValue = 0;
             
             if (isMatrixAnimation) {
                 TransformationMatrix fromt, tot;
