@@ -1,3 +1,14 @@
+2009-06-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Check the feMerge implementation.
+
+        * platform/mac/svg/filters/feMerge-expected.checksum: Added.
+        * platform/mac/svg/filters/feMerge-expected.png: Added.
+        * platform/mac/svg/filters/feMerge-expected.txt: Added.
+        * svg/filters/feMerge.svg: Added.
+
 2009-06-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

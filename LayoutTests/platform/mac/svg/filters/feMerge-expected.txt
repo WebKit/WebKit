@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,10) size 550x150
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderPath {rect} at (10,10) size 150x150 [fill={[type=SOLID] [color=#000000]}] [filter=filter_1] [data="M10.00,10.00 L160.00,10.00 L160.00,160.00 L10.00,160.00 Z"]
+    RenderPath {rect} at (210,10) size 150x150 [fill={[type=SOLID] [color=#000000]}] [filter=filter_2] [data="M210.00,10.00 L360.00,10.00 L360.00,160.00 L210.00,160.00 Z"]
+    RenderPath {rect} at (410,10) size 150x150 [fill={[type=SOLID] [color=#000000]}] [filter=filter_3] [data="M410.00,10.00 L560.00,10.00 L560.00,160.00 L410.00,160.00 Z"]
