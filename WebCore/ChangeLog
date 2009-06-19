@@ -1,3 +1,33 @@
+2009-06-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        An additional fix for Bug 26532: Native functions do not correctly unlink
+        from optimised callsites when they're collected
+        <https://bugs.webkit.org/show_bug.cgi?id=26532> | <rdar://problem/6625385>
+
+        Use "NativeFunctionWrapper" instead of "PrototypeFunction" in cross-frame
+        accessors, so the type of object you get to wrap a function is the same,
+        regardless of whether the access to the function is cross-frame.
+        
+        This is faster and more idiomatic than what we had before. It also would
+        have avoided Bug 26532 because it would have prevented a conflicting
+        PrototypeFunction from being allocated to wrap postMessage, where a
+        NativeFunctionWrapper had been allocated previously.
+        
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::objectToStringFunctionGetter):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::nonCachingStaticFunctionGetter):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::nonCachingStaticBackFunctionGetter):
+        (WebCore::nonCachingStaticForwardFunctionGetter):
+        (WebCore::nonCachingStaticGoFunctionGetter):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::nonCachingStaticReplaceFunctionGetter):
+        (WebCore::nonCachingStaticReloadFunctionGetter):
+        (WebCore::nonCachingStaticAssignFunctionGetter):
+
 2009-06-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by John Sullivan

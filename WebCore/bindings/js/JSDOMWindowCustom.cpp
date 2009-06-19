@@ -99,7 +99,7 @@ void JSDOMWindow::mark()
 template<NativeFunction nativeFunction, int length>
 JSValue nonCachingStaticFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {
-    return new (exec) PrototypeFunction(exec, length, propertyName, nativeFunction);
+    return new (exec) NativeFunctionWrapper(exec, exec->lexicalGlobalObject()->prototypeFunctionStructure(), length, propertyName, nativeFunction);
 }
 
 static JSValue childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
