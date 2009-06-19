@@ -1,3 +1,11 @@
+2009-06-19  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Add FastAllocBase.h to JavaScriptGlue's ForwardingHeaders/wtf, because it's needed by HashCountedSet.h on MAC.
+
+        * ForwardingHeaders/wtf/FastAllocBase.h: Added.
+
 2009-06-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Anders Carlsson.
