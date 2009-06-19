@@ -49,6 +49,7 @@ namespace WebCore {
     class ScriptState;
     class String;
     class Widget;
+    class XSSAuditor;
 
     class ScriptController {
     public:
@@ -80,6 +81,8 @@ namespace WebCore {
         ScriptController* windowShell() { return this; }
 
         ScriptState* state() const { return m_scriptState.get(); }
+
+        XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
 
         void collectGarbage();
 
@@ -160,6 +163,8 @@ namespace WebCore {
 #if ENABLE(NETSCAPE_PLUGIN_API)
         NPObject* m_windowScriptNPObject;
 #endif
+        // The XSSAuditor associated with this ScriptController.
+        OwnPtr<XSSAuditor> m_XSSAuditor;
     };
 
 } // namespace WebCore

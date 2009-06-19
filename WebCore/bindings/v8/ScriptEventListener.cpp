@@ -34,6 +34,7 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "Frame.h"
+#include "XSSAuditor.h"
 
 namespace WebCore {
 
@@ -46,6 +47,11 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
     if (!frame)
         return 0;
 
+    if (!frame->script()->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
+        // This script is not safe to execute.
+        return 0;
+    }
+
     return V8LazyEventListener::create(frame, attr->value(), attr->localName().string(), node->isSVGElement());
 }
 
@@ -53,6 +59,11 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
 {
     if (!frame)
         return 0;
+
+    if (!frame->script()->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
+        // This script is not safe to execute.
+        return 0;
+    }
 
     return V8LazyEventListener::create(frame, attr->value(), attr->localName().string(), frame->document()->isSVGDocument());
 }

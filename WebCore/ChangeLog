@@ -1,3 +1,15 @@
+2009-06-19  abarth  <abarth@webkit.org>
+
+        Unreviewed attempt to fix the Chromium build.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::evaluate):
+        * bindings/v8/ScriptController.h:
+        (WebCore::ScriptController::xssAuditor):
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+
 2009-06-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
