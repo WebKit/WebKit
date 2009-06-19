@@ -157,6 +157,7 @@ EXPORTS
     ?isBusy@Heap@JSC@@QAE_NXZ
     ?isDynamicScope@JSGlobalObject@JSC@@UBE_NXZ
     ?isGetterSetter@JSCell@JSC@@UBE_NXZ
+    ?isHostFunction@FunctionBodyNode@JSC@@QBE_NXZ
     ?isMainThread@WTF@@YA_NXZ
     ?isVariableObject@JSVariableObject@JSC@@UBE_NXZ
     ?jsAPIMangledNumber@JSC@@YA?AVJSValue@1@PAVExecState@1@N@Z
