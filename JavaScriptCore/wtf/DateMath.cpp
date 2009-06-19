@@ -361,13 +361,23 @@ int equivalentYearForDST(int year)
 
 static int32_t calculateUTCOffset()
 {
+    time_t localTime = time(0);
     tm localt;
-    memset(&localt, 0, sizeof(localt));
- 
-    // get the difference between this time zone and UTC on Jan 01, 2000 12:00:00 AM
+    getLocalTime(&localTime, &localt);
+
+    // Get the difference between this time zone and UTC on the 1st of January of this year.
+    localt.tm_sec = 0;
+    localt.tm_min = 0;
+    localt.tm_hour = 0;
     localt.tm_mday = 1;
-    localt.tm_year = 100;
-    time_t utcOffset = 946684800 - mktime(&localt);
+    localt.tm_mon = 0;
+    // Not setting localt.tm_year!
+    localt.tm_wday = 0;
+    localt.tm_yday = 0;
+    localt.tm_isdst = 0;
+    localt.tm_zone = 0;
+    localt.tm_gmtoff = 0;
+    time_t utcOffset = timegm(&localt) - mktime(&localt);
 
     return static_cast<int32_t>(utcOffset * 1000);
 }
