@@ -1,3 +1,14 @@
+2009-06-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by John Sullivan
+
+        <rdar://problem/6953673> Crash in RenderLayerCompositor::setCompositingParent
+        
+        Fix a crash that could occur in complex content due to timing issues
+        when doing a partial layer tree rebuild which is required when painting;
+        setCompositingParent() could be called with a parent which has not been made
+        compositing yet.
+
 2009-06-19  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Build fix. Adding missing HTMLDataGrid* files to the build.

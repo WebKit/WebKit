@@ -436,8 +436,13 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
 void RenderLayerCompositor::setCompositingParent(RenderLayer* childLayer, RenderLayer* parentLayer)
 {
     ASSERT(childLayer->isComposited());
-    ASSERT(!parentLayer || parentLayer->isComposited());
-    
+
+    // It's possible to be called with a parent that isn't yet composited when we're doing
+    // partial updates as required by painting or hit testing. Just bail in that case;
+    // we'll do a full layer update soon.
+    if (!parentLayer || !parentLayer->isComposited())
+        return;
+
     if (parentLayer) {
         GraphicsLayer* hostingLayer = parentLayer->backing()->parentForSublayers();
         GraphicsLayer* hostedLayer = childLayer->backing()->childForSuperlayers();
