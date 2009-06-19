@@ -2,6 +2,22 @@
 
         Reviewed by Oliver Hunt.
 
+        Added a test of batik and a own one to check behavior of the
+        new feTile effect in SVG.
+
+        * platform/mac/svg/batik/filters/feTile-expected.checksum: Added.
+        * platform/mac/svg/batik/filters/feTile-expected.png: Added.
+        * platform/mac/svg/batik/filters/feTile-expected.txt: Added.
+        * platform/mac/svg/filters/feTile-expected.checksum: Added.
+        * platform/mac/svg/filters/feTile-expected.png: Added.
+        * platform/mac/svg/filters/feTile-expected.txt: Added.
+        * svg/batik/filters/feTile.svg: Added.
+        * svg/filters/feTile.svg: Added.
+
+2009-06-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
         Check the feMerge implementation.
 
         * platform/mac/svg/filters/feMerge-expected.checksum: Added.

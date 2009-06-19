@@ -2,6 +2,29 @@
 
         Reviewed by Oliver Hunt.
 
+        feTile implementation missing
+        [https://bugs.webkit.org/show_bug.cgi?id=26419]
+
+        Implementation of feTile, a pattern effect for SVG filters. It was
+        necessary to modify FilterEffect since source inputs need a secial
+        logic and we have to identify if an effect is a source input.
+
+        Tests: svg/batik/filters/feTile.svg
+               svg/filters/feTile.svg
+
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::isSourceInput):
+        * platform/graphics/filters/SourceAlpha.h:
+        (WebCore::SourceAlpha::isSourceInput):
+        * platform/graphics/filters/SourceGraphic.h:
+        (WebCore::SourceGraphic::isSourceInput):
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::apply):
+
+2009-06-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
         feMerge implementation
         [https://bugs.webkit.org/show_bug.cgi?id=26480]
 

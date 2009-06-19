@@ -1,0 +1,76 @@
+KRenderingPaintServer {id="tileFill" [type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.50,#44CCFF), (1.00,#000033)]] [start=(0,0)] [end=(1,1)]}
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (1,26) size 373.66x453
+    RenderSVGContainer {g} at (1,26) size 373.66x352.43
+      RenderSVGText {text} at (191,40) size 68x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 68x18
+          chunk 1 (middle anchor) text run 1 at (191.00,40.00) startOffset 0 endOffset 11 width 68.00: "feTile Test"
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGHiddenContainer {linearGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} at (0,0) size 0x0
+      RenderSVGContainer {g} at (11,71) size 118x79.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,100.00)}]
+        RenderPath {rect} at (20,100) size 50x25 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.50,#44CCFF), (1.00,#000033)]] [start=(0,0)] [end=(1,1)]}] [filter=tile_1] [data="M0.00,0.00 L50.00,0.00 L50.00,25.00 L0.00,25.00 Z"]
+        RenderPath {rect} at (19.50,99.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+        RenderSVGText {text} at (32,-15) size 36x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 36x18
+            chunk 1 (middle anchor) text run 1 at (32.50,-15.00) startOffset 0 endOffset 6 width 35.00: "tile_1"
+        RenderSVGText {text} at (-9,-3) size 118x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 118x18
+            chunk 1 (middle anchor) text run 1 at (-8.50,-3.00) startOffset 0 endOffset 21 width 117.00: "4 tiles, quarter size"
+      RenderSVGContainer {g} at (1,171) size 138x79.50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,200.00)}]
+        RenderPath {rect} at (45,212.50) size 50x25 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.50,#44CCFF), (1.00,#000033)]] [start=(0,0)] [end=(1,1)]}] [filter=tile_2] [data="M25.00,12.50 L75.00,12.50 L75.00,37.50 L25.00,37.50 Z"]
+        RenderPath {rect} at (19.50,199.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+        RenderSVGText {text} at (-1,-15) size 102x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 102x18
+            chunk 1 (middle anchor) text run 1 at (-1.00,-15.00) startOffset 0 endOffset 17 width 102.00: "tile_2 (centered)"
+        RenderSVGText {text} at (-19,-3) size 138x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 138x18
+            chunk 1 (middle anchor) text run 1 at (-18.50,-3.00) startOffset 0 endOffset 26 width 137.00: "9 tiles, 1 full, 8 partial"
+      RenderSVGContainer {g} at (1.50,270.25) size 137x80.25 [transform={m=((1.00,0.00)(0.00,1.00)) t=(32.50,307.25)}]
+        RenderPath {rect} at (32.50,307.25) size 50x25 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.50,#44CCFF), (1.00,#000033)]] [start=(0,0)] [end=(1,1)]}] [filter=tile_3] [data="M0.00,0.00 L50.00,0.00 L50.00,25.00 L0.00,25.00 Z"]
+        RenderPath {rect} at (19.50,299.50) size 101x51 [stroke={[type=SOLID] [color=#000000]}] [data="M-12.50,-7.25 L87.50,-7.25 L87.50,42.75 L-12.50,42.75 Z"]
+        RenderSVGText {text} at (-29,-23) size 133x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 133x19
+            chunk 1 (middle anchor) text run 1 at (-28.50,-22.25) startOffset 0 endOffset 24 width 132.00: "tile_3 (top left offset)"
+        RenderSVGText {text} at (-31,-11) size 137x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 137x19
+            chunk 1 (middle anchor) text run 1 at (-31.00,-10.25) startOffset 0 endOffset 26 width 137.00: "9 tiles, 1 full, 8 partial"
+      RenderSVGContainer {g} at (244.21,99.50) size 130.44x51 [transform={m=((1.00,0.00)(0.58,1.00)) t=(245.00,100.00)}]
+        RenderPath {rect} at (245,100) size 64.43x25 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.50,#44CCFF), (1.00,#000033)]] [start=(0,0)] [end=(1,1)]}] [filter=tile_1] [data="M0.00,0.00 L50.00,0.00 L50.00,25.00 L0.00,25.00 Z"]
+        RenderPath {rect} at (244.21,99.50) size 130.44x51 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+      RenderSVGContainer {g} at (263,71) size 64x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(245.00,100.00)}]
+        RenderSVGText {text} at (32,-15) size 36x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 36x18
+            chunk 1 (middle anchor) text run 1 at (32.50,-15.00) startOffset 0 endOffset 6 width 35.00: "tile_1"
+        RenderSVGText {text} at (18,-3) size 64x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 64x18
+            chunk 1 (middle anchor) text run 1 at (18.00,-3.00) startOffset 0 endOffset 8 width 64.00: "skewed X"
+      RenderSVGContainer {g} at (255.68,201.14) size 78.65x57.73 [transform={m=((0.66,0.24)(-0.24,0.66)) t=(268.10,201.58)}]
+        RenderPath {rect} at (275.56,215.79) size 38.87x28.42 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.50,#44CCFF), (1.00,#000033)]] [start=(0,0)] [end=(1,1)]}] [filter=tile_2] [data="M25.00,12.50 L75.00,12.50 L75.00,37.50 L25.00,37.50 Z"]
+        RenderPath {rect} at (255.68,201.14) size 78.65x57.73 [stroke={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
+      RenderSVGContainer {g} at (216,171) size 158x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(245.00,200.00)}]
+        RenderSVGText {text} at (32,-15) size 36x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 36x18
+            chunk 1 (middle anchor) text run 1 at (32.50,-15.00) startOffset 0 endOffset 6 width 35.00: "tile_2"
+        RenderSVGText {text} at (-29,-3) size 158x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 158x18
+            chunk 1 (middle anchor) text run 1 at (-28.50,-3.00) startOffset 0 endOffset 26 width 157.00: "(centered, rotate & scale)"
+      RenderSVGContainer {g} at (244.50,300.37) size 101x78.06 [transform={m=((1.00,0.27)(0.00,1.00)) t=(257.50,310.60)}]
+        RenderPath {rect} at (257.50,310.60) size 50x38.40 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#FFFFFF), (0.50,#44CCFF), (1.00,#000033)]] [start=(0,0)] [end=(1,1)]}] [filter=tile_3] [data="M0.00,0.00 L50.00,0.00 L50.00,25.00 L0.00,25.00 Z"]
+        RenderPath {rect} at (244.50,300.37) size 101x78.06 [stroke={[type=SOLID] [color=#000000]}] [data="M-12.50,-6.25 L87.50,-6.25 L87.50,43.75 L-12.50,43.75 Z"]
+      RenderSVGContainer {g} at (228.50,270.25) size 133x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(257.50,307.25)}]
+        RenderSVGText {text} at (-29,-23) size 133x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 133x19
+            chunk 1 (middle anchor) text run 1 at (-28.50,-22.25) startOffset 0 endOffset 24 width 132.00: "tile_3 (top left offset)"
+        RenderSVGText {text} at (5,-11) size 65x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,-14) size 65x19
+            chunk 1 (middle anchor) text run 1 at (5.50,-10.25) startOffset 0 endOffset 8 width 64.00: "skewed Y"
+    RenderSVGContainer {a} at (20,461) size 161x18
+      RenderSVGText {text} at (20,475) size 161x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,-14) size 161x18
+          chunk 1 text run 1 at (20.00,475.00) startOffset 0 endOffset 26 width 161.00: "How it should look like..."
+    RenderSVGContainer {use} at (0,0) size 0x0
