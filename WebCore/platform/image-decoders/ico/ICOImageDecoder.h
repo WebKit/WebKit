@@ -40,22 +40,16 @@ namespace WebCore {
     class ICOImageDecoder : public BMPImageReader {
     public:
         // See comments on |m_preferredIconSize| below.
-        ICOImageDecoder(const IntSize& preferredIconSize)
-            : m_preferredIconSize(preferredIconSize)
-            , m_imageType(Unknown)
-        {
-            m_andMaskState = NotYetDecoded;
-        }
+        ICOImageDecoder(const IntSize& preferredIconSize);
 
+        // ImageDecoder
         virtual String filenameExtension() const { return "ico"; }
+        virtual bool isSizeAvailable();
+        virtual IntSize size() const;
 
         // BMPImageReader
         virtual void decodeImage(SharedBuffer* data);
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
-
-        // ImageDecoder
-        virtual bool isSizeAvailable();
-        virtual IntSize size() const;
 
     private:
         enum ImageType {
@@ -76,21 +70,36 @@ namespace WebCore {
             uint32_t dwImageOffset;
         };
 
-        // Processes the ICONDIR at the beginning of the data.  Returns true if the
-        // directory could be decoded.
+        inline uint16_t readUint16(SharedBuffer* data, int offset) const
+        {
+            return readUint16Helper(data, m_decodedOffset + offset);
+        }
+
+        inline uint32_t readUint32(SharedBuffer* data, int offset) const
+        {
+            return readUint32Helper(data, m_decodedOffset + offset);
+        }
+
+        // Processes the ICONDIR at the beginning of the data.  Returns true if
+        // the directory could be decoded.
         bool processDirectory(SharedBuffer*);
 
         // Processes the ICONDIRENTRY records after the directory.  Keeps the
-        // "best" entry as the one we'll decode.  Returns true if the entries could
-        // be decoded.
+        // "best" entry as the one we'll decode.  Returns true if the entries
+        // could be decoded.
         bool processDirectoryEntries(SharedBuffer*);
 
-        // Reads and returns a directory entry from the current offset into |data|.
+        // Reads and returns a directory entry from the current offset into
+        // |data|.
         IconDirectoryEntry readDirectoryEntry(SharedBuffer*);
 
         // Returns true if |entry| is a preferable icon entry to m_dirEntry.
         // Larger sizes, or greater bitdepths at the same size, are preferable.
         bool isBetterEntry(const IconDirectoryEntry&) const;
+
+        // Determines whether the desired entry is a BMP or PNG.  Returns true
+        // if the type could be determined.
+        bool processImageType(SharedBuffer*);
 
         // Called when the image to be decoded is a PNG rather than a BMP.
         // Instantiates a PNGImageDecoder, decodes the image, and copies the

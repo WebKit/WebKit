@@ -38,6 +38,11 @@ namespace WebCore {
 // don't pack).
 static const size_t sizeOfFileHeader = 14;
 
+BMPImageDecoder::BMPImageDecoder()
+    : BMPImageReader()
+{
+}
+
 void BMPImageDecoder::decodeImage(SharedBuffer* data)
 {
     // Read and process file header.
@@ -73,10 +78,12 @@ bool BMPImageDecoder::processFileHeader(SharedBuffer* data)
         BITMAPARRAY = 'BA',
         */
     };
-    if (fileType != BMAP)
-        m_failed = true;
+    if (fileType != BMAP) {
+        setFailed();
+        return false;
+    }
 
-    return !m_failed;
+    return true;
 }
 
 } // namespace WebCore

@@ -50,32 +50,22 @@ namespace WebCore {
         virtual void setData(SharedBuffer* data, bool allDataReceived);
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
-    protected:
-        enum AndMaskState {
-            None,
-            NotYetDecoded,
-            Decoding,
-        };
-
-        // Decodes a single BMP, starting with an info header.
-        void decodeBMP(SharedBuffer* data);
-
-        // Read a value from |data[m_decodedOffset + additionalOffset]|, converting
-        // from little to native endianness.
-        inline uint16_t readUint16(SharedBuffer* data, int additionalOffset) const
+        // Read a value from |data[offset]|, converting from little to native
+        // endianness.
+        static inline uint16_t readUint16Helper(SharedBuffer* data, int offset)
         {
             uint16_t result;
-            memcpy(&result, &data->data()[m_decodedOffset + additionalOffset], 2);
+            memcpy(&result, &data->data()[offset], 2);
         #if PLATFORM(BIG_ENDIAN)
             result = ((result & 0xff) << 8) | ((result & 0xff00) >> 8);
         #endif
             return result;
         }
 
-        inline uint32_t readUint32(SharedBuffer* data, int additionalOffset) const
+        static inline uint32_t readUint32Helper(SharedBuffer* data, int offset)
         {
             uint32_t result;
-            memcpy(&result, &data->data()[m_decodedOffset + additionalOffset], 4);
+            memcpy(&result, &data->data()[offset], 4);
         #if PLATFORM(BIG_ENDIAN)
             result = ((result & 0xff) << 24) | ((result & 0xff00) << 8) |
                 ((result & 0xff0000) >> 8) | ((result & 0xff000000) >> 24);
@@ -83,26 +73,37 @@ namespace WebCore {
             return result;
         }
 
+    protected:
+        enum AndMaskState {
+            None,
+            NotYetDecoded,
+            Decoding,
+        };
+
+        // Does the actual decoding.  Returns whether decoding succeeded.
+        bool decodeBMP(SharedBuffer* data);
+
         // An index into |m_data| representing how much we've already decoded.
         size_t m_decodedOffset;
 
         // The file offset at which the BMP info header starts.
         size_t m_headerOffset;
 
-        // The file offset at which the actual image bits start.  When decoding ICO
-        // files, this is set to 0, since it's not stored anywhere in a header; the
-        // reader functions expect the image data to start immediately after the
-        // header and (if necessary) color table.
+        // The file offset at which the actual image bits start.  When decoding
+        // ICO files, this is set to 0, since it's not stored anywhere in a
+        // header; the reader functions expect the image data to start
+        // immediately after the header and (if necessary) color table.
         size_t m_imgDataOffset;
 
         // ICOs store a 1bpp "mask" immediately after the main bitmap image data
         // (and, confusingly, add its height to the biHeight value in the info
-        // header, thus doubling it).  This variable tracks whether we have such a
-        // mask and if we've started decoding it yet.
+        // header, thus doubling it).  This variable tracks whether we have such
+        // a mask and if we've started decoding it yet.
         AndMaskState m_andMaskState;
 
     private:
-        // The various BMP compression types.  We don't currently decode all these.
+        // The various BMP compression types.  We don't currently decode all
+        // these.
         enum CompressionType {
             // Universal types
             RGB = 0,
@@ -117,8 +118,8 @@ namespace WebCore {
             RLE24,      // Stored in file as 4
         };
 
-        // These are based on the Windows BITMAPINFOHEADER and RGBTRIPLE structs,
-        // but with unnecessary entries removed.
+        // These are based on the Windows BITMAPINFOHEADER and RGBTRIPLE
+        // structs, but with unnecessary entries removed.
         struct BitmapInfoHeader {
             uint32_t biSize;
             int32_t biWidth;
@@ -133,16 +134,26 @@ namespace WebCore {
             uint8_t rgbRed;
         };
 
-        // Determines the size of the BMP info header.  Returns true if the size is
-        // valid.
+        inline uint16_t readUint16(SharedBuffer* data, int offset) const
+        {
+            return readUint16Helper(data, m_decodedOffset + offset);
+        }
+
+        inline uint32_t readUint32(SharedBuffer* data, int offset) const
+        {
+            return readUint32Helper(data, m_decodedOffset + offset);
+        }
+
+        // Determines the size of the BMP info header.  Returns true if the size
+        // is valid.
         bool getInfoHeaderSize(SharedBuffer* data);
 
-        // Processes the BMP info header.  Returns true if the info header could be
-        // decoded.
+        // Processes the BMP info header.  Returns true if the info header could
+        // be decoded.
         bool processInfoHeader(SharedBuffer* data);
 
-        // Helper function for processInfoHeader() which does the actual reading of
-        // header values from the byte stream.  Returns false on error.
+        // Helper function for processInfoHeader() which does the actual reading
+        // of header values from the byte stream.  Returns false on error.
         bool readInfoHeader(SharedBuffer* data);
 
         // Returns true if this is a Windows V4+ BMP.
@@ -155,12 +166,13 @@ namespace WebCore {
         // Returns false if consistency errors are found in the info header.
         bool isInfoHeaderValid() const;
 
-        // For BI_BITFIELDS images, initializes the m_bitMasks[] and m_bitOffsets[]
-        // arrays.  processInfoHeader() will initialize these for other compression
-        // types where needed.
+        // For BI_BITFIELDS images, initializes the m_bitMasks[] and
+        // m_bitOffsets[] arrays.  processInfoHeader() will initialize these for
+        // other compression types where needed.
         bool processBitmasks(SharedBuffer* data);
 
-        // For paletted images, allocates and initializes the m_colorTable[] array.
+        // For paletted images, allocates and initializes the m_colorTable[]
+        // array.
         bool processColorTable(SharedBuffer* data);
 
         // Processes an RLE-encoded image.  Returns true if the entire image was
@@ -172,14 +184,15 @@ namespace WebCore {
         //     process |numPixels| pixels on the current row; returns true on
         //     success.
         //   * inRLE = false: the data is inside a non-RLE-encoded bitmap.
-        //     |numPixels| is ignored.  Expects |m_coord| to point at the beginning
-        //     of the next row to be decoded.  Tries to process as many complete
-        //     rows as possible.  Returns true if the whole image was decoded.
+        //     |numPixels| is ignored.  Expects |m_coord| to point at the
+        //     beginning of the next row to be decoded.  Tries to process as
+        //     many complete rows as possible.  Returns true if the whole image
+        //     was decoded.
         bool processNonRLEData(SharedBuffer* data, bool inRLE, int numPixels);
 
         // Returns true if the current y-coordinate plus |numRows| would be past
-        // the end of the image.  Here "plus" means "toward the end of the image",
-        // so downwards for m_isTopDown images and upwards otherwise.
+        // the end of the image.  Here "plus" means "toward the end of the
+        // image", so downwards for m_isTopDown images and upwards otherwise.
         inline bool pastEndOfImage(int numRows)
         {
             return m_isTopDown
@@ -190,8 +203,8 @@ namespace WebCore {
         // Returns the pixel data for the current X coordinate in a uint32_t.
         // Assumes m_decodedOffset has been set to the beginning of the current
         // row.
-        // NOTE: Only as many bytes of the return value as are needed to hold the
-        // pixel data will actually be set.
+        // NOTE: Only as many bytes of the return value as are needed to hold
+        // the pixel data will actually be set.
         inline uint32_t readCurrentPixel(SharedBuffer* data, int bytesPerPixel) const
         {
             const int additionalOffset = m_coord.x() * bytesPerPixel;
@@ -200,9 +213,9 @@ namespace WebCore {
                 return readUint16(data, additionalOffset);
 
             case 3: {
-                // It doesn't matter that we never set the most significant byte of
-                // the return value here in little-endian mode, the caller won't
-                // read it.
+                // It doesn't matter that we never set the most significant byte
+                // of the return value here in little-endian mode, the caller
+                // won't read it.
                 uint32_t pixel;
                 memcpy(&pixel,
                        &data->data()[m_decodedOffset + additionalOffset], 3);
@@ -222,12 +235,12 @@ namespace WebCore {
             }
         }
 
-        // Returns the value of the desired component (0, 1, 2, 3 == R, G, B, A) in
-        // the given pixel data.
+        // Returns the value of the desired component (0, 1, 2, 3 == R, G, B, A)
+        // in the given pixel data.
         inline unsigned getComponent(uint32_t pixel, int component) const
         {
-            return ((pixel & m_bitMasks[component]) >> m_bitShiftsRight[component])
-                << m_bitShiftsLeft[component];
+            return ((pixel & m_bitMasks[component]) >>
+                m_bitShiftsRight[component]) << m_bitShiftsLeft[component];
         }
 
         inline unsigned getAlpha(uint32_t pixel) const
@@ -240,49 +253,57 @@ namespace WebCore {
         }
 
         // Sets the current pixel to the color given by |colorIndex|.  This also
-        // increments the relevant local variables to move the current pixel right
-        // by one.
+        // increments the relevant local variables to move the current pixel
+        // right by one.
         inline void setI(size_t colorIndex)
         {
-            setRGBA(m_colorTable[colorIndex].rgbRed, m_colorTable[colorIndex].rgbGreen,
+            setRGBA(m_colorTable[colorIndex].rgbRed,
+                    m_colorTable[colorIndex].rgbGreen,
                     m_colorTable[colorIndex].rgbBlue, 0xff);
         }
 
         // Like setI(), but with the individual component values specified.
-        inline void setRGBA(unsigned red, unsigned green, unsigned blue, unsigned alpha)
+        inline void setRGBA(unsigned red,
+                            unsigned green,
+                            unsigned blue,
+                            unsigned alpha)
         {
             m_frameBufferCache.first().setRGBA(m_coord.x(), m_coord.y(), red, green, blue, alpha);
             m_coord.move(1, 0);
         }
 
         // Fills pixels from the current X-coordinate up to, but not including,
-        // |endCoord| with the color given by the individual components.  This also
-        // increments the relevant local variables to move the current pixel right
-        // to |endCoord|.
-        inline void fillRGBA(int endCoord, unsigned red, unsigned green, unsigned blue, unsigned alpha)
+        // |endCoord| with the color given by the individual components.  This
+        // also increments the relevant local variables to move the current
+        // pixel right to |endCoord|.
+        inline void fillRGBA(int endCoord,
+                             unsigned red,
+                             unsigned green,
+                             unsigned blue,
+                             unsigned alpha)
         {
             while (m_coord.x() < endCoord)
                 setRGBA(red, green, blue, alpha);
         }
 
-        // Resets the relevant local variables to start drawing at the left edge of
-        // the "next" row, where "next" is above or below the current row depending
-        // on the value of |m_isTopDown|.
+        // Resets the relevant local variables to start drawing at the left edge
+        // of the "next" row, where "next" is above or below the current row
+        // depending on the value of |m_isTopDown|.
         void moveBufferToNextRow();
 
         // The BMP info header.
         BitmapInfoHeader m_infoHeader;
 
-        // True if this is an OS/2 1.x (aka Windows 2.x) BMP.  The struct layouts
-        // for this type of BMP are slightly different from the later, more common
-        // formats.
+        // True if this is an OS/2 1.x (aka Windows 2.x) BMP.  The struct
+        // layouts for this type of BMP are slightly different from the later,
+        // more common formats.
         bool m_isOS21x;
 
         // True if this is an OS/2 2.x BMP.  The meanings of compression types 3
         // and 4 for this type of BMP differ from Windows V3+ BMPs.
         //
-        // This will be falsely negative in some cases, but only ones where the way
-        // we misinterpret the data is irrelevant.
+        // This will be falsely negative in some cases, but only ones where the
+        // way we misinterpret the data is irrelevant.
         bool m_isOS22x;
 
         // True if the BMP is not vertically flipped, that is, the first line of
@@ -293,15 +314,17 @@ namespace WebCore {
         bool m_needToProcessBitmasks;
         bool m_needToProcessColorTable;
 
-        // Masks/offsets for the color values for non-palette formats.  These are
-        // bitwise, with array entries 0, 1, 2, 3 corresponding to R, G, B, A.
+        // Masks/offsets for the color values for non-palette formats.  These
+        // are bitwise, with array entries 0, 1, 2, 3 corresponding to R, G, B,
+        // A.
         //
         // The right/left shift values are meant to be applied after the masks.
-        // We need to right shift to compensate for the bitfields' offsets into the
-        // 32 bits of pixel data, and left shift to scale the color values up for
-        // fields with less than 8 bits of precision.  Sadly, we can't just combine
-        // these into one shift value because the net shift amount could go either
-        // direction.  (If only "<< -x" were equivalent to ">> x"...)
+        // We need to right shift to compensate for the bitfields' offsets into
+        // the 32 bits of pixel data, and left shift to scale the color values
+        // up for fields with less than 8 bits of precision.  Sadly, we can't
+        // just combine these into one shift value because the net shift amount
+        // could go either direction.  (If only "<< -x" were equivalent to
+        // ">> x"...)
         uint32_t m_bitMasks[4];
         int m_bitShiftsRight[4];
         int m_bitShiftsLeft[4];

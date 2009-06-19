@@ -1,5 +1,66 @@
 2009-06-18  Peter Kasting  <pkasting@google.com>
 
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26460 part two
+        Attempt to minimize diff of following functional change by first landing
+        non-functional change to:
+        * Make readUintX() public and static (since they will need to be once
+          BMPImageReader is included in *ImageDecoder via composition rather
+          than inheritance).  Add wrappers in each class so callers can be
+          simpler.  In the next patch, these wrappers will be beefed up slightly
+          and the callers will get even simpler.
+        * Change direct setting of m_failed to use setFailed(), since in the
+          next patch much of this code won't even have direct access to m_failed
+        * Add a helper function in ICOImageDecoder to determine the image type
+          instead of simply doing it inline
+        * Rewrap lines that used to be <=80 cols and slipped over it during the
+          original landing of these decoders
+        * Other misc. changes, e.g. adding constructor definitions, reordering
+          functions, changing RGBA32Buffer& to RGBA32Buffer*, etc. that have no
+          functional effect but minimize the subsequent diff for readability
+
+
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::BMPImageDecoder):
+        (WebCore::BMPImageDecoder::processFileHeader):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        (WebCore::BMPImageDecoder::readUint32):
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::decodeBMP):
+        (WebCore::BMPImageReader::getInfoHeaderSize):
+        (WebCore::BMPImageReader::processInfoHeader):
+        (WebCore::BMPImageReader::readInfoHeader):
+        (WebCore::BMPImageReader::processBitmasks):
+        (WebCore::BMPImageReader::processColorTable):
+        (WebCore::BMPImageReader::processRLEData):
+        (WebCore::BMPImageReader::processNonRLEData):
+        * platform/image-decoders/bmp/BMPImageReader.h:
+        (WebCore::BMPImageReader::readUint16Helper):
+        (WebCore::BMPImageReader::readUint32Helper):
+        (WebCore::BMPImageReader::):
+        (WebCore::BMPImageReader::readUint16):
+        (WebCore::BMPImageReader::readUint32):
+        (WebCore::BMPImageReader::readCurrentPixel):
+        (WebCore::BMPImageReader::getComponent):
+        (WebCore::BMPImageReader::setI):
+        (WebCore::BMPImageReader::setRGBA):
+        (WebCore::BMPImageReader::fillRGBA):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::ICOImageDecoder):
+        (WebCore::ICOImageDecoder::isSizeAvailable):
+        (WebCore::ICOImageDecoder::size):
+        (WebCore::ICOImageDecoder::decodeImage):
+        (WebCore::ICOImageDecoder::processDirectory):
+        (WebCore::ICOImageDecoder::processDirectoryEntries):
+        (WebCore::ICOImageDecoder::isBetterEntry):
+        (WebCore::ICOImageDecoder::processImageType):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        (WebCore::ICOImageDecoder::readUint16):
+        (WebCore::ICOImageDecoder::readUint32):
+
+2009-06-18  Peter Kasting  <pkasting@google.com>
+
         Fix build bustage.
 
         * platform/image-decoders/gif/GIFImageDecoder.h:

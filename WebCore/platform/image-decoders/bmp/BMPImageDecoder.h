@@ -38,12 +38,19 @@ namespace WebCore {
     // This class decodes the BMP image format.
     class BMPImageDecoder : public BMPImageReader {
     public:
+        BMPImageDecoder();
+
         virtual String filenameExtension() const { return "bmp"; }
 
         // BMPImageReader
         virtual void decodeImage(SharedBuffer*);
 
     private:
+        inline uint32_t readUint32(SharedBuffer* data, int offset) const
+        {
+            return readUint32Helper(data, m_decodedOffset + offset);
+        }
+
         // Processes the file header at the beginning of the data.  Returns true if
         // the file header could be decoded.
         bool processFileHeader(SharedBuffer*);

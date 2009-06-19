@@ -39,6 +39,25 @@ namespace WebCore {
 static const size_t sizeOfDirectory = 6;
 static const size_t sizeOfDirEntry = 16;
 
+ICOImageDecoder::ICOImageDecoder(const IntSize& preferredIconSize)
+    : BMPImageReader()
+    , m_preferredIconSize(preferredIconSize)
+    , m_imageType(Unknown)
+{
+    m_andMaskState = NotYetDecoded;
+}
+
+bool ICOImageDecoder::isSizeAvailable()
+{
+    return (m_imageType == PNG) ?
+        m_pngDecoder.isSizeAvailable() : BMPImageReader::isSizeAvailable();
+}
+
+IntSize ICOImageDecoder::size() const
+{
+    return (m_imageType == PNG) ? m_pngDecoder.size() : BMPImageReader::size();
+}
+
 void ICOImageDecoder::decodeImage(SharedBuffer* data)
 {
     // Read and process directory.
@@ -46,18 +65,14 @@ void ICOImageDecoder::decodeImage(SharedBuffer* data)
         return;
 
     // Read and process directory entries.
-    if ((m_decodedOffset < (sizeOfDirectory + (m_directory.idCount * sizeOfDirEntry)))
+    if ((m_decodedOffset <
+            (sizeOfDirectory + (m_directory.idCount * sizeOfDirEntry)))
         && !processDirectoryEntries(data))
         return;
 
-    // Check if this entry is a PNG; we need 4 bytes to check the magic number.
-    if (m_imageType == Unknown) {
-        if (data->size() < (m_dirEntry.dwImageOffset + 4))
-            return;
-        m_imageType =
-            strncmp(&data->data()[m_dirEntry.dwImageOffset], "\x89PNG", 4) ?
-            BMP : PNG;
-    }
+    // Get the image type.
+    if ((m_imageType == Unknown) && !processImageType(data))
+        return;
 
     // Decode selected entry.
     if (m_imageType == PNG)
@@ -80,17 +95,6 @@ RGBA32Buffer* ICOImageDecoder::frameBufferAtIndex(size_t index)
         BMPImageReader::frameBufferAtIndex(0);
 }
 
-bool ICOImageDecoder::isSizeAvailable()
-{
-    return (m_imageType == PNG) ? m_pngDecoder.isSizeAvailable() :
-        BMPImageReader::isSizeAvailable();
-}
-
-IntSize ICOImageDecoder::size() const
-{
-    return (m_imageType == PNG) ? m_pngDecoder.size() : BMPImageReader::size();
-}
-
 bool ICOImageDecoder::processDirectory(SharedBuffer* data)
 {
     // Read directory.
@@ -109,17 +113,18 @@ bool ICOImageDecoder::processDirectory(SharedBuffer* data)
     };
     if (((fileType != ICON) && (fileType != CURSOR)) ||
             (m_directory.idCount == 0))
-        m_failed = true;
+        setFailed();
 
-    return !m_failed;
+    return !failed();
 }
 
 bool ICOImageDecoder::processDirectoryEntries(SharedBuffer* data)
 {
     // Read directory entries.
     ASSERT(m_decodedOffset == sizeOfDirectory);
-    if ((m_decodedOffset > data->size()) || (data->size() - m_decodedOffset) <
-            (m_directory.idCount * sizeOfDirEntry))
+    if ((m_decodedOffset > data->size())
+        || ((data->size() - m_decodedOffset) <
+            (m_directory.idCount * sizeOfDirEntry)))
         return false;
     for (int i = 0; i < m_directory.idCount; ++i) {
         const IconDirectoryEntry dirEntry = readDirectoryEntry(data);
@@ -133,7 +138,7 @@ bool ICOImageDecoder::processDirectoryEntries(SharedBuffer* data)
     // examine the first 4 bytes of the image data).
     if ((m_dirEntry.dwImageOffset < m_decodedOffset) ||
             ((m_dirEntry.dwImageOffset + 4) < m_dirEntry.dwImageOffset)) {
-      m_failed = true;
+      setFailed();
       return false;
     }
 
@@ -189,8 +194,8 @@ bool ICOImageDecoder::isBetterEntry(const IconDirectoryEntry& entry) const
         // The icon closest to the preferred area without being smaller is
         // better.
         if (entryArea != dirEntryArea) {
-            return (entryArea < dirEntryArea)
-                && (entryArea >= (m_preferredIconSize.width() * m_preferredIconSize.height()));
+            return (entryArea < dirEntryArea) && (entryArea >=
+                (m_preferredIconSize.width() * m_preferredIconSize.height()));
         }
     }
 
@@ -200,6 +205,19 @@ bool ICOImageDecoder::isBetterEntry(const IconDirectoryEntry& entry) const
 
     // Higher bit-depth icons are better.
     return (entry.wBitCount > m_dirEntry.wBitCount);
+}
+
+bool ICOImageDecoder::processImageType(SharedBuffer* data)
+{
+    // Check if this entry is a BMP or a PNG; we need 4 bytes to check the magic
+    // number.
+    ASSERT(m_decodedOffset == m_dirEntry.dwImageOffset);
+    if ((m_decodedOffset > data->size())
+        || ((data->size() - m_decodedOffset) < 4))
+        return false;
+    m_imageType =
+        strncmp(&data->data()[m_decodedOffset], "\x89PNG", 4) ? BMP : PNG;
+    return true;
 }
 
 void ICOImageDecoder::decodePNG(SharedBuffer* data)
