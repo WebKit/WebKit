@@ -28,6 +28,7 @@
 
 #include <windows.h>
 
+#include "BitmapInfo.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "Settings.h"
