@@ -48,7 +48,7 @@ const ClassInfo JSFunction::info = { "Function", &InternalFunction::info, 0, 0 }
 JSFunction::JSFunction(ExecState* exec, PassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(&exec->globalData(), structure, name)
 #if ENABLE(JIT)
-    , m_body(exec->globalData().nativeFunctionThunk())
+    , m_body(FunctionBodyNode::createNativeThunk(&exec->globalData()))
 #else
     , m_body(0)
 #endif
@@ -76,22 +76,19 @@ JSFunction::~JSFunction()
     // JIT code for other functions may have had calls linked directly to the code for this function; these links
     // are based on a check for the this pointer value for this JSFunction - which will no longer be valid once
     // this memory is freed and may be reused (potentially for another, different JSFunction).
-    if (!isHostFunction()) {
-        if (m_body && m_body->isGenerated())
-            m_body->generatedBytecode().unlinkCallers();
+    if (m_body && m_body->isGenerated())
+        m_body->generatedBytecode().unlinkCallers();
+    if (!isHostFunction())
         scopeChain().~ScopeChain();
-    }
-    
 #endif
 }
 
 void JSFunction::mark()
 {
     Base::mark();
-    if (!isHostFunction()) {
-        m_body->mark();
+    m_body->mark();
+    if (!isHostFunction())
         scopeChain().mark();
-    }
 }
 
 CallType JSFunction::getCallData(CallData& callData)

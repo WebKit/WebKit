@@ -49,7 +49,7 @@ namespace JSC {
 
     class ExecState;
 
-    enum CodeType { GlobalCode, EvalCode, FunctionCode };
+    enum CodeType { GlobalCode, EvalCode, FunctionCode, NativeCode };
 
     static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
 
@@ -217,6 +217,7 @@ namespace JSC {
     class CodeBlock {
         friend class JIT;
     public:
+        CodeBlock(ScopeNode* ownerNode);
         CodeBlock(ScopeNode* ownerNode, CodeType, PassRefPtr<SourceProvider>, unsigned sourceOffset);
         ~CodeBlock();
 
@@ -339,8 +340,8 @@ namespace JSC {
 
         CodeType codeType() const { return m_codeType; }
 
-        SourceProvider* source() const { return m_source.get(); }
-        unsigned sourceOffset() const { return m_sourceOffset; }
+        SourceProvider* source() const { ASSERT(m_codeType != NativeCode); return m_source.get(); }
+        unsigned sourceOffset() const { ASSERT(m_codeType != NativeCode); return m_sourceOffset; }
 
         size_t numberOfJumpTargets() const { return m_jumpTargets.size(); }
         void addJumpTarget(unsigned jumpTarget) { m_jumpTargets.append(jumpTarget); }
@@ -432,7 +433,7 @@ namespace JSC {
 
         SymbolTable& symbolTable() { return m_symbolTable; }
 
-        EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
+        EvalCodeCache& evalCodeCache() { ASSERT(m_codeType != NativeCode); createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
         void shrinkToFit();
 
@@ -456,6 +457,7 @@ namespace JSC {
 
         void createRareDataIfNecessary()
         {
+            ASSERT(m_codeType != NativeCode); 
             if (!m_rareData)
                 m_rareData.set(new RareData);
         }

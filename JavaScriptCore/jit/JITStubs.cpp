@@ -1191,6 +1191,7 @@ DEFINE_STUB_FUNCTION(void*, op_call_JSFunction)
 #endif
 
     JSFunction* function = asFunction(stackFrame.args[0].jsValue());
+    ASSERT(!function->isHostFunction());
     FunctionBodyNode* body = function->body();
     ScopeChainNode* callDataScopeChain = function->scope().node();
     body->jitCode(callDataScopeChain);
@@ -1204,6 +1205,7 @@ DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
 
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* newCodeBlock = stackFrame.args[3].codeBlock();
+    ASSERT(newCodeBlock->codeType() != NativeCode);
     int argCount = stackFrame.args[2].int32();
 
     ASSERT(argCount != newCodeBlock->m_numParameters);
@@ -1265,6 +1267,8 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
     CodeBlock* codeBlock = 0;
     if (!callee->isHostFunction())
         codeBlock = &callee->body()->bytecode(callee->scope().node());
+    else
+        codeBlock = &callee->body()->generatedBytecode();
 
     CallLinkInfo* callLinkInfo = &stackFrame.callFrame->callerFrame()->codeBlock()->getCallLinkInfo(stackFrame.args[1].returnAddress());
     JIT::linkCall(callee, codeBlock, jitCode, callLinkInfo, stackFrame.args[2].int32(), stackFrame.globalData);

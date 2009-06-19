@@ -1,3 +1,61 @@
+2009-06-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin "Viceroy of Venezuela" Barraclough.
+
+        Bug 26532: Native functions do not correctly unlink from optimised callsites when they're collected
+        <https://bugs.webkit.org/show_bug.cgi?id=26532> <rdar://problem/6625385>
+
+        We need to make sure that each native function instance correctly unlinks any references to it
+        when it is collected.  Allowing this to happen required a few changes:
+            * Every native function needs a codeblock to track the link information
+            * To have this codeblock, every function now also needs its own functionbodynode
+              so we no longer get to have a single shared instance.
+            * Identifying a host function is now done by looking for CodeBlock::codeType() == NativeCode
+
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+           Constructor for NativeCode CodeBlock
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::refStructures):
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        (JSC::CodeBlock::getByIdExceptionInfoForBytecodeOffset):
+        (JSC::CodeBlock::functionRegisterForBytecodeOffset):
+        (JSC::CodeBlock::hasGlobalResolveInstructionAtBytecodeOffset):
+        (JSC::CodeBlock::hasGlobalResolveInfoAtBytecodeOffset):
+        (JSC::CodeBlock::setJITCode):
+           Add assertions to ensure we don't try and use NativeCode CodeBlocks as
+           a normal codeblock.
+
+        * bytecode/CodeBlock.h:
+        (JSC::):
+        (JSC::CodeBlock::source):
+        (JSC::CodeBlock::sourceOffset):
+        (JSC::CodeBlock::evalCodeCache):
+        (JSC::CodeBlock::createRareDataIfNecessary):
+          More assertions.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::linkCall):
+          Update logic to allow native function caching
+
+        * jit/JITStubs.cpp:
+        * parser/Nodes.cpp:
+        (JSC::FunctionBodyNode::createNativeThunk):
+        (JSC::FunctionBodyNode::isHostFunction):
+        * parser/Nodes.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::~JSFunction):
+        (JSC::JSFunction::mark):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+
 2009-06-18  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (Windows build fix).

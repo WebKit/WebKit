@@ -2037,10 +2037,16 @@ PassRefPtr<FunctionBodyNode> FunctionBodyNode::createNativeThunk(JSGlobalData* g
 {
     RefPtr<FunctionBodyNode> body = new FunctionBodyNode(globalData);
     globalData->parser->arena().reset();
+    body->m_code.set(new CodeBlock(body.get()));
     body->m_jitCode = JITCode(JITCode::HostFunction(globalData->jitStubs.ctiNativeCallThunk()));
     return body.release();
 }
 #endif
+
+bool FunctionBodyNode::isHostFunction() const
+{
+    return m_code && m_code->codeType() == NativeCode;
+}
 
 FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData)
 {

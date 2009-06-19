@@ -1554,14 +1554,7 @@ namespace JSC {
             return m_code;
         }
 
-        bool isHostFunction() const
-        {
-#if ENABLE(JIT)
-            return !!m_jitCode && !m_code;
-#else
-            return true;
-#endif
-        }
+        bool isHostFunction() const;
 
         virtual void mark();
 
