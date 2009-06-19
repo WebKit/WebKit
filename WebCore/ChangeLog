@@ -1,3 +1,11 @@
+2009-06-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after recent RenderTheme changes.
+
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::~RenderThemeWx):
+        (WebCore::RenderTheme::themeForPage):
+
 2009-06-18  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Eric Seidel.

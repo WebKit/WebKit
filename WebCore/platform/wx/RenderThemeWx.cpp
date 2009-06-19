@@ -123,6 +123,10 @@ private:
 #define POPUP_INTERNAL_PADDING_RIGHT 20
 #endif
 
+RenderThemeWx::~RenderThemeWx()
+{
+}
+
 PassRefPtr<RenderTheme> RenderThemeWx::create()
 {
     return adoptRef(new RenderThemeWx());
@@ -130,7 +134,7 @@ PassRefPtr<RenderTheme> RenderThemeWx::create()
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
-    static RenderTheme* rt = RenderThemeWx().create().releaseRef();
+    static RenderTheme* rt = RenderThemeWx::create().releaseRef();
     return rt;
 }
 
