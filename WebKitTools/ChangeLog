@@ -1,3 +1,12 @@
+2009-06-19  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed attempt to fix Windows build.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setXSSAuditorEnabled):
+
 2009-06-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

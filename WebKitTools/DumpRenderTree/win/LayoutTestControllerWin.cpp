@@ -318,7 +318,11 @@ void LayoutTestController::setXSSAuditorEnabled(bool enabled)
     if (FAILED(webView->preferences(&preferences)))
         return;
 
-    preferences->setXSSAuditorEnabled(enabled);
+    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    if (!prefsPrivate)
+        return;
+
+    prefsPrivate->setXSSAuditorEnabled(enabled);
 }
 
 void LayoutTestController::setPopupBlockingEnabled(bool enabled)
