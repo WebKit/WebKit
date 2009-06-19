@@ -190,7 +190,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {
     if (!m_XSSAuditor->canEvaluate(sourceCode)) {
         // This script is not safe to be evaluated.
-        return JSValue();
+        return ScriptValue();
     }
 
     v8::HandleScope handleScope;
