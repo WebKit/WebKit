@@ -74,6 +74,11 @@ void FEOffset::apply(Filter* filter)
     if (!filterContext)
         return;
 
+    if (filter->effectBoundingBoxMode()) {
+        setDx(dx() * filter->sourceImageRect().width());
+        setDy(dy() * filter->sourceImageRect().height());
+    }
+
     FloatRect dstRect = FloatRect(dx() + m_in->subRegion().x() - subRegion().x(),
                                   dy() + m_in->subRegion().y() - subRegion().y(),
                                   m_in->subRegion().width(),

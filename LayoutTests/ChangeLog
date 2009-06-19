@@ -2,6 +2,18 @@
 
         Reviewed by Oliver Hunt.
 
+        Test for feOffset with the primitiveUnits objectBoundingBox
+        and userSpaceOnUse.
+
+        * platform/mac/svg/filters/feOffset-expected.checksum: Added.
+        * platform/mac/svg/filters/feOffset-expected.png: Added.
+        * platform/mac/svg/filters/feOffset-expected.txt: Added.
+        * svg/filters/feOffset.svg: Added.
+
+2009-06-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
         Added a test of batik and a own one to check behavior of the
         new feTile effect in SVG.
 

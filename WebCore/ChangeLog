@@ -2,6 +2,22 @@
 
         Reviewed by Oliver Hunt.
 
+        feOffset and objectBoundingBox
+        [https://bugs.webkit.org/show_bug.cgi?id=26441]
+
+        If we use objectBoundingBox for primitiveUnits, the fractions given
+        to dx or dy of feOffset must be multiplied with the referenced objects
+        objectBoundingBox size.
+
+        Test: svg/filters/feOffset.svg
+
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::apply):
+
+2009-06-18  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
         feTile implementation missing
         [https://bugs.webkit.org/show_bug.cgi?id=26419]
 
