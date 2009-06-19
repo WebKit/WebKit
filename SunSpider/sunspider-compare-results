@@ -31,6 +31,7 @@ my $showHelp = 0;
 my $jsShellPath;
 my $ubench = 0;
 my $v8suite = 0;
+my $parseonly = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -39,16 +40,19 @@ Usage: $programName --shell=[path] [options] FILE FILE
   --shell       Path to javascript shell
   --ubench      Compare microbenchmark results
   --v8-suite    Compare the V8 benchmark results
+  --parse-only  Compare the parse-only benchmark results
 EOF
 
 GetOptions('shell=s' => \$jsShellPath,
            'ubench' => \$ubench,
            'v8-suite' => \$v8suite,
+           'parse-only' => \$parseonly,
            'help' => \$showHelp);
 
 my $resultDirectory = "sunspider-results";
 $resultDirectory = "ubench-results" if ($ubench);
 $resultDirectory = "v8-results" if ($v8suite);
+$resultDirectory = "parse-only-results" if ($parseonly);
 
 if ((scalar @ARGV != 0 && scalar @ARGV != 2) || !$jsShellPath || $showHelp) {
    print STDERR $usage;

@@ -1,4 +1,17 @@
-009-06-19  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+2009-06-19  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26540
+        Modify the test shell to add a new function 'checkSyntax' that will
+        only parse the source instead of executing it. In this way we can test
+        pure parsing performance against some of the larger scripts in the wild.
+
+        * jsc.cpp:
+        (GlobalObject::GlobalObject):
+        (functionCheckSyntax):
+
+2009-06-19  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
         

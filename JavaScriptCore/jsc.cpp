@@ -75,6 +75,7 @@ static JSValue JSC_HOST_CALL functionGC(ExecState*, JSObject*, JSValue, const Ar
 static JSValue JSC_HOST_CALL functionVersion(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL functionRun(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL functionLoad(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL functionCheckSyntax(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL functionReadline(ExecState*, JSObject*, JSValue, const ArgList&);
 static NO_RETURN JSValue JSC_HOST_CALL functionQuit(ExecState*, JSObject*, JSValue, const ArgList&);
 
@@ -184,6 +185,7 @@ GlobalObject::GlobalObject(const Vector<UString>& arguments)
     putDirectFunction(globalExec(), new (globalExec()) NativeFunctionWrapper(globalExec(), prototypeFunctionStructure(), 1, Identifier(globalExec(), "version"), functionVersion));
     putDirectFunction(globalExec(), new (globalExec()) NativeFunctionWrapper(globalExec(), prototypeFunctionStructure(), 1, Identifier(globalExec(), "run"), functionRun));
     putDirectFunction(globalExec(), new (globalExec()) NativeFunctionWrapper(globalExec(), prototypeFunctionStructure(), 1, Identifier(globalExec(), "load"), functionLoad));
+    putDirectFunction(globalExec(), new (globalExec()) NativeFunctionWrapper(globalExec(), prototypeFunctionStructure(), 1, Identifier(globalExec(), "checkSyntax"), functionCheckSyntax));
     putDirectFunction(globalExec(), new (globalExec()) NativeFunctionWrapper(globalExec(), prototypeFunctionStructure(), 0, Identifier(globalExec(), "readline"), functionReadline));
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -259,6 +261,22 @@ JSValue JSC_HOST_CALL functionLoad(ExecState* exec, JSObject* o, JSValue v, cons
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Completion result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
+    if (result.complType() == Throw)
+        exec->setException(result.value());
+    return result.value();
+}
+
+JSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec, JSObject* o, JSValue v, const ArgList& args)
+{
+    UNUSED_PARAM(o);
+    UNUSED_PARAM(v);
+    UString fileName = args.at(0).toString(exec);
+    Vector<char> script;
+    if (!fillBufferWithContentsOfFile(fileName, script))
+        return throwError(exec, GeneralError, "Could not open file.");
+
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    Completion result = checkSyntax(globalObject->globalExec(), makeSource(script.data(), fileName));
     if (result.complType() == Throw)
         exec->setException(result.value());
     return result.value();

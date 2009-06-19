@@ -38,6 +38,7 @@ my $runShark20 = 0;
 my $runSharkCache = 0;
 my $ubench = 0;
 my $v8suite = 0;
+my $parseonly = 0;
 my $jsShellPath;
 my $jsShellArgs = "";
 my $setBaseline = 0;
@@ -58,6 +59,7 @@ Usage: $programName --shell=[path] [options]
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
   --ubench          Use microbenchmark suite instead of regular tests (to check for core execution regressions)
   --v8-suite        Use the V8 benchmark suite
+  --parse-only      Use the parse-only benchmark suite
 EOF
 
 GetOptions('runs=i' => \$testRuns,
@@ -69,12 +71,14 @@ GetOptions('runs=i' => \$testRuns,
            'shark-cache' => \$runSharkCache,
            'ubench' => \$ubench,
            'v8-suite' => \$v8suite,
+           'parse-only' => \$parseonly,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
 my $resultDirectory = "sunspider-results";
 $resultDirectory = "ubench-results" if ($ubench);
 $resultDirectory = "v8-results" if ($v8suite);
+$resultDirectory = "parse-only-results" if ($parseonly);
 
 $runShark = 1 if $runSharkCache;
 $runShark = 20 if $runShark20;
@@ -122,6 +126,7 @@ sub loadTestsList()
     my $testlist = "LIST";
     $testlist = "LIST-UBENCH" if ($ubench);
     $testlist = "LIST-V8" if ($v8suite);
+    $testlist = "LIST-PARSE-ONLY" if ($parseonly);
 
     open TESTLIST, "<", "tests/${testlist}" or die "Can't find ./tests/${testlist}";
     while (<TESTLIST>) {
