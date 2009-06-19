@@ -1,3 +1,12 @@
+2009-06-19  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Windows build fix.
+        
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+
 2009-06-19  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Hausmann.

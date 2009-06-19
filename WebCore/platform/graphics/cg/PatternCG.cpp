@@ -65,8 +65,8 @@ CGPatternRef Pattern::createPlatformPattern(const TransformationMatrix& userSpac
     // pattern is not filled correctly.
     // To make error of floating point less than 1, we need to use a big number which is smaller than the
     // number of mantissa of float (1 << 23).
-    CGFloat xStep = m_repeatX ? tileRect.width() : (1 << 23 - 1);
-    CGFloat yStep = m_repeatY ? tileRect.height() : (1 << 23 - 1);
+    CGFloat xStep = m_repeatX ? tileRect.width() : ((1 << 23) - 1);
+    CGFloat yStep = m_repeatY ? tileRect.height() : ((1 << 23) - 1);
 
     // The pattern will release the tile when it's done rendering in patternReleaseCallback
     tileImage()->ref();
