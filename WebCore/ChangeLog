@@ -1,3 +1,22 @@
+2009-06-19  Jungshik Shin  <jshin@chromium.org>
+
+        Reviewed by David Levin
+
+        https://bugs.webkit.org/show_bug.cgi?id=25657
+
+        Chromium Linux port does not handle non-BMP characters properly.
+        It's fixed with a 'UTF-16 iterator macro' to extract Unicode
+        codepoints out of a UTF-16 input string.
+
+        A manual test is added for non-BMP character rendering,
+        which we can use until a small freely-distributable font
+        covering non-BMP is added to the Webkit source tree.
+
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * manual-tests/non-bmp.html: Added.
+
 2009-06-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Dimitri Glazkov.

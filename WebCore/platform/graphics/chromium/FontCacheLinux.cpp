@@ -46,6 +46,7 @@
 #include "SkTypeface.h"
 #include "SkUtils.h"
 
+#include <unicode/utf16.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -59,8 +60,11 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
                                                           int length)
 {
     FcCharSet* cset = FcCharSetCreate();
-    for (int i = 0; i < length; ++i)
-        FcCharSetAddChar(cset, characters[i]);
+    for (int i = 0; i < length; ) {
+        UChar32 ucs4 = 0;
+        U16_NEXT(characters, i, length, ucs4);
+        FcCharSetAddChar(cset, ucs4);
+    }
 
     FcPattern* pattern = FcPatternCreate();
 
