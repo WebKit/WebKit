@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2009 Torch Mobile, Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -57,6 +58,10 @@
 
 #if PLATFORM(MAC)
 #include <CoreFoundation/CoreFoundation.h>
+#endif
+
+#if PLATFORM(WINCE) && !PLATFORM(QT)
+extern "C" size_t strftime(char * const s, const size_t maxsize, const char * const format, const struct tm * const t); //provided by libce
 #endif
 
 using namespace WTF;
@@ -190,6 +195,9 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
 {
 #if HAVE(LANGINFO_H)
     static const nl_item formats[] = { D_T_FMT, D_FMT, T_FMT };
+#elif PLATFORM(WINCE) && !PLATFORM(QT)
+    // strftime() we are using does not support #
+    static const char* const formatStrings[] = { "%c", "%x", "%X" };
 #else
     static const char* const formatStrings[] = { "%#c", "%#x", "%X" };
 #endif

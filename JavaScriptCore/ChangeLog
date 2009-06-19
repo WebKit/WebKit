@@ -1,3 +1,14 @@
+2009-06-19  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26558
+        Declare these symbols extern for WINCE as they are provided by libce.
+
+        * runtime/DateConstructor.cpp:
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+
 2009-06-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

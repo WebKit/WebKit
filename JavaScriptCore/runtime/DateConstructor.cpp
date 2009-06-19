@@ -35,6 +35,10 @@
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 
+#if PLATFORM(WINCE) && !PLATFORM(QT)
+extern "C" time_t time(time_t* timer); //provided by libce
+#endif
+
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
