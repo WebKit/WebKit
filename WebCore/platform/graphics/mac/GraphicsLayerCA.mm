@@ -45,6 +45,7 @@
 #import "WebTiledLayer.h"
 #import <wtf/CurrentTime.h>
 #import <wtf/UnusedParam.h>
+#import <wtf/RetainPtr.h>
 
 using namespace std;
 
@@ -929,6 +930,8 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
     if ((hasBigRotation || functionList.size() > 1) && !caValueFunctionSupported())
         return false;
     
+    bool success = true;
+    
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     // Rules for animation:
@@ -957,16 +960,16 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
         TransformOperation::OperationType opType = isMatrixAnimation ? TransformOperation::MATRIX_3D : functionList[functionIndex];
 
         if (isKeyframe) {
-            NSMutableArray* timesArray = [[NSMutableArray alloc] init];
-            NSMutableArray* valArray = [[NSMutableArray alloc] init];
-            NSMutableArray* tfArray = [[NSMutableArray alloc] init];
+            RetainPtr<NSMutableArray> timesArray(AdoptNS, [[NSMutableArray alloc] init]);
+            RetainPtr<NSMutableArray> valArray(AdoptNS, [[NSMutableArray alloc] init]);
+            RetainPtr<NSMutableArray> tfArray(AdoptNS, [[NSMutableArray alloc] init]);
             
             // Iterate through the keyframes, building arrays for the animation.
             for (Vector<TransformValue>::const_iterator it = valueList.values().begin(); it != valueList.values().end(); ++it) {
                 const TransformValue& curValue = (*it);
                 
                 // fill in the key time and timing function
-                [timesArray addObject:[NSNumber numberWithFloat:curValue.key()]];
+                [timesArray.get() addObject:[NSNumber numberWithFloat:curValue.key()]];
                 
                 const TimingFunction* tf = 0;
                 if (curValue.timingFunction())
@@ -975,27 +978,32 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
                     tf = &anim->timingFunction();
                 
                 CAMediaTimingFunction* timingFunction = getCAMediaTimingFunction(tf ? *tf : TimingFunction(LinearTimingFunction));
-                [tfArray addObject:timingFunction];
+                [tfArray.get() addObject:timingFunction];
                 
                 // fill in the function
                 if (isMatrixAnimation) {
                     TransformationMatrix t;
                     curValue.value()->apply(size, t);
+                    
+                    // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
+                    if (!t.isInvertible()) {
+                        success = false;
+                        break;
+                    }
+                    
                     CATransform3D cat;
                     copyTransform(cat, t);
-                    [valArray addObject:[NSValue valueWithCATransform3D:cat]];
+                    [valArray.get() addObject:[NSValue valueWithCATransform3D:cat]];
                 } else
-                    [valArray addObject:getTransformFunctionValue(curValue, functionIndex, size, opType)];
+                    [valArray.get() addObject:getTransformFunctionValue(curValue, functionIndex, size, opType)];
             }
             
-            // We toss the last tfArray value because it has to one shorter than the others.
-            [tfArray removeLastObject];
+            if (success) {
+                // We toss the last tfArray value because it has to be one shorter than the others.
+                [tfArray.get() removeLastObject];
             
-            setKeyframeAnimation(AnimatedPropertyWebkitTransform, opType, functionIndex, timesArray, valArray, tfArray, isTransition, anim, beginTime);
-            
-            [timesArray release];
-            [valArray release];
-            [tfArray release];
+                setKeyframeAnimation(AnimatedPropertyWebkitTransform, opType, functionIndex, timesArray.get(), valArray.get(), tfArray.get(), isTransition, anim, beginTime);
+            }
         } else {
             // Is a transition
             id fromValue, toValue;
@@ -1004,18 +1012,24 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
                 TransformationMatrix fromt, tot;
                 valueList.at(0).value()->apply(size, fromt);
                 valueList.at(1).value()->apply(size, tot);
-                
-                CATransform3D cat;
-                copyTransform(cat, fromt);
-                fromValue = [NSValue valueWithCATransform3D:cat];
-                copyTransform(cat, tot);
-                toValue = [NSValue valueWithCATransform3D:cat];
+
+                // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
+                if (!fromt.isInvertible() || !tot.isInvertible())
+                    success = false;
+                else {
+                    CATransform3D cat;
+                    copyTransform(cat, fromt);
+                    fromValue = [NSValue valueWithCATransform3D:cat];
+                    copyTransform(cat, tot);
+                    toValue = [NSValue valueWithCATransform3D:cat];
+                }
             } else {
                 fromValue = getTransformFunctionValue(valueList.at(0), functionIndex, size, opType);
                 toValue = getTransformFunctionValue(valueList.at(1), functionIndex, size, opType);
             }
             
-            setBasicAnimation(AnimatedPropertyWebkitTransform, opType, functionIndex, fromValue, toValue, isTransition, anim, beginTime);
+            if (success)
+                setBasicAnimation(AnimatedPropertyWebkitTransform, opType, functionIndex, fromValue, toValue, isTransition, anim, beginTime);
         }
         
         if (isMatrixAnimation)
@@ -1023,7 +1037,7 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
     }
 
     END_BLOCK_OBJC_EXCEPTIONS
-    return true;
+    return success;
 }
 
 bool GraphicsLayerCA::animateFloat(AnimatedPropertyID property, const FloatValueList& valueList, const Animation* animation, double beginTime)
@@ -1052,14 +1066,14 @@ bool GraphicsLayerCA::animateFloat(AnimatedPropertyID property, const FloatValue
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
-    NSMutableArray* timesArray = [[NSMutableArray alloc] init];
-    NSMutableArray* valArray = [[NSMutableArray alloc] init];
-    NSMutableArray* tfArray = [[NSMutableArray alloc] init];
+    RetainPtr<NSMutableArray> timesArray(AdoptNS, [[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> valArray(AdoptNS, [[NSMutableArray alloc] init]);
+    RetainPtr<NSMutableArray> tfArray(AdoptNS, [[NSMutableArray alloc] init]);
 
     for (unsigned i = 0; i < valueList.values().size(); ++i) {
         const FloatValue& curValue = valueList.values()[i];
-        [timesArray addObject:[NSNumber numberWithFloat:curValue.key()]];
-        [valArray addObject:[NSNumber numberWithFloat:curValue.value()]];
+        [timesArray.get() addObject:[NSNumber numberWithFloat:curValue.key()]];
+        [valArray.get() addObject:[NSNumber numberWithFloat:curValue.value()]];
 
         const TimingFunction* tf = 0;
         if (curValue.timingFunction())
@@ -1068,20 +1082,16 @@ bool GraphicsLayerCA::animateFloat(AnimatedPropertyID property, const FloatValue
             tf = &animation->timingFunction();
 
         CAMediaTimingFunction* timingFunction = getCAMediaTimingFunction(tf ? *tf : TimingFunction());
-        [tfArray addObject:timingFunction];
+        [tfArray.get() addObject:timingFunction];
     }
     
     // We toss the last tfArray value because it has to one shorter than the others.
-    [tfArray removeLastObject];
+    [tfArray.get() removeLastObject];
     
     // Initialize the property to 0.
     [animatedLayer(property) setValue:0 forKeyPath:propertyIdToString(property)];
     // Then set the animation.
-    setKeyframeAnimation(property, TransformOperation::NONE, 0, timesArray, valArray, tfArray, false, animation, beginTime);
-
-    [timesArray release];
-    [valArray release];
-    [tfArray release];
+    setKeyframeAnimation(property, TransformOperation::NONE, 0, timesArray.get(), valArray.get(), tfArray.get(), false, animation, beginTime);
 
     END_BLOCK_OBJC_EXCEPTIONS
     return true;
