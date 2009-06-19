@@ -899,6 +899,7 @@ SOURCES += \
     page/Screen.cpp \
     page/Settings.cpp \
     page/WindowFeatures.cpp \
+    page/XSSAuditor.cpp \
     plugins/PluginData.cpp \
     plugins/PluginArray.cpp \
     plugins/Plugin.cpp \

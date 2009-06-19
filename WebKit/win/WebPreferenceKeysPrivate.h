@@ -123,3 +123,5 @@
 
 #define WebKitZoomsTextOnlyPreferenceKey "WebKitZoomsTextOnly"
 
+#define WebKitXSSAuditorEnabledPreferenceKey "WebKitXSSAuditorEnabled"
+

@@ -70,6 +70,7 @@ public:
     void setPersistentUserStyleSheetLocation(JSStringRef path);
     void setPopupBlockingEnabled(bool flag);
     void setPrivateBrowsingEnabled(bool flag);
+    void setXSSAuditorEnabled(bool flag);
     void setSelectTrailingWhitespaceEnabled(bool flag);
     void setSmartInsertDeleteEnabled(bool flag);
     void setTabKeyCyclesThroughElements(bool cycles);

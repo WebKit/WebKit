@@ -1269,6 +1269,8 @@ webcore_sources += \
 	WebCore/page/WebKitPoint.h \
 	WebCore/page/WindowFeatures.cpp \
 	WebCore/page/WindowFeatures.h \
+	WebCore/page/XSSAuditor.cpp \
+	WebCore/page/XSSAuditor.h \
 	WebCore/page/animation/AnimationBase.cpp \
 	WebCore/page/animation/AnimationBase.h \
 	WebCore/page/animation/AnimationController.cpp \

@@ -48,6 +48,7 @@
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "XSSAuditor.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/CurrentTime.h>
 
@@ -436,11 +437,14 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
                 if (!m_doc->ownerElement())
                     printf("Requesting script at time %d\n", m_doc->elapsedTime());
 #endif
-                // The parser might have been stopped by for example a window.close call in an earlier script.
-                // If so, we don't want to load scripts.
-                if (!m_parserStopped && (cs = m_doc->docLoader()->requestScript(m_scriptTagSrcAttrValue, m_scriptTagCharsetAttrValue)))
-                    m_pendingScripts.append(cs);
-                else
+                if (m_XSSAuditor && m_XSSAuditor->canLoadExternalScriptFromSrc(m_scriptTagSrcAttrValue)) {
+                    // The parser might have been stopped by for example a window.close call in an earlier script.
+                    // If so, we don't want to load scripts.
+                    if (!m_parserStopped && (cs = m_doc->docLoader()->requestScript(m_scriptTagSrcAttrValue, m_scriptTagCharsetAttrValue)))
+                        m_pendingScripts.append(cs);
+                    else
+                        m_scriptNode = 0;
+                } else
                     m_scriptNode = 0;
             } else
                 m_scriptNode = 0;

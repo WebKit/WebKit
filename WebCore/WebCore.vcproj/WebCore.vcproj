@@ -16327,6 +16327,14 @@
 				RelativePath="..\page\WorkerNavigator.h"
 				>
 			</File>
+			<File
+				RelativePath="..\page\XSSAuditor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\XSSAuditor.h"
+				>
+			</File>
 			<Filter
 				Name="win"
 				>

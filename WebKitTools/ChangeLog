@@ -1,3 +1,29 @@
+2009-06-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26199
+
+        Add support for testing the XSSAuditor.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setXSSAuditorEnabledCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setXSSAuditorEnabled):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setXSSAuditorEnabled):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setXSSAuditorEnabled):
+        (LayoutTestController::setPopupBlockingEnabled):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setXSSAuditorEnabled):
+
 2009-06-18  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Mark Rowe.

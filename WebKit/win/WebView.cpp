@@ -4204,6 +4204,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setAllowUniversalAccessFromFileURLs(!!enabled);
 
+    hr = prefsPrivate->isXSSAuditorEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setXSSAuditorEnabled(!!enabled);
+
 #if USE(SAFARI_THEME)
     hr = prefsPrivate->shouldPaintNativeControls(&enabled);
     if (FAILED(hr))

@@ -33,6 +33,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "Settings.h"
+#include "XSSAuditor.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <debugger/Debugger.h>
@@ -55,6 +56,7 @@ ScriptController::ScriptController(Frame* frame)
 #if PLATFORM(MAC)
     , m_windowScriptObject(0)
 #endif
+    , m_XSSAuditor(new XSSAuditor(frame))
 {
 #if PLATFORM(MAC) && ENABLE(MAC_JAVA_BRIDGE)
     static bool initializedJavaJSBindings;
@@ -79,6 +81,11 @@ ScriptController::~ScriptController()
 
 ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
 {
+    if (!m_XSSAuditor->canEvaluate(sourceCode)) {
+        // This script is not safe to be evaluated.
+        return JSValue();
+    }
+    
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occured or the type couldn't be converted.
     

@@ -347,6 +347,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitXSSAuditorEnabledPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -808,6 +809,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setZoomsTextOnly:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitZoomsTextOnlyPreferenceKey];
+}
+
+- (BOOL)isXSSAuditorEnabled
+{
+    return [self _boolValueForKey:WebKitXSSAuditorEnabledPreferenceKey];
+}
+
+- (void)setXSSAuditorEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitXSSAuditorEnabledPreferenceKey];
 }
 
 - (BOOL)respectStandardStyleKeyEquivalents

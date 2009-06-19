@@ -90,6 +90,7 @@
 #include "WindowFeatures.h"
 #include "XMLHttpRequest.h"
 #include "XMLTokenizer.h"
+#include "XSSAuditor.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 
@@ -964,6 +965,9 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
     restoreDocumentState();
 
     document->implicitOpen();
+    
+    // Associate the XSSAuditor with the tokenizer.
+    document->tokenizer()->setXSSAuditor(m_frame->script()->xssAuditor());
 
     if (m_frame->view())
         m_frame->view()->setContentsSize(IntSize());
@@ -1616,6 +1620,11 @@ bool FrameLoader::requestObject(RenderPart* renderer, const String& url, const A
 {
     if (url.isEmpty() && mimeType.isEmpty())
         return false;
+    
+    if (!m_frame->script()->xssAuditor()->canLoadObject(url)) {
+        // It is unsafe to honor the request for this object.
+        return false;
+    }
 
     KURL completedURL;
     if (!url.isEmpty())

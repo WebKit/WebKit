@@ -28,6 +28,7 @@
 namespace WebCore {
 
     class SegmentedString;
+    class XSSAuditor;
 
     class Tokenizer {
     public:
@@ -58,11 +59,15 @@ namespace WebCore {
         virtual void executeScriptsWaitingForStylesheets() {}
 
         virtual bool isHTMLTokenizer() const { return false; }
+        
+        XSSAuditor* xssAuditor() const { return m_XSSAuditor; }
+        void setXSSAuditor(XSSAuditor* auditor) { m_XSSAuditor = auditor; }
 
     protected:
         Tokenizer(bool viewSourceMode = false) 
             : m_parserStopped(false)
             , m_inViewSourceMode(viewSourceMode)
+            , m_XSSAuditor(0)
         {
         }
 
@@ -71,6 +76,9 @@ namespace WebCore {
         // even when it has buffered data.
         bool m_parserStopped;
         bool m_inViewSourceMode;
+        
+        // The XSSAuditor associated with this tokenizer.
+        XSSAuditor* m_XSSAuditor;
     };
 
 } // namespace WebCore

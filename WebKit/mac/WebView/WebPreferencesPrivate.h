@@ -101,6 +101,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)zoomsTextOnly;
 - (void)setZoomsTextOnly:(BOOL)zoomsTextOnly;
 
+- (BOOL)isXSSAuditorEnabled;
+- (void)setXSSAuditorEnabled:(BOOL)flag;
+
 // zero means do AutoScale
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;

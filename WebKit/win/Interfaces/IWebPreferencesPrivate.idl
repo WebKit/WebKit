@@ -75,4 +75,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT allowUniversalAccessFromFileURLs([out, retval] BOOL *allowAccess);
     HRESULT setAllowUniversalAccessFromFileURLs([in] BOOL allowAccess);
+
+    HRESULT isXSSAuditorEnabled([out, retval] BOOL *enabled);
+    HRESULT setXSSAuditorEnabled([in] BOOL enabled);
 }

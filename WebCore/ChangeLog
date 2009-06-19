@@ -1,3 +1,54 @@
+2009-06-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26199
+
+        Added an experimental reflective XSS filter.  The filter is disabled by
+        default.
+
+        Test: http/tests/security/xssAuditor/script-tag.html
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::evaluate):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::xssAuditor):
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * dom/Tokenizer.h:
+        (WebCore::Tokenizer::xssAuditor):
+        (WebCore::Tokenizer::setXSSAuditor):
+        (WebCore::Tokenizer::Tokenizer):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::requestObject):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setXSSAuditorEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::xssAuditorEnabled):
+        * page/XSSAuditor.cpp: Added.
+        (WebCore::isControlCharacter):
+        (WebCore::XSSAuditor::XSSAuditor):
+        (WebCore::XSSAuditor::~XSSAuditor):
+        (WebCore::XSSAuditor::canEvaluate):
+        (WebCore::XSSAuditor::canCreateInlineEventListener):
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+        (WebCore::XSSAuditor::canLoadObject):
+        (WebCore::XSSAuditor::decodeURL):
+        (WebCore::XSSAuditor::findInRequest):
+        * page/XSSAuditor.h: Added.
+        (WebCore::XSSAuditor::isEnabled):
+        (WebCore::XSSAuditor::setXSSAuditorEnabled):
+
 2009-06-18  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Oliver Hunt.

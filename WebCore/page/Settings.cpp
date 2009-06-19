@@ -103,6 +103,7 @@ Settings::Settings(Page* page)
     // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
     // they can't use by. Leaving enabled for now to not change existing behavior.
     , m_downloadableBinaryFontsEnabled(true)
+    , m_xssAuditorEnabled(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -456,6 +457,11 @@ void Settings::setCaretBrowsingEnabled(bool caretBrowsingEnabled)
 void Settings::setDownloadableBinaryFontsEnabled(bool downloadableBinaryFontsEnabled)
 {
     m_downloadableBinaryFontsEnabled = downloadableBinaryFontsEnabled;
+}
+
+void Settings::setXSSAuditorEnabled(bool xssAuditorEnabled)
+{
+    m_xssAuditorEnabled = xssAuditorEnabled;
 }
 
 } // namespace WebCore

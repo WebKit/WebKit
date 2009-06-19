@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "JSNode.h"
 #include "Frame.h"
+#include "XSSAuditor.h"
 
 #include <runtime/JSLock.h>
 
@@ -61,6 +62,11 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
     if (!scriptController->isEnabled())
         return 0;
 
+    if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
+        // This script is not safe to execute.
+        return 0;
+    }
+    
     JSDOMWindow* globalObject = scriptController->globalObject();
 
     // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
@@ -80,6 +86,11 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, Attri
     ScriptController* scriptController = frame->script();
     if (!scriptController->isEnabled())
         return 0;
+    
+    if (!scriptController->xssAuditor()->canCreateInlineEventListener(attr->localName().string(), attr->value())) {
+        // This script is not safe to execute.
+        return 0;
+    }
 
     // 'globalObject' is the JavaScript wrapper that will mark the event listener we're creating.
     JSDOMWindow* globalObject = scriptController->globalObject();

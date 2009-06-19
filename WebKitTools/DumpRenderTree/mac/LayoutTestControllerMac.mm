@@ -244,6 +244,11 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled
     [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:privateBrowsingEnabled];
 }
 
+void LayoutTestController::setXSSAuditorEnabled(bool enabled)
+{
+    [[[mainFrame webView] preferences] setXSSAuditorEnabled:enabled];
+}
+
 void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
 {
     [[[mainFrame webView] preferences] setJavaScriptCanOpenWindowsAutomatically:!popupBlockingEnabled];

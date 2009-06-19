@@ -58,6 +58,7 @@ class ScriptSourceCode;
 class ScriptValue;
 class String;
 class Widget;
+class XSSAuditor;
 
 typedef HashMap<void*, RefPtr<JSC::Bindings::RootObject> > RootObjectMap;
 
@@ -132,6 +133,8 @@ public:
     NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
     NPObject* windowScriptNPObject();
 #endif
+    
+    XSSAuditor* xssAuditor() { return m_XSSAuditor.get(); }
 
 private:
     void initScriptIfNeeded()
@@ -164,6 +167,9 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<WebScriptObject> m_windowScriptObject;
 #endif
+    
+    // The XSSAuditor associated with this ScriptController.
+    OwnPtr<XSSAuditor> m_XSSAuditor;
 };
 
 } // namespace WebCore

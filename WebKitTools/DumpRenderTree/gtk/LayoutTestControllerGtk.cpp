@@ -243,6 +243,11 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-private-browsing", flag, NULL);
 }
 
+void LayoutTestController::setXSSAuditorEnabled(bool flag)
+{
+    // FIXME: implement
+}
+
 void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
 {
     // FIXME: implement
