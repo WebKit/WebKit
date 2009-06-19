@@ -920,6 +920,9 @@ webcore_sources += \
 	WebCore/html/HTMLCanvasElement.h \
 	WebCore/html/HTMLCollection.cpp \
 	WebCore/html/HTMLCollection.h \
+	WebCore/html/HTMLDataGridColElement.cpp \
+	WebCore/html/HTMLDataGridColElement.h \
+	WebCore/html/HTMLDataGridElement.cpp \
 	WebCore/html/HTMLDataGridElement.h \
 	WebCore/html/HTMLDListElement.cpp \
 	WebCore/html/HTMLDListElement.h \
