@@ -1,3 +1,15 @@
+2009-06-19  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by David Levin.
+
+        Use WebCore::multipleFileUploadText() in Chromium to fix a problem
+        that Chromium shows only the first filename even if a user selects
+        multiple files for <input type=file multiple>.
+        <https://bugs.webkit.org/show_bug.cgi?id=26502>
+
+        * platform/chromium/FileChooserChromium.cpp:
+        (WebCore::FileChooser::basenameForWidth):
+
 2009-06-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
