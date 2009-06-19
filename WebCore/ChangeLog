@@ -1,3 +1,12 @@
+2009-06-19  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+        Build fix after 44825.
+
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::isSizeAvailable):
+        * platform/graphics/qt/ImageDecoderQt.h:
+
 2009-06-18  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Oliver Hunt.

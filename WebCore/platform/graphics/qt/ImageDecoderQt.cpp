@@ -260,7 +260,7 @@ void ImageDecoderQt::setData(const IncomingData &data, bool allDataReceived)
 }
 
 
-bool ImageDecoderQt::isSizeAvailable() const
+bool ImageDecoderQt::isSizeAvailable()
 {
     if (debugImageDecoderQt)
         qDebug() << " ImageDecoderQt::isSizeAvailable() returns" << ImageDecoder::isSizeAvailable();
