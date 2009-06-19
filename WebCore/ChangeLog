@@ -1,3 +1,21 @@
+2009-06-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26536
+
+        Fix external-script-URL-location.html and
+        write-external-script-open.html LayoutTests.
+
+        implicitOpen is called from several places.  We need to setXSSAuditor
+        each time, so I moved the call inside implicitOpen.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+        (WebCore::Document::implicitOpen):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+
 2009-06-19  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by David Levin.

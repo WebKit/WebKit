@@ -1477,7 +1477,7 @@ void Document::open(Document* ownerDocument)
         if (m_frame->loader()->state() == FrameStateProvisional)
             m_frame->loader()->stopAllLoaders();
     }
-    
+
     implicitOpen();
 
     if (m_frame)
@@ -1504,6 +1504,9 @@ void Document::implicitOpen()
     clear();
     m_tokenizer = createTokenizer();
     setParsing(true);
+
+    if (m_frame)
+        m_tokenizer->setXSSAuditor(m_frame->script()->xssAuditor());
 
     // If we reload, the animation controller sticks around and has
     // a stale animation time. We need to update it here.
