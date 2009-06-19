@@ -74,10 +74,6 @@ namespace WebCore {
 
         // Determines whether the script should be allowed or denied execution
         // based on the content of any user-submitted data.
-        bool canEvaluate(const ScriptSourceCode& sourceCode) const;
-
-        // Determines whether the script should be allowed or denied execution
-        // based on the content of any user-submitted data.
         bool canEvaluate(const String& sourceCode) const;
 
         // Determines whether the event listener should be created based on the

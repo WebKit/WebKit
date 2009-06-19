@@ -1,3 +1,18 @@
+2009-06-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26555
+
+        Fix the Chromium canary bot.  Turns out ScriptSourceCode doesn't have
+        the same API in V8 and JSC.
+
+        * WebCore/bindings/js/ScriptController.cpp:
+        * WebCore/bindings/js/ScriptSourceCode.h:
+        * WebCore/bindings/v8/ScriptController.cpp:
+        * WebCore/page/XSSAuditor.cpp:
+        * WebCore/page/XSSAuditor.h:
+
 2009-06-19  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.
@@ -160,7 +175,7 @@
         * platform/graphics/cg/PatternCG.cpp:
         (WebCore::Pattern::createPlatformPattern):
 
-2009-06-19  abarth  <abarth@webkit.org>
+2009-06-19  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempt to fix the Chromium build.
 

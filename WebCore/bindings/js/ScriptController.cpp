@@ -81,14 +81,14 @@ ScriptController::~ScriptController()
 
 ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
 {
-    if (!m_XSSAuditor->canEvaluate(sourceCode)) {
+    if (!m_XSSAuditor->canEvaluate(sourceCode.source())) {
         // This script is not safe to be evaluated.
         return JSValue();
     }
-    
+
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occured or the type couldn't be converted.
-    
+
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
 
     initScriptIfNeeded();
