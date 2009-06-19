@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLDataGridElement_h
-#define HTMLDataGridElement_h
+module html {
 
-#include "HTMLElement.h"
+interface [GenerateConstructor] HTMLDataGridColElement : HTMLElement {
+    attribute DOMString label; // The text to display in the column.
+    attribute DOMString type; // The type of data displayed in this column.
 
-namespace WebCore {
-
-class HTMLDataGridElement : public HTMLElement
-{
-public:
-    HTMLDataGridElement(const QualifiedName&, Document*);
+    attribute boolean sortable; // Whether or not the column can be sorted.
+    attribute DOMString sortDirection; // The sort direction for the column.  Valid values are ascending, descending and natural (no sort applied).
     
-    virtual int tagPriority() const { return 6; } // Same as <select>s
-    virtual bool checkDTD(const Node*);
+    attribute boolean selected; // Whether or not the column as a whole has been selected.
 };
 
-} //namespace
-
-#endif
+}

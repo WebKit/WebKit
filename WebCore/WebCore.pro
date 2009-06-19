@@ -753,6 +753,8 @@ SOURCES += \
     html/HTMLButtonElement.cpp \
     html/HTMLCanvasElement.cpp \
     html/HTMLCollection.cpp \
+    html/HTMLDataGridElement.cpp \
+    html/HTMLDataGridColElement.cpp \
     html/HTMLDirectoryElement.cpp \
     html/HTMLDivElement.cpp \
     html/HTMLDListElement.cpp \

@@ -168,6 +168,7 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLCanvasElement.idl \
 	WebCore/html/HTMLCollection.idl \
 	WebCore/html/HTMLDataGridElement.idl \
+	WebCore/html/HTMLDataGridColElement.idl \
 	WebCore/html/HTMLDListElement.idl \
 	WebCore/html/HTMLDirectoryElement.idl \
 	WebCore/html/HTMLDivElement.idl \

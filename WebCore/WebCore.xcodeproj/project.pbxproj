@@ -4033,6 +4033,11 @@
 		BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */; };
 		BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */; };
+		BC77CB870FEBF5AF0070887B /* HTMLDataGridColElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CB860FEBF5AF0070887B /* HTMLDataGridColElement.h */; };
+		BC77CB890FEBF5BA0070887B /* HTMLDataGridColElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC77CB880FEBF5BA0070887B /* HTMLDataGridColElement.idl */; };
+		BC77CBAA0FEBF6C90070887B /* HTMLDataGridColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */; };
+		BC77CBD30FEBF8310070887B /* JSHTMLDataGridColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CBD10FEBF8310070887B /* JSHTMLDataGridColElement.cpp */; };
+		BC77CBD40FEBF8310070887B /* JSHTMLDataGridColElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CBD20FEBF8310070887B /* JSHTMLDataGridColElement.h */; };
 		BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F44A70B9E324E00A9D081 /* ImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7FA6200D1F0CBD00DB22A9 /* DynamicNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */; };
 		BC7FA6210D1F0CBD00DB22A9 /* DynamicNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7FA61F0D1F0CBD00DB22A9 /* DynamicNodeList.h */; };
@@ -4248,6 +4253,7 @@
 		BCEFE1E50DCA5F3300739219 /* JSXSLTProcessorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */; };
 		BCEFE1EA0DCA5F6400739219 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFE1E80DCA5F6400739219 /* JSXSLTProcessor.cpp */; };
 		BCEFE1EB0DCA5F6400739219 /* JSXSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEFE1E90DCA5F6400739219 /* JSXSLTProcessor.h */; };
+		BCF524600FEBEE5D0095BF26 /* HTMLDataGridElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF5245F0FEBEE5D0095BF26 /* HTMLDataGridElement.cpp */; };
 		BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F74097A2E1A00BA703D /* Arena.cpp */; };
 		BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F75097A2E1A00BA703D /* Arena.h */; };
@@ -8818,6 +8824,11 @@
 		BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MIMETypeRegistry.cpp; sourceTree = "<group>"; };
 		BC772C4D0C4EB3040083285F /* MIMETypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MIMETypeRegistry.h; sourceTree = "<group>"; };
 		BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MIMETypeRegistryMac.mm; sourceTree = "<group>"; };
+		BC77CB860FEBF5AF0070887B /* HTMLDataGridColElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataGridColElement.h; sourceTree = "<group>"; };
+		BC77CB880FEBF5BA0070887B /* HTMLDataGridColElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataGridColElement.idl; sourceTree = "<group>"; };
+		BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataGridColElement.cpp; sourceTree = "<group>"; };
+		BC77CBD10FEBF8310070887B /* JSHTMLDataGridColElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataGridColElement.cpp; sourceTree = "<group>"; };
+		BC77CBD20FEBF8310070887B /* JSHTMLDataGridColElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataGridColElement.h; sourceTree = "<group>"; };
 		BC7B2AF80450824100A8000F /* Scrollbar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Scrollbar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
 		BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicNodeList.cpp; sourceTree = "<group>"; };
@@ -9048,6 +9059,7 @@
 		BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessorCustom.cpp; sourceTree = "<group>"; };
 		BCEFE1E80DCA5F6400739219 /* JSXSLTProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessor.cpp; sourceTree = "<group>"; };
 		BCEFE1E90DCA5F6400739219 /* JSXSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXSLTProcessor.h; sourceTree = "<group>"; };
+		BCF5245F0FEBEE5D0095BF26 /* HTMLDataGridElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataGridElement.cpp; sourceTree = "<group>"; };
 		BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceClient.h; sourceTree = "<group>"; };
 		BCFB2F74097A2E1A00BA703D /* Arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Arena.cpp; sourceTree = "<group>"; };
 		BCFB2F75097A2E1A00BA703D /* Arena.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Arena.h; sourceTree = "<group>"; };
@@ -11625,8 +11637,12 @@
 				A8DF3FC9097FA0FB0052981B /* HTMLCollection.cpp */,
 				A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */,
 				85DF2F690AA3C74300AD64C5 /* HTMLCollection.idl */,
+				BCF5245F0FEBEE5D0095BF26 /* HTMLDataGridElement.cpp */,
 				BC212A1E0FE8333200EC3708 /* HTMLDataGridElement.h */,
 				BC212A230FE8345D00EC3708 /* HTMLDataGridElement.idl */,
+				BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */,
+				BC77CB860FEBF5AF0070887B /* HTMLDataGridColElement.h */,
+				BC77CB880FEBF5BA0070887B /* HTMLDataGridColElement.idl */,
 				A8EA79E90A1916DF00A8EF5F /* HTMLDListElement.cpp */,
 				A8EA79EB0A1916DF00A8EF5F /* HTMLDListElement.h */,
 				1A85B1D10A1B235B00D8C87C /* HTMLDListElement.idl */,
@@ -11896,6 +11912,8 @@
 				BCCBAD3F0C18C14200CE890F /* JSHTMLCollection.h */,
 				BC212A3F0FE83A1800EC3708 /* JSHTMLDataGridElement.cpp */,
 				BC212A400FE83A1800EC3708 /* JSHTMLDataGridElement.h */,
+				BC77CBD10FEBF8310070887B /* JSHTMLDataGridColElement.cpp */,
+				BC77CBD20FEBF8310070887B /* JSHTMLDataGridColElement.h */,
 				1A85B1E20A1B240500D8C87C /* JSHTMLDListElement.cpp */,
 				1A85B1E30A1B240500D8C87C /* JSHTMLDListElement.h */,
 				1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */,
@@ -16816,6 +16834,8 @@
 				2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */,
 				BC212A1F0FE8333200EC3708 /* HTMLDataGridElement.h in Headers */,
 				BC212A420FE83A1800EC3708 /* JSHTMLDataGridElement.h in Headers */,
+				BC77CB870FEBF5AF0070887B /* HTMLDataGridColElement.h in Headers */,
+				BC77CBD40FEBF8310070887B /* JSHTMLDataGridColElement.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16920,6 +16940,7 @@
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				BC212A240FE8345D00EC3708 /* HTMLDataGridElement.idl in Resources */,
+				BC77CB890FEBF5BA0070887B /* HTMLDataGridColElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18812,6 +18833,9 @@
 				081EBF3A0FD34F4100DA7559 /* SVGFilterBuilder.cpp in Sources */,
 				A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */,
 				BC212A410FE83A1800EC3708 /* JSHTMLDataGridElement.cpp in Sources */,
+				BCF524600FEBEE5D0095BF26 /* HTMLDataGridElement.cpp in Sources */,
+				BC77CBAA0FEBF6C90070887B /* HTMLDataGridColElement.cpp in Sources */,
+				BC77CBD30FEBF8310070887B /* JSHTMLDataGridColElement.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

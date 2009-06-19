@@ -23,20 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLDataGridElement_h
-#define HTMLDataGridElement_h
+#ifndef HTMLDataGridColElement_h
+#define HTMLDataGridColElement_h
 
 #include "HTMLElement.h"
 
 namespace WebCore {
 
-class HTMLDataGridElement : public HTMLElement
+class HTMLDataGridColElement : public HTMLElement
 {
 public:
-    HTMLDataGridElement(const QualifiedName&, Document*);
+    HTMLDataGridColElement(const QualifiedName&, Document*);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
     
-    virtual int tagPriority() const { return 6; } // Same as <select>s
-    virtual bool checkDTD(const Node*);
+    String label() const;
+    void setLabel(const String&);
+    
+    String type() const;
+    void setType(const String&);
+    
+    bool sortable() const;
+    void setSortable(bool);
+    
+    String sortDirection() const;
+    void setSortDirection(const String&);
+    
+    bool selected() const;
+    void setSelected(bool);
 };
 
 } //namespace

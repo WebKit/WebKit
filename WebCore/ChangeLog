@@ -1,3 +1,40 @@
+2009-06-19  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26547
+        
+        Implement the IDL interface for HTMLDataGridColElement.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLDataGridColElement.cpp: Added.
+        (WebCore::HTMLDataGridColElement::HTMLDataGridColElement):
+        (WebCore::HTMLDataGridColElement::label):
+        (WebCore::HTMLDataGridColElement::setLabel):
+        (WebCore::HTMLDataGridColElement::type):
+        (WebCore::HTMLDataGridColElement::setType):
+        (WebCore::HTMLDataGridColElement::sortable):
+        (WebCore::HTMLDataGridColElement::setSortable):
+        (WebCore::HTMLDataGridColElement::sortDirection):
+        (WebCore::HTMLDataGridColElement::setSortDirection):
+        (WebCore::HTMLDataGridColElement::selected):
+        (WebCore::HTMLDataGridColElement::setSelected):
+        * html/HTMLDataGridColElement.h: Added.
+        (WebCore::HTMLDataGridColElement::endTagRequirement):
+        (WebCore::HTMLDataGridColElement::tagPriority):
+        * html/HTMLDataGridColElement.idl: Added.
+        * html/HTMLDataGridElement.h:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTagNames.in:
+        * page/DOMWindow.idl:
+
 2009-06-19  Chris Evans  <scarybeasts@gmail.com>
 
         Reviewed by Eric Seidel.

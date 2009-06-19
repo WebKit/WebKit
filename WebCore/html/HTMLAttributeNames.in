@@ -179,6 +179,8 @@ scrolling
 selected
 shape
 size
+sortable
+sortdirection
 span
 spellcheck
 src

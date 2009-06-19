@@ -111,6 +111,7 @@ DOM_CLASSES = \
     HTMLCanvasElement \
     HTMLCollection \
     HTMLDataGridElement \
+    HTMLDataGridColElement \
     HTMLDListElement \
     HTMLDirectoryElement \
     HTMLDivElement \

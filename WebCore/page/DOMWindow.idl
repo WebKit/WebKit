@@ -350,6 +350,7 @@ module window {
         attribute HTMLButtonElementConstructor HTMLButtonElement;
         attribute HTMLCanvasElementConstructor HTMLCanvasElement;
         attribute HTMLDataGridElementConstructor HTMLDataGridElement;
+        attribute HTMLDataGridColElementConstructor HTMLDataGridColElement;
         attribute HTMLDListElementConstructor HTMLDListElement;
         attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
         attribute HTMLDivElementConstructor HTMLDivElement;

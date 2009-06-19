@@ -23,22 +23,70 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLDataGridElement_h
-#define HTMLDataGridElement_h
+#include "config.h"
+#include "HTMLDataGridColElement.h"
 
-#include "HTMLElement.h"
+#include "HTMLNames.h"
+#include "Text.h"
 
 namespace WebCore {
 
-class HTMLDataGridElement : public HTMLElement
+using namespace HTMLNames;
+
+HTMLDataGridColElement::HTMLDataGridColElement(const QualifiedName& name, Document* doc)
+    : HTMLElement(name, doc)
 {
-public:
-    HTMLDataGridElement(const QualifiedName&, Document*);
-    
-    virtual int tagPriority() const { return 6; } // Same as <select>s
-    virtual bool checkDTD(const Node*);
-};
+}
 
-} //namespace
+String HTMLDataGridColElement::label() const
+{
+    return getAttribute(labelAttr);
+}
 
-#endif
+void HTMLDataGridColElement::setLabel(const String& label)
+{
+    setAttribute(labelAttr, label);
+}
+
+String HTMLDataGridColElement::type() const
+{
+    return getAttribute(typeAttr);
+}
+
+void HTMLDataGridColElement::setType(const String& type)
+{
+    setAttribute(typeAttr, type);
+}
+
+bool HTMLDataGridColElement::sortable() const
+{
+    return hasAttribute(sortableAttr);
+}
+
+void HTMLDataGridColElement::setSortable(bool sortable)
+{
+    setAttribute(sortableAttr, sortable ? "" : 0);
+}
+
+String HTMLDataGridColElement::sortDirection() const
+{
+    return getAttribute(sortdirectionAttr);
+}
+
+void HTMLDataGridColElement::setSortDirection(const String& sortDirection)
+{
+    setAttribute(sortdirectionAttr, sortDirection);
+}
+
+bool HTMLDataGridColElement::selected() const
+{
+    return hasAttribute(selectedAttr);
+}
+
+void HTMLDataGridColElement::setSelected(bool selected)
+{
+    setAttribute(selectedAttr, selected ? "" : 0);
+}
+
+}
+
