@@ -1,3 +1,20 @@
+2009-06-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Steve Falkenburg.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26488
+        No Support for Single Finger or Two Finger Panning in Windows 7
+        
+        The code in WebCore allows us to interpret a Pan gesture as
+        a mousewheel event, and we are able to reuse the scrolling code.
+        Another constructor was created in WheelEventWin which takes data
+        better suited to the pan guesture than what was currently there. 
+        
+        Unable to add tests to simulate touch behavior/gestures.
+
+        * platform/PlatformWheelEvent.h:
+        * platform/win/WheelEventWin.cpp:
+        
 2009-06-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

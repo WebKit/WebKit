@@ -30,6 +30,7 @@
 #include "CFDictionaryPropertyBag.h"
 #include "DOMCoreClasses.h"
 #include "MarshallingHelpers.h"
+#include "SoftLinking.h"
 #include "WebDatabaseManager.h"
 #include "WebDocumentLoader.h"
 #include "WebDownload.h"
@@ -50,6 +51,7 @@
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
+#include "WindowsTouch.h"
 #pragma warning( push, 0 )
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
@@ -96,6 +98,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ScriptValue.h>
+#include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SelectionController.h>
@@ -128,6 +131,16 @@
 #include <ShlObj.h>
 #include <tchar.h>
 #include <windowsx.h>
+
+// Soft link functions for gestures and panning feedback
+SOFT_LINK_LIBRARY(USER32);
+SOFT_LINK_OPTIONAL(USER32, GetGestureInfo, BOOL, WINAPI, (HGESTUREINFO, PGESTUREINFO));
+SOFT_LINK_OPTIONAL(USER32, SetGestureConfig, BOOL, WINAPI, (HWND, DWORD, UINT, PGESTURECONFIG, UINT));
+SOFT_LINK_OPTIONAL(USER32, CloseGestureInfoHandle, BOOL, WINAPI, (HGESTUREINFO));
+SOFT_LINK_LIBRARY(Uxtheme);
+SOFT_LINK_OPTIONAL(Uxtheme, BeginPanningFeedback, BOOL, WINAPI, (HWND));
+SOFT_LINK_OPTIONAL(Uxtheme, EndPanningFeedback, BOOL, WINAPI, (HWND, BOOL));
+SOFT_LINK_OPTIONAL(Uxtheme, UpdatePanningFeedback, BOOL, WINAPI, (HWND, LONG, LONG, BOOL));
 
 using namespace WebCore;
 using JSC::JSLock;
@@ -299,6 +312,10 @@ WebView::WebView()
 , m_deleteBackingStoreTimerActive(false)
 , m_transparent(false)
 , m_selectTrailingWhitespaceEnabled(false)
+, m_lastPanX(0)
+, m_lastPanY(0)
+, m_xOverpan(0)
+, m_yOverpan(0)
 {
     JSC::initializeThreading();
 
@@ -1315,6 +1332,132 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     return handled;
 }
 
+bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
+{
+    GESTURENOTIFYSTRUCT* gn = reinterpret_cast<GESTURENOTIFYSTRUCT*>(lParam);
+
+    Frame* coreFrame = core(m_mainFrame);
+    if (!coreFrame)
+        return false;
+
+    ScrollView* view = coreFrame->view();
+    if (!view)
+        return false;
+
+    // If we don't have this function, we shouldn't be receiving this message
+    ASSERT(SetGestureConfigPtr());
+
+    DWORD dwPanWant;
+    DWORD dwPanBlock; 
+
+    // Translate gesture location to client to hit test on scrollbars
+    POINT gestureBeginPoint = {gn->ptsLocation.x, gn->ptsLocation.y};
+    ScreenToClient(m_viewWindow, &gestureBeginPoint);
+
+    if (gestureBeginPoint.x > view->visibleWidth()) {
+        // We are in the scrollbar, turn off panning, need to be able to drag the scrollbar
+        dwPanWant = GC_PAN  | GC_PAN_WITH_INERTIA | GC_PAN_WITH_GUTTER;
+        dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY | GC_PAN_WITH_SINGLE_FINGER_VERTICALLY;
+    } else {
+        dwPanWant = GC_PAN  | GC_PAN_WITH_SINGLE_FINGER_VERTICALLY | GC_PAN_WITH_INERTIA | GC_PAN_WITH_GUTTER;
+        dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
+    }
+
+    GESTURECONFIG gc = { GID_PAN, dwPanWant , dwPanBlock } ;
+    return SetGestureConfigPtr()(m_viewWindow, 0, 1, &gc, sizeof(GESTURECONFIG));
+}
+
+bool WebView::gesture(WPARAM wParam, LPARAM lParam) 
+{
+    // We want to bail out if we don't have either of these functions
+    if (!GetGestureInfoPtr() || !CloseGestureInfoHandlePtr())
+        return false;
+
+    HGESTUREINFO gestureHandle = reinterpret_cast<HGESTUREINFO>(lParam);
+    
+    GESTUREINFO gi = {0};
+    gi.cbSize = sizeof(GESTUREINFO);
+
+    if (!GetGestureInfoPtr()(gestureHandle, reinterpret_cast<PGESTUREINFO>(&gi)))
+        return false;
+
+    switch (gi.dwID) {
+    case GID_BEGIN:
+        m_lastPanX = gi.ptsLocation.x;
+        m_lastPanY = gi.ptsLocation.y;
+
+        CloseGestureInfoHandlePtr()(gestureHandle);
+        break;
+    case GID_PAN: {
+        Frame* coreFrame = core(m_mainFrame);
+        if (!coreFrame) {
+            CloseGestureInfoHandlePtr()(gestureHandle);
+            return false;
+        }
+
+        ScrollView* view = coreFrame->view();
+        if (!view) {
+            CloseGestureInfoHandlePtr()(gestureHandle);
+            return false;
+        }
+
+        Scrollbar* vertScrollbar = view->verticalScrollbar();
+        if (!vertScrollbar) {
+            CloseGestureInfoHandlePtr()(gestureHandle);
+            return true;    //No panning of any kind when no vertical scrollbar, matches IE8
+        }
+
+        // Where are the fingers currently?
+        long currentX = gi.ptsLocation.x;
+        long currentY = gi.ptsLocation.y;
+        
+        // How far did we pan in each direction?
+        long deltaX = currentX - m_lastPanX;
+        long deltaY = currentY - m_lastPanY;
+        
+        // Calculate the overpan for window bounce
+        m_yOverpan -= m_lastPanY - currentY;
+        m_xOverpan -= m_lastPanX - currentX;
+        
+        // Update our class variables with updated values
+        m_lastPanX = currentX;
+        m_lastPanY = currentY;
+
+        // Represent the pan gesture as a mouse wheel event
+        PlatformWheelEvent wheelEvent(m_viewWindow, deltaX, deltaY, currentX, currentY);
+        coreFrame->eventHandler()->handleWheelEvent(wheelEvent);
+
+        if (!(UpdatePanningFeedbackPtr() && BeginPanningFeedbackPtr() && EndPanningFeedbackPtr())) {
+            CloseGestureInfoHandlePtr()(gestureHandle);
+            return true;
+        }
+
+        // FIXME: Support Horizontal Window Bounce
+        if (vertScrollbar->currentPos() == 0)
+            UpdatePanningFeedbackPtr()(m_viewWindow, 0, m_yOverpan, gi.dwFlags & GF_INERTIA);
+        else if (vertScrollbar->currentPos() >= vertScrollbar->maximum())
+            UpdatePanningFeedbackPtr()(m_viewWindow, 0, m_yOverpan, gi.dwFlags & GF_INERTIA);
+        
+        if (gi.dwFlags & GF_BEGIN) {
+            BeginPanningFeedbackPtr()(m_viewWindow);
+            m_yOverpan = 0;
+        } else if (gi.dwFlags & GF_END) {
+            EndPanningFeedbackPtr()(m_viewWindow, true);
+            m_yOverpan = 0;
+        }
+
+        CloseGestureInfoHandlePtr()(gestureHandle);
+        break;
+    }
+    default:
+        // We have encountered an unknown gesture - return false to pass it to DefWindowProc
+        CloseGestureInfoHandlePtr()(gestureHandle);
+        break;
+    }
+
+    return true;
+}
+
 bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
 {
     // Ctrl+Mouse wheel doesn't ever go into WebCore.  It is used to
@@ -1698,6 +1841,12 @@ static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, L
             webView->close();
             webView->setIsBeingDestroyed();
             webView->revokeDragDrop();
+            break;
+        case WM_GESTURENOTIFY:
+            handled = webView->gestureNotify(wParam, lParam);
+            break;
+        case WM_GESTURE:
+            handled = webView->gesture(wParam, lParam);
             break;
         case WM_MOUSEMOVE:
         case WM_LBUTTONDOWN:

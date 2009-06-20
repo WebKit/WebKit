@@ -62,6 +62,28 @@ static int verticalScrollLines()
     return scrollLines;
 }
 
+PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, float deltaX, float deltaY, float xLoc, float yLoc)
+    : m_isAccepted(false)
+    , m_shiftKey(false)
+    , m_ctrlKey(false)
+    , m_altKey(false)
+    , m_metaKey(false)
+{
+    m_deltaX = deltaX;
+    m_deltaY = deltaY;
+
+    m_wheelTicksX = m_deltaX;
+    m_wheelTicksY = m_deltaY;
+
+    // Global Position is just x, y location of event
+    POINT point = {xLoc, yLoc};
+    m_globalPosition = point;
+
+    // Position needs to be translated to our client
+    ScreenToClient(hWnd, &point);
+    m_position = point;
+}
+
 PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
     : m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))

@@ -99,6 +99,7 @@ namespace WebCore {
 
 #if PLATFORM(WIN)
         PlatformWheelEvent(HWND, WPARAM, LPARAM, bool isMouseHWheel);
+        PlatformWheelEvent(HWND, float deltaX, float deltaY, float xLoc, float yLoc);
 #endif
 
 #if PLATFORM(WX)

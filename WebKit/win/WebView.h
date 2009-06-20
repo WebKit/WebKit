@@ -742,6 +742,8 @@ public:
     bool onUninitMenuPopup(WPARAM, LPARAM);
     void performContextMenuAction(WPARAM, LPARAM, bool byPosition);
     bool mouseWheel(WPARAM, LPARAM, bool isMouseHWheel);
+    bool gesture(WPARAM, LPARAM);
+    bool gestureNotify(WPARAM, LPARAM);
     bool execCommand(WPARAM wParam, LPARAM lParam);
     bool keyDown(WPARAM, LPARAM, bool systemKeyDown = false);
     bool keyUp(WPARAM, LPARAM, bool systemKeyDown = false);
@@ -911,6 +913,12 @@ protected:
     HWND m_topLevelParent;
 
     OwnPtr<HashSet<WebCore::String> > m_embeddedViewMIMETypes;
+
+    //Variables needed to store gesture information
+    long m_lastPanX;
+    long m_lastPanY;
+    long m_xOverpan;
+    long m_yOverpan;
 };
 
 #endif
