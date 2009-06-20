@@ -1471,10 +1471,6 @@
 				RelativePath="..\..\bytecompiler\RegisterID.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\bytecompiler\SegmentedVector.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="bytecode"

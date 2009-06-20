@@ -37,11 +37,11 @@
 #include "LabelScope.h"
 #include "Interpreter.h"
 #include "RegisterID.h"
-#include "SegmentedVector.h"
 #include "SymbolTable.h"
 #include "Debugger.h"
 #include "Nodes.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -449,11 +449,11 @@ namespace JSC {
         RegisterID m_thisRegister;
         RegisterID m_argumentsRegister;
         int m_activationRegisterIndex;
-        SegmentedVector<RegisterID, 32> m_calleeRegisters;
-        SegmentedVector<RegisterID, 32> m_parameters;
-        SegmentedVector<RegisterID, 32> m_globals;
-        SegmentedVector<Label, 32> m_labels;
-        SegmentedVector<LabelScope, 8> m_labelScopes;
+        WTF::SegmentedVector<RegisterID, 32> m_calleeRegisters;
+        WTF::SegmentedVector<RegisterID, 32> m_parameters;
+        WTF::SegmentedVector<RegisterID, 32> m_globals;
+        WTF::SegmentedVector<Label, 32> m_labels;
+        WTF::SegmentedVector<LabelScope, 8> m_labelScopes;
         RefPtr<RegisterID> m_lastConstant;
         int m_finallyDepth;
         int m_dynamicScopeDepth;

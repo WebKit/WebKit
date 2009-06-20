@@ -409,6 +409,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\SegmentedVector.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\StdLibExtras.h"
 			>
 		</File>

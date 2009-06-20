@@ -1228,6 +1228,7 @@
 				65C647B3093EF8D60022C380 /* RefPtr.h */,
 				148A1ECD0D10C23B0069A47C /* RefPtrHashMap.h */,
 				51F648D60BB4E2CA0033D760 /* RetainPtr.h */,
+				969A07290ED1CE6900F1F681 /* SegmentedVector.h */,
 				FE1B44790ECCD73B004F4DD1 /* StdLibExtras.h */,
 				E11D51750B2E798D0056C188 /* StringExtras.h */,
 				5DA479650CFBCF56009328A0 /* TCPackedCache.h */,
@@ -1277,7 +1278,6 @@
 				969A07270ED1CE6900F1F681 /* Label.h */,
 				960097A50EBABB58007A7297 /* LabelScope.h */,
 				969A07280ED1CE6900F1F681 /* RegisterID.h */,
-				969A07290ED1CE6900F1F681 /* SegmentedVector.h */,
 			);
 			path = bytecompiler;
 			sourceTree = "<group>";

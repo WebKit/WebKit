@@ -1,3 +1,46 @@
+2009-06-20  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Bug 24986: ARM JIT port
+        <https://bugs.webkit.org/show_bug.cgi?id=24986>
+
+        Reviewed by Oliver Hunt.
+
+        Move SegmentedVector to /wtf subdirectory
+        and change "namespace JSC" to "namespace WTF"
+
+        Additional build file updates by David Kilzer.
+
+        * GNUmakefile.am: Updated path to SegmentedVector.h.
+        * JavaScriptCore.order: Updated SegmentedVector namespace from
+        JSC to WTF in mangled C++ method name.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Removed reference to bytecompiler\SegmentedVector.h.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Added reference to
+        wtf\SegmentedVector.h.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Moved
+        SegmentedVector.h definition from bytecompiler subdirectory to
+        wtf subdirectory.
+        * bytecompiler/BytecodeGenerator.h: Updated #include path to
+        SegmentedVector.h and prepended WTF:: namespace to its use.
+        * parser/Lexer.h: Ditto.
+        * wtf/SegmentedVector.h: Renamed from JavaScriptCore/bytecompiler/SegmentedVector.h.
+        (WTF::SegmentedVector::SegmentedVector):
+        (WTF::SegmentedVector::~SegmentedVector):
+        (WTF::SegmentedVector::size):
+        (WTF::SegmentedVector::at):
+        (WTF::SegmentedVector::operator[]):
+        (WTF::SegmentedVector::last):
+        (WTF::SegmentedVector::append):
+        (WTF::SegmentedVector::removeLast):
+        (WTF::SegmentedVector::grow):
+        (WTF::SegmentedVector::clear):
+        (WTF::SegmentedVector::deleteAllSegments):
+        (WTF::SegmentedVector::segmentExistsFor):
+        (WTF::SegmentedVector::segmentFor):
+        (WTF::SegmentedVector::subscriptFor):
+        (WTF::SegmentedVector::ensureSegmentsFor):
+        (WTF::SegmentedVector::ensureSegment):
+
 2009-06-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix take 2 - rename FIELD_OFFSET to something that doesn't conflict with winnt.h).

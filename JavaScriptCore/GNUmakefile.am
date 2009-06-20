@@ -108,7 +108,6 @@ javascriptcore_sources += \
 	JavaScriptCore/bytecompiler/RegisterID.h \
 	JavaScriptCore/bytecode/SamplingTool.cpp \
 	JavaScriptCore/bytecode/SamplingTool.h \
-	JavaScriptCore/bytecompiler/SegmentedVector.h \
 	JavaScriptCore/config.h \
 	JavaScriptCore/debugger/DebuggerActivation.cpp \
 	JavaScriptCore/debugger/DebuggerActivation.h \
@@ -257,6 +256,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/RefPtr.h \
 	JavaScriptCore/wtf/RefPtrHashMap.h \
 	JavaScriptCore/wtf/RetainPtr.h \
+	JavaScriptCore/wtf/SegmentedVector.h \
 	JavaScriptCore/wtf/StdLibExtras.h \
 	JavaScriptCore/wtf/StringExtras.h \
 	JavaScriptCore/wtf/TCPackedCache.h \

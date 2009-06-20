@@ -31,7 +31,7 @@
 
 #include <wtf/Vector.h>
 
-namespace JSC {
+namespace WTF {
 
     // SegmentedVector is just like Vector, but it doesn't move the values
     // stored in its buffer when it grows. Therefore, it is safe to keep
@@ -108,7 +108,7 @@ namespace JSC {
 
     private:
         typedef Vector<T, SegmentSize> Segment;
-        
+
         void deleteAllSegments()
         {
             // Skip the first segment, because it's our inline segment, which was
@@ -116,22 +116,22 @@ namespace JSC {
             for (size_t i = 1; i < m_segments.size(); i++)
                 delete m_segments[i];
         }
-        
+
         bool segmentExistsFor(size_t index)
         {
             return index / SegmentSize < m_segments.size();
         }
-        
+
         Segment* segmentFor(size_t index)
         {
             return m_segments[index / SegmentSize];
         }
-        
+
         size_t subscriptFor(size_t index)
         {
             return index % SegmentSize;
         }
-        
+
         void ensureSegmentsFor(size_t size)
         {
             size_t segmentCount = m_size / SegmentSize;
@@ -147,7 +147,7 @@ namespace JSC {
             size_t end = neededSegmentCount - 1;
             for (size_t i = segmentCount - 1; i < end; ++i)
                 ensureSegment(i, SegmentSize);
-            
+
             // Grow segment N to accomodate the remainder.
             ensureSegment(end, subscriptFor(size - 1) + 1);
         }
