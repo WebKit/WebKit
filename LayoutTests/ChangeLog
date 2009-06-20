@@ -1,3 +1,18 @@
+2009-06-19  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        This fixs the bug 26361. The original test case did not invoke the event that
+        triggered the actual test. This patch adds code to invoke this event, and also
+        converts it from a pixel test to a dumpAsText test.
+
+        * editing/deleting/5156801-expected.txt: Added.
+        * editing/deleting/5156801.html:
+        * platform/mac/editing/deleting/5156801-expected.checksum: Removed.
+        * platform/mac/editing/deleting/5156801-expected.png: Removed.
+        * platform/mac/editing/deleting/5156801-expected.txt: Removed.
+        * platform/qt/editing/deleting/5156801-expected.txt: Removed.
+
 2009-06-19  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.
