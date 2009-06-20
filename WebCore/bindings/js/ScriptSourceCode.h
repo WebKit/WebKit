@@ -53,8 +53,7 @@ public:
 
     const JSC::SourceCode& jsSourceCode() const { return m_code; }
 
-    // Note the memcpy!
-    String source() const { return String(m_code.data(), m_code.length()); }
+    const String& source() const { return static_cast<StringSourceProvider*>(m_code.provider())->source(); }
 
 private:
     JSC::SourceCode m_code;

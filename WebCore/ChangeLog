@@ -1,3 +1,18 @@
+2009-06-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26561
+
+        Remove a memcpy by retrieving the already existing copy of a string
+        instead of making a new one.
+
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::source):
+        * bindings/js/StringSourceProvider.h:
+        (WebCore::StringSourceProvider::source):
+
 2009-06-19  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg.

@@ -40,6 +40,7 @@ namespace WebCore {
         JSC::UString getRange(int start, int end) const { return JSC::UString(m_source.characters() + start, end - start); }
         const UChar* data() const { return m_source.characters(); }
         int length() const { return m_source.length(); }
+        const String& source() const { return m_source; }
 
     private:
         StringSourceProvider(const String& source, const String& url)
