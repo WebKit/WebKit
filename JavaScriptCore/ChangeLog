@@ -1,3 +1,31 @@
+2009-06-19  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        Reorganize ARM architecture specific macros.
+        Use PLATFORM_ARM_ARCH(7) instead of PLATFORM(ARM_V7).
+
+        Bug 24986: ARM JIT port
+        <https://bugs.webkit.org/show_bug.cgi?id=24986>
+
+        * assembler/ARMv7Assembler.h:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Imm32::Imm32):
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * wtf/Platform.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateEnter):
+        (JSC::Yarr::RegexGenerator::generateReturn):
+
 2009-06-19  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

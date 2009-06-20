@@ -43,7 +43,7 @@ namespace JSC { namespace Yarr {
 class RegexGenerator : private MacroAssembler {
     friend void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
-#if PLATFORM(ARM_V7)
+#if PLATFORM_ARM_ARCH(7)
     static const RegisterID input = ARM::r0;
     static const RegisterID index = ARM::r1;
     static const RegisterID length = ARM::r2;
@@ -1308,7 +1308,7 @@ class RegexGenerator : private MacroAssembler {
     #else
         loadPtr(Address(X86::ebp, 2 * sizeof(void*)), output);
     #endif
-#elif PLATFORM(ARM_V7)
+#elif PLATFORM_ARM_ARCH(7)
         push(ARM::r4);
         push(ARM::r5);
         push(ARM::r6);
@@ -1325,7 +1325,7 @@ class RegexGenerator : private MacroAssembler {
         pop(X86::edi);
         pop(X86::ebx);
         pop(X86::ebp);
-#elif PLATFORM(ARM_V7)
+#elif PLATFORM_ARM_ARCH(7)
         pop(ARM::r6);
         pop(ARM::r5);
         pop(ARM::r4);

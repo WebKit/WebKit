@@ -227,10 +227,29 @@
 #if !defined(__ARM_EABI__)
 #define WTF_PLATFORM_FORCE_PACK 1
 #endif
+#define ARM_ARCH_VERSION 3
+#if defined(__ARM_ARCH_4__) || defined(__ARM_ARCH_4T__)
+#undef ARM_ARCH_VERSION
+#define ARM_ARCH_VERSION 4
+#endif
+#if defined(__ARM_ARCH_5__) || defined(__ARM_ARCH_5T__) \
+        || defined(__ARM_ARCH_5E__) || defined(__ARM_ARCH_5TE__) \
+        || defined(__ARM_ARCH_5TEJ__)
+#undef ARM_ARCH_VERSION
+#define ARM_ARCH_VERSION 5
+#endif
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_6J__) \
+     || defined(__ARM_ARCH_6K__) || defined(__ARM_ARCH_6Z__) \
+     || defined(__ARM_ARCH_6ZK__)
+#undef ARM_ARCH_VERSION
+#define ARM_ARCH_VERSION 6
 #endif
 #if defined(__ARM_ARCH_7A__)
-#define WTF_PLATFORM_ARM_V7 1
+#undef ARM_ARCH_VERSION
+#define ARM_ARCH_VERSION 7
 #endif
+#endif /* ARM */
+#define PLATFORM_ARM_ARCH(N) (PLATFORM(ARM) && ARM_ARCH_VERSION >= N)
 
 /* PLATFORM(X86) */
 #if   defined(__i386__) \
@@ -519,7 +538,7 @@
 #elif PLATFORM(X86) && PLATFORM(MAC)
     #define ENABLE_JIT 1
     #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
-#elif PLATFORM(ARM_V7) && PLATFORM(IPHONE) 
+#elif PLATFORM_ARM_ARCH(7) && PLATFORM(IPHONE)
     /* Under development, temporarily disabled until 16Mb link range limit in assembler is fixed. */
     #define ENABLE_JIT 0
     #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 0
@@ -568,7 +587,7 @@
 #if (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(MAC)) \
  || (!defined(ENABLE_YARR_JIT) && PLATFORM(X86_64) && PLATFORM(MAC)) \
  /* Under development, temporarily disabled until 16Mb link range limit in assembler is fixed. */ \
- || (!defined(ENABLE_YARR_JIT) && PLATFORM(ARM_V7) && PLATFORM(IPHONE) && 0) \
+ || (!defined(ENABLE_YARR_JIT) && PLATFORM_ARM_ARCH(7) && PLATFORM(IPHONE) && 0) \
  || (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(WIN))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
@@ -583,7 +602,7 @@
 #endif
 /* Setting this flag prevents the assembler from using RWX memory; this may improve
    security but currectly comes at a significant performance cost. */
-#if PLATFORM(ARM_V7) && PLATFORM(IPHONE)
+#if PLATFORM_ARM_ARCH(7) && PLATFORM(IPHONE)
 #define ENABLE_ASSEMBLER_WX_EXCLUSIVE 1
 #else
 #define ENABLE_ASSEMBLER_WX_EXCLUSIVE 0

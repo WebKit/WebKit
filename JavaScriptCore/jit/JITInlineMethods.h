@@ -198,7 +198,7 @@ ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
     push(address);
 }
 
-#elif PLATFORM(ARM_V7)
+#elif PLATFORM_ARM_ARCH(7)
 
 ALWAYS_INLINE void JIT::preverveReturnAddressAfterCall(RegisterID reg)
 {
@@ -234,7 +234,7 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 #if PLATFORM(X86)
     // Within a trampoline the return address will be on the stack at this point.
     addPtr(Imm32(sizeof(void*)), stackPointerRegister, firstArgumentRegister);
-#elif PLATFORM(ARM_V7)
+#elif PLATFORM_ARM_ARCH(7)
     move(stackPointerRegister, firstArgumentRegister);
 #endif
     // In the trampoline on x86-64, the first argument register is not overwritten.

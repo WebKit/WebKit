@@ -210,7 +210,7 @@ private:
 #if PLATFORM(X86) || PLATFORM(X86_64)
         UNUSED_PARAM(code);
         UNUSED_PARAM(size);
-#elif PLATFORM(ARM_V7) && PLATFORM(IPHONE)
+#elif PLATFORM_ARM_ARCH(7) && PLATFORM(IPHONE)
         sys_dcache_flush(code, size);
         sys_icache_invalidate(code, size);
 #else

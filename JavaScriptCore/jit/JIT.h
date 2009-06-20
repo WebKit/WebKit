@@ -232,7 +232,7 @@ namespace JSC {
         static const FPRegisterID fpRegT0 = X86::xmm0;
         static const FPRegisterID fpRegT1 = X86::xmm1;
         static const FPRegisterID fpRegT2 = X86::xmm2;
-#elif PLATFORM(ARM_V7)
+#elif PLATFORM_ARM_ARCH(7)
         static const RegisterID returnValueRegister = ARM::r0;
         static const RegisterID cachedResultRegister = ARM::r0;
         static const RegisterID firstArgumentRegister = ARM::r0;
@@ -307,7 +307,7 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoObj = 11;
         static const int patchOffsetMethodCheckProtoStruct = 18;
         static const int patchOffsetMethodCheckPutFunction = 29;
-#elif PLATFORM(ARM_V7)
+#elif PLATFORM_ARM_ARCH(7)
         // These architecture specific value are used to enable patching - see comment on op_put_by_id.
         static const int patchOffsetPutByIdStructure = 10;
         static const int patchOffsetPutByIdExternalLoad = 20;
