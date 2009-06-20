@@ -28,6 +28,9 @@
 
 #include <wtf/Platform.h>
 
+#if PLATFORM(WIN)
+#undef FIELD_OFFSET // Fix conflict with winnt.h.
+#endif
 // FIELD_OFFSET: Like the C++ offsetof macro, but you can use it with classes.
 // The magic number 0x4000 is insignificant. We use it to avoid using NULL, since
 // NULL can cause compiler problems, especially in cases of multiple inheritance.

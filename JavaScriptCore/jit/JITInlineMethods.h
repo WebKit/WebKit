@@ -30,10 +30,6 @@
 
 #if ENABLE(JIT)
 
-#if PLATFORM(WIN)
-#undef FIELD_OFFSET // Fix conflict with winnt.h.
-#endif
-
 namespace JSC {
 
 ALWAYS_INLINE void JIT::killLastResultRegister()
