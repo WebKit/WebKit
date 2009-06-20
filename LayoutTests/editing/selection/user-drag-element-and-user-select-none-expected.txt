@@ -1,0 +1,29 @@
+Test for WebKit bug 15106: Dragging text inside an element with "user-drag: element" and "user-select: none" should initiate a drag
+
+SUCCESS Expected 'mousedown' and got it.
+
+SUCCESS Expected 'mouseup' and got it.
+
+SUCCESS Expected 'Selection' and got it.
+
+This element should be draggable, but initiating a drag from within the text should begin a selection.
+SUCCESS Expected 'mousedown' and got it.
+
+SUCCESS Expected 'mouseup' and got it.
+
+SUCCESS Expected 'No selection' and got it.
+
+This element should not be draggable, and initiating a drag from within the text should not begin a selection.
+SUCCESS Expected 'mousedown' and got it.
+
+SUCCESS Expected 'dragstart' and got it.
+
+SUCCESS Expected 'mouseup' and got it.
+
+SUCCESS Expected 'No selection' and got it.
+
+SUCCESS Expected 'mouseup' and got it.
+
+SUCCESS Expected 'No selection' and got it.
+
+This element should be draggable, and initiating a drag from within the text should drag the element.
