@@ -1,3 +1,12 @@
+2009-06-20  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Jan Alonzo.
+
+        Fix the ordering in which the new load status goes into the enum
+        to avoid ABI breakage.
+
+        * webkit/webkitwebframe.h:
+
 2009-06-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Xan Lopez and Christian Dywan.
