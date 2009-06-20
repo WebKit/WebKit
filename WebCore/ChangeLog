@@ -1,3 +1,11 @@
+2009-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by NOBODY.
+
+        Speculative Qt build fix - add HTMLDataGridColElement to the build script.
+
+        * WebCore.pro:
+
 2009-06-19  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
