@@ -5,15 +5,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=26488
         No Support for Single Finger or Two Finger Panning in Windows 7
         
-        The code in WebCore allows us to interpret a Pan gesture as
-        a mousewheel event, and we are able to reuse the scrolling code.
-        Another constructor was created in WheelEventWin which takes data
-        better suited to the pan guesture than what was currently there. 
-        
-        Unable to add tests to simulate touch behavior/gestures.
+        Added the code necessary for single finger and two-finger panning with
+        window bounce. We now register for WM_GESTURENOTIFY and WM_GESTURE messages,
+        and interpret the panning command. Also, added WindowsTouch.h which contains 
+        structs and #defines from the Windows 7 SDK.
 
-        * platform/PlatformWheelEvent.h:
-        * platform/win/WheelEventWin.cpp:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebView.cpp:
+        (WebView::gestureNotify): Checks if we are in a pannable region - IE: Not in the scrollbar
+        (WebView::gesture): Handles the Panning gesture, creating the WheelEvent
+        (WebViewWndProc): Added cases for WM_GESTURE and WM_GESTURENOTIFY
+        * WebView.h:
+        * WindowsTouch.h: Added.
         
 2009-06-18  Adam Barth  <abarth@webkit.org>
 
