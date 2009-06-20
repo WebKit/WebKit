@@ -1,3 +1,19 @@
+2009-06-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 26528: REGRESSION (r44674): Assertion in TextIterator::pushFullyClippedState while counting matches for "a" on apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=26528
+        rdar://problem/6985329
+
+        * editing/selection/find-in-text-control-expected.txt: Updated to expect
+        finding text in <input type="text"> and <input type="search">, but not
+        in <input type="password">.
+
+        * editing/selection/find-in-text-control.html: Added tests for <input>
+        elements as well as <textarea> elements. Also tweaked result output
+        format to accomodate multiple text nodes.
+
 2009-06-20  Xan Lopez  <xlopez@igalia.com>
 
         Skip new accessibility test, we still lack and accessibilityController.

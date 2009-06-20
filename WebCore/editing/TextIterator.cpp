@@ -528,10 +528,12 @@ bool TextIterator::handleReplacedElement()
     }
 
     if (m_enterTextControls && renderer->isTextControl()) {
-        m_node = toRenderTextControl(renderer)->innerTextElement();
-        pushFullyClippedState(m_fullyClippedStack, m_node);
-        m_offset = 0;
-        return false;
+        if (HTMLElement* innerTextElement = toRenderTextControl(renderer)->innerTextElement()) {
+            m_node = innerTextElement->shadowTreeRootNode();
+            pushFullyClippedState(m_fullyClippedStack, m_node);
+            m_offset = 0;
+            return false;
+        }
     }
 
     m_haveEmitted = true;

@@ -1,3 +1,17 @@
+2009-06-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 26528: REGRESSION (r44674): Assertion in TextIterator::pushFullyClippedState while counting matches for "a" on apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=26528
+        rdar://problem/6985329
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleReplacedElement): When entering a text control,
+        start at the top of the shadow tree (by calling shadowTreeRootNode). Also
+        remove assumption that innerTextElement will never be 0 since RenderTextControl
+        doesn't really guarantee this.
+
 2009-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by NOBODY.

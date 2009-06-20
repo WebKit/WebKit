@@ -3,6 +3,9 @@
 </p>
 <div id="div">
     Lorem ip<textarea id="textarea">sum dolor si</textarea>t amet
+    Lorem ip<input type="text" value="sum dolor si">t amet
+    Lorem ip<input type="search" value="sum dolor si">t amet
+    Lorem ip<input type="password" value="sum dolor si">t amet
 </div>
 <script>
     if (window.layoutTestController)
@@ -10,12 +13,32 @@
 
     var result = "";
 
+    function elementIndex(node)
+    {
+        var index = 1;
+        while (node = node.previousSibling) {
+            if (node.nodeType == Node.ELEMENT_NODE)
+                ++index;
+        }
+        return index;
+    }
+
+    function textNodeIndex(node)
+    {
+        var index = 1;
+        while (node = node.previousSibling) {
+            if (node.nodeType == Node.TEXT_NODE)
+                ++index;
+        }
+        return index;
+    }
+
     function findAll(target)
     {
-        document.body.offsetTop;
+        var ranges = [];
+
         var sel = getSelection();
         sel.empty();
-        var ranges = [];
         document.execCommand("FindString", false, target);
         if (!sel.rangeCount) {
             result += "Target " + target + " not matched\n";
@@ -27,11 +50,13 @@
             document.execCommand("FindString", false, target);
             range = sel.getRangeAt(0);
         }
+        sel.empty();
+
         var div = document.getElementById("div");
         result += "Target " + target + " matched at:\n";
         while (range = ranges.shift()) {
             result += "    ";
-            result += range.startContainer.parentNode != div ? "text control" : range.startContainer.nextSibling ? "outer text before" : "outer text after";
+            result += range.startContainer.parentNode != div ? "text control" : "outer text node " + textNodeIndex(range.startContainer);
             result += ", at offset " + range.startOffset + "\n";
         }
     }
