@@ -1490,11 +1490,11 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElemen
         errorCode = WebKitErrorCannotLoadPlugIn;
 
     if (errorCode) {
+        KURL pluginPageURL = document->completeURL(parseURL(parameterValue(paramNames, paramValues, "pluginspage")));
+        if (!pluginPageURL.protocolInHTTPFamily())
+            pluginPageURL = KURL();
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-            contentURL:URL
-            pluginPageURL:document->completeURL(parseURL(parameterValue(paramNames, paramValues, "pluginspage")))
-            pluginName:[pluginPackage name]
-            MIMEType:MIMEType];
+            contentURL:URL pluginPageURL:pluginPageURL pluginName:[pluginPackage name] MIMEType:MIMEType];
         WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
             error:error DOMElement:kit(element)] autorelease];
         view = nullView;
