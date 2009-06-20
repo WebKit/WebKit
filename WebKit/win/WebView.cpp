@@ -2314,6 +2314,12 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 #endif
     WebKitSetApplicationCachePathIfNecessary();
     
+#if USE(SAFARI_THEME)
+    BOOL shouldPaintNativeControls;
+    if (SUCCEEDED(m_preferences->shouldPaintNativeControls(&shouldPaintNativeControls)))
+        Settings::setShouldPaintNativeControls(shouldPaintNativeControls);
+#endif
+
     m_page = new Page(new WebChromeClient(this), new WebContextMenuClient(this), new WebEditorClient(this), new WebDragClient(this), new WebInspectorClient(this));
 
     BSTR localStoragePath;

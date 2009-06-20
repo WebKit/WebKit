@@ -1,3 +1,18 @@
+2009-06-19  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Steve Falkenburg.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26494
+        Bug 26494: RenderTheme::themeForPage reads from Settings before it has
+        been initialized by WebKit
+
+        Get the shouldPaintNativeControls preference and update the settings
+        before initializing the page, as the page depends on it after the
+        themeForPage change.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2009-06-19  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Steve Falkenburg.
