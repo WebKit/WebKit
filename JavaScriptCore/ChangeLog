@@ -1,3 +1,10 @@
+2009-06-20  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Fix namespace comment in SegmentedVector.h
+
+        * wtf/SegmentedVector.h: Updated namespace comment to reflect
+        new namespace after r44897.
+
 2009-06-20  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Bug 24986: ARM JIT port
