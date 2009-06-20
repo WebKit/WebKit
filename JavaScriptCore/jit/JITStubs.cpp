@@ -330,20 +330,20 @@ JITThunks::JITThunks(JSGlobalData* globalData)
 
 #if PLATFORM_ARM_ARCH(7)
     // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),
-    // and the FIELD_OFFSET macro does not appear constantish enough for it to be happy with its use in COMPILE_ASSERT
+    // and the OBJECT_OFFSETOF macro does not appear constantish enough for it to be happy with its use in COMPILE_ASSERT
     // macros.
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, preservedReturnAddress) == 0x20);
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, preservedR4) == 0x24);
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, preservedR5) == 0x28);
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, preservedR6) == 0x2c);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedReturnAddress) == 0x20);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR4) == 0x24);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR5) == 0x28);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, preservedR6) == 0x2c);
 
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, registerFile) == 0x30);
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, callFrame) == 0x34);
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, exception) == 0x38);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, registerFile) == 0x30);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, callFrame) == 0x34);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, exception) == 0x38);
     // The fifth argument is the first item already on the stack.
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, enabledProfilerReference) == 0x3c);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, enabledProfilerReference) == 0x3c);
 
-    ASSERT(FIELD_OFFSET(struct JITStackFrame, thunkReturnAddress) == 0x1C);
+    ASSERT(OBJECT_OFFSETOF(struct JITStackFrame, thunkReturnAddress) == 0x1C);
 #endif
 }
 

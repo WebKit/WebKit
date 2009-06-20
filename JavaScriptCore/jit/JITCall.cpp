@@ -49,7 +49,7 @@ void JIT::compileOpCallInitializeCallFrame()
 {
     store32(regT1, Address(callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
 
-    loadPtr(Address(regT2, FIELD_OFFSET(JSFunction, m_data) + FIELD_OFFSET(ScopeChain, m_node)), regT1); // newScopeChain
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_data) + OBJECT_OFFSETOF(ScopeChain, m_node)), regT1); // newScopeChain
 
     storePtr(ImmPtr(JSValue::encode(JSValue())), Address(callFrameRegister, RegisterFile::OptionalCalleeArguments * static_cast<int>(sizeof(Register))));
     storePtr(regT2, Address(callFrameRegister, RegisterFile::Callee * static_cast<int>(sizeof(Register))));
@@ -242,7 +242,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     // Note that this omits to set up RegisterFile::CodeBlock, which is set in the callee
     storePtr(ImmPtr(JSValue::encode(JSValue())), Address(callFrameRegister, (registerOffset + RegisterFile::OptionalCalleeArguments) * static_cast<int>(sizeof(Register))));
     storePtr(regT2, Address(callFrameRegister, (registerOffset + RegisterFile::Callee) * static_cast<int>(sizeof(Register))));
-    loadPtr(Address(regT2, FIELD_OFFSET(JSFunction, m_data) + FIELD_OFFSET(ScopeChain, m_node)), regT1); // newScopeChain
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_data) + OBJECT_OFFSETOF(ScopeChain, m_node)), regT1); // newScopeChain
     store32(Imm32(argCount), Address(callFrameRegister, (registerOffset + RegisterFile::ArgumentCount) * static_cast<int>(sizeof(Register))));
     storePtr(callFrameRegister, Address(callFrameRegister, (registerOffset + RegisterFile::CallerFrame) * static_cast<int>(sizeof(Register))));
     storePtr(regT1, Address(callFrameRegister, (registerOffset + RegisterFile::ScopeChain) * static_cast<int>(sizeof(Register))));

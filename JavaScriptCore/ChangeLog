@@ -1,5 +1,55 @@
 2009-06-19  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by NOBODY (build fix take 2 - rename FIELD_OFFSET to something that doesn't conflict with winnt.h).
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::emitGetVariableObjectRegister):
+        (JSC::JIT::emitPutVariableObjectRegister):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::compileBinaryArithOp):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReference):
+        (JSC::JIT::checkStructure):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_construct_verify):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+
+2009-06-19  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by NOBODY (Windows build fix).
 
         * jit/JIT.h:
