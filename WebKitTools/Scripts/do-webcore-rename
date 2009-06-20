@@ -68,12 +68,6 @@ sub wanted
 }
 
 my %renames = (
-    "JSUnprotectedEventListener" => "JSEventListener",
-    "findJSUnprotectedEventListener" => "findJSEventListener",
-    "findOrCreateJSUnprotectedEventListener" => "findOrCreateJSEventListener",
-    "UnprotectedListenersMap" => "JSListenersMap",
-    "jsUnprotectedEventListeners" => "jsEventListeners",
-    "jsUnprotectedInlineEventListeners" => "jsInlineEventListeners",
 );
 
 my %renamesContemplatedForTheFuture = (
@@ -99,6 +93,7 @@ my %renamesContemplatedForTheFuture = (
     "KURLMac" => "URLMac",
     "KURL_h" => "URL_h",
 
+    "ThreadSafeSharedBase" => "ThreadSafeRefCountedBase",
     "ThreadSafeShared" => "ThreadSafeRefCounted",
     "TreeShared" => "TreeRefCounted",
 
@@ -136,8 +131,11 @@ my %renamesContemplatedForTheFuture = (
 
     "m_invertibleCTM" => "m_transformIsInvertible",
 
-    "JSValuePtr" => "JSValue",
-    "ProtectedJSValuePtr" => "ProtectedJSValue",
+    "NativeFunctionWrapper_h" => "JSHostFunction_h",
+    "NativeFunctionWrapper" => "JSHostFunction",
+    "nativeFunctionThunk" => "hostFunctionThunk",
+    "nativeFunction" => "hostFunction",
+    "NativeFunction" => "HostFunction",
 );
 
 # rename files
