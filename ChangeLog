@@ -1,3 +1,11 @@
+2009-06-20  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Jan Alonzo.
+
+        Adding files for the new test case for loading statuses.
+
+        * GNUmakefile.am:
+
 2009-06-15  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
