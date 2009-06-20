@@ -419,15 +419,16 @@ void webkit_web_back_forward_list_set_limit(WebKitWebBackForwardList* webBackFor
  *
  * Adds the item to the #WebKitWebBackForwardList.
  *
- * The @webBackForwardList will steal the reference of the
- * @webHistoryItem, so you don't need to unref it after adding it to
- * the list.
+ * The @webBackForwardList will add a reference to the @webHistoryItem, so you
+ * don't need to keep a reference once you've added it to the list.
  *
  * Since: 1.1.1
  */
 void webkit_web_back_forward_list_add_item(WebKitWebBackForwardList *webBackForwardList, WebKitWebHistoryItem *webHistoryItem)
 {
     g_return_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList));
+
+    g_object_ref(webHistoryItem);
 
     WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     WebCore::HistoryItem* historyItem = core(webHistoryItem);

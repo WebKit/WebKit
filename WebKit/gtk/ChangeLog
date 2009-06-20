@@ -1,3 +1,22 @@
+2009-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha and Xan Lopez.
+
+        webkit_web_back_forward_list_add_item() should add a ref for the history item
+        https://bugs.webkit.org/show_bug.cgi?id=26517
+
+        Add a ref to the WebHistoryItem when it's added to the back
+        forward list through webkit_web_back_forward_list_add_item.
+        This keeps the history item alive and prevents pywebkitgtk from
+        crashing
+
+        * tests/testwebbackforwardlist.c:
+        (test_webkit_web_history_item_lifetime):
+        (test_webkit_web_back_forward_list_order):
+        (test_webkit_web_back_forward_list_add_item):
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_add_item):
+
 2009-06-20  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Jan Alonzo.

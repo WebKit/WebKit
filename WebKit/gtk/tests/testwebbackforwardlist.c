@@ -47,15 +47,19 @@ static void test_webkit_web_history_item_lifetime(void)
     /* add test items */
     item1 = webkit_web_history_item_new_with_data("http://example.com/1/", "Site 1");
     webkit_web_back_forward_list_add_item(backForwardList, item1);
+    g_object_unref(item1);
 
     item2 = webkit_web_history_item_new_with_data("http://example.com/2/", "Site 2");
     webkit_web_back_forward_list_add_item(backForwardList, item2);
+    g_object_unref(item2);
 
     item3 = webkit_web_history_item_new_with_data("http://example.com/3/", "Site 3");
     webkit_web_back_forward_list_add_item(backForwardList, item3);
+    g_object_unref(item3);
 
     item4 = webkit_web_history_item_new_with_data("http://example.com/4/", "Site 4");
     webkit_web_back_forward_list_add_item(backForwardList, item4);
+    g_object_unref(item4);
 
     /* make sure these functions don't add unnecessary ref to the history item */
     backItem = webkit_web_back_forward_list_get_back_item(backForwardList);
@@ -131,18 +135,22 @@ static void test_webkit_web_back_forward_list_order(void)
     // Add a new items
     item1 = webkit_web_history_item_new_with_data("http://example.com/1/", "Site 1");
     webkit_web_back_forward_list_add_item(webBackForwardList, item1);
+    g_object_unref(item1);
     g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, item1));
 
     item2 = webkit_web_history_item_new_with_data("http://example.com/2/", "Site 2");
     webkit_web_back_forward_list_add_item(webBackForwardList, item2);
+    g_object_unref(item2);
     g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, item2));
 
     item3 = webkit_web_history_item_new_with_data("http://example.com/3/", "Site 3");
     webkit_web_back_forward_list_add_item(webBackForwardList, item3);
+    g_object_unref(item3);
     g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, item3));
 
     item4 = webkit_web_history_item_new_with_data("http://example.com/4/", "Site 4");
     webkit_web_back_forward_list_add_item(webBackForwardList, item4);
+    g_object_unref(item4);
     g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, item4));
 
     // check the back list order
@@ -214,6 +222,7 @@ static void test_webkit_web_back_forward_list_add_item(void)
     // Add a new item
     addItem1 = webkit_web_history_item_new_with_data("http://example.com/", "Added site");
     webkit_web_back_forward_list_add_item(webBackForwardList, addItem1);
+    g_object_unref(addItem1);
     g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, addItem1));
 
     // Check that the added item is the current item.
@@ -229,6 +238,7 @@ static void test_webkit_web_back_forward_list_add_item(void)
     // Add another item.
     addItem2 = webkit_web_history_item_new_with_data("http://example.com/2/", "Added site 2");
     webkit_web_back_forward_list_add_item(webBackForwardList, addItem2);
+    g_object_unref(addItem2);
     g_assert(webkit_web_back_forward_list_contains_item(webBackForwardList, addItem2));
 
     // Check that the added item is new current item.
