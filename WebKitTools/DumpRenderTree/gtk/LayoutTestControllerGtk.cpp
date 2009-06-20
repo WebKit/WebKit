@@ -245,7 +245,11 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool flag)
 
 void LayoutTestController::setXSSAuditorEnabled(bool flag)
 {
-    // FIXME: implement
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
+    g_object_set(G_OBJECT(settings), "enable-xss-auditor", flag, NULL);
 }
 
 void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)

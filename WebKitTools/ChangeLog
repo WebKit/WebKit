@@ -1,3 +1,15 @@
+2009-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha and Xan Lopez.
+
+        [Gtk] Implement DRT XSS auditor support
+        https://bugs.webkit.org/show_bug.cgi?id=26571
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setXSSAuditorEnabled):
+
 2009-06-19  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: More renaming ideas.

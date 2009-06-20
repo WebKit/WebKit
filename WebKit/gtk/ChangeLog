@@ -2,6 +2,24 @@
 
         Reviewed by Gustavo Noronha and Xan Lopez.
 
+        [Gtk] Implement DRT XSS auditor support
+        https://bugs.webkit.org/show_bug.cgi?id=26571
+
+        Add a setting "enable-xss-auditor" to enable this feature.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        (webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
+2009-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha and Xan Lopez.
+
         webkit_web_back_forward_list_add_item() should add a ref for the history item
         https://bugs.webkit.org/show_bug.cgi?id=26517
 

@@ -2049,7 +2049,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     gchar* defaultEncoding, *cursiveFontFamily, *defaultFontFamily, *fantasyFontFamily, *monospaceFontFamily, *sansSerifFontFamily, *serifFontFamily, *userStylesheetUri;
     gboolean autoLoadImages, autoShrinkImages, printBackgrounds,
         enableScripts, enablePlugins, enableDeveloperExtras, resizableTextAreas,
-        enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage;
+        enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage,
+        enableXSSAuditor;
 
     g_object_get(webSettings,
                  "default-encoding", &defaultEncoding,
@@ -2071,6 +2072,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-caret-browsing", &enableCaretBrowsing,
                  "enable-html5-database", &enableHTML5Database,
                  "enable-html5-local-storage", &enableHTML5LocalStorage,
+                 "enable-xss-auditor", &enableXSSAuditor,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2092,6 +2094,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setCaretBrowsingEnabled(enableCaretBrowsing);
     settings->setDatabasesEnabled(enableHTML5Database);
     settings->setLocalStorageEnabled(enableHTML5LocalStorage);
+    settings->setXSSAuditorEnabled(enableXSSAuditor);
 
     g_free(defaultEncoding);
     g_free(cursiveFontFamily);
@@ -2168,6 +2171,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setDatabasesEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-html5-local-storage"))
         settings->setLocalStorageEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("enable-xss-auditor"))
+        settings->setXSSAuditorEnabled(g_value_get_boolean(&value));
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);

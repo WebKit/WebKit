@@ -80,6 +80,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_caret_browsing;
     gboolean enable_html5_database;
     gboolean enable_html5_local_storage;
+    gboolean enable_xss_auditor;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -113,7 +114,8 @@ enum {
     PROP_SPELL_CHECKING_LANGUAGES,
     PROP_ENABLE_CARET_BROWSING,
     PROP_ENABLE_HTML5_DATABASE,
-    PROP_ENABLE_HTML5_LOCAL_STORAGE
+    PROP_ENABLE_HTML5_LOCAL_STORAGE,
+    PROP_ENABLE_XSS_AUDITOR
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -454,6 +456,23 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether to enable HTML5 Local Storage support"),
                                                          TRUE,
                                                          flags));
+    /**
+    * WebKitWebSettings:enable-xss-auditor
+    *
+    * Whether to enable the XSS Auditor. This feature filters some kinds of
+    * reflective XSS attacks on vulnerable web sites.
+    *
+    * This is currently an experimental feature.
+    *
+    * Since 1.1.11
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_XSS_AUDITOR,
+                                    g_param_spec_boolean("enable-xss-auditor",
+                                                         _("Enable XSS Auditor"),
+                                                         _("Whether to enable teh XSS auditor"),
+                                                         FALSE,
+                                                         flags));
 
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
@@ -617,6 +636,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
         g_slist_free(priv->spell_checking_languages_list);
         priv->spell_checking_languages_list = spellLanguages;
         break;
+    case PROP_ENABLE_XSS_AUDITOR:
+        priv->enable_xss_auditor = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -710,6 +732,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_SPELL_CHECKING_LANGUAGES:
         g_value_set_string(value, priv->spell_checking_languages);
         break;
+    case PROP_ENABLE_XSS_AUDITOR:
+        g_value_set_boolean(value, priv->enable_xss_auditor);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -768,6 +793,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-caret-browsing", priv->enable_caret_browsing,
                  "enable-html5-database", priv->enable_html5_database,
                  "enable-html5-local-storage", priv->enable_html5_local_storage,
+                 "enable-xss-auditor", priv->enable_xss_auditor,
                  NULL));
 
     return copy;

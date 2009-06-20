@@ -234,6 +234,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
                  "enable-spell-checking", TRUE,
                  "enable-html5-database", TRUE,
                  "enable-html5-local-storage", TRUE,
+                 "enable-xss-auditor", TRUE,
                  NULL);
 
     webkit_web_frame_clear_main_frame_name(mainFrame);
