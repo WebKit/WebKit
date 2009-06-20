@@ -689,7 +689,7 @@ void JIT::emit_op_push_new_scope(Instruction* currentInstruction)
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
     killLastResultRegister(); // FIXME: Implicitly treat op_catch as a labeled statement, and remove this line of code.
-    peek(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
+    peek(callFrameRegister, FIELD_OFFSET(struct JITStackFrame, callFrame) / sizeof (void*));
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 

@@ -34,11 +34,6 @@
 #undef FIELD_OFFSET // Fix conflict with winnt.h.
 #endif
 
-// FIELD_OFFSET: Like the C++ offsetof macro, but you can use it with classes.
-// The magic number 0x4000 is insignificant. We use it to avoid using NULL, since
-// NULL can cause compiler problems, especially in cases of multiple inheritance.
-#define FIELD_OFFSET(class, field) (reinterpret_cast<ptrdiff_t>(&(reinterpret_cast<class*>(0x4000)->field)) - 0x4000)
-
 namespace JSC {
 
 ALWAYS_INLINE void JIT::killLastResultRegister()
@@ -225,14 +220,14 @@ ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
-    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
+    poke(callFrameRegister, FIELD_OFFSET(struct JITStackFrame, callFrame) / sizeof (void*));
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline() {}
 #else
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     move(stackPointerRegister, firstArgumentRegister);
-    poke(callFrameRegister, offsetof(struct JITStackFrame, callFrame) / sizeof (void*));
+    poke(callFrameRegister, FIELD_OFFSET(struct JITStackFrame, callFrame) / sizeof (void*));
 }
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {

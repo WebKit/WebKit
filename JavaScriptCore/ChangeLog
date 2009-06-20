@@ -1,3 +1,24 @@
+2009-06-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix armv7 JIT build issues.
+
+        Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it now contains non POD types),
+        and the FIELD_OFFSET macro does not appear constantish enough for it to be happy with its use in COMPILE_ASSERT macros.
+
+        * Replace offsetofs with FIELD_OFFSETs (safe on C++ objects).
+        * Move COMPILE_ASSERTs defending layout of JITStackFrame structure on armv7 into JITThunks constructor.
+
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::restoreArgumentReference):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+
 2009-06-19  Adam Treat  <adam.treat@torchmobile.com>
 
         Blind attempt at build fix.

@@ -195,17 +195,6 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #error "JIT_STUB_ARGUMENT_VA_LIST not supported on ARMv7."
 #endif
 
-COMPILE_ASSERT(offsetof(struct JITStackFrame, preservedReturnAddress) == 0x20, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, preservedR4) == 0x24, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, preservedR5) == 0x28, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, preservedR6) == 0x2c, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
-
-COMPILE_ASSERT(offsetof(struct JITStackFrame, registerFile) == 0x30, JITStackFrame_registerFile_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x34, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, exception) == 0x38, JITStackFrame_exception_offset_matches_ctiTrampoline);
-// The fifth argument is the first item already on the stack.
-COMPILE_ASSERT(offsetof(struct JITStackFrame, enabledProfilerReference) == 0x3c, JITStackFrame_enabledProfilerReference_offset_matches_ctiTrampoline);
-
 asm volatile (
 ".text" "\n"
 ".align 2" "\n"
@@ -338,6 +327,24 @@ extern "C" {
 JITThunks::JITThunks(JSGlobalData* globalData)
 {
     JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiArrayLengthTrampoline, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallPreLink, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
+
+#if PLATFORM(ARM_V7)
+    // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),
+    // and the FIELD_OFFSET macro does not appear constantish enough for it to be happy with its use in COMPILE_ASSERT
+    // macros.
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, preservedReturnAddress) == 0x20);
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, preservedR4) == 0x24);
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, preservedR5) == 0x28);
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, preservedR6) == 0x2c);
+
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, registerFile) == 0x30);
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, callFrame) == 0x34);
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, exception) == 0x38);
+    // The fifth argument is the first item already on the stack.
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, enabledProfilerReference) == 0x3c);
+
+    ASSERT(FIELD_OFFSET(struct JITStackFrame, thunkReturnAddress) == 0x1C);
+#endif
 }
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
@@ -563,8 +570,6 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 namespace JITStubs {
 
 #if PLATFORM(ARM_V7)
-
-COMPILE_ASSERT(offsetof(struct JITStackFrame, thunkReturnAddress) == 0x1C, JITStackFrame_outerReturnAddress_offset_matches_ctiTrampoline);
 
 #define DEFINE_STUB_FUNCTION(rtype, op) \
     extern "C" { \
