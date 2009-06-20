@@ -1,5 +1,11 @@
 2009-06-20  Xan Lopez  <xlopez@igalia.com>
 
+        We don't seem to support these new HTTP tests either, skip them.
+
+        * platform/gtk/Skipped:
+
+2009-06-20  Xan Lopez  <xlopez@igalia.com>
+
         Skip test that requires eventSender.
 
         * platform/gtk/Skipped:

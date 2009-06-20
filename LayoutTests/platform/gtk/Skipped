@@ -3882,6 +3882,10 @@ http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html
 http/tests/xmlhttprequest/basic-auth.html
 http/tests/xmlhttprequest/close-window.html
 http/tests/xmlhttprequest/cookies.html
+#We don't seem to support neither of these for now
+http/tests/xmlhttprequest/cross-origin-authorization.html
+http/tests/xmlhttprequest/cross-origin-no-authorization.html
+
 http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/encode-request-url-2.html
 http/tests/xmlhttprequest/exceptions.html
