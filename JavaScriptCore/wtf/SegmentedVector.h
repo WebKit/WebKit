@@ -33,11 +33,77 @@
 
 namespace WTF {
 
+    // An iterator for SegmentedVector. It supports only the pre ++ operator
+    template <typename T, size_t SegmentSize> class SegmentedVector;
+    template <typename T, size_t SegmentSize> class SegmentedVectorIterator {
+    private:
+        friend class SegmentedVector<T, SegmentSize>;
+    public:
+        typedef SegmentedVectorIterator<T, SegmentSize> Iterator;
+
+        ~SegmentedVectorIterator() { }
+
+        T& operator*() const { return m_vector.m_segments.at(m_segment)->at(m_index); }
+        T* operator->() const { return &m_vector.m_segments.at(m_segment)->at(m_index); }
+
+        // Only prefix ++ operator supported
+        Iterator& operator++()
+        {
+            ASSERT(m_index != SegmentSize);
+            ++m_index;
+            if (m_index >= m_vector.m_segments.at(m_segment)->size())  {
+                if (m_segment + 1 < m_vector.m_segments.size()) {
+                    ASSERT(m_vector.m_segments.at(m_segment)->size() > 0);
+                    ++m_segment;
+                    m_index = 0;
+                } else {
+                    // Points to the "end" symbol
+                    m_segment = 0;
+                    m_index = SegmentSize;
+                }
+            }
+            return *this;
+        }
+
+        bool operator==(const Iterator& other) const
+        {
+            return (m_index == other.m_index && m_segment = other.m_segment && &m_vector == &other.m_vector);
+        }
+
+        bool operator!=(const Iterator& other) const
+        {
+            return (m_index != other.m_index || m_segment != other.m_segment || &m_vector != &other.m_vector);
+        }
+
+        SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize>& other)
+        {
+            m_vector = other.m_vector;
+            m_segment = other.m_segment;
+            m_index = other.m_index;
+            return *this;
+        }
+
+    private:
+        SegmentedVectorIterator(SegmentedVector<T, SegmentSize>& vector, size_t segment, size_t index)
+            : m_vector(vector)
+            , m_segment(segment)
+            , m_index(index)
+        {
+        }
+
+        SegmentedVector<T, SegmentSize>& m_vector;
+        size_t m_segment;
+        size_t m_index;
+    };
+
     // SegmentedVector is just like Vector, but it doesn't move the values
     // stored in its buffer when it grows. Therefore, it is safe to keep
     // pointers into a SegmentedVector.
     template <typename T, size_t SegmentSize> class SegmentedVector {
+        friend class SegmentedVectorIterator<T, SegmentSize>;
     public:
+        typedef SegmentedVectorIterator<T, SegmentSize> Iterator;
+
         SegmentedVector()
             : m_size(0)
         {
@@ -82,6 +148,12 @@ namespace WTF {
             segmentFor(m_size - 1)->uncheckedAppend(value);
         }
 
+        T& alloc()
+        {
+            append<T>(T());
+            return last();
+        }
+
         void removeLast()
         {
             if (m_size <= SegmentSize)
@@ -104,6 +176,16 @@ namespace WTF {
             m_segments.resize(1);
             m_inlineSegment.clear();
             m_size = 0;
+        }
+
+        Iterator begin()
+        {
+            return Iterator(*this, 0, m_size ? 0 : SegmentSize);
+        }
+
+        Iterator end()
+        {
+            return Iterator(*this, 0, SegmentSize);
         }
 
     private:

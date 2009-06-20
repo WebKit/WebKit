@@ -5,6 +5,29 @@
 
         Reviewed by Oliver Hunt.
 
+        An Iterator added for SegmentedVector. Currently
+        only the pre ++ operator is supported.
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVectorIterator::~SegmentedVectorIterator):
+        (WTF::SegmentedVectorIterator::operator*):
+        (WTF::SegmentedVectorIterator::operator->):
+        (WTF::SegmentedVectorIterator::operator++):
+        (WTF::SegmentedVectorIterator::operator==):
+        (WTF::SegmentedVectorIterator::operator!=):
+        (WTF::SegmentedVectorIterator::operator=):
+        (WTF::SegmentedVectorIterator::SegmentedVectorIterator):
+        (WTF::SegmentedVector::alloc):
+        (WTF::SegmentedVector::begin):
+        (WTF::SegmentedVector::end):
+
+2009-06-20  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Bug 24986: ARM JIT port
+        <https://bugs.webkit.org/show_bug.cgi?id=24986>
+
+        Reviewed by Oliver Hunt.
+
         Move SegmentedVector to /wtf subdirectory
         and change "namespace JSC" to "namespace WTF"
 
