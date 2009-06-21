@@ -1,5 +1,11 @@
 2009-06-21  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY (Speculative gtk build fix).
+
+        * GNUmakefile.am:
+
+2009-06-21  David Levin  <levin@chromium.org>
+
         Reviewed by NOBODY.
 
         Speculative tiger build fix and a windows build fix.
