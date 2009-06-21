@@ -1,12 +1,3 @@
-2009-06-20  Darin Adler  <darin@apple.com>
-
-        Reviewed by Sam Weinig.
-
-        <rdar://problem/6964221> Need more processing of pluginspage.
-
-        * WebCoreSupport/WebFrameLoaderClient.cpp:
-        (WebFrameLoaderClient::createPlugin): Check protocolInHTTPFamily.
-
 2009-06-19  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Steve Falkenburg.

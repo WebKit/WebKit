@@ -666,15 +666,12 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugIn
 
     RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    size_t size = paramNames.size();
-    for (size_t i = 0; i < size; i++) {
+    unsigned count = (unsigned)paramNames.size();
+    for (unsigned i = 0; i < count; i++) {
         if (paramNames[i] == "pluginspage") {
-            KURL pluginPageURL = document->completeURL(parseURL(paramValues[i]));
-            if (pluginPageURL.protocolInHTTPFamily()) {
-                static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
-                RetainPtr<CFStringRef> str(AdoptCF, pluginPageURL.string().createCFString());
-                CFDictionarySetValue(userInfo.get(), key, str.get());
-            }
+            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
+            RetainPtr<CFStringRef> str(AdoptCF, paramValues[i].createCFString());
+            CFDictionarySetValue(userInfo.get(), key, str.get());
             break;
         }
     }
@@ -686,13 +683,13 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugIn
         CFDictionarySetValue(userInfo.get(), key, str.get());
     }
 
-    if (pluginView->plugin()) {
-        String pluginName = pluginView->plugin()->name();
-        if (!pluginName.isNull()) {
-            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
-            RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
-            CFDictionarySetValue(userInfo.get(), key, str.get());
-        }
+    String pluginName;
+    if (pluginView->plugin())
+        pluginName = pluginView->plugin()->name();
+    if (!pluginName.isNull()) {
+        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
+        RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
+        CFDictionarySetValue(userInfo.get(), key, str.get());
     }
 
     COMPtr<CFDictionaryPropertyBag> userInfoBag(AdoptCOM, CFDictionaryPropertyBag::createInstance());
