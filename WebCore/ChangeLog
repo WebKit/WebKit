@@ -1,3 +1,22 @@
+2009-06-19  Alice Liu  <alice.liu@apple.com>
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=26568 
+        Repro crash animating GIF if previously used in a closed window's back/forward list
+        Also filed as <rdar://problem/6978362>
+
+        Reviewed by Maciej Stachowiak.
+
+        Can't test this bug with an automated layout test since it requires b/f caching 
+        * manual-tests/animated-gif-bfcache-crash.html: Added.
+        * manual-tests/resources/containsAnimatedGif.html: Added.
+
+        Adding checks for hostWindow() since there is no guarantee that the Page is alive
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollRectIntoViewRecursively):
+        (WebCore::ScrollView::contentsToScreen):
+        (WebCore::ScrollView::screenToContents):
+        (WebCore::ScrollView::wheelEvent):
+
 2009-06-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Barth.
