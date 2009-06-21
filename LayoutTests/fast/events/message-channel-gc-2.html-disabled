@@ -6,7 +6,6 @@ function gc()
 {
     if (window.GCController)
         return GCController.collect();
-
     for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
         var s = new String("abc");
     }
@@ -24,9 +23,6 @@ if (window.layoutTestController) {
 
 var channel = new MessageChannel;
 
-channel.port1.onclose = function() { log("onclose"); setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone(); gc(); }, 0) }
-channel.port1.addEventListener("close", function() { log("close listener"); gc(); }, false);
-
 gc();
 channel.port1.start();
 channel.port2.postMessage("msg");
@@ -35,7 +31,15 @@ gc();
 channel.port1.close();
 channel.port2.close();
 gc();
+
+setTimeout(function() {
+    log("DONE");
+    gc();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, 0);
 channel = new MessageChannel;
 gc();
+
 </script>
 </body>

@@ -28,7 +28,6 @@ function test()
             log("Simple exchange: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
         test2();
     };
-    mainPort.start();
 }
 
 function test2()
@@ -42,34 +41,53 @@ function test2()
             log("Posted port: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
         test3();
     };
-    channel.port1.start();
 }
 
 function test3()
 {
-    var port = mainPort.startConversation("newConversation");
-    port.onmessage = function(evt) {
-        if (evt.data == "hey" && evt.origin == "")
-            log("Conversation: SUCCESS");
-        else
-            log("Conversation: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
-        test4();
-    };
-    port.start();
+    var channel = new MessageChannel;
+    channel.port1.postMessage("1");
+    var started = false;
+    channel.port2.addEventListener("message", function(evt) {
+        if (started) {
+            log("Event Listener: SUCCESS");
+            test4();
+        } else
+            log("Event Listener: FAIL. Event listener called before start()");
+   });
+   setTimeout(function() {
+      channel.port2.start();
+      started = true;
+   }, 100);
+
 }
 
 function test4()
 {
-    log("A port is active: " + (mainPort.active ? "SUCCESS" : "FAIL"));
+    var channel = new MessageChannel;
+    channel.port1.postMessage("1");
+    channel.port1.close();
+    channel.port1.postMessage("2");
+    channel.port2.onmessage = function(evt) {
+        if (evt.data == "1") {
+            log("Closed port: SUCCESS");
+            test5();
+        } else
+            log("Closed port: FAIL. Got message: " + evt.data + " after close");
+   }
+}
 
-    mainPort.close();
-
-    log("A closed port is inactive: " + (mainPort.active ? "FAIL" : "SUCCESS"));
-
-    log("DONE");
-
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+function test5()
+{
+    // Create a channel and put some messages in it which will go undelivered and should not leak
+    var channel = new MessageChannel;
+    channel.port1.postMessage("abcde");
+    // Now wait a short period of time to ensure no messages come in from previous tests.
+    setTimeout(function() {
+        log("DONE");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 100);
 }
 
 </script>

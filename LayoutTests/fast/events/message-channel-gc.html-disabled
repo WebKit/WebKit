@@ -29,8 +29,6 @@ gc();
 log("Should be 'bar': " + channel.port1.foo);
 
 channel.port1.onmessage = function() { log("onmessage"); }
-channel.port1.onclose = function() { log("onclose"); setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone() }, 0) }
-channel.port1.addEventListener("close", function() { log("close listener"); }, false);
 channel.port1.addEventListener("message", function() { log("message listener"); }, false);
 
 gc();
@@ -42,5 +40,12 @@ channel.port1.close();
 channel.port2.close();
 
 gc();
+
+setTimeout(function() {
+    log("DONE");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone()
+}, 0);
+
 </script>
 </body>

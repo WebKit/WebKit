@@ -23263,7 +23263,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\MessagePortProxy.h"
+				RelativePath="..\dom\MessagePortChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\MessagePortChannel.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\default\PlatformMessagePortChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\default\PlatformMessagePortChannel.h"
 				>
 			</File>
 			<File

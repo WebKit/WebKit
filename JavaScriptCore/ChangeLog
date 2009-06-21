@@ -1,3 +1,14 @@
+2009-06-21  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25043>
+        Added support for multi-threaded MessagePorts.
+
+        * wtf/MessageQueue.h:
+        (WTF::::appendAndCheckEmpty):
+            Added API to test whether the queue was empty before adding an element.
+  
 2009-06-20  David D. Kilzer  <ddkilzer@webkit.org>
 
         Fix namespace comment in SegmentedVector.h

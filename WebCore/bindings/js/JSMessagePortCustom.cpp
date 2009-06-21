@@ -43,13 +43,6 @@ void JSMessagePort::mark()
     DOMObject::mark();
 
     markIfNotNull(m_impl->onmessage());
-    markIfNotNull(m_impl->onclose());
-
-    if (MessagePortProxy* entangledPort = m_impl->entangledPort()) {
-        DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), entangledPort);
-        if (wrapper && !wrapper->marked())
-            wrapper->mark();
-    }
 
     typedef MessagePort::EventListenersMap EventListenersMap;
     typedef MessagePort::ListenerVector ListenerVector;
@@ -58,14 +51,6 @@ void JSMessagePort::mark()
         for (ListenerVector::iterator vecIter = mapIter->second.begin(); vecIter != mapIter->second.end(); ++vecIter) 
             (*vecIter)->markJSFunction();
     }
-}
-
-JSValue JSMessagePort::startConversation(ExecState* exec, const ArgList& args)
-{
-    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
-    const UString& message = args.at(0).toString(exec);
-
-    return toJS(exec, impl()->startConversation(globalObject->scriptExecutionContext(), message).get());
 }
 
 JSValue JSMessagePort::addEventListener(ExecState* exec, const ArgList& args)

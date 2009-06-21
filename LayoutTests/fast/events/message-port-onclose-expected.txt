@@ -1,4 +1,0 @@
-Test that close event handler is invoked when a MessagePort is closed.
-
-PASS
-

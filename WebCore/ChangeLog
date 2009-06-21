@@ -1,3 +1,98 @@
+2009-06-21  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25043>
+        Removed obsolete MessagePort.startConversation(), active and onclose APIs.
+
+        Refactored MessagePortProxy into MessagePortChannel and a platform-dependent PlatformMessagePortChannel
+        implementation. Modified APIs to simplify cross-process implementations by moving the messaging code
+        entirely into the platform-dependent proxy.
+
+        Created a thread-safe default PlatformMessagePortChannel implementation.
+
+        Changed DOMWindow messaging to create the MessageEvent in the target ScriptExecutionContext to match how
+        cross-thread MessagePorts work.
+        
+        * GNUMakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+            Added MessagePortChannel/PlatformMessagePortChannel files.
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::mark):
+            Changed ports to not mark their entangled pair as reachable, per the spec.
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        * dom/MessageChannel.cpp:
+        (WebCore::MessageChannel::MessageChannel):
+            Updated to use PlatformMessagePortChannel::createChannel() to entangle the ports.
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::~MessagePort):
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::disentangle):
+        (WebCore::MessagePort::messageAvailable):
+        (WebCore::MessagePort::start):
+        (WebCore::MessagePort::close):
+        (WebCore::MessagePort::entangle):
+        (WebCore::MessagePort::contextDestroyed):
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::setOnmessage):
+        (WebCore::MessagePort::hasPendingActivity):
+            Changed these APIs to delegate to new PlatformMessagePortChannel APIs.
+        * dom/MessagePort.h:
+            Renamed isQueueOpen() to started().
+        * dom/MessagePort.idl:
+            Removed startConversation and onclose.
+        * dom/MessagePortProxy.h: Removed.
+        * dom/MessagePortChannel.cpp: Added.
+        (WebCore::MessagePortChannel::EventData::create):
+        (WebCore::MessagePortChannel::EventData::EventData):
+        (WebCore::MessagePortChannel::~MessagePortChannel):
+        * dom/MessagePortChannel.h: Added.
+        (WebCore::MessagePortChannel::EventData::message):
+        (WebCore::MessagePortChannel::EventData::channel):
+            Changed EventData to hold a reference to a MessagePortChannel object instead of a MessagePort to enable cross-thread messaging.
+        (WebCore::MessagePortChannel::MessagePortChannel):
+        (WebCore::MessagePortChannel::create):        
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore:ScriptExecutionContext::dispatchMessagePortEvents):
+            Renamed isQueueOpen() to started().
+        * dom/default/PlatformMessagePortChannel.cpp: Added.
+        (WebCore::MessagePortChannel::entangleIfOpen):
+        (WebCore::MessagePortChannel::disentangle):
+        (WebCore::MessagePortChannel::postMessageToRemote):
+        (WebCore::MessagePortChannel::tryGetMessageFromRemote):
+        (WebCore::MessagePortChannel::close):
+        (WebCore::MessagePortChannel::isConnectedTo):
+        (WebCore::MessagePortChannel::hasPendingActivity):
+        (WebCore::PlatformMessagePortChannel::PlatformMessagePortChannel):
+        (WebCore::PlatformMessagePortChannel::~PlatformMessagePortChannel):
+        (WebCore::PlatformMessagePortChannel::createChannel):
+        (WebCore::PlatformMessagePortChannel::entangleIfOpen):
+        (WebCore::PlatformMessagePortChannel::disentangle):
+        (WebCore::PlatformMessagePortChannel::setRemotePort):
+        (WebCore::PlatformMessagePortChannel::remotePort):
+        (WebCore::PlatformMessagePortChannel::entangledChannel):
+        (WebCore::PlatformMessagePortChannel::setEntangledChannel):
+        (WebCore::PlatformMessagePortChannel::postMessageToRemote):
+        (WebCore::PlatformMessagePortChannel::tryGetMessageFromRemote):
+        (WebCore::PlatformMessagePortChannel::isConnectedTo):
+        (WebCore::PlatformMessagePortChannel::close):
+        (WebCore::PlatformMessagePortChannel::closeInternal):
+        (WebCore::PlatformMessagePortChannel::hasPendingActivity):
+        * dom/default/PlatformMessagePortChannel.h: Added.
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::create):
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::tryGetMessage):
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::appendAndCheckEmpty):
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::isEmpty):
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::MessagePortQueue):
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+            Changed DOMWindow messaging to create the MessageEvent in the target ScriptExecutionContext to match how cross-thread MessagePorts work.
+        (WebCore::PostMessageTimer::event):
+        (WebCore::DOMWindow::postMessage):
+        (WebCore::DOMWindow::postMessageTimerFired):
+
 2009-06-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

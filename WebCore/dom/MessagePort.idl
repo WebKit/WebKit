@@ -34,16 +34,13 @@ module events {
 // We need to have something as an ObjC binding, because MessagePort is used in MessageEvent, which already has one,
 // but we don't want to actually expose the API while it is in flux.
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        readonly attribute boolean active;
         void postMessage(in DOMString message, in [Optional] MessagePort messagePort)
             raises(DOMException);
-        [Custom] MessagePort startConversation(in DOMString message);
         void start();
         void close();
 
         // event handler attributes
         attribute EventListener onmessage;
-        attribute EventListener onclose;
 
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type, 

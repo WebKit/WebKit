@@ -678,7 +678,8 @@ webcore_sources += \
 	WebCore/dom/MessageEvent.h \
 	WebCore/dom/MessagePort.cpp \
 	WebCore/dom/MessagePort.h \
-	WebCore/dom/MessagePortProxy.h \
+	WebCore/dom/MessagePortChannel.cpp \
+	WebCore/dom/MessagePortChannel.h \
 	WebCore/dom/MouseEvent.cpp \
 	WebCore/dom/MouseEvent.h \
 	WebCore/dom/MouseRelatedEvent.cpp \
@@ -770,6 +771,8 @@ webcore_sources += \
 	WebCore/dom/XMLTokenizerLibxml2.cpp \
 	WebCore/dom/XMLTokenizerScope.cpp \
 	WebCore/dom/XMLTokenizerScope.h \
+	WebCore/dom/default/PlatformMessagePortChannel.cpp \
+	WebCore/dom/default/PlatformMessagePortChannel.h \
 	WebCore/editing/AppendNodeCommand.cpp \
 	WebCore/editing/AppendNodeCommand.h \
 	WebCore/editing/ApplyStyleCommand.cpp \

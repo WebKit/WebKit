@@ -1,3 +1,25 @@
+2009-06-21  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25043>
+        Updated MessageChannel/MessagePorts tests to reflect latest spec (close event has been removed).
+        Added more tests of port cloning.
+
+        * fast/events/message-channel-gc-2-expected.txt:
+        * fast/events/message-channel-gc-2.html-disabled:
+        * fast/events/message-channel-gc-3-expected.txt:
+        * fast/events/message-channel-gc-3.html-disabled:
+        * fast/events/message-channel-gc-expected.txt:
+        * fast/events/message-channel-gc.html-disabled:
+        * fast/events/message-port-clone-expected.txt: Added.
+        * fast/events/message-port-clone.html-disabled: Added.
+        * fast/events/message-port-expected.txt:
+        * fast/events/message-port-no-wrapper-expected.txt: Added.
+        * fast/events/message-port-onclose-expected.txt: Removed.
+        * fast/events/message-port-onclose.html-disabled: Removed.
+        * fast/events/message-port.html-disabled:
+
 2009-06-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

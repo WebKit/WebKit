@@ -3,5 +3,5 @@ Test that MessagePort messages are delivered even if both ports are inaccessible
 Should say PASS twice.
 
 PASS: message delivered. Port: [object MessagePort]
-PASS: close message delivered. Port: [object MessagePort]
+PASS: port closed.
 

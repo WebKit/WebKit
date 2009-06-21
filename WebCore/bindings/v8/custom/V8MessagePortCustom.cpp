@@ -73,54 +73,6 @@ ACCESSOR_SETTER(MessagePortOnmessage)
     }
 }
 
-ACCESSOR_GETTER(MessagePortOnclose)
-{
-    INC_STATS("DOM.MessagePort.onclose._get");
-    MessagePort* messagePort = V8Proxy::ToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, info.Holder());
-    return V8Proxy::EventListenerToV8Object(messagePort->onclose());
-}
-
-ACCESSOR_SETTER(MessagePortOnclose)
-{
-    INC_STATS("DOM.MessagePort.onclose._set");
-    MessagePort* messagePort = V8Proxy::ToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, info.Holder());
-    if (value->IsNull()) {
-        if (messagePort->onclose()) {
-            V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(messagePort->onclose());
-            removeHiddenDependency(info.Holder(), listener->getListenerObject(), V8Custom::kXMLHttpRequestCacheIndex);
-        }
-
-        // Clear the listener.
-        messagePort->setOnclose(0);
-    } else {
-        V8Proxy* proxy = V8Proxy::retrieve(messagePort->scriptExecutionContext());
-        if (!proxy)
-            return;
-
-        RefPtr<EventListener> listener = proxy->FindOrCreateObjectEventListener(value, false);
-        if (listener) {
-            messagePort->setOnclose(listener);
-            createHiddenDependency(info.Holder(), value, V8Custom::kMessagePortRequestCacheIndex);
-        }
-    }
-}
-
-CALLBACK_FUNC_DECL(MessagePortStartConversation)
-{
-    INC_STATS("DOM.MessagePort.StartConversation()");
-    if (args.Length() < 1)
-        return throwError("Not enough arguments", V8Proxy::SYNTAX_ERROR);
-    MessagePort* messagePort = V8Proxy::ToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args.Holder());
-
-    V8Proxy* proxy = V8Proxy::retrieve(messagePort->scriptExecutionContext());
-    if (!proxy)
-        return v8::Undefined();
-
-    RefPtr<MessagePort> port = messagePort->startConversation(messagePort->scriptExecutionContext(), toWebCoreString(args[0]));
-    v8::Handle<v8::Value> wrapper = V8Proxy::ToV8Object(V8ClassIndex::MESSAGEPORT, port.get());
-    return wrapper;
-}
-
 CALLBACK_FUNC_DECL(MessagePortAddEventListener)
 {
     INC_STATS("DOM.MessagePort.AddEventListener()");

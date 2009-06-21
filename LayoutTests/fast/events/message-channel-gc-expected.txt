@@ -3,6 +3,5 @@ Test some cases of MessagePort garbage collection.
 Should be 'bar': bar
 onmessage
 message listener
-onclose
-close listener
+DONE
 
