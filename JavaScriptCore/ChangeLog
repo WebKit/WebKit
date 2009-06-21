@@ -1,3 +1,12 @@
+2009-06-21  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (speculative build fix for windows).
+
+        Simply removed some whitespace form this file to make windows build wtf and
+        hopefully copy the new MessageQueque.h so that WebCore picks it up.
+
+        * wtf/Assertions.cpp:
+
 2009-06-21  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
