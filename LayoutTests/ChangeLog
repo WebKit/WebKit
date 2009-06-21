@@ -1,3 +1,14 @@
+2009-06-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=15383
+          <rdar://problem/5682745> resize: vertical does not restrict to vertical
+          resize
+
+        * fast/css/resize-single-axis-expected.txt: Added.
+        * fast/css/resize-single-axis.html: Added.
+
 2009-06-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Eric Seidel.
