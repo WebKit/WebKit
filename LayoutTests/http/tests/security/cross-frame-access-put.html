@@ -192,10 +192,8 @@ window.onload = function()
     setForbiddenProperty(targetWindow, "statusbar");
     setForbiddenProperty(targetWindow, "toolbar");
     setForbiddenProperty(targetWindow, "window");
-
-    // FIXME: find a way to test these attributes
-    // setForbiddenProperty(targetWindow, "parent");
-    // setForbiddenProperty(targetWindow, "top");
+    setForbiddenProperty(targetWindow, "parent");
+    setForbiddenProperty(targetWindow, "top");
 
     // Functions
     setForbiddenProperty(targetWindow, "addEventListener");

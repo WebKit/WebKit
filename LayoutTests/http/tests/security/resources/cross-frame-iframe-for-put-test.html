@@ -209,10 +209,8 @@
         var statusOld = window.status;
         var toolbarOld = window.toolbar;
         var windowOld = window.window;
-
-        // FIXME: find a way to test these attributes
-        // var parentOld = window.parent;
-        // var topOld = window.top;
+        var parentOld = window.parent;
+        var topOld = window.top;
 
         // Functions
         var addEventListenerOld = window.addEventListener;
@@ -417,9 +415,18 @@
             shouldBe("window.toolbar", "toolbarOld");
             shouldBe("window.window", "windowOld");
 
-            // FIXME: find a way to test these attributes
-            // shouldBe("window.parent", "parentOld");
-            // shouldBe("window.top", "topOld");
+            // Using shouldBe for parent and top causes extraneous warnings due to cross-orgin toString'ing.
+            if (window.parent === parentOld) {
+                alert("PASS: window.parent should be parentOld and is.");
+            } else {
+                alert("*** FAIL: window.parent should be parentOld but instead is " + window.parent + ". ***");
+            }
+
+            if (window.top === topOld) {
+                alert("PASS: window.top should be topOld and is.");
+            } else {
+                alert("*** FAIL: window.top should be topOld but instead is " + window.top + ". ***");
+            }
 
             // Functions
             shouldBe("window.addEventListener", "addEventListenerOld");

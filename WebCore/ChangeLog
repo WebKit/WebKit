@@ -1,3 +1,12 @@
+2009-06-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26554
+        Shadowing of top and parent
+
+        * page/DOMWindow.idl:
+
 2009-06-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.
