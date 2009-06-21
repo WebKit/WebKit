@@ -1,3 +1,7 @@
+2009-06-20  Darin Adler  <darin@apple.com>
+
+        * platform/gtk/Skipped: Skip some new tests.
+
 2009-06-19  Alice Liu  <alice.liu@apple.com>
 
         Fix https://bugs.webkit.org/show_bug.cgi?id=26568 

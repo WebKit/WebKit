@@ -1482,6 +1482,7 @@ editing/selection/unrendered-003.html
 editing/selection/unrendered-004.html
 editing/selection/unrendered-005.html
 editing/selection/unrendered-space.html
+editing/selection/user-drag-element-and-user-select-none.html
 editing/selection/word-granularity.html
 editing/selection/wrapped-line-caret-1.html
 editing/selection/wrapped-line-caret-2.html
@@ -4022,6 +4023,7 @@ media/video-muted.html
 media/video-no-autoplay.html
 media/video-pause-empty-events.html
 media/video-play-empty-events.html
+media/video-play-pause-events.html
 media/video-played-collapse.html
 media/video-played-reset.html
 media/video-played.html
