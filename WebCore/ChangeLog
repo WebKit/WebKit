@@ -1,5 +1,16 @@
 2009-06-21  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY.
+
+        Speculative tiger build fix and a windows build fix.
+        More fixes may still be in order.
+
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * dom/default/PlatformMessagePortChannel.h:
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::tryGetMessage):
+
+2009-06-21  David Levin  <levin@chromium.org>
+
         Reviewed by NOBODY (Speculative tiger build fix).
 
         * dom/default/PlatformMessagePortChannel.h:
