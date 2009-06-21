@@ -1,3 +1,10 @@
+2009-06-21  David Levin  <levin@chromium.org>
+
+        Reviewed by NOBODY (Speculative tiger build fix).
+
+        * dom/default/PlatformMessagePortChannel.h:
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::~MessagePortQueue):
+
 2009-06-21  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
