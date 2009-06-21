@@ -29,6 +29,7 @@
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"
+#include "LiteralParser.h"
 #include "PropertyNameArray.h"
 #include <wtf/MathExtras.h>
 
@@ -36,6 +37,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSONObject);
 
+static JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*, JSObject*, JSValue, const ArgList&);
 
 }
@@ -562,6 +564,7 @@ const ClassInfo JSONObject::info = { "JSON", 0, 0, ExecState::jsonTable };
 
 /* Source for JSONObject.lut.h
 @begin jsonTable
+  parse         JSONProtoFuncParse             DontEnum|Function 1
   stringify     JSONProtoFuncStringify         DontEnum|Function 1
 @end
 */
@@ -582,6 +585,24 @@ bool JSONObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
 void JSONObject::markStringifiers(Stringifier* stringifier)
 {
     stringifier->mark();
+}
+
+// ECMA-262 v5 15.12.3
+JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec, JSObject*, JSValue, const ArgList& args)
+{
+    if (args.isEmpty())
+        return throwError(exec, GeneralError, "JSON.parse requires at least one parameter");
+    JSValue value = args.at(0);
+    UString source = value.toString(exec);
+    if (exec->hadException())
+        return jsNull();
+    
+    LiteralParser jsonParser(exec, source, LiteralParser::StrictJSON);
+    JSValue parsedObject = jsonParser.tryLiteralParse();
+    if (!parsedObject)
+        return throwError(exec, SyntaxError, "Unable to parse JSON string");
+    
+    return parsedObject;
 }
 
 // ECMA-262 v5 15.12.3

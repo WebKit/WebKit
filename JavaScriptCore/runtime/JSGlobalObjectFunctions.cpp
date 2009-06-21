@@ -282,7 +282,7 @@ JSValue JSC_HOST_CALL globalFuncEval(ExecState* exec, JSObject* function, JSValu
 
     UString s = x.toString(exec);
 
-    LiteralParser preparser(exec, s);
+    LiteralParser preparser(exec, s, LiteralParser::NonStrictJSON);
     if (JSValue parsedObject = preparser.tryLiteralParse())
         return parsedObject;
 

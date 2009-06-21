@@ -350,7 +350,7 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
 
     UString programSource = asString(program)->value();
 
-    LiteralParser preparser(callFrame, programSource);
+    LiteralParser preparser(callFrame, programSource, LiteralParser::NonStrictJSON);
     if (JSValue parsedObject = preparser.tryLiteralParse())
         return parsedObject;
     

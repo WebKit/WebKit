@@ -1,3 +1,17 @@
+2009-06-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler and Cameron Zwarich.
+
+        Bug 26587: Support JSON.parse
+
+        Add tests to cover basic usage of JSON.parse
+
+        * fast/js/JSON-parse.html: Added.
+        * fast/js/JSON-parse-expected.txt: Added.
+        * fast/js/resources/JSON-parse.js: Added.
+        (createTests.result):
+        (createTests):
+
 2009-06-21  Drew Wilson  <atwilson@google.com>
  
         Reviewed by David Levin.

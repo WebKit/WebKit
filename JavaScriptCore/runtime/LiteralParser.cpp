@@ -28,14 +28,10 @@
 
 #include "JSArray.h"
 #include "JSString.h"
+#include "Lexer.h"
 #include <wtf/ASCIICType.h>
 
 namespace JSC {
-
-static bool isSafeStringCharacter(UChar c)
-{
-    return (c >= ' ' && c <= 0xff && c != '\\') || c == '\t';
-}
 
 LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
 {
@@ -84,8 +80,33 @@ LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
             token.end = ++m_ptr;
             return TokColon;
         case '"':
-            return lexString(token);
-
+            if (m_mode == StrictJSON)
+                return lexString<StrictJSON>(token);
+            return lexString<NonStrictJSON>(token);
+        case 't':
+            if (m_end - m_ptr >= 4 && m_ptr[1] == 'r' && m_ptr[2] == 'u' && m_ptr[3] == 'e') {
+                m_ptr += 4;
+                token.type = TokTrue;
+                token.end = m_ptr;
+                return TokTrue;
+            }
+            break;
+        case 'f':
+            if (m_end - m_ptr >= 5 && m_ptr[1] == 'a' && m_ptr[2] == 'l' && m_ptr[3] == 's' && m_ptr[4] == 'e') {
+                m_ptr += 5;
+                token.type = TokFalse;
+                token.end = m_ptr;
+                return TokFalse;
+            }
+            break;
+        case 'n':
+            if (m_end - m_ptr >= 4 && m_ptr[1] == 'u' && m_ptr[2] == 'l' && m_ptr[3] == 'l') {
+                m_ptr += 4;
+                token.type = TokNull;
+                token.end = m_ptr;
+                return TokNull;
+            }
+            break;    
         case '-':
         case '0':
         case '1':
@@ -102,16 +123,80 @@ LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
     return TokError;
 }
 
-LiteralParser::TokenType LiteralParser::Lexer::lexString(LiteralParserToken& token)
+static inline bool isSafeStringCharacter(UChar c)
+{
+    return (c >= ' ' && c <= 0xff && c != '\\' && c != '"') || c == '\t';
+}
+
+template <LiteralParser::ParserMode mode> LiteralParser::TokenType LiteralParser::Lexer::lexString(LiteralParserToken& token)
 {
     ++m_ptr;
-    while (m_ptr < m_end && isSafeStringCharacter(*m_ptr) && *m_ptr != '"')
-        ++m_ptr;
-    if (m_ptr >= m_end || *m_ptr != '"') {
-        token.type = TokError;
-        token.end = ++m_ptr;
+    const UChar* runStart;
+    token.stringToken = UString();
+    do {
+        runStart = m_ptr;
+        while (m_ptr < m_end && isSafeStringCharacter(*m_ptr))
+            ++m_ptr;
+        if (runStart < m_ptr)
+            token.stringToken.append(runStart, m_ptr - runStart);
+        if ((mode == StrictJSON) && m_ptr < m_end && *m_ptr == '\\') {
+            ++m_ptr;
+            if (m_ptr >= m_end)
+                return TokError;
+            switch (*m_ptr) {
+                case '"':
+                    token.stringToken.append('"');
+                    m_ptr++;
+                    break;
+                case '\\':
+                    token.stringToken.append('\\');
+                    m_ptr++;
+                    break;
+                case '/':
+                    token.stringToken.append('/');
+                    m_ptr++;
+                    break;
+                case 'b':
+                    token.stringToken.append('\b');
+                    m_ptr++;
+                    break;
+                case 'f':
+                    token.stringToken.append('\f');
+                    m_ptr++;
+                    break;
+                case 'n':
+                    token.stringToken.append('\n');
+                    m_ptr++;
+                    break;
+                case 'r':
+                    token.stringToken.append('\r');
+                    m_ptr++;
+                    break;
+                case 't':
+                    token.stringToken.append('\t');
+                    m_ptr++;
+                    break;
+
+                case 'u':
+                    if ((m_end - m_ptr) < 5) // uNNNN == 5 characters
+                        return TokError;
+                    for (int i = 1; i < 5; i++) {
+                        if (!isASCIIHexDigit(m_ptr[i]))
+                            return TokError;
+                    }
+                    token.stringToken.append(JSC::Lexer::convertUnicode(m_ptr[1], m_ptr[2], m_ptr[3], m_ptr[4]));
+                    m_ptr += 5;
+                    break;
+
+                default:
+                    return TokError;
+            }
+        }
+    } while ((mode == StrictJSON) && m_ptr != runStart && (m_ptr < m_end) && *m_ptr != '"');
+
+    if (m_ptr >= m_end || *m_ptr != '"')
         return TokError;
-    }
+
     token.type = TokString;
     token.end = ++m_ptr;
     return TokString;
@@ -151,7 +236,7 @@ LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& tok
     if (m_ptr < m_end && *m_ptr == '.') {
         ++m_ptr;
         // [0-9]+
-        if (m_ptr >= m_end && !isASCIIDigit(*m_ptr))
+        if (m_ptr >= m_end || !isASCIIDigit(*m_ptr))
             return TokError;
 
         ++m_ptr;
@@ -168,7 +253,7 @@ LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& tok
             ++m_ptr;
 
         // [0-9]+
-        if (m_ptr >= m_end && !isASCIIDigit(*m_ptr))
+        if (m_ptr >= m_end || !isASCIIDigit(*m_ptr))
             return TokError;
         
         ++m_ptr;
@@ -226,7 +311,25 @@ JSValue LiteralParser::parse(ParserState initialState)
             case StartParseObject: {
                 JSObject* object = constructEmptyObject(m_exec);
                 objectStack.append(object);
-                // fallthrough
+
+                TokenType type = m_lexer.next();
+                if (type == TokString) {
+                    Lexer::LiteralParserToken identifierToken = m_lexer.currentToken();
+
+                    // Check for colon
+                    if (m_lexer.next() != TokColon)
+                        return JSValue();
+                    
+                    m_lexer.next();
+                    identifierStack.append(Identifier(m_exec, identifierToken.stringToken));
+                    stateStack.append(DoParseObjectEndExpression);
+                    goto startParseExpression;
+                } else if (type != TokRBrace) 
+                    return JSValue();
+                m_lexer.next();
+                lastValue = objectStack.last();
+                objectStack.removeLast();
+                break;
             }
             doParseObjectStartExpression:
             case DoParseObjectStartExpression: {
@@ -239,10 +342,10 @@ JSValue LiteralParser::parse(ParserState initialState)
                         return JSValue();
 
                     m_lexer.next();
-                    identifierStack.append(Identifier(m_exec, identifierToken.start + 1, identifierToken.end - identifierToken.start - 2));
+                    identifierStack.append(Identifier(m_exec, identifierToken.stringToken));
                     stateStack.append(DoParseObjectEndExpression);
                     goto startParseExpression;
-                } else if (type != TokRBrace) 
+                } else
                     return JSValue();
                 m_lexer.next();
                 lastValue = objectStack.last();
@@ -272,7 +375,7 @@ JSValue LiteralParser::parse(ParserState initialState)
                     case TokString: {
                         Lexer::LiteralParserToken stringToken = m_lexer.currentToken();
                         m_lexer.next();
-                        lastValue = jsString(m_exec, UString(stringToken.start + 1, stringToken.end - stringToken.start - 2));
+                        lastValue = jsString(m_exec, stringToken.stringToken);
                         break;
                     }
                     case TokNumber: {
@@ -281,6 +384,21 @@ JSValue LiteralParser::parse(ParserState initialState)
                         lastValue = jsNumber(m_exec, UString(numberToken.start, numberToken.end - numberToken.start).toDouble());
                         break;
                     }
+                    case TokNull:
+                        m_lexer.next();
+                        lastValue = jsNull();
+                        break;
+
+                    case TokTrue:
+                        m_lexer.next();
+                        lastValue = jsBoolean(true);
+                        break;
+
+                    case TokFalse:
+                        m_lexer.next();
+                        lastValue = jsBoolean(false);
+                        break;
+
                     default:
                         // Error
                         return JSValue();

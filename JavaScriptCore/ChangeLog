@@ -1,3 +1,32 @@
+2009-06-21  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler and Cameron Zwarich.
+
+        Bug 26587: Support JSON.parse
+        <https://bugs.webkit.org/show_bug.cgi?id=26587>
+
+        Extend the LiteralParser to support the full strict JSON
+        grammar, fix a few places where the grammar was incorrectly
+        lenient.   Doesn't yet support the JSON.parse reviver function
+        but that does not block the JSON.parse functionality itself.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::Lexer::lex):
+        (JSC::isSafeStringCharacter):
+        (JSC::LiteralParser::Lexer::lexString):
+        (JSC::LiteralParser::parse):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::LiteralParser):
+        (JSC::LiteralParser::tryJSONParse):
+        (JSC::LiteralParser::):
+        (JSC::LiteralParser::Lexer::Lexer):
+
 2009-06-21  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY (speculative build fix for windows).

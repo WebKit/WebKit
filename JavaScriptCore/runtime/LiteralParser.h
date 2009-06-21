@@ -34,16 +34,18 @@ namespace JSC {
 
     class LiteralParser {
     public:
-        LiteralParser(ExecState* exec, const UString& s)
+        typedef enum { StrictJSON, NonStrictJSON } ParserMode;
+        LiteralParser(ExecState* exec, const UString& s, ParserMode mode)
             : m_exec(exec)
-            , m_lexer(s)
+            , m_lexer(s, mode)
+            , m_mode(mode)
         {
         }
         
         JSValue tryLiteralParse()
         {
             m_lexer.next();
-            JSValue result = parse(StartParseStatement);
+            JSValue result = parse(m_mode == StrictJSON ? StartParseExpression : StartParseStatement);
             if (m_lexer.currentToken().type != TokEnd)
                 return JSValue();
             return result;
@@ -55,7 +57,8 @@ namespace JSC {
                            DoParseArrayStartExpression, DoParseArrayEndExpression };
         enum TokenType { TokLBracket, TokRBracket, TokLBrace, TokRBrace, 
                          TokString, TokIdentifier, TokNumber, TokColon, 
-                         TokLParen, TokRParen, TokComma, TokEnd, TokError };
+                         TokLParen, TokRParen, TokComma, TokTrue, TokFalse,
+                         TokNull, TokEnd, TokError };
 
         class Lexer {
         public:
@@ -63,9 +66,11 @@ namespace JSC {
                 TokenType type;
                 const UChar* start;
                 const UChar* end;
+                UString stringToken;
             };
-            Lexer(const UString& s)
+            Lexer(const UString& s, ParserMode mode)
                 : m_string(s)
+                , m_mode(mode)
                 , m_ptr(s.data())
                 , m_end(s.data() + s.size())
             {
@@ -83,10 +88,11 @@ namespace JSC {
             
         private:
             TokenType lex(LiteralParserToken&);
-            TokenType lexString(LiteralParserToken&);
+            template <ParserMode parserMode> TokenType lexString(LiteralParserToken&);
             TokenType lexNumber(LiteralParserToken&);
             LiteralParserToken m_currentToken;
             UString m_string;
+            ParserMode m_mode;
             const UChar* m_ptr;
             const UChar* m_end;
         };
@@ -96,6 +102,7 @@ namespace JSC {
 
         ExecState* m_exec;
         LiteralParser::Lexer m_lexer;
+        ParserMode m_mode;
     };
 }
 
