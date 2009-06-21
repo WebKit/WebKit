@@ -80,6 +80,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && nbspMode == o.nbspMode
         && khtmlLineBreak == o.khtmlLineBreak
         && textSizeAdjust == o.textSizeAdjust
+        && resize == o.resize
         && userSelect == o.userSelect;
 }
 

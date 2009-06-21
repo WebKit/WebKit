@@ -1,3 +1,13 @@
+2009-06-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=9694
+          resize value not compared
+
+        * fast/css/resize-value-compared-expected.txt: Added.
+        * fast/css/resize-value-compared.html: Added.
+
 2009-06-21  Darin Adler  <darin@apple.com>
 
         * platform/gtk/Skipped: Skip one more test.
