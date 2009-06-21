@@ -1,5 +1,14 @@
 2009-06-21  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        Remove dead code.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::parse):
+
+2009-06-21  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin Adler and Cameron Zwarich.
 
         Bug 26587: Support JSON.parse

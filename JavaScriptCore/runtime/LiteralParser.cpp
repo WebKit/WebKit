@@ -334,23 +334,18 @@ JSValue LiteralParser::parse(ParserState initialState)
             doParseObjectStartExpression:
             case DoParseObjectStartExpression: {
                 TokenType type = m_lexer.next();
-                if (type == TokString) {
-                    Lexer::LiteralParserToken identifierToken = m_lexer.currentToken();
-
-                    // Check for colon
-                    if (m_lexer.next() != TokColon)
-                        return JSValue();
-
-                    m_lexer.next();
-                    identifierStack.append(Identifier(m_exec, identifierToken.stringToken));
-                    stateStack.append(DoParseObjectEndExpression);
-                    goto startParseExpression;
-                } else
+                if (type != TokString)
                     return JSValue();
+                Lexer::LiteralParserToken identifierToken = m_lexer.currentToken();
+
+                // Check for colon
+                if (m_lexer.next() != TokColon)
+                    return JSValue();
+
                 m_lexer.next();
-                lastValue = objectStack.last();
-                objectStack.removeLast();
-                break;
+                identifierStack.append(Identifier(m_exec, identifierToken.stringToken));
+                stateStack.append(DoParseObjectEndExpression);
+                goto startParseExpression;
             }
             case DoParseObjectEndExpression:
             {
