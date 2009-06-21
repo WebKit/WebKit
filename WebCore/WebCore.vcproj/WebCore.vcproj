@@ -29434,6 +29434,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\ForwardingHeaders\wtf\MessageQueue.h"
+					>
+				</File>
+				<File
 					RelativePath="..\ForwardingHeaders\wtf\Noncopyable.h"
 					>
 				</File>

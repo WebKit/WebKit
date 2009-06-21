@@ -1,5 +1,13 @@
 2009-06-21  David Levin  <levin@chromium.org>
 
+        Reviewed by NOBODY.
+
+        Speculative windows build fix (idea by Mark Rowe).
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2009-06-21  David Levin  <levin@chromium.org>
+
         Reviewed by NOBODY (Speculative gtk build fix).
 
         * GNUmakefile.am:
