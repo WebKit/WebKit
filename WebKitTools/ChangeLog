@@ -1,3 +1,23 @@
+2009-06-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a hook to the WebKit launcher application to allow a link on the nightly build start page to
+        trigger an update via the built-in software update mechanism.
+
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+        * WebKitLauncher/WebKitLauncherURLProtocol.h: Added.
+        * WebKitLauncher/WebKitLauncherURLProtocol.m: Added.
+        (+[WebKitLauncherURLProtocol load]):
+        (+[WebKitLauncherURLProtocol canInitWithRequest:]): Only allow use of the x-webkit-launcher scheme from .webkit.org subdomains.
+        (+[WebKitLauncherURLProtocol canonicalRequestForRequest:]):
+        (-[WebKitLauncherURLProtocol startLoading]):
+        (-[WebKitLauncherURLProtocol stopLoading]):
+        (-[WebKitLauncherURLProtocol handleIsWebKitLauncherAvailableJS]): Return a brief JavaScript snippet that can be used to programatically
+        determine whether the x-webkit-launcher is available and working.
+        (-[WebKitLauncherURLProtocol handleCheckForUpdates]): Trigger a software update on the main thread.
+        (-[WebKitLauncherURLProtocol resourceNotFound]): Fail with a generic "File does not exist" error.
+
 2009-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha and Xan Lopez.

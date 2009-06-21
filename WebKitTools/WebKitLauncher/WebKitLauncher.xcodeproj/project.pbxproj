@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5D1067640FE63758002A2868 /* WebKitLauncherURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D1067620FE63758002A2868 /* WebKitLauncherURLProtocol.h */; };
+		5D1067650FE63758002A2868 /* WebKitLauncherURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D1067630FE63758002A2868 /* WebKitLauncherURLProtocol.m */; };
 		5D41141C0A50A9DE00C84CF0 /* VERSION in Resources */ = {isa = PBXBuildFile; fileRef = 5D41141B0A50A9DE00C84CF0 /* VERSION */; };
 		5D4DF982097F89FB0083D5E5 /* start.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D4DF981097F89FB0083D5E5 /* start.html */; };
 		5D650F3609DB8B370075E9A8 /* WebKitNightlyEnabler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */; };
@@ -61,6 +63,8 @@
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5D1067620FE63758002A2868 /* WebKitLauncherURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLauncherURLProtocol.h; sourceTree = "<group>"; };
+		5D1067630FE63758002A2868 /* WebKitLauncherURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebKitLauncherURLProtocol.m; sourceTree = "<group>"; };
 		5D41141B0A50A9DE00C84CF0 /* VERSION */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
 		5D4DF981097F89FB0083D5E5 /* start.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; path = start.html; sourceTree = "<group>"; };
 		5D650F3409DB8B280075E9A8 /* WebKitNightlyEnabler.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebKitNightlyEnabler.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,6 +134,8 @@
 		29B97315FDCFA39411CA2CEA /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5D1067620FE63758002A2868 /* WebKitLauncherURLProtocol.h */,
+				5D1067630FE63758002A2868 /* WebKitLauncherURLProtocol.m */,
 				5DA88F790FC813EB00AB2F62 /* WebKitNightlyEnabler.h */,
 				5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */,
 				5DA88F6B0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h */,
@@ -177,6 +183,7 @@
 			files = (
 				5DA88F6D0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h in Headers */,
 				5DA88F7A0FC813EB00AB2F62 /* WebKitNightlyEnabler.h in Headers */,
+				5D1067640FE63758002A2868 /* WebKitLauncherURLProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +301,7 @@
 			files = (
 				5D650F3609DB8B370075E9A8 /* WebKitNightlyEnabler.m in Sources */,
 				5DA88F6E0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m in Sources */,
+				5D1067650FE63758002A2868 /* WebKitLauncherURLProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
