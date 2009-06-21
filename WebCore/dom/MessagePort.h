@@ -87,6 +87,12 @@ namespace WebCore {
         void setOnmessage(PassRefPtr<EventListener>);
         EventListener* onmessage() const { return m_onMessageListener.get(); }
 
+        // Returns null if there is no entangled port, or if the entangled port is run by a different thread.
+        // Returns null otherwise.
+        // NOTE: This is used solely to enable a GC optimization. Some platforms may not be able to determine ownership of the remote port (since it may live cross-process) - those platforms may always return null.
+        MessagePort* locallyEntangledPort();
+        bool isEntangled() { return m_entangledChannel; }
+
     private:
         MessagePort(ScriptExecutionContext&);
 

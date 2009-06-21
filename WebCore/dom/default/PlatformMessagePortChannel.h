@@ -46,30 +46,17 @@ namespace WebCore {
     // The goal of this implementation is to eliminate contention except when cloning or closing the port, so each side of the channel has its own separate mutex.
     class PlatformMessagePortChannel : public ThreadSafeShared<PlatformMessagePortChannel> {
     public:
-        // Creates a channel entangling two ports.
         static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
 
-        // Entangles the channel with a port (called when a port has been cloned, after the clone has been marshalled to its new owning thread and is ready to receive messages).
-        // Returns false if the entanglement failed because the port was closed.
+        // APIs delegated from MessagePortChannel.h
         bool entangleIfOpen(MessagePort*);
-
-        // Disentangles the channel from a given port so it no longer forwards messages to the port. Called when the port is being cloned and no new owning thread has yet been established.
         void disentangle();
-
-        // Sends a message and optional cloned port to the remote port.
         void postMessageToRemote(PassOwnPtr<MessagePortChannel::EventData>);
-
-        // Extracts a message from the message queue for this port.
         bool tryGetMessageFromRemote(OwnPtr<MessagePortChannel::EventData>&);
-
-        // Closes the port (ensures that no further messages can be added to either queue).
         void close();
-
-        // Used by MessagePort.postMessage() to prevent callers from passing a port's own entangled port.
         bool isConnectedTo(MessagePort*);
-
-        // Returns true if the channel currently contains messages for this port, or may receive messages in the future (is open).
         bool hasPendingActivity();
+        MessagePort* locallyEntangledPort(const ScriptExecutionContext*);
 
         // Wrapper for MessageQueue that allows us to do thread safe sharing by two proxies.
         class MessagePortQueue : public ThreadSafeShared<MessagePortQueue> {

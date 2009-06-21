@@ -62,9 +62,9 @@ void MessagePort::postMessage(const String& message, ExceptionCode& ec)
 
 void MessagePort::postMessage(const String& message, MessagePort* dataPort, ExceptionCode& ec)
 {
-    ASSERT(m_scriptExecutionContext);
     if (!m_entangledChannel)
         return;
+    ASSERT(m_scriptExecutionContext);
 
     OwnPtr<MessagePortChannel> channel;
     if (dataPort) {
@@ -83,8 +83,14 @@ PassOwnPtr<MessagePortChannel> MessagePort::disentangle(ExceptionCode& ec)
 {
     if (!m_entangledChannel)
         ec = INVALID_STATE_ERR;
-    else
+    else {
         m_entangledChannel->disentangle();
+
+        // We can't receive any messages or generate any events, so remove ourselves from the list of active ports.
+        ASSERT(m_scriptExecutionContext);
+        m_scriptExecutionContext->destroyedMessagePort(this);
+        m_scriptExecutionContext = 0;
+    }
     return m_entangledChannel.release();
 }
 
@@ -98,6 +104,10 @@ void MessagePort::messageAvailable()
 
 void MessagePort::start()
 {
+    // Do nothing if we've been cloned
+    if (!m_entangledChannel)
+        return;
+
     ASSERT(m_scriptExecutionContext);
     if (m_started)
         return;
@@ -228,6 +238,11 @@ bool MessagePort::hasPendingActivity()
     // The spec says that entangled message ports should always be treated as if they have a strong reference.
     // We'll also stipulate that the queue needs to be open (if the app drops its reference to the port before start()-ing it, then it's not really entangled as it's unreachable).
     return m_started && m_entangledChannel && m_entangledChannel->hasPendingActivity();
+}
+
+MessagePort* MessagePort::locallyEntangledPort()
+{
+    return m_entangledChannel ? m_entangledChannel->locallyEntangledPort(m_scriptExecutionContext) : 0;
 }
 
 } // namespace WebCore

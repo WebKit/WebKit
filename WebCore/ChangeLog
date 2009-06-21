@@ -2,6 +2,38 @@
 
         Reviewed by David Levin.
 
+        <https://bugs.webkit.org/show_bug.cgi?id=26448>
+        
+        Added optimized GC for MessagePorts when the entangled port is run by the same thread.
+        Fixed bug in isProxyFor() that was not properly throwing an exception when trying to clone the entangled port.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::markActiveObjectsForContext):
+        Now marks remotely entangled ports as in-use, in addition to those with pending activity.
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::mark):
+        Now checks if the entangled port is local (run by same thread) and if so mark()s it.
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::disentangle):
+        Removes cloned ports from the ScriptExecutionContext - this allows cloned ports to be GC'd as otherwise they look like remotely entangled ports.
+        (WebCore::MessagePort::start):
+        (WebCore::MessagePort::locallyEntangledPort):
+        Added API for fetching the entangled port if it is run by the same thread
+        * dom/MessagePort.h:
+        * dom/MessagePortProxyWrapper.h:
+        * dom/default/MessagePortProxy.cpp:
+        (WebCore::MessagePortProxyWrapper::locallyEntangledPort):
+        Added API for fetching the entangled port if it is run by the same thread        
+        (WebCore::MessagePortProxy::hasPendingActivity):
+        Changed definition of hasPendingActivity() to be stricter - only returns true if there are pending messages.
+        (WebCore::MessagePortProxy::locallyEntangledPort):
+        * dom/default/MessagePortProxy.h:
+
+2009-06-21  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
         <https://bugs.webkit.org/show_bug.cgi?id=25043>
         Removed obsolete MessagePort.startConversation(), active and onclose APIs.
 

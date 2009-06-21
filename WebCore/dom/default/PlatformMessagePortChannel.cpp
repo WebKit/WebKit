@@ -32,6 +32,7 @@
 #include "PlatformMessagePortChannel.h"
 
 #include "MessagePort.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -71,6 +72,10 @@ bool MessagePortChannel::hasPendingActivity()
     return m_channel->hasPendingActivity();
 }
 
+MessagePort* MessagePortChannel::locallyEntangledPort(const ScriptExecutionContext* context)
+{
+    return m_channel->locallyEntangledPort(context);
+}
 
 PassRefPtr<PlatformMessagePortChannel> PlatformMessagePortChannel::create(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing)
 {
@@ -198,7 +203,20 @@ void PlatformMessagePortChannel::closeInternal()
 bool PlatformMessagePortChannel::hasPendingActivity()
 {
     MutexLocker lock(m_mutex);
-    return m_entangledChannel || !m_incomingQueue->isEmpty();
+    return !m_incomingQueue->isEmpty();
+}
+
+MessagePort* PlatformMessagePortChannel::locallyEntangledPort(const ScriptExecutionContext* context)
+{
+    MutexLocker lock(m_mutex);
+    // See if both contexts are run by the same thread (are the same context, or are both documents).
+    if (m_remotePort) {
+        // The remote port's ScriptExecutionContext is guaranteed not to change here - MessagePort::contextDestroyed() will close the port before the context goes away, and close() will block because we are holding the mutex.
+        ScriptExecutionContext* remoteContext = m_remotePort->scriptExecutionContext();
+        if (remoteContext == context || (remoteContext && remoteContext->isDocument() && context->isDocument()))
+            return m_remotePort;
+    }
+    return 0;
 }
 
 } // namespace WebCore

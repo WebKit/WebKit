@@ -1,4 +1,16 @@
 2009-06-21  Drew Wilson  <atwilson@google.com>
+ 
+        Reviewed by David Levin.
+       
+        <https://bugs.webkit.org/show_bug.cgi?id=26448>
+
+        New tests for MessagePort GC cases that weren't previously covered.
+
+        * fast/events/message-channel-gc-4-expected.txt: Added.
+        Test for case where both MessagePorts are in-transit (cloned) when a GC occurs.
+        * fast/events/message-channel-gc-4.html-disabled: Added.
+
+2009-06-21  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
 
