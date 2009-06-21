@@ -2492,7 +2492,7 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     event->setEventPhase(Event::CAPTURING_PHASE);
 
     if (targetForWindowEvents) {
-        event->setCurrentTarget(targetForWindowEvents->document()); // FIXME: targetForWindowEvents should be the event target.
+        event->setCurrentTarget(targetForWindowEvents);
         targetForWindowEvents->handleEvent(event.get(), true);
         if (event->propagationStopped())
             goto doneDispatching;
@@ -2530,7 +2530,7 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
                 goto doneDispatching;
         }
         if (targetForWindowEvents) {
-            event->setCurrentTarget(targetForWindowEvents->document()); // FIXME: targetForWindowEvents should be the event target.
+            event->setCurrentTarget(targetForWindowEvents);
             targetForWindowEvents->handleEvent(event.get(), false);
             if (event->propagationStopped() || event->cancelBubble())
                 goto doneDispatching;

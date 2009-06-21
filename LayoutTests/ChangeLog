@@ -1,3 +1,13 @@
+2009-06-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=26578
+        event.currentTarget for listener registered on window should point to the window object like in Firefox
+
+        * fast/events/event-trace-expected.txt: Added.
+        * fast/events/event-trace.html: Added.
+
 2009-06-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
