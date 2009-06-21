@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -666,12 +666,15 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugIn
 
     RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    unsigned count = (unsigned)paramNames.size();
-    for (unsigned i = 0; i < count; i++) {
+    size_t size = paramNames.size();
+    for (size_t i = 0; i < size; i++) {
         if (paramNames[i] == "pluginspage") {
-            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
-            RetainPtr<CFStringRef> str(AdoptCF, paramValues[i].createCFString());
-            CFDictionarySetValue(userInfo.get(), key, str.get());
+            KURL pluginPageURL = frame->document()->completeURL(parseURL(paramValues[i]));
+            if (pluginPageURL.protocolInHTTPFamily()) {
+                static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
+                RetainPtr<CFStringRef> str(AdoptCF, pluginPageURL.string().createCFString());
+                CFDictionarySetValue(userInfo.get(), key, str.get());
+            }
             break;
         }
     }
@@ -683,13 +686,13 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugIn
         CFDictionarySetValue(userInfo.get(), key, str.get());
     }
 
-    String pluginName;
-    if (pluginView->plugin())
-        pluginName = pluginView->plugin()->name();
-    if (!pluginName.isNull()) {
-        static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
-        RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
-        CFDictionarySetValue(userInfo.get(), key, str.get());
+    if (pluginView->plugin()) {
+        String pluginName = pluginView->plugin()->name();
+        if (!pluginName.isNull()) {
+            static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
+            RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
+            CFDictionarySetValue(userInfo.get(), key, str.get());
+        }
     }
 
     COMPtr<CFDictionaryPropertyBag> userInfoBag(AdoptCOM, CFDictionaryPropertyBag::createInstance());
