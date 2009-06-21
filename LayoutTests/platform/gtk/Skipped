@@ -4024,6 +4024,7 @@ media/video-no-autoplay.html
 media/video-pause-empty-events.html
 media/video-play-empty-events.html
 media/video-play-pause-events.html
+media/video-play-pause-exception.html
 media/video-played-collapse.html
 media/video-played-reset.html
 media/video-played.html

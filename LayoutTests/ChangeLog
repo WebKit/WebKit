@@ -1,3 +1,7 @@
+2009-06-21  Darin Adler  <darin@apple.com>
+
+        * platform/gtk/Skipped: Skip one more test.
+
 2009-06-20  Darin Adler  <darin@apple.com>
 
         * platform/gtk/Skipped: Skip some new tests.
