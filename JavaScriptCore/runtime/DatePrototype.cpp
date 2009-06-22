@@ -113,6 +113,7 @@ static JSValue JSC_HOST_CALL dateProtoFuncToLocaleTimeString(ExecState*, JSObjec
 static JSValue JSC_HOST_CALL dateProtoFuncToString(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL dateProtoFuncToTimeString(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL dateProtoFuncToUTCString(ExecState*, JSObject*, JSValue, const ArgList&);
+static JSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState*, JSObject*, JSValue, const ArgList&);
 
 }
 
@@ -342,6 +343,7 @@ const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, 0, ExecState
 /* Source for DatePrototype.lut.h
 @begin dateTable
   toString              dateProtoFuncToString                DontEnum|Function       0
+  toISOString           dateProtoFuncToISOString             DontEnum|Function       0
   toUTCString           dateProtoFuncToUTCString             DontEnum|Function       0
   toDateString          dateProtoFuncToDateString            DontEnum|Function       0
   toTimeString          dateProtoFuncToTimeString            DontEnum|Function       0
@@ -436,6 +438,28 @@ JSValue JSC_HOST_CALL dateProtoFuncToUTCString(ExecState* exec, JSObject*, JSVal
     GregorianDateTime t;
     thisDateObj->msToGregorianDateTime(milli, utc, t);
     return jsNontrivialString(exec, formatDateUTCVariant(t) + " " + formatTime(t, utc));
+}
+
+JSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+{
+    if (!thisValue.isObject(&DateInstance::info))
+        return throwError(exec, TypeError);
+    
+    const bool utc = true;
+    
+    DateInstance* thisDateObj = asDateInstance(thisValue); 
+    double milli = thisDateObj->internalNumber();
+    if (!isfinite(milli))
+        return jsNontrivialString(exec, "Invalid Date");
+    
+    GregorianDateTime t;
+    thisDateObj->msToGregorianDateTime(milli, utc, t);
+    // Maximum amount of space we need in buffer: 6 (max. digits in year) + 2 * 5 (2 characters each for month, day, hour, minute, second)
+    // 6 for formatting and one for null termination = 23.  We add one extra character to allow us to force null termination.
+    char buffer[24];
+    snprintf(buffer, sizeof(buffer) - 1, "%04d-%02d-%02dT%02d:%02d:%02dZ", 1900 + t.year, t.month + 1, t.monthDay, t.hour, t.minute, t.second);
+    buffer[sizeof(buffer) - 1] = 0;
+    return jsNontrivialString(exec, buffer);
 }
 
 JSValue JSC_HOST_CALL dateProtoFuncToDateString(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)

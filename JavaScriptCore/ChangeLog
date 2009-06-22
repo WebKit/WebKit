@@ -1,5 +1,17 @@
 2009-06-21  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Bug 26594: JSC needs to support Date.toISOString
+        <https://bugs.webkit.org/show_bug.cgi?id=26594>
+
+        Add support for Date.toISOString.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToISOString):
+
+2009-06-21  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by NOBODY (Build fix).
 
         Remove dead code.
