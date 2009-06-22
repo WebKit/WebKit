@@ -1597,6 +1597,7 @@ fast/css/text-align.html
 fast/css/zoom-body-scroll.html
 fast/css/getComputedStyle/computed-style-without-renderer.html
 fast/css/getComputedStyle/computed-style.html
+fast/css/resize-single-axis.html
 fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
@@ -3876,6 +3877,7 @@ http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain
 http/tests/security/listener/xss-window-onclick-addEventListener.html
 http/tests/security/listener/xss-window-onclick-shortcut.html
 http/tests/security/originHeader/origin-header-for-empty.html
+http/tests/security/xssAuditor/link-opens-new-window.html
 http/tests/workers/text-encoding.html
 http/tests/xmlhttprequest/abort-should-cancel-load.html
 http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html

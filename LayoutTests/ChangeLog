@@ -1,5 +1,9 @@
 2009-06-22  Darin Adler  <darin@apple.com>
 
+        * platform/gtk/Skipped: Skip two new tests.
+
+2009-06-22  Darin Adler  <darin@apple.com>
+
         * fast/js/JSON-stringify-expected.txt: Update results.
 
 2009-06-21  Oliver Hunt  <oliver@apple.com>
