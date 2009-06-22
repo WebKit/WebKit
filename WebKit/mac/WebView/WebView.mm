@@ -751,14 +751,13 @@ static bool runningTigerMail()
 
 - (void)setFrameSize:(NSSize)size
 {
-    if (!NSEqualSizes(_private->lastLayoutSize, size)) {
+    if (!_private->usesDocumentViews && !NSEqualSizes(_private->lastLayoutSize, size)) {
         Frame* frame = [self _mainCoreFrame];
         // FIXME: Viewless WebKit is broken with Safari banners (e.g., the Find banner).  We'll have to figure out a way for
         // Safari to communicate that this space is being consumed.  For WebKit with document views, there's no
         // need to do an explicit resize, since WebFrameViews have auto resizing turned on and will handle changing
         // their bounds automatically. See <rdar://problem/6835573> for details.
-        if (!_private->usesDocumentViews)
-            frame->view()->resize(IntSize(size));
+        frame->view()->resize(IntSize(size));
         frame->view()->setNeedsLayout();
         [self setNeedsDisplay:YES];
         _private->lastLayoutSize = size;

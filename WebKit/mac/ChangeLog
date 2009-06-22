@@ -1,3 +1,17 @@
+2009-06-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6990938> REGRESSION (r42787): After showing and
+          hiding the Find banner, the WebHTMLView's height is not restored
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView setFrameSize:]): Mark the FrameView for layout when the
+        WebFrameView's size changes.
+        * WebView/WebView.mm:
+        (-[WebView setFrameSize:]): Left the resize logic here, but only for
+        the single view model.
+
 2009-06-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

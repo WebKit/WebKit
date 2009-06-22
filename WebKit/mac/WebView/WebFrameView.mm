@@ -493,9 +493,15 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)setFrameSize:(NSSize)size
 {
-    // See WebFrameLoaderClient::provisionalLoadStarted.
-    if (!NSEqualSizes(size, [self frame].size) && [[[self webFrame] webView] drawsBackground])
-        [[self _scrollView] setDrawsBackground:YES];
+    if (!NSEqualSizes(size, [self frame].size)) {
+        // See WebFrameLoaderClient::provisionalLoadStarted.
+        if ([[[self webFrame] webView] drawsBackground])
+            [[self _scrollView] setDrawsBackground:YES];
+        if (Frame* coreFrame = [self _web_frame]) {
+            if (FrameView* coreFrameView = coreFrame->view())
+                coreFrameView->setNeedsLayout();
+        }
+    }
     [super setFrameSize:size];
 }
 
