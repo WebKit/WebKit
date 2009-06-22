@@ -1,3 +1,14 @@
+2009-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26430
+        
+        Testcase for a layer's composited position being affected by a later sibling.
+
+        * compositing/sibling-positioning.html: Added.
+        * platform/mac/compositing/sibling-positioning-expected.txt: Added.
+
 2009-06-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

@@ -1,3 +1,47 @@
+2009-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26430
+        <rdar://problem/6944442> Elements jump around when they become composited (WWDC checkers demo)
+        <rdar://problem/6989006> Lots of time spent in RenderLayerCompositor::calculateCompositedBounds()
+            during window resize when using hardware layers
+        
+        Fix an ordering dependency which caused the compositing position of a layer
+        to be affected by some later sibling, which affected the compositing ancestor's
+        composited bounds.
+        
+        The fix is to only update the compositing positions of layers in some subtree
+        when updateAfterLayout() has been called on all the layers in that subtree,
+        from the ancestor down.
+        
+        Also cache the composited bounds of a RenderLayerBacking, now that we can
+        guarantee that those bounds are accurate.
+        
+        Test: compositing/sibling-positioning.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::contentOffsetInCompostingLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        (WebCore::RenderLayerBacking::compositedBounds):
+        (WebCore::RenderLayerBacking::setCompositedBounds):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::updateLayerCompositingState):
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateCompositingChildrenGeometry):
+        * rendering/RenderLayerCompositor.h:
+
 2009-06-22  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

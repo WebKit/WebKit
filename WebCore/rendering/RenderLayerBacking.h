@@ -57,8 +57,10 @@ public:
     
     // Returns true if layer configuration changed.
     bool updateGraphicsLayerConfiguration();
-    void updateGraphicsLayerGeometry();
-    void updateInternalHierarchy();
+    // Update graphics layer position and bounds.
+    void updateGraphicsLayerGeometry(); // make private
+    // Update contents and clipping structure.
+    void updateInternalHierarchy(); // make private
     
     GraphicsLayer* graphicsLayer() const { return m_graphicsLayer; }
 
@@ -99,6 +101,9 @@ public:
 
     void suspendAnimations();
     void resumeAnimations();
+
+    IntRect compositedBounds() const;
+    void setCompositedBounds(const IntRect&);
 
     FloatPoint graphicsLayerToContentsCoordinates(const GraphicsLayer*, const FloatPoint&);
     FloatPoint contentsToGraphicsLayerCoordinates(const GraphicsLayer*, const FloatPoint&);
@@ -159,10 +164,9 @@ private:
     GraphicsLayer* m_contentsLayer;         // only used in cases where we need to draw the foreground separately
     GraphicsLayer* m_clippingLayer;         // only used if we have clipping on a stacking context, with compositing children
 
-    IntSize m_compositingContentOffset;
+    IntRect m_compositedBounds;
 
-    bool m_hasDirectlyCompositedContent: 1;
-    bool m_compositingContentOffsetDirty: 1;
+    bool m_hasDirectlyCompositedContent;
 };
 
 } // namespace WebCore

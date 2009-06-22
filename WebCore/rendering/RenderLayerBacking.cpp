@@ -58,7 +58,6 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_contentsLayer(0)
     , m_clippingLayer(0)
     , m_hasDirectlyCompositedContent(false)
-    , m_compositingContentOffsetDirty(true)
 {
     createGraphicsLayer();
 }
@@ -129,9 +128,21 @@ void RenderLayerBacking::updateLayerTransform()
 
 void RenderLayerBacking::updateAfterLayout()
 {
-    // Only need to update geometry if there isn't a layer update pending.
-    if (!compositor()->compositingLayersNeedUpdate())
-        updateGraphicsLayerGeometry();
+    RenderLayerCompositor* layerCompositor = compositor();
+    if (!layerCompositor->compositingLayersNeedUpdate()) {
+        // Calling updateGraphicsLayerGeometry() here gives incorrect results, because the
+        // position of this layer's GraphicsLayer depends on the position of our compositing
+        // ancestor's GraphicsLayer. That cannot be determined until all the descendant 
+        // RenderLayers of that ancestor have been processed via updateLayerPositions().
+        //
+        // The solution is to update compositing children of this layer here,
+        // via updateCompositingChildrenGeometry().
+        setCompositedBounds(layerCompositor->calculateCompositedBounds(m_owningLayer, m_owningLayer));
+        layerCompositor->updateCompositingChildrenGeometry(m_owningLayer, m_owningLayer);
+        
+        if (!m_owningLayer->parent())
+            layerCompositor->updateRootLayerPosition();
+    }
 }
 
 bool RenderLayerBacking::updateGraphicsLayerConfiguration()
@@ -181,16 +192,16 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     m_graphicsLayer->setPreserves3D(style->transformStyle3D() == TransformStyle3DPreserve3D);
     m_graphicsLayer->setBackfaceVisibility(style->backfaceVisibility() == BackfaceVisibilityVisible);
 
-    m_compositingContentOffsetDirty = true;
-    
     RenderLayer* compAncestor = m_owningLayer->ancestorCompositingLayer();
     
     // We compute everything relative to the enclosing compositing layer.
     IntRect ancestorCompositingBounds;
-    if (compAncestor)
-        ancestorCompositingBounds = compositor()->calculateCompositedBounds(compAncestor, compAncestor);
-    
-    IntRect localCompositingBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
+    if (compAncestor) {
+        ASSERT(compAncestor->backing());
+        ancestorCompositingBounds = compAncestor->backing()->compositedBounds();
+    }
+
+    IntRect localCompositingBounds = compositedBounds();
 
     IntRect relativeCompositingBounds(localCompositingBounds);
     int deltaX = 0, deltaY = 0;
@@ -646,14 +657,10 @@ FloatPoint RenderLayerBacking::computePerspectiveOrigin(const IntRect& borderBox
 // Return the offset from the top-left of this compositing layer at which the renderer's contents are painted.
 IntSize RenderLayerBacking::contentOffsetInCompostingLayer()
 {
-    if (!m_compositingContentOffsetDirty)
-        return m_compositingContentOffset;
+    if (m_compositedBounds != compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer) && !compositor()->compositingLayersNeedUpdate())
+        fprintf(stderr, "Stale compositing offset\n");
 
-    IntRect relativeCompositingBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
-    m_compositingContentOffset = IntSize(-relativeCompositingBounds.x(), -relativeCompositingBounds.y());
-    m_compositingContentOffsetDirty = false;
-
-    return m_compositingContentOffset;
+    return IntSize(-m_compositedBounds.x(), -m_compositedBounds.y());
 }
 
 IntRect RenderLayerBacking::contentsBox(const GraphicsLayer*)
@@ -881,7 +888,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& co
 {
     // We have to use the same root as for hit testing, because both methods
     // can compute and cache clipRects.
-    IntRect enclosingBBox = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
+    IntRect enclosingBBox = compositedBounds();
 
     IntRect clipRect(clip);
     
@@ -1000,6 +1007,16 @@ void RenderLayerBacking::resumeAnimations()
     m_graphicsLayer->resumeAnimations();
 }
 
+IntRect RenderLayerBacking::compositedBounds() const
+{
+    return m_compositedBounds;
+}
+
+void RenderLayerBacking::setCompositedBounds(const IntRect& bounds)
+{
+    m_compositedBounds = bounds;
+
+}
 int RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedPropertyID property)
 {
     int cssProperty = CSSPropertyInvalid;
