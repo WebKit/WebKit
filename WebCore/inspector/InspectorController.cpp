@@ -1084,10 +1084,10 @@ void InspectorController::addProfile(PassRefPtr<Profile> prpProfile, unsigned li
     if (windowVisible())
         addScriptProfile(profile.get());
 
-    addProfileMessageToConsole(profile, lineNumber, sourceURL);
+    addProfileFinishedMessageToConsole(profile, lineNumber, sourceURL);
 }
 
-void InspectorController::addProfileMessageToConsole(PassRefPtr<Profile> prpProfile, unsigned lineNumber, const UString& sourceURL)
+void InspectorController::addProfileFinishedMessageToConsole(PassRefPtr<Profile> prpProfile, unsigned lineNumber, const UString& sourceURL)
 {
     RefPtr<Profile> profile = prpProfile;
 
@@ -1096,6 +1096,14 @@ void InspectorController::addProfileMessageToConsole(PassRefPtr<Profile> prpProf
     message += "/";
     message += UString::from(profile->uid());
     message += "\" finished.";
+    addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceURL);
+}
+
+void InspectorController::addStartProfilingMessageToConsole(const UString& title, unsigned lineNumber, const UString& sourceURL)
+{
+    UString message = "Profile \"webkit-profile://";
+    message += encodeWithURLEscapeSequences(title);
+    message += "/0\" started.";
     addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
@@ -1132,6 +1140,8 @@ void InspectorController::startUserInitiatedProfiling(Timer<InspectorController>
 
     ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
     Profiler::profiler()->startProfiling(scriptState, title);
+
+    addStartProfilingMessageToConsole(title, 0, UString());
 
     toggleRecordButton(true);
 }

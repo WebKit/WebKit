@@ -1,3 +1,27 @@
+2009-06-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6115819> Notify of profile start in console
+
+        Put a message in the console that announces that a profile has started,
+        similar to how a console message announces that a profile has finished.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addProfile): Use renamed function.
+        (WebCore::InspectorController::addProfileFinishedMessageToConsole):
+        Renamed.
+        (WebCore::InspectorController::addStartProfilingMessageToConsole):
+        New function that logs the message about the profile starting.
+        (WebCore::InspectorController::startUserInitiatedProfiling): Ditto
+        * inspector/InspectorController.h:
+        * inspector/front-end/ProfilesPanel.js: Print the "run" of the profile's
+        title if there are multiple profiles, and take into account the fact
+        that titles are displayed twice as much now.
+        (WebInspector.ProfilesPanel.prototype.displayTitleForProfileLink):
+        * page/Console.cpp:
+        (WebCore::Console::profile): Call new function.
+
 2009-06-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

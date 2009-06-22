@@ -287,6 +287,9 @@ void Console::profile(const JSC::UString& title, ScriptCallStack* callStack)
     }
 
     JSC::Profiler::profiler()->startProfiling(callStack->state(), title);
+
+    const ScriptCallFrame& lastCaller = callStack->at(0);
+    page->inspectorController()->addStartProfilingMessageToConsole(title, lastCaller.lineNumber(), lastCaller.sourceURL());
 }
 
 void Console::profileEnd(const JSC::UString& title, ScriptCallStack* callStack)
