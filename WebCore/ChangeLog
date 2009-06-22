@@ -1,3 +1,15 @@
+2009-06-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26600
+        StringImpl::copy() no longer copies empty string correctly
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::ustring): Changed method calling syntax to look less like calling a
+        static method.
+        (WebCore::StringImpl::copy): Reverted part of r41917 that caused the problem.
+
 2009-06-22  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Eric Seidel
