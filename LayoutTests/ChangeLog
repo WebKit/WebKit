@@ -10,6 +10,16 @@
 
 2009-06-22  David Levin  <levin@chromium.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Fix layout tests to account for removal of DOMStringList, which was done
+        in http://trac.webkit.org/changeset/44943.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
+2009-06-22  David Levin  <levin@chromium.org>
+
         Reviewed by David Hyatt and Eric Seidel.
 
         REGRESSION: When the main page (ScrollView) has a custom scrollbar, it crashes on destruction.
