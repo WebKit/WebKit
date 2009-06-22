@@ -1129,7 +1129,14 @@ sub GenerateImplementation
             # - GETTER
             my $getterSig = "- ($attributeType)$attributeInterfaceName\n";
             my $hasGetterException = @{$attribute->getterExceptions};
-            my $getterContentHead = "IMPL->" . $codeGenerator->WK_lcfirst($attributeName) . "(";
+            my $getterContentHead;
+            if (my $reflect = $attribute->signature->extendedAttributes->{"Reflect"}) {
+                $implIncludes{"HTMLNames.h"} = 1;
+                my $contentAttributeName = $reflect eq "1" ? $attributeName : $reflect;
+                $getterContentHead = "IMPL->getAttribute(WebCore::HTMLNames::${contentAttributeName}Attr";
+            } else {
+                $getterContentHead = "IMPL->" . $codeGenerator->WK_lcfirst($attributeName) . "(";
+            }
             my $getterContentTail = ")";
 
             # Special case for DOMSVGNumber
@@ -1226,7 +1233,7 @@ sub GenerateImplementation
                 # Exception handling
                 my $hasSetterException = @{$attribute->setterExceptions};
 
-                $attributeName = "set" . $codeGenerator->WK_ucfirst($attributeName);
+                my $coreSetterName = "set" . $codeGenerator->WK_ucfirst($attributeName);
                 my $setterName = "set" . ucfirst($attributeInterfaceName);
                 my $argName = "new" . ucfirst($attributeInterfaceName);
                 my $arg = GetObjCTypeGetter($argName, $idlType);
@@ -1252,14 +1259,18 @@ sub GenerateImplementation
                     if ($podType eq "float") {
                         push(@implContent, "    *IMPL = $arg;\n");
                     } else {
-                        push(@implContent, "    IMPL->$attributeName($arg);\n");
+                        push(@implContent, "    IMPL->$coreSetterName($arg);\n");
                     }
                 } elsif ($hasSetterException) {
                     push(@implContent, "    $exceptionInit\n");
-                    push(@implContent, "    IMPL->$attributeName($arg, ec);\n");
+                    push(@implContent, "    IMPL->$coreSetterName($arg, ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n");
+                } elsif (my $reflect = $attribute->signature->extendedAttributes->{"Reflect"}) {
+                    $implIncludes{"HTMLNames.h"} = 1;
+                    my $contentAttributeName = $reflect eq "1" ? $attributeName : $reflect;
+                    push(@implContent, "    IMPL->setAttribute(WebCore::HTMLNames::${contentAttributeName}Attr, $arg);\n");
                 } else {
-                    push(@implContent, "    IMPL->$attributeName($arg);\n");
+                    push(@implContent, "    IMPL->$coreSetterName($arg);\n");
                 }
 
                 push(@implContent, "}\n\n");

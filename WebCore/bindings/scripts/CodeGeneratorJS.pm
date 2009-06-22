@@ -34,7 +34,6 @@ my %headerIncludes = ();
 my @implContentHeader = ();
 my @implContent = ();
 my %implIncludes = ();
-my %implKJSIncludes = ();
 
 # Default .h template
 my $headerTemplate = << "EOF";
@@ -220,7 +219,7 @@ sub AddClassForwardIfNeeded
 {
     my $implClassName = shift;
 
-    # SVGAnimatedLength/Number/etc.. are typedefs to SVGAnimtatedTemplate, so don't use class forwards for them!
+    # SVGAnimatedLength/Number/etc. are typedefs to SVGAnimatedTemplate, so don't use class forwards for them!
     push(@headerContent, "class $implClassName;\n\n") unless $codeGenerator->IsSVGAnimatedType($implClassName);
 }
 
@@ -378,36 +377,38 @@ sub GenerateHeader
     my $conditionalString;
     if ($conditional) {
         $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-        push(@headerContentHeader, "\n#if ${conditionalString}\n\n");
+        push(@headerContentHeader, "#if ${conditionalString}\n\n");
     }
 
     if ($hasParent) {
-        push(@headerContentHeader, "#include \"$parentClassName.h\"\n");
+        $headerIncludes{"$parentClassName.h"} = 1;
     } else {
-        push(@headerContentHeader, "#include \"JSDOMBinding.h\"\n");
-        push(@headerContentHeader, "#include <runtime/JSGlobalObject.h>\n");
-        push(@headerContentHeader, "#include <runtime/ObjectPrototype.h>\n");
+        $headerIncludes{"JSDOMBinding.h"} = 1;
+        $headerIncludes{"<runtime/JSGlobalObject.h>"} = 1;
+        $headerIncludes{"<runtime/ObjectPrototype.h>"} = 1;
     }
 
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
-        push(@headerContentHeader, "#include <runtime/CallData.h>\n");
+        $headerIncludes{"<runtime/CallData.h>"} = 1;
     }
 
     if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
-        push(@headerContentHeader, "#include <runtime/Lookup.h>\n");
-        push(@headerContentHeader, "#include <wtf/AlwaysInline.h>\n");
+        $headerIncludes{"<runtime/Lookup.h>"} = 1;
+        $headerIncludes{"<wtf/AlwaysInline.h>"} = 1;
     }
 
     if ($hasParent && $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
-        push(@headerContentHeader, "#include \"${implClassName}.h\"");
+        $headerIncludes{"$implClassName.h"} = 1;
     }
+
+    $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
     # Get correct pass/store types respecting PODType flag
     my $podType = $dataNode->extendedAttributes->{"PODType"};
     my $implType = $podType ? "JSSVGPODTypeWrapper<$podType> " : $implClassName;
-    push(@headerContentHeader, "#include \"$podType.h\"\n") if $podType and $podType ne "float";
+    $headerIncludes{"$podType.h"} = 1 if $podType and $podType ne "float";
 
-    push(@headerContentHeader, "#include \"JSSVGPODTypeWrapper.h\"\n") if $podType;
+    $headerIncludes{"JSSVGPODTypeWrapper.h"} = 1 if $podType;
 
     my $numConstants = @{$dataNode->constants};
     my $numAttributes = @{$dataNode->attributes};
@@ -742,25 +743,19 @@ sub GenerateImplementation
 
     # - Add default header template
     @implContentHeader = split("\r", $headerTemplate);
-    push(@implContentHeader, "\n#include \"config.h\"\n\n");
+
+    push(@implContentHeader, "\n#include \"config.h\"\n");
     my $conditionalString;
     if ($conditional) {
         $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
         push(@implContentHeader, "\n#if ${conditionalString}\n\n");
     }
-
-    if ($className =~ /^JSSVG/) {
-        push(@implContentHeader, "#include \"SVGElement.h\"\n");
-
-        if ($className =~ /^JSSVGAnimated/) {
-            AddIncludesForSVGAnimatedType($interfaceName);
-        }
-    }
-
     push(@implContentHeader, "#include \"$className.h\"\n\n");
-    push(@implContentHeader, "#include <wtf/GetPtr.h>\n\n");
 
-    push(@implContentHeader, "#include <runtime/PropertyNameArray.h>\n") if $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"};
+    AddIncludesForSVGAnimatedType($interfaceName) if $className =~ /^JSSVGAnimated/;
+
+    $implIncludes{"<wtf/GetPtr.h>"} = 1;
+    $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"};
 
     AddIncludesForType($interfaceName);
 
@@ -1158,7 +1153,15 @@ sub GenerateImplementation
                         }
                     } else {
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
-                        my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$implGetterFunctionName()", "static_cast<$className*>(asObject(slot.slotBase()))");
+                        my $value;
+                        if (my $reflect = $attribute->signature->extendedAttributes->{"Reflect"}) {
+                            $implIncludes{"HTMLNames.h"} = 1;
+                            my $contentAttributeName = $reflect eq "1" ? $name : $reflect;
+                            $value = "imp->getAttribute(HTMLNames::${contentAttributeName}Attr)"
+                        } else {
+                            $value = "imp->$implGetterFunctionName()";
+                        }
+                        my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, $value, "static_cast<$className*>(asObject(slot.slotBase()))");
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
                             push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
                             push(@implContent, "    return toJS(exec, obj.get(), imp);\n");
@@ -1299,8 +1302,15 @@ sub GenerateImplementation
                                 push(@implContent, "        static_cast<$className*>(thisObject)->impl()->commitChange(imp, static_cast<$className*>(thisObject)->context());\n");
                             } else {
                                 push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
+                                my $nativeValue = JSValueToNative($attribute->signature, "value");
                                 push(@implContent, "    ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-                                push(@implContent, "    imp->set$implSetterFunctionName(" . JSValueToNative($attribute->signature, "value"));
+                                if (my $reflect = $attribute->signature->extendedAttributes->{"Reflect"}) {
+                                    $implIncludes{"HTMLNames.h"} = 1;
+                                    my $contentAttributeName = $reflect eq "1" ? $name : $reflect;
+                                    push(@implContent, "    imp->setAttribute(HTMLNames::${contentAttributeName}Attr, $nativeValue");
+                                } else {
+                                    push(@implContent, "    imp->set$implSetterFunctionName($nativeValue");
+                                }
                                 push(@implContent, ", ec") if @{$attribute->setterExceptions};
                                 push(@implContent, ");\n");
                                 push(@implContent, "    setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
@@ -1348,7 +1358,7 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    UNUSED_PARAM(args);\n");
 
-            $implKJSInclude{"Error.h"} = 1;
+            $implIncludes{"<runtime/Error.h>"} = 1;
 
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    $className* castedThisObj = toJSDOMWindow(thisValue.toThisObject(exec));\n");
@@ -1664,7 +1674,7 @@ sub NativeToJSValue
     return "jsBoolean($value)" if $type eq "boolean";
     
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp") {
-        $implKJSInclude{"JSNumberCell.h"} = 1;
+        $implIncludes{"<runtime/JSNumberCell.h>"} = 1;
         return "jsNumber(exec, $value)";
     }
 
@@ -1678,7 +1688,7 @@ sub NativeToJSValue
 
             die "Unknown value for ConvertNullStringTo extended attribute";
         }
-        $implKJSInclude{"JSString.h"} = 1;
+        $implIncludes{"<runtime/JSString.h>"} = 1;
         return "jsString(exec, $value)";
     }
 
@@ -1964,17 +1974,17 @@ sub WriteData
         # Write content to file.
         print $IMPL @implContentHeader;
 
-        foreach my $implInclude (sort keys(%implIncludes)) {
-            my $checkType = $implInclude;
+        my @includes = ();
+        foreach my $include (keys %implIncludes) {
+            my $checkType = $include;
             $checkType =~ s/\.h//;
+            next if $codeGenerator->IsSVGAnimatedType($checkType);
 
-            print $IMPL "#include \"$implInclude\"\n" unless $codeGenerator->IsSVGAnimatedType($checkType);
+            $include = "\"$include\"" unless $include =~ /^["<]/; # "
+            push @includes, $include;
         }
-        
-        print $IMPL "\n";
-
-        foreach my $implKJSInclude (sort keys(%implKJSInclude)) {
-            print $IMPL "#include <runtime/$implKJSInclude>\n";
+        foreach my $include (sort @includes) {
+            print $IMPL "#include $include\n";
         }
 
         print $IMPL @implContent;
@@ -1984,15 +1994,19 @@ sub WriteData
         @implContentHeader = ();
         @implContent = ();
         %implIncludes = ();
-        %implKJSIncludes = ();
     }
 
     if (defined($HEADER)) {
         # Write content to file.
         print $HEADER @headerContentHeader;
 
-        foreach my $headerInclude (sort keys(%headerIncludes)) {
-            print $HEADER "#include \"$headerInclude\"\n";
+        my @includes = ();
+        foreach my $include (keys %headerIncludes) {
+            $include = "\"$include\"" unless $include =~ /^["<]/; # "
+            push @includes, $include;
+        }
+        foreach my $include (sort @includes) {
+            print $HEADER "#include $include\n";
         }
 
         print $HEADER @headerContent;
@@ -2057,7 +2071,7 @@ bool ${className}Constructor::getOwnPropertySlot(ExecState* exec, const Identifi
 
 EOF
 
-    $implKJSInclude{"JSNumberCell.h"} = 1;
+    $implJSCInclude{"JSNumberCell.h"} = 1;
 
     return $implContent;
 }

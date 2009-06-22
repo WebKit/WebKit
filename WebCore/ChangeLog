@@ -1,3 +1,21 @@
+2009-06-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 25425: DOM attribute getter/setter functions should use const AtomicString& type
+        https://bugs.webkit.org/show_bug.cgi?id=25425
+
+        * bindings/scripts/CodeGeneratorJS.pm: Tweaked mechanism for includes to be a bit
+        more consistent and to make SVGElement.h be included in the header rather than in
+        every implementation file that includes the header. Added code to use getAttribute
+        and setAttribute directly when the [Reflect] extended attribute is used.
+
+        * bindings/scripts/CodeGeneratorObjC.pm: Ditto.
+
+        * html/HTMLElement.idl: Used [Reflect] for all the attributes in this class that
+        reflect content attributes. Restricting this to one class for now to keep the
+        patch small and start out slowly.
+
 2009-06-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
@@ -30,7 +48,9 @@
         (WebCore::XSSAuditor::canCreateInlineEventListener):
         (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
         (WebCore::XSSAuditor::canLoadObject):
-        * page/XSSAuditor.h: Removed method setXSSAuditorEnabled, and field m_isEnabled. Moved implementation of isEnabled to XSSAuditor.cpp and changed implementation to query Settings.
+        * page/XSSAuditor.h: Removed method setXSSAuditorEnabled, and field m_isEnabled.
+        Moved implementation of isEnabled to XSSAuditor.cpp and changed implementation
+        to query Settings.
 
 2009-06-21  David Levin  <levin@chromium.org>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -29,11 +29,11 @@ module html {
     ] HTMLElement : Element {
                  // iht.com relies on id returning the empty string when no id is present. 
                  // Other browsers do this as well. So we don't convert null to JS null.
-                 attribute [ConvertNullToNullString] DOMString id;
-                 attribute [ConvertNullToNullString] DOMString title;
-                 attribute [ConvertNullToNullString] DOMString lang;
-                 attribute [ConvertNullToNullString] DOMString dir;
-                 attribute [ConvertNullToNullString] DOMString className;
+                 attribute [ConvertNullToNullString, Reflect] DOMString id;
+                 attribute [ConvertNullToNullString, Reflect] DOMString title;
+                 attribute [ConvertNullToNullString, Reflect] DOMString lang;
+                 attribute [ConvertNullToNullString, Reflect] DOMString dir;
+                 attribute [ConvertNullToNullString, Reflect=class] DOMString className;
 
                  attribute long            tabIndex;
 
