@@ -1372,6 +1372,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/StorageEvent.cpp \
         storage/SessionStorage.cpp \
         storage/SessionStorageArea.cpp \
+        storage/StorageSyncManager.cpp \
         bindings/js/JSStorageCustom.cpp
 
     IDL_BINDINGS += \

@@ -31,23 +31,24 @@
 #include "SQLiteDatabase.h"
 #include "StorageArea.h"
 #include "StringHash.h"
+#include "StorageSyncManager.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
     
-    class LocalStorage;
+    class StorageSyncManager;
     
     class LocalStorageArea : public StorageArea {
     public:
         virtual ~LocalStorageArea();
 
-        static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin, LocalStorage* localStorage) { return adoptRef(new LocalStorageArea(origin, localStorage)); }
+        static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager) { return adoptRef(new LocalStorageArea(origin, syncManager)); }
 
         void scheduleFinalSync();
 
     private:
-        LocalStorageArea(SecurityOrigin*, LocalStorage*);
+        LocalStorageArea(SecurityOrigin*, PassRefPtr<StorageSyncManager> syncManager);
 
         virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame);
@@ -63,7 +64,7 @@ namespace WebCore {
         
         bool m_finalSyncScheduled;
 
-        LocalStorage* m_localStorage;
+        RefPtr<StorageSyncManager> m_syncManager;
 
         // The database handle will only ever be opened and used on the background thread.
         SQLiteDatabase m_database;

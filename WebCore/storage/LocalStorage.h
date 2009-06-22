@@ -29,29 +29,23 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "LocalStorageArea.h"
-#include "LocalStorageTask.h"
-#include "LocalStorageThread.h"
 #include "SecurityOriginHash.h"
 
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Threading.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class PageGroup;
     class StorageArea;
+    class StorageSyncManager;
 
-    class LocalStorage : public ThreadSafeShared<LocalStorage> {
+    class LocalStorage : public RefCounted<LocalStorage> {
     public:
         ~LocalStorage();
 
         static PassRefPtr<LocalStorage> localStorage(const String& path);
 
         PassRefPtr<StorageArea> storageArea(SecurityOrigin*);
-
-        bool scheduleImport(PassRefPtr<LocalStorageArea>);
-        void scheduleSync(PassRefPtr<LocalStorageArea>);
 
         void close();
 
@@ -61,21 +55,8 @@ namespace WebCore {
         typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<LocalStorageArea>, SecurityOriginHash> LocalStorageAreaMap;
         LocalStorageAreaMap m_storageAreaMap;
 
-        RefPtr<LocalStorageThread> m_thread;
-
-    // The following members are subject to thread synchronization issues
-    public:
-        // To be called from the background thread:
-        String fullDatabaseFilename(SecurityOrigin*);
-
-        void performImport();
-        void performSync();
-
-    private:
         String m_path;
-
-        typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash> SecurityOriginQuoteMap;
-        SecurityOriginQuoteMap m_securityOriginQuoteMap;
+        RefPtr<StorageSyncManager> m_syncManager;
     };
 
 } // namespace WebCore

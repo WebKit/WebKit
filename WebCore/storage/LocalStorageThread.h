@@ -35,7 +35,6 @@
 
 namespace WebCore {
 
-    class LocalStorage;
     class LocalStorageArea;
     class LocalStorageTask;
 
@@ -45,8 +44,6 @@ namespace WebCore {
 
         bool start();
 
-        void scheduleImport(PassRefPtr<LocalStorage>);
-        void scheduleSync(PassRefPtr<LocalStorage>);
         void scheduleImport(PassRefPtr<LocalStorageArea>);
         void scheduleSync(PassRefPtr<LocalStorageArea>);
 

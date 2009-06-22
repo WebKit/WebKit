@@ -87,18 +87,6 @@ void* LocalStorageThread::localStorageThread()
     return 0;
 }
 
-void LocalStorageThread::scheduleImport(PassRefPtr<LocalStorage> storage)
-{
-    ASSERT(!m_queue.killed() && m_threadID);
-    m_queue.append(LocalStorageTask::createImport(storage));
-}
-
-void LocalStorageThread::scheduleSync(PassRefPtr<LocalStorage> storage)
-{
-    ASSERT(!m_queue.killed() && m_threadID);
-    m_queue.append(LocalStorageTask::createSync(storage));
-}
-
 void LocalStorageThread::scheduleImport(PassRefPtr<LocalStorageArea> area)
 {
     ASSERT(!m_queue.killed() && m_threadID);

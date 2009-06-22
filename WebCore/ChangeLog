@@ -1,3 +1,62 @@
+2009-06-22  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        First step in https://bugs.webkit.org/show_bug.cgi?id=25376
+
+        Add StorageSyncManager.cpp/h
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+        In preparation for combining SessionStorage and LocalStorage into a
+        single StorageManager, move the syncing bits out of LocalStorage and
+        into its own class.
+
+        The next step is to combine LocalStorageArea and SessionStorageArea
+        into one.  Then SessionStorage and LocalStorage can be combined.
+
+        Note that combining them will cut down on code paths that must be
+        proxied, eliminate virtual dispatch, and allow Chromium to (eventually)
+        write historical sessionStorage to disk when memory is getting tight.
+
+        Also remove a couple bits of cruft including code for quotas which is
+        unnecessary (since a meta-data db is unnecessary since you can just
+        count bytes as you read the local storage databases into memory).
+
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::LocalStorage):
+        (WebCore::LocalStorage::storageArea):
+        (WebCore::LocalStorage::close):
+        * storage/LocalStorage.h:
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::LocalStorageArea):
+        (WebCore::LocalStorageArea::scheduleFinalSync):
+        (WebCore::LocalStorageArea::syncTimerFired):
+        (WebCore::LocalStorageArea::performImport):
+        * storage/LocalStorageArea.h:
+        (WebCore::LocalStorageArea::create):
+        * storage/LocalStorageTask.cpp:
+        (WebCore::LocalStorageTask::performTask):
+        * storage/LocalStorageTask.h:
+        (WebCore::LocalStorageTask::):
+        (WebCore::LocalStorageTask::createImport):
+        * storage/LocalStorageThread.cpp:
+        * storage/LocalStorageThread.h:
+        * storage/SessionStorage.h:
+        * storage/StorageSyncManager.cpp: Copied from WebCore/storage/LocalStorage.cpp.
+        (WebCore::StorageSyncManager::create):
+        (WebCore::StorageSyncManager::StorageSyncManager):
+        (WebCore::StorageSyncManager::fullDatabaseFilename):
+        (WebCore::StorageSyncManager::close):
+        (WebCore::StorageSyncManager::scheduleImport):
+        (WebCore::StorageSyncManager::scheduleSync):
+        * storage/StorageSyncManager.h: Copied from WebCore/storage/LocalStorage.h.
+        (WebCore::):
+
 2009-06-22  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dimitri Glazkov.

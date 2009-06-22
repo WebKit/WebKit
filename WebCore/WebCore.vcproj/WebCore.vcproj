@@ -29999,6 +29999,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\StorageSyncManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageSyncManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\VersionChangeCallback.h"
 				>
 			</File>

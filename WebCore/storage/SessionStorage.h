@@ -32,7 +32,6 @@
 #include "SessionStorageArea.h"
 
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

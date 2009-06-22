@@ -2091,7 +2091,9 @@ webcore_sources += \
 	WebCore/storage/StorageEvent.cpp \
 	WebCore/storage/StorageEvent.h \
 	WebCore/storage/StorageMap.cpp \
-	WebCore/storage/StorageMap.h
+	WebCore/storage/StorageMap.h \
+	WebCore/storage/StorageSyncManager.cpp \
+	WebCore/storage/StorageSyncManager.h
 endif # END ENABLE_DOM_STORAGE
 
 # ----

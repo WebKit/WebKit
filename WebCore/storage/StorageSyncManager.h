@@ -23,51 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "LocalStorageTask.h"
+#ifndef StorageSyncManager_h
+#define StorageSyncManager_h
 
 #if ENABLE(DOM_STORAGE)
 
-#include "LocalStorage.h"
 #include "LocalStorageArea.h"
+#include "LocalStorageTask.h"
 #include "LocalStorageThread.h"
+
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
-LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorageArea> area)
-    : m_type(type)
-    , m_area(area)
-{
-    ASSERT(m_area);
-    ASSERT(m_type == AreaImport || m_type == AreaSync);
-}
+    class StorageSyncManager : public ThreadSafeShared<StorageSyncManager> {
+    public:
+        static PassRefPtr<StorageSyncManager> create(const String& path);
 
-LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorageThread> thread)
-    : m_type(type)
-    , m_thread(thread)
-{
-    ASSERT(m_thread);
-    ASSERT(m_type == TerminateThread);
-}
+        bool scheduleImport(PassRefPtr<LocalStorageArea>);
+        void scheduleSync(PassRefPtr<LocalStorageArea>);
 
-void LocalStorageTask::performTask()
-{
-    switch (m_type) {
-        case AreaImport:
-            ASSERT(m_area);
-            m_area->performImport();
-            break;
-        case AreaSync:
-            ASSERT(m_area);
-            m_area->performSync();
-            break;
-        case TerminateThread:
-            m_thread->performTerminate();
-            break;
-    }
-}
+        void close();
 
-}
+    private:
+        StorageSyncManager(const String& path);
+
+        RefPtr<LocalStorageThread> m_thread;
+
+    // The following members are subject to thread synchronization issues
+    public:
+        // To be called from the background thread:
+        String fullDatabaseFilename(SecurityOrigin*);
+
+    private:
+        String m_path;
+    };
+
+} // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)
 
+#endif // StorageSyncManager_h

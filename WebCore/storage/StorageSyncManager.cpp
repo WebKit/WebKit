@@ -24,50 +24,75 @@
  */
 
 #include "config.h"
-#include "LocalStorageTask.h"
+#include "StorageSyncManager.h"
 
 #if ENABLE(DOM_STORAGE)
 
-#include "LocalStorage.h"
-#include "LocalStorageArea.h"
-#include "LocalStorageThread.h"
+#include "CString.h"
+#include "EventNames.h"
+#include "FileSystem.h"
+#include "Frame.h"
+#include "FrameTree.h"
+#include "Page.h"
+#include "PageGroup.h"
+#include "StorageArea.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorageArea> area)
-    : m_type(type)
-    , m_area(area)
+PassRefPtr<StorageSyncManager> StorageSyncManager::create(const String& path)
 {
-    ASSERT(m_area);
-    ASSERT(m_type == AreaImport || m_type == AreaSync);
+    return adoptRef(new StorageSyncManager(path));
 }
 
-LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorageThread> thread)
-    : m_type(type)
-    , m_thread(thread)
+StorageSyncManager::StorageSyncManager(const String& path)
+    : m_path(path.copy())
 {
-    ASSERT(m_thread);
-    ASSERT(m_type == TerminateThread);
+    ASSERT(!m_path.isEmpty());
+    m_thread = LocalStorageThread::create();
+    m_thread->start();
 }
 
-void LocalStorageTask::performTask()
+String StorageSyncManager::fullDatabaseFilename(SecurityOrigin* origin)
 {
-    switch (m_type) {
-        case AreaImport:
-            ASSERT(m_area);
-            m_area->performImport();
-            break;
-        case AreaSync:
-            ASSERT(m_area);
-            m_area->performSync();
-            break;
-        case TerminateThread:
-            m_thread->performTerminate();
-            break;
+    ASSERT(origin);
+    if (!makeAllDirectories(m_path)) {
+        LOG_ERROR("Unabled to create LocalStorage database path %s", m_path.utf8().data());
+        return String();
+    }
+
+    return pathByAppendingComponent(m_path, origin->databaseIdentifier() + ".localstorage");
+}
+
+void StorageSyncManager::close()
+{
+    ASSERT(isMainThread());
+
+    if (m_thread) {
+        m_thread->terminate();
+        m_thread = 0;
     }
 }
 
+bool StorageSyncManager::scheduleImport(PassRefPtr<LocalStorageArea> area)
+{
+    ASSERT(isMainThread());
+
+    if (m_thread)
+        m_thread->scheduleImport(area);
+
+    return m_thread;
 }
+
+void StorageSyncManager::scheduleSync(PassRefPtr<LocalStorageArea> area)
+{
+    ASSERT(isMainThread());
+
+    if (m_thread)
+        m_thread->scheduleSync(area);
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)
 
