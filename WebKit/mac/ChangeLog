@@ -1,3 +1,14 @@
+2009-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Add Mail on Tiger and Leopard to the list of applications that need the WebView init thread workaround.
+
+        <rdar://problem/6929524> Console shows WebKit Threading Violations from Mail
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebView.mm:
+        (clientNeedsWebViewInitThreadWorkaround): Return true for com.apple.Mail.
+
 2009-06-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

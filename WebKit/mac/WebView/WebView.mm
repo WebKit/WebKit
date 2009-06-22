@@ -2329,6 +2329,12 @@ static bool clientNeedsWebViewInitThreadWorkaround()
     if ([bundleIdentifier _webkit_hasCaseInsensitivePrefix:@"com.apple.Automator."])
         return true;
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    // Mail.
+    if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.Mail"])
+        return true;
+#endif
+
     return false;
 }
 
