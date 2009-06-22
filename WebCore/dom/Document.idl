@@ -312,10 +312,8 @@ module core {
         attribute [DontEnum] EventListener onbeforepaste;
         attribute [DontEnum] EventListener onpaste;
         attribute [DontEnum] EventListener onreset;
-        attribute [DontEnum] EventListener onresize;
         attribute [DontEnum] EventListener onsearch;
         attribute [DontEnum] EventListener onselectstart;
-        attribute [DontEnum] EventListener onunload;
 #endif
 #endif
     };

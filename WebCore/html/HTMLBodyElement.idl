@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -30,7 +30,34 @@ module html {
         attribute [ConvertNullToNullString] DOMString bgColor;
         attribute [ConvertNullToNullString] DOMString link;
         attribute [ConvertNullToNullString] DOMString text;
-        attribute [ConvertNullToNullString] DOMString vLink; 
+        attribute [ConvertNullToNullString] DOMString vLink;
+
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+        // Event handler attributes
+        attribute [DontEnum] EventListener onbeforeunload;
+        attribute [DontEnum] EventListener onmessage;
+        attribute [DontEnum] EventListener onoffline;
+        attribute [DontEnum] EventListener ononline;
+        attribute [DontEnum] EventListener onresize;
+        attribute [DontEnum] EventListener onstorage;
+        attribute [DontEnum] EventListener onunload;
+
+        // Overrides of Element attributes.
+        // attribute [DontEnum] EventListener onblur;
+        // attribute [DontEnum] EventListener onerror;
+        // attribute [DontEnum] EventListener onfocus;
+        // attribute [DontEnum] EventListener onload;
+
+        // Not implemented yet.
+        // attribute [DontEnum] EventListener onafterprint;
+        // attribute [DontEnum] EventListener onbeforeprint;
+        // attribute [DontEnum] EventListener onhashchange;
+        // attribute [DontEnum] EventListener onpopstate;
+        // attribute [DontEnum] EventListener onredo;
+        // attribute [DontEnum] EventListener onundo;
+#endif
+#endif
     };
 
 }

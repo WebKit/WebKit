@@ -30,8 +30,7 @@
 
 namespace WebCore {
 
-class HTMLBodyElement : public HTMLElement
-{
+class HTMLBodyElement : public HTMLElement {
 public:
     HTMLBodyElement(const QualifiedName&, Document*);
     ~HTMLBodyElement();
@@ -60,6 +59,31 @@ public:
     void setText(const String&);
     String vLink() const;
     void setVLink(const String&);
+
+    // Event handler attributes
+    virtual EventListener* onblur() const;
+    virtual void setOnblur(PassRefPtr<EventListener>);
+    virtual EventListener* onerror() const;
+    virtual void setOnerror(PassRefPtr<EventListener>);
+    virtual EventListener* onfocus() const;
+    virtual void setOnfocus(PassRefPtr<EventListener>);
+    virtual EventListener* onload() const;
+    virtual void setOnload(PassRefPtr<EventListener>);
+
+    EventListener* onbeforeunload() const;
+    void setOnbeforeunload(PassRefPtr<EventListener>);
+    EventListener* onmessage() const;
+    void setOnmessage(PassRefPtr<EventListener>);
+    EventListener* onoffline() const;
+    void setOnoffline(PassRefPtr<EventListener>);
+    EventListener* ononline() const;
+    void setOnonline(PassRefPtr<EventListener>);
+    EventListener* onresize() const;
+    void setOnresize(PassRefPtr<EventListener>);
+    EventListener* onstorage() const;
+    void setOnstorage(PassRefPtr<EventListener>);
+    EventListener* onunload() const;
+    void setOnunload(PassRefPtr<EventListener>);
 
     virtual int scrollLeft() const;
     virtual void setScrollLeft(int scrollLeft);

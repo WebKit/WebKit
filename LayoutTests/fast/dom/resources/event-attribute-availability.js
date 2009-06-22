@@ -1,28 +1,66 @@
-description("This test that the DOM attribute event handlers are avaiable on the only elements and documents, and not all other nodes such as attributes and text nodes.");
+description("This tests what event handler attributes are available on what objects.");
 
-var properties = ["onabort", "onblur", "onchange", "onclick", "oncontextmenu", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave", "ondragover", "ondragstart", "ondrop", "onerror", "onfocus", "oninput", "onkeydown", "onkeypress", "onkeyup", "onload", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onmousewheel", "onscroll", "onselect", "onsubmit", "onbeforecut", "oncut", "onbeforecopy", "oncopy", "onbeforepaste", "onpaste", "onreset", "onresize", "onsearch", "onselectstart", "onunload"];
+var elementAndDocumentProperties = [
+    "onabort", "onblur", "onchange", "onclick", "oncontextmenu", "ondblclick", "ondrag", "ondragend",
+    "ondragenter", "ondragleave", "ondragover", "ondragstart", "ondrop", "onerror", "onfocus", "oninput",
+    "onkeydown", "onkeypress", "onkeyup", "onload", "onmousedown", "onmousemove", "onmouseout",
+    "onmouseover", "onmouseup", "onmousewheel", "onscroll", "onselect", "onsubmit",
+
+    // Not implemented yet
+    // "oncanplay", "oncanplaythrough", "ondurationchange", "onemptied", "onended", "onformchange",
+    // "onforminput", "oninvalid", "onloadeddata", "onloadedmetadata", "onloadstart", "onpause",
+    // "onplay", "onplaying", "onprogress", "onratechange", "onreadystatechange", "onseeked", "onseeking",
+    // "onshow", "onstalled", "onsuspend", "ontimeupdate", "onvolumechange", "onwaiting",
+
+    // WebKit extensions
+    "onbeforecut", "oncut", "onbeforecopy", "oncopy", "onbeforepaste", "onpaste", "onreset", "onsearch",
+    "onselectstart"
+];
+
+var bodyProperties = [
+    "onbeforeunload", "onmessage", "onoffline", "ononline", "onresize", "onstorage", "onunload", "onblur",
+    "onerror", "onfocus", "onload",
+
+    // Not implemented yet.
+    // "onafterprint", "onbeforeprint", "onhashchange", "onpopstate", "onredo", "onundo"
+];
+
 
 debug("Test Element");
 var element = document.createElement("div");
-for (var i = 0; i < properties.length; ++i) {
-    shouldBeTrue("'" + properties[i] + "' in element");
+for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
+    shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in element");
 }
 
 debug("\nTest Document");
-for (var i = 0; i < properties.length; ++i) {
-    shouldBeTrue("'" + properties[i] + "' in document");
+for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
+    shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in document");
+}
+
+debug("\nTest Window");
+for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
+    shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in window");
 }
 
 debug("\nTest Text Node");
 var textNode = document.createTextNode("text");
-for (var i = 0; i < properties.length; ++i) {
-    shouldBeFalse("'" + properties[i] + "' in textNode");
+for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
+    shouldBeFalse("'" + elementAndDocumentProperties[i] + "' in textNode");
 }
 
 debug("\nTest Attribute");
 var attribute = document.createAttribute("attr");
-for (var i = 0; i < properties.length; ++i) {
-    shouldBeFalse("'" + properties[i] + "' in attribute");
+for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
+    shouldBeFalse("'" + elementAndDocumentProperties[i] + "' in attribute");
+}
+
+debug("\nTest HTMLBodyElement");
+var body = document.body;
+for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
+    shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in body");
+}
+for (var i = 0; i < bodyProperties.length; ++i) {
+    shouldBeTrue("'" + bodyProperties[i] + "' in body");
 }
 
 successfullyParsed = true;

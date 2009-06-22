@@ -1,3 +1,13 @@
+2009-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add event handler attribute getter/setters to HTMLBodyElement
+        as specified in HTML 5.
+
+        * fast/dom/event-attribute-availability-expected.txt:
+        * fast/dom/resources/event-attribute-availability.js:
+
 2009-06-22  David Levin  <levin@chromium.org>
 
         Reviewed by David Hyatt and Eric Seidel.

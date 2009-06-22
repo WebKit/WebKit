@@ -2748,6 +2748,14 @@ void Document::setWindowAttributeEventListener(const AtomicString& eventType, Pa
     domWindow->setAttributeEventListener(eventType, listener);
 }
 
+EventListener* Document::getWindowAttributeEventListener(const AtomicString& eventType)
+{
+    DOMWindow* domWindow = this->domWindow();
+    if (!domWindow)
+        return 0;
+    return domWindow->getAttributeEventListener(eventType);
+}
+
 void Document::dispatchWindowEvent(PassRefPtr<Event> event)
 {
     ASSERT(!eventDispatchForbidden());

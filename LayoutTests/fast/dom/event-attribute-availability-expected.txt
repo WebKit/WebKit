@@ -1,4 +1,4 @@
-This test that the DOM attribute event handlers are avaiable on the only elements and documents, and not all other nodes such as attributes and text nodes.
+This tests what event handler attributes are available on what objects.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -40,10 +40,8 @@ PASS 'oncopy' in element is true
 PASS 'onbeforepaste' in element is true
 PASS 'onpaste' in element is true
 PASS 'onreset' in element is true
-PASS 'onresize' in element is true
 PASS 'onsearch' in element is true
 PASS 'onselectstart' in element is true
-PASS 'onunload' in element is true
 
 Test Document
 PASS 'onabort' in document is true
@@ -82,10 +80,48 @@ PASS 'oncopy' in document is true
 PASS 'onbeforepaste' in document is true
 PASS 'onpaste' in document is true
 PASS 'onreset' in document is true
-PASS 'onresize' in document is true
 PASS 'onsearch' in document is true
 PASS 'onselectstart' in document is true
-PASS 'onunload' in document is true
+
+Test Window
+PASS 'onabort' in window is true
+PASS 'onblur' in window is true
+PASS 'onchange' in window is true
+PASS 'onclick' in window is true
+PASS 'oncontextmenu' in window is true
+PASS 'ondblclick' in window is true
+PASS 'ondrag' in window is true
+PASS 'ondragend' in window is true
+PASS 'ondragenter' in window is true
+PASS 'ondragleave' in window is true
+PASS 'ondragover' in window is true
+PASS 'ondragstart' in window is true
+PASS 'ondrop' in window is true
+PASS 'onerror' in window is true
+PASS 'onfocus' in window is true
+PASS 'oninput' in window is true
+PASS 'onkeydown' in window is true
+PASS 'onkeypress' in window is true
+PASS 'onkeyup' in window is true
+PASS 'onload' in window is true
+PASS 'onmousedown' in window is true
+PASS 'onmousemove' in window is true
+PASS 'onmouseout' in window is true
+PASS 'onmouseover' in window is true
+PASS 'onmouseup' in window is true
+PASS 'onmousewheel' in window is true
+PASS 'onscroll' in window is true
+PASS 'onselect' in window is true
+PASS 'onsubmit' in window is true
+FAIL 'onbeforecut' in window should be true. Was false.
+FAIL 'oncut' in window should be true. Was false.
+FAIL 'onbeforecopy' in window should be true. Was false.
+FAIL 'oncopy' in window should be true. Was false.
+FAIL 'onbeforepaste' in window should be true. Was false.
+FAIL 'onpaste' in window should be true. Was false.
+PASS 'onreset' in window is true
+PASS 'onsearch' in window is true
+FAIL 'onselectstart' in window should be true. Was false.
 
 Test Text Node
 PASS 'onabort' in textNode is false
@@ -124,10 +160,8 @@ PASS 'oncopy' in textNode is false
 PASS 'onbeforepaste' in textNode is false
 PASS 'onpaste' in textNode is false
 PASS 'onreset' in textNode is false
-PASS 'onresize' in textNode is false
 PASS 'onsearch' in textNode is false
 PASS 'onselectstart' in textNode is false
-PASS 'onunload' in textNode is false
 
 Test Attribute
 PASS 'onabort' in attribute is false
@@ -166,10 +200,59 @@ PASS 'oncopy' in attribute is false
 PASS 'onbeforepaste' in attribute is false
 PASS 'onpaste' in attribute is false
 PASS 'onreset' in attribute is false
-PASS 'onresize' in attribute is false
 PASS 'onsearch' in attribute is false
 PASS 'onselectstart' in attribute is false
-PASS 'onunload' in attribute is false
+
+Test HTMLBodyElement
+PASS 'onabort' in body is true
+PASS 'onblur' in body is true
+PASS 'onchange' in body is true
+PASS 'onclick' in body is true
+PASS 'oncontextmenu' in body is true
+PASS 'ondblclick' in body is true
+PASS 'ondrag' in body is true
+PASS 'ondragend' in body is true
+PASS 'ondragenter' in body is true
+PASS 'ondragleave' in body is true
+PASS 'ondragover' in body is true
+PASS 'ondragstart' in body is true
+PASS 'ondrop' in body is true
+PASS 'onerror' in body is true
+PASS 'onfocus' in body is true
+PASS 'oninput' in body is true
+PASS 'onkeydown' in body is true
+PASS 'onkeypress' in body is true
+PASS 'onkeyup' in body is true
+PASS 'onload' in body is true
+PASS 'onmousedown' in body is true
+PASS 'onmousemove' in body is true
+PASS 'onmouseout' in body is true
+PASS 'onmouseover' in body is true
+PASS 'onmouseup' in body is true
+PASS 'onmousewheel' in body is true
+PASS 'onscroll' in body is true
+PASS 'onselect' in body is true
+PASS 'onsubmit' in body is true
+PASS 'onbeforecut' in body is true
+PASS 'oncut' in body is true
+PASS 'onbeforecopy' in body is true
+PASS 'oncopy' in body is true
+PASS 'onbeforepaste' in body is true
+PASS 'onpaste' in body is true
+PASS 'onreset' in body is true
+PASS 'onsearch' in body is true
+PASS 'onselectstart' in body is true
+PASS 'onbeforeunload' in body is true
+PASS 'onmessage' in body is true
+PASS 'onoffline' in body is true
+PASS 'ononline' in body is true
+PASS 'onresize' in body is true
+PASS 'onstorage' in body is true
+PASS 'onunload' in body is true
+PASS 'onblur' in body is true
+PASS 'onerror' in body is true
+PASS 'onfocus' in body is true
+PASS 'onload' in body is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

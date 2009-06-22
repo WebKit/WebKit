@@ -3267,16 +3267,6 @@ void Node::setOnreset(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().resetEvent, eventListener);
 }
 
-EventListener* Node::onresize() const
-{
-    return getAttributeEventListener(eventNames().resizeEvent);
-}
-
-void Node::setOnresize(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().resizeEvent, eventListener);
-}
-
 EventListener* Node::onsearch() const
 {
     return getAttributeEventListener(eventNames().searchEvent);
@@ -3295,16 +3285,6 @@ EventListener* Node::onselectstart() const
 void Node::setOnselectstart(PassRefPtr<EventListener> eventListener)
 {
     setAttributeEventListener(eventNames().selectstartEvent, eventListener);
-}
-
-EventListener* Node::onunload() const
-{
-    return getAttributeEventListener(eventNames().unloadEvent);
-}
-
-void Node::setOnunload(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().unloadEvent, eventListener);
 }
 
 } // namespace WebCore

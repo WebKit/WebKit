@@ -1,3 +1,48 @@
+2009-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add event handler attribute getter/setters to HTMLBodyElement
+        as specified in HTML 5.
+
+        - Removes erroneous inclusion of the onresize and onunload event
+        handler attributes in Element and Document.
+
+        * dom/Document.cpp:
+        (WebCore::Document::getWindowAttributeEventListener):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Node.cpp:
+        * dom/Node.h: onblur, onerror, onfocus, and onload all need to be declared
+        virtual, since their behavior for HTMLBodyElement differs from the base
+        implementation.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::onblur):
+        (WebCore::HTMLBodyElement::setOnblur):
+        (WebCore::HTMLBodyElement::onerror):
+        (WebCore::HTMLBodyElement::setOnerror):
+        (WebCore::HTMLBodyElement::onfocus):
+        (WebCore::HTMLBodyElement::setOnfocus):
+        (WebCore::HTMLBodyElement::onload):
+        (WebCore::HTMLBodyElement::setOnload):
+        (WebCore::HTMLBodyElement::onbeforeunload):
+        (WebCore::HTMLBodyElement::setOnbeforeunload):
+        (WebCore::HTMLBodyElement::onmessage):
+        (WebCore::HTMLBodyElement::setOnmessage):
+        (WebCore::HTMLBodyElement::onoffline):
+        (WebCore::HTMLBodyElement::setOnoffline):
+        (WebCore::HTMLBodyElement::ononline):
+        (WebCore::HTMLBodyElement::setOnonline):
+        (WebCore::HTMLBodyElement::onresize):
+        (WebCore::HTMLBodyElement::setOnresize):
+        (WebCore::HTMLBodyElement::onstorage):
+        (WebCore::HTMLBodyElement::setOnstorage):
+        (WebCore::HTMLBodyElement::onunload):
+        (WebCore::HTMLBodyElement::setOnunload):
+        * html/HTMLBodyElement.h:
+        * html/HTMLBodyElement.idl:
+
 2009-06-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
