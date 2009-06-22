@@ -4051,6 +4051,8 @@
 		BC77CDBC0FEFF1420070887B /* HTMLDataGridCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CDBB0FEFF1420070887B /* HTMLDataGridCellElement.h */; };
 		BC77CDCE0FEFF33B0070887B /* JSHTMLDataGridCellElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CDCC0FEFF33B0070887B /* JSHTMLDataGridCellElement.cpp */; };
 		BC77CDCF0FEFF33B0070887B /* JSHTMLDataGridCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CDCD0FEFF33B0070887B /* JSHTMLDataGridCellElement.h */; };
+		BC77CEB30FF017F20070887B /* RenderDataGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CEB20FF017F20070887B /* RenderDataGrid.h */; };
+		BC77CEC80FF01CBE0070887B /* RenderDataGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CEC70FF01CBE0070887B /* RenderDataGrid.cpp */; };
 		BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F44A70B9E324E00A9D081 /* ImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7FA6200D1F0CBD00DB22A9 /* DynamicNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */; };
 		BC7FA6210D1F0CBD00DB22A9 /* DynamicNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7FA61F0D1F0CBD00DB22A9 /* DynamicNodeList.h */; };
@@ -8850,6 +8852,8 @@
 		BC77CDBB0FEFF1420070887B /* HTMLDataGridCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataGridCellElement.h; sourceTree = "<group>"; };
 		BC77CDCC0FEFF33B0070887B /* JSHTMLDataGridCellElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataGridCellElement.cpp; sourceTree = "<group>"; };
 		BC77CDCD0FEFF33B0070887B /* JSHTMLDataGridCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataGridCellElement.h; sourceTree = "<group>"; };
+		BC77CEB20FF017F20070887B /* RenderDataGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderDataGrid.h; sourceTree = "<group>"; };
+		BC77CEC70FF01CBE0070887B /* RenderDataGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderDataGrid.cpp; sourceTree = "<group>"; };
 		BC7B2AF80450824100A8000F /* Scrollbar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Scrollbar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
 		BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicNodeList.cpp; sourceTree = "<group>"; };
@@ -14216,6 +14220,8 @@
 				BCEA4827097D93020094C9E4 /* RenderButton.h */,
 				9392F1430AD185FE00691BD4 /* RenderCounter.cpp */,
 				9392F1410AD185F400691BD4 /* RenderCounter.h */,
+				BC77CEC70FF01CBE0070887B /* RenderDataGrid.cpp */,
+				BC77CEB20FF017F20070887B /* RenderDataGrid.h */,
 				A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */,
 				A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */,
 				066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */,
@@ -16859,6 +16865,7 @@
 				BC77CD4F0FEFE1610070887B /* JSHTMLDataGridRowElement.h in Headers */,
 				BC77CDBC0FEFF1420070887B /* HTMLDataGridCellElement.h in Headers */,
 				BC77CDCF0FEFF33B0070887B /* JSHTMLDataGridCellElement.h in Headers */,
+				BC77CEB30FF017F20070887B /* RenderDataGrid.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18864,6 +18871,7 @@
 				BC77CD4E0FEFE1610070887B /* JSHTMLDataGridRowElement.cpp in Sources */,
 				BC77CDB80FEFF1210070887B /* HTMLDataGridCellElement.cpp in Sources */,
 				BC77CDCE0FEFF33B0070887B /* JSHTMLDataGridCellElement.cpp in Sources */,
+				BC77CEC80FF01CBE0070887B /* RenderDataGrid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

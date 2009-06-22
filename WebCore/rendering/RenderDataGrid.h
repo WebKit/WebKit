@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+#ifndef RenderDataGrid_h
+#define RenderDataGrid_h
 
-interface [GenerateConstructor] HTMLDataGridElement : HTMLElement {
-    attribute boolean autofocus; // Whether or not the datagrid should autofocus.
-    attribute boolean disabled; // Whether or not the datagrid can be interacted with.
-    attribute boolean multiple; // Whether or not the datagrid supports multiple selection.
+#include "RenderBlock.h"
+#include "ScrollbarClient.h"
+
+namespace WebCore {
+
+class RenderDataGrid : public RenderBlock, private ScrollbarClient {
+public:
+    RenderDataGrid(Element*);
+    ~RenderDataGrid();
+    
+    virtual const char* renderName() const { return "RenderDataGrid"; }
+
+    virtual bool canHaveChildren() const { return false; }
+    
+    virtual void calcPrefWidths();
+    
+    virtual void paintObject(PaintInfo&, int tx, int ty);
+
+private:
+    // ScrollbarClient interface.
+    virtual void valueChanged(Scrollbar*);
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
+    virtual bool isActive() const;
+    virtual bool scrollbarCornerPresent() const { return false; } // We don't support resize on data grids yet.  If we did this would have to change.
+
+    RefPtr<Scrollbar> m_vBar;
 };
 
 }
+
+#endif // RenderDataGrid_h

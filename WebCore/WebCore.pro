@@ -1023,6 +1023,7 @@ SOURCES += \
     rendering/RenderBR.cpp \
     rendering/RenderButton.cpp \
     rendering/RenderCounter.cpp \
+    rendering/RenderDataGrid.cpp \
     rendering/RenderFieldset.cpp \
     rendering/RenderFileUploadControl.cpp \
     rendering/RenderFlexibleBox.cpp \

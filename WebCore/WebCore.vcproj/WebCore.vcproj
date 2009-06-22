@@ -21786,6 +21786,14 @@
 				RelativePath="..\rendering\RenderCounter.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\rendering\RenderDataGrid.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderDataGrid.h"
+				>
+			</File>
 			<File
 				RelativePath="..\rendering\RenderFieldset.cpp"
 				>

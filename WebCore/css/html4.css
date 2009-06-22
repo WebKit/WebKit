@@ -297,7 +297,7 @@ button {
     -webkit-appearance: button;
 }
 
-input, textarea, keygen, select, button, isindex {
+input, textarea, keygen, select, button, isindex, datagrid {
     margin: 0__qem;
     font: -webkit-small-control;
     color: initial;
@@ -421,7 +421,9 @@ input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: sliderthumb-horizontal;
 }
 
-input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, button:disabled, select:disabled, keygen:disabled, optgroup:disabled, option:disabled {
+input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled,
+input[type="file"]:disabled::-webkit-file-upload-button, button:disabled,
+select:disabled, keygen:disabled, optgroup:disabled, option:disabled, datagrid:disabled {
     color: GrayText
 }
 
@@ -485,6 +487,20 @@ optgroup {
 
 option {
     font-weight: normal;
+}
+
+/* datagrid */
+
+datagrid {
+    height: 150px; /* We don't use width:300px in CSS, since we want width:intrinsic and width:min-intrinsic to reset to 300 properly. */
+    -webkit-appearance: datagrid;
+    -webkit-box-sizing: border-box;
+    -webkit-rtl-ordering: logical;
+    color: black;
+    background-color: white;
+    cursor: default;
+    border: 1px inset gray;
+    white-space: initial;
 }
 
 /* inline elements */

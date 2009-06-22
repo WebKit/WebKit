@@ -1618,6 +1618,8 @@ webcore_sources += \
 	WebCore/rendering/RenderButton.h \
 	WebCore/rendering/RenderCounter.cpp \
 	WebCore/rendering/RenderCounter.h \
+	WebCore/rendering/RenderDataGrid.cpp \
+	WebCore/rendering/RenderDataGrid.h \
 	WebCore/rendering/RenderFieldset.cpp \
 	WebCore/rendering/RenderFieldset.h \
 	WebCore/rendering/RenderFileUploadControl.cpp \
