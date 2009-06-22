@@ -347,6 +347,7 @@ IDL_BINDINGS += \
     html/HTMLCollection.idl \
     html/HTMLDataGridElement.idl \
     html/HTMLDataGridColElement.idl \
+    html/HTMLDataGridRowElement.idl \
     html/HTMLDirectoryElement.idl \
     html/HTMLDivElement.idl \
     html/HTMLDListElement.idl \
@@ -759,6 +760,7 @@ SOURCES += \
     html/HTMLCollection.cpp \
     html/HTMLDataGridElement.cpp \
     html/HTMLDataGridColElement.cpp \
+    html/HTMLDataGridRowElement.cpp \
     html/HTMLDirectoryElement.cpp \
     html/HTMLDivElement.cpp \
     html/HTMLDListElement.cpp \

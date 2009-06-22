@@ -296,6 +296,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSHTMLCollection.cpp
         DerivedSources/WebCore/JSHTMLDataGridElement.cpp
         DerivedSources/WebCore/JSHTMLDataGridColElement.cpp
+        DerivedSources/WebCore/JSHTMLDataGridRowElement.cpp
         DerivedSources/WebCore/JSHTMLDListElement.cpp
         DerivedSources/WebCore/JSHTMLDirectoryElement.cpp
         DerivedSources/WebCore/JSHTMLDivElement.cpp
@@ -580,6 +581,7 @@ This file contains the list of files needed to build WebCore.
         html/HTMLCollection.cpp
         html/HTMLDataGridElement.cpp
         html/HTMLDataGridColElement.cpp
+        html/HTMLDataGridRowElement.cpp
         html/HTMLDListElement.cpp
         html/HTMLDirectoryElement.cpp
         html/HTMLDivElement.cpp

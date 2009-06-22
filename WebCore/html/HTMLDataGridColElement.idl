@@ -32,7 +32,7 @@ interface [GenerateConstructor] HTMLDataGridColElement : HTMLElement {
     attribute boolean sortable; // Whether or not the column can be sorted.
     attribute DOMString sortDirection; // The sort direction for the column.  Valid values are ascending, descending and natural (no sort applied).
     
-    attribute boolean selected; // Whether or not the column as a whole has been selected.
+    attribute boolean primary; // Whether or not this is the primary column of the tree (this will be where the disclosure triangle and connecting tree lines will display)
 };
 
 }

@@ -68,6 +68,7 @@ disabled
 enctype
 end
 face
+focused
 for
 frame
 frameborder
@@ -161,6 +162,7 @@ placeholder
 pluginurl
 poster
 precision
+primary
 profile
 prompt
 readonly

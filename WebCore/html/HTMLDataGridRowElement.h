@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+#ifndef HTMLDataGridRowElement_h
+#define HTMLDataGridRowElement_h
 
-interface [GenerateConstructor] HTMLDataGridElement : HTMLElement {
-    attribute boolean multiple; // Whether or not the datagrid supports multiple selection.
+#include "HTMLElement.h"
+
+namespace WebCore {
+
+class HTMLDataGridRowElement : public HTMLElement
+{
+public:
+    HTMLDataGridRowElement(const QualifiedName&, Document*);
+
+    virtual int tagPriority() const { return 2; } // Same as <option>s.
+    
+    bool selected() const;
+    void setSelected(bool);
+    
+    bool focused() const;
+    void setFocused(bool);
 };
 
-}
+} // namespace WebCore
+
+#endif // HTMLDataGridRowElement_h
+

@@ -4041,6 +4041,11 @@
 		BC77CBAA0FEBF6C90070887B /* HTMLDataGridColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */; };
 		BC77CBD30FEBF8310070887B /* JSHTMLDataGridColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CBD10FEBF8310070887B /* JSHTMLDataGridColElement.cpp */; };
 		BC77CBD40FEBF8310070887B /* JSHTMLDataGridColElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CBD20FEBF8310070887B /* JSHTMLDataGridColElement.h */; };
+		BC77CC6C0FEC3D5F0070887B /* HTMLDataGridRowElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC77CC6B0FEC3D5F0070887B /* HTMLDataGridRowElement.idl */; };
+		BC77CCEE0FEFDE6C0070887B /* HTMLDataGridRowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CCED0FEFDE6C0070887B /* HTMLDataGridRowElement.h */; };
+		BC77CD420FEFE0C40070887B /* HTMLDataGridRowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CD410FEFE0C40070887B /* HTMLDataGridRowElement.cpp */; };
+		BC77CD4E0FEFE1610070887B /* JSHTMLDataGridRowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC77CD4C0FEFE1610070887B /* JSHTMLDataGridRowElement.cpp */; };
+		BC77CD4F0FEFE1610070887B /* JSHTMLDataGridRowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC77CD4D0FEFE1610070887B /* JSHTMLDataGridRowElement.h */; };
 		BC7F44A80B9E324E00A9D081 /* ImageObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F44A70B9E324E00A9D081 /* ImageObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7FA6200D1F0CBD00DB22A9 /* DynamicNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */; };
 		BC7FA6210D1F0CBD00DB22A9 /* DynamicNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7FA61F0D1F0CBD00DB22A9 /* DynamicNodeList.h */; };
@@ -8835,6 +8840,11 @@
 		BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataGridColElement.cpp; sourceTree = "<group>"; };
 		BC77CBD10FEBF8310070887B /* JSHTMLDataGridColElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataGridColElement.cpp; sourceTree = "<group>"; };
 		BC77CBD20FEBF8310070887B /* JSHTMLDataGridColElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataGridColElement.h; sourceTree = "<group>"; };
+		BC77CC6B0FEC3D5F0070887B /* HTMLDataGridRowElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataGridRowElement.idl; sourceTree = "<group>"; };
+		BC77CCED0FEFDE6C0070887B /* HTMLDataGridRowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataGridRowElement.h; sourceTree = "<group>"; };
+		BC77CD410FEFE0C40070887B /* HTMLDataGridRowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataGridRowElement.cpp; sourceTree = "<group>"; };
+		BC77CD4C0FEFE1610070887B /* JSHTMLDataGridRowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDataGridRowElement.cpp; sourceTree = "<group>"; };
+		BC77CD4D0FEFE1610070887B /* JSHTMLDataGridRowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDataGridRowElement.h; sourceTree = "<group>"; };
 		BC7B2AF80450824100A8000F /* Scrollbar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Scrollbar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC7F44A70B9E324E00A9D081 /* ImageObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageObserver.h; sourceTree = "<group>"; };
 		BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicNodeList.cpp; sourceTree = "<group>"; };
@@ -11649,6 +11659,9 @@
 				BC77CBA90FEBF6C90070887B /* HTMLDataGridColElement.cpp */,
 				BC77CB860FEBF5AF0070887B /* HTMLDataGridColElement.h */,
 				BC77CB880FEBF5BA0070887B /* HTMLDataGridColElement.idl */,
+				BC77CD410FEFE0C40070887B /* HTMLDataGridRowElement.cpp */,
+				BC77CCED0FEFDE6C0070887B /* HTMLDataGridRowElement.h */,
+				BC77CC6B0FEC3D5F0070887B /* HTMLDataGridRowElement.idl */,
 				A8EA79E90A1916DF00A8EF5F /* HTMLDListElement.cpp */,
 				A8EA79EB0A1916DF00A8EF5F /* HTMLDListElement.h */,
 				1A85B1D10A1B235B00D8C87C /* HTMLDListElement.idl */,
@@ -11920,6 +11933,8 @@
 				BC212A400FE83A1800EC3708 /* JSHTMLDataGridElement.h */,
 				BC77CBD10FEBF8310070887B /* JSHTMLDataGridColElement.cpp */,
 				BC77CBD20FEBF8310070887B /* JSHTMLDataGridColElement.h */,
+				BC77CD4C0FEFE1610070887B /* JSHTMLDataGridRowElement.cpp */,
+				BC77CD4D0FEFE1610070887B /* JSHTMLDataGridRowElement.h */,
 				1A85B1E20A1B240500D8C87C /* JSHTMLDListElement.cpp */,
 				1A85B1E30A1B240500D8C87C /* JSHTMLDListElement.h */,
 				1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */,
@@ -16847,6 +16862,8 @@
 				BC77CB870FEBF5AF0070887B /* HTMLDataGridColElement.h in Headers */,
 				BC77CBD40FEBF8310070887B /* JSHTMLDataGridColElement.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
+				BC77CCEE0FEFDE6C0070887B /* HTMLDataGridRowElement.h in Headers */,
+				BC77CD4F0FEFE1610070887B /* JSHTMLDataGridRowElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16951,6 +16968,7 @@
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				BC212A240FE8345D00EC3708 /* HTMLDataGridElement.idl in Resources */,
 				BC77CB890FEBF5BA0070887B /* HTMLDataGridColElement.idl in Resources */,
+				BC77CC6C0FEC3D5F0070887B /* HTMLDataGridRowElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18849,6 +18867,8 @@
 				BC77CBAA0FEBF6C90070887B /* HTMLDataGridColElement.cpp in Sources */,
 				BC77CBD30FEBF8310070887B /* JSHTMLDataGridColElement.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				BC77CD420FEFE0C40070887B /* HTMLDataGridRowElement.cpp in Sources */,
+				BC77CD4E0FEFE1610070887B /* JSHTMLDataGridRowElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

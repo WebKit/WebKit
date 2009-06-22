@@ -42,7 +42,17 @@ bool HTMLDataGridElement::checkDTD(const Node* newChild)
 {
     if (newChild->isTextNode())
         return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(datagridcolTag);
+    return newChild->hasTagName(dcolTag) || newChild->hasTagName(drowTag);
+}
+
+bool HTMLDataGridElement::multiple() const
+{
+    return hasAttribute(multipleAttr);
+}
+
+void HTMLDataGridElement::setMultiple(bool multiple)
+{
+    setAttribute(multipleAttr, multiple ? "" : 0);
 }
 
 }

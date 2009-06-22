@@ -37,6 +37,9 @@ public:
     
     virtual int tagPriority() const { return 6; } // Same as <select>s
     virtual bool checkDTD(const Node*);
+    
+    bool multiple() const;
+    void setMultiple(bool);
 };
 
 } //namespace
