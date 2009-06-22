@@ -110,6 +110,7 @@ DOM_CLASSES = \
     HTMLCanvasElement \
     HTMLCollection \
     HTMLDataGridElement \
+    HTMLDataGridCellElement \
     HTMLDataGridColElement \
     HTMLDataGridRowElement \
     HTMLDListElement \

@@ -84,6 +84,7 @@
 #include "JSHTMLCanvasElement.cpp"
 #include "JSHTMLCollection.cpp"
 #include "JSHTMLDataGridElement.cpp"
+#include "JSHTMLDataGridCellElement.cpp"
 #include "JSHTMLDataGridColElement.cpp"
 #include "JSHTMLDataGridRowElement.cpp"
 #include "JSHTMLDirectoryElement.cpp"

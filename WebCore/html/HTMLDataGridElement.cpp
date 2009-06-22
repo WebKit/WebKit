@@ -45,6 +45,26 @@ bool HTMLDataGridElement::checkDTD(const Node* newChild)
     return newChild->hasTagName(dcolTag) || newChild->hasTagName(drowTag);
 }
 
+bool HTMLDataGridElement::autofocus() const
+{
+    return hasAttribute(autofocusAttr);
+}
+
+void HTMLDataGridElement::setAutofocus(bool autofocus)
+{
+    setAttribute(autofocusAttr, autofocus ? "" : 0);
+}
+
+bool HTMLDataGridElement::disabled() const
+{
+    return hasAttribute(disabledAttr);
+}
+
+void HTMLDataGridElement::setDisabled(bool disabled)
+{
+    setAttribute(disabledAttr, disabled ? "" : 0);
+}
+
 bool HTMLDataGridElement::multiple() const
 {
     return hasAttribute(multipleAttr);
@@ -53,6 +73,16 @@ bool HTMLDataGridElement::multiple() const
 void HTMLDataGridElement::setMultiple(bool multiple)
 {
     setAttribute(multipleAttr, multiple ? "" : 0);
+}
+
+int HTMLDataGridElement::size() const
+{
+    return getAttribute(sizeAttr).toInt();
+}
+
+void HTMLDataGridElement::setSize(int size)
+{
+    setAttribute(sizeAttr, String::number(size));
 }
 
 }

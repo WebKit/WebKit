@@ -36,12 +36,16 @@ public:
     HTMLDataGridRowElement(const QualifiedName&, Document*);
 
     virtual int tagPriority() const { return 2; } // Same as <option>s.
-    
+    virtual bool checkDTD(const Node*);
+
     bool selected() const;
     void setSelected(bool);
     
     bool focused() const;
     void setFocused(bool);
+    
+    bool expanded() const;
+    void setExpanded(bool);
 };
 
 } // namespace WebCore

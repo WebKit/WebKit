@@ -38,8 +38,17 @@ public:
     virtual int tagPriority() const { return 6; } // Same as <select>s
     virtual bool checkDTD(const Node*);
     
+    bool autofocus() const;
+    void setAutofocus(bool);
+    
+    bool disabled() const;
+    void setDisabled(bool);
+    
     bool multiple() const;
     void setMultiple(bool);
+    
+    int size() const;
+    void setSize(int);
 };
 
 } //namespace

@@ -67,6 +67,7 @@ direction
 disabled
 enctype
 end
+expanded
 face
 focused
 for
@@ -81,6 +82,7 @@ hspace
 http_equiv
 id
 incremental
+indeterminate
 ismap
 keytype
 label
@@ -164,6 +166,7 @@ poster
 precision
 primary
 profile
+progress
 prompt
 readonly
 rel

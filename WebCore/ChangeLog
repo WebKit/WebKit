@@ -1,3 +1,56 @@
+2009-06-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26615
+
+        Add IDL interface for datagrid cell elements.  Add a few more properties to the datagrid itself that
+        correspond to ones you find on <select> elements.
+
+        Add an expanded property to row elements.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLDataGridCellElement.cpp: Added.
+        (WebCore::HTMLDataGridCellElement::HTMLDataGridCellElement):
+        (WebCore::HTMLDataGridCellElement::label):
+        (WebCore::HTMLDataGridCellElement::setLabel):
+        (WebCore::HTMLDataGridCellElement::focused):
+        (WebCore::HTMLDataGridCellElement::setFocused):
+        (WebCore::HTMLDataGridCellElement::checked):
+        (WebCore::HTMLDataGridCellElement::setChecked):
+        (WebCore::HTMLDataGridCellElement::indeterminate):
+        (WebCore::HTMLDataGridCellElement::setIndeterminate):
+        (WebCore::HTMLDataGridCellElement::progress):
+        (WebCore::HTMLDataGridCellElement::setProgress):
+        * html/HTMLDataGridCellElement.h: Added.
+        (WebCore::HTMLDataGridCellElement::endTagRequirement):
+        (WebCore::HTMLDataGridCellElement::tagPriority):
+        * html/HTMLDataGridCellElement.idl: Added.
+        * html/HTMLDataGridElement.cpp:
+        (WebCore::HTMLDataGridElement::autofocus):
+        (WebCore::HTMLDataGridElement::setAutofocus):
+        (WebCore::HTMLDataGridElement::disabled):
+        (WebCore::HTMLDataGridElement::setDisabled):
+        (WebCore::HTMLDataGridElement::size):
+        (WebCore::HTMLDataGridElement::setSize):
+        * html/HTMLDataGridElement.h:
+        * html/HTMLDataGridElement.idl:
+        * html/HTMLDataGridRowElement.cpp:
+        (WebCore::HTMLDataGridRowElement::checkDTD):
+        (WebCore::HTMLDataGridRowElement::expanded):
+        (WebCore::HTMLDataGridRowElement::setExpanded):
+        * html/HTMLDataGridRowElement.h:
+        * html/HTMLDataGridRowElement.idl:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTagNames.in:
+
 2009-06-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

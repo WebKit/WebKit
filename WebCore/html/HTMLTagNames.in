@@ -26,6 +26,7 @@ code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
 datagrid interfaceName=HTMLDataGridElement
+dcell interfaceName=HTMLDataGridCellElement
 dcol interfaceName=HTMLDataGridColElement
 drow interfaceName=HTMLDataGridRowElement
 dd interfaceName=HTMLElement

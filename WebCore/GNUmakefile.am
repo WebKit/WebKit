@@ -168,6 +168,7 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLCanvasElement.idl \
 	WebCore/html/HTMLCollection.idl \
 	WebCore/html/HTMLDataGridElement.idl \
+	WebCore/html/HTMLDataGridCellElement.idl \
 	WebCore/html/HTMLDataGridColElement.idl \
 	WebCore/html/HTMLDataGridRowElement.idl \
 	WebCore/html/HTMLDListElement.idl \
@@ -921,6 +922,8 @@ webcore_sources += \
 	WebCore/html/HTMLCollection.h \
 	WebCore/html/HTMLDataGridElement.cpp \
 	WebCore/html/HTMLDataGridElement.h \
+	WebCore/html/HTMLDataGridCellElement.cpp \
+	WebCOre/html/HTMLDataGridCellElement.h \
 	WebCore/html/HTMLDataGridColElement.cpp \
 	WebCore/html/HTMLDataGridColElement.h \
 	WebCore/html/HTMLDataGridRowElement.cpp \

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "HTMLDataGridRowElement.h"
+#include "HTMLDataGridCellElement.h"
 
 #include "HTMLNames.h"
 #include "Text.h"
@@ -33,46 +33,60 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDataGridRowElement::HTMLDataGridRowElement(const QualifiedName& name, Document* doc)
+HTMLDataGridCellElement::HTMLDataGridCellElement(const QualifiedName& name, Document* doc)
     : HTMLElement(name, doc)
 {
 }
 
-bool HTMLDataGridRowElement::checkDTD(const Node* newChild)
+String HTMLDataGridCellElement::label() const
 {
-    if (newChild->isTextNode())
-        return static_cast<const Text*>(newChild)->containsOnlyWhitespace();
-    return newChild->hasTagName(drowTag) || newChild->hasTagName(dcellTag);
+    return getAttribute(labelAttr);
 }
 
-bool HTMLDataGridRowElement::selected() const
+void HTMLDataGridCellElement::setLabel(const String& label)
 {
-    return hasAttribute(selectedAttr);
+    setAttribute(labelAttr, label);
 }
 
-void HTMLDataGridRowElement::setSelected(bool selected)
-{
-    setAttribute(selectedAttr, selected ? "" : 0);
-}
-
-bool HTMLDataGridRowElement::focused() const
+bool HTMLDataGridCellElement::focused() const
 {
     return hasAttribute(focusedAttr);
 }
 
-void HTMLDataGridRowElement::setFocused(bool focused)
+void HTMLDataGridCellElement::setFocused(bool focused)
 {
     setAttribute(focusedAttr, focused ? "" : 0);
 }
 
-bool HTMLDataGridRowElement::expanded() const
+bool HTMLDataGridCellElement::checked() const
 {
-    return hasAttribute(expandedAttr);
+    return hasAttribute(checkedAttr);
 }
 
-void HTMLDataGridRowElement::setExpanded(bool expanded)
+void HTMLDataGridCellElement::setChecked(bool checked)
 {
-    setAttribute(expandedAttr, expanded ? "" : 0);
+    setAttribute(checkedAttr, checked ? "" : 0);
+}
+
+bool HTMLDataGridCellElement::indeterminate() const
+{
+    return hasAttribute(indeterminateAttr);
+}
+
+void HTMLDataGridCellElement::setIndeterminate(bool indeterminate)
+{
+    setAttribute(indeterminateAttr, indeterminate ? "" : 0);
+}
+
+float HTMLDataGridCellElement::progress() const
+{
+    return getAttribute(progressAttr).toInt();
+}
+
+void HTMLDataGridCellElement::setProgress(float progress)
+{
+    setAttribute(progressAttr, String::number(progress));
 }
 
 }
+

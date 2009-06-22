@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+#ifndef HTMLDataGridCellElement_h
+#define HTMLDataGridCellElement_h
 
-interface [GenerateConstructor] HTMLDataGridRowElement : HTMLElement {
-    attribute boolean selected; // Whether or not the row is currently selected.
-    attribute boolean focused; // Whether or not the row is the current object in the tree for keyboard navigation (or as the principal item of a multiple selection).
+#include "HTMLElement.h"
+
+namespace WebCore {
+
+class HTMLDataGridCellElement : public HTMLElement
+{
+public:
+    HTMLDataGridCellElement(const QualifiedName&, Document*);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
     
-    attribute boolean expanded; // Whether or not the row is open (if it is, child rows will be shown).
+    String label() const;
+    void setLabel(const String&);
+    
+    bool focused() const;
+    void setFocused(bool);
+
+    bool checked() const;
+    void setChecked(bool);
+    
+    bool indeterminate() const;
+    void setIndeterminate(bool);
+    
+    float progress() const;
+    void setProgress(float);
 };
 
-}
+} // namespace WebCore
+
+#endif // HTMLDataGridCellElement_h

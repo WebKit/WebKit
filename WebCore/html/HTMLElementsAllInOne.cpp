@@ -43,6 +43,7 @@
 #include "HTMLButtonElement.cpp"
 #include "HTMLCanvasElement.cpp"
 #include "HTMLDataGridElement.cpp"
+#include "HTMLDataGridCellElement.cpp"
 #include "HTMLDataGridColElement.cpp"
 #include "HTMLDataGridRowElement.cpp"
 #include "HTMLDListElement.cpp"
