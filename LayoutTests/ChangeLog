@@ -1,3 +1,16 @@
+2009-06-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=23606
+          <rdar://problem/6537777> CSS gradient not repainted when image load
+          completes
+
+        * fast/repaint/background-generated.html: Added.
+        * platform/mac/fast/repaint/background-generated-expected.checksum: Added.
+        * platform/mac/fast/repaint/background-generated-expected.png: Added.
+        * platform/mac/fast/repaint/background-generated-expected.txt: Added.
+
 2009-06-22  Darin Adler  <darin@apple.com>
 
         * platform/gtk/Skipped: Skip two new tests.

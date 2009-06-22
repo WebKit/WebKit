@@ -643,13 +643,16 @@ static bool mustRepaintFillLayers(const RenderObject* renderer, const FillLayer*
 
     // Make sure we have a valid image.
     StyleImage* img = layer->image();
-    bool shouldPaintBackgroundImage = img && img->canRender(renderer->style()->effectiveZoom());
+    if (!img || !img->canRender(renderer->style()->effectiveZoom()))
+        return false;
 
-    // These are always percents or auto.
-    if (shouldPaintBackgroundImage &&
-        (!layer->xPosition().isZero() || !layer->yPosition().isZero() ||
-         layer->size().width().isPercent() || layer->size().height().isPercent()))
-        // The image will shift unpredictably if the size changes.
+    if (!layer->xPosition().isZero() || !layer->yPosition().isZero())
+        return true;
+
+    if (layer->isSizeSet()) {
+        if (layer->size().width().isPercent() || layer->size().height().isPercent())
+            return true;
+    } else if (img->usesImageContainerSize())
         return true;
 
     return false;

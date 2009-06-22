@@ -1,3 +1,17 @@
+2009-06-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=23606
+          <rdar://problem/6537777> CSS gradient not repainted when image load
+          completes
+
+        Test: fast/repaint/background-generated.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::mustRepaintFillLayers): Return true if the layer does not
+        specify a size and the image uses the container size.
+
 2009-06-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
