@@ -1,3 +1,12 @@
+2009-06-22  Timothy Hatcher  <timothy@apple.com>
+
+        Add a silhouette image for the enable view of the Resource panel.
+
+        Reviewed by Kevin McCullough.
+
+        * inspector/front-end/Images/resourcesSilhouette.png: Added.
+        * inspector/front-end/inspector.css:
+
 2009-06-22  Kyle Prete  <kylep@chromium.org>
 
         Reviewed by Dimitri Glazkov.

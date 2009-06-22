@@ -2006,7 +2006,7 @@ body.inactive .panel-enabler-view button, .panel-enabler-view button:disabled {
 }
 
 .panel-enabler-view.resources img {
-    content: url(Images/scriptsSilhouette.png);
+    content: url(Images/resourcesSilhouette.png);
 }
 
 .panel-enabler-view.scripts img {
