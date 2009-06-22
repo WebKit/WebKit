@@ -2,6 +2,16 @@
 
         Reviewed by Sam Weinig.
 
+        Set a sensible user agent string for the HTTP requests that Sparkle makes (checking for and downloading updates).
+
+        * WebKitLauncher/WebKitNightlyEnablerSparkle.m:
+        (userAgentStringForSparkle):
+        (initializeSparkle):
+
+2009-06-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add a hook to the WebKit launcher application to allow a link on the nightly build start page to
         trigger an update via the built-in software update mechanism.
 

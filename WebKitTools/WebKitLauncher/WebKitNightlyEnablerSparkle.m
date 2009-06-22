@@ -122,6 +122,17 @@ static void setMethodImplementation(Method m, IMP imp)
 
 #endif
 
+static NSString *userAgentStringForSparkle()
+{
+    NSBundle *safariBundle = [NSBundle mainBundle];
+    NSString *safariVersion = [[safariBundle localizedInfoDictionary] valueForKey:@"CFBundleShortVersionString"];
+    NSString *safariBuild = [[[safariBundle infoDictionary] valueForKey:(NSString *)kCFBundleVersionKey] substringFromIndex:1];
+    NSString *webKitRevision = [[webKitLauncherBundle() infoDictionary] valueForKey:(NSString *)kCFBundleVersionKey];
+    NSString *applicationName = [NSString stringWithFormat:@"Version/%@ Safari/%@ WebKitRevision/%@", safariVersion, safariBuild, webKitRevision];
+    Class WebView = objc_lookUpClass("WebView");
+    return objc_msgSend(WebView, @selector(_standardUserAgentWithApplicationName:), applicationName);
+}
+
 void initializeSparkle()
 {
     // Override some Sparkle behaviour
@@ -135,6 +146,7 @@ void initializeSparkle()
     setMethodImplementation(methodToPatch, (IMP)updateAlertInitForAlertPanel);
 
     SUUpdater *updater = [SUUpdater updaterForBundle:webKitLauncherBundle()];
+    [updater setUserAgentString:userAgentStringForSparkle()];
 
     // Find the first separator on the Safari menu…
     NSMenu *applicationSubmenu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
