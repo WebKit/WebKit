@@ -11,6 +11,26 @@ function (jsonObject) {
     }
 PASS tests[i](nativeJSON) is tests[i](JSON)
 function (jsonObject) {
+        return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ return {}; }});
+    }
+PASS tests[i](nativeJSON) threw exception TypeError: toISOString did not return a primitive value.
+function (jsonObject) {
+        return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ throw "An exception"; }});
+    }
+PASS tests[i](nativeJSON) threw exception An exception.
+function (jsonObject) {
+        var d = new Date(0);
+        d.toISOString = null;
+        return jsonObject.stringify(d);
+    }
+PASS tests[i](nativeJSON) threw exception TypeError: toISOString is not a function.
+function (jsonObject) {
+        var d = new Date(0);
+        d.toJSON = undefined;
+        return jsonObject.stringify(d);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
         return jsonObject.stringify({get Foo() { return "bar"; }});
     }
 PASS tests[i](nativeJSON) is tests[i](JSON)
