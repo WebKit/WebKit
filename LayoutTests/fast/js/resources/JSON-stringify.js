@@ -6,6 +6,35 @@ function createTests() {
     var complexObject = {a:"1", b:"2", c:"3", d:undefined, e:null, "":12, get f(){ return simpleArray; }, array: complexArray};
     var result = [];
     result.push(function(jsonObject){
+        return jsonObject.stringify(new Date(0));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify({toJSON: Date.prototype.toJSON});
+    });
+    result[result.length - 1].throws = true;
+    result.push(function(jsonObject){
+        return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ return "custom toISOString"; }});
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ return {}; }});
+    });
+    result[result.length - 1].throws = true;
+    result.push(function(jsonObject){
+        return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ throw "An exception"; }});
+    });
+    result[result.length - 1].throws = true;
+    result.push(function(jsonObject){
+        var d = new Date(0);
+        d.toISOString = null;
+        return jsonObject.stringify(d);
+    });
+    result[result.length - 1].throws = true;
+    result.push(function(jsonObject){
+        var d = new Date(0);
+        d.toJSON = undefined;
+        return jsonObject.stringify(d);
+    });
+    result.push(function(jsonObject){
         return jsonObject.stringify({get Foo() { return "bar"; }});
     });
     result.push(function(jsonObject){

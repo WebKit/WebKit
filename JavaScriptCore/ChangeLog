@@ -1,5 +1,17 @@
 2009-06-21  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Bug 26592: Support standard toJSON functions
+        <https://bugs.webkit.org/show_bug.cgi?id=26592>
+
+        Add support for the standard Date.toJSON function.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToJSON):
+
+2009-06-21  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 26594: JSC needs to support Date.toISOString

@@ -59,6 +59,7 @@
     macro(test) \
     macro(toExponential) \
     macro(toFixed) \
+    macro(toISOString) \
     macro(toJSON) \
     macro(toLocaleString) \
     macro(toPrecision) \

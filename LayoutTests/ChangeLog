@@ -1,5 +1,18 @@
 2009-06-21  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Bug 26592: Support standard toJSON functions
+
+        Add tests of Date.toJSON.
+
+        * fast/js/JSON-stringify-expected.txt:
+        * fast/js/resources/JSON-stringify.js:
+        (createTests.result):
+        (createTests.result.push.):
+
+2009-06-21  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 26594: JSC needs to support Date.toISOString

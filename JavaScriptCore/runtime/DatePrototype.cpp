@@ -115,6 +115,8 @@ static JSValue JSC_HOST_CALL dateProtoFuncToTimeString(ExecState*, JSObject*, JS
 static JSValue JSC_HOST_CALL dateProtoFuncToUTCString(ExecState*, JSObject*, JSValue, const ArgList&);
 static JSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState*, JSObject*, JSValue, const ArgList&);
 
+static JSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState*, JSObject*, JSValue, const ArgList&);
+
 }
 
 #include "DatePrototype.lut.h"
@@ -387,6 +389,7 @@ const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, 0, ExecState
   setUTCFullYear        dateProtoFuncSetUTCFullYear          DontEnum|Function       3
   setYear               dateProtoFuncSetYear                 DontEnum|Function       1
   getYear               dateProtoFuncGetYear                 DontEnum|Function       0
+  toJSON                dateProtoFuncToJSON                  DontEnum|Function       0
 @end
 */
 
@@ -1074,6 +1077,29 @@ JSValue JSC_HOST_CALL dateProtoFuncGetYear(ExecState* exec, JSObject*, JSValue t
 
     // NOTE: IE returns the full year even in getYear.
     return jsNumber(exec, t.year);
+}
+
+JSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec, JSObject*, JSValue thisValue, const ArgList&)
+{
+    JSObject* object = thisValue.toThisObject(exec);
+    if (exec->hadException())
+        return jsNull();
+    
+    JSValue toISOValue = object->get(exec, exec->globalData().propertyNames->toISOString);
+    if (exec->hadException())
+        return jsNull();
+
+    CallData callData;
+    CallType callType = toISOValue.getCallData(callData);
+    if (callType == CallTypeNone)
+        return throwError(exec, TypeError, "toISOString is not a function");
+
+    JSValue result = call(exec, asObject(toISOValue), callType, callData, object, exec->emptyList());
+    if (exec->hadException())
+        return jsNull();
+    if (result.isObject())
+        return throwError(exec, TypeError, "toISOString did not return a primitive value");
+    return result;
 }
 
 } // namespace JSC

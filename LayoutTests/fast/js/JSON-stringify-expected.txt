@@ -1,4 +1,16 @@
 function (jsonObject) {
+        return jsonObject.stringify(new Date(0));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify({toJSON: Date.prototype.toJSON});
+    }
+PASS tests[i](nativeJSON) threw exception TypeError: toISOString is not a function.
+function (jsonObject) {
+        return jsonObject.stringify({toJSON: Date.prototype.toJSON, toISOString: function(){ return "custom toISOString"; }});
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
         return jsonObject.stringify({get Foo() { return "bar"; }});
     }
 PASS tests[i](nativeJSON) is tests[i](JSON)
