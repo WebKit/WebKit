@@ -1,3 +1,26 @@
+2009-06-22  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Eric Seidel
+
+        Not auto-testable since it involves sending a keyboard event to
+        the popup, which is not possible (eventSender sends the key
+        events through webview, we want to go through the webwidget).
+
+        This patch is one part of the fix for issue "keyboard selection in
+        Hebrew select element does not work in Windows". The other part of the
+        fix is in chromium's webkit/glue layer.
+        https://bugs.webkit.org/show_bug.cgi?id=25899
+
+        * manual-tests/keyboard_select_non_english.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::isCharacterTypeEvent): Added. Check whether the event is a 
+        character type event. "Char" in Windows or "KeyDown" in Mac is character
+        type event.
+        (WebCore::PopupListBox::typeAheadFind): Since m_lastCharTime is used to
+        indicate whether user types multiple characters continuely as a search
+        prefix or not, it should be only assigned when the event is character 
+        type event. 
+
 2009-06-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin Adler.

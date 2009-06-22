@@ -688,13 +688,32 @@ static String stripLeadingWhiteSpace(const String& string)
     return string.substring(i, length - i);
 }
 
+static bool isCharacterTypeEvent(const PlatformKeyboardEvent& event) {
+    // Check whether the event is a character-typed event or not. 
+    // In Windows, PlatformKeyboardEvent::Char (not RawKeyDown) type event
+    // is considered as character type event. In Mac OS, KeyDown (not 
+    // KeyUp) is considered as character type event.
+#if PLATFORM(WIN_OS)
+    if (event.type() == PlatformKeyboardEvent::Char)
+        return true;
+#else
+    if (event.type() == PlatformKeyboardEvent::KeyDown)
+        return true;
+#endif
+    return false;
+}
+
 // From HTMLSelectElement.cpp, with modifications
 void PopupListBox::typeAheadFind(const PlatformKeyboardEvent& event)
 {
     TimeStamp now = static_cast<TimeStamp>(currentTime() * 1000.0f);
     TimeStamp delta = now - m_lastCharTime;
 
-    m_lastCharTime = now;
+    // Reset the time when user types in a character. The time gap between
+    // last character and the current character is used to indicate whether
+    // user typed in a string or just a character as the search prefix.
+    if (isCharacterTypeEvent(event))
+        m_lastCharTime = now;
 
     UChar c = event.windowsVirtualKeyCode();
 
