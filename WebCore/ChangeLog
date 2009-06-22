@@ -1,3 +1,46 @@
+2009-06-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26601
+        Remove disabled code for appcache dynamic entries
+
+        This also removes code for DOM 3 Core DOMStringList, which we don't use for anything else yet.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDOMStringListCustom.cpp: Removed.
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DOMStringListCustom.cpp: Removed.
+        * dom/DOMStringList.cpp: Removed.
+        * dom/DOMStringList.h: Removed.
+        * dom/DOMStringList.idl: Removed.
+        * dom/StaticStringList.cpp: Removed.
+        * dom/StaticStringList.h: Removed.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::shouldLoadResourceFromApplicationCache):
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::addResource):
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        * loader/appcache/ApplicationCacheResource.cpp:
+        (WebCore::ApplicationCacheResource::dumpType):
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::storeUpdatedType):
+        * loader/appcache/DOMApplicationCache.cpp:
+        * loader/appcache/DOMApplicationCache.h:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/DOMWindow.idl:
+
 2009-06-22  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
@@ -14,7 +57,7 @@
 
         WebKit uses a per-frame input context for most editable fields, and application's global
         context for password fields, manually controlling secure input state and the list of available
-        input methods.
+        input sources.
 
         We were setting TSMDocument property to disable non-Roman input methods after focus changed
         to a password field, but before selection was updated. This resulted in the property being

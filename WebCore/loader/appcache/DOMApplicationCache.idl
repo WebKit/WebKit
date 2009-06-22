@@ -43,17 +43,6 @@ module offline {
         void swapCache()
             raises(DOMException);
 
-#if defined(ENABLE_APPLICATION_CACHE_DYNAMIC_ENTRIES) && ENABLE_APPLICATION_CACHE_DYNAMIC_ENTRIES
-        // dynamic entries
-        readonly attribute DOMStringList items;
-        [Custom] boolean hasItem(in DOMString url)
-            raises(DOMException);
-        [Custom] void add(in DOMString uri)
-            raises(DOMException);
-        [Custom] void remove(in DOMString uri)
-            raises(DOMException);
-#endif
-
         // events
         attribute EventListener onchecking;
         attribute EventListener onerror;

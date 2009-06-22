@@ -57,8 +57,6 @@ void ApplicationCacheResource::dumpType(unsigned type)
         printf("foreign ");
     if (type & Fallback)
         printf("fallback ");
-    if (type & Dynamic)
-        printf("dynamic ");
     
     printf("\n");
 }

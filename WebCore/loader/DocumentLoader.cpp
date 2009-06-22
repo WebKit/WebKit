@@ -883,7 +883,7 @@ bool DocumentLoader::shouldLoadResourceFromApplicationCache(const ResourceReques
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return false;
 
-    // If the resource's URL is an master entry, the manifest, an explicit entry, a fallback entry, or a dynamic entry
+    // If the resource's URL is an master entry, the manifest, an explicit entry, or a fallback entry
     // in the application cache, then get the resource from the cache (instead of fetching it).
     resource = cache->resourceForURL(request.url());
 

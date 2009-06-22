@@ -404,9 +404,6 @@ namespace WebCore {
 
         DECLARE_CALLBACK(HTMLFormElementSubmit);
 
-        DECLARE_INDEXED_PROPERTY_GETTER(DOMStringList);
-        DECLARE_CALLBACK(DOMStringListItem);
-
         DECLARE_NAMED_PROPERTY_GETTER(DOMWindow);
         DECLARE_INDEXED_PROPERTY_GETTER(DOMWindow);
         DECLARE_NAMED_ACCESS_CHECK(DOMWindow);

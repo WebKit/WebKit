@@ -2242,54 +2242,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMStringList.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMStringList.h"
-				>
-			</File>
-			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMWindow.cpp"
 				>
 				<FileConfiguration
@@ -23163,14 +23115,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\DOMStringList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\DOMStringList.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\DynamicNodeList.cpp"
 				>
 			</File>
@@ -23544,14 +23488,6 @@
 			</File>
 			<File
 				RelativePath="..\dom\StaticNodeList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\StaticStringList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\StaticStringList.h"
 				>
 			</File>
 			<File
@@ -27927,10 +27863,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDOMGlobalObject.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSDOMStringListCustom.cpp"
 					>
 				</File>
 				<File

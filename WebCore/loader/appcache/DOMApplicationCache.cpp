@@ -38,7 +38,6 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "StaticStringList.h"
 
 namespace WebCore {
 
@@ -125,65 +124,6 @@ void DOMApplicationCache::swapCache(ExceptionCode& ec)
 {
     if (!swapCache())
         ec = INVALID_STATE_ERR;
-}
-
-PassRefPtr<DOMStringList> DOMApplicationCache::items()
-{
-    Vector<String> result;
-    if (ApplicationCache* cache = associatedCache()) {
-        unsigned numEntries = cache->numDynamicEntries();
-        result.reserveInitialCapacity(numEntries);
-        for (unsigned i = 0; i < numEntries; ++i)
-            result.append(cache->dynamicEntry(i));
-    }
-    return StaticStringList::adopt(result);
-}
-
-bool DOMApplicationCache::hasItem(const KURL& url, ExceptionCode& ec)
-{
-    ApplicationCache* cache = associatedCache();
-    if (!cache) {
-        ec = INVALID_STATE_ERR;
-        return false;
-    }
-
-    if (!url.isValid()) {
-        ec = SYNTAX_ERR;
-        return false;
-    }
-
-    ApplicationCacheResource* resource = cache->resourceForURL(url.string());
-    return resource && (resource->type() & ApplicationCacheResource::Dynamic);
-}
-    
-void DOMApplicationCache::add(const KURL& url, ExceptionCode& ec)
-{
-    ApplicationCache* cache = associatedCache();
-    if (!cache) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
- 
-    if (!url.isValid()) {
-        ec = SYNTAX_ERR;
-        return;
-    }
-        
-    if (!cache->addDynamicEntry(url)) {
-        // This should use the (currently not specified) security exceptions in HTML5 4.3.4
-        ec = SECURITY_ERR;
-    }
-}
-
-void DOMApplicationCache::remove(const KURL& url, ExceptionCode& ec)
-{
-    ApplicationCache* cache = associatedCache();
-    if (!cache) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-    
-    cache->removeDynamicEntry(url);
 }
 
 ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const

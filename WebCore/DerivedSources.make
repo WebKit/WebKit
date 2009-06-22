@@ -80,7 +80,6 @@ DOM_CLASSES = \
     DOMImplementation \
     DOMParser \
     DOMSelection \
-    DOMStringList \
     DOMWindow \
     Database \
     Document \

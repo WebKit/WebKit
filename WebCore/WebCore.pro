@@ -296,7 +296,6 @@ IDL_BINDINGS += \
     dom/DocumentType.idl \
     dom/DOMCoreException.idl \
     dom/DOMImplementation.idl \
-    dom/DOMStringList.idl \
     dom/Element.idl \
     dom/Entity.idl \
     dom/EntityReference.idl \
@@ -463,7 +462,6 @@ SOURCES += \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDocumentFragmentCustom.cpp \
     bindings/js/JSDOMGlobalObject.cpp \
-    bindings/js/JSDOMStringListCustom.cpp \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSDOMWindowShell.cpp \
@@ -625,7 +623,6 @@ SOURCES += \
     dom/DocumentFragment.cpp \
     dom/DocumentType.cpp \
     dom/DOMImplementation.cpp \
-    dom/DOMStringList.cpp \
     dom/DynamicNodeList.cpp \
     dom/EditingText.cpp \
     dom/Element.cpp \
@@ -669,7 +666,6 @@ SOURCES += \
     dom/SelectElement.cpp \
     dom/SelectorNodeList.cpp \
     dom/StaticNodeList.cpp \
-    dom/StaticStringList.cpp \
     dom/StyledElement.cpp \
     dom/StyleElement.cpp \
     dom/TagNodeList.cpp \

@@ -615,9 +615,6 @@ bool ApplicationCacheStorage::storeUpdatedType(ApplicationCacheResource* resourc
     ASSERT_UNUSED(cache, cache->storageID());
     ASSERT(resource->storageID());
 
-    // FIXME: If the resource gained a Dynamic bit, it should be re-inserted at the end for correct order.
-    ASSERT(!(resource->type() & ApplicationCacheResource::Dynamic));
-    
     // First, insert the data
     SQLiteStatement entryStatement(m_database, "UPDATE CacheEntries SET type=? WHERE resource=?");
     if (entryStatement.prepare() != SQLResultOk)

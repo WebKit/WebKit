@@ -631,7 +631,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         ApplicationCache::ResourceMap::const_iterator end = m_newestCache->end();
         for (ApplicationCache::ResourceMap::const_iterator it = m_newestCache->begin(); it != end; ++it) {
             unsigned type = it->second->type();
-            if (type & (ApplicationCacheResource::Master | ApplicationCacheResource::Dynamic))
+            if (type & ApplicationCacheResource::Master)
                 addEntry(it->first, type);
         }
     }
