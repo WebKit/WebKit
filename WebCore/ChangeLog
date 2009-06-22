@@ -1,3 +1,24 @@
+2009-06-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/6956606> REGRESSION (S4Beta -> Final): After the password is input,
+        Japanese can't be input.
+
+        WebKit uses a per-frame input context for most editable fields, and application's global
+        context for password fields, manually controlling secure input state and the list of available
+        input methods.
+
+        We were setting TSMDocument property to disable non-Roman input methods after focus changed
+        to a password field, but before selection was updated. This resulted in the property being
+        applied to a wrong TSMDocument in some cases, because TSMGetActiveDocument() uses input
+        context cached by +[NSApplication updateWindows], we change context based on selection,
+        not on focus.
+
+        * page/mac/FrameMac.mm: (WebCore::Frame::setUseSecureKeyboardEntry): Since there is only one
+        context that we use for password fields - the global one - there is no need to get the active
+        one.
+
 2009-06-22  David Levin  <levin@chromium.org>
 
         Reviewed by David Hyatt and Eric Seidel.

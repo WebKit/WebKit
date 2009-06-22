@@ -5781,7 +5781,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         _private->exposeInputContext = exposeInputContext;
         // Let AppKit cache a potentially changed input context.
         // WebCore routinely sets the selection to None when editing, and IMs become unhappy when an input context suddenly turns nil, see bug 26009.
-        if (!coreFrame || !coreFrame->selection()->isNone())
+        if (!coreFrame->selection()->isNone())
             [NSApp updateWindows];
     }
 

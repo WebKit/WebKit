@@ -470,8 +470,11 @@ void Frame::setUseSecureKeyboardEntry(bool enable)
 #ifdef BUILDING_ON_TIGER
         KeyScript(enableRomanKeyboardsOnly);
 #else
+        // WebKit substitutes nil for input context when in password field, which corresponds to null TSMDocument. So, there is
+        // no need to call TSMGetActiveDocument(), which may return an incorrect result when selection hasn't been yet updated
+        // after focusing a node.
         CFArrayRef inputSources = TISCreateASCIICapableInputSourceList();
-        TSMSetDocumentProperty(TSMGetActiveDocument(), kTSMDocumentEnabledInputSourcesPropertyTag, sizeof(CFArrayRef), &inputSources);
+        TSMSetDocumentProperty(0, kTSMDocumentEnabledInputSourcesPropertyTag, sizeof(CFArrayRef), &inputSources);
         CFRelease(inputSources);
 #endif
     } else {
@@ -479,7 +482,7 @@ void Frame::setUseSecureKeyboardEntry(bool enable)
 #ifdef BUILDING_ON_TIGER
         KeyScript(smKeyEnableKybds);
 #else
-        TSMRemoveDocumentProperty(TSMGetActiveDocument(), kTSMDocumentEnabledInputSourcesPropertyTag);
+        TSMRemoveDocumentProperty(0, kTSMDocumentEnabledInputSourcesPropertyTag);
 #endif
     }
 }
