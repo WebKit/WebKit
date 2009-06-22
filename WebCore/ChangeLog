@@ -1,3 +1,13 @@
+2009-06-22  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26622
+        Add ChromiumDataObject::copy()
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        * platform/chromium/ChromiumDataObject.h:
+
 2009-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Add a silhouette image for the enable view of the Resource panel.

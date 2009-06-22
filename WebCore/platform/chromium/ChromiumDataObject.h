@@ -48,8 +48,13 @@ namespace WebCore {
             return adoptRef(new ChromiumDataObject);
         }
 
+        PassRefPtr<ChromiumDataObject> copy() const
+        {
+            return adoptRef(new ChromiumDataObject(*this));
+        }
+
         void clear();
-        bool hasData();
+        bool hasData() const;
 
         KURL url;
         String urlTitle;
@@ -67,6 +72,7 @@ namespace WebCore {
 
     private:
         ChromiumDataObject() {}
+        ChromiumDataObject(const ChromiumDataObject&);
     };
 
 } // namespace WebCore
