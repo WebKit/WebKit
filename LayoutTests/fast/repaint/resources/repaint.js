@@ -5,6 +5,6 @@ function runRepaintTest()
         layoutTestController.display();
         repaintTest();
     } else {
-        setTimeout(repaintTest, 0);
+        setTimeout(repaintTest, 100);
     }
 }

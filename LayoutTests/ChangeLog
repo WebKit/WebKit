@@ -1,3 +1,13 @@
+2009-06-21  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        - make repaint tests more reliable when run in Safari
+
+        * fast/repaint/resources/repaint.js:
+        (runRepaintTest): Increased the timeout from 0 to 100, to ensure that
+        painting occurs once before repaintTest() is called.
+
 2009-06-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler and Cameron Zwarich.
