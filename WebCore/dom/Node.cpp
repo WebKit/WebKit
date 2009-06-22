@@ -3097,66 +3097,6 @@ void Node::setOnmousewheel(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().mousewheelEvent, eventListener);
 }
 
-EventListener* Node::onbeforecut() const
-{
-    return getAttributeEventListener(eventNames().beforecutEvent);
-}
-
-void Node::setOnbeforecut(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().beforecutEvent, eventListener);
-}
-
-EventListener* Node::oncut() const
-{
-    return getAttributeEventListener(eventNames().cutEvent);
-}
-
-void Node::setOncut(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().cutEvent, eventListener);
-}
-
-EventListener* Node::onbeforecopy() const
-{
-    return getAttributeEventListener(eventNames().beforecopyEvent);
-}
-
-void Node::setOnbeforecopy(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().beforecopyEvent, eventListener);
-}
-
-EventListener* Node::oncopy() const
-{
-    return getAttributeEventListener(eventNames().copyEvent);
-}
-
-void Node::setOncopy(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().copyEvent, eventListener);
-}
-
-EventListener* Node::onbeforepaste() const
-{
-    return getAttributeEventListener(eventNames().beforepasteEvent);
-}
-
-void Node::setOnbeforepaste(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().beforepasteEvent, eventListener);
-}
-
-EventListener* Node::onpaste() const
-{
-    return getAttributeEventListener(eventNames().pasteEvent);
-}
-
-void Node::setOnpaste(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().pasteEvent, eventListener);
-}
-
 EventListener* Node::ondragenter() const
 {
     return getAttributeEventListener(eventNames().dragenterEvent);
@@ -3227,6 +3167,96 @@ void Node::setOndragend(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().dragendEvent, eventListener);
 }
 
+EventListener* Node::onscroll() const
+{
+    return getAttributeEventListener(eventNames().scrollEvent);
+}
+
+void Node::setOnscroll(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().scrollEvent, eventListener);
+}
+
+EventListener* Node::onselect() const
+{
+    return getAttributeEventListener(eventNames().selectEvent);
+}
+
+void Node::setOnselect(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().selectEvent, eventListener);
+}
+
+EventListener* Node::onsubmit() const
+{
+    return getAttributeEventListener(eventNames().submitEvent);
+}
+
+void Node::setOnsubmit(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().submitEvent, eventListener);
+}
+
+EventListener* Node::onbeforecut() const
+{
+    return getAttributeEventListener(eventNames().beforecutEvent);
+}
+
+void Node::setOnbeforecut(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().beforecutEvent, eventListener);
+}
+
+EventListener* Node::oncut() const
+{
+    return getAttributeEventListener(eventNames().cutEvent);
+}
+
+void Node::setOncut(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().cutEvent, eventListener);
+}
+
+EventListener* Node::onbeforecopy() const
+{
+    return getAttributeEventListener(eventNames().beforecopyEvent);
+}
+
+void Node::setOnbeforecopy(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().beforecopyEvent, eventListener);
+}
+
+EventListener* Node::oncopy() const
+{
+    return getAttributeEventListener(eventNames().copyEvent);
+}
+
+void Node::setOncopy(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().copyEvent, eventListener);
+}
+
+EventListener* Node::onbeforepaste() const
+{
+    return getAttributeEventListener(eventNames().beforepasteEvent);
+}
+
+void Node::setOnbeforepaste(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().beforepasteEvent, eventListener);
+}
+
+EventListener* Node::onpaste() const
+{
+    return getAttributeEventListener(eventNames().pasteEvent);
+}
+
+void Node::setOnpaste(PassRefPtr<EventListener> eventListener)
+{
+    setAttributeEventListener(eventNames().pasteEvent, eventListener);
+}
+
 EventListener* Node::onreset() const
 {
     return getAttributeEventListener(eventNames().resetEvent);
@@ -3247,16 +3277,6 @@ void Node::setOnresize(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().resizeEvent, eventListener);
 }
 
-EventListener* Node::onscroll() const
-{
-    return getAttributeEventListener(eventNames().scrollEvent);
-}
-
-void Node::setOnscroll(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().scrollEvent, eventListener);
-}
-
 EventListener* Node::onsearch() const
 {
     return getAttributeEventListener(eventNames().searchEvent);
@@ -3267,16 +3287,6 @@ void Node::setOnsearch(PassRefPtr<EventListener> eventListener)
     setAttributeEventListener(eventNames().searchEvent, eventListener);
 }
 
-EventListener* Node::onselect() const
-{
-    return getAttributeEventListener(eventNames().selectEvent);
-}
-
-void Node::setOnselect(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().selectEvent, eventListener);
-}
-
 EventListener* Node::onselectstart() const
 {
     return getAttributeEventListener(eventNames().selectstartEvent);
@@ -3285,16 +3295,6 @@ EventListener* Node::onselectstart() const
 void Node::setOnselectstart(PassRefPtr<EventListener> eventListener)
 {
     setAttributeEventListener(eventNames().selectstartEvent, eventListener);
-}
-
-EventListener* Node::onsubmit() const
-{
-    return getAttributeEventListener(eventNames().submitEvent);
-}
-
-void Node::setOnsubmit(PassRefPtr<EventListener> eventListener)
-{
-    setAttributeEventListener(eventNames().submitEvent, eventListener);
 }
 
 EventListener* Node::onunload() const

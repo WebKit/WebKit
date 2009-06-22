@@ -1,0 +1,176 @@
+This test that the DOM attribute event handlers are avaiable on the only elements and documents, and not all other nodes such as attributes and text nodes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test Element
+PASS 'onabort' in element is true
+PASS 'onblur' in element is true
+PASS 'onchange' in element is true
+PASS 'onclick' in element is true
+PASS 'oncontextmenu' in element is true
+PASS 'ondblclick' in element is true
+PASS 'ondrag' in element is true
+PASS 'ondragend' in element is true
+PASS 'ondragenter' in element is true
+PASS 'ondragleave' in element is true
+PASS 'ondragover' in element is true
+PASS 'ondragstart' in element is true
+PASS 'ondrop' in element is true
+PASS 'onerror' in element is true
+PASS 'onfocus' in element is true
+PASS 'oninput' in element is true
+PASS 'onkeydown' in element is true
+PASS 'onkeypress' in element is true
+PASS 'onkeyup' in element is true
+PASS 'onload' in element is true
+PASS 'onmousedown' in element is true
+PASS 'onmousemove' in element is true
+PASS 'onmouseout' in element is true
+PASS 'onmouseover' in element is true
+PASS 'onmouseup' in element is true
+PASS 'onmousewheel' in element is true
+PASS 'onscroll' in element is true
+PASS 'onselect' in element is true
+PASS 'onsubmit' in element is true
+PASS 'onbeforecut' in element is true
+PASS 'oncut' in element is true
+PASS 'onbeforecopy' in element is true
+PASS 'oncopy' in element is true
+PASS 'onbeforepaste' in element is true
+PASS 'onpaste' in element is true
+PASS 'onreset' in element is true
+PASS 'onresize' in element is true
+PASS 'onsearch' in element is true
+PASS 'onselectstart' in element is true
+PASS 'onunload' in element is true
+
+Test Document
+PASS 'onabort' in document is true
+PASS 'onblur' in document is true
+PASS 'onchange' in document is true
+PASS 'onclick' in document is true
+PASS 'oncontextmenu' in document is true
+PASS 'ondblclick' in document is true
+PASS 'ondrag' in document is true
+PASS 'ondragend' in document is true
+PASS 'ondragenter' in document is true
+PASS 'ondragleave' in document is true
+PASS 'ondragover' in document is true
+PASS 'ondragstart' in document is true
+PASS 'ondrop' in document is true
+PASS 'onerror' in document is true
+PASS 'onfocus' in document is true
+PASS 'oninput' in document is true
+PASS 'onkeydown' in document is true
+PASS 'onkeypress' in document is true
+PASS 'onkeyup' in document is true
+PASS 'onload' in document is true
+PASS 'onmousedown' in document is true
+PASS 'onmousemove' in document is true
+PASS 'onmouseout' in document is true
+PASS 'onmouseover' in document is true
+PASS 'onmouseup' in document is true
+PASS 'onmousewheel' in document is true
+PASS 'onscroll' in document is true
+PASS 'onselect' in document is true
+PASS 'onsubmit' in document is true
+PASS 'onbeforecut' in document is true
+PASS 'oncut' in document is true
+PASS 'onbeforecopy' in document is true
+PASS 'oncopy' in document is true
+PASS 'onbeforepaste' in document is true
+PASS 'onpaste' in document is true
+PASS 'onreset' in document is true
+PASS 'onresize' in document is true
+PASS 'onsearch' in document is true
+PASS 'onselectstart' in document is true
+PASS 'onunload' in document is true
+
+Test Text Node
+PASS 'onabort' in textNode is false
+PASS 'onblur' in textNode is false
+PASS 'onchange' in textNode is false
+PASS 'onclick' in textNode is false
+PASS 'oncontextmenu' in textNode is false
+PASS 'ondblclick' in textNode is false
+PASS 'ondrag' in textNode is false
+PASS 'ondragend' in textNode is false
+PASS 'ondragenter' in textNode is false
+PASS 'ondragleave' in textNode is false
+PASS 'ondragover' in textNode is false
+PASS 'ondragstart' in textNode is false
+PASS 'ondrop' in textNode is false
+PASS 'onerror' in textNode is false
+PASS 'onfocus' in textNode is false
+PASS 'oninput' in textNode is false
+PASS 'onkeydown' in textNode is false
+PASS 'onkeypress' in textNode is false
+PASS 'onkeyup' in textNode is false
+PASS 'onload' in textNode is false
+PASS 'onmousedown' in textNode is false
+PASS 'onmousemove' in textNode is false
+PASS 'onmouseout' in textNode is false
+PASS 'onmouseover' in textNode is false
+PASS 'onmouseup' in textNode is false
+PASS 'onmousewheel' in textNode is false
+PASS 'onscroll' in textNode is false
+PASS 'onselect' in textNode is false
+PASS 'onsubmit' in textNode is false
+PASS 'onbeforecut' in textNode is false
+PASS 'oncut' in textNode is false
+PASS 'onbeforecopy' in textNode is false
+PASS 'oncopy' in textNode is false
+PASS 'onbeforepaste' in textNode is false
+PASS 'onpaste' in textNode is false
+PASS 'onreset' in textNode is false
+PASS 'onresize' in textNode is false
+PASS 'onsearch' in textNode is false
+PASS 'onselectstart' in textNode is false
+PASS 'onunload' in textNode is false
+
+Test Attribute
+PASS 'onabort' in attribute is false
+PASS 'onblur' in attribute is false
+PASS 'onchange' in attribute is false
+PASS 'onclick' in attribute is false
+PASS 'oncontextmenu' in attribute is false
+PASS 'ondblclick' in attribute is false
+PASS 'ondrag' in attribute is false
+PASS 'ondragend' in attribute is false
+PASS 'ondragenter' in attribute is false
+PASS 'ondragleave' in attribute is false
+PASS 'ondragover' in attribute is false
+PASS 'ondragstart' in attribute is false
+PASS 'ondrop' in attribute is false
+PASS 'onerror' in attribute is false
+PASS 'onfocus' in attribute is false
+PASS 'oninput' in attribute is false
+PASS 'onkeydown' in attribute is false
+PASS 'onkeypress' in attribute is false
+PASS 'onkeyup' in attribute is false
+PASS 'onload' in attribute is false
+PASS 'onmousedown' in attribute is false
+PASS 'onmousemove' in attribute is false
+PASS 'onmouseout' in attribute is false
+PASS 'onmouseover' in attribute is false
+PASS 'onmouseup' in attribute is false
+PASS 'onmousewheel' in attribute is false
+PASS 'onscroll' in attribute is false
+PASS 'onselect' in attribute is false
+PASS 'onsubmit' in attribute is false
+PASS 'onbeforecut' in attribute is false
+PASS 'oncut' in attribute is false
+PASS 'onbeforecopy' in attribute is false
+PASS 'oncopy' in attribute is false
+PASS 'onbeforepaste' in attribute is false
+PASS 'onpaste' in attribute is false
+PASS 'onreset' in attribute is false
+PASS 'onresize' in attribute is false
+PASS 'onsearch' in attribute is false
+PASS 'onselectstart' in attribute is false
+PASS 'onunload' in attribute is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,14 @@
+2009-06-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=26596
+        Only expose event handler attributes to elements and documents.
+
+        * fast/dom/event-attribute-availability-expected.txt: Added.
+        * fast/dom/event-attribute-availability.html: Added.
+        * fast/dom/resources/event-attribute-availability.js: Added.
+
 2009-06-21  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,18 @@
+2009-06-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26596
+        Only expose event handler attributes to elements and documents.
+
+        Test: fast/dom/event-attribute-availability.html
+
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/Node.idl:
+
 2009-06-21  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.
