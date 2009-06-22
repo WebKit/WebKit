@@ -1,3 +1,17 @@
+2009-06-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - speculative fix for <rdar://problem/6889082>
+          Crash at -[WebHTMLView(WebPrivate) _updateMouseoverWithEvent:]
+
+        The crash seems to happen because lastHitView points to a deleted
+        object. Since -close calls -_clearLastHitViewIfSelf, I speculate that
+        lastHitView has been set to an already-closed view.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView hitTest:]): Return nil if the view is closed.
+
 2009-06-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by John Sullivan.

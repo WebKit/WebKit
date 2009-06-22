@@ -1386,6 +1386,9 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     //      and Dictionary's Command-Control-D (open dictionary popup for item under cursor).
     //      This is of course a hack.
 
+    if (_private->closed)
+        return nil;
+
     BOOL captureHitsOnSubviews;
     if (forceNSViewHitTest)
         captureHitsOnSubviews = NO;
