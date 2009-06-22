@@ -1,3 +1,12 @@
+2009-06-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Set up global native controls flag before creating the first WebView.
+        
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
 2009-06-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
