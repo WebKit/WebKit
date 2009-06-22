@@ -1,3 +1,12 @@
+2009-06-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix last DumpRenderTree change to correctly set preferences flag without crashing.
+        
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
 2009-06-21  Steve Falkenburg  <sfalken@apple.com>
 
         Set up global native controls flag before creating the first WebView.
