@@ -1,3 +1,15 @@
+2009-06-21  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+        
+        Test for https://bugs.webkit.org/show_bug.cgi?id=26580
+        
+        Tests that XSSAuditor (if enabled) prevents script execution in child window.
+
+        * http/tests/security/xssAuditor/link-opens-new-window-expected.txt: Added.
+        * http/tests/security/xssAuditor/link-opens-new-window.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag-and-notify.php: Added.
+
 2009-06-21  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

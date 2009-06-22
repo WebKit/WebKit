@@ -1,3 +1,22 @@
+2009-06-21  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26580
+        
+        Fix to enable XSSAuditor on child windows.
+        
+        Test: http/tests/security/xssAuditor/link-opens-new-window.html
+        
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::XSSAuditor):
+        (WebCore::XSSAuditor::isEnabled):
+        (WebCore::XSSAuditor::canEvaluate):
+        (WebCore::XSSAuditor::canCreateInlineEventListener):
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+        (WebCore::XSSAuditor::canLoadObject):
+        * page/XSSAuditor.h: Removed method setXSSAuditorEnabled, and field m_isEnabled. Moved implementation of isEnabled to XSSAuditor.cpp and changed implementation to query Settings.
+
 2009-06-21  David Levin  <levin@chromium.org>
 
         Reviewed by NOBODY.
