@@ -194,6 +194,7 @@ INCLUDEPATH +=  $$PWD/accessibility \
                 $$PWD/loader/icon \
                 $$PWD/css \
                 $$PWD/dom \
+                $$PWD/dom/default \
                 $$PWD/page \
                 $$PWD/page/animation \
                 $$PWD/editing \
@@ -640,6 +641,7 @@ SOURCES += \
     dom/MessageChannel.cpp \
     dom/MessageEvent.cpp \
     dom/MessagePort.cpp \
+    dom/MessagePortChannel.cpp \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
@@ -682,6 +684,7 @@ SOURCES += \
     dom/XMLTokenizer.cpp \
     dom/XMLTokenizerQt.cpp \
     dom/XMLTokenizerScope.cpp \
+    dom/default/PlatformMessagePortChannel.cpp \
     editing/AppendNodeCommand.cpp \
     editing/ApplyStyleCommand.cpp \
     editing/BreakBlockquoteCommand.cpp \

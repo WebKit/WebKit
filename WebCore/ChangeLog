@@ -1,3 +1,9 @@
+2009-06-22  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Fix the Qt build.
+
+        * WebCore.pro:
+
 2009-06-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
