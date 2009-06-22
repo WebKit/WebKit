@@ -1063,8 +1063,6 @@ RetainPtr<CFURLCacheRef> sharedCFURLCache()
 
 int main(int argc, char* argv[])
 {
-    Sleep(10000);
-
     leakChecking = false;
 
     _setmode(1, _O_BINARY);

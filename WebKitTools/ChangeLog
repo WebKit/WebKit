@@ -1,5 +1,12 @@
 2009-06-22  Steve Falkenburg  <sfalken@apple.com>
 
+        Remove errant line of code mistakenly checked in.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
+2009-06-22  Steve Falkenburg  <sfalken@apple.com>
+
         Pass correct value to setShouldPaintNativeControls.
         
         Rubber stamped by Mark Rowe.
