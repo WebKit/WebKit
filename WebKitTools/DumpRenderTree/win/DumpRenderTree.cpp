@@ -1063,6 +1063,8 @@ RetainPtr<CFURLCacheRef> sharedCFURLCache()
 
 int main(int argc, char* argv[])
 {
+    Sleep(10000);
+
     leakChecking = false;
 
     _setmode(1, _O_BINARY);
@@ -1112,7 +1114,7 @@ int main(int argc, char* argv[])
     COMPtr<IWebPreferencesPrivate> standardPreferencesPrivate;
     if (FAILED(standardPreferences->QueryInterface(&standardPreferencesPrivate)))
         return -1;
-    standardPreferencesPrivate->setShouldPaintNativeControls(TRUE);
+    standardPreferencesPrivate->setShouldPaintNativeControls(FALSE);
 
     COMPtr<IWebView> webView(AdoptCOM, createWebViewAndOffscreenWindow(&webViewWindow));
     if (!webView)

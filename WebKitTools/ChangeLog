@@ -1,5 +1,14 @@
 2009-06-22  Steve Falkenburg  <sfalken@apple.com>
 
+        Pass correct value to setShouldPaintNativeControls.
+        
+        Rubber stamped by Mark Rowe.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+
+2009-06-22  Steve Falkenburg  <sfalken@apple.com>
+
         Fix last DumpRenderTree change to correctly set preferences flag without crashing.
         
         Reviewed by Mark Rowe.
