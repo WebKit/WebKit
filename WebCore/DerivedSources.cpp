@@ -86,6 +86,7 @@
 #include "JSHTMLCollection.cpp"
 #include "JSHTMLDataGridElement.cpp"
 #include "JSHTMLDataGridColElement.cpp"
+#include "JSHTMLDataGridRowElement.cpp"
 #include "JSHTMLDirectoryElement.cpp"
 #include "JSHTMLDivElement.cpp"
 #include "JSHTMLDListElement.cpp"

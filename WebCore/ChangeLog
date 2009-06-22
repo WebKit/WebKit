@@ -1,3 +1,10 @@
+2009-06-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * DerivedSources.cpp:
+        * html/HTMLElementsAllInOne.cpp:
+
 2009-06-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by John Sullivan.

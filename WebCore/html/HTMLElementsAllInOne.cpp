@@ -44,6 +44,7 @@
 #include "HTMLCanvasElement.cpp"
 #include "HTMLDataGridElement.cpp"
 #include "HTMLDataGridColElement.cpp"
+#include "HTMLDataGridRowElement.cpp"
 #include "HTMLDListElement.cpp"
 #include "HTMLDirectoryElement.cpp"
 #include "HTMLDivElement.cpp"
