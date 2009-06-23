@@ -1936,9 +1936,16 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
                         bool appliedTransform, bool temporaryClipRects)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    // Composited RenderLayers are painted via the backing's paintIntoLayer().
-    if (isComposited() && !backing()->paintingGoesToWindow() && !p->updatingControlTints())
-        return;
+    if (isComposited()) {
+        // The updatingControlTints() painting pass goes through compositing layers,
+        // but we need to ensure that we don't cache clip rects computed with the wrong root in this case.
+        if (p->updatingControlTints())
+            temporaryClipRects = true;
+        else if (!backing()->paintingGoesToWindow()) {
+            // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
+            return;
+        }
+    }
 #endif
 
     // Avoid painting layers when stylesheets haven't loaded.  This eliminates FOUC.

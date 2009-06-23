@@ -657,9 +657,6 @@ FloatPoint RenderLayerBacking::computePerspectiveOrigin(const IntRect& borderBox
 // Return the offset from the top-left of this compositing layer at which the renderer's contents are painted.
 IntSize RenderLayerBacking::contentOffsetInCompostingLayer()
 {
-    if (m_compositedBounds != compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer) && !compositor()->compositingLayersNeedUpdate())
-        fprintf(stderr, "Stale compositing offset\n");
-
     return IntSize(-m_compositedBounds.x(), -m_compositedBounds.y());
 }
 

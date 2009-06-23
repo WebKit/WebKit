@@ -1,3 +1,20 @@
+2009-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6997929> Assertion at WebCore::RenderLayer::updateClipRects with hardware acceleration
+
+        The updatingControlTints() painting pass goes through compositing layer boundaries,
+        so we need to ensure we don't cache clip rects computed with the wrong root by
+        setting temporaryClipRects to true.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentOffsetInCompostingLayer):
+        Remove a printf that I left in by mistake.
+
 2009-06-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
