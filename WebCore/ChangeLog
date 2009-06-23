@@ -1,3 +1,17 @@
+2009-06-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6994790> CrashTracer: [USER] 8 crashes in Mail trying to
+        add a blank line to pasted Facebook content (under
+        CompositeEditCommand::positionAvoidingSpecialElementBoundary)
+
+        - Just added null checks and I will create a new bug to prevent the
+        bad behavior.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::positionAvoidingSpecialElementBoundary):
+
 2009-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix.

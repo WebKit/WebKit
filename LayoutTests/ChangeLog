@@ -1,3 +1,14 @@
+2009-06-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6994790> CrashTracer: [USER] 8 crashes in Mail trying to
+        add a blank line to pasted Facebook content (under
+        CompositeEditCommand::positionAvoidingSpecialElementBoundary)
+
+        * editing/inserting/return-with-object-element-expected.txt: Added.
+        * editing/inserting/return-with-object-element.html: Added.
+
 2009-06-23  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
