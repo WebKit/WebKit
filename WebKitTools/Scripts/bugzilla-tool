@@ -1,0 +1,468 @@
+#!/usr/bin/python
+# Copyright (c) 2009, Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+# 
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
+
+import os
+import re
+import subprocess
+import sys
+
+from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
+
+# Import WebKit-specific modules.
+from modules.bugzilla import Bugzilla
+from modules.scm import detect_scm_system, ScriptError
+
+def log(string):
+    print >> sys.stderr, string
+
+def error(string):
+    log(string)
+    exit(1)
+
+# These could be put in some sort of changelogs.py.
+def latest_changelog_entry(changelog_path):
+    # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
+    changelog_date_line_regexp = re.compile('^(\d{4}-\d{2}-\d{2})' # Consume the date.
+                                  + '\s+(.+)\s+' # Consume the name.
+                                  + '<([^<>]+)>$') # And finally the email address.
+    
+    entry_lines = []
+    changelog = open(changelog_path)
+    try:
+        log("Parsing ChangeLog: " + changelog_path)
+        # The first line should be a date line.
+        first_line = changelog.readline()
+        if not changelog_date_line_regexp.match(first_line):
+            return None
+        entry_lines.append(first_line)
+        
+        for line in changelog:
+            # If we've hit the next entry, return.
+            if changelog_date_line_regexp.match(line):
+                return ''.join(entry_lines)
+            entry_lines.append(line)
+    finally:
+        changelog.close()
+    # We never found a date line!
+    return None
+
+def modified_changelogs(scm):
+    changelog_paths = []
+    paths = scm.changed_files()
+    for path in paths:
+        if os.path.basename(path) == "ChangeLog":
+            changelog_paths.append(path)
+    return changelog_paths
+
+def commit_message_for_this_commit(scm):
+    changelog_paths = modified_changelogs(scm)
+    if not len(changelog_paths):
+        error("Found no modified ChangeLogs, can't create a commit message.")
+
+    changelog_messages = []
+    for path in changelog_paths:
+        changelog_entry = latest_changelog_entry(path)
+        if not changelog_entry:
+            error("Failed to parse ChangeLog: " + os.path.abspath(path))
+        changelog_messages.append(changelog_entry)
+    
+    # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
+    return ''.join(changelog_messages)
+
+
+class Command:
+    def __init__(self, help_text, argument_names="", options=[]):
+        self.help_text = help_text
+        self.argument_names = argument_names
+        self.options = options
+        self.option_parser = OptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
+    
+    def name_with_arguments(self, command_name):
+        usage_string = command_name
+        if len(self.options) > 0:
+            usage_string += " [options]"
+        if self.argument_names:
+            usage_string += " " + self.argument_names
+        return usage_string
+
+    def parse_args(self, args):
+        return self.option_parser.parse_args(args)
+
+    def execute(self, options, args, tool):
+        raise NotImplementedError, "subclasses must implement"
+
+
+class BugsInCommitQueue(Command):
+    def __init__(self):
+        Command.__init__(self, 'Bugs in the commit queue')
+
+    def execute(self, options, args, tool):
+        bug_ids = tool.bugs.fetch_bug_ids_from_commit_queue()
+        for bug_id in bug_ids:
+            print "%s" % tool.bugs.bug_url_for_bug_id(bug_id)
+
+
+class PatchesInCommitQueue(Command):
+    def __init__(self):
+        Command.__init__(self, 'Patches attached to bugs in the commit queue')
+
+    def execute(self, options, args, tool):
+        patches = tool.bugs.fetch_patches_from_commit_queue()
+        log("Patches in commit queue:")
+        for patch in patches:
+            print "%s" % patch['url']
+
+
+class ReviewedPatchesOnBug(Command):
+    def __init__(self):
+        Command.__init__(self, 'r+\'d patches on a bug', 'BUGID')
+
+    def execute(self, options, args, tool):
+        bug_id = args[0]
+        patches_to_land = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+        for patch in patches_to_land:
+            print "%s" % patch['url']
+
+
+class ApplyPatchesFromBug(Command):
+    def __init__(self):
+        options = [
+            make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
+            make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
+            make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
+        ]
+        Command.__init__(self, 'Applies all patches on a bug to the local working directory without committing.', 'BUGID', options=options)
+
+    def execute(self, options, args, tool):
+        bug_id = args[0]
+        patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+        os.chdir(tool.scm().checkout_root)
+        if options.clean:
+            tool.scm().ensure_clean_working_directory(options.force_clean)
+        if options.update:
+            tool.scm().update_webkit()
+        
+        for patch in patches:
+            # FIXME: Should have an option to local-commit each patch after application.
+            tool.scm().apply_patch(patch)
+
+
+def bug_comment_from_commit_text(commit_text):
+    comment_lines = []
+    commit_lines = commit_text.splitlines()
+    for line in commit_lines:
+        comment_lines.append(line)
+        match = re.match("^Committed r(\d+)$", line)
+        if match:
+            revision = match.group(1)
+            comment_lines.append("http://trac.webkit.org/changeset/" + revision)
+            break
+    return "\n".join(comment_lines)
+
+
+class LandAndUpdateBug(Command):
+    def __init__(self):
+        Command.__init__(self, 'Lands the current working directory diff and updates the bug.', 'BUGID')
+
+    def execute(self, options, args, tool):
+        bug_id = args[0]
+        os.chdir(tool.scm().checkout_root)
+        commit_message = commit_message_for_this_commit(tool.scm())
+        commit_log = tool.scm().commit_with_message(commit_message)
+        comment_text = bug_comment_from_commit_text(commit_log)
+        tool.bugs.close_bug_as_fixed(bug_id, comment_text)
+
+
+class LandPatchesFromBug(Command):
+    def __init__(self):
+        options = [
+            make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
+            make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
+            make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
+            make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
+            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without runnning run-webkit-tests."),
+        ]
+        Command.__init__(self, 'Lands all patches on a bug optionally testing them first', 'BUGID', options=options)
+
+    @staticmethod
+    def run_and_throw_if_fail(script_name):
+        build_webkit_process = subprocess.Popen(script_name, shell=True)
+        return_code = build_webkit_process.wait()
+        if return_code:
+            raise ScriptError(script_name + " failed with code " + return_code)
+
+    def build_webkit(self):
+        self.run_and_throw_if_fail("build-webkit")
+
+    def run_webkit_tests(self):
+        self.run_and_throw_if_fail("run-webkit-tests")
+
+    def execute(self, options, args, tool):
+        bug_id = args[0]
+
+        try:
+            patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+            commit_text = ""
+
+            os.chdir(tool.scm().checkout_root)
+            tool.scm().ensure_no_local_commits(options.force_clean)
+            if options.clean:
+                tool.scm().ensure_clean_working_directory(options.force_clean)
+            if options.update:
+                tool.scm().update_webkit()
+            
+            for patch in patches:
+                tool.scm().apply_patch(patch)
+                if options.build:
+                    self.build_webkit()
+                    if options.test:
+                        self.run_webkit_tests()
+                commit_message = commit_message_for_this_commit(tool.scm())
+                commit_log = tool.scm().commit_with_message(commit_message)
+                comment_text = bug_comment_from_commit_text(commit_log)
+                # If we're commiting more than one patch, update the bug as we go.
+                if len(patches) > 1:
+                    tool.bugs.obsolete_attachment(patch['id'], comment_text)
+
+            if len(patches) > 1:
+                commit_text = "All reviewed patches landed, closing."
+
+            tool.bugs.close_bug_as_fixed(bug_id, commit_text)
+        except ScriptError, error:
+            log(error)
+            # We could add a comment to the bug about the failure.
+
+
+class CommitMessageForCurrentDiff(Command):
+    def __init__(self):
+        Command.__init__(self, 'Prints a commit message suitable for the uncommitted changes.')
+
+    def execute(self, options, args, tool):
+        os.chdir(tool.scm().checkout_root)
+        print "%s" % commit_message_for_this_commit(tool.scm())
+
+
+class ObsoleteAttachmentsOnBug(Command):
+    def __init__(self):
+        Command.__init__(self, 'Marks all attachments on a bug as obsolete.', 'BUGID')
+
+    def execute(self, options, args, tool):
+        bug_id = args[0]
+        attachments = tool.bugs.fetch_attachments_from_bug(bug_id)
+        for attachment in attachments:
+            if not attachment['obsolete']:
+                tool.bugs.obsolete_attachment(attachment['id'])
+
+
+class PostDiffAsPatchToBug(Command):
+    def __init__(self):
+        options = [
+            make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
+            make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: 'patch')"),
+        ]
+        Command.__init__(self, 'Attaches the current working directory diff to a bug as a patch file.', 'BUGID', options=options)
+
+    def execute(self, options, args, tool):
+        bug_id = args[0]
+        
+        diff_process = subprocess.Popen(tool.scm().create_patch_command(), stdout=subprocess.PIPE, shell=True)
+        diff_process.wait() # Make sure svn-create-patch is done before we continue.
+        
+        description = options.description or "patch"
+        tool.bugs.add_patch_to_bug(bug_id, diff_process.stdout, description, mark_for_review=options.review)
+
+
+class PostCommitsAsPatchesToBug(Command):
+    def __init__(self):
+        options = [
+            make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
+        ]
+        Command.__init__(self, 'Attaches a range of local commits to a bug as patch files.', 'BUGID COMMITISH', options=options)
+
+    def execute(self, options, args, tool):
+        bug_id = args[0]
+        
+        if not tool.scm().supports_local_commits():
+            log(tool.scm().display_name() + " does not support local commits.")
+            exit(1)
+        
+        commit_ids = tool.scm().commit_ids_from_range_arguments(args[1:])
+        
+        if len(commit_ids) > 10:
+            log("Are you sure you want to attach %d patches to bug %s?" % (len(commit_ids), bug_id))
+            # Could add a --patches-limit option.
+            exit(1)
+        
+        log("Attaching %d commits as patches to bug %s" % (len(commit_ids), bug_id))
+        for commit_id in commit_ids:
+            commit_message = tool.scm().commit_message_for_commit(commit_id)
+            commit_lines = commit_message.splitlines()
+            
+            description = commit_lines[0]
+            comment_text = "\n".join(commit_lines[1:])
+        
+            comment_text += "\n---\n"
+            comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
+        
+            # This is a little bit of a hack, that we pass stdout as the patch file.
+            # We could alternatively make an in-memory file-like object with the patch contents.
+            diff_process = subprocess.Popen(tool.scm().show_diff_command_for_commit(commit_id), stdout=subprocess.PIPE, shell=True)
+            tool.bugs.add_patch_to_bug(bug_id, diff_process.stdout, description, comment_text, mark_for_review=options.review)
+
+
+class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
+    def __init__(self):
+        IndentedHelpFormatter.__init__(self)
+
+    # The standard IndentedHelpFormatter paragraph-wraps the epilog, killing our custom formatting.
+    def format_epilog(self, epilog):
+        if epilog:
+            return "\n" + epilog + "\n"
+        return ""
+
+class BugzillaTool:
+    def __init__(self):
+        self.cached_scm = None
+        self.bugs = Bugzilla()
+        self.commands = [
+            { 'name' : 'bugs-to-commit', 'object' : BugsInCommitQueue() },
+            { 'name' : 'patches-to-commit', 'object' : PatchesInCommitQueue() },
+            { 'name' : 'reviewed-patches', 'object' : ReviewedPatchesOnBug() },
+            { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
+            { 'name' : 'land-and-update', 'object' : LandAndUpdateBug() },
+            { 'name' : 'land-patches', 'object' : LandPatchesFromBug() },
+            { 'name' : 'commit-message', 'object' : CommitMessageForCurrentDiff() },
+            { 'name' : 'obsolete-attachments', 'object' : ObsoleteAttachmentsOnBug() },
+            { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },
+            { 'name' : 'post-commits', 'object' : PostCommitsAsPatchesToBug() },
+        ]
+        
+        self.global_option_parser = OptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())
+        self.global_option_parser.add_option("--dry-run", action="store_true", dest="dryrun", help="do not touch remote servers", default=False)
+    
+    def scm(self):
+        # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
+        original_cwd = os.path.abspath('.')
+        if not self.cached_scm:
+            self.cached_scm = detect_scm_system(original_cwd)
+        
+        if not self.cached_scm:
+            script_directory = os.path.abspath(sys.path[0])
+            webkit_directory = os.path.abspath(os.path.join(script_directory, "../.."))
+            self.cached_scm = detect_scm_system(webkit_directory)
+            if self.cached_scm:
+                log("The current directory (%s) is not a WebKit checkout, using %s" % (original_cwd, webkit_directory))
+            else:
+                error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, webkit_directory))
+        
+        return self.cached_scm
+    
+    @staticmethod
+    def usage_line():
+        return "Usage: %prog [options] command [command-options] [command-arguments]"
+    
+    def commands_usage(self):
+        commands_text = "Commands:\n"
+        longest_name_length = 0
+        command_rows = []
+        for command in self.commands:
+            command_object = command['object']
+            command_name_and_args = command_object.name_with_arguments(command['name'])
+            command_rows.append({ 'name-and-args': command_name_and_args, 'object': command_object })
+            longest_name_length = max([longest_name_length, len(command_name_and_args)])
+        
+        # Use our own help formatter so as to indent enough.
+        formatter = IndentedHelpFormatter()
+        formatter.indent()
+        formatter.indent()
+        
+        for row in command_rows:
+            command_object = row['object']
+            commands_text += "  " + row['name-and-args'].ljust(longest_name_length + 3) + command_object.help_text + "\n"
+            commands_text += command_object.option_parser.format_option_help(formatter)
+        return commands_text
+
+    def handle_global_args(self, args):
+        (options, args) = self.global_option_parser.parse_args(args)
+        if len(args):
+            # We'll never hit this because split_args splits at the first arg without a leading '-'
+            self.global_option_parser.error("Extra arguments before command: " + args)
+        
+        if options.dryrun:
+            self.scm().dryrun = True
+            self.bugs.dryrun = True
+    
+    @staticmethod
+    def split_args(args):
+        # Assume the first argument which doesn't start with '-' is the command name.
+        command_index = 0
+        for arg in args:
+            if arg[0] != '-':
+                break
+            command_index += 1
+        else:
+            return (args[:], None, [])
+
+        global_args = args[:command_index]
+        command = args[command_index]
+        command_args = args[command_index + 1:]
+        return (global_args, command, command_args)
+    
+    def command_by_name(self, command_name):
+        for command in self.commands:
+            if command_name == command['name']:
+                return command
+        return None
+    
+    def main(self):
+        (global_args, command_name, args_after_command_name) = self.split_args(sys.argv[1:])
+        
+        # Handle --help, etc:
+        self.handle_global_args(global_args)
+        
+        if not command_name:
+            self.global_option_parser.error("No command specified")
+        
+        command = self.command_by_name(command_name)
+        if not command:
+            self.global_option_parser.error(command_name + " is not a recognized command")
+        
+        command_object = command['object']
+        (command_options, command_args) = command_object.parse_args(args_after_command_name)
+        return command_object.execute(command_options, command_args, self)
+
+
+def main():
+    tool = BugzillaTool()
+    return tool.main()
+
+if __name__ == "__main__":
+    main()

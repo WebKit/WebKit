@@ -1,3 +1,55 @@
+2009-06-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dave Levin.
+
+        WebKit needs a script to interact with bugzilla and automate
+        parts of the patch posting and commit processes.
+        https://bugs.webkit.org/show_bug.cgi?id=26283
+
+        This is really a first-draft tool.
+        It's to the point where it's useful to more people than just me now though.
+        Git support works.  SVN support is written, but mostly untested.
+
+        This tool requires BeautifulSoup and mechanize python modules to run:
+        sudo easy_install BeautifulSoup
+        sudo easy_install mechanize
+
+        More important than the tool itself are the Bugzilla, Git and SVN class abstractions
+        which I hope will allow easy writing of future tools.
+
+        The tool currently implements 10 commands, described below.
+
+        Helpers for scripting dealing with the commit queue:
+        bugs-to-commit                 Bugs in the commit queue
+        patches-to-commit              Patches attached to bugs in the commit queue
+
+        Dealing with bugzilla:
+        reviewed-patches BUGID         r+'d patches on a bug
+        apply-patches BUGID            Applies all patches on a bug to the local working directory without committing.
+        land-and-update BUGID          Lands the current working directory diff and updates the bug.
+        land-patches [options] BUGID   Lands all patches on a bug optionally testing them first
+        obsolete-attachments BUGID     Marks all attachments on a bug as obsolete.
+        commit-message                 Prints a commit message suitable for the uncommitted changes.
+
+        These effectively replace git-send-bugzilla:
+        post-diff BUGID                Attaches the current working directory diff to a bug as a patch file.
+        post-commits BUGID COMMITISH   Attaches a range of local commits to a bug as patch files.
+
+        post-diff works for SVN and Git, post-commits only works for SCMs with local-commit support (like Git)
+
+        land-* commands in a Git environment only work with simple patches due to svn-apply bugs:
+        https://bugs.webkit.org/show_bug.cgi?id=26299
+        https://bugs.webkit.org/show_bug.cgi?id=26300
+
+        This script follows python style (similar to how for Obj-C we follow AppKit style)
+        http://www.python.org/doc/essays/styleguide.html
+        The Python community has a strong style culture and the WebKit style guide is silent re: Python.
+
+        I've filed a bug to update the WebKit style guide to mention python:
+        https://bugs.webkit.org/show_bug.cgi?id=26524
+
+        * Scripts/bugzilla-tool: Added.
+
 2009-06-22  Steve Falkenburg  <sfalken@apple.com>
 
         Remove errant line of code mistakenly checked in.
