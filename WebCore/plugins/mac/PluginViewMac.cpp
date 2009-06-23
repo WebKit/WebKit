@@ -397,7 +397,10 @@ void PluginView::updatePluginWidget()
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;
 
-    m_windowRect = IntRect(frameView->contentsToWindow(frameRect().location()), frameRect().size());
+    m_windowRect = frameView->contentsToWindow(frameRect());
+    IntPoint offset = topLevelOffsetFor(platformPluginWidget());
+    m_windowRect.move(offset.x(), offset.y());
+
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
@@ -623,10 +626,6 @@ Point PluginView::globalMousePosForPlugin() const
 {
     Point pos;
     GetGlobalMouse(&pos);
-
-    IntPoint offset = topLevelOffsetFor(platformPluginWidget());
-    pos.h -= offset.x();
-    pos.v -= offset.y();
 
     float scaleFactor = tigerOrBetter() ? HIGetScaleFactor() : 1;
 

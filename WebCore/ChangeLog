@@ -1,5 +1,29 @@
 2009-06-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Simon Hausmann.
+
+        Fix NPAPI mouse translation issues on Mac
+
+        The WindowRef we pass to the plugin refers to the the top level window,
+        so the x and y positions have to be relative to this position, but we
+        have to manually compensate for title bar decorations and other parents
+        of the QWebView since contentsToWindow() only traverses to the QWebView.
+
+        Previously we did this compensation when passing on mouse coordinates to
+        the plugin, which caused various issues with translations such as not
+        being able to close the Flash settings dialog, or the hand cursor not
+        appearing over links.
+
+        We now do the compensation as part of the call to NPP_SetWindow, and
+        then pass mouse coordinates in global context without any compensation,
+        similar to how both Safari and Mozilla does it.
+
+        * plugins/mac/PluginViewMac.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::globalMousePosForPlugin):
+
+2009-06-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Rubber-stamped by Simon Hausmann.
 
         [Qt] Resolve absolute path to library install_name manually
