@@ -1,3 +1,14 @@
+2009-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6991146> Scrollbars in hardware layers don't change to the
+        inactive look in background windows
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        Don't short-circuit the "painting" pass that is used to udpate control tints.
+
 2009-06-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Sam Weinig.

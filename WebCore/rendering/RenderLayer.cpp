@@ -1937,7 +1937,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 {
 #if USE(ACCELERATED_COMPOSITING)
     // Composited RenderLayers are painted via the backing's paintIntoLayer().
-    if (isComposited() && !backing()->paintingGoesToWindow())
+    if (isComposited() && !backing()->paintingGoesToWindow() && !p->updatingControlTints())
         return;
 #endif
 
