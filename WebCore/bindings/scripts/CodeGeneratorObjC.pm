@@ -1130,10 +1130,13 @@ sub GenerateImplementation
             my $getterSig = "- ($attributeType)$attributeInterfaceName\n";
             my $hasGetterException = @{$attribute->getterExceptions};
             my $getterContentHead;
-            if (my $reflect = $attribute->signature->extendedAttributes->{"Reflect"}) {
+            my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+            my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+            if ($reflect || $reflectURL) {
                 $implIncludes{"HTMLNames.h"} = 1;
-                my $contentAttributeName = $reflect eq "1" ? $attributeName : $reflect;
-                $getterContentHead = "IMPL->getAttribute(WebCore::HTMLNames::${contentAttributeName}Attr";
+                my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
+                my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
+                $getterContentHead = "IMPL->${getAttributeFunctionName}(WebCore::HTMLNames::${contentAttributeName}Attr";
             } else {
                 $getterContentHead = "IMPL->" . $codeGenerator->WK_lcfirst($attributeName) . "(";
             }
@@ -1265,12 +1268,16 @@ sub GenerateImplementation
                     push(@implContent, "    $exceptionInit\n");
                     push(@implContent, "    IMPL->$coreSetterName($arg, ec);\n");
                     push(@implContent, "    $exceptionRaiseOnError\n");
-                } elsif (my $reflect = $attribute->signature->extendedAttributes->{"Reflect"}) {
-                    $implIncludes{"HTMLNames.h"} = 1;
-                    my $contentAttributeName = $reflect eq "1" ? $attributeName : $reflect;
-                    push(@implContent, "    IMPL->setAttribute(WebCore::HTMLNames::${contentAttributeName}Attr, $arg);\n");
                 } else {
-                    push(@implContent, "    IMPL->$coreSetterName($arg);\n");
+                    my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+                    my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+                    if ($reflect || $reflectURL) {
+                        $implIncludes{"HTMLNames.h"} = 1;
+                        my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
+                        push(@implContent, "    IMPL->setAttribute(WebCore::HTMLNames::${contentAttributeName}Attr, $arg);\n");
+                    } else {
+                        push(@implContent, "    IMPL->$coreSetterName($arg);\n");
+                    }
                 }
 
                 push(@implContent, "}\n\n");

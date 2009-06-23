@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,22 +25,22 @@ module html {
         InterfaceUUID=b21b8125-d00b-4bdf-b0e8-659678db3923,
         ImplementationUUID=2121ca21-8118-4f1b-b9fe-4788a9050281
     ] HTMLImageElement : HTMLElement {
-                 attribute [ConvertNullToNullString] DOMString name;
-                 attribute [ConvertNullToNullString] DOMString align;
-                 attribute [ConvertNullToNullString] DOMString alt;
-                 attribute [ConvertNullToNullString] DOMString border;        
+                 attribute [ConvertNullToNullString, Reflect] DOMString name;
+                 attribute [ConvertNullToNullString, Reflect] DOMString align;
+                 attribute [ConvertNullToNullString, Reflect] DOMString alt;
+                 attribute [ConvertNullToNullString, Reflect] DOMString border;        
                  attribute long height;
                  attribute long hspace;
                  attribute boolean isMap;
-                 attribute [ConvertNullToNullString] DOMString longDesc;
-                 attribute [ConvertNullToNullString] DOMString src;
-                 attribute [ConvertNullToNullString] DOMString useMap;
+                 attribute [ConvertNullToNullString, ReflectURL=longdesc] DOMString longDesc;
+                 attribute [ConvertNullToNullString, ReflectURL] DOMString src;
+                 attribute [ConvertNullToNullString, Reflect=usemap] DOMString useMap;
                  attribute long vspace;
                  attribute long width;
         
         // Extensions
         readonly attribute boolean complete;
-                 attribute [ConvertNullToNullString] DOMString lowsrc;
+                 attribute [ConvertNullToNullString, ReflectURL] DOMString lowsrc;
         readonly attribute long naturalHeight;
         readonly attribute long naturalWidth;
         readonly attribute long x;

@@ -1,3 +1,20 @@
+2009-06-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 25425: DOM attribute getter/setter functions should use const AtomicString& type
+        https://bugs.webkit.org/show_bug.cgi?id=25425
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added handling for ReflectURL.
+        * bindings/scripts/CodeGeneratorObjC.pm: Ditto.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getURLAttribute): Added. For use implementing getters
+        for ReflectURL.
+        * dom/Element.h: Added getURLAttribute.
+
+        * html/HTMLImageElement.idl: Use Reflect and ReflectURL.
+
 2009-06-22  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

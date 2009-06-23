@@ -1154,10 +1154,13 @@ sub GenerateImplementation
                     } else {
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(asObject(slot.slotBase()))->impl());\n");
                         my $value;
-                        if (my $reflect = $attribute->signature->extendedAttributes->{"Reflect"}) {
+                        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+                        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+                        if ($reflect || $reflectURL) {
                             $implIncludes{"HTMLNames.h"} = 1;
-                            my $contentAttributeName = $reflect eq "1" ? $name : $reflect;
-                            $value = "imp->getAttribute(HTMLNames::${contentAttributeName}Attr)"
+                            my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $name : ($reflect || $reflectURL);
+                            my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
+                            $value = "imp->$getAttributeFunctionName(HTMLNames::${contentAttributeName}Attr)"
                         } else {
                             $value = "imp->$implGetterFunctionName()";
                         }
@@ -1304,9 +1307,11 @@ sub GenerateImplementation
                                 push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
                                 my $nativeValue = JSValueToNative($attribute->signature, "value");
                                 push(@implContent, "    ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
-                                if (my $reflect = $attribute->signature->extendedAttributes->{"Reflect"}) {
+                                my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+                                my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+                                if ($reflect || $reflectURL) {
                                     $implIncludes{"HTMLNames.h"} = 1;
-                                    my $contentAttributeName = $reflect eq "1" ? $name : $reflect;
+                                    my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $name : ($reflect || $reflectURL);
                                     push(@implContent, "    imp->setAttribute(HTMLNames::${contentAttributeName}Attr, $nativeValue");
                                 } else {
                                     push(@implContent, "    imp->set$implSetterFunctionName($nativeValue");

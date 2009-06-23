@@ -61,7 +61,7 @@ public:
     void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
     void setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode&);
 
-    void scrollIntoView (bool alignToTop = true);
+    void scrollIntoView(bool alignToTop = true);
     void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
 
     void scrollByUnits(int units, ScrollGranularity);
@@ -158,6 +158,7 @@ public:
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }
 
     virtual bool isURLAttribute(Attribute*) const;
+    KURL getURLAttribute(const QualifiedName&) const;
     virtual const QualifiedName& imageSourceAttributeName() const;
     virtual String target() const { return String(); }
 

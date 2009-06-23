@@ -1341,4 +1341,15 @@ unsigned Element::childElementCount() const
     return count;
 }
 
+KURL Element::getURLAttribute(const QualifiedName& name) const
+{
+#ifndef NDEBUG
+    if (namedAttrMap) {
+        if (Attribute* attribute = namedAttrMap->getAttributeItem(name))
+            ASSERT(isURLAttribute(attribute));
+    }
+#endif
+    return document()->completeURL(getAttribute(name));
+}
+
 } // namespace WebCore
