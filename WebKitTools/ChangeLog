@@ -1,3 +1,9 @@
+2009-06-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/modules/scm.py: Fix error seen when commiting r44979.
+
 2009-06-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dave Levin.

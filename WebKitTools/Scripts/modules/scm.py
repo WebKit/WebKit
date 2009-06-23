@@ -280,7 +280,8 @@ class Git(SCM):
         commit_process = subprocess.Popen('git svn dcommit', stdout=subprocess.PIPE, shell=True)
         (out, error) = commit_process.communicate()
         return_code = commit_process.wait()
-        log("Commit failure: " + return_code) # We really should handle the failure
+        if return_code:
+            log("Commit failure: %d" % return_code) # We really should handle the failure
         return out
 
     def commit_ids_from_range_arguments(self, args, cherry_pick=False):
