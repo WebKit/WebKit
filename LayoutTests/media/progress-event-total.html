@@ -1,33 +1,41 @@
-<video controls></video>
-<script src=video-test.js></script>
-<script>
-    var event;
+<html>
+    <head>
 
-    function testOnLoadStart(evt)
-    {
-        event = evt;
+        <script src=video-test.js></script>
+        <script>
+            function testOnLoadStart()
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+                testExpected("!event.lengthComputable", true);
+                testExpected("event.total", 0);
+                testExpected("event.loaded", 0);
+            }
+        
+            function testOnLoad()
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+                testExpected("event.lengthComputable", true);
+                testExpected("event.loaded", 0, '>');
+                var allowedTotalBytes = [188483, 192844];
+                if (event.total == allowedTotalBytes[0] || event.total == allowedTotalBytes[1])
+                    consoleWrite("SUCCESS: event.total is " + allowedTotalBytes[0] + " or " + allowedTotalBytes[1] + " (Playback engine specific)");
+                else
+                    consoleWrite("FAIL: event.total should not be " + event.total + " (should be " + allowedTotalBytes[0] + " or " + allowedTotalBytes[1] + ")");
+                endTest();
+            }
 
-        testExpected("!event.lengthComputable", true);
-        testExpected("event.total", 0);
-        testExpected("event.loaded", 0);
-    }
+            function start()
+            {
+                findMediaElement();
+            }
 
-    function testOnLoad(evt)
-    {
-        event = evt;
+        </script>
+    </head>
 
-        testExpected("event.lengthComputable", true);
-        testExpected("event.loaded", 0, '>');
-        var allowedTotalBytes = [188483, 192844];
-        if (event.total == allowedTotalBytes[0] || event.total == allowedTotalBytes[1])
-            consoleWrite("SUCCESS: event.total is " + allowedTotalBytes[0] + " or " + allowedTotalBytes[1] + " (Playback engine specific)");
-        else
-            consoleWrite("FAIL: event.total should not be " + event.total + " (should be " + allowedTotalBytes[0] + " or " + allowedTotalBytes[1] + ")");
-        endTest();
-    }
+    <body onload="start()">
 
-    waitForEvent("loadstart", testOnLoadStart);
-    waitForEvent("load", testOnLoad, true);
+        <video controls src="content/test.mp4" onloadstart="testOnLoadStart()" onload="testOnLoad()">
+        </video>
 
-    video.src = "content/test.mp4";
-</script>
+    </body>
+</html>

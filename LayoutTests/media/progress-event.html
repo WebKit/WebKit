@@ -1,30 +1,36 @@
-<video controls></video>
-<script src=video-test.js></script>
+<html>
+    <head>
 
-<script>
-    var event;
+        <script src=video-test.js></script>
+        <script>
+            function testOnLoadStart()
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+                testExpected("!event.lengthComputable", true);
+                testExpected("event.total", 0);
+                testExpected("event.loaded", 0);
+            }
+        
+            function testOnLoad()
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+                testExpected("event.lengthComputable", true);
+                testExpected("event.loaded", 0, '>');
+                testExpected("event.total", 0, '>');
+                endTest();
+            }
 
-    function testOnLoadStart(evt)
-    {
-        event = evt;
+            function start()
+            {
+                findMediaElement();
+            }
+        </script>
+    </head>
 
-        testExpected("!event.lengthComputable", true);
-        testExpected("event.total", 0);
-        testExpected("event.loaded", 0);
-    }
+    <body onload="start()">
 
-    function testOnLoad(evt)
-    {
-        event = evt;
+        <video src="content/test.mp4" controls onloadstart="testOnLoadStart()" onload="testOnLoad()">
+        </video>
 
-        testExpected("event.lengthComputable", true);
-        testExpected("event.loaded", 0, '>');
-        testExpected("event.total", 0, '>');
-        endTest();
-    }
-
-    waitForEvent("loadstart", testOnLoadStart);
-    waitForEvent("load", testOnLoad, true);
-
-    video.src = "content/test.mp4";
-</script>
+    </body>
+</html>

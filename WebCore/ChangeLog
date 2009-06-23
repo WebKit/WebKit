@@ -1,3 +1,15 @@
+2009-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6978938> Need HTML 5 event attributes for media elements
+
+        Test: media/event-attributes.html
+
+        * html/HTMLAttributeNames.in: Add media event attribute names.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseMappedAttribute): Handle media event attributes.
+
 2009-06-23  Thiago Macieira  <thiago.macieira@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -3998,6 +3998,7 @@ http/tests/webarchive/test-preload-resources.html
 media/audio-constructor-src.html
 media/audio-mpeg-supported.html
 media/broken-video.html
+media/event-attributes.html
 media/media-startTime.html
 media/progress-event-total.html
 media/progress-event.html

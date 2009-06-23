@@ -1,3 +1,21 @@
+2009-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/6978938> Need HTML 5 event attributes for media elements
+
+        * media/event-attributes-expected.txt: Added.
+        * media/event-attributes.html: Added.
+        * media/progress-event-total.html: Cleanup, use event handler attributes.
+        * media/progress-event.html: Ditto.
+
+        * media/video-size-intrinsic-scale.html: Remove duplicate 'waitForEvent("ratechange")'
+        * media/video-source-add-src.html: Ditto.
+        * media/video-source-error.html: Ditto.
+        * media/video-timeupdate-during-playback.html: Ditto.
+
+        * platform/gtk/Skipped: Skip new test.
+
 2009-06-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

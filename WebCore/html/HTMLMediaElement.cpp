@@ -52,6 +52,7 @@
 #include "Page.h"
 #include "ProgressEvent.h"
 #include "RenderVideo.h"
+#include "ScriptEventListener.h"
 #include "TimeRanges.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
@@ -149,12 +150,60 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
 #endif
 }
 
-void HTMLMediaElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLMediaElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == autobufferAttr) {
+    const QualifiedName& attrName = attr->name();
+
+    if (attrName == autobufferAttr) {
         if (m_player)
             m_player->setAutobuffer(!attr->isNull());
-    } else
+    } else if (attrName == onabortAttr)
+        setAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(this, attr));
+    else if (attrName == oncanplayAttr)
+        setAttributeEventListener(eventNames().canplayEvent, createAttributeEventListener(this, attr));
+    else if (attrName == oncanplaythroughAttr)
+        setAttributeEventListener(eventNames().canplaythroughEvent, createAttributeEventListener(this, attr));
+    else if (attrName == ondurationchangeAttr)
+        setAttributeEventListener(eventNames().durationchangeEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onemptiedAttr)
+        setAttributeEventListener(eventNames().emptiedEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onendedAttr)
+        setAttributeEventListener(eventNames().endedEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onerrorAttr)
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onloadeddataAttr)
+        setAttributeEventListener(eventNames().loadeddataEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onloadedmetadataAttr)
+        setAttributeEventListener(eventNames().loadedmetadataEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onloadstartAttr)
+        setAttributeEventListener(eventNames().loadstartEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onpauseAttr)
+        setAttributeEventListener(eventNames().pauseEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onplayAttr)
+        setAttributeEventListener(eventNames().playEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onplayingAttr)
+        setAttributeEventListener(eventNames().playingEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onprogressAttr)
+        setAttributeEventListener(eventNames().progressEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onratechangeAttr)
+        setAttributeEventListener(eventNames().ratechangeEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onseekedAttr)
+        setAttributeEventListener(eventNames().seekedEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onseekingAttr)
+        setAttributeEventListener(eventNames().seekingEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onstalledAttr)
+        setAttributeEventListener(eventNames().stalledEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onsuspendAttr)
+        setAttributeEventListener(eventNames().suspendEvent, createAttributeEventListener(this, attr));
+    else if (attrName == ontimeupdateAttr)
+        setAttributeEventListener(eventNames().timeupdateEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onvolumechangeAttr)
+        setAttributeEventListener(eventNames().volumechangeEvent, createAttributeEventListener(this, attr));
+    else if (attrName == onwaitingAttr)
+        setAttributeEventListener(eventNames().waitingEvent, createAttributeEventListener(this, attr));
+    else
         HTMLElement::parseMappedAttribute(attr);
 }
 
