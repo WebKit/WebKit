@@ -122,6 +122,8 @@ public:
     void setIsTargetItem(bool);
     
     void setFormInfoFromRequest(const ResourceRequest&);
+    void setFormData(PassRefPtr<FormData>);
+    void setFormContentType(const String&);
 
     void recordInitialVisit();
 
@@ -135,6 +137,7 @@ public:
     HistoryItem* targetItem();
     const HistoryItemVector& children() const;
     bool hasChildren() const;
+    void clearChildren();
 
     // This should not be called directly for HistoryItems that are already included
     // in GlobalHistory. The WebKit api for this is to use -[WebHistory setLastVisitedTimeInterval:forItem:] instead.

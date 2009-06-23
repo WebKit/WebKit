@@ -435,6 +435,11 @@ bool HistoryItem::hasChildren() const
     return !m_children.isEmpty();
 }
 
+void HistoryItem::clearChildren()
+{
+    m_children.clear();
+}
+
 String HistoryItem::formContentType() const
 {
     return m_formContentType;
@@ -453,6 +458,16 @@ void HistoryItem::setFormInfoFromRequest(const ResourceRequest& request)
         m_formData = 0;
         m_formContentType = String();
     }
+}
+
+void HistoryItem::setFormData(PassRefPtr<FormData> formData)
+{
+    m_formData = formData;
+}
+
+void HistoryItem::setFormContentType(const String& formContentType)
+{
+    m_formContentType = formContentType;
 }
 
 FormData* HistoryItem::formData()
