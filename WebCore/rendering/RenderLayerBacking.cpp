@@ -749,6 +749,14 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     
     m_owningLayer->updateLayerListsIfNeeded();
     
+    // Paint the reflection first if we have one.
+    if (m_owningLayer->hasReflection()) {
+        // Mark that we are now inside replica painting.
+        m_owningLayer->setPaintingInsideReflection(true);
+        m_owningLayer->reflectionLayer()->paintLayer(rootLayer, context, paintDirtyRect, paintRestriction, paintingRoot, 0, RenderLayer::PaintLayerPaintingReflection);
+        m_owningLayer->setPaintingInsideReflection(false);
+    }
+
     // Calculate the clip rects we should use.
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     m_owningLayer->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);

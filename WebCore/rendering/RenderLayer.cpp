@@ -1930,6 +1930,11 @@ static void performOverlapTests(RenderObject::OverlapTestRequestMap& overlapTest
         overlapTestRequests.remove(overlappedRequestClients[i]);
 }
 
+static bool shouldDoSoftwarePaint(const RenderLayer* layer, bool paintingReflection)
+{
+    return paintingReflection && !layer->has3DTransform();
+}
+
 void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
                         const IntRect& paintDirtyRect, PaintRestriction paintRestriction,
                         RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* overlapTestRequests,
@@ -1941,7 +1946,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // but we need to ensure that we don't cache clip rects computed with the wrong root in this case.
         if (p->updatingControlTints())
             paintFlags |= PaintLayerTemporaryClipRects;
-        else if (!backing()->paintingGoesToWindow()) {
+        else if (!backing()->paintingGoesToWindow() && !shouldDoSoftwarePaint(this, paintFlags & PaintLayerPaintingReflection)) {
             // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
             return;
         }
@@ -2012,10 +2017,10 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     bool haveTransparency = localPaintFlags & PaintLayerHaveTransparency;
 
     // Paint the reflection first if we have one.
-    if (m_reflection && !m_paintingInsideReflection && (!m_transform || (paintFlags & PaintLayerAppliedTransform))) {
+    if (m_reflection && !m_paintingInsideReflection) {
         // Mark that we are now inside replica painting.
         m_paintingInsideReflection = true;
-        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags);
+        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags | PaintLayerPaintingReflection);
         m_paintingInsideReflection = false;
     }
 

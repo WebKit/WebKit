@@ -1,3 +1,14 @@
+2009-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24863
+        
+        Testcase for reflections on composited layers.
+
+        * compositing/reflections/reflection-on-composited.html: Added.
+        * platform/mac/compositing/reflections/reflection-on-composited-expected.txt: Added.
+
 2009-06-23  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,36 @@
+2009-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=24863
+        
+        Fix reflection painting on elements with compositing layers.
+
+        Test: compositing/reflections/reflection-on-composited.html
+
+        * rendering/RenderLayer.h:
+        Add a new PaintLayerPaintingReflection flag which is set while painting inside
+        reflections.
+        (WebCore::RenderLayer::setPaintingInsideReflection):
+        Add a setter so that RenderLayerBacking can call it.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::shouldDoSoftwarePaint):
+        Utility to clarify the logic of when a composited layer should do a software paint.
+        
+        (WebCore::RenderLayer::paintLayer):
+        Use shouldDoSoftwarePaint() to determine when to software-paint a reflected layer.
+        Remove transform-related tests from the reflection-painting if test because they appear
+        to be unnecessary.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        Add the code to paint reflections to the composited layer painting method.
+        
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+        Set the PaintLayerPaintingReflection flag.
+
 2009-06-23  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.
