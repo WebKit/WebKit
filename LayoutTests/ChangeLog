@@ -1,5 +1,15 @@
 2009-06-23  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by NOBODY, layout tests fix.
+        
+        'timeupdate' events are, by definition, timing dependent so it isn't
+        a good idea to log them in layout test results.
+
+        * media/event-attributes-expected.txt:
+        * media/event-attributes.html:
+
+2009-06-23  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Darin Adler.
         
         <rdar://problem/6978938> Need HTML 5 event attributes for media elements

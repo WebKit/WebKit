@@ -17,20 +17,15 @@ RUN(video.volume = 0.5)
 EVENT(volumechange)
 
 RUN(video.pause())
-EVENT(timeupdate)
 EVENT(pause)
 
 RUN(video.currentTime = 5.6)
-EVENT(timeupdate)
 EVENT(seeked)
 
 RUN(video.play())
 EVENT(ratechange)
 EVENT(play)
 EVENT(playing)
-EVENT(timeupdate)
-EVENT(timeupdate)
-EVENT(timeupdate)
 EVENT(ended)
 
 RUN(video.src = 'content/garbage.mp4')
