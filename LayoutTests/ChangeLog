@@ -1,3 +1,22 @@
+2009-06-23  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        This test hits an edge case where typingStyle would never get cleared.
+        In addition to making every text insertion go into its own text node,
+        this caused large performance problems.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26279
+
+        * editing/execCommand/5770834-1-expected.txt:
+            These results match how they were before r43243. It's not clear to me 
+            why changes to font-size are affecting text-align styling though.
+        * editing/inserting/font-size-clears-from-typing-style-expected.txt: Added.
+        * editing/inserting/font-size-clears-from-typing-style.html: Added.
+        * editing/inserting/resources/TEMPLATE.html: Copied from LayoutTests/editing/execCommand/resources/TEMPLATE.html.
+        * editing/inserting/resources/font-size-clears-from-typing-style.js: Added.
+        * platform/mac/editing/execCommand/remove-formatting-2-expected.txt:
+
 2009-06-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin Adler.

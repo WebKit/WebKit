@@ -1,3 +1,27 @@
+2009-06-23  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add logic to CSSStyleDeclaration::diff to deal with font-sizes that are 
+        keyword values. When diff is called on a CSSStyleDeclaration, we check
+        the keywordSize to see if font-size matches a keyword value.
+        
+        This ensures that when we diff a CSSMutableStyleDeclaration returned from
+        copyInheritableProperties on a CSSComputedStyleDeclaration that we 
+        correctly identify matching font-sizes.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26279
+
+        Test: editing/inserting/font-size-clears-from-typing-style.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::cssPropertyMatches):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::cssPropertyMatches):
+        (WebCore::CSSStyleDeclaration::diff):
+        * css/CSSStyleDeclaration.h:
+
 2009-06-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin Adler.

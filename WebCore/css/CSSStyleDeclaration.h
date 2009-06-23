@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class CSSMutableStyleDeclaration;
+class CSSProperty;
 class CSSRule;
 class CSSValue;
 
@@ -72,6 +73,9 @@ public:
 
 protected:
     CSSStyleDeclaration(CSSRule* parentRule = 0);
+
+    virtual bool cssPropertyMatches(const CSSProperty*) const;
+
 };
 
 } // namespace WebCore

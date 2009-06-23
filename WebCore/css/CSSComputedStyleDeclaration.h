@@ -59,6 +59,9 @@ public:
 
     static void removeComputedInheritablePropertiesFrom(CSSMutableStyleDeclaration*);
 
+protected:
+    virtual bool cssPropertyMatches(const CSSProperty*) const;
+
 private:
     CSSComputedStyleDeclaration(PassRefPtr<Node>);
 

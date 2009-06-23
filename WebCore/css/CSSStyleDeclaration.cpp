@@ -118,6 +118,12 @@ CSSRule* CSSStyleDeclaration::parentRule() const
     return (parent() && parent()->isRule()) ? static_cast<CSSRule*>(parent()) : 0;
 }
 
+bool CSSStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const
+{
+    RefPtr<CSSValue> value = getPropertyCSSValue(property->id());
+    return value && value->cssText() == property->value()->cssText();
+}
+
 void CSSStyleDeclaration::diff(CSSMutableStyleDeclaration* style) const
 {
     if (!style)
@@ -128,8 +134,7 @@ void CSSStyleDeclaration::diff(CSSMutableStyleDeclaration* style) const
         CSSMutableStyleDeclaration::const_iterator end = style->end();
         for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
             const CSSProperty& property = *it;
-            RefPtr<CSSValue> value = getPropertyCSSValue(property.id());
-            if (value && (value->cssText() == property.value()->cssText()))
+            if (cssPropertyMatches(&property))
                 propertiesToRemove.append(property.id());
         }
     }
