@@ -19,42 +19,12 @@
 
 #include "config.h"
 #include "Logging.h"
+#include "PlatformString.h"
 
 #include <QDebug>
 #include <QStringList>
 
 namespace WebCore {
-
-#if !defined(NDEBUG)
-static WTFLogChannel* getChannelFromName(const QString& channelName)
-{
-    if (!channelName.length() >= 2)
-        return 0;
-
-    if (channelName == QLatin1String("BackForward")) return &LogBackForward;
-    if (channelName == QLatin1String("Editing")) return &LogEditing;
-    if (channelName == QLatin1String("Events")) return &LogEvents;
-    if (channelName == QLatin1String("Frames")) return &LogFrames;
-    if (channelName == QLatin1String("FTP")) return &LogFTP;
-    if (channelName == QLatin1String("History")) return &LogHistory;
-    if (channelName == QLatin1String("IconDatabase")) return &LogIconDatabase;
-    if (channelName == QLatin1String("Loading")) return &LogLoading;
-    if (channelName == QLatin1String("Media")) return &LogMedia;
-    if (channelName == QLatin1String("Network")) return &LogNetwork;
-    if (channelName == QLatin1String("NotYetImplemented")) return &LogNotYetImplemented;
-    if (channelName == QLatin1String("PageCache")) return &LogPageCache;
-    if (channelName == QLatin1String("PlatformLeaks")) return &LogPlatformLeaks;
-    if (channelName == QLatin1String("Plugins")) return &LogPlugins;
-    if (channelName == QLatin1String("PopupBlocking")) return &LogPopupBlocking;
-    if (channelName == QLatin1String("SpellingAndGrammar")) return &LogSpellingAndGrammar;
-    if (channelName == QLatin1String("SQLDatabase")) return &LogSQLDatabase;
-    if (channelName == QLatin1String("StorageAPI")) return &LogStorageAPI;
-    if (channelName == QLatin1String("TextConversion")) return &LogTextConversion;
-    if (channelName == QLatin1String("Threading")) return &LogThreading;
-
-    return 0;
-}
-#endif
 
 void InitializeLoggingChannelsIfNecessary()
 {
@@ -71,14 +41,10 @@ void InitializeLoggingChannelsIfNecessary()
 #if defined(NDEBUG)
     qWarning("This is a release build. Setting QT_WEBKIT_LOG will have no effect.");
 #else
-    QList<QByteArray> channels = loggingEnv.split(',');
-    QListIterator<QByteArray> iter(channels);
-
-    while (iter.hasNext()) {
-        QByteArray channelName = iter.next();
-        WTFLogChannel* channel = getChannelFromName(channelName);
-        if (!channel) continue;
-        channel->state = WTFLogChannelOn;
+    QStringList channels = QString::fromLocal8Bit(loggingEnv).split(QLatin1String(","));
+    for (int i = 0; i < channels.count(); i++) {
+        if (WTFLogChannel* channel = getChannelFromName(channels.at(i)))
+            channel->state = WTFLogChannelOn;
     }
 
     // By default we log calls to notImplemented(). This can be turned

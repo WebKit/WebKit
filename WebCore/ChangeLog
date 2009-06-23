@@ -2,6 +2,17 @@
 
         Reviewed by Simon Hausmann.
 
+        Remove duplicated code in Qt & GTK logging initialization
+
+        We now share the getChannelFromName() function in Logging.cpp
+
+        * platform/gtk/LoggingGtk.cpp:
+        * platform/qt/LoggingQt.cpp:
+
+2009-06-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Rename the plugin logging channel to plural form 'Plugins'
 
         This matches both the other logging channel names, as well as the
