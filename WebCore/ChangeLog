@@ -1,3 +1,15 @@
+2009-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6998286> Crash after leaving page with <video>
+        
+        Don't try to post events after going into the page cache.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::documentWillBecomeInactive): Cancel pending events and stop
+        event timers so we won't try to post events after going into the cache.
+
 2009-06-23  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Brady Eidson.
