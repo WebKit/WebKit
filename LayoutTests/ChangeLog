@@ -1,3 +1,16 @@
+2009-06-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17820
+
+        Skip layout tests for DST if the test runs not in PST/PDT.
+
+        * fast/js/date-DST-time-cusps-expected.txt:
+        * fast/js/date-big-setdate-expected.txt:
+        * fast/js/resources/date-DST-time-cusps.js:
+        * fast/js/resources/date-big-setdate.js:
+
 2009-06-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.

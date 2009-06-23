@@ -19,43 +19,41 @@ for (var i = 116; i < 126; i++) {
     validVars = true;
 }
 
-// Added a special case that should represent a change in DST.  DST did not actually
-// change on this date but because of the wierdness of how JavaScriptDates are
+var testCases = [];
+if ((new Date(2009, 9, 1)).toString().match("PDT")) {
+    // Added a special case that should represent a change in DST.  DST did not actually
+    // change on this date but because of the wierdness of how JavaScriptDates are
 // expected to interpolate DST as opposed to reflect acurate history, this day
-// (April 5th 1970) should show a DST change.
+    // (April 5th 1970) should show a DST change.
+    testCases.push([new Date(0), 97, 98]);
 
-var c = new Date(0);
-var d = new Date(0);
-c.setDate(97);
-d.setDate(98);
-shouldBe("d.valueOf() - c.valueOf()", "millisecondsPerDay - millisecondsPerHour");
+    // Added more special cases. These dates match the recent DST changes in the US.
+    // These tests check that the new changes are correctly propogated to the past and
+    // all of the tests should show DST occurring on the same date.
+    testCases.push([new Date(1970, 0,0,0,0,0,0), 98, 99]);
+    testCases.push([new Date(1998, 0,0,0,0,0,0), 98, 99]);
+    testCases.push([new Date(2026, 0,0,0,0,0,0), 98, 99]);
+    testCases.push([new Date(2054, 0,0,0,0,0,0), 98, 99]);
+}
 
-// Added more special cases. These dates match the recent DST changes in the US.
-// These tests check that the new changes are correctly propogated to the past and
-// all of the tests should show DST occurring on the same date.  
+var errors = [];
+for (var i = 0; i < testCases.length; i++) {
+    var c = testCases[i][0];
+    var d = new Date(c);
+    c.setDate(testCases[i][1]);
+    d.setDate(testCases[i][2]);
 
-var c = new Date(1970, 0,0,0,0,0,0);
-var d = new Date(1970, 0,0,0,0,0,0);
-c.setDate(98);
-d.setDate(99);
-shouldBe("d.valueOf() - c.valueOf()", "millisecondsPerDay - millisecondsPerHour");
+    var actual = d.valueOf() - c.valueOf();
+    var expected = millisecondsPerDay - millisecondsPerHour;
+    if (actual != expected) {
+        errors.push("Unexpected difference between two days (expected: " + expected + ", actual: " +  actual + ") for " + testCases[i][0]);
+    }
+}
 
-var c = new Date(1998, 0,0,0,0,0,0);
-var d = new Date(1998, 0,0,0,0,0,0);
-c.setDate(98);
-d.setDate(99);
-shouldBe("d.valueOf() - c.valueOf()", "millisecondsPerDay - millisecondsPerHour");
-
-var c = new Date(2026, 0,0,0,0,0,0);
-var d = new Date(2026, 0,0,0,0,0,0);
-c.setDate(98);
-d.setDate(99);
-shouldBe("d.valueOf() - c.valueOf()", "millisecondsPerDay - millisecondsPerHour");
-
-var c = new Date(2054, 0,0,0,0,0,0);
-var d = new Date(2054, 0,0,0,0,0,0);
-c.setDate(98);
-d.setDate(99);
-shouldBe("d.valueOf() - c.valueOf()", "millisecondsPerDay - millisecondsPerHour");
+if (errors.length) {
+    testFailed(errors.length + "/" + testCases.length + " tests were failed: " + errors.join(", "));
+} else {
+    testPassed("Passed all tests for DST (or skipped the tests if your timezone isn't PST/PDT)");
+}
 
 var successfullyParsed = true;

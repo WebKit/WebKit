@@ -13,11 +13,7 @@ PASS d.valueOf() - curValue is millisecondsPerDay
 PASS d.valueOf() - curValue is millisecondsPerDay
 PASS d.valueOf() - curValue is millisecondsPerDay
 PASS d.valueOf() - curValue is millisecondsPerDay
-PASS d.valueOf() - c.valueOf() is millisecondsPerDay - millisecondsPerHour
-PASS d.valueOf() - c.valueOf() is millisecondsPerDay - millisecondsPerHour
-PASS d.valueOf() - c.valueOf() is millisecondsPerDay - millisecondsPerHour
-PASS d.valueOf() - c.valueOf() is millisecondsPerDay - millisecondsPerHour
-PASS d.valueOf() - c.valueOf() is millisecondsPerDay - millisecondsPerHour
+PASS Passed all tests for DST (or skipped the tests if your timezone isn't PST/PDT)
 PASS successfullyParsed is true
 
 TEST COMPLETE
