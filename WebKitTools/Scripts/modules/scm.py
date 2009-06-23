@@ -203,8 +203,12 @@ class SVN(SCM):
         return "svn-create-patch"
 
     def commit_with_message(self, message):
-        commit_process = subprocess.Popen('svn commit -F -', stdin=subprocess.PIPE, shell=True)
-        commit_process.communicate(message)
+        commit_process = subprocess.Popen('svn commit -F -', stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+        (out, error) = commit_process.communicate(message)
+        return_code = commit_process.wait()
+        if return_code:
+            log("Commit failure: %d" % return_code) # We really should handle the failure
+        return out
 
 # All git-specific logic should go here.
 class Git(SCM):
@@ -266,7 +270,7 @@ class Git(SCM):
 
     def commit_with_message(self, message):
         self.commit_locally_with_message(message)
-        self.push_local_commits_to_server()
+        return self.push_local_commits_to_server()
 
     # Git-specific methods:
     
