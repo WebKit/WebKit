@@ -151,7 +151,7 @@ bool PluginPackage::load()
     m_module = g_module_open((m_path.utf8()).data(), G_MODULE_BIND_LOCAL);
 
     if (!m_module) {
-        LOG(Plugin,"Module Load Failed :%s, Error:%s\n", (m_path.utf8()).data(), g_module_error());
+        LOG(Plugins,"Module Load Failed :%s, Error:%s\n", (m_path.utf8()).data(), g_module_error());
         return false;
     }
 

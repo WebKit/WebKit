@@ -44,7 +44,7 @@ static WTFLogChannel* getChannelFromName(const QString& channelName)
     if (channelName == QLatin1String("NotYetImplemented")) return &LogNotYetImplemented;
     if (channelName == QLatin1String("PageCache")) return &LogPageCache;
     if (channelName == QLatin1String("PlatformLeaks")) return &LogPlatformLeaks;
-    if (channelName == QLatin1String("Plugin")) return &LogPlugin;
+    if (channelName == QLatin1String("Plugins")) return &LogPlugins;
     if (channelName == QLatin1String("PopupBlocking")) return &LogPopupBlocking;
     if (channelName == QLatin1String("SpellingAndGrammar")) return &LogSpellingAndGrammar;
     if (channelName == QLatin1String("SQLDatabase")) return &LogSQLDatabase;

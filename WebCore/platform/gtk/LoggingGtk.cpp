@@ -59,8 +59,8 @@ static WTFLogChannel* getChannelFromName(const char* channelName)
         return &LogPageCache;
     if (!g_ascii_strcasecmp(channelName, "PlatformLeaks"))
         return &LogPlatformLeaks;
-    if (!g_ascii_strcasecmp(channelName, "Plugin"))
-        return &LogPlugin;
+    if (!g_ascii_strcasecmp(channelName, "Plugins"))
+        return &LogPlugins;
     if (!g_ascii_strcasecmp(channelName, "PopupBlocking"))
         return &LogPopupBlocking;
     if (!g_ascii_strcasecmp(channelName, "SpellingAndGrammar"))

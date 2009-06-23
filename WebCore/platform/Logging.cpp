@@ -57,7 +57,7 @@ WTFLogChannel LogStorageAPI =        { 0x00800000, "WebCoreLogLevel", WTFLogChan
 
 WTFLogChannel LogMedia =             { 0x01000000, "WebCoreLogLevel", WTFLogChannelOff };
 
-WTFLogChannel LogPlugin =            { 0x02000000, "WebCoreLogLevel", WTFLogChannelOff };
+WTFLogChannel LogPlugins =           { 0x02000000, "WebCoreLogLevel", WTFLogChannelOff };
 WTFLogChannel LogArchives =          { 0x04000000, "WebCoreLogLevel", WTFLogChannelOff };
 
 WTFLogChannel* getChannelFromName(const String& channelName)
@@ -78,7 +78,7 @@ WTFLogChannel* getChannelFromName(const String& channelName)
     if (channelName == String("NotYetImplemented")) return &LogNotYetImplemented;
     if (channelName == String("PageCache")) return &LogPageCache;
     if (channelName == String("PlatformLeaks")) return &LogPlatformLeaks;
-    if (channelName == String("Plugin")) return &LogPlugin;
+    if (channelName == String("Plugins")) return &LogPlugins;
     if (channelName == String("PopupBlocking")) return &LogPopupBlocking;
     if (channelName == String("SpellingAndGrammar")) return &LogSpellingAndGrammar;
     if (channelName == String("SQLDatabase")) return &LogSQLDatabase;

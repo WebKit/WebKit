@@ -51,7 +51,7 @@ static const char* const errorStrings[] = {
 
 #endif
 
-#define LOG_NPERROR(err) if (err != NPERR_NO_ERROR) LOG_VERBOSE(Plugin, "%s\n", errorStrings[err])
-#define LOG_PLUGIN_NET_ERROR() LOG_VERBOSE(Plugin, "Stream failed due to problems with network, disk I/O, lack of memory, or other problems.\n")
+#define LOG_NPERROR(err) if (err != NPERR_NO_ERROR) LOG_VERBOSE(Plugins, "%s\n", errorStrings[err])
+#define LOG_PLUGIN_NET_ERROR() LOG_VERBOSE(Plugins, "Stream failed due to problems with network, disk I/O, lack of memory, or other problems.\n")
 
 #endif

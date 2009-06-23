@@ -90,7 +90,7 @@ bool PluginPackage::load()
     m_module = new QLibrary((QString)m_path);
     m_module->setLoadHints(QLibrary::ResolveAllSymbolsHint);
     if (!m_module->load()) {
-        LOG(Plugin, "%s not loaded (%s)", m_path.utf8().data(),
+        LOG(Plugins, "%s not loaded (%s)", m_path.utf8().data(),
                 m_module->errorString().toLatin1().constData());
         return false;
     }

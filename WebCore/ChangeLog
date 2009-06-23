@@ -2,6 +2,27 @@
 
         Reviewed by Simon Hausmann.
 
+        Rename the plugin logging channel to plural form 'Plugins'
+
+        This matches both the other logging channel names, as well as the
+        WebKit logging channel used by Safari/Mac for plugins.
+
+        * platform/Logging.cpp:
+        * platform/Logging.h:
+        * platform/gtk/LoggingGtk.cpp:
+        * platform/mac/LoggingMac.mm:
+        * platform/qt/LoggingQt.cpp:
+        * platform/win/LoggingWin.cpp:
+        * plugins/PluginDebug.h:
+        * plugins/gtk/PluginPackageGtk.cpp:
+        * plugins/mac/PluginPackageMac.cpp:
+        * plugins/mac/PluginViewMac.cpp:
+        * plugins/qt/PluginPackageQt.cpp:
+
+2009-06-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Fix NPAPI mouse translation issues on Mac
 
         The WindowRef we pass to the plugin refers to the the top level window,
