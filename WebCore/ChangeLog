@@ -1,5 +1,14 @@
 2009-06-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fix.
+
+        Wrap shouldDoSoftwarePaint() in #if USE(ACCELERATED_COMPOSITING) to avoid warning when 
+        ACCELERATED_COMPOSITING is not defined.
+
+        * rendering/RenderLayer.cpp:
+
+2009-06-23  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt.
         
         https://bugs.webkit.org/show_bug.cgi?id=24863
