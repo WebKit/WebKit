@@ -41,6 +41,7 @@ my $preservedParseMode = MODE_UNDEF;
 
 my $beQuiet; # Should not display anything on STDOUT?
 my $document = 0; # Will hold the resulting 'idlDocument'
+my $parentsOnly = 0; # If 1, parse only enough to populate parents list
 
 # Default Constructor
 sub new
@@ -62,6 +63,7 @@ sub Parse
     my $fileName = shift;
     my $defines = shift;
     my $preprocessor = shift;
+    $parentsOnly = shift;
 
     if (!$preprocessor) {
         $preprocessor = "/usr/bin/gcc -E -P -x c++";
@@ -239,6 +241,8 @@ sub ParseInterface
             my $arrayRef = $dataNode->parents;
             push(@$arrayRef, $line);
         }
+
+        return if $parentsOnly;
 
         $interfaceData =~ s/[\n\r]/ /g;
         my @interfaceMethods = split(/;/, $interfaceData);

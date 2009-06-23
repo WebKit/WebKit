@@ -116,6 +116,41 @@ sub ProcessDocument
     $codeGenerator->finish();
 }
 
+# Necessary for V8 bindings to determine whether an interface is descendant from Node.
+# Node descendants are treated differently by DOMMap and this allows inferring the
+# type statically. See more at the original change: http://codereview.chromium.org/3195.
+# FIXME: Figure out a way to eliminate this JS bindings dichotomy.
+sub FindParentsRecursively
+{
+    my $object = shift;
+    my $dataNode = shift;
+    my @parents = ($dataNode->name);
+    foreach (@{$dataNode->parents}) {
+        my $interface = $object->StripModule($_);
+
+        $endCondition = 0;
+        $foundFilename = "";
+        foreach (@{$useDirectories}) {
+            $object->ScanDirectory("$interface.idl", $_, $_, 0) if ($foundFilename eq "");
+        }
+
+        if ($foundFilename ne "") {
+            print "  |  |>  Parsing parent IDL \"$foundFilename\" for interface \"$interface\"\n" if $verbose;
+
+           # Step #2: Parse the found IDL file (in quiet mode).
+            my $parser = IDLParser->new(1);
+            my $document = $parser->Parse($foundFilename, $defines, $preprocessor, 1);
+
+            foreach my $class (@{$document->classes}) {
+                @parents = (@parents, FindParentsRecursively($object, $class));
+            }
+        } else {
+            die("Could NOT find specified parent interface \"$interface\"!\n")
+        }
+    }
+    return @parents;
+}
+
 sub AddMethodsConstantsAndAttributesFromParentClasses
 {
     # For the passed interface, recursively parse all parent
