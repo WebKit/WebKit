@@ -443,7 +443,7 @@ QTMovieWin::~QTMovieWin()
 
 void QTMovieWin::play()
 {
-    m_timeToRestore = -1.0f;
+    m_private->m_timeToRestore = -1.0f;
 
     if (m_private->m_movieController)
         MCDoAction(m_private->m_movieController, mcActionPrerollAndPlay, (void *)GetMoviePreferredRate(m_private->m_movie));
@@ -454,7 +454,7 @@ void QTMovieWin::play()
 
 void QTMovieWin::pause()
 {
-    m_timeToRestore = -1.0f;
+    m_private->m_timeToRestore = -1.0f;
 
     if (m_private->m_movieController)
         MCDoAction(m_private->m_movieController, mcActionPlay, 0);
@@ -474,7 +474,7 @@ void QTMovieWin::setRate(float rate)
 {
     if (!m_private->m_movie)
         return;    
-    m_timeToRestore = -1.0f;
+    m_private->m_timeToRestore = -1.0f;
     
     if (m_private->m_movieController)
         MCDoAction(m_private->m_movieController, mcActionPrerollAndPlay, (void *)FloatToFixed(rate));
@@ -506,7 +506,7 @@ void QTMovieWin::setCurrentTime(float time) const
     if (!m_private->m_movie)
         return;
 
-    m_timeToRestore = -1.0f;
+    m_private->m_timeToRestore = -1.0f;
     
     m_private->m_seeking = true;
     TimeScale scale = GetMovieTimeScale(m_private->m_movie);

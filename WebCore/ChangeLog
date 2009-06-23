@@ -1,3 +1,13 @@
+2009-06-23  Brady Eidson  <beidson@apple.com>
+
+        Windows build fix.
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWin::play):
+        (QTMovieWin::pause):
+        (QTMovieWin::setRate):
+        (QTMovieWin::setCurrentTime):
+
 2009-06-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adele Peterson.
