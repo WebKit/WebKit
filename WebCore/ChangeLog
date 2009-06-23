@@ -110,6 +110,27 @@
 
 2009-06-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dave Hyatt
+
+        First part of https://bugs.webkit.org/show_bug.cgi?id=26652
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint):
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::):
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint):
+        Replace the 3 boolean params to RenderLayer::paintLayer() with a bit mask for readability.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerBacking.h:
+        Remove the unused 'haveTransparency' param to paintIntoLayer().
+
+2009-06-23  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/6997929> Assertion at WebCore::RenderLayer::updateClipRects with hardware acceleration

@@ -1894,7 +1894,7 @@ bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularit
 void RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, PaintRestriction paintRestriction, RenderObject *paintingRoot)
 {
     RenderObject::OverlapTestRequestMap overlapTestRequests;
-    paintLayer(this, p, damageRect, false, paintRestriction, paintingRoot, &overlapTestRequests);
+    paintLayer(this, p, damageRect, paintRestriction, paintingRoot, &overlapTestRequests);
     RenderObject::OverlapTestRequestMap::iterator end = overlapTestRequests.end();
     for (RenderObject::OverlapTestRequestMap::iterator it = overlapTestRequests.begin(); it != end; ++it)
         it->first->setOverlapTestResult(false);
@@ -1931,16 +1931,16 @@ static void performOverlapTests(RenderObject::OverlapTestRequestMap& overlapTest
 }
 
 void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
-                        const IntRect& paintDirtyRect, bool haveTransparency, PaintRestriction paintRestriction,
+                        const IntRect& paintDirtyRect, PaintRestriction paintRestriction,
                         RenderObject* paintingRoot, RenderObject::OverlapTestRequestMap* overlapTestRequests,
-                        bool appliedTransform, bool temporaryClipRects)
+                        PaintLayerFlags paintFlags)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (isComposited()) {
         // The updatingControlTints() painting pass goes through compositing layers,
         // but we need to ensure that we don't cache clip rects computed with the wrong root in this case.
         if (p->updatingControlTints())
-            temporaryClipRects = true;
+            paintFlags |= PaintLayerTemporaryClipRects;
         else if (!backing()->paintingGoesToWindow()) {
             // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
             return;
@@ -1959,24 +1959,24 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         return;
 
     if (paintsWithTransparency())
-        haveTransparency = true;
+        paintFlags |= PaintLayerHaveTransparency;
 
     // Apply a transform if we have one.  A reflection is considered to be a transform, since it is a flip and a translate.
-    if (paintsWithTransform() && !appliedTransform) {
+    if (paintsWithTransform() && !(paintFlags & PaintLayerAppliedTransform)) {
         // If the transform can't be inverted, then don't paint anything.
         if (!m_transform->isInvertible())
             return;
 
         // If we have a transparency layer enclosing us and we are the root of a transform, then we need to establish the transparency
         // layer from the parent now.
-        if (haveTransparency)
+        if (paintFlags & PaintLayerHaveTransparency)
             parent()->beginTransparencyLayers(p, rootLayer);
   
         // Make sure the parent's clip rects have been calculated.
         IntRect clipRect = paintDirtyRect;
         if (parent()) {
             ClipRects parentRects;
-            parentClipRects(rootLayer, parentRects, temporaryClipRects);
+            parentClipRects(rootLayer, parentRects, paintFlags & PaintLayerTemporaryClipRects);
             clipRect = parentRects.overflowClipRect();
             clipRect.intersect(paintDirtyRect);
         }
@@ -1998,7 +1998,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         p->concatCTM(transform);
 
         // Now do a paint with the root layer shifted to be us.
-        paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), haveTransparency, paintRestriction, paintingRoot, overlapTestRequests, true, temporaryClipRects);
+        paintLayer(this, p, transform.inverse().mapRect(paintDirtyRect), paintRestriction, paintingRoot, overlapTestRequests, paintFlags | PaintLayerAppliedTransform);
 
         p->restore();
         
@@ -2008,17 +2008,20 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         return;
     }
 
+    PaintLayerFlags localPaintFlags = paintFlags & ~PaintLayerAppliedTransform;
+    bool haveTransparency = localPaintFlags & PaintLayerHaveTransparency;
+
     // Paint the reflection first if we have one.
-    if (m_reflection && !m_paintingInsideReflection && (!m_transform || appliedTransform)) {
+    if (m_reflection && !m_paintingInsideReflection && (!m_transform || (paintFlags & PaintLayerAppliedTransform))) {
         // Mark that we are now inside replica painting.
         m_paintingInsideReflection = true;
-        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot, overlapTestRequests, false, temporaryClipRects);
+        reflectionLayer()->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags);
         m_paintingInsideReflection = false;
     }
 
     // Calculate the clip rects we should use.
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
-    calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, temporaryClipRects);
+    calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, localPaintFlags & PaintLayerTemporaryClipRects);
     int x = layerBounds.x();
     int y = layerBounds.y();
     int tx = x - renderBoxX();
@@ -2063,7 +2066,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Now walk the sorted list of children with negative z-indices.
     if (m_negZOrderList)
         for (Vector<RenderLayer*>::iterator it = m_negZOrderList->begin(); it != m_negZOrderList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot, overlapTestRequests, false, temporaryClipRects);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags);
     
     // Now establish the appropriate clip and paint our child RenderObjects.
     if (shouldPaint && !clipRectToApply.isEmpty()) {
@@ -2102,12 +2105,12 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Paint any child layers that have overflow.
     if (m_normalFlowList)
         for (Vector<RenderLayer*>::iterator it = m_normalFlowList->begin(); it != m_normalFlowList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot, overlapTestRequests, false, temporaryClipRects);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags);
 
     // Now walk the sorted list of children with positive z-indices.
     if (m_posZOrderList)
         for (Vector<RenderLayer*>::iterator it = m_posZOrderList->begin(); it != m_posZOrderList->end(); ++it)
-            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, paintRestriction, paintingRoot, overlapTestRequests, false, temporaryClipRects);
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, paintRestriction, paintingRoot, overlapTestRequests, localPaintFlags);
     
     if (renderer()->hasMask() && shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
         setClip(p, paintDirtyRect, damageRect);
