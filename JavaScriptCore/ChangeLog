@@ -1,3 +1,18 @@
+2009-06-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 26591: Support revivers in JSON.parse
+        <https://bugs.webkit.org/show_bug.cgi?id=26591>
+
+        Add reviver support to JSON.parse.  This completes the JSON object.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::Walker):
+        (JSC::Walker::callReviver):
+        (JSC::Walker::walk):
+        (JSC::JSONProtoFuncParse):
+
 2009-06-21  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

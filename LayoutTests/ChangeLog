@@ -1,3 +1,21 @@
+2009-06-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 26591: Support revivers in JSON.parse
+        <https://bugs.webkit.org/show_bug.cgi?id=26591>
+
+        Test cases for JSON.parse with a reviver function.
+
+        * fast/js/JSON-parse-expected.txt:
+        * fast/js/resources/JSON-parse.js:
+        (createTests.log):
+        (createTests.result):
+        (createTests.logOrder):
+        (createTests.var):
+        (createTests.throwAfterFifthCall):
+        (createTests):
+
 2009-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -587,7 +587,145 @@ void JSONObject::markStringifiers(Stringifier* stringifier)
     stringifier->mark();
 }
 
-// ECMA-262 v5 15.12.3
+class Walker {
+public:
+    Walker(ExecState* exec, JSObject* function, CallType callType, CallData callData)
+        : m_exec(exec)
+        , m_function(function)
+        , m_callType(callType)
+        , m_callData(callData)
+    {
+    }
+    JSValue walk(JSValue unfiltered);
+private:
+    JSValue callReviver(JSValue property, JSValue unfiltered)
+    {
+        JSValue args[] = { property, unfiltered };
+        ArgList argList(args, 2);
+        return call(m_exec, m_function, m_callType, m_callData, jsNull(), argList);
+    }
+
+    friend class Holder;
+
+    ExecState* m_exec;
+    JSObject* m_function;
+    CallType m_callType;
+    CallData m_callData;
+};
+    
+enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember, 
+                                 ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember };
+NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
+{
+    Vector<PropertyNameArray, 16> propertyStack;
+    Vector<uint32_t, 16> indexStack;
+    Vector<JSObject*, 16> objectStack;
+    Vector<JSArray*, 16> arrayStack;
+    
+    Vector<WalkerState, 16> stateStack;
+    WalkerState state = StateUnknown;
+    JSValue inValue = unfiltered;
+    JSValue outValue = jsNull();
+    while (1) {
+        switch (state) {
+            arrayStartState:
+            case ArrayStartState: {
+                ASSERT(inValue.isObject());
+                ASSERT(isJSArray(&m_exec->globalData(), asObject(inValue)));
+                JSArray* array = asArray(inValue);
+                arrayStack.append(array);
+                indexStack.append(0);
+                // fallthrough
+            }
+            arrayStartVisitMember:
+            case ArrayStartVisitMember: {
+                JSArray* array = arrayStack.last();
+                uint32_t index = indexStack.last();
+                if (index == array->length()) {
+                    outValue = array;
+                    arrayStack.removeLast();
+                    indexStack.removeLast();
+                    break;
+                }
+                inValue = array->getIndex(index);
+                if (inValue.isObject()) {
+                    stateStack.append(ArrayEndVisitMember);
+                    goto stateUnknown;
+                } else
+                    outValue = inValue;
+                // fallthrough
+            }
+            case ArrayEndVisitMember: {
+                JSArray* array = arrayStack.last();
+                array->setIndex(indexStack.last(), callReviver(jsString(m_exec, UString::from(indexStack.last())), outValue));
+                if (m_exec->hadException())
+                    return jsNull();
+                indexStack.last()++;
+                goto arrayStartVisitMember;
+            }
+            objectStartState:
+            case ObjectStartState: {
+                ASSERT(inValue.isObject());
+                ASSERT(!isJSArray(&m_exec->globalData(), asObject(inValue)));
+                JSObject* object = asObject(inValue);
+                objectStack.append(object);
+                indexStack.append(0);
+                propertyStack.append(PropertyNameArray(m_exec));
+                object->getPropertyNames(m_exec, propertyStack.last());
+                // fallthrough
+            }
+            objectStartVisitMember:
+            case ObjectStartVisitMember: {
+                JSObject* object = objectStack.last();
+                uint32_t index = indexStack.last();
+                PropertyNameArray& properties = propertyStack.last();
+                if (index == properties.size()) {
+                    outValue = object;
+                    objectStack.removeLast();
+                    indexStack.removeLast();
+                    propertyStack.removeLast();
+                    break;
+                }
+                PropertySlot slot;
+                object->getOwnPropertySlot(m_exec, properties[index], slot);
+                inValue = slot.getValue(m_exec, properties[index]);
+                ASSERT(!m_exec->hadException());
+                if (inValue.isObject()) {
+                    stateStack.append(ObjectEndVisitMember);
+                    goto stateUnknown;
+                } else
+                    outValue = inValue;
+                // fallthrough
+            }
+            case ObjectEndVisitMember: {
+                JSObject* object = objectStack.last();
+                Identifier prop = propertyStack.last()[indexStack.last()];
+                PutPropertySlot slot;
+                object->put(m_exec, prop, callReviver(jsString(m_exec, prop.ustring()), outValue), slot);
+                if (m_exec->hadException())
+                    return jsNull();
+                indexStack.last()++;
+                goto objectStartVisitMember;
+            }
+            stateUnknown:
+            case StateUnknown:
+                if (!inValue.isObject()) {
+                    outValue = inValue;
+                    break;
+                }
+                if (isJSArray(&m_exec->globalData(), asObject(inValue)))
+                    goto arrayStartState;
+                goto objectStartState;
+        }
+        if (stateStack.isEmpty())
+            break;
+        state = stateStack.last();
+        stateStack.removeLast();
+    }
+    return callReviver(jsEmptyString(m_exec), outValue);
+}
+
+// ECMA-262 v5 15.12.2
 JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec, JSObject*, JSValue, const ArgList& args)
 {
     if (args.isEmpty())
@@ -598,11 +736,19 @@ JSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec, JSObject*, JSValue, co
         return jsNull();
     
     LiteralParser jsonParser(exec, source, LiteralParser::StrictJSON);
-    JSValue parsedObject = jsonParser.tryLiteralParse();
-    if (!parsedObject)
+    JSValue unfiltered = jsonParser.tryLiteralParse();
+    if (!unfiltered)
         return throwError(exec, SyntaxError, "Unable to parse JSON string");
     
-    return parsedObject;
+    if (args.size() < 2)
+        return unfiltered;
+    
+    JSValue function = args.at(1);
+    CallData callData;
+    CallType callType = function.getCallData(callData);
+    if (callType == CallTypeNone)
+        return unfiltered;
+    return Walker(exec, asObject(function), callType, callData).walk(unfiltered);
 }
 
 // ECMA-262 v5 15.12.3

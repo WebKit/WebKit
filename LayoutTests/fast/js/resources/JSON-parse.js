@@ -350,11 +350,181 @@ function createTests() {
     result.push(function(jsonObject){
         return jsonObject.parse(JSON.stringify(complexObject,null,"\n"));
     });
-    result.push(function(jsonObject){
-        return jsonObject.parse(JSON.stringify(complexObject,null,"\n"));
-    });
     result[result.length - 1].expected = JSON.stringify(complexObject);
-    
+    function log(key, value) {
+        var o = {};
+        o[key] = value;
+        o.keyType = typeof key;
+        return o;
+    }
+    result.push(function(jsonObject){
+        return jsonObject.parse("true", log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse("false", log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse("null", log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse("1", log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse("1.5", log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse('"a string"', log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse(JSON.stringify(simpleArray), log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse(JSON.stringify(complexArray), log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse(JSON.stringify(simpleObject), log);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.parse(JSON.stringify(complexObject), log);
+    });
+    var logOrderString;
+    function logOrder(key, value) {
+        logOrderString += key +":"+JSON.stringify(value);
+        return null;
+    }
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse("true", logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse("false", logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse("null", logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse("1", logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse("1.5", logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse('"a string"', logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse(JSON.stringify(simpleArray), logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse(JSON.stringify(complexArray), logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse(JSON.stringify(simpleObject), logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        return jsonObject.parse(JSON.stringify(complexObject), logOrder);
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse("true", logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse("false", logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse("null", logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse("1", logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse("1.5", logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse('"a string"', logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse(JSON.stringify(simpleArray), logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse(JSON.stringify(complexArray), logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse(JSON.stringify(simpleObject), logOrder);
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        logOrderString = "";
+        jsonObject.parse(JSON.stringify(complexObject), logOrder);
+        return logOrderString;
+    });
+    var callCount = 0;
+    function throwAfterFifthCall(key, value) {
+        logOrder(key, value);
+        if (++callCount > 5)
+            throw "from reviver";
+        return null;
+    }
+    result.push(function(jsonObject){
+        callCount = 0;
+        logOrderString = "";
+        return jsonObject.parse(JSON.stringify(complexArray), throwAfterFifthCall);
+    });
+    result[result.length - 1].throws = true;
+    result.push(function(jsonObject){
+        callCount = 0;
+        logOrderString = "";
+        return jsonObject.parse(JSON.stringify(simpleObject), throwAfterFifthCall);
+    });
+    result.push(function(jsonObject){
+        callCount = 0;
+        logOrderString = "";
+        return jsonObject.parse(JSON.stringify(complexObject), throwAfterFifthCall);
+    });
+    result[result.length - 1].throws = true;
+    result.push(function(jsonObject){
+        callCount = 0;
+        logOrderString = "";
+        try { jsonObject.parse(JSON.stringify(complexArray), throwAfterFifthCall); } catch (e) {}
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        callCount = 0;
+        logOrderString = "";
+        try { jsonObject.parse(JSON.stringify(simpleObject), throwAfterFifthCall); } catch (e) {}
+        return logOrderString;
+    });
+    result.push(function(jsonObject){
+        callCount = 0;
+        logOrderString = "";
+        try { jsonObject.parse(JSON.stringify(complexObject), throwAfterFifthCall); } catch (e) {}
+        return logOrderString;
+    });
+
     return result;
 }
 var tests = createTests();
