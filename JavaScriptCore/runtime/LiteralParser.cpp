@@ -30,6 +30,7 @@
 #include "JSString.h"
 #include "Lexer.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/dtoa.h>
 
 namespace JSC {
 
@@ -263,6 +264,16 @@ LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& tok
     
     token.type = TokNumber;
     token.end = m_ptr;
+    Vector<char, 64> buffer(token.end - token.start + 1);
+    int i;
+    for (i = 0; i < token.end - token.start; i++) {
+        ASSERT(static_cast<char>(token.start[i]) == token.start[i]);
+        buffer[i] = static_cast<char>(token.start[i]);
+    }
+    buffer[i] = 0;
+    char* end;
+    token.numberToken = WTF::strtod(buffer.data(), &end);
+    ASSERT(buffer.data() + (token.end - token.start) == end);
     return TokNumber;
 }
 
@@ -376,7 +387,7 @@ JSValue LiteralParser::parse(ParserState initialState)
                     case TokNumber: {
                         Lexer::LiteralParserToken numberToken = m_lexer.currentToken();
                         m_lexer.next();
-                        lastValue = jsNumber(m_exec, UString(numberToken.start, numberToken.end - numberToken.start).toDouble());
+                        lastValue = jsNumber(m_exec, numberToken.numberToken);
                         break;
                     }
                     case TokNull:

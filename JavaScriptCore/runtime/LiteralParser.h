@@ -67,6 +67,7 @@ namespace JSC {
                 const UChar* start;
                 const UChar* end;
                 UString stringToken;
+                double numberToken;
             };
             Lexer(const UString& s, ParserMode mode)
                 : m_string(s)

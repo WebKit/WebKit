@@ -1,3 +1,21 @@
+2009-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix stupid performance problem in the LiteralParser
+
+        The LiteralParser was making a new UString in order to use
+        toDouble, however UString's toDouble allows a much wider range
+        of numberic strings than the LiteralParser accepts, and requires
+        an additional heap allocation or two for the construciton of the
+        UString.  To rectify this we just call WTF::dtoa directly using
+        a stack allocated buffer to hold the validated numeric literal.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::Lexer::lexNumber):
+        (JSC::LiteralParser::parse):
+        * runtime/LiteralParser.h:
+
 2009-06-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.
