@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSONObject.h"
 
+#include "BooleanObject.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"
@@ -119,18 +120,18 @@ private:
 
 // ------------------------------ helper functions --------------------------------
 
-static inline JSValue unwrapNumberOrString(JSValue value)
+static inline JSValue unwrapBoxedPrimitive(JSValue value)
 {
     if (!value.isObject())
         return value;
-    if (!asObject(value)->inherits(&NumberObject::info) && !asObject(value)->inherits(&StringObject::info))
+    if (!asObject(value)->inherits(&NumberObject::info) && !asObject(value)->inherits(&StringObject::info) && !asObject(value)->inherits(&BooleanObject::info))
         return value;
     return static_cast<JSWrapperObject*>(asObject(value))->internalValue();
 }
 
 static inline UString gap(JSValue space)
 {
-    space = unwrapNumberOrString(space);
+    space = unwrapBoxedPrimitive(space);
 
     // If the space value is a number, create a gap string with that number of spaces.
     double spaceCount;
@@ -355,12 +356,12 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifySucceeded;
     }
 
+    value = unwrapBoxedPrimitive(value);
+
     if (value.isBoolean()) {
         builder.append(value.getBoolean() ? "true" : "false");
         return StringifySucceeded;
     }
-
-    value = unwrapNumberOrString(value);
 
     UString stringValue;
     if (value.getString(stringValue)) {

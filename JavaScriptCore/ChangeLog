@@ -1,5 +1,20 @@
 2009-06-22  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 26640: JSON.stringify needs to special case Boolean objects
+        <https://bugs.webkit.org/show_bug.cgi?id=26640>
+
+        Add special case handling of the Boolean object so we match current
+        ES5 errata.
+
+        * runtime/JSONObject.cpp:
+        (JSC::unwrapBoxedPrimitive): renamed from unwrapNumberOrString
+        (JSC::gap):
+        (JSC::Stringifier::appendStringifiedValue):
+
+2009-06-22  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin Adler.
 
         Bug 26591: Support revivers in JSON.parse

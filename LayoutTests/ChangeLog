@@ -1,3 +1,17 @@
+2009-06-22  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug 26640: JSON.stringify needs to special case Boolean objects
+        <https://bugs.webkit.org/show_bug.cgi?id=26640>
+
+        Add tests for serialisation of wrapped and unwrapped primitives.
+
+        * fast/js/JSON-stringify-expected.txt:
+        * fast/js/resources/JSON-stringify.js:
+        * fast/js/resources/json2-es5-compat.js:
+          Modify Str() to match ES5 errata
+
 2009-06-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

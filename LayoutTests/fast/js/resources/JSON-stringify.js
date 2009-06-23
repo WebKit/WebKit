@@ -6,6 +6,54 @@ function createTests() {
     var complexObject = {a:"1", b:"2", c:"3", d:undefined, e:null, "":12, get f(){ return simpleArray; }, array: complexArray};
     var result = [];
     result.push(function(jsonObject){
+        return jsonObject.stringify(1);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(1.5);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(-1);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(-1.5);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(null);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify("string");
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(new Number(0));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(new Number(1));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(new Number(1.5));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(new Number(-1));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(new Number(-1.5));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(new String("a string object"));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(new Boolean(true));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(new Boolean(false));
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(true);
+    });
+    result.push(function(jsonObject){
+        return jsonObject.stringify(false);
+    });
+    result.push(function(jsonObject){
         return jsonObject.stringify(new Date(0));
     });
     result.push(function(jsonObject){

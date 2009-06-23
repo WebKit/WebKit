@@ -1,4 +1,68 @@
 function (jsonObject) {
+        return jsonObject.stringify(1);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(1.5);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(-1);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(-1.5);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(null);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify("string");
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new Number(0));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new Number(1));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new Number(1.5));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new Number(-1));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new Number(-1.5));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new String("a string object"));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new Boolean(true));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(new Boolean(false));
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(true);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
+        return jsonObject.stringify(false);
+    }
+PASS tests[i](nativeJSON) is tests[i](JSON)
+function (jsonObject) {
         return jsonObject.stringify(new Date(0));
     }
 PASS tests[i](nativeJSON) is tests[i](JSON)

@@ -179,12 +179,6 @@ if (!this.JSON) {
                  f(this.getUTCMinutes())   + ':' +
                  f(this.getUTCSeconds())   + 'Z';
         };
-
-        String.prototype.toJSON =
-        Number.prototype.toJSON =
-        Boolean.prototype.toJSON = function (key) {
-            return this.valueOf();
-        };
     }
 
     var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
@@ -248,6 +242,11 @@ if (!this.JSON) {
         }
 
 // What happens next depends on the value's type.
+
+        if (value && ((typeof value) === "object")) {
+            if (value.constructor === String || value.constructor === Number || value.constructor === Boolean)
+                value = value.valueOf();
+        }
 
         switch (typeof value) {
         case 'string':
