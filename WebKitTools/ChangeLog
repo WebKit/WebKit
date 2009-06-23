@@ -1,3 +1,12 @@
+2009-06-23  Joe Mason  <joe.mason@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26664
+        * Scripts/prepare-ChangeLog: Added --git-index mode to list only the
+        changes which are already staged in the index.  Useful to create an
+        entry for what you're about to commit while ignoring unstaged changes.
+
 2009-06-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

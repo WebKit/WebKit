@@ -4,6 +4,7 @@
 #
 #  Copyright (C) 2000, 2001 Eazel, Inc.
 #  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
+#  Copyright (C) 2009 Torchmobile, Inc.
 #
 #  prepare-ChangeLog is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public
@@ -28,6 +29,7 @@
 # Java support added by Maciej Stachowiak <mjs@eazel.com>
 # Objective-C, C++ and Objective-C++ support added by Maciej Stachowiak <mjs@apple.com>
 # Git support added by Adam Roben <aroben@apple.com>
+# --git-index flag added by Joe Mason <joe.mason@torchmobile.com>
 
 
 #
@@ -93,6 +95,7 @@ sub normalizePath($);
 my $changeLogTimeZone = "PST8PDT";
 
 my $gitCommit = 0;
+my $gitIndex = "";
 my $gitReviewer = "";
 my $openChangeLogs = 0;
 my $showHelp = 0;
@@ -101,6 +104,7 @@ my $updateChangeLogs = 1;
 my $parseOptionsResult =
     GetOptions("diff|d!" => \$spewDiff,
                "git-commit:s" => \$gitCommit,
+               "git-index" => \$gitIndex,
                "git-reviewer:s" => \$gitReviewer,
                "help|h!" => \$showHelp,
                "open|o!" => \$openChangeLogs,
@@ -109,6 +113,7 @@ if (!$parseOptionsResult || $showHelp) {
     print STDERR basename($0) . " [-d|--diff] [-h|--help] [-o|--open] [--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
     print STDERR "  -d|--diff      Spew diff to stdout when running\n";
     print STDERR "  --git-commit   Populate the ChangeLogs from the specified git commit\n";
+    print STDERR "  --git-index    Populate the ChangeLogs from the git index only\n";
     print STDERR "  --git-reviewer When populating the ChangeLogs from a git commit claim that the spcified name reviewed the change.\n";
     print STDERR "                 This option is useful when the git commit lacks a Signed-Off-By: line\n";
     print STDERR "  -h|--help      Show this help message\n";
@@ -116,6 +121,8 @@ if (!$parseOptionsResult || $showHelp) {
     print STDERR "  --[no-]update  Update ChangeLogs from svn before adding entry (default: update)\n";
     exit 1;
 }
+
+die "--git-commit and --git-index are incompatible." if ($gitIndex && $gitCommit);
 
 my %paths = processPaths(@ARGV);
 
@@ -1141,6 +1148,7 @@ sub diffFromToString()
     return "" if $isSVN;
     return $gitCommit if $gitCommit =~ m/.+\.\..+/;
     return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
+    return "--cached" if $gitIndex;
     return "HEAD" if $isGit;
 }
 
@@ -1225,7 +1233,6 @@ sub generateFileList(\@\@\%)
     my ($changedFiles, $conflictFiles, $functionLists) = @_;
     print STDERR "  Running status to find changed, added, or removed files.\n";
     open STAT, "-|", statusCommand(keys %paths) or die "The status failed: $!.\n";
-    my $inGitCommitSection = 0;
     while (<STAT>) {
         my $status;
         my $original;
@@ -1336,7 +1343,7 @@ sub isConflictStatus($)
         "U" => 1,
     );
 
-    return 0 if $gitCommit; # an existing commit cannot have conflicts
+    return 0 if ($gitCommit || $gitIndex); # an existing commit or staged change cannot have conflicts
     return $svn{$status} if $isSVN;
     return $git{$status} if $isGit;
 }
