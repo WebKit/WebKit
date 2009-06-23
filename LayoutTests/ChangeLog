@@ -1,3 +1,41 @@
+2009-06-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26589
+
+        More tests for the XSSAuditor.  (I converted the server side to Perl
+        after Sam reviewed the patch because the PHP scripts didn't agree with
+        the Tiger and Windows buildbots.)
+
+        * http/tests/security/xssAuditor/img-onerror-tricky-expected.txt: Added.
+        * http/tests/security/xssAuditor/img-onerror-tricky.html: Added.
+        * http/tests/security/xssAuditor/link-onclick-expected.txt: Added.
+        * http/tests/security/xssAuditor/link-onclick.html: Added.
+        * http/tests/security/xssAuditor/property-escape-expected.txt: Added.
+        * http/tests/security/xssAuditor/property-escape.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag-post-and-notify.pl: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag-post.pl: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag-utf-7.pl: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag.php: Removed.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl: Added.
+        * http/tests/security/xssAuditor/resources/echo-property.pl: Added.
+        * http/tests/security/xssAuditor/resources/redir.php: Added.
+        * http/tests/security/xssAuditor/resources/xss.js: Added.
+        * http/tests/security/xssAuditor/script-tag-convoluted-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-convoluted.html: Added.
+        * http/tests/security/xssAuditor/script-tag-open-redirect-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-open-redirect.html: Added.
+        * http/tests/security/xssAuditor/script-tag-post-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-post.html: Added.
+        * http/tests/security/xssAuditor/script-tag-redirect-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-redirect.html: Added.
+        * http/tests/security/xssAuditor/script-tag-utf-7-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-utf-7.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source.html: Added.
+        * http/tests/security/xssAuditor/script-tag.html:
+
 2009-06-22  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
