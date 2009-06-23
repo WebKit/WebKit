@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -125,13 +125,27 @@ void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
             addCSSColor(attr, CSSPropertyBorderColor, attr->value());
             m_borderColorSet = true;
         }
-    } else if (attr->name() == onloadAttr) {
+    } else if (attr->name() == onloadAttr)
         document()->setWindowAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(document()->frame(), attr));
-    } else if (attr->name() == onbeforeunloadAttr) {
+    else if (attr->name() == onbeforeunloadAttr)
         document()->setWindowAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(document()->frame(), attr));
-    } else if (attr->name() == onunloadAttr) {
+    else if (attr->name() == onunloadAttr)
         document()->setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), attr));
-    } else
+    else if (attr->name() == onblurAttr)
+        document()->setWindowAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(document()->frame(), attr));
+    else if (attr->name() == onfocusAttr)
+        document()->setWindowAttributeEventListener(eventNames().focusEvent, createAttributeEventListener(document()->frame(), attr));
+    else if (attr->name() == onresizeAttr)
+        document()->setWindowAttributeEventListener(eventNames().resizeEvent, createAttributeEventListener(document()->frame(), attr));
+    else if (attr->name() == onscrollAttr)
+        document()->setWindowAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(document()->frame(), attr));
+    else if (attr->name() == onstorageAttr)
+        document()->setWindowAttributeEventListener(eventNames().storageEvent, createAttributeEventListener(document()->frame(), attr));
+    else if (attr->name() == ononlineAttr)
+        document()->setWindowAttributeEventListener(eventNames().onlineEvent, createAttributeEventListener(document()->frame(), attr));
+    else if (attr->name() == onofflineAttr)
+        document()->setWindowAttributeEventListener(eventNames().offlineEvent, createAttributeEventListener(document()->frame(), attr));
+    else
         HTMLElement::parseMappedAttribute(attr);
 }
 
@@ -214,4 +228,114 @@ void HTMLFrameSetElement::setRows(const String &value)
     setAttribute(rowsAttr, value);
 }
 
+EventListener* HTMLFrameSetElement::onblur() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().blurEvent);
 }
+
+void HTMLFrameSetElement::setOnblur(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().blurEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onerror() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().errorEvent);
+}
+
+void HTMLFrameSetElement::setOnerror(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().errorEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onfocus() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().focusEvent);
+}
+
+void HTMLFrameSetElement::setOnfocus(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().focusEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onload() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().loadEvent);
+}
+
+void HTMLFrameSetElement::setOnload(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().loadEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onbeforeunload() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().beforeunloadEvent);
+}
+
+void HTMLFrameSetElement::setOnbeforeunload(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().beforeunloadEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onmessage() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().messageEvent);
+}
+
+void HTMLFrameSetElement::setOnmessage(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().messageEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onoffline() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().offlineEvent);
+}
+
+void HTMLFrameSetElement::setOnoffline(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().offlineEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::ononline() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().onlineEvent);
+}
+
+void HTMLFrameSetElement::setOnonline(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().onlineEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onresize() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().resizeEvent);
+}
+
+void HTMLFrameSetElement::setOnresize(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().resizeEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onstorage() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().storageEvent);
+}
+
+void HTMLFrameSetElement::setOnstorage(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().storageEvent, eventListener);
+}
+
+EventListener* HTMLFrameSetElement::onunload() const
+{
+    return document()->getWindowAttributeEventListener(eventNames().unloadEvent);
+}
+
+void HTMLFrameSetElement::setOnunload(PassRefPtr<EventListener> eventListener)
+{
+    document()->setAttributeEventListener(eventNames().unloadEvent, eventListener);
+}
+
+} // namespace WebCore

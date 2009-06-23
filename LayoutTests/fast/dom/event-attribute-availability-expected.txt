@@ -253,6 +253,57 @@ PASS 'onblur' in body is true
 PASS 'onerror' in body is true
 PASS 'onfocus' in body is true
 PASS 'onload' in body is true
+
+Test HTMLFrameSetElement
+PASS 'onabort' in frameSet is true
+PASS 'onblur' in frameSet is true
+PASS 'onchange' in frameSet is true
+PASS 'onclick' in frameSet is true
+PASS 'oncontextmenu' in frameSet is true
+PASS 'ondblclick' in frameSet is true
+PASS 'ondrag' in frameSet is true
+PASS 'ondragend' in frameSet is true
+PASS 'ondragenter' in frameSet is true
+PASS 'ondragleave' in frameSet is true
+PASS 'ondragover' in frameSet is true
+PASS 'ondragstart' in frameSet is true
+PASS 'ondrop' in frameSet is true
+PASS 'onerror' in frameSet is true
+PASS 'onfocus' in frameSet is true
+PASS 'oninput' in frameSet is true
+PASS 'onkeydown' in frameSet is true
+PASS 'onkeypress' in frameSet is true
+PASS 'onkeyup' in frameSet is true
+PASS 'onload' in frameSet is true
+PASS 'onmousedown' in frameSet is true
+PASS 'onmousemove' in frameSet is true
+PASS 'onmouseout' in frameSet is true
+PASS 'onmouseover' in frameSet is true
+PASS 'onmouseup' in frameSet is true
+PASS 'onmousewheel' in frameSet is true
+PASS 'onscroll' in frameSet is true
+PASS 'onselect' in frameSet is true
+PASS 'onsubmit' in frameSet is true
+PASS 'onbeforecut' in frameSet is true
+PASS 'oncut' in frameSet is true
+PASS 'onbeforecopy' in frameSet is true
+PASS 'oncopy' in frameSet is true
+PASS 'onbeforepaste' in frameSet is true
+PASS 'onpaste' in frameSet is true
+PASS 'onreset' in frameSet is true
+PASS 'onsearch' in frameSet is true
+PASS 'onselectstart' in frameSet is true
+PASS 'onbeforeunload' in frameSet is true
+PASS 'onmessage' in frameSet is true
+PASS 'onoffline' in frameSet is true
+PASS 'ononline' in frameSet is true
+PASS 'onresize' in frameSet is true
+PASS 'onstorage' in frameSet is true
+PASS 'onunload' in frameSet is true
+PASS 'onblur' in frameSet is true
+PASS 'onerror' in frameSet is true
+PASS 'onfocus' in frameSet is true
+PASS 'onload' in frameSet is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -568,7 +568,7 @@ public:
     const RegisteredEventListenerVector& eventListeners() const;
 
     // These 4 attribute event handler attributes are overrided by HTMLBodyElement
-    // to forward to the DOMWindow.
+    // and HTMLFrameSetElement to forward to the DOMWindow.
     virtual EventListener* onblur() const;
     virtual void setOnblur(PassRefPtr<EventListener>);
     virtual EventListener* onerror() const;

@@ -1,3 +1,38 @@
+2009-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Add event handler attribute getter/setters to HTMLFrameSetElement
+        as specified in HTML 5.  These match the ones on HTMLBodyElement.
+
+        * dom/Node.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        (WebCore::HTMLFrameSetElement::onblur):
+        (WebCore::HTMLFrameSetElement::setOnblur):
+        (WebCore::HTMLFrameSetElement::onerror):
+        (WebCore::HTMLFrameSetElement::setOnerror):
+        (WebCore::HTMLFrameSetElement::onfocus):
+        (WebCore::HTMLFrameSetElement::setOnfocus):
+        (WebCore::HTMLFrameSetElement::onload):
+        (WebCore::HTMLFrameSetElement::setOnload):
+        (WebCore::HTMLFrameSetElement::onbeforeunload):
+        (WebCore::HTMLFrameSetElement::setOnbeforeunload):
+        (WebCore::HTMLFrameSetElement::onmessage):
+        (WebCore::HTMLFrameSetElement::setOnmessage):
+        (WebCore::HTMLFrameSetElement::onoffline):
+        (WebCore::HTMLFrameSetElement::setOnoffline):
+        (WebCore::HTMLFrameSetElement::ononline):
+        (WebCore::HTMLFrameSetElement::setOnonline):
+        (WebCore::HTMLFrameSetElement::onresize):
+        (WebCore::HTMLFrameSetElement::setOnresize):
+        (WebCore::HTMLFrameSetElement::onstorage):
+        (WebCore::HTMLFrameSetElement::setOnstorage):
+        (WebCore::HTMLFrameSetElement::onunload):
+        (WebCore::HTMLFrameSetElement::setOnunload):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLFrameSetElement.idl:
+
 2009-06-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

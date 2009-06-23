@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,7 +43,7 @@ public:
 
     virtual void attach();
     virtual bool rendererIsNeeded(RenderStyle*);
-    virtual RenderObject *createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
     virtual void defaultEventHandler(Event*);
 
@@ -58,7 +56,7 @@ public:
 
     bool hasBorderColor() const { return m_borderColorSet; }
 
-    virtual void recalcStyle( StyleChange ch );
+    virtual void recalcStyle(StyleChange);
     
     String cols() const;
     void setCols(const String&);
@@ -68,6 +66,31 @@ public:
 
     const Length* rowLengths() const { return m_rows; }
     const Length* colLengths() const { return m_cols; }
+
+    // Event handler attributes
+    virtual EventListener* onblur() const;
+    virtual void setOnblur(PassRefPtr<EventListener>);
+    virtual EventListener* onerror() const;
+    virtual void setOnerror(PassRefPtr<EventListener>);
+    virtual EventListener* onfocus() const;
+    virtual void setOnfocus(PassRefPtr<EventListener>);
+    virtual EventListener* onload() const;
+    virtual void setOnload(PassRefPtr<EventListener>);
+
+    EventListener* onbeforeunload() const;
+    void setOnbeforeunload(PassRefPtr<EventListener>);
+    EventListener* onmessage() const;
+    void setOnmessage(PassRefPtr<EventListener>);
+    EventListener* onoffline() const;
+    void setOnoffline(PassRefPtr<EventListener>);
+    EventListener* ononline() const;
+    void setOnonline(PassRefPtr<EventListener>);
+    EventListener* onresize() const;
+    void setOnresize(PassRefPtr<EventListener>);
+    EventListener* onstorage() const;
+    void setOnstorage(PassRefPtr<EventListener>);
+    EventListener* onunload() const;
+    void setOnunload(PassRefPtr<EventListener>);
 
 private:
     Length* m_rows;
@@ -86,6 +109,6 @@ private:
     bool noresize;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // HTMLFrameSetElement_h

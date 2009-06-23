@@ -1,3 +1,13 @@
+2009-06-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Add event handler attribute getter/setters to HTMLFrameSetElement
+        as specified in HTML 5.  These match the ones on HTMLBodyElement.
+
+        * fast/dom/event-attribute-availability-expected.txt:
+        * fast/dom/resources/event-attribute-availability.js:
+
 2009-06-22  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

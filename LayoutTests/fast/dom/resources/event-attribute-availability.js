@@ -17,7 +17,7 @@ var elementAndDocumentProperties = [
     "onselectstart"
 ];
 
-var bodyProperties = [
+var bodyAndFrameSetProperties = [
     "onbeforeunload", "onmessage", "onoffline", "ononline", "onresize", "onstorage", "onunload", "onblur",
     "onerror", "onfocus", "onload",
 
@@ -59,8 +59,17 @@ var body = document.body;
 for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
     shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in body");
 }
-for (var i = 0; i < bodyProperties.length; ++i) {
-    shouldBeTrue("'" + bodyProperties[i] + "' in body");
+for (var i = 0; i < bodyAndFrameSetProperties.length; ++i) {
+    shouldBeTrue("'" + bodyAndFrameSetProperties[i] + "' in body");
+}
+
+debug("\nTest HTMLFrameSetElement");
+var frameSet = document.createElement("frameset");
+for (var i = 0; i < elementAndDocumentProperties.length; ++i) {
+    shouldBeTrue("'" + elementAndDocumentProperties[i] + "' in frameSet");
+}
+for (var i = 0; i < bodyAndFrameSetProperties.length; ++i) {
+    shouldBeTrue("'" + bodyAndFrameSetProperties[i] + "' in frameSet");
 }
 
 successfullyParsed = true;

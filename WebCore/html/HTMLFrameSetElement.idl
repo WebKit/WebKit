@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserve
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserve
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,10 +26,35 @@ module html {
         InterfaceUUID=5038a73d-c0db-4847-acb4-4c6d31f48790,
         ImplementationUUID=450f7bf6-fdc0-4a0f-b7e1-baea7f7e5732
     ] HTMLFrameSetElement : HTMLElement {
-
         attribute [ConvertNullToNullString] DOMString cols;
         attribute [ConvertNullToNullString] DOMString rows;
 
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+        // Event handler attributes
+        attribute [DontEnum] EventListener onbeforeunload;
+        attribute [DontEnum] EventListener onmessage;
+        attribute [DontEnum] EventListener onoffline;
+        attribute [DontEnum] EventListener ononline;
+        attribute [DontEnum] EventListener onresize;
+        attribute [DontEnum] EventListener onstorage;
+        attribute [DontEnum] EventListener onunload;
+
+        // Overrides of Element attributes.
+        // attribute [DontEnum] EventListener onblur;
+        // attribute [DontEnum] EventListener onerror;
+        // attribute [DontEnum] EventListener onfocus;
+        // attribute [DontEnum] EventListener onload;
+
+        // Not implemented yet.
+        // attribute [DontEnum] EventListener onafterprint;
+        // attribute [DontEnum] EventListener onbeforeprint;
+        // attribute [DontEnum] EventListener onhashchange;
+        // attribute [DontEnum] EventListener onpopstate;
+        // attribute [DontEnum] EventListener onredo;
+        // attribute [DontEnum] EventListener onundo;
+#endif
+#endif
     };
 
 }
