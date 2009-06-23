@@ -36,6 +36,13 @@ tests = [
     {
         testHeaders: {
             'Expires': '[now+10s]',
+            'Cache-control': 'no-store',
+        },
+        expectedResult: 'Uncached',
+    },
+    {
+        testHeaders: {
+            'Expires': '[now+10s]',
             'Pragma': 'no-cache',
         },
         expectedResult: 'Uncached',
@@ -62,6 +69,12 @@ tests = [
     {
         testHeaders: {
             'Cache-control': 'max-age=10, no-cache',
+        },
+        expectedResult: 'Uncached',
+    },
+    {
+        testHeaders: {
+            'Cache-control': 'max-age=10, no-store',
         },
         expectedResult: 'Uncached',
     },

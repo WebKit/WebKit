@@ -196,18 +196,25 @@ void CachedResource::addClientToSet(CachedResourceClient* client)
     m_clients.add(client);
 }
 
-void CachedResource::removeClient(CachedResourceClient *c)
+void CachedResource::removeClient(CachedResourceClient* client)
 {
-    ASSERT(m_clients.contains(c));
-    m_clients.remove(c);
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
+
     if (canDelete() && !inCache())
         delete this;
     else if (!hasClients() && inCache()) {
         cache()->removeFromLiveResourcesSize(this);
         cache()->removeFromLiveDecodedResourcesList(this);
         allClientsRemoved();
-        cache()->prune();
+        if (response().cacheControlContainsNoStore()) {
+            // RFC2616 14.9.2:
+            // "no-store: ...MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
+            cache()->remove(this);
+        } else
+            cache()->prune();
     }
+    // This object may be dead here.
 }
 
 void CachedResource::deleteIfPossible()
@@ -366,18 +373,29 @@ void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& val
     
 bool CachedResource::canUseCacheValidator() const
 {
-    return !m_loading && (!m_response.httpHeaderField("Last-Modified").isEmpty() || !m_response.httpHeaderField("ETag").isEmpty());
+    if (m_loading)
+        return false;
+
+    if (m_response.cacheControlContainsNoStore())
+        return false;
+
+    DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified"));
+    DEFINE_STATIC_LOCAL(const AtomicString, eTagHeader, ("etag"));
+    return !m_response.httpHeaderField(lastModifiedHeader).isEmpty() || !m_response.httpHeaderField(eTagHeader).isEmpty();
 }
     
 bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
 {
     if (m_loading)
         return false;
+    
+    if (m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore())
+        return true;
 
     if (cachePolicy == CachePolicyCache)
-        return m_response.cacheControlContainsNoCache() || (isExpired() && m_response.cacheControlContainsMustRevalidate());
+        return m_response.cacheControlContainsMustRevalidate() && isExpired();
 
-    return isExpired() || m_response.cacheControlContainsNoCache();
+    return isExpired();
 }
 
 bool CachedResource::isSafeToMakePurgeable() const

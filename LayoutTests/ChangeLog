@@ -1,3 +1,15 @@
+2009-06-23  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26643
+        Memory cache should respect Cache-Control: no-store
+        
+        Update the test to cover no-store.
+
+        * http/tests/cache/subresource-expiration-expected.txt:
+        * http/tests/cache/subresource-expiration.html:
+
 2009-06-23  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adele Peterson.
