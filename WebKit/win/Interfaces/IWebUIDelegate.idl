@@ -557,7 +557,7 @@ interface IWebUIDelegate : IUnknown
         the contents of the dragging pasteboard.
         - (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard;
     */
-    HRESULT willPerformDragSourceAction([in] IWebView* webView, [in] WebDragSourceAction action, [in] LPPOINT point, [in] IDataObject* pasteboard);
+    HRESULT willPerformDragSourceAction([in] IWebView* webView, [in] WebDragSourceAction action, [in] LPPOINT point, [in] IDataObject* pasteboard, [out, retval] IDataObject** newPasteboard);
 
     /*!
         @method webView:contextMenuItemSelected:ForElement:

@@ -104,8 +104,19 @@ DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& win
    return (DragSourceAction)action;
 }
 
-void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*)
+void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const IntPoint& intPoint, Clipboard* clipboard)
 {
+    COMPtr<IWebUIDelegate> uiDelegate;
+    if (!SUCCEEDED(m_webView->uiDelegate(&uiDelegate)))
+        return;
+
+    POINT point = intPoint;
+    COMPtr<IDataObject> dataObject = static_cast<ClipboardWin*>(clipboard)->dataObject();
+
+    COMPtr<IDataObject> newDataObject;
+    HRESULT result = uiDelegate->willPerformDragSourceAction(m_webView, static_cast<WebDragSourceAction>(action), &point, dataObject.get(), &newDataObject);
+    if (result == S_OK && newDataObject != dataObject)
+        static_cast<ClipboardWin*>(clipboard)->setExternalDataObject(newDataObject.get());
 }
 
 void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, const IntPoint& dragPoint, Clipboard* clipboard, Frame* frame, bool isLink)

@@ -71,6 +71,8 @@ namespace WebCore {
 
         COMPtr<IDataObject> dataObject() { return m_dataObject; }
 
+        void setExternalDataObject(IDataObject *dataObject);
+
     private:
         ClipboardWin(bool isForDragging, IDataObject*, ClipboardAccessPolicy);
         ClipboardWin(bool isForDragging, WCDataObject*, ClipboardAccessPolicy);

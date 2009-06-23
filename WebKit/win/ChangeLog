@@ -1,3 +1,20 @@
+2009-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit side of <rdar://problem/6946094>.
+
+        * Interfaces/IWebUIDelegate.idl:
+        Add a newPasteboard out parameter to willPerformDragSourceAction.
+        
+        * WebCoreSupport/WebDragClient.cpp:
+        (WebDragClient::willPerformDragSourceAction):
+        Implement this. If the client returns a new pasteboard, use it for the drag.
+        
+        * WebCoreSupport/WebInspectorDelegate.h:
+        (WebInspectorDelegate::willPerformDragSourceAction):
+        Add the new parameter.
+
 2009-06-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

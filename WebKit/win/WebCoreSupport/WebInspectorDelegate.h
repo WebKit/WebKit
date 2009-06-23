@@ -187,7 +187,8 @@ public:
         /* [in] */ IWebView*,
         /* [in] */ WebDragSourceAction,
         /* [in] */ LPPOINT,
-        /* [in] */ IDataObject*) { return E_NOTIMPL; }
+        /* [in] */ IDataObject*,
+        /* [retval][out] */ IDataObject**) { return E_NOTIMPL; }
 
     virtual HRESULT STDMETHODCALLTYPE contextMenuItemSelected( 
         /* [in] */ IWebView*,

@@ -769,4 +769,12 @@ bool ClipboardWin::hasData()
     return false;
 }
 
+void ClipboardWin::setExternalDataObject(IDataObject *dataObject)
+{
+    ASSERT(isForDragging());
+
+    m_writableDataObject = 0;
+    m_dataObject = dataObject;
+}
+
 } // namespace WebCore

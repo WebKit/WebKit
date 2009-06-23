@@ -186,7 +186,8 @@ public:
         /* [in] */ IWebView *webView,
         /* [in] */ WebDragSourceAction action,
         /* [in] */ LPPOINT point,
-        /* [in] */ IDataObject *pasteboard) { return E_NOTIMPL; }
+        /* [in] */ IDataObject *pasteboard,
+        /* [retval][out] */ IDataObject **newPasteboard) { return E_NOTIMPL; }
 
     virtual HRESULT STDMETHODCALLTYPE contextMenuItemSelected( 
         /* [in] */ IWebView *sender,
