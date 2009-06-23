@@ -46,28 +46,22 @@ namespace WebCore {
     public:
         virtual ~StorageArea();
         
-        virtual unsigned length() const { return internalLength(); }
-        virtual String key(unsigned index, ExceptionCode& ec) const { return internalKey(index, ec); }
-        virtual String getItem(const String& key) const { return internalGetItem(key); }
-        virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame) { internalSetItem(key, value, ec, sourceFrame); }
-        virtual void removeItem(const String& key, Frame* sourceFrame) { internalRemoveItem(key, sourceFrame); }
-        virtual void clear(Frame* sourceFrame) { internalClear(sourceFrame); }
-        virtual bool contains(const String& key) const { return internalContains(key); }
-        
+        // The HTML5 DOM Storage API
+        unsigned length() const;
+        String key(unsigned index, ExceptionCode& ec) const;
+        String getItem(const String& key) const;
+        void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame);
+        void removeItem(const String& key, Frame* sourceFrame);
+        void clear(Frame* sourceFrame);
+
+        bool contains(const String& key) const;
+
         SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
 
     protected:
         StorageArea(SecurityOrigin*);
         StorageArea(SecurityOrigin*, StorageArea*);
                 
-        unsigned internalLength() const;
-        String internalKey(unsigned index, ExceptionCode&) const;
-        String internalGetItem(const String&) const;
-        void internalSetItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
-        void internalRemoveItem(const String&, Frame* sourceFrame);
-        void internalClear(Frame* sourceFrame);
-        bool internalContains(const String& key) const;
-        
         // This is meant to be called from a background thread for LocalStorageArea's background thread import procedure.
         void importItem(const String& key, const String& value);
 
@@ -75,6 +69,7 @@ namespace WebCore {
         virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame) = 0;
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame) = 0;
         virtual void areaCleared(Frame* sourceFrame) = 0;
+        virtual void blockUntilImportComplete() const { }
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         RefPtr<StorageMap> m_storageMap;

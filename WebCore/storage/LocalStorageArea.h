@@ -71,14 +71,6 @@ namespace WebCore {
 
     // The following members are subject to thread synchronization issues.
     public:
-        // Called on the main thread
-        virtual unsigned length() const;
-        virtual String key(unsigned index, ExceptionCode&) const;
-        virtual String getItem(const String&) const;
-        virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
-        virtual void removeItem(const String&, Frame* sourceFrame);
-        virtual bool contains(const String& key) const;
-
         // Called from the background thread
         virtual void performImport();
         virtual void performSync();
@@ -96,6 +88,7 @@ namespace WebCore {
         mutable ThreadCondition m_importCondition;
         mutable bool m_importComplete;
         void markImported();
+        void blockUntilImportComplete() const;
     };
 
 } // namespace WebCore

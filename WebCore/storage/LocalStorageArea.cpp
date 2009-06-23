@@ -82,112 +82,6 @@ void LocalStorageArea::scheduleFinalSync()
     m_finalSyncScheduled = true;
 }
 
-unsigned LocalStorageArea::length() const
-{
-    ASSERT(isMainThread());
-
-    if (m_importComplete)
-        return internalLength();
-
-    MutexLocker locker(m_importLock);
-    if (m_importComplete)
-        return internalLength();
-
-    while (!m_importComplete)
-        m_importCondition.wait(m_importLock);
-    ASSERT(m_importComplete);
-    
-    return internalLength();
-}
-
-String LocalStorageArea::key(unsigned index, ExceptionCode& ec) const
-{
-    ASSERT(isMainThread());
-
-    if (m_importComplete)
-        return internalKey(index, ec);
-
-    MutexLocker locker(m_importLock);
-    if (m_importComplete)
-        return internalKey(index, ec);
-
-    while (!m_importComplete)
-        m_importCondition.wait(m_importLock);
-    ASSERT(m_importComplete);
-
-    return internalKey(index, ec);
-}
-
-String LocalStorageArea::getItem(const String& key) const
-{
-    ASSERT(isMainThread());
-
-    if (m_importComplete)
-        return internalGetItem(key);
-
-    MutexLocker locker(m_importLock);
-    if (m_importComplete)
-        return internalGetItem(key);
-
-    String item = internalGetItem(key);
-    if (!item.isNull())
-        return item;
-
-    while (!m_importComplete)
-        m_importCondition.wait(m_importLock);
-    ASSERT(m_importComplete);
-
-    return internalGetItem(key);
-}
-
-void LocalStorageArea::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
-{
-    ASSERT(isMainThread());
-
-    if (m_importComplete) {
-        internalSetItem(key, value, ec, frame);
-        return;
-    }
-
-    MutexLocker locker(m_importLock);
-    internalSetItem(key, value, ec, frame);
-}
-
-void LocalStorageArea::removeItem(const String& key, Frame* frame)
-{    
-    ASSERT(isMainThread());
-
-    if (m_importComplete) {
-        internalRemoveItem(key, frame);
-        return;
-    }
-
-    MutexLocker locker(m_importLock);
-    internalRemoveItem(key, frame);
-}
-
-bool LocalStorageArea::contains(const String& key) const
-{
-    ASSERT(isMainThread());
-
-    if (m_importComplete)
-        return internalContains(key);
-
-    MutexLocker locker(m_importLock);
-    if (m_importComplete)
-        return internalContains(key);
-
-    bool contained = internalContains(key);
-    if (contained)
-        return true;
-
-    while (!m_importComplete)
-        m_importCondition.wait(m_importLock);
-    ASSERT(m_importComplete);
-
-    return internalContains(key);
-}
-
 void LocalStorageArea::itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
     ASSERT(isMainThread());
@@ -374,6 +268,27 @@ void LocalStorageArea::markImported()
     MutexLocker locker(m_importLock);
     m_importComplete = true;
     m_importCondition.signal();
+}
+
+// FIXME: In the future, we should allow use of localStorage while it's importing (when safe to do so).
+// Blocking everything until the import is complete is by far the simplest and safest thing to do, but
+// there is certainly room for safe optimization: Key/length will never be able to make use of such an
+// optimization (since the order of iteration can change as items are being added). Get can return any
+// item currently in the map. Get/remove can work whether or not it's in the map, but we'll need a list
+// of items the import should not overwrite. Clear can also work, but it'll need to kill the import
+// job first.
+void LocalStorageArea::blockUntilImportComplete() const
+{
+    ASSERT(isMainThread());
+
+    // Fast path to avoid locking.
+    if (m_importComplete)
+        return;
+
+    MutexLocker locker(m_importLock);
+    while (!m_importComplete)
+        m_importCondition.wait(m_importLock);
+    ASSERT(m_importComplete);
 }
 
 void LocalStorageArea::sync(bool clearItems, const HashMap<String, String>& items)
