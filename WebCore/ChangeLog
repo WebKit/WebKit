@@ -1,3 +1,17 @@
+2009-06-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        [Qt] Resolve absolute path to library install_name manually
+
+        Since our target.path is set to the Qt directory (to be able
+        to do 'make install') the 'absolute_library_soname' option
+        to QMake did not do the right thing.
+
+        We now compute the absolute path manually using DESTDIR.
+
+        * WebCore.pro:
+
 2009-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Oliver Hunt.

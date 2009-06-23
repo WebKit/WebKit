@@ -25,7 +25,6 @@ CONFIG(QTDIR_build) {
     }
 
     DESTDIR = $$OUTPUT_DIR/lib
-    macx:CONFIG += absolute_library_soname
 }
 
 GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR${QMAKE_DIR_SEP}
@@ -2184,21 +2183,25 @@ HEADERS += $$WEBKIT_API_HEADERS
         QMAKE_PKGCONFIG_INSTALL_REPLACE += lib_replace
     }
 
-    mac:!static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
-        !build_pass {
-            message("Building QtWebKit as a framework, as that's how Qt was built. You can")
-            message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
-        } else {
-            debug_and_release:CONFIG(debug, debug|release) {
-                TARGET = $$qtLibraryTarget($$TARGET)
+    mac {
+        !static:contains(QT_CONFIG, qt_framework):!CONFIG(webkit_no_framework) {
+            !build_pass {
+                message("Building QtWebKit as a framework, as that's how Qt was built. You can")
+                message("override this by passing CONFIG+=webkit_no_framework to build-webkit.")
+            } else {
+                debug_and_release:CONFIG(debug, debug|release) {
+                    TARGET = $$qtLibraryTarget($$TARGET)
+                }
             }
+
+            CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
+            FRAMEWORK_HEADERS.version = Versions
+            FRAMEWORK_HEADERS.files = $$WEBKIT_API_HEADERS
+            FRAMEWORK_HEADERS.path = Headers
+            QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
         }
 
-        CONFIG += lib_bundle qt_no_framework_direct_includes qt_framework
-        FRAMEWORK_HEADERS.version = Versions
-        FRAMEWORK_HEADERS.files = $$WEBKIT_API_HEADERS
-        FRAMEWORK_HEADERS.path = Headers
-        QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
+        QMAKE_LFLAGS_SONAME = "$${QMAKE_LFLAGS_SONAME}$${DESTDIR}$${QMAKE_DIR_SEP}"
     }
 }
 
