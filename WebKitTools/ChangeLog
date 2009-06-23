@@ -1,3 +1,9 @@
+2009-06-22  Mark Rowe  <mrowe@apple.com>
+
+        Update build.webkit.org config for new machine.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2009-06-22  Steve Falkenburg  <sfalken@apple.com>
 
         Remove errant line of code mistakenly checked in.

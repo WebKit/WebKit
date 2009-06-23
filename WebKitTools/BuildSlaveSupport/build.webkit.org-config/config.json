@@ -1,11 +1,13 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
+                    { "name": "bdash-slave-2", "platform": "mac-tiger" },
+
                     { "name": "apple-xserve-1", "platform": "mac-leopard" },
                     { "name": "apple-xserve-2", "platform": "mac-leopard" },
                     { "name": "apple-xserve-3", "platform": "mac-leopard" },
 
-                    { "name": "bdash-slave-2", "platform": "mac-tiger" },
+                    { "name": "apple-pixel-1", "platform": "mac-leopard" },
 
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
@@ -27,7 +29,7 @@
                     },
                     { "name": "Leopard Intel Release (Tests)", "type": "Test", "builddir": "leopard-intel-release-tests",
                       "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["apple-xserve-3", "test-slave"]
+                      "slavenames": ["apple-pixel-1", "test-slave"]
                     },
 
                     { "name": "Leopard Intel Debug (Build)", "type": "Build", "builddir": "leopard-intel-debug",
