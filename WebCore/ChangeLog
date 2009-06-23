@@ -1,3 +1,16 @@
+2009-06-23  Thiago Macieira  <thiago.macieira@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix Qt build with Phonon.
+
+        The #include <phonon> header no longer exists. And the <Phonon> or
+        <Phonon/Phonon> headers have never existed (neither for us nor for the
+        Phonon sources). You have to select each and every header that you do
+        want now.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+
 2009-06-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.

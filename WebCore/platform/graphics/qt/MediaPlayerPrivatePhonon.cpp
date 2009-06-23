@@ -36,7 +36,10 @@
 #include <QMetaEnum>
 #include <QUrl>
 #include <QEvent>
-#include <phonon>
+
+#include <Phonon/AudioOutput>
+#include <Phonon/MediaObject>
+#include <Phonon/VideoWidget>
 
 using namespace Phonon;
 
