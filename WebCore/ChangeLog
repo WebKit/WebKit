@@ -1,3 +1,17 @@
+2009-06-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6902203> REGRESSION: 'Return' insertion point incorrect
+        after manually quoting blank line then hitting return
+
+        If the insertion point is both the begining and ending visible position
+        then we need to insert at the end instead of the begining, which is what
+        would normally happen if the insertion point was as the begining.
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+
 2009-06-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig, and looked over by Eric Carlson.

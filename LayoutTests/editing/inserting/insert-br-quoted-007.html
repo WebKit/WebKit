@@ -1,0 +1,31 @@
+<html>
+<head>
+    <style>
+        div { border:1px solid red; }
+        blockquote { border:1px solid blue; }
+    </style>
+    <script>
+        function runTest() {
+            if (window.layoutTestController)
+                window.layoutTestController.dumpAsText();
+        
+            var blankLine = document.getElementById('blankLine');
+            var s = window.getSelection();
+            s.setPosition(blankLine, 0);
+            document.execCommand("InsertNewlineInQuotedContent");
+            
+            if (blankLine.nextSibling.nodeName == "BR")
+                console.log("SUCCESS! newline inserted AFTER quoted content");
+            else
+                console.log("FAILED! newline inserted BEFORE quoted content");
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div><br></div>
+    <div contentEditable="true">
+        <blockquote type="cite">Line of text</blockquote>
+        <blockquote type="cite" id="blankLine"><br></blockquote>
+    </div>
+</body>
+</html>

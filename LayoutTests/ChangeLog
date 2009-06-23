@@ -1,3 +1,13 @@
+2009-06-23  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6902203> REGRESSION: 'Return' insertion point incorrect
+        after manually quoting blank line then hitting return
+
+        * editing/inserting/insert-br-quoted-007-expected.txt: Added.
+        * editing/inserting/insert-br-quoted-007.html: Added.
+
 2009-06-23  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by NOBODY, layout tests fix.

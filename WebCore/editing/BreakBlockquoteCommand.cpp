@@ -67,9 +67,11 @@ void BreakBlockquoteCommand::doApply()
     
     RefPtr<Element> breakNode = createBreakElement(document());
 
+    bool isLastVisPosInNode = isLastVisiblePositionInNode(visiblePos, topBlockquote);
+
     // If the position is at the beginning of the top quoted content, we don't need to break the quote.
-    // Instead, insert the break before the blockquote.
-    if (isFirstVisiblePositionInNode(visiblePos, topBlockquote)) {
+    // Instead, insert the break before the blockquote, unless the position is as the end of the the quoted content.
+    if (isFirstVisiblePositionInNode(visiblePos, topBlockquote) && !isLastVisPosInNode) {
         insertNodeBefore(breakNode.get(), topBlockquote);
         setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
         rebalanceWhitespace();   
@@ -78,9 +80,9 @@ void BreakBlockquoteCommand::doApply()
     
     // Insert a break after the top blockquote.
     insertNodeAfter(breakNode.get(), topBlockquote);
-    
+
     // If we're inserting the break at the end of the quoted content, we don't need to break the quote.
-    if (isLastVisiblePositionInNode(visiblePos, topBlockquote)) {
+    if (isLastVisPosInNode) {
         setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
         rebalanceWhitespace();
         return;
