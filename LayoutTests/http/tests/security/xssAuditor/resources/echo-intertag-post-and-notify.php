@@ -14,7 +14,11 @@ if (get_magic_quotes_gpc()) {
 <html>
 <body>
 <?php
-echo $_GET['q'];
+echo $_POST['q'];
 ?>
+<script>
+if (window.layoutTestController)
+    layoutTestController.notifyDone();
+</script>
 </body>
 </html>

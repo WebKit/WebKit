@@ -1,4 +1,6 @@
 <?php
+header("Content-Type: text/html; charset=UTF-7");
+
 # Silly magic quotes.  We're using an old version of PHP.
 if (get_magic_quotes_gpc()) {
     function stripslashes_gpc(&$value) {

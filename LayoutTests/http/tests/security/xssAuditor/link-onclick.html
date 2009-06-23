@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.setXSSAuditorEnabled(true);
+}
+</script>
+</head>
+<body>
+<iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.php?q=<a href='http://webblaze.cs.berkeley.edu' onclick='alert(/XSS/);return false'>Click me to get haxored!</a>">
+</iframe>
+</body>
+</html>

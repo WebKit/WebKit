@@ -12,9 +12,8 @@ if (get_magic_quotes_gpc()) {
 ?>
 <!DOCTYPE html>
 <html>
-<body>
-<?php
+<body foo="<?php
 echo $_GET['q'];
-?>
+?>">
 </body>
 </html>
