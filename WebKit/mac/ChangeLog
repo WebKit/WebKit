@@ -1,3 +1,19 @@
+2009-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - Fix <rdar://problem/6965672>
+        
+        Defer calls to WKPCInvalidateRect, so we don't try to invalidate while waiting for a reply, since
+        that is too early.
+        
+        * Plugins/Hosted/NetscapePluginHostProxy.h:
+        (WebKit::NetscapePluginHostProxy::isProcessingRequests):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        (WebKit::NetscapePluginHostProxy::processRequests):
+        (WKPCInvalidateRect):
+
 2009-06-22  Timothy Hatcher  <timothy@apple.com>
 
         Add Mail on Tiger and Leopard to the list of applications that need the WebView init thread workaround.

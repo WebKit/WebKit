@@ -59,6 +59,7 @@ public:
     void applicationDidBecomeActive();
     
     bool processRequests();
+    bool isProcessingRequests() const { return m_processingRequests; }
     
 private:
     ~NetscapePluginHostProxy();
@@ -88,6 +89,8 @@ private:
     unsigned m_isModal;
     bool m_menuBarIsVisible;
     const ProcessSerialNumber m_pluginHostPSN;
+    
+    unsigned m_processingRequests;
 };
     
 } // namespace WebKit

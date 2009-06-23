@@ -95,6 +95,7 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     , m_isModal(false)
     , m_menuBarIsVisible(true)
     , m_pluginHostPSN(pluginHostPSN)
+    , m_processingRequests(0)
 {
     pluginProxyMap().add(m_clientPort, this);
     
@@ -261,7 +262,9 @@ void NetscapePluginHostProxy::setModal(bool modal)
     
 bool NetscapePluginHostProxy::processRequests()
 {
-    if (!m_portSet) {
+    m_processingRequests++;
+
+   if (!m_portSet) {
         mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_PORT_SET, &m_portSet);
         mach_port_insert_member(mach_task_self(), m_clientPort, m_portSet);
         mach_port_insert_member(mach_task_self(), CFMachPortGetPort(m_deadNameNotificationPort.get()), m_portSet);
@@ -275,6 +278,7 @@ bool NetscapePluginHostProxy::processRequests()
     
     if (kr != KERN_SUCCESS) {
         LOG_ERROR("Could not receive mach message, error %x", kr);
+        m_processingRequests--;
         return false;
     }
     
@@ -287,20 +291,24 @@ bool NetscapePluginHostProxy::processRequests()
             
             if (kr != KERN_SUCCESS) {
                 LOG_ERROR("Could not send mach message, error %x", kr);
+                m_processingRequests--;
                 return false;
             }
         }
         
+        m_processingRequests--;
         return true;
     }
     
     if (msg->msgh_local_port == CFMachPortGetPort(m_deadNameNotificationPort.get())) {
         ASSERT(msg->msgh_id == MACH_NOTIFY_DEAD_NAME);
         pluginHostDied();
+        m_processingRequests--;
         return false;
     }
     
     ASSERT_NOT_REACHED();
+    m_processingRequests--;
     return false;
 }
 
@@ -391,13 +399,22 @@ kern_return_t WKPCInvalidateRect(mach_port_t clientPort, uint32_t pluginID, doub
 {
     NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
     if (!hostProxy)
-        return KERN_FAILURE;
-    
-    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
-    if (!instanceProxy)
-        return KERN_FAILURE;
+        return KERN_SUCCESS;
 
-    instanceProxy->invalidateRect(x, y, width, height);
+    if (!hostProxy->isProcessingRequests()) {
+        if (NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID))
+            instanceProxy->invalidateRect(x, y, width, height);
+        return KERN_SUCCESS;
+    }        
+
+    // Defer the work
+    CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopDefaultMode, ^{
+        if (NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort)) {
+            if (NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID))
+                instanceProxy->invalidateRect(x, y, width, height);
+        }
+    });
+
     return KERN_SUCCESS;
 }
 
