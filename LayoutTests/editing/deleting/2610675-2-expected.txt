@@ -2,5 +2,5 @@ This tests to see that if the caret is in an empty quoted paragraph, and there's
 
 <div><br></div>
 <div>On Tuesday, Justin wrote:</div>
-<div>not&nbsp;quoted</div><blockquote type="cite" id="blockquote">quoted<br>quoted</blockquote>
+<div>not quoted</div><blockquote type="cite" id="blockquote">quoted<br>quoted</blockquote>
 

@@ -106,22 +106,14 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     return true;
 }
 
-void InsertTextCommand::input(const String& originalText, bool selectInsertedText)
+void InsertTextCommand::input(const String& text, bool selectInsertedText)
 {
-    String text = originalText;
     
     ASSERT(text.find('\n') == -1);
 
     if (endingSelection().isNone())
         return;
-        
-    if (RenderObject* renderer = endingSelection().start().node()->renderer())
-        if (renderer->style()->collapseWhiteSpace())
-            // Turn all spaces into non breaking spaces, to make sure that they are treated
-            // literally, and aren't collapsed after insertion. They will be rebalanced 
-            // (turned into a sequence of regular and non breaking spaces) below.
-            text.replace(' ', noBreakSpace);
-    
+
     // Delete the current selection.
     // FIXME: This delete operation blows away the typing style.
     if (endingSelection().isRange()) {
@@ -129,7 +121,7 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
             return;
         deleteSelection(false, true, true, false);
     }
-    
+
     Position startPosition(endingSelection().start());
     
     Position placeholder;
@@ -184,7 +176,7 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
         // The insertion may require adjusting adjacent whitespace, if it is present.
         rebalanceWhitespaceAt(endPosition);
         // Rebalancing on both sides isn't necessary if we've inserted a space.
-        if (originalText != " ") 
+        if (text != " ") 
             rebalanceWhitespaceAt(startPosition);
             
         m_charactersAdded += text.length();

@@ -1,3 +1,40 @@
+2009-06-23  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Justin Garcia.
+
+        Undo the changeset 21212 to fix the regression bug 14062.
+        The changeset 21212 attempted to fix rdar://problem/5002441.
+        The changeset 21212 modified InsertTextCommand::input so as to convert
+        all spaces in text to non-breaking spaces for rdar://problem/5002441.
+        However, the bug was originally caused by rebalanceWhitespaceAt
+        and this workaround introduced a regression bug 14062.
+        Because rebalanceWhitespaceAt appears to behave correctly now,
+        the workaround introduced in 21212 is no longer needed.
+
+        The following test cases are affected by this change.
+        This patch removes unappropriate non-breaking spaces (&nbsp;) and
+        inserts normal spaces instead.
+
+        * editing/deleting/2610675-1-expected.txt: Replaced.
+        * editing/deleting/2610675-2-expected.txt: Replaced.
+        * editing/deleting/2610675-3-expected.txt: Replaced.
+        * editing/inserting/insert-before-link-1-expected.txt: Replaced.
+        * editing/inserting/space-after-removeformat-expected.txt: Added.
+        * editing/inserting/space-after-removeformat.html: Added.
+        * platform/mac/editing/execCommand/5482023-expected.checksum: Replaced.
+        * platform/mac/editing/execCommand/5482023-expected.png: Replaced.
+        * platform/mac/editing/execCommand/5482023-expected.txt: Replaced.
+        * platform/mac/editing/input/text-input-controller-expected.txt: Replaced.
+        * platform/mac/editing/inserting/editable-html-element-expected.checksum: Replaced.
+        * platform/mac/editing/inserting/editable-html-element-expected.png: Replaced.
+        * platform/mac/editing/inserting/editable-html-element-expected.txt: Replaced.
+        * platform/mac/editing/pasteboard/4989774-expected.checksum: Replaced.
+        * platform/mac/editing/pasteboard/4989774-expected.png: Replaced.
+        * platform/mac/editing/pasteboard/4989774-expected.txt: Replaced.
+        * platform/mac/editing/selection/4983858-expected.checksum: Replaced.
+        * platform/mac/editing/selection/4983858-expected.png: Replaced.
+        * platform/mac/editing/selection/4983858-expected.txt: Replaced.
+
 2009-06-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

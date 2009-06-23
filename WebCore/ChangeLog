@@ -1,3 +1,21 @@
+2009-06-23  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Justin Garcia.
+
+        Undo the changeset 21212 to fix the regression bug 14062.
+        The changeset 21212 attempted to fix rdar://problem/5002441.
+        The changeset 21212 modified InsertTextCommand::input so as to convert
+        all spaces in text to non-breaking spaces for rdar://problem/5002441.
+        However, the bug was originally caused by rebalanceWhitespaceAt
+        and this workaround introduced a regression bug 14062.
+        Because rebalanceWhitespaceAt appears to behave correctly now,
+        the workaround introduced in 21212 is no longer needed.
+
+        Test: editing/inserting/space-after-removeformat.html
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+
 2009-06-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
