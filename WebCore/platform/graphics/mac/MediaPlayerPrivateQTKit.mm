@@ -90,6 +90,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieLoadStateDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieNaturalSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieCurrentSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMoviePreventExternalURLLinksAttribute, NSString *)
+SOFT_LINK_POINTER(QTKit, QTMovieRateChangesPreservePitchAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieSizeDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieTimeDidChangeNotification, NSString *)
@@ -124,6 +125,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
 #define QTMovieNaturalSizeAttribute getQTMovieNaturalSizeAttribute()
 #define QTMovieCurrentSizeAttribute getQTMovieCurrentSizeAttribute()
 #define QTMoviePreventExternalURLLinksAttribute getQTMoviePreventExternalURLLinksAttribute()
+#define QTMovieRateChangesPreservePitchAttribute getQTMovieRateChangesPreservePitchAttribute()
 #define QTMovieRateDidChangeNotification getQTMovieRateDidChangeNotification()
 #define QTMovieSizeDidChangeNotification getQTMovieSizeDidChangeNotification()
 #define QTMovieTimeDidChangeNotification getQTMovieTimeDidChangeNotification()
@@ -208,6 +210,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_totalTrackCount(0)
     , m_hasUnsupportedTracks(false)
     , m_duration(-1.0f)
+    , m_timeToRestore(-1.0f)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -226,41 +229,52 @@ MediaPlayerPrivate::~MediaPlayerPrivate()
 
 void MediaPlayerPrivate::createQTMovie(const String& url)
 {
+    NSURL *cocoaURL = KURL(url);
+    NSDictionary *movieAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                       cocoaURL, QTMovieURLAttribute,
+                       [NSNumber numberWithBool:m_player->preservesPitch()], QTMovieRateChangesPreservePitchAttribute,
+                       [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
+                       [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
+                       [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+                       [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",
+#endif
+#ifndef BUILDING_ON_TIGER
+                       QTMovieApertureModeClean, QTMovieApertureModeAttribute,
+#endif
+                       nil];
+
+    createQTMovie(cocoaURL, movieAttributes);
+}
+
+void MediaPlayerPrivate::createQTMovie(NSURL *url, NSDictionary *movieAttributes)
+{
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     
+    bool recreating = false;
     if (m_qtMovie) {
+        recreating = true;
         destroyQTVideoRenderer();
         m_qtMovie = 0;
     }
     
     // Disable streaming support for now, <rdar://problem/5693967>
-    if (protocolIs(url, "rtsp"))
+    if (protocolIs([url scheme], "rtsp"))
         return;
-
-    NSURL *cocoaURL = KURL(url);
-    NSDictionary *movieAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     cocoaURL, QTMovieURLAttribute,
-                                     [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
-                                     [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
-                                     [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-                                     [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",
-#endif
-#ifndef BUILDING_ON_TIGER
-                                     QTMovieApertureModeClean, QTMovieApertureModeAttribute,
-#endif
-                                     nil];
     
     NSError *error = nil;
     m_qtMovie.adoptNS([[QTMovie alloc] initWithAttributes:movieAttributes error:&error]);
     
     // FIXME: Find a proper way to detect streaming content.
-    m_isStreaming = protocolIs(url, "rtsp");
+    m_isStreaming = protocolIs([url scheme], "rtsp");
     
     if (!m_qtMovie)
         return;
     
     [m_qtMovie.get() setVolume:m_player->volume()];
+
+    if (recreating && hasVideo())
+        createQTVideoRenderer();
     
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(loadStateChanged:) 
@@ -708,6 +722,24 @@ void MediaPlayerPrivate::setRate(float rate)
     [m_qtMovie.get() setRate:rate];
 }
 
+void MediaPlayerPrivate::setPreservesPitch(bool preservesPitch)
+{
+    if (!m_qtMovie)
+        return;
+
+    // QTMovieRateChangesPreservePitchAttribute cannot be changed dynamically after QTMovie creation.
+    // If the passed in value is different than what already exists, we need to recreate the QTMovie for it to take effect.
+    if ([[m_qtMovie.get() attributeForKey:QTMovieRateChangesPreservePitchAttribute] boolValue] == preservesPitch)
+        return;
+
+    NSDictionary *movieAttributes = [[m_qtMovie.get() movieAttributes] mutableCopy];
+    ASSERT(movieAttributes);
+    [movieAttributes setValue:[NSNumber numberWithBool:preservesPitch] forKey:QTMovieRateChangesPreservePitchAttribute];
+    m_timeToRestore = currentTime();
+
+    createQTMovie([movieAttributes valueForKey:QTMovieURLAttribute], movieAttributes);
+}
+
 int MediaPlayerPrivate::dataRate() const
 {
     if (!metaDataAvailable())
@@ -819,8 +851,21 @@ void MediaPlayerPrivate::updateStates()
             loadState = QTMovieLoadStateError;
         }
         
-        if (loadState != QTMovieLoadStateError)
+        if (loadState != QTMovieLoadStateError) {
             cacheMovieScale();
+        }
+    }
+    
+    // If this movie is reloading and we mean to restore the current time/rate, this might be the right time to do it.
+    if (loadState >= QTMovieLoadStateLoaded && oldNetworkState < MediaPlayer::Loaded && m_timeToRestore != -1.0f) {
+        QTTime qttime = createQTTime(m_timeToRestore);
+        m_timeToRestore = -1.0f;
+            
+        // Disable event callbacks from setCurrentTime for restoring time in a recreated video
+        [m_objcObserver.get() setDelayCallbacks:YES];
+        [m_qtMovie.get() setCurrentTime:qttime];
+        [m_qtMovie.get() setRate:m_player->rate()];
+        [m_objcObserver.get() setDelayCallbacks:NO];
     }
 
     BOOL completelyLoaded = !m_isStreaming && (loadState >= QTMovieLoadStateComplete);
@@ -918,6 +963,7 @@ void MediaPlayerPrivate::timeChanged()
     if (m_hasUnsupportedTracks)
         return;
 
+    m_timeToRestore = -1.0f;
     updateStates();
     m_player->timeChanged();
 }

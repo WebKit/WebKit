@@ -108,6 +108,8 @@ public:
     void setDefaultPlaybackRate(float);
     float playbackRate() const;
     void setPlaybackRate(float);
+    bool webkitPreservesPitch() const;
+    void setWebkitPreservesPitch(bool);
     PassRefPtr<TimeRanges> played() const;
     PassRefPtr<TimeRanges> seekable() const;
     bool ended() const;
@@ -234,6 +236,7 @@ protected:
     
     float m_playbackRate;
     float m_defaultPlaybackRate;
+    bool m_webkitPreservesPitch;
     NetworkState m_networkState;
     ReadyState m_readyState;
     String m_currentSrc;

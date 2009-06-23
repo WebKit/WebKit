@@ -1,3 +1,56 @@
+2009-06-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig, and looked over by Eric Carlson.
+
+        <rdar://problem/6980466> Media elements should provide option for changing pitch correction
+
+        Introduce a new boolean property to HTMLMediaElement called webkitPreservesPitch for script to control this.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Currently the platforms that have a flexible pitch preservation 
+          property (Quicktime on Mac and Win) have had it on by default, so continue that default for now.
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::webkitPreservesPitch):
+        (WebCore::HTMLMediaElement::setWebkitPreservesPitch):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::setPreservesPitch):
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::preservesPitch):
+        (WebCore::MediaPlayer::setPreservesPitch):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setPreservesPitch):
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::createQTMovie): Rework to allow recreation of the movie with almost the
+          exact same attributes as before, with pitch preservation being the difference.
+        (WebCore::MediaPlayerPrivate::setPreservesPitch): Recreate the QTMovie if the flag actually changes.
+        (WebCore::MediaPlayerPrivate::updateStates): Restore current time and rate if this is a recreated movie.
+        (WebCore::MediaPlayerPrivate::timeChanged): Clear the time-to-be-restored, as this callback means it
+          has been effectively overwritten.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::setPreservesPitch):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+        * platform/graphics/win/QTMovieWin.cpp:
+        (QTMovieWinPrivate::QTMovieWinPrivate):
+        (QTMovieWinPrivate::~QTMovieWinPrivate):
+        (QTMovieWinPrivate::task): Restore current time and rate if this is a re-created movie.
+        (QTMovieWin::play): Clear the time-to-be-restored, as this effectively overwrites it.
+        (QTMovieWin::pause): Ditto.
+        (QTMovieWin::setRate): Ditto.
+        (QTMovieWin::setCurrentTime): Ditto.
+        (QTMovieWin::setPreservesPitch): Recreate the Movie if the flag actually changes.
+        (QTMovieWin::load): Rework to allow recreation of the Movie with similar state as the movie before it, 
+          but changing the pitch preservation flag.
+        * platform/graphics/win/QTMovieWin.h:
+
 2009-06-23  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

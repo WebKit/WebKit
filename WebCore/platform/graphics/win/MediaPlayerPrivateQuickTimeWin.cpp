@@ -106,7 +106,7 @@ void MediaPlayerPrivate::load(const String& url)
     cancelSeek();
 
     m_qtMovie.set(new QTMovieWin(this));
-    m_qtMovie->load(url.characters(), url.length());
+    m_qtMovie->load(url.characters(), url.length(), m_player->preservesPitch());
     m_qtMovie->setVolume(m_player->volume());
     m_qtMovie->setVisible(m_player->visible());
 }
@@ -253,6 +253,13 @@ void MediaPlayerPrivate::setRate(float rate)
     if (!m_qtMovie)
         return;
     m_qtMovie->setRate(rate);
+}
+
+void MediaPlayerPrivate::setPreservesPitch(bool preservesPitch)
+{
+    if (!m_qtMovie)
+        return;
+    m_qtMovie->setPreservesPitch(preservesPitch);
 }
 
 int MediaPlayerPrivate::dataRate() const

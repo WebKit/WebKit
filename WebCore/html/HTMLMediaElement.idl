@@ -76,5 +76,8 @@ interface [GenerateConstructor, Conditional=VIDEO] HTMLMediaElement : HTMLElemen
     attribute float volume 
         setter raises (DOMException);
     attribute boolean muted;
+    
+    // WebKit extension
+    attribute boolean webkitPreservesPitch;
 };
 }

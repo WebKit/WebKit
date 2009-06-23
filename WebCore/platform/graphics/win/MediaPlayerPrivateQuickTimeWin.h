@@ -69,6 +69,7 @@ public:
     
     void setRate(float);
     void setVolume(float);
+    void setPreservesPitch(bool);
     
     int dataRate() const;
     

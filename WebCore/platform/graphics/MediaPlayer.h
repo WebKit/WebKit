@@ -139,6 +139,9 @@ public:
     
     float rate() const;
     void setRate(float);
+
+    bool preservesPitch() const;    
+    void setPreservesPitch(bool);
     
     float maxTimeBuffered();
     float maxTimeSeekable();
@@ -199,6 +202,7 @@ private:
     bool m_visible;
     float m_rate;
     float m_volume;
+    bool m_preservesPitch;
     bool m_autobuffer;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     WebMediaPlayerProxy* m_playerProxy;    // not owned or used, passed to m_private

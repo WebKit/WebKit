@@ -63,6 +63,8 @@ public:
     virtual void setEndTime(float) = 0;
 
     virtual void setRate(float) = 0;
+    virtual void setPreservesPitch(bool) { }
+
     virtual bool paused() const = 0;
 
     virtual void setVolume(float) = 0;

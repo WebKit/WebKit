@@ -83,6 +83,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* doc)
     , m_playedTimeRanges()
     , m_playbackRate(1.0f)
     , m_defaultPlaybackRate(1.0f)
+    , m_webkitPreservesPitch(true)
     , m_networkState(NETWORK_EMPTY)
     , m_readyState(HAVE_NOTHING)
     , m_volume(1.0f)
@@ -549,6 +550,7 @@ void HTMLMediaElement::loadResource(const KURL& url, ContentType& contentType)
         m_player.set(new MediaPlayer(this));
 #endif
 
+    m_player->setPreservesPitch(m_webkitPreservesPitch);
     updateVolume();
 
     m_player->load(m_currentSrc, contentType);
@@ -955,6 +957,21 @@ void HTMLMediaElement::setPlaybackRate(float rate)
     }
     if (m_player && potentiallyPlaying() && m_player->rate() != rate)
         m_player->setRate(rate);
+}
+
+bool HTMLMediaElement::webkitPreservesPitch() const
+{
+    return m_webkitPreservesPitch;
+}
+
+void HTMLMediaElement::setWebkitPreservesPitch(bool preservesPitch)
+{
+    m_webkitPreservesPitch = preservesPitch;
+    
+    if (!m_player)
+        return;
+
+    m_player->setPreservesPitch(preservesPitch);
 }
 
 bool HTMLMediaElement::ended() const
