@@ -81,8 +81,15 @@ void HTMLTableColElement::parseMappedAttribute(MappedAttribute *attr)
         if (renderer() && renderer()->isTableCol())
             static_cast<RenderTableCol*>(renderer())->updateFromElement();
     } else if (attr->name() == widthAttr) {
-        if (!attr->value().isEmpty())
+        if (!attr->value().isEmpty()) {
             addCSSLength(attr, CSSPropertyWidth, attr->value());
+            if (renderer() && renderer()->isTableCol()) {
+                RenderTableCol* col = static_cast<RenderTableCol*>(renderer());
+                int newWidth = width().toInt();
+                if (newWidth != col->width())
+                    col->setNeedsLayoutAndPrefWidthsRecalc();
+            }
+        }
     } else
         HTMLTablePartElement::parseMappedAttribute(attr);
 }

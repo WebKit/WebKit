@@ -1,3 +1,17 @@
+2009-06-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=26523 <col> 
+        elements width can't be changed with javascript
+
+        * fast/dom/HTMLTableColElement: Added.
+        * fast/dom/HTMLTableColElement/resize-table-using-col-width.html: Added.
+        * platform/mac/fast/dom/HTMLTableColElement: Added.
+        * platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.checksum: Added.
+        * platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png: Added.
+        * platform/mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt: Added.
+
 2009-06-23  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dan Bernstein.

@@ -59,7 +59,9 @@ void AutoTableLayout::recalcColumn(int effCol)
     RenderTableCell* maxContributor = 0;
 
     while (child) {
-        if (child->isTableSection()) {
+        if (child->isTableCol())
+            static_cast<RenderTableCol*>(child)->calcPrefWidths();
+        else if (child->isTableSection()) {
             RenderTableSection* section = static_cast<RenderTableSection*>(child);
             int numRows = section->numRows();
             RenderTableCell* last = 0;

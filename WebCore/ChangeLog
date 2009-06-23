@@ -1,3 +1,35 @@
+2009-06-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26523 <col> 
+        elements width can't be changed with javascript
+
+        This patch both fixes setting the width attribute directly in 
+        JavaScript, and setting the width on the style attribute. 
+
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseMappedAttribute): If we have a 
+        new width, call setNeedsLayoutAndPrefWidthsRecalc()
+
+        Call calcPrefWidths() on the table cols.
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        
+        Call layoutIfNeeded on the table cols.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clippedOverflowRectForRepaint): Use new 
+        table() convenience function.
+        (WebCore::RenderTableCol::calcPrefWidths): Just call 
+        setPrefWidthsDirty(false) on ourself and our children.
+        (WebCore::RenderTableCol::table):
+        * rendering/RenderTableCol.h:
+
 2009-06-23  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dan Bernstein.
