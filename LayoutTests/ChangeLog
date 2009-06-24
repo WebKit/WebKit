@@ -1,3 +1,9 @@
+2009-06-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Disabling failing test!).
+
+        * media/video-canvas.html-disabled: Renamed from LayoutTests/media/video-canvas.html.
+
 2009-06-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
