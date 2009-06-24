@@ -106,6 +106,10 @@ static NSMutableDictionary *descriptions = nil;
     [[self class] _registerWebKitErrors];
     
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    NSDictionary *descriptionsForWebKitErrorDomain = [descriptions objectForKey:WebKitErrorDomain];
+    NSString *localizedDescription = [descriptionsForWebKitErrorDomain objectForKey:[NSNumber numberWithInt:code]];
+    if (localizedDescription)
+        [userInfo setObject:localizedDescription forKey:NSLocalizedDescriptionKey];
     if (contentURL) {
         [userInfo setObject:contentURL forKey:@"NSErrorFailingURLKey"];
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)

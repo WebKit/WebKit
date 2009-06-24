@@ -1,3 +1,15 @@
+2009-06-24  Jeff Johnson  <opendarwin@lapcatsoftware.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26638 WebKitErrors.m: _initWithPluginErrorCode: does not set localizedDescription
+
+        Add localized descriptions for plugin errors.
+        The localized strings already existed but were unused; now NSLocalizedDescriptionKey is added to the NSError userInfo.
+
+        * Misc/WebKitErrors.m:
+        (-[NSError _initWithPluginErrorCode:contentURL:pluginPageURL:pluginName:MIMEType:]):
+
 2009-06-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
