@@ -1,3 +1,51 @@
+2009-06-24  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26658
+
+        Split the syncing portions of LocalStorageArea into StorageAreaSync.
+        This name will make more sense in the next patch (in this set) when
+        LocalStorageArea and SessionStorageArea are merged to become simply
+        StorageArea.  (Thus the synching portion of StorageArea is in
+        StorageAreaSync.)
+
+        This looks like a big patch, but really all it's doing is splitting
+        code and patching split-related things up.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * storage/LocalStorageArea.cpp:
+        (WebCore::LocalStorageArea::create):
+        (WebCore::LocalStorageArea::LocalStorageArea):
+        (WebCore::LocalStorageArea::scheduleFinalSync):
+        (WebCore::LocalStorageArea::itemChanged):
+        (WebCore::LocalStorageArea::itemRemoved):
+        (WebCore::LocalStorageArea::areaCleared):
+        (WebCore::LocalStorageArea::blockUntilImportComplete):
+        * storage/LocalStorageArea.h:
+        * storage/LocalStorageTask.cpp:
+        (WebCore::LocalStorageTask::LocalStorageTask):
+        * storage/LocalStorageTask.h:
+        (WebCore::LocalStorageTask::createImport):
+        (WebCore::LocalStorageTask::createSync):
+        * storage/LocalStorageThread.cpp:
+        (WebCore::LocalStorageThread::scheduleImport):
+        (WebCore::LocalStorageThread::scheduleSync):
+        * storage/LocalStorageThread.h:
+        * storage/SessionStorageArea.cpp:
+        (WebCore::SessionStorageArea::blockUntilImportComplete):
+        * storage/SessionStorageArea.h:
+        * storage/StorageArea.h:
+        * storage/StorageAreaSync.cpp: Copied from WebCore/storage/LocalStorageArea.cpp.
+        * storage/StorageAreaSync.h: Copied from WebCore/storage/LocalStorageArea.h.
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::scheduleImport):
+        (WebCore::StorageSyncManager::scheduleSync):
+        * storage/StorageSyncManager.h:
+
 2009-06-24  Adam Treat  <adam.treat@torchmobile.com>
 
         Fix Qt build.

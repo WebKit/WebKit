@@ -31,6 +31,7 @@
 #include "LocalStorageArea.h"
 #include "LocalStorageTask.h"
 #include "LocalStorageThread.h"
+#include "StorageAreaSync.h"
 
 #include <wtf/Threading.h>
 
@@ -40,8 +41,8 @@ namespace WebCore {
     public:
         static PassRefPtr<StorageSyncManager> create(const String& path);
 
-        bool scheduleImport(PassRefPtr<LocalStorageArea>);
-        void scheduleSync(PassRefPtr<LocalStorageArea>);
+        bool scheduleImport(PassRefPtr<StorageAreaSync>);
+        void scheduleSync(PassRefPtr<StorageAreaSync>);
 
         void close();
 

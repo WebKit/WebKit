@@ -35,17 +35,18 @@
 
 namespace WebCore {
 
-    class LocalStorageArea;
+    class StorageAreaSync;
     class LocalStorageTask;
 
+    // FIXME: Rename this class to StorageThread
     class LocalStorageThread : public ThreadSafeShared<LocalStorageThread> {
     public:
         static PassRefPtr<LocalStorageThread> create();
 
         bool start();
 
-        void scheduleImport(PassRefPtr<LocalStorageArea>);
-        void scheduleSync(PassRefPtr<LocalStorageArea>);
+        void scheduleImport(PassRefPtr<StorageAreaSync>);
+        void scheduleSync(PassRefPtr<StorageAreaSync>);
 
         // Called from the main thread to synchronously shut down this thread
         void terminate();

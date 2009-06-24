@@ -30139,6 +30139,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\StorageAreaSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageAreaSync.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\StorageSyncManager.cpp"
 				>
 			</File>

@@ -28,22 +28,16 @@
 
 #if ENABLE(DOM_STORAGE)
 
-#include "SQLiteDatabase.h"
 #include "StorageArea.h"
-#include "StringHash.h"
-#include "StorageSyncManager.h"
-#include "Timer.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
     
+    class StorageAreaSync;
     class StorageSyncManager;
     
     class LocalStorageArea : public StorageArea {
     public:
-        virtual ~LocalStorageArea();
-
-        static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager) { return adoptRef(new LocalStorageArea(origin, syncManager)); }
+        static PassRefPtr<LocalStorageArea> create(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager);
 
         void scheduleFinalSync();
 
@@ -53,42 +47,12 @@ namespace WebCore {
         virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame);
         virtual void areaCleared(Frame* sourceFrame);
+        virtual void blockUntilImportComplete() const;
 
-        void scheduleItemForSync(const String& key, const String& value);
-        void scheduleClear();
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
-        Timer<LocalStorageArea> m_syncTimer;        
-        HashMap<String, String> m_changedItems;
-        bool m_itemsCleared;
-        
-        bool m_finalSyncScheduled;
-
-        RefPtr<StorageSyncManager> m_syncManager;
-
-        // The database handle will only ever be opened and used on the background thread.
-        SQLiteDatabase m_database;
-
-    // The following members are subject to thread synchronization issues.
-    public:
-        // Called from the background thread
-        virtual void performImport();
-        virtual void performSync();
-
-    private:
-        void syncTimerFired(Timer<LocalStorageArea>*);
-        void sync(bool clearItems, const HashMap<String, String>& items);
-
-        Mutex m_syncLock;
-        HashMap<String, String> m_itemsPendingSync;
-        bool m_clearItemsWhileSyncing;
-        bool m_syncScheduled;
-
-        mutable Mutex m_importLock;
-        mutable ThreadCondition m_importCondition;
-        mutable bool m_importComplete;
-        void markImported();
-        void blockUntilImportComplete() const;
+        RefPtr<StorageAreaSync> m_storageAreaSync;
+        RefPtr<StorageSyncManager> m_storageSyncManager;
     };
 
 } // namespace WebCore

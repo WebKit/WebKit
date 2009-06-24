@@ -29,12 +29,12 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "LocalStorage.h"
-#include "LocalStorageArea.h"
 #include "LocalStorageThread.h"
+#include "StorageAreaSync.h"
 
 namespace WebCore {
 
-LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorageArea> area)
+LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<StorageAreaSync> area)
     : m_type(type)
     , m_area(area)
 {

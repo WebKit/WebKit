@@ -38,8 +38,6 @@ namespace WebCore {
     public:
         static PassRefPtr<SessionStorageArea> create(SecurityOrigin* origin, Page* page) { return adoptRef(new SessionStorageArea(origin, page)); }
         PassRefPtr<SessionStorageArea> copy(SecurityOrigin*, Page*);
-                
-        Page* page() { return m_page; }
 
     private:
         SessionStorageArea(SecurityOrigin*, Page*);
@@ -48,6 +46,7 @@ namespace WebCore {
         virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame);
         virtual void areaCleared(Frame* sourceFrame);
+        virtual void blockUntilImportComplete() const;
 
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
         

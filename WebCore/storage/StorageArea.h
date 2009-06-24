@@ -42,7 +42,7 @@ namespace WebCore {
     class StorageMap;
     typedef int ExceptionCode;
 
-    class StorageArea : public RefCounted<StorageArea> {
+    class StorageArea : public ThreadSafeShared<StorageArea> {
     public:
         virtual ~StorageArea();
         
@@ -56,20 +56,19 @@ namespace WebCore {
 
         bool contains(const String& key) const;
 
+        // Could be called from a background thread.
+        void importItem(const String& key, const String& value);
         SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
 
     protected:
         StorageArea(SecurityOrigin*);
         StorageArea(SecurityOrigin*, StorageArea*);
-                
-        // This is meant to be called from a background thread for LocalStorageArea's background thread import procedure.
-        void importItem(const String& key, const String& value);
 
     private:
         virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame) = 0;
         virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame) = 0;
         virtual void areaCleared(Frame* sourceFrame) = 0;
-        virtual void blockUntilImportComplete() const { }
+        virtual void blockUntilImportComplete() const = 0;
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         RefPtr<StorageMap> m_storageMap;

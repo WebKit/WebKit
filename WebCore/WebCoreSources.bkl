@@ -1026,6 +1026,7 @@ This file contains the list of files needed to build WebCore.
         storage/StorageMap.cpp
         storage/SessionStorage.cpp
         storage/SessionStorageArea.cpp
+        storage/StorageAreaSync.cpp
         storage/StorageSyncManager.cpp
     </set>
 

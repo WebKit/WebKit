@@ -33,77 +33,52 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLElement.h"
-#include "LocalStorage.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "SQLiteStatement.h"
 #include "StorageEvent.h"
-#include "SuddenTermination.h"
+#include "StorageAreaSync.h"
+#include "StorageSyncManager.h"
 
 namespace WebCore {
 
-// If the LocalStorageArea undergoes rapid changes, don't sync each change to disk.
-// Instead, queue up a batch of items to sync and actually do the sync at the following interval.
-static const double LocalStorageSyncInterval = 1.0;
+PassRefPtr<LocalStorageArea> LocalStorageArea::create(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager)
+{
+    return adoptRef(new LocalStorageArea(origin, syncManager));
+}
 
 LocalStorageArea::LocalStorageArea(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager)
     : StorageArea(origin)
-    , m_syncTimer(this, &LocalStorageArea::syncTimerFired)
-    , m_itemsCleared(false)
-    , m_finalSyncScheduled(false)
-    , m_syncManager(syncManager)
-    , m_clearItemsWhileSyncing(false)
-    , m_syncScheduled(false)
-    , m_importComplete(false)
+    , m_storageAreaSync(StorageAreaSync::create(syncManager, this))
+    , m_storageSyncManager(syncManager)
 {
-    if (!m_syncManager || !m_syncManager->scheduleImport(this))
-        m_importComplete = true;
-}
-
-LocalStorageArea::~LocalStorageArea()
-{
-    ASSERT(!m_syncTimer.isActive());
 }
 
 void LocalStorageArea::scheduleFinalSync()
 {
-    ASSERT(isMainThread());
-    if (!m_syncManager)
-        return;
-
-    if (m_syncTimer.isActive())
-        m_syncTimer.stop();
-    else {
-        // The following is balanced by the call to enableSuddenTermination in the
-        // syncTimerFired function.
-        disableSuddenTermination();
-    }
-    syncTimerFired(&m_syncTimer);
-    m_finalSyncScheduled = true;
+    m_storageAreaSync->scheduleFinalSync();
 }
 
 void LocalStorageArea::itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
-    ASSERT(isMainThread());
-
-    scheduleItemForSync(key, newValue);
+    m_storageAreaSync->scheduleItemForSync(key, newValue);
     dispatchStorageEvent(key, oldValue, newValue, sourceFrame);
 }
 
 void LocalStorageArea::itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame)
 {
-    ASSERT(isMainThread());
-
-    scheduleItemForSync(key, String());
+    m_storageAreaSync->scheduleItemForSync(key, String());
     dispatchStorageEvent(key, oldValue, String(), sourceFrame);
 }
 
 void LocalStorageArea::areaCleared(Frame* sourceFrame)
 {
-    ASSERT(isMainThread());
-
-    scheduleClear();
+    m_storageAreaSync->scheduleClear();
     dispatchStorageEvent(String(), String(), String(), sourceFrame);
+}
+
+void LocalStorageArea::blockUntilImportComplete() const
+{
+    m_storageAreaSync->blockUntilImportComplete();
 }
 
 void LocalStorageArea::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
@@ -129,247 +104,6 @@ void LocalStorageArea::dispatchStorageEvent(const String& key, const String& old
 
     for (unsigned i = 0; i < frames.size(); ++i)
         frames[i]->document()->dispatchWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->documentURI(), sourceFrame->domWindow(), frames[i]->domWindow()->localStorage()));
-}
-
-void LocalStorageArea::scheduleItemForSync(const String& key, const String& value)
-{
-    ASSERT(isMainThread());
-    ASSERT(!m_finalSyncScheduled);
-
-    m_changedItems.set(key, value);
-    if (!m_syncTimer.isActive()) {
-        m_syncTimer.startOneShot(LocalStorageSyncInterval);
-
-        // The following is balanced by the call to enableSuddenTermination in the
-        // syncTimerFired function.
-        disableSuddenTermination();
-    }
-}
-
-void LocalStorageArea::scheduleClear()
-{
-    ASSERT(isMainThread());
-    ASSERT(!m_finalSyncScheduled);
-
-    m_changedItems.clear();
-    m_itemsCleared = true;
-    if (!m_syncTimer.isActive()) {
-        m_syncTimer.startOneShot(LocalStorageSyncInterval);
-
-        // The following is balanced by the call to enableSuddenTermination in the
-        // syncTimerFired function.
-        disableSuddenTermination();
-    }
-}
-
-void LocalStorageArea::syncTimerFired(Timer<LocalStorageArea>*)
-{
-    ASSERT(isMainThread());
-    if (!m_syncManager)
-        return;
-
-    HashMap<String, String>::iterator it = m_changedItems.begin();
-    HashMap<String, String>::iterator end = m_changedItems.end();
-    
-    {
-        MutexLocker locker(m_syncLock);
-
-        if (m_itemsCleared) {
-            m_itemsPendingSync.clear();
-            m_clearItemsWhileSyncing = true;
-            m_itemsCleared = false;
-        }
-
-        for (; it != end; ++it)
-            m_itemsPendingSync.set(it->first.copy(), it->second.copy());
-
-        if (!m_syncScheduled) {
-            m_syncScheduled = true;
-
-            // The following is balanced by the call to enableSuddenTermination in the
-            // performSync function.
-            disableSuddenTermination();
-
-            m_syncManager->scheduleSync(this);
-        }
-    }
-
-    // The following is balanced by the calls to disableSuddenTermination in the
-    // scheduleItemForSync, scheduleClear, and scheduleFinalSync functions.
-    enableSuddenTermination();
-
-    m_changedItems.clear();
-}
-
-void LocalStorageArea::performImport()
-{
-    ASSERT(!isMainThread());
-    ASSERT(!m_database.isOpen());
-    if (!m_syncManager)
-        return;
-
-    String databaseFilename = m_syncManager->fullDatabaseFilename(securityOrigin());
-
-    if (databaseFilename.isEmpty()) {
-        LOG_ERROR("Filename for local storage database is empty - cannot open for persistent storage");
-        markImported();
-        return;
-    }
-
-    if (!m_database.open(databaseFilename)) {
-        LOG_ERROR("Failed to open database file %s for local storage", databaseFilename.utf8().data());
-        markImported();
-        return;
-    }
-
-    if (!m_database.executeCommand("CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value TEXT NOT NULL ON CONFLICT FAIL)")) {
-        LOG_ERROR("Failed to create table ItemTable for local storage");
-        markImported();
-        return;
-    }
-    
-    SQLiteStatement query(m_database, "SELECT key, value FROM ItemTable");
-    if (query.prepare() != SQLResultOk) {
-        LOG_ERROR("Unable to select items from ItemTable for local storage");
-        markImported();
-        return;
-    }
-    
-    HashMap<String, String> itemMap;
-
-    int result = query.step();
-    while (result == SQLResultRow) {
-        itemMap.set(query.getColumnText(0), query.getColumnText(1));
-        result = query.step();
-    }
-
-    if (result != SQLResultDone) {
-        LOG_ERROR("Error reading items from ItemTable for local storage");
-        markImported();
-        return;
-    }
-
-    MutexLocker locker(m_importLock);
-    
-    HashMap<String, String>::iterator it = itemMap.begin();
-    HashMap<String, String>::iterator end = itemMap.end();
-    
-    for (; it != end; ++it)
-        importItem(it->first, it->second);
-    
-    m_importComplete = true;
-    m_importCondition.signal();
-}
-
-void LocalStorageArea::markImported()
-{
-    ASSERT(!isMainThread());
-
-    MutexLocker locker(m_importLock);
-    m_importComplete = true;
-    m_importCondition.signal();
-}
-
-// FIXME: In the future, we should allow use of localStorage while it's importing (when safe to do so).
-// Blocking everything until the import is complete is by far the simplest and safest thing to do, but
-// there is certainly room for safe optimization: Key/length will never be able to make use of such an
-// optimization (since the order of iteration can change as items are being added). Get can return any
-// item currently in the map. Get/remove can work whether or not it's in the map, but we'll need a list
-// of items the import should not overwrite. Clear can also work, but it'll need to kill the import
-// job first.
-void LocalStorageArea::blockUntilImportComplete() const
-{
-    ASSERT(isMainThread());
-
-    // Fast path to avoid locking.
-    if (m_importComplete)
-        return;
-
-    MutexLocker locker(m_importLock);
-    while (!m_importComplete)
-        m_importCondition.wait(m_importLock);
-    ASSERT(m_importComplete);
-}
-
-void LocalStorageArea::sync(bool clearItems, const HashMap<String, String>& items)
-{
-    ASSERT(!isMainThread());
-
-    if (!m_database.isOpen())
-        return;
-
-    // If the clear flag is set, then we clear all items out before we write any new ones in.
-    if (clearItems) {
-        SQLiteStatement clear(m_database, "DELETE FROM ItemTable");
-        if (clear.prepare() != SQLResultOk) {
-            LOG_ERROR("Failed to prepare clear statement - cannot write to local storage database");
-            return;
-        }
-        
-        int result = clear.step();
-        if (result != SQLResultDone) {
-            LOG_ERROR("Failed to clear all items in the local storage database - %i", result);
-            return;
-        }
-    }
-
-    SQLiteStatement insert(m_database, "INSERT INTO ItemTable VALUES (?, ?)");
-    if (insert.prepare() != SQLResultOk) {
-        LOG_ERROR("Failed to prepare insert statement - cannot write to local storage database");
-        return;
-    }
-
-    SQLiteStatement remove(m_database, "DELETE FROM ItemTable WHERE key=?");
-    if (remove.prepare() != SQLResultOk) {
-        LOG_ERROR("Failed to prepare delete statement - cannot write to local storage database");
-        return;
-    }
-
-    HashMap<String, String>::const_iterator end = items.end();
-
-    for (HashMap<String, String>::const_iterator it = items.begin(); it != end; ++it) {
-        // Based on the null-ness of the second argument, decide whether this is an insert or a delete.
-        SQLiteStatement& query = it->second.isNull() ? remove : insert;        
-
-        query.bindText(1, it->first);
-
-        // If the second argument is non-null, we're doing an insert, so bind it as the value. 
-        if (!it->second.isNull())
-            query.bindText(2, it->second);
-
-        int result = query.step();
-        if (result != SQLResultDone) {
-            LOG_ERROR("Failed to update item in the local storage database - %i", result);
-            break;
-        }
-
-        query.reset();
-    }
-}
-
-void LocalStorageArea::performSync()
-{
-    ASSERT(!isMainThread());
-
-    bool clearItems;
-    HashMap<String, String> items;
-    {
-        MutexLocker locker(m_syncLock);
-
-        ASSERT(m_syncScheduled);
-
-        clearItems = m_clearItemsWhileSyncing;
-        m_itemsPendingSync.swap(items);
-
-        m_clearItemsWhileSyncing = false;
-        m_syncScheduled = false;
-    }
-
-    sync(clearItems, items);
-
-    // The following is balanced by the call to disableSuddenTermination in the
-    // syncTimerFired function.
-    enableSuddenTermination();
 }
 
 } // namespace WebCore
