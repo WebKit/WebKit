@@ -1,3 +1,18 @@
+2009-06-24  David Levin  <levin@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Bug 26696: Member functions in DataGridColumnList should return pointers instead of PassRefPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=26696
+
+        * html/DataGridColumnList.cpp:
+        (WebCore::DataGridColumnList::itemWithName):
+        (WebCore::DataGridColumnList::add):
+        * html/DataGridColumnList.h:
+        (WebCore::DataGridColumnList::item):
+        (WebCore::DataGridColumnList::primaryColumn):
+        (WebCore::DataGridColumnList::sortColumn):
+
 2009-06-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave "Messy" Hyatt.
@@ -97,7 +112,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=26392
         Bug 26392: In html, modification of xlink:href of an newly inserted svg image does not work.
         https://bugs.webkit.org/show_bug.cgi?id=26328
-        Bug 26328: changing href attribute of svg images dows not work when changing display attribute as well
+        Bug 26328: changing href attribute of svg images does not work when changing display attribute as well
 
         React to href updates even when there is no renderer, i.e. display=none.
 

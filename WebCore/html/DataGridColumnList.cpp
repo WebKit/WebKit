@@ -36,23 +36,23 @@ DataGridColumnList::~DataGridColumnList()
     clear();
 }
 
-PassRefPtr<DataGridColumn> DataGridColumnList::itemWithName(const AtomicString& name) const
+DataGridColumn* DataGridColumnList::itemWithName(const AtomicString& name) const
 {
     unsigned length = m_columns.size();
     for (unsigned i = 0; i < length; ++i) {
         if (m_columns[i]->id() == name)
-            return m_columns[i];
+            return m_columns[i].get();
     }
     return 0;
 }
 
-PassRefPtr<DataGridColumn> DataGridColumnList::add(const String& id, const String& label, const String& type, bool primary, unsigned short sortable)
+DataGridColumn* DataGridColumnList::add(const String& id, const String& label, const String& type, bool primary, unsigned short sortable)
 {
     RefPtr<DataGridColumn> column = DataGridColumn::create(this, id, label, type, primary, sortable);
     if (primary)
         m_primaryColumn = column;
     m_columns.append(column);
-    return column;
+    return column.get();
 }
 
 void DataGridColumnList::remove(DataGridColumn* col)

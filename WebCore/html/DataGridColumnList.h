@@ -23,14 +23,14 @@ public:
 
     unsigned length() const { return m_columns.size(); }
 
-    PassRefPtr<DataGridColumn> item(unsigned index) const { return m_columns[index]; }
-    PassRefPtr<DataGridColumn> itemWithName(const AtomicString&) const;
+    DataGridColumn* item(unsigned index) const { return m_columns[index].get(); }
+    DataGridColumn* itemWithName(const AtomicString&) const;
 
-    PassRefPtr<DataGridColumn> primaryColumn() const { return m_primaryColumn; }
+    DataGridColumn* primaryColumn() const { return m_primaryColumn.get(); }
 
-    PassRefPtr<DataGridColumn> sortColumn() const { return m_sortColumn; }
+    DataGridColumn* sortColumn() const { return m_sortColumn.get(); }
 
-    PassRefPtr<DataGridColumn> add(const String& id, const String& label, const String& type, bool primary, unsigned short sortable);
+    DataGridColumn* add(const String& id, const String& label, const String& type, bool primary, unsigned short sortable);
     void remove(DataGridColumn*);
     void move(DataGridColumn*, unsigned long index);
     void clear();
