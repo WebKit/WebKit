@@ -1,3 +1,29 @@
+2009-06-24  Nicolas Weber  <thakis@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26685
+        Accomodate for backwards-incompatible skia api changes.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::State::State):
+        (PlatformContextSkia::setupPaintCommon):
+        (PlatformContextSkia::setXfermodeMode):
+        (PlatformContextSkia::applyClipFromImage):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::):
+        (WebCore::WebCoreCompositeToSkiaComposite):
+        * platform/graphics/skia/SkiaUtils.h:
+
 2009-06-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix. Add files that were added in r45093 and r45096

@@ -331,7 +331,7 @@ void GraphicsContext::clearRect(const FloatRect& rect)
 
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
-    paint.setPorterDuffXfermode(SkPorterDuff::kClear_Mode);
+    paint.setXfermodeMode(SkXfermode::kClear_Mode);
     platformContext()->canvas()->drawRect(r, paint);
 }
 
@@ -858,7 +858,7 @@ void GraphicsContext::setCompositeOperation(CompositeOperator op)
 {
     if (paintingDisabled())
         return;
-    platformContext()->setPorterDuffMode(WebCoreCompositeToSkiaComposite(op));
+    platformContext()->setXfermodeMode(WebCoreCompositeToSkiaComposite(op));
 }
 
 void GraphicsContext::setImageInterpolationQuality(InterpolationQuality)

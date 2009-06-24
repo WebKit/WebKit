@@ -220,10 +220,10 @@ static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeIm
     }
 }
 
-static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImageSkia& bitmap, const SkIRect& srcRect, const SkRect& destRect, const SkPorterDuff::Mode& compOp)
+static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImageSkia& bitmap, const SkIRect& srcRect, const SkRect& destRect, const SkXfermode::Mode& compOp)
 {
     SkPaint paint;
-    paint.setPorterDuffXfermode(compOp);
+    paint.setXfermodeMode(compOp);
     paint.setFilterBitmap(true);
     int alpha = roundf(platformContext->getAlpha() * 256);
     if (alpha > 255)
@@ -379,7 +379,7 @@ void Image::drawPattern(GraphicsContext* context,
 
     SkPaint paint;
     paint.setShader(shader)->unref();
-    paint.setPorterDuffXfermode(WebCoreCompositeToSkiaComposite(compositeOp));
+    paint.setXfermodeMode(WebCoreCompositeToSkiaComposite(compositeOp));
     paint.setFilterBitmap(resampling == RESAMPLE_LINEAR);
 
     context->platformContext()->paintSkPaint(destRect, paint);
