@@ -1610,8 +1610,7 @@ bool HTMLMediaElement::processingUserGesture() const
 void HTMLMediaElement::deliverNotification(MediaPlayerProxyNotificationType notification)
 {
     if (notification == MediaPlayerNotificationPlayPauseButtonPressed) {
-        ExceptionCode ec;
-        togglePlayState(ec);
+        togglePlayState();
         return;
     }
 
@@ -1630,7 +1629,7 @@ String HTMLMediaElement::initialURL()
     KURL initialSrc = document()->completeURL(getAttribute(srcAttr));
     
     if (!initialSrc.isValid())
-        initialSrc = selectNextSourceChild(0, DoNothing).string();
+        initialSrc = selectNextSourceChild(0, DoNothing);
 
     m_currentSrc = initialSrc.string();
 

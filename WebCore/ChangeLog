@@ -1,3 +1,15 @@
+2009-06-24  David Kilzer  <ddkilzer@apple.com>
+
+        Build fixes for ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+
+        Reviewed by Adam Roben.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::deliverNotification): Removed
+        ExceptionCode parameter from togglePlayState().
+        (WebCore::HTMLMediaElement::initialURL): Don't convert a KURL
+        object to a String when assigning to a KURL variable.
+
 2009-06-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Adam Treat.
