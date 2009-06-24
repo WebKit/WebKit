@@ -1,3 +1,12 @@
+2009-06-24  Eric Seidel  <eric@webkit.org>
+
+        No review, build fix only.
+
+        The previous checkin had an improper merge.  This fixes the build.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag):
+
 2009-06-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -261,9 +261,9 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
     if (!m_documentUnderMouse)
         return false;
     
-    DragOperation operation = DragOperationNone;
+    m_isHandlingDrag = false;
     if (actionMask & DragDestinationActionDHTML) {
-        operation = tryDHTMLDrag(dragData);
+        m_isHandlingDrag = tryDHTMLDrag(dragData, operation);
         // Do not continue if m_documentUnderMouse has been reset by tryDHTMLDrag.
         // tryDHTMLDrag fires dragenter event. The event listener that listens
         // to this event may create a nested message loop (open a modal dialog),
@@ -272,7 +272,6 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
         if (!m_documentUnderMouse)
             return false;
     }
-    m_isHandlingDrag = operation != DragOperationNone; 
 
     // It's unclear why this check is after tryDHTMLDrag.
     // We send drag events in tryDHTMLDrag and that may be the reason.
