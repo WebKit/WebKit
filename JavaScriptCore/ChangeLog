@@ -2,6 +2,17 @@
 
         Reviewed by Maciej Stachowiak.
         
+        https://bugs.webkit.org/show_bug.cgi?id=26677
+
+        Inherits CodeBlock class from FastAllocBase because it
+        has been instantiated by 'new' in JavaScriptCore/bytecode/CodeBlock.h:217.
+
+        * bytecode/CodeBlock.h:
+
+2009-06-24  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Maciej Stachowiak.
+        
         https://bugs.webkit.org/show_bug.cgi?id=26676
 
         Inherits BytecodeGenerator class from FastAllocBase because it has been

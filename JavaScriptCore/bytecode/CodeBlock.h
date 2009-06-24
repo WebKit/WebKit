@@ -214,7 +214,7 @@ namespace JSC {
     }
 #endif
 
-    class CodeBlock {
+    class CodeBlock : public FastAllocBase {
         friend class JIT;
     public:
         CodeBlock(ScopeNode* ownerNode);
