@@ -44,7 +44,7 @@ namespace WTF {
     template<typename T> class DequeConstReverseIterator;
 
     template<typename T>
-    class Deque {
+    class Deque : public FastAllocBase {
     public:
         typedef DequeIterator<T> iterator;
         typedef DequeConstIterator<T> const_iterator;
