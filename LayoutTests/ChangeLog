@@ -1,3 +1,11 @@
+2009-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (missed a file).
+
+        Add expected results for test i landed earlier
+
+        * fast/js/dictionary-no-cache-expected.txt: Added.
+
 2009-06-23  Oliver Hunt  <oliver@apple.com> and Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Sam Weinig and Dave Hyatt.
