@@ -3694,8 +3694,10 @@ static BOOL isInPasswordField(Frame* coreFrame)
         [self _setPrinting:YES minimumPageWidth:0.0f maximumPageWidth:0.0f adjustViewSize:NO];
 
     float newBottomFloat = *newBottom;
-    if (FrameView* view = core([self _frame])->view())
-        view->adjustPageHeight(&newBottomFloat, oldTop, oldBottom, bottomLimit);
+    if (Frame* frame = core([self _frame])) {
+        if (FrameView* view = frame->view())
+            view->adjustPageHeight(&newBottomFloat, oldTop, oldBottom, bottomLimit);
+    }
 
 #ifdef __LP64__
     // If the new bottom is equal to the old bottom (when both are treated as floats), we just copy
