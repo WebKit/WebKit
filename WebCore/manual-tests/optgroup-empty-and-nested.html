@@ -21,7 +21,11 @@
     <!-- for an optgroup without a label, IE will show an empty, unselectable row.
          Firefox doesn't show it. We /do/ show it because someone might be using
          it as a spacer. -->
-    <optgroup>
+    <!-- Additionally, this has been updated to test the crash fixed in
+         https://bugs.webkit.org/show_bug.cgi?id=26656. When setting the
+         font-size in the <optgroup> to extra large, opening the select element
+         must not leave any unpainted areas of overlapping text. -->
+    <optgroup style="font-size: x-large;">
       <option value="2">Item inside an optgroup without a label</option>
     </optgroup>
 
@@ -69,6 +73,8 @@
   <li>Item three</li>
   <li>Item four</li>
 </ul>
+
+<p>The text of the rows of the dropdown must not overlap each other.</p>
 
 </body>
 </html>

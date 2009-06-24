@@ -1,3 +1,22 @@
+2009-06-23  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Chromium: Fix crash with inherited font-size in <option>
+
+        https://bugs.webkit.org/show_bug.cgi?id=26656
+        http://code.google.com/p/chromium/issues/detail?id=14853
+
+        In r42597 (https://bugs.webkit.org/show_bug.cgi?id=25244), I changed
+        the <select> handing for Chromium to fix a rendering bug. However,
+        although the font-size is correctly ignored, getRowHeight wasn't
+        updated and so was calculating the height of the rows in an
+        inconsistent manner. This can lead to a crash.
+
+        * manual-tests/optgroup-empty-and-nested.html: adding test case for crash
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::getRowHeight):
+
 2009-06-23  Brady Eidson  <beidson@apple.com>
 
         Patch by Antti Koivisto.

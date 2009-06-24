@@ -925,7 +925,7 @@ int PopupListBox::getRowHeight(int index)
     if (index < 0)
         return 0;
 
-    return m_popupClient->itemStyle(index).font().height();
+    return getRowFont(index).height();
 }
 
 IntRect PopupListBox::getRowBounds(int index)
