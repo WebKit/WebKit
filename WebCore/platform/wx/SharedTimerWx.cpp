@@ -77,7 +77,7 @@ void setSharedTimerFireTime(double fireTime)
     if (!wkTimer)
         wkTimer = new WebKitTimer();
         
-    unsigned int intervalInMS = interval * 1000;
+    int intervalInMS = interval * 1000;
 
     // sanity check
     if (intervalInMS < 1)
