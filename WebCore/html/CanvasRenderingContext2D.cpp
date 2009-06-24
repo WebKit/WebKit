@@ -912,13 +912,15 @@ static IntSize size(HTMLImageElement* image)
         return cachedImage->imageSize(1.0f); // FIXME: Not sure about this.
     return IntSize();
 }
-    
+
+#if ENABLE(VIDEO)
 static IntSize size(HTMLVideoElement* video)
 {
     if (MediaPlayer* player = video->player())
         return player->naturalSize();
     return IntSize();
 }
+#endif
 
 static inline FloatRect normalizeRect(const FloatRect& rect)
 {
@@ -1041,6 +1043,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
                         // FIXME: Arguably willDraw should become didDraw and occur after drawing calls and not before them to avoid problems like this.
 }
 
+#if ENABLE(VIDEO)
 void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, float x, float y)
 {
     ASSERT(video);
@@ -1096,6 +1099,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
     video->paint(c, IntRect(IntPoint(), size(video)));
     c->restore();
 }
+#endif
 
 // FIXME: Why isn't this just another overload of drawImage? Why have a different name?
 void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,

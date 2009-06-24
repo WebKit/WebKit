@@ -1,3 +1,12 @@
+2009-06-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix the build without ENABLE_VIDEO.
+
+        * html/CanvasRenderingContext2D.cpp: Add #if ENABLE guards.
+        * html/CanvasRenderingContext2D.h: Ditto.
+
 2009-06-24  Siddhartha Chattopadhyay  <sidchat@google.com>
 
         Reviewed by Eric Seidel.
