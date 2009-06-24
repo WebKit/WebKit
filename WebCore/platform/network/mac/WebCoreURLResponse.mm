@@ -88,6 +88,7 @@ static NSSet *createBinaryExtensionsSet()
         @"jpgv",
         @"jpm",
         @"kar",
+        @"kmz",
         @"lha",
         @"lrm",
         @"lzh",

@@ -1,3 +1,12 @@
+2009-06-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        <rdar://problem/6893811> Instead of downloading files linked from Google Earth, file contents displayed in browser window as text.
+
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (createBinaryExtensionsSet): Add '.kmz' to the list of known-to-be-binary extensions.
+
 2009-06-24  Nicolas Weber  <thakis@chromium.org>
 
         Reviewed by Eric Seidel.
