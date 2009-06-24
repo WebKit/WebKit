@@ -44,6 +44,11 @@ WMLOptGroupElement::~WMLOptGroupElement()
 {
 }
 
+String WMLOptGroupElement::title() const
+{
+    return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::titleAttr));
+}
+
 const AtomicString& WMLOptGroupElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, optgroup, ("optgroup"));
@@ -120,11 +125,6 @@ void WMLOptGroupElement::childrenChanged(bool changedByParser, Node* beforeChang
 
 void WMLOptGroupElement::parseMappedAttribute(MappedAttribute* attr)
 {
-    if (attr->name() == HTMLNames::titleAttr) {
-        m_title = parseValueSubstitutingVariableReferences(attr->value());
-        return;
-    }
-
     WMLFormControlElement::parseMappedAttribute(attr);
     recalcSelectOptions();
 }
@@ -154,7 +154,7 @@ RenderStyle* WMLOptGroupElement::nonRendererRenderStyle() const
 
 String WMLOptGroupElement::groupLabelText() const
 {
-    String itemText = document()->displayStringModifiedByEncoding(m_title);
+    String itemText = document()->displayStringModifiedByEncoding(title());
 
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
     itemText = itemText.stripWhiteSpace();

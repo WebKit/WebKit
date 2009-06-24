@@ -42,10 +42,11 @@ public:
     void stop();
     void storeIntervalToPageState();
 
+    String value() const;
+
 private:
     WMLCardElement* m_card;
     String m_name;
-    String m_value;
     Timer<WMLTimerElement> m_timer;
 };
 

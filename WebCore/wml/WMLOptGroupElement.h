@@ -32,7 +32,7 @@ public:
     WMLOptGroupElement(const QualifiedName& tagName, Document*);
     virtual ~WMLOptGroupElement();
 
-    String title() const { return m_title; }
+    String title() const;
 
     virtual const AtomicString& formControlType() const;
 
@@ -59,7 +59,6 @@ private:
     void recalcSelectOptions();
 
 private:
-    String m_title;
     RefPtr<RenderStyle> m_style;
 };
 

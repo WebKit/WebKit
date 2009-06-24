@@ -1,5 +1,42 @@
 2009-06-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Adam Treat.
+
+        Save memory by not storing attribute values in member variables, if not absolutely needed.
+        Also fixes bugs where we're substituting variables too early (noticeable with the upcoming <select> element).
+
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::parseMappedAttribute):
+        (WebCore::WMLDoElement::label):
+        * wml/WMLDoElement.h:
+        * wml/WMLFieldSetElement.cpp:
+        (WebCore::WMLFieldSetElement::insertedIntoDocument):
+        * wml/WMLFieldSetElement.h:
+        * wml/WMLOptGroupElement.cpp:
+        (WebCore::WMLOptGroupElement::title):
+        (WebCore::WMLOptGroupElement::parseMappedAttribute):
+        (WebCore::WMLOptGroupElement::groupLabelText):
+        * wml/WMLOptGroupElement.h:
+        * wml/WMLPostfieldElement.cpp:
+        (WebCore::WMLPostfieldElement::name):
+        (WebCore::WMLPostfieldElement::value):
+        (WebCore::WMLPostfieldElement::encodeData):
+        * wml/WMLPostfieldElement.h:
+        * wml/WMLSetvarElement.cpp:
+        (WebCore::WMLSetvarElement::parseMappedAttribute):
+        (WebCore::WMLSetvarElement::name):
+        (WebCore::WMLSetvarElement::value):
+        * wml/WMLSetvarElement.h:
+        * wml/WMLTimerElement.cpp:
+        (WebCore::WMLTimerElement::parseMappedAttribute):
+        (WebCore::WMLTimerElement::insertedIntoDocument):
+        (WebCore::WMLTimerElement::timerFired):
+        (WebCore::WMLTimerElement::start):
+        (WebCore::WMLTimerElement::value):
+        * wml/WMLTimerElement.h:
+
+2009-06-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Reviewed by Adam Roben.
 
         Forgot to initialize m_task member variable. Results in crashes sometimes.

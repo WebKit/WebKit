@@ -26,7 +26,6 @@
 #include "CString.h"
 #include "TextEncoding.h"
 #include "HTMLNames.h"
-#include "MappedAttribute.h"
 #include "WMLDocument.h"
 #include "WMLGoElement.h"
 #include "WMLNames.h"
@@ -38,16 +37,6 @@ using namespace WMLNames;
 WMLPostfieldElement::WMLPostfieldElement(const QualifiedName& tagName, Document* doc)
     : WMLElement(tagName, doc)
 {
-}
-
-void WMLPostfieldElement::parseMappedAttribute(MappedAttribute* attr)
-{
-    if (attr->name() == HTMLNames::nameAttr)
-        m_name = parseValueSubstitutingVariableReferences(attr->value());
-    else if (attr->name() == HTMLNames::valueAttr)
-        m_value = parseValueSubstitutingVariableReferences(attr->value());
-    else
-        WMLElement::parseMappedAttribute(attr);
 }
 
 void WMLPostfieldElement::insertedIntoDocument()
@@ -63,6 +52,16 @@ void WMLPostfieldElement::insertedIntoDocument()
     static_cast<WMLGoElement*>(parent)->registerPostfieldElement(this);
 }
 
+String WMLPostfieldElement::name() const
+{
+    return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::nameAttr));
+}
+
+String WMLPostfieldElement::value() const
+{
+   return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::valueAttr));
+}
+
 static inline CString encodedString(const TextEncoding& encoding, const String& data)
 {
     return encoding.encode(data.characters(), data.length(), EntitiesForUnencodables);
@@ -70,8 +69,8 @@ static inline CString encodedString(const TextEncoding& encoding, const String& 
 
 void WMLPostfieldElement::encodeData(const TextEncoding& encoding, CString& name, CString& value)
 {
-    name = encodedString(encoding, m_name);
-    value = encodedString(encoding, m_value);
+    name = encodedString(encoding, this->name());
+    value = encodedString(encoding, this->value());
 }
 
 }

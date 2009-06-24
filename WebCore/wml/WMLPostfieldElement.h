@@ -30,18 +30,13 @@ class WMLPostfieldElement : public WMLElement {
 public:
     WMLPostfieldElement(const QualifiedName& tagName, Document*);
 
-    virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
 
-    String name() const { return m_name; }
-    String value() const { return m_value; }
+    String name() const;
+    String value() const;
 
     // Encode name() and value() in a CString using the passed encoding
     void encodeData(const TextEncoding&, CString& name, CString& value);
-
-private:
-    String m_name;
-    String m_value;
 };
 
 }

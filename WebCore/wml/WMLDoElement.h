@@ -42,7 +42,7 @@ public:
     void registerTask(WMLTaskElement* task) { m_task = task; }
 
     bool isActive() const { return m_isActive; }
-    String label() const { return m_label; }
+    String label() const;
     String name() const { return m_name; }
 
     void setActive(bool active) { m_isActive = active; }
@@ -53,7 +53,6 @@ private:
     bool m_isActive;
     bool m_isNoop;
     bool m_isOptional;
-    String m_label;
     String m_name;
     String m_type;
 };

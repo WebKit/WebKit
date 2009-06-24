@@ -31,14 +31,12 @@ public:
     WMLFieldSetElement(const QualifiedName& tagName, Document*);
     virtual ~WMLFieldSetElement();
 
-    virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
 private:
-    String m_title;
     RefPtr<WMLElement> m_insertedLegendElement;
 };
 
