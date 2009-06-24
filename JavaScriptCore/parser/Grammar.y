@@ -80,7 +80,7 @@ static ExpressionNode* makeSubNode(void*, ExpressionNode*, ExpressionNode*, bool
 static ExpressionNode* makeLeftShiftNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static ExpressionNode* makeRightShiftNode(void*, ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static StatementNode* makeVarStatementNode(void*, ExpressionNode*);
-static ExpressionNode* combineVarInitializers(void*, ExpressionNode* list, AssignResolveNode* init);
+static ExpressionNode* combineCommaNodes(void*, ExpressionNode* list, ExpressionNode* init);
 
 #if COMPILER(MSVC)
 
@@ -778,17 +778,17 @@ AssignmentOperator:
 
 Expr:
     AssignmentExpr
-  | Expr ',' AssignmentExpr             { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | Expr ',' AssignmentExpr             { $$ = createNodeInfo<ExpressionNode*>(combineCommaNodes(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 ExprNoIn:
     AssignmentExprNoIn
-  | ExprNoIn ',' AssignmentExprNoIn     { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | ExprNoIn ',' AssignmentExprNoIn     { $$ = createNodeInfo<ExpressionNode*>(combineCommaNodes(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 ExprNoBF:
     AssignmentExprNoBF
-  | ExprNoBF ',' AssignmentExpr         { $$ = createNodeInfo<ExpressionNode*>(new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
+  | ExprNoBF ',' AssignmentExpr         { $$ = createNodeInfo<ExpressionNode*>(combineCommaNodes(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_features | $3.m_features, $1.m_numConstants + $3.m_numConstants); }
 ;
 
 Statement:
@@ -854,7 +854,7 @@ VariableDeclarationList:
   | VariableDeclarationList ',' IDENT Initializer
                                         { AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, *$3, $4.m_node, $4.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @3.first_column, @4.first_column + 1, @4.last_column);
-                                          $$.m_node = combineVarInitializers(GLOBAL_DATA, $1.m_node, node);
+                                          $$.m_node = combineCommaNodes(GLOBAL_DATA, $1.m_node, node);
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$3, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
@@ -891,7 +891,7 @@ VariableDeclarationListNoIn:
   | VariableDeclarationListNoIn ',' IDENT InitializerNoIn
                                         { AssignResolveNode* node = new (GLOBAL_DATA) AssignResolveNode(GLOBAL_DATA, *$3, $4.m_node, $4.m_features & AssignFeature);
                                           SET_EXCEPTION_LOCATION(node, @3.first_column, @4.first_column + 1, @4.last_column);
-                                          $$.m_node = combineVarInitializers(GLOBAL_DATA, $1.m_node, node);
+                                          $$.m_node = combineCommaNodes(GLOBAL_DATA, $1.m_node, node);
                                           $$.m_varDeclarations = $1.m_varDeclarations;
                                           appendToVarDeclarationList(GLOBAL_DATA, $$.m_varDeclarations, *$3, DeclarationStacks::HasInitializer);
                                           $$.m_funcDeclarations = 0;
@@ -2071,10 +2071,14 @@ static bool allowAutomaticSemicolon(Lexer& lexer, int yychar)
     return yychar == CLOSEBRACE || yychar == 0 || lexer.prevTerminator();
 }
 
-static ExpressionNode* combineVarInitializers(void* globalPtr, ExpressionNode* list, AssignResolveNode* init)
+static ExpressionNode* combineCommaNodes(void* globalPtr, ExpressionNode* list, ExpressionNode* init)
 {
     if (!list)
         return init;
+    if (list->isCommaNode()) {
+        static_cast<CommaNode*>(list)->append(init);
+        return list;
+    }
     return new (GLOBAL_DATA) CommaNode(GLOBAL_DATA, list, init);
 }
 

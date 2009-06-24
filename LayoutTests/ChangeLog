@@ -1,3 +1,15 @@
+2009-06-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6940519> REGRESSION (Safari 4 Public Beta - TOT): google.com/adplanner shows blank page instead of site details in "basic research'
+
+        Add test cases for excessively large comma expressions.
+
+        * fast/js/excessive-comma-usage-expected.txt: Added.
+        * fast/js/excessive-comma-usage.html: Added.
+        * fast/js/resources/excessive-comma-usage.js: Added.
+
 2009-06-24  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Niko.

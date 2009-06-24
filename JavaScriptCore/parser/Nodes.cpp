@@ -1186,8 +1186,10 @@ RegisterID* ReadModifyBracketNode::emitBytecode(BytecodeGenerator& generator, Re
 
 RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    generator.emitNode(generator.ignoredResult(), m_expr1);
-    return generator.emitNode(dst, m_expr2);
+    ASSERT(m_expressions.size() > 1);
+    for (size_t i = 0; i < m_expressions.size() - 1; i++)
+        generator.emitNode(generator.ignoredResult(), m_expressions[i]);
+    return generator.emitNode(dst, m_expressions.last());
 }
 
 // ------------------------------ ConstDeclNode ------------------------------------

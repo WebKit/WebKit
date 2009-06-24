@@ -169,7 +169,8 @@ namespace JSC {
         virtual bool isResolveNode() const { return false; }
         virtual bool isBracketAccessorNode() const { return false; }
         virtual bool isDotAccessorNode() const { return false; }
-        virtual bool isFuncExprNode() const { return false; } 
+        virtual bool isFuncExprNode() const { return false; }
+        virtual bool isCommaNode() const { return false; }
         virtual bool isSimpleArray() const { return false; }
         virtual bool isAdd() const { return false; }
 
@@ -1087,16 +1088,20 @@ namespace JSC {
         Operator m_operator;
         ExpressionNode* m_right;
     };
+    
+    typedef Vector<ExpressionNode*, 8> ExpressionVector;
 
     class CommaNode : public ExpressionNode {
     public:
         CommaNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2);
 
+        void append(ExpressionNode* expr) { m_expressions.append(expr); }
+
     private:
+        virtual bool isCommaNode() const { return true; }
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        ExpressionNode* m_expr1;
-        ExpressionNode* m_expr2;
+        ExpressionVector m_expressions;
     };
     
     class ConstDeclNode : public ExpressionNode {

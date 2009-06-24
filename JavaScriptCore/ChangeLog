@@ -1,3 +1,25 @@
+2009-06-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6940519> REGRESSION (Safari 4 Public Beta - TOT): google.com/adplanner shows blank page instead of site details in "basic research'
+
+        The problem was caused by the page returned with a function using a
+        var declaration list containing around ~3000 variables.  The solution
+        to this is to flatten the comma expression representation and make
+        codegen comma expressions and initializer lists iterative rather than
+        recursive.
+
+        * parser/Grammar.y:
+        * parser/NodeConstructors.h:
+        (JSC::CommaNode::CommaNode):
+        * parser/Nodes.cpp:
+        (JSC::CommaNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isCommaNode):
+        (JSC::CommaNode::isCommaNode):
+        (JSC::CommaNode::append):
+
 2009-06-24  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Maciej Stachowiak.
