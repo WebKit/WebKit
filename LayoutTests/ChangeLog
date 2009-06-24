@@ -1,3 +1,12 @@
+2009-06-23  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mark Rowe.
+        
+        Resets the results for a test that was missed in 
+        http://trac.webkit.org/changeset/45016.
+
+        * editing/execCommand/5142012-3-expected.txt:
+
 2009-06-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave Hyatt.
