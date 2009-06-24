@@ -27,9 +27,9 @@
                     ctx.drawImage(video, 0, 0, width, height);
 
                 var frame = ctx.getImageData(0, 0, width, height);
-                r = frame.data[4 + 0];
-                g = frame.data[4 + 1];
-                b = frame.data[4 + 2];
+                r = frame.data[4 * 2 * width + 16 + 0];
+                g = frame.data[4 * 2 * width + 16 + 1];
+                b = frame.data[4 * 2 * width + 16 + 2];
 
                 testExpected("r", expected.r);
                 testExpected("g", expected.g);
@@ -43,6 +43,7 @@
 
             function testFrame()
             {
+                video.pause();
                 consoleWrite("");
                 var expected = results.values[results.current];
                 if (expected.time) 

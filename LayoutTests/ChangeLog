@@ -1,3 +1,11 @@
+2009-06-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (attempted test fix).
+
+        Attempting to make test more reliable.
+
+        * media/video-canvas.html:
+
 2009-06-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
