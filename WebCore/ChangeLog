@@ -1,3 +1,17 @@
+2009-06-23  Brady Eidson  <beidson@apple.com>
+
+        Patch by Antti Koivisto.
+        Reviewed by Brady Eidson.
+
+        <rdar://problem/6988010> Failed resources not reloaded when built against Tiger SDK
+
+        A latent bug that cache revalidation uncovered.  When a CachedResource failed to load,
+        it should always be revalidated upon reload.
+
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::canUseCacheValidator):
+        (WebCore::CachedResource::mustRevalidate):
+
 2009-06-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
