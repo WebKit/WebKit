@@ -2,8 +2,7 @@
 
         Reviewed by Anders Carlsson.
 
-        Fix the most recently seen kind of crash seen in
-        <rdar://problem/5983224>
+        Fix the most recently seen kind of crash in <rdar://problem/5983224>
 
         * WebView/WebHTMLView.mm:
         (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]): Null-check the
