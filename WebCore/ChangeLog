@@ -1,3 +1,22 @@
+2009-06-24  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 26668: AX: need a way to retrieve the language for an element
+        
+        Provides a way to retrieve the language associated with a specific accessibility element.
+
+        Test: accessibility/language-attribute.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::language):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::language):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2009-06-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Dan Bernstein.

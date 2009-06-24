@@ -1,3 +1,17 @@
+2009-06-24  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 26668: AX: need a way to retrieve the language for an element
+        Support ability to retrieve AXLanguage for testing
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getLanguageCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::language):
+
 2009-06-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.

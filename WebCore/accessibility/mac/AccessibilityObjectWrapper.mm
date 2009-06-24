@@ -111,6 +111,10 @@ using namespace std;
 #define NSAccessibilityAccessKeyAttribute @"AXAccessKey"
 #endif
 
+#ifndef NSAccessibilityLanguageAttribute
+#define NSAccessibilityLanguageAttribute @"AXLanguage"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;
 #endif
@@ -1451,6 +1455,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return obj->wrapper();
         return nil;
     }
+    
+    if ([attributeName isEqualToString:NSAccessibilityLanguageAttribute]) 
+        return m_object->language();
     
     return nil;
 }

@@ -177,6 +177,7 @@ public:
     virtual Widget* widgetForAttachmentView() const;
     virtual void getDocumentLinks(AccessibilityChildrenVector&);
     virtual FrameView* documentFrameView() const;
+    virtual String language() const;
     
     virtual const AccessibilityChildrenVector& children();
     

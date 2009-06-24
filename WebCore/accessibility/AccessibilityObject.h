@@ -311,7 +311,8 @@ public:
     virtual Document* document() const { return 0; }
     virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;
-
+    virtual String language() const;
+    
     void setAXObjectID(unsigned);
     virtual void setFocused(bool);
     virtual void setSelectedText(const String&);

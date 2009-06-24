@@ -1,0 +1,44 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<head>
+<meta http-equiv="content-language" content="en-gb"> 
+<body id="body">
+
+    <!-- This tests the ability to get the content language for various elements using various techniques -->
+
+    cheerio
+    
+    <p lang="de">germannish</p>
+    <p lang="ja">elvish</p>
+
+    and more english
+
+    <div id="result"></div>
+    
+    <script>
+        if (window.accessibilityController) {
+            var body = document.getElementById("body");
+            body.focus();
+            var webArea = accessibilityController.focusedElement;
+            var result = document.getElementById("result");
+
+            var text1 = webArea.childAtIndex(0).childAtIndex(0);
+            var text2 = webArea.childAtIndex(1).childAtIndex(0);
+            var text3 = webArea.childAtIndex(2).childAtIndex(0);
+            var text4 = webArea.childAtIndex(3).childAtIndex(0);
+
+            if ( webArea.language == "AXLanguage: en-gb" && text1.language == "AXLanguage: en-gb" && 
+                 text2.language == "AXLanguage: de" && text3.language == "AXLanguage: ja" && 
+                 text4.language == "AXLanguage: en-gb") {
+               result.innerText = "Passed";
+            }
+            else { 
+               result.innerText = "Failed. Could not find AXLanguages: " + webArea.language + " - " + text1.language;
+            }
+        }
+    </script>
+</body>
+</html>

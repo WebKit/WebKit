@@ -656,6 +656,25 @@ String AccessibilityRenderObject::helpText() const
     
     return String();
 }
+    
+String AccessibilityRenderObject::language() const
+{
+    if (!m_renderer)
+        return String();
+    
+    // Defer to parent if this element doesn't have a language set
+    Node* node = m_renderer->node();
+    if (!node)
+        return AccessibilityObject::language();
+    
+    if (!node->isElementNode())
+        return AccessibilityObject::language();
+    
+    String language = static_cast<Element*>(node)->getAttribute(langAttr);
+    if (language.isEmpty())
+        return AccessibilityObject::language();
+    return language;
+}
 
 String AccessibilityRenderObject::textUnderElement() const
 {

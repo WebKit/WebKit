@@ -1,3 +1,12 @@
+2009-06-24  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for Bug 26668: AX: need a way to retrieve the language for an element.
+
+        * accessibility/language-attribute-expected.txt: Added.
+        * accessibility/language-attribute.html: Added.
+
 2009-06-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
