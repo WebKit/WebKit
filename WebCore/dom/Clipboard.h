@@ -57,7 +57,7 @@ namespace WebCore {
         IntPoint dragLocation() const { return m_dragLoc; }
         CachedImage* dragImage() const { return m_dragImage.get(); }
         virtual void setDragImage(CachedImage*, const IntPoint&) = 0;
-        Node* dragImageElement() { return m_dragImageElement.get(); }
+        Node* dragImageElement() const { return m_dragImageElement.get(); }
         virtual void setDragImageElement(Node*, const IntPoint&) = 0;
         
         virtual DragImageRef createDragImage(IntPoint& dragLocation) const = 0;

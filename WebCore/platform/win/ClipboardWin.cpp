@@ -608,9 +608,12 @@ void ClipboardWin::setDragImageElement(Node *node, const IntPoint &loc)
 DragImageRef ClipboardWin::createDragImage(IntPoint& loc) const
 {
     HBITMAP result = 0;
-    //FIXME: Need to be able to draw element <rdar://problem/5015942>
     if (m_dragImage) {
         result = createDragImageFromImage(m_dragImage->image());        
+        loc = m_dragLoc;
+    } else if (m_dragImageElement) {
+        Node* node = m_dragImageElement.get();
+        result = node->document()->frame()->nodeImage(node);
         loc = m_dragLoc;
     }
     return result;

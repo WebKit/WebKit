@@ -1,3 +1,27 @@
+2009-06-24  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Partially fixes: https://bugs.webkit.org/show_bug.cgi?id=24735
+        (<rdar://problem/5015942>)
+        Where on windows it was not possible to set an element as the drag
+        image using setDragImage on the dataTransfer object.
+        
+        Does not "fix" the case of dragging a link where the default link image
+        is still used, even when the -webkit-user-drag is set to "element". This
+        is the same behavior as is found on OS X.
+        
+        Added a manual test because it is not possible to check that what is
+        contained in the image snapshot is indeed the requested element.
+
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::dragImageElement):
+        Made getting the raw pointer from the RefPtr a const operation.
+        * manual-tests/drag-with-div-or-image-as-data-image.html: Added.
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::createDragImage):
+        Get an image of the rendered element and its subtree.
+
 2009-06-24  Darin Fisher  <darin@chromium.org>
 
         Reviewed by David Levin.
