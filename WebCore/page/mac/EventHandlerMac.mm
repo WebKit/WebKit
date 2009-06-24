@@ -300,7 +300,10 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
 
     ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
+    NSView *outerView = widget->getOuterView();
+    widget->beforeMouseDown(outerView, widget);
     [view mouseDown:currentNSEvent()];
+    widget->afterMouseDown(outerView, widget);
     m_sendingEventToSubview = false;
     
     if (!wasDeferringLoading)

@@ -1,3 +1,17 @@
+2009-06-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6634228> Crash in [NSScroller mouseDown:] beneath
+          EventHandler::passMouseDownEventToWidget()
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passMouseDownEventToWidget): Surround the
+        -mouseDown: call with calls to Widget::beforeMouseDown() and
+        Widget::afterMouseDown(), which prevent the widget's view hierarchy from
+        being removed from its parent view while the scroller is tracking the
+        mouse.
+
 2009-06-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave Hyatt.
