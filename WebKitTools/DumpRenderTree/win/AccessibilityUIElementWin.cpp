@@ -177,6 +177,11 @@ JSStringRef AccessibilityUIElement::description()
     return JSStringCreateWithCharacters(description.data(), description.length());
 }
 
+JSStringRef AccessibilityUIElement::language()
+{
+    return JSStringCreateWithCharacters(0, 0);
+}
+
 double AccessibilityUIElement::x()
 {
     long x, y, width, height;

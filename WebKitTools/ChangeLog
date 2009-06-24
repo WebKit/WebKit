@@ -1,5 +1,12 @@
 2009-06-24  Chris Fleizach  <cfleizach@apple.com>
 
+        Windows build fix.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::language):
+
+2009-06-24  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 26668: AX: need a way to retrieve the language for an element
