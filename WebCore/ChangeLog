@@ -1,3 +1,11 @@
+2009-06-24  Brady Eidson  <beidson@apple.com>
+
+        Fix 64-bit SnowLeopard build.
+
+        * html/DataGridColumnList.cpp:
+        (WebCore::DataGridColumnList::remove):
+        (WebCore::DataGridColumnList::move):
+
 2009-06-24  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Niko.

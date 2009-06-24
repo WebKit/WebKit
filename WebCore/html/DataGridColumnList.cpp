@@ -57,7 +57,7 @@ PassRefPtr<DataGridColumn> DataGridColumnList::add(const String& id, const Strin
 
 void DataGridColumnList::remove(DataGridColumn* col)
 {
-    unsigned index = m_columns.find(col);
+    size_t index = m_columns.find(col);
     if (index == notFound)
         return;
     m_columns.remove(index);
@@ -69,7 +69,7 @@ void DataGridColumnList::remove(DataGridColumn* col)
 
 void DataGridColumnList::move(DataGridColumn* col, unsigned long index)
 {
-    unsigned colIndex = m_columns.find(col);
+    size_t colIndex = m_columns.find(col);
     if (colIndex == notFound)
         return;
     m_columns.insert(index, col);
