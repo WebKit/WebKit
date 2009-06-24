@@ -34,8 +34,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDataGridElement::HTMLDataGridElement(const QualifiedName& name, Document* doc)
-    : HTMLElement(name, doc)
+HTMLDataGridElement::HTMLDataGridElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
+    , m_initializationTimer(this, &HTMLDataGridElement::initializationTimerFired)
+{
+}
+
+HTMLDataGridElement::~HTMLDataGridElement()
 {
 }
 
@@ -81,4 +86,18 @@ void HTMLDataGridElement::setMultiple(bool multiple)
     setAttribute(multipleAttr, multiple ? "" : 0);
 }
 
+void HTMLDataGridElement::setDataSource(PassRefPtr<DataGridDataSource> dataSource)
+{
+    if (m_initializationTimer.isActive())
+        m_initializationTimer.stop();
+
+    m_dataSource = dataSource;
+    m_initializationTimer.startOneShot(0);
 }
+
+void HTMLDataGridElement::initializationTimerFired(Timer<HTMLDataGridElement>*)
+{
+    m_dataSource->initialize(this);
+}
+
+} // namespace WebCore

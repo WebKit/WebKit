@@ -1,3 +1,43 @@
+2009-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26516
+        Add initial implementation of DataGridDataSource
+
+        - Initial implementation only supports the initialize callback function.
+
+        Test: fast/dom/HTMLDataGridElement/DataGridDataSource-basic.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDataGridDataSource.cpp: Added.
+        (WebCore::JSDataGridDataSource::JSDataGridDataSource):
+        (WebCore::JSDataGridDataSource::~JSDataGridDataSource):
+        (WebCore::JSDataGridDataSource::initialize):
+        * bindings/js/JSDataGridDataSource.h: Added.
+        (WebCore::JSDataGridDataSource::create):
+        (WebCore::JSDataGridDataSource::isJSDataGridDataSource):
+        (WebCore::JSDataGridDataSource::jsDataSource):
+        (WebCore::asJSDataGridDataSource):
+        * bindings/js/JSHTMLDataGridElementCustom.cpp: Added.
+        (WebCore::JSHTMLDataGridElement::listener):
+        (WebCore::JSHTMLDataGridElement::setListener):
+        * html/DataGridDataSource.h: Added.
+        (WebCore::DataGridDataSource::~DataGridDataSource):
+        (WebCore::DataGridDataSource::isJSDataGridDataSource):
+        * html/HTMLDataGridElement.cpp:
+        (WebCore::HTMLDataGridElement::HTMLDataGridElement):
+        (WebCore::HTMLDataGridElement::setDataSource):
+        (WebCore::HTMLDataGridElement::initializationTimerFired):
+        * html/HTMLDataGridElement.h:
+        (WebCore::HTMLDataGridElement::dataSource):
+        * html/HTMLDataGridElement.idl:
+
 2009-06-23  Ryosuke Niwa  <rniwa@google.com>
 
         Reviewed by Justin Garcia.

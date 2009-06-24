@@ -13,7 +13,7 @@
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,44 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLDataGridElement_h
-#define HTMLDataGridElement_h
+#ifndef JSDataGridDataSource_h
+#define JSDataGridDataSource_h
 
 #include "DataGridDataSource.h"
-#include "HTMLElement.h"
-#include "Timer.h"
+#include <runtime/JSValue.h>
+#include <runtime/Protect.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class HTMLDataGridElement : public HTMLElement {
+class Frame;
+class HTMLDataGridElement;
+
+class JSDataGridDataSource : public DataGridDataSource {
 public:
-    HTMLDataGridElement(const QualifiedName&, Document*);
-    virtual ~HTMLDataGridElement();
+    static PassRefPtr<JSDataGridDataSource> create(JSC::JSValue dataSource, Frame* frame)
+    {
+        return adoptRef(new JSDataGridDataSource(dataSource, frame));
+    }
 
-    virtual int tagPriority() const { return 6; } // Same as <select>s
-    virtual bool checkDTD(const Node*);
-    
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual ~JSDataGridDataSource();
 
-    bool autofocus() const;
-    void setAutofocus(bool);
-    
-    bool disabled() const;
-    void setDisabled(bool);
-    
-    bool multiple() const;
-    void setMultiple(bool);
+    virtual bool isJSDataGridDataSource() const { return true; }
+    JSC::JSValue jsDataSource() const { return m_dataSource.get(); }
 
-    void setDataSource(PassRefPtr<DataGridDataSource>);
-    DataGridDataSource* dataSource() const { return m_dataSource.get(); }
+    virtual void initialize(HTMLDataGridElement*);
 
 private:
-    void initializationTimerFired(Timer<HTMLDataGridElement>*);
+    JSDataGridDataSource(JSC::JSValue, Frame*);
 
-    Timer<HTMLDataGridElement> m_initializationTimer;
-    RefPtr<DataGridDataSource> m_dataSource;
+    JSC::ProtectedJSValue m_dataSource;
+    RefPtr<Frame> m_frame;
 };
+
+inline JSDataGridDataSource* asJSDataGridDataSource(DataGridDataSource* dataSource)
+{
+    ASSERT(dataSource->isJSDataGridDataSource());
+    return static_cast<JSDataGridDataSource*>(dataSource);
+}
+
+inline const JSDataGridDataSource* asJSDataGridDataSource(const DataGridDataSource* dataSource)
+{
+    ASSERT(dataSource->isJSDataGridDataSource());
+    return static_cast<const JSDataGridDataSource*>(dataSource);
+}
 
 } // namespace WebCore
 
-#endif // HTMLDataGridElement_h
+#endif // JSDataGridDataSource_h

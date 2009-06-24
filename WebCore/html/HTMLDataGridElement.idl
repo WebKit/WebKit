@@ -25,10 +25,14 @@
 
 module html {
 
-interface [GenerateConstructor] HTMLDataGridElement : HTMLElement {
-    attribute boolean autofocus; // Whether or not the datagrid should autofocus.
-    attribute boolean disabled; // Whether or not the datagrid can be interacted with.
-    attribute boolean multiple; // Whether or not the datagrid supports multiple selection.
-};
+    interface [
+        GenerateConstructor
+    ] HTMLDataGridElement : HTMLElement {
+        attribute [Custom] DataGridDataSource dataSource;
+
+        attribute boolean autofocus; // Whether or not the datagrid should autofocus.
+        attribute boolean disabled; // Whether or not the datagrid can be interacted with.
+        attribute boolean multiple; // Whether or not the datagrid supports multiple selection.
+    };
 
 }

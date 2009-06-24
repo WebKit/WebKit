@@ -71,6 +71,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSCustomVoidCallback.cpp
         bindings/js/JSCustomXPathNSResolver.cpp
         bindings/js/JSDatabaseCustom.cpp
+        bindings/js/JSDataGridDataSource.cpp
         bindings/js/JSDOMApplicationCacheCustom.cpp
         bindings/js/JSDOMGlobalObject.cpp
         bindings/js/JSDOMWindowBase.cpp
@@ -86,6 +87,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSHistoryCustom.cpp
         bindings/js/JSHTMLAppletElementCustom.cpp
         bindings/js/JSHTMLCollectionCustom.cpp
+        bindings/js/JSHTMLDataGridElementCustom.cpp
         bindings/js/JSHTMLDocumentCustom.cpp
         bindings/js/JSHTMLElementCustom.cpp
         bindings/js/JSHTMLEmbedElementCustom.cpp

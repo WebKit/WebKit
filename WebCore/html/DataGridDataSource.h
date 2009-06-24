@@ -13,7 +13,7 @@
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,44 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HTMLDataGridElement_h
-#define HTMLDataGridElement_h
+#ifndef DataGridDataSource_h
+#define DataGridDataSource_h
 
-#include "DataGridDataSource.h"
-#include "HTMLElement.h"
-#include "Timer.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class HTMLDataGridElement : public HTMLElement {
+class HTMLDataGridElement;
+
+class DataGridDataSource : public RefCounted<DataGridDataSource> {
 public:
-    HTMLDataGridElement(const QualifiedName&, Document*);
-    virtual ~HTMLDataGridElement();
+    virtual ~DataGridDataSource() { }
 
-    virtual int tagPriority() const { return 6; } // Same as <select>s
-    virtual bool checkDTD(const Node*);
-    
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual bool isJSDataGridDataSource() const { return false; }
 
-    bool autofocus() const;
-    void setAutofocus(bool);
-    
-    bool disabled() const;
-    void setDisabled(bool);
-    
-    bool multiple() const;
-    void setMultiple(bool);
-
-    void setDataSource(PassRefPtr<DataGridDataSource>);
-    DataGridDataSource* dataSource() const { return m_dataSource.get(); }
-
-private:
-    void initializationTimerFired(Timer<HTMLDataGridElement>*);
-
-    Timer<HTMLDataGridElement> m_initializationTimer;
-    RefPtr<DataGridDataSource> m_dataSource;
+    virtual void initialize(HTMLDataGridElement*) = 0;
 };
 
 } // namespace WebCore
 
-#endif // HTMLDataGridElement_h
+#endif // DataGridDataSource_h

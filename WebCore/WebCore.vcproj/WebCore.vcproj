@@ -24179,6 +24179,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\DataGridDataSource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\CollectionCache.cpp"
 				>
 				<FileConfiguration
@@ -27946,6 +27950,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDataGridDataSource.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDataGridDataSource.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDocumentFragmentCustom.cpp"
 					>
 				</File>
@@ -28039,6 +28051,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLCollectionCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLDataGridElementCustom.cpp"
 					>
 				</File>
 				<File
