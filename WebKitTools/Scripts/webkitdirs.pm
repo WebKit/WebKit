@@ -94,6 +94,16 @@ sub determineBaseProductDir
     return if defined $baseProductDir;
     determineSourceDir();
     if (isAppleMacWebKit()) {
+        # Silently remove ~/Library/Preferences/xcodebuild.plist which can
+        # cause build failure. The presence of
+        # ~/Library/Preferences/xcodebuild.plist can prevent xcodebuild from
+        # respecting global settings such as a custom build products directory
+        # (<rdar://problem/5585899>).
+        my $personalPlistFile = $ENV{HOME} . "/Library/Preferences/xcodebuild.plist";
+        if (-e $personalPlistFile) {
+            unlink($personalPlistFile) || die "Could not delete $personalPlistFile: $!";
+        }
+
         open PRODUCT, "defaults read com.apple.Xcode PBXApplicationwideBuildSettings 2> /dev/null |" or die;
         $baseProductDir = join '', <PRODUCT>;
         close PRODUCT;

@@ -1,3 +1,17 @@
+2009-06-23  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 26537: Builds from command-line fail if custom build product directory is set and ~/Library/Preferences/xcodebuild.plist exists
+        https://bugs.webkit.org/show_bug.cgi?id=26537
+
+        Let determineBaseProductDir subroutine remove
+        ~/Library/Preferences/xcodebuild.plist. It can prevent xcodebuild from
+        respecting global settings such as a custom build products directory
+        (<rdar://problem/5585899>).
+
+        * Scripts/webkitdirs.pm:
+
 2009-06-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dave Levin.
