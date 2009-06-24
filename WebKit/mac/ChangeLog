@@ -1,3 +1,20 @@
+2009-06-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6950660> REGRESSION: iSale 5.5.3 crashes after I click a template to load
+
+        Due to some subtle WebKit changes - presumably some delegate callback behavior - a latent bug in 
+        iSale was uncovered where they aren't properly retaining their FrameLoadDelegate, and we ended up
+        calling back to a dealloc'ed object.
+
+        * WebView/WebView.mm:
+        (-[WebView _needsAdobeFrameReloadingQuirk]): Use more intelligent C++-style initialization.
+        (-[WebView _needsKeyboardEventDisambiguationQuirks]): Ditto.
+        (-[WebView _needsFrameLoadDelegateRetainQuirk]): YES for iSale versions under 5.6
+        (-[WebView dealloc]): Release the delegate if the quirk is in effect.
+        (-[WebView setFrameLoadDelegate:]): Retain the new delegate if the quirk is in effect.
+
 2009-06-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
