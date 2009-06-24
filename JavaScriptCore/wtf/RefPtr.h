@@ -23,6 +23,7 @@
 
 #include <algorithm>
 #include "AlwaysInline.h"
+#include "FastAllocBase.h"
 
 namespace WTF {
 
@@ -32,7 +33,7 @@ namespace WTF {
 
     enum HashTableDeletedValueType { HashTableDeletedValue };
 
-    template <typename T> class RefPtr {
+    template <typename T> class RefPtr : public FastAllocBase {
     public:
         RefPtr() : m_ptr(0) { }
         RefPtr(T* ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
