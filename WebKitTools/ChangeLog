@@ -1,3 +1,11 @@
+2009-06-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Spell Maciej's name right and add Brady Eidson.
+
+        * Scripts/modules/bugzilla.py:
+
 2009-06-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dave Levin.
