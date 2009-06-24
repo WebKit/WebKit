@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,11 +28,13 @@
 #include "FloatRect.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
 #include "ImageData.h"
 #include "JSCanvasGradient.h"
 #include "JSCanvasPattern.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
+#include "JSHTMLVideoElement.h"
 #include "JSImageData.h"
 #include <runtime/Error.h>
 
@@ -230,6 +232,29 @@ JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec, const ArgList& ar
             default:
                 return throwError(exec, SyntaxError);
         }
+#if ENABLE(VIDEO)
+    } else if (o->inherits(&JSHTMLVideoElement::s_info)) {
+            HTMLVideoElement* video = static_cast<HTMLVideoElement*>(static_cast<JSHTMLElement*>(o)->impl());
+            switch (args.size()) {
+                case 3:
+                    context->drawImage(video, args.at(1).toFloat(exec), args.at(2).toFloat(exec));
+                    break;
+                case 5:
+                    context->drawImage(video, args.at(1).toFloat(exec), args.at(2).toFloat(exec),
+                                       args.at(3).toFloat(exec), args.at(4).toFloat(exec), ec);
+                    setDOMException(exec, ec);
+                    break;
+                case 9:
+                    context->drawImage(video, FloatRect(args.at(1).toFloat(exec), args.at(2).toFloat(exec),
+                                       args.at(3).toFloat(exec), args.at(4).toFloat(exec)),
+                                       FloatRect(args.at(5).toFloat(exec), args.at(6).toFloat(exec),
+                                       args.at(7).toFloat(exec), args.at(8).toFloat(exec)), ec);
+                    setDOMException(exec, ec);
+                    break;
+                default:
+                    return throwError(exec, SyntaxError);
+        }
+#endif
     } else {
         setDOMException(exec, TYPE_MISMATCH_ERR);
     }

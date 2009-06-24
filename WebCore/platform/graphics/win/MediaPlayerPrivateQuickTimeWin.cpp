@@ -427,9 +427,33 @@ void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
 {
     if (p->paintingDisabled() || !m_qtMovie || m_hasUnsupportedTracks)
         return;
+
+    bool usingTempBitmap = false;
+    OwnPtr<GraphicsContext::WindowsBitmap> bitmap;
     HDC hdc = p->getWindowsContext(r);
+    if (!hdc) {
+        // The graphics context doesn't have an associated HDC so create a temporary
+        // bitmap where QTMovieWin can draw the frame and we can copy it.
+        usingTempBitmap = true;
+        bitmap.set(p->createWindowsBitmap(r.size()));
+        hdc = bitmap->hdc();
+
+        // FIXME: is this necessary??
+        XFORM xform;
+        xform.eM11 = 1.0f;
+        xform.eM12 = 0.0f;
+        xform.eM21 = 0.0f;
+        xform.eM22 = 1.0f;
+        xform.eDx = -r.x();
+        xform.eDy = -r.y();
+        SetWorldTransform(hdc, &xform);
+    }
+
     m_qtMovie->paint(hdc, r.x(), r.y());
-    p->releaseWindowsContext(hdc, r);
+    if (usingTempBitmap)
+        p->drawWindowsBitmap(bitmap.get(), r.topLeft());
+    else
+        p->releaseWindowsContext(hdc, r);
 
 #if DRAW_FRAME_RATE
     if (m_frameCountWhilePlaying > 10) {
@@ -539,6 +563,13 @@ void MediaPlayerPrivate::movieNewImageAvailable(QTMovieWin* movie)
     }
 #endif
     m_player->repaint();
+}
+
+bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
+{
+    // We tell quicktime to disallow resources that come from different origins
+    // so we all media is single origin.
+    return true;
 }
 
 }

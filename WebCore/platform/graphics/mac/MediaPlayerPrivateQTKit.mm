@@ -497,18 +497,17 @@ void MediaPlayerPrivate::setUpVideoRendering()
 {
     MediaRenderingMode currentMode = currentRenderingMode();
     MediaRenderingMode preferredMode = preferredRenderingMode();
-    if (currentMode == preferredMode)
+    if (currentMode == preferredMode && currentMode != MediaRenderingNone)
         return;
 
     if (currentMode != MediaRenderingNone)  
         tearDownVideoRendering();
 
     switch (preferredMode) {
-    case MediaRenderingNone:
-        break;
     case MediaRenderingMovieView:
         createQTMovieView();
         break;
+    case MediaRenderingNone:
     case MediaRenderingSoftwareRenderer:
         createQTVideoRenderer();
         break;
@@ -1308,6 +1307,13 @@ void MediaPlayerPrivate::acceleratedRenderingStateChanged()
     }
 }
 #endif
+
+bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
+{
+    // We tell quicktime to disallow resources that come from different origins
+    // so we know all media is single origin.
+    return true;
+}
 
 } // namespace WebCore
 

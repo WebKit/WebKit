@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@ namespace WebCore {
     class GraphicsContext;
     class HTMLCanvasElement;
     class HTMLImageElement;
+    class HTMLVideoElement;
     class ImageData;
     class KURL;
     class TextMetrics;
@@ -159,6 +160,9 @@ namespace WebCore {
         void drawImage(HTMLCanvasElement*, float x, float y);
         void drawImage(HTMLCanvasElement*, float x, float y, float width, float height, ExceptionCode&);
         void drawImage(HTMLCanvasElement*, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode&);
+        void drawImage(HTMLVideoElement*, float x, float y);
+        void drawImage(HTMLVideoElement*, float x, float y, float width, float height, ExceptionCode&);
+        void drawImage(HTMLVideoElement*, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode&);
 
         void drawImageFromRect(HTMLImageElement*, float sx, float sy, float sw, float sh,
             float dx, float dy, float dw, float dh, const String& compositeOperation);

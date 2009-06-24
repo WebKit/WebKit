@@ -103,6 +103,8 @@ public:
     virtual void deliverNotification(MediaPlayerProxyNotificationType) { }
     virtual void setMediaPlayerProxy(WebMediaPlayerProxy*) { }
 #endif
+
+    virtual bool hasSingleSecurityOrigin() const { return true; }
 };
 
 static MediaPlayerPrivateInterface* createNullMediaPlayer(MediaPlayer* player) 
@@ -527,6 +529,11 @@ void MediaPlayer::rateChanged()
 {
     if (m_mediaPlayerClient)
         m_mediaPlayerClient->mediaPlayerRateChanged(this);
+}
+
+bool MediaPlayer::hasSingleSecurityOrigin() const
+{
+    return m_private->hasSingleSecurityOrigin();
 }
 
 }

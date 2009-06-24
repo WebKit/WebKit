@@ -1,3 +1,15 @@
+2009-06-23  Oliver Hunt  <oliver@apple.com> and Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Sam Weinig and Dave Hyatt.
+
+        <rdar://problem/6164797> Add Canvas API to allow drawing of <video> frames
+        <https://bugs.webkit.org/show_bug.cgi?id=25920>
+
+        Add tests for drawing a video to the canvas element.
+
+        * media/video-canvas-expected.txt: Added.
+        * media/video-canvas.html: Added.
+
 2009-06-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

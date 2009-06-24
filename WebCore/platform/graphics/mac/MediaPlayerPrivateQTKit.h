@@ -68,6 +68,7 @@ public:
     void timeChanged();
     void didEnd();
 
+    bool hasSingleSecurityOrigin() const;
 private:
     MediaPlayerPrivate(MediaPlayer*);
 

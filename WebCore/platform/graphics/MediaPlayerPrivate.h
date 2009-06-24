@@ -99,6 +99,8 @@ public:
     // called when the rendering system flips the into or out of accelerated rendering mode.
     virtual void acceleratedRenderingStateChanged() { }
 #endif
+
+    virtual bool hasSingleSecurityOrigin() const { return false; }
 };
 
 }

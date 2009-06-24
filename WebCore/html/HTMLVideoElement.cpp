@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,6 +184,18 @@ void HTMLVideoElement::updatePosterImage()
         attach();
     }
 #endif
+}
+
+void HTMLVideoElement::paint(GraphicsContext* context, const IntRect& r)
+{
+    // FIXME: We should also be able to paint the poster image.
+
+    MediaPlayer* player = HTMLMediaElement::player();
+    if (!player)
+        return;
+
+    player->setVisible(true); // Make player visible or it won't draw.
+    player->paint(context, r);
 }
 
 }

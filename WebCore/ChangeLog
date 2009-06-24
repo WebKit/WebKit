@@ -1,3 +1,51 @@
+2009-06-23  Oliver Hunt  <oliver@apple.com> and Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Sam Weinig and Dave Hyatt.
+
+        <rdar://problem/6164797> Add Canvas API to allow drawing of <video> frames
+        <https://bugs.webkit.org/show_bug.cgi?id=25920>
+
+        Add support for drawing the contents of the video element to the canvas
+        in accordance with the current HTML5 draft.
+
+        Test: media/video-canvas.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::drawImage):
+          Standard custom bindings stuff we need to do for all canvas methods.
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::size): Helper function for finding the size of a video element
+        (WebCore::CanvasRenderingContext2D::checkOrigin): moved up in the file.
+        (WebCore::CanvasRenderingContext2D::drawImage): The various overloads of HTML5's drawImage(<video>)
+        * html/CanvasRenderingContext2D.h:
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::hasSingleSecurityOrigin):
+          hasSingleSecurityOrigin is needed for security, currently all implementations are trivial
+          as we force QT to maintain a single origin.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::paint): 
+            Paint routine on video so we don't have to look at MediaPlayer directly
+        * html/HTMLVideoElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::hasSingleSecurityOrigin):
+        (WebCore::MediaPlayer::hasSingleSecurityOrigin):
+            Default implementations of hasSingleSecurityOrigin
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+            A video may need a player now even if it is not visible.
+        (WebCore::MediaPlayerPrivate::hasSingleSecurityOrigin):
+            Always return true due to restrictions we've placed on QT.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::paint):
+            Jump through some hoops to allow windows QT to draw to an intermediate buffer.
+            In the long term we'd like to cache the HDC, but this will do for now.
+        (WebCore::MediaPlayerPrivate::hasSingleSecurityOrigin):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+            As for Mac we force QT to only allow same origin loads.
+
 2009-06-23  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.

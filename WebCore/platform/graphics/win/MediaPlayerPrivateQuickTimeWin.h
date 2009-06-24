@@ -90,6 +90,7 @@ public:
     
     void paint(GraphicsContext*, const IntRect&);
     
+    bool hasSingleSecurityOrigin() const;
 
 private:
     MediaPlayerPrivate(MediaPlayer*);
