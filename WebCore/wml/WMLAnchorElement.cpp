@@ -32,6 +32,7 @@ namespace WebCore {
 
 WMLAnchorElement::WMLAnchorElement(const QualifiedName& tagName, Document* doc)
     : WMLAElement(tagName, doc)
+    , m_task(0)
 {
     // Calling setIsLink(true), and returning a non-null value on CSSStyleSelectors' linkAttribute
     // method, makes it possible to 'appear as link' (just like <a href="..">) without the need to

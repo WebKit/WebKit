@@ -1,5 +1,14 @@
 2009-06-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
+        Reviewed by Adam Roben.
+
+        Forgot to initialize m_task member variable. Results in crashes sometimes.
+
+        * wml/WMLAnchorElement.cpp:
+        (WebCore::WMLAnchorElement::WMLAnchorElement):
+
+2009-06-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
         Not reviewed. Forgot to include within last patch.
 
         * manual-tests/wml/card-title-attr.wml: Added.
