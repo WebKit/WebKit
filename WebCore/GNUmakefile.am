@@ -153,6 +153,8 @@ IDL_BINDINGS += \
 	WebCore/html/CanvasGradient.idl \
 	WebCore/html/CanvasPattern.idl \
 	WebCore/html/CanvasRenderingContext2D.idl \
+	WebCore/html/DataGridColumn.idl \
+	WebCore/html/DataGridColumnList.idl \
 	WebCore/html/File.idl \
 	WebCore/html/FileList.idl \
 	WebCore/html/HTMLAnchorElement.idl \
@@ -295,6 +297,7 @@ webcore_sources += \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \
 	WebCore/bindings/js/JSCDATASectionCustom.cpp \
+	WebCore/bindings/js/JSDataGridColumnListCustom.cpp \
 	WebCore/bindings/js/JSDataGridDataSource.cpp \
 	WebCore/bindings/js/JSDataGridDataSource.h \
 	WebCore/bindings/js/JSCSSRuleCustom.cpp \
@@ -895,6 +898,10 @@ webcore_sources += \
 	WebCore/html/CollectionCache.cpp \
 	WebCore/html/CollectionCache.h \
 	WebCore/html/CollectionType.h \
+	WebCore/html/DataGridColumn.cpp \
+	WebCore/html/DataGridColumn.h \
+	WebCore/html/DataGridColumnList.cpp \
+	WebCore/html/DataGridColumnList.h \
 	WebCore/html/DataGridDataSource.h \
 	WebCore/html/File.cpp \
 	WebCore/html/File.h \

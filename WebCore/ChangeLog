@@ -1,3 +1,9 @@
+2009-06-24  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix. Add files that were added in r45093 and r45096
+
+        * GNUmakefile.am:
+
 2009-06-24  Brady Eidson  <beidson@apple.com>
 
         Fix 64-bit SnowLeopard build.
