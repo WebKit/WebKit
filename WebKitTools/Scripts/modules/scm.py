@@ -59,14 +59,21 @@ class SCM:
         self.dryrun = dryrun
 
     @staticmethod
-    def run_command(command, cwd=None):
-        return subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, cwd=cwd).communicate()[0].rstrip()
+    def run_command(command, cwd=None, input=None, raise_on_failure=True, return_exit_code=False):
+        stdin = subprocess.PIPE if input else None
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=stdin, shell=True, cwd=cwd)
+        output = process.communicate(input)[0].rstrip()
+        exit_code = process.wait()
+        if raise_on_failure and exit_code:
+            raise ScriptError("Failed to run " + command)
+        if return_exit_code:
+            return exit_code
+        return output
 
     def ensure_clean_working_directory(self, force):
         if not force and not self.working_directory_is_clean():
-            log("Working directory has modifications, pass --force-clean or --no-clean to continue.")
-            os.system(self.status_command())
-            exit(1)
+            print self.run_command(self.status_command())
+            error("Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
         log("Cleaning the working directory")
         self.clean_working_directory()
@@ -78,8 +85,7 @@ class SCM:
         if not len(commits):
             return
         if not force:
-            log("Working directory has local commits, pass --force-clean to continue.")
-            exit(1)
+            error("Working directory has local commits, pass --force-clean to continue.")
         self.discard_local_commits()
 
     def apply_patch(self, patch):
@@ -91,7 +97,7 @@ class SCM:
 
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []
-        for line in os.popen(status_command).readlines():
+        for line in self.run_command(status_command).splitlines():
             match = re.search(status_regexp, line)
             if not match:
                 continue
@@ -170,18 +176,13 @@ class SVN(SCM):
         return self.cached_version
 
     def working_directory_is_clean(self):
-        diff_process = subprocess.Popen("svn diff", stdout=subprocess.PIPE, shell=True)
-        diff_output = diff_process.communicate()[0]
-        if diff_process.wait():
-            log("Failed to run svn diff")
-            return False
-        return diff_output == ""
+        return self.run_command("svn diff") == ""
 
     def clean_working_directory(self):
-        os.system("svn reset -R")
+        self.run_command("svn reset -R")
 
     def update_webkit(self):
-        os.system("update-webkit")
+        self.run_command("update-webkit")
 
     def status_command(self):
         return 'svn status'
@@ -203,53 +204,43 @@ class SVN(SCM):
         return "svn-create-patch"
 
     def commit_with_message(self, message):
-        commit_process = subprocess.Popen('svn commit -F -', stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
-        (out, error) = commit_process.communicate(message)
-        return_code = commit_process.wait()
-        if return_code:
-            log("Commit failure: %d" % return_code) # We really should handle the failure
-        return out
+        return self.run_command('svn commit -F -', input=message)
 
 # All git-specific logic should go here.
 class Git(SCM):
     def __init__(self, cwd, dryrun=False):
         SCM.__init__(self, cwd, dryrun)
     
-    @staticmethod
-    def in_working_directory(path):
-        return SCM.run_command("git rev-parse --is-inside-work-tree 2>&1", cwd=path) == "true"
+    @classmethod
+    def in_working_directory(cls, path):
+        return cls.run_command("git rev-parse --is-inside-work-tree 2>&1", cwd=path) == "true"
 
-    @staticmethod
-    def find_checkout_root(path):
+    @classmethod
+    def find_checkout_root(cls, path):
         # "git rev-parse --show-cdup" would be another way to get to the root
-        (checkout_root, dot_git) = os.path.split(SCM.run_command("git rev-parse --git-dir", cwd=path))
+        (checkout_root, dot_git) = os.path.split(cls.run_command("git rev-parse --git-dir", cwd=path))
         # If we were using 2.6 # checkout_root = os.path.relpath(checkout_root, path)
         if not os.path.isabs(checkout_root): # Sometimes git returns relative paths
             checkout_root = os.path.join(path, checkout_root)
         return checkout_root
     
     def discard_local_commits(self):
-        os.system("git reset --hard trunk")
+        self.run_command("git reset --hard trunk")
     
     def local_commits(self):
         return self.run_command("git log --pretty=oneline head...trunk").splitlines()
     
     def working_directory_is_clean(self):
-        diff_process = subprocess.Popen("git diff-index head", stdout=subprocess.PIPE, shell=True)
-        diff_output = diff_process.communicate()[0]
-        if diff_process.wait():
-            log("Failed to run git diff-index head")
-            return False
-        return diff_output == ""
+        return self.run_command("git diff-index head") == ""
     
     def clean_working_directory(self):
-        os.system("git reset --hard head")
         # Could run git clean here too, but that wouldn't match working_directory_is_clean
+        self.run_command("git reset --hard head")
     
     def update_webkit(self):
         # FIXME: Should probably call update-webkit, no?
         log("Updating working directory")
-        os.system("git svn rebase")
+        self.run_command("git svn rebase")
 
     def status_command(self):
         return 'git status'
@@ -275,18 +266,12 @@ class Git(SCM):
     # Git-specific methods:
     
     def commit_locally_with_message(self, message):
-        commit_process = subprocess.Popen('git commit -a -F -', stdin=subprocess.PIPE, shell=True)
-        commit_process.communicate(message)
+        self.run_command('git commit -a -F -', input=message)
         
     def push_local_commits_to_server(self):
         if self.dryrun:
             return "Dry run, no remote commit."
-        commit_process = subprocess.Popen('git svn dcommit', stdout=subprocess.PIPE, shell=True)
-        (out, error) = commit_process.communicate()
-        return_code = commit_process.wait()
-        if return_code:
-            log("Commit failure: %d" % return_code) # We really should handle the failure
-        return out
+        return self.run_command('git svn dcommit')
 
     def commit_ids_from_range_arguments(self, args, cherry_pick=False):
         # First get the commit-ids for the passed in revisions.
@@ -305,9 +290,7 @@ class Git(SCM):
         return self.run_command(" ".join(rev_list_args)).splitlines()
 
     def commit_message_for_commit(self, commit_id):
-        commit_message_process = subprocess.Popen("git cat-file commit " + commit_id, stdout=subprocess.PIPE, shell=True)
-        commit_message = commit_message_process.communicate()[0]
-        commit_lines = commit_message.splitlines()
+        commit_lines = self.run_command("git cat-file commit " + commit_id).splitlines()
 
         # Skip the git headers.
         first_line_after_headers = 0
@@ -321,4 +304,4 @@ class Git(SCM):
         return "git diff-tree -p " + commit_id
 
     def files_changed_summary_for_commit(self, commit_id):
-        return subprocess.Popen("git diff-tree --shortstat --no-commit-id " + commit_id, stdout=subprocess.PIPE, shell=True).communicate()[0]
+        return self.run_command("git diff-tree --shortstat --no-commit-id " + commit_id)

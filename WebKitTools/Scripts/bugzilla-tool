@@ -328,8 +328,7 @@ class PostCommitsAsPatchesToBug(Command):
             
             description = commit_lines[0]
             comment_text = "\n".join(commit_lines[1:])
-        
-            comment_text += "\n---\n"
+            comment_text += "---\n"
             comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
         
             # This is a little bit of a hack, that we pass stdout as the patch file.
