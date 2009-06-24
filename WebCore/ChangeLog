@@ -1,3 +1,9 @@
+2009-06-24  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix Qt build.
+
+        * WebCore.pro:
+
 2009-06-24  David Levin  <levin@chromium.org>
 
         Reviewed by David Hyatt.

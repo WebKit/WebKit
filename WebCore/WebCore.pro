@@ -329,6 +329,8 @@ IDL_BINDINGS += \
     html/CanvasGradient.idl \
     html/CanvasPattern.idl \
     html/CanvasRenderingContext2D.idl \
+    html/DataGridColumn.idl \
+    html/DataGridColumnList.idl \
     html/File.idl \
     html/FileList.idl \
     html/HTMLAudioElement.idl \
@@ -459,8 +461,6 @@ SOURCES += \
     bindings/js/JSCustomPositionErrorCallback.cpp \
     bindings/js/JSCustomVoidCallback.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
-    bindings/js/JSDataGridColumn.cpp \
-    bindings/js/JSDataGridColumnList.cpp \
     bindings/js/JSDataGridColumnListCustom.cpp \
     bindings/js/JSDataGridDataSource.cpp \
     bindings/js/JSDocumentCustom.cpp \
