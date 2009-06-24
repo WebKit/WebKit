@@ -96,8 +96,8 @@ namespace WebCore {
         bool concludeEditDrag(DragData*);
         DragOperation dragEnteredOrUpdated(DragData*);
         DragOperation operationForLoad(DragData*);
-        DragOperation tryDocumentDrag(DragData*, DragDestinationAction);
-        DragOperation tryDHTMLDrag(DragData*);
+        bool tryDocumentDrag(DragData*, DragDestinationAction, DragOperation&);
+        bool tryDHTMLDrag(DragData*, DragOperation&);
         DragOperation dragOperation(DragData*);
         void cancelDrag();
         bool dragIsMove(SelectionController*);

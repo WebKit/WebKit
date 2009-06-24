@@ -1,3 +1,28 @@
+2009-06-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25922
+        JS setting dropEffect = "none" causes tryDHTMLDrag
+        to return DragOperationNone.  Which is also the value
+        tryDHTMLDrag previously used to indicate JS did not
+        want to handle the drag.
+
+        Make it possible for the DragController::try* methods
+        to return a bool to indicate if javascript accepted
+        or rejected the drag event, separate from the DragOperation.
+
+        Tests:
+        - fast/events/drag-to-navigate.html
+        - fast/events/prevent-drag-to-navigate.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::defaultOperationForDrag):
+        (WebCore::DragController::tryDHTMLDrag):
+        * page/DragController.h:
+
 2009-06-23  Oliver Hunt  <oliver@apple.com> and Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Sam Weinig and Dave Hyatt.

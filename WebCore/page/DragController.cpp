@@ -222,17 +222,15 @@ DragOperation DragController::dragEnteredOrUpdated(DragData* dragData)
     mouseMovedIntoDocument(m_page->mainFrame()->documentAtPoint(dragData->clientPosition()));
 
     m_dragDestinationAction = m_client->actionMaskForDrag(dragData);
-    
-    DragOperation operation = DragOperationNone;
-    
-    if (m_dragDestinationAction == DragDestinationActionNone)
+    if (m_dragDestinationAction == DragDestinationActionNone) {
         cancelDrag(); // FIXME: Why not call mouseMovedIntoDocument(0)?
-    else {
-        operation = tryDocumentDrag(dragData, m_dragDestinationAction);
-        if (operation == DragOperationNone && (m_dragDestinationAction & DragDestinationActionLoad))
-            return operationForLoad(dragData);
+        return DragOperationNone;
     }
-    
+
+    DragOperation operation = DragOperationNone;
+    bool handledByDocument = tryDocumentDrag(dragData, m_dragDestinationAction, operation);
+    if (!handledByDocument && (m_dragDestinationAction & DragDestinationActionLoad))
+        return operationForLoad(dragData);
     return operation;
 }
 
@@ -256,12 +254,12 @@ static HTMLInputElement* asFileInput(Node* node)
     return 0;
 }
     
-DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction actionMask)
+bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction actionMask, DragOperation& operation)
 {
     ASSERT(dragData);
     
     if (!m_documentUnderMouse)
-        return DragOperationNone;
+        return false;
     
     DragOperation operation = DragOperationNone;
     if (actionMask & DragDestinationActionDHTML) {
@@ -272,17 +270,26 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
         // which could process dragleave event and reset m_documentUnderMouse in
         // dragExited.
         if (!m_documentUnderMouse)
-            return DragOperationNone;
+            return false;
     }
     m_isHandlingDrag = operation != DragOperationNone; 
 
+    // It's unclear why this check is after tryDHTMLDrag.
+    // We send drag events in tryDHTMLDrag and that may be the reason.
     RefPtr<FrameView> frameView = m_documentUnderMouse->view();
     if (!frameView)
-        return operation;
-    
+        return false;
+
+    if (m_isHandlingDrag) {
+        m_page->dragCaretController()->clear();
+        return true;
+    }
+
     if ((actionMask & DragDestinationActionEdit) && !m_isHandlingDrag && canProcessDrag(dragData)) {
-        if (dragData->containsColor()) 
-            return DragOperationGeneric;
+        if (dragData->containsColor()) {
+            operation = DragOperationGeneric;
+            return true;
+        }
         
         IntPoint dragPos = dragData->clientPosition();
         IntPoint point = frameView->windowToContents(dragPos);
@@ -294,11 +301,10 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
         }
 
         Frame* innerFrame = element->document()->frame();
-        return dragIsMove(innerFrame->selection()) ? DragOperationMove : DragOperationCopy;
-    } 
-    
-    m_page->dragCaretController()->clear();
-    return operation;
+        operation = dragIsMove(innerFrame->selection()) ? DragOperationMove : DragOperationCopy;
+        return true;
+    }
+    return false;
 }
 
 DragSourceAction DragController::delegateDragSourceAction(const IntPoint& windowPoint)
@@ -461,43 +467,51 @@ bool DragController::canProcessDrag(DragData* dragData)
     return true;
 }
 
-DragOperation DragController::tryDHTMLDrag(DragData* dragData)
+static DragOperation defaultOperationForDrag(DragOperation srcOpMask)
+{
+    // This is designed to match IE's operation fallback for the case where
+    // the page calls preventDefault() in a drag event but doesn't set dropEffect.
+    if (srcOpMask & DragOperationCopy)
+         return DragOperationCopy;
+    if (srcOpMask & DragOperationMove || srcOpMask & DragOperationGeneric)
+        return DragOperationMove;
+    if (srcOpMask & DragOperationLink)
+        return DragOperationLink;
+
+    // FIXME: Does IE really return "generic" even if no operations were allowed by the source?
+    return DragOperationGeneric;
+}
+
+bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
 {   
     ASSERT(dragData);
     ASSERT(m_documentUnderMouse);
-    DragOperation op = DragOperationNone;
     RefPtr<Frame> mainFrame = m_page->mainFrame();
     RefPtr<FrameView> viewProtector = mainFrame->view();
     if (!viewProtector)
-        return DragOperationNone;
-    
+        return false;
+
     ClipboardAccessPolicy policy = m_documentUnderMouse->securityOrigin()->isLocal() ? ClipboardReadable : ClipboardTypesReadable;
     RefPtr<Clipboard> clipboard = dragData->createClipboard(policy);
-    DragOperation srcOp = dragData->draggingSourceOperationMask();
-    clipboard->setSourceOperation(srcOp);
-    
-    PlatformMouseEvent event = createMouseEvent(dragData);
-    if (mainFrame->eventHandler()->updateDragAndDrop(event, clipboard.get())) {
-        // *op unchanged if no source op was set
-        if (!clipboard->destinationOperation(op)) {
-            // The element accepted but they didn't pick an operation, so we pick one for them
-            // (as does WinIE).
-            if (srcOp & DragOperationCopy)
-                op = DragOperationCopy;
-            else if (srcOp & DragOperationMove || srcOp & DragOperationGeneric)
-                op = DragOperationMove;
-            else if (srcOp & DragOperationLink)
-                op = DragOperationLink;
-            else
-                op = DragOperationGeneric;
-        } else if (!(op & srcOp)) {
-            op = DragOperationNone;
-        }
+    DragOperation srcOpMask = dragData->draggingSourceOperationMask();
+    clipboard->setSourceOperation(srcOpMask);
 
+    PlatformMouseEvent event = createMouseEvent(dragData);
+    if (!mainFrame->eventHandler()->updateDragAndDrop(event, clipboard.get())) {
         clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
-        return op;
+        return false;
     }
-    return op;
+
+    if (!clipboard->destinationOperation(operation)) {
+        // The element accepted but they didn't pick an operation, so we pick one (to match IE).
+        operation = defaultOperationForDrag(srcOpMask);
+    } else if (!(srcOpMask & operation)) {
+        // The element picked an operation which is not supported by the source
+        operation = DragOperationNone;
+    }
+
+    clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
+    return true;
 }
 
 bool DragController::mayStartDragAtEventLocation(const Frame* frame, const IntPoint& framePos)
