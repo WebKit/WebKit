@@ -1,3 +1,21 @@
+2009-06-24  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Niko.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26392
+        Bug 26392: In html, modification of xlink:href of an newly inserted svg image does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=26328
+        Bug 26328: changing href attribute of svg images dows not work when changing display attribute as well
+
+        React to href updates even when there is no renderer, i.e. display=none.
+
+        Tests: svg/custom/js-update-image-and-display.svg
+               svg/custom/js-update-image-and-display2.svg
+               svg/custom/js-update-image-and-display3.svg
+
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+
 2009-06-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

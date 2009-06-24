@@ -1,3 +1,26 @@
+2009-06-24  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Niko.
+
+        Tests for:
+        https://bugs.webkit.org/show_bug.cgi?id=26392
+        Bug 26392: In html, modification of xlink:href of an newly inserted svg image does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=26328
+        Bug 26328: changing href attribute of svg images dows not work when changing display attribute as well
+
+        * platform/mac/svg/custom/js-update-image-and-display-expected.checksum: Added
+        * platform/mac/svg/custom/js-update-image-and-display-expected.png: Added
+        * platform/mac/svg/custom/js-update-image-and-display-expected.txt: Added
+        * svg/custom/js-update-image-and-display.svg: Added.
+        * platform/mac/svg/custom/js-update-image-and-display2-expected.checksum: Added
+        * platform/mac/svg/custom/js-update-image-and-display2-expected.png: Added
+        * platform/mac/svg/custom/js-update-image-and-display2-expected.txt: Added
+        * svg/custom/js-update-image-and-display2.svg: Added.
+        * platform/mac/svg/custom/js-update-image-and-display3-expected.checksum: Added
+        * platform/mac/svg/custom/js-update-image-and-display3-expected.png: Added
+        * platform/mac/svg/custom/js-update-image-and-display3-expected.txt: Added
+        * svg/custom/js-update-image-and-display3.svg: Added.
+
 2009-06-24  Dan Bernstein  <mitz@apple.com>
 
         - add Windows results for one new test and one test
