@@ -26,6 +26,7 @@
 #ifndef HTMLDataGridElement_h
 #define HTMLDataGridElement_h
 
+#include "DataGridColumnList.h"
 #include "DataGridDataSource.h"
 #include "HTMLElement.h"
 #include "Timer.h"
@@ -50,15 +51,19 @@ public:
     
     bool multiple() const;
     void setMultiple(bool);
-
+        
     void setDataSource(PassRefPtr<DataGridDataSource>);
     DataGridDataSource* dataSource() const { return m_dataSource.get(); }
+
+    DataGridColumnList* columns() const { return m_columns.get(); }
 
 private:
     void initializationTimerFired(Timer<HTMLDataGridElement>*);
 
     Timer<HTMLDataGridElement> m_initializationTimer;
     RefPtr<DataGridDataSource> m_dataSource;
+    
+    RefPtr<DataGridColumnList> m_columns;
 };
 
 } // namespace WebCore

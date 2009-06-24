@@ -26,8 +26,12 @@
 #ifndef RenderDataGrid_h
 #define RenderDataGrid_h
 
+#include "HTMLDataGridElement.h"
 #include "RenderBlock.h"
 #include "ScrollbarClient.h"
+#include "StyleImage.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -44,7 +48,14 @@ public:
     
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
+    void columnsChanged();
+
 private:
+    void paintColumnHeaders(PaintInfo&, int tx, int ty);
+    void rebuildColumns();
+
+    HTMLDataGridElement* gridElement() const { return static_cast<HTMLDataGridElement*>(node()); }
+
     // ScrollbarClient interface.
     virtual void valueChanged(Scrollbar*);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);

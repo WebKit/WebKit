@@ -25,16 +25,22 @@
 
 module html {
 
-    interface [
-        GenerateConstructor
-    ] HTMLDataGridElement : HTMLElement {
-        attribute [Custom] DataGridDataSource dataSource;
-        
-        readonly attribute DataGridColumnList columns;
+interface [
+        GenerateConstructor,
+        HasIndexGetter,
+        HasNameGetter
+] DataGridColumnList {
 
-        attribute boolean autofocus; // Whether or not the datagrid should autofocus.
-        attribute boolean disabled; // Whether or not the datagrid can be interacted with.
-        attribute boolean multiple; // Whether or not the datagrid supports multiple selection.
-    };
+    DataGridColumn item(in [IsIndex] unsigned long index);
+    readonly attribute unsigned long length;
+    
+    readonly attribute DataGridColumn sortColumn;
+    readonly attribute DataGridColumn primaryColumn;
+
+    DataGridColumn add(in DOMString id, in DOMString label, in DOMString type, in boolean primary, in unsigned short sortable);
+    void remove(in DataGridColumn column);
+    void move(in DataGridColumn column, in unsigned long index);
+    void clear();
+};
 
 }

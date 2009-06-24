@@ -75,6 +75,8 @@ DOM_CLASSES = \
     Console \
     Coordinates \
     Counter \
+    DataGridColumn \
+    DataGridColumnList \
     DOMApplicationCache \
     DOMCoreException \
     DOMImplementation \

@@ -1,3 +1,71 @@
+2009-06-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26687
+
+        Add basic back-end column support to datagrid.
+
+        Added fast/dom/HTMLDataGridElement/ column tests.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/DataGridColumn.cpp: Added.
+        (WebCore::DataGridColumn::setPrimary):
+        * html/DataGridColumn.h: Added.
+        (WebCore::DataGridColumn::create):
+        (WebCore::DataGridColumn::id):
+        (WebCore::DataGridColumn::setId):
+        (WebCore::DataGridColumn::label):
+        (WebCore::DataGridColumn::setLabel):
+        (WebCore::DataGridColumn::type):
+        (WebCore::DataGridColumn::setType):
+        (WebCore::DataGridColumn::sortable):
+        (WebCore::DataGridColumn::setSortable):
+        (WebCore::DataGridColumn::sortDirection):
+        (WebCore::DataGridColumn::setSortDirection):
+        (WebCore::DataGridColumn::primary):
+        (WebCore::DataGridColumn::detachFromColumnList):
+        (WebCore::DataGridColumn::DataGridColumn):
+        * html/DataGridColumn.idl: Added.
+        * html/DataGridColumnList.cpp: Added.
+        (WebCore::DataGridColumnList::~DataGridColumnList):
+        (WebCore::DataGridColumnList::itemWithName):
+        (WebCore::DataGridColumnList::add):
+        (WebCore::DataGridColumnList::remove):
+        (WebCore::DataGridColumnList::move):
+        (WebCore::DataGridColumnList::clear):
+        (WebCore::DataGridColumnList::primaryColumnChanged):
+        * html/DataGridColumnList.h: Added.
+        (WebCore::DataGridColumnList::create):
+        (WebCore::DataGridColumnList::length):
+        (WebCore::DataGridColumnList::item):
+        (WebCore::DataGridColumnList::primaryColumn):
+        (WebCore::DataGridColumnList::sortColumn):
+        * html/DataGridColumnList.idl: Added.
+        * html/HTMLDataGridColElement.cpp:
+        (WebCore::HTMLDataGridColElement::sortable):
+        (WebCore::HTMLDataGridColElement::setSortable):
+        (WebCore::HTMLDataGridColElement::sortDirection):
+        (WebCore::HTMLDataGridColElement::setSortDirection):
+        * html/HTMLDataGridColElement.h:
+        * html/HTMLDataGridColElement.idl:
+        * html/HTMLDataGridElement.cpp:
+        (WebCore::HTMLDataGridElement::HTMLDataGridElement):
+        * html/HTMLDataGridElement.h:
+        (WebCore::HTMLDataGridElement::columns):
+        * html/HTMLDataGridElement.idl:
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::paintObject):
+        (WebCore::RenderDataGrid::paintColumnHeaders):
+        (WebCore::RenderDataGrid::rebuildColumns):
+        * rendering/RenderDataGrid.h:
+        (WebCore::RenderDataGrid::gridElement):
+
 2009-06-24  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

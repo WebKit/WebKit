@@ -58,24 +58,35 @@ void HTMLDataGridColElement::setType(const String& type)
     setAttribute(typeAttr, type);
 }
 
-bool HTMLDataGridColElement::sortable() const
+unsigned short HTMLDataGridColElement::sortable() const
 {
     return hasAttribute(sortableAttr);
 }
 
-void HTMLDataGridColElement::setSortable(bool sortable)
+void HTMLDataGridColElement::setSortable(unsigned short sortable)
 {
     setAttribute(sortableAttr, sortable ? "" : 0);
 }
 
-String HTMLDataGridColElement::sortDirection() const
+unsigned short HTMLDataGridColElement::sortDirection() const
 {
-    return getAttribute(sortdirectionAttr);
+    String sortDirection = getAttribute(sortdirectionAttr);
+    if (equalIgnoringCase(sortDirection, "ascending"))
+        return 1;
+    if (equalIgnoringCase(sortDirection, "descending"))
+        return 2;
+    return 0;
 }
 
-void HTMLDataGridColElement::setSortDirection(const String& sortDirection)
+void HTMLDataGridColElement::setSortDirection(unsigned short sortDirection)
 {
-    setAttribute(sortdirectionAttr, sortDirection);
+    // FIXME: Check sortable rules.
+    if (sortDirection == 0)
+        setAttribute(sortdirectionAttr, "natural");
+    else if (sortDirection == 1)
+        setAttribute(sortdirectionAttr, "ascending");
+    else if (sortDirection == 2)
+        setAttribute(sortdirectionAttr, "descending");
 }
 
 bool HTMLDataGridColElement::primary() const

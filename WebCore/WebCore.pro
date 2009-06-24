@@ -459,6 +459,9 @@ SOURCES += \
     bindings/js/JSCustomPositionErrorCallback.cpp \
     bindings/js/JSCustomVoidCallback.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
+    bindings/js/JSDataGridColumn.cpp \
+    bindings/js/JSDataGridColumnList.cpp \
+    bindings/js/JSDataGridColumnListCustom.cpp \
     bindings/js/JSDataGridDataSource.cpp \
     bindings/js/JSDocumentCustom.cpp \
     bindings/js/JSDocumentFragmentCustom.cpp \
@@ -742,6 +745,8 @@ SOURCES += \
     html/CanvasRenderingContext2D.cpp \
     html/CanvasStyle.cpp \
     html/CollectionCache.cpp \
+    html/DataGridColumn.cpp \
+    html/DataGridColumnList.cpp \
     html/File.cpp \
     html/FileList.cpp \
     html/FormDataList.cpp \

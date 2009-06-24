@@ -82,12 +82,24 @@ void RenderDataGrid::paintObject(PaintInfo& paintInfo, int tx, int ty)
     if (style()->visibility() != VISIBLE)
         return;
 
-    // FIXME: Column and cell foregrounds will paint here.
-    
     // Paint our background and border.
     RenderBlock::paintObject(paintInfo, tx, ty);
     
-    // FIXME: Row, cell and column backgrounds will paint here.
+    if (paintInfo.phase != PaintPhaseForeground)
+        return;
+
+    // Paint our column headers first.
+    paintColumnHeaders(paintInfo, tx, ty);
+}
+
+void RenderDataGrid::paintColumnHeaders(PaintInfo&, int, int)
+{
+    gridElement()->columns();
+    
+}
+
+void RenderDataGrid::rebuildColumns()
+{
 }
 
 // Scrolling implementation functions

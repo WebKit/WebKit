@@ -1,3 +1,12 @@
+2009-06-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add test for https://bugs.webkit.org/show_bug.cgi?id=26687.
+
+        * fast/dom/HTMLDataGridElement/DataGridColumns-basic-expected.txt: Added.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-basic.html: Added.
+
 2009-06-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Disabling failing test!).

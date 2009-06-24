@@ -1,0 +1,13 @@
+PASS: Initial value of datagrid.columns is defined.
+PASS: Initial length of datagrid.columns is 0.
+PASS: Column returned from add.
+PASS: We have one column in the list.
+PASS: The column at index 0 is the column we got back from add.
+PASS: The column when referenced by name is the one we got back from add.
+PASS: The column's ID is fromcol as expected.
+PASS: The column's label is From as expected.
+PASS: The column's type is text as expected.
+PASS: The column's primary property is true as expected.
+PASS: The column's sortable property is 2 as expected.
+PASS: The column returned from add is now the primary column.
+

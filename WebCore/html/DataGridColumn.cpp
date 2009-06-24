@@ -23,18 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-module html {
+#include "config.h"
+#include "DataGridColumn.h"
+#include "DataGridColumnList.h"
 
-    interface [
-        GenerateConstructor
-    ] HTMLDataGridElement : HTMLElement {
-        attribute [Custom] DataGridDataSource dataSource;
-        
-        readonly attribute DataGridColumnList columns;
+namespace WebCore {
 
-        attribute boolean autofocus; // Whether or not the datagrid should autofocus.
-        attribute boolean disabled; // Whether or not the datagrid can be interacted with.
-        attribute boolean multiple; // Whether or not the datagrid supports multiple selection.
-    };
+void DataGridColumn::setPrimary(bool primary)
+{
+    if (m_primary != primary) {
+        m_primary = primary;
+        if (m_columns)
+            m_columns->primaryColumnChanged(this);
+    }
+}
 
 }

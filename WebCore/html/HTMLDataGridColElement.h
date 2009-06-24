@@ -44,11 +44,11 @@ public:
     String type() const;
     void setType(const String&);
     
-    bool sortable() const;
-    void setSortable(bool);
+    unsigned short sortable() const;
+    void setSortable(unsigned short);
     
-    String sortDirection() const;
-    void setSortDirection(const String&);
+    unsigned short sortDirection() const;
+    void setSortDirection(unsigned short);
     
     bool primary() const;
     void setPrimary(bool);

@@ -54,6 +54,8 @@
 #include "JSCSSVariablesDeclaration.cpp"
 #include "JSCSSVariablesRule.cpp"
 #include "JSDatabase.cpp"
+#include "JSDataGridColumn.cpp"
+#include "JSDataGridColumnList.cpp"
 #include "JSDocument.cpp"
 #include "JSDocumentFragment.cpp"
 #include "JSDocumentType.cpp"
