@@ -1,3 +1,12 @@
+2009-06-24  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Inherits Vector class from FastAllocBase because it has been
+        instantiated by 'new' in JavaScriptCore/runtime/Structure.cpp:633.
+
+        * wtf/Vector.h:
+
 2009-06-24  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Maciej Stachoviak.

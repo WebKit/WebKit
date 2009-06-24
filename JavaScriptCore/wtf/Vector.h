@@ -21,14 +21,11 @@
 #ifndef WTF_Vector_h
 #define WTF_Vector_h
 
-#include "Assertions.h"
-#include "FastMalloc.h"
+#include "FastAllocBase.h"
 #include "Noncopyable.h"
 #include "NotFound.h"
 #include "VectorTraits.h"
 #include <limits>
-#include <stdlib.h>
-#include <string.h>
 #include <utility>
 
 namespace WTF {
@@ -433,7 +430,7 @@ namespace WTF {
     };
 
     template<typename T, size_t inlineCapacity = 0>
-    class Vector {
+    class Vector : public FastAllocBase {
     private:
         typedef VectorBuffer<T, inlineCapacity> Buffer;
         typedef VectorTypeOperations<T> TypeOperations;
