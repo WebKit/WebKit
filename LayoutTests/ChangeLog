@@ -1,3 +1,15 @@
+2009-06-24  Dan Bernstein  <mitz@apple.com>
+
+        - add Windows results for one new test and one test
+          whose Mac results changed recently
+
+        * platform/win/fast/forms/search-vertical-alignment-expected.checksum: Added.
+        * platform/win/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/win/fast/forms/search-vertical-alignment-expected.txt: Added.
+        * platform/win/fast/replaced/width100percent-searchfield-expected.checksum: Added.
+        * platform/win/fast/replaced/width100percent-searchfield-expected.png: Added.
+        * platform/win/fast/replaced/width100percent-searchfield-expected.txt:
+
 2009-06-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
