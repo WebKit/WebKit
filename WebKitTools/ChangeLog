@@ -1,3 +1,13 @@
+2009-06-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dave Levin.
+
+        Fix missing comment message during land-patches and SVN.commit_with_message respecting --dry-run
+        https://bugs.webkit.org/show_bug.cgi?id=26669
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/scm.py:
+
 2009-06-23  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Mark Rowe.

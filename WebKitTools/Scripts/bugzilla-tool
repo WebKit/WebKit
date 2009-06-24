@@ -230,7 +230,7 @@ class LandPatchesFromBug(Command):
 
         try:
             patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
-            commit_text = ""
+            comment_text = ""
 
             os.chdir(tool.scm().checkout_root)
             tool.scm().ensure_no_local_commits(options.force_clean)
@@ -253,9 +253,9 @@ class LandPatchesFromBug(Command):
                     tool.bugs.obsolete_attachment(patch['id'], comment_text)
 
             if len(patches) > 1:
-                commit_text = "All reviewed patches landed, closing."
+                comment_text = "All reviewed patches landed, closing."
 
-            tool.bugs.close_bug_as_fixed(bug_id, commit_text)
+            tool.bugs.close_bug_as_fixed(bug_id, comment_text)
         except ScriptError, error:
             log(error)
             # We could add a comment to the bug about the failure.

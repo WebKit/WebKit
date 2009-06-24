@@ -75,7 +75,7 @@ class SCM:
             print self.run_command(self.status_command())
             error("Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
-        log("Cleaning the working directory")
+        log("Cleaning working directory")
         self.clean_working_directory()
     
     def ensure_no_local_commits(self, force):
@@ -204,6 +204,8 @@ class SVN(SCM):
         return "svn-create-patch"
 
     def commit_with_message(self, message):
+        if self.dryrun:
+            return "Dry run, no remote commit."
         return self.run_command('svn commit -F -', input=message)
 
 # All git-specific logic should go here.
