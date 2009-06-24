@@ -21,7 +21,7 @@
 #ifndef ScopeChain_h
 #define ScopeChain_h
 
-#include <wtf/Assertions.h>
+#include "FastAllocBase.h"
 
 namespace JSC {
 
@@ -30,7 +30,7 @@ namespace JSC {
     class JSObject;
     class ScopeChainIterator;
     
-    class ScopeChainNode {
+    class ScopeChainNode : public WTF::FastAllocBase {
     public:
         ScopeChainNode(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSObject* globalThis)
             : next(next)
