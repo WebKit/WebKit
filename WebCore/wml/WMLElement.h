@@ -42,8 +42,8 @@ public:
 
 protected:
     // Helper function for derived classes
-    String parseValueSubstitutingVariableReferences(const AtomicString&, WMLErrorCode defaultErrorCode = WMLErrorInvalidVariableReference);
-    String parseValueForbiddingVariableReferences(const AtomicString&);
+    String parseValueSubstitutingVariableReferences(const AtomicString&, WMLErrorCode defaultErrorCode = WMLErrorInvalidVariableReference) const;
+    String parseValueForbiddingVariableReferences(const AtomicString&) const;
 };
 
 }
