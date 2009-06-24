@@ -1,3 +1,22 @@
+2009-06-24  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Maciej Stachoviak.
+
+        The BytecodeGenerator objects were instantiated on stack, which takes up ~38kB per instance
+        (each instance includes copy of JSC::CodeBlock with large SymbolTable, etc.).
+        Specifically, since there is nested invocation (e.g., GlobalCode --> FunctionCode),
+        the stack overflows immediately on Symbian hardware (max. 80 kB).
+        Proposed change allocates generator objects on heap.
+        Performance impact (if any) should be negligible and change is proposed as general fix,
+        rather than ifdef'd for SYMBIAN.
+
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::generateBytecode):
+        (JSC::EvalNode::generateBytecode):
+        (JSC::EvalNode::bytecodeForExceptionInfoReparse):
+        (JSC::FunctionBodyNode::generateBytecode):
+        (JSC::FunctionBodyNode::bytecodeForExceptionInfoReparse):
+
 2009-06-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
