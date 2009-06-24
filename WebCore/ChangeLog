@@ -1,3 +1,15 @@
+2009-06-24  Siddhartha Chattopadhyay  <sidchat@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=26200 which I introduced earlier. I had
+        the smartReplace set TRUE initially, which was wrong since the purpose of this call is
+        to just replace the selection, and place the caret at the end of the selection it replaced.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToPosition):
+        * manual-tests/textarea-caret-position-after-auto-spell-correct.html: Added.
+
 2009-06-24  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

@@ -2206,7 +2206,7 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
 
         if (!frame()->editor()->shouldInsertText(autocorrectedString, misspellingRange.get(), EditorInsertActionTyped))
             return;
-        frame()->editor()->replaceSelectionWithText(autocorrectedString, false, true);
+        frame()->editor()->replaceSelectionWithText(autocorrectedString, false, false);
 
         // Reset the charet one character further.
         frame()->selection()->moveTo(frame()->selection()->end());
