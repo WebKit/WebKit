@@ -1,3 +1,17 @@
+2009-06-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add new drag tests to the Skipped lists for non-mac platforms.
+
+        Skipped tests:
+        fast/events/drag-to-navigate.html
+        fast/events/prevent-drag-to-navigate.html
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-06-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (attempted test fix).
