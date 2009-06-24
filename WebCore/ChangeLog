@@ -1,3 +1,9 @@
+2009-06-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Forgot to include within last patch.
+
+        * manual-tests/wml/card-title-attr.wml: Added.
+
 2009-06-24  Wajahat Siddiqui <wajahatmeister@gmail.com>
  
         Reviewed by Nikolas Zimmermann.
