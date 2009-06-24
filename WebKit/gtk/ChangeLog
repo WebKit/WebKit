@@ -1,3 +1,23 @@
+2009-06-24  Jiahua Huang  <jhuangjiahua@gmail.com>
+
+        Reviewed by Holger Freyther.
+
+        [Gtk] Add Undo/Redo support to WebKitGtk
+        https://bugs.webkit.org/show_bug.cgi?id=26573
+
+        Implement EditorClient::undo and other interested funcs.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::registerCommandForUndo):
+        (WebKit::EditorClient::registerCommandForRedo):
+        (WebKit::EditorClient::clearUndoRedoOperations):
+        (WebKit::EditorClient::canUndo):
+        (WebKit::EditorClient::canRedo):
+        (WebKit::EditorClient::undo):
+        (WebKit::EditorClient::redo):
+        (WebKit::EditorClient::EditorClient):
+        * WebCoreSupport/EditorClientGtk.h:
+
 2009-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Gustavo Noronha and Xan Lopez.

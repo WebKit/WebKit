@@ -32,6 +32,7 @@
 
 #include "EditorClient.h"
 
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 
 typedef struct _WebKitWebView WebKitWebView;
@@ -43,6 +44,12 @@ namespace WebCore {
 namespace WebKit {
 
     class EditorClient : public WebCore::EditorClient {
+    protected:
+        bool m_isInRedo;
+
+        WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > undoStack;
+        WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > redoStack;
+
     public:
         EditorClient(WebKitWebView*);
         ~EditorClient();
