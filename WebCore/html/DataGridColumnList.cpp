@@ -95,5 +95,4 @@ void DataGridColumnList::primaryColumnChanged(DataGridColumn* col)
     // FIXME: Invalidate the tree.
 }
 
-}
-
+} // namespace WebCore

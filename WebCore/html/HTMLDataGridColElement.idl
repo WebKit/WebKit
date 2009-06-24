@@ -25,14 +25,16 @@
 
 module html {
 
-interface [GenerateConstructor] HTMLDataGridColElement : HTMLElement {
-    attribute DOMString label; // The text to display in the column.
-    attribute DOMString type; // The type of data displayed in this column.
+    interface [
+        GenerateConstructor
+    ] HTMLDataGridColElement : HTMLElement {
+        attribute DOMString label; // The text to display in the column.
+        attribute DOMString type; // The type of data displayed in this column.
 
-    attribute unsigned short sortable; // Whether or not the column can be sorted.  Values are none, ascending/descending, and ascending/descending/na
-    attribute unsigned short sortDirection; // The sort direction for the column.  Valid values are ascending, descending and natural (no sort applied).
+        attribute unsigned short sortable; // Whether or not the column can be sorted.  Values are none, ascending/descending, and ascending/descending/na
+        attribute unsigned short sortDirection; // The sort direction for the column.  Valid values are ascending, descending and natural (no sort applied).
     
-    attribute boolean primary; // Whether or not this is the primary column of the tree (this will be where the disclosure triangle and connecting tree lines will display)
-};
+        attribute boolean primary; // Whether or not this is the primary column of the tree (this will be where the disclosure triangle and connecting tree lines will display)
+    };
 
 }

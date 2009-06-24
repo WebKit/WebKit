@@ -25,11 +25,13 @@
 
 module html {
 
-interface [GenerateConstructor] HTMLDataGridRowElement : HTMLElement {
-    attribute boolean selected; // Whether or not the row is currently selected.
-    attribute boolean focused; // Whether or not the row is the current object in the tree for keyboard navigation (or as the principal item of a multiple selection).
-    
-    attribute boolean expanded; // Whether or not the row is open (if it is, child rows will be shown).
-};
+    interface [
+        GenerateConstructor
+    ] HTMLDataGridRowElement : HTMLElement {
+        attribute boolean selected; // Whether or not the row is currently selected.
+        attribute boolean focused; // Whether or not the row is the current object in the tree for keyboard navigation (or as the principal item of a multiple selection).
+        
+        attribute boolean expanded; // Whether or not the row is open (if it is, child rows will be shown).
+    };
 
 }

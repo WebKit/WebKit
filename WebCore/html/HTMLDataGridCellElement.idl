@@ -25,15 +25,17 @@
 
 module html {
 
-interface [GenerateConstructor] HTMLDataGridCellElement : HTMLElement {
-    attribute DOMString label; // The text to display in the column, assuming the type supports text.
-    
-    attribute boolean focused; // Whether or not this cell is currently focused.
-    
-    attribute boolean checked; // The checked state of the column, assuming the type of the column is checkbox.
-    attribute boolean indeterminate; // If the checked state is indeterminate.
-    
-    attribute float progress; // For progress cells, a value from 0-1.0 indicating the state of progress.
-};
+    interface [
+        GenerateConstructor
+    ] HTMLDataGridCellElement : HTMLElement {
+        attribute DOMString label; // The text to display in the column, assuming the type supports text.
+
+        attribute boolean focused; // Whether or not this cell is currently focused.
+
+        attribute boolean checked; // The checked state of the column, assuming the type of the column is checkbox.
+        attribute boolean indeterminate; // If the checked state is indeterminate.
+
+        attribute float progress; // For progress cells, a value from 0-1.0 indicating the state of progress.
+    };
 
 }

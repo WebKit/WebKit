@@ -88,5 +88,4 @@ void HTMLDataGridCellElement::setProgress(float progress)
     setAttribute(progressAttr, String::number(progress));
 }
 
-}
-
+} // namespace WebCore

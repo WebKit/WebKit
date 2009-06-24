@@ -29,7 +29,7 @@ module html {
         GenerateConstructor
     ] HTMLDataGridElement : HTMLElement {
         attribute [Custom] DataGridDataSource dataSource;
-        
+
         readonly attribute DataGridColumnList columns;
 
         attribute boolean autofocus; // Whether or not the datagrid should autofocus.

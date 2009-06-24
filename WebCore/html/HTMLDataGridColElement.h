@@ -30,8 +30,7 @@
 
 namespace WebCore {
 
-class HTMLDataGridColElement : public HTMLElement
-{
+class HTMLDataGridColElement : public HTMLElement {
 public:
     HTMLDataGridColElement(const QualifiedName&, Document*);
 
@@ -54,6 +53,6 @@ public:
     void setPrimary(bool);
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // HTMLDataGridColElement_h

@@ -34,8 +34,7 @@ namespace WebCore {
 
 class DataGridColumnList;
 
-class DataGridColumn : public RefCounted<DataGridColumn>
-{
+class DataGridColumn : public RefCounted<DataGridColumn> {
 public:
     static PassRefPtr<DataGridColumn> create(DataGridColumnList* columns, const String& columnID, const String& label, const String& type, bool primary, unsigned short sortable)
     {
@@ -74,19 +73,18 @@ private:
     {
     }
 
-private:
     DataGridColumnList* m_columns; // Not refcounted.  The columns list will null out our reference when it goes away.
 
     AtomicString m_id;
     AtomicString m_label;
     AtomicString m_type;
-    
+
     bool m_primary;
 
     unsigned short m_sortable;
     unsigned short m_sortDirection;
 };
 
-} //namespace
+} // namespace WebCore
 
-#endif
+#endif // DataGridColumn_h

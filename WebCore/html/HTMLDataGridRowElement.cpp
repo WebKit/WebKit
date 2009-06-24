@@ -75,4 +75,4 @@ void HTMLDataGridRowElement::setExpanded(bool expanded)
     setAttribute(expandedAttr, expanded ? "" : 0);
 }
 
-}
+} // namespace WebCore

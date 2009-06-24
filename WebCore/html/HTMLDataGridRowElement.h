@@ -30,8 +30,7 @@
 
 namespace WebCore {
 
-class HTMLDataGridRowElement : public HTMLElement
-{
+class HTMLDataGridRowElement : public HTMLElement {
 public:
     HTMLDataGridRowElement(const QualifiedName&, Document*);
 
@@ -51,4 +50,3 @@ public:
 } // namespace WebCore
 
 #endif // HTMLDataGridRowElement_h
-

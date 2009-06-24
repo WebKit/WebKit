@@ -1,3 +1,27 @@
+2009-06-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave "Messy" Hyatt.
+
+        Little bit of style cleanup.
+
+        * html/DataGridColumn.cpp:
+        * html/DataGridColumn.h:
+        * html/DataGridColumn.idl:
+        * html/DataGridColumnList.cpp:
+        * html/DataGridColumnList.h:
+        * html/DataGridColumnList.idl:
+        * html/HTMLDataGridCellElement.cpp:
+        * html/HTMLDataGridCellElement.h:
+        * html/HTMLDataGridCellElement.idl:
+        * html/HTMLDataGridColElement.cpp:
+        * html/HTMLDataGridColElement.h:
+        * html/HTMLDataGridColElement.idl:
+        * html/HTMLDataGridElement.h:
+        * html/HTMLDataGridElement.idl:
+        * html/HTMLDataGridRowElement.cpp:
+        * html/HTMLDataGridRowElement.h:
+        * html/HTMLDataGridRowElement.idl:
+
 2009-06-24  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.
