@@ -383,6 +383,10 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
     // Structure transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
         StructureChain* prototypeChain = structure->prototypeChain(callFrame);
+        if (!prototypeChain->isCacheable()) {
+            ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(JITStubs::cti_op_put_by_id_generic));
+            return;
+        }
         stubInfo->initPutByIdTransition(structure->previousID(), structure, prototypeChain);
         JIT::compilePutByIdTransition(callFrame->scopeChain()->globalData, codeBlock, stubInfo, structure->previousID(), structure, slot.cachedOffset(), prototypeChain, returnAddress);
         return;
@@ -470,6 +474,10 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     }
 
     StructureChain* prototypeChain = structure->prototypeChain(callFrame);
+    if (!prototypeChain->isCacheable()) {
+        ctiPatchCallByReturnAddress(returnAddress, FunctionPtr(JITStubs::cti_op_get_by_id_generic));
+        return;
+    }
     stubInfo->initGetByIdChain(structure, prototypeChain);
     JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, prototypeChain, count, slot.cachedOffset(), returnAddress);
 }
@@ -1043,9 +1051,15 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_list_full));
     } else if (size_t count = countPrototypeChainEntriesAndCheckForProxies(callFrame, baseValue, slot)) {
+        StructureChain* protoChain = structure->prototypeChain(callFrame);
+        if (!protoChain->isCacheable()) {
+            ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
+            return JSValue::encode(result);
+        }
+        
         int listIndex;
         PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(stubInfo, listIndex);
-        JIT::compileGetByIdChainList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, structure->prototypeChain(callFrame), count, slot.cachedOffset());
+        JIT::compileGetByIdChainList(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, prototypeStructureList, listIndex, structure, protoChain, count, slot.cachedOffset());
 
         if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             ctiPatchCallByReturnAddress(STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_list_full));

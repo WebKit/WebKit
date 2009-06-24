@@ -1,3 +1,17 @@
+2009-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/6992806> REGRESSION: Enumeration can skip new properties in cases of prototypes that have more than 64 (26593)
+        <https://bugs.webkit.org/show_bug.cgi?id=26593>
+
+        Add tests to ensure we correctly invalidate caching that depends on structure chains
+        that include dictionaries.
+
+        * fast/js/dictionary-no-cache.html: Added.
+        * fast/js/dictionary-no-cache-expected.txt: Added.
+        * fast/js/resources/dictionary-no-cache.js: Added.
+
 2009-06-23  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Mark Rowe.

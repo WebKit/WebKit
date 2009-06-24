@@ -306,8 +306,11 @@ void Structure::getEnumerablePropertyNames(ExecState* exec, PropertyNameArray& p
     }
 
     if (shouldCache) {
+        StructureChain* protoChain = prototypeChain(exec);
         m_cachedPropertyNameArrayData = propertyNames.data();
-        m_cachedPropertyNameArrayData->setCachedPrototypeChain(prototypeChain(exec));
+        if (!protoChain->isCacheable())
+            return;
+        m_cachedPropertyNameArrayData->setCachedPrototypeChain(protoChain);
         m_cachedPropertyNameArrayData->setCachedStructure(this);
     }
 }
@@ -407,6 +410,7 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
 
     if (structure->transitionCount() > s_maxTransitionLength) {
         RefPtr<Structure> transition = toDictionaryTransition(structure);
+        ASSERT(structure != transition);
         offset = transition->put(propertyName, attributes, specificValue);
         if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
             transition->growPropertyStorageCapacity();

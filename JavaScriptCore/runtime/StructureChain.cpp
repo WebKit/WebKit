@@ -46,4 +46,15 @@ StructureChain::StructureChain(Structure* head)
     m_vector[i] = 0;
 }
 
+bool StructureChain::isCacheable() const
+{
+    uint32_t i = 0;
+    
+    while (m_vector[i]) {
+        if (m_vector[i++]->isDictionary())
+            return false;
+    }
+    return true;
+}
+
 } // namespace JSC

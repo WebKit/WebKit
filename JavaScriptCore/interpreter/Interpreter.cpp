@@ -970,12 +970,18 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
         return;
     }
 
+    StructureChain* protoChain = structure->prototypeChain(callFrame);
+    if (!protoChain->isCacheable()) {
+        vPC[0] = getOpcode(op_put_by_id_generic);
+        return;
+    }
+
     // Structure transition, cache transition info
     if (slot.type() == PutPropertySlot::NewProperty) {
         vPC[0] = getOpcode(op_put_by_id_transition);
         vPC[4] = structure->previousID();
         vPC[5] = structure;
-        vPC[6] = structure->prototypeChain(callFrame);
+        vPC[6] = protoChain;
         vPC[7] = slot.cachedOffset();
         codeBlock->refStructures(vPC);
         return;
@@ -1077,9 +1083,15 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         return;
     }
 
+    StructureChain* protoChain = structure->prototypeChain(callFrame);
+    if (!protoChain->isCacheable()) {
+        vPC[0] = getOpcode(op_put_by_id_generic);
+        return;
+    }
+
     vPC[0] = getOpcode(op_get_by_id_chain);
     vPC[4] = structure;
-    vPC[5] = structure->prototypeChain(callFrame);
+    vPC[5] = protoChain;
     vPC[6] = count;
     vPC[7] = slot.cachedOffset();
     codeBlock->refStructures(vPC);

@@ -1,3 +1,24 @@
+2009-06-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/6992806> REGRESSION: Enumeration can skip new properties in cases of prototypes that have more than 64 (26593)
+        <https://bugs.webkit.org/show_bug.cgi?id=26593>
+
+        Do not attempt to cache structure chains if they contain a dictionary at any level.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getEnumerablePropertyNames):
+        (JSC::Structure::addPropertyTransition):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::isCacheable):
+        * runtime/StructureChain.h:
+
 2009-06-23  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by George Staikos.
