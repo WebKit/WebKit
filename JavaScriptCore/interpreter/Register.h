@@ -47,7 +47,7 @@ namespace JSC {
 
     typedef ExecState CallFrame;
 
-    class Register {
+    class Register : public FastAllocBase {
     public:
         Register();
         Register(JSValue);
