@@ -2,6 +2,15 @@
 
         Reviewed by Darin Adler.
 
+        Inherits HashSet class from FastAllocBase, because it has been
+        instantiated by 'new' in JavaScriptCore/runtime/Collector.h:116.
+
+        * wtf/HashSet.h:
+
+2009-06-24  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
         Inherits Vector class from FastAllocBase because it has been
         instantiated by 'new' in JavaScriptCore/runtime/Structure.cpp:633.
 
