@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "ClipboardWx.h"
+
+#include "FileList.h"
 #include "HashTable.h"
 #include "IntPoint.h"
 #include "NotImplemented.h"
