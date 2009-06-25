@@ -29,6 +29,10 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "PlatformString.h"
+#include "SecurityOrigin.h"
+#include "StorageAreaSync.h"
+#include "StorageMap.h"
+#include "StorageSyncManager.h"
 
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -38,14 +42,19 @@
 namespace WebCore {
 
     class Frame;
+    class Page;
     class SecurityOrigin;
+    class StorageAreaSync;
     class StorageMap;
+    class StorageSyncManager;
     typedef int ExceptionCode;
 
     class StorageArea : public ThreadSafeShared<StorageArea> {
     public:
-        virtual ~StorageArea();
-        
+        static PassRefPtr<StorageArea> createLocalStorage(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager);
+        static PassRefPtr<StorageArea> createSessionStorage(SecurityOrigin* origin, Page* page);
+        PassRefPtr<StorageArea> copy(SecurityOrigin*, Page*);
+
         // The HTML5 DOM Storage API
         unsigned length() const;
         String key(unsigned index, ExceptionCode& ec) const;
@@ -55,23 +64,28 @@ namespace WebCore {
         void clear(Frame* sourceFrame);
 
         bool contains(const String& key) const;
+        void scheduleFinalSync();
 
         // Could be called from a background thread.
         void importItem(const String& key, const String& value);
         SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
 
     protected:
-        StorageArea(SecurityOrigin*);
-        StorageArea(SecurityOrigin*, StorageArea*);
+        StorageArea(SecurityOrigin*, PassRefPtr<StorageSyncManager>);
+        StorageArea(SecurityOrigin*, Page*);
+        StorageArea(SecurityOrigin*, Page*, StorageArea*);
 
     private:
-        virtual void itemChanged(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame) = 0;
-        virtual void itemRemoved(const String& key, const String& oldValue, Frame* sourceFrame) = 0;
-        virtual void areaCleared(Frame* sourceFrame) = 0;
-        virtual void blockUntilImportComplete() const = 0;
+        void blockUntilImportComplete() const;
+
+        void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
         RefPtr<SecurityOrigin> m_securityOrigin;
         RefPtr<StorageMap> m_storageMap;
+
+        RefPtr<StorageAreaSync> m_storageAreaSync;
+        RefPtr<StorageSyncManager> m_storageSyncManager;
+        Page* m_sessionStoragePage;  // NULL iff it's LocalStorage
     };
 
 } // namespace WebCore

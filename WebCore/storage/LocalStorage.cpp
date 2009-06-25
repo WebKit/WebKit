@@ -33,7 +33,6 @@
 #include "FileSystem.h"
 #include "Frame.h"
 #include "FrameTree.h"
-#include "LocalStorageArea.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "StorageArea.h"
@@ -90,11 +89,11 @@ PassRefPtr<StorageArea> LocalStorage::storageArea(SecurityOrigin* origin)
     // FIXME: If the storage area is being established for the first time here, we need to 
     // sync its existance and quota out to disk via an task of type AreaSync
 
-    RefPtr<LocalStorageArea> storageArea;
+    RefPtr<StorageArea> storageArea;
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
 
-    storageArea = LocalStorageArea::create(origin, m_syncManager);
+    storageArea = StorageArea::createLocalStorage(origin, m_syncManager);
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
 }

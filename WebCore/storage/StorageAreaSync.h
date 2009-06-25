@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+    class Frame;
     class StorageArea;    
     class StorageSyncManager;
     
