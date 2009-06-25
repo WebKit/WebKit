@@ -235,18 +235,23 @@ class LandPatchesFromBugs(Command):
 
     @staticmethod
     def run_and_throw_if_fail(script_name):
-        build_webkit_process = subprocess.Popen(script_name, shell=True)
+        build_webkit_process = subprocess.Popen(script_name)
         return_code = build_webkit_process.wait()
         if return_code:
             raise ScriptError("%s failed with exit code %d" % (script_name, return_code))
 
     @classmethod
+    def run_webkit_script(cls, script_name):
+        # We might need to pass scm into this function for scm.checkout_root
+        cls.run_and_throw_if_fail(os.path.join("WebKitTools", "Scripts", script_name))
+
+    @classmethod
     def build_webkit(cls):
-        cls.run_and_throw_if_fail("build-webkit")
+        cls.run_webkit_script("build-webkit")
 
     @classmethod
     def run_webkit_tests(cls):
-        cls.run_and_throw_if_fail("run-webkit-tests")
+        cls.run_webkit_script("run-webkit-tests")
 
     @staticmethod
     def setup_for_landing(scm, options):

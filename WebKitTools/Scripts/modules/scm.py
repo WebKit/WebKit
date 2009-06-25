@@ -70,6 +70,9 @@ class SCM:
             return exit_code
         return output
 
+    def script_path(self, script_name):
+        return os.path.join(self.checkout_root, "WebKitTools", "Scripts", script_name)
+
     def ensure_clean_working_directory(self, force):
         if not force and not self.working_directory_is_clean():
             print self.run_command(self.status_command(), raise_on_failure=False)
@@ -92,7 +95,7 @@ class SCM:
         # It's possible that the patch was not made from the root directory.
         # We should detect and handle that case.
         curl_process = subprocess.Popen(['curl', patch['url']], stdout=subprocess.PIPE)
-        patch_apply_process = subprocess.Popen(['svn-apply', '--reviewer', patch['reviewer']], stdin=curl_process.stdout)
+        patch_apply_process = subprocess.Popen([self.script_path('svn-apply'), '--reviewer', patch['reviewer']], stdin=curl_process.stdout)
 
         return_code = patch_apply_process.wait()
         if return_code:
@@ -188,7 +191,7 @@ class SVN(SCM):
         self.run_command("svn reset -R")
 
     def update_webkit(self):
-        self.run_command("update-webkit")
+        self.run_command(self.script_path("update-webkit"))
 
     def status_command(self):
         return 'svn status'
@@ -207,7 +210,7 @@ class SVN(SCM):
         return "svn"
 
     def create_patch_command(self):
-        return "svn-create-patch"
+        return self.script_path("svn-create-patch")
 
     def commit_with_message(self, message):
         if self.dryrun:
