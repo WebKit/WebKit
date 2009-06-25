@@ -624,9 +624,9 @@ END
 
     if ($attrIsPodType) {
         my $classIndex = uc($attrType);
-        push(@implContentDecls, "    return V8Proxy::ToV8Object(V8ClassIndex::$classIndex, wrapper);n");
+        push(@implContentDecls, "    return V8Proxy::ToV8Object(V8ClassIndex::$classIndex, wrapper);\n");
     } else {
-        push(@implContentDecls, "    return ".NativeToJSValue($attribute - >signature, $result).";n");
+        push(@implContentDecls, "    return ".NativeToJSValue($attribute->signature, $result).";\n");
     }
 
     push(@implContentDecls, "  }\n\n");  # end of getter
@@ -945,7 +945,7 @@ sub GenerateBatchedAttributeData
         if ($interfaceName eq "DOMWindow") {
             $getter = "V8Custom::v8DOMWindowEventHandlerAccessorGetter";
             $setter = "V8Custom::v8DOMWindowEventHandlerAccessorSetter";
-        } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "SVGElementInstance" || $interfaceName eq "HTMLFrameSetElement") {
+        } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "HTMLBodyElement" || $interfaceName eq "SVGElementInstance" || $interfaceName eq "HTMLFrameSetElement") {
             $getter = "V8Custom::v8ElementEventHandlerAccessorGetter";
             $setter = "V8Custom::v8ElementEventHandlerAccessorSetter";
         } else {
@@ -1135,7 +1135,7 @@ sub GenerateImplementation
     foreach my $function (@{$dataNode->functions}) {
         # hack for addEventListener/RemoveEventListener
         # FIXME: avoid naming conflict
-        if ($function->signature->extendedAttributes->{"Custom"} || function->signature->extendedAttributes->{"V8Custom"}) {
+        if ($function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"}) {
                 $implIncludes{"V8CustomBinding.h"} = 1;
         } else {
             GenerateFunctionCallback($function, $dataNode, $classIndex, $implClassName);
