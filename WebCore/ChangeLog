@@ -2,6 +2,18 @@
 
         TBRed: fix for Chromium tree.
 
+        Add missing include for r45199.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26736
+
+        r45199 added a reference to throwError without including V8Proxy.h
+
+        * bindings/v8/WorkerScriptController.cpp:
+
+2009-06-25  Adam Langley  <agl@google.com>
+
+        TBRed: fix for Chromium tree.
+
         https://bugs.webkit.org/show_bug.cgi?id=26735
 
         Fix V8IsolatedWorld to point to the correct include file.

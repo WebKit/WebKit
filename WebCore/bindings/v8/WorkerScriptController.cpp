@@ -40,6 +40,7 @@
 #include "ScriptValue.h"
 #include "DOMTimer.h"
 #include "V8DOMMap.h"
+#include "V8Proxy.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 #include "WorkerObjectProxy.h"
