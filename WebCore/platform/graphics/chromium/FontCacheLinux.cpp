@@ -31,9 +31,8 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include <fontconfig/fontconfig.h>
-
 #include "AtomicString.h"
+#include "ChromiumBridge.h"
 #include "CString.h"
 #include "Font.h"
 #include "FontDescription.h"
@@ -59,41 +58,12 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
                                                           const UChar* characters,
                                                           int length)
 {
-    FcCharSet* cset = FcCharSetCreate();
-    for (int i = 0; i < length; ) {
-        UChar32 ucs4 = 0;
-        U16_NEXT(characters, i, length, ucs4);
-        FcCharSetAddChar(cset, ucs4);
-    }
+    String family = ChromiumBridge::getFontFamilyForCharacters(characters, length);
+    if (family.isEmpty())
+        return 0;
 
-    FcPattern* pattern = FcPatternCreate();
-
-    FcValue fcvalue;
-    fcvalue.type = FcTypeCharSet;
-    fcvalue.u.c = cset;
-    FcPatternAdd(pattern, FC_CHARSET, fcvalue, 0);
-
-    FcConfigSubstitute(0, pattern, FcMatchPattern);
-    FcDefaultSubstitute(pattern);
-
-    FcResult result;
-    FcPattern* match = FcFontMatch(0, pattern, &result);
-    FcPatternDestroy(pattern);
-
-    SimpleFontData* ret = 0;
-
-    if (match) {
-        FcChar8* family;
-        if (FcPatternGetString(match, FC_FAMILY, 0, &family) == FcResultMatch) {
-            AtomicString fontFamily(reinterpret_cast<char*>(family));
-            ret = getCachedFontData(getCachedFontPlatformData(font.fontDescription(), fontFamily, false));
-        }
-        FcPatternDestroy(match);
-    }
-
-    FcCharSetDestroy(cset);
-
-    return ret;
+    AtomicString atomicFamily(family);
+    return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, false));
 }
 
 FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)

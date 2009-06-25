@@ -1,3 +1,28 @@
+2009-06-25  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26529
+
+        This is hopefully the last step before our renderers can run
+        cleanly in a chroot.
+
+        WebKit needs to be able to ask for the correct font to use in
+        the case that the current font doesn't include glyphs for
+        certain code points. Currently we make a fontconfig call in our
+        WebKit port to handle this.
+
+        This patch changes this so that the call is sent our via
+        ChromiumBridge.
+
+        http://codereview.chromium.org/132007
+
+        This should not affect any layout tests.
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2009-06-25  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by David Levin.
