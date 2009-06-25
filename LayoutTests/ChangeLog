@@ -1,3 +1,16 @@
+2009-06-25  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by David Levin.
+
+        Bug 26207: Rebaseline the expected image for fast/forms/select-style.html for Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=26207
+
+        Replace the expected image for fast/forms/select-style-expected.html for
+        Mac which need to be rebaselined due to r43903
+        (http://trac.webkit.org/changeset/43903).
+
+        * platform/mac/fast/forms/select-style-expected.png:
+
 2009-06-25  John Gregg  <johnnyg@google.com>
 
         Reviewed by Sam Weinig.
