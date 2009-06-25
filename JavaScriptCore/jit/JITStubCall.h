@@ -108,8 +108,8 @@ namespace JSC {
         JIT::Call call()
         {
 #if ENABLE(OPCODE_SAMPLING)
-            ASSERT(m_jit->m_bytecodeIndex != (unsigned)-1);
-            m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, true);
+            if (m_jit->m_bytecodeIndex != (unsigned)-1)
+                m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, true);
 #endif
 
             m_jit->restoreArgumentReference();
@@ -117,7 +117,8 @@ namespace JSC {
             m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeIndex, m_stub));
 
 #if ENABLE(OPCODE_SAMPLING)
-            m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, false);
+            if (m_jit->m_bytecodeIndex != (unsigned)-1)
+                m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeIndex, false);
 #endif
 
             m_jit->killLastResultRegister();

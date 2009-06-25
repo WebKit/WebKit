@@ -342,61 +342,40 @@ namespace JSC {
         static void compileGetByIdProto(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, Structure* prototypeStructure, size_t cachedOffset, ReturnAddressPtr returnAddress)
         {
             JIT jit(globalData, codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-            jit->m_bytecodeIndex = jit->m_codeBlock->getCallReturnOffset(returnAddress.value());
-#endif
             jit.privateCompileGetByIdProto(stubInfo, structure, prototypeStructure, cachedOffset, returnAddress, callFrame);
         }
 
         static void compileGetByIdSelfList(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* polymorphicStructures, int currentIndex, Structure* structure, size_t cachedOffset)
         {
             JIT jit(globalData, codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-            jit->m_bytecodeIndex = jit->m_codeBlock->getCallReturnOffset(returnAddress.value());
-#endif
             jit.privateCompileGetByIdSelfList(stubInfo, polymorphicStructures, currentIndex, structure, cachedOffset);
         }
         static void compileGetByIdProtoList(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, Structure* prototypeStructure, size_t cachedOffset)
         {
             JIT jit(globalData, codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-            jit->m_bytecodeIndex = jit->m_codeBlock->getCallReturnOffset(returnAddress.value());
-#endif
             jit.privateCompileGetByIdProtoList(stubInfo, prototypeStructureList, currentIndex, structure, prototypeStructure, cachedOffset, callFrame);
         }
         static void compileGetByIdChainList(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructureList, int currentIndex, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset)
         {
             JIT jit(globalData, codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-            jit->m_bytecodeIndex = jit->m_codeBlock->getCallReturnOffset(returnAddress.value());
-#endif
             jit.privateCompileGetByIdChainList(stubInfo, prototypeStructureList, currentIndex, structure, chain, count, cachedOffset, callFrame);
         }
 
         static void compileGetByIdChain(JSGlobalData* globalData, CallFrame* callFrame, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, size_t cachedOffset, ReturnAddressPtr returnAddress)
         {
             JIT jit(globalData, codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-            jit->m_bytecodeIndex = jit->m_codeBlock->getCallReturnOffset(returnAddress.value());
-#endif
             jit.privateCompileGetByIdChain(stubInfo, structure, chain, count, cachedOffset, returnAddress, callFrame);
         }
         
         static void compilePutByIdTransition(JSGlobalData* globalData, CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress)
         {
             JIT jit(globalData, codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-            jit->m_bytecodeIndex = jit->m_codeBlock->getCallReturnOffset(returnAddress.value());
-#endif
             jit.privateCompilePutByIdTransition(stubInfo, oldStructure, newStructure, cachedOffset, chain, returnAddress);
         }
 
         static void compileCTIMachineTrampolines(JSGlobalData* globalData, RefPtr<ExecutablePool>* executablePool, CodePtr* ctiArrayLengthTrampoline, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallPreLink, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk)
         {
             JIT jit(globalData);
-#if ENABLE(OPCODE_SAMPLING)
-            jit->m_bytecodeIndex = jit->m_codeBlock->getCallReturnOffset(returnAddress.value());
-#endif
             jit.privateCompileCTIMachineTrampolines(executablePool, globalData, ctiArrayLengthTrampoline, ctiStringLengthTrampoline, ctiVirtualCallPreLink, ctiVirtualCallLink, ctiVirtualCall, ctiNativeCallThunk);
         }
 
@@ -407,9 +386,6 @@ namespace JSC {
         static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, ReturnAddressPtr returnAddress)
         {
             JIT jit(globalData, codeBlock);
-#if ENABLE(OPCODE_SAMPLING)
-            jit->m_bytecodeIndex = jit->m_codeBlock->getCallReturnOffset(returnAddress.value());
-#endif
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 

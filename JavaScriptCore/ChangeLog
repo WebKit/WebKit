@@ -1,3 +1,21 @@
+2009-06-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Make the opcode sampler work once again.
+
+        * jit/JIT.h:
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdTransition):
+        (JSC::JIT::compileCTIMachineTrampolines):
+        (JSC::JIT::compilePatchGetArrayLength):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::call):
+
 2009-06-24  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Maciej Stachowiak.
