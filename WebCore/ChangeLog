@@ -1,3 +1,17 @@
+2009-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix <rdar://problem/7001817> REGRESSION (r41902): Base position track
+          at UCSC Genome Browser doesn't work because image map prevents img
+          from hit-testing
+
+        Test: fast/replaced/image-map-2.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint): Do not reset 'inside' to false if
+        the image map failed the hit test.
+
 2009-06-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

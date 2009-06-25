@@ -1,3 +1,14 @@
+2009-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - test for <rdar://problem/7001817> REGRESSION (r41902): Base position
+          track at UCSC Genome Browser doesn't work because image map prevents
+          img from hit-testing
+
+        * fast/replaced/image-map-2-expected.txt: Added.
+        * fast/replaced/image-map-2.html: Added.
+
 2009-06-24  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.
