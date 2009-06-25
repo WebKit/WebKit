@@ -2087,12 +2087,16 @@ webcore_sources += \
 	WebCore/bindings/js/JSStorageCustom.cpp \
 	WebCore/storage/LocalStorage.cpp \
 	WebCore/storage/LocalStorage.h \
+	WebCore/storage/LocalStorageArea.cpp \
+	WebCore/storage/LocalStorageArea.h \
 	WebCore/storage/LocalStorageTask.cpp \
 	WebCore/storage/LocalStorageTask.h \
 	WebCore/storage/LocalStorageThread.cpp \
 	WebCore/storage/LocalStorageThread.h \
 	WebCore/storage/SessionStorage.cpp \
 	WebCore/storage/SessionStorage.h \
+	WebCore/storage/SessionStorageArea.cpp \
+	WebCore/storage/SessionStorageArea.h \
 	WebCore/storage/Storage.cpp \
 	WebCore/storage/Storage.h \
 	WebCore/storage/StorageArea.cpp \

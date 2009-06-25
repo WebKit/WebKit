@@ -29,7 +29,7 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "SecurityOriginHash.h"
-#include "StorageArea.h"
+#include "SessionStorageArea.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -56,7 +56,7 @@ namespace WebCore {
 
         Page* m_page;
         
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> SessionStorageAreaMap;
+        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<SessionStorageArea>, SecurityOriginHash> SessionStorageAreaMap;
         SessionStorageAreaMap m_storageAreaMap;
     };
 

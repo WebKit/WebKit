@@ -29995,6 +29995,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\LocalStorageArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\LocalStorageArea.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\LocalStorageTask.cpp"
 				>
 			</File>
@@ -30032,6 +30040,14 @@
 			</File>
 			<File
 				RelativePath="..\storage\SessionStorage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SessionStorageArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\SessionStorageArea.h"
 				>
 			</File>
 			<File

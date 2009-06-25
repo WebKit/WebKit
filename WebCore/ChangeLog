@@ -1,3 +1,36 @@
+2009-06-25  Eric Seidel  <eric@webkit.org>
+
+        No review, reverting r45144 only.
+
+        Roll out r45144 after 18 test failures appeared on the bots.
+        https://bugs.webkit.org/show_bug.cgi?id=26698
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::storageArea):
+        * storage/LocalStorage.h:
+        * storage/SessionStorage.cpp:
+        (WebCore::SessionStorage::copy):
+        (WebCore::SessionStorage::storageArea):
+        * storage/SessionStorage.h:
+        * storage/StorageArea.cpp:
+        (WebCore::StorageArea::StorageArea):
+        (WebCore::StorageArea::~StorageArea):
+        (WebCore::StorageArea::setItem):
+        (WebCore::StorageArea::removeItem):
+        (WebCore::StorageArea::clear):
+        * storage/StorageArea.h:
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        (WebCore::StorageAreaSync::syncTimerFired):
+        (WebCore::StorageAreaSync::performImport):
+        * storage/StorageAreaSync.h:
+        * storage/StorageSyncManager.h:
+
 2009-06-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.

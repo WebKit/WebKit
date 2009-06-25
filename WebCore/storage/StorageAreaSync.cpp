@@ -57,11 +57,7 @@ StorageAreaSync::StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManag
     , m_importComplete(false)
 {
     ASSERT(m_storageArea);
-    ASSERT(m_syncManager);
-
-    // FIXME: If it can't import, then the default WebKit behavior should be that of private browsing,
-    // not silently ignoring it.  https://bugs.webkit.org/show_bug.cgi?id=25894
-    if (!m_syncManager->scheduleImport(this))
+    if (!m_syncManager || !m_syncManager->scheduleImport(this))
         m_importComplete = true;
 }
 
@@ -75,6 +71,8 @@ StorageAreaSync::~StorageAreaSync()
 void StorageAreaSync::scheduleFinalSync()
 {
     ASSERT(isMainThread());
+    if (!m_syncManager)
+        return;
     
     if (m_syncTimer.isActive())
         m_syncTimer.stop();
@@ -123,6 +121,8 @@ void StorageAreaSync::scheduleClear()
 void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
 {
     ASSERT(isMainThread());
+    if (!m_syncManager)
+        return;
 
     HashMap<String, String>::iterator it = m_changedItems.begin();
     HashMap<String, String>::iterator end = m_changedItems.end();
@@ -161,6 +161,8 @@ void StorageAreaSync::performImport()
 {
     ASSERT(!isMainThread());
     ASSERT(!m_database.isOpen());
+    if (!m_syncManager)
+        return;
 
     String databaseFilename = m_syncManager->fullDatabaseFilename(m_storageArea->securityOrigin());
 

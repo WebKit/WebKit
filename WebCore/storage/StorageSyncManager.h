@@ -28,9 +28,9 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "LocalStorageArea.h"
 #include "LocalStorageTask.h"
 #include "LocalStorageThread.h"
-#include "StorageArea.h"
 #include "StorageAreaSync.h"
 
 #include <wtf/Threading.h>
