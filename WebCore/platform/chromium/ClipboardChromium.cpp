@@ -33,6 +33,7 @@
 #include "ClipboardUtilitiesChromium.h"
 #include "Document.h"
 #include "Element.h"
+#include "FileList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "NamedAttrMap.h"

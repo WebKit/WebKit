@@ -1,3 +1,11 @@
+2009-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, build fix.
+
+        Add FileList.h include to fix Chromium build.
+
+        * platform/chromium/ClipboardChromium.cpp: Added FileList.h include.
+
 2009-06-25  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Jan Alonzo.
