@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-    struct CallIdentifier : public WTF::FastAllocBase {
+    struct CallIdentifier : public FastAllocBase {
         UString m_name;
         UString m_url;
         unsigned m_lineNumber;

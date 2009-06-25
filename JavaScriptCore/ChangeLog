@@ -1,3 +1,16 @@
+2009-06-24  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Maciej Stachowiak.
+
+        Extend FastAllocBase.h with 'using WTF::FastAllocBase' to avoid
+        unnecessary WTF:: usings.
+        Remove existing unnecessary WTF:: usings.
+
+        * interpreter/Interpreter.h:
+        * profiler/CallIdentifier.h:
+        * runtime/ScopeChain.h:
+        * wtf/FastAllocBase.h:
+
 2009-06-24  David Levin  <levin@chromium.org>
 
         Fix all builds.
