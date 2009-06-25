@@ -1,3 +1,19 @@
+2009-06-25  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstream V8Index.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26495
+
+        * bindings/v8/V8Index.cpp: Added.
+        (WebCore::V8ClassIndex::GetFactory): Moved from src.chromium.org.
+        (WebCore::V8ClassIndex::GetCache): Moved from src.chromium.org.
+        * bindings/v8/V8Index.h:
+        (WebCore::V8ClassIndex::): Moved from src.chromium.org.
+        (WebCore::V8ClassIndex::ToInt): Moved from src.chromium.org.
+        (WebCore::V8ClassIndex::FromInt): Moved from src.chromium.org.
+
 2009-06-25  Adam Langley  <agl@google.com>
 
         Reviewed by Darin Fisher.
