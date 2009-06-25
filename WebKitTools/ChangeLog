@@ -2,6 +2,18 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Remove use of os.system to fix reviewers with unicode chars in their names
+        https://bugs.webkit.org/show_bug.cgi?id=26713
+
+        Also change to latin1 encoding of ø to make python happy.
+
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/scm.py:
+
+2009-06-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         Add Adam Roben and Tor Arne Vestbø to the reviewers list.
 
         * Scripts/modules/bugzilla.py:

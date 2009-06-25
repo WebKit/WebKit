@@ -102,7 +102,7 @@ class Bugzilla:
         "staikos" : "George Staikos",
         "timothy" : "Timothy Hatcher",
         "treat" : "Adam Treat",
-        "vestbo" : u'Tor Arne Vestb\xc3',
+        "vestbo" : u'Tor Arne Vestb\xf8',
         "xan.lopez" : "Xan Lopez",
         "zecke" : "Holger Freyther",
         "zimmermann" : "Nikolas Zimmermann",

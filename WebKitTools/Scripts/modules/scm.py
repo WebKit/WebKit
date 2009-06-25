@@ -91,7 +91,10 @@ class SCM:
     def apply_patch(self, patch):
         # It's possible that the patch was not made from the root directory.
         # We should detect and handle that case.
-        return_code = os.system('curl %s | svn-apply --reviewer "%s"' % (patch['url'], patch['reviewer']))
+        curl_process = subprocess.Popen(['curl', patch['url']], stdout=subprocess.PIPE)
+        patch_apply_process = subprocess.Popen(['svn-apply', '--reviewer', patch['reviewer']], stdin=curl_process.stdout)
+
+        return_code = patch_apply_process.wait()
         if return_code:
             raise ScriptError("Patch " + patch['url'] + " failed to download and apply.")
 
