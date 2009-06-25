@@ -65,14 +65,14 @@ class SCM:
         output = process.communicate(input)[0].rstrip()
         exit_code = process.wait()
         if raise_on_failure and exit_code:
-            raise ScriptError("Failed to run " + command)
+            raise ScriptError('Failed to run "%s"  exit_code: %d  cwd: %s' % (command, exit_code, cwd))
         if return_exit_code:
             return exit_code
         return output
 
     def ensure_clean_working_directory(self, force):
         if not force and not self.working_directory_is_clean():
-            print self.run_command(self.status_command())
+            print self.run_command(self.status_command(), raise_on_failure=False)
             error("Working directory has modifications, pass --force-clean or --no-clean to continue.")
         
         log("Cleaning working directory")
@@ -145,6 +145,9 @@ class SCM:
     # but the SCM baseclass will only call local_commits methods when this is true.
     def supports_local_commits(self):
         raise NotImplementedError, "subclasses must implement"
+
+    def commit_locally_with_message(self, message):
+        pass
 
     def discard_local_commits(self):
         pass

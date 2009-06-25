@@ -47,6 +47,18 @@ def error(string):
     log(string)
     exit(1)
 
+def plural(noun):
+    # This is a dumb plural() implementation which was just enough for our uses.
+    if re.search('h$', noun):
+        return noun + 'es'
+    else:
+        return noun + 's'
+
+def pluralize(noun, count):
+    if count != 1:
+        noun = plural(noun)
+    return "%d %s" % (count, noun)
+
 # These could be put in some sort of changelogs.py.
 def latest_changelog_entry(changelog_path):
     # e.g. 2009-06-03  Eric Seidel  <eric@webkit.org>
@@ -158,8 +170,17 @@ class ApplyPatchesFromBug(Command):
             make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
             make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
             make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
+            make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch"),
         ]
         Command.__init__(self, 'Applies all patches on a bug to the local working directory without committing.', 'BUGID', options=options)
+
+    @staticmethod
+    def apply_patches(patches, scm, commit_each):
+        for patch in patches:
+            scm.apply_patch(patch)
+            if commit_each:
+                commit_message = commit_message_for_this_commit(scm)
+                scm.commit_locally_with_message(commit_message or patch['name'])
 
     def execute(self, options, args, tool):
         bug_id = args[0]
@@ -170,10 +191,10 @@ class ApplyPatchesFromBug(Command):
         if options.update:
             tool.scm().update_webkit()
         
-        for patch in patches:
-            # FIXME: Should have an option to local-commit each patch after application.
-            tool.scm().apply_patch(patch)
-
+        if options.local_commit and not tool.scm().supports_local_commits():
+            error("--local-commit passed, but %s does not support local commits" % tool.scm().display_name())
+        
+        self.apply_patches(patches, tool.scm(), options.local_commit)
 
 def bug_comment_from_commit_text(commit_text):
     comment_lines = []
@@ -201,7 +222,7 @@ class LandAndUpdateBug(Command):
         tool.bugs.close_bug_as_fixed(bug_id, comment_text)
 
 
-class LandPatchesFromBug(Command):
+class LandPatchesFromBugs(Command):
     def __init__(self):
         options = [
             make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
@@ -217,37 +238,43 @@ class LandPatchesFromBug(Command):
         build_webkit_process = subprocess.Popen(script_name, shell=True)
         return_code = build_webkit_process.wait()
         if return_code:
-            raise ScriptError(script_name + " failed with code " + return_code)
+            raise ScriptError("%s failed with exit code %d" % (script_name, return_code))
 
-    def build_webkit(self):
-        self.run_and_throw_if_fail("build-webkit")
+    @classmethod
+    def build_webkit(cls):
+        cls.run_and_throw_if_fail("build-webkit")
 
-    def run_webkit_tests(self):
-        self.run_and_throw_if_fail("run-webkit-tests")
+    @classmethod
+    def run_webkit_tests(cls):
+        cls.run_and_throw_if_fail("run-webkit-tests")
 
-    def execute(self, options, args, tool):
-        bug_id = args[0]
+    @staticmethod
+    def setup_for_landing(scm, options):
+        os.chdir(scm.checkout_root)
+        scm.ensure_no_local_commits(options.force_clean)
+        if options.clean:
+            scm.ensure_clean_working_directory(options.force_clean)
+        if options.update:
+            scm.update_webkit()
 
+    @classmethod
+    def build_and_commit(cls, scm, options):
+        if options.build:
+            cls.build_webkit()
+            if options.test:
+                cls.run_webkit_tests()
+        commit_message = commit_message_for_this_commit(scm)
+        commit_log = scm.commit_with_message(commit_message)
+        return bug_comment_from_commit_text(commit_log)
+
+    @classmethod
+    def land_patches(cls, bug_id, patches, options, tool):
         try:
-            patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
             comment_text = ""
-
-            os.chdir(tool.scm().checkout_root)
-            tool.scm().ensure_no_local_commits(options.force_clean)
-            if options.clean:
-                tool.scm().ensure_clean_working_directory(options.force_clean)
-            if options.update:
-                tool.scm().update_webkit()
-            
             for patch in patches:
                 tool.scm().apply_patch(patch)
-                if options.build:
-                    self.build_webkit()
-                    if options.test:
-                        self.run_webkit_tests()
-                commit_message = commit_message_for_this_commit(tool.scm())
-                commit_log = tool.scm().commit_with_message(commit_message)
-                comment_text = bug_comment_from_commit_text(commit_log)
+                comment_text = cls.build_and_commit(tool.scm(), options)
+
                 # If we're commiting more than one patch, update the bug as we go.
                 if len(patches) > 1:
                     tool.bugs.obsolete_attachment(patch['id'], comment_text)
@@ -256,10 +283,29 @@ class LandPatchesFromBug(Command):
                 comment_text = "All reviewed patches landed, closing."
 
             tool.bugs.close_bug_as_fixed(bug_id, comment_text)
-        except ScriptError, error:
-            log(error)
-            # We could add a comment to the bug about the failure.
+        except ScriptError, e:
+            # We should add a comment to the bug, and r- the patch on failure
+            error(e)
 
+    def execute(self, options, args, tool):
+        if not len(args):
+            error("bug-id(s) required")
+
+        bugs_to_patches = {}
+        patch_count = 0
+        for bug_id in args:
+            patches = tool.bugs.fetch_reviewed_patches_from_bug(bug_id)
+            if not len(patches):
+                exit("No reviewed patches found on %s" % bug_id)
+            patch_count += len(patches)
+            bugs_to_patches[bug_id] = patches
+
+        log("Landing %s from %s." % (pluralize("patch", patch_count), pluralize("bug", len(args))))
+        
+        self.setup_for_landing(tool.scm(), options)
+
+        for bug_id in args:
+            self.land_patches(bug_id, bugs_to_patches[bug_id], options, tool)
 
 class CommitMessageForCurrentDiff(Command):
     def __init__(self):
@@ -317,11 +363,11 @@ class PostCommitsAsPatchesToBug(Command):
         commit_ids = tool.scm().commit_ids_from_range_arguments(args[1:])
         
         if len(commit_ids) > 10:
-            log("Are you sure you want to attach %d patches to bug %s?" % (len(commit_ids), bug_id))
+            log("Are you sure you want to attach %s to bug %s?" % (pluralize('patch', len(commit_ids)), bug_id))
             # Could add a --patches-limit option.
             exit(1)
         
-        log("Attaching %d commits as patches to bug %s" % (len(commit_ids), bug_id))
+        log("Attaching %s as patches to bug %s" % (pluralize('commit', len(commit_ids)), bug_id))
         for commit_id in commit_ids:
             commit_message = tool.scm().commit_message_for_commit(commit_id)
             commit_lines = commit_message.splitlines()
@@ -357,7 +403,7 @@ class BugzillaTool:
             { 'name' : 'reviewed-patches', 'object' : ReviewedPatchesOnBug() },
             { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
             { 'name' : 'land-and-update', 'object' : LandAndUpdateBug() },
-            { 'name' : 'land-patches', 'object' : LandPatchesFromBug() },
+            { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },
             { 'name' : 'commit-message', 'object' : CommitMessageForCurrentDiff() },
             { 'name' : 'obsolete-attachments', 'object' : ObsoleteAttachmentsOnBug() },
             { 'name' : 'post-diff', 'object' : PostDiffAsPatchToBug() },

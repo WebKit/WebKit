@@ -146,7 +146,7 @@ class Bugzilla:
             attachment_link = cells[0].find('a')
             attachment['url'] = self.bug_server + attachment_link['href'] # urls are relative
             attachment['id'] = attachment['url'].split('=')[1] # e.g. https://bugs.webkit.org/attachment.cgi?id=31223
-            attachment['name'] = attachment_link.string
+            attachment['name'] = str(attachment_link.string) # w/o str it returns some sort of non-string object
             # attachment['type'] = cells[1]
             # attachment['date'] = cells[2]
             # attachment['size'] = cells[3]

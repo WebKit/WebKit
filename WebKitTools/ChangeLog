@@ -1,3 +1,19 @@
+2009-06-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dave Levin.
+
+        Support local commits during apply-patches
+        and let land-patches take multiple bug ids.
+        https://bugs.webkit.org/show_bug.cgi?id=26703
+
+        I also restructured parts of land-patches into
+        class methods and static methods in preparation
+        for future code sharing with other commands.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/bugzilla.py:
+        * Scripts/modules/scm.py:
+
 2009-06-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
