@@ -118,8 +118,9 @@ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
 
 void RenderLayerCompositor::cacheAcceleratedCompositingEnabledFlag()
 {
-    
-    bool hasAcceleratedCompositing = m_renderView->document()->settings() && m_renderView->frameView()->frame()->page()->settings()->acceleratedCompositingEnabled();
+    bool hasAcceleratedCompositing = false;
+    if (Settings* settings = m_renderView->document()->settings())
+        hasAcceleratedCompositing = settings-> acceleratedCompositingEnabled();
 
     if (hasAcceleratedCompositing != m_hasAcceleratedCompositing)
         setCompositingLayersNeedUpdate();

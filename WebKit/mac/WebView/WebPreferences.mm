@@ -348,7 +348,11 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitXSSAuditorEnabledPreferenceKey,
+#if USE(ACCELERATED_COMPOSITING)
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
+#else
+        [NSNumber numberWithBool:NO],   WebKitAcceleratedCompositingEnabledPreferenceKey,
+#endif
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -741,7 +745,7 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (BOOL)acceleratedCompositingEnabled
 {
-    return [self _boolValueForKey: WebKitAcceleratedCompositingEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitAcceleratedCompositingEnabledPreferenceKey];
 }
 
 - (void)setAcceleratedCompositingEnabled:(BOOL)enabled

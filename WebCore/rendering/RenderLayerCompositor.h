@@ -58,7 +58,7 @@ public:
     void enableCompositingMode(bool enable = true);
     
     // Returns true if the accelerated compositing is enabled
-    bool hasAcceleratedCompositing() { return m_hasAcceleratedCompositing; }
+    bool hasAcceleratedCompositing() const { return m_hasAcceleratedCompositing; }
     
     // Copy the acceleratedCompositingEnabledFlag from Settings
     void cacheAcceleratedCompositingEnabledFlag();
