@@ -1,3 +1,22 @@
+2009-06-25  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Show the filename and first line for "(program)" in the Profiler/Debugger
+        https://bugs.webkit.org/show_bug.cgi?id=25475
+
+        Add support to associate a sourceURL with an eval()'d string
+        via a @sourceURL comment.  Currently the sourceURL is only available
+        in the script debugger, not in the console or profiler, but it's
+        most needed in the script debugger.
+
+        * English.lproj/localizedStrings.js: added new "(program): %s" string
+        * inspector/front-end/Script.js:
+        (WebInspector.Script): if no sourceURL is available for the Script,
+        search for a comment of the form //@ sourceURL=(url) to use
+        as the sourceURL instead.
+        * manual-tests/inspector/named-evals.html: Added.
+
 2009-06-25  John Gregg  <johnnyg@google.com>
 
         Reviewed by Sam Weinig.

@@ -31,6 +31,19 @@ WebInspector.Script = function(sourceID, sourceURL, source, startingLine, errorL
     this.startingLine = startingLine;
     this.errorLine = errorLine;
     this.errorMessage = errorMessage;
+
+    // if no URL, look for "//@ sourceURL=" decorator
+    // note that this sourceURL comment decorator is behavior that FireBug added
+    // in it's 1.1 release as noted in the release notes:
+    // http://fbug.googlecode.com/svn/branches/firebug1.1/docs/ReleaseNotes_1.1.txt
+    if (!sourceURL) {
+        // use of [ \t] rather than \s is to prevent \n from matching
+        var pattern = /^\s*\/\/[ \t]*@[ \t]*sourceURL[ \t]*=[ \t]*(\S+).*$/m;
+        var match = pattern.exec(source);
+
+        if (match)
+            this.sourceURL = WebInspector.UIString("(program): %s", match[1]);
+    }
 }
 
 WebInspector.Script.prototype = {
