@@ -7,13 +7,13 @@
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution. 
 # 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -59,13 +59,16 @@
 use strict;
 use warnings;
 
-use Cwd;
 use Digest::MD5;
 use File::Basename;
 use File::Spec;
 use Getopt::Long;
 use MIME::Base64;
 use POSIX qw(strftime);
+
+use FindBin;
+use lib $FindBin::Bin;
+use VCSUtils;
 
 sub addDirectoriesIfNeeded($);
 sub applyPatch($$;$);
@@ -79,20 +82,41 @@ sub removeDirectoriesIfNeeded();
 sub setChangeLogDateAndReviewer($$);
 sub svnStatus($);
 
+# These should be replaced by an scm class/module:
+sub scmKnowsOfFile($);
+sub scmCopy($$);
+sub scmAdd($);
+sub scmRemove($);
+
+
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
 
 my $merge = 0;
 my $showHelp = 0;
 my $reviewer;
-if (!GetOptions("merge!" => \$merge, "help!" => \$showHelp, "reviewer=s" => \$reviewer) || $showHelp) {
-    print STDERR basename($0) . " [-h|--help] [-m|--merge] [-r|--reviewer name] patch1 [patch2 ...]\n";
+my $force = 0;
+
+my $optionParseSuccess = GetOptions(
+    "merge!" => \$merge,
+    "help!" => \$showHelp,
+    "reviewer=s" => \$reviewer,
+    "force!" => \$force
+);
+
+if (!$optionParseSuccess || $showHelp) {
+    print STDERR basename($0) . " [-h|--help] [--force] [-m|--merge] [-r|--reviewer name] patch1 [patch2 ...]\n";
     exit 1;
 }
+
+my $isGit = isGitDirectory(".");
+my $isSVN = isSVNDirectory(".");
+$isSVN || $isGit || die "Couldn't determine your version control system.";
 
 my %removeDirectoryIgnoreList = (
     '.' => 1,
     '..' => 1,
+    '.git' => 1,
     '.svn' => 1,
     '_svn' => 1,
 );
@@ -148,6 +172,8 @@ if ($patch && !$copiedFromPath) {
 }
 
 if ($merge) {
+    die "--merge is currently only supported for SVN" unless $isSVN;
+    # How do we handle Git patches applied to an SVN checkout here?
     for my $file (sort keys %versions) {
         print "Getting version $versions{$file} of $file\n";
         system "svn", "update", "-r", $versions{$file}, $file;
@@ -157,7 +183,7 @@ if ($merge) {
 # Handle copied and moved files first since moved files may have their source deleted before the move.
 for my $file (keys %copiedFiles) {
     addDirectoriesIfNeeded(dirname($file));
-    system "svn", "copy", $copiedFiles{$file}, $file;
+    scmCopy($copiedFiles{$file}, $file);
 }
 
 for $patch (@patches) {
@@ -178,18 +204,21 @@ sub addDirectoriesIfNeeded($)
         next if exists $checkedDirectories{$dir};
         if (! -e $dir) {
             mkdir $dir or die "Failed to create required directory '$dir' for path '$path'\n";
-            system "svn", "add", $dir;
+            scmAdd($dir);
             $checkedDirectories{$dir} = 1;
         }
         elsif (-d $dir) {
-            my $svnOutput = svnStatus($dir);
-            if ($svnOutput && $svnOutput =~ m#\?\s+$dir\n#) {
-                system "svn", "add", $dir;
+            # SVN prints "svn: warning: 'directory' is already under version control"
+            # if you try and add a directory which is already in the repository.
+            # Git will ignore the add, but re-adding large directories can be sloooow.
+            # So we check first to see if the directory is under version control first.
+            if (!scmKnowsOfFile($dir)) {
+                scmAdd($dir);
             }
             $checkedDirectories{$dir} = 1;
         }
         else {
-            die "'$dir' is not a directory";
+            die "'$dir' exists, but is not a directory";
         }
     }
 }
@@ -202,6 +231,12 @@ sub applyPatch($$;$)
     open PATCH, "| $command" or die "Failed to patch $fullPath\n";
     print PATCH $patch;
     close PATCH;
+
+    my $exitCode = $? >> 8;
+    if ($exitCode != 0) {
+        print "patch -p0 \"$fullPath\" returned $exitCode.  Pass --force to ignore patch failures.\n";
+        exit($exitCode);
+    }
 }
 
 sub checksum($)
@@ -290,17 +325,13 @@ sub handleBinaryChange($$)
         open FILE, ">", $fullPath or die;
         print FILE decode_base64($1);
         close FILE;
-        my $svnOutput = svnStatus($fullPath);
-        if ($svnOutput && substr($svnOutput, 0, 1) eq "?") {
+        if (!scmKnowsOfFile($fullPath)) {
             # Addition
-            system "svn", "add", $fullPath;
-        } else {
-            # Modification
-            print $svnOutput if $svnOutput;
+            scmAdd($fullPath);
         }
     } else {
         # Deletion
-        system "svn", "rm", $fullPath;
+        scmRemove($fullPath);
     }
 }
 
@@ -314,8 +345,7 @@ sub isDirectoryEmptyForRemoval($)
         if (! -d File::Spec->catdir($dir, $item)) {
             $directoryIsEmpty = 0;
         } else {
-            my $svnOutput = svnStatus(File::Spec->catdir($dir, $item));
-            next if $svnOutput && substr($svnOutput, 0, 1) eq "D";
+            next if (scmWillDeleteFile(File::Spec->catdir($dir, $item)));
             $directoryIsEmpty = 0;
         }
     }
@@ -363,14 +393,15 @@ sub patch($)
         } elsif ($deletion) {
             # Deletion
             applyPatch($patch, $fullPath, ["--force"]);
-            system "svn", "rm", "--force", $fullPath;
+            scmRemove($fullPath);
         } else {
             # Addition
             rename($fullPath, "$fullPath.orig") if -e $fullPath;
             applyPatch($patch, $fullPath);
             unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
-            system "svn", "add", $fullPath;
-            system "svn", "stat", "$fullPath.orig" if -e "$fullPath.orig";
+            scmAdd($fullPath);
+            # What is this for?
+            system "svn", "stat", "$fullPath.orig" if $isSVN && -e "$fullPath.orig";
         }
     }
 }
@@ -379,14 +410,7 @@ sub removeDirectoriesIfNeeded()
 {
     foreach my $dir (reverse sort keys %checkedDirectories) {
         if (isDirectoryEmptyForRemoval($dir)) {
-            my $svnOutput;
-            open SVN, "svn rm '$dir' |" or die;
-            # Only save the last line since Subversion lists all changed statuses below $dir
-            while (<SVN>) {
-                $svnOutput = $_;
-            }
-            close SVN;
-            print $svnOutput if $svnOutput;
+            scmRemove($dir);
         }
     }
 }
@@ -440,4 +464,76 @@ sub svnStatus($)
     }
     close SVN;
     return $svnStatus;
+}
+
+# This could be made into a more general "status" call, except svn and git
+# have different ideas about "moving" files which might get confusing.
+sub scmWillDeleteFile($)
+{
+    my ($path) = @_;
+    if ($isSVN) {
+        my $svnOutput = svnStatus($path);
+        return 1 if $svnOutput && substr($svnOutput, 0, 1) eq "D";
+    } elsif ($isGit) {
+        my $gitOutput = `git diff-index --name-status head -- $path`;
+        return 1 if $gitOutput && substr($gitOutput, 0, 1) eq "D";
+    }
+    return 0;
+}
+
+sub scmKnowsOfFile($)
+{
+    my ($path) = @_;
+    if ($isSVN) {
+        my $svnOutput = svnStatus($path);
+        # This will match more than intended.  ? might not be the first field in the status
+        if ($svnOutput && $svnOutput =~ m#\?\s+$path\n#) {
+            return 0;
+        }
+        # This does not handle errors well.
+        return 1;
+    } elsif ($isGit) {
+        `git ls-files --error-unmatch -- $path`;
+        my $exitCode = $? >> 8;
+        return $exitCode == 0;
+    }
+}
+
+sub scmCopy($$)
+{
+    my ($source, $destination) = @_;
+    if ($isSVN) {
+        system "svn", "copy", $source, $destination;
+    } elsif ($isGit) {
+        system "cp", $source, $destination;
+        system "git", "add", $destination;
+    }
+}
+
+sub scmAdd($)
+{
+    my ($path) = @_;
+    if ($isSVN) {
+        system "svn", "add", $path;
+    } elsif ($isGit) {
+        system "git", "add", $path;
+    }
+}
+
+sub scmRemove($)
+{
+    my ($path) = @_;
+    if ($isSVN) {
+        # SVN is very verbose when removing directories.  Squelch all output except the last line.
+        my $svnOutput;
+        open SVN, "svn rm --force '$path' |" or die "svn rm --force '$path' failed!";
+        # Only print the last line.  Subversion outputs all changed statuses below $dir
+        while (<SVN>) {
+            $svnOutput = $_;
+        }
+        close SVN;
+        print $svnOutput if $svnOutput;
+    } elsif ($isGit) {
+        system "git", "rm", "--force", $path;
+    }
 }

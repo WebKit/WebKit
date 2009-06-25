@@ -2,6 +2,23 @@
 
         Reviewed by Tor Arne Vestbø.
 
+        Make svn-apply work with Git too
+        https://bugs.webkit.org/show_bug.cgi?id=26299
+        
+        Add an --force option to svn-apply and otherwise make svn-apply
+        exit non-zero when patch application fails.
+        https://bugs.webkit.org/show_bug.cgi?id=26300
+
+        I did not update svn-unapply, because it makes no sense in a Git world.
+        You don't roll in and out patch files.  You make commits and deal with those.
+        Git users can just git reset --hard to get the same functionality.
+
+        * Scripts/svn-apply:
+
+2009-06-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
         Remove use of os.system to fix reviewers with unicode chars in their names
         https://bugs.webkit.org/show_bug.cgi?id=26713
 
