@@ -1,3 +1,37 @@
+2009-06-25  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26566
+        Upstream these files from the chromium v8 code.  No tests were
+        affected because this is essentially a code move.
+
+        * bindings/v8/NPV8Object.cpp: Added.
+        (allocV8NPObject):
+        (freeV8NPObject):
+        (listFromVariantArgs):
+        (npIdentifierToV8Identifier):
+        (npCreateV8ScriptObject):
+        (NPN_Invoke):
+        (NPN_InvokeDefault):
+        (NPN_Evaluate):
+        (NPN_EvaluateHelper):
+        (NPN_GetProperty):
+        (NPN_SetProperty):
+        (NPN_RemoveProperty):
+        (NPN_HasProperty):
+        (NPN_HasMethod):
+        (NPN_SetException):
+        (NPN_Enumerate):
+        (NPN_Construct):
+        * bindings/v8/NPV8Object.h: Added.
+        (PrivateIdentifier::):
+        * bindings/v8/V8NPUtils.cpp: Added.
+        (convertV8ObjectToNPVariant):
+        (convertNPVariantToV8Object):
+        (getStringIdentifier):
+        * bindings/v8/V8NPUtils.h: Added.
+
 2009-06-25  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Dimitri Glazkov.
