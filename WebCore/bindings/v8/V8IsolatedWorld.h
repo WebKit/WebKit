@@ -33,7 +33,7 @@
 
 #include <v8.h>
 
-#include "v8_index.h"
+#include "V8Index.h"
 #include "v8_utility.h"
 #include "V8DOMMap.h"
 #include "ScriptSourceCode.h"  // for WebCore::ScriptSourceCode

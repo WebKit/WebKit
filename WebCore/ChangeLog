@@ -1,3 +1,17 @@
+2009-06-25  Adam Langley  <agl@google.com>
+
+        TBRed: fix for Chromium tree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26735
+
+        Fix V8IsolatedWorld to point to the correct include file.
+
+        The deprecated v8_index.h was removed from the Chromium tree in r19291
+        and upstreamed into WebKit with r45193. However V8IsolatedWorld
+        slipped in between the cracks and broke the build.
+
+        * bindings/v8/V8IsolatedWorld.h: update with new header location.
+
 2009-06-25  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser  <simon.fraser@apple.com>.
