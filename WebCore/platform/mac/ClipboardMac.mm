@@ -31,6 +31,7 @@
 #import "DragController.h"
 #import "Editor.h"
 #import "FoundationExtras.h"
+#import "FileList.h"
 #import "Frame.h"
 #import "Image.h"
 #import "Page.h"
@@ -139,7 +140,7 @@ void ClipboardMac::clearAllData()
     [m_pasteboard.get() declareTypes:[NSArray array] owner:nil];
 }
 
-static NSArray *absoluteURLsFromPasteboardFilenames(NSPasteboard* pasteboard, bool onlyFirstURL)
+static NSArray *absoluteURLsFromPasteboardFilenames(NSPasteboard* pasteboard, bool onlyFirstURL = false)
 {
     NSArray *fileList = [pasteboard propertyListForType:NSFilenamesPboardType];
 
@@ -163,7 +164,7 @@ static NSArray *absoluteURLsFromPasteboardFilenames(NSPasteboard* pasteboard, bo
     return urls;
 }
 
-static NSArray *absoluteURLsFromPasteboard(NSPasteboard* pasteboard, bool onlyFirstURL)
+static NSArray *absoluteURLsFromPasteboard(NSPasteboard* pasteboard, bool onlyFirstURL = false)
 {
     // NOTE: We must always check [availableTypes containsObject:] before accessing pasteboard data
     // or CoreFoundation will printf when there is not data of the corresponding type.
@@ -272,6 +273,26 @@ HashSet<String> ClipboardMac::types() const
             result.add(str);
     }
     return result;
+}
+
+// FIXME: We could cache the computed fileList if necessary
+// Currently each access gets a new copy, setData() modifications to the
+// clipboard are not reflected in any FileList objects the page has accessed and stored
+PassRefPtr<FileList> ClipboardMac::files() const
+{
+    if (policy() != ClipboardReadable)
+        return FileList::create();
+
+    NSArray *absoluteURLs = absoluteURLsFromPasteboard(m_pasteboard.get());
+    NSUInteger count = [absoluteURLs count];
+
+    RefPtr<FileList> fileList = FileList::create();
+    for (NSUInteger x = 0; x < count; x++) {
+        NSURL *absoluteURL = [NSURL URLWithString:[absoluteURLs objectAtIndex:x]];
+        ASSERT([absoluteURL isFileURL]);
+        fileList->append(File::create([absoluteURL path]));
+    }
+    return fileList.release(); // We will always return a FileList, sometimes empty
 }
 
 // The rest of these getters don't really have any impact on security, so for now make no checks

@@ -426,6 +426,32 @@
         * fast/dom/event-attribute-availability-expected.txt:
         * fast/dom/resources/event-attribute-availability.js:
 
+2009-05-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Expose files in the clipboard in ondrop events.
+        https://bugs.webkit.org/show_bug.cgi?id=25916
+
+        File.fileSize subtests fail due to limitations of DRT during http tests:
+        https://bugs.webkit.org/show_bug.cgi?id=25909
+
+        Directory subtests fail until correct of directory File tests is decided by:
+        https://bugs.webkit.org/show_bug.cgi?id=25879
+
+        * http/tests/security/clipboard/clipboard-file-access-expected.txt: Added.
+        * http/tests/security/clipboard/clipboard-file-access.html: Added.
+        * http/tests/security/clipboard/resources/TEMPLATE.html: Added.
+        * http/tests/security/clipboard/resources/apple.gif: Copied from LayoutTests/editing/pasteboard/resources/apple.gif.
+        * http/tests/security/clipboard/resources/clipboard-file-access.js: Added.
+        (var):
+        (moveMouseToCenterOfElement):
+        (dragFilesOntoDragTarget):
+        (fileListShouldBe):
+        (draggingPathsShouldResultInFiles):
+        (runTest):
+        * http/tests/security/clipboard/resources/mozilla.gif: Copied from LayoutTests/editing/pasteboard/resources/mozilla.gif.
+
 2009-06-22  David Levin  <levin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

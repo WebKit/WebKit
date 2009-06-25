@@ -1,0 +1,77 @@
+Tests access to event.dataTransfer.files
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Dragging no files should return an empty file list (arbitrary implementation detail):
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On drop:
+PASS event.dataTransfer.files.length is 0
+Dragging a single (non-existant) file onto an element:
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On drop:
+PASS event.dataTransfer.files.length is 1
+PASS event.dataTransfer.files[0].fileName is "DRTFakeFile"
+PASS event.dataTransfer.files[0].fileSize is 0
+FIXME: File.fileSize always returns 0 for files dropped by eventSender.beginDragWithFiles from http tests:  https://bugs.webkit.org/show_bug.cgi?id=25909
+Dragging a real file onto an element:
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On drop:
+PASS event.dataTransfer.files.length is 1
+PASS event.dataTransfer.files[0].fileName is "apple.gif"
+FAIL event.dataTransfer.files[0].fileSize should be 1476. Was 0.
+Dragging two files onto an element:
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On drop:
+PASS event.dataTransfer.files.length is 2
+PASS event.dataTransfer.files[0].fileName is "apple.gif"
+FAIL event.dataTransfer.files[0].fileSize should be 1476. Was 0.
+PASS event.dataTransfer.files[1].fileName is "mozilla.gif"
+FAIL event.dataTransfer.files[1].fileSize should be 2593. Was 0.
+Dragging two files in reverse alphabetical order onto an element:
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On drop:
+PASS event.dataTransfer.files.length is 2
+PASS event.dataTransfer.files[0].fileName is "mozilla.gif"
+FAIL event.dataTransfer.files[0].fileSize should be 2593. Was 0.
+PASS event.dataTransfer.files[1].fileName is "apple.gif"
+FAIL event.dataTransfer.files[1].fileSize should be 1476. Was 0.
+FIXME: We should not allow element to accept drops including directories unless https://bugs.webkit.org/show_bug.cgi?id=25879 is fixed to make directory File objects useful from JavaScript.  The page is given File objects corresponding to directories, but form submission and xhr.send() will fail.
+Dragging a directory onto an element:
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On drop:
+FAIL event.dataTransfer.files.length should be 0. Was 1.
+Dragging a file and a directory onto an element:
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On drop:
+FAIL event.dataTransfer.files.length should be 0. Was 2.
+Dragging a directory and a file onto an element:
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On dragover:
+PASS event.dataTransfer.files.length is 0
+On drop:
+FAIL event.dataTransfer.files.length should be 0. Was 2.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

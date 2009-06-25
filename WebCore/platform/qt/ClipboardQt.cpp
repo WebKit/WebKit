@@ -178,6 +178,12 @@ HashSet<String> ClipboardQt::types() const
     return result;
 }
 
+PassRefPtr<FileList> ClipboardQt::files() const
+{
+    notImplemented();
+    return 0;
+}
+
 void ClipboardQt::setDragImage(CachedImage* image, const IntPoint& point) 
 {
     setDragImage(image, 0, point);

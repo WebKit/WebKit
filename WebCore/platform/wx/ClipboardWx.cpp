@@ -70,6 +70,12 @@ HashSet<String> ClipboardWx::types() const
     return result;
 }
 
+PassRefPtr<FileList> ClipboardWx::files() const
+{
+    notImplemented();
+    return 0;
+}
+
 IntPoint ClipboardWx::dragLocation() const 
 { 
     notImplemented();

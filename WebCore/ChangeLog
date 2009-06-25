@@ -1,3 +1,65 @@
+2009-05-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Expose files in the clipboard in ondrop events
+        https://bugs.webkit.org/show_bug.cgi?id=25916
+
+        Make it possible for applications like gmail to implement
+        drag and drop of attachments onto email messages.
+
+        This patch exposes an event.dataTransfer.files accessor
+        on the drop event.  No information is exposed during dragover.
+        This follows the HTML 5 drag and drop security model:
+        http://www.w3.org/TR/html5/editing.html#security-risks-in-the-drag-and-drop-model
+        The test http/tests/security/clipboard/clipboard-file-access.html
+        verifies this behavior.
+
+        Internet Explorer shows historical documentation of supporting
+        getData('File') as a way of exposing files on the pasteboard.  The current version of their docs:
+        http://msdn.microsoft.com/en-us/library/ms537658(VS.85).aspx
+        has removed this reference (as far as I can tell IE never implemented it)
+        I have a printed copy of that URL from 2008 on my desk describing getData('File') in IE.
+        IE does not follow the HTML5 clipboard security model and always allows access to the full clipboard, even on dragover.
+
+        I choose not to use IE's getData('File') and instead added .files
+        so that the accessor could have a type, matching WebKit's existing
+        .files accessor on HTMLInputElement.
+
+        Mozilla has equivalent file access:
+        event.dataTransfer.mozGetDataAt("application/x-moz-file", 0);
+        which also does not return a typed value.
+        https://developer.mozilla.org/En/DragDrop/Recommended_Drag_Types#Dragging_Files
+
+        This is only implemented for Mac WebKit.  All other platforms (including Apple's Win WebKit)
+        have incomplete Clipboard implementations and will require experts from those platforms
+        to add this functionality.  Right now they all have Clipboard*::files() methods which call notImplemented();
+
+        Test: http/tests/security/clipboard/clipboard-file-access.html
+
+        * dom/Clipboard.h:
+        * dom/Clipboard.idl:
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::files):
+        * platform/chromium/ClipboardChromium.h:
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::files):
+        * platform/gtk/ClipboardGtk.h:
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::absoluteURLsFromPasteboardFilenames):
+        (WebCore::absoluteURLsFromPasteboard):
+        (WebCore::ClipboardMac::files):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::files):
+        * platform/qt/ClipboardQt.h:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::files):
+        * platform/win/ClipboardWin.h:
+        * platform/wx/ClipboardWx.cpp:
+        (WebCore::ClipboardWx::files):
+        * platform/wx/ClipboardWx.h:
+
 2009-06-25  Eric Seidel  <eric@webkit.org>
 
         No review, only completing revert of r45144.
