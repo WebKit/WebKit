@@ -297,7 +297,7 @@ void RenderMenuList::hidePopup()
 void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
 {
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
-    select->setSelectedIndex(select->listToOptionIndex(listIndex), true, fireOnChange);
+    select->setSelectedIndexByUser(select->listToOptionIndex(listIndex), true, fireOnChange);
 }
 
 String RenderMenuList::itemText(unsigned listIndex) const

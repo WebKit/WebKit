@@ -1,3 +1,16 @@
+2009-06-25  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23721: Changing dropdown's selectedIndex within onchange handler fires another onchange
+        https://bugs.webkit.org/show_bug.cgi?id=23721
+
+        Check for unnecessary calls to onchange in response to script
+        actions.
+
+        * fast/forms/select-script-onchange-expected.txt: Added.
+        * fast/forms/select-script-onchange.html: Added.
+
 2009-06-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

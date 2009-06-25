@@ -198,8 +198,9 @@ void SelectElement::menuListOnChange(SelectElementData& data, Element* element)
     ASSERT(data.usesMenuList());
 
     int selected = selectedIndex(data, element);
-    if (data.lastOnChangeIndex() != selected) {
+    if (data.lastOnChangeIndex() != selected && data.userDrivenChange()) {
         data.setLastOnChangeIndex(selected);
+        data.setUserDrivenChange(false);
         element->dispatchFormControlChangeEvent();
     }
 }
@@ -309,7 +310,7 @@ int SelectElement::selectedIndex(const SelectElementData& data, const Element* e
     return -1;
 }
 
-void SelectElement::setSelectedIndex(SelectElementData& data, Element* element, int optionIndex, bool deselect, bool fireOnChange)
+void SelectElement::setSelectedIndex(SelectElementData& data, Element* element, int optionIndex, bool deselect, bool fireOnChangeNow, bool userDrivenChange)
 {
     const Vector<Element*>& items = data.listItems(element);
     int listIndex = optionToListIndex(data, element, optionIndex);
@@ -335,9 +336,12 @@ void SelectElement::setSelectedIndex(SelectElementData& data, Element* element, 
 
     scrollToSelection(data, element);
 
-    // This only gets called with fireOnChange for menu lists. 
-    if (fireOnChange && data.usesMenuList())
-        menuListOnChange(data, element);
+    // This only gets called with fireOnChangeNow for menu lists. 
+    if (data.usesMenuList()) {
+        data.setUserDrivenChange(userDrivenChange);
+        if (fireOnChangeNow)
+            menuListOnChange(data, element);
+    }
 
     if (Frame* frame = element->document()->frame())
         frame->page()->chrome()->client()->formStateDidChange(element);

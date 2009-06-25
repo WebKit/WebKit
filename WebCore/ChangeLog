@@ -1,3 +1,37 @@
+2009-06-25  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 23721: Changing dropdown's selectedIndex within onchange handler fires another onchange
+        https://bugs.webkit.org/show_bug.cgi?id=23721
+
+        onchange events fire when a SELECT element has
+        focus and the selectedIndex is updated by script in some way--either
+        during another onchange, onkeypress, onfocus, or timer--and then
+        focus is lost. 
+
+        Fixed by making a separate method for user-driven selectedIndex 
+        changes, leaving scripts to use one which doesn't cause onchange to
+        be queued.
+        
+        Test: fast/forms/select-script-onchange.html
+
+        * dom/SelectElement.cpp: check if the pending change is user driven
+        before calling onchange
+        (WebCore::SelectElement::menuListOnChange):
+        (WebCore::SelectElement::setSelectedIndex):
+        * dom/SelectElement.h: store whether the pending change is user driven
+        (WebCore::SelectElementData::userDrivenChange):
+        (WebCore::SelectElementData::setUserDrivenChange):
+        * html/HTMLSelectElement.cpp: split into two methods -- script version
+        [non-user-driven] corresponds to IDL defined property name
+        (WebCore::HTMLSelectElement::setSelectedIndex):
+        (WebCore::HTMLSelectElement::setSelectedIndexByUser):
+        * html/HTMLSelectElement.h: 
+        * rendering/RenderMenuList.cpp: use ByUser method when coming through
+        the renderer
+        (WebCore::RenderMenuList::valueChanged):
+
 2009-06-25  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
