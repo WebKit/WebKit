@@ -211,7 +211,12 @@ namespace WebCore {
         virtual void windowObjectCleared() = 0;
         virtual void documentElementAvailable() = 0;
         virtual void didPerformFirstNavigation() const = 0; // "Navigation" here means a transition from one page to another that ends up in the back/forward list.
-        
+
+#if USE(V8)
+        virtual void didCreateScriptContext() = 0;
+        virtual void didDestroyScriptContext() = 0;
+#endif
+
         virtual void registerForIconNotification(bool listen = true) = 0;
         
 #if PLATFORM(MAC)

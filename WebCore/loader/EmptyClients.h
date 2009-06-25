@@ -283,6 +283,11 @@ public:
 
     virtual void registerForIconNotification(bool) { }
 
+#if USE(V8)
+    virtual void didCreateScriptContext() { }
+    virtual void didDestroyScriptContext() { }
+#endif
+
 #if PLATFORM(MAC)
     virtual NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse* response) const { return response; }
 #endif

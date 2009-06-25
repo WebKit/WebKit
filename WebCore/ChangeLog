@@ -1,3 +1,19 @@
+2009-06-25  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26733
+
+        Add V8-only methods to FrameLoaderClient that V8 can use to send
+        out notifications when it creates/destroys a script context.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::didCreateScriptContext):
+        (WebCore::EmptyFrameLoaderClient::didDestroyScriptContext):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::didCreateScriptContext):
+        (WebCore::FrameLoaderClient::didDestroyScriptContext):
+
 2009-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by David Levin.
