@@ -1,3 +1,17 @@
+2009-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by and done with Tor Arne Vestbø.
+
+        Fix shortcut keyboard handling with plugins on the Qt/Mac build.
+
+        When we receive shortcut events like Ctrl+V then the text in the QKeyEvent is
+        empty. If we're asked to disambiguate the event into a Char keyboard event,
+        we try to detect this situation and still set the text, to ensure that the
+        general event handling sends a key press event after this disambiguation.
+
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+
 2009-06-25  Eric Seidel  <eric@webkit.org>
 
         Build fix only, no review.
