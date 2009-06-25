@@ -1,5 +1,15 @@
 2009-06-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Dave Levin.
+
+        Use unicode() instead of str when reading from bugzilla.
+        Also add Simon Fraser as a reviewer.
+        https://bugs.webkit.org/show_bug.cgi?id=26719
+
+        * Scripts/modules/bugzilla.py:
+
+2009-06-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Reviewed by Simon Hausmann.
 
         Use Q_ASSERT in Qt's DumpRenderTree instead of JSC's ASSERT
