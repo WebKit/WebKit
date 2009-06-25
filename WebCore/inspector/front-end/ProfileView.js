@@ -166,8 +166,8 @@ WebInspector.ProfileView.prototype = {
         for (var index = 0; index < count; ++index)
             this.dataGrid.appendChild(children[index]);
 
-        if (selectedProfileNode && selectedProfileNode._dataGridNode)
-            selectedProfileNode._dataGridNode.selected = true;
+        if (selectedProfileNode)
+            selectedProfileNode.selected = true;
     },
 
     refreshVisibleData: function()
@@ -196,8 +196,7 @@ WebInspector.ProfileView.prototype = {
                 delete profileNode._searchMatchedCallsColumn;
                 delete profileNode._searchMatchedFunctionColumn;
 
-                if (profileNode._dataGridNode)
-                    profileNode._dataGridNode.refresh();
+                profileNode.refresh();
             }
         }
 
@@ -313,7 +312,7 @@ WebInspector.ProfileView.prototype = {
                 profileDataGridNode._searchMatchedTotalColumn ||
                 profileDataGridNode._searchMatchedAverageColumn ||
                 profileDataGridNode._searchMatchedCallsColumn ||
-                profileDataGridNode._searchMatchedFunctionColumn);
+                profileDataGridNode._searchMatchedFunctionColumn)
             {
                 profileDataGridNode.refresh();
                 return true;
@@ -322,48 +321,14 @@ WebInspector.ProfileView.prototype = {
             return false;
         }
 
-        var current = this.dataGrid;
-        var ancestors = [];
-        var nextIndexes = [];
-        var startIndex = 0;
+        var current = this.profileDataGridTree.children[0];
 
         while (current) {
-            var children = current.children;
-            var childrenLength = children.length;
-
-            if (startIndex >= childrenLength) {
-                current = ancestors.pop();
-                startIndex = nextIndexes.pop();
-                continue;
+            if (matchesQuery(current)) {
+                this._searchResults.push({ profileNode: current });
             }
 
-            for (var i = startIndex; i < childrenLength; ++i) {
-                var child = children[i];
-
-                if (matchesQuery(child)) {
-                    if (child._dataGridNode) {
-                        // The child has a data grid node already, no need to remember the ancestors.
-                        this._searchResults.push({ profileNode: child });
-                    } else {
-                        var ancestorsCopy = [].concat(ancestors);
-                        ancestorsCopy.push(current);
-                        this._searchResults.push({ profileNode: child, ancestors: ancestorsCopy });
-                    }
-                }
-
-                if (child.children.length) {
-                    ancestors.push(current);
-                    nextIndexes.push(i + 1);
-                    current = child;
-                    startIndex = 0;
-                    break;
-                }
-
-                if (i === (childrenLength - 1)) {
-                    current = ancestors.pop();
-                    startIndex = nextIndexes.pop();
-                }
-            }
+            current = current.traverseNextNode(false, null, false);
         }
 
         finishedCallback(this, this._searchResults.length);
@@ -419,26 +384,9 @@ WebInspector.ProfileView.prototype = {
         if (!searchResult)
             return;
 
-        var profileNode = this._searchResults[index].profileNode;
-        if (!profileNode._dataGridNode && searchResult.ancestors) {
-            var ancestors = searchResult.ancestors;
-            for (var i = 0; i < ancestors.length; ++i) {
-                var ancestorProfileNode = ancestors[i];
-                var gridNode = ancestorProfileNode._dataGridNode;
-                if (gridNode)
-                    gridNode.expand();
-            }
-
-            // No need to keep the ancestors around.
-            delete searchResult.ancestors;
-        }
-
-        gridNode = profileNode._dataGridNode;
-        if (!gridNode)
-            return;
-
-        gridNode.reveal();
-        gridNode.select();
+        var profileNode = searchResult.profileNode;
+        profileNode.reveal();
+        profileNode.select();
     },
 
     _changeView: function(event)
