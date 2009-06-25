@@ -242,11 +242,11 @@ class Git(SCM):
         return self.run_command("git log --pretty=oneline head...trunk").splitlines()
     
     def working_directory_is_clean(self):
-        return self.run_command("git diff-index head") == ""
+        return self.run_command("git diff-index HEAD") == ""
     
     def clean_working_directory(self):
         # Could run git clean here too, but that wouldn't match working_directory_is_clean
-        self.run_command("git reset --hard head")
+        self.run_command("git reset --hard HEAD")
     
     def update_webkit(self):
         # FIXME: Should probably call update-webkit, no?
@@ -268,7 +268,7 @@ class Git(SCM):
         return "git"
 
     def create_patch_command(self):
-        return "git diff head"
+        return "git diff HEAD"
 
     def commit_with_message(self, message):
         self.commit_locally_with_message(message)
@@ -295,7 +295,7 @@ class Git(SCM):
         # If we're not cherry picking and were only passed one revision, assume "^revision head" aka "revision..head".
         if len(revisions) < 2:
             revisions[0] = "^" + revisions[0]
-            revisions.append("head")
+            revisions.append("HEAD")
         
         rev_list_args = ['git', 'rev-list'] + revisions
         return self.run_command(" ".join(rev_list_args)).splitlines()

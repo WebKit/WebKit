@@ -1,3 +1,15 @@
+2009-06-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        bugzilla-tool apply-patch throws exception in Linux
+        https://bugs.webkit.org/show_bug.cgi?id=26738
+
+        HEAD is case-sensitive in Linux. Convert uses of head to HEAD in
+        the scm module.
+
+        * Scripts/modules/scm.py:
+
 2009-06-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
