@@ -1,5 +1,11 @@
 2009-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Fix the Qt build, add missing StorageAreaSync files to the build.
+
+        * WebCore.pro:
+
+2009-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Reviewed by and done with Tor Arne Vestbø.
 
         Fix shortcut keyboard handling with plugins on the Qt/Mac build.

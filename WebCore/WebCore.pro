@@ -1366,7 +1366,9 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/Storage.h \
         storage/StorageEvent.h \
         storage/SessionStorage.h \
-        storage/SessionStorageArea.h
+        storage/SessionStorageArea.h \
+        storage/StorageSyncManager.h \
+        storage/StorageAreaSync.h
 
     SOURCES += \
         storage/LocalStorage.cpp \
@@ -1375,6 +1377,7 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/LocalStorageThread.cpp \
         storage/Storage.cpp \
         storage/StorageArea.cpp \
+        storage/StorageAreaSync.cpp \
         storage/StorageMap.cpp \
         storage/StorageEvent.cpp \
         storage/SessionStorage.cpp \
