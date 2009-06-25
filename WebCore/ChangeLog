@@ -1,3 +1,16 @@
+2009-06-25  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        Bug 26489: Web Inspector: Typo in DatabaseQuery Error Message
+        https://bugs.webkit.org/show_bug.cgi?id=26489
+
+        Fixed a Typo in a Web Inspector error message.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._queryError):
+
 2009-06-25  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build, add missing StorageAreaSync files to the build.

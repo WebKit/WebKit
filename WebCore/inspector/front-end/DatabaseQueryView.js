@@ -157,7 +157,7 @@ WebInspector.DatabaseQueryView.prototype = {
         else if (error.code == 2)
             var message = WebInspector.UIString("Database no longer has expected version.");
         else
-            var message = WebInspector.UIString("An unexpected error %s occured.", error.code);
+            var message = WebInspector.UIString("An unexpected error %s occurred.", error.code);
 
         this._appendQueryResult(query, message, "error");
     },
