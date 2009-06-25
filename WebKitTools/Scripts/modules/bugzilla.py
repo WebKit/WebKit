@@ -79,6 +79,7 @@ class Bugzilla:
     reviewer_usernames_to_full_names = {
         "abarth" : "Adam Barth",
         "adele" : "Adele Peterson",
+        "aroben" : "Adam Roben",
         "ap" : "Alexey Proskuryakov",
         "ariya.hidayat" : "Ariya Hidayat",
         "beidson" : "Brady Eidson",
@@ -101,6 +102,7 @@ class Bugzilla:
         "staikos" : "George Staikos",
         "timothy" : "Timothy Hatcher",
         "treat" : "Adam Treat",
+        "vestbo" : u'Tor Arne Vestb\xc3',
         "xan.lopez" : "Xan Lopez",
         "zecke" : "Holger Freyther",
         "zimmermann" : "Nikolas Zimmermann",

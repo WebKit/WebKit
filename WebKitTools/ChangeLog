@@ -1,3 +1,11 @@
+2009-06-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add Adam Roben and Tor Arne Vestbø to the reviewers list.
+
+        * Scripts/modules/bugzilla.py:
+
 2009-06-24  Chris Fleizach  <cfleizach@apple.com>
 
         Windows build fix.
