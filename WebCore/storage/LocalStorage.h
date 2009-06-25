@@ -28,7 +28,6 @@
 
 #if ENABLE(DOM_STORAGE)
 
-#include "LocalStorageArea.h"
 #include "SecurityOriginHash.h"
 
 #include <wtf/HashMap.h>
@@ -52,7 +51,7 @@ namespace WebCore {
     private:
         LocalStorage(const String& path);
 
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<LocalStorageArea>, SecurityOriginHash> LocalStorageAreaMap;
+        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> LocalStorageAreaMap;
         LocalStorageAreaMap m_storageAreaMap;
 
         String m_path;

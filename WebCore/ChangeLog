@@ -1,3 +1,48 @@
+2009-06-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26698
+
+        Combined LocalStorageArea and SessionStorageArea into StorageArea since
+        (after my other refactorings) there are no longer substantial
+        differences between the two.
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * storage/LocalStorage.cpp:
+        (WebCore::LocalStorage::storageArea):
+        * storage/LocalStorage.h:
+        * storage/LocalStorageArea.cpp: Removed.
+        * storage/LocalStorageArea.h: Removed.
+        * storage/SessionStorage.cpp:
+        (WebCore::SessionStorage::copy):
+        (WebCore::SessionStorage::storageArea):
+        * storage/SessionStorage.h:
+        * storage/SessionStorageArea.cpp: Removed.
+        * storage/SessionStorageArea.h: Removed.
+        * storage/StorageArea.cpp:
+        (WebCore::StorageArea::createLocalStorage):
+        (WebCore::StorageArea::StorageArea):
+        (WebCore::StorageArea::createSessionStorage):
+        (WebCore::StorageArea::copy):
+        (WebCore::StorageArea::setItem):
+        (WebCore::StorageArea::removeItem):
+        (WebCore::StorageArea::clear):
+        (WebCore::StorageArea::scheduleFinalSync):
+        (WebCore::StorageArea::blockUntilImportComplete):
+        (WebCore::StorageArea::dispatchStorageEvent):
+        * storage/StorageArea.h:
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        (WebCore::StorageAreaSync::syncTimerFired):
+        (WebCore::StorageAreaSync::performImport):
+        * storage/StorageAreaSync.h:
+        * storage/StorageSyncManager.h:
+
 2009-06-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
