@@ -502,7 +502,7 @@
 
 2009-06-24  Rob Buis  <rwlbuis@gmail.com>
 
-        Reviewed by Niko.
+        Reviewed by Eric Seidel.
 
         https://bugs.webkit.org/show_bug.cgi?id=26392
         Bug 26392: In html, modification of xlink:href of an newly inserted svg image does not work.
