@@ -1,5 +1,32 @@
 2009-06-25  Eric Seidel  <eric@webkit.org>
 
+        No review, only completing revert of r45144.
+
+        Add back files deleted by r45144.
+
+        * storage/LocalStorageArea.cpp: Added.
+        (WebCore::LocalStorageArea::create):
+        (WebCore::LocalStorageArea::LocalStorageArea):
+        (WebCore::LocalStorageArea::scheduleFinalSync):
+        (WebCore::LocalStorageArea::itemChanged):
+        (WebCore::LocalStorageArea::itemRemoved):
+        (WebCore::LocalStorageArea::areaCleared):
+        (WebCore::LocalStorageArea::blockUntilImportComplete):
+        (WebCore::LocalStorageArea::dispatchStorageEvent):
+        * storage/LocalStorageArea.h: Added.
+        * storage/SessionStorageArea.cpp: Added.
+        (WebCore::SessionStorageArea::copy):
+        (WebCore::SessionStorageArea::SessionStorageArea):
+        (WebCore::SessionStorageArea::itemChanged):
+        (WebCore::SessionStorageArea::itemRemoved):
+        (WebCore::SessionStorageArea::areaCleared):
+        (WebCore::SessionStorageArea::blockUntilImportComplete):
+        (WebCore::SessionStorageArea::dispatchStorageEvent):
+        * storage/SessionStorageArea.h: Added.
+        (WebCore::SessionStorageArea::create):
+
+2009-06-25  Eric Seidel  <eric@webkit.org>
+
         No review, reverting r45144 only.
 
         Roll out r45144 after 18 test failures appeared on the bots.
