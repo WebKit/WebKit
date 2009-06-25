@@ -1,5 +1,22 @@
 2009-06-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Simon Hausmann.
+
+        Use Q_ASSERT in Qt's DumpRenderTree instead of JSC's ASSERT
+        
+        The WTFReportAssertionFailure function in JSC is not exported when
+        building QtWebKit in both debug and release on Mac, so DRT fails to
+        link.
+        
+        We can revert this patch once the Qt port builds JSC as a separate
+        library, and we add the proper export macros to Assertions.cpp
+
+        * DumpRenderTree/qt/WorkQueue.cpp:
+        (WorkQueue::queue):
+        (WorkQueue::dequeue):
+
+2009-06-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Reviewed by Jan Alonzo.
 
         bugzilla-tool: Add Simon Hausmann as reviewer
