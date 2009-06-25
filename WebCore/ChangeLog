@@ -1,3 +1,67 @@
+2009-06-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26366
+
+        Refactor V8DOMMap to support isolated worlds.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInNewWorld):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::DOMDataStore::InternalDOMWrapperMap::InternalDOMWrapperMap):
+        (WebCore::DOMDataStore::allStores):
+        (WebCore::DOMDataStore::allStoresMutex):
+        (WebCore::DOMDataStore::domData):
+        (WebCore::ScopedDOMDataStore::ScopedDOMDataStore):
+        (WebCore::ScopedDOMDataStore::~ScopedDOMDataStore):
+        (WebCore::StaticDOMDataStore::StaticDOMDataStore):
+        (WebCore::):
+        (WebCore::MainThreadDOMData::MainThreadDOMData):
+        (WebCore::MainThreadDOMData::getStore):
+        (WebCore::ChildThreadDOMData::ChildThreadDOMData):
+        (WebCore::ChildThreadDOMData::getStore):
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::~DOMDataStore):
+        (WebCore::DOMDataStoreHandle::DOMDataStoreHandle):
+        (WebCore::DOMDataStoreHandle::~DOMDataStoreHandle):
+        (WebCore::::forget):
+        (WebCore::getDOMNodeMap):
+        (WebCore::getDOMObjectMap):
+        (WebCore::getActiveDOMObjectMap):
+        (WebCore::getDOMSVGElementInstanceMap):
+        (WebCore::getDOMSVGObjectWithContextMap):
+        (WebCore::DOMData::getCurrent):
+        (WebCore::DOMData::handleWeakObject):
+        (WebCore::DOMData::ensureDeref):
+        (WebCore::weakDOMObjectCallback):
+        (WebCore::weakActiveDOMObjectCallback):
+        (WebCore::weakNodeCallback):
+        (WebCore::weakSVGElementInstanceCallback):
+        (WebCore::weakSVGObjectWithContextCallback):
+        (WebCore::DOMData::derefObject):
+        (WebCore::DOMData::derefDelayedObjects):
+        (WebCore::DOMData::derefDelayedObjectsInCurrentThread):
+        (WebCore::DOMData::removeObjectsFromWrapperMap):
+        (WebCore::removeAllDOMObjectsInCurrentThreadHelper):
+        (WebCore::visitDOMNodesInCurrentThread):
+        (WebCore::visitDOMObjectsInCurrentThread):
+        (WebCore::visitActiveDOMObjectsInCurrentThread):
+        (WebCore::visitDOMSVGElementInstancesInCurrentThread):
+        (WebCore::visitSVGObjectsInCurrentThread):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::DOMDataStoreHandle::getStore):
+        * bindings/v8/V8IsolatedWorld.cpp: Added.
+        (WebCore::getIsolatedWorldKey):
+        (WebCore::contextWeakReferenceCallback):
+        (WebCore::V8IsolatedWorld::evaluate):
+        (WebCore::V8IsolatedWorld::V8IsolatedWorld):
+        (WebCore::V8IsolatedWorld::~V8IsolatedWorld):
+        (WebCore::V8IsolatedWorld::getEntered):
+        * bindings/v8/V8IsolatedWorld.h: Added.
+        (WebCore::V8IsolatedWorld::getDOMDataStore):
+
 2009-06-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.

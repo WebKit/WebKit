@@ -65,6 +65,12 @@ namespace WebCore {
         // as a string.
         ScriptValue evaluate(const ScriptSourceCode&);
 
+        // Executes JavaScript in a new world associated with the web frame. The
+        // script gets its own global scope, its own prototypes for intrinsic
+        // JavaScript objects (String, Array, and so-on), and its own wrappers for
+        // all DOM nodes and DOM constructors.
+        void evaluateInNewWorld(const Vector<ScriptSourceCode>&);
+
         // Executes JavaScript in a new context associated with the web frame. The
         // script gets its own global scope and its own prototypes for intrinsic
         // JavaScript objects (String, Array, and so-on). It shares the wrappers for

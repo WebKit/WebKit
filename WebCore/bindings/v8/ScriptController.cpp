@@ -180,6 +180,11 @@ bool ScriptController::processingUserGesture() const
     return false;
 }
 
+void ScriptController::evaluateInNewWorld(const Vector<ScriptSourceCode>& sources)
+{
+    m_proxy->evaluateInNewWorld(sources);
+}
+
 void ScriptController::evaluateInNewContext(const Vector<ScriptSourceCode>& sources)
 {
     m_proxy->evaluateInNewContext(sources);
