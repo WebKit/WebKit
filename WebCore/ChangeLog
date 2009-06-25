@@ -1,5 +1,14 @@
 2009-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Darin Fisher.
+
+        Update CodeGeneratorV8.pm to sync up with the changes downstream.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Added HTMLFrameSetElement check,
+          FileList as a ref-counted type, and DataGridColumn as typeCanFailConversion.
+
+2009-06-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, build fix.
 
         Add FileList.h include to fix Chromium build.

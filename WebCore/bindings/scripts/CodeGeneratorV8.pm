@@ -945,7 +945,7 @@ sub GenerateBatchedAttributeData
         if ($interfaceName eq "DOMWindow") {
             $getter = "V8Custom::v8DOMWindowEventHandlerAccessorGetter";
             $setter = "V8Custom::v8DOMWindowEventHandlerAccessorSetter";
-        } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "SVGElementInstance") {
+        } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "SVGElementInstance" || $interfaceName eq "HTMLFrameSetElement") {
             $getter = "V8Custom::v8ElementEventHandlerAccessorGetter";
             $setter = "V8Custom::v8ElementEventHandlerAccessorSetter";
         } else {
@@ -1603,6 +1603,7 @@ sub IsRefPtrType
     return 1 if $type eq "Element";
     return 1 if $type eq "EntityReference";
     return 1 if $type eq "Event";
+    return 1 if $type eq "FileList";
     return 1 if $type eq "HTMLCollection";
     return 1 if $type eq "HTMLDocument";
     return 1 if $type eq "HTMLElement";
@@ -1706,6 +1707,7 @@ my %typeCanFailConversion = (
     "AtomicString" => 0,
     "Attr" => 1,
     "CompareHow" => 0,
+    "DataGridColumn" => 0,
     "DOMString" => 0,
     "DOMWindow" => 0,
     "DocumentType" => 0,
