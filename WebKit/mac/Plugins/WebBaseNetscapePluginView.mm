@@ -358,6 +358,9 @@ using namespace WebCore;
     if (_isStarted)
         return;
     
+    if (_triedAndFailedToCreatePlugin)
+        return;
+    
     ASSERT([self webView]);
     
     if (![[[self webView] preferences] arePlugInsEnabled])
@@ -379,8 +382,10 @@ using namespace WebCore;
     if (!wasDeferring)
         page->setDefersLoading(false);
 
-    if (!result)
+    if (!result) {
+        _triedAndFailedToCreatePlugin = YES;
         return;
+    }
     
     _isStarted = YES;
     [[self webView] addPluginInstanceView:self];

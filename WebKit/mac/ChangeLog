@@ -1,3 +1,18 @@
+2009-06-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6989017> 
+        REGRESSION (SnowLeopard): RealPlayer content replays when opening a new tab or switching back to the RealPlayer tab
+        
+        If a plug-in fails in NPP_New, we would try to recreate it whenever the preferences for a web view would change. 
+        
+        Fix this by setting a flag when we fail to instantiate the plug-in, so we only try once.
+        
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView start]):
+
 2009-06-25  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser  <simon.fraser@apple.com>.
