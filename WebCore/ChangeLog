@@ -1,3 +1,18 @@
+2009-06-25  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26436
+
+        Windows Chromium bug fix: save context of destination canvas in
+        TransparencyWin::compositeTextComposite() before the function
+        modifies the context.
+
+        Test: fast/canvas/translate-text.html
+
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::compositeTextComposite):
+
 2009-06-25  Patrick Mueller  <Patrick_Mueller@us.ibm.com>
 
         Reviewed by Timothy Hatcher.
