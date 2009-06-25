@@ -959,12 +959,14 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
         last->scheduleRelayout();
 }
 
-inline void makeMatrixRenderable(TransformationMatrix& matrix)
+inline void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
 {
 #if !ENABLE(3D_RENDERING)
+    UNUSED_PARAM(has3DRendering);
     matrix.makeAffine();
 #else
-    UNUSED_PARAM(matrix);
+    if (!has3DRendering)
+        matrix.makeAffine();
 #endif
 }
 

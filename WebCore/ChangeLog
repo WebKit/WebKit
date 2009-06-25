@@ -1,3 +1,46 @@
+2009-06-25  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser  <simon.fraser@apple.com>.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26651
+        
+        Preference is named "WebKitAcceleratedCompositingEnabled"
+        and is a boolean value. When false, prevents compositing layers from
+        being created, which prevents hardware animation from running.
+        Also forces video to do software rendering. Added a cache for
+        the flag in RenderLayerCompositing and made it all work
+        on-the-fly when the flag is changed while a page is loaded.
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayers):
+        * page/Settings.cpp:
+        (WebCore::setNeedsReapplyStylesInAllFrames):
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setAcceleratedCompositingEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::acceleratedCompositingEnabled):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasAcceleratedCompositing):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::currentTransform):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateLayerTransform):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::enableCompositingMode):
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingEnabledFlag):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::canAccelerateVideoRendering):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::needsToBeComposited):
+        (WebCore::RenderLayerCompositor::destroyRootPlatformLayer):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::hasAcceleratedCompositing):
+        * rendering/RenderObject.h:
+        (WebCore::makeMatrixRenderable):
+
 2009-06-25  Jian Li  <jianli@chromium.org>
 
         Reviewed by Dimitri Glazkov.

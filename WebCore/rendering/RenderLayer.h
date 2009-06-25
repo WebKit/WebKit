@@ -289,6 +289,9 @@ public:
     // Allows updates of layer content without repainting.
     void rendererContentChanged();
 #endif
+
+    // Returns true if the accelerated compositing is enabled
+    bool hasAcceleratedCompositing() const;
     
     void updateLayerPosition();
     void updateLayerPositions(bool doFullRepaint = false, bool checkForRepaint = true);

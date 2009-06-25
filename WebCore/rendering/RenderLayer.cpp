@@ -238,6 +238,15 @@ void RenderLayer::rendererContentChanged()
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
+bool RenderLayer::hasAcceleratedCompositing() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    return compositor()->hasAcceleratedCompositing();
+#else
+    return false;
+#endif
+}
+
 void RenderLayer::setStaticY(int staticY)
 {
     if (m_staticY == staticY)
@@ -339,7 +348,7 @@ void RenderLayer::updateTransform()
         ASSERT(box);
         m_transform->makeIdentity();
         box->style()->applyTransform(*m_transform, box->borderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
-        makeMatrixRenderable(*m_transform);
+        makeMatrixRenderable(*m_transform, hasAcceleratedCompositing());
     }
 
     if (had3DTransform != has3DTransform())
@@ -356,7 +365,7 @@ TransformationMatrix RenderLayer::currentTransform() const
         TransformationMatrix currTransform;
         RefPtr<RenderStyle> style = renderer()->animation()->getAnimatedStyleForRenderer(renderer());
         style->applyTransform(currTransform, renderBox()->borderBoxRect().size(), RenderStyle::IncludeTransformOrigin);
-        makeMatrixRenderable(currTransform);
+        makeMatrixRenderable(currTransform, hasAcceleratedCompositing());
         return currTransform;
     }
 #endif

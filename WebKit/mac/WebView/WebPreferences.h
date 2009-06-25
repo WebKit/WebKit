@@ -437,6 +437,17 @@ caching behavior.
 */
 - (WebCacheModel)cacheModel;
 
+/*!
+    @method acceleratedCompositingEnabled
+*/
+- (BOOL)acceleratedCompositingEnabled;
+
+/*!
+    @method setAcceleratedCompositingEnabled:
+    @param enabled
+*/
+- (void)setAcceleratedCompositingEnabled:(BOOL)enabled;
+
 @end
 
 #undef WebNSUInteger

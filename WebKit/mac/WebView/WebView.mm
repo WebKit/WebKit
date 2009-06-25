@@ -1294,6 +1294,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setZoomsTextOnly([preferences zoomsTextOnly]);
     settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
+    settings->setAcceleratedCompositingEnabled([preferences acceleratedCompositingEnabled]);
 }
 
 static inline IMP getMethod(id o, SEL s)
