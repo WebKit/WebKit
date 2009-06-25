@@ -1,3 +1,15 @@
+2009-06-25  Eric Seidel  <eric@webkit.org>
+
+        No review, just skipping a new test.
+
+        Skip new test on platforms missing eventSender.beginDragWithFiles
+        Test: http/tests/security/clipboard/clipboard-file-access.html
+        https://bugs.webkit.org/show_bug.cgi?id=25916
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2009-06-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
