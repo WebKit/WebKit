@@ -71,8 +71,7 @@ void HTMLStyleElement::insertedIntoDocument()
 void HTMLStyleElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
-    if (document()->renderer())
-        document()->removeStyleSheetCandidateNode(this);
+    document()->removeStyleSheetCandidateNode(this);
     StyleElement::removedFromDocument(document());
 }
 

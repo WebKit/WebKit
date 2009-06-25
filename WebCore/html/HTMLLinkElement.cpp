@@ -225,11 +225,11 @@ void HTMLLinkElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
 
+    document()->removeStyleSheetCandidateNode(this);
+
     // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
-    if (document()->renderer()) {
-        document()->removeStyleSheetCandidateNode(this);
+    if (document()->renderer())
         document()->updateStyleSelector();
-    }
 }
 
 void HTMLLinkElement::finishParsingChildren()

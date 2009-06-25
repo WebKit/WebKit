@@ -1,3 +1,14 @@
+2009-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=26671
+          <rdar://problem/7001880> Safari 4.0 crashes in
+          WebCore::DOMTimer::fired()
+
+        * fast/dom/style-sheet-candidate-remove-unrendered-document-expected.txt: Added.
+        * fast/dom/style-sheet-candidate-remove-unrendered-document.html: Added.
+
 2009-06-25  Eric Seidel  <eric@webkit.org>
 
         No review, just skipping a new test.
