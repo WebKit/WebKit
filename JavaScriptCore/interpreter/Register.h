@@ -31,6 +31,7 @@
 
 #include "JSValue.h"
 #include <wtf/Assertions.h>
+#include <wtf/FastAllocBase.h>
 #include <wtf/VectorTraits.h>
 
 namespace JSC {
@@ -47,7 +48,7 @@ namespace JSC {
 
     typedef ExecState CallFrame;
 
-    class Register : public FastAllocBase {
+    class Register : public WTF::FastAllocBase {
     public:
         Register();
         Register(JSValue);

@@ -1,3 +1,11 @@
+2009-06-24  David Levin  <levin@chromium.org>
+
+        Fix all builds.
+
+        * bytecode/CodeBlock.h:
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Register.h:
+
 2009-06-24  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Maciej Stachowiak.

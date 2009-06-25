@@ -38,6 +38,7 @@
 #include "Nodes.h"
 #include "RegExp.h"
 #include "UString.h"
+#include <wtf/FastAllocBase.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -214,7 +215,7 @@ namespace JSC {
     }
 #endif
 
-    class CodeBlock : public FastAllocBase {
+    class CodeBlock : public WTF::FastAllocBase {
         friend class JIT;
     public:
         CodeBlock(ScopeNode* ownerNode);

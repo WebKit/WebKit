@@ -1,3 +1,9 @@
+2009-06-24  David Levin  <levin@chromium.org>
+
+        Fix all builds.
+
+        * ForwardingHeaders/wtf/FastAllocBase.h: Added.
+
 2009-06-24  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
