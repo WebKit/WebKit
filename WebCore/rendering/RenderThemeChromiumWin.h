@@ -81,11 +81,8 @@ namespace WebCore {
         // entire menulist.
         virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
-        // Provide a way to pass the default font size from the Settings object
-        // to the render theme.  FIXME: http://b/1129186 A cleaner way would be
-        // to remove the default font size from this object and have callers
-        // that need the value to get it directly from the appropriate Settings
-        // object.
+        // Override RenderThemeChromiumSkia's setDefaultFontSize method to also reset the local font property caches.
+        // See comment in RenderThemeChromiumSkia::setDefaultFontSize() regarding ugliness of this hack.
         static void setDefaultFontSize(int);
 
     protected:
