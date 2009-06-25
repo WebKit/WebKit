@@ -698,27 +698,47 @@ bool RenderLayerBacking::paintingGoesToWindow() const
 
 void RenderLayerBacking::setContentsNeedDisplay()
 {
-    if (m_graphicsLayer)
+    bool needViewUpdate = false;
+
+    if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
         m_graphicsLayer->setNeedsDisplay();
-    if (m_contentsLayer)
+        needViewUpdate = true;
+    }
+    
+    if (m_contentsLayer && m_contentsLayer->drawsContent()) {
         m_contentsLayer->setNeedsDisplay();
+        needViewUpdate = true;
+    }
+    
+    // Make sure layout happens before we get rendered again.
+    if (needViewUpdate)
+        compositor()->scheduleViewUpdate();
 }
 
 // r is in the coordinate space of the layer's render object
 void RenderLayerBacking::setContentsNeedDisplayInRect(const IntRect& r)
 {
-    if (m_graphicsLayer) {
+    bool needViewUpdate = false;
+
+    if (m_graphicsLayer && m_graphicsLayer->drawsContent()) {
         FloatPoint dirtyOrigin = contentsToGraphicsLayerCoordinates(m_graphicsLayer, FloatPoint(r.x(), r.y()));
         FloatRect dirtyRect(dirtyOrigin, r.size());
         FloatRect bounds(FloatPoint(), m_graphicsLayer->size());
-        if (bounds.intersects(dirtyRect))
+        if (bounds.intersects(dirtyRect)) {
             m_graphicsLayer->setNeedsDisplayInRect(dirtyRect);
+            needViewUpdate = true;
+        }
     }
 
-    if (m_contentsLayer) {
+    if (m_contentsLayer && m_contentsLayer->drawsContent()) {
         // FIXME: do incremental repaint
         m_contentsLayer->setNeedsDisplay();
+        needViewUpdate = true;
     }
+
+    // Make sure layout happens before we get rendered again.
+    if (needViewUpdate)
+        compositor()->scheduleViewUpdate();
 }
 
 static void setClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)

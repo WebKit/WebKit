@@ -1,3 +1,19 @@
+2009-06-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        <rdar://problem/6450239&6574516>
+    
+        Fix flashing issues caused by compositing layers rendering content before
+        a deferred layout has happened. Because the -viewWillDraw machinery doesn't
+        work for composited layers, we need to use scheduleViewUpdate() to queue
+        up a layout via the run loop observer in WebKit, whenever we know we
+        are going to be painting soon.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+
 2009-06-24  David Levin  <levin@chromium.org>
 
         Fix all builds.
