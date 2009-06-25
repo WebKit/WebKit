@@ -89,6 +89,7 @@ class Bugzilla:
         "eric" : "Eric Seidel",
         "fishd" : "Darin Fisher",
         "gns" : "Gustavo Noronha",
+        "hausmann" : "Simon Hausmann",
         "hyatt" : "David Hyatt",
         "jmalonzo" : "Jan Alonzo",
         "justin.garcia" : "Justin Garcia",
