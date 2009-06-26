@@ -546,8 +546,8 @@ void EventHandler::mouseDown(NSEvent *event)
     m_mouseDownView = nil;
     
     CurrentEventScope scope(event);
-    m_mouseDown = currentPlatformMouseEvent();
-    handleMousePressEvent(m_mouseDown);
+
+    handleMousePressEvent(currentPlatformMouseEvent());
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

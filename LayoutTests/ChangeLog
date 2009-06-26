@@ -1,3 +1,15 @@
+2009-06-26  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Layout test for making sure the client X Y coordinates of the event
+        in a dragstart handler are correct.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26723
+
+        * editing/selection/drag-start-event-client-x-y-expected.txt: Added.
+        * editing/selection/drag-start-event-client-x-y.html: Added.
+
 2009-06-26  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

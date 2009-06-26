@@ -1,3 +1,21 @@
+2009-06-26  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Fix: https://bugs.webkit.org/show_bug.cgi?id=26723
+        Where the m_mouseDown event was never being set on windows, so the
+        client X and Y coordinates were always being reported as zero in a
+        dragstart handler.
+
+        Test: editing/selection/drag-start-event-client-x-y.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        Set the m_mouseDown event when the mouse press is handled.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::mouseDown):
+        Removed now redundant setting of m_mouseDown.
+
 2009-06-26  Brady Eidson  <beidson@apple.com>
 
         Tiger build fix
