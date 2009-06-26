@@ -1,3 +1,10 @@
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
+        Fix Tiger results for the new mime type layout test.
+
+        * platform/mac-tiger/fast/loader: Added.
+        * platform/mac-tiger/fast/loader/file-url-mimetypes-expected.txt: Added.
+
 2009-06-26  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Mark Rowe.
