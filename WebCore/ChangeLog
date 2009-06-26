@@ -2,6 +2,30 @@
 
         Reviewed by Simon Fraser.
 
+        Show the fullscreen button only if the backend has support for it.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26661
+
+        No test since this is not reachable via the DOM.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::supportsFullscreen): new
+        * html/HTMLVideoElement.h:
+        (WebCore::HTMLVideoElement::supportsFullscreen): new
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::supportsFullscreen): new
+        (WebCore::MediaPlayer::supportsFullscreen): new
+        * platform/graphics/MediaPlayer.h: new
+        * platform/graphics/MediaPlayerPrivate.h: new
+        (WebCore::MediaPlayerPrivateInterface::supportsFullscreen): new
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::rendererIsNeeded): new
+        * rendering/MediaControlElements.h:
+
+2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
         <rdar://problem/7007776> Controller doesn't automatically update counters when file
         is playing ( http://www.jazzguitar.be/mp3/Michael%20Lewis%20-%20SSSJ.mp3 )
 

@@ -107,6 +107,7 @@ public:
     static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
 
+    bool supportsFullscreen() const;
     IntSize naturalSize();
     bool hasVideo();
     

@@ -46,6 +46,8 @@ public:
     virtual void play() = 0;
     virtual void pause() = 0;    
 
+    virtual bool supportsFullscreen() const { return false; };
+
     virtual IntSize naturalSize() const = 0;
 
     virtual bool hasVideo() const = 0;

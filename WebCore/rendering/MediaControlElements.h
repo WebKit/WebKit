@@ -152,6 +152,7 @@ class MediaControlFullscreenButtonElement : public MediaControlInputElement {
 public:
     MediaControlFullscreenButtonElement(Document*, HTMLMediaElement*);
     virtual void defaultEventHandler(Event*);
+    virtual bool rendererIsNeeded(RenderStyle*);
 };
 
 // ----------------------------

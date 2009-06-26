@@ -339,6 +339,12 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
     HTMLInputElement::defaultEventHandler(event);
 }
 
+bool MediaControlFullscreenButtonElement::rendererIsNeeded(RenderStyle* style)
+{
+    return m_mediaElement->supportsFullscreen() && MediaControlInputElement::rendererIsNeeded(style);
+}
+
+
 // ----------------------------
 
 } //namespace WebCore
