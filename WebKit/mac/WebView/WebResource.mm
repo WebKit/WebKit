@@ -366,7 +366,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     // Copying it will also cause a performance regression.
     return [self _initWithData:data
                            URL:URL
-                      MIMEType:[response _webcore_MIMEType]
+                      MIMEType:[response MIMEType]
               textEncodingName:[response textEncodingName]
                      frameName:nil
                       response:response

@@ -121,6 +121,9 @@ public:
 
     bool dumpResourceLoadCallbacks() const { return m_dumpResourceLoadCallbacks; }
     void setDumpResourceLoadCallbacks(bool dumpResourceLoadCallbacks) { m_dumpResourceLoadCallbacks = dumpResourceLoadCallbacks; }
+    
+    bool dumpResourceResponseMIMETypes() const { return m_dumpResourceResponseMIMETypes; }
+    void setDumpResourceResponseMIMETypes(bool dumpResourceResponseMIMETypes) { m_dumpResourceResponseMIMETypes = dumpResourceResponseMIMETypes; }
 
     bool dumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
     void setDumpFrameLoadCallbacks(bool dumpFrameLoadCallbacks) { m_dumpFrameLoadCallbacks = dumpFrameLoadCallbacks; }
@@ -176,6 +179,7 @@ private:
     bool m_dumpTitleChanges;
     bool m_dumpEditingCallbacks;
     bool m_dumpResourceLoadCallbacks;
+    bool m_dumpResourceResponseMIMETypes;
     bool m_dumpFrameLoadCallbacks;
     bool m_callCloseOnWebViews;
     bool m_canOpenWindows;

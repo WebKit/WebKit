@@ -419,7 +419,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
                                                         contentURL:[response URL]
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
-                                                          MIMEType:[response _webcore_MIMEType]];
+                                                          MIMEType:[response MIMEType]];
         [_dataSource _documentLoader]->cancelMainResourceLoad(error);
         [error release];
     }        

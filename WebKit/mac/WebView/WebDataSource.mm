@@ -189,7 +189,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSString *)_responseMIMEType
 {
-    return [[self response] _webcore_MIMEType];
+    return [[self response] MIMEType];
 }
 
 - (BOOL)_transferApplicationCache:(NSString*)destinationBundleIdentifier

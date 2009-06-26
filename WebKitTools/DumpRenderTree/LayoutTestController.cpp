@@ -50,6 +50,7 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
     , m_dumpTitleChanges(false)
     , m_dumpEditingCallbacks(false)
     , m_dumpResourceLoadCallbacks(false)
+    , m_dumpResourceResponseMIMETypes(false)
     , m_dumpFrameLoadCallbacks(false)
     , m_callCloseOnWebViews(true)
     , m_canOpenWindows(false)
@@ -128,6 +129,13 @@ static JSValueRef dumpResourceLoadCallbacksCallback(JSContextRef context, JSObje
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->setDumpResourceLoadCallbacks(true);
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef dumpResourceResponseMIMETypesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setDumpResourceResponseMIMETypes(true);
     return JSValueMakeUndefined(context);
 }
 
@@ -873,6 +881,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "dumpDatabaseCallbacks", dumpDatabaseCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpEditingCallbacks", dumpEditingCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpResourceLoadCallbacks", dumpResourceLoadCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "dumpResourceResponseMIMETypes", dumpResourceResponseMIMETypesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpSelectionRect", dumpSelectionRectCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpSourceAsWebArchive", dumpSourceAsWebArchiveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpStatusCallbacks", dumpStatusCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

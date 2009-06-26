@@ -1,3 +1,39 @@
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        <rdar://problem/6961578> REGRESSION (r43511): Opening .fdf files from Acrobat Professional fails
+
+        When we disabled content sniffing for file urls we lost knowledge of many file extensions that we
+        didn't intend to lose.  Turns out the CoreTypes UTI database doesn't know about every extension Gatekeeper
+        knew about.
+
+        By comparing CoreTypes' database to Gatekeepers, this patch adds a hardcoded list of file extension to MIME
+        type mappings that are missing in CoreType's database.
+
+        Test: platform/mac/fast/loader/file-url-mimetypes.html
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): Move the MIME Type swizzling code to
+          WebCoreURLResponse.
+
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit): _webcore_MIMEType -> MIMEType, as we now have only one place
+          where we do all MIMEType correction.
+
+        * platform/network/mac/WebCoreURLResponse.h: Remove _webcore_MIMEType, as it is now folded into the swizzled
+          implementation of MIMEType.
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (createBinaryExtensionsSet):
+        (createExtensionToMIMETypeMap):
+        (swizzleMIMETypeMethodIfNecessary):
+        (webNSURLResponseMIMEType): If it's a file URL and there's no MIME type, see if the extension exists in the 
+          extension -> MIME type map before turning to the default MIME type.  Also roll in what was previously
+          implemented in _webcore_MIMEType.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::~SVGImage): Tweak this ASSERT - SVGImages might get destroyed without ever having a client.
+
 2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.

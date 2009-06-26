@@ -95,7 +95,7 @@ SVGImage::~SVGImage()
     }
 
     // Verify that page teardown destroyed the Chrome
-    ASSERT(!m_chromeClient->image());
+    ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
 void SVGImage::setContainerSize(const IntSize& containerSize)

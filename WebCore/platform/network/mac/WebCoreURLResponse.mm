@@ -27,10 +27,17 @@
  */
 
 #import "config.h"
-
 #import "WebCoreURLResponse.h"
 
-#ifndef BUILDING_ON_TIGER
+#import "MIMETypeRegistry.h"
+#import <objc/objc-class.h>
+#import <wtf/Assertions.h>
+
+// <rdar://problem/5321972> Plain text document from HTTP server detected as application/octet-stream
+// When we sniff a resource as application/octet-stream but the http response headers had "text/plain",
+// we have a hard decision to make about which of the two generic MIME types to go with.
+// When the URL's extension is a known binary type, we'll go with application/octet-stream.
+// Otherwise, we'll trust the server.
 static NSSet *createBinaryExtensionsSet()
 {
     return [[NSSet alloc] initWithObjects:
@@ -188,35 +195,184 @@ static NSSet *createBinaryExtensionsSet()
         nil
     ];
 }
+
+// <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
+// When we disabled content sniffing for file URLs we caused problems with these 100+ extensions that CoreTypes
+// doesn't know about.
+// If CoreTypes is ever brought up to speed we can remove this table and associated code.
+static NSDictionary *createExtensionToMIMETypeMap()
+{
+    return [[NSDictionary alloc] initWithObjectsAndKeys:
+        @"application/postscript", @"ai",
+        @"text/plain", @"asc",
+        @"application/x-bcpio", @"bcpio",
+        @"image/bmp", @"bmp",
+        @"application/x-netcdf", @"cdf",
+        @"application/octet-stream", @"class",
+        @"application/x-gzip", @"cpgz",
+        @"application/x-cpio", @"cpio",
+        @"application/mac-compactpro", @"cpt",
+        @"application/x-csh", @"csh",
+        @"text/css", @"css",
+        @"application/x-director", @"dcr",
+        @"application/x-director", @"dir",
+        @"application/x-diskcopy", @"dmg",
+        @"application/octet-stream", @"dms",
+        @"application/x-dvi", @"dvi",
+        @"application/x-director", @"dxr",
+        @"application/postscript", @"eps",
+        @"text/x-setext", @"etx",
+        @"application/andrew-inset", @"ez",
+        @"application/vnd.fdf", @"fdf",
+        @"application/octet-stream", @"fla",
+        @"application/x-filemaker", @"fp",
+        @"application/x-filemaker", @"fp2",
+        @"application/x-filemaker", @"fp3",
+        @"application/x-filemaker", @"fp4",
+        @"application/x-filemaker", @"fp5",
+        @"application/x-filemaker", @"fp6",
+        @"application/x-hdf", @"hdf",
+        @"x-conference/x-cooltalk", @"ice",
+        @"image/x-icon", @"ico",
+        @"text/calendar", @"ics",
+        @"image/ief", @"ief",
+        @"model/iges", @"iges",
+        @"model/iges", @"igs",
+        @"application/octet-stream", @"iso",
+        @"text/html", @"jhtml",
+        @"application/x-latex", @"latex",
+        @"application/octet-stream", @"lha",
+        @"application/octet-stream", @"lzh",
+        @"audio/x-mpegurl", @"m3u",
+        @"audio/x-m4p", @"m4p",
+        @"image/x-macpaint", @"mac",
+        @"application/x-troff-man", @"man",
+        @"application/x-troff-me", @"me",
+        @"model/mesh", @"mesh",
+        @"application/vnd.mif", @"mif",
+        @"video/x-sgi-movie", @"movie",
+        @"audio/mpeg", @"mp2",
+        @"audio/mpeg", @"mpga",
+        @"application/x-troff-ms", @"ms",
+        @"model/mesh", @"msh",
+        @"video/vnd.mpegurl", @"mxu",
+        @"application/x-netcdf", @"nc",
+        @"application/oda", @"oda",
+        @"image/x-portable-bitmap", @"pbm",
+        @"image/x-pcx", @"pcx",
+        @"chemical/x-pdb", @"pdb",
+        @"image/x-portable-graymap", @"pgm",
+        @"application/x-chess-pgn", @"pgn",
+        @"audio/scpls", @"pls",
+        @"image/x-portable-anymap", @"pnm",
+        @"image/x-macpaint", @"pnt",
+        @"image/x-macpaint", @"pntg",
+        @"image/x-portable-pixmap", @"ppm",
+        @"image/x-cmu-raster", @"ras",
+        @"image/x-rgb", @"rgb",
+        @"application/x-troff", @"roff",
+        @"audio/x-pn-realaudio-plugin", @"rpm",
+        @"text/richtext", @"rtx",
+        @"text/sgml", @"sgm",
+        @"text/sgml", @"sgml",
+        @"application/x-sh", @"sh",
+        @"application/x-shar", @"shar",
+        @"model/mesh", @"silo",
+        @"application/x-koan", @"skd",
+        @"application/x-koan", @"skm",
+        @"application/x-koan", @"skp",
+        @"application/x-koan", @"skt",
+        @"application/x-diskcopy", @"smi",
+        @"application/octet-stream", @"so",
+        @"application/x-futuresplash", @"spl",
+        @"application/x-wais-source", @"src",
+        @"application/x-sv4cpio", @"sv4cpio",
+        @"application/x-sv4crc", @"sv4crc",
+        @"application/x-shockwave-flash", @"swf",
+        @"application/x-troff", @"t",
+        @"image/x-targa", @"targa",
+        @"application/x-tcl", @"tcl",
+        @"application/x-tex", @"tex",
+        @"application/x-texinfo", @"texi",
+        @"application/x-texinfo", @"texinfo",
+        @"application/x-gzip", @"tgz",
+        @"application/x-bittorrent", @"torrent",
+        @"application/x-troff", @"tr",
+        @"text/tab-separated-values", @"tsv",
+        @"application/x-ustar", @"ustar",
+        @"application/x-cdlink", @"vcd",
+        @"model/vrml", @"vrml",
+        @"image/vnd.wap.wbmp", @"wbmp",
+        @"application/vnd.wap.wbxml", @"wbxml",
+        @"application/x-webarchive", @"webarchive",
+        @"application/x-ms-wmd", @"wmd",
+        @"text/vnd.wap.wml", @"wml",
+        @"application/vnd.wap.wmlc", @"wmlc",
+        @"text/vnd.wap.wmlscript", @"wmls",
+        @"application/vnd.wap.wmlscriptc", @"wmlsc",
+        @"model/vrml", @"wrl",
+        @"application/vnd.adobe.xdp+xml", @"xdp",
+        @"application/vnd.adobe.xfd+xml", @"xfd",
+        @"application/vnd.adobe.xfdf", @"xfdf",
+        @"image/x-xpixmap", @"xpm",
+        @"text/xml", @"xsl",
+        @"image/x-xwindowdump", @"xwd",
+        @"chemical/x-xyz", @"xyz",
+        @"application/x-compress", @"z",
+        nil
+    ];
+}
+
+static IMP oldNSURLResponseMIMETypeIMP = 0;
+static NSString *webNSURLResponseMIMEType(id, SEL);
+
+void swizzleMIMETypeMethodIfNecessary()
+{
+    if (!oldNSURLResponseMIMETypeIMP) {
+        Method nsURLResponseMIMETypeMethod = class_getInstanceMethod(objc_getClass("NSURLResponse"), @selector(MIMEType));
+        ASSERT(nsURLResponseMIMETypeMethod);
+        oldNSURLResponseMIMETypeIMP = method_setImplementation(nsURLResponseMIMETypeMethod, (IMP)webNSURLResponseMIMEType);
+    }
+}
+
+static NSString *webNSURLResponseMIMEType(id self, SEL _cmd)
+{
+    ASSERT(oldNSURLResponseMIMETypeIMP);
+    NSString *result = oldNSURLResponseMIMETypeIMP(self, _cmd);
+
+    if (!result) {
+        // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
+        // When this radar is resolved, we can remove this file:// url specific code.
+        NSURL *url = [self URL];
+        if ([url isFileURL]) {
+            if (NSString *extension = [[url path] pathExtension]) {
+                static NSDictionary *extensionMap = createExtensionToMIMETypeMap();
+                result = [extensionMap objectForKey:[extension lowercaseString]];
+            }
+        }
+    }
+    
+    if (!result) {
+        static NSString *defaultMIMETypeString = [(NSString *)WebCore::defaultMIMEType() retain];
+        result = defaultMIMETypeString;
+    }
+
+#ifndef BUILDING_ON_TIGER
+    // <rdar://problem/5321972> Plain text document from HTTP server detected as application/octet-stream
+    // Make the best guess when deciding between "generic binary" and "generic text" using a table of known binary MIME types.
+    if ([result isEqualToString:@"application/octet-stream"] && [self respondsToSelector:@selector(allHeaderFields)] && [[[self allHeaderFields] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"]) {
+        static NSSet *binaryExtensions = createBinaryExtensionsSet();
+        if (![binaryExtensions containsObject:[[[self suggestedFilename] pathExtension] lowercaseString]])
+            result = @"text/plain";
+    }
+
 #endif
 
-@implementation NSURLResponse (WebCoreURLResponse)
-
-- (NSString *)_webcore_MIMEType
-{
-    NSString *MIMEType = [self MIMEType];
 #ifdef BUILDING_ON_LEOPARD
     // Workaround for <rdar://problem/5539824>
-    if ([MIMEType isEqualToString:@"text/xml"])
-        return @"application/xml";
+    if ([result isEqualToString:@"text/xml"])
+        result = @"application/xml";
 #endif
-    return MIMEType;
+
+    return result;
 }
-
-@end
-
-@implementation NSHTTPURLResponse (WebCoreURLResponse)
-
-- (NSString *)_webcore_MIMEType
-{
-    NSString *MIMEType = [self MIMEType];
-#ifndef BUILDING_ON_TIGER
-    if ([MIMEType isEqualToString:@"application/octet-stream"] && [[[self allHeaderFields] objectForKey:@"Content-Type"] hasPrefix:@"text/plain"]) {
-        static NSSet *binaryExtensions = createBinaryExtensionsSet();
-        return [binaryExtensions containsObject:[[[self suggestedFilename] pathExtension] lowercaseString]] ? MIMEType : @"text/plain";
-    }
-#endif
-    return MIMEType;
-}
-
-@end

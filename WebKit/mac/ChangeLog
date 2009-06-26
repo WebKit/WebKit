@@ -1,3 +1,22 @@
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        <rdar://problem/6961578> REGRESSION (r43511): Opening .fdf files from Acrobat Professional fails
+
+        Replace all usage of the now obsolete [NSURLResponse _webcore_MIMEType].
+
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (WebNetscapePluginStream::didReceiveResponse):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView pluginView:receivedData:]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController pluginView:receivedResponse:]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _responseMIMEType]):
+        * WebView/WebResource.mm:
+        (-[WebResource _initWithData:URL:response:]):
+
 2009-06-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Sam Weinig.

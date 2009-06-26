@@ -348,7 +348,7 @@ void WebNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*, co
         // startStreamResponseURL:... will null-terminate.
     }
     
-    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r _webcore_MIMEType], theHeaders);
+    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);
 }
 
 void WebNetscapePluginStream::startStreamWithResponse(NSURLResponse *response)

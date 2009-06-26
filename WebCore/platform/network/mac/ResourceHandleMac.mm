@@ -46,10 +46,6 @@
 #import "WebCoreURLResponse.h"
 #import <wtf/UnusedParam.h>
 
-#ifndef BUILDING_ON_TIGER
-#import <objc/objc-class.h>
-#endif
-
 #ifdef BUILDING_ON_TIGER
 typedef int NSInteger;
 #endif
@@ -92,9 +88,6 @@ using namespace WebCore;
 @end
 
 static NSString *WebCoreSynchronousLoaderRunLoopMode = @"WebCoreSynchronousLoaderRunLoopMode";
-
-static IMP oldNSURLResponseMIMETypeIMP = 0;
-static NSString *webNSURLResponseMIMEType(id, SEL);
 
 #endif
 
@@ -633,11 +626,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     CallbackGuard guard;
 
 #ifndef BUILDING_ON_TIGER
-    if (!oldNSURLResponseMIMETypeIMP) {
-        Method nsURLResponseMIMETypeMethod = class_getInstanceMethod(objc_getClass("NSURLResponse"), @selector(MIMEType));
-        ASSERT(nsURLResponseMIMETypeMethod);
-        oldNSURLResponseMIMETypeIMP = method_setImplementation(nsURLResponseMIMETypeMethod, (IMP)webNSURLResponseMIMEType);
-    }
+    swizzleMIMETypeMethodIfNecessary();
 #endif
 
     if ([m_handle->request().nsURLRequest() _propertyForKey:@"ForceHTMLMIMEType"])
@@ -653,7 +642,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         DEFINE_STATIC_LOCAL(const String, wmlExt, (".wml"));
         if (path.endsWith(wmlExt, false)) {
             static NSString* defaultMIMETypeString = [(NSString*) defaultMIMEType() retain];
-            if ([[r _webcore_MIMEType] isEqualToString:defaultMIMETypeString])
+            if ([[r MIMEType] isEqualToString:defaultMIMETypeString])
                 [r _setMIMEType:@"text/vnd.wap.wml"];
         }
     }
@@ -1007,15 +996,5 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 }
 
 @end
-
-static NSString *webNSURLResponseMIMEType(id self, SEL _cmd)
-{
-    ASSERT(oldNSURLResponseMIMETypeIMP);
-    if (NSString *result = oldNSURLResponseMIMETypeIMP(self, _cmd))
-        return result;
-
-    static NSString *defaultMIMETypeString = [(NSString *)defaultMIMEType() retain];
-    return defaultMIMETypeString;
-}
 
 #endif

@@ -1,3 +1,23 @@
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        <rdar://problem/6961578> REGRESSION (r43511): Opening .fdf files from Acrobat Professional fails
+
+        Add a dumpResourceResponseMIMETypes() mode so the ResourceLoadDelegate will dump the mime type from
+        the NSURLResponse.  Needed for the test for this bug fix.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpResourceResponseMIMETypesCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpResourceResponseMIMETypes):
+        (LayoutTestController::setDumpResourceResponseMIMETypes):
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:didReceiveResponse:fromDataSource:]):
+
 2009-06-26  David Kilzer  <ddkilzer@apple.com>
 
         Update build-dumprendertree to use buildXCodeProject()

@@ -69,7 +69,7 @@ void ResourceResponse::platformLazyInit()
     }
     
     m_url = [m_nsResponse.get() URL];
-    m_mimeType = [m_nsResponse.get() _webcore_MIMEType];
+    m_mimeType = [m_nsResponse.get() MIMEType];
     m_expectedContentLength = [m_nsResponse.get() expectedContentLength];
     m_textEncodingName = [m_nsResponse.get() textEncodingName];
     m_suggestedFilename = [m_nsResponse.get() suggestedFilename];

@@ -1465,7 +1465,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                                                             contentURL:[response URL]
                                                          pluginPageURL:nil
                                                             pluginName:nil // FIXME: Get this from somewhere
-                                                              MIMEType:[response _webcore_MIMEType]];
+                                                              MIMEType:[response MIMEType]];
             [[self dataSource] _documentLoader]->cancelMainResourceLoad(error);
             [error release];
             return;
