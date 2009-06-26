@@ -56,9 +56,16 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const String& mimeT
 
 Tokenizer* HTMLViewSourceDocument::createTokenizer()
 {
-    if (implementation()->isTextMIMEType(m_type))
-        return createTextTokenizer(this);
-    return new HTMLTokenizer(this);
+    // Use HTMLTokenizer if applicable, otherwise use TextTokenizer.
+    if (m_type == "text/html" || m_type == "application/xhtml+xml" || m_type == "image/svg+xml" || implementation()->isXMLMIMEType(m_type)
+#if ENABLE(XHTMLMP)
+        || m_type == "application/vnd.wap.xhtml+xml"
+#endif
+        ) {
+        return new HTMLTokenizer(this);
+    }
+
+    return createTextTokenizer(this);
 }
 
 void HTMLViewSourceDocument::createContainingTable()

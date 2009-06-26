@@ -1,3 +1,36 @@
+2009-06-26  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Bug 26156: In view-source mode, always render the contents using HTMLViewSourceDocument
+        https://bugs.webkit.org/show_bug.cgi?id=26156
+
+        When in view-source mode, render the contents using HTMLViewSourceDocument
+        regardless it's applicable for any plugin or not.
+
+        Chromium tells WebCore to render the contents of specified URL when
+        view-source: prefix is added to the URL. But currently, DOMImplementation
+        ignores inViewSourceMode() when the MIME type is indicating that the contents
+        are neither texts nor HTML family documents.
+
+        For example, we can check the contents of asf file without launching media
+        player. Rendering contents for view-source:-specified input is not what user
+        expects.
+
+        http://code.google.com/p/chromium/issues/detail?id=10545
+
+        I want to fix this issue by this patch. IMHO, regardless of this Chromium
+        specific issue, I think we should force use of HTMLViewSourceDocument when
+        inViewSourceMode() is specified.
+
+        Test: fast/frames/viewsource-on-image-file.html
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createTokenizer):
+        * html/HTMLViewSourceDocument.h:
+
 2009-06-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

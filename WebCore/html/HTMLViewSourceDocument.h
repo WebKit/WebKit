@@ -38,9 +38,10 @@ public:
     {
         return new HTMLViewSourceDocument(frame, mimeType);
     }
-    
+
+    // Returns HTMLTokenizer or TextTokenizer based on m_type.
     virtual Tokenizer* createTokenizer();
-    
+
     void addViewSourceToken(Token*); // Used by the HTML tokenizer.
     void addViewSourceText(const String&); // Used by the plaintext tokenizer.
     void addViewSourceDoctypeToken(DoctypeToken*);
