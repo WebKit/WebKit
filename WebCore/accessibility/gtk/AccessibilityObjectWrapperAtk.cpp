@@ -293,11 +293,17 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     if (coreObject->isChecked())
         atk_state_set_add_state(stateSet, ATK_STATE_CHECKED);
 
-    if (!coreObject->isReadOnly())
+    // FIXME: isReadOnly does not seem to do the right thing for
+    // controls, so check explicitly for them
+    if (!coreObject->isReadOnly() ||
+        (coreObject->isControl() && coreObject->canSetValueAttribute()))
         atk_state_set_add_state(stateSet, ATK_STATE_EDITABLE);
 
-    if (coreObject->isEnabled())
+    // FIXME: Put both ENABLED and SENSITIVE together here for now
+    if (coreObject->isEnabled()) {
         atk_state_set_add_state(stateSet, ATK_STATE_ENABLED);
+        atk_state_set_add_state(stateSet, ATK_STATE_SENSITIVE);
+    }
 
     if (coreObject->canSetFocusAttribute())
         atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
@@ -320,13 +326,17 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
 
     // TODO: ATK_STATE_SELECTABLE_TEXT
 
-    // TODO: ATK_STATE_SENSITIVE
-
     if (coreObject->isSelected())
         atk_state_set_add_state(stateSet, ATK_STATE_SELECTED);
 
-    if (!coreObject->isOffScreen())
+    // FIXME: Group both SHOWING and VISIBLE here for now
+    // Not sure how to handle this in WebKit, see bug
+    // http://bugzilla.gnome.org/show_bug.cgi?id=509650 for other
+    // issues with SHOWING vs VISIBLE within GTK+
+    if (!coreObject->isOffScreen()) {
         atk_state_set_add_state(stateSet, ATK_STATE_SHOWING);
+        atk_state_set_add_state(stateSet, ATK_STATE_VISIBLE);
+    }
 
     // Mutually exclusive, so we group these two
     if (coreObject->roleValue() == TextFieldRole)
