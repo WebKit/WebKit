@@ -1,3 +1,9 @@
+2009-06-26  Mark Rowe  <mrowe@apple.com>
+
+        Land updated results after the test change.
+
+        * editing/selection/user-drag-element-and-user-select-none-expected.txt:
+
 2009-06-26  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Mark Rowe.
