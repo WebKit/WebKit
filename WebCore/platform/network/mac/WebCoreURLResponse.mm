@@ -33,6 +33,7 @@
 #import <objc/objc-class.h>
 #import <wtf/Assertions.h>
 
+#ifndef BUILDING_ON_TIGER
 // <rdar://problem/5321972> Plain text document from HTTP server detected as application/octet-stream
 // When we sniff a resource as application/octet-stream but the http response headers had "text/plain",
 // we have a hard decision to make about which of the two generic MIME types to go with.
@@ -195,6 +196,7 @@ static NSSet *createBinaryExtensionsSet()
         nil
     ];
 }
+#endif
 
 // <rdar://problem/7007389> CoreTypes UTI map is missing 100+ file extensions that GateKeeper knew about
 // When we disabled content sniffing for file URLs we caused problems with these 100+ extensions that CoreTypes
@@ -329,9 +331,14 @@ static NSString *webNSURLResponseMIMEType(id, SEL);
 void swizzleMIMETypeMethodIfNecessary()
 {
     if (!oldNSURLResponseMIMETypeIMP) {
-        Method nsURLResponseMIMETypeMethod = class_getInstanceMethod(objc_getClass("NSURLResponse"), @selector(MIMEType));
+        Method nsURLResponseMIMETypeMethod = class_getInstanceMethod([NSURLResponse class], @selector(MIMEType));
         ASSERT(nsURLResponseMIMETypeMethod);
+#ifdef BUILDING_ON_TIGER
+        oldNSURLResponseMIMETypeIMP = nsURLResponseMIMETypeMethod->method_imp;
+        nsURLResponseMIMETypeMethod->method_imp = (IMP)webNSURLResponseMIMEType;
+#else
         oldNSURLResponseMIMETypeIMP = method_setImplementation(nsURLResponseMIMETypeMethod, (IMP)webNSURLResponseMIMEType);
+#endif
     }
 }
 
