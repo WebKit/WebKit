@@ -1,3 +1,11 @@
+2009-06-26  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Fix the build bots.
+
+        * editing/selection/drag-start-event-client-x-y-expected.txt:
+
 2009-06-26  Brady Eidson  <beidson@apple.com>
 
         Step 2 (new Mac results)
