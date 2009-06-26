@@ -1,3 +1,12 @@
+2009-06-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Jan Alonzo.
+
+        Fix obsolete_attachment to work when passed a comment.
+        https://bugs.webkit.org/show_bug.cgi?id=26745
+
+        * Scripts/modules/bugzilla.py:
+
 2009-06-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe.

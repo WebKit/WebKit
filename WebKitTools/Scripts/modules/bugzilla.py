@@ -250,7 +250,8 @@ class Bugzilla:
         self.browser.find_control(type='select', nr=0).value = ("X",)
         if comment_text:
             log(comment_text)
-            self.browser['comment'] = comment_text
+            # Bugzilla has two textareas named 'comment', one is somehow hidden.  We want the first.
+            self.browser.set_value(comment_text, name='comment', nr=0)
         self.browser.submit()
     
     def post_comment_to_bug(self, bug_id, comment_text):
