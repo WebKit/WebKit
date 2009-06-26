@@ -277,19 +277,19 @@ void Console::profile(const JSC::UString& title, ScriptCallStack* callStack)
     if (!page)
         return;
 
-    // FIXME: log a console message when profiling is disabled.
-    if (!page->inspectorController()->profilerEnabled())
+    InspectorController* controller = page->inspectorController();
+    // FIXME: log a console message when profiling is disabled. 
+    if (!controller->profilerEnabled())
         return;
 
-    if (title.isNull()) {   // no title so give it the next user initiated profile title.
-        page->inspectorController()->startUserInitiatedProfiling(0);
-        return;
-    }
+    JSC::UString resolvedTitle = title;
+    if (title.isNull())   // no title so give it the next user initiated profile title.
+        resolvedTitle = controller->getCurrentUserInitiatedProfileName(true);
 
-    JSC::Profiler::profiler()->startProfiling(callStack->state(), title);
+    JSC::Profiler::profiler()->startProfiling(callStack->state(), resolvedTitle);
 
     const ScriptCallFrame& lastCaller = callStack->at(0);
-    page->inspectorController()->addStartProfilingMessageToConsole(title, lastCaller.lineNumber(), lastCaller.sourceURL());
+    controller->addStartProfilingMessageToConsole(resolvedTitle, lastCaller.lineNumber(), lastCaller.sourceURL());
 }
 
 void Console::profileEnd(const JSC::UString& title, ScriptCallStack* callStack)
@@ -298,7 +298,11 @@ void Console::profileEnd(const JSC::UString& title, ScriptCallStack* callStack)
     if (!page)
         return;
 
-    if (!page->inspectorController()->profilerEnabled())
+    if (!this->page())
+        return;
+
+    InspectorController* controller = page->inspectorController();
+    if (!controller->profilerEnabled())
         return;
 
     RefPtr<JSC::Profile> profile = JSC::Profiler::profiler()->stopProfiling(callStack->state(), title);
@@ -307,10 +311,8 @@ void Console::profileEnd(const JSC::UString& title, ScriptCallStack* callStack)
 
     m_profiles.append(profile);
 
-    if (Page* page = this->page()) {
-        const ScriptCallFrame& lastCaller = callStack->at(0);
-        page->inspectorController()->addProfile(profile, lastCaller.lineNumber(), lastCaller.sourceURL());
-    }
+    const ScriptCallFrame& lastCaller = callStack->at(0);
+    controller->addProfile(profile, lastCaller.lineNumber(), lastCaller.sourceURL());
 }
 
 #endif

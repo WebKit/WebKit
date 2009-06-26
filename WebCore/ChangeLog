@@ -1,3 +1,25 @@
+2009-06-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/7011047> Profiler shows the record button 'on' even
+        though it's finished
+
+        I consolidated the creation of the user initiated profile name into
+        its own function and then called it from console::profile instead of
+        calling startUserInitiatedProfiling().  This way we don't call
+        toggleRecordButton() which turns on the record button.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::getCurrentUserInitiatedProfileName):
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        * inspector/InspectorController.h:
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+
 2009-06-26  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.
