@@ -1,3 +1,21 @@
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
+        1st step of fixing the layout test I broke on Mac platforms.
+
+        * platform/mac-leopard/fast/images/favicon-as-image-expected.checksum: Removed.
+        * platform/mac-leopard/fast/images/favicon-as-image-expected.png: Removed.
+        * platform/mac-leopard/fast/images/favicon-as-image-expected.txt: Removed.
+        * platform/mac-tiger/fast/images/favicon-as-image-expected.checksum: Removed.
+        * platform/mac-tiger/fast/images/favicon-as-image-expected.png: Removed.
+        * platform/mac-tiger/fast/images/favicon-as-image-expected.txt: Removed.
+        * platform/mac/fast/images/favicon-as-image-expected.checksum: Removed.
+        * platform/mac/fast/images/favicon-as-image-expected.png: Removed.
+        * platform/mac/fast/images/favicon-as-image-expected.txt: Removed.
+        * platform/win/fast/images: Added.
+        * platform/win/fast/images/favicon-as-image-expected.checksum: Copied from platform/mac/fast/images/favicon-as-image-expected.checksum.
+        * platform/win/fast/images/favicon-as-image-expected.png: Copied from platform/mac/fast/images/favicon-as-image-expected.png.
+        * platform/win/fast/images/favicon-as-image-expected.txt: Copied from platform/mac/fast/images/favicon-as-image-expected.txt.
+
 2009-06-26  Mark Rowe  <mrowe@apple.com>
 
         Land updated results after the test change.
