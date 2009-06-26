@@ -1,3 +1,18 @@
+2009-06-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 20303: [Qt] Key events are not working in frames.
+
+        Send scrolling events to current focused frame, bubble the event
+        up to parent frame if it is not handled.  Use EventHandler's new
+        shared scrolling code.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPagePrivate::handleScrolling):
+        * Api/qwebpage_p.h:
+
 2009-06-25  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Adam Treat.

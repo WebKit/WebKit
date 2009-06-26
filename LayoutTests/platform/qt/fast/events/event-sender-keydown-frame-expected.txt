@@ -1,0 +1,4 @@
+Test for bug 20303: [Qt] key events are not working in frames.
+
+
+SUCCESS

@@ -856,6 +856,21 @@ bool EventHandler::scrollOverflow(ScrollDirection direction, ScrollGranularity g
     return false;
 }
 
+bool EventHandler::scrollRecursively(ScrollDirection direction, ScrollGranularity granularity)
+{
+    bool handled = scrollOverflow(direction, granularity);
+    if (!handled) {
+        Frame* frame = m_frame;
+        do {
+            FrameView* view = frame->view();
+            handled = view ? view->scroll(direction, granularity) : false;
+            frame = frame->tree()->parent();
+        } while (!handled && frame);
+     }
+
+    return handled;
+}
+
 IntPoint EventHandler::currentMousePosition() const
 {
     return m_currentMousePosition;

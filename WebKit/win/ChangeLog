@@ -1,3 +1,16 @@
+2009-06-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 20303: [Qt] Key events are not working in frames.
+
+        Move the scroll handling code to EventHandler so that other
+        ports can share the functionality.
+
+        * WebView.cpp:
+        (WebView::keyDown):
+        (EnumTextMatches::QueryInterface):
+
 2009-06-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

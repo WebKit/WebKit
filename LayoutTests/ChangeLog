@@ -1,3 +1,14 @@
+2009-06-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 20303: [Qt] Key events are not working in frames.
+
+        Add a layout test to test the event is sent to the right sub-frame.
+
+        * platform/qt/fast/events/event-sender-keydown-frame-expected.txt: Added.
+        * platform/qt/fast/events/event-sender-keydown-frame.html: Added.
+
 2009-06-26  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Eric Seidel.

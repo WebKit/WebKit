@@ -1,3 +1,18 @@
+2009-06-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Test: platform/qt/fast/events/event-sender-keydown-frame.html
+
+        Bug 20303: [Qt] Key events are not working in frames.
+
+        Merge scrolling handling code in qt and win port, move it to
+        EventHandler.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::scrollRecursively):
+        * page/EventHandler.h:
+
 2009-06-26  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Eric Seidel.

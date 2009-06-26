@@ -1,0 +1,53 @@
+<head>
+</head>
+<body>
+    <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=20303">bug 20303</a>:
+    [Qt] key events are not working in frames.</p>
+<script>
+    function reportIFramePos()
+    {
+        var x = document.getElementById("anIFrame").contentDocument.body.scrollLeft;
+        var y = document.getElementById("anIFrame").contentDocument.body.scrollTop;
+
+        // result, the iframe should be scrolled down
+        if (y > 0)
+            document.getElementById("console").innerHTML = "SUCCESS";
+        else
+            document.getElementById("console").innerHTML = "FAILURE";
+    }
+
+    function testAndReport() {
+         if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        if (window.eventSender) {
+            var frame = document.getElementById("anIFrame");
+
+            // center the mouse cursor
+            var x = frame.offsetLeft + frame.offsetWidth/2;
+            var y = frame.offsetTop + frame.offsetHeight/2;
+
+            // send mouse event to focus the iframe
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+
+            // send key down event
+            eventSender.keyDown('\uf701');
+
+            // report
+            reportIFramePos();
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+
+<iframe style="width:350px;border:dotted green 1px" width="200" height="200"
+ id="anIFrame" src="resources/divs.html" onload="javascript:testAndReport()"></iframe>
+</iframe>
+<div id="result">
+</div>
+<div id="console">
+</div>
+</body>
+</html>
