@@ -1,3 +1,13 @@
+2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix support for documenting functions prefixed with QWEBKIT_EXPORT
+
+        Add QWEBKIT_EXPORT to the list of macros to ignore by qdoc.
+
+        * docs/qtwebkit.qdocconf:
+
 2009-06-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Eric Seidel.
