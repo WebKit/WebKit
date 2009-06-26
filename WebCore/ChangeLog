@@ -1,5 +1,21 @@
 2009-06-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Reviewed by Darin Adler.
+
+        "Pointer to incomplete class type is not allowed" error with RVCT
+        https://bugs.webkit.org/show_bug.cgi?id=26721
+
+        Based on Norbert Leser's work.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchMouseEvent):
+        * dom/Node.h: Remove the default value for PassRefPtr<Event> args,
+        to eliminate dependency on the Event class definition
+
+2009-06-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Reviewed by Maciej Stachowiak.
 
         [Qt] Build fix after r45183

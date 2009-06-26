@@ -531,7 +531,7 @@ public:
     void removeAllEventListeners() { if (hasRareData()) removeAllEventListenersSlowCase(); }
 
     void dispatchSubtreeModifiedEvent();
-    void dispatchUIEvent(const AtomicString& eventType, int detail = 0, PassRefPtr<Event> underlyingEvent = 0);
+    void dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     void dispatchWheelEvent(PlatformWheelEvent&);
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType,
@@ -539,8 +539,8 @@ public:
     bool dispatchMouseEvent(const AtomicString& eventType, int button, int clickCount,
         int pageX, int pageY, int screenX, int screenY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        bool isSimulated = false, Node* relatedTarget = 0, PassRefPtr<Event> underlyingEvent = 0);
-    void dispatchSimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<Event> underlyingEvent = 0);
+        bool isSimulated, Node* relatedTarget, PassRefPtr<Event> underlyingEvent);
+    void dispatchSimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<Event> underlyingEvent);
     void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
     void dispatchProgressEvent(const AtomicString& eventType, bool lengthComputableArg, unsigned loadedArg, unsigned totalArg);
     void dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime);
