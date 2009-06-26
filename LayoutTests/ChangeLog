@@ -1,3 +1,16 @@
+2009-06-26  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Test for:
+        https://bugs.webkit.org/show_bug.cgi?id=26682
+        Bug 26682: It should be possible to add image to SVG DOM programmatically (using JavaScript)
+
+        * platform/mac/svg/custom/createImageElement-expected.checksum: Added
+        * platform/mac/svg/custom/createImageElement-expected.png: Added
+        * platform/mac/svg/custom/createImageElement-expected.txt: Added.
+        * svg/custom/createImageElement.svg: Added.
+
 2009-06-26  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Timothy Hatcher.

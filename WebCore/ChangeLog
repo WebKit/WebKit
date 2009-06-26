@@ -1,3 +1,17 @@
+2009-06-26  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26682
+        Bug 26682: It should be possible to add image to SVG DOM programmatically (using JavaScript)
+
+        Make sure the xlink:href animated property setting syncs the corresponding attribute with the right namespace.
+
+        Test: svg/custom/createImageElement.svg
+
+        * svg/SVGAnimatedProperty.h:
+        (WebCore::synchronizeProperty):
+
 2009-06-26  Takeshi Yoshino  <tyoshino@google.com>
 
         Reviewed by Timothy Hatcher.
