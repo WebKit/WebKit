@@ -38,6 +38,8 @@ typedef struct objc_object* id;
 
 #if PLATFORM(QT)
 #include <QVariant>
+#include <QByteArray>
+#include <QDataStream>
 #endif
 
 namespace WebCore {
@@ -163,6 +165,9 @@ public:
 #if PLATFORM(QT)
     QVariant userData() const { return m_userData; }
     void setUserData(const QVariant& userData) { m_userData = userData; }
+
+    bool restoreState(QDataStream& buffer, int version);
+    QDataStream& saveState(QDataStream& out, int version) const;
 #endif
 
 #ifndef NDEBUG
@@ -171,8 +176,8 @@ public:
 #endif
 
     void adoptVisitCounts(Vector<int>& dailyCounts, Vector<int>& weeklyCounts);
-    const Vector<int>& dailyVisitCounts() { return m_dailyVisitCounts; }
-    const Vector<int>& weeklyVisitCounts() { return m_weeklyVisitCounts; }
+    const Vector<int>& dailyVisitCounts() const { return m_dailyVisitCounts; }
+    const Vector<int>& weeklyVisitCounts() const { return m_weeklyVisitCounts; }
 
 private:
     HistoryItem();
@@ -187,6 +192,10 @@ private:
     void recordVisitAtTime(double);
 
     HistoryItem* findTargetItem();
+
+    /* When adding new member variables to this class, please notify the Qt team.
+     * qt/HistoryItemQt.cpp contains code to serialize history items.
+     */
 
     String m_urlString;
     String m_originalURLString;

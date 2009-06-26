@@ -2,6 +2,40 @@
 
         Reviewed by Simon Hausmann.
 
+        Add support for saving and loading of QWebHistory to and from a QByteArray.
+
+        This includes streaming operators for QWebHistory. for convenience.
+
+        New autotests that test QWebHistory and QWebHistoryItem serialization.
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::restoreState):
+        (QWebHistory::saveState):
+        (operator<<):
+        (operator>>):
+        * Api/qwebhistory.h:
+        * Api/qwebhistory_p.h:
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::):
+        (tst_QWebHistory::init):
+        (tst_QWebHistory::title):
+        (tst_QWebHistory::count):
+        (tst_QWebHistory::back):
+        (tst_QWebHistory::forward):
+        (tst_QWebHistory::itemAt):
+        (tst_QWebHistory::goToItem):
+        (tst_QWebHistory::items):
+        (tst_QWebHistory::serialize_1):
+        (tst_QWebHistory::serialize_2):
+        (tst_QWebHistory::serialize_3):
+        (tst_QWebHistory::saveAndRestore_1):
+        (tst_QWebHistory::saveAndRestore_2):
+        (tst_QWebHistory::saveAndRestore_3):
+
+2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Fix the behaviour of QWebHistory::itemAt to interpret the specified index as absolute index.
 
         Returns an invalid QWebHistoryItem if the index is out of range.

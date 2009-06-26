@@ -738,6 +738,7 @@ SOURCES += \
     history/CachedFrame.cpp \
     history/CachedPage.cpp \
     history/HistoryItem.cpp \
+    history/qt/HistoryItemQt.cpp \
     history/PageCache.cpp \
     html/CanvasGradient.cpp \
     html/CanvasPattern.cpp \
