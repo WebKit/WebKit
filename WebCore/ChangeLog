@@ -1,3 +1,17 @@
+2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add support for QDataStream operators to String and IntPoint.
+
+        * platform/graphics/IntPoint.h:
+        (WebCore::operator<<):
+        (WebCore::operator>>):
+        * platform/text/PlatformString.h:
+        * platform/text/qt/StringQt.cpp:
+        (WebCore::operator<<):
+        (WebCore::operator>>):
+
 2009-06-26  Ben Murdoch  <benm@google.com>
 
         Reviewed by Darin Fisher.

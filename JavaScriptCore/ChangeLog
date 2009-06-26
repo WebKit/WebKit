@@ -1,3 +1,13 @@
+2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add support for QDataStream operators to Vector.
+
+        * wtf/Vector.h:
+        (WTF::operator<<):
+        (WTF::operator>>):
+
 2009-06-26  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Eric Seidel.
