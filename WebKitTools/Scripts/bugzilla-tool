@@ -329,21 +329,33 @@ class ObsoleteAttachmentsOnBug(Command):
         bug_id = args[0]
         attachments = tool.bugs.fetch_attachments_from_bug(bug_id)
         for attachment in attachments:
-            if not attachment['obsolete']:
+            if not attachment['is_obsolete']:
                 tool.bugs.obsolete_attachment(attachment['id'])
 
 
 class PostDiffAsPatchToBug(Command):
     def __init__(self):
         options = [
+            make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
             make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: 'patch')"),
         ]
         Command.__init__(self, 'Attaches the current working directory diff to a bug as a patch file.', 'BUGID', options=options)
 
+    @staticmethod
+    def obsolete_patches_on_bug(bug_id, bugs):
+        patches = bugs.fetch_patches_from_bug(bug_id)
+        if len(patches):
+            log("Obsoleting %s on bug %s" % (pluralize('old patch', len(patches)), bug_id))
+            for patch in patches:
+                bugs.obsolete_attachment(patch['id'])
+
     def execute(self, options, args, tool):
         bug_id = args[0]
-        
+
+        if options.obsolete_patches:
+            self.obsolete_patches_on_bug(bug_id, tool.bugs)
+
         diff_process = subprocess.Popen(tool.scm().create_patch_command(), stdout=subprocess.PIPE, shell=True)
         diff_process.wait() # Make sure svn-create-patch is done before we continue.
         
@@ -354,6 +366,7 @@ class PostDiffAsPatchToBug(Command):
 class PostCommitsAsPatchesToBug(Command):
     def __init__(self):
         options = [
+            make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting new ones."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
         ]
         Command.__init__(self, 'Attaches a range of local commits to a bug as patch files.', 'BUGID COMMITISH', options=options)
@@ -362,15 +375,16 @@ class PostCommitsAsPatchesToBug(Command):
         bug_id = args[0]
         
         if not tool.scm().supports_local_commits():
-            log(tool.scm().display_name() + " does not support local commits.")
-            exit(1)
+            error(tool.scm().display_name() + " does not support local commits.")
         
         commit_ids = tool.scm().commit_ids_from_range_arguments(args[1:])
         
         if len(commit_ids) > 10:
-            log("Are you sure you want to attach %s to bug %s?" % (pluralize('patch', len(commit_ids)), bug_id))
+            error("Are you sure you want to attach %s to bug %s?" % (pluralize('patch', len(commit_ids)), bug_id))
             # Could add a --patches-limit option.
-            exit(1)
+
+        if options.obsolete_patches:
+            PostDiffAsPatchToBug.obsolete_patches_on_bug(bug_id, tool.bugs)
         
         log("Attaching %s as patches to bug %s" % (pluralize('commit', len(commit_ids)), bug_id))
         for commit_id in commit_ids:

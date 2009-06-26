@@ -12,6 +12,20 @@
 
 2009-06-25  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Jan Alonzo.
+
+        bugzilla-tool post-diff needs to obsolete old patches before posting
+        https://bugs.webkit.org/show_bug.cgi?id=26740
+
+        I've also added a --no-obsolete to disable this behavior.
+        
+        I also finally updated the bug page parsing to use XML. So much less code!
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/bugzilla.py:
+
+2009-06-25  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Mark Rowe.
 
         Call WebKitTools/Scripts scripts by their absolute paths

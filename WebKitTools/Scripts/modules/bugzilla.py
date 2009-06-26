@@ -115,58 +115,54 @@ class Bugzilla:
             raise Exception("ERROR: Unknown reviewer! " + bugzilla_name)
         return self.reviewer_usernames_to_full_names[bugzilla_name]
 
-    def bug_url_for_bug_id(self, bug_id):
-        bug_base_url = self.bug_server + "show_bug.cgi?id="
-        return "%s%s" % (bug_base_url, bug_id)
+    def bug_url_for_bug_id(self, bug_id, xml=False):
+        content_type = "&ctype=xml" if xml else ""
+        return "%sshow_bug.cgi?id=%s%s" % (self.bug_server, bug_id, content_type)
     
     def attachment_url_for_id(self, attachment_id, action="view"):
-        attachment_base_url = self.bug_server + "attachment.cgi?id="
-        return "%s%s&action=%s" % (attachment_base_url, attachment_id, action)
+        action_param = ""
+        if action and action != "view":
+            action_param = "&action=" + action
+        return "%sattachment.cgi?id=%s%s" % (self.bug_server, attachment_id, action_param)
 
     def fetch_attachments_from_bug(self, bug_id):
-        bug_url = self.bug_url_for_bug_id(bug_id)
+        bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
         log("Fetching: " + bug_url)
 
         page = urllib2.urlopen(bug_url)
         soup = BeautifulSoup(page)
     
-        attachment_table = soup.find('table', {'cellspacing':"0", 'cellpadding':"4", 'border':"1"})
-    
         attachments = []
-        # Grab a list of non-obsoleted patch files 
-        for attachment_row in attachment_table.findAll('tr'):
-            first_cell = attachment_row.find('td')
-            if not first_cell:
-                continue # This is the header, no cells
-            if first_cell.has_key('colspan'):
-                break # this is the last row
-            
+        for element in soup.findAll('attachment'):
             attachment = {}
-            attachment['obsolete'] = (attachment_row.has_key('class') and attachment_row['class'] == "bz_obsolete")
-            
-            cells = attachment_row.findAll('td')
-            attachment_link = cells[0].find('a')
-            attachment['url'] = self.bug_server + attachment_link['href'] # urls are relative
-            attachment['id'] = attachment['url'].split('=')[1] # e.g. https://bugs.webkit.org/attachment.cgi?id=31223
-            attachment['name'] = unicode(attachment_link.string) # .string returns some kind of non-string object
-            # attachment['type'] = cells[1]
-            # attachment['date'] = cells[2]
-            # attachment['size'] = cells[3]
-            review_status = cells[4]
-            # action_links = cells[5]
+            attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
+            attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
+            attachment['id'] = str(element.find('attachid').string)
+            attachment['url'] = self.attachment_url_for_id(attachment['id'])
+            attachment['name'] = unicode(element.find('desc').string)
+            attachment['type'] = str(element.find('ctype').string)
 
-            if str(review_status).find("review+") != -1:
-                reviewer = review_status.contents[0].split(':')[0] # name:\n review+\n
-                reviewer_full_name = self.full_name_from_bugzilla_name(reviewer)
-                attachment['reviewer'] = reviewer_full_name
+            review_flag = element.find('flag', attrs={"name" : "review"})
+            if review_flag and review_flag['status'] == '+':
+                reviewer_email = review_flag['setter']
+                # We could lookup the full email address instead once we update full_name_from_bugzilla_name
+                bugzilla_name = reviewer_email.split('@')[0]
+                attachment['reviewer'] = self.full_name_from_bugzilla_name(bugzilla_name)
 
             attachments.append(attachment)
         return attachments
 
+    def fetch_patches_from_bug(self, bug_id):
+        patches = []
+        for attachment in self.fetch_attachments_from_bug(bug_id):
+            if attachment['is_patch'] and not attachment['is_obsolete']:
+                patches.append(attachment)
+        return patches
+
     def fetch_reviewed_patches_from_bug(self, bug_id):
         reviewed_patches = []
         for attachment in self.fetch_attachments_from_bug(bug_id):
-            if 'reviewer' in attachment and not attachment['obsolete']:
+            if 'reviewer' in attachment and not attachment['is_obsolete']:
                 reviewed_patches.append(attachment)
         return reviewed_patches
 
