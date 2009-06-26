@@ -105,11 +105,7 @@ Settings::Settings(Page* page)
     // they can't use by. Leaving enabled for now to not change existing behavior.
     , m_downloadableBinaryFontsEnabled(true)
     , m_xssAuditorEnabled(false)
-#if USE(ACCELERATED_COMPOSITING)
     , m_acceleratedCompositingEnabled(true)
-#else
-    , m_acceleratedCompositingEnabled(false)
-#endif
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

@@ -1,3 +1,17 @@
+2009-06-26  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser  <simon.fraser@apple.com>.
+
+        Additional fix for https://bugs.webkit.org/show_bug.cgi?id=26651
+
+        The flag should always default to true to avoid it getting set
+        to false in a build with accelerated compositing turned off
+        and then disabling accelerated compositing when subsequently
+        running a build with it turned on.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2009-06-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
