@@ -2,6 +2,18 @@
 
         Reviewed by Simon Fraser.
 
+        <rdar://problem/7007776> Controller doesn't automatically update counters when file
+        is playing ( http://www.jazzguitar.be/mp3/Michael%20Lewis%20-%20SSSJ.mp3 )
+
+        Update the time display when the movie time changes.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateControls):
+
+2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
         https://bugs.webkit.org/show_bug.cgi?id=26659
 
         Support hidding a control bar element from the Media element controller.

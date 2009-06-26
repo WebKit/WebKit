@@ -299,6 +299,10 @@ void RenderMedia::updateControls()
         m_playButton->update();
     if (m_timeline)
         m_timeline->update();
+    if (m_currentTimeDisplay)
+        m_currentTimeDisplay->update();
+    if (m_timeRemainingDisplay)
+        m_timeRemainingDisplay->update();
     if (m_seekBackButton)
         m_seekBackButton->update();
     if (m_seekForwardButton)
