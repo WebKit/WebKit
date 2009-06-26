@@ -38,7 +38,7 @@ using namespace std;
 
 namespace WebCore {
 
-static void setNeedsReapplyStylesInAllFrames(Page* page, bool /*updateCompositingLayers*/ = false)
+static void setNeedsReapplyStylesInAllFrames(Page* page)
 {
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->setNeedsReapplyStyles();
@@ -476,7 +476,7 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
         return;
         
     m_acceleratedCompositingEnabled = enabled;
-    setNeedsReapplyStylesInAllFrames(m_page, true);
+    setNeedsReapplyStylesInAllFrames(m_page);
 }
 
 } // namespace WebCore
