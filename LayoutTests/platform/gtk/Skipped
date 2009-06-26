@@ -70,6 +70,7 @@ accessibility/iframe-bastardization.html
 accessibility/ignore-spacer-elements.html
 accessibility/img-aria-button-alt-tag.html
 accessibility/input-image-alt.html
+accessibility/language-attribute.html
 accessibility/onclick-handlers.html
 accessibility/non-data-table-cell-title-ui-element.html
 accessibility/nochildren-elements.html
@@ -778,6 +779,7 @@ editing/execCommand/unlink.html
 editing/input/textarea-arrow-navigation.html
 editing/inserting/5994480-2.html
 editing/inserting/insert-thai-characters-001.html
+editing/inserting/space-after-removeformat.html
 editing/inserting/typing-tab-designmode.html
 editing/pasteboard/19644-1.html
 editing/pasteboard/19644-2.html
@@ -1807,6 +1809,7 @@ fast/regex/test1.html
 fast/regex/test4.html
 fast/replaced/image-map-bug16782.html
 fast/replaced/image-map.html
+fast/replaced/image-map-2.html
 fast/replaced/table-percent-height-text-controls.html
 fast/replaced/table-percent-height.html
 fast/selectors/lang-inheritance2.html
