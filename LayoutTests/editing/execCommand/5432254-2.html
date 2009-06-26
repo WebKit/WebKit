@@ -2,11 +2,27 @@
 <div id="div" contenteditable="true"><div><table id="table" border="1"><tr><td id="td">foo</td></tr></table></div>
 
 <br id="br"></div>
+<p id="console"></p>
 
 <script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(message) {
+    var console = document.getElementById("console");
+    var text = document.createTextNode(message);
+    console.appendChild(text);
+}
+
 td = document.getElementById("td");
 br = document.getElementById("br");
 s = window.getSelection();
 s.setBaseAndExtent(td, 0, br, 0);
 document.execCommand("InsertUnorderedList");
+
+log(document.getElementById('div').innerHTML);
+
 </script>
+
+PASS

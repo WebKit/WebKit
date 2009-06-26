@@ -1,11 +1,25 @@
-<div contenteditable="true">
-    <div>There should an empty H1 block below, followed by a normal empty paragraph.</div>
+<div id="outerdiv" contenteditable="true">
+    <div>There should be a H1 with BR block below, followed by a normal empty paragraph.</div>
     <div id="div"><br><br></div>
     <div id="div">There should be a single empty paragraph above.</div>
 </div>
+<p id="console"></p>
 
 <script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(message) {
+    var console = document.getElementById("console");
+    var text = document.createTextNode(message);
+    console.appendChild(text);
+}
+
 div = document.getElementById("div");
 window.getSelection().setPosition(div, 0);
 document.execCommand("FormatBlock", false, "h1");
+
+log(document.getElementById('outerdiv').innerHTML);
+
 </script>

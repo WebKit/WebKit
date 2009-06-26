@@ -1,11 +1,25 @@
-<div contenteditable="true">
-    <div>There should be a single empty H1 block below.</div>
+<div id="outerdiv" contenteditable="true">
+    <div>There should be a single H1 block with a single BR below.</div>
     <div id="div"><br></div>
-    <div id="div">There should be a single empty H1 block above.</div>
+    <div id="div">There should be a single H1 block with a single BR above.</div>
 </div>
+<p id="console"></p>
 
 <script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(message) {
+    var console = document.getElementById("console");
+    var text = document.createTextNode(message);
+    console.appendChild(text);
+}
+
 div = document.getElementById("div");
 window.getSelection().setPosition(div, 0);
 document.execCommand("FormatBlock", false, "h1");
+
+log(document.getElementById('outerdiv').innerHTML);
+
 </script>
