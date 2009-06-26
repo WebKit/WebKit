@@ -26,6 +26,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BUILDING_ON_TIGER
 void swizzleMIMETypeMethodIfNecessary();
-#endif

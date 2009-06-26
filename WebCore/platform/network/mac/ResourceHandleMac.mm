@@ -632,9 +632,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         return;
     CallbackGuard guard;
 
-#ifndef BUILDING_ON_TIGER
     swizzleMIMETypeMethodIfNecessary();
-#endif
 
     if ([m_handle->request().nsURLRequest() _propertyForKey:@"ForceHTMLMIMEType"])
         [r _setMIMEType:@"text/html"];

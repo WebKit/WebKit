@@ -1,3 +1,15 @@
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Followup for the fix for <rdar://problem/6961578> REGRESSION (r43511): Opening .fdf files from Acrobat Professional fails
+
+        Now that other MIME type correction stuff is in our swizzled method, Tiger needs it too!
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]):
+        * platform/network/mac/WebCoreURLResponse.h:
+
 2009-06-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
