@@ -1,3 +1,32 @@
+2009-06-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <rdar://problem/7000796>
+        REGRESSION(34681): Breaking up quoted text makes new, unquoted text blue after certain steps; repros with some messages
+
+        Test: editing/inserting/break-blockquote-after-delete.html
+
+        Keep track of whether the typing style should be preserved after the TypingCommand is applied.  When adding onto an open
+        typing command, keep that flag up to date.
+
+        In this case, an InsertParagraphSeparatorInQuotedContent command, which should not preserve typing style, 
+        was following an open Delete command, which does preserve the typing style.  So we were applying the original
+        typing style (from before the delete, so blue text) to the cursor in the unquoted area after breaking up the blockquote.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::typingAddedToOpenCommand):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::updatePreservesTypingStyle):
+        * editing/TypingCommand.h: (WebCore::TypingCommand::preservesTypingStyle):
+
 2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -1,3 +1,15 @@
+2009-06-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for <rdar://problem/7000796>
+        REGRESSION(34681): Breaking up quoted text makes new, unquoted text blue after certain steps; repros with some messages
+
+        * editing/inserting/break-blockquote-after-delete.html: Added.
+        * platform/mac/editing/inserting/break-blockquote-after-delete-expected.checksum: Added.
+        * platform/mac/editing/inserting/break-blockquote-after-delete-expected.png: Added.
+        * platform/mac/editing/inserting/break-blockquote-after-delete-expected.txt: Added.
+
 2009-06-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Eric Seidel.

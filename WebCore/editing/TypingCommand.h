@@ -79,10 +79,11 @@ private:
     virtual void doApply();
     virtual EditAction editingAction() const;
     virtual bool isTypingCommand() const;
-    virtual bool preservesTypingStyle() const;
+    virtual bool preservesTypingStyle() const { return m_preservesTypingStyle; }
 
+    void updatePreservesTypingStyle(ETypingCommand);
     void markMisspellingsAfterTyping();
-    void typingAddedToOpenCommand();
+    void typingAddedToOpenCommand(ETypingCommand);
     bool makeEditableRootEmpty();
     
     ETypingCommand m_commandType;
@@ -92,6 +93,7 @@ private:
     bool m_smartDelete;
     TextGranularity m_granularity;
     bool m_killRing;
+    bool m_preservesTypingStyle;
     
     // Undoing a series of backward deletes will restore a selection around all of the
     // characters that were deleted, but only if the typing command being undone

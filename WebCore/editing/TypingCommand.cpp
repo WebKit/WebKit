@@ -58,6 +58,7 @@ TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, con
       m_killRing(killRing),
       m_openedByBackwardDelete(false)
 {
+    updatePreservesTypingStyle(m_commandType);
 }
 
 void TypingCommand::deleteSelection(Document* document, bool smartDelete)
@@ -309,8 +310,10 @@ void TypingCommand::markMisspellingsAfterTyping()
     }
 }
 
-void TypingCommand::typingAddedToOpenCommand()
+void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)
 {
+    updatePreservesTypingStyle(commandTypeForAddedTyping);
+    
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     document()->frame()->editor()->appliedEditing(this);
     // Since the spellchecking code may also perform corrections and other replacements, it should happen after the typing changes.
@@ -360,19 +363,19 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
         applyCommandToComposite(command);
     }
     command->input(text, selectInsertedText);
-    typingAddedToOpenCommand();
+    typingAddedToOpenCommand(InsertText);
 }
 
 void TypingCommand::insertLineBreak()
 {
     applyCommandToComposite(InsertLineBreakCommand::create(document()));
-    typingAddedToOpenCommand();
+    typingAddedToOpenCommand(InsertLineBreak);
 }
 
 void TypingCommand::insertParagraphSeparator()
 {
     applyCommandToComposite(InsertParagraphSeparatorCommand::create(document()));
-    typingAddedToOpenCommand();
+    typingAddedToOpenCommand(InsertParagraphSeparator);
 }
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent()
@@ -385,7 +388,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
     }
         
     applyCommandToComposite(BreakBlockquoteCommand::create(document()));
-    typingAddedToOpenCommand();
+    typingAddedToOpenCommand(InsertParagraphSeparatorInQuotedContent);
 }
 
 bool TypingCommand::makeEditableRootEmpty()
@@ -423,7 +426,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             // After breaking out of an empty mail blockquote, we still want continue with the deletion
             // so actual content will get deleted, and not just the quote style.
             if (breakOutOfEmptyMailBlockquotedParagraph())
-                typingAddedToOpenCommand();
+                typingAddedToOpenCommand(DeleteKey);
         
             m_smartDelete = false;
 
@@ -436,12 +439,12 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             if (endingSelection().visibleStart().previous(true).isNull()) {
                 // When the caret is at the start of the editable area in an empty list item, break out of the list item.
                 if (breakOutOfEmptyListItem()) {
-                    typingAddedToOpenCommand();
+                    typingAddedToOpenCommand(DeleteKey);
                     return;
                 }
                 // When there are no visible positions in the editing root, delete its entire contents.
                 if (endingSelection().visibleStart().next(true).isNull() && makeEditableRootEmpty()) {
-                    typingAddedToOpenCommand();
+                    typingAddedToOpenCommand(DeleteKey);
                     return;
                 }
             }
@@ -457,7 +460,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             // If the caret is just after a table, select the table and don't delete anything.
             } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
                 setEndingSelection(VisibleSelection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
-                typingAddedToOpenCommand();
+                typingAddedToOpenCommand(DeleteKey);
                 return;
             }
 
@@ -498,7 +501,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
         setStartingSelection(selectionAfterUndo);
     CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);
     setSmartDelete(false);
-    typingAddedToOpenCommand();
+    typingAddedToOpenCommand(DeleteKey);
 }
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool killRing)
@@ -530,7 +533,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
             // When deleting tables: Select the table first, then perform the deletion
             if (downstreamEnd.node() && downstreamEnd.node()->renderer() && downstreamEnd.node()->renderer()->isTable() && downstreamEnd.deprecatedEditingOffset() == 0) {
                 setEndingSelection(VisibleSelection(endingSelection().end(), lastDeepEditingPositionForNode(downstreamEnd.node()), DOWNSTREAM));
-                typingAddedToOpenCommand();
+                typingAddedToOpenCommand(ForwardDeleteKey);
                 return;
             }
 
@@ -578,30 +581,32 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
     setStartingSelection(selectionAfterUndo);
     CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete);
     setSmartDelete(false);
-    typingAddedToOpenCommand();
+    typingAddedToOpenCommand(ForwardDeleteKey);
 }
 
 void TypingCommand::deleteSelection(bool smartDelete)
 {
     CompositeEditCommand::deleteSelection(smartDelete);
-    typingAddedToOpenCommand();
+    typingAddedToOpenCommand(DeleteSelection);
 }
 
-bool TypingCommand::preservesTypingStyle() const
+void TypingCommand::updatePreservesTypingStyle(ETypingCommand commandType)
 {
-    switch (m_commandType) {
+    switch (commandType) {
         case DeleteSelection:
         case DeleteKey:
         case ForwardDeleteKey:
         case InsertParagraphSeparator:
         case InsertLineBreak:
-            return true;
+            m_preservesTypingStyle = true;
+            return;
         case InsertParagraphSeparatorInQuotedContent:
         case InsertText:
-            return false;
+            m_preservesTypingStyle = false;
+            return;
     }
     ASSERT_NOT_REACHED();
-    return false;
+    m_preservesTypingStyle = false;
 }
 
 bool TypingCommand::isTypingCommand() const
