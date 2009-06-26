@@ -1,3 +1,12 @@
+2009-06-25  Duy Nguyen  <pclouds@gmail.com>
+
+        Rubber-stamped by Jan Alonzo.
+
+        Gtk port Vietnamese translation
+        https://bugs.webkit.org/show_bug.cgi?id=26739
+
+        * vi.po: Added.
+
 2009-05-13  Luca Ferretti  <elle.uca@libero.it>
 
         Rubber-stamped by Xan Lopez.
