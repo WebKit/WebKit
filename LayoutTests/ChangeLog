@@ -1,5 +1,11 @@
 2009-06-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Not reviewed. Skip another failing test due to lack of eventSender impl.
+
+        * platform/gtk/Skipped:
+
+2009-06-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Not reviewed. Skip failing gtk tests due to missing DRT features.
 
         * platform/gtk/Skipped:

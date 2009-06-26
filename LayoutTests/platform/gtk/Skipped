@@ -1760,6 +1760,7 @@ fast/forms/select-double-onchange.html
 fast/forms/select-empty-list.html
 fast/forms/select-enter-key.html
 fast/forms/search-styled.html
+fast/forms/select-script-onchange.html
 fast/forms/select-type-ahead-list-box-no-selection.html
 fast/forms/select-type-ahead-non-latin.html
 fast/forms/slider-mouse-events.html
