@@ -1,3 +1,11 @@
+2009-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Eric Seidel
+        
+        Update this test after the video controller changes.
+
+        * platform/mac/fast/layers/video-layer-expected.txt:
+
 2009-06-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Not reviewed. Skip another failing test due to lack of eventSender impl.
