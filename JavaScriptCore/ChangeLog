@@ -1,3 +1,28 @@
+2009-06-26  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26750        
+
+        Allow custom memory allocation control for JavaScriptCore/runtime
+        directory's classes which instantiated by new:
+
+        class  IdentifierTable
+        struct RegExpObjectData
+        class  HashEntry
+        struct DataInstance::Cache 
+        class  UString
+        struct RegExpConstructorPrivate
+        class  ScopeChain
+
+        * runtime/DateInstance.cpp:
+        * runtime/Identifier.cpp:
+        * runtime/Lookup.h:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/ScopeChain.h:
+        * runtime/UString.h:
+
 2009-06-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

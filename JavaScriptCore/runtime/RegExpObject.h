@@ -56,7 +56,7 @@ namespace JSC {
 
         virtual CallType getCallData(CallData&);
 
-        struct RegExpObjectData {
+        struct RegExpObjectData : public FastAllocBase {
             RegExpObjectData(PassRefPtr<RegExp> regExp, double lastIndex)
                 : regExp(regExp)
                 , lastIndex(lastIndex)

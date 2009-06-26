@@ -32,7 +32,7 @@ namespace JSC {
 
 typedef HashMap<const char*, RefPtr<UString::Rep>, PtrHash<const char*> > LiteralIdentifierTable;
 
-class IdentifierTable {
+class IdentifierTable : public FastAllocBase {
 public:
     ~IdentifierTable()
     {

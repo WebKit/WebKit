@@ -88,7 +88,7 @@ const ClassInfo RegExpConstructor::info = { "Function", &InternalFunction::info,
 @end
 */
 
-struct RegExpConstructorPrivate {
+struct RegExpConstructorPrivate : public FastAllocBase {
     // Global search cache / settings
     RegExpConstructorPrivate()
         : lastNumSubPatterns(0)
