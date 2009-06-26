@@ -30,12 +30,16 @@ audio {
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-user-select: none;
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 100%;
-    -webkit-user-select: none;
     z-index: 0;
+    overflow: hidden;
+    height: 16px;
+    text-align: right;
 }
 
 video:-webkit-full-page-media::-webkit-media-controls-panel {
@@ -44,32 +48,26 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-appearance: media-mute-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    width: 17px;
+    display: -webkit-box;
+    width: 16px;
     height: 16px;
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 16px;
-    width: 17px;
+    display: -webkit-box;
+    width: 16px;
     height: 16px;
 }
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
+    -webkit-appearance: media-timeline-container;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-align: center;
+    -webkit-box-pack: end;
+    -webkit-box-flex: 1;
     -webkit-user-select: none;
-    position: absolute;
-    padding: 0px 16px 0px 0px;
-    top: auto;
-    bottom: 0;
-    left: 32px;
-    right: 32px;
     height: 16px;
 }
 
@@ -83,35 +81,27 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 0px;
-    right: 0px;
+    display: -webkit-box;
+    -webkit-box-flex: 1;
     height: 16px;
     padding: 0px 2px;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
     -webkit-appearance: media-seek-back-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    right: 16px;
-    width: 17px;
+    display: -webkit-box;
+    width: 16px;
     height: 16px;
 }
 
 audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
     -webkit-appearance: media-seek-forward-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    right: 0;
-    width: 17px;
+    display: -webkit-box;
+    width: 16px;
     height: 16px;
 }
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
     display: none;
 }
+

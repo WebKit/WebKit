@@ -1,3 +1,17 @@
+2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26653
+
+        Use flex box in the mediaControls.css style, to nicely scale if a button gets
+        dynamically added or removed.
+
+        Media tests results are affected by this changes.
+
+        * css/mediaControls.css:
+        * css/mediaControlsQT.css:
+
 2009-06-25  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Darin Fisher.

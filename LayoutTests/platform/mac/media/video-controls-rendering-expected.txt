@@ -17,57 +17,39 @@ layer at (8,282) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
 layer at (8,42) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,42) size 320x240
-  RenderBlock (positioned) {DIV} at (0,0) size 320x240
-    RenderButton {INPUT} at (0,0) size 320x18
-layer at (8,266) size 17x16
-  RenderButton {INPUT} at (0,224) size 17x16
-layer at (24,266) size 17x16
-  RenderButton {INPUT} at (16,224) size 17x16
-layer at (40,266) size 256x16
-  RenderBlock (positioned) {DIV} at (32,224) size 256x16
-layer at (40,266) size 256x16
-  RenderSlider {INPUT} at (0,0) size 256x16
-    RenderBlock {DIV} at (2,1) size 13x14
-layer at (295,266) size 17x16
-  RenderButton {INPUT} at (287,224) size 17x16
-layer at (311,266) size 17x16
-  RenderButton {INPUT} at (303,224) size 17x16
+layer at (8,266) size 320x16
+  RenderFlexibleBox (positioned) {DIV} at (0,224) size 320x16
+    RenderButton {INPUT} at (0,0) size 16x16
+    RenderButton {INPUT} at (16,0) size 16x16
+    RenderFlexibleBox {DIV} at (32,0) size 256x16
+      RenderSlider {INPUT} at (0,0) size 256x16
+        RenderBlock {DIV} at (2,1) size 13x14
+    RenderButton {INPUT} at (288,0) size 16x16
+    RenderButton {INPUT} at (304,0) size 16x16
+    RenderButton {INPUT} at (320,0) size 0x16
 layer at (8,282) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,282) size 320x240
-  RenderBlock (positioned) {DIV} at (0,0) size 320x240
-    RenderButton {INPUT} at (0,0) size 320x18
-layer at (8,506) size 17x16
-  RenderButton {INPUT} at (0,224) size 17x16
-layer at (24,506) size 17x16
-  RenderButton {INPUT} at (16,224) size 17x16
-layer at (40,506) size 256x16
-  RenderBlock (positioned) {DIV} at (32,224) size 256x16
-layer at (40,506) size 256x16
-  RenderSlider {INPUT} at (0,0) size 256x16
-    RenderBlock {DIV} at (2,1) size 13x14
-layer at (295,506) size 17x16
-  RenderButton {INPUT} at (287,224) size 17x16
-layer at (311,506) size 17x16
-  RenderButton {INPUT} at (303,224) size 17x16
+layer at (8,506) size 320x16
+  RenderFlexibleBox (positioned) {DIV} at (0,224) size 320x16
+    RenderButton {INPUT} at (0,0) size 16x16
+    RenderButton {INPUT} at (16,0) size 16x16
+    RenderFlexibleBox {DIV} at (32,0) size 256x16
+      RenderSlider {INPUT} at (0,0) size 256x16
+        RenderBlock {DIV} at (2,1) size 13x14
+    RenderButton {INPUT} at (288,0) size 16x16
+    RenderButton {INPUT} at (304,0) size 16x16
+    RenderButton {INPUT} at (320,0) size 0x16
 layer at (8,522) size 320x240
   RenderVideo {VIDEO} at (8,522) size 320x240
 layer at (8,522) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,522) size 320x240
-  RenderBlock (positioned) {DIV} at (0,0) size 320x240
-    RenderButton {INPUT} at (0,0) size 320x18
-layer at (8,746) size 17x16
-  RenderButton {INPUT} at (0,224) size 17x16
-layer at (24,746) size 17x16
-  RenderButton {INPUT} at (16,224) size 17x16
-layer at (40,746) size 256x16
-  RenderBlock (positioned) {DIV} at (32,224) size 256x16
-layer at (40,746) size 256x16
-  RenderSlider {INPUT} at (0,0) size 256x16
-    RenderBlock {DIV} at (2,1) size 13x14
-layer at (295,746) size 17x16
-  RenderButton {INPUT} at (287,224) size 17x16
-layer at (311,746) size 17x16
-  RenderButton {INPUT} at (303,224) size 17x16
+layer at (8,746) size 320x16
+  RenderFlexibleBox (positioned) {DIV} at (0,224) size 320x16
+    RenderButton {INPUT} at (0,0) size 16x16
+    RenderButton {INPUT} at (16,0) size 16x16
+    RenderFlexibleBox {DIV} at (32,0) size 256x16
+      RenderSlider {INPUT} at (0,0) size 256x16
+        RenderBlock {DIV} at (2,1) size 13x14
+    RenderButton {INPUT} at (288,0) size 16x16
+    RenderButton {INPUT} at (304,0) size 16x16
+    RenderButton {INPUT} at (320,0) size 0x16

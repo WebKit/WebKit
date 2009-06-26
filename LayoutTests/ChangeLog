@@ -1,3 +1,18 @@
+2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26653
+
+        After the change to -webkit-box usage for controller bar, we need to
+        update the media layout tests.
+
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-empty-source-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
 2009-06-25  Ryosuke Niwa  <rniwa@google.com>
 
         Reviewed by Eric Seidel.

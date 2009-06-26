@@ -22,7 +22,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-/* alternate media controls */
+/* alternate media controls - Extend mediaControls.css */
 
 audio {
     width: 200px;
@@ -30,47 +30,26 @@ audio {
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
-    -webkit-user-select: none;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
+    /* In mediaControls.css */
+    height: 25px;
 }
 
 video:-webkit-full-page-media::-webkit-media-controls-panel {
-    bottom: -16px;
+    bottom: -25px;
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
-    -webkit-appearance: media-mute-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    right: 0;
-    left: auto;
+    -webkit-box-ordinal-group: 2; /* At the end of the controller bar */
     width: 30px;
     height: 25px;
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
-    -webkit-appearance: media-play-button;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 0px;
     width: 30px;
     height: 25px;
 }
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
-    -webkit-appearance: media-timeline-container;
-    -webkit-user-select: none;
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 30px;
-    right: 30px;
     height: 25px;
 }
 
@@ -78,16 +57,12 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
     display: inline-block;
-    position: absolute;
     cursor: default;
     font: -webkit-small-control;
     font-size: .09em;
     text-align: center;
     overflow: hidden;
     line-height: 13px;
-    top: auto;
-    bottom: 6px;
-    left: 0px;
     height: 14px;
     width: 45px;
 }
@@ -96,36 +71,28 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     -webkit-appearance: media-time-remaining-display;
     -webkit-user-select: none;
     display: inline-block;
-    position: absolute;
     cursor: default;
     font: -webkit-small-control;
     font-size: .09em;
     text-align: center;
     overflow: hidden;
     line-height: 13px;
-    top: auto;
-    bottom: 6px;
-    right: 0px;
     height: 14px;
     width: 45px;
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
-    -webkit-appearance: media-slider;
-    position: absolute;
-    top: auto;
-    bottom: 6px;
-    left: 45px;
-    right: 45px;
     height: 13px;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
     display: none;
+    width: 0px;
 }
 
 audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
     display: none;
+    width: 0px;
 }
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
