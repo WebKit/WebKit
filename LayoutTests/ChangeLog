@@ -20,6 +20,16 @@
 
 2009-06-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/6990481>
+        
+        Handle perspective computation on non-layer objects.
+
+        * transforms/3d/general/perspective-non-layer.html: Added.
+
+2009-06-25  Simon Fraser  <simon.fraser@apple.com>
+
         Rubber-stamped by Eric Seidel
         
         Update this test after the video controller changes.

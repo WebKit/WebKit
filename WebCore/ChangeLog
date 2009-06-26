@@ -1,3 +1,16 @@
+2009-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/6990481>
+        
+        Handle perspective computation on non-layer objects.
+
+        Test: transforms/3d/general/perspective-non-layer.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTransformFromContainer):
+
 2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Eric Seidel.
