@@ -2,6 +2,34 @@
 
         Reviewed by Simon Hausmann.
 
+        Added a few autotest to QWebHistory.
+
+        * tests/qwebhistory/data/page1.html: Added.
+        * tests/qwebhistory/data/page2.html: Added.
+        * tests/qwebhistory/data/page3.html: Added.
+        * tests/qwebhistory/data/page4.html: Added.
+        * tests/qwebhistory/data/page5.html: Added.
+        * tests/qwebhistory/data/page6.html: Added.
+        * tests/qwebhistory/qwebhistory.pro: Added.
+        * tests/qwebhistory/tst_qwebhistory.cpp: Added.
+        (tst_QWebHistory::):
+        (tst_QWebHistory::tst_QWebHistory):
+        (tst_QWebHistory::~tst_QWebHistory):
+        (tst_QWebHistory::init):
+        (tst_QWebHistory::cleanup):
+        (tst_QWebHistory::title):
+        (tst_QWebHistory::count):
+        (tst_QWebHistory::back):
+        (tst_QWebHistory::forward):
+        (tst_QWebHistory::goToItem):
+        (tst_QWebHistory::items):
+        * tests/qwebhistory/tst_qwebhistory.qrc: Added.
+        * tests/tests.pro:
+
+2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Fix support for documenting functions prefixed with QWEBKIT_EXPORT
 
         Add QWEBKIT_EXPORT to the list of macros to ignore by qdoc.
