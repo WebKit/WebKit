@@ -1,3 +1,12 @@
+2009-06-26  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [Qt] Build fix after r45183
+        https://bugs.webkit.org/show_bug.cgi?id=26748
+
+        * WebCore.pro:
+
 2009-06-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
