@@ -172,7 +172,8 @@ public:
     enum FindFlag {
         FindBackward = 1,
         FindCaseSensitively = 2,
-        FindWrapsAroundDocument = 4
+        FindWrapsAroundDocument = 4,
+        HighlightAllOccurrences = 8
     };
     Q_DECLARE_FLAGS(FindFlags, FindFlag)
 

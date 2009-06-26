@@ -646,9 +646,18 @@ void QWebView::setRenderHint(QPainter::RenderHint hint, bool enabled)
 
 
 /*!
-    Finds the next occurrence of the string, \a subString, in the page, using
-    the given \a options. Returns true of \a subString was found and selects
-    the match visually; otherwise returns false.
+    Finds the specified string, \a subString, in the page, using the given \a options.
+
+    If the HighlightAllOccurrences flag is passed, the function will highlight all occurrences
+    that exist in the page. All subsequent calls will extend the highlight, rather than
+    replace it, with occurrences of the new string.
+
+    If the HighlightAllOccurrences flag is not passed, the function will select an occurrence
+    and all subsequent calls will replace the current occurrence with the next one.
+
+    To clear the selection, just pass an empty string.
+
+    Returns true if \a subString was found; otherwise returns false.
 
     \sa selectedText(), selectionChanged()
 */

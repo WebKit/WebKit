@@ -1,3 +1,16 @@
+2009-06-25  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Adam Treat.
+
+        Add highlight functionality to the QWebPage::findText() method. Introduced is
+        new HighlightAllOccurrences flag which passed to the function will make it mark
+        all existing occurrences of specified string in the page.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::findText):
+        * Api/qwebpage.h:
+        * Api/qwebview.cpp:
+
 2009-06-19  Daniel Teske <qt-info@nokia.com>
 
         Reviewed by Simon Hausmann.
