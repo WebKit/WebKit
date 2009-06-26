@@ -1,3 +1,13 @@
+2009-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+        
+        Add Windows-specific test results, since Windows does not have
+        3d transforms enabled.
+
+        * platform/win/fast/media/mq-transform-02-expected.txt: Copied from LayoutTests/platform/mac-leopard/fast/media/mq-transform-02-expected.txt.
+        * platform/win/fast/media/mq-transform-03-expected.txt: Copied from LayoutTests/platform/mac-leopard/fast/media/mq-transform-03-expected.txt.
+
 2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Eric Seidel.
