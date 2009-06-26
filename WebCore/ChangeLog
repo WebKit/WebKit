@@ -1,3 +1,72 @@
+2009-06-26  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26691
+
+        Cleanup: Move focusRingColor to RenderTheme.
+
+        Most of this CL involves deleting files and removing dead code.
+
+        focusRingColor() is now defined in RenderTheme rather than in
+        misc. places on each port.  The default color is specified as
+        black in renderTheme and ports can override it in their own
+        custom renderThemes.
+
+        Behavior should be identical except for the following cases,
+        this lists platform and what the focus ring color used to be
+        before this cl and the file where it used to be defined:
+
+        Android - red
+        WebCore/platform/android/TemporaryLinkStubs.cpp
+
+        Cairo - aqua focus ring color - 0xFF7DADD9
+        WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp
+
+        wx - red
+        WebCore/platform/wx/TemporaryLinkStubs.cpp
+
+        QT - black
+        WebCore/platform/graphics/qt/GraphicsContextQt.cpp
+
+        Manual test: manual-tests/focusringcolor-change-on-theme-change.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * manual-tests/focusringcolor-change-on-theme-change.html: Added.
+        * platform/android/TemporaryLinkStubs.cpp:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/chromium/ColorChromium.cpp: Removed.
+        * platform/graphics/chromium/ColorChromiumMac.mm: Removed.
+        * platform/graphics/mac/ColorMac.h:
+        * platform/graphics/mac/ColorMac.mm:
+        (WebCore::oldAquaFocusRingColor):
+        (WebCore::setUsesTestModeFocusRingColor):
+        (WebCore::usesTestModeFocusRingColor):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/win/ColorSafari.cpp: Removed.
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::focusRingColor):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::focusRingColor):
+        (WebCore::RenderThemeChromiumMac::systemColor):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::focusRingColor):
+        * rendering/RenderThemeChromiumSkia.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::focusRingColor):
+        (WebCore::RenderThemeMac::systemColor):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::makeRGBAFromCGColor):
+        (WebCore::RenderThemeSafari::focusRingColor):
+        * rendering/RenderThemeSafari.h:
+
 2009-06-26  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

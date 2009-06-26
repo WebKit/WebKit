@@ -849,4 +849,9 @@ Color RenderTheme::platformInactiveTextSearchHighlightColor() const
     return Color(255, 255, 0); // Yellow.
 }
 
+Color RenderTheme::focusRingColor() const
+{
+    return Color(0, 0, 0); // Black.
+}
+
 } // namespace WebCore

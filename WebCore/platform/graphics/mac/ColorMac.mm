@@ -29,18 +29,26 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
 
-@interface WebCoreControlTintObserver : NSObject
-+ (void)controlTintDidChange;
-@end
-
 namespace WebCore {
 
 // NSColor calls don't throw, so no need to block Cocoa exceptions in this file
 
-static RGBA32 oldAquaFocusRingColor = 0xFF7DADD9;
-static RGBA32 systemFocusRingColor;
 static bool useOldAquaFocusRingColor;
 
+RGBA32 oldAquaFocusRingColor()
+{
+    return 0xFF7DADD9;
+}
+
+void setUsesTestModeFocusRingColor(bool newValue)
+{
+    useOldAquaFocusRingColor = newValue;
+}
+
+bool usesTestModeFocusRingColor()
+{
+    return useOldAquaFocusRingColor;
+}
 
 static RGBA32 makeRGBAFromNSColor(NSColor *c)
 {
@@ -119,42 +127,4 @@ CGColorRef createCGColor(const Color& c)
     return CGColorFromNSColor(nsColor(c));
 }
 
-Color focusRingColor()
-{
-    static bool tintIsKnown = false;
-    if (!tintIsKnown) {
-        [[NSNotificationCenter defaultCenter] addObserver:[WebCoreControlTintObserver class]
-                                                 selector:@selector(controlTintDidChange)
-                                                     name:NSControlTintDidChangeNotification
-                                                   object:NSApp];
-        [WebCoreControlTintObserver controlTintDidChange];
-        tintIsKnown = true;
-    }
-
-    if (usesTestModeFocusRingColor())
-        return oldAquaFocusRingColor;
-
-    return systemFocusRingColor;
-}
-
-bool usesTestModeFocusRingColor()
-{
-    return useOldAquaFocusRingColor;
-}
-
-void setUsesTestModeFocusRingColor(bool newValue)
-{
-    useOldAquaFocusRingColor = newValue;
-}
-
-}
-
-@implementation WebCoreControlTintObserver
-
-+ (void)controlTintDidChange
-{
-    NSColor *color = [[NSColor keyboardFocusIndicatorColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-    WebCore::systemFocusRingColor = WebCore::makeRGBAFromNSColor(color);
-}
-
-@end
+} // namespace WebCore

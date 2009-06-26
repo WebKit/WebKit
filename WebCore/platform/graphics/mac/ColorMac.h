@@ -46,6 +46,9 @@ namespace WebCore {
     bool usesTestModeFocusRingColor();
     void setUsesTestModeFocusRingColor(bool);
     
+    // Focus ring color used for testing purposes.
+    RGBA32 oldAquaFocusRingColor();
+
 }
 
 #endif

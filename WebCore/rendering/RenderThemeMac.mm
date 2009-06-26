@@ -21,6 +21,7 @@
 #import "RenderThemeMac.h"
 
 #import "BitmapImage.h"
+#import "ColorMac.h"
 #import "CSSStyleSelector.h"
 #import "CSSValueKeywords.h"
 #import "Document.h"
@@ -154,6 +155,14 @@ Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor() const
 Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor() const
 {
     return Color::black;
+}
+
+Color RenderThemeMac::focusRingColor() const
+{
+    if (usesTestModeFocusRingColor())
+        return oldAquaFocusRingColor();
+
+    return systemColor(CSSValueWebkitFocusRingColor);
 }
 
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor() const
@@ -412,6 +421,9 @@ Color RenderThemeMac::systemColor(int cssValueId) const
             break;
         case CSSValueThreedlightshadow:
             color = convertNSColorToColor([NSColor controlLightHighlightColor]);
+            break;
+        case CSSValueWebkitFocusRingColor:
+            color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
             break;
         case CSSValueWindow:
             color = convertNSColorToColor([NSColor windowBackgroundColor]);

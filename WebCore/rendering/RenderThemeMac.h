@@ -58,6 +58,7 @@ public:
     virtual Color platformActiveListBoxSelectionForegroundColor() const;
     virtual Color platformInactiveListBoxSelectionBackgroundColor() const;
     virtual Color platformInactiveListBoxSelectionForegroundColor() const;
+    virtual Color focusRingColor() const;
 
     virtual ScrollbarControlSize scrollbarControlSizeForPart(ControlPart) { return SmallScrollbar; }
     

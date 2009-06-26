@@ -32,6 +32,8 @@
 #import <math.h>
 
 #import "BitmapImage.h"
+#import "ChromiumBridge.h"
+#import "ColorMac.h"
 #import "CSSStyleSelector.h"
 #import "CSSValueKeywords.h"
 #import "Element.h"
@@ -168,6 +170,14 @@ Color RenderThemeChromiumMac::activeListBoxSelectionBackgroundColor() const
 {
     NSColor* color = [[NSColor alternateSelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
+}
+
+Color RenderThemeChromiumMac::focusRingColor() const
+{
+    if (ChromiumBridge::layoutTestMode())
+        return oldAquaFocusRingColor();
+
+    return systemColor(CSSValueWebkitFocusRingColor);
 }
 
 static FontWeight toFontWeight(NSInteger appKitFontWeight)
@@ -421,6 +431,9 @@ Color RenderThemeChromiumMac::systemColor(int cssValueId) const
         break;
     case CSSValueThreedlightshadow:
         color = convertNSColorToColor([NSColor controlLightHighlightColor]);
+        break;
+    case CSSValueWebkitFocusRingColor:
+        color = convertNSColorToColor([NSColor keyboardFocusIndicatorColor]);
         break;
     case CSSValueWindow:
         color = convertNSColorToColor([NSColor windowBackgroundColor]);

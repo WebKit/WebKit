@@ -54,6 +54,7 @@ namespace WebCore {
         virtual Color platformInactiveSelectionBackgroundColor() const;
         virtual Color platformActiveSelectionForegroundColor() const;
         virtual Color platformInactiveSelectionForegroundColor() const;
+        virtual Color focusRingColor() const;
 
         // To change the blink interval, override caretBlinkIntervalInternal instead of this one so that we may share layout test code an intercepts.
         virtual double caretBlinkInterval() const;

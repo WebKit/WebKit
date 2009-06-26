@@ -162,15 +162,6 @@ void CheckCacheObjectStatus(DocLoader*, CachedResource*)
 Icon::~Icon() { }
 void Icon::paint(GraphicsContext*, const IntRect&) { }
 
-// This function provides the default value for the CSS property:
-// -webkit-focus-ring-color
-// It is also related to the CSS property outline-color:
-Color focusRingColor()
-{
-    verifiedOk();
-    return 0xFF0000FF;
-}
-
 }  // namespace WebCore
 
 // FIXME, no support for spelling yet.

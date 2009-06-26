@@ -503,7 +503,7 @@ void GraphicsContext::drawFocusRing(const Color& color)
     paint.setAntiAlias(true);
     paint.setStyle(SkPaint::kStroke_Style);
 
-    paint.setColor(focusRingColor().rgb());
+    paint.setColor(color.rgb());
     paint.setStrokeWidth(focusRingOutset * 2);
     paint.setPathEffect(new SkCornerPathEffect(focusRingOutset * 2))->unref();
     focusRingRegion.getBoundaryPath(&path);
