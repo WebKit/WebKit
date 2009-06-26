@@ -54,6 +54,7 @@
 
             function compareResults(id, expectedResult, actualResult) {
                 var resultElement = document.getElementById(id + '-result');
+                shouldBe(resultElement, expectedResult.length, actualResult.length);
                 for (var i = 0; i < expectedResult.length; i++) {
                     shouldBe(resultElement, expectedResult[i], actualResult[i]);
                 }
@@ -111,8 +112,12 @@
                 registerEventListenersWithResults(draggableUnselectableResults);
                 var draggableUnselectable = document.getElementById('draggable-unselectable');
                 dragFromTopOfElement(draggableUnselectable, {x: 0, y: draggableUnselectable.offsetHeight / 2});
-                // The second "mouseup" event that is fired here is something of a mystery, but doesn't appear relevant to what this is testing
-                compareResults("draggable-unselectable", ["mousedown", "dragstart", "mouseup", "No selection", "mouseup", "No selection"], draggableUnselectableResults);
+
+                // <https://bugs.webkit.org/show_bug.cgi?id=26758>: eventSender.mouseUp during a drag can dispatch a duplicate mouseup event on Mac OS X
+                if (draggableUnselectableResults.length == 6 && draggableUnselectableResults[4] == "mouseup" && draggableUnselectableResults[5] == "No selection")
+                    draggableUnselectableResults = draggableUnselectableResults.slice(0, 4);
+
+                compareResults("draggable-unselectable", ["mousedown", "dragstart", "mouseup", "No selection"], draggableUnselectableResults);
             }
         </script>
     </head>

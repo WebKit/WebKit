@@ -1,3 +1,11 @@
+2009-06-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix user-drag-element-and-user-select-none.html to not rely on a bug in Mac DRT.
+
+        * editing/selection/user-drag-element-and-user-select-none.html:
+
 2009-06-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
