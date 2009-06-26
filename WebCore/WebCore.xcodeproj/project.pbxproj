@@ -834,8 +834,6 @@
 		51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */; };
 		51BE37DF0DAEE00E001085FC /* StorageArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BE37DD0DAEE00E001085FC /* StorageArea.cpp */; };
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; };
-		51BE38280DAEF7DA001085FC /* LocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BE38260DAEF7DA001085FC /* LocalStorage.cpp */; };
-		51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE38270DAEF7DA001085FC /* LocalStorage.h */; };
 		51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0AA380F2AA10A001648C2 /* CachedFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA410F2AA15E001648C2 /* CachedFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */; };
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
@@ -849,8 +847,6 @@
 		51E0BABC0DA5547100A9E417 /* StorageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E0BABA0DA5547100A9E417 /* StorageEvent.cpp */; };
 		51E0BAEA0DA55D4A00A9E417 /* JSStorageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E0BAE80DA55D4A00A9E417 /* JSStorageEvent.cpp */; };
 		51E0BAEB0DA55D4A00A9E417 /* JSStorageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BAE90DA55D4A00A9E417 /* JSStorageEvent.h */; };
-		51E0BB230DA572A600A9E417 /* SessionStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BB210DA572A600A9E417 /* SessionStorage.h */; };
-		51E0BB240DA572A600A9E417 /* SessionStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E0BB220DA572A600A9E417 /* SessionStorage.cpp */; };
 		51E0BB380DA5ACB600A9E417 /* StorageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BB360DA5ACB600A9E417 /* StorageMap.h */; };
 		51E0BB390DA5ACB600A9E417 /* StorageMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */; };
 		51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */; };
@@ -4296,6 +4292,8 @@
 		C0DFC8700DB6841A003EAE7C /* JSConsoleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */; };
 		C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */; };
 		C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */; };
+		C50D0E820FF4272900AC2644 /* StorageNamespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C50D0E800FF4272900AC2644 /* StorageNamespace.cpp */; };
+		C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = C50D0E810FF4272900AC2644 /* StorageNamespace.h */; };
 		C5102D940FD9AA2D00FAFF04 /* StorageSyncManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C5102D920FD9AA2D00FAFF04 /* StorageSyncManager.h */; };
 		C5102D950FD9AA2D00FAFF04 /* StorageSyncManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5102D930FD9AA2D00FAFF04 /* StorageSyncManager.cpp */; };
 		C5102ECF0FD9EF8C00FAFF04 /* StorageAreaSync.h in Headers */ = {isa = PBXBuildFile; fileRef = C5102ECD0FD9EF8C00FAFF04 /* StorageAreaSync.h */; };
@@ -5796,8 +5794,6 @@
 		51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyWebArchiveMac.mm; sourceTree = "<group>"; };
 		51BE37DD0DAEE00E001085FC /* StorageArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageArea.cpp; sourceTree = "<group>"; };
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
-		51BE38260DAEF7DA001085FC /* LocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorage.cpp; sourceTree = "<group>"; };
-		51BE38270DAEF7DA001085FC /* LocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorage.h; sourceTree = "<group>"; };
 		51C0AA380F2AA10A001648C2 /* CachedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFrame.h; sourceTree = "<group>"; };
 		51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFrame.cpp; sourceTree = "<group>"; };
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
@@ -5812,8 +5808,6 @@
 		51E0BABD0DA5548400A9E417 /* StorageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StorageEvent.idl; sourceTree = "<group>"; };
 		51E0BAE80DA55D4A00A9E417 /* JSStorageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageEvent.cpp; sourceTree = "<group>"; };
 		51E0BAE90DA55D4A00A9E417 /* JSStorageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageEvent.h; sourceTree = "<group>"; };
-		51E0BB210DA572A600A9E417 /* SessionStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionStorage.h; sourceTree = "<group>"; };
-		51E0BB220DA572A600A9E417 /* SessionStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionStorage.cpp; sourceTree = "<group>"; };
 		51E0BB360DA5ACB600A9E417 /* StorageMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageMap.h; sourceTree = "<group>"; };
 		51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageMap.cpp; sourceTree = "<group>"; };
 		51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutodrainedPool.mm; sourceTree = "<group>"; };
@@ -9130,6 +9124,8 @@
 		C0DFC86F0DB6841A003EAE7C /* JSConsoleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsoleCustom.cpp; sourceTree = "<group>"; };
 		C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingDetectorICU.cpp; sourceTree = "<group>"; };
 		C105DA630F3AA6B8001DD44F /* TextEncodingDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEncodingDetector.h; sourceTree = "<group>"; };
+		C50D0E800FF4272900AC2644 /* StorageNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespace.cpp; sourceTree = "<group>"; };
+		C50D0E810FF4272900AC2644 /* StorageNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespace.h; sourceTree = "<group>"; };
 		C5102D920FD9AA2D00FAFF04 /* StorageSyncManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageSyncManager.h; sourceTree = "<group>"; };
 		C5102D930FD9AA2D00FAFF04 /* StorageSyncManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageSyncManager.cpp; sourceTree = "<group>"; };
 		C5102ECD0FD9EF8C00FAFF04 /* StorageAreaSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaSync.h; sourceTree = "<group>"; };
@@ -9672,8 +9668,6 @@
 				1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */,
 				1AD51A120CB59CD300953D11 /* DatabaseTracker.h */,
 				51FAFE330CECBF2D00BB3F24 /* DatabaseTrackerClient.h */,
-				51BE38260DAEF7DA001085FC /* LocalStorage.cpp */,
-				51BE38270DAEF7DA001085FC /* LocalStorage.h */,
 				511F23130DC160DA004F0032 /* LocalStorageTask.cpp */,
 				511F23140DC160DA004F0032 /* LocalStorageTask.h */,
 				511F23150DC160DA004F0032 /* LocalStorageThread.cpp */,
@@ -9699,8 +9693,6 @@
 				1A7CCB230CD946FD00B7B64E /* SQLTransaction.idl */,
 				1A7CCB170CD9469A00B7B64E /* SQLTransactionCallback.h */,
 				1A7CCB180CD9469A00B7B64E /* SQLTransactionErrorCallback.h */,
-				51E0BB220DA572A600A9E417 /* SessionStorage.cpp */,
-				51E0BB210DA572A600A9E417 /* SessionStorage.h */,
 				51E3F9C50DA059DC00250911 /* Storage.cpp */,
 				51E3F9C40DA059DC00250911 /* Storage.h */,
 				51E3F9D10DA05D7100250911 /* Storage.idl */,
@@ -9713,6 +9705,8 @@
 				51E0BABD0DA5548400A9E417 /* StorageEvent.idl */,
 				51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */,
 				51E0BB360DA5ACB600A9E417 /* StorageMap.h */,
+				C50D0E800FF4272900AC2644 /* StorageNamespace.cpp */,
+				C50D0E810FF4272900AC2644 /* StorageNamespace.h */,
 				C5102D920FD9AA2D00FAFF04 /* StorageSyncManager.h */,
 				C5102D930FD9AA2D00FAFF04 /* StorageSyncManager.cpp */,
 			);
@@ -16171,7 +16165,6 @@
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
-				51BE38290DAEF7DA001085FC /* LocalStorage.h in Headers */,
 				511F23180DC160DA004F0032 /* LocalStorageTask.h in Headers */,
 				511F231A0DC160DA004F0032 /* LocalStorageThread.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
@@ -16610,7 +16603,6 @@
 				084AEBE50FB505FA0038483E /* SelectElement.h in Headers */,
 				93309E0E099E64920056E581 /* SelectionController.h in Headers */,
 				BC7FA6810D1F167900DB22A9 /* SelectorNodeList.h in Headers */,
-				51E0BB230DA572A600A9E417 /* SessionStorage.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
@@ -16913,6 +16905,7 @@
 				BC77D16C0FF19F560070887B /* JSDataGridColumnList.h in Headers */,
 				BCBCAE370FF19385000762AE /* DataGridDataSource.h in Headers */,
 				BCBCAE3D0FF19399000762AE /* JSDataGridDataSource.h in Headers */,
+				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18253,7 +18246,6 @@
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
-				51BE38280DAEF7DA001085FC /* LocalStorage.cpp in Sources */,
 				511F23170DC160DA004F0032 /* LocalStorageTask.cpp in Sources */,
 				511F23190DC160DA004F0032 /* LocalStorageThread.cpp in Sources */,
 				935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */,
@@ -18653,7 +18645,6 @@
 				93309E0D099E64920056E581 /* SelectionController.cpp in Sources */,
 				4A8C96EB0BE69032004EEFF0 /* SelectionControllerMac.mm in Sources */,
 				BC7FA6820D1F167900DB22A9 /* SelectorNodeList.cpp in Sources */,
-				51E0BB240DA572A600A9E417 /* SessionStorage.cpp in Sources */,
 				93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */,
 				14C9A5EA0B3D105F005A0232 /* Settings.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
@@ -18926,6 +18917,7 @@
 				BCBCAE540FF1A29E000762AE /* JSHTMLDataGridElementCustom.cpp in Sources */,
 				BC77D1FD0FF28D9B0070887B /* DataGridColumnList.cpp in Sources */,
 				BC77D2390FF298080070887B /* DataGridColumn.cpp in Sources */,
+				C50D0E820FF4272900AC2644 /* StorageNamespace.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

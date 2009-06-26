@@ -20,15 +20,16 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocalStorage_h
-#define LocalStorage_h
+#ifndef StorageNamespace_h
+#define StorageNamespace_h
 
 #if ENABLE(DOM_STORAGE)
 
 #include "SecurityOriginHash.h"
+#include "StorageArea.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -38,28 +39,36 @@ namespace WebCore {
     class StorageArea;
     class StorageSyncManager;
 
-    class LocalStorage : public RefCounted<LocalStorage> {
+    class StorageNamespace : public RefCounted<StorageNamespace> {
     public:
-        ~LocalStorage();
+        ~StorageNamespace();
 
-        static PassRefPtr<LocalStorage> localStorage(const String& path);
+        static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path);
+        static PassRefPtr<StorageNamespace> sessionStorageNamespace();
 
         PassRefPtr<StorageArea> storageArea(SecurityOrigin*);
-
+        PassRefPtr<StorageNamespace> copy();
         void close();
 
     private:
-        LocalStorage(const String& path);
+        StorageNamespace(StorageType, const String& path);
 
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> LocalStorageAreaMap;
-        LocalStorageAreaMap m_storageAreaMap;
+        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> StorageAreaMap;
+        StorageAreaMap m_storageAreaMap;
 
+        StorageType m_storageType;
+
+        // Only used if m_storageType == LocalStorage and the path was not "" in our constructor.
         String m_path;
         RefPtr<StorageSyncManager> m_syncManager;
+
+#ifndef NDEBUG
+        bool m_isShutdown;
+#endif
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)
 
-#endif // LocalStorage_h
+#endif // StorageNamespace_h

@@ -28,7 +28,6 @@
 
 #if ENABLE(DOM_STORAGE)
 
-#include "LocalStorage.h"
 #include "LocalStorageTask.h"
 #include "StorageAreaSync.h"
 

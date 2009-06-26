@@ -75,6 +75,8 @@ StorageAreaSync::~StorageAreaSync()
 void StorageAreaSync::scheduleFinalSync()
 {
     ASSERT(isMainThread());
+    // FIXME: We do this to avoid races, but it'd be better to make things safe without blocking.
+    blockUntilImportComplete();
     
     if (m_syncTimer.isActive())
         m_syncTimer.stop();

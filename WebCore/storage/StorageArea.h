@@ -48,12 +48,12 @@ namespace WebCore {
     class StorageMap;
     class StorageSyncManager;
     typedef int ExceptionCode;
+    enum StorageType { LocalStorage, SessionStorage };
 
     class StorageArea : public ThreadSafeShared<StorageArea> {
     public:
-        static PassRefPtr<StorageArea> createLocalStorage(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager);
-        static PassRefPtr<StorageArea> createSessionStorage(SecurityOrigin* origin, Page* page);
-        PassRefPtr<StorageArea> copy(SecurityOrigin*, Page*);
+        static PassRefPtr<StorageArea> create(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
+        PassRefPtr<StorageArea> copy(SecurityOrigin*);
 
         // The HTML5 DOM Storage API
         unsigned length() const;
@@ -64,28 +64,31 @@ namespace WebCore {
         void clear(Frame* sourceFrame);
 
         bool contains(const String& key) const;
-        void scheduleFinalSync();
+        void close();
 
         // Could be called from a background thread.
         void importItem(const String& key, const String& value);
         SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
 
     protected:
-        StorageArea(SecurityOrigin*, PassRefPtr<StorageSyncManager>);
-        StorageArea(SecurityOrigin*, Page*);
-        StorageArea(SecurityOrigin*, Page*, PassRefPtr<StorageMap>);
+        StorageArea(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
+        StorageArea(SecurityOrigin*, StorageArea*);
 
     private:
         void blockUntilImportComplete() const;
 
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
+        StorageType m_storageType;
         RefPtr<SecurityOrigin> m_securityOrigin;
         RefPtr<StorageMap> m_storageMap;
 
         RefPtr<StorageAreaSync> m_storageAreaSync;
         RefPtr<StorageSyncManager> m_storageSyncManager;
-        Page* m_sessionStoragePage;  // NULL iff it's LocalStorage
+
+#ifndef NDEBUG
+        bool m_isShutdown;
+#endif
     };
 
 } // namespace WebCore

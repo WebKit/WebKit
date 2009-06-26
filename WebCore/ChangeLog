@@ -1,3 +1,67 @@
+2009-06-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26732
+
+        For the final step of https://bugs.webkit.org/show_bug.cgi?id=25376,
+        combine LocalStorage and SessionStorage into StorageNamespace. The
+        synching code (for LocalStorage) has already been removed, so these
+        classes are now very similar.  All they do is essentially contain a
+        logical grouping of origins that are attached to specific contexts
+        (be it PageGroups for LocalStorage and Page for SessionStorage).
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createWindow):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::localStorage):
+        * page/DOMWindow.h:
+        * page/Page.cpp:
+        (WebCore::Page::sessionStorage):
+        (WebCore::Page::setSessionStorage):
+        * page/Page.h:
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::localStorage):
+        * page/PageGroup.h:
+        * storage/LocalStorage.cpp: Removed.
+        * storage/LocalStorage.h: Removed.
+        * storage/LocalStorageTask.cpp:
+        * storage/LocalStorageThread.cpp:
+        * storage/SessionStorage.cpp: Removed.
+        * storage/SessionStorage.h: Removed.
+        * storage/StorageArea.cpp:
+        (WebCore::StorageArea::create):
+        (WebCore::StorageArea::StorageArea):
+        (WebCore::StorageArea::copy):
+        (WebCore::StorageArea::length):
+        (WebCore::StorageArea::key):
+        (WebCore::StorageArea::getItem):
+        (WebCore::StorageArea::setItem):
+        (WebCore::StorageArea::removeItem):
+        (WebCore::StorageArea::clear):
+        (WebCore::StorageArea::contains):
+        (WebCore::StorageArea::importItem):
+        (WebCore::StorageArea::close):
+        (WebCore::StorageArea::dispatchStorageEvent):
+        * storage/StorageArea.h:
+        (WebCore::):
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        * storage/StorageNamespace.cpp: Copied from WebCore/storage/LocalStorage.cpp.
+        (WebCore::localStorageNamespaceMap):
+        (WebCore::StorageNamespace::localStorageNamespace):
+        (WebCore::StorageNamespace::sessionStorageNamespace):
+        (WebCore::StorageNamespace::StorageNamespace):
+        (WebCore::StorageNamespace::~StorageNamespace):
+        (WebCore::StorageNamespace::copy):
+        (WebCore::StorageNamespace::storageArea):
+        (WebCore::StorageNamespace::close):
+        * storage/StorageNamespace.h: Copied from WebCore/storage/LocalStorage.h.
+
 2009-06-26  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by David Levin.

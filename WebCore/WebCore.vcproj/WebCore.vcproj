@@ -29987,14 +29987,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\LocalStorage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\LocalStorage.h"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\LocalStorageTask.cpp"
 				>
 			</File>
@@ -30024,14 +30016,6 @@
 			</File>
 			<File
 				RelativePath="..\storage\OriginUsageRecord.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\SessionStorage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\SessionStorage.h"
 				>
 			</File>
 			<File
@@ -30107,6 +30091,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\StorageAreaSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageAreaSync.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\StorageEvent.cpp"
 				>
 			</File>
@@ -30123,11 +30115,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\StorageAreaSync.cpp"
+				RelativePath="..\storage\StorageNamespace.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\StorageAreaSync.h"
+				RelativePath="..\storage\StorageNamespace.h"
 				>
 			</File>
 			<File

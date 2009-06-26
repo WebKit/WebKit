@@ -1010,7 +1010,6 @@ This file contains the list of files needed to build WebCore.
         storage/DatabaseTask.cpp
         storage/DatabaseThread.cpp
         storage/DatabaseTracker.cpp
-        storage/LocalStorage.cpp
         storage/LocalStorageTask.cpp
         storage/LocalStorageThread.cpp
         storage/OriginQuotaManager.cpp
@@ -1021,10 +1020,10 @@ This file contains the list of files needed to build WebCore.
         storage/SQLTransaction.cpp
         storage/Storage.cpp
         storage/StorageArea.cpp
-        storage/StorageEvent.cpp
-        storage/StorageMap.cpp
-        storage/SessionStorage.cpp
         storage/StorageAreaSync.cpp
+        storage/StorageEvent.cpp
+        storage/StorageNamespace.cpp
+        storage/StorageMap.cpp
         storage/StorageSyncManager.cpp
     </set>
 

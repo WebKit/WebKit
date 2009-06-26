@@ -32,8 +32,7 @@
 #include "Settings.h"
 
 #if ENABLE(DOM_STORAGE)
-#include "LocalStorage.h"
-#include "StorageArea.h"
+#include "StorageNamespace.h"
 #endif
 
 #if PLATFORM(CHROMIUM)
@@ -181,13 +180,13 @@ void PageGroup::setShouldTrackVisitedLinks(bool shouldTrack)
 }
 
 #if ENABLE(DOM_STORAGE)
-LocalStorage* PageGroup::localStorage()
+StorageNamespace* PageGroup::localStorage()
 {
     if (!m_localStorage) {
         // Need a page in this page group to query the settings for the local storage database path.
         Page* page = *m_pages.begin();
         ASSERT(page);
-        m_localStorage = LocalStorage::localStorage(page->settings()->localStorageDatabasePath());
+        m_localStorage = StorageNamespace::localStorageNamespace(page->settings()->localStorageDatabasePath());
     }
 
     return m_localStorage.get();

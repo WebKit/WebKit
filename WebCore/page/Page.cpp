@@ -58,9 +58,8 @@
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(DOM_STORAGE)
-#include "LocalStorage.h"
-#include "SessionStorage.h"
 #include "StorageArea.h"
+#include "StorageNamespace.h"
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -550,17 +549,16 @@ void Page::setDebugger(JSC::Debugger* debugger)
 }
 
 #if ENABLE(DOM_STORAGE)
-SessionStorage* Page::sessionStorage(bool optionalCreate)
+StorageNamespace* Page::sessionStorage(bool optionalCreate)
 {
     if (!m_sessionStorage && optionalCreate)
-        m_sessionStorage = SessionStorage::create(this);
+        m_sessionStorage = StorageNamespace::sessionStorageNamespace();
 
     return m_sessionStorage.get();
 }
 
-void Page::setSessionStorage(PassRefPtr<SessionStorage> newStorage)
+void Page::setSessionStorage(PassRefPtr<StorageNamespace> newStorage)
 {
-    ASSERT(newStorage->page() == this);
     m_sessionStorage = newStorage;
 }
 #endif

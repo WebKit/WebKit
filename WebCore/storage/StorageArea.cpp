@@ -42,16 +42,19 @@
 
 namespace WebCore {
 
-PassRefPtr<StorageArea> StorageArea::createLocalStorage(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager)
+PassRefPtr<StorageArea> StorageArea::create(StorageType storageType, SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager)
 {
-    return adoptRef(new StorageArea(origin, syncManager));
+    return adoptRef(new StorageArea(storageType, origin, syncManager));
 }
 
-StorageArea::StorageArea(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager)
-    : m_securityOrigin(origin)
+StorageArea::StorageArea(StorageType storageType, SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager)
+    : m_storageType(storageType)
+    , m_securityOrigin(origin)
     , m_storageMap(StorageMap::create())
     , m_storageSyncManager(syncManager)
-    , m_sessionStoragePage(0)
+#ifndef NDEBUG
+    , m_isShutdown(false)
+#endif
 {
     ASSERT(m_securityOrigin);
     ASSERT(m_storageMap);
@@ -64,37 +67,35 @@ StorageArea::StorageArea(SecurityOrigin* origin, PassRefPtr<StorageSyncManager> 
     }
 }
 
-PassRefPtr<StorageArea> StorageArea::createSessionStorage(SecurityOrigin* origin, Page* page)
+PassRefPtr<StorageArea> StorageArea::copy(SecurityOrigin* origin)
 {
-    return adoptRef(new StorageArea(origin, page, 0));
+    ASSERT(!m_isShutdown);
+    return adoptRef(new StorageArea(origin, this));
 }
 
-PassRefPtr<StorageArea> StorageArea::copy(SecurityOrigin* origin, Page* page)
-{
-    return adoptRef(new StorageArea(origin, page, m_storageMap));
-}
-
-StorageArea::StorageArea(SecurityOrigin* origin, Page* page, PassRefPtr<StorageMap> storageMap)
-    : m_securityOrigin(origin)
-    , m_storageMap(storageMap)
-    , m_sessionStoragePage(page)
+StorageArea::StorageArea(SecurityOrigin* origin, StorageArea* area)
+    : m_storageType(area->m_storageType)
+    , m_securityOrigin(origin)
+    , m_storageMap(area->m_storageMap)
+    , m_storageSyncManager(area->m_storageSyncManager)
+#ifndef NDEBUG
+    , m_isShutdown(area->m_isShutdown)
+#endif
 {
     ASSERT(m_securityOrigin);
-    ASSERT(m_sessionStoragePage);
-
-    if (!m_storageMap) {
-        m_storageMap = StorageMap::create();
-        ASSERT(m_storageMap);
-    }
+    ASSERT(m_storageMap);
+    ASSERT(!m_isShutdown);
 }
 
 unsigned StorageArea::length() const
 {
+    ASSERT(!m_isShutdown);
     return m_storageMap->length();
 }
 
 String StorageArea::key(unsigned index, ExceptionCode& ec) const
 {
+    ASSERT(!m_isShutdown);
     blockUntilImportComplete();
     
     String key;
@@ -109,6 +110,7 @@ String StorageArea::key(unsigned index, ExceptionCode& ec) const
 
 String StorageArea::getItem(const String& key) const
 {
+    ASSERT(!m_isShutdown);
     blockUntilImportComplete();
     
     return m_storageMap->getItem(key);
@@ -116,6 +118,7 @@ String StorageArea::getItem(const String& key) const
 
 void StorageArea::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* frame)
 {
+    ASSERT(!m_isShutdown);
     ASSERT(!value.isNull());
     blockUntilImportComplete();
     
@@ -147,6 +150,7 @@ void StorageArea::setItem(const String& key, const String& value, ExceptionCode&
 
 void StorageArea::removeItem(const String& key, Frame* frame)
 {
+    ASSERT(!m_isShutdown);
     blockUntilImportComplete();
     
     if (frame->page()->settings()->privateBrowsingEnabled())
@@ -167,6 +171,7 @@ void StorageArea::removeItem(const String& key, Frame* frame)
 
 void StorageArea::clear(Frame* frame)
 {
+    ASSERT(!m_isShutdown);
     blockUntilImportComplete();
     
     if (frame->page()->settings()->privateBrowsingEnabled())
@@ -181,6 +186,7 @@ void StorageArea::clear(Frame* frame)
 
 bool StorageArea::contains(const String& key) const
 {
+    ASSERT(!m_isShutdown);
     blockUntilImportComplete();
     
     return m_storageMap->contains(key);
@@ -188,13 +194,18 @@ bool StorageArea::contains(const String& key) const
 
 void StorageArea::importItem(const String& key, const String& value)
 {
+    ASSERT(!m_isShutdown);
     m_storageMap->importItem(key, value);
 }
 
-void StorageArea::scheduleFinalSync()
+void StorageArea::close()
 {
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleFinalSync();
+
+#ifndef NDEBUG
+    m_isShutdown = true;
+#endif
 }
 
 void StorageArea::blockUntilImportComplete() const
@@ -209,9 +220,14 @@ void StorageArea::dispatchStorageEvent(const String& key, const String& oldValue
     // of any given page in the group or mutate the page group itself.
     Vector<RefPtr<Frame> > frames;
 
-    if (m_sessionStoragePage) {
+    // FIXME: When can this occur?
+    Page* page = sourceFrame->page();
+    if (!page)
+        return;
+
+    if (m_storageType == SessionStorage) {
         // Send events only to our page.
-        for (Frame* frame = m_sessionStoragePage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
             if (frame->document()->securityOrigin()->equal(securityOrigin()))
                 frames.append(frame);
         }
@@ -219,11 +235,6 @@ void StorageArea::dispatchStorageEvent(const String& key, const String& oldValue
         for (unsigned i = 0; i < frames.size(); ++i)
             frames[i]->document()->dispatchWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->documentURI(), sourceFrame->domWindow(), frames[i]->domWindow()->sessionStorage()));
     } else {
-        // FIXME: When can this occur?
-        Page* page = sourceFrame->page();
-        if (!page)
-            return;
-
         // Send events to every page.
         const HashSet<Page*>& pages = page->group().pages();
         HashSet<Page*>::const_iterator end = pages.end();
