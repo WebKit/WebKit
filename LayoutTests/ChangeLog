@@ -1,3 +1,23 @@
+2009-06-25  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        The following pixel tests have been converted into dumpastext tests. This
+        fixes the bug 26336 partially.
+
+        * editing/execCommand/remove-list-1-expected.txt: Added.
+        * editing/execCommand/remove-list-1.html:
+        * editing/execCommand/remove-list-items-expected.txt: Added.
+        * editing/execCommand/remove-list-items.html:
+        * platform/mac/editing/execCommand/remove-list-1-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/remove-list-1-expected.png: Removed.
+        * platform/mac/editing/execCommand/remove-list-1-expected.txt: Removed.
+        * platform/mac/editing/execCommand/remove-list-items-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/remove-list-items-expected.png: Removed.
+        * platform/mac/editing/execCommand/remove-list-items-expected.txt: Removed.
+        * platform/qt/editing/execCommand/remove-list-1-expected.txt: Removed.
+        * platform/qt/editing/execCommand/remove-list-items-expected.txt: Removed.
+
 2009-06-25  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber-stamped by Eric Seidel

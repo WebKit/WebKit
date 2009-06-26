@@ -1,15 +1,28 @@
 <script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+}
 </script>
 <p>This tests de-listing content.</p>
-<div id="div" contenteditable="true"><ol><li></li><li>There should be a empty paragraph above this one.</li></ol></div>
+<div id="div" contenteditable="true"><ol><li></li><li>There should be a single BR above this line and no OL or LI.</li></ol></div>
+<p id="console"></p>
 
 <script>
+
+function log(message) {
+    var console = document.getElementById("console");
+    var text = document.createTextNode(message);
+    console.appendChild(text);
+}
+
 var div = document.getElementById("div");
 var sel = window.getSelection();
 
 div.focus();
 document.execCommand("SelectAll");
 document.execCommand("InsertOrderedList");
+
+log(div.innerHTML);
+
 </script>
