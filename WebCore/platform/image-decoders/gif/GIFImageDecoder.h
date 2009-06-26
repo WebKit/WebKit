@@ -51,7 +51,7 @@ namespace WebCore {
         virtual int frameCount();
 
         // The number of repetitions to perform for an animation loop.
-        virtual int repetitionCount();
+        virtual int repetitionCount() const;
 
         virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
@@ -79,7 +79,7 @@ namespace WebCore {
 
         bool m_frameCountValid;
         bool m_currentBufferSawAlpha;
-        int m_repetitionCount;
+        mutable int m_repetitionCount;
         GIFImageDecoderPrivate* m_reader;
     };
 

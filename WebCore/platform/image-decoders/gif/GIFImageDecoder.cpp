@@ -145,7 +145,7 @@ int GIFImageDecoder::frameCount()
 }
 
 // The number of repetitions to perform for an animation loop.
-int GIFImageDecoder::repetitionCount()
+int GIFImageDecoder::repetitionCount() const
 {
     // This value can arrive at any point in the image data stream.  Most GIFs
     // in the wild declare it near the beginning of the file, so it usually is
