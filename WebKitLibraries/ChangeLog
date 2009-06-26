@@ -1,3 +1,15 @@
+2009-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+        
+        <rdar://problem/6999737>
+        
+        Update the media controller images.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * libWebKitSystemInterfaceTiger.a:
+
 2009-06-16  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber-stamped by Anders Carlsson.
