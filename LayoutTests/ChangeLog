@@ -1,3 +1,12 @@
+2009-06-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6651201> Update lookalike character list.
+
+        * fast/encoding/idn-security-expected.txt:
+        * fast/encoding/idn-security.html:
+
 2009-06-26  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -72,7 +72,10 @@ static inline BOOL isLookalikeCharacter(int charCode)
         return YES;
 
     switch (charCode) {
+        case 0x00ED: /* LATIN SMALL LETTER I WITH ACUTE */
         case 0x01C3: /* LATIN LETTER RETROFLEX CLICK */
+        case 0x0251: /* LATIN SMALL LETTER ALPHA */
+        case 0x0261: /* LATIN SMALL LETTER SCRIPT G */
         case 0x0337: /* COMBINING SHORT SOLIDUS OVERLAY */
         case 0x0338: /* COMBINING LONG SOLIDUS OVERLAY */
         case 0x05B4: /* HEBREW POINT HIRIQ */
@@ -87,8 +90,12 @@ static inline BOOL isLookalikeCharacter(int charCode)
         case 0x203A: /* SINGLE RIGHT-POINTING ANGLE QUOTATION MARK */
         case 0x2044: /* FRACTION SLASH */
         case 0x2215: /* DIVISION SLASH */
-        case 0x23ae: /* INTEGRAL EXTENSION */
+        case 0x2216: /* SET MINUS */
+        case 0x233F: /* APL FUNCTIONAL SYMBOL SLASH BAR */
+        case 0x23AE: /* INTEGRAL EXTENSION */
+        case 0x244A: /* OCR DOUBLE BACKSLASH */
         case 0x2571: /* BOX DRAWINGS LIGHT DIAGONAL UPPER RIGHT TO LOWER LEFT */
+        case 0x2572: /* BOX DRAWINGS LIGHT DIAGONAL UPPER LEFT TO LOWER RIGHT */
         case 0x29F8: /* BIG SOLIDUS */
         case 0x29f6: /* SOLIDUS WITH OVERBAR */
         case 0x2AFB: /* TRIPLE SOLIDUS BINARY RELATION */
@@ -97,6 +104,7 @@ static inline BOOL isLookalikeCharacter(int charCode)
         case 0x3014: /* LEFT TORTOISE SHELL BRACKET */
         case 0x3015: /* RIGHT TORTOISE SHELL BRACKET */
         case 0x3033: /* VERTICAL KANA REPEAT MARK UPPER HALF */
+        case 0x3035: /* VERTICAL KANA REPEAT MARK LOWER HALF */
         case 0x321D: /* PARENTHESIZED KOREAN CHARACTER OJEON */
         case 0x321E: /* PARENTHESIZED KOREAN CHARACTER O HU */
         case 0x33DF: /* SQUARE A OVER M */

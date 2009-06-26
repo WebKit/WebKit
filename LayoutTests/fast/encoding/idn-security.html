@@ -141,6 +141,10 @@ testIDNCharacter(0x2024, ".");
 testIDNCharacter(0xFE52, ".");
 testIDNCharacter(0xFF0F, "/");
 
+/* ICU converts these characters to backslash, so the original character can't be used to get to a phishy domain name */
+testIDNCharacter(0xFE68, "%5C");
+testIDNCharacter(0xFF3C, "%5C");
+
 /* ICU converts these characters to space, so the original character can't be used to get to a phishy domain name */
 testIDNCharacter(0x00A0, "%20");
 testIDNCharacter(0x2000, "%20");
@@ -163,7 +167,10 @@ testIDNCharacter(0x3000, "%20");
 */
 testIDNCharacter(0x00BC, "disallowed");
 testIDNCharacter(0x00BD, "disallowed");
+testIDNCharacter(0x00ED, "disallowed");
 testIDNCharacter(0x01C3, "disallowed");
+testIDNCharacter(0x0251, "disallowed");
+testIDNCharacter(0x0261, "disallowed");
 testIDNCharacter(0x0337, "disallowed");
 testIDNCharacter(0x0337, "disallowed");
 testIDNCharacter(0x0338, "disallowed");
@@ -187,9 +194,12 @@ testIDNCharacter(0x215A, "disallowed");
 testIDNCharacter(0x215B, "disallowed");
 testIDNCharacter(0x215F, "disallowed");
 testIDNCharacter(0x2215, "disallowed");
-testIDNCharacter(0x2215, "disallowed");
+testIDNCharacter(0x2216, "disallowed");
+testIDNCharacter(0x233F, "disallowed");
 testIDNCharacter(0x23AE, "disallowed");
+testIDNCharacter(0x244A, "disallowed");
 testIDNCharacter(0x2571, "disallowed");
+testIDNCharacter(0x2572, "disallowed");
 testIDNCharacter(0x29F6, "disallowed");
 testIDNCharacter(0x29F8, "disallowed");
 testIDNCharacter(0x29F8, "disallowed");
@@ -198,6 +208,7 @@ testIDNCharacter(0x2AFD, "disallowed");
 testIDNCharacter(0x3014, "disallowed");
 testIDNCharacter(0x3015, "disallowed");
 testIDNCharacter(0x3033, "disallowed");
+testIDNCharacter(0x3035, "disallowed");
 testIDNCharacter(0x3164, "disallowed");
 testIDNCharacter(0x321D, "disallowed");
 testIDNCharacter(0x321E, "disallowed");
