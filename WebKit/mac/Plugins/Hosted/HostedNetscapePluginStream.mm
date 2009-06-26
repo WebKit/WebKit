@@ -160,7 +160,7 @@ void HostedNetscapePluginStream::didReceiveResponse(NetscapePlugInStreamLoader*,
         [theHeaders appendBytes:"\0" length:1];
     }
     
-    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r _webcore_MIMEType], theHeaders);
+    startStream([r URL], expectedContentLength, WKGetNSURLResponseLastModifiedDate(r), [r MIMEType], theHeaders);
 }
 
 static NPReason reasonForError(NSError *error)

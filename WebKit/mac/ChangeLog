@@ -1,5 +1,12 @@
 2009-06-26  Brady Eidson  <beidson@apple.com>
 
+        Fix SnowLeopard build.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::didReceiveResponse):
+
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam Weinig
 
         <rdar://problem/6961578> REGRESSION (r43511): Opening .fdf files from Acrobat Professional fails
