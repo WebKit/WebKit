@@ -2,6 +2,19 @@
 
         Reviewed by Simon Hausmann.
 
+        Fix the behaviour of QWebHistory::itemAt to interpret the specified index as absolute index.
+
+        Returns an invalid QWebHistoryItem if the index is out of range.
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::itemAt):
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::itemAt):
+
+2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Added a few autotest to QWebHistory.
 
         * tests/qwebhistory/data/page1.html: Added.

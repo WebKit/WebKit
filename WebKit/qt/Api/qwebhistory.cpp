@@ -405,9 +405,13 @@ int QWebHistory::currentItemIndex() const
 */
 QWebHistoryItem QWebHistory::itemAt(int i) const
 {
-    WebCore::HistoryItem *item = d->lst->itemAtIndex(i);
-
-    QWebHistoryItemPrivate *priv = new QWebHistoryItemPrivate(item);
+    QWebHistoryItemPrivate *priv;
+    if (i < 0 || i >= count())
+        priv = new QWebHistoryItemPrivate(0);
+    else {
+        WebCore::HistoryItem *item = d->lst->entries()[i].get();
+        priv = new QWebHistoryItemPrivate(item);
+    }
     return QWebHistoryItem(priv);
 }
 
