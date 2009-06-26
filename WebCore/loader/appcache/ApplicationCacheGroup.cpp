@@ -451,6 +451,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
             m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data()));
             m_currentHandle->cancel();
             m_currentHandle = 0;
+            m_pendingEntries.remove(handle->request().url());
             // Load the next resource, if any.
             startLoadingEntry();
             return;

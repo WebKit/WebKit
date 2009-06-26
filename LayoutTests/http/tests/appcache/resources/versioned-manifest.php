@@ -31,6 +31,7 @@ if ("step" == $_GET['command'])
 print("CACHE MANIFEST\n");
 print("# version " . getCount($tmpFile) . "\n");
 print("counter.php\n");
+print("uncacheable-resource.php\n"); // with Cache-control: no-store
 print("NETWORK:\n");
 print("versioned-manifest.php?command=\n");
 ?>
