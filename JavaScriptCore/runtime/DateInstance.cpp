@@ -30,7 +30,7 @@ using namespace WTF;
 
 namespace JSC {
 
-struct DateInstance::Cache : public FastAllocBase {
+struct DateInstance::Cache {
     double m_gregorianDateTimeCachedForMS;
     GregorianDateTime m_cachedGregorianDateTime;
     double m_gregorianDateTimeUTCCachedForMS;

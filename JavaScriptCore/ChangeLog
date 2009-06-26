@@ -1,3 +1,21 @@
+2009-06-26  Eric Seidel  <eric@webkit.org>
+
+        No review, only rolling out r45259.
+
+        Roll out r45259 after crash appeared on the bots:
+        plugins/undefined-property-crash.html
+        ASSERTION FAILED: s <= HeapConstants<heapType>::cellSize
+        (leopard-intel-debug-tests/build/JavaScriptCore/runtime/Collector.cpp:278
+        void* JSC::Heap::heapAllocate(size_t) [with JSC::HeapType heapType = PrimaryHeap])
+
+        * runtime/DateInstance.cpp:
+        * runtime/Identifier.cpp:
+        * runtime/Lookup.h:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/ScopeChain.h:
+        * runtime/UString.h:
+
 2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.
@@ -7,31 +25,6 @@
         * wtf/Vector.h:
         (WTF::operator<<):
         (WTF::operator>>):
-
-2009-06-26  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
-
-        Reviewed by Eric Seidel.
-
-        https://bugs.webkit.org/show_bug.cgi?id=26750        
-
-        Allow custom memory allocation control for JavaScriptCore/runtime
-        directory's classes which instantiated by new:
-
-        class  IdentifierTable
-        struct RegExpObjectData
-        class  HashEntry
-        struct DataInstance::Cache 
-        class  UString
-        struct RegExpConstructorPrivate
-        class  ScopeChain
-
-        * runtime/DateInstance.cpp:
-        * runtime/Identifier.cpp:
-        * runtime/Lookup.h:
-        * runtime/RegExpConstructor.cpp:
-        * runtime/RegExpObject.h:
-        * runtime/ScopeChain.h:
-        * runtime/UString.h:
 
 2009-06-24  Sam Weinig  <sam@webkit.org>
 
