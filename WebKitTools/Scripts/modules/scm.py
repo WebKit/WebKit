@@ -257,7 +257,7 @@ class Git(SCM):
         return 'git status'
 
     def changed_files(self):
-        status_command = 'git diff -r --name-status -C -M'
+        status_command = 'git diff -r --name-status -C -M HEAD'
         status_regexp = '^(?P<status>[ADM])\t(?P<filename>.+)$'
         return self.run_status_and_extract_filenames(status_command, status_regexp)
     

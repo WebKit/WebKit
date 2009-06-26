@@ -1,3 +1,16 @@
+2009-06-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Remove non-sense --update option to land-patches
+        and make land-patches update before every patch application.
+        This makes it slightly less likely that multi-patch landings will fail.
+
+        Also updated git diff command to include staged modifications.
+
+        * Scripts/bugzilla-tool:
+        * Scripts/modules/scm.py:
+
 2009-06-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Jan Alonzo.

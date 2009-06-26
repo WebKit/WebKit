@@ -225,7 +225,6 @@ class LandAndUpdateBug(Command):
 class LandPatchesFromBugs(Command):
     def __init__(self):
         options = [
-            make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory before applying patches"),
             make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
             make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
             make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
@@ -259,8 +258,6 @@ class LandPatchesFromBugs(Command):
         scm.ensure_no_local_commits(options.force_clean)
         if options.clean:
             scm.ensure_clean_working_directory(options.force_clean)
-        if options.update:
-            scm.update_webkit()
 
     @classmethod
     def build_and_commit(cls, scm, options):
@@ -277,6 +274,7 @@ class LandPatchesFromBugs(Command):
         try:
             comment_text = ""
             for patch in patches:
+                tool.scm().update_webkit() # Update before every patch in case the tree has changed
                 tool.scm().apply_patch(patch)
                 comment_text = cls.build_and_commit(tool.scm(), options)
 
