@@ -53,7 +53,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(ElementSetAttribute)
 {
     INC_STATS("DOM.Element.setAttribute()");
-    Element* element = V8Proxy::DOMWrapperToNode<Element>(args.Holder());
+    Element* element = V8Proxy::convertDOMWrapperToNode<Element>(args.Holder());
     String name = toWebCoreString(args[0]);
     String value = toWebCoreString(args[1]);
 
@@ -74,8 +74,8 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNode)
     if (!V8Attr::HasInstance(args[0]))
         return throwError(TYPE_MISMATCH_ERR);
 
-    Attr* newAttr = V8Proxy::DOMWrapperToNode<Attr>(args[0]);
-    Element* element = V8Proxy::DOMWrapperToNode<Element>(args.Holder());
+    Attr* newAttr = V8Proxy::convertDOMWrapperToNode<Attr>(args[0]);
+    Element* element = V8Proxy::convertDOMWrapperToNode<Element>(args.Holder());
 
     if (!allowSettingSrcToJavascriptURL(element, newAttr->name(), newAttr->value()))
         return v8::Undefined();
@@ -85,13 +85,13 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNode)
     if (ec)
         throwError(ec);
 
-    return V8Proxy::NodeToV8Object(result.get());
+    return V8Proxy::convertNodeToV8Object(result.get());
 }
 
 CALLBACK_FUNC_DECL(ElementSetAttributeNS)
 {
     INC_STATS("DOM.Element.setAttributeNS()");
-    Element* element = V8Proxy::DOMWrapperToNode<Element>(args.Holder());
+    Element* element = V8Proxy::convertDOMWrapperToNode<Element>(args.Holder());
     String namespaceURI = toWebCoreStringWithNullCheck(args[0]);
     String qualifiedName = toWebCoreString(args[1]);
     String value = toWebCoreString(args[2]);
@@ -113,8 +113,8 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNodeNS)
     if (!V8Attr::HasInstance(args[0]))
         return throwError(TYPE_MISMATCH_ERR);
 
-    Attr* newAttr = V8Proxy::DOMWrapperToNode<Attr>(args[0]);
-    Element* element = V8Proxy::DOMWrapperToNode<Element>(args.Holder());
+    Attr* newAttr = V8Proxy::convertDOMWrapperToNode<Attr>(args[0]);
+    Element* element = V8Proxy::convertDOMWrapperToNode<Element>(args.Holder());
 
     if (!allowSettingSrcToJavascriptURL(element, newAttr->name(), newAttr->value()))
         return v8::Undefined();
@@ -124,7 +124,7 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNodeNS)
     if (ec)
         throwError(ec);
 
-    return V8Proxy::NodeToV8Object(result.get());
+    return V8Proxy::convertNodeToV8Object(result.get());
 }
 
 static inline String toEventType(v8::Local<v8::String> value)
@@ -136,7 +136,7 @@ static inline String toEventType(v8::Local<v8::String> value)
 
 ACCESSOR_SETTER(ElementEventHandler)
 {
-    Node* node = V8Proxy::DOMWrapperToNode<Node>(info.Holder());
+    Node* node = V8Proxy::convertDOMWrapperToNode<Node>(info.Holder());
 
     String eventType = toEventType(name);
 
@@ -151,7 +151,7 @@ ACCESSOR_SETTER(ElementEventHandler)
         if (!proxy)
             return;
 
-        if (RefPtr<EventListener> listener = proxy->FindOrCreateV8EventListener(value, true))
+        if (RefPtr<EventListener> listener = proxy->findOrCreateV8EventListener(value, true))
             node->setAttributeEventListener(eventType, listener);
     } else
         node->clearAttributeEventListener(eventType);
@@ -159,10 +159,10 @@ ACCESSOR_SETTER(ElementEventHandler)
 
 ACCESSOR_GETTER(ElementEventHandler)
 {
-    Node* node = V8Proxy::DOMWrapperToNode<Node>(info.Holder());
+    Node* node = V8Proxy::convertDOMWrapperToNode<Node>(info.Holder());
 
     EventListener* listener = node->getAttributeEventListener(toEventType(name));
-    return V8Proxy::EventListenerToV8Object(listener);
+    return V8Proxy::convertEventListenerToV8Object(listener);
 }
 
 } // namespace WebCore

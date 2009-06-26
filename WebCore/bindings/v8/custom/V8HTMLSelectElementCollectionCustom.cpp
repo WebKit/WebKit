@@ -43,7 +43,7 @@ namespace WebCore {
 NAMED_PROPERTY_GETTER(HTMLSelectElementCollection)
 {
     INC_STATS("DOM.HTMLSelectElementCollection.NamedPropertySetter");
-    HTMLSelectElement* select = V8Proxy::DOMWrapperToNode<HTMLSelectElement>(info.Holder());
+    HTMLSelectElement* select = V8Proxy::convertDOMWrapperToNode<HTMLSelectElement>(info.Holder());
     v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
 
     if (!value.IsEmpty())
@@ -62,16 +62,16 @@ NAMED_PROPERTY_GETTER(HTMLSelectElementCollection)
         return notHandledByInterceptor();
 
     if (items.size() == 1)
-        return V8Proxy::NodeToV8Object(items.at(0).get());
+        return V8Proxy::convertNodeToV8Object(items.at(0).get());
 
     NodeList* list = new V8NamedNodesCollection(items);
-    return V8Proxy::ToV8Object(V8ClassIndex::NODELIST, list);
+    return V8Proxy::convertToV8Object(V8ClassIndex::NODELIST, list);
 }
 
 INDEXED_PROPERTY_SETTER(HTMLSelectElementCollection)
 {
     INC_STATS("DOM.HTMLSelectElementCollection.IndexedPropertySetter");
-    HTMLSelectElement* select = V8Proxy::DOMWrapperToNode<HTMLSelectElement>(info.Holder());
+    HTMLSelectElement* select = V8Proxy::convertDOMWrapperToNode<HTMLSelectElement>(info.Holder());
     return toOptionsCollectionSetter(index, value, select);
 }
 

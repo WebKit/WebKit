@@ -72,17 +72,17 @@ Frame* ScriptController::retrieveFrameForCurrentContext()
 
 bool ScriptController::isSafeScript(Frame* target)
 {
-    return V8Proxy::CanAccessFrame(target, true);
+    return V8Proxy::canAccessFrame(target, true);
 }
 
 void ScriptController::gcProtectJSWrapper(void* domObject)
 {
-    V8Proxy::GCProtect(domObject);
+    V8Proxy::gcProtect(domObject);
 }
 
 void ScriptController::gcUnprotectJSWrapper(void* domObject)
 {
-    V8Proxy::GCUnprotect(domObject);
+    V8Proxy::gcUnprotect(domObject);
 }
 
 ScriptController::ScriptController(Frame* frame)
@@ -144,18 +144,18 @@ bool ScriptController::processingUserGesture() const
     V8Proxy* activeProxy = activeFrame->script()->proxy();
 
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(activeFrame);
+    v8::Handle<v8::Context> v8Context = V8Proxy::context(activeFrame);
     // FIXME: find all cases context can be empty:
     //  1) JS is disabled;
     //  2) page is NULL;
-    if (context.IsEmpty())
+    if (v8Context.IsEmpty())
         return true;
 
-    v8::Context::Scope scope(context);
+    v8::Context::Scope scope(v8Context);
 
-    v8::Handle<v8::Object> global = context->Global();
+    v8::Handle<v8::Object> global = v8Context->Global();
     v8::Handle<v8::Value> jsEvent = global->Get(v8::String::NewSymbol("event"));
-    Event* event = V8Proxy::ToNativeEvent(jsEvent);
+    Event* event = V8Proxy::convertToNativeEvent(jsEvent);
 
     // Based on code from kjs_bindings.cpp.
     // Note: This is more liberal than Firefox's implementation.
@@ -199,11 +199,11 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
     }
 
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(m_proxy->frame());
-    if (context.IsEmpty())
+    v8::Handle<v8::Context> v8Context = V8Proxy::context(m_proxy->frame());
+    if (v8Context.IsEmpty())
         return ScriptValue();
 
-    v8::Context::Scope scope(context);
+    v8::Context::Scope scope(v8Context);
 
     RefPtr<Frame> protect(m_frame);
 
@@ -221,7 +221,7 @@ ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 
 void ScriptController::setEventHandlerLineNumber(int lineNumber)
 {
-    m_proxy->setEventHandlerLineno(lineNumber);
+    m_proxy->setEventHandlerLineNumber(lineNumber);
 }
 
 void ScriptController::finishedWithEvent(Event* event)
@@ -234,34 +234,34 @@ void ScriptController::bindToWindowObject(Frame* frame, const String& key, NPObj
 {
     v8::HandleScope handleScope;
 
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(frame);
-    if (context.IsEmpty())
+    v8::Handle<v8::Context> v8Context = V8Proxy::context(frame);
+    if (v8Context.IsEmpty())
         return;
 
-    v8::Context::Scope scope(context);
+    v8::Context::Scope scope(v8Context);
 
     v8::Handle<v8::Object> value = CreateV8ObjectForNPObject(object, 0);
 
     // Attach to the global object.
-    v8::Handle<v8::Object> global = context->Global();
+    v8::Handle<v8::Object> global = v8Context->Global();
     global->Set(v8String(key), value);
 }
 
 void ScriptController::collectGarbage()
 {
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(m_proxy->frame());
-    if (context.IsEmpty())
+    v8::Handle<v8::Context> v8Context = V8Proxy::context(m_proxy->frame());
+    if (v8Context.IsEmpty())
         return;
 
-    v8::Context::Scope scope(context);
+    v8::Context::Scope scope(v8Context);
 
     m_proxy->evaluate(ScriptSourceCode("if (window.gc) void(gc());"), 0);
 }
 
 bool ScriptController::haveInterpreter() const
 {
-    return m_proxy->ContextInitialized();
+    return m_proxy->isContextInitialized();
 }
 
 bool ScriptController::isEnabled() const
@@ -331,13 +331,13 @@ static NPObject* createNoScriptObject()
 static NPObject* createScriptObject(Frame* frame)
 {
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(frame);
-    if (context.IsEmpty())
+    v8::Handle<v8::Context> v8Context = V8Proxy::context(frame);
+    if (v8Context.IsEmpty())
         return createNoScriptObject();
 
-    v8::Context::Scope scope(context);
+    v8::Context::Scope scope(v8Context);
     DOMWindow* window = frame->domWindow();
-    v8::Handle<v8::Value> global = V8Proxy::ToV8Object(V8ClassIndex::DOMWINDOW, window);
+    v8::Handle<v8::Value> global = V8Proxy::convertToV8Object(V8ClassIndex::DOMWINDOW, window);
     ASSERT(global->IsObject());
     return npCreateV8ScriptObject(0, v8::Handle<v8::Object>::Cast(global), window);
 }
@@ -368,13 +368,13 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
         return createNoScriptObject();
 
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = V8Proxy::GetContext(m_frame);
-    if (context.IsEmpty())
+    v8::Handle<v8::Context> v8Context = V8Proxy::context(m_frame);
+    if (v8Context.IsEmpty())
         return createNoScriptObject();
-    v8::Context::Scope scope(context);
+    v8::Context::Scope scope(v8Context);
 
     DOMWindow* window = m_frame->domWindow();
-    v8::Handle<v8::Value> v8plugin = V8Proxy::ToV8Object(V8ClassIndex::HTMLEMBEDELEMENT, plugin);
+    v8::Handle<v8::Value> v8plugin = V8Proxy::convertToV8Object(V8ClassIndex::HTMLEMBEDELEMENT, plugin);
     if (!v8plugin->IsObject())
         return createNoScriptObject();
 

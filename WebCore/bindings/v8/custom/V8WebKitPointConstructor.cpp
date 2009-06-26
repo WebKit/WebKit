@@ -40,7 +40,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(WebKitPointConstructor)
 {
     INC_STATS("DOM.WebKitPoint.Constructor");
-    return V8Proxy::ConstructDOMObject<V8ClassIndex::WEBKITPOINT, WebKitPoint>(args);
+    return V8Proxy::constructDOMObject<V8ClassIndex::WEBKITPOINT, WebKitPoint>(args);
 }
 
 } // namespace WebCore

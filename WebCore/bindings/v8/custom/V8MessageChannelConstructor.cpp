@@ -44,7 +44,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(MessageChannelConstructor)
 {
     INC_STATS("DOM.MessageChannel.Constructor");
-    // FIXME: The logic here is almost exact duplicate of V8::ConstructDOMObject.
+    // FIXME: The logic here is almost exact duplicate of V8::constructDOMObject.
     // Consider refactoring to reduce duplication.
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
@@ -57,7 +57,7 @@ CALLBACK_FUNC_DECL(MessageChannelConstructor)
     Document* document = frame->document();
 
     // Note: it's OK to let this RefPtr go out of scope because we also call
-    // SetDOMWrapper(), which effectively holds a reference to obj.
+    // setDOMWrapper(), which effectively holds a reference to obj.
     RefPtr<MessageChannel> obj = MessageChannel::create(document);
 
     v8::Local<v8::Object> messageChannel = args.Holder();
@@ -65,11 +65,11 @@ CALLBACK_FUNC_DECL(MessageChannelConstructor)
     // Create references from the MessageChannel wrapper to the two
     // MessagePort wrappers to make sure that the MessagePort wrappers
     // stay alive as long as the MessageChannel wrapper is around.
-    messageChannel->SetInternalField(kMessageChannelPort1Index, V8Proxy::ToV8Object(V8ClassIndex::MESSAGEPORT, obj->port1()));
-    messageChannel->SetInternalField(kMessageChannelPort2Index, V8Proxy::ToV8Object(V8ClassIndex::MESSAGEPORT, obj->port2()));
+    messageChannel->SetInternalField(kMessageChannelPort1Index, V8Proxy::convertToV8Object(V8ClassIndex::MESSAGEPORT, obj->port1()));
+    messageChannel->SetInternalField(kMessageChannelPort2Index, V8Proxy::convertToV8Object(V8ClassIndex::MESSAGEPORT, obj->port2()));
 
     // Setup the standard wrapper object internal fields.
-    V8Proxy::SetDOMWrapper(messageChannel, V8ClassIndex::MESSAGECHANNEL, obj.get());
+    V8Proxy::setDOMWrapper(messageChannel, V8ClassIndex::MESSAGECHANNEL, obj.get());
     return toV8(obj.release(), messageChannel);
 }
 

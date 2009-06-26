@@ -51,7 +51,7 @@ bool allowSettingFrameSrcToJavascriptUrl(HTMLFrameElementBase* frame, String val
 {
     if (protocolIs(parseURL(value), "javascript")) {
         Node* contentDoc = frame->contentDocument();
-        if (contentDoc && !V8Proxy::CheckNodeSecurity(contentDoc))
+        if (contentDoc && !V8Proxy::checkNodeSecurity(contentDoc))
             return false;
     }
     return true;
@@ -82,8 +82,8 @@ ACCESSOR_GETTER(DocumentImplementation)
         return implementation;
 
     // Generate a wrapper.
-    Document* document = V8Proxy::DOMWrapperToNative<Document>(info.Holder());
-    v8::Handle<v8::Value> wrapper = V8Proxy::DOMImplementationToV8Object(document->implementation());
+    Document* document = V8Proxy::convertDOMWrapperToNative<Document>(info.Holder());
+    v8::Handle<v8::Value> wrapper = V8Proxy::convertDOMImplementationToV8Object(document->implementation());
 
     // Store the wrapper in the internal field.
     info.Holder()->SetInternalField(kDocumentImplementationIndex, wrapper);
@@ -96,16 +96,16 @@ INDEXED_ACCESS_CHECK(History)
 {
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::HISTORY);
     // Only allow same origin access.
-    History* history = V8Proxy::ToNativeObject<History>(V8ClassIndex::HISTORY, host);
-    return V8Proxy::CanAccessFrame(history->frame(), false);
+    History* history = V8Proxy::convertToNativeObject<History>(V8ClassIndex::HISTORY, host);
+    return V8Proxy::canAccessFrame(history->frame(), false);
 }
 
 NAMED_ACCESS_CHECK(History)
 {
     ASSERT(V8ClassIndex::FromInt(data->Int32Value()) == V8ClassIndex::HISTORY);
     // Only allow same origin access.
-    History* history = V8Proxy::ToNativeObject<History>(V8ClassIndex::HISTORY, host);
-    return V8Proxy::CanAccessFrame(history->frame(), false);
+    History* history = V8Proxy::convertToNativeObject<History>(V8ClassIndex::HISTORY, host);
+    return V8Proxy::canAccessFrame(history->frame(), false);
 }
 
 #undef INDEXED_ACCESS_CHECK
@@ -118,21 +118,21 @@ Frame* V8Custom::GetTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value>
     Frame* target = 0;
     switch (V8ClassIndex::FromInt(data->Int32Value())) {
     case V8ClassIndex::DOMWINDOW: {
-        v8::Handle<v8::Value> window = V8Proxy::LookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
+        v8::Handle<v8::Value> window = V8Proxy::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
         if (window.IsEmpty())
             return target;
 
-        DOMWindow* targetWindow = V8Proxy::ToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, window);
+        DOMWindow* targetWindow = V8Proxy::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, window);
         target = targetWindow->frame();
         break;
     }
     case V8ClassIndex::LOCATION: {
-        History* history = V8Proxy::ToNativeObject<History>(V8ClassIndex::HISTORY, host);
+        History* history = V8Proxy::convertToNativeObject<History>(V8ClassIndex::HISTORY, host);
         target = history->frame();
         break;
     }
     case V8ClassIndex::HISTORY: {
-        Location* location = V8Proxy::ToNativeObject<Location>(V8ClassIndex::LOCATION, host);
+        Location* location = V8Proxy::convertToNativeObject<Location>(V8ClassIndex::LOCATION, host);
         target = location->frame();
         break;
     }

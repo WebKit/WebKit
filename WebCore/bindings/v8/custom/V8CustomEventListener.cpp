@@ -40,7 +40,7 @@ V8EventListener::V8EventListener(Frame* frame, v8::Local<v8::Object> listener, b
 {
     m_listener = v8::Persistent<v8::Object>::New(listener);
 #ifndef NDEBUG
-    V8Proxy::RegisterGlobalHandle(EVENT_LISTENER, this, m_listener);
+    V8Proxy::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
 #endif
 }
 
@@ -49,7 +49,7 @@ V8EventListener::~V8EventListener()
     if (m_frame) {
         V8Proxy* proxy = V8Proxy::retrieve(m_frame);
         if (proxy)
-            proxy->RemoveV8EventListener(this);
+            proxy->removeV8EventListener(this);
     }
 
     disposeListenerObject();
@@ -83,7 +83,7 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(v8::Handle<v8::Value>
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
     V8Proxy* proxy = V8Proxy::retrieve(m_frame);
-    return proxy->CallFunction(handlerFunction, receiver, 1, parameters);
+    return proxy->callFunction(handlerFunction, receiver, 1, parameters);
 }
 
 } // namespace WebCore

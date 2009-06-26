@@ -39,7 +39,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(DOMParserConstructor)
 {
     INC_STATS("DOM.DOMParser.Contructor");
-    return V8Proxy::ConstructDOMObject<V8ClassIndex::DOMPARSER, DOMParser>(args);
+    return V8Proxy::constructDOMObject<V8ClassIndex::DOMPARSER, DOMParser>(args);
 }
 
 } // namespace WebCore

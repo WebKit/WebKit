@@ -50,7 +50,7 @@ ScheduledAction::ScheduledAction(v8::Handle<v8::Function> func, int argc, v8::Ha
     m_function = v8::Persistent<v8::Function>::New(func);
 
 #ifndef NDEBUG
-    V8Proxy::RegisterGlobalHandle(SCHEDULED_ACTION, this, m_function);
+    V8Proxy::registerGlobalHandle(SCHEDULED_ACTION, this, m_function);
 #endif
 
     m_argc = argc;
@@ -60,7 +60,7 @@ ScheduledAction::ScheduledAction(v8::Handle<v8::Function> func, int argc, v8::Ha
             m_argv[i] = v8::Persistent<v8::Value>::New(argv[i]);
 
 #ifndef NDEBUG
-    V8Proxy::RegisterGlobalHandle(SCHEDULED_ACTION, this, m_argv[i]);
+    V8Proxy::registerGlobalHandle(SCHEDULED_ACTION, this, m_argv[i]);
 #endif
         }
     } else
@@ -73,13 +73,13 @@ ScheduledAction::~ScheduledAction()
         return;
 
 #ifndef NDEBUG
-    V8Proxy::UnregisterGlobalHandle(this, m_function);
+    V8Proxy::unregisterGlobalHandle(this, m_function);
 #endif
     m_function.Dispose();
 
     for (int i = 0; i < m_argc; i++) {
 #ifndef NDEBUG
-        V8Proxy::UnregisterGlobalHandle(this, m_argv[i]);
+        V8Proxy::unregisterGlobalHandle(this, m_argv[i]);
 #endif
         m_argv[i].Dispose();
     }
@@ -106,7 +106,7 @@ void ScheduledAction::execute(V8Proxy* proxy)
     ASSERT(proxy);
 
     v8::HandleScope handleScope;
-    v8::Local<v8::Context> v8Context = proxy->GetContext();
+    v8::Local<v8::Context> v8Context = proxy->context();
     if (v8Context.IsEmpty())
         return; // JS may not be enabled.
 
@@ -116,7 +116,7 @@ void ScheduledAction::execute(V8Proxy* proxy)
 
     // FIXME: Need to implement timeouts for preempting a long-running script.
     if (!m_function.IsEmpty() && m_function->IsFunction()) {
-        proxy->CallFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), m_argc, m_argv);
+        proxy->callFunction(v8::Persistent<v8::Function>::Cast(m_function), v8Context->Global(), m_argc, m_argv);
         Document::updateStyleForAllDocuments();
     } else
         proxy->evaluate(m_code, 0);

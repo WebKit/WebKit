@@ -54,7 +54,7 @@ V8LazyEventListener::~V8LazyEventListener()
     // Dispose wrapped function
     if (!m_wrappedFunction.IsEmpty()) {
 #ifndef NDEBUG
-        V8Proxy::UnregisterGlobalHandle(this, m_wrappedFunction);
+        V8Proxy::unregisterGlobalHandle(this, m_wrappedFunction);
 #endif
         m_wrappedFunction.Dispose();
         m_wrappedFunction.Clear();
@@ -77,12 +77,12 @@ v8::Local<v8::Function> V8LazyEventListener::getListenerFunction()
         v8::HandleScope handleScope;
 
         // Use the outer scope to hold context.
-        v8::Handle<v8::Context> context = V8Proxy::GetContext(m_frame);
+        v8::Handle<v8::Context> v8Context = V8Proxy::context(m_frame);
         // Bail out if we could not get the context.
-        if (context.IsEmpty())
+        if (v8Context.IsEmpty())
             return v8::Local<v8::Function>();
 
-        v8::Context::Scope scope(context);
+        v8::Context::Scope scope(v8Context);
 
         // Wrap function around the event code.  The parenthesis around the function are needed so that evaluating the code yields
         // the function value.  Without the parenthesis the function value is thrown away.
@@ -102,11 +102,11 @@ v8::Local<v8::Function> V8LazyEventListener::getListenerFunction()
         code.append("\n})");
 
         v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
-        v8::Handle<v8::Script> script = V8Proxy::CompileScript(codeExternalString, m_frame->document()->url(), m_lineNumber - 1);
+        v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_frame->document()->url(), m_lineNumber - 1);
         if (!script.IsEmpty()) {
             V8Proxy* proxy = V8Proxy::retrieve(m_frame);
             ASSERT(proxy);
-            v8::Local<v8::Value> value = proxy->RunScript(script, false);
+            v8::Local<v8::Value> value = proxy->runScript(script, false);
             if (!value.IsEmpty()) {
                 ASSERT(value->IsFunction());
                 v8::Local<v8::Function> listenerFunction = v8::Local<v8::Function>::Cast(value);
@@ -114,7 +114,7 @@ v8::Local<v8::Function> V8LazyEventListener::getListenerFunction()
 
                 m_listener = v8::Persistent<v8::Function>::New(listenerFunction);
 #ifndef NDEBUG
-                V8Proxy::RegisterGlobalHandle(EVENT_LISTENER, this, m_listener);
+                V8Proxy::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
 #endif
             }
         }
@@ -134,7 +134,7 @@ v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(v8::Handle<v8::Va
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
     V8Proxy* proxy = V8Proxy::retrieve(m_frame);
-    return proxy->CallFunction(handlerFunction, receiver, 1, parameters);
+    return proxy->callFunction(handlerFunction, receiver, 1, parameters);
 }
 
 
@@ -158,12 +158,12 @@ v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
         v8::HandleScope handleScope;
 
         // Use the outer scope to hold context.
-        v8::Handle<v8::Context> context = V8Proxy::GetContext(m_frame);
+        v8::Handle<v8::Context> v8Context = V8Proxy::context(m_frame);
         // Bail out if we cannot get the context.
-        if (context.IsEmpty())
+        if (v8Context.IsEmpty())
             return v8::Local<v8::Function>();
 
-        v8::Context::Scope scope(context);
+        v8::Context::Scope scope(v8Context);
 
         // FIXME: cache the wrapper function.
 
@@ -184,11 +184,11 @@ v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
         // Insert '\n' otherwise //-style comments could break the handler.
         code.append(  "\n}).call(this, evt);}}}})");
         v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
-        v8::Handle<v8::Script> script = V8Proxy::CompileScript(codeExternalString, m_frame->document()->url(), m_lineNumber);
+        v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_frame->document()->url(), m_lineNumber);
         if (!script.IsEmpty()) {
             V8Proxy* proxy = V8Proxy::retrieve(m_frame);
             ASSERT(proxy);
-            v8::Local<v8::Value> value = proxy->RunScript(script, false);
+            v8::Local<v8::Value> value = proxy->runScript(script, false);
             if (!value.IsEmpty()) {
                 ASSERT(value->IsFunction());
 
@@ -218,7 +218,7 @@ v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
                 }
 
 #ifndef NDEBUG
-                V8Proxy::RegisterGlobalHandle(EVENT_LISTENER, this, m_wrappedFunction);
+                V8Proxy::registerGlobalHandle(EVENT_LISTENER, this, m_wrappedFunction);
 #endif
                 m_wrappedFunction->SetName(v8::String::New(fromWebCoreString(m_functionName), m_functionName.length()));
             }

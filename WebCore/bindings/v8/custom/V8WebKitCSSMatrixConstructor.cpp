@@ -47,7 +47,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(WebKitCSSMatrixConstructor)
 {
     INC_STATS("DOM.WebKitCSSMatrix.Constructor");
-    // FIXME: The logic here is almost exact duplicate of V8::ConstructDOMObject.
+    // FIXME: The logic here is almost exact duplicate of V8::constructDOMObject.
     // Consider refactoring to reduce duplication.
     String cssValue;
     if (args.Length() >= 1)
@@ -59,7 +59,7 @@ CALLBACK_FUNC_DECL(WebKitCSSMatrixConstructor)
         throwError(ec);
 
     // Transform the holder into a wrapper object for the matrix.
-    V8Proxy::SetDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::WEBKITCSSMATRIX), matrix.get());
+    V8Proxy::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::WEBKITCSSMATRIX), matrix.get());
     return toV8(matrix.release(), args.Holder());
 }
 

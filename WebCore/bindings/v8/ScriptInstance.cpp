@@ -62,7 +62,7 @@ void V8ScriptInstance::clear()
     if (m_instance.IsEmpty())
         return;
 #ifndef NDEBUG
-    V8Proxy::UnregisterGlobalHandle(this, m_instance);
+    V8Proxy::unregisterGlobalHandle(this, m_instance);
 #endif
     m_instance.Dispose();
     m_instance.Clear();
@@ -76,7 +76,7 @@ void V8ScriptInstance::set(v8::Handle<v8::Object> instance)
 
     m_instance = v8::Persistent<v8::Object>::New(instance);
 #ifndef NDEBUG
-    V8Proxy::RegisterGlobalHandle(SCRIPTINSTANCE, this, m_instance);
+    V8Proxy::registerGlobalHandle(SCRIPTINSTANCE, this, m_instance);
 #endif
 }
 

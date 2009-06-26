@@ -44,17 +44,17 @@ namespace WebCore {
 ACCESSOR_GETTER(SVGLengthValue)
 {
     INC_STATS("DOM.SVGLength.value");
-    V8SVGPODTypeWrapper<SVGLength>* wrapper = V8Proxy::ToNativeObject<V8SVGPODTypeWrapper<SVGLength> >(V8ClassIndex::SVGLENGTH, info.Holder());
+    V8SVGPODTypeWrapper<SVGLength>* wrapper = V8Proxy::convertToNativeObject<V8SVGPODTypeWrapper<SVGLength> >(V8ClassIndex::SVGLENGTH, info.Holder());
     SVGLength imp = *wrapper;
-    return v8::Number::New(imp.value(V8Proxy::GetSVGContext(wrapper)));
+    return v8::Number::New(imp.value(V8Proxy::svgContext(wrapper)));
 }
 
 CALLBACK_FUNC_DECL(SVGLengthConvertToSpecifiedUnits)
 {
     INC_STATS("DOM.SVGLength.convertToSpecifiedUnits");
-    V8SVGPODTypeWrapper<SVGLength>* wrapper = V8Proxy::ToNativeObject<V8SVGPODTypeWrapper<SVGLength> >(V8ClassIndex::SVGLENGTH, args.Holder());
+    V8SVGPODTypeWrapper<SVGLength>* wrapper = V8Proxy::convertToNativeObject<V8SVGPODTypeWrapper<SVGLength> >(V8ClassIndex::SVGLENGTH, args.Holder());
     SVGLength imp = *wrapper;
-    SVGElement* context = V8Proxy::GetSVGContext(wrapper);
+    SVGElement* context = V8Proxy::svgContext(wrapper);
     imp.convertToSpecifiedUnits(toInt32(args[0]), context);
     wrapper->commitChange(imp, context);
     return v8::Undefined();

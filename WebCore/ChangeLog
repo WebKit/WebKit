@@ -1,3 +1,303 @@
+2009-06-26  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by David Levin.
+
+        Upstream V8Proxy.  This involved updating a lot of function and variable names to match WebKit style, hence the large size.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26623
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::~ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::isSafeScript):
+        (WebCore::ScriptController::gcProtectJSWrapper):
+        (WebCore::ScriptController::gcUnprotectJSWrapper):
+        (WebCore::ScriptController::processingUserGesture):
+        (WebCore::ScriptController::evaluate):
+        (WebCore::ScriptController::setEventHandlerLineNumber):
+        (WebCore::ScriptController::bindToWindowObject):
+        (WebCore::ScriptController::collectGarbage):
+        (WebCore::ScriptController::haveInterpreter):
+        (WebCore::createScriptObject):
+        (WebCore::ScriptController::createScriptObjectForPluginElement):
+        * bindings/v8/ScriptInstance.cpp:
+        (WebCore::V8ScriptInstance::clear):
+        (WebCore::V8ScriptInstance::set):
+        * bindings/v8/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        * bindings/v8/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject):
+        * bindings/v8/ScriptScope.cpp:
+        (WebCore::ScriptScope::ScriptScope):
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::ScriptValue):
+        (WebCore::ScriptValue::operator=):
+        (WebCore::ScriptValue::clear):
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        (WebCore::V8AbstractEventListener::handleEvent):
+        (WebCore::V8AbstractEventListener::disposeListenerObject):
+        (WebCore::V8AbstractEventListener::getReceiverObject):
+        * bindings/v8/V8Collection.cpp:
+        (WebCore::toOptionsCollectionSetter):
+        * bindings/v8/V8Collection.h:
+        (WebCore::getV8Object):
+        (WebCore::getNamedPropertyOfCollection):
+        (WebCore::nodeCollectionNamedPropertyGetter):
+        (WebCore::getIndexedPropertyOfCollection):
+        (WebCore::nodeCollectionIndexedPropertyGetter):
+        (WebCore::nodeCollectionIndexedPropertyEnumerator):
+        (WebCore::collectionIndexedPropertyEnumerator):
+        (WebCore::collectionStringOrNullIndexedPropertyGetter):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::weakDOMObjectCallback):
+        (WebCore::DOMData::removeObjectsFromWrapperMap):
+        * bindings/v8/V8Helpers.cpp:
+        (WebCore::wrapNPObject):
+        (WebCore::toV8Context):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::~V8LazyEventListener):
+        (WebCore::V8LazyEventListener::getListenerFunction):
+        (WebCore::V8LazyEventListener::callListenerFunction):
+        (WebCore::V8LazyEventListener::getWrappedListenerFunction):
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        (WebCore::V8NodeFilterCondition::V8NodeFilterCondition):
+        (WebCore::V8NodeFilterCondition::~V8NodeFilterCondition):
+        (WebCore::V8NodeFilterCondition::acceptNode):
+        * bindings/v8/V8ObjectEventListener.cpp:
+        (WebCore::weakObjectEventListenerCallback):
+        (WebCore::V8ObjectEventListener::~V8ObjectEventListener):
+        * bindings/v8/V8Proxy.cpp: Added.
+        * bindings/v8/V8Proxy.h:
+        (WebCore::):
+        (WebCore::GlobalHandleInfo::GlobalHandleInfo):
+        (WebCore::V8Proxy::):
+        (WebCore::V8Proxy::V8Proxy):
+        (WebCore::V8Proxy::frame):
+        (WebCore::V8Proxy::inlineCode):
+        (WebCore::V8Proxy::setInlineCode):
+        (WebCore::V8Proxy::timerCallback):
+        (WebCore::V8Proxy::setTimerCallback):
+        (WebCore::V8Proxy::setEventHandlerLineNumber):
+        (WebCore::V8Proxy::finishedWithEvent):
+        (WebCore::V8Proxy::wrapCPointer):
+        (WebCore::V8Proxy::extractCPointer):
+        (WebCore::V8Proxy::convertDOMWrapperToNative):
+        (WebCore::V8Proxy::convertDOMWrapperToNode):
+        (WebCore::V8Proxy::convertToV8Object):
+        (WebCore::V8Proxy::convertToNativeObject):
+        (WebCore::V8Proxy::convertToNativeEvent):
+        (WebCore::V8Proxy::context):
+        (WebCore::V8Proxy::extractCPointerImpl):
+        (WebCore::V8Proxy::utilityContext):
+        (WebCore::V8Proxy::constructDOMObject):
+        (WebCore::throwError):
+        (WebCore::toV8):
+        * bindings/v8/V8Utilities.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::retrieve):
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+        (WebCore::WorkerContextExecutionProxy::GetConstructor):
+        (WebCore::WorkerContextExecutionProxy::ToV8Object):
+        (WebCore::WorkerContextExecutionProxy::EventToV8Object):
+        (WebCore::WorkerContextExecutionProxy::toV8):
+        (WebCore::WorkerContextExecutionProxy::forgetV8EventObject):
+        (WebCore::WorkerContextExecutionProxy::evaluate):
+        (WebCore::WorkerContextExecutionProxy::runScript):
+        * bindings/v8/custom/V8AttrCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasPixelArrayCustom.cpp:
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        (WebCore::toV8):
+        (WebCore::toCanvasStyle):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8ClientRectListCustom.cpp:
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8CustomBinding.cpp:
+        (WebCore::allowSettingFrameSrcToJavascriptUrl):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::INDEXED_ACCESS_CHECK):
+        (WebCore::NAMED_ACCESS_CHECK):
+        (WebCore::V8Custom::GetTargetFrame):
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::V8EventListener):
+        (WebCore::V8EventListener::~V8EventListener):
+        (WebCore::V8EventListener::callListenerFunction):
+        * bindings/v8/custom/V8CustomSQLStatementCallback.cpp:
+        (WebCore::V8CustomSQLStatementCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8CustomSQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLTransactionCallback.cpp:
+        (WebCore::V8CustomSQLTransactionCallback::handleEvent):
+        * bindings/v8/custom/V8CustomSQLTransactionErrorCallback.cpp:
+        (WebCore::V8CustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/v8/custom/V8CustomVoidCallback.cpp:
+        (WebCore::V8CustomVoidCallback::handleEvent):
+        (WebCore::invokeCallback):
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        (WebCore::V8CustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/v8/custom/V8DOMParserConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8Custom::WindowSetTimeoutImpl):
+        (WebCore::convertBase64):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::createWindow):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::V8Custom::ClearTimeoutImpl):
+        (WebCore::NAMED_ACCESS_CHECK):
+        (WebCore::INDEXED_ACCESS_CHECK):
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::ACCESSOR_GETTER):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::ACCESSOR_GETTER):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        (WebCore::getItem):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::ACCESSOR_GETTER):
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8HTMLIFrameElementCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_SETTER):
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8HTMLSelectElementCollectionCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER):
+        (WebCore::INDEXED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::removeElement):
+        * bindings/v8/custom/V8InspectorControllerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::INDEXED_ACCESS_CHECK):
+        (WebCore::NAMED_ACCESS_CHECK):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        (WebCore::INDEXED_PROPERTY_GETTER):
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8NavigatorCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8NodeIteratorCustom.cpp:
+        (WebCore::toV8):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8SVGElementInstanceCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8SVGMatrixCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8StyleSheetListCustom.cpp:
+        (WebCore::NAMED_PROPERTY_GETTER):
+        * bindings/v8/custom/V8TreeWalkerCustom.cpp:
+        (WebCore::toV8):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebKitCSSMatrixConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::SetTimeoutOrInterval):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::getEventListener):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::getEventListener):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8XMLHttpRequestUploadCustom.cpp:
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8XMLSerializerConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8XPathEvaluatorConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8XSLTProcessorCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-06-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim Hatcher.

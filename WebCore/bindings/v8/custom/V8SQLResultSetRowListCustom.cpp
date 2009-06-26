@@ -32,11 +32,10 @@
 
 #if ENABLE(DATABASE)
 
-#include "v8_binding.h"
-#include "v8_proxy.h"
-
 #include "SQLResultSetRowList.h"
+#include "V8Binding.h"
 #include "V8CustomBinding.h"
+#include "V8Proxy.h"
 
 namespace WebCore {
 
@@ -45,20 +44,20 @@ CALLBACK_FUNC_DECL(SQLResultSetRowListItem)
     INC_STATS("DOM.SQLResultSetRowList.item()");
 
     if (args.Length() == 0) {
-        V8Proxy::ThrowError(V8Proxy::SYNTAX_ERROR, "Item index is required.");
+        V8Proxy::throwError(V8Proxy::SyntaxError, "Item index is required.");
         return v8::Undefined();
     }
 
     if (!args[0]->IsNumber()) {
-        V8Proxy::ThrowError(V8Proxy::TYPE_ERROR, "Item index must be a number.");
+        V8Proxy::throwError(V8Proxy::TypeError, "Item index must be a number.");
         return v8::Undefined();
     }
 
-    SQLResultSetRowList* rowList = V8Proxy::ToNativeObject<SQLResultSetRowList>(V8ClassIndex::SQLRESULTSETROWLIST, args.Holder());
+    SQLResultSetRowList* rowList = V8Proxy::convertToNativeObject<SQLResultSetRowList>(V8ClassIndex::SQLRESULTSETROWLIST, args.Holder());
 
     unsigned long index = args[0]->IntegerValue();
     if (index < 0 || index >= rowList->length()) {
-        V8Proxy::ThrowError(V8Proxy::RANGE_ERROR, "Item index is out of range.");
+        V8Proxy::throwError(V8Proxy::RangeError, "Item index is out of range.");
         return v8::Undefined();
     }
 

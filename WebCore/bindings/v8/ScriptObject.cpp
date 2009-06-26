@@ -119,7 +119,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorController* value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::New(name), V8Proxy::ToV8Object(V8ClassIndex::INSPECTORCONTROLLER, value));
+    scope.global()->Set(v8::String::New(name), V8Proxy::convertToV8Object(V8ClassIndex::INSPECTORCONTROLLER, value));
     return scope.success();
 }
 

@@ -40,12 +40,12 @@ namespace WebCore {
 
 CALLBACK_FUNC_DECL(HTMLCanvasElementGetContext)
 {
-    INC_STATS("DOM.HTMLCanvasElement.getContext");
+    INC_STATS("DOM.HTMLCanvasElement.context");
     v8::Handle<v8::Value> holder = args.Holder();
-    HTMLCanvasElement* imp = V8Proxy::DOMWrapperToNode<HTMLCanvasElement>(holder);
+    HTMLCanvasElement* imp = V8Proxy::convertDOMWrapperToNode<HTMLCanvasElement>(holder);
     String contextId = ToWebCoreString(args[0]);
     CanvasRenderingContext2D* result = imp->getContext(contextId);
-    return V8Proxy::ToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
+    return V8Proxy::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
 }
 
 } // namespace WebCore

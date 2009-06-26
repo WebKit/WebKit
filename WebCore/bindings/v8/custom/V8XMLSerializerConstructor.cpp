@@ -39,7 +39,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(XMLSerializerConstructor)
 {
     INC_STATS("DOM.XMLSerializer.Constructor");
-    return V8Proxy::ConstructDOMObject<V8ClassIndex::XMLSERIALIZER, XMLSerializer>(args);
+    return V8Proxy::constructDOMObject<V8ClassIndex::XMLSERIALIZER, XMLSerializer>(args);
 }
 
 } // namespace WebCore

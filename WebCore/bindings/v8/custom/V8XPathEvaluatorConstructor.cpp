@@ -39,7 +39,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(XPathEvaluatorConstructor)
 {
     INC_STATS("DOM.XPathEvaluator.Constructor");
-    return V8Proxy::ConstructDOMObject<V8ClassIndex::XPATHEVALUATOR, XPathEvaluator>(args);
+    return V8Proxy::constructDOMObject<V8ClassIndex::XPATHEVALUATOR, XPathEvaluator>(args);
 }
 
 } // namespace WebCore

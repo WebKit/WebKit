@@ -46,7 +46,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(HTMLOptionsCollectionRemove)
 {
     INC_STATS("DOM.HTMLOptionsCollection.remove()");
-    HTMLOptionsCollection* imp = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
+    HTMLOptionsCollection* imp = V8Proxy::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
     HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());
     return removeElement(base, args);
 }
@@ -55,11 +55,11 @@ CALLBACK_FUNC_DECL(HTMLOptionsCollectionAdd)
 {
     INC_STATS("DOM.HTMLOptionsCollection.add()");
     if (!V8HTMLOptionElement::HasInstance(args[0])) {
-        V8Proxy::SetDOMException(TYPE_MISMATCH_ERR);
+        V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
         return v8::Undefined();
     }
-    HTMLOptionsCollection* imp = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
-    HTMLOptionElement* option = V8Proxy::DOMWrapperToNode<HTMLOptionElement>(args[0]);
+    HTMLOptionsCollection* imp = V8Proxy::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
+    HTMLOptionElement* option = V8Proxy::convertDOMWrapperToNode<HTMLOptionElement>(args[0]);
 
     ExceptionCode ec = 0;
     if (args.Length() < 2)
@@ -79,7 +79,7 @@ CALLBACK_FUNC_DECL(HTMLOptionsCollectionAdd)
     }
 
     if (ec != 0)
-        V8Proxy::SetDOMException(ec);
+        V8Proxy::setDOMException(ec);
 
     return v8::Undefined();
 }
@@ -87,7 +87,7 @@ CALLBACK_FUNC_DECL(HTMLOptionsCollectionAdd)
 ACCESSOR_GETTER(HTMLOptionsCollectionLength)
 {
     INC_STATS("DOM.HTMLOptionsCollection.length._get");
-    HTMLOptionsCollection* imp = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
+    HTMLOptionsCollection* imp = V8Proxy::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
     int v = imp->length();
     return v8::Integer::New(v);
 }
@@ -95,7 +95,7 @@ ACCESSOR_GETTER(HTMLOptionsCollectionLength)
 ACCESSOR_SETTER(HTMLOptionsCollectionLength)
 {
     INC_STATS("DOM.HTMLOptionsCollection.length._set");
-    HTMLOptionsCollection* imp = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
+    HTMLOptionsCollection* imp = V8Proxy::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
     double v = value->NumberValue();
     unsigned newLength = 0;
     ExceptionCode ec = 0;
@@ -110,25 +110,25 @@ ACCESSOR_SETTER(HTMLOptionsCollectionLength)
     if (!ec)
         imp->setLength(value->Uint32Value(), ec);
 
-    V8Proxy::SetDOMException(ec);
+    V8Proxy::setDOMException(ec);
 }
 
 INDEXED_PROPERTY_GETTER(HTMLOptionsCollection)
 {
     INC_STATS("DOM.HTMLOptionsCollection.IndexedPropertyGetter");
-    HTMLOptionsCollection* collection = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
+    HTMLOptionsCollection* collection = V8Proxy::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
 
     RefPtr<Node> result = collection->item(index);
     if (!result)
         return notHandledByInterceptor();
 
-    return V8Proxy::NodeToV8Object(result.get());
+    return V8Proxy::convertNodeToV8Object(result.get());
 }
 
 INDEXED_PROPERTY_SETTER(HTMLOptionsCollection)
 {
     INC_STATS("DOM.HTMLOptionsCollection.IndexedPropertySetter");
-    HTMLOptionsCollection* collection = V8Proxy::ToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
+    HTMLOptionsCollection* collection = V8Proxy::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, info.Holder());
     HTMLSelectElement* base = static_cast<HTMLSelectElement*>(collection->base());
     return toOptionsCollectionSetter(index, value, base);
 }

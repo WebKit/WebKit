@@ -46,7 +46,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestConstructor)
     INC_STATS("DOM.XMLHttpRequest.Constructor");
 
     if (!args.IsConstructCall())
-        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TYPE_ERROR);
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
     // Expect no parameters.
     // Allocate a XMLHttpRequest object as its internal field.
@@ -59,11 +59,11 @@ CALLBACK_FUNC_DECL(XMLHttpRequestConstructor)
 #endif
         context = V8Proxy::retrieveFrame()->document();
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
-    V8Proxy::SetDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::XMLHTTPREQUEST), xmlHttpRequest.get());
+    V8Proxy::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::XMLHTTPREQUEST), xmlHttpRequest.get());
 
     // Add object to the wrapper map.
     xmlHttpRequest->ref();
-    V8Proxy::SetJSWrapperForActiveDOMObject(xmlHttpRequest.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8Proxy::setJSWrapperForActiveDOMObject(xmlHttpRequest.get(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
 }
 

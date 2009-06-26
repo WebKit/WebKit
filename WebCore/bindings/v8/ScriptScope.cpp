@@ -43,7 +43,7 @@
 namespace WebCore {
 
 ScriptScope::ScriptScope(ScriptState* scriptState, bool reportExceptions)
-    : m_context(V8Proxy::GetContext(scriptState->frame()))
+    : m_context(V8Proxy::context(scriptState->frame()))
     , m_scope(m_context)
     , m_scriptState(scriptState)
     , m_reportExceptions(reportExceptions)

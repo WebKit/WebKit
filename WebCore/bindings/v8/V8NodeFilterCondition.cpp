@@ -44,14 +44,14 @@ V8NodeFilterCondition::V8NodeFilterCondition(v8::Handle<v8::Value> filter)
     : m_filter(v8::Persistent<v8::Value>::New(filter))
 {
 #ifndef NDEBUG
-    V8Proxy::RegisterGlobalHandle(NODE_FILTER, this, m_filter);
+    V8Proxy::registerGlobalHandle(NODE_FILTER, this, m_filter);
 #endif
 }
 
 V8NodeFilterCondition::~V8NodeFilterCondition()
 {
 #ifndef NDEBUG
-    V8Proxy::UnregisterGlobalHandle(this, m_filter);
+    V8Proxy::unregisterGlobalHandle(this, m_filter);
 #endif
     m_filter.Dispose();
     m_filter.Clear();
@@ -69,12 +69,12 @@ short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
     v8::Handle<v8::Object> object = v8::Context::GetCurrent()->Global();
     v8::Handle<v8::Function> callback = v8::Handle<v8::Function>::Cast(m_filter);
     OwnArrayPtr<v8::Handle<v8::Value> > args(new v8::Handle<v8::Value>[1]);
-    args[0] = V8Proxy::ToV8Object(V8ClassIndex::NODE, node);
+    args[0] = V8Proxy::convertToV8Object(V8ClassIndex::NODE, node);
 
     V8Proxy* proxy = V8Proxy::retrieve();
     ASSERT(proxy);
 
-    v8::Handle<v8::Value> result = proxy->CallFunction(callback, object, 1, args.get());
+    v8::Handle<v8::Value> result = proxy->callFunction(callback, object, 1, args.get());
 
     if (exceptionCatcher.HasCaught()) {
         state->setException(exceptionCatcher.Exception());

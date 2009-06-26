@@ -42,19 +42,19 @@ namespace WebCore {
 INDEXED_PROPERTY_GETTER(HTMLFormElement)
 {
     INC_STATS("DOM.HTMLFormElement.IndexedPropertyGetter");
-    HTMLFormElement* form = V8Proxy::DOMWrapperToNode<HTMLFormElement>(info.Holder());
+    HTMLFormElement* form = V8Proxy::convertDOMWrapperToNode<HTMLFormElement>(info.Holder());
     
     RefPtr<Node> formElement = form->elements()->item(index);
     if (!formElement)
         return notHandledByInterceptor();
-    return V8Proxy::NodeToV8Object(formElement.get());
+    return V8Proxy::convertNodeToV8Object(formElement.get());
 }
 
 
 NAMED_PROPERTY_GETTER(HTMLFormElement)
 {
     INC_STATS("DOM.HTMLFormElement.NamedPropertyGetter");
-    HTMLFormElement* imp = V8Proxy::DOMWrapperToNode<HTMLFormElement>(info.Holder());
+    HTMLFormElement* imp = V8Proxy::convertDOMWrapperToNode<HTMLFormElement>(info.Holder());
     AtomicString v = v8StringToAtomicWebCoreString(name);
 
     // Call getNamedElements twice, first time check if it has a value
@@ -74,15 +74,15 @@ NAMED_PROPERTY_GETTER(HTMLFormElement)
     ASSERT(!elements.isEmpty());
 
     if (elements.size() == 1)
-        return V8Proxy::NodeToV8Object(elements.at(0).get());
+        return V8Proxy::convertNodeToV8Object(elements.at(0).get());
 
     NodeList* collection = new V8NamedNodesCollection(elements);
-    return V8Proxy::ToV8Object(V8ClassIndex::NODELIST, collection);
+    return V8Proxy::convertToV8Object(V8ClassIndex::NODELIST, collection);
 }
     
 CALLBACK_FUNC_DECL(HTMLFormElementSubmit) {
     INC_STATS("DOM.HTMLFormElement.submit()");
-    HTMLFormElement* form = V8Proxy::DOMWrapperToNative<HTMLFormElement>(args.Holder());
+    HTMLFormElement* form = V8Proxy::convertDOMWrapperToNative<HTMLFormElement>(args.Holder());
     form->submit(0, false, false);
     return v8::Undefined();
 }

@@ -32,14 +32,13 @@
 
 #if ENABLE(DATABASE)
 
-#include "v8_binding.h"
-#include "v8_proxy.h"
-
 #include "Database.h"
+#include "V8Binding.h"
 #include "V8CustomBinding.h"
 #include "V8CustomSQLTransactionCallback.h"
 #include "V8CustomSQLTransactionErrorCallback.h"
 #include "V8CustomVoidCallback.h"
+#include "V8Proxy.h"
 
 namespace WebCore {
 
@@ -54,16 +53,16 @@ CALLBACK_FUNC_DECL(DatabaseTransaction)
     INC_STATS("DOM.Database.transaction()");
 
     if (args.Length() == 0) {
-        V8Proxy::ThrowError(V8Proxy::SYNTAX_ERROR, "Transaction callback is required.");
+        V8Proxy::throwError(V8Proxy::SyntaxError, "Transaction callback is required.");
         return v8::Undefined();
     }
 
     if (!args[0]->IsObject()) {
-        V8Proxy::ThrowError(V8Proxy::TYPE_ERROR, "Transaction callback must be of valid type.");
+        V8Proxy::throwError(V8Proxy::TypeError, "Transaction callback must be of valid type.");
         return v8::Undefined();
     }
 
-    Database* database = V8Proxy::ToNativeObject<Database>(V8ClassIndex::DATABASE, args.Holder());
+    Database* database = V8Proxy::convertToNativeObject<Database>(V8ClassIndex::DATABASE, args.Holder());
 
     Frame* frame = V8Proxy::retrieveFrame();
 
@@ -72,7 +71,7 @@ CALLBACK_FUNC_DECL(DatabaseTransaction)
     RefPtr<V8CustomSQLTransactionErrorCallback> errorCallback;
     if (args.Length() > 1) {
         if (!args[1]->IsObject()) {
-            V8Proxy::ThrowError(V8Proxy::TYPE_ERROR, "Transaction error callback must be of valid type.");
+            V8Proxy::throwError(V8Proxy::TypeError, "Transaction error callback must be of valid type.");
             return v8::Undefined();
         }
         errorCallback = V8CustomSQLTransactionErrorCallback::create(args[1], frame);
@@ -81,7 +80,7 @@ CALLBACK_FUNC_DECL(DatabaseTransaction)
     RefPtr<V8CustomVoidCallback> successCallback;
     if (args.Length() > 2) {
         if (!args[1]->IsObject()) {
-            V8Proxy::ThrowError(V8Proxy::TYPE_ERROR, "Transaction success callback must be of valid type.");
+            V8Proxy::throwError(V8Proxy::TypeError, "Transaction success callback must be of valid type.");
             return v8::Undefined();
         }
         successCallback = V8CustomVoidCallback::create(args[2], frame);

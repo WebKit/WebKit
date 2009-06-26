@@ -35,13 +35,13 @@
 
 #include "WorkerContextExecutionProxy.h"
 
-#include "V8Binding.h"
-#include "V8Proxy.h"
 #include "DOMCoreException.h"
 #include "Event.h"
 #include "EventException.h"
 #include "RangeException.h"
-#include "XMLHttpRequestException.h"
+#include "V8Binding.h"
+#include "V8DOMMap.h"
+#include "V8Proxy.h"
 #include "V8WorkerContextEventListener.h"
 #include "V8WorkerContextObjectEventListener.h"
 #include "Worker.h"
@@ -49,6 +49,7 @@
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerScriptController.h"
+#include "XMLHttpRequestException.h"
 
 namespace WebCore {
 
@@ -133,11 +134,11 @@ WorkerContextExecutionProxy* WorkerContextExecutionProxy::retrieve()
 {
     v8::Handle<v8::Context> context = v8::Context::GetCurrent();
     v8::Handle<v8::Object> global = context->Global();
-    global = V8Proxy::LookupDOMWrapper(V8ClassIndex::WORKERCONTEXT, global);
+    global = V8Proxy::lookupDOMWrapper(V8ClassIndex::WORKERCONTEXT, global);
     // Return 0 if the current executing context is not the worker context.
     if (global.IsEmpty())
         return 0;
-    WorkerContext* workerContext = V8Proxy::ToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, global);
+    WorkerContext* workerContext = V8Proxy::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, global);
     return workerContext->script()->proxy();
 }
 
@@ -185,9 +186,9 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     }
 
     // Wrap the object.
-    V8Proxy::SetDOMWrapper(jsWorkerContext, V8ClassIndex::ToInt(V8ClassIndex::WORKERCONTEXT), m_workerContext);
+    V8Proxy::setDOMWrapper(jsWorkerContext, V8ClassIndex::ToInt(V8ClassIndex::WORKERCONTEXT), m_workerContext);
 
-    V8Proxy::SetJSWrapperForDOMObject(m_workerContext, v8::Persistent<v8::Object>::New(jsWorkerContext));
+    V8Proxy::setJSWrapperForDOMObject(m_workerContext, v8::Persistent<v8::Object>::New(jsWorkerContext));
     m_workerContext->ref();
 
     // Insert the object instance as the prototype of the shadow object.
@@ -202,7 +203,7 @@ v8::Local<v8::Function> WorkerContextExecutionProxy::GetConstructor(V8ClassIndex
     // Enter the context of the proxy to make sure that the function is
     // constructed in the context corresponding to this proxy.
     v8::Context::Scope scope(m_context);
-    v8::Handle<v8::FunctionTemplate> functionTemplate = V8Proxy::GetTemplate(type);
+    v8::Handle<v8::FunctionTemplate> functionTemplate = V8Proxy::getTemplate(type);
 
     // Getting the function might fail if we're running out of stack or memory.
     v8::TryCatch tryCatch;
@@ -230,12 +231,12 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::V8Wr
         if (!object.IsEmpty())
             static_cast<Worker*>(impl)->ref();
         result = v8::Persistent<v8::Object>::New(object);
-        V8Proxy::SetJSWrapperForDOMObject(impl, result);
+        V8Proxy::setJSWrapperForDOMObject(impl, result);
         return result;
     }
 
     // Non DOM node
-    v8::Persistent<v8::Object> result = domObjectMap().get(impl);
+    v8::Persistent<v8::Object> result = getDOMObjectMap().get(impl);
     if (result.IsEmpty()) {
         v8::Local<v8::Object> object = toV8(type, type, impl);
         if (!object.IsEmpty()) {
@@ -262,7 +263,7 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::V8Wr
                 ASSERT(false);
             }
             result = v8::Persistent<v8::Object>::New(object);
-            V8Proxy::SetJSWrapperForDOMObject(impl, result);
+            V8Proxy::setJSWrapperForDOMObject(impl, result);
         }
     }
     return result;
@@ -273,7 +274,7 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::EventToV8Object(Event* event)
     if (!event)
         return v8::Null();
 
-    v8::Handle<v8::Object> wrapper = domObjectMap().get(event);
+    v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(event);
     if (!wrapper.IsEmpty())
         return wrapper;
 
@@ -290,7 +291,7 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::EventToV8Object(Event* event)
     }
 
     event->ref();  // fast ref
-    V8Proxy::SetJSWrapperForDOMObject(event, v8::Persistent<v8::Object>::New(result));
+    V8Proxy::setJSWrapperForDOMObject(event, v8::Persistent<v8::Object>::New(result));
 
     return result;
 }
@@ -336,20 +337,20 @@ v8::Local<v8::Object> WorkerContextExecutionProxy::toV8(V8ClassIndex::V8WrapperT
     if (proxy)
         function = proxy->GetConstructor(descType);
     else
-        function = V8Proxy::GetTemplate(descType)->GetFunction();
+        function = V8Proxy::getTemplate(descType)->GetFunction();
 
     v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
     if (!instance.IsEmpty()) {
         // Avoid setting the DOM wrapper for failed allocations.
-        V8Proxy::SetDOMWrapper(instance, V8ClassIndex::ToInt(cptrType), impl);
+        V8Proxy::setDOMWrapper(instance, V8ClassIndex::ToInt(cptrType), impl);
     }
     return instance;
 }
 
 bool WorkerContextExecutionProxy::forgetV8EventObject(Event* event)
 {
-    if (domObjectMap().contains(event)) {
-        domObjectMap().forget(event);
+    if (getDOMObjectMap().contains(event)) {
+        getDOMObjectMap().forget(event);
         return true;
     } else
         return false;
@@ -363,7 +364,7 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::evaluate(const String& script,
     v8::Context::Scope scope(m_context);
 
     v8::Local<v8::String> scriptString = v8ExternalString(script);
-    v8::Handle<v8::Script> compiledScript = V8Proxy::CompileScript(scriptString, fileName, baseLine);
+    v8::Handle<v8::Script> compiledScript = V8Proxy::compileScript(scriptString, fileName, baseLine);
     return runScript(compiledScript);
 }
 
@@ -375,10 +376,10 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Scrip
     // Compute the source string and prevent against infinite recursion.
     if (m_recursion >= kMaxRecursionDepth) {
         v8::Local<v8::String> code = v8ExternalString("throw RangeError('Recursion too deep')");
-        script = V8Proxy::CompileScript(code, "", 0);
+        script = V8Proxy::compileScript(code, "", 0);
     }
 
-    if (V8Proxy::HandleOutOfMemory())
+    if (V8Proxy::handleOutOfMemory())
         ASSERT(script.IsEmpty());
 
     if (script.IsEmpty())

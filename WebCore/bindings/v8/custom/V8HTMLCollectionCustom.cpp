@@ -47,10 +47,10 @@ static v8::Handle<v8::Value> getNamedItems(HTMLCollection* collection, AtomicStr
         return v8::Handle<v8::Value>();
 
     if (namedItems.size() == 1)
-        return V8Proxy::NodeToV8Object(namedItems.at(0).get());
+        return V8Proxy::convertNodeToV8Object(namedItems.at(0).get());
 
     NodeList* list = new V8NamedNodesCollection(namedItems);
-    return V8Proxy::ToV8Object(V8ClassIndex::NODELIST, list);
+    return V8Proxy::convertToV8Object(V8ClassIndex::NODELIST, list);
 }
 
 static v8::Handle<v8::Value> getItem(HTMLCollection* collection, v8::Handle<v8::Value> argument)
@@ -66,7 +66,7 @@ static v8::Handle<v8::Value> getItem(HTMLCollection* collection, v8::Handle<v8::
     }
 
     RefPtr<Node> result = collection->item(index->Uint32Value());
-    return V8Proxy::NodeToV8Object(result.get());
+    return V8Proxy::convertNodeToV8Object(result.get());
 }
 
 NAMED_PROPERTY_GETTER(HTMLCollection)
@@ -84,21 +84,21 @@ NAMED_PROPERTY_GETTER(HTMLCollection)
         return v8::Handle<v8::Value>();
 
     // Finally, search the DOM structure.
-    HTMLCollection* imp = V8Proxy::ToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, info.Holder());
+    HTMLCollection* imp = V8Proxy::convertToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, info.Holder());
     return getNamedItems(imp, v8StringToAtomicWebCoreString(name));
 }
 
 CALLBACK_FUNC_DECL(HTMLCollectionItem)
 {
     INC_STATS("DOM.HTMLCollection.item()");
-    HTMLCollection* imp = V8Proxy::ToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
+    HTMLCollection* imp = V8Proxy::convertToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
     return getItem(imp, args[0]);
 }
 
 CALLBACK_FUNC_DECL(HTMLCollectionNamedItem)
 {
     INC_STATS("DOM.HTMLCollection.namedItem()");
-    HTMLCollection* imp = V8Proxy::ToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
+    HTMLCollection* imp = V8Proxy::convertToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
     v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]));
 
     if (result.IsEmpty())
@@ -113,7 +113,7 @@ CALLBACK_FUNC_DECL(HTMLCollectionCallAsFunction)
     if (args.Length() < 1)
         return v8::Undefined();
 
-    HTMLCollection* imp = V8Proxy::ToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
+    HTMLCollection* imp = V8Proxy::convertToNativeObject<HTMLCollection>(V8ClassIndex::HTMLCOLLECTION, args.Holder());
 
     if (args.Length() == 1)
         return getItem(imp, args[0]);
@@ -128,7 +128,7 @@ CALLBACK_FUNC_DECL(HTMLCollectionCallAsFunction)
     Node* node = imp->namedItem(name);
     while (node) {
         if (!current)
-            return V8Proxy::NodeToV8Object(node);
+            return V8Proxy::convertNodeToV8Object(node);
 
         node = imp->nextNamedItem(name);
         current--;
