@@ -729,6 +729,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_counts.clear();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         m_profiles.clear();
+        m_currentUserInitiatedProfileNumber = -1;
+        m_nextUserInitiatedProfileNumber = 1;
 #endif
 #if ENABLE(DATABASE)
         m_databaseResources.clear();

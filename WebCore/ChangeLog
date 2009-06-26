@@ -1,3 +1,15 @@
+2009-06-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6968137> Profiler title numbers increment even after a
+        reload.
+
+        - Now the numbers are reset when the profiles are.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+
 2009-06-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.
