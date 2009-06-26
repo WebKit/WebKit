@@ -1,3 +1,18 @@
+2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26659
+
+        Update layout tests since the fullscreen button no longer has a renderer.
+
+        * platform/mac/fast/layers/video-layer-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-empty-source-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
 2009-06-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,22 @@
+2009-06-25  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26659
+
+        Support hidding a control bar element from the Media element controller.
+
+        Update layout tests since the fullscreen button no longer has a renderer.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaTextDisplayElement::update): call updateStyle() so everything
+        is updated properly.
+        (WebCore::MediaControlInputElement::MediaControlInputElement):
+        (WebCore::MediaControlInputElement::update): call updateStyle()
+        (WebCore::MediaControlInputElement::updateStyle): create the renderer properly
+        or not depending on what rendererIsNeeded() return.
+        * rendering/MediaControlElements.h:
+
 2009-06-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -25,7 +25,6 @@ layer at (8,42) size 200x16
         RenderBlock {DIV} at (2,1) size 13x14
     RenderButton {INPUT} at (168,0) size 16x16
     RenderButton {INPUT} at (184,0) size 16x16
-    RenderButton {INPUT} at (200,0) size 0x16
 layer at (8,76) size 320x16
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x16
 layer at (8,76) size 320x16
@@ -37,7 +36,6 @@ layer at (8,76) size 320x16
         RenderBlock {DIV} at (2,1) size 13x14
     RenderButton {INPUT} at (288,0) size 16x16
     RenderButton {INPUT} at (304,0) size 16x16
-    RenderButton {INPUT} at (320,0) size 0x16
 layer at (8,110) size 320x100
   RenderMedia {AUDIO} at (8,110) size 320x100 [bgcolor=#0000FF]
 layer at (8,110) size 320x100
@@ -51,4 +49,3 @@ layer at (8,194) size 320x16
         RenderBlock {DIV} at (2,1) size 13x14
     RenderButton {INPUT} at (288,0) size 16x16
     RenderButton {INPUT} at (304,0) size 16x16
-    RenderButton {INPUT} at (320,0) size 0x16

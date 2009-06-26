@@ -23,4 +23,3 @@ layer at (9,177) size 300x16
         RenderBlock {DIV} at (2,1) size 13x14
     RenderButton {INPUT} at (268,0) size 16x16
     RenderButton {INPUT} at (284,0) size 16x16
-    RenderButton {INPUT} at (300,0) size 0x16

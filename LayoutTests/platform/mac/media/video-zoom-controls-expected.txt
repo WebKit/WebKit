@@ -19,7 +19,6 @@ layer at (57,241) size 240x24
         RenderBlock {DIV} at (3,1) size 19x21
     RenderButton {INPUT} at (192,0) size 24x24
     RenderButton {INPUT} at (216,0) size 24x24
-    RenderButton {INPUT} at (240,0) size 0x24
 layer at (57,310) size 240x180
   RenderVideo {VIDEO} at (45,298) size 240x180
 layer at (57,310) size 240x180
@@ -33,4 +32,3 @@ layer at (57,466) size 240x24
         RenderBlock {DIV} at (3,1) size 19x21
     RenderButton {INPUT} at (192,0) size 24x24
     RenderButton {INPUT} at (216,0) size 24x24
-    RenderButton {INPUT} at (240,0) size 0x24
