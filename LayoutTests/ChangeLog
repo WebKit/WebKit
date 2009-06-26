@@ -1,5 +1,13 @@
 2009-06-26  Brady Eidson  <beidson@apple.com>
 
+        Step 2 (new Mac results)
+
+        * platform/mac/fast/images/favicon-as-image-expected.checksum: Added.
+        * platform/mac/fast/images/favicon-as-image-expected.png: Added.
+        * platform/mac/fast/images/favicon-as-image-expected.txt: Added.
+
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
         1st step of fixing the layout test I broke on Mac platforms.
 
         * platform/mac-leopard/fast/images/favicon-as-image-expected.checksum: Removed.
