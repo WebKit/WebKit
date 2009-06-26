@@ -50,10 +50,6 @@ CALLBACK_FUNC_DECL(WorkerConstructor)
 {
     INC_STATS(L"DOM.Worker.Constructor");
 
-    if (!WorkerContextExecutionProxy::isWebWorkersEnabled()) {
-        return throwError("Worker is not enabled.", V8Proxy::SYNTAX_ERROR);
-    }
-
     if (!args.IsConstructCall()) {
         return throwError("DOM object constructor cannot be called as a function.");
     }
