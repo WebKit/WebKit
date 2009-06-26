@@ -175,6 +175,13 @@ bool ResourceHandle::start(Frame* frame)
     if (!ResourceHandle::didSendBodyDataDelegateExists())
         associateStreamWithResourceHandle([d->m_request.nsURLRequest() HTTPBodyStream], this);
 
+#ifdef BUILDING_ON_TIGER
+    // A conditional request sent by WebCore (e.g. to update appcache) can be for a resource that is not cacheable by NSURLConnection,
+    // which can get confused and fail to load it in this case.
+    if (d->m_request.isConditional())
+        d->m_request.setCachePolicy(ReloadIgnoringCacheData);
+#endif
+
     d->m_needsSiteSpecificQuirks = frame->settings() && frame->settings()->needsSiteSpecificQuirks();
 
     NSURLConnection *connection;
