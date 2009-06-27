@@ -1,3 +1,18 @@
+2009-06-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25889
+        [GTK] scrollbar policy for main frame is not implementable
+
+        Override visibleContentRect to handle GTK+'s case, in which
+        scrollbars or equivalent decoration are painted by the parent
+        widget.
+
+        * platform/ScrollView.cpp:
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+
 2009-06-27  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

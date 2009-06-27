@@ -121,4 +121,25 @@ void ScrollView::platformRemoveChild(Widget* child)
         gtk_container_remove(GTK_CONTAINER(parent), child->platformWidget());
 }
 
+IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
+{
+    if (!m_horizontalAdjustment)
+        return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
+                       IntSize(max(0, width() - (verticalScrollbar() && !includeScrollbars ? verticalScrollbar()->width() : 0)),
+                               max(0, height() - (horizontalScrollbar() && !includeScrollbars ? horizontalScrollbar()->height() : 0))));
+
+    // Main frame.
+    GtkWidget* measuredWidget = hostWindow()->platformWindow();
+    GtkWidget* parent = gtk_widget_get_parent(measuredWidget);
+
+    // We may not be in a widget that displays scrollbars, but we may
+    // have other kinds of decoration that make us smaller.
+    if (parent && includeScrollbars)
+        measuredWidget = parent;
+
+    return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
+                   IntSize(measuredWidget->allocation.width,
+                           measuredWidget->allocation.height));
+}
+
 }
