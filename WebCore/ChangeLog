@@ -1,3 +1,13 @@
+2009-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Dave Levin
+
+        Rename ioCompState to compositingState to better match WebCore coding style.
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+
 2009-06-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

@@ -364,7 +364,7 @@ RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const Rend
 //      must be compositing so that its contents render over that child.
 //      This implies that its positive z-index children must also be compositing.
 //
-void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, struct CompositingState& ioCompState)
+void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, struct CompositingState& compositingState)
 {
     layer->updateLayerPosition();
     layer->updateZOrderLists();
@@ -372,12 +372,12 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
     
     // Clear the flag
     layer->setHasCompositingDescendant(false);
-    layer->setMustOverlayCompositedLayers(ioCompState.m_subtreeIsCompositing);
+    layer->setMustOverlayCompositedLayers(compositingState.m_subtreeIsCompositing);
     
     const bool willBeComposited = needsToBeComposited(layer);
-    ioCompState.m_subtreeIsCompositing = willBeComposited;
+    compositingState.m_subtreeIsCompositing = willBeComposited;
 
-    CompositingState childState = ioCompState;
+    CompositingState childState = compositingState;
     if (willBeComposited)
         childState.m_compositingAncestor = layer;
 
@@ -444,7 +444,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
 
     // Subsequent layers in the parent stacking context also need to composite.
     if (childState.m_subtreeIsCompositing)
-        ioCompState.m_subtreeIsCompositing = true;
+        compositingState.m_subtreeIsCompositing = true;
 
     // If the layer is going into compositing mode, repaint its old location.
     if (!layer->isComposited() && needsToBeComposited(layer))
@@ -511,7 +511,7 @@ bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo* o) const
 }
 #endif
 
-void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, struct CompositingState& ioCompState)
+void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, struct CompositingState& compositingState)
 {
     // Make the layer compositing if necessary, and set up clipping and content layers.
     // Note that we can only do work here that is independent of whether the descendant layers
@@ -536,7 +536,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, stru
     if (layer->isRootLayer() && layer->isComposited())
         parentInRootLayer(layer);
 
-    CompositingState childState = ioCompState;
+    CompositingState childState = compositingState;
     if (layer->isComposited())
         childState.m_compositingAncestor = layer;
 
