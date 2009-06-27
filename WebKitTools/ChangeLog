@@ -1,3 +1,11 @@
+2009-06-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make SVN work (again?).
+
+        * Scripts/modules/scm.py:
+
 2009-06-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.

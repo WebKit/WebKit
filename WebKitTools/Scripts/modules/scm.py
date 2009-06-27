@@ -188,7 +188,7 @@ class SVN(SCM):
         return self.run_command("svn diff") == ""
 
     def clean_working_directory(self):
-        self.run_command("svn reset -R")
+        self.run_command("svn revert -R .")
 
     def update_webkit(self):
         self.run_command(self.script_path("update-webkit"))
