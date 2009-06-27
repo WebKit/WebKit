@@ -32,7 +32,6 @@
 #include "WebKitClassFactory.h"
 #include <WebCore/COMPtr.h>
 #include <WebCore/IconDatabase.h>
-#include <WebCore/LocalStorage.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/RenderThemeWin.h>

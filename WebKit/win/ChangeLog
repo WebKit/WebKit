@@ -1,3 +1,16 @@
+2009-06-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26767
+
+        Fix a build break due to LocalStorage.h being included in WebKitDLL.cpp
+        despite it being deleted from the repo by the following patch/commit:
+        https://bugs.webkit.org/show_bug.cgi?id=26732
+        http://trac.webkit.org/changeset/45290
+
+        * WebKitDLL.cpp:
+
 2009-06-26  Yongjun Zhang  <yongjun.zhang@nokia.com>
 
         Reviewed by Eric Seidel.
