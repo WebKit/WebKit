@@ -1,3 +1,22 @@
+2009-06-27  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=26708
+
+        Tests prevention of injected scripts with scheme relative paths, iFrame JavaScript URLs, 
+        and UTF-7 encoding.
+
+        * http/tests/security/xssAuditor/http-equiv-utf-7-encoded-expected.txt: Added.
+        * http/tests/security/xssAuditor/http-equiv-utf-7-encoded.html: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-javascript-url.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag-default-encode.pl: Added.
+        * http/tests/security/xssAuditor/script-tag-utf-7-encoded-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-utf-7-encoded.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-relative-scheme-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-relative-scheme.html: Added.
+
 2009-06-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

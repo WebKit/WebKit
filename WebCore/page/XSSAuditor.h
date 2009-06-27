@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef XSSAuditor_h
@@ -62,7 +62,7 @@ namespace WebCore {
     // * ScriptController::evaluate - used to evaluate JavaScript scripts.
     // * ScriptController::createInlineEventListener - used to create JavaScript event handlers.
     // * HTMLTokenizer::scriptHandler - used to load external JavaScript scripts.
-    // 
+    //
     class XSSAuditor {
     public:
         XSSAuditor(Frame*);
@@ -82,16 +82,18 @@ namespace WebCore {
         // content of any user-submitted data.
         bool canLoadExternalScriptFromSrc(const String& url) const;
 
-        // Determines whether object should be loaded based on the content of 
+        // Determines whether object should be loaded based on the content of
         // any user-submitted data.
         //
         // This method is called by FrameLoader::requestObject.
         bool canLoadObject(const String& url) const;
 
     private:
-        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool allowNullCharacters = false);
+        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool allowControlCharacters = false);
 
         bool findInRequest(const String&) const;
+
+        bool findInRequest(Frame*, const String&) const;
 
         // The frame to audit.
         Frame* m_frame;

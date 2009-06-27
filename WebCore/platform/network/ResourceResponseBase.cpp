@@ -502,7 +502,7 @@ static bool isCacheHeaderSeparator(UChar c)
     }
 }
 
-static bool isControlCharacter(UChar c)
+bool isControlCharacter(UChar c)
 {
     return c < ' ' || c == 127;
 }
