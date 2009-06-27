@@ -1857,7 +1857,7 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDatabase.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDataGridColumn.cpp"
 				>
 				<FileConfiguration
@@ -1905,7 +1905,7 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDataGridColumn.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDataGridColumnList.cpp"
 				>
 				<FileConfiguration
@@ -3446,54 +3446,6 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridElement.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridElement.h"
-				>
-			</File>
-                        <File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridCellElement.cpp"
 				>
 				<FileConfiguration
@@ -3541,7 +3493,7 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridCellElement.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridColElement.cpp"
 				>
 				<FileConfiguration
@@ -3589,7 +3541,55 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridColElement.h"
 				>
 			</File>
-                        <File
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridElement.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridElement.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSHTMLDataGridRowElement.cpp"
 				>
 				<FileConfiguration
@@ -6228,6 +6228,10 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.cpp"
 				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.cpp"
+				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="true"
@@ -6268,10 +6272,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.cpp"
-				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.h"
@@ -9592,6 +9592,10 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.cpp"
 				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.cpp"
+				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="true"
@@ -9632,10 +9636,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.cpp"
-				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.h"
@@ -18071,26 +18071,6 @@
 					Name="win"
 					>
 					<File
-						RelativePath="..\platform\graphics\win\ColorSafari.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\win\FontCacheWin.cpp"
 						>
 					</File>
@@ -21882,7 +21862,7 @@
 				RelativePath="..\rendering\RenderCounter.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\rendering\RenderDataGrid.cpp"
 				>
 			</File>
@@ -23415,14 +23395,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\default\PlatformMessagePortChannel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\default\PlatformMessagePortChannel.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\MouseEvent.cpp"
 				>
 			</File>
@@ -23536,6 +23508,14 @@
 			</File>
 			<File
 				RelativePath="..\dom\OverflowEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\default\PlatformMessagePortChannel.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\default\PlatformMessagePortChannel.h"
 				>
 			</File>
 			<File
@@ -24274,26 +24254,6 @@
 				RelativePath="..\html\CanvasStyle.h"
 				>
 			</File>
-                        <File
-				RelativePath="..\html\DataGridColumn.cpp"
-				>
-			</File>
-                        <File
-				RelativePath="..\html\DataGridColumn.h"
-				>
-			</File>
-                        <File
-				RelativePath="..\html\DataGridColumnList.cpp"
-				>
-			</File>
-                        <File
-				RelativePath="..\html\DataGridColumnList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DataGridDataSource.h"
-				>
-			</File>
 			<File
 				RelativePath="..\html\CollectionCache.cpp"
 				>
@@ -24312,6 +24272,26 @@
 			</File>
 			<File
 				RelativePath="..\html\CollectionType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridColumn.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridColumn.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridColumnList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridColumnList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DataGridDataSource.h"
 				>
 			</File>
 			<File
@@ -24874,55 +24854,7 @@
 				RelativePath="..\html\HTMLCollection.h"
 				>
 			</File>
-                        <File
-				RelativePath="..\html\HTMLDataGridElement.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Internal|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
 			<File
-				RelativePath="..\html\HTMLDataGridElement.h"
-				>
-			</File>
-                        <File
 				RelativePath="..\html\HTMLDataGridCellElement.cpp"
 				>
 				<FileConfiguration
@@ -24970,7 +24902,7 @@
 				RelativePath="..\html\HTMLDataGridCellElement.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\html\HTMLDataGridColElement.cpp"
 				>
 				<FileConfiguration
@@ -25018,7 +24950,55 @@
 				RelativePath="..\html\HTMLDataGridColElement.h"
 				>
 			</File>
-                        <File
+			<File
+				RelativePath="..\html\HTMLDataGridElement.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\HTMLDataGridElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLDataGridRowElement.cpp"
 				>
 				<FileConfiguration
@@ -28058,10 +28038,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSDocumentCustom.cpp"
-					>
-				</File>
-                                <File
 					RelativePath="..\bindings\js\JSDataGridColumnListCustom.cpp"
 					>
 				</File>
@@ -28071,6 +28047,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSDataGridDataSource.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSDocumentCustom.cpp"
 					>
 				</File>
 				<File

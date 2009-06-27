@@ -1,3 +1,10 @@
+2009-06-26  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Windows build.
+
+        * WebCore.vcproj/WebCore.vcproj: Remove ColorSafari.cpp as
+        the file was deleted from SVN.
+
 2009-06-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
