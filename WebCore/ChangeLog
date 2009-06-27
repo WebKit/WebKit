@@ -1,3 +1,22 @@
+2009-06-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26766
+
+        Change to use array indexing rather than Vector enumerators; the former
+        are preferred style.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::hasNonCompositingContent):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::updateCompositingChildrenGeometry):
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayerRect):
+        (WebCore::RenderLayerCompositor::layerHas3DContent):
+
 2009-06-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
