@@ -299,6 +299,11 @@ static JSValueRef getSupportsPressActionCallback(JSContextRef context, JSObjectR
     return JSValueMakeBoolean(context, toAXElement(thisObject)->supportsPressAction());
 }
 
+static JSValueRef getIsEnabledCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isEnabled());
+}
+
 // Destruction
 
 static void finalize(JSObjectRef thisObject)
@@ -331,6 +336,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "insertionPointLineNumber", getInsertionPointLineNumberCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedTextRange", getSelectedTextRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "supportsPressAction", getSupportsPressActionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isEnabled", getIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
 

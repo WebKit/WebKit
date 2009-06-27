@@ -1,3 +1,18 @@
+2009-06-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Add ability to query isEnabled
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getIsEnabledCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isEnabled):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::isEnabled):
+
 2009-06-26  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig

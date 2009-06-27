@@ -15,10 +15,13 @@ archive
 aria-activedescendant
 aria-checked
 aria-describedby
+aria-disabled
+aria-hidden
 aria-labeledby
 aria-labelledby
 aria-level
 aria-pressed
+aria-readonly
 aria-valuemax
 aria-valuemin
 aria-valuenow

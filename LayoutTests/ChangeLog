@@ -1,3 +1,16 @@
+2009-06-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for Bug 26725: aria-hidden, aria-disabled, aria-readonly need to be implemented
+
+        * accessibility/aria-disabled-expected.txt: Added.
+        * accessibility/aria-disabled.html: Added.
+        * accessibility/aria-hidden-expected.txt: Added.
+        * accessibility/aria-hidden.html: Added.
+        * accessibility/aria-readonly-expected.txt: Added.
+        * accessibility/aria-readonly.html: Added.
+
 2009-06-26  Brady Eidson  <beidson@apple.com>
 
         OMG.

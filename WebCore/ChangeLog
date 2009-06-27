@@ -1,3 +1,22 @@
+2009-06-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 26725: aria-hidden, aria-disabled, aria-readonly need to be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=26725
+
+        Tests: accessibility/aria-disabled.html
+               accessibility/aria-hidden.html
+               accessibility/aria-readonly.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaIsHidden):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::isEnabled):
+        (WebCore::AccessibilityRenderObject::canSetValueAttribute):
+        * accessibility/AccessibilityRenderObject.h:
+        * html/HTMLAttributeNames.in:
+
 2009-06-26  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by David Levin.

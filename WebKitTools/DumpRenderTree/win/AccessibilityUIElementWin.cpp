@@ -240,6 +240,11 @@ bool AccessibilityUIElement::supportsPressAction()
     return false;
 }
 
+bool AccessibilityUIElement::isEnabled()
+{
+    return false;
+}
+
 int AccessibilityUIElement::insertionPointLineNumber()
 {
     return 0;

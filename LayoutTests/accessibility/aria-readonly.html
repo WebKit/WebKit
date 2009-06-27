@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<input type="text" aria-readonly="true" size=20>
+<input type="text" aria-readonly="false" size=20>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria-readonly attribute works. The first text field should not be writable.");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+          var textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+          var succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "0");
+
+          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
+          succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "1");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

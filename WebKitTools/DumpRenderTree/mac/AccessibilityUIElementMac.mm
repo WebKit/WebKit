@@ -386,6 +386,14 @@ bool AccessibilityUIElement::supportsPressAction()
     return [actions containsObject:NSAccessibilityPressAction];
 }
 
+bool AccessibilityUIElement::isEnabled()
+{
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    return false;
+}
+
 // parameterized attributes
 int AccessibilityUIElement::lineForIndex(int index)
 {

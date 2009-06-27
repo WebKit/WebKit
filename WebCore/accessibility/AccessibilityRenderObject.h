@@ -227,6 +227,7 @@ protected:
 private:
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
+    bool ariaIsHidden() const;
 
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const; 
