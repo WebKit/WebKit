@@ -737,7 +737,7 @@ void EventHandler::allowDHTMLDrag(bool& flagDHTML, bool& flagUA) const
     flagUA = ((mask & DragSourceActionImage) || (mask & DragSourceActionLink) || (mask & DragSourceActionSelection));
 }
     
-HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent, bool ignoreClipping)
+HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars)
 {
     HitTestResult result(point);
     if (!m_frame->contentRenderer())
@@ -764,6 +764,12 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         HitTestResult widgetHitTestResult(widgetPoint);
         frame->contentRenderer()->layer()->hitTest(HitTestRequest(hitType), widgetHitTestResult);
         result = widgetHitTestResult;
+
+        if (testScrollbars == ShouldHitTestScrollbars) {
+            Scrollbar* eventScrollbar = view->scrollbarUnderPoint(point);
+            if (eventScrollbar)
+                result.setScrollbar(eventScrollbar);
+        }
     }
     
     // If our HitTestResult is not visible, then we started hit testing too far down the frame chain. 
@@ -1199,7 +1205,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         }
 
         FrameView* view = m_frame->view();
-        Scrollbar* scrollbar = view ? view->scrollbarUnderMouse(mouseEvent) : 0;
+        Scrollbar* scrollbar = view ? view->scrollbarUnderPoint(mouseEvent.pos()) : 0;
         if (!scrollbar)
             scrollbar = mev.scrollbar();
         if (scrollbar && passMousePressEventToScrollbar(mev, scrollbar))
@@ -1313,7 +1319,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         m_resizeLayer->resize(mouseEvent, m_offsetFromResizeCorner);
     else {
         if (FrameView* view = m_frame->view())
-            scrollbar = view->scrollbarUnderMouse(mouseEvent);
+            scrollbar = view->scrollbarUnderPoint(mouseEvent.pos());
 
         if (!scrollbar)
             scrollbar = mev.scrollbar();

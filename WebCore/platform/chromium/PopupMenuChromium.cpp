@@ -512,7 +512,7 @@ const WTF::Vector<PopupItem*>& PopupContainer:: popupData() const
 
 bool PopupListBox::handleMouseDownEvent(const PlatformMouseEvent& event)
 {
-    Scrollbar* scrollbar = scrollbarUnderMouse(event);
+    Scrollbar* scrollbar = scrollbarUnderPoint(event.pos());
     if (scrollbar) {
         m_capturingScrollbar = scrollbar;
         m_capturingScrollbar->mouseDown(event);
@@ -532,7 +532,7 @@ bool PopupListBox::handleMouseMoveEvent(const PlatformMouseEvent& event)
         return true;
     }
 
-    Scrollbar* scrollbar = scrollbarUnderMouse(event);
+    Scrollbar* scrollbar = scrollbarUnderPoint(event.pos());
     if (m_lastScrollbarUnderMouse != scrollbar) {
         // Send mouse exited to the old scrollbar.
         if (m_lastScrollbarUnderMouse)

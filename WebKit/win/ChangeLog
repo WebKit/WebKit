@@ -1,3 +1,17 @@
+2009-06-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26695
+
+        Added hit testing on scrollbars, so if you start a gesture over a scrollbar,
+        it isn't counted, and lets the user drag the scrollbar itself instead of a
+        panning gesture. Also cleaned up code in gesture.
+
+        * WebView.cpp:
+        (WebView::gestureNotify):
+        (WebView::gesture):
+
 2009-06-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

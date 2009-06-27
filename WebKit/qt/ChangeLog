@@ -1,3 +1,12 @@
+2009-06-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        Changed call of scrollbarUnderMouse to scrollbarUnderPoint to match new API.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::swallowContextMenuEvent):
+
 2009-06-26  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Simon Hausmann.

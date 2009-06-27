@@ -1,3 +1,30 @@
+2009-06-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26695
+        
+        Added the ability to do scrollbar hit testing in EventHandler, changed the
+        signature of a PlatformWheelEvent constructor, and changed scrollbarUnderMouse
+        to scrollbarUnderPoint, and updated all calls to that function.        
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/EventHandler.h:
+        (WebCore::):
+        * platform/PlatformWheelEvent.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarUnderPoint):
+        * platform/ScrollView.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::handleMouseDownEvent):
+        (WebCore::PopupListBox::handleMouseMoveEvent):
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
+
 2009-06-26  Simon Fraser  <simon.fraser@apple.com>
 
         Rubber-stamped by Dave Levin

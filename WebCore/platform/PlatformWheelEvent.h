@@ -51,6 +51,9 @@ class wxPoint;
 
 namespace WebCore {
 
+    class FloatPoint;
+    class FloatSize;
+
     // Wheel events come in two flavors:
     // The ScrollByPixelWheelEvent is a fine-grained event that specifies the precise number of pixels to scroll.  It is sent directly by MacBook touchpads on OS X,
     // and synthesized in other cases where platforms generate line-by-line scrolling events.
@@ -99,7 +102,7 @@ namespace WebCore {
 
 #if PLATFORM(WIN)
         PlatformWheelEvent(HWND, WPARAM, LPARAM, bool isMouseHWheel);
-        PlatformWheelEvent(HWND, float deltaX, float deltaY, float xLoc, float yLoc);
+        PlatformWheelEvent(HWND, const FloatSize& delta, const FloatPoint& location);
 #endif
 
 #if PLATFORM(WX)
