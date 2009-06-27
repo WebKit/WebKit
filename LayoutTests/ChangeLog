@@ -1,3 +1,10 @@
+2009-06-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        * fast/dom/Element/scrollWidth-expected.txt: Added.
+        * fast/dom/Element/scrollWidth.html: Added.
+
 2009-06-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.

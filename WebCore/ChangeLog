@@ -1,3 +1,21 @@
+2009-06-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix <rdar://problem/6961476> REGRESSION (r42043): scrollWidth reported
+          as 1 px
+
+        Test: fast/dom/Element/scrollWidth.html
+
+        Changed scrollWidth and scrollHeight to use the same logic for
+        visible overflow boxes that is used for clipped overflow boxes. In
+        particular, borders are not included and
+        {leftmost,rightmost,lowest}Position() are used. This logic matches IE8.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+
 2009-06-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Oliver Hunt.
