@@ -1,3 +1,16 @@
+2009-06-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7009684> REGRESSION(r45039): Crashes inside JSEvent::put on PowerPC (26746)
+        <https://bugs.webkit.org/show_bug.cgi?id=26746>
+
+        Fix for r45039 incorrectly uncached a get_by_id by converting it to put_by_id.  Clearly this
+        is less than correct.  This patch corrects that error.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCacheGetByID):
+
 2009-06-26  Eric Seidel  <eric@webkit.org>
 
         No review, only rolling out r45259.
