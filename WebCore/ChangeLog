@@ -27,6 +27,21 @@
 
 2009-06-26  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7011924> Opacity transitions should not trigger hardware compositing mode
+        
+        Don't go into compositing mode just for opacity transitions, but they will be
+        hardware acclerated if we're already compositing.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForTransform):
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation):
+        * rendering/RenderLayerCompositor.h:
+
+2009-06-26  Simon Fraser  <simon.fraser@apple.com>
+
         Rubber-stamped by Dave Levin
 
         Rename ioCompState to compositingState to better match WebCore coding style.

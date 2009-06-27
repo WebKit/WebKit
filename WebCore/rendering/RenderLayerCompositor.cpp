@@ -736,51 +736,11 @@ bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
     return m_hasAcceleratedCompositing && (requiresCompositingLayer(layer) || layer->mustOverlayCompositedLayers());
 }
 
-#define VERBOSE_COMPOSITINGLAYER    0
-
 // Note: this specifies whether the RL needs a compositing layer for intrinsic reasons.
 // Use needsToBeComposited() to determine if a RL actually needs a compositing layer.
 // static
 bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) const
 {
-    // FIXME: cache the result of these tests?
-#if VERBOSE_COMPOSITINGLAYER
-    bool gotReason = false;
-
-    if (!gotReason && inCompositingMode() && layer->isRootLayer()) {
-        fprintf(stderr, "RenderLayer %p requires compositing layer because: it's the document root\n", layer);
-        gotReason = true;
-    }
-    
-    if (!gotReason && requiresCompositingForTransform(layer->renderer())) {
-        fprintf(stderr, "RenderLayer %p requires compositing layer because: it has 3d transform, perspective or backface-hidden\n", layer);
-        gotReason = true;
-    }
-
-    if (!gotReason && requiresCompositingForVideo(layer->renderer())) {
-        fprintf(stderr, "RenderLayer %p requires compositing layer because: it is video\n", layer);
-        gotReason = true;
-    }
-
-    if (!gotReason && layer->renderer()->style()->backfaceVisibility() == BackfaceVisibilityHidden) {
-        fprintf(stderr, "RenderLayer %p requires compositing layer because: it has backface-visibility: hidden\n", layer);
-        gotReason = true;
-    }
-
-    if (!gotReason && clipsCompositingDescendants(layer)) {
-        fprintf(stderr, "RenderLayer %p requires compositing layer because: it has overflow clip\n", layer);
-        gotReason = true;
-    }
-
-    if (!gotReason && requiresCompositingForAnimation(layer->renderer())) {
-        fprintf(stderr, "RenderLayer %p requires compositing layer because: it has a running transition for opacity or transform\n", layer);
-        gotReason = true;
-    }
-    
-    if (!gotReason)
-        fprintf(stderr, "RenderLayer %p does not require compositing layer\n", layer);
-#endif
-
     // The root layer always has a compositing layer, but it may not have backing.
     return (inCompositingMode() && layer->isRootLayer()) ||
              requiresCompositingForTransform(layer->renderer()) ||
@@ -837,7 +797,7 @@ bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer* layer
            layer->renderer()->hasOverflowClip();
 }
 
-bool RenderLayerCompositor::requiresCompositingForTransform(RenderObject* renderer)
+bool RenderLayerCompositor::requiresCompositingForTransform(RenderObject* renderer) const
 {
     RenderStyle* style = renderer->style();
     // Note that we ask the renderer if it has a transform, because the style may have transforms,
@@ -856,12 +816,12 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
     return false;
 }
 
-bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* renderer)
+bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* renderer) const
 {
-    AnimationController* animController = renderer->animation();
-    if (animController)
-        return animController->isAnimatingPropertyOnRenderer(renderer, CSSPropertyOpacity) ||
-               animController->isAnimatingPropertyOnRenderer(renderer, CSSPropertyWebkitTransform);
+    if (AnimationController* animController = renderer->animation()) {
+        return (animController->isAnimatingPropertyOnRenderer(renderer, CSSPropertyOpacity) && inCompositingMode())
+            || animController->isAnimatingPropertyOnRenderer(renderer, CSSPropertyWebkitTransform);
+    }
     return false;
 }
 
