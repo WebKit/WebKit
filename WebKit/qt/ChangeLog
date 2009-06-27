@@ -1,3 +1,9 @@
+2009-06-27  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Build fix for Qt under Windows.
+
+        * Api/qwebhistory.h: Use consistent export linkage for the datastream operators.
+
 2009-06-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Simon Fraser.
