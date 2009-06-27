@@ -1,5 +1,16 @@
 2009-06-26  Brady Eidson  <beidson@apple.com>
 
+        OMG.
+
+        * platform/mac-tiger/fast/loader/file-url-mimetypes-expected.txt: Removed.
+        * platform/mac-tiger/platform: Added.
+        * platform/mac-tiger/platform/mac: Added.
+        * platform/mac-tiger/platform/mac/fast: Added.
+        * platform/mac-tiger/platform/mac/fast/loader: Added.
+        * platform/mac-tiger/platform/mac/fast/loader/file-url-mimetypes-expected.txt: Copied from platform/mac-tiger/fast/loader/file-url-mimetypes-expected.txt.
+
+2009-06-26  Brady Eidson  <beidson@apple.com>
+
         Fix Tiger results for the new mime type layout test.
 
         * platform/mac-tiger/fast/loader: Added.
