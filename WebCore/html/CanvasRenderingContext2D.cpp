@@ -937,6 +937,13 @@ void CanvasRenderingContext2D::checkOrigin(const KURL& url)
         m_canvas->setOriginTainted();
 }
 
+void CanvasRenderingContext2D::checkOrigin(const String& url)
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromString(url);
+    if (!m_canvas->document()->securityOrigin()->canAccess(origin.get()))
+        m_canvas->setOriginTainted();
+}
+
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y)
 {
     ASSERT(image);
@@ -1082,7 +1089,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
         return;
 
     if (m_canvas->originClean())
-        checkOrigin(video->src());
+        checkOrigin(video->currentSrc());
 
     if (m_canvas->originClean() && !video->hasSingleSecurityOrigin())
         m_canvas->setOriginTainted();

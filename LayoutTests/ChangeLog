@@ -1,3 +1,14 @@
+2009-06-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 26771: Canvas is incorrectly tainted when drawing from a video element that uses <source> elements
+
+        Add test to protect against incorrectly tainting the canvas.
+
+        * media/video-canvas-source-expected.txt: Added.
+        * media/video-canvas-source.html: Added.
+
 2009-06-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Updating Tiger results for a recently modified test.

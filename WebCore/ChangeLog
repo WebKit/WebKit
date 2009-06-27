@@ -1,3 +1,22 @@
+2009-06-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 26771: Canvas is incorrectly tainted when drawing from a video element that uses <source> elements
+
+        The drawImage(<video>) logic naively assumes that it just needs
+        to check the src attribute of the video element when in fact it
+        needs to look at the url that is being played instead.  Failure
+        to do this means that video provided through source elements 
+        taints the canvas.
+
+        Test: media/video-canvas-source.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::checkOrigin):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/CanvasRenderingContext2D.h:
+
 2009-06-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Simon Fraser.

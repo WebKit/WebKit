@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>Drawing to canvas using video with source element does not taint canvas</title>
+        <link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+        <script src=video-test.js></script>
+        <script src="../fast/js/resources/js-test-pre.js"></script>
+        <script>
+            var ctx;
+            var width;
+            var height;
+
+            function videoLoaded()
+            {
+                width = video.videoWidth / 2;
+                height = video.videoHeight / 2;
+
+                ctx = canvas.getContext("2d");
+                video.pause();
+                ctx.drawImage(video, 0, 0, width, height);
+                shouldBeTrue("!!ctx.getImageData(0, 0, width, height)");
+                endTest();
+            }
+
+            function start()
+            {
+                description("Test to ensure we don't taint a canvas when drawing from a video the uses source elements rather than the src attribute");
+                findMediaElement();
+                canvas = document.getElementsByTagName('canvas')[0];
+                waitForEvent('load', videoLoaded);
+                run("var source = document.createElement('source'); source.src = 'content/counting.mp4'; video.appendChild(source)");
+            }
+        </script>
+    </head>
+
+    <body onload="start()" >
+        <p id="description"></p>
+        <video controls="true"></video>
+        <canvas width="160" height="120" ></canvas>
+        <div id="console"></div>
+    </body>
+</html>
