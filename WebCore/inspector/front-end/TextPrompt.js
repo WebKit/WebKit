@@ -165,7 +165,7 @@ WebInspector.TextPrompt.prototype = {
         fullWordRange.setStart(wordPrefixRange.startContainer, wordPrefixRange.startOffset);
         fullWordRange.setEnd(selectionRange.endContainer, selectionRange.endOffset);
 
-        if (originalWordPrefixRange.toString() != fullWordRange.toString())
+        if (originalWordPrefixRange.toString() + selectionRange.toString() != fullWordRange.toString())
             return;
 
         if (completions.length === 1 || selection.isCollapsed || auto) {

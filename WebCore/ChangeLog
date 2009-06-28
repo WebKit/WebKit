@@ -1,3 +1,14 @@
+2009-06-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Fix completion when iterating options using Tab.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26722
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype._completionsReady):
+
 2009-06-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Holger Freyther.
