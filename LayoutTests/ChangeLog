@@ -1,4 +1,14 @@
-2009-06-27  Ryosuke Niwa  <set EMAIL_ADDRESS environment variable>
+2009-06-28  Eric Seidel  <eric@webkit.org>
+
+        No review.  Just updating test results Kevin seems to have missed.
+
+        Test failure started with:
+        http://trac.webkit.org/changeset/45287
+        The new results definitely look better.
+
+        * fast/profiler/profile-with-no-title-expected.txt:
+
+2009-06-27  Ryosuke Niwa  <rniwa@google.com>
 
         Reviewed by Eric Seidel.
 

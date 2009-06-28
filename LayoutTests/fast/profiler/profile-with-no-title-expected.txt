@@ -4,7 +4,7 @@ To run this test manually, load it in the browser then load the WebInspector and
 
 Profile title: org.webkit.profiles.user-initiated.1
 Thread_1 (no file) (line 0)
-   (program) (no file) (line 4294967295)
+   startTest profile-with-no-title.html (line 11)
       endTest profiler-test-JS-resources.js (line 1)
 
 
