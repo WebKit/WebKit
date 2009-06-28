@@ -375,15 +375,15 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
     layer->setMustOverlayCompositedLayers(compositingState.m_subtreeIsCompositing);
     
     const bool willBeComposited = needsToBeComposited(layer);
-    compositingState.m_subtreeIsCompositing = willBeComposited;
 
     CompositingState childState = compositingState;
-    if (willBeComposited)
-        childState.m_compositingAncestor = layer;
-
-    // The children of this stacking context don't need to composite, unless there is
+    // The children of this layer don't need to composite, unless there is
     // a compositing layer among them, so start by assuming false.
     childState.m_subtreeIsCompositing = false;
+
+    // If this layer is compositing, it acts at the ancestor for kids.
+    if (willBeComposited)
+        childState.m_compositingAncestor = layer;
 
 #if ENABLE(VIDEO)
     // Video is special. It's a replaced element with a content layer, but has shadow content
@@ -417,10 +417,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, s
     }
     
     ASSERT(!layer->m_normalFlowListDirty);
-    Vector<RenderLayer*>* normalFlowList = layer->normalFlowList();
-    if (normalFlowList && normalFlowList->size() > 0) {
-        for (Vector<RenderLayer*>::const_iterator it = normalFlowList->begin(); it != normalFlowList->end(); ++it) {
-            RenderLayer* curLayer = (*it);
+    if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = normalFlowList->at(i);
             computeCompositingRequirements(curLayer, childState);
         }
     }
@@ -667,17 +667,16 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
                 recursiveRepaintLayerRect(curLayer, childRect);
             }
         }
-        
-        if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
-            size_t listSize = normalFlowList->size();
-            for (size_t i = 0; i < listSize; ++i) {
-                RenderLayer* curLayer = normalFlowList->at(i);
-                int x = 0, y = 0;
-                curLayer->convertToLayerCoords(layer, x, y);
-                IntRect childRect(rect);
-                childRect.move(-x, -y);
-                recursiveRepaintLayerRect(curLayer, childRect);
-            }
+    }
+    if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i) {
+            RenderLayer* curLayer = normalFlowList->at(i);
+            int x = 0, y = 0;
+            curLayer->convertToLayerCoords(layer, x, y);
+            IntRect childRect(rect);
+            childRect.move(-x, -y);
+            recursiveRepaintLayerRect(curLayer, childRect);
         }
     }
 }

@@ -1,3 +1,22 @@
+2009-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26780
+        
+        First part: fix the RenderLayer::hasCompositingDescendant() flag to be set
+        correctly.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        Do not unconditionally set compositingState.m_subtreeIsCompositing, because
+        that can clobber the value from an earlier sibling. Add some more comments.
+        
+        Remove a final use of Vector iterators.
+        
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayerRect):
+        Move the normalFlowList() processing outside the test for isStackingContext().
+
 2009-06-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser and Antti Koivisto.
