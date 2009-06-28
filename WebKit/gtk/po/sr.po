@@ -1,0 +1,705 @@
+# Serbian translation of webkit
+# Courtesy of Prevod.org team (http://prevod.org/) -- 2009.
+# 
+# This file is distributed under the same license as the webkit package.
+# 
+# Милош Поповић <gpopac@gmail.com>
+# Review by Бранко Кокановић <branko.kokanovic@gmail.com> (27.6.2009.)
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit 1.1.10\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2009-04-09 19:09-0300\n"
+"PO-Revision-Date: 2009-06-19 02:35+100\n"
+"Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
+"Language-Team: Serbian <gnom@prevod.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:425
+msgid "Upload File"
+msgstr "Пошаљи датотеку"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:61
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:139
+msgid "Input _Methods"
+msgstr "Начин _уноса"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:78
+msgid "LRM _Left-to-right mark"
+msgstr "Ознака с _лева на десно"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:79
+msgid "RLM _Right-to-left mark"
+msgstr "Ознака с _десна на лево"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:80
+msgid "LRE Left-to-right _embedding"
+msgstr "_Уметање с лева на десно"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:81
+msgid "RLE Right-to-left e_mbedding"
+msgstr "У_метање с десна на лево"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:82
+msgid "LRO Left-to-right _override"
+msgstr "_Препис с лева на десно"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:83
+msgid "RLO Right-to-left o_verride"
+msgstr "П_репис с десна на лево"
+
+# Ух, ух, ух... ~Милош :(
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:84
+#, fuzzy
+msgid "PDF _Pop directional formatting"
+msgstr "Искачуће _дирекционо форматирање"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:85
+msgid "ZWS _Zero width space"
+msgstr "_Нула са тачком"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:86
+msgid "ZWJ Zero width _joiner"
+msgstr "П_рецртана нула"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:87
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "Н_епрецртана нула"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:109
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:134
+msgid "_Insert Unicode Control Character"
+msgstr "_Уметни уникод контролни знак"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:250
+msgid "Network Request"
+msgstr "Захтев на мрежи"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:251
+msgid "The network request for the URI that should be downloaded"
+msgstr "Захтевана адресе датотеке коју желите да преузмете"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:265
+msgid "Destination URI"
+msgstr "Циљна адреса"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:266
+msgid "The destination URI where to save the file"
+msgstr "Циљна адреса где желите да сачувате датотеку"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:280
+msgid "Suggested Filename"
+msgstr "Предложено име датотеке"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:281
+msgid "The filename suggested as default when saving"
+msgstr "Подразумевано име датотеке приликом чувања"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:294
+msgid "Progress"
+msgstr "Преузето"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:295
+msgid "Determines the current progress of the download"
+msgstr "Показује тренутни напредак преузимања"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:308
+msgid "Status"
+msgstr "Стање"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:309
+msgid "Determines the current status of the download"
+msgstr "Показује тренутно стање преузимања"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:324
+msgid "Current Size"
+msgstr "Величина"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:325
+msgid "The length of the data already downloaded"
+msgstr "Приказује величину преузете датотеке"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:339
+msgid "Total Size"
+msgstr "Укупна величина"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:340
+msgid "The total size of the file"
+msgstr "Приказује укупну величину преузете датотеке"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:469
+msgid "User cancelled the download"
+msgstr "Прекинута преузимања"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:244
+#, c-format
+msgid "A username and password are being requested by the site %s"
+msgstr "Страница %s захтева корисничко име и лозинку"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:269
+msgid "Username:"
+msgstr "Корисничко име:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:271
+msgid "Password:"
+msgstr "Лозинка:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:281
+msgid "Remember password"
+msgstr "Упамти лозинку"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:211
+msgid "Name"
+msgstr "Име"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:212
+msgid "The name of the frame"
+msgstr "Име оквира"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:218
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:154
+#: WebKit/gtk/webkit/webkitwebview.cpp:1715
+msgid "Title"
+msgstr "Наслов"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:219
+msgid "The document title of the frame"
+msgstr "Наслов документа унутар оквира"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:225
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:186
+#: WebKit/gtk/webkit/webkitwebview.cpp:1729
+msgid "URI"
+msgstr "Адреса"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:226
+msgid "The current URI of the contents displayed by the frame"
+msgstr "Адреса садржаја који је приказан унутар оквира"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:155
+msgid "The title of the history item"
+msgstr "Наслов за ставке у историјату"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:170
+#, fuzzy
+msgid "Alternate Title"
+msgstr "Променљив наслов"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:171
+#, fuzzy
+msgid "The alternate title of the history item"
+msgstr "Променљив наслов ставке у историјату"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:187
+msgid "The URI of the history item"
+msgstr "Адреса ставке у историјату"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:202
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:167
+msgid "Original URI"
+msgstr "Оригинална адреса"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:203
+msgid "The original URI of the history item"
+msgstr "Оригинална адреса ставке у историјату"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:218
+msgid "Last visited Time"
+msgstr "Последња посета"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:219
+msgid "The time at which the history item was last visited"
+msgstr "Време када је ставка из историјата последњи пут посећена"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:260
+msgid "Web View"
+msgstr "Веб приказ"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:261
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "Веб приказ кога исцртава „Веб инспектор“"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:274
+#, fuzzy
+msgid "Inspected URI"
+msgstr "Инспекција адресе"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:275
+#, fuzzy
+msgid "The URI that is currently being inspected"
+msgstr "Адреса коју тренутно обрађује инспектор"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:291
+msgid "Enable JavaScript profiling"
+msgstr "Омогући учење Јава скрипте"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:292
+msgid "Profile the executed JavaScript."
+msgstr "Прави профил покренуте Јава скрипте."
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:152
+msgid "Reason"
+msgstr "Разлог"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:153
+msgid "The reason why this navigation is occurring"
+msgstr "Разлог због кога је приказана навигација"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:168
+msgid "The URI that was requested as the target for the navigation"
+msgstr "Циљна адреса коју захтева навигација"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:180
+msgid "Button"
+msgstr "Дугме"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:181
+msgid "The button used to click"
+msgstr "Дугме које се притиска"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:196
+msgid "Modifier state"
+msgstr "Стање измењивача"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:197
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "Ознака која одређује да ли је укључен тастер за измену функције"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:129
+msgid "Default Encoding"
+msgstr "Подразумевано кодирање"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:130
+msgid "The default encoding used to display text."
+msgstr "Подразумевано кодирање за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:138
+msgid "Cursive Font Family"
+msgstr "Скуп искошених фонтова"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:139
+msgid "The default Cursive font family used to display text."
+msgstr "Подразумевани скуп искошених фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:147
+msgid "Default Font Family"
+msgstr "Подразумевани скуп фонтова"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:148
+msgid "The default font family used to display text."
+msgstr "Подразумевани скуп фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:156
+msgid "Fantasy Font Family"
+msgstr "Скуп фантази фонтова"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:157
+msgid "The default Fantasy font family used to display text."
+msgstr "Подразумевани скуп фантази фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:165
+msgid "Monospace Font Family"
+msgstr "Скуп равномерних фонтова"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:166
+msgid "The default font family used to display monospace text."
+msgstr "Подразумевани скуп равномерно широких фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:174
+msgid "Sans Serif Font Family"
+msgstr "Скуп безсерифних фонтова"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:175
+msgid "The default Sans Serif font family used to display text."
+msgstr "Подразумевани скуп безсерифних фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:183
+msgid "Serif Font Family"
+msgstr "Скуп серифних фонтова"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:184
+msgid "The default Serif font family used to display text."
+msgstr "Подразумевани скуп серифних фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:192
+msgid "Default Font Size"
+msgstr "Подразумевана величина фонта"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:193
+msgid "The default font size used to display text."
+msgstr "Подразумевана величина фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:201
+msgid "Default Monospace Font Size"
+msgstr "Подразумевана величина разномерног фонта"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:202
+msgid "The default font size used to display monospace text."
+msgstr "Подразумевана величина равномерно широких фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:210
+msgid "Minimum Font Size"
+msgstr "Најмања величина фонта"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:211
+msgid "The minimum font size used to display text."
+msgstr "Најмања величина фонта за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:219
+msgid "Minimum Logical Font Size"
+msgstr "Најмања логичка величина фонта"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:220
+msgid "The minimum logical font size used to display text."
+msgstr "Најмања логичка величина фонтова за приказ текста."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:239
+msgid "Enforce 96 DPI"
+msgstr "Приморај 96 ТПИ"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:240
+msgid "Enforce a resolution of 96 DPI"
+msgstr "Приморава резолуцију од 96 ТПИ"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:248
+msgid "Auto Load Images"
+msgstr "Сам учитај слике"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:249
+msgid "Load images automatically."
+msgstr "Аутоматски учитава слике."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:257
+msgid "Auto Shrink Images"
+msgstr "Сам смањи слике"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:258
+msgid "Automatically shrink standalone images to fit."
+msgstr "Аутоматску умањује слике тако да се уклопиле у страну."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:266
+msgid "Print Backgrounds"
+msgstr "Исцртај позадину"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:267
+msgid "Whether background images should be printed."
+msgstr "Одређује да ли да се приказују позадинске слике."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:275
+msgid "Enable Scripts"
+msgstr "Омогући скрипте"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:276
+msgid "Enable embedded scripting languages."
+msgstr "Укључује језике за скрипте уметнуте унутар страница."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:284
+msgid "Enable Plugins"
+msgstr "Омогући додатке"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:285
+msgid "Enable embedded plugin objects."
+msgstr "Укључује објекте уметнуте унутар страница."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:293
+msgid "Resizable Text Areas"
+msgstr "Текст променљиве величине"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:294
+msgid "Whether text areas are resizable."
+msgstr "Одређује да ли да област са текстом буде променљиве величине."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:301
+msgid "User Stylesheet URI"
+msgstr "Адреса датотеке са стилом"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:302
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr ""
+"Путања до датотеке са сопственим стилом који се примењује на сваку страницу."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:317
+msgid "Zoom Stepping Value"
+msgstr "Корак увећања"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:318
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "Вредност за коју се мења приказ приликом повећања или смањења."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:336
+msgid "Enable Developer Extras"
+msgstr "Укључи додатке за развој"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:337
+msgid "Enables special extensions that help developers"
+msgstr "Укључује додатке који помажу приликом развоја овог програма"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:357
+msgid "Enable Private Browsing"
+msgstr "Приватни режим"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:358
+msgid "Enables private browsing mode"
+msgstr "Укључује режим разгледања уз чување ваше приватности"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1716
+msgid "Returns the @web_view's document title"
+msgstr "Исписује наслов документа из @веб_прегледа"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1730
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "Исписује тренутну адресу садржаја приказаног у @веб_прегледу"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1743
+msgid "Copy target list"
+msgstr "Умножи списак циљева"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1744
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr "Циљева за копирање међу списак исечака које подржава веб преглед"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1757
+msgid "Paste target list"
+msgstr "Убаци списак циљева"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1758
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr "Списак циљева за убацивање из оставе које подржава веб преглед"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1764
+msgid "Settings"
+msgstr "Подешавања"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1765
+msgid "An associated WebKitWebSettings instance"
+msgstr "Повезано са WebKitWebSettings"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1778
+msgid "Web Inspector"
+msgstr "Веб инспектор"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1779
+msgid "The associated WebKitWebInspector instance"
+msgstr "Повезано са WebKitWebSettings"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1799
+msgid "Editable"
+msgstr "Измењиво"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1800
+msgid "Whether content can be modified by the user"
+msgstr "Омогућава кориснику да уређује приказани садржај"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1806
+msgid "Transparent"
+msgstr "Провидност"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1807
+msgid "Whether content has a transparent background"
+msgstr "Омогућава провидну позадину за садржај"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1820
+msgid "Zoom level"
+msgstr "Увећање"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1821
+msgid "The level of zoom of the content"
+msgstr "Ниво увећања приказаног садржаја"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1836
+msgid "Full content zoom"
+msgstr "Увећавај све"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1837
+msgid "Whether the full content is scaled when zooming"
+msgstr "Одређује да ли да се увећава целокупан садржај"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1850
+msgid "Encoding"
+msgstr "Кодирање"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1851
+msgid "The default encoding of the web view"
+msgstr "Подразумевано кодирање веб странице"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1864
+msgid "Custom Encoding"
+msgstr "Произвољно кодирање"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1865
+msgid "The custom encoding of the web view"
+msgstr "Произвољно кодирање веб странице"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:51
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:56
+msgid "Submit"
+msgstr "Пошаљи"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:61
+msgid "Reset"
+msgstr "Поништи"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:66
+msgid "_Searchable Index"
+msgstr "_Претражив индекс"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:71
+msgid "Choose File"
+msgstr "Изаберите датотеку"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:76
+msgid "(None)"
+msgstr "(ништа)"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:81
+msgid "Open Link in New _Window"
+msgstr "Отвори везу у _новом прозору"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:86
+msgid "_Download Linked File"
+msgstr "_Преузми циљну датотеку"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:91
+msgid "Copy Link Loc_ation"
+msgstr "Умножи _адресу везе"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:96
+msgid "Open _Image in New Window"
+msgstr "_Отвори слику у новом прозору"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:101
+msgid "Sa_ve Image As"
+msgstr "_Сачувај слику као"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:106
+msgid "Cop_y Image"
+msgstr "_Умножи слику"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:111
+msgid "Open _Frame in New Window"
+msgstr "О_твори оквир у новом прозору"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:162
+msgid "_Reload"
+msgstr "_Освежи"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:179
+msgid "No Guesses Found"
+msgstr "Нема поклапања"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:184
+msgid "_Ignore Spelling"
+msgstr "_Занемари ову реч"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:189
+msgid "_Learn Spelling"
+msgstr "_Упамти ову реч"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:194
+msgid "_Search the Web"
+msgstr "_Потражи на мрежи"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:199
+msgid "_Look Up in Dictionary"
+msgstr "_Потражи у директоријуму"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:204
+msgid "_Open Link"
+msgstr "_Отвори везу"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:209
+msgid "Ignore _Grammar"
+msgstr "Занемари _правопис"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:214
+msgid "Spelling and _Grammar"
+msgstr "Провера пи_сања и правописа"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:219
+msgid "_Show Spelling and Grammar"
+msgstr "_Прикажи проверу писања и правописа"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:219
+msgid "_Hide Spelling and Grammar"
+msgstr "С_акриј проверу писања и правописа"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:224
+msgid "_Check Document Now"
+msgstr "Про_вери документ"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:229
+msgid "Check Spelling While _Typing"
+msgstr "Провери писање _док куцам"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:234
+msgid "Check _Grammar With Spelling"
+msgstr "П_ровери правопис и писање"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:239
+msgid "_Font"
+msgstr "_Фонт"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:262
+msgid "_Outline"
+msgstr "_Оквир"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:267
+#, fuzzy
+msgid "Inspect _Element"
+msgstr "Инспекција _елемента"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:272
+msgid "No recent searches"
+msgstr "Нема скорашњих претрага"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:277
+msgid "Recent searches"
+msgstr "Скорашње претраге"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:282
+msgid "_Clear recent searches"
+msgstr "_Очисти скорашње претраге"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:287
+msgid "term"
+msgstr "термин"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:292
+msgid "definition"
+msgstr "дефиниција"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:297
+msgid "press"
+msgstr "притисни"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:302
+msgid "select"
+msgstr "изабери"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:307
+msgid "activate"
+msgstr "покрени"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:312
+msgid "uncheck"
+msgstr "искључи"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:317
+msgid "check"
+msgstr "укључи"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:322
+msgid "jump"
+msgstr "иди"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:328
+msgid " files"
+msgstr " датотеке"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:333
+msgid "Unknown"
+msgstr "Непознато"
