@@ -1364,24 +1364,27 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_DOM_STORAGE=1
 
     HEADERS += \
+        storage/LocalStorageTask.h \
+        storage/LocalStorageThread.h \
         storage/Storage.h \
+        storage/StorageArea.h \
+        storage/StorageAreaSync.h \
         storage/StorageEvent.h \
-        storage/SessionStorage.h \
-        storage/StorageSyncManager.h \
-        storage/StorageAreaSync.h
+        storage/StorageMap.h \
+        storage/StorageNamespace.h \
+        storage/StorageSyncManager.h
 
     SOURCES += \
-        storage/LocalStorage.cpp \
+        bindings/js/JSStorageCustom.cpp \
         storage/LocalStorageTask.cpp \
         storage/LocalStorageThread.cpp \
         storage/Storage.cpp \
         storage/StorageArea.cpp \
         storage/StorageAreaSync.cpp \
-        storage/StorageMap.cpp \
         storage/StorageEvent.cpp \
-        storage/SessionStorage.cpp \
-        storage/StorageSyncManager.cpp \
-        bindings/js/JSStorageCustom.cpp
+        storage/StorageMap.cpp \
+        storage/StorageNamespace.cpp \
+        storage/StorageSyncManager.cpp
 
     IDL_BINDINGS += \
         storage/Storage.idl \
