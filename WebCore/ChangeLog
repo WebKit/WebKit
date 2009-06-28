@@ -1,3 +1,15 @@
+2009-06-27  Emilio Pozuelo Monfort  <pochu27@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Don't use deprecated GTK+ symbols.
+        https://bugs.webkit.org/show_bug.cgi?id=26583
+
+        * plugins/gtk/gtk2xtbin.c:
+        (gtk_xtbin_class_init):
+        (gtk_xtbin_new):
+        (gtk_xtbin_destroy):
+
 2009-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

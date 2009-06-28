@@ -1,3 +1,13 @@
+2009-06-27  Emilio Pozuelo Monfort  <pochu27@gmail.com>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK] Don't use deprecated GTK+ symbols.
+        https://bugs.webkit.org/show_bug.cgi?id=26583
+
+        * GtkLauncher/main.c:
+        (create_toolbar):
+
 2009-06-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

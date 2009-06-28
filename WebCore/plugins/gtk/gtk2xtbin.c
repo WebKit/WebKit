@@ -42,8 +42,6 @@
  * inside a GTK application.  
  */
 
-#undef GTK_DISABLE_DEPRECATED
-
 #include "xembed.h"
 #include "gtk2xtbin.h"
 #include <gtk/gtk.h>
@@ -246,7 +244,7 @@ gtk_xtbin_class_init (GtkXtBinClass *klass)
   GtkWidgetClass *widget_class;
   GtkObjectClass *object_class;
 
-  parent_class = gtk_type_class (GTK_TYPE_SOCKET);
+  parent_class = g_type_class_peek_parent (klass);
 
   widget_class = GTK_WIDGET_CLASS (klass);
   widget_class->realize = gtk_xtbin_realize;
@@ -319,7 +317,7 @@ gtk_xtbin_new (GdkWindow *parent_window, String * f)
   gpointer user_data;
 
   assert(parent_window != NULL);
-  xtbin = gtk_type_new (GTK_TYPE_XTBIN);
+  xtbin = g_object_new (GTK_TYPE_XTBIN, NULL);
 
   if (!xtbin)
     return (GtkWidget*)NULL;
@@ -377,8 +375,8 @@ gtk_xtbin_new (GdkWindow *parent_window, String * f)
                              G_PRIORITY_LOW);
     /* add a timer so that we can poll and process Xt timers */
     xt_polling_timer_id =
-      gtk_timeout_add(25,
-                      (GtkFunction)xt_event_polling_timer_callback,
+      g_timeout_add(25,
+                      (GSourceFunc)xt_event_polling_timer_callback,
                       xtdisplay);
   }
 
@@ -495,7 +493,7 @@ gtk_xtbin_destroy (GtkObject *object)
       g_main_context_remove_poll((GMainContext*)NULL, &xt_event_poll_fd);
       g_source_remove(tag);
 
-      gtk_timeout_remove(xt_polling_timer_id);
+      g_source_remove(xt_polling_timer_id);
       xt_polling_timer_id = 0;
     }
   }
