@@ -1,3 +1,13 @@
+2009-06-28  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Update CodeGeneratorV8.pm to match the new api for V8Proxy.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26765
+
+        * bindings/scripts/CodeGeneratorV8.pm: Match the current version of V8Proxy.
+
 2009-06-28  Nicolas Sylvain  <nsylvain@chromium.org>
 
         Reviewed by Dimitri Glazkov.
