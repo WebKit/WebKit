@@ -794,7 +794,9 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
-    if (paintingPhase & GraphicsLayerPaintBackgroundMask) {
+    bool shouldPaint = m_owningLayer->hasVisibleContent() && m_owningLayer->isSelfPaintingLayer();
+
+    if (shouldPaint && (paintingPhase & GraphicsLayerPaintBackgroundMask)) {
         // If this is the root then we need to send in a bigger bounding box
         // because we'll be painting the background as well (see RenderBox::paintRootBoxDecorations()).
         IntRect paintBox = clipRectToApply;
@@ -838,7 +840,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         restoreClip(context, paintDirtyRect, damageRect);
     }
                 
-    if (paintingPhase & GraphicsLayerPaintForegroundMask) {
+    if (shouldPaint && (paintingPhase & GraphicsLayerPaintForegroundMask)) {
         // Now walk the sorted list of children with negative z-indices. Only RenderLayers without compositing layers will paint.
         // FIXME: should these be painted as background?
         Vector<RenderLayer*>* negZOrderList = m_owningLayer->negZOrderList();

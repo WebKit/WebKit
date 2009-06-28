@@ -1062,8 +1062,10 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
         child->updateLayerPositions(false, false);
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (isComposited())
-        m_backing->updateGraphicsLayerGeometry();
+    if (compositor()->inCompositingMode()) {
+        if (RenderLayer* compositingAncestor = ancestorCompositingLayer())
+            compositingAncestor->backing()->updateAfterLayout();
+    }
 #endif
     
     RenderView* view = renderer()->view();

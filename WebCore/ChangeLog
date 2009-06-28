@@ -1,3 +1,30 @@
+2009-06-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26780
+        
+        Do not make compositing layers for non-self-painting RenderLayers,
+        since these exist only to push a clip onto the clipping stack. If such
+        a layer gets compositied for some other reason, it should not paint.
+        
+        Also ensure that we update composited layer positions correctly
+        inside overflow:scroll layers. We can't assume that the contents
+        are child layers, so we have to go up to the compositing ancestor,
+        and tell it to update all its child layer positions as we do 
+        after layout.
+
+        Tests: compositing/layers-inside-overflow-scroll.html
+               compositing/self-painting-layers.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::needsToBeComposited):
+
 2009-06-28  Luke Kenneth Casson Leighton  <lkcl@lkcl.net>
 
         Reviewed by Eric Seidel.

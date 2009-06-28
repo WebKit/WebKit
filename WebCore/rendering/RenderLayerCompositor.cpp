@@ -266,6 +266,9 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
     
     ASSERT(layer->isStackingContext() || (!layer->m_posZOrderList || layer->m_posZOrderList->size() == 0));
 
+    if (!layer->isSelfPaintingLayer())
+        return IntRect();
+
     if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
         size_t listSize = negZOrderList->size();
         for (size_t i = 0; i < listSize; ++i) {
@@ -733,7 +736,10 @@ bool RenderLayerCompositor::has3DContent() const
 
 bool RenderLayerCompositor::needsToBeComposited(const RenderLayer* layer) const
 {
-    return m_hasAcceleratedCompositing && (requiresCompositingLayer(layer) || layer->mustOverlayCompositedLayers());
+    if (!m_hasAcceleratedCompositing || !layer->isSelfPaintingLayer())
+        return false;
+
+    return requiresCompositingLayer(layer) || layer->mustOverlayCompositedLayers();
 }
 
 // Note: this specifies whether the RL needs a compositing layer for intrinsic reasons.
