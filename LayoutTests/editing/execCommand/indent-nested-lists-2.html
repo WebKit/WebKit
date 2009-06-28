@@ -1,0 +1,38 @@
+<html>
+<body>
+<div>
+This tests indenting "three".  You should see numbers 1 and 2 before "two" and "three" respectively.
+<ol id="e" contenteditable="true">
+<li>one</li>
+<ol><li>two</li></ol>
+<li id="test">three</li>
+<li>four</li>
+</ol>
+</div>
+
+<ul>
+<li>Before:<span id="c1"></span></li>
+<li>After:<span id="c2"></span></li>
+</ul>
+
+<script type="text/javascript">
+
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+}
+
+var e = document.getElementById('e');
+
+document.getElementById('c1').appendChild(document.createTextNode(e.innerHTML));
+
+var s = window.getSelection();
+var r = document.createRange();
+r.selectNode(document.getElementById('test'));
+s.removeAllRanges();
+s.addRange(r);
+document.execCommand("Indent", false, "");
+
+document.getElementById('c2').appendChild(document.createTextNode(e.innerHTML));
+
+</script>

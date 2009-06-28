@@ -1,0 +1,16 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 11 of OL > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > LI > OL > OL > DIV > BODY > HTML > #document to 4 of #text > LI > OL > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests indenting "three" and "four". You should see 1 before "two", "three", and "five" but 2 before "four". Neither "two" nor "five" should be the part of new nested list since there is text between "two" and "three", and "five" is unordered.
+one
+two
+aaa
+three
+four
+five
+Before: <li>one</li> <ol><li>two</li></ol> aaa <li id="test3">three</li> <li id="test4">four</li> <ul><li>five</li></ul>
+After: <li>one</li> <ol><li>two</li></ol> aaa <ol><li id="test3">three</li><li id="test4">four</li></ol> <ul><li>five</li></ul>

@@ -49,7 +49,9 @@ private:
     void indentRegion();
     void outdentRegion();
     void outdentParagraph();
-    PassRefPtr<Element> prepareBlockquoteLevelForInsertion(VisiblePosition&, RefPtr<Element>&);
+    PassRefPtr<Element> prepareBlockquoteLevelForInsertion(const VisiblePosition&, RefPtr<Element>&);
+    bool tryIndentingAsListItem(const VisiblePosition&);
+    void indentIntoBlockquote(const VisiblePosition&, const VisiblePosition&, RefPtr<Element>&);
 
     EIndentType m_typeOfAction;
     int m_marginInPixels;

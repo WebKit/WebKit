@@ -1,0 +1,38 @@
+<html>
+<body>
+<div>
+This tests outdenting "three".  You should see 2 and 3 before "three" and "four" respectively.
+<ol id="e" contenteditable="true">
+<li>one</li>
+<ol><li>two</li>
+<li id="test">three</li></ol>
+<li>four</li>
+</ol>
+</div>
+
+<ul>
+<li>Before:<span id="c1"></span></li>
+<li>After:<span id="c2"></span></li>
+</ul>
+
+<script type="text/javascript">
+
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+}
+
+var e = document.getElementById('e');
+
+document.getElementById('c1').appendChild(document.createTextNode(e.innerHTML));
+
+var s = window.getSelection();
+var r = document.createRange();
+r.selectNode(document.getElementById('test'));
+s.removeAllRanges();
+s.addRange(r);
+document.execCommand("Outdent", false, "");
+
+document.getElementById('c2').appendChild(document.createTextNode(e.innerHTML));
+
+</script>

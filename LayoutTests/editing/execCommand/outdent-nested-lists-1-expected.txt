@@ -1,0 +1,14 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 7 of OL > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > LI > OL > DIV > BODY > HTML > #document to 5 of #text > LI > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests outdenting "three". You should see 2 and 3 before "three" and "four" respectively.
+one
+two
+three
+four
+Before: <li>one</li> <ol><li>two</li> <li id="test">three</li></ol> <li>four</li>
+After: <li>one</li> <ol><li>two</li> </ol><li>three</li> <li>four</li>

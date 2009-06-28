@@ -123,7 +123,8 @@ Node* enclosingAnchorElement(const Position&);
 bool isListElement(Node*);
 HTMLElement* enclosingList(Node*);
 HTMLElement* outermostEnclosingList(Node*);
-Node* enclosingListChild(Node*);
+HTMLElement* enclosingListChild(Node*);
+bool canMergeLists(Element* firstList, Element* secondList);
 Node* highestAncestor(Node*);
 bool isTableElement(Node*);
 bool isTableCell(const Node*);
@@ -134,7 +135,7 @@ bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
 VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
 
 int indexForVisiblePosition(VisiblePosition&);
-
+bool isVisibilyAdjacent(const Position& first, const Position& second);
 }
 
 #endif

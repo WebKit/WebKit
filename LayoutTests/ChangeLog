@@ -1,3 +1,38 @@
+2009-06-27  Ryosuke Niwa  <set EMAIL_ADDRESS environment variable>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26762
+
+        Clean up for IndentOutdentCommand::indentRegion, and solved most of problems related to the bug 21712.
+        https://bugs.webkit.org/show_bug.cgi?id=21712
+        
+        The following test cases are intended for 21712, but included here
+        since this patch already solved a lot of problems.
+
+        * editing/execCommand/indent-nested-lists-1-expected.txt: Added.
+        * editing/execCommand/indent-nested-lists-1.html: Added.
+        * editing/execCommand/indent-nested-lists-2-expected.txt: Added.
+        * editing/execCommand/indent-nested-lists-2.html: Added.
+        * editing/execCommand/indent-nested-lists-3-expected.txt: Added.
+        * editing/execCommand/indent-nested-lists-3.html: Added.
+        * editing/execCommand/indent-nested-lists-4-expected.txt: Added.
+        * editing/execCommand/indent-nested-lists-4.html: Added.
+        * editing/execCommand/indent-nested-lists-5-expected.txt: Added.
+        * editing/execCommand/indent-nested-lists-5.html: Added.
+        * editing/execCommand/indent-nested-lists-6-expected.txt: Added.
+        * editing/execCommand/indent-nested-lists-6.html: Added.
+        * editing/execCommand/indent-nested-lists-7-expected.txt: Added.
+        * editing/execCommand/indent-nested-lists-7.html: Added.
+        * editing/execCommand/outdent-nested-lists-1-expected.txt: Added.
+        * editing/execCommand/outdent-nested-lists-1.html: Added.
+        * editing/execCommand/outdent-nested-lists-2-expected.txt: Added.
+        * editing/execCommand/outdent-nested-lists-2.html: Added.
+        * editing/execCommand/outdent-nested-lists-3-expected.txt: Added.
+        * editing/execCommand/outdent-nested-lists-3.html: Added.
+        * editing/execCommand/outdent-nested-lists-4-expected.txt: Added.
+        * editing/execCommand/outdent-nested-lists-4.html: Added.
+
 2009-06-27  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

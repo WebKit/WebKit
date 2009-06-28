@@ -665,7 +665,7 @@ HTMLElement* enclosingList(Node* node)
     return 0;
 }
 
-Node* enclosingListChild(Node *node)
+HTMLElement* enclosingListChild(Node *node)
 {
     if (!node)
         return 0;
@@ -676,7 +676,7 @@ Node* enclosingListChild(Node *node)
     // FIXME: This function is inappropriately named if it starts with node instead of node->parentNode()
     for (Node* n = node; n && n->parentNode(); n = n->parentNode()) {
         if (n->hasTagName(liTag) || isListElement(n->parentNode()))
-            return n;
+            return static_cast<HTMLElement*>(n);
         if (n == root || isTableCell(n))
             return 0;
     }
@@ -736,6 +736,18 @@ HTMLElement* outermostEnclosingList(Node* node)
     while (HTMLElement* nextList = enclosingList(list))
         list = nextList;
     return list;
+}
+
+bool canMergeLists(Element* firstList, Element* secondList)
+{
+    if (!firstList || !secondList)
+        return false;
+
+    return firstList->hasTagName(secondList->tagQName())// make sure the list types match (ol vs. ul)
+    && isContentEditable(firstList) && isContentEditable(secondList)// both lists are editable
+    && firstList->rootEditableElement() == secondList->rootEditableElement()// don't cross editing boundaries
+    && isVisibilyAdjacent(positionAfterNode(firstList), positionBeforeNode(secondList));
+    // Make sure there is no visible content between this li and the previous list
 }
 
 Node* highestAncestor(Node* node)
@@ -969,6 +981,11 @@ int indexForVisiblePosition(VisiblePosition& visiblePosition)
     Position p(visiblePosition.deepEquivalent());
     RefPtr<Range> range = Range::create(p.node()->document(), Position(p.node()->document(), 0), rangeCompliantEquivalent(p));
     return TextIterator::rangeLength(range.get(), true);
+}
+
+bool isVisibilyAdjacent(const Position& first, const Position& second)
+{
+    return VisiblePosition(first) == VisiblePosition(second.upstream());
 }
 
 PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)

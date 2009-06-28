@@ -1,3 +1,44 @@
+2009-06-27  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26762
+
+        Clean up for IndentOutdentCommand::indentRegion, and solved most of problems related to the bug 21712.
+        https://bugs.webkit.org/show_bug.cgi?id=21712
+
+        Added few utility functions to htmlediting.h/cpp
+
+        isVisibilyAdjacent checks whether the first position is visibly next to the second position.
+        i.e. there is no visible node between the first and second positions
+
+        canMergeLists checks whether two lists can be merged.
+        It checks the type of list, the editing boundary, and adjacency of the lists.
+
+        Tests: editing/execCommand/indent-nested-lists-1.html
+               editing/execCommand/indent-nested-lists-2.html
+               editing/execCommand/indent-nested-lists-3.html
+               editing/execCommand/indent-nested-lists-4.html
+               editing/execCommand/indent-nested-lists-5.html
+               editing/execCommand/indent-nested-lists-6.html
+               editing/execCommand/indent-nested-lists-7.html
+               editing/execCommand/outdent-nested-lists-1.html
+               editing/execCommand/outdent-nested-lists-2.html
+               editing/execCommand/outdent-nested-lists-3.html
+               editing/execCommand/outdent-nested-lists-4.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::prepareBlockquoteLevelForInsertion):
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem):
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote):
+        (WebCore::IndentOutdentCommand::indentRegion):
+        * editing/IndentOutdentCommand.h:
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingListChild):
+        (WebCore::canMergeLists):
+        (WebCore::isVisibilyAdjacent):
+        * editing/htmlediting.h:
+
 2009-06-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
