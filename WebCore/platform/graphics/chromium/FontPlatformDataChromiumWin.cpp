@@ -141,7 +141,7 @@ SCRIPT_FONTPROPERTIES* FontPlatformData::scriptFontProperties() const
                     hr = ScriptGetFontProperties(dc, scriptCache(),
                                                  m_scriptFontProperties);
                     if (S_OK != hr) {
-                        ASSERT_NOT_REACHED();
+                        LOG_ERROR("Unable to get the font properties after second attempt");
                     }
                 }
             }

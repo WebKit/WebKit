@@ -63,7 +63,7 @@ void SimpleFontData::platformInit()
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
             if (!GetTextMetrics(dc, &textMetric))
-                ASSERT_NOT_REACHED();
+                LOG_ERROR("Unable to get the text metrics after second attempt");
         }
     }
 
@@ -141,7 +141,7 @@ void SimpleFontData::determinePitch()
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
             if (!GetTextMetrics(dc, &textMetric))
-                ASSERT_NOT_REACHED();
+                LOG_ERROR("Unable to get the text metrics after second attempt");
         }
     }
 
@@ -163,7 +163,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
             if (!GetCharWidthI(dc, glyph, 1, 0, &width))
-                ASSERT_NOT_REACHED();
+                LOG_ERROR("Unable to get the char width after second attempt");
         }
     }
 

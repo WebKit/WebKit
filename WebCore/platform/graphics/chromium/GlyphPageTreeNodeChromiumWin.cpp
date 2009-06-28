@@ -87,10 +87,9 @@ static bool fillBMPGlyphs(unsigned offset,
                 return false;
             }
         } else {
-            // FIXME: This should never happen. We want to crash the
-            // process and receive a crash dump. We should revisit this code later.
+            // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401
-            ASSERT_NOT_REACHED();
+            LOG_ERROR("Unable to get the text metrics after second attempt");
             fillEmptyGlyphs(page);
             return false;
         }

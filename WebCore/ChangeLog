@@ -1,3 +1,30 @@
+2009-06-28  Nicolas Sylvain  <nsylvain@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        If loading a font fails because of the sandbox, we ask the browser process to 
+        try to load it by calling ensureFontLoaded. If it still fails after 
+        ensureFontLoaded, we hit a ASSERT_NOT_REACHED. 
+
+        This case happens once in a while during browser shutdown. The browser will 
+        queue a message to the renderer to shutdown, and will then stop answering sync 
+        messages from the renderer. If the renderer is still loading a page during this 
+        time, it might try to call the browser process to ask to load a font. The 
+        browser process will ignore the request, and the font will fail to load, even 
+        after the second try. 
+
+        This is unfortunate, but there is no real risk here, since the renderer will be 
+        going away as soon as it processes another message. 
+
+        This can't be layout tested as it depends on the sandbox. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=26743 
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+
 2009-06-28  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Eric Seidel.
