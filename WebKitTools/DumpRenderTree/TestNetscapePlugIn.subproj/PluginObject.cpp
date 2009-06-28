@@ -33,6 +33,46 @@
 #include <string.h>
 #include <stdlib.h>
 
+void pluginLog(NPP instance, const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    char message[2048] = "PLUGIN: ";
+    vsprintf(message + strlen(message), format, args);
+    va_end(args);
+
+    NPObject* windowObject = 0;
+    NPError error = browser->getvalue(instance, NPNVWindowNPObject, &windowObject);
+    if (error != NPERR_NO_ERROR) {
+        fprintf(stderr, "Failed to retrieve window object while logging: %s\n", message);
+        return;
+    }
+
+    NPVariant consoleVariant;
+    if (!browser->getproperty(instance, windowObject, browser->getstringidentifier("console"), &consoleVariant)) {
+        fprintf(stderr, "Failed to retrieve console object while logging: %s\n", message);
+        browser->releaseobject(windowObject);
+        return;
+    }
+
+    NPObject* consoleObject = NPVARIANT_TO_OBJECT(consoleVariant);
+
+    NPVariant messageVariant;
+    STRINGZ_TO_NPVARIANT(message, messageVariant);
+
+    NPVariant result;
+    if (!browser->invoke(instance, consoleObject, browser->getstringidentifier("log"), &messageVariant, 1, &result)) {
+        fprintf(stderr, "Failed to invoke console.log while logging: %s\n", message);
+        browser->releaseobject(consoleObject);
+        browser->releaseobject(windowObject);
+        return;
+    }
+
+    browser->releasevariantvalue(&result);
+    browser->releaseobject(consoleObject);
+    browser->releaseobject(windowObject);
+}
+
 static void pluginInvalidate(NPObject*);
 static bool pluginHasProperty(NPObject*, NPIdentifier name);
 static bool pluginHasMethod(NPObject*, NPIdentifier name);

@@ -142,6 +142,24 @@ static inline bool shouldUseEmbedDescendant(HTMLObjectElement* objectElement, co
 #endif
 }
 
+static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)
+{
+    // Some plugins don't understand the "data" attribute of the OBJECT tag (i.e. Real and WMP
+    // require "src" attribute).
+    int srcIndex = -1, dataIndex = -1;
+    for (unsigned int i = 0; i < paramNames->size(); ++i) {
+        if (equalIgnoringCase((*paramNames)[i], "src"))
+            srcIndex = i;
+        else if (equalIgnoringCase((*paramNames)[i], "data"))
+            dataIndex = i;
+    }
+
+    if (srcIndex == -1 && dataIndex != -1) {
+        paramNames->append("src");
+        paramValues->append((*paramValues)[dataIndex]);
+    }
+}
+
 void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
 {
     String url;
@@ -237,6 +255,8 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                 }
             }
         }
+
+        mapDataParamToSrc(&paramNames, &paramValues);
 
         // If we still don't have a type, try to map from a specific CLASSID to a type.
         if (serviceType.isEmpty())

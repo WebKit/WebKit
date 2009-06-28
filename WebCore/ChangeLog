@@ -1,3 +1,19 @@
+2009-06-28  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15457
+
+        Test: plugins/netscape-plugin-map-data-to-src.html
+
+        Fix problems with Real or WMP plugins not displaying because "data" was set
+        on the OBJECT tag instead of "src".  This is based on what Firefox does, see
+        http://mxr.mozilla.org/mozilla-central/source/layout/generic/nsObjectFrame.cpp#3045
+
+        * rendering/RenderPartObject.cpp:
+        (WebCore::mapDataParamToSrc):
+        (WebCore::RenderPartObject::updateWidget):
+
 2009-06-27  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Jan Alonzo.

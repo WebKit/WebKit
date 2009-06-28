@@ -1,3 +1,13 @@
+2009-06-28  John Abd-El-Malek  <jam@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=15457
+
+        Layout tests to ensure that "src" paramater is added when it's missing
+        but "data" is present.
+
+        * plugins/netscape-plugin-map-data-to-src-expected.txt: Added.
+        * plugins/netscape-plugin-map-data-to-src.html: Added.
+
 2009-06-28  Eric Seidel  <eric@webkit.org>
 
         No review.  Just updating test results Kevin seems to have missed.
