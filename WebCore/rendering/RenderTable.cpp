@@ -514,16 +514,9 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
             ty += captionHeight;
     }
 
-    int my = max(ty, paintInfo.rect.y());
-    int mh;
-    if (ty < paintInfo.rect.y())
-        mh = max(0, h - (paintInfo.rect.y() - ty));
-    else
-        mh = min(paintInfo.rect.height(), h);
-
     paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
     
-    paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
+    paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), tx, ty, w, h);
 
     if (style()->hasBorder() && !collapseBorders())
         paintBorder(paintInfo.context, tx, ty, w, h, style());
@@ -545,14 +538,7 @@ void RenderTable::paintMask(PaintInfo& paintInfo, int tx, int ty)
             ty += captionHeight;
     }
 
-    int my = max(ty, paintInfo.rect.y());
-    int mh;
-    if (ty < paintInfo.rect.y())
-        mh = max(0, h - (paintInfo.rect.y() - ty));
-    else
-        mh = min(paintInfo.rect.height(), h);
-    
-    paintMaskImages(paintInfo, my, mh, tx, ty, w, h);
+    paintMaskImages(paintInfo, tx, ty, w, h);
 }
 
 void RenderTable::calcPrefWidths()

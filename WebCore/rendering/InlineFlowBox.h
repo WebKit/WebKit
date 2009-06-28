@@ -87,10 +87,8 @@ public:
 
     virtual void paintBoxDecorations(RenderObject::PaintInfo&, int tx, int ty);
     virtual void paintMask(RenderObject::PaintInfo&, int tx, int ty);
-    void paintFillLayers(const RenderObject::PaintInfo&, const Color&, const FillLayer*,
-                         int my, int mh, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
-    void paintFillLayer(const RenderObject::PaintInfo&, const Color&, const FillLayer*,
-                         int my, int mh, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
+    void paintFillLayers(const RenderObject::PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
+    void paintFillLayer(const RenderObject::PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, RenderStyle*, int tx, int ty, int w, int h);
     virtual void paintTextDecorations(RenderObject::PaintInfo&, int tx, int ty, bool paintedChildren = false);
     virtual void paint(RenderObject::PaintInfo&, int tx, int ty);

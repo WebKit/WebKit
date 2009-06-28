@@ -582,9 +582,7 @@ void RenderBox::paintRootBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     int bw = max(w + marginLeft() + marginRight() + borderLeft() + borderRight(), rw);
     int bh = max(h + marginTop() + marginBottom() + borderTop() + borderBottom(), rh);
 
-    int my = max(by, paintInfo.rect.y());
-
-    paintFillLayers(paintInfo, bgColor, bgLayer, my, paintInfo.rect.height(), bx, by, bw, bh);
+    paintFillLayers(paintInfo, bgColor, bgLayer, bx, by, bw, bh);
 
     if (style()->hasBorder() && style()->display() != INLINE)
         paintBorder(paintInfo.context, tx, ty, w, h, style());
@@ -607,13 +605,6 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     // balloon layout is an example of this).
     borderFitAdjust(tx, w);
 
-    int my = max(ty, paintInfo.rect.y());
-    int mh;
-    if (ty < paintInfo.rect.y())
-        mh = max(0, h - (paintInfo.rect.y() - ty));
-    else
-        mh = min(paintInfo.rect.height(), h);
-
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
     paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
@@ -626,7 +617,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         // independent of the body.  Go through the DOM to get to the root element's render object,
         // since the root could be inline and wrapped in an anonymous block.
         if (!isBody() || document()->documentElement()->renderer()->style()->hasBackground())
-            paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
+            paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), tx, ty, w, h);
         if (style()->hasAppearance())
             theme()->paintDecorations(this, paintInfo, IntRect(tx, ty, w, h));
     }
@@ -648,17 +639,10 @@ void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     // balloon layout is an example of this).
     borderFitAdjust(tx, w);
 
-    int my = max(ty, paintInfo.rect.y());
-    int mh;
-    if (ty < paintInfo.rect.y())
-        mh = max(0, h - (paintInfo.rect.y() - ty));
-    else
-        mh = min(paintInfo.rect.height(), h);
-
-    paintMaskImages(paintInfo, my, mh, tx, ty, w, h);
+    paintMaskImages(paintInfo, tx, ty, w, h);
 }
 
-void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int my, int mh, int tx, int ty, int w, int h)
+void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int tx, int ty, int w, int h)
 {
     // Figure out if we need to push a transparency layer to render our mask.
     bool pushTransparencyLayer = false;
@@ -689,7 +673,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int my, int mh, int 
         compositeOp = CompositeSourceOver;
     }
 
-    paintFillLayers(paintInfo, Color(), style()->maskLayers(), my, mh, tx, ty, w, h, compositeOp);
+    paintFillLayers(paintInfo, Color(), style()->maskLayers(), tx, ty, w, h, compositeOp);
     paintNinePieceImage(paintInfo.context, tx, ty, w, h, style(), style()->maskBoxImage(), compositeOp);
     
     if (pushTransparencyLayer)
@@ -715,20 +699,18 @@ IntRect RenderBox::maskClipRect()
     return result;
 }
 
-void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer,
-                                int clipY, int clipH, int tx, int ty, int width, int height, CompositeOperator op)
+void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int width, int height, CompositeOperator op)
 {
     if (!fillLayer)
         return;
 
-    paintFillLayers(paintInfo, c, fillLayer->next(), clipY, clipH, tx, ty, width, height, op);
-    paintFillLayer(paintInfo, c, fillLayer, clipY, clipH, tx, ty, width, height, op);
+    paintFillLayers(paintInfo, c, fillLayer->next(), tx, ty, width, height, op);
+    paintFillLayer(paintInfo, c, fillLayer, tx, ty, width, height, op);
 }
 
-void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer,
-                               int clipY, int clipH, int tx, int ty, int width, int height, CompositeOperator op)
+void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int tx, int ty, int width, int height, CompositeOperator op)
 {
-    paintFillLayerExtended(paintInfo, c, fillLayer, clipY, clipH, tx, ty, width, height, 0, op);
+    paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, width, height, 0, op);
 }
 
 void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)

@@ -288,10 +288,10 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateBoxModelInfoFromStyle();
 
-    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
-    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int clipY, int clipHeight, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
+    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
+    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int width, int height, CompositeOperator = CompositeSourceOver);
 
-    void paintMaskImages(const PaintInfo&, int clipY, int clipHeight, int tx, int ty, int width, int height);
+    void paintMaskImages(const PaintInfo&, int tx, int ty, int width, int height);
 
 #if PLATFORM(MAC)
     void paintCustomHighlight(int tx, int ty, const AtomicString& type, bool behindText);

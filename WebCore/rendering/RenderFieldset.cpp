@@ -131,13 +131,9 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     h -= yOff;
     ty += yOff;
 
-    int my = max(ty, paintInfo.rect.y());
-    int end = min(paintInfo.rect.bottom(), ty + h);
-    int mh = end - my;
-
     paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
 
-    paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), my, mh, tx, ty, w, h);
+    paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), tx, ty, w, h);
 
     if (!style()->hasBorder())
         return;
@@ -176,11 +172,7 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)
     h -= yOff;
     ty += yOff;
 
-    int my = max(ty, paintInfo.rect.y());
-    int end = min(paintInfo.rect.bottom(), ty + h);
-    int mh = end - my;
-
-    paintMaskImages(paintInfo, my, mh, tx, ty, w, h);
+    paintMaskImages(paintInfo, tx, ty, w, h);
 }
         
 void RenderFieldset::paintBorderMinusLegend(GraphicsContext* graphicsContext, int tx, int ty, int w, int h,

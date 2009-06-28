@@ -297,8 +297,7 @@ int RenderBoxModelObject::paddingRight(bool) const
 }
 
 
-void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int clipY, int clipH,
-                                                  int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op)
+void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op)
 {
     GraphicsContext* context = paintInfo.context;
     bool includeLeftEdge = box ? box->includeLeftEdge() : true;
@@ -411,7 +410,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     // Paint the color first underneath all images.
     if (!bgLayer->next()) {
-        IntRect rect(tx, clipY, w, clipH);
+        IntRect rect(tx, ty, w, h);
+        rect.intersect(paintInfo.rect);
         // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
         if (isOpaqueRoot) {
             Color baseColor = view()->frameView()->baseBackgroundColor();

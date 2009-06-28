@@ -1,3 +1,44 @@
+2009-06-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser and Antti Koivisto.
+
+        - make paintFillLayerExtended() non-virtual and remove its clipY and
+          clipH parameters
+
+        These parameters were computed and passed along to
+        paintFillLayerExtended in order to vertically constrain the rect fill to
+        the damage rect, because Qt cannot paint tall rectangles (see
+        <http://websvn.kde.org/?view=rev&revision=42721>). Since the damage rect
+        is passed along in the PaintInfo, the extra parameters are redundant,
+        and the intersection can just take place in paintFillLayerExtended().
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayers):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::paintMask):
+        (WebCore::RenderBox::paintMaskImages):
+        (WebCore::RenderBox::paintFillLayers):
+        (WebCore::RenderBox::paintFillLayer):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        (WebCore::RenderFieldset::paintMask):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations):
+        (WebCore::RenderTable::paintMask):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintMask):
+
 2009-06-27  Ryosuke Niwa  <rniwa@google.com>
 
         Reviewed by Eric Seidel.
