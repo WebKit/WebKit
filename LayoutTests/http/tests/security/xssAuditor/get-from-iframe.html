@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://localhost:8000/security/xssAuditor/resources/utilities.js"></script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.setXSSAuditorEnabled(true);
+}
+window.onload = function()
+{
+    sendRequestFromIFrame("http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl","q=<script>alert(/XSS/)<\/script>","GET");
+    window.setTimeout(done, 100);
+};
+function done()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body>
+</body>
+</html>

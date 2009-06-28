@@ -1,6 +1,49 @@
 2009-06-27  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26776
+        
+        More tests for the XSSAuditor.
+
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-expected.txt: Added.
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-expected.txt: Added.
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event.html: Added.
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-javascript-URL-expected.txt: Added.
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-javascript-URL.html: Added.
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location.html: Added.
+        * http/tests/security/xssAuditor/dom-write-URL-expected.txt: Added.
+        * http/tests/security/xssAuditor/dom-write-URL.html: Added.
+        * http/tests/security/xssAuditor/dom-write-innerHTML-expected.txt: Added.
+        * http/tests/security/xssAuditor/dom-write-innerHTML.html: Added.
+        * http/tests/security/xssAuditor/dom-write-location-expected.txt: Added.
+        * http/tests/security/xssAuditor/dom-write-location-inline-event-expected.txt: Added.
+        * http/tests/security/xssAuditor/dom-write-location-inline-event.html: Added.
+        * http/tests/security/xssAuditor/dom-write-location-javascript-URL-expected.txt: Added.
+        * http/tests/security/xssAuditor/dom-write-location-javascript-URL.html: Added.
+        * http/tests/security/xssAuditor/dom-write-location.html: Added.
+        * http/tests/security/xssAuditor/faux-script1-expected.txt: Added.
+        * http/tests/security/xssAuditor/faux-script1.html: Added.
+        * http/tests/security/xssAuditor/faux-script2-expected.txt: Added.
+        * http/tests/security/xssAuditor/faux-script2.html: Added.
+        * http/tests/security/xssAuditor/faux-script3-expected.txt: Added.
+        * http/tests/security/xssAuditor/faux-script3.html: Added.
+        * http/tests/security/xssAuditor/get-from-iframe-expected.txt: Added.
+        * http/tests/security/xssAuditor/get-from-iframe.html: Added.
+        * http/tests/security/xssAuditor/malformed-HTML-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-HTML.html: Added.
+        * http/tests/security/xssAuditor/post-from-iframe-expected.txt: Added.
+        * http/tests/security/xssAuditor/post-from-iframe.html: Added.
+        * http/tests/security/xssAuditor/resources/anchor-url-dom-write-location-click.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-dom-write-URL.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-dom-write-innerHTML.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-dom-write-location.html: Added.
+        * http/tests/security/xssAuditor/resources/utilities.js: Added.
+        (sendRequestFromIFrame):
+
+2009-06-27  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
 
         Tests for https://bugs.webkit.org/show_bug.cgi?id=26708
 
