@@ -1,3 +1,14 @@
+2009-06-28  Luke Kenneth Casson Leighton  <lkcl@lkcl.net>
+
+        Reviewed by Eric Seidel.
+
+        PurgeableBuffer #defines leave out functions on gtk MacOSX 10.4 build
+        https://bugs.webkit.org/show_bug.cgi?id=23057
+
+        Define these functions for Gtk as well.
+
+        * platform/PurgeableBuffer.h:
+
 2009-06-28  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
