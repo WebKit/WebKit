@@ -40,7 +40,7 @@ class DataGridColumn : public RefCounted<DataGridColumn> {
 public:
     static PassRefPtr<DataGridColumn> create(DataGridColumnList* columns, const String& columnID, const String& label, const String& type, bool primary, unsigned short sortable)
     {
-        return new DataGridColumn(columns, columnID, label, type, primary, sortable);
+        return adoptRef(new DataGridColumn(columns, columnID, label, type, primary, sortable));
     }
 
     const AtomicString& id() const { return m_id; }

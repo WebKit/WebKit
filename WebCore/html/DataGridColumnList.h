@@ -18,7 +18,7 @@ class DataGridColumnList : public RefCounted<DataGridColumnList> {
 public:
     static PassRefPtr<DataGridColumnList> create()
     {
-        return new DataGridColumnList();
+        return adoptRef(new DataGridColumnList);
     }
 
     ~DataGridColumnList();

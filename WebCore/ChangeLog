@@ -2,6 +2,17 @@
 
         Reviewed by Dave Hyatt.
 
+        Fix some incorrect create functions.
+
+        * html/DataGridColumn.h:
+        (WebCore::DataGridColumn::create):
+        * html/DataGridColumnList.h:
+        (WebCore::DataGridColumnList::create):
+
+2009-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
         Remove initialize method from DataGridDataSource and add
         DOMDataGridDataSource.
 
