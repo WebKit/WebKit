@@ -1,3 +1,14 @@
+2009-06-29  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix one more bad merge in V8Proxy.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26819
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException): setDOMExceptionHelper() instead of convertToV8Object().
+
 2009-06-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

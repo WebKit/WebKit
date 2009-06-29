@@ -2137,7 +2137,7 @@ void V8Proxy::setDOMException(int exceptionCode)
 #endif
 #if ENABLE(XPATH)
     case XPathExceptionType:
-        exception = convertToV8Object(V8ClassIndex::XPATHEXCEPTION, XPathException::create(description));
+        setDOMExceptionHelper(V8ClassIndex::XPATHEXCEPTION, XPathException::create(description));
         break;
 #endif
     default:
