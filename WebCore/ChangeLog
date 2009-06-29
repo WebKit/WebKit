@@ -1,3 +1,24 @@
+2009-06-26  John Sullivan  <sullivan@apple.com>
+
+        Added Speech submenu to context menu on Mac when there's a non-editable selection
+        (it was already present when there's an editable selection). 
+        Also added support for disabling "Stop Speaking" when there is no speaking to stop.
+
+        Reviewed by Tim Hatcher.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyContextMenuClient::isSpeaking):
+        implemented this new virtual function to return false
+        
+        * page/ContextMenuClient.h:
+        declared this new pure virtual function
+        
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+        insert Speech item (after a separator) on Mac when there's selected non-editable text
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+        enable Stop Speaking item only if the context menu client returns true for isSpeaking()
+
 2009-06-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

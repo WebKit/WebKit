@@ -1,3 +1,20 @@
+2009-06-26  John Sullivan  <sullivan@apple.com>
+
+        Added support for disabling Stop Speaking when there is no speaking to stop.
+        Also fixed Stop Speaking so that it works (formerly it would throw an exception, and
+        selecting it from the menu would perform a web search instead (!)).
+
+        Reviewed by Tim Hatcher.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        declare isSpeaking()
+        
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::isSpeaking):
+        implement by calling through to NSApplication
+        (WebContextMenuClient::stopSpeaking):
+        fixed implementation by correcting the signature of the NSApplication method
+
 2009-06-26  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser  <simon.fraser@apple.com>.

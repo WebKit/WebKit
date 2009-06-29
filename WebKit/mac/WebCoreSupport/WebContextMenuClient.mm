@@ -338,6 +338,11 @@ void WebContextMenuClient::lookUpInDictionary(Frame* frame)
     [htmlView _lookUpInDictionaryFromMenu:nil];
 }
 
+bool WebContextMenuClient::isSpeaking()
+{
+    return [NSApp isSpeaking];
+}
+
 void WebContextMenuClient::speak(const String& string)
 {
     [NSApp speakString:[[(NSString*)string copy] autorelease]];
@@ -345,5 +350,5 @@ void WebContextMenuClient::speak(const String& string)
 
 void WebContextMenuClient::stopSpeaking()
 {
-    [NSApp stopSpeaking];
+    [NSApp stopSpeaking:nil];
 }

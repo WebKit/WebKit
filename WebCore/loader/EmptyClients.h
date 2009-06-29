@@ -413,6 +413,7 @@ public:
     virtual void copyImageToClipboard(const HitTestResult&) { }
     virtual void searchWithGoogle(const Frame*) { }
     virtual void lookUpInDictionary(Frame*) { }
+    virtual bool isSpeaking() { return false; }
     virtual void speak(const String&) { }
     virtual void stopSpeaking() { }
 
