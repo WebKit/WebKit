@@ -26,8 +26,10 @@
 #include "config.h"
 
 #if ENABLE(DATAGRID)
+
 #include "HTMLDataGridElement.h"
 
+#include "DOMDataGridDataSource.h"
 #include "HTMLNames.h"
 #include "RenderDataGrid.h"
 #include "Text.h"
@@ -38,9 +40,9 @@ using namespace HTMLNames;
 
 HTMLDataGridElement::HTMLDataGridElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_initializationTimer(this, &HTMLDataGridElement::initializationTimerFired)
+    , m_columns(DataGridColumnList::create())
 {
-    m_columns = DataGridColumnList::create();
+    setDataSource(DOMDataGridDataSource::create());
 }
 
 HTMLDataGridElement::~HTMLDataGridElement()
@@ -89,20 +91,24 @@ void HTMLDataGridElement::setMultiple(bool multiple)
     setAttribute(multipleAttr, multiple ? "" : 0);
 }
 
-void HTMLDataGridElement::setDataSource(PassRefPtr<DataGridDataSource> dataSource)
+void HTMLDataGridElement::setDataSource(PassRefPtr<DataGridDataSource> ds)
 {
-    if (m_initializationTimer.isActive())
-        m_initializationTimer.stop();
-
+    RefPtr<DataGridDataSource> dataSource = ds;
+    if (!dataSource)
+        dataSource = DOMDataGridDataSource::create();
     m_dataSource = dataSource;
-    m_initializationTimer.startOneShot(0);
 }
 
-void HTMLDataGridElement::initializationTimerFired(Timer<HTMLDataGridElement>*)
+DataGridDataSource* HTMLDataGridElement::dataSource() const
 {
-    m_dataSource->initialize(this);
+    ASSERT(m_dataSource);
+
+    if (m_dataSource->isDOMDataGridDataSource())
+        return 0;
+
+    return m_dataSource.get();
 }
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(DATAGRID)

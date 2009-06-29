@@ -3,10 +3,8 @@
     <pre id="console"></pre>
     <datagrid id="test"></datagrid>
     <script>
-        if (window.layoutTestController) {
+        if (window.layoutTestController)
             layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-        }
 
         function log(msg)
         {
@@ -39,23 +37,20 @@
         }
 
         // Test setting dataSource to an object.
-        var dataSource = {
-            initialize : function(d)
-            {
-                if (d == datagrid) {
-                    log("PASS: Correct HTMLDataGridElement passed to the initialize function.");
-                } else {
-                    log("FAIL: Incorrect HTMLDataGridElement passed to the initialize function.");
-                }
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
-            }
-        }
+        var dataSource = {};
         datagrid.dataSource = dataSource;
         if (datagrid.dataSource == dataSource) {
             log("PASS: Allowed setting datagrid.dataSource to an object.");
         } else {
             log("FAIL: Did not allowed setting datagrid.dataSource to an object.");
+        }
+
+        // Test setting dataSource to an object.
+        datagrid.dataSource = null;
+        if (datagrid.dataSource == null) {
+            log("PASS: Allowed setting datagrid.dataSource to null.");
+        } else {
+            log("FAIL: Did not allowed setting datagrid.dataSource to null.");
         }
     </script>
 </body>

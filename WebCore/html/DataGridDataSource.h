@@ -38,9 +38,8 @@ class DataGridDataSource : public RefCounted<DataGridDataSource> {
 public:
     virtual ~DataGridDataSource() { }
 
+    virtual bool isDOMDataGridDataSource() const { return false; }
     virtual bool isJSDataGridDataSource() const { return false; }
-
-    virtual void initialize(HTMLDataGridElement*) = 0;
 };
 
 } // namespace WebCore

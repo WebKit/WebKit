@@ -51,8 +51,6 @@ public:
     virtual bool isJSDataGridDataSource() const { return true; }
     JSC::JSValue jsDataSource() const { return m_dataSource.get(); }
 
-    virtual void initialize(HTMLDataGridElement*);
-
 private:
     JSDataGridDataSource(JSC::JSValue, Frame*);
 
@@ -74,6 +72,5 @@ inline const JSDataGridDataSource* asJSDataGridDataSource(const DataGridDataSour
 
 } // namespace WebCore
 
-#endif
-
+#endif // ENABLE(DATAGRID)
 #endif // JSDataGridDataSource_h

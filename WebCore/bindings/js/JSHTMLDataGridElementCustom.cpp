@@ -47,8 +47,14 @@ JSValue JSHTMLDataGridElement::dataSource(ExecState*) const
 
 void JSHTMLDataGridElement::setDataSource(ExecState*, JSValue value)
 {
+    if (value.isNull()) {
+        static_cast<HTMLDataGridElement*>(impl())->setDataSource(0);
+        return;
+    }
+
     static_cast<HTMLDataGridElement*>(impl())->setDataSource(JSDataGridDataSource::create(value, impl()->document()->frame()));
 }
 
 } // namespace WebCore
-#endif
+
+#endif // ENABLE(DATAGRID)

@@ -748,6 +748,7 @@ SOURCES += \
     html/CollectionCache.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
+    html/DOMDataGridDataSource.cpp \
     html/File.cpp \
     html/FileList.cpp \
     html/FormDataList.cpp \

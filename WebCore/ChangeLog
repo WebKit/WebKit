@@ -1,3 +1,35 @@
+2009-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Remove initialize method from DataGridDataSource and add
+        DOMDataGridDataSource.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDataGridDataSource.cpp:
+        * bindings/js/JSDataGridDataSource.h:
+        * bindings/js/JSHTMLDataGridElementCustom.cpp:
+        (WebCore::JSHTMLDataGridElement::setDataSource):
+        * html/DOMDataGridDataSource.cpp: Added.
+        (WebCore::DOMDataGridDataSource::DOMDataGridDataSource):
+        (WebCore::DOMDataGridDataSource::~DOMDataGridDataSource):
+        * html/DOMDataGridDataSource.h: Added.
+        (WebCore::DOMDataGridDataSource::create):
+        (WebCore::DOMDataGridDataSource::isDOMDataGridDataSource):
+        (WebCore::asDOMDataGridDataSource):
+        * html/DataGridDataSource.h:
+        (WebCore::DataGridDataSource::isDOMDataGridDataSource):
+        (WebCore::DataGridDataSource::isJSDataGridDataSource):
+        * html/HTMLDataGridElement.cpp:
+        (WebCore::HTMLDataGridElement::HTMLDataGridElement):
+        (WebCore::HTMLDataGridElement::setDataSource):
+        (WebCore::HTMLDataGridElement::dataSource):
+        * html/HTMLDataGridElement.h:
+
 2009-06-29  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -24255,6 +24255,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\DOMDataGridDataSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMDataGridDataSource.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\CollectionCache.cpp"
 				>
 				<FileConfiguration

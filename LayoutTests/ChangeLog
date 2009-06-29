@@ -1,3 +1,12 @@
+2009-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Update for the change in DataGridDataSource API.
+
+        * fast/dom/HTMLDataGridElement/DataGridDataSource-basic-expected.txt:
+        * fast/dom/HTMLDataGridElement/DataGridDataSource-basic.html:
+
 2009-06-29  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser  <simon.fraser@apple.com>.

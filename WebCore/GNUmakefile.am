@@ -903,6 +903,8 @@ webcore_sources += \
 	WebCore/html/DataGridColumnList.cpp \
 	WebCore/html/DataGridColumnList.h \
 	WebCore/html/DataGridDataSource.h \
+	WebCore/html/DOMDataGridDataSource.cpp \
+	WebCore/html/DOMDataGridDataSource.h \
 	WebCore/html/File.cpp \
 	WebCore/html/File.h \
 	WebCore/html/FileList.cpp \
