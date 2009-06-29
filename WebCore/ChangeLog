@@ -1,3 +1,18 @@
+2009-06-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat and Adam Roben.
+
+        Fix compilation with MINGW. Ported MSVC inline assembly to
+        GNU inline assembly. Also fixed casting errors where gcc
+        refused to cast a pointer-to-function to a pointer-to-object,
+        without an intermediate cast to a non-pointer type.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::hookedBeginPaint):
+        (WebCore::PluginView::hookedEndPaint):
+        (WebCore::hook):
+        (WebCore::setUpOffscreenPaintingHooks):
+
 2009-06-26  John Sullivan  <sullivan@apple.com>
 
         Added Speech submenu to context menu on Mac when there's a non-editable selection
