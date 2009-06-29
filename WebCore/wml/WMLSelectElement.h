@@ -32,6 +32,9 @@ public:
     WMLSelectElement(const QualifiedName&, Document*);
     virtual ~WMLSelectElement();
 
+    virtual String title() const;
+
+    virtual const AtomicString& formControlName() const;
     virtual const AtomicString& formControlType() const;
  
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
@@ -47,7 +50,8 @@ public:
     virtual bool canStartSelection() const { return false; }
 
     virtual int selectedIndex() const;
-    virtual void setSelectedIndex(int index, bool deselect = true, bool fireOnChange = false);
+    virtual void setSelectedIndex(int index, bool deselect = true);
+    virtual void setSelectedIndexByUser(int index, bool deselect = true, bool fireOnChangeNow = false);
 
     virtual int size() const { return m_data.size(); }
     virtual bool multiple() const { return m_data.multiple(); }
@@ -81,11 +85,28 @@ public:
     void accessKeySetSelectedIndex(int);
     void setRecalcListItems();
     void scrollToSelection();
+    void selectInitialOptions();
 
 private:
     virtual void insertedIntoTree(bool);
 
+    void calculateDefaultOptionIndices();
+    void selectDefaultOptions();
+    void initializeVariables();
+    void updateVariables();
+
+    Vector<unsigned> parseIndexValueString(const String&) const;
+    Vector<unsigned> valueStringToOptionIndices(const String&) const;
+    String optionIndicesToValueString() const;
+    String optionIndicesToString() const;
+
+    String name() const;
+    String value() const;
+    String iname() const;
+    String ivalue() const;
+
     SelectElementData m_data;
+    Vector<unsigned> m_defaultOptionIndices;
 };
 
 }

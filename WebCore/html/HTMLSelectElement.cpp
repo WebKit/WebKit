@@ -106,13 +106,7 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
 
 unsigned HTMLSelectElement::length() const
 {
-    unsigned len = 0;
-    const Vector<Element*>& items = listItems();
-    for (unsigned i = 0; i < items.size(); ++i) {
-        if (items[i]->hasLocalName(optionTag))
-            ++len;
-    }
-    return len;
+    return SelectElement::optionCount(m_data, this);
 }
 
 void HTMLSelectElement::add(HTMLElement *element, HTMLElement *before, ExceptionCode& ec)

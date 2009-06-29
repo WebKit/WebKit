@@ -95,7 +95,8 @@ protected:
     static void typeAheadFind(SelectElementData&, Element*, KeyboardEvent*);
     static void insertedIntoTree(SelectElementData&, Element*);
     static void accessKeySetSelectedIndex(SelectElementData&, Element*, int index);
-
+    static unsigned optionCount(const SelectElementData&, const Element*);
+ 
 private:
     static void menuListDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);
     static void listBoxDefaultEventHandler(SelectElementData&, Element*, Event*, HTMLFormElement*);

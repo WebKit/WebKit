@@ -1,0 +1,24 @@
+WML http navigation layout tests - using XHTML scripting
+
+
+Complex data posting example
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+This page was requested with an HTTP POST
+
+The query parameters are: category=wap;title=%5Btitle%5D%20TEST%20PASSED;url=%5Burl%5D%20TEST%20PASSED;desc=%5Bdesc%5D%20TEST%20PASSED
+Form content category: 'wap'
+Form content title : '[title] TEST PASSED'
+Form content url : '[url] TEST PASSED'
+Form content desc : '[desc] TEST PASSED'
+

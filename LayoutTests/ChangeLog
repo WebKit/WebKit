@@ -1,3 +1,31 @@
+2009-06-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=26246
+
+        Implement most WML specific <select> element features.
+        Add two tests covering most select/variable related functionality.
+
+        * http/tests/wml/post-data-to-server-expected.txt: Added.
+        * http/tests/wml/post-data-to-server.html: Added.
+        * http/tests/wml/resources/dumpVariables.cgi: Added.
+        * http/tests/wml/resources/post-data-to-server.js: Added.
+        (setupTestDocument):
+        (sendTextToControl):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/WMLTestCase.js:
+        (createWMLTestCase.iframeElement.onload):
+        (createWMLTestCase):
+        (delayExecuteTest):
+        * wml/resources/select-element-variables.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/select-element-variables-expected.txt: Added.
+        * wml/select-element-variables.html: Added.
+
 2009-06-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

@@ -42,7 +42,7 @@ function createWMLTestCase(desc, substituteVariables, testName) {
 
         // External deck jumps
         if (testDocument != null && !substituteVariables) {
-            executeTest();
+            delayExecuteTest();
             return;
         }
 
@@ -51,7 +51,7 @@ function createWMLTestCase(desc, substituteVariables, testName) {
 
         // Variable refresh
         if (loaded && substituteVariables) {
-            executeTest();
+            delayExecuteTest();
             return;
         }
 
@@ -61,7 +61,7 @@ function createWMLTestCase(desc, substituteVariables, testName) {
         // Internal deck jumps
         if (!substituteVariables) {
             executed = true;
-            executeTest();
+            delayExecuteTest();
         }
     }
 
@@ -88,6 +88,11 @@ function startTest(x, y) {
 
     // Assure first layout finished
     window.setTimeout("triggerUpdate(" + x + ", " + y + ")", 0);
+}
+
+function delayExecuteTest() {
+    // Assure first layout finished, after making changes
+    window.setTimeout("executeTest()", 0);
 }
 
 function completeTest() {

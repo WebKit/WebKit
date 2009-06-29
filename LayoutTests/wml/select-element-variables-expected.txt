@@ -1,0 +1,19 @@
+WML layout tests - using XHTML scripting
+
+
+Tests variable references in conjuction with select elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS resultElement.textContent is "Selection result: '$result'"
+PASS resultElement.textContent is "Selection result: 'doggy'"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Selection result: 'doggy'

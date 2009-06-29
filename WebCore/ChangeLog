@@ -1,3 +1,44 @@
+2009-06-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=26246
+
+        Implement most WML specific <select> element features.
+        Add 'iname' / 'ivalue' support and support variable references.
+
+        Add two tests covering most select/variable related functionality.
+        Needs more tests when adding full 'iname' / 'ivalue' support (used in conjuction with onpick).
+
+        Tests: http/tests/wml/post-data-to-server.html
+               wml/select-element-variables.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::optionCount): Refactored from HTMLSelectElement::length() for use within HTML & WML.
+        * dom/SelectElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::length): Use new SelectElement::optionCount() function. (no functional changes for HTML).
+        * wml/WMLCardElement.cpp:
+        (WebCore::WMLCardElement::handleIntrinsicEventIfNeeded): Activated commented code taking care of WMLSelectElement initialization.
+        * wml/WMLSelectElement.cpp: Add a bunch of new code handling WML specific feature processing.
+        (WebCore::WMLSelectElement::title):
+        (WebCore::WMLSelectElement::formControlName):
+        (WebCore::WMLSelectElement::defaultEventHandler):
+        (WebCore::WMLSelectElement::selectInitialOptions):
+        (WebCore::WMLSelectElement::calculateDefaultOptionIndices):
+        (WebCore::WMLSelectElement::selectDefaultOptions):
+        (WebCore::WMLSelectElement::initializeVariables):
+        (WebCore::WMLSelectElement::updateVariables):
+        (WebCore::WMLSelectElement::parseIndexValueString):
+        (WebCore::WMLSelectElement::valueStringToOptionIndices):
+        (WebCore::WMLSelectElement::optionIndicesToValueString):
+        (WebCore::WMLSelectElement::optionIndicesToString):
+        (WebCore::WMLSelectElement::name):
+        (WebCore::WMLSelectElement::value):
+        (WebCore::WMLSelectElement::iname):
+        (WebCore::WMLSelectElement::ivalue):
+        * wml/WMLSelectElement.h:
+
 2009-06-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adam Roben.

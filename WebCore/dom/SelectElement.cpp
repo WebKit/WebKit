@@ -867,6 +867,19 @@ void SelectElement::accessKeySetSelectedIndex(SelectElementData& data, Element* 
     scrollToSelection(data, element);
 }
 
+unsigned SelectElement::optionCount(const SelectElementData& data, const Element* element)
+{
+    unsigned options = 0;
+
+    const Vector<Element*>& items = data.listItems(element);
+    for (unsigned i = 0; i < items.size(); ++i) {
+        if (isOptionElement(items[i]))
+            ++options;
+    }
+
+    return options;
+}
+
 // SelectElementData
 SelectElementData::SelectElementData()
     : m_multiple(false) 
