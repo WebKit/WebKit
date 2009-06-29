@@ -1,3 +1,20 @@
+2009-06-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=26783
+          <rdar://problem/7014543> REGRESSION (r45296): Subfolders not displayed
+          in MobileMe iDisk Web App
+
+        Test: added a case to fast/dom/Element/scrollWidth.html
+
+        Ensure that scroll{Width, Height} is greater or equal to
+        client{Width, Height}.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+
 2009-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel.

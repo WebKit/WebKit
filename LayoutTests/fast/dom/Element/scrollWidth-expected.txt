@@ -9,6 +9,7 @@ position: relative; -> scrollWidth: 75
 position: relative; left: 9px; -> scrollWidth: 84
 position: relative; left: -9px; -> scrollWidth: 66
 position: relative; left: -27px; -> scrollWidth: 50
+position: absolute; -> scrollWidth: 50
 
 RTL:
 -> scrollWidth: 75
@@ -19,4 +20,5 @@ position: relative; -> scrollWidth: 75
 position: relative; left: 9px; -> scrollWidth: 66
 position: relative; left: -9px; -> scrollWidth: 84
 position: relative; left: -27px; -> scrollWidth: 102
+position: absolute; -> scrollWidth: 50
 

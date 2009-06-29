@@ -254,7 +254,7 @@ int RenderBox::scrollWidth() const
         return layer()->scrollWidth();
     // For objects with visible overflow, this matches IE.
     if (style()->direction() == LTR)
-        return rightmostPosition(true, false) - borderLeft();
+        return max(clientWidth(), rightmostPosition(true, false) - borderLeft());
     return clientWidth() - min(0, leftmostPosition(true, false) - borderLeft());
 }
 
@@ -263,7 +263,7 @@ int RenderBox::scrollHeight() const
     if (hasOverflowClip())
         return layer()->scrollHeight();
     // For objects with visible overflow, this matches IE.
-    return lowestPosition(true, false) - borderTop();
+    return max(clientHeight(), lowestPosition(true, false) - borderTop());
 }
 
 int RenderBox::scrollLeft() const

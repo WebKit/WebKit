@@ -1,3 +1,14 @@
+2009-06-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - add a test case for https://bugs.webkit.org/show_bug.cgi?id=26783
+          <rdar://problem/7014543> REGRESSION (r45296): Subfolders not displayed
+          in MobileMe iDisk Web App
+
+        * fast/dom/Element/scrollWidth-expected.txt:
+        * fast/dom/Element/scrollWidth.html:
+
 2009-06-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel.
