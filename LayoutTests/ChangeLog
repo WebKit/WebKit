@@ -1,3 +1,12 @@
+2009-06-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Update layout tests for addition of HTMLDataGridCellElement constructor.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2009-06-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Adam Treat.
