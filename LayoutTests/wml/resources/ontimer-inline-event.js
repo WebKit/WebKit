@@ -1,6 +1,6 @@
-/// [Name] go-task-animation.js
+/// [Name] ontimer-inline-event.js
 
-createWMLTestCase("Tests &lt;timer&gt; and &lt;go&gt; element combinations", false, "resources/animation.wml");
+createWMLTestCase("Tests &lt;timer&gt; and &lt;go&gt; element combinations", false, "resources/ontimer-inline-event.wml");
 
 var counter = 0;
 

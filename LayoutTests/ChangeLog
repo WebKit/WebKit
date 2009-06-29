@@ -2,6 +2,21 @@
 
         Reviewed by Adam Treat.
 
+        Rename go-task-animation.* to ontimer-inline-event.* to reflect what it really tests.
+
+        * wml/go-task-animation-expected.txt: Removed.
+        * wml/go-task-animation.html: Removed.
+        * wml/ontimer-inline-event-expected.txt: Copied from wml/go-task-animation-expected.txt.
+        * wml/ontimer-inline-event.html: Copied from wml/go-task-animation.html.
+        * wml/resources/animation.wml: Removed.
+        * wml/resources/go-task-animation.js: Removed.
+        * wml/resources/ontimer-inline-event.js: Copied from wml/resources/go-task-animation.js.
+        * wml/resources/ontimer-inline-event.wml: Copied from wml/resources/animation.wml.
+
+2009-06-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=26246
 
         Implement most WML specific <select> element features.
