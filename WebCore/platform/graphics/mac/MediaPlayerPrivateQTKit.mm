@@ -258,15 +258,12 @@ void MediaPlayerPrivate::createQTMovie(NSURL *url, NSDictionary *movieAttributes
         m_qtMovie = 0;
     }
     
-    // Disable streaming support for now, <rdar://problem/5693967>
+    // Disable rtsp streams for now, <rdar://problem/5693967>
     if (protocolIs([url scheme], "rtsp"))
         return;
     
     NSError *error = nil;
     m_qtMovie.adoptNS([[QTMovie alloc] initWithAttributes:movieAttributes error:&error]);
-    
-    // FIXME: Find a proper way to detect streaming content.
-    m_isStreaming = protocolIs([url scheme], "rtsp");
     
     if (!m_qtMovie)
         return;
@@ -749,8 +746,7 @@ int MediaPlayerPrivate::dataRate() const
 
 float MediaPlayerPrivate::maxTimeBuffered() const
 {
-    // rtsp streams are not buffered
-    return m_isStreaming ? 0 : maxTimeLoaded();
+    return maxTimeLoaded();
 }
 
 float MediaPlayerPrivate::maxTimeSeekable() const
@@ -846,12 +842,13 @@ void MediaPlayerPrivate::updateStates()
                 sawUnsupportedTracks();
                 return;
             }
-        } else if (!m_enabledTrackCount) {
+        } else if (!m_enabledTrackCount)
             loadState = QTMovieLoadStateError;
-        }
-        
+
         if (loadState != QTMovieLoadStateError) {
             cacheMovieScale();
+            MediaPlayer::MovieLoadType movieType = movieLoadType();
+            m_isStreaming = movieType == MediaPlayer::StoredStream || movieType == MediaPlayer::LiveStream;
         }
     }
     
@@ -1234,8 +1231,10 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
         
         // Check to see if the track is disabled already, we should move along.
         // We don't need to re-disable it.
-        if (![track isEnabled])
+        if (![track isEnabled]) {
+            --m_enabledTrackCount;
             continue;
+        }
         
         // Get the track's media type.
         NSString *mediaType = [track attributeForKey:QTTrackMediaTypeAttribute];
@@ -1314,6 +1313,21 @@ bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
     // so we know all media is single origin.
     return true;
 }
+
+MediaPlayer::MovieLoadType MediaPlayerPrivate::movieLoadType() const
+{
+    if (!m_qtMovie)
+        return MediaPlayer::Unknown;
+
+    MediaPlayer::MovieLoadType movieType = (MediaPlayer::MovieLoadType)wkQTMovieGetType(m_qtMovie.get());
+
+    // Can't include WebKitSystemInterface from WebCore so we can't get the enum returned
+    // by wkQTMovieGetType, but at least verify that the value is in the valid range.
+    ASSERT(movieType >= MediaPlayer::Unknown && movieType <= MediaPlayer::LiveStream);
+
+    return movieType;
+}
+
 
 } // namespace WebCore
 

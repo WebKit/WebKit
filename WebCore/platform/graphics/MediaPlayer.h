@@ -167,6 +167,9 @@ public:
     enum ReadyState  { HaveNothing, HaveMetadata, HaveCurrentData, HaveFutureData, HaveEnoughData };
     ReadyState readyState();
     
+    enum MovieLoadType { Unknown, Download, StoredStream, LiveStream };
+    MovieLoadType movieLoadType() const;
+
     void networkStateChanged();
     void readyStateChanged();
     void volumeChanged();

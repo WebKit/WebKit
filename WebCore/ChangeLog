@@ -1,3 +1,41 @@
+2009-06-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7014813> Ask media engine if a movie is streamed or downloaded.
+
+        * WebCore.base.exp: 
+            Export _wkQTMovieGetType
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::hasSingleSecurityOrigin):
+            Move to keep with other non-callback functions.
+        (WebCore::MediaPlayer::movieLoadType):
+            New, returns the movie type.
+        * platform/graphics/MediaPlayer.h:
+            Declare MovieLoadType enum and movieLoadType method.
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::movieLoadType):
+            Default implementation of movieLoadType
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie):
+            Don't base m_isStreaming on protocol, there are other types of streaming movies.
+        (WebCore::MediaPlayerPrivate::maxTimeBuffered):
+            Don't assume all streams are unbuffered.
+        (WebCore::MediaPlayerPrivate::updateStates):
+            Update m_isStreaming once we have metadata.
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks):
+            Tracks that are disabled to begin with shouldn't be included in m_enabledTrackCount.
+        (WebCore::MediaPlayerPrivate::movieLoadType):
+            New, return movie type.
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+            Add wkQTMovieGetType.
+
 2009-06-29  Alice Liu  <alice.liu@apple.com>
 
         Fixed <rdar://problem/6930280> Reproducible crash at USA Today photo gallery

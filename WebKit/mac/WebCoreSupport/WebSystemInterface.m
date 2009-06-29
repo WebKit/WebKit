@@ -77,6 +77,7 @@ void InitWebCoreSystemInterface(void)
     INIT(QTMovieMaxTimeLoaded);
     INIT(QTMovieMaxTimeLoadedChangeNotification);
     INIT(QTMovieMaxTimeSeekable);
+    INIT(QTMovieGetType);
     INIT(QTMovieViewSetDrawSynchronously);
 
 #ifndef BUILDING_ON_TIGER
