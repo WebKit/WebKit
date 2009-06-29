@@ -29,6 +29,7 @@
 #
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
+import fileinput # inplace file editing for set_reviewer_in_changelog
 import os
 import re
 import subprocess
@@ -86,6 +87,11 @@ def latest_changelog_entry(changelog_path):
     # We never found a date line!
     return None
 
+def set_reviewer_in_changelog(changelog_path, reviewer):
+    # inplace=1 creates a backup file and re-directs stdout to the file
+    for line in fileinput.FileInput(changelog_path, inplace=1):
+        print line.replace("NOBODY (OOPS!)", reviewer),
+
 def modified_changelogs(scm):
     changelog_paths = []
     paths = scm.changed_files()
@@ -97,7 +103,9 @@ def modified_changelogs(scm):
 def commit_message_for_this_commit(scm):
     changelog_paths = modified_changelogs(scm)
     if not len(changelog_paths):
-        error("Found no modified ChangeLogs, can't create a commit message.")
+        error("Found no modified ChangeLogs, cannot create a commit message.\n"
+              "All changes require a ChangeLog.  See:\n"
+              "http://webkit.org/coding/contributing.html")
 
     changelog_messages = []
     for path in changelog_paths:
@@ -211,16 +219,57 @@ def bug_comment_from_commit_text(commit_text):
 
 class LandAndUpdateBug(Command):
     def __init__(self):
-        Command.__init__(self, 'Lands the current working directory diff and updates the bug.', 'BUGID')
+        options = [
+            make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER."),
+            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
+            make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
+            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
+        ]
+        Command.__init__(self, 'Lands the current working directory diff and updates the bug if provided.', '[BUGID]', options=options)
+
+    def guess_reviewer_from_bug(self, bugs, bug_id):
+        patches = bugs.fetch_reviewed_patches_from_bug(bug_id)
+        if len(patches) != 1:
+            log("%s on bug %s, cannot infer reviewer." % (pluralize("reviewed patch", len(patches)), bug_id))
+            return None
+        patch = patches[0]
+        reviewer = patch['reviewer']
+        log('Guessing "%s" as reviewer from attachment %s on bug %s.' % (reviewer, patch['id'], bug_id))
+        return reviewer
+
+    def update_changelogs_with_reviewer(self, reviewer, bug_id, tool):
+        if not reviewer:
+            if not bug_id:
+                log("No bug id provided and --reviewer= not provided.  Not updating ChangeLogs with reviewer.")
+                return
+            reviewer = self.guess_reviewer_from_bug(tool.bugs, bug_id)
+
+        if not reviewer:
+            log("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)
+            return
+
+        changelogs = modified_changelogs(tool.scm())
+        for changelog in changelogs:
+            set_reviewer_in_changelog(changelog, reviewer)
 
     def execute(self, options, args, tool):
-        bug_id = args[0]
+        bug_id = args[0] if len(args) else None
         os.chdir(tool.scm().checkout_root)
-        commit_message = commit_message_for_this_commit(tool.scm())
-        commit_log = tool.scm().commit_with_message(commit_message)
-        comment_text = bug_comment_from_commit_text(commit_log)
-        tool.bugs.close_bug_as_fixed(bug_id, comment_text)
 
+        self.update_changelogs_with_reviewer(options.reviewer, bug_id, tool)
+
+        comment_text = LandPatchesFromBugs.build_and_commit(tool.scm(), options)
+        if bug_id:
+            log("Updating bug %s", bug_id)
+            if options.close:
+                tool.bugs.close_bug_as_fixed(bug_id, comment_text)
+            else:
+                # FIXME: We should a smart way to figure out if the patch is attached
+                # to the bug, and if so obsolete it.
+                tool.bugs.post_comment_to_bug(bug_id, comment_text)
+        else:
+            log(comment_text)
+            log("No bug id provided.")
 
 class LandPatchesFromBugs(Command):
     def __init__(self):
@@ -228,7 +277,7 @@ class LandPatchesFromBugs(Command):
             make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
             make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
             make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
-            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without runnning run-webkit-tests."),
+            make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
         ]
         Command.__init__(self, 'Lands all patches on a bug optionally testing them first', 'BUGID', options=options)
 
@@ -419,7 +468,7 @@ class BugzillaTool:
             { 'name' : 'patches-to-commit', 'object' : PatchesInCommitQueue() },
             { 'name' : 'reviewed-patches', 'object' : ReviewedPatchesOnBug() },
             { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
-            { 'name' : 'land-and-update', 'object' : LandAndUpdateBug() },
+            { 'name' : 'land-diff', 'object' : LandAndUpdateBug() },
             { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },
             { 'name' : 'commit-message', 'object' : CommitMessageForCurrentDiff() },
             { 'name' : 'obsolete-attachments', 'object' : ObsoleteAttachmentsOnBug() },

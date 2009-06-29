@@ -1,3 +1,24 @@
+2009-06-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        Rename land-and-update to land-diff and make it awesome.
+        https://bugs.webkit.org/show_bug.cgi?id=26734
+
+        Renamed land-and-update to land-diff
+        Made the BUGID argument optional.
+        Added optional support for building and testing before landing.
+
+        land-diff [options] [BUGID]    Lands the current working directory diff and updates the bug if provided.
+          Options:
+            -r REVIEWER, --reviewer=REVIEWER
+                              Update ChangeLogs to say Reviewed by REVIEWER.
+            --no-close        Leave bug open after landing.
+            --no-build        Commit without building first, implies --no-test.
+            --no-test         Commit without running run-webkit-tests.
+
+        * Scripts/bugzilla-tool:
+
 2009-06-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix - include stdarg.h for va_start/va_end.
