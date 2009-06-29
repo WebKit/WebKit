@@ -1,3 +1,17 @@
+2009-06-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        <rdar://problem/7016214> JSON.parse fails to parse valid JSON with most Unicode characters
+        <https://bugs.webkit.org/show_bug.cgi?id=26802>
+
+        In the original JSON.parse patch unicode was handled correctly, however in some last
+        minute "clean up" I oversimplified isSafeStringCharacter.  This patch corrects this bug.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::isSafeStringCharacter):
+        (JSC::LiteralParser::Lexer::lexString):
+
 2009-06-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -124,9 +124,9 @@ LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
     return TokError;
 }
 
-static inline bool isSafeStringCharacter(UChar c)
+template <LiteralParser::ParserMode mode> static inline bool isSafeStringCharacter(UChar c)
 {
-    return (c >= ' ' && c <= 0xff && c != '\\' && c != '"') || c == '\t';
+    return (c >= ' ' && (mode == LiteralParser::StrictJSON || c <= 0xff) && c != '\\' && c != '"') || c == '\t';
 }
 
 template <LiteralParser::ParserMode mode> LiteralParser::TokenType LiteralParser::Lexer::lexString(LiteralParserToken& token)
@@ -136,7 +136,7 @@ template <LiteralParser::ParserMode mode> LiteralParser::TokenType LiteralParser
     token.stringToken = UString();
     do {
         runStart = m_ptr;
-        while (m_ptr < m_end && isSafeStringCharacter(*m_ptr))
+        while (m_ptr < m_end && isSafeStringCharacter<mode>(*m_ptr))
             ++m_ptr;
         if (runStart < m_ptr)
             token.stringToken.append(runStart, m_ptr - runStart);
