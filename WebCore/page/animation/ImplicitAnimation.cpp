@@ -212,6 +212,10 @@ bool ImplicitAnimation::affectsProperty(int property) const
 
 bool ImplicitAnimation::isTargetPropertyEqual(int prop, const RenderStyle* targetStyle)
 {
+    // We can get here for a transition that has not started yet. This would make m_toStyle unset and null. 
+    // So we check that here (see <https://bugs.webkit.org/show_bug.cgi?id=26706>)
+    if (!m_toStyle)
+        return false;
     return propertiesEqual(prop, m_toStyle.get(), targetStyle);
 }
 

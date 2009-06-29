@@ -1,3 +1,16 @@
+2009-06-29  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser  <simon.fraser@apple.com>.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26706
+
+        Added tests for -webkit-text-fill-color and
+        text-shadow, since these go through different
+        paths.
+
+        * transitions/override-transition-crash-expected.txt:
+        * transitions/override-transition-crash.html:
+
 2009-06-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Mark Rowe.
