@@ -75,13 +75,6 @@ struct CompositingState {
 #endif
 };
 
-static TransformationMatrix flipTransform()
-{
-    TransformationMatrix flipper;
-    flipper.flipY();
-    return flipper;
-}
-
 RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     : m_renderView(renderView)
     , m_rootPlatformLayer(0)
@@ -847,9 +840,8 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     m_rootPlatformLayer = GraphicsLayer::createGraphicsLayer(0);
     m_rootPlatformLayer->setSize(FloatSize(m_renderView->overflowWidth(), m_renderView->overflowHeight()));
     m_rootPlatformLayer->setPosition(FloatPoint(0, 0));
-
-    if (GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
-        m_rootPlatformLayer->setChildrenTransform(flipTransform());
+    // The root layer does flipping if we need it on this platform.
+    m_rootPlatformLayer->setGeometryOrientation(GraphicsLayer::compositingCoordinatesOrientation());
 
     // Need to clip to prevent transformed content showing outside this frame
     m_rootPlatformLayer->setMasksToBounds(true);

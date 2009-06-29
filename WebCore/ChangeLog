@@ -1,3 +1,32 @@
+2009-06-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        <rdar://problem/6976712> Text antialiasing problems when rendering into compositing layers.
+        
+        Improve the appearance of text in compositing layers by making use of
+        CA's layer geometry flipping, rather that doing it ourselves with a flip
+        transform. This allows CG to use font autohinting in the layer text.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setGeometryOrientation):
+        (WebCore::GraphicsLayer::geometryOrientation):
+        New methods to set whether this layer uses flipped geometry.
+        
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setGeometryOrientation):
+        (WebCore::GraphicsLayerCA::geometryOrientation):
+        Subclass in order to call into CA
+        
+        (WebCore::GraphicsLayerCA::setContentsLayer):
+        Now that CA is doing the geometry flipping, we no longer need to flip the content
+        layers for image and video manually
+        
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        Turn on flipping on the root layer.
+
 2009-06-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Adam Treat.

@@ -293,6 +293,10 @@ public:
     enum CompositingCoordinatesOrientation { CompositingCoordinatesTopDown, CompositingCoordinatesBottomUp };
     static CompositingCoordinatesOrientation compositingCoordinatesOrientation();
 
+    // Set the geometry orientation (top-down, or bottom-up) for this layer, which also controls sublayer geometry.
+    virtual void setGeometryOrientation(CompositingCoordinatesOrientation) { }
+    virtual CompositingCoordinatesOrientation geometryOrientation() const { return CompositingCoordinatesTopDown; }
+
 #ifndef NDEBUG
     static bool showDebugBorders();
     static bool showRepaintCounter();

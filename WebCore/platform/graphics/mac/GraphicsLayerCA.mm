@@ -1159,6 +1159,25 @@ void GraphicsLayerCA::updateContentsRect()
     }
 }
 
+void GraphicsLayerCA::setGeometryOrientation(CompositingCoordinatesOrientation orientation)
+{
+    switch (orientation) {
+    case CompositingCoordinatesTopDown:
+        [m_layer.get() setGeometryFlipped:NO];
+        break;
+        
+    case CompositingCoordinatesBottomUp:
+        [m_layer.get() setGeometryFlipped:YES];
+        break;
+    }
+}
+
+GraphicsLayerCA::CompositingCoordinatesOrientation GraphicsLayerCA::geometryOrientation() const
+{
+    // CoreAnimation defaults to bottom-up
+    return [m_layer.get() isGeometryFlipped] ? CompositingCoordinatesBottomUp : CompositingCoordinatesTopDown;
+}
+
 void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, TransformOperation::OperationType operationType, short index, void* fromVal, void* toVal, bool isTransition, const Animation* transition, double beginTime)
 {
     ASSERT(fromVal || toVal);
@@ -1502,22 +1521,9 @@ void GraphicsLayerCA::setContentsLayer(WebLayer* contentsLayer)
     if (contentsLayer) {
         // Turn off implicit animations on the inner layer.
         [contentsLayer setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
-
         m_contentsLayer.adoptNS([contentsLayer retain]);
 
-        bool needToFlip = GraphicsLayer::compositingCoordinatesOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp;
-        CGPoint anchorPoint = needToFlip ? CGPointMake(0.0f, 1.0f) : CGPointZero;
-
-        // If the layer world is flipped, we need to un-flip the contents layer
-        if (needToFlip) {
-            CATransform3D flipper = {
-                1.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, -1.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f};
-            [m_contentsLayer.get() setTransform:flipper];
-        }
-        [m_contentsLayer.get() setAnchorPoint:anchorPoint];
+        [m_contentsLayer.get() setAnchorPoint:CGPointZero];
 
         // Insert the content layer first. Video elements require this, because they have
         // shadow content that must display in front of the video.
