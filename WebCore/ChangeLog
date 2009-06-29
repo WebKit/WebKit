@@ -1,3 +1,16 @@
+2009-06-29  Alice Liu  <alice.liu@apple.com>
+
+        Fixed <rdar://problem/6930280> Reproducible crash at USA Today photo gallery
+
+        Reviewed by Anders Carlsson.
+
+        No test added because the crash requires a flash plugin
+
+        * plugins/win/PluginMessageThrottlerWin.cpp:
+        Rely on the hWnd of the plugin to tell us whether the PluginView has 
+        been deleted during execution of its wndProc.
+        (WebCore::PluginMessageThrottlerWin::messageThrottleTimerFired):
+
 2009-06-29  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
