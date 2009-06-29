@@ -1,3 +1,11 @@
+2009-06-28  Xan Lopez  <xlopez@igalia.com>
+
+        Fix the GTK+ build.
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::ContextMenuClient::isSpeaking):
+        * WebCoreSupport/ContextMenuClientGtk.h:
+
 2009-06-24  Jiahua Huang  <jhuangjiahua@gmail.com>
 
         Reviewed by Holger Freyther.

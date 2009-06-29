@@ -196,5 +196,11 @@ void ContextMenuClient::stopSpeaking()
     notImplemented();
 }
 
+bool ContextMenuClient::isSpeaking()
+{
+    notImplemented();
+    return false;
+}
+
 }
 
