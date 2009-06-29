@@ -313,8 +313,6 @@ for my $dir (@projects) {
         if ($dir eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
         }
-    } elsif (isChromium()) {
-        $result = buildSconsProject($dir, $clean);
     }
 
     if (exitStatus($result)) {

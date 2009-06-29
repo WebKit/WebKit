@@ -1,1 +1,0 @@
-SConscript(['WebCore.scons'])

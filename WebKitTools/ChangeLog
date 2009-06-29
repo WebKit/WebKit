@@ -1,3 +1,13 @@
+2009-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Remove more unused scons support.
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
 2009-06-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.

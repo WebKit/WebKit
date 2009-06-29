@@ -1033,24 +1033,6 @@ sub buildVisualStudioProject
     return system @command;
 }
 
-sub buildSconsProject
-{
-    my ($project, $shouldClean) = @_;
-    print "Building from $project/$project.scons\n";
-
-    my $sconsCommand = "scons";
-    if (isCygwin()) {
-        # HACK: Launch scons with Win32 python instead of CYGWIN python
-        # Scons + MSVC only works under Win32 python
-        # http://scons.tigris.org/issues/show_bug.cgi?id=2266
-        $sconsCommand = "cmd /c 'C:\\Python26\\Scripts\\scons'";
-    }
-    if ($shouldClean) {
-        return system $sconsCommand, "--clean";
-    }
-    return system $sconsCommand;
-}
-
 sub retrieveQMakespecVar
 {
     my $mkspec = $_[0];
