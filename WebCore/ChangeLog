@@ -1,3 +1,16 @@
+2009-06-29  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a couple of bad merge items from my previous V8Proxy patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26813
+
+        * bindings/v8/V8Collection.h:
+        (WebCore::nodeCollectionNamedPropertyGetter):  Fix a bad function name that slipped through.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):  Fix a bad merge that caused a couple of lines of extraneous, breaking code to get in.
+
 2009-06-29  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser  <simon.fraser@apple.com>.
