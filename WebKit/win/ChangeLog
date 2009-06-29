@@ -1,3 +1,9 @@
+2009-06-29  David Hyatt  <hyatt@apple.com>
+
+        Fix Windows bustage.  Missed two configurations for enabling DATAGRID.
+
+        * WebKit.vcproj/WebKit.vcproj:
+
 2009-06-29  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.
