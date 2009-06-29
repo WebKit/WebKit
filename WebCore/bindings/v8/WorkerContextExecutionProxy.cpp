@@ -53,8 +53,6 @@
 
 namespace WebCore {
 
-static bool isWorkersEnabled = false;
-
 static void reportFatalErrorInV8(const char* location, const char* message)
 {
     // FIXME: We temporarily deal with V8 internal error situations such as out-of-memory by crashing the worker.
@@ -80,16 +78,6 @@ static void handleConsoleMessage(v8::Handle<v8::Message> message, v8::Handle<v8:
     String resourceNameString = useURL ? workerContext->url() : ToWebCoreString(resourceName);
     
     workerContext->addMessage(ConsoleDestination, JSMessageSource, ErrorMessageLevel, errorMessage, message->GetLineNumber(), resourceNameString);
-}
-
-bool WorkerContextExecutionProxy::isWebWorkersEnabled()
-{
-    return isWorkersEnabled;
-}
-
-void WorkerContextExecutionProxy::setIsWebWorkersEnabled(bool value)
-{
-    isWorkersEnabled = value;
 }
 
 WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerContext)

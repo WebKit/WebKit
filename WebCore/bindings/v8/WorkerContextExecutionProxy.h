@@ -81,10 +81,6 @@ namespace WebCore {
         // Returns WorkerContextExecutionProxy object of the currently executing context. 0 will be returned if the current executing context is not the worker context.
         static WorkerContextExecutionProxy* retrieve();
 
-        // Enables HTML5 worker support.
-        static bool isWebWorkersEnabled();
-        static void setIsWebWorkersEnabled(bool);
-
     private:
         void initV8IfNeeded();
         void initContextIfNeeded();
