@@ -26,6 +26,8 @@
 #ifndef RenderDataGrid_h
 #define RenderDataGrid_h
 
+#if ENABLE(DATAGRID)
+
 #include "HTMLDataGridElement.h"
 #include "RenderBlock.h"
 #include "ScrollbarClient.h"
@@ -66,5 +68,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif // RenderDataGrid_h

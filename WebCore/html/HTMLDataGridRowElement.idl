@@ -26,7 +26,8 @@
 module html {
 
     interface [
-        GenerateConstructor
+        GenerateConstructor,
+        Conditional=DATAGRID
     ] HTMLDataGridRowElement : HTMLElement {
         attribute boolean selected; // Whether or not the row is currently selected.
         attribute boolean focused; // Whether or not the row is the current object in the tree for keyboard navigation (or as the principal item of a multiple selection).

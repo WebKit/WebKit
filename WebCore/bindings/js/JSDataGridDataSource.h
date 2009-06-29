@@ -26,6 +26,8 @@
 #ifndef JSDataGridDataSource_h
 #define JSDataGridDataSource_h
 
+#if ENABLE(DATAGRID)
+
 #include "DataGridDataSource.h"
 #include <runtime/JSValue.h>
 #include <runtime/Protect.h>
@@ -71,5 +73,7 @@ inline const JSDataGridDataSource* asJSDataGridDataSource(const DataGridDataSour
 }
 
 } // namespace WebCore
+
+#endif
 
 #endif // JSDataGridDataSource_h

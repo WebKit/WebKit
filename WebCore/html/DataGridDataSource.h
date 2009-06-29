@@ -26,6 +26,8 @@
 #ifndef DataGridDataSource_h
 #define DataGridDataSource_h
 
+#if ENABLE(DATAGRID)
+
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -42,5 +44,7 @@ public:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // DataGridDataSource_h

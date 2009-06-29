@@ -26,7 +26,8 @@
 module html {
 
     interface [
-        GenerateConstructor
+        GenerateConstructor,
+        Conditional=DATAGRID
     ] DataGridColumn {
         attribute DOMString id; // The identifier for the column.
         attribute DOMString label; // The text to display in the column.

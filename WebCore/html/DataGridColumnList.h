@@ -1,6 +1,8 @@
 #ifndef DataGridColumnList_h
 #define DataGridColumnList_h
 
+#if ENABLE(DATAGRID)
+
 #include "DataGridColumn.h"
 
 #include <wtf/PassRefPtr.h>
@@ -44,5 +46,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // DataGridColumnList_h

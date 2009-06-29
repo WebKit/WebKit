@@ -349,8 +349,9 @@ module window {
         attribute HTMLBodyElementConstructor HTMLBodyElement;
         attribute HTMLButtonElementConstructor HTMLButtonElement;
         attribute HTMLCanvasElementConstructor HTMLCanvasElement;
-        attribute HTMLDataGridElementConstructor HTMLDataGridElement;
-        attribute HTMLDataGridColElementConstructor HTMLDataGridColElement;
+        attribute [Conditional=DATAGRID] HTMLDataGridElementConstructor HTMLDataGridElement;
+        attribute [Conditional=DATAGRID] HTMLDataGridCellElementConstructor HTMLDataGridCellElement;
+        attribute [Conditional=DATAGRID] HTMLDataGridColElementConstructor HTMLDataGridColElement;
         attribute HTMLDListElementConstructor HTMLDListElement;
         attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
         attribute HTMLDivElementConstructor HTMLDivElement;

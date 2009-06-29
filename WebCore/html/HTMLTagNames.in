@@ -25,10 +25,10 @@ cite interfaceName=HTMLElement
 code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
-datagrid interfaceName=HTMLDataGridElement
-dcell interfaceName=HTMLDataGridCellElement
-dcol interfaceName=HTMLDataGridColElement
-drow interfaceName=HTMLDataGridRowElement
+datagrid interfaceName=HTMLDataGridElement,conditional=DATAGRID
+dcell interfaceName=HTMLDataGridCellElement,conditional=DATAGRID
+dcol interfaceName=HTMLDataGridColElement,conditional=DATAGRID
+drow interfaceName=HTMLDataGridRowElement,conditional=DATAGRID
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
 dfn interfaceName=HTMLElement

@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DATAGRID)
+
 #include "JSDataGridColumnList.h"
 
 #include "AtomicString.h"
@@ -47,3 +50,5 @@ JSValue JSDataGridColumnList::nameGetter(ExecState* exec, const Identifier& prop
 }
 
 } // namespace WebCore
+
+#endif

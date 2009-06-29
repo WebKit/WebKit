@@ -28,7 +28,8 @@ module html {
     interface [
         GenerateConstructor,
         HasIndexGetter,
-        HasNameGetter
+        HasNameGetter,
+        Conditional=DATAGRID
     ] DataGridColumnList {
         DataGridColumn item(in [IsIndex] unsigned long index);
         readonly attribute unsigned long length;

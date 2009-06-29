@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DATAGRID)
+
 #include "DataGridColumn.h"
 
 #include "DataGridColumnList.h"
@@ -40,3 +43,5 @@ void DataGridColumn::setPrimary(bool primary)
 }
 
 } // namespace WebCore
+
+#endif

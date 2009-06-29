@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DATAGRID)
+
 #include "JSDataGridDataSource.h"
 
 #include "Document.h"
@@ -78,3 +81,5 @@ void JSDataGridDataSource::initialize(HTMLDataGridElement* datagrid)
 }
 
 } // namespace WebCore
+
+#endif

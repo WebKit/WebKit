@@ -26,6 +26,8 @@
 #ifndef HTMLDataGridColElement_h
 #define HTMLDataGridColElement_h
 
+#if ENABLE(DATAGRID)
+
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -54,5 +56,7 @@ public:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // HTMLDataGridColElement_h

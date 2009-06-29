@@ -1,3 +1,11 @@
+2009-06-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Put datagrid behind an #ifdef.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2009-06-26  John Sullivan  <sullivan@apple.com>
 
         Added support for disabling Stop Speaking when there is no speaking to stop.

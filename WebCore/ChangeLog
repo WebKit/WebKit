@@ -1,3 +1,38 @@
+2009-06-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Put <datagrid> behind an ifdef.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/js/JSDataGridColumnListCustom.cpp:
+        * bindings/js/JSDataGridDataSource.cpp:
+        * bindings/js/JSDataGridDataSource.h:
+        * bindings/js/JSHTMLDataGridElementCustom.cpp:
+        * html/DataGridColumn.cpp:
+        * html/DataGridColumn.h:
+        * html/DataGridColumn.idl:
+        * html/DataGridColumnList.cpp:
+        * html/DataGridColumnList.h:
+        * html/DataGridColumnList.idl:
+        * html/DataGridDataSource.h:
+        * html/HTMLDataGridCellElement.cpp:
+        * html/HTMLDataGridCellElement.h:
+        * html/HTMLDataGridCellElement.idl:
+        * html/HTMLDataGridColElement.cpp:
+        * html/HTMLDataGridColElement.h:
+        * html/HTMLDataGridColElement.idl:
+        * html/HTMLDataGridElement.cpp:
+        * html/HTMLDataGridElement.h:
+        * html/HTMLDataGridElement.idl:
+        * html/HTMLDataGridRowElement.cpp:
+        * html/HTMLDataGridRowElement.h:
+        * html/HTMLDataGridRowElement.idl:
+        * html/HTMLTagNames.in:
+        * page/DOMWindow.idl:
+        * rendering/RenderDataGrid.cpp:
+        * rendering/RenderDataGrid.h:
+
 2009-06-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat and Adam Roben.
