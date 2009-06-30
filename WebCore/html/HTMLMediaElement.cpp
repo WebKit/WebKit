@@ -690,7 +690,6 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     }
 
     if (state == MediaPlayer::Idle) {
-        ASSERT(static_cast<ReadyState>(m_player->readyState()) < HAVE_ENOUGH_DATA);
         if (m_networkState > NETWORK_IDLE) {
             stopPeriodicTimers();
             scheduleProgressEvent(eventNames().suspendEvent);
@@ -752,7 +751,6 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     if (m_seeking && m_readyState < HAVE_CURRENT_DATA) {
         // 4.8.10.10, step 9
         scheduleEvent(eventNames().seekingEvent);
-        m_seeking = false;
     }
 
     if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {

@@ -607,6 +607,10 @@ float MediaPlayerPrivate::currentTime() const
 
 void MediaPlayerPrivate::seek(float time)
 {
+    // Nothing to do if we are already in the middle of a seek to the same time.
+    if (time == m_seekTo)
+        return;
+
     cancelSeek();
     
     if (!metaDataAvailable())
@@ -616,7 +620,7 @@ void MediaPlayerPrivate::seek(float time)
         time = duration();
 
     m_seekTo = time;
-    if (maxTimeLoaded() >= m_seekTo)
+    if (maxTimeSeekable() >= m_seekTo)
         doSeek();
     else 
         m_seekTimer.start(0, 0.5f);
@@ -628,12 +632,16 @@ void MediaPlayerPrivate::doSeek()
     // setCurrentTime generates several event callbacks, update afterwards
     [m_objcObserver.get() setDelayCallbacks:YES];
     float oldRate = [m_qtMovie.get() rate];
-    [m_qtMovie.get() setRate:0];
+
+    if (oldRate)
+        [m_qtMovie.get() setRate:0];
     [m_qtMovie.get() setCurrentTime:qttime];
-    float timeAfterSeek = currentTime();
+
     // restore playback only if not at end, othewise QTMovie will loop
+    float timeAfterSeek = currentTime();
     if (oldRate && timeAfterSeek < duration())
         [m_qtMovie.get() setRate:oldRate];
+
     cancelSeek();
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
@@ -652,8 +660,8 @@ void MediaPlayerPrivate::seekTimerFired(Timer<MediaPlayerPrivate>*)
         m_player->timeChanged(); 
         return;
     } 
-    
-    if (maxTimeLoaded() >= m_seekTo)
+
+    if (maxTimeSeekable() >= m_seekTo)
         doSeek();
     else {
         MediaPlayer::NetworkState state = networkState();
@@ -891,6 +899,8 @@ void MediaPlayerPrivate::updateStates()
         m_readyState = MediaPlayer::HaveNothing;
         m_networkState = MediaPlayer::Loading;
     } else {
+        // Loading or decoding failed.
+
         if (m_player->inMediaDocument()) {
             // Something went wrong in the loading of media within a standalone file. 
             // This can occur with chained refmovies pointing to streamed media.
@@ -913,11 +923,15 @@ void MediaPlayerPrivate::updateStates()
         }
     }
 
-    if (seeking())
-        m_readyState = MediaPlayer::HaveNothing;
-
     if (loadState >= QTMovieLoadStateLoaded && !hasSetUpVideoRendering() && m_player->visible())
         setUpVideoRendering();
+
+    if (seeking())
+        m_readyState = m_readyState >= MediaPlayer::HaveMetadata ? MediaPlayer::HaveMetadata : MediaPlayer::HaveNothing;
+
+    // Streaming movies don't use the network when paused.
+    if (m_isStreaming && m_readyState >= MediaPlayer::HaveMetadata && m_networkState >= MediaPlayer::Loading && [m_qtMovie.get() rate] == 0)
+        m_networkState = MediaPlayer::Idle;
 
     if (m_networkState != oldNetworkState)
         m_player->networkStateChanged();
@@ -960,6 +974,12 @@ void MediaPlayerPrivate::timeChanged()
 {
     if (m_hasUnsupportedTracks)
         return;
+
+    // It may not be possible to seek to a specific time in a streamed movie. When seeking in a 
+    // stream QuickTime sets the movie time to closest time possible and posts a timechanged 
+    // notification. Update m_seekTo so we can detect when the seek completes.
+    if (m_seekTo != -1)
+        m_seekTo = currentTime();
 
     m_timeToRestore = -1.0f;
     updateStates();

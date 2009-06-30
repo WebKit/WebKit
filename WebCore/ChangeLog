@@ -1,3 +1,33 @@
+2009-06-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/7020825> HTMLMediaElement should not assume seeking is only possible in 
+        buffered time ranges
+
+        * html/HTMLMediaElement.cpp:
+            Don't ASSERT if the network state goes to Idle when when the ready state is 
+            HaveEnoughData or higher, it is perfectly legal.
+        (WebCore::HTMLMediaElement::setReadyState): 
+            Don't clear m_seeking after posting a 'seeking' event.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::seek):
+            Do nothing when asked to seek to the same time we are already seeking to. Check requested
+            seek time against maxTimeSeekable, not maxTimeLoaded.
+        (WebCore::MediaPlayerPrivate::doSeek):
+            Don't bother stopping a movie that isn't playing. Minor cleanup to make the code more readable.
+        (WebCore::MediaPlayerPrivate::seekTimerFired):
+            Check requested seek time against maxTimeSeekable, not maxTimeLoaded.
+        (WebCore::MediaPlayerPrivate::updateStates):
+            A streaming movie has as much data as it needs once it reaches "playable", so 
+            set the ready state to HaveFutureData. A movie with metadata doesn't drop back 
+            to "have nothing" when seeking. A streaming movie doesn't use the network when paused.
+        (WebCore::MediaPlayerPrivate::timeChanged):
+            It may not be possible to seek to a specific time in a streamed movie but when seeking 
+            in a streaming movie QuickTime sets the time to closest time possible and posts a  
+            timechanged notification, so update m_seekTo so we can detect when the seek completes.
+
 2009-06-30  Steve Falkenburg  <sfalken@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=26860
