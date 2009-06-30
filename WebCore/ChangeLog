@@ -1,3 +1,13 @@
+2009-06-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Initialize member variables in the right order. Fixes compiler
+        warning.
+
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::BMPImageReader):
+
 2009-06-29  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by David Levin.
