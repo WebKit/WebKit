@@ -1,3 +1,52 @@
+2009-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt, Dan Bernstein.
+        
+        <rdar://problem/6191676> Redraw issues scrolling overflow:scroll div with compositing
+
+        There are two parts to this fix. First, if a compositing layer has overflow clipping
+        or a mask, then the compositing layer does not need to be sized to encompass all
+        non-composited children.
+        
+        Second, when scrolling, we have to back up to the compositing ancestor and have
+        it reposition descendant compositing layers, because overflow doesn't follow
+        the z-order tree.
+        
+        Test: compositing/overflow/overflow-scroll.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        Pass the UpdateCompositingLayers flag when updating layers after layout, so that
+        we can reposition compositing layers if we're not about to do a layer rebuild.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        Only update compositing layers if the flag is set.
+        
+        (WebCore::RenderLayer::scrollToOffset):
+        Do compositing layer updates from the compositing ancestor in one fell swoop.
+
+        * rendering/RenderLayer.h:
+        Replace the unused FullUpdate flag with one that allows us to specify whether
+        compositing layers should be updated.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        * rendering/RenderLayerBacking.h:
+        New param that we can pass to updateCompositingDescendantGeometry to control
+        whether the update goes deep.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        We can return earlier if this is not a self-painting layer.
+        If the layer has overflow clip or a mask, then the composited bounds are just the
+        local bounds, excluding descendants.
+        
+        (WebCore::RenderLayerCompositor::updateCompositingDescendantGeometry):
+        * rendering/RenderLayerCompositor.h:
+        Renamed from updateCompositingChildrenGeometry, and added a flag that allows
+        us to do a deep update.
+
 2009-06-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

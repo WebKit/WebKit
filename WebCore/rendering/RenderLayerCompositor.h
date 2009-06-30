@@ -27,6 +27,7 @@
 #define RenderLayerCompositor_h
 
 #include "RenderLayer.h"
+#include "RenderLayerBacking.h"
 
 namespace WebCore {
 
@@ -76,7 +77,7 @@ public:
     bool updateLayerCompositingState(RenderLayer*, CompositingChangeRepaint = CompositingChangeRepaintNow);
 
     // Update the geometry for compositing children of compositingAncestor.
-    void updateCompositingChildrenGeometry(RenderLayer* compositingAncestor, RenderLayer* layer);
+    void updateCompositingDescendantGeometry(RenderLayer* compositingAncestor, RenderLayer* layer, RenderLayerBacking::UpdateDepth);
     
     // Whether layer's backing needs a graphics layer to do clipping by an ancestor (non-stacking-context parent with overflow).
     bool clippedByAncestor(RenderLayer*) const;

@@ -1,3 +1,14 @@
+2009-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt, Dan Bernstein.
+
+        <rdar://problem/6191676> Redraw issues scrolling overflow:scroll div with compositing
+        
+        Testcase for various configurations of compositing and positioning with overflow.
+
+        * compositing/overflow/overflow-scroll.html: Added.
+        * platform/mac/compositing/overflow/overflow-scroll-expected.txt: Added.
+
 2009-06-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.
