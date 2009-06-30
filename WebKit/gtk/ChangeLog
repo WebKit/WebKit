@@ -1,3 +1,13 @@
+2009-06-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Fix a couple of compiler warnings.
+
+        * webkit/webkitwebnavigationaction.cpp:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_real_move_cursor):
+
 2009-06-28  Xan Lopez  <xlopez@igalia.com>
 
         Fix the GTK+ build.

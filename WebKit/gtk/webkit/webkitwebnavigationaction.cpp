@@ -109,8 +109,6 @@ static void webkit_web_navigation_action_set_property(GObject* object, guint pro
 static void webkit_web_navigation_action_init(WebKitWebNavigationAction* navigationAction)
 {
     navigationAction->priv = WEBKIT_WEB_NAVIGATION_ACTION_GET_PRIVATE(navigationAction);
-
-    WebKitWebNavigationActionPrivate* priv = navigationAction->priv;
 }
 
 static void webkit_web_navigation_action_finalize(GObject* obj)

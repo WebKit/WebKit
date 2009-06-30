@@ -841,28 +841,28 @@ static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMov
         granularity = ScrollByLine;
         if (count == 1)
             direction = ScrollDown;
-        else if (count == -1)
+        else
             direction = ScrollUp;
         break;
     case GTK_MOVEMENT_VISUAL_POSITIONS:
         granularity = ScrollByLine;
         if (count == 1)
             direction = ScrollRight;
-        else if (count == -1)
+        else
             direction = ScrollLeft;
         break;
     case GTK_MOVEMENT_PAGES:
         granularity = ScrollByPage;
         if (count == 1)
             direction = ScrollDown;
-        else if (count == -1)
+        else
             direction = ScrollUp;
         break;
     case GTK_MOVEMENT_BUFFER_ENDS:
         granularity = ScrollByDocument;
         if (count == 1)
             direction = ScrollDown;
-        else if (count == -1)
+        else
             direction = ScrollUp;
         break;
     default:
