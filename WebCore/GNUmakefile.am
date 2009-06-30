@@ -936,7 +936,7 @@ webcore_sources += \
 	WebCore/html/HTMLDataGridElement.cpp \
 	WebCore/html/HTMLDataGridElement.h \
 	WebCore/html/HTMLDataGridCellElement.cpp \
-	WebCOre/html/HTMLDataGridCellElement.h \
+	WebCore/html/HTMLDataGridCellElement.h \
 	WebCore/html/HTMLDataGridColElement.cpp \
 	WebCore/html/HTMLDataGridColElement.h \
 	WebCore/html/HTMLDataGridRowElement.cpp \
