@@ -1,3 +1,14 @@
+2009-06-30  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Sam Weinig.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=24986>
+
+        Remove unnecessary references to AssemblerBuffer.
+
+        * interpreter/Interpreter.cpp:
+        * interpreter/Interpreter.h:
+
 2009-06-29  David Levin  <levin@chromium.org>
 
         Reviewed by Oliver Hunt.

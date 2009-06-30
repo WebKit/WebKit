@@ -65,10 +65,6 @@
 #include "JIT.h"
 #endif
 
-#if ENABLE(ASSEMBLER)
-#include "AssemblerBuffer.h"
-#endif
-
 using namespace std;
 
 namespace JSC {

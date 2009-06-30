@@ -45,7 +45,6 @@ namespace JSC {
     class FunctionBodyNode;
     class Instruction;
     class InternalFunction;
-    class AssemblerBuffer;
     class JSFunction;
     class JSGlobalObject;
     class ProgramNode;
