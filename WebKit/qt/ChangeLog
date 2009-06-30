@@ -1,3 +1,15 @@
+2009-06-30  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add QWebFrame::baseUrl() function that exposes the base URL of a frame.
+        Autotests included.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::baseUrl):
+        * Api/qwebframe.h:
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-06-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build, add missing isSpeaking() implementation to

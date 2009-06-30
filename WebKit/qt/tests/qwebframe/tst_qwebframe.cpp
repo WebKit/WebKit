@@ -582,6 +582,9 @@ private slots:
     void jsByteArray();
     void ownership();
     void nullValue();
+    void baseUrl_data();
+    void baseUrl();
+
 private:
     QString  evalJS(const QString&s) {
         // Convert an undefined return variant to the string "undefined"
@@ -2411,6 +2414,40 @@ void tst_QWebFrame::nullValue()
 {
     QVariant v = m_view->page()->mainFrame()->evaluateJavaScript("null");
     QVERIFY(v.isNull());
+}
+
+void tst_QWebFrame::baseUrl_data()
+{
+    QTest::addColumn<QString>("html");
+    QTest::addColumn<QUrl>("loadUrl");
+    QTest::addColumn<QUrl>("url");
+    QTest::addColumn<QUrl>("baseUrl");
+
+    QTest::newRow("null") << QString() << QUrl()
+                          << QUrl("about:blank") << QUrl("about:blank");
+
+    QTest::newRow("foo") << QString() << QUrl("http://foobar.baz/")
+                         << QUrl("http://foobar.baz/") << QUrl("http://foobar.baz/");
+
+    QString html = "<html>"
+        "<head>"
+            "<base href=\"http://foobaz.bar/\" />"
+        "</head>"
+    "</html>";
+    QTest::newRow("customBaseUrl") << html << QUrl("http://foobar.baz/")
+                                   << QUrl("http://foobar.baz/") << QUrl("http://foobaz.bar/");
+}
+
+void tst_QWebFrame::baseUrl()
+{
+    QFETCH(QString, html);
+    QFETCH(QUrl, loadUrl);
+    QFETCH(QUrl, url);
+    QFETCH(QUrl, baseUrl);
+
+    m_page->mainFrame()->setHtml(html, loadUrl);
+    QCOMPARE(m_page->mainFrame()->url(), url);
+    QCOMPARE(m_page->mainFrame()->baseUrl(), baseUrl);
 }
 
 QTEST_MAIN(tst_QWebFrame)

@@ -487,6 +487,17 @@ QUrl QWebFrame::url() const
 }
 
 /*!
+    \property QWebFrame::baseUrl
+    \brief the base URL of the frame, can be used to resolve relative URLs
+    \since 4.6
+*/
+
+QUrl QWebFrame::baseUrl() const
+{
+    return d->frame->loader()->baseURL();
+}
+
+/*!
     \property QWebFrame::icon
     \brief the icon associated with this frame
 
