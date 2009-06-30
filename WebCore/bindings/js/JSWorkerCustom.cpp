@@ -31,6 +31,7 @@
 
 #include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
+#include "JSMessagePort.h"
 #include "Worker.h"
 
 using namespace JSC;

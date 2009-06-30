@@ -58,11 +58,12 @@ namespace WebCore {
 
         virtual Worker* toWorker() { return this; }
 
-        void postMessage(const String& message);
+        void postMessage(const String&, ExceptionCode&);
+        void postMessage(const String&, MessagePort*, ExceptionCode&);
 
         void terminate();
 
-        void dispatchMessage(const String&);
+        void dispatchMessage(const String&, PassRefPtr<MessagePort>);
         void dispatchErrorEvent();
 
         virtual bool canSuspend() const;

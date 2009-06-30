@@ -35,8 +35,11 @@
 
 #include "Console.h"
 
+#include <wtf/PassOwnPtr.h>
+
 namespace WebCore {
 
+    class MessagePortChannel;
     class String;
 
     // A proxy to talk to the worker object.
@@ -44,7 +47,7 @@ namespace WebCore {
     public:
         virtual ~WorkerObjectProxy() {}
 
-        virtual void postMessageToWorkerObject(const String&) = 0;
+        virtual void postMessageToWorkerObject(const String&, PassOwnPtr<MessagePortChannel>) = 0;
 
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
 

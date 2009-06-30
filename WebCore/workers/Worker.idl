@@ -30,7 +30,8 @@ module threads {
 
         attribute EventListener onerror;
         attribute EventListener onmessage;
-        void postMessage(in DOMString message);
+        void postMessage(in DOMString message, in [Optional] MessagePort messagePort)
+            raises(DOMException);
 
         void terminate();
 

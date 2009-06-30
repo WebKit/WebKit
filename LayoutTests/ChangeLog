@@ -1,3 +1,26 @@
+2009-06-30  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25435>
+
+        Added tests for sending MessagePorts to/from workers.
+
+        * fast/workers/resources/worker-cloneport.js: Added.
+        (onmessage):
+        * fast/workers/resources/worker-messageport.js: Added.
+        (onmessage):
+        (pingBack):
+        * fast/workers/worker-cloneport-expected.txt: Added.
+        * fast/workers/worker-cloneport.html-disabled: Added.
+        Tests for cloning a port while messages are sent from another thread.
+        * fast/workers/worker-messageport-expected.txt: Added.
+        * fast/workers/worker-messageport.html-disabled: Added.
+        General tests for sending messages to workers via message ports.
+        * fast/workers/worker-messageport-gc-expected.txt: Added.
+        * fast/workers/worker-messageport-gc.html-disabled: Added.
+        Tests to ensure Workers don't shut down when reachable only via MessagePorts.
+
 2009-06-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

@@ -31,11 +31,13 @@
 #include "config.h"
 #include "MessageChannel.h"
 
-#include "Document.h"
-#include "Frame.h"
-
 #include "V8Binding.h"
 #include "V8Proxy.h"
+
+#include "Document.h"
+#include "Frame.h"
+#include "WorkerContext.h"
+#include "WorkerContextExecutionProxy.h"
 
 #include <wtf/RefPtr.h>
 
@@ -49,16 +51,21 @@ CALLBACK_FUNC_DECL(MessageChannelConstructor)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
 
-    // Get the document.
-    Frame* frame = V8Proxy::retrieveFrame();
-    if (!frame)
-        return v8::Undefined();
-
-    Document* document = frame->document();
+    // Get the ScriptExecutionContext (WorkerContext or Document)
+    ScriptExecutionContext* context = 0;
+    WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
+    if (proxy)
+        context = proxy->workerContext();
+    else {
+        Frame* frame = V8Proxy::retrieveFrame();
+        if (!frame)
+            return v8::Undefined();
+        context = frame->document();
+    }
 
     // Note: it's OK to let this RefPtr go out of scope because we also call
-    // setDOMWrapper(), which effectively holds a reference to obj.
-    RefPtr<MessageChannel> obj = MessageChannel::create(document);
+    // SetDOMWrapper(), which effectively holds a reference to obj.
+    RefPtr<MessageChannel> obj = MessageChannel::create(context);
 
     v8::Local<v8::Object> messageChannel = args.Holder();
 

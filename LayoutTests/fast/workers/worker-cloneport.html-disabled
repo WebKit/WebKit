@@ -1,0 +1,103 @@
+<body>
+<p>Test MessagePort messaging/entangle/detangle across threads. Should print "SUCCESS" when done.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+
+var channel = new MessageChannel();
+var numMessages = 50000;
+
+// Create a channel which we will use to clone and re-clone one end of a
+// MessageChannel.
+var cloneChannel = new MessageChannel();
+var stopCloning = false;
+cloneChannel.port1.onmessage = cloneChannel.port2.onmessage = resendPort;
+cloneChannel.port1.start();
+cloneChannel.port2.start();
+cloneChannel.port1.postMessage("", channel.port2);
+
+// Create worker with other end of port and have it send messages back to us
+// while we clone our end of the port repeatedly.
+var worker = new Worker("resources/worker-cloneport.js");
+worker.postMessage("postBack " + numMessages, channel.port1);
+
+// Test posting back 50000 messages, make sure ordering is fine
+worker.onmessage = function(evt) {
+    if (evt.data == "postBackDone") {
+        stopCloning = true;
+    } else {
+        // Log message from worker
+        log(evt.data);
+    }
+}
+
+// Keep cloning the passed port until we're told to stop.
+var numClones = 0;
+function resendPort(evt)
+{
+    if (!stopCloning) {
+        numClones++;
+        evt.target.postMessage("", evt.messagePort);
+    } else {
+        if (numClones < 1000) {
+            // If we didn't clone at least 1000 times, then there's something amiss.
+            log("FAIL: postBack complete, but only cloned " + numClones + " times.");
+        } else {
+            log("PASS: postBack complete, cloned > 1000 times.");
+        }
+        // Make sure the messages arrived in order.
+        var itemNum = 0;
+        // Queue up a task to execute once the messages have been processed. The timeout value doesn't matter, since timers won't fire until the message queue is cleared.
+        var timer = setTimeout(function() {
+            log("FAILURE: Received: " + itemNum + " events - expected: " + numMessages);
+        }, 10);
+        evt.messagePort.onmessage = function(event) {
+            var done = false;
+            if (event.data == itemNum) {
+                itemNum++;
+                if (itemNum == numMessages) {
+                    log("SUCCESS - received " + numMessages + " messages.");
+                    done = true;
+                }
+            } else {
+                log("FAILURE: Out of order message: expected #: " + itemNum + ", received: " + event.data);
+                done = true;
+            }
+            clearTimeout(timer);
+            if (done) {
+                gc();
+                setTimeout(reportDone, 100);  // Make sure no unexpected events come in.
+            }
+       }
+        evt.messagePort.start();
+    }
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // force garbage collection (FF requires about 9K allocations before a collect).
+        var s = new String("abc");
+    }
+}
+function reportDone()
+{
+     log("DONE");
+     if (window.layoutTestController)
+         layoutTestController.notifyDone();
+}
+
+</script>
+</body>
+</html>

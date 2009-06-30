@@ -1,3 +1,55 @@
+2009-06-30  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=25435>
+
+        Added support for sending MessagePorts to/from Workers via postMessage().
+
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::messageChannel):
+        Exposes MessageChannel constructor WorkerContext.
+        * bindings/js/JSWorkerCustom.cpp:
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        Now correctly handles being instantiated from within a Worker.
+       * platform/CrossThreadCopier.h:
+        (WebCore::GenericWorkerTaskTraits<PassOwnPtr>):
+        Added support for passing PassOwnPtr as argument to GenericWorkerTask
+       * workers/GenericWorkerTask.h:
+        (WebCore::):
+        * workers/Worker.cpp:
+        (WebCore::Worker::postMessage):
+        Now handles disentangling/entangling MessagePorts sent to/from via postMessage.
+        (WebCore::Worker::dispatchMessage):
+        * workers/Worker.h:
+        * workers/Worker.idl:
+        Added an optional MessagePort argument to postMessage()
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::hasPendingActivity):
+        Workers now report pending activity whenever there are remotely entangled ports.
+        (WebCore::WorkerContext::postMessage):
+        Now handles disentangling/entangling MessagePorts sent to/from via postMessage.
+        (WebCore::WorkerContext::dispatchMessage):
+        * workers/WorkerContext.h:
+        * workers/WorkerContext.idl:
+        Added an optional MessagePort argument to postMessage()
+        * workers/WorkerContextProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        Updated messaging infrastructure to transport an optional MessagePort/MessagePortChannel.
+        (WebCore::MessageWorkerContextTask::create):
+        (WebCore::MessageWorkerContextTask::MessageWorkerContextTask):
+        (WebCore::MessageWorkerContextTask::performTask):
+        (WebCore::MessageWorkerTask::create):
+        (WebCore::MessageWorkerTask::MessageWorkerTask):
+        (WebCore::MessageWorkerTask::performTask):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerContext):
+        * workers/WorkerMessagingProxy.h:
+        Added additional postMessage() API that accepts a MessagePort
+        * workers/WorkerObjectProxy.h:
+        Added additional postMessage() API that accepts a MessagePort
+
 2009-06-30  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.

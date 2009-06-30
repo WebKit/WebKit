@@ -30,7 +30,10 @@
 #include "JSWorkerContext.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
+#include "JSMessageChannelConstructor.h"
+#include "JSMessagePort.h"
 #include "JSWorkerLocation.h"
 #include "JSWorkerNavigator.h"
 #include "JSXMLHttpRequestConstructor.h"
@@ -137,6 +140,14 @@ JSValue JSWorkerContext::setInterval(ExecState* exec, const ArgList& args)
     int delay = args.at(1).toInt32(exec);
     return jsNumber(exec, impl()->setInterval(action, delay));
 }
+
+
+#if ENABLE(CHANNEL_MESSAGING)
+JSValue JSWorkerContext::messageChannel(ExecState* exec) const
+{
+    return getDOMConstructor<JSMessageChannelConstructor>(exec, this);
+}
+#endif
 
 } // namespace WebCore
 

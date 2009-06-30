@@ -41,7 +41,6 @@ module threads {
 #endif
                  attribute [Replaceable] WorkerLocation location;
         void close();
-        //         attribute EventListener onclose;
         //         attribute EventListener onerror;
 
         // WorkerUtils
@@ -52,9 +51,9 @@ module threads {
 
 
         // DedicatedWorkerGlobalScope
-        void postMessage(in DOMString message);
+        void postMessage(in DOMString message, in [Optional] MessagePort messagePort)
+            raises(DOMException);
                  attribute EventListener onmessage;
-
 
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
@@ -80,6 +79,9 @@ module threads {
         attribute MessageEventConstructor MessageEvent;
         attribute WorkerLocationConstructor WorkerLocation;
 
+#if ENABLE_CHANNEL_MESSAGING
+        attribute [JSCCustomGetter] MessageChannelConstructor MessageChannel;
+#endif
         attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
     };
 

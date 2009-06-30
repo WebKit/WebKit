@@ -32,6 +32,7 @@
 #define CrossThreadCopier_h
 
 #include <memory>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
@@ -70,6 +71,14 @@ namespace WebCore {
         static Type copy(const RefPtr<ThreadSafeShared<T> >& refPtr)
         {
             return PassRefPtr<T>(static_cast<T*>(refPtr.get()));
+        }
+    };
+
+    template<typename T> struct CrossThreadCopierBase<false, PassOwnPtr<T> > {
+        typedef PassOwnPtr<T> Type;
+        static Type copy(const PassOwnPtr<T>& ownPtr)
+        {
+            return PassOwnPtr<T>(static_cast<T*>(ownPtr.release()));
         }
     };
 
