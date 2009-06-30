@@ -1,3 +1,21 @@
+2009-06-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/6960286> CrashTracer: [REGRESSION] 1120 crashes in Safari at com.apple.WebCore WebCore::JSLazyEventListener::parseCode const + 62
+
+        <select> elements and other elements the produce popups can keep their popups
+        live across a page load.  If this occurs and the <select> element has an
+        onchange handler it is possible to get into a state where we try to execute
+        JS on a page that no longer has an execution context. 
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::parseCode):
+          Be paranoid and add a null check, but assert as well because we shouldn't
+          actually get to this point.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::valueChanged):
+
 2009-06-30  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
