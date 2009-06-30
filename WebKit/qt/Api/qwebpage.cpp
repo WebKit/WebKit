@@ -2193,7 +2193,7 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
 
     if (QWebFrame* webFrame = frameAt(event->pos())) {
         Frame* frame = QWebFramePrivate::core(webFrame);
-        if (Scrollbar* scrollbar = frame->view()->scrollbarUnderPoint(PlatformMouseEvent(event, 1).pos())) {
+        if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(PlatformMouseEvent(event, 1).pos())) {
             return scrollbar->contextMenu(PlatformMouseEvent(event, 1));
         }
     }

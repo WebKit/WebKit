@@ -1,3 +1,20 @@
+2009-06-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Renamed scrollbarUnderPoint to scrollbarAtPoint.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarAtPoint):
+        * platform/ScrollView.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::handleMouseDownEvent):
+        (WebCore::PopupListBox::handleMouseMoveEvent):
+
 2009-06-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

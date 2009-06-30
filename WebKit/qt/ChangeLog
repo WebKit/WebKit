@@ -1,3 +1,12 @@
+2009-06-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+        
+        Renamed scrollbarUnderPoint to scrollbarAtPoint to follow conventions.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::swallowContextMenuEvent):
+
 2009-06-30  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Adam Treat.
