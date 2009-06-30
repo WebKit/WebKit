@@ -138,7 +138,7 @@ class SCM:
     def display_name(self):
         raise NotImplementedError, "subclasses must implement"
 
-    def create_patch_command(self):
+    def create_patch(self):
         raise NotImplementedError, "subclasses must implement"
 
     def commit_with_message(self, message):
@@ -209,8 +209,8 @@ class SVN(SCM):
     def display_name(self):
         return "svn"
 
-    def create_patch_command(self):
-        return self.script_path("svn-create-patch")
+    def create_patch(self):
+        return self.run_command(self.script_path("svn-create-patch"))
 
     def commit_with_message(self, message):
         if self.dryrun:
@@ -267,8 +267,8 @@ class Git(SCM):
     def display_name(self):
         return "git"
 
-    def create_patch_command(self):
-        return "git diff HEAD"
+    def create_patch(self):
+        return self.run_command("git diff HEAD")
 
     def commit_with_message(self, message):
         self.commit_locally_with_message(message)

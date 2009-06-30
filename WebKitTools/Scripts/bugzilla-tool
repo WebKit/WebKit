@@ -32,6 +32,7 @@
 import fileinput # inplace file editing for set_reviewer_in_changelog
 import os
 import re
+import StringIO # for add_patch_to_bug file wrappers
 import subprocess
 import sys
 
@@ -403,11 +404,11 @@ class PostDiffAsPatchToBug(Command):
         if options.obsolete_patches:
             self.obsolete_patches_on_bug(bug_id, tool.bugs)
 
-        diff_process = subprocess.Popen(tool.scm().create_patch_command(), stdout=subprocess.PIPE, shell=True)
-        diff_process.wait() # Make sure svn-create-patch is done before we continue.
-        
+        diff = tool.scm().create_patch()
+        diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
+
         description = options.description or "patch"
-        tool.bugs.add_patch_to_bug(bug_id, diff_process.stdout, description, mark_for_review=options.review)
+        tool.bugs.add_patch_to_bug(bug_id, diff_file, description, mark_for_review=options.review)
 
 
 class PostCommitsAsPatchesToBug(Command):
@@ -443,10 +444,9 @@ class PostCommitsAsPatchesToBug(Command):
             comment_text += "---\n"
             comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
         
-            # This is a little bit of a hack, that we pass stdout as the patch file.
-            # We could alternatively make an in-memory file-like object with the patch contents.
-            diff_process = subprocess.Popen(tool.scm().show_diff_command_for_commit(commit_id), stdout=subprocess.PIPE, shell=True)
-            tool.bugs.add_patch_to_bug(bug_id, diff_process.stdout, description, comment_text, mark_for_review=options.review)
+            diff = tool.scm().create_patch()
+            diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
+            tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review)
 
 
 class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
