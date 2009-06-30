@@ -124,7 +124,7 @@ class Command:
         self.help_text = help_text
         self.argument_names = argument_names
         self.options = options
-        self.option_parser = OptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
+        self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
     
     def name_with_arguments(self, command_name):
         usage_string = command_name
@@ -459,6 +459,13 @@ class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
             return "\n" + epilog + "\n"
         return ""
 
+class HelpPrintingOptionParser(OptionParser):
+    def error(self, msg):
+        self.print_usage(sys.stderr)
+        error_message = "%s: error: %s\n" % (self.get_prog_name(), msg)
+        error_message += "\nType '" + self.get_prog_name() + " --help' to see usage.\n"
+        self.exit(2, error_message)
+
 class BugzillaTool:
     def __init__(self):
         self.cached_scm = None
@@ -476,7 +483,7 @@ class BugzillaTool:
             { 'name' : 'post-commits', 'object' : PostCommitsAsPatchesToBug() },
         ]
         
-        self.global_option_parser = OptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())
+        self.global_option_parser = HelpPrintingOptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())
         self.global_option_parser.add_option("--dry-run", action="store_true", dest="dryrun", help="do not touch remote servers", default=False)
     
     def scm(self):

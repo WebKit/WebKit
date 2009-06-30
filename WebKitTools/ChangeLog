@@ -10,6 +10,22 @@
 
 2009-06-30  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Nikolas Zimmermann.
+
+        Make bugzilla tool print a message explaining how to get help on failure:
+        https://bugs.webkit.org/show_bug.cgi?id=26861
+
+        % bugzilla-tool
+        Usage: bugzilla-tool [options] command [command-options] [command-arguments]
+
+        bugzilla-tool: error: No command specified
+
+        Type 'bugzilla-tool --help' to see usage.
+
+        * Scripts/bugzilla-tool:
+
+2009-06-30  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Maciej Stachowiak.
 
         Include a built copy of BeautifulSoup 3.1.0.1 so that
