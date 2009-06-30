@@ -2,6 +2,9 @@
 <qresource>
     <file>frametest/index.html</file>
     <file>frametest/frame_a.html</file>
+    <file>frametest/iframe.html</file>
+    <file>frametest/iframe2.html</file>
+    <file>frametest/iframe3.html</file>
 </qresource>
 </RCC>
 

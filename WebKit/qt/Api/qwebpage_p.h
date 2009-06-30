@@ -75,9 +75,6 @@ public:
 #ifndef QT_NO_CONTEXTMENU
     QMenu *createContextMenu(const WebCore::ContextMenu *webcoreMenu, const QList<WebCore::ContextMenuItem> *items, QBitArray *visitedWebActions);
 #endif
-
-    QWebFrame *frameAt(const QPoint &pos) const;
-
     void _q_onLoadProgressChanged(int);
     void _q_webActionTriggered(bool checked);
 #ifndef NDEBUG

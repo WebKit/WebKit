@@ -193,6 +193,7 @@ public:
 
     QWebFrame *mainFrame() const;
     QWebFrame *currentFrame() const;
+    QWebFrame* frameAt(const QPoint& pos) const;
 
     QWebHistory *history() const;
     QWebSettings *settings() const;

@@ -106,7 +106,7 @@ private slots:
     void textSelection();
     void textEditing();
     void backActionUpdate();
-
+    void frameAt();
     void requestCache();
 
 private:
@@ -1114,6 +1114,33 @@ void tst_QWebPage::backActionUpdate()
     QTRY_COMPARE(loadSpy.count(), 2);
 
     QVERIFY(action->isEnabled());
+}
+
+void frameAtHelper(QWebPage* webPage, QWebFrame* webFrame, QPoint framePosition)
+{
+    if (!webFrame)
+        return;
+
+    framePosition += QPoint(webFrame->pos());
+    QList<QWebFrame*> children = webFrame->childFrames();
+    for (int i = 0; i < children.size(); ++i) {
+        if (children.at(i)->childFrames().size() > 0)
+            frameAtHelper(webPage, children.at(i), framePosition);
+
+        QRect frameRect(children.at(i)->pos() + framePosition, children.at(i)->geometry().size());
+        QVERIFY(children.at(i) == webPage->frameAt(frameRect.topLeft()));
+    }
+}
+
+void tst_QWebPage::frameAt()
+{
+    QWebView webView;
+    QWebPage* webPage = webView.page();
+    QSignalSpy loadSpy(webPage, SIGNAL(loadFinished(bool)));
+    QUrl url = QUrl("qrc:///frametest/iframe.html");
+    webPage->mainFrame()->load(url);
+    QTRY_COMPARE(loadSpy.count(), 1);
+    frameAtHelper(webPage, webPage->mainFrame(), webPage->mainFrame()->pos());
 }
 
 QTEST_MAIN(tst_QWebPage)
