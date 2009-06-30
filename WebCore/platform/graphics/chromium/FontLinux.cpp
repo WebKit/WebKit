@@ -101,7 +101,6 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         SkPaint paint;
         gc->platformContext()->setupPaintForStroking(&paint, 0, 0);
         font->platformData().setupPaint(&paint);
-        paint.setFlags(SkPaint::kAntiAlias_Flag);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
         paint.setColor(gc->strokeColor().rgb());
 
@@ -142,8 +141,9 @@ static int truncateFixedPointToInteger(HB_Fixed value)
 // can call |reset| to start over again.
 class TextRunWalker {
 public:
-    TextRunWalker(const TextRun& run, SkPaint* paint, unsigned startingX, const FontPlatformData* font)
-        : m_run(run)
+    TextRunWalker(const TextRun& run, unsigned startingX, const Font* font)
+        : m_font(font)
+        , m_run(run)
         , m_startingX(startingX)
         , m_offsetX(m_startingX)
         , m_iterateBackwards(run.rtl())
@@ -158,11 +158,8 @@ public:
 
         m_item.log_clusters = new unsigned short[run.length()];
 
-        m_item.face = HB_NewFace(const_cast<FontPlatformData*>(font), harfbuzzSkiaGetTable);
-        m_item.font = allocHarfbuzzFont(const_cast<FontPlatformData*>(font));
-        // This sets up the SkPaint graphics context such that the text related
-        // input will always by assumed to be font specific glyph ids.
-        paint->setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+        m_item.face = 0;
+        m_item.font = allocHarfbuzzFont();
 
         m_item.string = run.characters();
         m_item.stringLength = run.length();
@@ -176,7 +173,8 @@ public:
         fastFree(m_item.font);
         deleteGlyphArrays();
         delete[] m_item.log_clusters;
-        HB_FreeFace(m_item.face);
+        if (m_item.face)
+            HB_FreeFace(m_item.face);
     }
 
     void reset()
@@ -223,6 +221,8 @@ public:
             if (!hb_utf16_script_run_next(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
                 return false;
         }
+
+        setupFontForScriptRun();
 
         if (!shapeGlyphs())
             return false;
@@ -277,6 +277,10 @@ public:
         return m_numCodePoints;
     }
 
+    const FontPlatformData* fontPlatformDataForScriptRun()
+    {
+        return reinterpret_cast<FontPlatformData*>(m_item.font->userData);
+    }
 
     float widthOfFullRun()
     {
@@ -288,12 +292,25 @@ public:
     }
 
 private:
-    HB_FontRec* allocHarfbuzzFont(void* userData)
+    void setupFontForScriptRun()
+    {
+        const FontData* fontData = m_font->fontDataAt(0);
+        if (!fontData->containsCharacters(m_item.string + m_item.item.pos, m_item.item.length))
+            fontData = m_font->fontDataForCharacters(m_item.string + m_item.item.pos, m_item.item.length);
+        const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
+        void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
+        m_item.font->userData = opaquePlatformData;
+        if (m_item.face)
+            HB_FreeFace(m_item.face);
+        m_item.face = HB_NewFace(opaquePlatformData, harfbuzzSkiaGetTable);
+    }
+
+    HB_FontRec* allocHarfbuzzFont()
     {
         HB_FontRec* font = reinterpret_cast<HB_FontRec*>(fastMalloc(sizeof(HB_FontRec)));
         memset(font, 0, sizeof(HB_FontRec));
         font->klass = &harfbuzzSkiaClass;
-        font->userData = userData;
+        font->userData = 0;
         // The values which harfbuzzSkiaClass returns are already scaled to
         // pixel units, so we just set all these to one to disable further
         // scaling.
@@ -372,6 +389,7 @@ private:
         m_offsetX += m_pixelWidth;
     }
 
+    const Font* const m_font;
     const TextRun& m_run;
     HB_ShaperItem m_item;
     uint16_t* m_glyphs16; // A vector of 16-bit glyph ids.
@@ -385,17 +403,10 @@ private:
     bool m_iterateBackwards;
 };
 
-static void setupForTextPainting(const FontPlatformData& font, SkPaint* paint, SkColor color)
+static void setupForTextPainting(SkPaint* paint, SkColor color)
 {
-    font.setupPaint(paint);
-    paint->setFlags(SkPaint::kAntiAlias_Flag);
     paint->setTextEncoding(SkPaint::kGlyphID_TextEncoding);
     paint->setColor(color);
-}
-
-static FontPlatformData fontPlatformDataForTextRun(const Font* font, const TextRun& run)
-{
-    return font->fontDataForCharacters(run.characters(), run.length())->fontDataForCharacter(' ')->platformData();
 }
 
 void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
@@ -403,8 +414,6 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
 {
     if (!run.length())
         return;
-
-    const FontPlatformData& font = fontPlatformDataForTextRun(this, run);
 
     SkCanvas* canvas = gc->platformContext()->canvas();
     int textMode = gc->platformContext()->getTextDrawingMode();
@@ -419,30 +428,31 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
     SkPaint strokePaint, fillPaint;
     if (fill) {
         gc->platformContext()->setupPaintForFilling(&fillPaint);
-        setupForTextPainting(font, &fillPaint, gc->fillColor().rgb());
+        setupForTextPainting(&fillPaint, gc->fillColor().rgb());
     }
     if (stroke) {
         gc->platformContext()->setupPaintForStroking(&strokePaint, 0, 0);
-        setupForTextPainting(font, &strokePaint, gc->strokeColor().rgb());
+        setupForTextPainting(&strokePaint, gc->strokeColor().rgb());
     }
 
-    TextRunWalker walker(run, stroke ? &strokePaint : &fillPaint, point.x(), &font);
+    TextRunWalker walker(run, point.x(), this);
 
     while (walker.nextScriptRun()) {
-        if (fill)
+        if (fill) {
+            walker.fontPlatformDataForScriptRun()->setupPaint(&fillPaint);
             canvas->drawPosTextH(walker.glyphs(), walker.length() << 1, walker.xPositions(), point.y(), fillPaint);
-        if (stroke)
+        }
+
+        if (stroke) {
+            walker.fontPlatformDataForScriptRun()->setupPaint(&strokePaint);
             canvas->drawPosTextH(walker.glyphs(), walker.length() << 1, walker.xPositions(), point.y(), strokePaint);
+        }
     }
 }
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */) const
 {
-    SkPaint paint;
-    const FontPlatformData& font = fontPlatformDataForTextRun(this, run);
-    font.setupPaint(&paint);
-
-    TextRunWalker walker(run, &paint, 0, &font);
+    TextRunWalker walker(run, 0, this);
     return walker.widthOfFullRun();
 }
 
@@ -473,11 +483,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x,
 {
     // (Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.)
-    SkPaint paint;
-    const FontPlatformData& font = fontPlatformDataForTextRun(this, run);
-    font.setupPaint(&paint);
-
-    TextRunWalker walker(run, &paint, 0, &font);
+    TextRunWalker walker(run, 0, this);
 
     // If this is RTL text, the first glyph from the left is actually the last
     // code point. So we need to know how many code points there are total in
@@ -546,13 +552,8 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
                                             const IntPoint& point, int height,
                                             int from, int to) const
 {
-    SkPaint paint;
-    const FontPlatformData& font = fontPlatformDataForTextRun(this, run);
-    font.setupPaint(&paint);
-
     int fromX = -1, toX = -1, fromAdvance = -1, toAdvance = -1;
-
-    TextRunWalker walker(run, &paint, 0, &font);
+    TextRunWalker walker(run, 0, this);
 
     // Base will point to the x offset for the current script run. Note that, in
     // the LTR case, width will be 0.

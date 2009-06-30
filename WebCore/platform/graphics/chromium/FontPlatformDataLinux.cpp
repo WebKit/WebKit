@@ -92,7 +92,6 @@ void FontPlatformData::setupPaint(SkPaint* paint) const
     paint->setTypeface(m_typeface);
     paint->setFakeBoldText(m_fakeBold);
     paint->setTextSkewX(m_fakeItalic ? -SK_Scalar1 / 4 : 0);
-    paint->setTextEncoding(SkPaint::kUTF16_TextEncoding);
 }
 
 SkFontID FontPlatformData::uniqueID() const

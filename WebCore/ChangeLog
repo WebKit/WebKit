@@ -1,3 +1,37 @@
+2009-06-30  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Chromium Linux: use different fonts for each script run.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26853
+
+        Previously, when rendering complex text, we picked a single font which
+        could render all the glyphs needed for the run. However, this meant
+        that sometimes lines were rendered with, for example, [LATIN, THAI,
+        LATIN] and we could end up with a different font for the Latin parts
+        than for lines without Thai in them.
+
+        With this patch, we pick a font for each script run.
+
+        This change is covered by existing layout tests.
+
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::drawGlyphs):
+        (WebCore::TextRunWalker::TextRunWalker):
+        (WebCore::TextRunWalker::~TextRunWalker):
+        (WebCore::TextRunWalker::nextScriptRun):
+        (WebCore::TextRunWalker::fontPlatformDataForScriptRun):
+        (WebCore::TextRunWalker::setupFontForScriptRun):
+        (WebCore::TextRunWalker::allocHarfbuzzFont):
+        (WebCore::setupForTextPainting):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::setupPaint):
+
 2009-06-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt, Dan Bernstein.
