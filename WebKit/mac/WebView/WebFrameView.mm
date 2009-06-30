@@ -321,7 +321,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         bool throwExceptionsForRoundTwo = WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_ROUND_TWO_MAIN_THREAD_EXCEPTIONS);
 #ifdef MAIL_THREAD_WORKAROUND
         // Even if old Mail is linked with new WebKit, don't throw exceptions.
-        if (needMailThreadWorkaround())
+        if ([WebResource _needMailThreadWorkaroundIfCalledOffMainThread])
             throwExceptionsForRoundTwo = false;
 #endif
         if (!throwExceptionsForRoundTwo)

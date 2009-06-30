@@ -1,3 +1,15 @@
+2009-06-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        <rdar://problem/7006959> 'Save as…’ does not work in Mail
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView initWithFrame:]): Call _needMailThreadWorkaroundIfCalledOffMainThread rather than
+        needMailThreadWorkaround, as the latter is intended to be used at the point which a workaround would
+        be applied and thus contains a main thread check.  Since -initWithFrame: is called on the main thread,
+        this was causing us to not switch from exception-throwing to logging for the thread violation behavior.
+
 2009-06-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
