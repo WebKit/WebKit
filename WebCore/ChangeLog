@@ -1,3 +1,11 @@
+2009-06-29  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        Remove unused function.
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+
 2009-06-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

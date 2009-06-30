@@ -39,49 +39,6 @@
 
 namespace WebCore {
 
-static PlatformModuleVersion getModuleVersion(const char *description)
-{
-    // It's a bit lame to detect the plugin version by parsing it
-    // from the plugin description string, but it doesn't seem that
-    // version information is available in any standardized way at
-    // the module level, like in Windows
-
-    PlatformModuleVersion version = 0;
-
-    if (!description)
-        return 0;
-
-    if (g_str_has_prefix(description, "Shockwave Flash ") && strlen(description) >= 19) {
-        // The flash version as a PlatformModuleVersion differs in GTK from Windows
-        // since the revision can be larger than a 8 bits, so we allow it 16 here and
-        // push the major/minor up 8 bits. Thus in GTK, Flash's version may be
-        // 0x0a000000 instead of 0x000a0000. This avoids having to modify 
-        // PlatformModuleVersion in the GTK port 
-
-        char **version_parts = g_strsplit(description + 16, " ", -1);
-        if (!version_parts)
-            return 0;
-
-        int parts_length = g_strv_length(version_parts);
-
-        if (parts_length >= 1) {
-            guint16 major = 0, minor = 0;
-            if (sscanf(version_parts[0], "%" G_GUINT16_FORMAT ".%" G_GUINT16_FORMAT, &major, &minor) == 2)
-                version = ((guint8)major << 24) | ((guint8)minor << 16);
-        }
-
-        if (parts_length >= 2) {
-            char *rev_str = version_parts[1];
-            if (strlen(rev_str) > 1 && (rev_str[0] == 'r' || rev_str[0] == 'b'))
-                version |= (guint16)atoi(rev_str + 1);
-        }
-        
-        g_strfreev(version_parts);
-    }
-
-    return version;
-}
-
 bool PluginPackage::fetchInfo()
 {
 #if defined(XP_UNIX)
