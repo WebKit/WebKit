@@ -1,3 +1,18 @@
+2009-06-30  Jeremy Orlow (jorlow@chromium.org)
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26852
+
+        Fix some minor build issues in the v8 bindings.
+
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore::V8Custom::v8StorageNamedPropertyEnumerator):
+        (WebCore::storageGetter):
+        (WebCore::storageSetter):
+        (WebCore::storageDeleter):
+        * storage/StorageArea.cpp:
+
 2009-06-30  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.
