@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        Updated LayoutTests/fast/css/getComputedStyle/computed-style-font-family-expected.txt
+        according to the default font size value set in WebKit/qt/Api/qwebsettings.cpp (in
+        this case '14').
+
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+
+2009-06-30  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
         Updated LayoutTests/platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt
         to some newly cross-platform CSS properties.
 
