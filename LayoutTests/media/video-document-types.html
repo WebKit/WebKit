@@ -1,6 +1,11 @@
 <html>
     <head>
         <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
         function log(msg)
         {
             document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
@@ -15,8 +20,6 @@
                 log("FAIL: <video> NOT used");
 
             if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
                 layoutTestController.notifyDone();
             }
         }

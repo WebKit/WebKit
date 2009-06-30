@@ -1,3 +1,12 @@
+2009-06-30  David Levin  <levin@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Make media/video-document-types pass again.  It broke when the
+        call to waitUntilDone was accidently made asynchronous in r45378.
+
+        * media/video-document-types.html:
+
 2009-06-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt, Dan Bernstein.
