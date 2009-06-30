@@ -1,0 +1,106 @@
+<html>
+<body>
+    <pre id="console"></pre>
+    <datagrid id="test"><dcol id="from" label="From" type="text" primary><dcol id="subject" label="Subject" type="text"></datagrid>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+        }
+
+        var datagrid = document.getElementById('test');
+
+        // Test initial value.
+        if (datagrid.columns != null) {
+            log("PASS: Initial value of datagrid.columns is defined.");
+        } else {
+            log("FAIL: Initial value of datagrid.columns was null.");
+        }
+
+        // Test initial length.
+        if (datagrid.columns.length == 2) {
+            log("PASS: Initial length of datagrid.columns is 2.");
+        } else {
+            log("FAIL: Initial length of datagrid.columns was " + datagrid.columns.length + ".");
+        }
+        
+        // Test adding a column.
+        var newCol = document.createElement("dcol");
+        newCol.setAttribute("id", "date");
+        newCol.setAttribute("label", "Date Received");
+        newCol.setAttribute("type", "text");
+        var column = datagrid.appendChild(newCol);
+        
+        // Make sure the column list now has three columns.
+        if (datagrid.columns.length == 3) {
+            log("PASS: We have three columns in the list.");
+        } else {
+            log("FAIL: Expected three columns in the list but have " + datagrid.columns.length + " columns instead.");
+        }
+        
+        // Examine the first column's properties to make sure they are what we expected.
+        var column = datagrid.columns[0];
+        if (column.id == "from") {
+            log("PASS: The column's ID is from as expected.");
+        } else {
+            log("FAIL: The column's ID should be from but is " + column.id + " instead.");
+        }
+        
+        if (column.label == "From") {
+            log("PASS: The column's label is From as expected.");
+        } else {
+            log("FAIL: The column's label should be From but is " + column.label + " instead.");
+        }
+
+        if (column.type == "text") {
+            log("PASS: The column's type is text as expected.");
+        } else {
+            log("FAIL: The column's type should be text but is " + column.type + " instead.");
+        }
+    
+        if (column.primary) {
+            log("PASS: The column's primary property is true as expected.");
+        } else {
+            log("FAIL: The column's primary property should be true but isn't.");
+        }
+
+        if (column.sortable == 2) {
+            log("PASS: The column's sortable property is 2 as expected.");
+        } else {
+            log("FAIL: The column's sortable property should be 2 but is " + column.sortable + " instead.");
+        }
+
+        // Make sure the from column is the primary column.
+        if (datagrid.columns.primaryColumn == column) {
+            log("PASS: The first column is the primary column.");
+        } else {
+            log("FAIL: The first column is not the primary column as expected.");
+        }
+
+        // Yank the first column out.
+        datagrid.removeChild(datagrid.firstChild);
+        
+        // Check the column count now.
+        if (datagrid.columns.length == 2) {
+            log("PASS: After removing a column, the length of datagrid.columns is 2.");
+        } else {
+            log("FAIL: After removing a column, the length of datagrid.columns is " + datagrid.columns.length + ".");
+        }
+        
+        // There should no longer be a primary column.
+        if (!datagrid.columns.primaryColumn) {
+            log("PASS: No column is the primary column.");
+        } else {
+            log("FAIL: There is a primary column, but there should not be.");
+        }
+    
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    </script>
+</body>
+</html>

@@ -93,19 +93,22 @@ void HTMLDataGridElement::setMultiple(bool multiple)
 
 void HTMLDataGridElement::setDataSource(PassRefPtr<DataGridDataSource> ds)
 {
+    if (m_dataSource == ds)
+        return;
+    
     RefPtr<DataGridDataSource> dataSource = ds;
     if (!dataSource)
         dataSource = DOMDataGridDataSource::create();
     m_dataSource = dataSource;
+    
+    // Always clear our columns when a data source changes.
+    // The register callback will rebuild the columns.
+    m_columns->clear();
 }
 
 DataGridDataSource* HTMLDataGridElement::dataSource() const
 {
     ASSERT(m_dataSource);
-
-    if (m_dataSource->isDOMDataGridDataSource())
-        return 0;
-
     return m_dataSource.get();
 }
 

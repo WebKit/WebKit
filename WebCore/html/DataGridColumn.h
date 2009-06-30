@@ -38,9 +38,9 @@ class DataGridColumnList;
 
 class DataGridColumn : public RefCounted<DataGridColumn> {
 public:
-    static PassRefPtr<DataGridColumn> create(DataGridColumnList* columns, const String& columnID, const String& label, const String& type, bool primary, unsigned short sortable)
+    static PassRefPtr<DataGridColumn> create(const String& columnID, const String& label, const String& type, bool primary, unsigned short sortable)
     {
-        return adoptRef(new DataGridColumn(columns, columnID, label, type, primary, sortable));
+        return adoptRef(new DataGridColumn(columnID, label, type, primary, sortable));
     }
 
     const AtomicString& id() const { return m_id; }
@@ -61,11 +61,11 @@ public:
     bool primary() const { return m_primary; }
     void setPrimary(bool);
 
-    void detachFromColumnList() { m_columns = 0; }
+    void setColumnList(DataGridColumnList* list) { m_columns = list; }
 
 private:
-    DataGridColumn(DataGridColumnList* columns, const String& columnID, const String& label, const String& type, bool primary, unsigned short sortable)
-        : m_columns(columns)
+    DataGridColumn(const String& columnID, const String& label, const String& type, bool primary, unsigned short sortable)
+        : m_columns(0)
         , m_id(columnID)
         , m_label(label)
         , m_type(type)

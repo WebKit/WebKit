@@ -51,11 +51,16 @@ DataGridColumn* DataGridColumnList::itemWithName(const AtomicString& name) const
 
 DataGridColumn* DataGridColumnList::add(const String& id, const String& label, const String& type, bool primary, unsigned short sortable)
 {
-    RefPtr<DataGridColumn> column = DataGridColumn::create(this, id, label, type, primary, sortable);
-    if (primary)
+    return add(DataGridColumn::create(id, label, type, primary, sortable).get());
+}
+
+DataGridColumn* DataGridColumnList::add(DataGridColumn* column)
+{
+    if (column->primary())
         m_primaryColumn = column;
     m_columns.append(column);
-    return column.get();
+    column->setColumnList(this);
+    return column;
 }
 
 void DataGridColumnList::remove(DataGridColumn* col)
@@ -68,6 +73,7 @@ void DataGridColumnList::remove(DataGridColumn* col)
         m_primaryColumn = 0;
     if (col == m_sortColumn)
         m_sortColumn = 0;
+    col->setColumnList(0);
 }
 
 void DataGridColumnList::move(DataGridColumn* col, unsigned long index)
@@ -82,7 +88,7 @@ void DataGridColumnList::clear()
 {
     unsigned length = m_columns.size();
     for (unsigned i = 0; i < length; ++i)
-        m_columns[i]->detachFromColumnList();
+        m_columns[i]->setColumnList(0);
     m_columns.clear();
     m_primaryColumn = 0;
     m_sortColumn = 0;

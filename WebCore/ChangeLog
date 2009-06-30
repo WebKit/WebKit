@@ -1,3 +1,41 @@
+<<<<<<< .mine
+2009-06-30  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26858
+
+        Get <dcol> elements reflected into the datagrid's column list.  Make sure columns get added/removed
+        properly.  (Attribute changes are still not caught.  That is coming in a separate patch.)
+
+        Added fast/dom/HTMLDataGridElement/DataGridColumns-dom.html
+
+        * html/DataGridColumn.h:
+        (WebCore::DataGridColumn::create):
+        (WebCore::DataGridColumn::setColumnList):
+        (WebCore::DataGridColumn::DataGridColumn):
+        * html/DataGridColumnList.cpp:
+        (WebCore::DataGridColumnList::add):
+        (WebCore::DataGridColumnList::remove):
+        (WebCore::DataGridColumnList::clear):
+        * html/DataGridColumnList.h:
+        * html/HTMLDataGridColElement.cpp:
+        (WebCore::HTMLDataGridColElement::HTMLDataGridColElement):
+        (WebCore::HTMLDataGridColElement::findDatagridAncestor):
+        (WebCore::HTMLDataGridColElement::ensureColumn):
+        (WebCore::HTMLDataGridColElement::insertedIntoTree):
+        (WebCore::HTMLDataGridColElement::removedFromTree):
+        (WebCore::HTMLDataGridColElement::sortable):
+        (WebCore::HTMLDataGridColElement::setSortable):
+        * html/HTMLDataGridColElement.h:
+        (WebCore::HTMLDataGridColElement::column):
+        (WebCore::HTMLDataGridColElement::setColumn):
+        (WebCore::HTMLDataGridColElement::datagrid):
+        * html/HTMLDataGridElement.cpp:
+        (WebCore::HTMLDataGridElement::setDataSource):
+        (WebCore::HTMLDataGridElement::dataSource):
+
+=======
 2009-06-30  Jeremy Orlow (jorlow@chromium.org)
 
         Reviewed by David Levin.
@@ -13,6 +51,7 @@
         (WebCore::storageDeleter):
         * storage/StorageArea.cpp:
 
+>>>>>>> .r45396
 2009-06-30  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.

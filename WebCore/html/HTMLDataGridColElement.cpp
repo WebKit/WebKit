@@ -27,6 +27,8 @@
 
 #if ENABLE(DATAGRID)
 
+#include "DataGridColumn.h"
+#include "HTMLDataGridElement.h"
 #include "HTMLDataGridColElement.h"
 
 #include "HTMLNames.h"
@@ -38,9 +40,48 @@ using namespace HTMLNames;
 
 HTMLDataGridColElement::HTMLDataGridColElement(const QualifiedName& name, Document* doc)
     : HTMLElement(name, doc)
+    , m_datagrid(0)
 {
 }
 
+HTMLDataGridElement* HTMLDataGridColElement::findDatagridAncestor() const
+{
+    if (parent() && parent()->hasTagName(datagridTag))
+        return static_cast<HTMLDataGridElement*>(parent());
+    return 0;
+}
+
+void HTMLDataGridColElement::ensureColumn()
+{
+    if (m_column)
+        return;
+    m_column = DataGridColumn::create(getAttribute(idAttr), label(), type(), primary(), sortable());
+}
+
+void HTMLDataGridColElement::insertedIntoTree(bool deep)
+{
+    HTMLElement::insertedIntoTree(deep);
+    if (datagrid()) // We're connected to a datagrid already.
+        return;
+    m_datagrid = findDatagridAncestor();
+    if (datagrid() && datagrid()->dataSource()->isDOMDataGridDataSource()) {
+        ensureColumn();
+        m_datagrid->columns()->add(column()); // FIXME: Deal with ordering issues (complicated, since columns can be made outside the DOM).
+    }
+}
+
+void HTMLDataGridColElement::removedFromTree(bool deep)
+{
+    HTMLElement::removedFromTree(deep);
+    if (datagrid() && datagrid()->dataSource()->isDOMDataGridDataSource()) {
+        HTMLDataGridElement* grid = findDatagridAncestor();
+        if (!grid && column()) {
+            datagrid()->columns()->remove(column());
+            m_datagrid = 0;
+        }
+    }
+}
+    
 String HTMLDataGridColElement::label() const
 {
     return getAttribute(labelAttr);
@@ -63,12 +104,14 @@ void HTMLDataGridColElement::setType(const String& type)
 
 unsigned short HTMLDataGridColElement::sortable() const
 {
-    return hasAttribute(sortableAttr);
+    if (!hasAttribute(sortableAttr))
+        return 2;
+    return getAttribute(sortableAttr).toInt(0);
 }
 
 void HTMLDataGridColElement::setSortable(unsigned short sortable)
 {
-    setAttribute(sortableAttr, sortable ? "" : 0);
+    setAttribute(sortableAttr, String::number(sortable));
 }
 
 unsigned short HTMLDataGridColElement::sortDirection() const

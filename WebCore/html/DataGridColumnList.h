@@ -33,6 +33,7 @@ public:
     DataGridColumn* sortColumn() const { return m_sortColumn.get(); }
 
     DataGridColumn* add(const String& id, const String& label, const String& type, bool primary, unsigned short sortable);
+    DataGridColumn* add(DataGridColumn*);
     void remove(DataGridColumn*);
     void move(DataGridColumn*, unsigned long index);
     void clear();

@@ -1,3 +1,12 @@
+2009-06-30  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Add layout test for https://bugs.webkit.org/show_bug.cgi?id=26858.
+
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-expected.txt: Added.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom.html: Added.
+
 2009-06-30  Antonio Gomes   <antonio.gomes@openbossa.org>
 
         Reviewed by Simon Hausmann.
