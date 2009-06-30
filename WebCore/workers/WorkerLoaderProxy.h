@@ -33,11 +33,11 @@
 
 #if ENABLE(WORKERS)
 
+#include "ScriptExecutionContext.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-    class ScriptExecutionContext::Task;
     class String;
 
     // A proxy to talk to the loader context. Normally, the document on the main thread

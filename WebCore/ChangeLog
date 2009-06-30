@@ -1,5 +1,24 @@
 2009-06-29  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26831
+        Fix compiler warning in WorkerLoaderProxy.h
+
+        Forward declaration of a class within a class is not allowed,
+        since the compiler can't know if the declaration is legal at that
+        point. This gives the following compiler warning:
+
+        ../../WebCore/workers/WorkerLoaderProxy.h:40: warning: declaration
+        "class WebCore::ScriptExecutionContext::Task" does not declare
+        anything
+
+        Include the full ScriptExecutionHeader header instead.
+
+        * workers/WorkerLoaderProxy.h:
+
+2009-06-29  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Jan Alonzo.
 
         Remove unused function.
