@@ -1,3 +1,19 @@
+2009-06-29  David Levin  <levin@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        Still seeing occasional leaks from UString::sharedBuffer code
+        https://bugs.webkit.org/show_bug.cgi?id=26420
+
+        The problem is that the pointer to the memory allocation isn't visible
+        by "leaks" due to the lower bits being used as flags.  The fix is to
+        make the pointer visible in memory (in debug only). The downside of
+        this fix that the memory allocated by sharedBuffer will still look like
+        a leak in non-debug builds when any flags are set.
+
+        * wtf/PtrAndFlags.h:
+        (WTF::PtrAndFlags::set):
+
 2009-06-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
