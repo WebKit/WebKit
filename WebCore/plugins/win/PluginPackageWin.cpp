@@ -81,9 +81,16 @@ bool PluginPackage::isPluginBlacklisted()
 
         if (compareFileVersion(slPluginMinRequired) < 0)
             return true;
-    } else if (fileName() == "npmozax.dll")
+    } else if (fileName() == "npmozax.dll") {
         // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
         return true;
+    } else if (name() == "Yahoo Application State Plugin") {
+        // https://bugs.webkit.org/show_bug.cgi?id=26860
+        // Bug in Yahoo Application State plug-in earlier than 1.0.0.6 leads to heap corruption. 
+        static const PlatformModuleVersion yahooAppStatePluginMinRequired(0x00000006, 0x00010000);
+        if (compareFileVersion(yahooAppStatePluginMinRequired) < 0)
+            return true;
+    }
 
     return false;
 }
