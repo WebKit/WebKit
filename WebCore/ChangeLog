@@ -1,3 +1,13 @@
+2009-06-30  Raju Kunnath  <raju.kunnath@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=26752>
+
+        [Qt] Windows release build issue with Qt4.5 due to -GL flag on msvc2005 and msvc2008. 
+
+        * WebCore.pro: Removed -GL compiler option for win32-msvc2005|win32-msvc2008.
+
 2009-06-30  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.

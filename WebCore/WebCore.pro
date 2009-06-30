@@ -58,6 +58,12 @@ freebsd-*: DEFINES += HAVE_PTHREAD_NP_H
 
 DEFINES += BUILD_WEBKIT
 
+# Remove whole program optimizations due to miscompilations
+win32-msvc2005|win32-msvc2008:{
+    QMAKE_CFLAGS_RELEASE -= -GL
+    QMAKE_CXXFLAGS_RELEASE -= -GL
+}
+
 win32-*: DEFINES += _HAS_TR1=0
 wince* {
 #    DEFINES += ENABLE_SVG=0 ENABLE_XPATH=0 ENABLE_XBL=0 \
