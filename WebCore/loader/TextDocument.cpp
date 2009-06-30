@@ -162,6 +162,8 @@ void TextTokenizer::write(const SegmentedString& s, bool)
 
 void TextTokenizer::finish()
 {
+    if (!m_preElement)
+        write(SegmentedString(), true); // Create document structure for an empty text document.
     m_preElement = 0;
     fastFree(m_buffer);
     m_buffer = 0;

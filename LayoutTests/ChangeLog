@@ -1,3 +1,13 @@
+2009-06-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26764
+        Uncaught NOT_FOUND_ERR: DOMException 8 loading empty text file
+
+        * fast/parser/empty-text-resource-expected.txt: Added.
+        * fast/parser/empty-text-resource.html: Added.
+
 2009-06-30  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
