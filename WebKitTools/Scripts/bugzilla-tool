@@ -261,7 +261,7 @@ class LandAndUpdateBug(Command):
 
         comment_text = LandPatchesFromBugs.build_and_commit(tool.scm(), options)
         if bug_id:
-            log("Updating bug %s", bug_id)
+            log("Updating bug %s" % bug_id)
             if options.close:
                 tool.bugs.close_bug_as_fixed(bug_id, comment_text)
             else:

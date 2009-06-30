@@ -1,5 +1,20 @@
 2009-06-30  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Include a built copy of BeautifulSoup 3.1.0.1 so that
+        bugzilla-tool users do not need to install it manually.
+        https://bugs.webkit.org/show_bug.cgi?id=26833
+
+        BeautifulSoup is BSD-licensed (thus WebKit compatible) and available from:
+        http://www.crummy.com/software/BeautifulSoup
+
+        * Scripts/bugzilla-tool: fixed a typo in a log message.
+        * Scripts/modules/BeautifulSoup.py: Added.
+        * Scripts/modules/bugzilla.py:
+
+2009-06-30  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Simon Hausmann.
 
         Fix our create_patch handling to not

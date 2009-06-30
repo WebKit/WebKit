@@ -33,18 +33,20 @@ import subprocess
 import sys
 import urllib2
 
+# WebKit includes a built copy of BeautifulSoup in Scripts/modules
+# so this import should always succeed.
+from .BeautifulSoup import BeautifulSoup
+
 try:
-    from BeautifulSoup import BeautifulSoup
     from mechanize import Browser
 except ImportError, e:
     print """
-BeautifulSoup and mechanize are required.
+mechanize is required.
 
 To install:
-sudo easy_install BeautifulSoup mechanize
+sudo easy_install mechanize
 
 Or from the web:
-http://www.crummy.com/software/BeautifulSoup/
 http://wwwsearch.sourceforge.net/mechanize/
 """
     exit(1)
