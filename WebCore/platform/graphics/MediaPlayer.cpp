@@ -437,6 +437,11 @@ void MediaPlayer::paint(GraphicsContext* p, const IntRect& r)
     m_private->paint(p, r);
 }
 
+void MediaPlayer::paintCurrentFrameInContext(GraphicsContext* p, const IntRect& r)
+{
+    m_private->paintCurrentFrameInContext(p, r);
+}
+
 MediaPlayer::SupportsType MediaPlayer::supportsType(ContentType contentType)
 {
     String type = contentType.type();

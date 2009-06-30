@@ -186,7 +186,7 @@ void HTMLVideoElement::updatePosterImage()
 #endif
 }
 
-void HTMLVideoElement::paint(GraphicsContext* context, const IntRect& r)
+void HTMLVideoElement::paint(GraphicsContext* context, const IntRect& destRect)
 {
     // FIXME: We should also be able to paint the poster image.
 
@@ -195,7 +195,19 @@ void HTMLVideoElement::paint(GraphicsContext* context, const IntRect& r)
         return;
 
     player->setVisible(true); // Make player visible or it won't draw.
-    player->paint(context, r);
+    player->paint(context, destRect);
+}
+
+void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& destRect)
+{
+    // FIXME: We should also be able to paint the poster image.
+    
+    MediaPlayer* player = HTMLMediaElement::player();
+    if (!player)
+        return;
+    
+    player->setVisible(true); // Make player visible or it won't draw.
+    player->paintCurrentFrameInContext(context, destRect);
 }
 
 }

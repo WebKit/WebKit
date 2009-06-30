@@ -1,3 +1,37 @@
+2009-06-30  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7005207> <video> in canvas broken with ACCEL_COMPOSITING
+        
+        Fix drawImage of video in CanvasRenderingContext2D when
+        accelerated compositing is enabled. This is done by
+        adding a new paint method to HTMLVideoElement that
+        is only called from canvas, which will create the software
+        renderer if necessary, but otherwise calls the regular
+        paint method. Meanwhile, add logic to the software video
+        renderer so that it can be created without calling repaint
+        every time it sees a new frame.
+        
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::paintCurrentFrameInContext):
+        * html/HTMLVideoElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::paintCurrentFrameInContext):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::paintCurrentFrameInContext):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovie):
+        (WebCore::MediaPlayerPrivate::createQTVideoRenderer):
+        (WebCore::MediaPlayerPrivate::currentRenderingMode):
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivate::tearDownVideoRendering):
+        (WebCore::MediaPlayerPrivate::paintCurrentFrameInContext):
+
 2009-06-30  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.

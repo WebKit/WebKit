@@ -114,6 +114,7 @@ private:
     void setSize(const IntSize&);
     
     void paint(GraphicsContext*, const IntRect&);
+    void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
 
 #if USE(ACCELERATED_COMPOSITING)
     bool supportsAcceleratedRendering() const;
@@ -137,7 +138,8 @@ private:
     void createQTMovieView();
     void detachQTMovieView();
     
-    void createQTVideoRenderer();
+    enum QTVideoRendererMode { QTVideoRendererModeDefault, QTVideoRendererModeListensForNewImages };
+    void createQTVideoRenderer(QTVideoRendererMode rendererMode);
     void destroyQTVideoRenderer();
     
     void createQTMovieLayer();

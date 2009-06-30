@@ -85,7 +85,9 @@ public:
 
     virtual void setSize(const IntSize&) = 0;
 
-    virtual void paint(GraphicsContext*, const IntRect&) = 0 ;
+    virtual void paint(GraphicsContext*, const IntRect&) = 0;
+
+    virtual void paintCurrentFrameInContext(GraphicsContext* c, const IntRect& r) { paint(c, r); }
 
     virtual void setAutobuffer(bool) { };
 

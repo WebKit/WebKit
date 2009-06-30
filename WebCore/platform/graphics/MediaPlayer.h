@@ -160,6 +160,7 @@ public:
     void setAutobuffer(bool);
 
     void paint(GraphicsContext*, const IntRect&);
+    void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
     
     enum NetworkState { Empty, Idle, Loading, Loaded, FormatError, NetworkError, DecodeError };
     NetworkState networkState();

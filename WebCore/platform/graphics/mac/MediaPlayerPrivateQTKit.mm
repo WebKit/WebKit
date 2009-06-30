@@ -271,7 +271,7 @@ void MediaPlayerPrivate::createQTMovie(NSURL *url, NSDictionary *movieAttributes
     [m_qtMovie.get() setVolume:m_player->volume()];
 
     if (recreating && hasVideo())
-        createQTVideoRenderer();
+        createQTVideoRenderer(QTVideoRendererModeListensForNewImages);
     
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(loadStateChanged:) 
@@ -387,7 +387,7 @@ void MediaPlayerPrivate::detachQTMovieView()
     }
 }
 
-void MediaPlayerPrivate::createQTVideoRenderer()
+void MediaPlayerPrivate::createQTVideoRenderer(QTVideoRendererMode rendererMode)
 {
     destroyQTVideoRenderer();
 
@@ -398,11 +398,13 @@ void MediaPlayerPrivate::createQTVideoRenderer()
     // associate our movie with our instance of QTVideoRendererWebKitOnly
     [(id<WebKitVideoRenderingDetails>)m_qtVideoRenderer.get() setMovie:m_qtMovie.get()];    
 
-    // listen to QTVideoRendererWebKitOnly's QTVideoRendererWebKitOnlyNewImageDidBecomeAvailableNotification
-    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
-                                             selector:@selector(newImageAvailable:)
-                                                 name:QTVideoRendererWebKitOnlyNewImageAvailableNotification
-                                               object:m_qtVideoRenderer.get()];
+    if (rendererMode == QTVideoRendererModeListensForNewImages) {
+        // listen to QTVideoRendererWebKitOnly's QTVideoRendererWebKitOnlyNewImageDidBecomeAvailableNotification
+        [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
+                                                 selector:@selector(newImageAvailable:)
+                                                     name:QTVideoRendererWebKitOnlyNewImageAvailableNotification
+                                                   object:m_qtVideoRenderer.get()];
+    }
 }
 
 void MediaPlayerPrivate::destroyQTVideoRenderer()
@@ -465,11 +467,11 @@ MediaPlayerPrivate::MediaRenderingMode MediaPlayerPrivate::currentRenderingMode(
     if (m_qtMovieView)
         return MediaRenderingMovieView;
     
-    if (m_qtVideoRenderer)
-        return MediaRenderingSoftwareRenderer;
-    
     if (m_qtVideoLayer)
         return MediaRenderingMovieLayer;
+
+    if (m_qtVideoRenderer)
+        return MediaRenderingSoftwareRenderer;
     
     return MediaRenderingNone;
 }
@@ -506,7 +508,7 @@ void MediaPlayerPrivate::setUpVideoRendering()
         break;
     case MediaRenderingNone:
     case MediaRenderingSoftwareRenderer:
-        createQTVideoRenderer();
+        createQTVideoRenderer(QTVideoRendererModeListensForNewImages);
         break;
     case MediaRenderingMovieLayer:
         createQTMovieLayer();
@@ -518,9 +520,9 @@ void MediaPlayerPrivate::tearDownVideoRendering()
 {
     if (m_qtMovieView)
         detachQTMovieView();
-    else if (m_qtVideoRenderer)
+    if (m_qtVideoRenderer)
         destroyQTVideoRenderer();
-    else
+    if (m_qtVideoLayer)
         destroyQTMovieLayer();
 }
 
@@ -1015,6 +1017,20 @@ void MediaPlayerPrivate::repaint()
     }
 #endif
     m_player->repaint();
+}
+
+void MediaPlayerPrivate::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& r)
+{
+    id qtVideoRenderer = m_qtVideoRenderer.get();
+    if (!qtVideoRenderer && currentRenderingMode() == MediaRenderingMovieLayer) {
+        // We're being told to render into a context, but we already have the
+        // MovieLayer going. This probably means we've been called from <canvas>.
+        // Set up a QTVideoRenderer to use, but one that doesn't register for
+        // update callbacks. That way, it won't bother us asking to repaint.
+        createQTVideoRenderer(QTVideoRendererModeDefault);
+        qtVideoRenderer = m_qtVideoRenderer.get();
+    }
+    paint(context, r);
 }
 
 void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
