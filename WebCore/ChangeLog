@@ -1,4 +1,3 @@
-<<<<<<< .mine
 2009-06-30  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.
@@ -35,7 +34,6 @@
         (WebCore::HTMLDataGridElement::setDataSource):
         (WebCore::HTMLDataGridElement::dataSource):
 
-=======
 2009-06-30  Jeremy Orlow (jorlow@chromium.org)
 
         Reviewed by David Levin.
@@ -51,7 +49,6 @@
         (WebCore::storageDeleter):
         * storage/StorageArea.cpp:
 
->>>>>>> .r45396
 2009-06-30  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.
