@@ -154,7 +154,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
         }
     } else {
         if (onscreen) {
-#ifdef BUILDING_ON_LEOPARD
+#if !defined(BUILDING_ON_TIGER)
             // Ask the window server to provide us a composited version of the *real* window content including surfaces (i.e. OpenGL content)
             // Note that the returned image might differ very slightly from the window backing because of dithering artifacts in the window server compositor
             

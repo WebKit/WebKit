@@ -1,3 +1,13 @@
+2009-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        createBitmapContextFromWebView() incorrectly used #ifdef BUILDING_ON_LEOPARD,
+        and thus failed on SnowLeopard.
+        
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+
 2009-06-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.
