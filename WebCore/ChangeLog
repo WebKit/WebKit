@@ -1,3 +1,11 @@
+2009-06-30  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] Turn on ENABLE_DATAGRID so we can run the layout tests.
+
+        * GNUmakefile.am:
+
 2009-06-30  Raju Kunnath  <raju.kunnath@nokia.com>
 
         Reviewed by Simon Hausmann.

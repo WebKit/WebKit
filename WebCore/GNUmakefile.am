@@ -1944,6 +1944,14 @@ webcoregtk_sources += \
 endif # END USE_PANGO
 
 # ----
+# HTML Data Grid - enable always.
+# ----
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_DATAGRID=1
+
+webcore_cppflags += \
+	-DENABLE_DATAGRID=1
+
+# ----
 # JavaScript Debugger/Profiler
 # ----
 if ENABLE_JAVASCRIPT_DEBUGGER
