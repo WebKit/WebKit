@@ -294,7 +294,14 @@ public:
     bool hasAcceleratedCompositing() const;
     
     void updateLayerPosition();
-    void updateLayerPositions(bool doFullRepaint = false, bool checkForRepaint = true);
+    
+    enum UpdateLayerPositionsFlag {
+        DoFullRepaint = 1,
+        CheckForRepaint = 1 << 1,
+        FullUpdate = 1 << 2,
+    };
+    typedef unsigned UpdateLayerPositionsFlags;
+    void updateLayerPositions(UpdateLayerPositionsFlags = DoFullRepaint);
 
     void updateTransform();
 

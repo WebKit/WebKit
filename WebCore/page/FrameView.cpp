@@ -624,7 +624,9 @@ void FrameView::layout(bool allowSubtree)
 
     // Now update the positions of all layers.
     beginDeferredRepaints();
-    layer->updateLayerPositions(m_doFullRepaint);
+    layer->updateLayerPositions((m_doFullRepaint ? RenderLayer::DoFullRepaint : 0)
+                                | RenderLayer::CheckForRepaint
+                                | RenderLayer::FullUpdate);
     endDeferredRepaints();
 
 #if USE(ACCELERATED_COMPOSITING)

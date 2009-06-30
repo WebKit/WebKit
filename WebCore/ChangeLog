@@ -1,3 +1,18 @@
+2009-06-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Change RenderLayer::updateLayerPositions() to use a bitmask instead of two
+        boolean arguments. FullUpdate is unused at present, but will be used soon.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::):
+
 2009-06-29  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
