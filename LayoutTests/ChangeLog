@@ -1,3 +1,10 @@
+2009-06-30  Eric Seidel  <eric@webkit.org>
+
+        No review, reverting r45396.  (George Staikos agrees the change was wrong.)
+        http://trac.webkit.org/changeset/45396
+
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+
 2009-06-30  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.
