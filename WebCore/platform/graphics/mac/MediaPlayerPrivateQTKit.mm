@@ -835,9 +835,9 @@ void MediaPlayerPrivate::updateStates()
     if (loadState >= QTMovieLoadStateLoaded && m_readyState < MediaPlayer::HaveMetadata) {
         disableUnsupportedTracks();
         if (m_player->inMediaDocument()) {
-            if (!m_enabledTrackCount || m_enabledTrackCount != m_totalTrackCount) {
-                // This is a type of media that we do not handle directly with a <video> 
-                // element, likely streamed media or QuickTime VR. Tell the MediaPlayerClient
+            if (!m_enabledTrackCount || m_hasUnsupportedTracks) {
+                // This has a type of media that we do not handle directly with a <video> 
+                // element, eg. a rtsp track or QuickTime VR. Tell the MediaPlayerClient
                 // that we noticed.
                 sawUnsupportedTracks();
                 return;
@@ -1246,6 +1246,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
             // If this track type is not allowed, then we need to disable it.
             [track setEnabled:NO];
             --m_enabledTrackCount;
+            m_hasUnsupportedTracks = true;
         }
 
         // Disable chapter tracks. These are most likely to lead to trouble, as
@@ -1278,6 +1279,7 @@ void MediaPlayerPrivate::disableUnsupportedTracks()
         // Disable the evil, evil track.
         [chapterTrack setEnabled:NO];
         --m_enabledTrackCount;
+        m_hasUnsupportedTracks = true;
     }
 }
 

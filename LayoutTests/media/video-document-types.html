@@ -1,7 +1,6 @@
 <html>
     <head>
         <script>
-        var video;
         function log(msg)
         {
             document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
@@ -9,7 +8,7 @@
         
         function test()
         {
-            video = document.getElementById('fr').contentDocument.getElementsByTagName('video')[0];
+            var video = document.getElementById('fr').contentDocument.getElementsByTagName('video')[0];
             if (video)
                 log("PASS: <video> used");
             else
@@ -23,7 +22,7 @@
         }
         </script>
     </head>
-    <body onload="test()">
+    <body onload="setTimeout(test, 250)">
         <iframe src="content/counting.mp4" id="fr" width=380 height=330></iframe>
         <p>This tests that a standalone MPEG-4 file with 'sdsm' and 'odsm' tracks is opened in a MediaDocument.</p>
         <pre id="console"></pre>

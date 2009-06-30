@@ -1,3 +1,15 @@
+2009-06-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7019799> Slow loading MediaDocument can fall back to plug-in unnecessarily
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::updateStates):
+            Always fall back to a plug-in if m_hasUnsupportedTracks is set.
+        (WebCore::MediaPlayerPrivate::disableUnsupportedTracks):
+            Set m_hasUnsupportedTracks if we disable a track.
+
 2009-06-30  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

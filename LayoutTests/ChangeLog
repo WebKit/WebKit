@@ -1,3 +1,14 @@
+2009-06-30  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        <rdar://problem/7019799> Slow loading MediaDocument can fall back to plug-in unnecessarily
+        
+        Don't test iframe immediately, switch over from <video> to <embed> may not have
+        happend when the document 'load' event fires.
+
+        * media/video-document-types.html:
+
 2009-06-30  Xan Lopez  <xlopez@igalia.com>
 
         Skip new editing tests.
