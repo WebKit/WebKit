@@ -1044,6 +1044,13 @@ editing/execCommand/format-block.html
 editing/execCommand/hilitecolor.html
 editing/execCommand/indent-empty-root.html
 editing/execCommand/indent-list-item.html
+editing/execCommand/indent-nested-lists-1.html
+editing/execCommand/indent-nested-lists-2.html
+editing/execCommand/indent-nested-lists-3.html
+editing/execCommand/indent-nested-lists-4.html
+editing/execCommand/indent-nested-lists-5.html
+editing/execCommand/indent-nested-lists-6.html
+editing/execCommand/indent-nested-lists-7.html
 editing/execCommand/indent-selection.html
 editing/execCommand/insert-list-and-stitch.html
 editing/execCommand/insert-list-empty-div.html
@@ -1055,6 +1062,10 @@ editing/execCommand/modifyForeColorByCharacter.html
 editing/execCommand/nsresponder-indent.html
 editing/execCommand/nsresponder-outdent.html
 editing/execCommand/outdent-selection.html
+editing/execCommand/outdent-nested-lists-1.html
+editing/execCommand/outdent-nested-lists-2.html
+editing/execCommand/outdent-nested-lists-3.html
+editing/execCommand/outdent-nested-lists-4.html
 editing/execCommand/paste-1.html
 editing/execCommand/paste-2.html
 editing/execCommand/print.html
