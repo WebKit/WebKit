@@ -1,3 +1,25 @@
+2009-06-30  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        Override operator new/delete with const std::nothrow_t& as the second
+        argument.
+        https://bugs.webkit.org/show_bug.cgi?id=26792
+
+        On Windows CE, operator new/delete, new[]/delete[] with const
+        std::nothrow_t& must be overrided because some standard template
+        libraries use these operators.
+
+        The problem occurs when memory allocated by new(size_t s, const
+        std::nothrow_t&) is freed by delete(void* p). This causes the umatched
+        malloc/free problem.
+
+        The patch overrides all new, delete, new[] and delete[] to use
+        fastMaloc and fastFree consistently.
+
+        * wtf/FastMalloc.h:
+        (throw):
+
 2009-06-30  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Reviewed by Sam Weinig.

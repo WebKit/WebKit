@@ -179,6 +179,13 @@ WTF_PRIVATE_INLINE void* operator new(size_t s) { return fastMalloc(s); }
 WTF_PRIVATE_INLINE void operator delete(void* p) { fastFree(p); }
 WTF_PRIVATE_INLINE void* operator new[](size_t s) { return fastMalloc(s); }
 WTF_PRIVATE_INLINE void operator delete[](void* p) { fastFree(p); }
+
+#if PLATFORM(WINCE)
+WTF_PRIVATE_INLINE void* operator new(size_t s, const std::nothrow_t&) throw() { return fastMalloc(s); }
+WTF_PRIVATE_INLINE void operator delete(void* p, const std::nothrow_t&) throw() { fastFree(p); }
+WTF_PRIVATE_INLINE void* operator new[](size_t s, const std::nothrow_t&) throw() { return fastMalloc(s); }
+WTF_PRIVATE_INLINE void operator delete[](void* p, const std::nothrow_t&) throw() { fastFree(p); }
+#endif
 #endif
 
 #endif // _CRTDBG_MAP_ALLOC
