@@ -75,6 +75,7 @@ Settings::Settings(Page* page)
 #endif
     , m_needsAdobeFrameReloadingQuirk(false)
     , m_needsKeyboardEventDisambiguationQuirks(false)
+    , m_treatsAnyTextCSSLinkAsStylesheet(false)
     , m_needsLeopardMailQuirks(false)
     , m_needsTigerMailQuirks(false)
     , m_isDOMPasteAllowed(false)
@@ -312,6 +313,11 @@ void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUn
 void Settings::setNeedsKeyboardEventDisambiguationQuirks(bool needsQuirks)
 {
     m_needsKeyboardEventDisambiguationQuirks = needsQuirks;
+}
+
+void Settings::setTreatsAnyTextCSSLinkAsStylesheet(bool treatsAnyTextCSSLinkAsStylesheet)
+{
+    m_treatsAnyTextCSSLinkAsStylesheet = treatsAnyTextCSSLinkAsStylesheet;
 }
 
 void Settings::setNeedsLeopardMailQuirks(bool needsQuirks)

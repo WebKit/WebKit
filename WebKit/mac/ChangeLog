@@ -1,3 +1,19 @@
+2009-06-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6946611> REGRESSION (r30673): Shade10:" D_Snap
+          to Grid" window is clipping
+
+        * Misc/WebKitVersionChecks.h: Added
+            WEBKIT_FIRST_VERSION_WITHOUT_SHADE10_QUIRK
+        * WebView/WebView.mm:
+        (-[WebView _needsLinkElementTextCSSQuirk]): Added. Returns YES if the
+            client app is a version of Shade 10 earlier than 10.6 and it was
+            linked against a version of WebKit earlier than 531.2.
+        (-[WebView _preferencesChangedNotification:]): Added a call to
+            Settings::setTreatsAnyTextCSSLinkAsStylesheet().
+
 2009-06-29  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

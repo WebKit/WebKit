@@ -1,3 +1,27 @@
+2009-06-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6946611> REGRESSION (r30673): Shade10:" D_Snap
+          to Grid" window is clipping
+
+        Added an app-specific quirk to revert the behavior of <link> elements
+        to the way it was before r30673, namely that if the rel attribute
+        is not "stylesheet" but the type attribute contains "text/css", the
+        link behaves as a stylesheet link.
+
+        * WebCore.base.exp: Exported setTreatsAnyTextCSSLinkAsStylesheet().
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process): Check
+            Settings::treatsAnyTextCSSLinkAsStylesheet() and if true, allow a
+            style sheet link if the type contains "text/css".
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+            Initialize m_treatsAnyTextCSSLinkAsStylesheet.
+        (WebCore::Settings::setTreatsAnyTextCSSLinkAsStylesheet): Added.
+        * page/Settings.h:
+        (WebCore::Settings::treatsAnyTextCSSLinkAsStylesheet): Added.
+
 2009-06-30  Adrien Nader  <camaradetux@gmail.com>
 
         Reviewed by Xan Lopez.

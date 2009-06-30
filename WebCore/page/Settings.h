@@ -163,6 +163,9 @@ namespace WebCore {
         void setNeedsKeyboardEventDisambiguationQuirks(bool);
         bool needsKeyboardEventDisambiguationQuirks() const { return m_needsKeyboardEventDisambiguationQuirks; }
 
+        void setTreatsAnyTextCSSLinkAsStylesheet(bool);
+        bool treatsAnyTextCSSLinkAsStylesheet() const { return m_treatsAnyTextCSSLinkAsStylesheet; }
+
         void setNeedsLeopardMailQuirks(bool);
         bool needsLeopardMailQuirks() const { return m_needsLeopardMailQuirks; }
 
@@ -282,6 +285,7 @@ namespace WebCore {
 #endif
         bool m_needsAdobeFrameReloadingQuirk : 1;
         bool m_needsKeyboardEventDisambiguationQuirks : 1;
+        bool m_treatsAnyTextCSSLinkAsStylesheet : 1;
         bool m_needsLeopardMailQuirks : 1;
         bool m_needsTigerMailQuirks : 1;
         bool m_isDOMPasteAllowed : 1;

@@ -181,9 +181,11 @@ void HTMLLinkElement::process()
     if (m_isDNSPrefetch && m_url.isValid() && !m_url.isEmpty())
         prefetchDNS(m_url.host());
 
+    bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
+
     // Stylesheet
     // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
-    if (m_disabledState != 2 && m_isStyleSheet && document()->frame() && m_url.isValid()) {
+    if (m_disabledState != 2 && (m_isStyleSheet || acceptIfTypeContainsTextCSS && type.contains("text/css")) && document()->frame() && m_url.isValid()) {
         // also, don't load style sheets for standalone documents
         // Add ourselves as a pending sheet, but only if we aren't an alternate 
         // stylesheet.  Alternate stylesheets don't hold up render tree construction.
