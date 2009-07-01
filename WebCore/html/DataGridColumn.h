@@ -65,13 +65,17 @@ public:
     void setColumnList(DataGridColumnList* list)
     {
         m_columns = list;
-        m_style = 0;
+        m_columnStyle = 0;
+        m_headerStyle = 0;
         m_rect = IntRect();
     }
 
-    RenderStyle* style() const { return m_style.get(); }
-    void setStyle(PassRefPtr<RenderStyle> style) { m_style = style; }
-
+    RenderStyle* columnStyle() const { return m_columnStyle.get(); }
+    void setColumnStyle(PassRefPtr<RenderStyle> style) { m_columnStyle = style; }
+    
+    RenderStyle* headerStyle() const { return m_headerStyle.get(); }
+    void setHeaderStyle(PassRefPtr<RenderStyle> style) { m_headerStyle = style; }
+    
     const IntRect& rect() const { return m_rect; }
     void setRect(const IntRect& rect) { m_rect = rect; }
 
@@ -100,7 +104,9 @@ private:
     unsigned short m_sortable;
     unsigned short m_sortDirection;
     
-    RefPtr<RenderStyle> m_style;
+    RefPtr<RenderStyle> m_columnStyle; // The style used to render the column background behind the row cells.
+    RefPtr<RenderStyle> m_headerStyle; // The style used to render the column header above the row cells.
+    
     IntRect m_rect;
 };
 

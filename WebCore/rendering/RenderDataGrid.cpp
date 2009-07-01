@@ -29,6 +29,7 @@
 
 #include "RenderDataGrid.h"
 
+#include "CSSStyleSelector.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
@@ -64,16 +65,26 @@ void RenderDataGrid::recalcStyleForColumns()
         recalcStyleForColumn(columns->item(i));
 }
 
-void RenderDataGrid::recalcStyleForColumn(DataGridColumn*)
+void RenderDataGrid::recalcStyleForColumn(DataGridColumn* column)
 {
-    // FIXME: Implement.
+    if (!column->columnStyle())
+        column->setColumnStyle(document()->styleSelector()->pseudoStyleForDataGridColumn(column, style()));
+    if (!column->headerStyle())
+        column->setHeaderStyle(document()->styleSelector()->pseudoStyleForDataGridColumnHeader(column, style()));
 }
 
-RenderStyle* RenderDataGrid::styleForColumn(DataGridColumn* column)
+RenderStyle* RenderDataGrid::columnStyle(DataGridColumn* column)
 {
-    if (!column->style())
+    if (!column->columnStyle())
         recalcStyleForColumn(column);
-    return column->style();
+    return column->columnStyle();
+}
+
+RenderStyle* RenderDataGrid::headerStyle(DataGridColumn* column)
+{
+    if (!column->headerStyle())
+        recalcStyleForColumn(column);
+    return column->headerStyle();
 }
 
 void RenderDataGrid::calcPrefWidths()
@@ -138,7 +149,7 @@ void RenderDataGrid::paintColumnHeaders(PaintInfo& paintInfo, int tx, int ty)
     unsigned length = columns->length();
     for (unsigned i = 0; i < length; ++i) {
         DataGridColumn* column = columns->item(i);
-        RenderStyle* columnStyle = styleForColumn(column);
+        RenderStyle* columnStyle = headerStyle(column);
 
         // Don't render invisible columns.
         if (!columnStyle || columnStyle->display() == NONE || columnStyle->visibility() != VISIBLE)

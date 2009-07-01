@@ -1405,6 +1405,22 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     return m_style.release();
 }
 
+#if ENABLE(DATAGRID)
+
+PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForDataGridColumn(DataGridColumn*, RenderStyle*)
+{
+    // FIXME: Implement
+    return 0;
+}
+
+PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForDataGridColumnHeader(DataGridColumn*, RenderStyle*)
+{
+    // FIXME: Implement
+    return 0;
+}
+
+#endif
+
 static void addIntrinsicMargins(RenderStyle* style)
 {
     // Intrinsic margin value.

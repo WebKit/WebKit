@@ -53,7 +53,8 @@ public:
 private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    RenderStyle* styleForColumn(DataGridColumn*);
+    RenderStyle* columnStyle(DataGridColumn*);
+    RenderStyle* headerStyle(DataGridColumn*);
     void recalcStyleForColumns();
     void recalcStyleForColumn(DataGridColumn*);
 
