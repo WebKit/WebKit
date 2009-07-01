@@ -5327,7 +5327,7 @@ static WebFrameView *containingFrameView(NSView *view)
 - (void)_setToolTip:(NSString *)toolTip
 {
     if (_private->usesDocumentViews) {
-        id documentView = [[[self selectedFrame] frameView] documentView];
+        id documentView = [[[self _selectedOrMainFrame] frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [documentView _setToolTip:toolTip];
         return;
@@ -5339,7 +5339,7 @@ static WebFrameView *containingFrameView(NSView *view)
 - (void)_selectionChanged
 {
     if (_private->usesDocumentViews) {
-        id documentView = [[[self selectedFrame] frameView] documentView];
+        id documentView = [[[self _selectedOrMainFrame] frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [documentView _selectionChanged];
         return;

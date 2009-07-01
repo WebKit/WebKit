@@ -1,3 +1,18 @@
+2009-06-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/7014389> REGRESSION(4-TOT): Hyperlinks have no tooltips in Mail unless you first click in the message body
+
+        Updated these new methods (added as part of the viewless WebKit effort) that call through to WebHTMLView to use _selectedOrMainFrame, 
+        instead of just selectedFrame.  When the selection changes, I don't think there is a situation where there's no selected frame, but
+        it seems better to keep these two uses the same, since if there is a case, this will be more like the old behavior, before there was
+        a version of _selectionChanged in WebView. 
+
+        * WebView/WebView.mm:
+        (-[WebView _setToolTip:]):
+        (-[WebView _selectionChanged]):
+
 2009-06-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Timothy Hatcher.
