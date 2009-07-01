@@ -153,6 +153,10 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
                 [view displayRectIgnoringOpacity:line inContext:nsContext];
         }
     } else {
+
+        // Make sure the view has been painted.
+        [view displayIfNeeded];
+
         if (onscreen) {
 #if !defined(BUILDING_ON_TIGER)
             // Ask the window server to provide us a composited version of the *real* window content including surfaces (i.e. OpenGL content)
@@ -218,8 +222,6 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
         } else {
             // Grab directly the contents of the window backing buffer (this ignores any surfaces on the window)
             // FIXME: This path is suboptimal: data is read from window backing store, converted to RGB8 then drawn again into an RGBA8 bitmap
-            
-            [view displayIfNeeded];
             [view lockFocus];
             NSBitmapImageRep *imageRep = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:[view frame]] autorelease];
             [view unlockFocus];

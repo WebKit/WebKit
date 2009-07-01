@@ -8,6 +8,17 @@
 
 2009-06-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+        
+        Fix drawing of view background in pixel snapshots when using compositing.
+        We still need to call -displayIfNeeded to ensure that the NSView drawing
+        has happened.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+
+2009-06-30  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Mark Rowe.
 
         createBitmapContextFromWebView() incorrectly used #ifdef BUILDING_ON_LEOPARD,
