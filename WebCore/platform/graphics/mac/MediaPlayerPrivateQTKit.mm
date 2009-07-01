@@ -209,7 +209,8 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_enabledTrackCount(0)
     , m_totalTrackCount(0)
     , m_hasUnsupportedTracks(false)
-    , m_duration(-1.0f)
+    , m_reportedDuration(-1.0f)
+    , m_cachedDuration(-1.0f)
     , m_timeToRestore(-1.0f)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
@@ -591,6 +592,10 @@ float MediaPlayerPrivate::duration() const
 {
     if (!metaDataAvailable())
         return 0;
+
+    if (m_cachedDuration != -1.0f)
+        return m_cachedDuration;
+
     QTTime time = [m_qtMovie.get() duration];
     if (time.flags == kQTTimeIsIndefinite)
         return numeric_limits<float>::infinity();
@@ -941,10 +946,10 @@ void MediaPlayerPrivate::updateStates()
 
     if (loadState >= QTMovieLoadStateLoaded) {
         float dur = duration();
-        if (dur != m_duration) {
-            if (m_duration != -1.0f)
+        if (dur != m_reportedDuration) {
+            if (m_reportedDuration != -1.0f)
                 m_player->durationChanged();
-            m_duration = dur;
+            m_reportedDuration = dur;
         }
     }
 }
@@ -995,6 +1000,12 @@ void MediaPlayerPrivate::didEnd()
 #if DRAW_FRAME_RATE
     m_timeStoppedPlaying = [NSDate timeIntervalSinceReferenceDate];
 #endif
+
+    // Hang onto the current time and use it as duration from now on since QuickTime is telling us we
+    // are at the end. Do this because QuickTime sometimes reports one time for duration and stops
+    // playback at another time, which causes problems in HTMLMediaElement.
+    m_cachedDuration = currentTime();
+
     updateStates();
     m_player->timeChanged();
 }

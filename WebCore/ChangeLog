@@ -1,3 +1,27 @@
+2009-07-01  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        <rdar://problem/7009870> After <audio> movie finishes playing, Pause button fails to change 
+        back to Play button
+
+        Grab onto the current time when QTKit "ended" notification fires and use it as 
+        duration from that point on as QuickTime sometimes refuses to play all the way to
+        the time it reports for duration and buffered. HTMLMediaElement assumes that there
+        more to play in this situation and tries to restart playback, endlessly.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+            Rename m_duration to m_reportedDuration. Declare m_cachedDuration.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+            Rename m_duration to m_reportedDuration. Initialize m_cachedDuration.
+        (WebCore::MediaPlayerPrivate::duration):
+            Return m_cachedDuration once it has been set.
+        (WebCore::MediaPlayerPrivate::updateStates):
+            Rename m_duration to m_reportedDuration.
+        (WebCore::MediaPlayerPrivate::didEnd):
+            Set m_cachedDuration to currentTime().
+
 2009-07-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

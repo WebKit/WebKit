@@ -175,7 +175,8 @@ private:
     unsigned m_enabledTrackCount;
     unsigned m_totalTrackCount;
     bool m_hasUnsupportedTracks;
-    float m_duration;
+    float m_reportedDuration;
+    float m_cachedDuration;
     float m_timeToRestore;
     RetainPtr<QTMovieLayer> m_qtVideoLayer;
 #if DRAW_FRAME_RATE
