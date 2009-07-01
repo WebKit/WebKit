@@ -93,6 +93,8 @@ public:
     JSStringRef selectedTextRange();
     bool supportsPressAction();
     bool isEnabled();
+    double clickPointX();
+    double clickPointY();
 
     // Table-specific attributes
     JSStringRef attributesOfColumnHeaders();

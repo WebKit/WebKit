@@ -1459,6 +1459,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:NSAccessibilityLanguageAttribute]) 
         return m_object->language();
     
+    // this is used only by DumpRenderTree for testing
+    if ([attributeName isEqualToString:@"AXClickPoint"])
+        return [NSValue valueWithPoint:m_object->clickPoint()];
+    
     return nil;
 }
 

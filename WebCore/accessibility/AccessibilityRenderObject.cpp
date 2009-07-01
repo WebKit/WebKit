@@ -1063,6 +1063,21 @@ IntSize AccessibilityRenderObject::size() const
     return rect.size();
 }
 
+IntPoint AccessibilityRenderObject::clickPoint() const
+{
+    // use the default position unless this is an editable web area, in which case we use the selection bounds.
+    if (!isWebArea() || isReadOnly())
+        return AccessibilityObject::clickPoint();
+    
+    VisibleSelection visSelection = selection();
+    VisiblePositionRange range = VisiblePositionRange(visSelection.visibleStart(), visSelection.visibleEnd());
+    IntRect bounds = boundsForVisiblePositionRange(range);
+#if PLATFORM(MAC)
+    bounds.setLocation(m_renderer->document()->view()->screenToContents(bounds.location()));
+#endif        
+    return IntPoint(bounds.x() + (bounds.width() / 2), bounds.y() - (bounds.height() / 2));
+}
+    
 AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
 {
     Element* element = anchorElement();

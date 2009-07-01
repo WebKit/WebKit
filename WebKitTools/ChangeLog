@@ -1,3 +1,24 @@
+2009-07-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Bug 26900: AX: Manual spell check with Command-; does not bring up suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=26900
+
+        Expose the ability to get the click point of an element through accessibility.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (getClickPointXCallback):
+        (getClickPointYCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::clickPointX):
+        (AccessibilityUIElement::clickPointY):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::clickPointX):
+        (AccessibilityUIElement::clickPointY):
+
 2009-07-01  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Simon Fraser.

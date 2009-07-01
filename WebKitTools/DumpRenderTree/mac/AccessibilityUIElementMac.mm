@@ -348,6 +348,18 @@ double AccessibilityUIElement::height()
     return static_cast<double>([sizeValue sizeValue].height);
 }
 
+double AccessibilityUIElement::clickPointX()
+{
+    NSValue* positionValue = [m_element accessibilityAttributeValue:@"AXClickPoint"];
+    return static_cast<double>([positionValue pointValue].x);        
+}
+
+double AccessibilityUIElement::clickPointY()
+{
+    NSValue* positionValue = [m_element accessibilityAttributeValue:@"AXClickPoint"];
+    return static_cast<double>([positionValue pointValue].x);            
+}
+
 double AccessibilityUIElement::intValue()
 {
     id value = [m_element accessibilityAttributeValue:NSAccessibilityValueAttribute];
