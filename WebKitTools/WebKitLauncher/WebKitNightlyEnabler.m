@@ -117,25 +117,42 @@ NSBundle *webKitLauncherBundle()
 }
 
 extern char **_CFGetProcessPath() __attribute__((weak));
+extern OSStatus _RegisterApplication(CFDictionaryRef additionalAppInfoRef, ProcessSerialNumber* myPSN) __attribute__((weak));
 
 static void poseAsWebKitApp()
 {
     webKitAppPath = strdup(getenv("WebKitAppPath"));
-    if (!webKitAppPath || !_CFGetProcessPath)
+    if (!webKitAppPath)
         return;
+
+    unsetenv("WebKitAppPath");
 
     // Set up the main bundle early so it points at Safari.app
     CFBundleGetMainBundle();
 
-    // Fiddle with CoreFoundation to have it pick up the executable path as being within WebKit.app
-    char **processPath = _CFGetProcessPath();
-    *processPath = NULL;
-    setenv("CFProcessPath", webKitAppPath, 1);
-    _CFGetProcessPath();
+    if (systemVersion() < 0x1060) {
+        if (!_CFGetProcessPath)
+            return;
 
-    // Clean up
-    unsetenv("CFProcessPath");
-    unsetenv("WebKitAppPath");
+        // Fiddle with CoreFoundation to have it pick up the executable path as being within WebKit.app
+        char **processPath = _CFGetProcessPath();
+        *processPath = NULL;
+        setenv("CFProcessPath", webKitAppPath, 1);
+        _CFGetProcessPath();
+        unsetenv("CFProcessPath");
+    } else {
+        if (!_RegisterApplication)
+            return;
+
+        // Register the application with LaunchServices, passing a customized registration dictionary that
+        // uses the WebKit launcher as the application bundle.
+        NSBundle *bundle = webKitLauncherBundle();
+        NSMutableDictionary *checkInDictionary = [[bundle infoDictionary] mutableCopy];
+        [checkInDictionary setObject:[bundle bundlePath] forKey:@"LSBundlePath"];
+        [checkInDictionary setObject:[checkInDictionary objectForKey:(NSString *)kCFBundleNameKey] forKey:@"LSDisplayName"];
+        _RegisterApplication((CFDictionaryRef)checkInDictionary, 0);
+        [checkInDictionary release];
+    }
 }
 
 static BOOL insideSafari4OnTigerTrampoline()
@@ -167,10 +184,11 @@ static void enableWebKitNightlyBehaviour()
     if (insideSafari4OnTigerTrampoline())
         return;
 
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
     unsetenv("DYLD_INSERT_LIBRARIES");
     poseAsWebKitApp();
 
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     extensionPaths = [[NSSet alloc] initWithObjects:@"~/Library/InputManagers/", @"/Library/InputManagers/",
                                                     @"~/Library/Application Support/SIMBL/Plugins/", @"/Library/Application Support/SIMBL/Plugins/",
                                                     @"~/Library/Application Enhancers/", @"/Library/Application Enhancers/",

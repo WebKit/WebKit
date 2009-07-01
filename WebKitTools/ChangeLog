@@ -2,6 +2,18 @@
 
         Reviewed by Simon Fraser.
 
+        Change how WebKitNightlyEnabler.dylib lies about Safari's identity to LaunchServices.
+        This makes WebKit.app behave as expected when set as the default web browser on a wider
+        range of OS versions.
+
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (poseAsWebKitApp):
+        (enableWebKitNightlyBehaviour):
+
+2009-07-01  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Simon Fraser.
+
         Shuffle some code around in preparation for a change to how poseAsWebKitApp works.
 
         * WebKitLauncher/WebKitNightlyEnabler.m:
