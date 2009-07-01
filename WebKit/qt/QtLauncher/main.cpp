@@ -406,17 +406,18 @@ int main(int argc, char **argv)
 
     const QStringList args = app.arguments();
 
-    // robotized
     if (args.contains(QLatin1String("-r"))) {
+        // robotized
         QString listFile = args.at(2);
         if (!(args.count() == 3) && QFile::exists(listFile)) {
             qDebug() << "Usage: QtLauncher -r listfile";
             exit(0);
         }
-        MainWindow window(url);
+        MainWindow window;
         QWebView *view = window.webView();
         URLLoader loader(view, listFile);
         QObject::connect(view, SIGNAL(loadFinished(bool)), &loader, SLOT(loadNext()));
+        loader.loadNext();
         window.show();
         return app.exec();
     } else {

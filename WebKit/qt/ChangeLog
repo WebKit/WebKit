@@ -1,3 +1,12 @@
+2009-07-01  Balazs Kelemen  <kelemen.balazs.3@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Fixed robotized QtLauncher to work when there is no index.html in the user's home.
+
+        * QtLauncher/main.cpp:
+        (main):
+
 2009-06-30  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
