@@ -1,3 +1,20 @@
+2009-06-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Drag and drop support
+        https://bugs.webkit.org/show_bug.cgi?id=23642
+
+        Define DragImageRef as GdkPixbuf and implement essential
+        functions which manipulate drag images.
+
+        * platform/DragImage.h:
+        * platform/gtk/DragImageGtk.cpp:
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::createDragImageFromImage):
+
 2009-06-30  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Eric Seidel.
