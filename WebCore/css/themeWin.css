@@ -29,7 +29,7 @@
  */
 
 /* These styles override the default styling for HTML elements as defined in
-   WebCore/css/html4.css. So far we have used this file exclusively for
+   WebCore/css/html.css. So far we have used this file exclusively for
    making our form elements match Firefox's. */
 
 input:not([type]), 

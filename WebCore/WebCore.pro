@@ -252,7 +252,7 @@ SVGCSSPROPERTIES = $$PWD/css/SVGCSSPropertyNames.in
 SVGCSSVALUES = $$PWD/css/SVGCSSValueKeywords.in
 
 STYLESHEETS_EMBED = \
-    $$PWD/css/html4.css \
+    $$PWD/css/html.css \
     $$PWD/css/quirks.css \
     $$PWD/css/svg.css \
     $$PWD/css/view-source.css \

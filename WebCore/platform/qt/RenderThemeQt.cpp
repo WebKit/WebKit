@@ -608,7 +608,7 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
 void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
                                               Element* e) const
 {
-    // WORKAROUND because html4.css specifies -webkit-border-radius for <select> so we override it here
+    // WORKAROUND because html.css specifies -webkit-border-radius for <select> so we override it here
     // see also http://bugs.webkit.org/show_bug.cgi?id=18399
     style->resetBorderRadius();
 

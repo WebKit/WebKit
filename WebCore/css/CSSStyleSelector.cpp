@@ -526,7 +526,7 @@ static void loadFullDefaultStyle()
     }
 
     // Strict-mode rules.
-    String defaultRules = String(html4UserAgentStyleSheet, sizeof(html4UserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraDefaultStyleSheet();
+    String defaultRules = String(htmlUserAgentStyleSheet, sizeof(htmlUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraDefaultStyleSheet();
     CSSStyleSheet* defaultSheet = parseUASheet(defaultRules);
     defaultStyle->addRulesFromSheet(defaultSheet, screenEval());
     defaultPrintStyle->addRulesFromSheet(defaultSheet, printEval());

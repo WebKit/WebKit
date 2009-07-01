@@ -1,3 +1,25 @@
+2009-06-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - Rename html4.css to html.css, since we target HTML5 now
+        https://bugs.webkit.org/show_bug.cgi?id=26873
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::loadFullDefaultStyle):
+        * css/html.css: Copied from css/html4.css.
+        * css/html4.css: Removed.
+        * css/themeWin.css:
+        * platform/Theme.h:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+        * rendering/RenderTheme.h:
+
 2009-06-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Gustavo Noronha.

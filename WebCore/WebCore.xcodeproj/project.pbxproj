@@ -6983,7 +6983,7 @@
 		93C441FF0F813AE100C1A634 /* CollectionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionType.h; sourceTree = "<group>"; };
 		93C841F709CE855C00DFF5E5 /* DOMImplementationFront.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationFront.h; sourceTree = "<group>"; };
 		93C841FE09CE858300DFF5E5 /* DOMImplementationFront.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationFront.cpp; sourceTree = "<group>"; };
-		93CA4C9909DF93FA00DF8677 /* html4.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html4.css; sourceTree = "<group>"; };
+		93CA4C9909DF93FA00DF8677 /* html.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html.css; sourceTree = "<group>"; };
 		93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "make-css-file-arrays.pl"; sourceTree = "<group>"; };
 		93CA4C9B09DF93FA00DF8677 /* makeprop.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makeprop.pl; sourceTree = "<group>"; };
 		93CA4C9C09DF93FA00DF8677 /* maketokenizer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = maketokenizer; sourceTree = "<group>"; };
@@ -14199,7 +14199,7 @@
 				BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */,
 				BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */,
 				31611E540E1C4D4A00F6A579 /* WebKitCSSTransformValue.idl */,
-				93CA4C9909DF93FA00DF8677 /* html4.css */,
+				93CA4C9909DF93FA00DF8677 /* html.css */,
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
 				93CA4C9B09DF93FA00DF8677 /* makeprop.pl */,
 				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,

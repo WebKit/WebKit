@@ -3102,7 +3102,7 @@ DerivedSources/CSSGrammar.cpp: $(WebCore)/css/CSSGrammar.y
 
 # user agent style sheets
 USER_AGENT_STYLE_SHEETS = \
-	$(WebCore)/css/html4.css \
+	$(WebCore)/css/html.css \
 	$(WebCore)/css/quirks.css \
 	$(WebCore)/css/view-source.css \
 	$(WebCore)/css/svg.css \
@@ -3222,7 +3222,7 @@ webcore_dist += \
 	WebCore/bindings/scripts/InFilesParser.pm \
 	WebCore/bindings/scripts/generate-bindings.pl \
 	WebCore/bindings/scripts/CodeGeneratorJS.pm \
-	WebCore/css/html4.css \
+	WebCore/css/html.css \
 	WebCore/css/quirks.css \
 	WebCore/css/view-source.css \
 	WebCore/css/svg.css \
