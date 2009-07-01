@@ -1,3 +1,17 @@
+2009-06-30  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        StorageNamespace.cpp build issue
+        https://bugs.webkit.org/show_bug.cgi?id=26859
+
+        Moved #endif //ENABLE(DOM_STORAGE) position
+        so that the build doesn't fail.
+        The namespace WebCore was started after the #if ENABLE(DOM_STORAGE)
+        but closed after the #endif.
+
+        * storage/StorageNamespace.cpp:
+
 2009-06-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -124,6 +124,6 @@ void StorageNamespace::close()
 #endif
 }
 
-#endif // ENABLE(DOM_STORAGE)
-
 } // namespace WebCore
+
+#endif // ENABLE(DOM_STORAGE)
