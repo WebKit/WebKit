@@ -1,3 +1,18 @@
+2009-06-30  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Flip back on block caching. Throwing away block data, while 
+        a perceived memory win, is a performance hit in cases where we 
+        are repainting large images (i.e. backgrounds) frequently 
+        (i.e. a flash video playing on top).  
+        <rdar://problem/6933515> REGRESSION(L-SL): Large JPEG images are 
+        decoded on drawing, slowing down painting of sites that frequently 
+        repaint e.g. because of Flash (pandora.com, Starcraft 2)
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::imageSourceOptions):
+
 2009-06-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.

@@ -38,7 +38,6 @@
 namespace WebCore {
 
 static const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
-static const CFStringRef kCGImageSourceDoNotCacheImageBlocks = CFSTR("kCGImageSourceDoNotCacheImageBlocks");
 
 ImageSource::ImageSource()
     : m_decoder(0)
@@ -81,9 +80,10 @@ static CFDictionaryRef imageSourceOptions()
     static CFDictionaryRef options;
     
     if (!options) {
-        const void* keys[3] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceDoNotCacheImageBlocks };
-        const void* values[3] = { kCFBooleanTrue, kCFBooleanTrue, kCFBooleanTrue };
-        options = CFDictionaryCreate(NULL, keys, values, 3, 
+        unsigned numOptions = 2;
+        const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32 };
+        const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue };
+        options = CFDictionaryCreate(NULL, keys, values, numOptions, 
             &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
     return options;
