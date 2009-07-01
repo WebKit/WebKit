@@ -1411,6 +1411,7 @@ editing/selection/display-table-text.html
 editing/selection/doubleclick-crash.html
 editing/selection/drag-in-iframe.html
 editing/selection/drag-select-1.html
+editing/selection/drag-start-event-client-x-y.html
 editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/editable-html-element.html
 editing/selection/editable-links.html

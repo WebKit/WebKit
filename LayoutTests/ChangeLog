@@ -1,5 +1,11 @@
 2009-06-30  Xan Lopez  <xlopez@igalia.com>
 
+        Disable test using eventSender.
+
+        * platform/gtk/Skipped:
+
+2009-06-30  Xan Lopez  <xlopez@igalia.com>
+
         Disable new tests until we enable the accessibility controller.
 
         * platform/gtk/Skipped:
