@@ -11,7 +11,7 @@ function setupTestDocument() {
 
     var anchorElement = createWMLElement("anchor");
     anchorElement.setAttribute("id", "top");
-    anchorElement.appendChild(testDocument.createTextNode("Start test"));
+    anchorElement.textContent = "Start test";
     cardElement.appendChild(anchorElement);
 
     // Pure WML based form data posting using variable substitution

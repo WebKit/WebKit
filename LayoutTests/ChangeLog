@@ -2,6 +2,23 @@
 
         Reviewed by Holger Freyther.
 
+        Apply same cleanup to WML testcases living in http/tests/wml/. Forgot about them in my last commit.
+
+        * http/tests/wml/resources/go-task-get-method-accept-charset.js:
+        (setupTestDocument):
+        * http/tests/wml/resources/go-task-get-method.js:
+        (setupTestDocument):
+        * http/tests/wml/resources/go-task-post-method-accept-charset.js:
+        (setupTestDocument):
+        * http/tests/wml/resources/go-task-post-method.js:
+        (setupTestDocument):
+        * http/tests/wml/resources/post-data-to-server.js:
+        (setupTestDocument):
+
+2009-07-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Holger Freyther.
+
         Slightly cleanup some WML testcases:
         Use "anchorElement.textContent = '...'" instead of "anchorElement.appendChild(document.createTextNode('...'))"
 

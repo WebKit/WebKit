@@ -6,7 +6,7 @@ function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;
 
     var anchorElement = createWMLElement("anchor");
-    anchorElement.appendChild(testDocument.createTextNode("Start test"));
+    anchorElement.textContent = "Start test";
     cardElement.appendChild(anchorElement);
 
     var goElement = createWMLElement("go");
