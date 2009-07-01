@@ -64,12 +64,12 @@ public:
     void setColumn(PassRefPtr<DataGridColumn> col) { m_column = col; }
 
 private:
-    HTMLDataGridElement* datagrid() const { return m_datagrid; }
-    HTMLDataGridElement* findDatagridAncestor() const;
+    HTMLDataGridElement* dataGrid() const { return m_dataGrid; }
+    HTMLDataGridElement* findDataGridAncestor() const;
     void ensureColumn();
 
     RefPtr<DataGridColumn> m_column;
-    HTMLDataGridElement* m_datagrid; // Not refcounted. We will null out our reference if we get removed from the grid.
+    HTMLDataGridElement* m_dataGrid; // Not refcounted. We will null out our reference if we get removed from the grid.
 };
 
 } // namespace WebCore

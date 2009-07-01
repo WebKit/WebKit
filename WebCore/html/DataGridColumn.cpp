@@ -42,6 +42,12 @@ void DataGridColumn::setPrimary(bool primary)
     }
 }
 
+void DataGridColumn::columnChanged()
+{
+    if (m_columns)
+        m_columns->setDataGridNeedsLayout();
+}
+
 } // namespace WebCore
 
 #endif

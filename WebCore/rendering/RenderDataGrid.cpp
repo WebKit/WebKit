@@ -50,6 +50,32 @@ RenderDataGrid::~RenderDataGrid()
 {
 }
 
+void RenderDataGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+    recalcStyleForColumns();
+}
+
+void RenderDataGrid::recalcStyleForColumns()
+{
+    DataGridColumnList* columns = gridElement()->columns();
+    unsigned length = columns->length();
+    for (unsigned i = 0; i < length; ++i)
+        recalcStyleForColumn(columns->item(i));
+}
+
+void RenderDataGrid::recalcStyleForColumn(DataGridColumn*)
+{
+    // FIXME: Implement.
+}
+
+RenderStyle* RenderDataGrid::styleForColumn(DataGridColumn* column)
+{
+    if (!column->style())
+        recalcStyleForColumn(column);
+    return column->style();
+}
+
 void RenderDataGrid::calcPrefWidths()
 {
     m_minPrefWidth = 0;
@@ -80,6 +106,17 @@ void RenderDataGrid::calcPrefWidths()
     setPrefWidthsDirty(false);
 }
 
+void RenderDataGrid::layout()
+{
+    RenderBlock::layout();
+    layoutColumns();
+}
+
+void RenderDataGrid::layoutColumns()
+{
+    // FIXME: Implement.
+}
+
 void RenderDataGrid::paintObject(PaintInfo& paintInfo, int tx, int ty)
 {
     if (style()->visibility() != VISIBLE)
@@ -95,14 +132,29 @@ void RenderDataGrid::paintObject(PaintInfo& paintInfo, int tx, int ty)
     paintColumnHeaders(paintInfo, tx, ty);
 }
 
-void RenderDataGrid::paintColumnHeaders(PaintInfo&, int, int)
+void RenderDataGrid::paintColumnHeaders(PaintInfo& paintInfo, int tx, int ty)
 {
-    gridElement()->columns();
-    
+    DataGridColumnList* columns = gridElement()->columns();
+    unsigned length = columns->length();
+    for (unsigned i = 0; i < length; ++i) {
+        DataGridColumn* column = columns->item(i);
+        RenderStyle* columnStyle = styleForColumn(column);
+
+        // Don't render invisible columns.
+        if (!columnStyle || columnStyle->display() == NONE || columnStyle->visibility() != VISIBLE)
+            continue;
+        
+        // Paint the column header if it intersects the dirty rect.
+        IntRect columnRect(column->rect());
+        columnRect.move(tx, ty);
+        if (columnRect.intersects(paintInfo.rect))
+            paintColumnHeader(column, paintInfo, tx, ty);
+    }
 }
 
-void RenderDataGrid::rebuildColumns()
+void RenderDataGrid::paintColumnHeader(DataGridColumn*, PaintInfo&, int, int)
 {
+    // FIXME: Implement.
 }
 
 // Scrolling implementation functions

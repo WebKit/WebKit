@@ -1,3 +1,58 @@
+2009-07-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Begin stubbing out functions for layout, painting and style/geometry caching on columns.  Not enough
+        is implemented for this to do much of anything yet, but it should help keep patch sizes down. :)
+
+        * html/DataGridColumn.cpp:
+        (WebCore::DataGridColumn::columnChanged):
+        * html/DataGridColumn.h:
+        (WebCore::DataGridColumn::setId):
+        (WebCore::DataGridColumn::setLabel):
+        (WebCore::DataGridColumn::setType):
+        (WebCore::DataGridColumn::setSortable):
+        (WebCore::DataGridColumn::setSortDirection):
+        (WebCore::DataGridColumn::setColumnList):
+        (WebCore::DataGridColumn::style):
+        (WebCore::DataGridColumn::setStyle):
+        (WebCore::DataGridColumn::rect):
+        (WebCore::DataGridColumn::setRect):
+        * html/DataGridColumnList.cpp:
+        (WebCore::DataGridColumnList::DataGridColumnList):
+        (WebCore::DataGridColumnList::setDataGridNeedsLayout):
+        (WebCore::DataGridColumnList::add):
+        (WebCore::DataGridColumnList::remove):
+        (WebCore::DataGridColumnList::move):
+        (WebCore::DataGridColumnList::clear):
+        (WebCore::DataGridColumnList::primaryColumnChanged):
+        * html/DataGridColumnList.h:
+        (WebCore::DataGridColumnList::create):
+        (WebCore::DataGridColumnList::dataGrid):
+        (WebCore::DataGridColumnList::clearDataGrid):
+        * html/HTMLDataGridColElement.cpp:
+        (WebCore::HTMLDataGridColElement::HTMLDataGridColElement):
+        (WebCore::HTMLDataGridColElement::findDataGridAncestor):
+        (WebCore::HTMLDataGridColElement::insertedIntoTree):
+        (WebCore::HTMLDataGridColElement::removedFromTree):
+        * html/HTMLDataGridColElement.h:
+        (WebCore::HTMLDataGridColElement::dataGrid):
+        * html/HTMLDataGridElement.cpp:
+        (WebCore::HTMLDataGridElement::HTMLDataGridElement):
+        (WebCore::HTMLDataGridElement::~HTMLDataGridElement):
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::styleDidChange):
+        (WebCore::RenderDataGrid::recalcStyleForColumns):
+        (WebCore::RenderDataGrid::recalcStyleForColumn):
+        (WebCore::RenderDataGrid::styleForColumn):
+        (WebCore::RenderDataGrid::layout):
+        (WebCore::RenderDataGrid::layoutColumns):
+        (WebCore::RenderDataGrid::paintColumnHeaders):
+        (WebCore::RenderDataGrid::paintColumnHeader):
+        * rendering/RenderDataGrid.h:
+        (WebCore::RenderDataGrid::renderName):
+        (WebCore::RenderDataGrid::canHaveChildren):
+
 2009-07-01  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

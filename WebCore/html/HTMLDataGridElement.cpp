@@ -40,13 +40,14 @@ using namespace HTMLNames;
 
 HTMLDataGridElement::HTMLDataGridElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_columns(DataGridColumnList::create())
+    , m_columns(DataGridColumnList::create(this))
 {
     setDataSource(DOMDataGridDataSource::create());
 }
 
 HTMLDataGridElement::~HTMLDataGridElement()
 {
+    m_columns->clearDataGrid();
 }
 
 bool HTMLDataGridElement::checkDTD(const Node* newChild)

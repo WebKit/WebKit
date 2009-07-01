@@ -29,6 +29,7 @@
 #if ENABLE(DATAGRID)
 
 #include "AtomicString.h"
+#include "RenderStyle.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -44,24 +45,35 @@ public:
     }
 
     const AtomicString& id() const { return m_id; }
-    void setId(const AtomicString& id) { m_id = id; }
+    void setId(const AtomicString& id) { m_id = id; columnChanged(); }
 
     const AtomicString& label() const { return m_label; }
-    void setLabel(const AtomicString& label) { m_label = label; }
+    void setLabel(const AtomicString& label) { m_label = label; columnChanged(); }
     
     const AtomicString& type() const { return m_type; }
-    void setType(const AtomicString& type) { m_type = type; }
+    void setType(const AtomicString& type) { m_type = type; columnChanged(); }
     
     unsigned short sortable() const { return m_sortable; }
-    void setSortable(unsigned short sortable) { m_sortable = sortable; }
+    void setSortable(unsigned short sortable) { m_sortable = sortable; columnChanged(); }
     
     unsigned short sortDirection() const { return m_sortDirection; }
-    void setSortDirection(unsigned short sortDirection) { m_sortDirection = sortDirection; }
+    void setSortDirection(unsigned short sortDirection) { m_sortDirection = sortDirection; columnChanged(); }
     
     bool primary() const { return m_primary; }
     void setPrimary(bool);
 
-    void setColumnList(DataGridColumnList* list) { m_columns = list; }
+    void setColumnList(DataGridColumnList* list)
+    {
+        m_columns = list;
+        m_style = 0;
+        m_rect = IntRect();
+    }
+
+    RenderStyle* style() const { return m_style.get(); }
+    void setStyle(PassRefPtr<RenderStyle> style) { m_style = style; }
+
+    const IntRect& rect() const { return m_rect; }
+    void setRect(const IntRect& rect) { m_rect = rect; }
 
 private:
     DataGridColumn(const String& columnID, const String& label, const String& type, bool primary, unsigned short sortable)
@@ -75,6 +87,8 @@ private:
     {
     }
 
+    void columnChanged();
+
     DataGridColumnList* m_columns; // Not refcounted.  The columns list will null out our reference when it goes away.
 
     AtomicString m_id;
@@ -85,6 +99,9 @@ private:
 
     unsigned short m_sortable;
     unsigned short m_sortDirection;
+    
+    RefPtr<RenderStyle> m_style;
+    IntRect m_rect;
 };
 
 } // namespace WebCore

@@ -43,18 +43,23 @@ public:
     ~RenderDataGrid();
     
     virtual const char* renderName() const { return "RenderDataGrid"; }
-
     virtual bool canHaveChildren() const { return false; }
-    
     virtual void calcPrefWidths();
-    
+    virtual void layout();
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
     void columnsChanged();
 
 private:
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
+    RenderStyle* styleForColumn(DataGridColumn*);
+    void recalcStyleForColumns();
+    void recalcStyleForColumn(DataGridColumn*);
+
+    void layoutColumns();
     void paintColumnHeaders(PaintInfo&, int tx, int ty);
-    void rebuildColumns();
+    void paintColumnHeader(DataGridColumn*, PaintInfo&, int tx, int ty);
 
     HTMLDataGridElement* gridElement() const { return static_cast<HTMLDataGridElement*>(node()); }
 
