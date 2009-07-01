@@ -1,3 +1,23 @@
+2009-07-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Holger Freyther.
+
+        Slightly cleanup some WML testcases:
+        Use "anchorElement.textContent = '...'" instead of "anchorElement.appendChild(document.createTextNode('...'))"
+
+        * wml/resources/go-task-get-method-external-deck-with-href.js:
+        (setupTestDocument):
+        * wml/resources/go-task-get-method-external-deck.js:
+        (setupTestDocument):
+        * wml/resources/go-task-get-method-same-deck.js:
+        (setupTestDocument):
+        * wml/resources/input-format.js:
+        (setupTestDocument):
+        * wml/resources/variable-reference-invalid-character.js:
+        (setupTestDocument):
+        * wml/resources/variable-reference-valid.js:
+        (setupTestDocument):
+
 2009-06-30  Xan Lopez  <xlopez@igalia.com>
 
         Disable test using eventSender.
