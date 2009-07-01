@@ -1101,8 +1101,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         coreFrame->view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
         
     // If the WebHTMLView implicitly became first responder, make sure to set the focused frame properly.
-    if (usesDocumentViews && [[documentView window] firstResponder] == documentView)
+    if (usesDocumentViews && [[documentView window] firstResponder] == documentView) {
         page->focusController()->setFocusedFrame(coreFrame);
+        page->focusController()->setFocused(true);
+    }
 }
 
 RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)

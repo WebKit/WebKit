@@ -53,10 +53,14 @@ namespace WebCore {
         void setActive(bool);
         bool isActive() const { return m_isActive; }
 
+        void setFocused(bool);
+        bool isFocused() const { return m_isFocused; }
+
     private:
         Page* m_page;
         RefPtr<Frame> m_focusedFrame;
         bool m_isActive;
+        bool m_isFocused;
     };
 
 } // namespace WebCore

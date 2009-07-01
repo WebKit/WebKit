@@ -3586,6 +3586,8 @@ static BOOL isInPasswordField(Frame* coreFrame)
     if (![[self _webView] _isPerformingProgrammaticFocus])
         page->focusController()->setFocusedFrame(frame);
 
+    page->focusController()->setFocused(true);
+
     if (direction == NSDirectSelection)
         return YES;
 
@@ -3601,19 +3603,23 @@ static BOOL isInPasswordField(Frame* coreFrame)
     BOOL resign = [super resignFirstResponder];
     if (resign) {
         [_private->completionController endRevertingChange:NO moveLeft:NO];
+        Frame* coreFrame = core([self _frame]);
+        if (!coreFrame)
+            return resign;
+        Page* page = coreFrame->page();
+        if (!page)
+            return resign;
         if (![self maintainsInactiveSelection]) { 
             [self deselectAll];
-            if (![[self _webView] _isPerformingProgrammaticFocus]) {
+            if (![[self _webView] _isPerformingProgrammaticFocus])
                 [self clearFocus];
-                Frame* coreFrame = core([self _frame]);
-                if (!coreFrame)
-                    return resign;
-                Page* page = coreFrame->page();
-                if (!page)
-                    return resign;
-                page->focusController()->setFocusedFrame(0);
-            }
         }
+        
+        id nextResponder = [[self window] _newFirstResponderAfterResigning];
+        bool nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]]
+            && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
+        if (!nextResponderIsInWebView)
+            page->focusController()->setFocused(false);
     }
     return resign;
 }

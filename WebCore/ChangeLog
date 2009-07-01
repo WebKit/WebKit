@@ -1,3 +1,23 @@
+2009-07-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/6998524> REGRESSION (r44474): Form text field has focus ring, looks focused,
+        even though the field is not actually focused for keyboard input
+        
+        Add the concept of whether or not the Page is focused by adding a boolean to the focusController.  This allows the
+        focused frame and focused node to both be cached and changed programmatically even when the Page itself doesn't
+        actually happen to have focus at that time.
+
+        * WebCore.base.exp:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::FocusController):
+        (WebCore::FocusController::setFocusedFrame):
+        (WebCore::FocusController::setFocused):
+        (WebCore::FocusController::setActive):
+        * page/FocusController.h:
+        (WebCore::FocusController::isFocused):
+
 2009-07-01  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
