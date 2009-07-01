@@ -6,4 +6,6 @@ WEBKIT_API_HEADERS = $$PWD/qwebframe.h \
                      $$PWD/qwebhistoryinterface.h \
                      $$PWD/qwebdatabase.h \
                      $$PWD/qwebsecurityorigin.h \
-                     $$PWD/qwebelement.h
+                     $$PWD/qwebelement.h \
+                     $$PWD/qwebpluginfactory.h \
+                     $$PWD/qwebhistory.h
