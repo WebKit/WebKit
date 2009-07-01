@@ -966,6 +966,10 @@ String AccessibilityRenderObject::accessibilityDescription() const
     if (!m_renderer)
         return String();
 
+    String ariaLabel = getAttribute(aria_labelAttr).string();
+    if (!ariaLabel.isEmpty())
+        return ariaLabel;
+    
     String ariaDescription = ariaDescribedByAttribute();
     if (!ariaDescription.isEmpty())
         return ariaDescription;
