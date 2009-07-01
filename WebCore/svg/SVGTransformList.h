@@ -42,7 +42,6 @@ namespace WebCore {
 
         // Internal use only
         SVGTransform concatenate() const;
-        SVGTransform concatenateForType(SVGTransform::SVGTransformType) const;
  
         String valueAsString() const;
 

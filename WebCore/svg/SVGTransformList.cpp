@@ -26,7 +26,6 @@
 #include "TransformationMatrix.h"
 #include "SVGTransform.h"
 #include "SVGSVGElement.h"
-#include "SVGTransformDistance.h"
 #include "SVGTransformList.h"
 
 using namespace WebCore;
@@ -63,23 +62,6 @@ SVGTransform SVGTransformList::concatenate() const
         matrix = getItem(i, ec).matrix() * matrix;
 
     return SVGTransform(matrix);
-}
-
-SVGTransform SVGTransformList::concatenateForType(SVGTransform::SVGTransformType type) const
-{
-    unsigned int length = numberOfItems();
-    if (!length)
-        return SVGTransform();
-    
-    ExceptionCode ec = 0;
-    SVGTransformDistance totalTransform;
-    for (unsigned int i = 0; i < length; i++) {
-        const SVGTransform& transform = getItem(i, ec);
-        if (transform.type() == type)
-            totalTransform.addSVGTransform(transform);
-    }
-    
-    return totalTransform.addToSVGTransform(SVGTransform());
 }
 
 String SVGTransformList::valueAsString() const

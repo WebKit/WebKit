@@ -1,3 +1,15 @@
+2009-07-01  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove unused code in SVGTransformList and SVGTransformDistance
+        <https://bugs.webkit.org/show_bug.cgi?id=26891>
+
+        * svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::SVGTransformDistance):
+        * svg/SVGTransformList.cpp:
+        * svg/SVGTransformList.h:
+
 2009-07-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.
