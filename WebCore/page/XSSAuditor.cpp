@@ -137,6 +137,11 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string) const
     ASSERT(frame->document());
     String pageURL = frame->document()->url().string();
 
+    if (!frame->document()->decoder()) {
+        // Note, JavaScript URLs do not have a charset.
+        return false;
+    }
+    
     if (protocolIs(pageURL, "data"))
         return false;
 
