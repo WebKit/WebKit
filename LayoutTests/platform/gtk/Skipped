@@ -62,8 +62,11 @@
 # Tests in accessibility/ directory
 # An implementation of accessibilityController is required.
 #   Tests failing
+accessibility/aria-disabled.html
+accessibility/aria-hidden.html
 accessibility/aria-labelledby-stay-within.html
 accessibility/aria-link-supports-press.html
+accessibility/aria-readonly.html
 accessibility/button-press-action.html
 accessibility/canvas.html
 accessibility/iframe-bastardization.html
