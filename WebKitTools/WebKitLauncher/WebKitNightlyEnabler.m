@@ -45,6 +45,16 @@ static char *webKitAppPath;
 static bool extensionBundlesWereLoaded = NO;
 static NSSet *extensionPaths = nil;
 
+static int32_t systemVersion()
+{
+    static SInt32 version = 0;
+    if (!version)
+        Gestalt(gestaltSystemVersion, &version);
+
+    return version;
+}
+
+
 static void myBundleDidLoad(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
     NSBundle *bundle = (NSBundle *)object;
@@ -98,6 +108,14 @@ static void myApplicationWillTerminate(CFNotificationCenterRef center, void *obs
     [userDefaults synchronize];
 }
 
+NSBundle *webKitLauncherBundle()
+{
+    NSString *executablePath = [NSString stringWithUTF8String:webKitAppPath];
+    NSRange appLocation = [executablePath rangeOfString:@".app/" options:NSBackwardsSearch];
+    NSString *appPath = [executablePath substringToIndex:appLocation.location + appLocation.length];
+    return [NSBundle bundleWithPath:appPath];
+}
+
 extern char **_CFGetProcessPath() __attribute__((weak));
 
 static void poseAsWebKitApp()
@@ -120,22 +138,10 @@ static void poseAsWebKitApp()
     unsetenv("WebKitAppPath");
 }
 
-NSBundle *webKitLauncherBundle()
-{
-    NSString *executablePath = [NSString stringWithUTF8String:webKitAppPath];
-    NSRange appLocation = [executablePath rangeOfString:@".app/" options:NSBackwardsSearch];
-    NSString *appPath = [executablePath substringToIndex:appLocation.location + appLocation.length];
-    return [NSBundle bundleWithPath:appPath];
-}
-
 static BOOL insideSafari4OnTigerTrampoline()
 {
-    SInt32 systemVersion;
-    if (Gestalt(gestaltSystemVersion, &systemVersion) != noErr)
-        return NO;
-
     // If we're not on Tiger then we can't be in the trampoline state.
-    if ((systemVersion & 0xFFF0) != 0x1040)
+    if ((systemVersion() & 0xFFF0) != 0x1040)
         return NO;
 
     // If we're running Safari < 4.0 then we can't be in the trampoline state.
