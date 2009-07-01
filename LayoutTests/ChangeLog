@@ -1,3 +1,12 @@
+2009-07-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test for being able to set attributes on dcol elements.
+        
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes-expected.txt: Added.
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes.html: Added.
+
 2009-07-01  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dimitri Glazkov.

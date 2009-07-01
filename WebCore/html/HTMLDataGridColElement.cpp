@@ -30,8 +30,8 @@
 #include "DataGridColumn.h"
 #include "HTMLDataGridElement.h"
 #include "HTMLDataGridColElement.h"
-
 #include "HTMLNames.h"
+#include "MappedAttribute.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -143,6 +143,27 @@ bool HTMLDataGridColElement::primary() const
 void HTMLDataGridColElement::setPrimary(bool primary)
 {
     setAttribute(primaryAttr, primary ? "" : 0);
+}
+
+void HTMLDataGridColElement::parseMappedAttribute(MappedAttribute* attr) 
+{
+    HTMLElement::parseMappedAttribute(attr);
+     
+    if (!column())
+        return;
+
+    if (attr->name() == labelAttr)
+        column()->setLabel(label());
+    else if (attr->name() == typeAttr)
+        column()->setType(type());
+    else if (attr->name() == primaryAttr)
+        column()->setPrimary(primary());
+    else if (attr->name() == sortableAttr)
+        column()->setSortable(sortable());
+    else if (attr->name() == sortdirectionAttr)
+        column()->setSortDirection(sortDirection());
+    else if (attr->name() == idAttr)
+        column()->setId(getAttribute(idAttr));
 }
 
 } // namespace WebCore

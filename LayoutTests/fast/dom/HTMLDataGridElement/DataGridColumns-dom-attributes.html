@@ -1,0 +1,81 @@
+<html>
+<body>
+    <pre id="console"></pre>
+    <datagrid id="test"><dcol id="fromwrong" label="Fromwrong" type="progress"><dcol id="subject" label="Subject" type="text"></datagrid>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+        }
+
+        var datagrid = document.getElementById('test');
+
+        // Test initial value.
+        if (datagrid.columns != null) {
+            log("PASS: Initial value of datagrid.columns is defined.");
+        } else {
+            log("FAIL: Initial value of datagrid.columns was null.");
+        }
+
+        // Test initial length.
+        if (datagrid.columns.length == 2) {
+            log("PASS: Initial length of datagrid.columns is 2.");
+        } else {
+            log("FAIL: Initial length of datagrid.columns was " + datagrid.columns.length + ".");
+        }
+        
+        // Examine the first column's properties to make sure they are what we expected after
+        // we change the attributes using setAttribute calls.
+        datagrid.firstChild.setAttribute("id", "from");
+        datagrid.firstChild.setAttribute("label", "From");
+        datagrid.firstChild.setAttribute("type", "text");
+        datagrid.firstChild.setAttribute("primary", "true");
+
+        var column = datagrid.columns[0];
+        if (column.id == "from") {
+            log("PASS: The column's ID is from as expected.");
+        } else {
+            log("FAIL: The column's ID should be from but is " + column.id + " instead.");
+        }
+        
+        if (column.label == "From") {
+            log("PASS: The column's label is From as expected.");
+        } else {
+            log("FAIL: The column's label should be From but is " + column.label + " instead.");
+        }
+
+        if (column.type == "text") {
+            log("PASS: The column's type is text as expected.");
+        } else {
+            log("FAIL: The column's type should be text but is " + column.type + " instead.");
+        }
+    
+        if (column.primary) {
+            log("PASS: The column's primary property is true as expected.");
+        } else {
+            log("FAIL: The column's primary property should be true but isn't.");
+        }
+
+        if (column.sortable == 2) {
+            log("PASS: The column's sortable property is 2 as expected.");
+        } else {
+            log("FAIL: The column's sortable property should be 2 but is " + column.sortable + " instead.");
+        }
+
+        // Make sure the from column is the primary column.
+        if (datagrid.columns.primaryColumn == column) {
+            log("PASS: The first column is the primary column.");
+        } else {
+            log("FAIL: The first column is not the primary column as expected.");
+        }
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    </script>
+</body>
+</html>
