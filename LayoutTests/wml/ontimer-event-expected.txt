@@ -1,0 +1,17 @@
+WML layout tests - using XHTML scripting
+
+
+Tests ontimer non-inline event declarations
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Test passed

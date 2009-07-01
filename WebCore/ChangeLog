@@ -1,3 +1,19 @@
+2009-07-01  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=26885
+
+        Correctly reset history length to '0', not '1'. Old relict from early WML days.
+        Add some new WML testcases covering the use of history length (by onenterforward event handling)
+
+        Tests: wml/onenterforward-event.html
+               wml/onenterforward-inline-event.html
+               wml/ontimer-event.html
+ 
+        * wml/WMLPageState.cpp:
+        (WebCore::WMLPageState::reset):
+
 2009-07-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

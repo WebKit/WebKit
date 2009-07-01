@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://wap.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+  <card id="one"><onevent type="onenterforward"><go href="#two"/></onevent>Test failed</card>
+  <card id="two"><p>Test passed</p></card>
+</wml>

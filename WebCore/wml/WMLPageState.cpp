@@ -54,7 +54,7 @@ void WMLPageState::reset()
         m_page->backForwardList()->clearWmlPageHistory();
 
     // reset implementation-specfic state if UA has
-    m_historyLength = 1;
+    m_historyLength = 0;
 }
 
 bool WMLPageState::setNeedCheckDeckAccess(bool need)

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://wap.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+  <card id="one"><onevent type="ontimer"><go href="#two"/></onevent><timer value="1"/>1</card>
+  <card id="two"><onevent type="ontimer"><go href="#three"/></onevent><timer value="1"/>2</card>
+  <card id="three"><onevent type="ontimer"><go href="#four"/></onevent><timer value="1"/>3</card>
+  <card id="four"><p>Test passed</p></card>
+</wml>

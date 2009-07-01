@@ -1,6 +1,6 @@
-/// [Name] ontimer-inline-event.js
+/// [Name] ontimer-event.js
 
-createWMLTestCase("Tests ontimer inline event declarations", false, "resources/ontimer-inline-event.wml");
+createWMLTestCase("Tests ontimer non-inline event declarations", false, "resources/ontimer-event.wml");
 
 var counter = 0;
 
