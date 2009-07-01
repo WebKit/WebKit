@@ -111,6 +111,11 @@ webkit_test_plugin_new_instance(NPMIMEType mimetype,
                 obj->logSetWindow = TRUE;
             else if (strcasecmp(argn[i], "testnpruntime") == 0)
                 testNPRuntime(instance);
+            else if (strcasecmp(argn[i], "logSrc") == 0) {
+                for (int i = 0; i < argc; i++)
+                    if (strcasecmp(argn[i], "src") == 0)
+                        log(instance, "src: %s", argv[i]);
+            }
         }
 
         instance->pdata = obj;

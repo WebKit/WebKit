@@ -1,3 +1,16 @@
+2009-06-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26877
+        [GTK] DRT fixes to pass new plugin test
+
+        Modify our DRT as done in bug #15457 to log logSrc as src in order
+        to pass test plugins/netscape-plugin-map-data-to-src.html.
+
+        * DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+
 2009-06-30  Adrien Nader  <camaradetux@gmail.com>
 
         Reviewed by Jan Alonzo.
