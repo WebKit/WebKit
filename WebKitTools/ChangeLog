@@ -5,6 +5,21 @@
         https://bugs.webkit.org/show_bug.cgi?id=26877
         [GTK] DRT fixes to pass new plugin test
 
+        Use the common pluginLog function instead of a local copy.
+
+        * DumpRenderTree/gtk/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_destroy_instance):
+        (webkit_test_plugin_set_window):
+        (webkit_test_plugin_handle_event):
+
+2009-06-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26877
+        [GTK] DRT fixes to pass new plugin test
+
         Modify our DRT as done in bug #15457 to log logSrc as src in order
         to pass test plugins/netscape-plugin-map-data-to-src.html.
 
