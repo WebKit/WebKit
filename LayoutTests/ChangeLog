@@ -1,3 +1,24 @@
+2009-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+        
+        Update compositing pixel results now that DRT dumps them correctly.
+        
+        * compositing/overflow/overflow-scroll.html:
+        Fixed typo in this testcase.
+        
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.checksum:
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.png:
+        * platform/mac/compositing/overflow/overflow-positioning-expected.checksum:
+        * platform/mac/compositing/overflow/overflow-positioning-expected.png:
+        * platform/mac/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/mac/compositing/overflow/parent-overflow-expected.checksum:
+        * platform/mac/compositing/overflow/parent-overflow-expected.png:
+        * platform/mac/compositing/repaint/content-into-overflow-expected.checksum:
+        * platform/mac/compositing/repaint/content-into-overflow-expected.png:
+        * platform/mac/compositing/repaint/overflow-into-content-expected.checksum:
+        * platform/mac/compositing/repaint/overflow-into-content-expected.png:
+
 2009-06-30  Eric Seidel  <eric@webkit.org>
 
         No review, reverting r45396.  (George Staikos agrees the change was wrong.)
