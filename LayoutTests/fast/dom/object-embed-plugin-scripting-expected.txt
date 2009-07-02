@@ -14,4 +14,4 @@ plugin <embed> nested in empty <object> nested in plugin <object>: should not ha
 
 standalone plugin <embed>: should have a plugin and does
 
-    
+        
