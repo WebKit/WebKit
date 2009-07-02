@@ -1271,7 +1271,7 @@ void NetscapePluginInstanceProxy::invalidateRect(double x, double y, double widt
 {
     ASSERT(m_pluginView);
     
-    [m_pluginView setNeedsDisplayInRect:NSMakeRect(x, y, width, height)];
+    [m_pluginView invalidatePluginContentRect:NSMakeRect(x, y, width, height)];
 }
 
 bool NetscapePluginInstanceProxy::getCookies(data_t urlData, mach_msg_type_number_t urlLength, data_t& cookiesData, mach_msg_type_number_t& cookiesLength)

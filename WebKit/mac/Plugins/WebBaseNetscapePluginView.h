@@ -110,6 +110,8 @@ namespace WebCore {
                  toX:(double *)destX andY:(double *)destY space:(NPCoordinateSpace)destSpace;
 - (WebCore::CString)resolvedURLStringForURL:(const char*)url target:(const char*)target;
 
+- (void)invalidatePluginContentRect:(NSRect)rect;
+
 @end
 
 

@@ -1,3 +1,11 @@
+2009-07-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Sort, add functions used by WebKit.
+        
+        * WebCore.base.exp:
+
 2009-07-02  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig.

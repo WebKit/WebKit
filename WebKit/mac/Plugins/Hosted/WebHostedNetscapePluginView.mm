@@ -321,7 +321,7 @@ extern "C" {
     // No need for us to be layer backed anymore
     self.wantsLayer = NO;
     
-    [self setNeedsDisplay:YES];
+    [self invalidatePluginContentRect:[self bounds]];
 }
 
 

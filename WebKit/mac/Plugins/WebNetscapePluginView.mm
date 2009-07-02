@@ -1904,7 +1904,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 -(void)invalidateRect:(NPRect *)invalidRect
 {
     LOG(Plugins, "NPN_InvalidateRect");
-    [self setNeedsDisplayInRect:NSMakeRect(invalidRect->left, invalidRect->top,
+    [self invalidatePluginContentRect:NSMakeRect(invalidRect->left, invalidRect->top,
         (float)invalidRect->right - invalidRect->left, (float)invalidRect->bottom - invalidRect->top)];
 }
 
@@ -1934,13 +1934,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         break;
     }
     
-    [self setNeedsDisplayInRect:invalidRect];
+    [self invalidatePluginContentRect:invalidRect];
 }
 
 -(void)forceRedraw
 {
     LOG(Plugins, "forceRedraw");
-    [self setNeedsDisplay:YES];
+    [self invalidatePluginContentRect:[self bounds]];
     [[self window] displayIfNeeded];
 }
 
