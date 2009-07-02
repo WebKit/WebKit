@@ -50,7 +50,9 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <windows.h>
+#if PLATFORM(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
+#endif
 #include <CoreFoundation/CoreFoundation.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/WebKit.h>
@@ -1042,6 +1044,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
     return webView;
 }
 
+#if PLATFORM(CFNETWORK)
 RetainPtr<CFURLCacheRef> sharedCFURLCache()
 {
     HMODULE module = GetModuleHandle(TEXT("CFNetwork_debug.dll"));
@@ -1060,6 +1063,7 @@ RetainPtr<CFURLCacheRef> sharedCFURLCache()
 
     return 0;
 }
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -1128,8 +1132,10 @@ int main(int argc, char* argv[])
     if (FAILED(webView->mainFrame(&frame)))
         return -1;
 
+#if PLATFORM(CFNETWORK)
     RetainPtr<CFURLCacheRef> urlCache = sharedCFURLCache();
     CFURLCacheRemoveAllCachedResponses(urlCache.get());
+#endif
 
 #ifdef _DEBUG
     _CrtMemState entryToMainMemCheckpoint;

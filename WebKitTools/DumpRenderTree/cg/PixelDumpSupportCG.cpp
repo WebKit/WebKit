@@ -32,7 +32,7 @@
 #include "PixelDumpSupportCG.h"
 
 #include "DumpRenderTree.h"
-#include "LayoutTestController.h"
+#include "PixelDumpSupport.h"
 #include <ImageIO/CGImageDestination.h>
 #include <algorithm>
 #include <ctype.h>
@@ -65,23 +65,13 @@ static void printPNG(CGImageRef image)
     const UInt8* data = CFDataGetBytePtr(imageData.get());
     CFIndex dataLength = CFDataGetLength(imageData.get());
 
-    printf("Content-Type: %s\n", "image/png");
-    printf("Content-Length: %lu\n", static_cast<unsigned long>(dataLength));
-
-    const size_t bytesToWriteInOneChunk = 1 << 15;
-    size_t dataRemainingToWrite = dataLength;
-    while (dataRemainingToWrite) {
-        size_t bytesToWriteInThisChunk = min(dataRemainingToWrite, bytesToWriteInOneChunk);
-        size_t bytesWritten = fwrite(data, 1, bytesToWriteInThisChunk, stdout);
-        if (bytesWritten != bytesToWriteInThisChunk)
-            break;
-        dataRemainingToWrite -= bytesWritten;
-        data += bytesWritten;
-    }
+    printPNG(static_cast<const unsigned char*>(data), static_cast<size_t>(dataLength));
 }
 
-static void computeMD5HashStringForBitmapContext(CGContextRef bitmapContext, char hashString[33])
+void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
 {
+    CGContextRef bitmapContext = context->cgContext();
+
     ASSERT(CGBitmapContextGetBitsPerPixel(bitmapContext) == 32); // ImageDiff assumes 32 bit RGBA, we must as well.
     size_t pixelsHigh = CGBitmapContextGetHeight(bitmapContext);
     size_t pixelsWide = CGBitmapContextGetWidth(bitmapContext);
@@ -116,31 +106,8 @@ static void computeMD5HashStringForBitmapContext(CGContextRef bitmapContext, cha
         snprintf(hashString, 33, "%s%02x", hashString, hash[i]);
 }
 
-void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
+void dumpBitmap(BitmapContext* context)
 {
-    RefPtr<BitmapContext> context;
-    
-    context = createBitmapContextFromWebView(gLayoutTestController->testOnscreen(), gLayoutTestController->testRepaint(), gLayoutTestController->testRepaintSweepHorizontally(), gLayoutTestController->dumpSelectionRect());
-    ASSERT(context);
-    
-    // Compute the hash of the bitmap context pixels
-    char actualHash[33];
-    computeMD5HashStringForBitmapContext(context->cgContext(), actualHash);
-    printf("\nActualHash: %s\n", actualHash);
-    
-    // Check the computed hash against the expected one and dump image on mismatch
-    bool dumpImage = true;
-    if (expectedHash.length() > 0) {
-        ASSERT(expectedHash.length() == 32);
-        
-        printf("\nExpectedHash: %s\n", expectedHash.c_str());
-        
-        if (expectedHash == actualHash)     // FIXME: do case insensitive compare
-            dumpImage = false;
-    }
-    
-    if (dumpImage) {
-        RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context->cgContext()));
-        printPNG(image.get());
-    }
+    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context->cgContext()));
+    printPNG(image.get());
 }

@@ -1,3 +1,14 @@
+2009-06-30  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Build DumpRenderTree under Cairo.
+        https://bugs.webkit.org/show_bug.cgi?id=26457
+
+        * WebKit.vcproj/WebKit.sln: Add Cairo targets to the
+          DumpRenderTree build, and use the in the Debug_Cairo
+          and Release_Cairo targets.
+
 2009-07-02  Eric Carlson  <eric.carlson@apple.com>
 
         Fix Windows build by including missing localized string methods.

@@ -27,10 +27,15 @@
  */
 
 #include "config.h"
+#if PLATFORM(CG)
+#include <CoreGraphics/CGBitmapContext.h>
 #include "PixelDumpSupportCG.h"
+#else
+#include <cairo-win32.h>
+#include "PixelDumpSupportCairo.h"
+#endif
 
 #include "DumpRenderTree.h"
-#include <CoreGraphics/CGBitmapContext.h>
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
 
@@ -60,9 +65,19 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
     GetObject(bitmap, sizeof(info), &info);
     ASSERT(info.bmBitsPixel == 32);
 
+#if PLATFORM(CG)
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
     CGContextRef context = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
                                                 info.bmWidthBytes, colorSpace.get(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+#elif PLATFORM(CAIRO)
+    cairo_surface_t* image = cairo_image_surface_create_for_data((unsigned char*)info.bmBits,
+                                               CAIRO_FORMAT_ARGB32,
+                                               info.bmWidth,
+                                               info.bmHeight,
+                                               info.bmWidthBytes);
+    cairo_t* context = cairo_create(image);
+    cairo_surface_destroy(image);
+#endif
 
     return BitmapContext::createByAdoptingBitmapAndContext(bitmap, context);
 }

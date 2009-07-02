@@ -1,3 +1,49 @@
+2009-06-30  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add build support for a Windows Cairo version of
+        DumpRenderTree.  Share as much logic between the
+        CG and Cairo builds as possible.
+        https://bugs.webkit.org/show_bug.cgi?id=26457
+
+        * DumpRenderTree/PixelDumpSupport.cpp: Added.
+        (dumpWebViewAsPixelsAndCompareWithExpected): Moved common logic
+          from CG-specific file.
+        (printPNG): Moved common logic from CG-specific file.
+        * DumpRenderTree/PixelDumpSupport.h: Add declaration for new
+          common printPNG function.
+        * DumpRenderTree/cairo: Added.
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.cpp: Added.
+          Implement cairo-specific logic for dealing with Cairo surfaces.
+        (writeFunction):
+        (printPNG): Cairo-specific PNG handling logic.
+        (computeMD5HashStringForBitmapContext): New Cairo routine using
+          the generic BitmapContext signature.
+        (dumpBitmap): New function containing Cairo-specific portions of
+          the dumping routine.
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.h: Added.
+          Provide Cairo version of the BitmapContext structure so that
+          dumping routines can work on an abstract type.
+        (BitmapContext::createByAdoptingBitmapAndContext):
+        (BitmapContext::~BitmapContext):
+        (BitmapContext::cairoContext):
+        (BitmapContext::BitmapContext):
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (printPNG): CG-specific PNG handling logic.
+        (computeMD5HashStringForBitmapContext): Revised to use generic
+          BitmapContext signature.
+        (dumpBitmap): New function containing CG-specific portions of
+          the dumping routine.
+        * DumpRenderTree/cg/PixelDumpSupportCG.h: Add new signatures.
+        * DumpRenderTree/win/DumpRenderTree.cpp: Disable CFNetwork logic
+          when building the non-CFNetwork version.
+        (main):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView): Provide parallel Cairo implementation
+          of CG bitmap/context setup.
+
 2009-07-02  Eric Seidel  <eric@webkit.org>
 
         No review, just adding Antti as a reviewer.

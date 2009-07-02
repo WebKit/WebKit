@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
+ *           (C) 2009 Brent Fulgham <bfulgham@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,29 +27,57 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PixelDumpSupport_h
-#define PixelDumpSupport_h
-
-#include <string>
+#ifndef PixelDumpSupportCairo_h
+#define PixelDumpSupportCairo_h
 
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
-class BitmapContext;
-
-void computeMD5HashStringForBitmapContext(BitmapContext*, char hashString[33]);
-PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect);
-void dumpBitmap(BitmapContext*);
-void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash);
-void printPNG(const unsigned char* data, const size_t dataLength);
-
-#if PLATFORM(MAC)
-
-// Can be used as a signal handler
-void restoreMainDisplayColorProfile(int ignored);
-
-// May change your color space, requiring a call to restoreMainDisplayColorProfile
-void setupMainDisplayColorProfile();
-
+#if PLATFORM(WIN)
+#include <windows.h>
+#include <cairo-win32.h>
 #endif
 
-#endif // PixelDumpSupport_h
+#if PLATFORM(WIN)
+typedef HBITMAP PlatformBitmapBuffer;
+#else
+typedef void* PlatformBitmapBuffer;
+#endif
+
+class BitmapContext : public RefCounted<BitmapContext> {
+public:
+    static PassRefPtr<BitmapContext> createByAdoptingBitmapAndContext(PlatformBitmapBuffer buffer, cairo_t* context)
+    {
+        return adoptRef(new BitmapContext(buffer, context));
+    }
+
+    ~BitmapContext()
+    {
+        if (m_buffer)
+#if PLATFORM(WIN)
+            DeleteObject(m_buffer);
+#else
+            free(m_buffer);
+#endif
+        cairo_destroy(m_context);
+    }
+
+    cairo_t* cairoContext() const { return m_context; }
+
+private:
+
+    BitmapContext(PlatformBitmapBuffer buffer, cairo_t* context)
+        : m_buffer(buffer)
+    {
+       if (m_context)
+          cairo_destroy(m_context);
+
+       m_context = context;
+    }
+
+    PlatformBitmapBuffer m_buffer;
+    cairo_t* m_context;
+
+};
+
+#endif // PixelDumpSupportCairo_h
