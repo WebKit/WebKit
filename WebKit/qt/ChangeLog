@@ -1,3 +1,20 @@
+2009-07-01  Robert Hogan <robert@roberthogan.net>
+
+        Reviewed by NOBODY.
+        
+        Fix Qt segfault when javascript disabled.
+        If clients call addToJavaScriptWindowObject even though JavascriptEnabled is false
+        webkit will segfault on the assert:
+          ASSERTION FAILED: _rootObject
+          (../../../WebCore/bridge/runtime.cpp:52
+          JSC::Bindings::Instance::Instance(WTF::PassRefPtr<JSC::Bindings::RootObject>))
+        Fix is to ensure JavaScript is enabled when client calls addToJavaScriptWindowObject.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26906
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
 2009-07-01  Jakub Wieczorek  <faw217@gmail.com>
 
         Reviewed by Simon Hausmann.
