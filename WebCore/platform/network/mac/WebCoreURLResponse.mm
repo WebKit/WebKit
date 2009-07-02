@@ -344,7 +344,7 @@ void swizzleMIMETypeMethodIfNecessary()
     }
 }
 
-NSString *mimeTypeFromUTITree(CFStringRef uti)
+static NSString *mimeTypeFromUTITree(CFStringRef uti)
 {
     // Check if this UTI has a MIME type.
     RetainPtr<CFStringRef> mimeType(AdoptCF, UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
