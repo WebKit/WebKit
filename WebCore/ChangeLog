@@ -1,3 +1,18 @@
+2009-07-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/7028682> ThemeMac::paintRadio() throws Obj-C exceptions when zoomed
+
+        Add BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS guards around code
+        that can possibly throw Objective-C exceptions when drawing Mac form controls.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintCheckbox):
+        (WebCore::paintRadio):
+        (WebCore::paintButton):
+        (WebCore::ThemeMac::inflateControlPaintRect):
+
 2009-07-02  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by David Levin.

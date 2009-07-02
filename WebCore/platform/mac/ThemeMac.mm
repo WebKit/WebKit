@@ -195,6 +195,8 @@ static NSButtonCell* checkbox(ControlStates states, const IntRect& zoomedRect, f
 // FIXME: Share more code with radio buttons.
 static void paintCheckbox(ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
     // Determine the width and height needed for the control and prepare the cell for painting.
     NSButtonCell* checkboxCell = checkbox(states, zoomedRect, zoomFactor);
 
@@ -218,6 +220,8 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
     [checkboxCell setControlView:nil];
 
     context->restore();
+    
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 // Radio Buttons
@@ -289,8 +293,10 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
         context->translate(-inflatedRect.x(), -inflatedRect.y());
     }
     
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [radioCell drawWithFrame:NSRect(inflatedRect) inView:scrollView->documentView()];
     [radioCell setControlView:nil];
+    END_BLOCK_OBJC_EXCEPTIONS
 
     context->restore();
 }
@@ -348,6 +354,8 @@ static NSButtonCell* button(ControlPart part, ControlStates states, const IntRec
 
 static void paintButton(ControlPart part, ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    
     // Determine the width and height needed for the control and prepare the cell for painting.
     NSButtonCell *buttonCell = button(part, states, zoomedRect, zoomFactor);
     LocalCurrentGraphicsContext localContext(context);
@@ -391,6 +399,8 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
 
     if (![previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:previousDefaultButtonCell];
+
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 // Theme overrides
@@ -479,6 +489,7 @@ LengthBox ThemeMac::controlPadding(ControlPart part, const Font& font, const Len
 
 void ThemeMac::inflateControlPaintRect(ControlPart part, ControlStates states, IntRect& zoomedRect, float zoomFactor) const
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     switch (part) {
         case CheckboxPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
@@ -520,6 +531,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, ControlStates states, I
         default:
             break;
     }
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void ThemeMac::paint(ControlPart part, ControlStates states, GraphicsContext* context, const IntRect& zoomedRect, float zoomFactor, ScrollView* scrollView) const
