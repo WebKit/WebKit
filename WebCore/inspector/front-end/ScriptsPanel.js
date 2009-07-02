@@ -163,6 +163,39 @@ WebInspector.ScriptsPanel = function()
 
     this._breakpointsURLMap = {};
 
+    this._shortcuts = {};
+
+    var isMac = InspectorController.platform().indexOf("mac-") === 0;
+    var platformSpecificModifier = isMac ? WebInspector.KeyboardShortcut.Modifiers.Meta : WebInspector.KeyboardShortcut.Modifiers.Ctrl;
+
+    // Continue.
+    var handler = this.pauseButton.click.bind(this.pauseButton);
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.F5);
+    this._shortcuts[shortcut] = handler;
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Slash, platformSpecificModifier);
+    this._shortcuts[shortcut] = handler;
+
+    // Step over.
+    var handler = this.stepOverButton.click.bind(this.stepOverButton);
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.F10);
+    this._shortcuts[shortcut] = handler;
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.SingleQuote, platformSpecificModifier);
+    this._shortcuts[shortcut] = handler;
+
+    // Step into.
+    var handler = this.stepIntoButton.click.bind(this.stepIntoButton);
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.F11);
+    this._shortcuts[shortcut] = handler;
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Semicolon, platformSpecificModifier);
+    this._shortcuts[shortcut] = handler;
+
+    // Step out.
+    var handler = this.stepOutButton.click.bind(this.stepOutButton);
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.F11, WebInspector.KeyboardShortcut.Modifiers.Shift);
+    this._shortcuts[shortcut] = handler;
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Semicolon, WebInspector.KeyboardShortcut.Modifiers.Shift, platformSpecificModifier);
+    this._shortcuts[shortcut] = handler;
+
     this.reset();
 }
 
@@ -484,6 +517,19 @@ WebInspector.ScriptsPanel.prototype = {
         if (!view)
             return;
         this._showScriptOrResource((view.resource || view.script));
+    },
+
+    handleKeyEvent: function(event)
+    {
+        var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
+        var handler = this._shortcuts[shortcut];
+        if (handler) {
+            handler(event);
+            event.preventDefault();
+            event.handled = true;
+        } else {
+            this.sidebarPanes.callstack.handleKeyEvent(event);
+        }
     },
 
     scriptViewForScript: function(script)

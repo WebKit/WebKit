@@ -19,6 +19,7 @@
     <file>FontView.js</file>
     <file>ImageView.js</file>
     <file>inspector.js</file>
+    <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
     <file>Object.js</file>
     <file>ObjectPropertiesSection.js</file>
