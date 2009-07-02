@@ -1,3 +1,16 @@
+2009-07-02  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26521
+        Expose file size to chromium.
+
+        Implement getFileSize() for Chromium.
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/FileSystemChromium.cpp:
+        (WebCore::getFileSize):
+
 2009-07-02  Nate Chapin  <japhet@chromium.org>
 
         Unreviewed, build fix.

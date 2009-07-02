@@ -82,6 +82,9 @@ namespace WebCore {
         // DNS ----------------------------------------------------------------
         static void prefetchDNS(const String& hostname);
 
+        // File ---------------------------------------------------------------
+        static bool getFileSize(const String& path, long long& result);
+
         // Font ---------------------------------------------------------------
 #if PLATFORM(WIN_OS)
         static bool ensureFontLoaded(HFONT font);
