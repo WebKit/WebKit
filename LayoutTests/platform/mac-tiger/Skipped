@@ -57,3 +57,5 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html
 
 # Disable the file url mimetypes test until I can improve the situation
 mac/fast/loader/file-url-mimetypes.html 
+mac/fast/loader/file-url-mimetypes-2.html 
+mac/fast/loader/file-url-mimetypes-3.html 

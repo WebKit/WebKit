@@ -1,0 +1,168 @@
+<html>
+<head>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpResourceResponseMIMETypes();
+    layoutTestController.waitUntilDone();
+}
+
+var testImage;
+var currentIndex = 0;
+var testURL = new Array("resources/mimeTypeExamples/example-js.js", 
+                        "resources/mimeTypeExamples/example-jscript.jscript", 
+                        "resources/mimeTypeExamples/example-kar.kar", 
+                        "resources/mimeTypeExamples/example-l.l", 
+                        "resources/mimeTypeExamples/example-latex.latex", 
+                        "resources/mimeTypeExamples/example-lha.lha", 
+                        "resources/mimeTypeExamples/example-lid.lid", 
+                        "resources/mimeTypeExamples/example-lm.lm", 
+                        "resources/mimeTypeExamples/example-lmm.lmm", 
+                        "resources/mimeTypeExamples/example-lpp.lpp", 
+                        "resources/mimeTypeExamples/example-lxx.lxx", 
+                        "resources/mimeTypeExamples/example-lzh.lzh", 
+                        "resources/mimeTypeExamples/example-m.m", 
+                        "resources/mimeTypeExamples/example-m15.m15", 
+                        "resources/mimeTypeExamples/example-m2v.m2v", 
+                        "resources/mimeTypeExamples/example-m3u.m3u", 
+                        "resources/mimeTypeExamples/example-m4a.m4a", 
+                        "resources/mimeTypeExamples/example-m4b.m4b", 
+                        "resources/mimeTypeExamples/example-m4p.m4p", 
+                        "resources/mimeTypeExamples/example-m4v.m4v", 
+                        "resources/mimeTypeExamples/example-m75.m75", 
+                        "resources/mimeTypeExamples/example-mac.mac", 
+                        "resources/mimeTypeExamples/example-man.man", 
+                        "resources/mimeTypeExamples/example-me.me", 
+                        "resources/mimeTypeExamples/example-mesh.mesh", 
+                        "resources/mimeTypeExamples/example-mid.mid", 
+                        "resources/mimeTypeExamples/example-midi.midi", 
+                        "resources/mimeTypeExamples/example-mif.mif", 
+                        "resources/mimeTypeExamples/example-mig.mig", 
+                        "resources/mimeTypeExamples/example-mm.mm", 
+                        "resources/mimeTypeExamples/example-mos.mos", 
+                        "resources/mimeTypeExamples/example-mov.mov", 
+                        "resources/mimeTypeExamples/example-movie.movie", 
+                        "resources/mimeTypeExamples/example-mp2.mp2", 
+                        "resources/mimeTypeExamples/example-mp3.mp3", 
+                        "resources/mimeTypeExamples/example-mp4.mp4", 
+                        "resources/mimeTypeExamples/example-mpe.mpe", 
+                        "resources/mimeTypeExamples/example-mpeg.mpeg", 
+                        "resources/mimeTypeExamples/example-mpg.mpg", 
+                        "resources/mimeTypeExamples/example-mpga.mpga", 
+                        "resources/mimeTypeExamples/example-mrw.mrw", 
+                        "resources/mimeTypeExamples/example-ms.ms", 
+                        "resources/mimeTypeExamples/example-msh.msh", 
+                        "resources/mimeTypeExamples/example-mxu.mxu", 
+                        "resources/mimeTypeExamples/example-nc.nc", 
+                        "resources/mimeTypeExamples/example-nef.nef", 
+                        "resources/mimeTypeExamples/example-o.o", 
+                        "resources/mimeTypeExamples/example-oda.oda", 
+                        "resources/mimeTypeExamples/example-odc.odc", 
+                        "resources/mimeTypeExamples/example-odf.odf", 
+                        "resources/mimeTypeExamples/example-odg.odg", 
+                        "resources/mimeTypeExamples/example-odi.odi", 
+                        "resources/mimeTypeExamples/example-odm.odm", 
+                        "resources/mimeTypeExamples/example-odp.odp", 
+                        "resources/mimeTypeExamples/example-ods.ods", 
+                        "resources/mimeTypeExamples/example-odt.odt", 
+                        "resources/mimeTypeExamples/example-omf.omf", 
+                        "resources/mimeTypeExamples/example-orf.orf", 
+                        "resources/mimeTypeExamples/example-otc.otc", 
+                        "resources/mimeTypeExamples/example-otf.otf", 
+                        "resources/mimeTypeExamples/example-otg.otg", 
+                        "resources/mimeTypeExamples/example-oth.oth", 
+                        "resources/mimeTypeExamples/example-oti.oti", 
+                        "resources/mimeTypeExamples/example-otp.otp", 
+                        "resources/mimeTypeExamples/example-ots.ots", 
+                        "resources/mimeTypeExamples/example-ott.ott", 
+                        "resources/mimeTypeExamples/example-pas.pas", 
+                        "resources/mimeTypeExamples/example-pbm.pbm", 
+                        "resources/mimeTypeExamples/example-pch.pch", 
+                        "resources/mimeTypeExamples/example-pch++.pch++", 
+                        "resources/mimeTypeExamples/example-pct.pct", 
+                        "resources/mimeTypeExamples/example-pcx.pcx", 
+                        "resources/mimeTypeExamples/example-pdb.pdb", 
+                        "resources/mimeTypeExamples/example-pdf.pdf", 
+                        "resources/mimeTypeExamples/example-pef.pef", 
+                        "resources/mimeTypeExamples/example-pf.pf", 
+                        "resources/mimeTypeExamples/example-pfa.pfa", 
+                        "resources/mimeTypeExamples/example-pfb.pfb", 
+                        "resources/mimeTypeExamples/example-pgm.pgm", 
+                        "resources/mimeTypeExamples/example-pgn.pgn", 
+                        "resources/mimeTypeExamples/example-ph3.ph3", 
+                        "resources/mimeTypeExamples/example-ph4.ph4", 
+                        "resources/mimeTypeExamples/example-php.php", 
+                        "resources/mimeTypeExamples/example-php3.php3", 
+                        "resources/mimeTypeExamples/example-php4.php4", 
+                        "resources/mimeTypeExamples/example-phtml.phtml", 
+                        "resources/mimeTypeExamples/example-pic.pic", 
+                        "resources/mimeTypeExamples/example-pict.pict", 
+                        "resources/mimeTypeExamples/example-pl.pl", 
+                        "resources/mimeTypeExamples/example-plist.plist", 
+                        "resources/mimeTypeExamples/example-pls.pls", 
+                        "resources/mimeTypeExamples/example-pm.pm", 
+                        "resources/mimeTypeExamples/example-png.png", 
+                        "resources/mimeTypeExamples/example-pnm.pnm", 
+                        "resources/mimeTypeExamples/example-pnt.pnt", 
+                        "resources/mimeTypeExamples/example-pntg.pntg", 
+                        "resources/mimeTypeExamples/example-potm.potm", 
+                        "resources/mimeTypeExamples/example-potx.potx", 
+                        "resources/mimeTypeExamples/example-ppm.ppm", 
+                        "resources/mimeTypeExamples/example-ppsm.ppsm", 
+                        "resources/mimeTypeExamples/example-ppsx.ppsx", 
+                        "resources/mimeTypeExamples/example-ppt.ppt", 
+                        "resources/mimeTypeExamples/example-pptm.pptm", 
+                        "resources/mimeTypeExamples/example-pptx.pptx", 
+                        "resources/mimeTypeExamples/example-ps.ps", 
+                        "resources/mimeTypeExamples/example-psd.psd", 
+                        "resources/mimeTypeExamples/example-py.py", 
+                        "resources/mimeTypeExamples/example-qif.qif", 
+                        "resources/mimeTypeExamples/example-qt.qt", 
+                        "resources/mimeTypeExamples/example-qti.qti", 
+                        "resources/mimeTypeExamples/example-qtif.qtif", 
+                        "resources/mimeTypeExamples/example-qtz.qtz", 
+                        "resources/mimeTypeExamples/example-r.r", 
+                        "resources/mimeTypeExamples/example-ra.ra", 
+                        "resources/mimeTypeExamples/example-raf.raf", 
+                        "resources/mimeTypeExamples/example-ram.ram", 
+                        "resources/mimeTypeExamples/example-ras.ras", 
+                        "resources/mimeTypeExamples/example-raw.raw", 
+                        "resources/mimeTypeExamples/example-rb.rb", 
+                        "resources/mimeTypeExamples/example-rbw.rbw", 
+                        "resources/mimeTypeExamples/example-rgb.rgb", 
+                        "resources/mimeTypeExamples/example-rm.rm", 
+                        "resources/mimeTypeExamples/example-roff.roff", 
+                        "resources/mimeTypeExamples/example-rpm.rpm", 
+                        "resources/mimeTypeExamples/example-rtf.rtf", 
+                        "resources/mimeTypeExamples/example-rtx.rtx");
+
+function startTest()
+{
+    testImage = document.getElementById("testImage");
+    testImage.src = testURL[0];
+}
+
+function imageLoaded()
+{
+    if (++currentIndex == testURL.length) {
+        finish();
+        return;
+    }
+    
+    testImage.src = testURL[currentIndex];
+}
+
+function finish()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+</head>
+<body onload="startTest();">
+Using an image element to load resources, this test makes sure that every MIME type the loader should know about based solely on file extension in file:// urls is correct.<br>
+<img id="testImage" onload="imageLoaded();" onerror="imageLoaded();">
+</body>
+</html>
