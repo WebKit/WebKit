@@ -42,7 +42,7 @@
 namespace WebCore {
 
 template<typename PODType>
-class V8SVGPODTypeWrapper : public RefCounted<V8SVGPODTypeWrapper<PODType>> {
+class V8SVGPODTypeWrapper : public RefCounted<V8SVGPODTypeWrapper<PODType> > {
 public:
     V8SVGPODTypeWrapper() { }
     virtual ~V8SVGPODTypeWrapper() { }
