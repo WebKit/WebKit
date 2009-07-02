@@ -27,7 +27,7 @@
 #define ScrollbarClient_h
 
 #include "IntRect.h"
-#include "ScrollBar.h"
+#include "Scrollbar.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
