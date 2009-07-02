@@ -951,6 +951,22 @@ qreal QWebFrame::zoomFactor() const
 }
 
 /*!
+    Returns true if this frame is set as the focused frame in the focus controller
+*/
+bool QWebFrame::hasFocus() const
+{
+    return QWebFramePrivate::kit(d->frame->page()->focusController()->focusedFrame()) == this;
+}
+
+/*!
+    Sets this frame as focused in the focus controller
+*/
+void QWebFrame::setFocus()
+{
+    QWebFramePrivate::core(this)->page()->focusController()->setFocusedFrame(QWebFramePrivate::core(this));
+}
+
+/*!
     Returns the position of the frame relative to it's parent frame.
 */
 QPoint QWebFrame::pos() const

@@ -1,3 +1,18 @@
+2009-07-02  Joe Ligman  <joseph.ligman@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Bug 26855: [Qt] New methods for QWebFrame to check and set focus.
+
+        Added new public methods QWebFrame::hasFocus() and QWebFrame::setFocus()
+        Added auto test.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::hasFocus):
+        (QWebFrame::setFocus):
+        * Api/qwebframe.h:
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-07-01  Robert Hogan <robert@roberthogan.net>
 
         Reviewed by NOBODY.

@@ -584,6 +584,7 @@ private slots:
     void nullValue();
     void baseUrl_data();
     void baseUrl();
+    void hasSetFocus();
 
 private:
     QString  evalJS(const QString&s) {
@@ -2448,6 +2449,28 @@ void tst_QWebFrame::baseUrl()
     m_page->mainFrame()->setHtml(html, loadUrl);
     QCOMPARE(m_page->mainFrame()->url(), url);
     QCOMPARE(m_page->mainFrame()->baseUrl(), baseUrl);
+}
+
+void tst_QWebFrame::hasSetFocus()
+{
+    QSignalSpy loadSpy(m_page, SIGNAL(loadFinished(bool)));
+    QUrl url = QUrl("qrc:///frametest/iframe.html");
+    m_page->mainFrame()->load(url);
+
+    ::waitForSignal(m_page, SIGNAL(loadFinished(bool)));
+
+    m_page->mainFrame()->setFocus();
+    QVERIFY(m_page->mainFrame()->hasFocus());
+
+    QList<QWebFrame*> children = m_page->mainFrame()->childFrames();
+    for (int i = 0; i < children.size(); ++i) {
+        children.at(i)->setFocus();
+        QVERIFY(children.at(i)->hasFocus());
+        QVERIFY(!m_page->mainFrame()->hasFocus());
+    }
+
+    m_page->mainFrame()->setFocus();
+    QVERIFY(m_page->mainFrame()->hasFocus());
 }
 
 QTEST_MAIN(tst_QWebFrame)
