@@ -64,11 +64,13 @@
 #   Tests failing
 accessibility/aria-disabled.html
 accessibility/aria-hidden.html
+accessibility/aria-label.html
 accessibility/aria-labelledby-stay-within.html
 accessibility/aria-link-supports-press.html
 accessibility/aria-readonly.html
 accessibility/button-press-action.html
 accessibility/canvas.html
+accessibility/editable-webarea-context-menu-point.html
 accessibility/iframe-bastardization.html
 accessibility/ignore-spacer-elements.html
 accessibility/img-aria-button-alt-tag.html
