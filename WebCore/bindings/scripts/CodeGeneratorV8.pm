@@ -1851,7 +1851,7 @@ sub JSValueToNative
             my $nativeType = GetNativeType($type);
             $implIncludes{"V8SVGPODTypeWrapper.h"} = 1;
 
-            return "V8SVGPODTypeUtil::ToSVGPODType<${nativeType}>(V8ClassIndex::${classIndex}, $value${maybeOkParam})"
+            return "V8SVGPODTypeUtil::toSVGPODType<${nativeType}>(V8ClassIndex::${classIndex}, $value${maybeOkParam})"
         }
 
         $implIncludes{"V8${type}.h"} = 1;
