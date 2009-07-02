@@ -146,17 +146,23 @@ void TransparencyAwareFontPainter::initializeForGDI()
         // know everything is opaque so don't need to do anything special.
         layerMode = TransparencyWin::NoLayer;
     }
-    m_transparency.init(m_graphicsContext, layerMode, TransparencyWin::KeepTransform, layerRect);
+
+    // Bug 26088 - init() might fail if layerRect is invalid. Given this, we
+    // need to be careful to check for null pointers everywhere after this call
+    m_transparency.init(m_graphicsContext, layerMode, 
+                        TransparencyWin::KeepTransform, layerRect);
 
     // Set up the DC, using the one from the transparency helper.
-    m_hdc = m_transparency.platformContext()->canvas()->beginPlatformPaint();
-    SetTextColor(m_hdc, skia::SkColorToCOLORREF(color));
-    SetBkMode(m_hdc, TRANSPARENT);
+    if (m_transparency.platformContext()) {
+        m_hdc = m_transparency.platformContext()->canvas()->beginPlatformPaint();
+        SetTextColor(m_hdc, skia::SkColorToCOLORREF(color));
+        SetBkMode(m_hdc, TRANSPARENT);
+    }
 }
 
 TransparencyAwareFontPainter::~TransparencyAwareFontPainter()
 {
-    if (!m_useGDI)
+    if (!m_useGDI || !m_graphicsContext || !m_platformContext)
         return;  // Nothing to do.
     m_transparency.composite();
     if (m_createdTransparencyLayer)
@@ -208,12 +214,13 @@ TransparencyAwareGlyphPainter::TransparencyAwareGlyphPainter(
 {
     init();
 
-    m_oldFont = ::SelectObject(m_hdc, m_font->platformData().hfont());
+    if (m_hdc)
+        m_oldFont = ::SelectObject(m_hdc, m_font->platformData().hfont());
 }
 
 TransparencyAwareGlyphPainter::~TransparencyAwareGlyphPainter()
 {
-    if (m_useGDI)
+    if (m_useGDI && m_hdc)
         ::SelectObject(m_hdc, m_oldFont);
 }
 
@@ -245,6 +252,9 @@ bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
                              numGlyphs, glyphs, advances, 0, &origin);
     }
 
+    if (!m_graphicsContext || !m_hdc)
+        return true;
+
     // Windows' origin is the top-left of the bounding box, so we have
     // to subtract off the font ascent to get it.
     int x = lroundf(m_point.x() + startAdvance);
@@ -265,7 +275,7 @@ bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
         COLORREF savedTextColor = GetTextColor(m_hdc);
         SetTextColor(m_hdc, textColor);
         ExtTextOut(m_hdc, x + shadowSize.width(), y + shadowSize.height(), ETO_GLYPH_INDEX, 0, reinterpret_cast<const wchar_t*>(&glyphs[0]), numGlyphs, &advances[0]);
-        SetTextColor(m_hdc, savedTextColor); 
+        SetTextColor(m_hdc, savedTextColor);
     }
     
     return !!ExtTextOut(m_hdc, x, y, ETO_GLYPH_INDEX, 0, reinterpret_cast<const wchar_t*>(&glyphs[0]), numGlyphs, &advances[0]);
@@ -379,6 +389,17 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
         for (int i = 0; i < curLen; ++i, ++glyphIndex) {
             glyphs[i] = glyphBuffer.glyphAt(from + glyphIndex);
             advances[i] = static_cast<int>(glyphBuffer.advanceAt(from + glyphIndex));
+            
+            // Bug 26088 - very large positive or negative runs can fail to
+            // render so we clamp the size here. In the specs, negative
+            // letter-spacing is implementation-defined, so this should be
+            // fine, and it matches Safari's implementation. The call actually
+            // seems to crash if kMaxNegativeRun is set to somewhere around
+            // -32830, so we give ourselves a little breathing room.
+            const int maxNegativeRun = -32768;
+            const int maxPositiveRun =  32768;
+            if ((curWidth + advances[i] < maxNegativeRun) || (curWidth + advances[i] > maxPositiveRun)) 
+                advances[i] = 0;
             curWidth += advances[i];
         }
 
@@ -438,6 +459,8 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     TransparencyAwareUniscribePainter painter(graphicsContext, this, run, from, to, point);
 
     HDC hdc = painter.hdc();
+    if (!hdc)
+        return;
 
     // TODO(maruel): http://b/700464 SetTextColor doesn't support transparency.
     // Enforce non-transparent color.
