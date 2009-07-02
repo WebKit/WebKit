@@ -65,7 +65,7 @@ class SCM:
         output = process.communicate(input)[0].rstrip()
         exit_code = process.wait()
         if raise_on_failure and exit_code:
-            raise ScriptError('Failed to run "%s"  exit_code: %d  cwd: %s' % (command, exit_code, cwd))
+            raise ScriptError('Failed to run "%s"  exit_code: %d  cwd: %s' % (args, exit_code, cwd))
         if return_exit_code:
             return exit_code
         return output

@@ -29,6 +29,7 @@
 # WebKit's Python module for interacting with Bugzilla
 
 import getpass
+import re
 import subprocess
 import sys
 import urllib2
@@ -53,6 +54,10 @@ http://wwwsearch.sourceforge.net/mechanize/
 
 def log(string):
     print >> sys.stderr, string
+
+def error(string):
+    log(string)
+    exit(1)
 
 # FIXME: This should not depend on git for config storage
 def read_config(key):
@@ -196,7 +201,7 @@ class Bugzilla:
     def authenticate(self, username=None, password=None):
         if self.authenticated:
             return
-        
+
         if not username:
             username = read_config("username")
             if not username:
@@ -214,9 +219,14 @@ class Bugzilla:
         self.browser.select_form(name="login")
         self.browser['Bugzilla_login'] = username
         self.browser['Bugzilla_password'] = password
-        self.browser.submit()
+        response = self.browser.submit()
 
-        # We really should check the result codes and try again as necessary
+        match = re.search("<title>(.+?)</title>", response.read())
+        # If the resulting page has a title, and it contains the word "invalid" assume it's the login failure page.
+        if match and re.search("Invalid", match.group(1), re.IGNORECASE):
+            # FIXME: We could add the ability to try again on failure.
+            error("Bugzilla login failed: %s" % match.group(1))
+
         self.authenticated = True
 
     def add_patch_to_bug(self, bug_id, patch_file_object, description, comment_text=None, mark_for_review=False):
