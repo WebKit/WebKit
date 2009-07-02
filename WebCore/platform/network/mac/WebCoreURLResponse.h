@@ -26,4 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@interface NSURLResponse (WebCoreURLResponse)
+-(NSString *)_webcore_reportedMIMEType;
+@end
+
 void swizzleMIMETypeMethodIfNecessary();

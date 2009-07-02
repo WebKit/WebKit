@@ -1,3 +1,22 @@
+2009-07-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6969425> Safari 4.0 doesn't recognize text/plain files if their extension is unknown.
+
+        Walk the CoreTypes UTI tree for extensions with unknown MIME types, using the first MIME type found.
+
+        For many types of text files (such as source code files) this ends up being text/plain.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): Tweak the logging output.
+
+        * platform/network/mac/WebCoreURLResponse.h:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (mimeTypeFromUTITree): 
+        (webNSURLResponseMIMEType): Use mimeTypeFromUTITree() to find a UTI-based MIME type for this file's extension.
+        (-[NSURLResponse _webcore_reportedMIMEType]): Return the actual MIME type that CFNetwork gave us.
+
 2009-07-02  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.

@@ -626,7 +626,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 {
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, MIMEType '%s', reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String], [[r _webcore_reportedMIMEType] UTF8String]);
 
     if (!m_handle || !m_handle->client())
         return;
