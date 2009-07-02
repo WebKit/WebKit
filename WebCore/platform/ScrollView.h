@@ -221,10 +221,10 @@ public:
 
     virtual bool scrollbarCornerPresent() const;
 
-    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const = 0;
-    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const = 0;
-    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const = 0;
-    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const = 0;
+    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
+    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
+    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
+    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
 
 protected:
     virtual void repaintContentRectangle(const IntRect&, bool now = false);

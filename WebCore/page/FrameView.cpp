@@ -1294,39 +1294,6 @@ void FrameView::getTickmarks(Vector<IntRect>& tickmarks) const
     tickmarks = frame()->document()->renderedRectsForMarkers(DocumentMarker::TextMatch);
 }
 
-IntRect FrameView::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& localRect) const
-{
-    // Scrollbars won't be transformed within us
-    IntRect newRect = localRect;
-    newRect.move(scrollbar->x(), scrollbar->y());
-    return newRect;
-}
-
-IntRect FrameView::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
-{
-    IntRect newRect = parentRect;
-    // Scrollbars won't be transformed within us
-    newRect.move(-scrollbar->x(), -scrollbar->y());
-    return newRect;
-}
-
-// FIXME: test these on windows
-IntPoint FrameView::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntPoint& localPoint) const
-{
-    // Scrollbars won't be transformed within us
-    IntPoint newPoint = localPoint;
-    newPoint.move(scrollbar->x(), scrollbar->y());
-    return newPoint;
-}
-
-IntPoint FrameView::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
-{
-    IntPoint newPoint = parentPoint;
-    // Scrollbars won't be transformed within us
-    newPoint.move(-scrollbar->x(), -scrollbar->y());
-    return newPoint;
-}
-
 IntRect FrameView::windowResizerRect() const
 {
     Page* page = frame() ? frame()->page() : 0;
