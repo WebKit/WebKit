@@ -31,6 +31,7 @@ audio {
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     /* In mediaControls.css */
+    -webkit-appearance: media-controls-background;
     height: 25px;
 }
 
@@ -39,17 +40,22 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
-    -webkit-box-ordinal-group: 2; /* At the end of the controller bar */
-    width: 30px;
-    height: 25px;
+    -webkit-box-ordinal-group: 2; /* Before the fullscreen button */
+    width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    margin-right: 7px;
 }
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
-    width: 30px;
-    height: 25px;
+    width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    margin-right: 7px;
 }
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
+    -webkit-appearance: none;
     height: 25px;
 }
 
@@ -63,7 +69,7 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     text-align: center;
     overflow: hidden;
     line-height: 13px;
-    height: 14px;
+    height: 13px;
     width: 45px;
 }
 
@@ -77,7 +83,7 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     text-align: center;
     overflow: hidden;
     line-height: 13px;
-    height: 14px;
+    height: 13px;
     width: 45px;
 }
 
@@ -96,5 +102,41 @@ audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls
 }
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
-    display: none;
+    width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    margin-right: 7px;
+    -webkit-box-ordinal-group: 3; /* At the very end */
+}
+
+audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button {
+    -webkit-appearance: media-rewind-button;
+    display: -webkit-box;
+    width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    margin-right: 7px;
+}
+
+audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button {
+    -webkit-appearance: media-return-to-realtime-button;
+    display: -webkit-box;
+    width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    margin-right: 7px;
+}
+
+audio::-webkit-media-controls-status-display, video::-webkit-media-controls-status-display {
+    -webkit-user-select: none;
+    display: -webkit-box;
+    -webkit-box-flex: 1;
+    font: -webkit-small-control;
+    color: white;
+    font-size: 0.6em;
+    line-height: 13px;
+    overflow: hidden;
+    text-shadow: 1px 1px 0px black;
+    margin-left: 10px;
+    margin-right: 10px;
 }

@@ -1,5 +1,18 @@
-<body>
-<p>Slider drawing with no source. The controls should render correctly.</p>
-<video src="" controls style="border:1px solid black"></video>
-</div>
-</body>
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.waitUntilDone();
+    
+            function test()
+            {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="setTimeout(test, 250)">
+        <p>Slider drawing with no source. The controls should render correctly.</p>
+        <video src="" controls style="border:1px solid black"></video>
+    </body>
+</html>

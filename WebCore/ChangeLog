@@ -1,3 +1,98 @@
+2009-07-02  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6518119>
+
+        Add a rewind button and hide the timeline for live broadcasts when
+        in MediaUI mode.
+
+        * css/CSSPrimitiveValueMappings.h: 
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Add the new pseudo element.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType): Ditto.
+        * css/CSSSelector.h: 
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Ditto.
+
+        * css/CSSValueKeywords.in: Ditto.
+        * css/mediaControls.css: Ditto.
+        * css/mediaControlsQT.css: Ditto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::rewind): New.
+        (WebCore::HTMLMediaElement::returnToRealTime): New.
+        (WebCore::HTMLMediaElement::isStreaming): New.
+        * html/HTMLMediaElement.h:
+
+        * page/mac/WebCoreViewFactory.h: Declare mediaElementLoadingStateText and mediaElementLiveBroadcastStateText.
+
+        * platform/LocalizedStrings.h: Add localized media state messages.
+
+        * platform/ThemeTypes.h: Add the new pseudo element.
+
+        * platform/mac/LocalizedStringsMac.mm: 
+        (WebCore::mediaElementLoadingStateText): Add localized media state.
+        (WebCore::mediaElementLiveBroadcastStateText): Ditto.
+
+        * platform/mac/WebCoreSystemInterface.h: Change BOOL param wkDrawMediaUIPart to an int to support
+           multiple states.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
+        * rendering/MediaControlElements.cpp: 
+        (WebCore::MediaControlElement::MediaControlElement): Deal with new elements.
+        (WebCore::MediaControlElement::attachToParent): Ditto.
+        (WebCore::MediaControlElement::update): Ditto.
+        (WebCore::MediaControlElement::updateStyle): Ditto.
+        (WebCore::MediaControlTimelineContainerElement::MediaControlTimelineContainerElement): Ditto.
+        (WebCore::MediaControlTimelineContainerElement::rendererIsNeeded): Ditto.
+        (WebCore::MediaControlStatusDisplayElement::MediaControlStatusDisplayElement): Ditto.
+        (WebCore::MediaControlStatusDisplayElement::update): Ditto.
+        (WebCore::MediaControlStatusDisplayElement::rendererIsNeeded): Ditto.
+        (WebCore::MediaControlInputElement::MediaControlInputElement): Ditto.
+        (WebCore::MediaControlInputElement::attachToParent): Ditto.
+        (WebCore::MediaControlInputElement::updateStyle): Ditto.
+        (WebCore::MediaControlRewindButtonElement::MediaControlRewindButtonElement): Ditto.
+        (WebCore::MediaControlRewindButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::MediaControlReturnToRealtimeButtonElement): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::rendererIsNeeded): Ditto.
+        (WebCore::MediaControlTimelineElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlTimelineElement::update): Ditto.
+        (WebCore::MediaControlFullscreenButtonElement::rendererIsNeeded): Ditto.
+        * rendering/MediaControlElements.h: Ditto.
+
+        * rendering/RenderMedia.cpp: 
+        (WebCore::RenderMedia::styleDidChange): Deal with the new elements.
+        (WebCore::RenderMedia::createPanel): Ditto.
+        (WebCore::RenderMedia::createRewindButton): Ditto.
+        (WebCore::RenderMedia::createReturnToRealtimeButton): Ditto.
+        (WebCore::RenderMedia::createStatusDisplay): Ditto.
+        (WebCore::RenderMedia::createTimelineContainer): Ditto.
+        (WebCore::RenderMedia::createCurrentTimeDisplay): Ditto.
+        (WebCore::RenderMedia::createTimeRemainingDisplay): Ditto.
+        (WebCore::RenderMedia::updateControls): Ditto.
+        (WebCore::RenderMedia::forwardEvent): Ditto.
+        * rendering/RenderMedia.h:
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint): Deal with the new elements.
+
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintMediaRewindButton): Deal with the new elements.
+        (WebCore::RenderTheme::paintMediaReturnToRealtimeButton): Ditto.
+        (WebCore::RenderTheme::paintMediaControlsBackground): Ditto.
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMediaRewindButton): Deal with the new elements.
+        (WebCore::RenderThemeMac::paintMediaReturnToRealtimeButton): Ditto.
+        (WebCore::RenderThemeMac::paintMediaControlsBackground): Ditto.
+
+        * rendering/style/RenderStyleConstants.h: Add constants for the new elements.
+
 2009-07-01  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.

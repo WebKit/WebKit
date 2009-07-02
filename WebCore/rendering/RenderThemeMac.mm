@@ -1572,8 +1572,31 @@ bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const RenderObject::
     wkDrawMediaUIPart(MediaSliderThumb, mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
     return false;
 }
+    
+bool RenderThemeMac::paintMediaRewindButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->node();
+    if (!node)
+        return false;
+    
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaRewindButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
+    return false;
+}
 
-bool RenderThemeMac::paintMediaTimelineContainer(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
+{
+    Node* node = o->node();
+    if (!node)
+        return false;
+    
+    LocalCurrentGraphicsContext localContext(paintInfo.context);
+    wkDrawMediaUIPart(MediaReturnToRealtimeButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
+    return false;
+}
+
+
+bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
     if (!node)

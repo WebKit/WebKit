@@ -2497,6 +2497,15 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             case CSSSelector::PseudoMediaControlsSeekForwardButton:
                 dynamicPseudo = MEDIA_CONTROLS_SEEK_FORWARD_BUTTON;
                 return true;
+            case CSSSelector::PseudoMediaControlsRewindButton:
+                dynamicPseudo = MEDIA_CONTROLS_REWIND_BUTTON;
+                return true;
+            case CSSSelector::PseudoMediaControlsReturnToRealtimeButton:
+                dynamicPseudo = MEDIA_CONTROLS_RETURN_TO_REALTIME_BUTTON;
+                return true;
+            case CSSSelector::PseudoMediaControlsStatusDisplay:
+                dynamicPseudo = MEDIA_CONTROLS_STATUS_DISPLAY;
+                return true;
             case CSSSelector::PseudoMediaControlsFullscreenButton:
                 dynamicPseudo = MEDIA_CONTROLS_FULLSCREEN_BUTTON;
                 return true;

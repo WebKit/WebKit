@@ -141,6 +141,9 @@
 // FTP Directory Related
 - (NSString *)unknownFileSizeText;
 
+- (NSString *)mediaElementLoadingStateText;
+- (NSString *)mediaElementLiveBroadcastStateText;
+
 @end
 
 @interface WebCoreViewFactory : NSObject

@@ -199,17 +199,19 @@ CFStringRef WKCopyFoundationCacheDirectory(void);
 
 typedef enum {
     WKMediaUIPartFullscreenButton   = 0,
-    WKMediaUIPartMuteButton         = 1,
-    WKMediaUIPartPlayButton         = 2,
-    WKMediaUIPartSeekBackButton     = 3,
-    WKMediaUIPartSeekForwardButton  = 4,
-    WKMediaUIPartSlider             = 5,
-    WKMediaUIPartSliderThumb        = 6,
-    WKMediaUIPartUnMuteButton       = 7,
-    WKMediaUIPartPauseButton        = 8,
-    WKMediaUIPartTimelineContainer  = 9,
-    WKMediaUIPartCurrentTimeDisplay = 10,
-    WKMediaUIPartTimeRemainingDisplay= 11
+    WKMediaUIPartMuteButton,
+    WKMediaUIPartPlayButton,
+    WKMediaUIPartSeekBackButton,
+    WKMediaUIPartSeekForwardButton,
+    WKMediaUIPartSlider,
+    WKMediaUIPartSliderThumb,
+    WKMediaUIPartRewindButton,
+    WKMediaUIPartSeekToRealtimeButton,
+    WKMediaUIPartUnMuteButton,
+    WKMediaUIPartPauseButton,
+    WKMediaUIPartBackground,
+    WKMediaUIPartCurrentTimeDisplay,
+    WKMediaUIPartTimeRemainingDisplay
 } WKMediaUIPart;
 
 typedef enum {
@@ -217,9 +219,15 @@ typedef enum {
     WKMediaControllerThemeQT        = 2
 } WKMediaControllerThemeStyle;
 
+typedef enum {
+    WKMediaControllerStateNormal     = 0,
+    WKMediaControllerStateActivated  = 1,
+    WKMediaControllerStateDisabled   = 2
+} WKMediaControllerThemeState;
+
 BOOL WKHitTestMediaUIPart(int part, int themeStyle, CGRect bounds, CGPoint point);
 void WKMeasureMediaUIPart(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
-void WKDrawMediaUIPart(int part, int themeStyle, CGContextRef context, CGRect rect, BOOL active);
+void WKDrawMediaUIPart(int part, int themeStyle, CGContextRef context, CGRect rect, int state);
 void WKDrawMediaSliderTrack(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && defined(__x86_64__)

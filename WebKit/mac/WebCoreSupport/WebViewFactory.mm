@@ -598,4 +598,14 @@
     return [NSString stringWithFormat:UI_STRING("%@ %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, width, height];
 }
 
+- (NSString*)mediaElementLoadingStateText
+{
+    return UI_STRING("Loading...", "text that shows up in the media controller when the media is loading");
+}
+
+- (NSString*)mediaElementLiveBroadcastStateText
+{
+    return UI_STRING("Live Broadcast", "text that shows up in the media controller when watching a live broadcast");
+}
+
 @end

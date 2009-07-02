@@ -41,7 +41,7 @@ NSFont* (*wkGetFontInLanguageForCharacter)(NSFont*, UniChar);
 BOOL (*wkGetGlyphTransformedAdvances)(CGFontRef, NSFont*, CGAffineTransform*, ATSGlyphRef*, CGSize* advance);
 void (*wkDrawMediaSliderTrack)(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration);
 BOOL (*wkHitTestMediaUIPart)(int part, int themeStyle, CGRect bounds, CGPoint point);
-void (*wkDrawMediaUIPart)(int part, int themeStyle, CGContextRef context, CGRect rect, BOOL active);
+void (*wkDrawMediaUIPart)(int part, int themeStyle, CGContextRef context, CGRect rect, int state);
 void (*wkMeasureMediaUIPart)(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
 NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
 NSArray* (*wkGetExtensionsForMIMEType)(NSString*);

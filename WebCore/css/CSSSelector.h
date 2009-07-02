@@ -173,6 +173,9 @@ namespace WebCore {
             PseudoMediaControlsTimeline,
             PseudoMediaControlsSeekBackButton,
             PseudoMediaControlsSeekForwardButton,
+            PseudoMediaControlsRewindButton,
+            PseudoMediaControlsReturnToRealtimeButton,
+            PseudoMediaControlsStatusDisplay,
             PseudoMediaControlsFullscreenButton
         };
 

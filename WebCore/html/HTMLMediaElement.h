@@ -66,6 +66,9 @@ public:
     virtual bool isVideo() const { return false; }
     virtual bool hasVideo() const { return false; }
 
+    void rewind(float timeDelta);
+    void returnToRealtime();
+    
     virtual bool supportsFullscreen() const { return false; }
 
     void scheduleLoad();
@@ -94,6 +97,8 @@ public:
     PassRefPtr<TimeRanges> buffered() const;
     void load(ExceptionCode&);
     String canPlayType(const String& mimeType) const;
+
+    bool isStreaming() const;
 
 // ready state
     enum ReadyState { HAVE_NOTHING, HAVE_METADATA, HAVE_CURRENT_DATA, HAVE_FUTURE_DATA, HAVE_ENOUGH_DATA };
@@ -220,6 +225,9 @@ private:
     bool endedPlayback() const;
     bool stoppedDueToErrors() const;
     bool pausedForUserInteraction() const;
+
+    float minTimeSeekable() const;
+    float maxTimeSeekable() const;
 
     // Restrictions to change default behaviors. This is a effectively a compile time choice at the moment
     //  because there are no accessor methods.

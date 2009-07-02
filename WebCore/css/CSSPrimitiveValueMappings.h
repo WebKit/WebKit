@@ -215,14 +215,20 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         case MediaSeekForwardButtonPart:
             m_value.ident = CSSValueMediaSeekForwardButton;
             break;
+        case MediaRewindButtonPart:
+            m_value.ident = CSSValueMediaRewindButton;
+            break;
+        case MediaReturnToRealtimeButtonPart:
+            m_value.ident = CSSValueMediaReturnToRealtimeButton;
+            break;
         case MediaSliderPart:
             m_value.ident = CSSValueMediaSlider;
             break;
         case MediaSliderThumbPart:
             m_value.ident = CSSValueMediaSliderthumb;
             break;
-        case MediaTimelineContainerPart:
-            m_value.ident = CSSValueMediaTimelineContainer;
+        case MediaControlsBackgroundPart:
+            m_value.ident = CSSValueMediaControlsBackground;
             break;
         case MediaCurrentTimePart:
             m_value.ident = CSSValueMediaCurrentTimeDisplay;

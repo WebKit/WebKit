@@ -124,7 +124,9 @@ protected:
     virtual bool paintMediaSeekForwardButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderTrack(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
-    virtual bool paintMediaTimelineContainer(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaRewindButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaReturnToRealtimeButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual bool paintMediaControlsBackground(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual bool paintMediaCurrentTime(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual bool paintMediaTimeRemaining(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 

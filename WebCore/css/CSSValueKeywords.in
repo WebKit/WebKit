@@ -504,9 +504,11 @@ media-mute-button
 media-play-button
 media-seek-back-button
 media-seek-forward-button
+media-rewind-button
+media-return-to-realtime-button
 media-slider
 media-sliderthumb
-media-timeline-container
+media-controls-background
 media-current-time-display
 media-time-remaining-display
 menulist

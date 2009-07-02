@@ -697,4 +697,20 @@ String imageTitle(const String& filename, const IntSize& size)
     return String();
 }
 
+String mediaElementLoadingStateText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] mediaElementLoadingStateText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
+String mediaElementLiveBroadcastStateText()
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] mediaElementLiveBroadcastStateText];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
+}
+
 }
