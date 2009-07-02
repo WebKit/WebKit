@@ -31,7 +31,6 @@
 #include "config.h"
 #include "ScriptObjectQuarantine.h"
 
-#include "Database.h"
 #include "Document.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
@@ -43,6 +42,7 @@
 #include <runtime/JSLock.h>
 
 #if ENABLE(DATABASE)
+#include "Database.h"
 #include "JSDatabase.h"
 #endif
 
