@@ -569,6 +569,7 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
 
         Frame* frame = core(webView)->mainFrame();
         core(webView)->focusController()->setActive(frame);
+        core(webView)->focusController()->setFocused(true);
     }
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 }
@@ -578,6 +579,7 @@ static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
     core(webView)->focusController()->setActive(false);
+    core(webView)->focusController()->setFocused(false);
 
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_out_event(widget, event);
 }
