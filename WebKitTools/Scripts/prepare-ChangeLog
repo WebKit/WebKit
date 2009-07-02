@@ -96,6 +96,7 @@ sub normalizePath($);
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
 
+my $bugNumber;
 my $name;
 my $emailAddress;
 my $gitCommit = 0;
@@ -107,6 +108,7 @@ my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
 my $updateChangeLogs = 1;
 my $parseOptionsResult =
     GetOptions("diff|d!" => \$spewDiff,
+               "bug:i" => \$bugNumber,
                "name:s" => \$name,
                "email:s" => \$emailAddress,
                "git-commit:s" => \$gitCommit,
@@ -244,6 +246,18 @@ $emailAddress = changeLogEmailAddress($emailAddress);
 
 print STDERR "  Change author: $name <$emailAddress>.\n";
 
+my $bugDescription;
+my $bugURL;
+if ($bugNumber) {
+    $bugURL = "https://bugs.webkit.org/show_bug.cgi?id=$bugNumber";
+    my $bugXMLURL = "$bugURL&ctype=xml";
+    # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
+    my $descriptionLine = `curl --silent "$bugXMLURL" | grep short_desc`;
+    $descriptionLine =~ /<short_desc>(.*)<\/short_desc>/;
+    $bugDescription = $1;
+    print STDERR "  Description from bug $bugNumber:\n    \"$bugDescription\".\n";
+}
+
 # Remove trailing parenthesized notes from user name (bit of hack).
 $name =~ s/\(.*?\)\s*$//g;
 
@@ -320,11 +334,21 @@ foreach my $prefix (sort keys %files) {
     print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
     print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
+    $bugDescription = "SHORT DESCRIPTION/BUG TITLE GOES HERE (OOPS!)" unless $bugDescription;
+    print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl);
+
+    $bugURL = "BUG URL GOES HERE (pass --bug= to autofill)" unless $bugURL;
+    print CHANGE_LOG normalizeLineEndings("        $bugURL\n\n", $endl);
+
+    # We could pre-populate this with the git commit log or with the bug description.
+    print CHANGE_LOG normalizeLineEndings("        DETAILED DESCRIPTION OF THE CHANGES GOES HERE. (OOPS!) SEE:\n", $endl);
+    print CHANGE_LOG normalizeLineEndings("        http://webkit.org/coding/contributing.html FOR MORE INFORMATION\n\n", $endl);
+
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         if ($didChangeRegressionTests) {
             print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @addedRegressionTests), $endl);
         } else {
-            print CHANGE_LOG normalizeLineEndings("        WARNING: NO TEST CASES ADDED OR CHANGED\n\n", $endl);
+            print CHANGE_LOG normalizeLineEndings("        LIST OF TESTS, OR EXPLANATION WHY TESTING IS IMPOSSIBLE GOES HERE (OOPS!)\n\n", $endl);
         }
     }
 

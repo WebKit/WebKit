@@ -1,5 +1,18 @@
 2009-07-01  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        prepare-ChangeLog should have a --bug= argument and use it for url autofill
+        https://bugs.webkit.org/show_bug.cgi?id=26383
+
+        prepare-ChangeLog now knows how to grab the bug title from bugs.webkit.org
+        I also added a bit more template text in an effort to get better ChangeLogs
+        from casual contributers.
+
+        * Scripts/prepare-ChangeLog:
+
+2009-07-01  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Roben.
 
         prepare-ChangeLog should fail when EMAIL_ADDRESS or REAL_NAME are missing:
