@@ -16,7 +16,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     border-right-width: 0px
     border-top-color: rgb(0, 0, 0)
     border-top-style: solid
-    border-top-width: 14px
+    border-top-width: 13px
     bottom: auto
     caption-side: top
     clear: none
@@ -28,7 +28,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     empty-cells: show
     float: none
     font-family: Arial
-    font-size: 14px
+    font-size: 13px
     font-style: normal
     font-variant: normal
     font-weight: normal
@@ -207,7 +207,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-text-size-adjust: auto
 
 After changing grandparent's 'color' and the parent's 'font-size' inherited properties:
-    border-top-width: 17px
+    border-top-width: 16px
     color: rgb(0, 0, 255)
 
 After changing the parent's 'display' property to 'block', so that the child gets a renderer:
