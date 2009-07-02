@@ -182,8 +182,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
         paintCustomHighlight(tx - x(), ty - y(), style()->highlight(), true);
 #endif
 
-    bool clipToBorderRadius = style()->overflowX() != OVISIBLE && style()->hasBorderRadius(); 
-    if (clipToBorderRadius) {
+    if (style()->hasBorderRadius()) {
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
         paintInfo.context->save();
         
@@ -210,7 +209,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
         }
     }
 
-    if (clipToBorderRadius)
+    if (style()->hasBorderRadius())
         paintInfo.context->restore();
 
     // Paint a partially transparent wash over selected widgets.
