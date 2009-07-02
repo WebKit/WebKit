@@ -165,10 +165,7 @@ static unsigned depthCrossingShadowBoundaries(Node* node)
 static inline bool fullyClipsContents(Node* node)
 {
     RenderObject* renderer = node->renderer();
-    if (!renderer || !renderer->isBox())
-        return false;
-    RenderStyle* style = renderer->style();
-    if (style->overflowX() == OVISIBLE && style->overflowY() == OVISIBLE)
+    if (!renderer || !renderer->isBox() || !renderer->hasOverflowClip())
         return false;
     return toRenderBox(renderer)->size().isEmpty();
 }
