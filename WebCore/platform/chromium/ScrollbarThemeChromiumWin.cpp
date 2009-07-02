@@ -253,6 +253,11 @@ int ScrollbarThemeChromiumWin::getClassicThemeState(Scrollbar* scrollbar, Scroll
     return (scrollbar->pressedPart() == part) ? (DFCS_PUSHED | DFCS_FLAT) : 0;
 }
 
+bool ScrollbarThemeChromiumWin::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
+{
+    return evt.shiftKey() && evt.button() == LeftButton;
+}
+
 IntSize ScrollbarThemeChromiumWin::buttonSize(Scrollbar* scrollbar)
 {
     // Our desired rect is essentially thickness by thickness.

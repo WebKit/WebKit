@@ -49,7 +49,6 @@ namespace WebCore {
         virtual IntRect trackRect(Scrollbar*, bool painting = false);
 
         virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect&);
-        virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
 
         virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
         virtual void paintTickmarks(GraphicsContext*, Scrollbar*, const IntRect&);
