@@ -1,3 +1,16 @@
+2009-07-02  Adam Roben  <aroben@apple.com>
+
+        Fix warnings from update-webkit-localizable-strings
+
+        Rubber-stamped by Eric Carlson.
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory mediaElementLoadingStateText]):
+        (-[WebViewFactory mediaElementLiveBroadcastStateText]):
+        Changed the localization comments to match the comments in the Windows
+        version of this file, to avoid warnings about different comments for
+        the same localized string.
+
 2009-07-02  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

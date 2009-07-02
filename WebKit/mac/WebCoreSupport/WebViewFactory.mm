@@ -600,12 +600,12 @@
 
 - (NSString*)mediaElementLoadingStateText
 {
-    return UI_STRING("Loading...", "text that shows up in the media controller when the media is loading");
+    return UI_STRING("Loading...", "Media controller status message when the media is loading");
 }
 
 - (NSString*)mediaElementLiveBroadcastStateText
 {
-    return UI_STRING("Live Broadcast", "text that shows up in the media controller when watching a live broadcast");
+    return UI_STRING("Live Broadcast", "Media controller status message when watching a live broadcast");
 }
 
 @end
