@@ -1298,6 +1298,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setNeedsTigerMailQuirks(runningTigerMail());
     settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
+    settings->setLocalFileContentSniffingEnabled([preferences localFileContentSniffingEnabled]);
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
     settings->setZoomsTextOnly([preferences zoomsTextOnly]);
     settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);

@@ -345,6 +345,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitApplicationChromeModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitLocalFileContentSniffingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitXSSAuditorEnabledPreferenceKey,
@@ -800,6 +801,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setWebArchiveDebugModeEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitWebArchiveDebugModeEnabledPreferenceKey];
+}
+
+- (BOOL)localFileContentSniffingEnabled
+{
+    return [self _boolValueForKey:WebKitLocalFileContentSniffingEnabledPreferenceKey];
+}
+
+- (void)setLocalFileContentSniffingEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitLocalFileContentSniffingEnabledPreferenceKey];
 }
 
 - (BOOL)offlineWebApplicationCacheEnabled

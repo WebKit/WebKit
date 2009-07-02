@@ -205,6 +205,9 @@ namespace WebCore {
         void setWebArchiveDebugModeEnabled(bool);
         bool webArchiveDebugModeEnabled() const { return m_webArchiveDebugModeEnabled; }
 
+        void setLocalFileContentSniffingEnabled(bool);
+        bool localFileContentSniffingEnabled() const { return m_localFileContentSniffingEnabled; }
+
         void setLocalStorageDatabasePath(const String&);
         const String& localStorageDatabasePath() const { return m_localStorageDatabasePath; }
         
@@ -298,6 +301,7 @@ namespace WebCore {
         bool m_needsSiteSpecificQuirks : 1;
         unsigned m_fontRenderingMode : 1;
         bool m_webArchiveDebugModeEnabled : 1;
+        bool m_localFileContentSniffingEnabled : 1;
         bool m_inApplicationChromeMode : 1;
         bool m_offlineWebApplicationCacheEnabled : 1;
         bool m_shouldPaintCustomScrollbars : 1;

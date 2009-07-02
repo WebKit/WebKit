@@ -186,7 +186,7 @@ bool ResourceHandle::start(Frame* frame)
 
     NSURLConnection *connection;
     
-    if (d->m_shouldContentSniff) 
+    if (d->m_shouldContentSniff || frame->settings()->localFileContentSniffingEnabled()) 
 #ifdef BUILDING_ON_TIGER
         connection = [[NSURLConnection alloc] initWithRequest:d->m_request.nsURLRequest() delegate:delegate];
 #else
@@ -626,7 +626,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 {
     UNUSED_PARAM(connection);
 
-    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d)", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
     if (!m_handle || !m_handle->client())
         return;
