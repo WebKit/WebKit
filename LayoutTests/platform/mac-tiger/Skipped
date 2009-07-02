@@ -54,8 +54,3 @@ http/tests/cookies/double-quoted-value-with-semi-colon.html
 
 # Tiger does not support connectionShouldUseCredentialStorage: delegate call.
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
-
-# Disable the file url mimetypes test until I can improve the situation
-platform/mac/fast/loader/file-url-mimetypes.html 
-platform/mac/fast/loader/file-url-mimetypes-2.html 
-platform/mac/fast/loader/file-url-mimetypes-3.html 

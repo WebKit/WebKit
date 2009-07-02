@@ -1,5 +1,16 @@
 2009-07-02  Brady Eidson  <beidson@apple.com>
 
+        Rubberstamped by John Sullivan.
+
+        Add Tiger-specific results for these tests.
+
+        * platform/mac-tiger/Skipped:
+        * platform/mac-tiger/platform/mac/fast/loader/file-url-mimetypes-2-expected.txt: Added.
+        * platform/mac-tiger/platform/mac/fast/loader/file-url-mimetypes-3-expected.txt: Added.
+        * platform/mac-tiger/platform/mac/fast/loader/file-url-mimetypes-expected.txt:
+
+2009-07-02  Brady Eidson  <beidson@apple.com>
+
         Skip the correct test names.
 
         * platform/mac-tiger/Skipped:
