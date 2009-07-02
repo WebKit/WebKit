@@ -1,3 +1,18 @@
+2009-07-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        Compositing-related preference methods are not public API; should move to WebPreferencesPrivate.h
+        <rdar://problem/7027363>
+
+        Move accelerated-compositing pref to WebPreferencesPrivate.h
+
+        * WebView/WebPreferences.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences acceleratedCompositingEnabled]):
+        (-[WebPreferences setAcceleratedCompositingEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2009-07-02  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.

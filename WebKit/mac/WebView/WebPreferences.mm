@@ -740,16 +740,6 @@ static WebCacheModel cacheModelForMainBundle(void)
     return [self _integerValueForKey:WebKitCacheModelPreferenceKey];
 }
 
-- (BOOL)acceleratedCompositingEnabled
-{
-    return [self _boolValueForKey:WebKitAcceleratedCompositingEnabledPreferenceKey];
-}
-
-- (void)setAcceleratedCompositingEnabled:(BOOL)enabled
-{
-    [self _setBoolValue: enabled forKey: WebKitAcceleratedCompositingEnabledPreferenceKey];
-}
-
 @end
 
 @implementation WebPreferences (WebPrivate)
@@ -1108,11 +1098,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:DOMPasteAllowed forKey:WebKitDOMPasteAllowedPreferenceKey];
 }
 
-- (void)_setFTPDirectoryTemplatePath:(NSString *)path
-{
-    [self _setStringValue:[path stringByStandardizingPath] forKey:WebKitFTPDirectoryTemplatePath];
-}
-
 - (NSString *)_localStorageDatabasePath
 {
     return [[self _stringValueForKey:WebKitLocalStorageDatabasePathPreferenceKey] stringByStandardizingPath];
@@ -1128,14 +1113,29 @@ static NSString *classIBCreatorID = nil;
     return [[self _stringValueForKey:WebKitFTPDirectoryTemplatePath] stringByStandardizingPath];
 }
 
-- (void)_setForceFTPDirectoryListings:(BOOL)force
+- (void)_setFTPDirectoryTemplatePath:(NSString *)path
 {
-    [self _setBoolValue:force forKey:WebKitForceFTPDirectoryListings];
+    [self _setStringValue:[path stringByStandardizingPath] forKey:WebKitFTPDirectoryTemplatePath];
 }
 
 - (BOOL)_forceFTPDirectoryListings
 {
     return [self _boolValueForKey:WebKitForceFTPDirectoryListings];
+}
+
+- (void)_setForceFTPDirectoryListings:(BOOL)force
+{
+    [self _setBoolValue:force forKey:WebKitForceFTPDirectoryListings];
+}
+
+- (BOOL)acceleratedCompositingEnabled
+{
+    return [self _boolValueForKey:WebKitAcceleratedCompositingEnabledPreferenceKey];
+}
+
+- (void)setAcceleratedCompositingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitAcceleratedCompositingEnabledPreferenceKey];
 }
 
 - (void)didRemoveFromWebView
