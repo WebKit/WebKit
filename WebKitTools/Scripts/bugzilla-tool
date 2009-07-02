@@ -205,18 +205,11 @@ class ApplyPatchesFromBug(Command):
         
         self.apply_patches(patches, tool.scm(), options.local_commit)
 
-def bug_comment_from_commit_text(commit_text):
-    comment_lines = []
-    commit_lines = commit_text.splitlines()
-    for line in commit_lines:
-        comment_lines.append(line)
-        match = re.match("^Committed r(\d+)$", line)
-        if match:
-            revision = match.group(1)
-            comment_lines.append("http://trac.webkit.org/changeset/" + revision)
-            break
-    return "\n".join(comment_lines)
-
+def bug_comment_from_commit_text(scm, commit_text):
+    match = re.search(scm.commit_success_regexp(), commit_text, re.MULTILINE)
+    svn_revision = match.group('svn_revision')
+    commit_text += ("\nhttp://trac.webkit.org/changeset/%s" % svn_revision)
+    return commit_text
 
 class LandAndUpdateBug(Command):
     def __init__(self):
@@ -317,7 +310,7 @@ class LandPatchesFromBugs(Command):
                 cls.run_webkit_tests()
         commit_message = commit_message_for_this_commit(scm)
         commit_log = scm.commit_with_message(commit_message)
-        return bug_comment_from_commit_text(commit_log)
+        return bug_comment_from_commit_text(scm, commit_log)
 
     @classmethod
     def land_patches(cls, bug_id, patches, options, tool):
