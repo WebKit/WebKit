@@ -1,0 +1,108 @@
+<html>
+<head>
+  <title>Overflow scrollbar hit testing</title>
+  <style type="text/css" media="screen">
+    .box {
+      display: inline-block;
+      width: 150px;
+      height: 150px;
+      border: 20px inset gray;
+      padding: 10px;
+      margin: 15px;
+      overflow: scroll;
+    }
+    
+    .inner {
+      width: 300px;
+      height: 300px;
+      border: 1px solid gray;
+    }
+    
+    #results {
+      margin-top: 50px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    function sendClick(element, clientX, clientY)
+    {
+      if (window.eventSender) {
+        eventSender.mouseMoveTo(clientX, clientY);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+      }
+    }
+
+    function mouseDownOnOverflowDiv(elementId, translateX, translateY)
+    {
+      log('Testing clicks on ' + elementId);
+
+      var element = document.getElementById(elementId);
+      var scrollIncrement = 40;
+      var border = 20;
+      var scrollbarWidth = 16;
+      var scrollbarHeight = 16;
+      
+      var scrollbarMidX = translateX + element.offsetLeft + element.offsetWidth - border - scrollbarWidth / 2;
+      // Recall that DRT sets scroll arrows to be together at end end of the scrollbar
+      var scrollbarTopArrowY = translateY + element.offsetTop + element.offsetHeight - border - scrollbarHeight - scrollbarHeight - 3;
+      var scrollbarBottomArrowY = translateY + element.offsetTop + element.offsetHeight - border - scrollbarHeight - 3;
+      
+      sendClick(element, scrollbarMidX, scrollbarBottomArrowY);
+      sendClick(element, scrollbarMidX, scrollbarBottomArrowY);
+      if (element.scrollTop == 2 * scrollIncrement)
+        log('Scrolled down by ' + (2 * scrollIncrement) + ' on down arrow click: PASS');
+      else
+        log('Failed to scroll down - scrollTop is ' + element.scrollTop + ': FAIL');
+
+      sendClick(element, scrollbarMidX, scrollbarTopArrowY);
+      if (element.scrollTop == scrollIncrement)
+        log('Scrolled up by ' + scrollIncrement + ' on up arrow click: PASS');
+      else
+        log('Failed to scroll up - scrollTop is ' + element.scrollTop + ': FAIL');
+
+      log('');
+    }
+    
+    function log(msg)
+    {
+      var results = document.getElementById('results');
+      results.innerHTML += msg + '<br>';
+    }
+    
+    function test()
+    {
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+      }
+      
+      if (!window.eventSender) {
+        log('This test only runs in DRT');
+      }
+      
+      // Have to wait for the select to be painted before the
+      // scrollbar is sized correctly.
+      setTimeout(function() {
+        mouseDownOnOverflowDiv('box1', 0, 0);
+        mouseDownOnOverflowDiv('box2', 50, 50);
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
+      }, 0);
+    }
+  </script>
+</head>
+<body onload="test()">
+
+
+  <div class="box" id="box1">
+    <div class="inner">Inner</div>
+  </div>
+
+  <div class="box" id="box2" style="-webkit-transform: translate(50px, 50px);">
+    <div class="inner">Inner</div>
+  </div>
+
+  <div id="results">
+  </div>
+</body>
+</html>

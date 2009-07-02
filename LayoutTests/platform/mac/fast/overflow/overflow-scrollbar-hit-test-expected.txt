@@ -1,0 +1,12 @@
+Inner
+ 
+Inner
+Testing clicks on box1
+Scrolled down by 80 on down arrow click: PASS
+Scrolled up by 40 on up arrow click: PASS
+
+Testing clicks on box2
+Scrolled down by 80 on down arrow click: PASS
+Scrolled up by 40 on up arrow click: PASS
+
+

@@ -126,11 +126,6 @@ public:
     virtual IntRect windowClipRect(bool clipToContents = true) const;
     IntRect windowClipRectForLayer(const RenderLayer*, bool clipToLayerContents) const;
 
-    virtual bool isActive() const;
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
-    virtual void valueChanged(Scrollbar*);
-    virtual void getTickmarks(Vector<IntRect>&) const;
-
     virtual IntRect windowResizerRect() const;
 
     virtual void scrollRectIntoViewRecursively(const IntRect&);
@@ -188,6 +183,11 @@ public:
     bool lockedToAnchor() { return m_lockedToAnchor; }
     void setLockedToAnchor(bool lockedToAnchor) { m_lockedToAnchor = lockedToAnchor; }
 
+    // Methods to convert points and rects between the coordinate space of the renderer, and this view.
+    virtual IntRect convertFromRenderer(const RenderObject*, const IntRect&) const;
+    virtual IntRect convertToRenderer(const RenderObject*, const IntRect&) const;
+    virtual IntPoint convertFromRenderer(const RenderObject*, const IntPoint&) const;
+    virtual IntPoint convertToRenderer(const RenderObject*, const IntPoint&) const;
 
 private:
     FrameView(Frame*);
@@ -214,6 +214,23 @@ private:
         if (needsLayout())
             layout();
     }
+
+    // Override ScrollView methods to do point conversion via renderers, in order to
+    // take transforms into account.
+    virtual IntRect convertToContainingView(const IntRect&) const;
+    virtual IntRect convertFromContainingView(const IntRect&) const;
+    virtual IntPoint convertToContainingView(const IntPoint&) const;
+    virtual IntPoint convertFromContainingView(const IntPoint&) const;
+
+    // ScrollBarClient interface
+    virtual void valueChanged(Scrollbar*);
+    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
+    virtual bool isActive() const;
+    virtual void getTickmarks(Vector<IntRect>&) const;
+    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
+    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
+    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
+    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
 
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();

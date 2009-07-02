@@ -1,3 +1,63 @@
+2009-07-02  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Fix for bug 22119, clicks in the scrollbars of transformed content don't work.  Add new
+        conversion methods for going across parent/child widget boundaries that can be implemented
+        by the FrameView and ScrollbarClient to be transform-aware.
+
+        Test cases added in platform/mac/fast/forms and platform/mac/fast/overflow.
+
+        * WebCore.base.exp:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::convertFromScrollbarToContainingView):
+        (WebCore::FrameView::convertFromContainingViewToScrollbar):
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToRenderer):
+        (WebCore::FrameView::convertToContainingView):
+        (WebCore::FrameView::convertFromContainingView):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::convertToContainingView):
+        (WebCore::Scrollbar::convertFromContainingView):
+        * platform/Scrollbar.h:
+        * platform/ScrollbarClient.h:
+        (WebCore::ScrollbarClient::convertFromScrollbarToContainingView):
+        (WebCore::ScrollbarClient::convertFromContainingViewToScrollbar):
+        * platform/Widget.cpp:
+        (WebCore::Widget::convertFromContainingWindow):
+        (WebCore::Widget::convertToContainingWindow):
+        (WebCore::Widget::convertFromRootToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindowToRoot):
+        (WebCore::Widget::convertToContainingView):
+        (WebCore::Widget::convertFromContainingView):
+        * platform/Widget.h:
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::move):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::convertFromRootToContainingWindow):
+        (WebCore::Widget::convertFromContainingWindowToRoot):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInOverflowControl):
+        * rendering/RenderDataGrid.cpp:
+        (WebCore::RenderDataGrid::convertFromScrollbarToContainingView):
+        (WebCore::RenderDataGrid::convertFromContainingViewToScrollbar):
+        * rendering/RenderDataGrid.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::convertFromScrollbarToContainingView):
+        (WebCore::RenderLayer::convertFromContainingViewToScrollbar):
+        (WebCore::RenderLayer::scrollbarOffset):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        (WebCore::RenderListBox::convertFromScrollbarToContainingView):
+        (WebCore::RenderListBox::convertFromContainingViewToScrollbar):
+        * rendering/RenderListBox.h:
+
 2009-07-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt and Simon Fraser.

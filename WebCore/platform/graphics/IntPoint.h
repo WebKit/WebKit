@@ -80,6 +80,7 @@ public:
     void setX(int x) { m_x = x; }
     void setY(int y) { m_y = y; }
 
+    void move(const IntSize& s) { move(s.width(), s.height()); } 
     void move(int dx, int dy) { m_x += dx; m_y += dy; }
     
     IntPoint expandedTo(const IntPoint& other) const

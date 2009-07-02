@@ -449,9 +449,36 @@ void Scrollbar::invalidateRect(const IntRect& rect)
         m_client->invalidateScrollbarRect(this, rect);
 }
 
-PlatformMouseEvent Scrollbar::transformEvent(const PlatformMouseEvent& event)
+IntRect Scrollbar::convertToContainingView(const IntRect& localRect) const
 {
-    return event;
+    if (m_client)
+        return m_client->convertFromScrollbarToContainingView(this, localRect);
+
+    return Widget::convertToContainingView(localRect);
+}
+
+IntRect Scrollbar::convertFromContainingView(const IntRect& parentRect) const
+{
+    if (m_client)
+        return m_client->convertFromContainingViewToScrollbar(this, parentRect);
+
+    return Widget::convertFromContainingView(parentRect);
+}
+
+IntPoint Scrollbar::convertToContainingView(const IntPoint& localPoint) const
+{
+    if (m_client)
+        return m_client->convertFromScrollbarToContainingView(this, localPoint);
+
+    return Widget::convertToContainingView(localPoint);
+}
+
+IntPoint Scrollbar::convertFromContainingView(const IntPoint& parentPoint) const
+{
+    if (m_client)
+        return m_client->convertFromContainingViewToScrollbar(this, parentPoint);
+
+    return Widget::convertFromContainingView(parentPoint);
 }
 
 }

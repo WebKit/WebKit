@@ -264,7 +264,7 @@ public:
 
     void positionOverflowControls(int tx, int ty);
     bool isPointInResizeControl(const IntPoint& absolutePoint) const;
-    bool hitTestOverflowControls(HitTestResult&);
+    bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
     IntSize offsetFromResizeCorner(const IntPoint& absolutePoint) const;
 
     void paintOverflowControls(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
@@ -476,11 +476,18 @@ private:
 
     bool shouldBeNormalFlowOnly() const; 
 
+    // ScrollBarClient interface
     virtual void valueChanged(Scrollbar*);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const;
     virtual bool scrollbarCornerPresent() const;
-
+    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
+    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
+    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
+    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
+    
+    IntSize scrollbarOffset(const Scrollbar*) const;
+    
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 
     void childVisibilityChanged(bool newVisibility);

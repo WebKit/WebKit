@@ -1424,6 +1424,66 @@ bool RenderLayer::scrollbarCornerPresent() const
     return !scrollCornerRect(this, renderBox()->borderBoxRect()).isEmpty();
 }
 
+IntRect RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& scrollbarRect) const
+{
+    RenderView* view = renderer()->view();
+    if (!view)
+        return scrollbarRect;
+
+    IntRect rect = scrollbarRect;
+    rect.move(scrollbarOffset(scrollbar));
+
+    return view->frameView()->convertFromRenderer(renderer(), rect);
+}
+
+IntRect RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
+{
+    RenderView* view = renderer()->view();
+    if (!view)
+        return parentRect;
+
+    IntRect rect = view->frameView()->convertToRenderer(renderer(), parentRect);
+    rect.move(-scrollbarOffset(scrollbar));
+    return rect;
+}
+
+IntPoint RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntPoint& scrollbarPoint) const
+{
+    RenderView* view = renderer()->view();
+    if (!view)
+        return scrollbarPoint;
+
+    IntPoint point = scrollbarPoint;
+    point.move(scrollbarOffset(scrollbar));
+    return view->frameView()->convertFromRenderer(renderer(), point);
+}
+
+IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
+{
+    RenderView* view = renderer()->view();
+    if (!view)
+        return parentPoint;
+
+    IntPoint point = view->frameView()->convertToRenderer(renderer(), parentPoint);
+
+    point.move(-scrollbarOffset(scrollbar));
+    return point;
+}
+
+IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
+{
+    RenderBox* box = renderBox();
+
+    if (scrollbar == m_vBar.get())
+        return IntSize(box->width() - box->borderRight() - scrollbar->width(), box->borderTop());
+
+    if (scrollbar == m_hBar.get())
+        return IntSize(box->borderLeft(), box->height() - box->borderBottom() - scrollbar->height());
+    
+    ASSERT_NOT_REACHED();
+    return IntSize();
+}
+
 void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
     IntRect scrollRect = rect;
@@ -1835,34 +1895,29 @@ bool RenderLayer::isPointInResizeControl(const IntPoint& absolutePoint) const
     return resizerCornerRect(this, localBounds).contains(localPoint);
 }
     
-bool RenderLayer::hitTestOverflowControls(HitTestResult& result)
+bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint& localPoint)
 {
     if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))
         return false;
 
     RenderBox* box = renderBox();
     ASSERT(box);
-
-    int x = 0;
-    int y = 0;
-    convertToLayerCoords(root(), x, y);
-    IntRect absBounds(x, y, box->width(), box->height());
     
     IntRect resizeControlRect;
     if (renderer()->style()->resize() != RESIZE_NONE) {
-        resizeControlRect = resizerCornerRect(this, absBounds);
-        if (resizeControlRect.contains(result.point()))
+        resizeControlRect = resizerCornerRect(this, box->borderBoxRect());
+        if (resizeControlRect.contains(localPoint))
             return true;
     }
 
     int resizeControlSize = max(resizeControlRect.height(), 0);
 
     if (m_vBar) {
-        IntRect vBarRect(absBounds.right() - box->borderRight() - m_vBar->width(), 
-                         absBounds.y() + box->borderTop(),
+        IntRect vBarRect(box->width() - box->borderRight() - m_vBar->width(), 
+                         box->borderTop(),
                          m_vBar->width(),
-                         absBounds.height() - (box->borderTop() + box->borderBottom()) - (m_hBar ? m_hBar->height() : resizeControlSize));
-        if (vBarRect.contains(result.point())) {
+                         box->height() - (box->borderTop() + box->borderBottom()) - (m_hBar ? m_hBar->height() : resizeControlSize));
+        if (vBarRect.contains(localPoint)) {
             result.setScrollbar(m_vBar.get());
             return true;
         }
@@ -1870,11 +1925,11 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result)
 
     resizeControlSize = max(resizeControlRect.width(), 0);
     if (m_hBar) {
-        IntRect hBarRect(absBounds.x() + box->borderLeft(),
-                         absBounds.bottom() - box->borderBottom() - m_hBar->height(),
-                         absBounds.width() - (box->borderLeft() + box->borderRight()) - (m_vBar ? m_vBar->width() : resizeControlSize),
+        IntRect hBarRect(box->borderLeft(),
+                         box->height() - box->borderBottom() - m_hBar->height(),
+                         box->width() - (box->borderLeft() + box->borderRight()) - (m_vBar ? m_vBar->width() : resizeControlSize),
                          m_hBar->height());
-        if (hBarRect.contains(result.point())) {
+        if (hBarRect.contains(localPoint)) {
             result.setScrollbar(m_hBar.get());
             return true;
         }

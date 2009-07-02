@@ -370,7 +370,7 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, int _x, int 
         return false;
 
     IntRect vertRect(_tx + width() - borderRight() - m_vBar->width(),
-                     _ty,
+                     _ty + borderTop(),
                      m_vBar->width(),
                      height() - borderTop() - borderBottom());
 
@@ -621,6 +621,64 @@ void RenderListBox::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect&
     IntRect scrollRect = rect;
     scrollRect.move(width() - borderRight() - scrollbar->width(), borderTop());
     repaintRectangle(scrollRect);
+}
+
+IntRect RenderListBox::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& scrollbarRect) const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return scrollbarRect;
+
+    IntRect rect = scrollbarRect;
+
+    int scrollbarLeft = width() - borderRight() - scrollbar->width();
+    int scrollbarTop = borderTop();
+    rect.move(scrollbarLeft, scrollbarTop);
+
+    return view->frameView()->convertFromRenderer(this, rect);
+}
+
+IntRect RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return parentRect;
+
+    IntRect rect = view->frameView()->convertToRenderer(this, parentRect);
+
+    int scrollbarLeft = width() - borderRight() - scrollbar->width();
+    int scrollbarTop = borderTop();
+    rect.move(-scrollbarLeft, -scrollbarTop);
+    return rect;
+}
+
+IntPoint RenderListBox::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntPoint& scrollbarPoint) const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return scrollbarPoint;
+
+    IntPoint point = scrollbarPoint;
+
+    int scrollbarLeft = width() - borderRight() - scrollbar->width();
+    int scrollbarTop = borderTop();
+    point.move(scrollbarLeft, scrollbarTop);
+
+    return view->frameView()->convertFromRenderer(this, point);
+}
+
+IntPoint RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return parentPoint;
+
+    IntPoint point = view->frameView()->convertToRenderer(this, parentPoint);
+
+    int scrollbarLeft = width() - borderRight() - scrollbar->width();
+    int scrollbarTop = borderTop();
+    point.move(-scrollbarLeft, -scrollbarTop);
+    return point;
 }
 
 PassRefPtr<Scrollbar> RenderListBox::createScrollbar()

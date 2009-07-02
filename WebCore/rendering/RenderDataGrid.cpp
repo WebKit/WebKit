@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "Page.h"
+#include "RenderView.h"
 #include "Scrollbar.h"
 
 using std::min;
@@ -183,6 +184,65 @@ bool RenderDataGrid::isActive() const
 {
     Page* page = document()->frame()->page();
     return page && page->focusController()->isActive();
+}
+
+
+IntRect RenderDataGrid::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& scrollbarRect) const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return scrollbarRect;
+
+    IntRect rect = scrollbarRect;
+
+    int scrollbarLeft = width() - borderRight() - scrollbar->width();
+    int scrollbarTop = borderTop();
+    rect.move(scrollbarLeft, scrollbarTop);
+
+    return view->frameView()->convertFromRenderer(this, rect);
+}
+
+IntRect RenderDataGrid::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return parentRect;
+
+    IntRect rect = view->frameView()->convertToRenderer(this, parentRect);
+
+    int scrollbarLeft = width() - borderRight() - scrollbar->width();
+    int scrollbarTop = borderTop();
+    rect.move(-scrollbarLeft, -scrollbarTop);
+    return rect;
+}
+
+IntPoint RenderDataGrid::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntPoint& scrollbarPoint) const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return scrollbarPoint;
+
+    IntPoint point = scrollbarPoint;
+
+    int scrollbarLeft = width() - borderRight() - scrollbar->width();
+    int scrollbarTop = borderTop();
+    point.move(scrollbarLeft, scrollbarTop);
+
+    return view->frameView()->convertFromRenderer(this, point);
+}
+
+IntPoint RenderDataGrid::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
+{
+    RenderView* view = this->view();
+    if (!view)
+        return parentPoint;
+
+    IntPoint point = view->frameView()->convertToRenderer(this, parentPoint);
+
+    int scrollbarLeft = width() - borderRight() - scrollbar->width();
+    int scrollbarTop = borderTop();
+    point.move(-scrollbarLeft, -scrollbarTop);
+    return point;
 }
 
 }
