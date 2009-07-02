@@ -96,6 +96,7 @@ class Bugzilla:
         "jmalonzo" : "Jan Alonzo",
         "justin.garcia" : "Justin Garcia",
         "kevino" : "Kevin Ollivier",
+        "koivisto" : "Antti Koivisto",
         "levin" : "David Levin",
         "mitz" : "Dan Bernstein",
         "mjs" : "Maciej Stachowiak",
