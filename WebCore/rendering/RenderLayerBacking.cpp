@@ -140,8 +140,10 @@ void RenderLayerBacking::updateAfterLayout(UpdateDepth updateDepth)
         setCompositedBounds(layerCompositor->calculateCompositedBounds(m_owningLayer, m_owningLayer));
         layerCompositor->updateCompositingDescendantGeometry(m_owningLayer, m_owningLayer, updateDepth);
         
-        if (!m_owningLayer->parent())
+        if (!m_owningLayer->parent()) {
+            updateGraphicsLayerGeometry();
             layerCompositor->updateRootLayerPosition();
+        }
     }
 }
 
