@@ -1,5 +1,11 @@
 2009-07-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fix: add missing #include.
+
+        * platform/mac/ThemeMac.mm:
+
+2009-07-02  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt.
 
         <rdar://problem/7028682> ThemeMac::paintRadio() throws Obj-C exceptions when zoomed

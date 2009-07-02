@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ThemeMac.h"
 
+#import "BlockExceptions.h"
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
