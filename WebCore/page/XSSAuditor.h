@@ -89,7 +89,7 @@ namespace WebCore {
         bool canLoadObject(const String& url) const;
 
     private:
-        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool allowControlCharacters = false);
+        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool allowNullCharacters = false);
 
         bool findInRequest(const String&) const;
 

@@ -1,3 +1,24 @@
+2009-07-01  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26899
+        
+        Modified XSSAuditor::decodeURL to only remove null characters so that 
+        it is consistent with the behavior of HTMLTokenizer and prevents 
+        injected scripts that contain control characters. 
+
+        Tests: http/tests/security/xssAuditor/script-tag-control-char.html
+               http/tests/security/xssAuditor/script-tag-null-char.html
+
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::decodeURL): Modified to only remove null characters. 
+        * page/XSSAuditor.h: Reverted naming of third argument of method XSSAuditor::decodeURL
+        from allowControlCharacters back to allowNullCharacters.
+        * platform/network/ResourceResponseBase.cpp: Reverted back to rev #45003.
+        (WebCore::isControlCharacter):
+        * platform/network/ResourceResponseBase.h: Reverted back to rev #45003.  
+
 2009-07-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Timothy Hatcher.

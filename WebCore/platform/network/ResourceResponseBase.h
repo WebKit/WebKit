@@ -162,8 +162,6 @@ struct CrossThreadResourceResponseData {
     time_t m_lastModifiedDate;
 };
 
-bool isControlCharacter(UChar c);
-    
 } // namespace WebCore
 
 #endif // ResourceResponseBase_h
