@@ -1,3 +1,39 @@
+2009-07-02  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adds an abstraction layer between the DB classes and the file
+        system, which allows us to add our own logic for storing, opening,
+        deleting, etc. databases.
+
+        The patch was tested using the tests in WebCore/storage.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26054
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open): Delegating the job of opening DB files to SQLiteFileSystem to allow use of custom VFSs.
+        * platform/sql/SQLiteFileSystem.cpp: Added.
+        * platform/sql/SQLiteFileSystem.h: Added.
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::directoryName): Implemented.
+        * storage/Database.cpp:
+        (WebCore::Database::databaseSize): The code that returns the size of a DB file moved to SQLiteFileSystem.
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::DatabaseTracker): Added the ability to register a custom SQLite VFS.
+        (WebCore::DatabaseTracker::trackerDatabasePath): DB file-related operations moved to SQLiteFileSystem.
+        (WebCore::DatabaseTracker::openTrackerDatabase): DB file-related operations moved to SQLiteFileSystem.
+        (WebCore::DatabaseTracker::originPath): DB file-related operations moved to SQLiteFileSystem.
+        (WebCore::DatabaseTracker::fullPathForDatabase): DB file-related operations moved to SQLiteFileSystem.
+        (WebCore::DatabaseTracker::usageForDatabase): DB file-related operations moved to SQLiteFileSystem.
+        (WebCore::DatabaseTracker::deleteOrigin): DB file-related operations moved to SQLiteFileSystem.
+        (WebCore::DatabaseTracker::deleteDatabaseFile): DB file-related operations moved to SQLiteFileSystem.
+        * storage/OriginUsageRecord.cpp:
+        (WebCore::OriginUsageRecord::diskUsage): DB file-related operations moved to SQLiteFileSystem.
+
 2009-07-02  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

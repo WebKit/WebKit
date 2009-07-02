@@ -1326,6 +1326,7 @@ contains(DEFINES, ENABLE_SQLITE=1) {
     SOURCES += \
         platform/sql/SQLiteAuthorizer.cpp \
         platform/sql/SQLiteDatabase.cpp \
+        platform/sql/SQLiteFileSystem.cpp \
         platform/sql/SQLiteStatement.cpp \
         platform/sql/SQLiteTransaction.cpp \
         platform/sql/SQLValue.cpp \

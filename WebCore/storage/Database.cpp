@@ -40,7 +40,6 @@
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "FileSystem.h"
 #include "Frame.h"
 #include "InspectorController.h"
 #include "Logging.h"
@@ -48,6 +47,7 @@
 #include "Page.h"
 #include "OriginQuotaManager.h"
 #include "SQLiteDatabase.h"
+#include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include "SQLResultSet.h"
 #include <wtf/MainThread.h>
@@ -338,10 +338,7 @@ void Database::stop()
 
 unsigned long long Database::databaseSize() const
 {
-    long long size;
-    if (!getFileSize(m_filename, size))
-        size = 0;
-    return size;
+    return SQLiteFileSystem::getDatabaseFileSize(m_filename);
 }
 
 unsigned long long Database::maximumSize() const

@@ -3780,6 +3780,8 @@
 		B2FA3E180AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */; };
 		B2FA3E190AB75A6F000E5AC4 /* JSSVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */; };
 		B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
+		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
 		BC00F0040E0A185500FD04E3 /* DOMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00EFFE0E0A185500FD04E3 /* DOMFile.h */; };
 		BC00F0050E0A185500FD04E3 /* DOMFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */; };
 		BC00F0060E0A185500FD04E3 /* DOMFileInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00F0000E0A185500FD04E3 /* DOMFileInternal.h */; };
@@ -8584,6 +8586,8 @@
 		B2FA3D300AB75A6F000E5AC4 /* JSSVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomEvent.cpp; sourceTree = "<group>"; };
 		B2FA3D310AB75A6F000E5AC4 /* JSSVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomEvent.h; sourceTree = "<group>"; };
 		B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreObjCExtras.mm; sourceTree = "<group>"; };
+		B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteFileSystem.h; path = sql/SQLiteFileSystem.h; sourceTree = "<group>"; };
+		B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteFileSystem.cpp; path = sql/SQLiteFileSystem.cpp; sourceTree = "<group>"; };
 		BC00EFFE0E0A185500FD04E3 /* DOMFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFile.h; sourceTree = "<group>"; };
 		BC00EFFF0E0A185500FD04E3 /* DOMFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMFile.mm; sourceTree = "<group>"; };
 		BC00F0000E0A185500FD04E3 /* DOMFileInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMFileInternal.h; sourceTree = "<group>"; };
@@ -9514,6 +9518,8 @@
 		1A2E6E560CC551E0004A2062 /* sql */ = {
 			isa = PBXGroup;
 			children = (
+				B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */,
+				B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */,
 				1A2E6E570CC55213004A2062 /* SQLValue.cpp */,
 				1A2E6E580CC55213004A2062 /* SQLValue.h */,
 				1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */,
@@ -16913,6 +16919,7 @@
 				BCBCAE3D0FF19399000762AE /* JSDataGridDataSource.h in Headers */,
 				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
 				BC7DAAEF0FF9615D00CE0138 /* DOMDataGridDataSource.h in Headers */,
+				B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18927,6 +18934,7 @@
 				BC77D2390FF298080070887B /* DataGridColumn.cpp in Sources */,
 				C50D0E820FF4272900AC2644 /* StorageNamespace.cpp in Sources */,
 				BC7DAAEE0FF9615D00CE0138 /* DOMDataGridDataSource.cpp in Sources */,
+				B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

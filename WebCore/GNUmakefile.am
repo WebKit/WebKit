@@ -2038,6 +2038,8 @@ webcore_sources += \
 	WebCore/platform/sql/SQLiteAuthorizer.cpp \
 	WebCore/platform/sql/SQLiteDatabase.cpp \
 	WebCore/platform/sql/SQLiteDatabase.h \
+	WebCore/platform/sql/SQLiteFileSystem.cpp \
+	WebCore/platform/sql/SQLiteFileSystem.h \
 	WebCore/platform/sql/SQLiteStatement.cpp \
 	WebCore/platform/sql/SQLiteStatement.h \
 	WebCore/platform/sql/SQLiteTransaction.cpp \

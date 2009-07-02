@@ -29,6 +29,7 @@
 
 #include "DatabaseAuthorizer.h"
 #include "Logging.h"
+#include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 
 #include <sqlite3.h>
@@ -60,9 +61,7 @@ bool SQLiteDatabase::open(const String& filename)
 {
     close();
     
-    // SQLite expects a null terminator on its UTF-16 strings.
-    String path = filename;
-    m_lastError = sqlite3_open16(path.charactersWithNullTermination(), &m_db);
+    m_lastError = SQLiteFileSystem::openDatabase(filename, &m_db);
     if (m_lastError != SQLITE_OK) {
         LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
             sqlite3_errmsg(m_db));
