@@ -1124,6 +1124,9 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 {
     // FIXME: Deal with border-image.  Would be great to use border-image as a mask.
 
+    if (context->paintingDisabled())
+        return;
+
     IntRect rect(tx, ty, w, h);
     bool hasBorderRadius = s->hasBorderRadius();
     bool hasOpaqueBackground = s->backgroundColor().isValid() && s->backgroundColor().alpha() == 255;
@@ -1134,18 +1137,16 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
         int shadowBlur = shadow->blur;
         IntRect fillRect(rect);
 
-        if (hasBorderRadius) {
-            IntRect shadowRect(rect);
-            shadowRect.inflate(shadowBlur);
-            shadowRect.move(shadowOffset);
-            context->clip(shadowRect);
+        IntRect shadowRect(rect);
+        shadowRect.inflate(shadowBlur);
+        shadowRect.move(shadowOffset);
+        context->clip(shadowRect);
 
-            // Move the fill just outside the clip, adding 1 pixel separation so that the fill does not
-            // bleed in (due to antialiasing) if the context is transformed.
-            IntSize extraOffset(w + max(0, shadowOffset.width()) + shadowBlur + 1, 0);
-            shadowOffset -= extraOffset;
-            fillRect.move(extraOffset);
-        }
+        // Move the fill just outside the clip, adding 1 pixel separation so that the fill does not
+        // bleed in (due to antialiasing) if the context is transformed.
+        IntSize extraOffset(w + max(0, shadowOffset.width()) + shadowBlur + 1, 0);
+        shadowOffset -= extraOffset;
+        fillRect.move(extraOffset);
 
         context->setShadow(shadowOffset, shadowBlur, shadow->color);
         if (hasBorderRadius) {
@@ -1157,12 +1158,50 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
             IntSize bottomLeft = begin ? bottomLeftRadius : IntSize();
             IntSize bottomRight = end ? bottomRightRadius : IntSize();
 
-            if (!hasOpaqueBackground)
-                context->clipOutRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+            IntRect rectToClipOut = rect;
+            IntSize topLeftToClipOut = topLeft;
+            IntSize topRightToClipOut = topRight;
+            IntSize bottomLeftToClipOut = bottomLeft;
+            IntSize bottomRightToClipOut = bottomRight;
+
+            // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
+            // when painting the shadow. On the other hand, it introduces subpixel gaps along the
+            // corners. Those are avoided by insetting the clipping path by one pixel.
+            if (hasOpaqueBackground) {
+                rectToClipOut.inflate(-1);
+
+                topLeftToClipOut.expand(-1, -1);
+                topLeftToClipOut.clampNegativeToZero();
+
+                topRightToClipOut.expand(-1, -1);
+                topRightToClipOut.clampNegativeToZero();
+
+                bottomLeftToClipOut.expand(-1, -1);
+                bottomLeftToClipOut.clampNegativeToZero();
+
+                bottomRightToClipOut.expand(-1, -1);
+                bottomRightToClipOut.clampNegativeToZero();
+            }
+
+            if (!rectToClipOut.isEmpty())
+                context->clipOutRoundedRect(rectToClipOut, topLeftToClipOut, topRightToClipOut, bottomLeftToClipOut, bottomRightToClipOut);
             context->fillRoundedRect(fillRect, topLeft, topRight, bottomLeft, bottomRight, Color::black);
         } else {
-            if (!hasOpaqueBackground)
-                context->clipOut(rect);
+            IntRect rectToClipOut = rect;
+
+            // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
+            // when painting the shadow. On the other hand, it introduces subpixel gaps along the
+            // edges if they are not pixel-aligned. Those are avoided by insetting the clipping path
+            // by one pixel.
+            if (hasOpaqueBackground) {
+                TransformationMatrix currentTransformation = context->getCTM();
+                if (currentTransformation.a() != 1 || (currentTransformation.d() != 1 && currentTransformation.d() != -1)
+                        || currentTransformation.b() || currentTransformation.c())
+                    rectToClipOut.inflate(-1);
+            }
+
+            if (!rectToClipOut.isEmpty())
+                context->clipOut(rectToClipOut);
             context->fillRect(fillRect, Color::black);
         }
         context->restore();
