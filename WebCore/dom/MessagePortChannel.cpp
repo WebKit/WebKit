@@ -30,14 +30,8 @@
 #include "config.h"
 #include "MessagePortChannel.h"
 
-#include "PlatformMessagePortChannel.h"
-
 namespace WebCore {
 
-PassOwnPtr<MessagePortChannel> MessagePortChannel::create(PassRefPtr<PlatformMessagePortChannel> channel)
-{
-    return new MessagePortChannel(channel);
-}
 
 PassOwnPtr<MessagePortChannel::EventData> MessagePortChannel::EventData::create(const String& message, PassOwnPtr<MessagePortChannel> channel)
 {
@@ -48,17 +42,6 @@ MessagePortChannel::EventData::EventData(const String& message, PassOwnPtr<Messa
     : m_message(message.copy())
     , m_channel(channel)
 {
-}
-
-MessagePortChannel::MessagePortChannel(PassRefPtr<PlatformMessagePortChannel> channel)
-    : m_channel(channel)
-{
-}
-
-MessagePortChannel::~MessagePortChannel()
-{
-    // Make sure we close our platform channel when the base is freed, to keep the channel objects from leaking.
-    m_channel->close();
 }
 
 } // namespace WebCore

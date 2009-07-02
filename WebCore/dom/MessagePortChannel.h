@@ -50,6 +50,8 @@ namespace WebCore {
     // It acts as a wrapper around the platform-dependent PlatformMessagePortChannel implementation which ensures that the platform-dependent close() method is invoked before destruction.
     class MessagePortChannel : Noncopyable {
     public:
+        static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
+
         // Creates a new wrapper for the passed channel.
         static PassOwnPtr<MessagePortChannel> create(PassRefPtr<PlatformMessagePortChannel>);
 

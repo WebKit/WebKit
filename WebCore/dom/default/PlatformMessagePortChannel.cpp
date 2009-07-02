@@ -37,6 +37,27 @@
 namespace WebCore {
 
 // MessagePortChannel implementations - just delegate to the PlatformMessagePortChannel.
+void MessagePortChannel::createChannel(PassRefPtr<MessagePort> port1, PassRefPtr<MessagePort> port2)
+{
+    PlatformMessagePortChannel::createChannel(port1, port2);
+}
+
+PassOwnPtr<MessagePortChannel> MessagePortChannel::create(PassRefPtr<PlatformMessagePortChannel> channel)
+{
+    return new MessagePortChannel(channel);
+}
+
+MessagePortChannel::MessagePortChannel(PassRefPtr<PlatformMessagePortChannel> channel)
+    : m_channel(channel)
+{
+}
+
+MessagePortChannel::~MessagePortChannel()
+{
+    // Make sure we close our platform channel when the base is freed, to keep the channel objects from leaking.
+    m_channel->close();
+}
+
 bool MessagePortChannel::entangleIfOpen(MessagePort* port)
 {
     return m_channel->entangleIfOpen(port);
