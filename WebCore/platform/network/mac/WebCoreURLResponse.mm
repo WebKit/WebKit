@@ -384,6 +384,13 @@ static NSString *webNSURLResponseMIMEType(id self, SEL _cmd)
     ASSERT(oldNSURLResponseMIMETypeIMP);
     NSString *result = oldNSURLResponseMIMETypeIMP(self, _cmd);
 
+#ifdef BUILDING_ON_TIGER
+    // When content sniffing is disabled, Tiger's CFNetwork automatically returns application/octet-stream for certain
+    // extensions even when scouring the UTI maps would end up with a better result, so we'll give a chance for that to happen.
+    if ([[self URL] isFileURL] && [result caseInsensitiveCompare:@"application/octet-stream"] == NSOrderedSame)
+        result = nil;
+#endif
+
     if (!result) {
         NSURL *url = [self URL];
         if ([url isFileURL]) {
