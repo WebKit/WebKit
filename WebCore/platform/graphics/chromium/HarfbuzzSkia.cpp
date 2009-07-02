@@ -30,6 +30,7 @@
 
 #include "config.h"
 
+#include "Font.h"
 #include "FontPlatformData.h"
 #include "wtf/OwnArrayPtr.h"
 
@@ -41,6 +42,7 @@
 
 extern "C" {
 #include "harfbuzz-shaper.h"
+#include "harfbuzz-unicode.h"
 }
 
 // This file implements the callbacks which Harfbuzz requires by using Skia
@@ -65,10 +67,29 @@ static HB_Bool stringToGlyphs(HB_Font hbFont, const HB_UChar16* characters, hb_u
 
     // HB_Glyph is 32-bit, but Skia outputs only 16-bit numbers. So our
     // |glyphs| array needs to be converted.
+    // Additionally, if the CSS white-space property is inhibiting line
+    // breaking, we might find end-of-line charactors rendered via the complex
+    // text path. Fonts don't provide glyphs for these code points so, if we
+    // find one, we simulate the space glyph being interposed in this case.
+    // Because the input is variable-length per code point, we walk the input
+    // in step with the output.
+    // FIXME: it seems that this logic is duplicated in CoreTextController and UniscribeController
+    ssize_t indexOfNextCodePoint = 0;
+    uint16_t spaceGlyphNumber = 0;
     for (int i = numGlyphs - 1; i >= 0; --i) {
+        const uint32_t currentCodePoint = utf16_to_code_point(characters, length, &indexOfNextCodePoint);
+
         uint16_t value;
         // We use a memcpy to avoid breaking strict aliasing rules.
         memcpy(&value, reinterpret_cast<char*>(glyphs) + sizeof(uint16_t) * i, sizeof(uint16_t));
+
+        if (!value && Font::treatAsSpace(currentCodePoint)) {
+            static const uint16_t spaceUTF16 = ' ';
+            if (!spaceGlyphNumber)
+                paint.textToGlyphs(&spaceUTF16, sizeof(spaceUTF16), &spaceGlyphNumber);
+            value = spaceGlyphNumber;
+        }
+
         glyphs[i] = value;
     }
 

@@ -1,3 +1,26 @@
+2009-07-02  Adam Langley  <agl@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Chromium Linux: fix complex text rendering with line break characters.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26935
+
+        If the CSS white-space property is inhibiting line breaking, we might
+        find end-of-line characters rendered via the complex text path. Fonts
+        don't provide glyphs for these code points so, if we find one, we
+        simulate the space glyph being interposed in this case.  Because the
+        input is variable-length per code point, we walk the input in step
+        with the output.
+
+        Covered by:
+            LayoutTests/fast/text/international/bidi-linebreak-002.html
+            LayoutTests/fast/text/international/bidi-linebreak-003.html
+            LayoutTests/fast/text/international/hindi-whitespace.html
+
+        * platform/graphics/chromium/HarfbuzzSkia.cpp:
+        (WebCore::stringToGlyphs):
+
 2009-07-02  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Fisher.
