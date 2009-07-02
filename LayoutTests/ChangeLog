@@ -1,5 +1,11 @@
 2009-07-02  Brady Eidson  <beidson@apple.com>
 
+        Skip the correct test names.
+
+        * platform/mac-tiger/Skipped:
+
+2009-07-02  Brady Eidson  <beidson@apple.com>
+
         Rubberstamped by Sam Weinig
 
         Split up file-url-mimetypes.html into 3 tests to avoid any risk of timing out on slower machines.
