@@ -32,7 +32,7 @@
 
 #include "MediaControlElements.h"
 
-#import "LocalizedStrings.h"
+#include "LocalizedStrings.h"
 #include "EventNames.h"
 #include "FloatConversion.h"
 #include "Frame.h"
