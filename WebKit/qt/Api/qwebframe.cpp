@@ -951,7 +951,9 @@ qreal QWebFrame::zoomFactor() const
 }
 
 /*!
-    Returns true if this frame is set as the focused frame in the focus controller
+    \since 4.6
+
+    Returns true if this frame has keyboard input focus; otherwise, returns false.
 */
 bool QWebFrame::hasFocus() const
 {
@@ -959,7 +961,9 @@ bool QWebFrame::hasFocus() const
 }
 
 /*!
-    Sets this frame as focused in the focus controller
+    \since 4.6
+
+    Gives keyboard input focus to this frame.
 */
 void QWebFrame::setFocus()
 {

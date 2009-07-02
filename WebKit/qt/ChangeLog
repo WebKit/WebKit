@@ -1,3 +1,13 @@
+2009-07-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Improve documentation of QWebFrame::setFocus and hasFocus()
+        Added missing Q_PROPERTY for QWebFrame::hasFocus.
+
+        * Api/qwebframe.cpp: Clarify the docs.
+        * Api/qwebframe.h: add Q_PROPERTY(focus).
+
 2009-07-02  Joe Ligman  <joseph.ligman@nokia.com>
 
         Reviewed by Simon Hausmann.
