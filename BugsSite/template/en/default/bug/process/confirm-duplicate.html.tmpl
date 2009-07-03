@@ -29,19 +29,19 @@
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
-
 [% PROCESS global/header.html.tmpl title="Duplicate Warning" %]
+[% orig_bug = "$terms.bug $original_bug_id"
+     FILTER bug_link(original_bug_id) %]
 
 <p>
   When marking [% terms.abug %] as a duplicate, the reporter of the duplicate
   is normally added to the CC list of the original. The permissions
-  on [% terms.bug %] [%+ original_bug_id %] (the original) are currently set
+  on [% orig_bug FILTER none %] (the original) are currently set
   such that the reporter would not normally be able to see it.
 </p>
 
 <p>
-  <b>Adding the reporter to the CC list of [% terms.bug %] 
-    [%+ original_bug_id %]
+  <b>Adding the reporter to the CC list of [% orig_bug FILTER none %]
   [% IF cclist_accessible %]
     will immediately
   [% ELSE %]
@@ -57,18 +57,18 @@
 
 <p>
   <input type="radio" name="confirm_add_duplicate" value="1">
-    Yes, add the reporter to CC list on [% terms.bug %] [%+ original_bug_id %]
+    Yes, add the reporter to CC list on [% orig_bug FILTER none %]
 </p>
 <p>
   <input type="radio" name="confirm_add_duplicate" value="0" checked="checked">
-    No, do not add the reporter to CC list on [% terms.bug %] 
-    [%+ original_bug_id %]
+    No, do not add the reporter to CC list on [% orig_bug FILTER none %]
 </p>
 <p>
-  <a href="show_bug.cgi?id=[% duplicate_bug_id %]">Throw away my changes,
-    and revisit [% terms.bug %] [%+ duplicate_bug_id %]</a>
+  [% "Throw away my changes, and revisit $terms.bug $duplicate_bug_id"
+     FILTER bug_link(duplicate_bug_id) FILTER none %]
+</p>
 <p>
-  <input type="submit" value="Submit">
+  <input type="submit" id="process" value="Submit">
 </p>
 
 </form>

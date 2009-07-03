@@ -18,193 +18,91 @@
   #
   # Contributor(s): Eli Goldberg <eli@prometheus-music.com>
   #                 Gervase Markham <gerv@gerv.net>
+  #                 Vera Horiuchi
   #                 Claudius Gayle
   #                 Peter Mock
   #                 Chris Pratt
   #                 Tom Schutter
   #                 Chris Yeh
   #%]
-  
-[% PROCESS global/variables.none.tmpl %] 
-[% INCLUDE global/header.html.tmpl title = "$terms.Bug Writing Guidelines" %] 
 
-<h3>Why You Should Read This</h3>
+[% PROCESS "global/field-descs.none.tmpl" %]
 
-<blockquote>
-  <p>Simply put, the more effectively you report [% terms.abug %], the more
-  likely an
-  engineer will actually fix it.</p>
+[% INCLUDE global/header.html.tmpl title = "$terms.Bug Writing Guidelines" %]
 
-  <p>These guidelines are a general tutorial to teach novice and
-  intermediate [% terms.bug %] reporters how to compose effective 
-  [% terms.bug %] reports. Not
-  every sentence may precisely apply to your software project.</p>
-</blockquote>
+  <p>Effective [% terms.bug %] reports are the most likely to be fixed. 
+  These guidelines explain how to write such reports.
 
-<h3>How to Write a Useful [% terms.Bug %] Report</h3>
+<h3>Principles</h3>
 
-<blockquote>
-  <p>Useful [% terms.bug %] reports are ones that get [% terms.bugs %] fixed. 
-  A useful [% terms.bug %] report normally has two qualities:</p>
+  <ul>
+    <li>Be precise</li>
+    <li>Be clear - explain it so others can reproduce the [% terms.bug %]</li>
+    <li>One [% terms.bug %] per report</li>
+    <li>No [% terms.bug %] is too trivial to report - 
+    small [% terms.bugs %] may hide big [% terms.bugs %]</li>
+    <li>Clearly separate fact from speculation</li>
+  </ul>
 
-  <ol>
-    <li><b>Reproducible.</b> If an engineer can't see the [% terms.bug %]
-    herself to prove that it exists, she'll probably stamp your [% terms.bug %]
-    report "WORKSFORME" or "INVALID" and move on to the next [% terms.bug %].
-    Every detail you can provide helps.<br>
-    <br>
-    </li>
+<h3>Preliminaries</h3>
 
-    <li><b>Specific.</b> The quicker the engineer can isolate the 
-    [% terms.bug %] to a specific area, the more likely she'll expediently 
-    fix it. (If a programmer or tester has to decipher [% terms.abug %], 
-    they may spend more time cursing the submitter than solving the 
-    problem.)<br>
-    <br>
-    [ <a href="#tips" name="Anchor">Tell Me More</a> ]</li>
-  </ol>
+<ol>
+  <li>Reproduce your [% terms.bug %] using a recent build of the
+  software, to see whether it has already been fixed.
+  </li>
 
-  <p>Let's say the application you're testing is a web browser. You crash
-  at foo.com, and want to write up a [% terms.bug %] report:</p>
+  <li><a href="query.cgi?format=specific">Search</a> 
+  [% terms.Bugzilla %], to see whether your [% terms.bug %] has
+  already been reported.</li>
+</ol>
 
-  <blockquote>
-    <p><b>BAD:</b> "My browser crashed. I think I was on www.foo.com. I
-    play golf with Bill Gates, so you better fix this problem, or I'll
-    report you to him. By the way, your Back icon looks like a squashed
-    rodent. UGGGLY. And my grandmother's home page is all messed up in your
-    browser. Thx 4 UR help."</p>
+<h3>Reporting a New [% terms.Bug %]</h3>
 
-    <p><b>GOOD:</b> "I crashed each time I went to www.foo.com, using the
-    2002-02-25 build on a Windows 2000 system. I also rebooted into Linux,
-    and reproduced this problem using the 2002-02-24 Linux build.</p>
+<p>If you have reproduced the [% terms.bug %] in a recent build and 
+no-one else appears to have reported it, then:</p>
 
-    <p>It again crashed each time upon drawing the Foo banner at the top of
-    the page. I broke apart the page, and discovered that the following
-    image link will crash the application reproducibly, unless you remove
-    the "border=0" attribute:</p>
-
-    <p><tt>&lt;IMG SRC="http://www.foo.com/images/topics/topicfoos.gif"
-    width="34" height="44" border="0" alt="News"&gt;</tt></p>
-  </blockquote>
-</blockquote>
-
-<h3>How to Enter your Useful [% terms.Bug %] Report 
-    into [% terms.Bugzilla %]:</h3>
-
-<blockquote>
-  <p>Before you enter your [% terms.bug %], use [% terms.Bugzilla %]'s 
-  <a href="query.cgi">search page</a> to determine whether the defect 
-  you've discovered is a known, already-reported [% terms.bug %]. If 
-  your [% terms.bug %] is the 37th duplicate of a known issue,
-  you're more likely to annoy the engineer. (Annoyed engineers fix fewer
-  [% terms.bugs %].)</p>
-
-  <p>Next, be sure to reproduce your [% terms.bug %] using a recent build. 
-  Engineers tend to be most interested in problems affecting the code base 
-  that they're actively working on. After all, the [% terms.bug %] you're 
-  reporting may already be fixed.</p>
-
-  <p>If you've discovered a new [% terms.bug %] using a current build, report 
-  it in [% terms.Bugzilla %]:</p>
-
-  <ol>
-    <li>From your [% terms.Bugzilla %] main page, choose 
-    "<a href="enter_bug.cgi">Enter a new [% terms.bug %]</a>".</li>
-
-    <li>Select the product that you've found a [% terms.bug %] in.</li>
-
-    <li>Enter your e-mail address, password, and press the "Log in" button.
-    (If you don't yet have a password, enter your email address below and
-    press the "Submit Request" button instead. You'll quickly receive
-    an e-mail message with your password.)</li>
-  </ol>
-
-  <p>Now, fill out the form. Here's what it all means:</p>
-
-  <p><b>Where did you find the [% terms.bug %]?</b></p>
+<ol>
+ <li>Choose 
+ "<a href="enter_bug.cgi">Enter a new [% terms.bug %]</a>"</li>
+ <li>Select the product in which you've found the [% terms.bug %]</li>
+ <li>Fill out the form. Here is some help understanding it:</li>
+</ol>
 
   <blockquote>
-    <p><b>Product: In which product did you find the [% terms.bug %]?</b><br>
-     You just specified this on the last page, so you can't edit it
-    here.</p>
+    <p><b>Component:</b> In which sub-part of the software does it 
+          exist?<br>
+    This field is required.
+    Click the word "Component" to see a description of each 
+    component. If none seems appropriate, look for a "General" component.</p>
 
-    <p><b>Version: In which product version did you find 
-          the [% terms.bug %]?</b><br>
-     (If applicable)</p>
+    <p><b>OS:</b> On which operating system (OS) did you find 
+          it?
+    (e.g. Linux, Windows XP, Mac OS X.)<br>
+    If you know the [% terms.bug %] happens on more than one type of 
+    operating system, choose "All". 
+    If your OS isn't listed, choose Other.</p>
 
-    <p><b>Component: In which component does the [% terms.bug %] 
-          exist?</b><br>
-    [% terms.Bugzilla %] requires that you select a component to enter 
-    a [% terms.bug %]. (Not sure which to choose? Click on the Component link. 
-    You'll see a description of each component, to help you make the best 
-    choice.)</p>
-
-    <p><b>OS: On which Operating System (OS) did you find 
-          this [% terms.bug %]?</b>
-    (e.g. Linux, Windows 2000, Mac OS 9.)<br>
-    If you know the [% terms.bug %] happens on all OSs, choose 'All'. 
-    Otherwise, select the OS that you found the [% terms.bug %] on, or 
-    "Other" if your OS isn't listed.</p>
-  </blockquote>
-
-  <p><b>How important is the [% terms.bug %]?</b></p>
-
-  <blockquote>
-    <p><b>Severity: How damaging is the [% terms.bug %]?</b><br>
-     This item defaults to 'normal'. If you're not sure what severity your
-    [% terms.bug %] deserves, click on the Severity link. You'll see a
-    description of each severity rating.<br>
-    </p>
-  </blockquote>
-
-  <p><b>Who will be following up on the [% terms.bug %]?</b></p>
-
-  <blockquote>
-    <p><b>Assigned To: Which engineer should be responsible for fixing
-    this [% terms.bug %]?</b><br>
-    [% terms.Bugzilla %] will automatically assign the [% terms.bug %] to a
-    default engineer upon submitting [% terms.abug %] report. If you'd prefer
-    to directly assign the [% terms.bug %] to someone else, enter their e-mail
-    address into this field. (To see the list of default engineers for each
-    component, click on the Component link.)</p>
-
-    <p><b>Cc: Who else should receive e-mail updates on changes to this
-    [% terms.bug %]?</b><br>
-     List the full e-mail addresses of other individuals who should receive
-    an e-mail update upon every change to the [% terms.bug %] report. You can
-    enter as many e-mail addresses as you'd like, separated by spaces or 
-    commas, as long as those people have [% terms.Bugzilla %] accounts.</p>
-  </blockquote>
-
-  <p><b>What else can you tell the engineer about the [% terms.bug %]?</b></p>
-
-  <blockquote>
-    <p><b>Summary:</b> <b>How would you describe the [% terms.bug %], in 
-    approximately 60 or fewer characters?</b><br>
+    <p><b>Summary:</b> How would you describe the [% terms.bug %], in 
+    approximately 60 or fewer characters?<br>
      A good summary should <b>quickly and uniquely identify [% terms.abug %]
-    report</b>. Otherwise, an engineer cannot meaningfully identify your
-    [% terms.bug %] by its summary, and will often fail to pay attention to 
-    your [% terms.bug %] report when skimming through a 10 
-    page [% terms.bug %] list.<br>
-    <br>
-     A useful summary might be "<tt>PCMCIA install fails on Tosh Tecra
-    780DVD w/ 3c589C</tt>". "<tt>Software fails</tt>" or "<tt>install
-    problem</tt>" would be examples of a bad summary.<br>
-    <br>
-     [ <a href="#summary">Tell Me More</a> ]<br>
-    <br>
-     <b>Description:</b><br>
-     Please provide a detailed problem report in this field. Your 
-     [% terms.bug %]'s recipients will most likely expect the following 
-     information:</p>
+    report</b>. It should explain the problem, not your suggested solution.<br>
+    <ul>
+     <li>Good: "<tt>Cancelling a File Copy dialog crashes 
+     File Manager</tt>"</li>
+     <li>Bad: "<tt>Software crashes</tt>"</li>
+     <li>Bad: "<tt>Browser should work with my web site</tt>"</li>
+    </ul>
+    
+    <b>Description:</b>
+    The details of your problem report, including:</p>
 
     <blockquote>
-      <p><b>Overview Description:</b> More detailed expansion of
+      <p><b>Overview:</b> More detailed restatement of
       summary.</p>
 
       <blockquote>
 <pre>
-Drag-selecting any page crashes Mac builds in NSGetFactory
+Drag-selecting any page crashes Mac builds in the NSGetFactory function.
 </pre>
       </blockquote>
 
@@ -213,13 +111,13 @@ Drag-selecting any page crashes Mac builds in NSGetFactory
 
       <blockquote>
 <pre>
-1) View any web page. (I used the default sample page,
+1) View any web page. (I used the default sample page, 
 resource:/res/samples/test0.html)
 
 2) Drag-select the page. (Specifically, while holding down 
 the mouse button, drag the mouse pointer downwards from any 
 point in the browser's content region to the bottom of the 
-browser's content region.)                   
+browser's content region.)
 </pre>
       </blockquote>
 
@@ -228,7 +126,7 @@ browser's content region.)
 
       <blockquote>
 <pre>
-The application crashed. Stack crawl appended below from MacsBug.
+The application crashed.
 </pre>
       </blockquote>
 
@@ -243,11 +141,11 @@ The window should scroll downwards. Scrolled content should be selected.
       </blockquote>
 
       <p><b>Build Date &amp; Platform:</b> Date and platform of the build
-      that you first encountered the [% terms.bug %] in.</p>
+      in which you first encountered the [% terms.bug %].</p>
 
       <blockquote>
 <pre>
-Build 2002-03-15 on Mac OS 9.0
+Build 2006-08-10 on Mac OS 10.4.3
 </pre>
       </blockquote>
 
@@ -257,134 +155,28 @@ Build 2002-03-15 on Mac OS 9.0
 
       <blockquote>
 <pre>
-- Also Occurs On        
-Mozilla (2002-03-15 build on Windows NT 4.0) 
-
-- Doesn't Occur On        
-Mozilla (2002-03-15 build on Red Hat Linux; feature not supported)        
-Internet Explorer 5.0 (shipping build on Windows NT 4.0)        
-Netscape Communicator 4.5 (shipping build on Mac OS 9.0)
+Doesn't Occur On Build 2006-08-10 on Windows XP Home (Service Pack 2)
 </pre>
       </blockquote>
 
-      <p><b>Additional Information:</b> Any other debugging information.
-      For crashing [% terms.bugs %]:</p>
+      <p><b>Additional Information:</b> Any other useful information.
+      <br><br>For crashing [% terms.bugs %]:</p>
 
       <ul>
-        <li><b>Win32:</b> if you receive a Dr. Watson error, please note
-        the type of the crash, and the module that the application crashed
-        in. (e.g. access violation in apprunner.exe)</li>
+        <li><b>Windows:</b> Note the type of the crash, and the module that the
+        application crashed in (e.g. access violation in apprunner.exe).</li>
 
-        <li><b>Mac OS:</b> if you're running MacsBug, please provide the
-        results of a <b>how</b> and an <b>sc</b>:</li>
+        <li><b>Mac OS X:</b> Attach the "Crash Reporter" log that appears
+        upon crash.
+        Only include the section directly below the crashing thread, usually 
+        titled "Thread 0 Crashed". Please do not paste the entire log!</li>
       </ul>
-
-      <blockquote>
-<pre>
-*** MACSBUG STACK CRAWL OF CRASH (Mac OS)
-Calling chain using A6/R1 links 
-Back chain  ISA  Caller 
-00000000    PPC  0BA85E74   
-03AEFD80    PPC  0B742248   
-03AEFD30    PPC  0B50FDDC  NSGetFactory+027FC
-PowerPC unmapped memory exception at 0B512BD0 NSGetFactory+055F0
-</pre>
-      </blockquote>
     </blockquote>
-  </blockquote>
 
-  <p>You're done!<br>
-  <br>
-   After double-checking your entries for any possible errors, press the
-  "Commit" button, and your [% terms.bug %] report will now be in 
+  <p>Double-check your report for errors and omissions, then press "Commit".
+  Your [% terms.bug %] report will now be in 
   the [% terms.Bugzilla %] database.<br>
   </p>
-</blockquote>
-<hr>
-
-<h3>More Information on Writing Good [% terms.Bugs %]</h3>
-
-<blockquote>
-  <p><b><a name="tips"></a> 1. General Tips for a Useful [% terms.Bug %] 
-     Report</b></p>
-
-  <blockquote>
-    <p><b>Use an explicit structure, so your [% terms.bug %] reports are easy
-    to skim.</b> [% terms.Bug %] report users often need immediate access to 
-    specific sections of your [% terms.bug %]. If your [% terms.Bugzilla %] 
-    installation supports the [% terms.Bugzilla %] Helper, use it.</p>
-
-    <p><b>Avoid cuteness if it costs clarity.</b> Nobody will be laughing
-    at your funny [% terms.bug %] title at 3:00 AM when they can't remember how 
-    to find your [% terms.bug %].</p>
-
-    <p><b>One [% terms.bug %] per report.</b> Completely different people 
-    typically fix, verify, and prioritize different [% terms.bugs %]. If you 
-    mix a handful of [% terms.bugs %] into a single report, the right people 
-    probably won't discover your [% terms.bugs %] in a timely fashion, or at 
-    all. Certain [% terms.bugs %] are also more important than others. It's 
-    impossible to prioritize [% terms.abug %] report when
-    it contains four different issues, all of differing importance.</p>
-
-    <p><b>No [% terms.bug %] is too trivial to report.</b> Unless you're 
-    reading the source code, you can't see actual software [% terms.bugs %], 
-    like a dangling pointer -- you'll see their visible manifestations, such 
-    as the segfault when the application finally crashes. Severe software 
-    problems can manifest themselves in superficially trivial ways. File them
-    anyway.<br>
-    </p>
-  </blockquote>
-
-  <p><b><a name="summary"></a>2. How and Why to Write Good [% terms.Bug %]
-  Summaries</b></p>
-
-  <blockquote>
-    <p><b>You want to make a good first impression on the [% terms.bug %]
-    recipient.</b> Just like a New York Times headline guides readers
-    towards a relevant article from dozens of choices, will 
-    your [% terms.bug %] summary suggest that your [% terms.bug %] report is 
-    worth reading from dozens or hundreds of choices?</p>
-
-    <p>Conversely, a vague [% terms.bug %] summary like <tt>install 
-    problem</tt> forces anyone reviewing installation [% terms.bugs %] to waste 
-    time opening up your [% terms.bug %] to determine whether it matters.</p>
-
-    <p><b>Your [% terms.bug %] will often be searched by its summary.</b> Just 
-    as you'd find web pages with Google by searching by keywords through 
-    intuition, so will other people locate your [% terms.bugs %]. 
-    Descriptive [% terms.bug %] summaries are
-    naturally keyword-rich, and easier to find.</p>
-
-    <p>For example, you'll find a [% terms.bug %] titled "<tt>Dragging icons 
-    from List View to gnome-terminal doesn't paste path</tt>" if you search on
-    "List", "terminal", or "path". Those search keywords wouldn't have
-    found a [% terms.bug %] titled "<tt>Dragging icons doesn't paste</tt>".</p>
-
-    <p>Ask yourself, "Would someone understand my [% terms.bug %] from just 
-    this summary?" If so, you've written a fine summary.</p>
-
-    <p><b>Don't write titles like these:</b></p>
-
-    <ol>
-      <li>"Can't install" - Why can't you install? What happens when you
-      try to install?</li>
-
-      <li>"Severe Performance Problems" - ...and they occur when you do
-      what?</li>
-
-      <li>"back button does not work" - Ever? At all?</li>
-    </ol>
-
-    <p><b>Good [% terms.bug %] titles:</b></p>
-
-    <ol>
-      <li>"1.0 upgrade installation fails if Mozilla M18 package present" -
-      Explains problem and the context.</li>
-
-      <li>"RPM 4 installer crashes if launched on Red Hat 6.2 (RPM 3)
-      system" - Explains what happens, and the context.</li>
-    </ol>
-  </blockquote>
 </blockquote>
 
 [% INCLUDE global/footer.html.tmpl %]

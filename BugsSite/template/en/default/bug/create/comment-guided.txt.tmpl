@@ -37,7 +37,7 @@ Build Identifier: [%+ cgi.param("buildid") %]
 Reproducible: [%+ cgi.param("reproducible") %]
 [% END %]
 
-[% IF !(cgi.param("reproduce_steps").match('^1\.\s+2\.\s+3\.\s+$') || cgi.param("reproduce_steps").match('^\s+$')) %]
+[% IF !(cgi.param("reproduce_steps").match('^1\.\s+2\.\s+3\.\s+$') || cgi.param("reproduce_steps").match('^\s*$')) %]
 Steps to Reproduce:
 [%+ cgi.param("reproduce_steps") %]
 [% END %]

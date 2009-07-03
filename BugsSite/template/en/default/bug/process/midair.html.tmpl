@@ -45,7 +45,9 @@
 <h1>Mid-air collision detected!</h1>
 
 <p>
-  Someone else has made changes to this [% terms.bug %] at the same time you were trying to.
+  Someone else has made changes to
+  [%+ "$terms.bug $bug_id" FILTER bug_link(bug_id) FILTER none %]
+  at the same time you were trying to.
   The changes made were:
 </p>
 
@@ -62,10 +64,12 @@
 </p>
 [% END %]
 
+[% IF cgi.param("comment") %]
 <p>
   Your comment was:<br>
   <blockquote><pre>[% cgi.param("comment") FILTER wrap_comment FILTER html %]</pre></blockquote>
 </p>
+[% END %]
 
 <p>
 You have the following choices:
@@ -75,14 +79,14 @@ You have the following choices:
   <li>
     <form method="post" action="process_bug.cgi">
       [% PROCESS "global/hidden-fields.html.tmpl" exclude="^Bugzilla_(login|password)$" %]
-      <input type="submit" value="Submit my changes anyway">
+      <input type="submit" id="process" value="Submit my changes anyway">
         This will cause all of the above changes to be overwritten
         [% ", except for the added comment(s)" IF comments.size > start_at %].
     </form>
   </li>
   <li>
-    <a href="show_bug.cgi?id=[% bug_id %]">Throw away my changes,
-      and revisit [% terms.bug %] [%+ bug_id %]</a>
+    Throw away my changes, and
+    [%+ "revisit $terms.bug $bug_id" FILTER bug_link(bug_id) FILTER none %]
   </li>
 </ul>
 

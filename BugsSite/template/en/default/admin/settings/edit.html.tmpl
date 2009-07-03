@@ -55,7 +55,7 @@ page, and the Default Value will automatically apply to everyone.
         <th>Preference Text</th>
         <th>Default Value</th>
         <th>Enabled</th>
-      <tr>
+      </tr>
 
       [% FOREACH name = setting_names %]
           [% checkbox_name = name _ '-enabled' %]
@@ -64,7 +64,7 @@ page, and the Default Value will automatically apply to everyone.
               [% setting_descs.$name OR name FILTER html %]
             </td>
             <td>
-              <select name="[% name %]" id="[% name %]">
+              <select name="[% name FILTER html %]" id="[% name FILTER html %]">
                 [% FOREACH x = settings.${name}.legal_values %]
                     <option value="[% x FILTER html %]"
                       [% " selected=\"selected\"" IF x == settings.${name}.default_value %]>
@@ -75,8 +75,8 @@ page, and the Default Value will automatically apply to everyone.
             </td>
             <td align="center">
               <input type="checkbox"
-                name="[% checkbox_name %]"
-                id="[% checkbox_name %]"
+                name="[% checkbox_name FILTER html %]"
+                id="[% checkbox_name FILTER html %]"
                 [% " checked=\"checked\"" IF settings.${name}.is_enabled %]>
               <br>
             </td>
@@ -85,11 +85,12 @@ page, and the Default Value will automatically apply to everyone.
       </table>
 
     <input type="hidden" name="action" value="update">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
     <table>
       <tr>
         <td width="150"></td>
         <td>
-          <input type="submit" value="Submit Changes">
+          <input type="submit" id="update" value="Submit Changes">
         </td>
       </tr>
     </table>

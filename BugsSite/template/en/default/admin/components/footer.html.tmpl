@@ -20,37 +20,36 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; the name of the component
-  #
-  # product: string; the name of the product which the component
-  #                  belongs/belonged to
+  # comp: object; Bugzilla::Component object representing the component 
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
   #%]
-  
-<p>
 
 <hr>
+
+<p>
 Edit 
 
-[% IF name && !no_edit_component_link %]
+[% IF comp && !no_edit_component_link %]
   component <a 
-  title="Edit Component '[% name FILTER html %]'"
+  title="Edit Component '[% comp.name FILTER html %]'"
   href="editcomponents.cgi?action=edit&amp;product=
-  [%- product FILTER url_quote %]&amp;component=[% name FILTER url_quote %]">
-   '[% name FILTER html %]'</a> 
+  [%- product.name FILTER url_quote %]&amp;component=[% comp.name FILTER url_quote %]">
+   '[% comp.name FILTER html %]'</a> 
   or edit
 [% END %]
 
 [% IF !no_edit_other_components_link %]
 other components of product <a 
-  title="Choose a component from product '[% product FILTER html %]' to edit"
+  title="Choose a component from product '[% product.name FILTER html %]' to edit"
   href="editcomponents.cgi?product=
-  [%- product FILTER url_quote %]">'[% product FILTER html %]'</a>, 
+  [%- product.name FILTER url_quote %]">'[% product.name FILTER html %]'</a>, 
   or edit 
 [% END %]
 
 product <a 
-  title="Edit Product '[% product FILTER html %]'"
+  title="Edit Product '[% product.name FILTER html %]'"
   href="editproducts.cgi?action=edit&amp;product=
-  [%- product FILTER url_quote %]">'[% product FILTER html %]'</a>.
+  [%- product.name FILTER url_quote %]">'[% product.name FILTER html %]'</a>.
 
 </p>

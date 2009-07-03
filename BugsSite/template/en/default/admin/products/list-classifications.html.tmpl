@@ -50,21 +50,22 @@
        name => "product_count"
        align => "right"
        heading => "Product Count"
-     },
-     { 
-       heading => "Action..."
-       content => "Add product"
-       contentlink => add_contentlink
-     },
+     }
    ]
 %]
+
+[% IF user.in_group('editcomponents') %]
+  [% columns.push({
+       heading => "Action..."
+       content => "Add product"
+       contentlink => add_contentlink })
+  %]
+[% END %]
 
 [% PROCESS admin/table.html.tmpl
      columns = columns
      data = classifications
 %]
-
-<p>
 
 [%# No need for the standard edit products footer, as we have an 'add'
     link in the table %]

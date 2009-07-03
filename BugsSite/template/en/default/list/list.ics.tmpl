@@ -18,7 +18,7 @@
   #
   # Contributor(s): William Jon McCann <mccann@jhu.edu>
   #%]
-[% PROCESS global/variables.none.tmpl %][% USE date %]
+[% PROCESS global/variables.none.tmpl %]
 BEGIN:VCALENDAR
 CALSCALE:GREGORIAN
 [%+ PROCESS ics_prodid +%]
@@ -32,7 +32,7 @@ BEGIN:VTODO
 [%+ PROCESS ics_status bug_status = bug.bug_status +%]
 [%+ PROCESS ics_dtstamp +%]
 [% IF bug.changeddate %]
-[%+ date.format(bug.changedtime,"%Y%m%dT%H%M%SZ") FILTER ics('LAST-MODIFIED') +%]
+[%+ time2str("%Y%m%dT%H%M%SZ", bug.changedtime, "UTC") FILTER ics('LAST-MODIFIED') +%]
 [% END %]
 [% IF bug.percentage_complete %]
 [%+ bug.percentage_complete FILTER format('%d') FILTER ics('PERCENT-COMPLETE') +%]
@@ -54,23 +54,23 @@ END:VTODO
 END:VCALENDAR
 
 [% BLOCK ics_prodid %]
-  [% "-//Mozilla/Bugzilla $VERSION//EN" FILTER ics('PRODID') %]
+  [% "-//Mozilla/Bugzilla $constants.BUGZILLA_VERSION//EN" FILTER ics('PRODID') %]
 [% END %]
 
 [% BLOCK ics_uid %]
-  [% "${bug_id}@${base_url}" FILTER uri FILTER ics('UID') %]
+  [% "${bug_id}@${base_url}" FILTER url_quote FILTER ics('UID') %]
 [% END %]
 
 [% BLOCK ics_url %]
-  [% "${base_url}show_bug.cgi?id=${bug_id}" FILTER uri FILTER ics('URL;VALUE=URI') %]
+  [% "${base_url}show_bug.cgi?id=${bug_id}" FILTER url_quote FILTER ics('URL;VALUE=URI') %]
 [% END %]
 
 [% BLOCK ics_dtstart %]
-  [% date.format(bug.opentime,"%Y%m%dT%H%M%SZ") FILTER ics('DTSTART') %]
+  [% time2str("%Y%m%dT%H%M%SZ", bug.opentime, "UTC") FILTER ics('DTSTART') %]
 [% END %]
 
 [% BLOCK ics_dtstamp %]
-  [% date.format(date.now,"%Y%m%dT%H%M%SZ") FILTER ics('DTSTAMP') %]
+  [% time2str("%Y%m%dT%H%M%SZ", currenttime, "UTC") FILTER ics('DTSTAMP') %]
 [% END %]
 
 [% BLOCK ics_status %]

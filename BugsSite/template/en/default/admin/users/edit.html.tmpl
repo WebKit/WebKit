@@ -25,8 +25,10 @@
   #                      canbless) for viewed user.
   #%]
 
+[% title = BLOCK %]Edit user [% otheruser.identity FILTER html %][% END %]
+
 [% PROCESS global/header.html.tmpl
-  title = "Edit user $login"
+  title = title
   message = message
   style_urls = ['skins/standard/editusers.css']
 %]
@@ -89,7 +91,7 @@
               <td class="groupname">
                 <label for="group_[% group.id %]">
                   <strong>[% group.name FILTER html %]:</strong>
-                  [%+ group.description FILTER html %]
+                  [%+ group.description FILTER html_light %]
                 </label>
               </td>
             </tr>
@@ -101,10 +103,15 @@
 </table>
 
 <p>
-  <input type="submit" value="Update" />
+  <input type="submit" id="update" value="Update" />
   <input type="hidden" name="userid" value="[% otheruser.id %]" />
   <input type="hidden" name="action" value="update" />
+  <input type="hidden" name="token" value="[% token FILTER html %]">
   [% INCLUDE listselectionhiddenfields %]
+
+  or <a href="editusers.cgi?action=activity&amp;userid=[% otheruser.id %]"
+        title="View the account log for user '
+        [%- otheruser.login FILTER html %]'">View this user's account log</a>
 </p>
 </form>
 <p>
@@ -124,7 +131,7 @@
 [% IF Param('allowuserdeletion') && editusers %]
   <form method="post" action="editusers.cgi">
   <p>
-    <input type="submit" value="Delete User" />
+    <input type="submit" id="delete" value="Delete User" />
     <input type="hidden" name="action" value="del" />
     <input type="hidden" name="userid" value="[% otheruser.id %]" />
     [% INCLUDE listselectionhiddenfields %]
@@ -140,7 +147,7 @@
     [% IF listselectionvalues %],
     [% END %]
   [% END %]
-  [% IF listselectionvalues %]
+  [% IF listselectionvalues.matchtype != 'exact' %]
     go
     <a href="editusers.cgi?action=list[% INCLUDE listselectionurlparams %]">back
     to the user list</a>,

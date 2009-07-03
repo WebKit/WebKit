@@ -26,39 +26,26 @@
 #                 Christian Reis <kiko@async.com.br>
 #                 Bradley Baetz <bbaetz@acm.org>
 #                 Erik Stambaugh <erik@dasbistro.com>
+#                 Max Kanat-Alexander <mkanat@bugzilla.org>
 
 package Bugzilla::Auth::Verify::LDAP;
-
 use strict;
+use base qw(Bugzilla::Auth::Verify);
+use fields qw(
+    ldap
+);
 
-use Bugzilla::Config;
 use Bugzilla::Constants;
-use Bugzilla::User;
+use Bugzilla::Error;
 
 use Net::LDAP;
 
-my $edit_options = {
-    'new' => 0,
-    'userid' => 0,
-    'login_name' => 0,
-    'realname' => 0,
-};
+use constant admin_can_create_account => 0;
+use constant user_can_create_account  => 0;
 
-sub can_edit {
-    my ($class, $type) = @_;
-    return $edit_options->{$type};
-}
-
-sub authenticate {
-    my ($class, $username, $passwd) = @_;
-
-    # If no password was provided, then fail the authentication.
-    # While it may be valid to not have an LDAP password, when you
-    # bind without a password (regardless of the binddn value), you
-    # will get an anonymous bind.  I do not know of a way to determine
-    # whether a bind is anonymous or not without making changes to the
-    # LDAP access control settings
-    return (AUTH_NODATA) unless $username && $passwd;
+sub check_credentials {
+    my ($self, $params) = @_;
+    my $dbh = Bugzilla->dbh;
 
     # We need to bind anonymously to the LDAP server.  This is
     # because we need to get the Distinguished Name of the user trying
@@ -67,132 +54,100 @@ sub authenticate {
     # just appending the Base DN to the uid isn't sufficient to get the
     # user's DN.  For servers which don't work this way, there will still
     # be no harm done.
-    my $LDAPserver = Param("LDAPserver");
-    if ($LDAPserver eq "") {
-        return (AUTH_ERROR, undef, "server_not_defined");
+    $self->_bind_ldap_anonymously();
+
+    # Now, we verify that the user exists, and get a LDAP Distinguished
+    # Name for the user.
+    my $username = $params->{username};
+    my $dn_result = $self->ldap->search(_bz_search_params($username),
+                                        attrs  => ['dn']);
+    return { failure => AUTH_ERROR, error => "ldap_search_error",
+             details => {errstr => $dn_result->error, username => $username}
+    } if $dn_result->code;
+
+    return { failure => AUTH_NO_SUCH_USER } if !$dn_result->count;
+
+    my $dn = $dn_result->shift_entry->dn;
+
+    # Check the password.   
+    my $pw_result = $self->ldap->bind($dn, password => $params->{password});
+    return { failure => AUTH_LOGINFAILED } if $pw_result->code;
+
+    # And now we fill in the user's details.
+    my $detail_result = $self->ldap->search(_bz_search_params($username));
+    return { failure => AUTH_ERROR, error => "ldap_search_error",
+             details => {errstr => $detail_result->error, username => $username}
+    } if $detail_result->code;
+
+    my $user_entry = $detail_result->shift_entry;
+
+    my $mail_attr = Bugzilla->params->{"LDAPmailattribute"};
+    if ($mail_attr) {
+        if (!$user_entry->exists($mail_attr)) {
+            return { failure => AUTH_ERROR,
+                     error   => "ldap_cannot_retreive_attr",
+                     details => {attr => $mail_attr} };
+        }
+
+        $params->{bz_username} = $user_entry->get_value($mail_attr);
+    } else {
+        $params->{bz_username} = $username;
     }
 
-    my $LDAPport = "389";  # default LDAP port
-    if($LDAPserver =~ /:/) {
-        ($LDAPserver, $LDAPport) = split(":",$LDAPserver);
-    }
-    my $LDAPconn = Net::LDAP->new($LDAPserver, port => $LDAPport, version => 3);
-    if(!$LDAPconn) {
-        return (AUTH_ERROR, undef, "connect_failed");
-    }
+    $params->{realname}  ||= $user_entry->get_value("displayName");
+    $params->{realname}  ||= $user_entry->get_value("cn");
 
-    my $mesg;
-    if (Param("LDAPbinddn")) {
-        my ($LDAPbinddn,$LDAPbindpass) = split(":",Param("LDAPbinddn"));
-        $mesg = $LDAPconn->bind($LDAPbinddn, password => $LDAPbindpass);
+    return $params;
+}
+
+sub _bz_search_params {
+    my ($username) = @_;
+    return (base   => Bugzilla->params->{"LDAPBaseDN"},
+            scope  => "sub",
+            filter => '(&(' . Bugzilla->params->{"LDAPuidattribute"} 
+                      . "=$username)"
+                      . Bugzilla->params->{"LDAPfilter"} . ')');
+}
+
+sub _bind_ldap_anonymously {
+    my ($self) = @_;
+    my $bind_result;
+    if (Bugzilla->params->{"LDAPbinddn"}) {
+        my ($LDAPbinddn,$LDAPbindpass) = 
+            split(":",Bugzilla->params->{"LDAPbinddn"});
+        $bind_result = 
+            $self->ldap->bind($LDAPbinddn, password => $LDAPbindpass);
     }
     else {
-        $mesg = $LDAPconn->bind();
+        $bind_result = $self->ldap->bind();
     }
-    if($mesg->code) {
-        return (AUTH_ERROR, undef,
-                "connect_failed",
-                { errstr => $mesg->error });
-    }
+    ThrowCodeError("ldap_bind_failed", {errstr => $bind_result->error})
+        if $bind_result->code;
+}
 
-    # We've got our anonymous bind;  let's look up this user.
-    $mesg = $LDAPconn->search( base   => Param("LDAPBaseDN"),
-                               scope  => "sub",
-                               filter => '(&(' . Param("LDAPuidattribute") . "=$username)" . Param("LDAPfilter") . ')',
-                               attrs  => ['dn'],
-                             );
-    return (AUTH_LOGINFAILED, undef, "lookup_failure")
-        unless $mesg->count;
+# We can't just do this in new(), because we're not allowed to throw any
+# error from anywhere under Bugzilla::Auth::new -- otherwise we
+# could create a situation where the admin couldn't get to editparams
+# to fix his mistake. (Because Bugzilla->login always calls 
+# Bugzilla::Auth->new, and almost every page calls Bugzilla->login.)
+sub ldap {
+    my ($self) = @_;
+    return $self->{ldap} if $self->{ldap};
 
-    # Now we get the DN from this search.
-    my $userDN = $mesg->shift_entry->dn;
+    my $server = Bugzilla->params->{"LDAPserver"};
+    ThrowCodeError("ldap_server_not_defined") unless $server;
 
-    # Now we attempt to bind as the specified user.
-    $mesg = $LDAPconn->bind( $userDN, password => $passwd);
+    $self->{ldap} = new Net::LDAP($server)
+        || ThrowCodeError("ldap_connect_failed", { server => $server });
 
-    return (AUTH_LOGINFAILED) if $mesg->code;
-
-    # And now we're going to repeat the search, so that we can get the
-    # mail attribute for this user.
-    $mesg = $LDAPconn->search( base   => Param("LDAPBaseDN"),
-                               scope  => "sub",
-                               filter => '(&(' . Param("LDAPuidattribute") . "=$username)" . Param("LDAPfilter") . ')',
-                             );
-    my $user_entry = $mesg->shift_entry if !$mesg->code && $mesg->count;
-    if(!$user_entry || !$user_entry->exists(Param("LDAPmailattribute"))) {
-        return (AUTH_ERROR, undef,
-                "cannot_retreive_attr",
-                { attr => Param("LDAPmailattribute") });
+    # try to start TLS if needed
+    if (Bugzilla->params->{"LDAPstarttls"}) {
+        my $mesg = $self->{ldap}->start_tls();
+        ThrowCodeError("ldap_start_tls_failed", { error => $mesg->error() })
+            if $mesg->code();
     }
 
-    # get the mail attribute
-    $username = $user_entry->get_value(Param("LDAPmailattribute"));
-    # OK, so now we know that the user is valid. Lets try finding them in the
-    # Bugzilla database
-
-    # XXX - should this part be made more generic, and placed in
-    # Bugzilla::Auth? Lots of login mechanisms may have to do this, although
-    # until we actually get some more, its hard to know - BB
-
-    my $dbh = Bugzilla->dbh;
-    my $sth = $dbh->prepare_cached("SELECT userid, disabledtext " .
-                                   "FROM profiles " .
-                                   "WHERE " .
-                                   $dbh->sql_istrcmp('login_name', '?'));
-    my ($userid, $disabledtext) =
-      $dbh->selectrow_array($sth,
-                            undef,
-                            $username);
-
-    # If the user doesn't exist, then they need to be added
-    unless ($userid) {
-        # We'll want the user's name for this.
-        my $userRealName = $user_entry->get_value("displayName");
-        if($userRealName eq "") {
-            $userRealName = $user_entry->get_value("cn");
-        }
-        insert_new_user($username, $userRealName);
-
-        ($userid, $disabledtext) = $dbh->selectrow_array($sth,
-                                                         undef,
-                                                         $username);
-        return (AUTH_ERROR, $userid, "no_userid")
-          unless $userid;
-    }
-
-    # we're done, so disconnect
-    $LDAPconn->unbind;
-
-    # Test for disabled account
-    return (AUTH_DISABLED, $userid, $disabledtext)
-      if $disabledtext ne '';
-
-    # If we get to here, then the user is allowed to login, so we're done!
-    return (AUTH_OK, $userid);
+    return $self->{ldap};
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-Bugzilla::Auth::Verify::LDAP - LDAP based authentication for Bugzilla
-
-This is an L<authentication module|Bugzilla::Auth/"AUTHENTICATION"> for
-Bugzilla, which logs the user in using an LDAP directory.
-
-=head1 DISCLAIMER
-
-B<This module is experimental>. It is poorly documented, and not very flexible.
-Search L<http://bugzilla.mozilla.org/> for a list of known LDAP bugs.
-
-None of the core Bugzilla developers, nor any of the large installations, use
-this module, and so it has received less testing. (In fact, this iteration
-hasn't been tested at all)
-
-Patches are accepted.
-
-=head1 SEE ALSO
-
-L<Bugzilla::Auth>

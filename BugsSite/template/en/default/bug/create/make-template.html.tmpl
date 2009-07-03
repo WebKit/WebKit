@@ -17,19 +17,29 @@
   # Rights Reserved.
   #
   # Contributor(s): Gervase Markham <gerv@gerv.net>
+  #                 Marc Schumann <wurblzap@gmail.com>
+  #%]
+
+[%# INTERFACE:
+  # url: URL to a pre-filled bug entry form.
+  # short_desc: Bug summary as entered in the form.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
 [% PROCESS global/header.html.tmpl
   title = "Bookmarks are your friend"
-  h1 = "Template constructed"
+  header = "Template constructed"
 %]
 
 <p>
   You can bookmark this link:
-  &ldquo;<a href="enter_bug.cgi?[% url FILTER html %]">[% terms.Bug %]
-  entry template</a>&rdquo;.
+  &ldquo;<a href="enter_bug.cgi?[% url FILTER html %]">
+  [% IF short_desc %]
+    [% short_desc FILTER html %]
+  [% ELSE %]
+    [% terms.Bug %] entry template
+  [% END %]</a>&rdquo;.
   This bookmark will bring up the <em>Enter [% terms.Bug %]</em> page with the
   fields initialized as you've requested.
 </p>

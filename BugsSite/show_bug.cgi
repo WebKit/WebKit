@@ -26,21 +26,16 @@ use lib qw(.);
 
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Error;
 use Bugzilla::User;
-
-require "CGI.pl";
-
-use vars qw($template $vars $userid);
-
+use Bugzilla::Keyword;
 use Bugzilla::Bug;
 
 my $cgi = Bugzilla->cgi;
+my $template = Bugzilla->template;
+my $vars = {};
 
-if ($cgi->param('GoAheadAndLogIn')) {
-    Bugzilla->login(LOGIN_REQUIRED);
-} else {
-    Bugzilla->login();
-}
+my $user = Bugzilla->login();
 
 # Editable, 'single' HTML bugs are treated slightly specially in a few places
 my $single = !$cgi->param('format')
@@ -54,10 +49,8 @@ if (!$cgi->param('id') && $single) {
     exit;
 }
 
-my $format = GetFormat("bug/show", scalar $cgi->param('format'), 
-                       scalar $cgi->param('ctype'));
-
-GetVersionTable();
+my $format = $template->get_format("bug/show", scalar $cgi->param('format'), 
+                                   scalar $cgi->param('ctype'));
 
 my @bugs = ();
 my %marks;
@@ -67,7 +60,7 @@ if ($single) {
     # Its a bit silly to do the validation twice - that functionality should
     # probably move into Bug.pm at some point
     ValidateBugID($id);
-    push @bugs, new Bugzilla::Bug($id, $userid);
+    push @bugs, new Bugzilla::Bug($id);
     if (defined $cgi->param('mark')) {
         foreach my $range (split ',', $cgi->param('mark')) {
             if ($range =~ /^(\d+)-(\d+)$/) {
@@ -81,8 +74,18 @@ if ($single) {
     }
 } else {
     foreach my $id ($cgi->param('id')) {
-        my $bug = new Bugzilla::Bug($id, $userid);
-        push @bugs, $bug;
+        # Be kind enough and accept URLs of the form: id=1,2,3.
+        my @ids = split(/,/, $id);
+        foreach (@ids) {
+            my $bug = new Bugzilla::Bug($_);
+            # This is basically a backwards-compatibility hack from when
+            # Bugzilla::Bug->new used to set 'NotPermitted' if you couldn't
+            # see the bug.
+            if (!$bug->{error} && !$user->can_see_bug($bug->bug_id)) {
+                $bug->{error} = 'NotPermitted';
+            }
+            push(@bugs, $bug);
+        }
     }
 }
 
@@ -94,7 +97,10 @@ eval {
 
 $vars->{'bugs'} = \@bugs;
 $vars->{'marks'} = \%marks;
-$vars->{'use_keywords'} = 1 if (@::legal_keywords);
+$vars->{'use_keywords'} = 1 if Bugzilla::Keyword::keyword_count();
+
+my @bugids = map {$_->bug_id} @bugs;
+$vars->{'bugids'} = join(", ", @bugids);
 
 # Next bug in list (if there is one)
 my @bug_list;
@@ -108,15 +114,16 @@ $vars->{'bug_list'} = \@bug_list;
 # If no explicit list is defined, we show all fields. We then exclude any
 # on the exclusion list. This is so you can say e.g. "Everything except 
 # attachments" without listing almost all the fields.
-my @fieldlist = (Bugzilla::Bug::fields(), 'group', 'long_desc', 'attachment');
+my @fieldlist = (Bugzilla::Bug->fields, 'group', 'long_desc', 
+                 'attachment', 'attachmentdata');
 my %displayfields;
 
 if ($cgi->param("field")) {
     @fieldlist = $cgi->param("field");
 }
 
-unless (UserInGroup(Param("timetrackinggroup"))) {
-    @fieldlist = grep($_ !~ /_time$/, @fieldlist);
+unless (Bugzilla->user->in_group(Bugzilla->params->{"timetrackinggroup"})) {
+    @fieldlist = grep($_ !~ /(^deadline|_time)$/, @fieldlist);
 }
 
 foreach (@fieldlist) {

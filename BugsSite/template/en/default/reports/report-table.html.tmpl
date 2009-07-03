@@ -37,23 +37,18 @@
 [% row_field_disp = field_descs.$row_field || row_field %]
   
 [% IF tbl == "-total-" %]
-  [% urlbase = BLOCK %]buglist.cgi?[% buglistbase %]
+  [% urlbase = BLOCK %]buglist.cgi?[% buglistbase FILTER html %]
   [% "&amp;$tbl_vals" IF tbl_vals %][% END %]
 [% ELSE %]
-  [% urlbase = BLOCK %]buglist.cgi?[% buglistbase %]&amp;
+  [% urlbase = BLOCK %]buglist.cgi?[% buglistbase FILTER html %]&amp;
   [% tbl_field FILTER url_quote %]=[% tbl FILTER url_quote %][% END %]
 [% END %]
 
+[% IF tbl_field %]
+  <h2>[% tbl_disp FILTER html %]</h2>
+[% END %]
+
 <table>
-  [% IF tbl_field %]
-    <tr>
-      <td>
-      </td>
-      <td align="center">        
-        <h2>[% tbl_disp FILTER html %]</h2>
-      </td>
-    </tr>
-  [% END %]  
   <tr>
     <td>
     </td>
@@ -88,7 +83,7 @@
           [% IF col_field == 'bug_status' %]
             [% status_descs.$col FILTER html FILTER replace('^ $','&nbsp;') %]
           [% ELSIF col_field == 'resolution' %]
-            [% resolution_descs.$col FILTER html FILTER replace('^ $','&nbsp;') %]
+            [% get_resolution(col) FILTER html FILTER replace('^ $','&nbsp;') %]
           [% ELSE %]
             [% col FILTER html FILTER replace('^ $','&nbsp;') %]
           [% END %]
@@ -109,7 +104,7 @@
         [% IF row_field == 'bug_status' %]
           [% status_descs.$row FILTER html FILTER replace('^ $','&nbsp;') %]
         [% ELSIF row_field == 'resolution' %]
-          [% resolution_descs.$row FILTER html FILTER replace('^ $','&nbsp;') %]
+          [% get_resolution(row) FILTER html FILTER replace('^ $','&nbsp;') %]
         [% ELSE %]
           [% row FILTER html FILTER replace('^ $','&nbsp;') %]
         [% END %]
@@ -154,7 +149,6 @@
           [% col_field FILTER url_quote %]=[% col FILTER url_quote %]
           [% "&amp;$row_vals" IF row_vals %]">
         [% col_totals.$col %]</a>
-      <strong>
       </td> 
     [% END %]
     <td class="ttotal" align="right">

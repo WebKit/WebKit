@@ -13,21 +13,20 @@
 #
 # The Original Code is the LDAP to Bugzilla User Sync Tool.
 #
-# The Initial Developer of the Original Code is Andreas Höfler.
-# Portions created by Andreas Höfler are Copyright (C) 2003
-# Andreas Höfler. All
-# Rights Reserved.
+# The Initial Developer of the Original Code is Andreas HÃ¶fler.
+# Portions created by Andreas HÃ¶fler are Copyright (C) 2003
+# Andreas HÃ¶fler. All Rights Reserved.
 #
-# Contributor(s): Andreas Höfler <andreas.hoefler@bearingpoint.com>
+# Contributor(s): Andreas HÃ¶fler <andreas.hoefler@bearingpoint.com>
 #
 
 use strict;
 
-require "CGI.pl";
-
 use lib qw(.);
 
 use Net::LDAP;
+use Bugzilla;
+use Bugzilla::User;
 
 my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
@@ -75,30 +74,24 @@ foreach my $arg (@ARGV)
    }
 }
 
-my %bugzilla_users;
 my %ldap_users;
 
 ###
 # Get current bugzilla users
 ###
-SendSQL("SELECT login_name, realname, disabledtext " .
-        "FROM profiles" );
-while (MoreSQLData()) {
-    my ($login_name, $realname, $disabledtext) 
-        = FetchSQLData();
-        
+my $bugzilla_users = $dbh->selectall_hashref(
+    'SELECT login_name AS new_login_name, realname, disabledtext ' .
+    'FROM profiles', 'new_login_name');
+
+foreach my $login_name (keys %$bugzilla_users) {
     # remove whitespaces
-    $realname =~ s/^\s+|\s+$//g;
-    
-    $bugzilla_users{$login_name} = { realname         => $realname,
-                                     new_login_name   => $login_name,
-                                     disabledtext     => $disabledtext };
+    $bugzilla_users->{$login_name}{'realname'} =~ s/^\s+|\s+$//g;
 }
 
 ###
 # Get current LDAP users
 ###
-my $LDAPserver = Param("LDAPserver");
+my $LDAPserver = Bugzilla->params->{"LDAPserver"};
 if ($LDAPserver eq "") {
    print "No LDAP server defined in bugzilla preferences.\n";
    exit;
@@ -114,8 +107,8 @@ if(!$LDAPconn) {
    exit;
 }
 my $mesg;
-if (Param("LDAPbinddn")) {
-    my ($LDAPbinddn,$LDAPbindpass) = split(":",Param("LDAPbinddn"));
+if (Bugzilla->params->{"LDAPbinddn"}) {
+    my ($LDAPbinddn,$LDAPbindpass) = split(":",Bugzilla->params->{"LDAPbinddn"});
     $mesg = $LDAPconn->bind($LDAPbinddn, password => $LDAPbindpass);
 }
 else {
@@ -127,9 +120,9 @@ if($mesg->code) {
 }
 
 # We've got our anonymous bind;  let's look up the users.
-$mesg = $LDAPconn->search( base   => Param("LDAPBaseDN"),
+$mesg = $LDAPconn->search( base   => Bugzilla->params->{"LDAPBaseDN"},
                            scope  => "sub",
-                           filter => '(&(' . Param("LDAPuidattribute") . "=*)" . Param("LDAPfilter") . ')',
+                           filter => '(&(' . Bugzilla->params->{"LDAPuidattribute"} . "=*)" . Bugzilla->params->{"LDAPfilter"} . ')',
                          );
                          
 
@@ -142,7 +135,7 @@ my $val = $mesg->as_struct;
 
 while( my ($key, $value) = each(%$val) ) {
 
-   my $login_name = @$value{Param("LDAPmailattribute")};
+   my $login_name = @$value{Bugzilla->params->{"LDAPmailattribute"}};
    my $realname  = @$value{"cn"};
 
    # no mail entered? go to next
@@ -153,7 +146,7 @@ while( my ($key, $value) = each(%$val) ) {
 
    # no cn entered? use uid instead
    if(! defined $realname) { 
-      $realname = @$value{Param("LDAPuidattribute")};
+      $realname = @$value{Bugzilla->params->{"LDAPuidattribute"}};
    }
   
    my $login = shift @$login_name;
@@ -171,7 +164,7 @@ my %update_users;
 my %create_users;
 
 print "Bugzilla-Users: \n" unless $quiet;
-while( my ($key, $value) = each(%bugzilla_users) ) {
+while( my ($key, $value) = each(%$bugzilla_users) ) {
   print " " . $key . " '" . @$value{'realname'} . "' " . @$value{'disabledtext'} ."\n" unless $quiet==1;
   if(!exists $ldap_users{$key}){
      if(@$value{'disabledtext'} eq '') {
@@ -183,11 +176,11 @@ while( my ($key, $value) = each(%bugzilla_users) ) {
 print "\nLDAP-Users: \n" unless $quiet;
 while( my ($key, $value) = each(%ldap_users) ) {
   print " " . $key . " '" . @$value{'realname'} . "'\n" unless $quiet==1;
-  if(!exists $bugzilla_users{$key}){
+  if(!defined $bugzilla_users->{$key}){
     $create_users{$key} = $value;
   }
   else { 
-    my $bugzilla_user_value = $bugzilla_users{$key};
+    my $bugzilla_user_value = $bugzilla_users->{$key};
     if(@$bugzilla_user_value{'realname'} ne @$value{'realname'}) {
       $update_users{$key} = $value;
     }
@@ -236,11 +229,15 @@ if($quiet == 0) {
 ###
 if($readonly == 0) {
    print "Performing DB update:\nPhase 1: disabling not-existing users... " unless $quiet;
+
+   my $sth_disable = $dbh->prepare(
+       'UPDATE profiles
+           SET disabledtext = ?
+         WHERE ' . $dbh->sql_istrcmp('login_name', '?'));
+
    if($nodisable == 0) {
       while( my ($key, $value) = each(%disable_users) ) {
-        SendSQL("UPDATE profiles SET disabledtext = 'auto-disabled by ldap " .
-                "sync' WHERE " . $dbh->sql_istrcmp('login_name', 
-                $dbh->quote($key)));
+        $sth_disable->execute('auto-disabled by ldap sync', $key);
       }
       print "done!\n" unless $quiet;
    }
@@ -249,15 +246,22 @@ if($readonly == 0) {
    }
    
    print "Phase 2: updating existing users... " unless $quiet;
+
+   my $sth_update_login = $dbh->prepare(
+       'UPDATE profiles
+           SET login_name = ? 
+         WHERE ' . $dbh->sql_istrcmp('login_name', '?'));
+   my $sth_update_realname = $dbh->prepare(
+       'UPDATE profiles
+           SET realname = ? 
+         WHERE ' . $dbh->sql_istrcmp('login_name', '?'));
+
    if($noupdate == 0) {
       while( my ($key, $value) = each(%update_users) ) {
         if(defined @$value{'new_login_name'}) {
-          SendSQL("UPDATE profiles SET login_name = '" . 
-                  @$value{'new_login_name'} . "' WHERE " .
-                  $dbh->sql_istrcmp('login_name', $dbh->quote($key)));
+          $sth_update_login->execute(@$value{'new_login_name'}, $key);
         } else {
-          SendSQL("UPDATE profiles SET realname = '" . @$value{'realname'} .
-                   "' WHERE " . $dbh->sql_istrcmp('login_name', $dbh->quote($key)));
+          $sth_update_realname->execute(@$value{'realname'}, $key);
         }
       }
       print "done!\n" unless $quiet;
@@ -269,14 +273,10 @@ if($readonly == 0) {
    print "Phase 3: creating new users... " unless $quiet;
    if($nocreate == 0) {
       while( my ($key, $value) = each(%create_users) ) {
-        SendSQL("INSERT INTO profiles VALUES ('',
-                                              '$key',
-                                              'xxKFIy4WR66mA', 
-                                              '" . @$value{'realname'} . "', 
-                                              '', 
-                                              1, 
-                                              'ExcludeSelf~on~emailOwnerRemoveme~on~emailOwnerComments~on~emailOwnerAttachments~on~emailOwnerStatus~on~emailOwnerResolved~on~emailOwnerKeywords~on~emailOwnerCC~on~emailOwnerOther~on~emailOwnerUnconfirmed~on~emailReporterRemoveme~on~emailReporterComments~on~emailReporterAttachments~on~emailReporterStatus~on~emailReporterResolved~on~emailReporterKeywords~on~emailReporterCC~on~emailReporterOther~on~emailReporterUnconfirmed~on~emailQAcontactRemoveme~on~emailQAcontactComments~on~emailQAcontactAttachments~on~emailQAcontactStatus~on~emailQAcontactResolved~on~emailQAcontactKeywords~on~emailQAcontactCC~on~emailQAcontactOther~on~emailQAcontactUnconfirmed~on~emailCClistRemoveme~on~emailCClistComments~on~emailCClistAttachments~on~emailCClistStatus~on~emailCClistResolved~on~emailCClistKeywords~on~emailCClistCC~on~emailCClistOther~on~emailCClistUnconfirmed~on~emailVoterRemoveme~on~emailVoterComments~on~emailVoterAttachments~on~emailVoterStatus~on~emailVoterResolved~on~emailVoterKeywords~on~emailVoterCC~on~emailVoterOther~on~emailVoterUnconfirmed~on', 
-                                              sysdate())");
+        Bugzilla::User->create({
+            login_name => $key, 
+            realname   => @$value{'realname'},
+            cryptpassword   => '*'});
       }
       print "done!\n" unless $quiet;
    }

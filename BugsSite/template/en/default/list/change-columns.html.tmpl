@@ -64,14 +64,15 @@
   </p>
 
   <p>
-    <input type="submit" value="Change Columns">
+    <input type="submit" id="change" value="Change Columns">
   </p>
 </form>
 
 <form action="colchange.cgi">
   <input type="hidden" name="rememberedquery" value="[% buffer FILTER html %]">
   <input type="hidden" name="resetit" value="1">
-  <input type="submit" value="Reset to [% terms.Bugzilla %] default">
+  <input type="submit" id="reset" 
+         value="Reset to [% terms.Bugzilla %] default">
 </form>
 
 [% PROCESS global/footer.html.tmpl %]

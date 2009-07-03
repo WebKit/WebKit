@@ -33,7 +33,7 @@
 
 [% PROCESS global/header.html.tmpl 
   title = "Create New Data Set"
-  onload = "selectProduct(document.forms['chartform']);"
+  onload = "doOnSelectProduct(0);"
   javascript = js_data 
   javascript_urls = [ "js/productform.js" ]
 %]

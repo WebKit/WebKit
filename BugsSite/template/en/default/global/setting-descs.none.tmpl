@@ -22,11 +22,24 @@
 [% setting_descs = { 
    "comment_sort_order"               => "When viewing $terms.abug, show comments in this order",
    "csv_colsepchar"                   => "Field separator character for CSV files",
-   "display_quips"                    => "Show a quip at the top of each bug list",
+   "display_quips"                    => "Show a quip at the top of each $terms.bug list",
+   "zoom_textareas"                   => "Zoom textareas large when in use (requires JavaScript)",
    "newest_to_oldest"                 => "Newest to Oldest",
    "newest_to_oldest_desc_first"      => "Newest to Oldest, but keep Description at the top",
    "off"                              => "Off",
    "oldest_to_newest"                 => "Oldest to Newest",
-   "on"                               => "On"
+   "on"                               => "On",
+   "per_bug_queries"                  => "Enable tags for $terms.bugs",
+   "post_bug_submit_action"           => "After changing $terms.abug",
+   "next_bug"                         => "Show next $terms.bug in my list",
+   "same_bug"                         => "Show the updated $terms.bug",
+   "standard"                         => "Classic",
+   "skin"                             => "$terms.Bugzilla's general appearance (skin)",
+   "nothing"                          => "Do Nothing",
+   "state_addselfcc"                  => "Automatically add me to the CC list of $terms.bugs I change",
+   "always"                           => "Always",
+   "never"                            => "Never",
+   "cc_unless_role"                   => "Only if I have no role on them",
+   "lang"                             => "Language used in email",
                    } 
 %]

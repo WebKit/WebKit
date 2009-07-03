@@ -21,7 +21,7 @@
 # Contributor(s): Holger Schurig <holgerschurig@nikocity.de>
 #                 Terry Weissman <terry@mozilla.org>
 #                 Gavin Shelley <bugzilla@chimpychompy.org>
-#                 Frédéric Buclin <LpSolit@gmail.com>
+#                 FrÃ©dÃ©ric Buclin <LpSolit@gmail.com>
 #
 #
 # Direct any questions on this source code to
@@ -31,90 +31,28 @@
 use strict;
 use lib ".";
 
-require "CGI.pl";
-require "globals.pl";
-
+use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Config qw(:DEFAULT $datadir);
-use Bugzilla::User;
-
-use vars qw($template $vars);
+use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::Version;
+use Bugzilla::Token;
 
 my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
-
-# TestProduct:  just returns if the specified product does exists
-# CheckProduct: same check, optionally  emit an error text
-# TestVersion:  just returns if the specified product/version combination exists
-# CheckVersion: same check, optionally emit an error text
-
-sub TestProduct ($)
-{
-    my $prod = shift;
-
-    # does the product exist?
-    SendSQL("SELECT name
-             FROM products
-             WHERE name = " . SqlQuote($prod));
-    return FetchOneColumn();
-}
-
-sub CheckProduct ($)
-{
-    my $prod = shift;
-
-    # do we have a product?
-    unless ($prod) {
-        ThrowUserError('product_not_specified');    
-    }
-
-    unless (TestProduct $prod) {
-        ThrowUserError('product_doesnt_exist',
-                       {'product' => $prod});
-    }
-}
-
-sub TestVersion ($$)
-{
-    my ($prod,$ver) = @_;
-
-    # does the product exist?
-    SendSQL("SELECT products.name, value
-             FROM versions, products
-             WHERE versions.product_id = products.id
-               AND products.name = " . SqlQuote($prod) . "
-               AND value = " . SqlQuote($ver));
-    return FetchOneColumn();
-}
-
-sub CheckVersion ($$)
-{
-    my ($prod, $ver) = @_;
-
-    # do we have the version?
-    unless ($ver) {
-        ThrowUserError('version_not_specified');
-    }
-
-    CheckProduct($prod);
-
-    unless (TestVersion $prod, $ver) {
-        ThrowUserError('version_not_valid',
-                       {'product' => $prod,
-                        'version' => $ver});
-    }
-}
-
+my $template = Bugzilla->template;
+my $vars = {};
 
 #
 # Preliminary checks:
 #
 
-Bugzilla->login(LOGIN_REQUIRED);
+my $user = Bugzilla->login(LOGIN_REQUIRED);
 
-print Bugzilla->cgi->header();
+print $cgi->header();
 
-UserInGroup("editcomponents")
+$user->in_group('editcomponents')
+  || scalar(@{$user->get_products_by_permission('editcomponents')})
   || ThrowUserError("auth_failure", {group  => "editcomponents",
                                      action => "edit",
                                      object => "versions"});
@@ -122,72 +60,41 @@ UserInGroup("editcomponents")
 #
 # often used variables
 #
-my $product = trim($cgi->param('product') || '');
-my $version = trim($cgi->param('version') || '');
-my $action  = trim($cgi->param('action')  || '');
-
+my $product_name = trim($cgi->param('product') || '');
+my $version_name = trim($cgi->param('version') || '');
+my $action       = trim($cgi->param('action')  || '');
+my $showbugcounts = (defined $cgi->param('showbugcounts'));
+my $token        = $cgi->param('token');
 
 #
-# product = '' -> Show nice list of versions
+# product = '' -> Show nice list of products
 #
 
-unless ($product) {
-
-    my @products = ();
-
-    SendSQL("SELECT products.name, products.description
-             FROM products 
-             ORDER BY products.name");
-
-    while ( MoreSQLData() ) {
-        my ($product, $description) = FetchSQLData();
-
-        my $prod = {};
-
-        $prod->{'name'} = $product;
-        $prod->{'description'} = $description;
-
-        push(@products, $prod);
+unless ($product_name) {
+    my $selectable_products = $user->get_selectable_products;
+    # If the user has editcomponents privs for some products only,
+    # we have to restrict the list of products to display.
+    unless ($user->in_group('editcomponents')) {
+        $selectable_products = $user->get_products_by_permission('editcomponents');
     }
+    $vars->{'products'} = $selectable_products;
+    $vars->{'showbugcounts'} = $showbugcounts;
 
-    $vars->{'products'} = \@products;
-    $template->process("admin/versions/select-product.html.tmpl",
-                       $vars)
+    $template->process("admin/versions/select-product.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-
     exit;
 }
+
+my $product = $user->check_can_admin_product($product_name);
 
 #
 # action='' -> Show nice list of versions
 #
 
 unless ($action) {
-
-    CheckProduct($product);
-    my $product_id = get_product_id($product);
-    my @versions = ();
-
-    SendSQL("SELECT value
-             FROM versions
-             WHERE product_id = $product_id
-             ORDER BY value");
-
-    while ( MoreSQLData() ) {
-        my $name = FetchOneColumn();
-
-        my $version = {};
-
-        $version->{'name'} = $name;
-
-        push(@versions, $version);
-
-    }
-
+    $vars->{'showbugcounts'} = $showbugcounts;
     $vars->{'product'} = $product;
-    $vars->{'versions'} = \@versions;
-    $template->process("admin/versions/list.html.tmpl",
-                       $vars)
+    $template->process("admin/versions/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -203,13 +110,9 @@ unless ($action) {
 #
 
 if ($action eq 'add') {
-
-    CheckProduct($product);
-    my $product_id = get_product_id($product);
-
+    $vars->{'token'} = issue_session_token('add_version');
     $vars->{'product'} = $product;
-    $template->process("admin/versions/create.html.tmpl",
-                       $vars)
+    $template->process("admin/versions/create.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -222,36 +125,13 @@ if ($action eq 'add') {
 #
 
 if ($action eq 'new') {
+    check_token_data($token, 'add_version');
+    my $version = Bugzilla::Version::create($version_name, $product);
+    delete_token($token);
 
-    CheckProduct($product);
-    my $product_id = get_product_id($product);
-
-    # Cleanups and valididy checks
-
-    unless ($version) {
-        ThrowUserError('version_blank_name',
-                       {'name' => $version});
-    }
-
-    if (TestVersion($product,$version)) {
-        ThrowUserError('version_already_exists',
-                       {'name' => $version,
-                        'product' => $product});
-    }
-
-    # Add the new version
-    SendSQL("INSERT INTO versions ( " .
-            "value, product_id" .
-            " ) VALUES ( " .
-            SqlQuote($version) . ", $product_id)");
-
-    # Make versioncache flush
-    unlink "$datadir/versioncache";
-
-    $vars->{'name'} = $version;
+    $vars->{'version'} = $version;
     $vars->{'product'} = $product;
-    $template->process("admin/versions/created.html.tmpl",
-                       $vars)
+    $template->process("admin/versions/created.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -268,20 +148,12 @@ if ($action eq 'new') {
 
 if ($action eq 'del') {
 
-    CheckVersion($product, $version);
-    my $product_id = get_product_id($product);
+    my $version = Bugzilla::Version::check_version($product, $version_name);
 
-    SendSQL("SELECT count(bug_id)
-             FROM bugs
-             WHERE product_id = $product_id
-               AND version = " . SqlQuote($version));
-    my $bugs = FetchOneColumn() || 0;
-
-    $vars->{'bug_count'} = $bugs;
-    $vars->{'name'} = $version;
+    $vars->{'version'} = $version;
     $vars->{'product'} = $product;
-    $template->process("admin/versions/confirm-delete.html.tmpl",
-                       $vars)
+    $vars->{'token'} = issue_session_token('delete_version');
+    $template->process("admin/versions/confirm-delete.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -294,32 +166,17 @@ if ($action eq 'del') {
 #
 
 if ($action eq 'delete') {
-    CheckVersion($product, $version);
-    my $product_id = get_product_id($product);
+    check_token_data($token, 'delete_version');
+    my $version = Bugzilla::Version::check_version($product, $version_name);
+    $version->remove_from_db;
+    delete_token($token);
 
-    trick_taint($version);
-
-    my $nb_bugs =
-      $dbh->selectrow_array("SELECT COUNT(bug_id) FROM bugs
-                             WHERE product_id = ? AND version = ?",
-                             undef, ($product_id, $version));
-
-    # The version cannot be removed if there are bugs
-    # associated with it.
-    if ($nb_bugs) {
-        ThrowUserError("version_has_bugs", { nb => $nb_bugs });
-    }
-
-    $dbh->do("DELETE FROM versions WHERE product_id = ? AND value = ?",
-              undef, ($product_id, $version));
-
-    unlink "$datadir/versioncache";
-
-    $vars->{'name'} = $version;
+    $vars->{'version'} = $version;
     $vars->{'product'} = $product;
 
     $template->process("admin/versions/deleted.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
+
     exit;
 }
 
@@ -333,14 +190,13 @@ if ($action eq 'delete') {
 
 if ($action eq 'edit') {
 
-    CheckVersion($product,$version);
-    my $product_id = get_product_id($product);
+    my $version = Bugzilla::Version::check_version($product, $version_name);
 
-    $vars->{'name'} = $version;
+    $vars->{'version'} = $version;
     $vars->{'product'} = $product;
+    $vars->{'token'} = issue_session_token('edit_version');
 
-    $template->process("admin/versions/edit.html.tmpl",
-                       $vars)
+    $template->process("admin/versions/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -353,47 +209,21 @@ if ($action eq 'edit') {
 #
 
 if ($action eq 'update') {
+    check_token_data($token, 'edit_version');
+    my $version_old_name = trim($cgi->param('versionold') || '');
+    my $version =
+        Bugzilla::Version::check_version($product, $version_old_name);
 
-    my $versionold = trim($cgi->param('versionold') || '');
+    $dbh->bz_lock_tables('bugs WRITE', 'versions WRITE');
 
-    CheckVersion($product,$versionold);
-    my $product_id = get_product_id($product);
+    $vars->{'updated'} = $version->update($version_name, $product);
 
-    # Note that the order of this tests is important. If you change
-    # them, be sure to test for WHERE='$version' or WHERE='$versionold'
+    $dbh->bz_unlock_tables();
+    delete_token($token);
 
-    $dbh->bz_lock_tables('bugs WRITE',
-                         'versions WRITE',
-                         'products READ');
-
-    if ($version ne $versionold) {
-        unless ($version) {
-            ThrowUserError('version_blank_name');
-        }
-        if (TestVersion($product,$version)) {
-            ThrowUserError('version_already_exists',
-                           {'name' => $version,
-                            'product' => $product});
-        }
-        SendSQL("UPDATE bugs
-                 SET version=" . SqlQuote($version) . "
-                 WHERE version=" . SqlQuote($versionold) . "
-                   AND product_id = $product_id");
-        SendSQL("UPDATE versions
-                 SET value = " . SqlQuote($version) . "
-                 WHERE product_id = $product_id
-                   AND value = " . SqlQuote($versionold));
-        unlink "$datadir/versioncache";
-
-        $vars->{'updated_name'} = 1;
-    }
-
-    $dbh->bz_unlock_tables(); 
-
-    $vars->{'name'} = $version;
+    $vars->{'version'} = $version;
     $vars->{'product'} = $product;
-    $template->process("admin/versions/updated.html.tmpl",
-                       $vars)
+    $template->process("admin/versions/updated.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;

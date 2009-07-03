@@ -20,28 +20,23 @@
 #
 # Contributor(s): Terry Weissman <terry@mozilla.org>
 #                 Gervase Markham <gerv@gerv.net>
+#                 Max Kanat-Alexander <mkanat@bugzilla.org>
 
 use strict;
 
 use lib qw(.);
 
-use vars qw(
-  @legal_keywords
-  $buffer
-  $template
-  $vars
-);
-
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Error;
 use Bugzilla::User;
-require "CGI.pl";
+use Bugzilla::Keyword;
 
 Bugzilla->login();
 
-GetVersionTable();
-
 my $cgi = Bugzilla->cgi;
+my $template = Bugzilla->template;
+my $vars = {};
 
 # The master list not only says what fields are possible, but what order
 # they get displayed in.
@@ -50,38 +45,40 @@ my @masterlist = ("opendate", "changeddate", "bug_severity", "priority",
                   "reporter", "reporter_realname", "bug_status",
                   "resolution");
 
-if (Param("useclassification")) {
+if (Bugzilla->params->{"useclassification"}) {
     push(@masterlist, "classification");
 }
 
 push(@masterlist, ("product", "component", "version", "op_sys"));
 
-if (Param("usevotes")) {
+if (Bugzilla->params->{"usevotes"}) {
     push (@masterlist, "votes");
 }
-if (Param("usebugaliases")) {
+if (Bugzilla->params->{"usebugaliases"}) {
     unshift(@masterlist, "alias");
 }
-if (Param("usetargetmilestone")) {
+if (Bugzilla->params->{"usetargetmilestone"}) {
     push(@masterlist, "target_milestone");
 }
-if (Param("useqacontact")) {
+if (Bugzilla->params->{"useqacontact"}) {
     push(@masterlist, "qa_contact");
     push(@masterlist, "qa_contact_realname");
 }
-if (Param("usestatuswhiteboard")) {
+if (Bugzilla->params->{"usestatuswhiteboard"}) {
     push(@masterlist, "status_whiteboard");
 }
-if (@::legal_keywords) {
+if (Bugzilla::Keyword::keyword_count()) {
     push(@masterlist, "keywords");
 }
 
-if (UserInGroup(Param("timetrackinggroup"))) {
+if (Bugzilla->user->in_group(Bugzilla->params->{"timetrackinggroup"})) {
     push(@masterlist, ("estimated_time", "remaining_time", "actual_time",
                        "percentage_complete", "deadline")); 
 }
 
 push(@masterlist, ("short_desc", "short_short_desc"));
+
+push(@masterlist, Bugzilla->custom_field_names);
 
 $vars->{'masterlist'} = \@masterlist;
 
@@ -101,7 +98,7 @@ if (defined $cgi->param('rememberedquery')) {
         }
     }
     my $list = join(" ", @collist);
-    my $urlbase = Param("urlbase");
+    my $urlbase = Bugzilla->params->{"urlbase"};
 
     if ($list) {
         $cgi->send_cookie(-name => 'COLUMNLIST',
@@ -150,7 +147,7 @@ if (defined $cgi->cookie('COLUMNLIST')) {
 $vars->{'collist'} = \@collist;
 $vars->{'splitheader'} = $cgi->cookie('SPLITHEADER') ? 1 : 0;
 
-$vars->{'buffer'} = $::buffer;
+$vars->{'buffer'} = $cgi->query_string();
 
 # Generate and return the UI (HTML page) from the appropriate template.
 print $cgi->header();

@@ -28,44 +28,26 @@
 use strict;
 use lib ".";
 
-require "CGI.pl";
-
+use Bugzilla;
+use Bugzilla::Bug;
 use Bugzilla::Constants;
 use Bugzilla::Search;
 use Bugzilla::User;
-
-use vars qw(
-    @CheckOptionValues
-    @legal_resolution
-    @legal_bug_status
-    @legal_components
-    @legal_keywords
-    @legal_opsys
-    @legal_platform
-    @legal_priority
-    @legal_product
-    @legal_severity
-    @legal_target_milestone
-    @legal_versions
-    @log_columns
-    %versions
-    %components
-    $template
-    $vars
-);
+use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::Product;
+use Bugzilla::Keyword;
+use Bugzilla::Field;
+use Bugzilla::Install::Requirements;
 
 my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
+my $template = Bugzilla->template;
+my $vars = {};
+my $buffer = $cgi->query_string();
 
-if ($cgi->param("GoAheadAndLogIn")) {
-    # We got here from a login page, probably from relogin.cgi.  We better
-    # make sure the password is legit.
-    Bugzilla->login(LOGIN_REQUIRED);
-} else {
-    Bugzilla->login();
-}
-
-my $userid = Bugzilla->user->id;
+my $user = Bugzilla->login();
+my $userid = $user->id;
 
 # Backwards compatibility hack -- if there are any of the old QUERY_*
 # cookies around, and we are logged in, then move them into the database
@@ -111,7 +93,7 @@ if ($cgi->param('nukedefaultquery')) {
                  " WHERE userid = ? AND name = ?", 
                  undef, ($userid, DEFAULT_QUERY_NAME));
     }
-    $::buffer = "";
+    $buffer = "";
 }
 
 my $userdefaultquery;
@@ -122,13 +104,15 @@ if ($userid) {
          undef, ($userid, DEFAULT_QUERY_NAME));
 }
 
-my %default;
+local our %default;
 
 # We pass the defaults as a hash of references to arrays. For those
 # Items which are single-valued, the template should only reference [0]
 # and ignore any multiple values.
 sub PrefillForm {
     my ($buf) = (@_);
+    my $cgi = Bugzilla->cgi;
+    $buf = new Bugzilla::CGI($buf);
     my $foundone = 0;
 
     # Nothing must be undef, otherwise the template complains.
@@ -150,32 +134,25 @@ sub PrefillForm {
                       "category", "subcategory", "name", "newcategory",
                       "newsubcategory", "public", "frequency") 
     {
-        # This is a bit of a hack. The default, empty list has 
-        # three entries to accommodate the needs of the email fields -
-        # we use each position to denote the relevant field. Array
-        # position 0 is unused for email fields because the form 
-        # parameters historically started at 1.
-        $default{$name} = ["", "", ""];
+        $default{$name} = [];
     }
  
+    # we won't prefill the boolean chart data from this query if
+    # there are any being submitted via params
+    my $prefillcharts = (grep(/^field-/, $cgi->param)) ? 0 : 1;
  
     # Iterate over the URL parameters
-    foreach my $item (split(/\&/, $buf)) {
-        my @el = split(/=/, $item);
-        my $name = $el[0];
-        my $value;
-        if ($#el > 0) {
-            $value = url_decode($el[1]);
-        } else {
-            $value = "";
-        }
-        
-        # If the name begins with field, type, or value, then it is part of
-        # the boolean charts. Because these are built different than the rest
-        # of the form, we don't need to save a default value. We do, however,
-        # need to indicate that we found something so the default query isn't
-        # added in if all we have are boolean chart items.
-        if ($name =~ m/^(?:field|type|value)/) {
+    foreach my $name ($buf->param()) {
+        my @values = $buf->param($name);
+
+        # If the name begins with the string 'field', 'type', 'value', or
+        # 'negate', then it is part of the boolean charts. Because
+        # these are built different than the rest of the form, we need
+        # to store these as parameters. We also need to indicate that
+        # we found something so the default query isn't added in if
+        # all we have are boolean chart items.
+        if ($name =~ m/^(?:field|type|value|negate)/) {
+            $cgi->param(-name => $name, -value => $values[0]) if ($prefillcharts);
             $foundone = 1;
         }
         # If the name ends in a number (which it does for the fields which
@@ -183,128 +160,55 @@ sub PrefillForm {
         # positions to show the defaults for that number field.
         elsif ($name =~ m/^(.+)(\d)$/ && defined($default{$1})) {
             $foundone = 1;
-            $default{$1}->[$2] = $value;
+            $default{$1}->[$2] = $values[0];
         }
-        # If there's no default yet, we replace the blank string.
-        elsif (defined($default{$name}) && $default{$name}->[0] eq "") {
+        elsif (exists $default{$name}) {
             $foundone = 1;
-            $default{$name} = [$value]; 
-        } 
-        # If there's already a default, we push on the new value.
-        elsif (defined($default{$name})) {
-            push (@{$default{$name}}, $value);
-        }        
-    }        
+            push (@{$default{$name}}, @values);
+        }
+    }
     return $foundone;
 }
 
-
-if (!PrefillForm($::buffer)) {
+if (!PrefillForm($buffer)) {
     # Ah-hah, there was no form stuff specified.  Do it again with the
     # default query.
     if ($userdefaultquery) {
         PrefillForm($userdefaultquery);
     } else {
-        PrefillForm(Param("defaultquery"));
+        PrefillForm(Bugzilla->params->{"defaultquery"});
     }
 }
 
-if ($default{'chfieldto'}->[0] eq "") {
+if (!scalar(@{$default{'chfieldto'}}) || $default{'chfieldto'}->[0] eq "") {
     $default{'chfieldto'} = ["Now"];
 }
 
-GetVersionTable();
-
 # if using groups for entry, then we don't want people to see products they 
 # don't have access to. Remove them from the list.
-
-my @products = ();
-my %component_set;
-my %version_set;
-my %milestone_set;
-foreach my $p (GetSelectableProducts()) {
-    # We build up boolean hashes in the "-set" hashes for each of these things 
-    # before making a list because there may be duplicates names across products.
-    push @products, $p;
-    if ($::components{$p}) {
-        foreach my $c (@{$::components{$p}}) {
-            $component_set{$c} = 1;
-        }
-    }
-    foreach my $v (@{$::versions{$p}}) {
-        $version_set{$v} = 1;
-    }
-    foreach my $m (@{$::target_milestone{$p}}) {
-        $milestone_set{$m} = 1;
-    }
-}
-
-# @products is now all the products we are ever concerned with, as a list
-# %x_set is now a unique "list" of the relevant components/versions/tms
-@products = sort { lc($a) cmp lc($b) } @products;
+my @selectable_products = sort {lc($a->name) cmp lc($b->name)} 
+                               @{$user->get_selectable_products};
 
 # Create the component, version and milestone lists.
-my @components = ();
-my @versions = ();
-my @milestones = ();
-foreach my $c (@::legal_components) {
-    if ($component_set{$c}) {
-        push @components, $c;
-    }
-}
-foreach my $v (@::legal_versions) {
-    if ($version_set{$v}) {
-        push @versions, $v;
-    }
-}
-foreach my $m (@::legal_target_milestone) {
-    if ($milestone_set{$m}) {
-        push @milestones, $m;
-    }
+my %components;
+my %versions;
+my %milestones;
+
+foreach my $product (@selectable_products) {
+    $components{$_->name} = 1 foreach (@{$product->components});
+    $versions{$_->name}   = 1 foreach (@{$product->versions});
+    $milestones{$_->name} = 1 foreach (@{$product->milestones});
 }
 
-# Create data structures representing each product.
-for (my $i = 0; $i < @products; ++$i) {
-    my $p = $products[$i];
-    
-    # Bug 190611: band-aid to avoid crashing with no versions defined
-    if (!defined ($::components{$p})) {
-        $::components{$p} = [];
-    }
-    
-    # Create hash to hold attributes for each product.
-    my %product = (
-        'name'       => $p,
-        'components' => [ sort { lc($a) cmp lc($b) } @{$::components{$p}} ],
-        'versions'   => [ sort { lc($a) cmp lc($b) } @{$::versions{$p}}   ]
-    );
-    
-    if (Param('usetargetmilestone')) {
-        # Sorting here is required for ordering multiple selections 
-        # correctly; see bug 97736 for discussion on how to fix this
-        $product{'milestones'} =  
-                      [ sort { lc($a) cmp lc($b) } @{$::target_milestone{$p}} ];
-    }
-    
-    # Assign hash back to product array.
-    $products[$i] = \%product;
-}
-$vars->{'product'} = \@products;
+my @components = sort(keys %components);
+my @versions = sort { vers_cmp (lc($a), lc($b)) } keys %versions;
+my @milestones = sort(keys %milestones);
+
+$vars->{'product'} = \@selectable_products;
 
 # Create data structures representing each classification
-if (Param('useclassification')) {
-    my @classifications = ();
-
-    foreach my $c (GetSelectableClassifications()) {
-        # Create hash to hold attributes for each classification.
-        my %classification = (
-            'name'       => $c,
-            'products'   => [ GetSelectableProducts(0,$c) ]
-        );
-        # Assign hash back to classification array.
-        push @classifications, \%classification;
-    }
-    $vars->{'classification'} = \@classifications;
+if (Bugzilla->params->{'useclassification'}) {
+    $vars->{'classification'} = $user->get_selectable_classifications;
 }
 
 # We use 'component_' because 'component' is a Template Toolkit reserved word.
@@ -312,16 +216,16 @@ $vars->{'component_'} = \@components;
 
 $vars->{'version'} = \@versions;
 
-if (Param('usetargetmilestone')) {
+if (Bugzilla->params->{'usetargetmilestone'}) {
     $vars->{'target_milestone'} = \@milestones;
 }
 
-$vars->{'have_keywords'} = scalar(@::legal_keywords);
+$vars->{'have_keywords'} = Bugzilla::Keyword::keyword_count();
 
-push @::legal_resolution, "---"; # Oy, what a hack.
-shift @::legal_resolution; 
-      # Another hack - this array contains "" for some reason. See bug 106589.
-$vars->{'resolution'} = \@::legal_resolution;
+my $legal_resolutions = get_legal_field_values('resolution');
+push(@$legal_resolutions, "---"); # Oy, what a hack.
+# Another hack - this array contains "" for some reason. See bug 106589.
+$vars->{'resolution'} = [grep ($_, @$legal_resolutions)];
 
 my @chfields;
 
@@ -329,7 +233,7 @@ push @chfields, "[Bug creation]";
 
 # This is what happens when you have variables whose definition depends
 # on the DB schema, and then the underlying schema changes...
-foreach my $val (@::log_columns) {
+foreach my $val (editable_bug_fields()) {
     if ($val eq 'classification_id') {
         $val = 'classification';
     } elsif ($val eq 'product_id') {
@@ -340,7 +244,7 @@ foreach my $val (@::log_columns) {
     push @chfields, $val;
 }
 
-if (UserInGroup(Param('timetrackinggroup'))) {
+if (Bugzilla->user->in_group(Bugzilla->params->{'timetrackinggroup'})) {
     push @chfields, "work_time";
 } else {
     @chfields = grep($_ ne "estimated_time", @chfields);
@@ -348,16 +252,17 @@ if (UserInGroup(Param('timetrackinggroup'))) {
 }
 @chfields = (sort(@chfields));
 $vars->{'chfield'} = \@chfields;
-$vars->{'bug_status'} = \@::legal_bug_status;
-$vars->{'rep_platform'} = \@::legal_platform;
-$vars->{'op_sys'} = \@::legal_opsys;
-$vars->{'priority'} = \@::legal_priority;
-$vars->{'bug_severity'} = \@::legal_severity;
+$vars->{'bug_status'} = get_legal_field_values('bug_status');
+$vars->{'rep_platform'} = get_legal_field_values('rep_platform');
+$vars->{'op_sys'} = get_legal_field_values('op_sys');
+$vars->{'priority'} = get_legal_field_values('priority');
+$vars->{'bug_severity'} = get_legal_field_values('bug_severity');
 
 # Boolean charts
 my @fields;
 push(@fields, { name => "noop", description => "---" });
 push(@fields, $dbh->bz_get_field_defs());
+@fields = sort {lc($a->{'description'}) cmp lc($b->{'description'})} @fields;
 $vars->{'fields'} = \@fields;
 
 # Creating new charts - if the cmd-add value is there, we define the field
@@ -382,9 +287,13 @@ for (my $chart = 0; $cgi->param("field$chart-0-0"); $chart++) {
     for (my $row = 0; $cgi->param("field$chart-$row-0"); $row++) {
         my @cols;
         for (my $col = 0; $cgi->param("field$chart-$row-$col"); $col++) {
+            my $value = $cgi->param("value$chart-$row-$col");
+            if (!defined($value)) {
+                $value = '';
+            }
             push(@cols, { field => $cgi->param("field$chart-$row-$col"),
                           type => $cgi->param("type$chart-$row-$col") || 'noop',
-                          value => $cgi->param("value$chart-$row-$col") || '' });
+                          value => $value });
         }
         push(@rows, \@cols);
     }
@@ -397,7 +306,7 @@ $default{'charts'} = \@charts;
 if ($userid) {
      $vars->{'namedqueries'} = $dbh->selectcol_arrayref(
            "SELECT name FROM namedqueries " .
-            "WHERE userid = ? AND name != ?" .
+            "WHERE userid = ? AND name != ? " .
          "ORDER BY name",
          undef, ($userid, DEFAULT_QUERY_NAME));
 }
@@ -415,7 +324,7 @@ if ($cgi->param('order')) { $deforder = $cgi->param('order') }
 
 $vars->{'userdefaultquery'} = $userdefaultquery;
 $vars->{'orders'} = \@orders;
-$default{'querytype'} = $deforder || 'Importance';
+$default{'order'} = [$deforder || 'Importance'];
 
 if (($cgi->param('query_format') || $cgi->param('format') || "")
     eq "create-series") {
@@ -432,7 +341,7 @@ $vars->{'default'} = \%default;
 $vars->{'format'} = $cgi->param('format');
 $vars->{'query_format'} = $cgi->param('query_format');
 
-# Set default page to "specific" if none proviced
+# Set default page to "specific" if none provided
 if (!($cgi->param('query_format') || $cgi->param('format'))) {
     if (defined $cgi->cookie('DEFAULTFORMAT')) {
         $vars->{'format'} = $cgi->cookie('DEFAULTFORMAT');
@@ -453,9 +362,9 @@ if (defined($vars->{'format'}) && IsValidQueryType($vars->{'format'})) {
 # If we submit back to ourselves (for e.g. boolean charts), we need to
 # preserve format information; hence query_format taking priority over
 # format.
-my $format = GetFormat("search/search", 
-                       $vars->{'query_format'} || $vars->{'format'}, 
-                       scalar $cgi->param('ctype'));
+my $format = $template->get_format("search/search", 
+                                   $vars->{'query_format'} || $vars->{'format'}, 
+                                   scalar $cgi->param('ctype'));
 
 print $cgi->header($format->{'ctype'});
 

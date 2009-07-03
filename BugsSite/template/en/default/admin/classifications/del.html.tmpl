@@ -30,31 +30,36 @@
 
 </tr><tr>
   <td valign="top">Classification:</td>
-  <td valign="top">[% classification FILTER html %]</td>
+  <td valign="top">[% classification.name FILTER html %]</td>
 
 </tr><tr>
   <td valign="top">Description:</td>
   <td valign="top">
-    [% IF description %]
-      [% description %]
+    [% IF classification.description %]
+      [% classification.description FILTER html_light %]
     [% ELSE %]
       <font color="red">description missing</font>
     [% END %]
   </td>
+
+</tr><tr>
+  <td valign="top">Sortkey:</td>
+  <td valign="top">[% classification.sortkey FILTER html %]</td>
 
 </tr>
 </table>
 
 <h2>Confirmation</h2>
 
-<p>Do you really want to delete this classification?<p>
+<p>Do you really want to delete this classification?</p>
 <form method=post action="editclassifications.cgi">
   <input type=submit value="Yes, delete">
   <input type=hidden name="action" value="delete">
-  <input type=hidden name="classification" value="[% classification FILTER html %]">
+  <input type=hidden name="classification" value="[% classification.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
 
 <p>Back to the <a href="./">main [% terms.bugs %] page</a>
-or <a href="editclassifications.cgi"> edit</a> more classifications.
+or <a href="editclassifications.cgi"> edit</a> more classifications.</p>
 
 [% PROCESS global/footer.html.tmpl %] 

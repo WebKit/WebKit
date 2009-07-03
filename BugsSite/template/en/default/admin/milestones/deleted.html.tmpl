@@ -21,25 +21,23 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; the name of the deleted milestone.
-  #
-  # product: string; the name of the product the milestone belonged to
-  #
-  # bug_count: number; the number of bugs which were reassigned to
-  #            the default milestone.
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestone belongs.
+  # milestone: object; Bugzilla::Milestone object representing the
+  #                    milestone the user deleted.
   #%]
   
-[% title = BLOCK %]Deleted Milestone '[% name FILTER html %]' of Product
-                   '[% product FILTER html %]'[% END %]
+[% title = BLOCK %]Deleted Milestone '[% milestone.name FILTER html %]' of Product
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
 <p>
-[% IF bug_count %]
+[% IF milestone.bug_count %]
 
-  [% bug_count %]
-  [% IF bug_count > 1 %] 
+  [% milestone.bug_count FILTER none %]
+  [% IF milestone.bug_count > 1 %] 
     [%+ terms.bugs %]
   [% ELSE %]
     [%+ terms.bug %]
@@ -51,9 +49,7 @@
 [% END %]
 </p>
 
-<p>Milestone '[% name FILTER html %]' deleted.</p>
-
-<p>
+<p>Milestone '[% milestone.name FILTER html %]' deleted.</p>
 
 [% PROCESS admin/milestones/footer.html.tmpl
   no_edit_milestone_link = 1

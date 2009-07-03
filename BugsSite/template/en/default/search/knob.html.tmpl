@@ -32,7 +32,7 @@
         
 [% PROCESS global/variables.none.tmpl %]
 
-[%# This is not necessary for English templates, but useful for localisers. %]
+[%# This is not necessary for English templates, but useful for localizers. %]
 [% ordersdesc = {
    "Reuse same sort as last time" => "Reuse same sort as last time",
    "Bug Number"   => "$terms.Bug Number",
@@ -43,8 +43,8 @@
 <input type="hidden" name="cmdtype" value="doit">
 
 <p>
-  Sort results by:
-  <select name="order">
+  <label for="order">Sort results by</label>:
+  <select name="order" id="order">
   [% FOREACH order = orders %]
     <option value="[% order FILTER html %]"
       [% " selected" IF default.order.0 == order %]>
@@ -54,10 +54,14 @@
 </p>
 
 <p>  
-  <input type="submit" value="[% button_name FILTER html %]">
+  <input type="submit" id="[% button_name FILTER html %]"
+         value="[% button_name FILTER html %]">
   [% IF known_name %]
-    <input type="hidden" name="query_based_on" 
-           value="[% known_name FILTER html %]">
+    [%# We store known_name in case the user add a boolean chart. %]
+    <input type="hidden" name="known_name" value="[% known_name FILTER html %]">
+
+    [%# The name of the existing query will be passed to buglist.cgi. %]
+    <input type="hidden" name="query_based_on" value="[% known_name FILTER html %]">
   [% END %]
 </p>
 

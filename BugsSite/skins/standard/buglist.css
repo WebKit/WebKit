@@ -21,10 +21,20 @@
 .bz_id_column {
 }
 
+.bz_row_odd {
+    background-color: #F7F7F7;
+    color: #000000;
+}
+
+.bz_row_even {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
 /* Style bug rows according to severity. */
 .bz_blocker { color: red; font-weight: bold; }
 .bz_critical { color: red; }
-.bz_enhancement { color: #888; background-color: white; }
+.bz_enhancement { color: #666; background-color: white; }
 
 /* Align columns in the "change multiple bugs" form to the right. */
 table#form tr th { text-align: right; }

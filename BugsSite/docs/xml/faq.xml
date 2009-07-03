@@ -14,6 +14,21 @@
       <title>General Questions</title>
 
       <qandaentry>
+        <question id="faq-general-tryout">
+          <para>
+            Can I try out Bugzilla somewhere?
+          </para>
+        </question>
+        <answer>
+          <para>
+            If you want to take a test ride, there are test installations
+            at <ulink url="http://landfill.bugzilla.org/"/>,
+            ready to play with directly from your browser.
+          </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
         <question id="faq-general-license">
           <para>
             What license is Bugzilla distributed under?
@@ -126,11 +141,11 @@
           </para>
           <para>
             The best way to make an enhancement request is to <ulink 
-            url="http://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla">file
+            url="https://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla">file
             a bug at bugzilla.mozilla.org</ulink> and set the Severity
             to 'enhancement'. Your 'request for enhancement' (RFE) will
             start out in the UNCONFIRMED state, and will stay there until
-            someone with the ability to COMFIRM the bug reviews it.
+            someone with the ability to CONFIRM the bug reviews it.
             If that person feels it to be a good request that fits in with
             Bugzilla's overall direction, the status will be changed to
             NEW; if not, they will probably explain why and set the bug
@@ -157,69 +172,40 @@
       </qandaentry>
 
       <qandaentry>
-        <question id="faq-general-mysql">
+        <question id="faq-general-db">
           <para>
-            Why MySQL?  I'm interested in seeing Bugzilla run on
-            PostgreSQL/Sybase/Oracle/Msql/MSSQL.
+            What databases does Bugzilla run on?
           </para>
         </question>
         <answer>
           <para>
-            MySQL was originally chosen because it is free, easy to install,
-            and was available for the hardware Netscape intended to run it on.
+            MySQL is the default database for Bugzilla. It was originally chosen 
+            because it is free, easy to install, and was available for the hardware 
+            Netscape intended to run it on.
           </para>
           <para>
-            There is currently work in progress to make Bugzilla work on
-            PostgreSQL; track the progress of this initiative in <ulink
-            url="http://bugzilla.mozilla.org/show_bug.cgi?id=98304">bug 98304</ulink>.
+            As of Bugzilla 2.22, complete support for PostgreSQL 
+            is included. With this release using PostgreSQL with Bugzilla 
+            should be as stable as using MySQL. If you experience any problems
+            with PostgreSQL compatibility, they will be taken as
+            seriously as if you were running MySQL.
           </para>
           <para>
-            Sybase support is no longer being worked on.  Even if it eventually
-            happens, it's VERY unlikely to work without the end-user-company
-            having to stick a few developers on making several manual changes.
-            Sybase is just NOT very standards-compliant (despite all the hype),
-            and it turned out that way too much had to be changed to make it
-            work -- like moving half of the application logic into stored
-            procedures to get any kind of decent performance out of it.
-            <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=173130">Bug
-            173130</ulink> is the relevant bug.
+            There are plans to include an Oracle driver for Bugzilla 3.1.2. 
+            Track progress at
+            <ulink url="https://bugzilla.mozilla.org/show_bug.cgi?id=189947">
+            Bug 189947</ulink>.
           </para>
           <para>
-            Red Hat once ran a version of Bugzilla that worked on Oracle, 
-            but that was long, long ago; that version (Bugzilla 2.8) is
-            now obsolete, insecure, and totally unsupported. Red Hat's
-            current Bugzilla (based on Bugzilla 2.17.1) uses PostgreSQL,
-            and work is being done to merge those changes into the main
-            distribution. (See above.) At this time we know of no recent
-            ports of Bugzilla to Oracle. (In our honest opinion, Bugzilla
-            doesn't need what Oracle offers.)
+            Sybase support was worked on for a time. However, several 
+            complicating factors have prevented Sybase support from 
+            being realized. There are currently no plans to revive it.
           </para>
           <para>
-            <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=237862">Bug
-            237862</ulink> is a good bug to read through if you'd like to see
-            what progress is being made on general database compatibility.
-          </para>
-        </answer>
-      </qandaentry>
-
-      <qandaentry>
-        <question id="faq-general-bonsaitools">
-          <para>
-            What is <filename>/usr/bonsaitools/bin/perl</filename>?
-          </para>
-        </question>
-        <answer>
-          <para>
-            Bugzilla used to have the path to perl on the shebang line set
-            to <filename>/usr/bonsaitools/bin/perl</filename> because when
-            Terry first started writing the code for mozilla.org he needed a
-            version of Perl and other tools that were completely under his
-            control. This location was abandoned for the 2.18 release in favor
-            of the more sensible <filename>/usr/bin/perl</filename>. If you
-            installed an older verion of Bugzilla and created the symlink we
-            suggested, you can remove it now (provided that you don't have
-            anything else, such as Bonsai, using it and you don't intend to
-            reinstall an older version of Bugzilla).
+            <ulink url="https://bugzilla.mozilla.org/show_bug.cgi?id=237862">
+            Bug 237862</ulink> is a good bug to read through if you'd
+            like to see what progress is being made on general database
+            compatibility.
           </para>
         </answer>
       </qandaentry>
@@ -269,7 +255,7 @@ C:\mysql\bin\replace "#!/usr/bin/perl" "#!C:\perl\bin\perl" -- *.cgi *.pl
             url="http://www.bugzilla.org/docs/developer.html#testsuite">Developers'
             Guide</ulink>.) Having done this, run the test itself:
             <programlisting>
-perl runtests.pl 2 --verbose
+            perl runtests.pl 2 --verbose
             </programlisting>
             to ensure that you've modified all the relevant files.
           </para>
@@ -301,24 +287,29 @@ perl runtests.pl 2 --verbose
           </para>
         </answer>
       </qandaentry>
-      
+
       <qandaentry>
-        <question id="faq-mod-perl">
+        <question id="faq-general-selinux">
           <para>
-            Does bugzilla run under <filename>mod_perl</filename>?
+            How can Bugzilla be made to work under SELinux?
           </para>
         </question>
         <answer>
           <para>
-            At present, no. Work is slowly taking place to remove global
-            variables, use $cgi, and use DBI. These are all necessary for
-            mod_perl (as well as being good for other reasons). Visit 
-            <ulink url="https://bugzilla.mozilla.org/show_bug.cgi?id=87406">
-            bug 87406</ulink> to view the discussion and progress.
+            As a web application, Bugzilla simply requires its root
+            directory to have the httpd context applied for it to work
+            properly under SELinux. This should happen automatically
+            on distributions that use SELinux and that package Bugzilla
+            (if it is installed with the native package management tools).
+            Information on how to view and change SELinux file contexts
+            can be found at the 
+            <ulink url="http://docs.fedoraproject.org/selinux-faq-fc5/">
+            SELinux FAQ</ulink>.
+
           </para>
         </answer>
       </qandaentry>
-      
+
     </qandadiv>
 
     <qandadiv id="faq-phb">
@@ -353,9 +344,8 @@ perl runtests.pl 2 --verbose
             compensate for the change.
           </para>
           <para>
-            There is no GUI for adding fields to Bugzilla at this
-            time. You can follow development of this feature in 
-            <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=91037">bug 91037</ulink>
+            As of Bugzilla 3.0 custom fields can be created via the
+            "Custom Fields" admin page.
           </para>
         </answer>
       </qandaentry>
@@ -369,7 +359,7 @@ perl runtests.pl 2 --verbose
         </question>
         <answer>
           <para>
-            Yes. Look at <ulink url="http://bugzilla.mozilla.org/report.cgi"/>
+            Yes. Look at <ulink url="https://bugzilla.mozilla.org/report.cgi"/>
             for samples of what Bugzilla can do in reporting and graphing.
             Fuller documentation is provided in <xref linkend="reporting"/>.
           </para>
@@ -403,8 +393,7 @@ perl runtests.pl 2 --verbose
       <qandaentry>
         <question id="faq-phb-emailapp">
           <para>
-            Do users have to have any particular
-            type of email application?
+            Do users have to have any particular type of email application?
           </para>
         </question>
         <answer>
@@ -481,7 +470,7 @@ perl runtests.pl 2 --verbose
             Some admin interfaces have been templatized (for easy localization)
             but many of them are still available in English only. Also, there
             may be issues with the charset not being declared. See <ulink
-            url="http://bugzilla.mozilla.org/show_bug.cgi?id=126266">bug 126226</ulink>
+            url="https://bugzilla.mozilla.org/show_bug.cgi?id=126266">bug 126226</ulink>
             for more information.
           </para>
         </answer>
@@ -509,10 +498,11 @@ perl runtests.pl 2 --verbose
         </question>
         <answer>
           <para>
-            MySQL, the database back-end for Bugzilla, allows hot-backup
-            of data. You can find strategies for dealing with backup
-            considerations at <ulink
-            url="http://www.mysql.com/doc/B/a/Backup.html"/>.
+            You should use the backup options supplied by your database platform.  
+            Vendor documentation for backing up a MySQL database can be found at 
+            <ulink url="http://www.mysql.com/doc/B/a/Backup.html"/>. 
+            PostgreSQL backup documentation can be found at
+            <ulink url="http://www.postgresql.org/docs/8.0/static/backup.html"/>.
           </para>
         </answer>
       </qandaentry>
@@ -578,9 +568,9 @@ perl runtests.pl 2 --verbose
           <para>
             No. Bugzilla, Perl, the Template Toolkit, and all other support
             software needed to make Bugzilla work can be downloaded for free.
-            MySQL -- the database used by Bugzilla -- is also open-source, but
-            they ask that if you find their product valuable, you purchase a
-            support contract from them that suits your needs.
+            MySQL and PostgreSQL -- the databases supported by Bugzilla -- 
+            are also open-source. MySQL asks that if you find their product 
+            valuable, you purchase a support contract from them that suits your needs.
           </para>
         </answer>
       </qandaentry>
@@ -598,7 +588,7 @@ perl runtests.pl 2 --verbose
             See the documentation on Customization for more details,
             specifically <xref linkend="template-specific"/>.
           </para>
-        </answer>      
+        </answer>
       </qandaentry>
 
     </qandadiv>
@@ -633,13 +623,12 @@ perl runtests.pl 2 --verbose
         </question>
         <answer>
           <para>
-            Yes, but commits to the database must wait until the tables
-            are unlocked. Bugzilla databases are typically very small,
-            and backups routinely take less than a minute. If your database
-            is larger, you may want to look into alternate backup
-            techniques, such as database replication, or backing up from
-            a read-only mirror. (Read up on these in the MySQL docs
-            on the MySQL site.)
+            Refer to your database platform documentation for details on how to do hot
+            backups.  
+            Vendor documentation for backing up a MySQL database can be found at 
+            <ulink url="http://www.mysql.com/doc/B/a/Backup.html"/>. 
+            PostgreSQL backup documentation can be found at
+            <ulink url="http://www.postgresql.org/docs/8.0/static/backup.html"/>.
           </para>
         </answer>
       </qandaentry>
@@ -712,7 +701,7 @@ perl runtests.pl 2 --verbose
           </para>
           <para>
             See also the instructions in <xref linkend="upgrade-cvs"/>.
-          </para>      
+          </para>
         </answer>
       </qandaentry>
 
@@ -753,35 +742,14 @@ perl runtests.pl 2 --verbose
 
         <answer>
           <para>
-            Use mysqldump to make a backup of the bugs database. For a
-            typical Bugzilla setup, such a command might look like this:
-            <programlisting>
-/usr/bin/mysqldump -u(username) -p(password) --database bugs > bugzilla-backup.txt
-            </programlisting>
-            See the <ulink url="http://dev.mysql.com/doc/mysql/en/mysqldump.html">
-            mysqldump documentation</ulink> for more information on using 
-            the tool, including how to restore your copy onto the destination
-            machine.
+            Reference your database vendor's documentation for information on 
+            backing up and restoring your Bugzilla database on to a different server.
+            Vendor documentation for backing up a MySQL database can be found at 
+            <ulink url="http://dev.mysql.com/doc/mysql/en/mysqldump.html"/>.
+            PostgreSQL backup documentation can be found at
+            <ulink url="http://www.postgresql.org/docs/8.0/static/backup.html"/>.
           </para>
 
-          <warning>
-            <para>
-              Depending on the size of your database, and the power of your
-              machine, the mysqldump command could be running long enough
-              that the password would be visible to someone using the
-              <command>ps</command> command. If you are on a multi-user
-              machine, and this is a concern to you, create an entry in
-              the file <filename>~/.my.cnf</filename> that looks like this:
-              <programlisting>
-[mysqldump]
-user=bugs
-password=mypassword
-              </programlisting>
-              and then leave the 'user' and 'password' params out of the
-              command line.
-            </para>
-          </warning>
-              
           <para>
             On your new machine, follow the instructions found in <xref 
             linkend="installing-bugzilla"/> as far as setting up the physical
@@ -799,7 +767,7 @@ password=mypassword
 
           <note>
             <para>
-              If the location or port number of your SQL server changed
+              If the hostname or port number of your database server changed
               as part of the move, you'll need to update the appropriate
               variables in localconfig before taking the next step.
             </para>
@@ -814,11 +782,27 @@ password=mypassword
         </answer>
       </qandaentry>
 
+      <qandaentry>
+        <question id="faq-admin-makeadmin">
+          <para>
+            How do I make a new Bugzilla administrator?
+            The previous administrator is gone...
+          </para>
+        </question>
+        <answer>
+          <para>
+            Run <command>checksetup.pl</command> with
+            <option>--make-admin</option> option.
+            Its usage is <option>--make-admin=user@example.org</option>.
+            The user account must be exist in the Bugzilla database.
+          </para>
+        </answer>
+      </qandaentry>
+
     </qandadiv>
 
     <qandadiv id="faq-security">
       <title>Bugzilla Security</title>
-
       <qandaentry>
         <question id="faq-security-mysql">
           <para>
@@ -827,24 +811,17 @@ password=mypassword
             section of this guide...)
           </para>
         </question>
-        <!-- Should we really even answer this question? -->
+
         <answer>
           <para>
-            Run MySQL like this: <command>mysqld --skip-grant-tables</command>.
-            Please remember that <emphasis>this makes MySQL as secure as
-            taping a $100 to the floor of a football stadium bathroom for
-            safekeeping.</emphasis> 
-          </para>
-          <warning>
-            <para>
-              This can't be stressed enough. Doing this is a bad idea.
-              Please consult <xref linkend="security-mysql"/> of this guide
-              and the MySQL documentation for better solutions.
+            You can run MySQL like this: <command>mysqld --skip-grant-tables</command>.
+            However, doing so disables all MySQL security. This is a bad idea.
+            Please consult <xref linkend="security-mysql"/> of this guide
+            and the MySQL documentation for better solutions.
             </para>
-          </warning>
         </answer>
       </qandaentry>
-
+      
       <qandaentry>
         <question id="faq-security-knownproblems">
           <para>
@@ -952,7 +929,7 @@ password=mypassword
             For older versions of Bugzilla, you may be able to apply 
             Klaas Freitag's patch for <quote>whineatassigned</quote>,
             which can be found in
-            <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=6679">bug
+            <ulink url="https://bugzilla.mozilla.org/show_bug.cgi?id=6679">bug
             6679</ulink>. Note that this patch was made in 2000, so it may take
             some work to apply cleanly to any releases of Bugzilla newer than
             that, but you can use it as a starting point.
@@ -961,7 +938,7 @@ password=mypassword
           <para>
             An updated (and much-expanded) version of this functionality is
             due to be released as part of Bugzilla 2.20; see 
-            <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=185090">bug
+            <ulink url="https://bugzilla.mozilla.org/show_bug.cgi?id=185090">bug
             185090</ulink> for the discussion, and for more up-to-date patches
             if you just can't wait.
           </para>
@@ -969,15 +946,18 @@ password=mypassword
       </qandaentry>
 
       <qandaentry>
-        <question id="faq-email-mailif">
+        <question id="faq-email-in">
           <para>
-            How do I set up the email interface to submit/change bugs via email?
+            How do I set up the email interface to submit or change bugs via email?
           </para>
         </question>
         <answer>
           <para>
-            You can find an updated README.mailif file in the contrib/ directory
-            of your Bugzilla distribution that walks you through the setup.
+            Bugzilla 3.0 and later offers the ability submit or change
+            bugs via email, using the <filename>email_in.pl</filename>
+            script within the root directory of the Bugzilla installation.
+            More information on the script can be found in
+            <ulink url="api/email_in.html">docs/html/api/email_in.html</ulink>.
           </para>
         </answer>
       </qandaentry>
@@ -1082,19 +1062,16 @@ password=mypassword
             There is no facility in Bugzilla itself to do this. It's also
             generally not a smart thing to do if you don't know exactly what
             you're doing. If you understand SQL, though, you can use the
-            <command>mysql</command> command line utility to manually insert,
-            delete and modify table information. There are also more intuitive
-            GUI clients available. Personal favorites of the Bugzilla team
-            are <ulink url="http://www.phpmyadmin.net/">phpMyAdmin</ulink>
-            and <ulink url="http://www.mysql.com/products/mysqlcc/">MySQL
-            Control Center</ulink>.
+            <command>mysql</command> or <command>psql</command> command line 
+            utilities to manually insert, delete and modify table information. 
+            There are also more intuitive GUI clients available for both MySQL 
+            and PostgreSQL. For MySQL, we recommend
+            <ulink url="http://www.phpmyadmin.net/">phpMyAdmin</ulink>.
           </para>
 
           <para>
             Remember, backups are your friend. Everyone makes mistakes, and
             it's nice to have a safety net in case you mess something up.
-            Consider using <command>mysqldump</command> to make a duplicate
-            of your database before altering it manually.
           </para>
 
         </answer>
@@ -1121,9 +1098,65 @@ password=mypassword
             <para>
               Running MySQL with this command line option is very insecure and
               should only be done when not connected to the external network
-              as a troubleshooting step.
+              as a troubleshooting step.  Please do not run your production
+              database in this mode.
             </para>
           </warning>
+          <para>
+            You may also be suffering from a client version mismatch:
+          </para>
+          <para>
+            MySQL 4.1 and up uses an authentication protocol based on
+            a password hashing algorithm that is incompatible with that
+            used by older clients. If you upgrade the server to 4.1,
+            attempts to connect to it with an older client may fail
+            with the following message:
+          </para>
+          <para>
+            <screen><prompt>shell&gt;</prompt> mysql
+            Client does not support authentication protocol requested
+            by server; consider upgrading MySQL client
+            </screen>
+          </para>
+          <para>
+            To solve this problem, you should use one of the following
+            approaches:
+          </para>
+          <para>
+            <itemizedlist>
+              <listitem>
+                <para>
+                  Upgrade all client programs to use a 4.1.1 or newer
+                  client library.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  When connecting to the server with a pre-4.1 client
+                  program, use an account that still has a
+                  pre-4.1-style password.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  Reset the password to pre-4.1 style for each user
+                  that needs to use a pre-4.1 client program.
+                  This can be done using the SET PASSWORD statement
+                  and the OLD_PASSWORD() function:
+                  <screen>
+                    <prompt>mysql&gt;</prompt> SET PASSWORD FOR
+                    <prompt>    -&gt;</prompt> ' some_user '@' some_host ' = OLD_PASSWORD(' newpwd ');
+                  </screen>
+                </para>
+              </listitem>
+            </itemizedlist>
+            
+          </para>
+
+
+          <para>
+          </para>
+
         </answer>
       </qandaentry>
 
@@ -1158,7 +1191,7 @@ password=mypassword
     </qandadiv>
 
     <qandadiv id="faq-nt">
-      <title>Bugzilla and Win32</title>
+      <title>Can Bugzilla run on a Windows server?</title>
 
       <qandaentry>
         <question id="faq-nt-easiest">
@@ -1168,11 +1201,7 @@ password=mypassword
         </question>
         <answer>
           <para>
-            Remove Windows. Install Linux. Install Bugzilla.
-            The boss will never know the difference. B^)
-          </para>
-          <para>
-            Seriously though, making Bugzilla work easily with Windows
+            Making Bugzilla work easily with Windows
             was one of the major goals of the 2.18 milestone. If the
             necessary components are in place (perl, a webserver, an MTA, etc.)
             then installation of Bugzilla on a Windows box should be no more
@@ -1252,7 +1281,7 @@ password=mypassword
             <orderedlist>
               <listitem>
                 <para>
-                  Hitting http://www.activestate.com/ActivePerl
+                  Hitting <ulink url="http://www.activestate.com/ActivePerl"/>
                 </para>
               </listitem>
               <listitem>
@@ -1276,7 +1305,7 @@ password=mypassword
                 </para>
               </listitem>
             </orderedlist>
-            I reckon TimeDate and Data::Dumper come with the activeperl.
+            I reckon TimeDate comes with the activeperl.
             You can check the ActiveState site for packages for installation
             through PPM. <ulink url="http://www.activestate.com/Packages/"/>.
           </para>
@@ -1296,8 +1325,10 @@ password=mypassword
         </question>
         <answer>
           <para>
-            New in 2.16 - go to the Account section of the Preferences. You
-            will be emailed at both addresses for confirmation.
+            You can change your email address from the Name and Password
+            section in Preferences. You will be emailed at both the old 
+            and new addresses for confirmation. 'Administrative Policies' 
+            must have the 'allowemailchange' parameter set to <quote>On</quote>.
           </para>
         </answer>
       </qandaentry>
@@ -1358,16 +1389,16 @@ password=mypassword
             have your choice of patches: 
             <simplelist>
               <member>
-                <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=35195">Bug 35195</ulink>
+                <ulink url="https://bugzilla.mozilla.org/show_bug.cgi?id=35195">Bug 35195</ulink>
                 seeks to add an <quote>...and accept the bug</quote> checkbox
                 to the UI. It has two patches attached to it: 
-                <ulink url="http://bugzilla.mozilla.org/showattachment.cgi?attach_id=8029">attachment 8029</ulink>
+                <ulink url="https://bugzilla.mozilla.org/showattachment.cgi?attach_id=8029">attachment 8029</ulink>
                 was originally created for Bugzilla 2.12, while 
-                <ulink url="http://bugzilla.mozilla.org/showattachment.cgi?attach_id=91372">attachment 91372</ulink>
+                <ulink url="https://bugzilla.mozilla.org/showattachment.cgi?attach_id=91372">attachment 91372</ulink>
                 is an updated version for Bugzilla 2.16
               </member>
               <member>
-                <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=37613">Bug
+                <ulink url="https://bugzilla.mozilla.org/show_bug.cgi?id=37613">Bug
                 37613</ulink> also provides two patches (against Bugzilla
                 2.12): one to add a 'Take Bug' option, and the other to
                 automatically reassign the bug on 'Accept'. 
@@ -1501,13 +1532,13 @@ password=mypassword
         </question>
         <answer>
           <para>
-            Try <ulink url="http://bugzilla.mozilla.org/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;product=Bugzilla">
+            Try <ulink url="https://bugzilla.mozilla.org/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;product=Bugzilla">
             this link</ulink> to view current bugs or requests for
             enhancement for Bugzilla.
           </para>
           <para>
             You can view bugs marked for &bz-nextver; release
-            <ulink url="http://bugzilla.mozilla.org/buglist.cgi?product=Bugzilla&amp;target_milestone=Bugzilla+&amp;bz-nextver;">here</ulink>.
+            <ulink url="https://bugzilla.mozilla.org/buglist.cgi?product=Bugzilla&amp;target_milestone=Bugzilla+&amp;bz-nextver;">here</ulink>.
             This list includes bugs for the &bz-nextver; release that have already
             been fixed and checked into CVS. Please consult the
             <ulink url="http://www.bugzilla.org/">
@@ -1529,7 +1560,7 @@ password=mypassword
         <answer>
           <para>
             This is well-documented in <ulink
-            url="http://bugzilla.mozilla.org/show_bug.cgi?id=49862">bug
+            url="https://bugzilla.mozilla.org/show_bug.cgi?id=49862">bug
             49862</ulink>. Ultimately, it's as easy as adding the
             <quote>---</quote> priority field to your localconfig file
             in the appropriate area, re-running checksetup.pl, and then
@@ -1552,7 +1583,7 @@ password=mypassword
               <listitem>
                 <para>
                   Enter a bug into bugzilla.mozilla.org for the <quote><ulink
-                  url="http://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla">Bugzilla</ulink></quote>
+                  url="https://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla">Bugzilla</ulink></quote>
                   product.
                 </para>
               </listitem>
@@ -1571,9 +1602,9 @@ password=mypassword
               <listitem>
                 <para>
                   Announce your patch and the associated URL
-                  (http://bugzilla.mozilla.org/show_bug.cgi?id=XXXXXX)
+                  (https://bugzilla.mozilla.org/show_bug.cgi?id=XXXXXX)
                   for discussion in the newsgroup
-                  (netscape.public.mozilla.webtools). You'll get a
+                  (mozilla.support.bugzilla). You'll get a
                   really good, fairly immediate reaction to the
                   implications of your patch, which will also give us
                   an idea how well-received the change would be.

@@ -20,93 +20,68 @@
 #
 # Contributor(s): Terry Weissman <terry@mozilla.org>
 #                 Bradley Baetz <bbaetz@student.usyd.edu.au>
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 use strict;
 use lib qw(.);
 
 use Bugzilla;
 use Bugzilla::Constants;
-require "CGI.pl";
+use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::Product;
 
-use vars qw($vars @legal_product);
-
-Bugzilla->login();
-
-GetVersionTable();
+my $user = Bugzilla->login();
 
 my $cgi = Bugzilla->cgi;
+my $dbh = Bugzilla->dbh;
 my $template = Bugzilla->template;
-my $product = trim($cgi->param('product') || '');
-my $product_id = get_product_id($product);
+my $vars = {};
 
-if (!$product_id || !CanEnterProduct($product)) {
-    # Reference to a subset of %::proddesc, which the user is allowed to see
-    my %products;
+print $cgi->header();
 
-    if (AnyEntryGroups()) {
-        # OK, now only add products the user can see
-        Bugzilla->login(LOGIN_REQUIRED);
-        foreach my $p (@::legal_product) {
-            if (CanEnterProduct($p)) {
-                $products{$p} = $::proddesc{$p};
-            }
-        }
-    }
-    else {
-        %products = %::proddesc;
-    }
+my $product_name = trim($cgi->param('product') || '');
+my $product = new Bugzilla::Product({'name' => $product_name});
 
-    my $prodsize = scalar(keys %products);
-    if ($prodsize == 0) {
+unless ($product && $user->can_enter_product($product->name)) {
+    # Products which the user is allowed to see.
+    my @products = @{$user->get_enterable_products};
+
+    if (scalar(@products) == 0) {
         ThrowUserError("no_products");
     }
-    elsif ($prodsize > 1) {
-        $vars->{'proddesc'} = \%products;
+    # If there is only one product available but the user entered
+    # another product name, we display a list with this single
+    # product only, to not confuse the user with components of a
+    # product he didn't request.
+    elsif (scalar(@products) > 1 || $product_name) {
+        $vars->{'classifications'} = [{object => undef, products => \@products}];
         $vars->{'target'} = "describecomponents.cgi";
         # If an invalid product name is given, or the user is not
         # allowed to access that product, a message is displayed
         # with a list of the products the user can choose from.
-        if ($product) {
+        if ($product_name) {
             $vars->{'message'} = "product_invalid";
-            $vars->{'product'} = $product;
+            # Do not use $product->name here, else you could use
+            # this way to determine whether the product exists or not.
+            $vars->{'product'} = $product_name;
         }
 
-        print $cgi->header();
         $template->process("global/choose-product.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
         exit;
     }
 
-    $product = (keys %products)[0];
-    $product_id = get_product_id($product);
+    # If there is only one product available and the user didn't specify
+    # any product name, we show this product.
+    $product = $products[0];
 }
 
 ######################################################################
 # End Data/Security Validation
 ######################################################################
 
-my @components;
-SendSQL("SELECT name, initialowner, initialqacontact, description FROM " .
-        "components WHERE product_id = $product_id ORDER BY name");
-while (MoreSQLData()) {
-    my ($name, $initialowner, $initialqacontact, $description) =
-      FetchSQLData();
-
-    my %component;
-
-    $component{'name'} = $name;
-    $component{'initialowner'} = $initialowner ?
-      DBID_to_name($initialowner) : '';
-    $component{'initialqacontact'} = $initialqacontact ?
-      DBID_to_name($initialqacontact) : '';
-    $component{'description'} = $description;
-
-    push @components, \%component;
-}
-
 $vars->{'product'} = $product;
-$vars->{'components'} = \@components;
 
-print $cgi->header();
 $template->process("reports/components.html.tmpl", $vars)
   || ThrowTemplateError($template->error());

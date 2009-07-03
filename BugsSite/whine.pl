@@ -27,13 +27,12 @@
 use strict;
 
 use lib ".";
-require "globals.pl";
 
-use Bugzilla::Config qw(:DEFAULT $datadir);
+use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Search;
 use Bugzilla::User;
-use Bugzilla::BugMail;
+use Bugzilla::Mailer;
 use Bugzilla::Util;
 
 # create some handles that we'll need
@@ -94,39 +93,17 @@ my $sth_schedules_by_event = $dbh->prepare(
 # After that, it looks over each user to see if they have schedules that need
 # running, then runs those and generates the email messages.
 
-# exit quietly if the system is shut down
-if (Param('shutdownhtml')) {
-    exit;
-}
-
-
-# Send whines from the address in the 'maintainer' Parameter so that all
+# Send whines from the address in the 'mailfrom' Parameter so that all
 # Bugzilla-originated mail appears to come from a single address.
-my $fromaddress = Param('maintainer');
+my $fromaddress = Bugzilla->params->{'mailfrom'};
 
-if ($fromaddress !~ Param('emailregexp')) {
-    die "Cannot run.  " .
-        "The maintainer email address has not been properly set!\n";
-}
-
-# Check the nomail file for users who should not receive mail
-my %nomail;
-if (open(NOMAIL, '<', "$datadir/nomail")) {
-    while (<NOMAIL>) {
-        $nomail{trim($_)} = 1;
-    }
-}
-
-# get the current date and time from the database
-$sth = $dbh->prepare('SELECT ' . $dbh->sql_date_format('NOW()', '%y,%m,%d,%a,%H,%i'));
-$sth->execute;
-my ($now_year, $now_month, $now_day, $now_weekdayname, $now_hour, $now_minute) =
-        split(',', $sth->fetchrow_array);
-$sth->finish;
-
-# As DBs have different days numbering, use day name and convert it
-# to the range 0-6
-my $now_weekday = index("SunMonTueWedThuFriSat", $now_weekdayname) / 3;
+# get the current date and time
+my ($now_sec, $now_minute, $now_hour, $now_day, $now_month, $now_year, 
+    $now_weekday) = localtime;
+# Convert year to two digits
+$now_year = sprintf("%02d", $now_year % 100);
+# Convert the month to January being "1" instead of January being "0".
+$now_month++;
 
 my @daysinmonth = qw(0 31 28 31 30 31 30 31 31 30 31 30 31);
 # Alter February in case of a leap year.  This simple way to do it only
@@ -181,8 +158,8 @@ while (my ($schedule_id, $day, $time) = $sched_h->fetchrow_array) {
         else { # set it for the next applicable day
             $day = &get_next_date($day);
             $sth = $dbh->prepare("UPDATE whine_schedules " .
-                                 "SET run_next = CURRENT_DATE + " .
-                                 $dbh->sql_interval('?', 'DAY') . " + " .
+                                 "SET run_next = (CURRENT_DATE + " .
+                                 $dbh->sql_interval('?', 'DAY') . ") + " .
                                  $dbh->sql_interval('?', 'HOUR') .
                                  " WHERE id = ?");
             $sth->execute($day, $time, $schedule_id);
@@ -198,8 +175,8 @@ while (my ($schedule_id, $day, $time) = $sched_h->fetchrow_array) {
         my $target_time = ($time =~ /^\d+$/) ? $time : 0;
 
         $sth = $dbh->prepare("UPDATE whine_schedules " .
-                             "SET run_next = CURRENT_DATE + " .
-                             $dbh->sql_interval('?', 'DAY') . " + " .
+                             "SET run_next = (CURRENT_DATE + " .
+                             $dbh->sql_interval('?', 'DAY') . ") + " .
                              $dbh->sql_interval('?', 'HOUR') .
                              " WHERE id = ?");
         $sth->execute($target_date, $target_time, $schedule_id);
@@ -231,10 +208,10 @@ sub get_next_event {
 
         $dbh->bz_lock_tables('whine_schedules WRITE',
                              'whine_events READ',
-                             'profiles WRITE',
+                             'profiles READ',
                              'groups READ',
                              'group_group_map READ',
-                             'user_group_map WRITE');
+                             'user_group_map READ');
 
         # Get the event ID for the first pending schedule
         $sth_next_scheduled_event->execute;
@@ -243,8 +220,7 @@ sub get_next_event {
         return undef unless $fetched;
         my ($eventid, $owner_id, $subject, $body) = @{$fetched};
 
-        my $owner = Bugzilla::User->new($owner_id,
-                                        DERIVE_GROUPS_TABLES_ALREADY_LOCKED);
+        my $owner = Bugzilla::User->new($owner_id);
 
         my $whineatothers = $owner->in_group('bz_canusewhineatothers');
 
@@ -266,7 +242,7 @@ sub get_next_event {
                             $user_objects{$mailto} = $owner;
                         }
                         elsif ($whineatothers) {
-                            $user_objects{$mailto} = Bugzilla::User->new($mailto,DERIVE_GROUPS_TABLES_ALREADY_LOCKED);
+                            $user_objects{$mailto} = Bugzilla::User->new($mailto);
                         }
                     }
                 }
@@ -278,14 +254,17 @@ sub get_next_event {
                     my $group_id = Bugzilla::Group::ValidateGroupName(
                         $groupname, $owner);
                     if ($group_id) {
+                        my $glist = join(',',
+                            @{Bugzilla::User->flatten_group_membership(
+                            $group_id)});
                         $sth = $dbh->prepare("SELECT user_id FROM " .
                                              "user_group_map " .
-                                             "WHERE group_id=?");
-                        $sth->execute($group_id);
+                                             "WHERE group_id IN ($glist)");
+                        $sth->execute();
                         for my $row (@{$sth->fetchall_arrayref}) {
                             if (not defined $user_objects{$row->[0]}) {
                                 $user_objects{$row->[0]} =
-                                    Bugzilla::User->new($row->[0],DERIVE_GROUPS_TABLES_ALREADY_LOCKED);
+                                    Bugzilla::User->new($row->[0]);
                             }
                         }
                     }
@@ -381,7 +360,7 @@ sub mail {
     my $args = shift;
 
     # Don't send mail to someone on the nomail list.
-    return if $nomail{$args->{'recipient'}->{'login'}};
+    return if $args->{recipient}->email_disabled;
 
     my $msg = ''; # it's a temporary variable to hold the template output
     $args->{'alternatives'} ||= [];
@@ -408,12 +387,12 @@ sub mail {
 
     # now produce a ready-to-mail mime-encoded message
 
-    $args->{'boundary'} = "-----=====-----" . $$ . "--" . time() . "-----";
+    $args->{'boundary'} = "----------" . $$ . "--" . time() . "-----";
 
     $template->process("whine/multipart-mime.txt.tmpl", $args, \$msg)
         or die($template->error());
 
-    Bugzilla::BugMail::MessageToMTA($msg);
+    MessageToMTA($msg);
 
     delete $args->{'boundary'};
     delete $args->{'alternatives'};
@@ -605,8 +584,8 @@ sub reset_timer {
         my $nextdate = &get_next_date($run_day);
 
         $sth = $dbh->prepare("UPDATE whine_schedules " .
-                             "SET run_next = CURRENT_DATE + " .
-                             $dbh->sql_interval('?', 'DAY') . " + " .
+                             "SET run_next = (CURRENT_DATE + " .
+                             $dbh->sql_interval('?', 'DAY') . ") + " .
                              $dbh->sql_interval('?', 'HOUR') .
                              " WHERE id = ?");
         $sth->execute($nextdate, $target_time, $schedule_id);

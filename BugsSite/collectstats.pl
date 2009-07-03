@@ -23,6 +23,7 @@
 #                 Gervase Markham <gerv@gerv.net>
 #                 Richard Walters <rwalters@qualcomm.com>
 #                 Jean-Sebastien Guay <jean_seb@hybride.com>
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 # Run me out of cron at midnight to collect Bugzilla statistics.
 #
@@ -32,18 +33,20 @@
 use AnyDBM_File;
 use strict;
 use IO::Handle;
-use vars @::legal_product;
 
 use lib ".";
-require "globals.pl";
-use Bugzilla::Search;
-use Bugzilla::User;
 
 use Bugzilla;
-use Bugzilla::Config qw(:DEFAULT $datadir);
+use Bugzilla::Constants;
+use Bugzilla::Error;
+use Bugzilla::Util;
+use Bugzilla::Search;
+use Bugzilla::User;
+use Bugzilla::Product;
+use Bugzilla::Field;
 
 # Turn off output buffering (probably needed when displaying output feedback
-# in the regenerate mode.)
+# in the regenerate mode).
 $| = 1;
 
 # Tidy up after graphing module
@@ -53,9 +56,10 @@ if (chdir("graphs")) {
     chdir("..");
 }
 
-GetVersionTable();
+# This is a pure command line script.
+Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
 
-Bugzilla->switch_to_shadow_db();
+my $dbh = Bugzilla->switch_to_shadow_db();
 
 # To recreate the daily statistics,  run "collectstats.pl --regenerate" .
 my $regenerate = 0;
@@ -64,15 +68,50 @@ if ($#ARGV >= 0 && $ARGV[0] eq "--regenerate") {
     $regenerate = 1;
 }
 
-my @myproducts;
-push( @myproducts, "-All-", @::legal_product );
+my $datadir = bz_locations()->{'datadir'};
+
+my @myproducts = map {$_->name} Bugzilla::Product->get_all;
+unshift(@myproducts, "-All-");
+
+# As we can now customize the list of resolutions, looking at the actual list
+# of available resolutions only is not enough as some now removed resolutions
+# may have existed in the past, or have been renamed. We want them all.
+my @resolutions = @{get_legal_field_values('resolution')};
+my $old_resolutions =
+    $dbh->selectcol_arrayref('SELECT bugs_activity.added
+                                FROM bugs_activity
+                          INNER JOIN fielddefs
+                                  ON fielddefs.id = bugs_activity.fieldid
+                           LEFT JOIN resolution
+                                  ON resolution.value = bugs_activity.added
+                               WHERE fielddefs.name = ?
+                                 AND resolution.id IS NULL
+
+                               UNION
+
+                              SELECT bugs_activity.removed
+                                FROM bugs_activity
+                          INNER JOIN fielddefs
+                                  ON fielddefs.id = bugs_activity.fieldid
+                           LEFT JOIN resolution
+                                  ON resolution.value = bugs_activity.removed
+                               WHERE fielddefs.name = ?
+                                 AND resolution.id IS NULL',
+                               undef, ('resolution', 'resolution'));
+
+push(@resolutions, @$old_resolutions);
+# Exclude "" from the resolution list.
+@resolutions = grep {$_} @resolutions;
+
+# Actually, the list of statuses is predefined. This will change in the near future.
+my @statuses = qw(NEW ASSIGNED REOPENED UNCONFIRMED RESOLVED VERIFIED CLOSED);
 
 my $tstart = time;
 foreach (@myproducts) {
     my $dir = "$datadir/mining";
 
     &check_data_dir ($dir);
-    
+
     if ($regenerate) {
         &regenerate_stats($dir, $_);
     } else {
@@ -126,9 +165,13 @@ sub collect_stats {
     my $dir = shift;
     my $product = shift;
     my $when = localtime (time);
-    my $product_id = get_product_id($product) unless $product eq '-All-';
+    my $dbh = Bugzilla->dbh;
 
-    die "Unknown product $product" unless ($product_id or $product eq '-All-');
+    my $product_id;
+    if ($product ne '-All-') {
+        my $prod = Bugzilla::Product::check_product($product);
+        $product_id = $prod->id;
+    }
 
     # NB: Need to mangle the product for the filename, but use the real
     # product name in the query
@@ -137,47 +180,111 @@ sub collect_stats {
     my $file = join '/', $dir, $file_product;
     my $exists = -f $file;
 
-    if (open DATA, ">>$file") {
-        push my @row, &today;
+    # if the file exists, get the old status and resolution list for that product.
+    my @data;
+    @data = get_old_data($file) if $exists;
 
-        foreach my $status ('NEW', 'ASSIGNED', 'REOPENED', 'UNCONFIRMED', 'RESOLVED', 'VERIFIED', 'CLOSED') {
-            if( $product eq "-All-" ) {
-                SendSQL("SELECT COUNT(bug_status) FROM bugs WHERE bug_status='$status'");
-            } else {
-                SendSQL("SELECT COUNT(bug_status) FROM bugs WHERE bug_status='$status' AND product_id=$product_id");
-            }
+    # If @data is not empty, then we have to recreate the data file.
+    if (scalar(@data)) {
+        open(DATA, '>', $file)
+          || ThrowCodeError('chart_file_open_fail', {'filename' => $file});
+    }
+    else {
+        open(DATA, '>>', $file)
+          || ThrowCodeError('chart_file_open_fail', {'filename' => $file});
+    }
 
-            push @row, FetchOneColumn();
-        }
+    # Now collect current data.
+    my @row = (today());
+    my $status_sql = q{SELECT COUNT(*) FROM bugs WHERE bug_status = ?};
+    my $reso_sql   = q{SELECT COUNT(*) FROM bugs WHERE resolution = ?};
 
-        foreach my $resolution ('FIXED', 'INVALID', 'WONTFIX', 'LATER', 'REMIND', 'DUPLICATE', 'WORKSFORME', 'MOVED') {
-            if( $product eq "-All-" ) {
-                SendSQL("SELECT COUNT(resolution) FROM bugs WHERE resolution='$resolution'");
-            } else {
-                SendSQL("SELECT COUNT(resolution) FROM bugs WHERE resolution='$resolution' AND product_id=$product_id");
-            }
+    if ($product ne '-All-') {
+        $status_sql .= q{ AND product_id = ?};
+        $reso_sql   .= q{ AND product_id = ?};
+    }
 
-            push @row, FetchOneColumn();
-        }
+    my $sth_status = $dbh->prepare($status_sql);
+    my $sth_reso   = $dbh->prepare($reso_sql);
 
-        if (! $exists) {
-            print DATA <<FIN;
+    my @values ;
+    foreach my $status (@statuses) {
+        @values = ($status);
+        push (@values, $product_id) if ($product ne '-All-');
+        my $count = $dbh->selectrow_array($sth_status, undef, @values);
+        push(@row, $count);
+    }
+    foreach my $resolution (@resolutions) {
+        @values = ($resolution);
+        push (@values, $product_id) if ($product ne '-All-');
+        my $count = $dbh->selectrow_array($sth_reso, undef, @values);
+        push(@row, $count);
+    }
+
+    if (!$exists || scalar(@data)) {
+        my $fields = join('|', ('DATE', @statuses, @resolutions));
+        print DATA <<FIN;
 # Bugzilla Daily Bug Stats
 #
 # Do not edit me! This file is generated.
 #
-# fields: DATE|NEW|ASSIGNED|REOPENED|UNCONFIRMED|RESOLVED|VERIFIED|CLOSED|FIXED|INVALID|WONTFIX|LATER|REMIND|DUPLICATE|WORKSFORME|MOVED
+# fields: $fields
 # Product: $product
 # Created: $when
 FIN
-        }
-
-        print DATA (join '|', @row) . "\n";
-        close DATA;
-        chmod 0644, $file;
-    } else {
-        print "$0: $file, $!";
     }
+
+    # Add existing data, if needed. Note that no count is not treated
+    # the same way as a count with 0 bug.
+    foreach my $data (@data) {
+        print DATA join('|', map {defined $data->{$_} ? $data->{$_} : ''}
+                                 ('DATE', @statuses, @resolutions)) . "\n";
+    }
+    print DATA (join '|', @row) . "\n";
+    close DATA;
+    chmod 0644, $file;
+}
+
+sub get_old_data {
+    my $file = shift;
+
+    open(DATA, '<', $file)
+      || ThrowCodeError('chart_file_open_fail', {'filename' => $file});
+
+    my @data;
+    my @columns;
+    my $recreate = 0;
+    while (<DATA>) {
+        chomp;
+        next unless $_;
+        if (/^# fields?:\s*(.+)\s*$/) {
+            @columns = split(/\|/, $1);
+            # Compare this list with @statuses and @resolutions.
+            # If they are identical, then we can safely append new data
+            # to the end of the file; else we have to recreate it.
+            $recreate = 1;
+            my @new_cols = ($columns[0], @statuses, @resolutions);
+            if (scalar(@columns) == scalar(@new_cols)) {
+                my $identical = 1;
+                for (0 .. $#columns) {
+                    $identical = 0 if ($columns[$_] ne $new_cols[$_]);
+                }
+                last if $identical;
+            }
+        }
+        next unless $recreate;
+        next if (/^#/); # Ignore comments.
+        # If we have to recreate the file, we have to load all existing
+        # data first.
+        my @line = split /\|/;
+        my %data;
+        foreach my $column (@columns) {
+            $data{$column} = shift @line;
+        }
+        push(@data, \%data);
+    }
+    close(DATA);
+    return @data;
 }
 
 sub calculate_dupes {
@@ -194,6 +301,8 @@ sub calculate_dupes {
     # Save % count here in a date-named file
     # so we can read it back in to do changed counters
     # First, delete it if it exists, so we don't add to the contents of an old file
+    my $datadir = bz_locations()->{'datadir'};
+
     if (my @files = <$datadir/duplicates/dupes$today*>) {
         map { trick_taint($_) } @files;
         unlink @files;
@@ -220,7 +329,7 @@ sub calculate_dupes {
         }
 
         $count{$dupe_of}++;
-    }   
+    }
 
     # Now we collapse the dupe tree by iterating over %count until
     # there is no further change.
@@ -272,37 +381,41 @@ sub regenerate_stats {
 
     my $and_product = "";
     my $from_product = "";
-                    
+
+    my @values = ();
     if ($product ne '-All-') {
-        $and_product = " AND products.name = " . SqlQuote($product);
-        $from_product = "INNER JOIN products " .
-                        "ON bugs.product_id = products.id";
-    }          
-              
+        $and_product = q{ AND products.name = ?};
+        $from_product = q{ INNER JOIN products 
+                          ON bugs.product_id = products.id};
+        push (@values, $product);
+    }
+
     # Determine the start date from the date the first bug in the
     # database was created, and the end date from the current day.
     # If there were no bugs in the search, return early.
-    SendSQL("SELECT " . $dbh->sql_to_days('creation_ts') . " AS start, " .
-                        $dbh->sql_to_days('current_date') . " AS end, " .
-                        $dbh->sql_to_days("'1970-01-01'") . 
-            " FROM bugs $from_product WHERE " .
-            $dbh->sql_to_days('creation_ts') . " IS NOT NULL " .
-            $and_product .
-            " ORDER BY start " . $dbh->sql_limit(1));
-    
-    my ($start, $end, $base) = FetchSQLData();
+    my $query = q{SELECT } .
+                $dbh->sql_to_days('creation_ts') . q{ AS start, } . 
+                $dbh->sql_to_days('current_date') . q{ AS end, } . 
+                $dbh->sql_to_days("'1970-01-01'") . 
+                 qq{ FROM bugs $from_product 
+                   WHERE } . $dbh->sql_to_days('creation_ts') . 
+                         qq{ IS NOT NULL $and_product 
+                ORDER BY start } . $dbh->sql_limit(1);
+    my ($start, $end, $base) = $dbh->selectrow_array($query, undef, @values);
+
     if (!defined $start) {
         return;
     }
- 
+
     if (open DATA, ">$file") {
         DATA->autoflush(1);
+        my $fields = join('|', ('DATE', @statuses, @resolutions));
         print DATA <<FIN;
 # Bugzilla Daily Bug Stats
 #
 # Do not edit me! This file is generated.
 #
-# fields: DATE|NEW|ASSIGNED|REOPENED|UNCONFIRMED|RESOLVED|VERIFIED|CLOSED|FIXED|INVALID|WONTFIX|LATER|REMIND|DUPLICATE|WORKSFORME|MOVED
+# fields: $fields
 # Product: $product
 # Created: $when
 FIN
@@ -315,16 +428,17 @@ FIN
 
             # Get a list of bugs that were created the previous day, and
             # add those bugs to the list of bugs for this product.
-            SendSQL("SELECT bug_id FROM bugs $from_product " .
-                    " WHERE bugs.creation_ts < " . $dbh->sql_from_days($day - 1) .
-                    " AND bugs.creation_ts >= " . $dbh->sql_from_days($day - 2) .
-                    $and_product .
-                    " ORDER BY bug_id");
-            
-            my @row;        
-            while (@row = FetchSQLData()) {
-                push @bugs, $row[0];
-            }
+            $query = qq{SELECT bug_id 
+                          FROM bugs $from_product 
+                         WHERE bugs.creation_ts < } . 
+                         $dbh->sql_from_days($day - 1) . 
+                         q{ AND bugs.creation_ts >= } . 
+                         $dbh->sql_from_days($day - 2) . 
+                        $and_product . q{ ORDER BY bug_id};
+
+            my $bug_ids = $dbh->selectcol_arrayref($query, undef, @values);
+
+            push(@bugs, @$bug_ids);
 
             # For each bug that existed on that day, determine its status
             # at the beginning of the day.  If there were no status
@@ -334,62 +448,47 @@ FIN
             # the bugs_activity table for that bug made on or after that
             # day.
             my %bugcount;
-            my @logstates = qw(NEW ASSIGNED REOPENED UNCONFIRMED RESOLVED 
-                               VERIFIED CLOSED);
-            my @logresolutions = qw(FIXED INVALID WONTFIX LATER REMIND 
-                                    DUPLICATE WORKSFORME MOVED);
-            foreach (@logstates) {
-                $bugcount{$_} = 0;
-            }
+            foreach (@statuses) { $bugcount{$_} = 0; }
+            foreach (@resolutions) { $bugcount{$_} = 0; }
+            # Get information on bug states and resolutions.
+            $query = qq{SELECT bugs_activity.removed 
+                          FROM bugs_activity 
+                    INNER JOIN fielddefs 
+                            ON bugs_activity.fieldid = fielddefs.id 
+                         WHERE fielddefs.name = ? 
+                           AND bugs_activity.bug_id = ? 
+                           AND bugs_activity.bug_when >= } . 
+                           $dbh->sql_from_days($day) . 
+                    " ORDER BY bugs_activity.bug_when " . 
+                          $dbh->sql_limit(1);
+
+            my $sth_bug = $dbh->prepare($query);
+            my $sth_status = $dbh->prepare(q{SELECT bug_status 
+                                               FROM bugs 
+                                              WHERE bug_id = ?});
             
-            foreach (@logresolutions) {
-                $bugcount{$_} = 0;
-            }
-            
+            my $sth_reso = $dbh->prepare(q{SELECT resolution 
+                                             FROM bugs 
+                                            WHERE bug_id = ?});
+
             for my $bug (@bugs) {
-                # First, get information on various bug states.
-                SendSQL("SELECT bugs_activity.removed " .
-                        "  FROM bugs_activity " .
-                    "INNER JOIN fielddefs " .
-                        "    ON bugs_activity.fieldid = fielddefs.fieldid " .
-                        " WHERE fielddefs.name = 'bug_status' " .
-                        "   AND bugs_activity.bug_id = $bug " .
-                        "   AND bugs_activity.bug_when >= " . $dbh->sql_from_days($day) .
-                     " ORDER BY bugs_activity.bug_when " .
-                        $dbh->sql_limit(1));
-                
-                my $status;
-                if (@row = FetchSQLData()) {
-                    $status = $row[0];
-                } else {
-                    SendSQL("SELECT bug_status FROM bugs WHERE bug_id = $bug");
-                    $status = FetchOneColumn();
-                }
-                
-                if (defined $bugcount{$status}) {
-                    $bugcount{$status}++;
+                my $status = $dbh->selectrow_array($sth_bug, undef, 
+                                                       'bug_status', $bug);
+                unless ($status) {
+                    $status = $dbh->selectrow_array($sth_status, undef, $bug);
                 }
 
-                # Next, get information on various bug resolutions.
-                SendSQL("SELECT bugs_activity.removed " .
-                        "  FROM bugs_activity " .
-                    "INNER JOIN fielddefs " .
-                        "    ON bugs_activity.fieldid = fielddefs.fieldid " .
-                        " WHERE fielddefs.name = 'resolution' " .
-                        "   AND bugs_activity.bug_id = $bug " .
-                        "   AND bugs_activity.bug_when >= " . $dbh->sql_from_days($day) .
-                     " ORDER BY bugs_activity.bug_when " . 
-                        $dbh->sql_limit(1));
-                        
-                if (@row = FetchSQLData()) {
-                    $status = $row[0];
-                } else {
-                    SendSQL("SELECT resolution FROM bugs WHERE bug_id = $bug");
-                    $status = FetchOneColumn();
-                }
-                
                 if (defined $bugcount{$status}) {
                     $bugcount{$status}++;
+                }
+                my $resolution = $dbh->selectrow_array($sth_bug, undef, 
+                                                         'resolution', $bug);
+                unless ($resolution) {
+                    $resolution = $dbh->selectrow_array($sth_reso, undef, $bug);
+                }
+                
+                if (defined $bugcount{$resolution}) {
+                    $bugcount{$resolution}++;
                 }
             }
 
@@ -397,14 +496,8 @@ FIN
             # of bugs in each state.
             my $date = sqlday($day, $base);
             print DATA "$date";
-            foreach (@logstates) {
-                print DATA "|$bugcount{$_}";
-            }
-            
-            foreach (@logresolutions) {
-                print DATA "|$bugcount{$_}";
-            }
-            
+            foreach (@statuses) { print DATA "|$bugcount{$_}"; }
+            foreach (@resolutions) { print DATA "|$bugcount{$_}"; }
             print DATA "\n";
         }
         
@@ -482,22 +575,19 @@ sub CollectSeriesData {
         # We set up the user for Search.pm's permission checking - each series
         # runs with the permissions of its creator.
         my $user = new Bugzilla::User($serieses->{$series_id}->{'creator'});
-
         my $cgi = new Bugzilla::CGI($serieses->{$series_id}->{'query'});
-        my $search = new Bugzilla::Search('params' => $cgi,
-                                          'fields' => ["bugs.bug_id"],
-                                          'user'   => $user);
-        my $sql = $search->getSQL();
-        
         my $data;
-        
-        # We can't die if we get dodgy SQL back for whatever reason, so we
-        # eval() this and, if it fails, just ignore it and carry on.
-        # One day we might even log an error.
-        eval { 
+
+        # Do not die if Search->new() detects invalid data, such as an obsolete
+        # login name or a renamed product or component, etc.
+        eval {
+            my $search = new Bugzilla::Search('params' => $cgi,
+                                              'fields' => ["bugs.bug_id"],
+                                              'user'   => $user);
+            my $sql = $search->getSQL();
             $data = $shadow_dbh->selectall_arrayref($sql);
         };
-        
+
         if (!$@) {
             # We need to count the returned rows. Without subselects, we can't
             # do this directly in the SQL for all queries. So we do it by hand.

@@ -37,16 +37,31 @@
     <td>
       [% IF has_bits.size %]
         You have the following permission [% terms.bits %] set on your account:
-        <p>
-        <br>
         <table align="center">
           [% FOREACH bit_description = has_bits %]
             <tr>
-              <td>[% bit_description.name %]</td>
-              <td>[% bit_description.desc %]</td>
+              <td>[% bit_description.name FILTER html %]</td>
+              <td>[% bit_description.desc FILTER html_light %]</td>
             </tr>
           [% END %]
         </table>
+
+        [% FOREACH privs = ["editcomponents", "canconfirm", "editbugs"] %]
+          [% SET products = ${"local_$privs"} %]
+          [% IF products && products.size %]
+            <br>
+            <p>
+              You also have local '[% privs FILTER html %]' privileges
+              for the following products:
+            </p>
+            <p>
+              [% FOREACH product = products %]
+                [% product.name FILTER html %]<br>
+              [% END %]
+            </p>
+          [% END %]
+        [% END %]
+
       [% ELSE %]
         There are no permission [% terms.bits %] set on your account.
       [% END %]
@@ -59,16 +74,20 @@
         <br>
         And you can turn on or off the following [% terms.bits %] for
         <a href="editusers.cgi">other users</a>:
-        <p>
           <table align="center">
           [% FOREACH bit_description = set_bits %]
             <tr>
-              <td>[% bit_description.name %]</td>
-              <td>[% bit_description.desc %]</td>
+              <td>[% bit_description.name FILTER html %]</td>
+              <td>[% bit_description.desc FILTER html_light %]</td>
             </tr>
           [% END %]
           </table>
-        </p>
+      [% END %]
+
+      [% IF user.groups.bz_sudoers %]
+        <br>
+        You are a member of the <b>bz_sudoers</b> group, so you can 
+        <a href="relogin.cgi?action=prepare-sudo">impersonate someone else</a>.
       [% END %]
     </td>
   </tr>

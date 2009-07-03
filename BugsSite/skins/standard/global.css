@@ -19,257 +19,177 @@
   *                 Christian Reis <kiko@async.com.br>
   *                 Vitaly Harisov <vitaly@rathedg.com>
   *                 Svetlana Harisova <light@rathedg.com>
+  *                 Marc Schumann <wurblzap@gmail.com>
   */
 
-body
-{
-    color: #000;
-    background-color: #fff;
-}
-
-/* banner (begin) */
-    #banner
-    {
-        text-align: center;        
-
-        width: 100%;
-        background: #fff;
-    }
-
-    #banner p
-    {
-        margin: 0;
-        margin-bottom: 1px;
-        padding: 0;
-    }
-
-    #banner-name
-    {
-        font-size: 0px;
-        height: 48px;
-        background: transparent no-repeat url(global/header.png);
-    }
-
-    #banner-version
-    {
+/* global (begin) */
+    body {
         font-family: sans-serif;
-        font-size: 75%;
-        background: #fff;
+        color: #000;
+        background: #fff url("global/body-back.gif") repeat-x;
     }
-
-    /* hide from NN4 */
-    p#banner-version
-    {
-        font-size: 85%;
-    }
-/* banner (end) */
+/* global (end) */
 
 /* header (begin) */
-    #header
-    {
-        width: 100%;
+    #header {
+        margin-bottom: 1em;
+        padding-bottom: 2px;
     }
 
-    #header *
-    {
+    #header form {
+        font-size: 85%;
+        display: inline;
+    }
+
+    #header .btn,
+    #header .txt {
+        font-size: 80%;
+    }
+
+    #header .links {
+        font-size: 85%;
+        border-left: 1px solid silver;
+        border-right: 1px solid silver;
+        border-bottom: 1px solid silver;
+        -moz-border-radius-bottomleft: 5px;
+        -moz-border-radius-bottomright: 5px;
+        padding: 0.5em;
+    }
+
+    #message {
+        border: 1px solid red;
+        margin: 0.3em 0em;
+        padding: 0.3em;
+        color: green;
+    }
+
+/* header (end)   */
+
+/* banner (begin) */
+    #banner {
+    }
+
+/* banner (end) */
+
+/* titles (begin) */
+    #titles {
+        width: 100%;
+        background-color: #404D6C;
+        color: #fff;
+        -moz-border-radius-topleft: 5px;
+        -moz-border-radius-topright: 5px;
+        font-size: 110%;
+        margin: 0;
+        padding: 0.5em;
+        vertical-align: bottom;
+    }
+
+    #titles a {
+        color: #fff;
+    }
+
+    #titles p {
         margin: 0;
         padding: 0;
     }
 
-    /* hide from MSIE and NN4 */
-    [id]#header
-    {
-        display: table;
-    }
-
-    /* IE hack for float content*/
-    * html #header
-    {
-        height: 1%;
-    }
-
-    /* hide from NN4 */
-    div#header h1
-    {
-        float: left;
-    }
-
-    #header h1
-    {
-        font-family: serif;
+    #titles #title {
         font-weight: bold;
-        font-size: 110%;
-
         white-space: nowrap;
-        padding: 0.2em 1em 0.1em 0.2em;
     }
 
-    /* hide from MSIE and NN4 */
-    [id]#header h1
-    {
-        float: none;
-        display: table-cell;
-
-        vertical-align: top;
-    }
-
-    /* hide from NN4 */
-    div#header h2
-    {
-        float: left;
-        width: 70%;
-
+    #titles #subtitle {
+        font-weight: normal;
+        width: 100%;
         text-align: center;
-        padding: 0.2em 1em 0.1em 0.1em;
     }
 
-    #header h2
-    {
-        font-family: serif;
+    #titles #information {
         font-weight: normal;
-        font-size: 100%;
-    }
-
-    /* hide from MSIE and NN4 */
-    [id]#header h2
-    {
-        float: none;
-        width: auto;
-
-        text-align: left;
-        vertical-align: top;
-    }
-
-    #header h3
-    {
-        font-family: serif;
-        font-weight: normal;
-        font-size: 100%;
-
-        padding: 0.2em 0.2em 0.1em 0.1em;
-        float: right;
-    }
-
-    /* hide from MSIE and NN4 */
-    [id]#header h3
-    {
-        display: table-cell;
-        float: none;
-
         text-align: right;
-        vertical-align: top;
+        font-size: 90%;
+        white-space: nowrap;
     }
 
-    #message
-    {
-    	border: 1px solid red;
-
-    	padding: 0.3em;
-    	color: green;
-    }
-/* header (end)   */
+/* titles (end) */
 
 /* footer (begin) */
-    #footer
-    {
-        float: left;
+    #footer {
         margin-top: 5px;
         width: 100%;
-        font-family: sans-serif;
-    }
-
-    #footer form
-    {
         background: #edf2f2;
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
     }
 
-    #footer span
-    {
-        display: block;
+    #footer form {
+        display: inline;
     }
 
-    #footer .btn, #footer .txt
-    {
-        font-size: 0.8em;
+    #footer .btn,
+    #footer .txt {
+        font-size: 80%;
     }
 
-    #footer #useful-links
-    {
-        padding: 0.3em;
-    }
-
-    /* hide from MSIE and NN4 */
-    [id]#footer #useful-links
-    {
-        margin: 0.3em;
+    #footer #useful-links {
         display: table;
+        padding-left: 1ex;
+        padding-right: 1ex;
     }
 
     #footer #links-actions,
     #footer #links-edit,
-    #footer #links-saved
-    {
+    #footer #links-saved,
+    #footer #links-special {
         display: table-row;
+        list-style-type: none;
     }
 
-    #footer .label
-    {
-        width: 7.2em;
-        display: block;
-        float: left;
-
-        vertical-align: baseline;
-
-        padding: 0.1em 0.2em;
-    }
-
-    #footer #links-actions .label
-    {
-        padding-top: 0.45em;
-    }
-
-    /* hide from MSIE and NN4 */
-    [id]#footer .label
-    {
+    #footer .label {
         display: table-cell;
-        float: none;
-        width: auto;
-
-        padding-top: 0;
+        white-space: nowrap;
+        vertical-align: top;
     }
 
-    #footer .links
-    {
-        display: block;
-
-        padding: 0.1em 0.2em;
-    }
-
-    /* hide from MSIE and NN4 */
-    [id]#footer .links
-    {
+    #footer .links {
         display: table-cell;
-
-        padding-top: 0;
-        
-        vertical-align: baseline;
-    }
-
-    /* hide from MSIE and NN4 */
-    #footer+*
-    {
-        clear: both;
+        vertical-align: top;
     }
 /* footer (end) */
 
-/* generic (begin) */
-    body
-    {
-        background: #fff url("global/body-back.gif") repeat-x;
+/* link lists (begin) */
+    ul.links {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
     }
 
+    ul.links li {
+        display: inline;
+        white-space: nowrap;
+    }
+/* link lists (end) */
+
+/* tabs (begin) */
+    .tabs td {
+        background: #eee;
+        text-align: center;
+        border-style: solid;
+        border-color: black;
+        border-width: 0px 0px 2px 0px;
+    }
+        
+    .tabs td.selected {
+        background: white;
+        border-width: 2px 2px 0px 2px;
+    }
+
+    .tabs td.spacer {
+        background: white;
+    }
+/* tabs (end) */
+
+/* generic (begin) */
     :link {
         color: #039;
     }
@@ -285,52 +205,144 @@ body
     :link:active, :link:active {
         color: #000;
     }
+
+    .clickable_area {
+        cursor: pointer;
+    }
 /* generic (end) */
 
-.bz_obsolete { text-decoration: line-through; }
-.bz_inactive { text-decoration: line-through; }
+div#docslinks {
+    float: right;
+    border: 1px solid black;
+    padding: 1ex;
+    font-size: 80%;
+}
+
+#docslinks h2 {
+    margin: 0;
+}
+
+.bz_obsolete {
+    text-decoration: line-through;
+}
+.bz_inactive {
+    text-decoration: line-through;
+}
 .bz_closed,
 .bz_CLOSED td {
     text-decoration: line-through;
 }
-.bz_private { color: darkred ; background : #f3eeee ; }
-.bz_disabled { color: #a0a0a0 ; }
-
-.bz_row_odd
-{
-    background-color: #F7F7F7;
-    color: #000000;
+.bz_private {
+    color: darkred;
+    background: #f3eeee;
+}
+.bz_disabled {
+    color: #a0a0a0;
 }
 
-.bz_row_even
-{
-    background-color: #FFFFFF;
-    color: #000000;
+.bz_comment {
+    margin-bottom: 2em;
 }
 
-.bz_comment { background-color: #e0e0e0; }
-.bz_comment_hilite pre
-{
+.bz_comment_head {
+    background-color: #e0e0e0;
+}
+.bz_comment_hilite pre {
     background-color: lightgreen;
     margin: 0;
     padding: 1em 0;
 }
 
-.selected_tab
-{
-    background: #fff;
-    border: 1px solid black;
+span.quote {
+    color: #65379c;
 }
 
-.unselected_tab
-{
-    background: #eee;
-    border: 1px solid black;
+table#flags th,
+table#flags td {
+    vertical-align: baseline;
+    text-align: left;
 }
 
-.spacer
-{
-    border: 1px solid black;
+.flag_select {
+    min-width: 3em;
 }
 
-table#flags th, table#flags td { vertical-align: baseline; text-align: left; }
+.throw_error {
+    background-color: #ff0000;
+    color: black;
+    font-size: 120%;
+    margin: 1em;
+    padding: 0.5em 1em;
+}
+
+dt {
+    font-weight: bolder;
+}
+body > dl > dt {
+    border-top: dotted gray thin;
+}
+dl dl > dt {
+    border-top: none;
+}
+
+/* Style of the attachment table */
+#attachment_table {
+    border-collapse: collapse;
+    width: 40em;
+    border: 1px solid #333333;
+}
+
+#attachment_table th, .bz_attach_footer {
+    background-color: #E0E0E0;
+    color: black;
+}
+
+#attachment_table td {
+    border: 1px solid #333333;
+}
+
+.bz_attach_extra_info {
+    font-size: smaller;
+}
+
+.bz_attach_flags, .bz_attach_footer {
+    white-space: nowrap;
+}
+
+.bz_attach_view_hide {
+    float: right;
+    padding-left: 1em;
+}
+
+div.user_match {
+    margin-bottom: 1em;
+}
+
+.box {
+    border: 1px solid black;
+    color: black;
+    background-color: #ffc;
+    margin: 1em;
+    padding: 0.5em 1em;
+}
+
+/* Rules specific for printing */
+@media print {
+    #header, #footer {
+        display: none;
+    }
+
+    body {
+        background-image: none;
+        background-color: #fff;
+    }
+}
+
+.field_label {
+    text-align: right;
+    vertical-align: top;
+    font-weight: bold;
+}
+.field_value {
+    vertical-align: top;
+}

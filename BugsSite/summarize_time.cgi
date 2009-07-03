@@ -23,16 +23,15 @@ use lib qw(.);
 use Date::Parse;         # strptime
 use Date::Format;        # strftime
 
+use Bugzilla;
+use Bugzilla::Constants; # LOGIN_*
 use Bugzilla::Bug;       # EmitDependList
 use Bugzilla::Util;      # trim
-use Bugzilla::Constants; # LOGIN_*
-use Bugzilla::User;      # UserInGroup
-require "CGI.pl";
+use Bugzilla::Error;
+use Bugzilla::User;      # Bugzilla->user->in_group
 
-GetVersionTable();
-
-# Use global template variables.
-use vars qw($template $vars);
+my $template = Bugzilla->template;
+my $vars = {};
 
 #
 # Date handling
@@ -206,7 +205,7 @@ sub include_tt_details {
 
 sub sqlize_dates {
     my ($start_date, $end_date) = @_;
-    my $date_bits;
+    my $date_bits = "";
     my @date_values;
     if ($start_date) {
         # we've checked, trick_taint is fine
@@ -405,7 +404,7 @@ my $cgi = Bugzilla->cgi;
 
 Bugzilla->switch_to_shadow_db();
 
-UserInGroup(Param("timetrackinggroup"))
+Bugzilla->user->in_group(Bugzilla->params->{"timetrackinggroup"})
     || ThrowUserError("auth_failure", {group  => "time-tracking",
                                        action => "access",
                                        object => "timetracking_summaries"});
@@ -522,12 +521,10 @@ $vars->{'do_report'} = $do_report;
 $vars->{'do_depends'} = $do_depends;
 $vars->{'check_time'} = \&check_time;
 $vars->{'sort_bug_keys'} = \&sort_bug_keys;
-$vars->{'GetBugLink'} = \&GetBugLink;
 
-$ctype = "html" if !$ctype;
-my $format = GetFormat("bug/summarize-time", undef, $ctype);
+my $format = $template->get_format("bug/summarize-time", undef, $ctype);
 
 # Get the proper content-type
-print $cgi->header(-type=> Bugzilla::Constants::contenttypes->{$ctype});
+print $cgi->header(-type=> $format->{'ctype'});
 $template->process("$format->{'template'}", $vars)
   || ThrowTemplateError($template->error());

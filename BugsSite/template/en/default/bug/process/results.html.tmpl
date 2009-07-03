@@ -37,34 +37,25 @@
 
 [% DEFAULT type="bug" %]
 
+[% Link = BLOCK %][% "$terms.Bug $id" FILTER bug_link(id) %][% END %]
+[% link = BLOCK %][% "$terms.bug $id" FILTER bug_link(id) %][% END %]
+
 [%
   title = {
-    'bug' => "Changes submitted for $terms.bug $id" ,
-    'dupe' => "Duplicate notation added to $terms.bug $id" ,
-    'dep' => "Checking for dependency changes on $terms.bug $id" ,
-    'votes' => "$terms.Bug $id confirmed by number of votes" ,
-    'created' => "$terms.Bug $id has been added to the database" ,
-  }
-
-  linktext = {
-    'bug' => "Back To $terms.Bug $id" ,
-    'dupe' => "Go To $terms.Bug $id" ,
-    'dep' => "Go To $terms.Bug $id" ,
-    'votes' => "Go To $terms.Bug $id" ,
-    'created' => "Go To $terms.Bug $id" ,
+    'bug' => "Changes submitted for $link" ,
+    'dupe' => "Duplicate notation added to $link" ,
+    'dep' => "Checking for dependency changes on $link" ,
+    'votes' => "$Link confirmed by number of votes" ,
+    'created' => "$Link has been added to the database" ,
+    'move' => "$Link has been moved to another database" ,
   }
 %]
 
-<table border="1">
-  <tr>
-    <td>
-      <h2>[% title.$type %]</h2>
-      [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = id %]
-    </td>
-    <td>
-      <a href="show_bug.cgi?id=[% id %]">[% linktext.$type %]</a>
-      [%# Links to more information about the changed bug. %]
-      [% Hook.process("links") %]
-    </td>
-  </tr>
-</table>
+<dl>
+  <dt>[% title.$type %]</dt>
+  <dd>
+    [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = id %]
+    [%# Links to more information about the changed bug. %]
+    [% Hook.process("links") %]
+  </dd>
+</dl>

@@ -24,7 +24,7 @@
   #
   # multiple: boolean; whether or not the menu is multi-select
   #
-  # size: integer; if multi-select, the number of items to display at once
+  # size: integer; the number of items to display at once
   # 
   # options: array or hash; the items with which to populate the array.
   #   If a hash is passed, the hash keys become the names displayed
@@ -45,7 +45,8 @@
 
 <select name="[% name FILTER html %]" 
         [% IF onchange %]onchange="[% onchange FILTER html %]"[% END %]
-        [% IF multiple %] multiple [% IF size %] size="[% size %]" [% END %] [% END %]>
+        [% IF multiple %] multiple [% END %]
+        [% IF size %] size="[% size %]" [% END %]>
   [% IF options_type.search("ARRAY") %]
     [% FOREACH value = options %]
       <option value="[% value FILTER html %]"

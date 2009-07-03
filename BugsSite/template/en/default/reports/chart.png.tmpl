@@ -19,7 +19,7 @@
   # Contributor(s): Gervase Markham <gerv@gerv.net>
   #%]
 
-[% y_label = "Bugs" %]
+[% y_label = "$terms.Bugs" %]
 [% x_label = "Time" %]
 
 [% IF chart.cumulate %]
@@ -35,6 +35,7 @@
   graph.set(x_label           => x_label,
             y_label           => y_label,
             y_tick_number     => 8, 
+            y_max_value       => chart.y_max_value,
             x_label_position  => 0.5,
             x_labels_vertical => 1,
             x_label_skip      => x_label_skip,

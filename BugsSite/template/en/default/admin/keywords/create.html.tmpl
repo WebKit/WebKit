@@ -26,7 +26,7 @@
   
 [% PROCESS global/header.html.tmpl
   title = "Add keyword"
-  h2 = "This page allows you to add a new keyword."
+  subheader = "This page allows you to add a new keyword."
 %]
 
 <form method="post" action="editkeywords.cgi">
@@ -38,15 +38,20 @@
     <tr>
       <th align="right">Description:</th>
       <td>
-        <textarea rows="4" cols="64" wrap="virtual"
-        name="description"></textarea>
+        [% INCLUDE global/textarea.html.tmpl
+          name    = 'description'
+          minrows = 4
+          cols    = 64
+          wrap    = 'virtual'
+        %]
       </td>
     </tr>
   </table>
   <hr>
   <input type="hidden" name="id" value="-1">
-  <input type="submit" value="Add">
+  <input type="submit" id="create" value="Add">
   <input type="hidden" name="action" value="new">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
 
 <p><a href="editkeywords.cgi">Edit other keywords</a>.</p>

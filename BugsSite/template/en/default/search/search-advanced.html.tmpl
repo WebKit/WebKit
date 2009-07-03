@@ -37,34 +37,23 @@ var queryform = "queryform"
 
 [% PROCESS global/header.html.tmpl
   title = "Search for $terms.bugs"
-  h1 = ""
   onload = "doOnSelectProduct(0); initHelp();"
   javascript = js_data
   javascript_urls = [ "js/productform.js" ]
-  style = "td.selected_tab {
-             border-width: 2px 2px 0px;
-             border-style: solid; 
-             border-color: black;
-           }
-           td.unselected_tab, td.spacer {
-             border-width: 0px 0px 2px 0px;
-             border-style: solid; 
-             border-color: black;
-           }
-           dl.bug_changes dt {
+  style = "dl.bug_changes dt {
              margin-top: 15px;
            }"
 %]
 
-[% PROCESS search/tabs.html.tmpl %]
+[% WRAPPER search/tabs.html.tmpl %]
 
 [% button_name = "Search" %]
 
 [%# The decent help requires Javascript %]
-[% IF NOT help %]
+[% IF NOT cgi.param("help") %]
   [% IF cgi.user_agent("Mozilla/5") %]
     <script type="text/javascript"> <!--
-      document.write("<p><a href='query.cgi?help=1&amp;format=advanced'>Give me some help</a> (reloads page.)</p>");
+      document.write("<p><a href='query.cgi?help=1&amp;format=advanced'>Give me some help<\/a> (reloads page).<\/p>");
       // -->
     </script>
   [% END %]
@@ -92,6 +81,8 @@ var queryform = "queryform"
 
 </form>
 
-[% PROCESS "search/search-help.html.tmpl" IF help %]
+[% PROCESS "search/search-help.html.tmpl" IF cgi.param("help") %]
+
+[% END %]
 
 [% PROCESS global/footer.html.tmpl %]

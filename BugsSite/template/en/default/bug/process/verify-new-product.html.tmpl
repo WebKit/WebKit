@@ -17,6 +17,7 @@
   # Rights Reserved.
   #
   # Contributor(s): Myk Melez <myk@mozilla.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# INTERFACE:
@@ -31,6 +32,8 @@
   #   if they want to add the bug to its new product's group
   # use_target_milestone: boolean; whether or not to use
   #   the target milestone field
+  # old_groups: a list of group objects which are not available
+  #   for the new product.
   #%]
 
 [%# The global Bugzilla->cgi object is used to obtain form variable values. %]
@@ -47,6 +50,7 @@
 [% PROCESS "global/hidden-fields.html.tmpl"
      exclude=(verify_fields ? "^version|component|target_milestone$" : "") %]
 
+<input type="hidden" name="confirm_product_change" value="1">
 [%# Verify the version, component, and target milestone fields. %]
 [% IF verify_fields %]
   <h3>Verify Version, Component[% ", Target Milestone" IF use_target_milestone %]</h3>
@@ -63,22 +67,34 @@
     and the version and component fields are no longer correct.
     Please set the correct version and component now:
   [% END %]
-  <p>
+  </p>
 
   <table>
     <tr>
       <td>
         <b>Version:</b><br>
-        [% PROCESS "global/select-menu.html.tmpl" name="version" options=versions default=defaults.version %]
+        [% PROCESS "global/select-menu.html.tmpl" 
+                   name="version"
+                   options=versions
+                   default=defaults.version
+                   size=10 %]
       </td>
       <td>
         <b>Component:</b><br>
-        [% PROCESS "global/select-menu.html.tmpl" name="component" options=components default=defaults.component %]
+        [% PROCESS "global/select-menu.html.tmpl"
+                   name="component"
+                   options=components
+                   default=defaults.component
+                   size=10 %]
       </td>
       [% IF use_target_milestone %]
         <td>
           <b>Target Milestone:</b><br>
-        [% PROCESS "global/select-menu.html.tmpl" name="target_milestone" options=milestones default=defaults.target_milestone %]
+        [% PROCESS "global/select-menu.html.tmpl"
+                   name="target_milestone"
+                   options=milestones
+                   default=defaults.target_milestone
+                   size=10 %]
         </td>
       [% END %]
     </tr>
@@ -86,26 +102,50 @@
 
 [% END %]
 
-[% IF verify_bug_group %]
+[% IF verify_bug_group || old_groups.size %]
   <h3>Verify [% terms.Bug %] Group</h3>
 
-  <p>
-    Do you want to add the [% terms.bug %] to its new product's default groups (if any)?
-  </p>
+  [% IF old_groups.size %]
+    <p>The following groups are not legal for the <b>[% cgi.param("product") FILTER html %]</b>
+    product or you are not allowed to restrict [% terms.bugs %] to these groups:</p>
+    <ul>
+      [% FOREACH group = old_groups %]
+        <li>[% group.name FILTER html %]: [% group.description FILTER html %]</li>
+      [% END %]
+    </ul>
+    <p><b>[%+ terms.Bugs %] will no longer be restricted to these groups and may become
+    public if no other group applies.</b></p>
+  [% END %]
 
-  <p>
-    <input type="radio" name="addtonewgroup" value="no"><b>no</b><br>
-    <input type="radio" name="addtonewgroup" value="yes"><b>yes</b><br>
-    <input type="radio" name="addtonewgroup" value="yesifinold" checked="checked">
-      <b>yes, but only if the [% terms.bug %] was in any of its old product's default groups</b><br>
-  </p>
+  [% IF verify_bug_group %]
+    <p>
+      This new product has default groups associated to it. Do you want to add the
+      [%+ terms.bug %] to them?<br>
+      <input type="radio" id="add_no" name="addtonewgroup" value="no"><label for="add_no">no</label><br>
+      <input type="radio" id="add_yes" name="addtonewgroup" value="yes"><label for="add_yes">yes</label><br>
+      <input type="radio" id="add_yesifinold" name="addtonewgroup" value="yesifinold" checked="checked">
+        <label for="add_yesifinold">yes, but only if the [% terms.bug %] was in any of
+        its old product's default groups</label>
+    </p>
+  [% END %]
 [% END %]
 
-<input type="submit" value="Commit">
+<p>
+  <input type="submit" id="change_product" value="Commit">
+</p>
 
 </form>
 <hr>
-<a href="query.cgi">Cancel and Return to the Search Page</a>
+
+[%# If 'id' is defined, then we are editing a single bug.
+  # Else we are editing several bugs at once. %]
+
+[% IF cgi.param('id') AND cgi.param('id').match('^\d+$') %]
+  [% id = cgi.param('id') %]
+  Cancel and Return to [% "$terms.bug $id" FILTER bug_link(id) FILTER none %]
+[% ELSE %]
+  Cancel and Return to <a href="buglist.cgi?regetlastlist=1">the last search results</a>
+[% END %]
 
 [% PROCESS global/footer.html.tmpl %]
 

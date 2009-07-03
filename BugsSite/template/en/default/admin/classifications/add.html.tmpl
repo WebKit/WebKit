@@ -31,12 +31,25 @@
     </tr>
     <tr>
       <th align="right">Description:</th>
-      <td><textarea rows=4 cols=64 wrap=virtual name="description"></textarea></td>
+      <td>
+        [% INCLUDE global/textarea.html.tmpl
+          name    = 'description'
+          minrows = 4
+          cols    = 64
+          wrap    = 'virtual'
+        %]
+      </td>
+    </tr>
+    <tr>
+      <th align="right"><label for="sortkey">Sortkey:</label></th>
+      <td><input id="sortkey" size="20" maxlength="20" name="sortkey" 
+                 value=""></td>
     </tr>
   </table>
   <hr>
   <input type=submit value="Add">
   <input type=hidden name="action" value="new">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </FORM>
 
 <p>Back to the <a href="./">main [% terms.bugs %] page</a>

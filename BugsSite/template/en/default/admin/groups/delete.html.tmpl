@@ -30,6 +30,7 @@
   # hasbugs: boolean int. True if the group includes bugs in it.
   # hasproduct: boolean int. True if the group is binded to a product.
   # hasflags: boolean int. True if the group is used by a flag type.
+  # shared_queries: int. Number of saved searches being shared with this group.
   # buglist: string. The list of bugs included in this group.
   #%]
 
@@ -47,7 +48,7 @@
   <tr>
     <td>[% gid FILTER html %]</td>
     <td>[% name FILTER html %]</td>
-    <td>[% description FILTER html %]</td>
+    <td>[% description FILTER html_light %]</td>
   </tr>
 </table>
 
@@ -80,7 +81,7 @@
     You cannot delete this group while it is tied to a product.</b>
 
     <br><input type="checkbox" name="unbind">Delete this group anyway,
-    and make the <U>[% name FILTER html %]</U> publicly visible.</p>
+    and make the product <U>[% name FILTER html %]</U> publicly visible.</p>
   [% END %]
   
   [% IF hasflags %]
@@ -92,6 +93,25 @@
     flag types from this group for me.</p>
   [% END %]
 
+  [% IF shared_queries %]
+    <p>
+      <b>There
+      [% IF shared_queries > 1 %]
+        are [% shared_queries %] saved searches
+      [% ELSE %]
+        is a saved search
+      [% END %]
+      being shared with this group.</b>
+      If you delete this group,
+      [% IF shared_queries > 1 %]
+        these saved searches
+      [% ELSE %]
+        this saved search
+      [% END %]
+      will fall back to being private again.
+    </p>
+  [% END %]
+
   <h2>Confirmation</h2>
 
   <p>Do you really want to delete this group?</p>
@@ -100,9 +120,12 @@
           indicated problems first before you can proceed.</b></p>
   [% END %]
 
-  <p><input type="submit" value="Yes, delete">
-  <input type="hidden" name="action" value="delete">
-  <input type="hidden" name="group" value="[% gid FILTER html %]">
+  <p>
+    <input type="submit" id="delete" value="Yes, delete">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="group" value="[% gid FILTER html %]">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
+  </p>
 </form>
 
 Go back to the <a href="editgroups.cgi">group list</a>.

@@ -25,25 +25,23 @@ use strict;
 
 use lib qw(.);
 
-require "CGI.pl";
+use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::BugMail;
 
 my $dbh = Bugzilla->dbh;
-SendSQL("SELECT bug_id FROM bugs 
-          WHERE lastdiffed IS NULL
-                OR lastdiffed < delta_ts AND  delta_ts < NOW() - " 
-                 . $dbh->sql_interval(30, 'MINUTE') .
-        " ORDER BY bug_id");
-my @list;
-while (MoreSQLData()) {
-    push (@list, FetchOneColumn());
-}
 
-if (scalar(@list) > 0) {
+my $list = $dbh->selectcol_arrayref(
+        'SELECT bug_id FROM bugs 
+          WHERE lastdiffed IS NULL
+             OR lastdiffed < delta_ts 
+            AND delta_ts < NOW() - ' . $dbh->sql_interval(30, 'MINUTE') .
+     ' ORDER BY bug_id');
+
+if (scalar(@$list) > 0) {
     print "OK, now attempting to send unsent mail\n";
-    print scalar(@list) . " bugs found with possibly unsent mail.\n\n";
-    foreach my $bugid (@list) {
+    print scalar(@$list) . " bugs found with possibly unsent mail.\n\n";
+    foreach my $bugid (@$list) {
         my $start_time = time;
         print "Sending mail for bug $bugid...\n";
         my $outputref = Bugzilla::BugMail::Send($bugid);

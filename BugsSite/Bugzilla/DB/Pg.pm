@@ -23,6 +23,7 @@
 #                 Dave Lawrence <dkl@redhat.com>
 #                 Tomas Kopal <Tomas.Kopal@altap.cz>
 #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+#                 Lance Larsh <lance.larsh@oracle.com>
 
 =head1 NAME
 
@@ -49,10 +50,6 @@ use DBD::Pg;
 use base qw(Bugzilla::DB);
 
 use constant BLOB_TYPE => { pg_type => DBD::Pg::PG_BYTEA };
-use constant REQUIRED_VERSION => '7.03.0000';
-use constant PROGRAM_NAME => 'PostgreSQL';
-use constant MODULE_NAME  => 'Pg';
-use constant DBD_VERSION  => '1.31';
 
 sub new {
     my ($class, $user, $pass, $host, $dbname, $port) = @_;
@@ -63,9 +60,14 @@ sub new {
     $dbname ||= 'template1';
 
     # construct the DSN from the parameters we got
-    my $dsn = "DBI:Pg:host=$host;dbname=$dbname";
+    my $dsn = "DBI:Pg:dbname=$dbname";
+    $dsn .= ";host=$host" if $host;
     $dsn .= ";port=$port" if $port;
-   
+
+    # This stops Pg from printing out lots of "NOTICE" messages when
+    # creating tables.
+    $dsn .= ";options='-c client_min_messages=warning'";
+
     my $self = $class->db_new($dsn, $user, $pass);
 
     # all class local variables stored in DBI derived class needs to have
@@ -89,11 +91,15 @@ sub bz_last_key {
 }
 
 sub sql_regexp {
-    return "~*";
+    my ($self, $expr, $pattern) = @_;
+
+    return "$expr ~* $pattern";
 }
 
 sub sql_not_regexp {
-    return "!~*" 
+    my ($self, $expr, $pattern) = @_;
+
+    return "$expr !~* $pattern" 
 }
 
 sub sql_limit {
@@ -115,7 +121,7 @@ sub sql_from_days {
 sub sql_to_days {
     my ($self, $date) = @_;
 
-    return "TO_CHAR($date, 'J')::int";
+    return "TO_CHAR(${date}::date, 'J')::int";
 }
 
 sub sql_date_format {
@@ -206,6 +212,15 @@ sub bz_unlock_tables {
     }
 }
 
+# Tell us whether or not a particular sequence exists in the DB.
+sub bz_sequence_exists {
+    my ($self, $seq_name) = @_;
+    my $exists = $self->selectrow_array(
+        'SELECT 1 FROM pg_statio_user_sequences WHERE relname = ?',
+        undef, $seq_name);
+    return $exists || 0;
+}
+
 #####################################################################
 # Custom Database Setup
 #####################################################################
@@ -223,6 +238,59 @@ sub bz_setup_database {
     # login_name, which we do with sql_istrcmp all over the place.
     $self->bz_add_index('profiles', 'profiles_login_name_lower_idx', 
         {FIELDS => ['LOWER(login_name)'], TYPE => 'UNIQUE'});
+
+    # Now that Bugzilla::Object uses sql_istrcmp, other tables
+    # also need a LOWER() index.
+    _fix_case_differences('fielddefs', 'name');
+    $self->bz_add_index('fielddefs', 'fielddefs_name_lower_idx',
+        {FIELDS => ['LOWER(name)'], TYPE => 'UNIQUE'});
+    _fix_case_differences('keyworddefs', 'name');
+    $self->bz_add_index('keyworddefs', 'keyworddefs_name_lower_idx',
+        {FIELDS => ['LOWER(name)'], TYPE => 'UNIQUE'});
+    _fix_case_differences('products', 'name');
+    $self->bz_add_index('products', 'products_name_lower_idx',
+        {FIELDS => ['LOWER(name)'], TYPE => 'UNIQUE'});
+
+    # bz_rename_column didn't correctly rename the sequence.
+    if ($self->bz_column_info('fielddefs', 'id')
+        && $self->bz_sequence_exists('fielddefs_fieldid_seq')) 
+    {
+        print "Fixing fielddefs_fieldid_seq sequence...\n";
+        $self->do("ALTER TABLE fielddefs_fieldid_seq RENAME TO fielddefs_id_seq");
+        $self->do("ALTER TABLE fielddefs ALTER COLUMN id
+                    SET DEFAULT NEXTVAL('fielddefs_id_seq')");
+    }
+}
+
+# Renames things that differ only in case.
+sub _fix_case_differences {
+    my ($table, $field) = @_;
+    my $dbh = Bugzilla->dbh;
+
+    my $duplicates = $dbh->selectcol_arrayref(
+          "SELECT DISTINCT LOWER($field) FROM $table 
+        GROUP BY LOWER($field) HAVING COUNT(LOWER($field)) > 1");
+
+    foreach my $name (@$duplicates) {
+        my $dups = $dbh->selectcol_arrayref(
+            "SELECT $field FROM $table WHERE LOWER($field) = ?",
+            undef, $name);
+        my $primary = shift @$dups;
+        foreach my $dup (@$dups) {
+            my $new_name = "${dup}_";
+            # Make sure the new name isn't *also* a duplicate.
+            while (1) {
+                last if (!$dbh->selectrow_array(
+                             "SELECT 1 FROM $table WHERE LOWER($field) = ?",
+                              undef, lc($new_name)));
+                $new_name .= "_";
+            }
+            print "$table '$primary' and '$dup' have names that differ",
+                  " only in case.\nRenaming '$dup' to '$new_name'...\n";
+            $dbh->do("UPDATE $table SET $field = ? WHERE $field = ?",
+                     undef, $new_name, $dup);
+        }
+    }
 }
 
 #####################################################################

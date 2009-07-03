@@ -19,7 +19,7 @@
   # Contributor(s): Myk Melez <myk@mozilla.org>
   #%]
 
-<?xml version="1.0"?>
+<?xml version="1.0"[% IF Param('utf8') %] encoding="UTF-8"[% END %]?>
 <!-- Note: this interface is experimental and under development.
    - We may and probably will make breaking changes to it in the future. -->
 
@@ -28,7 +28,7 @@
      xmlns:bz="http://www.bugzilla.org/rdf#">
 
 <bz:installation rdf:about="[% Param('urlbase') FILTER html %]">
-  <bz:install_version>[% VERSION FILTER html %]</bz:install_version>
+  <bz:install_version>[% constants.BUGZILLA_VERSION FILTER html %]</bz:install_version>
   <bz:maintainer>[% Param('maintainer') FILTER html %]</bz:maintainer>
 
   <bz:status>
@@ -103,25 +103,36 @@
     </Seq>
   </bz:severity>
 
+[% FOREACH cf = custom_fields %]
+  <bz:[% cf.name FILTER html %]>
+    <Seq>
+      [% FOREACH item = cf.legal_values %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:[% cf.name FILTER html %]>
+
+[% END %]
+
   <bz:products>
     <Seq>
-      [% FOREACH product = legal_products %]
+      [% FOREACH product = products %]
         <li>
-          <bz:product rdf:about="[% Param('urlbase') %]product.cgi?name=[% product FILTER uri %]">
-            <bz:name>[% product FILTER html %]</bz:name>
+          <bz:product rdf:about="[% Param('urlbase') %]product.cgi?name=[% product.name FILTER url_quote %]">
+            <bz:name>[% product.name FILTER html %]</bz:name>
 
             <bz:components>
               <Seq>
-                [% FOREACH component = components_by_product.$product %]
-                  <li resource="[% Param('urlbase') %]component.cgi?name=[% component FILTER uri %]"/>
+                [% FOREACH component = product.components %]
+                  <li resource="[% Param('urlbase') %]component.cgi?name=[% component.name FILTER url_quote %]"/>
                 [% END %]
               </Seq>
             </bz:components>
 
             <bz:versions>
               <Seq>
-                [% FOREACH version = versions_by_product.$product %]
-                  <li resource="[% Param('urlbase') %]version.cgi?name=[% version FILTER uri %]"/>
+                [% FOREACH version = product.versions %]
+                  <li resource="[% Param('urlbase') %]version.cgi?name=[% version.name FILTER url_quote %]"/>
                 [% END %]
               </Seq>
             </bz:versions>
@@ -129,8 +140,8 @@
             [% IF Param('usetargetmilestone') %]
               <bz:target_milestones>
                 <Seq>
-                  [% FOREACH milestone = milestones_by_product.$product %]
-                    <li resource="[% Param('urlbase') %]milestone.cgi?name=[% milestone FILTER uri %]"/>
+                  [% FOREACH milestone = product.milestones %]
+                    <li resource="[% Param('urlbase') %]milestone.cgi?name=[% milestone.name FILTER url_quote %]"/>
                   [% END %]
                 </Seq>
               </bz:target_milestones>
@@ -144,24 +155,28 @@
 
   <bz:components>
     <Seq>
-      [% FOREACH item = legal_components %]
-        <li>
-          <bz:component rdf:about="[% Param('urlbase') %]component.cgi?name=[% item FILTER uri %]">
-            <bz:name>[% item FILTER html %]</bz:name>
-          </bz:component>
-        </li>
+      [% FOREACH product = products %]
+        [% FOREACH component = product.components %]
+          <li>
+            <bz:component rdf:about="[% Param('urlbase') %]component.cgi?name=[% component.name FILTER url_quote %]">
+              <bz:name>[% component.name FILTER html %]</bz:name>
+            </bz:component>
+          </li>
+        [% END %]
       [% END %]
     </Seq>
   </bz:components>
 
   <bz:versions>
     <Seq>
-      [% FOREACH item = legal_versions %]
-        <li>
-          <bz:version rdf:about="[% Param('urlbase') %]version.cgi?name=[% item FILTER uri %]">
-            <bz:name>[% item FILTER html %]</bz:name>
-          </bz:version>
-        </li>
+      [% FOREACH product = products %]
+        [% FOREACH version = product.versions %]
+          <li>
+            <bz:version rdf:about="[% Param('urlbase') %]version.cgi?name=[% version.name FILTER url_quote %]">
+              <bz:name>[% version.name FILTER html %]</bz:name>
+            </bz:version>
+          </li>
+        [% END %]
       [% END %]
     </Seq>
   </bz:versions>
@@ -169,12 +184,14 @@
   [% IF Param('usetargetmilestone') %]
     <bz:target_milestones>
       <Seq>
-        [% FOREACH item = legal_milestones %]
-          <li>
-            <bz:target_milestone rdf:about="[% Param('urlbase') %]milestone.cgi?name=[% item FILTER uri %]">
-              <bz:name>[% item FILTER html %]</bz:name>
-            </bz:target_milestone>
-          </li>
+        [% FOREACH product = products %]
+          [% FOREACH milestone = product.milestones %]
+            <li>
+              <bz:target_milestone rdf:about="[% Param('urlbase') %]milestone.cgi?name=[% milestone.name FILTER url_quote %]">
+                <bz:name>[% milestone.name FILTER html %]</bz:name>
+              </bz:target_milestone>
+            </li>
+          [% END %]
         [% END %]
       </Seq>
     </bz:target_milestones>
@@ -185,7 +202,7 @@
       [% PROCESS "global/field-descs.none.tmpl" %]
       [% FOREACH item = field %]
         <li>
-          <bz:field rdf:about="[% Param('urlbase') %]field.cgi?name=[% item.name FILTER uri %]">
+          <bz:field rdf:about="[% Param('urlbase') %]field.cgi?name=[% item.name FILTER url_quote %]">
             <bz:name>[% item.name FILTER html %]</bz:name>
             <bz:description>[% (field_descs.${item.name} OR item.description) FILTER html %]</bz:description>
           </bz:field>

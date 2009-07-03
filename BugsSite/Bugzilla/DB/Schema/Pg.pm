@@ -30,8 +30,8 @@ package Bugzilla::DB::Schema::Pg;
 ###############################################################################
 
 use strict;
-
 use base qw(Bugzilla::DB::Schema);
+use Storable qw(dclone);
 
 #------------------------------------------------------------------------------
 sub _initialize {
@@ -90,54 +90,77 @@ sub _initialize {
 } #eosub--_initialize
 #--------------------------------------------------------------------
 
-# Overridden because Pg has such weird ALTER TABLE problems.
-sub get_add_column_ddl {
-    my ($self, $table, $column, $definition, $init_value) = @_;
+sub get_rename_column_ddl {
+    my ($self, $table, $old_name, $new_name) = @_;
+    if (lc($old_name) eq lc($new_name)) {
+        # if the only change is a case change, return an empty list, since Pg
+        # is case-insensitive and will return an error about a duplicate name
+        return ();
+    }
+    my @sql = ("ALTER TABLE $table RENAME COLUMN $old_name TO $new_name");
+    my $def = $self->get_column_abstract($table, $old_name);
+    if ($def->{TYPE} =~ /SERIAL/i) {
+        # We have to rename the series also, and fix the default of the series.
+        push(@sql, "ALTER TABLE ${table}_${old_name}_seq 
+                      RENAME TO ${table}_${new_name}_seq");
+        push(@sql, "ALTER TABLE $table ALTER COLUMN $new_name 
+                    SET DEFAULT NEXTVAL('${table}_${new_name}_seq')");
+    }
+    return @sql;
+}
 
+sub get_rename_table_sql {
+    my ($self, $old_name, $new_name) = @_;
+    if (lc($old_name) eq lc($new_name)) {
+        # if the only change is a case change, return an empty list, since Pg
+        # is case-insensitive and will return an error about a duplicate name
+        return ();
+    }
+    return ("ALTER TABLE $old_name RENAME TO $new_name");
+}
+
+sub _get_alter_type_sql {
+    my ($self, $table, $column, $new_def, $old_def) = @_;
     my @statements;
-    my $specific = $self->{db_specific};
 
-    my $type = $definition->{TYPE};
-    $type = $specific->{$type} if exists $specific->{$type};
-    push(@statements, "ALTER TABLE $table ADD COLUMN $column $type");
+    my $type = $new_def->{TYPE};
+    $type = $self->{db_specific}->{$type} 
+        if exists $self->{db_specific}->{$type};
 
-    my $default = $definition->{DEFAULT};
-    if (defined $default) {
-        # Replace any abstract default value (such as 'TRUE' or 'FALSE')
-        # with its database-specific implementation.
-        $default = $specific->{$default} if exists $specific->{$default};
-        push(@statements, "ALTER TABLE $table ALTER COLUMN $column "
-                         . " SET DEFAULT $default");
+    if ($type =~ /serial/i && $old_def->{TYPE} !~ /serial/i) {
+        die("You cannot specify a DEFAULT on a SERIAL-type column.") 
+            if $new_def->{DEFAULT};
+        $type =~ s/serial/integer/i;
     }
 
-    if (defined $init_value) {
-        push(@statements, "UPDATE $table SET $column = $init_value");
+    # On Pg, you don't need UNIQUE if you're a PK--it creates
+    # two identical indexes otherwise.
+    $type =~ s/unique//i if $new_def->{PRIMARYKEY};
+
+    push(@statements, "ALTER TABLE $table ALTER COLUMN $column
+                              TYPE $type");
+
+    if ($new_def->{TYPE} =~ /serial/i && $old_def->{TYPE} !~ /serial/i) {
+        push(@statements, "CREATE SEQUENCE ${table}_${column}_seq");
+        push(@statements, "SELECT setval('${table}_${column}_seq',
+                                         MAX($table.$column))
+                             FROM $table");
+        push(@statements, "ALTER TABLE $table ALTER COLUMN $column 
+                           SET DEFAULT nextval('${table}_${column}_seq')");
     }
 
-    if ($definition->{NOTNULL}) {
-        # Handle rows that were NULL when we added the column.
-        # We *must* have a DEFAULT. This check is usually handled
-        # at a higher level than this code, but I figure it can't
-        # hurt to have it here.
-        die "NOT NULL columns must have a DEFAULT or an init_value."
-            unless (exists $definition->{DEFAULT} || defined $init_value);
-        push(@statements, "UPDATE $table SET $column = $default");
-        push(@statements, "ALTER TABLE $table ALTER COLUMN $column "
-                         . " SET NOT NULL");
-    }
-
-    if ($definition->{PRIMARYKEY}) {
-         push(@statements, "ALTER TABLE $table ALTER COLUMN "
-                         . " ADD PRIMARY KEY ($column)");
+    # If this column is no longer SERIAL, we need to drop the sequence
+    # that went along with it.
+    if ($old_def->{TYPE} =~ /serial/i && $new_def->{TYPE} !~ /serial/i) {
+        push(@statements, "ALTER TABLE $table ALTER COLUMN $column 
+                           DROP DEFAULT");
+        # XXX Pg actually won't let us drop the sequence, even though it's
+        #     no longer in use. So we harmlessly leave behind a sequence
+        #     that does nothing.
+        #push(@statements, "DROP SEQUENCE ${table}_${column}_seq");
     }
 
     return @statements;
-}
-
-sub get_rename_column_ddl {
-    my ($self, $table, $old_name, $new_name) = @_;
-
-    return ("ALTER TABLE $table RENAME COLUMN $old_name TO $new_name");
 }
 
 1;

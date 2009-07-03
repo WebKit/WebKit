@@ -29,25 +29,18 @@
 
 [% PROCESS global/header.html.tmpl
   title = "Changes Submitted"
-  style = "th { text-align: left; }"
 %]
 
-<hr>
-
-<table border="1">
-  <tr>
-    <td>
-      <h2>Changes to
-        <a href="attachment.cgi?id=[% attachid %]&amp;action=edit">attachment [% attachid %]</a>
-        of [% terms.bug %] [%+ bugid %] submitted
-      </h2>
-      [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = bugid %]
-    </td>
-
-    <td>
-      <a href="show_bug.cgi?id=[% bugid %]">Back to [% terms.Bug %] #[% bugid %]</a>
-    </td>
-  </tr>
-</table>
+<dl>
+  <dt>Changes to
+    <a href="attachment.cgi?id=[% attachid %]&amp;action=edit">attachment [% attachid %]</a>
+    of [% "$terms.bug $bugid" FILTER bug_link(bugid) %] submitted
+  </dt>
+  <dd>
+    [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = bugid %]
+    [%# Links to more information about the changed bug. %]
+    [% Hook.process("links") %]
+  </dd>
+</dl>
 
 [% PROCESS global/footer.html.tmpl %]

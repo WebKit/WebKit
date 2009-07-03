@@ -98,6 +98,10 @@ sub find_templates {
         my $local_dir = File::Spec->abs2rel($File::Find::dir,
                                             $File::Find::topdir);
 
+        # File::Spec 3.13 and newer return "." instead of "" if both
+        # arguments of abs2rel() are identical.
+        $local_dir = "" if ($local_dir eq ".");
+
         if ($local_dir) {
             $filename = File::Spec->catfile($local_dir, $_);
         } else {

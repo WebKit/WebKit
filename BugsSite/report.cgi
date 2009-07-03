@@ -24,14 +24,16 @@
 use strict;
 use lib ".";
 
-require "CGI.pl";
-
-use vars qw($template $vars @legal_opsys @legal_platform @legal_severity);
-
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::Field;
 
 my $cgi = Bugzilla->cgi;
+my $template = Bugzilla->template;
+my $vars = {};
+my $buffer = $cgi->query_string();
 
 # Go straight back to query.cgi if we are adding a boolean chart.
 if (grep(/^cmd-/, $cgi->param())) {
@@ -45,11 +47,9 @@ if (grep(/^cmd-/, $cgi->param())) {
 
 use Bugzilla::Search;
 
-GetVersionTable();
-
 Bugzilla->login();
 
-Bugzilla->switch_to_shadow_db();
+my $dbh = Bugzilla->switch_to_shadow_db();
 
 my $action = $cgi->param('action') || 'menu';
 
@@ -146,7 +146,7 @@ my $query = $search->getSQL();
 $::SIG{TERM} = 'DEFAULT';
 $::SIG{PIPE} = 'DEFAULT';
 
-SendSQL($query);
+my $results = $dbh->selectall_arrayref($query);
 
 # We have a hash of hashes for the data itself, and a hash to hold the 
 # row/col/table names.
@@ -162,8 +162,8 @@ my $col_isnumeric = 1;
 my $row_isnumeric = 1;
 my $tbl_isnumeric = 1;
 
-while (MoreSQLData()) {
-    my ($row, $col, $tbl) = FetchSQLData();
+foreach my $result (@$results) {
+    my ($row, $col, $tbl) = @$result;
 
     # handle empty dimension member names
     $row = ' ' if ($row eq '');
@@ -266,9 +266,9 @@ if ($action eq "wrap") {
     # We need to keep track of the defined restrictions on each of the 
     # axes, because buglistbase, below, throws them away. Without this, we
     # get buglistlinks wrong if there is a restriction on an axis field.
-    $vars->{'col_vals'} = join("&", $::buffer =~ /[&?]($col_field=[^&]+)/g);
-    $vars->{'row_vals'} = join("&", $::buffer =~ /[&?]($row_field=[^&]+)/g);
-    $vars->{'tbl_vals'} = join("&", $::buffer =~ /[&?]($tbl_field=[^&]+)/g);
+    $vars->{'col_vals'} = join("&", $buffer =~ /[&?]($col_field=[^&]+)/g);
+    $vars->{'row_vals'} = join("&", $buffer =~ /[&?]($row_field=[^&]+)/g);
+    $vars->{'tbl_vals'} = join("&", $buffer =~ /[&?]($tbl_field=[^&]+)/g);
     
     # We need a number of different variants of the base URL for different
     # URLs in the HTML.
@@ -292,7 +292,8 @@ else {
     ThrowCodeError("unknown_action", {action => $cgi->param('action')});
 }
 
-my $format = GetFormat("reports/report", $formatparam, $cgi->param('ctype'));
+my $format = $template->get_format("reports/report", $formatparam,
+                                   scalar($cgi->param('ctype')));
 
 # If we get a template or CGI error, it comes out as HTML, which isn't valid
 # PNG data, and the browser just displays a "corrupt PNG" message. So, you can
@@ -325,12 +326,12 @@ sub get_names {
     my ($names, $isnumeric, $field) = @_;
   
     # These are all the fields we want to preserve the order of in reports.
-    my %fields = ('priority'     => \@::legal_priority,
-                  'bug_severity' => \@::legal_severity,
-                  'rep_platform' => \@::legal_platform,
-                  'op_sys'       => \@::legal_opsys,
-                  'bug_status'   => \@::legal_bug_status,
-                  'resolution'   => [' ', @::legal_resolution]);
+    my %fields = ('priority'     => get_legal_field_values('priority'),
+                  'bug_severity' => get_legal_field_values('bug_severity'),
+                  'rep_platform' => get_legal_field_values('rep_platform'),
+                  'op_sys'       => get_legal_field_values('op_sys'),
+                  'bug_status'   => get_legal_field_values('bug_status'),
+                  'resolution'   => [' ', @{get_legal_field_values('resolution')}]);
     
     my $field_list = $fields{$field};
     my @sorted;

@@ -25,16 +25,30 @@ use strict;
 
 package Bugzilla::CGI;
 
+BEGIN {
+    if ($^O =~ /MSWin32/i) {
+        # Help CGI find the correct temp directory as the default list
+        # isn't Windows friendly (Bug 248988)
+        $ENV{'TMPDIR'} = $ENV{'TEMP'} || $ENV{'TMP'} || "$ENV{'WINDIR'}\\TEMP";
+    }
+}
+
 use CGI qw(-no_xhtml -oldstyle_urls :private_tempfiles :unique_headers SERVER_PUSH);
 
 use base qw(CGI);
 
+use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Bugzilla::Config;
 
 # We need to disable output buffering - see bug 179174
 $| = 1;
+
+# Ignore SIGTERM and SIGPIPE - this prevents DB corruption. If the user closes
+# their browser window while a script is running, the webserver sends these
+# signals, and we don't want to die half way through a write.
+$::SIG{TERM} = 'IGNORE';
+$::SIG{PIPE} = 'IGNORE';
 
 # CGI.pm uses AUTOLOAD, but explicitly defines a DESTROY sub.
 # We need to do so, too, otherwise perl dies when the object is destroyed
@@ -48,15 +62,25 @@ sub new {
 
     my $self = $class->SUPER::new(@args);
 
+    if (Bugzilla->error_mode eq ERROR_MODE_WEBPAGE) {
+        # This happens here so that command-line scripts don't spit out
+        # their errors in HTML format.
+        require CGI::Carp;
+        import CGI::Carp qw(fatalsToBrowser);
+    }
+
     # Make sure our outgoing cookie list is empty on each invocation
     $self->{Bugzilla_cookie_list} = [];
 
-    # Make sure that we don't send any charset headers
-    $self->charset('');
+    # Send appropriate charset
+    $self->charset(Bugzilla->params->{'utf8'} ? 'UTF-8' : '');
 
     # Redirect to SSL if required
-    if (Param('sslbase') ne '' and Param('ssl') eq 'always' and i_am_cgi()) {
-        $self->require_https(Param('sslbase'));
+    if (Bugzilla->params->{'sslbase'} ne ''
+        && Bugzilla->params->{'ssl'} eq 'always'
+        && i_am_cgi())
+    {
+        $self->require_https(Bugzilla->params->{'sslbase'});
     }
 
     # Check for errors
@@ -66,13 +90,6 @@ sub new {
     my $err = $self->cgi_error;
 
     if ($err) {
-        # XXX - under mod_perl we can use the request object to
-        # enable the apache ErrorDocument stuff, which is localisable
-        # (and localised by default under apache2).
-        # This doesn't appear to be possible under mod_cgi.
-        # Under mod_perl v2, though, this happens automatically, and the
-        # message body is ignored.
-
         # Note that this error block is only triggered by CGI.pm for malformed
         # multipart requests, and so should never happen unless there is a
         # browser bug.
@@ -107,7 +124,7 @@ sub canonicalise_query {
         my $esc_key = url_quote($key);
 
         foreach my $value ($self->param($key)) {
-            if ($value) {
+            if (defined($value)) {
                 my $esc_value = url_quote($value);
 
                 push(@parameters, "$esc_key=$esc_value");
@@ -116,6 +133,31 @@ sub canonicalise_query {
     }
 
     return join("&", @parameters);
+}
+
+sub clean_search_url {
+    my $self = shift;
+    # Delete any empty URL parameter
+    my @cgi_params = $self->param;
+
+    foreach my $param (@cgi_params) {
+        if (defined $self->param($param) && $self->param($param) eq '') {
+            $self->delete($param);
+            $self->delete("${param}_type");
+        }
+
+        # Boolean Chart stuff is empty if it's "noop"
+        if ($param =~ /\d-\d-\d/ && defined $self->param($param)
+            && $self->param($param) eq 'noop')
+        {
+            $self->delete($param);
+        }
+    }
+
+    # Delete certain parameters if the associated parameter is empty.
+    $self->delete('bugidtype')  if !$self->param('bug_id');
+    $self->delete('emailtype1') if !$self->param('email1');
+    $self->delete('emailtype2') if !$self->param('email2');
 }
 
 # Overwrite to ensure nph doesn't get set, and unset HEADERS_ONCE
@@ -139,14 +181,39 @@ sub multipart_init {
     # Note: CGI.pm::multipart_init up to v3.04 explicitly set nph to 0
     # CGI.pm::multipart_init v3.05 explicitly sets nph to 1
     # CGI.pm's header() sets nph according to a param or $CGI::NPH, which
-    # is the desired behavour.
-
-    # Allow multiple calls to $cgi->header()
-    $CGI::HEADERS_ONCE = 0;
+    # is the desired behaviour.
 
     return $self->header(
         %param,
     ) . "WARNING: YOUR BROWSER DOESN'T SUPPORT THIS SERVER-PUSH TECHNOLOGY." . $self->multipart_end;
+}
+
+# Have to add the cookies in.
+sub multipart_start {
+    my $self = shift;
+    
+    my %args = @_;
+
+    # CGI.pm::multipart_start doesn't accept a -charset parameter, so
+    # we do it ourselves here
+    if (defined $args{-charset} && defined $args{-type}) {
+        # Remove any existing charset specifier
+        $args{-type} =~ s/;.*$//;
+        # and add the specified one
+        $args{-type} .= "; charset=$args{-charset}";
+    }
+        
+    my $headers = $self->SUPER::multipart_start(%args);
+    # Eliminate the one extra CRLF at the end.
+    $headers =~ s/$CGI::CRLF$//;
+    # Add the cookies. We have to do it this way instead of
+    # passing them to multpart_start, because CGI.pm's multipart_start
+    # doesn't understand a '-cookie' argument pointing to an arrayref.
+    foreach my $cookie (@{$self->{Bugzilla_cookie_list}}) {
+        $headers .= "Set-Cookie: ${cookie}${CGI::CRLF}";
+    }
+    $headers .= $CGI::CRLF;
+    return $headers;
 }
 
 # Override header so we can add the cookies in
@@ -166,15 +233,8 @@ sub header {
     return $self->SUPER::header(@_) || "";
 }
 
-# Override multipart_start to ensure our cookies are added and avoid bad quoting of
-# CGI's multipart_start (bug 275108)
-sub multipart_start {
-    my $self = shift;
-    return $self->header(@_);
-}
-
 # The various parts of Bugzilla which create cookies don't want to have to
-# pass them arround to all of the callers. Instead, store them locally here,
+# pass them around to all of the callers. Instead, store them locally here,
 # and then output as required from |header|.
 sub send_cookie {
     my $self = shift;
@@ -194,8 +254,9 @@ sub send_cookie {
     }
 
     # Add the default path and the domain in.
-    $paramhash{'-path'} = Param('cookiepath');
-    $paramhash{'-domain'} = Param('cookiedomain') if Param('cookiedomain');
+    $paramhash{'-path'} = Bugzilla->params->{'cookiepath'};
+    $paramhash{'-domain'} = Bugzilla->params->{'cookiedomain'}
+        if Bugzilla->params->{'cookiedomain'};
 
     # Move the param list back into an array for the call to cookie().
     foreach (keys(%paramhash)) {

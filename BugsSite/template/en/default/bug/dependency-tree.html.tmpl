@@ -19,141 +19,152 @@
   # Contributor(s): Tobias Burnus <burnus@net-b.de>
   #                 Ville Skyttä <ville.skytta@iki.fi>
   #                 Myk Melez <myk@mozilla.org>
+  #                 André Batosti <batosti@async.com.br>
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
+[% filtered_desc = blocked_tree.$bugid.short_desc FILTER html %]
 [% PROCESS global/header.html.tmpl
-   title = "Dependency tree for $terms.Bug $bugid"
-   h1    = "Dependency tree for <a href=\"show_bug.cgi?id=$bugid\">$terms.Bug $bugid</a>"
+   title           = "Dependency tree for $terms.Bug $bugid"
+   header          = "Dependency tree for 
+                      <a href=\"show_bug.cgi?id=$bugid\">$terms.Bug $bugid</a>"
+   javascript_urls = ["js/expanding-tree.js"]
+   style_urls      = ["skins/standard/dependency-tree.css"]
+   subheader      = filtered_desc
 %]
 
 [% PROCESS depthControlToolbar %]
-
-[%# Display the tree of bugs that this bug depends on. %]
-<h3>
-  [% IF hide_resolved %]
-    Open [% terms.bugs %]
-  [% ELSE %]
-    [% terms.Bugs %]
-  [% END %] 
-  that <a href="show_bug.cgi?id=[% bugid %]">[% terms.bug %] [%+ bugid %]</a> 
-  depends on</h3>
-[% IF dependson_ids.size > 0 %]
-  (
-  [% IF maxdepth -%]Up to [% maxdepth %] level[% "s" IF maxdepth > 1 %] deep | [% END %]
-  <a href="buglist.cgi?bug_id=[% dependson_ids.join(",") %]">view as [% terms.bug %] list</a>
-  [% IF canedit && dependson_ids.size > 1 %]
-    | <a href="buglist.cgi?bug_id=[% dependson_ids.join(",") %]&amp;tweak=1">change several</a>
-  [% END %])
-  [% INCLUDE display_tree tree=dependson_tree bug_id=bugid %]
-[% ELSE %]
-  </h3>
-  <p>None</p>
-[% END %]
-
-[%# Display the tree of bugs that this bug blocks. %]
-<h3>
-  [% IF hide_resolved %]
-    Open [% terms.bugs %]
-  [% ELSE %]
-    [% terms.Bugs %]
-  [% END %] 
-  that <a href="show_bug.cgi?id=[% bugid %]">[% terms.bug %] [%+ bugid %]</a> 
-  blocks</h3>
-[% IF blocked_ids.size > 0 %]
-  (
-  [% IF maxdepth -%]Up to [% maxdepth %] level[% "s" IF maxdepth > 1 %] deep | [% END %]
-  <a href="buglist.cgi?bug_id=[% blocked_ids.join(",") %]">view as [% terms.bug %] list</a>
-  [% IF canedit && blocked_ids.size > 1 %]
-    | <a href="buglist.cgi?bug_id=[% blocked_ids.join(",") %]&amp;tweak=1">change several</a>
-  [% END %])
-  [% INCLUDE display_tree tree=blocked_tree bug_id=bugid %]
-[% ELSE %]
-  </h3>
-  <p>None</p>
-[% END %]
+  
+[% INCLUDE tree_section ids=dependson_ids type=1 %]
+ 
+[% INCLUDE tree_section ids=blocked_ids type=2 %] 
 
 [% PROCESS depthControlToolbar %]
 
+[% PROCESS global/footer.html.tmpl %]
+
 [%###########################################################################%]
-[%# Block to display a tree                                                 #%]
+[%# Tree-drawing blocks                                                     #%]
 [%###########################################################################%]
 
-[% BLOCK display_tree %]
-[% tree.$bug_id.seen = 1 %]
-<ul>
-  [% FOREACH dep_id = tree.$bug_id.dependencies %]
-    [% dep = tree.$dep_id %]
-    <li>
-      [% "<script>document.write('<a href=\"#\" class=\"toggle\" onclick=\"listToggle(event); return false\">[-]</a>')</script>"
-         IF dep.dependencies.size > 0 && !dep.seen %]
-      [% isclosed = !dep.open %]
-      [% FILTER closed(isclosed) %]
-      <a href="show_bug.cgi?id=[% dep_id %]">[% dep_id %]
-        [[% IF dep.milestone %][% dep.milestone FILTER html %], [% END %]
-        [% dep.assignee_email FILTER html %]] -
-        [% IF dep.seen %]
-          <i>This [% terms.bug %] appears elsewhere in this tree.</i></a>
+[% BLOCK tree_section %]
+  [%# INTERFACE
+    #   - ids: a list of bug IDs to be displayed as children
+    #   - type: the type of tree. 1 = depends on, 2 = blockeds
+    # GLOBALS
+    #   - seen: Maintains a global hash of bugs that have been displayed
+    #%]
+  [% global.seen = {} %]
+  [%# Display the tree of bugs that this bug depends on. %]
+  <h3>
+    <a href="show_bug.cgi?id=[% bugid %]">[% terms.Bug %] [%+ bugid %]</a> 
+    [% IF type == 1 %]
+        [% tree_name = "dependson_tree" %]
+        [% IF ids.size %]
+            depends on 
         [% ELSE %]
-          [%+ dep.summary FILTER html %].</a>
+            does not depend on any [% terms.bugs %].
         [% END %]
-      [% END %]
-      [% INCLUDE display_tree bug_id=dep_id
-           IF dep.dependencies.size > 0 && !dep.seen %]
-    </li>
+    [% ELSIF type == 2 %]
+        [% tree_name = "blocked_tree" %]
+        [% IF ids.size %] 
+            blocks 
+        [% ELSE %]
+            does not block any [% terms.bugs %].
+        [% END %]
+    [% END %]
+    [% IF ids.size %]
+        [%+ (ids.size == 1) ? "one" : ids.size %]
+        [%+ IF hide_resolved %]open[% END %]
+        [%+ (ids.size == 1) ? terms.bug : terms.bugs %]:
+    [% END %] 
+  </h3>
+  [% IF ids.size %]
+    ([% IF maxdepth -%]Up to [% maxdepth %] level[% "s" IF maxdepth > 1 %] deep | [% END -%]
+    <a href="buglist.cgi?bug_id=[% ids.join(",") %]">view as [% terms.bug %] list</a>
+    [% IF user.groups.editbugs && ids.size > 1 %]
+      | <a href="buglist.cgi?bug_id=[% ids.join(",") %]&amp;tweak=1">change several</a>
+    [% END %])
+    <ul class="tree">
+      [% INCLUDE display_tree tree=$tree_name %]
+    </ul>
   [% END %]
-</ul>
 [% END %]
 
-<script type="text/javascript">
-if (typeof Node == 'undefined') {
-    /* MSIE doesn't define Node, so provide a compatibility object */
-    window.Node = {
-        TEXT_NODE: 3
-    };
-}
 
-function toggleDisplay(node)
-{
-    var display = node.style.display;
-    if (display == "none") {
-        node.style.display =
-            ("oldDisplay" in node) ? node.oldDisplay : "block";
-        return true;
-    }
+[% BLOCK display_tree %]
+  [%# INTERFACE
+    #   - bugid: the ID of the bug being displayed
+    #   - tree: a hash of bug objects and of bug dependencies
+    #%]
+  [% bug = tree.$bugid %]
+  <li>
+    [%- INCLUDE bullet bugid=bugid tree=tree -%]
+    <span class="summ[% "_deep" IF tree.dependencies.$bugid.size %]" 
+          id="[% bugid FILTER html %]" 
+          [% IF global.seen.$bugid %]
+            onMouseover="duplicatedover('[% bugid FILTER html %]')"
+            onMouseout="duplicatedout('[% bugid FILTER html %]')"
+          [% END %]>
+      [%- INCLUDE buglink bug=bug bugid=bugid %]
+    </span>
+    [% IF global.seen.$bugid %]
+      <b><a title="Already displayed above; click to locate"
+            onclick="duplicated('[% bugid FILTER html %]')"
+            href="#b[% bugid %]">(*)</a></b>
+    [% ELSIF tree.dependencies.$bugid.size %]
+      <ul>
+        [% FOREACH depid = tree.dependencies.$bugid %]
+          [% INCLUDE display_tree bugid=depid %]
+        [% END %]
+      </ul>
+    [% END %]
+  </li>
+  [% global.seen.$bugid = 1 %]
+[% END %]
 
-    node.oldDisplay = display;
-    node.style.display = "none";
-    return false;
-}
+[% BLOCK bullet %]
+  [% IF tree.dependencies.$bugid.size && ! global.seen.$bugid %]
+    [% extra_class = " b_open" %]
+    [% extra_args = 'onclick="return doToggle(this, event)"' %] 
+  [% END %]
+  <a name="b[% bugid %]" 
+     class="b [%+ extra_class FILTER none %]"
+     title="Click to expand or contract this portion of the tree. Hold down the Ctrl key while clicking to expand or contract all subtrees."
+     [% extra_args FILTER none %]>&nbsp;&nbsp;</a>
+[% END %]
 
-function listToggle(event)
-{
-    var node = event.target;
-    if (!node)
-        node = event.srcElement;
-    if (node.nodeType == Node.TEXT_NODE)
-        node = node.parentNode;
-    var toggle = node.nextSibling;
-    while (toggle && toggle.tagName != "UL")
-        toggle = toggle.nextSibling;
-    if (toggle) {
-        node.firstChild.data = toggleDisplay(toggle) ? "[-]" : "[+]";
-    }
-}
+[% BLOCK buglink %]
+  [% isclosed = !bug.isopened %]
+  [% FILTER closed(isclosed) -%]
+    <a title="[% INCLUDE buginfo bug=bug %]"
+       href="show_bug.cgi?id=[% bugid %]">
+      <b>[%- bugid %]:</b>
+      <span class="summ_text">[%+ bug.short_desc FILTER html %]</span>
+      <span class="summ_info">[[% INCLUDE buginfo %]]</span>
+    </a>
+    <a href="showdependencytree.cgi?id=[% bugid FILTER url_quote %]"
+       class="tree_link">
+      <img src="skins/standard/dependency-tree/tree.png"
+           title="See dependency tree for [% terms.bug %] [%+ bugid FILTER html %]">
+    </a>
+  [% END %]
+[% END %]
 
-</script>
-
-[% PROCESS global/footer.html.tmpl %]
+[% BLOCK buginfo %]
+  [% bug.bug_status FILTER html -%] [%+ bug.resolution FILTER html %];
+  [%-%] assigned to [% bug.assigned_to.login FILTER html %]
+  [%-%][% "; Target: " _ bug.target_milestone IF bug.target_milestone %]
+[% END %]
 
 [%###########################################################################%]
 [%# Block for depth control toolbar                                         #%]
 [%###########################################################################%]
 
 [% BLOCK depthControlToolbar %]
- <table cellpadding="3" border="0" cellspacing="0" bgcolor="#d0d0d0">
- <tr>
+ <table cellpadding="3" border="0" cellspacing="0" bgcolor="#e0e0e0">
+   <tr>
    [%# Hide/show resolved button
        Swaps text depending on the state of hide_resolved %]
    <td align="center">
@@ -164,7 +175,7 @@ function listToggle(event)
        <input name="maxdepth" type="hidden" value="[% maxdepth %]">
      [% END %]
      <input type="hidden" name="hide_resolved" value="[% hide_resolved ? 0 : 1 %]">
-     <input type="submit" 
+     <input type="submit" id="toggle_visibility"
             value="[% IF hide_resolved %]Show[% ELSE %]Hide[% END %] Resolved">
    </form>
    </td>
@@ -181,7 +192,8 @@ function listToggle(event)
    <form method="get" action="showdependencytree.cgi"
          style="display: inline; margin: 0px;">
      [%# set to one form %]
-     <input type="submit" value="&nbsp;1&nbsp;" 
+     <input type="submit" id="change_maxdepth"
+       value="&nbsp;1&nbsp;" 
        [% "disabled" IF realdepth < 2 || maxdepth == 1 %]>
      <input name="id" type="hidden" value="[% bugid %]">
      <input name="maxdepth" type="hidden" value="1">
@@ -200,7 +212,7 @@ function listToggle(event)
                        : ( maxdepth ? maxdepth - 1 : realdepth - 1 )
      %]">
      <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
-     <input type="submit" value="&nbsp;&lt;&nbsp;" 
+     <input type="submit" id="decrease_depth" value="&nbsp;&lt;&nbsp;"
        [% "disabled" IF realdepth < 2 || ( maxdepth && maxdepth < 2 ) %]>
    </form>
    </td>
@@ -216,7 +228,8 @@ function listToggle(event)
      <input name="id" type="hidden" value="[% bugid %]">
      <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
      <noscript>
-       <input type="submit" value="Change" [% "disabled" IF realdepth < 2 %]>
+       <input type="submit" id="change_depth" value="Change"
+              [% "disabled" IF realdepth < 2 %]>
      </noscript>
    </form>
    </td>
@@ -231,9 +244,8 @@ function listToggle(event)
        <input name="maxdepth" type="hidden" value="[% maxdepth + 1 %]">
      [% END %]
      <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
-     <input type="submit" value="&nbsp;&gt;&nbsp;" 
-        [% "disabled" IF realdepth < 2 || !maxdepth || maxdepth >= realdepth %]
-    %]>
+     <input type="submit" id="increase_depth" value="&nbsp;&gt;&nbsp;" 
+        [% "disabled" IF realdepth < 2 || !maxdepth || maxdepth >= realdepth %]>
    </form>
    </td>
 
@@ -243,7 +255,8 @@ function listToggle(event)
      [%# Unlimited button %]
      <input name="id" type="hidden" value="[% bugid %]">
      <input name="hide_resolved" type="hidden" value="[% hide_resolved %]">
-     <input type="submit" value="&nbsp;Unlimited&nbsp;"
+     <input type="submit" id="remove_limit"
+       value="&nbsp;Unlimited&nbsp;"
        [% "disabled" IF maxdepth == 0 || maxdepth == realdepth %]>
    </form>
    </td>

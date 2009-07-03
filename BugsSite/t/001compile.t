@@ -36,11 +36,11 @@ use Test::More tests => scalar(@Support::Files::testitems);
 use DBI;
 my @DBI_drivers = DBI->available_drivers;
 
-# Bugzilla requires Perl 5.6.1 now.  Checksetup will tell you this if you run it, but
+# Bugzilla requires Perl 5.8.0 now.  Checksetup will tell you this if you run it, but
 # it tests it in a polite/passive way that won't make it fail at compile time.  We'll
-# slip in a compile-time failure if it's missing here so a tinderbox on 5.00503 won't
-# pass and mistakenly let people think Bugzilla works on 5.00503
-require 5.006_001;
+# slip in a compile-time failure if it's missing here so a tinderbox on < 5.8 won't
+# pass and mistakenly let people think Bugzilla works on any perl below 5.8.
+require 5.008;
 
 # Capture the TESTOUT from Test::More or Test::Builder for printing errors.
 # This will handle verbosity for us automatically.
@@ -64,6 +64,12 @@ my $perlapp = "\"$^X\"";
 foreach my $file (@testitems) {
     $file =~ s/\s.*$//; # nuke everything after the first space (#comment)
     next if (!$file); # skip null entries
+
+    # Skip mod_perl.pl in all cases. It doesn't compile correctly from the command line.
+    if ($file eq 'mod_perl.pl') {
+        ok(1, "Skipping mod_perl.pl");
+        next;
+    }
 
     # Check that we have a DBI module to support the DB, if this is a database
     # module (but not Schema)

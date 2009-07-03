@@ -39,7 +39,7 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% IF !header_done %]
-  [% h2 = voting_user.login FILTER html %]
+  [% subheader = voting_user.login FILTER html %]
   [% IF canedit %]
     [% title = "Change Votes" %]
     [% IF bug_id %]
@@ -121,14 +121,11 @@
               [% END %]
             </a></td>
             <td align="center">
-              [% isclosed = !bug.opened %]
-                <a href="show_bug.cgi?id=[% bug.id %]">
-                  [% bug.id FILTER closed(isclosed) %]</a>
+              [% bug.id FILTER bug_link(bug.id) FILTER none %]
             </td>
             <td>
-              <a href="votes.cgi?action=show_bug&amp;bug_id=[% bug.id %]">
-                [% bug.summary FILTER html %]
-              </a>
+              [% bug.summary FILTER html %]
+              (<a href="votes.cgi?action=show_bug&amp;bug_id=[% bug.id %]">Show Votes</a>)
             </td>
           </tr>
         [% END %]
@@ -146,7 +143,7 @@
     </table>
 
     [% IF canedit %]
-      <input type="submit" value="Change My Votes">
+      <input type="submit" value="Change My Votes" id="change">
       <br>
       <br>
       To change your votes,

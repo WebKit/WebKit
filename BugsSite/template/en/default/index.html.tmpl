@@ -23,16 +23,19 @@
   #%]
 
 [%# INTERFACE:
-  # This template has no interface.
+  # release: a hash containing data about new releases, if any.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
-[% title = BLOCK %]
-[% terms.Bugzilla %] Main Page
-[% END %]
-[% style_urls = [ "skins/standard/index.css" ] %]
-[% PROCESS global/header.html.tmpl %]
+
+[% PROCESS global/header.html.tmpl
+   title = "$terms.Bugzilla Main Page"
+   header = "Main Page" 
+   header_addl_info = "version $constants.BUGZILLA_VERSION"
+   style_urls = [ 'skins/standard/index.css' ]
+   onload = 'document.forms[\'f\'].quicksearch.focus();'
+%]
 
 
 <script type="text/javascript">
@@ -55,54 +58,102 @@ function addSidebar() {
 //-->
 </script>
 
+[% IF release %]
+  <div id="new_release">
+    [% IF release.data %]
+      [% IF release.deprecated %]
+        <p>[% terms.Bugzilla %] [%+ release.deprecated FILTER html %] is no longer
+        supported. You are highly encouraged to upgrade in order to keep your
+        system secure.</p>
+      [% END %]
+
+      <p>A new [% terms.Bugzilla %] version ([% release.data.latest_ver FILTER html %])
+      is available at
+      <a href="[% release.data.url FILTER html %]">[% release.data.url FILTER html %]</a>.<br>
+      Release date: [% release.data.date FILTER html %]</p>
+
+      <p class="notice">This message is only shown to logged in users with admin privs.
+      You can configure this notification from the
+      <a href="editparams.cgi?section=core#upgrade_notification">Parameters</a> page.</p>
+    [% ELSIF release.error == "missing_package" %]
+      <p>Missing package '[% release.package FILTER html %]'. This package is required to
+      <a href="editparams.cgi?section=core#upgrade_notification">notify you about new releases</a>.</p>
+    [% ELSIF release.error == "cannot_download" %]
+      <p>The local XML file '[% release.xml_file FILTER html %]' cannot be created.
+      Please make sure the web server can write in this directory and that you can access
+      the web. If you are behind a proxy, set the
+      <a href="editparams.cgi?section=core#proxy_url">proxy_url</a> parameter correctly.</p>
+    [% ELSIF release.error == "no_update" %]
+      <p>The local XML file '[% release.xml_file FILTER html %]' cannot be updated.
+      Please make sure the web server can edit this file.</p>
+    [% ELSIF release.error == "no_access" %]
+      <p>The local XML file '[% release.xml_file FILTER html %]' cannot be read.
+      Please make sure this file has the correct rights set on it.</p>
+    [% ELSIF release.error == "corrupted" %]
+      <p>The local XML file '[% release.xml_file FILTER html %]' has an invalid XML format.
+      Please delete it and try accessing this page again.</p>
+    [% ELSIF release.error == "unknown_parameter" %]
+      <p>'[% Param("upgrade_notification") FILTER html %]' is not a valid notification
+      parameter. Please check this parameter in the
+      <a href="editparams.cgi?section=core#upgrade_notification">Parameters</a> page.</p>
+    [% END %]
+  </div>
+[% END %]
 
 <div id="page-index">
   <div class="intro"></div>
 
-  <p>This is where we put in lots of nifty words explaining all about [% terms.Bugzilla %].</p>
+  <p>Welcome to [% terms.Bugzilla %]. To see what's new in this version
+    of [% terms.Bugzilla %], see the 
+    <a href="page.cgi?id=release-notes.html">release notes</a>!
+    You may also want to read the 
+    <a href="[% Param('docs_urlbase') FILTER html %]using.html">
+    [%- terms.Bugzilla %] User's Guide</a> to find out more about 
+    [%+ terms.Bugzilla %] and how to use it.</p>
 
-  <p>But it all boils down to a choice of:</p>
+  <p>Most common actions:</p>
   <ul>
     <li id="query"><a href="query.cgi">Search existing [% terms.bug %] reports</a></li>
     <li id="enter-bug"><a href="enter_bug.cgi">Enter a new [% terms.bug %] report</a></li>
     <li id="report"><a href="report.cgi">Summary reports and charts</a></li>
 [% IF user.id %]
     <li id="userprefs"><a href="userprefs.cgi">Change password or user preferences</a></li>
-  [% IF user.get_flag('can_logout') %]
+  [% IF user.authorizer.can_logout %]
     <li id="logout"><a href="relogin.cgi">Log out [% user.login FILTER html %]</a></li>
   [% END %]
-[% ELSE %]
+[% ELSIF user.authorizer.can_login %]
+  </ul>
     [% PROCESS "account/auth/login-small.html.tmpl" %]
-  [% IF Param('createemailregexp') %]
+  <ul>
+  [% IF Param('createemailregexp') && user.authorizer.user_can_create_account %]
     <li id="account"><a href="createaccount.cgi">Open a new [% terms.Bugzilla %] account</a></li>
   [% END %]
 [% END %]
     <li id="sidebar"><a href="javascript:addSidebar()">Add to Sidebar</a> (requires a Mozilla browser like Mozilla Firefox)</li>
+    <li id="quick_search_plugin">
+      <a href="javascript:window.external.AddSearchProvider('[% Param('urlbase') %]search_plugin.cgi')">Install
+      the Quick Search plugin</a> (requires Firefox 2 or Internet Explorer 7)
+    </li>
+
 
     [%# List items of links to more things users can do on this installation. %]
     [% Hook.process("links") %]
 
   </ul>
 
-  <form id="show-bug" name="f" action="show_bug.cgi" method="get"
-      onsubmit="QuickSearch(f.id.value); return false;">
+  <form id="f" name="f" action="buglist.cgi" method="get"
+        onsubmit="if (this.quicksearch.value == '')
+                  { alert('Please enter one or more search terms first.');
+                    return false; } return true;">
   <div>
     <p>Enter [% terms.abug %] # or some search terms:</p>
-    <input id="text" type="text" name="id">
-    <input id="show" type="submit" value="Show">
-    <a href="quicksearch.html">[Help]</a>
+    <input id="quicksearch" type="text" name="quicksearch">
+    <input id="find" type="submit" value="Find">
+    <a href="page.cgi?id=quicksearch.html">[Help]</a>
   </div>
   </form>
 
   <div class="outro"></div>
 </div>
-
-<script type="text/javascript" src="localconfig.js"></script>
-<script type="text/javascript" src="quicksearch.js"></script>
-<script type="text/javascript">
-<!--
-document.forms['f'].id.focus();
-//-->
-</script>
 
 [% PROCESS global/footer.html.tmpl %]

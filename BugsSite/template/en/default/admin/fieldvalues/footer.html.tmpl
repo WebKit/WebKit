@@ -26,10 +26,10 @@
   # no_edit_other_link
   # no_add_link
   #%]
-  
-<p>
 
 <hr>
+
+<p>
 
 [% UNLESS no_add_link %]
   <a title="Add a value for the '[% field FILTER html %]' field."
@@ -50,7 +50,7 @@
   Edit other values for the <a 
   href="editvalues.cgi?field=
         [%- field FILTER url_quote %]">'[% field FILTER html %]'</a> field.
-   
+
 [% END %]
 
 </p>

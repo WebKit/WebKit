@@ -19,11 +19,11 @@
   #%]
   
 [% title = BLOCK %]Add Value for the '[% field FILTER html %]' field[% END %]
-[% h2 = BLOCK %]This page allows you to add a new value for the
+[% subheader = BLOCK %]This page allows you to add a new value for the
                 '[% field FILTER html %]' field.[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
-  h2 = h2
+  subheader = subheader
 %]
 
 <form method="post" action="editvalues.cgi">
@@ -39,13 +39,11 @@
                  value=""></td>
     </tr>
   </table>
-  <input type="submit" value="Add">
+  <input type="submit" id="create" value="Add">
   <input type="hidden" name="action" value="new">
   <input type="hidden" name='field' value="[% field FILTER html %]">
-
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
-
-<p>
 
 [% PROCESS admin/fieldvalues/footer.html.tmpl
     no_add_link = 1

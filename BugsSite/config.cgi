@@ -28,63 +28,58 @@
 # Make it harder for us to do dangerous things in Perl.
 use strict;
 
-# Include the Bugzilla CGI and general utility library.
 use lib qw(.);
-require "CGI.pl";
+
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Error;
+use Bugzilla::Keyword;
+use Bugzilla::Bug;
+use Bugzilla::Field;
 
-# Suppress "used only once" warnings.
-use vars 
-  qw(
-    @legal_priority 
-    @legal_severity 
-    @legal_platform 
-    @legal_opsys 
-    @legal_resolution 
-
-    @legal_components 
-    @legal_target_milestone 
-    @legal_versions 
-    @legal_keywords 
-  );
-
-# Use the global template variables defined in globals.pl 
-# to generate the output.
-use vars qw($template $vars);
-
-Bugzilla->login(LOGIN_OPTIONAL);
+my $user = Bugzilla->login(LOGIN_OPTIONAL);
+my $cgi  = Bugzilla->cgi;
 
 # If the 'requirelogin' parameter is on and the user is not
 # authenticated, return empty fields.
-if (Param('requirelogin') && !Bugzilla->user->id) {
+if (Bugzilla->params->{'requirelogin'} && !$user->id) {
     display_data();
 }
 
-# Retrieve this installation's configuration.
-GetVersionTable();
-
 # Pass a bunch of Bugzilla configuration to the templates.
-$vars->{'priority'}  = \@::legal_priority;
-$vars->{'severity'}  = \@::legal_severity;
-$vars->{'platform'}   = \@::legal_platform;
-$vars->{'op_sys'}    = \@::legal_opsys;
-$vars->{'keyword'}    = \@::legal_keywords;
-$vars->{'resolution'} = \@::legal_resolution;
-$vars->{'status'}    = \@::legal_bug_status;
+my $vars = {};
+$vars->{'priority'}  = get_legal_field_values('priority');
+$vars->{'severity'}  = get_legal_field_values('bug_severity');
+$vars->{'platform'}  = get_legal_field_values('rep_platform');
+$vars->{'op_sys'}    = get_legal_field_values('op_sys');
+$vars->{'keyword'}    = [map($_->name, Bugzilla::Keyword->get_all)];
+$vars->{'resolution'} = get_legal_field_values('resolution');
+$vars->{'status'}    = get_legal_field_values('bug_status');
+$vars->{'custom_fields'} =
+  [Bugzilla->get_fields({custom => 1, obsolete => 0, type => FIELD_TYPE_SINGLE_SELECT})];
 
-# Include lists of products, components, versions, and target milestones.
-my $selectables = GetSelectableProductHash();
-foreach my $selectable (keys %$selectables) {
-    $vars->{$selectable} = $selectables->{$selectable};
+# Include a list of product objects.
+if ($cgi->param('product')) {
+    my @products = $cgi->param('product');
+    foreach my $product_name (@products) {
+        # We don't use check_product because config.cgi outputs mostly
+        # in XML and JS and we don't want to display an HTML error
+        # instead of that.
+        my $product = new Bugzilla::Product({ name => $product_name });
+        if ($product && $user->can_see_product($product->name)) {
+            push (@{$vars->{'products'}}, $product);
+        }
+    }
+} else {
+    $vars->{'products'} = $user->get_selectable_products;
 }
 
 # Create separate lists of open versus resolved statuses.  This should really
 # be made part of the configuration.
 my @open_status;
 my @closed_status;
-foreach my $status (@::legal_bug_status) {
-    IsOpenedState($status) ? push(@open_status, $status) 
+foreach my $status (@{$vars->{'status'}}) {
+    is_open_state($status) ? push(@open_status, $status) 
                            : push(@closed_status, $status);
 }
 $vars->{'open_status'} = \@open_status;
@@ -99,11 +94,13 @@ display_data($vars);
 sub display_data {
     my $vars = shift;
 
-    my $cgi = Bugzilla->cgi;
+    my $cgi      = Bugzilla->cgi;
+    my $template = Bugzilla->template;
+
     # Determine how the user would like to receive the output; 
     # default is JavaScript.
-    my $format = GetFormat("config", scalar($cgi->param('format')),
-                           scalar($cgi->param('ctype')) || "js");
+    my $format = $template->get_format("config", scalar($cgi->param('format')),
+                                       scalar($cgi->param('ctype')) || "js");
 
     # Return HTTP headers.
     print "Content-Type: $format->{'ctype'}\n\n";

@@ -21,10 +21,13 @@
 
 [% PROCESS global/variables.none.tmpl %]
 
-[%# Use the current script name. If an empty name is retuned,
+[%# Use the current script name. If an empty name is returned,
   # then we are accessing the home page. %]
 
 [% script_name = cgi.url(Relative => 1) %]
+[% IF !script_name %]
+ [% script_name = "index.cgi" %]
+[% END %]
 
 [%# If SSL is in use, use 'sslbase', else use 'urlbase'. %]
 [% IF Param("sslbase") != "" && Param("ssl") != "never" %]
@@ -34,51 +37,51 @@
 [% END %]
 
 <form name="login" action="[% script_name FILTER html %]" method="POST">
-  <table>
+  <table id="login-small">
     <tr>
-      <td align="right"><b>Login:</b></td>
-      <td><input size="20" name="Bugzilla_login"></td>
+      <th align="right"><label for="Bugzilla_login">Login:</label></th>
+      <td><input size="20" id="Bugzilla_login" name="Bugzilla_login">
+          [% Param('emailsuffix') FILTER html %]</td>
     </tr>
     <tr>
-      <td align="right"><b>Password:</b></td>
-      <td><input type="password" size="20" name="Bugzilla_password"></td>
+      <th align="right"><label for="Bugzilla_password">Password:</label></th>
+      <td>
+        <input type="password" size="20" id="Bugzilla_password" name="Bugzilla_password">
+      </td>
     </tr>
 
     [% IF Param('rememberlogin') == 'defaulton' || 
           Param('rememberlogin') == 'defaultoff' %]
       <tr>
-        <td>&nbsp;</td>
+        <th>&nbsp;</th>
         <td>
-          <input type="checkbox" name="Bugzilla_remember" value="on"
+          <input type="checkbox" id="Bugzilla_remember" name="Bugzilla_remember" value="on"
                  [% "checked" IF Param('rememberlogin') == "defaulton" %]>
-          Remember my Login
+          <label for="Bugzilla_remember">Remember my Login</label>
         </td>
       </tr>
     [% END %]
 
     [% IF Param('loginnetmask') < 32 %]
       <tr>
-        <td align="right">
-          <b>
-             Restrict this session<br>
-             to this IP address:
-          </b>
-        </td>
+        <th>&nbsp;</th>
         <td>
-          <input type="checkbox" name="Bugzilla_restrictlogin"
+          <input type="checkbox" id="Bugzilla_restrictlogin" name="Bugzilla_restrictlogin"
                  checked="checked">
-          (Using this option improves security)
+          <label for="Bugzilla_restrictlogin">Restrict this session to this IP address
+          (using this option improves security)</label>
         </td>
       </tr>
     [% END %]
 
     <tr>
-      <td><input type="submit" name="GoAheadAndLogIn" value="Login"></td>
+      <td><input type="submit" name="GoAheadAndLogIn" value="Login"
+                 id="log_in"></td>
 
       [%# For now, password change requests only apply to the DB
         # verification method #%]
 
-      [% IF has_db != 0 %]
+      [% IF user.authorizer.can_change_password %]
         <td>[ <a href="index.cgi?GoAheadAndLogIn=1#forgot">Forgot my Password</a> ]</td>
       [% END %]
     </tr>

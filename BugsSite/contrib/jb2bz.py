@@ -248,10 +248,13 @@ def process_jitterbug(filename):
     for a in current['attachments']:
         cursor.execute( "INSERT INTO attachments SET " \
                         "bug_id=%s, creation_ts=%s, description='', mimetype=%s," \
-                        "filename=%s, thedata=%s, submitter_id=%s",
+                        "filename=%s, submitter_id=%s",
                         [ current['number'],
                           time.strftime("%Y-%m-%d %H:%M:%S", current['date-reported'][:9]),
-                          a[1], a[0], a[2], reporter ])
+                          a[1], a[0], reporter ])
+        cursor.execute( "INSERT INTO attach_data SET " \
+                        "id=LAST_INSERT_ID(), thedata=%s",
+                        [ a[2] ])
 
     cursor.close()
     db.close()

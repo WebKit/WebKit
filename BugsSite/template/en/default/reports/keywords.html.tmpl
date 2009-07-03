@@ -17,13 +17,15 @@
   # Rights Reserved.
   #
   # Contributor(s): Gervase Markham <gerv@gerv.net>
+  # Contributor(s): David D. Kilzer <ddkilzer@kilzer.net>
   #%]
 
 [%# INTERFACE:
-  # keywords: array of hashes. May be empty. Each has has three members:
+  # keywords: array keyword objects. May be empty. Each has has four members:
+  #   id: id of the keyword
   #   name: the name of the keyword
-  #   description: keyword description. May be HTML.
-  #   bugcount: number of bugs with that keyword
+  #   description: keyword description. Can contain some limited HTML code.
+  #   bug_count: number of bugs with that keyword
   # caneditkeywords: boolean. True if this user can edit keywords
  %]
 
@@ -43,7 +45,8 @@
       <tr bgcolor="#6666FF">
         <th align="left">Name</th>
         <th align="left">Description</th>
-        <th align="left">[% terms.Bugs %]</th>
+        <th align="left">Open [% terms.Bugs %]</th>
+        <th align="left">Total [% terms.Bugs %]</th>
       </tr>
   [% END %]
 
@@ -52,11 +55,19 @@
       <a name="[% keyword.name FILTER html %]">
         [% keyword.name FILTER html %]</a>
     </th>
-    <td>[% keyword.description %]</td>
+    <td>[% keyword.description FILTER html_light %]</td>
+    <td align="center">
+      [% IF keyword.bug_count > 0 %]
+        <a href="buglist.cgi?keywords=[% keyword.name FILTER url_quote %]&amp;resolution=---">
+          Search</a>
+      [% ELSE %]
+        none
+      [% END %]
+    </td>
     <td align="right">
-      [% IF keyword.bugcount > 0 %]
+      [% IF keyword.bug_count > 0 %]
         <a href="buglist.cgi?keywords=[% keyword.name FILTER url_quote %]">
-          [% keyword.bugcount %]</a>
+          [% keyword.bug_count %]</a>
       [% ELSE %]
         none
       [% END %]

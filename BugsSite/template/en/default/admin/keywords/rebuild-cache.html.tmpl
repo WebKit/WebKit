@@ -18,11 +18,12 @@
   #
   # Contributor(s): Terry Weissman <terry@mozilla.org>
   #                 Vlad Dascalu <jocuri@softhome.net>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
 [%# INTERFACE:
   # action: string; the current action (either "update" or "delete").
-  # name: string; the name of the current keyword.
+  # keyword: A Bugzilla::Keyword object
   #%]
   
 [% IF action == "update" %]
@@ -35,7 +36,7 @@
 
 [% PROCESS global/header.html.tmpl %]
 
-Keyword [% name FILTER html %] [%+status FILTER html %].
+Keyword [% keyword.name FILTER html %] [%+ status FILTER html %].
 
 <p>
   <b>After you have finished deleting or modifying keywords,

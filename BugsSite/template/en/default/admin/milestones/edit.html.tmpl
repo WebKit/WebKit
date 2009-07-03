@@ -20,46 +20,43 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; The name of the milestone
-  #
-  # sortkey: number; milestone sortkey
-  #
-  # product: string; The product the milestone belongs to
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestone belongs.
+  # milestone: object; Bugzilla::Milestone object representing the
+  #                    milestone the user wants to edit.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
-[% title = BLOCK %]Edit Milestone '[% name FILTER html %]' of product '
-                   [%- product FILTER html %]'[% END %]
+[% title = BLOCK %]Edit Milestone '[% milestone.name FILTER html %]' of product '
+                   [%- product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
+  onload = "document.forms['f'].milestone.select()"
 %]
 
-<form method="post" action="editmilestones.cgi">
+<form name="f" method="post" action="editmilestones.cgi">
   <table border="0" cellpadding="4" cellspacing="0">
 
     <tr>
       <th valign="top"><label for="milestone">Milestone:</label></th>
       <td><input id="milestone" size="20" maxlength="20" name="milestone" value="
-      [%- name FILTER html %]"></td>
+      [%- milestone.name FILTER html %]"></td>
     </tr>
     <tr>
       <th align="right"><label for="sortkey">Sortkey:</label></th>
       <td><input id="sortkey" size="20" maxlength="20" name="sortkey" value="
-      [%- sortkey FILTER html %]"></td>
+      [%- milestone.sortkey FILTER html %]"></td>
     </tr>
 
   </table>
 
-  <input type="hidden" name="milestoneold" value="[% name FILTER html %]">
-  <input type="hidden" name="sortkeyold" value="[% sortkey FILTER html %]">
+  <input type="hidden" name="milestoneold" value="[% milestone.name FILTER html %]">
   <input type="hidden" name="action" value="update">
-  <input type="hidden" name="product" value="[% product FILTER html %]">
-  <input type="submit" value="Update">
-
+  <input type="hidden" name="product" value="[% product.name FILTER html %]">
+  <input type="submit" id="update" value="Update">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
-
-<p>
 
 [% PROCESS admin/milestones/footer.html.tmpl
   no_edit_milestone_link = 1 %]

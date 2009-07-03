@@ -1,7 +1,43 @@
 <!-- <!DOCTYPE appendix PUBLIC "-//OASIS//DTD DocBook V4.1//EN"> -->
 <chapter id="customization">
-  <title>Customising Bugzilla</title>
+  <title>Customizing Bugzilla</title>
 
+  <section id="cust-skins">
+    <title>Custom Skins</title>
+    
+    <para>
+      Bugzilla allows you to have multiple skins. These are custom CSS and possibly
+      also custom images for Bugzilla. To create a new custom skin, you have two
+      choices:
+      <itemizedlist>
+        <listitem>
+          <para>
+            Make a single CSS file, and put it in the 
+            <filename>skins/contrib</filename> directory.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Make a directory that contains all the same CSS file
+            names as <filename>skins/standard/</filename>, and put
+            your directory in <filename>skins/contrib/</filename>.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+      
+    <para>
+      After you put the file or the directory there, make sure to run checksetup.pl
+      so that it can reset the file permissions correctly.
+    </para>
+    <para>
+      After you have installed the new skin, it will show up as an option in the
+      user's General Preferences. If you would like to force a particular skin on all
+      users, just select it in the Default Preferences and then uncheck "Enabled" on
+      the preference.
+    </para>
+  </section>
+  
   <section id="cust-templates">
     <title>Template Customization</title>
     
@@ -202,7 +238,7 @@
       
       <para>
         To see if a CGI supports multiple output formats and types, grep the
-        CGI for <quote>GetFormat</quote>. If it's not present, adding
+        CGI for <quote>get_format</quote>. If it's not present, adding
         multiple format/type support isn't too hard - see how it's done in
         other CGIs, e.g. config.cgi.
       </para>
@@ -404,18 +440,18 @@
       you must update the <option>languages</option> parameter to contain any
       localizations you'd like to permit. You may also wish to set the
       <option>defaultlanguage</option> parameter to something other than
-      <quote>en</quote> if you don't want Engish to be the default language.
+      <quote>en</quote> if you don't want English to be the default language.
       </para>
     </section>
       
   </section>
 
   <section id="cust-hooks">
-    <title>Template Hooks</title>
+    <title>The Bugzilla Extension Mechanism</title>
         
     <warning>
       <para>
-        Template Hooks require Template Toolkit version 2.12 or
+        Custom extensions require Template Toolkit version 2.12 or
         above, or the application of a patch.  See <ulink
         url="http://bugzilla.mozilla.org/show_bug.cgi?id=239112">bug
         239112</ulink> for details.
@@ -423,62 +459,82 @@
     </warning>
        
     <para>
-      Template hooks are a way for extensions to Bugzilla to insert code
-      into the standard Bugzilla templates without modifying the template files
-      themselves.  The hooks mechanism defines a consistent API for extending
-      the standard templates in a way that cleanly separates standard code
-      from extension code.  Hooks reduce merge conflicts and make it easier
-      to write extensions that work across multiple versions of Bugzilla,
-      making upgrading a Bugzilla installation with installed extensions easier.
-    </para>
-
-    <para>
-      A template hook is just a named place in a standard template file
-      where extension template files for that hook get processed.  Each hook
-      has a corresponding directory in the Bugzilla directory tree.  Hooking an
-      extension template to a hook is as simple as putting the extension file
-      into the hook's directory.  When Bugzilla processes the standard template
-      and reaches the hook, it will process all extension templates in the
-      hook's directory. The hooks themselves can be added into any standard
-      template upon request by extension authors.
+      Extensions are a way for extensions to Bugzilla to insert code
+      into the standard Bugzilla templates and source files
+      without modifying these files themselves.  The extension mechanism 
+      defines a consistent API for extending the standard templates and source files 
+      in a way that cleanly separates standard code from extension code.  
+      Hooks reduce merge conflicts and make it easier to write extensions that work 
+      across multiple versions of Bugzilla, making upgrading a Bugzilla installation 
+      with installed extensions easier. Furthermore, they make it easy to install 
+      and remove extensions as each extension is nothing more than a 
+      simple directory structure. 
     </para>
     
     <para>
-      To use hooks to extend a Bugzilla template, first make sure there is
-      a hook at the appropriate place within the template you want to extend. 
-      Hooks appear in the standard Bugzilla templates as a single directive
-      in the format
+      There are two main types of hooks: code hooks and template hooks. Code 
+      hooks allow extensions to invoke code at specific points in various 
+      source files, while template hooks allow extensions to add elements to 
+      the Bugzilla user interface. 
+    </para>
+
+    <para>
+      A hook is just a named place in a standard source or template file
+      where extension source code or template files for that hook get processed. 
+      Each extension has a corresponding directory in the Bugzilla directory 
+      tree (<filename>BUGZILLA_ROOT/extensions/extension_name</filename>).  Hooking 
+      an extension source file or template to a hook is as simple as putting 
+      the extension file into extension's template or code directory. 
+      When Bugzilla processes the source file or template and reaches the hook, 
+      it will process all extension files in the hook's directory. 
+      The hooks themselves can be added into any source file or standard template 
+      upon request by extension authors.
+    </para>
+    
+    <para>
+      To use hooks to extend Bugzilla, first make sure there is
+      a hook at the appropriate place within the source file or template you 
+      want to extend. The exact appearance of a hook depends on if the hook 
+      is a code hook or a template hook. 
+    </para>
+    
+    <para>
+      Code hooks appear in Bugzilla source files as a single method call 
+      in the format <literal role="code">Bugzilla::Hook->process("<varname>name</varname>");</literal>.
+      For instance, <filename>enter_bug.cgi</filename> may invoke the hook 
+      "<varname>enter_bug-entrydefaultvars</varname>". Thus, a source file at 
+      <filename>BUGZILLA_ROOT/extensions/EXTENSION_NAME/code/enter_bug-entrydefaultvars.pl</filename>
+      will be automatically invoked when the code hook is reached. 
+    </para>
+   
+    <para>  
+      Template hooks appear in the standard Bugzilla templates as a 
+      single directive in the format
       <literal role="code">[% Hook.process("<varname>name</varname>") %]</literal>,
-      where <varname>name</varname> is the unique (within that template)
-      name of the hook.
+      where <varname>name</varname> is the unique name of the hook.
     </para>
 
     <para>
-      If you aren't sure which template you want to extend or just want
-      to browse the available hooks, either use your favorite multi-file search
+      If you aren't sure what you want to extend or just want to browse the 
+      available hooks, either use your favorite multi-file search
       tool (e.g. <command>grep</command>) to search the standard templates
-      for occurrences of <methodname>Hook.process</methodname> or browse
-      the directory tree in
-      <filename>BUGZILLA_ROOT/template/en/extension/hook/</filename>,
-      which contains a directory for each hook in the following location:
+      for occurrences of <methodname>Hook.process</methodname> or the source 
+      files for occurrences of <methodname>Bugzilla::Hook::process</methodname>.
     </para>
 
     <para>
-      <filename>BUGZILLA_ROOT/template/en/extension/hook/PATH_TO_STANDARD_TEMPLATE/STANDARD_TEMPLATE_NAME/HOOK_NAME/</filename>
-    </para>
-
-    <para>
-      If there is no hook at the appropriate place within the Bugzilla template
-      you want to extend,
+      If there is no hook at the appropriate place within the Bugzilla 
+      source file or template you want to extend,
       <ulink url="http://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla&amp;component=User%20Interface">file
       a bug requesting one</ulink>, specifying:
     </para>
 
     <simplelist>
-      <member>the template for which you are requesting a hook;</member>
+      <member>the source or template file for which you are 
+          requesting a hook;</member>
       <member>
-        where in the template you would like the hook to be placed
-        (line number/position for latest version of template in CVS
+        where in the file you would like the hook to be placed
+        (line number/position for latest version of the file in CVS
         or description of location);
       </member>
       <member>the purpose of the hook;</member>
@@ -487,9 +543,8 @@
 
     <para>
       The Bugzilla reviewers will promptly review each hook request,
-      name the hook, add it to the template, check the new version
-      of the template into CVS, and create the corresponding directory in
-      <filename>BUGZILLA_ROOT/template/en/extension/hook/</filename>.
+      name the hook, add it to the template or source file, and check 
+      the new version of the template into CVS.
     </para>
 
     <para>
@@ -505,13 +560,13 @@
 
     <para>
       After making sure the hook you need exists (or getting it added if not),
-      add your extension template to the directory within the Bugzilla
-      directory tree corresponding to the hook. 
+      add your extension to the directory within the Bugzilla
+      extensions tree corresponding to the hook. 
     </para>
     
     <para>
-      That's it!  Now, when the standard template containing the hook
-      is processed, your extension template will be processed at the point 
+      That's it!  Now, when the source file or template containing the hook
+      is processed, your extension file will be processed at the point 
       where the hook appears.
     </para>
 
@@ -542,14 +597,9 @@
 ...]]></programlisting>
 
     <para>
-      The corresponding directory for this hook is
-      <filename>BUGZILLA_ROOT/template/en/extension/hook/global/useful-links.html.tmpl/edit/</filename>.
-    </para>
-
-    <para>
-      You put a template named
-      <filename>projman-edit-projects.html.tmpl</filename>
-      into that directory with the following content:
+      The corresponding extension file for this hook is
+      <filename>BUGZILLA_ROOT/extensions/projman/template/en/hook/global/useful-links-edit.html.tmpl</filename>.
+      You then create that template file and add the following constant:
     </para>
 
     <programlisting><![CDATA[...[% ', <a href="edit-projects.cgi">projects</a>' IF user.groups.projman_admins %]]]></programlisting>
@@ -558,7 +608,28 @@
       Voila!  The link now appears after the other administration links in the
       navigation bar for users in the <literal>projman_admins</literal> group.
     </para>
-
+    
+    <para>
+      Now, let us say your extension adds a custom "project_manager" field 
+      to enter_bug.cgi. You want to modify the CGI script to set the default 
+      project manager to be productname@company.com. Looking at 
+      <filename>enter_bug.cgi</filename>, you see the enter_bug-entrydefaultvars 
+      hook near the bottom of the file before the default form values are set. 
+      The corresponding extension source file for this hook is located at 
+      <filename>BUGZILLA_ROOT/extensions/projman/code/enter_bug-entrydefaultvars.pl</filename>.
+      You then create that file and add the following:
+    </para>
+    
+    <programlisting>$default{'project_manager'} = $product.'@company.com';</programlisting>
+    
+    <para>
+      This code will be invoked whenever enter_bug.cgi is executed. 
+      Assuming that the rest of the customization was completed (e.g. the 
+      custom field was added to the enter_bug template and the required hooks 
+      were used in process_bug.cgi), the new field will now have this 
+      default value. 
+    </para>
+      
     <para>
       Notes:
     </para>
@@ -566,61 +637,47 @@
     <itemizedlist>
       <listitem>
         <para>
-          You may want to prefix your extension template names
-          with the name of your extension, e.g. 
-          <filename>projman-foo.html.tmpl</filename>, 
-          so they do not conflict with the names of templates installed by
-          other extensions.
-        </para>
-      </listitem>
-
-      <listitem>
-        <para>
           If your extension includes entirely new templates in addition to
-          extensions of standard templates, it should install those new
-          templates into an extension-specific subdirectory of the
-          <filename>BUGZILLA_ROOT/template/en/extension/</filename> 
-          directory.  The <filename>extension/</filename> directory, like the 
+          extensions of standard templates, it should store those new
+          templates in its
+          <filename>BUGZILLA_ROOT/extensions/template/en/</filename> 
+          directory. Extension template directories, like the 
           <filename>default/</filename> and <filename>custom/</filename>
-          directories, is part of the template search path, so putting templates
+          directories, are part of the template search path, so putting templates
           there enables them to be found by the template processor.
         </para>
 
         <para>
           The template processor looks for templates first in the
           <filename>custom/</filename> directory (i.e. templates added by the 
-          specific installation), then in the <filename>extension/</filename> 
-          directory (i.e. templates added by extensions), and finally in the
+          specific installation), then in the <filename>extensions/</filename>
+          directory (i.e. templates added by extensions), and finally in the 
           <filename>default/</filename> directory (i.e. the standard Bugzilla 
-          templates).  Thus extension templates can override standard templates,
-          but installation-specific templates override both.
-        </para>
-
-        <para>
-          Note that overriding standard templates with extension templates
-          gives you great power but also makes upgrading an installation harder.
-          As with custom templates,  we recommend using this functionality
-          sparingly and only when absolutely necessary.
+          templates). Thus, installation-specific templates override both 
+          default and extension templates.
         </para>
       </listitem>
 
       <listitem>
         <para>
-          Installation customizers can also take advantage of hooks when adding
-          code to a Bugzilla template.  To do so, create directories in
+          If you are looking to customize Bugzilla, you can also take advantage 
+          of template hooks. To do so, create a directory in
           <filename>BUGZILLA_ROOT/template/en/custom/hook/</filename>
-          equivalent to the directories in
-          <filename>BUGZILLA_ROOT/template/en/extension/hook/</filename>          
-          for the hooks you want to use, then place your customization templates
-          into those directories.
+          that corresponds to the hook you wish to use, then place your 
+          customization templates into those directories. For example, 
+          if you wanted to use the hook "end" in 
+          <filename>global/useful-links.html.tmpl</filename>, you would 
+          create the directory <filename>BUGZILLA_ROOT/template/en/custom/hook/
+          global/useful-links.html.tmpl/end/</filename> and add your customization 
+          template to this directory. 
         </para>
 
         <para>
           Obviously this method of customizing Bugzilla only lets you add code
-          to the standard templates; you cannot change the existing code.
-          Nevertheless, for those customizations that only add code, this method
-          can reduce conflicts when merging changes, making upgrading
-          your customized Bugzilla installation easier.
+          to the standard source files and templates; you cannot change the 
+          existing code. Nevertheless, for those customizations that only add 
+          code, this method can reduce conflicts when merging changes, 
+          making upgrading your customized Bugzilla installation easier.
         </para>
       </listitem>
     </itemizedlist>    
@@ -652,11 +709,11 @@
     <para>
       For maximum flexibility, customizing this means editing Bugzilla's Perl 
       code. This gives the administrator complete control over exactly who is
-      allowed to do what. The relevant function is called 
-      <filename>CheckCanChangeField()</filename>,
-      and is found in <filename>process_bug.cgi</filename> in your 
-      Bugzilla directory. If you open that file and search for 
-      <quote>sub CheckCanChangeField</quote>, you'll find it.
+      allowed to do what. The relevant method is called
+      <filename>check_can_change_field()</filename>,
+      and is found in <filename>Bug.pm</filename> in your
+      Bugzilla/ directory. If you open that file and search for
+      <quote>sub check_can_change_field</quote>, you'll find it.
     </para>
     
     <para>
@@ -727,371 +784,11 @@
     </warning>
     
     <para>
-      For a list of possible field names, look in 
-      <filename>data/versioncache</filename> for the list called 
-      <filename>@::log_columns</filename>. If you need help writing custom
-      rules for your organization, ask in the newsgroup.
+      For a list of possible field names, look at the bugs table in the 
+      database. If you need help writing custom rules for your organization,
+      ask in the newsgroup.
     </para>    
   </section>   
-  
-  <section id="dbmodify">
-    <title>Modifying Your Running System</title>
-
-      <para>
-        Bugzilla optimizes database lookups by storing all relatively
-        static information in the <filename>versioncache</filename>
-        file, located in the <filename class="directory">data/</filename>
-        subdirectory under your installation directory.
-      </para>
-
-      <para>
-        If you make a change to the structural data in your database (the
-        versions table for example), or to the <quote>constants</quote>
-        encoded in <filename>defparams.pl</filename>, you will need to remove 
-        the cached content from the data directory (by doing a 
-        <command>rm data/versioncache</command>), or your changes won't show up.
-      </para>
-
-      <para>
-        <filename>versioncache</filename> gets regenerated automatically
-        whenever it's more than an hour old, so Bugzilla will eventually
-        notice your changes by itself, but generally you want it to notice
-        right away, so that you can test things.
-      </para>
-    </section>
-
-  <section id="dbdoc">
-    <title>MySQL Bugzilla Database Introduction</title>
-
-    <para>This information comes straight from my life. I was forced to learn
-    how Bugzilla organizes database because of nitpicky requests from users
-    for tiny changes in wording, rather than having people re-educate
-    themselves or figure out how to work our procedures around the tool. It
-    sucks, but it can and will happen to you, so learn how the schema works
-    and deal with it when it comes.</para>
-
-    <para>So, here you are with your brand-new installation of Bugzilla.
-    You've got MySQL set up, Apache working right, Perl DBI and DBD talking
-    to the database flawlessly. Maybe you've even entered a few test bugs to
-    make sure email's working; people seem to be notified of new bugs and
-    changes, and you can enter and edit bugs to your heart's content. Perhaps
-    you've gone through the trouble of setting up a gateway for people to
-    submit bugs to your database via email, have had a few people test it,
-    and received rave reviews from your beta testers.</para>
-
-    <para>What's the next thing you do? Outline a training strategy for your
-    development team, of course, and bring them up to speed on the new tool
-    you've labored over for hours.</para>
-
-    <para>Your first training session starts off very well! You have a
-    captive audience which seems enraptured by the efficiency embodied in
-    this thing called "Bugzilla". You are caught up describing the nifty
-    features, how people can save favorite queries in the database, set them
-    up as headers and footers on their pages, customize their layouts,
-    generate reports, track status with greater efficiency than ever before,
-    leap tall buildings with a single bound and rescue Jane from the clutches
-    of Certain Death!</para>
-
-    <para>But Certain Death speaks up -- a tiny voice, from the dark corners
-    of the conference room. "I have a concern," the voice hisses from the
-    darkness, "about the use of the word 'verified'."</para>
-
-    <para>The room, previously filled with happy chatter, lapses into
-    reverential silence as Certain Death (better known as the Vice President
-    of Software Engineering) continues. "You see, for two years we've used
-    the word 'verified' to indicate that a developer or quality assurance
-    engineer has confirmed that, in fact, a bug is valid. I don't want to
-    lose two years of training to a new software product. You need to change
-    the bug status of 'verified' to 'approved' as soon as possible. To avoid
-    confusion, of course."</para>
-
-    <para>Oh no! Terror strikes your heart, as you find yourself mumbling
-    "yes, yes, I don't think that would be a problem," You review the changes
-    with Certain Death, and continue to jabber on, "no, it's not too big a
-    change. I mean, we have the source code, right? You know, 'Use the
-    Source, Luke' and all that... no problem," All the while you quiver
-    inside like a beached jellyfish bubbling, burbling, and boiling on a hot
-    Jamaican sand dune...</para>
-
-    <para>Thus begins your adventure into the heart of Bugzilla. You've been
-    forced to learn about non-portable enum() fields, varchar columns, and
-    tinyint definitions. The Adventure Awaits You!</para>
-
-    <section>
-      <title>Bugzilla Database Basics</title>
-
-      <para>If you were like me, at this point you're totally clueless about
-      the internals of MySQL, and if it weren't for this executive order from
-      the Vice President you couldn't care less about the difference between
-      a 
-      <quote>bigint</quote>
-
-      and a 
-      <quote>tinyint</quote>
-
-      entry in MySQL. I recommend you refer to the
-      <ulink url="http://www.mysql.com/documentation/">MySQL documentation</ulink>
-      . Below are the basics you need to know about the Bugzilla database.
-      Check the chart above for more details.</para>
-
-      <para>
-        <orderedlist>
-          <listitem>
-            <para>To connect to your database:</para>
-
-            <para>
-              <prompt>bash#</prompt>
-
-              <command>mysql</command>
-
-              <parameter>-u root</parameter>
-            </para>
-
-            <para>If this works without asking you for a password, 
-            <emphasis>shame on you</emphasis>
-
-            ! You should have locked your security down like the installation
-            instructions told you to. You can find details on locking down
-            your database in the Bugzilla FAQ in this directory (under
-            "Security"), or more robust security generalities in the 
-            <ulink url="http://www.mysql.com/php/manual.php3?section=Privilege_system">MySQL
-            searchable documentation</ulink>.
-            </para>
-          </listitem>
-
-          <listitem>
-            <para>You should now be at a prompt that looks like this:</para>
-
-            <para>
-              <prompt>mysql&gt;</prompt>
-            </para>
-
-            <para>At the prompt, if 
-            <quote>bugs</quote>
-
-            is the name you chose in the
-            <filename>localconfig</filename>
-
-            file for your Bugzilla database, type:</para>
-
-            <para>
-              <prompt>mysql</prompt>
-
-              <command>use bugs;</command>
-            </para>
-
-          </listitem>
-        </orderedlist>
-      </para>
-
-      <section>
-        <title>Bugzilla Database Tables</title>
-
-        <para>Imagine your MySQL database as a series of spreadsheets, and
-        you won't be too far off. If you use this command:</para>
-
-        <para>
-          <prompt>mysql&gt;</prompt>
-          <command>show tables from bugs;</command>
-        </para>
-
-        <para>you'll be able to see the names of all the 
-        <quote>spreadsheets</quote>
-        (tables) in your database.</para>
-
- 	<para>From the command issued above, ou should have some
-	  output that looks like this:
-<programlisting>
-+-------------------+
-| Tables in bugs    |
-+-------------------+
-| attachments       |
-| bugs              |
-| bugs_activity     |
-| cc                |
-| components        |
-| dependencies      |
-| fielddefs         |
-| groups            |
-| keyworddefs       |
-| keywords          |
-| logincookies      |
-| longdescs         |
-| milestones        |
-| namedqueries      |
-| products          |
-| profiles          |
-| profiles_activity |
-| tokens            |
-| versions          |
-| votes             |
-| watch             |
-+-------------------+
-</programlisting>
-</para>
-
-<literallayout>
-  Here's an overview of what each table does. Most columns in each table have
-descriptive names that make it fairly trivial to figure out their jobs.
-
-attachments: This table stores all attachments to bugs. It tends to be your
-largest table, yet also generally has the fewest entries because file
-attachments are so (relatively) large.
-
-bugs:  This is the core of your system. The bugs table stores most of the
-current information about a bug, with the exception of the info stored in the
-other tables.
-
-bugs_activity:  This stores information regarding what changes are made to bugs
-when -- a history file.
-
-cc:  This tiny table simply stores all the CC information for any bug which has
-any entries in the CC field of the bug. Note that, like most other tables in
-Bugzilla, it does not refer to users by their user names, but by their unique
-userid, stored as a primary key in the profiles table.
-
-components: This stores the programs and components (or products and
-components, in newer Bugzilla parlance) for Bugzilla. Curiously, the "program"
-(product) field is the full name of the product, rather than some other unique
-identifier, like bug_id and user_id are elsewhere in the database.
-
-dependencies: Stores data about those cool dependency trees.
-
-fielddefs:  A nifty table that defines other tables. For instance, when you
-submit a form that changes the value of "AssignedTo" this table allows
-translation to the actual field name "assigned_to" for entry into MySQL.
-
-groups:  defines bitmasks for groups. A bitmask is a number that can uniquely
-identify group memberships. For instance, say the group that is allowed to
-tweak parameters is assigned a value of "1", the group that is allowed to edit
-users is assigned a "2", and the group that is allowed to create new groups is
-assigned the bitmask of "4". By uniquely combining the group bitmasks (much
-like the chmod command in UNIX,) you can identify a user is allowed to tweak
-parameters and create groups, but not edit users, by giving him a bitmask of
-"5", or a user allowed to edit users and create groups, but not tweak
-parameters, by giving him a bitmask of "6" Simple, huh?
-  If this makes no sense to you, try this at the mysql prompt:
-mysql> select * from groups;
-  You'll see the list, it makes much more sense that way.
-
-keyworddefs:  Definitions of keywords to be used
-
-keywords: Unlike what you'd think, this table holds which keywords are
-associated with which bug id's.
-
-logincookies: This stores every login cookie ever assigned to you for every
-machine you've ever logged into Bugzilla from. Curiously, it never does any
-housecleaning -- I see cookies in this file I've not used for months. However,
-since Bugzilla never expires your cookie (for convenience' sake), it makes
-sense.
-
-longdescs:  The meat of bugzilla -- here is where all user comments are stored!
-You've only got 2^24 bytes per comment (it's a mediumtext field), so speak
-sparingly -- that's only the amount of space the Old Testament from the Bible
-would take (uncompressed, 16 megabytes). Each comment is keyed to the
-bug_id to which it's attached, so the order is necessarily chronological, for
-comments are played back in the order in which they are received.
-
-milestones:  Interesting that milestones are associated with a specific product
-in this table, but Bugzilla does not yet support differing milestones by
-product through the standard configuration interfaces.
-
-namedqueries:  This is where everybody stores their "custom queries". Very
-cool feature; it beats the tar out of having to bookmark each cool query you
-construct.
-
-products:  What products you have, whether new bug entries are allowed for the
-product, what milestone you're working toward on that product, votes, etc. It
-will be nice when the components table supports these same features, so you
-could close a particular component for bug entry without having to close an
-entire product...
-
-profiles:  Ahh, so you were wondering where your precious user information was
-stored?  Here it is!  With the passwords in plain text for all to see! (but
-sshh... don't tell your users!)
-
-profiles_activity:  Need to know who did what when to who's profile?  This'll
-tell you, it's a pretty complete history.
-
-versions:  Version information for every product
-
-votes:  Who voted for what when
-
-watch:  Who (according to userid) is watching who's bugs (according to their
-userid).
-
-
-===
-THE DETAILS
-===
-
-  Ahh, so you're wondering just what to do with the information above?  At the
-mysql prompt, you can view any information about the columns in a table with
-this command (where "table" is the name of the table you wish to view):
-
-mysql> show columns from table;
-
-  You can also view all the data in a table with this command:
-
-mysql> select * from table;
-
-  -- note: this is a very bad idea to do on, for instance, the "bugs" table if
-you have 50,000 bugs. You'll be sitting there a while until you ctrl-c or
-50,000 bugs play across your screen.
-
-  You can limit the display from above a little with the command, where
-"column" is the name of the column for which you wish to restrict information:
-
-mysql> select * from table where (column = "some info");
-
-  -- or the reverse of this
-
-mysql> select * from table where (column != "some info");
-
-  Let's take our example from the introduction, and assume you need to change
-the word "verified" to "approved" in the resolution field. We know from the
-above information that the resolution is likely to be stored in the "bugs"
-table. Note we'll need to change a little perl code as well as this database
-change, but I won't plunge into that in this document. Let's verify the
-information is stored in the "bugs" table:
-
-mysql> show columns from bugs
-
-  (exceedingly long output truncated here)
-| bug_status| enum('UNCONFIRMED','NEW','ASSIGNED','REOPENED','RESOLVED','VERIFIED','CLOSED')||MUL | UNCONFIRMED||
-
-  Sorry about that long line. We see from this that the "bug status" column is
-an "enum field", which is a MySQL peculiarity where a string type field can
-only have certain types of entries. While I think this is very cool, it's not
-standard SQL. Anyway, we need to add the possible enum field entry
-'APPROVED' by altering the "bugs" table.
-
-mysql> ALTER table bugs CHANGE bug_status bug_status
-    -> enum("UNCONFIRMED", "NEW", "ASSIGNED", "REOPENED", "RESOLVED",
-    -> "VERIFIED", "APPROVED", "CLOSED") not null;
-
-    (note we can take three lines or more -- whatever you put in before the
-semicolon is evaluated as a single expression)
-
-Now if you do this:
-
-mysql> show columns from bugs;
-
-  you'll see that the bug_status field has an extra "APPROVED" enum that's
-available!  Cool thing, too, is that this is reflected on your query page as
-well -- you can query by the new status. But how's it fit into the existing
-scheme of things?
-  Looks like you need to go back and look for instances of the word "verified"
-in the perl code for Bugzilla -- wherever you find "verified", change it to
-"approved" and you're in business (make sure that's a case-insensitive search).
-Although you can query by the enum field, you can't give something a status
-of "APPROVED" until you make the perl changes. Note that this change I
-mentioned can also be done by editing checksetup.pl, which automates a lot of
-this. But you need to know this stuff anyway, right?
-	</literallayout>
-      </section>
-    </section>
-  </section>
 
   <!-- Integrating Bugzilla with Third-Party Tools -->
   &integration;

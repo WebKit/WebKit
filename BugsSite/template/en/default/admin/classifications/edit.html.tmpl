@@ -27,23 +27,39 @@
   <table  border=0 cellpadding=4 cellspacing=0>
     <tr>
       <th align="right">Classification:</th>
-      <td><input size=64 maxlength=64 name="classification" value="[% classification FILTER html %]"></TD>
+      <td><input size=64 maxlength=64 name="classification" 
+                 value="[% classification.name FILTER html %]"></td>
     </tr>
     <tr>
       <th align="right">Description:</th>
-      <td><textarea rows=4 cols=64 name="description">[% description %]</textarea></TD>
+      <td>
+        [% INCLUDE global/textarea.html.tmpl
+          name           = 'description'
+          minrows        = 4
+          cols           = 64
+          defaultcontent = classification.description
+        %]
+      </td>
+    </tr>
+    <tr>
+      <th align="right"><label for="sortkey">Sortkey:</label></th>
+      <td><input id="sortkey" size="20" maxlength="20" name="sortkey" value="
+      [%- classification.sortkey FILTER html %]"></td>
     </tr>
     <tr valign=top>
-      <th align="right"><a href="editproducts.cgi?classification=[% classification FILTER url_quote %]">Edit products</a></th>
+      <th align="right">
+        <a href="editproducts.cgi?classification=[% classification.name FILTER url_quote %]">
+        Edit Products</a>:
+      </th>
       <td>
-        [% IF products AND products.size > 0 %]
+        [% IF classification.products.size > 0 %]
           <table>
-            [% FOREACH product = products %]
+            [% FOREACH product = classification.products %]
               <tr>
                 <th align=right valign=top>[% product.name FILTER html %]</th>
                 <td valign=top>
                   [% IF product.description %]
-                    [% product.description FILTER none %]
+                    [% product.description FILTER html_light %]
                   [% ELSE %]
                     <font color="red">description missing</font>
                   [% END %]
@@ -58,9 +74,10 @@
     </tr>
   </table>
 
-  <input type=hidden name="classificationold" value="[% classification FILTER html %]">
-  <input type=hidden name="descriptionold" value="[% description FILTER html %]">
+  <input type=hidden name="classificationold" 
+         value="[% classification.name FILTER html %]">
   <input type=hidden name="action" value="update">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
   <input type=submit value="Update">
 </form>
 

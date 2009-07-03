@@ -35,7 +35,7 @@
 
 [% IF col_field == 'resolution' %]
   [% FOR i IN [ 0 .. data.0.0.max ] %]
-    [% data.0.0.$i = resolution_descs.${data.0.0.$i} %]
+    [% data.0.0.$i = get_resolution(data.0.0.$i) %]
   [% END %]
 [% END %]
 
@@ -47,7 +47,7 @@
 
 [% IF row_field == 'resolution' %]
   [% FOR i IN [ 0 .. row_names.max ] %]
-    [% row_names.$i = resolution_descs.${row_names.$i} %]
+    [% row_names.$i = get_resolution(row_names.$i) %]
   [% END %]
 [% END %]
 

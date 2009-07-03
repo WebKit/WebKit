@@ -19,43 +19,64 @@
   # Contributor(s): Gervase Markham <gerv@gerv.net>
   #                 Ville Skyttä <ville.skytta@iki.fi>
   #                 Shane H. W. Travis <travis@sedsystems.ca>
+  #                 Marc Schumann <wurblzap@gmail.com>
+  #                 Akamai Technologies <bugzilla-dev@akamai.com>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
 [% PROCESS "global/field-descs.none.tmpl" %]
 
-[% product_name = product FILTER html %]
+[% title = BLOCK %]Enter [% terms.Bug %]: [% product.name FILTER html %][% END %]
+
 [% PROCESS global/header.html.tmpl
-  title = "Enter $terms.Bug: $product_name"
-  h2 = "This page lets you enter a new $terms.bug into ${terms.Bugzilla}."
-  onload="set_assign_to();"
+  title = title
+  style_urls = [ 'skins/standard/create_attachment.css' ]
+  javascript_urls = [ "js/attachment.js" ]
 %]
-[% USE Bugzilla %]
 
 <script type="text/javascript">
 <!--
 
-var initialowners = new Array([% component_.size %]);
+var initialowners = new Array([% product.components.size %]);
 var last_initialowner;
-var components = new Array([% component_.size %]);
+var initialccs = new Array([% product.components.size %]);
+var components = new Array([% product.components.size %]);
+var flags = new Array([% product.components.size %]);
 [% IF Param("useqacontact") %]
-    var initialqacontacts = new Array([% component_.size %]);
+    var initialqacontacts = new Array([% product.components.size %]);
     var last_initialqacontact;
 [% END %]
 [% count = 0 %]
-[%- FOREACH c = component_ %]
+[%- FOREACH c = product.components %]
     components[[% count %]] = "[% c.name FILTER js %]";
-    initialowners[[% count %]] = "[% c.initialowner FILTER js %]";
-    [% IF Param("useqacontact") %]
-        initialqacontacts[[% count %]] = "[% c.initialqacontact FILTER js %]";
+    initialowners[[% count %]] = "[% c.default_assignee.login FILTER js %]";
+    [% flag_list = [] %]
+    [% FOREACH f = c.flag_types.bug %]
+      [% NEXT UNLESS f.is_active %]
+      [% flag_list.push(f.id) %]
     [% END %]
+    [% FOREACH f = c.flag_types.attachment %]
+      [% NEXT UNLESS f.is_active %]
+      [% flag_list.push(f.id) %]
+    [% END %]
+    flags[[% count %]] = [[% flag_list.join(",") FILTER js %]];
+    [% IF Param("useqacontact") %]
+        initialqacontacts[[% count %]] = "[% c.default_qa_contact.login FILTER js %]";
+    [% END %]
+
+    [% SET initial_cc_list = [] %]
+    [% FOREACH cc_user = c.initial_cc %]
+      [% initial_cc_list.push(cc_user.login) %]
+    [% END %]
+    initialccs[[% count %]] = "[% initial_cc_list.join(', ') FILTER js %]";
+
     [% count = count + 1 %]
 [%- END %]
 
 function set_assign_to() {
     // Based on the selected component, fill the "Assign To:" field
-    // with the default component owner, and the the "QA Contact:" field
-    // with the default QA Contact.
+    // with the default component owner, and the "QA Contact:" field
+    // with the default QA Contact. It also selectively enables flags.
     var form = document.Create;
     var assigned_to = form.assigned_to.value;
 
@@ -79,6 +100,9 @@ function set_assign_to() {
             form.assigned_to.value = owner;
             last_initialowner = owner;
         }
+
+        document.getElementById('initial_cc').innerHTML = initialccs[index];
+
         [% IF Param("useqacontact") %]
             var contact = initialqacontacts[index];
             if (qa_contact == last_initialqacontact
@@ -88,22 +112,59 @@ function set_assign_to() {
                   last_initialqacontact = contact;
             }
         [% END %]
+
+        // First, we disable all flags. Then we re-enable those
+        // which are available for the selected component.
+        var inputElements = document.getElementsByTagName("select");
+        var inputElement, flagField;
+        for ( var i=0 ; i<inputElements.length ; i++ ) {
+            inputElement = inputElements.item(i);
+            if (inputElement.name.search(/^flag_type-(\d+)$/) != -1) {
+                var id = inputElement.name.replace(/^flag_type-(\d+)$/, "$1");
+                inputElement.disabled = true;
+                // Also disable the requestee field, if it exists.
+                inputElement = document.getElementById("requestee_type-" + id);
+                if (inputElement) inputElement.disabled = true;
+            }
+        }
+        // Now enable flags available for the selected component.
+        for (var i = 0; i < flags[index].length; i++) {
+            flagField = document.getElementById("flag_type-" + flags[index][i]);
+            // Do not enable flags the user cannot set nor request.
+            if (flagField && flagField.options.length > 1) {
+                flagField.disabled = false;
+                // Re-enabling the requestee field depends on the status
+                // of the flag.
+                toggleRequesteeField(flagField, 1);
+            }
+        }
     }
 }
+
+function handleWantsAttachment(wants_attachment) {
+    if (wants_attachment) {
+        document.getElementById('attachment_false').style.display = 'none';
+        document.getElementById('attachment_true').style.display = 'block';
+    }
+    else {
+        document.getElementById('attachment_false').style.display = 'block';
+        document.getElementById('attachment_true').style.display = 'none';
+        clearAttachmentFields();
+    }
+}
+
 -->
 </script>
 
-<form name="Create" id="Create" method="post" action="post_bug.cgi">
-<input type="hidden" name="product" value="[% product FILTER html %]">
+<form name="Create" id="Create" method="post" action="post_bug.cgi"
+      enctype="multipart/form-data">
+<input type="hidden" name="product" value="[% product.name FILTER html %]">
+<input type="hidden" name="token" value="[% token FILTER html %]">
 
 <table cellspacing="2" cellpadding="0" border="0">
 
   <tr>
-    <td><br></td>
-  </tr>
-
-  <tr>
-    <td></td>
+    <td>&nbsp;</td>
     <td colspan="3">
     [%# Migration note: The following file corresponds to the old Param
       # 'entryheaderhtml'
@@ -113,15 +174,16 @@ function set_assign_to() {
   </tr>
 
   <tr>
-    <td><br></td>
+    <td>&nbsp;</td>
+    <td colspan="3">&nbsp;</td>
   </tr>
 
   <tr>
     <td align="right" valign="top"><strong>Reporter:</strong></td>
-    <td valign="top">[% Bugzilla.user.login FILTER html %]</td>
+    <td valign="top">[% user.login FILTER html %]</td>
 
     <td align="right" valign="top"><strong>Product:</strong></td>
-    <td valign="top">[% product FILTER html %]</td>
+    <td valign="top">[% product.name FILTER html %]</td>
   </tr>
 
   [%# We can't use the select block in these two cases for various reasons. %]
@@ -141,13 +203,13 @@ function set_assign_to() {
 
     <td align="right" valign="top">
       <strong>
-        <a href="describecomponents.cgi?product=[% product FILTER url_quote %]">
+        <a href="describecomponents.cgi?product=[% product.name FILTER url_quote %]">
           Component</a>:
       </strong>
     </td>
     <td>
       <select name="component" onchange="set_assign_to();" size="5">
-        [%- FOREACH c = component_ %]
+        [%- FOREACH c = product.components %]
           <option value="[% c.name FILTER html %]"
             [% " selected=\"selected\"" IF c.name == default.component_ %]>
             [% c.name FILTER html -%]
@@ -159,41 +221,42 @@ function set_assign_to() {
 
   <tr>
     <td>&nbsp;</td>
-    <td colspan="3"></td>
+    <td colspan="3">&nbsp;</td>
   </tr>
 
   <tr>
+    [% sel = { description => 'Severity', name => 'bug_severity' } %]
+    [% INCLUDE select %]
+
     [% sel = { description => 'Platform', name => 'rep_platform' } %]
     [% INCLUDE select %]
+  </tr>
+
+  <tr>
+    [% IF Param('letsubmitterchoosepriority') %]
+      [% sel = { description => 'Priority', name => 'priority' } %]
+      [% INCLUDE select %]
+    [% ELSE %]
+      <td colspan="2">
+        <input type="hidden" name="priority" value="[% default.priority FILTER html %]">
+      </td>
+    [% END %]
 
     [% sel = { description => 'OS', name => 'op_sys' } %]
     [% INCLUDE select %]
   </tr>
 
-  <tr>
-  [% IF Param('letsubmitterchoosepriority') %]
-    [% sel = { description => 'Priority', name => 'priority' } %]
-    [% INCLUDE select %]
-  [% ELSE %]
-    <input type="hidden" name="priority"
-           value="[% default.priority FILTER html %]">
-  [% END %]
-
-  [% sel = { description => 'Severity', name => 'bug_severity' } %]
-  [% INCLUDE select %]
-  </tr>
-
   [% IF Param('usetargetmilestone') && Param('letsubmitterchoosemilestone') %]
     <tr>
-    [% sel = { description => 'Target Milestone', name => 'target_milestone' } %]
-    [% INCLUDE select %]
-    <td colspan="2"></td>
+      [% sel = { description => 'Target Milestone', name => 'target_milestone' } %]
+      [% INCLUDE select %]
+      <td colspan="2">&nbsp;</td>
     </tr>
   [% END %]
 
   <tr>
     <td>&nbsp;</td>
-    <td colspan="3"></td>
+    <td colspan="3">&nbsp;</td>
   </tr>
 
   <tr>
@@ -206,7 +269,20 @@ function set_assign_to() {
     [% sel = { description => 'Initial State', name => 'bug_status' } %]
     [% INCLUDE select %]
 [% END %]
-    <td colspan="2"></td>
+    <td>&nbsp;</td>
+    [%# Calculate the number of rows we can use for flags %]
+    [% num_rows = 6 + (Param("useqacontact") ? 1 : 0) +
+                      (user.in_group(Param('timetrackinggroup')) ? 3 : 0) +
+                      (Param("usebugaliases") ? 1 : 0)
+    %]
+    <td rowspan="[% num_rows FILTER html %]" valign="top">
+      [% IF product.flag_types.bug.size > 0 %]
+        [% PROCESS "flag/list.html.tmpl" flag_types = product.flag_types.bug
+                                         any_flags_requesteeble = 1
+                                         flag_table_id = "bug_flags"
+        %]
+      [% END %]
+    </td>
   </tr>
 
   <tr>
@@ -215,7 +291,7 @@ function set_assign_to() {
         <a href="page.cgi?id=fields.html#assigned_to">Assign To</a>:
       </strong>
     </td>
-    <td colspan="3">
+    <td colspan="2">
       [% INCLUDE global/userselect.html.tmpl
          name => "assigned_to"
          value => assigned_to
@@ -230,7 +306,7 @@ function set_assign_to() {
 [% IF Param("useqacontact") %]
     <tr>
       <td align="right"><strong>QA Contact:</strong></td>
-      <td colspan="3">
+      <td colspan="2">
       [% INCLUDE global/userselect.html.tmpl
          name => "qa_contact"
          value => qa_contact
@@ -245,7 +321,7 @@ function set_assign_to() {
 
   <tr>
     <td align="right"><strong>Cc:</strong></td>
-    <td colspan="3">
+    <td colspan="2">
       [% INCLUDE global/userselect.html.tmpl
          name => "cc"
          value => cc
@@ -255,22 +331,34 @@ function set_assign_to() {
        %]
     </td>
   </tr>
+
+  <tr>
+    <th align="right">Default CC:</th>
+    <td colspan="2">
+      <div id="initial_cc">
+          <!-- This has to happen after everything above renders,
+               and onload doesn't work. So this is as good a place
+               as any to put it. -->
+          <script type="text/javascript">set_assign_to();</script>
+      </div>
+   </td>
+  </tr>
   
   <tr>
     <td>&nbsp;</td>
-    <td colspan="3"></td>
+    <td colspan="2"></td>
   </tr>
 
-[% IF UserInGroup(Param('timetrackinggroup')) %]
+[% IF user.in_group(Param('timetrackinggroup')) %]
   <tr>
     <td align="right"><strong>Estimated Hours:</strong></td>
-    <td colspan="3">
+    <td colspan="2">
       <input name="estimated_time" size="6" maxlength="6" value="0.0">
     </td>
   </tr>
   <tr>
     <td align="right"><strong>Deadline:</strong></td>
-    <td colspan="3">
+    <td colspan="2">
       <input name="deadline" size="10" maxlength="10" value="[% deadline FILTER html %]">
       <small>(YYYY-MM-DD)</small>
     </td>
@@ -278,39 +366,69 @@ function set_assign_to() {
 
   <tr>
     <td>&nbsp;</td>
-    <td colspan="3"></td>
+    <td colspan="2"></td>
+  </tr>
+[% END %]
+
+[% IF Param("usebugaliases") %]
+  <tr>
+    <td align="right"><strong>Alias:</strong></td>
+    <td colspan="2">
+      <input name="alias" size="20">
+    </td>
   </tr>
 [% END %]
 
   <tr>
     <td align="right"><strong>URL:</strong></td>
-    <td colspan="3">
+    <td colspan="2">
       <input name="bug_file_loc" size="60"
              value="[% bug_file_loc FILTER html %]">
     </td>
   </tr>
 
+  [% USE Bugzilla %]
+  [% FOREACH field = Bugzilla.get_fields({ obsolete => 0, custom => 1, 
+                                           enter_bug => 1 }) %]
+    [% SET value = ${field.name} IF ${field.name}.defined %]
+    <tr>
+      [% PROCESS bug/field.html.tmpl editable=1 value_span=2 %]
+    </tr>
+  [% END %]
+
   <tr>
     <td align="right"><strong>Summary:</strong></td>
-    <td colspan="3">
-      <input name="short_desc" size="60" value="[% short_desc FILTER html %]">
+    <td colspan="2">
+      <input name="short_desc" size="60" value="[% short_desc FILTER html %]"
+             maxlength="255">
     </td>
   </tr>
 
   <tr><td align="right" valign="top"><strong>Description:</strong></td>
     <td colspan="3">
-      <textarea name="comment" rows="10" cols="80">
+      [% defaultcontent = BLOCK %]
         [% IF cloned_bug_id %]
 +++ This [% terms.bug %] was initially created as a clone of [% terms.Bug %] #[% cloned_bug_id %] +++
 
 
         [% END %]
-        [% comment FILTER html %]</textarea>
+        [%-# We are within a BLOCK. The comment will be correctly HTML-escaped
+          # by global/textarea.html.tmpl. So we must not escape the comment here. %]
+        [% comment FILTER none %]
+      [%- END %]
+      [% INCLUDE global/textarea.html.tmpl
+         name           = 'comment'
+         id             = 'comment'
+         minrows        = 10
+         maxrows        = 25
+         cols           = constants.COMMENT_COLS
+         defaultcontent = defaultcontent
+       %]
       <br>
     </td>
   </tr>
 
-  [% IF Param("insidergroup") && UserInGroup(Param("insidergroup")) %]
+  [% IF Param("insidergroup") && user.in_group(Param("insidergroup")) %]
     <tr>
       <td></td>
       <td colspan="3">
@@ -322,11 +440,44 @@ function set_assign_to() {
         </label>
       </td>
     </tr>
-  [% ELSE %]
-    <input type="hidden" name="commentprivacy" value="0">
   [% END %]
 
-  [% IF UserInGroup('editbugs') %]
+  <tr>
+    <th align="right" valign="top">Attachment:</th>
+    <td colspan="3">
+      <script type="text/javascript">
+        <!--
+        document.write( '<div id="attachment_false">'
+                      +   '<input type="button" value="Add an attachment" '
+                      +          'onClick="handleWantsAttachment(true)"> '
+                      +   '<em style="display: none">This button has no '
+                      +   'functionality for you because your browser does '
+                      +   'not support CSS or does not use it.<\/em>'
+                      + '<\/div>'
+                      + '<div id="attachment_true" style="display: none">'
+                      +   '<input type="button" '
+                      +          'value="Don\'t add an attachment " '
+                      +          'onClick="handleWantsAttachment(false)">');
+        //-->
+      </script>
+        <fieldset>
+          <legend>Add an attachment</legend>
+          <table class="attachment_entry">
+            [% PROCESS attachment/createformcontents.html.tmpl
+                       flag_types = product.flag_types.attachment
+                       any_flags_requesteeble = 1
+                       flag_table_id ="attachment_flags" %]
+          </table>
+        </fieldset>
+      <script type="text/javascript">
+        <!--
+        document.write('<\/div>');
+        //-->
+      </script>
+    </td>
+  </tr>
+
+  [% IF user.in_group('editbugs', product.id) %]
     [% IF use_keywords %]
       <tr>
         <td align="right" valign="top">
@@ -378,7 +529,7 @@ function set_assign_to() {
         <input type="checkbox" id="bit-[% g.bit %]"
           name="bit-[% g.bit %]" value="1"
           [% " checked=\"checked\"" IF g.checked %]>
-          <label for="bit-[% g.bit %]">[% g.description %]</label><br>
+          <label for="bit-[% g.bit %]">[% g.description FILTER html_light %]</label><br>
       [% END %]
       <br>
     [% END %]
@@ -391,12 +542,12 @@ function set_assign_to() {
   <tr>
     <td></td>
     <td colspan="3">
-      <input type="submit" value="    Commit    "
+      <input type="submit" id="commit" value="    Commit    "
              onclick="if (this.form.short_desc.value == '')
              { alert('Please enter a summary sentence for this [% terms.bug %].');
                return false; } return true;">
       &nbsp;&nbsp;&nbsp;&nbsp;
-      <input type="submit" name="maketemplate"
+      <input type="submit" name="maketemplate" id="maketemplate"
              value="Remember values as bookmarkable template">
     </td>
   </tr>

@@ -1,5 +1,5 @@
 <!-- <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"> -->
-<!-- $Id: security.xml,v 1.6 2005/06/29 23:43:33 zach%zachlipton.com Exp $ -->
+<!-- $Id: security.xml,v 1.16.2.1 2007/09/03 10:13:24 lpsolit%gmail.com Exp $ -->
 
 <chapter id="security">
 <title>Bugzilla Security</title>
@@ -49,8 +49,8 @@
       <quote>SYSTEM</quote> introduces obvious security concerns, the
       problems introduced by running everything as <quote>nobody</quote> may
       not be so obvious. Basically, if you run every daemon as
-      <quote>nobody</quote> and one of them gets comprimised it can
-      comprimise every other daemon running as <quote>nobody</quote> on your
+      <quote>nobody</quote> and one of them gets compromised it can
+      compromise every other daemon running as <quote>nobody</quote> on your
       machine. For this reason, it is recommended that you create a user
       account for each daemon.
       </para>
@@ -90,7 +90,7 @@
     <title>The MySQL System Account</title>
     
       <para>As mentioned in <xref linkend="security-os-accounts"/>, the MySQL
-      daemon should run as a non-privleged, unique user. Be sure to consult
+      daemon should run as a non-privileged, unique user. Be sure to consult
       the MySQL documentation or the documentation that came with your system
       for instructions.
       </para>
@@ -141,15 +141,15 @@
       have no other reason to access MySQL remotely, then you should disable
       the network access. This, along with the suggestion in
       <xref linkend="security-os-ports"/>, will help protect your system from
-      any remote vulnerabilites in MySQL.
+      any remote vulnerabilities in MySQL.
       </para>
       
       <example id="security-mysql-network-ex">
       <title>Disabling Networking in MySQL</title>
       
-        <para>Simply enter the following in <filename>/etc/my.conf</filename>:
+        <para>Simply enter the following in <filename>/etc/my.cnf</filename>:
         <screen>
-[myslqd]
+[mysqld]
 # Prevent network access to MySQL.
 skip-networking
         </screen>
@@ -171,20 +171,19 @@ skip-networking
   
   
   <section id="security-webserver">
-  <title>Webserver</title>
+  <title>Web server</title>
 
     <section id="security-webserver-access">
     <title>Disabling Remote Access to Bugzilla Configuration Files</title>
     
-      <para>There are many files that are placed in the Bugzilla directory
-      area that should not be accessable from the web. Because of the way
-      Bugzilla is currently layed out, the list of what should and should not
-      be accessible is rather complicated. A new installation method is
-      currently in the works which should solve this by allowing files that
-      shouldn't be accessible from the web to be placed in a directory outside
-      the webroot. See 
-      <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=44659">bug 44659</ulink>
-      for more information.
+      <para>
+        There are many files that are placed in the Bugzilla directory
+        area that should not be accessible from the web. Because of the way
+        Bugzilla is currently layed out, the list of what should and should not
+        be accessible is rather complicated. A quick way is to run
+	<filename>testserver.pl</filename> to check if your web server serves
+        Bugzilla files as expected. If not, you may want to follow the few
+	steps below.
       </para>
       
       <tip>
@@ -204,14 +203,6 @@ skip-networking
               <simplelist type="inline">
                 <member><filename>*.pl</filename></member>
                 <member><filename>*localconfig*</filename></member>
-              </simplelist>
-              </para>
-            </listitem>
-            <listitem>
-              <para>But allow:
-              <simplelist type="inline">
-                <member><filename>localconfig.js</filename></member>
-                <member><filename>localconfig.rdf</filename></member>
               </simplelist>
               </para>
             </listitem>
@@ -301,53 +292,22 @@ skip-networking
       </itemizedlist>
 
       <para>Be sure to test that data that should not be accessed remotely is
-      properly blocked. Of particular intrest is the localconfig file which
+      properly blocked. Of particular interest is the localconfig file which
       contains your database password. Also, be aware that many editors
       create temporary and backup files in the working directory and that
-      those should also not be accessable. For more information, see 
+      those should also not be accessible. For more information, see
       <ulink url="http://bugzilla.mozilla.org/show_bug.cgi?id=186383">bug 186383</ulink>
       or
       <ulink url="http://online.securityfocus.com/bid/6501">Bugtraq ID 6501</ulink>.
-      To test, simply point your web browser at the file; for example, to
-      test mozilla.org's installation, we'd try to access
-      <ulink url="http://bugzilla.mozilla.org/localconfig"/>. You should get
-      a <quote><errorcode>403</errorcode> <errorname>Forbidden</errorname></quote>
-      error.
+      To test, simply run <filename>testserver.pl</filename>, as said above.
       </para>
       
       <tip>
         <para>Be sure to check <xref linkend="http"/> for instructions
-        specific to the webserver you use.
+        specific to the web server you use.
         </para>
       </tip>
     
-    </section>
-
-
-    <section id="security-webserver-mod-throttle">
-      <title>Using <filename>mod_throttle</filename> to Prevent a DOS</title>
-
-      <note>
-        <para>This section only applies to people who have chosen the Apache
-        webserver. It may be possible to do similar things with other
-        webservers. Consult the documentation that came with your webserver
-        to find out.
-        </para>
-      </note>
-
-      <para>It is possible for a user, by mistake or on purpose, to access
-      the database many times in a row which can result in very slow access
-      speeds for other users (effectively, a
-      <glossterm linkend="gloss-dos">DOS</glossterm> attack). If your
-      Bugzilla installation is experiencing this problem, you may install
-      the Apache module <filename>mod_throttle</filename> which can limit
-      connections by IP address. You may download this module at 
-      <ulink url="http://www.snert.com/Software/mod_throttle/"/>.
-      Follow the instructions to install into your Apache install. 
-      The command you need is 
-      <command>ThrottleClientIP</command>. See the 
-      <ulink url="http://www.snert.com/Software/mod_throttle/">documentation</ulink>
-      for more information.</para>
     </section>
 
       
@@ -360,28 +320,25 @@ skip-networking
     <section id="security-bugzilla-charset">
     <title>Prevent users injecting malicious Javascript</title>
 
-      <para>It is possible for a Bugzilla user to take advantage of character
-      set encoding ambiguities to inject HTML into Bugzilla comments. This
-      could include malicious scripts. 
-      Due to internationalization concerns, we are unable to
-      incorporate by default the code changes suggested by 
+      <para>If you installed Bugzilla version 2.22 or later from scratch,
+      then the <emphasis>utf8</emphasis> parameter is switched on by default.
+      This makes Bugzilla explicitly set the character encoding, following
       <ulink
-      url="http://www.cert.org/tech_tips/malicious_code_mitigation.html#3">the
-      CERT advisory</ulink> on this issue.
-      Making the change in <xref linkend="security-bugzilla-charset-ex"/> will
-      prevent this problem. 
+      url="http://www.cert.org/tech_tips/malicious_code_mitigation.html#3">a
+      CERT advisory</ulink> recommending exactly this.
+      The following therefore does not apply to you; just keep
+      <emphasis>utf8</emphasis> turned on.
       </para>
 
-      <example id="security-bugzilla-charset-ex">
-      <title>Forcing Bugzilla to output a charset</title>
-
-        <para>Locate the following line in
-        <filename>Bugzilla/CGI.pm</filename>:
-        <programlisting>$self->charset('');</programlisting>
-        and change it to:
-        <programlisting>$self->charset('UTF-8');</programlisting>
-        </para>
-      </example>
+      <para>If you've upgraded from an older version, then it may be possible
+      for a Bugzilla user to take advantage of character set encoding
+      ambiguities to inject HTML into Bugzilla comments.
+      This could include malicious scripts. 
+      This is because due to internationalization concerns, we are unable to
+      turn the <emphasis>utf8</emphasis> parameter on by default for upgraded
+      installations.
+      Turning it on manually will prevent this problem.
+      </para>
     </section>    
     
   </section>

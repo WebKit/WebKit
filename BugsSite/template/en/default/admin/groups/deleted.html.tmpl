@@ -23,9 +23,7 @@
   #%]
 
 [%# INTERFACE:
-  # gid: number. The group ID.
   # name: string. The name of the group.
-  # cantdelete: boolean int. Is 1 if the group couldn't have been deleted.
   #%]
 
 
@@ -33,21 +31,7 @@
   title = "Deleting group"
 %]
 
-[% IF cantdelete %]
-  <p>
-    This group cannot be deleted because there are records
-    in the database which refer to it.  All such records
-    must be removed or altered to remove the reference to this
-    group before the group can be deleted.
-  </p>
-
-  <p>
-    <a href="editgroups.cgi?action=del&amp;group=[% gid FILTER url_quote %]">View</a>
-    the list of which records are affected.
-  </p>
-[% ELSE %]
-  <p><b>The group [% name FILTER html %] has been deleted.</b></p>
-[% END %]
+<p>The group [% name FILTER html %] has been deleted.</p>
 
 <p>Go back to the <a href="editgroups.cgi">group list</a>.
 

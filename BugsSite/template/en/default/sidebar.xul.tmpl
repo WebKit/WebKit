@@ -1,4 +1,4 @@
-[% template_version = "1.0@bugzilla.org" %]
+[%# 1.0@bugzilla.org %]
 [%# -*- mode: sgml -*- %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
@@ -25,7 +25,6 @@
 [% PROCESS global/variables.none.tmpl %]
 
 <?xml version="1.0"?>
-<!-- [% template_version %] -->
 <?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
 <?xml-stylesheet href="[% Param('urlbase') %]skins/standard/panel.css" type="text/css"?>
 <window
@@ -34,13 +33,7 @@
   orient="vertical"
   onload="document.getElementById('query-field').addEventListener('keypress', initial_keypress_handler, true)">
 
-<!-- Load QuickSearch libraries -->
-<script type="application/x-javascript" src="localconfig.js"/>
-<script type="application/x-javascript" src="quicksearch.js"/>
 <script type="application/x-javascript"><![CDATA[
-
-// Tell QuickSearch that the source of this is the sidebar
-var sidebar = 1;
 
 function load_absolute_url( aAbsoluteURL ) {
     content.location = aAbsoluteURL;
@@ -59,7 +52,7 @@ function initial_keypress_handler( aEvent ) {
 
 function normal_keypress_handler( aEvent ) {
     if ( aEvent.keyCode == 13 )
-      QuickSearch(this.value);
+      load_relative_url('buglist.cgi?quicksearch=' + this.value);
 }
 
 ]]></script>
@@ -79,12 +72,18 @@ function normal_keypress_handler( aEvent ) {
       <text class="text-link" onclick="load_relative_url('userprefs.cgi')" value="edit prefs"/>
   [%- IF user.groups.tweakparams %]
       <text class="text-link" onclick="load_relative_url('editparams.cgi')" value="edit params"/>
+      <text class="text-link" onclick="load_relative_url('editsettings.cgi')" value="edit default preferences"/>
   [%- END %]
   [%- IF user.groups.editusers || user.can_bless %]
       <text class="text-link" onclick="load_relative_url('editusers.cgi')" value="edit users"/>
   [%- END %]
+  [%- IF Param('useclassification') && user.groups.editclassifications %]
+      <text class="text-link" onclick="load_relative_url('editclassifications.cgi')" value="edit classifications"/>
+  [%- END %]
   [%- IF user.groups.editcomponents %]
       <text class="text-link" onclick="load_relative_url('editcomponents.cgi')" value="edit components"/>
+      <text class="text-link" onclick="load_relative_url('editflagtypes.cgi')" value="edit flags"/>
+      <text class="text-link" onclick="load_relative_url('editvalues.cgi')" value="edit field values"/>
   [%- END %]
   [%- IF user.groups.creategroups %]
       <text class="text-link" onclick="load_relative_url('editgroups.cgi')" value="edit groups"/>
@@ -92,10 +91,13 @@ function normal_keypress_handler( aEvent ) {
   [%- IF user.groups.editkeywords %]
       <text class="text-link" onclick="load_relative_url('editkeywords.cgi')" value="edit keywords"/>
   [%- END %]
-  [%- IF user.groups.tweakparams %]
+  [%- IF user.groups.bz_canusewhines %]
+      <text class="text-link" onclick="load_relative_url('editwhines.cgi')" value="edit whining"/>
+  [%- END %]
+  [%- IF user.groups.editcomponents %]
       <text class="text-link" onclick="load_relative_url('sanitycheck.cgi')" value="sanity check"/>
   [%- END %]
-  [%- IF user.get_flag('can_logout') %]
+  [%- IF user.authorizer.can_logout %]
       <text class="text-link" onclick="load_relative_url('relogin.cgi')" value="log out [% user.login FILTER html %]"/>
   [%- END %]
       <separator class="thin"/>

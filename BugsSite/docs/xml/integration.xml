@@ -36,7 +36,7 @@
 
     <para>There is also a CVSZilla project, based upon somewhat dated 
     Bugzilla code, to integrate CVS and Bugzilla through CVS' ability to 
-    email. Check it out at: <ulink url="http://homepages.kcbbs.gen.nz/~tonyg/"/>.
+    email. Check it out at: <ulink url="http://www.cvszilla.org/"/>.
     </para>
 
     <para>Another system capable of CVS integration with Bugzilla is

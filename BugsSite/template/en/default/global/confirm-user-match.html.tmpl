@@ -42,10 +42,15 @@
 [% IF matchsuccess == 1 %]
   [% PROCESS global/header.html.tmpl title="Confirm Match" %]
 
+[% USE Bugzilla %]
+
   <form method="post" 
   [% IF script -%]
     action="[% script %]"
   [%- END -%]
+  [% IF Bugzilla.cgi.param("data") %]
+    enctype="multipart/form-data"
+  [% END %]
   >
 
   <p>
@@ -64,7 +69,6 @@
   </p>
 [% END %]
 
-<p>
   <table border="0">
     <tr>
       <td colspan="2">
@@ -81,6 +85,7 @@
       </td>
       <td align="left" valign="top">
           [% FOREACH query = field.value %]
+            <div class="user_match">
               <b>[% query.key FILTER html %]</b>
             [% IF query.value.users.size %]
                 [% IF query.value.users.size > 1 %]
@@ -119,7 +124,6 @@
                 [% ELSE %]
                   matched
                   <b>[% query.value.users.0.identity FILTER html %]</b>
-                  <br>
                 [% END %]
             [% ELSE %]
                 [% IF (query.key.length < 3) && !(Param('emailsuffix'))
@@ -130,7 +134,7 @@
                   <font color="#FF0000">did not match anything</font>
                 [% END %]
             [% END %]
-            <p>
+            </div>
         [% END %]
       </td>
     </tr>
@@ -143,14 +147,12 @@
 
   </table>
 
-</p>
-
 [% IF matchsuccess == 1 %]
 
   [% PROCESS "global/hidden-fields.html.tmpl" exclude="^Bugzilla_(login|password)$" %]
 
   <p>
-    <input type="submit" value="Continue">
+    <input type="submit" id="continue" value="Continue">
   </p>
 
   </form>

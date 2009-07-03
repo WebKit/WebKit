@@ -17,30 +17,28 @@
   # Rights Reserved.
   #
   # Contributor(s): Gavin Shelley <bugzilla@chimpychompy.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# INTERFACE:
-  # versions: array of hashes having the following properties:
-  #   - name: string; The name of the version.
-  #
-  # product: string; the name of the product we are editing versions for
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the versions belongs.
   #%]
-
-[% USE Bugzilla %]
-[% cgi = Bugzilla.cgi %]
 
 [% PROCESS global/variables.none.tmpl %]
 
 [% title = BLOCK %]Select version of product
-                   '[% product FILTER html %]'[% END %]
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
 [% edit_contentlink = BLOCK %]editversions.cgi?action=edit&amp;product=
-  [%- product FILTER url_quote %]&amp;version=%%name%%[% END %]
+  [%- product.name FILTER url_quote %]&amp;version=%%name%%[% END %]
 [% delete_contentlink = BLOCK %]editversions.cgi?action=del&amp;product=
-  [%- product FILTER url_quote %]&amp;version=%%name%%[% END %]
+  [%- product.name FILTER url_quote %]&amp;version=%%name%%[% END %]
+[% bug_count_contentlink = BLOCK %]buglist.cgi?version=%%name%%&amp;product=
+  [%- product.name FILTER url_quote %][% END %]
 
 
 [% columns = [
@@ -48,21 +46,40 @@
        name => "name"
        heading => "Edit version..."
        contentlink => edit_contentlink
-     },
-     {
-       heading => "Action"
-       content => "Delete"
-       contentlink => delete_contentlink
      }
    ]
 %]
 
-[% PROCESS admin/table.html.tmpl
-     columns = columns
-     data = versions
+[% IF showbugcounts %]
+
+  [% columns.push({
+       name => "bug_count"
+       heading => "$terms.Bugs"
+       align => "right"
+       contentlink => bug_count_contentlink
+     })
+  %]
+
+[% END %]
+
+[% columns.push({
+       heading => "Action"
+       content => "Delete"
+       contentlink => delete_contentlink
+     })
 %]
 
-<p>
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = product.versions
+%]
+
+[% IF ! showbugcounts %]
+
+  <p><a href="editversions.cgi?product=[% product.name FILTER url_quote %]&amp;showbugcounts=1">
+      Redisplay table with [% terms.bug %] counts (slower)</a></p>
+
+[% END %]
 
 [% PROCESS admin/versions/footer.html.tmpl
   no_edit_other_versions_link = 1

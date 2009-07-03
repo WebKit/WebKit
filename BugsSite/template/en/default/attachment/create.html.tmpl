@@ -17,114 +17,36 @@
   # Rights Reserved.
   #
   # Contributor(s): Myk Melez <myk@mozilla.org>
+  #                 Joel Peshkin <bugreport@peshkin.net>
+  #                 Erik Stambaugh <erik@dasbistro.com>
+  #                 Marc Schumann <wurblzap@gmail.com>
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
 [%# Define strings that will serve as the title and header of this page %]
-[% title = BLOCK %]Create New Attachment for [% terms.Bug %] #[% bugid %][% END %]
-[% h1 = BLOCK %]Create New Attachment for
-  [%+ GetBugLink(bugid, "$terms.Bug $bugid") %][% END %]
-[% h2 = BLOCK %][% bugsummary FILTER html %][% END %]
+[% title = BLOCK %]Create New Attachment for [% terms.Bug %] #[% bug.bug_id %][% END %]
+[% header = BLOCK %]Create New Attachment for
+  [%+ "$terms.Bug $bug.bug_id" FILTER bug_link(bug.bug_id) FILTER none %][% END %]
+[% subheader = BLOCK %][% bug.short_desc FILTER html %][% END %]
 
 [% PROCESS global/header.html.tmpl
   title = title
-  h1 = h1
-  h2 = h2
-  style = "
-    table.attachment_entry th {
-      text-align: right;
-      vertical-align: baseline;
-      white-space: nowrap;
-    }
-
-    table.attachment_entry td {
-      text-align: left;
-      vertical-align: baseline;
-      padding-bottom: 5px;
-    }
-    
-    table#flags th, table#flags td {
-      text-align: left;
-      vertical-align: baseline;
-      font-size: small;
-    }
-  "
-  onload="setContentTypeDisabledState();"
+  header = header
+  subheader = subheader
+  onload="setContentTypeDisabledState(document.entryform);"
+  style_urls = [ 'skins/standard/create_attachment.css' ]
+  javascript_urls = [ "js/attachment.js" ]
 %]
 
 <form name="entryform" method="post" action="attachment.cgi" enctype="multipart/form-data">
-  <input type="hidden" name="bugid" value="[% bugid %]">
+  <input type="hidden" name="bugid" value="[% bug.bug_id %]">
   <input type="hidden" name="action" value="insert">
 
   <table class="attachment_entry">
-    <tr>
-      <th><label for="data">File:</label></th>
-      <td>
-        <em>Enter the path to the file on your computer.</em><br>
-        <input type="file" id="data" name="data" size="50">
-      </td>
-    </tr>
-    [% IF Param("maxlocalattachment") %]
-    <tr>
-      <th>BigFile:</th>
-      <td>
-        <input type="checkbox" id="bigfile"
-               name="bigfile" value="bigfile">
-        <label for="bigfile">
-          Big File - Stored locally and may be purged
-        </label>
-      </td>
-    </tr>
-    [% END %]
-    <tr>
-      <th><label for="description">Description:</label></th>
-      <td>
-        <em>Describe the attachment briefly.</em><br>
-        <input type="text" id="description" name="description" size="60" maxlength="200">
-      </td>
-    </tr>
-    <tr>
-      <th></th>
-      <td>
-      </td>
-    </tr>
-    <tr>
-      <th>Content Type:</th>
-      <td>
-        <em>If the attachment is a patch, check the box below.</em><br>
-        <input type="checkbox" id="ispatch" name="ispatch" value="1"
-               onchange="setContentTypeDisabledState();">
-        <label for="ispatch">patch</label><br><br>
+    [% PROCESS attachment/createformcontents.html.tmpl %]
 
-        <em>Otherwise, choose a method for determining the content type.</em><br>
-        <input type="radio" id="autodetect"
-               name="contenttypemethod" value="autodetect">
-          <label for="autodetect">auto-detect</label><br>
-        <input type="radio" id="list"
-               name="contenttypemethod" value="list">
-          <label for="list">select from list:</label>
-          <select name="contenttypeselection"
-                  onchange="this.form.contenttypemethod[1].checked = true;">
-            [% PROCESS "attachment/content-types.html.tmpl" %]
-          </select><br>
-        <input type="radio" id="manual"
-                     name="contenttypemethod" value="manual">
-          <label for="manual">enter manually:</label>
-          <input type="text" name="contenttypeentry" size="30" maxlength="200"
-                 onchange="if (this.value) this.form.contenttypemethod[2].checked = true;">
-      </td>
-    </tr>
-    [% IF (Param("insidergroup") && UserInGroup(Param("insidergroup"))) %]
-      <tr>
-        <th>Privacy:</th>
-        <td>
-          <em>If the attachment is private, check the box below.</em><br>
-          <input type="checkbox" name="isprivate" id="isprivate" value="1">
-        <label for="isprivate">Private</label>
-        </td>
-      </tr>
-    [% END %]
+    [%# Additional fields for attachments on existing bugs: %]
     <tr>
       <th>Obsoletes:</th>
       <td>
@@ -132,7 +54,7 @@
         [% IF attachments.size %]
           [% FOREACH attachment = attachments %]
             [% IF ((attachment.isprivate == 0) || (Param("insidergroup")
-              && UserInGroup(Param("insidergroup")))) %]
+              && user.in_group(Param("insidergroup")))) %]
               <input type="checkbox" id="[% attachment.id %]"
                    name="obsolete" value="[% attachment.id %]">
               <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">[% attachment.id %]: [% attachment.description FILTER html %]</a><br>
@@ -144,7 +66,7 @@
       </td>
     </tr>
 
-    [% IF (user.id != bugassignee_id) AND user.groups.editbugs %]
+    [% IF (user.id != bug.assigned_to.id) AND user.in_group("editbugs", bug.product_id) %]
       <tr>
         <th>Reassignment:</th>
         <td>
@@ -156,45 +78,36 @@
       </tr>
     [% END %]
     <tr>
-      <td> </td>
-      <td>
-        [% IF flag_types.size > 0 %]
-          [% PROCESS "flag/list.html.tmpl" bug_id=bugid attach_id=attachid %]<br>
-        [% END %]
-      </td>
-    </tr>
-    <tr>
       <th><label for="comment">Comment:</label></th>
       <td>
         <em>(optional) Add a comment about this attachment to the [% terms.bug %].</em><br>
-        <textarea wrap="soft" id="commment" name="comment" rows="6" cols="80"></textarea>
+        [% INCLUDE global/textarea.html.tmpl
+          name    = 'comment'
+          id      = 'comment'
+          minrows = 6
+          maxrows = 15
+          cols    = constants.COMMENT_COLS
+          wrap    = 'soft'
+        %]
       </td>
     </tr>
+    [% IF (Param("insidergroup") && user.in_group(Param("insidergroup"))) %]
+      <tr>
+        <th>Privacy:</th>
+        <td>
+          <em>If the attachment is private, check the box below.</em><br>
+          <input type="checkbox" name="isprivate" id="isprivate"
+          value="1" onClick="updateCommentPrivacy(this)">
+        <label for="isprivate">Private</label>
+        </td>
+      </tr>
+    [% END %]
     <tr>
       <th>&nbsp;</th>
-      <td><input type="submit" value="Submit"></td>
+      <td><input type="submit" id="create" value="Submit"></td>
     </tr>
   </table>
 
 </form>
-
-<script type="text/javascript">
-  <!--
-  function setContentTypeDisabledState()
-  {
-    var entryform = document.entryform;
-
-    var isdisabled = false;
-    if (entryform.ispatch.checked)
-      isdisabled = true;
-
-    for (var i=0 ; i<entryform.contenttypemethod.length ; i++)
-      entryform.contenttypemethod[i].disabled = isdisabled;
-
-    entryform.contenttypeselection.disabled = isdisabled;
-    entryform.contenttypeentry.disabled = isdisabled;
-  }
-  //-->
-</script>
 
 [% PROCESS global/footer.html.tmpl %]

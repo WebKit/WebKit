@@ -18,6 +18,7 @@
 # Rights Reserved.
 #
 # Contributor(s): Gervase Markham <gerv@gerv.net>
+#                 Lance Larsh <lance.larsh@oracle.com>
 
 use strict;
 use lib ".";
@@ -31,11 +32,9 @@ use lib ".";
 
 package Bugzilla::Series;
 
-use Bugzilla;
+use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::User;
-
-use constant PUBLIC_USER_ID => 0;
 
 sub new {
     my $invocant = shift;
@@ -85,13 +84,13 @@ sub initFromDatabase {
     my $self = shift;
     my $series_id = shift;
     
-    &::detaint_natural($series_id) 
-      || &::ThrowCodeError("invalid_series_id", { 'series_id' => $series_id });
+    detaint_natural($series_id) 
+      || ThrowCodeError("invalid_series_id", { 'series_id' => $series_id });
     
     my $dbh = Bugzilla->dbh;
     my @series = $dbh->selectrow_array("SELECT series.series_id, cc1.name, " .
         "cc2.name, series.name, series.creator, series.frequency, " .
-        "series.query, series.public " .
+        "series.query, series.is_public " .
         "FROM series " .
         "LEFT JOIN series_categories AS cc1 " .
         "    ON series.category = cc1.id " .
@@ -104,11 +103,11 @@ sub initFromDatabase {
         "    AND ugm.user_id = " . Bugzilla->user->id .
         "    AND isbless = 0 " .
         "WHERE series.series_id = $series_id AND " .
-        "(public = 1 OR creator = " . Bugzilla->user->id . " OR " .
+        "(is_public = 1 OR creator = " . Bugzilla->user->id . " OR " .
         "(ugm.group_id IS NOT NULL)) " . 
         $dbh->sql_group_by('series.series_id', 'cc1.name, cc2.name, ' .
                            'series.name, series.creator, series.frequency, ' .
-                           'series.query, series.public'));
+                           'series.query, series.is_public'));
     
     if (@series) {
         $self->initFromParameters(@series);
@@ -135,26 +134,26 @@ sub initFromCGI {
     $self->{'series_id'} = $cgi->param('series_id') || undef;
     if (defined($self->{'series_id'})) {
         detaint_natural($self->{'series_id'})
-          || &::ThrowCodeError("invalid_series_id", 
+          || ThrowCodeError("invalid_series_id", 
                                { 'series_id' => $self->{'series_id'} });
     }
     
     $self->{'category'} = $cgi->param('category')
       || $cgi->param('newcategory')
-      || &::ThrowUserError("missing_category");
+      || ThrowUserError("missing_category");
 
     $self->{'subcategory'} = $cgi->param('subcategory')
       || $cgi->param('newsubcategory')
-      || &::ThrowUserError("missing_subcategory");
+      || ThrowUserError("missing_subcategory");
 
     $self->{'name'} = $cgi->param('name')
-      || &::ThrowUserError("missing_name");
+      || ThrowUserError("missing_name");
 
     $self->{'creator'} = Bugzilla->user->id;
 
     $self->{'frequency'} = $cgi->param('frequency');
     detaint_natural($self->{'frequency'})
-      || &::ThrowUserError("missing_frequency");
+      || ThrowUserError("missing_frequency");
 
     $self->{'query'} = $cgi->canonicalise_query("format", "ctype", "action",
                                         "category", "subcategory", "name",
@@ -165,7 +164,7 @@ sub initFromCGI {
     
     # Change 'admin' here and in series.html.tmpl, or remove the check
     # completely, if you want to change who can make series public.
-    $self->{'public'} = 0 unless UserInGroup('admin');
+    $self->{'public'} = 0 unless Bugzilla->user->in_group('admin');
 }
 
 sub writeToDatabase {
@@ -190,7 +189,7 @@ sub writeToDatabase {
         my $dbh = Bugzilla->dbh;
         $dbh->do("UPDATE series SET " .
                  "category = ?, subcategory = ?," .
-                 "name = ?, frequency = ?, public = ?  " .
+                 "name = ?, frequency = ?, is_public = ?  " .
                  "WHERE series_id = ?", undef,
                  $category_id, $subcategory_id, $self->{'name'},
                  $self->{'frequency'}, $self->{'public'}, 
@@ -199,17 +198,16 @@ sub writeToDatabase {
     else {
         # Insert the new series into the series table
         $dbh->do("INSERT INTO series (creator, category, subcategory, " .
-                 "name, frequency, query, public) VALUES " . 
-                 "($self->{'creator'}, " . 
-                 "$category_id, $subcategory_id, " .
-                 $dbh->quote($self->{'name'}) . ", $self->{'frequency'}," .
-                 $dbh->quote($self->{'query'}) . ", $self->{'public'})");
+                 "name, frequency, query, is_public) VALUES " . 
+                 "(?, ?, ?, ?, ?, ?, ?)", undef,
+                 $self->{'creator'}, $category_id, $subcategory_id, $self->{'name'},
+                 $self->{'frequency'}, $self->{'query'}, $self->{'public'});
 
         # Retrieve series_id
         $self->{'series_id'} = $dbh->selectrow_array("SELECT MAX(series_id) " .
                                                      "FROM series");
         $self->{'series_id'}
-          || &::ThrowCodeError("missing_series_id", { 'series' => $self });
+          || ThrowCodeError("missing_series_id", { 'series' => $self });
     }
     
     $dbh->bz_unlock_tables();

@@ -25,10 +25,14 @@
 use strict;
 
 use lib qw(.);
-use vars qw ($template $vars);
 
-require "CGI.pl";
+use Bugzilla;
+use Bugzilla::Error;
+use Bugzilla::Bug;
+
 my $cgi = Bugzilla->cgi;
+my $template = Bugzilla->template;
+my $vars = {};
 
 ###############################################################################
 # Begin Data/Security Validation
@@ -47,11 +51,11 @@ ValidateBugID($bug_id);
 ###############################################################################
 
 ($vars->{'operations'}, $vars->{'incomplete_data'}) = 
-                                                 GetBugActivity($bug_id);
+    Bugzilla::Bug::GetBugActivity($bug_id);
 
 $vars->{'bug_id'} = $bug_id;
 
-print Bugzilla->cgi->header();
+print $cgi->header();
 
 $template->process("bug/activity/show.html.tmpl", $vars)
   || ThrowTemplateError($template->error());

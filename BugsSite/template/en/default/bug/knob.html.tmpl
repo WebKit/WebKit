@@ -24,17 +24,15 @@
 
 [%# *** Knob *** %]
 
-  <br>
-  <input type="radio" id="knob-leave" name="knob" value="none" checked="checked">
-  <label for="knob-leave">
-    Leave as <b>[% status_descs.${bug.bug_status} FILTER html %]&nbsp;
-                [% resolution_descs.${bug.resolution} FILTER html %]</b>
-  </label>
-  <br>
+<br>
+<div id="knob">
+  <div id="knob-options">
 
   [% knum = 1 %]
+  [% initial_action_shown = 0 %]
 
   [% IF bug.isunconfirmed && bug.user.canconfirm %]
+    [% PROCESS initial_action %]
     <input type="radio" id="knob-confirm" name="knob" value="confirm">
     <label for="knob-confirm">
       Confirm [% terms.bug %] (change status to <b>[% status_descs.NEW FILTER html %]</b>)
@@ -45,6 +43,7 @@
 
   [% IF bug.isopened && bug.bug_status != "ASSIGNED" && bug.user.canedit
         && (!bug.isunconfirmed || bug.user.canconfirm) %]
+    [% PROCESS initial_action %]
     <input type="radio" id="knob-accept" name="knob" value="accept">
     <label for="knob-accept">
       Accept [% terms.bug %] (
@@ -58,38 +57,25 @@
   [% IF bug.user.canedit || bug.user.isreporter %]
     [% IF bug.isopened %]
       [% IF bug.resolution %]
+        [% PROCESS initial_action %]
         <input type="radio" id="knob-clear" name="knob" value="clearresolution">
         <label for="knob-clear">
           Clear the resolution (remove the current resolution of
-          <b>[% status_descs.${bug.resolution} FILTER html %]</b>)
+          <b>[% get_resolution(bug.resolution) FILTER html %]</b>)
         </label>
         <br>
         [% knum = knum + 1 %]
       [% END %]
 
+      [% PROCESS initial_action %]
       <input type="radio" id="knob-resolve" name="knob" value="resolve">
       <label for="knob-resolve">
         Resolve [% terms.bug %], changing 
         <a href="page.cgi?id=fields.html#resolution">resolution</a> to
       </label>  
-      <select name="resolution"
-              onchange="document.changeform.knob[[% knum %]].checked=true">
-        [% FOREACH r = bug.choices.resolution %]
-          <option value="[% r FILTER html %]">[% resolution_descs.${r} FILTER html %]</option>
-        [% END %]
-      </select>
-      <br>
-      [% knum = knum + 1 %]
+      [% PROCESS select_resolution %]
 
-      <input type="radio" id="knob-duplicate" name="knob" value="duplicate">
-      <label for="knob-duplicate">
-        Resolve [% terms.bug %], mark it as duplicate of [% terms.bug %] #
-      </label>
-      <input name="dup_id" size="6"
-             onchange="if (this.value != '')
-                       {document.changeform.knob[[% knum %]].checked=true}">
-      <br>
-      [% knum = knum + 1 %]
+      [% PROCESS duplicate %]
 
       [% IF bug.user.canedit %]
         <input type="radio" id="knob-reassign" name="knob" value="reassign">
@@ -99,6 +85,7 @@
         </label>
         [% safe_assigned_to = FILTER js; bug.assigned_to.login; END %]
         [% INCLUDE global/userselect.html.tmpl
+             id => "assigned_to"
              name => "assigned_to"
              value => bug.assigned_to.login
              size => 32
@@ -119,8 +106,8 @@
         <input type="radio" id="knob-reassign-cmp" name="knob" value="reassignbycomponent">
         <label for="knob-reassign-cmp">
           Reassign [% terms.bug %] to default assignee
-          [% " and QA contact" IF Param('useqacontact') %]
-          of selected component
+          [% " and QA contact," IF Param('useqacontact') %]
+          and add Default CC of selected component
         </label>
         <br>
         [% IF bug.isunconfirmed && bug.user.canconfirm %]
@@ -135,6 +122,15 @@
     [% ELSE %]
       [% IF bug.resolution != "MOVED" ||
            (bug.resolution == "MOVED" && bug.user.canmove) %]
+        [% PROCESS initial_action %]
+        <input type="radio" id="knob-change-resolution" name="knob" value="change_resolution">
+        <label for="knob-change-resolution">
+          Change <a href="page.cgi?id=fields.html#resolution">resolution</a> to
+        </label>
+        [% PROCESS select_resolution %]
+
+        [% PROCESS duplicate %]
+
         <input type="radio" id="knob-reopen" name="knob" value="reopen">
         <label for="knob-reopen">
           Reopen [% terms.bug %]
@@ -143,6 +139,7 @@
         [% knum = knum + 1 %]
       [% END %]
       [% IF bug.bug_status == "RESOLVED" %]
+        [% PROCESS initial_action %]
         <input type="radio" id="knob-verify" name="knob" value="verify">
         <label for="knob-verify">
           Mark [% terms.bug %] as <b>[% status_descs.VERIFIED FILTER html %]</b>
@@ -151,6 +148,7 @@
         [% knum = knum + 1 %]
       [% END %]
       [% IF bug.bug_status != "CLOSED" %]
+        [% PROCESS initial_action %]
         <input type="radio" id="knob-close" name="knob" value="close">
         <label for="knob-close">
           Mark [% terms.bug %] as <b>[% status_descs.CLOSED FILTER html %]</b>
@@ -160,27 +158,51 @@
       [% END %]
     [% END %]
   [% END %]
+  </div>
 
-  <input type="submit" value="Commit">
-  <input type="hidden" name="form_name" value="process_bug">
-  <p>
-    <font size="+1">
-      <b>
-        <a href="show_activity.cgi?id=[% bug.bug_id %]">View [% terms.Bug %] Activity</a>
-        &nbsp; | &nbsp;
-        <a href="show_bug.cgi?format=multiple&amp;id=[% bug.bug_id %]">Format For Printing</a>
-        &nbsp; | &nbsp;
-        <a href="enter_bug.cgi?cloned_bug_id=[% bug.bug_id %]">Clone This [% terms.Bug %]</a>
-
-        [%# Links to more things users can do with this bug. %]
-        [% Hook.process("links") %]
-      </b>
-    </font>
-
+  <div id="knob-buttons">
+  <input type="submit" value="Commit" id="commit">
     [% IF bug.user.canmove %]
       &nbsp; <font size="+1"><b> | </b></font> &nbsp;
-      <input type="submit" name="action"
+      <input type="submit" name="action" id="action"
              value="[% Param("move-button-text") %]">
     [% END %]
-  </p>
+  </div>
+</div>
 
+[%# Common actions %]
+
+[% BLOCK initial_action %]
+  [%# Only show 'Leave as' action in combination with another knob %]
+  [% IF !initial_action_shown %]
+    <input type="radio" id="knob-leave" name="knob" value="none" checked="checked">
+    <label for="knob-leave">
+      Leave as <b>[% status_descs.${bug.bug_status} FILTER html %]&nbsp;
+                  [% get_resolution(bug.resolution) FILTER html %]</b>
+    </label>
+    <br>
+    [% initial_action_shown = 1 %]
+  [% END %]
+[% END %]
+
+[% BLOCK select_resolution %]
+  <select name="resolution"
+          onchange="document.changeform.knob[[% knum %]].checked=true">
+    [% FOREACH r = bug.choices.resolution %]
+      <option value="[% r FILTER html %]">[% get_resolution(r) FILTER html %]</option>
+    [% END %]
+  </select>
+  <br>
+  [% knum = knum + 1 %]
+[% END %]
+
+[% BLOCK duplicate %]
+  <input type="radio" id="knob-duplicate" name="knob" value="duplicate">
+  <label for="knob-duplicate">
+    Mark the [% terms.bug %] as duplicate of [% terms.bug %] #
+  </label>
+  <input name="dup_id" size="6"
+         onchange="if (this.value != '') {document.changeform.knob[[% knum %]].checked=true}">
+  <br>
+  [% knum = knum + 1 %]
+[% END %]

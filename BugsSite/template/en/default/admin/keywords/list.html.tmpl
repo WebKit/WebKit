@@ -22,7 +22,7 @@
   #%]
 
 [%# INTERFACE:
-  # keywords: array of hashes having the properties:
+  # keywords: array keyword objects having the properties:
   #   - id: number. The ID of the keyword.
   #   - name: string. The name of the keyword.
   #   - description: string. The description of the keyword.
@@ -43,12 +43,14 @@
      },
      { 
        name => "description"
-       heading => "Description" 
+       heading => "Description"
+       allow_html_content => 1
      },
      { 
        name => "bug_count"
-       heading => "Bugs"
+       heading => "$terms.Bugs"
        align => "right"
+       contentlink => "buglist.cgi?keywords=%%name%%"
      },
      { 
        heading => "Action" 

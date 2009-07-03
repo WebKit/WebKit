@@ -32,8 +32,8 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% title = "$terms.Bug List" %]
-[% IF searchname %]
-  [% title = title _ ": " _ searchname %]
+[% IF searchname || defaultsavename %]
+  [% title = title _ ": " _ (searchname OR defaultsavename) FILTER html %]
 [% END %]
 
 [% style_urls = [ "skins/standard/buglist.css" ] %]
@@ -48,7 +48,7 @@
 [% PROCESS global/header.html.tmpl
   title = title
   style = style
-  rsslink = "buglist.cgi?$urlquerypart&ctype=rss" 
+  rsslink = "buglist.cgi?$urlquerypart&title=$title&ctype=rss" 
 %]
 
 <div align="center">
@@ -59,6 +59,11 @@
   [% END %]
 
   [% IF debug %]
+    <p>
+      [% FOREACH debugline = debugdata %]
+        [% debugline FILTER html %]<br>
+      [% END %]
+    </p>
     <p>[% query FILTER html %]</p>
   [% END %]
 
@@ -138,13 +143,21 @@
             <input type="hidden" name="id" value="[% id FILTER html %]">
           [% END %]
           <input type="hidden" name="format" value="multiple">
-          <input type="submit" value="&nbsp;&nbsp;Long Format&nbsp;">
+          <input type="submit" id="long_format" value="Long Format">
+        </form>
+        <form method="post" action="show_bug.cgi">
+            <input type="hidden" name="ctype" value="xml">
+          [% FOREACH id = buglist %]
+            <input type="hidden" name="id" value="[% id FILTER html %]">
+          [% END %]
+            <input type="hidden" name="excludefield" value="attachmentdata">
+            <input type="submit" value="XML" id="xml">
         </form>
 
-        [% IF UserInGroup(Param('timetrackinggroup')) %]
+        [% IF user.in_group(Param('timetrackinggroup')) %]
           <form method="post" action="summarize_time.cgi">
             <input type="hidden" name="id" value="[% buglist_joined FILTER html %]">
-            <input type="submit" value="Time Summary">
+            <input type="submit" id="timesummary" value="Time Summary">
           </form>
         [% END %]
       </td>
@@ -155,11 +168,13 @@
         <a href="buglist.cgi?
         [% urlquerypart FILTER html %]&amp;ctype=csv">CSV</a> |
         <a href="buglist.cgi?
-        [% urlquerypart FILTER html %]&amp;ctype=rss">RSS</a> |
+        [% urlquerypart FILTER html %]&amp;title=
+        [%- title FILTER html %]&amp;ctype=rss">RSS</a> |
         <a href="buglist.cgi?
         [% urlquerypart FILTER html %]&amp;ctype=ics">iCalendar</a> |
         <a href="colchange.cgi?
-        [% urlquerypart FILTER html %]">Change&nbsp;Columns</a> |
+        [% urlquerypart FILTER html %]&amp;query_based_on=
+          [% defaultsavename OR searchname FILTER url_quote %]">Change&nbsp;Columns</a> |
 
         [% IF bugs.size > 1 && caneditbugs && !dotweak %]
           <a href="buglist.cgi?[% urlquerypart FILTER html %]
@@ -198,12 +213,12 @@
       
       <td valign="middle">
         <form method="get" action="buglist.cgi">
-          <input type="submit" value="Remember search"> as 
+          <input type="submit" id="remember" value="Remember search"> as 
           <input type="hidden" name="newquery" 
-                 value="[% urlquerypart FILTER html %]">
+                 value="[% urlquerypart FILTER html %][% "&order=$qorder" FILTER html IF order %]">
           <input type="hidden" name="cmdtype" value="doit">
           <input type="hidden" name="remtype" value="asnamed">
-          <input type="text" name="newqueryname" size="20"
+          <input type="text" id="save_newqueryname" name="newqueryname" size="20"
                  value="[% defaultsavename FILTER html %]"> 
         </form> 
       </td>
@@ -211,6 +226,12 @@
   </tr>
 </table>
 
+[% IF cgi.param('product').size == 1 && cgi.param('product') != "" %]
+  <p>
+    <a href="enter_bug.cgi?product=[% cgi.param('product') FILTER url_quote %]">File
+      a new [% terms.bug %] in the "[% cgi.param('product') FILTER html %]" product</a>
+  </p>
+[% END %]
 
 [%############################################################################%]
 [%# Page Footer                                                              #%]

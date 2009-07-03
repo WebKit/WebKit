@@ -134,11 +134,13 @@ div.links {
 	margin-bottom: 6px;
 }
 
+.bz_tr_obsolete,
 .bz_obsolete, tr.bz_obsolete td, tr.bz_obsolete a {
 	color: #aaa;
 	text-decoration: none;
 }
 
+.bz_tr_obsolete:hover,
 .bz_obsolete:hover, tr.bz_obsolete td:hover, tr.bz_obsolete td:hover a, tr.bz_obsolete td:hover a:hover {
 	background-color: #ddd;
 	color: #111;
@@ -146,4 +148,8 @@ div.links {
 
 .bz_patch {
 
+}
+
+.comment_rule {
+        visibility: collapse;
 }

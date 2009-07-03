@@ -21,7 +21,7 @@
 
     <warning>
       <para>
-        These files pre-date the templatisation work done as part of the
+        These files pre-date the templatization work done as part of the
         2.16 release, and have not been updated.
       </para>
     </warning>
@@ -83,7 +83,7 @@
 
     <para>
       To accomplish this task, <filename>sendunsentbugmail.pl</filename> uses
-      the same mechanism as the <filename>sanitycheck.cgi</filename> script; it
+      the same mechanism as the <filename>sanitycheck.cgi</filename> script;
       it scans through the entire database looking for bugs with changes that
       were made more than 30 minutes ago, but where there is no record of
       anyone related to that bug having been sent mail. Having compiled a list,

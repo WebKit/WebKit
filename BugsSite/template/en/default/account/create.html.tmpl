@@ -29,47 +29,37 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% title = BLOCK %]
-Create a new [% terms.Bugzilla %] account
+  Create a new [% terms.Bugzilla %] account
 [% END %]
-[% PROCESS global/header.html.tmpl %]
+
+[% PROCESS global/header.html.tmpl
+           title = title
+           onload = "document.forms['account_creation_form'].login.focus();" %]
 
 <p>
-  To create a [% terms.Bugzilla %] account, all you need to do is
-  enter a legitimate e-mail address. The account will be created, and
-  its password will be mailed to you. <b>You will not be able to log
-  in until you receive the password.</b> If it doesn't arrive within a
+  To create a [% terms.Bugzilla %] account, all you need to do is to enter
+  a legitimate e-mail address. You will receive an email at this address
+  to confirm the creation of your account. <b>You will not be able to log
+  in until you receive the email.</b> If it doesn't arrive within a
   reasonable amount of time, you can contact the maintainer of
   this [% terms.Bugzilla %] installation
   at <a href="mailto:[% Param("maintainer") %]">[% Param("maintainer") %]</a>.
 </p>
 
-<p>
-  Optionally you may enter your real name as well.
-</p>
-
-<form method="get" action="createaccount.cgi">
+<form id="account_creation_form" method="get" action="createaccount.cgi">
   <table>
     <tr>
       <td align="right">
         <b>E-mail address:</b>
       </td>
       <td>
-        <input size="35" name="login">
+        <input size="35" id="login" name="login">
         [% Param('emailsuffix') FILTER html %]
-      </td>
-    </tr>
-
-    <tr>
-      <td align="right">
-        <b>Real name:</b>
-      </td>
-      <td>
-        <input size="35" name="realname">
       </td>
     </tr>
   </table>
   <br>
-  <input type="submit" value="Create Account">
+  <input type="submit" id="send" value="Send">
 </form>
 
 [% PROCESS global/footer.html.tmpl %]

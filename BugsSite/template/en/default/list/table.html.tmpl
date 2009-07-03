@@ -63,8 +63,6 @@
   }
 %]
 
-[% qorder = order FILTER url_quote IF order %]
-
 [% PROCESS bug/time.html.tmpl %]
 
 [%############################################################################%]
@@ -94,7 +92,7 @@
           <a href="buglist.cgi?
                     [% urlquerypart FILTER html %]&amp;order=bugs.bug_id
                     [%-#%]&amp;query_based_on=
-                    [% defaultsavename OR searchname FILTER html %]">ID</a>
+                    [% defaultsavename OR searchname FILTER url_quote %]">ID</a>
         [% END %]
       </th>
 
@@ -106,7 +104,11 @@
           [% PROCESS columnheader %]
         [% END %]
 
-        </tr><tr align="left"><th>&nbsp;</th>
+        </tr><tr align="left">
+        [% IF dotweak %]
+          <th>&nbsp;</th>
+        [% END %]
+        <th>&nbsp;</th>
 
         [% FOREACH id = displaycolumns %]
           [% NEXT IF loop.count() % 2 == 0 %]
@@ -139,10 +141,10 @@
         [% column.sortalias = column.name %]
       [% END %]
       <a href="buglist.cgi?[% urlquerypart FILTER html %]&amp;order=
-        [% column.sortalias FILTER url_quote FILTER html %]
-        [% ",$qorder" FILTER html IF order %]
+        [% column.sortalias FILTER url_quote %]
+        [% ",$order" FILTER url_quote IF order %]
         [%-#%]&amp;query_based_on=
-        [% defaultsavename OR searchname FILTER html %]">
+        [% defaultsavename OR searchname FILTER url_quote %]">
           [%- abbrev.$id.title || field_descs.$id || column.title -%]</a>
     [% END %]
   </th>
@@ -162,7 +164,8 @@
     [% tableheader %]
   [% END %]
 
-  <tr class="bz_[% bug.bug_severity FILTER css_class_quote -%]
+  <tr class="bz_bugitem
+             bz_[% bug.bug_severity FILTER css_class_quote -%]
              bz_[% bug.priority FILTER css_class_quote -%]
              bz_[% bug.bug_status FILTER css_class_quote -%]
              [%+ "bz_$bug.resolution" FILTER css_class_quote IF bug.resolution -%]
@@ -170,7 +173,6 @@
              [%+ "bz_secure_mode_$bug.secure_mode" FILTER css_class_quote IF bug.secure_mode -%]
              [%+ count % 2 == 1 ? "bz_row_odd" : "bz_row_even" -%]
              ">
-             
 
     [% IF dotweak %]
     <td>
@@ -178,7 +180,8 @@
     </td>
     [% END %]
     <td class="first-child">
-      <a href="show_bug.cgi?id=[% bug.bug_id %]">[% bug.bug_id %]</a>
+      <a name="b[% bug.bug_id %]"
+         href="show_bug.cgi?id=[% bug.bug_id %]">[% bug.bug_id %]</a>
       <span style="display: none">[%+ '[SEC]' IF bug.secure_mode %]</span>
     </td>
 
@@ -193,7 +196,7 @@
       [% ELSIF column == 'bug_status' %]
         [%- status_descs.${bug.$column}.truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html %]
       [% ELSIF column == 'resolution' %]
-        [%- resolution_descs.${bug.$column}.truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html %]
+        [%- get_resolution(bug.$column).truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html %]
       [% ELSE %]
         [%- bug.$column.truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html -%]
       [% END %]

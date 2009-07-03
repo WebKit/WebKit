@@ -29,13 +29,12 @@ use AnyDBM_File;
 
 use lib qw(.);
 
-require "globals.pl";
-require "CGI.pl";
-
 use Bugzilla;
-use Bugzilla::Search;
-use Bugzilla::Config qw(:DEFAULT $datadir);
 use Bugzilla::Constants;
+use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::Search;
+use Bugzilla::Product;
 
 my $cgi = Bugzilla->cgi;
 
@@ -51,10 +50,8 @@ if (defined $cgi->param('ctype') && $cgi->param('ctype') eq "xul") {
     exit;
 }
 
-# Use global templatisation variables.
-use vars qw($template $vars);
-
-GetVersionTable();
+my $template = Bugzilla->template;
+my $vars = {};
 
 # collectstats.pl uses duplicates.cgi to generate the RDF duplicates stats.
 # However, this conflicts with requirelogin if it's enabled; so we make
@@ -66,9 +63,7 @@ else {
     Bugzilla->login();
 }
 
-Bugzilla->switch_to_shadow_db();
-
-use vars qw ($userid @legal_product);
+my $dbh = Bugzilla->switch_to_shadow_db();
 
 my %dbmcount;
 my %count;
@@ -77,7 +72,7 @@ my %before;
 # Get params from URL
 sub formvalue {
     my ($name, $default) = (@_);
-    return $cgi->param($name) || $default || "";
+    return Bugzilla->cgi->param($name) || $default || "";
 }
 
 my $sortby = formvalue("sortby");
@@ -89,13 +84,9 @@ my @query_products = $cgi->param('product');
 my $sortvisible = formvalue("sortvisible");
 my @buglist = (split(/[:,]/, formvalue("bug_id")));
 
-my $product_id;
+# Make sure all products are valid.
 foreach my $p (@query_products) {
-    $product_id = get_product_id($p);
-    if (!$product_id) {
-        ThrowUserError("invalid_product_name",
-                       { product => $p });
-    }
+    Bugzilla::Product::check_product($p);
 }
 
 # Small backwards-compatibility hack, dated 2002-04-10.
@@ -105,7 +96,7 @@ $sortby = "count" if $sortby eq "dup_count";
 my $today = days_ago(0);
 my $yesterday = days_ago(1);
 
-# We don't know the exact file name, because the extention depends on the
+# We don't know the exact file name, because the extension depends on the
 # underlying dbm library, which could be anything. We can't glob, because
 # perl < 5.6 considers if (<*>) { ... } to be tainted
 # Instead, just check the return value for today's data and yesterday's,
@@ -113,6 +104,8 @@ my $yesterday = days_ago(1);
 
 use Errno;
 use Fcntl;
+
+my $datadir = bz_locations()->{'datadir'};
 
 if (!tie(%dbmcount, 'AnyDBM_File', "$datadir/duplicates/dupes$today",
          O_RDONLY, 0644)) {
@@ -138,7 +131,7 @@ if (!tie(%dbmcount, 'AnyDBM_File', "$datadir/duplicates/dupes$today",
 
 # Remove all those dupes under the threshold parameter. 
 # We do this, before the sorting, for performance reasons.
-my $threshold = Param("mostfreqthreshold");
+my $threshold = Bugzilla->params->{"mostfreqthreshold"};
 
 while (my ($key, $value) = each %count) {
     delete $count{$key} if ($value < $threshold);
@@ -232,13 +225,13 @@ if (scalar(%count)) {
                                      'params' => $params,
                                     );
 
-    SendSQL($query->getSQL());
+    my $results = $dbh->selectall_arrayref($query->getSQL());
 
-    while (MoreSQLData()) {
+    foreach my $result (@$results) {
         # Note: maximum row count is dealt with in the template.
 
         my ($id, $component, $bug_severity, $op_sys, $target_milestone, 
-            $short_desc, $bug_status, $resolution) = FetchSQLData();
+            $short_desc, $bug_status, $resolution) = @$result;
 
         push (@bugs, { id => $id,
                        count => $count{$id},
@@ -266,14 +259,20 @@ $vars->{'openonly'} = $openonly;
 $vars->{'reverse'} = $reverse;
 $vars->{'format'} = $cgi->param('format');
 $vars->{'query_products'} = \@query_products;
-my @selectable_products = GetSelectableProducts();
-$vars->{'products'} = \@selectable_products;
+$vars->{'products'} = Bugzilla->user->get_selectable_products;
 
 
-my $format = GetFormat("reports/duplicates", scalar($cgi->param('format')),
-                       scalar($cgi->param('ctype')));
+my $format = $template->get_format("reports/duplicates",
+                                   scalar($cgi->param('format')),
+                                   scalar($cgi->param('ctype')));
 
-print $cgi->header($format->{'ctype'});
+# We set the charset in Bugzilla::CGI, but CGI.pm ignores it unless the
+# Content-Type is a text type. In some cases, such as when we are
+# generating RDF, it isn't, so we specify the charset again here.
+print $cgi->header(
+    -type => $format->{'ctype'},
+    (Bugzilla->params->{'utf8'} ? ('charset', 'utf8') : () )
+);
 
 # Generate and return the UI (HTML page) from the appropriate template.
 $template->process($format->{'template'}, $vars)

@@ -27,69 +27,122 @@
   #   - id: number. The ID of the group.
   #   - name: string. The name of the group.
   #   - description: string. The description of the group.
-  #   - regexp: string. The user regexp for the given group.
+  #   - userregexp: string. The user regexp for the given group.
   #   - isactive: boolean int. Specifies if the group is active or not.
   #   - isbuggroup: boolean int. Specifies if it can be used for bugs.
   #%]
 
 [% PROCESS global/header.html.tmpl
   title = "Edit Groups"
-  h2 = "This lets you edit the groups available to put users in."
+  subheader = "This lets you edit the groups available to put users in."
 %]
 
+[% edit_contentlink = "editgroups.cgi?action=changeform&amp;group=%%id%%" %]
+[% del_contentlink = "editgroups.cgi?action=del&amp;group=%%id%%" %]
 
-<table border="1">
-  <tr>
-    <th>Name</th>
-    <th>Description</th>
-    <th>User RegExp</th>
-    <th>Use For [% terms.Bugs %]</th>
-    <th>Type</th>
-    <th>Action</th>
-  </tr>
+[% columns =
+  [{name               => 'name'
+    heading            => 'Name'
+    contentlink        => edit_contentlink
+   }
+   {name               => 'description'
+    heading            => 'Description'
+    allow_html_content => 1
+   }
+   {name               => 'userregexp'
+    heading            => 'User RegExp'
+   }
+   {name               => 'is_active_bug_group'
+    heading            => "Use For $terms.Bugs"
+    align              => 'center'
+   }
+   {name               => 'type'
+    heading            => 'Type'
+    align              => 'center'
+   }
+   {name               => 'action'
+    heading            => 'Action'
+   }
+  ]
+%]
 
-  [% FOREACH group = groups %]
-    <tr>
-      <td>
-        <a href="editgroups.cgi?action=changeform&amp;group=[% group.id FILTER url_quote %]">
-          [% group.name FILTER html %]</a>
-      </td>
-      <td>[% group.description FILTER html %]</td>
-      <td>[% group.regexp FILTER html %]&nbsp;</td>
+[% overrides.is_active_bug_group = [ {
+     match_value => "0"
+     match_field => 'is_active_bug_group'
+     override_content => 1
+     content => "&nbsp;"
+   },
+   {
+     match_value => "1"
+     match_field => 'is_active_bug_group'
+     override_content => 1
+     content => "X"
+   }]
+   overrides.userregexp = [ {
+     match_value => ""
+     match_field => 'userregexp'
+     override_content => 1
+     content => "&nbsp;"
+   }]
+   overrides.action = [ {
+     match_value => Param("chartgroup")
+     match_field => 'name'
+     override_content => 1
+     content => "(used as the 'chartgroup')"
+   },
+   {
+     match_value => Param("insidergroup")
+     match_field => 'name'
+     override_content => 1
+     content => "(used as the 'insidergroup')"
+   },
+   {
+     match_value => Param("timetrackinggroup")
+     match_field => 'name'
+     override_content => 1
+     content => "(used as the 'timetrackinggroup')"
+   },
+   {
+     match_value => Param("querysharegroup")
+     match_field => 'name'
+     override_content => 1
+     content => "(used as the 'querysharegroup')"
+   },
+   {
+     match_value => "1"
+     match_field => 'isbuggroup'
+     override_content => 1
+     content => "Delete"
+     override_contentlink => 1
+     contentlink => del_contentlink
+   }]
+   overrides.type = [ {
+     match_value => "0"
+     match_field => 'isbuggroup'
+     override_content => 1
+     content => "system"
+   },
+   {
+     match_value => "1"
+     match_field => 'isbuggroup'
+     override_content => 1
+     content => "user"
+   }]
+%] 
 
-      <td align="center">
-        [% IF (group.isactive != 0) && (group.isbuggroup) %]
-          X
-        [% ELSE %]
-          &nbsp;
-        [% END %]
-      </td>
+[% PROCESS admin/table.html.tmpl
+  columns = columns
+  data    = groups
+  overrides = overrides
+%]
 
-      <td align="center">
-        [% (group.isbuggroup) ? "user" : "system" %]
-      </td>
-
-      <td align="center" valign="middle">
-        [% IF (group.isbuggroup) %]
-          <a href="editgroups.cgi?action=del&amp;group=[% group.id FILTER url_quote %]">Delete</a>
-        [% ELSE %]
-          &nbsp;
-        [% END %]
-      </td>
-    </tr>
-  [% END %]
-
-  <tr>
-    <td colspan="5"></td>
-    <td><a href="editgroups.cgi?action=add">Add Group</a></td>
-  </tr>
-</table>
+<p><a href="editgroups.cgi?action=add">Add Group</a></p>
 
 <p>
-  <b>Name</b> is what is used with the UserInGroup() function in any
-customized cgi files you write that use a given group.  It can also be used
-by people submitting [% terms.bugs %] by email to limit [% terms.abug %]
-to a certain set of groups.
+  <b>Name</b> is what is used with the B<!-- blah -->ugzilla->user->in_group()
+function in any customized cgi files you write that use a given group.
+It can also be used by people submitting [% terms.bugs %] by email to
+limit [% terms.abug %] to a certain set of groups.
 </p>
 
 <p>

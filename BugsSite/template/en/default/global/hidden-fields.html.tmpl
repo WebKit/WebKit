@@ -34,8 +34,26 @@
   [%# The '.slice(0)' bit is here to force the 'param(field)' to be evaluated
       in a list context, so we can avoid extra code checking for single valued or
       empty fields %]
-  [% FOREACH mvalue = cgi.param(field).slice(0) %]
-    <input type="hidden" name="[% field FILTER html %]"
+  [% IF field == "data" && cgi.param("data") %]
+    <div class="box">
+      <p>
+        We were unable to store the file you uploaded because of incomplete information
+        in the form you just submitted. Because we are unable to retain the file between
+        form submissions, you must re-attach the file in addition to completing the
+        remaining missing information above.
+      </p>
+      <p>
+        Please re-attach the file <b>[% cgi.param(field) FILTER html %]</b> in
+        the field below:
+      </p>
+      <p>
+        <input type="file" id="data" name="data" size="50">
+      </p>
+    </div>
+  [% ELSE %]
+    [% FOREACH mvalue = cgi.param(field).slice(0) %]
+      <input type="hidden" name="[% field FILTER html %]"
              value="[% mvalue FILTER html FILTER html_linebreak %]">
     [% END %]
+  [% END %]
 [% END %]

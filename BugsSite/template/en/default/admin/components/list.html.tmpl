@@ -17,39 +17,29 @@
   # Rights Reserved.
   #
   # Contributor(s): Gavin Shelley <bugzilla@chimpychompy.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# INTERFACE:
-  # components: array of hashes having the properties:
-  #   - name: string; The name of the component.
-  #   - description: string; The description of the component.
-  #   - initialowner: string; The default assignee of the component.
-  #   - initialqacontact: string; The qa_contact of the component.
-  #   - bug_count: number; The number of bugs in the component
-  #                        (if showbugcounts defined).
-  #
   # showbugcounts: if defined, then bug counts should be included in the table
-  #
-  # product: string; the name of the product we are editing components for
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
   #%]
-
-[% USE Bugzilla %]
-[% cgi = Bugzilla.cgi %]
 
 [% PROCESS global/variables.none.tmpl %]
 
 [% title = BLOCK %]Select component of product
-                   '[% product FILTER html %]'[% END %]
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
 [% edit_contentlink = BLOCK %]editcomponents.cgi?action=edit&amp;product=
-  [%- product FILTER url_quote %]&amp;component=%%name%%[% END %]
+  [%- product.name FILTER url_quote %]&amp;component=%%name%%[% END %]
 [% delete_contentlink = BLOCK %]editcomponents.cgi?action=del&amp;product=
-  [%- product FILTER url_quote %]&amp;component=%%name%%[% END %]
+  [%- product.name FILTER url_quote %]&amp;component=%%name%%[% END %]
 [% bug_count_contentlink = BLOCK %]buglist.cgi?component=%%name%%&amp;product=
-  [%- product FILTER url_quote %][% END %]
+  [%- product.name FILTER url_quote %][% END %]
 
 
 [% columns = [
@@ -96,19 +86,40 @@
      contentlink => delete_contentlink
    }) %]
 
+[%# Overrides the initialowner and the initialqacontact with right values %]
+[% overrides.initialowner = [] %]
+[% overrides.initialqacontact = [] %]
+
+[% FOREACH component = product.components %]
+  [% overrides.initialowner.push({
+       match_value => component.name
+       match_field => 'name'
+       override_content => 1
+       content => component.default_assignee.login
+     })
+  %]
+  [% overrides.initialqacontact.push({
+       match_value => component.name
+       match_field => 'name'
+       override_content => 1
+       content => component.default_qa_contact.login
+     })
+  %]
+[% END %]
+
 [% PROCESS admin/table.html.tmpl
      columns = columns
-     data = components
-     footer = footer_row
+     data = product.components
+     overrides = overrides
 %]
 
-<p><a href="editcomponents.cgi?action=add&amp;product=[% product FILTER url_quote %]">Add</a>
-    a new component to product '[% product FILTER html %]'</p>
+<p><a href="editcomponents.cgi?action=add&amp;product=[% product.name FILTER url_quote %]">Add</a>
+    a new component to product '[% product.name FILTER html %]'</p>
 
 [% IF ! showbugcounts %]
 
-<p><a href="editcomponents.cgi?showbugcounts=1&amp;[% cgi.query_string %]">
-    Redisplay table with [% terms.bug %] counts (slower)</a></p>
+  <p><a href="editcomponents.cgi?product=[% product.name FILTER url_quote %]&amp;showbugcounts=1">
+      Redisplay table with [% terms.bug %] counts (slower)</a></p>
 
 [% END %]
 

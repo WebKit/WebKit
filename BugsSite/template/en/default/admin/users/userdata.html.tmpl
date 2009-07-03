@@ -28,8 +28,11 @@
       <input size="64" maxlength="255" name="login" 
              id="login" value="[% otheruser.login FILTER html %]" />
       [% IF editform %]
-        <input type="hidden" name="loginold"
-               value="[% otheruser.login FILTER html %]" />
+        [% IF !otheruser.groups.bz_sudo_protect %]
+          <br />
+          <a href="relogin.cgi?action=prepare-sudo&amp;target_login=
+          [%- otheruser.login FILTER html %]">Impersonate this user</a>
+        [% END %]
       [% END %]
     [% ELSE %]
       [% otheruser.login FILTER html %]
@@ -43,10 +46,6 @@
       <input size="64" maxlength="255" name="name"
              autocomplete="off"
              id="name" value="[% otheruser.name FILTER html %]" />
-      [% IF editform %]
-        <input type="hidden" name="nameold"
-               value="[% otheruser.name FILTER html %]" />
-      [% END %]
     [% ELSE %]
       [% otheruser.name FILTER html %]
     [% END %]
@@ -65,17 +64,28 @@
     </td>
   </tr>
   <tr>
+    <th><label for="disable_mail">[% terms.Bug %]mail Disabled:</label></th>
+    <td>
+      <input type="checkbox" name="disable_mail" id="disable_mail" value="1" 
+      [% IF otheruser.email_disabled %] checked="checked" [% END %] />
+      (This affects [% terms.bug %]mail and whinemail, not password-reset or other 
+      non-[% terms.bug %]-related emails)
+    </td>
+  </tr>
+  <tr>
     <th><label for="disabledtext">Disable text:</label></th>
     <td>
-      <textarea name="disabledtext" rows="10"
-                id="disabledtext"
-                cols="60">[% otheruser.disabledtext FILTER html %]</textarea><br />
+      [% INCLUDE global/textarea.html.tmpl
+         name           = 'disabledtext'
+         id             = 'disabledtext'
+         minrows        = 2
+         maxrows        = 10
+         defaultrows    = 10
+         cols           = 60
+         defaultcontent = otheruser.disabledtext
+       %]<br>
       (If non-empty, then the account will be disabled, and this text should
       explain why.)
-      [% IF editform %]
-        <input type="hidden" name="disabledtextold"
-               value="[% otheruser.disabledtext FILTER html %]" />
-      [% END %]
     </td>
   </tr>
 [% END %]

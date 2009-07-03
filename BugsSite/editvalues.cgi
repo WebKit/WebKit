@@ -12,6 +12,7 @@
 # The Original Code is the Bugzilla Bug Tracking System.
 #
 # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 # This is a script to edit the values of fields that have drop-down
 # or select boxes. It is largely a copy of editmilestones.cgi, but 
@@ -20,35 +21,40 @@
 use strict;
 use lib ".";
 
-require "CGI.pl";
-
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Bugzilla::Config qw(:DEFAULT :locations);
+use Bugzilla::Config qw(:admin);
+use Bugzilla::Token;
 
 # List of different tables that contain the changeable field values
 # (the old "enums.") Keep them in alphabetical order by their 
 # English name from field-descs.html.tmpl.
 # Format: Array of valid field names.
-# Admins may add resolution and bug_status to this list, but they
-# do so at their own risk.
-our @valid_fields = ('op_sys', 'rep_platform', 'priority', 'bug_severity',);
+# Admins may add bug_status to this list, but they do so at their own risk.
+our @valid_fields = ('op_sys', 'rep_platform', 'priority', 'bug_severity',
+                     'resolution');
+
+# Add custom select fields.
+my @custom_fields = Bugzilla->get_fields({custom => 1,
+                                          type => FIELD_TYPE_SINGLE_SELECT});
+
+push(@valid_fields, map { $_->name } @custom_fields);
 
 ######################################################################
 # Subroutines
 ######################################################################
 
 # Returns whether or not the specified table exists in the @tables array.
-sub FieldExists ($) {
+sub FieldExists {
   my ($field) = @_;
 
   return lsearch(\@valid_fields, $field) >= 0;
 }
 
 # Same as FieldExists, but emits and error and dies if it fails.
-sub FieldMustExist ($) {
+sub FieldMustExist {
     my ($field)= @_;
 
     $field ||
@@ -60,7 +66,7 @@ sub FieldMustExist ($) {
 }
 
 # Returns if the specified value exists for the field specified.
-sub ValueExists ($$) {
+sub ValueExists {
     my ($field, $value) = @_;
     FieldMustExist($field);
     trick_taint($field);
@@ -77,7 +83,7 @@ sub ValueExists ($$) {
 }
 
 # Same check as ValueExists, emits an error text and dies if it fails.
-sub ValueMustExist ($$) {
+sub ValueMustExist {
     my ($field, $value)= @_;
 
     # Values may not be empty (it's very difficult to deal 
@@ -104,10 +110,10 @@ my $vars = {};
 
 print $cgi->header();
 
-exists Bugzilla->user->groups->{'editcomponents'} ||
-    ThrowUserError('auth_failure', {group  => "editcomponents",
+exists Bugzilla->user->groups->{'admin'} ||
+    ThrowUserError('auth_failure', {group  => "admin",
                                     action => "edit",
-                                    object => "field values"});
+                                    object => "field_values"});
 
 #
 # often-used variables
@@ -116,7 +122,21 @@ my $field   = trim($cgi->param('field')   || '');
 my $value   = trim($cgi->param('value')   || '');
 my $sortkey = trim($cgi->param('sortkey') || '0');
 my $action  = trim($cgi->param('action')  || '');
+my $token   = $cgi->param('token');
 
+# Gives the name of the parameter associated with the field
+# and representing its default value.
+my %defaults;
+$defaults{'op_sys'} = 'defaultopsys';
+$defaults{'rep_platform'} = 'defaultplatform';
+$defaults{'priority'} = 'defaultpriority';
+$defaults{'bug_severity'} = 'defaultseverity';
+
+# Alternatively, a list of non-editable values can be specified.
+# In this case, only the sortkey can be altered.
+my %static;
+$static{'resolution'} = ['', 'FIXED', 'MOVED', 'DUPLICATE'];
+$static{$_->name} = ['---'] foreach (@custom_fields);
 
 #
 # field = '' -> Show nice list of fields
@@ -150,8 +170,9 @@ unless ($action) {
                                  {Slice =>{}});
     $vars->{'field'} = $field;
     $vars->{'values'} = $fieldvalues;
-    $template->process("admin/fieldvalues/list.html.tmpl",
-                       $vars)
+    $vars->{'default'} = Bugzilla->params->{$defaults{$field}} if defined $defaults{$field};
+    $vars->{'static'} = $static{$field} if exists $static{$field};
+    $template->process("admin/fieldvalues/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -167,6 +188,7 @@ if ($action eq 'add') {
 
     $vars->{'value'} = $value;
     $vars->{'field'} = $field;
+    $vars->{'token'} = issue_session_token('add_field_value');
     $template->process("admin/fieldvalues/create.html.tmpl",
                        $vars)
       || ThrowTemplateError($template->error());
@@ -179,6 +201,7 @@ if ($action eq 'add') {
 # action='new' -> add field value entered in the 'action=add' screen
 #
 if ($action eq 'new') {
+    check_token_data($token, 'add_field_value');
     FieldMustExist($field);
     trick_taint($field);
 
@@ -209,7 +232,7 @@ if ($action eq 'new') {
                              VALUES ( ?, ? )");
     $sth->execute($value, $sortkey);
 
-    unlink "$datadir/versioncache";
+    delete_token($token);
 
     $vars->{'value'} = $value;
     $vars->{'field'} = $field;
@@ -239,6 +262,14 @@ if ($action eq 'del') {
 
     $vars->{'value'} = $value;
     $vars->{'field'} = $field;
+    $vars->{'param_name'} = $defaults{$field};
+
+    # If the value cannot be deleted, throw an error.
+    if (lsearch($static{$field}, $value) >= 0) {
+        ThrowUserError('fieldvalue_not_deletable', $vars);
+    }
+    $vars->{'token'} = issue_session_token('delete_field_value');
+
     $template->process("admin/fieldvalues/confirm-delete.html.tmpl",
                        $vars)
       || ThrowTemplateError($template->error());
@@ -251,7 +282,23 @@ if ($action eq 'del') {
 # action='delete' -> really delete the field value
 #
 if ($action eq 'delete') {
+    check_token_data($token, 'delete_field_value');
     ValueMustExist($field, $value);
+
+    $vars->{'value'} = $value;
+    $vars->{'field'} = $field;
+    $vars->{'param_name'} = $defaults{$field};
+
+    if (defined $defaults{$field}
+        && ($value eq Bugzilla->params->{$defaults{$field}}))
+    {
+        ThrowUserError('fieldvalue_is_default', $vars);
+    }
+    # If the value cannot be deleted, throw an error.
+    if (lsearch($static{$field}, $value) >= 0) {
+        ThrowUserError('fieldvalue_not_deletable', $vars);
+    }
+
     trick_taint($field);
     trick_taint($value);
 
@@ -272,11 +319,8 @@ if ($action eq 'delete') {
     $dbh->do("DELETE FROM $field WHERE value = ?", undef, $value);
 
     $dbh->bz_unlock_tables();
+    delete_token($token);
 
-    unlink "$datadir/versioncache";
-
-    $vars->{'value'} = $value;
-    $vars->{'field'} = $field;
     $template->process("admin/fieldvalues/deleted.html.tmpl",
                        $vars)
       || ThrowTemplateError($template->error());
@@ -298,9 +342,10 @@ if ($action eq 'edit') {
 
     $vars->{'value'} = $value;
     $vars->{'field'} = $field;
+    $vars->{'is_static'} = (lsearch($static{$field}, $value) >= 0) ? 1 : 0;
+    $vars->{'token'} = issue_session_token('edit_field_value');
 
-    $template->process("admin/fieldvalues/edit.html.tmpl",
-                       $vars)
+    $template->process("admin/fieldvalues/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -311,6 +356,7 @@ if ($action eq 'edit') {
 # action='update' -> update the field value
 #
 if ($action eq 'update') {
+    check_token_data($token, 'edit_field_value');
     my $valueold   = trim($cgi->param('valueold')   || '');
     my $sortkeyold = trim($cgi->param('sortkeyold') || '0');
 
@@ -318,9 +364,17 @@ if ($action eq 'update') {
     trick_taint($field);
     trick_taint($valueold);
 
+    $vars->{'value'} = $value;
+    $vars->{'field'} = $field;
+
+    # If the value cannot be renamed, throw an error.
+    if (lsearch($static{$field}, $valueold) >= 0 && $value ne $valueold) {
+        $vars->{'old_value'} = $valueold;
+        ThrowUserError('fieldvalue_not_editable', $vars);
+    }
+
     if (length($value) > 60) {
-        ThrowUserError('fieldvalue_name_too_long',
-                       {'value' => $value});
+        ThrowUserError('fieldvalue_name_too_long', $vars);
     }
 
     $dbh->bz_lock_tables('bugs WRITE', "$field WRITE");
@@ -340,7 +394,6 @@ if ($action eq 'update') {
         $dbh->do("UPDATE $field SET sortkey = ? WHERE value = ?",
                  undef, $sortkey, $valueold);
 
-        unlink "$datadir/versioncache";
         $vars->{'updated_sortkey'} = 1;
         $vars->{'sortkey'} = $sortkey;
     }
@@ -351,9 +404,7 @@ if ($action eq 'update') {
             ThrowUserError('fieldvalue_undefined');
         }
         if (ValueExists($field, $value)) {
-            ThrowUserError('fieldvalue_already_exists',
-                           {'value' => $value,
-                            'field' => $field});
+            ThrowUserError('fieldvalue_already_exists', $vars);
         }
         trick_taint($value);
 
@@ -363,15 +414,25 @@ if ($action eq 'update') {
         $dbh->do("UPDATE $field SET value = ? WHERE value = ?",
                  undef, $value, $valueold);
 
-        unlink "$datadir/versioncache";
-
         $vars->{'updated_value'} = 1;
     }
 
-    $dbh->bz_unlock_tables(); 
+    $dbh->bz_unlock_tables();
 
-    $vars->{'value'} = $value;
-    $vars->{'field'} = $field;
+    # If the old value was the default value for the field,
+    # update data/params accordingly.
+    # This update is done while tables are unlocked due to the
+    # annoying calls in Bugzilla/Config/Common.pm.
+    if (defined $defaults{$field}
+        && $value ne $valueold
+        && $valueold eq Bugzilla->params->{$defaults{$field}})
+    {
+        SetParam($defaults{$field}, $value);
+        write_params();
+        $vars->{'default_value_updated'} = 1;
+    }
+    delete_token($token);
+
     $template->process("admin/fieldvalues/updated.html.tmpl",
                        $vars)
       || ThrowTemplateError($template->error());

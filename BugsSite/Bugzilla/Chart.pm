@@ -18,6 +18,8 @@
 # Rights Reserved.
 #
 # Contributor(s): Gervase Markham <gerv@gerv.net>
+#                 Albert Ting <altlst@sonic.net>
+#                 A. Karl Kornel <karl@kornel.name>
 
 use strict;
 use lib ".";
@@ -30,8 +32,13 @@ use lib ".";
 # the same points.
 package Bugzilla::Chart;
 
+use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::Series;
+
+use Date::Format;
+use Date::Parse;
+use List::Util qw(max);
 
 sub new {
     my $invocant = shift;
@@ -70,7 +77,7 @@ sub init {
         if ($param =~ /^line(\d+)$/) {
             foreach my $series_id ($cgi->param($param)) {
                 detaint_natural($series_id) 
-                                     || &::ThrowCodeError("invalid_series_id");
+                                     || ThrowCodeError("invalid_series_id");
                 my $series = new Bugzilla::Series($series_id);
                 push(@{$self->{'lines'}[$1]}, $series) if $series;
             }
@@ -95,8 +102,8 @@ sub init {
     # Make sure the dates are ones we are able to interpret
     foreach my $date ('datefrom', 'dateto') {
         if ($self->{$date}) {
-            $self->{$date} = &::str2time($self->{$date}) 
-              || &::ThrowUserError("illegal_date", { date => $self->{$date}});
+            $self->{$date} = str2time($self->{$date}) 
+              || ThrowUserError("illegal_date", { date => $self->{$date}});
         }
     }
 
@@ -104,7 +111,7 @@ sub init {
     if ($self->{'datefrom'} && $self->{'dateto'} && 
         $self->{'datefrom'} > $self->{'dateto'}) 
     {
-          &::ThrowUserError("misarranged_dates", 
+          ThrowUserError("misarranged_dates", 
                                          {'datefrom' => $cgi->param('datefrom'),
                                           'dateto' => $cgi->param('dateto')});
     }    
@@ -205,10 +212,13 @@ sub data {
 sub readData {
     my $self = shift;
     my @data;
+    my @maxvals;
 
     # Note: you get a bad image if getSeriesIDs returns nothing
     # We need to handle errors better.
     my $series_ids = join(",", $self->getSeriesIDs());
+
+    return [] unless $series_ids;
 
     # Work out the date boundaries for our data.
     my $dbh = Bugzilla->dbh;
@@ -218,7 +228,7 @@ sub readData {
     my $datefrom = $dbh->selectrow_array("SELECT MIN(series_date) " . 
                                          "FROM series_data " .
                                          "WHERE series_id IN ($series_ids)");
-    $datefrom = &::str2time($datefrom);
+    $datefrom = str2time($datefrom);
 
     if ($self->{'datefrom'} && $self->{'datefrom'} > $datefrom) {
         $datefrom = $self->{'datefrom'};
@@ -227,20 +237,24 @@ sub readData {
     my $dateto = $dbh->selectrow_array("SELECT MAX(series_date) " . 
                                        "FROM series_data " .
                                        "WHERE series_id IN ($series_ids)");
-    $dateto = &::str2time($dateto); 
+    $dateto = str2time($dateto); 
 
     if ($self->{'dateto'} && $self->{'dateto'} < $dateto) {
         $dateto = $self->{'dateto'};
     }
 
+    # Convert UNIX times back to a date format usable for SQL queries.
+    my $sql_from = time2str('%Y-%m-%d', $datefrom);
+    my $sql_to = time2str('%Y-%m-%d', $dateto);
+
     # Prepare the query which retrieves the data for each series
-    my $query = "SELECT " . $dbh->sql_to_days('series_date') . " - " . 
-                            $dbh->sql_to_days("FROM_UNIXTIME($datefrom)") .
-                ", series_value FROM series_data " .
+    my $query = "SELECT " . $dbh->sql_to_days('series_date') . " - " .
+                            $dbh->sql_to_days('?') . ", series_value " .
+                "FROM series_data " .
                 "WHERE series_id = ? " .
-                "AND series_date >= FROM_UNIXTIME($datefrom)";
+                "AND series_date >= ?";
     if ($dateto) {
-        $query .= " AND series_date <= FROM_UNIXTIME($dateto)";
+        $query .= " AND series_date <= ?";
     }
     
     my $sth = $dbh->prepare($query);
@@ -248,33 +262,94 @@ sub readData {
     my $gt_index = $self->{'gt'} ? scalar(@{$self->{'lines'}}) : undef;
     my $line_index = 0;
 
+    $maxvals[$gt_index] = 0 if $gt_index;
+
+    my @datediff_total;
+
     foreach my $line (@{$self->{'lines'}}) {        
         # Even if we end up with no data, we need an empty arrayref to prevent
         # errors in the PNG-generating code
         $data[$line_index] = [];
+        $maxvals[$line_index] = 0;
 
         foreach my $series (@$line) {
 
             # Get the data for this series and add it on
-            $sth->execute($series->{'series_id'});
+            if ($dateto) {
+                $sth->execute($sql_from, $series->{'series_id'}, $sql_from, $sql_to);
+            }
+            else {
+                $sth->execute($sql_from, $series->{'series_id'}, $sql_from);
+            }
             my $points = $sth->fetchall_arrayref();
 
             foreach my $point (@$points) {
                 my ($datediff, $value) = @$point;
                 $data[$line_index][$datediff] ||= 0;
                 $data[$line_index][$datediff] += $value;
+                if ($data[$line_index][$datediff] > $maxvals[$line_index]) {
+                    $maxvals[$line_index] = $data[$line_index][$datediff];
+                }
+
+                $datediff_total[$datediff] += $value;
 
                 # Add to the grand total, if we are doing that
                 if ($gt_index) {
                     $data[$gt_index][$datediff] ||= 0;
                     $data[$gt_index][$datediff] += $value;
+                    if ($data[$gt_index][$datediff] > $maxvals[$gt_index]) {
+                        $maxvals[$gt_index] = $data[$gt_index][$datediff];
+                    }
                 }
             }
         }
 
+        # We are done with the series making up this line, go to the next one
         $line_index++;
     }
 
+    # calculate maximum y value
+    if ($self->{'cumulate'}) {
+        # Make sure we do not try to take the max of an array with undef values
+        my @processed_datediff;
+        while (@datediff_total) {
+            my $datediff = shift @datediff_total;
+            push @processed_datediff, $datediff if defined($datediff);
+        }
+        $self->{'y_max_value'} = max(@processed_datediff);
+    }
+    else {
+        $self->{'y_max_value'} = max(@maxvals);
+    }
+    $self->{'y_max_value'} |= 1; # For log()
+
+    # Align the max y value:
+    #  For one- or two-digit numbers, increase y_max_value until divisible by 8
+    #  For larger numbers, see the comments below to figure out what's going on
+    if ($self->{'y_max_value'} < 100) {
+        do {
+            ++$self->{'y_max_value'};
+        } while ($self->{'y_max_value'} % 8 != 0);
+    }
+    else {
+        #  First, get the # of digits in the y_max_value
+        my $num_digits = 1+int(log($self->{'y_max_value'})/log(10));
+
+        # We want to zero out all but the top 2 digits
+        my $mask_length = $num_digits - 2;
+        $self->{'y_max_value'} /= 10**$mask_length;
+        $self->{'y_max_value'} = int($self->{'y_max_value'});
+        $self->{'y_max_value'} *= 10**$mask_length;
+
+        # Add 10^$mask_length to the max value
+        # Continue to increase until it's divisible by 8 * 10^($mask_length-1)
+        # (Throwing in the -1 keeps at least the smallest digit at zero)
+        do {
+            $self->{'y_max_value'} += 10**$mask_length;
+        } while ($self->{'y_max_value'} % (8*(10**($mask_length-1))) != 0);
+    }
+
+        
     # Add the x-axis labels into the data structure
     my $date_progression = generateDateProgression($datefrom, $dateto);
     unshift(@data, $date_progression);
@@ -350,7 +425,7 @@ sub generateDateProgression {
     $dateto += (2 * $oneday) / 3;
 
     while ($datefrom < $dateto) {
-        push (@progression, &::time2str("%Y-%m-%d", $datefrom));
+        push (@progression, time2str("%Y-%m-%d", $datefrom));
         $datefrom += $oneday;
     }
 

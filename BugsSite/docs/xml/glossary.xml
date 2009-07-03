@@ -180,10 +180,10 @@
         are not a part of the official distribution. These scripts are written
         by third parties and may be in languages other than perl. For those
         that are in perl, there may be additional modules or other requirements
-        than those of the offical distribution.
+        than those of the official distribution.
         <note>
           <para>Scripts in the <filename class="directory">contrib</filename>
-          directory are not offically supported by the Bugzilla team and may
+          directory are not officially supported by the Bugzilla team and may
           break in between versions.
           </para>
         </note>
@@ -214,10 +214,8 @@
       
       <glossdef>
         <para>A DOS, or Denial of Service attack, is when a user attempts to
-        deny access to a web server by repeatadly accessing a page or sending
-        malformed requests to a webserver. This can be effectively prevented
-        by using <filename>mod_throttle</filename> as described in
-        <xref linkend="security-webserver-mod-throttle"/>. A D-DOS, or
+        deny access to a web server by repeatedly accessing a page or sending
+        malformed requests to a webserver. A D-DOS, or
         Distributed Denial of Service attack, is when these requests come
         from multiple sources at the same time. Unfortunately, these are much
         more difficult to defend against.
@@ -268,8 +266,8 @@
       <acronym>MTA</acronym>
 
       <glossdef>
-        <para>A Message Transport Agent is used to control the flow of email
-        on a system. The <ulink url="http://search.cpan.org/dist/MailTools/Mail/Mailer.pm">Mail::Mailer</ulink>
+        <para>A Message Transport Agent is used to control the flow of email on a system.
+        The <ulink url="http://search.cpan.org/dist/Email-Send/lib/Email/Send.pm">Email::Send</ulink>
         Perl module, which Bugzilla uses to send email, can be configured to
         use many different underlying implementations for actually sending the
         mail using the <option>mail_delivery_method</option> parameter.
@@ -386,7 +384,7 @@
     <title>R</title>
 
     <glossentry id="gloss-rdbms">
-      <glossterm>Relational DataBase Managment System</glossterm>
+      <glossterm>Relational DataBase Management System</glossterm>
       <acronym>RDBMS</acronym>
 
       <glossdef>
@@ -416,8 +414,8 @@
       
       <glossdef>
         <para>In Windows NT environment, a boot-time background application
-        is refered to as a service. These are generally managed through the
-        control pannel while logged in as an account with
+        is referred to as a service. These are generally managed through the
+        control panel while logged in as an account with
         <quote>Administrator</quote> level capabilities. For more
         information, consult your Windows manual or the MSKB.
         </para>

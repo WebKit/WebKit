@@ -21,8 +21,10 @@
 
           <option value="text/plain">plain text (text/plain)</option>
           <option value="text/html">HTML source (text/html)</option>
+[%# if WEBKIT_CHANGES %]
           <option value="application/xhtml+xml">XHTML source (application/xhtml+xml)</option>
           <option value="image/svg+xml">SVG image (image/svg+xml)</option>
+[%# endif // WEBKIT_CHANGES %]
           <option value="application/xml">XML source (application/xml)</option>
           <option value="image/gif">GIF image (image/gif)</option>
           <option value="image/jpeg">JPEG image (image/jpeg)</option>

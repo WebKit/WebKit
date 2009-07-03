@@ -20,125 +20,144 @@
 #
 # Contributor(s): Terry Weissman <terry@mozilla.org>
 #                 J. Paul Reed <preed@sigkill.com>
-
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 use strict;
 use lib ".";
 
+use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Config qw(:DEFAULT :admin);
+use Bugzilla::Config qw(:admin);
+use Bugzilla::Config::Common;
+use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::Token;
 use Bugzilla::User;
+use Bugzilla::User::Setting;
 
-require "CGI.pl";
+my $user = Bugzilla->login(LOGIN_REQUIRED);
+my $cgi = Bugzilla->cgi;
+my $template = Bugzilla->template;
+my $vars = {};
 
-Bugzilla->login(LOGIN_REQUIRED);
+print $cgi->header();
 
-print Bugzilla->cgi->header();
-
-UserInGroup("tweakparams")
+$user->in_group('tweakparams')
   || ThrowUserError("auth_failure", {group  => "tweakparams",
-                                     action => "modify",
+                                     action => "access",
                                      object => "parameters"});
 
-PutHeader("Edit parameters");
+my $action = trim($cgi->param('action') || '');
+my $token  = $cgi->param('token');
+my $current_panel = $cgi->param('section') || 'core';
+$current_panel =~ /^([A-Za-z0-9_-]+)$/;
+$current_panel = $1;
 
-print "This lets you edit the basic operating parameters of bugzilla.\n";
-print "Be careful!\n";
-print "<p>\n";
-print "Any item you check Reset on will get reset to its default value.\n";
-
-print "<form method=post action=doeditparams.cgi><table>\n";
-
-my $rowbreak = "<tr><td colspan=2><hr></td></tr>";
-print $rowbreak;
-
-foreach my $i (GetParamList()) {
-    my $name = $i->{'name'};
-    my $value = Param($name);
-    print "<tr><th align=right valign=top>$name:</th><td>$i->{'desc'}</td></tr>\n";
-    print "<tr><td valign=top><input type=checkbox name=reset-$name>Reset</td><td>\n";
-    SWITCH: for ($i->{'type'}) {
-        /^t$/ && do {
-            print "<input size=80 name=$name value=\"" .
-                value_quote($value) . "\">\n";
-            last SWITCH;
-        };
-        /^l$/ && do {
-            print "<textarea wrap=hard name=$name rows=10 cols=80>" .
-                value_quote($value) . "</textarea>\n";
-            last SWITCH;
-        };
-        /^b$/ && do {
-            my $on;
-            my $off;
-            if ($value) {
-                $on = "checked";
-                $off = "";
-            } else {
-                $on = "";
-                $off = "checked";
-            }
-            print "<input type=radio name=$name value=1 $on>On\n";
-            print "<input type=radio name=$name value=0 $off>Off\n";
-            last SWITCH;
-        };
-        /^m$/ && do {
-            my @choices = @{$i->{'choices'}};
-            ## showing 5 options seems like a nice round number; this should
-            ## probably be configurable; if you care, file a bug ;-)
-            my $boxSize = scalar(@choices) < 5 ? scalar(@choices) : 5;
-
-            print "<select multiple size=\"$boxSize\" name=\"$name\">\n";
-
-            foreach my $item (@choices) {
-                my $selected = "";
-
-                if (lsearch($value, $item) >= 0) {
-                    $selected = "selected";
-                }
-
-                print "<option $selected value=\"" . html_quote($item) . "\">" .
-                 html_quote($item) . "</option>\n";
-            }
-
-            print "</select>\n";
-            last SWITCH;
-        };
-        /^s$/ && do {
-            print "<select name=\"$name\">\n";
-            my @choices = @{$i->{'choices'}};
-
-            foreach my $item (@choices) {
-                my $selected = "";
-
-                if ($value eq $item) {
-                    $selected = "selected";
-                }
-
-                print "<option $selected value=\"" . html_quote($item) . "\">" .
-                  html_quote($item) . "</option>\n";
-
-            }
-            print "</select>\n";
-            last SWITCH;
-        };
-        # DEFAULT
-        print "<font color=red><blink>Unknown param type $i->{'type'}!!!</blink></font>\n";
-    }
-    print "</td></tr>\n";
-    print $rowbreak;
+my $current_module;
+my @panels = ();
+foreach my $panel (Bugzilla::Config::param_panels()) {
+    eval("require Bugzilla::Config::$panel") || die $@;
+    my @module_param_list = "Bugzilla::Config::${panel}"->get_param_list(1);
+    my $item = { name => lc($panel),
+                 current => ($current_panel eq lc($panel)) ? 1 : 0,
+                 param_list => \@module_param_list,
+                 sortkey => eval "\$Bugzilla::Config::${panel}::sortkey;"
+               };
+    push(@panels, $item);
+    $current_module = $panel if ($current_panel eq lc($panel));
 }
 
-print "<tr><th align=right valign=top>version:</th><td>
-What version of Bugzilla this is. This can't be modified.
-<tr><td></td><td>" . $Bugzilla::Config::VERSION . "</td></tr>";
+$vars->{panels} = \@panels;
 
-print "</table>\n";
+if ($action eq 'save' && $current_module) {
+    check_token_data($token, 'edit_parameters');
+    my @changes = ();
+    my @module_param_list = "Bugzilla::Config::${current_module}"->get_param_list(1);
 
-print "<input type=reset value=\"Reset form\"><br>\n";
-print "<input type=submit value=\"Submit changes\">\n";
+    my $update_lang_user_pref = 0;
+    foreach my $i (@module_param_list) {
+        my $name = $i->{'name'};
+        my $value = $cgi->param($name);
 
-print "</form>\n";
+        if (defined $cgi->param("reset-$name")) {
+            $value = $i->{'default'};
+        } else {
+            if ($i->{'type'} eq 'm') {
+                # This simplifies the code below
+                $value = [ $cgi->param($name) ];
+            } else {
+                # Get rid of windows/mac-style line endings.
+                $value =~ s/\r\n?/\n/g;
+                # assume single linefeed is an empty string
+                $value =~ s/^\n$//;
+            }
+        }
 
-print "<p><a href=query.cgi>Skip all this, and go back to the query page</a>\n";
-PutFooter();
+        my $changed;
+        if ($i->{'type'} eq 'm') {
+            my @old = sort @{Bugzilla->params->{$name}};
+            my @new = sort @$value;
+            if (scalar(@old) != scalar(@new)) {
+                $changed = 1;
+            } else {
+                $changed = 0; # Assume not changed...
+                for (my $cnt = 0; $cnt < scalar(@old); ++$cnt) {
+                    if ($old[$cnt] ne $new[$cnt]) {
+                        # entry is different, therefore changed
+                        $changed = 1;
+                        last;
+                    }
+                }
+            }
+        } else {
+            $changed = ($value eq Bugzilla->params->{$name})? 0 : 1;
+        }
+
+        if ($changed) {
+            if (exists $i->{'checker'}) {
+                my $ok = $i->{'checker'}->($value, $i);
+                if ($ok ne "") {
+                    ThrowUserError('invalid_parameter', { name => $name, err => $ok });
+                }
+            } elsif ($name eq 'globalwatchers') {
+                # can't check this as others, as Bugzilla::Config::Common
+                # can not use Bugzilla::User
+                foreach my $watcher (split(/[,\s]+/, $value)) {
+                    ThrowUserError(
+                        'invalid_parameter',
+                        { name => $name, err => "no such user $watcher" }
+                    ) unless login_to_id($watcher);
+                }
+            }
+            push(@changes, $name);
+            SetParam($name, $value);
+            if (($name eq "shutdownhtml") && ($value ne "")) {
+                $vars->{'shutdown_is_active'} = 1;
+            }
+            if ($name eq 'languages') {
+                $update_lang_user_pref = 1;
+            }
+        }
+    }
+    if ($update_lang_user_pref) {
+        # We have to update the list of languages users can choose.
+        # If some users have selected a language which is no longer available,
+        # then we delete it (the user pref is reset to the default one).
+        my @languages = split(/[\s,]+/, Bugzilla->params->{'languages'});
+        map {trick_taint($_)} @languages;
+        my $lang = Bugzilla->params->{'defaultlanguage'};
+        trick_taint($lang);
+        add_setting('lang', \@languages, $lang, undef, 1);
+    }
+
+    $vars->{'message'} = 'parameters_updated';
+    $vars->{'param_changed'} = \@changes;
+
+    write_params();
+    delete_token($token);
+}
+
+$vars->{'token'} = issue_session_token('edit_parameters');
+
+$template->process("admin/params/editparams.html.tmpl", $vars)
+    || ThrowTemplateError($template->error());

@@ -20,24 +20,23 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; the name of the newly created version
-  #
-  # product: string; the name of the product the version belongs to
+  # product: object; Bugzilla::Product object representing the product to
+  #                  which the version belongs.
+  # version: object; Bugzilla::Version object representing the
+  #                  newly created version
   #%]
   
 [% title = BLOCK %]Adding new Version of Product
-                   '[% product FILTER html %]'[% END %]
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
-<p>The version '<a title="Edit version '[% name FILTER html %]' of product '
-   [%- product FILTER html %]'"
+<p>The version '<a title="Edit version '[% version.name FILTER html %]' of product '
+   [%- product.name FILTER html %]'"
    href="editversions.cgi?action=edit&amp;product=
-   [%- product FILTER url_quote %]&amp;version=[% name FILTER url_quote %]">
-   [%- name FILTER html %]</a>' has been created.</p>
-
-<p>
+   [%- product.name FILTER url_quote %]&amp;version=[% version.name FILTER url_quote %]">
+   [%- version.name FILTER html %]</a>' has been created.</p>
 
 [% PROCESS admin/versions/footer.html.tmpl %]
 

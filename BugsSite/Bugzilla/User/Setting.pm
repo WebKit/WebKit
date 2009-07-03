@@ -14,7 +14,8 @@
 #
 # Contributor(s): Shane H. W. Travis <travis@sedsystems.ca>
 #                 Max Kanat-Alexander <mkanat@bugzilla.org>
-#
+#                 Marc Schumann <wurblzap@gmail.com>
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 
 package Bugzilla::User::Setting;
@@ -22,12 +23,13 @@ package Bugzilla::User::Setting;
 use strict;
 use base qw(Exporter);
 
+
 # Module stuff
 @Bugzilla::User::Setting::EXPORT = qw(get_all_settings get_defaults
      add_setting);
 
 use Bugzilla::Error;
-use Bugzilla::Util qw{trick_taint};
+use Bugzilla::Util qw(trick_taint get_text);
 
 ###############################
 ###  Module Initialization  ###
@@ -39,10 +41,10 @@ sub new {
     my $user_id = shift;
 
     my $class = ref($invocant) || $invocant;
+    my $subclass = '';
 
     # Create a ref to an empty hash and bless it
     my $self = {};
-    bless($self, $class);
 
     my $dbh = Bugzilla->dbh;
 
@@ -60,9 +62,10 @@ sub new {
     # to retrieve the information for this setting ourselves.
     if (scalar @_ == 0) {
 
-        my ($default, $is_enabled, $value) = 
+        my ($default, $is_enabled, $value);
+        ($default, $is_enabled, $value, $subclass) = 
           $dbh->selectrow_array(
-             q{SELECT default_value, is_enabled, setting_value
+             q{SELECT default_value, is_enabled, setting_value, subclass
                  FROM setting
             LEFT JOIN profile_setting
                    ON setting.name = profile_setting.setting_name
@@ -73,9 +76,9 @@ sub new {
 
         # if not defined, then grab the default value
         if (! defined $value) {
-            ($default, $is_enabled) =
+            ($default, $is_enabled, $subclass) =
               $dbh->selectrow_array(
-                 q{SELECT default_value, is_enabled
+                 q{SELECT default_value, is_enabled, subclass
                    FROM setting
                    WHERE name = ?},
               undef,
@@ -96,12 +99,23 @@ sub new {
         }
     }
     else {
-      # If the values were passed in, simply assign them and return.
-      $self->{'is_enabled'}     = shift;
-      $self->{'default_value'}  = shift;
-      $self->{'value'}          = shift;
-      $self->{'is_default'}     = shift;
+        ($subclass) = $dbh->selectrow_array(
+            q{SELECT subclass FROM setting WHERE name = ?},
+            undef,
+            $setting_name);
+        # If the values were passed in, simply assign them and return.
+        $self->{'is_enabled'}    = shift;
+        $self->{'default_value'} = shift;
+        $self->{'value'}         = shift;
+        $self->{'is_default'}    = shift;
     }
+    if ($subclass) {
+        eval('require ' . $class . '::' . $subclass);
+        $@ && ThrowCodeError('setting_subclass_invalid',
+                             {'subclass' => $subclass});
+        $class = $class . '::' . $subclass;
+    }
+    bless($self, $class);
 
     $self->{'_setting_name'} = $setting_name;
     $self->{'_user_id'}      = $user_id;
@@ -114,25 +128,39 @@ sub new {
 ###############################
 
 sub add_setting {
-    my ($name, $values, $default_value) = @_;
+    my ($name, $values, $default_value, $subclass, $force_check) = @_;
     my $dbh = Bugzilla->dbh;
 
-    return if _setting_exists($name);
+    my $exists = _setting_exists($name);
+    return if ($exists && !$force_check);
 
-    ($name && $values && $default_value)
+    ($name && $default_value)
       ||  ThrowCodeError("setting_info_invalid");
 
-    print "Adding a new user setting called '$name'\n";
-    $dbh->do(q{INSERT INTO setting (name, default_value, is_enabled)
-                    VALUES (?, ?, 1)},
-             undef, ($name, $default_value));
+    if ($exists) {
+        # If this setting exists, we delete it and regenerate it.
+        $dbh->do('DELETE FROM setting_value WHERE name = ?', undef, $name);
+        $dbh->do('DELETE FROM setting WHERE name = ?', undef, $name);
+        # Remove obsolete user preferences for this setting.
+        my $list = join(', ', map {$dbh->quote($_)} @$values);
+        $dbh->do("DELETE FROM profile_setting
+                  WHERE setting_name = ? AND setting_value NOT IN ($list)",
+                  undef, $name);
+    }
+    else {
+        print get_text('install_setting_new', { name => $name }) . "\n";
+    }
+    $dbh->do(q{INSERT INTO setting (name, default_value, is_enabled, subclass)
+                    VALUES (?, ?, 1, ?)},
+             undef, ($name, $default_value, $subclass));
 
     my $sth = $dbh->prepare(q{INSERT INTO setting_value (name, value, sortindex)
                                     VALUES (?, ?, ?)});
 
-    my @values_list = keys %{$values};
-    foreach my $key (@values_list){
-        $sth->execute($name, $key, $values->{$key});
+    my $sortindex = 5;
+    foreach my $key (@$values){
+        $sth->execute($name, $key, $sortindex);
+        $sortindex += 5;
     }
 }
 
@@ -307,17 +335,19 @@ $settings->{$setting_name} = new Bugzilla::User::Setting(
 
 =over 4
 
-=item C<add_setting($name, $values, $default_value)>
+=item C<add_setting($name, \@values, $default_value)>
 
 Description: Checks for the existence of a setting, and adds it 
              to the database if it does not yet exist.
+
 Params:      C<$name> - string - the name of the new setting
-             C<$values> - hash - contains the new values (key) and 
-             sortindexes for the new setting
+             C<$values> - arrayref - contains the new choices
+               for the new Setting.
              C<$default_value> - string - the site default
+
 Returns:     a pointer to a hash of settings
-#
-#
+
+
 =item C<get_all_settings($user_id)>
 
 Description: Provides the user's choices for each setting in the 

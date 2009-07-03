@@ -1,4 +1,8 @@
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+    <!ENTITY % myents SYSTEM "bugzilla.ent">
+    %myents;
 
 <!-- Include macros -->
 <!ENTITY about SYSTEM "about.xml">
@@ -23,7 +27,6 @@
      * bz-ver to current stable
      * bz-nexver to next stable
      * bz-date to the release date
-     * Remove the BZ-DEVEL comments
      - COMPILE DOCS AND CHECKIN -
        Also, tag and tarball before completing
      * bz-ver to devel version
@@ -31,43 +34,18 @@
      For a devel release, simple bump bz-ver and bz-date
 -->
 
-<!ENTITY bz-ver "2.20.1">
-<!ENTITY bz-nextver "2.20.2">
-<!ENTITY bz-date "2006-02-20">
-<!ENTITY current-year "2006">
+<!ENTITY bz-ver "3.0.3">
+<!ENTITY bz-nextver "3.2">
+<!ENTITY bz-date "2008-01-08">
+<!ENTITY current-year "2008">
 
-<!ENTITY landfillbase "http://landfill.bugzilla.org/bugzilla-tip/">
+<!ENTITY landfillbase "http://landfill.bugzilla.org/bugzilla-3.0-branch/">
 <!ENTITY bz "http://www.bugzilla.org/">
-<!ENTITY bzg-bugs "<ulink url='http://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla&amp;component=Documentation'>Bugzilla Documentation</ulink>">
+<!ENTITY bzg-bugs "<ulink url='https://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla&amp;component=Documentation'>Bugzilla Documentation</ulink>">
 <!ENTITY mysql "http://www.mysql.com/">
 
-<!-- For minimum versions -->
-<!ENTITY min-mysql-ver "3.23.41">
-<!ENTITY min-pg-ver "7.3.x">
-<!ENTITY min-perl-ver "5.6.1">
+<!ENTITY min-perl-ver "5.8.0">
 <!ENTITY min-perl-ver-win "5.8.1">
-<!ENTITY min-template-ver "2.08">
-<!ENTITY min-file-temp-ver "any">
-<!ENTITY min-appconfig-ver "1.52">
-<!ENTITY min-text-wrap-ver "2001.0131">
-<!ENTITY min-file-spec-ver "0.84">
-<!ENTITY min-data-dumper-ver "any">
-<!ENTITY min-dbd-mysql-ver "2.9003">
-<!ENTITY min-dbd-pg-ver "1.31">
-<!ENTITY min-dbi-ver "1.38">
-<!ENTITY min-date-format-ver "2.21">
-<!ENTITY min-cgi-ver "2.93">
-<!ENTITY min-mail-mailer-ver "1.65">
-<!ENTITY min-storable-ver "any">
-<!-- Optional modules -->
-<!ENTITY min-gd-ver "1.20">
-<!ENTITY min-gd-graph-ver "any">
-<!ENTITY min-gd-text-align-ver "any">
-<!ENTITY min-chart-base-ver "1.0">
-<!ENTITY min-xml-parser-ver "any">
-<!ENTITY min-mime-parser-ver "any">
-<!ENTITY min-patchreader-ver "0.9.4">
-
 ]>
 
 
@@ -98,8 +76,7 @@
 <!-- Header -->
 
   <bookinfo>
-    <title>The Bugzilla Guide - &bz-ver; 
-    Release</title>
+    <title>The Bugzilla Guide - &bz-ver;  Release</title>
 
     <authorgroup>
       <corpauthor>The Bugzilla Team</corpauthor>
@@ -118,7 +95,7 @@
 
       <para>
         The most current version of this document can always be found on the
-        <ulink url="http://www.bugzilla.org/documentation.html">Bugzilla 
+        <ulink url="http://www.bugzilla.org/docs/">Bugzilla 
         Documentation Page</ulink>.
       </para>
 
@@ -149,11 +126,11 @@
 <!-- Securing Bugzilla -->
 &security;
 
-<!-- Customizing Bugzilla -->
-&customization;
-
 <!-- Using Bugzilla -->
 &using;
+
+<!-- Customizing Bugzilla -->
+&customization;
 
 <!-- Appendix: The Frequently Asked Questions -->
 &faq;

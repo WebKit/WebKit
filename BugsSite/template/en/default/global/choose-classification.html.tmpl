@@ -17,13 +17,13 @@
   #%]
 
 [%# INTERFACE:
-  # classdesc: hash. May be empty. The hash keys are the classifications, and the values
-  # are their descriptions.
+  # classifications: an array of classification objects containing
+  #                  at least one product accessible by the user.
   #%]
 
 [% IF target == "enter_bug.cgi" %]
   [% title = "Select Classification" %]
-  [% h2 = "Please select the classification." %]
+  [% subheader = "Please select the classification." %]
 [% END %]
 
 [% DEFAULT title = "Choose the classification" %]
@@ -33,32 +33,33 @@
         
 [% IF Param('showallproducts') %]
   <tr>
-    <th align="right" valign="center" height=50>
+    <th align="right">
       <a href="[% target FILTER url_quote %]?classification=__all
             [% IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER url_quote %][% END -%] 
             [%- IF format %]&amp;format=[% format FILTER url_quote %][% END %]">
       All</a>:
     </th>
 
-    <td valign="center">&nbsp;Show all products</td>
-  </tr>    
+    <td valign="top">&nbsp;Show all products</td>
+  </tr>
+  <tr>
+    <th colspan="2">&nbsp;</th>
+  </tr>
 [% END %]
 
-[% FOREACH p = classdesc.keys.sort %]
-  [% IF classifications.$p.size > 0 %]
+[% FOREACH class = classifications %]
   <tr>
-    <th align="right" valign="top">
-      <a href="[% target FILTER url_quote %]?classification=[% p FILTER url_quote -%]
+    <th align="right">
+      <a href="[% target FILTER url_quote %]?classification=[% class.name FILTER url_quote -%]
             [%- IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER url_quote %][% END -%] 
             [%- IF format %]&amp;format=[% format FILTER url_quote %][% END %]">
-      [% p FILTER html %]</a>:
+      [% class.name FILTER html %]</a>:
     </th>
 
-    [% IF classdesc.$p %]
-      <td valign="top">&nbsp;[% classdesc.$p %]</td>
+    [% IF class.description %]
+      <td valign="top">&nbsp;[% class.description FILTER html_light %]</td>
     [% END %]
   </tr>
-  [% END %]
 [% END %]
 
 </table>

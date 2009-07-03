@@ -40,33 +40,35 @@
 
 [% mail = SendBugMail(mailing_bugid, mailrecipients) %]
 
+<dl>
 [% PROCESS emails
    description = "Email sent to"
    names = mail.sent
 %]
-<br>
+
 [% PROCESS emails
    description = "Excluding"
    names = mail.excluded
 %]
-<br>
-<center>
-  If you wish to tweak the kinds of mail [% terms.Bugzilla %] sends you, you can
-  <a href="userprefs.cgi?tab=email">change your preferences</a>.
-</center>
-
+</dl>
 
 [%############################################################################%]
 [%# Block for a set of email addresses                                       #%]
 [%############################################################################%]
 
 [% BLOCK emails %]
-  <b>[% description FILTER html %]:</b>
-  [% IF names.size > 0 %]
-    [%+ FOREACH name = names %]
-      [% name FILTER html %][% ", " UNLESS loop.last() %]
+  <dt>[% description FILTER html %]:</dt>
+  <dd>
+  [% IF user.can_see_bug(mailing_bugid) %]
+    [% IF names.size > 0 %]
+      [%+ FOREACH name = names %]
+        <code>[% name FILTER html %]</code>[% ", " UNLESS loop.last() %]
+      [% END %]
+    [% ELSE %]
+      no one
     [% END %]
   [% ELSE %]
-    no one
+    (list of e-mails not available)
   [% END %]
+  </dd>
 [% END %]

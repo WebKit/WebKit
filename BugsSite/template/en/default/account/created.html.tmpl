@@ -17,26 +17,26 @@
   # Rights Reserved.
   #
   # Contributor(s): Gervase Markham <gerv@gerv.net>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# INTERFACE:
   # login: string. The user's Bugzilla login email address.
   #%]
 
-[% PROCESS global/header.html.tmpl 
-  title = "Account Created"
-%]
+[% PROCESS global/variables.none.tmpl %]
+
+[% title = BLOCK %]
+  Request for new user account '[% login FILTER html %]' submitted
+[% END %]
+
+[% PROCESS global/header.html.tmpl title = title %]
 
 <p>
-  A new account,  
-  <tt>[% login FILTER html %]</tt>,
-  has been created and a randomly-generated password has been e-mailed 
-  to that address.
-</p>
-
-<p>
-  When the e-mail arrives, 
-  <a href="index.cgi?GoAheadAndLogIn=1">log in here</a>.
+  To confirm the creation of the user account <tt>[% login FILTER html %]</tt>,
+  use the URL given in the email you will receive. If you take no action in the
+  next [% constants.MAX_TOKEN_AGE FILTER html %] days, this request will
+  automatically be canceled.
 </p>
 
 [% PROCESS global/footer.html.tmpl %] 

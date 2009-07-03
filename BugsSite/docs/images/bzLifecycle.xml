@@ -1118,9 +1118,7 @@ possession#</dia:string>
   DUPLICATE
   WONTFIX
   WORKSFORME
-  INVALID
-  REMIND
-  LATER#</dia:string>
+  INVALID#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="sans" style="0" name="Helvetica"/>

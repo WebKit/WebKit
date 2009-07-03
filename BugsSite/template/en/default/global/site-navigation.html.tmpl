@@ -57,15 +57,22 @@
     [% END %]
   [% END %]
 
+  [%# *** Attachment *** %]
+  [% IF attachment && attachment.bug_id %]
+    <link rel="Up" href="show_bug.cgi?id=[% attachment.bug_id FILTER none %]">
+  [% END %]
+
 
   [%# *** Dependencies, Votes, Activity, Print-version *** %]
   [% IF bug %]
     <link rel="Show" title="Dependency Tree"
-          href="showdependencytree.cgi?id=[% bug.bug_id %]">
-    <link rel="Show" title="Dependency Graph"
-          href="showdependencygraph.cgi?id=[% bug.bug_id %]">
+          href="showdependencytree.cgi?id=[% bug.bug_id %]&amp;hide_resolved=1">
+    [% IF Param('webdotbase') %]
+      <link rel="Show" title="Dependency Graph"
+            href="showdependencygraph.cgi?id=[% bug.bug_id %]">
+    [% END %]
 
-    [% IF use_votes %]
+    [% IF bug.use_votes %]
       <link rel="Show" title="Votes ([% bug.votes %])"
             href="votes.cgi?action=show_bug&amp;bug_id=[% bug.bug_id %]">
     [% END %]
@@ -90,14 +97,22 @@
           href="buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% q.name FILTER url_quote %]">
   [% END %]
 
+  [% FOREACH q = user.queries_subscribed %]
+    <link rel="Saved&nbsp;Search"
+          title="[% q.name FILTER html %] ([% q.user.login FILTER html %])"
+          href="buglist.cgi?cmdtype=dorem&amp;remaction=run&amp;namedcmd=
+                 [% q.name FILTER url_quote %]&amp;sharer_id=
+                 [% q.user.id FILTER url_quote %]">
+  [% END %]
+
   [%# *** Bugzilla Administration Tools *** %]
   [% IF user.login %] 
     [% '<link rel="Administration" title="Parameters"    
               href="editparams.cgi">' IF user.groups.tweakparams %]
     [% '<link rel="Administration" title="Users"    
               href="editusers.cgi">' IF user.groups.editusers %]
-    [% '<link rel="Administration" title="Products"      
-              href="editproducts.cgi">' IF user.groups.editcomponents %]
+    [% '<link rel="Administration" title="Products" href="editproducts.cgi">'
+       IF user.groups.editcomponents || user.get_products_by_permission("editcomponents").size %]
     [% '<link rel="Administration" title="Flag Types"   
               href="editflagtypes.cgi">' IF user.groups.editcomponents %]
     [% '<link rel="Administration" title="Groups"        
@@ -107,6 +122,6 @@
     [% '<link rel="Administration" title="Whining"       
               href="editwhines.cgi">' IF user.groups.bz_canusewhines %]
     [% '<link rel="Administration" title="Sanity Check"  
-              href="sanitycheck.cgi">' IF user.groups.tweakparams %]
+              href="sanitycheck.cgi">' IF user.groups.editcomponents %]
   [% END %]  
 [% END %]

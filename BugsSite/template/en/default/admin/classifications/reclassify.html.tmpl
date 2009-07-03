@@ -23,38 +23,44 @@
   title = "Reclassify products"
 %]
 
-[% main_classification = classification %]
-
 <form method=post action="editclassifications.cgi">
   <table border=0 cellpadding=4 cellspacing=0>
     <tr>
       <td valign="top">Classification:</td>
-      <td valign="top" colspan=3>[% main_classification FILTER html %]</td>
+      <td valign="top" colspan=3>[% classification.name FILTER html %]</td>
 
     </tr><tr>
       <td valign="top">Description:</td>
       <td valign="top" colspan=3>
-        [% IF description %]
-          [% description %]
+        [% IF classification.description %]
+          [% classification.description FILTER html_light %]
         [% ELSE %]
           <font color="red">description missing</font>
         [% END %]
       </td>
 
     </tr><tr>
+      <td valign="top">Sortkey:</td>
+      <td valign="top" colspan=3>[% classification.sortkey FILTER html %]</td>
+
+    </tr><tr>
       <td valign="top">Products:</td>
       <td valign="top">Products</td>
       <td></td>
-      <td valign="top">[% main_classification FILTER html %] Products</td>
+      <td valign="top">[% classification.name FILTER html %] Products</td>
 
     </tr><tr>
       <td></td>
       <td valign="top">
       <select name="prodlist" id="prodlist" multiple="multiple" size="20">
-        [% FOREACH cl = class_products %]
-          <option value="[% cl.value FILTER html %]">
-             [% cl.name FILTER html %]
-          </option>
+        [% FOREACH class = classifications %]
+          [% IF class.id != classification.id %]
+            [% FOREACH product = class.products %]
+              <option value="[% product.name FILTER html %]">
+                [[% class.name FILTER html %]]&nbsp;[% product.name FILTER html %]
+              </option>
+            [% END %]
+          [% END %]
         [% END %]
       </select></td>
 
@@ -65,9 +71,9 @@
 
       <td valign="middle" rowspan=2>
         <select name="myprodlist" id="myprodlist" multiple="multiple" size="20">
-          [% FOREACH product = selected_products %]
-            <option value="[% product FILTER html %]">
-              [% product FILTER html %]
+          [% FOREACH product = classification.products %]
+            <option value="[% product.name FILTER html %]">
+              [% product.name FILTER html %]
             </option>
           [% END %]
       </select></td>
@@ -75,10 +81,12 @@
   </table>
 
   <input type=hidden name="action" value="reclassify">
-  <input type=hidden name="classification" value="[% main_classification FILTER html %]">
+  <input type=hidden name="classification" value="[% classification.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
 
 <p>Back to the <a href="./">main [% terms.bugs %] page</a>,
 or <a href="editclassifications.cgi"> edit</a> more classifications.
 
-[% PROCESS global/footer.html.tmpl %] 
+[% PROCESS global/footer.html.tmpl %]
+

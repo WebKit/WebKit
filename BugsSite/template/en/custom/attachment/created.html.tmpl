@@ -32,33 +32,34 @@
 
 [% PROCESS global/header.html.tmpl
   title = "Changes Submitted"
-  style = "th { text-align: left; }"
 %]
 
-<table border="1">
-  <tr>
-    <td>
-      <h2>
-        <a title="[% description FILTER html %]" href="attachment.cgi?id=[% attachid %]&amp;action=review">Attachment #[% attachid %]</a>
-        to <a href="show_bug.cgi?id=[% bugid %]">[% terms.Bug %] #[% bugid %]</a> Created
-      </h2>
+<dl>
+  <dt>
+    <a title="[% description FILTER html %]" href="attachment.cgi?id=[% attachid %]&amp;action=review">Attachment #[% attachid %]</a>
+    to [% "$terms.bug $bugid" FILTER bug_link(bugid) %] created
+  </dt>
+  <dd>
+    [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = bugid %]
+    [% IF convertedbmp %]
+      <p>
+        <b>Note:</b> [% terms.Bugzilla %] automatically converted your BMP image file to a
+        compressed PNG format.
+      </p>
+    [% END %]
+    [% IF contenttypemethod == 'autodetect' %]
+      <p>
+        <b>Note:</b> [% terms.Bugzilla %] automatically detected the content type
+        <em>[% contenttype %]</em> for this attachment.  If this is
+        incorrect, correct the value by
+        editing the attachment's <a href="attachment.cgi?id=[% attachid %]&amp;action=review">details</a>.
+      </p>
+    [% END %]
 
-      [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = bugid %]
-
-      [% IF contenttypemethod == 'autodetect' %]
-        <p>
-          <b>Note:</b> [% terms.Bugzilla %] automatically detected the content type
-          <em>[% contenttype %]</em> for this attachment.  If this is
-          incorrect, correct the value by
-          <a href="attachment.cgi?id=[% attachid %]&amp;action=edit">editing the attachment</a>.
-        </p>
-      [% END %]
-    </td>
-    <td>
-      <a href="show_bug.cgi?id=[% bugid %]">Go back to [% terms.bug %] #[% bugid %]</a>
-    </td>
-  </tr>
-</table>
+    [%# Links to more information about the changed bug. %]
+    [% Hook.process("links") %]
+  </dd>
+</dl>
 
 <p>
 <a href="attachment.cgi?bugid=[% bugid %]&amp;action=enter">Create

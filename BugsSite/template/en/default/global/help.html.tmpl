@@ -22,7 +22,7 @@
 [% USE Bugzilla %]
 [% cgi = Bugzilla.cgi %]
 
-[% IF help %]
+[% IF cgi.param("help") %]
   [% IF cgi.user_agent("Mozilla/5") %]
       [% FOREACH h = help_html %]
       <div id="[% h.id %]_help" class="help" style="display: none;">

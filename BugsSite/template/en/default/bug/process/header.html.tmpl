@@ -25,10 +25,21 @@
 
 [% PROCESS global/variables.none.tmpl %]
 
+[% USE Bugzilla %]
+
 [% IF    title_tag == "bug_processed" %]
-  [% title = "$terms.Bug processed" %]
+  [% title = BLOCK %]
+    [% IF Bugzilla.cgi.param('id') %]
+      [% terms.Bug %] [%+ id FILTER html %]
+    [% ELSE %]
+      [% terms.Bugs %]
+    [% END %]
+    processed
+  [% END %]
 [% ELSIF title_tag == "mid_air" %]
   [% title = "Mid-air collision!" %]
+[% ELSIF title_tag == "change_votes" %]
+  [% title = "Change Votes" %]
 [% END %]
 
 [% PROCESS global/header.html.tmpl %]

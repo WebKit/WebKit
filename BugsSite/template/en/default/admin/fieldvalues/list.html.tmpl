@@ -21,6 +21,7 @@
   #              displayed to the user in a list.
   #
   # field: string; the name of the field we are editing values for.
+  # static: array; list of values which cannot be renamed nor deleted.
   #%]
 
 [% USE Bugzilla %]
@@ -50,21 +51,49 @@
        name => "sortkey"
        heading => "Sortkey"
      },
-   ]
+     {
+       name => "action"
+       heading => "Action"
+       content => "Delete"
+       contentlink => delete_contentlink
+     } ]
 %]
 
-[% columns.push({
-     heading => "Action"
-     content => "Delete"
-     contentlink => delete_contentlink
-   }) %]
+[% IF default.defined %]
+  [% overrides.action = [ {
+       match_value => "$default"
+       match_field => 'name'
+       override_content => 1
+       content => "(Default value)"
+       override_contentlink => 1
+       contentlink => undef
+     } ]
+  %]
+[% END %]
+
+[% IF static.size %]
+  [% UNLESS overrides.action.size %]
+    [% overrides.action = [] %]
+  [% END %]
+
+  [% FOREACH static_value = static %]
+    [% overrides.action.push({
+         match_value => "$static_value"
+         match_field => 'name'
+         override_content => 1
+         content => "(Non-deletable value)"
+         override_contentlink => 1
+         contentlink => undef
+       })
+    %]
+  [% END %]
+[% END %]
 
 [% PROCESS admin/table.html.tmpl
      columns = columns
      data = values
+     overrides = overrides
 %]
-
-<p>
 
 [% PROCESS admin/fieldvalues/footer.html.tmpl
   no_edit_other_link = 1

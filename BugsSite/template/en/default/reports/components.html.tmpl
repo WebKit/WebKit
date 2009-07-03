@@ -20,18 +20,14 @@
   #%]
 
 [%# INTERFACE:
-  # product: string. The product this is the components list for.
-  # components: List of hashes. May be empty. Each hash has four members:
-  #   name: string. Name of the component.
-  #   description: string. Description of the component. May contain HTML.
-  #   initialowner: string. Component's default assignee.
-  #   initialqacontact: string. Component's default QA contact.
+  # product: object. The product for which we want to display component descriptions.
   #%]
-  
-[% filtered_product = product FILTER html %]
-[% PROCESS global/header.html.tmpl 
-  title = "Components for $product"
-  h2 = filtered_product %]
+
+[% title = BLOCK %]
+  Components for [% product.name FILTER html %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl title = title %]
 
 [% IF Param("useqacontact") %]
   [% numcols = 3 %]
@@ -39,28 +35,28 @@
   [% numcols = 2 %]
 [% END %]
 
-[% IF components.size == 0 %]
-  This product has no components.
-[% ELSE %]
-  <table>
-    <tr>
-      <th align="left">Component</th>
-      <th align="left">Default Assignee</th>
-      [% IF Param("useqacontact") %]
-        <th align="left">Default QA Contact</th>
-      [% END %]
-    </tr>
+<p>
+  [% product.description FILTER html_light %]
+</p>
 
-    [% FOREACH comp = components %]
-      [% INCLUDE describe_comp %]
+<table>
+  <tr>
+    <th align="left">Component</th>
+    <th align="left">Default Assignee</th>
+    [% IF Param("useqacontact") %]
+      <th align="left">Default QA Contact</th>
     [% END %]
-    <tr>
-      <td colspan="[% numcols %]">
-        <hr>
-      </td>
-    </tr>
-  </table>
-[% END %]
+  </tr>
+
+  [% FOREACH comp = product.components %]
+    [% INCLUDE describe_comp %]
+  [% END %]
+  <tr>
+    <td colspan="[% numcols %]">
+      <hr>
+    </td>
+  </tr>
+</table>
 
 [% PROCESS global/footer.html.tmpl %]
 
@@ -79,21 +75,19 @@
       <a name="[% comp.name FILTER html %]">[% comp.name FILTER html %]</a>
     </td>
     <td>
-      <a href="mailto:[% comp.initialowner FILTER html %]
-                      [% Param('emailsuffix') %]">
-      [% comp.initialowner FILTER html %]</a>
+      <a href="mailto:[% comp.default_assignee.email FILTER html %]">
+      [% comp.default_assignee.login FILTER html %]</a>
     </td>
     [% IF Param("useqacontact") %]
       <td>
-        <a href="mailto:[% comp.initialqacontact FILTER html %]
-                        [% Param('emailsuffix') %]">
-        [% comp.initialqacontact FILTER html %]</a>
+        <a href="mailto:[% comp.default_qa_contact.email FILTER html %]">
+        [% comp.default_qa_contact.login FILTER html %]</a>
       </td>
     [% END %]
   </tr>
   <tr>
     <td colspan="[% numcols - 1 %]">
-      [% comp.description %]
+      [% comp.description FILTER html_light %]
     </td>
   </tr>
 [% END %]

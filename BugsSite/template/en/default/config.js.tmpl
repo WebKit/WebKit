@@ -19,8 +19,7 @@
   # Contributor(s): Myk Melez <myk@mozilla.org>
   #%]
 //
-// This file contains the installation specific values for QuickSearch
-// and other Bugzilla clients.  See quicksearch.js for more details.
+// This file contains installation specific values for third-party clients.
 //
 // Note: this interface is experimental and under development.
 // We may and probably will make breaking changes to it in the future.
@@ -28,7 +27,7 @@
 // the global bugzilla url
 var installation = {
   base_url        : '[% Param('urlbase') FILTER js %]',
-  install_version : '[% VERSION FILTER js %]',
+  install_version : '[% constants.BUGZILLA_VERSION FILTER js %]',
   maintainer      : '[% Param('maintainer') FILTER js %]'
 };
 
@@ -59,6 +58,14 @@ var platform      = [ [% FOREACH x = platform %]'[% x FILTER js %]', [% END %] ]
 var severity      = [ [% FOREACH x = severity %]'[% x FILTER js %]', [% END %] ];
 
 
+// Custom Fields
+// =============
+
+[% FOREACH cf = custom_fields %]
+var [% cf.name FILTER js %] = [ [% FOREACH x = cf.legal_values %]'[% x FILTER js %]', [% END %] ];
+[% END %]
+
+
 // Products and Components
 // =======================
 //
@@ -74,10 +81,10 @@ var component = new Object();
 var version = new Object();
 var target_milestone = new Object();
 
-[% FOREACH p = legal_products %]
-  component['[% p FILTER js %]'] = [ [% FOREACH x = components_by_product.$p %]'[% x FILTER js %]', [% END %] ];
-  version['[% p FILTER js %]'] = [ [% FOREACH x = versions_by_product.$p %]'[% x FILTER js %]', [% END %] ];
-  target_milestone['[% p FILTER js %]'] = [ [% FOREACH x = milestones_by_product.$p %]'[% x FILTER js %]', [% END %] ];
+[% FOREACH p = products %]
+  component['[% p.name FILTER js %]'] = [ [% FOREACH x = p.components %]'[% x.name FILTER js %]', [% END %] ];
+  version['[% p.name FILTER js %]'] = [ [% FOREACH x = p.versions %]'[% x.name FILTER js %]', [% END %] ];
+  target_milestone['[% p.name FILTER js %]'] = [ [% FOREACH x = p.milestones %]'[% x.name FILTER js %]', [% END %] ];
 [% END %]
 
 // Product and Component Exceptions

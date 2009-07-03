@@ -33,11 +33,13 @@
 
 
 [% IF remove_all %]
-  [% title = "Removing All Explicit Group Memberships from '"
-      _ name _ "'" %]
+  [% title = BLOCK %]
+    Removing All Explicit Group Memberships from '[% name FILTER html %]'
+  [% END %]
 [% ELSE %]
-  [% title = "Removing All Explicit Group Memberships Matching "
-      _ "Group RegExp from '" _ name _ "'" %]
+  [% title = BLOCK %]
+    Removing All Explicit Group Memberships Matching Group RegExp from '[% name FILTER html %]'
+  [% END %]
 [% END %]
 
 [% PROCESS global/header.html.tmpl %]

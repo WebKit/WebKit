@@ -17,12 +17,13 @@
   # Rights Reserved.
   #
   # Contributor(s): Gervase Markham <gerv@gerv.net>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# INTERFACE:
   # tabs: List of hashes. May not be empty. Each hash has three members:
   #   name: string. Name of the tab (used internally.)
-  #   description: string. Description of the tab (used in tab title.)
+  #   description: string. Description of the tab (used in tab title).
   #   saveable: boolean. True if tab has a form which can be submitted.
   #               True if user is not receiving self-generated mail.
   # Note: For each tab name, a template "prefs/${tab.name}.tmpl" must exist, 
@@ -32,97 +33,78 @@
   # changes_saved: boolean/string. True if the CGI processed form data before 
   #                displaying anything, and can contain an optional custom
   #                message if required (which Perl still evaluates as True).
+  # dont_show_button: boolean. Prevent the display of the "Submit Changes" button.
   #%]
 
 [% filtered_login = user.login FILTER html %]
 [% PROCESS global/header.html.tmpl
    title = "User Preferences"
-   h2 = filtered_login
-   style = "td.selected_tab {
-              border-width: 2px 2px 0px;
-              border-style: solid; 
-              border-color: black;
-            }
-            td.unselected_tab, td.spacer {
-              border-width: 0px 0px 2px 0px;
-              border-style: solid; 
-              border-color: black;
-            }"
+   subheader = filtered_login
+   style_urls = ['skins/standard/admin.css']
  %]
 
-[% tabs = [ { name => "account", description => "Account Preferences", 
-              saveable => "1" },
-            { name => "settings", description => "General Preferences", 
-              saveable => "1" }, 
-            { name => "email", description => "Email Preferences", 
-              saveable => "1" },
-            { name => "saved-searches", description => "Saved searches", 
-              saveable => "1" },
-            { name => "permissions", description => "Permissions", 
-              saveable => "0" } ] %]
+[% tabs = [{ name => "settings", label => "General Preferences",
+              link => "userprefs.cgi?tab=settings", saveable => "1" },
+            { name => "email", label => "Email Preferences", 
+              link => "userprefs.cgi?tab=email", saveable => "1" },
+            { name => "saved-searches", label => "Saved Searches", 
+              link => "userprefs.cgi?tab=saved-searches", saveable => "1" },
+            { name => "account", label => "Name and Password",
+              link => "userprefs.cgi?tab=account", saveable => "1" },
+            { name => "permissions", label => "Permissions", 
+              link => "userprefs.cgi?tab=permissions", saveable => "0" } ] %]
 
-<center>
-  <table cellspacing="0" cellpadding="10" border="0" width="100%">
-    <tr>
-      <td class="spacer">&nbsp;</td>
- 
-      [% FOREACH tab = tabs %]
-        [% IF tab.name == current_tab_name %]
-          [% current_tab = tab %]
-          <td align="center" bgcolor="lightblue" class="selected_tab">
-            [% tab.description %]
-          </td>
-        [% ELSE %]
-          <td align="center" bgcolor="#BBBBEE" class="unselected_tab">
-            <a href="userprefs.cgi?tab=[% tab.name %]">[% tab.description %]</a>
-          </td>
-        [% END %]
-       [% END %]
- 
-       <td class="spacer">&nbsp;</td>
-     </tr>
-   </table>
-</center>
-
-[% IF changes_saved %]
-  <p>
-    <font color="red">
-      The changes to your 
-      [% current_tab.description FILTER lower %] have been saved.
-    </font>
-  </p>
-  [% IF email_changes_saved %]
-    <p>
-      An email has been sent to both old and new email 
-      addresses to confirm the change of email address.
-    </p>
+[% FOREACH tab IN tabs %]
+  [% IF tab.name == current_tab_name %]
+    [% current_tab = tab %]
+    [% LAST %]
   [% END %]
 [% END %]
 
-<h3>[% current_tab.description %]</h3>
+[% WRAPPER global/tabs.html.tmpl
+   tabs        = tabs
+   current_tab = current_tab
+%]
 
-<form name="userprefsform" method="post" action="userprefs.cgi">
-  <input type="hidden" name="tab" value="[% current_tab.name %]">
+[% IF changes_saved %]
+  <div id="message">
+    The changes to your [% current_tab.label FILTER lower %] have been saved.
 
-  [% PROCESS "account/prefs/${current_tab.name}.html.tmpl" 
-                                                 IF current_tab.name.defined %]
+    [% IF email_changes_saved %]
+      <p>
+        An email has been sent to both old and new email
+        addresses to confirm the change of email address.
+      </p>
+    [% END %]
+  </div>
+[% END %]
 
-  [% IF current_tab.saveable %]
+<h3>[% current_tab.label %]</h3>
+
+[% IF current_tab.saveable %]
+  <form name="userprefsform" method="post" action="userprefs.cgi">
+    <input type="hidden" name="tab" value="[% current_tab.name %]">
+[% END %]
+
+[% PROCESS "account/prefs/${current_tab.name}.html.tmpl" 
+                                     IF current_tab.name.defined %]
+
+[% IF current_tab.saveable %]
     <input type="hidden" name="dosave" value="1">
 
-    <table>
-      <tr>
-        <td width="150"></td>
-        <td>
-          <input type="submit" value="Submit Changes">
-         </td>
-      </tr>
-    </table>
-  [% END %]
-  
-</form>
+    [% UNLESS dont_show_button %]
+      <table>
+        <tr>
+          <td width="150">&nbsp;</td>
+          <td>
+            <input type="submit" id="update" value="Submit Changes">
+          </td>
+        </tr>
+      </table>
+    [% END %]
+  </form>
+[% END %]
+
+[% END %]
 
 [% PROCESS global/footer.html.tmpl %]
-
-    
-    

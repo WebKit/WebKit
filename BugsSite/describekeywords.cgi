@@ -25,38 +25,18 @@ use strict;
 use lib ".";
 
 use Bugzilla;
+use Bugzilla::Error;
 use Bugzilla::User;
-
-require "CGI.pl";
-
-# Use the global template variables. 
-use vars qw($vars $template);
+use Bugzilla::Keyword;
 
 Bugzilla->login();
 
 my $cgi = Bugzilla->cgi;
-my $dbh = Bugzilla->dbh;
+my $template = Bugzilla->template;
+my $vars = {};
 
-SendSQL("SELECT keyworddefs.name, keyworddefs.description, 
-                COUNT(keywords.bug_id)
-         FROM keyworddefs LEFT JOIN keywords
-         ON keyworddefs.id = keywords.keywordid " .
-         $dbh->sql_group_by('keyworddefs.id',
-                            'keyworddefs.name, keyworddefs.description') . "
-         ORDER BY keyworddefs.name");
-
-my @keywords;
-
-while (MoreSQLData()) {
-    my ($name, $description, $bugs) = FetchSQLData();
-   
-    push (@keywords, { name => $name, 
-                       description => $description,
-                       bugcount => $bugs });
-}
-   
-$vars->{'keywords'} = \@keywords;
-$vars->{'caneditkeywords'} = UserInGroup("editkeywords");
+$vars->{'keywords'} = Bugzilla::Keyword->get_all_with_bug_count();
+$vars->{'caneditkeywords'} = Bugzilla->user->in_group("editkeywords");
 
 print Bugzilla->cgi->header();
 $template->process("reports/keywords.html.tmpl", $vars)

@@ -42,20 +42,21 @@
   <tr>
     <td colspan="2"><hr></td>
   </tr>
+  [% IF user.authorizer.can_change_password %]
+    <tr>
+      <th align="right">New password:</th>
+      <td>
+        <input type="password" name="new_password1">
+      </td>
+    </tr>              
 
-  <tr>
-    <th align="right">New password:</th>
-    <td>
-      <input type="password" name="new_password1">
-    </td>
-  </tr>              
-
-  <tr>
-    <th align="right">Re-enter new password:</th>
-    <td>
-      <input type="password" name="new_password2">
-    </td>
-  </tr>              
+    <tr>
+      <th align="right">Re-enter new password:</th>
+      <td>
+        <input type="password" name="new_password2">
+      </td>
+    </tr>              
+  [% END %]
 
   <tr>
     <th align="right">Your real name (optional, but encouraged):</th>
@@ -64,7 +65,7 @@
     </td>
   </tr>  
 
-  [% IF Param('allowemailchange') %]
+  [% IF user.authorizer.can_change_email && Param('allowemailchange') %]
     [% IF login_change_date %]
       [% IF new_login_name %]
         <tr>

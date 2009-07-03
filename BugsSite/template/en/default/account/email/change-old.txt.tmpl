@@ -27,12 +27,13 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% expiration_ts = token_ts + (max_token_age * 86400) %]
-From: bugzilla-admin-daemon
+From: [% Param('mailfrom') %]
 To: [% emailaddress %]
 Subject: [% terms.Bugzilla %] Change Email Address Request
 Importance: High
 X-MSMail-Priority: High
 X-Priority: 1
+X-Bugzilla-Type: admin
 
 [%+ terms.Bugzilla %] has received a request to change the email address
 for your account to [%+ newemailaddress %].
@@ -42,6 +43,6 @@ this request, visit the following link:
 
 [%+ Param('urlbase') %]token.cgi?t=[% token FILTER url_quote %]&a=cxlem
 
-If you do nothing, and [%+ newemailaddress %] confirms this request, the
-change will be made permanent after [%+ max_token_age %] days (at precisely 
-[%+ time2str("%H:%M on the %o of %B, %Y", expiration_ts) %]).
+If you do nothing, and [%+ newemailaddress %] confirms this request,
+the change will be made permanent after [%+ max_token_age %] days
+(on [%+ time2str("%B %o, %Y at %H:%M %Z", expiration_ts) %]).

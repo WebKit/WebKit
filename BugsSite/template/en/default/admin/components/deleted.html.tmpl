@@ -20,27 +20,25 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; the name of the deleted component.
-  #
-  # product: string; the name of the product the component belonged to
-  #
-  # deleted_bug_count: number; the number of bugs which were deleted
-  #                            (if bug deletion is allowed)
+  # comp: object; Bugzilla::Component object representing the component the
+  #               user deleted.
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
   #%]
   
-[% title = BLOCK %]Deleted Component '[% name FILTER html %]' from Product
-                   '[% product FILTER html %]'[% END %]
+[% title = BLOCK %]Deleted Component '[% comp.name FILTER html %]' from Product
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
 <p>
-[% IF deleted_bug_count %]
-  [% deleted_bug_count %]
-  [%- IF deleted_bug_count > 1 %] 
-    [% terms.bugs %]
+[% IF comp.bug_count %]
+  [% comp.bug_count FILTER none %]
+  [%- IF comp.bug_count > 1 %] 
+    [%+ terms.bugs %]
   [% ELSE %]
-    [% terms.bug %]
+    [%+ terms.bug %]
   [% END %]
   deleted.
   </p><p>
@@ -52,7 +50,7 @@
 
 <p>Flag inclusions and exclusions deleted.</p>
 
-<p>Component '[% name FILTER html %]' deleted.</p>
+<p>Component '[% comp.name FILTER html %]' deleted.</p>
 
 [% PROCESS admin/components/footer.html.tmpl
   no_edit_component_link = 1

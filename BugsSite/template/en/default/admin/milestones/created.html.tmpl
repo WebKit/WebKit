@@ -20,24 +20,24 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; the name of the newly created milestone
+  # milestone: object; Bugzilla::Milestone object representing the
+  #                    milestone the user created.
   #
-  # product: string; the name of the product the milestone belongs to
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestone belongs.
   #%]
   
 [% title = BLOCK %]Adding new Milestone of Product
-                   '[% product FILTER html %]'[% END %]
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
-<p>The milestone '<a title="Edit milestone '[% name FILTER html %]' of 
-   product '[% product FILTER html %]'"
+<p>The milestone '<a title="Edit milestone '[% milestone.name FILTER html %]' of 
+   product '[% product.name FILTER html %]'"
    href="editmilestones.cgi?action=edit&amp;product=
-   [%- product FILTER url_quote %]&amp;milestone=[% name FILTER url_quote %]">
-   [%- name FILTER html %]</a>' has been created.</p>
-
-<p>
+   [%- product.name FILTER url_quote %]&amp;milestone=[% milestone.name FILTER url_quote %]">
+   [%- milestone.name FILTER html %]</a>' has been created.</p>
 
 [% PROCESS admin/milestones/footer.html.tmpl %]
 

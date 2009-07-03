@@ -41,9 +41,10 @@
   #                   be aware of the group being edited and its members.
   #%]
 
+[% title = BLOCK %]Change Group: [% name FILTER html %][% END %]
 
 [% PROCESS global/header.html.tmpl
-  title = "Change Group: $name"
+  title = title
   style = "tr.odd_row {
                background: #e9e9e9; 
            }
@@ -99,8 +100,7 @@
     [% END %]
   </table>
 
-  <p>
-    Users become members of this group in one of three ways:
+  <p>Users become members of this group in one of three ways:</p>
     <ul>
       <li> by being explicity included when the user is edited.
       <li> by matching the user regexp above.
@@ -152,6 +152,11 @@
             <input type="checkbox" name="grp-[% group.grpid FILTER html %]" [% group.grpmember ? "checked " : "" %]value="1">
             <input type="hidden" name="oldgrp-[% group.grpid FILTER html %]" value="[% group.grpmember FILTER html %]">
           </td>
+          <td align="left" class="groupname">
+            <a href="[% "editgroups.cgi?action=changeform&group=${group.grpid}" FILTER html %]">
+              [% group.grpnam FILTER html %]
+            </a>
+          </td>
         [% ELSE %]
           <td>
             <input type="hidden" name="oldbless-[% group.grpid FILTER html %]" value="0">
@@ -159,18 +164,18 @@
           <td>
             <input type="hidden" name="oldgrp-[% group.grpid FILTER html %]" value="0">
           </td>
+          <td align="left" class="groupname">
+            <em>
+              [% group.grpnam FILTER html %]
+            </em>
+          </td>
         [% END %]
-        <td align="left" class="groupname">
-          <a href="[% "editgroups.cgi?action=changeform&group=${group.grpid}" FILTER html %]">
-            [% group.grpnam FILTER html %]
-          </a>
-        </td>
-        <td align="left" class="groupdesc">[% group.grpdesc FILTER html %]</td>
+        <td align="left" class="groupdesc">[% group.grpdesc FILTER html_light %]</td>
       </tr>
     [% END %]
   </table>
-  
-  <input type="submit" value="Save Changes">
+
+  <input type="submit" id="update" value="Save Changes">
   <br>
   <dl>
     [% IF usevisibility %]
@@ -196,7 +201,7 @@
       <td>
         <h4>Conversion of groups created with [% terms.Bugzilla %]
         versions 2.16 and prior:</h4>
-        
+
         <ul>
           <li>Remove all explicit memberships from this group: 
             <input name="remove_explicit_members" type="submit" id="remove_explicit_members" value="Remove Memberships">
@@ -213,8 +218,9 @@
 
   <input type="hidden" name="action" value="postchanges">
   <input type="hidden" name="group" value="[% group_id FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
 
-Back to the <a href="editgroups.cgi">group list</a>.
+<p>Back to the <a href="editgroups.cgi">group list</a>.</p>
 
 [% PROCESS global/footer.html.tmpl %] 

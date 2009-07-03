@@ -1,36 +1,26 @@
 #!/usr/bin/perl -w
 #
-# bzdbcopy.pl - Copies data from one Bugzilla database to another. 
+# The contents of this file are subject to the Mozilla Public
+# License Version 1.1 (the "License"); you may not use this file
+# except in compliance with the License. You may obtain a copy of
+# the License at http://www.mozilla.org/MPL/
 #
-# Author: Max Kanat-Alexander <mkanat@bugzilla.org>
+# Software distributed under the License is distributed on an "AS
+# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# rights and limitations under the License.
 #
-# The intended use of this script is to copy data from an installation
-# running on one DB platform to an installation running on another
-# DB platform.
+# The Original Code is the Bugzilla Bug Tracking System.
 #
-# It must be run from the directory containing your Bugzilla installation.
-# That means if this script is in the contrib/ directory, you should
-# be running it as: ./contrib/bzdbcopy.pl
+# The Initial Developer of the Original Code is Everything Solved.
+# Portions created by Everything Solved are Copyright (C) 2006 
+# Everything Solved. All Rights Reserved.
 #
-# Note: Both schemas must already exist and be IDENTICAL. (That is, 
-# they must have both been created/updated by the same version of 
-# checksetup.pl.) This script will DESTROY ALL CURRENT DATA in the 
-# target database.
-#
-# Both Schemas must be at least from Bugzilla 2.19.3, but if you're
-# running a Bugzilla from before 2.20rc2, you'll need the patch at:
-# https://bugzilla.mozilla.org/show_bug.cgi?id=300311 in order to
-# be able to run this script.
-#
-# Before you using it, you have to correctly set all the variables
-# in the "User-Configurable Settings" section, below. The "SOURCE"
-# settings are for the database you're copying from, and the "TARGET"
-# settings are for the database you're copying to. The DB_TYPE is
-# the name of a DB driver from the Bugzilla/DB/ directory.
-#
+# Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
 
 use strict;
 use lib ".";
+use Bugzilla;
 use Bugzilla::DB;
 use Bugzilla::Util;
 
@@ -63,6 +53,7 @@ print "Connecting to the '" . TARGET_DB_NAME . "' target database on "
       . TARGET_DB_TYPE . "...\n";
 my $target_db = Bugzilla::DB::_connect(TARGET_DB_TYPE, 'localhost', 
     TARGET_DB_NAME, undef, undef, TARGET_DB_USER, TARGET_DB_PASSWORD);
+my $ident_char = $target_db->get_info( 29 ); # SQL_IDENTIFIER_QUOTE_CHAR
 
 # We use the table list from the target DB, because if somebody
 # has customized their source DB, we still want the script to work,
@@ -84,6 +75,11 @@ foreach my $table (@table_list) {
     print "Reading data from the source '$table' table on " 
           . SOURCE_DB_TYPE . "...\n";
     my @table_columns = $target_db->bz_table_columns_real($table);
+    # The column names could be quoted using the quote identifier char
+    # Remove these chars as different databases use different quote chars
+    @table_columns = map { s/^\Q$ident_char\E?(.*?)\Q$ident_char\E?$/$1/; $_ }
+                         @table_columns;
+
     my $select_query = "SELECT " . join(',', @table_columns) . " FROM $table";
     my $data_in = $source_db->selectall_arrayref($select_query);
 
@@ -172,17 +168,44 @@ foreach my $table (@table_list) {
     print "\n\n";
 }
 
-# And there's one entry in the fielddefs table that needs
-# to be manually fixed. This is a huge hack.
-my $delta_fdef = "(" . $target_db->sql_to_days('NOW()') . " - " .
-                       $target_db->sql_to_days('bugs.delta_ts') . ")";
-$target_db->do(q{UPDATE fielddefs SET name = ?
-                  WHERE name LIKE '%bugs.delta_ts%'}, undef, $delta_fdef);
-
 print "Committing changes to the target database...\n";
 $target_db->commit;
 
 print "All done! Make sure to run checksetup on the new DB.\n";
 $source_db->disconnect;
 $target_db->disconnect;
+
 1;
+
+__END__
+
+=head1 NAME
+
+bzdbcopy.pl - Copies data from one Bugzilla database to another. 
+
+=head1 DESCRIPTION
+
+The intended use of this script is to copy data from an installation
+running on one DB platform to an installation running on another
+DB platform.
+
+It must be run from the directory containing your Bugzilla installation.
+That means if this script is in the contrib/ directory, you should
+be running it as: C<./contrib/bzdbcopy.pl>
+
+Note: Both schemas must already exist and be B<IDENTICAL>. (That is, 
+they must have both been created/updated by the same version of 
+checksetup.pl.) This script will B<DESTROY ALL CURRENT DATA> in the 
+target database.
+
+Both Schemas must be at least from Bugzilla 2.19.3, but if you're
+running a Bugzilla from before 2.20rc2, you'll need the patch at:
+L<http://bugzilla.mozilla.org/show_bug.cgi?id=300311> in order to
+be able to run this script.
+
+Before you using it, you have to correctly set all the variables
+in the "User-Configurable Settings" section at the top of the script. 
+The C<SOURCE> settings are for the database you're copying from, and 
+the C<TARGET> settings are for the database you're copying to. The 
+C<DB_TYPE> is the name of a DB driver from the F<Bugzilla/DB/> directory.
+

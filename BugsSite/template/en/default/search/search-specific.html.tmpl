@@ -23,18 +23,9 @@
 
 [% PROCESS global/header.html.tmpl 
   title = "Find a Specific " _ terms.Bug
-  h1 = ""
-  style = "td.selected_tab {
-             border-width: 2px 2px 0px;
-             border-style: solid; 
-           }
-           td.unselected_tab, td.spacer {
-             border-width: 0px 0px 2px 0px;
-             border-style: solid; 
-           }"
 %]
 
-[% PROCESS search/tabs.html.tmpl %]
+[% WRAPPER search/tabs.html.tmpl %]
 
 <p>
 Find a specific [% terms.bug %] by entering words that describe it.  
@@ -81,11 +72,13 @@ for "crash secure SSL flash".
         [% IF Param('useclassification') %]
           [% FOREACH c = classification %]
             <optgroup label="[% c.name FILTER html %]">
-            [% FOREACH p = c.products %]
-              <option value="[% p FILTER html %]"
-                [% " selected" IF lsearch(default.product, p) != -1 %]>
-                [% p FILTER html %]
-              </option>
+            [% FOREACH p = user.get_selectable_products(c.id) %]
+              [% IF p.components.size %]
+                <option value="[% p.name FILTER html %]"
+                  [% " selected" IF lsearch(default.product, p.name) != -1 %]>
+                  [% p.name FILTER html %]
+                </option>
+              [% END %]
             [% END %]
             </optgroup>
           [% END %]
@@ -116,11 +109,22 @@ for "crash secure SSL flash".
   <tr>
     <td></td>
     <td>
-      <input type="submit" value="Search">
+    
+      [% IF Param('specific_search_allow_empty_words') %]
+        <input type="submit" id="search" value="Search">
+      [% ELSE %]
+        <input type="submit" id="search" value="Search"
+             onclick="if (this.form.content.value == '')
+                      {alert('The Words field cannot be empty. You have to ' +
+                             'enter at least one word in your search criteria.');
+                       return false;} return true;">
+      [% END %]
     </td>
   </tr>
 </table>
 </form>
+
+[% END %]
 
 [% PROCESS global/footer.html.tmpl %]
 

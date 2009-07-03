@@ -32,6 +32,7 @@
 [% PROCESS global/header.html.tmpl
    title = "Enter $terms.ABug"
    onload = "PutDescription()"
+   style = "#somebugs { width: 100%; height: 500px }"
  %]
 
 <p>
@@ -51,7 +52,7 @@
 [%# This script displays the descriptions for selected components. %]
 <script type="text/javascript">
 var descriptions = [
-[% FOREACH c = component_ %]
+[% FOREACH c = product.components %]
   '[% c.description FILTER js %]',
 [% END %]
 ];
@@ -112,12 +113,12 @@ function PutDescription() {
 </p>
 
 [%# Include other products if sensible %]
-[% IF product == "Firefox" %]
+[% IF product.name == "Firefox" %]
   [% productstring = "product=Mozilla%20Application%20Suite&amp;product=Firefox" %]
-[% ELSIF product == "Thunderbird" %]
+[% ELSIF product.name == "Thunderbird" %]
   [% productstring = "product=Mozilla%20Application%20Suite&amp;product=Thunderbird" %]
 [% ELSE %]
-  [% productstring = BLOCK %]product=[% product FILTER url_quote %][% END %]
+  [% productstring = BLOCK %]product=[% product.name FILTER url_quote %][% END %]
 [% END %]
 
 <p>
@@ -125,7 +126,7 @@ function PutDescription() {
     <a href="duplicates.cgi?[% productstring %]&format=simple&sortby=delta&reverse=1&maxrows=100&changedsince=14" target="somebugs">Hot in the last two weeks</a>  
 </p>
 
-<iframe name="somebugs" width="100%" height="80%"
+<iframe name="somebugs" id="somebugs"
   style="border: 2px black solid"
   src="duplicates.cgi?[% productstring %]&format=simple">
 </iframe>
@@ -142,11 +143,11 @@ function PutDescription() {
     <input type="hidden" name="format" value="simple">
     <input type="hidden" name="order" value="relevance desc">
     <input type="hidden" name="bug_status" value="__all__">
-    <input type="hidden" name="product" value="[% product FILTER html %]">
-    [% IF product == "Firefox" OR 
-          product == "Thunderbird" OR 
-          product == "Mozilla Application Suite" OR
-          product == "Camino" %]
+    <input type="hidden" name="product" value="[% product.name FILTER html %]">
+    [% IF product.name == "Firefox" OR 
+          product.name == "Thunderbird" OR 
+          product.name == "Mozilla Application Suite" OR
+          product.name == "Camino" %]
       <input type="hidden" name="product" value="Core">
       <input type="hidden" name="product" value="Toolkit">
       <input type="hidden" name="product" value="PSM">
@@ -157,7 +158,7 @@ function PutDescription() {
     <input type="hidden" name="chfieldto" value="Now">
     <input type="hidden" name="chfield" value="[Bug creation]">
     <input type="text" name="content" size="40">
-    <input type="submit" value="Search">
+    <input type="submit" id="search" value="Search">
   </form>
 
 <p>
@@ -185,6 +186,7 @@ function PutDescription() {
          value="[% default.priority FILTER html %]">
   <input type="hidden" name="version"
          value="[% default.version FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 
 <table valign="top" cellpadding="5" cellspacing="5" border="0">
 
@@ -193,8 +195,8 @@ function PutDescription() {
       <b>Product</b>
     </td>
     <td valign="top">
-      <input type="hidden" name="product" value="[% product FILTER html %]">
-      [% product FILTER html %]
+      <input type="hidden" name="product" value="[% product.name FILTER html %]">
+      [% product.name FILTER html %]
     </td>
   </tr>
 
@@ -208,9 +210,9 @@ function PutDescription() {
           <td valign="top">
             <select name="component" id="component"
                     size="5" onchange="PutDescription()">
-              [% FOREACH c = component_ %]
+              [% FOREACH c = product.components %]
                 <option value="[% c.name FILTER html %]"
-                  [% " selected=\"selected\"" IF c == default.component_ %]>
+                  [% " selected=\"selected\"" IF c.name == default.component_ %]>
                   [% c.name FILTER html %]
                 </option>
               [% END %]
@@ -235,7 +237,7 @@ function PutDescription() {
         To pick the right component, you could use the same one as
         similar [% terms.bugs %] you found in your search, or read the full list of
         <a target="_blank" href="describecomponents.cgi?product=
-            [% product FILTER url_quote %]">component
+            [% product.name FILTER url_quote %]">component
         descriptions</a> (opens in new window) if you need more help.
       </p>
     </td>
@@ -267,24 +269,29 @@ function PutDescription() {
     </td>
   </tr>
 
-  [% matches = cgi.user_agent('Gecko/(\d+)') %]
-  [% buildid = cgi.user_agent() IF matches %]
+  [% IF product.name.match("Firefox|Camino|Mozilla Application Suite") %]
+    [% matches = cgi.user_agent('Gecko/(\d+)') %]
+    [% buildid = cgi.user_agent() IF matches %]
+  [% END %]
+  
+  [%# Accept URL parameter build ID for non-browser products %]
+  [% IF cgi.param("buildid") %]
+    [% buildid = cgi.param("buildid") %]
+  [% END %]
 
   <tr bgcolor="[% tablecolour %]">
     <td align="right" valign="top">
-      <b>Build Identifier<br>(User Agent)</b>
+      <b>Build Identifier</b>
     </td>
     <td valign="top">
-      <input type="text" size="80" name="buildid" value="[% buildid %]">
+      <input type="text" size="80" name="buildid" value="[% buildid FILTER html %]">
       <p>
-        This identifies exactly the version of the product you were using.
-        If reporting [% terms.abug %] in Mozilla or Firefox,
-        this is the line beginning <tt>"Mozilla/5.0"</tt> in
-        <tt>Help | About</tt>.
-        If you are using the problematic software to file the bug, this 
-        field will already be filled in correctly.
-        If the product won't start, just enter the complete URL you 
-        downloaded it from.
+        This should identify the exact version of the product you were using.  
+        If the above field is blank or you know it is incorrect, copy the 
+        version text from the product's Help | 
+        About menu (for browsers this will begin with "Mozilla/5.0...").  
+        If the product won't start, instead paste the complete URL you downloaded 
+        it from.
       </p>
     </td>
   </tr>
@@ -296,11 +303,10 @@ function PutDescription() {
     <td valign="top">
       <input type="text" size="80" name="bug_file_loc" value="http://">
       <p>
-        URL that demonstrates the problem you are seeing (optional.)
-        <!--
-        <b>IMPORTANT</b>: problems with broken web pages go
-        <a href="http://write-this-webtool/">in this form instead</a>.
-        -->
+        URL that demonstrates the problem you are seeing (optional).<br>
+        <b>IMPORTANT</b>: if the problem is with a broken web page, you need
+        to report it
+        <a href="https://bugzilla.mozilla.org/page.cgi?id=broken-website.html">a different way</a>.
       </p>
    </td>
   </tr>
@@ -310,7 +316,8 @@ function PutDescription() {
       <b>Summary</b>
     </td>
     <td valign="top">
-      <input type="text" size="80" name="short_desc" id="short_desc">
+      <input type="text" size="80" name="short_desc" id="short_desc" 
+             maxlength="255">
       <p>
         A sentence which summarises the problem.
         Please be descriptive and use lots of keywords.
@@ -333,7 +340,11 @@ function PutDescription() {
       <b>Details</b>
     </td>
     <td valign="top">
-      <textarea rows="6" cols="80" name="comment"></textarea>
+      [% INCLUDE global/textarea.html.tmpl
+        name    = 'comment'
+        minrows = 6
+        cols    = constants.COMMENT_COLS
+      %]
       <p>
         Expand on the Summary. Please be
         as specific as possible about what is wrong.
@@ -381,11 +392,12 @@ function PutDescription() {
       <b>Steps to Reproduce</b>
     </td>
     <td valign="top">
-<textarea rows="4" cols="80" name="reproduce_steps">
-1.
-2.
-3.
-</textarea>
+      [% INCLUDE global/textarea.html.tmpl
+        name           = 'reproduce_steps'
+        minrows        = 4
+        cols           = constants.COMMENT_COLS
+        defaultcontent = "1.\n2.\n3."
+      %]
       <p>
         Describe how to reproduce the problem, step by
         step. Include any special setup steps.
@@ -398,7 +410,11 @@ function PutDescription() {
       <b>Actual Results</b>
     </td>
     <td valign="top">
-      <textarea rows="4" cols="80" name="actual_results"></textarea>
+      [% INCLUDE global/textarea.html.tmpl
+        name    = 'actual_results'
+        minrows = 4
+        cols    = constants.COMMENT_COLS
+      %]
       <p>
         What happened after you performed the steps above?
       </p>
@@ -410,7 +426,11 @@ function PutDescription() {
       <b>Expected Results</b>
     </td>
     <td valign="top">
-      <textarea rows="4" cols="80" name="expected_results"></textarea>
+      [% INCLUDE global/textarea.html.tmpl
+        name    = 'expected_results'
+        minrows = 4
+        cols    = constants.COMMENT_COLS
+      %]
       <p>
         What should the software have done instead?
       </p>
@@ -422,7 +442,11 @@ function PutDescription() {
       <b>Additional Information</b>
     </td>
     <td valign="top">
-      <textarea rows="8" cols="80" name="additional_info"></textarea>
+      [% INCLUDE global/textarea.html.tmpl
+        name    = 'additional_info'
+        minrows = 8
+        cols    = constants.COMMENT_COLS
+      %]
       <p>
         Add any additional information you feel may be
         relevant to this [% terms.bug %], such as the <b>theme</b> you were
@@ -484,7 +508,7 @@ function PutDescription() {
 <h3>Step 3 of 3 - submit the [% terms.bug %] report</h3>
 
 <p>
-  <input type="submit" value="    Submit [% terms.Bug %] Report    "
+  <input type="submit" id="report" value="    Submit [% terms.Bug %] Report    "
    onclick="if (this.form.comment.value == '')
    { alert('Please enter some details about this [% terms.bug %].');
      this.form.comment.focus();

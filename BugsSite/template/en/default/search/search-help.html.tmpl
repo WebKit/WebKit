@@ -63,14 +63,14 @@
 { id => "keywords_type", 
   html => "The type of keyword search you would like" },   
 { id => "bug_status", 
-  html => "A $terms.bug may be in any of a number of states." },   
+  html => "$terms.Abug may be in any of a number of states." },
 { id => "resolution", 
-  html => "If a $terms.bug is in a resolved state, then one of these reasons 
+  html => "If $terms.abug is in a resolved state, then one of these reasons
            will<br>be given for its resolution." },   
 { id => "bug_severity", 
   html => "How severe the $terms.bug is, or whether it's an enhancement." },   
 { id => "priority", 
-  html => "Engineers prioritise their $terms.bugs using this field." },   
+  html => "Engineers prioritize their $terms.bugs using this field." },   
 { id => "rep_platform", 
   html => "The hardware platform the $terms.bug was observed on." },   
 { id => "op_sys", 
@@ -92,15 +92,17 @@
 { id => "chfieldfrom", 
   html => "Specify the start and end dates either in YYYY-MM-DD format<br>
            (optionally followed by HH:mm, in 24 hour clock), or in relative<br>
-           dates such as 1d, 2w, 3m, 4y, which respectively mean one day,<br>
-           two weeks, three months, or four years ago. 0d is last midnight,<br>
-           and 0w, 0m, 0y is the beginning of this week, month, or year." },
+           dates such as 1h, 2d, 3w, 4m, 5y, which respectively mean one hour,<br>
+           two days, three weeks, four months, or five years ago. 0d is last<br>
+           midnight, and 0h, 0w, 0m, 0y is the beginning of this hour, week,<br>
+           month, or year." },
 { id => "chfieldto", 
   html => "Specify the start and end dates either in YYYY-MM-DD format<br>
            (optionally followed by HH:mm, in 24 hour clock), or in relative<br>
-           dates such as 1d, 2w, 3m, 4y, which respectively mean one day,<br>
-           two weeks, three months, or four years ago. 0d is last midnight,<br>
-           and 0w, 0m, 0y is the beginning of this week, month, or year." },
+           dates such as 1h, 2d, 3w, 4m, 5y, which respectively mean one hour,<br>
+           two days, three weeks, four months, or five years ago. 0d is last<br>
+           midnight, and 0h, 0w, 0m, 0y is the beginning of this hour, week,<br>
+           month, or year." },
 { id => "chfieldvalue", 
   html => "The value the field defined above changed to during that time." },   
 ] %]

@@ -6,130 +6,31 @@
 # the editversions.cgi script, since the two fields were set up in a
 # very similar fashion.
 #
-# (basically replace each occurance of 'milestone' with 'version', and
+# (basically replace each occurrence of 'milestone' with 'version', and
 # you'll have the original script)
 #
 # Matt Masson <matthew@zeroknowledge.com>
 #
 # Contributors : Gavin Shelley <bugzilla@chimpychompy.org>
-#                Frédéric Buclin <LpSolit@gmail.com>
+#                FrÃ©dÃ©ric Buclin <LpSolit@gmail.com>
 #
 
 
 use strict;
 use lib ".";
 
-require "CGI.pl";
-require "globals.pl";
-
+use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Config qw(:DEFAULT $datadir);
-use Bugzilla::User;
-
-use vars qw($template $vars);
+use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::Milestone;
+use Bugzilla::Bug;
+use Bugzilla::Token;
 
 my $cgi = Bugzilla->cgi;
-
-# TestProduct:  just returns if the specified product does exists
-# CheckProduct: same check, optionally  emit an error text
-# TestMilestone:  just returns if the specified product/version combination exists
-# CheckMilestone: same check, optionally emit an error text
-
-sub TestProduct ($)
-{
-    my $product = shift;
-
-    trick_taint($product);
-
-    # does the product exist?
-    my $dbh = Bugzilla->dbh;
-    my $sth = $dbh->prepare_cached("SELECT name
-                                    FROM products
-                                    WHERE name = ?");
-    $sth->execute($product);
-
-    my ($row) = $sth->fetchrow_array;
-
-    $sth->finish;
-
-    return $row;
-}
-
-sub CheckProduct ($)
-{
-    my $product = shift;
-
-    # do we have a product?
-    unless ($product) {
-        ThrowUserError('product_not_specified');    
-    }
-
-    # Does it exist in the DB?
-    unless (TestProduct $product) {
-        ThrowUserError('product_doesnt_exist',
-                       {'product' => $product});
-    }
-}
-
-sub TestMilestone ($$)
-{
-    my ($product, $milestone) = @_;
-
-    my $dbh = Bugzilla->dbh;
-
-    # does the product exist?
-    my $sth = $dbh->prepare_cached("
-             SELECT products.name, value
-             FROM milestones
-             INNER JOIN products
-                ON milestones.product_id = products.id
-             WHERE products.name = ?
-               AND value = ?");
-
-    trick_taint($product);
-    trick_taint($milestone);
-
-    $sth->execute($product, $milestone);
-
-    my ($db_milestone) = $sth->fetchrow_array();
-
-    $sth->finish();
-
-    return $db_milestone;
-}
-
-sub CheckMilestone ($$)
-{
-    my ($product, $milestone) = @_;
-
-    # do we have the milestone and product combination?
-    unless ($milestone) {
-        ThrowUserError('milestone_not_specified');
-    }
-
-    CheckProduct($product);
-
-    unless (TestMilestone $product, $milestone) {
-        ThrowUserError('milestone_not_valid',
-                       {'product' => $product,
-                        'milestone' => $milestone});
-    }
-}
-
-sub CheckSortkey ($$)
-{
-    my ($milestone, $sortkey) = @_;
-    # Keep a copy in case detaint_signed() clears the sortkey
-    my $stored_sortkey = $sortkey;
-
-    if (!detaint_signed($sortkey) || $sortkey < -32768 || $sortkey > 32767) {
-        ThrowUserError('milestone_sortkey_invalid',
-                       {'name' => $milestone,
-                        'sortkey' => $stored_sortkey});
-    }
-
-    return $sortkey;
-}
+my $dbh = Bugzilla->dbh;
+my $template = Bugzilla->template;
+my $vars = {};
 
 #
 # Preliminary checks:
@@ -138,9 +39,10 @@ sub CheckSortkey ($$)
 my $user = Bugzilla->login(LOGIN_REQUIRED);
 my $whoid = $user->id;
 
-print Bugzilla->cgi->header();
+print $cgi->header();
 
-UserInGroup("editcomponents")
+$user->in_group('editcomponents')
+  || scalar(@{$user->get_products_by_permission('editcomponents')})
   || ThrowUserError("auth_failure", {group  => "editcomponents",
                                      action => "edit",
                                      object => "milestones"});
@@ -148,48 +50,33 @@ UserInGroup("editcomponents")
 #
 # often used variables
 #
-my $product = trim($cgi->param('product')     || '');
-my $milestone = trim($cgi->param('milestone') || '');
-my $sortkey = trim($cgi->param('sortkey')     || '0');
-my $action  = trim($cgi->param('action')      || '');
+my $product_name   = trim($cgi->param('product')     || '');
+my $milestone_name = trim($cgi->param('milestone')   || '');
+my $sortkey        = trim($cgi->param('sortkey')     || 0);
+my $action         = trim($cgi->param('action')      || '');
+my $showbugcounts = (defined $cgi->param('showbugcounts'));
+my $token          = $cgi->param('token');
 
 #
-# product = '' -> Show nice list of milestones
+# product = '' -> Show nice list of products
 #
 
-unless ($product) {
-
-    my @products = ();
-
-    my $dbh = Bugzilla->dbh;
-
-    my $sth = $dbh->prepare_cached('SELECT products.name, products.description
-                                    FROM products 
-                                    ORDER BY products.name');
-
-    my $data = $dbh->selectall_arrayref($sth);
-
-    foreach my $aref (@$data) {
-
-        my $prod = {};
-
-        my ($name, $description) = @$aref;
-
-        $prod->{'name'} = $name;
-        $prod->{'description'} = $description;
-
-        push(@products, $prod);
+unless ($product_name) {
+    my $selectable_products = $user->get_selectable_products;
+    # If the user has editcomponents privs for some products only,
+    # we have to restrict the list of products to display.
+    unless ($user->in_group('editcomponents')) {
+        $selectable_products = $user->get_products_by_permission('editcomponents');
     }
+    $vars->{'products'} = $selectable_products;
+    $vars->{'showbugcounts'} = $showbugcounts;
 
-    $vars->{'products'} = \@products;
-    $template->process("admin/milestones/select-product.html.tmpl",
-                       $vars)
+    $template->process("admin/milestones/select-product.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-
     exit;
 }
 
-
+my $product = $user->check_can_admin_product($product_name);
 
 #
 # action='' -> Show nice list of milestones
@@ -197,34 +84,8 @@ unless ($product) {
 
 unless ($action) {
 
-    CheckProduct($product);
-    my $product_id = get_product_id($product);
-    my @milestones = ();
-
-    my $dbh = Bugzilla->dbh;
-
-    my $sth = $dbh->prepare_cached('SELECT value, sortkey
-                                    FROM milestones
-                                    WHERE product_id = ?
-                                    ORDER BY sortkey, value');
-
-    my $data = $dbh->selectall_arrayref($sth,
-                                        undef,
-                                        $product_id);
-
-    foreach my $aref (@$data) {
-
-        my $milestone = {};
-        my ($name, $sortkey) = @$aref;
-
-        $milestone->{'name'} = $name;
-        $milestone->{'sortkey'} = $sortkey;
-
-        push(@milestones, $milestone);
-    }
-
+    $vars->{'showbugcounts'} = $showbugcounts;
     $vars->{'product'} = $product;
-    $vars->{'milestones'} = \@milestones;
     $template->process("admin/milestones/list.html.tmpl",
                        $vars)
       || ThrowTemplateError($template->error());
@@ -242,10 +103,7 @@ unless ($action) {
 #
 
 if ($action eq 'add') {
-
-    CheckProduct($product);
-    my $product_id = get_product_id($product);
-
+    $vars->{'token'} = issue_session_token('add_milestone');
     $vars->{'product'} = $product;
     $template->process("admin/milestones/create.html.tmpl",
                        $vars)
@@ -261,43 +119,37 @@ if ($action eq 'add') {
 #
 
 if ($action eq 'new') {
+    check_token_data($token, 'add_milestone');
+    $milestone_name || ThrowUserError('milestone_blank_name');
 
-    CheckProduct($product);
-    my $product_id = get_product_id($product);
-
-    # Cleanups and valididy checks
-    unless ($milestone) {
-        ThrowUserError('milestone_blank_name',
-                       {'name' => $milestone});
-    }
-
-    if (length($milestone) > 20) {
+    if (length($milestone_name) > 20) {
         ThrowUserError('milestone_name_too_long',
-                       {'name' => $milestone});
+                       {'name' => $milestone_name});
     }
 
-    $sortkey = CheckSortkey($milestone, $sortkey);
+    $sortkey = Bugzilla::Milestone::check_sort_key($milestone_name,
+                                                   $sortkey);
 
-    if (TestMilestone($product, $milestone)) {
+    my $milestone = new Bugzilla::Milestone(
+        { product => $product, name => $milestone_name });
+
+    if ($milestone) {
         ThrowUserError('milestone_already_exists',
-                       {'name' => $milestone,
-                        'product' => $product});
+                       {'name' => $milestone->name,
+                        'product' => $product->name});
     }
 
     # Add the new milestone
-    my $dbh = Bugzilla->dbh;
-    trick_taint($milestone);
+    trick_taint($milestone_name);
     $dbh->do('INSERT INTO milestones ( value, product_id, sortkey )
               VALUES ( ?, ?, ? )',
-             undef,
-             $milestone,
-             $product_id,
-             $sortkey);
+             undef, $milestone_name, $product->id, $sortkey);
 
-    # Make versioncache flush
-    unlink "$datadir/versioncache";
+    $milestone = new Bugzilla::Milestone(
+        { product => $product, name => $milestone_name });
+    delete_token($token);
 
-    $vars->{'name'} = $milestone;
+    $vars->{'milestone'} = $milestone;
     $vars->{'product'} = $product;
     $template->process("admin/milestones/created.html.tmpl",
                        $vars)
@@ -316,28 +168,17 @@ if ($action eq 'new') {
 #
 
 if ($action eq 'del') {
-    CheckMilestone($product, $milestone);
-    my $product_id = get_product_id($product);
-    my $dbh = Bugzilla->dbh;
-
-    $vars->{'default_milestone'} =
-      $dbh->selectrow_array('SELECT defaultmilestone
-                             FROM products WHERE id = ?',
-                             undef, $product_id);
-
-    trick_taint($milestone);
-    $vars->{'name'} = $milestone;
+    my $milestone = Bugzilla::Milestone::check_milestone($product,
+                                                         $milestone_name);
+    
+    $vars->{'milestone'} = $milestone;
     $vars->{'product'} = $product;
 
     # The default milestone cannot be deleted.
-    if ($vars->{'default_milestone'} eq $milestone) {
+    if ($product->default_milestone eq $milestone->name) {
         ThrowUserError("milestone_is_default", $vars);
     }
-
-    $vars->{'bug_count'} =
-      $dbh->selectrow_array("SELECT COUNT(bug_id) FROM bugs
-                             WHERE product_id = ? AND target_milestone = ?",
-                             undef, ($product_id, $milestone)) || 0;
+    $vars->{'token'} = issue_session_token('delete_milestone');
 
     $template->process("admin/milestones/confirm-delete.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
@@ -351,50 +192,43 @@ if ($action eq 'del') {
 #
 
 if ($action eq 'delete') {
-    CheckMilestone($product, $milestone);
-    my $product_id = get_product_id($product);
-    my $dbh = Bugzilla->dbh;
-
-    my $default_milestone =
-      $dbh->selectrow_array("SELECT defaultmilestone
-                             FROM products WHERE id = ?",
-                             undef, $product_id);
-
-    trick_taint($milestone);
-    $vars->{'name'} = $milestone;
+    check_token_data($token, 'delete_milestone');
+    my $milestone =
+        Bugzilla::Milestone::check_milestone($product,
+                                             $milestone_name);
+    $vars->{'milestone'} = $milestone;
     $vars->{'product'} = $product;
 
     # The default milestone cannot be deleted.
-    if ($milestone eq $default_milestone) {
+    if ($milestone->name eq $product->default_milestone) {
         ThrowUserError("milestone_is_default", $vars);
     }
 
-    # We don't want to delete bugs when deleting a milestone.
-    # Bugs concerned are reassigned to the default milestone.
-    my $bug_ids =
-      $dbh->selectcol_arrayref("SELECT bug_id FROM bugs
-                                WHERE product_id = ? AND target_milestone = ?",
-                                undef, ($product_id, $milestone));
-
-    my $nb_bugs = scalar(@$bug_ids);
-    if ($nb_bugs) {
+    if ($milestone->bug_count) {
+        # We don't want to delete bugs when deleting a milestone.
+        # Bugs concerned are reassigned to the default milestone.
+        my $bug_ids =
+          $dbh->selectcol_arrayref("SELECT bug_id FROM bugs
+                                    WHERE product_id = ? AND target_milestone = ?",
+                                    undef, ($product->id, $milestone->name));
         my $timestamp = $dbh->selectrow_array("SELECT NOW()");
         foreach my $bug_id (@$bug_ids) {
             $dbh->do("UPDATE bugs SET target_milestone = ?,
                       delta_ts = ? WHERE bug_id = ?",
-                      undef, ($default_milestone, $timestamp, $bug_id));
+                      undef, ($product->default_milestone, $timestamp,
+                              $bug_id));
             # We have to update the 'bugs_activity' table too.
-            LogActivityEntry($bug_id, 'target_milestone', $milestone,
-                             $default_milestone, $whoid, $timestamp);
+            LogActivityEntry($bug_id, 'target_milestone',
+                             $milestone->name,
+                             $product->default_milestone,
+                             $whoid, $timestamp);
         }
     }
 
-    $vars->{'bug_count'} = $nb_bugs;
-
     $dbh->do("DELETE FROM milestones WHERE product_id = ? AND value = ?",
-             undef, ($product_id, $milestone));
+             undef, ($product->id, $milestone->name));
 
-    unlink "$datadir/versioncache";
+    delete_token($token);
 
     $template->process("admin/milestones/deleted.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
@@ -411,25 +245,13 @@ if ($action eq 'delete') {
 
 if ($action eq 'edit') {
 
-    CheckMilestone($product, $milestone);
-    my $product_id = get_product_id($product);
+    my $milestone =
+        Bugzilla::Milestone::check_milestone($product,
+                                             $milestone_name);
 
-    my $dbh = Bugzilla->dbh;
-
-    my $sth = $dbh->prepare_cached('SELECT sortkey
-                                    FROM milestones
-                                    WHERE product_id = ?
-                                    AND value = ?');
-
-    trick_taint($milestone);
-
-    $vars->{'sortkey'} = $dbh->selectrow_array($sth,
-                                               undef,
-                                               $product_id,
-                                               $milestone) || 0;
-
-    $vars->{'name'} = $milestone;
+    $vars->{'milestone'} = $milestone;
     $vars->{'product'} = $product;
+    $vars->{'token'} = issue_session_token('edit_milestone');
 
     $template->process("admin/milestones/edit.html.tmpl",
                        $vars)
@@ -445,90 +267,88 @@ if ($action eq 'edit') {
 #
 
 if ($action eq 'update') {
+    check_token_data($token, 'edit_milestone');
+    my $milestone_old_name = trim($cgi->param('milestoneold') || '');
+    my $milestone_old =
+        Bugzilla::Milestone::check_milestone($product,
+                                             $milestone_old_name);
 
-    my $milestoneold = trim($cgi->param('milestoneold') || '');
-    my $sortkeyold = trim($cgi->param('sortkeyold')     || '0');
-
-    CheckMilestone($product, $milestoneold);
-    my $product_id = get_product_id($product);
-
-    if (length($milestone) > 20) {
+    if (length($milestone_name) > 20) {
         ThrowUserError('milestone_name_too_long',
-                       {'name' => $milestone});
+                       {'name' => $milestone_name});
     }
-
-    my $dbh = Bugzilla->dbh;
 
     $dbh->bz_lock_tables('bugs WRITE',
                          'milestones WRITE',
                          'products WRITE');
 
-    if ($sortkey ne $sortkeyold) {
-        $sortkey = CheckSortkey($milestone, $sortkey);
-
-        trick_taint($milestoneold);
+    if ($sortkey ne $milestone_old->sortkey) {
+        $sortkey = Bugzilla::Milestone::check_sort_key($milestone_name,
+                                                       $sortkey);
 
         $dbh->do('UPDATE milestones SET sortkey = ?
                   WHERE product_id = ?
                   AND value = ?',
                  undef,
                  $sortkey,
-                 $product_id,
-                 $milestoneold);
+                 $product->id,
+                 $milestone_old->name);
 
-        unlink "$datadir/versioncache";
         $vars->{'updated_sortkey'} = 1;
-        $vars->{'sortkey'} = $sortkey;
     }
 
-    if ($milestone ne $milestoneold) {
-        unless ($milestone) {
+    if ($milestone_name ne $milestone_old->name) {
+        unless ($milestone_name) {
             ThrowUserError('milestone_blank_name');
         }
-        if (TestMilestone($product, $milestone)) {
+        my $milestone = new Bugzilla::Milestone(
+            { product => $product, name => $milestone_name });
+        if ($milestone) {
             ThrowUserError('milestone_already_exists',
-                           {'name' => $milestone,
-                            'product' => $product});
+                           {'name' => $milestone->name,
+                            'product' => $product->name});
         }
 
-        trick_taint($milestone);
-        trick_taint($milestoneold);
+        trick_taint($milestone_name);
 
         $dbh->do('UPDATE bugs
                   SET target_milestone = ?
                   WHERE target_milestone = ?
                   AND product_id = ?',
                  undef,
-                 $milestone,
-                 $milestoneold,
-                 $product_id);
+                 $milestone_name,
+                 $milestone_old->name,
+                 $product->id);
 
         $dbh->do("UPDATE milestones
                   SET value = ?
                   WHERE product_id = ?
                   AND value = ?",
                  undef,
-                 $milestone,
-                 $product_id,
-                 $milestoneold);
+                 $milestone_name,
+                 $product->id,
+                 $milestone_old->name);
 
         $dbh->do("UPDATE products
                   SET defaultmilestone = ?
                   WHERE id = ?
                   AND defaultmilestone = ?",
                  undef,
-                 $milestone,
-                 $product_id,
-                 $milestoneold);
-
-        unlink "$datadir/versioncache";
+                 $milestone_name,
+                 $product->id,
+                 $milestone_old->name);
 
         $vars->{'updated_name'} = 1;
     }
 
     $dbh->bz_unlock_tables();
 
-    $vars->{'name'} = $milestone;
+    my $milestone =
+        Bugzilla::Milestone::check_milestone($product,
+                                             $milestone_name);
+    delete_token($token);
+
+    $vars->{'milestone'} = $milestone;
     $vars->{'product'} = $product;
     $template->process("admin/milestones/updated.html.tmpl",
                        $vars)

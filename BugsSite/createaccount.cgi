@@ -28,14 +28,12 @@ use strict;
 
 use lib qw(.);
 
-require "CGI.pl";
-
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Error;
 use Bugzilla::User;
-
-# Shut up misguided -w warnings about "used only once":
-use vars qw($template $vars);
+use Bugzilla::BugMail;
+use Bugzilla::Util;
 
 # Just in case someone already has an account, let them get the correct footer
 # on an error message. The user is logged out just after the account is
@@ -44,14 +42,17 @@ Bugzilla->login(LOGIN_OPTIONAL);
 
 my $dbh = Bugzilla->dbh;
 my $cgi = Bugzilla->cgi;
+my $template = Bugzilla->template;
+my $vars = {};
+
 print $cgi->header();
 
 # If we're using LDAP for login, then we can't create a new account here.
-unless (Bugzilla::Auth->can_edit('new')) {
+unless (Bugzilla->user->authorizer->user_can_create_account) {
     ThrowUserError("auth_cant_create_account");
 }
 
-my $createexp = Param('createemailregexp');
+my $createexp = Bugzilla->params->{'createemailregexp'};
 unless ($createexp) {
     ThrowUserError("account_creation_disabled");
 }
@@ -59,35 +60,16 @@ unless ($createexp) {
 my $login = $cgi->param('login');
 
 if (defined($login)) {
-    # We've been asked to create an account.
-    my $realname = trim($cgi->param('realname'));
-    CheckEmailSyntax($login);
+    $login = Bugzilla::User->check_login_name_for_creation($login);
     $vars->{'login'} = $login;
-
-    $dbh->bz_lock_tables('profiles WRITE', 'email_setting WRITE', 'tokens READ');
-
-    if (!is_available_username($login)) {
-        # Account already exists
-        $dbh->bz_unlock_tables();
-        $template->process("account/exists.html.tmpl", $vars)
-          || ThrowTemplateError($template->error());
-        exit;
-    }
 
     if ($login !~ /$createexp/) {
         ThrowUserError("account_creation_disabled");
     }
-    
-    # Create account
-    my $password = insert_new_user($login, $realname);
 
-    $dbh->bz_unlock_tables();
+    # Create and send a token for this new account.
+    Bugzilla::Token::issue_new_user_account_token($login);
 
-    # Clear out the login cookies in case the user is currently logged in.
-    Bugzilla->logout();
-
-    MailPassword($login, $password);
-    
     $template->process("account/created.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     exit;

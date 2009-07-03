@@ -19,110 +19,172 @@
 #
 # Contributor(s): Bradley Baetz <bbaetz@acm.org>
 #                 Erik Stambaugh <erik@dasbistro.com>
+#                 Max Kanat-Alexander <mkanat@bugzilla.org>
 
 package Bugzilla::Auth;
 
 use strict;
+use fields qw(
+    _info_getter
+    _verifier
+    _persister
+);
 
-use Bugzilla::Config;
 use Bugzilla::Constants;
+use Bugzilla::Error;
+use Bugzilla::Auth::Login::Stack;
+use Bugzilla::Auth::Verify::Stack;
+use Bugzilla::Auth::Persist::Cookie;
 
-# The verification method that was successfully used upon login, if any
-my $current_verify_class = undef;
+sub new {
+    my ($class, $params) = @_;
+    my $self = fields::new($class);
 
-# 'inherit' from the main verify method
-BEGIN {
-    for my $verifyclass (split /,\s*/, Param("user_verify_class")) {
-        if ($verifyclass =~ /^([A-Za-z0-9_\.\-]+)$/) {
-            $verifyclass = $1;
-        } else {
-            die "Badly-named user_verify_class '$verifyclass'";
-        }
-        require "Bugzilla/Auth/Verify/" . $verifyclass . ".pm";
-    }
+    $params            ||= {};
+    $params->{Login}   ||= Bugzilla->params->{'user_info_class'} . ',Cookie';
+    $params->{Verify}  ||= Bugzilla->params->{'user_verify_class'};
+
+    $self->{_info_getter} = new Bugzilla::Auth::Login::Stack($params->{Login});
+    $self->{_verifier} = new Bugzilla::Auth::Verify::Stack($params->{Verify});
+    # If we ever have any other login persistence methods besides cookies,
+    # this could become more configurable.
+    $self->{_persister} = new Bugzilla::Auth::Persist::Cookie();
+
+    return $self;
 }
 
-# PRIVATE
+sub login {
+    my ($self, $type) = @_;
+    my $dbh = Bugzilla->dbh;
 
-# A number of features, like password change requests, require the DB
-# verification method to be on the list.
-sub has_db {
-    for (split (/[\s,]+/, Param("user_verify_class"))) {
-        if (/^DB$/) {
-            return 1;
-        }
+    # Get login info from the cookie, form, environment variables, etc.
+    my $login_info = $self->{_info_getter}->get_login_info();
+
+    if ($login_info->{failure}) {
+        return $self->_handle_login_result($login_info, $type);
     }
-    return 0;
+
+    # Now verify his username and password against the DB, LDAP, etc.
+    if ($self->{_info_getter}->{successful}->requires_verification) {
+        $login_info = $self->{_verifier}->check_credentials($login_info);
+        if ($login_info->{failure}) {
+            return $self->_handle_login_result($login_info, $type);
+        }
+        $login_info =
+          $self->{_verifier}->{successful}->create_or_update_user($login_info);
+    }
+    else {
+        $login_info = $self->{_verifier}->create_or_update_user($login_info);
+    }
+
+    if ($login_info->{failure}) {
+        return $self->_handle_login_result($login_info, $type);
+    }
+
+    # Make sure the user isn't disabled.
+    my $user = $login_info->{user};
+    if ($user->disabledtext) {
+        return $self->_handle_login_result({ failure => AUTH_DISABLED,
+                                              user    => $user }, $type);
+    }
+    $user->set_authorizer($self);
+
+    return $self->_handle_login_result($login_info, $type);
 }
 
-# Returns the network address for a given ip
-sub get_netaddr {
-    my $ipaddr = shift;
-
-    # Check for a valid IPv4 addr which we know how to parse
-    if (!$ipaddr || $ipaddr !~ /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/) {
-        return undef;
-    }
-
-    my $addr = unpack("N", pack("CCCC", split(/\./, $ipaddr)));
-
-    my $maskbits = Param('loginnetmask');
-
-    $addr >>= (32-$maskbits);
-    $addr <<= (32-$maskbits);
-    return join(".", unpack("CCCC", pack("N", $addr)));
+sub can_change_password {
+    my ($self) = @_;
+    my $verifier = $self->{_verifier}->{successful};
+    $verifier  ||= $self->{_verifier};
+    my $getter   = $self->{_info_getter}->{successful};
+    $getter      = $self->{_info_getter} 
+        if (!$getter || $getter->isa('Bugzilla::Auth::Login::Cookie'));
+    return $verifier->can_change_password &&
+           $getter->user_can_create_account;
 }
 
-# This is a replacement for the inherited authenticate function
-# go through each of the available methods for each function
-sub authenticate {
-    my $class = shift;
-    my @args   = @_;
-    my @firstresult = ();
-    my @result = ();
-    my $current_verify_method;
-    for my $method (split /,\s*/, Param("user_verify_class")) {
-        $current_verify_method = $method;
-        $method = "Bugzilla::Auth::Verify::" . $method;
-        @result = $method->authenticate(@args);
-        @firstresult = @result unless @firstresult;
-
-        if (($result[0] != AUTH_NODATA)&&($result[0] != AUTH_LOGINFAILED)) {
-            unshift @result, ($current_verify_method);
-            return @result;
-        }
-    }
-    @result = @firstresult;
-    # no auth match
-
-    # see if we can set $current to the first verify method that
-    # will allow a new login
-
-    my $chosen_verify_method;
-    for my $method (split /,\s*/, Param("user_verify_class")) {
-        $current_verify_method = $method;
-        $method = "Bugzilla::Auth::Verify::" . $method;
-        if ($method->can_edit('new')) {
-            $chosen_verify_method = $method;
-        }
-    }
-
-    unshift @result, $chosen_verify_method;
-    return @result;
+sub can_login {
+    my ($self) = @_;
+    my $getter = $self->{_info_getter}->{successful};
+    $getter    = $self->{_info_getter}
+        if (!$getter || $getter->isa('Bugzilla::Auth::Login::Cookie'));
+    return $getter->can_login;
 }
 
-sub can_edit {
-    my ($class, $type) = @_;
-    if ($current_verify_class) {
-        return $current_verify_class->can_edit($type);
+sub can_logout {
+    my ($self) = @_;
+    my $getter = $self->{_info_getter}->{successful};
+    # If there's no successful getter, we're not logged in, so of
+    # course we can't log out!
+    return 0 unless $getter;
+    return $getter->can_logout;
+}
+
+sub user_can_create_account {
+    my ($self) = @_;
+    my $verifier = $self->{_verifier}->{successful};
+    $verifier  ||= $self->{_verifier};
+    my $getter   = $self->{_info_getter}->{successful};
+    $getter      = $self->{_info_getter}
+        if (!$getter || $getter->isa('Bugzilla::Auth::Login::Cookie'));
+    return $verifier->user_can_create_account
+           && $getter->user_can_create_account;
+}
+
+sub can_change_email {
+    return $_[0]->user_can_create_account;
+}
+
+sub _handle_login_result {
+    my ($self, $result, $login_type) = @_;
+    my $dbh = Bugzilla->dbh;
+
+    my $user      = $result->{user};
+    my $fail_code = $result->{failure};
+
+    if (!$fail_code) {
+        if ($self->{_info_getter}->{successful}->requires_persistence) {
+            $self->{_persister}->persist_login($user);
+        }
     }
-    # $current_verify_class will not be set if the user isn't logged in.  That
-    # happens when the user is trying to create a new account, which (for now)
-    # is hard-coded to work with DB.
-    elsif (has_db) {
-        return Bugzilla::Auth::Verify::DB->can_edit($type);
+    elsif ($fail_code == AUTH_ERROR) {
+        ThrowCodeError($result->{error}, $result->{details});
     }
-    return 0;
+    elsif ($fail_code == AUTH_NODATA) {
+        if ($login_type == LOGIN_REQUIRED) {
+            # This seems like as good as time as any to get rid of
+            # old crufty junk in the logincookies table.  Get rid
+            # of any entry that hasn't been used in a month.
+            $dbh->do("DELETE FROM logincookies WHERE " .
+                     $dbh->sql_to_days('NOW()') . " - " .
+                     $dbh->sql_to_days('lastused') . " > 30");
+            $self->{_info_getter}->fail_nodata($self);
+        }
+        # Otherwise, we just return the "default" user.
+        $user = Bugzilla->user;
+    }
+    # The username/password may be wrong
+    # Don't let the user know whether the username exists or whether
+    # the password was just wrong. (This makes it harder for a cracker
+    # to find account names by brute force)
+    elsif (($fail_code == AUTH_LOGINFAILED) || ($fail_code == AUTH_NO_SUCH_USER)) {
+        ThrowUserError("invalid_username_or_password");
+    }
+    # The account may be disabled
+    elsif ($fail_code == AUTH_DISABLED) {
+        $self->{_persister}->logout();
+        # XXX This is NOT a good way to do this, architecturally.
+        $self->{_persister}->clear_browser_cookies();
+        # and throw a user error
+        ThrowUserError("account_disabled",
+            {'disabled_reason' => $result->{user}->disabledtext});
+    }
+    # If we get here, then we've run out of options, which shouldn't happen.
+    else {
+        ThrowCodeError("authres_unhandled", { value => $fail_code });
+    }
+
+    return $user;
 }
 
 1;
@@ -131,192 +193,274 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Auth - Authentication handling for Bugzilla users
+Bugzilla::Auth - An object that authenticates the login credentials for
+                 a user.
 
 =head1 DESCRIPTION
 
 Handles authentication for Bugzilla users.
 
 Authentication from Bugzilla involves two sets of modules. One set is
-used to obtain the data (from CGI, email, etc), and the other set uses
-this data to authenticate against the datasource (the Bugzilla DB, LDAP,
-cookies, etc).
+used to obtain the username/password (from CGI, email, etc), and the 
+other set uses this data to authenticate against the datasource 
+(the Bugzilla DB, LDAP, PAM, etc.).
 
-Modules for obtaining the data are located under L<Bugzilla::Auth::Login>, and
-modules for authenticating are located in L<Bugzilla::Auth::Verify>.
+Modules for obtaining the username/password are subclasses of 
+L<Bugzilla::Auth::Login>, and modules for authenticating are subclasses
+of L<Bugzilla::Auth::Verify>.
 
-=head1 METHODS
+=head1 AUTHENTICATION ERROR CODES
 
-C<Bugzilla::Auth> contains several helper methods to be used by
-authentication or login modules.
+Whenever a method in the C<Bugzilla::Auth> family fails in some way,
+it will return a hashref containing at least a single key called C<failure>.
+C<failure> will point to an integer error code, and depending on the error
+code the hashref may contain more data.
 
-=over 4
+The error codes are explained here below.
 
-=item C<Bugzilla::Auth::get_netaddr($ipaddr)>
-
-Given an ip address, this returns the associated network address, using
-C<Param('loginnetmask')> as the netmask. This can be used to obtain data
-in order to restrict weak authentication methods (such as cookies) to
-only some addresses.
-
-=back
-
-=head1 AUTHENTICATION
-
-Authentication modules check a user's credentials (username, password,
-etc) to verify who the user is.  The methods that C<Bugzilla::Auth> uses for
-authentication are wrappers that check all configured modules (via the
-C<Param('user_info_class')> and C<Param('user_verify_class')>) in sequence.
-
-=head2 METHODS
-
-=over 4
-
-=item C<authenticate($username, $pass)>
-
-This method is passed a username and a password, and returns a list
-containing up to four return values, depending on the results of the
-authentication.
-
-The first return value is the name of the class that generated the results 
-constined in the remaining return values.  The second return value is one of 
-the status codes defined in L<Bugzilla::Constants|Bugzilla::Constants> and 
-described below.  The rest of the return values are status code-specific 
-and are explained in the status code descriptions.
-
-=item C<AUTH_OK>
-
-Authentication succeeded. The third variable is the userid of the new
-user.
-
-=item C<AUTH_NODATA>
+=head2 C<AUTH_NODATA>
 
 Insufficient login data was provided by the user. This may happen in several
 cases, such as cookie authentication when the cookie is not present.
 
-=item C<AUTH_ERROR>
+=head2 C<AUTH_ERROR>
 
-An error occurred when trying to use the login mechanism. The third return
-value may contain the Bugzilla userid, but will probably be C<undef>,
-signifiying that the userid is unknown. The fourth value is a tag describing
-the error used by the authentication error templates to print a description
-to the user. The optional fifth argument is a hashref of values used as part
-of the tag's error descriptions.
+An error occurred when trying to use the login mechanism.
 
-This error template must have a name/location of
-I<account/auth/C<lc(authentication-type)>-error.html.tmpl>.
+The hashref will also contain an C<error> element, which is the name
+of an error from C<template/en/default/global/code-error.html> --
+the same type of error that would be thrown by 
+L<Bugzilla::Error::ThrowCodeError>.
 
-=item C<AUTH_LOGINFAILED>
+The hashref *may* contain an element called C<details>, which is a hashref
+that should be passed to L<Bugzilla::Error::ThrowCodeError> as the 
+various fields to be used in the error message.
 
-An incorrect username or password was given. Note that for security reasons,
-both cases return the same error code. However, in the case of a valid
-username, the third argument may be the userid. The authentication
-mechanism may not always be able to discover the userid if the password is
-not known, so whether or not this argument is present is implementation
-specific. For security reasons, the presence or lack of a userid value should
-not be communicated to the user.
+=head2 C<AUTH_LOGINFAILED>
 
-The fourth argument is an optional tag from the authentication server
-describing the error. The tag can be used by a template to inform the user
-about the error.  Similar to C<AUTH_ERROR>, an optional hashref may be
-present as a fifth argument, to be used by the tag to give more detailed 
-information.
+An incorrect username or password was given.
 
-=item C<AUTH_DISABLED>
+=head2 C<AUTH_NO_SUCH_USER>
+
+This is an optional more-specific version of C<AUTH_LOGINFAILED>.
+Modules should throw this error when they discover that the
+requested user account actually does not exist, according to them.
+
+That is, for example, L<Bugzilla::Auth::Verify::LDAP> would throw
+this if the user didn't exist in LDAP.
+
+The difference between C<AUTH_NO_SUCH_USER> and C<AUTH_LOGINFAILED>
+should never be communicated to the user, for security reasons.
+
+=head2 C<AUTH_DISABLED>
 
 The user successfully logged in, but their account has been disabled.
-The third argument in the returned array is the userid, and the fourth
-is some text explaining why the account was disabled. This text would
-typically come from the C<disabledtext> field in the C<profiles> table.
-Note that this argument is a string, not a tag.
+Usually this is throw only by C<Bugzilla::Auth::login>.
 
-=item C<current_verify_class>
+=head1 LOGIN TYPES
 
-This scalar gets populated with the full name (eg.,
-C<Bugzilla::Auth::Verify::DB>) of the verification method being used by the
-current user.  If no user is logged in, it will contain the name of the first
-method that allows new users, if any.  Otherwise, it carries an undefined
-value.
+The C<login> function (below) can do different types of login, depending
+on what constant you pass into it:
 
-=item C<can_edit>
-
-This determines if the user's account details can be modified.  It returns a
-reference to a hash with the keys C<userid>, C<login_name>, and C<realname>,
-which determine whether their respective profile values may be altered, and
-C<new>, which determines if new accounts may be created.
-
-Each user verification method (chosen with C<Param('user_verify_class')> has
-its own set of can_edit values.  Calls to can_edit return the appropriate
-values for the current user's login method.
-
-If a user is not logged in, C<can_edit> will contain the values of the first
-verify method that allows new users to be created, if available.  Otherwise it
-returns an empty hash.
-
-=back
-
-=head1 LOGINS
-
-A login module can be used to try to log in a Bugzilla user in a
-particular way. For example,
-L<Bugzilla::Auth::Login::WWW::CGI|Bugzilla::Auth::Login::WWW::CGI>
-logs in users from CGI scripts, first by using form variables, and then
-by trying cookies as a fallback.
-
-The login interface consists of the following methods:
-
-=over 4
-
-=item C<login>, which takes a C<$type> argument, using constants found in
-C<Bugzilla::Constants>.
-
-The login method may use various authentication modules (described
-above) to try to authenticate a user, and should return the userid on
-success, or C<undef> on failure.
-
-When a login is required, but data is not present, it is the job of the
-login method to prompt the user for this data.
-
-The constants accepted by C<login> include the following:
-
-=item C<LOGIN_OPTIONAL>
+=head2 C<LOGIN_OPTIONAL>
 
 A login is never required to access this data. Attempting to login is
 still useful, because this allows the page to be personalised. Note that
 an incorrect login will still trigger an error, even though the lack of
 a login will be OK.
 
-=item C<LOGIN_NORMAL>
+=head2 C<LOGIN_NORMAL>
 
 A login may or may not be required, depending on the setting of the
-I<requirelogin> parameter.
+I<requirelogin> parameter. This is the default if you don't specify a
+type.
 
-=item C<LOGIN_REQUIRED>
+=head2 C<LOGIN_REQUIRED>
 
 A login is always required to access this data.
 
-=item C<logout>, which takes a C<Bugzilla::User> argument for the user
-being logged out, and an C<$option> argument. Possible values for
-C<$option> include:
+=head1 METHODS
 
-=item C<LOGOUT_CURRENT>
+These are methods that can be called on a C<Bugzilla::Auth> object 
+itself.
 
-Log out the user and invalidate his currently registered session.
+=head2 Login
 
-=item C<LOGOUT_ALL>
+=over 4
 
-Log out the user, and invalidate all sessions the user has registered in
-Bugzilla.
+=item C<login($type)>
 
-=item C<LOGOUT_KEEP_CURRENT>
-
-Invalidate all sessions the user has registered excluding his current
-session; this option should leave the user logged in. This is useful for
-user-performed password changes.
+Description: Logs a user in. For more details on how this works
+             internally, see the section entitled "STRUCTURE."
+Params:      $type - One of the Login Types from above.
+Returns:     An authenticated C<Bugzilla::User>. Or, if the type was
+             not C<LOGIN_REQUIRED>, then we return an
+             empty C<Bugzilla::User> if no login data was passed in.
 
 =back
 
-=head1 SEE ALSO
+=head2 Info Methods
 
-L<Bugzilla::Auth::Login::WWW::CGI>, L<Bugzilla::Auth::Login::WWW::CGI::Cookie>, L<Bugzilla::Auth::Verify::DB>
+These are methods that give information about the Bugzilla::Auth object.
+
+=over 4
+
+=item C<can_change_password>
+
+Description: Tells you whether or not the current login system allows
+             changing passwords.
+Params:      None
+Returns:     C<true> if users and administrators should be allowed to
+             change passwords, C<false> otherwise.
+
+=item C<can_login>
+
+Description: Tells you whether or not the current login system allows
+             users to log in through the web interface.
+Params:      None
+Returns:     C<true> if users can log in through the web interface,
+             C<false> otherwise.
+
+=item C<can_logout>
+
+Description: Tells you whether or not the current login system allows
+             users to log themselves out.
+Params:      None
+Returns:     C<true> if users can log themselves out, C<false> otherwise.
+             If a user isn't logged in, we always return C<false>.
+
+=item C<user_can_create_account>
+
+Description: Tells you whether or not users are allowed to manually create
+             their own accounts, based on the current login system in use.
+             Note that this doesn't check the C<createemailregexp>
+             parameter--you have to do that by yourself in your code.
+Params:      None
+Returns:     C<true> if users are allowed to create new Bugzilla accounts,
+             C<false> otherwise.
+
+=item C<can_change_email>
+
+Description: Whether or not the current login system allows users to
+             change their own email address.
+Params:      None
+Returns:     C<true> if users can change their own email address,
+             C<false> otherwise.
+
+=back
+
+=head1 STRUCTURE
+
+This section is mostly interesting to developers who want to implement
+a new authentication type. It describes the general structure of the
+Bugzilla::Auth family, and how the C<login> function works.
+
+A C<Bugzilla::Auth> object is essentially a collection of a few other
+objects: the "Info Getter," the "Verifier," and the "Persistence 
+Mechanism."
+
+They are used inside the C<login> function in the following order:
+
+=head2 The Info Getter
+
+This is a C<Bugzilla::Auth::Login> object. Basically, it gets the
+username and password from the user, somehow. Or, it just gets enough
+information to uniquely identify a user, and passes that on down the line.
+(For example, a C<user_id> is enough to uniquely identify a user,
+even without a username and password.)
+
+Some Info Getters don't require any verification. For example, if we got
+the C<user_id> from a Cookie, we don't need to check the username and 
+password.
+
+If an Info Getter returns only a C<user_id> and no username/password,
+then it MUST NOT require verification. If an Info Getter requires
+verfication, then it MUST return at least a C<username>.
+
+=head2 The Verifier
+
+This verifies that the username and password are valid.
+
+It's possible that some methods of verification don't require a password.
+
+=head2 The Persistence Mechanism
+
+This makes it so that the user doesn't have to log in on every page.
+Normally this object just sends a cookie to the user's web browser,
+as that's the most common method of "login persistence."
+
+=head2 Other Things We Do
+
+After we verify the username and password, sometimes we automatically
+create an account in the Bugzilla database, for certain authentication
+types. We use the "Account Source" to get data about the user, and
+create them in the database. (Or, if their data has changed since the
+last time they logged in, their data gets updated.)
+
+=head2 The C<$login_data> Hash
+
+All of the C<Bugzilla::Auth::Login> and C<Bugzilla::Auth::Verify>
+methods take an argument called C<$login_data>. This is basically
+a hash that becomes more and more populated as we go through the
+C<login> function.
+
+All C<Bugzilla::Auth::Login> and C<Bugzilla::Auth::Verify> methods
+also *return* the C<$login_data> structure, when they succeed. They
+may have added new data to it.
+
+For all C<Bugzilla::Auth::Login> and C<Bugzilla::Auth::Verify> methods,
+the rule is "you must return the same hashref you were passed in." You can
+modify the hashref all you want, but you can't create a new one. The only
+time you can return a new one is if you're returning some error code
+instead of the C<$login_data> structure.
+
+Each C<Bugzilla::Auth::Login> or C<Bugzilla::Auth::Verify> method
+explains in its documentation which C<$login_data> elements are
+required by it, and which are set by it.
+
+Here are all of the elements that *may* be in C<$login_data>:
+
+=over 4
+
+=item C<user_id>
+
+A Bugzilla C<user_id> that uniquely identifies a user.
+
+=item C<username>
+
+The username that was provided by the user.
+
+=item C<bz_username>
+
+The username of this user inside of Bugzilla. Sometimes this differs from
+C<username>.
+
+=item C<password>
+
+The password provided by the user.
+
+=item C<realname>
+
+The real name of the user.
+
+=item C<extern_id>
+
+Some string that uniquely identifies the user in an external account 
+source. If this C<extern_id> already exists in the database with
+a different username, the username will be *changed* to be the
+username specified in this C<$login_data>.
+
+That is, let's my extern_id is C<mkanat>. I already have an account
+in Bugzilla with the username of C<mkanat@foo.com>. But this time,
+when I log in, I have an extern_id of C<mkanat> and a C<username>
+of C<mkanat@bar.org>. So now, Bugzilla will automatically change my 
+username to C<mkanat@bar.org> instead of C<mkanat@foo.com>.
+
+=item C<user>
+
+A L<Bugzilla::User> object representing the authenticated user. 
+Note that C<Bugzilla::Auth::login> may modify this object at various points.
+
+=back
+
 

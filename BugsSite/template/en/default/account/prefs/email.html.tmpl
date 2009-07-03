@@ -100,6 +100,16 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
       <br>
     </td>
   </tr>
+[% IF user.is_global_watcher %]
+  <tr>
+    <td width="150"></td>
+    <td>
+      You are watching all [% terms.bugs %]. To be removed from this role,
+      contact
+      <a href="mailto:[% Param("maintainer") %]">[% Param("maintainer") %]</a>.
+    </td>
+  </tr>
+[% END %]
 </table>
 
 <hr>
@@ -124,6 +134,8 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
       description = "The keywords field changes" },
     { id = constants.EVT_CC,
       description = "The CC field changes" },
+    { id = constants.EVT_DEPEND_BLOCK,
+      description = "The dependency tree changes" },
     { id = constants.EVT_OTHER,
       description = "Any field not mentioned above changes" },
 ] %]
@@ -259,21 +271,37 @@ document.write('<input type="button" value="Disable All Mail" onclick="SetCheckb
 If you watch a user, it is as if you are standing in their shoes for the 
 purposes of getting email. Email is sent or not according to <u>your</u>
 preferences for <u>their</u> relationship to the [% terms.bug %] 
-(e.g. Assignee). You are watching anyone on the following comma-separated list:
+(e.g. Assignee).
 </p>
 
-<p>Users to watch:
-  <input size="60" name="watchedusers" 
-         value="[% watchedusers FILTER html %]">
+<p>
+[% IF watchedusers.size %]
+You are watching everyone in the following list:
+  </p>
+  <p>
+    <select id="watched_by_you" name="watched_by_you" multiple="multiple" size="5">
+        [% FOREACH w = watchedusers %]
+           <option value="[% w FILTER html %]">[% w FILTER html %]</option>
+        [% END %]
+    </select> <br />
+    <input type="checkbox" id="remove_watched_users" name="remove_watched_users">
+    <label for="remove_watched_users">Remove selected users from my watch list</label>
+[% ELSE %]
+You are currently not watching any users.
+[% END %]
+</p>
+
+<p><a name="new_watched_by_you" id="new_watched_by_you">Add users to my watch list (comma separated list)</a>:
+  <input size="60" name="new_watchedusers" value="">
 </p>            
 
-<p>Users watching you:<br>
+<p><a name="watching_you" id="watching_you">Users watching you</a>:<br>
   [% IF watchers.size %]
     [% FOREACH watcher = watchers %]
       [% watcher FILTER html %] <br>
     [% END %]
   [% ELSE %]
-    <i>None</i>
+    <i>No one</i>
   [% END %]
 </p>
 

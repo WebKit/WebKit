@@ -23,8 +23,26 @@
 
 [% PROCESS bug/time.html.tmpl %]
 
+  <script type="text/javascript">
+  <!--
+  function updateCommentPrivacy(checkbox, id) {
+    var comment_elem = document.getElementById('comment_text_'+id).parentNode;
+    if (checkbox.checked) {
+      if (!comment_elem.className.match('bz_private')) {
+        comment_elem.className = comment_elem.className.concat(' bz_private');
+      }
+    }
+    else {
+      comment_elem.className =
+        comment_elem.className.replace(/(\s*|^)bz_private(\s*|$)/, '$2');
+    }
+  }
+  //-->
+  </script>
+
+
 [% DEFAULT start_at = 0 mode = "show" %]
-[% isinsider = Param("insidergroup") && UserInGroup(Param("insidergroup")) %]
+[% isinsider = Param("insidergroup") && user.in_group(Param("insidergroup")) %]
 [% sort_order = user.settings.comment_sort_order.value %]
 
 [%# NOTE: (start_at > 0) means we came here from a midair collision,
@@ -71,12 +89,12 @@
 
 [% BLOCK a_comment %]
   [% IF NOT comment.isprivate || isinsider %]
-    <div [% "class=\"bz_private\" " IF comment.isprivate %]
-         [% "class=\"bz_comment_hilite\" " IF marks.$count %]>
+    <div class="bz_comment[% " bz_private" IF comment.isprivate %]
+                [% " bz_comment_hilite" IF marks.$count %]">
       [% IF count == description %]
         <table>
           <tr>
-            <td align="left">
+            <th align="left">
               <b><a name="c0" href="show_bug.cgi?id=[% bug.bug_id %]#c0">
                 Description</a>:</b>&nbsp;&nbsp;
                 [% IF mode == "edit" %]
@@ -84,16 +102,15 @@
                     addReplyLink(0);
                   //--></script>
                 [% END %]
-            </td>
+            </th>
             <td align="left" width="30%">
               <b>Opened:</b> [% bug.creation_ts FILTER time %]
             </td>
           </tr>
         </table>
       [% ELSE %]
-        <br>
-        <span class="bz_comment">
-          ------- <i>Comment
+        <span class="bz_comment_head">
+          <span class="comment_rule">-------</span> <i>Comment
           <a name="c[% count %]" href="show_bug.cgi?id=[% bug.bug_id %]#c[% count %]">
             #[% count %]</a> From 
           <a href="mailto:[% comment.email FILTER html %]">
@@ -104,7 +121,7 @@
           <script type="text/javascript"><!-- 
             addReplyLink([% count %]); //--></script>
           [% END %]
-          -------
+          <span class="comment_rule">-------</span>
         </span>
       [% END %]
         
@@ -112,13 +129,15 @@
         <i>
           <input type="hidden" name="oisprivate-[% count %]" 
                  value="[% comment.isprivate %]">
-          <input type="hidden" name="when-[% count %]" value="[% comment.when %]">
+          <input type="hidden" name="when-[% count %]" value="[% comment.time %]">
           <input type="checkbox" name="isprivate-[% count %]" value="1"
+                 onClick="updateCommentPrivacy(this, [% count %])"
                  id="isprivate-[% count %]"
-          [% " checked=\"checked\"" IF comment.isprivate %]> Private
+                 [% " checked=\"checked\"" IF comment.isprivate %]>
+          <label for="isprivate-[% count %]">Private</label>
         </i>
       [% END %]
-      [% IF UserInGroup(Param('timetrackinggroup')) &&
+      [% IF user.in_group(Param('timetrackinggroup')) &&
             (comment.work_time > 0 || comment.work_time < 0) %]
          <br>
          Additional hours worked: 

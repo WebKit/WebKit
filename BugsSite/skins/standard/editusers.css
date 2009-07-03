@@ -50,3 +50,8 @@ table.groups td.checkbox {
     text-align: center;
     white-space: nowrap;
 }
+
+.missing {
+    color: red;
+    border-color: inherit;
+}

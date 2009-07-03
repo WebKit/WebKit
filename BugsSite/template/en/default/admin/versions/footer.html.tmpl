@@ -20,10 +20,9 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; the name of the version
-  #
-  # product: string; the name of the product which the version
-  #                  belongs/belonged to
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the version belongs.
+  # version: object; Bugzilla::Version object representing the version
   #
   # no_XXX_link: boolean; if defined, then don't show the corresponding
   #                       link. Supported parameters are:
@@ -32,35 +31,36 @@
   # no_edit_other_versions_link
   # no_add_version_link
   #%]
-  
-<p>
 
 <hr>
 
+<p>
+
 [% UNLESS no_add_version_link %]
-  <a title="Add a version to product '[% product FILTER html %]'"
+  <a title="Add a version to product '[% product.name FILTER html %]'"
      href="editversions.cgi?action=add&amp;product=
-          [%- product FILTER url_quote %]">Add</a> a version. 
+          [%- product.name FILTER url_quote %]">Add</a> a version. 
 [% END %]
 
-[% IF name && !no_edit_version_link %]
+[% IF version.name && !no_edit_version_link %]
   Edit version <a 
-  title="Edit Version '[% name FILTER html %]' of product '
-         [%- product FILTER html %]'"
+  title="Edit Version '[% version.name FILTER html %]' of product '
+         [%- product.name FILTER html %]'"
   href="editversions.cgi?action=edit&amp;product=
-        [%- product FILTER url_quote %]&amp;version=[% name FILTER url_quote %]">
-        '[% name FILTER html %]'</a>.
+        [%- product.name FILTER url_quote %]&amp;version=
+        [%- version.name FILTER url_quote %]">
+        '[% version.name FILTER html %]'</a>.
 [% END %]
 
 [% UNLESS no_edit_other_versions_link %]
   Edit other versions of product <a 
   href="editversions.cgi?product=
-        [%- product FILTER url_quote %]">'[% product FILTER html %]'</a>.
-   
+        [%- product.name FILTER url_quote %]">'[% product.name FILTER html %]'</a>.
+
 [% END %]
 
   Edit product <a 
   href="editproducts.cgi?action=edit&amp;product=
-        [%- product FILTER url_quote %]">'[% product FILTER html %]'</a>.
+        [%- product.name FILTER url_quote %]">'[% product.name FILTER html %]'</a>.
 
 </p>

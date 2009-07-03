@@ -20,7 +20,7 @@
   #%]
 
 [%# INTERFACE:
-  # products: list of strings. The products this user can see.
+  # products: an array of product objects this user can see.
   #
   # sortby: string. the column on which we are sorting the buglist.
   # reverse: boolean. True if we are reversing the current sort.
@@ -36,12 +36,15 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% IF query_products.size %]
-  [% title = "Most Frequently Reported $terms.Bugs for ${query_products.join(', ')}" %]
+  [% title = BLOCK %]
+    Most Frequently Reported [% terms.Bugs %] for [% query_products.join(', ') FILTER html %]
+  [% END %]
 [% ELSE %]
   [% title = "Most Frequently Reported $terms.Bugs" %]
 [% END%]
 
 [% PROCESS global/header.html.tmpl
+   title = title
    style = ".resolved { background-color: #d9d9d9; color: #000000; }"
 %]
 
@@ -84,9 +87,9 @@
       <td rowspan="4" valign="top">
         <select name="product" size="5" multiple="multiple">
           [% FOREACH p = products %]
-            <option name="[% p FILTER html %]"
-            [% " selected" IF lsearch(query_products, p) != -1 %]
-            >[% p FILTER html %]</option>
+            <option name="[% p.name FILTER html %]"
+            [% " selected" IF lsearch(query_products, p.name) != -1 %]
+            >[% p.name FILTER html %]</option>
           [% END %]
         </select>
       </td>
@@ -120,13 +123,14 @@
 
   </table>
 
-  <input type="submit" value="Change">
+  <input type="submit" id="change" value="Change">
 </form>
 
 <form method="post" action="buglist.cgi">
   <input type="hidden" name="bug_id" value="[% bug_ids_string %]">
   <input type="hidden" name="order" value="Reuse same sort as last time">
-  Or just give this to me as a <input type="submit" value="[% terms.bug %] list">.
+  Or just give this to me as a <input type="submit" id="list" 
+                                value="[% terms.bug %] list">.
   (Note: the order may not be the same.)
 </form>
 

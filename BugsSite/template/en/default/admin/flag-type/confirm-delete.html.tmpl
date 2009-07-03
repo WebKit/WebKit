@@ -21,18 +21,16 @@
 
 [% PROCESS global/variables.none.tmpl %]
 
-[%# Filter off the name here to be used multiple times below %]
-[% name = BLOCK %][% flag_type.name FILTER html %][% END %]
+[% title = BLOCK %]Confirm Deletion of Flag Type '[% flag_type.name FILTER html %]'[% END %]
 
-[% PROCESS global/header.html.tmpl
-  title = "Confirm Deletion of Flag Type '$name'"
-%]
+[% PROCESS global/header.html.tmpl title = title %]
 
 <p>
-   There are [% flag_count %] flags of type [% name FILTER html %].
+   There are [% flag_type.flag_count %] flags of type [% flag_type.name FILTER html %].
    If you delete this type, those flags will also be deleted.  Note that
    instead of deleting the type you can
-   <a href="editflagtypes.cgi?action=deactivate&amp;id=[% flag_type.id %]">deactivate it</a>,
+   <a href="editflagtypes.cgi?action=deactivate&amp;id=[% flag_type.id %]&amp;token=
+           [%- token FILTER html %]">deactivate it</a>,
    in which case the type and its flags will remain in the database
    but will not appear in the [% terms.Bugzilla %] UI.
 </p>
@@ -45,8 +43,8 @@
    </tr>
    <tr>
       <td>
-         <a href="editflagtypes.cgi?action=delete&amp;id=[% flag_type.id %]">
-            Yes, delete
+         <a href="editflagtypes.cgi?action=delete&amp;id=[% flag_type.id %]&amp;token=
+                 [%- token FILTER html %]">Yes, delete
          </a>
       </td>
       <td align="right">

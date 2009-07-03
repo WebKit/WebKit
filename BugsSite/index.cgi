@@ -19,7 +19,7 @@
 # Rights Reserved.
 #
 # Contributor(s): Jacob Steenhagen <jake@bugzilla.org>
-#
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 ###############################################################################
 # Script Initialization
@@ -30,31 +30,42 @@ use strict;
 
 # Include the Bugzilla CGI and general utility library.
 use lib ".";
-require "CGI.pl";
 
-use vars qw(
-  $vars
-);
-
-# Check whether or not the user is logged in and, if so, set the $::userid 
+use Bugzilla;
 use Bugzilla::Constants;
-Bugzilla->login(LOGIN_OPTIONAL);
+use Bugzilla::Error;
+use Bugzilla::Update;
+
+# Check whether or not the user is logged in
+my $user = Bugzilla->login(LOGIN_OPTIONAL);
 
 ###############################################################################
 # Main Body Execution
 ###############################################################################
 
 my $cgi = Bugzilla->cgi;
-# Force to use HTTPS unless Param('ssl') equals 'never'.
+# Force to use HTTPS unless Bugzilla->params->{'ssl'} equals 'never'.
 # This is required because the user may want to log in from here.
-if (Param('sslbase') ne '' and Param('ssl') ne 'never') {
-    $cgi->require_https(Param('sslbase'));
+if (Bugzilla->params->{'sslbase'} ne '' and Bugzilla->params->{'ssl'} ne 'never') {
+    $cgi->require_https(Bugzilla->params->{'sslbase'});
 }
 
 my $template = Bugzilla->template;
+my $vars = {};
 
 # Return the appropriate HTTP response headers.
 print $cgi->header();
+
+if ($user->in_group('admin')) {
+    # If 'urlbase' is not set, display the Welcome page.
+    unless (Bugzilla->params->{'urlbase'}) {
+        $template->process('welcome-admin.html.tmpl')
+          || ThrowTemplateError($template->error());
+        exit;
+    }
+    # Inform the administrator about new releases, if any.
+    $vars->{'release'} = Bugzilla::Update::get_notifications();
+}
 
 # Generate and return the UI (HTML page) from the appropriate template.
 $template->process("index.html.tmpl", $vars)

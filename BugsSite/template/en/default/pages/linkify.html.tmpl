@@ -30,10 +30,14 @@
 </p>
 
 <form action="page.cgi" method="post">
-  <textarea cols="80" rows="20" name="text"></textarea>
+  [% INCLUDE global/textarea.html.tmpl
+    name    = 'text'
+    minrows = 20
+    cols    = constants.COMMENT_COLS
+  %]
   <br>
   <input type="hidden" name="id" value="linked.html">
-  <input value="Linkify" type="submit">
+  <input type="submit" id="linkify" value="Linkify">
 </form>
 
 [% INCLUDE global/footer.html.tmpl %]

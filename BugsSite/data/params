@@ -4,15 +4,18 @@
            'LDAPfilter' => '',
            'LDAPmailattribute' => 'mail',
            'LDAPserver' => '',
+           'LDAPstarttls' => 0,
            'LDAPuidattribute' => 'uid',
-           'allowbugdeletion' => '0',
+           'allow_attach_url' => 0,
+           'allow_attachment_deletion' => 0,
+           'allowbugdeletion' => 0,
            'allowemailchange' => '1',
            'allowuserdeletion' => 0,
+           'announcehtml' => '',
            'auth_env_email' => '',
            'auth_env_id' => '',
            'auth_env_realname' => '',
            'bonsai_url' => '',
-           'browserbugmessage' => 'this may indicate a bug in your browser.',
            'chartgroup' => 'editbugs',
            'commentonaccept' => 0,
            'commentonclearresolution' => 0,
@@ -26,6 +29,7 @@
            'commentonresolve' => 0,
            'commentonverify' => 0,
            'confirmuniqueusermatch' => 1,
+           'convert_uncompressed_images' => 0,
            'cookiedomain' => '',
            'cookiepath' => '/',
            'createemailregexp' => '.*',
@@ -37,9 +41,11 @@
            'defaultpriority' => 'P2',
            'defaultquery' => 'bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailqa_contact2=1&order=Importance&long_desc_type=substring',
            'defaultseverity' => 'Normal',
+           'docs_urlbase' => 'docs/html/',
            'emailregexp' => '^[\\w\\.\\+\\-=]+@[\\w\\.\\-]+\\.[\\w\\-]+$',
            'emailregexpdesc' => 'A legal address must contain exactly one \'@\', and at least one \'.\' after the @.',
            'emailsuffix' => '',
+           'globalwatchers' => '',
            'insidergroup' => '',
            'languages' => 'en',
            'letsubmitterchoosemilestone' => 1,
@@ -47,7 +53,8 @@
            'loginnetmask' => '32',
            'lxr_root' => '',
            'lxr_url' => '',
-           'mail_delivery_method' => 'sendmail',
+           'mail_delivery_method' => 'Sendmail',
+           'mailfrom' => 'bugzilla-daemon',
            'maintainer' => 'admin@webkit.org',
            'makeproductgroups' => 0,
            'maxattachmentsize' => '20000',
@@ -65,21 +72,6 @@
            'movers' => 'mrowe@apple.com, ddkilzer@webkit.org',
            'musthavemilestoneonaccept' => 0,
            'mybugstemplate' => 'buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=%userid%&amp;emailtype1=exact&amp;emailassigned_to1=1&amp;emailreporter1=1',
-           'newchangedmail' => 'From: bugzilla-daemon@webkit.org
-To: %to%
-Subject: [Bug %bugid%] %neworchanged%%summary%
-%threadingmarker%
-X-Bugzilla-Reason: %reasonsheader%
-X-Bugzilla-Product: %product%
-X-Bugzilla-Component: %component%
-
-%urlbase%show_bug.cgi?id=%bugid%
-
-%diffs%
-
---%space%
-Configure bugmail: %urlbase%userprefs.cgi?tab=email
-%reasonsbody%',
            'noresolveonopenblockers' => 0,
            'passwordmail' => 'From: bugzilla-daemon@webkit.org
 To: %mailaddress%
@@ -96,6 +88,9 @@ To use the wonders of Bugzilla, you can use the following:
 
 
 ',
+           'proxy_url' => '',
+           'querysharegroup' => 'editbugs',
+           'quicksearch_comment_cutoff' => '4',
            'quip_list_entry_control' => 'moderated',
            'rememberlogin' => 'on',
            'requirelogin' => '0',
@@ -106,12 +101,16 @@ To use the wonders of Bugzilla, you can use the following:
            'shadowdbsock' => '',
            'showallproducts' => 0,
            'shutdownhtml' => '',
+           'smtp_debug' => 0,
            'smtpserver' => 'localhost',
+           'specific_search_allow_empty_words' => 0,
            'ssl' => 'always',
            'sslbase' => 'https://bugs.webkit.org/',
+           'strict_isolation' => 0,
            'supportwatchers' => '1',
            'timetrackinggroup' => '',
            'timezone' => 'PDT',
+           'upgrade_notification' => 'latest_stable_release',
            'urlbase' => 'https://bugs.webkit.org/',
            'usebugaliases' => '1',
            'useclassification' => 0,
@@ -184,5 +183,8 @@ You will get this message once a day until you\'ve dealt with these bugs!
 
 
 
-'
+',
+           'utf8' => '0',
+           'webdotbase' => 'http://www.research.att.com/~north/cgi-bin/webdot.cgi/%urlbase%',
+           'whinedays' => 7
          );

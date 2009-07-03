@@ -20,18 +20,22 @@
   #%]
 
 [%# INTERFACE:
-  # proddesc: hash. May be empty. The hash keys are the products, and the values
-  # are their descriptions.
+  # classifications: array of hashes, with an 'object' key representing a
+  #                  classification object and 'products' the list of
+  #                  product objects the user can enter bugs into.
+  # target:   the script that displays this template.
+  # cloned_bug_id: ID of the bug being cloned.
+  # format:   the desired format to display the target.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
 [% IF target == "enter_bug.cgi" %]
   [% title = "Enter $terms.Bug" %]
-  [% h2 = BLOCK %]First, you must pick a product on which to enter [% terms.abug %]. [% END %]
+  [% subheader = BLOCK %]First, you must pick a product on which to enter [% terms.abug %]. [% END %]
 [% ELSIF target == "describecomponents.cgi" %]
   [% title = "$terms.Bugzilla Component Descriptions" %]
-  [% h2 = "Please specify the product whose components you want described." %]
+  [% subheader = "Please specify the product whose components you want described." %]
 [% END %]
 
 [% DEFAULT title = "Choose a Product" %]
@@ -39,18 +43,29 @@
 
 <table>
 
-[% FOREACH p = proddesc.keys.sort %]
-  <tr>
-    <th align="right" valign="top">
-      <a href="[% target %]?product=[% p FILTER url_quote -%]
-            [%- IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER url_quote %][% END -%] 
-            [%- IF format %]&amp;format=[% format FILTER url_quote %][% END %]">
-      [% p FILTER html %]</a>:
-    </th>
+[% FOREACH c = classifications %]
+  [% IF c.object %]
+    <tr>
+      <th colspan="2" align="left">[% c.object.name FILTER html %]:
+      [%+ c.object.description FILTER html_light %]</th>
+    </tr>
+  [% END %]
 
-    [% IF proddesc.$p %]
-      <td valign="top">&nbsp;[% proddesc.$p %]</td>
-    [% END %]
+  [% FOREACH p = c.products %]
+    <tr>
+      <th align="right" valign="top">
+        <a href="[% target %]?product=[% p.name FILTER url_quote -%]
+              [%- IF cloned_bug_id %]&amp;cloned_bug_id=[% cloned_bug_id FILTER url_quote %][% END -%] 
+              [%- IF format %]&amp;format=[% format FILTER url_quote %][% END %]">
+        [% p.name FILTER html FILTER no_break %]</a>:&nbsp;
+      </th>
+
+      <td valign="top">[% p.description FILTER html_light %]</td>
+    </tr>
+  [% END %]
+
+  <tr>
+    <th colspan="2">&nbsp;</th>
   </tr>
 [% END %]
 

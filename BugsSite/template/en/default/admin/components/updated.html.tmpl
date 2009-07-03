@@ -17,50 +17,57 @@
   # Rights Reserved.
   #
   # Contributor(s): Gavin Shelley <bugzilla@chimpychompy.org>
+  #                 Akamai Technologies <bugzilla-dev@akamai.com>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
 [%# INTERFACE:
   #
   # 'updated_XXX' variables are booleans, and are defined if the
   # 'XXX' field was updated during the edit just being handled.
-  # Variables called just 'XXX' are strings, and are the _new_ contents
-  # of the fields.
   #
-  # name & updated_name: the name of the component
+  # updated_name: the name of the component updated
   #
-  # description & updated_description: the component description
+  # updated_description: the component description updated
   #
-  # initialowner & updated_initialowner: the default assignee
+  # updated_initialowner: the default assignee updated
   #
-  # initialqacontact & updated_initialqacontact: the default qa contact
+  # updated_initialqacontact: the default qa contact updated
   #
-  # product: string; the name of the product the component belongs to
+  # updated_initialcc: the default initial cc list
+  #
+  # comp: object; Bugzilla::Component object representing the component 
+  #               user updated.
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
+  #
+  # initial_cc_names: a comma-separated list of the login names of
+  #                   the Initial CC, if it was updated.
   #%]
   
-[% title = BLOCK %]Updating Component '[% name FILTER html %]' of Product
-                   '[% product FILTER html %]'[% END %]
+[% title = BLOCK %]Updating Component '[% comp.name FILTER html %]' of Product
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
 [% IF updated_description %]
-  <p>
   <table>
     <tr>
       <td>Updated description to:</td>
-      <td>'[% description FILTER html %]'</td>
+      <td>'[% comp.description FILTER html_light %]'</td>
     </tr>
   </table>
 [% END %]
 
 [% IF updated_initialowner %]
-  <p>Updated Default Assignee to: '[% initialowner FILTER html %]'.</p>
+  <p>Updated Default Assignee to: '[% comp.default_assignee.login FILTER html %]'.</p>
 [% END %]
 
 [% IF updated_initialqacontact %]
   <p>
-  [% IF initialqacontact %]
-    Updated Default QA Contact to '[% initialqacontact FILTER html %]'.
+  [% IF comp.default_qa_contact.id %]
+    Updated Default QA Contact to '[% comp.default_qa_contact.login FILTER html %]'.
   [% ELSE %]
     Removed Default QA Contact.
   [% END %]
@@ -68,14 +75,23 @@
 [% END %]
 
 [% IF updated_name %]
-  <p>Updated Component name to: '[% name FILTER html %]'.</p>
+  <p>Updated Component name to: '[% comp.name FILTER html %]'.</p>
+[% END %]
+
+[% IF updated_initialcc %]
+  [% IF initial_cc_names %]
+    <p>Updated Default CC list to:
+      '[% initial_cc_names FILTER html %]'.</p>
+  [% ELSE %]
+    <p>Removed the Default CC list.</p>
+  [% END %]
 [% END %]
 
 [% UNLESS updated_description || updated_initialowner || 
-          updated_initialqacontact || updated_name %]
-  <p>Nothing changed for component '[% name FILTER html %]'.
+          updated_initialqacontact || updated_name  ||
+          updated_initialcc %]
+  <p>Nothing changed for component '[% comp.name FILTER html %]'.</p>
 [% END %]
-   
 
 [% PROCESS admin/components/footer.html.tmpl %]
 

@@ -21,16 +21,19 @@
 
 [% PROCESS global/variables.none.tmpl %]
 
-[% filt_product = product FILTER html %]
-[% filt_classification = classification FILTER html %]
-[% PROCESS global/header.html.tmpl
-  title = "Edit Group Controls for $filt_product"
+[% title = BLOCK %]
+    Edit Group Controls for [% product.name FILTER html %]
+[% END %]
+[% PROCESS global/header.html.tmpl 
+   title = title 
 %]
 
 <form method="post" action="editproducts.cgi">
   <input type="hidden" name="action" value="updategroupcontrols">
-  <input type="hidden" name="product" value="[% filt_product %]">
-  <input type="hidden" name="classification" value="[% filt_classification %]">
+  <input type="hidden" name="product" value="[% product.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="hidden" name="classification" 
+         value="[% classification.name FILTER html %]">
 
   <table id="form" cellspacing="0" cellpadding="4" border="1">
     <tr bgcolor="#6666ff">
@@ -39,6 +42,9 @@
       <th>MemberControl</th>
       <th>OtherControl</th>
       <th>Canedit</th>
+      <th>editcomponents</th>
+      <th>canconfirm</th>
+      <th>editbugs</th>
       <th>[% terms.Bugs %]</th>
     </tr>
     [% FOREACH group = groups %]
@@ -47,7 +53,7 @@
           <td>
             [% group.name FILTER html %]
           </td>
-          <td align="center" colspan=4>
+          <td align="center" colspan=7>
             Disabled
           </td>
           <td>
@@ -116,6 +122,18 @@
             [% " checked=\"checked\"" IF group.canedit %]>
           </td>
           <td>
+            <input type=checkbox value=1 name=editcomponents_[% group.id %]
+            [% " checked=\"checked\"" IF group.editcomponents %]>
+          </td>
+          <td>
+            <input type=checkbox value=1 name=canconfirm_[% group.id %]
+            [% " checked=\"checked\"" IF group.canconfirm %]>
+          </td>
+          <td>
+            <input type=checkbox value=1 name=editbugs_[% group.id %]
+            [% " checked=\"checked\"" IF group.editbugs %]>
+          </td>
+          <td>
             [% group.bugcount %]
           </td>
         </tr>
@@ -132,21 +150,44 @@
 <p>
 These settings control the relationship of the groups to this
 product.
+</p>
 <p>
 If any group has <b>Entry</b> selected, then this product will
 restrict [% terms.bug %] entry to only those users who are members of all the
 groups with entry selected.
+</p>
 <p>
 If any group has <b>Canedit</b> selected, then this product
 will be read-only for any users who are not members of all of
 the groups with Canedit selected. ONLY users who are members of
 all the canedit groups will be able to edit. This is an additional
 restriction that further restricts what can be edited by a user.
+</p>
+<p>
+The following settings control let you choose privileges on a <b>per-product basis</b>.
+This is a convenient way to give privileges to some users for some products
+only, without having to give them global privileges which would affect all
+products:
+</p>
+<p>
+Any group having <b>editcomponents</b> selected allows users who are
+in this group to edit all aspects of this product, including components,
+milestones and versions.
+</p>
+<p>
+Any group having <b>canconfirm</b> selected allows users who are
+in this group to confirm [% terms.bugs %] in this product.
+</p>
+<p>
+Any group having <b>editbugs</b> selected allows users who are
+in this group to edit all fields of [% terms.bugs %] in this product.
+</p>
 <p>
 The <b>MemberControl</b> and <b>OtherControl</b> fields
 indicate which [% terms.bugs %] will be placed in
 this group according to the following definitions.
-<br>
+</p>
+
 <table border=1>
   <tr>
     <th>

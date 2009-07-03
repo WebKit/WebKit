@@ -22,18 +22,18 @@
 [%# INTERFACE:
   # bug_id: integer. ID of the bug we are listing the votes for.
   # users: list of hashes. May be empty. Each hash has two members:
-  #   name: string. The login name of the user whose vote is attached
-  #   count: integer. The number of times that user has votes for this bug.
-  # total: integer. The total number of votes for this bug.
+  #   login_name: string. The login name of the user whose vote is attached
+  #   vote_count: integer. The number of times that user has votes for this bug.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
 [% PROCESS global/header.html.tmpl
            title = "Show Votes"
-           h2 = "$terms.Bug <a href=\"show_bug.cgi?id=$bug_id\">$bug_id</a>"
+           subheader = "$terms.Bug <a href=\"show_bug.cgi?id=$bug_id\">$bug_id</a>"
  %]
 
+[% total = 0 %]
 <table cellspacing="4">
   <tr>
     <th>Who</th>
@@ -41,14 +41,15 @@
   </tr>
 
   [% FOREACH voter = users %]
+    [% total = total + voter.vote_count %]
     <tr>
       <td>
-        <a href="votes.cgi?action=show_user&amp;user=[% voter.name FILTER url_quote %]">
-          [% voter.name FILTER html %]
+        <a href="votes.cgi?action=show_user&amp;user=[% voter.login_name FILTER url_quote %]">
+          [% voter.login_name FILTER html %]
         </a>
       </td>
       <td align="right">
-        [% voter.count %]
+        [% voter.vote_count %]
       </td>
     </tr>
   [% END %]

@@ -20,29 +20,25 @@
   #%]
 
 [%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the version belongs.
+  # version: object; Bugzilla::Version object representing the
+  #                    version the user updated.
   #
-  # updated_name: boolean; defined if the 'name' field was updated
-  #
-  # name: string; the new name of the version
-  #
-  # product: string; the name of the product the version belongs to
+  # updated: boolean; defined if the 'name' field was updated
   #%]
   
-[% title = BLOCK %]Updating Version '[% name FILTER html %]' of Product
-                   '[% product FILTER html %]'[% END %]
+[% title = BLOCK %]Updating Version '[% version.name FILTER html %]' of Product
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
-[% IF updated_name %]
-  <p>Updated Version name to: '[% name FILTER html %]'.</p>
+[% IF updated %]
+  <p>Updated Version name to: '[% version.name FILTER html %]'.</p>
+[% ELSE %]
+  <p>Nothing changed for version '[% version.name FILTER html %]'.</p>
 [% END %]
-
-[% UNLESS updated_name %]
-  <p>Nothing changed for version '[% name FILTER html %]'.
-[% END %]
-   
-<p>
 
 [% PROCESS admin/versions/footer.html.tmpl %]
 

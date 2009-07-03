@@ -17,20 +17,25 @@
   # Rights Reserved.
   #
   # Contributor(s): Myk Melez <myk@mozilla.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
 [%# Define strings that will serve as the title and header of this page %]
-[% title = BLOCK %]Edit Attachment #[% attachid %] for [% terms.Bug %] #[% bugid %][% END %]
-[% h1 = BLOCK %]Edit Attachment #[% attachid %] for
-  [%+ GetBugLink(bugid, "$terms.Bug $bugid") %][% END %]
-[% h2 = BLOCK %][% bugsummary FILTER html %][% END %]
+[% title = BLOCK %]
+  Attachment [% attachment.id %] Details for [% terms.Bug %] [%+ attachment.bug_id %]
+[% END %]
+[% header = BLOCK %]
+  Attachment [% attachment.id %] Details for
+  [%+ "$terms.Bug ${attachment.bug_id}" FILTER bug_link(attachment.bug_id) FILTER none %]
+[% END %]
+[% subheader = BLOCK %][% bugsummary FILTER html %][% END %]
 
 [% PROCESS global/header.html.tmpl
   title = title
-  h1 = h1
-  h2 = h2
+  header = header
+  subheader = subheader
   style = "
     table.attachment_info th { text-align: right; vertical-align: top; }
     table.attachment_info td { text-align: left; vertical-align: top; }
@@ -57,7 +62,7 @@
       // If this is a plaintext document, remove cruft that Mozilla adds
       // because it treats it as an HTML document with a big PRE section.
       // http://bugzilla.mozilla.org/show_bug.cgi?id=86012
-      var contentType = '[% contenttype FILTER js %]';
+      var contentType = '[% attachment.contenttype FILTER js %]';
       if ( contentType == 'text/plain' )
         {
           theContent = theContent.replace( /^<html><head\/?><body><pre>/i , "" );
@@ -77,8 +82,7 @@
 
       // Copy the contents of the diff into the textarea
       var editFrame = document.getElementById('editFrame');
-      editFrame.value = theContent;
-      editFrame.value += "\n\n";
+      editFrame.value = theContent + "\n\n";
 
       has_edited = 1;
     }
@@ -99,7 +103,7 @@
       if (!has_viewed_as_diff) {
         var viewDiffFrame = document.getElementById('viewDiffFrame');
         viewDiffFrame.src =
-            'attachment.cgi?id=[% attachid %]&action=diff&headers=0';
+            'attachment.cgi?id=[% attachment.id %]&action=diff&headers=0';
         has_viewed_as_diff = 1;
       }
     }
@@ -197,7 +201,7 @@
 </script>
 
 <form method="post" action="attachment.cgi" onsubmit="normalizeComments();">
-  <input type="hidden" name="id" value="[% attachid %]">
+  <input type="hidden" name="id" value="[% attachment.id %]">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="contenttypemethod" value="manual">
 
@@ -206,50 +210,97 @@
     <tr>
       <td width="25%">
         <small>
-        <b>Description:</b><br>
-          <textarea rows="3" cols="25" name="description" wrap="soft">[% description FILTER html %]</textarea><br>
+        <b><label for="description">Description</label>:</b><br>
+          [% INCLUDE global/textarea.html.tmpl
+            id             = 'description'
+            name           = 'description'
+            minrows        = 3
+            cols           = 25
+            wrap           = 'soft'
+            defaultcontent = attachment.description
+          %]<br>
 
-        <b>Filename:</b><br>
-          <input type="text" size="20" name="filename" value="[% filename FILTER html %]"><br>
-        <b>Size: </b>[% datasize FILTER unitconvert %]<br>
+        [% IF attachment.isurl %]
+            <input type="hidden" name="filename"
+                   value="[% attachment.filename FILTER html %]">
+            <input type="hidden" name="contenttypeentry"
+                   value="[% attachment.contenttype FILTER html %]">
+        [% ELSE %]
+          <b><label for="filename">Filename</label>:</b><br>
+            <input type="text" size="20" id="filename" name="filename"
+                   value="[% attachment.filename FILTER html %]"><br>
+          <b>Size:</b>
+          [% IF attachment.datasize %]
+            [%+ attachment.datasize FILTER unitconvert %]
+          [% ELSE %]
+            <em>deleted</em>
+          [% END %]<br>
 
-        <b>MIME Type:</b><br>
-          <input type="text" size="20" name="contenttypeentry" value="[% contenttype FILTER html %]"><br>
+          <b><label for="contenttypeentry">MIME Type</label>:</b><br>
+            <input type="text" size="20"
+                   id="contenttypeentry" name="contenttypeentry"
+                   value="[% attachment.contenttype FILTER html %]"><br>
 
           <input type="checkbox" id="ispatch" name="ispatch" value="1"
-                 [% 'checked="checked"' IF ispatch %]>
+                 [% 'checked="checked"' IF attachment.ispatch %]>
           <label for="ispatch">patch</label>
+        [% END %]
           <input type="checkbox" id="isobsolete" name="isobsolete" value="1"
-                 [% 'checked="checked"' IF isobsolete %]>
-          <label for="isobsolete">obsolete</label><br>
-          [% IF (Param("insidergroup") && UserInGroup(Param("insidergroup"))) %]
-            <input type="checkbox" name="isprivate" value="1"[% " checked" IF isprivate %]> private<br><br>
-          [% ELSE %]<br>
+                 [% 'checked="checked"' IF attachment.isobsolete %]>
+          <label for="isobsolete">obsolete</label>
+          [% IF (Param("insidergroup") && user.in_group(Param("insidergroup"))) %]
+            <input type="checkbox" id="isprivate" name="isprivate" value="1"
+                   [% " checked" IF attachment.isprivate %]>
+            <label for="isprivate">private</label><br>
           [% END %]
+          <br>
 
         [% IF flag_types.size > 0 %]
-          [% PROCESS "flag/list.html.tmpl" bug_id=bugid attach_id=attachid %]<br>
+          [% PROCESS "flag/list.html.tmpl" bug_id = attachment.bug_id
+                                           attach_id = attachment.id %]<br>
         [% END %]
 
         <div id="smallCommentFrame">
-          <b>Comment (on the [% terms.bug %]):</b><br>
-            <textarea name="comment" rows="5" cols="25" wrap="soft"></textarea><br>
+          <b><label for="comment">Comment</label> (on the
+          [%+ terms.bug %]):</b><br>
+            [% INCLUDE global/textarea.html.tmpl
+              id      = 'comment'
+              name    = 'comment'
+              minrows = 5
+              cols    = 25
+              wrap    = 'soft'
+            %]<br>
         </div>
 
-        <input type="submit" value="Submit"><br><br>
-        <strong>Actions:</strong> <a href="attachment.cgi?id=[% attachid %]">View</a>
-        [% IF ispatch && patchviewerinstalled %]
-         | <a href="attachment.cgi?id=[% attachid %]&action=diff">Diff</a>
+        <input type="submit" value="Submit" id="update"><br><br>
+        <strong>Actions:</strong>
+        <a href="attachment.cgi?id=[% attachment.id %]">View</a>
+        [% IF attachment.ispatch && patchviewerinstalled %]
+         | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=diff">Diff</a>
+        [% END %]
+        [% IF Param("allow_attachment_deletion")
+              && user.groups.admin
+              && attachment.datasize > 0 %]
+          | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=delete">Delete</a>
         [% END %]
         </small>
       </td>
 
-      [% IF isviewable %]
+      [% IF !attachment.datasize %]
+        <td width="75%"><b>The content of this attachment has been deleted.</b></td>
+      [% ELSIF isviewable %]
         <td width="75%">
-          <textarea id="editFrame" name="comment" style="height: 400px; width: 100%; display: none;" cols="80" wrap="soft"></textarea>
-          <iframe id="viewFrame" src="attachment.cgi?id=[% attachid %]" style="height: 400px; width: 100%;">
-            <b>You cannot view the attachment while editing it because your browser does not support IFRAMEs.
-            <a href="attachment.cgi?id=[% attachid %]">View the attachment on a separate page</a>.</b>
+          [% INCLUDE global/textarea.html.tmpl
+            id      = 'editFrame'
+            name    = 'comment'
+            style   = 'height: 400px; width: 100%; display: none'
+            minrows = 10
+            cols    = 80
+            wrap    = 'soft'
+          %]
+          <iframe id="viewFrame" src="attachment.cgi?id=[% attachment.id %]" style="height: 400px; width: 100%;">
+            <b>You cannot view the attachment while viewing its details because your browser does not support IFRAMEs.
+            <a href="attachment.cgi?id=[% attachment.id %]">View the attachment on a separate page</a>.</b>
           </iframe>
           <script type="text/javascript">
             <!--
@@ -268,15 +319,27 @@
             //-->
           </script>
         </td>
+      [% ELSIF attachment.isurl %]
+        <td width="75%">
+          <a href="[% attachment.data FILTER html %]">
+            [% IF attachment.datasize < 120 %]
+              [% attachment.data FILTER html %]
+            [% ELSE %]
+              [% attachment.data FILTER truncate(80) FILTER html %]
+              &nbsp;...
+              [% attachment.data.match(".*(.{20})$").0 FILTER html %]
+            [% END %]
+          </a>
+        </td>
       [% ELSE %]
         <td id="noview" width="50%">
           <p><b>
             Attachment is not viewable in your browser because its MIME type 
-            ([% contenttype FILTER html %]) is not one that your browser is 
+            ([% attachment.contenttype FILTER html %]) is not one that your browser is 
             able to display.
           </b></p>
           <p><b>
-            <a href="attachment.cgi?id=[% attachid %]">Download the attachment</a>.
+            <a href="attachment.cgi?id=[% attachment.id %]">Download the attachment</a>.
           </b></p>
         </td>
       [% END %]
@@ -287,10 +350,10 @@
 
   Attachments on this [% terms.Bug %]:
   [% FOREACH a = attachments %]
-    [% IF a == attachid %]
-      #[% a %]
+    [% IF a == attachment.id %]
+      [%+ a %]
     [% ELSE %]
-      <a href="attachment.cgi?id=[% a %]&amp;action=edit">#[% a %]</a>
+      <a href="attachment.cgi?id=[% a %]&amp;action=edit">[% a %]</a>
     [% END %]
     [% " |" UNLESS loop.last() %]
   [% END %]

@@ -47,7 +47,8 @@
                                        onchange => "catSelected()" } %]
         <td>
           <noscript>
-            <input type="submit" name="action-edit" value="Update --&gt;">
+            <input type="submit" name="action-edit" value="Update --&gt;"
+                   id="action-edit">
           </noscript>
         </td>
         
@@ -67,7 +68,7 @@
         <span style="font-weight: bold;">&nbsp;day(s)</span><br>
         [%# Change 'admin' here and in Series.pm, or remove the check
             completely, if you want to change who can make series public. %]
-        [% IF UserInGroup('admin') %]      
+        [% IF user.in_group('admin') %]      
           <input type="checkbox" name="public"
                  [% "checked='checked'" IF default.public.0 %]>
           <span style="font-weight: bold;">Visible to all<br>
@@ -89,7 +90,7 @@
       </td>
       <td></td>
       <td>
-        <input type="submit" name="submit-button" 
+        <input type="submit" name="submit-button" id="submit-button"
                value="[% button_name FILTER html %]">
       </td>
     </tr>

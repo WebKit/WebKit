@@ -20,20 +20,21 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; the name of the newly created component
-  #
-  # product: string; the name of the product the component belongs to
+  # comp: object; Bugzilla::Component object representing the component the
+  #               user created.
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
   #%]
   
 [% title = BLOCK %]Adding new Component of Product
-                   '[% product FILTER html %]'[% END %]
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
 <p>The component '<a href="editcomponents.cgi?action=edit&amp;product=
-   [%- product FILTER url_quote %]&amp;component=[% name FILTER url_quote %]">
-   [%- name FILTER html %]</a>' has been created.</p>
+   [%- product.name FILTER url_quote %]&amp;component=[% comp.name FILTER url_quote %]">
+   [%- comp.name FILTER html %]</a>' has been created.</p>
 
 [% PROCESS admin/components/footer.html.tmpl %]
 

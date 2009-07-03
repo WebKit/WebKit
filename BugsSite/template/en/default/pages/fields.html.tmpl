@@ -148,7 +148,7 @@ cycle of [% terms.abug %].
     <td>
       <dl>
         <dt>
-          <b>[% resolution_descs.FIXED FILTER html %]</b>
+          <b>[% get_resolution("FIXED") FILTER html %]</b>
         </dt>
         <dd>
           A fix for this [% terms.bug %] is checked into the tree and 
@@ -156,14 +156,14 @@ cycle of [% terms.abug %].
         </dd>
 
         <dt>
-          <b>[% resolution_descs.INVALID FILTER html %]</b>
+          <b>[% get_resolution("INVALID") FILTER html %]</b>
         </dt>
         <dd>
           The problem described is not [% terms.abug %].
         </dd>
 
         <dt>
-          <b>[% resolution_descs.WONTFIX FILTER html %]</b>
+          <b>[% get_resolution("WONTFIX") FILTER html %]</b>
         </dt>
         <dd>
           The problem described is [% terms.abug %] which will never be 
@@ -171,7 +171,7 @@ cycle of [% terms.abug %].
         </dd>
 
         <dt>
-         <b>[% resolution_descs.DUPLICATE FILTER html %]</b>
+         <b>[% get_resolution("DUPLICATE") FILTER html %]</b>
         </dt>
         <dd>
           The problem is a duplicate of an existing [% terms.bug %].
@@ -181,7 +181,7 @@ cycle of [% terms.abug %].
         </dd>
 
         <dt>
-          <b>[% resolution_descs.WORKSFORME FILTER html %]</b>
+          <b>[% get_resolution("WORKSFORME") FILTER html %]</b>
         </dt>
         <dd>
           All attempts at reproducing this [% terms.bug %] were futile, 
@@ -191,7 +191,7 @@ cycle of [% terms.abug %].
         </dd>
 
         <dt>
-          <b>[% resolution_descs.MOVED FILTER html %]</b>
+          <b>[% get_resolution("MOVED") FILTER html %]</b>
         </dt>
         <dd>
           The problem was specific to a related product 
@@ -251,7 +251,7 @@ This field describes the importance and order in which [% terms.abug %]
 should be fixed. This field is utilized by the
 programmers/engineers to prioritize their work to be done. The
 available priorities range from <b>P1</b> (most important) to 
-<b>P5</b> (least important.) 
+<b>P5</b> (least important). 
 
 
 <h2><a name="rep_platform">Platform</a></h2>
@@ -264,10 +264,6 @@ reported. Legal platforms include:
   <li>Macintosh</li>
 
   <li>PC</li>
-
-  <li>Sun</li>
-
-  <li>HP</li>
 </ul>
 <b>Note:</b> When searching, selecting the option "All" does not 
 select [% terms.bugs %]
@@ -282,9 +278,9 @@ reported. Legal operating systems include:
   <li>All (happens on all operating systems; cross-platform
   [% terms.bug %])</li>
 
-  <li>Windows 95</li>
+  <li>Windows</li>
 
-  <li>Mac System 8.0</li>
+  <li>Mac OS</li>
 
   <li>Linux</li>
 </ul>

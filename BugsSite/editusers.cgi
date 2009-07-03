@@ -14,22 +14,26 @@
 # The Original Code is the Bugzilla Bug Tracking System.
 #
 # Contributor(s): Marc Schumann <wurblzap@gmail.com>
+#                 Lance Larsh <lance.larsh@oracle.com>
 #                 Frédéric Buclin <LpSolit@gmail.com>
+#                 David Lawrence <dkl@redhat.com>
+#                 Vlad Dascalu <jocuri@softhome.net>
+#                 Gavin Shelley  <bugzilla@chimpychompy.org>
 
 use strict;
 use lib ".";
 
-require "CGI.pl";
-require "globals.pl";
-
-use vars qw( $vars );
-
 use Bugzilla;
-use Bugzilla::User;
-use Bugzilla::Flag;
-use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::User;
+use Bugzilla::Bug;
+use Bugzilla::BugMail;
+use Bugzilla::Flag;
+use Bugzilla::Field;
+use Bugzilla::Group;
+use Bugzilla::Token;
 
 my $user = Bugzilla->login(LOGIN_REQUIRED);
 
@@ -38,6 +42,7 @@ my $template  = Bugzilla->template;
 my $dbh       = Bugzilla->dbh;
 my $userid    = $user->id;
 my $editusers = $user->in_group('editusers');
+local our $vars     = {};
 
 # Reject access if there is no sense in continuing.
 $editusers
@@ -53,6 +58,7 @@ print $cgi->header();
 my $action         = $cgi->param('action') || 'search';
 my $otherUserID    = $cgi->param('userid');
 my $otherUserLogin = $cgi->param('user');
+my $token          = $cgi->param('token');
 
 # Prefill template vars with data used in all or nearly all templates
 $vars->{'editusers'} = $editusers;
@@ -67,10 +73,10 @@ if ($action eq 'search') {
 
 ###########################################################################
 } elsif ($action eq 'list') {
+    my $matchvalue    = $cgi->param('matchvalue') || '';
     my $matchstr      = $cgi->param('matchstr');
     my $matchtype     = $cgi->param('matchtype');
     my $grouprestrict = $cgi->param('grouprestrict') || '0';
-    my $groupid       = $cgi->param('groupid');
     my $query = 'SELECT DISTINCT userid, login_name, realname, disabledtext ' .
                 'FROM profiles';
     my @bindValues;
@@ -78,14 +84,15 @@ if ($action eq 'search') {
     my $visibleGroups;
 
     # If a group ID is given, make sure it is a valid one.
+    my $group;
     if ($grouprestrict) {
-        (detaint_natural($groupid) && GroupIdToName($groupid))
-          || ThrowUserError('invalid_group_ID');
+        $group = new Bugzilla::Group(scalar $cgi->param('groupid'));
+        $group || ThrowUserError('invalid_group_ID');
     }
 
-    if (!$editusers && Param('usevisibilitygroups')) {
+    if (!$editusers && Bugzilla->params->{'usevisibilitygroups'}) {
         # Show only users in visible groups.
-        $visibleGroups = visibleGroupsAsString();
+        $visibleGroups = $user->visible_groups_as_string();
 
         if ($visibleGroups) {
             $query .= qq{, user_group_map AS ugm
@@ -98,26 +105,48 @@ if ($action eq 'search') {
     } else {
         $visibleGroups = 1;
         if ($grouprestrict eq '1') {
-            $query .= ', user_group_map AS ugm';
+            $query .= qq{, user_group_map AS ugm
+                         WHERE ugm.user_id = profiles.userid
+                           AND ugm.isbless = 0
+                        };
+            $nextCondition = 'AND';
         }
-        $nextCondition = 'WHERE';
+        else {
+            $nextCondition = 'WHERE';
+        }
     }
 
     if (!$visibleGroups) {
         $vars->{'users'} = {};
     }
     else {
-        # Handle selection by user name.
+        # Handle selection by login name, real name, or userid.
         if (defined($matchtype)) {
-            $query .= " $nextCondition profiles.login_name ";
+            $query .= " $nextCondition ";
+            my $expr = "";
+            if ($matchvalue eq 'userid') {
+                if ($matchstr) {
+                    my $stored_matchstr = $matchstr;
+                    detaint_natural($matchstr) 
+                        || ThrowUserError('illegal_user_id', {userid => $stored_matchstr});
+                }
+                $expr = "profiles.userid";
+            } elsif ($matchvalue eq 'realname') {
+                $expr = "profiles.realname";
+            } else {
+                $expr = "profiles.login_name";
+            }
             if ($matchtype eq 'regexp') {
-                $query .= $dbh->sql_regexp . ' ?';
+                $query .= $dbh->sql_regexp($expr, '?');
                 $matchstr = '.' unless $matchstr;
             } elsif ($matchtype eq 'notregexp') {
-                $query .= $dbh->sql_not_regexp . ' ?';
+                $query .= $dbh->sql_not_regexp($expr, '?');
+                $matchstr = '.' unless $matchstr;
+            } elsif ($matchtype eq 'exact') {
+                $query .= $expr . ' = ?';
                 $matchstr = '.' unless $matchstr;
             } else { # substr or unknown
-                $query .= 'like ?';
+                $query .= $dbh->sql_istrcmp($expr, '?', 'LIKE');
                 $matchstr = "%$matchstr%";
             }
             $nextCondition = 'AND';
@@ -129,27 +158,34 @@ if ($action eq 'search') {
 
         # Handle selection by group.
         if ($grouprestrict eq '1') {
-            $query .= " $nextCondition profiles.userid = ugm.user_id " .
-                      'AND ugm.group_id = ?';
-            # We can trick_taint because we use the value in a SELECT only,
-            # using a placeholder.
-            push(@bindValues, $groupid);
+            my $grouplist = join(',',
+                @{Bugzilla::User->flatten_group_membership($group->id)});
+            $query .= " $nextCondition ugm.group_id IN($grouplist) ";
         }
         $query .= ' ORDER BY profiles.login_name';
 
         $vars->{'users'} = $dbh->selectall_arrayref($query,
                                                     {'Slice' => {}},
                                                     @bindValues);
+
     }
 
-    $template->process('admin/users/list.html.tmpl', $vars)
-       || ThrowTemplateError($template->error());
+    if ($matchtype eq 'exact' && scalar(@{$vars->{'users'}}) == 1) {
+        my $match_user_id = $vars->{'users'}[0]->{'userid'};
+        my $match_user = check_user($match_user_id);
+        edit_processing($match_user);
+    } else {
+        $template->process('admin/users/list.html.tmpl', $vars)
+            || ThrowTemplateError($template->error());
+    }
 
 ###########################################################################
 } elsif ($action eq 'add') {
     $editusers || ThrowUserError("auth_failure", {group  => "editusers",
                                                   action => "add",
                                                   object => "users"});
+
+    $vars->{'token'} = issue_session_token('add_user');
 
     $template->process('admin/users/create.html.tmpl', $vars)
        || ThrowTemplateError($template->error());
@@ -160,38 +196,21 @@ if ($action eq 'search') {
                                                   action => "add",
                                                   object => "users"});
 
-    my $login        = $cgi->param('login');
-    my $password     = $cgi->param('password');
-    my $realname     = trim($cgi->param('name')         || '');
-    my $disabledtext = trim($cgi->param('disabledtext') || '');
-    
-    # Lock tables during the check+creation session.
-    $dbh->bz_lock_tables('profiles WRITE',
-                         'profiles_activity WRITE',
-                         'email_setting WRITE',
-                         'namedqueries READ',
-                         'whine_queries READ',
-                         'tokens READ');
+    check_token_data($token, 'add_user');
 
-    # Validity checks
-    $login || ThrowUserError('user_login_required');
-    CheckEmailSyntax($login);
-    is_available_username($login) || ThrowUserError('account_exists',
-                                                    {'email' => $login});
-    ValidatePassword($password);
+    my $new_user = Bugzilla::User->create({
+        login_name    => scalar $cgi->param('login'),
+        cryptpassword => scalar $cgi->param('password'),
+        realname      => scalar $cgi->param('name'),
+        disabledtext  => scalar $cgi->param('disabledtext'),
+        disable_mail  => scalar $cgi->param('disable_mail')});
 
-    # Login and password are validated now, and realname and disabledtext
-    # are allowed to contain anything
-    trick_taint($login);
-    trick_taint($realname);
-    trick_taint($password);
-    trick_taint($disabledtext);
+    userDataToVars($new_user->id);
 
-    insert_new_user($login, $realname, $password, $disabledtext);
-    my $userid = $dbh->bz_last_key('profiles', 'userid');
-    $dbh->bz_unlock_tables();
-    userDataToVars($userid);
+    delete_token($token);
 
+    # We already display the updated page. We have to recreate a token now.
+    $vars->{'token'} = issue_session_token('edit_user');
     $vars->{'message'} = 'account_created';
     $template->process('admin/users/edit.html.tmpl', $vars)
        || ThrowTemplateError($template->error());
@@ -199,106 +218,43 @@ if ($action eq 'search') {
 ###########################################################################
 } elsif ($action eq 'edit') {
     my $otherUser = check_user($otherUserID, $otherUserLogin);
-    $otherUserID = $otherUser->id;
-
-    $editusers || canSeeUser($otherUserID)
-        || ThrowUserError('auth_failure', {reason => "not_visible",
-                                           action => "modify",
-                                           object => "user"});
-
-    userDataToVars($otherUserID);
-
-    $template->process('admin/users/edit.html.tmpl', $vars)
-       || ThrowTemplateError($template->error());
+    edit_processing($otherUser);
 
 ###########################################################################
 } elsif ($action eq 'update') {
+    check_token_data($token, 'edit_user');
     my $otherUser = check_user($otherUserID, $otherUserLogin);
     $otherUserID = $otherUser->id;
-
-    my $logoutNeeded = 0;
-    my @changedFields;
 
     # Lock tables during the check+update session.
     $dbh->bz_lock_tables('profiles WRITE',
                          'profiles_activity WRITE',
                          'fielddefs READ',
-                         'namedqueries READ',
-                         'whine_queries READ',
                          'tokens WRITE',
                          'logincookies WRITE',
                          'groups READ',
                          'user_group_map WRITE',
-                         'user_group_map AS ugm READ',
                          'group_group_map READ',
                          'group_group_map AS ggm READ');
  
-    $editusers || canSeeUser($otherUserID)
+    $editusers || $user->can_see_user($otherUser)
         || ThrowUserError('auth_failure', {reason => "not_visible",
                                            action => "modify",
                                            object => "user"});
 
-    # Cleanups
-    my $loginold        = $cgi->param('loginold')        || '';
-    my $realnameold     = $cgi->param('nameold')         || '';
-    my $disabledtextold = $cgi->param('disabledtextold') || '';
-
-    my $login        = $cgi->param('login');
-    my $password     = $cgi->param('password');
-    my $realname     = trim($cgi->param('name')         || '');
-    my $disabledtext = trim($cgi->param('disabledtext') || '');
+    $vars->{'loginold'} = $otherUser->login;
 
     # Update profiles table entry; silently skip doing this if the user
     # is not authorized.
+    my %changes;
     if ($editusers) {
-        my @values;
-
-        if ($login ne $loginold) {
-            # Validate, then trick_taint.
-            $login || ThrowUserError('user_login_required');
-            CheckEmailSyntax($login);
-            is_available_username($login) || ThrowUserError('account_exists',
-                                                            {'email' => $login});
-            trick_taint($login);
-            push(@changedFields, 'login_name');
-            push(@values, $login);
-            $logoutNeeded = 1;
-
-            # Since we change the login, silently delete any tokens.
-            $dbh->do('DELETE FROM tokens WHERE userid = ?', {}, $otherUserID);
-        }
-        if ($realname ne $realnameold) {
-            # The real name may be anything; we use a placeholder for our
-            # INSERT, and we rely on displaying code to FILTER html.
-            trick_taint($realname);
-            push(@changedFields, 'realname');
-            push(@values, $realname);
-        }
-        if ($password) {
-            # Validate, then trick_taint.
-            ValidatePassword($password) if $password;
-            trick_taint($password);
-            push(@changedFields, 'cryptpassword');
-            push(@values, bz_crypt($password));
-            $logoutNeeded = 1;
-        }
-        if ($disabledtext ne $disabledtextold) {
-            # The disable text may be anything; we use a placeholder for our
-            # INSERT, and we rely on displaying code to FILTER html.
-            trick_taint($disabledtext);
-            push(@changedFields, 'disabledtext');
-            push(@values, $disabledtext);
-            $logoutNeeded = 1;
-        }
-        if (@changedFields) {
-            push (@values, $otherUserID);
-            $logoutNeeded && Bugzilla->logout_user($otherUser);
-            $dbh->do('UPDATE profiles SET ' .
-                     join(' = ?,', @changedFields).' = ? ' .
-                     'WHERE userid = ?',
-                     undef, @values);
-            # XXX: should create profiles_activity entries.
-        }
+        $otherUser->set_login($cgi->param('login'));
+        $otherUser->set_name($cgi->param('name'));
+        $otherUser->set_password($cgi->param('password'))
+            if $cgi->param('password');
+        $otherUser->set_disabledtext($cgi->param('disabledtext'));
+        $otherUser->set_disable_mail($cgi->param('disable_mail'));
+        %changes = %{$otherUser->update()};
     }
 
     # Update group settings.
@@ -374,10 +330,8 @@ if ($action eq 'search') {
                    },
                  undef,
                  ($otherUserID, $userid,
-                  GetFieldID('bug_group'),
+                  get_field_id('bug_group'),
                   join(', ', @groupsRemovedFrom), join(', ', @groupsAddedTo)));
-        $dbh->do('UPDATE profiles SET refreshed_when=? WHERE userid = ?',
-                 undef, ('1900-01-01 00:00:00', $otherUserID));
     }
     # XXX: should create profiles_activity entries for blesser changes.
 
@@ -385,14 +339,17 @@ if ($action eq 'search') {
 
     # XXX: userDataToVars may be off when editing ourselves.
     userDataToVars($otherUserID);
+    delete_token($token);
 
     $vars->{'message'} = 'account_updated';
-    $vars->{'loginold'} = $loginold;
-    $vars->{'changed_fields'} = \@changedFields;
+    $vars->{'changed_fields'} = [keys %changes];
     $vars->{'groups_added_to'} = \@groupsAddedTo;
     $vars->{'groups_removed_from'} = \@groupsRemovedFrom;
     $vars->{'groups_granted_rights_to_bless'} = \@groupsGrantedRightsToBless;
     $vars->{'groups_denied_rights_to_bless'} = \@groupsDeniedRightsToBless;
+    # We already display the updated page. We have to recreate a token now.
+    $vars->{'token'} = issue_session_token('edit_user');
+
     $template->process('admin/users/edit.html.tmpl', $vars)
        || ThrowTemplateError($template->error());
 
@@ -401,12 +358,12 @@ if ($action eq 'search') {
     my $otherUser = check_user($otherUserID, $otherUserLogin);
     $otherUserID = $otherUser->id;
 
-    Param('allowuserdeletion') || ThrowUserError('users_deletion_disabled');
+    Bugzilla->params->{'allowuserdeletion'} 
+        || ThrowUserError('users_deletion_disabled');
     $editusers || ThrowUserError('auth_failure', {group  => "editusers",
                                                   action => "delete",
                                                   object => "users"});
     $vars->{'otheruser'}      = $otherUser;
-    $vars->{'editcomponents'} = UserInGroup('editcomponents');
 
     # Find other cross references.
     $vars->{'assignee_or_qa'} = $dbh->selectrow_array(
@@ -427,7 +384,7 @@ if ($action eq 'search') {
         'SELECT COUNT(*) FROM email_setting WHERE user_id = ?',
         undef, $otherUserID);
     $vars->{'flags'}{'requestee'} = $dbh->selectrow_array(
-        'SELECT COUNT(*) FROM flags WHERE requestee_id = ? AND is_active = 1',
+        'SELECT COUNT(*) FROM flags WHERE requestee_id = ?',
         undef, $otherUserID);
     $vars->{'flags'}{'setter'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM flags WHERE setter_id = ?',
@@ -435,9 +392,18 @@ if ($action eq 'search') {
     $vars->{'longdescs'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM longdescs WHERE who = ?',
         undef, $otherUserID);
-    $vars->{'namedqueries'} = $dbh->selectrow_array(
-        'SELECT COUNT(*) FROM namedqueries WHERE userid = ?',
+    my $namedquery_ids = $dbh->selectcol_arrayref(
+        'SELECT id FROM namedqueries WHERE userid = ?',
         undef, $otherUserID);
+    $vars->{'namedqueries'} = scalar(@$namedquery_ids);
+    if (scalar(@$namedquery_ids)) {
+        $vars->{'namedquery_group_map'} = $dbh->selectrow_array(
+            'SELECT COUNT(*) FROM namedquery_group_map WHERE namedquery_id IN' .
+            ' (' . join(', ', @$namedquery_ids) . ')');
+    }
+    else {
+        $vars->{'namedquery_group_map'} = 0;
+    }
     $vars->{'profile_setting'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM profile_setting WHERE user_id = ?',
         undef, $otherUserID);
@@ -466,12 +432,14 @@ if ($action eq 'search') {
            AND mailto_type = ?
           },
         undef, ($otherUserID, MAILTO_USER));
+    $vars->{'token'} = issue_session_token('delete_user');
 
     $template->process('admin/users/confirm-delete.html.tmpl', $vars)
        || ThrowTemplateError($template->error());
 
 ###########################################################################
 } elsif ($action eq 'delete') {
+    check_token_data($token, 'delete_user');
     my $otherUser = check_user($otherUserID, $otherUserLogin);
     $otherUserID = $otherUser->id;
 
@@ -494,14 +462,14 @@ if ($action eq 'search') {
                          'profiles_activity WRITE',
                          'email_setting WRITE',
                          'profile_setting WRITE',
-                         'groups READ',
                          'bug_group_map READ',
                          'user_group_map WRITE',
-                         'group_group_map READ',
                          'flags WRITE',
                          'flagtypes READ',
                          'cc WRITE',
                          'namedqueries WRITE',
+                         'namedqueries_link_in_footer WRITE',
+                         'namedquery_group_map WRITE',
                          'tokens WRITE',
                          'votes WRITE',
                          'watch WRITE',
@@ -511,7 +479,7 @@ if ($action eq 'search') {
                          'whine_queries WRITE',
                          'whine_events WRITE');
 
-    Param('allowuserdeletion')
+    Bugzilla->params->{'allowuserdeletion'}
         || ThrowUserError('users_deletion_disabled');
     $editusers || ThrowUserError('auth_failure',
                                  {group  => "editusers",
@@ -521,6 +489,10 @@ if ($action eq 'search') {
         && ThrowUserError('user_has_responsibility');
 
     Bugzilla->logout_user($otherUser);
+
+    # Get the named query list so we can delete namedquery_group_map entries.
+    my $namedqueries_as_string = join(', ', @{$dbh->selectcol_arrayref(
+        'SELECT id FROM namedqueries WHERE userid = ?', undef, $otherUserID)});
 
     # Get the timestamp for LogActivityEntry.
     my $timestamp = $dbh->selectrow_array('SELECT NOW()');
@@ -556,8 +528,7 @@ if ($action eq 'search') {
         my @new_summaries = Bugzilla::Flag::snapshot($bug_id, $attach_id);
         # Let update_activity do all the dirty work, including setting
         # the bug timestamp.
-        Bugzilla::Flag::update_activity($bug_id, $attach_id,
-                                        $dbh->quote($timestamp),
+        Bugzilla::Flag::update_activity($bug_id, $attach_id, $timestamp,
                                         \@old_summaries, \@new_summaries);
         $updatedbugs{$bug_id} = 1;
     }
@@ -567,6 +538,12 @@ if ($action eq 'search') {
              $otherUserID);
     $dbh->do('DELETE FROM logincookies WHERE userid = ?', undef, $otherUserID);
     $dbh->do('DELETE FROM namedqueries WHERE userid = ?', undef, $otherUserID);
+    $dbh->do('DELETE FROM namedqueries_link_in_footer WHERE user_id = ?', undef,
+             $otherUserID);
+    if ($namedqueries_as_string) {
+        $dbh->do('DELETE FROM namedquery_group_map WHERE namedquery_id IN ' .
+                 "($namedqueries_as_string)");
+    }
     $dbh->do('DELETE FROM profile_setting WHERE user_id = ?', undef,
              $otherUserID);
     $dbh->do('DELETE FROM profiles_activity WHERE userid = ? OR who = ?', undef,
@@ -608,9 +585,6 @@ if ($action eq 'search') {
     }
 
     # 2) Whines
-    my $sth_whineidFromSchedules = $dbh->prepare(
-           qq{SELECT eventid FROM whine_schedules
-              WHERE mailto = ? AND mailto_type = ?});
     my $sth_whineidFromEvents = $dbh->prepare(
            'SELECT id FROM whine_events WHERE owner_userid = ?');
     my $sth_deleteWhineEvent = $dbh->prepare(
@@ -620,12 +594,8 @@ if ($action eq 'search') {
     my $sth_deleteWhineSchedule = $dbh->prepare(
            'DELETE FROM whine_schedules WHERE eventid = ?');
 
-    $sth_whineidFromSchedules->execute($otherUserID, MAILTO_USER);
-    while ($id = $sth_whineidFromSchedules->fetchrow_array()) {
-        $sth_deleteWhineQuery->execute($id);
-        $sth_deleteWhineSchedule->execute($id);
-        $sth_deleteWhineEvent->execute($id);
-    }
+    $dbh->do('DELETE FROM whine_schedules WHERE mailto = ? AND mailto_type = ?',
+             undef, ($otherUserID, MAILTO_USER));
 
     $sth_whineidFromEvents->execute($otherUserID);
     while ($id = $sth_whineidFromEvents->fetchrow_array()) {
@@ -685,6 +655,7 @@ if ($action eq 'search') {
     $dbh->do('DELETE FROM profiles WHERE userid = ?', undef, $otherUserID);
 
     $dbh->bz_unlock_tables();
+    delete_token($token);
 
     $vars->{'message'} = 'account_deleted';
     $vars->{'otheruser'}{'login'} = $otherUser->login;
@@ -695,8 +666,31 @@ if ($action eq 'search') {
     # Send mail about what we've done to bugs.
     # The deleted user is not notified of the changes.
     foreach (keys(%updatedbugs)) {
-        Bugzilla::BugMail::Send($_);
+        Bugzilla::BugMail::Send($_, {'changer' => $user->login} );
     }
+
+###########################################################################
+} elsif ($action eq 'activity') {
+    my $otherUser = check_user($otherUserID, $otherUserLogin);
+
+    $vars->{'profile_changes'} = $dbh->selectall_arrayref(
+        "SELECT profiles.login_name AS who, " .
+                $dbh->sql_date_format('profiles_activity.profiles_when') . " AS activity_when,
+                fielddefs.description AS what,
+                profiles_activity.oldvalue AS removed,
+                profiles_activity.newvalue AS added
+         FROM profiles_activity
+         INNER JOIN profiles ON profiles_activity.who = profiles.userid
+         INNER JOIN fielddefs ON fielddefs.id = profiles_activity.fieldid
+         WHERE profiles_activity.userid = ?
+         ORDER BY profiles_activity.profiles_when",
+        {'Slice' => {}},
+        $otherUser->id);
+
+    $vars->{'otheruser'} = $otherUser;
+
+    $template->process("account/profile-activity.html.tmpl", $vars)
+        || ThrowTemplateError($template->error());
 
 ###########################################################################
 } else {
@@ -723,7 +717,7 @@ sub check_user {
         $vars->{'user_id'} = $otherUserID;
     }
     elsif ($otherUserLogin) {
-        $otherUser = Bugzilla::User->new_from_login($otherUserLogin);
+        $otherUser = new Bugzilla::User({ name => $otherUserLogin });
         $vars->{'user_login'} = $otherUserLogin;
     }
     ($otherUser && $otherUser->id) || ThrowCodeError('invalid_user', $vars);
@@ -733,41 +727,12 @@ sub check_user {
 
 # Copy incoming list selection values from CGI params to template variables.
 sub mirrorListSelectionValues {
+    my $cgi = Bugzilla->cgi;
     if (defined($cgi->param('matchtype'))) {
-        foreach ('matchstr', 'matchtype', 'grouprestrict', 'groupid') {
+        foreach ('matchvalue', 'matchstr', 'matchtype', 'grouprestrict', 'groupid') {
             $vars->{'listselectionvalues'}{$_} = $cgi->param($_);
         }
     }
-}
-
-# Give a list of IDs of groups the user can see.
-sub visibleGroupsAsString {
-    return join(', ', @{$user->visible_groups_direct()});
-}
-
-# Determine whether the user can see a user. (Checks for existence, too.)
-sub canSeeUser {
-    my $otherUserID = shift;
-    my $query;
-
-    if (Param('usevisibilitygroups')) {
-        # If the user can see no groups, then no users are visible either.
-        my $visibleGroups = visibleGroupsAsString() || return 0;
-
-        $query = qq{SELECT COUNT(DISTINCT userid)
-                    FROM profiles, user_group_map
-                    WHERE userid = ?
-                    AND user_id = userid
-                    AND isbless = 0
-                    AND group_id IN ($visibleGroups)
-                   };
-    } else {
-        $query = qq{SELECT COUNT(userid)
-                    FROM profiles
-                    WHERE userid = ?
-                   };
-    }
-    return $dbh->selectrow_array($query, undef, $otherUserID);
 }
 
 # Retrieve user data for the user editing form. User creation and user
@@ -776,9 +741,10 @@ sub userDataToVars {
     my $otheruserid = shift;
     my $otheruser = new Bugzilla::User($otheruserid);
     my $query;
+    my $user = Bugzilla->user;
     my $dbh = Bugzilla->dbh;
 
-    $otheruser->derive_groups();
+    my $grouplist = $otheruser->groups_as_string;
 
     $vars->{'otheruser'} = $otheruser;
     $vars->{'groups'} = $user->bless_groups();
@@ -787,7 +753,11 @@ sub userDataToVars {
         qq{SELECT id,
                   COUNT(directmember.group_id) AS directmember,
                   COUNT(regexpmember.group_id) AS regexpmember,
-                  COUNT(derivedmember.group_id) AS derivedmember,
+                  (CASE WHEN (groups.id IN ($grouplist)
+                              AND COUNT(directmember.group_id) = 0
+                              AND COUNT(regexpmember.group_id) = 0
+                             ) THEN 1 ELSE 0 END) 
+                      AS derivedmember,
                   COUNT(directbless.group_id) AS directbless
            FROM groups
            LEFT JOIN user_group_map AS directmember
@@ -800,11 +770,6 @@ sub userDataToVars {
                  AND regexpmember.user_id = ?
                  AND regexpmember.isbless = 0
                  AND regexpmember.grant_type = ?
-           LEFT JOIN user_group_map AS derivedmember
-                  ON derivedmember.group_id = id
-                 AND derivedmember.user_id = ?
-                 AND derivedmember.isbless = 0
-                 AND derivedmember.grant_type = ?
            LEFT JOIN user_group_map AS directbless
                   ON directbless.group_id = id
                  AND directbless.user_id = ?
@@ -814,21 +779,35 @@ sub userDataToVars {
         'id', undef,
         ($otheruserid, GRANT_DIRECT,
          $otheruserid, GRANT_REGEXP,
-         $otheruserid, GRANT_DERIVED,
          $otheruserid, GRANT_DIRECT));
 
     # Find indirect bless permission.
     $query = qq{SELECT groups.id
-                FROM groups, user_group_map AS ugm, group_group_map AS ggm
-                WHERE ugm.user_id = ?
-                  AND groups.id = ggm.grantor_id
-                  AND ggm.member_id = ugm.group_id
-                  AND ugm.isbless = 0
+                FROM groups, group_group_map AS ggm
+                WHERE groups.id = ggm.grantor_id
+                  AND ggm.member_id IN ($grouplist)
                   AND ggm.grant_type = ?
                } . $dbh->sql_group_by('id');
     foreach (@{$dbh->selectall_arrayref($query, undef,
-                                        ($otheruserid, GROUP_BLESS))}) {
+                                        (GROUP_BLESS))}) {
         # Merge indirect bless permissions into permission variable.
         $vars->{'permissions'}{${$_}[0]}{'indirectbless'} = 1;
     }
+}
+
+sub edit_processing {
+    my $otherUser = shift;
+    my $user = Bugzilla->user;
+    my $template = Bugzilla->template;
+
+    $user->in_group('editusers') || $user->can_see_user($otherUser)
+        || ThrowUserError('auth_failure', {reason => "not_visible",
+                                           action => "modify",
+                                           object => "user"});
+
+    userDataToVars($otherUser->id);
+    $vars->{'token'} = issue_session_token('edit_user');
+
+    $template->process('admin/users/edit.html.tmpl', $vars)
+       || ThrowTemplateError($template->error());
 }

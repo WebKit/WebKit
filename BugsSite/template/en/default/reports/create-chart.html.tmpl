@@ -70,11 +70,11 @@ function subcatSelected() {
       </tr>
     [% ELSE %]
       <tr>
-        <th>Category:</th>
+        <th><label for="category">Category</label>:</th>
         <th></th>
-        <th>Sub-category:</th>
+        <th><label for="subcategory">Sub-category</label>:</th>
         <th></th>
-        <th>Name:</th>
+        <th><label for="name" accesskey="N">Name</label>:</th>
         <th><br>
         </th>
       </tr>
@@ -87,7 +87,8 @@ function subcatSelected() {
                                    
         <td>
           <noscript>
-            <input type="submit" name="action-assemble" value="Update --&gt;">
+            <input type="submit" name="action-assemble" value="Update --&gt;"
+                   id="action-assemble">
           </noscript>
         </td>
         
@@ -97,28 +98,28 @@ function subcatSelected() {
                                    
         <td>
           <noscript>
-            <input type="submit" name="action-assemble" value="Update --&gt;">
+            <input type="submit" name="action-assemble" value="Update --&gt;"
+                   id="action-assemble">
           </noscript>
         </td>
         
         <td align="left">
-          <label for="name" accesskey="N">
-            <select name="name" id="name" style="width: 15em"
-                    size="5" multiple="multiple"
-                    [%+ "disabled=\"disabled\"" UNLESS name.keys.size %]>
-              [% FOREACH x = name.keys.sort %]
-                <option value="[% name.$x FILTER html %]">
-                  [% x FILTER html %]</option>
-              [% END %]
-              [% UNLESS name.keys.size %]
-                <option value="" disabled="disabled"></option>
-              [% END %]
-            </select>
-          </label>
+          <select name="name" id="name" style="width: 15em"
+                  size="5" multiple="multiple"
+                  [%+ "disabled=\"disabled\"" UNLESS name.keys.size %]>
+            [% FOREACH x = name.keys.sort %]
+              <option value="[% name.$x FILTER html %]">
+                [% x FILTER html %]</option>
+            [% END %]
+            [% UNLESS name.keys.size %]
+              <option value="" disabled="disabled"></option>
+            [% END %]
+          </select>
         </td>
 
         <td align="center" valign="middle"> 
-          <input type="submit" name="action-add" value="Add To List"><br>
+          <input type="submit" name="action-add" value="Add To List"
+                 id="action-add"><br>
         </td>
       </tr>
     [% END %]
@@ -187,8 +188,8 @@ function subcatSelected() {
             </td>
 
             <td align="center">
-              [% IF user.id == series.creator OR UserInGroup("admin") %]
-               <a href="chart.cgi?action=edit&series_id=
+              [% IF user.id == series.creator OR user.in_group("admin") %]
+               <a href="chart.cgi?action=edit&amp;series_id=
                        [% series.series_id %]">Edit</a> |
               [% END %]
               <a href="buglist.cgi?cmdtype=dorem&amp;namedcmd=
@@ -227,29 +228,30 @@ function subcatSelected() {
       <tr>
         <td valign="bottom" style="text-align: center;">
           <input type="submit" name="action-sum" value="Sum" 
-                 style="width: 5em;"><br>
+                 style="width: 5em;" id="action-sum"><br>
           <input type="submit" name="action-remove" value="Remove"
-                 style="width: 5em;">
+                 style="width: 5em;" id="action-remove">
         </td>
 
         <td style="text-align: right; vertical-align: bottom;">
-          <b>Cumulate:</b> 
-          <input type="checkbox" name="cumulate" value="1"
+          <label for="cumulate"><b>Cumulate</b></label>:
+          <input type="checkbox" name="cumulate" id="cumulate" value="1"
           [% " checked" IF chart.cumulate %]>
         </td>
 
         <td></td>
-        <td valign="bottom"> 
-          <b>Date Range:</b> 
-          <input type="text" size="12" name="datefrom" 
+        <td valign="bottom">
+          <label for="datefrom"><b>Date Range</b></label>:
+          <input type="text" size="12" name="datefrom" id="datefrom"
             value="[% time2str("%Y-%m-%d", chart.datefrom) IF chart.datefrom%]">
-          <b>to</b> 
-          <input type="text" size="12" name="dateto" 
+          <label for="dateto"><b>to</b></label>
+          <input type="text" size="12" name="dateto" id="dateto"
             value="[% time2str("%Y-%m-%d", chart.dateto) IF chart.dateto %]">
         </td>
 
         <td style="text-align: right" valign="bottom">
-          <input type="submit" name="action-wrap" value="Chart This List">
+          <input type="submit" name="action-wrap" value="Chart This List"
+                 id="action-wrap">
         </td>
       </tr>
     </table>
@@ -258,7 +260,7 @@ function subcatSelected() {
   [% END %]  
 </form>
 
-[% IF UserInGroup('editbugs') %]
+[% IF user.in_group('editbugs') %]
   <h3><a href="query.cgi?format=create-series">Create New Data Set</a></h3>
 [% END %]                 
 

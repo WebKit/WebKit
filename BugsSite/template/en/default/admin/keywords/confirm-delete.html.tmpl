@@ -18,12 +18,11 @@
   #
   # Contributor(s): Terry Weissman <terry@mozilla.org>
   #                 Vlad Dascalu <jocuri@softhome.net>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
 [%# INTERFACE:
-  # name: string. The name of the keyword.
-  # keyword_id: number. The ID of the keyword.
-  # bug_count: number. The number of bugs with the keyword.
+  # keyword: A Bugzilla::Keyword object.
   #%]
 
 [% PROCESS global/header.html.tmpl
@@ -31,22 +30,24 @@
 %]
 
 <p>
-  [% IF bug_count == 1 %]
+  [% IF keyword.bug_count == 1 %]
     There is one [% terms.bug %] with this keyword set.
   [% ELSE %]
-    There are [% bug_count %] [%+terms.bugs %] with
+    There are [% keyword.bug_count FILTER html %] [%+ terms.bugs %] with
     this keyword set.
   [% END %]
   
   Are you <b>sure</b> you want to delete
-  the <code>[% name FILTER html %]</code> keyword?
+  the <code>[% keyword.name FILTER html %]</code> keyword?
 </p>
 
 <form method="post" action="editkeywords.cgi">
-  <input type="hidden" name="id" value="[% keyword_id %]">
+  <input type="hidden" name="id" value="[% keyword.id FILTER html %]">
   <input type="hidden" name="action" value="delete">
   <input type="hidden" name="reallydelete" value="1">
-  <input type="submit" value="Yes, really delete the keyword">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="delete"
+         value="Yes, really delete the keyword">
 </form>
 
 <p><a href="editkeywords.cgi">Edit other keywords</a>.</p>

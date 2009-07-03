@@ -25,9 +25,9 @@
 [%# INTERFACE:
   # (All the below interface elements are optional.)
   # title: string. Page title.
-  # h1: string. Main page header.
-  # h2: string. Page subheader.
-  # h3: string. Right-aligned subheader.
+  # header: string. Main page header.
+  # subheader: string. Page subheader.
+  # header_addl_info: string. Additional header information.
   # bodyclasses: array of extra CSS classes for the <body>
   # onload: string. JavaScript code to run when the page finishes loading.
   # javascript: string. Javascript to go in the header.
@@ -35,7 +35,7 @@
   # style: string. CSS style.
   # style_urls: list. List of URLs to CSS style sheets.
   # message: string. A message to display to the user. May contain HTML.
-  # atomlink: Atom link url, May contain HTML
+  # atomlink: Atom link URL, May contain HTML
   #%]
 
 [% IF message %]
@@ -43,29 +43,32 @@
 [% END %]
 
 [% DEFAULT
-  h2 = ""
-  h3 = ""
+  subheader = ""
+  header_addl_info = ""
   onload = ""
+  style_urls = []
 %]
 
-[%# We should be able to set the default value of the h1 variable
+[%# We should be able to set the default value of the header variable
   # to the value of the title variable using the DEFAULT directive,
-  # but that doesn't work if a caller sets h1 to the empty string
-  # to avoid h1 inheriting the value of title, since DEFAULT
-  # mistakenly treats empty strings as undefined and gives h1 the
+  # but that doesn't work if a caller sets header to the empty string
+  # to avoid header inheriting the value of title, since DEFAULT
+  # mistakenly treats empty strings as undefined and gives header the
   # value of title anyway.  To get around that problem we explicitly
-  # set h1's default value here only if it is undefined. %]
-[% IF !h1.defined %][% h1 = title %][% END %]
+  # set header's default value here only if it is undefined. %]
+[% IF !header.defined %][% header = title %][% END %]
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
                       "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
-    <title>[% title FILTER html %]</title>
+    <title>[% title %]</title>
 
 [%# Migration note: contents of the old Param 'headerhtml' would go here %]
 
     [% PROCESS "global/site-navigation.html.tmpl" %]
+
+    [% PROCESS 'global/setting-descs.none.tmpl' %]
 
     [% IF javascript %]
       <script type="text/javascript">
@@ -81,32 +84,135 @@
 
     [%+ INCLUDE "global/help-header.html.tmpl" %]
 
-    <link href="skins/standard/global.css" rel="stylesheet" type="text/css">
-    <link href="skins/custom/global.css" rel="stylesheet" type="text/css">
+    [%# Set up the skin CSS cascade:
+      #  1. Standard Bugzilla stylesheet set (persistent)
+      #  2. Standard Bugzilla stylesheet set (selectable)
+      #  3. All third-party "skin" stylesheet sets (selectable)
+      #  4. Page-specific styles
+      #  5. Custom Bugzilla stylesheet set (persistent)
+      # "Selectable" skin file sets may be either preferred or alternate.
+      # Exactly one is preferred, determined by the "skin" user preference.
+      #%]
+    [% IF user.settings.skin.value != 'standard' %]
+      [% user_skin = user.settings.skin.value %]
+    [% END %]
+    [% style_urls.unshift('skins/standard/global.css') %]
 
+    [%# CSS cascade, part 1: Standard Bugzilla stylesheet set (persistent).
+      # Always present.
+      #%]
+    [% FOREACH style_url = style_urls %]
+      <link href="[% style_url FILTER html %]"
+            rel="stylesheet"
+            type="text/css">
+    [% END %]
+    <!--[if IE]>
+      [%# Internet Explorer treats [if IE] HTML comments as uncommented.
+        # Use it to import CSS fixes so that Bugzilla looks decent on IE, too.
+        #%]
+      <link href="skins/standard/IE-fixes.css"
+            rel="stylesheet"
+            type="text/css">
+    <![endif]-->
+
+    [%# CSS cascade, part 2: Standard Bugzilla stylesheet set (selectable)
+      # Present if skin selection is enabled.
+      #%]
+    [% IF user.settings.skin.is_enabled %]
+      [% FOREACH style_url = style_urls %]
+        <link href="[% style_url FILTER html %]"
+              rel="[% 'alternate ' IF user_skin %]stylesheet"
+              title="[% setting_descs.standard FILTER html %]"
+              type="text/css">
+      [% END %]
+      <!--[if IE]>
+        [%# Internet Explorer treats [if IE] HTML comments as uncommented.
+          # Use it to import CSS fixes so that Bugzilla looks decent on IE,
+          # too.
+          #%]
+        <link href="skins/standard/IE-fixes.css"
+              rel="[% 'alternate ' IF user_skin %]stylesheet"
+              title="[% setting_descs.standard FILTER html %]"
+              type="text/css">
+      <![endif]-->
+    [% END %]
+
+    [%# CSS cascade, part 3: Third-party stylesheet set (selectable).
+      # All third-party skins are present if skin selection is enabled.
+      # The admin-selected skin is always present.
+      #%]
+    [% FOREACH contrib_skin = user.settings.skin.legal_values %]
+      [% NEXT IF contrib_skin == 'standard' %]
+      [% NEXT UNLESS contrib_skin == user_skin
+                  OR user.settings.skin.is_enabled %]
+      [% contrib_skin = contrib_skin FILTER url_quote %]
+      [% IF contrib_skin.match('\.css$') %]
+        [%# 1st skin variant: single-file stylesheet %]
+        <link href="[% "skins/contrib/$contrib_skin" %]"
+              rel="[% 'alternate ' UNLESS contrib_skin == user_skin %]stylesheet"
+              title="[% contrib_skin FILTER html %]"
+              type="text/css">
+      [% ELSE %]
+        [%# 2nd skin variant: stylesheet set %]
+        [% FOREACH style_url = style_urls %]
+          [% IF style_url.match('^skins/standard/') %]
+            <link href="[% style_url.replace('^skins/standard/',
+                                             "skins/contrib/$contrib_skin/") %]"
+                  rel="[% 'alternate ' UNLESS contrib_skin == user_skin %]stylesheet"
+                  title="[% contrib_skin FILTER html %]"
+                  type="text/css">
+          [% END %]
+        [% END %]
+        <!--[if IE]>
+          [%# Internet Explorer treats [if IE] HTML comments as uncommented.
+            # Use it to import CSS fixes so that Bugzilla looks decent on IE,
+            # too.
+            #%]
+          <link href="skins/contrib/[% contrib_skin FILTER html %]/IE-fixes.css"
+                rel="[% 'alternate ' UNLESS contrib_skin == user_skin %]stylesheet"
+                title="[% contrib_skin FILTER html %]"
+                type="text/css">
+        <![endif]-->
+      [% END %]
+    [% END %]
+
+    [%# CSS cascade, part 4: page-specific styles.
+      #%]
     [% IF style %]
       <style type="text/css">
         [% style %]
       </style>
     [% END %]
 
-    [% IF style_urls %]
-      [% FOREACH style_url = style_urls %]
-        <link href="[% style_url FILTER html %]" rel="stylesheet" type="text/css">
-        [% IF style_url.match('^skins/standard/') %]
-          <link href="[% style_url.replace('^skins/standard/', 'skins/custom/')
-                         FILTER html %]" rel="stylesheet" type="text/css">
-        [% END %]
+    [%# CSS cascade, part 5: Custom Bugzilla stylesheet set (persistent).
+      # Always present. Site administrators may override all other style
+      # definitions, including skins, using custom stylesheets.
+      #%]
+    [% FOREACH style_url = style_urls %]
+      [% IF style_url.match('^skins/standard/') %]
+        <link href="[% style_url.replace('^skins/standard/', "skins/custom/")
+                       FILTER html %]" rel="stylesheet" type="text/css">
       [% END %]
     [% END %]
+    <!--[if IE]>
+      [%# Internet Explorer treats [if IE] HTML comments as uncommented.
+        # Use it to import CSS fixes so that Bugzilla looks decent on IE, too.
+        #%]
+      <link href="skins/custom/IE-fixes.css"
+            rel="stylesheet"
+            type="text/css">
+    <![endif]-->
 
     [%# this puts the live bookmark up on firefox for the Atom feed %]
     [% IF atomlink %]
        <link rel="alternate" 
              type="application/atom+xml" title="Atom feed" 
-             href="[% atomlink FILTER html %]" />
+             href="[% atomlink FILTER html %]">
     [% END %]
 
+    [%# Required for the 'Autodiscovery' feature in Firefox 2 and IE 7. %]
+    <link rel="search" type="application/opensearchdescription+xml"
+                       title="[% terms.Bugzilla %]" href="./search_plugin.cgi">
   </head>
 
 [%# Migration note: contents of the old Param 'bodyhtml' go in the body tag,
@@ -123,21 +229,41 @@
   # 'bannerhtml'
   #%]
 
-[% INCLUDE global/banner.html.tmpl %]
 
 <div id="header">
-  [% IF h1 %]
-    <h1>[% h1 %]</h1>
+
+[% INCLUDE global/banner.html.tmpl %]
+
+<table border="0" cellspacing="0" cellpadding="0" id="titles">
+<tr>
+    <td id="title">
+      <p>[% terms.Bugzilla %]
+      [% " &ndash; $header" IF header %]</p>
+    </td>
+
+  [% IF subheader %]
+    <td id="subtitle">
+      <p class="subheader">[% subheader %]</p>
+    </td>
   [% END %]
 
-  [% IF h2 %]
-    <h2>[% h2 %]</h2>
+  [% IF header_addl_info %]
+    <td id="information">
+      <p class="header_addl_info">[% header_addl_info %]</p>
+    </td>
   [% END %]
+</tr>
+</table>
 
-  [% IF h3 %]
-    <h3>[% h3 %]</h3>
-  [% END %]
+[% PROCESS "global/common-links.html.tmpl" btn_id = "find_top" %]
+
 </div>
+
+<div id="bugzilla-body">
+
+[% IF Param('announcehtml') %]
+[% Param('announcehtml') FILTER none %]
+[% END %]
 
 [% IF message %]
 <div id="message">[% message %]</div>

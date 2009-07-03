@@ -38,11 +38,15 @@
     heading            => 'Edit user...'
     contentlink        => 'editusers.cgi?action=edit&amp;userid=%%userid%%' _
                           listselectionurlparams
-    allow_html_content => 1
    }
    {name               => 'realname'
     heading            => 'Real name'
-    allow_html_content => 1
+   }
+   {heading            => 'User Account Log'
+    content            => 'View'
+    contentlink        => 'editusers.cgi?action=activity' _
+                                  '&amp;userid=%%userid%%' _
+                                  listselectionurlparams
    }
   ]
 %]
@@ -58,23 +62,38 @@
   %]
 [% END %]
 
+[%# Disabled users are crossed out. Missing realnames are noticed in red. %]
+[% overrides.login_name = [] %]
+[% overrides.realname = [] %]
+
 [% FOREACH thisuser = users %]
-  [%# We FILTER html here because we need admin/table.html.tmpl to accept HTML
-    # for styling, so we cannot let admin/table.html.tmpl do the FILTER.
-    #%]
-  [% thisuser.login_name = BLOCK %]
-    [% thisuser.login_name FILTER html %]
+  [% IF !thisuser.realname %]
+    [%# We cannot pass one class now and one class later. %]
+    [% SET classes = (thisuser.disabledtext ? "bz_inactive missing" : "missing") %]
+    [% overrides.realname.push({
+        match_value      => "$thisuser.login_name"
+        match_field      => 'login_name'
+        content          => "missing"
+        override_content => 1
+        class            => "$classes"
+        override_class   => 1 })
+    %]
   [% END %]
-  [% IF thisuser.realname %]
-    [% thisuser.realname = BLOCK %]
-      [% thisuser.realname FILTER html %]
-    [% END %]
-  [% ELSE %]
-    [% SET thisuser.realname = '<span style="color: red">missing</span>' %]
-  [% END %]
+
   [% IF thisuser.disabledtext %]
-    [% thisuser.login_name = "<span class=\"bz_inactive\">$thisuser.login_name</span>" %]
-    [% thisuser.realname = "<span class=\"bz_inactive\">$thisuser.realname</span>" %]
+    [% overrides.login_name.push({
+        match_value    => "$thisuser.login_name"
+        match_field    => 'login_name'
+        class          => "bz_inactive"
+        override_class => 1 })
+    %]
+
+    [% overrides.realname.push({
+        match_value    => "$thisuser.login_name"
+        match_field    => 'login_name'
+        class          => "bz_inactive"
+        override_class => 1 })
+    %]
   [% END %]
 [% END %]
 
@@ -83,6 +102,7 @@
 [% PROCESS admin/table.html.tmpl
   columns = columns
   data    = users
+  overrides = overrides
 %]
 
 <p>

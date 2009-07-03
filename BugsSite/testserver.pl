@@ -14,20 +14,28 @@
 # Contributor(s): Joel Peshkin <bugreport@peshkin.net>
 #                 Byron Jones <byron@glob.com.au>
 
-# testserver.pl is involked with the baseurl of the Bugzilla installation
+# testserver.pl is invoked with the baseurl of the Bugzilla installation
 # as its only argument.  It attempts to troubleshoot as many installation
 # issues as possible.
 
-use Socket;
-use Bugzilla::Config qw($datadir);
-my $envpath = $ENV{'PATH'};
-use lib ".";
 use strict;
-require "globals.pl";
+use lib ".";
+
+BEGIN {
+    my $envpath = $ENV{'PATH'};
+    require Bugzilla;
+    # $ENV{'PATH'} is required by the 'ps' command to run correctly.
+    $ENV{'PATH'} = $envpath;
+}
+
+use Bugzilla::Constants;
+
+use Socket;
+
+my $datadir = bz_locations()->{'datadir'};
+
 eval "require LWP; require LWP::UserAgent;";
 my $lwp = $@ ? 0 : 1;
-
-$ENV{'PATH'}= $envpath;
 
 if ((@ARGV != 1) || ($ARGV[0] !~ /^https?:/))
 {
@@ -54,15 +62,16 @@ if ($^O !~ /MSWin32/i) {
 
 # Determine the numeric GID of $webservergroup
 my $webgroupnum = 0;
-if ($::webservergroup =~ /^(\d+)$/) {
+my $webservergroup = Bugzilla->localconfig->{webservergroup};
+if ($webservergroup =~ /^(\d+)$/) {
     $webgroupnum = $1;
 } else {
-    eval { $webgroupnum = (getgrnam $::webservergroup) || 0; };
+    eval { $webgroupnum = (getgrnam $webservergroup) || 0; };
 }
 
 # Check $webservergroup against the server's GID
 if ($sgid > 0) {
-    if ($::webservergroup eq "") {
+    if ($webservergroup eq "") {
         print 
 "WARNING \$webservergroup is set to an empty string.
 That is a very insecure practice. Please refer to the
@@ -83,14 +92,14 @@ to validate webservergroup.\n";
 }
 
 
-# Try to fetch a static file (ant.jpg)
+# Try to fetch a static file (front.png)
 $ARGV[0] =~ s/\/$//;
-my $url = $ARGV[0] . "/ant.jpg";
+my $url = $ARGV[0] . "/skins/standard/index/front.png";
 if (fetch($url)) {
-    print "TEST-OK Got ant picture.\n";
+    print "TEST-OK Got front picture.\n";
 } else {
     print 
-"TEST-FAILED Fetch of ant.jpg failed
+"TEST-FAILED Fetch of skins/standard/index/front.png failed
 Your webserver could not fetch $url.
 Check your webserver configuration and try again.\n";
     exit(1);
@@ -98,8 +107,8 @@ Check your webserver configuration and try again.\n";
 
 # Try to execute a cgi script
 my $response = fetch($ARGV[0] . "/testagent.cgi");
-if ($response =~ /^OK/) {
-    print "TEST-OK Webserver is executing CGIs.\n";
+if ($response =~ /^OK (.*)$/) {
+    print "TEST-OK Webserver is executing CGIs via $1.\n";
 } elsif ($response =~ /^#!/) {
     print 
 "TEST-FAILED Webserver is fetching rather than executing CGI files.
@@ -110,8 +119,9 @@ Check the AddHandler statement in your httpd.conf file.\n";
 }
 
 # Make sure that webserver is honoring .htaccess files
-$::localconfig =~ s~^\./~~;
-$url = $ARGV[0] . "/$::localconfig";
+my $localconfig = bz_locations()->{'localconfig'};
+$localconfig =~ s~^\./~~;
+$url = $ARGV[0] . "/$localconfig";
 $response = fetch($url);
 if ($response) {
     print 
@@ -123,37 +133,37 @@ Check your webserver configuration.\n";
     print "TEST-OK Webserver is preventing fetch of $url.\n";
 }
 
+# Test chart generation
 eval 'use GD';
 if ($@ eq '') {
     undef $/;
 
     # Ensure major versions of GD and libgd match
-    # Windows's GD module include libgd.dll, guarenteed to match
-
+    # Windows's GD module include libgd.dll, guaranteed to match
     if ($^O !~ /MSWin32/i) {
-        my $gdlib = `gdlib-config --version 2>&1`;
+        my $gdlib = `gdlib-config --version 2>&1` || "";
         $gdlib =~ s/\n$//;
         if (!$gdlib) {
-            print "TEST-WARNING Failed to run gdlib-config, assuming gdlib " .
-                  "version 1.x\n";
-            $gdlib = '1.x';
+            print "TEST-WARNING Failed to run gdlib-config; can't compare " .
+                  "GD versions.\n";
         }
-        my $gd = $GD::VERSION;
-
-        my $verstring = "GD version $gd, libgd version $gdlib";
-
-        $gdlib =~ s/^([^\.]+)\..*/$1/;
-        $gd =~ s/^([^\.]+)\..*/$1/;
-
-        if ($gdlib == $gd) {
-            print "TEST-OK $verstring; Major versions match.\n";
-        } else {
-            print "TEST-FAIL $verstring; Major versions do not match\n";
+        else {
+            my $gd = $GD::VERSION;
+    
+            my $verstring = "GD version $gd, libgd version $gdlib";
+    
+            $gdlib =~ s/^([^\.]+)\..*/$1/;
+            $gd =~ s/^([^\.]+)\..*/$1/;
+    
+            if ($gdlib == $gd) {
+                print "TEST-OK $verstring; Major versions match.\n";
+            } else {
+                print "TEST-FAILED $verstring; Major versions do not match.\n";
+            }
         }
     }
 
     # Test GD
-
     eval {
         my $image = new GD::Image(100, 100);
         my $black = $image->colorAllocate(0, 0, 0);
@@ -167,9 +177,9 @@ if ($@ eq '') {
 
         if ($image->can('png')) {
             create_file("$datadir/testgd-local.png", $image->png);
-            check_image("$datadir/testgd-local.png", 't/testgd.png', 'GD', 'PNG');
+            check_image("$datadir/testgd-local.png", 'GD');
         } else {
-            die "GD doesn't support PNG generation\n";
+            print "TEST-FAILED GD doesn't support PNG generation.\n";
         }
     };
     if ($@ ne '') {
@@ -177,10 +187,9 @@ if ($@ eq '') {
     }
 
     # Test Chart
-
     eval 'use Chart::Lines';
     if ($@) {
-        print "TEST-FAILED Chart::Lines is not installed\n";
+        print "TEST-FAILED Chart::Lines is not installed.\n";
     } else {
         eval {
             my $chart = Chart::Lines->new(400, 400);
@@ -188,14 +197,20 @@ if ($@ eq '') {
             $chart->add_pt('foo', 30, 25);
             $chart->add_pt('bar', 16, 32);
 
-            my $type = $chart->can('gif') ? 'gif' : 'png';
-            $chart->$type("$datadir/testchart-local.$type");
-            check_image("$datadir/testchart-local.$type", "t/testchart.$type",
-                "Chart", uc($type));
+            $chart->png("$datadir/testchart-local.png");
+            check_image("$datadir/testchart-local.png", "Chart");
         };
         if ($@ ne '') {
             print "TEST-FAILED Chart returned: $@\n";
         }
+    }
+
+    eval 'use Template::Plugin::GD::Image';
+    if ($@) {
+        print "TEST-FAILED Template::Plugin::GD is not installed.\n";
+    }
+    else {
+        print "TEST-OK Template::Plugin::GD is installed.\n";
     }
 }
 
@@ -227,7 +242,6 @@ sub fetch {
             select((select(SOCK), $| = 1)[0]);
 
             # get content
-    
             print SOCK "GET $file HTTP/1.0\015\012host: $host:$port\015\012\015\012";
             my $header = '';
             while (defined(my $line = <SOCK>)) {
@@ -247,14 +261,13 @@ sub fetch {
 }
 
 sub check_image {
-    my ($local_file, $test_file, $library, $image_type) = @_;
-    if (read_file($local_file) eq read_file($test_file)) {
-        print "TEST-OK $library library generated a good $image_type image\n";
+    my ($local_file, $library) = @_;
+    my $filedata = read_file($local_file);
+    if ($filedata =~ /^\x89\x50\x4E\x47\x0D\x0A\x1A\x0A/) {
+        print "TEST-OK $library library generated a good PNG image.\n";
         unlink $local_file;
     } else {
-        print "TEST-WARNING $library library generated a $image_type that " .
-              "didn't match the expected image.\nIt has been saved as " .
-              "$local_file and should be compared with $test_file\n";
+        print "TEST-WARNING $library library did not generate a good PNG.\n";
     }
 }
 

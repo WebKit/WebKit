@@ -21,17 +21,13 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; The name of the milestone
-  #
-  # default_milestone: string; The default milestone for the product
-  #
-  # bug_count: number; The number of bugs targetted at the milestone
-  #
-  # product: string; The name of the product
-  #
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestone belongs.
+  # milestone: object; Bugzilla::Milestone object representing the
+  #                    milestone the user wants to delete.
   #%]
 
-[% title = BLOCK %]Delete Milestone of Product '[% product FILTER html %]'
+[% title = BLOCK %]Delete Milestone of Product '[% product.name FILTER html %]'
   [% END %]
 
 [% PROCESS global/header.html.tmpl
@@ -45,20 +41,21 @@
 </tr>
 <tr>
   <td valign="top">Milestone:</td>
-  <td valign="top">[% name FILTER html %]</td>
+  <td valign="top">[% milestone.name FILTER html %]</td>
 </tr>
 <tr>
   <td valign="top">Milestone of Product:</td>
-  <td valign="top">[% product FILTER html %]</td>
+  <td valign="top">[% product.name FILTER html %]</td>
 </tr>
 <tr>
   <td valign="top">[% terms.Bugs %]:</td>
   <td valign="top">
-[% IF bug_count %]
+[% IF milestone.bug_count %]
   <a title="List of [% terms.bugs %] targetted at milestone '
-           [% name FILTER html %]'"
-     href="buglist.cgi?target_milestone=[% name FILTER url_quote %]&amp;product=
-          [%- product FILTER url_quote %]">[% bug_count %]</a>
+           [% milestone.name FILTER html %]'"
+     href="buglist.cgi?target_milestone=[% milestone.name FILTER url_quote %]&amp;product=
+          [%- product.name FILTER url_quote %]">
+          [% milestone.bug_count FILTER none %]</a>
 [% ELSE %]
   None
 [% END %]
@@ -68,13 +65,13 @@
 
 <h2>Confirmation</h2>
   
-[% IF bug_count %]
+[% IF milestone.bug_count %]
 
   <table border="0" cellpadding="20" width="70%" bgcolor="red">
   <tr><td>
     There
-    [% IF bug_count > 1 %] 
-      are [% bug_count %] [%+ terms.bugs %] 
+    [% IF milestone.bug_count > 1 %] 
+      are [% milestone.bug_count FILTER none %] [%+ terms.bugs %] 
     [% ELSE %]
       is 1 [% terms.bug %]
     [% END %]
@@ -89,10 +86,11 @@
 <p>Do you really want to delete this milestone?<p>
 
 <form method="post" action="editmilestones.cgi">
-  <input type="submit" value="Yes, delete">
+  <input type="submit" id="delete" value="Yes, delete">
   <input type="hidden" name="action" value="delete">
-  <input type="hidden" name="product" value="[% product FILTER html %]">
-  <input type="hidden" name="milestone" value="[% name FILTER html %]">
+  <input type="hidden" name="product" value="[% product.name FILTER html %]">
+  <input type="hidden" name="milestone" value="[% milestone.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
 
 [% PROCESS admin/milestones/footer.html.tmpl %]

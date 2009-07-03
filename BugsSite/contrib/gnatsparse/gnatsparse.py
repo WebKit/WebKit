@@ -270,7 +270,7 @@ def load_responsible(fname):
     rfp.close()
 
 def split_csl(list):
-    """ Split a comma seperated list """
+    """ Split a comma separated list """
     newlist = re.split(r"""\s*,\s*""", list)
     return newlist
 
@@ -357,7 +357,7 @@ class Bugzillabug(object):
         for piece in pieces:
             result = changedfromtore.search(piece)
             # See what things we actually have inside this entry, and
-            # handle them approriately
+            # handle them appropriately
             if result is not None:
                 type = result.group(1)
                 changedfromto = result.group(2)
@@ -451,7 +451,7 @@ class Bugzillabug(object):
             print >>outfile, "  %s, %s, %s, %s);" % (id, who, when, text)
         for name, data, who in self.attachments:
             print >>outfile, "\ninsert into attachments ("
-            print >>outfile, "  bug_id, filename, description, mimetype, ispatch, submitter_id, thedata) values ("
+            print >>outfile, "  bug_id, filename, description, mimetype, ispatch, submitter_id) values ("
 	    ftype = None
 	    # It's *magic*!
 	    if name.endswith(".ii") == 1:
@@ -463,7 +463,10 @@ class Bugzillabug(object):
             if ftype is None:
                 ftype = "application/octet-stream"
             
-            print >>outfile, "%s,%s,%s, %s,0, %s,%s);" %(self.bug_id, SqlQuote(name), SqlQuote(name), SqlQuote (ftype), who, SqlQuote(zlib.compress(data)))
+            print >>outfile, "%s,%s,%s, %s,0, %s,%s);" %(self.bug_id, SqlQuote(name), SqlQuote(name), SqlQuote (ftype), who)
+            print >>outfile, "\ninsert into attach_data ("
+            print >>outfile, "\n(id, thedata) values (last_insert_id(),"
+            print >>outfile, "%s);" % (SqlQuote(zlib.compress(data)))
         for newstate, oldstate, fieldid, changedby, changedwhen in self.bug_activity:
             print >>outfile, "\ninsert into bugs_activity ("
             print >>outfile, "  bug_id, who, bug_when, fieldid, added, removed) values ("

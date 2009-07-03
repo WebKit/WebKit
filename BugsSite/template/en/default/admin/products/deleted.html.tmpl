@@ -15,11 +15,16 @@
   #
   #%]
 
+[%# INTERFACE:
+  # product: Bugzilla::Product object; The product
+  #
+  #%]
+
 [% PROCESS global/header.html.tmpl
   title = 'Deleting product'
 %]
 
-[% IF nb_bugs %]
+[% IF product.bug_count %]
   All references to deleted [% terms.bugs %] removed.
 [% END %]
 
@@ -35,7 +40,7 @@
 </p>
 
 <p>
-  Product [% product FILTER html %] deleted.
+  Product [% product.name FILTER html %] deleted.
 </p>
 
 [% PROCESS admin/products/footer.html.tmpl

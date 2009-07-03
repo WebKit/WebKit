@@ -27,45 +27,18 @@ use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
-use Bugzilla::Config qw($datadir);
+use Bugzilla::Classification;
+use Bugzilla::Token;
 
-require "CGI.pl";
-
-my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
+my $cgi = Bugzilla->cgi;
 my $template = Bugzilla->template;
-my $vars = {};
+local our $vars = {};
 
-# TestClassification:  just returns if the specified classification does exist
-# CheckClassification: same check, optionally  emit an error text
-
-sub TestClassification ($) {
-    my $cl = shift;
-    my $dbh = Bugzilla->dbh;
-
-    trick_taint($cl);
-    # does the classification exist?
-    my $sth = $dbh->prepare("SELECT name
-                             FROM classifications
-                             WHERE name=?");
-    $sth->execute($cl);
-    my @row = $sth->fetchrow_array();
-    return $row[0];
-}
-
-sub CheckClassification ($) {
-    my $cl = shift;
-
-    unless ($cl) {
-        ThrowUserError("classification_not_specified");
-    }
-    if (! TestClassification($cl)) {
-        ThrowUserError("classification_doesnt_exist", { name => $cl });
-    }
-}
-
-sub LoadTemplate ($) {
+sub LoadTemplate {
     my $action = shift;
+    my $cgi = Bugzilla->cgi;
+    my $template = Bugzilla->template;
 
     $action =~ /(\w+)/;
     $action = $1;
@@ -88,49 +61,23 @@ exists Bugzilla->user->groups->{'editclassifications'}
                                      action => "edit",
                                      object => "classifications"});
 
-ThrowUserError("auth_classification_not_enabled") unless Param("useclassification");
+ThrowUserError("auth_classification_not_enabled") 
+    unless Bugzilla->params->{"useclassification"};
 
 #
 # often used variables
 #
-my $action = trim($cgi->param('action') || '');
-my $classification = trim($cgi->param('classification') || '');
-trick_taint($classification);
-$vars->{'classification'} = $classification;
+my $action     = trim($cgi->param('action')         || '');
+my $class_name = trim($cgi->param('classification') || '');
+my $token      = $cgi->param('token');
 
 #
 # action='' -> Show nice list of classifications
 #
 
 unless ($action) {
-    my @classifications;
-    # left join is tricky
-    #   - must select "classifications" fields if you want a REAL value
-    #   - must use "count(products.classification_id)" if you want a true
-    #     count.  If you use count(classifications.id), it will return 1 for NULL
-    #   - must use "group by classifications.id" instead of
-    #     products.classification_id. Otherwise it won't look for all
-    #     classification ids, just the ones used by the products.
-    my $sth = $dbh->prepare("SELECT classifications.id, classifications.name,
-                                    classifications.description,
-                                    COUNT(classification_id) AS total
-                             FROM classifications
-                             LEFT JOIN products
-                             ON classifications.id = products.classification_id
-                            " . $dbh->sql_group_by('classifications.id',
-                                         'classifications.name,
-                                          classifications.description') . "
-                             ORDER BY name");
-    $sth->execute();
-    while (my ($id,$classification,$description,$total) = $sth->fetchrow_array()) {
-        my $cl = {};
-        $cl->{'id'} = $id;
-        $cl->{'classification'} = $classification;
-        $cl->{'description'} = $description if (defined $description);
-        $cl->{'total'} = $total;
-
-        push(@classifications, $cl);
-    }
+    my @classifications =
+        Bugzilla::Classification::get_all_classifications();
 
     $vars->{'classifications'} = \@classifications;
     LoadTemplate("select");
@@ -143,6 +90,7 @@ unless ($action) {
 #
 
 if ($action eq 'add') {
+    $vars->{'token'} = issue_session_token('add_classification');
     LoadTemplate($action);
 }
 
@@ -151,23 +99,36 @@ if ($action eq 'add') {
 #
 
 if ($action eq 'new') {
-    unless ($classification) {
-        ThrowUserError("classification_not_specified");
+    check_token_data($token, 'add_classification');
+
+    $class_name || ThrowUserError("classification_not_specified");
+
+    my $classification =
+        new Bugzilla::Classification({name => $class_name});
+
+    if ($classification) {
+        ThrowUserError("classification_already_exists",
+                       { name => $classification->name });
     }
-    if (TestClassification($classification)) {
-        ThrowUserError("classification_already_exists", { name => $classification });
-    }
+
     my $description = trim($cgi->param('description')  || '');
+
+    my $sortkey = trim($cgi->param('sortkey') || 0);
+    my $stored_sortkey = $sortkey;
+    detaint_natural($sortkey)
+      || ThrowUserError('classification_invalid_sortkey', {'name' => $class_name,
+                                                           'sortkey' => $stored_sortkey});
+
     trick_taint($description);
+    trick_taint($class_name);
 
     # Add the new classification.
-    my $sth = $dbh->prepare("INSERT INTO classifications (name,description)
-                            VALUES (?,?)");
-    $sth->execute($classification,$description);
+    $dbh->do("INSERT INTO classifications (name, description, sortkey)
+              VALUES (?, ?, ?)", undef, ($class_name, $description, $sortkey));
 
-    # Make versioncache flush
-    unlink "$datadir/versioncache";
+    $vars->{'classification'} = $class_name;
 
+    delete_token($token);
     LoadTemplate($action);
 }
 
@@ -178,25 +139,20 @@ if ($action eq 'new') {
 #
 
 if ($action eq 'del') {
-    CheckClassification($classification);
-    my $sth;
 
-    # display some data about the classification
-    $sth = $dbh->prepare("SELECT id, description
-                          FROM classifications
-                          WHERE name=?");
-    $sth->execute($classification);
-    my ($classification_id, $description) = $sth->fetchrow_array();
+    my $classification =
+        Bugzilla::Classification::check_classification($class_name);
 
-    ThrowUserError("classification_not_deletable") if ($classification_id eq "1");
+    if ($classification->id == 1) {
+        ThrowUserError("classification_not_deletable");
+    }
 
-    $sth = $dbh->prepare("SELECT name
-                          FROM products
-                          WHERE classification_id=$classification_id");
-    $sth->execute();
-    ThrowUserError("classification_has_products") if ($sth->fetchrow_array());
+    if ($classification->product_count()) {
+        ThrowUserError("classification_has_products");
+    }
 
-    $vars->{'description'} = $description if (defined $description);
+    $vars->{'classification'} = $classification;
+    $vars->{'token'} = issue_session_token('delete_classification');
 
     LoadTemplate($action);
 }
@@ -206,32 +162,31 @@ if ($action eq 'del') {
 #
 
 if ($action eq 'delete') {
-    CheckClassification($classification);
+    check_token_data($token, 'delete_classification');
 
-    my $sth;
-    my $classification_id = get_classification_id($classification);
+    my $classification =
+        Bugzilla::Classification::check_classification($class_name);
 
-    if ($classification_id == 1) {
-        ThrowUserError("cant_delete_default_classification", { name => $classification });
+    if ($classification->id == 1) {
+        ThrowUserError("classification_not_deletable");
     }
 
     # lock the tables before we start to change everything:
     $dbh->bz_lock_tables('classifications WRITE', 'products WRITE');
 
     # delete
-    $sth = $dbh->prepare("DELETE FROM classifications WHERE id=?");
-    $sth->execute($classification_id);
+    $dbh->do("DELETE FROM classifications WHERE id = ?", undef,
+             $classification->id);
 
     # update products just in case
-    $sth = $dbh->prepare("UPDATE products 
-                          SET classification_id=1
-                          WHERE classification_id=?");
-    $sth->execute($classification_id);
+    $dbh->do("UPDATE products SET classification_id = 1
+              WHERE classification_id = ?", undef, $classification->id);
 
     $dbh->bz_unlock_tables();
 
-    unlink "$datadir/versioncache";
+    $vars->{'classification'} = $classification;
 
+    delete_token($token);
     LoadTemplate($action);
 }
 
@@ -242,34 +197,12 @@ if ($action eq 'delete') {
 #
 
 if ($action eq 'edit') {
-    CheckClassification($classification);
 
-    my @products = ();
-    my $has_products = 0;
-    my $sth;
-    
+    my $classification =
+        Bugzilla::Classification::check_classification($class_name);
 
-    # get data of classification
-    $sth = $dbh->prepare("SELECT id,description
-                          FROM classifications
-                          WHERE name=?");
-    $sth->execute($classification);
-    my ($classification_id,$description) = $sth->fetchrow_array();
-    $vars->{'description'} = $description if (defined $description);
-
-    $sth = $dbh->prepare("SELECT name,description
-                          FROM products
-                          WHERE classification_id=?
-                          ORDER BY name");
-    $sth->execute($classification_id);
-    while ( my ($product, $prod_description) = $sth->fetchrow_array()) {
-        my $prod = {};
-        $has_products = 1;
-        $prod->{'name'} = $product;
-        $prod->{'description'} = $prod_description if (defined $prod_description);
-        push(@products, $prod);
-    }
-    $vars->{'products'} = \@products if ($has_products);
+    $vars->{'classification'} = $classification;
+    $vars->{'token'} = issue_session_token('edit_classification');
 
     LoadTemplate($action);
 }
@@ -279,48 +212,59 @@ if ($action eq 'edit') {
 #
 
 if ($action eq 'update') {
-    my $classificationold   = trim($cgi->param('classificationold')   || '');
-    my $description         = trim($cgi->param('description')         || '');
-    my $descriptionold      = trim($cgi->param('descriptionold')      || '');
-    my $checkvotes = 0;
-    my $sth;
+    check_token_data($token, 'edit_classification');
 
-    CheckClassification($classificationold);
+    $class_name || ThrowUserError("classification_not_specified");
 
-    my $classification_id = get_classification_id($classificationold);
-    trick_taint($description);
+    my $class_old_name = trim($cgi->param('classificationold') || '');
 
-    # Note that we got the $classification_id using $classificationold
-    # above so it will remain static even after we rename the
-    # classification in the database.
+    my $class_old =
+        Bugzilla::Classification::check_classification($class_old_name);
+
+    my $description = trim($cgi->param('description') || '');
+
+    my $sortkey = trim($cgi->param('sortkey') || 0);
+    my $stored_sortkey = $sortkey;
+    detaint_natural($sortkey)
+      || ThrowUserError('classification_invalid_sortkey', {'name' => $class_old->name,
+                                                           'sortkey' => $stored_sortkey});
 
     $dbh->bz_lock_tables('classifications WRITE');
 
-    if ($classification ne $classificationold) {
-        unless ($classification) {
-            ThrowUserError("classification_not_specified");
+    if ($class_name ne $class_old->name) {
+
+        my $class = new Bugzilla::Classification({name => $class_name});
+        if ($class) {
+            ThrowUserError("classification_already_exists",
+                           { name => $class->name });
         }
-        
-        if (TestClassification($classification)) {
-            ThrowUserError("classification_already_exists", { name => $classification });
-        }
-        $sth = $dbh->prepare("UPDATE classifications
-                              SET name=? WHERE id=?");
-        $sth->execute($classification,$classification_id);
+        trick_taint($class_name);
+        $dbh->do("UPDATE classifications SET name = ? WHERE id = ?",
+                 undef, ($class_name, $class_old->id));
+
         $vars->{'updated_classification'} = 1;
     }
 
-    if ($description ne $descriptionold) {
-        $sth = $dbh->prepare("UPDATE classifications
-                              SET description=?
-                              WHERE id=?");
-        $sth->execute($description,$classification_id);
+    if ($description ne $class_old->description) {
+        trick_taint($description);
+        $dbh->do("UPDATE classifications SET description = ?
+                  WHERE id = ?", undef,
+                 ($description, $class_old->id));
+
         $vars->{'updated_description'} = 1;
+    }
+
+    if ($sortkey ne $class_old->sortkey) {
+        $dbh->do("UPDATE classifications SET sortkey = ?
+                  WHERE id = ?", undef,
+                 ($sortkey, $class_old->id));
+
+        $vars->{'updated_sortkey'} = 1;
     }
 
     $dbh->bz_unlock_tables();
 
-    unlink "$datadir/versioncache";
+    delete_token($token);
     LoadTemplate($action);
 }
 
@@ -329,73 +273,38 @@ if ($action eq 'update') {
 #
 
 if ($action eq 'reclassify') {
-    CheckClassification($classification);
-    my $sth;
 
-    # display some data about the classification
-    $sth = $dbh->prepare("SELECT id, description
-                          FROM classifications
-                          WHERE name=?");
-    $sth->execute($classification);
-    my ($classification_id, $description) = $sth->fetchrow_array();
+    my $classification =
+        Bugzilla::Classification::check_classification($class_name);
+   
+    my $sth = $dbh->prepare("UPDATE products SET classification_id = ?
+                             WHERE name = ?");
 
-    $vars->{'description'} = $description if (defined $description);
-
-    $sth = $dbh->prepare("UPDATE products
-                          SET classification_id=?
-                          WHERE name=?");
     if (defined $cgi->param('add_products')) {
+        check_token_data($token, 'reclassify_classifications');
         if (defined $cgi->param('prodlist')) {
             foreach my $prod ($cgi->param("prodlist")) {
                 trick_taint($prod);
-                $sth->execute($classification_id,$prod);
+                $sth->execute($classification->id, $prod);
             }
         }
+        delete_token($token);
     } elsif (defined $cgi->param('remove_products')) {
+        check_token_data($token, 'reclassify_classifications');
         if (defined $cgi->param('myprodlist')) {
             foreach my $prod ($cgi->param("myprodlist")) {
                 trick_taint($prod);
                 $sth->execute(1,$prod);
             }
         }
-    } elsif (defined $cgi->param('migrate_products')) {
-        if (defined $cgi->param('clprodlist')) {
-            foreach my $prod ($cgi->param("clprodlist")) {
-                trick_taint($prod);
-                $sth->execute($classification_id,$prod);
-            }
-        }
+        delete_token($token);
     }
 
-    my @selected_products = ();
-    my @class_products = ();
-
-    $sth = $dbh->prepare("SELECT classifications.id,
-                                 products.name,
-                                 classifications.name,
-                                 classifications.id > 1 as unknown
-                           FROM products
-                           INNER JOIN classifications
-                           ON classifications.id = products.classification_id
-                           ORDER BY unknown, products.name,
-                                    classifications.name");
-    $sth->execute();
-    while ( my ($clid, $name, $clname) = $sth->fetchrow_array() ) {
-        if ($clid == $classification_id) {
-            push(@selected_products,$name);
-        } else {
-            my $cl = {};
-            if ($clid == 1) {
-                $cl->{'name'} = "[$clname] $name";
-            } else {
-                $cl->{'name'} = "$name [$clname]";
-            }
-            $cl->{'value'} = $name;
-            push(@class_products,$cl);
-        }
-    }
-    $vars->{'selected_products'} = \@selected_products;
-    $vars->{'class_products'} = \@class_products;
+    my @classifications = 
+        Bugzilla::Classification::get_all_classifications;
+    $vars->{'classifications'} = \@classifications;
+    $vars->{'classification'} = $classification;
+    $vars->{'token'} = issue_session_token('reclassify_classifications');
 
     LoadTemplate($action);
 }
@@ -404,4 +313,4 @@ if ($action eq 'reclassify') {
 # No valid action found
 #
 
-ThrowCodeError("action_unrecognized", $vars);
+ThrowCodeError("action_unrecognized", {action => $action});

@@ -1,5 +1,5 @@
 <!-- <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"> -->
-<!-- $Id: troubleshooting.xml,v 1.5.4.1 2005/09/08 20:57:06 mozilla%colinogilvie.co.uk Exp $ -->
+<!-- $Id: troubleshooting.xml,v 1.12 2006/07/31 22:22:51 mkanat%bugzilla.org Exp $ -->
 
 <appendix id="troubleshooting">
 <title>Troubleshooting</title>
@@ -15,7 +15,7 @@
     completion, it normally explains what's wrong and how to fix it.
     If you can't work it out, or if it's being uncommunicative, post 
     the errors in the 
-    <ulink url="news://news.mozilla.org/netscape.public.mozilla.webtools">netscape.public.mozilla.webtools</ulink>
+    <ulink url="news://news.mozilla.org/mozilla.support.bugzilla">mozilla.support.bugzilla</ulink>
     newsgroup.
     </para>
 
@@ -82,24 +82,6 @@ TEST-OK Webserver is preventing fetch of http://landfill.bugzilla.org/bugzilla-t
       </listitem>
     </orderedlist>
   </section>
-    
-  <section id="trbl-bundleBugzilla">
-  <title>Bundle::Bugzilla makes me upgrade to Perl 5.6.1</title>
-
-    <para>Try executing <command>perl -MCPAN -e 'install CPAN'</command>
-    and then continuing.
-    </para>
-      
-    <para>Certain older versions of the CPAN toolset were somewhat naive about
-    how to upgrade Perl modules. When a couple of modules got rolled into the
-    core Perl distribution for 5.6.1, CPAN thought that the best way to get
-    those modules up to date was to haul down the Perl distribution itself and
-    build it. Needless to say, this has caused headaches for just about
-    everybody. Upgrading to a newer version of CPAN with the
-    commandline above should fix things.
-    </para>
-  </section>
-
 
   <section id="trbl-dbdSponge">
   <title>DBD::Sponge::db prepare failed</title>
@@ -156,49 +138,6 @@ TEST-OK Webserver is preventing fetch of http://landfill.bugzilla.org/bugzilla-t
     <filename>/var/spool/mqueue</filename> directory.
     </para>
   </section>    
-
-  <section id="trouble-filetemp">
-  <title>Your vendor has not defined Fcntl macro O_NOINHERIT</title>
-
-    <para>This is caused by a bug in the version of
-    <productname>File::Temp</productname> that is distributed with perl
-    5.6.0. Many minor variations of this error have been reported:
-    </para>
-
-    <programlisting>Your vendor has not defined Fcntl macro O_NOINHERIT, used 
-at /usr/lib/perl5/site_perl/5.6.0/File/Temp.pm line 208.
-
-Your vendor has not defined Fcntl macro O_EXLOCK, used 
-at /usr/lib/perl5/site_perl/5.6.0/File/Temp.pm line 210.
-
-Your vendor has not defined Fcntl macro O_TEMPORARY, used 
-at /usr/lib/perl5/site_perl/5.6.0/File/Temp.pm line 233.</programlisting>
-
-    <para>Numerous people have reported that upgrading to version 5.6.1
-    or higher solved the problem for them. A less involved fix is to apply
-    the following patch, which is also
-    available as a <ulink url="../xml/filetemp.patch">patch file</ulink>.
-    </para>
-
-    <programlisting><![CDATA[--- File/Temp.pm.orig   Thu Feb  6 16:26:00 2003
-+++ File/Temp.pm        Thu Feb  6 16:26:23 2003
-@@ -205,6 +205,7 @@
-     # eg CGI::Carp
-     local $SIG{__DIE__} = sub {};
-     local $SIG{__WARN__} = sub {};
-+    local *CORE::GLOBAL::die = sub {};
-     $bit = &$func();
-     1;
-   };
-@@ -226,6 +227,7 @@
-     # eg CGI::Carp
-     local $SIG{__DIE__} = sub {};
-     local $SIG{__WARN__} = sub {};
-+    local *CORE::GLOBAL::die = sub {};
-     $bit = &$func();
-     1;
-   };]]></programlisting>
-  </section>
 
   <section id="trbl-relogin-everyone">
   <title>Everybody is constantly being forced to relogin</title>
@@ -274,7 +213,7 @@ at /usr/lib/perl5/site_perl/5.6.0/File/Temp.pm line 233.</programlisting>
     </para>
   </section>
 
-  <section>
+  <section id="trbl-relogin-some">
   <title>Some users are constantly being forced to relogin</title>
 
     <para>First, make sure cookies are enabled in the user's browser.

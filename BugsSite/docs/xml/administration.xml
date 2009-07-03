@@ -82,7 +82,7 @@
 
       <varlistentry>
         <term>
-          maildeliverymethod
+          mail_delivery_method
         </term>
         <listitem>
           <para>
@@ -170,25 +170,6 @@
 
       <varlistentry>
         <term>
-          passwordmail
-        </term>
-        <listitem>
-          <para>
-            Every time a user creates an account, the text of this parameter
-            (with substitutions) is sent to the new user along with their
-            password message.
-          </para>
-
-          <para>
-            Add any text you wish to the "passwordmail" parameter box. For
-            instance, many people choose to use this box to give a quick 
-            training blurb about how to use Bugzilla at your site.
-          </para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
-        <term>
           movebugs
         </term>
         <listitem>
@@ -211,6 +192,21 @@
             This allows you to define an email address for each component, 
             in addition to that of the default assignee, who will be sent
             carbon copies of incoming bugs.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          globalwatcher
+        </term>
+        <listitem>
+          <para>
+            This allows to define specific users that will
+            receive notification each time a new bug in entered, or when
+            an existing bug changes, according to the normal groupset
+            permissions. It may be useful for sending notifications to a
+            mailing-list, for instance.
           </para>
         </listitem>
       </varlistentry>
@@ -310,6 +306,22 @@
         </listitem>
       </varlistentry>
 
+      <varlistentry>
+        <term>
+          sendmailnow
+        </term>
+        <listitem>
+          <para>
+            When Bugzilla is using Sendmail older than 8.12, turning this option
+            off will improve performance by not waiting for Sendmail to actually
+            send mail.  If Sendmail 8.12 or later is being used, there is 
+            nothing to gain by turning this off.  If another MTA is being used, 
+            such as Postfix, then this option *must* be turned on (even if you 
+            are using the fake sendmail executable that Postfix provides).
+          </para>
+        </listitem>
+      </varlistentry>
+
     </variablelist>
   </section>
 
@@ -327,9 +339,9 @@
 
       <tip>
         <para>If you wish to add more administrative users, add them to 
-        the "admin" group and, optionally, add edit the tweakparams, editusers,
+        the "admin" group and, optionally, edit the tweakparams, editusers,
         creategroups, editcomponents, and editkeywords groups to add the
-        entire admin group to those groups.
+        entire admin group to those groups (which is the case by default).
         </para>
       </tip>
     </section>
@@ -337,61 +349,87 @@
     <section id="manageusers">
       <title>Managing Other Users</title>
 
+      <section id="user-account-search">
+        <title>Searching for existing users</title>
+
+        <para>
+          If you have <quote>editusers</quote> privileges or if you are allowed
+          to grant privileges for some groups, the <quote>Users</quote> link
+          appears in the footer.
+        </para>
+
+        <para>
+          The first screen you get is a search form to search for existing user
+          accounts. You can run searches based either on the ID, real name or
+          login name (i.e. the email address in most cases) of users. You can
+          search in different ways the listbox to the right of the text entry
+          box. You can match by case-insensitive substring (the default),
+          regular expression, a <emphasis>reverse</emphasis> regular expression
+          match, which finds every user name which does NOT match the regular
+          expression, or the exact string if you know exactly who you are looking for.
+        </para>
+
+        <para>
+          You can also restrict your search to users being in some specific group.
+          By default, the restriction is turned off. Then you get a list of
+          users matching your criteria, and clicking their login name lets you
+          edit their properties.
+        </para>
+      </section>
+
       <section id="createnewusers">
         <title>Creating new users</title>
 
-        <para>Your users can create their own user accounts by clicking the
-        "New Account" link at the bottom of each page (assuming they
-        aren't logged in as someone else already.) However, should you
-        desire to create user accounts ahead of time, here is how you do
-        it.</para>
+        <section id="self-registration">
+          <title>Self-registration</title>
 
-        <orderedlist>
-          <listitem>
-            <para>After logging in, click the "Users" link at the footer of
-            the query page, and then click "Add a new user".</para>
-          </listitem>
+          <para>
+            By default, users can create their own user accounts by clicking the
+            <quote>New Account</quote> link at the bottom of each page (assuming
+            they aren't logged in as someone else already). If you want to disable
+            this self-registration, or if you want to restrict who can create his
+            own user account, you have to edit the <quote>createemailregexp</quote>
+            parameter in the <quote>Configuration</quote> page, see
+            <xref linkend="parameters" />.
+          </para>
+        </section>
 
-          <listitem>
-            <para>Fill out the form presented. This page is self-explanatory.
-            When done, click "Submit".</para>
+        <section id="user-account-creation">
+          <title>Accounts created by an administrator</title>
 
-            <note>
-              <para>Adding a user this way will 
-              <emphasis>not</emphasis>
+          <para>
+            Users with <quote>editusers</quote> privileges, such as administrators,
+            can create user accounts for other users:
+          </para>
 
-              send an email informing them of their username and password.
-              While useful for creating dummy accounts (watchers which
-              shuttle mail to another system, for instance, or email
-              addresses which are a mailing list), in general it is
-              preferable to log out and use the 
-              <quote>New Account</quote>
+          <orderedlist>
+            <listitem>
+              <para>After logging in, click the "Users" link at the footer of
+              the query page, and then click "Add a new user".</para>
+            </listitem>
 
-              button to create users, as it will pre-populate all the
-              required fields and also notify the user of her account name
-              and password.</para>
-            </note>
-          </listitem>
-        </orderedlist>
+            <listitem>
+              <para>Fill out the form presented. This page is self-explanatory.
+              When done, click "Submit".</para>
+
+              <note>
+                <para>Adding a user this way will <emphasis>not</emphasis>
+                send an email informing them of their username and password.
+                While useful for creating dummy accounts (watchers which
+                shuttle mail to another system, for instance, or email
+                addresses which are a mailing list), in general it is
+                preferable to log out and use the <quote>New Account</quote>
+                button to create users, as it will pre-populate all the
+                required fields and also notify the user of her account name
+                and password.</para>
+              </note>
+            </listitem>
+          </orderedlist>
+        </section>
       </section>
 
       <section id="modifyusers">
         <title>Modifying Users</title>
-
-        <para>To see a specific user, search for their login name
-        in the box provided on the "Edit Users" page. To see all users, 
-        leave the box blank.</para>
-
-        <para>You can search in different ways the listbox to the right
-        of the text entry box. You can match by 
-        case-insensitive substring (the default),
-        regular expression, or a 
-        <emphasis>reverse</emphasis>
-        regular expression match, which finds every user name which does NOT
-        match the regular expression. (Please see
-        the <command>man regexp</command>
-        manual page for details on regular expression syntax.)
-        </para>
 
         <para>Once you have found your user, you can change the following
         fields:</para>
@@ -401,9 +439,9 @@
             <para>
             <emphasis>Login Name</emphasis>: 
             This is generally the user's full email address. However, if you
-            have are using the emailsuffix Param, this may just be the user's
-            login name. Note that users can now change their login names
-            themselves (to any valid email address.)
+            have are using the <quote>emailsuffix</quote> parameter, this may
+            just be the user's login name. Note that users can now change their
+            login names themselves (to any valid email address).
             </para>
           </listitem>
 
@@ -424,6 +462,15 @@
 
           <listitem>
             <para>
+              <emphasis>Bugmail Disabled</emphasis>:
+              Mark this checkbox to disable bugmail and whinemail completely
+              for this account. This checkbox replaces the data/nomail file
+              which existed in older versions of Bugzilla.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
               <emphasis>Disable Text</emphasis>: 
               If you type anything in this box, including just a space, the
               user is prevented from logging in, or making any changes to 
@@ -437,8 +484,8 @@
               mail from Bugzilla; furthermore, they will not be able
               to log in themselves to change their own preferences and
               stop it. If you want an account (disabled or active) to
-              stop receiving mail, add the account name (one account
-              per line) to the file <filename>data/nomail</filename>.
+              stop receiving mail, simply check the
+              <quote>Bugmail Disabled</quote> checkbox above.
             </para>
             <note>
               <para>
@@ -528,15 +575,96 @@
           </listitem>
 
           <listitem>
-            <para>
-            <emphasis>&lt;productname&gt;</emphasis>: 
-            This allows an administrator to specify the products in which 
-            a user can see bugs. The user must still have the 
-            "editbugs" privilege to edit bugs in these products.</para>
+            <para> 
+            <emphasis>&lt;productname&gt;</emphasis>:
+            This allows an administrator to specify the products 
+            in which a user can see bugs. If you turn on the 
+            <quote>makeproductgroups</quote> parameter in
+            the Group Security Panel in the Parameters page, 
+            then Bugzilla creates one group per product (at the time you create 
+            the product), and this group has exactly the same name as the 
+            product itself. Note that for products that already exist when
+            the parameter is turned on, the corresponding group will not be
+            created. The user must still have the <quote>editbugs</quote> 
+            privilege to edit bugs in these products.</para>
           </listitem>
         </itemizedlist>
       </section>
+
+      <section id="user-account-deletion">
+        <title>Deleting Users</title>
+        <para>
+          If the <quote>allowuserdeletion</quote> parameter is turned on, see
+          <xref linkend="parameters" />, then you can also delete user accounts.
+          Note that this is most of the time not the best thing to do. If only
+          a warning in a yellow box is displayed, then the deletion is safe.
+          If a warning is also displayed in a red box, then you should NOT try
+          to delete the user account, else you will get referential integrity
+          problems in your database, which can lead to unexpected behavior,
+          such as bugs not appearing in bug lists anymore, or data displaying
+          incorrectly. You have been warned!
+        </para>
+      </section>
+
+      <section id="impersonatingusers">
+        <title>Impersonating Users</title>
+        
+        <para>
+        There may be times when an administrator would like to do something as
+        another user.  The <command>sudo</command> feature may be used to do 
+        this.
+        </para>
+        
+        <note>
+          <para>
+          To use the sudo feature, you must be in the
+          <emphasis>bz_sudoers</emphasis> group.  By default, all
+          administrators are in this group.</para>
+        </note>
+        
+        <para>
+        If you have access to this feature, you may start a session by
+        going to the Edit Users page, Searching for a user and clicking on 
+        their login.  You should see a link below their login name titled 
+        "Impersonate this user".  Click on the link.  This will take you 
+        to a page where you will see a description of the feature and 
+        instructions for using it.  After reading the text, simply 
+        enter the login of the user you would like to impersonate, provide 
+        a short message explaining why you are doing this, and press the 
+        button.</para>
+        
+        <para>
+        As long as you are using this feature, everything you do will be done 
+        as if you were logged in as the user you are impersonating.</para>
+        
+        <warning>
+          <para>
+          The user you are impersonating will not be told about what you are 
+          doing.  If you do anything that results in mail being sent, that 
+          mail will appear to be from the user you are impersonating.  You 
+          should be extremely careful while using this feature.</para>
+        </warning>
+      </section>
     </section>
+  </section>
+
+  <section id="classifications">
+    <title>Classifications</title>
+
+    <para>Classifications tend to be used in order to group several related
+    products into one distinct entity.</para>
+
+    <para>The classifications layer is disabled by default; it can be turned
+    on or off using the useclassification parameter,
+    in the <emphasis>Bug Fields</emphasis> section of the edit parameters screen.</para>
+
+    <para>Access to the administration of classifications is controlled using
+    the <emphasis>editclassifications</emphasis> system group, which defines
+    a privilege for creating, destroying, and editing classifications.</para>
+
+    <para>When activated, classifications will introduce an additional
+    step when filling bugs (dedicated to classification selection), and they
+    will also appear in the advanced search form.</para>
   </section>
 
   <section id="products">
@@ -545,43 +673,164 @@
     <para>
     <glossterm linkend="gloss-product" baseform="product">
     Products</glossterm>
-
-    are the broadest category in Bugzilla, and tend to represent real-world
+    tend to represent real-world
     shipping products. E.g. if your company makes computer games, 
-    you should have one product per game, perhaps a "Common" product for 
-    units of technology used in multiple games, and maybe a few special
-     products (Website, Administration...)</para>
+    you should have one product per game, perhaps a 
+    <quote>Common</quote> product for units of technology used 
+    in multiple games, and maybe a few special products 
+    (Website, Administration...)
+    </para>
 
-    <para>Many of Bugzilla's settings are configurable on a per-product
-    basis. The number of "votes" available to users is set per-product, 
-    as is the number of votes
-    required to move a bug automatically from the UNCONFIRMED status to the
-    NEW status.</para>
+    <para>
+    Many of Bugzilla's settings are configurable on a per-product
+    basis. The number of <quote>votes</quote> available to 
+    users is set per-product, as is the number of votes
+    required to move a bug automatically from the UNCONFIRMED 
+    status to the NEW status.
+    </para>
 
-    <para>To create a new product:</para>
+    <para>
+    To create a new product:
+    </para>
 
     <orderedlist>
       <listitem>
-        <para>Select "products" from the footer</para>
+        <para> 
+        Select <quote>products</quote> from the footer.
+        </para>
 
       </listitem>
 
       <listitem>
-        <para>Select the "Add" link in the bottom right</para>
+        <para>
+        Select the <quote>Add</quote> link in the bottom right.
+        </para>
       </listitem>
 
       <listitem>
-        <para>Enter the name of the product and a description. The
-        Description field may contain HTML.</para>
+        <para>
+        Enter the name of the product and a description. The
+        Description field may contain HTML.
+        </para>
       </listitem>
     </orderedlist>
 
-    <para>Don't worry about the "Closed for bug entry", "Maximum Votes
-    per person", "Maximum votes a person can put on a single bug",
-    "Number of votes a bug in this Product needs to automatically get out
-    of the UNCOMFIRMED state", and "Version" options yet. We'll cover
-    those in a few moments.
-    </para>
+
+<section>
+      <title>Assigning Group Controls to Products</title>
+      <para> 
+      On the <quote>Product Edit</quote> page, 
+      there is a link called 
+      <quote>Edit Group Access Controls</quote>. 
+      The settings on this page control the relationship 
+      of the groups to the product being edited.
+      </para> 
+      <para>
+      Groups may be applicable, default, and 
+      mandatory for each product. Groups can also control access 
+      to bugs for a given product, or be used to make bugs 
+      for a product totally read-only unless the group 
+      restrictions are met.
+      </para>
+      <para>
+      If any group has <emphasis>Entry</emphasis> selected, then the 
+      product will restrict bug entry to only those users 
+      who are members of all the groups with 
+      <emphasis>Entry</emphasis> selected.
+      </para>
+      <para>
+      If any group has <emphasis>Canedit</emphasis> selected, 
+      then the product will be read-only for any users 
+      who are not members of all of the groups with
+      <emphasis>Canedit</emphasis> selected. ONLY users who 
+      are members of all the <emphasis>Canedit</emphasis> groups 
+      will be able to edit. This is an 
+      additional restriction that further limits 
+      what can be edited by a user.
+      </para>
+      <para>
+      The following settings let you 
+      choose privileges on a <emphasis>per-product basis</emphasis>.
+      This is a convenient way to give privileges to 
+      some users for some products only, without having 
+      to give them global privileges which would affect 
+      all products.
+      </para>
+      <para>
+      Any group having <emphasis>editcomponents</emphasis> 
+      selected  allows users who are in this group to edit all 
+      aspects of this product, including components, milestones 
+      and versions.
+      </para>
+      <para>
+      Any group having <emphasis>canconfirm</emphasis> selected 
+      allows users who are in this group to confirm bugs 
+      in this product.
+      </para>
+      <para>
+      Any group having <emphasis>editbugs</emphasis> selected allows 
+      users who are in this group to edit all fields of 
+      bugs in this product.
+      </para>
+      <para>
+      The <emphasis>MemberControl</emphasis> and 
+      <emphasis>OtherControl</emphasis> fields indicate which 
+      bugs will be placed in this group according 
+      to the following definitions.
+      </para>
+      <para>
+      For each group, it is possible to specify if 
+      membership in that group is:
+      </para>
+      <orderedlist>
+        <listitem>
+          <para>
+          Required for bug entry. 
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Not applicable to this product(NA),
+          a possible restriction for a member of the 
+          group to place on a bug in this product(Shown),
+          a default restriction for a member of the 
+          group to place on a bug in this product(Default),
+          or a mandatory restriction to be placed on bugs 
+          in this product(Mandatory).
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Not applicable by non-members to this product(NA),
+          a possible restriction for a non-member of the 
+          group to place on a bug in this product(Shown),
+          a default restriction for a non-member of the 
+          group to place on a bug in this product(Default),
+          or a mandatory restriction to be placed on bugs 
+          in this product when entered by a non-member(Mandatory).
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          Required in order to make <emphasis>any</emphasis> change
+          to bugs in this product <emphasis>including comments.</emphasis>
+          </para>
+        </listitem>
+      </orderedlist>
+      <para>These controls are often described in this order, so a 
+      product that requires a user to be a member of group "foo" 
+      to enter a bug and then requires that the bug stay restricted
+      to group "foo" at all times and that only members of group "foo"
+      can edit the bug even if they otherwise could see the bug would 
+      have its controls summarized by...</para>
+      <programlisting> 
+foo: ENTRY, MANDATORY/MANDATORY, CANEDIT
+      </programlisting>
+      
+    </section>
+
+
+
   </section>
 
   <section id="components">
@@ -609,22 +858,24 @@
 
     <para>To create a new Component:</para>
 
-    <orderedlist>
+   <orderedlist>
       <listitem>
-        <para>Select the "Edit components" link from the "Edit product"
-        page</para>
+        <para>Select the <quote>Edit components</quote> link 
+        from the <quote>Edit product</quote> page</para>
       </listitem>
 
       <listitem>
-        <para>Select the "Add" link in the bottom right.</para>
+        <para>Select the <quote>Add</quote> link in the bottom right.</para>
       </listitem>
 
       <listitem>
-        <para>Fill out the "Component" field, a short "Description", 
-        the "Default Assignee" and "Default QA Contact" (if enabled.) 
-        The Component and Description fields may contain HTML; 
-        the "Default Assignee" field must be a login name
-        already existing in the database. 
+        <para>Fill out the <quote>Component</quote> field, a 
+        short <quote>Description</quote>, the 
+        <quote>Default Assignee</quote>, <quote>Default CC List</quote> 
+        and <quote>Default QA Contact</quote> (if enabled). 
+        The <quote>Component Description</quote> field may contain a 
+        limited subset of HTML tags. The <quote>Default Assignee</quote> 
+        field must be a login name already existing in the Bugzilla database. 
         </para>
       </listitem>
     </orderedlist>
@@ -809,15 +1060,15 @@
    <section id="flag-askto">
      <title>Using flag requests</title>
      <para>
-       If a flag has been defined as 'requestable', 
-       users are allowed to set the flag's status to <quote>?</quote>.
-       This status indicates that someone (aka <quote>the requester</quote> is asking
-       for someone else to set the flag to either <quote>+</quote> or <quote>-</quote>.
+       If a flag has been defined as 'requestable', and a user has enough privileges
+       to request it (see below), the user can set the flag's status to <quote>?</quote>.
+       This status indicates that someone (a.k.a. <quote>the requester</quote>) is asking
+       someone else to set the flag to either <quote>+</quote> or <quote>-</quote>.
      </para>
      <para>
        If a flag has been defined as 'specifically requestable', 
        a text box will appear next to the flag into which the requester may
-       enter a Bugzilla username. That named person (aka <quote>the requestee</quote>)
+       enter a Bugzilla username. That named person (a.k.a. <quote>the requestee</quote>)
        will receive an email notifying them of the request, and pointing them
        to the bug/attachment in question.
      </para>
@@ -855,8 +1106,7 @@
        </para>
 
        <para>
-         For a Bugzilla user, attachment flags show up in two 
-         places:
+         For a Bugzilla user, attachment flags show up in three places:
          <orderedlist>
            <listitem>
              <para>
@@ -875,6 +1125,14 @@
               screen is where you set flags to ?, -, +, or unset them.
              </para>
            </listitem>
+           <listitem>
+             <para>
+               Requests are listed in the <quote>Request Queue</quote>, which
+               is accessible from the <quote>My Requests</quote> link (if you are
+               logged in) or <quote>Requests</quote> link (if you are logged out)
+               visible in the footer of all pages.
+             </para>
+           </listitem>
          </orderedlist>
        </para>
 
@@ -885,14 +1143,13 @@
 
        <para>
          Bug flags are used to set a status on the bug itself. You can 
-         see Bug Flags in the <quote>Show Bug</quote> screen 
-         (<filename>editbug.cgi</filename>).
+         see Bug Flags in the <quote>Show Bug</quote> and <quote>Requests</quote>
+         screens, as described above.
        </para>
        <para>
-         Only users with the ability to edit the bug may 
-         set flags on bugs. This includes the assignee, reporter, and 
-         any user with the <computeroutput>editbugs</computeroutput> 
-         permission.
+         Only users with enough privileges (see below) may set flags on bugs.
+         This doesn't necessarily include the assignee, reporter, or users with the
+         <computeroutput>editbugs</computeroutput> permission.
        </para>
      </section>
 
@@ -927,17 +1184,18 @@
           <para>
             This is the name of the flag. This will be displayed 
             to Bugzilla users who are looking at or setting the flag. 
-            The name may consist of any valid Unicode character. 
+            The name may contain any valid Unicode characters except commas
+            and spaces.
           </para>
         </section>
 
         <section id="flags-create-field-description">
           <title>Description</title>
           <para>
-            This describes the flag in more detail. At present, this doesn't
-            show up anywhere helpful; ideally, it would be nice to have
-            it show up as a tooltip. This field 
-            can be as long as you like, and can contain any character you want.
+            The description describes the flag in more detail. It is visible
+            in a tooltip when hovering over a flag either in the <quote>Show Bug</quote>
+            or <quote>Edit Attachment</quote> pages. This field can be as
+            long as you like, and can contain any character you want.
           </para>
         </section>
 
@@ -983,9 +1241,9 @@
 
           <para>
             You may select a Product without selecting a specific Component,
-            but it is illegal to select a Component without a Product, or to select a
-            Component that does not belong to the named Product. Doing so as of
-            this writing (2.18rc3) will raise an error... even if all your products
+            but you can't select a Component without a Product, or to select a
+            Component that does not belong to the named Product. If you do so,
+            Bugzilla will display an error message, even if all your products
             have a component by that name.
           </para>
 
@@ -1041,16 +1299,6 @@
           </para>
         </section>
 
-        <section id="flags-create-field-cclist">
-          <title>CC List</title>
-
-          <para>
-            If you want certain users to be notified every time this flag is 
-            set to ?, -, +, or unset, add them here. This is a comma-separated 
-            list of email addresses that need not be restricted to Bugzilla usernames..
-          </para>
-        </section>
-
         <section id="flags-create-field-specific">
           <title>Specifically Requestable</title>
           <para>
@@ -1074,6 +1322,38 @@
           </para>
         </section>
 
+	<section id="flags-create-field-cclist">
+          <title>CC List</title>
+
+          <para>
+            If you want certain users to be notified every time this flag is 
+            set to ?, -, +, or unset, add them here. This is a comma-separated 
+            list of email addresses that need not be restricted to Bugzilla usernames.
+          </para>
+        </section>
+
+        <section id="flags-create-grant-group">
+          <title>Grant Group</title>
+          <para>
+            When this field is set to some given group, only users in the group
+            can set the flag to <quote>+</quote> and <quote>-</quote>. This
+            field does not affect who can request or cancel the flag. For that,
+            see the <quote>Request Group</quote> field below. If this field
+            is left blank, all users can set or delete this flag. This field is
+            useful for restricting which users can approve or reject requests.
+          </para>
+        </section>
+
+        <section id="flags-create-request-group">
+          <title>Request Group</title>
+          <para>
+            When this field is set to some given group, only users in the group
+            can request or cancel this flag. Note that this field has no effect
+            if the <quote>grant group</quote> field is empty. You can set the
+            value of this field to a different group, but both fields have to be
+            set to a group for this field to have an effect.
+          </para>
+        </section>
       </section> <!-- flags-create -->
 
       <section id="flags-delete">
@@ -1114,7 +1394,176 @@
     <!-- XXX We should add a "Uses of Flags" section, here, with examples. -->
 
   </section> <!-- flags -->
-   
+
+  <section id="custom-fields">
+    <title>Custom Fields</title>
+
+    <para>
+      One of the most requested features was the ability to add your own custom
+      fields to bugs, based on your needs. With the release of Bugzilla 3.0, this
+      dream finally comes true. Administrators can manage these fields using the
+      <quote>Custom Fields</quote> link in the footer of pages. The first thing
+      they will see is the list of existing custom fields (which is empty by default).
+    </para>
+
+    <section id="add-custom-fields">
+      <title>Adding Custom Fields</title>
+
+      <para>
+        The <quote>Add a new custom field</quote> link permits you to add a
+        new field which can be either a free text box or a drop down menu.
+        More field types will be available in future releases.
+      </para>
+
+      <para>
+        The following attributes must be set for each new custom field:
+        <itemizedlist>
+          <listitem>
+            <para>
+              <emphasis>Name:</emphasis>
+              the name of the field, used internally. This name MUST begin
+              with <quote>cf_</quote>. If you omit this string, it will
+              be automatically added to the name you entered. This way, all
+              custom fields added to Bugzilla begin with <quote>cf_</quote>,
+              avoiding any conflict with default fields.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Description:</emphasis>
+              the string which is used as a label for this custom field.
+              That is the string that users will see, and so should be
+              short and explicit.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Type:</emphasis>
+              as mentioned above, only two types are implemented so far.
+              Free text boxes let you type any string, while drop down menus
+              only let you choose one value in the list provided. The list of
+              legal values for this field can be created and edited as soon as
+              this custom field is added to the DB. See
+              <xref linkend="edit-values-list" /> for information about editing
+              legal values.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Sortkey:</emphasis>
+              this integer determines in which order custom fields are
+              displayed in the UI, especially when viewing a bug. Fields
+              with lower values are displayed first.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Can be set on bug creation:</emphasis>
+              this boolean determines whether this field can be set on
+              bug creation or not. If not, then you have to create the
+              bug first before being able to set this field. Else you
+              can set its value at the same time you file a bug,
+              see <xref linkend="bugreports" /> about filing bugs.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Displayed in bugmail for new bugs:</emphasis>
+              this boolean determines whether the value set on this field
+              should appear in bugmail when the bug is filed. This attribute
+              has no effect if the field cannot be set on bug creation.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis>Is obsolete:</emphasis>
+              this boolean determines whether or not this field should
+              be displayed at all. Obsolete custom fields are hidden.
+            </para>
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
+    <section id="edit-custom-fields">
+      <title>Editing Custom Fields</title>
+
+      <para>
+        As soon as a custom field is created, its name and type cannot be
+        changed. If this field is a drop down menu, its legal values can
+        be set as described in <xref linkend="edit-values-list" />. All
+        other attributes can be edited as described above.
+      </para>
+    </section>
+
+    <section id="delete-custom-fields">
+      <title>Deleting Custom Fields</title>
+
+      <para>
+        At this point, it is not possible to delete custom fields from
+        your web browser. If you don't want to make one available anymore,
+        mark it as obsolete. This way, you will preserve your DB
+        referential integrity.
+      </para>
+    </section>
+  </section>
+
+  <section id="edit-values">
+    <title>Legal Values</title>
+
+    <para>
+      Since Bugzilla 2.20 RC1, legal values for Operating Systems, platforms,
+      bug priorities and severities can be edited from the User Interface
+      directly. This means that it is no longer required to manually edit
+      <filename>localconfig</filename>. Starting with Bugzilla 2.23.3, you
+      can also customize the list of valid resolutions from the same interface.
+    </para>
+
+    <section id="edit-values-list">
+      <title>Viewing/Editing legal values</title>
+      <para>
+        Editing legal values requires <quote>admin</quote> privileges.
+        A link named <quote>Field Values</quote> is visible in your footer and
+        clicking on it displays the list of fields whose values can be edited.
+      </para>
+      <para>
+	You can add as many legal values as you want, and each value must be
+	unique (on a per field basis). The sortkey is important to display these
+	values in the desired order.
+      </para>
+    </section>
+
+    <section id="edit-values-delete">
+      <title>Deleting legal values</title>
+      <para>
+        You can also delete legal values, but only if the two following conditions
+	are respected:
+      </para>
+
+      <orderedlist>
+        <listitem>
+	  <para>The value is not used by default for the field.</para>
+	</listitem>
+
+	<listitem>
+	  <para>No bug is currently using this value.</para>
+        </listitem>
+      </orderedlist>
+
+      <para>
+        If any of these conditions is not respected, the value cannot be deleted.
+	The only way to delete these values is to reassign bugs to another value
+	and to set another value as default for the field.
+      </para>
+    </section>
+  </section>
+
   <section id="voting">
     <title>Voting</title>
 
@@ -1317,70 +1766,14 @@
         </listitem>
       </orderedlist>
     </section>
-    
     <section>
-      <title>Assigning Group Controls to Products</title>
-      <para>
-      On the product edit page, there is a page to edit the 
-      <quote>Group Controls</quote> 
-      for a product. This  allows you to 
-      configure how a group relates to the product. 
-      Groups may be applicable, default, 
-      and mandatory as well as used to control entry 
-      or used to make bugs in the product
-      totally read-only unless the group restrictions are met. 
-      </para>
-      
-      <para>
-      For each group, it is possible to specify if membership in that
-      group is...
-      </para>
-      <orderedlist>
-        <listitem>
-          <para>
-          required for bug entry, 
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-          Not applicable to this product(NA),
-          a possible restriction for a member of the 
-          group to place on a bug in this product(Shown),
-          a default restriction for a member of the 
-          group to place on a bug in this product(Default),
-          or a mandatory restriction to be placed on bugs 
-          in this product(Mandatory).
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-          Not applicable by non-members to this product(NA),
-          a possible restriction for a non-member of the 
-          group to place on a bug in this product(Shown),
-          a default restriction for a non-member of the 
-          group to place on a bug in this product(Default),
-          or a mandatory restriction to be placed on bugs 
-          in this product when entered by a non-member(Mandatory).
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-          required in order to make <emphasis>any</emphasis> change
-          to bugs in this product <emphasis>including comments.</emphasis>
-          </para>
-        </listitem>
-      </orderedlist>
-      <para>These controls are often described in this order, so a 
-      product that requires a user to be a member of group "foo" 
-      to enter a bug and then requires that the bug stay restricted
-      to group "foo" at all times and that only members of group "foo"
-      can edit the bug even if they otherwise could see the bug would 
-      have its controls summarized by...</para>
-      <programlisting> 
-foo: ENTRY, MANDATORY/MANDATORY, CANEDIT
-      </programlisting>
-      
+     <title>Assigning Group Controls to Products</title>
+     <para>
+     For information on assigning group controls to
+     products, see <xref linkend="products" />.
+     </para>
     </section>
+    
     <section>
     <title>Common Applications of Group Controls</title>
       <section>
@@ -1477,22 +1870,21 @@ Support: ENTRY, DEFAULT/MANDATORY, CANEDIT
       <title>Version Definitions</title>
 
       <para>
-        Bugzilla displays the version you are using at the top of most
-        pages you load. It will look something like '2.16.7' or '2.18rc3'
-        or '2.19.1+'. The first number in this series is the Major Version.
-        This does not change very often (that is to say, almost never);
+        Bugzilla displays the version you are using at the top of the home
+        page <filename>index.cgi</filename>. It looks something like
+        '2.20.3', '2.22.1' or '3.0rc1'. The first number in this series is
+        the Major Version. This does not change very often;
         Bugzilla was 1.x.x when it was first created, and went to 2.x.x
-        when it was re-written in perl in Sept 1998. If/When the major version
-        is changed to 3.x.x, it will signify a significant structural change
-        and will be accompanied by much fanfare and many instructions on
-        how to upgrade, including a revision to this page. :)
+        when it was re-written in perl in Sept 1998. The major version
+        3.x.x, released in early 2007, is pretty far from what the 2.x.x
+        series looked like, both about its UI and its code.
       </para>
 
       <para>
         The second number in the version is called the 'minor number', and
         a release that changes the minor number is called a 'point release'.
-        An even number in this position (2.14, 2.16, 2.18, 2.20, etc.)
-        represents a stable version, while an odd number (2.17, 2.19, etc.)
+        An even number in this position (2.18, 2.20, 2.22, 3.0, 3.2, etc.)
+        represents a stable version, while an odd number (2.19, 2.21, 2.23, etc.)
         represents a development version. In the past, stable point releases
         were feature-based, coming when certain enhancements had been
         completed, or the Bugzilla development team felt that enough
@@ -1504,25 +1896,41 @@ Support: ENTRY, DEFAULT/MANDATORY, CANEDIT
 
       <para>
         The third number in the Bugzilla version represents a bugfix version.
-        Bugfix Revisions are normally released only to address security
-        vulnerabilities; in the future, it is likely that the Bugzilla
-        development team will back-port bugfixes in a new point release to
-        the old point release for a limited period. Once enough of these
+        Bugfix Revisions are released only to address security vulnerabilities
+        and, for a limited period, bug fixes. Once enough of these
         bugfixes have accumulated (or a new security vulnerability is
-        identified and closed), a bugfix release will be made. As an 
-        example, 2.16.6 was a bugfix release, and improved on 2.16.5.
+        identified and closed), a bugfix release is made. As an
+        example, 2.20.3 was a bugfix release, and improved on 2.20.2.
       </para>
 
       <note>
         <para>
           When reading version numbers, everything separated by a point ('.')
           should be read as a single number. It is <emphasis>not</emphasis>
-          the same as decimal. 2.14 is newer than 2.8 because minor version
-          14 is greater than minor version 8. 2.24.11 would be newer than
-          2.24.9 (because bugfix 11 is greater than bugfix 9. This is
+          the same as decimal. 2.22 is newer than 2.8 because minor version
+          22 is greater than minor version 8. The now unsupported release 2.16.11
+          was newer than 2.16.9 (because bugfix 11 is greater than bugfix 9. This is
           confusing to some people who aren't used to dealing with software.
         </para>
       </note>
+    </section>
+
+    <section id="upgrading-notifications">
+      <title>Upgrading - Notifications</title>
+
+      <para>
+        Bugzilla 3.0 introduces the ability to automatically notify
+        administrators when new releases are available, based on the
+        <literal>upgrade_notification</literal> parameter, see
+        <xref linkend="parameters"/>. Administrators will see these
+        notifications when they access the <filename>index.cgi</filename>
+        page, i.e. generally when logging in. Bugzilla will check once per
+        day for new releases, unless the parameter is set to
+        <quote>disabled</quote>. If you are behind a proxy, you may have to set
+        the <literal>proxy_url</literal> parameter accordingly. If the proxy
+        requires authentication, use the
+        <literal>http://user:pass@proxy_url/</literal> syntax.
+      </para>
     </section>
 
     <section id="upgrading-methods">
@@ -1561,8 +1969,8 @@ Support: ENTRY, DEFAULT/MANDATORY, CANEDIT
       <para>
         The larger the jump you are trying to make, the more difficult it
         is going to be to upgrade if you have made local customizations.
-        Upgrading from 2.18 to 2.18.1 should be fairly painless even if
-        you are heavily customized, but going from 2.14 to 2.18 is going
+        Upgrading from 2.22 to 2.22.1 should be fairly painless even if
+        you are heavily customized, but going from 2.18 to 3.0 is going
         to mean a fair bit of work re-writing your local changes to use
         the new files, logic, templates, etc. If you have done no local
         changes at all, however, then upgrading should be approximately
@@ -1581,7 +1989,7 @@ Support: ENTRY, DEFAULT/MANDATORY, CANEDIT
 
       <para>
         The examples in the following sections are written as though the
-        user were updating to version 2.18.1, but the procedures are the
+        user were updating to version 2.22.1, but the procedures are the
         same regardless of whether one is updating to a new point release
         or simply trying to obtain a new bugfix release. Also, in the
         examples the user's Bugzilla installation is found at
@@ -1620,10 +2028,9 @@ bash$ <command>cd /var/www/html/bugzilla</command>
 bash$ <command>cvs login</command>
 Logging in to :pserver:anonymous@cvs-mirror.mozilla.org:2401/cvsroot
 CVS password: <emphasis>('anonymous', or just leave it blank)</emphasis>
-bash$ <command>cvs -q update -r BUGZILLA-2_18_1 -dP</command>
+bash$ <command>cvs -q update -r BUGZILLA-2_22_1 -dP</command>
 P checksetup.pl
 P collectstats.pl
-P globals.pl
 P docs/rel_notes.txt
 P template/en/default/list/quips.html.tmpl
 <emphasis>(etc.)</emphasis>
@@ -1661,19 +2068,18 @@ P template/en/default/list/quips.html.tmpl
 
         <programlisting>
 bash$ <command>cd /var/www/html</command>
-bash$ <command>wget ftp://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-2.18.1.tar.gz</command>
+bash$ <command>wget http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-2.22.1.tar.gz</command>
 <emphasis>(Output omitted)</emphasis>
-bash$ <command>tar xzvf bugzilla-2.18.1.tar.gz</command>
-bugzilla-2.18.1/
-bugzilla-2.18.1/.cvsignore
-bugzilla-2.18.1/1x1.gif
+bash$ <command>tar xzvf bugzilla-2.22.1.tar.gz</command>
+bugzilla-2.22.1/
+bugzilla-2.22.1/.cvsignore
 <emphasis>(Output truncated)</emphasis>
-bash$ <command>cd bugzilla-2.18.1</command>
+bash$ <command>cd bugzilla-2.22.1</command>
 bash$ <command>cp ../bugzilla/localconfig* .</command>
 bash$ <command>cp -r ../bugzilla/data .</command>
 bash$ <command>cd ..</command>
 bash$ <command>mv bugzilla bugzilla.old</command>
-bash$ <command>mv bugzilla-2.18.1 bugzilla</command>
+bash$ <command>mv bugzilla-2.22.1 bugzilla</command>
         </programlisting>
 
         <warning>
@@ -1703,7 +2109,7 @@ bash$ <command>mv bugzilla-2.18.1 bugzilla</command>
 
         <para>
           If you are doing a bugfix upgrade -- that is, one where only the 
-          last number of the revision changes, such as from 2.16.6 to 2.16.7
+          last number of the revision changes, such as from 2.22 to 2.22.1
           -- then you have the option of obtaining and applying a patch file
           from the <ulink
           url="http://www.bugzilla.org/download/">Download Page</ulink>.
@@ -1725,13 +2131,12 @@ bash$ <command>mv bugzilla-2.18.1 bugzilla</command>
 
         <programlisting>
 bash$ <command>cd /var/www/html/bugzilla</command>
-bash$ <command>wget ftp://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-2.18.0-to-2.18.1.diff.gz</command>
+bash$ <command>wget http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-2.22-to-2.22.1.diff.gz</command>
 <emphasis>(Output omitted)</emphasis>
-bash$ <command>gunzip bugzilla-2.18.0-to-2.18.1.diff.gz</command>
-bash$ <command>patch -p1 &lt; bugzilla-2.18.0-to-2.18.1.diff</command>
+bash$ <command>gunzip bugzilla-2.22-to-2.22.1.diff.gz</command>
+bash$ <command>patch -p1 &lt; bugzilla-2.22-to-2.22.1.diff</command>
 patching file checksetup.pl
 patching file collectstats.pl
-patching file globals.pl
 <emphasis>(etc.)</emphasis>
         </programlisting>
 

@@ -31,7 +31,7 @@
 
 [% PROCESS global/header.html.tmpl
            title = "$terms.Bugzilla Quip System"
-           h1 = "Add your own clever headline"
+           header = "Add your own clever headline"
  %]
 
 [% IF added_quip %]
@@ -76,7 +76,7 @@
     <input type="hidden" name="action" value="add">
     <input size="80" name="quip">
     <p>
-      <input type="submit" value="Add This Quip">
+      <input type="submit" id="add" value="Add This Quip">
     </p>
   </form>
 [% ELSE %]
@@ -85,7 +85,7 @@
 [% END %]
 
 [% IF show_quips %]
-  [% IF !UserInGroup('admin') %]
+  [% IF !user.in_group('admin') %]
     <h2>
       Existing quips:
     </h2>
@@ -120,13 +120,13 @@
               [% "Unknown" IF NOT users.$userid %]
             </td>
             <td>
-              <a href="quips.cgi?action=delete&amp;quipid=[% quipid FILTER uri%]">
+              <a href="quips.cgi?action=delete&amp;quipid=[% quipid FILTER url_quote %]">
                 Delete
               </a>
             </td>
             <td>
-              <input type="checkbox" name="quipid_[% quipid FILTER uri%]"
-                     id="quipid_[% quipid FILTER uri%]"
+              <input type="checkbox" name="quipid_[% quipid FILTER html %]"
+                     id="quipid_[% quipid FILTER html %]"
                      [%- ' checked="checked"' IF quips.$quipid.approved %]>
             </td>
           </tr>
@@ -148,7 +148,7 @@
                       +'value="Check All" onclick="SetCheckboxes(true);">');
         //--></script>
 
-      <input type="submit" value="Update">
+      <input type="submit" id="update" value="Update">
     </form>
     <br>
   [% END %]
@@ -156,7 +156,7 @@
   <p>
     Those who like their wisdom in large doses can
     <a href="quips.cgi?action=show">view
-    [% IF UserInGroup('admin') %]
+    [% IF user.in_group('admin') %]
       and edit
     [% END %]
     the whole quip list</a>.

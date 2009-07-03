@@ -16,30 +16,28 @@
 
 [% USE date %]
 
-[% PROCESS global/variables.none.tmpl %]
+[% PROCESS "global/field-descs.none.tmpl" %]
 
 [% title = "Time Summary " %]
 [% IF do_depends %]
     [% title = title _ "for " %]
-    [% h1 = title _  GetBugLink(ids.0, "$terms.Bug $ids.0") %]
+    [% header = title _ "$terms.Bug $ids.0" FILTER bug_link(ids.0) FILTER none %]
     [% title = title _ "$terms.Bug $ids.0: " %]
-    [% h1 = (h1 _ " (and $terms.bugs blocking it)") IF do_depends %]
+    [% header = (header _ " (and $terms.bugs blocking it)") IF do_depends %]
 [% ELSE %]
-    [% title = title _ "($ids.size $terms.bugs selected)" %]    
-    [% h1 = title %]
+    [% title = title _ "($ids.size $terms.bugs selected)" %]
+    [% header = title %]
 [% END %]
 
 [% PROCESS global/header.html.tmpl 
     title = title 
-    h1 = h1 
+    header = header 
     style_urls = ["skins/standard/summarize-time.css"]
     %]
 
-<p>
-
 [% IF ids.size == 0 %]
 
-    No [% terms.bugs %] specified or visible.
+    <p>No [% terms.bugs %] specified or visible.</p>
 
 [% ELSE %]
 
@@ -49,7 +47,6 @@
 
         [% global.grand_total = 0 %]
 
-        <p>
         [% FOREACH workdata = part_list %]
             [% part = parts.shift %]
             <div align="right">
@@ -66,7 +63,6 @@
             [% ELSE %]
                 [% INCLUDE owner_report %]
             [% END %]
-            <p>
         [% END %]
 
         [% IF monthly %]
@@ -76,15 +72,13 @@
 
         [% IF null.keys.size > 0 %] 
             [% INCLUDE inactive_report %]
-            <p>
-            <h4 style="margin: 0">Total of [% null.keys.size %] 
+            <h4 style="margin: 0">Total of [% null.keys.size %]
                 inactive [% terms.bugs %]</h4>
         [% END %]
 
     [% END %]
 
 [% END %]
-<p>
 
 [% PROCESS global/footer.html.tmpl %]
 
@@ -199,7 +193,7 @@
     <tr class="bug_header[% '2' IF cid % 2 %]">
         <td width="10" valign="top">
         [% INCLUDE buglink id=id %]</td>
-        <td width="10"><b>[% bug_status FILTER html %]</b></td>
+        <td width="10"><b>[% status_descs.${bug_status} FILTER html %]</b></td>
         <td colspan="2">[% short_desc FILTER html %]</td>
         [% extra FILTER none %]
     </tr>
@@ -258,8 +252,8 @@
 <table>
 <tr>
 <td align="right">
-  <b>Period <label accesskey="s" 
-             for="start_date"><u>s</u>tarting</label></b>: 
+  <b><label accesskey="s" 
+             for="start_date">Period <u>s</u>tarting</label></b>: 
 </td><td colspan="3">
   <input type="text" id="start_date" name="start_date" size="11"
   align="right" value="[% start_date FILTER html %]" maxlength="10">
@@ -268,7 +262,7 @@
   <input type="text" name="end_date" size="11" id="end_date"
   align="right" value ="[% end_date FILTER html %]" maxlength="10">
 </td><td align="right">
-  <input type="submit" value="Summarize">
+  <input type="submit" id="summarize" value="Summarize">
 </td></tr>
 <tr>
 <td>&nbsp;</td><td colspan="4">
@@ -286,26 +280,24 @@
   %]><label 
   for="owner" accesskey="d"><u>D</u>eveloper</label>
 </td><td colspan="2">
-  <b>Format</b>: <select name="ctype">
+  <label for="ctype"><b>Format</b></label>: <select name="ctype" id="ctype">
     <option value="html">HTML Report</option>
   </select>
 </td></tr><tr>
 <td>&nbsp;</td><td colspan="4">
-  <label for="monthly" accesskey="m">
   <input type="checkbox" name="monthly" [% 'checked="checked"' IF
       monthly %] id="monthly">
-  Split by <u>m</u>onth</label>
+  <label for="monthly" accesskey="m">Split by <u>m</u>onth</label>
   [%# XXX: allow splitting by other intervals %]
   &nbsp;
-  <label for="detailed" accesskey="t">
   <input type="checkbox" name="detailed" [% 'checked="checked"' IF
       detailed %] id="detailed">
-  De<u>t</u>ailed summaries</label>
+  <label for="detailed" accesskey="t">De<u>t</u>ailed summaries</label>
   &nbsp;
-  <label for="inactive" accesskey="i">
   <input type="checkbox" name="inactive" [% 'checked="checked"' IF
       inactive %] id="inactive">
-  Also show <u>i</u>nactive [% terms.bugs %]</label>
+  <label for="inactive" accesskey="i">Also show <u>i</u>nactive
+  [%+ terms.bugs %]</label>
 </td>
 </tr></table>
 

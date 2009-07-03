@@ -78,7 +78,7 @@ var queryform = "reportform"
         Individually<br>
         <input type="radio" name="cumulate" value="1"
         [% " checked" IF default.cumulate.0 == "1" %]>
-        Summed
+        Stacked
     </td>
     <td width="150" height="150">
       <table border="1" width="100%" height="100%">
@@ -129,7 +129,8 @@ var queryform = "reportform"
 [% PROCESS search/form.html.tmpl %]
 
 <br>
-<input type="submit" value="[% button_name FILTER html %]">
+<input type="submit" id="[% button_name FILTER html %]"
+       value="[% button_name FILTER html %]">
 <input type="hidden" name="action" value="wrap">
 <hr>
 

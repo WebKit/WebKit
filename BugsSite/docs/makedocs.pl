@@ -20,39 +20,106 @@
 #
 # Contributor(s): Matthew Tuck <matty@chariot.net.au>
 #                 Jacob Steenhagen <jake@bugzilla.org>
+#                 Colin Ogilvie <colin.ogilvie@gmail.com>
+#                 Max Kanat-Alexander <mkanat@bugzilla.org>
 
 # This script compiles all the documentation.
 
-use diagnostics;
 use strict;
 
-use File::Basename;
+# We need to be in this directory to use our libraries.
+BEGIN {
+    require File::Basename;
+    import File::Basename qw(dirname);
+    chdir dirname($0);
+}
+
+use lib qw(.. lib);
+
+# We only compile our POD if Pod::Simple is installed. We do the checks
+# this way so that if there's a compile error in Pod::Simple::HTML::Bugzilla,
+# makedocs doesn't just silently fail, but instead actually tells us there's
+# a compile error.
+my $pod_simple;
+if (eval { require Pod::Simple }) {
+    require Pod::Simple::HTMLBatch::Bugzilla;
+    require Pod::Simple::HTML::Bugzilla;
+    $pod_simple = 1;
+};
+
+use Bugzilla::Install::Requirements 
+    qw(REQUIRED_MODULES OPTIONAL_MODULES);
+use Bugzilla::Constants qw(DB_MODULE BUGZILLA_VERSION);
+
+###############################################################################
+# Generate minimum version list
+###############################################################################
+
+my $modules = REQUIRED_MODULES;
+my $opt_modules = OPTIONAL_MODULES;
+
+open(ENTITIES, '>', 'xml/bugzilla.ent') or die('Could not open xml/bugzilla.ent: ' . $!);
+print ENTITIES '<?xml version="1.0"?>' ."\n\n";
+print ENTITIES '<!-- Module Versions -->' . "\n";
+foreach my $module (@$modules, @$opt_modules)
+{
+    my $name = $module->{'module'};
+    $name =~ s/::/-/g;
+    $name = lc($name);
+    #This needs to be a string comparison, due to the modules having
+    #version numbers like 0.9.4
+    my $version = $module->{'version'} eq 0 ? 'any' : $module->{'version'};
+    print ENTITIES '<!ENTITY min-' . $name . '-ver "'.$version.'">' . "\n";
+}
+
+# CGI is a special case, because it has an optional version *and* a required
+# version.
+my ($cgi_opt) = grep($_->{package} eq 'CGI', @$opt_modules);
+print ENTITIES '<!ENTITY min-mp-cgi-ver "' . $cgi_opt->{version} . '">' . "\n";
+
+print ENTITIES "\n <!-- Database Versions --> \n";
+
+my $db_modules = DB_MODULE;
+foreach my $db (keys %$db_modules) {
+    my $dbd  = $db_modules->{$db}->{dbd};
+    my $name = $dbd->{package};
+    $name = lc($name);
+    my $version    = $dbd->{version} || 'any';
+    my $db_version = $db_modules->{$db}->{'db_version'};
+    print ENTITIES '<!ENTITY min-' . $name . '-ver "'.$version.'">' . "\n";
+    print ENTITIES '<!ENTITY min-' . lc($db) . '-ver "'.$db_version.'">' . "\n";
+}
+close(ENTITIES);
 
 ###############################################################################
 # Environment Variable Checking
 ###############################################################################
 
-my ($JADE_PUB, $LDP_HOME);
-
+my ($JADE_PUB, $LDP_HOME, $build_docs);
+$build_docs = 1;
 if (defined $ENV{JADE_PUB} && $ENV{JADE_PUB} ne '') {
     $JADE_PUB = $ENV{JADE_PUB};
 }
 else {
-    die "You need to set the JADE_PUB environment variable first.";
+    print "To build 'The Bugzilla Guide', you need to set the ";
+    print "JADE_PUB environment variable first.\n";
+    $build_docs = 0;
 }
 
 if (defined $ENV{LDP_HOME} && $ENV{LDP_HOME} ne '') {
     $LDP_HOME = $ENV{LDP_HOME};
 }
 else {
-    die "You need to set the LDP_HOME environment variable first.";
+    print "To build 'The Bugzilla Guide', you need to set the ";
+    print "LDP_HOME environment variable first.\n";
+    $build_docs = 0;
 }
 
 ###############################################################################
 # Subs
 ###############################################################################
 
-sub MakeDocs($$) {
+sub MakeDocs {
 
     my ($name, $cmdline) = @_;
 
@@ -63,16 +130,44 @@ sub MakeDocs($$) {
 
 }
 
+sub make_pod {
+
+    print "Creating API documentation...\n";
+
+    my $converter = Pod::Simple::HTMLBatch::Bugzilla->new;
+    # Don't output progress information.
+    $converter->verbose(0);
+    $converter->html_render_class('Pod::Simple::HTML::Bugzilla');
+
+    my $doctype      = Pod::Simple::HTML::Bugzilla->DOCTYPE;
+    my $content_type = Pod::Simple::HTML::Bugzilla->META_CT;
+    my $bz_version   = BUGZILLA_VERSION;
+
+    my $contents_start = <<END_HTML;
+$doctype
+<html>
+  <head>
+    $content_type
+    <title>Bugzilla $bz_version API Documentation</title>
+  </head>
+  <body class="contentspage">
+    <h1>Bugzilla $bz_version API Documentation</h1>
+END_HTML
+
+    $converter->contents_page_start($contents_start);
+    $converter->contents_page_end("</body></html>");
+    $converter->add_css('style.css');
+    $converter->javascript_flurry(0);
+    $converter->css_flurry(0);
+    $converter->batch_convert(['../'], 'html/api/');
+
+    print "\n";
+}
+
 ###############################################################################
 # Make the docs ...
 ###############################################################################
 
-chdir dirname($0);
-
-if (!-d 'html') {
-    unlink 'html';
-    mkdir 'html', 0755;
-}
 if (!-d 'txt') {
     unlink 'txt';
     mkdir 'txt', 0755;
@@ -81,6 +176,9 @@ if (!-d 'pdf') {
     unlink 'pdf';
     mkdir 'pdf', 0755;
 }
+
+make_pod() if $pod_simple;
+exit unless $build_docs;
 
 chdir 'html';
 
@@ -92,7 +190,7 @@ MakeDocs('big HTML', "jade -V nochunks -t sgml -i html -d " .
 MakeDocs('big text', "lynx -dump -justify=off -nolist Bugzilla-Guide.html " .
 	 "> ../txt/Bugzilla-Guide.txt");
 
-if (! grep("--with-pdf", @ARGV)) {
+if (! grep($_ eq "--with-pdf", @ARGV)) {
     exit;
 }
 

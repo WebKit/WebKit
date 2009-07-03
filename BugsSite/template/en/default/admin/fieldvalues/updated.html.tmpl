@@ -24,6 +24,8 @@
   # value & updated_value: the name of the field value
   # sortkey & updated_sortkey: the field value sortkey
   # field: string; the field that the value belongs to
+  # default_value_updated: boolean; whether the default value for
+  #                        this field has been updated
   #%]
   
 [% title = BLOCK %]Updating Value '[% value FILTER html %]' of the
@@ -34,6 +36,10 @@
 
 [% IF updated_value %]
   <p>Updated field value to: '[% value FILTER html %]'.</p>
+  [% IF default_value_updated %]
+    <p>Note that this value is the default for this field.
+    All references to the default value will now point to this new value.</p>
+  [% END %]
 [% END %]
 
 [% IF updated_sortkey %]
@@ -41,10 +47,8 @@
 [% END %]
 
 [% UNLESS (updated_sortkey || updated_value) %]
-  <p>Nothing changed for field value '[% value FILTER html %]'.
+  <p>Nothing changed for field value '[% value FILTER html %]'.</p>
 [% END %]
-   
-<p>
 
 [% PROCESS admin/fieldvalues/footer.html.tmpl %]
 

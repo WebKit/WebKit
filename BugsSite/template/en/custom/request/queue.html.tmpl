@@ -24,32 +24,29 @@
 [% USE Bugzilla %]
 [% cgi = Bugzilla.cgi %]
 
-[%# The javascript block gets used in header.html.tmpl. %]
-[% javascript = BLOCK %]
-  var usetms = 0; // do we have target milestone?
-  var first_load = 1; // is this the first time we load the page?
-  var last_sel = []; // caches last selection
-  var cpts = new Array();
-  [% FOREACH p = products %]
-    cpts['[% p FILTER js %]'] = [
-      [%- FOREACH item = components_by_product.$p %]'[% item FILTER js %]'[% ", " UNLESS loop.last %] [%- END -%] ];
-  [% END %]
-[% END %]
+[% PROCESS "global/js-products.html.tmpl" %]
 
 [% PROCESS global/header.html.tmpl
   title="Request Queue"
   style = "
     table.requests th { text-align: left; }
-    table#filter th { text-align: right; }
+    table#filtering th { text-align: right; }
   "
   onload="selectProduct(document.forms[0], 'product', 'component', 'Any');"
   javascript_urls=["productmenu.js"]
 %]
 
+<p>
+When you are logged in, only requests made by you or addressed to you
+are shown by default.  You can change the criteria using the form below.
+When you are logged out, all pending requests that are not restricted
+to some group are shown by default.
+</p>
+
 <form action="request.cgi" method="get">
   <input type="hidden" name="action" value="queue">
 
-  <table id="filter">
+  <table id="filtering">
     <tr>
       <th>Requester:</th>
       <td><input type="text" name="requester" value="[% cgi.param('requester') FILTER html %]" size="20" 
@@ -58,9 +55,10 @@
       <td>
         <select name="product" onchange="selectProduct(this.form, 'product', 'component', 'Any');">
           <option value="">Any</option>
-          [% FOREACH item = products %]
-            <option value="[% item FILTER html %]"
-                    [% "selected" IF cgi.param('product') == item %]>[% item FILTER html %]</option>
+          [% FOREACH prod = products %]
+            <option value="[% prod.name FILTER html %]"
+                    [% "selected" IF cgi.param('product') == prod.name %]>
+              [% prod.name FILTER html %]</option>
           [% END %]
         </select>
       </td>
@@ -92,9 +90,11 @@
       <td>
         <select name="component">
           <option value="">Any</option>
-          [% FOREACH item = components %]
-            <option value="[% item FILTER html %]" [% "selected" IF cgi.param('component') == item %]>
-              [% item FILTER html %]</option>
+          [% FOREACH prod = products %]
+            [% FOREACH comp = prod.components %]
+              <option value="[% comp.name FILTER html %]" [% "selected" IF cgi.param('component') == comp.name %]>
+                [% comp.name FILTER html %]</option>
+            [% END %]
           [% END %]
         </select>
       </td>
@@ -108,7 +108,7 @@
           } %]
         [% PROCESS "global/select-menu.html.tmpl" name="group" options=groups default=cgi.param('group') %]
       </td>
-      <td><input type="submit" value="Filter"></td>
+      <td><input type="submit" id="filter" value="Filter"></td>
     </tr>
   </table>
 

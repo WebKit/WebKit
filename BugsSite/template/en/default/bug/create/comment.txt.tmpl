@@ -27,4 +27,7 @@
   # from them.
   #%]
 [% USE Bugzilla %]
+[% Hook.process("form") %]
+
+
 [% Bugzilla.cgi.param("comment") %]

@@ -19,6 +19,7 @@
   # Contributor(s): Gervase Markham <gerv@gerv.net>
   #                 Vaskin Kissoyan <vkissoyan@yahoo.com>
   #                 Bradley Baetz <bbaetz@student.usyd.edu.au>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
@@ -26,19 +27,30 @@
 [%# This script/template only handles one bug #%]
 [% bug = bugs.0 %]
 
-[% filtered_desc = bug.short_desc FILTER html %]
-[% filtered_timestamp = bug.delta_ts FILTER time %]
-[% PROCESS global/header.html.tmpl
-  title = "$terms.Bug $bug.bug_id - $bug.short_desc"
-  h1 = "$terms.Bugzilla $terms.Bug $bug.bug_id"
-  h2 = filtered_desc
-  h3 = "Last modified: $filtered_timestamp"
-  bodyclasses = ['bz_bug',
-                 "bz_status_$bug.bug_status",
-                 "bz_component_$bug.component",
-                 "bz_bug_$bug.bug_id"
-                ]
-%]
+[% IF !header_done %]
+  [% filtered_desc = bug.short_desc FILTER html %]
+  [% filtered_timestamp = bug.delta_ts FILTER time %]
+  [% PROCESS global/header.html.tmpl
+    title = "$terms.Bug $bug.bug_id &ndash; $filtered_desc"
+    header = "$terms.Bug&nbsp;$bug.bug_id"
+    subheader = filtered_desc
+    header_addl_info = "Last modified: $filtered_timestamp"
+    bodyclasses = ['bz_bug',
+                   "bz_status_$bug.bug_status",
+                   "bz_component_$bug.component",
+                   "bz_bug_$bug.bug_id"
+                  ]
+  %]
+[% END %]
+
+[% IF nextbug %]
+  <hr>
+  <p>
+    The next [% terms.bug %] in your list is [% terms.bug %]
+    <a href="show_bug.cgi?id=[% bug.bug_id %]">[% bug.bug_id %]</a>:
+  </p>
+  <hr>
+[% END %]
 
 [% PROCESS bug/navigate.html.tmpl %]
 

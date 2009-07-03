@@ -28,7 +28,7 @@
 
 [% PROCESS global/header.html.tmpl
   title = "Add group"
-  h2 = "This page allows you to define a new user group."
+  subheader = "This page allows you to define a new user group."
 %]
 
 <form method="post" action="editgroups.cgi">
@@ -47,14 +47,16 @@
   <input type="checkbox" name="insertnew" value="1"
     [% IF Param("makeproductgroups") %] checked[% END %]>
     Insert new group into all existing products.<p>
-  <input type="submit" value="Add">
+  <input type="submit" id="create" value="Add">
   <input type="hidden" name="action" value="new">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
 
-<p><b>Name</b> is what is used with the UserInGroup() function in any
-customized cgi files you write that use a given group.  It can also be used
-by people submitting [% terms.bugs %] by email to limit [% terms.abug %] to
-a certain set of groups. It may not contain any spaces.</p>
+<p><b>Name</b> is what is used with the B<!-- blah -->ugzilla->user->in_group()
+function in any customized cgi files you write that use a given group.
+It can also be used by people submitting [% terms.bugs %] by email to
+limit [% terms.abug %] to a certain set of groups. It may not contain
+any spaces.</p>
 
 <p><b>Description</b> is what will be shown in the [% terms.bug %] reports
 to members of the group where they can choose whether

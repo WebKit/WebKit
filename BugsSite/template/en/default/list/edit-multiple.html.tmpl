@@ -17,6 +17,7 @@
   # Rights Reserved.
   #
   # Contributor(s): Myk Melez <myk@mozilla.org>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
@@ -55,13 +56,34 @@
     <th><label for="product">Product:</label></th>
     <td>
       [% PROCESS selectmenu menuname = "product"
-                            menuitems = products %]
+                            menuitems = products
+                            property = "name" %]
     </td>
 
     <th><label for="version">Version:</label></th>
     <td>
       [% PROCESS selectmenu menuname = "version"
-                            menuitems = versions %]
+                            menuitems = versions
+                            property = "" %]
+    </td>
+
+  </tr>
+  <tr>
+
+    <th><label for="component">Component:</label></th>
+    <td>
+      [% PROCESS selectmenu menuname = "component"
+                            menuitems = components %]
+    </td>
+
+    <th>
+      <label for="priority">
+        <a href="page.cgi?id=fields.html#priority">Priority</a>:
+      </label>
+    </th>
+    <td>
+      [% PROCESS selectmenu menuname = "priority"
+                            menuitems = priorities %]
     </td>
 
   </tr>
@@ -78,25 +100,6 @@
     </td>
 
     <th>
-      <label for="priority">
-        <a href="page.cgi?id=fields.html#priority">Priority</a>:
-      </label>
-    </th>
-    <td>
-      [% PROCESS selectmenu menuname = "priority"
-                            menuitems = priorities %]
-    </td>
-
-  </tr>
-  <tr>
-
-    <th><label for="component">Component:</label></th>
-    <td>
-      [% PROCESS selectmenu menuname = "component"
-                            menuitems = components %]
-    </td>
-
-    <th>
       <label for="bug_severity">
         <a href="page.cgi?id=fields.html#bug_severity">Severity</a>:
       </label>
@@ -108,17 +111,27 @@
 
   </tr>
 
-  [% IF Param("usetargetmilestone") %]
-    <tr>
+  <tr>
+    <th>
+      <label for="op_sys">
+        <a href="page.cgi?id=fields.html#op_sys">OS</a>:
+      </label>
+    </th>
+    <td [% " colspan=\"3\"" IF !Param("usetargetmilestone") %]>
+      [% PROCESS selectmenu menuname = "op_sys"
+                            menuitems = op_sys %]
+    </td>
+
+    [% IF Param("usetargetmilestone") %]
       <th><label for="target_milestone">Target Milestone:</label></th>
-      <td colspan="3">
+      <td>
         [% PROCESS selectmenu menuname = "target_milestone"
                               menuitems = targetmilestones %]
       </td>
-    </tr>
-  [% END %]
+    [% END %]
+  </tr>
 
-  [% IF UserInGroup(Param("timetrackinggroup")) %]
+  [% IF user.in_group(Param("timetrackinggroup")) %]
     <tr>
       <th><label for="estimated_time">Estimated Hours:</label></th>
       <td>
@@ -182,10 +195,37 @@
     </tr>
   [% END %]
 
+  [% IF Param('usestatuswhiteboard') %]
+    <tr>
+      <td align="right">
+        <b>Status Whiteboard:</b>
+      </td>
+      <td colspan="7">
+        <input name="status_whiteboard" 
+               value="[% dontchange FILTER html %]" size="60">
+      </td>
+    </tr>
+  [% END %]
+
+  [% USE Bugzilla %]
+  [% FOREACH field = Bugzilla.get_fields({ obsolete => 0, custom => 1 }) %]
+    <tr>
+      [% PROCESS bug/field.html.tmpl value = dontchange
+                                     editable = 1
+                                     allow_dont_change = 1 %]
+    </tr>
+  [% END %]
+
 </table>
 
 <b><label for="comment">Additional Comments:</label></b><br>
-<textarea id="comment" name="comment" rows="5" cols="80"></textarea><br>
+[% INCLUDE global/textarea.html.tmpl
+  name    = 'comment'
+  id      = 'comment'
+  minrows = 5
+  maxrows = 25
+  cols    = constants.COMMENT_COLS
+%]<br>
 
 [% IF groups.size > 0 %]
 
@@ -216,11 +256,8 @@
       [% END %]
 
       <td>
-        [% IF group.isactive %]
-          [% group.description %]
-        [% ELSE %]
-          [% group.description FILTER inactive %]
-        [% END %]
+        [% SET inactive = !group.isactive %]
+        [% group.description FILTER html_light FILTER inactive(inactive) %]
       </td>
 
     </tr>
@@ -270,8 +307,8 @@
   <select name="resolution" onchange="document.forms.changeform.knob[[% knum %]].checked=true">
     [% FOREACH resolution = resolutions %]
       [% NEXT IF !resolution %]
-      <option value="[% resolution FILTER html %]" [% 'selected="selected"' IF resolution == "FIXED" %]>
-        [% resolution_descs.$resolution FILTER html %]
+      <option value="[% resolution FILTER html %]">
+        [% get_resolution(resolution) FILTER html %]
       </option>
     [% END %]
   </select><br>
@@ -320,10 +357,10 @@
   Reassign [% terms.bugs %] to default assignee of selected component
 </label><br>
 
-<input type="submit" value="Commit">
+<input type="submit" id="commit" value="Commit">
 
 [% IF Param('move-enabled') && user.is_mover %]
-  <input type="submit" name="action" value="[% Param('move-button-text') %]">
+  <input type="submit" name="action" id="action" value="[% Param('move-button-text') %]">
 [% END %]
 
 [%############################################################################%]
@@ -336,6 +373,7 @@
       [% dontchange FILTER html %]
     </option>
     [% FOREACH menuitem = menuitems %]
+      [% IF property %][% menuitem = menuitem.$property %][% END %]
       <option value="[% menuitem FILTER html %]">[% menuitem FILTER html %]</option>
     [% END %]
   </select>

@@ -33,14 +33,12 @@ use strict;
 use lib ".";
 
 use Bugzilla;
-
-require "CGI.pl";
-
-use vars qw($template $vars);
+use Bugzilla::Error;
 
 Bugzilla->login();
 
 my $cgi = Bugzilla->cgi;
+my $template = Bugzilla->template;
 
 my $id = $cgi->param('id');
 if ($id) {
@@ -52,13 +50,13 @@ if ($id) {
         ThrowCodeError("bad_page_cgi_id", { "page_id" => $id });
     }
 
-    my $format = GetFormat("pages/$1", undef, $2);
+    my $format = $template->get_format("pages/$1", undef, $2);
     
     $cgi->param('id', $id);
 
     print $cgi->header($format->{'ctype'});
 
-    $template->process("$format->{'template'}", $vars)
+    $template->process("$format->{'template'}")
       || ThrowTemplateError($template->error());
 }
 else {

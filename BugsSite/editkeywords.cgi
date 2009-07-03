@@ -23,83 +23,43 @@
 use strict;
 use lib ".";
 
-require "CGI.pl";
-
+use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Config qw(:DEFAULT $datadir);
-use Bugzilla::User;
+use Bugzilla::Util;
+use Bugzilla::Error;
+use Bugzilla::Keyword;
+use Bugzilla::Token;
 
 my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
-
-use vars qw($template $vars);
-
-
-sub Validate ($$) {
-    my ($name, $description) = @_;
-    if ($name eq "") {
-        ThrowUserError("keyword_blank_name");
-    }
-    if ($name =~ /[\s,]/) {
-        ThrowUserError("keyword_invalid_name");
-    }    
-    if ($description eq "") {
-        ThrowUserError("keyword_blank_description");
-    }
-}
-
-sub ValidateKeyID {
-    my $id = shift;
-
-    $id = trim($id || 0);
-    detaint_natural($id) || ThrowCodeError('invalid_keyword_id');
-    return $id;
-}
-
+my $template = Bugzilla->template;
+my $vars = {};
 
 #
 # Preliminary checks:
 #
 
-Bugzilla->login(LOGIN_REQUIRED);
+my $user = Bugzilla->login(LOGIN_REQUIRED);
 
-print Bugzilla->cgi->header();
+print $cgi->header();
 
-UserInGroup("editkeywords")
+$user->in_group('editkeywords')
   || ThrowUserError("auth_failure", {group  => "editkeywords",
                                      action => "edit",
                                      object => "keywords"});
 
-my $action  = trim($cgi->param('action')  || '');
+my $action = trim($cgi->param('action')  || '');
+my $key_id = $cgi->param('id');
+my $token  = $cgi->param('token');
+
 $vars->{'action'} = $action;
 
 
 if ($action eq "") {
-    my @keywords;
+    $vars->{'keywords'} = Bugzilla::Keyword->get_all_with_bug_count();
 
-    SendSQL("SELECT keyworddefs.id, keyworddefs.name, keyworddefs.description,
-                    COUNT(keywords.bug_id)
-             FROM keyworddefs LEFT JOIN keywords
-               ON keyworddefs.id = keywords.keywordid " .
-             $dbh->sql_group_by('keyworddefs.id',
-                    'keyworddefs.name, keyworddefs.description') . "
-             ORDER BY keyworddefs.name");
-
-    while (MoreSQLData()) {
-        my ($id, $name, $description, $bugs) = FetchSQLData();
-        my $keyword = {};
-        $keyword->{'id'} = $id;
-        $keyword->{'name'} = $name;
-        $keyword->{'description'} = $description;
-        $keyword->{'bug_count'} = $bugs;
-        push(@keywords, $keyword);
-    }
-
-    print Bugzilla->cgi->header();
-
-    $vars->{'keywords'} = \@keywords;
-    $template->process("admin/keywords/list.html.tmpl",
-                       $vars)
+    print $cgi->header();
+    $template->process("admin/keywords/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -107,10 +67,11 @@ if ($action eq "") {
     
 
 if ($action eq 'add') {
-    print Bugzilla->cgi->header();
+    $vars->{'token'} = issue_session_token('add_keyword');
 
-    $template->process("admin/keywords/create.html.tmpl",
-                       $vars)
+    print $cgi->header();
+
+    $template->process("admin/keywords/create.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -119,53 +80,20 @@ if ($action eq 'add') {
 #
 # action='new' -> add keyword entered in the 'action=add' screen
 #
-
 if ($action eq 'new') {
-    # Cleanups and valididy checks
+    check_token_data($token, 'add_keyword');
+    my $name = $cgi->param('name') || '';
+    my $desc = $cgi->param('description')  || '';
 
-    my $name = trim($cgi->param('name') || '');
-    my $description  = trim($cgi->param('description')  || '');
+    my $keyword = Bugzilla::Keyword->create(
+        { name => $name, description => $desc });
 
-    Validate($name, $description);
-    
-    SendSQL("SELECT id FROM keyworddefs WHERE name = " . SqlQuote($name));
+    delete_token($token);
 
-    if (FetchOneColumn()) {
-        $vars->{'name'} = $name;
-        ThrowUserError("keyword_already_exists", $vars);
-    }
+    print $cgi->header();
 
-
-    # Pick an unused number.  Be sure to recycle numbers that may have been
-    # deleted in the past.  This code is potentially slow, but it happens
-    # rarely enough, and there really aren't ever going to be that many
-    # keywords anyway.
-
-    SendSQL("SELECT id FROM keyworddefs ORDER BY id");
-
-    my $newid = 1;
-
-    while (MoreSQLData()) {
-        my $oldid = FetchOneColumn();
-        if ($oldid > $newid) {
-            last;
-        }
-        $newid = $oldid + 1;
-    }
-
-    # Add the new keyword.
-    SendSQL("INSERT INTO keyworddefs (id, name, description) VALUES ($newid, " .
-            SqlQuote($name) . "," .
-            SqlQuote($description) . ")");
-
-    # Make versioncache flush
-    unlink "$datadir/versioncache";
-
-    print Bugzilla->cgi->header();
-
-    $vars->{'name'} = $name;
-    $template->process("admin/keywords/created.html.tmpl",
-                       $vars)
+    $vars->{'name'} = $keyword->name;
+    $template->process("admin/keywords/created.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -180,35 +108,15 @@ if ($action eq 'new') {
 #
 
 if ($action eq 'edit') {
-    my $id = ValidateKeyID(scalar $cgi->param('id'));
+    my $keyword = new Bugzilla::Keyword($key_id)
+        || ThrowCodeError('invalid_keyword_id', { id => $key_id });
 
-    # get data of keyword
-    SendSQL("SELECT name,description
-             FROM keyworddefs
-             WHERE id=$id");
-    my ($name, $description) = FetchSQLData();
-    if (!$name) {
-        $vars->{'id'} = $id;
-        ThrowCodeError("invalid_keyword_id", $vars);
-    }
+    $vars->{'keyword'} = $keyword;
+    $vars->{'token'} = issue_session_token('edit_keyword');
 
-    SendSQL("SELECT count(*)
-             FROM keywords
-             WHERE keywordid = $id");
-    my $bugs = '';
-    $bugs = FetchOneColumn() if MoreSQLData();
-
-    $vars->{'keyword_id'} = $id;
-    $vars->{'name'} = $name;
-    $vars->{'description'} = $description;
-    $vars->{'bug_count'} = $bugs;
-
-    print Bugzilla->cgi->header();
-
-    $template->process("admin/keywords/edit.html.tmpl",
-                       $vars)
+    print $cgi->header();
+    $template->process("admin/keywords/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-
     exit;
 }
 
@@ -218,34 +126,20 @@ if ($action eq 'edit') {
 #
 
 if ($action eq 'update') {
-    my $id = ValidateKeyID(scalar $cgi->param('id'));
+    check_token_data($token, 'edit_keyword');
+    my $keyword = new Bugzilla::Keyword($key_id)
+        || ThrowCodeError('invalid_keyword_id', { id => $key_id });
 
-    my $name  = trim($cgi->param('name') || '');
-    my $description  = trim($cgi->param('description')  || '');
+    $keyword->set_name($cgi->param('name'));
+    $keyword->set_description($cgi->param('description'));
+    $keyword->update();
 
-    Validate($name, $description);
+    delete_token($token);
 
-    SendSQL("SELECT id FROM keyworddefs WHERE name = " . SqlQuote($name));
+    print $cgi->header();
 
-    my $tmp = FetchOneColumn();
-
-    if ($tmp && $tmp != $id) {
-        $vars->{'name'} = $name;
-        ThrowUserError("keyword_already_exists", $vars);
-    }
-
-    SendSQL("UPDATE keyworddefs SET name = " . SqlQuote($name) .
-            ", description = " . SqlQuote($description) .
-            " WHERE id = $id");
-
-    # Make versioncache flush
-    unlink "$datadir/versioncache";
-
-    print Bugzilla->cgi->header();
-
-    $vars->{'name'} = $name;
-    $template->process("admin/keywords/rebuild-cache.html.tmpl",
-                       $vars)
+    $vars->{'keyword'} = $keyword;
+    $template->process("admin/keywords/rebuild-cache.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -253,44 +147,33 @@ if ($action eq 'update') {
 
 
 if ($action eq 'delete') {
-    my $id = ValidateKeyID(scalar $cgi->param('id'));
+    my $keyword =  new Bugzilla::Keyword($key_id)
+        || ThrowCodeError('invalid_keyword_id', { id => $key_id });
 
-    SendSQL("SELECT name FROM keyworddefs WHERE id=$id");
-    my $name = FetchOneColumn();
+    $vars->{'keyword'} = $keyword;
 
-    if (!$cgi->param('reallydelete')) {
-        SendSQL("SELECT count(*)
-                 FROM keywords
-                 WHERE keywordid = $id");
-        
-        my $bugs = FetchOneColumn();
-        
-        if ($bugs) {
-            $vars->{'bug_count'} = $bugs;
-            $vars->{'keyword_id'} = $id;
-            $vars->{'name'} = $name;
+    # We need this token even if there is no bug using this keyword.
+    $token = issue_session_token('delete_keyword');
 
-            print Bugzilla->cgi->header();
+    if (!$cgi->param('reallydelete') && $keyword->bug_count) {
+        $vars->{'token'} = $token;
 
-            $template->process("admin/keywords/confirm-delete.html.tmpl",
-                               $vars)
-              || ThrowTemplateError($template->error());
-
-            exit;
-        }
+        print $cgi->header();
+        $template->process("admin/keywords/confirm-delete.html.tmpl", $vars)
+            || ThrowTemplateError($template->error());
+        exit;
     }
+    # We cannot do this check earlier as we have to check 'reallydelete' first.
+    check_token_data($token, 'delete_keyword');
 
-    SendSQL("DELETE FROM keywords WHERE keywordid = $id");
-    SendSQL("DELETE FROM keyworddefs WHERE id = $id");
+    $dbh->do('DELETE FROM keywords WHERE keywordid = ?', undef, $keyword->id);
+    $dbh->do('DELETE FROM keyworddefs WHERE id = ?', undef, $keyword->id);
 
-    # Make versioncache flush
-    unlink "$datadir/versioncache";
+    delete_token($token);
 
-    print Bugzilla->cgi->header();
+    print $cgi->header();
 
-    $vars->{'name'} = $name;
-    $template->process("admin/keywords/rebuild-cache.html.tmpl",
-                       $vars)
+    $template->process("admin/keywords/rebuild-cache.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;

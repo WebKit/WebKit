@@ -38,6 +38,15 @@
     [% IF groups.size %]
       You may want to edit the group settings now, using the form below.
     [% END %]
+    [% IF login_info %]
+      You can now go to the <a href="index.cgi">Log In</a> page to enter
+      this [% terms.Bugzilla %] installation.
+    [% END %]
+
+  [% ELSIF message_tag == "account_creation_cancelled" %]
+    [% title = "User Account Creation Canceled" %]
+    The creation of the user account [% account FILTER html %] has been
+    canceled.
 
   [% ELSIF message_tag == "account_updated" %]
     [% IF changed_fields.size
@@ -57,6 +66,12 @@
               A new password has been set.
             [% ELSIF field == 'disabledtext' %]
               The disable text has been modified.
+            [% ELSIF field == 'disable_mail' %]
+              [% IF otheruser.email_disabled %]
+                [% terms.Bug %]mail has been disabled.
+              [% ELSE %]
+                [% terms.Bug %]mail has been enabled.
+              [% END %]
             [% END %]
           </li>
         [% END %]
@@ -91,7 +106,7 @@
       </ul>
     [% ELSE %]
       [% title = "User $otheruser.login not changed" %]
-      You didn't request any change on the user account
+      You didn't request any changes to the user's account
       [%+ otheruser.login FILTER html %].
     [% END %]
 
@@ -100,14 +115,30 @@
     The user account [% otheruser.login FILTER html %] has been deleted
     successfully.
 
+  [% ELSIF message_tag == "attachment_creation_failed" %]
+    The [% terms.bug %] was created successfully, but attachment creation
+    failed.
+    Please add your attachment by clicking the "Create a New Attachment" link
+    below.
+
+  [% ELSIF message_tag == "bug_confirmed_by_votes" %]
+    *** This [% terms.bug %] has been confirmed by popular vote. ***
+
+  [% ELSIF message_tag == "bug_duplicate_of" %]
+    *** This [% terms.bug %] has been marked as a duplicate of [% terms.bug %] [%+ dupe_of FILTER html %] ***
+
+  [% ELSIF message_tag == "bug_has_duplicate" %]
+    *** [% terms.Bug %] [%+ dupe FILTER html %] has been marked as a duplicate of this [% terms.bug %]. ***
+
+  [% ELSIF message_tag == "bug_moved_to" %]
+    <p>[% terms.Bug %] moved to [% Param("move-to-url") FILTER html %].</p>
+    <p>If the move succeeded, [% login FILTER html %] will receive a mail
+    containing the number of the new [% terms.bug %] in the other database.
+    If all went well, please mark this [% terms.bug %] verified, and paste
+    in a link to the new [% terms.bug %]. Otherwise, reopen this [% terms.bug %].
+
   [% ELSIF message_tag == "buglist_adding_field" %]
     [% title = "Adding field to search page..." %]
-    [% link  = "Click here if the page does not redisplay automatically." %]
-
-  [% ELSIF message_tag == "buglist_load_named_query" %]
-    [% title = BLOCK %]
-      Loading your search named [% namedcmd FILTER html %]
-    [% END %]
     [% link  = "Click here if the page does not redisplay automatically." %]
 
   [% ELSIF message_tag == "buglist_updated_named_query" %]
@@ -139,23 +170,38 @@
     Click <a href="[% redirect_url FILTER html %]">here</a>
     if the page does not automatically refresh.
 
+  [% ELSIF message_tag == "custom_field_created" %]
+    [% title = "Custom Field Created" %]
+    The new custom field '[% field.name FILTER html %]' has been
+    successfully created.
+
+  [% ELSIF message_tag == "custom_field_updated" %]
+    [% title = "Custom Field Updated" %]
+    Properties of the '[% field.name FILTER html %]' field have been
+    successfully updated.
+
   [% ELSIF message_tag == "emailold_change_cancelled" %]
     [% title = "Cancel Request to Change Email Address" %]
     The request to change the email address for your account to
-    [%+ new_email FILTER html %] has been cancelled.
+    [%+ new_email FILTER html %] has been canceled.
 
   [% ELSIF message_tag == "email_change_cancelled" %]
     [% title = "Cancel Request to Change Email Address" %]
     The request to change the email address for the
     account [%+ old_email FILTER html %] to
-    [%+ new_email FILTER html %] has been cancelled.
+    [%+ new_email FILTER html %] has been canceled.
 
   [% ELSIF message_tag == "email_change_cancelled_reinstated" %]
     [% title = "Cancel Request to Change Email Address" %]
     The request to change the email address for the
     account [%+ old_email FILTER html %] to 
-    [%+ new_email FILTER html %] has been cancelled.
+    [%+ new_email FILTER html %] has been canceled.
    Your old account settings have been reinstated.
+
+  [% ELSIF message_tag == "flag_creation_failed" %]
+    [% title = "Flag Creation Failure" %]
+    An error occured while validating flags:
+    [%+ flag_creation_error FILTER none %]
 
   [% ELSIF message_tag == "logged_out" %]
     [% title = "Logged Out" %]
@@ -169,9 +215,28 @@
     [% title = "$terms.Bugzilla Login Changed" %]
     Your [% terms.Bugzilla %] login has been changed.
 
+  [% ELSIF message_tag == "parameters_updated" %]
+    [% title = "Parameters Updated" %]
+    [% IF param_changed.size > 0 %]
+      [% FOREACH param = param_changed %]
+        Changed <em>[% param FILTER html %]</em><br>
+        [% IF param == 'utf8' && Param('utf8') %]
+          <strong>You must now re-run checksetup.pl.</strong><br>
+        [% END %]
+      [% END %]
+    [% ELSE %]
+      No changes made.
+    [% END %]
+
+    [% IF shutdown_is_active == 1 %]
+      <hr>
+      [% terms.Bugzilla %] has now been shut down. To re-enable the system,
+      clear the <em>shutdownhtml</em> field.
+    [% END%]
+
   [% ELSIF message_tag == "password_change_cancelled" %]
     [% title = "Cancel Request to Change Password" %]
-    Your request has been cancelled.
+    Your request has been canceled.
 
   [% ELSIF message_tag == "password_change_request" %]
     [% title = "Request to Change Password" %]
@@ -210,6 +275,91 @@
       <a href="editflagtypes.cgi">Back to flag types.</a>
     </p>
     
+  [% ELSIF message_tag == "install_admin_get_email" %]
+    Enter the e-mail address of the administrator:
+
+  [% ELSIF message_tag == "install_admin_get_name" %]
+    Enter the real name of the administrator:
+
+  [% ELSIF message_tag == "install_admin_get_password" %]
+    Enter a password for the administrator account:
+
+  [% ELSIF message_tag == "install_admin_get_password2" %]
+    Please retype the password to verify:
+
+  [% ELSIF message_tag == "install_admin_created" %]
+    [% user.login FILTER html %] is now set up as an administrator.
+
+  [% ELSIF message_tag == "install_admin_setup" %]
+    Looks like we don't have an administrator set up yet.
+    Either this is your first time using [% terms.Bugzilla %], or your
+    administrator's privileges might have accidentally been deleted.
+
+  [% ELSIF message_tag == "install_column_add" %]
+    Adding new column '[% column FILTER html %]' to the '[% table FILTER html %]' table...
+
+  [% ELSIF message_tag == "install_column_drop" %]
+    Deleting the '[% column FILTER html %]' column from the '[% table FILTER html %]' table...
+
+  [% ELSIF message_tag == "install_column_rename" %]
+    Renaming column '[% old FILTER html %]' to '[% new FILTER html %]'...
+
+  [% ELSIF message_tag == "install_default_classification" %]
+    Creating default classification '[% name FILTER html %]'...
+
+  [% ELSIF message_tag == "install_default_product" %]
+    Creating initial dummy product '[% name FILTER html %]'...
+
+  [% ELSIF message_tag == "install_file_perms_fix" %]
+    Fixing file permissions...
+
+  [% ELSIF message_tag == "install_group_create" %]
+    Creating group [% name FILTER html %]...
+
+  [% ELSIF message_tag == "install_setting_new" %]
+    Adding a new user setting called '[% name FILTER html %]'
+
+  [% ELSIF message_tag == "install_table_drop" %]
+    Dropping the '[% name FILTER html %]' table...
+
+  [% ELSIF message_tag == "install_table_rename" %]
+    Renaming the '[% old FILTER html %]' table to '[% new FILTER html %]'...
+
+  [% ELSIF message_tag == "install_urlbase_default" %]
+    Now that you have installed [% terms.Bugzilla %], you should visit the
+    'Parameters' page (linked in the footer of the Administrator
+    account) to ensure it is set up as you wish - this includes
+    setting the 'urlbase' option to the correct URL.
+
+  [% ELSIF message_tag == "install_webservergroup_empty" %]
+    ****************************************************************************
+    WARNING! You have not entered a value for the "webservergroup" parameter
+    in localconfig. This means that certain files and directories which need
+    to be editable by both you and the webserver must be world writable, and
+    other files (including the localconfig file which stores your database
+    password) must be world readable. This means that _anyone_ who can obtain
+    local access to this machine can do whatever they want to your 
+    [%+ terms.Bugzilla %] installation, and is probably also able to run 
+    arbitrary Perl code as the user that the webserver runs as.
+
+    You really, really, really need to change this setting.
+    ****************************************************************************
+
+  [% ELSIF message_tag == "install_webservergroup_not_in" %]
+    Warning: you have entered a value for the "webservergroup" parameter in
+    localconfig, but you are not either a) running this script as [% constants.ROOT_USER FILTER html %]; 
+    or b) a member of this group. This can cause permissions problems and 
+    decreased security.  If you experience problems running [% terms.Bugzilla %]
+    scripts, log in as [% constants.ROOT_USER FILTER html %] and re-run this script, become a 
+    member of the group, or remove the value of the "webservergroup" parameter.
+
+  [% ELSIF message_tag == "install_webservergroup_windows" %]
+    Warning: You have set webservergroup in [% constants.bz_locations.localconfig FILTER html %]
+    Please understand that this does not bring you any security when
+    running under Windows.
+    Verify that the file permissions in your [% terms.Bugzilla %] directory are
+    suitable for your system. Avoid unnecessary write access.
+
   [% ELSIF message_tag == "product_invalid" %]
     [% title = "$terms.Bugzilla Component Descriptions" %]
     The product <em>[% product FILTER html %]</em> does not exist
@@ -220,6 +370,17 @@
     The [% field_descs.remaining_time FILTER html %] field has been 
     set to zero automatically as part of marking this [% terms.bug %]
     as either RESOLVED or CLOSED.
+
+  [% ELSIF message_tag == "sudo_started" %]
+    [% title = "Sudo session started" %]
+      The sudo session has been started.  For the next 6 hours, or until you 
+      end the session, everything you do you do as the user you are 
+      impersonating ([% target FILTER html %]).
+  
+  [% ELSIF message_tag == "sudo_ended" %]
+    [% title = "Sudo session complete" %]
+      The sudo session has been ended.  From this point forward, everything you 
+      do you do as yourself.
 
   [% ELSIF message_tag == "series_created" %]
     [% title = "Series Created" %]
@@ -240,6 +401,9 @@
       <p>For security reasons, you have been logged out automatically.
       The cookie that was remembering your login is now gone.
     [% END %]
+
+  [% ELSIF message_tag == "term" %]
+    [% terms.$term FILTER html %]
 
   [% ELSIF message_tag == "user_match_failed" %]
     You entered a username that did not match any known 

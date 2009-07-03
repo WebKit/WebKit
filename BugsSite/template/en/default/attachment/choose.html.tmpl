@@ -29,15 +29,15 @@
 <form name="choose-id" method="get" action="attachment.cgi">
   <p>Access an attachment by entering its ID into the form below:</p>
   <p>Attachment ID: <input name="id" size="6">
-  <button name="action" value="edit">&nbsp;Edit&nbsp;</button>
-  <button name="action" value="view">View</button>
+  <button name="action" value="edit" id="edit">Details</button>
+  <button name="action" value="view" id="view">View</button>
   </p>
 </form>
 
 <form method="get" action="show_bug.cgi">
   <p>Or, access it from the list of attachments in its associated [% terms.bug %] report:</p>
   <p>[% terms.Bug %] ID: <input name="id" size="6">
-  <input type="submit" name="action" value="View">
+  <input type="submit" name="action" value="View" id="action">
   </p>
 </form>
 

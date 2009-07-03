@@ -15,32 +15,16 @@
   #%]
 
 [%# INTERFACE:
-  # product_name: string; The name of the product
-  #
-  # prod_description: string; Product description, may be empty
+  # product: Bugzilla::Product object; The product
   #
   # (classification fields available if Param('useclassification') is enabled:)
   #
-  # classification: string; The name of the classification the product is in
-  #
-  # class_description: string; Classification description, may be empty
-  #
-  # bug_count: number; The number of bugs belonging to the product
-  #
-  # milestoneurl: string; milestone url, if milestones are in use,
-  #                       may be empty
-  #
-  # disallownew: boolean; Are new bugs allowed for the product flag
-  #
-  # components: list of hashes, members are: name, description
-  #
-  # versions: list of version values.
-  #
-  # milestones: list of milestone values.
+  # classification: Bugzilla::Classification object; The classification 
+  #                                                  the product is in
   #
   #%]
 
-[% title = BLOCK %]Delete Product '[% product_name FILTER html %]'
+[% title = BLOCK %]Delete Product '[% product.name FILTER html %]'
 [% END %]
 
 [% PROCESS global/header.html.tmpl
@@ -50,23 +34,10 @@
 
 [% IF classification %]
   [% classification_url_part = BLOCK %]&amp;classification=
-    [%- classification FILTER url_quote %]
+    [%- classification.name FILTER url_quote %]
   [%- END %]
 [% ELSE %]
   [% classification_url_part = "" %]
-[% END %]
-
-[% UNLESS class_description %]
-  [% class_description = '<span style="color: red">missing</span>' %]
-[% END %]
-[% UNLESS prod_description %]
-  [% prod_description = '<span style="color: red">missing</span>' %]
-[% END %]
-
-[% IF disallownew %]
-  [% disallownew = "closed" %]
-[% ELSE %]
-  [% disallownew = "open" %]
 [% END %]
 
 <table border="1" cellpadding="4" cellspacing="0">
@@ -78,37 +49,49 @@
   [% IF Param('useclassification') %]
     <tr>
       <td>Classification:</td>
-      <td>[% classification FILTER html %]</td>
+      <td>[% classification.name FILTER html %]</td>
     </tr>
     <tr>
       <td>Classification Description:</td>
       [%# descriptions are intentionally not filtered to allow html content %]
-      <td>[% class_description FILTER none %]</td>
+      <td>
+        [% IF classification.description %]
+          [% classification.description FILTER html_light %]
+        [% ELSE %]
+          <span style="color: red">missing</span>
+        [% END %]
+      </td>
     </tr>
   [% END %]
 
   <tr>
     <td valign="top">Product:</td>
     <td valign="top">
-      <a href="editproducts.cgi?product=[% product_name FILTER url_quote %]
+      <a href="editproducts.cgi?product=[% product.name FILTER url_quote %]
          [%- classification_url_part %]">
-        [% product_name FILTER html %]
+        [% product.name FILTER html %]
       </a>
     </td>
   </tr>
   <tr>
     <td valign="top">Description:</td>
     [%# descriptions are intentionally not filtered to allow html content %]
-    <td valign="top">[% prod_description FILTER none %]</td>
+    <td valign="top">
+      [% IF product.description %]
+        [% product.description FILTER html_light %]
+      [% ELSE %]
+        <span style="color: red">missing</span>
+      [% END %]
+    </td>
   </tr>
 
   [% IF Param('usetargetmilestone') %]
     <tr>
       <td>Milestone URL:</td>
       <td>
-        [% IF milestoneurl %]
-          <a href="[% milestoneurl FILTER uri %]">
-            [%- milestoneurl FILTER html %]
+        [% IF product.milestone_url %]
+          <a href="[% product.milestone_url FILTER html %]">
+            [%- product.milestone_url FILTER html %]
           </a>
         [% ELSE %]
           none
@@ -119,15 +102,21 @@
 
   <tr>
     <td>Closed for [% terms.bugs %]:</td>
-    <td>[% disallownew FILTER html %]</td>
+    <td>
+      [% IF product.disallownew %]
+        closed
+      [% ELSE %]
+        open
+      [% END %]
+    </td>
   </tr>
 
   <tr>
     <td>
-      [% IF components.size > 0 %]
-        <a href="editcomponents.cgi?product=[% product_name FILTER url_quote %]
+      [% IF product.components.size > 0 %]
+        <a href="editcomponents.cgi?product=[% product.name FILTER url_quote %]
            [%- classification_url_part %]"
-           title="Edit components for product '[% product_name FILTER html %]'">
+           title="Edit components for product '[% product.name FILTER html %]'">
           Components:
         </a>
       [% ELSE %]
@@ -135,15 +124,15 @@
       [% END %]
     </td>
     <td>
-      [% IF components.size > 0 %]
+      [% IF product.components.size > 0 %]
         <table>
-          [% FOREACH c = components %]
+          [% FOREACH c = product.components %]
             <tr>
               <th align="right">[% c.name FILTER html %]:</th>
               [%# descriptions are intentionally not filtered to allow html content %]
               <td>
                 [% IF c.description %]
-                  [% c.description FILTER none %]
+                  [% c.description FILTER html_light %]
                 [% ELSE %]
                   <span style="color: red">missing</span>
                 [% END %]
@@ -159,18 +148,19 @@
 
   <tr>
     <td>
-      [% IF versions.size > 0 %]
-        <a href="editversions.cgi?product=[%- product_name FILTER url_quote %]
+      [% IF product.versions.size > 0 %]
+        <a href="editversions.cgi?product=[%- product.name FILTER url_quote %]
            [%- classification_url_part %]">
           Versions:
         </a>
       [% ELSE %]
         Versions:
       [% END %]
+    </td>
     <td>
-      [% IF versions.size > 0 %]
-        [% FOREACH v = versions %]
-          [% v FILTER html %]<br>
+      [% IF product.versions.size > 0 %]
+        [% FOREACH v = product.versions %]
+          [% v.name FILTER html %]<br>
         [% END %]
       [% ELSE %]
         none
@@ -178,11 +168,12 @@
     </td>
   </tr>
 
+
   [% IF Param('usetargetmilestone') %]
     <tr>
       <td valign="top">
-        [% IF milestones.size > 0 %]
-          <a href="editmilestones.cgi?product=[%- product_name FILTER url_quote %]
+        [% IF product.milestones.size > 0 %]
+          <a href="editmilestones.cgi?product=[%- product.name FILTER url_quote %]
              [%- classification_url_part -%]">
             Milestones:
           </a>
@@ -191,9 +182,9 @@
         [% END %]
       </td>
       <td>
-        [% IF milestones.size > 0 %]
-          [% FOREACH m = milestones %]
-            [% m FILTER html %]<br>
+        [% IF product.milestones.size > 0 %]
+          [% FOREACH m = product.milestones %]
+            [% m.name FILTER html %]<br>
           [% END %]
         [% ELSE %]
           none
@@ -205,12 +196,12 @@
   <tr>
     <td>[% terms.Bugs %]:</td>
     <td>
-      [% IF bug_count %]
-        <a href="buglist.cgi?product=[%- product_name FILTER url_quote %]
+      [% IF product.bug_count %]
+        <a href="buglist.cgi?product=[%- product.name FILTER url_quote %]
            [%- classification_url_part %]"
            title="List of [% terms.bugs %] for product '
-           [%- product_name FILTER html %]'">
-          [% bug_count %]
+           [%- product.name FILTER html %]'">
+          [% product.bug_count FILTER html %]
         </a>
       [% ELSE %]
         none
@@ -221,27 +212,27 @@
 
 <h2>Confirmation</h2>
 
-[% IF bug_count %]
+[% IF product.bug_count %]
 
   [% IF !Param("allowbugdeletion") %]
 
-    Sorry, there
+    <p>Sorry, there
 
-    [% IF bug_count > 1 %]
-      are [% bug_count %] [%+ terms.bugs %]
+    [% IF product.bug_count > 1 %]
+      are [% product.bug_count FILTER html %] [%+ terms.bugs %]
     [% ELSE %]
       is 1 [% terms.bug %]
     [% END %]
 
     outstanding for this product. You must reassign
 
-    [% IF bug_count > 1 %]
+    [% IF product.bug_count > 1 %]
        those [% terms.bugs %]
     [% ELSE %]
        that [% terms.bug %]
     [% END %]
 
-    to another product before you can delete this one.
+    to another product before you can delete this one.</p>
 
   [% ELSE %]
 
@@ -249,8 +240,8 @@
       <tr>
         <td>
           There
-          [% IF bug_count > 1 %]
-            are [% bug_count %] [%+ terms.bugs %]
+          [% IF product.bug_count > 1 %]
+            are [% product.bug_count FILTER html %] [%+ terms.bugs %]
           [% ELSE %]
             is 1 [% terms.bug %]
           [% END %]
@@ -265,16 +256,17 @@
 
 [% END %]
 
-[% IF bug_count == 0 || Param('allowbugdeletion') %]
+[% IF product.bug_count == 0 || Param('allowbugdeletion') %]
 
-  <p>Do you really want to delete this product?<p>
+  <p>Do you really want to delete this product?</p>
 
   <form method="post" action="editproducts.cgi">
-    <input type="submit" value="Yes, delete">
+    <input type="submit" id="delete" value="Yes, delete">
     <input type="hidden" name="action" value="delete">
-    <input type="hidden" name="product" value="[% product_name FILTER html %]">
+    <input type="hidden" name="product" value="[% product.name FILTER html %]">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
     <input type="hidden" name="classification"
-           value="[% classification FILTER html %]">
+           value="[% classification.name FILTER html %]">
   </form>
 
 [% END %]

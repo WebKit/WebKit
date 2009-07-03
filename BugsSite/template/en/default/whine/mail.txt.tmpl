@@ -59,7 +59,7 @@
   Platform: [%+ bug.rep_platform %]
   Assignee: [%+ bug.$assignee_login_string %]
     Status: [%+ status_descs.${bug.bug_status} %]
-            [%- IF bug.resolution -%] Resolution: [% resolution_descs.${bug.resolution} -%]
+            [%- IF bug.resolution -%] Resolution: [% get_resolution(bug.resolution) -%]
                                 [%- END %]
    Summary: [% bug.short_desc %]
 

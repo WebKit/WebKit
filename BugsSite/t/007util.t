@@ -28,18 +28,16 @@ use lib 't';
 use Support::Files;
 
 BEGIN { 
-        use Test::More tests => 14;
+        use Test::More tests => 13;
+        use_ok(Bugzilla);
         use_ok(Bugzilla::Util);
 }
 
-# We need to override the the Param() function so we can get an expected
-# value when Bugzilla::Utim::format_time calls asks for Param('timezone').
+# We need to override Bugzilla->params so we can get an expected value when
+# Bugzilla::Util::format_time() calls ask for the 'timezone' parameter.
 # This will also prevent the tests from failing on site that do not have a
-# data/params file containing Param('timezone') yet.
-sub myParam {
-    return "TEST" if $_[0] eq 'timezone';
-}
-*::Param = *myParam;
+# data/params file containing 'timezone' yet.
+Bugzilla->params->{'timezone'} = "TEST";
 
 # we don't test the taint functions since that's going to take some more work.
 # XXX: test taint functions
@@ -58,11 +56,6 @@ my @list = ('apple','pear','plum','<"\\%');
 is(lsearch(\@list,'pear'),1,'lsearch 1');
 is(lsearch(\@list,'<"\\%'),3,'lsearch 2');
 is(lsearch(\@list,'kiwi'),-1,'lsearch 3 (missing item)');
-
-#max() and min():
-@list = (7,27,636,2);
-is(max(@list),636,'max()');
-is(min(@list),2,'min()');
 
 #trim():
 is(trim(" fg<*\$%>+=~~ "),'fg<*$%>+=~~','trim()');

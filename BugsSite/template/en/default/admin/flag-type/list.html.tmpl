@@ -21,12 +21,18 @@
 
 [% PROCESS global/variables.none.tmpl %]
 
+[% PROCESS "global/js-products.html.tmpl" %]
+
 [% PROCESS global/header.html.tmpl
   title = 'Administer Flag Types'
   style = "
-    table#flag_types tr th { text-align: left; }
+    table#flag_types_bugs tr th,
+    table#flag_types_attachments tr th { text-align: left; }
     .inactive { color: #787878; }
+    .multiplicable { display: block; }
   "
+  onload="selectProduct(document.forms[0], 'product', 'component', '__All__');"
+  javascript_urls=["productmenu.js"]
 %]
 
 <p>
@@ -43,9 +49,45 @@
   depending on whether the patch passed or failed review.
 </p>
 
+<p>
+  You can restrict the list of flag types to those available for a given product
+  and component. If a product is selected with no component, only flag types
+  which are available to at least one component of the product are shown.
+</p>
+
+<form action="editflagtypes.cgi" method="get">
+  <table>
+    <tr>
+      <th><label for="product">Product:</label></th>
+      <td>
+        <select name="product" onchange="selectProduct(this.form, 'product', 'component', '__Any__');">
+          <option value="">__Any__</option>
+          [% FOREACH prod = products %]
+            <option value="[% prod.name FILTER html %]"
+                    [% " selected" IF selected_product == prod.name %]>
+                    [% prod.name FILTER html %]</option>
+          [% END %]
+        </select>
+      </td>
+      <th><label for="component">Component:</label></th>
+      <td>
+        <select name="component">
+          <option value="">__Any__</option>
+          [% FOREACH comp = components %]
+            <option value="[% comp FILTER html %]"
+                    [% " selected" IF selected_component == comp %]>
+                    [% comp FILTER html %]</option>
+          [% END %]
+        </select>
+      </td>
+      <td><input type="submit" id="submit" value="Filter"></td>
+    </tr>
+  </table>
+</form>
+
 <h3>Flag Types for [% terms.Bugs %]</h3>
 
-[% PROCESS display_flag_types types=bug_types %]
+[% PROCESS display_flag_types types=bug_types types_id='bugs' %]
 
 <p>
   <a href="editflagtypes.cgi?action=enter&amp;target_type=bug">Create Flag Type for [% terms.Bugs %]</a>
@@ -53,40 +95,25 @@
 
 <h3>Flag Types for Attachments</h3>
 
-[% PROCESS display_flag_types types=attachment_types %]
+[% PROCESS display_flag_types types=attachment_types types_id='attachments' %]
 
 <p>
   <a href="editflagtypes.cgi?action=enter&amp;target_type=attachment">Create Flag Type For Attachments</a>
 </p>
 
-<script type="text/javascript">
-  <!--
-  function confirmDelete(id, name, count)
-  {
-    if (count > 0) {
-        var msg = 'There are ' + count + ' flags of type ' + name + '. ' +
-                  'If you delete this type, those flags will also be ' +
-                  'deleted.\n\nNote: to deactivate the type instead ' +
-                  'of deleting it, edit it and uncheck its "is active" ' +
-                  'flag.\n\nDo you really want to delete this flag type?';
-        if (!confirm(msg)) return false;
-    }
-    location.href = "editflagtypes.cgi?action=delete&id=" + id;
-    return false; // prevent strict JavaScript warning that this function
-                  // does not always return a value
-  }
-  //-->
-</script>
-
 [% PROCESS global/footer.html.tmpl %]
 
 
 [% BLOCK display_flag_types %]
-  <table id="flag_types" cellspacing="0" cellpadding="4" border="1">
+  <table id="flag_types_[% types_id FILTER html %]" cellspacing="0" cellpadding="4" border="1">
 
     <tr>
       <th>Edit name ...</th>
       <th>Description</th>
+      <th>Sortkey</th>
+      <th>Properties</th>
+      <th>Grant group</th>
+      <th>Request group</th>
       <th>Actions</th>
     </tr>
 
@@ -95,11 +122,23 @@
       <tr class="[% IF type.is_active %]active[% ELSE %]inactive[% END %]">
         <td><a href="editflagtypes.cgi?action=edit&amp;id=[% type.id %]">[% type.name FILTER html FILTER no_break %]</a></td>
         <td>[% type.description FILTER html %]</td>
+        <td align="right">[% type.sortkey FILTER html %]</td>
+        <td>
+          [% IF type.is_requestable %]
+            <span class="requestable">requestable</span>
+          [% END %]
+          [% IF type.is_requestable && type.is_requesteeble %]
+            <span class="requesteeble">(specifically)</span>
+          [% END %]
+          [% IF type.is_multiplicable %]
+            <span class="multiplicable">multiplicable</span>
+          [% END %]
+        </td>
+        <td>[% IF type.grant_group %][% type.grant_group.name FILTER html %][% END %]</td>
+        <td>[% IF type.request_group %][% type.request_group.name FILTER html %][% END %]</td>
         <td>
           <a href="editflagtypes.cgi?action=copy&amp;id=[% type.id %]">Copy</a>
-          | <a href="editflagtypes.cgi?action=confirmdelete&amp;id=[% type.id %]"
-               onclick="return confirmDelete([% type.id %], '[% type.name FILTER js FILTER html %]',
-                                             [% type.flag_count %]);">Delete</a>
+          | <a href="editflagtypes.cgi?action=confirmdelete&amp;id=[% type.id %]">Delete</a>
         </td>
       </tr>
 

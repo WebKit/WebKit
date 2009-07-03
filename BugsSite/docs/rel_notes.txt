@@ -1,3 +1,630 @@
+Release Notes for Bugzilla version 3.0 and higher are available in HTML
+format, either on the bugzilla.org website, or in your current installation,
+linked from the index page.
+
+bugzilla.org links for release notes
+------------------------------------
+3.0.2: http://www.bugzilla.org/releases/3.0.2/release-notes.html
+
+***************************************
+*** The Bugzilla 2.22 Release Notes ***
+***************************************
+
+Table of Contents
+*****************
+
+- Introduction
+- Important Updates In This Point Release
+- Minimum Requirements
+    * Perl
+    * For MySQL Users
+    * For PostgreSQL Users
+    * Required Perl Modules
+    * Optional Perl Modules
+- What's New?
+    * Complete PostgreSQL Support
+    * Parameters In Sections
+    * One Codebase, Multiple Databases
+    * UTF-8 for New Installations
+    * Admins Can Impersonate Users
+    * Bug Import and Moving Improvements
+    * Adding Individual Bugs to Saved Searches
+    * Attach URLs
+    * Optional "Strict Isolation" for Groups
+    * "editcomponents" Change
+    * "shutdownhtml" Change
+    * Miscellaneous Improvements
+    * All Changes
+- Deprecated Features
+- Outstanding Issues (<======================== IMPORTANT, PLEASE READ)
+- How to Upgrade From An Older Bugzilla
+    * Steps for Upgrading
+- Code Changes Which May Affect Customizations
+    * CGI.pl is Gone
+    * Other Changes
+- Security Fixes In 2.22 Releases
+- Release Notes for Previous Versions
+
+Introduction
+************
+Bugzilla 2.22 is one of our most polished releases. We did a lot of
+small cleanups to make Bugzilla easier to use and more useful in
+many, many small ways, in addition to adding some major new features.
+
+This document contains the release notes for Bugzilla 2.22.
+In this document, recently added, changed, and removed features
+of Bugzilla are described. If you are upgrading from an older version,
+you will definitely want to read these release notes in detail, so that
+you have an idea of what has changed.
+
+If you are upgrading from a version before 2.20, also read the 2.20 
+release notes (lower in this file) and any previous release notes.
+
+If you are installing a new Bugzilla, you will still want to look over
+the release notes to see if there is any particularly important 
+information that affects your installation.
+
+If you would like to contribute code to Bugzilla, read our 
+Contributor's Guide at:
+
+http://www.bugzilla.org/docs/contributor.html
+
+
+Important Updates In This Point Release
+***************************************
+
+This section describes bugs fixed in releases after the original 2.22
+release.
+
+Version 2.22.2
+--------------
+
++ Make Bugzilla compatible with Template Toolkit 2.15 (bug 357374)
+
++ Make Bugzilla compatible with versions of MySQL higher than 5.0.25
+  (bug 321645)
+
++ Sanity Check can now only be run by people with the "admin" privilege.
+  (bug 91761)
+
+Version 2.22.1
+--------------
+
++ When sending mail, Bugzilla could throw the error "Insecure dependency in
+  exec while running with -T switch" (bug 340538).
+
++ Using the public webdot server (for dependency graphs) should work 
+  again (bug 351243).
+
++ The "I'm added to or removed from this capacity" email preference
+  wasn't working for new bugs (bug 349852).
+
++ The original release of 2.22 incorrectly said it required Template-Toolkit
+  version 2.08. In actual fact, Bugzilla requires version 2.10 (bug 351478).
+
++ votes.cgi would crash if your bug was the one confirming a bug (bug 351300).
+
++ checksetup.pl now correctly reports if your Template::Plugin::GD module
+  is missing. If missing, it could lead to charts and graphs not working
+  (bug 345389).
+
++ The "Keyword" field on buglist.cgi was not sorted alphabetically, so
+  it wasn't very useful for sorting (bug 342828).
+
++ Sendmail will no longer complain about there being a newline in the
+  email address, when Bugzilla sends mail (bug 331365).
+
++ contrib/bzdbcopy.pl would try to insert an invalid value into the
+  database, unnecessarily (bug 335572).
+
++ Deleting a bug now correctly deletes its attachments from the database
+  (bug 339667).
+
+
+Minimum Requirements
+********************
+
+Perl
+----
+
+  Perl v5.6.1              (Non-Windows platforms)
+  ActiveState Perl v5.8.1  (Windows only)
+
+  Note that this is the last release of Bugzilla to support perl 5.6.x--
+  future versions will require perl 5.8.
+
+For MySQL Users
+---------------
+
+  MySQL v4.0.14                    (changed from 2.20)
+  perl module: DBD::mysql v2.9003  (changed from 2.18)
+
+For PostgreSQL Users
+--------------------
+
+  PostgreSQL 7.3.x
+  perl module: DBD::Pg 1.31 (1.41 required for PostgreSQL 8+)
+
+  WARNING: DBD::Pg 1.43 has a bug which causes checksetup.pl to fail
+  and corrupt the database. If you are using DBD::Pg 1.43, either downgrade
+  to 1.41 or upgrade to 1.45 (1.42 and 1.44 seem broken somehow too).
+
+  Note that this is the last release of Bugzilla to support PostgreSQL 7.x.
+  Future versions will require PostgreSQL 8.0 and DBD::Pg 1.45.
+
+Required Perl Modules
+---------------------
+
+  AppConfig v1.52
+  CGI v2.93
+  Data::Dumper (any)
+  Date::Format v2.21
+  DBI v1.38
+  File::Spec v0.84
+  File::Temp (any)
+  Template Toolkit v2.10 (changed from 2.20)
+  Text::Wrap v2001.0131
+  Mail::Mailer v1.67     (changed from 2.20)
+  MIME::Base64 v3.01     (new in 2.22)
+  MIME::Parser v5.406    (new in 2.22)
+  Storable (any)
+
+  Note: The SMTP support in Mail::Mailer 1.73 (the most recent version)
+        is broken. The last known working version is 1.67.
+
+Optional Perl Modules
+---------------------
+
+  Chart::Base v1.0
+  GD v1.20
+  GD::Graph (any)
+  GD::Text::Align (any)
+  Net::LDAP (any)
+  PatchReader v0.9.4
+  XML::Twig (any)       (new in 2.22)
+  Image::Magick         (new in 2.22)
+
+
+What's New?
+***********
+
+Complete PostgreSQL Support
+---------------------------
+Bugzilla 2.20 contained experimental support for PostgreSQL.
+In Bugzilla 2.22, PostgreSQL support is fully complete and stable. Using
+PostgreSQL with Bugzilla should be as stable as using MySQL, and if
+you experience any problems they will be taken as seriously as if you
+were running MySQL.
+
+There are no known remaining major problems with Bugzilla on PostgreSQL.
+All features of Bugzilla have been tested and work.
+
+
+Parameters In Sections
+----------------------
+Long-time users of Bugzilla know that over time the parameter list has
+grown quite large. It has now been split into sections to make it easier
+to use.
+
+
+One Codebase, Multiple Databases
+--------------------------------
+There is now limited support for having multiple projects use the
+same Bugzilla codebase, but all have separate databases.
+
+The different projects can have their own templates and their own
+bug database, but all use the same set of Bugzilla code in the same
+directory.
+
+To enable this, set an environment variable called PROJECT when
+calling the Bugzilla CGIs. Then for each project, you can have
+a localconfig.PROJECT (where "PROJECT" is the value of the PROJECT
+environment variable) file for the database parameters, and a 
+template/en/PROJECT directory (where "PROJECT" is the value of the
+PROJECT environment variable)
+
+This feature isn't documented yet, but we hope to have documentation for
+it soon.
+
+
+UTF-8 For New Installations
+---------------------------
+If this is the first time you're installing Bugzilla, it will now use
+UTF-8 encoding for all pages, automatically. It will also send emails
+in UTF-8. This eliminates most of the internationalization problems
+users have experienced, as one Bugzilla page may now contain any number
+of languages simultaneously.
+
+If you are upgrading and you want to use UTF-8, just turn on the "utf8"
+Parameter. However, realize that if you have non-UTF-8 data in your 
+Bugzilla, it will appear unreadable. (If you just have ASCII in your
+database, you're safe to turn on the "utf8" parameter, definitely.)
+
+
+Admins Can Impersonate Users
+----------------------------
+User impersonation (think of the su/sudo command on Unix) allows you
+to view pages and perform actions as if you are logged in as someone else,
+without having to know their password.
+
+A user in the new "bz_sudoers" group has the option of "becoming"
+any user in Bugzilla. Once they "become" that user, they *are* that user
+for the rest of the session, until they decide to switch back to being
+themselves.
+
+However, they cannot "become" any user in the "bz_sudo_protect" group.
+This group includes everybody in the "admin" and "bz_sudoers" groups by 
+default.
+
+Any time a user is impersonated, they will get an email notifying them
+who has impersonated them.
+
+
+Bug Import and Moving Improvements
+----------------------------------
+The XML Import script, importxml.pl, has been completely re-written.
+
+It now:
+
+  * Correctly imports the "priority" field
+  * Understands when the "Reporter" or "CC List" security boxes 
+    are unchecked on the bug.
+  * Places bugs in the appropriate groups
+  * Allows attachments to be imported
+  * Is much more forgiving about small problems in the XML
+
+
+Adding Individual Bugs to Saved Searches (Tagging)
+--------------------------------------------------
+Users now have the option of adding an individual bug to any
+particular Saved Search. Individual users that disagree with the site
+default can add or remove this feature (which appears as an entry box
+visible in the footer) by changing the General Preferences setting
+called "Enable tags for bugs".
+
+
+Attach URLs
+-----------
+Instead of attaching a file, you can now also attach a URL to a bug.
+This will show up just like an attachment on show_bug.cgi, but when
+you click on it, it will take you to the URL.
+
+To enable this, turn on the "allow_attach_url" parameter.
+
+
+Optional "Strict Isolation" for Groups
+--------------------------------------
+If you turn on the "strict_isolation" parameter in Bugzilla, you
+will *not* be able to add any user to the CC field (or set them
+as an Assignee or QA Contact) unless that user could normally see
+the bug. That is, you will no longer be able to "accidentally" 
+(or intentionally) give somebody access to a bug that they 
+otherwise couldn't see.
+
+
+"editcomponents" Change
+-----------------------
+Previously, all users who had "editcomponents" could see every Product,
+using the editcomponents.cgi script. Now, users with "editcomponents"
+can only see Products that they normally have access to.
+
+This restriction also affects editversions.cgi, editmilestones.cgi and
+editproducts.cgi.
+
+
+"shutdownhtml" Change
+---------------------
+All of Bugzilla is now affected by the "shutdownhtml" parameter,
+including command-line scripts. checksetup.pl is exempt. Many scripts
+(such as collectstats.pl and whine.pl) will just exit silently when
+"shutdownhtml" is turned on.
+
+
+Miscellaneous Improvements
+--------------------------
+
+- Added a frequently-requested user preference for whether or not to go
+  to the next bug in your list after submitting changes to a bug.
+
+- The ability to do relative date searches (like "1d" for "1 day" or "1w"
+  for "1 week") by hour now, in addition to days and other units of time.
+
+- "Alias" added to the New Bug form, for users with editbugs.
+
+- Users can now actually see the descriptions of flags that you enter
+  in editflagtypes.cgi. The description will appear as a tooltip
+  when a user places their mouse over the flag name on show_bug.cgi.
+
+- Bugzilla will optionally convert BMP attachments into PNGs for you.
+  See the "convert_uncompressed_images" in the "Attachments" section
+  of the Parameters.
+
+- You can now edit the Status Whiteboard when you are changing multiple
+  bugs at once.
+
+- The way that groups work in the database has changed, and large-scale 
+  Bugzilla use with many concurrent users should be much faster, as a 
+  result. (Technical Details: The need for Bugzilla to "derive groups" 
+  has gone away pretty much entirely.)
+
+- Performance improvements on searching attachment information that's not
+  the actual content of the attachment (such as searching the Attachment
+  Description or the Attachment MIME Type)
+
+- You can now specify multiple email addresses, comma-separated, when 
+  setting the requestee of a flag, and it will set the flag once for each
+  of those email addresses
+
+- "Bug Creation Time" is now searchable in the Boolean Charts.
+
+- When you mark a comment on a bug as private, the background color
+  of the comment will change immediately. However, in order for
+  Bugzilla to register that the comment is now private, you still
+  have to "submit" the changes.
+
+- Emails sent from Bugzilla now have "X-Bugzilla-Keywords" and
+  "X-Bugzilla-Severity" by default, containing the information
+  from the related Bugzilla fields.
+
+- You can now change the assignee and QA contact on multiple bugs at
+  once even when those bugs are in different products.
+
+- contrib/merge-users.pl allows you to merge two user accounts. This is
+  particulary useful when a user opened several accounts and only one should
+  be kept. It also lets you merge a deleted account with an existing one.
+
+All Changes
+-----------
+
+If you'd like to see all the changes between Bugzilla 2.20 and Bugzilla
+2.22, see:
+
+http://tinyurl.com/9p2tm
+
+
+Deprecated Features
+*******************
+
+- This is the last release of Bugzilla to support perl 5.6.x. All future
+  versions of Bugzilla will require at least perl 5.8.
+
+  This is the last release of Bugzilla to support PostgreSQL 7.x. Future
+  releases using PostgreSQL will require PostgreSQL 8.0 and DBD::Pg 1.45.
+
+Outstanding Issues
+******************
+
+- bug 305836: PostgreSQL users: do not use DBD::Pg version 1.43 with 
+  Bugzilla. It has a bug which can corrupt the database. Version 1.41
+  is fine. Version 1.45 or higher is fine too.
+
+- (No Bug Number) VERY IMPORTANT: If you have customized the values in
+  your Status/Resolution field, you must edit checksetup.pl BEFORE YOU
+  RUN IT. Find the line that starts like this:
+
+  bug_status   => ["UNCONFIRMED",
+
+  That's where you set the values for the Status field.
+
+  resolution   => ["","FIXED",
+
+  And that's where you set values for the Resolution field.
+
+  Those are both near line 1826 in checksetup.pl.
+
+  If you forget to do this, you will have to manually edit the "bug_status"
+  and "resolution" tables in the database to contain the correct values.
+
+- bug 276230: The support for restricting access to particular Categories of 
+  New Charts is not complete. You should treat the 'chartgroup' Param as the 
+  only access mechanism available. However, additionally, charts migrated from
+  Old Charts will be restricted to the groups that are marked MANDATORY for 
+  the corresponding Product. There is currently no way to change this 
+  restriction, and the groupings will not be updated if the group configuration
+  for the Product changes.
+
+- bug 37765: If you use the "sendmail" support of Bugzilla,
+  and you use an MTA which is *not* Sendmail (such as Postfix, Exim, etc.)
+  make sure the "sendmailnow" parameter is ON or Bugzilla will not send
+  e-mail correctly.
+
+- bug 69621: If you rename or remove a keyword that is in use on bugs, you will
+  need to rebuild the "keyword cache" by running sanitycheck.cgi and choosing
+  the option to rebuild the cache when it asks. Otherwise keywords may not show
+  up properly in search results.
+
+- (No Bug Number) If you have a lot of non-ASCII data in your Bugzilla (for 
+  example, if you use a translation of Bugzilla), don't enable the XS::Stash
+  option when you install the Template Toolkit, or your Bugzilla installation
+  may become slow. This problem is fixed in a not-yet-released version of the
+  Template Toolkit (after 2.14).
+
+- Bug 99215: Flags are not protected by "mid-air collision" detection.
+  Nor are any attachment changes.
+
+- Bug 89822: When changing multiple bugs at the same time, there is no
+  "mid-air collision" protection.
+
+- bug 322955: The email interface (bug_mail.pl) in the contrib/ directory
+  has not been maintained (as it has no maintainer), and does not work 
+  properly. We hope to have this fixed in our next major release of 
+  Bugzilla; however, any help or contributions in this area are very 
+  welcome.
+
+
+How to Upgrade From An Older Bugzilla
+*************************************
+
+NOTE: Upgrading from a large installation (over 10,000 bugs) running 2.18
+      or before may take a significant amount of time. checksetup will 
+      try to let you know how long it will take, but expect downtime 
+      of an hour or more if you have many bugs, many attachments, 
+      or many users.
+
+Steps for Upgrading
+-------------------
+
+1) Read these entire Release Notes, particularly the "Outstanding Issues"
+   and "Security Fixes" sections.
+
+2) View the Sanity Check (sanitycheck.cgi) page on your installation before
+   upgrading. Attempt to fix all warnings that the page produces before
+   you go any further, or you may experience problems during your upgrade.
+
+3) Make a backup of the Bugzilla database before you upgrade, perhaps
+   by using mysqldump. THIS IS VERY IMPORTANT. If anything goes wrong
+   during the upgrade, your installation can be corrupted beyond
+   recovery. Having a backup keeps you safe.
+
+   Example:
+
+      mysqldump -u root -p bugs > bugs-db.sql
+
+4) Replace the files in your installation with the new version of Bugzilla,
+   or you can try to use CVS to upgrade. The bugzilla.org website has 
+   instructions on how to do the actual installation.
+
+   You can also use a brand-new Bugzilla directory, as long as you
+   copy over the old data/ directory and the "localconfig" file to the
+   new installation.
+
+5) Run checksetup.pl after you install the new version.
+
+7) View the Sanity Check page again after you run checksetup.pl.
+
+8) It is recommended that, if possible, you fix any problems you find
+   immediately. Failure to do this may mean that Bugzilla will not work 
+   correctly. Be aware that if the sanity check page contains more errors after
+   an upgrade, it doesn't necessarily mean there are more errors in your 
+   database, as additional tests are added to the sanity check over time, and 
+   it is possible that those errors weren't being checked for in the old 
+   version.
+
+9) This version of Bugzilla contains improvements to the email that
+   Bugzilla sends when a bug is changed. The template for that email 
+   is contained in the "newchangedmail" parameter. If you would like
+   to take advantage of the email enhancements in this version of
+   Bugzilla, reset that parameter to its default. (You can customize
+   it after that again, if you want.)
+
+
+Code Changes Which May Affect Customizations
+********************************************
+
+CGI.pl is Gone
+--------------
+The CGI.pl file, which used to contain many global functions, and which
+also contained initialization code for every CGI, is gone. The functions
+have been moved to various places and sometimes renamed.
+
+The initialization code that used to happen inside CGI.pl is now inside
+of Bugzilla.pm. All CGIs must "use Bugzilla" in one way or another. (Some
+CGIs "use Bugzilla" by doing "require globals.pl".)
+
+
+Deriving Groups No Longer Happens
+---------------------------------
+Bugzilla no longer needs to "derive groups" in advance. That is, previously
+Bugzilla used to flatten the group heirarchy into the user_group_map
+table. (That is, show that a user was in every group they were in,
+even if they were only in that group because they belonged to *another*
+group.) Now the table only contains groups that the user is in directly,
+and groups that they are in because of a regexp.
+
+Instead, The Bugzilla::User->group function determines the groups a user
+is in when called.
+
+We did this because the group derivation was causing a lot of complexity
+in the code, and also deriving the groups was a slow process that 
+frequently had to happen inside of a database lock while sending mail
+or viewing a bug list.
+
+See https://bugzilla.mozilla.org/show_bug.cgi?id=304583 for details.
+
+
+Other Changes
+-------------
+
+- The move.pl script's functionality has been merged into process_bug.cgi.
+
+- $::template and $::vars are gone from globals.pl. Instead of $::template,
+  use Bugzilla->template. Every script creates the $vars variable by itself
+  instead of using a global $::vars variable.
+
+- $::userid is gone. Instead use Bugzilla->user->id.
+
+- QuickSearch is now in perl instead of in JavaScript. The code is in
+  Bugzilla/Search/QuickSearch.pm. This makes it much easier to customize,
+  and it also fixes some long-standing issues that QuickSearch had.
+
+- Attachment data is now in the attach_data table. Other information
+  about attachments is still in the "attachments" table.
+
+- Much like the 2.20 release, many functions have been removed from
+  globals.pl and CGI.pl. They were moved elsewhere and renamed.
+  Search RESOLVED bugs in bugzilla.mozilla.org for the old
+  version of the function name, and that will usually show you
+  the bug where we moved the function, allowing you to find out
+  what the new name and location is.
+
+- This is the last release that contains the deprecated
+  SendSQL, SqlQuote, FetchSqlData, MoreSqlData, and FetchOneColumn 
+  functions. Instead, you should use DBI functions. For a very brief 
+  example, see:
+
+  http://www.bugzilla.org/docs/developer.html#sql-sendreceive
+
+
+Security Fixes in 2.22 Releases
+*******************************
+
+A long-standing, well-known security issue is finally resolved in Bugzilla
+2.22: Previously, the "Session ID" of each user could be easily guessed,
+given enough time. This could have allowed an attacker to take over a
+user's account, in certain circumstances. Now, the "Session ID" is totally
+random, resolving this issue. See bug 119524 in bugzilla.mozilla.org for
+details.
+
+If you are very concerned about the security of your Bugzilla installation,
+it would be a very good idea to run the following command on your
+database immediately after upgrading:
+
+TRUNCATE TABLE logincookies;
+
+This is actually safe to do at any time--it just forces a logout of
+every single user, even those with saved sessions. (It invalidates
+every login cookie Bugzilla has ever given out.)
+
+Version 2.22.2
+--------------
+
+A Cross-Site Scripting vulnerability is fixed in Bugzilla 2.22.2. You can
+read the details of the fix at:
+
+http://www.bugzilla.org/security/2.20.3/
+
+Version 2.22.1
+--------------
+
+The Bugzilla team fixed two Information Leaks and three Cross-Site
+Scripting vulnerabilities that existed in versions of Bugzilla
+prior to 2.22.1. We strongly recommend that you update any 2.22 
+installation to 2.22.1, to be protected from these vulnerabilities.
+
+In addition, we have made an enhancement to security in this version
+of Bugzilla. In previous versions, it was possible for malicious
+users to exploit administrators in certain ways. Although this has
+never happened (to our knowledge) in the real world, we thought it
+was important that we protect administrators from this sort of attack.
+
+You can see details on all the vulnerabilities and enhancements at:
+
+http://www.bugzilla.org/security/2.18.5/
+
+
+Release Notes For Previous Versions
+************************************
+
 ***************************************
 *** The Bugzilla 2.20 Release Notes ***
 ***************************************
@@ -8,6 +635,7 @@ Table of Contents
 - Introduction
 - Important Updates in this Point Release
     * Version 2.20.1
+    * Version 2.20.2
 - Minimum Requirements
     * Perl
     * For MySQL Users
@@ -60,11 +688,10 @@ If you are installing a new Bugzilla, you will still want to look over
 the release notes to see if there is any particularly important information
 that affects your installation.
 
-The 2.20 release is our current stable series. It has had about nine 
-months of development since 2.18, but they were nearly the most active
-nine months in Bugzilla's history. We hope that users will appreciate 
-our many external changes, and that Bugzilla administators will find 
-that our internal changes make their lives easier.
+The 2.20 release has had about nine months of development since 2.18, but
+they were nearly the most active nine months in Bugzilla's history. We hope
+that users will appreciate our many external changes, and that Bugzilla
+administators will find that our internal changes make their lives easier.
 
 If you would like to contribute code to Bugzilla, read our 
 Contributor's Guide at:
@@ -128,6 +755,33 @@ Version 2.20.1
 
 + Many, many other bug fixes. See http://www.bugzilla.org/status/changes.html
   for details on what was fixed between 2.20 and 2.20.1.
+
+
+Version 2.20.2
+--------------
+
++ Adding a new attachment and taking the bug at the same time does not
+  create a referential integrity problem anymore if the bug was marked as
+  a duplicate (bug 332705).
+
++ Some additional admin links have been added to the sidebar (bug 282613).
+
++ A new test has been added to our test suite, named 012throwables.t.
+  It will now make sure that all tags used in ThrowUserError() and
+  ThrowCodeError() are defined, and that there are no unused tags (bug 312042).
+
++ whine.pl now works correctly on MySQL 4.0. MySQL 4.1 is not affected
+  (bug 327348).
+
++ contrib/merge-users.pl allows you to merge two user accounts. This is
+  especially useful when a user opened several accounts and only one
+  should be kept (bug 188264).
+
++ The login form on index.cgi again works correctly on a fresh installation
+  (bug 328108).
+
++ Email preferences are now set correctly when creating a new user account
+  using the ENV method (bug 327355).
 
 
 Minimum Requirements
@@ -638,15 +1292,13 @@ Other Changes
 
 - SendSQL() and related calls are deprecated, and the various $dbh methods
   should be used instead, such as $dbh->prepare() and $dbh->execute().
-  Bugzilla->dbh is the $dbh handle to use. We expect SendSQL to completely
-  disappear by 2.22. For more information on how to use the $dbh methods, 
-  see:  http://search.cpan.org/dist/DBI/DBI.pm
+  Bugzilla->dbh is the $dbh handle to use. For more information on how
+  to use the $dbh methods, see:  http://search.cpan.org/dist/DBI/DBI.pm
 
 - The $::userid variable will be going away. Use Bugzilla->user->id instead.
 
 - All global variables (any that start with $::, @::, or %::) will 
-  be going away, eventually, hopefully they will be entirely gone 
-  by Bugzilla 2.24.
+  be entirely gone by Bugzilla 2.24.
 
 
 Security Fixes in 2.20 Releases
@@ -664,7 +1316,7 @@ extremely specific information leak.
 To see details on the vulnerabilities that were fixed, see the 
 Security Advisory at:
 
-http://www.bugzilla.org/security/2.18.4/
+http://www.bugzilla.org/security/2.16.10/
 
 
 Release Notes for Previous Versions
@@ -1737,7 +2389,7 @@ See also next section.
   'letsubmitterchoosepriority' was off.
   (bug 63018)
 
-- Most CGIs are now templatised.  This helps to make it
+- Most CGIs are now templatized.  This helps to make it
   easier to remember to HTML filter values and easier to spot
   when they are not, preventing cross site scripting attacks.
   (bug 86168)
@@ -1748,17 +2400,17 @@ See also next section.
 
 *** IMPORTANT CHANGES ***
 
-- 2.16 introduces "templatisation", a new feature that allows
-  administrators to easily customise the HTML output (the "look and feel")
+- 2.16 introduces "templatization", a new feature that allows
+  administrators to easily customize the HTML output (the "look and feel")
   of Bugzilla without altering Perl code.  Bugzilla uses the
-  "Template Toolkit" for this.  Please see the "Template Customisation"
+  "Template Toolkit" for this.  Please see the "Template Customization"
   section of the Bugzilla Guide for more details.
 
-  Administrators who ran the 2.15 development version and customised
+  Administrators who ran the 2.15 development version with custom
   templates should check the templates are still valid, as file names
   and file paths have changed.
 
-  Most output is now templatised.  This process will be complete next
+  Most output is now templatized.  This process will be complete next
   milestone.
 
   For speed, compiled templates are cached on disk.  If you modify the
@@ -1812,7 +2464,7 @@ See also next section.
   lengthy delays in future if this problem reoccurs.
   (bug 106377)
 
-- In parallel with templatisation, a lot of changes have been made to the HTML
+- In parallel with templatization, a lot of changes have been made to the HTML
   output of the Bugzilla CGIs.  This could break code that attempts to parse
   such code.  For example, this breaks mozbot.
   (no bug number)
@@ -2089,8 +2741,8 @@ known to us after the Bugzilla 2.14 release.
 
 *** SECURITY ISSUES RESOLVED ***
 
-- Multiple instances of unauthorised access to confidential
-  bugs has been fixed.
+- Multiple instances of unauthorized access to confidential
+  bugs have been fixed.
   (bug 39524, 39526, 39527, 39531, 39533, 70189, 82781)
 
 - Multiple instances of untrusted parameters not being
@@ -2101,7 +2753,7 @@ known to us after the Bugzilla 2.14 release.
 - After logging in passwords no longer appear in the URL.
   (bug 15980)
 
-- Procedures to prevent unauthorised access to confidential
+- Procedures to prevent unauthorized access to confidential
   files are now simpler.  In particular the shadow directory
   no longer exists and the data/comments file no longer needs
   to be directly accessible, so the entire data directory can
@@ -2112,7 +2764,7 @@ known to us after the Bugzilla 2.14 release.
 
 - If they do not already exist, checksetup.pl will attempt to
   write Apache .htaccess files by default, to prevent
-  unauthorised access to confidential files.  You can turn this
+  unauthorized access to confidential files.  You can turn this
   off in the localconfig file.
   (bug 76154)
 

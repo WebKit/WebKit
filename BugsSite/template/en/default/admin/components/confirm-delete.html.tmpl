@@ -20,29 +20,13 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; The name of the component
-  #
-  # description: string; Component description, may be empty
-  #
-  # bug_count: number; The number of bugs belonging to the component
-  #
-  # initialowner: string; default assignee, may be empty
-  #
-  # initialqacontact: string; if system parameter is set to use the default
-  #                           qa contact field, then this will be it, 
-  #                           may be empty
-  #
-  # milestoneurl: string; milestone url, if milestones are in use, 
-  #                       may be empty
-  #
-  # product: string; The name of the product
-  #
-  # disallownew: boolean; Are new bugs allowed for the product flag
-  #
-  # product_description: string; Description of product
+  # comp: object; Bugzilla::Component object representing the component the
+  #               user wants to delete.
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
   #%]
 
-[% title = BLOCK %]Delete Component of Product '[% product FILTER html %]'
+[% title = BLOCK %]Delete Component of Product '[% product.name FILTER html %]'
   [% END %]
 
 [% PROCESS global/header.html.tmpl
@@ -56,54 +40,58 @@
 </tr>
 <tr>
   <td valign="top">Component:</td>
-  <td valign="top">[% name FILTER html %]</td>
+  <td valign="top">[% comp.name FILTER html %]</td>
 </tr>
 <tr>
   <td valign="top">Component Description:</td>
-  <td valign="top">[% description FILTER html %]</td>
+  <td valign="top">[% comp.description FILTER html_light %]</td>
 </tr>
 <tr>
   <td valign="top">Default assignee:</td>
-  <td valign="top">[% initialowner FILTER html %]</td>
+  <td valign="top">[% comp.default_assignee.login FILTER html %]</td>
   
 [% IF Param('useqacontact') %]
 </tr>
 <tr>
   <td valign="top">Default QA contact:</td>
-  <td valign="top">[% initialqacontact FILTER html %]</td>
+  <td valign="top">[% comp.default_qa_contact.login FILTER html %]</td>
 [% END %]
   
 </tr>
 <tr>
   <td valign="top">Component of Product:</td>
-  <td valign="top">[% product FILTER html %]</td>
+  <td valign="top">[% product.name FILTER html %]</td>
 
-[% IF product_description %]  
+[% IF product.description %]
 </tr>
 <tr>
   <td valign="top">Product Description:</td>
-  <td valign="top">[% product_description FILTER html %]</td>
+  <td valign="top">[% product.description FILTER html_light %]</td>
 [% END %]
 
 [% IF Param('usetargetmilestone') %]
 </tr>
 <tr>
   <td valign="top">Product Milestone URL:</td>
-  <td valign="top"><a href="[% milestoneurl FILTER uri %]">[% milestoneurl FILTER html %]</a></td>
+  <td valign="top">
+    <a href="[% product.milestone_url FILTER html %]">
+      [% product.milestone_url FILTER html %]
+    </a>
+  </td>
 [% END %]
 
 </tr>
 <tr>
   <TD VALIGN="top">Closed for [% terms.bugs %]:</TD>
-  <TD VALIGN="top">[% IF $disallownew %]Yes[% ELSE %]No[% END %]</td>
+  <TD VALIGN="top">[% IF product.disallow_new %]Yes[% ELSE %]No[% END %]</td>
 </tr>
 <tr>
   <td valign="top">[% terms.Bugs %]:</td>
   <td valign="top">
-[% IF bug_count %]
-  <a title="List of [% terms.bugs %] for component '[% name FILTER html %]'"
-     href="buglist.cgi?component=[% name FILTER url_quote %]&amp;product=
-          [%- product FILTER url_quote %]">[% bug_count %]</a>
+[% IF comp.bug_count %]
+  <a title="List of [% terms.bugs %] for component '[% comp.name FILTER html %]'"
+     href="buglist.cgi?component=[% comp.name FILTER url_quote %]&amp;product=
+          [%- product.name FILTER url_quote %]">[% comp.bug_count %]</a>
 [% ELSE %]
   None
 [% END %]
@@ -113,34 +101,34 @@
 
 <h2>Confirmation</h2>
   
-[% IF bug_count %]
+[% IF comp.bug_count %]
 
   [% IF !Param("allowbugdeletion") %]
-
+  <p>
     Sorry, there
 
-    [% IF bug_count > 1 %] 
-      are [% bug_count %] [%+ terms.bugs %] 
+    [% IF comp.bug_count > 1 %] 
+      are [% comp.bug_count %] [%+ terms.bugs %] 
     [% ELSE %]
-      is [% bug_count %] [%+ terms.bug %] 
+      is [% comp.bug_count %] [%+ terms.bug %] 
     [% END %]
 
     outstanding for this component.  You must reassign 
 
-    [% IF bug_count > 1 %]
+    [% IF comp.bug_count > 1 %]
        those [% terms.bugs %] 
     [% ELSE %]
        that [% terms.bug %]
     [% END %]
 
     to another component before you can delete this one.
-
+  </p>
   [% ELSE %]
 
     <table border="0" cellpadding="20" width="70%" bgcolor="red"><tr><td>
 
-      There [% IF bug_count > 1 %] 
-        are [% bug_count %] [%+ terms.bugs %] 
+      There [% IF comp.bug_count > 1 %] 
+        are [% comp.bug_count %] [%+ terms.bugs %] 
       [% ELSE %]
         is 1 [% terms.bug %]
       [% END %]
@@ -153,15 +141,16 @@
 
 [% END %]
 
-[% IF bug_count == 0 || Param('allowbugdeletion') %]
+[% IF comp.bug_count == 0 || Param('allowbugdeletion') %]
 
-  <p>Do you really want to delete this component?<p>
+  <p>Do you really want to delete this component?</p>
   
   <form method="post" action="editcomponents.cgi">
-  <input type="submit" value="Yes, delete">
+  <input type="submit" id="delete" value="Yes, delete">
   <input type="hidden" name="action" value="delete">
-  <input type="hidden" name="product" value="[% product FILTER html %]">
-  <input type="hidden" name="component" value="[% name FILTER html %]">
+  <input type="hidden" name="product" value="[% product.name FILTER html %]">
+  <input type="hidden" name="component" value="[% comp.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
   </form>
 
 [% END %]

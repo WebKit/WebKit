@@ -17,6 +17,7 @@
   # Rights Reserved.
   #
   # Contributor(s): Gervase Markham <gerv@gerv.net>
+  #                 David D. Kilzer <ddkilzer@kilzer.net>
   #%]
 
 [%# INTERFACE:
@@ -70,7 +71,7 @@
           [% "</tr><tr>" IF loop.index > 0 %]
             <td>
               [% IF change.attachid %]
-                <a href="attachment.cgi?id=[% change.attachid %]&amp;action=view">
+                <a href="attachment.cgi?id=[% change.attachid %]">
                 Attachment #[% change.attachid %]</a>
               [% END %]
               [% change.field %]
@@ -84,7 +85,10 @@
                 [% ELSIF change.fieldname == 'bug_status' %]
                   [% status_descs.${change.removed} FILTER html %]
                 [% ELSIF change.fieldname == 'resolution' %]
-                  [% resolution_descs.${change.removed} FILTER html %]
+                  [% get_resolution(change.removed) FILTER html %]
+                [% ELSIF change.fieldname == 'blocked' ||
+                         change.fieldname == 'dependson' %]
+                  [% change.removed FILTER bug_list_link FILTER none %]
                 [% ELSE %]
                   [% change.removed FILTER html %]
                 [% END %]
@@ -101,7 +105,10 @@
                 [% ELSIF change.fieldname == 'bug_status' %]
                   [% status_descs.${change.added} FILTER html %]
                 [% ELSIF change.fieldname == 'resolution' %]
-                  [% resolution_descs.${change.added} FILTER html %]
+                  [% get_resolution(change.added) FILTER html %]
+                [% ELSIF change.fieldname == 'blocked' ||
+                         change.fieldname == 'dependson' %]
+                  [% change.added FILTER bug_list_link FILTER none %]
                 [% ELSE %]
                   [% change.added FILTER html %]
                 [% END %]

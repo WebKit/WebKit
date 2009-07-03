@@ -29,7 +29,7 @@
 
 [% DEFAULT title = "$terms.Bugzilla $terms.Bugs" %]
 
-<?xml version="1.0"?>
+<?xml version="1.0"[% IF Param('utf8') %] encoding="UTF-8"[% END %]?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>[% title FILTER xml %]</title>
   <link rel="alternate" type="text/html"
@@ -62,23 +62,23 @@
       <tr>
         <th>Field</th><th>Value</th>
       </tr><tr>
-        <td>[% columns.opendate.title FILTER none %]</td>
-        <td>[% bug.opendate FILTER none %]</td>
+        <td>[% columns.opendate.title FILTER html %]</td>
+        <td>[% bug.opendate FILTER html %]</td>
       </tr><tr>
-        <td>[% columns.assigned_to_realname.title FILTER none %]</td>
-        <td>[% bug.assigned_to_realname FILTER none %]</td>
+        <td>[% columns.assigned_to_realname.title FILTER html %]</td>
+        <td>[% bug.assigned_to_realname FILTER html %]</td>
       </tr><tr>
-        <td>[% columns.priority.title FILTER none %]</td>
-        <td>[% bug.priority FILTER none %]</td>
+        <td>[% columns.priority.title FILTER html %]</td>
+        <td>[% bug.priority FILTER html %]</td>
       </tr><tr>
-        <td>[% columns.bug_severity.title FILTER none %] </td>
-        <td>[% bug.bug_severity FILTER none %]</td>
+        <td>[% columns.bug_severity.title FILTER html %] </td>
+        <td>[% bug.bug_severity FILTER html %]</td>
       </tr><tr>
-        <td>[% columns.bug_status.title FILTER none %]</td>
-        <td>[% bug.bug_status FILTER none %]</td>
+        <td>[% columns.bug_status.title FILTER html %]</td>
+        <td>[% bug.bug_status FILTER html %]</td>
       </tr><tr>
-        <td>[% columns.changeddate.title FILTER none %]</td>
-        <td>[% bug.changeddate FILTER none -%]</td>
+        <td>[% columns.changeddate.title FILTER html %]</td>
+        <td>[% bug.changeddate FILTER html -%]</td>
       </tr>
       </table>
       [% END %]

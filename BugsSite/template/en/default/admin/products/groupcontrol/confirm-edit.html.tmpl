@@ -21,9 +21,11 @@
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
+[% title = BLOCK %]
+  Confirm Group Control Change for product '[%- product.name FILTER html %]'
+[% END %]
 
-[% PROCESS global/header.html.tmpl title="Confirm Group Control Change for product \'$product\'" %]
-
+[% PROCESS global/header.html.tmpl title = title %]
 [% FOREACH group = mandatory_groups %]
 <P>
 group '[% group.name FILTER html %]' impacts [% group.count %] 
@@ -46,7 +48,7 @@ be removed.[% END %]
      return to the previous page.
   <p>
     <input type="hidden" name="confirmed" value="confirmed">
-    <input type="submit" value="Continue">
+    <input type="submit" id="update" value="Continue">
   </p>
 
 </form>

@@ -21,15 +21,13 @@
   #%]
 
 [%# INTERFACE:
-  # name: string; The name of the version
-  #
-  # bug_count: number; The number of bugs targetted at the version
-  #
-  # product: string; The name of the product
-  #
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the version belongs.
+  # version: object; Bugzilla::Version object representing the
+  #                    version the user wants to delete.
   #%]
 
-[% title = BLOCK %]Delete Version of Product '[% product FILTER html %]'
+[% title = BLOCK %]Delete Version of Product '[% product.name FILTER html %]'
   [% END %]
 
 [% PROCESS global/header.html.tmpl
@@ -43,20 +41,21 @@
 </tr>
 <tr>
   <td valign="top">Version:</td>
-  <td valign="top">[% name FILTER html %]</td>
+  <td valign="top">[% version.name FILTER html %]</td>
 </tr>
 <tr>
   <td valign="top">Version of Product:</td>
-  <td valign="top">[% product FILTER html %]</td>
+  <td valign="top">[% product.name FILTER html %]</td>
 </tr>
 <tr>
   <td valign="top">[% terms.Bugs %]:</td>
   <td valign="top">
-[% IF bug_count %]
+[% IF version.bug_count %]
   <a title="List of [% terms.bugs %] targetted at version '
-           [% name FILTER html %]'"
-     href="buglist.cgi?version=[% name FILTER url_quote %]&amp;product=
-          [%- product FILTER url_quote %]">[% bug_count %]</a>
+           [%- version.name FILTER html %]'"
+     href="buglist.cgi?version=[% version.name FILTER url_quote %]&amp;product=
+          [%- product.name FILTER url_quote %]">
+          [%- version.bug_count FILTER none %]</a>
 [% ELSE %]
   None
 [% END %]
@@ -65,34 +64,35 @@
 </table>
 
 <h2>Confirmation</h2>
-  
-[% IF bug_count %]
 
+[% IF version.bug_count %]
+  <p>
   Sorry, there
-  [% IF bug_count > 1 %] 
-    are [% bug_count %] [%+ terms.bugs %] 
+  [% IF version.bug_count > 1 %] 
+    are [% version.bug_count FILTER none %] [%+ terms.bugs %] 
   [% ELSE %]
-    is [% bug_count %] [%+ terms.bug %] 
+    is [% version.bug_count FILTER none %] [%+ terms.bug %] 
   [% END %]
 
   outstanding for this version. You must move 
 
-  [% IF bug_count > 1 %]
+  [% IF version.bug_count > 1 %]
      those [% terms.bugs %] 
   [% ELSE %]
      that [% terms.bug %]
   [% END %]
   to another version before you can delete this one.
-
+  </p>
 [% ELSE %]
 
-  <p>Do you really want to delete this version?<p>
+  <p>Do you really want to delete this version?</p>
   
   <form method="post" action="editversions.cgi">
-    <input type="submit" value="Yes, delete">
+    <input type="submit" id="delete" value="Yes, delete">
     <input type="hidden" name="action" value="delete">
-    <input type="hidden" name="product" value="[% product FILTER html %]">
-    <input type="hidden" name="version" value="[% name FILTER html %]">
+    <input type="hidden" name="product" value="[% product.name FILTER html %]">
+    <input type="hidden" name="version" value="[% version.name FILTER html %]">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
   </form>
 
 [% END %]

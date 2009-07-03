@@ -2,7 +2,7 @@
 # if research.att.com ever changes their IP, or if you use a different
 # webdot server, you'll need to edit this
 <FilesMatch \.dot$>
-  Allow from 192.20.225.10
+  Allow from 192.20.225.0/24
   Deny from all
 </FilesMatch>
 

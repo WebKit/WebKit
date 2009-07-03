@@ -207,7 +207,7 @@ tbody.file pre:empty {
 [% BLOCK diffurl %][% PROCESS viewurl %]&amp;action=diff[% END %]
 
 [% IF headers %]
-  [% h1 = BLOCK %]
+  [% header = BLOCK %]
     [% IF attachid %]
       Attachment #[% attachid %]: [% description FILTER html %]
     [% ELSE %]
@@ -218,7 +218,7 @@ tbody.file pre:empty {
     [% END %]
     for <a href="show_bug.cgi?id=[% bugid %]">[% terms.bug %] #[% bugid %]</a>
   [% END %]
-  [% h2 = BLOCK %]
+  [% subheader = BLOCK %]
     [% bugsummary FILTER html %]
   [% END %]
   [% PROCESS global/header.html.tmpl %]
@@ -242,7 +242,7 @@ tbody.file pre:empty {
   [%# HEADER %]
   [% IF headers %]
     <a href="[% PROCESS viewurl id=attachid %]">View</a>
-    | <a href="[% PROCESS editurl id=attachid %]">Edit</a>
+    | <a href="[% PROCESS editurl id=attachid %]">Details</a>
     | <a href="[% PROCESS diffurl id=attachid %]&amp;context=[% context FILTER url_quote %]&amp;collapsed=[% collapsed FILTER url_quote %]&amp;headers=[% headers FILTER url_quote %]&amp;format=raw">Raw&nbsp;Unified</a>
   [% END %]
   [% IF other_patches.size > 0 %]
@@ -257,7 +257,7 @@ tbody.file pre:empty {
       [% END %]
       </select>
       and this patch
-      <input type="submit" value="Diff">
+      <input type="submit" id="diff" value="Diff">
       <input type="hidden" name="action" value="interdiff">
       <input type="hidden" name="newid" value="[% attachid %]">
       <input type="hidden" name="headers" value="[% headers FILTER html %]">

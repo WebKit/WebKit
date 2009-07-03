@@ -58,7 +58,7 @@
 </p>
 
 <p>
-  Queries come from saved searches, which are created by executing a <a
+  Searches come from saved searches, which are created by executing a <a
   href="query.cgi">search</a>, then telling [% terms.Bugzilla %] to remember
   the search under a particular name.  Add a query by clicking "Add a new
   query", and select the desired saved search name under "Search" and add a
@@ -68,16 +68,25 @@
   terms.bug %] that matches the search will be sent in its own email message.
 </p>
 
+<p>
+  [% IF Param("timezone") %]
+    All times are server local time ([% Param("timezone") FILTER upper %]).
+  [% ELSE %]
+    All times are server local time.
+  [% END %]
+</p>
+
 <form method="post" action="editwhines.cgi">
 [%# This hidden submit button must be here to set default behavior when
     the user presses return on a form input field #%]
 <input type="submit" value="Update / Commit" name="commit"
-       style="visibility: hidden">
+       style="display: none;" id="commit">
 <input type="hidden" name="update" value="1">
+<input type="hidden" name="token" value="[% token FILTER html %]">
 
 [% FOREACH event = events %]
 
-<table cellspacing="2px" cellpadding="2px" border="0" width="100%"
+<table cellspacing="2" cellpadding="2" width="100%"
        style="border: 1px solid;">
   <tr>
     <th align="left" bgcolor="#FFFFFF" colspan="2">
@@ -85,7 +94,8 @@
     </th>
     <td align="right">
       <input type="submit" value="Remove Event"
-             name="remove_event_[% event.key %]">
+             name="remove_event_[% event.key %]"
+             id="remove_event_[% event.key %]">
     </td>
   </tr>
 
@@ -105,9 +115,14 @@
       Descriptive text sent within whine message:
     </td>
     <td>
-      <textarea name="event_[% event.key %]_body"
-                rows="5" cols="80">
-          [% event.value.body FILTER html %]</textarea>
+      [% INCLUDE global/textarea.html.tmpl
+         name           = "event_${event.key}_body"
+         minrows        = 3
+         maxrows        = 10
+         defaultrows    = 5
+         cols           = 80
+         defaultcontent = event.value.body
+       %]
     </td>
   </tr>
 
@@ -120,7 +135,8 @@
       <td align="left" bgcolor="#FFEEEE">
         Not scheduled to run<br>
         <input type="submit" value="Add a new schedule"
-               name="add_schedule_[% event.key %]">
+               name="add_schedule_[% event.key %]"
+               id="add_schedule_[% event.key %]">
       </td>
     </tr>
 
@@ -177,7 +193,8 @@
               </td>
               <td align="left">
                 <input type="submit" value="Remove"
-                       name="remove_schedule_[% schedule.id %]">
+                       name="remove_schedule_[% schedule.id %]"
+                       id="remove_schedule_[% schedule.id %]">
               </td>
             </tr>
           [% END %]
@@ -185,7 +202,8 @@
         <tr>
           <td>
             <input type="submit" value="Add a new schedule"
-                   name="add_schedule_[% event.key %]">
+                   name="add_schedule_[% event.key %]"
+                   id="add_schedule_[% event.key %]">
           </td>
         </tr>
 
@@ -201,14 +219,16 @@
 
     <tr>
       <td valign="top" align="right">
-        Queries:
+        Searches:
       </td>
       <td align="left" colspan="1">
-        No queries <br>
-        <input type="submit" value="Add a new query" name="add_query_[% event.key %]">
+        No searches <br>
+        <input type="submit" value="Add a new query"
+               name="add_query_[% event.key %]"
+               id="add_query_[% event.key %]">
       </td>
       <td align="right" valign="bottom">
-        <input type="submit" value="Update / Commit" name="commit">
+        <input type="submit" value="Update / Commit" name="commit" id="update">
       </td>
     </tr>
 
@@ -216,7 +236,7 @@
 
     <tr>
       <td valign="top" align="right">
-        Queries:
+        Searches:
       </td>
       <td align="left">
 
@@ -258,7 +278,8 @@
               </td>
               <td align="right">
                 <input type="submit" value="Remove"
-                       name="remove_query_[% query.id %]">
+                       name="remove_query_[% query.id %]"
+                       id="remove_query_[% query.id %]">
               </td>
             </tr>
 
@@ -267,7 +288,8 @@
           <tr>
             <td colspan="3">
               <input type="submit" value="Add a new query"
-                     name="add_query_[% event.key %]">
+                     name="add_query_[% event.key %]"
+                     id="add_query_[% event.key %]">
             </td>
           </tr>
 
@@ -275,7 +297,7 @@
 
       </td>
       <td align="right" valign="bottom">
-        <input type="submit" value="Update / Commit" name="commit">
+        <input type="submit" value="Update / Commit" name="commit" id="update">
       </td>
     </tr>
 
@@ -286,7 +308,7 @@
 [% END %]
 
 <p align="left">
-  <input type="submit" value="Add a new event" name="add_event">
+  <input type="submit" value="Add a new event" name="add_event" id="add_event">
 </p>
 
 </form>

@@ -34,3 +34,7 @@ p.areyoureallyreallysure {
     font-size: 120%;
     font-weight: bold;
 }
+
+tr.param_disabled {
+    background-color: lightgrey;
+}

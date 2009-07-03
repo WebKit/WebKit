@@ -17,14 +17,13 @@
   # Rights Reserved.
   #
   # Contributor(s): Gavin Shelley <bugzilla@chimpychompy.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# INTERFACE:
-  # milestones: array of hashes having the following properties:
-  #   - name: string; The name of the milestone.
-  #   - sortkey: number; The sortkey used to order the milestone.
-  #
-  # product: string; the name of the product we are editing milestones for
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestones belongs.
+  # showbugcounts: if defined, then bug counts should be included in the table
   #%]
 
 [% USE Bugzilla %]
@@ -33,15 +32,17 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% title = BLOCK %]Select milestone of product
-                   '[% product FILTER html %]'[% END %]
+                   '[% product.name FILTER html %]'[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
 %]
 
 [% edit_contentlink = BLOCK %]editmilestones.cgi?action=edit&amp;product=
-  [%- product FILTER url_quote %]&amp;milestone=%%name%%[% END %]
+  [%- product.name FILTER url_quote %]&amp;milestone=%%name%%[% END %]
 [% delete_contentlink = BLOCK %]editmilestones.cgi?action=del&amp;product=
-  [%- product FILTER url_quote %]&amp;milestone=%%name%%[% END %]
+  [%- product.name FILTER url_quote %]&amp;milestone=%%name%%[% END %]
+[% bug_count_contentlink = BLOCK %]buglist.cgi?target_milestone=%%name%%&amp;product=
+  [%- product.name FILTER url_quote %][% END %]
 
 
 [% columns = [
@@ -53,25 +54,57 @@
      { 
        name => "sortkey"
        heading => "Sortkey"
-     },
+     }
    ]
 %]
 
+[% IF showbugcounts %]
+
+  [% columns.push({
+       name => "bug_count"
+       heading => "$terms.Bugs"
+       align => "right"
+       contentlink => bug_count_contentlink
+     })
+  %]
+
+[% END %]
+
 [% columns.push({
-     heading => "Action"
-     content => "Delete"
-     contentlink => delete_contentlink
-   }) %]
+       name => "action"
+       heading => "Action"
+       content => "Delete"
+       contentlink => delete_contentlink
+     })
+%]
+
+[%# We want to override the usual 'Delete' link for the default
+    milestone %]
+[% overrides.action = [ {
+     match_value => product.default_milestone
+     match_field => 'name'
+     override_content => 1
+     content => "(Default milestone)"
+     override_contentlink => 1
+     contentlink => undef
+   } ]
+%] 
 
 [% PROCESS admin/table.html.tmpl
      columns = columns
-     data = milestones
+     data = product.milestones
+     overrides = overrides
 %]
 
-<p>
+[% IF ! showbugcounts %]
+
+  <p><a href="editmilestones.cgi?product=[% product.name FILTER url_quote %]&amp;showbugcounts=1">
+      Redisplay table with [% terms.bug %] counts (slower)</a></p>
+
+[% END %]
 
 [% PROCESS admin/milestones/footer.html.tmpl
   no_edit_other_milestones_link = 1
- %]
+%]
 
 [% PROCESS global/footer.html.tmpl %]

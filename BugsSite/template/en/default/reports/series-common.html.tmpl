@@ -99,22 +99,20 @@ function checkNewState() {
 
 [% BLOCK series_select %]
   <td align="left">
-    <label for="[% sel.name %]" accesskey="[% sel.accesskey %]">
-      <select name="[% sel.name %]" id="[% sel.name %]"
-              size="[% sel.size %]" style="width: 15em"
-              [%+ "disabled=\"disabled\"" UNLESS ${sel.name}.keys.size || newtext %]
-              [%+ "onchange=\"$sel.onchange\"" IF sel.onchange %]>
-        [% FOREACH x = ${sel.name}.keys.sort %]
-          <option value="[% x FILTER html %]"
-            [% " selected" IF default.${sel.name} == x %]>
-            [% x FILTER html %]</option>
-        [% END %]
-        [% IF newtext %]
-          <option value="">[% newtext FILTER html %]</option>
-        [% ELSIF NOT ${sel.name}.keys.size %]
-          <option value="" disabled="disabled"></option>
-        [% END %]
-      </select>
-    </label>
+    <select name="[% sel.name %]" id="[% sel.name %]"
+            size="[% sel.size %]" style="width: 15em"
+            [%+ "disabled=\"disabled\"" UNLESS ${sel.name}.keys.size || newtext %]
+            [%+ "onchange=\"$sel.onchange\"" IF sel.onchange %]>
+      [% FOREACH x = ${sel.name}.keys.sort %]
+        <option value="[% x FILTER html %]"
+          [% " selected" IF default.${sel.name} == x %]>
+          [% x FILTER html %]</option>
+      [% END %]
+      [% IF newtext %]
+        <option value="">[% newtext FILTER html %]</option>
+      [% ELSIF NOT ${sel.name}.keys.size %]
+        <option value="" disabled="disabled"></option>
+      [% END %]
+    </select>
   </td>
 [% END %]

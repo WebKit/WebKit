@@ -181,6 +181,12 @@ function selectProduct( f , productfield, componentfield, blank ) {
         return;
     }
 
+    // Do nothing if no products are defined (this avoids the
+    // "a has no properties" error from merge_arrays function)
+    if (f[productfield].length == blank ? 1 : 0) {
+        return;
+    }
+
     // if this is the first load and nothing is selected, no need to
     // merge and sort all components; perl gives it to us sorted.
 
@@ -219,7 +225,8 @@ function selectProduct( f , productfield, componentfield, blank ) {
         for ( var i = blank ? 1 : 0 ; i < f[productfield].length ; i++ ) {
             sel[sel.length] = f[productfield].options[i].value;
         }
-        single = 0;
+        // If there is only one product, then only one product can be selected
+        single = ( sel.length == 1 );
     } else {
 
         for ( i = blank ? 1 : 0 ; i < f[productfield].length ; i++ ) {

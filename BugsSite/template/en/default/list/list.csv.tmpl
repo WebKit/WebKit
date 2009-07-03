@@ -20,7 +20,7 @@
   #                 Gervase Markham <gerv@gerv.net>
   #%]
 
-[% PROCESS global/variables.none.tmpl %]
+[% PROCESS "global/field-descs.none.tmpl" %]
 [% USE date %]
 
 [% colsepchar = user.settings.csv_colsepchar.value %]
@@ -37,6 +37,10 @@ bug_id
       [% IF column == "opendate" OR column == "changeddate" %]
         [% rawcolumn = column.replace("date", "time") %]
         [% bug.$column = date.format(bug.$rawcolumn, "%Y-%m-%d %H:%M:%S") %]
+      [% ELSIF column == 'bug_status' %]
+        [% bug.$column = status_descs.${bug.$column} %]
+      [% ELSIF column == 'resolution' %]
+        [%- bug.$column = get_resolution(bug.$column) %]
       [% END %]
       [% bug.$column FILTER csv %]
     [% END %]
