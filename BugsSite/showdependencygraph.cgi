@@ -23,7 +23,7 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use File::Temp;
 
@@ -32,6 +32,7 @@ use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Bug;
+use Bugzilla::Status;
 
 Bugzilla->login();
 
@@ -71,7 +72,7 @@ sub CreateImagemap {
             # Pick up bugid from the mapdata label field. Getting the title from
             # bugtitle hash instead of mapdata allows us to get the summary even
             # when showsummary is off, and also gives us status and resolution.
-            my $bugtitle = value_quote($bugtitles{$bugid});
+            my $bugtitle = html_quote(clean_text($bugtitles{$bugid}));
             $map .= qq{<area alt="bug $bugid" name="bug$bugid" shape="rect" } .
                     qq{title="$bugtitle" href="$url" } .
                     qq{coords="$leftx,$topy,$rightx,$bottomy">\n};
@@ -95,18 +96,19 @@ sub AddLink {
 }
 
 # The list of valid directions. Some are not proposed in the dropdrown
-# menu despite they are valid ones.
+# menu despite the fact that they are valid.
 my @valid_rankdirs = ('LR', 'RL', 'TB', 'BT');
 
-my $rankdir = $cgi->param('rankdir') || "LR";
+my $rankdir = $cgi->param('rankdir') || 'TB';
 # Make sure the submitted 'rankdir' value is valid.
 if (lsearch(\@valid_rankdirs, $rankdir) < 0) {
-    $rankdir = 'LR';
+    $rankdir = 'TB';
 }
 
+my $display = $cgi->param('display') || 'tree';
 my $webdotdir = bz_locations()->{'webdotdir'};
 
-if (!defined $cgi->param('id') && !defined $cgi->param('doall')) {
+if (!defined $cgi->param('id') && $display ne 'doall') {
     ThrowCodeError("missing_bug_id");
 }
 
@@ -123,7 +125,7 @@ node [URL="${urlbase}show_bug.cgi?id=\\N", style=filled, color=lightgrey]
 
 my %baselist;
 
-if ($cgi->param('doall')) {
+if ($display eq 'doall') {
     my $dependencies = $dbh->selectall_arrayref(
                            "SELECT blocked, dependson FROM dependencies");
 
@@ -133,29 +135,48 @@ if ($cgi->param('doall')) {
     }
 } else {
     foreach my $i (split('[\s,]+', $cgi->param('id'))) {
-        $i = trim($i);
         ValidateBugID($i);
         $baselist{$i} = 1;
     }
 
     my @stack = keys(%baselist);
-    my $sth = $dbh->prepare(
-                  q{SELECT blocked, dependson
-                      FROM dependencies
-                     WHERE blocked = ? or dependson = ?});
-    foreach my $id (@stack) {
-        my $dependencies = $dbh->selectall_arrayref($sth, undef, ($id, $id));
-        foreach my $dependency (@$dependencies) {
-            my ($blocked, $dependson) = @$dependency;
-            if ($blocked != $id && !exists $seen{$blocked}) {
-                push @stack, $blocked;
-            }
 
-            if ($dependson != $id && !exists $seen{$dependson}) {
-                push @stack, $dependson;
-            }
+    if ($display eq 'web') {
+        my $sth = $dbh->prepare(q{SELECT blocked, dependson
+                                    FROM dependencies
+                                   WHERE blocked = ? OR dependson = ?});
 
-            AddLink($blocked, $dependson, $fh);
+        foreach my $id (@stack) {
+            my $dependencies = $dbh->selectall_arrayref($sth, undef, ($id, $id));
+            foreach my $dependency (@$dependencies) {
+                my ($blocked, $dependson) = @$dependency;
+                if ($blocked != $id && !exists $seen{$blocked}) {
+                    push @stack, $blocked;
+                }
+                if ($dependson != $id && !exists $seen{$dependson}) {
+                    push @stack, $dependson;
+                }
+                AddLink($blocked, $dependson, $fh);
+            }
+        }
+    }
+    # This is the default: a tree instead of a spider web.
+    else {
+        my @blocker_stack = @stack;
+        foreach my $id (@blocker_stack) {
+            my $blocker_ids = Bugzilla::Bug::EmitDependList('blocked', 'dependson', $id);
+            foreach my $blocker_id (@$blocker_ids) {
+                push(@blocker_stack, $blocker_id) unless $seen{$blocker_id};
+                AddLink($id, $blocker_id, $fh);
+            }
+        }
+        my @dependent_stack = @stack;
+        foreach my $id (@dependent_stack) {
+            my $dep_bug_ids = Bugzilla::Bug::EmitDependList('dependson', 'blocked', $id);
+            foreach my $dep_bug_id (@$dep_bug_ids) {
+                push(@dependent_stack, $dep_bug_id) unless $seen{$dep_bug_id};
+                AddLink($dep_bug_id, $id, $fh);
+            }
         }
     }
 
@@ -224,8 +245,10 @@ chmod 0777, $filename;
 my $webdotbase = Bugzilla->params->{'webdotbase'};
 
 if ($webdotbase =~ /^https?:/) {
-     # Remote dot server
-     my $url = perform_substs($webdotbase) . $filename;
+     # Remote dot server. We don't hardcode 'urlbase' here in case
+     # 'sslbase' is in use.
+     $webdotbase =~ s/%([a-z]*)%/Bugzilla->params->{$1}/eg;
+     my $url = $webdotbase . $filename;
      $vars->{'image_url'} = $url . ".gif";
      $vars->{'map_url'} = $url . ".map";
 } else {
@@ -292,7 +315,7 @@ foreach my $f (@files)
 my @bugs = grep(detaint_natural($_), split(/[\s,]+/, $cgi->param('id')));
 $vars->{'bug_id'} = join(', ', @bugs);
 $vars->{'multiple_bugs'} = ($cgi->param('id') =~ /[ ,]/);
-$vars->{'doall'} = $cgi->param('doall');
+$vars->{'display'} = $display;
 $vars->{'rankdir'} = $rankdir;
 $vars->{'showsummary'} = $cgi->param('showsummary');
 

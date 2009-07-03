@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -58,16 +57,20 @@
 </script>
 
 <form method="post" action="attachment.cgi" target="_top" onsubmit="omitUntouchedComment(); return true;">
-  <input type="hidden" name="id" value="[% attachid %]">
+  <input type="hidden" name="id" value="[% attachment.id %]">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="contenttypemethod" value="manual">
-  <input type="hidden" name="description" value="[% description FILTER html %]">
-  <input type="hidden" name="filename" value="[% filename FILTER html %]">
-  <input type="hidden" name="contenttypeentry" value="[% contenttype FILTER html %]"><br>
-  <input type="hidden" name="ispatch" [% IF ispatch %] value="1" [% ELSE %] value="0" [% END %] >
-  <input type="hidden" name="isobsolete" [% IF isobsolete %] value="1" [% ELSE %] value="0" [% END %] >
-  [% IF (Param("insidergroup") && UserInGroup(Param("insidergroup"))) %]
-    <input type="hidden" name="isprivate" [% IF isprivate %] value="1" [% ELSE %] value="0" [% END %] >
+  <input type="hidden" name="delta_ts" value="[% attachment.modification_time FILTER html %]">
+  [% IF user.id %]
+    <input type="hidden" name="token" value="[% issue_hash_token([attachment.id, attachment.modification_time]) FILTER html %]">
+  [% END %]
+  <input type="hidden" name="description" value="[% attachment.description FILTER html %]">
+  <input type="hidden" name="filename" value="[% attachment.filename FILTER html %]">
+  <input type="hidden" name="contenttypeentry" value="[% attachment.contenttype FILTER html %]"><br>
+  <input type="hidden" name="ispatch" [% IF attachment.ispatch %] value="1" [% ELSE %] value="0" [% END %] >
+  <input type="hidden" name="isobsolete" [% IF attachment.isobsolete %] value="1" [% ELSE %] value="0" [% END %] >
+  [% IF (Param("insidergroup") && user.in_group(Param("insidergroup"))) %]
+    <input type="hidden" name="isprivate" [% IF attachment.isprivate %] value="1" [% ELSE %] value="0" [% END %] >
   [% END %]
 
 <table style="width:100%; height:90%" cellpadding=0 cellspacing=0>
@@ -77,11 +80,11 @@
 </td>
 <td>
     [% IF flag_types.size > 0 %]
-      [% PROCESS "flag/list.html.tmpl" bug_id=bugid attach_id=attachid %]<br>
+      [% PROCESS "flag/list.html.tmpl" bug_id=attachment.bug_id attach_id=attachment.id %]<br>
     [% END %]
 </td>
 <td>
-Back to <a href="show_bug.cgi?id=[% bugid %]" target="_top">[% terms.Bug %] #[% bugid %]</a>
+Back to <a href="show_bug.cgi?id=[% attachment.bug_id %]" target="_top">[% terms.Bug %] #[% attachment.bug_id %]</a>
 </td>
 <td>
     [% IF ispatch %]

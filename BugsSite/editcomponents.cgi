@@ -22,55 +22,30 @@
 #                 Terry Weissman <terry@mozilla.org>
 #                 Frédéric Buclin <LpSolit@gmail.com>
 #                 Akamai Technologies <bugzilla-dev@akamai.com>
-#
-# Direct any questions on this source code to
-#
-# Holger Schurig <holgerschurig@nikocity.de>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Series;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::User;
 use Bugzilla::Component;
-use Bugzilla::Bug;
 use Bugzilla::Token;
 
-###############
-# Subroutines #
-###############
-
-# Takes an arrayref of login names and returns an arrayref of user ids.
-sub check_initial_cc {
-    my ($user_names) = @_;
-
-    my %cc_ids;
-    foreach my $cc (@$user_names) {
-        my $id = login_to_id($cc, THROW_ERROR);
-        $cc_ids{$id} = 1;
-    }
-    return [keys %cc_ids];
-}
-
-###############
-# Main Script #
-###############
-
 my $cgi = Bugzilla->cgi;
-my $dbh = Bugzilla->dbh;
 my $template = Bugzilla->template;
 my $vars = {};
+# There is only one section about components in the documentation,
+# so all actions point to the same page.
+$vars->{'doc_section'} = 'components.html';
 
 #
 # Preliminary checks:
 #
 
 my $user = Bugzilla->login(LOGIN_REQUIRED);
-my $whoid = $user->id;
 
 print $cgi->header();
 
@@ -115,15 +90,12 @@ my $product = $user->check_can_admin_product($product_name);
 #
 
 unless ($action) {
-
     $vars->{'showbugcounts'} = $showbugcounts;
     $vars->{'product'} = $product;
     $template->process("admin/components/list.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-
     exit;
 }
-
 
 #
 # action='add' -> present form for parameters for new component
@@ -136,11 +108,8 @@ if ($action eq 'add') {
     $vars->{'product'} = $product;
     $template->process("admin/components/create.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-
     exit;
 }
-
-
 
 #
 # action='new' -> add component entered in the 'action=add' screen
@@ -160,102 +129,23 @@ if ($action eq 'new') {
     my $description        = trim($cgi->param('description')      || '');
     my @initial_cc         = $cgi->param('initialcc');
 
-    $comp_name || ThrowUserError('component_blank_name');
-
-    if (length($comp_name) > 64) {
-        ThrowUserError('component_name_too_long',
-                       {'name' => $comp_name});
-    }
-
     my $component =
-        new Bugzilla::Component({product => $product,
-                                 name => $comp_name});
+      Bugzilla::Component->create({ name             => $comp_name,
+                                    product          => $product,
+                                    description      => $description,
+                                    initialowner     => $default_assignee,
+                                    initialqacontact => $default_qa_contact,
+                                    initial_cc       => \@initial_cc });
 
-    if ($component) {
-        ThrowUserError('component_already_exists',
-                       {'name' => $component->name});
-    }
-
-    $description || ThrowUserError('component_blank_description',
-                                   {name => $comp_name});
-
-    $default_assignee || ThrowUserError('component_need_initialowner',
-                                        {name => $comp_name});
-
-    my $default_assignee_id   = login_to_id($default_assignee);
-    my $default_qa_contact_id = Bugzilla->params->{'useqacontact'} ?
-        (login_to_id($default_qa_contact) || undef) : undef;
-
-    my $initial_cc_ids = check_initial_cc(\@initial_cc);
-
-    trick_taint($comp_name);
-    trick_taint($description);
-
-    $dbh->bz_lock_tables('components WRITE', 'component_cc WRITE');
-
-    $dbh->do("INSERT INTO components
-                (product_id, name, description, initialowner,
-                 initialqacontact)
-              VALUES (?, ?, ?, ?, ?)", undef,
-             ($product->id, $comp_name, $description,
-              $default_assignee_id, $default_qa_contact_id));
-
-    $component = new Bugzilla::Component({ product => $product,
-                                           name => $comp_name });
-
-    my $sth = $dbh->prepare("INSERT INTO component_cc 
-                             (user_id, component_id) VALUES (?, ?)");
-    foreach my $user_id (@$initial_cc_ids) {
-        $sth->execute($user_id, $component->id);
-    }
-
-    $dbh->bz_unlock_tables;
-
-    # Insert default charting queries for this product.
-    # If they aren't using charting, this won't do any harm.
-    my @series;
-
-    my $prodcomp = "&product="   . url_quote($product->name) .
-                   "&component=" . url_quote($comp_name);
-
-    # For localization reasons, we get the title of the queries from the
-    # submitted form.
-    my $open_name = $cgi->param('open_name');
-    my $nonopen_name = $cgi->param('nonopen_name');
-    my $open_query = "field0-0-0=resolution&type0-0-0=notregexp&value0-0-0=." .
-                     $prodcomp;
-    my $nonopen_query = "field0-0-0=resolution&type0-0-0=regexp&value0-0-0=." .
-                        $prodcomp;
-
-    # trick_taint is ok here, as these variables aren't used as a command
-    # or in SQL unquoted
-    trick_taint($open_name);
-    trick_taint($nonopen_name);
-    trick_taint($open_query);
-    trick_taint($nonopen_query);
-
-    push(@series, [$open_name, $open_query]);
-    push(@series, [$nonopen_name, $nonopen_query]);
-
-    foreach my $sdata (@series) {
-        my $series = new Bugzilla::Series(undef, $product->name,
-                                          $comp_name, $sdata->[0],
-                                          $whoid, 1, $sdata->[1], 1);
-        $series->writeToDatabase();
-    }
-
+    $vars->{'message'} = 'component_created';
     $vars->{'comp'} = $component;
     $vars->{'product'} = $product;
     delete_token($token);
 
-    $template->process("admin/components/created.html.tmpl",
-                       $vars)
+    $template->process("admin/components/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-
     exit;
 }
-
-
 
 #
 # action='del' -> ask if user really wants to delete
@@ -266,17 +156,13 @@ if ($action eq 'new') {
 if ($action eq 'del') {
     $vars->{'token'} = issue_session_token('delete_component');
     $vars->{'comp'} =
-        Bugzilla::Component::check_component($product, $comp_name);
-
+      Bugzilla::Component->check({ product => $product, name => $comp_name });
     $vars->{'product'} = $product;
 
     $template->process("admin/components/confirm-delete.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-
     exit;
 }
-
-
 
 #
 # action='delete' -> really delete the component
@@ -285,46 +171,20 @@ if ($action eq 'del') {
 if ($action eq 'delete') {
     check_token_data($token, 'delete_component');
     my $component =
-        Bugzilla::Component::check_component($product, $comp_name);
+        Bugzilla::Component->check({ product => $product, name => $comp_name });
 
-    if ($component->bug_count) {
-        if (Bugzilla->params->{"allowbugdeletion"}) {
-            foreach my $bug_id (@{$component->bug_ids}) {
-                # Note: We allow admins to delete bugs even if they can't
-                # see them, as long as they can see the product.
-                my $bug = new Bugzilla::Bug($bug_id);
-                $bug->remove_from_db();
-            }
-        } else {
-            ThrowUserError("component_has_bugs",
-                           {nb => $component->bug_count });
-        }
-    }
-    
-    $dbh->bz_lock_tables('components WRITE', 'component_cc WRITE',
-                         'flaginclusions WRITE', 'flagexclusions WRITE');
+    $component->remove_from_db;
 
-    $dbh->do("DELETE FROM flaginclusions WHERE component_id = ?",
-             undef, $component->id);
-    $dbh->do("DELETE FROM flagexclusions WHERE component_id = ?",
-             undef, $component->id);
-    $dbh->do("DELETE FROM component_cc WHERE component_id = ?",
-             undef, $component->id);
-    $dbh->do("DELETE FROM components WHERE id = ?",
-             undef, $component->id);
-
-    $dbh->bz_unlock_tables();
-
+    $vars->{'message'} = 'component_deleted';
     $vars->{'comp'} = $component;
     $vars->{'product'} = $product;
+    $vars->{'no_edit_component_link'} = 1;
     delete_token($token);
 
-    $template->process("admin/components/deleted.html.tmpl", $vars)
+    $template->process("admin/components/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     exit;
 }
-
-
 
 #
 # action='edit' -> present the edit component form
@@ -335,7 +195,7 @@ if ($action eq 'delete') {
 if ($action eq 'edit') {
     $vars->{'token'} = issue_session_token('edit_component');
     my $component =
-        Bugzilla::Component::check_component($product, $comp_name);
+        Bugzilla::Component->check({ product => $product, name => $comp_name });
     $vars->{'comp'} = $component;
 
     $vars->{'initial_cc_names'} = 
@@ -343,14 +203,10 @@ if ($action eq 'edit') {
 
     $vars->{'product'} = $product;
 
-    $template->process("admin/components/edit.html.tmpl",
-                       $vars)
+    $template->process("admin/components/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-
     exit;
 }
-
-
 
 #
 # action='update' -> update the component
@@ -371,106 +227,24 @@ if ($action eq 'update') {
     my $description           = trim($cgi->param('description')      || '');
     my @initial_cc            = $cgi->param('initialcc');
 
-    my $component_old =
-        Bugzilla::Component::check_component($product, $comp_old_name);
+    my $component =
+        Bugzilla::Component->check({ product => $product, name => $comp_old_name });
 
-    $comp_name || ThrowUserError('component_blank_name');
+    $component->set_name($comp_name);
+    $component->set_description($description);
+    $component->set_default_assignee($default_assignee);
+    $component->set_default_qa_contact($default_qa_contact);
+    $component->set_cc_list(\@initial_cc);
+    my $changes = $component->update();
 
-    if (length($comp_name) > 64) {
-        ThrowUserError('component_name_too_long',
-                       {'name' => $comp_name});
-    }
-
-    if ($comp_name ne $component_old->name) {
-        my $component =
-            new Bugzilla::Component({product => $product,
-                                     name => $comp_name});
-        if ($component) {
-            ThrowUserError('component_already_exists',
-                           {'name' => $component->name});
-        }
-    }
-
-    $description || ThrowUserError('component_blank_description',
-                                   {'name' => $component_old->name});
-
-    $default_assignee || ThrowUserError('component_need_initialowner',
-                                        {name => $comp_name});
-
-    my $default_assignee_id   = login_to_id($default_assignee);
-    my $default_qa_contact_id = login_to_id($default_qa_contact) || undef;
-
-    my $initial_cc_ids = check_initial_cc(\@initial_cc);
-
-    $dbh->bz_lock_tables('components WRITE', 'component_cc WRITE', 
-                         'profiles READ');
-
-    if ($comp_name ne $component_old->name) {
-
-        trick_taint($comp_name);
-        $dbh->do("UPDATE components SET name = ? WHERE id = ?",
-                 undef, ($comp_name, $component_old->id));
-
-        $vars->{'updated_name'} = 1;
-
-    }
-
-    if ($description ne $component_old->description) {
-    
-        trick_taint($description);
-        $dbh->do("UPDATE components SET description = ? WHERE id = ?",
-                 undef, ($description, $component_old->id));
-
-        $vars->{'updated_description'} = 1;
-    }
-
-    if ($default_assignee ne $component_old->default_assignee->login) {
-
-        $dbh->do("UPDATE components SET initialowner = ? WHERE id = ?",
-                 undef, ($default_assignee_id, $component_old->id));
-
-        $vars->{'updated_initialowner'} = 1;
-    }
-
-    if (Bugzilla->params->{'useqacontact'}
-        && $default_qa_contact ne $component_old->default_qa_contact->login) {
-        $dbh->do("UPDATE components SET initialqacontact = ?
-                  WHERE id = ?", undef,
-                 ($default_qa_contact_id, $component_old->id));
-
-        $vars->{'updated_initialqacontact'} = 1;
-    }
-
-    my @initial_cc_old = map($_->id, @{$component_old->initial_cc});
-    my ($removed, $added) = diff_arrays(\@initial_cc_old, $initial_cc_ids);
-
-    foreach my $user_id (@$removed) {
-        $dbh->do('DELETE FROM component_cc 
-                   WHERE component_id = ? AND user_id = ?', undef,
-                 $component_old->id, $user_id);
-        $vars->{'updated_initialcc'} = 1;
-    }
-
-    foreach my $user_id (@$added) {
-        $dbh->do("INSERT INTO component_cc (user_id, component_id) 
-                       VALUES (?, ?)", undef, $user_id, $component_old->id);
-        $vars->{'updated_initialcc'} = 1;
-    }
-
-    $dbh->bz_unlock_tables();
-
-    my $component = new Bugzilla::Component($component_old->id);
-    
+    $vars->{'message'} = 'component_updated';
     $vars->{'comp'} = $component;
-    $vars->{'initial_cc_names'} = 
-        join(', ', map($_->login, @{$component->initial_cc}));
     $vars->{'product'} = $product;
+    $vars->{'changes'} = $changes;
     delete_token($token);
 
-    $template->process("admin/components/updated.html.tmpl",
-                       $vars)
+    $template->process("admin/components/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-
     exit;
 }
 

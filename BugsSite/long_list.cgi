@@ -22,7 +22,7 @@
 #                 Gervase Markham <gerv@gerv.net>
 
 use strict;
-use lib qw(.);
+use lib qw(. lib);
 use Bugzilla;
 
 my $cgi = Bugzilla->cgi;

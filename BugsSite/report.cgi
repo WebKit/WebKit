@@ -22,7 +22,7 @@
 #                 <rdean@cambianetworks.com>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -315,6 +315,11 @@ if ($cgi->param('debug')) {
     print "data array:\n";
     print Data::Dumper::Dumper(@image_data) . "\n\n</pre>";
 }
+
+# All formats point to the same section of the documentation.
+$vars->{'doc_section'} = 'reporting.html#reports';
+
+disable_utf8() if ($format->{'ctype'} =~ /^image\//);
 
 $template->process("$format->{'template'}", $vars)
   || ThrowTemplateError($template->error());

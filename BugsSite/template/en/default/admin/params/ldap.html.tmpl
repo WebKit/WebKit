@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -30,10 +29,12 @@
                 "URI syntax can also be used, such as "_
                 "ldaps://ldap.company.com (for a secure connection) or " _
                 "ldapi://%2fvar%2flib%2fldap_sock (for a socket-based " _
-                "local connection.",
+                "local connection. Multiple hostnames or URIs can be comma " _
+                "separated; each will be tried in turn until a connection is " _
+                "established.",
 
-  LDAPstartls => "Whether to require encrypted communication once normal " _
-                 "LDAP connection achieved with the server.",
+  LDAPstarttls => "Whether to require encrypted communication once a normal " _
+                  "LDAP connection is achieved with the server.",
 
   LDAPbinddn => "If your LDAP server requires that you use a binddn and password " _
                 "instead of binding anonymously, enter it here " _

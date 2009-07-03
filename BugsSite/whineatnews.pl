@@ -29,7 +29,7 @@
 # touched for more than the number of days specified in the whinedays param.
 
 use strict;
-use lib '.';
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Mailer;
@@ -85,9 +85,11 @@ foreach my $email (sort (keys %bugs)) {
     $vars->{'bugs'} = \@bugs;
 
     my $msg;
-    my $template = Bugzilla->template;
-    $template->process("email/whine.txt.tmpl", $vars, \$msg);
+    my $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
+    $template->process("email/whine.txt.tmpl", $vars, \$msg)
+      or die($template->error());
 
+    Bugzilla->template_inner("");
     MessageToMTA($msg);
 
     print "$email      " . join(" ", @{$bugs{$email}}) . "\n";

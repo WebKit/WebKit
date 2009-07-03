@@ -44,11 +44,12 @@ merge-users.pl - Merge two user accounts.
 
 =cut
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Util;
+use Bugzilla::User;
 
 use Getopt::Long;
 use Pod::Usage;
@@ -154,9 +155,8 @@ my $changes = {
     profiles        => [], # ['userid'],
 };
 
-# Lock tables
-my @locked_tables = map {"$_ WRITE"} keys(%$changes);
-$dbh->bz_lock_tables(@locked_tables);
+# Start the transaction
+$dbh->bz_start_transaction();
 
 # Delete old records from logincookies and tokens tables.
 $dbh->do('DELETE FROM logincookies WHERE userid = ?', undef, $old_id);
@@ -230,7 +230,13 @@ print "OK, records in the 'mailto' column of the 'whine_schedules' table\n" .
 # Delete the old record from the profiles table.
 $dbh->do('DELETE FROM profiles WHERE userid = ?', undef, $old_id);
 
-# Unlock tables
-$dbh->bz_unlock_tables();
+# rederive regexp-based group memberships, because we merged all memberships
+# from all of the accounts, and since the email address isn't the same on
+# them, some of them may no longer match the regexps.
+my $user = new Bugzilla::User($new_id);
+$user->derive_regexp_groups();
+
+# Commit the transaction
+$dbh->bz_commit_transaction();
 
 print "Done.\n";

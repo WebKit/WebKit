@@ -37,12 +37,19 @@ use Bugzilla::User;
 use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Bug;
+use Bugzilla::Classification;
 use Bugzilla::Product;
 use Bugzilla::Component;
+use Bugzilla::Status;
 use Bugzilla::Mailer;
 
 use Date::Parse;
 use Date::Format;
+
+use constant FORMAT_TRIPLE => "%19s|%-28s|%-28s";
+use constant FORMAT_3_SIZE => [19,28,28];
+use constant FORMAT_DOUBLE => "%19s %-55s";
+use constant FORMAT_2_SIZE => [19,55];
 
 use constant BIT_DIRECT    => 1;
 use constant BIT_WATCHING  => 2;
@@ -58,25 +65,38 @@ use constant REL_NAMES => {
     REL_GLOBAL_WATCHER, "GlobalWatcher"
 };
 
-sub FormatTriple {
-    my ($a, $b, $c) = (@_);
-    $^A = "";
-    my $temp = formline << 'END', $a, $b, $c;
-^>>>>>>>>>>>>>>>>>>|^<<<<<<<<<<<<<<<<<<<<<<<<<<<|^<<<<<<<<<<<<<<<<<<<<<<<<<<<~~
-END
-    ; # This semicolon appeases my emacs editor macros. :-)
-    return $^A;
+# We use this instead of format because format doesn't deal well with
+# multi-byte languages.
+sub multiline_sprintf {
+    my ($format, $args, $sizes) = @_;
+    my @parts;
+    my @my_sizes = @$sizes; # Copy this so we don't modify the input array.
+    foreach my $string (@$args) {
+        my $size = shift @my_sizes;
+        my @pieces = split("\n", wrap_hard($string, $size));
+        push(@parts, \@pieces);
+    }
+
+    my $formatted;
+    while (1) {
+        # Get the first item of each part.
+        my @line = map { shift @$_ } @parts;
+        # If they're all undef, we're done.
+        last if !grep { defined $_ } @line;
+        # Make any single undef item into ''
+        @line = map { defined $_ ? $_ : '' } @line;
+        # And append a formatted line
+        $formatted .= sprintf($format, @line);
+        # Remove trailing spaces, or they become lots of =20's in 
+        # quoted-printable emails.
+        $formatted =~ s/\s+$//;
+        $formatted .= "\n";
+    }
+    return $formatted;
 }
-    
-sub FormatDouble {
-    my ($a, $b) = (@_);
-    $a .= ":";
-    $^A = "";
-    my $temp = formline << 'END', $a, $b;
-^>>>>>>>>>>>>>>>>>> ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<~~
-END
-    ; # This semicolon appeases my emacs editor macros. :-)
-    return $^A;
+
+sub three_columns {
+    return multiline_sprintf(FORMAT_TRIPLE, \@_, FORMAT_3_SIZE);
 }
 
 # This is a bit of a hack, basically keeping the old system()
@@ -111,16 +131,19 @@ sub Send {
 
     my %values = %{$dbh->selectrow_hashref(
         'SELECT ' . join(',', editable_bug_fields()) . ', reporter,
-                lastdiffed AS start, LOCALTIMESTAMP(0) AS end
+                lastdiffed AS start_time, LOCALTIMESTAMP(0) AS end_time
            FROM bugs WHERE bug_id = ?',
         undef, $id)};
 
     my $product = new Bugzilla::Product($values{product_id});
     $values{product} = $product->name;
+    if (Bugzilla->params->{'useclassification'}) {
+        $values{classification} = Bugzilla::Classification->new($product->classification_id)->name;
+    }
     my $component = new Bugzilla::Component($values{component_id});
     $values{component} = $component->name;
 
-    my ($start, $end) = ($values{start}, $values{end});
+    my ($start, $end) = ($values{start_time}, $values{end_time});
 
     # User IDs of people in various roles. More than one person can 'have' a 
     # role, if the person in that role has changed, or people are watching.
@@ -227,10 +250,9 @@ sub Send {
         my $diffpart = {};
         if ($who ne $lastwho) {
             $lastwho = $who;
-            $fullwho = $whoname ? "$whoname <$who" . Bugzilla->params->{'emailsuffix'} . ">" :
-                                  "$who" . Bugzilla->params->{'emailsuffix'};
+            $fullwho = $whoname ? "$whoname <$who>" : $who;
             $diffheader = "\n$fullwho changed:\n\n";
-            $diffheader .= FormatTriple("What    ", "Removed", "Added");
+            $diffheader .= three_columns("What    ", "Removed", "Added");
             $diffheader .= ('-' x 76) . "\n";
         }
         $what =~ s/^(Attachment )?/Attachment #$attachid / if $attachid;
@@ -247,7 +269,7 @@ sub Send {
                 'SELECT isprivate FROM attachments WHERE attach_id = ?',
                 undef, ($attachid));
         }
-        $difftext = FormatTriple($what, $old, $new);
+        $difftext = three_columns($what, $old, $new);
         $diffpart->{'header'} = $diffheader;
         $diffpart->{'fieldname'} = $fieldname;
         $diffpart->{'text'} = $difftext;
@@ -301,13 +323,13 @@ sub Send {
                   "\nBug $id depends on bug $depbug, which changed state.\n\n" .
                   "Bug $depbug Summary: $summary\n" .
                   "${urlbase}show_bug.cgi?id=$depbug\n\n";
-                $thisdiff .= FormatTriple("What    ", "Old Value", "New Value");
+                $thisdiff .= three_columns("What    ", "Old Value", "New Value");
                 $thisdiff .= ('-' x 76) . "\n";
                 $interestingchange = 0;
             }
-            $thisdiff .= FormatTriple($fielddescription{$what}, $old, $new);
+            $thisdiff .= three_columns($fielddescription{$what}, $old, $new);
             if ($what eq 'bug_status'
-                && Bugzilla::Bug::is_open_state($old) ne Bugzilla::Bug::is_open_state($new))
+                && is_open_state($old) ne is_open_state($new))
             {
                 $interestingchange = 1;
             }
@@ -499,7 +521,7 @@ sub Send {
                                       \@diffparts,
                                       $comments{$lang},
                                       $anyprivate, 
-                                      $start, 
+                                      ! $start, 
                                       $id,
                                       exists $watching{$user_id} ?
                                              $watching{$user_id} : undef);
@@ -521,8 +543,8 @@ sub Send {
 }
 
 sub sendMail {
-    my ($user, $hlRef, $relRef, $valueRef, $dmhRef, $fdRef,  
-        $diffRef, $newcomments, $anyprivate, $start, 
+    my ($user, $hlRef, $relRef, $valueRef, $dmhRef, $fdRef,
+        $diffRef, $newcomments, $anyprivate, $isnew,
         $id, $watchingRef) = @_;
 
     my %values = %$valueRef;
@@ -530,25 +552,7 @@ sub sendMail {
     my %mailhead = %$dmhRef;
     my %fielddescription = %$fdRef;
     my @diffparts = @$diffRef;    
-    my $head = "";
     
-    foreach my $f (@headerlist) {
-      if ($mailhead{$f}) {
-        my $value = $values{$f};
-        # If there isn't anything to show, don't include this header
-        if (! $value) {
-          next;
-        }
-        # Only send estimated_time if it is enabled and the user is in the group
-        if (($f ne 'estimated_time' && $f ne 'deadline') ||
-             $user->groups->{Bugzilla->params->{'timetrackinggroup'}}) {
-
-            my $desc = $fielddescription{$f};
-            $head .= FormatDouble($desc, $value);
-        }
-      }
-    }
-
     # Build difftext (the actions) by verifying the user should see them
     my $difftext = "";
     my $diffheader = "";
@@ -584,12 +588,10 @@ sub sendMail {
         }
     }
  
-    if ($difftext eq "" && $newcomments eq "") {
+    if ($difftext eq "" && $newcomments eq "" && !$isnew) {
       # Whoops, no differences!
       return 0;
     }
-    
-    my $isnew = !$start;
     
     # If an attachment was created, then add an URL. (Note: the 'g'lobal
     # replace should work with comments with multiple attachments.)
@@ -604,6 +606,21 @@ sub sendMail {
 
     my $diffs = $difftext . "\n\n" . $newcomments;
     if ($isnew) {
+        my $head = "";
+        foreach my $f (@headerlist) {
+            next unless $mailhead{$f};
+            my $value = $values{$f};
+            # If there isn't anything to show, don't include this header.
+            next unless $value;
+            # Only send estimated_time if it is enabled and the user is in the group.
+            if (($f ne 'estimated_time' && $f ne 'deadline')
+                || $user->groups->{Bugzilla->params->{'timetrackinggroup'}})
+            {
+                my $desc = $fielddescription{$f};
+                $head .= multiline_sprintf(FORMAT_DOUBLE, ["$desc:", $value],
+                                           FORMAT_2_SIZE);
+            }
+        }
         $diffs = $head . ($difftext ? "\n\n" : "") . $diffs;
     }
 
@@ -619,24 +636,14 @@ sub sendMail {
     push(@watchingrel, 'None') unless @watchingrel;
     push @watchingrel, map { user_id_to_login($_) } @$watchingRef;
 
-    my $sitespec = '@' . Bugzilla->params->{'urlbase'};
-    $sitespec =~ s/:\/\//\./; # Make the protocol look like part of the domain
-    $sitespec =~ s/^([^:\/]+):(\d+)/$1/; # Remove a port number, to relocate
-    if ($2) {
-        $sitespec = "-$2$sitespec"; # Put the port number back in, before the '@'
-    }
-    my $threadingmarker;
-    if ($isnew) {
-        $threadingmarker = "Message-ID: <bug-$id-" . $user->id . "$sitespec>";
-    } else {
-        $threadingmarker = "In-Reply-To: <bug-$id-" . $user->id . "$sitespec>";
-    }
-    
+    my $threadingmarker = build_thread_marker($id, $user->id, $isnew);
 
     my $vars = {
-        neworchanged => $isnew ? 'New: ' : '',
+        isnew => $isnew,
         to => $user->email,
         bugid => $id,
+        alias => Bugzilla->params->{'usebugaliases'} ? $values{'alias'} : "",
+        classification => $values{'classification'},
         product => $values{'product'},
         comp => $values{'component'},
         keywords => $values{'keywords'},
@@ -644,6 +651,7 @@ sub sendMail {
         status => $values{'bug_status'},
         priority => $values{'priority'},
         assignedto => $values{'assigned_to'},
+        assignedtoname => Bugzilla::User->new({name => $values{'assigned_to'}})->name,
         targetmilestone => $values{'target_milestone'},
         changedfields => $values{'changed_fields'},
         summary => $values{'short_desc'},
@@ -653,6 +661,8 @@ sub sendMail {
         reasonswatchheader => join(" ", @watchingrel),
         changer => $values{'changer'},
         changername => $values{'changername'},
+        reporter => $values{'reporter'},
+        reportername => Bugzilla::User->new({name => $values{'reporter'}})->name,
         diffs => $diffs,
         threadingmarker => $threadingmarker
     };
@@ -703,13 +713,8 @@ sub prepare_comments {
     my $result = "";
     foreach my $comment (@$raw_comments) {
         if ($count) {
-            $result .= "\n\n--- Comment #$count from ";
-            if ($comment->{'name'} eq $comment->{'email'}) {
-                $result .= $comment->{'email'};
-            } else {
-                $result .= $comment->{'name'} . " <" . $comment->{'email'} . ">";
-            }
-            $result .= "  " . format_time($comment->{'time'}) . " ---\n";
+            $result .= "\n\n--- Comment #$count from " . $comment->{'author'}->identity .
+                       "  " . format_time($comment->{'time'}) . " ---\n";
         }
         # Format language specific comments. We don't update $comment->{'body'}
         # directly, otherwise it would grow everytime you call format_comment()

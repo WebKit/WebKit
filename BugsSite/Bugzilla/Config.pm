@@ -53,9 +53,11 @@ use vars qw(@param_list);
 our %params;
 # Load in the param definitions
 sub _load_params {
-    foreach my $module (param_panels()) {
-        eval("require Bugzilla::Config::$module") || die $@;
-        my @new_param_list = "Bugzilla::Config::$module"->get_param_list();
+    my $panels = param_panels();
+    foreach my $panel (keys %$panels) {
+        my $module = $panels->{$panel};
+        eval("require $module") || die $@;
+        my @new_param_list = "$module"->get_param_list();
         foreach my $item (@new_param_list) {
             $params{$item->{'name'}} = $item;
         }
@@ -67,14 +69,16 @@ sub _load_params {
 # Subroutines go here
 
 sub param_panels {
-    my @param_panels;
+    my $param_panels = {};
     my $libpath = bz_locations()->{'libpath'};
     foreach my $item ((glob "$libpath/Bugzilla/Config/*.pm")) {
         $item =~ m#/([^/]+)\.pm$#;
         my $module = $1;
-        push(@param_panels, $module) unless $module eq 'Common';
+        $param_panels->{$module} = "Bugzilla::Config::$module" unless $module eq 'Common';
     }
-    return @param_panels;
+    # Now check for any hooked params
+    Bugzilla::Hook::process('config', { config => $param_panels });
+    return $param_panels;
 }
 
 sub SetParam {
@@ -199,18 +203,16 @@ sub update_params {
 
     # --- REMOVE OLD PARAMS ---
 
-    my @oldparams;
+    my %oldparams;
     # Remove any old params, put them in old-params.txt
     foreach my $item (keys %$param) {
         if (!grep($_ eq $item, map ($_->{'name'}, @param_list))) {
-            local $Data::Dumper::Terse  = 1;
-            local $Data::Dumper::Indent = 0;
-            push (@oldparams, [$item, Data::Dumper->Dump([$param->{$item}])]);
+            $oldparams{$item} = $param->{$item};
             delete $param->{$item};
         }
     }
 
-    if (@oldparams) {
+    if (scalar(keys %oldparams)) {
         my $op_file = new IO::File('old-params.txt', '>>', 0600)
           || die "old-params.txt: $!";
 
@@ -218,11 +220,14 @@ sub update_params {
               " and so have been\nmoved from your parameters file into",
               " old-params.txt:\n";
 
-        foreach my $p (@oldparams) {
-            my ($item, $value) = @$p;
-            print $op_file "\n\n$item:\n$value\n";
-            print $item;
-            print ", " unless $item eq $oldparams[$#oldparams]->[0];
+        local $Data::Dumper::Terse  = 1;
+        local $Data::Dumper::Indent = 0;
+
+        my $comma = "";
+        foreach my $item (keys %oldparams) {
+            print $op_file "\n\n$item:\n" . Data::Dumper->Dump([$oldparams{$item}]) . "\n";
+            print "${comma}$item";
+            $comma = ", ";
         }
         print "\n";
         $op_file->close;
@@ -250,6 +255,10 @@ sub update_params {
     }
 
     write_params($param);
+
+    # Return deleted params and values so that checksetup.pl has a chance
+    # to convert old params to new data.
+    return %oldparams;
 }
 
 sub write_params {
@@ -259,8 +268,6 @@ sub write_params {
     my $datadir    = bz_locations()->{'datadir'};
     my $param_file = "$datadir/params";
 
-    # This only has an affect for Data::Dumper >= 2.12 (ie perl >= 5.8.0)
-    # Its just cosmetic, though, so that doesn't matter
     local $Data::Dumper::Sortkeys = 1;
 
     my ($fh, $tmpname) = File::Temp::tempfile('params.XXXXX',
@@ -272,7 +279,7 @@ sub write_params {
     close $fh;
 
     rename $tmpname, $param_file
-      || die "Can't rename $tmpname to $param_file: $!";
+      or die "Can't rename $tmpname to $param_file: $!";
 
     ChmodDataFile($param_file, 0666);
 
@@ -314,6 +321,17 @@ sub read_param_file {
 
         # Now read the param back out from the sandbox
         %params = %{$s->varglob('param')};
+    }
+    elsif ($ENV{'SERVER_SOFTWARE'}) {
+       # We're in a CGI, but the params file doesn't exist. We can't
+       # Template Toolkit, or even install_string, since checksetup
+       # might not have thrown an error. Bugzilla::CGI->new
+       # hasn't even been called yet, so we manually use CGI::Carp here
+       # so that the user sees the error.
+       require CGI::Carp;
+       CGI::Carp->import('fatalsToBrowser');
+       die "The $datadir/params file does not exist."
+           . ' You probably need to run checksetup.pl.',
     }
     return \%params;
 }

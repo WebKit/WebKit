@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -36,46 +35,54 @@
   [% title = title _ ": " _ (searchname OR defaultsavename) FILTER html %]
 [% END %]
 
-[% style_urls = [ "skins/standard/buglist.css" ] %]
 [% qorder = order FILTER url_quote IF order %]
-[% message = "buglist_sorted_by_relevance" IF sorted_by_relevance %]
 
 
 [%############################################################################%]
 [%# Page Header                                                              #%]
 [%############################################################################%]
 
+[%# if WEBKIT_CHANGES %]
 [% PROCESS global/header.html.tmpl
   title = title
   style = style
   rsslink = "buglist.cgi?$urlquerypart&title=$title&ctype=rss" 
+  javascript_urls = [ "js/util.js", "js/field.js",
+                      "js/yui/yahoo-dom-event.js", "js/yui/calendar.js" ]
+  style_urls = [ "skins/standard/buglist.css", "skins/standard/yui/calendar.css" ]
+  doc_section = "query.html#list"
 %]
+[%# endif // WEBKIT_CHANGES %]
 
-<div align="center">
-  [% IF Param('timezone') %]
-    <b>[% time2str("%a %b %e %Y %T %Z", currenttime, Param('timezone')) %]</b><br>
-  [% ELSE %]
-    <b>[% time2str("%a %b %e %Y %T", currenttime) %]</b><br>
-  [% END %]
+<div class="bz_query_head" align="center">
+  <span class="bz_query_timestamp">
+    [% IF Param('timezone') %]
+      <b>[% time2str("%a %b %e %Y %T %Z", currenttime, Param('timezone')) %]</b><br>
+    [% ELSE %]
+      <b>[% time2str("%a %b %e %Y %T", currenttime) %]</b><br>
+    [% END %]
+  </span>
 
   [% IF debug %]
-    <p>
+    <p class="bz_query_debug">
       [% FOREACH debugline = debugdata %]
         [% debugline FILTER html %]<br>
       [% END %]
     </p>
-    <p>[% query FILTER html %]</p>
+    <p class="bz_query">[% query FILTER html %]</p>
   [% END %]
 
   [% IF user.settings.display_quips.value == 'on' %]
     [% DEFAULT quip = "$terms.Bugzilla would like to put a random quip here, but no one has entered any." %]
-    <a href="quips.cgi"><i>[% quip FILTER html %]</i></a>
+    <span class="bz_quip">
+      <a href="quips.cgi"><i>[% quip FILTER html %]</i></a>
+    </span>
   [% END %]
 
 </div>
 
 [% IF toolong %]
-  <h2>
+  <h2 class="bz_smallminded">
     This list is too long for [% terms.Bugzilla %]'s little mind; the
     Next/Prev/First/Last buttons won't appear on individual [% terms.bugs %].
   </h2>
@@ -88,7 +95,9 @@
 [%############################################################################%]
 
 [% IF bugs.size > 9 %]
-  [% bugs.size %] [%+ terms.bugs %] found.
+  <span class="bz_result_count">
+    [% bugs.size %] [%+ terms.bugs %] found.
+  </span>
 [% END %]
 
 [%############################################################################%]
@@ -110,13 +119,15 @@
 [%# Succeeding Status Line                                                   #%]
 [%############################################################################%]
 
-[% IF bugs.size == 0 %]
-  [% terms.zeroSearchResults %].
-[% ELSIF bugs.size == 1 %]
-  One [% terms.bug %] found.
-[% ELSE %]
-  [% bugs.size %] [%+ terms.bugs %] found.
-[% END %]
+<span class="bz_result_count">
+  [% IF bugs.size == 0 %]
+    [% terms.zeroSearchResults %].
+  [% ELSIF bugs.size == 1 %]
+    One [% terms.bug %] found.
+  [% ELSE %]
+    [% bugs.size %] [%+ terms.bugs %] found.
+  [% END %]
+</span>
 
 <br>
 
@@ -137,7 +148,7 @@
 <table>
   <tr>
     [% IF bugs.size > 0 %]
-      <td valign="middle">
+      <td valign="middle" class="bz_query_buttons">
         <form method="post" action="show_bug.cgi">
           [% FOREACH id = buglist %]
             <input type="hidden" name="id" value="[% id FILTER html %]">
@@ -164,12 +175,14 @@
       
       <td>&nbsp;</td>
       
-      <td valign="middle">
+      <td valign="middle" class="bz_query_links">
         <a href="buglist.cgi?
         [% urlquerypart FILTER html %]&amp;ctype=csv">CSV</a> |
         <a href="buglist.cgi?
         [% urlquerypart FILTER html %]&amp;title=
+[%# if WEBKIT_CHANGES %]
         [%- title FILTER html %]&amp;ctype=rss">RSS</a> |
+[%# endif // WEBKIT_CHANGES %]
         <a href="buglist.cgi?
         [% urlquerypart FILTER html %]&amp;ctype=ics">iCalendar</a> |
         <a href="colchange.cgi?
@@ -193,7 +206,7 @@
       </td>
     [% END %]
     
-    <td valign="middle">
+    <td valign="middle" class="bz_query_edit">
       [% editqueryname = searchname OR defaultsavename OR '' %]
       <a href="query.cgi?[% urlquerypart FILTER html %]
       [% IF editqueryname != '' %]&amp;known_name=
@@ -202,16 +215,17 @@
     </td>
       
     [% IF searchtype == "saved" %]
-      <td valign="middle" nowrap="nowrap">
+      <td valign="middle" nowrap="nowrap" class="bz_query_forget">
         |
         <a href="buglist.cgi?cmdtype=dorem&amp;remaction=forget&amp;namedcmd=
-                [% searchname FILTER url_quote %]">Forget&nbsp;Search&nbsp;'
-                [% searchname FILTER html %]'</a>
+                [% searchname FILTER url_quote %]&amp;token=
+                [% issue_hash_token([search_id, searchname]) FILTER url_quote %]">
+          Forget&nbsp;Search&nbsp;'[% searchname FILTER html %]'</a>
       </td>
     [% ELSE %]
       <td>&nbsp;</td>
       
-      <td valign="middle">
+      <td valign="middle" class="bz_query_remember">
         <form method="get" action="buglist.cgi">
           <input type="submit" id="remember" value="Remember search"> as 
           <input type="hidden" name="newquery" 
@@ -227,7 +241,7 @@
 </table>
 
 [% IF cgi.param('product').size == 1 && cgi.param('product') != "" %]
-  <p>
+  <p class="bz_query_single_product">
     <a href="enter_bug.cgi?product=[% cgi.param('product') FILTER url_quote %]">File
       a new [% terms.bug %] in the "[% cgi.param('product') FILTER html %]" product</a>
   </p>

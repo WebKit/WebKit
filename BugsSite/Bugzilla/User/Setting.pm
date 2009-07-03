@@ -99,15 +99,12 @@ sub new {
         }
     }
     else {
-        ($subclass) = $dbh->selectrow_array(
-            q{SELECT subclass FROM setting WHERE name = ?},
-            undef,
-            $setting_name);
         # If the values were passed in, simply assign them and return.
         $self->{'is_enabled'}    = shift;
         $self->{'default_value'} = shift;
         $self->{'value'}         = shift;
         $self->{'is_default'}    = shift;
+        $subclass                = shift;
     }
     if ($subclass) {
         eval('require ' . $class . '::' . $subclass);
@@ -142,10 +139,12 @@ sub add_setting {
         $dbh->do('DELETE FROM setting_value WHERE name = ?', undef, $name);
         $dbh->do('DELETE FROM setting WHERE name = ?', undef, $name);
         # Remove obsolete user preferences for this setting.
-        my $list = join(', ', map {$dbh->quote($_)} @$values);
-        $dbh->do("DELETE FROM profile_setting
-                  WHERE setting_name = ? AND setting_value NOT IN ($list)",
-                  undef, $name);
+        if (defined $values && scalar(@$values)) {
+            my $list = join(', ', map {$dbh->quote($_)} @$values);
+            $dbh->do("DELETE FROM profile_setting
+                      WHERE setting_name = ? AND setting_value NOT IN ($list)",
+                      undef, $name);
+        }
     }
     else {
         print get_text('install_setting_new', { name => $name }) . "\n";
@@ -170,7 +169,7 @@ sub get_all_settings {
     my $dbh = Bugzilla->dbh;
 
     my $sth = $dbh->prepare(
-           q{SELECT name, default_value, is_enabled, setting_value
+           q{SELECT name, default_value, is_enabled, setting_value, subclass
                FROM setting
           LEFT JOIN profile_setting
                  ON setting.name = profile_setting.setting_name
@@ -178,8 +177,9 @@ sub get_all_settings {
            ORDER BY name});
 
     $sth->execute($user_id);
-    while (my ($name, $default_value, $is_enabled, $value) 
-               = $sth->fetchrow_array()) {
+    while (my ($name, $default_value, $is_enabled, $value, $subclass) 
+               = $sth->fetchrow_array()) 
+    {
 
         my $is_default;
 
@@ -192,7 +192,7 @@ sub get_all_settings {
 
         $settings->{$name} = new Bugzilla::User::Setting(
            $name, $user_id, $is_enabled, 
-           $default_value, $value, $is_default);
+           $default_value, $value, $is_default, $subclass);
     }
 
     return $settings;
@@ -205,14 +205,17 @@ sub get_defaults {
 
     $user_id ||= 0;
 
-    my $sth = $dbh->prepare(q{SELECT name, default_value, is_enabled
+    my $sth = $dbh->prepare(q{SELECT name, default_value, is_enabled, subclass
                                 FROM setting
                             ORDER BY name});
     $sth->execute();
-    while (my ($name, $default_value, $is_enabled) = $sth->fetchrow_array()) {
+    while (my ($name, $default_value, $is_enabled, $subclass) 
+           = $sth->fetchrow_array()) 
+    {
 
         $default_settings->{$name} = new Bugzilla::User::Setting(
-            $name, $user_id, $is_enabled, $default_value, $default_value, 1);
+            $name, $user_id, $is_enabled, $default_value, $default_value, 1,
+            $subclass);
     }
 
     return $default_settings;
@@ -231,9 +234,8 @@ sub set_default {
 sub _setting_exists {
     my ($setting_name) = @_;
     my $dbh = Bugzilla->dbh;
-    my $sth = $dbh->prepare("SELECT name FROM setting WHERE name = ?");
-    $sth->execute($setting_name);
-    return ($sth->rows) ? 1 : 0;
+    return $dbh->selectrow_arrayref(
+        "SELECT 1 FROM setting WHERE name = ?", undef, $setting_name) || 0;
 }
 
 
@@ -335,7 +337,7 @@ $settings->{$setting_name} = new Bugzilla::User::Setting(
 
 =over 4
 
-=item C<add_setting($name, \@values, $default_value)>
+=item C<add_setting($name, \@values, $default_value, $subclass, $force_check)>
 
 Description: Checks for the existence of a setting, and adds it 
              to the database if it does not yet exist.
@@ -344,6 +346,11 @@ Params:      C<$name> - string - the name of the new setting
              C<$values> - arrayref - contains the new choices
                for the new Setting.
              C<$default_value> - string - the site default
+             C<$subclass> - string - name of the module returning
+               the list of valid values. This means legal values are
+               not stored in the DB.
+             C<$force_check> - boolean - when true, the existing setting
+               and all its values are deleted and replaced by new data.
 
 Returns:     a pointer to a hash of settings
 

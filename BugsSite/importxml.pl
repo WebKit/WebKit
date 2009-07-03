@@ -23,6 +23,7 @@
 #                 Vance Baarda <vrb@novell.com>
 #                 Guzman Braso <gbn@hqso.net>
 #                 Erik Purins <epurins@day1studios.com>
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 # This script reads in xml bug data from standard input and inserts
 # a new bug into bugzilla. Everything before the beginning <?xml line
@@ -53,22 +54,16 @@ use strict;
 #
 #####################################################################
 
-# figure out which path this script lives in. Set the current path to
-# this and add it to @INC so this will work when run as part of mail
-# alias by the mailer daemon
-# since "use lib" is run at compile time, we need to enclose the
-# $::path declaration in a BEGIN block so that it is executed before
-# the rest of the file is compiled.
+use File::Basename qw(dirname);
+# MTAs may call this script from any directory, but it should always
+# run from this one so that it can find its modules.
 BEGIN {
-    $::path = $0;
-    $::path =~ m#(.*)/[^/]+#;
-    $::path = $1;
-    $::path ||= '.';    # $0 is empty at compile time.  This line will
-                        # have no effect on this script at runtime.
+    require File::Basename;
+    my $dir = $0; $dir =~ /(.*)/; $dir = $1; # trick taint
+    chdir(File::Basename::dirname($dir));
 }
 
-chdir $::path;
-use lib ($::path);
+use lib qw(. lib);
 # Data dumber is used for debugging, I got tired of copying it back in 
 # and then removing it. 
 #use Data::Dumper;
@@ -88,6 +83,7 @@ use Bugzilla::Util;
 use Bugzilla::Constants;
 use Bugzilla::Keyword;
 use Bugzilla::Field;
+use Bugzilla::Status;
 
 use MIME::Base64;
 use MIME::Parser;
@@ -285,6 +281,14 @@ sub flag_handler {
     return $err;
 }
 
+# Converts and returns the input data as an array.
+sub _to_array {
+    my $value = shift;
+
+    $value = [$value] if !ref($value);
+    return @$value;
+}
+
 ###############################################################################
 # XML Handlers                                                                #
 ###############################################################################
@@ -322,19 +326,17 @@ sub init() {
     Error( "no urlbase set", "REOPEN", $exporter ) unless ($urlbase);
     my $def_product =
         new Bugzilla::Product( { name => $params->{"moved-default-product"} } )
-        || Error("Cannot import these bugs because an invalid default 
-                  product was defined for the target db."
-                  . $params->{"maintainer"} . " needs to fix the definitions of
-                  moved-default-product. \n", "REOPEN", $exporter);
+        || Error("an invalid default product was defined for the target DB. " .
+                  $params->{"maintainer"} . " needs to fix the definitions of " .
+                 "moved-default-product. \n", "REOPEN", $exporter);
     my $def_component = new Bugzilla::Component(
         {
             product => $def_product,
             name    => $params->{"moved-default-component"}
         })
-    || Error("Cannot import these bugs because an invalid default 
-              component was defined for the target db."
-              . $params->{"maintainer"} . " needs to fix the definitions of
-              moved-default-component.\n", "REOPEN", $exporter);
+    || Error("an invalid default component was defined for the target DB. " .
+             $params->{"maintainer"} . " needs to fix the definitions of " .
+             "moved-default-component.\n", "REOPEN", $exporter);
 }
     
 
@@ -366,6 +368,7 @@ sub process_attachment() {
     $attachment{'isobsolete'} = $attach->{'att'}->{'isobsolete'} || 0;
     $attachment{'isprivate'}  = $attach->{'att'}->{'isprivate'} || 0;
     $attachment{'filename'}   = $attach->field('filename') || "file";
+    $attachment{'attacher'}   = $attach->field('attacher');
     # Attachment data is not exported in versions 2.20 and older.
     if (defined $attach->first_child('data') &&
             defined $attach->first_child('data')->{'att'}->{'encoding'}) {
@@ -379,8 +382,13 @@ sub process_attachment() {
         elsif ($encoding =~ /filename/) {
             # read the attachment file
             Error("attach_path is required", undef) unless ($attach_path);
-            my $attach_filename = $attach_path . "/" . $attach->field('data');
-            open(ATTACH_FH, $attach_filename) or
+            
+            my $filename = $attach->field('data');
+            # Remove any leading path data from the filename
+            $filename =~ s/(.*\/|.*\\)//gs;
+            
+            my $attach_filename = $attach_path . "/" . $filename;
+            open(ATTACH_FH, "<", $attach_filename) or
                 Error("cannot open $attach_filename", undef);
             $attachment{'data'} = do { local $/; <ATTACH_FH> };
             close ATTACH_FH;
@@ -464,9 +472,19 @@ sub process_bug {
    # append it to the log, which will go into the comments when we are done.
     foreach my $bugchild ( $bug->children() ) {
         Debug( "Parsing field: " . $bugchild->name, DEBUG_LEVEL );
+
+        # Skip the token if one is included. We don't want it included in
+        # the comments, and it is not used by the importer.
+        next if $bugchild->name eq 'token';
+
         if ( defined $all_fields{ $bugchild->name } ) {
-              $bug_fields{ $bugchild->name } =
-                  join( " ", $bug->children_text( $bugchild->name ) );
+            my @values = $bug->children_text($bugchild->name);
+            if (scalar @values > 1) {
+                $bug_fields{$bugchild->name} = \@values;
+            }
+            else {
+                $bug_fields{$bugchild->name} = $values[0];
+            }
         }
         else {
             $err .= "Unknown bug field \"" . $bugchild->name . "\"";
@@ -562,10 +580,12 @@ sub process_bug {
     $comments .= "This bug was previously known as _bug_ $bug_fields{'bug_id'} at ";
     $comments .= $urlbase . "show_bug.cgi?id=" . $bug_fields{'bug_id'} . "\n";
     if ( defined $bug_fields{'dependson'} ) {
-        $comments .= "This bug depended on bug(s) $bug_fields{'dependson'}.\n";
+        $comments .= "This bug depended on bug(s) " .
+                     join(' ', _to_array($bug_fields{'dependson'})) . ".\n";
     }
     if ( defined $bug_fields{'blocked'} ) {
-        $comments .= "This bug blocked bug(s) $bug_fields{'blocked'}.\n";
+        $comments .= "This bug blocked bug(s) " .
+                     join(' ', _to_array($bug_fields{'blocked'})) . ".\n";
     }
 
     # Now we process each of the fields in turn and make sure they contain
@@ -577,7 +597,7 @@ sub process_bug {
 
     # Each of these fields we will check for newlines and shove onto the array
     foreach my $field (qw(status_whiteboard bug_file_loc short_desc)) {
-        if (( defined $bug_fields{$field} ) && ( $bug_fields{$field} )) {
+        if ($bug_fields{$field}) {
             $bug_fields{$field} = clean_text( $bug_fields{$field} );
             push( @query,  $field );
             push( @values, $bug_fields{$field} );
@@ -916,7 +936,30 @@ sub process_bug {
         $err .= "This bug was marked DUPLICATE in the database ";
         $err .= "it was moved from.\n    Changing resolution to \"MOVED\"\n";
     } 
-    
+
+    # If there is at least 1 initial bug status different from UNCO, use it,
+    # else use the open bug status with the lowest sortkey (different from UNCO).
+    my @bug_statuses = @{Bugzilla::Status->can_change_to()};
+    @bug_statuses = grep { $_->name ne 'UNCONFIRMED' } @bug_statuses;
+
+    my $initial_status;
+    if (scalar(@bug_statuses)) {
+        $initial_status = $bug_statuses[0]->name;
+    }
+    else {
+        @bug_statuses = @{Bugzilla::Status->get_all()};
+        # Exclude UNCO and inactive bug statuses.
+        @bug_statuses = grep { $_->is_active && $_->name ne 'UNCONFIRMED'} @bug_statuses;
+        my @open_statuses = grep { $_->is_open } @bug_statuses;
+        if (scalar(@open_statuses)) {
+            $initial_status = $open_statuses[0]->name;
+        }
+        else {
+            # There is NO other open bug statuses outside UNCO???
+            Error("no open bug statuses available.");
+        }
+    }
+
     if($has_status){
         if($valid_status){
             if($is_open){
@@ -927,7 +970,7 @@ sub process_bug {
                 }
                 if($changed_owner){
                     if($everconfirmed){  
-                        $status = "NEW";
+                        $status = $initial_status;
                     }
                     else{
                         $status = "UNCONFIRMED";
@@ -941,9 +984,9 @@ sub process_bug {
                 if($everconfirmed){
                     if($status eq "UNCONFIRMED"){
                         $err .= "Bug Status was UNCONFIRMED but everconfirmed was true\n";
-                        $err .= "   Setting status to NEW\n";
+                        $err .= "   Setting status to $initial_status\n";
                         $err .= "Resetting votes to 0\n" if ( $bug_fields{'votes'} );
-                        $status = "NEW";
+                        $status = $initial_status;
                     }
                 }
                 else{ # $everconfirmed is false
@@ -958,8 +1001,8 @@ sub process_bug {
                if(!$has_res){
                    $err .= "Missing Resolution. Setting status to ";
                    if($everconfirmed){
-                       $status = "NEW";
-                       $err .= "NEW\n";
+                       $status = $initial_status;
+                       $err .= "$initial_status\n";
                    }
                    else{
                        $status = "UNCONFIRMED";
@@ -975,7 +1018,7 @@ sub process_bug {
         }
         else{ # $valid_status is false
             if($everconfirmed){  
-                $status = "NEW";
+                $status = $initial_status;
             }
             else{
                 $status = "UNCONFIRMED";
@@ -989,7 +1032,7 @@ sub process_bug {
     }
     else{ #has_status is false
         if($everconfirmed){  
-            $status = "NEW";
+            $status = $initial_status;
         }
         else{
             $status = "UNCONFIRMED";
@@ -1008,21 +1051,47 @@ sub process_bug {
     push( @query,  "bug_status" );
     push( @values, $status );
 
-    # Custom fields
-    foreach my $custom_field (Bugzilla->custom_field_names) {
-        next unless defined($bug_fields{$custom_field});
-        my $field = new Bugzilla::Field({name => $custom_field});
+    # Custom fields - Multi-select fields have their own table.
+    my %multi_select_fields;
+    foreach my $field (Bugzilla->active_custom_fields) {
+        my $custom_field = $field->name;
+        my $value = $bug_fields{$custom_field};
+        next unless defined $value;
         if ($field->type == FIELD_TYPE_FREETEXT) {
             push(@query, $custom_field);
-            push(@values, clean_text($bug_fields{$custom_field}));
+            push(@values, clean_text($value));
+        } elsif ($field->type == FIELD_TYPE_TEXTAREA) {
+            push(@query, $custom_field);
+            push(@values, $value);
         } elsif ($field->type == FIELD_TYPE_SINGLE_SELECT) {
-            my $is_well_formed = check_field($custom_field, scalar $bug_fields{$custom_field},
-                                             undef, ERR_LEVEL);
+            my $is_well_formed = check_field($custom_field, $value, undef, ERR_LEVEL);
             if ($is_well_formed) {
                 push(@query, $custom_field);
-                push(@values, $bug_fields{$custom_field});
+                push(@values, $value);
             } else {
-                $err .= "Skipping illegal value \"$bug_fields{$custom_field}\" in $custom_field.\n" ;
+                $err .= "Skipping illegal value \"$value\" in $custom_field.\n" ;
+            }
+        } elsif ($field->type == FIELD_TYPE_MULTI_SELECT) {
+            my @legal_values;
+            foreach my $item (_to_array($value)) {
+                my $is_well_formed = check_field($custom_field, $item, undef, ERR_LEVEL);
+                if ($is_well_formed) {
+                    push(@legal_values, $item);
+                } else {
+                    $err .= "Skipping illegal value \"$item\" in $custom_field.\n" ;
+                }
+            }
+            if (scalar @legal_values) {
+                $multi_select_fields{$custom_field} = \@legal_values;
+            }
+        } elsif ($field->type == FIELD_TYPE_DATETIME) {
+            eval { $value = Bugzilla::Bug->_check_datetime_field($value); };
+            if ($@) {
+                $err .= "Skipping illegal value \"$value\" in $custom_field.\n" ;
+            }
+            else {
+                push(@query, $custom_field);
+                push(@values, $value);
             }
         } else {
             $err .= "Type of custom field $custom_field is an unhandled FIELD_TYPE: " .
@@ -1063,7 +1132,7 @@ sub process_bug {
     if ( defined $bug_fields{'cc'} ) {
         my %ccseen;
         my $sth_cc = $dbh->prepare("INSERT INTO cc (bug_id, who) VALUES (?,?)");
-        foreach my $person ( split( /[\s,]+/, $bug_fields{'cc'} ) ) {
+        foreach my $person (_to_array($bug_fields{'cc'})) {
             next unless $person;
             my $uid;
             if ($uid = login_to_id($person)) {
@@ -1108,6 +1177,16 @@ sub process_bug {
             undef, $keywordstring, $id )
     }
 
+    # Insert values of custom multi-select fields. They have already
+    # been validated.
+    foreach my $custom_field (keys %multi_select_fields) {
+        my $sth = $dbh->prepare("INSERT INTO bug_$custom_field
+                                 (bug_id, value) VALUES (?, ?)");
+        foreach my $value (@{$multi_select_fields{$custom_field}}) {
+            $sth->execute($id, $value);
+        }
+    }
+
     # Parse bug flags
     foreach my $bflag ( $bug->children('flag')) {
         next unless ( defined($bflag) );
@@ -1131,13 +1210,16 @@ sub process_bug {
             $err .= "   Marking attachment public\n";
             $att->{'isprivate'} = 0;
         }
+
+        my $attacher_id = $att->{'attacher'} ? login_to_id($att->{'attacher'}) : undef;
+
         $dbh->do("INSERT INTO attachments 
-                 (bug_id, creation_ts, filename, description, mimetype, 
-                 ispatch, isprivate, isobsolete, submitter_id) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            undef, $id, $att->{'date'}, $att->{'filename'},
+                 (bug_id, creation_ts, modification_time, filename, description,
+                 mimetype, ispatch, isprivate, isobsolete, submitter_id) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            undef, $id, $att->{'date'}, $att->{'date'}, $att->{'filename'},
             $att->{'desc'}, $att->{'ctype'}, $att->{'ispatch'},
-            $att->{'isprivate'}, $att->{'isobsolete'}, $exporterid);
+            $att->{'isprivate'}, $att->{'isobsolete'}, $attacher_id || $exporterid);
         my $att_id   = $dbh->bz_last_key( 'attachments', 'attach_id' );
         my $att_data = $att->{'data'};
         my $sth = $dbh->prepare("INSERT INTO attach_data (id, thedata) 
@@ -1145,7 +1227,18 @@ sub process_bug {
         trick_taint($att_data);
         $sth->bind_param( 1, $att_data, $dbh->BLOB_TYPE );
         $sth->execute();
+
         $comments .= "Imported an attachment (id=$att_id)\n";
+        if (!$attacher_id) {
+            if ($att->{'attacher'}) {
+                $err .= "The original submitter of attachment $att_id was\n   ";
+                $err .= $att->{'attacher'} . ", but he doesn't have an account here.\n";
+            }
+            else {
+                $err .= "The original submitter of attachment $att_id is unknown.\n";
+            }
+            $err .= "   Reassigning to the person who moved it here: $exporter_login.\n";
+        }
 
         # Process attachment flags
         foreach my $aflag (@{ $att->{'flags'} }) {
@@ -1176,6 +1269,7 @@ sub process_bug {
                      VALUES (?,?,?,?,?,?)", undef,
         $id, $exporterid, $timestamp, $worktime, $private, $long_description
     );
+    Bugzilla::Bug->new($id)->_sync_fulltext('new_bug');
 
     # Add this bug to each group of which its product is a member.
     my $sth_group = $dbh->prepare("INSERT INTO bug_group_map (bug_id, group_id) 
@@ -1263,7 +1357,7 @@ importxml - Import bugzilla bug data from xml.
  Options:
        -? --help        brief help message
        -v --verbose     print error and debug information. 
-                        Mulltiple -v increases verbosity
+                        Multiple -v increases verbosity
        -m --sendmail    send mail to recipients with log of bugs imported
        --attach_path    The path to the attachment files.
                         (Required if encoding="filename" is used for attachments.)

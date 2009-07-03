@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -51,7 +50,7 @@
     </tr>              
 
     <tr>
-      <th align="right">Re-enter new password:</th>
+      <th align="right">Confirm new password:</th>
       <td>
         <input type="password" name="new_password2">
       </td>
@@ -95,5 +94,7 @@
       </tr>
     [% END %]
   [% END %]
-  
+
+  [% Hook.process('field') %]
+
 </table>

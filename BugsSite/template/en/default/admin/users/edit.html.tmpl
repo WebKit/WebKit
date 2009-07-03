@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -30,7 +29,8 @@
 [% PROCESS global/header.html.tmpl
   title = title
   message = message
-  style_urls = ['skins/standard/editusers.css']
+  style_urls = ['skins/standard/admin.css', 'skins/standard/editusers.css']
+  doc_section = "useradmin.html#modifyusers"
 %]
 
 [% PROCESS admin/users/listselectvars.html.tmpl
@@ -52,7 +52,7 @@
           <tr>
             [% IF editusers %]
               <th colspan="3">
-                Can turn these [% terms.bits %] on for other users
+                Can turn these bits on for other users
               </th>
             [% END %]
           </tr>
@@ -72,9 +72,7 @@
                               name="bless_[% group.id %]"
                               value="1"
                               [% ' checked="checked"' IF perms.directbless %] />
-                  [% ']' IF perms.indirectbless %]
-                [% %]<input type="hidden" name="oldbless_[% group.id %]"
-                            value="[% perms.directbless %]" /></td>
+                  [% ']' IF perms.indirectbless %]</td>
               [% END %]
               <td class="checkbox">
                 [% '[' IF perms.derivedmember %]
@@ -85,9 +83,7 @@
                            value="1"
                            [% ' checked="checked"' IF perms.directmember %] />
                 [% '*' IF perms.regexpmember %]
-                [% ']' IF perms.derivedmember %]
-              [% %]<input type="hidden" name="oldgroup_[% group.id %]"
-                          value="[% perms.directmember %]" /></td>
+                [% ']' IF perms.derivedmember %]</td>
               <td class="groupname">
                 <label for="group_[% group.id %]">
                   <strong>[% group.name FILTER html %]:</strong>
@@ -100,18 +96,29 @@
       </td>
     </tr>
   [% END %]
+
+  <tr>
+    <th>Product responsibilities:</th>
+    <td>
+      [% IF otheruser.product_responsibilities.size %]
+        [% PROCESS admin/users/responsibilities.html.tmpl otheruser = otheruser %]
+      [% ELSE %]
+        <em>none</em>
+      [% END %]
+    </td>
+  </tr>
 </table>
 
 <p>
-  <input type="submit" id="update" value="Update" />
+  <input type="submit" id="update" value="Save Changes" />
   <input type="hidden" name="userid" value="[% otheruser.id %]" />
   <input type="hidden" name="action" value="update" />
   <input type="hidden" name="token" value="[% token FILTER html %]">
   [% INCLUDE listselectionhiddenfields %]
 
   or <a href="editusers.cgi?action=activity&amp;userid=[% otheruser.id %]"
-        title="View the account log for user '
-        [%- otheruser.login FILTER html %]'">View this user's account log</a>
+        title="View Account History for '
+        [%- otheruser.login FILTER html %]'">View Account History</a>
 </p>
 </form>
 <p>

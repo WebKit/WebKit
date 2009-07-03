@@ -48,6 +48,12 @@ dd {
   margin-bottom: 1.5em;
 }
 
+.sortlist_separator {
+    font-weight: bold;
+    font-size: 80%;
+    background-color: #dddddd;
+}
+
 .contribute {
     border: 1px dotted black;
     padding: .5em;

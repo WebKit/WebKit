@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -23,12 +22,11 @@
 [% cgi = Bugzilla.cgi %]
 
 [% IF cgi.param("help") %]
-  [% IF cgi.user_agent("Mozilla/5") %]
-      [% FOREACH h = help_html %]
-      <div id="[% h.id %]_help" class="help" style="display: none;">
-        [%- h.html -%]  
-      </div>
-      [% END %]
-  [% END %]
+  <script type="text/javascript"> <!--
+    [% FOREACH h = help_html %]
+      g_helpTexts["[% h.id FILTER js %]"] = "[%- h.html FILTER js -%]";
+    [% END %]
+    // -->
+  </script>
 [% END %]
 

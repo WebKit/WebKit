@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -29,69 +28,10 @@
 <ul id="useful-links">
   <li id="links-actions">
     <div class="label">Actions: </div>
-      [% PROCESS "global/common-links.html.tmpl" btn_id = "find_bottom" %]
+      [% PROCESS "global/common-links.html.tmpl" qs_suffix = "_bottom" %]
   </li>
 
-  [%# We have no other choices than enumerating all required privileges to have
-    # at least one link in this section. %]
-  [% IF user.login
-     && (user.groups.tweakparams || user.groups.editusers || user.can_bless
-         || (Param('useclassification') && user.groups.editclassifications)
-         || user.groups.editcomponents || user.groups.admin || user.groups.creategroups
-         || user.get_products_by_permission("editcomponents").size
-         || user.groups.editkeywords || user.groups.bz_canusewhines) %]
-
-    [% print_pipe = 0 %]
-    <li id="links-edit">
-      <div class="label">Edit: </div>
-      <ul class="links">
-        [% IF user.groups.tweakparams %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editparams.cgi">Parameters</a></li>
-          [% print_pipe = 1 %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editsettings.cgi">Default Preferences</a></li>
-        [% END %]
-        [% IF user.groups.editcomponents %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="sanitycheck.cgi">Sanity Check</a></li>
-          [% print_pipe = 1 %]
-        [% END %]
-        [% IF user.groups.editusers || user.can_bless %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editusers.cgi">Users</a></li>
-          [% print_pipe = 1 %]
-        [% END %]
-        [% IF Param('useclassification') && user.groups.editclassifications %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editclassifications.cgi">Classifications</a></li>
-          [% print_pipe = 1 %]
-        [% END %]
-        [% IF user.groups.editcomponents || user.get_products_by_permission("editcomponents").size %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editproducts.cgi">Products</a></li>
-          [% print_pipe = 1 %]
-        [% END %]
-        [% IF user.groups.editcomponents %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editflagtypes.cgi">Flags</a></li>
-          [% print_pipe = 1 %]
-        [% END %]
-        [% IF user.groups.admin %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editfields.cgi">Custom Fields</a></li>
-          [% print_pipe = 1 %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editvalues.cgi">Field Values</a></li>
-        [% END %]
-        [% IF user.groups.creategroups %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editgroups.cgi">Groups</a></li>
-          [% print_pipe = 1 %]
-        [% END %]
-        [% IF user.groups.editkeywords %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editkeywords.cgi">Keywords</a></li>
-          [% print_pipe = 1 %]
-        [% END %]
-        [% IF user.groups.bz_canusewhines %]
-          <li>[% '<span class="separator">| </span>' IF print_pipe %]<a href="editwhines.cgi">Whining</a></li>
-          [% print_pipe = 1 %]
-        [% END %]
-      </ul>
-    </li>
-  [% END %]
-    
-    [%# Saved searches %]
+  [%# Saved searches %]
     
   [% IF user.showmybugslink OR user.queries.size 
         OR user.queries_subscribed.size 

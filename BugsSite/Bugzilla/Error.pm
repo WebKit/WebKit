@@ -46,16 +46,15 @@ sub _in_eval {
 
 sub _throw_error {
     my ($name, $error, $vars) = @_;
-
+    my $dbh = Bugzilla->dbh;
     $vars ||= {};
 
     $vars->{error} = $error;
 
-    # Make sure any locked tables are unlocked
-    # and the transaction is rolled back (if supported)
-    # If we are within an eval(), do not unlock tables as we are
+    # Make sure any transaction is rolled back (if supported).
+    # If we are within an eval(), do not roll back transactions as we are
     # eval'uating some test on purpose.
-    Bugzilla->dbh->bz_unlock_tables(UNLOCK_ABORT) unless _in_eval();
+    $dbh->bz_rollback_transaction() if ($dbh->bz_in_transaction() && !_in_eval());
 
     my $datadir = bz_locations()->{'datadir'};
     # If a writable $datadir/errorlog exists, log error details there.
@@ -103,7 +102,12 @@ sub _throw_error {
             die("$message\n");
         }
         elsif (Bugzilla->error_mode == ERROR_MODE_DIE_SOAP_FAULT) {
-            my $code = WS_ERROR_CODE->{$error};
+            # Clone the hash so we aren't modifying the constant.
+            my %error_map = %{ WS_ERROR_CODE() };
+            require Bugzilla::Hook;
+            Bugzilla::Hook::process('webservice-error_codes', 
+                                    { error_map => \%error_map });
+            my $code = $error_map{$error};
             if (!$code) {
                 $code = ERROR_UNKNOWN_FATAL if $name =~ /code/i;
                 $code = ERROR_UNKNOWN_TRANSIENT if $name =~ /user/i;
@@ -124,10 +128,10 @@ sub ThrowCodeError {
 
 sub ThrowTemplateError {
     my ($template_err) = @_;
+    my $dbh = Bugzilla->dbh;
 
-    # Make sure any locked tables are unlocked
-    # and the transaction is rolled back (if supported)
-    Bugzilla->dbh->bz_unlock_tables(UNLOCK_ABORT);
+    # Make sure the transaction is rolled back (if supported).
+    $dbh->bz_rollback_transaction() if $dbh->bz_in_transaction();
 
     my $vars = {};
     if (Bugzilla->error_mode == ERROR_MODE_DIE) {

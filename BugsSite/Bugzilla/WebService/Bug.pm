@@ -14,6 +14,8 @@
 #
 # Contributor(s): Marc Schumann <wurblzap@gmail.com>
 #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+#                 Mads Bondo Dydensborg <mbd@dbc.dk>
+#                 Tsahi Asher <tsahi_75@yahoo.com>
 
 package Bugzilla::WebService::Bug;
 
@@ -25,10 +27,9 @@ use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Field;
 use Bugzilla::WebService::Constants;
-use Bugzilla::Util qw(detaint_natural);
 use Bugzilla::Bug;
 use Bugzilla::BugMail;
-use Bugzilla::Constants;
+use Bugzilla::Util qw(trim);
 
 #############
 # Constants #
@@ -56,11 +57,17 @@ use constant GLOBAL_SELECT_FIELDS => qw(
 
 use constant PRODUCT_SPECIFIC_FIELDS => qw(version target_milestone component);
 
+######################################################
+# Add aliases here for old method name compatibility #
+######################################################
+
+BEGIN { *get_bugs = \&get }
+
 ###########
 # Methods #
 ###########
 
-sub get_bugs {
+sub get {
     my ($self, $params) = @_;
     my $ids = $params->{ids};
     defined $ids || ThrowCodeError('param_required', { param => 'ids' });
@@ -116,11 +123,6 @@ sub create {
         $field_values{$field_name} = $params->{$field}; 
     }
 
-    # Make sure all the required fields are in the hash.
-    foreach my $field (Bugzilla::Bug::REQUIRED_CREATE_FIELDS) {
-        $field_values{$field} = undef unless exists $field_values{$field};
-    }
-
     # WebService users can't set the creation date of a bug.
     delete $field_values{'creation_ts'};
 
@@ -135,8 +137,8 @@ sub legal_values {
     my ($self, $params) = @_;
     my $field = FIELD_MAP->{$params->{field}} || $params->{field};
 
-    my @custom_select =
-        Bugzilla->get_fields({ type => FIELD_TYPE_SINGLE_SELECT });
+    my @custom_select = Bugzilla->get_fields(
+        {custom => 1, type => [FIELD_TYPE_SINGLE_SELECT, FIELD_TYPE_MULTI_SELECT]});
     # We only want field names.
     @custom_select = map {$_->name} @custom_select;
 
@@ -177,6 +179,36 @@ sub legal_values {
     return { values => \@result };
 }
 
+sub add_comment {
+    my ($self, $params) = @_;
+    
+    #The user must login in order add a comment
+    Bugzilla->login(LOGIN_REQUIRED);
+    
+    # Check parameters
+    defined $params->{id} 
+        || ThrowCodeError('param_required', { param => 'id' });
+    ValidateBugID($params->{id});
+    
+    my $comment = $params->{comment}; 
+    (defined $comment && trim($comment) ne '')
+        || ThrowCodeError('param_required', { param => 'comment' });
+    
+    my $bug = new Bugzilla::Bug($params->{id});
+    
+    Bugzilla->user->can_edit_product($bug->product_id)
+        || ThrowUserError("product_edit_denied", {product => $bug->product});
+        
+    # Append comment
+    $bug->add_comment($comment, { isprivate => $params->{private},
+                                  work_time => $params->{work_time} });
+    $bug->update();
+    
+    # Send mail.
+    Bugzilla::BugMail::Send($bug->bug_id, { changer => Bugzilla->user->login });
+    return undef;
+}
+
 1;
 
 __END__
@@ -193,14 +225,16 @@ or get information about bugs that have already been filed.
 
 =head1 METHODS
 
-See L<Bugzilla::WebService> for a description of B<STABLE>, B<UNSTABLE>,
-and B<EXPERIMENTAL>.
+See L<Bugzilla::WebService> for a description of how parameters are passed,
+and what B<STABLE>, B<UNSTABLE>, and B<EXPERIMENTAL> mean.
 
 =head2 Utility Functions
 
 =over
 
-=item C<legal_values> B<EXPERIMENTAL>
+=item C<legal_values> 
+
+B<EXPERIMENTAL>
 
 =over
 
@@ -245,17 +279,21 @@ You specified a field that doesn't exist or isn't a drop-down field.
 
 =back
 
-=head2 Bug Creation and Modification
+=head2 Bug Information
 
 =over
 
-=item C<get_bugs> B<EXPERIMENTAL>
+=item C<get> 
+
+B<EXPERIMENTAL>
 
 =over
 
 =item B<Description>
 
 Gets information about particular bugs in the database.
+
+Note: Can also be called as "get_bugs" for compatibilty with Bugzilla 3.0 API.
 
 =item B<Params>
 
@@ -333,7 +371,12 @@ You do not have access to the bug_id you specified.
 
 =back
 
+=back
 
+
+=head2 Bug Creation and Modification
+
+=over
 
 =item C<create> B<EXPERIMENTAL>
 
@@ -431,6 +474,10 @@ A hash with one element, C<id>. This is the id of the newly-filed bug.
 
 =over
 
+=item 51 (Invalid Object)
+
+The component you specified is not valid for this Product.
+
 =item 103 (Invalid Alias)
 
 The alias you specified is invalid for some reason. See the error message
@@ -438,13 +485,12 @@ for more details.
 
 =item 104 (Invalid Field)
 
-One of the drop-down fields has an invalid value. The error message will
-have more detail.
+One of the drop-down fields has an invalid value, or a value entered in a
+text field is too long. The error message will have more detail.
 
 =item 105 (Invalid Component)
 
-Either you didn't specify a component, or the component you specified was
-invalid.
+You didn't specify a component.
 
 =item 106 (Invalid Product)
 
@@ -459,6 +505,75 @@ You didn't specify a summary for the bug.
 
 Either the QA Contact, Assignee, or CC lists have some invalid user
 in them. The error message will have more details.
+
+=back
+
+=item B<History>
+
+=over
+
+=item Before B<3.0.4>, parameters marked as B<Defaulted> were actually
+B<Required>, due to a bug in Bugzilla.
+
+=back
+
+=back
+
+=item C<add_comment> 
+
+B<EXPERIMENTAL>
+
+=over
+
+=item B<Description>
+
+This allows you to add a comment to a bug in Bugzilla.
+
+=item B<Params>
+
+=over
+
+=item C<id> (int) B<Required> - The id or alias of the bug to append a 
+comment to.
+
+=item C<comment> (string) B<Required> - The comment to append to the bug.
+If this is empty or all whitespace, an error will be thrown saying that
+you did not set the C<comment> parameter.
+
+=item C<private> (boolean) - If set to true, the comment is private, otherwise
+it is assumed to be public.
+
+=item C<work_time> (double) - Adds this many hours to the "Hours Worked"
+on the bug. If you are not in the time tracking group, this value will
+be ignored.
+
+
+=back
+
+=item B<Errors>
+
+=over
+
+=item 100 (Invalid Bug Alias) 
+
+If you specified an alias and either: (a) the Bugzilla you're querying
+doesn't support aliases or (b) there is no bug with that alias.
+
+=item 101 (Invalid Bug ID)
+
+The id you specified doesn't exist in the database.
+
+=item 108 (Bug Edit Denied)
+
+You did not have the necessary rights to edit the bug.
+
+=back
+
+=item B<History>
+
+=over
+
+=item Added in Bugzilla B<3.2>.
 
 =back
 

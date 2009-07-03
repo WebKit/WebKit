@@ -26,6 +26,7 @@
 # This script compiles all the documentation.
 
 use strict;
+use Cwd;
 
 # We need to be in this directory to use our libraries.
 BEGIN {
@@ -34,7 +35,7 @@ BEGIN {
     chdir dirname($0);
 }
 
-use lib qw(.. lib);
+use lib qw(.. ../lib lib);
 
 # We only compile our POD if Pod::Simple is installed. We do the checks
 # this way so that if there's a compile error in Pod::Simple::HTML::Bugzilla,
@@ -58,7 +59,7 @@ use Bugzilla::Constants qw(DB_MODULE BUGZILLA_VERSION);
 my $modules = REQUIRED_MODULES;
 my $opt_modules = OPTIONAL_MODULES;
 
-open(ENTITIES, '>', 'xml/bugzilla.ent') or die('Could not open xml/bugzilla.ent: ' . $!);
+open(ENTITIES, '>', 'bugzilla.ent') or die('Could not open bugzilla.ent: ' . $!);
 print ENTITIES '<?xml version="1.0"?>' ."\n\n";
 print ENTITIES '<!-- Module Versions -->' . "\n";
 foreach my $module (@$modules, @$opt_modules)
@@ -72,9 +73,11 @@ foreach my $module (@$modules, @$opt_modules)
     print ENTITIES '<!ENTITY min-' . $name . '-ver "'.$version.'">' . "\n";
 }
 
-# CGI is a special case, because it has an optional version *and* a required
-# version.
-my ($cgi_opt) = grep($_->{package} eq 'CGI', @$opt_modules);
+# CGI is a special case, because for Perl versions below 5.10, it has an
+# optional version *and* a required version.
+# We check @opt_modules first, then @modules, and pick the first we get.
+# We'll get the optional one then, if it is given, otherwise the required one.
+my ($cgi_opt) = grep($_->{module} eq 'CGI', @$opt_modules, @$modules);
 print ENTITIES '<!ENTITY min-mp-cgi-ver "' . $cgi_opt->{version} . '">' . "\n";
 
 print ENTITIES "\n <!-- Database Versions --> \n";
@@ -82,7 +85,8 @@ print ENTITIES "\n <!-- Database Versions --> \n";
 my $db_modules = DB_MODULE;
 foreach my $db (keys %$db_modules) {
     my $dbd  = $db_modules->{$db}->{dbd};
-    my $name = $dbd->{package};
+    my $name = $dbd->{module};
+    $name =~ s/::/-/g;
     $name = lc($name);
     my $version    = $dbd->{version} || 'any';
     my $db_version = $db_modules->{$db}->{'db_version'};
@@ -156,10 +160,10 @@ END_HTML
 
     $converter->contents_page_start($contents_start);
     $converter->contents_page_end("</body></html>");
-    $converter->add_css('style.css');
+    $converter->add_css('./../../../style.css');
     $converter->javascript_flurry(0);
     $converter->css_flurry(0);
-    $converter->batch_convert(['../'], 'html/api/');
+    $converter->batch_convert(['../../'], 'html/api/');
 
     print "\n";
 }
@@ -168,38 +172,64 @@ END_HTML
 # Make the docs ...
 ###############################################################################
 
-if (!-d 'txt') {
-    unlink 'txt';
-    mkdir 'txt', 0755;
+my @langs;
+# search for sub directories which have a 'xml' sub-directory
+opendir(LANGS, './');
+foreach my $dir (readdir(LANGS)) {
+    next if (($dir eq '.') || ($dir eq '..') || (! -d $dir));
+    if (-d "$dir/xml") {
+        push(@langs, $dir);
+    }
 }
-if (!-d 'pdf') {
-    unlink 'pdf';
-    mkdir 'pdf', 0755;
-}
+closedir(LANGS);
 
-make_pod() if $pod_simple;
-exit unless $build_docs;
+my $docparent = getcwd();
+foreach my $lang (@langs) {
+    chdir "$docparent/$lang";
+    MakeDocs(undef, 'cp ../bugzilla.ent ./xml/');
 
-chdir 'html';
+    if (!-d 'txt') {
+        unlink 'txt';
+        mkdir 'txt', 0755;
+    }
+    if (!-d 'pdf') {
+        unlink 'pdf';
+        mkdir 'pdf', 0755;
+    }
+    if (!-d 'html') {
+        unlink 'html';
+        mkdir 'html', 0755;
+    }
+    if (!-d 'html/api') {
+        unlink 'html/api';
+        mkdir 'html/api', 0755;
+    }
 
-MakeDocs('separate HTML', "jade -t sgml -i html -d $LDP_HOME/ldp.dsl\#html " .
+    make_pod() if $pod_simple;
+    next unless $build_docs;
+
+    chdir 'html';
+
+    MakeDocs('separate HTML', "jade -t sgml -i html -d $LDP_HOME/ldp.dsl\#html " .
 	 "$JADE_PUB/xml.dcl ../xml/Bugzilla-Guide.xml");
-MakeDocs('big HTML', "jade -V nochunks -t sgml -i html -d " .
+    MakeDocs('big HTML', "jade -V nochunks -t sgml -i html -d " .
          "$LDP_HOME/ldp.dsl\#html $JADE_PUB/xml.dcl " .
 	 "../xml/Bugzilla-Guide.xml > Bugzilla-Guide.html");
-MakeDocs('big text', "lynx -dump -justify=off -nolist Bugzilla-Guide.html " .
+    MakeDocs('big text', "lynx -dump -justify=off -nolist Bugzilla-Guide.html " .
 	 "> ../txt/Bugzilla-Guide.txt");
 
-if (! grep($_ eq "--with-pdf", @ARGV)) {
-    exit;
-}
+    if (! grep($_ eq "--with-pdf", @ARGV)) {
+        next;
+    }
 
-MakeDocs('PDF', "jade -t tex -d $LDP_HOME/ldp.dsl\#print $JADE_PUB/xml.dcl " .
+    MakeDocs('PDF', "jade -t tex -d $LDP_HOME/ldp.dsl\#print $JADE_PUB/xml.dcl " .
          '../xml/Bugzilla-Guide.xml');
-chdir '../pdf';
-MakeDocs(undef, 'mv ../xml/Bugzilla-Guide.tex .');
-MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
-MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
-MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
-MakeDocs(undef, 'rm Bugzilla-Guide.tex Bugzilla-Guide.log Bugzilla-Guide.aux Bugzilla-Guide.out');
+    chdir '../pdf';
+    MakeDocs(undef, 'mv ../xml/Bugzilla-Guide.tex .');
+    MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
+    MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
+    MakeDocs(undef, 'pdfjadetex Bugzilla-Guide.tex');
+    MakeDocs(undef, 'rm Bugzilla-Guide.tex Bugzilla-Guide.log Bugzilla-Guide.aux Bugzilla-Guide.out');
+
+}
 

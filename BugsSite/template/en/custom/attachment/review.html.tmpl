@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -24,9 +23,9 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Review patch #[% attachid %] for [% terms.Bug %] #[% bugid %]: [% bugsummary FILTER html %]</title>
+<title>Review patch #[% attachment.id %] for [% terms.Bug %] #[% attachment.bug_id %]: [% bugsummary FILTER html %]</title>
 <frameset rows="60%,40%">
-<frame id=viewFrame src="attachment.cgi?id=[% attachid %]&action=prettypatch">
-<frame src="attachment.cgi?id=[% attachid %]&action=reviewform">
+<frame id=viewFrame src="attachment.cgi?id=[% attachment.id %]&action=prettypatch">
+<frame src="attachment.cgi?id=[% attachment.id %]&action=reviewform">
 </frameset>
 

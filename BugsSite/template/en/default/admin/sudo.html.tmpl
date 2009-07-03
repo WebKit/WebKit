@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -24,6 +23,7 @@
 [% PROCESS global/header.html.tmpl
    title = "Begin sudo session"
    style_urls = ['skins/standard/admin.css']
+   doc_section = "useradmin.html#impersonatingusers"
  %]
  
 [% DEFAULT target_login = "" %]
@@ -52,10 +52,9 @@
     [% INCLUDE global/userselect.html.tmpl
        id => "target_login"
        name => "target_login"
-       value => "$target_login_default"
+       value => target_login_default
        accesskey => "u"
        size => 30
-       multiple => 5
     %]
   </p>
   

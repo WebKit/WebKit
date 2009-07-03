@@ -21,7 +21,7 @@ package Bugzilla::Version;
 
 use base qw(Bugzilla::Object);
 
-use Bugzilla::Install::Requirements qw(vers_cmp);
+use Bugzilla::Install::Util qw(vers_cmp);
 use Bugzilla::Util;
 use Bugzilla::Error;
 
@@ -150,20 +150,6 @@ sub product_id { return $_[0]->{'product_id'}; }
 #####     Subroutines       ###
 ###############################
 
-sub check_version {
-    my ($product, $version_name) = @_;
-
-    $version_name || ThrowUserError('version_not_specified');
-    my $version = new Bugzilla::Version(
-        { product => $product, name => $version_name });
-    unless ($version) {
-        ThrowUserError('version_not_valid',
-                       {'product' => $product->name,
-                        'version' => $version_name});
-    }
-    return $version;
-}
-
 sub create {
     my ($name, $product) = @_;
     my $dbh = Bugzilla->dbh;
@@ -211,9 +197,6 @@ Bugzilla::Version - Bugzilla product version class.
     my $updated = $version->update($version_name, $product);
 
     my $version = $hash_ref->{'version_value'};
-
-    my $version = Bugzilla::Version::check_version($product_obj,
-                                                   'acme_version');
 
     my $version = Bugzilla::Version::create($version_name, $product);
 
@@ -265,15 +248,6 @@ Version.pm represents a Product Version object.
 =head1 SUBROUTINES
 
 =over
-
-=item C<check_version($product, $version_name)>
-
- Description: Checks if the version name exists for the product name.
-
- Params:      $product - A Bugzilla::Product object.
-              $version_name - String with a version name.
-
- Returns:     Bugzilla::Version object.
 
 =item C<create($version_name, $product)>
 

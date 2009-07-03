@@ -43,27 +43,30 @@
 ######################################################################
 
 use strict;
-use 5.008;
+use 5.008001;
 use File::Basename;
 use Getopt::Long qw(:config bundling);
 use Pod::Usage;
-use POSIX qw(setlocale LC_CTYPE);
 use Safe;
 
 BEGIN { chdir dirname($0); }
-use lib ".";
+use lib qw(. lib);
 use Bugzilla::Constants;
 use Bugzilla::Install::Requirements;
-
-require 5.008001 if ON_WINDOWS; # for CGI 2.93 or higher
+use Bugzilla::Install::Util qw(install_string get_version_and_os get_console_locale);
 
 ######################################################################
 # Live Code
 ######################################################################
 
+# When we're running at the command line, we need to pick the right
+# language before ever displaying any string.
+$ENV{'HTTP_ACCEPT_LANGUAGE'} ||= get_console_locale();
+
 my %switch;
 GetOptions(\%switch, 'help|h|?', 'check-modules', 'no-templates|t',
-                     'verbose|v|no-silent', 'make-admin=s');
+                     'verbose|v|no-silent', 'make-admin=s', 
+                     'reset-password=s', 'version|V');
 
 # Print the help message if that switch was selected.
 pod2usage({-verbose => 1, -exitval => 1}) if $switch{'help'};
@@ -73,7 +76,8 @@ pod2usage({-verbose => 1, -exitval => 1}) if $switch{'help'};
 my $answers_file = $ARGV[0];
 my $silent = $answers_file && !$switch{'verbose'};
 
-display_version_and_os() unless $silent;
+print(install_string('header', get_version_and_os()) . "\n") unless $silent;
+exit if $switch{'version'};
 # Check required --MODULES--
 my $module_results = check_requirements(!$silent);
 Bugzilla::Install::Requirements::print_module_instructions(
@@ -115,10 +119,6 @@ Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
 Bugzilla->installation_mode(INSTALLATION_MODE_NON_INTERACTIVE) if $answers_file;
 Bugzilla->installation_answers($answers_file);
 
-# When we're running at the command line, we need to pick the right
-# language before ever creating a template object.
-$ENV{'HTTP_ACCEPT_LANGUAGE'} ||= setlocale(LC_CTYPE);
-
 ###########################################################################
 # Check and update --LOCAL-- configuration
 ###########################################################################
@@ -154,7 +154,7 @@ create_htaccess() if $lc_hash->{'create_htaccess'};
 
 # Remove parameters from the params file that no longer exist in Bugzilla,
 # and set the defaults for new ones
-update_params();
+my %old_params = update_params();
 
 ###########################################################################
 # Pre-compile --TEMPLATE-- code
@@ -192,7 +192,7 @@ Bugzilla::Field::populate_field_definitions();
 # Update the tables to the current definition --TABLE--
 ###########################################################################
 
-Bugzilla::Install::DB::update_table_definitions();        
+Bugzilla::Install::DB::update_table_definitions(\%old_params);
 
 ###########################################################################
 # Bugzilla uses --GROUPS-- to assign various rights to its users.
@@ -213,11 +213,16 @@ Bugzilla::Install::update_settings();
 Bugzilla::Install::make_admin($switch{'make-admin'}) if $switch{'make-admin'};
 Bugzilla::Install::create_admin();
 
+Bugzilla::Install::reset_password($switch{'reset-password'})
+    if $switch{'reset-password'};
+
 ###########################################################################
 # Create default Product and Classification
 ###########################################################################
 
 Bugzilla::Install::create_default_product();
+
+Bugzilla::Hook::process('install-before_final_checks', {'silent' => $silent });
 
 ###########################################################################
 # Final checks
@@ -238,9 +243,10 @@ checksetup.pl - A do-it-all upgrade and installation script for Bugzilla.
 
 =head1 SYNOPSIS
 
- ./checksetup.pl [--help|--check-modules]
+ ./checksetup.pl [--help|--check-modules|--version]
  ./checksetup.pl [SCRIPT [--verbose]] [--no-templates|-t]
                  [--make-admin=user@domain.com]
+                 [--reset-password=user@domain.com]
 
 =head1 OPTIONS
 
@@ -268,6 +274,11 @@ Makes the specified user into a Bugzilla administrator. This is
 in case you accidentally lock yourself out of the Bugzilla administrative
 interface.
 
+=item B<--reset-password>=user@domain.com
+
+Resets the specified user's password. checksetup.pl will prompt you to 
+enter a new password for the user.
+
 =item B<--no-templates> (B<-t>)
 
 Don't compile the templates at all. Existing compiled templates will
@@ -277,6 +288,11 @@ by developers to speed up checksetup.) Use this switch at your own risk.
 =item B<--verbose>
 
 Output results of SCRIPT being processed.
+
+=item B<--version>
+
+Display the version of Bugzilla, Perl, and some info about the
+system that Bugzilla is being installed on, and then exit.
 
 =back
 

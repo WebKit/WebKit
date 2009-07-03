@@ -26,7 +26,7 @@
 
 use strict;
 
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -206,12 +206,7 @@ sub get_next_event {
     # Loop until there's something to return
     until (scalar keys %{$event}) {
 
-        $dbh->bz_lock_tables('whine_schedules WRITE',
-                             'whine_events READ',
-                             'profiles READ',
-                             'groups READ',
-                             'group_group_map READ',
-                             'user_group_map READ');
+        $dbh->bz_start_transaction();
 
         # Get the event ID for the first pending schedule
         $sth_next_scheduled_event->execute;
@@ -275,7 +270,7 @@ sub get_next_event {
             reset_timer($sid);
         }
 
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
 
         # Only set $event if the user is allowed to do whining
         if ($owner->in_group('bz_canusewhines')) {
@@ -358,10 +353,11 @@ while (my $event = get_next_event) {
 #
 sub mail {
     my $args = shift;
+    my $addressee = $args->{recipient};
+    # Don't send mail to someone whose bugmail notification is disabled.
+    return if $addressee->email_disabled;
 
-    # Don't send mail to someone on the nomail list.
-    return if $args->{recipient}->email_disabled;
-
+    my $template = Bugzilla->template_inner($addressee->settings->{'lang'}->{'value'});
     my $msg = ''; # it's a temporary variable to hold the template output
     $args->{'alternatives'} ||= [];
 
@@ -392,6 +388,7 @@ sub mail {
     $template->process("whine/multipart-mime.txt.tmpl", $args, \$msg)
         or die($template->error());
 
+    Bugzilla->template_inner("");
     MessageToMTA($msg);
 
     delete $args->{'boundary'};
@@ -474,7 +471,7 @@ sub run_queries {
                 push @{$thisquery->{'bugs'}}, $bug;
             }
         }
-        unless ($thisquery->{'onemailperbug'}) {
+        if (!$thisquery->{'onemailperbug'} && @{$thisquery->{'bugs'}}) {
             push @{$return_queries}, $thisquery;
         }
     }
@@ -489,7 +486,7 @@ sub run_queries {
 sub get_query {
     my ($name, $user) = @_;
     my $qname = $name;
-    $sth_get_query->execute($user->{'id'}, $qname);
+    $sth_get_query->execute($user->id, $qname);
     my $fetched = $sth_get_query->fetch;
     $sth_get_query->finish;
     return $fetched ? $fetched->[0] : '';

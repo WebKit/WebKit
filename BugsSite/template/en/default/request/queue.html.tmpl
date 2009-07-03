@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -32,8 +31,8 @@
     table.requests th { text-align: left; }
     table#filtering th { text-align: right; }
   "
-  onload="selectProduct(document.forms[0], 'product', 'component', 'Any');"
-  javascript_urls=["productmenu.js"]
+  onload="var f = document.forms[0]; selectProduct(f.product, f.component, null, null, 'Any');"
+  javascript_urls=["js/productform.js"]
 %]
 
 <p>
@@ -53,7 +52,7 @@ to some group are shown by default.
            title="Requester's email address"></td>
       <th>Product:</th>
       <td>
-        <select name="product" onchange="selectProduct(this.form, 'product', 'component', 'Any');">
+        <select name="product" onchange="selectProduct(this, this.form.component, null, null, 'Any');">
           <option value="">Any</option>
           [% FOREACH prod = products %]
             <option value="[% prod.name FILTER html %]"
@@ -90,11 +89,9 @@ to some group are shown by default.
       <td>
         <select name="component">
           <option value="">Any</option>
-          [% FOREACH prod = products %]
-            [% FOREACH comp = prod.components %]
-              <option value="[% comp.name FILTER html %]" [% "selected" IF cgi.param('component') == comp.name %]>
-                [% comp.name FILTER html %]</option>
-            [% END %]
+          [% FOREACH comp = components %]
+            <option value="[% comp FILTER html %]" [% "selected" IF cgi.param('component') == comp %]>
+              [% comp FILTER html %]</option>
           [% END %]
         </select>
       </td>

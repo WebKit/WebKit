@@ -44,8 +44,17 @@ package Bugzilla::DB::Mysql;
 use strict;
 
 use Bugzilla::Constants;
+use Bugzilla::Install::Util qw(install_string);
 use Bugzilla::Util;
 use Bugzilla::Error;
+use Bugzilla::DB::Schema::Mysql;
+
+use List::Util qw(max);
+
+# This is how many comments of MAX_COMMENT_LENGTH we expect on a single bug.
+# In reality, you could have a LOT more comments than this, because 
+# MAX_COMMENT_LENGTH is big.
+use constant MAX_COMMENTS => 50;
 
 # This module extends the DB interface via inheritance
 use base qw(Bugzilla::DB);
@@ -57,8 +66,10 @@ sub new {
     my $dsn = "DBI:mysql:host=$host;database=$dbname";
     $dsn .= ";port=$port" if $port;
     $dsn .= ";mysql_socket=$sock" if $sock;
+
+    my $attrs = { mysql_enable_utf8 => Bugzilla->params->{'utf8'} };
     
-    my $self = $class->db_new($dsn, $user, $pass);
+    my $self = $class->db_new($dsn, $user, $pass, $attrs);
 
     # This makes sure that if the tables are encoded as UTF-8, we
     # return their data correctly.
@@ -87,6 +98,10 @@ sub new {
         }
     }
 
+    # Allow large GROUP_CONCATs (largely for inserting comments 
+    # into bugs_fulltext).
+    $self->do('SET SESSION group_concat_max_len = 128000000');
+
     return $self;
 }
 
@@ -98,6 +113,15 @@ sub bz_last_key {
     my ($last_insert_id) = $self->selectrow_array('SELECT LAST_INSERT_ID()');
 
     return $last_insert_id;
+}
+
+sub sql_group_concat {
+    my ($self, $column, $separator) = @_;
+    my $sep_sql;
+    if ($separator) {
+        $sep_sql = " SEPARATOR $separator";
+    }
+    return "GROUP_CONCAT($column$sep_sql)";
 }
 
 sub sql_regexp {
@@ -133,7 +157,7 @@ sub sql_fulltext_search {
 
     # Add the boolean mode modifier if the search string contains
     # boolean operators.
-    my $mode = ($text =~ /[+-<>()~*"]/ ? "IN BOOLEAN MODE" : "");
+    my $mode = ($text =~ /[+\-<>()~*"]/ ? "IN BOOLEAN MODE" : "");
 
     # quote the text for use in the MATCH AGAINST expression
     $text = $self->quote($text);
@@ -176,71 +200,25 @@ sub sql_interval {
     return "INTERVAL $interval $units";
 }
 
+sub sql_iposition {
+    my ($self, $fragment, $text) = @_;
+    return "INSTR($text, $fragment)";
+}
+
 sub sql_position {
     my ($self, $fragment, $text) = @_;
 
-    # mysql 4.0.1 and lower do not support CAST
-    # (checksetup has a check for unsupported versions)
-
-    my $server_version = $self->bz_server_version;
     return "INSTR(CAST($text AS BINARY), CAST($fragment AS BINARY))";
 }
 
 sub sql_group_by {
     my ($self, $needed_columns, $optional_columns) = @_;
 
-    # MySQL allows to specify all columns as ANSI SQL requires, but also
-    # allow you to specify just minimal subset to get unique result.
-    # According to MySQL documentation, the less columns you specify
-    # the faster the query runs.
+    # MySQL allows you to specify the minimal subset of columns to get
+    # a unique result. While it does allow specifying all columns as
+    # ANSI SQL requires, according to MySQL documentation, the fewer
+    # columns you specify, the faster the query runs.
     return "GROUP BY $needed_columns";
-}
-
-
-sub bz_lock_tables {
-    my ($self, @tables) = @_;
-
-    my $list = join(', ', @tables);
-    # Check first if there was no lock before
-    if ($self->{private_bz_tables_locked}) {
-        ThrowCodeError("already_locked", { current => $self->{private_bz_tables_locked},
-                                           new => $list });
-    } else {
-        $self->do('LOCK TABLE ' . $list); 
-    
-        $self->{private_bz_tables_locked} = $list;
-    }
-}
-
-sub bz_unlock_tables {
-    my ($self, $abort) = @_;
-    
-    # Check first if there was previous matching lock
-    if (!$self->{private_bz_tables_locked}) {
-        # Abort is allowed even without previous lock for error handling
-        return if $abort;
-        ThrowCodeError("no_matching_lock");
-    } else {
-        $self->do("UNLOCK TABLES");
-    
-        $self->{private_bz_tables_locked} = "";
-    }
-}
-
-# As Bugzilla currently runs on MyISAM storage, which does not support
-# transactions, these functions die when called.
-# Maybe we should just ignore these calls for now, but as we are not
-# using transactions in MySQL yet, this just hints the developers.
-sub bz_start_transaction {
-    die("Attempt to start transaction on DB without transaction support");
-}
-
-sub bz_commit_transaction {
-    die("Attempt to commit transaction on DB without transaction support");
-}
-
-sub bz_rollback_transaction {
-    die("Attempt to rollback transaction on DB without transaction support");
 }
 
 
@@ -256,14 +234,50 @@ sub _bz_get_initial_schema {
 sub bz_setup_database {
     my ($self) = @_;
 
+    # The "comments" field of the bugs_fulltext table could easily exceed
+    # MySQL's default max_allowed_packet. Also, MySQL should never have
+    # a max_allowed_packet smaller than our max_attachment_size. So, we
+    # warn the user here if max_allowed_packet is too small.
+    my $min_max_allowed = MAX_COMMENTS * MAX_COMMENT_LENGTH;
+    my (undef, $current_max_allowed) = $self->selectrow_array(
+        q{SHOW VARIABLES LIKE 'max\_allowed\_packet'});
+    # This parameter is not yet defined when the DB is being built for
+    # the very first time. The code below still works properly, however,
+    # because the default maxattachmentsize is smaller than $min_max_allowed.
+    my $max_attachment = (Bugzilla->params->{'maxattachmentsize'} || 0) * 1024;
+    my $needed_max_allowed = max($min_max_allowed, $max_attachment);
+    if ($current_max_allowed < $needed_max_allowed) {
+        warn install_string('max_allowed_packet',
+                            { current => $current_max_allowed,
+                              needed  => $needed_max_allowed }) . "\n";
+    }
+
+    # Make sure the installation has InnoDB turned on, or we're going to be
+    # doing silly things like making foreign keys on MyISAM tables, which is
+    # hard to fix later. We do this up here because none of the code below
+    # works if InnoDB is off. (Particularly if we've already converted the
+    # tables to InnoDB.)
+    my ($innodb_on) = @{$self->selectcol_arrayref(
+        q{SHOW VARIABLES LIKE '%have_innodb%'}, {Columns=>[2]})};
+    if ($innodb_on ne 'YES') {
+        print <<EOT;
+InnoDB is disabled in your MySQL installation. 
+Bugzilla requires InnoDB to be enabled. 
+Please enable it and then re-run checksetup.pl.
+
+EOT
+        exit 3;
+    }
+
+
     # Figure out if any existing tables are of type ISAM and convert them
     # to type MyISAM if so.  ISAM tables are deprecated in MySQL 3.23,
     # which Bugzilla now requires, and they don't support more than 16
     # indexes per table, which Bugzilla needs.
-    my $sth = $self->prepare("SHOW TABLE STATUS");
-    $sth->execute;
-    my @isam_tables = ();
-    while (my ($name, $type) = $sth->fetchrow_array) {
+    my $table_status = $self->selectall_arrayref("SHOW TABLE STATUS");
+    my @isam_tables;
+    foreach my $row (@$table_status) {
+        my ($name, $type) = @$row;
         push(@isam_tables, $name) if $type eq "ISAM";
     }
 
@@ -281,17 +295,52 @@ sub bz_setup_database {
         print "\nISAM->MyISAM table conversion done.\n\n";
     }
 
-    # There is a bug in MySQL 4.1.0 - 4.1.15 that makes certain SELECT
-    # statements fail after a SHOW TABLE STATUS: 
-    # http://bugs.mysql.com/bug.php?id=13535
-    # This is a workaround, a dummy SELECT to reset the LAST_INSERT_ID.
+    my ($sd_index_deleted, $longdescs_index_deleted);
     my @tables = $self->bz_table_list_real();
-    if (grep($_ eq 'bugs', @tables)
-        && $self->bz_column_info_real("bugs", "bug_id"))
-    {
-        $self->do('SELECT 1 FROM bugs WHERE bug_id IS NULL');
+    # We want to convert tables to InnoDB, but it's possible that they have 
+    # fulltext indexes on them, and conversion will fail unless we remove
+    # the indexes.
+    if (grep($_ eq 'bugs', @tables)) {
+        if ($self->bz_index_info_real('bugs', 'short_desc')) {
+            $self->bz_drop_index_raw('bugs', 'short_desc');
+        }
+        if ($self->bz_index_info_real('bugs', 'bugs_short_desc_idx')) {
+            $self->bz_drop_index_raw('bugs', 'bugs_short_desc_idx');
+            $sd_index_deleted = 1; # Used for later schema cleanup.
+        }
+    }
+    if (grep($_ eq 'longdescs', @tables)) {
+        if ($self->bz_index_info_real('longdescs', 'thetext')) {
+            $self->bz_drop_index_raw('longdescs', 'thetext');
+        }
+        if ($self->bz_index_info_real('longdescs', 'longdescs_thetext_idx')) {
+            $self->bz_drop_index_raw('longdescs', 'longdescs_thetext_idx');
+            $longdescs_index_deleted = 1; # For later schema cleanup.
+        }
     }
 
+    # Upgrade tables from MyISAM to InnoDB
+    my @myisam_tables;
+    foreach my $row (@$table_status) {
+        my ($name, $type) = @$row;
+        if ($type =~ /^MYISAM$/i 
+            && !grep($_ eq $name, Bugzilla::DB::Schema::Mysql::MYISAM_TABLES))
+        {
+            push(@myisam_tables, $name) ;
+        }
+    }
+    if (scalar @myisam_tables) {
+        print "Bugzilla now uses the InnoDB storage engine in MySQL for",
+              " most tables.\nConverting tables to InnoDB:\n";
+        foreach my $table (@myisam_tables) {
+            print "Converting table $table... ";
+            $self->do("ALTER TABLE $table TYPE = InnoDB");
+            print "done.\n";
+        }
+    }
+    
+    $self->_after_table_status(\@tables);
+    
     # Versions of Bugzilla before the existence of Bugzilla::DB::Schema did 
     # not provide explicit names for the table indexes. This means
     # that our upgrades will not be reliable, because we look for the name
@@ -461,10 +510,30 @@ sub bz_setup_database {
         } # foreach table
     } # if old-name indexes
 
+    # If there are no tables, but the DB isn't utf8 and it should be,
+    # then we should alter the database to be utf8. We know it should be
+    # if the utf8 parameter is true or there are no params at all.
+    # This kind of situation happens when people create the database
+    # themselves, and if we don't do this they will get the big
+    # scary WARNING statement about conversion to UTF8.
+    if ( !$self->bz_db_is_utf8 && !@tables 
+         && (Bugzilla->params->{'utf8'} || !scalar keys %{Bugzilla->params}) )
+    {
+        $self->_alter_db_charset_to_utf8();
+    }
 
     # And now we create the tables and the Schema object.
     $self->SUPER::bz_setup_database();
 
+    if ($sd_index_deleted) {
+        $self->_bz_real_schema->delete_index('bugs', 'bugs_short_desc_idx');
+        $self->_bz_store_real_schema;
+    }
+    if ($longdescs_index_deleted) {
+        $self->_bz_real_schema->delete_index('longdescs', 
+                                             'longdescs_thetext_idx');
+        $self->_bz_store_real_schema;
+    }
 
     # The old timestamp fields need to be adjusted here instead of in
     # checksetup. Otherwise the UPDATE statements inside of bz_add_column
@@ -551,7 +620,16 @@ sub bz_setup_database {
     }
 
     # Convert the database to UTF-8 if the utf8 parameter is on.
-    if (Bugzilla->params->{'utf8'} && !$self->bz_db_is_utf8) {
+    # We check if any table isn't utf8, because lots of crazy
+    # partial-conversion situations can happen, and this handles anything
+    # that could come up (including having the DB charset be utf8 but not
+    # the table charsets.
+    my $utf_table_status =
+        $self->selectall_arrayref("SHOW TABLE STATUS", {Slice=>{}});
+    $self->_after_table_status([map($_->{Name}, @$utf_table_status)]);
+    my @non_utf8_tables = grep($_->{Collation} !~ /^utf8/, @$utf_table_status);
+    
+    if (Bugzilla->params->{'utf8'} && scalar @non_utf8_tables) {
         print <<EOT;
 
 WARNING: We are about to convert your table storage format to UTF8. This
@@ -604,14 +682,21 @@ EOT
                     my $name = $column->{Field};
 
                     # The code below doesn't work on a field with a FULLTEXT
-                    # index. So we drop it. The upgrade code will re-create
-                    # it later.
+                    # index. So we drop it, which we'd do later anyway.
                     if ($table eq 'longdescs' && $name eq 'thetext') {
                         $self->bz_drop_index('longdescs', 
                                              'longdescs_thetext_idx');
                     }
                     if ($table eq 'bugs' && $name eq 'short_desc') {
                         $self->bz_drop_index('bugs', 'bugs_short_desc_idx');
+                    }
+                    my %ft_indexes;
+                    if ($table eq 'bugs_fulltext') {
+                        %ft_indexes = $self->_bz_real_schema->get_indexes_on_column_abstract(
+                            'bugs_fulltext', $name);
+                        foreach my $index (keys %ft_indexes) {
+                            $self->bz_drop_index('bugs_fulltext', $index);
+                        }
                     }
 
                     print "Converting $table.$name to be stored as UTF-8...\n";
@@ -636,15 +721,47 @@ EOT
                               $binary");
                     $self->do("ALTER TABLE $table CHANGE COLUMN $name $name 
                               $utf8");
+
+                    if ($table eq 'bugs_fulltext') {
+                        foreach my $index (keys %ft_indexes) {
+                            $self->bz_add_index('bugs_fulltext', $index,
+                                                $ft_indexes{$index});
+                        }
+                    }
                 }
             }
 
             $self->do("ALTER TABLE $table DEFAULT CHARACTER SET utf8");
         } # foreach my $table (@tables)
-
-        my $db_name = Bugzilla->localconfig->{db_name};
-        $self->do("ALTER DATABASE $db_name CHARACTER SET utf8");
     }
+
+    # Sometimes you can have a situation where all the tables are utf8,
+    # but the database isn't. (This tends to happen when you've done
+    # a mysqldump.) So we have this change outside of the above block,
+    # so that it just happens silently if no actual *table* conversion
+    # needs to happen.
+    if (Bugzilla->params->{'utf8'} && !$self->bz_db_is_utf8) {
+        $self->_alter_db_charset_to_utf8();
+    }
+}
+
+# There is a bug in MySQL 4.1.0 - 4.1.15 that makes certain SELECT
+# statements fail after a SHOW TABLE STATUS: 
+# http://bugs.mysql.com/bug.php?id=13535
+# This is a workaround, a dummy SELECT to reset the LAST_INSERT_ID.
+sub _after_table_status {
+    my ($self, $tables) = @_;
+    if (grep($_ eq 'bugs', @$tables)
+        && $self->bz_column_info_real("bugs", "bug_id"))
+    {
+        $self->do('SELECT 1 FROM bugs WHERE bug_id IS NULL');
+    }
+}
+
+sub _alter_db_charset_to_utf8 {
+    my $self = shift;
+    my $db_name = Bugzilla->localconfig->{db_name};
+    $self->do("ALTER DATABASE $db_name CHARACTER SET utf8"); 
 }
 
 sub bz_db_is_utf8 {

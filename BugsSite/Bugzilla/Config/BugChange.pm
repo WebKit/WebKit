@@ -34,12 +34,34 @@ package Bugzilla::Config::BugChange;
 use strict;
 
 use Bugzilla::Config::Common;
+use Bugzilla::Status;
 
 $Bugzilla::Config::BugChange::sortkey = "03";
 
 sub get_param_list {
   my $class = shift;
+
+  # Hardcoded bug statuses which existed before Bugzilla 3.1.
+  my @closed_bug_statuses = ('RESOLVED', 'VERIFIED', 'CLOSED');
+
+  # If we are upgrading from 3.0 or older, bug statuses are not customisable
+  # and bug_status.is_open is not yet defined (hence the eval), so we use
+  # the bug statuses above as they are still hardcoded.
+  eval {
+      my @current_closed_states = map {$_->name} closed_bug_statuses();
+      # If no closed state was found, use the default list above.
+      @closed_bug_statuses = @current_closed_states if scalar(@current_closed_states);
+  };
+
   my @param_list = (
+  {
+   name => 'duplicate_or_move_bug_status',
+   type => 's',
+   choices => \@closed_bug_statuses,
+   default => $closed_bug_statuses[0],
+   checker => \&check_bug_status
+  },
+
   {
    name => 'letsubmitterchoosepriority',
    type => 'b',
@@ -59,61 +81,19 @@ sub get_param_list {
   },
 
   {
-   name => 'commentoncreate',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'commentonaccept',
-   type => 'b',
-   default => 0
-  },
-
-  {
    name => 'commentonclearresolution',
    type => 'b',
    default => 0
   },
 
   {
-   name => 'commentonconfirm',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'commentonresolve',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'commentonreassign',
+   name => 'commentonchange_resolution',
    type => 'b',
    default => 0
   },
 
   {
    name => 'commentonreassignbycomponent',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'commentonreopen',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'commentonverify',
-   type => 'b',
-   default => 0
-  },
-
-  {
-   name => 'commentonclose',
    type => 'b',
    default => 0
   },

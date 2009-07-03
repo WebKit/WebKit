@@ -4,7 +4,7 @@
 # and makes nice bugzilla user entries out of them. Also disables Bugzilla users
 # that are not found in LDAP.
 
-# $Id: bugzilla_ldapsync.rb,v 1.2 2003/04/26 16:35:04 jake%bugzilla.org Exp $
+# $Id$
 
 require 'ldap'
 require 'dbi'

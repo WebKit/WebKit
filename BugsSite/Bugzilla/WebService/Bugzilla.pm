@@ -21,12 +21,31 @@ package Bugzilla::WebService::Bugzilla;
 use strict;
 use base qw(Bugzilla::WebService);
 use Bugzilla::Constants;
+use Bugzilla::Hook;
 import SOAP::Data qw(type);
 
 use Time::Zone;
 
+# Basic info that is needed before logins
+use constant LOGIN_EXEMPT => {
+    timezone => 1,
+    version => 1,
+};
+
 sub version {
     return { version => type('string')->value(BUGZILLA_VERSION) };
+}
+
+sub extensions {
+    my $extensions = Bugzilla::Hook::enabled_plugins();
+    foreach my $name (keys %$extensions) {
+        my $info = $extensions->{$name};
+        foreach my $data (keys %$info)
+        {
+            $extensions->{$name}->{$data} = type('string')->value($info->{$data});
+        }
+    }
+    return { extensions => $extensions };
 }
 
 sub timezone {
@@ -50,12 +69,14 @@ This provides functions that tell you about Bugzilla in general.
 
 =head1 METHODS
 
-See L<Bugzilla::WebService> for a description of what B<STABLE>, B<UNSTABLE>,
-and B<EXPERIMENTAL> mean.
+See L<Bugzilla::WebService> for a description of how parameters are passed,
+and what B<STABLE>, B<UNSTABLE>, and B<EXPERIMENTAL> mean.
 
 =over
 
-=item C<version> B<EXPERIMENTAL>
+=item C<version>
+
+B<STABLE>
 
 =over
 
@@ -74,7 +95,39 @@ string.
 
 =back
 
-=item C<timezone> B<EXPERIMENTAL>
+=item C<extensions>
+
+B<EXPERIMENTAL>
+
+=over
+
+=item B<Description>
+
+Gets information about the extensions that are currently installed and enabled
+in this Bugzilla.
+
+=item B<Params> (none)
+
+=item B<Returns>
+
+A hash with a single item, C<extesions>. This points to a hash. I<That> hash
+contains the names of extensions as keys, and information about the extension
+as values. One of the values that must be returned is the 'version' of the
+extension
+
+=item B<History>
+
+=over
+
+=item Added in Bugzilla B<3.2>.
+
+=back
+
+=back
+
+=item C<timezone>
+
+B<STABLE>
 
 =over
 
@@ -88,7 +141,7 @@ returns will be in this timezone.
 
 =item B<Returns>
 
-A hash with a single item, C<timezone>, that is the timezone as a
+A hash with a single item, C<timezone>, that is the timezone offset as a
 string in (+/-)XXXX (RFC 2822) format.
 
 =back

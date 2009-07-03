@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -23,8 +22,11 @@
   # between the elements.  This is necessary because DOM parent-child-sibling
   # relations can change and screw up the javascript for restoring, collapsing
   # and expanding.  Do not change without testing all three of those.
+  # Also, the first empty row is required because 'table-layout: fixed' only
+  # considers the first row to determine column widths. If a colspan is found,
+  # it then share the width equally among all columns, which we don't want.
   #%]
-<table class="file_table"><thead><tr><td class="file_head" colspan="2"><a href="#" onclick="return twisty_click(this)">[% collapsed ? '(+)' : '(-)' %]</a><input type="checkbox" name="[% file.filename FILTER html %]"[% collapsed ? '' : ' checked' %] style="display: none"> 
+<table class="file_table"><thead><tr><td class="num"></td><td></td><td class="num"></td><td></td></tr><tr><td class="file_head" colspan="4"><a href="#" onclick="return twisty_click(this)">[% collapsed ? '(+)' : '(-)' %]</a><input type="checkbox" name="[% file.filename FILTER html %]"[% collapsed ? '' : ' checked' %] style="display: none">
   [% IF lxr_prefix && !file.is_add %]
     <a href="[% lxr_prefix %]">[% file.filename FILTER html %]</a>
   [% ELSE %]
@@ -49,7 +51,7 @@ incremental_restore()
 [% section_num = 0 %]
 [% FOREACH section = sections %]
   [% section_num = section_num + 1 %]
-  <tr><th colspan="2" class="section_head">
+  <tr><th colspan="4" class="section_head">
     <table cellpadding="0" cellspacing="0">
     <tr><th width="95%" align="left">
   [% IF file.is_add %]
@@ -79,38 +81,67 @@ incremental_restore()
   <a name="[% file.filename FILTER html %]_sec[% section_num %]" href="#[% file.filename FILTER html %]_sec[% section_num %]">Link&nbsp;Here</a>&nbsp;
     </th></tr></table>
   </th></tr>
+  [% current_line_old = section.old_start %]
+  [% current_line_new = section.new_start %]
   [% FOREACH group = section.groups %]
     [% IF group.context %]
       [% FOREACH line = group.context %]
-        <tr><td><pre>[% line FILTER html %]</pre></td><td><pre>[% line FILTER html %]</pre></td></tr>
+        <tr>
+          <td class="num">[% current_line_old %]</td>
+          <td><pre>[% line FILTER html %]</pre></td>
+          <td class="num">[% current_line_new %]</td>
+          <td><pre>[% line FILTER html %]</pre></td>
+        </tr>
+        [% current_line_old = current_line_old + 1 %]
+        [% current_line_new = current_line_new + 1 %]
       [% END %]
     [% END %]
     [% IF group.plus.size %]
       [% IF group.minus.size %]
         [% i = 0 %]
+        [%# We need to store them in external variables. %]
+        [% curr_new = current_line_new %]
+        [% curr_old = current_line_old %]
         [% WHILE (i < group.plus.size || i < group.minus.size) %]
           [% currentloop = 0 %]
           [% WHILE currentloop < 500 && (i < group.plus.size || i < group.minus.size) %]
-            <tr class="changed">
-              <td><pre>[% group.minus.$i FILTER html %]</pre></td>
-              <td><pre>[% group.plus.$i FILTER html %]</pre></td>
+            <tr>
+              <td class="num">[% curr_old %]</td>
+              <td class="changed"><pre>[% group.minus.$i FILTER html %]</pre></td>
+              <td class="num">[% curr_new %]</td>
+              <td class="changed"><pre>[% group.plus.$i FILTER html %]</pre></td>
             </tr>
             [% currentloop = currentloop + 1 %]
             [% i = i + 1 %]
+            [% IF i < group.minus.size %]
+              [% curr_old = curr_old + 1 %]
+            [% ELSE %]
+              [% curr_old = "" %]
+            [% END %]
+            [% IF i < group.plus.size %]
+              [% curr_new = curr_new + 1 %]
+            [% ELSE %]
+              [% curr_new = "" %]
+            [% END %]
           [% END %]
         [% END %]
+        [% current_line_old = current_line_old + group.minus.size %]
+        [% current_line_new = current_line_new + group.plus.size %]
       [% ELSE %]
         [% FOREACH line = group.plus %]
           [% IF file.is_add %]
             <tr>
-              <td class="added" colspan="2"><pre>[% line FILTER html %]</pre></td>
+              <td class="num">[% current_line_new %]</td>
+              <td class="added" colspan="3"><pre>[% line FILTER html %]</pre></td>
             </tr>
           [% ELSE %]
             <tr>
-              <td></td>
+              <td class="num"></td><td></td>
+              <td class="num">[% current_line_new %]</td>
               <td class="added"><pre>[% line FILTER html %]</pre></td>
             </tr>
           [% END %]
+          [% current_line_new = current_line_new + 1 %]
         [% END %]
       [% END %]
     [% ELSE %]
@@ -118,14 +149,17 @@ incremental_restore()
         [% FOREACH line = group.minus %]
           [% IF file.is_remove %]
             <tr>
-              <td class="removed" colspan="2"><pre>[% line FILTER html %]</pre></td>
+              <td class="num">[% current_line_old %]</td>
+              <td class="removed" colspan="3"><pre>[% line FILTER html %]</pre></td>
             </tr>
           [% ELSE %]
             <tr>
+              <td class="num">[% current_line_old %]</td>
               <td class="removed"><pre>[% line FILTER html %]</pre></td>
-              <td></td>
+              <td class="num"></td><td></td>
             </tr>
           [% END %]
+          [% current_line_old = current_line_old + 1 %]
         [% END %]
       [% END %]
     [% END %]

@@ -31,6 +31,7 @@ use base qw(Bugzilla::Object);
 use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
+use Bugzilla::Config qw(:admin);
 
 ###############################
 ##### Module Initialization ###
@@ -43,6 +44,7 @@ use constant DB_COLUMNS => qw(
     groups.isbuggroup
     groups.userregexp
     groups.isactive
+    groups.icon_url
 );
 
 use constant DB_TABLE => 'groups';
@@ -53,10 +55,24 @@ use constant VALIDATORS => {
     name        => \&_check_name,
     description => \&_check_description,
     userregexp  => \&_check_user_regexp,
+    isactive    => \&_check_is_active,
     isbuggroup  => \&_check_is_bug_group,
+    icon_url    => \&_check_icon_url,
 };
 
 use constant REQUIRED_CREATE_FIELDS => qw(name description isbuggroup);
+
+use constant UPDATE_COLUMNS => qw(
+    name
+    description
+    userregexp
+    isactive
+    icon_url
+);
+
+# Parameters that are lists of groups.
+use constant GROUP_PARAMS => qw(chartgroup insidergroup timetrackinggroup
+                                querysharegroup);
 
 ###############################
 ####      Accessors      ######
@@ -66,10 +82,114 @@ sub description  { return $_[0]->{'description'};  }
 sub is_bug_group { return $_[0]->{'isbuggroup'};   }
 sub user_regexp  { return $_[0]->{'userregexp'};   }
 sub is_active    { return $_[0]->{'isactive'};     }
+sub icon_url     { return $_[0]->{'icon_url'};     }
+
+sub members_direct {
+    my ($self) = @_;
+    return $self->{members_direct} if defined $self->{members_direct};
+    my $dbh = Bugzilla->dbh;
+    my $user_ids = $dbh->selectcol_arrayref(
+        "SELECT user_group_map.user_id
+           FROM user_group_map
+          WHERE user_group_map.group_id = ?
+                AND grant_type = " . GRANT_DIRECT . "
+                AND isbless = 0", undef, $self->id);
+    require Bugzilla::User;
+    $self->{members_direct} = Bugzilla::User->new_from_list($user_ids);
+    return $self->{members_direct};
+}
+
+sub grant_direct {
+    my ($self, $type) = @_;
+    $self->{grant_direct} ||= {};
+    return $self->{grant_direct}->{$type} 
+        if defined $self->{members_direct}->{$type};
+    my $dbh = Bugzilla->dbh;
+
+    my $ids = $dbh->selectcol_arrayref(
+      "SELECT member_id FROM group_group_map
+        WHERE grantor_id = ? AND grant_type = $type", 
+      undef, $self->id) || [];
+
+    $self->{grant_direct}->{$type} = $self->new_from_list($ids);
+    return $self->{grant_direct}->{$type};
+}
+
+sub granted_by_direct {
+    my ($self, $type) = @_;
+    $self->{granted_by_direct} ||= {};
+    return $self->{granted_by_direct}->{$type}
+         if defined $self->{granted_by_direct}->{$type};
+    my $dbh = Bugzilla->dbh;
+
+    my $ids = $dbh->selectcol_arrayref(
+      "SELECT grantor_id FROM group_group_map
+        WHERE member_id = ? AND grant_type = $type",
+      undef, $self->id) || [];
+
+    $self->{granted_by_direct}->{$type} = $self->new_from_list($ids);
+    return $self->{granted_by_direct}->{$type};
+}
 
 ###############################
 ####        Methods        ####
 ###############################
+
+sub set_description { $_[0]->set('description', $_[1]); }
+sub set_is_active   { $_[0]->set('isactive', $_[1]);    }
+sub set_name        { $_[0]->set('name', $_[1]);        }
+sub set_user_regexp { $_[0]->set('userregexp', $_[1]);  }
+sub set_icon_url    { $_[0]->set('icon_url', $_[1]);    }
+
+sub update {
+    my $self = shift;
+    my $changes = $self->SUPER::update(@_);
+
+    if (exists $changes->{name}) {
+        my ($old_name, $new_name) = @{$changes->{name}};
+        my $update_params;
+        foreach my $group (GROUP_PARAMS) {
+            if ($old_name eq Bugzilla->params->{$group}) {
+                SetParam($group, $new_name);
+                $update_params = 1;
+            }
+        }
+        write_params() if $update_params;
+    }
+
+    # If we've changed this group to be active, fix any Mandatory groups.
+    $self->_enforce_mandatory if (exists $changes->{isactive} 
+                                  && $changes->{isactive}->[1]);
+
+    $self->_rederive_regexp() if exists $changes->{userregexp};
+    return $changes;
+}
+
+# Add missing entries in bug_group_map for bugs created while
+# a mandatory group was disabled and which is now enabled again.
+sub _enforce_mandatory {
+    my ($self) = @_;
+    my $dbh = Bugzilla->dbh;
+    my $gid = $self->id;
+
+    my $bug_ids =
+      $dbh->selectcol_arrayref('SELECT bugs.bug_id
+                                  FROM bugs
+                            INNER JOIN group_control_map
+                                    ON group_control_map.product_id = bugs.product_id
+                             LEFT JOIN bug_group_map
+                                    ON bug_group_map.bug_id = bugs.bug_id
+                                   AND bug_group_map.group_id = group_control_map.group_id
+                                 WHERE group_control_map.group_id = ?
+                                   AND group_control_map.membercontrol = ?
+                                   AND bug_group_map.group_id IS NULL',
+                                 undef, ($gid, CONTROLMAPMANDATORY));
+
+    my $sth = $dbh->prepare('INSERT INTO bug_group_map (bug_id, group_id) VALUES (?, ?)');
+    foreach my $bug_id (@$bug_ids) {
+        $sth->execute($bug_id, $gid);
+    }
+}
 
 sub is_active_bug_group {
     my $self = shift;
@@ -183,8 +303,11 @@ sub _check_name {
     my ($invocant, $name) = @_;
     $name = trim($name);
     $name || ThrowUserError("empty_group_name");
-    my $exists = new Bugzilla::Group({name => $name });
-    ThrowUserError("group_exists", { name => $name }) if $exists;
+    # If we're creating a Group or changing the name...
+    if (!ref($invocant) || $invocant->name ne $name) {
+        my $exists = new Bugzilla::Group({name => $name });
+        ThrowUserError("group_exists", { name => $name }) if $exists;
+    }
     return $name;
 }
 
@@ -202,9 +325,13 @@ sub _check_user_regexp {
     return $regex;
 }
 
+sub _check_is_active { return $_[1] ? 1 : 0; }
 sub _check_is_bug_group {
     return $_[1] ? 1 : 0;
 }
+
+sub _check_icon_url { return $_[1] ? clean_text($_[1]) : undef; }
+
 1;
 
 __END__
@@ -225,6 +352,7 @@ Bugzilla::Group - Bugzilla group class.
     my $description  = $group->description;
     my $user_reg_exp = $group->user_reg_exp;
     my $is_active    = $group->is_active;
+    my $icon_url     = $group->icon_url;
     my $is_active_bug_group = $group->is_active_bug_group;
 
     my $group_id = Bugzilla::Group::ValidateGroupName('admin', @users);

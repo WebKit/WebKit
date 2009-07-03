@@ -36,11 +36,11 @@ use Test::More tests => scalar(@Support::Files::testitems);
 use DBI;
 my @DBI_drivers = DBI->available_drivers;
 
-# Bugzilla requires Perl 5.8.0 now.  Checksetup will tell you this if you run it, but
+# Bugzilla requires Perl 5.8.1 now.  Checksetup will tell you this if you run it, but
 # it tests it in a polite/passive way that won't make it fail at compile time.  We'll
-# slip in a compile-time failure if it's missing here so a tinderbox on < 5.8 won't
-# pass and mistakenly let people think Bugzilla works on any perl below 5.8.
-require 5.008;
+# slip in a compile-time failure if it's missing here so a tinderbox on < 5.8.1 won't
+# pass and mistakenly let people think Bugzilla works on any perl below 5.8.1.
+require 5.008001;
 
 # Capture the TESTOUT from Test::More or Test::Builder for printing errors.
 # This will handle verbosity for us automatically.
@@ -91,13 +91,23 @@ foreach my $file (@testitems) {
     my $loginfo=`$command`;
     #print '@@'.$loginfo.'##';
     if ($loginfo =~ /syntax ok$/im) {
+        # Special hack due to CPAN.pm on Windows with Cygwin installed throwing
+        # strings of the form "Set up gcc environment - 3.4.4 (cygming special,
+        # gdc 0.12, using dmd 0.125)". See bug 416047 for details.
+        if ($^O =~ /MSWin32/i
+            && grep($_ eq $file, 'install-module.pl', 'Bugzilla/Install/CPAN.pm'))
+        {
+            $loginfo =~ s/^Set up gcc environment.*?\n//;
+        }
         if ($loginfo ne "$file syntax OK\n") {
             ok(0,$file." --WARNING");
             print $fh $loginfo;
-        } else {
+        }
+        else {
             ok(1,$file);
         }
-    } else {
+    }
+    else {
         ok(0,$file." --ERROR");
         print $fh $loginfo;
     }

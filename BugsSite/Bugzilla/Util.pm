@@ -33,18 +33,18 @@ use strict;
 use base qw(Exporter);
 @Bugzilla::Util::EXPORT = qw(is_tainted trick_taint detaint_natural
                              detaint_signed
-                             html_quote url_quote value_quote xml_quote
+                             html_quote url_quote xml_quote
                              css_class_quote html_light_quote url_decode
                              i_am_cgi get_netaddr correct_urlbase
-                             lsearch
+                             lsearch ssl_require_redirect use_attachbase
                              diff_arrays diff_strings
-                             trim wrap_comment find_wrap_point
-                             perform_substs
+                             trim wrap_hard wrap_comment find_wrap_point
                              format_time format_time_decimal validate_date
+                             validate_time
                              file_mod_time is_7bit_clean
                              bz_crypt generate_random_password
                              validate_email_syntax clean_text
-                             get_text);
+                             get_text disable_utf8);
 
 use Bugzilla::Constants;
 
@@ -100,15 +100,15 @@ sub html_light_quote {
 
     # List of allowed HTML elements having no attributes.
     my @allow = qw(b strong em i u p br abbr acronym ins del cite code var
-                   dfn samp kbd big small sub sup tt dd dt dl ul li ol);
+                   dfn samp kbd big small sub sup tt dd dt dl ul li ol
+                   fieldset legend);
 
     # Are HTML::Scrubber and HTML::Parser installed?
     eval { require HTML::Scrubber;
            require HTML::Parser;
     };
 
-    # We need utf8_mode() from HTML::Parser 3.40 if running Perl >= 5.8.
-    if ($@ || ($] >= 5.008 && $HTML::Parser::VERSION < 3.40)) { # Package(s) not installed.
+    if ($@) { # Package(s) not installed.
         my $safe = join('|', @allow);
         my $chr = chr(1);
 
@@ -172,12 +172,6 @@ sub html_light_quote {
                                            comment => 0,
                                            process => 0);
 
-        # Avoid filling the web server error log with Perl 5.8.x.
-        # In HTML::Scrubber 0.08, the HTML::Parser object is stored in
-        # the "_p" key, but this may change in future versions.
-        if ($] >= 5.008 && ref($scrubber->{_p}) eq 'HTML::Parser') {
-            $scrubber->{_p}->utf8_mode(1);
-        }
         return $scrubber->scrub($text);
     }
 }
@@ -185,6 +179,8 @@ sub html_light_quote {
 # This originally came from CGI.pm, by Lincoln D. Stein
 sub url_quote {
     my ($toencode) = (@_);
+    utf8::encode($toencode) # The below regex works only on bytes
+        if Bugzilla->params->{'utf8'} && utf8::is_utf8($toencode);
     $toencode =~ s/([^a-zA-Z0-9_\-.])/uc sprintf("%%%02x",ord($1))/eg;
     return $toencode;
 }
@@ -196,22 +192,6 @@ sub css_class_quote {
     return $toencode;
 }
 
-sub value_quote {
-    my ($var) = (@_);
-    $var =~ s/\&/\&amp;/g;
-    $var =~ s/</\&lt;/g;
-    $var =~ s/>/\&gt;/g;
-    $var =~ s/\"/\&quot;/g;
-    # See bug http://bugzilla.mozilla.org/show_bug.cgi?id=4928 for 
-    # explanation of why Bugzilla does this linebreak substitution. 
-    # This caused form submission problems in mozilla (bug 22983, 32000).
-    $var =~ s/\r\n/\&#013;/g;
-    $var =~ s/\n\r/\&#013;/g;
-    $var =~ s/\r/\&#013;/g;
-    $var =~ s/\n/\&#013;/g;
-    return $var;
-}
-
 sub xml_quote {
     my ($var) = (@_);
     $var =~ s/\&/\&amp;/g;
@@ -219,9 +199,23 @@ sub xml_quote {
     $var =~ s/>/\&gt;/g;
     $var =~ s/\"/\&quot;/g;
     $var =~ s/\'/\&apos;/g;
+    
+    # the following nukes characters disallowed by the XML 1.0
+    # spec, Production 2.2. 1.0 declares that only the following 
+    # are valid:
+    # (#x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF])
+    $var =~ s/([\x{0001}-\x{0008}]|
+               [\x{000B}-\x{000C}]|
+               [\x{000E}-\x{001F}]|
+               [\x{D800}-\x{DFFF}]|
+               [\x{FFFE}-\x{FFFF}])//gx;
     return $var;
 }
 
+# This function must not be relied upon to return a valid string to pass to
+# the DB or the user in UTF-8 situations. The only thing you  can rely upon
+# it for is that if you url_decode a string, it will url_encode back to the 
+# exact same thing.
 sub url_decode {
     my ($todecode) = (@_);
     $todecode =~ tr/+/ /;       # pluses become spaces
@@ -233,6 +227,46 @@ sub i_am_cgi {
     # I use SERVER_SOFTWARE because it's required to be
     # defined for all requests in the CGI spec.
     return exists $ENV{'SERVER_SOFTWARE'} ? 1 : 0;
+}
+
+sub ssl_require_redirect {
+    my $method = shift;
+
+    # If currently not in a protected SSL 
+    # connection, determine if a redirection is 
+    # needed based on value in Bugzilla->params->{ssl}.
+    # If we are already in a protected connection or
+    # sslbase is not set then no action is required.
+    if (uc($ENV{'HTTPS'}) ne 'ON' 
+        && $ENV{'SERVER_PORT'} != 443 
+        && Bugzilla->params->{'sslbase'} ne '')
+    {
+        # System is configured to never require SSL 
+        # so no redirection is needed.
+        return 0 
+            if Bugzilla->params->{'ssl'} eq 'never';
+            
+        # System is configured to always require a SSL
+        # connection so we need to redirect.
+        return 1
+            if Bugzilla->params->{'ssl'} eq 'always';
+
+        # System is configured such that if we are inside
+        # of an authenticated session, then we need to make
+        # sure that all of the connections are over SSL. Non
+        # authenticated sessions SSL is not mandatory.
+        # For XMLRPC requests, if the method is User.login
+        # then we always want the connection to be over SSL
+        # if the system is configured for authenticated
+        # sessions since the user's username and password
+        # will be passed before the user is logged in.
+        return 1 
+            if Bugzilla->params->{'ssl'} eq 'authenticated sessions'
+                && (Bugzilla->user->id 
+                    || (defined $method && $method eq 'User.login'));
+    }
+
+    return 0;
 }
 
 sub correct_urlbase {
@@ -249,6 +283,13 @@ sub correct_urlbase {
     # Set to "authenticated sessions" but nobody's logged in, or
     # sslbase isn't set.
     return Bugzilla->params->{'urlbase'};
+}
+
+sub use_attachbase {
+    my $attachbase = Bugzilla->params->{'attachment_base'};
+    return ($attachbase ne ''
+            && $attachbase ne Bugzilla->params->{'urlbase'}
+            && $attachbase ne Bugzilla->params->{'sslbase'}) ? 1 : 0;
 }
 
 sub lsearch {
@@ -313,11 +354,11 @@ sub diff_strings {
 }
 
 sub wrap_comment {
-    my ($comment) = @_;
+    my ($comment, $cols) = @_;
     my $wrappedcomment = "";
 
     # Use 'local', as recommended by Text::Wrap's perldoc.
-    local $Text::Wrap::columns = COMMENT_COLS;
+    local $Text::Wrap::columns = $cols || COMMENT_COLS;
     # Make words that are longer than COMMENT_COLS not wrap.
     local $Text::Wrap::huge    = 'overflow';
     # Don't mess with tabs.
@@ -329,10 +370,16 @@ sub wrap_comment {
         $wrappedcomment .= ($line . "\n");
       }
       else {
+        # Due to a segfault in Text::Tabs::expand() when processing tabs with
+        # Unicode (see http://rt.perl.org/rt3/Public/Bug/Display.html?id=52104),
+        # we have to remove tabs before processing the comment. This restriction
+        # can go away when we require Perl 5.8.9 or newer.
+        $line =~ s/\t/    /g;
         $wrappedcomment .= (wrap('', '', $line) . "\n");
       }
     }
 
+    chomp($wrappedcomment); # Text::Wrap adds an extra newline at the end.
     return $wrappedcomment;
 }
 
@@ -355,10 +402,15 @@ sub find_wrap_point {
     return $wrappoint;
 }
 
-sub perform_substs {
-    my ($str, $substs) = (@_);
-    $str =~ s/%([a-z]*)%/(defined $substs->{$1} ? $substs->{$1} : Bugzilla->params->{$1})/eg;
-    return $str;
+sub wrap_hard {
+    my ($string, $columns) = @_;
+    local $Text::Wrap::columns = $columns;
+    local $Text::Wrap::unexpand = 0;
+    local $Text::Wrap::huge = 'wrap';
+    
+    my $wrapped = wrap('', '', $string);
+    chomp($wrapped);
+    return $wrapped;
 }
 
 sub format_time {
@@ -440,6 +492,11 @@ sub bz_crypt {
         $salt .= $saltchars[rand(64)];
     }
 
+    # Wide characters cause crypt to die
+    if (Bugzilla->params->{'utf8'}) {
+        utf8::encode($password) if utf8::is_utf8($password);
+    }
+    
     # Crypt the password.
     my $cryptedpassword = crypt($password, $salt);
 
@@ -476,6 +533,22 @@ sub validate_date {
         $date2 =~ s/(\d+)-0*(\d+?)-0*(\d+?)/$1-$2-$3/;
     }
     my $ret = ($ts && $date eq $date2);
+    return $ret ? 1 : 0;
+}
+
+sub validate_time {
+    my ($time) = @_;
+    my $time2;
+
+    # $ts is undefined if the parser fails.
+    my $ts = str2time($time);
+    if ($ts) {
+        $time2 = time2str("%H:%M:%S", $ts);
+        if ($time =~ /^(\d{1,2}):(\d\d)(?::(\d\d))?$/) {
+            $time = sprintf("%02d:%02d:%02d", $1, $2, $3 || 0);
+        }
+    }
+    my $ret = ($ts && $time eq $time2);
     return $ret ? 1 : 0;
 }
 
@@ -524,6 +597,12 @@ sub get_netaddr {
     return join(".", unpack("CCCC", pack("N", $addr)));
 }
 
+sub disable_utf8 {
+    if (Bugzilla->params->{'utf8'}) {
+        binmode STDOUT, ':bytes'; # Turn off UTF8 encoding.
+    }
+}
+
 1;
 
 __END__
@@ -545,7 +624,6 @@ Bugzilla::Util - Generic utility functions for bugzilla
   # Functions for quoting
   html_quote($var);
   url_quote($var);
-  value_quote($var);
   xml_quote($var);
 
   # Functions for decoding
@@ -566,7 +644,6 @@ Bugzilla::Util - Generic utility functions for bugzilla
   $val = trim(" abc ");
   ($removed, $added) = diff_strings($old, $new);
   $wrapped = wrap_comment($comment);
-  $msg = perform_substs($str, $substs);
 
   # Functions for formatting time
   format_time($time);
@@ -659,11 +736,6 @@ Quotes characters so that they may be included as part of a url.
 Quotes characters so that they may be used as CSS class names. Spaces
 are replaced by underscores.
 
-=item C<value_quote($val)>
-
-As well as escaping html like C<html_quote>, this routine converts newlines
-into &#013;, suitable for use in html attributes.
-
 =item C<xml_quote($val)>
 
 This is similar to C<html_quote>, except that ' is escaped to &apos;. This
@@ -699,6 +771,11 @@ cookies) to only some addresses.
 
 Returns either the C<sslbase> or C<urlbase> parameter, depending on the
 current setting for the C<ssl> parameter.
+
+=item C<use_attachbase()>
+
+Returns true if an alternate host is used to display attachments; false
+otherwise.
 
 =back
 
@@ -752,6 +829,11 @@ compared to the old one. Returns a list, where the first entry is a scalar
 containing removed items, and the second entry is a scalar containing added
 items.
 
+=item C<wrap_hard($string, $size)>
+
+Wraps a string, so that a line is I<never> longer than C<$size>.
+Returns the string, wrapped.
+
 =item C<wrap_comment($comment)>
 
 Takes a bug comment, and wraps it to the appropriate length. The length is
@@ -768,28 +850,14 @@ Search for a comma, a whitespace or a hyphen to split $string, within the first
 $maxpos characters. If none of them is found, just split $string at $maxpos.
 The search starts at $maxpos and goes back to the beginning of the string.
 
-=item C<perform_substs($str, $substs)>
-
-Performs substitutions for sending out email with variables in it,
-or for inserting a parameter into some other string.
-
-Takes a string and a reference to a hash containing substitution 
-variables and their values.
-
-If the hash is not specified, or if we need to substitute something
-that's not in the hash, then we will use parameters to do the 
-substitution instead.
-
-Substitutions are always enclosed with '%' symbols. So they look like:
-%some_variable_name%. If "some_variable_name" is a key in the hash, then
-its value will be placed into the string. If it's not a key in the hash,
-then the value of the parameter called "some_variable_name" will be placed
-into the string.
-
 =item C<is_7bit_clean($str)>
 
 Returns true is the string contains only 7-bit characters (ASCII 32 through 126,
 ASCII 10 (LineFeed) and ASCII 13 (Carrage Return).
+
+=item C<disable_utf8()>
+
+Disable utf8 on STDOUT (and display raw data instead).
 
 =item C<clean_text($str)>
 Returns the parameter "cleaned" by exchanging non-printable characters with spaces.

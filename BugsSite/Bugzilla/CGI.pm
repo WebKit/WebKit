@@ -45,7 +45,7 @@ use Bugzilla::Util;
 $| = 1;
 
 # Ignore SIGTERM and SIGPIPE - this prevents DB corruption. If the user closes
-# their browser window while a script is running, the webserver sends these
+# their browser window while a script is running, the web server sends these
 # signals, and we don't want to die half way through a write.
 $::SIG{TERM} = 'IGNORE';
 $::SIG{PIPE} = 'IGNORE';
@@ -54,7 +54,10 @@ $::SIG{PIPE} = 'IGNORE';
 # We need to do so, too, otherwise perl dies when the object is destroyed
 # and we don't have a DESTROY method (because CGI.pm's AUTOLOAD will |die|
 # on getting an unknown sub to try to call)
-sub DESTROY {};
+sub DESTROY {
+    my $self = shift;
+    $self->SUPER::DESTROY(@_);
+};
 
 sub new {
     my ($invocant, @args) = @_;
@@ -62,25 +65,22 @@ sub new {
 
     my $self = $class->SUPER::new(@args);
 
-    if (Bugzilla->error_mode eq ERROR_MODE_WEBPAGE) {
-        # This happens here so that command-line scripts don't spit out
-        # their errors in HTML format.
-        require CGI::Carp;
-        import CGI::Carp qw(fatalsToBrowser);
-    }
-
     # Make sure our outgoing cookie list is empty on each invocation
     $self->{Bugzilla_cookie_list} = [];
 
     # Send appropriate charset
     $self->charset(Bugzilla->params->{'utf8'} ? 'UTF-8' : '');
 
-    # Redirect to SSL if required
-    if (Bugzilla->params->{'sslbase'} ne ''
-        && Bugzilla->params->{'ssl'} eq 'always'
-        && i_am_cgi())
-    {
-        $self->require_https(Bugzilla->params->{'sslbase'});
+    # Redirect to urlbase/sslbase if we are not viewing an attachment.
+    if (use_attachbase() && i_am_cgi()) {
+        my $cgi_file = $self->url('-path_info' => 0, '-query' => 0, '-relative' => 1);
+        $cgi_file =~ s/\?$//;
+        my $urlbase = Bugzilla->params->{'urlbase'};
+        my $sslbase = Bugzilla->params->{'sslbase'};
+        my $path_regexp = $sslbase ? qr/^(\Q$urlbase\E|\Q$sslbase\E)/ : qr/^\Q$urlbase\E/;
+        if ($cgi_file ne 'attachment.cgi' && $self->self_url !~ /$path_regexp/) {
+            $self->redirect_to_urlbase;
+        }
     }
 
     # Check for errors
@@ -194,13 +194,13 @@ sub multipart_start {
     
     my %args = @_;
 
-    # CGI.pm::multipart_start doesn't accept a -charset parameter, so
+    # CGI.pm::multipart_start doesn't honour its own charset information, so
     # we do it ourselves here
-    if (defined $args{-charset} && defined $args{-type}) {
+    if (defined $self->charset() && defined $args{-type}) {
         # Remove any existing charset specifier
         $args{-type} =~ s/;.*$//;
         # and add the specified one
-        $args{-type} .= "; charset=$args{-charset}";
+        $args{-type} .= '; charset=' . $self->charset();
     }
         
     my $headers = $self->SUPER::multipart_start(%args);
@@ -231,6 +231,27 @@ sub header {
     }
 
     return $self->SUPER::header(@_) || "";
+}
+
+# CGI.pm is not utf8-aware and passes data as bytes instead of UTF-8 strings.
+sub param {
+    my $self = shift;
+    if (Bugzilla->params->{'utf8'} && scalar(@_) == 1) {
+        if (wantarray) {
+            return map { _fix_utf8($_) } $self->SUPER::param(@_);
+        }
+        else {
+            return _fix_utf8(scalar $self->SUPER::param(@_));
+        }
+    }
+    return $self->SUPER::param(@_);
+}
+
+sub _fix_utf8 {
+    my $input = shift;
+    # The is_utf8 is here in case CGI gets smart about utf8 someday.
+    utf8::decode($input) if defined $input && !utf8::is_utf8($input);
+    return $input;
 }
 
 # The various parts of Bugzilla which create cookies don't want to have to
@@ -280,18 +301,31 @@ sub remove_cookie {
 
 # Redirect to https if required
 sub require_https {
+     my ($self, $url) = @_;
+     # Do not create query string if data submitted via XMLRPC
+     # since we want the data to be resubmitted over POST method.
+     my $query = Bugzilla->usage_mode == USAGE_MODE_WEBSERVICE ? 0 : 1;
+     # XMLRPC clients (SOAP::Lite at least) requires 301 to redirect properly
+     # and do not work with 302.
+     my $status = Bugzilla->usage_mode == USAGE_MODE_WEBSERVICE ? 301 : 302;
+     if (defined $url) {
+         $url .= $self->url('-path_info' => 1, '-query' => $query, '-relative' => 1);
+     } else {
+         $url = $self->self_url;
+         $url =~ s/^http:/https:/i;
+     }
+     print $self->redirect(-location => $url, -status => $status);
+     # When using XML-RPC with mod_perl, we need the headers sent immediately.
+     $self->r->rflush if $ENV{MOD_PERL};
+     exit;
+}
+
+# Redirect to the urlbase version of the current URL.
+sub redirect_to_urlbase {
     my $self = shift;
-    if ($self->protocol ne 'https') {
-        my $url = shift;
-        if (defined $url) {
-            $url .= $self->url('-path_info' => 1, '-query' => 1, '-relative' => 1);
-        } else {
-            $url = $self->self_url;
-            $url =~ s/^http:/https:/i;
-        }
-        print $self->redirect(-location => $url);
-        exit;
-    }
+    my $path = $self->url('-path_info' => 1, '-query' => 1, '-relative' => 1);
+    print $self->redirect('-location' => correct_urlbase() . $path);
+    exit;
 }
 
 1;
@@ -358,11 +392,15 @@ As its only argument, it takes the name of the cookie to expire.
 
 =item C<require_https($baseurl)>
 
-This routine checks if the current page is being served over https, and
-redirects to the https protocol if required, retaining QUERY_STRING.
+This routine redirects the client to a different location using the https protocol. 
+If the client is using XMLRPC, it will not retain the QUERY_STRING since XMLRPC uses POST.
 
-It takes an option argument which will be used as the base URL.  If $baseurl
+It takes an optional argument which will be used as the base URL.  If $baseurl
 is not provided, the current URL is used.
+
+=item C<redirect_to_urlbase>
+
+Redirects from the current URL to one prefixed by the urlbase parameter.
 
 =back
 

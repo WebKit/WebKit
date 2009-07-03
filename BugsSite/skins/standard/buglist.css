@@ -60,3 +60,7 @@ tr.bz_secure_mode_implied td.first-child {
 
 tr.bz_secure_mode_manual td.first-child {
 }
+
+#commit, #action {
+  margin-top: .25em;
+}

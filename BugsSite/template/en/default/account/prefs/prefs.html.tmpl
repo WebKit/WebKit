@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -41,6 +40,8 @@
    title = "User Preferences"
    subheader = filtered_login
    style_urls = ['skins/standard/admin.css']
+   javascript_urls = ['js/util.js']
+   doc_section = "userpreferences.html"
  %]
 
 [% tabs = [{ name => "settings", label => "General Preferences",
@@ -84,6 +85,7 @@
 [% IF current_tab.saveable %]
   <form name="userprefsform" method="post" action="userprefs.cgi">
     <input type="hidden" name="tab" value="[% current_tab.name %]">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
 [% END %]
 
 [% PROCESS "account/prefs/${current_tab.name}.html.tmpl" 

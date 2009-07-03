@@ -18,139 +18,164 @@
  * Contributor(s): Christian Reis <kiko@async.com.br>
  */
 
-/* this file contains functions to update form controls based on a
- * collection of javascript arrays containing strings */
+// Functions to update form select elements based on a
+// collection of javascript arrays containing strings.
 
-/* selectClassification reads the selection from f.classification and updates
- * f.product accordingly
- *     - f: a form containing classification, product, component, varsion and
- *       target_milestone select boxes.
- * globals (3vil!):
- *     - prods, indexed by classification name
- *     - first_load: boolean, specifying if it is the first time we load
- *       the query page.
- *     - last_sel: saves our last selection list so we know what has
- *       changed, and optimize for additions.
+/**
+ * Reads the selected classifications and updates product, component,
+ * version and milestone lists accordingly.
+ *
+ * @param  classfield Select element that contains classifications.
+ * @param  product    Select element that contains products.
+ * @param  component  Select element that contains components. Can be null if
+ *                    there is no such element to update.
+ * @param  version    Select element that contains versions. Can be null if
+ *                    there is no such element to update.
+ * @param  milestone  Select element that contains milestones. Can be null if
+ *                    there is no such element to update.
+ *
+ * @global prods      Array of products indexed by classification name.
+ * @global first_load Boolean; true if this is the first time this page loads
+ *                    or false if not.
+ * @global last_sel   Array that contains last list of products so we know what
+ *                    has changed, and optimize for additions.
  */
 function selectClassification(classfield, product, component, version, milestone) {
-    /* this is to avoid handling events that occur before the form
-     * itself is ready, which could happen in buggy browsers.
-     */
-    if (!classfield) {
+    // This is to avoid handling events that occur before the form
+    // itself is ready, which could happen in buggy browsers.
+    if (!classfield)
         return;
-    }
 
-    /* if this is the first load and nothing is selected, no need to
-     * merge and sort all components; perl gives it to us sorted.
-     */
+    // If this is the first load and nothing is selected, no need to
+    // merge and sort all lists; they are created sorted.
     if ((first_load) && (classfield.selectedIndex == -1)) {
         first_load = false;
         return;
     }
     
-    /* don't reset first_load as done in selectProduct.  That's because we
-       want selectProduct to handle the first_load attribute
-    */
+    // Don't reset first_load as done in selectProduct. That's because we
+    // want selectProduct to handle the first_load attribute.
 
-    /* - sel keeps the array of classifications we are selected. 
-     * - merging says if it is a full list or just a list of classifications 
-     *   that were added to the current selection.
-     */
-    var merging = false;
+    // Stores classifications that are selected.
     var sel = Array();
 
-    /* if nothing selected, pick all */
+    // True if sel array has a full list or false if sel contains only
+    // new classifications that are to be merged to the current list.
+    var merging = false;
+
+    // If nothing selected, pick all.
     var findall = classfield.selectedIndex == -1;
     sel = get_selection(classfield, findall, false);
     if (!findall) {
-        /* save sel for the next invocation of selectClassification() */
+        // Save sel for the next invocation of selectClassification().
         var tmp = sel;
     
-        /* this is an optimization: if we have just added classifications to an
-         * existing selection, no need to clear the form controls and add 
-         * everybody again; just merge the new ones with the existing 
-         * options.
-	 */
+        // This is an optimization: if we have just added classifications to an
+        // existing selection, no need to clear the form elements and add
+        // everything again; just merge the new ones with the existing
+        // options.
         if ((last_sel.length > 0) && (last_sel.length < sel.length)) {
             sel = fake_diff_array(sel, last_sel);
             merging = true;
         }
         last_sel = tmp;
     }
-    /* save original options selected */
-    var saved_prods = get_selection(product, false, true);
 
-    /* do the actual fill/update, reselect originally selected options */
-    updateSelect(prods, sel, product, merging);
+    // Save original options selected.
+    var saved_prods = get_selection(product, false, true, null);
+
+    // Do the actual fill/update, reselect originally selected options.
+    updateSelect(prods, sel, product, merging, null);
     restoreSelection(product, saved_prods);
-    selectProduct(product, component, version, milestone);
+    selectProduct(product, component, version, milestone, null);
 }
 
-
-/* selectProduct reads the selection from the product control and
- * updates version, component and milestone controls accordingly.
- * 
- *     - product, component, version and milestone: form controls
+/**
+ * Reads the selected products and updates component, version and milestone
+ * lists accordingly.
  *
- * globals (3vil!):
- *     - cpts, vers, tms: array of arrays, indexed by product name. the
- *       subarrays contain a list of names to be fed to the respective
- *       selectboxes. For bugzilla, these are generated with perl code
- *       at page start.
- *     - first_load: boolean, specifying if it is the first time we load
- *       the query page.
- *     - last_sel: saves our last selection list so we know what has
- *       changed, and optimize for additions. 
+ * @param  product    Select element that contains products.
+ * @param  component  Select element that contains components. Can be null if
+ *                    there is no such element to update.
+ * @param  version    Select element that contains versions. Can be null if
+ *                    there is no such element to update.
+ * @param  milestone  Select element that contains milestones. Can be null if
+ *                    there is no such element to update.
+ * @param  anyval     Value to use for a special "Any" list item. Can be null
+ *                    to not use any. If used must and will be first item in
+ *                    the select element.
+ *
+ * @global cpts       Array of arrays, indexed by product name. The subarrays
+ *                    contain a list of components to be fed to the respective
+ *                    select element.
+ * @global vers       Array of arrays, indexed by product name. The subarrays
+ *                    contain a list of versions to be fed to the respective
+ *                    select element.
+ * @global tms        Array of arrays, indexed by product name. The subarrays
+ *                    contain a list of milestones to be fed to the respective
+ *                    select element.
+ * @global first_load Boolean; true if this is the first time this page loads
+ *                    or false if not.
+ * @global last_sel   Array that contains last list of products so we know what
+ *                    has changed, and optimize for additions.
  */
-function selectProduct(product, component, version, milestone) {
-
-    if (!product) {
-        /* this is to avoid handling events that occur before the form
-         * itself is ready, which could happen in buggy browsers. */
+function selectProduct(product, component, version, milestone, anyval) {
+    // This is to avoid handling events that occur before the form
+    // itself is ready, which could happen in buggy browsers.
+    if (!product)
         return;
-    }
 
-    /* if this is the first load and nothing is selected, no need to
-     * merge and sort all components; perl gives it to us sorted. */
+    // Do nothing if no products are defined. This is to avoid the
+    // "a has no properties" error from merge_arrays function.
+    if (product.length == (anyval != null ? 1 : 0))
+        return;
+
+    // If this is the first load and nothing is selected, no need to
+    // merge and sort all lists; they are created sorted.
     if ((first_load) && (product.selectedIndex == -1)) {
         first_load = false;
         return;
     }
 
-    /* turn first_load off. this is tricky, since it seems to be
-     * redundant with the above clause. It's not: if when we first load
-     * the page there is _one_ element selected, it won't fall into that
-     * clause, and first_load will remain 1. Then, if we unselect that
-     * item, selectProduct will be called but the clause will be valid
-     * (since selectedIndex == -1), and we will return - incorrectly -
-     * without merge/sorting. */
+    // Turn first_load off. This is tricky, since it seems to be
+    // redundant with the above clause. It's not: if when we first load
+    // the page there is _one_ element selected, it won't fall into that
+    // clause, and first_load will remain 1. Then, if we unselect that
+    // item, selectProduct will be called but the clause will be valid
+    // (since selectedIndex == -1), and we will return - incorrectly -
+    // without merge/sorting.
     first_load = false;
 
-    /* - sel keeps the array of products we are selected.
-     * - merging says if it is a full list or just a list of products that
-     *   were added to the current selection. */
-    var merging = false;
+    // Stores products that are selected.
     var sel = Array();
 
-    /* if nothing selected, pick all */
-    var findall = product.selectedIndex == -1;
+    // True if sel array has a full list or false if sel contains only
+    // new products that are to be merged to the current list.
+    var merging = false;
+
+    // If nothing is selected, or the special "Any" option is selected
+    // which represents all products, then pick all products so we show
+    // all components.
+    var findall = (product.selectedIndex == -1
+                   || (anyval != null && product.options[0].selected));
+
     if (useclassification) {
-        /* update index based on the complete product array */
-        sel = get_selection(product, findall, true);
-        for (var i=0; i<sel.length; i++) {
+        // Update index based on the complete product array.
+        sel = get_selection(product, findall, true, anyval);
+        for (var i=0; i<sel.length; i++)
            sel[i] = prods[sel[i]];
-        }
-    } else {
-        sel = get_selection(product, findall, false);
+    }
+    else {
+        sel = get_selection(product, findall, false, anyval);
     }
     if (!findall) {
-        /* save sel for the next invocation of selectProduct() */
+        // Save sel for the next invocation of selectProduct().
         var tmp = sel;
 
-        /* this is an optimization: if we have just added products to an
-         *  existing selection, no need to clear the form controls and add
-         *  everybody again; just merge the new ones with the existing
-         *  options. */
+        // This is an optimization: if we have just added products to an
+        // existing selection, no need to clear the form controls and add
+        // everybody again; just merge the new ones with the existing
+        // options.
         if ((last_sel.length > 0) && (last_sel.length < sel.length)) {
             sel = fake_diff_array(sel, last_sel);
             merging = true;
@@ -158,167 +183,180 @@ function selectProduct(product, component, version, milestone) {
         last_sel = tmp;
     }
 
-    /* do the actual fill/update */
+    // Do the actual fill/update.
     if (component) {
-        var saved_cpts = get_selection(component, false, true);
-        updateSelect(cpts, sel, component, merging);
+        var saved_cpts = get_selection(component, false, true, null);
+        updateSelect(cpts, sel, component, merging, anyval);
         restoreSelection(component, saved_cpts);
     }
 
     if (version) {
-        var saved_vers = get_selection(version, false, true);
-        updateSelect(vers, sel, version, merging);
+        var saved_vers = get_selection(version, false, true, null);
+        updateSelect(vers, sel, version, merging, anyval);
         restoreSelection(version, saved_vers);
     }
 
     if (milestone) {
-        var saved_tms = get_selection(milestone, false, true);
-        updateSelect(tms, sel, milestone, merging);
+        var saved_tms = get_selection(milestone, false, true, null);
+        updateSelect(tms, sel, milestone, merging, anyval);
         restoreSelection(milestone, saved_tms);
     }
 }
 
-
-/* updateSelect(array, sel, target, merging)
+/**
+ * Adds to the target select element all elements from array that
+ * correspond to the selected items.
  *
- * Adds to the target select object all elements in array that
- * correspond to the elements selected in source.
- * - array should be a array of arrays, indexed by number. the
- *   array should contain the elements that correspond to that
- *   product.
- * - sel is a list of selected items, either whole or a diff
- *   depending on merging.
- * - target should be the target select object.
- * - merging (boolean) determines if we are mergine in a diff or
- *   substituting the whole selection. a diff is used to optimize adding
- *   selections.
+ * @param array   An array of arrays, indexed by number. The array should
+ *                contain elements for each selection.
+ * @param sel     A list of selected items, either whole or a diff depending
+ *                on merging parameter.
+ * @param target  Select element that is to be updated.
+ * @param merging Boolean that determines if we are merging in a diff or
+ *                substituting the whole selection. A diff is used to optimize
+ *                adding selections.
+ * @param anyval  Name of special "Any" value to add. Can be null if not used.
+ * @return        Boolean; true if target contains options or false if target
+ *                is empty.
  *
- * Example (compsel is a select form control)
+ * Example (compsel is a select form element):
  *
  *     var components = Array();
  *     components[1] = [ 'ComponentA', 'ComponentB' ];
  *     components[2] = [ 'ComponentC', 'ComponentD' ];
  *     source = [ 2 ];
- *     updateSelect(components, source, compsel, 0, 0);
+ *     updateSelect(components, source, compsel, false, null);
  *
- * would clear compsel and add 'ComponentC' and 'ComponentD' to it.
- *
+ * This would clear compsel and add 'ComponentC' and 'ComponentD' to it.
  */
-
-function updateSelect(array, sel, target, merging) {
-
+function updateSelect(array, sel, target, merging, anyval) {
     var i, item;
 
-    /* If we have no versions/components/milestones */
+    // If we have no versions/components/milestones.
     if (array.length < 1) {
         target.options.length = 0;
         return false;
     }
 
     if (merging) {
-        /* array merging/sorting in the case of multiple selections */
-        /* merge in the current options with the first selection */
+        // Array merging/sorting in the case of multiple selections
+        // merge in the current options with the first selection.
         item = merge_arrays(array[sel[0]], target.options, 1);
 
-        /* merge the rest of the selection with the results */
-        for (i = 1 ; i < sel.length ; i++) {
+        // Merge the rest of the selection with the results.
+        for (i = 1 ; i < sel.length ; i++)
             item = merge_arrays(array[sel[i]], item, 0);
-        }
-    } else if ( sel.length > 1 ) {
-        /* here we micro-optimize for two arrays to avoid merging with a
-         * null array */
+    }
+    else if (sel.length > 1) {
+        // Here we micro-optimize for two arrays to avoid merging with a
+        // null array.
         item = merge_arrays(array[sel[0]],array[sel[1]], 0);
 
-        /* merge the arrays. not very good for multiple selections. */
-        for (i = 2; i < sel.length; i++) {
+        // Merge the arrays. Not very good for multiple selections.
+        for (i = 2; i < sel.length; i++)
             item = merge_arrays(item, array[sel[i]], 0);
-        }
-    } else { /* single item in selection, just get me the list */
+    }
+    else {
+        // Single item in selection, just get me the list.
         item = array[sel[0]];
     }
 
-    /* clear select */
+    // Clear current selection.
     target.options.length = 0;
 
-    /* load elements of list into select */
-    for (i = 0; i < item.length; i++) {
-        target.options[i] = new Option(item[i], item[i]);
-    }
+    // Add special "Any" value back to the list.
+    if (anyval != null)
+        target.options[0] = new Option(anyval, "");
+
+    // Load elements of list into select element.
+    for (i = 0; i < item.length; i++)
+        target.options[target.options.length] = new Option(item[i], item[i]);
+
     return true;
 }
 
-
-/* Selects items in control that have index defined in sel
- *    - control: SELECT control to be restored
- *    - selnames: array of indexes in select form control */
+/**
+ * Selects items in select element that are defined to be selected.
+ *
+ * @param control  Select element of which selected options are to be restored.
+ * @param selnames Array of option names to select.
+ */
 function restoreSelection(control, selnames) {
-    /* right. this sucks. but I see no way to avoid going through the
-     * list and comparing to the contents of the control. */
-    for (var j=0; j < selnames.length; j++) {
-        for (var i=0; i < control.options.length; i++) {
-            if (control.options[i].value == selnames[j]) {
+    // Right. This sucks but I see no way to avoid going through the
+    // list and comparing to the contents of the control.
+    for (var j = 0; j < selnames.length; j++)
+        for (var i = 0; i < control.options.length; i++)
+            if (control.options[i].value == selnames[j])
                 control.options[i].selected = true;
-            }
-        }
-    }
 }
 
-
-/* Returns elements in a that are not in b.
+/**
+ * Returns elements in a that are not in b.
  * NOT A REAL DIFF: does not check the reverse.
- *    - a,b: arrays of values to be compare. */
+ *
+ * @param  a First array to compare.
+ * @param  b Second array to compare.
+ * @return   Array of elements in a but not in b.
+ */
 function fake_diff_array(a, b) {
     var newsel = new Array();
     var found = false;
 
-    /* do a boring array diff to see who's new */
+    // Do a boring array diff to see who's new.
     for (var ia in a) {
-        for (var ib in b) {
-            if (a[ia] == b[ib]) {
+        for (var ib in b)
+            if (a[ia] == b[ib])
                 found = true;
-            }
-        }
-        if (!found) {
+
+        if (!found)
             newsel[newsel.length] = a[ia];
-        }
+
         found = false;
     }
+
     return newsel;
 }
 
-/* takes two arrays and sorts them by string, returning a new, sorted
- * array. the merge removes dupes, too.
- *    - a, b: arrays to be merge.
- *    - b_is_select: if true, then b is actually an optionitem and as
- *      such we need to use item.value on it. */
+/**
+ * Takes two arrays and sorts them by string, returning a new, sorted
+ * array. The merge removes dupes, too.
+ *
+ * @param  a           First array to merge.
+ * @param  b           Second array or an optionitem element to merge.
+ * @param  b_is_select Boolean; true if b is an optionitem element (need to
+ *                     access its value by item.value) or false if b is a
+ *                     an array.
+ * @return             Merged and sorted array.
+ */
 function merge_arrays(a, b, b_is_select) {
     var pos_a = 0;
     var pos_b = 0;
     var ret = new Array();
     var bitem, aitem;
 
-    /* iterate through both arrays and add the larger item to the return
-     * list. remove dupes, too. Use toLowerCase to provide
-     * case-insensitivity. */
+    // Iterate through both arrays and add the larger item to the return
+    // list. Remove dupes, too. Use toLowerCase to provide
+    // case-insensitivity.
     while ((pos_a < a.length) && (pos_b < b.length)) {
-        if (b_is_select) {
-            bitem = b[pos_b].value;
-        } else {
-            bitem = b[pos_b];
-        }
         aitem = a[pos_a];
+        if (b_is_select)
+            bitem = b[pos_b].value;
+        else
+            bitem = b[pos_b];
 
-        /* smaller item in list a */
+        // Smaller item in list a.
         if (aitem.toLowerCase() < bitem.toLowerCase()) {
             ret[ret.length] = aitem;
             pos_a++;
-        } else {
-            /* smaller item in list b */
+        }
+        else {
+            // Smaller item in list b.
             if (aitem.toLowerCase() > bitem.toLowerCase()) {
                 ret[ret.length] = bitem;
                 pos_b++;
-            } else {
-                /* list contents are equal, inc both counters. */
+            }
+            else {
+                // List contents are equal, include both counters.
                 ret[ret.length] = aitem;
                 pos_a++;
                 pos_b++;
@@ -326,44 +364,45 @@ function merge_arrays(a, b, b_is_select) {
         }
     }
 
-    /* catch leftovers here. these sections are ugly code-copying. */
-    if (pos_a < a.length) {
-        for (; pos_a < a.length ; pos_a++) {
+    // Catch leftovers here. These sections are ugly code-copying.
+    if (pos_a < a.length)
+        for (; pos_a < a.length ; pos_a++)
             ret[ret.length] = a[pos_a];
-        }
-    }
 
     if (pos_b < b.length) {
         for (; pos_b < b.length; pos_b++) {
-            if (b_is_select) {
+            if (b_is_select)
                 bitem = b[pos_b].value;
-            } else {
+            else
                 bitem = b[pos_b];
-            }
             ret[ret.length] = bitem;
         }
     }
+
     return ret;
 }
 
-/* Returns an array of indexes or values from a select form control.
- *    - control: select control from which to find selections
- *    - findall: boolean, store all options when true or just the selected
- *      indexes
- *    - want_values: boolean; we store values when true and indexes when
- *      false */
-function get_selection(control, findall, want_values) {
+/**
+ * Returns an array of indexes or values of options in a select form element.
+ *
+ * @param  control     Select form element from which to find selections.
+ * @param  findall     Boolean; true to return all options or false to return
+ *                     only selected options.
+ * @param  want_values Boolean; true to return values and false to return
+ *                     indexes.
+ * @param  anyval      Name of a special "Any" value that should be skipped. Can
+ *                     be null if not used.
+ * @return             Array of all or selected indexes or values.
+ */
+function get_selection(control, findall, want_values, anyval) {
     var ret = new Array();
 
-    if ((!findall) && (control.selectedIndex == -1)) {
+    if ((!findall) && (control.selectedIndex == -1))
         return ret;
-    }
 
-    for (var i=0; i<control.length; i++) {
-        if (findall || control.options[i].selected) {
+    for (var i = (anyval != null ? 1 : 0); i < control.length; i++)
+        if (findall || control.options[i].selected)
             ret[ret.length] = want_values ? control.options[i].value : i;
-        }
-    }
+
     return ret;
 }
-

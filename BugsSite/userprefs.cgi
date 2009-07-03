@@ -24,7 +24,7 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -90,8 +90,14 @@ sub SaveAccount {
                         undef, $user->id);
         $oldcryptedpwd || ThrowCodeError("unable_to_retrieve_password");
 
-        if (crypt(scalar($cgi->param('Bugzilla_password')), $oldcryptedpwd) ne 
-                  $oldcryptedpwd) 
+        my $oldpassword = $cgi->param('Bugzilla_password');
+
+        # Wide characters cause crypt to die
+        if (Bugzilla->params->{'utf8'}) {
+            utf8::encode($oldpassword) if utf8::is_utf8($oldpassword);
+        } 
+
+        if (crypt($oldpassword, $oldcryptedpwd) ne $oldcryptedpwd) 
         {
             ThrowUserError("old_password_incorrect");
         }
@@ -138,7 +144,7 @@ sub SaveAccount {
             is_available_username($new_login_name)
               || ThrowUserError("account_exists", {email => $new_login_name});
 
-            Bugzilla::Token::IssueEmailChangeToken($user->id, $old_login_name,
+            Bugzilla::Token::IssueEmailChangeToken($user, $old_login_name,
                                                    $new_login_name);
 
             $vars->{'email_changes_saved'} = 1;
@@ -247,11 +253,15 @@ sub SaveEmail {
     my $dbh = Bugzilla->dbh;
     my $cgi = Bugzilla->cgi;
     my $user = Bugzilla->user;
-    
+
+    if (Bugzilla->params->{"supportwatchers"}) {
+        Bugzilla::User::match_field($cgi, { 'new_watchedusers' => {'type' => 'multi'} });
+    }
+
     ###########################################################################
     # Role-based preferences
     ###########################################################################
-    $dbh->bz_lock_tables("email_setting WRITE");
+    $dbh->bz_start_transaction();
 
     # Delete all the user's current preferences
     $dbh->do("DELETE FROM email_setting WHERE user_id = ?", undef, $user->id);
@@ -298,7 +308,7 @@ sub SaveEmail {
         }
     }
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     ###########################################################################
     # User watching
@@ -307,11 +317,7 @@ sub SaveEmail {
         && (defined $cgi->param('new_watchedusers')
             || defined $cgi->param('remove_watched_users'))) 
     {
-        # Just in case.  Note that this much locking is actually overkill:
-        # we don't really care if anyone reads the watch table.  So 
-        # some small amount of contention could be gotten rid of by
-        # using user-defined locks rather than table locking.
-        $dbh->bz_lock_tables('watch WRITE', 'profiles READ');
+        $dbh->bz_start_transaction();
 
         # Use this to protect error messages on duplicate submissions
         my $old_watch_ids =
@@ -319,7 +325,8 @@ sub SaveEmail {
                                    . " WHERE watcher = ?", undef, $user->id);
 
         # The new information given to us by the user.
-        my @new_watch_names = split(/[,\s]+/, $cgi->param('new_watchedusers'));
+        my $new_watched_users = join(',', $cgi->param('new_watchedusers')) || '';
+        my @new_watch_names = split(/[,\s]+/, $new_watched_users);
         my %new_watch_ids;
 
         foreach my $username (@new_watch_names) {
@@ -351,7 +358,7 @@ sub SaveEmail {
             }
         }
 
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
     }
 }
 
@@ -502,7 +509,7 @@ my $cgi = Bugzilla->cgi;
 
 # This script needs direct access to the username and password CGI variables,
 # so we save them before their removal in Bugzilla->login, and delete them 
-# prior to login if we might possibly be in an sudo session.
+# before login in case we might be in a sudo session.
 my $bugzilla_login    = $cgi->param('Bugzilla_login');
 my $bugzilla_password = $cgi->param('Bugzilla_password');
 $cgi->delete('Bugzilla_login', 'Bugzilla_password') if ($cgi->cookie('sudo'));
@@ -519,6 +526,9 @@ my $current_tab_name = $cgi->param('tab') || "settings";
 trick_taint($current_tab_name);
 
 $vars->{'current_tab_name'} = $current_tab_name;
+
+my $token = $cgi->param('token');
+check_token_data($token, 'edit_user_prefs') if $cgi->param('dosave');
 
 # Do any saving, and then display the current tab.
 SWITCH: for ($current_tab_name) {
@@ -548,6 +558,11 @@ SWITCH: for ($current_tab_name) {
     };
     ThrowUserError("unknown_tab",
                    { current_tab_name => $current_tab_name });
+}
+
+delete_token($token) if $cgi->param('dosave');
+if ($current_tab_name ne 'permissions') {
+    $vars->{'token'} = issue_session_token('edit_user_prefs');
 }
 
 # Generate and return the UI (HTML page) from the appropriate template.

@@ -19,6 +19,7 @@
 #
 # Contributor(s): Myk Melez <myk@mozilla.org>
 #                 Zach Lipton <zach@zachlipton.com>
+#                 Elliotte Martin <everythingsolved.com>
 #
 
 package Bugzilla::Template::Plugin::Hook;
@@ -26,6 +27,7 @@ package Bugzilla::Template::Plugin::Hook;
 use strict;
 
 use Bugzilla::Constants;
+use Bugzilla::Install::Util qw(include_languages);
 use Bugzilla::Template;
 use Bugzilla::Util;
 use Bugzilla::Error;
@@ -44,12 +46,11 @@ sub new {
 }
 
 sub process {
-    my ($self, $hook_name) = @_;
+    my ($self, $hook_name, $template) = @_;
+    $template ||= $self->{_CONTEXT}->stash->{component}->{name};
 
-    my $paths = $self->{_CONTEXT}->{LOAD_TEMPLATES}->[0]->paths;
-    my $template = $self->{_CONTEXT}->stash->{component}->{name};
-    my @hooks = ();
-    
+    my @hooks;
+
     # sanity check:
     if (!$template =~ /[\w\.\/\-_\\]+/) {
         ThrowCodeError('template_invalid', { name => $template});
@@ -65,8 +66,9 @@ sub process {
     # munge the filename to create the extension hook filename:
     my $extensiontemplate = $subpath.'/'.$templatename.'-'.$hook_name.'.'.$type.'.tmpl';
     my @extensions = glob(bz_locations()->{'extensionsdir'} . "/*");
-    my @usedlanguages = getLanguages();
+    my @usedlanguages = include_languages({use_languages => Bugzilla->languages});
     foreach my $extension (@extensions) {
+        next if -e "$extension/disabled";
         foreach my $language (@usedlanguages) {
             my $file = $extension.'/template/'.$language.'/'.$extensiontemplate;
             if (-e $file) {
@@ -78,6 +80,8 @@ sub process {
             }
         }
     }
+
+    my $paths = $self->{_CONTEXT}->{LOAD_TEMPLATES}->[0]->paths;
     
     # we keep this too since you can still put hook templates in 
     # template/en/custom/hook
@@ -103,24 +107,6 @@ sub process {
     return $output;
 }
 
-# get a list of languages we accept so we can find the hook 
-# that corresponds to our desired languages:
-sub getLanguages() {
-    my $languages = trim(Bugzilla->params->{'languages'});
-    if (not ($languages =~ /,/)) { # only one language
-        return $languages;
-    }
-    my @languages       = Bugzilla::Template::sortAcceptLanguage($languages);
-    my @accept_language = Bugzilla::Template::sortAcceptLanguage($ENV{'HTTP_ACCEPT_LANGUAGE'} || "" );
-    my @usedlanguages;
-    foreach my $lang (@accept_language) {
-        if(my @found = grep /^\Q$lang\E(-.+)?$/i, @languages) {
-            push (@usedlanguages, @found);
-        }
-    }
-    return @usedlanguages;
-}
-
 1;
 
 __END__
@@ -133,9 +119,54 @@ Bugzilla::Template::Plugin::Hook
 
 Template Toolkit plugin to process hooks added into templates by extensions.
 
+=head1 METHODS
+
+=over
+
+=item B<process>
+
+=over
+
+=item B<Description>
+
+Processes hooks added into templates by extensions.
+
+=item B<Params>
+
+=over
+
+=item C<hook_name>
+
+The unique name of the template hook.
+
+=item C<template> (optional)
+
+The path of the calling template.
+This is used as a work around to a bug which causes the path to the hook
+to be incorrect when the hook is called from inside a block.
+
+Example: If the hook C<lastrow> is added to the template
+F<show-multiple.html.tmpl> and it is desired to force the correct template
+path, the template hook would be:
+
+ [% Hook.process("lastrow", "bug/show-multiple.html.tmpl") %]
+
+=back
+
+=item B<Returns> 
+
+Output from processing template extension.
+
+=back
+
+=back
+
 =head1 SEE ALSO
 
 L<Template::Plugin>
-L<http:E<sol>E<sol>www.bugzilla.orgE<sol>docsE<sol>tipE<sol>htmlE<sol>customization.html>
-L<http:E<sol>E<sol>bugzilla.mozilla.orgE<sol>show_bug.cgi?id=229658>
-L<http:E<sol>E<sol>bugzilla.mozilla.orgE<sol>show_bug.cgi?id=298341>
+
+L<http://www.bugzilla.org/docs/tip/html/customization.html>
+
+L<http://bugzilla.mozilla.org/show_bug.cgi?id=229658>
+
+L<http://bugzilla.mozilla.org/show_bug.cgi?id=298341>

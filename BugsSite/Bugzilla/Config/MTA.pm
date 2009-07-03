@@ -69,6 +69,17 @@ sub get_param_list {
    default => 'localhost'
   },
   {
+   name => 'smtp_username',
+   type => 't',
+   default => '',
+   checker => \&check_smtp_auth
+  },
+  {
+   name => 'smtp_password',
+   type => 'p',
+   default => ''
+  },
+  {
    name => 'smtp_debug',
    type => 'b',
    default => 0

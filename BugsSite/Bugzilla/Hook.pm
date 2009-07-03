@@ -41,8 +41,13 @@ sub process {
         # If there's malicious data here, we have much bigger issues to 
         # worry about, so we can safely detaint them:
         trick_taint($extension);
+        # Skip CVS directories and any hidden files/dirs.
+        next if $extension =~ m{/CVS$} || $extension =~ m{/\.[^/]+$};
+        next if -e "$extension/disabled";
         if (-e $extension.'/code/'.$name.'.pl') {
             Bugzilla->hook_args($args);
+            # Allow extensions to load their own libraries.
+            local @INC = ("$extension/lib", @INC);
             do($extension.'/code/'.$name.'.pl');
             ThrowCodeError('extension_invalid', 
                 { errstr => $@, name => $name, extension => $extension }) if $@;
@@ -50,7 +55,28 @@ sub process {
             Bugzilla->hook_args({});
         }
     }
-    
+}
+
+sub enabled_plugins {
+    my $extdir = bz_locations()->{'extensionsdir'};
+    my @extensions = glob("$extdir/*");
+    my %enabled;
+    foreach my $extension (@extensions) {
+        trick_taint($extension);
+        my $extname = $extension;
+        $extname =~ s{^\Q$extdir\E/}{};
+        next if $extname eq 'CVS' || $extname =~ /^\./;
+        next if -e "$extension/disabled";
+        # Allow extensions to load their own libraries.
+        local @INC = ("$extension/lib", @INC);
+        $enabled{$extname} = do("$extension/info.pl");
+        ThrowCodeError('extension_invalid',
+                { errstr => $@, name => 'version',
+                  extension => $extension }) if $@;
+
+    }
+
+    return \%enabled;
 }
 
 1;
@@ -59,7 +85,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Hook - Extendible extension hooks for Bugzilla code
+Bugzilla::Hook - Extendable extension hooks for Bugzilla code
 
 =head1 SYNOPSIS
 
@@ -70,10 +96,14 @@ Bugzilla::Hook - Extendible extension hooks for Bugzilla code
 =head1 DESCRIPTION
 
 Bugzilla allows extension modules to drop in and add routines at 
-arbitrary points in Bugzilla code. These points are refered to as 
+arbitrary points in Bugzilla code. These points are referred to as
 hooks. When a piece of standard Bugzilla code wants to allow an extension
 to perform additional functions, it uses Bugzilla::Hook's L</process>
 subroutine to invoke any extension code if installed. 
+
+There is a sample extension in F<extensions/example/> that demonstrates
+most of the things described in this document, as well as many of the
+hooks available.
 
 =head2 How Hooks Work
 
@@ -92,6 +122,15 @@ Some L<hooks|/HOOKS> have params that are passed to them.
 These params are accessible through L<Bugzilla/hook_args>.
 That returns a hashref. Very frequently, if you want your
 hook to do anything, you have to modify these variables.
+
+=head2 Versioning Extensions
+
+Every extension must have a file in its root called F<info.pl>.
+This file must return a hash when called with C<do>.
+The hash must contain a 'version' key with the current version of the
+extension. Extension authors can also add any extra infomration to this hash if
+required, by adding a new key beginning with x_ which will not be used the
+core Bugzilla code. 
 
 =head1 SUBROUTINES
 
@@ -127,7 +166,72 @@ They will be accessible to the hook via L<Bugzilla/hook_args>.
 
 =head1 HOOKS
 
-This describes what hooks exist in Bugzilla currently.
+This describes what hooks exist in Bugzilla currently. They are mostly
+in alphabetical order, but some related hooks are near each other instead
+of being alphabetical.
+
+=head2 bug-end_of_update
+
+This happens at the end of L<Bugzilla::Bug/update>, after all other changes are
+made to the database. This generally occurs inside a database transaction.
+
+Params:
+
+=over
+
+=item C<bug> - The changed bug object, with all fields set to their updated
+values.
+
+=item C<timestamp> - The timestamp used for all updates in this transaction.
+
+=item C<changes> - The hash of changed fields. 
+C<$changes-E<gt>{field} = [old, new]>
+
+=back
+
+=head2 buglist-columns
+
+This happens in buglist.cgi after the standard columns have been defined and
+right before the display column determination.  It gives you the opportunity
+to add additional display columns.
+
+Params:
+
+=over
+
+=item C<columns> - A hashref, where the keys are unique string identifiers
+for the column being defined and the values are hashrefs with the
+following fields:
+
+=over
+
+=item C<name> - The name of the column in the database.
+
+=item C<title> - The title of the column as displayed to users.
+
+=back
+
+The definition is structured as:
+
+ $columns->{$id} = { name => $name, title => $title };
+
+=back
+
+=head2 colchange-columns
+
+This happens in F<colchange.cgi> right after the list of possible display
+columns have been defined and gives you the opportunity to add additional
+display columns to the list of selectable columns.
+
+Params:
+
+=over
+
+=item C<columns> - An arrayref containing an array of column IDs.  Any IDs
+added by this hook must have been defined in the the buglist-columns hook.
+See L</buglist-columns>.
+
+=back
 
 =head2 enter_bug-entrydefaultvars
 
@@ -138,6 +242,47 @@ Params:
 =over
 
 =item C<vars> - A hashref. The variables that will be passed into the template.
+
+=back
+
+=head2 flag-end_of_update
+
+This happens at the end of L<Bugzilla::Flag/process>, after all other changes
+are made to the database and after emails are sent. It gives you a before/after
+snapshot of flags so you can react to specific flag changes.
+This generally occurs inside a database transaction.
+
+Note that the interface to this hook is B<UNSTABLE> and it may change in the
+future.
+
+Params:
+
+=over
+
+=item C<bug> - The changed bug object.
+
+=item C<timestamp> - The timestamp used for all updates in this transaction.
+
+=item C<old_flags> - The snapshot of flag summaries from before the change.
+
+=item C<new_flags> - The snapshot of flag summaries after the change. Call
+C<my ($removed, $added) = diff_arrays(old_flags, new_flags)> to get the list of
+changed flags, and search for a specific condition like C<added eq 'review-'>.
+
+=back
+
+=head2 install-before_final_checks
+
+Allows execution of custom code before the final checks are done in 
+checksetup.pl.
+
+Params:
+
+=over
+
+=item C<silent>
+
+A flag that indicates whether or not checksetup is running in silent mode.
 
 =back
 
@@ -188,5 +333,69 @@ Params:
 L<Bugzilla::DB::Schema/ABSTRACT_SCHEMA>. Add new hash keys to make new table
 definitions. F<checksetup.pl> will automatically add these tables to the
 database when run.
+
+=back
+
+=head2 product-confirm_delete
+
+Called before displaying the confirmation message when deleting a product.
+
+Params:
+
+=over
+
+=item C<vars> - The template vars hashref.
+
+=back
+
+=head2 webservice
+
+This hook allows you to add your own modules to the WebService. (See
+L<Bugzilla::WebService>.)
+
+Params:
+
+=over
+
+=item C<dispatch>
+
+A hashref that you can specify the names of your modules and what Perl
+module handles the functions for that module. (This is actually sent to 
+L<SOAP::Lite/dispatch_with>. You can see how that's used in F<xmlrpc.cgi>.)
+
+The Perl module name must start with C<extensions::yourextension::lib::>
+(replace C<yourextension> with the name of your extension). The C<package>
+declaration inside that module must also start with 
+C<extensions::yourextension::lib::> in that module's code.
+
+Example:
+
+  $dispatch->{Example} = "extensions::example::lib::Example";
+
+And then you'd have a module F<extensions/example/lib/Example.pm>
+
+It's recommended that all the keys you put in C<dispatch> start with the
+name of your extension, so that you don't conflict with the standard Bugzilla
+WebService functions (and so that you also don't conflict with other
+plugins).
+
+=back
+
+=head2 webservice-error_codes
+
+If your webservice extension throws custom errors, you can set numeric
+codes for those errors here.
+
+Extensions should use error codes above 10000, unless they are re-using
+an already-existing error code.
+
+Params:
+
+=over
+
+=item C<error_map>
+
+A hash that maps the names of errors (like C<invalid_param>) to numbers.
+See L<Bugzilla::WebService::Constants/WS_ERROR_CODE> for an example.
 
 =back

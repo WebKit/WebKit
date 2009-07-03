@@ -29,6 +29,11 @@
     border-color: red;
 }
 
+.alert {
+    color: red;
+    background-color: inherit;
+}
+
 p.areyoureallyreallysure {
     color: red;
     font-size: 120%;
@@ -37,4 +42,74 @@ p.areyoureallyreallysure {
 
 tr.param_disabled {
     background-color: lightgrey;
+}
+
+td.admin_links {
+    width: 50%;
+    padding: 1em;
+    vertical-align: top;
+}
+
+td.admin_links dt {
+    margin-top: 1em;
+}
+
+td.admin_links dt.forbidden, td.admin_links dd.forbidden {
+    font-size: smaller;
+    font-style: italic;
+    color: #aaa;
+}
+
+td.admin_links dt.forbidden a, td.admin_links dd.forbidden a {
+    text-decoration: none;
+    color: inherit;
+    cursor: default;
+}
+
+.col-header {
+    width: 8em;
+}
+
+.checkbox-cell {
+    border: 1px black solid;
+}
+
+/* Grey-green color */
+.open-status {
+    color: #286;
+}
+
+/* Brown-red color */
+.closed-status {
+    color: #a63;
+}
+
+/* Dark green color */
+.checked {
+    background-color: #5b4;
+}
+
+/* Dark red color */
+td.forbidden {
+    background-color: #811;
+}
+
+/* Light green color */
+td.set {
+    background-color: #efe;
+}
+
+/* Light red color */
+td.unset {
+    background-color: #fee;
+}
+
+tr.highlight:hover {
+    background-color: yellow;
+}
+
+th.title {
+    font-size: larger;
+    text-align: center;
+    vertical-align: middle;
 }

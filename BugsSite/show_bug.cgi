@@ -22,7 +22,7 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -99,7 +99,7 @@ $vars->{'bugs'} = \@bugs;
 $vars->{'marks'} = \%marks;
 $vars->{'use_keywords'} = 1 if Bugzilla::Keyword::keyword_count();
 
-my @bugids = map {$_->bug_id} @bugs;
+my @bugids = map {$_->bug_id} grep {!$_->error} @bugs;
 $vars->{'bugids'} = join(", ", @bugids);
 
 # Next bug in list (if there is one)
@@ -115,7 +115,7 @@ $vars->{'bug_list'} = \@bug_list;
 # on the exclusion list. This is so you can say e.g. "Everything except 
 # attachments" without listing almost all the fields.
 my @fieldlist = (Bugzilla::Bug->fields, 'group', 'long_desc', 
-                 'attachment', 'attachmentdata');
+                 'attachment', 'attachmentdata', 'token');
 my %displayfields;
 
 if ($cgi->param("field")) {

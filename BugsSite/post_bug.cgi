@@ -25,7 +25,7 @@
 #                 Marc Schumann <wurblzap@gmail.com>
 
 use strict;
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Attachment;
@@ -36,6 +36,7 @@ use Bugzilla::Error;
 use Bugzilla::Bug;
 use Bugzilla::User;
 use Bugzilla::Field;
+use Bugzilla::Hook;
 use Bugzilla::Product;
 use Bugzilla::Component;
 use Bugzilla::Keyword;
@@ -53,6 +54,9 @@ my $vars = {};
 # Main Script
 ######################################################################
 
+# redirect to enter_bug if no field is passed.
+print $cgi->redirect(correct_urlbase() . 'enter_bug.cgi') unless $cgi->param();
+
 # Detect if the user already used the same form to submit a bug
 my $token = trim($cgi->param('token'));
 if ($token) {
@@ -62,7 +66,7 @@ if ($token) {
               && ($old_bug_id =~ "^createbug:"))
     {
         # The token is invalid.
-        ThrowUserError('token_inexistent');
+        ThrowUserError('token_does_not_exist');
     }
 
     $old_bug_id =~ s/^createbug://;
@@ -120,8 +124,8 @@ $template->process($format->{'template'}, $vars, \$comment)
     || ThrowTemplateError($template->error());
 
 # Include custom fields editable on bug creation.
-my @custom_bug_fields = Bugzilla->get_fields(
-    { custom => 1, obsolete => 0, enter_bug => 1 });
+my @custom_bug_fields = grep {$_->type != FIELD_TYPE_MULTI_SELECT && $_->enter_bug}
+                             Bugzilla->active_custom_fields;
 
 # Undefined custom fields are ignored to ensure they will get their default
 # value (e.g. "---" for custom single select fields).
@@ -163,6 +167,13 @@ $bug_params{'cc'}          = [$cgi->param('cc')];
 $bug_params{'groups'}      = \@selected_groups;
 $bug_params{'comment'}     = $comment;
 
+my @multi_selects = grep {$_->type == FIELD_TYPE_MULTI_SELECT && $_->enter_bug}
+                         Bugzilla->active_custom_fields;
+
+foreach my $field (@multi_selects) {
+    $bug_params{$field->name} = [$cgi->param($field->name)];
+}
+
 my $bug = Bugzilla::Bug->create(\%bug_params);
 
 # Get the bug ID back.
@@ -183,15 +194,15 @@ if (defined $cgi->param('version')) {
 # Add an attachment if requested.
 if (defined($cgi->upload('data')) || $cgi->param('attachurl')) {
     $cgi->param('isprivate', $cgi->param('commentprivacy'));
-    my $attach_id = Bugzilla::Attachment->insert_attachment_for_bug(!THROW_ERROR,
-                                                  $bug, $user, $timestamp, \$vars);
+    my $attachment = Bugzilla::Attachment->insert_attachment_for_bug(!THROW_ERROR,
+                                                  $bug, $user, $timestamp, $vars);
 
-    if ($attach_id) {
+    if ($attachment) {
         # Update the comment to include the new attachment ID.
         # This string is hardcoded here because Template::quoteUrls()
         # expects to find this exact string.
-        my $new_comment = "Created an attachment (id=$attach_id)\n" .
-                          $cgi->param('description') . "\n";
+        my $new_comment = "Created an attachment (id=" . $attachment->id . ")\n" .
+                          $attachment->description . "\n";
         # We can use $bug->longdescs here because we are sure that the bug
         # description is of type CMT_NORMAL. No need to include it if it's
         # empty, though.
@@ -219,8 +230,8 @@ if (defined($cgi->upload('data')) || $cgi->param('attachurl')) {
 my $error_mode_cache = Bugzilla->error_mode;
 Bugzilla->error_mode(ERROR_MODE_DIE);
 eval {
-    Bugzilla::Flag::validate($cgi, $id, undef, SKIP_REQUESTEE_ON_ERROR);
-    Bugzilla::Flag::process($bug, undef, $timestamp, $cgi);
+    Bugzilla::Flag::validate($id, undef, SKIP_REQUESTEE_ON_ERROR);
+    Bugzilla::Flag->process($bug, undef, $timestamp, $vars);
 };
 Bugzilla->error_mode($error_mode_cache);
 if ($@) {
@@ -233,6 +244,8 @@ $vars->{'mailrecipients'} = {'changer' => $user->login};
 
 $vars->{'id'} = $id;
 $vars->{'bug'} = $bug;
+
+Bugzilla::Hook::process("post_bug-after_creation", { vars => $vars });
 
 ThrowCodeError("bug_error", { bug => $bug }) if $bug->error;
 

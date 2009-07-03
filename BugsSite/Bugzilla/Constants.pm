@@ -40,6 +40,10 @@ use File::Basename;
     BUGZILLA_VERSION
 
     bz_locations
+
+    IS_NULL
+    NOT_NULL
+
     CONTROLMAPNA
     CONTROLMAPSHOWN
     CONTROLMAPDEFAULT
@@ -80,6 +84,7 @@ use File::Basename;
     LIST_OF_BUGS
 
     COMMENT_COLS
+    MAX_COMMENT_LENGTH
 
     CMT_NORMAL
     CMT_DUPE_OF
@@ -87,7 +92,6 @@ use File::Basename;
     CMT_POPULAR_VOTES
     CMT_MOVED_TO
 
-    UNLOCK_ABORT
     THROW_ERROR
     
     RELATIONSHIPS
@@ -115,8 +119,9 @@ use File::Basename;
     FIELD_TYPE_UNKNOWN
     FIELD_TYPE_FREETEXT
     FIELD_TYPE_SINGLE_SELECT
-
-    BUG_STATE_OPEN
+    FIELD_TYPE_MULTI_SELECT
+    FIELD_TYPE_TEXTAREA
+    FIELD_TYPE_DATETIME
 
     USAGE_MODE_BROWSER
     USAGE_MODE_CMDLINE
@@ -135,10 +140,17 @@ use File::Basename;
     ON_WINDOWS
 
     MAX_TOKEN_AGE
+    MAX_LOGINCOOKIE_AGE
 
     SAFE_PROTOCOLS
 
+    MIN_SMALLINT
+    MAX_SMALLINT
+
     MAX_LEN_QUERY_NAME
+    MAX_MILESTONE_SIZE
+    MAX_COMPONENT_SIZE
+    MAX_FREETEXT_LENGTH
 );
 
 @Bugzilla::Constants::EXPORT_OK = qw(contenttypes);
@@ -146,7 +158,18 @@ use File::Basename;
 # CONSTANTS
 #
 # Bugzilla version
-use constant BUGZILLA_VERSION => "3.0.3";
+use constant BUGZILLA_VERSION => "3.2.3";
+
+# These are unique values that are unlikely to match a string or a number,
+# to be used in criteria for match() functions and other things. They start
+# and end with spaces because most Bugzilla stuff has trim() called on it,
+# so this is unlikely to match anything we get out of the DB.
+#
+# We can't use a reference, because Template Toolkit doesn't work with
+# them properly (constants.IS_NULL => {} just returns an empty string instead
+# of the reference).
+use constant IS_NULL  => '  __IS_NULL__  ';
+use constant NOT_NULL => '  __NOT_NULL__  ';
 
 #
 # ControlMap constants for group_control_map.
@@ -239,6 +262,8 @@ use constant LIST_OF_BUGS => 1;
 
 # The column length for displayed (and wrapped) bug comments.
 use constant COMMENT_COLS => 80;
+# Used in _check_comment(). Gives the max length allowed for a comment.
+use constant MAX_COMMENT_LENGTH => 65535;
 
 # The type of bug comments.
 use constant CMT_NORMAL => 0;
@@ -246,10 +271,6 @@ use constant CMT_DUPE_OF => 1;
 use constant CMT_HAS_DUPE => 2;
 use constant CMT_POPULAR_VOTES => 3;
 use constant CMT_MOVED_TO => 4;
-
-# used by Bugzilla::DB to indicate that tables are being unlocked
-# because of error
-use constant UNLOCK_ABORT => 1;
 
 # Determine whether a validation routine should return 0 or throw
 # an error when the validation fails.
@@ -327,18 +348,19 @@ use constant SENDMAIL_PATH => '/usr/lib:/usr/sbin:/usr/ucblib';
 use constant FIELD_TYPE_UNKNOWN   => 0;
 use constant FIELD_TYPE_FREETEXT  => 1;
 use constant FIELD_TYPE_SINGLE_SELECT => 2;
+use constant FIELD_TYPE_MULTI_SELECT => 3;
+use constant FIELD_TYPE_TEXTAREA  => 4;
+use constant FIELD_TYPE_DATETIME  => 5;
 
 # The maximum number of days a token will remain valid.
 use constant MAX_TOKEN_AGE => 3;
+# How many days a logincookie will remain valid if not used.
+use constant MAX_LOGINCOOKIE_AGE => 30;
 
 # Protocols which are considered as safe.
 use constant SAFE_PROTOCOLS => ('afs', 'cid', 'ftp', 'gopher', 'http', 'https',
                                 'irc', 'mid', 'news', 'nntp', 'prospero', 'telnet',
                                 'view-source', 'wais');
-
-# States that are considered to be "open" for bugs.
-use constant BUG_STATE_OPEN => ('NEW', 'REOPENED', 'ASSIGNED', 
-                                'UNCONFIRMED');
 
 # Usage modes. Default USAGE_MODE_BROWSER. Use with Bugzilla->usage_mode.
 use constant USAGE_MODE_BROWSER    => 0;
@@ -362,10 +384,10 @@ use constant DB_MODULE => {
                 dbd => { 
                     package => 'DBD-mysql',
                     module  => 'DBD::mysql',
-                    version => '2.9003',
-                    # Certain versions are broken, development versions are
-                    # always disallowed.
-                    blacklist => ['^3\.000[3-6]', '_'],
+                    # Disallow development versions
+                    blacklist => ['_'],
+                    # For UTF-8 support
+                    version => '4.00',
                 },
                 name => 'MySQL'},
     'pg'    => {db => 'Bugzilla::DB::Pg', db_version => '8.00.0000',
@@ -375,6 +397,13 @@ use constant DB_MODULE => {
                     version => '1.45',
                 },
                 name => 'PostgreSQL'},
+     'oracle'=> {db => 'Bugzilla::DB::Oracle', db_version => '10.02.0',
+                dbd => {
+                     package => 'DBD-Oracle',
+                     module  => 'DBD::Oracle',
+                     version => '1.19',
+                },
+                name => 'Oracle'},
 };
 
 # The user who should be considered "root" when we're giving
@@ -384,8 +413,20 @@ use constant ROOT_USER => $^O =~ /MSWin32/i ? 'Administrator' : 'root';
 # True if we're on Win32.
 use constant ON_WINDOWS => ($^O =~ /MSWin32/i);
 
+use constant MIN_SMALLINT => -32768;
+use constant MAX_SMALLINT => 32767;
+
 # The longest that a saved search name can be.
 use constant MAX_LEN_QUERY_NAME => 64;
+
+# The longest milestone name allowed.
+use constant MAX_MILESTONE_SIZE => 20;
+
+# The longest component name allowed.
+use constant MAX_COMPONENT_SIZE => 64;
+
+# Maximum length allowed for free text fields.
+use constant MAX_FREETEXT_LENGTH => 255;
 
 sub bz_locations {
     # We know that Bugzilla/Constants.pm must be in %INC at this point.
@@ -418,6 +459,7 @@ sub bz_locations {
     # That means that if you modify these paths, they must be absolute paths.
     return {
         'libpath'     => $libpath,
+        'ext_libpath' => "$libpath/lib",
         # If you put the libraries in a different location than the CGIs,
         # make sure this still points to the CGIs.
         'cgi_path'    => $libpath,
@@ -427,7 +469,7 @@ sub bz_locations {
         'datadir'     => "$libpath/$datadir",
         'attachdir'   => "$libpath/$datadir/attachments",
         'skinsdir'    => "$libpath/skins",
-        # $webdotdir must be in the webtree somewhere. Even if you use a 
+        # $webdotdir must be in the web server's tree somewhere. Even if you use a 
         # local dot, we output images to there. Also, if $webdotdir is 
         # not relative to the bugzilla root directory, you'll need to 
         # change showdependencygraph.cgi to set image_url to the correct 

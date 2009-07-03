@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# -*- mode: sgml -*- %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
@@ -26,7 +25,7 @@
 
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://communicator/skin/" type="text/css"?>
-<?xml-stylesheet href="[% Param('urlbase') %]skins/standard/panel.css" type="text/css"?>
+<?xml-stylesheet href="[% urlbase FILTER xml %]skins/standard/panel.css" type="text/css"?>
 <window
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -40,7 +39,7 @@ function load_absolute_url( aAbsoluteURL ) {
 }
 
 function load_relative_url( aRelativeURL ) {
-    aRelativeURL = '[% Param('urlbase') %]' + aRelativeURL;
+    aRelativeURL = '[% urlbase FILTER xml %]' + aRelativeURL;
     _content.location = aRelativeURL;
 }
 
@@ -125,7 +124,7 @@ function normal_keypress_handler( aEvent ) {
   <box orient="horizontal">
     <spring flex="1"/>
     <html align="right">
-      <html:a class="text-link" href="[% Param('urlbase') %]sidebar.cgi">reload</html:a>
+      <html:a class="text-link" href="[% urlbase FILTER xml %]sidebar.cgi">reload</html:a>
     </html>
   </box>
 </window>

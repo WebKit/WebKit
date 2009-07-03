@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -61,7 +60,7 @@
       <td>
         <input type="checkbox" id="negate[% chartnum FILTER html %]"
              name="negate[% chartnum FILTER html %]" value="1"
-            [% "checked" IF chart.negate %]>
+            [%+ "checked" IF chart.negate %]>
         <label for="negate[% chartnum FILTER html %]">
           Not (negate this whole chart)
         </label>
@@ -75,8 +74,9 @@
       <td>
         <select name="[% "field${chartnum}-${rownum}-${colnum}" %]">
           [% FOREACH field = fields %]
-            <option value="[% field.name %]"
-              [%- " selected" IF field.name == col.field %]>[% field.description %]</option>
+            <option value="[% field.name %]" [% "selected" IF field.name == col.field %]>
+              [% field_descs.${field.name} || field.description FILTER html %]
+            </option>
           [% END %]
         </select>
 

@@ -51,6 +51,20 @@ table.groups td.checkbox {
     white-space: nowrap;
 }
 
+table#user_responsibilities th {
+    text-align: center;
+    padding: 0 1em 1em;
+}
+
+table#user_responsibilities th.product {
+    text-align: left;
+    padding: 1em 0 0;
+}
+
+table#user_responsibilities td.center {
+    text-align: center;
+}
+
 .missing {
     color: red;
     border-color: inherit;

@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -20,9 +19,23 @@
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
+[% IF bottom_navigator == 1 %]
+  <ul class="related_actions">
+    <li><a href="show_bug.cgi?format=multiple&amp;id=
+                [% bug.bug_id FILTER url_quote %]">Format For Printing</a></li>
+    <li>&nbsp;-&nbsp;<a href="show_bug.cgi?ctype=xml&amp;id=
+                        [% bug.bug_id  FILTER url_quote %]">XML</a></li>
+    <li>&nbsp;-&nbsp;<a href="enter_bug.cgi?cloned_bug_id=
+                        [% bug.bug_id  FILTER url_quote %]">Clone This 
+                        [% terms.Bug %]</a></li>
+    [%# Links to more things users can do with this bug. %]
+    [% Hook.process("links") %]
+    <li>&nbsp;-&nbsp;<a href="#">Top of page </a></li>
+    </ul>
+[% END %]        
 
-<div id="navigate">
 
+<div class="navigation">
 [% IF bug_list && bug_list.size > 0 %]
   [% this_bug_idx = lsearch(bug_list, bug.bug_id) %]
   <b>[% terms.Bug %] List:</b>
@@ -31,24 +44,34 @@
   [% END %]
 
 [% IF this_bug_idx != -1 %]
+[%# if WEBKIT_CHANGES %]
   <a href="show_bug.cgi?id=[% bug_list.first %]">|&laquo; First</a>
   <a href="show_bug.cgi?id=[% bug_list.last %]">Last &raquo;|</a>
+[%# endif // WEBKIT_CHANGES %]
 [% END %]
 
   [% IF bug.bug_id %]
     [% IF this_bug_idx != -1 %]
       [% IF this_bug_idx > 0 %]
         [% prev_bug = this_bug_idx - 1 %]
+[%# if WEBKIT_CHANGES %]
         <a href="show_bug.cgi?id=[% bug_list.$prev_bug %]">&laquo; Prev</a>
+[%# endif // WEBKIT_CHANGES %]
       [% ELSE %]
+[%# if WEBKIT_CHANGES %]
         <i><font color="#777777">&laquo; Prev</font></i>
+[%# endif // WEBKIT_CHANGES %]
       [% END %]
 
       [% IF this_bug_idx + 1 < bug_list.size %]
         [% next_bug = this_bug_idx + 1 %]
+[%# if WEBKIT_CHANGES %]
         <a href="show_bug.cgi?id=[% bug_list.$next_bug %]">Next &raquo;</a>
+[%# endif // WEBKIT_CHANGES %]
       [% ELSE %]
+[%# if WEBKIT_CHANGES %]
         <i><font color="#777777">Next &raquo;</font></i>
+[%# endif // WEBKIT_CHANGES %]
       [% END %]
     [% ELSE %]
       (This [% terms.bug %] is not in your last search results)
@@ -61,12 +84,13 @@
 [% ELSE %]
   [%# Either !bug_list || bug_list.size <= 0 %]
   [%# With no list, don't show link to search results %]
+[%# if WEBKIT_CHANGES %]
   <i><font color="#777777">|&laquo; First</font></i>
   <i><font color="#777777">Last &raquo;|</font></i>
   <i><font color="#777777">&laquo; Prev</font></i>
   <i><font color="#777777">Next &raquo;</font></i>
+[%# endif // WEBKIT_CHANGES %]
   &nbsp;&nbsp;
   <i><font color="#777777">No search results available</font></i>
 [% END %]
-
 </div>

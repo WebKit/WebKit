@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -20,7 +19,12 @@
 
 [% PROCESS "global/field-descs.none.tmpl" %]
 
-[% PROCESS global/header.html.tmpl title = "Custom Fields" %]
+[% PROCESS global/header.html.tmpl
+  title = "Custom Fields"
+  doc_section = "custom-fields.html"
+%]
+
+[% delete_contentlink = BLOCK %]editfields.cgi?action=del&amp;name=%%name%%[% END %]
 
 [% columns = [
      {
@@ -51,6 +55,11 @@
      {
        name => "obsolete"
        heading => "Is Obsolete"
+     },
+     {
+       name => "action"
+       heading => "Action"
+       content => ""
      }
    ]
 %]
@@ -70,6 +79,17 @@
     })
   %]
 [% END %]
+
+
+[% overrides.action = [ {
+     match_value => 1
+     match_field => 'obsolete'
+     override_content => 1
+     content => "Delete"
+     override_contentlink => 1
+     contentlink => delete_contentlink
+   } ]
+%] 
 
 [% PROCESS admin/table.html.tmpl
      columns = columns

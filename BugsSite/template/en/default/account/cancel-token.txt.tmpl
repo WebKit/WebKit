@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -33,7 +32,7 @@ If you did not request this, it could be either an honest
 mistake or someone attempting to break into your [% terms.Bugzilla %] account.
 
 Take a look at the information below and forward this email
-to [% maintainer %] if you suspect foul play.
+to [% Param('maintainer') %] if you suspect foul play.
 
             Token: [% token %]
        Token Type: [% tokentype %]
@@ -58,24 +57,24 @@ Canceled Because: [% PROCESS cancelactionmessage %]
   [% IF    cancelaction == 'account_exists' %]
     Account [% email %] already exists.
 
-  [% ELSIF cancelaction == 'email_change_cancelled' %]
+  [% ELSIF cancelaction == 'email_change_canceled' %]
     The request to change the email address for
     the [% old_email %] account to [% new_email %] has
     been canceled.
 
-  [% ELSIF cancelaction == 'email_change_cancelled_reinstated' %]
+  [% ELSIF cancelaction == 'email_change_canceled_reinstated' %]
     The request to change the email address for your account
     to [% new_email %] has been canceled. Your old account
     settings have been reinstated.
 
-  [% ELSIF cancelaction == 'emailold_change_cancelled' %]
+  [% ELSIF cancelaction == 'emailold_change_canceled' %]
     The request to change the email address for your account
     to [% new_email %] has been canceled.
 
-  [% ELSIF cancelaction == 'password_change_cancelled' %]
+  [% ELSIF cancelaction == 'password_change_canceled' %]
     You have requested cancellation.
 
-  [% ELSIF cancelaction == 'account_creation_cancelled' %]
+  [% ELSIF cancelaction == 'account_creation_canceled' %]
     The creation of the user account [% emailaddress %]
     has been canceled.
 

@@ -62,6 +62,7 @@ sub FILESYSTEM {
     my $webdotdir     = bz_locations()->{'webdotdir'};
     my $templatedir   = bz_locations()->{'templatedir'};
     my $libdir        = bz_locations()->{'libpath'};
+    my $extlib        = bz_locations()->{'ext_libpath'};
     my $skinsdir      = bz_locations()->{'skinsdir'};
 
     my $ws_group      = Bugzilla->localconfig->{'webservergroup'};
@@ -87,7 +88,7 @@ sub FILESYSTEM {
     my $owner_dir_readable = 0700;
     # Writeable by the web server.
     my $ws_dir_writeable = $ws_group ? 0770 : 01777;
-    # The webserver can overwrite files owned by other users, 
+    # The web server can overwrite files owned by other users, 
     # in this directory.
     my $ws_dir_full_control = $ws_group ? 0770 : 0777;
 
@@ -112,10 +113,13 @@ sub FILESYSTEM {
         'whine.pl'        => { perms => $ws_executable },
         'customfield.pl'  => { perms => $owner_executable },
         'email_in.pl'     => { perms => $ws_executable },
+        'sanitycheck.pl'  => { perms => $ws_executable },
+        'install-module.pl' => { perms => $owner_executable },
 
         'docs/makedocs.pl'   => { perms => $owner_executable },
-        'docs/rel_notes.txt' => { perms => $ws_readable },
-        'docs/README.docs'   => { perms => $owner_readable },
+        'docs/style.css'       => { perms => $ws_readable },
+        'docs/*/rel_notes.txt' => { perms => $ws_readable },
+        'docs/*/README.docs'   => { perms => $owner_readable },
         "$datadir/bugzilla-update.xml" => { perms => $ws_writeable },
         "$datadir/params" => { perms => $ws_writeable },
         "$datadir/mailer.testfile" => { perms => $ws_writeable },
@@ -151,7 +155,11 @@ sub FILESYSTEM {
                                      dirs => $ws_dir_readable },
          "$libdir/Bugzilla"    => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
+         $extlib               => { files => $ws_readable,
+                                     dirs => $ws_dir_readable },
          $templatedir          => { files => $ws_readable,
+                                     dirs => $ws_dir_readable },
+         $extensionsdir        => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
          images                => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
@@ -159,21 +167,21 @@ sub FILESYSTEM {
                                      dirs => $ws_dir_readable },
          js                    => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
-         skins                 => { files => $ws_readable,
+         $skinsdir             => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
          t                     => { files => $owner_readable,
                                      dirs => $owner_dir_readable },
-         'docs/html'           => { files => $ws_readable,
+         'docs/*/html'         => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
-         'docs/pdf'            => { files => $ws_readable,
+         'docs/*/pdf'          => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
-         'docs/txt'            => { files => $ws_readable,
+         'docs/*/txt'          => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
-         'docs/images'         => { files => $ws_readable,
+         'docs/*/images'       => { files => $ws_readable,
                                      dirs => $ws_dir_readable },
          'docs/lib'            => { files => $owner_readable,
                                      dirs => $owner_dir_readable },
-         'docs/xml'            => { files => $owner_readable,
+         'docs/*/xml'          => { files => $owner_readable,
                                      dirs => $owner_dir_readable },
     );
 
@@ -183,39 +191,32 @@ sub FILESYSTEM {
     # pointing at its default permissions.
     my %create_dirs = (
         $datadir                => $ws_dir_full_control,
-        "$datadir/mimedump-tmp" => $ws_dir_writeable,
         "$datadir/mining"       => $ws_dir_readable,
         "$datadir/duplicates"   => $ws_dir_readable,
         $attachdir              => $ws_dir_writeable,
         $extensionsdir          => $ws_dir_readable,
         graphs                  => $ws_dir_writeable,
         $webdotdir              => $ws_dir_writeable,
-        'skins/custom'          => $ws_dir_readable,
-        'skins/contrib'         => $ws_dir_readable,
+        "$skinsdir/custom"      => $ws_dir_readable,
+        "$skinsdir/contrib"     => $ws_dir_readable,
     );
 
     # The name of each file, pointing at its default permissions and
     # default contents.
-    my %create_files = (
-        "$datadir/mail"    => { perms => $ws_readable },
-    );
+    my %create_files = ();
 
     # Each standard stylesheet has an associated custom stylesheet that
     # we create. Also, we create placeholders for standard stylesheets
     # for contrib skins which don't provide them themselves.
     foreach my $skin_dir ("$skinsdir/custom", <$skinsdir/contrib/*>) {
-        next unless -d $skin_dir;
         next if basename($skin_dir) =~ /^cvs$/i;
-        foreach (<$skinsdir/standard/*.css>) {
-            my $standard_css_file = basename($_);
-            my $custom_css_file = "$skin_dir/$standard_css_file";
-            $create_files{$custom_css_file} = { perms => $ws_readable, contents => <<EOT
-/*
- * Custom rules for $standard_css_file.
- * The rules you put here override rules in that stylesheet.
- */
-EOT
-            }
+        $create_dirs{"$skin_dir/yui"} = $ws_dir_readable;
+        foreach my $base_css (<$skinsdir/standard/*.css>) {
+            _add_custom_css($skin_dir, basename($base_css), \%create_files, $ws_readable);
+        }
+        foreach my $dir_css (<$skinsdir/standard/*/*.css>) {
+            $dir_css =~ s{.+?([^/]+/[^/]+)$}{$1};
+            _add_custom_css($skin_dir, $dir_css, \%create_files, $ws_readable);
         }
     }
 
@@ -250,6 +251,8 @@ EOT
                                           contents => $ht_default_deny },
         "$libdir/Bugzilla/.htaccess" => { perms    => $ws_readable,
                                           contents => $ht_default_deny },
+        "$extlib/.htaccess"          => { perms    => $ws_readable,
+                                          contents => $ht_default_deny },
         "$templatedir/.htaccess"     => { perms    => $ws_readable,
                                           contents => $ht_default_deny },
 
@@ -280,13 +283,13 @@ Deny from all
 EOT
         },
 
-        # Even though $datadir may not (and should not) be in the webtree,
-        # we can't know for sure, so create the .htaccess anyway. It's harmless
-        # if it's not accessible...
+        # Even though $datadir may not (and should not) be accessible from the 
+        # web server, we can't know for sure, so create the .htaccess anyway. 
+        # It's harmless if it isn't accessible...
         "$datadir/.htaccess" => { perms    => $ws_readable, contents => <<EOT
 # Nothing in this directory is retrievable unless overridden by an .htaccess
 # in a subdirectory; the only exception is duplicates.rdf, which is used by
-# duplicates.xul and must be loadable over the web
+# duplicates.xul and must be accessible from the web server
 deny from all
 <Files duplicates.rdf>
   allow from all
@@ -369,6 +372,18 @@ EOT
         unlink "$datadir/versioncache";
     }
 
+}
+
+# A simple helper for creating "empty" CSS files.
+sub _add_custom_css {
+    my ($skin_dir, $path, $create_files, $perms) = @_;
+    $create_files->{"$skin_dir/$path"} = { perms => $perms, contents => <<EOT
+/*
+ * Custom rules for $path.
+ * The rules you put here override rules in that stylesheet.
+ */
+EOT
+    };
 }
 
 sub create_htaccess {

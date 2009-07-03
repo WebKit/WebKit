@@ -26,13 +26,10 @@
 #               Frédéric Buclin <LpSolit@gmail.com>
 #               Greg Hendricks <ghendricks@novell.com>
 #               Lance Larsh <lance.larsh@oracle.com>
-#
-# Direct any questions on this source code to
-#
-# Holger Schurig <holgerschurig@nikocity.de>
+#               Elliotte Martin <elliotte.martin@yahoo.com>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -48,6 +45,7 @@ use Bugzilla::Group;
 use Bugzilla::User;
 use Bugzilla::Field;
 use Bugzilla::Token;
+use Bugzilla::Status;
 
 #
 # Preliminary checks:
@@ -60,6 +58,9 @@ my $dbh = Bugzilla->dbh;
 my $cgi = Bugzilla->cgi;
 my $template = Bugzilla->template;
 my $vars = {};
+# Remove this as soon as the documentation about products has been
+# improved and each action has its own section.
+$vars->{'doc_section'} = 'products.html';
 
 print $cgi->header();
 
@@ -87,8 +88,9 @@ if (Bugzilla->params->{'useclassification'}
     && !$classification_name
     && !$product_name)
 {
-    $vars->{'classifications'} = $user->get_selectable_classifications;
-    
+    $vars->{'classifications'} = $user->in_group('editcomponents') ?
+      [Bugzilla::Classification::get_all_classifications] : $user->get_selectable_classifications;
+
     $template->process("admin/products/list-classifications.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
     exit;
@@ -335,9 +337,13 @@ if ($action eq 'new') {
     }
     delete_token($token);
 
+    $vars->{'message'} = 'product_created';
     $vars->{'product'} = $product;
+    $vars->{'classification'} = new Bugzilla::Classification($product->classification_id)
+      if Bugzilla->params->{'useclassification'};
+    $vars->{'token'} = issue_session_token('edit_product');
 
-    $template->process("admin/products/created.html.tmpl", $vars)
+    $template->process("admin/products/edit.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
     exit;
 }
@@ -364,7 +370,9 @@ if ($action eq 'del') {
 
     $vars->{'product'} = $product;
     $vars->{'token'} = issue_session_token('delete_product');
-
+    
+    Bugzilla::Hook::process("product-confirm_delete", { vars => $vars });
+    
     $template->process("admin/products/confirm-delete.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
     exit;
@@ -377,8 +385,6 @@ if ($action eq 'del') {
 if ($action eq 'delete') {
     my $product = $user->check_can_admin_product($product_name);
     check_token_data($token, 'delete_product');
-
-    $vars->{'product'} = $product;
 
     if (Bugzilla->params->{'useclassification'}) {
         my $classification = 
@@ -406,10 +412,7 @@ if ($action eq 'delete') {
         }
     }
 
-    $dbh->bz_lock_tables('products WRITE', 'components WRITE',
-                         'versions WRITE', 'milestones WRITE',
-                         'group_control_map WRITE', 'component_cc WRITE',
-                         'flaginclusions WRITE', 'flagexclusions WRITE');
+    $dbh->bz_start_transaction();
 
     my $comp_ids = $dbh->selectcol_arrayref('SELECT id FROM components
                                              WHERE product_id = ?',
@@ -439,12 +442,38 @@ if ($action eq 'delete') {
     $dbh->do("DELETE FROM products WHERE id = ?",
              undef, $product->id);
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
+
+    # We have to delete these internal variables, else we get
+    # the old lists of products and classifications again.
+    delete $user->{selectable_products};
+    delete $user->{selectable_classifications};
 
     delete_token($token);
 
-    $template->process("admin/products/deleted.html.tmpl", $vars)
-        || ThrowTemplateError($template->error());
+    $vars->{'message'} = 'product_deleted';
+    $vars->{'product'} = $product;
+    $vars->{'no_edit_product_link'} = 1;
+
+    if (Bugzilla->params->{'useclassification'}) {
+        $vars->{'classifications'} = $user->in_group('editcomponents') ?
+          [Bugzilla::Classification::get_all_classifications] : $user->get_selectable_classifications;
+
+        $template->process("admin/products/list-classifications.html.tmpl", $vars)
+          || ThrowTemplateError($template->error());
+    }
+    else {
+        my $products = $user->get_selectable_products;
+        # If the user has editcomponents privs for some products only,
+        # we have to restrict the list of products to display.
+        unless ($user->in_group('editcomponents')) {
+            $products = $user->get_products_by_permission('editcomponents');
+        }
+        $vars->{'products'} = $products;
+
+        $template->process("admin/products/list.html.tmpl", $vars)
+          || ThrowTemplateError($template->error());
+    }
     exit;
 }
 
@@ -474,30 +503,11 @@ if ($action eq 'edit' || (!$action && $product_name)) {
         }
         $vars->{'classification'} = $classification;
     }
-    my $group_controls = $product->group_controls;
-        
-    # Convert Group Controls(membercontrol and othercontrol) from 
-    # integer to string to display Membercontrol/Othercontrol names
-    # at the template. <gabriel@async.com.br>
-    my $constants = {
-        (CONTROLMAPNA) => 'NA',
-        (CONTROLMAPSHOWN) => 'Shown',
-        (CONTROLMAPDEFAULT) => 'Default',
-        (CONTROLMAPMANDATORY) => 'Mandatory'};
-
-    foreach my $group (keys(%$group_controls)) {
-        foreach my $control ('membercontrol', 'othercontrol') {
-            $group_controls->{$group}->{$control} = 
-                $constants->{$group_controls->{$group}->{$control}};
-        }
-    }
-    $vars->{'group_controls'} = $group_controls;
     $vars->{'product'} = $product;
     $vars->{'token'} = issue_session_token('edit_product');
 
     $template->process("admin/products/edit.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-
     exit;
 }
 
@@ -537,20 +547,28 @@ if ($action eq 'updategroupcontrols') {
                    {'Slice' => {}}, $product->id);
         }
 
+#
+# return the mandatory groups which need to have bug entries added to the bug_group_map
+# and the corresponding bug count
+#
         my $mandatory_groups;
         if (@now_mandatory) {
             $mandatory_groups = $dbh->selectall_arrayref(
-                    'SELECT groups.name, COUNT(bugs.bug_id) AS count
-                       FROM bugs
-                  LEFT JOIN bug_group_map
-                         ON bug_group_map.bug_id = bugs.bug_id
-                 INNER JOIN groups
-                         ON bug_group_map.group_id = groups.id
-                      WHERE groups.id IN (' . join(', ', @now_mandatory) . ')
-                        AND bugs.product_id = ?
-                        AND bug_group_map.bug_id IS NULL ' .
-                       $dbh->sql_group_by('groups.name'),
+                    'SELECT groups.name,
+                           (SELECT COUNT(bugs.bug_id)
+                              FROM bugs
+                             WHERE bugs.product_id = ?
+                               AND bugs.bug_id NOT IN
+                                (SELECT bug_group_map.bug_id FROM bug_group_map
+                                  WHERE bug_group_map.group_id = groups.id))
+                           AS count
+                      FROM groups
+                     WHERE groups.id IN (' . join(', ', @now_mandatory) . ')
+                     ORDER BY groups.name',
                    {'Slice' => {}}, $product->id);
+            # remove zero counts
+            @$mandatory_groups = grep { $_->{count} } @$mandatory_groups;
+
         }
         if (($na_groups && scalar(@$na_groups))
             || ($mandatory_groups && scalar(@$mandatory_groups)))
@@ -586,12 +604,7 @@ if ($action eq 'updategroupcontrols') {
                             {groupname => $groupname});
         }
     }
-    $dbh->bz_lock_tables('groups READ',
-                         'group_control_map WRITE',
-                         'bugs WRITE',
-                         'bugs_activity WRITE',
-                         'bug_group_map WRITE',
-                         'fielddefs READ');
+    $dbh->bz_start_transaction();
 
     my $sth_Insert = $dbh->prepare('INSERT INTO group_control_map
                                     (group_id, product_id, entry, membercontrol,
@@ -770,7 +783,7 @@ if ($action eq 'updategroupcontrols') {
 
         push(@added_mandatory, \%group);
     }
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     delete_token($token);
 
@@ -846,7 +859,7 @@ if ($action eq 'update') {
                        {votestoconfirm => $stored_votestoconfirm});
     }
 
-    $dbh->bz_lock_tables('products WRITE', 'milestones READ');
+    $dbh->bz_start_transaction();
 
     my $testproduct = 
         new Bugzilla::Product({name => $product_name});
@@ -916,7 +929,7 @@ if ($action eq 'update') {
                  undef, ($product_name, $product_old->id));
     }
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     my $product = new Bugzilla::Product({name => $product_name});
 
@@ -939,10 +952,7 @@ if ($action eq 'update') {
                 my ($who, $id) = (@$vote);
                 # If some votes are removed, RemoveVotes() returns a list
                 # of messages to send to voters.
-                my $msgs =
-                    RemoveVotes($id, $who, "The rules for voting on this product " .
-                                           "has changed;\nyou had too many votes " .
-                                           "for a single bug.");
+                my $msgs = RemoveVotes($id, $who, 'votes_too_many_per_bug');
                 foreach my $msg (@$msgs) {
                     MessageToMTA($msg);
                 }
@@ -991,11 +1001,7 @@ if ($action eq 'update') {
                 foreach my $bug_id (@$bug_ids) {
                     # RemoveVotes() returns a list of messages to send
                     # in case some voters had too many votes.
-                    my $msgs =
-                        RemoveVotes($bug_id, $who, "The rules for voting on this " .
-                                                   "product has changed; you had " .
-                                                   "too many\ntotal votes, so all " .
-                                                   "votes have been removed.");
+                    my $msgs = RemoveVotes($bug_id, $who, 'votes_too_many_per_user');
                     foreach my $msg (@$msgs) {
                         MessageToMTA($msg);
                     }

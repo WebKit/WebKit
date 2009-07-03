@@ -25,7 +25,7 @@
 #                 Frédéric Buclin <LpSolit@gmail.com>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -56,34 +56,6 @@ $user->in_group('creategroups')
 
 my $action = trim($cgi->param('action') || '');
 my $token  = $cgi->param('token');
-
-# Add missing entries in bug_group_map for bugs created while
-# a mandatory group was disabled and which is now enabled again.
-sub fix_bug_permissions {
-    my $gid = shift;
-    my $dbh = Bugzilla->dbh;
-
-    detaint_natural($gid);
-    return unless $gid;
-
-    my $bug_ids =
-      $dbh->selectcol_arrayref('SELECT bugs.bug_id
-                                  FROM bugs
-                            INNER JOIN group_control_map
-                                    ON group_control_map.product_id = bugs.product_id
-                             LEFT JOIN bug_group_map
-                                    ON bug_group_map.bug_id = bugs.bug_id
-                                   AND bug_group_map.group_id = group_control_map.group_id
-                                 WHERE group_control_map.group_id = ?
-                                   AND group_control_map.membercontrol = ?
-                                   AND bug_group_map.group_id IS NULL',
-                                 undef, ($gid, CONTROLMAPMANDATORY));
-
-    my $sth = $dbh->prepare('INSERT INTO bug_group_map (bug_id, group_id) VALUES (?, ?)');
-    foreach my $bug_id (@$bug_ids) {
-        $sth->execute($bug_id, $gid);
-    }
-}
 
 # CheckGroupID checks that a positive integer is given and is
 # actually a valid group ID. If all tests are successful, the
@@ -148,6 +120,66 @@ sub CheckGroupRegexp {
     return $regexp;
 }
 
+# A helper for displaying the edit.html.tmpl template.
+sub get_current_and_available {
+    my ($group, $vars) = @_;
+
+    my @all_groups         = Bugzilla::Group->get_all;
+    my @members_current    = @{$group->grant_direct(GROUP_MEMBERSHIP)};
+    my @member_of_current  = @{$group->granted_by_direct(GROUP_MEMBERSHIP)};
+    my @bless_from_current = @{$group->grant_direct(GROUP_BLESS)};
+    my @bless_to_current   = @{$group->granted_by_direct(GROUP_BLESS)};
+    my (@visible_from_current, @visible_to_me_current);
+    if (Bugzilla->params->{'usevisibilitygroups'}) {
+        @visible_from_current  = @{$group->grant_direct(GROUP_VISIBLE)};
+        @visible_to_me_current = @{$group->granted_by_direct(GROUP_VISIBLE)};
+    }
+
+    # Figure out what groups are not currently a member of this group,
+    # and what groups this group is not currently a member of.
+    my (@members_available, @member_of_available,
+        @bless_from_available, @bless_to_available,
+        @visible_from_available, @visible_to_me_available);
+    foreach my $group_option (@all_groups) {
+        if (Bugzilla->params->{'usevisibilitygroups'}) {
+            push(@visible_from_available, $group_option)
+                if !grep($_->id == $group_option->id, @visible_from_current);
+            push(@visible_to_me_available, $group_option)
+                if !grep($_->id == $group_option->id, @visible_to_me_current);
+        }
+
+        # The group itself should never show up in the bless or 
+        # membership lists.
+        next if $group_option->id == $group->id;
+
+        push(@members_available, $group_option)
+            if !grep($_->id == $group_option->id, @members_current);
+        push(@member_of_available, $group_option)
+            if !grep($_->id == $group_option->id, @member_of_current);
+        push(@bless_from_available, $group_option)
+            if !grep($_->id == $group_option->id, @bless_from_current);
+        push(@bless_to_available, $group_option)
+           if !grep($_->id == $group_option->id, @bless_to_current);
+    }
+
+    $vars->{'members_current'}     = \@members_current;
+    $vars->{'members_available'}   = \@members_available;
+    $vars->{'member_of_current'}   = \@member_of_current;
+    $vars->{'member_of_available'} = \@member_of_available;
+
+    $vars->{'bless_from_current'}   = \@bless_from_current;
+    $vars->{'bless_from_available'} = \@bless_from_available;
+    $vars->{'bless_to_current'}     = \@bless_to_current;
+    $vars->{'bless_to_available'}   = \@bless_to_available;
+
+    if (Bugzilla->params->{'usevisibilitygroups'}) {
+        $vars->{'visible_from_current'}    = \@visible_from_current;
+        $vars->{'visible_from_available'}  = \@visible_from_available;
+        $vars->{'visible_to_me_current'}   = \@visible_to_me_current;
+        $vars->{'visible_to_me_available'} = \@visible_to_me_available;
+    }
+}
+
 # If no action is specified, get a list of all groups available.
 
 unless ($action) {
@@ -169,62 +201,10 @@ unless ($action) {
 if ($action eq 'changeform') {
     # Check that an existing group ID is given
     my $group_id = CheckGroupID($cgi->param('group'));
-    my ($name, $description, $regexp, $isactive, $isbuggroup) =
-        $dbh->selectrow_array("SELECT name, description, userregexp, " .
-                              "isactive, isbuggroup " .
-                              "FROM groups WHERE id = ?", undef, $group_id);
+    my $group = new Bugzilla::Group($group_id);
 
-    # For each group, we use left joins to establish the existence of
-    # a record making that group a member of this group
-    # and the existence of a record permitting that group to bless
-    # this one
-
-    my @groups;
-    my $group_list =
-      $dbh->selectall_arrayref('SELECT groups.id, groups.name, groups.description,
-                                       CASE WHEN group_group_map.member_id IS NOT NULL
-                                            THEN 1 ELSE 0 END,
-                                       CASE WHEN B.member_id IS NOT NULL
-                                            THEN 1 ELSE 0 END,
-                                       CASE WHEN C.member_id IS NOT NULL
-                                            THEN 1 ELSE 0 END
-                                  FROM groups
-                                  LEFT JOIN group_group_map
-                                    ON group_group_map.member_id = groups.id
-                                   AND group_group_map.grantor_id = ?
-                                   AND group_group_map.grant_type = ?
-                                  LEFT JOIN group_group_map as B
-                                    ON B.member_id = groups.id
-                                   AND B.grantor_id = ?
-                                   AND B.grant_type = ?
-                                  LEFT JOIN group_group_map as C
-                                    ON C.member_id = groups.id
-                                   AND C.grantor_id = ?
-                                   AND C.grant_type = ?
-                                 ORDER by name',
-                                undef, ($group_id, GROUP_MEMBERSHIP,
-                                        $group_id, GROUP_BLESS,
-                                        $group_id, GROUP_VISIBLE));
-
-    foreach (@$group_list) {
-        my ($grpid, $grpnam, $grpdesc, $grpmember, $blessmember, $membercansee) = @$_;
-        my $group = {};
-        $group->{'grpid'}       = $grpid;
-        $group->{'grpnam'}      = $grpnam;
-        $group->{'grpdesc'}     = $grpdesc;
-        $group->{'grpmember'}   = $grpmember;
-        $group->{'blessmember'} = $blessmember;
-        $group->{'membercansee'}= $membercansee;
-        push(@groups, $group);
-    }
-
-    $vars->{'group_id'}    = $group_id;
-    $vars->{'name'}        = $name;
-    $vars->{'description'} = $description;
-    $vars->{'regexp'}      = $regexp;
-    $vars->{'isactive'}    = $isactive;
-    $vars->{'isbuggroup'}  = $isbuggroup;
-    $vars->{'groups'}      = \@groups;
+    get_current_and_available($group, $vars);
+    $vars->{'group'} = $group;
     $vars->{'token'}       = issue_session_token('edit_group');
 
     print $cgi->header();
@@ -264,14 +244,20 @@ if ($action eq 'new') {
     my $desc = CheckGroupDesc($cgi->param('desc'));
     my $regexp = CheckGroupRegexp($cgi->param('regexp'));
     my $isactive = $cgi->param('isactive') ? 1 : 0;
+    # This is an admin page. The URL is considered safe.
+    my $icon_url;
+    if ($cgi->param('icon_url')) {
+        $icon_url = clean_text($cgi->param('icon_url'));
+        trick_taint($icon_url);
+    }
 
     # Add the new group
     $dbh->do('INSERT INTO groups
-              (name, description, isbuggroup, userregexp, isactive)
-              VALUES (?, ?, 1, ?, ?)',
-              undef, ($name, $desc, $regexp, $isactive));
+              (name, description, isbuggroup, userregexp, isactive, icon_url)
+              VALUES (?, ?, 1, ?, ?, ?)',
+              undef, ($name, $desc, $regexp, $isactive, $icon_url));
 
-    my $gid = $dbh->bz_last_key('groups', 'id');
+    my $group = new Bugzilla::Group({name => $name});
     my $admin = Bugzilla::Group->new({name => 'admin'})->id();
     # Since we created a new group, give the "admin" group all privileges
     # initially.
@@ -279,9 +265,9 @@ if ($action eq 'new') {
                              (member_id, grantor_id, grant_type)
                              VALUES (?, ?, ?)');
 
-    $sth->execute($admin, $gid, GROUP_MEMBERSHIP);
-    $sth->execute($admin, $gid, GROUP_BLESS);
-    $sth->execute($admin, $gid, GROUP_VISIBLE);
+    $sth->execute($admin, $group->id, GROUP_MEMBERSHIP);
+    $sth->execute($admin, $group->id, GROUP_BLESS);
+    $sth->execute($admin, $group->id, GROUP_VISIBLE);
 
     # Permit all existing products to use the new group if makeproductgroups.
     if ($cgi->param('insertnew')) {
@@ -289,13 +275,18 @@ if ($action eq 'new') {
                   (group_id, product_id, entry, membercontrol,
                    othercontrol, canedit)
                   SELECT ?, products.id, 0, ?, ?, 0 FROM products',
-                  undef, ($gid, CONTROLMAPSHOWN, CONTROLMAPNA));
+                  undef, ($group->id, CONTROLMAPSHOWN, CONTROLMAPNA));
     }
-    Bugzilla::Group::RederiveRegexp($regexp, $gid);
+    Bugzilla::Group::RederiveRegexp($regexp, $group->id);
     delete_token($token);
 
+    $vars->{'message'} = 'group_created';
+    $vars->{'group'} = $group;
+    get_current_and_available($group, $vars);
+    $vars->{'token'} = issue_session_token('edit_group');
+
     print $cgi->header();
-    $template->process("admin/groups/created.html.tmpl", $vars)
+    $template->process("admin/groups/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     exit;
 }
@@ -468,10 +459,12 @@ if ($action eq 'delete') {
 
     delete_token($token);
 
-    print $cgi->header();
-    $template->process("admin/groups/deleted.html.tmpl", $vars)
-      || ThrowTemplateError($template->error());
+    $vars->{'message'} = 'group_deleted';
+    $vars->{'groups'} = [Bugzilla::Group->get_all];
 
+    print $cgi->header();
+    $template->process("admin/groups/list.html.tmpl", $vars)
+      || ThrowTemplateError($template->error());
     exit;
 }
 
@@ -481,85 +474,67 @@ if ($action eq 'delete') {
 
 if ($action eq 'postchanges') {
     check_token_data($token, 'edit_group');
-    # ZLL: Bug 181589: we need to have something to remove explicitly listed users from
-    # groups in order for the conversion to 2.18 groups to work
-    my $action;
-
-    if ($cgi->param('remove_explicit_members')) {
-        $action = 1;
-    } elsif ($cgi->param('remove_explicit_members_regexp')) {
-        $action = 2;
-    } else {
-        $action = 3;
-    }
-    
-    my ($gid, $chgs, $name, $regexp) = doGroupChanges();
-    
-    $vars->{'action'}  = $action;
-    $vars->{'changes'} = $chgs;
-    $vars->{'gid'}     = $gid;
-    $vars->{'name'}    = $name;
-    if ($action == 2) {
-        $vars->{'regexp'} = $regexp;
-    }
+    my $changes = doGroupChanges();
     delete_token($token);
 
+    my $group = new Bugzilla::Group($cgi->param('group_id'));
+    get_current_and_available($group, $vars);
+    $vars->{'message'} = 'group_updated';
+    $vars->{'group'}   = $group;
+    $vars->{'changes'} = $changes;
+    $vars->{'token'} = issue_session_token('edit_group');
+
     print $cgi->header();
-    $template->process("admin/groups/change.html.tmpl", $vars)
+    $template->process("admin/groups/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     exit;
 }
 
-if (($action eq 'remove_all_regexp') || ($action eq 'remove_all')) {
+if ($action eq 'confirm_remove') {
+    my $group = new Bugzilla::Group(CheckGroupID($cgi->param('group_id')));
+    $vars->{'group'} = $group;
+    $vars->{'regexp'} = CheckGroupRegexp($cgi->param('regexp'));
+    $vars->{'token'} = issue_session_token('remove_group_members');
+    $template->process('admin/groups/confirm-remove.html.tmpl', $vars)
+        || ThrowTemplateError($template->error());
+    exit;
+}
+
+if ($action eq 'remove_regexp') {
+    check_token_data($token, 'remove_group_members');
     # remove all explicit users from the group with
     # gid = $cgi->param('group') that match the regular expression
     # stored in the DB for that group or all of them period
 
-    my $gid = CheckGroupID($cgi->param('group'));
+    my $group  = new Bugzilla::Group(CheckGroupID($cgi->param('group_id')));
+    my $regexp = CheckGroupRegexp($cgi->param('regexp'));
 
-    my ($name, $regexp) =
-      $dbh->selectrow_array('SELECT name, userregexp FROM groups
-                             WHERE id = ?', undef, $gid);
+    $dbh->bz_start_transaction();
 
-    $dbh->bz_lock_tables('groups WRITE', 'profiles READ',
-                         'user_group_map WRITE');
+    my $users = $group->members_direct();
+    my $sth_delete = $dbh->prepare(
+        "DELETE FROM user_group_map
+           WHERE user_id = ? AND isbless = 0 AND group_id = ?");
 
-    my $sth = $dbh->prepare("SELECT user_group_map.user_id, profiles.login_name
-                               FROM user_group_map
-                         INNER JOIN profiles
-                                 ON user_group_map.user_id = profiles.userid
-                              WHERE user_group_map.group_id = ?
-                                AND grant_type = ?
-                                AND isbless = 0");
-    $sth->execute($gid, GRANT_DIRECT);
-
-    my @users;
-    my $sth2 = $dbh->prepare("DELETE FROM user_group_map
-                              WHERE user_id = ?
-                              AND isbless = 0
-                              AND group_id = ?");
-
-    while ( my ($userid, $userlogin) = $sth->fetchrow_array() ) {
-        if ((($regexp =~ /\S/) && ($userlogin =~ m/$regexp/i))
-            || ($action eq 'remove_all'))
-        {
-            $sth2->execute($userid, $gid);
-
-            my $user = {};
-            $user->{'login'} = $userlogin;
-            push(@users, $user);
+    my @deleted;
+    foreach my $member (@$users) {
+        if ($regexp eq '' || $member->login =~ m/$regexp/i) {
+            $sth_delete->execute($member->id, $group->id);
+            push(@deleted, $member);
         }
     }
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
-    $vars->{'users'}      = \@users;
-    $vars->{'name'}       = $name;
-    $vars->{'regexp'}     = $regexp;
-    $vars->{'remove_all'} = ($action eq 'remove_all');
-    $vars->{'gid'}        = $gid;
-    
+    $vars->{'users'}  = \@deleted;
+    $vars->{'regexp'} = $regexp;
+    delete_token($token);
+
+    $vars->{'message'} = 'group_membership_removed';
+    $vars->{'group'} = $group->name;
+    $vars->{'groups'} = [Bugzilla::Group->get_all];
+
     print $cgi->header();
-    $template->process("admin/groups/remove.html.tmpl", $vars)
+    $template->process("admin/groups/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
     exit;
@@ -578,124 +553,108 @@ sub doGroupChanges {
     my $cgi = Bugzilla->cgi;
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_lock_tables('groups WRITE', 'group_group_map WRITE',
-                         'bug_group_map WRITE', 'user_group_map WRITE',
-                         'group_control_map READ', 'bugs READ', 'profiles READ',
-                         # Due to the way Bugzilla::Config::BugFields::get_param_list()
-                         # works, we need to lock these tables too.
-                         'priority READ', 'bug_severity READ', 'rep_platform READ',
-                         'op_sys READ');
+    $dbh->bz_start_transaction();
 
-    # Check that the given group ID and regular expression are valid.
-    # If tests are successful, trimmed values are returned by CheckGroup*.
-    my $gid = CheckGroupID($cgi->param('group'));
-    my $regexp = CheckGroupRegexp($cgi->param('regexp'));
+    # Check that the given group ID is valid and make a Group.
+    my $group = new Bugzilla::Group(CheckGroupID($cgi->param('group_id')));
 
-    # The name and the description of system groups cannot be edited.
-    # We then need to know if the group being edited is a system group.
-    my $isbuggroup = $dbh->selectrow_array('SELECT isbuggroup FROM groups
-                                            WHERE id = ?', undef, $gid);
-    my $name;
-    my $desc;
-    my $isactive;
-    my $chgs = 0;
-
-    # We trust old values given by the template. If they are hacked
-    # in a way that some of the tests below become negative, the
-    # corresponding attributes are not updated in the DB, which does
-    # not hurt.
-    if ($isbuggroup) {
-        # Check that the group name and its description are valid
-        # and return trimmed values if tests are successful.
-        $name = CheckGroupName($cgi->param('name'), $gid);
-        $desc = CheckGroupDesc($cgi->param('desc'));
-        $isactive = $cgi->param('isactive') ? 1 : 0;
-
-        if ($name ne $cgi->param('oldname')) {
-            $chgs = 1;
-            $dbh->do('UPDATE groups SET name = ? WHERE id = ?',
-                      undef, ($name, $gid));
-            # If the group is used by some parameters, we have to update
-            # these parameters too.
-            my $update_params = 0;
-            foreach my $group (SPECIAL_GROUPS) {
-                if ($cgi->param('oldname') eq Bugzilla->params->{$group}) {
-                    SetParam($group, $name);
-                    $update_params = 1;
-                }
-            }
-            write_params() if $update_params;
-        }
-        if ($desc ne $cgi->param('olddesc')) {
-            $chgs = 1;
-            $dbh->do('UPDATE groups SET description = ? WHERE id = ?',
-                      undef, ($desc, $gid));
-        }
-        if ($isactive ne $cgi->param('oldisactive')) {
-            $chgs = 1;
-            $dbh->do('UPDATE groups SET isactive = ? WHERE id = ?',
-                      undef, ($isactive, $gid));
-            # If the group was mandatory for some products before
-            # we deactivated it and we now activate this group again,
-            # we have to add all bugs created while this group was
-            # disabled in bug_group_map to correctly protect them.
-            if ($isactive) { fix_bug_permissions($gid); }
-        }
-    }
-    if ($regexp ne $cgi->param('oldregexp')) {
-        $chgs = 1;
-        $dbh->do('UPDATE groups SET userregexp = ? WHERE id = ?',
-                  undef, ($regexp, $gid));
-        Bugzilla::Group::RederiveRegexp($regexp, $gid);
+    if (defined $cgi->param('regexp')) {
+        $group->set_user_regexp($cgi->param('regexp'));
     }
 
-    my $sthInsert = $dbh->prepare('INSERT INTO group_group_map
-                                   (member_id, grantor_id, grant_type)
-                                   VALUES (?, ?, ?)');
-
-    my $sthDelete = $dbh->prepare('DELETE FROM group_group_map
-                                    WHERE member_id = ?
-                                      AND grantor_id = ?
-                                      AND grant_type = ?');
-
-    foreach my $b (grep {/^oldgrp-\d*$/} $cgi->param()) {
-        if (defined($cgi->param($b))) {
-            $b =~ /^oldgrp-(\d+)$/;
-            my $v = $1;
-            my $grp = $cgi->param("grp-$v") || 0;
-            if (($v != $gid) && ($cgi->param("oldgrp-$v") != $grp)) {
-                $chgs = 1;
-                if ($grp != 0) {
-                    $sthInsert->execute($v, $gid, GROUP_MEMBERSHIP);
-                } else {
-                    $sthDelete->execute($v, $gid, GROUP_MEMBERSHIP);
-                }
-            }
-
-            my $bless = $cgi->param("bless-$v") || 0;
-            my $oldbless = $cgi->param("oldbless-$v");
-            if ((defined $oldbless) and ($oldbless != $bless)) {
-                $chgs = 1;
-                if ($bless != 0) {
-                    $sthInsert->execute($v, $gid, GROUP_BLESS);
-                } else {
-                    $sthDelete->execute($v, $gid, GROUP_BLESS);
-                }
-            }
-
-            my $cansee = $cgi->param("cansee-$v") || 0;
-            if (Bugzilla->params->{"usevisibilitygroups"} 
-               && ($cgi->param("oldcansee-$v") != $cansee)) {
-                $chgs = 1;
-                if ($cansee != 0) {
-                    $sthInsert->execute($v, $gid, GROUP_VISIBLE);
-                } else {
-                    $sthDelete->execute($v, $gid, GROUP_VISIBLE);
-                }
-            }
-
+    if ($group->is_bug_group) {
+        if (defined $cgi->param('name')) {
+            $group->set_name($cgi->param('name'));
+        }
+        if (defined $cgi->param('desc')) {
+            $group->set_description($cgi->param('desc'));
+        }
+        # Only set isactive if we came from the right form.
+        if (defined $cgi->param('regexp')) {
+            $group->set_is_active($cgi->param('isactive'));
         }
     }
-    $dbh->bz_unlock_tables();
-    return $gid, $chgs, $name, $regexp;
+
+    if (defined $cgi->param('icon_url')) {
+        $group->set_icon_url($cgi->param('icon_url'));
+    }
+
+    my $changes = $group->update();
+
+    my $sth_insert = $dbh->prepare('INSERT INTO group_group_map
+                                    (member_id, grantor_id, grant_type)
+                                    VALUES (?, ?, ?)');
+
+    my $sth_delete = $dbh->prepare('DELETE FROM group_group_map
+                                     WHERE member_id = ?
+                                           AND grantor_id = ?
+                                           AND grant_type = ?');
+
+    # First item is the type, second is whether or not it's "reverse" 
+    # (granted_by) (see _do_add for more explanation).
+    my %fields = (
+        members       => [GROUP_MEMBERSHIP, 0],
+        bless_from    => [GROUP_BLESS, 0],
+        visible_from  => [GROUP_VISIBLE, 0],
+        member_of     => [GROUP_MEMBERSHIP, 1],
+        bless_to      => [GROUP_BLESS, 1],
+        visible_to_me => [GROUP_VISIBLE, 1]
+    );
+    while (my ($field, $data) = each %fields) {
+        _do_add($group, $changes, $sth_insert, "${field}_add", 
+                $data->[0], $data->[1]);
+        _do_remove($group, $changes, $sth_delete, "${field}_remove",
+                   $data->[0], $data->[1]);
+    }
+
+    $dbh->bz_commit_transaction();
+    return $changes;
+}
+
+sub _do_add {
+    my ($group, $changes, $sth_insert, $field, $type, $reverse) = @_;
+    my $cgi = Bugzilla->cgi;
+
+    my $current;
+    # $reverse means we're doing a granted_by--that is, somebody else
+    # is granting us something.
+    if ($reverse) {
+        $current = $group->granted_by_direct($type);
+    }
+    else {
+        $current = $group->grant_direct($type);
+    }
+
+    my $add_items = Bugzilla::Group->new_from_list([$cgi->param($field)]);
+
+    foreach my $add (@$add_items) {
+        next if grep($_->id == $add->id, @$current);
+
+        $changes->{$field} ||= [];
+        push(@{$changes->{$field}}, $add->name);
+        # They go this direction for a normal "This group is granting
+        # $add something."
+        my @ids = ($add->id, $group->id);
+        # But they get reversed for "This group is being granted something
+        # by $add."
+        @ids = reverse @ids if $reverse;
+        $sth_insert->execute(@ids, $type);
+    }
+}
+
+sub _do_remove {
+    my ($group, $changes, $sth_delete, $field, $type, $reverse) = @_;
+    my $cgi = Bugzilla->cgi;
+    my $remove_items = Bugzilla::Group->new_from_list([$cgi->param($field)]);
+
+    foreach my $remove (@$remove_items) {
+        my @ids = ($remove->id, $group->id);
+        # See _do_add for an explanation of $reverse
+        @ids = reverse @ids if $reverse;
+        # Deletions always succeed and are harmless if they fail, so we
+        # don't need to do any checks.
+        $sth_delete->execute(@ids, $type);
+        $changes->{$field} ||= [];
+        push(@{$changes->{$field}}, $remove->name);
+    }
 }

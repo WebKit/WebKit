@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -21,6 +20,7 @@
   #                 Toms Baugis <toms@myrealbox.com>
   #                 Olav Vitters <olav@bkor.dhs.org>
   #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  #                 Elliotte Martin <emartin@everythingsolved.com>
   #%]
 
 [% PROCESS "global/field-descs.none.tmpl" %]
@@ -30,11 +30,22 @@
   h1 = ""
   style_urls = ["skins/standard/show_multiple.css",
                 "skins/standard/buglist.css"]
+  doc_section = "bug_page.html"
 %]
 [% PROCESS bug/time.html.tmpl %]
 [% IF bugs.first %]
+  [% ids = [] %]
   [% FOREACH bug = bugs %]
     [% PROCESS bug_display %]
+    [% ids.push(bug.bug_id) UNLESS bug.error %]
+  [% END %]
+  [% IF ids.size > 1 %]
+    <div class="bz_query_buttons">
+      <form method="post" action="buglist.cgi">
+        <input type="hidden" name="bug_id" value="[% ids.join(",") FILTER html %]">
+        <input type="submit" id="short_format" value="Short Format">
+      </form>
+    </div>
   [% END %]
 [% ELSE %]
   <p>
@@ -53,9 +64,10 @@
 [% BLOCK bug_display %]
   <h1>
     [% terms.Bug %] 
-    <a href="show_bug.cgi?id=[% bug.bug_id %]">[% bug.bug_id %]</a>
+    <a href="show_bug.cgi?id=[% bug.bug_id FILTER html %]">[% bug.bug_id FILTER html %]</a>
     [% IF Param("usebugaliases") AND bug.alias AND NOT bug.error %]
-      ([% bug.alias FILTER html %])
+      (<a href="show_bug.cgi?id=[% bug.alias FILTER url_quote %]">
+        [% bug.alias FILTER html %]</a>)
     [% END %]
   </h1>
 
@@ -117,7 +129,7 @@
     <tr>
       <th>[% field_descs.bug_status  FILTER html %]:</th>
       <td>
-        [% status_descs.${bug.bug_status} FILTER html %]
+        [% get_status(bug.bug_status) FILTER html %]
         [%+ get_resolution(bug.resolution) FILTER html %]
       </td>
 
@@ -167,7 +179,7 @@
 
     [% USE Bugzilla %]
     [% field_counter = 0 %]
-    [% FOREACH field = Bugzilla.get_fields({ obsolete => 0, custom => 1 }) %]
+    [% FOREACH field = Bugzilla.active_custom_fields %]
         [% field_counter = field_counter + 1 %]
         [%# Odd-numbered fields get an opening <tr> %]
         [% '<tr>' IF field_counter % 2 %]
@@ -268,6 +280,9 @@
       </tr>
     [% END %]
   [% END %]
+  
+  [% Hook.process("last_row", "bug/show-multiple.html.tmpl") %]
+   
   </table>
 
 
@@ -276,7 +291,6 @@
   [% PROCESS bug/comments.html.tmpl
      comments = bug.longdescs %]
 
-  <hr>
 [% END %]
 
 

@@ -43,7 +43,7 @@
 # Offer subscription when you get a "series already exists" error?
 
 use strict;
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -71,6 +71,7 @@ if (grep(/^cmd-/, $cgi->param())) {
 
 my $action = $cgi->param('action');
 my $series_id = $cgi->param('series_id');
+$vars->{'doc_section'} = 'reporting.html#charts';
 
 # Because some actions are chosen by buttons, we can't encode them as the value
 # of the action param, because that value is localization-dependent. So, we
@@ -281,6 +282,8 @@ sub plot {
     }
 
     print $cgi->header($format->{'ctype'});
+    disable_utf8() if ($format->{'ctype'} =~ /^image\//);
+
     $template->process($format->{'template'}, $vars)
       || ThrowTemplateError($template->error());
 }

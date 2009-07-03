@@ -26,7 +26,7 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Error;
@@ -49,7 +49,7 @@ my $dbh = Bugzilla->switch_to_shadow_db();
 
 # Make sure the bug ID is a positive integer representing an existing
 # bug that the user is authorized to access.
-my $id = $cgi->param('id') || ThrowUserError('invalid_bug_id_or_alias');
+my $id = $cgi->param('id') || ThrowUserError('improper_bug_id_field_value');
 ValidateBugID($id);
 my $current_bug = new Bugzilla::Bug($id);
 
@@ -131,7 +131,7 @@ sub GenerateTree {
         if (!$bugs->{$dep_id}->{'error'}
             && Bugzilla->user->can_see_bug($dep_id)
             && (!$maxdepth || $depth <= $maxdepth) 
-            && ($bugs->{$dep_id}->{'isopened'} || !$hide_resolved))
+            && ($bugs->{$dep_id}->isopened || !$hide_resolved))
         {
             # Due to AUTOLOAD in Bug.pm, we cannot add 'dependencies'
             # as a bug object attribute from here.

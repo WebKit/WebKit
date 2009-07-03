@@ -1,4 +1,3 @@
-[% template_version = "1.0@bugzilla.org" %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -17,6 +16,7 @@
   # Rights Reserved.
   #
   # Contributor(s): Myk Melez <myk@mozilla.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 <?xml version="1.0"[% IF Param('utf8') %] encoding="UTF-8"[% END %]?>
@@ -27,7 +27,7 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:bz="http://www.bugzilla.org/rdf#">
 
-<bz:installation rdf:about="[% Param('urlbase') FILTER html %]">
+<bz:installation rdf:about="[% urlbase FILTER xml %]">
   <bz:install_version>[% constants.BUGZILLA_VERSION FILTER html %]</bz:install_version>
   <bz:maintainer>[% Param('maintainer') FILTER html %]</bz:maintainer>
 
@@ -118,13 +118,14 @@
     <Seq>
       [% FOREACH product = products %]
         <li>
-          <bz:product rdf:about="[% Param('urlbase') %]product.cgi?name=[% product.name FILTER url_quote %]">
+          <bz:product rdf:about="[% urlbase FILTER xml %]product.cgi?name=[% product.name FILTER url_quote %]">
             <bz:name>[% product.name FILTER html %]</bz:name>
 
             <bz:components>
               <Seq>
                 [% FOREACH component = product.components %]
-                  <li resource="[% Param('urlbase') %]component.cgi?name=[% component.name FILTER url_quote %]"/>
+                  <li resource="[% urlbase FILTER xml %]component.cgi?name=[% component.name FILTER url_quote 
+                      %]&amp;product=[% product.name FILTER url_quote %]"/>
                 [% END %]
               </Seq>
             </bz:components>
@@ -132,7 +133,7 @@
             <bz:versions>
               <Seq>
                 [% FOREACH version = product.versions %]
-                  <li resource="[% Param('urlbase') %]version.cgi?name=[% version.name FILTER url_quote %]"/>
+                  <li resource="[% urlbase FILTER xml %]version.cgi?name=[% version.name FILTER url_quote %]"/>
                 [% END %]
               </Seq>
             </bz:versions>
@@ -141,7 +142,7 @@
               <bz:target_milestones>
                 <Seq>
                   [% FOREACH milestone = product.milestones %]
-                    <li resource="[% Param('urlbase') %]milestone.cgi?name=[% milestone.name FILTER url_quote %]"/>
+                    <li resource="[% urlbase FILTER xml %]milestone.cgi?name=[% milestone.name FILTER url_quote %]"/>
                   [% END %]
                 </Seq>
               </bz:target_milestones>
@@ -153,13 +154,26 @@
     </Seq>
   </bz:products>
 
+  [% all_visible_flag_types = {} %]
   <bz:components>
     <Seq>
       [% FOREACH product = products %]
         [% FOREACH component = product.components %]
           <li>
-            <bz:component rdf:about="[% Param('urlbase') %]component.cgi?name=[% component.name FILTER url_quote %]">
+            <bz:component rdf:about="[% urlbase FILTER xml %]component.cgi?name=[% component.name FILTER url_quote 
+                          %]&amp;product=[% product.name FILTER url_quote %]">
               <bz:name>[% component.name FILTER html %]</bz:name>
+              <bz:flag_types>
+                <Seq>
+                  [% flag_types = component.flag_types.bug.merge(component.flag_types.attachment) %]
+                  [% FOREACH flag_type = flag_types %]
+                    [% NEXT UNLESS flag_type.is_active %]
+                    [% all_visible_flag_types.${flag_type.id} = flag_type %]
+                    <li resource="[% urlbase FILTER xml %]flags.cgi?id=[% flag_type.id FILTER url_quote
+                        %]&amp;name=[% flag_type.name FILTER url_quote %]" />
+                  [% END %]
+                </Seq>
+              </bz:flag_types>
             </bz:component>
           </li>
         [% END %]
@@ -172,7 +186,7 @@
       [% FOREACH product = products %]
         [% FOREACH version = product.versions %]
           <li>
-            <bz:version rdf:about="[% Param('urlbase') %]version.cgi?name=[% version.name FILTER url_quote %]">
+            <bz:version rdf:about="[% urlbase FILTER xml %]version.cgi?name=[% version.name FILTER url_quote %]">
               <bz:name>[% version.name FILTER html %]</bz:name>
             </bz:version>
           </li>
@@ -187,7 +201,7 @@
         [% FOREACH product = products %]
           [% FOREACH milestone = product.milestones %]
             <li>
-              <bz:target_milestone rdf:about="[% Param('urlbase') %]milestone.cgi?name=[% milestone.name FILTER url_quote %]">
+              <bz:target_milestone rdf:about="[% urlbase FILTER xml %]milestone.cgi?name=[% milestone.name FILTER url_quote %]">
                 <bz:name>[% milestone.name FILTER html %]</bz:name>
               </bz:target_milestone>
             </li>
@@ -197,14 +211,39 @@
     </bz:target_milestones>
   [% END %]
 
+  <bz:flag_types>
+    <Seq>
+      [% FOREACH flag_type = all_visible_flag_types.values.sort('name') %]
+        <li>
+          <bz:flag_type rdf:about="[% urlbase FILTER xml %]flag.cgi?id=[% flag_type.id FILTER url_quote
+                        %]&amp;name=[% flag_type.name FILTER url_quote %]">
+            <bz:id>[% flag_type.id FILTER html %]</bz:id>
+            <bz:name>[% flag_type.name FILTER html %]</bz:name>
+            <bz:description>[% flag_type.description FILTER html %]</bz:description>
+            <bz:type>[% flag_type.target_type FILTER html %]</bz:type>
+            <bz:requestable>[% flag_type.is_requestable FILTER html %]</bz:requestable>
+            <bz:specifically_requestable>[% flag_type.is_requesteeble FILTER html %]</bz:specifically_requestable>
+            <bz:multiplicable>[% flag_type.is_multiplicable FILTER html %]</bz:multiplicable>
+          </bz:flag_type>
+        </li>
+      [% END %]
+    </Seq>
+  </bz:flag_types>
+
   <bz:fields>
     <Seq>
       [% PROCESS "global/field-descs.none.tmpl" %]
       [% FOREACH item = field %]
         <li>
-          <bz:field rdf:about="[% Param('urlbase') %]field.cgi?name=[% item.name FILTER url_quote %]">
+          <bz:field rdf:about="[% urlbase FILTER xml %]field.cgi?name=[% item.name FILTER url_quote %]">
             <bz:name>[% item.name FILTER html %]</bz:name>
             <bz:description>[% (field_descs.${item.name} OR item.description) FILTER html %]</bz:description>
+            [%-# These values are meaningful for custom fields only. %]
+            [% IF item.custom %]
+              <bz:type>[% item.type FILTER html %]</bz:type>
+              <bz:type_desc>[% field_types.${item.type} FILTER html %]</bz:type_desc>
+              <bz:enter_bug>[% item.enter_bug FILTER html %]</bz:enter_bug>
+            [% END %]
           </bz:field>
         </li>
       [% END %]

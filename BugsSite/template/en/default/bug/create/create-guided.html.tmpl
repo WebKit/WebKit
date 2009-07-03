@@ -1,4 +1,3 @@
-[%# 1.0@mozilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -68,40 +67,6 @@ function PutDescription() {
 }
 </script>
 
-[%# Browser sniff to try and reduce the incidence of Netscape 6/7 bugs %]
-
-[% IF cgi.user_agent('Netscape(\d)') %]
-  [% matches = cgi.user_agent().match('Netscape(\d)') %]
-  <div style="background-color: lightgrey;
-              border: 1px solid black;
-              padding: 2px">
-    <font color="#990000">
-      <b>
-        You are using Netscape [% matches.0 %].
-        Report [% terms.bugs %] with this browser to the
-        <a href="http://home.netscape.com/browsers/[% matches.0 %]/feedback/index.html">
-         Netscape [% matches.0 %] Feedback Center.</a>
-      </b>
-    </font>
-    This form is only for reporting [% terms.bugs %] in the Mozilla web browser
-    and other products from mozilla.org. To report [% terms.abug %] you find 
-    in Netscape [% matches.0 %] with this form, you must reproduce it first in 
-    a recent build of
-    <a href="http://ftp.mozilla.org/pub/mozilla.org/mozilla/nightly/latest/">Mozilla</a>,
-    <a href="http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-trunk/">Firefox</a>,
-<a href="http://ftp.mozilla.org/pub/mozilla.org/thunderbird/nightly/latest-trunk/">Thunderbird</a> or
-    <a href="http://ftp.mozilla.org/pub/mozilla.org/camino/nightly/latest/">Camino</a>
-    to make sure the problem hasn't been fixed already.
-  </div>
-[% END %]
-
-[% IF cgi.user_agent('Gecko/') %]
-  [% matches = cgi.user_agent().match('Gecko/(\d+)') %]
-  
-[% END %]
-
-<!-- @@@ Need UA checking here -->
-
 <a name="step1"></a>
 <h3>Step 1 of 3 - has your [% terms.bug %] already been reported?</h3>
 
@@ -122,13 +87,13 @@ function PutDescription() {
 [% END %]
 
 <p>
-    <a href="duplicates.cgi?[% productstring %]&format=simple" target="somebugs">All-time Top 100</a> (loaded initially) |
-    <a href="duplicates.cgi?[% productstring %]&format=simple&sortby=delta&reverse=1&maxrows=100&changedsince=14" target="somebugs">Hot in the last two weeks</a>  
+    <a href="duplicates.cgi?[% productstring %]&amp;format=simple" target="somebugs">All-time Top 100</a> (loaded initially) |
+    <a href="duplicates.cgi?[% productstring %]&amp;format=simple&amp;sortby=delta&amp;reverse=1&amp;maxrows=100&amp;changedsince=14" target="somebugs">Hot in the last two weeks</a>  
 </p>
 
 <iframe name="somebugs" id="somebugs"
   style="border: 2px black solid"
-  src="duplicates.cgi?[% productstring %]&format=simple">
+  src="duplicates.cgi?[% productstring %]&amp;format=simple">
 </iframe>
 
 <p>
@@ -210,6 +175,11 @@ function PutDescription() {
           <td valign="top">
             <select name="component" id="component"
                     size="5" onchange="PutDescription()">
+              [% IF NOT default.component_ %]
+                [%# Various b.m.o. products have a "General" component,
+                    which is a useful default. %]
+                [% default.component_ = "General" %]
+              [% END %]
               [% FOREACH c = product.components %]
                 <option value="[% c.name FILTER html %]"
                   [% " selected=\"selected\"" IF c.name == default.component_ %]>
@@ -256,9 +226,8 @@ function PutDescription() {
     </td>
   </tr>
 
-  [% op_sys = [ "Windows 98", "Windows NT", "Windows 2000", "Windows XP",
-                "Mac System 9.x", "MacOS X",
-                "Linux", "All", "other" ] %]
+  [% op_sys = [ "Windows 2000", "Windows XP", "Windows Vista", "Windows 7",
+                "Mac OS X", "Linux", "All", "Other" ] %]
 
   <tr>
     <td align="right" valign="top">
@@ -317,7 +286,7 @@ function PutDescription() {
     </td>
     <td valign="top">
       <input type="text" size="80" name="short_desc" id="short_desc" 
-             maxlength="255">
+             maxlength="255" spellcheck="true">
       <p>
         A sentence which summarises the problem.
         Please be descriptive and use lots of keywords.
@@ -451,11 +420,12 @@ function PutDescription() {
         Add any additional information you feel may be
         relevant to this [% terms.bug %], such as the <b>theme</b> you were
         using (does the [% terms.bug %] still occur
-        with the default theme?), a <b>Talkback crash ID</b>, or special
+        with the default theme?), a 
+        <b><a href="http://kb.mozillazine.org/Quality_Feedback_Agent">Talkback crash ID</a></b>, or special
         information about <b>your computer's configuration</b>. Any information
         longer than a few lines, such as a <b>stack trace</b> or <b>HTML
         testcase</b>, should be added
-        using the "Create a new Attachment" link on the [% terms.bug %], after
+        using the "Add an Attachment" link on the [% terms.bug %], after
         it is filed. If you believe that it's relevant, please also include
         your build configuration, obtained by typing <tt>about:buildconfig</tt>
         into your URL bar.

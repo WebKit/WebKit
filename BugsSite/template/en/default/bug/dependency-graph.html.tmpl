@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -64,42 +63,39 @@
 
 <hr>
 
-<form action="showdependencygraph.cgi">
+<form action="showdependencygraph.cgi" method="GET">
   <table>
     <tr>
+      <th align="left"><label for="id">[% terms.Bug %] numbers</label>:</th>
+      <td><input id="id" name="id" value="[% bug_id %]"></td>
       <td>
-        [% terms.Bug %] numbers:
-        <input name="id" value="[% bug_id %]">
+        <input type="checkbox" id="showsummary" name="showsummary" [% " checked" IF showsummary %]>
+        <label for="showsummary">Show the summaries of all displayed [% terms.bugs %]</label>
       </td>
     </tr>
 
     <tr>
-      <td>
-        <input type="checkbox" name="doall"
-        [% " checked" IF doall %]>
-        Show <b>every</b> [% terms.bug %] in the system with dependencies
+      <th align="left"><label for="display">Display:</label></th>
+      <td colspan="2">
+        <select id="display" name="display">
+          <option value="tree"[% 'selected="selected"' IF (!display || display == "tree") %]>
+            Restrict to [% terms.bugs %] having a direct relationship with entered [% terms.bugs %]</option>
+          <option value="web" [% 'selected="selected"' IF display == "web" %]>
+            Show all [% terms.bugs %] having any relationship with entered [% terms.bugs %]</option>
+          <option value="doall" [% 'selected="selected"' IF display == "doall" %]>
+            Show every [% terms.bug %] in the system with dependencies</option>
+        </select>
       </td>
     </tr>
 
     <tr>
-      <td colspan="3">
-        <input type="checkbox" name="showsummary"
-          [% " checked" IF showsummary %]>
-        Show the summaries of all displayed [% terms.bugs %]
-      </td>
-    </tr>
-
-    <tr>
-      <td colspan="3">
-        <select name="rankdir">
-          <option value="TB"
-            [% " selected" IF rankdir == "TB" %]>
-            Orient top-to-bottom
-          </option>
-          <option value="LR"
-            [% " selected" IF rankdir == "LR" %]>
-            Orient left-to-right
-          </option>
+      <th align="left"><label for="rankdir">Orientation:</label></th>
+      <td colspan="2">
+        <select id="rankdir" name="rankdir">
+          <option value="TB"[% " selected" IF rankdir == "TB" %]>Top to bottom</option>
+          <option value="BT"[% " selected" IF rankdir == "BT" %]>Bottom to top</option>
+          <option value="LR"[% " selected" IF rankdir == "LR" %]>Left to right</option>
+          <option value="RL"[% " selected" IF rankdir == "RL" %]>Right to left</option>
         </select>
       </td>
     </tr>

@@ -21,7 +21,7 @@
 #                 Gavin Shelley  <bugzilla@chimpychompy.org>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -170,7 +170,7 @@ if ($action eq 'search') {
 
     }
 
-    if ($matchtype eq 'exact' && scalar(@{$vars->{'users'}}) == 1) {
+    if ($matchtype && $matchtype eq 'exact' && scalar(@{$vars->{'users'}}) == 1) {
         my $match_user_id = $vars->{'users'}[0]->{'userid'};
         my $match_user = check_user($match_user_id);
         edit_processing($match_user);
@@ -227,15 +227,7 @@ if ($action eq 'search') {
     $otherUserID = $otherUser->id;
 
     # Lock tables during the check+update session.
-    $dbh->bz_lock_tables('profiles WRITE',
-                         'profiles_activity WRITE',
-                         'fielddefs READ',
-                         'tokens WRITE',
-                         'logincookies WRITE',
-                         'groups READ',
-                         'user_group_map WRITE',
-                         'group_group_map READ',
-                         'group_group_map AS ggm READ');
+    $dbh->bz_start_transaction();
  
     $editusers || $user->can_see_user($otherUser)
         || ThrowUserError('auth_failure', {reason => "not_visible",
@@ -282,15 +274,16 @@ if ($action eq 'search') {
     # silently.
     # XXX: checking for existence of each user_group_map entry
     #      would allow to display a friendlier error message on page reloads.
+    userDataToVars($otherUserID);
+    my $permissions = $vars->{'permissions'};
     foreach (@{$user->bless_groups()}) {
         my $id = $$_{'id'};
         my $name = $$_{'name'};
 
         # Change memberships.
-        my $oldgroupid = $cgi->param("oldgroup_$id") || '0';
-        my $groupid    = $cgi->param("group_$id")    || '0';
-        if ($groupid ne $oldgroupid) {
-            if ($groupid eq '0') {
+        my $groupid = $cgi->param("group_$id") || 0;
+        if ($groupid != $permissions->{$id}->{'directmember'}) {
+            if (!$groupid) {
                 $sth_remove_mapping->execute(
                     $otherUserID, $id, 0, GRANT_DIRECT);
                 push(@groupsRemovedFrom, $name);
@@ -304,10 +297,9 @@ if ($action eq 'search') {
         # Only members of the editusers group may change bless grants.
         # Skip silently if this is not the case.
         if ($editusers) {
-            my $oldgroupid = $cgi->param("oldbless_$id") || '0';
-            my $groupid    = $cgi->param("bless_$id")    || '0';
-            if ($groupid ne $oldgroupid) {
-                if ($groupid eq '0') {
+            my $groupid = $cgi->param("bless_$id") || 0;
+            if ($groupid != $permissions->{$id}->{'directbless'}) {
+                if (!$groupid) {
                     $sth_remove_mapping->execute(
                         $otherUserID, $id, 1, GRANT_DIRECT);
                     push(@groupsDeniedRightsToBless, $name);
@@ -335,7 +327,7 @@ if ($action eq 'search') {
     }
     # XXX: should create profiles_activity entries for blesser changes.
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     # XXX: userDataToVars may be off when editing ourselves.
     userDataToVars($otherUserID);
@@ -366,6 +358,9 @@ if ($action eq 'search') {
     $vars->{'otheruser'}      = $otherUser;
 
     # Find other cross references.
+    $vars->{'attachments'} = $dbh->selectrow_array(
+        'SELECT COUNT(*) FROM attachments WHERE submitter_id = ?',
+        undef, $otherUserID);
     $vars->{'assignee_or_qa'} = $dbh->selectrow_array(
         qq{SELECT COUNT(*)
            FROM bugs
@@ -379,6 +374,9 @@ if ($action eq 'search') {
         undef, $otherUserID);
     $vars->{'bugs_activity'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM bugs_activity WHERE who = ?',
+        undef, $otherUserID);
+    $vars->{'component_cc'} = $dbh->selectrow_array(
+        'SELECT COUNT(*) FROM component_cc WHERE user_id = ?',
         undef, $otherUserID);
     $vars->{'email_setting'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM email_setting WHERE user_id = ?',
@@ -410,6 +408,9 @@ if ($action eq 'search') {
     $vars->{'profiles_activity'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM profiles_activity WHERE who = ? AND userid != ?',
         undef, ($otherUserID, $otherUserID));
+    $vars->{'quips'} = $dbh->selectrow_array(
+        'SELECT COUNT(*) FROM quips WHERE userid = ?',
+        undef, $otherUserID);
     $vars->{'series'} = $dbh->selectrow_array(
         'SELECT COUNT(*) FROM series WHERE creator = ?',
         undef, $otherUserID);
@@ -451,33 +452,7 @@ if ($action eq 'search') {
     # XXX: if there was some change on these tables after the deletion
     #      confirmation checks, we may do something here we haven't warned
     #      about.
-    $dbh->bz_lock_tables('bugs WRITE',
-                         'bugs_activity WRITE',
-                         'attachments READ',
-                         'fielddefs READ',
-                         'products READ',
-                         'components READ',
-                         'logincookies WRITE',
-                         'profiles WRITE',
-                         'profiles_activity WRITE',
-                         'email_setting WRITE',
-                         'profile_setting WRITE',
-                         'bug_group_map READ',
-                         'user_group_map WRITE',
-                         'flags WRITE',
-                         'flagtypes READ',
-                         'cc WRITE',
-                         'namedqueries WRITE',
-                         'namedqueries_link_in_footer WRITE',
-                         'namedquery_group_map WRITE',
-                         'tokens WRITE',
-                         'votes WRITE',
-                         'watch WRITE',
-                         'series WRITE',
-                         'series_data WRITE',
-                         'whine_schedules WRITE',
-                         'whine_queries WRITE',
-                         'whine_events WRITE');
+    $dbh->bz_start_transaction();
 
     Bugzilla->params->{'allowuserdeletion'}
         || ThrowUserError('users_deletion_disabled');
@@ -518,14 +493,14 @@ if ($action eq 'search') {
 
     foreach (@$buglist) {
         my ($bug_id, $attach_id) = @$_;
-        my @old_summaries = Bugzilla::Flag::snapshot($bug_id, $attach_id);
+        my @old_summaries = Bugzilla::Flag->snapshot($bug_id, $attach_id);
         if ($attach_id) {
             $sth_flagupdate_attachment->execute($bug_id, $attach_id, $otherUserID);
         }
         else {
             $sth_flagupdate_bug->execute($bug_id, $otherUserID);
         }
-        my @new_summaries = Bugzilla::Flag::snapshot($bug_id, $attach_id);
+        my @new_summaries = Bugzilla::Flag->snapshot($bug_id, $attach_id);
         # Let update_activity do all the dirty work, including setting
         # the bug timestamp.
         Bugzilla::Flag::update_activity($bug_id, $attach_id, $timestamp,
@@ -548,6 +523,7 @@ if ($action eq 'search') {
              $otherUserID);
     $dbh->do('DELETE FROM profiles_activity WHERE userid = ? OR who = ?', undef,
              ($otherUserID, $otherUserID));
+    $dbh->do('UPDATE quips SET userid = NULL where userid = ?', undef, $otherUserID);
     $dbh->do('DELETE FROM tokens WHERE userid = ?', undef, $otherUserID);
     $dbh->do('DELETE FROM user_group_map WHERE user_id = ?', undef,
              $otherUserID);
@@ -654,7 +630,7 @@ if ($action eq 'search') {
     # Finally, remove the user account itself.
     $dbh->do('DELETE FROM profiles WHERE userid = ?', undef, $otherUserID);
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
     delete_token($token);
 
     $vars->{'message'} = 'account_deleted';

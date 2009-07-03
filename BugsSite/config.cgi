@@ -28,13 +28,13 @@
 # Make it harder for us to do dangerous things in Perl.
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Keyword;
-use Bugzilla::Bug;
+use Bugzilla::Status;
 use Bugzilla::Field;
 
 my $user = Bugzilla->login(LOGIN_OPTIONAL);
@@ -56,7 +56,8 @@ $vars->{'keyword'}    = [map($_->name, Bugzilla::Keyword->get_all)];
 $vars->{'resolution'} = get_legal_field_values('resolution');
 $vars->{'status'}    = get_legal_field_values('bug_status');
 $vars->{'custom_fields'} =
-  [Bugzilla->get_fields({custom => 1, obsolete => 0, type => FIELD_TYPE_SINGLE_SELECT})];
+  [ grep {$_->type == FIELD_TYPE_SINGLE_SELECT || $_->type == FIELD_TYPE_MULTI_SELECT}
+         Bugzilla->active_custom_fields ];
 
 # Include a list of product objects.
 if ($cgi->param('product')) {
@@ -86,7 +87,12 @@ $vars->{'open_status'} = \@open_status;
 $vars->{'closed_status'} = \@closed_status;
 
 # Generate a list of fields that can be queried.
-$vars->{'field'} = [Bugzilla->dbh->bz_get_field_defs()];
+my @fields = @{Bugzilla::Field->match({obsolete => 0})};
+# Exclude fields the user cannot query.
+if (!Bugzilla->user->in_group(Bugzilla->params->{'timetrackinggroup'})) {
+    @fields = grep { $_->name !~ /^(estimated_time|remaining_time|work_time|percentage_complete|deadline)$/ } @fields;
+}
+$vars->{'field'} = \@fields;
 
 display_data($vars);
 

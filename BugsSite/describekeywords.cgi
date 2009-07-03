@@ -22,7 +22,7 @@
 # Contributor(s): Gervase Markham <gerv@gerv.net>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Error;

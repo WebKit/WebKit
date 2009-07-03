@@ -40,12 +40,9 @@ sub get_notifications {
     if (!-e $local_file || (time() - (stat($local_file))[9] > TIME_INTERVAL)) {
         # Are we sure we didn't try to refresh this file already
         # but we failed because we cannot modify its timestamp?
-        my $can_alter = 1;
-        if (-e $local_file) {
-            # Try to alter its last modification time.
-            $can_alter = utime(undef, undef, $local_file);
-        }
+        my $can_alter = (-e $local_file) ? utime(undef, undef, $local_file) : 1;
         if ($can_alter) {
+            unlink $local_file; # Make sure the old copy is away.
             my $error = _synchronize_data();
             # If an error is returned, leave now.
             return $error if $error;

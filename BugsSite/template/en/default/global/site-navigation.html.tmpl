@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -31,29 +30,30 @@
 [% cgi = Bugzilla.cgi %]
 
 [% IF NOT (cgi.user_agent("MSIE [1-6]") OR cgi.user_agent("Mozilla/4")) %]
-  <link rel="Top" href="[% Param('urlbase') %]">
+  <link rel="Top" href="[% urlbase FILTER html %]">
 
   [%# *** Bug List Navigation *** %]
-  [% IF bug && bug_list && bug_list.size > 0 %]
+  [% IF bug_list && bug_list.size > 0 %]
     <link rel="Up" href="buglist.cgi?regetlastlist=1">
 
     <link rel="First" href="show_bug.cgi?id=[% bug_list.first %]">
     <link rel="Last" href="show_bug.cgi?id=[% bug_list.last %]">
 
-    [% current_bug_idx = lsearch(bug_list, bug.bug_id) %]
+    [% IF bug && bug.bug_id %]
+      [% current_bug_idx = lsearch(bug_list, bug.bug_id) %]
+      [% IF current_bug_idx != -1 %]
 
-    [% IF current_bug_idx != -1 %]
+        [% IF current_bug_idx > 0 %]
+          [% prev_bug = current_bug_idx - 1 %]
+          <link rel="Prev" href="show_bug.cgi?id=[% bug_list.$prev_bug %]">
+        [% END %]
 
-      [% IF current_bug_idx > 0 %]
-      [% prev_bug = current_bug_idx - 1 %]
-        <link rel="Prev" href="show_bug.cgi?id=[% bug_list.$prev_bug %]">
+        [% IF current_bug_idx + 1 < bug_list.size %]
+          [% next_bug = current_bug_idx + 1 %]
+          <link rel="Next" href="show_bug.cgi?id=[% bug_list.$next_bug %]">
+        [% END %]
+
       [% END %]
-
-      [% IF current_bug_idx + 1 < bug_list.size %]
-        [% next_bug = current_bug_idx + 1 %]
-        <link rel="Next" href="show_bug.cgi?id=[% bug_list.$next_bug %]">
-      [% END %]
-
     [% END %]
   [% END %]
 

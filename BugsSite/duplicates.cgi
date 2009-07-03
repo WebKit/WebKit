@@ -27,7 +27,7 @@ use strict;
 
 use AnyDBM_File;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -37,19 +37,6 @@ use Bugzilla::Search;
 use Bugzilla::Product;
 
 my $cgi = Bugzilla->cgi;
-
-# Go directly to the XUL version of the duplicates report (duplicates.xul)
-# if the user specified ctype=xul.  Adds params if they exist, and directs
-# the user to a signed copy of the script in duplicates.jar if it exists.
-if (defined $cgi->param('ctype') && $cgi->param('ctype') eq "xul") {
-    my $params = CanonicaliseParams($cgi->query_string(), ["format", "ctype"]);
-    my $url = (-e "duplicates.jar" ? "duplicates.jar!/" : "") . 
-          "duplicates.xul" . ($params ? "?$params" : "") . "\n\n";
-
-    print $cgi->redirect($url);
-    exit;
-}
-
 my $template = Bugzilla->template;
 my $vars = {};
 

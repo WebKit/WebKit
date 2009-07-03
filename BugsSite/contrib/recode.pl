@@ -20,8 +20,7 @@
 # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
 
 use strict;
-# Allow the script to be run from contrib or as contrib/recode.pl
-use lib '..';
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -150,16 +149,9 @@ if ($switch{'guess'}) {
         my $root = ROOT_USER;
         print STDERR <<EOT;
 Using --guess requires that Encode::Detect be installed. To install
-Encode::Detect, first download it from:
+Encode::Detect, run the following command:
 
-  http://search.cpan.org/dist/Encode-Detect/
-
-Then, unpack it into its own directory and run the following commands
-in that directory, as $root:
-
-  ./Build.PL
-  ./Build
-  ./Build install
+  $^X install-module.pl Encode::Detect
 
 EOT
         exit;
@@ -249,7 +241,10 @@ foreach my $table ($dbh->bz_table_list_real) {
 
             while (my @result = $sth->fetchrow_array) {
                 my $data = shift @result;
-                my $digest = md5_base64($data);
+                # Wide characters cause md5_base64() to die.
+                my $digest_data = utf8::is_utf8($data) 
+                                  ? Encode::encode_utf8($data) : $data;
+                my $digest = md5_base64($digest_data);
 
                 my @primary_keys = reverse split(',', $pk);
                 # We copy the array so that we can pop things from it without

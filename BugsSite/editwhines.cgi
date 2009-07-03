@@ -27,7 +27,7 @@
 
 use strict;
 
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -238,28 +238,14 @@ if ($cgi->param('update')) {
                     # get an id for the mailto address
                     if ($can_mail_others && $mailto) {
                         if ($mailto_type == MAILTO_USER) {
-                            # detaint
-                            my $emailregexp = Bugzilla->params->{'emailregexp'};
-                            if ($mailto =~ /($emailregexp)/) {
-                                $mailto_id = login_to_id($1);
-                            }
-                            else {
-                                ThrowUserError("illegal_email_address", 
-                                               { addr => $mailto });
-                            }
+                            # The user login has already been validated.
+                            $mailto_id = login_to_id($mailto);
                         }
                         elsif ($mailto_type == MAILTO_GROUP) {
-                            # detaint the group parameter
-                            if ($mailto =~ /^([0-9a-z_\-\.]+)$/i) {
-                                $mailto_id = Bugzilla::Group::ValidateGroupName(
-                                                 $1, ($user)) || 
-                                             ThrowUserError(
-                                                 'invalid_group_name', 
-                                                 { name => $1 });
-                            } else {
-                                ThrowUserError('invalid_group_name',
-                                               { name => $mailto });
-                            }
+                            # The group name is used in a placeholder.
+                            trick_taint($mailto);
+                            $mailto_id = Bugzilla::Group::ValidateGroupName($mailto, ($user))
+                                           || ThrowUserError('invalid_group_name', { name => $mailto });
                         }
                         else {
                             # bad value, so it will just mail to the whine

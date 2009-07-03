@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -40,7 +39,7 @@
 
 [% IF author.login == recipient.login %]
   To edit your whine schedule, visit the following URL:
-  [%+ Param('urlbase') %]editwhines.cgi
+  [%+ urlbase %]editwhines.cgi
 [% ELSE %]
   This search was scheduled by [% author.login %].
 [% END %]
@@ -53,12 +52,12 @@
 
  [% FOREACH bug=query.bugs %]
   [% terms.Bug +%] [%+ bug.bug_id %]:
-  [%+ Param('urlbase') %]show_bug.cgi?id=[% bug.bug_id +%]
+  [%+ urlbase %]show_bug.cgi?id=[% bug.bug_id +%]
   Priority: [%+ bug.priority -%]
   Severity: [%+ bug.bug_severity -%]
   Platform: [%+ bug.rep_platform %]
   Assignee: [%+ bug.$assignee_login_string %]
-    Status: [%+ status_descs.${bug.bug_status} %]
+    Status: [%+ get_status(bug.bug_status) %]
             [%- IF bug.resolution -%] Resolution: [% get_resolution(bug.resolution) -%]
                                 [%- END %]
    Summary: [% bug.short_desc %]

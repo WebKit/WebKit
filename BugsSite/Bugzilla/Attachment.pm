@@ -88,9 +88,10 @@ sub _retrieve {
         'attachments.bug_id AS bug_id',
         'attachments.description AS description',
         'attachments.mimetype AS contenttype',
-        'attachments.submitter_id AS _attacher_id',
+        'attachments.submitter_id AS attacher_id',
         Bugzilla->dbh->sql_date_format('attachments.creation_ts',
                                        '%Y.%m.%d %H:%i') . " AS attached",
+        'attachments.modification_time',
         'attachments.filename AS filename',
         'attachments.ispatch AS ispatch',
         'attachments.isurl AS isurl',
@@ -98,13 +99,14 @@ sub _retrieve {
         'attachments.isprivate AS isprivate'
     );
     my $columns = join(", ", @columns);
-
-    my $records = Bugzilla->dbh->selectall_arrayref("SELECT $columns
-                                                     FROM attachments
-                                                     WHERE attach_id IN (" .
-                                                     join(",", @$ids) . ")
-                                                     ORDER BY attach_id",
-                                                    { Slice => {} });
+    my $dbh = Bugzilla->dbh;
+    my $records = $dbh->selectall_arrayref(
+                      "SELECT $columns
+                         FROM attachments
+                        WHERE " 
+                       . Bugzilla->dbh->sql_in('attach_id', $ids) 
+                 . " ORDER BY attach_id",
+                       { Slice => {} });
     return $records;
 }
 
@@ -187,7 +189,7 @@ the user who attached the attachment
 sub attacher {
     my $self = shift;
     return $self->{attacher} if exists $self->{attacher};
-    $self->{attacher} = new Bugzilla::User($self->{_attacher_id});
+    $self->{attacher} = new Bugzilla::User($self->{attacher_id});
     return $self->{attacher};
 }
 
@@ -204,6 +206,21 @@ the date and time on which the attacher attached the attachment
 sub attached {
     my $self = shift;
     return $self->{attached};
+}
+
+=over
+
+=item C<modification_time>
+
+the date and time on which the attachment was last modified.
+
+=back
+
+=cut
+
+sub modification_time {
+    my $self = shift;
+    return $self->{modification_time};
 }
 
 =over
@@ -279,6 +296,40 @@ whether or not the attachment is private
 sub isprivate {
     my $self = shift;
     return $self->{isprivate};
+}
+
+=over
+
+=item C<is_viewable>
+
+Returns 1 if the attachment has a content-type viewable in this browser.
+Note that we don't use $cgi->Accept()'s ability to check if a content-type
+matches, because this will return a value even if it's matched by the generic
+*/* which most browsers add to the end of their Accept: headers.
+
+=back
+
+=cut
+
+sub is_viewable {
+    my $self = shift;
+    my $contenttype = $self->contenttype;
+    my $cgi = Bugzilla->cgi;
+
+    # We assume we can view all text and image types.
+    return 1 if ($contenttype =~ /^(text|image)\//);
+
+    # Mozilla can view XUL. Note the trailing slash on the Gecko detection to
+    # avoid sending XUL to Safari.
+    return 1 if (($contenttype =~ /^application\/vnd\.mozilla\./)
+                 && ($cgi->user_agent() =~ /Gecko\//));
+
+    # If it's not one of the above types, we check the Accept: header for any
+    # types mentioned explicitly.
+    my $accept = join(",", $cgi->Accept());
+    return 1 if ($accept =~ /^(.*,)?\Q$contenttype\E(,.*)?$/);
+
+    return 0;
 }
 
 =over
@@ -375,7 +426,7 @@ sub flags {
     my $self = shift;
     return $self->{flags} if exists $self->{flags};
 
-    $self->{flags} = Bugzilla::Flag::match({ 'attach_id' => $self->id });
+    $self->{flags} = Bugzilla::Flag->match({ 'attach_id' => $self->id });
     return $self->{flags};
 }
 
@@ -450,7 +501,7 @@ sub _validate_data {
         my $imgdata = $img->ImageToBlob();
         $data = $imgdata;
         $cgi->param('contenttype', 'image/png');
-        $$hr_vars->{'convertedbmp'} = 1;
+        $hr_vars->{'convertedbmp'} = 1;
     }
 
     # Make sure the attachment does not exceed the maximum permitted size
@@ -625,19 +676,12 @@ Returns:     1 on success. Else an error is thrown.
 
 sub validate_can_edit {
     my ($attachment, $product_id) = @_;
-    my $dbh = Bugzilla->dbh;
     my $user = Bugzilla->user;
 
-    # Bug 97729 - the submitter can edit their attachments.
-    return if ($attachment->attacher->id == $user->id);
-
-    # Only users in the insider group can view private attachments.
-    if ($attachment->isprivate && !$user->is_insider) {
-        ThrowUserError('illegal_attachment_edit', {attach_id => $attachment->id});
-    }
-
-    # Users with editbugs privs can edit all attachments.
-    return if $user->in_group('editbugs', $product_id);
+    # The submitter can edit their attachments.
+    return 1 if ($attachment->attacher->id == $user->id
+                 || ((!$attachment->isprivate || $user->is_insider)
+                      && $user->in_group('editbugs', $product_id)));
 
     # If we come here, then this attachment cannot be seen by the user.
     ThrowUserError('illegal_attachment_edit', { attach_id => $attachment->id });
@@ -714,8 +758,6 @@ Params:     C<$bug> - Bugzilla::Bug object - the bug for which to insert
 
 Returns:    the ID of the new attachment.
 
-=back
-
 =cut
 
 sub insert_attachment_for_bug {
@@ -728,8 +770,8 @@ sub insert_attachment_for_bug {
     my $filename;
     my $contenttype;
     my $isurl;
-    $class->validate_is_patch($throw_error) || return 0;
-    $class->validate_description($throw_error) || return 0;
+    $class->validate_is_patch($throw_error) || return;
+    $class->validate_description($throw_error) || return;
 
     if (Bugzilla->params->{'allow_attach_url'}
         && ($attachurl =~ /^(http|https|ftp):\/\/\S+/)
@@ -743,11 +785,11 @@ sub insert_attachment_for_bug {
         $cgi->delete('bigfile');
     }
     else {
-        $filename = _validate_filename($throw_error) || return 0;
+        $filename = _validate_filename($throw_error) || return;
         # need to validate content type before data as
         # we now check the content type for image/bmp in _validate_data()
         unless ($cgi->param('ispatch')) {
-            $class->validate_content_type($throw_error) || return 0;
+            $class->validate_content_type($throw_error) || return;
 
             # Set the ispatch flag to 1 if we're set to autodetect
             # and the content type is text/x-diff or text/x-patch
@@ -761,7 +803,7 @@ sub insert_attachment_for_bug {
         $data = _validate_data($throw_error, $hr_vars);
         # If the attachment is stored locally, $data eq ''.
         # If an error is thrown, $data eq '0'.
-        ($data ne '0') || return 0;
+        ($data ne '0') || return;
         $contenttype = $cgi->param('contenttype');
 
         # These are inserted using placeholders so no need to panic
@@ -783,12 +825,12 @@ sub insert_attachment_for_bug {
         '^requestee(_type)?-(\d+)$' => { 'type' => 'multi' },
     }, MATCH_SKIP_CONFIRM);
 
-    $$hr_vars->{'match_field'} = 'requestee';
+    $hr_vars->{'match_field'} = 'requestee';
     if ($match_status == USER_MATCH_FAILED) {
-        $$hr_vars->{'message'} = 'user_match_failed';
+        $hr_vars->{'message'} = 'user_match_failed';
     }
     elsif ($match_status == USER_MATCH_MULTIPLE) {
-        $$hr_vars->{'message'} = 'user_match_multiple';
+        $hr_vars->{'message'} = 'user_match_multiple';
     }
 
     # Escape characters in strings that will be used in SQL statements.
@@ -799,10 +841,10 @@ sub insert_attachment_for_bug {
     # Insert the attachment into the database.
     my $sth = $dbh->do(
         "INSERT INTO attachments
-            (bug_id, creation_ts, filename, description,
+            (bug_id, creation_ts, modification_time, filename, description,
              mimetype, ispatch, isurl, isprivate, submitter_id)
-         VALUES (?,?,?,?,?,?,?,?,?)", undef, ($bug->bug_id, $timestamp, $filename,
-              $description, $contenttype, $cgi->param('ispatch'),
+         VALUES (?,?,?,?,?,?,?,?,?,?)", undef, ($bug->bug_id, $timestamp, $timestamp,
+              $filename, $description, $contenttype, $cgi->param('ispatch'),
               $isurl, $isprivate, $user->id));
     # Retrieve the ID of the newly created attachment record.
     my $attachid = $dbh->bz_last_key('attachments', 'attach_id');
@@ -815,7 +857,7 @@ sub insert_attachment_for_bug {
     $sth->bind_param(1, $data, $dbh->BLOB_TYPE);
     $sth->execute();
 
-    # If the file is to be stored locally, stream the file from the webserver
+    # If the file is to be stored locally, stream the file from the web server
     # to the local file without reading it into a local variable.
     if ($cgi->param('bigfile')) {
         my $attachdir = bz_locations()->{'attachdir'};
@@ -835,7 +877,7 @@ sub insert_attachment_for_bug {
                 close AH;
                 close $fh;
                 unlink "$attachdir/$hash/attachment.$attachid";
-                $throw_error ? ThrowUserError("local_file_too_large") : return 0;
+                $throw_error ? ThrowUserError("local_file_too_large") : return;
             }
         }
         close AH;
@@ -848,10 +890,11 @@ sub insert_attachment_for_bug {
     foreach my $obsolete_attachment (@obsolete_attachments) {
         # If the obsolete attachment has request flags, cancel them.
         # This call must be done before updating the 'attachments' table.
-        Bugzilla::Flag::CancelRequests($bug, $obsolete_attachment, $timestamp);
+        Bugzilla::Flag->CancelRequests($bug, $obsolete_attachment, $timestamp);
 
-        $dbh->do('UPDATE attachments SET isobsolete = 1 WHERE attach_id = ?',
-                 undef, $obsolete_attachment->id);
+        $dbh->do('UPDATE attachments SET isobsolete = 1, modification_time = ?
+                  WHERE attach_id = ?',
+                 undef, ($timestamp, $obsolete_attachment->id));
 
         $dbh->do('INSERT INTO bugs_activity (bug_id, attach_id, who, bug_when,
                                              fieldid, removed, added)
@@ -874,17 +917,43 @@ sub insert_attachment_for_bug {
     my $error_mode_cache = Bugzilla->error_mode;
     Bugzilla->error_mode(ERROR_MODE_DIE);
     eval {
-        Bugzilla::Flag::validate($cgi, $bug->bug_id, -1, SKIP_REQUESTEE_ON_ERROR);
-        Bugzilla::Flag::process($bug, $attachment, $timestamp, $cgi);
+        Bugzilla::Flag::validate($bug->bug_id, -1, SKIP_REQUESTEE_ON_ERROR);
+        Bugzilla::Flag->process($bug, $attachment, $timestamp, $hr_vars);
     };
     Bugzilla->error_mode($error_mode_cache);
     if ($@) {
-        $$hr_vars->{'message'} = 'flag_creation_failed';
-        $$hr_vars->{'flag_creation_error'} = $@;
+        $hr_vars->{'message'} = 'flag_creation_failed';
+        $hr_vars->{'flag_creation_error'} = $@;
     }
 
-    # Return the ID of the new attachment.
-    return $attachid;
+    # Return the new attachment object.
+    return $attachment;
+}
+
+=pod
+
+=item C<remove_from_db()>
+
+Description: removes an attachment from the DB.
+
+Params:     none
+
+Returns:    nothing
+
+=back
+
+=cut
+
+sub remove_from_db {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_start_transaction();
+    $dbh->do('DELETE FROM flags WHERE attach_id = ?', undef, $self->id);
+    $dbh->do('DELETE FROM attach_data WHERE id = ?', undef, $self->id);
+    $dbh->do('UPDATE attachments SET mimetype = ?, ispatch = ?, isurl = ?, isobsolete = ?
+              WHERE attach_id = ?', undef, ('text/plain', 0, 0, 1, $self->id));
+    $dbh->bz_commit_transaction();
 }
 
 1;

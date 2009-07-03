@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -18,6 +17,7 @@
   #
   # Contributor(s): Dave Miller <justdave@bugzilla.org>
   #                 Frédéric Buclin <LpSolit@gmail.com>
+  #                 Marc Schumann <wurblzap@gmail.com>
   #%]
 [%
    title = "User Authentication"
@@ -67,12 +67,22 @@
                             ${terms.Bugzilla}'s built-in authentication. This is the most common
                             choice.
                           </dd>
+                          <dt>RADIUS</dt>
+                          <dd>
+                            RADIUS authentication using a RADIUS server.
+                            This method is experimental; please see the
+                            $terms.Bugzilla documentation for more information.
+                            Using this method requires
+                            <a href=\"?section=radius\">additional
+                            parameters</a> to be set.
+                          </dd>
                           <dt>LDAP</dt>
                           <dd>
                             LDAP authentication using an LDAP server.
                             Please see the $terms.Bugzilla documentation
                             for more information. Using this method requires
-                            additional parameters to be set above.
+                            <a href=\"?section=ldap\">additional
+                            parameters</a> to be set.
                           </dd>
                         </dl>",
 

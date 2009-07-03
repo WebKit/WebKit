@@ -26,7 +26,7 @@ use strict;
 use Bugzilla::Error;
 use Bugzilla::Constants;
 use Bugzilla::Keyword;
-use Bugzilla::Bug;
+use Bugzilla::Status;
 use Bugzilla::Field;
 use Bugzilla::Util;
 
@@ -78,6 +78,12 @@ use constant MAPPINGS => {
                 "sw" => "status_whiteboard",
                 "keywords" => "keywords",    # no change
                 "kw" => "keywords",
+                "group" => "bug_group",
+                "flag" => "flagtypes.name",
+                "requestee" => "requestees.login_name",
+                "req" => "requestees.login_name",
+                "setter" => "setters.login_name",
+                "set" => "setters.login_name",
                 # Attachments
                 "attachment" => "attachments.description",
                 "attachmentdesc" => "attachments.description",
@@ -90,6 +96,7 @@ use constant MAPPINGS => {
 
 # We might want to put this into localconfig or somewhere
 use constant PLATFORMS => ('pc', 'sun', 'macintosh', 'mac');
+use constant OPSYSTEMS => ('windows', 'win', 'linux');
 use constant PRODUCT_EXCEPTIONS => (
     'row',   # [Browser]
              #   ^^^
@@ -269,6 +276,12 @@ sub quicksearch {
                         # votes:xx ("at least xx votes")
                         addChart('votes', 'greaterthan', $1 - 1, $negate);
                     }
+                    elsif ($or_operand =~ /^(?:flag:)?([^\?]+\?)([^\?]*)$/) {
+                        # Flag and requestee shortcut
+                        addChart('flagtypes.name', 'substring', $1, $negate);
+                        $chart++; $and = $or = 0; # Next chart for boolean AND
+                        addChart('requestees.login_name', 'substring', $2, $negate);
+                    }
                     elsif ($or_operand =~ /^([^:]+):([^:]+)$/) {
                         # generic field1,field2,field3:value1,value2 notation
                         my @fields = split(/,/, $1);
@@ -291,9 +304,12 @@ sub quicksearch {
                         # Having ruled out the special cases, we may now split
                         # by comma, which is another legal boolean OR indicator.
                         foreach my $word (split(/,/, $or_operand)) {
-                            # Platform
-                            if (grep({lc($word) eq $_} PLATFORMS)) {
+                            # Platform and operating system
+                            if (grep({lc($word) eq $_} PLATFORMS)
+                                || grep({lc($word) eq $_} OPSYSTEMS)) {
                                 addChart('rep_platform', 'substring',
+                                         $word, $negate);
+                                addChart('op_sys', 'substring',
                                          $word, $negate);
                             }
                             # Priority
@@ -334,7 +350,7 @@ sub quicksearch {
                                     addChart('component', 'substring',
                                              $word, $negate);
                                 }
-                                if (grep({lc($word) eq $_}
+                                if (grep({lc($word) eq lc($_)}
                                          map($_->name, Bugzilla::Keyword->get_all))) {
                                     addChart('keywords', 'substring',
                                              $word, $negate);
@@ -430,10 +446,14 @@ sub splitString {
     # Now split on unescaped whitespace
     @parts = split(/\s+/, $string);
     foreach (@parts) {
+        # Protect plus signs from becoming a blank.
+        # If "+" appears as the first character, leave it alone
+        # as it has a special meaning. Strings which start with
+        # "+" must be quoted.
+        s/(?<!^)\+/%2B/g;
         # Remove quotes
         s/"//g;
     }
-                        
     return @parts;
 }
 

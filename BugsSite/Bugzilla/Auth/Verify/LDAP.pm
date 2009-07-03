@@ -37,6 +37,8 @@ use fields qw(
 
 use Bugzilla::Constants;
 use Bugzilla::Error;
+use Bugzilla::User;
+use Bugzilla::Util;
 
 use Net::LDAP;
 
@@ -89,13 +91,30 @@ sub check_credentials {
                      details => {attr => $mail_attr} };
         }
 
-        $params->{bz_username} = $user_entry->get_value($mail_attr);
+        my @emails = $user_entry->get_value($mail_attr);
+
+        # Default to the first email address returned.
+        $params->{bz_username} = $emails[0];
+
+        if (@emails > 1) {
+            # Cycle through the adresses and check if they're Bugzilla logins.
+            # Use the first one that returns a valid id. 
+            foreach my $email (@emails) {
+                if ( login_to_id($email) ) {
+                    $params->{bz_username} = $email;
+                    last;
+                }
+            }
+        }
+
     } else {
         $params->{bz_username} = $username;
     }
 
     $params->{realname}  ||= $user_entry->get_value("displayName");
     $params->{realname}  ||= $user_entry->get_value("cn");
+
+    $params->{extern_id} = $username;
 
     return $params;
 }
@@ -134,11 +153,15 @@ sub ldap {
     my ($self) = @_;
     return $self->{ldap} if $self->{ldap};
 
-    my $server = Bugzilla->params->{"LDAPserver"};
-    ThrowCodeError("ldap_server_not_defined") unless $server;
+    my @servers = split(/[\s,]+/, Bugzilla->params->{"LDAPserver"});
+    ThrowCodeError("ldap_server_not_defined") unless @servers;
 
-    $self->{ldap} = new Net::LDAP($server)
-        || ThrowCodeError("ldap_connect_failed", { server => $server });
+    foreach (@servers) {
+        $self->{ldap} = new Net::LDAP(trim($_));
+        last if $self->{ldap};
+    }
+    ThrowCodeError("ldap_connect_failed", { server => join(", ", @servers) }) 
+        unless $self->{ldap};
 
     # try to start TLS if needed
     if (Bugzilla->params->{"LDAPstarttls"}) {

@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -55,45 +54,47 @@ cycle of [% terms.abug %].
     <td>
       <dl>
         <dt>
-          <b>[% status_descs.UNCONFIRMED FILTER html %]</b>
+          <b>[% get_status("UNCONFIRMED") FILTER html %]</b>
         </dt>
         <dd>
           This [% terms.bug %] has recently been added to the database. 
           Nobody has validated that this [% terms.bug %] is true. Users
           who have the "canconfirm" permission set may confirm
-          this [% terms.bug %], changing its state to [% status_descs.NEW FILTER html %]. Or, it may be
-          directly resolved and marked [% status_descs.RESOLVED FILTER html %].
+          this [% terms.bug %], changing its state to [% get_status("NEW") FILTER html %]. Or, it may be
+          directly resolved and marked [% get_status("RESOLVED") FILTER html %].
         </dd>
 
         <dt>
-          <b>[% status_descs.NEW FILTER html %]</b>
+          <b>[% get_status("NEW") FILTER html %]</b>
         </dt>
         <dd>
           This [% terms.bug %] has recently been added to the assignee's
           list of [% terms.bugs %] and must be processed. [% terms.Bugs %] in
-          this state may be accepted, and become <b>[% status_descs.ASSIGNED FILTER html %]</b>, passed
-          on to someone else, and remain <b>[% status_descs.NEW FILTER html %]</b>, or resolved and marked
-          <b>[% status_descs.RESOLVED FILTER html %]</b>.
+          this state may be accepted, and become <b>[% get_status("ASSIGNED") FILTER html %]</b>, passed
+          on to someone else, and remain <b>[% get_status("NEW") FILTER html %]</b>, or resolved and marked
+          <b>[% get_status("RESOLVED") FILTER html %]</b>.
         </dd>
 
         <dt>
-          <b>[% status_descs.ASSIGNED FILTER html %]</b>
+          <b>[% get_status("ASSIGNED") FILTER html %]</b>
         </dt>
         <dd>
           This [% terms.bug %] is not yet resolved, but is assigned to the 
           proper person. From here [% terms.bugs %] can be given to another 
-          person and become <b>[% status_descs.NEW FILTER html %]</b>, or resolved and become <b>[% status_descs.RESOLVED FILTER html  %]</b>.
+          person and become <b>[% get_status("NEW") FILTER html %]</b>, or
+          resolved and become <b>[% get_status("RESOLVED") FILTER html %]</b>.
         </dd>
 
         <dt>
-          <b>[% status_descs.REOPENED FILTER html %]</b>
+          <b>[% get_status("REOPENED") FILTER html %]</b>
         </dt>
         <dd>
           This [% terms.bug %] was once resolved, but the resolution was 
-          deemed incorrect. For example, a <b>[% status_descs.WORKSFORME FILTER html %]</b> [% terms.bug %] is
-          <b>[% status_descs.REOPENED FILTER html %]</b> when more information shows up and
+          deemed incorrect. For example, a <b>[% get_resolution("WORKSFORME") FILTER html %]</b> [% terms.bug %] is
+          <b>[% get_status("REOPENED") FILTER html %]</b> when more information shows up and
           the [% terms.bug %] is now reproducible. From here [% terms.bugs %] are
-          either marked <b>[% status_descs.ASSIGNED FILTER html %]</b> or <b>[% status_descs.RESOLVED FILTER html %]</b>.
+          either marked <b>[% get_status("ASSIGNED") FILTER html %]</b> or
+          <b>[% get_status("RESOLVED") FILTER html %]</b>.
         </dd>
       </dl>
     </td>
@@ -114,33 +115,34 @@ cycle of [% terms.abug %].
     <td>
       <dl>
         <dt>
-          <b>[% status_descs.RESOLVED FILTER html %]</b>
+          <b>[% get_status("RESOLVED") FILTER html %]</b>
         </dt>
         <dd>
           A resolution has been taken, and it is awaiting verification by
           QA. From here [% terms.bugs %] are either re-opened and become 
-          <b>[% status_descs.REOPENED FILTER html %]</b>, are marked <b>[% status_descs.VERIFIED FILTER html %]</b>, or are closed for
-          good and marked <b>[% status_descs.CLOSED FILTER html %]</b>.
+          <b>[% get_status("REOPENED") FILTER html %]</b>, are marked
+          <b>[% get_status("VERIFIED") FILTER html %]</b>, or are closed for
+          good and marked <b>[% get_status("CLOSED") FILTER html %]</b>.
         </dd>
 
         <dt>
-          <b>[% status_descs.VERIFIED FILTER html %]</b>
+          <b>[% get_status("VERIFIED") FILTER html %]</b>
         </dt>
         <dd>
           QA has looked at the [% terms.bug %] and the resolution and 
           agrees that the appropriate resolution has been taken. [% terms.Bugs %] remain
           in this state until the product they were reported
           against actually ships, at which point they become
-          <b>[% status_descs.CLOSED FILTER html %]</b>.
+          <b>[% get_status("CLOSED") FILTER html %]</b>.
         </dd>
 
         <dt>
-          <b>[% status_descs.CLOSED FILTER html %]</b>
+          <b>[% get_status("CLOSED") FILTER html %]</b>
         </dt>
         <dd>
           The [% terms.bug %] is considered dead, the resolution is correct. 
           Any zombie [% terms.bugs %] who choose to walk the earth again must 
-          do so by becoming <b>[% status_descs.REOPENED FILTER html %]</b>.
+          do so by becoming <b>[% get_status("REOPENED") FILTER html %]</b>.
         </dd>
       </dl>
     </td>
@@ -204,6 +206,18 @@ cycle of [% terms.abug %].
   </tr>
 </table>
 
+<h2><a name="importance">Importance</h2>
+The importance of [% terms.abug %] is described as the combination of
+its <a href="#priority">priority</a> and <a href="#bug_severity">severity</a>,
+as described below.
+
+<h2><a name="priority">Priority</a></h2>
+This field describes the importance and order in which [% terms.abug %]
+should be fixed. This field is utilized by the
+programmers/engineers to prioritize their work to be done. The
+available priorities range from <b>P1</b> (most important) to
+<b>P5</b> (least important).
+
 <h2><a name="bug_severity">Severity</a></h2>
 This field describes the impact of [% terms.abug %]. 
 
@@ -227,6 +241,13 @@ This field describes the impact of [% terms.abug %].
   </tr>
 
   <tr>
+    <th>Normal</th>
+
+    <td>regular issue, some loss of functionality under specific circumstances</td>
+  </tr>
+
+
+  <tr>
     <th>Minor</th>
 
     <td>minor loss of function, or other problem where easy
@@ -245,14 +266,6 @@ This field describes the impact of [% terms.abug %].
 
     <td>Request for enhancement</td>
 </table>
-
-<h2><a name="priority">Priority</a></h2>
-This field describes the importance and order in which [% terms.abug %]
-should be fixed. This field is utilized by the
-programmers/engineers to prioritize their work to be done. The
-available priorities range from <b>P1</b> (most important) to 
-<b>P5</b> (least important). 
-
 
 <h2><a name="rep_platform">Platform</a></h2>
 This is the hardware platform against which the [% terms.bug %] was
@@ -292,12 +305,13 @@ others.
 
 <p>
 This is the person in charge of resolving the [% terms.bug %]. Every time
-this field changes, the status changes to <b>[% status_descs.NEW FILTER html %]</b> to make it
+this field changes, the status changes to <b>[% get_status("NEW") FILTER html %]</b> to make it
 easy to see which new [% terms.bugs %] have appeared on a person's list.</p>
 
 <p>
-The default status for queries is set to [% status_descs.NEW FILTER html %], [% descs.bug_status_descs.ASSIGNED FILTER html %] and 
-[% status_descs.REOPENED FILTER html %]. When searching for [% terms.bugs %] that have been resolved or
+The default status for queries is set to [% get_status("NEW") FILTER html %],
+[%+ get_status("ASSIGNED") FILTER html %] and [% get_status("REOPENED") FILTER html %].
+When searching for [% terms.bugs %] that have been resolved or
 verified, remember to set the status field appropriately. 
 </p>
 

@@ -8,6 +8,7 @@ body {
 a img {
 	border: 0;
 }
+
 table {
 	border-collapse: collapse;
 }
@@ -21,35 +22,38 @@ hr {
 	border-bottom: 0px;
 }
 
-#banner {
-	height: 28px;
-	margin: 10px 0 5px 0;
-	padding: 10px 0 10px 0;
-	background-color: #aaa;
-	color: #fff;
-	-webkit-border-radius: 10px;
-	 -moz-border-radius: 10px;
-}
-
-#banner-name {
-	background-image: none;
-}
-
-#banner-name span {
-	font-size: 20px;
-	text-shadow: #000 1px 1px 5px;
-}
-
-#banner-version {
-	display: none;
-}
-
 #header {
+        padding-top: 5px;
+}
+
+#titles {
+        height: 32px;
+	-webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+	-moz-border-top-left-radius: 10px;
+	-moz-border-top-right-radius: 10px;
+}
+
+#title {
+        text-align: center;
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 20px;
+        text-shadow: #000 1px 1px 5px;
+}
+
+#bug_title {
+        text-align: center;
 	background-color: #ddd;
-	padding: 10px;
-	margin-bottom: 5px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
+        padding: 5px;
+        border: 1px solid #aaa;
+}
+
+#header > .links {
+	-webkit-border-bottom-left-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-botom-left-radius: 10px;
+	-moz-border-botom-right-radius: 10px;
 }
 
 #header h1, #header h2, #header h3 {
@@ -102,12 +106,16 @@ table#bug_details #flags td {
         font-weight: bold;
 }
 
+#attachment_table {
+        width: auto;
+}
+
 #summary_fields input {
   width: 50em;
 }
 
-#comment {
-  width: 60em;
+#comment, #description {
+  width: 98%;
 }
 
 span.bz_comment {
@@ -150,6 +158,15 @@ div.links {
 
 }
 
+.bz_alias_short_desc_container {
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;     
+}
+
 .comment_rule {
         visibility: collapse;
+}
+
+.flag_select {
+        min-width: 40px;
 }

@@ -53,6 +53,8 @@ my $cgi_path = Bugzilla::Constants::bz_locations()->{'cgi_path'};
 # Set up the configuration for the web server
 my $server = Apache2::ServerUtil->server;
 my $conf = <<EOT;
+# Make sure each httpd child receives a different random seed (bug 476622)
+PerlChildInitHandler "sub { srand(); }"
 <Directory "$cgi_path">
     AddHandler perl-script .cgi
     # No need to PerlModule these because they're already defined in mod_perl.pl
@@ -92,6 +94,7 @@ sub handler : method {
     # $0 is broken under mod_perl before 2.0.2, so we have to set it
     # here explicitly or init_page's shutdownhtml code won't work right.
     $0 = $ENV{'SCRIPT_FILENAME'};
+
     Bugzilla::init_page();
     return $class->SUPER::handler(@_);
 }
@@ -104,6 +107,7 @@ use Apache2::Const -compile => qw(OK);
 sub handler {
     my $r = shift;
 
+    Bugzilla::_cleanup();
     # Sometimes mod_perl doesn't properly call DESTROY on all
     # the objects in pnotes()
     foreach my $key (keys %{$r->pnotes}) {

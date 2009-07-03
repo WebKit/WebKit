@@ -1,0 +1,48 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Olav Vitters.
+  #
+  # Contributor(s): Olav Vitters <olav@bkor.dhs.org>
+  #                 David Lawrence <dkl@redhat.com>
+  #%]
+
+[%# INTERFACE:
+  # bugid:    integer. ID of the bug report that this attachment relates to.
+  # attachid: integer. ID of the previous attachment recently created.
+  #%]
+
+[% PROCESS "global/field-descs.none.tmpl" %]
+
+[% PROCESS global/header.html.tmpl
+  title = "Already filed attachment"
+%]
+
+[% USE Bugzilla %]
+
+<table cellpadding="20">
+  <tr>
+    <td bgcolor="#ff0000">
+      <font size="+2">
+        You already used the form to file
+        <a href="[% urlbase FILTER html %]attachment.cgi?id=[% attachid FILTER url_quote %]&action=edit">attachment [% attachid FILTER url_quote %]</a>.
+      </font>
+    </td>
+  </tr>
+</table>
+
+<p>
+  You can either <a href="[% urlbase FILTER html %]attachment.cgi?bugid=[% bugid FILTER url_quote %]&action=enter">
+  create a new attachment</a> or [% "go back to $terms.bug $bugid" FILTER bug_link(bugid) FILTER none %].
+<p>
+
+[% PROCESS global/footer.html.tmpl %]

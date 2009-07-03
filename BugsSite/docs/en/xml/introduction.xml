@@ -1,0 +1,149 @@
+<chapter id="introduction">
+  <title>Introduction</title>
+
+  <section id="whatis">
+    <title>What is Bugzilla?</title>
+
+    <para>
+    Bugzilla is a bug- or issue-tracking system. Bug-tracking
+    systems allow individual or groups of developers effectively to keep track
+    of outstanding problems with their product. 
+    Bugzilla was originally
+    written by Terry Weissman in a programming language called TCL, to
+    replace a rudimentary bug-tracking database used internally by Netscape
+    Communications. Terry later ported Bugzilla to Perl from TCL, and in Perl
+    it remains to this day. Most commercial defect-tracking software vendors
+    at the time charged enormous licensing fees, and Bugzilla quickly became
+    a favorite of the open-source crowd (with its genesis in the open-source
+    browser project, Mozilla). It is now the de-facto standard
+    defect-tracking system against which all others are measured.
+    </para>
+
+    <para>Bugzilla boasts many advanced features. These include: 
+    <itemizedlist>
+      <listitem>
+        <para>Powerful searching</para>
+      </listitem>
+
+      <listitem>
+        <para>User-configurable email notifications of bug changes</para>
+      </listitem>
+
+      <listitem>
+        <para>Full change history</para>
+      </listitem>
+
+      <listitem>
+        <para>Inter-bug dependency tracking and graphing</para>
+      </listitem>
+
+      <listitem>
+        <para>Excellent attachment management</para>
+      </listitem>
+
+      <listitem>
+        <para>Integrated, product-based, granular security schema</para>
+      </listitem>
+
+      <listitem>
+        <para>Fully security-audited, and runs under Perl's taint mode</para>
+      </listitem>
+
+      <listitem>
+        <para>A robust, stable RDBMS back-end</para>
+      </listitem>
+
+      <listitem>
+        <para>Web, XML, email and console interfaces</para>
+      </listitem>
+
+      <listitem>
+        <para>Completely customisable and/or localisable web user
+        interface</para>
+      </listitem>
+
+      <listitem>
+        <para>Extensive configurability</para>
+      </listitem>
+
+      <listitem>
+        <para>Smooth upgrade pathway between versions</para>
+      </listitem>
+    </itemizedlist>
+    </para>
+  </section>
+
+  <section id="why">
+    <title>Why Should We Use Bugzilla?</title>
+
+    <para>For many years, defect-tracking software has remained principally
+    the domain of large software development houses. Even then, most shops
+    never bothered with bug-tracking software, and instead simply relied on
+    shared lists and email to monitor the status of defects. This procedure
+    is error-prone and tends to cause those bugs judged least significant by
+    developers to be dropped or ignored.</para>
+
+    <para>These days, many companies are finding that integrated
+    defect-tracking systems reduce downtime, increase productivity, and raise
+    customer satisfaction with their systems. Along with full disclosure, an
+    open bug-tracker allows manufacturers to keep in touch with their clients
+    and resellers, to communicate about problems effectively throughout the
+    data management chain. Many corporations have also discovered that
+    defect-tracking helps reduce costs by providing IT support
+    accountability, telephone support knowledge bases, and a common,
+    well-understood system for accounting for unusual system or software
+    issues.</para>
+
+    <para>But why should 
+    <emphasis>you</emphasis>
+
+    use Bugzilla?</para>
+
+    <para>Bugzilla is very adaptable to various situations. Known uses
+    currently include IT support queues, Systems Administration deployment
+    management, chip design and development problem tracking (both
+    pre-and-post fabrication), and software and hardware bug tracking for
+    luminaries such as Redhat, NASA, Linux-Mandrake, and VA Systems.
+    Combined with systems such as 
+    <ulink url="http://www.cvshome.org">CVS</ulink>, 
+    <ulink url="http://www.mozilla.org/bonsai.html">Bonsai</ulink>, or 
+    <ulink url="http://www.perforce.com">Perforce SCM</ulink>, Bugzilla
+    provides a powerful, easy-to-use solution to configuration management and
+    replication problems.</para>
+
+    <para>Bugzilla can dramatically increase the productivity and
+    accountability of individual employees by providing a documented workflow
+    and positive feedback for good performance. How many times do you wake up
+    in the morning, remembering that you were supposed to do 
+    <emphasis>something</emphasis>
+    today, but you just can't quite remember? Put it in Bugzilla, and you
+    have a record of it from which you can extrapolate milestones, predict
+    product versions for integration, and  follow the discussion trail 
+    that led to critical decisions.</para>
+
+    <para>Ultimately, Bugzilla puts the power in your hands to improve your
+    value to your employer or business while providing a usable framework for
+    your natural attention to detail and knowledge store to flourish.</para>
+  </section>
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-always-quote-attributes:t
+sgml-auto-insert-required-elements:t
+sgml-balanced-tag-edit:t
+sgml-exposed-tags:nil
+sgml-general-insert-case:lower
+sgml-indent-data:t
+sgml-indent-step:2
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-minimize-attributes:nil
+sgml-namecase-general:t
+sgml-omittag:t
+sgml-parent-document:("Bugzilla-Guide.sgml" "book" "chapter")
+sgml-shorttag:t
+sgml-tag-region-if-active:t
+End:
+-->

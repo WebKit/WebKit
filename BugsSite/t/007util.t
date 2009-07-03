@@ -28,7 +28,7 @@ use lib 't';
 use Support::Files;
 
 BEGIN { 
-        use Test::More tests => 13;
+        use Test::More tests => 12;
         use_ok(Bugzilla);
         use_ok(Bugzilla::Util);
 }
@@ -47,9 +47,6 @@ is(html_quote("<lala&>"),"&lt;lala&amp;&gt;",'html_quote');
 
 #url_quote():
 is(url_quote("<lala&>gaa\"'[]{\\"),"%3Clala%26%3Egaa%22%27%5B%5D%7B%5C",'url_quote');
-
-#value_quote():
-is(value_quote("<lal\na&>g\naa\"'[\n]{\\"),"&lt;lal&#013;a&amp;&gt;g&#013;aa&quot;'[&#013;]{\\",'value_quote');
 
 #lsearch():
 my @list = ('apple','pear','plum','<"\\%');

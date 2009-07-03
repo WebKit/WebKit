@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -22,11 +21,13 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% title = BLOCK %]
-  Delete Attachment [% a.id FILTER html %] of
-  [%+ "$terms.Bug " _ a.bug_id FILTER bug_link(a.bug_id) FILTER none %]
+  Delete Attachment [% a.id FILTER html %] of [% terms.Bug %] [%+ a.bug_id FILTER html %]
 [% END %]
 
-[% PROCESS global/header.html.tmpl title = title %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  doc_section = "attachments.html"
+%]
 
 <table border="1" cellpadding="4" cellspacing="0">
   <tr bgcolor="#6666FF">

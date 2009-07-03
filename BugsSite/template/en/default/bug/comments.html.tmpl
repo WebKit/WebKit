@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -37,6 +36,58 @@
         comment_elem.className.replace(/(\s*|^)bz_private(\s*|$)/, '$2');
     }
   }
+
+  /* The functions below expand and collapse comments  */
+
+  function toggle_comment_display(link, comment_id) {
+    var comment = document.getElementById('comment_text_' + comment_id);
+    var re = new RegExp(/\bcollapsed\b/);
+    if (comment.className.match(re))
+        expand_comment(link, comment);
+    else
+        collapse_comment(link, comment);
+  }
+
+  function toggle_all_comments(action) {
+    var num_comments = [% comments.size FILTER html %];
+
+    // If for some given ID the comment doesn't exist, this doesn't mean
+    // there are no more comments, but that the comment is private and
+    // the user is not allowed to view it.
+
+    for (var id = 0; id < num_comments; id++) {
+        var comment = document.getElementById('comment_text_' + id);
+        if (!comment)
+            continue;
+
+        var link = document.getElementById('comment_link_' + id);
+        if (action == 'collapse')
+            collapse_comment(link, comment);
+        else
+            expand_comment(link, comment);
+    }
+  }
+
+  function collapse_comment(link, comment) {
+    link.innerHTML = "(+)";
+    link.title = "Expand the comment.";
+    comment.className = "collapsed";
+  }
+
+  function expand_comment(link, comment) {
+    link.innerHTML = "(-)";
+    link.title = "Collapse the comment";
+    comment.className = "";
+  }
+
+  /* This way, we are sure that browsers which do not support JS
+   * won't display this link  */
+
+  function addCollapseLink(count) {
+    document.write(' <a href="#" id="comment_link_' + count +
+                   '" onclick="toggle_comment_display(this, ' +  count +
+                   '); return false;" title="Collapse the comment.">(-)</a> ');
+  }
   //-->
   </script>
 
@@ -69,6 +120,11 @@
     [% END %]
 [% END %]
 
+[% IF mode == "edit" %]
+  <a href="#" onclick="toggle_all_comments('collapse'); return false;">Collapse All Comments</a> -
+  <a href="#" onclick="toggle_all_comments('expand'); return false;">Expand All Comments</a>
+  <hr>
+[% END %]
 
 [% FOREACH comment = comments %]
   [% IF count >= start_at %]
@@ -90,51 +146,58 @@
 [% BLOCK a_comment %]
   [% IF NOT comment.isprivate || isinsider %]
     <div class="bz_comment[% " bz_private" IF comment.isprivate %]
-                [% " bz_comment_hilite" IF marks.$count %]">
+                [% " bz_comment_hilite" IF marks.$count %]
+                [% " bz_first_comment" IF count == description %]">
       [% IF count == description %]
-        <table>
-          <tr>
-            <th align="left">
-              <b><a name="c0" href="show_bug.cgi?id=[% bug.bug_id %]#c0">
-                Description</a>:</b>&nbsp;&nbsp;
-                [% IF mode == "edit" %]
-                  [%%]<script type="text/javascript"><!-- 
-                    addReplyLink(0);
-                  //--></script>
-                [% END %]
-            </th>
-            <td align="left" width="30%">
-              <b>Opened:</b> [% bug.creation_ts FILTER time %]
-            </td>
-          </tr>
-        </table>
+        [% class_name = "bz_first_comment_head" %]
+        [% comment_label = "" %]
+        [% comment_link = "Description" %]
+        [% decoration = "" %]
       [% ELSE %]
-        <span class="bz_comment_head">
-          <span class="comment_rule">-------</span> <i>Comment
-          <a name="c[% count %]" href="show_bug.cgi?id=[% bug.bug_id %]#c[% count %]">
-            #[% count %]</a> From 
-          <a href="mailto:[% comment.email FILTER html %]">
-            [% comment.name FILTER html %]</a>
-          [%+ comment.time FILTER time %] 
-          </i>
-          [% IF mode == "edit" %]
-          <script type="text/javascript"><!-- 
-            addReplyLink([% count %]); //--></script>
-          [% END %]
-          <span class="comment_rule">-------</span>
-        </span>
+        [% class_name = "bz_comment_head" %]
+        [% comment_label = "Comment" %]
+        [% comment_link = "#" _ count %]
+        [% decoration = '<span class="comment_rule">-------</span>' %]
       [% END %]
-        
+
+      <span class="[% class_name FILTER html %]">
+        [%# Do not filter decoration as it's a real HTML tag. No XSS risk. %]
+        [% decoration FILTER none %]
+        <i>[% comment_label FILTER html %]
+        <a name="c[% count %]" href="show_bug.cgi?id=[% bug.bug_id %]#c[% count %]">
+          [% comment_link FILTER html %]</a> From
+        <span class="vcard">
+          <a class="fn email" href="mailto:[% comment.author.email FILTER html %]">
+            [% (comment.author.name || comment.author.login) FILTER html %]</a>
+        </span>
+        [% FOREACH group = comment.author.direct_group_membership %]
+          [% NEXT UNLESS group.icon_url %]
+          <img src="[% group.icon_url FILTER html %]"
+               alt="[% group.name FILTER html %]"
+               title="[% group.name FILTER html %] - [% group.description FILTER html %]">
+        [% END %]
+
+        [%+ comment.time FILTER time %]</i>
+
+        [% IF mode == "edit" %]
+          <script type="text/javascript"><!--
+            addCollapseLink([% count %]);
+            addReplyLink([% count %], [% comment.id %]); //-->
+          </script>
+        [% END %]
+        [%+ decoration FILTER none %]
+      </span>
+
       [% IF mode == "edit" && isinsider %]
         <i>
-          <input type="hidden" name="oisprivate-[% count %]" 
-                 value="[% comment.isprivate %]">
-          <input type="hidden" name="when-[% count %]" value="[% comment.time %]">
-          <input type="checkbox" name="isprivate-[% count %]" value="1"
+          <input type="hidden" value="1"
+                 name="defined_isprivate_[% comment.id %]">
+          <input type="checkbox"
+                 name="isprivate_[% comment.id %]" value="1"
+                 id="isprivate_[% comment.id %]"
                  onClick="updateCommentPrivacy(this, [% count %])"
-                 id="isprivate-[% count %]"
                  [% " checked=\"checked\"" IF comment.isprivate %]>
-          <label for="isprivate-[% count %]">Private</label>
+          <label for="isprivate_[% comment.id %]">Private</label>
         </i>
       [% END %]
       [% IF user.in_group(Param('timetrackinggroup')) &&
@@ -152,7 +215,8 @@
 [% ELSE %]
     [% wrapped_comment = comment.body FILTER wrap_comment %]
 [% END %]
-<pre[% ' id="comment_text_' _ count _ '"' IF mode == "edit" %]>
+<pre class="bz_comment_text" 
+     [% ' id="comment_text_' _ count _ '"' IF mode == "edit" %]>
   [%- wrapped_comment FILTER quoteUrls(bug.bug_id) -%]
 </pre>
     </div>

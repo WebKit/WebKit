@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -29,6 +28,7 @@
 [% PROCESS global/header.html.tmpl
   title = "Add group"
   subheader = "This page allows you to define a new user group."
+  doc_section = "groups.html#create-groups"
 %]
 
 <form method="post" action="editgroups.cgi">
@@ -42,11 +42,20 @@
     <td><input size="40" name="desc"></td>
     <td><input size="30" name="regexp"></td>
     <td><input type="checkbox" name="isactive" value="1" checked></td>
-  </tr></table><hr>
+  </tr>
+  <tr>
+    <th>Icon URL:</th>
+    <td colspan="3"><input type="text" size="70" maxlength="255" id="icon_url" name="icon_url"></td>
+  </tr>
+  [% Hook.process('field') %]
+  </table>
 
-  <input type="checkbox" name="insertnew" value="1"
+  <hr>
+
+  <input type="checkbox" id="insertnew" name="insertnew" value="1"
     [% IF Param("makeproductgroups") %] checked[% END %]>
-    Insert new group into all existing products.<p>
+  <label for="insertnew">Insert new group into all existing products.</label>
+  <p>
   <input type="submit" id="create" value="Add">
   <input type="hidden" name="action" value="new">
   <input type="hidden" name="token" value="[% token FILTER html %]">
@@ -55,8 +64,7 @@
 <p><b>Name</b> is what is used with the B<!-- blah -->ugzilla->user->in_group()
 function in any customized cgi files you write that use a given group.
 It can also be used by people submitting [% terms.bugs %] by email to
-limit [% terms.abug %] to a certain set of groups. It may not contain
-any spaces.</p>
+limit [% terms.abug %] to a certain set of groups.</p>
 
 <p><b>Description</b> is what will be shown in the [% terms.bug %] reports
 to members of the group where they can choose whether
@@ -74,6 +82,13 @@ case you should leave this checked.</b></p>
 <p><b>User RegExp</b> is optional, and if filled in, will 
 automatically grant membership to this group to anyone with an 
 email address that matches this regular expression.</p>
+
+<p>
+  <b>Icon URL</b> is optional, and is the URL pointing to the icon
+  used to identify the group. It may be either a relative URL to the base URL
+  of this installation or an absolute URL. This icon will be displayed
+  in comments in [% terms.bugs %] besides the name of the author of comments.
+</p>
 
 <p>By default, the new group will be associated with existing 
 products. Unchecking the "Insert new group into all existing 

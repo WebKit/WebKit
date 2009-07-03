@@ -16,10 +16,13 @@
 # Contributor(s): Marc Schumann <wurblzap@gmail.com>
 
 use strict;
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Error;
+use Bugzilla::Hook;
+use Bugzilla::WebService::Constants;
 
 # Use an eval here so that runtests.pl accepts this script even if SOAP-Lite
 # is not installed.
@@ -28,12 +31,34 @@ eval 'use XMLRPC::Transport::HTTP;
 $@ && ThrowCodeError('soap_not_installed');
 
 Bugzilla->usage_mode(Bugzilla::Constants::USAGE_MODE_WEBSERVICE);
+local $SOAP::Constants::FAULT_SERVER;
+$SOAP::Constants::FAULT_SERVER = ERROR_UNKNOWN_FATAL;
+# The line above is used, this one is ignored, but SOAP::Lite
+# might start using this constant (the correct one) for XML-RPC someday.
+local $XMLRPC::Constants::FAULT_SERVER;
+$XMLRPC::Constants::FAULT_SERVER = ERROR_UNKNOWN_FATAL;
+
+my %hook_dispatch;
+Bugzilla::Hook::process('webservice', { dispatch => \%hook_dispatch });
+local @INC = (bz_locations()->{extensionsdir}, @INC);
+
+my $dispatch = {
+    'Bugzilla' => 'Bugzilla::WebService::Bugzilla',
+    'Bug'      => 'Bugzilla::WebService::Bug',
+    'User'     => 'Bugzilla::WebService::User',
+    'Product'  => 'Bugzilla::WebService::Product',
+    %hook_dispatch
+};
+
+# The on_action sub needs to be wrapped so that we can work out which
+# class to use; when the XMLRPC module calls it theres no indication
+# of which dispatch class will be handling it.
+# Note that using this to get code thats called before the actual routine
+# is a bit of a hack; its meant to be for modifying the SOAPAction
+# headers, which XMLRPC doesn't use; it relies on the XMLRPC modules
+# using SOAP::Lite internally....
 
 my $response = Bugzilla::WebService::XMLRPC::Transport::HTTP::CGI
-    ->dispatch_with({'Bugzilla' => 'Bugzilla::WebService::Bugzilla',
-                     'Bug'      => 'Bugzilla::WebService::Bug',
-                     'User'     => 'Bugzilla::WebService::User',
-                     'Product'  => 'Bugzilla::WebService::Product',
-                    })
-    ->on_action(\&Bugzilla::WebService::handle_login)
+    ->dispatch_with($dispatch)
+    ->on_action(sub { Bugzilla::WebService::handle_login($dispatch, @_) } )
     ->handle;

@@ -23,7 +23,7 @@
 #                 A. Karl Kornel <karl@kornel.name>
 
 use strict;
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Mailer;
@@ -158,11 +158,11 @@ elsif ($action eq 'begin-sudo') {
 
     # Go ahead and send out the message now
     my $message;
-    $template->process('email/sudo.txt.tmpl', 
-                       { reason => $reason },
-                       \$message);
+    my $mail_template = Bugzilla->template_inner($target_user->settings->{'lang'}->{'value'});
+    $mail_template->process('email/sudo.txt.tmpl', { reason => $reason }, \$message);
+    Bugzilla->template_inner("");
     MessageToMTA($message);
-        
+
     $vars->{'message'} = 'sudo_started';
     $vars->{'target'} = $target_user->login;
     $target = 'global/message.html.tmpl';

@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -12,19 +11,23 @@
   # The Original Code is the Bugzilla Bug Tracking System.
   #
   # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# INTERFACE:
-  # field: string; name of the field the value is being created for
+  # field: object; the field the value is being created for
   #%]
   
-[% title = BLOCK %]Add Value for the '[% field FILTER html %]' field[% END %]
-[% subheader = BLOCK %]This page allows you to add a new value for the
-                '[% field FILTER html %]' field.[% END %]
+[% title = BLOCK %]
+  Add Value for the '[% field.description FILTER html %]' ([% field.name FILTER html %]) field
+[% END %]
 [% PROCESS global/header.html.tmpl
   title = title
-  subheader = subheader
 %]
+
+<p>
+  This page allows you to add a new value for the '[% field.description FILTER html %]' field.
+</p>
 
 <form method="post" action="editvalues.cgi">
   <table border="0" cellpadding="4" cellspacing="0">
@@ -38,10 +41,28 @@
       <td><input id="sortkey" size="10" maxlength="20" name="sortkey"
                  value=""></td>
     </tr>
+    [% IF field.name == "bug_status" %]
+      <tr>
+        <th align="right"><label for="is_open">Status Type:</label></th>
+        <td>
+          <input type="radio" id="open_status" name="is_open" value="1" checked="checked">
+          <label for="open_status">Open</label><br>
+          <input type="radio" id="closed_status" name="is_open" value="0">
+          <label for="closed_status">Closed (requires a Resolution)</label>
+        </td>
+      </tr>
+      <tr>
+        <th>&nbsp;</th>
+        <td>
+          Note: The open/close attribute can only be set now, when you create
+          the status. It cannot be edited later.
+        </td>
+      </tr>
+    [% END %]
   </table>
   <input type="submit" id="create" value="Add">
   <input type="hidden" name="action" value="new">
-  <input type="hidden" name='field' value="[% field FILTER html %]">
+  <input type="hidden" name='field' value="[% field.name FILTER html %]">
   <input type="hidden" name="token" value="[% token FILTER html %]">
 </form>
 

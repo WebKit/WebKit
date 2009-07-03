@@ -1,7 +1,7 @@
 #!/bin/sh
 # -*- Mode: ksh -*-
 ##############################################################################
-# $Id: yp_nomail.sh,v 1.1 2000/09/12 23:50:31 cyeh%bluemartini.com Exp $
+# $Id$
 # yp_nomail
 #
 # Our mail admins got annoyed when bugzilla kept sending email

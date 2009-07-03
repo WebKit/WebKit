@@ -81,9 +81,12 @@ use constant REVERSE_MAPPING => {
     SMALLINT  => 'INT2',
     MEDIUMINT => 'INT3',
     INTEGER   => 'INT4',
+
     # All the other types have the same name in their abstract version
     # as in their db-specific version, so no reverse mapping is needed.
 };
+
+use constant MYISAM_TABLES => qw(bugs_fulltext);
 
 #------------------------------------------------------------------------------
 sub _initialize {
@@ -109,7 +112,7 @@ sub _initialize {
 
         TINYTEXT =>     'tinytext',
         MEDIUMTEXT =>   'mediumtext',
-        TEXT =>         'text',
+        LONGTEXT =>     'mediumtext',
 
         LONGBLOB =>     'longblob',
 
@@ -130,8 +133,9 @@ sub _get_create_table_ddl {
     my($self, $table) = @_;
 
     my $charset = Bugzilla->dbh->bz_db_is_utf8 ? "CHARACTER SET utf8" : '';
+    my $type    = grep($_ eq $table, MYISAM_TABLES) ? 'MYISAM' : 'InnoDB';
     return($self->SUPER::_get_create_table_ddl($table) 
-           . " ENGINE = MYISAM $charset");
+           . " ENGINE = $type $charset");
 
 } #eosub--_get_create_table_ddl
 #------------------------------------------------------------------------------
@@ -176,6 +180,7 @@ sub get_alter_column_ddl {
 
     my $new_ddl = $self->get_type_ddl(\%new_def_copy);
     my @statements;
+
     push(@statements, "UPDATE $table SET $column = $set_nulls_to
                         WHERE $column IS NULL") if defined $set_nulls_to;
     push(@statements, "ALTER TABLE $table CHANGE COLUMN 
@@ -184,7 +189,24 @@ sub get_alter_column_ddl {
         # Dropping a PRIMARY KEY needs an explicit DROP PRIMARY KEY
         push(@statements, "ALTER TABLE $table DROP PRIMARY KEY");
     }
+
     return @statements;
+}
+
+sub get_drop_fk_sql {
+    my ($self, $table, $column, $references) = @_;
+    my $fk_name = $self->_get_fk_name($table, $column, $references);
+    my @sql = ("ALTER TABLE $table DROP FOREIGN KEY $fk_name");
+    my $dbh = Bugzilla->dbh;
+
+    # MySQL requires, and will create, an index on any column with
+    # an FK. It will name it after the fk, which we never do.
+    # So if there's an index named after the fk, we also have to delete it. 
+    if ($dbh->bz_index_info_real($table, $fk_name)) {
+        push(@sql, $self->get_drop_index_ddl($table, $fk_name));
+    }
+
+    return @sql;
 }
 
 sub get_drop_index_ddl {

@@ -25,7 +25,7 @@
 #                 Frédéric Buclin <LpSolit@gmail.com>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -130,9 +130,7 @@ sub show_user {
 
     my $canedit = (Bugzilla->params->{'usevotes'} && $userid == $who) ? 1 : 0;
 
-    $dbh->bz_lock_tables('bugs READ', 'products READ', 'votes WRITE',
-             'cc READ', 'bug_group_map READ', 'user_group_map READ',
-             'group_group_map READ', 'groups READ', 'group_control_map READ');
+    $dbh->bz_start_transaction();
 
     if ($canedit && $bug_id) {
         # Make sure there is an entry for this bug
@@ -146,6 +144,7 @@ sub show_user {
         }
     }
 
+    my @all_bug_ids;
     my @products;
     my $products = $user->get_selectable_products;
     # Read the votes data for this user for each product.
@@ -153,6 +152,7 @@ sub show_user {
         next unless ($product->votes_per_user > 0);
 
         my @bugs;
+        my @bug_ids;
         my $total = 0;
         my $onevoteonly = 0;
 
@@ -180,6 +180,8 @@ sub show_user {
             push (@bugs, { id => $id, 
                            summary => $summary,
                            count => $count });
+            push (@bug_ids, $id);
+            push (@all_bug_ids, $id);
         }
 
         $onevoteonly = 1 if (min($product->votes_per_user,
@@ -189,6 +191,7 @@ sub show_user {
         if ($#bugs > -1) {
             push (@products, { name => $product->name,
                                bugs => \@bugs,
+                               bug_ids => \@bug_ids,
                                onevoteonly => $onevoteonly,
                                total => $total,
                                maxvotes => $product->votes_per_user,
@@ -197,12 +200,13 @@ sub show_user {
     }
 
     $dbh->do('DELETE FROM votes WHERE vote_count <= 0');
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     $vars->{'canedit'} = $canedit;
     $vars->{'voting_user'} = { "login" => $name };
     $vars->{'products'} = \@products;
     $vars->{'bug_id'} = $bug_id;
+    $vars->{'all_bug_ids'} = \@all_bug_ids;
 
     print $cgi->header();
     $template->process("bug/votes/list-for-user.html.tmpl", $vars)
@@ -296,9 +300,7 @@ sub record_votes {
     # for products that only allow one vote per bug).  In that case, we still
     # need to clear the user's votes from the database.
     my %affected;
-    $dbh->bz_lock_tables('bugs WRITE', 'bugs_activity WRITE',
-                         'votes WRITE', 'longdescs WRITE',
-                         'products READ', 'fielddefs READ');
+    $dbh->bz_start_transaction();
     
     # Take note of, and delete the user's old votes from the database.
     my $bug_list = $dbh->selectcol_arrayref('SELECT bug_id FROM votes
@@ -337,7 +339,7 @@ sub record_votes {
         my $confirmed = CheckIfVotedConfirmed($id, $who);
         push (@updated_bugs, $id) if $confirmed;
     }
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     $vars->{'type'} = "votes";
     $vars->{'mailrecipients'} = { 'changer' => Bugzilla->user->login };

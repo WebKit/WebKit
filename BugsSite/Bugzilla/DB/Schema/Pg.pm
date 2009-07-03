@@ -75,7 +75,7 @@ sub _initialize {
 
         TINYTEXT =>     'varchar(255)',
         MEDIUMTEXT =>   'text',
-        TEXT =>         'text',
+        LONGTEXT =>     'text',
 
         LONGBLOB =>     'bytea',
 

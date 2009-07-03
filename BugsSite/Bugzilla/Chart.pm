@@ -22,7 +22,6 @@
 #                 A. Karl Kornel <karl@kornel.name>
 
 use strict;
-use lib ".";
 
 # This module represents a chart.
 #

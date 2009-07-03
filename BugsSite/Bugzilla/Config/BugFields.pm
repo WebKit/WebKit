@@ -80,7 +80,7 @@ sub get_param_list {
   {
    name => 'usevotes',
    type => 'b',
-   default => 1
+   default => 0
   },
 
   {

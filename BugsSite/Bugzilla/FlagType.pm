@@ -177,6 +177,8 @@ sub is_requestable   { return $_[0]->{'is_requestable'};   }
 sub is_requesteeble  { return $_[0]->{'is_requesteeble'};  }
 sub is_multiplicable { return $_[0]->{'is_multiplicable'}; }
 sub sortkey          { return $_[0]->{'sortkey'};          }
+sub request_group_id { return $_[0]->{'request_group_id'}; }
+sub grant_group_id   { return $_[0]->{'grant_group_id'};   }
 
 ###############################
 ####       Methods         ####
@@ -185,6 +187,11 @@ sub sortkey          { return $_[0]->{'sortkey'};          }
 =pod
 
 =over
+
+=item C<grant_list>
+
+Returns a reference to an array of users who have permission to grant this flag type.
+The arrays are populated with hashrefs containing the login, identity and visibility of users.
 
 =item C<grant_group>
 
@@ -213,6 +220,17 @@ explicitly excluded from the flagtype.
 =back
 
 =cut
+
+sub grant_list {
+    my $self = shift;
+    my @custusers;
+    my @allusers = @{Bugzilla->user->get_userlist};
+    foreach my $user (@allusers) {
+        my $user_obj = new Bugzilla::User({name => $user->{login}});
+        push(@custusers, $user) if $user_obj->can_set_flag($self);
+    }
+    return \@custusers;
+}
 
 sub grant_group {
     my $self = shift;

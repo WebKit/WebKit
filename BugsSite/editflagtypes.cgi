@@ -27,7 +27,7 @@
 
 # Make it harder for us to do dangerous things in Perl.
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 # Use Bugzilla's flag modules for handling flag types.
 use Bugzilla;
@@ -80,7 +80,7 @@ elsif ($action eq 'edit')           { edit($action);    }
 elsif ($action eq 'insert')         { insert($token);   }
 elsif ($action eq 'update')         { update($token);   }
 elsif ($action eq 'confirmdelete')  { confirmDelete();  } 
-elsif ($action eq 'delete')         { deleteType(undef, $token); }
+elsif ($action eq 'delete')         { deleteType($token); }
 elsif ($action eq 'deactivate')     { deactivate($token); }
 else { 
     ThrowCodeError("action_unrecognized", { action => $action });
@@ -309,9 +309,7 @@ sub insert {
 
     my $target_type = $cgi->param('target_type') eq "bug" ? "b" : "a";
 
-    $dbh->bz_lock_tables('flagtypes WRITE', 'products READ',
-                         'components READ', 'flaginclusions WRITE',
-                         'flagexclusions WRITE');
+    $dbh->bz_start_transaction();
 
     # Insert a record for the new flag type into the database.
     $dbh->do('INSERT INTO flagtypes
@@ -332,17 +330,19 @@ sub insert {
     # Populate the list of inclusions/exclusions for this flag type.
     validateAndSubmit($id);
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
-    $vars->{'name'} = $cgi->param('name');
+    $vars->{'name'} = $name;
     $vars->{'message'} = "flag_type_created";
     delete_token($token);
+
+    $vars->{'bug_types'} = Bugzilla::FlagType::match({'target_type' => 'bug'});
+    $vars->{'attachment_types'} = Bugzilla::FlagType::match({'target_type' => 'attachment'});
 
     # Return the appropriate HTTP response headers.
     print $cgi->header();
 
-    # Generate and return the UI (HTML page) from the appropriate template.
-    $template->process("global/message.html.tmpl", $vars)
+    $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 }
 
@@ -365,9 +365,7 @@ sub update {
 
     my $dbh = Bugzilla->dbh;
     my $user = Bugzilla->user;
-    $dbh->bz_lock_tables('flagtypes WRITE', 'products READ',
-                         'components READ', 'flaginclusions WRITE',
-                         'flagexclusions WRITE');
+    $dbh->bz_start_transaction();
     $dbh->do('UPDATE flagtypes
                  SET name = ?, description = ?, cc_list = ?,
                      sortkey = ?, is_active = ?, is_requestable = ?,
@@ -383,7 +381,7 @@ sub update {
     # Update the list of inclusions/exclusions for this flag type.
     validateAndSubmit($id);
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     # Clear existing flags for bugs/attachments in categories no longer on 
     # the list of inclusions or that have been added to the list of exclusions.
@@ -431,23 +429,24 @@ sub update {
                  undef, $id);
     }
 
-    $vars->{'name'} = $cgi->param('name');
+    $vars->{'name'} = $name;
     $vars->{'message'} = "flag_type_changes_saved";
     delete_token($token);
+
+    $vars->{'bug_types'} = Bugzilla::FlagType::match({'target_type' => 'bug'});
+    $vars->{'attachment_types'} = Bugzilla::FlagType::match({'target_type' => 'attachment'});
 
     # Return the appropriate HTTP response headers.
     print $cgi->header();
 
-    # Generate and return the UI (HTML page) from the appropriate template.
-    $template->process("global/message.html.tmpl", $vars)
+    $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 }
 
 
 sub confirmDelete {
-  my $flag_type = validateID();
+    my $flag_type = validateID();
 
-  if ($flag_type->flag_count) {
     $vars->{'flag_type'} = $flag_type;
     $vars->{'token'} = issue_session_token('delete_flagtype');
     # Return the appropriate HTTP response headers.
@@ -456,25 +455,17 @@ sub confirmDelete {
     # Generate and return the UI (HTML page) from the appropriate template.
     $template->process("admin/flag-type/confirm-delete.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-  } 
-  else {
-    # We should *always* ask if the admin really wants to delete
-    # a flagtype, even if there is no flag belonging to this type.
-    my $token = issue_session_token('delete_flagtype');
-    deleteType($flag_type, $token);
-  }
 }
 
 
 sub deleteType {
-    my $flag_type = shift || validateID();
     my $token = shift;
     check_token_data($token, 'delete_flagtype');
+    my $flag_type = validateID();
     my $id = $flag_type->id;
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_lock_tables('flagtypes WRITE', 'flags WRITE',
-                         'flaginclusions WRITE', 'flagexclusions WRITE');
+    $dbh->bz_start_transaction();
 
     # Get the name of the flag type so we can tell users
     # what was deleted.
@@ -484,16 +475,18 @@ sub deleteType {
     $dbh->do('DELETE FROM flaginclusions WHERE type_id = ?', undef, $id);
     $dbh->do('DELETE FROM flagexclusions WHERE type_id = ?', undef, $id);
     $dbh->do('DELETE FROM flagtypes WHERE id = ?', undef, $id);
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     $vars->{'message'} = "flag_type_deleted";
     delete_token($token);
 
+    $vars->{'bug_types'} = Bugzilla::FlagType::match({'target_type' => 'bug'});
+    $vars->{'attachment_types'} = Bugzilla::FlagType::match({'target_type' => 'attachment'});
+
     # Return the appropriate HTTP response headers.
     print $cgi->header();
 
-    # Generate and return the UI (HTML page) from the appropriate template.
-    $template->process("global/message.html.tmpl", $vars)
+    $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 }
 
@@ -506,19 +499,22 @@ sub deactivate {
 
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_lock_tables('flagtypes WRITE');
+    $dbh->bz_start_transaction();
     $dbh->do('UPDATE flagtypes SET is_active = 0 WHERE id = ?', undef, $flag_type->id);
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     $vars->{'message'} = "flag_type_deactivated";
     $vars->{'flag_type'} = $flag_type;
     delete_token($token);
 
+    $vars->{'bug_types'} = Bugzilla::FlagType::match({'target_type' => 'bug'});
+    $vars->{'attachment_types'} = Bugzilla::FlagType::match({'target_type' => 'attachment'});
+
     # Return the appropriate HTTP response headers.
     print $cgi->header();
 
     # Generate and return the UI (HTML page) from the appropriate template.
-    $template->process("global/message.html.tmpl", $vars)
+    $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 }
 
@@ -605,7 +601,8 @@ sub validateComponent {
     ($product && $product->id)
       || ThrowUserError("flag_type_component_without_product");
 
-    my $component = Bugzilla::Component::check_component($product, $component_name);
+    my $component = Bugzilla::Component->check({ product => $product,
+                                                 name => $component_name });
     return $component;
 }
 

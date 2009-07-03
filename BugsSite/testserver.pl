@@ -19,7 +19,7 @@
 # issues as possible.
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 BEGIN {
     my $envpath = $ENV{'PATH'};
@@ -45,7 +45,7 @@ if ((@ARGV != 1) || ($ARGV[0] !~ /^https?:/))
 }
 
 
-# Try to determine the GID used by the webserver.
+# Try to determine the GID used by the web server.
 my @pscmds = ('ps -eo comm,gid', 'ps -acxo command,gid', 'ps -acxo command,rgid');
 my $sgid = 0;
 if ($^O !~ /MSWin32/i) {
@@ -82,7 +82,7 @@ Bugzilla documentation.\n";
         print 
 "TEST-WARNING Webserver is running under group id not matching \$webservergroup.
 This if the tests below fail, this is probably the problem.
-Please refer to the webserver configuration section of the Bugzilla guide. 
+Please refer to the web server configuration section of the Bugzilla guide. 
 If you are using virtual hosts or suexec, this warning may not apply.\n";
     }
 } elsif ($^O !~ /MSWin32/i) {
@@ -100,8 +100,8 @@ if (fetch($url)) {
 } else {
     print 
 "TEST-FAILED Fetch of skins/standard/index/front.png failed
-Your webserver could not fetch $url.
-Check your webserver configuration and try again.\n";
+Your web server could not fetch $url.
+Check your web server configuration and try again.\n";
     exit(1);
 }
 
@@ -118,7 +118,7 @@ Check the AddHandler statement in your httpd.conf file.\n";
     print "TEST-FAILED Webserver is not executing CGI files.\n"; 
 }
 
-# Make sure that webserver is honoring .htaccess files
+# Make sure that the web server is honoring .htaccess files
 my $localconfig = bz_locations()->{'localconfig'};
 $localconfig =~ s~^\./~~;
 $url = $ARGV[0] . "/$localconfig";
@@ -127,7 +127,7 @@ if ($response) {
     print 
 "TEST-FAILED Webserver is permitting fetch of $url.
 This is a serious security problem.
-Check your webserver configuration.\n";
+Check your web server configuration.\n";
     exit(1);
 } else {
     print "TEST-OK Webserver is preventing fetch of $url.\n";

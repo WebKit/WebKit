@@ -31,7 +31,8 @@ BEGIN { *esc = \&Pod::Simple::HTML::esc }
 # Note that if you leave out a category here, it will not be indexed
 # in the contents file, even though its HTML POD will still exist.
 use constant FILE_TRANSLATION => {
-    Files      => ['importxml', 'contrib', 'checksetup', 'email_in'],
+    Files      => ['importxml', 'contrib', 'checksetup', 'email_in', 'install-module',
+                   'sanitycheck'],
     Modules    => ['bugzilla'],
     Extensions => ['extensions'],
 };
@@ -70,6 +71,7 @@ sub _write_contents_middle {
             my $path = join( "/", '.', esc(@{$e->[3]}) )
                . $Pod::Simple::HTML::HTML_EXTENSION;
             my $description = $self->{bugzilla_desc}->{$name} || '';
+            $description = esc($description);
             my $html = <<END_HTML;
 <tr class="$even_or_odd">
   <th><a href="$path">$name</a></th>

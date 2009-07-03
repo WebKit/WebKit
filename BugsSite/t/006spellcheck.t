@@ -31,12 +31,18 @@ BEGIN { # yes the indenting is off, deal with it
 #add the words to check here:
 @evilwords = qw(
 anyways
+appearence
 arbitary
+cancelled
+critera
 databasa
 dependan
 existance
 existant
 paramater
+refered
+repsentation
+suported
 varsion
 );
 

@@ -28,7 +28,7 @@
 # Make it harder for us to do dangerous things in Perl.
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -72,7 +72,7 @@ if ($cgi->param('t')) {
   # Make sure the token exists in the database.
   my ($tokentype) = $dbh->selectrow_array('SELECT tokentype FROM tokens
                                            WHERE token = ?', undef, $::token);
-  $tokentype || ThrowUserError("token_inexistent");
+  $tokentype || ThrowUserError("token_does_not_exist");
 
   # Make sure the token is the correct type for the action being taken.
   if ( grep($::action eq $_ , qw(cfmpw cxlpw chgpw)) && $tokentype ne 'password' ) {
@@ -101,11 +101,10 @@ if ($cgi->param('t')) {
 # If the user is requesting a password change, make sure they submitted
 # their login name and it exists in the database, and that the DB module is in
 # the list of allowed verification methods.
-my $login_name;
+my $user_account;
 if ( $::action eq 'reqpw' ) {
-    $login_name = $cgi->param('loginname');
-    defined $login_name
-      || ThrowUserError("login_needed_for_password_change");
+    my $login_name = $cgi->param('loginname')
+                       || ThrowUserError("login_needed_for_password_change");
 
     # check verification methods
     unless (Bugzilla->user->authorizer->can_change_password) {
@@ -115,10 +114,7 @@ if ( $::action eq 'reqpw' ) {
     validate_email_syntax($login_name)
         || ThrowUserError('illegal_email_address', {addr => $login_name});
 
-    my ($user_id) = $dbh->selectrow_array('SELECT userid FROM profiles WHERE ' .
-                                          $dbh->sql_istrcmp('login_name', '?'),
-                                          undef, $login_name);
-    $user_id || ThrowUserError("account_inexistent");
+    $user_account = Bugzilla::User->check($login_name);
 }
 
 # If the user is changing their password, make sure they submitted a new
@@ -142,7 +138,7 @@ if ( $::action eq 'chgpw' ) {
 # that variable and runs the appropriate code.
 
 if ($::action eq 'reqpw') { 
-    requestChangePassword($login_name);
+    requestChangePassword($user_account);
 } elsif ($::action eq 'cfmpw') { 
     confirmChangePassword(); 
 } elsif ($::action eq 'cxlpw') { 
@@ -175,8 +171,8 @@ exit;
 ################################################################################
 
 sub requestChangePassword {
-    my ($login_name) = @_;
-    Bugzilla::Token::IssuePasswordToken($login_name);
+    my ($user) = @_;
+    Bugzilla::Token::IssuePasswordToken($user);
 
     $vars->{'message'} = "password_change_request";
 
@@ -194,7 +190,7 @@ sub confirmChangePassword {
 }
 
 sub cancelChangePassword {    
-    $vars->{'message'} = "password_change_cancelled";
+    $vars->{'message'} = "password_change_canceled";
     Bugzilla::Token::Cancel($::token, $vars->{'message'});
 
     print $cgi->header();
@@ -215,13 +211,13 @@ sub changePassword {
     
     # Update the user's password in the profiles table and delete the token
     # from the tokens table.
-    $dbh->bz_lock_tables('profiles WRITE', 'tokens WRITE');
+    $dbh->bz_start_transaction();
     $dbh->do(q{UPDATE   profiles
                SET      cryptpassword = ?
                WHERE    userid = ?},
              undef, ($cryptedpassword, $userid) );
     $dbh->do('DELETE FROM tokens WHERE token = ?', undef, $::token);
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     Bugzilla->logout_user_by_id($userid);
 
@@ -265,7 +261,7 @@ sub changeEmail {
 
     # Update the user's login name in the profiles table and delete the token
     # from the tokens table.
-    $dbh->bz_lock_tables('profiles WRITE', 'tokens WRITE');
+    $dbh->bz_start_transaction();
     $dbh->do(q{UPDATE   profiles
                SET      login_name = ?
                WHERE    userid = ?},
@@ -273,7 +269,7 @@ sub changeEmail {
     $dbh->do('DELETE FROM tokens WHERE token = ?', undef, $::token);
     $dbh->do(q{DELETE FROM tokens WHERE userid = ?
                AND tokentype = 'emailnew'}, undef, $userid);
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     # The email address has been changed, so we need to rederive the groups
     my $user = new Bugzilla::User($userid);
@@ -300,7 +296,7 @@ sub cancelChangeEmail {
     my ($old_email, $new_email) = split(/:/,$eventdata);
 
     if($tokentype eq "emailold") {
-        $vars->{'message'} = "emailold_change_cancelled";
+        $vars->{'message'} = "emailold_change_canceled";
 
         my $actualemail = $dbh->selectrow_array(
                             q{SELECT login_name FROM profiles
@@ -308,12 +304,10 @@ sub cancelChangeEmail {
         
         # check to see if it has been altered
         if($actualemail ne $old_email) {
-            $dbh->bz_lock_tables('profiles WRITE');
             $dbh->do(q{UPDATE   profiles
                        SET      login_name = ?
                        WHERE    userid = ?},
                      undef, ($old_email, $userid));
-            $dbh->bz_unlock_tables();
 
             # email has changed, so rederive groups
             # Note that this is done _after_ the tables are unlocked
@@ -324,22 +318,20 @@ sub cancelChangeEmail {
             my $user = new Bugzilla::User($userid);
             $user->derive_regexp_groups;
 
-            $vars->{'message'} = "email_change_cancelled_reinstated";
+            $vars->{'message'} = "email_change_canceled_reinstated";
         } 
     } 
     else {
-        $vars->{'message'} = 'email_change_cancelled'
+        $vars->{'message'} = 'email_change_canceled'
      }
 
     $vars->{'old_email'} = $old_email;
     $vars->{'new_email'} = $new_email;
     Bugzilla::Token::Cancel($::token, $vars->{'message'}, $vars);
 
-    $dbh->bz_lock_tables('tokens WRITE');
     $dbh->do(q{DELETE FROM tokens WHERE userid = ?
                AND tokentype = 'emailold' OR tokentype = 'emailnew'},
              undef, $userid);
-    $dbh->bz_unlock_tables();
 
     # Return HTTP response headers.
     print $cgi->header();
@@ -354,8 +346,9 @@ sub request_create_account {
     $vars->{'email'} = $login_name . Bugzilla->params->{'emailsuffix'};
     $vars->{'date'} = str2time($date);
 
-    # We require a HTTPS connection if possible.
-    if (Bugzilla->params->{'sslbase'} ne ''
+    # When 'ssl' equals 'always' or 'authenticated sessions', 
+    # we want this form to always be over SSL.
+    if ($cgi->protocol ne 'https' && Bugzilla->params->{'sslbase'} ne ''
         && Bugzilla->params->{'ssl'} ne 'never')
     {
         $cgi->require_https(Bugzilla->params->{'sslbase'});
@@ -394,7 +387,7 @@ sub confirm_create_account {
 sub cancel_create_account {
     my (undef, undef, $login_name) = Bugzilla::Token::GetTokenData($::token);
 
-    $vars->{'message'} = 'account_creation_cancelled';
+    $vars->{'message'} = 'account_creation_canceled';
     $vars->{'account'} = $login_name;
     Bugzilla::Token::Cancel($::token, $vars->{'message'});
 

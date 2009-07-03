@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -27,11 +26,9 @@
 
 [% expiration_ts = date + (constants.MAX_TOKEN_AGE * 86400) %]
 <div>
-  To complete the creation of your user account, you must choose a password in the
-  form below. You can also enter your real name, which is optional.<p>
-  If you don't fill this form before
-  <u>[%+ time2str("%B %o, %Y at %H:%M %Z", expiration_ts) %]</u>,
-  the creation of this account will be automatically canceled.
+  To create your account, you must enter a password in the form below.
+  Your email address and Real Name (if provided) will be shown with
+  changes you make.
 </div>
 
 <form id="confirm_account_form" method="post" action="token.cgi">
@@ -43,7 +40,7 @@
       <td>[% email FILTER html %]</td>
     </tr>
     <tr>
-      <th align="right"><label for="realname">Real Name</label>:</th>
+      <th align="right"><small><i>(OPTIONAL)</i></small> <label for="realname">Real Name</label>:</th>
       <td><input type="text" id="realname" name="realname" value=""></td>
     </tr>
     <tr>
@@ -51,7 +48,7 @@
       <td><input type="password" id="passwd1" name="passwd1" value=""></td>
     </tr>
     <tr>
-      <th align="right"><label for="passwd1">Re-type your password</label>:</th>
+      <th align="right"><label for="passwd2">Confirm your password</label>:</th>
       <td><input type="password" id="passwd2" name="passwd2" value=""></td>
     </tr>
     <tr>
@@ -59,6 +56,22 @@
       <td><input type="submit" id="confirm" value="Send"></td>
     </tr>
   </table>
+</form>
+
+<p>
+  This account will not be created if this form is not completed by
+  <u>[%+ time2str("%B %o, %Y at %H:%M %Z", expiration_ts) %]</u>.
+</p>
+
+<p>
+  If you do not wish to create an account with this email click the
+  cancel account button below and your details will be forgotten.
+</p>
+
+<form id="cancel_account_form" method="post" action="token.cgi">
+  <input type="hidden" name="t" value="[% token FILTER html %]">
+  <input type="hidden" name="a" value="cancel_new_account">
+  <input type="submit" id="confirm" value="Cancel Account">
 </form>
 
 [% PROCESS global/footer.html.tmpl %]

@@ -56,7 +56,7 @@ sub get_param_list {
   {
    name => 'docs_urlbase',
    type => 't',
-   default => 'docs/html/',
+   default => 'docs/%lang%/html/',
    checker => \&check_url
   },
 

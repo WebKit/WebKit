@@ -1,0 +1,818 @@
+<!-- <!DOCTYPE appendix PUBLIC "-//OASIS//DTD DocBook V4.1//EN"> -->
+<chapter id="customization">
+  <title>Customizing Bugzilla</title>
+
+  <section id="cust-skins">
+    <title>Custom Skins</title>
+    
+    <para>
+      Bugzilla allows you to have multiple skins. These are custom CSS and possibly
+      also custom images for Bugzilla. To create a new custom skin, you have two
+      choices:
+      <itemizedlist>
+        <listitem>
+          <para>
+            Make a single CSS file, and put it in the 
+            <filename>skins/contrib</filename> directory.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Make a directory that contains all the same CSS file
+            names as <filename>skins/standard/</filename>, and put
+            your directory in <filename>skins/contrib/</filename>.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
+      
+    <para>
+      After you put the file or the directory there, make sure to run checksetup.pl
+      so that it can reset the file permissions correctly.
+    </para>
+    <para>
+      After you have installed the new skin, it will show up as an option in the
+      user's General Preferences. If you would like to force a particular skin on all
+      users, just select it in the Default Preferences and then uncheck "Enabled" on
+      the preference.
+    </para>
+  </section>
+  
+  <section id="cust-templates">
+    <title>Template Customization</title>
+    
+    <para>
+      Administrators can configure the look and feel of Bugzilla without
+      having to edit Perl files or face the nightmare of massive merge
+      conflicts when they upgrade to a newer version in the future.
+    </para>
+    
+    <para>
+      Templatization also makes localized versions of Bugzilla possible, 
+      for the first time. It's possible to have Bugzilla's UI language 
+      determined by the user's browser. More information is available in
+      <xref linkend="template-http-accept"/>.
+    </para>
+    
+    <section id="template-directory">
+      <title>Template Directory Structure</title>
+      <para>
+        The template directory structure starts with top level directory 
+        named <filename>template</filename>, which contains a directory
+        for each installed localization. The next level defines the
+        language used in the templates. Bugzilla comes with English
+        templates, so the directory name is <filename>en</filename>,
+        and we will discuss <filename>template/en</filename> throughout
+        the documentation. Below <filename>template/en</filename> is the
+        <filename>default</filename> directory, which contains all the
+        standard templates shipped with Bugzilla.
+      </para>
+
+      <warning>
+        <para>
+          A directory <filename>data/templates</filename> also exists;
+          this is where Template Toolkit puts the compiled versions of
+          the templates from either the default or custom directories.
+          <emphasis>Do not</emphasis> directly edit the files in this
+          directory, or all your changes will be lost the next time
+          Template Toolkit recompiles the templates.
+        </para>
+      </warning>
+    </section>
+
+    <section id="template-method">
+      <title>Choosing a Customization Method</title>
+      <para>
+        If you want to edit Bugzilla's templates, the first decision
+        you must make is how you want to go about doing so. There are two
+        choices, and which you use depends mainly on the scope of your 
+        modifications, and the method you plan to use to upgrade Bugzilla.
+      </para> 
+
+      <para>
+        The first method of making customizations is to directly edit the
+        templates found in <filename>template/en/default</filename>.
+        This is probably the best way to go about it if you are going to
+        be upgrading Bugzilla through CVS, because if you then execute
+        a <command>cvs update</command>, any changes you have made will
+        be merged automagically with the updated versions.
+      </para>
+
+      <note>
+        <para>
+          If you use this method, and CVS conflicts occur during an
+          update, the conflicted templates (and possibly other parts
+          of your installation) will not work until they are resolved.
+        </para>
+      </note>
+
+      <para>
+        The second method is to copy the templates to be modified
+        into a mirrored directory structure under 
+        <filename>template/en/custom</filename>. Templates in this
+        directory structure automatically override any identically-named
+        and identically-located templates in the 
+        <filename>default</filename> directory. 
+      </para>
+
+      <note>
+        <para>
+          The <filename>custom</filename> directory does not exist
+          at first and must be created if you want to use it.
+        </para>
+      </note>
+
+      <para>
+        The second method of customization should be used if you 
+        use the overwriting method of upgrade, because otherwise 
+        your changes will be lost.  This method may also be better if
+        you are using the CVS method of upgrading and are going to make major
+        changes, because it is guaranteed that the contents of this directory
+        will not be touched during an upgrade, and you can then decide whether
+        to continue using your own templates, or make the effort to merge your
+        changes into the new versions by hand.
+      </para>
+
+      <para>
+        Using this method, your installation may break if incompatible
+        changes are made to the template interface.  Such changes should
+        be documented in the release notes, provided you are using a
+        stable release of Bugzilla.  If you use using unstable code, you will
+        need to deal with this one yourself, although if possible the changes
+        will be mentioned before they occur in the deprecations section of the
+        previous stable release's release notes.
+      </para>
+
+      <note>
+        <para>
+          Regardless of which method you choose, it is recommended that
+          you run <command>./checksetup.pl</command> after creating or
+          editing any templates in the <filename>template/en/default</filename>
+          directory, and after editing any templates in the 
+          <filename>custom</filename> directory.
+        </para>
+      </note>
+
+      <warning>
+        <para>
+          It is <emphasis>required</emphasis> that you run 
+          <command>./checksetup.pl</command> after creating a new
+          template in the <filename>custom</filename> directory. Failure
+          to do so will raise an incomprehensible error message.
+        </para>
+      </warning>
+    </section>
+    
+    <section id="template-edit">
+      <title>How To Edit Templates</title>
+      
+      <note>
+        <para>
+          If you are making template changes that you intend on submitting back
+          for inclusion in standard Bugzilla, you should read the relevant
+          sections of the 
+          <ulink url="http://www.bugzilla.org/docs/developer.html">Developers'
+          Guide</ulink>.
+        </para>
+      </note>
+      
+      <para>
+        The syntax of the Template Toolkit language is beyond the scope of
+        this guide. It's reasonably easy to pick up by looking at the current 
+        templates; or, you can read the manual, available on the
+        <ulink url="http://www.template-toolkit.org">Template Toolkit home
+        page</ulink>.
+      </para>
+      
+      <para>
+        One thing you should take particular care about is the need
+        to properly HTML filter data that has been passed into the template.
+        This means that if the data can possibly contain special HTML characters
+        such as &lt;, and the data was not intended to be HTML, they need to be
+        converted to entity form, i.e. &amp;lt;.  You use the 'html' filter in the
+        Template Toolkit to do this.  If you forget, you may open up
+        your installation to cross-site scripting attacks.
+      </para>
+
+      <para>
+        Also note that Bugzilla adds a few filters of its own, that are not
+        in standard Template Toolkit.  In particular, the 'url_quote' filter
+        can convert characters that are illegal or have special meaning in URLs,
+        such as &amp;, to the encoded form, i.e. %26.  This actually encodes most
+        characters (but not the common ones such as letters and numbers and so
+        on), including the HTML-special characters, so there's never a need to
+        HTML filter afterwards.
+      </para>
+ 
+      <para>
+        Editing templates is a good way of doing a <quote>poor man's custom
+        fields</quote>.
+        For example, if you don't use the Status Whiteboard, but want to have
+        a free-form text entry box for <quote>Build Identifier</quote>,
+        then you can just
+        edit the templates to change the field labels. It's still be called
+        status_whiteboard internally, but your users don't need to know that.
+      </para>
+      
+    </section>
+            
+    
+    <section id="template-formats">
+      <title>Template Formats and Types</title>
+      
+      <para>
+        Some CGI's have the ability to use more than one template. For example,
+        <filename>buglist.cgi</filename> can output itself as RDF, or as two 
+        formats of HTML (complex and simple). The mechanism that provides this 
+        feature is extensible.
+      </para>
+
+      <para>
+        Bugzilla can support different types of output, which again can have 
+        multiple formats. In order to request a certain type, you can append 
+        the &amp;ctype=&lt;contenttype&gt; (such as rdf or html) to the 
+        <filename>&lt;cginame&gt;.cgi</filename> URL. If you would like to 
+        retrieve a certain format, you can use the &amp;format=&lt;format&gt; 
+        (such as simple or complex) in the URL.
+      </para>
+      
+      <para>
+        To see if a CGI supports multiple output formats and types, grep the
+        CGI for <quote>get_format</quote>. If it's not present, adding
+        multiple format/type support isn't too hard - see how it's done in
+        other CGIs, e.g. config.cgi.
+      </para>
+      
+      <para>
+        To make a new format template for a CGI which supports this, 
+        open a current template for
+        that CGI and take note of the INTERFACE comment (if present.) This 
+        comment defines what variables are passed into this template. If 
+        there isn't one, I'm afraid you'll have to read the template and
+        the code to find out what information you get. 
+      </para>     
+  
+      <para>
+        Write your template in whatever markup or text style is appropriate.
+      </para>
+      
+      <para>
+        You now need to decide what content type you want your template
+        served as. The content types are defined in the
+        <filename>Bugzilla/Constants.pm</filename> file in the 
+        <filename>contenttypes</filename>
+        constant. If your content type is not there, add it. Remember
+        the three- or four-letter tag assigned to your content type. 
+        This tag will be part of the template filename.
+      </para>
+
+      <note>
+        <para>
+          After adding or changing a content type, it's suitable to edit
+          <filename>Bugzilla/Constants.pm</filename> in order to reflect
+          the changes. Also, the file should be kept up to date after an
+          upgrade if content types have been customized in the past. 
+        </para>
+      </note>
+      
+      <para>
+        Save the template as <filename>&lt;stubname&gt;-&lt;formatname&gt;.&lt;contenttypetag&gt;.tmpl</filename>. 
+        Try out the template by calling the CGI as 
+        <filename>&lt;cginame&gt;.cgi?format=&lt;formatname&gt;&amp;ctype=&lt;type&gt;</filename> .
+      </para>       
+    </section>
+    
+    
+    <section id="template-specific">
+      <title>Particular Templates</title>
+      
+      <para>
+        There are a few templates you may be particularly interested in
+        customizing for your installation.
+      </para>
+      
+      <para>
+        <command>index.html.tmpl</command>:
+        This is the Bugzilla front page.
+      </para>      
+
+      <para>
+        <command>global/header.html.tmpl</command>:
+        This defines the header that goes on all Bugzilla pages.
+        The header includes the banner, which is what appears to users
+        and is probably what you want to edit instead.  However the
+        header also includes the HTML HEAD section, so you could for
+        example add a stylesheet or META tag by editing the header.
+      </para>
+
+      <para>
+        <command>global/banner.html.tmpl</command>:
+        This contains the <quote>banner</quote>, the part of the header
+        that appears
+        at the top of all Bugzilla pages.  The default banner is reasonably
+        barren, so you'll probably want to customize this to give your
+        installation a distinctive look and feel.  It is recommended you
+        preserve the Bugzilla version number in some form so the version 
+        you are running can be determined, and users know what docs to read.
+      </para>
+
+      <para>
+        <command>global/footer.html.tmpl</command>:
+        This defines the footer that goes on all Bugzilla pages.  Editing
+        this is another way to quickly get a distinctive look and feel for
+        your Bugzilla installation.
+      </para>
+
+      <para>
+        <command>global/variables.none.tmpl</command>:
+        This defines a list of terms that may be changed in order to
+        <quote>brand</quote> the Bugzilla instance In this way, terms
+        like <quote>bugs</quote> can be replaced with <quote>issues</quote>
+        across the whole Bugzilla installation. The name
+        <quote>Bugzilla</quote> and other words can be customized as well.
+      </para>
+
+      <para>
+        <command>list/table.html.tmpl</command>:
+        This template controls the appearance of the bug lists created
+        by Bugzilla. Editing this template allows per-column control of 
+        the width and title of a column, the maximum display length of
+        each entry, and the wrap behaviour of long entries.
+        For long bug lists, Bugzilla inserts a 'break' every 100 bugs by
+        default; this behaviour is also controlled by this template, and
+        that value can be modified here.
+       </para>
+
+      <para>
+        <command>bug/create/user-message.html.tmpl</command>:
+        This is a message that appears near the top of the bug reporting page.
+        By modifying this, you can tell your users how they should report
+        bugs.
+      </para>
+
+      <para>
+        <command>bug/process/midair.html.tmpl</command>:
+        This is the page used if two people submit simultaneous changes to the
+        same bug.  The second person to submit their changes will get this page
+        to tell them what the first person did, and ask if they wish to
+        overwrite those changes or go back and revisit the bug.  The default
+        title and header on this page read "Mid-air collision detected!"  If
+        you work in the aviation industry, or other environment where this
+        might be found offensive (yes, we have true stories of this happening)
+        you'll want to change this to something more appropriate for your
+        environment.
+      </para>
+
+      <para>
+        <command>bug/create/create.html.tmpl</command> and
+        <command>bug/create/comment.txt.tmpl</command>:
+        You may not wish to go to the effort of creating custom fields in
+        Bugzilla, yet you want to make sure that each bug report contains
+        a number of pieces of important information for which there is not
+        a special field. The bug entry system has been designed in an
+        extensible fashion to enable you to add arbitrary HTML widgets,
+        such as drop-down lists or textboxes, to the bug entry page
+        and have their values appear formatted in the initial comment.
+        A hidden field that indicates the format should be added inside
+        the form in order to make the template functional. Its value should
+        be the suffix of the template filename. For example, if the file
+        is called <filename>create-cust.html.tmpl</filename>, then
+        <programlisting>&lt;input type="hidden" name="format" value="cust"&gt;</programlisting>
+        should be used inside the form.
+      </para>
+
+      <para>  
+        An example of this is the mozilla.org 
+        <ulink url="http://landfill.bugzilla.org/bugzilla-tip/enter_bug.cgi?product=WorldControl&amp;format=guided">guided 
+        bug submission form</ulink>. The code for this comes with the Bugzilla
+        distribution as an example for you to copy. It can be found in the
+        files 
+        <filename>create-guided.html.tmpl</filename> and
+        <filename>comment-guided.html.tmpl</filename>.
+      </para>  
+
+      <para>
+        So to use this feature, create a custom template for 
+        <filename>enter_bug.cgi</filename>. The default template, on which you
+        could base it, is 
+        <filename>custom/bug/create/create.html.tmpl</filename>.
+        Call it <filename>create-&lt;formatname&gt;.html.tmpl</filename>, and
+        in it, add widgets for each piece of information you'd like
+        collected - such as a build number, or set of steps to reproduce.
+      </para>
+
+      <para>
+        Then, create a template like 
+        <filename>custom/bug/create/comment.txt.tmpl</filename>, and call it 
+        <filename>comment-&lt;formatname&gt;.txt.tmpl</filename>. This 
+        template should reference the form fields you have created using
+        the syntax <filename>[% form.&lt;fieldname&gt; %]</filename>. When a 
+        bug report is
+        submitted, the initial comment attached to the bug report will be
+        formatted according to the layout of this template.
+      </para> 
+
+      <para>
+        For example, if your custom enter_bug template had a field
+        <programlisting>&lt;input type="text" name="buildid" size="30"&gt;</programlisting>
+        and then your comment.txt.tmpl had
+        <programlisting>BuildID: [% form.buildid %]</programlisting>
+        then something like
+        <programlisting>BuildID: 20020303</programlisting>
+        would appear in the initial comment.
+      </para>            
+    </section>          
+
+
+    <section id="template-http-accept">
+      <title>Configuring Bugzilla to Detect the User's Language</title>
+
+      <para>Bugzilla honours the user's Accept: HTTP header. You can install
+      templates in other languages, and Bugzilla will pick the most appropriate
+      according to a priority order defined by you. Many
+      language templates can be obtained from <ulink 
+      url="http://www.bugzilla.org/download.html#localizations"/>. Instructions
+      for submitting new languages are also available from that location.
+      </para>
+    </section>
+      
+  </section>
+
+  <section id="cust-hooks">
+    <title>The Bugzilla Extension Mechanism</title>
+    
+    <warning>
+      <para>
+        Note that the below paths are inconsistent and confusing. They will
+        likely be changed in Bugzilla 4.0.
+      </para>
+    </warning>
+       
+    <para>
+      Extensions are a way for extensions to Bugzilla to insert code
+      into the standard Bugzilla templates and source files
+      without modifying these files themselves.  The extension mechanism 
+      defines a consistent API for extending the standard templates and source files 
+      in a way that cleanly separates standard code from extension code.  
+      Hooks reduce merge conflicts and make it easier to write extensions that work 
+      across multiple versions of Bugzilla, making upgrading a Bugzilla installation 
+      with installed extensions easier. Furthermore, they make it easy to install 
+      and remove extensions as each extension is nothing more than a 
+      simple directory structure. 
+    </para>
+    
+    <para>
+      There are two main types of hooks: code hooks and template hooks. Code 
+      hooks allow extensions to invoke code at specific points in various 
+      source files, while template hooks allow extensions to add elements to 
+      the Bugzilla user interface. 
+    </para>
+
+    <para>
+      A hook is just a named place in a standard source or template file
+      where extension source code or template files for that hook get processed. 
+      Each extension has a corresponding directory in the Bugzilla directory 
+      tree (<filename>BUGZILLA_ROOT/extensions/extension_name</filename>).  Hooking 
+      an extension source file or template to a hook is as simple as putting 
+      the extension file into extension's template or code directory. 
+      When Bugzilla processes the source file or template and reaches the hook, 
+      it will process all extension files in the hook's directory. 
+      The hooks themselves can be added into any source file or standard template 
+      upon request by extension authors.
+    </para>
+    
+    <para>
+      To use hooks to extend Bugzilla, first make sure there is
+      a hook at the appropriate place within the source file or template you 
+      want to extend. The exact appearance of a hook depends on if the hook 
+      is a code hook or a template hook. 
+    </para>
+    
+    <para>
+      Code hooks appear in Bugzilla source files as a single method call 
+      in the format <literal role="code">Bugzilla::Hook->process("<varname>name</varname>");</literal>.
+      For instance, <filename>enter_bug.cgi</filename> may invoke the hook 
+      "<varname>enter_bug-entrydefaultvars</varname>". Thus, a source file at 
+      <filename>BUGZILLA_ROOT/extensions/EXTENSION_NAME/code/enter_bug-entrydefaultvars.pl</filename>
+      will be automatically invoked when the code hook is reached. 
+    </para>
+   
+    <para>  
+      Template hooks appear in the standard Bugzilla templates as a 
+      single directive in the format
+      <literal role="code">[% Hook.process("<varname>name</varname>") %]</literal>,
+      where <varname>name</varname> is the unique name of the hook.
+    </para>
+
+    <para>
+      If you aren't sure what you want to extend or just want to browse the 
+      available hooks, either use your favorite multi-file search
+      tool (e.g. <command>grep</command>) to search the standard templates
+      for occurrences of <methodname>Hook.process</methodname> or the source 
+      files for occurrences of <methodname>Bugzilla::Hook::process</methodname>.
+    </para>
+
+    <para>
+      If there is no hook at the appropriate place within the Bugzilla 
+      source file or template you want to extend,
+      <ulink url="http://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla&amp;component=User%20Interface">file
+      a bug requesting one</ulink>, specifying:
+    </para>
+
+    <simplelist>
+      <member>the source or template file for which you are 
+          requesting a hook;</member>
+      <member>
+        where in the file you would like the hook to be placed
+        (line number/position for latest version of the file in CVS
+        or description of location);
+      </member>
+      <member>the purpose of the hook;</member>
+      <member>a link to information about your extension, if any.</member>
+    </simplelist>
+
+    <para>
+      The Bugzilla reviewers will promptly review each hook request,
+      name the hook, add it to the template or source file, and check 
+      the new version of the template into CVS.
+    </para>
+
+    <para>
+      You may optionally attach a patch to the bug which implements the hook
+      and check it in yourself after receiving approval from a Bugzilla
+      reviewer.  The developers may suggest changes to the location of the
+      hook based on their analysis of your needs or so the hook can satisfy
+      the needs of multiple extensions, but the process of getting hooks
+      approved and checked in is not as stringent as the process for general
+      changes to Bugzilla, and any extension, whether released or still in
+      development, can have hooks added to meet their needs.
+    </para>
+
+    <para>
+      After making sure the hook you need exists (or getting it added if not),
+      add your extension to the directory within the Bugzilla
+      extensions tree corresponding to the hook. 
+    </para>
+    
+    <para>
+      That's it!  Now, when the source file or template containing the hook
+      is processed, your extension file will be processed at the point 
+      where the hook appears.
+    </para>
+
+    <para>
+      For example, let's say you have an extension named Projman that adds
+      project management capabilities to Bugzilla.  Projman has an
+      administration interface <filename>edit-projects.cgi</filename>, 
+      and you want to add a link to it into the navigation bar at the bottom
+      of every Bugzilla page for those users who are authorized
+      to administer projects.
+    </para>
+
+    <para>
+      The navigation bar is generated by the template file
+      <filename>useful-links.html.tmpl</filename>, which is located in
+      the <filename>global/</filename> subdirectory on the standard Bugzilla 
+      template path
+      <filename>BUGZILLA_ROOT/template/en/default/</filename>.
+      Looking in <filename>useful-links.html.tmpl</filename>, you find
+      the following hook at the end of the list of standard Bugzilla
+      administration links:
+    </para>
+
+    <programlisting><![CDATA[...
+    [% ', <a href="editkeywords.cgi">keywords</a>' 
+                                              IF user.groups.editkeywords %]
+    [% Hook.process("edit") %]
+...]]></programlisting>
+
+    <para>
+      The corresponding extension file for this hook is
+      <filename>BUGZILLA_ROOT/extensions/projman/template/en/global/useful-links-edit.html.tmpl</filename>.
+      You then create that template file and add the following constant:
+    </para>
+
+    <programlisting><![CDATA[...[% ', <a href="edit-projects.cgi">projects</a>' IF user.groups.projman_admins %]]]></programlisting>
+
+    <para>
+      Voila!  The link now appears after the other administration links in the
+      navigation bar for users in the <literal>projman_admins</literal> group.
+    </para>
+    
+    <para>
+      Now, let us say your extension adds a custom "project_manager" field 
+      to enter_bug.cgi. You want to modify the CGI script to set the default 
+      project manager to be productname@company.com. Looking at 
+      <filename>enter_bug.cgi</filename>, you see the enter_bug-entrydefaultvars 
+      hook near the bottom of the file before the default form values are set. 
+      The corresponding extension source file for this hook is located at 
+      <filename>BUGZILLA_ROOT/extensions/projman/code/enter_bug-entrydefaultvars.pl</filename>.
+      You then create that file and add the following:
+    </para>
+    
+    <programlisting>$default{'project_manager'} = $product.'@company.com';</programlisting>
+    
+    <para>
+      This code will be invoked whenever enter_bug.cgi is executed. 
+      Assuming that the rest of the customization was completed (e.g. the 
+      custom field was added to the enter_bug template and the required hooks 
+      were used in process_bug.cgi), the new field will now have this 
+      default value. 
+    </para>
+      
+    <para>
+      Notes:
+    </para>
+
+    <itemizedlist>
+      <listitem>
+        <para>
+          If your extension includes entirely new templates in addition to
+          extensions of standard templates, it should store those new
+          templates in its
+          <filename>BUGZILLA_ROOT/extensions/template/en/</filename> 
+          directory. Extension template directories, like the 
+          <filename>default/</filename> and <filename>custom/</filename>
+          directories, are part of the template search path, so putting templates
+          there enables them to be found by the template processor.
+        </para>
+
+        <para>
+          The template processor looks for templates first in the
+          <filename>custom/</filename> directory (i.e. templates added by the 
+          specific installation), then in the <filename>extensions/</filename>
+          directory (i.e. templates added by extensions), and finally in the 
+          <filename>default/</filename> directory (i.e. the standard Bugzilla 
+          templates). Thus, installation-specific templates override both 
+          default and extension templates.
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>
+          If you are looking to customize Bugzilla, you can also take advantage 
+          of template hooks. To do so, create a directory in
+          <filename>BUGZILLA_ROOT/template/en/custom/hook/</filename>
+          that corresponds to the hook you wish to use, then place your 
+          customization templates into those directories. For example, 
+          if you wanted to use the hook "end" in 
+          <filename>global/useful-links.html.tmpl</filename>, you would 
+          create the directory <filename>BUGZILLA_ROOT/template/en/custom/hook/
+          global/useful-links.html.tmpl/end/</filename> and add your customization 
+          template to this directory. 
+        </para>
+
+        <para>
+          Obviously this method of customizing Bugzilla only lets you add code
+          to the standard source files and templates; you cannot change the 
+          existing code. Nevertheless, for those customizations that only add 
+          code, this method can reduce conflicts when merging changes, 
+          making upgrading your customized Bugzilla installation easier.
+        </para>
+      </listitem>
+    </itemizedlist>    
+  </section>
+
+  <section id="cust-change-permissions">
+    <title>Customizing Who Can Change What</title>
+    
+    <warning>
+      <para>
+        This feature should be considered experimental; the Bugzilla code you
+        will be changing is not stable, and could change or move between 
+        versions. Be aware that if you make modifications as outlined here, 
+        you may have
+        to re-make them or port them if Bugzilla changes internally between
+        versions, and you upgrade.
+      </para>
+    </warning>
+      
+    <para>
+      Companies often have rules about which employees, or classes of employees,
+      are allowed to change certain things in the bug system. For example, 
+      only the bug's designated QA Contact may be allowed to VERIFY the bug.
+      Bugzilla has been
+      designed to make it easy for you to write your own custom rules to define
+      who is allowed to make what sorts of value transition.
+    </para>
+
+    <para>
+     By default, assignees, QA owners and users
+     with <emphasis>editbugs</emphasis> privileges can edit all fields of bugs, 
+     except group restrictions (unless they are members of the groups they 
+     are trying to change). Bug reporters also have the ability to edit some 
+     fields, but in a more restrictive manner. Other users, without 
+     <emphasis>editbugs</emphasis> privileges, can not edit 
+     bugs, except to comment and add themselves to the CC list.
+    </para> 
+    
+    <para>
+      For maximum flexibility, customizing this means editing Bugzilla's Perl 
+      code. This gives the administrator complete control over exactly who is
+      allowed to do what. The relevant method is called
+      <filename>check_can_change_field()</filename>,
+      and is found in <filename>Bug.pm</filename> in your
+      Bugzilla/ directory. If you open that file and search for
+      <quote>sub check_can_change_field</quote>, you'll find it.
+    </para>
+    
+    <para>
+      This function has been carefully commented to allow you to see exactly
+      how it works, and give you an idea of how to make changes to it.
+      Certain marked sections should not be changed - these are
+      the <quote>plumbing</quote> which makes the rest of the function work.
+      In between those sections, you'll find snippets of code like:
+      <programlisting>    # Allow the assignee to change anything.
+    if ($ownerid eq $whoid) {
+        return 1;
+    }</programlisting>
+      It's fairly obvious what this piece of code does.
+    </para>      
+      
+    <para>
+      So, how does one go about changing this function? Well, simple changes
+      can be made just by removing pieces - for example, if you wanted to 
+      prevent any user adding a comment to a bug, just remove the lines marked
+      <quote>Allow anyone to change comments.</quote> If you don't want the
+      Reporter to have any special rights on bugs they have filed, just
+      remove the entire section that deals with the Reporter.
+    </para>
+    
+    <para>
+      More complex customizations are not much harder. Basically, you add
+      a check in the right place in the function, i.e. after all the variables
+      you are using have been set up. So, don't look at $ownerid before 
+      $ownerid has been obtained from the database. You can either add a
+      positive check, which returns 1 (allow) if certain conditions are true,
+      or a negative check, which returns 0 (deny.) E.g.:
+      <programlisting>    if ($field eq "qacontact") {
+        if (Bugzilla->user->groups("quality_assurance")) {
+            return 1;
+        } 
+        else {
+            return 0;
+        }
+    }</programlisting>
+      This says that only users in the group "quality_assurance" can change
+      the QA Contact field of a bug.
+    </para>
+
+    <para>
+      Getting more weird:
+      <programlisting><![CDATA[    if (($field eq "priority") &&
+        (Bugzilla->user->email =~ /.*\@example\.com$/))
+    {
+        if ($oldvalue eq "P1") {
+            return 1;
+        } 
+        else {
+            return 0;
+        }
+    }]]></programlisting>
+      This says that if the user is trying to change the priority field,
+      and their email address is @example.com, they can only do so if the
+      old value of the field was "P1". Not very useful, but illustrative.
+    </para>
+
+    <warning>
+      <para>
+        If you are modifying <filename>process_bug.cgi</filename> in any
+        way, do not change the code that is bounded by DO_NOT_CHANGE blocks.
+        Doing so could compromise security, or cause your installation to
+        stop working entirely.
+      </para>
+    </warning>
+    
+    <para>
+      For a list of possible field names, look at the bugs table in the 
+      database. If you need help writing custom rules for your organization,
+      ask in the newsgroup.
+    </para>    
+  </section>   
+
+  <!-- Integrating Bugzilla with Third-Party Tools -->
+  &integration;
+
+</chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-always-quote-attributes:t
+sgml-auto-insert-required-elements:t
+sgml-balanced-tag-edit:t
+sgml-exposed-tags:nil
+sgml-general-insert-case:lower
+sgml-indent-data:t
+sgml-indent-step:2
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-minimize-attributes:nil
+sgml-namecase-general:t
+sgml-omittag:t
+sgml-parent-document:("Bugzilla-Guide.xml" "book" "chapter")
+sgml-shorttag:t
+sgml-tag-region-if-active:t
+End:
+-->
+

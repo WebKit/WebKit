@@ -21,7 +21,7 @@
 # Contributor(s): Terry Weissman <terry@mozilla.org>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -92,14 +92,15 @@ if ($action eq 'new') {
 
     print $cgi->header();
 
+    $vars->{'message'} = 'keyword_created';
     $vars->{'name'} = $keyword->name;
-    $template->process("admin/keywords/created.html.tmpl", $vars)
-      || ThrowTemplateError($template->error());
+    $vars->{'keywords'} = Bugzilla::Keyword->get_all_with_bug_count();
 
+    $template->process("admin/keywords/list.html.tmpl", $vars)
+      || ThrowTemplateError($template->error());
     exit;
 }
 
-    
 
 #
 # action='edit' -> present the edit keywords from
@@ -132,39 +133,39 @@ if ($action eq 'update') {
 
     $keyword->set_name($cgi->param('name'));
     $keyword->set_description($cgi->param('description'));
-    $keyword->update();
+    my $changes = $keyword->update();
 
     delete_token($token);
 
     print $cgi->header();
 
+    $vars->{'message'} = 'keyword_updated';
     $vars->{'keyword'} = $keyword;
-    $template->process("admin/keywords/rebuild-cache.html.tmpl", $vars)
-      || ThrowTemplateError($template->error());
+    $vars->{'changes'} = $changes;
+    $vars->{'keywords'} = Bugzilla::Keyword->get_all_with_bug_count();
 
+    $template->process("admin/keywords/list.html.tmpl", $vars)
+      || ThrowTemplateError($template->error());
     exit;
 }
 
-
-if ($action eq 'delete') {
+if ($action eq 'del') {
     my $keyword =  new Bugzilla::Keyword($key_id)
         || ThrowCodeError('invalid_keyword_id', { id => $key_id });
 
     $vars->{'keyword'} = $keyword;
+    $vars->{'token'} = issue_session_token('delete_keyword');
 
-    # We need this token even if there is no bug using this keyword.
-    $token = issue_session_token('delete_keyword');
+    print $cgi->header();
+    $template->process("admin/keywords/confirm-delete.html.tmpl", $vars)
+      || ThrowTemplateError($template->error());
+    exit;
+}
 
-    if (!$cgi->param('reallydelete') && $keyword->bug_count) {
-        $vars->{'token'} = $token;
-
-        print $cgi->header();
-        $template->process("admin/keywords/confirm-delete.html.tmpl", $vars)
-            || ThrowTemplateError($template->error());
-        exit;
-    }
-    # We cannot do this check earlier as we have to check 'reallydelete' first.
+if ($action eq 'delete') {
     check_token_data($token, 'delete_keyword');
+    my $keyword =  new Bugzilla::Keyword($key_id)
+        || ThrowCodeError('invalid_keyword_id', { id => $key_id });
 
     $dbh->do('DELETE FROM keywords WHERE keywordid = ?', undef, $keyword->id);
     $dbh->do('DELETE FROM keyworddefs WHERE id = ?', undef, $keyword->id);
@@ -173,9 +174,11 @@ if ($action eq 'delete') {
 
     print $cgi->header();
 
-    $template->process("admin/keywords/rebuild-cache.html.tmpl", $vars)
-      || ThrowTemplateError($template->error());
+    $vars->{'message'} = 'keyword_deleted';
+    $vars->{'keywords'} = Bugzilla::Keyword->get_all_with_bug_count();
 
+    $template->process("admin/keywords/list.html.tmpl", $vars)
+      || ThrowTemplateError($template->error());
     exit;
 }
 

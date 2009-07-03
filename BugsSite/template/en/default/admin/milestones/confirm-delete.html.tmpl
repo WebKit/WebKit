@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -76,8 +75,9 @@
       is 1 [% terms.bug %]
     [% END %]
     entered for this milestone! When you delete this milestone,
-    <b><blink>ALL</blink></b> stored [% terms.bugs %] will be reassigned to
-    the default milestone of this product.
+    <b><blink>ALL</blink></b> of these [% terms.bugs %] will be retargeted
+    to [% product.default_milestone FILTER html %], the default milestone for 
+    the [% product.name FILTER html %] product.
   </td></tr>
   </table>
 

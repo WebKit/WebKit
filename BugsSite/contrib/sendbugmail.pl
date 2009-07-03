@@ -4,7 +4,7 @@
 #
 # Nick Barnes, Ravenbrook Limited, 2004-04-01.
 #
-# $Id: sendbugmail.pl,v 1.7 2006/07/03 21:42:47 mkanat%bugzilla.org Exp $
+# $Id$
 # 
 # Bugzilla email script for Bugzilla 2.17.4 and later.  Invoke this to send
 # bugmail for a bug which has been changed directly in the database.
@@ -14,7 +14,7 @@
 # 
 # Usage: perl -T contrib/sendbugmail.pl bug_id user_email
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;

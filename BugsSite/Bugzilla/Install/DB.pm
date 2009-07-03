@@ -22,32 +22,15 @@ package Bugzilla::Install::DB;
 
 use strict;
 
-use Bugzilla::Bug qw(is_open_state);
 use Bugzilla::Constants;
 use Bugzilla::Hook;
+use Bugzilla::Install::Util qw(indicate_progress install_string);
 use Bugzilla::Util;
 use Bugzilla::Series;
 
 use Date::Parse;
 use Date::Format;
 use IO::File;
-
-use base qw(Exporter);
-our @EXPORT_OK = qw(
-    indicate_progress
-);
-
-sub indicate_progress {
-    my ($params) = @_;
-    my $current = $params->{current};
-    my $total   = $params->{total};
-    my $every   = $params->{every} || 1;
-
-    print "." if !($current % $every);
-    if ($current % ($every * 60) == 0) {
-        print "$current/$total (" . int($current * 100 / $total) . "%)\n";
-    }
-}
 
 # NOTE: This is NOT the function for general table updates. See
 # update_table_definitions for that. This is only for the fielddefs table.
@@ -131,6 +114,7 @@ sub update_fielddefs_definition {
 # the purpose of a column.
 #
 sub update_table_definitions {
+    my $old_params = shift;
     my $dbh = Bugzilla->dbh;
     _update_pre_checksetup_bugzillas();
 
@@ -331,12 +315,6 @@ sub update_table_definitions {
         $dbh->do('UPDATE quips SET userid = NULL WHERE userid = 0');
     }
 
-    # Right now, we only create the "thetext" index on MySQL.
-    if ($dbh->isa('Bugzilla::DB::Mysql')) {
-        $dbh->bz_add_index('longdescs', 'longdescs_thetext_idx',
-                           {TYPE => 'FULLTEXT', FIELDS => [qw(thetext)]});
-    }
-
     _convert_attachments_filename_from_mediumtext();
 
     $dbh->bz_add_column('quips', 'approved',
@@ -380,9 +358,9 @@ sub update_table_definitions {
     if ($dbh->bz_column_info('components', 'initialqacontact')->{NOTNULL}) {
         $dbh->bz_alter_column('components', 'initialqacontact', 
                               {TYPE => 'INT3'});
-        $dbh->do("UPDATE components SET initialqacontact = NULL " .
-                  "WHERE initialqacontact = 0");
     }
+    $dbh->do("UPDATE components SET initialqacontact = NULL " .
+              "WHERE initialqacontact = 0");
 
     _migrate_email_prefs_to_new_table();
     _initialize_dependency_tree_changes_email_pref();
@@ -499,7 +477,7 @@ sub update_table_definitions {
     $dbh->bz_add_column('setting', 'subclass', {TYPE => 'varchar(32)'});
 
     $dbh->bz_alter_column('longdescs', 'thetext', 
-        { TYPE => 'MEDIUMTEXT', NOTNULL => 1 }, '');
+        {TYPE => 'LONGTEXT', NOTNULL => 1}, '');
 
     # 2006-10-20 LpSolit@gmail.com - Bug 189627
     $dbh->bz_add_column('group_control_map', 'editcomponents',
@@ -522,11 +500,39 @@ sub update_table_definitions {
     _fix_uppercase_custom_field_names();
     _fix_uppercase_index_names();
 
+    # 2007-05-17 LpSolit@gmail.com - Bug 344965
+    _initialize_workflow($old_params);
+
+    # 2007-08-08 LpSolit@gmail.com - Bug 332149
+    $dbh->bz_add_column('groups', 'icon_url', {TYPE => 'TINYTEXT'});
+
+    # 2007-08-21 wurblzap@gmail.com - Bug 365378
+    _make_lang_setting_dynamic();
+    
+    # 2007-11-29 xiaoou.wu@oracle.com - Bug 153129
+    _change_text_types();
+
+    # 2007-09-09 LpSolit@gmail.com - Bug 99215
+    _fix_attachment_modification_date();
+
+    # This had the wrong definition in DB::Schema.
+    $dbh->bz_alter_column('namedqueries', 'query_type',
+                          {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 0});
+
+    $dbh->bz_drop_index('longdescs', 'longdescs_thetext_idx');
+    _populate_bugs_fulltext();
+
+    # 2008-01-18 xiaoou.wu@oracle.com - Bug 414292
+    $dbh->bz_alter_column('series', 'query',
+        { TYPE => 'MEDIUMTEXT', NOTNULL => 1 });
+
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
     ################################################################
 
     Bugzilla::Hook::process('install-update_db');
+
+    $dbh->bz_setup_foreign_keys();
 }
 
 # Subroutines should be ordered in the order that they are called.
@@ -664,8 +670,9 @@ sub _populate_longdescs {
               " for each 50.\n\n";
         local $| = 1;
 
-        $dbh->bz_lock_tables('bugs write', 'longdescs write', 'profiles write',
-                             'bz_schema WRITE');
+        # On MySQL, longdescs doesn't benefit from transactions, but this
+        # doesn't hurt.
+        $dbh->bz_start_transaction();
 
         $dbh->do('DELETE FROM longdescs');
 
@@ -727,7 +734,7 @@ sub _populate_longdescs {
 
         print "\n\n";
         $dbh->bz_drop_column('bugs', 'long_desc');
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
     } # main if
 }
 
@@ -745,8 +752,7 @@ sub _update_bugs_activity_field_to_fieldid {
                            [qw(fieldid)]);
         print "Populating new bugs_activity.fieldid field...\n";
 
-        $dbh->bz_lock_tables('bugs_activity WRITE', 'fielddefs WRITE');
-
+        $dbh->bz_start_transaction();
 
         my $ids = $dbh->selectall_arrayref(
             'SELECT DISTINCT fielddefs.id, bugs_activity.field
@@ -765,7 +771,7 @@ sub _update_bugs_activity_field_to_fieldid {
             $dbh->do("UPDATE bugs_activity SET fieldid = ? WHERE field = ?",
                      undef, $id, $field);
         }
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
 
         $dbh->bz_drop_column('bugs_activity', 'field');
     }
@@ -1034,10 +1040,10 @@ installation has many users.
 ENDTEXT
 
         # Re-crypt everyone's password.
+        my $total = $dbh->selectrow_array('SELECT COUNT(*) FROM profiles');
         my $sth = $dbh->prepare("SELECT userid, password FROM profiles");
         $sth->execute();
 
-        my $total = $sth->rows;
         my $i = 1;
 
         print "Fixing passwords...\n";
@@ -1076,12 +1082,12 @@ sub _update_bugs_activity_to_only_record_changes {
 
         # Now we need to process the bugs_activity table and reformat the data
         print "Fixing activity log...\n";
+        my $total = $dbh->selectrow_array('SELECT COUNT(*) FROM bugs_activity');
         my $sth = $dbh->prepare("SELECT bug_id, who, bug_when, fieldid,
                                 oldvalue, newvalue FROM bugs_activity");
         $sth->execute;
         my $i = 0;
-        my $total = $sth->rows;
-        while (my ($bug_id, $who, $bug_when, $fieldid, $oldvalue, $newvalue) 
+        while (my ($bug_id, $who, $bug_when, $fieldid, $oldvalue, $newvalue)
                    = $sth->fetchrow_array()) 
         {
             $i++;
@@ -1974,7 +1980,7 @@ sub _copy_old_charts_into_database {
                         $data{$fields[$i]}{$numbers[0]} = $numbers[$i + 1];
 
                         # Keep a total of the number of open bugs for this day
-                        if (is_open_state($fields[$i])) {
+                        if (grep { $_ eq $fields[$i] } @openedstatuses) {
                             $data{$open_name}{$numbers[0]} += $numbers[$i + 1];
                         }
                     }
@@ -2140,20 +2146,19 @@ sub _fix_group_with_empty_name {
         # group_$gid and add _<n> if necessary.
         my $trycount = 0;
         my $trygroupname;
-        my $trygroupsth = $dbh->prepare("SELECT id FROM groups where name = ?");
-        do {
+        my $sth = $dbh->prepare("SELECT 1 FROM groups where name = ?");
+        my $name_exists = 1;
+
+        while ($name_exists) {
             $trygroupname = "group_$emptygroupid";
             if ($trycount > 0) {
                $trygroupname .= "_$trycount";
             }
-            $trygroupsth->execute($trygroupname);
-            if ($trygroupsth->rows > 0) {
-                $trycount ++;
-            }
-        } while ($trygroupsth->rows > 0);
-        my $sth = $dbh->prepare("UPDATE groups SET name = ? " .
-                                 "WHERE id = $emptygroupid");
-        $sth->execute($trygroupname);
+            $name_exists = $dbh->selectrow_array($sth, undef, $trygroupname);
+            $trycount++;
+        }
+        $dbh->do("UPDATE groups SET name = ? WHERE id = ?",
+                 undef, $trygroupname, $emptygroupid);
         print "Group $emptygroupid had an empty name; renamed as",
               " '$trygroupname'.\n";
     }
@@ -2206,11 +2211,14 @@ sub _migrate_email_prefs_to_new_table {
         my %requestprefs = ("FlagRequestee" => EVT_FLAG_REQUESTED,
                             "FlagRequester" => EVT_REQUESTED_FLAG);
 
+        # We run the below code in a transaction to speed things up.
+        $dbh->bz_start_transaction();
+
         # Select all emailflags flag strings
+        my $total = $dbh->selectrow_array('SELECT COUNT(*) FROM profiles');
         my $sth = $dbh->prepare("SELECT userid, emailflags FROM profiles");
         $sth->execute();
         my $i = 0;
-        my $total = $sth->rows;
 
         while (my ($userid, $flagstring) = $sth->fetchrow_array()) {
             $i++;
@@ -2272,6 +2280,7 @@ sub _migrate_email_prefs_to_new_table {
         # EVT_ATTACHMENT.
         _clone_email_event(EVT_ATTACHMENT, EVT_ATTACHMENT_DATA);
 
+        $dbh->bz_commit_transaction();
         $dbh->bz_drop_column("profiles", "emailflags");
     }
 }
@@ -2444,7 +2453,8 @@ sub _fix_broken_all_closed_series {
             join("&", map { "bug_status=" . url_quote($_) }
                           ('UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED'));
         my $open_bugs_query_base_new =
-            join("&", map { "bug_status=" . url_quote($_) } BUG_STATE_OPEN);
+            join("&", map { "bug_status=" . url_quote($_) }
+                          ('NEW', 'REOPENED', 'ASSIGNED', 'UNCONFIRMED'));
         my $sth_openbugs_series =
             $dbh->prepare("SELECT series_id FROM series WHERE query IN (?, ?)");
         # Statement to find the series which has collected the most data.
@@ -2606,7 +2616,7 @@ sub _change_short_desc_from_mediumtext_to_varchar {
         # and then truncate the summary.
         my $long_summary_bugs = $dbh->selectall_arrayref(
             'SELECT bug_id, short_desc, reporter
-               FROM bugs WHERE LENGTH(short_desc) > 255');
+               FROM bugs WHERE CHAR_LENGTH(short_desc) > 255');
 
         if (@$long_summary_bugs) {
             print <<EOT;
@@ -2785,6 +2795,263 @@ sub _fix_uppercase_index_names {
     }
 }
 
+sub _initialize_workflow {
+    my $old_params = shift;
+    my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_add_column('bug_status', 'is_open',
+                        {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE'});
+
+    # Till now, bug statuses were not customizable. Nevertheless, local
+    # changes are possible and so we will try to respect these changes.
+    # This means: get the status of bugs having a resolution different from ''
+    # and mark these statuses as 'closed', even if some of these statuses are
+    # expected to be open statuses. Bug statuses we have no information about
+    # are left as 'open'.
+    my @closed_statuses =
+      @{$dbh->selectcol_arrayref('SELECT DISTINCT bug_status FROM bugs
+                                  WHERE resolution != ?', undef, '')};
+
+    # Append the default list of closed statuses *unless* we detect at least
+    # one closed state in the DB (i.e. with is_open = 0). This would mean that
+    # the DB has already been updated at least once and maybe the admin decided
+    # that e.g. 'RESOLVED' is now an open state, in which case we don't want to
+    # override this attribute. At least one bug status has to be a closed state
+    # anyway (due to the 'duplicate_or_move_bug_status' parameter) so it's safe
+    # to use this criteria.
+    my $num_closed_states = $dbh->selectrow_array('SELECT COUNT(*) FROM bug_status
+                                                   WHERE is_open = 0');
+
+    if (!$num_closed_states) {
+        @closed_statuses =
+          map {$dbh->quote($_)} (@closed_statuses, qw(RESOLVED VERIFIED CLOSED));
+
+        print "Marking closed bug statuses as such...\n";
+        $dbh->do('UPDATE bug_status SET is_open = 0 WHERE value IN (' .
+                  join(', ', @closed_statuses) . ')');
+    }
+
+    # Populate the status_workflow table. We do nothing if the table already
+    # has entries. If all bug status transitions have been deleted, the
+    # workflow will be restored to its default schema.
+    my $count = $dbh->selectrow_array('SELECT COUNT(*) FROM status_workflow');
+
+    if (!$count) {
+        # Make sure the variables below are defined as
+        # status_workflow.require_comment cannot be NULL.
+        my $create = $old_params->{'commentoncreate'} || 0;
+        my $confirm = $old_params->{'commentonconfirm'} || 0;
+        my $accept = $old_params->{'commentonaccept'} || 0;
+        my $resolve = $old_params->{'commentonresolve'} || 0;
+        my $verify = $old_params->{'commentonverify'} || 0;
+        my $close = $old_params->{'commentonclose'} || 0;
+        my $reopen = $old_params->{'commentonreopen'} || 0;
+        # This was till recently the only way to get back to NEW for
+        # confirmed bugs, so we use this parameter here.
+        my $reassign = $old_params->{'commentonreassign'} || 0;
+
+        # This is the default workflow.
+        my @workflow = ([undef, 'UNCONFIRMED', $create],
+                        [undef, 'NEW', $create],
+                        [undef, 'ASSIGNED', $create],
+                        ['UNCONFIRMED', 'NEW', $confirm],
+                        ['UNCONFIRMED', 'ASSIGNED', $accept],
+                        ['UNCONFIRMED', 'RESOLVED', $resolve],
+                        ['NEW', 'ASSIGNED', $accept],
+                        ['NEW', 'RESOLVED', $resolve],
+                        ['ASSIGNED', 'NEW', $reassign],
+                        ['ASSIGNED', 'RESOLVED', $resolve],
+                        ['REOPENED', 'NEW', $reassign],
+                        ['REOPENED', 'ASSIGNED', $accept],
+                        ['REOPENED', 'RESOLVED', $resolve],
+                        ['RESOLVED', 'UNCONFIRMED', $reopen],
+                        ['RESOLVED', 'REOPENED', $reopen],
+                        ['RESOLVED', 'VERIFIED', $verify],
+                        ['RESOLVED', 'CLOSED', $close],
+                        ['VERIFIED', 'UNCONFIRMED', $reopen],
+                        ['VERIFIED', 'REOPENED', $reopen],
+                        ['VERIFIED', 'CLOSED', $close],
+                        ['CLOSED', 'UNCONFIRMED', $reopen],
+                        ['CLOSED', 'REOPENED', $reopen]);
+
+        print "Now filling the 'status_workflow' table with valid bug status transitions...\n";
+        my $sth_select = $dbh->prepare('SELECT id FROM bug_status WHERE value = ?');
+        my $sth = $dbh->prepare('INSERT INTO status_workflow (old_status, new_status,
+                                             require_comment) VALUES (?, ?, ?)');
+
+        foreach my $transition (@workflow) {
+            my ($from, $to);
+            # If it's an initial state, there is no "old" value.
+            $from = $dbh->selectrow_array($sth_select, undef, $transition->[0])
+              if $transition->[0];
+            $to = $dbh->selectrow_array($sth_select, undef, $transition->[1]);
+            # If one of the bug statuses doesn't exist, the transition is invalid.
+            next if (($transition->[0] && !$from) || !$to);
+
+            $sth->execute($from, $to, $transition->[2] ? 1 : 0);
+        }
+    }
+
+    # Make sure the bug status used by the 'duplicate_or_move_bug_status'
+    # parameter has all the required transitions set.
+    Bugzilla::Status::add_missing_bug_status_transitions();
+}
+
+sub _make_lang_setting_dynamic {
+    my $dbh = Bugzilla->dbh;
+    my $count = $dbh->selectrow_array(q{SELECT 1 FROM setting
+                                         WHERE name = 'lang'
+                                           AND subclass IS NULL});
+    if ($count) {
+        $dbh->do(q{UPDATE setting SET subclass = 'Lang' WHERE name = 'lang'});
+        $dbh->do(q{DELETE FROM setting_value WHERE name = 'lang'});
+    }
+}
+
+sub _fix_attachment_modification_date {
+    my $dbh = Bugzilla->dbh;
+    if (!$dbh->bz_column_info('attachments', 'modification_time')) {
+        # Allow NULL values till the modification time has been set.
+        $dbh->bz_add_column('attachments', 'modification_time', {TYPE => 'DATETIME'});
+
+        print "Setting the modification time for attachments...\n";
+        $dbh->do('UPDATE attachments SET modification_time = creation_ts');
+
+        # Now force values to be always defined.
+        $dbh->bz_alter_column('attachments', 'modification_time',
+                              {TYPE => 'DATETIME', NOTNULL => 1});
+
+        # Update the modification time for attachments which have been modified.
+        my $attachments =
+          $dbh->selectall_arrayref('SELECT attach_id, MAX(bug_when) FROM bugs_activity
+                                    WHERE attach_id IS NOT NULL ' .
+                                    $dbh->sql_group_by('attach_id'));
+
+        my $sth = $dbh->prepare('UPDATE attachments SET modification_time = ?
+                                 WHERE attach_id = ?');
+        $sth->execute($_->[1], $_->[0]) foreach (@$attachments);
+    }
+    # We add this here to be sure to have the index being added, due to the original
+    # patch omitting it.
+    $dbh->bz_add_index('attachments', 'attachments_modification_time_idx',
+                       [qw(modification_time)]);
+}
+
+sub _change_text_types {
+    my $dbh = Bugzilla->dbh; 
+    return if 
+        $dbh->bz_column_info('namedqueries', 'query')->{TYPE} eq 'LONGTEXT';
+    _check_content_length('attachments', 'mimetype',    255, 'attach_id');
+    _check_content_length('fielddefs',   'description', 255, 'id');
+    _check_content_length('attachments', 'description', 255, 'attach_id');
+
+    $dbh->bz_alter_column('bugs', 'bug_file_loc',
+        { TYPE => 'MEDIUMTEXT'});
+    $dbh->bz_alter_column('longdescs', 'thetext',
+        { TYPE => 'LONGTEXT', NOTNULL => 1 });
+    $dbh->bz_alter_column('attachments', 'description',
+        { TYPE => 'TINYTEXT', NOTNULL => 1 });
+    $dbh->bz_alter_column('attachments', 'mimetype',
+        { TYPE => 'TINYTEXT', NOTNULL => 1 });
+    # This also changes NULL to NOT NULL.
+    $dbh->bz_alter_column('flagtypes', 'description',
+        { TYPE => 'MEDIUMTEXT', NOTNULL => 1 }, '');
+    $dbh->bz_alter_column('fielddefs', 'description',
+        { TYPE => 'TINYTEXT', NOTNULL => 1 });
+    $dbh->bz_alter_column('groups', 'description',
+        { TYPE => 'MEDIUMTEXT', NOTNULL => 1 });
+    $dbh->bz_alter_column('quips', 'quip',
+        { TYPE => 'MEDIUMTEXT', NOTNULL => 1 });
+    $dbh->bz_alter_column('namedqueries', 'query',
+        { TYPE => 'LONGTEXT', NOTNULL => 1 });
+
+} 
+
+sub _check_content_length {
+    my ($table_name, $field_name, $max_length, $id_field) = @_;
+    my $dbh = Bugzilla->dbh;
+    my %contents = @{ $dbh->selectcol_arrayref(
+        "SELECT $id_field, $field_name FROM $table_name 
+          WHERE CHAR_LENGTH($field_name) > ?", {Columns=>[1,2]}, $max_length) };
+
+    if (scalar keys %contents) {
+        print install_string('install_data_too_long',
+                             { column     => $field_name,
+                               id_column  => $id_field,
+                               table      => $table_name,
+                               max_length => $max_length });
+        foreach my $id (keys %contents) {
+            my $string = $contents{$id};
+            # Don't dump the whole string--it could be 16MB.
+            if (length($string) > 80) {
+                $string = substr($string, 0, 30) . "..." 
+                         . substr($string, -30) . "\n";
+            }
+            print "$id: $string\n";
+        }
+        exit 3;
+    }
+}
+
+sub _populate_bugs_fulltext {
+    my $dbh = Bugzilla->dbh;
+    my $fulltext = $dbh->selectrow_array('SELECT 1 FROM bugs_fulltext '
+                                         . $dbh->sql_limit(1));
+    # We only populate the table if it's empty...
+    if (!$fulltext) {
+        # ... and if there are bugs in the bugs table.
+        my $bug_ids = $dbh->selectcol_arrayref('SELECT bug_id FROM bugs');
+        return if !@$bug_ids;
+
+        # Populating bugs_fulltext can be very slow for large installs,
+        # so we special-case any DB that supports GROUP_CONCAT, which is
+        # a much faster way to do things.
+        if (UNIVERSAL::can($dbh, 'sql_group_concat')) {
+            print "Populating bugs_fulltext...";
+            print " (this can take a long time.)\n";
+            $dbh->do(
+                q{INSERT INTO bugs_fulltext (bug_id, short_desc, comments, 
+                                             comments_noprivate)
+                       SELECT bugs.bug_id, bugs.short_desc, }
+                     . $dbh->sql_group_concat('longdescs.thetext', '\'\n\'')
+              . ', ' . $dbh->sql_group_concat('nopriv.thetext',    '\'\n\'') .
+                      q{ FROM bugs 
+                              LEFT JOIN longdescs
+                                     ON bugs.bug_id = longdescs.bug_id
+                              LEFT JOIN longdescs AS nopriv
+                                     ON longdescs.comment_id = nopriv.comment_id
+                                        AND nopriv.isprivate = 0 }
+                     . $dbh->sql_group_by('bugs.bug_id', 'bugs.short_desc'));
+        }
+        # The slow way, without group_concat.
+        else {
+            print "Populating bugs_fulltext.short_desc...\n";
+            $dbh->do('INSERT INTO bugs_fulltext (bug_id, short_desc)
+                           SELECT bug_id, short_desc FROM bugs');
+
+            my $count = 1;
+            my $sth_all = $dbh->prepare('SELECT thetext FROM longdescs 
+                                          WHERE bug_id = ?');
+            my $sth_nopriv = $dbh->prepare(
+                'SELECT thetext FROM longdescs
+                  WHERE bug_id = ? AND isprivate = 0');
+            my $sth_update = $dbh->prepare(
+                'UPDATE bugs_fulltext SET comments = ?, comments_noprivate = ?
+                  WHERE bug_id = ?');
+
+            print "Populating bugs_fulltext comment fields...\n";
+            foreach my $id (@$bug_ids) { 
+                my $all = $dbh->selectcol_arrayref($sth_all, undef, $id);
+                my $nopriv = $dbh->selectcol_arrayref($sth_nopriv, undef, $id);
+                $sth_update->execute(join("\n", @$all), join("\n", @$nopriv), $id);
+                indicate_progress({ total   => scalar @$bug_ids, every => 100,
+                                    current => $count++ });
+            }
+            print "\n";
+        }
+    }
+}
+
 1;
 
 __END__
@@ -2828,20 +3095,6 @@ Description: L<checksetup.pl> depends on the fielddefs table having
              L</update_table_definitions()>.
 
 Params:      none
-
-Returns:     nothing
-
-=item C<indicate_progress({ total => $total, current => $count, every => 1 })>
-
-Description: This prints out lines of dots as a long update is going on,
-             to let the user know where we are and that we're not frozen.
-             A new line of dots will start every 60 dots.
-
-Params:      C<total> - The total number of items we're processing.
-             C<current> - The number of the current item we're processing.
-             C<every> - How often the function should print out a dot.
-               For example, if this is 10, the function will print out
-               a dot every ten items.
 
 Returns:     nothing
 

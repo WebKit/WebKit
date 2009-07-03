@@ -37,12 +37,13 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
+use Bugzilla::Status;
 
 eval "use GD";
 $@ && ThrowCodeError("gd_not_installed");
@@ -75,7 +76,7 @@ if (! defined $cgi->param('product')) {
       || ThrowCodeError('chart_dir_nonexistent',
                         {dir => $dir, graph_dir => $graph_dir});
 
-    my %default_sel = map { $_ => 1 } qw/UNCONFIRMED NEW ASSIGNED REOPENED/;
+    my %default_sel = map { $_ => 1 } BUG_STATE_OPEN;
 
     my @datasets;
     my @data = get_data($dir);
@@ -214,6 +215,7 @@ sub generate_chart {
         if (/^#/) {
             if (/^# fields?: (.*)\s*$/) {
                 @fields = split /\||\r/, $1;
+                $data{$_} ||= [] foreach @fields;
                 unless ($fields[0] =~ /date/i) {
                     ThrowCodeError('chart_datafile_corrupt', {'file' => $data_file});
                 }

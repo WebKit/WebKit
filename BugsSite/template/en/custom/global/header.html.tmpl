@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -35,7 +34,7 @@
   # style: string. CSS style.
   # style_urls: list. List of URLs to CSS style sheets.
   # message: string. A message to display to the user. May contain HTML.
-  # rsslink: RSS link URL, May contain HTML
+  # rsslink: RSS link URL, May contain HTML (WEBKIT_CHANGES)
   #%]
 
 [% IF message %]
@@ -69,20 +68,6 @@
     [% PROCESS "global/site-navigation.html.tmpl" %]
 
     [% PROCESS 'global/setting-descs.none.tmpl' %]
-
-    [% IF javascript %]
-      <script type="text/javascript">
-        [% javascript %]
-      </script>
-    [% END %]
-    
-    [% IF javascript_urls %]
-      [% FOREACH javascript_url = javascript_urls %]
-        <script src="[% javascript_url FILTER html %]" type="text/javascript"></script>
-      [% END %]
-    [% END %]
-
-    [%+ INCLUDE "global/help-header.html.tmpl" %]
 
     [%# Set up the skin CSS cascade:
       #  1. Standard Bugzilla stylesheet set (persistent)
@@ -203,16 +188,40 @@
             type="text/css">
     <![endif]-->
 
+
+    [% IF javascript %]
+      <script type="text/javascript">
+        [% javascript %]
+      </script>
+    [% END %]
+
+    [% IF javascript_urls %]
+      [% FOREACH javascript_url = javascript_urls %]
+        <script src="[% javascript_url FILTER html %]" type="text/javascript"></script>
+      [% END %]
+      [% IF javascript_urls.grep('yui/').size %]
+        <script type="text/javascript">
+          YAHOO.namespace('bugzilla');
+          if( YAHOO.env.ua.gecko )
+            YAHOO.util.Event._simpleRemove(window, "unload", YAHOO.util.Event._unload);
+        </script>
+      [% END %]
+    [% END %]
+
+[%# if WEBKIT_CHANGES %]
     [%# this puts the live bookmark up on firefox for the RSS feed %]
     [% IF rsslink %]
        <link rel="alternate" 
              type="application/rss+xml" title="RSS 1.0" 
              href="[% rsslink FILTER html %]">
     [% END %]
+[%# endif // WEBKIT_CHANGES %]
 
     [%# Required for the 'Autodiscovery' feature in Firefox 2 and IE 7. %]
     <link rel="search" type="application/opensearchdescription+xml"
                        title="[% terms.Bugzilla %]" href="./search_plugin.cgi">
+    <link rel="shortcut icon" href="images/favicon.ico" >
+    [% Hook.process("additional_header") %]
   </head>
 
 [%# Migration note: contents of the old Param 'bodyhtml' go in the body tag,
@@ -220,7 +229,7 @@
   #%]
 
   <body onload="[% onload %]"
-        class="[% Param('urlbase').replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
+        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
                [% FOREACH class = bodyclasses %]
                  [% ' ' %][% class FILTER css_class_quote %]
                [% END %]">
@@ -232,30 +241,28 @@
 
 <div id="header">
 
-[% INCLUDE global/banner.html.tmpl %]
+[%# INCLUDE global/banner.html.tmpl #%]
 
 <table border="0" cellspacing="0" cellpadding="0" id="titles">
 <tr>
     <td id="title">
-      <p>[% terms.Bugzilla %]
-      [% " &ndash; $header" IF header %]</p>
+      <p>WebKit [% terms.Bugzilla %]
+[%# if WEBKIT_CHANGES %]
+      [%# " &ndash; $header" IF header %]</p>
+[%# endif // WEBKIT_CHANGES %]
     </td>
 
-  [% IF subheader %]
-    <td id="subtitle">
-      <p class="subheader">[% subheader %]</p>
-    </td>
-  [% END %]
-
-  [% IF header_addl_info %]
-    <td id="information">
-      <p class="header_addl_info">[% header_addl_info %]</p>
-    </td>
-  [% END %]
+[%# WEBKIT_CHANGES: Removed subheader and header_addl_info output %]
 </tr>
 </table>
 
-[% PROCESS "global/common-links.html.tmpl" btn_id = "find_top" %]
+[%# if WEBKIT_CHANGES %]
+  [% IF header || subheader %]
+    <div id="bug_title">[% header %][% ": $subheader" IF subheader %]</div>
+  [% END %]
+[%# endif // WEBKIT_CHANGES %]
+
+[% PROCESS "global/common-links.html.tmpl" qs_suffix = "_top" %]
 
 </div>
 

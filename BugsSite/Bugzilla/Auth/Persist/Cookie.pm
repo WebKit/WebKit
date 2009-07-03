@@ -60,12 +60,24 @@ sub persist_login {
     # subsequent login
     trick_taint($ip_addr);
 
+    $dbh->bz_start_transaction();
+
     my $login_cookie = 
         Bugzilla::Token::GenerateUniqueToken('logincookies', 'cookie');
 
     $dbh->do("INSERT INTO logincookies (cookie, userid, ipaddr, lastused)
               VALUES (?, ?, ?, NOW())",
               undef, $login_cookie, $user->id, $ip_addr);
+
+    # Issuing a new cookie is a good time to clean up the old
+    # cookies.
+    $dbh->do("DELETE FROM logincookies WHERE lastused < LOCALTIMESTAMP(0) - "
+             . $dbh->sql_interval(MAX_LOGINCOOKIE_AGE, 'DAY'));
+
+    $dbh->bz_commit_transaction();
+
+    # Prevent JavaScript from accessing login cookies.
+    my %cookieargs = ('-httponly' => 1);
 
     # Remember cookie only if admin has told so
     # or admin didn't forbid it and user told to remember.
@@ -74,20 +86,23 @@ sub persist_login {
           $cgi->param('Bugzilla_remember') &&
           $cgi->param('Bugzilla_remember') eq 'on') ) 
     {
-        $cgi->send_cookie(-name => 'Bugzilla_login',
-                          -value => $user->id,
-                          -expires => 'Fri, 01-Jan-2038 00:00:00 GMT');
-        $cgi->send_cookie(-name => 'Bugzilla_logincookie',
-                          -value => $login_cookie,
-                          -expires => 'Fri, 01-Jan-2038 00:00:00 GMT');
+        # Not a session cookie, so set an infinite expiry
+        $cookieargs{'-expires'} = 'Fri, 01-Jan-2038 00:00:00 GMT';
+    }
+    if (Bugzilla->params->{'ssl'} ne 'never'
+        && Bugzilla->params->{'sslbase'} ne '')
+    {
+        # Bugzilla->login will automatically redirect to https://,
+        # so it's safe to turn on the 'secure' bit.
+        $cookieargs{'-secure'} = 1;
+    }
 
-    }
-    else {
-        $cgi->send_cookie(-name => 'Bugzilla_login',
-                          -value => $user->id);
-        $cgi->send_cookie(-name => 'Bugzilla_logincookie',
-                          -value => $login_cookie);
-    }
+    $cgi->send_cookie(-name => 'Bugzilla_login',
+                      -value => $user->id,
+                      %cookieargs);
+    $cgi->send_cookie(-name => 'Bugzilla_logincookie',
+                      -value => $login_cookie,
+                      %cookieargs);
 }
 
 sub logout {

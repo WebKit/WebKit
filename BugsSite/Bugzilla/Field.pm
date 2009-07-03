@@ -30,17 +30,14 @@ Bugzilla::Field - a particular piece of information about bugs
   print Dumper(Bugzilla->get_fields());
 
   # Display information about non-obsolete custom fields.
-  print Dumper(Bugzilla->get_fields({ obsolete => 1, custom => 1 }));
-
-  # Display a list of the names of non-obsolete custom fields.
-  print Bugzilla->custom_field_names;
+  print Dumper(Bugzilla->active_custom_fields);
 
   use Bugzilla::Field;
 
   # Display information about non-obsolete custom fields.
   # Bugzilla->get_fields() is a wrapper around Bugzilla::Field->match(),
   # so both methods take the same arguments.
-  print Dumper(Bugzilla::Field->match({ obsolete => 1, custom => 1 }));
+  print Dumper(Bugzilla::Field->match({ obsolete => 0, custom => 1 }));
 
   # Create or update a custom field or field definition.
   my $field = Bugzilla::Field->create(
@@ -126,6 +123,8 @@ use constant SQL_DEFINITIONS => {
     FIELD_TYPE_FREETEXT,      { TYPE => 'varchar(255)' },
     FIELD_TYPE_SINGLE_SELECT, { TYPE => 'varchar(64)', NOTNULL => 1,
                                 DEFAULT => "'---'" },
+    FIELD_TYPE_TEXTAREA,      { TYPE => 'MEDIUMTEXT' },
+    FIELD_TYPE_DATETIME,      { TYPE => 'DATETIME'   },
 };
 
 # Field definitions for the fields that ship with Bugzilla.
@@ -252,9 +251,9 @@ sub _check_sortkey {
 sub _check_type {
     my ($invocant, $type) = @_;
     my $saved_type = $type;
-    # FIELD_TYPE_SINGLE_SELECT here should be updated every time a new,
+    # The constant here should be updated every time a new,
     # higher field type is added.
-    (detaint_natural($type) && $type <= FIELD_TYPE_SINGLE_SELECT)
+    (detaint_natural($type) && $type <= FIELD_TYPE_DATETIME)
       || ThrowCodeError('invalid_customfield_type', { type => $saved_type });
     return $type;
 }
@@ -413,6 +412,89 @@ sub set_in_new_bugmail { $_[0]->set('mailhead',    $_[1]); }
 
 =pod
 
+=head2 Instance Method
+
+=over
+
+=item C<remove_from_db>
+
+Attempts to remove the passed in field from the database.
+Deleting a field is only successful if the field is obsolete and
+there are no values specified (or EVER specified) for the field.
+
+=back
+
+=cut
+
+sub remove_from_db {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    my $name = $self->name;
+
+    if (!$self->custom) {
+        ThrowCodeError('field_not_custom', {'name' => $name });
+    }
+
+    if (!$self->obsolete) {
+        ThrowUserError('customfield_not_obsolete', {'name' => $self->name });
+    }
+
+    $dbh->bz_start_transaction();
+
+    # Check to see if bug activity table has records (should be fast with index)
+    my $has_activity = $dbh->selectrow_array("SELECT COUNT(*) FROM bugs_activity
+                                      WHERE fieldid = ?", undef, $self->id);
+    if ($has_activity) {
+        ThrowUserError('customfield_has_activity', {'name' => $name });
+    }
+
+    # Check to see if bugs table has records (slow)
+    my $bugs_query = "";
+
+    if ($self->type == FIELD_TYPE_MULTI_SELECT) {
+        $bugs_query = "SELECT COUNT(*) FROM bug_$name";
+    }
+    else {
+        $bugs_query = "SELECT COUNT(*) FROM bugs WHERE $name IS NOT NULL
+                                AND $name != ''";
+        # Ignore the default single select value
+        if ($self->type == FIELD_TYPE_SINGLE_SELECT) {
+            $bugs_query .= " AND $name != '---'";
+        }
+        # Ignore blank dates.
+        if ($self->type == FIELD_TYPE_DATETIME) {
+            $bugs_query .= " AND $name != '00-00-00 00:00:00'";
+        }
+    }
+
+    my $has_bugs = $dbh->selectrow_array($bugs_query);
+    if ($has_bugs) {
+        ThrowUserError('customfield_has_contents', {'name' => $name });
+    }
+
+    # Once we reach here, we should be OK to delete.
+    $dbh->do('DELETE FROM fielddefs WHERE id = ?', undef, $self->id);
+
+    my $type = $self->type;
+
+    # the values for multi-select are stored in a seperate table
+    if ($type != FIELD_TYPE_MULTI_SELECT) {
+        $dbh->bz_drop_column('bugs', $name);
+    }
+
+    if ($type == FIELD_TYPE_SINGLE_SELECT
+        || $type == FIELD_TYPE_MULTI_SELECT)
+    {
+        # Delete the table that holds the legal values for this field.
+        $dbh->bz_drop_field_tables($self);
+    }
+
+    $dbh->bz_commit_transaction()
+}
+
+=pod
+
 =head2 Class Methods
 
 =over
@@ -454,13 +536,20 @@ sub create {
     if ($field->custom) {
         my $name = $field->name;
         my $type = $field->type;
-        # Create the database column that stores the data for this field.
-        $dbh->bz_add_column('bugs', $name, SQL_DEFINITIONS->{$type});
+        if (SQL_DEFINITIONS->{$type}) {
+            # Create the database column that stores the data for this field.
+            $dbh->bz_add_column('bugs', $name, SQL_DEFINITIONS->{$type});
+        }
+
+        if ($type == FIELD_TYPE_SINGLE_SELECT
+                || $type == FIELD_TYPE_MULTI_SELECT) 
+        {
+            # Create the table that holds the legal values for this field.
+            $dbh->bz_add_field_tables($field);
+        }
 
         if ($type == FIELD_TYPE_SINGLE_SELECT) {
-            # Create the table that holds the legal values for this field.
-            $dbh->bz_add_field_table($name);
-            # And insert a default value of "---" into it.
+            # Insert a default value of "---" into the legal values table.
             $dbh->do("INSERT INTO $name (value) VALUES ('---')");
         }
     }
@@ -482,81 +571,6 @@ sub run_create_validators {
     return $params;
 }
 
-
-=pod
-
-=over
-
-=item C<match>
-
-=over
-
-=item B<Description>
-
-Returns a list of fields that match the specified criteria.
-
-You should be using L<Bugzilla/get_fields> and
-L<Bugzilla/get_custom_field_names> instead of this function.
-
-=item B<Params>
-
-Takes named parameters in a hashref:
-
-=over
-
-=item C<name> - The name of the field.
-
-=item C<custom> - Boolean. True to only return custom fields. False
-to only return non-custom fields. 
-
-=item C<obsolete> - Boolean. True to only return obsolete fields.
-False to not return obsolete fields.
-
-=item C<type> - The type of the field. A C<FIELD_TYPE> constant from
-L<Bugzilla::Constants>.
-
-=item C<enter_bug> - Boolean. True to only return fields that appear
-on F<enter_bug.cgi>. False to only return fields that I<don't> appear
-on F<enter_bug.cgi>.
-
-=back
-
-=item B<Returns>
-
-A reference to an array of C<Bugzilla::Field> objects.
-
-=back
-
-=back
-
-=cut
-
-sub match {
-    my ($class, $criteria) = @_;
-  
-    my @terms;
-    if (defined $criteria->{name}) {
-        push(@terms, "name=" . Bugzilla->dbh->quote($criteria->{name}));
-    }
-    if (defined $criteria->{custom}) {
-        push(@terms, "custom=" . ($criteria->{custom} ? "1" : "0"));
-    }
-    if (defined $criteria->{obsolete}) {
-        push(@terms, "obsolete=" . ($criteria->{obsolete} ? "1" : "0"));
-    }
-    if (defined $criteria->{enter_bug}) {
-        push(@terms, "enter_bug=" . ($criteria->{enter_bug} ? '1' : '0'));
-    }
-    if (defined $criteria->{type}) {
-        push(@terms, "type = " . $criteria->{type});
-    }
-    my $where = (scalar(@terms) > 0) ? "WHERE " . join(" AND ", @terms) : "";
-
-    my $ids = Bugzilla->dbh->selectcol_arrayref(
-        "SELECT id FROM fielddefs $where", {Slice => {}});
-
-    return $class->new_from_list($ids);
-}
 
 =pod
 

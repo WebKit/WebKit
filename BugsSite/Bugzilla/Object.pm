@@ -23,12 +23,19 @@ use strict;
 
 package Bugzilla::Object;
 
+use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
+
+use Date::Parse;
 
 use constant NAME_FIELD => 'name';
 use constant ID_FIELD   => 'id';
 use constant LIST_ORDER => NAME_FIELD;
+
+use constant UPDATE_VALIDATORS => {};
+use constant NUMERIC_COLUMNS   => ();
+use constant DATE_COLUMNS      => ();
 
 ###############################
 ####    Initialization     ####
@@ -100,44 +107,107 @@ sub _init {
     return $object;
 }
 
+sub check {
+    my ($invocant, $param) = @_;
+    my $class = ref($invocant) || $invocant;
+    # If we were just passed a name, then just use the name.
+    if (!ref $param) {
+        $param = { name => $param };
+    }
+    # Don't allow empty names.
+    if (exists $param->{name}) {
+        $param->{name} = trim($param->{name});
+        $param->{name} || ThrowUserError('object_name_not_specified',
+                                          { class => $class });
+    }
+    my $obj = $class->new($param)
+        || ThrowUserError('object_does_not_exist', {%$param, class => $class});
+    return $obj;
+}
+
 sub new_from_list {
     my $invocant = shift;
     my $class = ref($invocant) || $invocant;
     my ($id_list) = @_;
-    my $dbh = Bugzilla->dbh;
-    my $columns = join(',', $class->DB_COLUMNS);
-    my $table   = $class->DB_TABLE;
-    my $order   = $class->LIST_ORDER;
     my $id_field = $class->ID_FIELD;
 
-    my $objects;
-    if (@$id_list) {
-        my @detainted_ids;
-        foreach my $id (@$id_list) {
-            detaint_natural($id) ||
-                ThrowCodeError('param_must_be_numeric',
-                              {function => $class . '::new_from_list'});
-            push(@detainted_ids, $id);
+    my @detainted_ids;
+    foreach my $id (@$id_list) {
+        detaint_natural($id) ||
+            ThrowCodeError('param_must_be_numeric',
+                          {function => $class . '::new_from_list'});
+        push(@detainted_ids, $id);
+    }
+    # We don't do $invocant->match because some classes have
+    # their own implementation of match which is not compatible
+    # with this one. However, match() still needs to have the right $invocant
+    # in order to do $class->DB_TABLE and so on.
+    return match($invocant, { $id_field => \@detainted_ids });
+}
+
+# Note: Future extensions to this could be:
+#  * Add a MATCH_JOIN constant so that we can join against
+#    certain other tables for the WHERE criteria.
+sub match {
+    my ($invocant, $criteria) = @_;
+    my $class = ref($invocant) || $invocant;
+    my $dbh   = Bugzilla->dbh;
+
+    return [$class->get_all] if !$criteria;
+
+    my (@terms, @values);
+    foreach my $field (keys %$criteria) {
+        my $value = $criteria->{$field};
+        if (ref $value eq 'ARRAY') {
+            # IN () is invalid SQL, and if we have an empty list
+            # to match against, we're just returning an empty
+            # array anyhow.
+            return [] if !scalar @$value;
+
+            my @qmarks = ("?") x @$value;
+            push(@terms, $dbh->sql_in($field, \@qmarks));
+            push(@values, @$value);
         }
-        $objects = $dbh->selectall_arrayref(
-            "SELECT $columns FROM $table WHERE $id_field IN (" 
-            . join(',', @detainted_ids) . ") ORDER BY $order", {Slice=>{}});
-    } else {
-        return [];
+        elsif ($value eq NOT_NULL) {
+            push(@terms, "$field IS NOT NULL");
+        }
+        elsif ($value eq IS_NULL) {
+            push(@terms, "$field IS NULL");
+        }
+        else {
+            push(@terms, "$field = ?");
+            push(@values, $value);
+        }
     }
 
-    foreach my $object (@$objects) {
-        bless($object, $class);
+    my $where = join(' AND ', @terms);
+    return $class->_do_list_select($where, \@values);
+}
+
+sub _do_list_select {
+    my ($class, $where, $values) = @_;
+    my $table = $class->DB_TABLE;
+    my $cols  = join(',', $class->DB_COLUMNS);
+    my $order = $class->LIST_ORDER;
+
+    my $sql = "SELECT $cols FROM $table";
+    if (defined $where) {
+        $sql .= " WHERE $where ";
     }
-    return $objects;
+    $sql .= " ORDER BY $order";
+
+    my $dbh = Bugzilla->dbh;
+    my $objects = $dbh->selectall_arrayref($sql, {Slice=>{}}, @$values);
+    bless ($_, $class) foreach @$objects;
+    return $objects
 }
 
 ###############################
 ####      Accessors      ######
 ###############################
 
-sub id                { return $_[0]->{'id'};          }
-sub name              { return $_[0]->{'name'};        }
+sub id   { return $_[0]->{$_[0]->ID_FIELD};   }
+sub name { return $_[0]->{$_[0]->NAME_FIELD}; }
 
 ###############################
 ####        Methods        ####
@@ -153,10 +223,15 @@ sub set {
                             superclass => __PACKAGE__,
                             function   => 'Bugzilla::Object->set' });
 
-    my $validators = $self->VALIDATORS;
-    if (exists $validators->{$field}) {
-        my $validator = $validators->{$field};
+    my %validators = (%{$self->VALIDATORS}, %{$self->UPDATE_VALIDATORS});
+    if (exists $validators{$field}) {
+        my $validator = $validators{$field};
         $value = $self->$validator($value, $field);
+        trick_taint($value) if (defined $value && !ref($value));
+
+        if ($self->can('_set_global_validator')) {
+            $self->_set_global_validator($value, $field);
+        }
     }
 
     $self->{$field} = $value;
@@ -169,25 +244,41 @@ sub update {
     my $table    = $self->DB_TABLE;
     my $id_field = $self->ID_FIELD;
 
+    $dbh->bz_start_transaction();
+
     my $old_self = $self->new($self->id);
     
+    my %numeric = map { $_ => 1 } $self->NUMERIC_COLUMNS;
+    my %date    = map { $_ => 1 } $self->DATE_COLUMNS;
     my (@update_columns, @values, %changes);
     foreach my $column ($self->UPDATE_COLUMNS) {
-        if ($old_self->{$column} ne $self->{$column}) {
-            my $value = $self->{$column};
-            trick_taint($value) if defined $value;
-            push(@values, $value);
-            push(@update_columns, $column);
-            # We don't use $value because we don't want to detaint this for
-            # the caller.
-            $changes{$column} = [$old_self->{$column}, $self->{$column}];
+        my ($old, $new) = ($old_self->{$column}, $self->{$column});
+        # This has to be written this way in order to allow us to set a field
+        # from undef or to undef, and avoid warnings about comparing an undef
+        # with the "eq" operator.
+        if (!defined $new || !defined $old) {
+            next if !defined $new && !defined $old;
         }
+        elsif ( ($numeric{$column} && $old == $new) 
+                || ($date{$column} && str2time($old) == str2time($new))
+                || $old eq $new ) {
+            next;
+        }
+
+        trick_taint($new) if defined $new;
+        push(@values, $new);
+        push(@update_columns, $column);
+        # We don't use $new because we don't want to detaint this for
+        # the caller.
+        $changes{$column} = [$old, $self->{$column}];
     }
 
     my $columns = join(', ', map {"$_ = ?"} @update_columns);
 
     $dbh->do("UPDATE $table SET $columns WHERE $id_field = ?", undef, 
              @values, $self->id) if @values;
+
+    $dbh->bz_commit_transaction();
 
     return \%changes;
 }
@@ -200,9 +291,13 @@ sub create {
     my ($class, $params) = @_;
     my $dbh = Bugzilla->dbh;
 
+    $dbh->bz_start_transaction();
     $class->check_required_create_fields($params);
     my $field_values = $class->run_create_validators($params);
-    return $class->insert_create_data($field_values);
+    my $object = $class->insert_create_data($field_values);
+    $dbh->bz_commit_transaction();
+
+    return $object;
 }
 
 sub check_required_create_fields {
@@ -262,17 +357,14 @@ sub insert_create_data {
 
 sub get_all {
     my $class = shift;
-    my $dbh = Bugzilla->dbh;
-    my $table = $class->DB_TABLE;
-    my $order = $class->LIST_ORDER;
-    my $id_field = $class->ID_FIELD;
-
-    my $ids = $dbh->selectcol_arrayref(qq{
-        SELECT $id_field FROM $table ORDER BY $order});
-
-    my $objects = $class->new_from_list($ids);
-    return @$objects;
+    return @{$class->_do_list_select()};
 }
+
+###############################
+####      Validators     ######
+###############################
+
+sub check_boolean { return $_[1] ? 1 : 0 }
 
 1;
 
@@ -366,11 +458,33 @@ These functions should call L<Bugzilla::Error/ThrowUserError> if they fail.
 
 The validator must return the validated value.
 
+=item C<UPDATE_VALIDATORS>
+
+This is just like L</VALIDATORS>, but these validators are called only
+when updating an object, not when creating it. Any validator that appears
+here must not appear in L</VALIDATORS>.
+
+L<Bugzilla::Bug> has good examples in its code of when to use this.
+
 =item C<UPDATE_COLUMNS>
 
 A list of columns to update when L</update> is called.
 If a field can't be changed, it shouldn't be listed here. (For example,
 the L</ID_FIELD> usually can't be updated.)
+
+=item C<NUMERIC_COLUMNS>
+
+When L</update> is called, it compares each column in the object to its
+current value in the database. It only updates columns that have changed.
+
+Any column listed in NUMERIC_COLUMNS is treated as a number, not as a string,
+during these comparisons.
+
+=item C<DATE_COLUMNS>
+
+This is much like L</NUMERIC_COLUMNS>, except that it treats strings as
+dates when being compared. So, for example, C<2007-01-01> would be
+equal to C<2007-01-01 00:00:00>.
 
 =back
 
@@ -380,7 +494,7 @@ the L</ID_FIELD> usually can't be updated.)
 
 =over
 
-=item C<new($param)>
+=item C<new>
 
 =over
 
@@ -395,7 +509,7 @@ If you pass an integer, the integer is the id of the object,
 from the database, that we  want to read in. (id is defined
 as the value in the L</ID_FIELD> column).
 
-If you pass in a hash, you can pass a C<name> key. The 
+If you pass in a hashref, you can pass a C<name> key. The 
 value of the C<name> key is the case-insensitive name of the object 
 (from L</NAME_FIELD>) in the DB.
 
@@ -420,7 +534,35 @@ are intended B<only> for use by subclasses.
 
 =item B<Returns>
 
-A fully-initialized object.
+A fully-initialized object, or C<undef> if there is no object in the
+database matching the parameters you passed in.
+
+=back
+
+=item C<check>
+
+=over
+
+=item B<Description>
+
+Checks if there is an object in the database with the specified name, and
+throws an error if you specified an empty name, or if there is no object
+in the database with that name.
+
+=item B<Params>
+
+The parameters are the same as for L</new>, except that if you don't pass
+a hashref, the single argument is the I<name> of the object, not the id.
+
+=item B<Returns>
+
+A fully initialized object, guaranteed.
+
+=item B<Notes For Implementors>
+
+If you implement this in your subclass, make sure that you also update
+the C<object_name> block at the bottom of the F<global/user-error.html.tmpl>
+template.
 
 =back
 
@@ -435,6 +577,38 @@ A fully-initialized object.
                           be skipped.
 
  Returns:     A reference to an array of objects.
+
+=item C<match>
+
+=over
+
+=item B<Description>
+
+Gets a list of objects from the database based on certain criteria.
+
+Basically, a simple way of doing a sort of "SELECT" statement (like SQL)
+to get objects.
+
+All criteria are joined by C<AND>, so adding more criteria will give you
+a smaller set of results, not a larger set.
+
+=item B<Params>
+
+A hashref, where the keys are column names of the table, pointing to the 
+value that you want to match against for that column. 
+
+There are two special values, the constants C<NULL> and C<NOT_NULL>,
+which means "give me objects where this field is NULL or NOT NULL,
+respectively."
+
+If you don't specify any criteria, calling this function is the same
+as doing C<[$class-E<gt>get_all]>.
+
+=item B<Returns>
+
+An arrayref of objects, or an empty arrayref if there are no matches.
+
+=back
 
 =back
 
@@ -555,6 +729,12 @@ if it exists. Subclasses should use this function
 to implement the various C<set_> mutators for their different
 fields.
 
+If your class defines a method called C<_set_global_validator>,
+C<set> will call it with C<($value, $field)> as arguments, after running
+the validator for this particular field. C<_set_global_validator> does not
+return anything.
+
+
 See L</VALIDATORS> for more information.
 
 =item B<Params>
@@ -571,6 +751,20 @@ be the same as the name of the field in L</VALIDATORS>, if it exists there.
 =item B<Returns> (nothing)
 
 =back
+
+=back
+
+=head2 Simple Validators
+
+You can use these in your subclass L</VALIDATORS> or L</UPDATE_VALIDATORS>.
+Note that you have to reference them like C<\&Bugzilla::Object::check_boolean>,
+you can't just write C<\&check_boolean>.
+
+=over
+
+=item C<check_boolean>
+
+Returns C<1> if the passed-in value is true, C<0> otherwise.
 
 =back
 

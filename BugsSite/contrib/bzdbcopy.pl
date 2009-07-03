@@ -19,9 +19,11 @@
 # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 use Bugzilla;
+use Bugzilla::Constants;
 use Bugzilla::DB;
+use Bugzilla::Install::Util qw(indicate_progress);
 use Bugzilla::Util;
 
 #####################################################################
@@ -33,25 +35,37 @@ use constant SOURCE_DB_TYPE => 'Mysql';
 use constant SOURCE_DB_NAME => 'bugs';
 use constant SOURCE_DB_USER => 'bugs';
 use constant SOURCE_DB_PASSWORD => '';
+use constant SOURCE_DB_HOST => 'localhost';
 
 # Settings for the 'Target' DB that you are copying to.
 use constant TARGET_DB_TYPE => 'Pg';
 use constant TARGET_DB_NAME => 'bugs';
 use constant TARGET_DB_USER => 'bugs';
 use constant TARGET_DB_PASSWORD => '';
+use constant TARGET_DB_HOST => 'localhost';
 
 #####################################################################
 # MAIN SCRIPT
 #####################################################################
 
+Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
+
 print "Connecting to the '" . SOURCE_DB_NAME . "' source database on " 
       . SOURCE_DB_TYPE . "...\n";
-my $source_db = Bugzilla::DB::_connect(SOURCE_DB_TYPE, 'localhost', 
+my $source_db = Bugzilla::DB::_connect(SOURCE_DB_TYPE, SOURCE_DB_HOST, 
     SOURCE_DB_NAME, undef, undef, SOURCE_DB_USER, SOURCE_DB_PASSWORD);
+# Don't read entire tables into memory.
+if (SOURCE_DB_TYPE eq 'Mysql') {
+    $source_db->{'mysql_use_result'}=1;
+
+    # MySQL cannot have two queries running at the same time. Ensure the schema
+    # is loaded from the database so bz_column_info will not execute a query
+    $source_db->_bz_real_schema;
+}
 
 print "Connecting to the '" . TARGET_DB_NAME . "' target database on "
       . TARGET_DB_TYPE . "...\n";
-my $target_db = Bugzilla::DB::_connect(TARGET_DB_TYPE, 'localhost', 
+my $target_db = Bugzilla::DB::_connect(TARGET_DB_TYPE, TARGET_DB_HOST, 
     TARGET_DB_NAME, undef, undef, TARGET_DB_USER, TARGET_DB_PASSWORD);
 my $ident_char = $target_db->get_info( 29 ); # SQL_IDENTIFIER_QUOTE_CHAR
 
@@ -65,11 +79,12 @@ my @table_list = $target_db->bz_table_list_real();
 my $bz_schema_location = lsearch(\@table_list, 'bz_schema');
 splice(@table_list, $bz_schema_location, 1) if $bz_schema_location > 0;
 
-# We turn off autocommit on the target DB, because we're doing so
-# much copying.
-$target_db->{AutoCommit} = 0;
-$target_db->{AutoCommit} == 0 
-    || warn "Failed to disable autocommit on " . TARGET_DB_TYPE;
+# Instead of figuring out some fancy algorithm to insert data in the right
+# order and not break FK integrity, we just drop them all.
+$target_db->bz_drop_foreign_keys();
+# We start a transaction on the target DB, which helps when we're doing
+# so many inserts.
+$target_db->bz_start_transaction();
 foreach my $table (@table_list) {
     my @serial_cols;
     print "Reading data from the source '$table' table on " 
@@ -80,8 +95,10 @@ foreach my $table (@table_list) {
     @table_columns = map { s/^\Q$ident_char\E?(.*?)\Q$ident_char\E?$/$1/; $_ }
                          @table_columns;
 
+    my ($total) = $source_db->selectrow_array("SELECT COUNT(*) FROM $table");
     my $select_query = "SELECT " . join(',', @table_columns) . " FROM $table";
-    my $data_in = $source_db->selectall_arrayref($select_query);
+    my $select_sth = $source_db->prepare($select_query);
+    $select_sth->execute();
 
     my $insert_query = "INSERT INTO $table ( " . join(',', @table_columns) 
                        . " ) VALUES (";
@@ -94,10 +111,25 @@ foreach my $table (@table_list) {
     print "Clearing out the target '$table' table on " 
           . TARGET_DB_TYPE . "...\n";
     $target_db->do("DELETE FROM $table");
+
+    # Oracle doesn't like us manually inserting into tables that have
+    # auto-increment PKs set, because of the way we made auto-increment
+    # fields work.
+    if ($target_db->isa('Bugzilla::DB::Oracle')) {
+        foreach my $column (@table_columns) {
+            my $col_info = $source_db->bz_column_info($table, $column);
+            if ($col_info && $col_info->{TYPE} =~ /SERIAL/i) {
+                print "Dropping the sequence + trigger on $table.$column...\n";
+                $target_db->do("DROP TRIGGER ${table}_${column}_TR");
+                $target_db->do("DROP SEQUENCE ${table}_${column}_SEQ");
+            }
+        }
+    }
     
     print "Writing data to the target '$table' table on " 
-          . TARGET_DB_TYPE . "...";
-    foreach my $row (@$data_in) {
+          . TARGET_DB_TYPE . "...\n";
+    my $count = 0;
+    while (my $row = $select_sth->fetchrow_arrayref) {
         # Each column needs to be bound separately, because
         # many columns need to be dealt with specially.
         my $colnum = 0;
@@ -144,23 +176,38 @@ foreach my $table (@table_list) {
         }
 
         $insert_sth->execute();
+        $count++;
+        indicate_progress({ current => $count, total => $total, every => 100 });
     }
 
-    # PostgreSQL doesn't like it when you insert values into
-    # a serial field; it doesn't increment the counter 
-    # automatically.
-    if ($target_db->isa('Bugzilla::DB::Pg')) {
-        foreach my $column (@table_columns) {
-            my $col_info = $source_db->bz_column_info($table, $column);
-            if ($col_info && $col_info->{TYPE} =~ /SERIAL/i) {
-                # Set the sequence to the current max value + 1.
-                my ($max_val) = $target_db->selectrow_array(
+    # For some DBs, we have to do clever things with auto-increment fields.
+    foreach my $column (@table_columns) {
+        next if $target_db->isa('Bugzilla::DB::Mysql');
+        my $col_info = $source_db->bz_column_info($table, $column);
+        if ($col_info && $col_info->{TYPE} =~ /SERIAL/i) {
+            my ($max_val) = $target_db->selectrow_array(
                     "SELECT MAX($column) FROM $table");
-                $max_val = 0 if !defined $max_val;
-                $max_val++;
-                print "\nSetting the next value for $table.$column to $max_val.";
+            # Set the sequence to the current max value + 1.
+            $max_val = 0 if !defined $max_val;
+            $max_val++;
+            print "\nSetting the next value for $table.$column to $max_val.";
+            if ($target_db->isa('Bugzilla::DB::Pg')) {
+                # PostgreSQL doesn't like it when you insert values into
+                # a serial field; it doesn't increment the counter 
+                # automatically.
                 $target_db->do("SELECT pg_catalog.setval 
                                 ('${table}_${column}_seq', $max_val, false)");
+            }
+            elsif ($target_db->isa('Bugzilla::DB::Oracle')) {
+                # Oracle increments the counter on every insert, and *always*
+                # sets the field, even if you gave it a value. So if there
+                # were already rows in the target DB (like the default rows
+                # created by checksetup), you'll get crazy values in your
+                # id columns. So we just dropped the sequences above and
+                # we re-create them here, starting with the right number.
+                my @sql = $target_db->_bz_real_schema->_get_create_seq_ddl(
+                    $table, $column, $max_val);
+                $target_db->do($_) foreach @sql;
             }
         }
     }
@@ -169,9 +216,10 @@ foreach my $table (@table_list) {
 }
 
 print "Committing changes to the target database...\n";
-$target_db->commit;
+$target_db->bz_commit_transaction();
+$target_db->bz_setup_foreign_keys();
 
-print "All done! Make sure to run checksetup on the new DB.\n";
+print "All done! Make sure to run checksetup.pl on the new DB.\n";
 $source_db->disconnect;
 $target_db->disconnect;
 

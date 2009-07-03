@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# -*- mode: html -*- %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
@@ -46,7 +45,7 @@ function addSidebar() {
     var sidebarname=window.location.host;
     if (!/bug/i.test(sidebarname))
       sidebarname="[% terms.Bugzilla %] "+sidebarname;
-    window.sidebar.addPanel (sidebarname, "[% Param('urlbase') %]sidebar.cgi", "");
+    window.sidebar.addPanel (sidebarname, "[% urlbase FILTER html %]sidebar.cgi", "");
   }
   else
   {
@@ -107,7 +106,7 @@ function addSidebar() {
     of [% terms.Bugzilla %], see the 
     <a href="page.cgi?id=release-notes.html">release notes</a>!
     You may also want to read the 
-    <a href="[% Param('docs_urlbase') FILTER html %]using.html">
+    <a href="[% docs_urlbase FILTER html %]using.html">
     [%- terms.Bugzilla %] User's Guide</a> to find out more about 
     [%+ terms.Bugzilla %] and how to use it.</p>
 
@@ -131,7 +130,7 @@ function addSidebar() {
 [% END %]
     <li id="sidebar"><a href="javascript:addSidebar()">Add to Sidebar</a> (requires a Mozilla browser like Mozilla Firefox)</li>
     <li id="quick_search_plugin">
-      <a href="javascript:window.external.AddSearchProvider('[% Param('urlbase') %]search_plugin.cgi')">Install
+      <a href="javascript:window.external.AddSearchProvider('[% urlbase FILTER html %]search_plugin.cgi')">Install
       the Quick Search plugin</a> (requires Firefox 2 or Internet Explorer 7)
     </li>
 

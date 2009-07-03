@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -69,20 +68,6 @@
     [% PROCESS "global/site-navigation.html.tmpl" %]
 
     [% PROCESS 'global/setting-descs.none.tmpl' %]
-
-    [% IF javascript %]
-      <script type="text/javascript">
-        [% javascript %]
-      </script>
-    [% END %]
-    
-    [% IF javascript_urls %]
-      [% FOREACH javascript_url = javascript_urls %]
-        <script src="[% javascript_url FILTER html %]" type="text/javascript"></script>
-      [% END %]
-    [% END %]
-
-    [%+ INCLUDE "global/help-header.html.tmpl" %]
 
     [%# Set up the skin CSS cascade:
       #  1. Standard Bugzilla stylesheet set (persistent)
@@ -203,6 +188,26 @@
             type="text/css">
     <![endif]-->
 
+
+    [% IF javascript %]
+      <script type="text/javascript">
+        [% javascript %]
+      </script>
+    [% END %]
+
+    [% IF javascript_urls %]
+      [% FOREACH javascript_url = javascript_urls %]
+        <script src="[% javascript_url FILTER html %]" type="text/javascript"></script>
+      [% END %]
+      [% IF javascript_urls.grep('yui/').size %]
+        <script type="text/javascript">
+          YAHOO.namespace('bugzilla');
+          if( YAHOO.env.ua.gecko )
+            YAHOO.util.Event._simpleRemove(window, "unload", YAHOO.util.Event._unload);
+        </script>
+      [% END %]
+    [% END %]
+
     [%# this puts the live bookmark up on firefox for the Atom feed %]
     [% IF atomlink %]
        <link rel="alternate" 
@@ -213,6 +218,8 @@
     [%# Required for the 'Autodiscovery' feature in Firefox 2 and IE 7. %]
     <link rel="search" type="application/opensearchdescription+xml"
                        title="[% terms.Bugzilla %]" href="./search_plugin.cgi">
+    <link rel="shortcut icon" href="images/favicon.ico" >
+    [% Hook.process("additional_header") %]
   </head>
 
 [%# Migration note: contents of the old Param 'bodyhtml' go in the body tag,
@@ -220,7 +227,7 @@
   #%]
 
   <body onload="[% onload %]"
-        class="[% Param('urlbase').replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
+        class="[% urlbase.replace('^https?://','').replace('/$','').replace('[-~@:/.]+','-') %]
                [% FOREACH class = bodyclasses %]
                  [% ' ' %][% class FILTER css_class_quote %]
                [% END %]">
@@ -255,7 +262,7 @@
 </tr>
 </table>
 
-[% PROCESS "global/common-links.html.tmpl" btn_id = "find_top" %]
+[% PROCESS "global/common-links.html.tmpl" qs_suffix = "_top" %]
 
 </div>
 

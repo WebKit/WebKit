@@ -23,17 +23,19 @@
 #                 Frédéric Buclin <LpSolit@gmail.com>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Config qw(:admin);
 use Bugzilla::Config::Common;
+use Bugzilla::Hook;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Token;
 use Bugzilla::User;
 use Bugzilla::User::Setting;
+use Bugzilla::Status;
 
 my $user = Bugzilla->login(LOGIN_REQUIRED);
 my $cgi = Bugzilla->cgi;
@@ -55,13 +57,15 @@ $current_panel = $1;
 
 my $current_module;
 my @panels = ();
-foreach my $panel (Bugzilla::Config::param_panels()) {
-    eval("require Bugzilla::Config::$panel") || die $@;
-    my @module_param_list = "Bugzilla::Config::${panel}"->get_param_list(1);
+my $param_panels = Bugzilla::Config::param_panels();
+foreach my $panel (keys %$param_panels) {
+    my $module = $param_panels->{$panel};
+    eval("require $module") || die $@;
+    my @module_param_list = "$module"->get_param_list();
     my $item = { name => lc($panel),
                  current => ($current_panel eq lc($panel)) ? 1 : 0,
                  param_list => \@module_param_list,
-                 sortkey => eval "\$Bugzilla::Config::${panel}::sortkey;"
+                 sortkey => eval "\$${module}::sortkey;"
                };
     push(@panels, $item);
     $current_module = $panel if ($current_panel eq lc($panel));
@@ -72,9 +76,8 @@ $vars->{panels} = \@panels;
 if ($action eq 'save' && $current_module) {
     check_token_data($token, 'edit_parameters');
     my @changes = ();
-    my @module_param_list = "Bugzilla::Config::${current_module}"->get_param_list(1);
+    my @module_param_list = "$param_panels->{$current_module}"->get_param_list();
 
-    my $update_lang_user_pref = 0;
     foreach my $i (@module_param_list) {
         my $name = $i->{'name'};
         my $value = $cgi->param($name);
@@ -134,20 +137,10 @@ if ($action eq 'save' && $current_module) {
             if (($name eq "shutdownhtml") && ($value ne "")) {
                 $vars->{'shutdown_is_active'} = 1;
             }
-            if ($name eq 'languages') {
-                $update_lang_user_pref = 1;
+            if ($name eq 'duplicate_or_move_bug_status') {
+                Bugzilla::Status::add_missing_bug_status_transitions($value);
             }
         }
-    }
-    if ($update_lang_user_pref) {
-        # We have to update the list of languages users can choose.
-        # If some users have selected a language which is no longer available,
-        # then we delete it (the user pref is reset to the default one).
-        my @languages = split(/[\s,]+/, Bugzilla->params->{'languages'});
-        map {trick_taint($_)} @languages;
-        my $lang = Bugzilla->params->{'defaultlanguage'};
-        trick_taint($lang);
-        add_setting('lang', \@languages, $lang, undef, 1);
     }
 
     $vars->{'message'} = 'parameters_updated';

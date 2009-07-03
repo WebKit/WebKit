@@ -28,6 +28,14 @@
         color: #000;
         background: #fff url("global/body-back.gif") repeat-x;
     }
+    body, td, th, input {
+        font-family: Verdana, sans-serif;
+        font-size: small;
+    }
+    /* monospace is much smaller than Verdana by default, so we make it a bit bigger. */
+    pre, code, kbd {
+        font-size: medium;
+    }
 /* global (end) */
 
 /* header (begin) */
@@ -39,11 +47,6 @@
     #header form {
         font-size: 85%;
         display: inline;
-    }
-
-    #header .btn,
-    #header .txt {
-        font-size: 80%;
     }
 
     #header .links {
@@ -115,6 +118,7 @@
 
 /* footer (begin) */
     #footer {
+        clear: both;
         margin-top: 5px;
         width: 100%;
         background: #edf2f2;
@@ -138,7 +142,6 @@
     }
 
     #footer #links-actions,
-    #footer #links-edit,
     #footer #links-saved,
     #footer #links-special {
         display: table-row;
@@ -244,7 +247,26 @@ div#docslinks {
     margin-bottom: 2em;
 }
 
-.bz_comment_head {
+/* The rules for these classes make international text wrap correctly,
+   even for languages like Japanese that have no spaces. */
+.bz_comment_text, .uneditable_textarea {
+     font-family: monospace;
+    /* Note that these must all be on separate lines or they stop
+       working in Konqueror. */
+     white-space: pre-wrap;      /* CSS 3 & 2.1 */
+     white-space: -moz-pre-wrap; /* Gecko */
+     white-space: -pre-wrap;     /* Opera 4-6 */
+     white-space: -o-pre-wrap;   /* Opera 7 */
+}
+
+.bz_comment_text {
+     width: 50em;
+}
+
+.bz_first_comment {
+}
+
+.bz_comment_head, .bz_first_comment_head {
     background-color: #e0e0e0;
 }
 .bz_comment_hilite pre {
@@ -255,16 +277,22 @@ div#docslinks {
 
 span.quote {
     color: #65379c;
+    /* Make quoted text not wrap. */
+    white-space: pre;
 }
 
 table#flags th,
 table#flags td {
-    vertical-align: baseline;
+    vertical-align: middle;
     text-align: left;
 }
 
 .flag_select {
     min-width: 3em;
+}
+
+#error_msg {
+    font-size: x-large;
 }
 
 .throw_error {
@@ -285,19 +313,23 @@ dl dl > dt {
     border-top: none;
 }
 
-/* Style of the attachment table */
+#admin_table th {
+    white-space: normal !important;
+}
+
+/* Style of the attachment table and time tracking table */
 #attachment_table {
     border-collapse: collapse;
     width: 40em;
     border: 1px solid #333333;
 }
 
-#attachment_table th, .bz_attach_footer {
+#attachment_table th, .bz_attach_footer, .bz_time_tracking_table th {
     background-color: #E0E0E0;
     color: black;
 }
 
-#attachment_table td {
+#attachment_table td, .bz_time_tracking_table th, .bz_time_tracking_table td {
     border: 1px solid #333333;
 }
 
@@ -314,6 +346,28 @@ dl dl > dt {
     padding-left: 1em;
 }
 
+table.attachment_info th {
+    text-align: right;
+    vertical-align: top;
+}
+
+table.attachment_info td {
+    text-align: left;
+    vertical-align: top;
+}
+
+/* Text displayed when the attachment is not viewable by the web browser */
+#noview {
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* For bug fields */
+.uneditable_textarea {
+    width: 30em;
+    font-size: medium;
+}
+
 div.user_match {
     margin-bottom: 1em;
 }
@@ -324,6 +378,10 @@ div.user_match {
     background-color: #ffc;
     margin: 1em;
     padding: 0.5em 1em;
+}
+
+.collapsed {
+    display: none;
 }
 
 /* Rules specific for printing */
@@ -343,6 +401,34 @@ div.user_match {
     vertical-align: top;
     font-weight: bold;
 }
-.field_value {
+.field_value, form#Create th, form#Create td {
     vertical-align: top;
+}
+
+.calendar_button {
+    background: transparent url("global/calendar.png") no-repeat;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+.calendar_button span { display: none }
+/* These classes are set by YUI. */
+.yui-calcontainer {
+    display: none; 
+    background-color: white; 
+    padding: 10px;
+    border: 1px solid #404D6C;
+}
+
+form#Create th {
+    text-align: right;
+}
+
+form#Create .comment {
+    vertical-align: top;
+    overflow: auto;
+    color: green;
+    margin: 0 0.5em;
+    padding: 0.3em;
+    height: 8ex;
 }

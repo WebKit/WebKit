@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -45,10 +44,19 @@
   function disableRequesteeFields()
   {
     var inputElements = document.getElementsByTagName("input");
+    var selectElements = document.getElementsByTagName("select");
+    //You cannot update Node lists, so you must create an array to combine the NodeLists
+    var allElements = [];
+    for( var i=0; i < inputElements.length; i++ ) {
+        allElements[allElements.length] = inputElements.item(i);
+    }
+    for( var i=0; i < selectElements.length; i++ ) { //Combine inputs with selects
+        allElements[allElements.length] = selectElements.item(i);
+    }
     var inputElement, id, flagField;
-    for ( var i=0 ; i<inputElements.length ; i++ )
+    for ( var i=0 ; i<allElements.length ; i++ )
     {
-      inputElement = inputElements.item(i);
+      inputElement = allElements[i];
       if (inputElement.name.search(/^requestee(_type)?-(\d+)$/) != -1)
       {
         // Convert the ID of the requestee field into the ID of its corresponding
@@ -128,15 +136,32 @@
         </td>
         [% IF any_flags_requesteeble %]
           <td>
-            [% IF type.is_active && type.is_requesteeble %]
+            [% IF (type.is_active && type.is_requestable && type.is_requesteeble) || flag.requestee %]
               <span style="white-space: nowrap;">
-                (<input type="text" size="30" maxlength="255"
-                        id="requestee-[% flag.id %]" 
-                        name="requestee-[% flag.id %]"
-                        [% IF flag.status == "?" && flag.requestee %]
-                          value="[% flag.requestee.login FILTER html %]"
-                        [% END %]
-                 >)
+                [% IF Param('usemenuforusers') %]
+                  [% flag_custom_list = flag.type.grant_list %]
+                  [% IF !(type.is_active && type.is_requestable && type.is_requesteeble) %]
+                    [%# We are here only because there was already a requestee. In this case,
+                        the only valid action is to remove the requestee or leave it alone;
+                        nothing else. %]
+                    [% flag_custom_list = [flag.requestee] %]
+                  [% END %]
+                  [% INCLUDE global/userselect.html.tmpl
+                             name     => "requestee-$flag.id"
+                             id       => "requestee-$flag.id"
+                             value    => flag.requestee.login
+                             multiple => 0
+                             emptyok  => 1
+                             custom_userlist => flag_custom_list
+                  %]
+                [% ELSE %]
+                  (<input type="text" size="30" maxlength="255"
+                          id="requestee-[% flag.id %]" 
+                          name="requestee-[% flag.id %]"
+                          [% IF flag.status == "?" && flag.requestee %]
+                            value="[% flag.requestee.login FILTER html %]"
+                          [% END %]>)
+                [% END %]
               </span>
             [% END %]
           </td>
@@ -156,7 +181,7 @@
         <td>
           <select id="flag_type-[% type.id %]" name="flag_type-[% type.id %]" 
                   title="[% type.description FILTER html %]"
-                  [% " disabled=\"disabled\"" UNLESS user.can_request_flag(type) %]
+                  [% " disabled=\"disabled\"" UNLESS (type.is_requestable && user.can_request_flag(type)) || user.can_set_flag(type) %]
                   onchange="toggleRequesteeField(this);"
                   class="flag_select">
             <option value="X"></option>
@@ -171,11 +196,22 @@
         </td>
         [% IF any_flags_requesteeble %]
           <td>
-            [% IF type.is_requesteeble %]
+            [% IF type.is_requestable && type.is_requesteeble %]
               <span style="white-space: nowrap;">
-                (<input type="text" size="30" maxlength="255"
-                        id="requestee_type-[% type.id %]" 
-                        name="requestee_type-[% type.id %]">)
+                [% IF Param('usemenuforusers') %]
+                  [% INCLUDE global/userselect.html.tmpl
+                             name     => "requestee_type-$type.id"
+                             id       => "requestee_type-$type.id"
+                             multiple => type.is_multiplicable * 3
+                             emptyok  => !type.is_multiplicable
+                             value    => ""
+                             custom_userlist => type.grant_list
+                  %]
+                [% ELSE %]
+                  (<input type="text" size="30" maxlength="255"
+                          id="requestee_type-[% type.id %]"
+                          name="requestee_type-[% type.id %]">)
+                [% END %]
               </span>
             [% END %]
           </td>
@@ -200,7 +236,7 @@
       <td>
         <select id="flag_type-[% type.id %]" name="flag_type-[% type.id %]" 
                 title="[% type.description FILTER html %]"
-                [% " disabled=\"disabled\"" UNLESS user.can_request_flag(type) %]
+                [% " disabled=\"disabled\"" UNLESS (type.is_requestable && user.can_request_flag(type)) || user.can_set_flag(type) %]
                 onchange="toggleRequesteeField(this);"
                 class="flag_select">
           <option value="X"></option>
@@ -215,12 +251,23 @@
       </td>
       [% IF any_flags_requesteeble %]
         <td>
-          [% IF type.is_requesteeble %]
-              <span style="white-space: nowrap;">
+          [% IF type.is_requestable && type.is_requesteeble %]
+            <span style="white-space: nowrap;">
+              [% IF Param('usemenuforusers') %]
+                [% INCLUDE global/userselect.html.tmpl
+                           name     => "requestee_type-$type.id"
+                           id       => "requestee_type-$type.id"
+                           multiple => type.is_multiplicable * 3
+                           emptyok  => !type.is_multiplicable
+                           value    => ""
+                           custom_userlist => type.grant_list
+                %]
+              [% ELSE %]
                 (<input type="text" size="30" maxlength="255"
                         id="requestee_type-[% type.id %]" 
                         name="requestee_type-[% type.id %]">)
-              </span>
+              [% END %]
+            </span>
           [% END %]
         </td>
       [% END %]

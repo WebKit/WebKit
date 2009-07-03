@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -51,7 +50,7 @@
 
     <p align="left">
       [% IF author.login == recipient.login %]
-        <a href="[%+ Param('urlbase') FILTER html %]editwhines.cgi">Click
+        <a href="[%+ urlbase FILTER html %]editwhines.cgi">Click
             here to edit your whine schedule</a>
       [% ELSE %]
         This search was scheduled by [% author.login FILTER html %].
@@ -77,13 +76,13 @@
 
     [% FOREACH bug=query.bugs %]
       <tr>
-        <td align="left"><a href="[%+ Param('urlbase') FILTER html %]show_bug.cgi?id=
+        <td align="left"><a href="[%+ urlbase FILTER html %]show_bug.cgi?id=
             [%- bug.bug_id %]">[% bug.bug_id %]</a></td>
         <td align="left">[% bug.bug_severity FILTER html %]</td>
         <td align="left">[% bug.priority FILTER html %]</td>
         <td align="left">[% bug.rep_platform FILTER html %]</td>
         <td align="left">[% bug.$assignee_login_string FILTER html %]</td>
-        <td align="left">[% status_descs.${bug.bug_status} FILTER html %]</td>
+        <td align="left">[% get_status(bug.bug_status) FILTER html %]</td>
         <td align="left">[% get_resolution(bug.resolution) FILTER html %]</td>
         <td align="left">[% bug.short_desc FILTER html %]</td>
       </tr>

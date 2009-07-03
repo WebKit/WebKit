@@ -29,6 +29,7 @@ C<bz_webservice_demo.pl --help> for detailed help
 =cut
 
 use strict;
+use lib qw(lib);
 use Getopt::Long;
 use Pod::Usage;
 use File::Basename qw(dirname);
@@ -50,6 +51,10 @@ my $bug_id;
 my $product_name;
 my $create_file_name;
 my $legal_field_values;
+my $add_comment;
+my $private;
+my $work_time;
+my $fetch_extension_info = 0;
 
 GetOptions('help|h|?'       => \$help,
            'uri=s'          => \$Bugzilla_uri,
@@ -59,7 +64,11 @@ GetOptions('help|h|?'       => \$help,
            'bug_id:s'       => \$bug_id,
            'product_name:s' => \$product_name,
            'create:s'       => \$create_file_name,
-           'field:s'        => \$legal_field_values
+           'field:s'        => \$legal_field_values,
+           'comment:s'      => \$add_comment,
+           'private:i'      => \$private,
+           'worktime:f'     => \$work_time,
+           'extension_info'    => \$fetch_extension_info
           ) or pod2usage({'-verbose' => 0, '-exitval' => 1});
 
 =head1 OPTIONS
@@ -87,7 +96,7 @@ Bugzilla password. Specify this together with B<--login> in order to log in.
 
 =item --rememberlogin
 
-Gives access to Bugzilla's “Bugzilla_remember” option.
+Gives access to Bugzilla's "Bugzilla_remember" option.
 Specify this option while logging in to do the same thing as ticking the
 C<Bugzilla_remember> box on Bugilla's log in form.
 Don't specify this option to do the same thing as unchecking the box.
@@ -112,6 +121,24 @@ Specify a file that contains settings for the creating of a new bug.
 Pass a field name to get legal values for this field. It must be either a
 global select field (such as bug_status, resolution, rep_platform, op_sys,
 priority, bug_severity) or a custom select field.
+
+=item --comment
+
+A comment to add to a bug identified by B<--bug_id>. You must also pass a B<--login>
+and B<--password> to log in to Bugzilla.
+
+=item --private
+
+An optional non-zero value to specify B<--comment> as private.
+
+=item --worktime
+
+An optional double precision number specifying the work time for B<--comment>.
+
+=item --extension_info
+
+If specified on the command line, the script returns the information about the
+extensions that are installed.
 
 =back
 
@@ -172,6 +199,25 @@ $soapresult = $proxy->call('Bugzilla.timezone');
 _die_on_fault($soapresult);
 print 'Bugzilla\'s timezone is ' . $soapresult->result()->{timezone} . ".\n";
 
+=head2 Getting Extension Information
+
+Returns all the information any extensions have decided to provide to the webservice.
+
+=cut
+
+if ($fetch_extension_info) {
+    $soapresult = $proxy->call('Bugzilla.extensions');
+    _die_on_fault($soapresult);
+    my $extensions = $soapresult->result()->{extensions};
+    foreach my $extensionname (keys(%$extensions)) {
+        print "Extensionn '$extensionname' information\n";
+        my $extension = $extensions->{$extensionname};
+        foreach my $data (keys(%$extension)) {
+            print '  ' . $data . ' => ' . $extension->{$data} . "\n";
+        }
+    }
+}
+
 =head2 Logging In and Out
 
 =head3 Using Bugzilla's Environment Authentication
@@ -214,13 +260,15 @@ if (defined($Bugzilla_login)) {
 
 =head2 Retrieving Bug Information
 
-Call C<Bug.get_bug> with the ID of the bug you want to know more of.
-The call will return a C<Bugzilla::Bug> object.
+Call C<Bug.get> with the ID of the bug you want to know more of.
+The call will return a C<Bugzilla::Bug> object. 
+
+Note: You can also use "Bug.get_bugs" for compatibility with Bugzilla 3.0 API.
 
 =cut
 
 if ($bug_id) {
-    $soapresult = $proxy->call('Bug.get_bugs', { ids => [$bug_id] });
+    $soapresult = $proxy->call('Bug.get', { ids => [$bug_id] });
     _die_on_fault($soapresult);
     $result = $soapresult->result;
     my $bug = $result->{bugs}->[0];
@@ -301,6 +349,25 @@ if ($legal_field_values) {
     print join("\n", @{$result->{values}}) . "\n";
 }
 
+=head2 Adding a comment to a bug
+
+Call C<Bug.add_comment> with the bug id, the comment text, and optionally the number
+of hours you worked on the bug, and a boolean indicating if the comment is private
+or not.
+
+=cut
+
+if ($add_comment) {
+    if ($bug_id) {
+        $soapresult = $proxy->call('Bug.add_comment', {id => $bug_id,
+            comment => $add_comment, private => $private, work_time => $work_time});
+        _die_on_fault($soapresult);
+        print "Comment added.\n";
+    }
+    else {
+        print "A --bug_id must be supplied to add a comment.";
+    }
+}
 
 =head1 NOTES
 

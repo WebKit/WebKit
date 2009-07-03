@@ -21,7 +21,6 @@
 #                 Lance Larsh <lance.larsh@oracle.com>
 
 use strict;
-use lib ".";
 
 # This module implements a series - a set of data to be plotted on a chart.
 #
@@ -125,6 +124,10 @@ sub initFromParameters {
     ($self->{'series_id'}, $self->{'category'},  $self->{'subcategory'},
      $self->{'name'}, $self->{'creator'}, $self->{'frequency'},
      $self->{'query'}, $self->{'public'}) = @_;
+
+    # If the first parameter is undefined, check if this series already
+    # exists and update it series_id accordingly
+    $self->{'series_id'} ||= $self->existsInDatabase();
 }
 
 sub initFromCGI {
@@ -171,7 +174,7 @@ sub writeToDatabase {
     my $self = shift;
 
     my $dbh = Bugzilla->dbh;
-    $dbh->bz_lock_tables('series_categories WRITE', 'series WRITE');
+    $dbh->bz_start_transaction();
 
     my $category_id = getCategoryID($self->{'category'});
     my $subcategory_id = getCategoryID($self->{'subcategory'});
@@ -210,7 +213,7 @@ sub writeToDatabase {
           || ThrowCodeError("missing_series_id", { 'series' => $self });
     }
     
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 }
 
 # Check whether a series with this name, category and subcategory exists in

@@ -76,8 +76,8 @@ sub get_param_list {
 
   {
    name => 'user_verify_class',
-   type => 's',
-   choices => [ 'DB', 'LDAP', 'DB,LDAP', 'LDAP,DB' ],
+   type => 'o',
+   choices => [ 'DB', 'RADIUS', 'LDAP' ],
    default => 'DB',
    checker => \&check_user_verify_class
   },

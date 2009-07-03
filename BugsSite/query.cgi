@@ -26,7 +26,7 @@
 #                 Max Kanat-Alexander <mkanat@bugzilla.org>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Bug;
@@ -38,7 +38,7 @@ use Bugzilla::Error;
 use Bugzilla::Product;
 use Bugzilla::Keyword;
 use Bugzilla::Field;
-use Bugzilla::Install::Requirements;
+use Bugzilla::Install::Util qw(vers_cmp);
 
 my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
@@ -70,7 +70,7 @@ if ($userid) {
                 # If the query name contains invalid characters, don't import.
                 $name =~ /[<>&]/ && next;
                 trick_taint($name);
-                $dbh->bz_lock_tables('namedqueries WRITE');
+                $dbh->bz_start_transaction();
                 my $query = $dbh->selectrow_array(
                     "SELECT query FROM namedqueries " .
                      "WHERE userid = ? AND name = ?",
@@ -80,7 +80,7 @@ if ($userid) {
                             "(userid, name, query) VALUES " .
                             "(?, ?, ?)", undef, ($userid, $name, $value));
                 }
-                $dbh->bz_unlock_tables();
+                $dbh->bz_commit_transaction();
             }
             $cgi->remove_cookie($cookiename);
         }
@@ -129,6 +129,7 @@ sub PrefillForm {
                       "bug_file_loc_type", "status_whiteboard",
                       "status_whiteboard_type", "bug_id",
                       "bugidtype", "keywords", "keywords_type",
+                      "deadlinefrom", "deadlineto",
                       "x_axis_field", "y_axis_field", "z_axis_field",
                       "chart_format", "cumulate", "x_labels_vertical",
                       "category", "subcategory", "name", "newcategory",
@@ -188,6 +189,7 @@ if (!scalar(@{$default{'chfieldto'}}) || $default{'chfieldto'}->[0] eq "") {
 # don't have access to. Remove them from the list.
 my @selectable_products = sort {lc($a->name) cmp lc($b->name)} 
                                @{$user->get_selectable_products};
+Bugzilla::Product::preload(\@selectable_products);
 
 # Create the component, version and milestone lists.
 my %components;
@@ -259,10 +261,19 @@ $vars->{'priority'} = get_legal_field_values('priority');
 $vars->{'bug_severity'} = get_legal_field_values('bug_severity');
 
 # Boolean charts
-my @fields;
-push(@fields, { name => "noop", description => "---" });
-push(@fields, $dbh->bz_get_field_defs());
-@fields = sort {lc($a->{'description'}) cmp lc($b->{'description'})} @fields;
+my @fields = Bugzilla->get_fields({ obsolete => 0 });
+
+# If we're not in the time-tracking group, exclude time-tracking fields.
+if (!Bugzilla->user->in_group(Bugzilla->params->{'timetrackinggroup'})) {
+    foreach my $tt_field (qw(estimated_time remaining_time work_time
+                             percentage_complete deadline))
+    {
+        @fields = grep($_->name ne $tt_field, @fields);
+    }
+}
+
+@fields = sort {lc($a->description) cmp lc($b->description)} @fields;
+unshift(@fields, { name => "noop", description => "---" });
 $vars->{'fields'} = \@fields;
 
 # Creating new charts - if the cmd-add value is there, we define the field

@@ -37,18 +37,22 @@ use base qw(DBI::db);
 
 use Bugzilla::Constants;
 use Bugzilla::Install::Requirements;
+use Bugzilla::Install::Util qw(vers_cmp);
 use Bugzilla::Install::Localconfig;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::DB::Schema;
 
 use List::Util qw(max);
+use Storable qw(dclone);
 
 #####################################################################
 # Constants
 #####################################################################
 
 use constant BLOB_TYPE => DBI::SQL_BLOB;
+use constant ISOLATION_LEVEL => 'REPEATABLE READ';
+use constant GROUPBY_REGEXP => '(?:.*\s+AS\s+)?(\w+(\.\w+)?)(?:\s+(ASC|DESC))?$';
 
 # Set default values for what used to be the enum types.  These values
 # are no longer stored in localconfig.  If we are upgrading from a
@@ -270,8 +274,7 @@ EOT
 # List of abstract methods we are checking the derived class implements
 our @_abstract_methods = qw(REQUIRED_VERSION PROGRAM_NAME DBD_VERSION
                             new sql_regexp sql_not_regexp sql_limit sql_to_days
-                            sql_date_format sql_interval
-                            bz_lock_tables bz_unlock_tables);
+                            sql_date_format sql_interval);
 
 # This overridden import method will check implementation of inherited classes
 # for missing implementation of abstract methods
@@ -311,6 +314,13 @@ sub sql_istring {
     return "LOWER($string)";
 }
 
+sub sql_iposition {
+    my ($self, $fragment, $text) = @_;
+    $fragment = $self->sql_istring($fragment);
+    $text = $self->sql_istring($text);
+    return $self->sql_position($fragment, $text);
+}
+
 sub sql_position {
     my ($self, $fragment, $text) = @_;
 
@@ -330,6 +340,11 @@ sub sql_string_concat {
     my ($self, @params) = @_;
     
     return '(' . join(' || ', @params) . ')';
+}
+
+sub sql_in {
+    my ($self, $column_name, $in_list_ref) = @_;
+    return " $column_name IN (" . join(',', @$in_list_ref) . ") ";
 }
 
 sub sql_fulltext_search {
@@ -376,26 +391,6 @@ sub bz_last_key {
                                  $table, $column);
 }
 
-sub bz_get_field_defs {
-    my ($self) = @_;
-
-    my $extra = "";
-    if (!Bugzilla->user->in_group(Bugzilla->params->{'timetrackinggroup'})) {
-        $extra = "AND name NOT IN ('estimated_time', 'remaining_time', " .
-                 "'work_time', 'percentage_complete', 'deadline')";
-    }
-
-    my @fields;
-    my $sth = $self->prepare("SELECT name, description FROM fielddefs
-                              WHERE obsolete = 0 $extra
-                              ORDER BY sortkey");
-    $sth->execute();
-    while (my $field_ref = $sth->fetchrow_hashref()) {
-        push(@fields, $field_ref);
-    }
-    return(@fields);
-}
-
 #####################################################################
 # Database Setup
 #####################################################################
@@ -425,6 +420,36 @@ sub bz_populate_enum_tables {
     my $enum_values = $self->bz_enum_initial_values();
     while (my ($table, $values) = each %$enum_values) {
         $self->_bz_populate_enum_table($table, $values);
+    }
+}
+
+sub bz_setup_foreign_keys {
+    my ($self) = @_;
+
+    # We use _bz_schema because bz_add_table has removed all REFERENCES
+    # items from _bz_real_schema.
+    my @tables = $self->_bz_schema->get_table_list();
+    foreach my $table (@tables) {
+        my @columns = $self->_bz_schema->get_table_columns($table);
+        foreach my $column (@columns) {
+            my $def = $self->_bz_schema->get_column_abstract($table, $column);
+            if ($def->{REFERENCES}) {
+                $self->bz_add_fk($table, $column, $def->{REFERENCES});
+            }
+        }
+    }
+}
+
+# This is used by contrib/bzdbcopy.pl, mostly.
+sub bz_drop_foreign_keys {
+    my ($self) = @_;
+
+    my @tables = $self->_bz_real_schema->get_table_list();
+    foreach my $table (@tables) {
+        my @columns = $self->_bz_real_schema->get_table_columns($table);
+        foreach my $column (@columns) {
+            $self->bz_drop_fk($table, $column);
+        }
     }
 }
 
@@ -459,6 +484,24 @@ sub bz_add_column {
             $self->do($sql);
         }
         $self->_bz_real_schema->set_column($table, $name, $new_def);
+        $self->_bz_store_real_schema;
+    }
+}
+
+sub bz_add_fk {
+    my ($self, $table, $column, $def) = @_;
+
+    my $col_def = $self->bz_column_info($table, $column);
+    if (!$col_def->{REFERENCES}) {
+        $self->_check_references($table, $column, $def->{TABLE},
+                                 $def->{COLUMN});
+        print get_text('install_fk_add',
+                       { table => $table, column => $column, fk => $def }) 
+            . "\n" if Bugzilla->usage_mode == USAGE_MODE_CMDLINE;
+        my @sql = $self->_bz_real_schema->get_add_fk_sql($table, $column, $def);
+        $self->do($_) foreach @sql;
+        $col_def->{REFERENCES} = $def;
+        $self->_bz_real_schema->set_column($table, $column, $col_def);
         $self->_bz_store_real_schema;
     }
 }
@@ -568,8 +611,17 @@ sub bz_add_table {
 
     if (!$table_exists) {
         $self->_bz_add_table_raw($name);
-        $self->_bz_real_schema->add_table($name,
-            $self->_bz_schema->get_table_abstract($name));
+        my $table_def = dclone($self->_bz_schema->get_table_abstract($name));
+
+        my %fields = @{$table_def->{FIELDS}};
+        foreach my $col (keys %fields) {
+            # Foreign Key references have to be added by Install::DB after
+            # initial table creation, because column names have changed
+            # over history and it's impossible to keep track of that info
+            # in ABSTRACT_SCHEMA.
+            delete $fields{$col}->{REFERENCES};
+        }
+        $self->_bz_real_schema->add_table($name, $table_def);
         $self->_bz_store_real_schema;
     }
 }
@@ -595,21 +647,45 @@ sub _bz_add_table_raw {
     $self->do($_) foreach (@statements);
 }
 
-sub bz_add_field_table {
-    my ($self, $name) = @_;
-    my $table_schema = $self->_bz_schema->FIELD_TABLE_SCHEMA;
+sub _bz_add_field_table {
+    my ($self, $name, $schema_ref) = @_;
     # We do nothing if the table already exists.
     return if $self->bz_table_info($name);
-    my $indexes      = $table_schema->{INDEXES};
-    # $indexes is an arrayref, not a hash. In order to fix the keys,
-    # we have to fix every other item.
-    for (my $i = 0; $i < scalar @$indexes; $i++) {
-        next if ($i % 2 && $i != 0); # We skip 1, 3, 5, 7, etc.
-        $indexes->[$i] = $name . "_" . $indexes->[$i];
+
+    # Copy this so that we're not modifying the passed reference.
+    # (This avoids modifying a constant in Bugzilla::DB::Schema.)
+    my %table_schema = %$schema_ref;
+    my %indexes = @{ $table_schema{INDEXES} };
+    my %fixed_indexes;
+    foreach my $key (keys %indexes) {
+        $fixed_indexes{$name . "_" . $key} = $indexes{$key};
     }
+    # INDEXES is supposed to be an arrayref, so we have to convert back.
+    my @indexes_array = %fixed_indexes;
+    $table_schema{INDEXES} = \@indexes_array;
     # We add this to the abstract schema so that bz_add_table can find it.
-    $self->_bz_schema->add_table($name, $table_schema);
+    $self->_bz_schema->add_table($name, \%table_schema);
     $self->bz_add_table($name);
+}
+
+sub bz_add_field_tables {
+    my ($self, $field) = @_;
+    
+    $self->_bz_add_field_table($field->name,
+                                $self->_bz_schema->FIELD_TABLE_SCHEMA);
+    if ( $field->type == FIELD_TYPE_MULTI_SELECT ) {
+        $self->_bz_add_field_table('bug_' . $field->name,
+                $self->_bz_schema->MULTI_SELECT_VALUE_TABLE);
+    }
+
+}
+
+sub bz_drop_field_tables {
+    my ($self, $field) = @_;
+    if ($field->type == FIELD_TYPE_MULTI_SELECT) {
+        $self->bz_drop_table('bug_' . $field->name);
+    }
+    $self->bz_drop_table($field->name);
 }
 
 sub bz_drop_column {
@@ -632,6 +708,24 @@ sub bz_drop_column {
         $self->_bz_real_schema->delete_column($table, $column);
         $self->_bz_store_real_schema;
     }
+}
+
+sub bz_drop_fk {
+    my ($self, $table, $column) = @_;
+
+    my $col_def = $self->bz_column_info($table, $column);
+    if ($col_def && exists $col_def->{REFERENCES}) {
+        my $def = $col_def->{REFERENCES};
+        print get_text('install_fk_drop',
+                       { table => $table, column => $column, fk => $def })
+            . "\n" if Bugzilla->usage_mode == USAGE_MODE_CMDLINE;
+        my @sql = $self->_bz_real_schema->get_drop_fk_sql($table,$column,$def);
+        $self->do($_) foreach @sql;
+        delete $col_def->{REFERENCES};
+        $self->_bz_real_schema->set_column($table, $column, $col_def);
+        $self->_bz_store_real_schema;
+    }
+
 }
 
 sub bz_drop_index {
@@ -767,7 +861,10 @@ sub _bz_get_initial_schema {
 
 sub bz_column_info {
     my ($self, $table, $column) = @_;
-    return $self->_bz_real_schema->get_column_abstract($table, $column);
+    my $def = $self->_bz_real_schema->get_column_abstract($table, $column);
+    # We dclone it so callers can't modify the Schema.
+    $def = dclone($def) if defined $def;
+    return $def;
 }
 
 sub bz_index_info {
@@ -839,39 +936,51 @@ sub bz_table_list_real {
 # Transaction Methods
 #####################################################################
 
+sub bz_in_transaction {
+    return $_[0]->{private_bz_transaction_count} ? 1 : 0;
+}
+
 sub bz_start_transaction {
     my ($self) = @_;
 
-    if ($self->{private_bz_in_transaction}) {
-        ThrowCodeError("nested_transaction");
+    if ($self->bz_in_transaction) {
+        $self->{private_bz_transaction_count}++;
     } else {
         # Turn AutoCommit off and start a new transaction
         $self->begin_work();
-        $self->{private_bz_in_transaction} = 1;
+        # REPEATABLE READ means "We work on a snapshot of the DB that
+        # is created when we execute our first SQL statement." It's
+        # what we need in Bugzilla to be safe, for what we do.
+        # Different DBs have different defaults for their isolation
+        # level, so we just set it here manually.
+        $self->do('SET TRANSACTION ISOLATION LEVEL ' . $self->ISOLATION_LEVEL);
+        $self->{private_bz_transaction_count} = 1;
     }
 }
 
 sub bz_commit_transaction {
     my ($self) = @_;
-
-    if (!$self->{private_bz_in_transaction}) {
-        ThrowCodeError("not_in_transaction");
-    } else {
+    
+    if ($self->{private_bz_transaction_count} > 1) {
+        $self->{private_bz_transaction_count}--;
+    } elsif ($self->bz_in_transaction) {
         $self->commit();
-
-        $self->{private_bz_in_transaction} = 0;
+        $self->{private_bz_transaction_count} = 0;
+    } else {
+       ThrowCodeError('not_in_transaction');
     }
 }
 
 sub bz_rollback_transaction {
     my ($self) = @_;
 
-    if (!$self->{private_bz_in_transaction}) {
+    # Unlike start and commit, if we rollback at any point it happens
+    # instantly, even if we're in a nested transaction.
+    if (!$self->bz_in_transaction) {
         ThrowCodeError("not_in_transaction");
     } else {
         $self->rollback();
-
-        $self->{private_bz_in_transaction} = 0;
+        $self->{private_bz_transaction_count} = 0;
     }
 }
 
@@ -880,22 +989,28 @@ sub bz_rollback_transaction {
 #####################################################################
 
 sub db_new {
-    my ($class, $dsn, $user, $pass, $attributes) = @_;
+    my ($class, $dsn, $user, $pass, $override_attrs) = @_;
 
     # set up default attributes used to connect to the database
-    # (if not defined by DB specific implementation)
-    $attributes = { RaiseError => 0,
-                    AutoCommit => 1,
-                    PrintError => 0,
-                    ShowErrorStatement => 1,
-                    HandleError => \&_handle_error,
-                    TaintIn => 1,
-                    FetchHashKeyName => 'NAME',  
-                    # Note: NAME_lc causes crash on ActiveState Perl
-                    # 5.8.4 (see Bug 253696)
-                    # XXX - This will likely cause problems in DB
-                    # back ends that twiddle column case (Oracle?)
-                  } if (!defined($attributes));
+    # (may be overridden by DB driver implementations)
+    my $attributes = { RaiseError => 0,
+                       AutoCommit => 1,
+                       PrintError => 0,
+                       ShowErrorStatement => 1,
+                       HandleError => \&_handle_error,
+                       TaintIn => 1,
+                       FetchHashKeyName => 'NAME',  
+                       # Note: NAME_lc causes crash on ActiveState Perl
+                       # 5.8.4 (see Bug 253696)
+                       # XXX - This will likely cause problems in DB
+                       # back ends that twiddle column case (Oracle?)
+                     };
+
+    if ($override_attrs) {
+        foreach my $key (keys %$override_attrs) {
+            $attributes->{$key} = $override_attrs->{$key};
+        }
+    }
 
     # connect using our known info to the specified db
     my $self = DBI->connect($dsn, $user, $pass, $attributes)
@@ -906,9 +1021,6 @@ sub db_new {
     # RaiseError was only set to 0 so that we could catch the 
     # above "die" condition.
     $self->{RaiseError} = 1;
-
-    # class variables
-    $self->{private_bz_in_transaction} = 0;
 
     bless ($self, $class);
 
@@ -1076,6 +1188,39 @@ sub _bz_populate_enum_table {
     }
 }
 
+# This is used before adding a foreign key to a column, to make sure
+# that the database won't fail adding the key.
+sub _check_references {
+    my ($self, $table, $column, $foreign_table, $foreign_column) = @_;
+
+    my $bad_values = $self->selectcol_arrayref(
+        "SELECT DISTINCT $table.$column 
+           FROM $table LEFT JOIN $foreign_table
+                ON $table.$column = $foreign_table.$foreign_column
+          WHERE $foreign_table.$foreign_column IS NULL
+                AND $table.$column IS NOT NULL");
+
+    if (@$bad_values) {
+        my $values = join(', ', @$bad_values);
+        print <<EOT;
+
+ERROR: There are invalid values for the $column column in the $table 
+table. (These values do not exist in the $foreign_table table, in the 
+$foreign_column column.)
+
+Before continuing with checksetup, you will need to fix these values,
+either by deleting these rows from the database, or changing the values
+of $column in $table to point to valid values in $foreign_table.$foreign_column.
+
+The bad values from the $table.$column column are:
+$values
+
+EOT
+        # I just picked a number above 2, to be considered "abnormal exit."
+        exit 3;
+    }
+}
+
 1;
 
 __END__
@@ -1116,9 +1261,6 @@ Bugzilla::DB - Database access routines, using L<DBI>
   my $column = $dbh->bz_column_info($table, $column);
   my $index  = $dbh->bz_index_info($table, $index);
 
-  # General Information
-  my @fields    = $dbh->bz_get_field_defs();
-
 =head1 DESCRIPTION
 
 Functions in this module allows creation of a database handle to connect
@@ -1135,12 +1277,20 @@ should be always preffered over hard-coding SQL commands.
 Subclasses of Bugzilla::DB are required to define certain constants. These
 constants are required to be subroutines or "use constant" variables.
 
-=over 4
+=over
 
 =item C<BLOB_TYPE>
 
 The C<\%attr> argument that must be passed to bind_param in order to 
 correctly escape a C<LONGBLOB> type.
+
+=item C<ISOLATION_LEVEL>
+
+The argument that this database should send to 
+C<SET TRANSACTION ISOLATION LEVEL> when starting a transaction. If you
+override this in a subclass, the isolation level you choose should
+be as strict as or more strict than the default isolation level defined in
+L<Bugzilla::DB>.
 
 =back
 
@@ -1422,7 +1572,7 @@ Abstract method, should be overridden by database specific code.
 
 =item C<$limit> - number of rows to return from query (scalar)
 
-=item C<$offset> - number of rows to skip prior counting (scalar)
+=item C<$offset> - number of rows to skip before counting (scalar)
 
 =back
 
@@ -1542,9 +1692,12 @@ Formatted SQL for interval function (scalar)
 
 =item B<Description>
 
-Outputs proper SQL syntax determinig position of a substring
+Outputs proper SQL syntax determining position of a substring
 (fragment) withing a string (text). Note: if the substring or
 text are string constants, they must be properly quoted (e.g. "'pattern'").
+
+It searches for the string in a case-sensitive manner. If you want to do
+a case-insensitive search, use L</sql_iposition>.
 
 =item B<Params>
 
@@ -1561,6 +1714,10 @@ text are string constants, they must be properly quoted (e.g. "'pattern'").
 Formatted SQL for substring search (scalar)
 
 =back
+
+=item C<sql_iposition>
+
+Just like L</sql_position>, but case-insensitive.
 
 =item C<sql_group_by>
 
@@ -1713,60 +1870,29 @@ will not be usually used unless it was created as LOWER(column).
 
 =back
 
-=item C<bz_lock_tables>
+=item C<sql_in>
 
 =over
 
 =item B<Description>
 
-Performs a table lock operation on specified tables. If the underlying 
-database supports transactions, it should also implicitly start a new 
-transaction.
+Returns SQL syntax for the C<IN ()> operator. 
 
-Abstract method, should be overridden by database specific code.
+Only necessary where an C<IN> clause can have more than 1000 items.
 
 =item B<Params>
 
 =over
 
-=item C<@tables> - list of names of tables to lock in MySQL
-notation (ex. 'bugs AS bugs2 READ', 'logincookies WRITE')
+=item C<$column_name> - Column name (e.g. C<bug_id>)
+
+=item C<$in_list_ref> - an arrayref containing values for C<IN ()>
 
 =back
 
-=item B<Returns> (nothing)
+=item B<Returns>
 
-=back
-
-=item C<bz_unlock_tables>
-
-=over
-
-=item B<Description>
-
-Performs a table unlock operation.
-
-If the underlying database supports transactions, it should also implicitly 
-commit or rollback the transaction.
-
-Also, this function should allow to be called with the abort flag
-set even without locking tables first without raising an error
-to simplify error handling.
-
-Abstract method, should be overridden by database specific code.
-
-=item B<Params>
-
-=over
-
-=item C<$abort> - C<UNLOCK_ABORT> if the operation on locked tables
-failed (if transactions are supported, the action will be rolled
-back). No param if the operation succeeded. This is only used by
-L<Bugzilla::Error/throw_error>.
-
-=back
-
-=item B<Returns> (none)
+Formatted SQL for the C<IN> operator.
 
 =back
 
@@ -1812,23 +1938,6 @@ needs to override this function.
 =item B<Returns>
 
 Last inserted ID (scalar)
-
-=back
-
-=item C<bz_get_field_defs>
-
-=over
-
-=item B<Description>
-
-Returns a list of all the "bug" fields in Bugzilla. The list
-contains hashes, with a C<name> key and a C<description> key.
-
-=item B<Params> (none)
-
-=item B<Returns>
-
-List of all the "bug" fields
 
 =back
 
@@ -2183,20 +2292,33 @@ in the database.
 
 =over
 
+=item C<bz_in_transaction>
+
+Returns C<1> if we are currently in the middle of an uncommitted transaction,
+C<0> otherwise.
+
 =item C<bz_start_transaction>
 
-Starts a transaction if supported by the database being used. Returns nothing
-and takes no parameters.
+Starts a transaction.
+
+It is OK to call C<bz_start_transaction> when you are already inside of
+a transaction. However, you must call L</bz_commit_transaction> as many
+times as you called C<bz_start_transaction>, in order for your transaction
+to actually commit.
+
+Bugzilla uses C<REPEATABLE READ> transactions.
+
+Returns nothing and takes no parameters.
 
 =item C<bz_commit_transaction>
 
-Ends a transaction, commiting all changes, if supported by the database 
-being used. Returns nothing and takes no parameters.
+Ends a transaction, commiting all changes. Returns nothing and takes
+no parameters.
 
 =item C<bz_rollback_transaction>
 
-Ends a transaction, rolling back all changes, if supported by the database 
-being used. Returns nothing and takes no parameters.
+Ends a transaction, rolling back all changes. Returns nothing and takes 
+no parameters.
 
 =back
 
@@ -2226,7 +2348,9 @@ Constructor
 
 =item C<$pass> - password used to log in to the database
 
-=item C<\%attributes> - set of attributes for DB connection (optional)
+=item C<\%override_attrs> - set of attributes for DB connection (optional).
+You only have to set attributes that you want to be different from
+the default attributes set inside of C<db_new>.
 
 =back
 

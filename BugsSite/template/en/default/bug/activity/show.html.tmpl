@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -20,27 +19,31 @@
   #%]
 
 [%# INTERFACE:
-  # bug_id: integer. The bug ID.
+  # bug: object. The bug whose activity is being displayed.
+  # operations: array of hashes, see activity/table.html.tmpl.
   #
   # This template also needs to be called with the interface to the
-  # activity.html.tmpl template fulfilled.
+  # activity/table.html.tmpl template fulfilled.
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
 
+[% filtered_desc = bug.short_desc FILTER html %]
 [% PROCESS global/header.html.tmpl
-  title = "Changes made to $terms.bug $bug_id"
-  header = "Activity log"
-  subheader = "$terms.Bug <a href=\"show_bug.cgi?id=$bug_id\">$bug_id</a>"
+  title = "Changes made to $terms.bug $bug.bug_id"
+  header = "Activity log for $terms.bug $bug.bug_id: $filtered_desc"
  %]
 
-<br>
+<p>
+  [% "Back to $terms.bug $bug.bug_id" FILTER bug_link(bug.bug_id) FILTER none %]
+</p>
 
 [% PROCESS bug/activity/table.html.tmpl %]
 
-<p>
-  <a href="show_bug.cgi?id=[% bug_id %]">Back to [% terms.bug %] 
-  [%+ bug_id %]</a>
-</p>
+[% IF operations.size > 0 %]
+  <p>
+    [% "Back to $terms.bug $bug.bug_id" FILTER bug_link(bug.bug_id) FILTER none %]
+  </p>
+[% END %]
 
 [% PROCESS global/footer.html.tmpl %]

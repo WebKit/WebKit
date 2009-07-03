@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -35,6 +34,7 @@ var queryform = "reportform"
   onload = "doOnSelectProduct(0)"
   javascript = js_data
   javascript_urls = [ "js/productform.js" ]
+  doc_section = "reporting.html#reports"
 %]
 
 [% PROCESS "search/search-report-select.html.tmpl" %]
@@ -81,7 +81,7 @@ var queryform = "reportform"
 [% PROCESS search/form.html.tmpl %]
 
 <br>
-<input type="submit" id="[% button_name.replace (' ' , '_') FILTER html %]"
+<input type="submit" id="[% button_name FILTER css_class_quote %]"
        value="[% button_name FILTER html %]">
 <input type="hidden" name="format" value="table">
 <input type="hidden" name="action" value="wrap">

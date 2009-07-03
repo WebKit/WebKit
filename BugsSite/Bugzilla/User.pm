@@ -67,7 +67,7 @@ use constant USER_MATCH_SUCCESS  => 1;
 use constant MATCH_SKIP_CONFIRM  => 1;
 
 use constant DEFAULT_USER => {
-    'id'             => 0,
+    'userid'         => 0,
     'realname'       => '',
     'login_name'     => '',
     'showmybugslink' => 0,
@@ -82,7 +82,7 @@ use constant DB_TABLE => 'profiles';
 # Bugzilla::User used "name" for the realname field. This should be
 # fixed one day.
 use constant DB_COLUMNS => (
-    'profiles.userid     AS id',
+    'profiles.userid',
     'profiles.login_name',
     'profiles.realname',
     'profiles.mybugslink AS showmybugslink',
@@ -281,6 +281,11 @@ sub queries {
         'SELECT id FROM namedqueries WHERE userid = ?', undef, $self->id);
     require Bugzilla::Search::Saved;
     $self->{queries} = Bugzilla::Search::Saved->new_from_list($query_ids);
+
+    # We preload link_in_footer from here as this information is always requested.
+    # This only works if the user object represents the current logged in user.
+    Bugzilla::Search::Saved::preload($self->{queries}) if $self->id == Bugzilla->user->id;
+
     return $self->{queries};
 }
 
@@ -368,7 +373,7 @@ sub groups {
                                                AND user_id=?
                                                AND isbless=0},
                                           { Columns=>[1,2] },
-                                          $self->{id});
+                                          $self->id);
 
     # The above gives us an arrayref [name, id, name, id, ...]
     # Convert that into a hashref
@@ -578,7 +583,7 @@ sub can_see_bug {
     my ($self, $bugid) = @_;
     my $dbh = Bugzilla->dbh;
     my $sth  = $self->{sthCanSeeBug};
-    my $userid  = $self->{id};
+    my $userid  = $self->id;
     # Get fields from bug, presence of user on cclist, and determine if
     # the user is missing any groups required by the bug. The prepared query
     # is cached because this may be called for every row in buglists or
@@ -680,9 +685,10 @@ sub can_enter_product {
         return unless $warn == THROW_ERROR;
         ThrowUserError('no_products');
     }
-    trick_taint($product_name);
+    my $product = new Bugzilla::Product({name => $product_name});
+
     my $can_enter =
-        grep($_->name eq $product_name, @{$self->get_enterable_products});
+      $product && grep($_->name eq $product->name, @{$self->get_enterable_products});
 
     return 1 if $can_enter;
 
@@ -690,8 +696,6 @@ sub can_enter_product {
 
     # Check why access was denied. These checks are slow,
     # but that's fine, because they only happen if we fail.
-
-    my $product = new Bugzilla::Product({name => $product_name});
 
     # The product could not exist or you could be denied...
     if (!$product || !$product->user_has_access($self)) {
@@ -776,16 +780,34 @@ sub can_request_flag {
     my ($self, $flag_type) = @_;
 
     return ($self->can_set_flag($flag_type)
-            || !$flag_type->request_group
-            || $self->in_group_id($flag_type->request_group->id)) ? 1 : 0;
+            || !$flag_type->request_group_id
+            || $self->in_group_id($flag_type->request_group_id)) ? 1 : 0;
 }
 
 sub can_set_flag {
     my ($self, $flag_type) = @_;
 
-    return (!$flag_type->grant_group
-            || $self->in_group_id($flag_type->grant_group->id)) ? 1 : 0;
+    return (!$flag_type->grant_group_id
+            || $self->in_group_id($flag_type->grant_group_id)) ? 1 : 0;
 }
+
+sub direct_group_membership {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    if (!$self->{'direct_group_membership'}) {
+        my $gid = $dbh->selectcol_arrayref('SELECT id
+                                              FROM groups
+                                        INNER JOIN user_group_map
+                                                ON groups.id = user_group_map.group_id
+                                             WHERE user_id = ?
+                                               AND isbless = 0',
+                                             undef, $self->id);
+        $self->{'direct_group_membership'} = Bugzilla::Group->new_from_list($gid);
+    }
+    return $self->{'direct_group_membership'};
+}
+
 
 # visible_groups_inherited returns a reference to a list of all the groups
 # whose members are visible to this user.
@@ -912,14 +934,33 @@ sub product_responsibilities {
     return $self->{'product_resp'} if defined $self->{'product_resp'};
     return [] unless $self->id;
 
-    my $comp_ids = $dbh->selectcol_arrayref('SELECT id FROM components
-                                              WHERE initialowner = ?
-                                                 OR initialqacontact = ?',
-                                              undef, ($self->id, $self->id));
+    my $list = $dbh->selectall_arrayref('SELECT product_id, id
+                                           FROM components
+                                          WHERE initialowner = ?
+                                             OR initialqacontact = ?',
+                                  {Slice => {}}, ($self->id, $self->id));
 
+    unless ($list) {
+        $self->{'product_resp'} = [];
+        return $self->{'product_resp'};
+    }
+
+    my @prod_ids = map {$_->{'product_id'}} @$list;
+    my $products = Bugzilla::Product->new_from_list(\@prod_ids);
     # We cannot |use| it, because Component.pm already |use|s User.pm.
     require Bugzilla::Component;
-    $self->{'product_resp'} = Bugzilla::Component->new_from_list($comp_ids);
+    my @comp_ids = map {$_->{'id'}} @$list;
+    my $components = Bugzilla::Component->new_from_list(\@comp_ids);
+
+    my @prod_list;
+    # @$products is already sorted alphabetically.
+    foreach my $prod (@$products) {
+        # We use @components instead of $prod->components because we only want
+        # components where the user is either the default assignee or QA contact.
+        push(@prod_list, {product    => $prod,
+                          components => [grep {$_->product_id == $prod->id} @$components]});
+    }
+    $self->{'product_resp'} = \@prod_list;
     return $self->{'product_resp'};
 }
 
@@ -1114,9 +1155,6 @@ sub match_field {
 
     # prepare default form values
 
-    # What does a "--do_not_change--" field look like (if any)?
-    my $dontchange = $cgi->param('dontchange');
-
     # Fields can be regular expressions matching multiple form fields
     # (f.e. "requestee-(\d+)"), so expand each non-literal field
     # into the list of form fields it matches.
@@ -1174,9 +1212,6 @@ sub match_field {
         # quietly ignored rather than raising a code error.
 
         next if !defined $cgi->param($field);
-
-        # Skip it if this is a --do_not_change-- field
-        next if $dontchange && $dontchange eq $cgi->param($field);
 
         # We need to move the query to $raw_field, where it will be split up,
         # modified by the search, and put back into the CGI environment
@@ -1312,6 +1347,7 @@ sub match_field {
     $vars->{'fields'}        = $fields; # fields being matched
     $vars->{'matches'}       = $matches; # matches that were made
     $vars->{'matchsuccess'}  = $matchsuccess; # continue or fail
+    $vars->{'matchmultiple'} = $match_multiple;
 
     print Bugzilla->cgi->header();
 
@@ -1464,7 +1500,7 @@ sub wants_mail {
                                   AND relationship = ?
                                   AND event IN (' . join(',', @$events) . ') ' .
                                       $dbh->sql_limit(1),
-                              undef, ($self->{'id'}, $relationship));
+                              undef, ($self->id, $relationship));
 
     return defined($wants_mail) ? 1 : 0;
 }
@@ -1545,9 +1581,7 @@ sub create {
     my $class = ref($invocant) || $invocant;
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_lock_tables('profiles WRITE', 'profiles_activity WRITE',
-        'user_group_map WRITE', 'email_setting WRITE', 'groups READ', 
-        'tokens READ', 'fielddefs READ');
+    $dbh->bz_start_transaction();
 
     my $user = $class->SUPER::create(@_);
 
@@ -1584,7 +1618,7 @@ sub create {
                    VALUES (?, ?, NOW(), ?, NOW())',
                    undef, ($user->id, $who, $creation_date_fieldid));
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     # Return the newly created user account.
     return $user;
@@ -1993,6 +2027,11 @@ is in any of the groups input to flatten_group_membership by querying the
 user_group_map for any user with DIRECT or REGEXP membership IN() the list
 of groups returned.
 
+=item C<direct_group_membership>
+
+Returns a reference to an array of group objects. Groups the user belong to
+by group inheritance are excluded from the list.
+
 =item C<visible_groups_inherited>
 
 Returns a list of all groups whose members should be visible to this user.
@@ -2005,7 +2044,7 @@ Returns a list of groups that the user is aware of.
 
 =item C<visible_groups_as_string>
 
-Returns the result of C<visible_groups_direct> as a string (a comma-separated
+Returns the result of C<visible_groups_inherited> as a string (a comma-separated
 list).
 
 =item C<product_responsibilities>
@@ -2072,6 +2111,11 @@ Params: login_name - B<Required> The login name for the new user.
             empty string.
         disable_mail - If 1, bug-related mail will not be  sent to this user; 
             if 0, mail will be sent depending on the user's  email preferences.
+
+=item C<check>
+
+Takes a username as its only argument. Throws an error if there is no
+user with that username. Returns a C<Bugzilla::User> object.
 
 =item C<is_available_username>
 

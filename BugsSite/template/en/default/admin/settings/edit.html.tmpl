@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -16,8 +15,7 @@
   #%]
 
 [%# INTERFACE:
-  # setting_names: an array of strings
-  # settings:      a hash of hashes, keyed by setting_name.
+  # settings:      a hash of hashes, keyed by setting name.
   #                Each hash contains:
   #                 is_enabled    - boolean
   #                 default_value - string (global default for this setting)
@@ -57,7 +55,7 @@ page, and the Default Value will automatically apply to everyone.
         <th>Enabled</th>
       </tr>
 
-      [% FOREACH name = setting_names %]
+      [% FOREACH name = settings.keys %]
           [% checkbox_name = name _ '-enabled' %]
           <tr>
             <td align="right">

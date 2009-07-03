@@ -41,6 +41,7 @@ sub legal_values {
     foreach my $direntry (glob(catdir($dirbase, '*'))) {
         if (-d $direntry) {
             # Stylesheet set
+            next if basename($direntry) =~ /^cvs$/i;
             push(@legal_values, basename($direntry));
         }
         elsif ($direntry =~ /\.css$/) {

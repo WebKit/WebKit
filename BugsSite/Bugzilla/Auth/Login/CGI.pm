@@ -65,12 +65,17 @@ sub fail_nodata {
             ->faultstring('Login Required');
     }
 
-    # Redirect to SSL if required
-    if (Bugzilla->params->{'sslbase'} ne '' 
-        and Bugzilla->params->{'ssl'} ne 'never') 
+    # If system is not configured to never require SSL connections
+    # we want to always redirect to SSL since passing usernames and
+    # passwords over an unprotected connection is a bad idea. If we 
+    # get here then a login form will be provided to the user so we
+    # want this to be protected if possible.
+    if ($cgi->protocol ne 'https' && Bugzilla->params->{'sslbase'} ne ''
+        && Bugzilla->params->{'ssl'} ne 'never')
     {
         $cgi->require_https(Bugzilla->params->{'sslbase'});
     }
+
     print $cgi->header();
     $template->process("account/auth/login.html.tmpl",
                        { 'target' => $cgi->url(-relative=>1) }) 

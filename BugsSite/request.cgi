@@ -28,7 +28,7 @@
 # Make it harder for us to do dangerous things in Perl.
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
@@ -42,6 +42,11 @@ use Bugzilla::Component;
 # Make sure the user is logged in.
 my $user = Bugzilla->login();
 my $cgi = Bugzilla->cgi;
+my $dbh = Bugzilla->dbh;
+my $template = Bugzilla->template;
+my $action = $cgi->param('action') || '';
+
+print $cgi->header();
 
 ################################################################################
 # Main Body Execution
@@ -59,7 +64,30 @@ unless (defined $cgi->param('requestee')
 
 Bugzilla::User::match_field($cgi, $fields);
 
-queue();
+if ($action eq 'queue') {
+    queue();
+}
+else {
+    my $flagtypes = $dbh->selectcol_arrayref('SELECT DISTINCT(name) FROM flagtypes
+                                              ORDER BY name');
+    my @types = ('all', @$flagtypes);
+
+    my $vars = {};
+    $vars->{'products'} = $user->get_selectable_products;
+    $vars->{'types'} = \@types;
+    $vars->{'requests'} = {};
+
+    my %components;
+    foreach my $prod (@{$vars->{'products'}}) {
+        foreach my $comp (@{$prod->components}) {
+            $components{$comp->name} = 1;
+        }
+    }
+    $vars->{'components'} = [ sort { $a cmp $b } keys %components ];
+
+    $template->process('request/queue.html.tmpl', $vars)
+      || ThrowTemplateError($template->error());
+}
 exit;
 
 ################################################################################
@@ -186,8 +214,8 @@ sub queue {
         push(@criteria, "bugs.product_id = " . $product->id);
         push(@excluded_columns, 'product') unless $cgi->param('do_union');
         if (defined $cgi->param('component') && $cgi->param('component') ne "") {
-            my $component =
-                Bugzilla::Component::check_component($product, scalar $cgi->param('component'));
+            my $component = Bugzilla::Component->check({ product => $product,
+                                                         name => scalar $cgi->param('component') });
             push(@criteria, "bugs.component_id = " . $component->id);
             push(@excluded_columns, 'component') unless $cgi->param('do_union');
         }
@@ -288,8 +316,13 @@ sub queue {
     $vars->{'requests'} = \@requests;
     $vars->{'types'} = \@types;
 
-    # Return the appropriate HTTP response headers.
-    print $cgi->header();
+    my %components;
+    foreach my $prod (@{$vars->{'products'}}) {
+        foreach my $comp (@{$prod->components}) {
+            $components{$comp->name} = 1;
+        }
+    }
+    $vars->{'components'} = [ sort { $a cmp $b } keys %components ];
 
     # Generate and return the UI (HTML page) from the appropriate template.
     $template->process("request/queue.html.tmpl", $vars)

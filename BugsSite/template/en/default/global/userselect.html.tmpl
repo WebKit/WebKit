@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -12,11 +11,10 @@
   # The Original Code is the Bugzilla Bug Tracking System.
   #
   # Contributor(s): Byron Jones <bugzilla@glob.com.au>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
   #%]
 
 [%# INTERFACE:
-  # userlist: select only; array reference with list of users and identities
-  #                        userlist is built by Bugzilla::User::get_userlist()
   # name: mandatory; field name
   # id: optional; field id
   # value: optional; default field value/selection
@@ -26,7 +24,7 @@
   # size: optional, input only; size attribute value
   # emptyok: optional, select only;  if true, prepend menu option to start of select
   # multiple: optional, do multiselect box, value is size (height) of box
-  #
+  # custom_userlist: optional, specify a limited list of users to use
   #%]
 
 [% IF Param("usemenuforusers") %]
@@ -40,12 +38,34 @@
   [% IF emptyok %]
     <option value=""></option>
   [% END %]
-  [% FOREACH tmpuser = user.get_userlist %]
-    [% IF tmpuser.visible OR value.match("\\b$tmpuser.login\\b") %]
+
+  [% UNLESS custom_userlist %]
+    [% custom_userlist = user.get_userlist %]
+  [% END %]
+
+  [% SET selected = {} %]
+  [% IF value.defined %]
+    [% FOREACH selected_value IN value.split(', ') %]
+      [% SET selected.$selected_value = 1 %]
+    [% END %]
+  [% END %]
+
+  [% FOREACH tmpuser = custom_userlist %]
+    [% IF tmpuser.visible OR selected.${tmpuser.login} == 1 %]
       <option value="[% tmpuser.login FILTER html %]"
-        [% " selected=\"selected\"" IF value.match("\\b$tmpuser.login\\b") %]
+        [% IF selected.${tmpuser.login} == 1 %]
+          selected="selected"
+          [%# A user account appears only once. Remove it from the list, so that
+            # we know if there are some selected accounts which have not been listed. %]
+          [% selected.delete(tmpuser.login) %]
+        [% END %]
       >[% tmpuser.identity FILTER html %]</option>
     [% END %]
+  [% END %]
+
+  [%# If the list is not empty, this means some accounts have not been mentioned yet. %]
+  [% FOREACH selected_user = selected.keys %]
+    <option value="[% selected_user FILTER html %]" selected="selected">[% selected_user FILTER html %]</option>
   [% END %]
 </select>
 [% ELSE %]

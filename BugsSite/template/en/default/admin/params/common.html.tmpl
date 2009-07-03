@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -17,10 +16,13 @@
   # Rights Reserved.
   #
   # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  #                 Marc Schumann <wurblzap@gmail.com>
   #%]
 [%# INTERFACE:
   # panel: hash representing the current panel.
   #%]
+
+[% sortlist_separator = '---' %]
 
 <dl>
   [% FOREACH param = panel.param_list %]
@@ -28,11 +30,15 @@
     <dd>[% panel.param_descs.${param.name} FILTER none %]
       <p>
       [% IF param.type == "t" %]
-        <input size="80" name="[% param.name FILTER html %]"
-               value="[% Param(param.name) FILTER html %]">
+        <input type="text" size="80" name="[% param.name FILTER html %]"
+               id="[% param.name FILTER html %]" value="[% Param(param.name) FILTER html %]">
+      [% ELSIF param.type == "p" %]
+        <input type="password" size="80" name="[% param.name FILTER html %]"
+               id="[% param.name FILTER html %]" value="[% Param(param.name) FILTER html %]"
+               autocomplete="off">
       [% ELSIF param.type == "l" %]
-        <textarea name="[% param.name FILTER html %]" rows="10" cols="80">
-            [% Param(param.name) FILTER html %]</textarea>
+        <textarea name="[% param.name FILTER html %]" id="[% param.name FILTER html %]"
+                  rows="10" cols="80">[% Param(param.name) FILTER html %]</textarea>
       [% ELSIF param.type == "b" %]
         <input type="radio" name="[% param.name FILTER html %]" id="[% param.name FILTER html %]-on"
                value=1 [% "checked=\"checked\"" IF Param(param.name) %]>
@@ -45,7 +51,7 @@
         [% boxSize = param.choices.size IF param.choices.size < 5 %]
 
         <select multiple="multiple" size="[% boxSize FILTER html %]"
-                name="[% param.name FILTER html %]">
+                name="[% param.name FILTER html %]" id="[% param.name FILTER html %]">
           [% FOREACH item = param.choices %]
             <option value="[% item FILTER html %]"
                     [% " selected=\"selected\"" IF lsearch(Param(param.name), item) != -1 %]>
@@ -53,8 +59,59 @@
             </option>
           [% END %]
         </select>
+      [% ELSIF param.type == "o" %]
+        <script type="text/javascript"><!--
+          document.write("<span style=\"display: none\">");
+        // -->
+        </script>
+        <input id="input_[% param.name FILTER html %]" size="80"
+               name="[% param.name FILTER html %]"
+               value="[% Param(param.name) FILTER html %]"><br>
+        <script type="text/javascript"><!--
+          document.write("<\/span>");
+        // -->
+        </script>
+        [% boxSize = 7 %]
+        [% boxSize = 3 + param.choices.size IF param.choices.size < 7 %]
+        [% plist = Param(param.name).split(',') %]
+
+        <script type="text/javascript"><!--
+          document.write(
+            '<table>' +
+            '  <tr>' +
+            '    <td rowspan="2">' +
+            '      <select id="select_[% param.name FILTER html %]"' +
+            '              size="[% boxSize FILTER html %]"' +
+            '              name="select_[% param.name FILTER html %]">' +
+                     [% FOREACH item = plist %]
+            '          <option value="[% item FILTER html %]">[% item FILTER html %]<\/option>' +
+                     [% END %]
+            '        <option class="sortlist_separator"' +
+            '                disabled="disabled"' +
+            '                value="[% sortlist_separator %]">active&uarr;&nbsp;&darr;inactive<\/option>' +
+                     [% FOREACH item = param.choices %]
+                       [% IF lsearch(plist, item) == -1 %]
+            '            <option value="[% item FILTER html %]">[% item FILTER html %]<\/option>' +
+                       [% END %]
+                     [% END %]
+            '      <\/select>' +
+            '    <\/td>' +
+            '    <td style="vertical-align: bottom">' +
+            '      <button type="button"' +
+            '              onClick="sortedList_moveItem(\'[% param.name FILTER html %]\', -1, \'[% sortlist_separator %]\');">&uarr;<\/button>' +
+            '    <\/td>' +
+            '  <\/tr>' +
+            '  <tr>' +
+            '    <td style="vertical-align: top">' +
+            '      <button type="button"' +
+            '              onClick="sortedList_moveItem(\'[% param.name FILTER html %]\', +1, \'[% sortlist_separator %]\');">&darr;<\/button>' +
+            '    <\/td>' +
+            '  <\/tr>' +
+            '<\/table>');
+        // -->
+        </script>
       [% ELSIF param.type == "s" %]
-        <select name="[% param.name FILTER html %]">
+        <select name="[% param.name FILTER html %]" id="[% param.name FILTER html %]">
           [% FOREACH item = param.choices %]
             <option value="[% item FILTER html %]"
                     [% " selected=\"selected\"" IF item == Param(param.name) %]>

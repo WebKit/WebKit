@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# -*- mode: html -*- %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
@@ -36,7 +35,11 @@
 [% PROCESS global/variables.none.tmpl %]
 
 [% title = "Set up whining" %]
-[% PROCESS global/header.html.tmpl %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "whining.html"
+%]
 
 <p>
   "Whining" is when [% terms.Bugzilla %] executes a saved query at a regular interval
@@ -86,13 +89,12 @@
 
 [% FOREACH event = events %]
 
-<table cellspacing="2" cellpadding="2" width="100%"
-       style="border: 1px solid;">
+<table cellspacing="2" cellpadding="2" style="border: 1px solid;">
   <tr>
-    <th align="left" bgcolor="#FFFFFF" colspan="2">
-      Event: 
+    <th align="left">
+      Event:
     </th>
-    <td align="right">
+    <td align="right" colspan="2">
       <input type="submit" value="Remove Event"
              name="remove_event_[% event.key %]"
              id="remove_event_[% event.key %]">
@@ -103,7 +105,7 @@
     <td valign="top" align="right">
       Email subject line:
     </td>
-    <td>
+    <td colspan="2">
       <input type="text" name="event_[% event.key %]_subject"
              size="60" maxlength="128" value="
              [%- event.value.subject FILTER html %]">
@@ -114,7 +116,7 @@
     <td valign="top" align="right">
       Descriptive text sent within whine message:
     </td>
-    <td>
+    <td colspan="2">
       [% INCLUDE global/textarea.html.tmpl
          name           = "event_${event.key}_body"
          minrows        = 3
@@ -132,7 +134,7 @@
       <td valign="top" align="right">
         Schedule:
       </td>
-      <td align="left" bgcolor="#FFEEEE">
+      <td class="unset" colspan="2">
         Not scheduled to run<br>
         <input type="submit" value="Add a new schedule"
                name="add_schedule_[% event.key %]"
@@ -146,18 +148,20 @@
       <td valign="top" align="right">
         Schedule:
       </td>
-      <td align="left" bgcolor="#EEFFEE">
+      <td class="set" colspan="2">
 
         <table>
           <tr>
             <th>
               Interval
             </th>
-            [% IF mail_others %]
-              <th>
+            <th>
+              [% IF mail_others %]
                 Mail to
-              </th>
-            [% END %]
+              [% END %]
+            </th>
+            <th>
+            </th>
           </tr>
           [% FOREACH schedule = event.value.schedule %]
             <tr>
@@ -199,18 +203,16 @@
             </tr>
           [% END %]
 
-        <tr>
-          <td>
-            <input type="submit" value="Add a new schedule"
-                   name="add_schedule_[% event.key %]"
-                   id="add_schedule_[% event.key %]">
-          </td>
-        </tr>
-
+          <tr>
+            <td colspan="3">
+              <input type="submit" value="Add a new schedule"
+                     name="add_schedule_[% event.key %]"
+                     id="add_schedule_[% event.key %]">
+            </td>
+          </tr>
         </table>
 
       </td>
-
     </tr>
 
   [% END %]
@@ -221,7 +223,7 @@
       <td valign="top" align="right">
         Searches:
       </td>
-      <td align="left" colspan="1">
+      <td align="left">
         No searches <br>
         <input type="submit" value="Add a new query"
                name="add_query_[% event.key %]"
@@ -238,13 +240,15 @@
       <td valign="top" align="right">
         Searches:
       </td>
-      <td align="left">
+      <td align="left" colspan="2">
 
         <table>
           <tr>
             <th>Sort</th>
             <th>Search</th>
             <th>Title</th>
+            <th></th>
+            <th></th>
           </tr>
 
           [% FOREACH query = event.value.queries %]
@@ -271,10 +275,10 @@
               <td align="left">
                 <input type="hidden" value="[% query.onemailperbug FILTER html %]"
                        name="orig_query_onemailperbug_[% query.id %]">
-                <input type="checkbox" [% IF query.onemailperbug == 1 %]
-                       checked [% END %]name="query_onemailperbug_
-                       [% query.id %]">
-                One message per [% terms.bug %]
+                <input type="checkbox" [% IF query.onemailperbug == 1 %] checked [% END %]
+                       id="query_onemailperbug_[% query.id %]"
+                       name="query_onemailperbug_[% query.id %]">
+                <label for="query_onemailperbug_[% query.id %]">One message per [% terms.bug %]</label>
               </td>
               <td align="right">
                 <input type="submit" value="Remove"
@@ -291,13 +295,12 @@
                      name="add_query_[% event.key %]"
                      id="add_query_[% event.key %]">
             </td>
+            <td align="right" colspan="2">
+              <input type="submit" value="Update / Commit" name="commit" id="update">
+            </td>
           </tr>
-
         </table>
 
-      </td>
-      <td align="right" valign="bottom">
-        <input type="submit" value="Update / Commit" name="commit" id="update">
       </td>
     </tr>
 

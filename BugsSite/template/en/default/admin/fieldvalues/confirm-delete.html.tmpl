@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -19,13 +18,15 @@
   # bug_count: number; The number of bugs that have this field value.
   # value_count: number; The number of values left for this field, including
   #              this value.
-  # field: string; The name of the field.
+  # field: object; the field the value is being deleted from.
   # param_name: string; The name of the parameter (defaultxxx) associated
   #             with the field.
   #%]
 
-[% title = BLOCK %]Delete Value '[% value FILTER html %]' from the 
-  '[% field FILTER html %]' field[% END %]
+[% title = BLOCK %]
+  Delete Value '[% value FILTER html %]' from the '[% field.description FILTER html %]'
+  ([% field.name FILTER html %]) field
+[% END %]
 
 [% PROCESS global/header.html.tmpl
   title = title
@@ -39,7 +40,7 @@
 </tr>
 <tr>
   <td valign="top">Field Name:</td>
-  <td valign="top">[% field FILTER html %]</td>
+  <td valign="top">[% field.description FILTER html %]</td>
 </tr>
 <tr>
   <td valign="top">Field Value:</td>
@@ -49,9 +50,9 @@
   <td valign="top">[% terms.Bugs %]:</td>
   <td valign="top">
 [% IF bug_count %]
-  <a title="List of [% terms.bugs %] where '[% field FILTER html %]' is '
+  <a title="List of [% terms.bugs %] where '[% field.description FILTER html %]' is '
             [% value FILTER html %]'"
-     href="buglist.cgi?[% field FILTER url_quote %]=[%- value FILTER url_quote %]">[% bug_count FILTER html %]</a>
+     href="buglist.cgi?[% field.name FILTER url_quote %]=[%- value FILTER url_quote %]">[% bug_count FILTER html %]</a>
 [% ELSE %]
   None
 [% END %]
@@ -64,12 +65,12 @@
 [% IF (param_name.defined && Param(param_name) == value) || bug_count || (value_count == 1) %]
 
   <p>Sorry, but the '[% value FILTER html %]' value cannot be deleted
-  from the '[% field FILTER html %]' field for the following reason(s):</p>
+  from the '[% field.description FILTER html %]' field for the following reason(s):</p>
 
   <ul class="warningmessages">
     [% IF param_name.defined && Param(param_name) == value %]
       <li>'[% value FILTER html %]' is the default value for
-          the '[% field FILTER html %]' field.
+          the '[% field.description FILTER html %]' field.
           [% IF user.groups.tweakparams %]
             You first have to <a href="editparams.cgi?section=bugfields#
             [%- param_name FILTER url_quote %]">change the default value</a> for
@@ -85,8 +86,8 @@
             is 1 [% terms.bug %] 
           [% END %]
           with this field value. You must change the field value on
-          <a title="List of [% terms.bugs %] where '[% field FILTER html %]' is '[% value FILTER html %]'"
-             href="buglist.cgi?[% field FILTER url_quote %]=[% value FILTER url_quote %]">
+          <a title="List of [% terms.bugs %] where '[% field.description FILTER html %]' is '[% value FILTER html %]'"
+             href="buglist.cgi?[% field.name FILTER url_quote %]=[% value FILTER url_quote %]">
             [% IF bug_count > 1 %]
               those [% terms.bugs %] 
             [% ELSE %]
@@ -98,7 +99,7 @@
 
     [% IF value_count == 1 %]
       <li>'[% value FILTER html %]' is the last value for
-          '[%- field FILTER html %]', and so it can not be deleted.
+          '[%- field.description FILTER html %]', and so it can not be deleted.
     [% END %]
   </ul>
 
@@ -109,7 +110,7 @@
   <form method="post" action="editvalues.cgi">
     <input type="submit" value="Yes, delete" id="delete">
     <input type="hidden" name="action" value="delete">
-    <input type="hidden" name="field" value="[% field FILTER html %]">
+    <input type="hidden" name="field" value="[% field.name FILTER html %]">
     <input type="hidden" name="value" value="[% value FILTER html %]">
     <input type="hidden" name="token" value="[% token FILTER html %]">
   </form>

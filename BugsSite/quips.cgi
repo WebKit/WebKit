@@ -25,7 +25,7 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -88,6 +88,11 @@ if ($action eq "add") {
 }
 
 if ($action eq 'approve') {
+    $user->in_group('admin')
+      || ThrowUserError("auth_failure", {group  => "admin",
+                                         action => "approve",
+                                         object => "quips"});
+ 
     # Read in the entire quip list
     my $quipsref = $dbh->selectall_arrayref("SELECT quipid, approved FROM quips");
     
@@ -100,11 +105,18 @@ if ($action eq 'approve') {
     my @approved;
     my @unapproved;
     foreach my $quipid (keys %quips) {
-       my $form = $cgi->param('quipid_'.$quipid) ? 1 : 0;
-       if($quips{$quipid} ne $form) {
-           if($form) { push(@approved, $quipid); }
-           else { push(@unapproved, $quipid); }
-       }
+        # Must check for each quipid being defined for concurrency and
+        # automated usage where only one quipid might be defined.
+        my $quip = $cgi->param("quipid_$quipid") ? 1 : 0;
+        if(defined($cgi->param("defined_quipid_$quipid"))) {
+            if($quips{$quipid} != $quip) {
+                if($quip) { 
+                    push(@approved, $quipid); 
+                } else { 
+                    push(@unapproved, $quipid); 
+                }
+            }
+        }
     }
     $dbh->do("UPDATE quips SET approved = 1 WHERE quipid IN (" .
             join(",", @approved) . ")") if($#approved > -1);

@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -33,10 +32,9 @@
 [% PROCESS global/header.html.tmpl title = title %]
 
 <p>
-  To confirm the creation of the user account <tt>[% login FILTER html %]</tt>,
-  use the URL given in the email you will receive. If you take no action in the
-  next [% constants.MAX_TOKEN_AGE FILTER html %] days, this request will
-  automatically be canceled.
+  A confirmation email has been sent containing a link to continue
+  creating an account. The link will expire if an account is not
+  created within [% constants.MAX_TOKEN_AGE FILTER html %] days.
 </p>
 
 [% PROCESS global/footer.html.tmpl %] 

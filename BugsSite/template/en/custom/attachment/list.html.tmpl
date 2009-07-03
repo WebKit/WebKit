@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -126,7 +125,7 @@
         <td valign="top">
 [%# if WEBKIT_CHANGES %]
           [% IF attachment.ispatch %]
-          <a href="attachment.cgi?id=[% attachment.id %]&amp;action=review">Review Patch</a>
+          <a href="attachment.cgi?id=[% attachment.id %]&amp;action=review">Review Patch</a> |
           [% END %]
 [%# endif // WEBKIT_CHANGES %]
           <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">Details</a>
@@ -149,9 +148,11 @@
       [% IF attachments.size %]
         <span class="bz_attach_view_hide">
           [% IF obsolete_attachments %]
-            <a href="#a0" onClick="return toggle_display(this);">Hide Obsolete</a> ([% obsolete_attachments %]) |
+            <a href="#a0" onClick="return toggle_display(this);">Hide Obsolete</a> ([% obsolete_attachments %])
           [% END %]
-          <a href="attachment.cgi?bugid=[% bugid %]&amp;action=viewall">View All</a>
+          [% IF Param("allow_attachment_display") %]
+            <a href="attachment.cgi?bugid=[% bugid %]&amp;action=viewall">View All</a>
+          [% END %]
         </span>
       [% END %]
       <a href="attachment.cgi?bugid=[% bugid %]&amp;action=enter">Add an attachment</a>

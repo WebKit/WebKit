@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -36,14 +35,11 @@
   title = title
   header = header
   subheader = subheader
-  style = "
-    table.attachment_info th { text-align: right; vertical-align: top; }
-    table.attachment_info td { text-align: left; vertical-align: top; }
-    #noview { text-align: left; vertical-align: middle; }
-
-    table#flags th, table#flags td { font-size: small; vertical-align: baseline; text-align: left; }
-  "
+  doc_section = "attachments.html"
 %]
+
+[%# No need to display the Diff button and iframe if the attachment is not a patch. %]
+[% patchviewerinstalled = (patchviewerinstalled && attachment.ispatch) %]
 
 <script type="text/javascript">
   <!--
@@ -56,37 +52,7 @@
 // endif WEBKIT_CHANGES
   function editAsComment()
     {
-      // Get the content of the document as a string.
-      var viewFrame = document.getElementById('viewFrame');
-      var aSerializer = new XMLSerializer();
-      var contentDocument = viewFrame.contentDocument;
-      var theContent = aSerializer.serializeToString(contentDocument);
-
-      // If this is a plaintext document, remove cruft that Mozilla adds
-      // because it treats it as an HTML document with a big PRE section.
-      // http://bugzilla.mozilla.org/show_bug.cgi?id=86012
-      var contentType = '[% attachment.contenttype FILTER js %]';
-      if ( contentType == 'text/plain' )
-        {
-          theContent = theContent.replace( /^<html><head\/?><body><pre>/i , "" );
-          theContent = theContent.replace( /<\/pre><\/body><\/html>$/i , "" );
-          theContent = theContent.replace( /&lt;/gi , "<" );
-          theContent = theContent.replace( /&gt;/gi , ">" );
-          theContent = theContent.replace( /&amp;/gi , "&" );
-        }
-
-      // Add mail-style quote indicators (>) to the beginning of each line.
-      // ".*\n" matches lines that end with a newline, while ".+" matches
-      // the rare situation in which the last line of a file does not end
-      // with a newline.
-      theContent = theContent.replace( /(.*\n|.+)/g , ">$1" );
-
       switchToMode('edit');
-
-      // Copy the contents of the diff into the textarea
-      var editFrame = document.getElementById('editFrame');
-      editFrame.value = theContent + "\n\n";
-
       has_edited = 1;
     }
   function undoEditAsComment()
@@ -229,6 +195,10 @@
   <input type="hidden" name="id" value="[% attachment.id %]">
   <input type="hidden" name="action" value="update">
   <input type="hidden" name="contenttypemethod" value="manual">
+  <input type="hidden" name="delta_ts" value="[% attachment.modification_time FILTER html %]">
+  [% IF user.id %]
+    <input type="hidden" name="token" value="[% issue_hash_token([attachment.id, attachment.modification_time]) FILTER html %]">
+  [% END %]
 
   <table class="attachment_info" width="100%">
 
@@ -267,11 +237,11 @@
                    value="[% attachment.contenttype FILTER html %]"><br>
 
           <input type="checkbox" id="ispatch" name="ispatch" value="1"
-                 [% 'checked="checked"' IF attachment.ispatch %]>
+                 [%+ 'checked="checked"' IF attachment.ispatch %]>
           <label for="ispatch">patch</label>
         [% END %]
           <input type="checkbox" id="isobsolete" name="isobsolete" value="1"
-                 [% 'checked="checked"' IF attachment.isobsolete %]>
+                 [%+ 'checked="checked"' IF attachment.isobsolete %]>
           <label for="isobsolete">obsolete</label>
           [% IF (Param("insidergroup") && user.in_group(Param("insidergroup"))) %]
             <input type="checkbox" id="isprivate" name="isprivate" value="1"
@@ -279,6 +249,7 @@
             <label for="isprivate">private</label><br>
           [% END %]
           <br>
+        </small>
 
         [% IF flag_types.size > 0 %]
           [% PROCESS "flag/list.html.tmpl" bug_id = attachment.bug_id
@@ -286,8 +257,8 @@
         [% END %]
 
         <div id="smallCommentFrame">
-          <b><label for="comment">Comment</label> (on the
-          [%+ terms.bug %]):</b><br>
+          <b><small><label for="comment">Comment</label> (on the
+          [%+ terms.bug %]):</small></b><br>
             [% INCLUDE global/textarea.html.tmpl
               id      = 'comment'
               name    = 'comment'
@@ -313,47 +284,10 @@
               && attachment.datasize > 0 %]
           | <a href="attachment.cgi?id=[% attachment.id %]&amp;action=delete">Delete</a>
         [% END %]
-        </small>
       </td>
 
       [% IF !attachment.datasize %]
         <td width="75%"><b>The content of this attachment has been deleted.</b></td>
-      [% ELSIF isviewable %]
-        <td width="75%">
-          [% INCLUDE global/textarea.html.tmpl
-            id      = 'editFrame'
-            name    = 'comment'
-            style   = 'height: 400px; width: 100%; display: none'
-            minrows = 10
-            cols    = 80
-            wrap    = 'soft'
-          %]
-          <iframe id="viewFrame" src="attachment.cgi?id=[% attachment.id %]" style="height: 400px; width: 100%;">
-            <b>You cannot view the attachment while viewing its details because your browser does not support IFRAMEs.
-            <a href="attachment.cgi?id=[% attachment.id %]">View the attachment on a separate page</a>.</b>
-          </iframe>
-          <script type="text/javascript">
-            <!--
-            if (typeof document.getElementById == "function") {
-[% IF patchviewerinstalled %]
-              document.write('<iframe id="viewDiffFrame" style="height: 400px; width: 100%; display: none;"></iframe>');
-[% END %]
-[%# if WEBKIT_CHANGES %]
-[% IF attachment.ispatch %]
-              document.write('<button type="button" id="viewPrettyPatchButton" onclick="viewPrettyPatch();">View Formatted Diff</button>');
-[% END %]
-[%# endif // WEBKIT_CHANGES %]
-              document.write('<button type="button" id="editButton" onclick="editAsComment();">Edit Attachment As Comment</button>');
-              document.write('<button type="button" id="undoEditButton" onclick="undoEditAsComment();" style="display: none;">Undo Edit As Comment</button>');
-              document.write('<button type="button" id="redoEditButton" onclick="redoEditAsComment();" style="display: none;">Redo Edit As Comment</button>');
-[% IF patchviewerinstalled %]
-              document.write('<button type="button" id="viewDiffButton" onclick="viewDiff();">View Attachment As Diff</button>');
-[% END %]
-              document.write('<button type="button" id="viewRawButton" onclick="viewRaw();" style="display: none;">View Attachment As Raw</button>');
-            }
-            //-->
-          </script>
-        </td>
       [% ELSIF attachment.isurl %]
         <td width="75%">
           <a href="[% attachment.data FILTER html %]">
@@ -365,6 +299,55 @@
               [% attachment.data.match(".*(.{20})$").0 FILTER html %]
             [% END %]
           </a>
+        </td>
+      [% ELSIF !Param("allow_attachment_display") %]
+        <td id="view_disabled" width="50%">
+          <p><b>
+            The attachment is not viewable in your browser due to security
+            restrictions enabled by [% terms.Bugzilla %].
+          </b></p>
+          <p><b>
+            In order to view the attachment, you first have to
+            <a href="attachment.cgi?id=[% attachment.id %]">download it</a>.
+          </b></p>
+        </td>
+      [% ELSIF attachment.is_viewable %]
+        <td width="75%">
+          [% INCLUDE global/textarea.html.tmpl
+            id      = 'editFrame'
+            name    = 'comment'
+            style   = 'height: 400px; width: 100%; display: none'
+            minrows = 10
+            cols    = 80
+            wrap    = 'soft'
+            defaultcontent = (attachment.contenttype.match('^text\/')) ?
+                               attachment.data.replace('(.*\n|.+)', '>$1') : undef
+          %]
+          <iframe id="viewFrame" src="attachment.cgi?id=[% attachment.id %]" style="height: 400px; width: 100%;">
+            <b>You cannot view the attachment while viewing its details because your browser does not support IFRAMEs.
+            <a href="attachment.cgi?id=[% attachment.id %]">View the attachment on a separate page</a>.</b>
+          </iframe>
+          <script type="text/javascript">
+            <!--
+            if (typeof document.getElementById == "function") {
+[% IF patchviewerinstalled %]
+              document.write('<iframe id="viewDiffFrame" style="height: 400px; width: 100%; display: none;"><\/iframe>');
+[% END %]
+[%# if WEBKIT_CHANGES %]
+[% IF attachment.ispatch %]
+              document.write('<button type="button" id="viewPrettyPatchButton" onclick="viewPrettyPatch();">View Formatted Diff<\/button>');
+[% END %]
+[%# endif // WEBKIT_CHANGES %]
+              document.write('<button type="button" id="editButton" onclick="editAsComment();">Edit Attachment As Comment<\/button>');
+              document.write('<button type="button" id="undoEditButton" onclick="undoEditAsComment();" style="display: none;">Undo Edit As Comment<\/button>');
+              document.write('<button type="button" id="redoEditButton" onclick="redoEditAsComment();" style="display: none;">Redo Edit As Comment<\/button>');
+[% IF patchviewerinstalled %]
+              document.write('<button type="button" id="viewDiffButton" onclick="viewDiff();">View Attachment As Diff<\/button>');
+[% END %]
+              document.write('<button type="button" id="viewRawButton" onclick="viewRaw();" style="display: none;">View Attachment As Raw<\/button>');
+            }
+            //-->
+          </script>
         </td>
       [% ELSE %]
         <td id="noview" width="50%">

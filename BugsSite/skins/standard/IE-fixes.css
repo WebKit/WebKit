@@ -13,6 +13,11 @@
   * Contributor(s): Marc Schumann <wurblzap@gmail.com>
   */
 
+.bz_comment_text, .uneditable_textarea {
+     white-space: pre;
+     word-wrap: break-word;
+}
+
 #footer #useful-links li {
     padding-bottom: 0.8ex;
 }

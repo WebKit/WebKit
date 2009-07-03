@@ -16,7 +16,7 @@
 # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -113,6 +113,49 @@ elsif ($action eq 'update') {
 
     $vars->{'field'}   = $field;
     $vars->{'message'} = 'custom_field_updated';
+
+    $template->process('admin/custom_fields/list.html.tmpl', $vars)
+        || ThrowTemplateError($template->error());
+}
+elsif ($action eq 'del') {
+    my $name = $cgi->param('name');
+
+    # Validate field.
+    $name || ThrowUserError('field_missing_name');
+    # Custom field names must start with "cf_".
+    if ($name !~ /^cf_/) {
+        $name = 'cf_' . $name;
+    }
+    my $field = new Bugzilla::Field({'name' => $name});
+    $field || ThrowUserError('customfield_nonexistent', {'name' => $name});
+
+    $vars->{'field'} = $field;
+    $vars->{'token'} = issue_session_token('delete_field');
+
+    $template->process('admin/custom_fields/confirm-delete.html.tmpl', $vars)
+            || ThrowTemplateError($template->error());
+}
+elsif ($action eq 'delete') {
+    check_token_data($token, 'delete_field');
+    my $name = $cgi->param('name');
+
+    # Validate fields.
+    $name || ThrowUserError('field_missing_name');
+    # Custom field names must start with "cf_".
+    if ($name !~ /^cf_/) {
+        $name = 'cf_' . $name;
+    }
+    my $field = new Bugzilla::Field({'name' => $name});
+    $field || ThrowUserError('customfield_nonexistent', {'name' => $name});
+
+    # Calling remove_from_db will check if field can be deleted.
+    # If the field cannot be deleted, it will throw an error.
+    $field->remove_from_db();
+    
+    $vars->{'field'}   = $field;
+    $vars->{'message'} = 'custom_field_deleted';
+    
+    delete_token($token);
 
     $template->process('admin/custom_fields/list.html.tmpl', $vars)
         || ThrowTemplateError($template->error());

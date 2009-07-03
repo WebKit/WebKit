@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -42,22 +41,69 @@
 [% IF editable %]
   [% SWITCH field.type %]
     [% CASE constants.FIELD_TYPE_FREETEXT %]
-        <input name="[% field.name FILTER html %]" value="[% value FILTER html %]" size="60">
-    [% CASE constants.FIELD_TYPE_SINGLE_SELECT %]
-        <select id="[% field.name FILTER html %]" name="[% field.name FILTER html %]">
+        <input id="[% field.name FILTER html %]" name="[% field.name FILTER html %]"
+               value="[% value FILTER html %]" size="40"
+               maxlength="[% constants.MAX_FREETEXT_LENGTH FILTER none %]">
+    [% CASE constants.FIELD_TYPE_DATETIME %]
+      <input name="[% field.name FILTER html %]" size="20"
+             id="[% field.name FILTER html %]"
+             value="[% value FILTER html %]"
+             onchange="updateCalendarFromField(this)">
+      <button type="button" class="calendar_button"
+              id="button_calendar_[% field.name FILTER html %]"
+              onclick="showCalendar('[% field.name FILTER js %]')">
+        <span>Calendar</span>
+      </button>
+
+      <div id="con_calendar_[% field.name FILTER html %]"
+           class="yui-skin-sam"></div>
+
+      <script type="text/javascript">
+        createCalendar('[% field.name FILTER js %]')
+      </script>
+    [% CASE [ constants.FIELD_TYPE_SINGLE_SELECT 
+              constants.FIELD_TYPE_MULTI_SELECT ] %]
+        <select id="[% field.name FILTER html %]" 
+                name="[% field.name FILTER html %]" 
+                [% IF field.type == constants.FIELD_TYPE_MULTI_SELECT %]
+                    [% SET field_size = 5 %]
+                    [% IF field.legal_values.size < 5 %]
+                        [% SET field_size = field.legal_values.size %]
+                    [% END %]
+                    size="[% field_size FILTER html %]" multiple="multiple"
+                [% END %]
+                >
           [% IF allow_dont_change %]
-            <option value="[% dontchange FILTER html %]">
+            <option value="[% dontchange FILTER html %]"
+                   [% ' selected="selected"' IF value == dontchange %]>
               [% dontchange FILTER html %]
             </option>
           [% END %]
           [% FOREACH legal_value = field.legal_values %]
             <option value="[% legal_value FILTER html %]"
-                [%- " selected=\"selected\"" IF value == legal_value %]>
+                [%- " selected=\"selected\"" IF value.contains(legal_value).size %]>
                 [%- legal_value FILTER html %]</option>
           [% END %]
         </select>
+        [%# When you pass an empty multi-select in the web interface,
+          # it doesn't appear at all in the CGI object. Instead of
+          # forcing all users of process_bug to always specify every
+          # multi-select, we have this field defined if the multi-select
+          # field is defined, and then if this is passed but the multi-select
+          # isn't, we know that the multi-select was emptied.
+        %]
+        [% IF field.type == constants.FIELD_TYPE_MULTI_SELECT %]
+          <input type="hidden" name="defined_[% field.name FILTER html %]">
+        [% END %]
+     [% CASE constants.FIELD_TYPE_TEXTAREA %]
+       [% INCLUDE global/textarea.html.tmpl
+           id = field.name name = field.name minrows = 4 maxrows = 8
+           cols = 60 defaultcontent = value %]
   [% END %]
+[% ELSIF field.type == constants.FIELD_TYPE_TEXTAREA %]
+  <div class="uneditable_textarea">[% value FILTER wrap_comment(60)
+                                            FILTER html %]</div>
 [% ELSE %]
-  [% value FILTER html %]
+  [% value.join(', ') FILTER html %]
 [% END %]
 </td>

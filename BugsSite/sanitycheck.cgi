@@ -26,83 +26,86 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
+use Bugzilla::Bug;
 use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
-use Bugzilla::User;
+use Bugzilla::Status;
 
 ###########################################################################
 # General subs
 ###########################################################################
 
+sub get_string {
+    my ($san_tag, $vars) = @_;
+    $vars->{'san_tag'} = $san_tag;
+    return get_text('sanitycheck', $vars);
+}
+
 sub Status {
-    my ($str) = (@_);
-    print "$str <p>\n";
-}
+    my ($san_tag, $vars, $alert) = @_;
+    my $cgi = Bugzilla->cgi;
+    return if (!$alert && Bugzilla->usage_mode == USAGE_MODE_CMDLINE && !$cgi->param('verbose'));
 
-sub Alert {
-    my ($str) = (@_);
-    Status("<font color=\"red\">$str</font>");
-}
-
-sub BugLink {
-    my ($id) = (@_);
-    return "<a href=\"show_bug.cgi?id=$id\">$id</a>";
-}
-
-#
-# Parameter is a list of bug ids.
-#
-# Return is a string containing a list of all the bugids, as hrefs,
-# followed by a link to them all as a buglist
-sub BugListLinks {
-    my @bugs = @_;
-
-    # Historically, GetBugLink() wasn't used here. I'm guessing this
-    # was because it didn't exist or is too performance heavy, or just
-    # plain unnecessary
-    my @bug_links = map(BugLink($_), @bugs);
-
-    return join(', ',@bug_links) . " <a href=\"buglist.cgi?bug_id=" .
-        join(',',@bugs) . "\">(as buglist)</a>";
+    if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+        my $output = $cgi->param('output') || '';
+        my $linebreak = $alert ? "\nALERT: " : "\n";
+        $cgi->param('error_found', 1) if $alert;
+        $cgi->param('output', $output . $linebreak . get_string($san_tag, $vars));
+    }
+    else {
+        my $start_tag = $alert ? '<p class="alert">' : '<p>';
+        print $start_tag . get_string($san_tag, $vars) . "</p>\n";
+    }
 }
 
 ###########################################################################
 # Start
 ###########################################################################
 
-Bugzilla->login(LOGIN_REQUIRED);
+my $user = Bugzilla->login(LOGIN_REQUIRED);
 
 my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
-my $template = Bugzilla->template;
-my $user = Bugzilla->user;
+# If the result of the sanity check is sent per email, then we have to
+# take the user prefs into account rather than querying the web browser.
+my $template;
+if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+    $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
+}
+else {
+    $template = Bugzilla->template;
+}
+my $vars = {};
+
+print $cgi->header() unless Bugzilla->usage_mode == USAGE_MODE_CMDLINE;
 
 # Make sure the user is authorized to access sanitycheck.cgi.
 # As this script can now alter the group_control_map table, we no longer
 # let users with editbugs privs run it anymore.
 $user->in_group("editcomponents")
-  || ($user->in_group('editkeywords') && defined $cgi->param('rebuildkeywordcache'))
+  || ($user->in_group('editkeywords') && $cgi->param('rebuildkeywordcache'))
   || ThrowUserError("auth_failure", {group  => "editcomponents",
                                      action => "run",
                                      object => "sanity_check"});
 
-print $cgi->header();
-
-my @row;
-
-$template->put_header("Sanity Check");
+unless (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+    $template->process('admin/sanitycheck/list.html.tmpl', $vars)
+      || ThrowTemplateError($template->error());
+}
 
 ###########################################################################
 # Users with 'editkeywords' privs only can only check keywords.
 ###########################################################################
 unless ($user->in_group('editcomponents')) {
     check_votes_or_keywords('keywords');
-    Status("Sanity check completed.");
-    $template->put_footer();
+    Status('checks_completed');
+
+    $template->process('global/footer.html.tmpl', $vars)
+        || ThrowTemplateError($template->error());
     exit;
 }
 
@@ -110,9 +113,9 @@ unless ($user->in_group('editcomponents')) {
 # Fix vote cache
 ###########################################################################
 
-if (defined $cgi->param('rebuildvotecache')) {
-    Status("OK, now rebuilding vote cache.");
-    $dbh->bz_lock_tables('bugs WRITE', 'votes READ');
+if ($cgi->param('rebuildvotecache')) {
+    Status('vote_cache_rebuild_start');
+    $dbh->bz_start_transaction();
     $dbh->do(q{UPDATE bugs SET votes = 0});
     my $sth_update = $dbh->prepare(q{UPDATE bugs 
                                         SET votes = ? 
@@ -123,17 +126,16 @@ if (defined $cgi->param('rebuildvotecache')) {
     while (my ($id, $v) = $sth->fetchrow_array) {
         $sth_update->execute($v, $id);
     }
-    $dbh->bz_unlock_tables();
-    Status("Vote cache has been rebuilt.");
+    $dbh->bz_commit_transaction();
+    Status('vote_cache_rebuild_end');
 }
 
 ###########################################################################
 # Create missing group_control_map entries
 ###########################################################################
 
-if (defined $cgi->param('createmissinggroupcontrolmapentries')) {
-    Status(qq{OK, now creating <code>SHOWN</code> member control entries
-              for product/group combinations lacking one.});
+if ($cgi->param('createmissinggroupcontrolmapentries')) {
+    Status('group_control_map_entries_creation');
 
     my $na    = CONTROLMAPNA;
     my $shown = CONTROLMAPSHOWN;
@@ -180,29 +182,26 @@ if (defined $cgi->param('createmissinggroupcontrolmapentries')) {
 
         $counter++;
         if (defined($currentmembercontrol)) {
-            Status(qq{Updating <code>NA/<em>xxx</em></code> group control
-                      setting for group <em>$group_name</em> to
-                      <code>SHOWN/<em>xxx</em></code> in product
-                      <em>$product_name</em>.});
+            Status('group_control_map_entries_update',
+                   {group_name => $group_name, product_name => $product_name});
             $updatesth->execute($group_id, $product_id);
         }
         else {
-            Status(qq{Generating <code>SHOWN/NA</code> group control setting
-                      for group <em>$group_name</em> in product
-                      <em>$product_name</em>.});
+            Status('group_control_map_entries_generation',
+                   {group_name => $group_name, product_name => $product_name});
             $insertsth->execute($group_id, $product_id);
         }
     }
 
-    Status("Repaired $counter defective group control settings.");
+    Status('group_control_map_entries_repaired', {counter => $counter});
 }
 
 ###########################################################################
 # Fix missing creation date
 ###########################################################################
 
-if (defined $cgi->param('repair_creation_date')) {
-    Status("OK, now fixing missing bug creation dates");
+if ($cgi->param('repair_creation_date')) {
+    Status('bug_creation_date_start');
 
     my $bug_ids = $dbh->selectcol_arrayref('SELECT bug_id FROM bugs
                                             WHERE creation_ts IS NULL');
@@ -211,7 +210,7 @@ if (defined $cgi->param('repair_creation_date')) {
                                         WHERE bug_id = ?');
 
     # All bugs have an entry in the 'longdescs' table when they are created,
-    # even if 'commentoncreate' is turned off.
+    # even if no comment is required.
     my $sth_getDate = $dbh->prepare('SELECT MIN(bug_when) FROM longdescs
                                      WHERE bug_id = ?');
 
@@ -220,19 +219,39 @@ if (defined $cgi->param('repair_creation_date')) {
         my $date = $sth_getDate->fetchrow_array;
         $sth_UpdateDate->execute($date, $bugid);
     }
-    Status(scalar(@$bug_ids) . " bugs have been fixed.");
+    Status('bug_creation_date_fixed', {bug_count => scalar(@$bug_ids)});
+}
+
+###########################################################################
+# Fix entries in Bugs full_text
+###########################################################################
+
+if ($cgi->param('repair_bugs_fulltext')) {
+    Status('bugs_fulltext_start');
+
+    my $bug_ids = $dbh->selectcol_arrayref('SELECT bugs.bug_id
+                                            FROM bugs
+                                            LEFT JOIN bugs_fulltext
+                                            ON bugs_fulltext.bug_id = bugs.bug_id
+                                            WHERE bugs_fulltext.bug_id IS NULL');
+
+   foreach my $bugid (@$bug_ids) {
+       Bugzilla::Bug->new($bugid)->_sync_fulltext('new_bug');
+   }
+
+   Status('bugs_fulltext_fixed', {bug_count => scalar(@$bug_ids)});
 }
 
 ###########################################################################
 # Send unsent mail
 ###########################################################################
 
-if (defined $cgi->param('rescanallBugMail')) {
+if ($cgi->param('rescanallBugMail')) {
     require Bugzilla::BugMail;
 
-    Status("OK, now attempting to send unsent mail");
+    Status('send_bugmail_start');
     my $time = $dbh->sql_interval(30, 'MINUTE');
-    
+
     my $list = $dbh->selectcol_arrayref(qq{
                                         SELECT bug_id
                                           FROM bugs 
@@ -240,10 +259,9 @@ if (defined $cgi->param('rescanallBugMail')) {
                                                 OR lastdiffed < delta_ts)
                                            AND delta_ts < now() - $time
                                       ORDER BY bug_id});
-         
-    Status(scalar(@$list) . ' bugs found with possibly unsent mail.');
 
-    my $vars = {};
+    Status('send_bugmail_status', {bug_count => scalar(@$list)});
+
     # We cannot simply look at the bugs_activity table to find who did the
     # last change in a given bug, as e.g. adding a comment doesn't add any
     # entry to this table. And some other changes may be private
@@ -257,11 +275,12 @@ if (defined $cgi->param('rescanallBugMail')) {
         Bugzilla::BugMail::Send($bugid, $vars);
     }
 
-    if (scalar(@$list) > 0) {
-        Status("Unsent mail has been sent.");
-    }
+    Status('send_bugmail_end') if scalar(@$list);
 
-    $template->put_footer();
+    unless (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+        $template->process('global/footer.html.tmpl', $vars)
+          || ThrowTemplateError($template->error());
+    }
     exit;
 }
 
@@ -269,20 +288,22 @@ if (defined $cgi->param('rescanallBugMail')) {
 # Remove all references to deleted bugs
 ###########################################################################
 
-if (defined $cgi->param('remove_invalid_bug_references')) {
-    Status("OK, now removing all references to deleted bugs.");
+if ($cgi->param('remove_invalid_bug_references')) {
+    Status('bug_reference_deletion_start');
 
-    $dbh->bz_lock_tables('attachments WRITE', 'bug_group_map WRITE',
-                         'bugs_activity WRITE', 'cc WRITE',
-                         'dependencies WRITE', 'duplicates WRITE',
-                         'flags WRITE', 'keywords WRITE',
-                         'longdescs WRITE', 'votes WRITE', 'bugs READ');
+    $dbh->bz_start_transaction();
 
-    foreach my $pair ('attachments/', 'bug_group_map/', 'bugs_activity/', 'cc/',
+    # Include custom multi-select fields to the list.
+    my @multi_selects = Bugzilla->get_fields({custom => 1, type => FIELD_TYPE_MULTI_SELECT});
+    my @addl_fields = map { 'bug_' . $_->name . '/' } @multi_selects;
+
+    foreach my $pair ('attachments/', 'bug_group_map/', 'bugs_activity/',
+                      'bugs_fulltext/', 'cc/',
                       'dependencies/blocked', 'dependencies/dependson',
                       'duplicates/dupe', 'duplicates/dupe_of',
-                      'flags/', 'keywords/', 'longdescs/', 'votes/') {
-
+                      'flags/', 'keywords/', 'longdescs/', 'votes/',
+                      @addl_fields)
+    {
         my ($table, $field) = split('/', $pair);
         $field ||= "bug_id";
 
@@ -296,18 +317,18 @@ if (defined $cgi->param('remove_invalid_bug_references')) {
         }
     }
 
-    $dbh->bz_unlock_tables();
-    Status("All references to deleted bugs have been removed.");
+    $dbh->bz_commit_transaction();
+    Status('bug_reference_deletion_end');
 }
 
 ###########################################################################
 # Remove all references to deleted attachments
 ###########################################################################
 
-if (defined $cgi->param('remove_invalid_attach_references')) {
-    Status("OK, now removing all references to deleted attachments.");
+if ($cgi->param('remove_invalid_attach_references')) {
+    Status('attachment_reference_deletion_start');
 
-    $dbh->bz_lock_tables('attachments WRITE', 'attach_data WRITE');
+    $dbh->bz_start_transaction();
 
     my $attach_ids =
         $dbh->selectcol_arrayref('SELECT attach_data.id
@@ -321,11 +342,41 @@ if (defined $cgi->param('remove_invalid_attach_references')) {
                  join(',', @$attach_ids) . ')');
     }
 
-    $dbh->bz_unlock_tables();
-    Status("All references to deleted attachments have been removed.");
+    $dbh->bz_commit_transaction();
+    Status('attachment_reference_deletion_end');
 }
 
-print "OK, now running sanity checks.<p>\n";
+###########################################################################
+# Remove all references to deleted users or groups from whines
+###########################################################################
+
+if ($cgi->param('remove_old_whine_targets')) {
+    Status('whines_obsolete_target_deletion_start');
+
+    $dbh->bz_start_transaction();
+
+    foreach my $target (['groups', 'id', MAILTO_GROUP],
+                        ['profiles', 'userid', MAILTO_USER])
+    {
+        my ($table, $col, $type) = @$target;
+        my $old_ids =
+          $dbh->selectcol_arrayref("SELECT DISTINCT mailto
+                                      FROM whine_schedules
+                                 LEFT JOIN $table
+                                        ON $table.$col = whine_schedules.mailto
+                                     WHERE mailto_type = $type AND $table.$col IS NULL");
+
+        if (scalar(@$old_ids)) {
+            $dbh->do("DELETE FROM whine_schedules
+                       WHERE mailto_type = $type AND mailto IN (" .
+                       join(',', @$old_ids) . ")");
+        }
+    }
+    $dbh->bz_commit_transaction();
+    Status('whines_obsolete_target_deletion_end');
+}
+
+Status('checks_start');
 
 ###########################################################################
 # Perform referential (cross) checks
@@ -354,7 +405,7 @@ sub CrossCheck {
     my $field = shift @_;
     my $dbh = Bugzilla->dbh;
 
-    Status("Checking references to $table.$field");
+    Status('cross_check_to', {table => $table, field => $field});
 
     while (@_) {
         my $ref = shift @_;
@@ -363,8 +414,8 @@ sub CrossCheck {
         $exceptions ||= [];
         my %exceptions = map { $_ => 1 } @$exceptions;
 
-        Status("... from $refertable.$referfield");
-       
+        Status('cross_check_from', {table => $refertable, field => $referfield});
+
         my $query = qq{SELECT DISTINCT $refertable.$referfield} .
             ($keyname ? qq{, $refertable.$keyname } : q{}) .
                      qq{ FROM $refertable
@@ -372,7 +423,7 @@ sub CrossCheck {
                            ON $refertable.$referfield = $table.$field
                         WHERE $table.$field IS NULL
                           AND $refertable.$referfield IS NOT NULL};
-         
+
         my $sth = $dbh->prepare($query);
         $sth->execute;
 
@@ -380,26 +431,18 @@ sub CrossCheck {
 
         while (my ($value, $key) = $sth->fetchrow_array) {
             next if $exceptions{$value};
-            my $alert = "Bad value &quot;$value&quot; found in $refertable.$referfield";
-            if ($keyname) {
-                if ($keyname eq 'bug_id') {
-                    $alert .= ' (bug ' . BugLink($key) . ')';
-                } else {
-                    $alert .= " ($keyname == '$key')";
-                }
-            }
-            Alert($alert);
+            Status('cross_check_alert', {value => $value, table => $refertable,
+                                         field => $referfield, keyname => $keyname,
+                                         key => $key}, 'alert');
             $has_bad_references = 1;
         }
         # References to non existent bugs can be safely removed, bug 288461
         if ($table eq 'bugs' && $has_bad_references) {
-            print qq{<a href="sanitycheck.cgi?remove_invalid_bug_references=1">
-                     Remove invalid references to non existent bugs.</a><p>\n};
+            Status('cross_check_bug_has_references');
         }
         # References to non existent attachments can be safely removed.
         if ($table eq 'attachments' && $has_bad_references) {
-            print qq{<a href="sanitycheck.cgi?remove_invalid_attach_references=1">
-                     Remove invalid references to non existent attachments.</a><p>\n};
+            Status('cross_check_attachment_has_references');
         }
     }
 }
@@ -415,11 +458,18 @@ CrossCheck("fielddefs", "id",
            ['profiles_activity', 'fieldid']);
 
 CrossCheck("flagtypes", "id",
-           ["flags", "type_id"]);
+           ["flags", "type_id"],
+           ["flagexclusions", "type_id"],
+           ["flaginclusions", "type_id"]);
+
+# Include custom multi-select fields to the list.
+my @multi_selects = Bugzilla->get_fields({custom => 1, type => FIELD_TYPE_MULTI_SELECT});
+my @addl_fields = map { ['bug_' . $_->name, 'bug_id'] } @multi_selects;
 
 CrossCheck("bugs", "bug_id",
            ["bugs_activity", "bug_id"],
            ["bug_group_map", "bug_id"],
+           ["bugs_fulltext", "bug_id"],
            ["attachments", "bug_id"],
            ["cc", "bug_id"],
            ["longdescs", "bug_id"],
@@ -429,7 +479,8 @@ CrossCheck("bugs", "bug_id",
            ["votes", "bug_id"],
            ["keywords", "bug_id"],
            ["duplicates", "dupe_of", "dupe"],
-           ["duplicates", "dupe", "dupe_of"]);
+           ["duplicates", "dupe", "dupe_of"],
+           @addl_fields);
 
 CrossCheck("groups", "id",
            ["bug_group_map", "group_id"],
@@ -438,7 +489,9 @@ CrossCheck("groups", "id",
            ["group_group_map", "member_id"],
            ["group_control_map", "group_id"],
            ["namedquery_group_map", "group_id"],
-           ["user_group_map", "group_id"]);
+           ["user_group_map", "group_id"],
+           ["flagtypes", "grant_group_id"],
+           ["flagtypes", "request_group_id"]);
 
 CrossCheck("namedqueries", "id",
            ["namedqueries_link_in_footer", "namedquery_id"],
@@ -484,7 +537,9 @@ CrossCheck("products", "id",
            ["flagexclusions", "product_id", "type_id"]);
 
 CrossCheck("components", "id",
-           ["component_cc", "component_id"]);
+           ["component_cc", "component_id"],
+           ["flagexclusions", "component_id", "type_id"],
+           ["flaginclusions", "component_id", "type_id"]);
 
 # Check the former enum types -mkanat@bugzilla.org
 CrossCheck("bug_status", "value",
@@ -509,14 +564,21 @@ CrossCheck('series', 'series_id',
            ['series_data', 'series_id']);
 
 CrossCheck('series_categories', 'id',
-           ['series', 'category']);
+           ['series', 'category'],
+           ["category_group_map", "category_id"],
+           ["series", "subcategory"]);
 
 CrossCheck('whine_events', 'id',
            ['whine_queries', 'eventid'],
            ['whine_schedules', 'eventid']);
 
 CrossCheck('attachments', 'attach_id',
-           ['attach_data', 'id']);
+           ['attach_data', 'id'],
+           ['bugs_activity', 'attach_id']);
+
+CrossCheck('bug_status', 'id',
+           ['status_workflow', 'old_status'],
+           ['status_workflow', 'new_status']);
 
 ###########################################################################
 # Perform double field referential (cross) checks
@@ -541,14 +603,16 @@ sub DoubleCrossCheck {
     my $field1 = shift @_;
     my $field2 = shift @_;
     my $dbh = Bugzilla->dbh;
- 
-    Status("Checking references to $table.$field1 / $table.$field2");
- 
+
+    Status('double_cross_check_to',
+           {table => $table, field1 => $field1, field2 => $field2});
+
     while (@_) {
         my $ref = shift @_;
         my ($refertable, $referfield1, $referfield2, $keyname) = @$ref;
- 
-        Status("... from $refertable.$referfield1 / $refertable.$referfield2");
+
+        Status('double_cross_check_from',
+               {table => $refertable, field1 => $referfield1, field2 =>$referfield2});
 
         my $d_cross_check = $dbh->selectall_arrayref(qq{
                         SELECT DISTINCT $refertable.$referfield1, 
@@ -565,17 +629,11 @@ sub DoubleCrossCheck {
 
         foreach my $check (@$d_cross_check) {
             my ($value1, $value2, $key) = @$check;
-            my $alert = "Bad values &quot;$value1&quot;, &quot;$value2&quot; found in " .
-                "$refertable.$referfield1 / $refertable.$referfield2";
-            if ($keyname) {
-                if ($keyname eq 'bug_id') {
-                   $alert .= ' (bug ' . BugLink($key) . ')';
-                }
-                else {
-                    $alert .= " ($keyname == '$key')";
-                }
-            }
-            Alert($alert);
+            Status('double_cross_check_alert',
+                   {value1 => $value1, value2 => $value2,
+                    table => $refertable,
+                    field1 => $referfield1, field2 => $referfield2,
+                    keyname => $keyname, key => $key}, 'alert');
         }
     }
 }
@@ -599,25 +657,20 @@ DoubleCrossCheck("milestones", "product_id", "value",
 ###########################################################################
 # Perform login checks
 ###########################################################################
- 
-Status("Checking profile logins");
+
+Status('profile_login_start');
 
 my $sth = $dbh->prepare(q{SELECT userid, login_name FROM profiles});
 $sth->execute;
 
 while (my ($id, $email) = $sth->fetchrow_array) {
     validate_email_syntax($email)
-      || Alert "Bad profile email address, id=$id,  &lt;$email&gt;.";
+      || Status('profile_login_alert', {id => $id, email => $email}, 'alert');
 }
 
 ###########################################################################
 # Perform vote/keyword cache checks
 ###########################################################################
-
-sub AlertBadVoteCache {
-    my ($id) = (@_);
-    Alert("Bad vote cache for bug " . BugLink($id));
-}
 
 check_votes_or_keywords();
 
@@ -651,7 +704,7 @@ sub check_votes_or_keywords {
 sub _check_votes {
     my $votes = shift;
 
-    Status("Checking cached vote counts");
+    Status('vote_count_start');
     my $dbh = Bugzilla->dbh;
     my $sth = $dbh->prepare(q{SELECT bug_id, SUM(vote_count)
                                 FROM votes }.
@@ -662,29 +715,27 @@ sub _check_votes {
 
     while (my ($id, $v) = $sth->fetchrow_array) {
         if ($v <= 0) {
-            Alert("Bad vote sum for bug $id");
+            Status('vote_count_alert', {id => $id}, 'alert');
         } else {
             if (!defined $votes->{$id} || $votes->{$id} != $v) {
-                AlertBadVoteCache($id);
+                Status('vote_cache_alert', {id => $id}, 'alert');
                 $offer_votecache_rebuild = 1;
             }
             delete $votes->{$id};
         }
     }
     foreach my $id (keys %$votes) {
-        AlertBadVoteCache($id);
+        Status('vote_cache_alert', {id => $id}, 'alert');
         $offer_votecache_rebuild = 1;
     }
 
-    if ($offer_votecache_rebuild) {
-        print qq{<a href="sanitycheck.cgi?rebuildvotecache=1">Click here to rebuild the vote cache</a><p>\n};
-    }
+    Status('vote_cache_rebuild_fix') if $offer_votecache_rebuild;
 }
 
 sub _check_keywords {
     my $keyword = shift;
 
-    Status("Checking keywords table");
+    Status('keyword_check_start');
     my $dbh = Bugzilla->dbh;
     my $cgi = Bugzilla->cgi;
 
@@ -695,11 +746,11 @@ sub _check_keywords {
     foreach (@$keywords) {
         my ($id, $name) = @$_;
         if ($keywordids{$id}) {
-            Alert("Duplicate entry in keyworddefs for id $id");
+            Status('keyword_check_alert', {id => $id}, 'alert');
         }
         $keywordids{$id} = 1;
         if ($name =~ /[\s,]/) {
-            Alert("Bogus name in keyworddefs for id $id");
+            Status('keyword_check_invalid_name', {id => $id}, 'alert');
         }
     }
 
@@ -711,19 +762,19 @@ sub _check_keywords {
     my $lastk;
     while (my ($id, $k) = $sth->fetchrow_array) {
         if (!$keywordids{$k}) {
-            Alert("Bogus keywordids $k found in keywords table");
+            Status('keyword_check_invalid_id', {id => $k}, 'alert');
         }
         if (defined $lastid && $id eq $lastid && $k eq $lastk) {
-            Alert("Duplicate keyword ids found in bug " . BugLink($id));
+            Status('keyword_check_duplicated_ids', {id => $id}, 'alert');
         }
         $lastid = $id;
         $lastk = $k;
     }
 
-    Status("Checking cached keywords");
+    Status('keyword_cache_start');
 
-    if (defined $cgi->param('rebuildkeywordcache')) {
-        $dbh->bz_lock_tables('bugs write', 'keywords read', 'keyworddefs read');
+    if ($cgi->param('rebuildkeywordcache')) {
+        $dbh->bz_start_transaction();
     }
 
     my $query = q{SELECT keywords.bug_id, keyworddefs.name
@@ -768,15 +819,13 @@ sub _check_keywords {
     }
     if (@badbugs) {
         @badbugs = sort {$a <=> $b} @badbugs;
-        Alert(scalar(@badbugs) . " bug(s) found with incorrect keyword cache: " .
-              BugListLinks(@badbugs));
 
-        my $sth_update = $dbh->prepare(q{UPDATE bugs
-                                            SET keywords = ?
-                                          WHERE bug_id = ?});
+        if ($cgi->param('rebuildkeywordcache')) {
+            my $sth_update = $dbh->prepare(q{UPDATE bugs
+                                                SET keywords = ?
+                                              WHERE bug_id = ?});
 
-        if (defined $cgi->param('rebuildkeywordcache')) {
-            Status("OK, now fixing keyword cache.");
+            Status('keyword_cache_fixing');
             foreach my $b (@badbugs) {
                 my $k = '';
                 if (exists($realk{$b})) {
@@ -784,14 +833,15 @@ sub _check_keywords {
                 }
                 $sth_update->execute($k, $b);
             }
-            Status("Keyword cache fixed.");
+            Status('keyword_cache_fixed');
         } else {
-            print qq{<a href="sanitycheck.cgi?rebuildkeywordcache=1">Click here to rebuild the keyword cache</a><p>\n};
+            Status('keyword_cache_alert', {badbugs => \@badbugs}, 'alert');
+            Status('keyword_cache_rebuild');
         }
     }
 
-    if (defined $cgi->param('rebuildkeywordcache')) {
-        $dbh->bz_unlock_tables();
+    if ($cgi->param('rebuildkeywordcache')) {
+        $dbh->bz_commit_transaction();
     }
 }
 
@@ -799,7 +849,7 @@ sub _check_keywords {
 # Check for flags being in incorrect products and components
 ###########################################################################
 
-Status('Checking for flags being in the wrong product/component');
+Status('flag_check_start');
 
 my $invalid_flags = $dbh->selectall_arrayref(
        'SELECT DISTINCT flags.id, flags.bug_id, flags.attach_id
@@ -828,22 +878,20 @@ push(@invalid_flags, @$invalid_flags);
 
 if (scalar(@invalid_flags)) {
     if ($cgi->param('remove_invalid_flags')) {
-        Status("OK, now deleting invalid flags.");
+        Status('flag_deletion_start');
         my @flag_ids = map {$_->[0]} @invalid_flags;
-        $dbh->bz_lock_tables('flags WRITE');
         # Silently delete these flags, with no notification to requesters/setters.
         $dbh->do('DELETE FROM flags WHERE id IN (' . join(',', @flag_ids) .')');
-        $dbh->bz_unlock_tables();
-        Status("Invalid flags deleted.");
+        Status('flag_deletion_end');
     }
     else {
         foreach my $flag (@$invalid_flags) {
             my ($flag_id, $bug_id, $attach_id) = @$flag;
-            Alert("Invalid flag $flag_id for " .
-                  ($attach_id ? "attachment $attach_id in bug " : "bug ") . BugLink($bug_id));
+            Status('flag_alert',
+                   {flag_id => $flag_id, attach_id => $attach_id, bug_id => $bug_id},
+                   'alert');
         }
-        print qq{<a href="sanitycheck.cgi?remove_invalid_flags=1">Click
-                 here to delete invalid flags</a><p>\n};
+        Status('flag_fix');
     }
 }
 
@@ -860,57 +908,64 @@ sub BugCheck {
                                             ORDER BY bugs.bug_id});
 
     if (scalar(@$badbugs)) {
-        Alert("$errortext: " . BugListLinks(@$badbugs));
+        Status('bug_check_alert',
+               {errortext => get_string($errortext), badbugs => $badbugs},
+               'alert');
+
         if ($repairparam) {
-            $repairtext ||= 'Repair these bugs';
-            print qq{<a href="sanitycheck.cgi?$repairparam=1">$repairtext</a>.},
-                  '<p>';
+            $repairtext ||= 'repair_bugs';
+            Status('bug_check_repair',
+                   {param => $repairparam, text => get_string($repairtext)});
         }
     }
 }
 
-Status("Checking for bugs with no creation date (which makes them invisible)");
+Status('bug_check_creation_date');
 
-BugCheck("bugs WHERE creation_ts IS NULL", "Bugs with no creation date",
-         "repair_creation_date", "Repair missing creation date for these bugs");
+BugCheck("bugs WHERE creation_ts IS NULL", 'bug_check_creation_date_error_text',
+         'repair_creation_date', 'bug_check_creation_date_repair_text');
 
-Status("Checking resolution/duplicates");
+Status('bug_check_bugs_fulltext');
+
+BugCheck("bugs LEFT JOIN bugs_fulltext ON bugs_fulltext.bug_id = bugs.bug_id " .
+         "WHERE bugs_fulltext.bug_id IS NULL", 'bug_check_bugs_fulltext_error_text',
+         'repair_bugs_fulltext', 'bug_check_bugs_fulltext_repair_text');
+
+Status('bug_check_res_dupl');
 
 BugCheck("bugs INNER JOIN duplicates ON bugs.bug_id = duplicates.dupe " .
-         "WHERE bugs.resolution != 'DUPLICATE'",
-         "Bug(s) found on duplicates table that are not marked duplicate");
+         "WHERE bugs.resolution != 'DUPLICATE'", 'bug_check_res_dupl_error_text');
 
 BugCheck("bugs LEFT JOIN duplicates ON bugs.bug_id = duplicates.dupe WHERE " .
          "bugs.resolution = 'DUPLICATE' AND " .
-         "duplicates.dupe IS NULL",
-         "Bug(s) found marked resolved duplicate and not on duplicates table");
+         "duplicates.dupe IS NULL", 'bug_check_res_dupl_error_text2');
 
-Status("Checking statuses/resolutions");
+Status('bug_check_status_res');
 
 my @open_states = map($dbh->quote($_), BUG_STATE_OPEN);
 my $open_states = join(', ', @open_states);
 
 BugCheck("bugs WHERE bug_status IN ($open_states) AND resolution != ''",
-         "Bugs with open status and a resolution");
+         'bug_check_status_res_error_text');
 BugCheck("bugs WHERE bug_status NOT IN ($open_states) AND resolution = ''",
-         "Bugs with non-open status and no resolution");
+         'bug_check_status_res_error_text2');
 
-Status("Checking statuses/everconfirmed");
+Status('bug_check_status_everconfirmed');
 
 BugCheck("bugs WHERE bug_status = 'UNCONFIRMED' AND everconfirmed = 1",
-         "Bugs that are UNCONFIRMED but have everconfirmed set");
-# The below list of resolutions is hard-coded because we don't know if future
-# resolutions will be confirmed, unconfirmed or maybeconfirmed.  I suspect
-# they will be maybeconfirmed, e.g. ASLEEP and REMIND.  This hardcoding should
-# disappear when we have customized statuses.
-BugCheck("bugs WHERE bug_status IN ('NEW', 'ASSIGNED', 'REOPENED') AND everconfirmed = 0",
-         "Bugs with confirmed status but don't have everconfirmed set"); 
+         'bug_check_status_everconfirmed_error_text');
 
-Status("Checking votes/everconfirmed");
+my @confirmed_open_states = grep {$_ ne 'UNCONFIRMED'} BUG_STATE_OPEN;
+my $confirmed_open_states = join(', ', map {$dbh->quote($_)} @confirmed_open_states);
+
+BugCheck("bugs WHERE bug_status IN ($confirmed_open_states) AND everconfirmed = 0",
+         'bug_check_status_everconfirmed_error_text2');
+
+Status('bug_check_votes_everconfirmed');
 
 BugCheck("bugs INNER JOIN products ON bugs.product_id = products.id " .
          "WHERE everconfirmed = 0 AND votestoconfirm <= votes",
-         "Bugs that have enough votes to be confirmed but haven't been");
+         'bug_check_votes_everconfirmed_error_text');
 
 ###########################################################################
 # Control Values
@@ -918,7 +973,7 @@ BugCheck("bugs INNER JOIN products ON bugs.product_id = products.id " .
 
 # Checks for values that are invalid OR
 # not among the 9 valid combinations
-Status("Checking for bad values in group_control_map");
+Status('bug_check_control_values');
 my $groups = join(", ", (CONTROLMAPNA, CONTROLMAPSHOWN, CONTROLMAPDEFAULT,
 CONTROLMAPMANDATORY));
 my $query = qq{
@@ -930,13 +985,11 @@ my $query = qq{
              AND (membercontrol != } . CONTROLMAPSHOWN . q{)
              AND ((membercontrol != } . CONTROLMAPDEFAULT . q{)
                   OR (othercontrol = } . CONTROLMAPSHOWN . q{)))};
-                  
-my $c = $dbh->selectrow_array($query);
-if ($c) {
-    Alert("Found $c bad group_control_map entries");
-}
 
-Status("Checking for bugs with groups violating their product's group controls");
+my $entries = $dbh->selectrow_array($query);
+Status('bug_check_control_values_alert', {entries => $entries}, 'alert') if $entries;
+
+Status('bug_check_control_values_violation');
 BugCheck("bugs
          INNER JOIN bug_group_map
             ON bugs.bug_id = bug_group_map.bug_id
@@ -945,10 +998,9 @@ BugCheck("bugs
            AND bug_group_map.group_id = group_control_map.group_id
          WHERE ((group_control_map.membercontrol = " . CONTROLMAPNA . ")
          OR (group_control_map.membercontrol IS NULL))",
-         'Have groups not permitted for their products',
+         'bug_check_control_values_error_text',
          'createmissinggroupcontrolmapentries',
-         'Permit the missing groups for the affected products
-          (set member control to <code>SHOWN</code>)');
+         'bug_check_control_values_repair_text');
 
 BugCheck("bugs
          INNER JOIN group_control_map
@@ -961,14 +1013,13 @@ BugCheck("bugs
          WHERE group_control_map.membercontrol = " . CONTROLMAPMANDATORY . "
            AND bug_group_map.group_id IS NULL
            AND groups.isactive != 0",
-         "Are missing groups required for their products");
-
+         'bug_check_control_values_error_text2');
 
 ###########################################################################
 # Unsent mail
 ###########################################################################
 
-Status("Checking for unsent mail");
+Status('unsent_bugmail_check');
 
 my $time = $dbh->sql_interval(30, 'MINUTE');
 my $badbugs = $dbh->selectcol_arrayref(qq{
@@ -980,15 +1031,41 @@ my $badbugs = $dbh->selectcol_arrayref(qq{
 
 
 if (scalar(@$badbugs > 0)) {
-    Alert("Bugs that have changes but no mail sent for at least half an hour: " .
-          BugListLinks(@$badbugs));
-
-    print qq{<a href="sanitycheck.cgi?rescanallBugMail=1">Send these mails</a>.<p>\n};
+    Status('unsent_bugmail_alert', {badbugs => $badbugs}, 'alert');
+    Status('unsent_bugmail_fix');
 }
+
+###########################################################################
+# Whines
+###########################################################################
+
+Status('whines_obsolete_target_start');
+
+my $display_repair_whines_link = 0;
+foreach my $target (['groups', 'id', MAILTO_GROUP],
+                    ['profiles', 'userid', MAILTO_USER])
+{
+    my ($table, $col, $type) = @$target;
+    my $old = $dbh->selectall_arrayref("SELECT whine_schedules.id, mailto
+                                          FROM whine_schedules
+                                     LEFT JOIN $table
+                                            ON $table.$col = whine_schedules.mailto
+                                         WHERE mailto_type = $type AND $table.$col IS NULL");
+
+    if (scalar(@$old)) {
+        Status('whines_obsolete_target_alert', {schedules => $old, type => $type}, 'alert');
+        $display_repair_whines_link = 1;
+    }
+}
+Status('whines_obsolete_target_fix') if $display_repair_whines_link;
 
 ###########################################################################
 # End
 ###########################################################################
 
-Status("Sanity check completed.");
-$template->put_footer();
+Status('checks_completed');
+
+unless (Bugzilla->usage_mode == USAGE_MODE_CMDLINE) {
+    $template->process('global/footer.html.tmpl', $vars)
+      || ThrowTemplateError($template->error());
+}

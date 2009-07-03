@@ -24,10 +24,13 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
+use Bugzilla::Util;
+use Bugzilla::CGI;
+use Bugzilla::Search::Saved;
 use Bugzilla::Error;
 use Bugzilla::User;
 use Bugzilla::Keyword;
@@ -78,7 +81,11 @@ if (Bugzilla->user->in_group(Bugzilla->params->{"timetrackinggroup"})) {
 
 push(@masterlist, ("short_desc", "short_short_desc"));
 
-push(@masterlist, Bugzilla->custom_field_names);
+my @custom_fields = grep { $_->type != FIELD_TYPE_MULTI_SELECT }
+                         Bugzilla->active_custom_fields;
+push(@masterlist, map { $_->name } @custom_fields);
+
+Bugzilla::Hook::process("colchange-columns", {'columns' => \@masterlist} );
 
 $vars->{'masterlist'} = \@masterlist;
 
@@ -101,9 +108,13 @@ if (defined $cgi->param('rememberedquery')) {
     my $urlbase = Bugzilla->params->{"urlbase"};
 
     if ($list) {
-        $cgi->send_cookie(-name => 'COLUMNLIST',
-                          -value => $list,
-                          -expires => 'Fri, 01-Jan-2038 00:00:00 GMT');
+        # Only set the cookie if this is not a saved search.
+        # Saved searches have their own column list
+        if (!$cgi->param('save_columns_for_search')) {
+            $cgi->send_cookie(-name => 'COLUMNLIST',
+                              -value => $list,
+                              -expires => 'Fri, 01-Jan-2038 00:00:00 GMT');
+        }
     }
     else {
         $cgi->remove_cookie('COLUMNLIST');
@@ -118,7 +129,27 @@ if (defined $cgi->param('rememberedquery')) {
     }
 
     $vars->{'message'} = "change_columns";
-    $vars->{'redirect_url'} = "buglist.cgi?".$cgi->param('rememberedquery');
+
+    my $search;
+    if (defined $cgi->param('saved_search')) {
+        $search = new Bugzilla::Search::Saved($cgi->param('saved_search'));
+    }
+
+    if ($cgi->param('save_columns_for_search')
+        && defined $search && $search->user->id == Bugzilla->user->id) 
+    {
+        my $params = new Bugzilla::CGI($search->url);
+        $params->param('columnlist', join(",", @collist));
+        $search->set_url($params->query_string());
+        $search->update();
+        $vars->{'redirect_url'} = "buglist.cgi?".$cgi->param('rememberedquery');
+    }
+    else {
+        my $params = new Bugzilla::CGI($cgi->param('rememberedquery'));
+        $params->param('columnlist', join(",", @collist));
+        $vars->{'redirect_url'} = "buglist.cgi?".$params->query_string();
+    }
+
 
     # If we're running on Microsoft IIS, using cgi->redirect discards
     # the Set-Cookie lines -- workaround is to use the old-fashioned 
@@ -148,6 +179,24 @@ $vars->{'collist'} = \@collist;
 $vars->{'splitheader'} = $cgi->cookie('SPLITHEADER') ? 1 : 0;
 
 $vars->{'buffer'} = $cgi->query_string();
+
+my $search;
+if (defined $cgi->param('query_based_on')) {
+    my $searches = Bugzilla->user->queries;
+    my ($search) = grep($_->name eq $cgi->param('query_based_on'), @$searches);
+
+    # Only allow users to edit their own queries.
+    if ($search && $search->user->id == Bugzilla->user->id) {
+        $vars->{'saved_search'} = $search;
+        $vars->{'buffer'} = "cmdtype=runnamed&namedcmd=". url_quote($search->name);
+
+        my $params = new Bugzilla::CGI($search->url);
+        if ($params->param('columnlist')) {
+            my @collist = split(',', $params->param('columnlist'));
+            $vars->{'collist'} = \@collist if scalar (@collist);
+        }
+    }
+}
 
 # Generate and return the UI (HTML page) from the appropriate template.
 print $cgi->header();

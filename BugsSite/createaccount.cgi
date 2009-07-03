@@ -26,7 +26,7 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -44,6 +44,8 @@ my $dbh = Bugzilla->dbh;
 my $cgi = Bugzilla->cgi;
 my $template = Bugzilla->template;
 my $vars = {};
+
+$vars->{'doc_section'} = 'myaccount.html';
 
 print $cgi->header();
 
@@ -64,7 +66,7 @@ if (defined($login)) {
     $vars->{'login'} = $login;
 
     if ($login !~ /$createexp/) {
-        ThrowUserError("account_creation_disabled");
+        ThrowUserError("account_creation_restricted");
     }
 
     # Create and send a token for this new account.

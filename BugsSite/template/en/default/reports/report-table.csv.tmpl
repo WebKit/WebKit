@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -42,7 +41,7 @@
   [% FOREACH col = col_names -%]
     [% colsepchar %]
     [% IF col_field == 'bug_status' %]
-      [% status_descs.$col FILTER csv -%]
+      [% get_status(col) FILTER csv -%]
     [% ELSIF col_field == 'resolution' %]
       [% get_resolution(col) FILTER csv -%]
     [% ELSE %]
@@ -55,7 +54,7 @@
 
 [% FOREACH row = row_names %]
   [% IF row_field == 'bug_status' %]
-    [% status_descs.$row FILTER csv -%]
+    [% get_status(row) FILTER csv -%]
   [% ELSIF row_field == 'resolution' %]
     [% get_resolution(row) FILTER csv -%]
   [% ELSE %]

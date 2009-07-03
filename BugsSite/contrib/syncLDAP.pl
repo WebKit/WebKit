@@ -22,7 +22,7 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Net::LDAP;
 use Bugzilla;
@@ -79,13 +79,13 @@ my %ldap_users;
 ###
 # Get current bugzilla users
 ###
-my $bugzilla_users = $dbh->selectall_hashref(
+my %bugzilla_users = %{ $dbh->selectall_hashref(
     'SELECT login_name AS new_login_name, realname, disabledtext ' .
-    'FROM profiles', 'new_login_name');
+    'FROM profiles', 'new_login_name') };
 
-foreach my $login_name (keys %$bugzilla_users) {
+foreach my $login_name (keys %bugzilla_users) {
     # remove whitespaces
-    $bugzilla_users->{$login_name}{'realname'} =~ s/^\s+|\s+$//g;
+    $bugzilla_users{$login_name}{'realname'} =~ s/^\s+|\s+$//g;
 }
 
 ###
@@ -96,12 +96,19 @@ if ($LDAPserver eq "") {
    print "No LDAP server defined in bugzilla preferences.\n";
    exit;
 }
-my $LDAPport = "389";  # default LDAP port
-if($LDAPserver =~ /:/) {
-    ($LDAPserver, $LDAPport) = split(":",$LDAPserver);
+
+my $LDAPconn;
+if($LDAPserver =~ /:\/\//) {
+    # if the "LDAPserver" parameter is in uri scheme
+    $LDAPconn = Net::LDAP->new($LDAPserver, version => 3);
+} else {
+    my $LDAPport = "389";  # default LDAP port
+    if($LDAPserver =~ /:/) {
+        ($LDAPserver, $LDAPport) = split(":",$LDAPserver);
+    }
+    $LDAPconn = Net::LDAP->new($LDAPserver, port => $LDAPport, version => 3);
 }
 
-my $LDAPconn = Net::LDAP->new($LDAPserver, port => $LDAPport, version => 3);
 if(!$LDAPconn) {
    print "Connecting to LDAP server failed. Check LDAPserver setting.\n";
    exit;
@@ -131,26 +138,26 @@ if(! $mesg->count) {
    exit;
 }
    
-my $val = $mesg->as_struct;
+my %val = %{ $mesg->as_struct };
 
-while( my ($key, $value) = each(%$val) ) {
+while( my ($key, $value) = each(%val) ) {
 
-   my $login_name = @$value{Bugzilla->params->{"LDAPmailattribute"}};
-   my $realname  = @$value{"cn"};
+   my @login_name = @{ $value->{Bugzilla->params->{"LDAPmailattribute"}} };
+   my @realname  = @{ $value->{"cn"} };
 
    # no mail entered? go to next
-   if(! defined $login_name) { 
+   if(! @login_name) { 
       print "$key has no valid mail address\n";
       next; 
    }
 
    # no cn entered? use uid instead
-   if(! defined $realname) { 
-      $realname = @$value{Bugzilla->params->{"LDAPuidattribute"}};
+   if(! @realname) { 
+       @realname = @{ $value->{Bugzilla->params->{"LDAPuidattribute"}} };
    }
   
-   my $login = shift @$login_name;
-   my $real = shift @$realname;
+   my $login = shift @login_name;
+   my $real = shift @realname;
    $ldap_users{$login} = { realname => $real };
 }
 
@@ -164,10 +171,10 @@ my %update_users;
 my %create_users;
 
 print "Bugzilla-Users: \n" unless $quiet;
-while( my ($key, $value) = each(%$bugzilla_users) ) {
-  print " " . $key . " '" . @$value{'realname'} . "' " . @$value{'disabledtext'} ."\n" unless $quiet==1;
+while( my ($key, $value) = each(%bugzilla_users) ) {
+  print " " . $key . " '" . $value->{'realname'} . "' " . $value->{'disabledtext'} ."\n" unless $quiet==1;
   if(!exists $ldap_users{$key}){
-     if(@$value{'disabledtext'} eq '') {
+     if($value->{'disabledtext'} eq '') {
        $disable_users{$key} = $value;
      }
   }
@@ -175,13 +182,13 @@ while( my ($key, $value) = each(%$bugzilla_users) ) {
 
 print "\nLDAP-Users: \n" unless $quiet;
 while( my ($key, $value) = each(%ldap_users) ) {
-  print " " . $key . " '" . @$value{'realname'} . "'\n" unless $quiet==1;
-  if(!defined $bugzilla_users->{$key}){
+  print " " . $key . " '" . $value->{'realname'} . "'\n" unless $quiet==1;
+  if(!defined $bugzilla_users{$key}){
     $create_users{$key} = $value;
   }
   else { 
-    my $bugzilla_user_value = $bugzilla_users->{$key};
-    if(@$bugzilla_user_value{'realname'} ne @$value{'realname'}) {
+    my $bugzilla_user_value = $bugzilla_users{$key};
+    if($bugzilla_user_value->{'realname'} ne $value->{'realname'}) {
       $update_users{$key} = $value;
     }
   }
@@ -190,9 +197,9 @@ while( my ($key, $value) = each(%ldap_users) ) {
 print "\nDetecting email changes: \n" unless $quiet;
 while( my ($create_key, $create_value) = each(%create_users) ) {
   while( my ($disable_key, $disable_value) = each(%disable_users) ) {
-    if(@$create_value{'realname'} eq @$disable_value{'realname'}) {
+    if($create_value->{'realname'} eq $disable_value->{'realname'}) {
        print " " . $disable_key . " => " . $create_key ."'\n" unless $quiet==1;
-       $update_users{$disable_key} = { realname => @$create_value{'realname'},
+       $update_users{$disable_key} = { realname => $create_value->{'realname'},
                                        new_login_name => $create_key };
        delete $create_users{$create_key};
        delete $disable_users{$disable_key};
@@ -203,21 +210,21 @@ while( my ($create_key, $create_value) = each(%create_users) ) {
 if($quiet == 0) {
    print "\nUsers to disable: \n";
    while( my ($key, $value) = each(%disable_users) ) {
-     print " " . $key . " '" . @$value{'realname'} . "'\n";
+     print " " . $key . " '" . $value->{'realname'} . "'\n";
    }
    
    print "\nUsers to update: \n";
    while( my ($key, $value) = each(%update_users) ) {
-     print " " . $key . " '" . @$value{'realname'} . "' ";
-     if(defined @$value{'new_login_name'}) {
-       print "has changed email to " . @$value{'new_login_name'};
+     print " " . $key . " '" . $value->{'realname'} . "' ";
+     if(defined $value->{'new_login_name'}) {
+       print "has changed email to " . $value->{'new_login_name'};
      }
      print "\n";
    }
    
    print "\nUsers to create: \n";
    while( my ($key, $value) = each(%create_users) ) {
-     print " " . $key . " '" . @$value{'realname'} . "'\n";
+     print " " . $key . " '" . $value->{'realname'} . "'\n";
    }
    
    print "\n\n";
@@ -258,10 +265,10 @@ if($readonly == 0) {
 
    if($noupdate == 0) {
       while( my ($key, $value) = each(%update_users) ) {
-        if(defined @$value{'new_login_name'}) {
-          $sth_update_login->execute(@$value{'new_login_name'}, $key);
+        if(defined $value->{'new_login_name'}) {
+          $sth_update_login->execute($value->{'new_login_name'}, $key);
         } else {
-          $sth_update_realname->execute(@$value{'realname'}, $key);
+          $sth_update_realname->execute($value->{'realname'}, $key);
         }
       }
       print "done!\n" unless $quiet;
@@ -275,7 +282,7 @@ if($readonly == 0) {
       while( my ($key, $value) = each(%create_users) ) {
         Bugzilla::User->create({
             login_name => $key, 
-            realname   => @$value{'realname'},
+            realname   => $value->{'realname'},
             cryptpassword   => '*'});
       }
       print "done!\n" unless $quiet;

@@ -36,13 +36,16 @@ use strict;
 
 use Bugzilla::Constants;
 use Bugzilla::Install::Requirements;
+use Bugzilla::Install::Util qw(install_string template_include_path include_languages);
 use Bugzilla::Util;
 use Bugzilla::User;
 use Bugzilla::Error;
-use MIME::Base64;
-use Bugzilla::Bug;
+use Bugzilla::Status;
+use Bugzilla::Token;
+use Bugzilla::Template::Parser;
 
 use Cwd qw(abs_path);
+use MIME::Base64;
 # for time2str - replace by TT Date plugin??
 use Date::Format ();
 use File::Basename qw(dirname);
@@ -53,56 +56,47 @@ use IO::Dir;
 
 use base qw(Template);
 
+# As per the Template::Base documentation, the _init() method is being called 
+# by the new() constructor. We take advantage of this in order to plug our
+# UTF-8-aware Parser object in neatly after the original _init() method has
+# happened, in particular, after having set up the constants namespace.
+# See bug 413121 for details.
+sub _init {
+    my $self = shift;
+    my $config = $_[0];
+
+    $self->SUPER::_init(@_) || return undef;
+
+    $self->{PARSER} = $config->{PARSER}
+        = new Bugzilla::Template::Parser($config);
+
+    # Now we need to re-create the default Service object, making it aware
+    # of our Parser object.
+    $self->{SERVICE} = $config->{SERVICE}
+        = Template::Config->service($config);
+
+    return $self;
+}
+
 # Convert the constants in the Bugzilla::Constants module into a hash we can
 # pass to the template object for reflection into its "constants" namespace
 # (which is like its "variables" namespace, but for constants).  To do so, we
-# traverse the arrays of exported and exportable symbols, pulling out functions
-# (which is how Perl implements constants) and ignoring the rest (which, if
-# Constants.pm exports only constants, as it should, will be nothing else).
+# traverse the arrays of exported and exportable symbols and ignoring the rest
+# (which, if Constants.pm exports only constants, as it should, will be nothing else).
 sub _load_constants {
     my %constants;
     foreach my $constant (@Bugzilla::Constants::EXPORT,
                           @Bugzilla::Constants::EXPORT_OK)
     {
-        if (defined Bugzilla::Constants->$constant) {
-            # Constants can be lists, and we can't know whether we're
-            # getting a scalar or a list in advance, since they come to us
-            # as the return value of a function call, so we have to
-            # retrieve them all in list context into anonymous arrays,
-            # then extract the scalar ones (i.e. the ones whose arrays
-            # contain a single element) from their arrays.
-            $constants{$constant} = [&{$Bugzilla::Constants::{$constant}}];
-            if (scalar(@{$constants{$constant}}) == 1) {
-                $constants{$constant} = @{$constants{$constant}}[0];
-            }
+        if (ref Bugzilla::Constants->$constant) {
+            $constants{$constant} = Bugzilla::Constants->$constant;
+        }
+        else {
+            my @list = (Bugzilla::Constants->$constant);
+            $constants{$constant} = (scalar(@list) == 1) ? $list[0] : \@list;
         }
     }
     return \%constants;
-}
-
-# Make an ordered list out of a HTTP Accept-Language header see RFC 2616, 14.4
-# We ignore '*' and <language-range>;q=0
-# For languages with the same priority q the order remains unchanged.
-sub sortAcceptLanguage {
-    sub sortQvalue { $b->{'qvalue'} <=> $a->{'qvalue'} }
-    my $accept_language = $_[0];
-
-    # clean up string.
-    $accept_language =~ s/[^A-Za-z;q=0-9\.\-,]//g;
-    my @qlanguages;
-    my @languages;
-    foreach(split /,/, $accept_language) {
-        if (m/([A-Za-z\-]+)(?:;q=(\d(?:\.\d+)))?/) {
-            my $lang   = $1;
-            my $qvalue = $2;
-            $qvalue = 1 if not defined $qvalue;
-            next if $qvalue == 0;
-            $qvalue = 1 if $qvalue > 1;
-            push(@qlanguages, {'qvalue' => $qvalue, 'language' => $lang});
-        }
-    }
-
-    return map($_->{'language'}, (sort sortQvalue @qlanguages));
 }
 
 # Returns the path to the templates based on the Accept-Language
@@ -110,99 +104,12 @@ sub sortAcceptLanguage {
 # If no Accept-Language is present it uses the defined default
 # Templates may also be found in the extensions/ tree
 sub getTemplateIncludePath {
-    my $lang = Bugzilla->request_cache->{'language'} || "";
-    # Return cached value if available
-
-    my $include_path = Bugzilla->request_cache->{"template_include_path_$lang"};
-    return $include_path if $include_path;
-
-    my $templatedir = bz_locations()->{'templatedir'};
-    my $project     = bz_locations()->{'project'};
-
-    my $languages = trim(Bugzilla->params->{'languages'});
-    if (not ($languages =~ /,/)) {
-       if ($project) {
-           $include_path = [
-               "$templatedir/$languages/$project",
-               "$templatedir/$languages/custom",
-               "$templatedir/$languages/default"
-           ];
-       } else {
-           $include_path = [
-               "$templatedir/$languages/custom",
-               "$templatedir/$languages/default"
-           ];
-       }
-    }
-    my @languages       = sortAcceptLanguage($languages);
-    # If $lang is specified, only consider this language.
-    my @accept_language = ($lang) || sortAcceptLanguage($ENV{'HTTP_ACCEPT_LANGUAGE'} || "");
-    my @usedlanguages;
-    foreach my $language (@accept_language) {
-        # Per RFC 1766 and RFC 2616 any language tag matches also its 
-        # primary tag. That is 'en' (accept language)  matches 'en-us',
-        # 'en-uk' etc. but not the otherway round. (This is unfortunately
-        # not very clearly stated in those RFC; see comment just over 14.5
-        # in http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4)
-        if(my @found = grep /^\Q$language\E(-.+)?$/i, @languages) {
-            push (@usedlanguages, @found);
-        }
-    }
-    push(@usedlanguages, Bugzilla->params->{'defaultlanguage'});
-    if ($project) {
-        $include_path = [
-           map((
-               "$templatedir/$_/$project",
-               "$templatedir/$_/custom",
-               "$templatedir/$_/default"
-               ), @usedlanguages
-            )
-        ];
-    } else {
-        $include_path = [
-           map((
-               "$templatedir/$_/custom",
-               "$templatedir/$_/default"
-               ), @usedlanguages
-            )
-        ];
-    }
-    
-    # add in extension template directories:
-    my @extensions = glob(bz_locations()->{'extensionsdir'} . "/*");
-    foreach my $extension (@extensions) {
-        trick_taint($extension); # since this comes right from the filesystem
-                                 # we have bigger issues if it is insecure
-        push(@$include_path,
-            map((
-                $extension."/template/".$_),
-               @usedlanguages));
-    }
-    
-    # remove duplicates since they keep popping up:
-    my @dirs;
-    foreach my $dir (@$include_path) {
-        push(@dirs, $dir) unless grep ($dir eq $_, @dirs);
-    }
-    Bugzilla->request_cache->{"template_include_path_$lang"} = \@dirs;
-    
-    return Bugzilla->request_cache->{"template_include_path_$lang"};
-}
-
-sub put_header {
-    my $self = shift;
-    my $vars = {};
-    ($vars->{'title'}, $vars->{'h1'}, $vars->{'h2'}) = (@_);
-     
-    $self->process("global/header.html.tmpl", $vars)
-      || ThrowTemplateError($self->error());
-    $vars->{'header_done'} = 1;
-}
-
-sub put_footer {
-    my $self = shift;
-    $self->process("global/footer.html.tmpl")
-      || ThrowTemplateError($self->error());
+    my $cache = Bugzilla->request_cache;
+    my $lang  = $cache->{'language'} || '';
+    $cache->{"template_include_path_$lang"} ||= template_include_path({
+        use_languages => Bugzilla->languages,
+        only_language => $lang });
+    return $cache->{"template_include_path_$lang"};
 }
 
 sub get_format {
@@ -263,8 +170,6 @@ sub quoteUrls {
     # Do this by escaping \0 to \1\0, and replacing matches with \0\0$count\0\0
     # \0 is used because it's unlikely to occur in the text, so the cost of
     # doing this should be very small
-    # Also, \0 won't appear in the value_quote'd bug title, so we don't have
-    # to worry about bogus substitutions from there
 
     # escape the 2nd escape char we're using
     my $chr1 = chr(1);
@@ -384,7 +289,7 @@ sub get_attachment_link {
             $className = "bz_obsolete";
         }
         # Prevent code injection in the title.
-        $title = value_quote($title);
+        $title = html_quote(clean_text($title));
 
         $link_text =~ s/ \[details\]$//;
         my $linkval = "attachment.cgi?id=$attachid";
@@ -426,21 +331,21 @@ sub get_bug_link {
         # if we don't change them below (which is highly likely).
         my ($pre, $title, $post) = ("", "", "");
 
-        $title = $bug_state;
+        $title = get_text('get_status', {status => $bug_state});
         if ($bug_state eq 'UNCONFIRMED') {
             $pre = "<i>";
             $post = "</i>";
         }
         elsif (!is_open_state($bug_state)) {
             $pre = '<span class="bz_closed">';
-            $title .= " $bug_res";
+            $title .= ' ' . get_text('get_resolution', {resolution => $bug_res});
             $post = '</span>';
         }
         if (Bugzilla->user->can_see_bug($bug_num)) {
             $title .= " - $bug_desc";
         }
         # Prevent code injection in the title.
-        $title = value_quote($title);
+        $title = html_quote(clean_text($title));
 
         my $linkval = "show_bug.cgi?id=$bug_num";
         if (defined $comment_num) {
@@ -482,6 +387,13 @@ $Template::Stash::LIST_OPS->{ containsany } =
           return 1 if grep($_ eq $item, @$list);
       }
       return 0;
+  };
+
+# Clone the array reference to leave the original one unaltered.
+$Template::Stash::LIST_OPS->{ clone } =
+  sub {
+      my $list = shift;
+      return [@$list];
   };
 
 # Allow us to still get the scalar if we use the list operation ".0" on it,
@@ -731,11 +643,7 @@ sub create {
                     # |U+200e|Left-To-Right Mark        |0xe2 0x80 0x8e      |
                     # |U+200f|Right-To-Left Mark        |0xe2 0x80 0x8f      |
                     # --------------------------------------------------------
-                    #
-                    # Do the replacing in a loop so that we don't get tricked
-                    # by stuff like 0xe2 0xe2 0x80 0xae 0x80 0xae.
-                    while ($var =~ s/\xe2\x80(\xaa|\xab|\xac|\xad|\xae)//g) {
-                    }
+                    $var =~ s/[\x{202a}-\x{202e}]//g;
                 }
                 return $var;
             },
@@ -784,7 +692,11 @@ sub create {
             },
 
             # Wrap a displayed comment to the appropriate length
-            wrap_comment => \&Bugzilla::Util::wrap_comment,
+            wrap_comment => [
+                sub {
+                    my ($context, $cols) = @_;
+                    return sub { wrap_comment($_[0], $cols) }
+                }, 1],
 
             # We force filtering of every variable in key security-critical
             # places; we have a none filter for people to use when they 
@@ -822,6 +734,20 @@ sub create {
                 Bugzilla::BugMail::Send($id, $mailrecipients);
             },
 
+            # Allow templates to access the "corect" URLBase value
+            'urlbase' => sub { return Bugzilla::Util::correct_urlbase(); },
+
+            # Allow templates to access docs url with users' preferred language
+            'docs_urlbase' => sub { 
+                my ($language) = include_languages();
+                my $docs_urlbase = Bugzilla->params->{'docs_urlbase'};
+                $docs_urlbase =~ s/\%lang\%/$language/;
+                return $docs_urlbase;
+            },
+
+            # Allow templates to generate a token themselves.
+            'issue_hash_token' => \&Bugzilla::Token::issue_hash_token,
+
             # These don't work as normal constants.
             DB_MODULE        => \&Bugzilla::Constants::DB_MODULE,
             REQUIRED_MODULES => 
@@ -846,7 +772,7 @@ sub precompile_templates {
     # Remove the compiled templates.
     my $datadir = bz_locations()->{'datadir'};
     if (-e "$datadir/template") {
-        print "Removing existing compiled templates ...\n" if $output;
+        print install_string('template_removing_dir') . "\n" if $output;
 
         # XXX This frequently fails if the webserver made the files, because
         # then the webserver owns the directories. We could fix that by
@@ -862,7 +788,7 @@ sub precompile_templates {
         }
     }
 
-    print "Precompiling templates...\n" if $output;
+    print install_string('template_precompile') if $output;
 
     my $templatedir = bz_locations()->{'templatedir'};
     # Don't hang on templates which use the CGI library
@@ -877,9 +803,6 @@ sub precompile_templates {
         -d "$templatedir/$dir/default" || -d "$templatedir/$dir/custom" 
             || next;
         local $ENV{'HTTP_ACCEPT_LANGUAGE'} = $dir;
-        # We locally hack this parameter so that Bugzilla::Template
-        # accepts this language no matter what.
-        local Bugzilla->params->{'languages'} = "$dir,en";
         my $template = Bugzilla::Template->create(clean_cache => 1);
 
         # Precompile all the templates found in all the directories.
@@ -922,6 +845,11 @@ sub precompile_templates {
 
     # If anything created a Template object before now, clear it out.
     delete Bugzilla->request_cache->{template};
+    # This is the single variable used to precompile templates,
+    # which needs to be cleared as well.
+    delete Bugzilla->request_cache->{template_include_path_};
+
+    print install_string('done') . "\n" if $output;
 }
 
 # Helper for precompile_templates
@@ -946,10 +874,6 @@ Bugzilla::Template - Wrapper around the Template Toolkit C<Template> object
 =head1 SYNOPSIS
 
   my $template = Bugzilla::Template->create;
-
-  $template->put_header($title, $h1, $h2);
-  $template->put_footer();
-
   my $format = $template->get_format("foo/bar",
                                      scalar($cgi->param('format')),
                                      scalar($cgi->param('ctype')));
@@ -981,24 +905,6 @@ Returns:     nothing
 =head1 METHODS
 
 =over
-
-=item C<put_header($title, $h1, $h2)>
-
- Description: Display the header of the page for non yet templatized .cgi files.
-
- Params:      $title - Page title.
-              $h1    - Main page header.
-              $h2    - Page subheader.
-
- Returns:     nothing
-
-=item C<put_footer()>
-
- Description: Display the footer of the page for non yet templatized .cgi files.
-
- Params:      none
-
- Returns:     nothing
 
 =item C<get_format($file, $format, $ctype)>
 

@@ -17,7 +17,7 @@
 
 use strict;
 
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Error;

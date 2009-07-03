@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -54,6 +53,7 @@
     "short_desc"        => { wrap => 1 } ,
     "short_short_desc"  => { maxlength => 60 , ellipsis => "..." , wrap => 1 } ,
     "status_whiteboard" => { title => "Whiteboard" , wrap => 1 } , 
+    "keywords"          => { wrap => 1 } ,
     "component"         => { maxlength => 8 , title => "Comp" } , 
     "product"           => { maxlength => 8 } , 
     "version"           => { maxlength => 5 , title => "Vers" } , 
@@ -81,19 +81,19 @@
       [% END %]
     </colgroup>
 
-    <tr align="left">
+    <tr class="bz_buglist_header bz_first_buglist_header" align="left">
       [% IF dotweak %]
       <th>&nbsp;</th>
       [% END %]
       <th colspan="[% splitheader ? 2 : 1 %]" class="first-child">
-        [% IF sorted_by_relevance %]
-          ID
-        [% ELSE %]
-          <a href="buglist.cgi?
-                    [% urlquerypart FILTER html %]&amp;order=bugs.bug_id
-                    [%-#%]&amp;query_based_on=
-                    [% defaultsavename OR searchname FILTER url_quote %]">ID</a>
+        [% desc = '' %]
+        [% IF (om = order.match("^bugs\.bug_id( desc)?")) %]
+          [% desc = ' desc' IF NOT om.0 %]
         [% END %]
+        <a href="buglist.cgi?
+                  [% urlquerypart FILTER html %]&amp;order=bugs.bug_id[% desc FILTER url_quote %]
+                  [%-#%]&amp;query_based_on=
+                  [% defaultsavename OR searchname FILTER url_quote %]">ID</a>
       </th>
 
       [% IF splitheader %]
@@ -104,7 +104,7 @@
           [% PROCESS columnheader %]
         [% END %]
 
-        </tr><tr align="left">
+        </tr><tr class="bz_buglist_header" align="left">
         [% IF dotweak %]
           <th>&nbsp;</th>
         [% END %]
@@ -130,23 +130,24 @@
 
 [% BLOCK columnheader %]
   <th colspan="[% splitheader ? 2 : 1 %]">
-    [% IF sorted_by_relevance %]
-      [%- abbrev.$id.title || field_descs.$id || column.title -%]
+    [% IF column.name.match('\s+AS\s+') %]
+      [%# For aliased columns, use their ID for sorting. %]
+      [% column.sortalias = id %]
     [% ELSE %]
-      [% IF column.name.match('\s+AS\s+') %]
-        [%# For aliased columns, use their ID for sorting. %]
-        [% column.sortalias = id %]
-      [% ELSE %]
-        [%# Other columns may sort on their name directly. %]
-        [% column.sortalias = column.name %]
-      [% END %]
-      <a href="buglist.cgi?[% urlquerypart FILTER html %]&amp;order=
-        [% column.sortalias FILTER url_quote %]
-        [% ",$order" FILTER url_quote IF order %]
-        [%-#%]&amp;query_based_on=
-        [% defaultsavename OR searchname FILTER url_quote %]">
-          [%- abbrev.$id.title || field_descs.$id || column.title -%]</a>
+      [%# Other columns may sort on their name directly. %]
+      [% column.sortalias = column.name %]
     [% END %]
+    [% desc = '' %]
+    [% IF (om = order.match("$column.sortalias( desc)?")) %]
+      [% desc = ' desc' IF NOT om.0 %]
+    [% END %]
+    [% order = order.remove("$column.sortalias( desc)?,?") %]
+    <a href="buglist.cgi?[% urlquerypart FILTER html %]&amp;order=
+      [% column.sortalias FILTER url_quote %][% desc FILTER url_quote %]
+      [% ",$order" FILTER url_quote IF order %]
+      [%-#%]&amp;query_based_on=
+      [% defaultsavename OR searchname FILTER url_quote %]">
+        [%- abbrev.$id.title || field_descs.$id || column.title -%]</a>
   </th>
 [% END %]
 
@@ -194,7 +195,7 @@
                column == 'estimated_time' %]
         [% PROCESS formattimeunit time_unit=bug.$column %] 
       [% ELSIF column == 'bug_status' %]
-        [%- status_descs.${bug.$column}.truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html %]
+        [%- get_status(bug.$column).truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html %]
       [% ELSIF column == 'resolution' %]
         [%- get_resolution(bug.$column).truncate(abbrev.$column.maxlength, abbrev.$column.ellipsis) FILTER html %]
       [% ELSE %]

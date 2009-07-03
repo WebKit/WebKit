@@ -21,6 +21,7 @@ package Bugzilla::Product;
 use Bugzilla::Version;
 use Bugzilla::Milestone;
 
+use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Group;
 use Bugzilla::Error;
@@ -50,6 +51,32 @@ use constant DB_COLUMNS => qw(
    products.defaultmilestone
 );
 
+###############################
+####     Constructors     #####
+###############################
+
+# This is considerably faster than calling new_from_list three times
+# for each product in the list, particularly with hundreds or thousands
+# of products.
+sub preload {
+    my ($products) = @_;
+    my %prods = map { $_->id => $_ } @$products;
+    my @prod_ids = keys %prods;
+    return unless @prod_ids;
+
+    my $dbh = Bugzilla->dbh;
+    foreach my $field (qw(component version milestone)) {
+        my $classname = "Bugzilla::" . ucfirst($field);
+        my $objects = $classname->match({ product_id => \@prod_ids });
+
+        # Now populate the products with this set of objects.
+        foreach my $obj (@$objects) {
+            my $product_id = $obj->product_id;
+            $prods{$product_id}->{"${field}s"} ||= [];
+            push(@{$prods{$product_id}->{"${field}s"}}, $obj);
+        }
+    }
+}
 
 ###############################
 ####       Methods         ####
@@ -93,12 +120,46 @@ sub group_controls {
                   ORDER BY groups.name};
         $self->{group_controls} = 
             $dbh->selectall_hashref($query, 'id', undef, $self->id);
-        foreach my $group (keys(%{$self->{group_controls}})) {
-            $self->{group_controls}->{$group}->{'group'} = 
-                new Bugzilla::Group($group);
-        }
+
+        # For each group ID listed above, create and store its group object.
+        my @gids = keys %{$self->{group_controls}};
+        my $groups = Bugzilla::Group->new_from_list(\@gids);
+        $self->{group_controls}->{$_->id}->{group} = $_ foreach @$groups;
     }
     return $self->{group_controls};
+}
+
+sub groups_mandatory_for {
+    my ($self, $user) = @_;
+    my $groups = $user->groups_as_string;
+    my $mandatory = CONTROLMAPMANDATORY;
+    # For membercontrol we don't check group_id IN, because if membercontrol
+    # is Mandatory, the group is Mandatory for everybody, regardless of their
+    # group membership.
+    my $ids = Bugzilla->dbh->selectcol_arrayref(
+        "SELECT group_id FROM group_control_map
+          WHERE product_id = ?
+                AND (membercontrol = $mandatory
+                     OR (othercontrol = $mandatory
+                         AND group_id NOT IN ($groups)))",
+        undef, $self->id);
+    return Bugzilla::Group->new_from_list($ids);
+}
+
+sub groups_valid {
+    my ($self) = @_;
+    return $self->{groups_valid} if defined $self->{groups_valid};
+    
+    # Note that we don't check OtherControl below, because there is no
+    # valid NA/* combination.
+    my $ids = Bugzilla->dbh->selectcol_arrayref(
+        "SELECT DISTINCT group_id
+          FROM group_control_map AS gcm
+               INNER JOIN groups ON gcm.group_id = groups.id
+         WHERE product_id = ? AND isbuggroup = 1
+               AND membercontrol != " . CONTROLMAPNA,  undef, $self->id);
+    $self->{groups_valid} = Bugzilla::Group->new_from_list($ids);
+    return $self->{groups_valid};
 }
 
 sub versions {
@@ -266,7 +327,7 @@ below.
 
 =over
 
-=item C<components()>
+=item C<components>
 
  Description: Returns an array of component objects belonging to
               the product.
@@ -286,7 +347,43 @@ below.
               a Bugzilla::Group object and the properties of group
               relative to the product.
 
-=item C<versions()>
+=item C<groups_mandatory_for>
+
+=over
+
+=item B<Description>
+
+Tells you what groups are mandatory for bugs in this product.
+
+=item B<Params>
+
+C<$user> - The user who you want to check.
+
+=item B<Returns> An arrayref of C<Bugzilla::Group> objects.
+
+=back
+
+=item C<groups_valid>
+
+=over
+
+=item B<Description>
+
+Returns an arrayref of L<Bugzilla::Group> objects, representing groups
+that bugs could validly be restricted to within this product. Used mostly
+by L<Bugzilla::Bug> to assure that you're adding valid groups to a bug.
+
+B<Note>: This doesn't check whether or not the current user can add/remove
+bugs to/from these groups. It just tells you that bugs I<could be in> these
+groups, in this product.
+
+=item B<Params> (none)
+
+=item B<Returns> An arrayref of L<Bugzilla::Group> objects.
+
+=back
+
+=item C<versions>
 
  Description: Returns all valid versions for that product.
 
@@ -294,7 +391,7 @@ below.
 
  Returns:     An array of Bugzilla::Version objects.
 
-=item C<milestones()>
+=item C<milestones>
 
  Description: Returns all valid milestones for that product.
 
@@ -344,6 +441,15 @@ below.
 =head1 SUBROUTINES
 
 =over
+
+=item C<preload>
+
+When passed an arrayref of C<Bugzilla::Product> objects, preloads their
+L</milestones>, L</components>, and L</versions>, which is much faster
+than calling those accessors on every item in the array individually.
+
+This function is not exported, so must be called like 
+C<Bugzilla::Product::preload($products)>.
 
 =item C<check_product($product_name)>
 

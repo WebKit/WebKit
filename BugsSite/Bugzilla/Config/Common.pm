@@ -27,6 +27,7 @@
 #                 Joseph Heenan <joseph@heenan.me.uk>
 #                 Erik Stambaugh <erik@dasbistro.com>
 #                 Frédéric Buclin <LpSolit@gmail.com>
+#                 Marc Schumann <wurblzap@gmail.com>
 #
 
 package Bugzilla::Config::Common;
@@ -40,6 +41,7 @@ use Bugzilla::Util;
 use Bugzilla::Constants;
 use Bugzilla::Field;
 use Bugzilla::Group;
+use Bugzilla::Status;
 
 use base qw(Exporter);
 @Bugzilla::Config::Common::EXPORT =
@@ -47,8 +49,9 @@ use base qw(Exporter);
        check_sslbase check_priority check_severity check_platform
        check_opsys check_shadowdb check_urlbase check_webdotbase
        check_netmask check_user_verify_class check_image_converter
-       check_languages check_mail_delivery_method check_notification
-       check_timezone check_utf8
+       check_mail_delivery_method check_notification check_timezone check_utf8
+       check_bug_status check_smtp_auth 
+       check_maxattachmentsize
 );
 
 # Checking functions for the various values
@@ -63,8 +66,8 @@ sub check_multi {
 
         return "";
     }
-    elsif ($param->{'type'} eq "m") {
-        foreach my $chkParam (@$value) {
+    elsif ($param->{'type'} eq 'm' || $param->{'type'} eq 'o') {
+        foreach my $chkParam (split(',', $value)) {
             unless (scalar(grep {$_ eq $chkParam} (@{$param->{'choices'}}))) {
                 return "Invalid choice '$chkParam' for multi-select list param '$param->{'name'}'";
             }
@@ -99,17 +102,21 @@ sub check_sslbase {
             return "must be a legal URL, that starts with https and ends with a slash.";
         }
         my $host = $1;
-        if ($host =~ /:\d+$/) {
-            return "must not contain a port.";
+        # Fall back to port 443 if for some reason getservbyname() fails.
+        my $port = getservbyname('https', 'tcp') || 443;
+        if ($host =~ /^(.+):(\d+)$/) {
+            $host = $1;
+            $port = $2;
         }
         local *SOCK;
         my $proto = getprotobyname('tcp');
         socket(SOCK, PF_INET, SOCK_STREAM, $proto);
-        my $sin = sockaddr_in(443, inet_aton($host));
+        my $iaddr = inet_aton($host) || return "The host $host cannot be resolved";
+        my $sin = sockaddr_in($port, $iaddr);
         if (!connect(SOCK, $sin)) {
-            return "Failed to connect to " . html_quote($host) . 
-                   ":443, unable to enable SSL.";
+            return "Failed to connect to $host:$port; unable to enable SSL";
         }
+        close(SOCK);
     }
     return "";
 }
@@ -162,6 +169,15 @@ sub check_opsys {
     if (lsearch(['', @$legal_OS], $value) < 0) {
         return "Must be empty or a legal operating system value: one of " .
             join(", ", @$legal_OS);
+    }
+    return "";
+}
+
+sub check_bug_status {
+    my $bug_status = shift;
+    my @closed_bug_statuses = map {$_->name} closed_bug_statuses();
+    if (lsearch(\@closed_bug_statuses, $bug_status) < 0) {
+        return "Must be a valid closed status: one of " . join(', ', @closed_bug_statuses);
     }
     return "";
 }
@@ -258,18 +274,27 @@ sub check_user_verify_class {
     # So don't do that.
 
     my ($list, $entry) = @_;
+    $list || return 'You need to specify at least one authentication mechanism';
     for my $class (split /,\s*/, $list) {
         my $res = check_multi($class, $entry);
         return $res if $res;
         if ($class eq 'DB') {
             # No params
-        } elsif ($class eq 'LDAP') {
+        }
+        elsif ($class eq 'RADIUS') {
+            eval "require Authen::Radius";
+            return "Error requiring Authen::Radius: '$@'" if $@;
+            return "RADIUS servername (RADIUS_server) is missing" unless Bugzilla->params->{"RADIUS_server"};
+            return "RADIUS_secret is empty" unless Bugzilla->params->{"RADIUS_secret"};
+        }
+        elsif ($class eq 'LDAP') {
             eval "require Net::LDAP";
             return "Error requiring Net::LDAP: '$@'" if $@;
-            return "LDAP servername is missing" unless Bugzilla->params->{"LDAPserver"};
+            return "LDAP servername (LDAPserver) is missing" unless Bugzilla->params->{"LDAPserver"};
             return "LDAPBaseDN is empty" unless Bugzilla->params->{"LDAPBaseDN"};
-        } else {
-                return "Unknown user_verify_class '$class' in check_user_verify_class";
+        }
+        else {
+            return "Unknown user_verify_class '$class' in check_user_verify_class";
         }
     }
     return "";
@@ -284,30 +309,6 @@ sub check_image_converter {
     return "";
 }
 
-sub check_languages {
-    my ($lang, $param) = @_;
-    my @languages = split(/[,\s]+/, trim($lang));
-    if(!scalar(@languages)) {
-       return "You need to specify a language tag."
-    }
-    if (scalar(@languages) > 1 && $param && $param->{'name'} eq 'defaultlanguage') {
-        return "You can only specify one language tag";
-    }
-    my $templatedir = bz_locations()->{'templatedir'};
-    my %lang_seen;
-    my @validated_languages;
-    foreach my $language (@languages) {
-       if(   ! -d "$templatedir/$language/custom" 
-          && ! -d "$templatedir/$language/default") {
-          return "The template directory for $language does not exist";
-       }
-       push(@validated_languages, $language) unless $lang_seen{$language}++;
-    }
-    # Rebuild the list of language tags, avoiding duplicates.
-    $_[0] = join(', ', @validated_languages);
-    return "";
-}
-
 sub check_mail_delivery_method {
     my $check = check_multi(@_);
     return $check if $check;
@@ -316,6 +317,24 @@ sub check_mail_delivery_method {
         # look for sendmail.exe 
         return "Failed to locate " . SENDMAIL_EXE
             unless -e SENDMAIL_EXE;
+    }
+    return "";
+}
+
+sub check_maxattachmentsize {
+    my $check = check_numeric(@_);
+    return $check if $check;
+    my $size = shift;
+    my $dbh = Bugzilla->dbh;
+    if ($dbh->isa('Bugzilla::DB::Mysql')) {
+        my (undef, $max_packet) = $dbh->selectrow_array(
+            q{SHOW VARIABLES LIKE 'max\_allowed\_packet'});
+        my $byte_size = $size * 1024;
+        if ($max_packet < $byte_size) {
+            return "You asked for a maxattachmentsize of $byte_size bytes,"
+                   . " but the max_allowed_packet setting in MySQL currently"
+                   . " only allows packets up to $max_packet bytes";
+        }
     }
     return "";
 }
@@ -341,6 +360,14 @@ sub check_timezone {
     return "";
 }
 
+sub check_smtp_auth {
+    my $username = shift;
+    if ($username) {
+        eval "require Authen::SASL";
+        return "Error requiring Authen::SASL: '$@'" if $@;
+    }
+    return "";
+}
 
 # OK, here are the parameter definitions themselves.
 #
@@ -358,13 +385,14 @@ sub check_timezone {
 # The type value can be one of the following:
 #
 # t -- A short text entry field (suitable for a single line)
+# p -- A short text entry field (as with type = 't'), but the string is
+#      replaced by asterisks (appropriate for passwords)
 # l -- A long text field (suitable for many lines)
 # b -- A boolean value (either 1 or 0)
 # m -- A list of values, with many selectable (shows up as a select box)
 #      To specify the list of values, make the 'choices' key be an array
-#      reference of the valid choices. The 'default' key should be an array
-#      reference for the list of selected values (which must appear in the
-#      first anonymous array), i.e.:
+#      reference of the valid choices. The 'default' key should be a string
+#      with a list of selected values (as a comma-separated list), i.e.:
 #       {
 #         name => 'multiselect',
 #         desc => 'A list of options, choose many',
@@ -379,6 +407,11 @@ sub check_timezone {
 #
 #      &check_multi should always be used as the param verification function
 #      for list (single and multiple) parameter types.
+#
+# o -- A list of values, orderable, and with many selectable (shows up as a
+#      JavaScript-enhanced select box if JavaScript is enabled, and a text
+#      entry field if not)
+#      Set up in the same way as type m.
 #
 # s -- A list of values, with one selectable (shows up as a select box)
 #      To specify the list of values, make the 'choices' key be an array
@@ -421,7 +454,7 @@ All parameter checking functions are called with two parameters:
 
 =item C<check_multi>
 
-Checks that a multi-valued parameter (ie type C<s> or type C<m>) satisfies
+Checks that a multi-valued parameter (ie types C<s>, C<o> or C<m>) satisfies
 its contraints.
 
 =item C<check_numeric>

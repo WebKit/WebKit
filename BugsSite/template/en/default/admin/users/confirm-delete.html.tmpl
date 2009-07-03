@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -49,16 +48,11 @@
   title = title
   style_urls = ['skins/standard/admin.css',
                 'skins/standard/editusers.css']
+  doc_section = "useradmin.html#user-account-deletion"
 %]
 
 [% PROCESS admin/users/listselectvars.html.tmpl
   listselectionvalues = listselectionvalues
-%]
-
-[% responsibilityterms = {
-  'default_assignee'   => 'Default Assignee',
-  'default_qa_contact' => 'Default QA Contact'
-  }
 %]
 
 <table class="main">
@@ -88,30 +82,7 @@
     <tr>
       <th>Product responsibilities:</th>
       <td>
-        <ul>
-          [% FOREACH component = otheruser.product_responsibilities %]
-            <li>
-              [% andstring = '' %]
-              [% FOREACH responsibility = ['default_assignee', 'default_qa_contact'] %]
-                [% IF component.${responsibility}.id == otheruser.id %]
-                  [% andstring %] [% responsibilityterms.$responsibility %]
-                  [% andstring = ' and ' %]
-                [% END %]
-              [% END %]
-              for
-              [% IF user.in_group("editcomponents", component.product_id) %]
-                <a href="editcomponents.cgi?action=edit&amp;product=
-                         [% component.product.name FILTER url_quote %]&amp;component=
-                         [% component.name FILTER url_quote %]">
-              [% END %]
-                [%+ component.product.name FILTER html %]:
-                [% component.name FILTER html %]
-              [% IF user.in_group("editcomponents", component.product_id) %]
-                </a>
-              [% END %]
-            </li>
-          [% END %]
-        </ul>
+        [% PROCESS admin/users/responsibilities.html.tmpl otheruser = otheruser %]
       </td>
     </tr>
   [% END %]
@@ -130,17 +101,34 @@
       For now, you can
     [% END %]
 [% ELSE %]
+  [% accept_deletion = 1 %]
 
-  <h2>Confirmation</h2>
-
-  [% display_warning = 0 %]
-
-  [% IF reporter || bugs_activity || flags.setter || longdescs || profiles_activity %]
+  [% IF attachments || reporter || bugs_activity || flags.setter || longdescs || profiles_activity %]
     <div class="criticalmessages">
-      <p>The following deletions are <b>highly not recommended</b> and
-      will generate referential integrity inconsistencies!</p>
+      <p>The following deletions are <b>unsafe</b> and would generate referential
+      integrity inconsistencies!</p>
 
       <ul>
+        [% IF attachments %]
+          <li>
+            [% otheruser.login FILTER html %]
+            <a href="buglist.cgi?field0-0-0=attachments.submitter&type0-0-0=equals&value0-0-0=
+               [%- otheruser.login FILTER url_quote %]">has submitted
+            [% IF attachments == 1 %]
+              one attachment
+            [% ELSE %]
+              [%+ attachments %] attachments
+            [% END %]</a>.
+            If you delete the user account, the database records will be
+            inconsistent, resulting in
+            [% IF attachments == 1 %]
+              this attachment
+            [% ELSE %]
+              these attachments
+            [% END %]
+            not appearing in [% terms.bugs %] any more.
+          </li>
+        [% END %]
         [% IF reporter %]
           <li>
             [% otheruser.login FILTER html %]
@@ -234,11 +222,11 @@
         [% END %]
       </ul>
     </div>
-    [% display_warning = 1 %]
+    [% accept_deletion = 0 %]
   [% END %]
 
-  [% IF assignee_or_qa || cc || email_setting || flags.requestee ||
-        namedqueries || profile_setting || series || votes || watch.watched ||
+  [% IF assignee_or_qa || cc || component_cc || email_setting || flags.requestee ||
+        namedqueries || profile_setting || quips || series || votes || watch.watched ||
         watch.watcher || whine_events || whine_schedules %]
     <div class="warningmessages">
       <p>The following deletions are <b>safe</b> and will not generate
@@ -271,6 +259,17 @@
             [% ELSE %]
               [%+ cc %] [%+ terms.bugs %]
             [% END %]</a>.
+            If you delete the user account, it will be removed from these CC lists.
+          </li>
+        [% END %]
+        [% IF component_cc %]
+          <li>
+            [% otheruser.login FILTER html %] is on the default CC list of
+            [% IF component_cc == 1 %]
+              one component
+            [% ELSE %]
+              [%+ component_cc %] components
+            [% END %].
             If you delete the user account, it will be removed from these CC lists.
           </li>
         [% END %]
@@ -356,6 +355,23 @@
             will be deleted along with the user account.
           </li>
         [% END %]
+        [% IF quips %]
+          <li>
+            [% otheruser.login FILTER html %] has submitted
+            [% IF quips == 1 %]
+              a quip
+            [% ELSE %]
+              [%+ quips %] quips
+            [% END %].
+            If you delete the user account,
+            [% IF quips == 1 %]
+              this quip
+            [% ELSE %]
+              these quips
+            [% END %]
+            will have no author anymore, but will remain available.
+          </li>
+        [% END %]
         [% IF votes %]
           <li>
             [% otheruser.login FILTER html %] has voted on
@@ -431,28 +447,28 @@
         [% END %]
       </ul>
     </div>
-    [% display_warning = 1 %]
+
+    [% IF accept_deletion %]
+      <p class="areyoureallyreallysure">
+        Please be aware of the consequences of this before continuing.
+      </p>
+      <p>Do you really want to delete this user account?</p>
+
+      <form method="post" action="editusers.cgi">
+        <p>
+          <input type="submit" id="delete" value="Yes, delete"/>
+          <input type="hidden" name="action" value="delete" />
+          <input type="hidden" name="userid" value="[% otheruser.id %]" />
+          <input type="hidden" name="token" value="[% token FILTER html %]">
+          [% INCLUDE listselectionhiddenfields %]
+        </p>
+      </form>
+      <p>If you do not want to delete the user account at this time,
+    [% ELSE %]
+      <p><b>You cannot delete this user account</b> due to unsafe actions reported above. You can
+    [% END %]
+
   [% END %]
-
-  [% IF display_warning %]
-    <p class="areyoureallyreallysure">
-      Please be aware of the consequences of this before continuing.
-    </p>
-  [% END %]
-
-  <p>Do you really want to delete this user account?</p>
-
-  <form method="post" action="editusers.cgi">
-    <p>
-      <input type="submit" id="delete" value="Yes, delete"/>
-      <input type="hidden" name="action" value="delete" />
-      <input type="hidden" name="userid" value="[% otheruser.id %]" />
-      <input type="hidden" name="token" value="[% token FILTER html %]">
-      [% INCLUDE listselectionhiddenfields %]
-    </p>
-  </form>
-
-  <p>If you do not want to delete the user account at this time,
 [% END %]
 
   <a href="editusers.cgi?action=edit&amp;userid=[% otheruser.id %]

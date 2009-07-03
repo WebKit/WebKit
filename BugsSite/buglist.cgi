@@ -32,7 +32,7 @@
 # Make it harder for us to do dangerous things in Perl.
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -46,6 +46,8 @@ use Bugzilla::Bug;
 use Bugzilla::Product;
 use Bugzilla::Keyword;
 use Bugzilla::Field;
+use Bugzilla::Status;
+use Bugzilla::Token;
 
 use Date::Parse;
 
@@ -93,10 +95,6 @@ my $dotweak = $cgi->param('tweak') ? 1 : 0;
 # Log the user in
 if ($dotweak) {
     Bugzilla->login(LOGIN_REQUIRED);
-    Bugzilla->user->in_group("editbugs")
-      || ThrowUserError("auth_failure", {group  => "editbugs",
-                                         action => "modify",
-                                         object => "multiple_bugs"});
 }
 
 # Hack to support legacy applications that think the RDF ctype is at format=rdf.
@@ -253,6 +251,12 @@ sub LookupNamedQuery {
                                                 WHERE userid = ? AND name = ?
                                                       $extra",
                                                undef, @args);
+
+    # Some DBs (read: Oracle) incorrectly mark this string as UTF-8
+    # even though it has no UTF-8 characters in it, which prevents
+    # Bugzilla::CGI from later reading it correctly.
+    utf8::downgrade($result) if utf8::is_utf8($result);
+
     if (!defined($result)) {
         return 0 unless $throw_error;
         ThrowUserError("missing_query", {'queryname' => $name,
@@ -273,7 +277,7 @@ sub LookupNamedQuery {
     $result
        || ThrowUserError("buglist_parameters_required", {'queryname' => $name});
 
-    return $result;
+    return wantarray ? ($result, $id) : $result;
 }
 
 # Inserts a Named Query (a "Saved Search") into the database, or
@@ -301,9 +305,10 @@ sub InsertNamedQuery {
     my $dbh = Bugzilla->dbh;
 
     $query_name = trim($query_name);
-    my ($query_obj) = grep {$_->name eq $query_name} @{Bugzilla->user->queries};
+    my ($query_obj) = grep {lc($_->name) eq lc($query_name)} @{Bugzilla->user->queries};
 
     if ($query_obj) {
+        $query_obj->set_name($query_name);
         $query_obj->set_url($query);
         $query_obj->set_query_type($query_type);
         $query_obj->update();
@@ -345,23 +350,47 @@ sub GetQuip {
     return $quip;
 }
 
+# Return groups available for at least one product of the buglist.
 sub GetGroups {
-    my $dbh = Bugzilla->dbh;
+    my $product_names = shift;
     my $user = Bugzilla->user;
+    my %legal_groups;
 
-    # Create an array where each item is a hash. The hash contains 
-    # as keys the name of the columns, which point to the value of 
-    # the columns for that row.
-    my $grouplist = $user->groups_as_string;
-    my $groups = $dbh->selectall_arrayref(
-                "SELECT  id, name, description, isactive
-                   FROM  groups
-                  WHERE  id IN ($grouplist)
-                    AND  isbuggroup = 1
-               ORDER BY  description "
-               , {Slice => {}});
+    foreach my $product_name (@$product_names) {
+        my $product = new Bugzilla::Product({name => $product_name});
 
-    return $groups;
+        foreach my $gid (keys %{$product->group_controls}) {
+            # The user can only edit groups he belongs to.
+            next unless $user->in_group_id($gid);
+
+            # The user has no control on groups marked as NA or MANDATORY.
+            my $group = $product->group_controls->{$gid};
+            next if ($group->{membercontrol} == CONTROLMAPMANDATORY
+                     || $group->{membercontrol} == CONTROLMAPNA);
+
+            # It's fine to include inactive groups. Those will be marked
+            # as "remove only" when editing several bugs at once.
+            $legal_groups{$gid} ||= $group->{group};
+        }
+    }
+    # Return a list of group objects.
+    return [values %legal_groups];
+}
+
+sub _close_standby_message {
+    my ($contenttype, $disposition, $serverpush) = @_;
+    my $cgi = Bugzilla->cgi;
+
+    # Close the "please wait" page, then open the buglist page
+    if ($serverpush) {
+        print $cgi->multipart_end();
+        print $cgi->multipart_start(-type                => $contenttype,
+                                    -content_disposition => $disposition);
+    }
+    else {
+        print $cgi->header(-type                => $contenttype,
+                           -content_disposition => $disposition);
+    }
 }
 
 
@@ -400,18 +429,22 @@ if ($cgi->param('cmdtype') eq "dorem" && $cgi->param('remaction') =~ /^run/) {
     # with the HTTP headers.
     $filename =~ s/\s/_/g;
 }
+$filename =~ s/\\/\\\\/g; # escape backslashes
+$filename =~ s/"/\\"/g; # escape quotes
 
 # Take appropriate action based on user's request.
 if ($cgi->param('cmdtype') eq "dorem") {  
     if ($cgi->param('remaction') eq "run") {
-        $buffer = LookupNamedQuery(scalar $cgi->param("namedcmd"),
-                                   scalar $cgi->param('sharer_id'));
+        my $query_id;
+        ($buffer, $query_id) = LookupNamedQuery(scalar $cgi->param("namedcmd"),
+                                                scalar $cgi->param('sharer_id'));
         # If this is the user's own query, remember information about it
         # so that it can be modified easily.
         $vars->{'searchname'} = $cgi->param('namedcmd');
         if (!$cgi->param('sharer_id') ||
             $cgi->param('sharer_id') == Bugzilla->user->id) {
             $vars->{'searchtype'} = "saved";
+            $vars->{'search_id'} = $query_id;
         }
         $params = new Bugzilla::CGI($buffer);
         $order = $params->param('order') || $order;
@@ -460,6 +493,10 @@ if ($cgi->param('cmdtype') eq "dorem") {
             # The user has no query of this name. Play along.
         }
         else {
+            # Make sure the user really wants to delete his saved search.
+            my $token = $cgi->param('token');
+            check_hash_token($token, [$query_id, $qname]);
+
             $dbh->do('DELETE FROM namedqueries
                             WHERE id = ?',
                      undef, $query_id);
@@ -513,9 +550,12 @@ elsif (($cgi->param('cmdtype') eq "doit") && defined $cgi->param('remtype')) {
             my %bug_ids;
             my $is_new_name = 0;
             if ($query_name) {
+                my ($query, $query_id) =
+                  LookupNamedQuery($query_name, undef, QUERY_LIST, !THROW_ERROR);
                 # Make sure this name is not already in use by a normal saved search.
-                if (LookupNamedQuery($query_name, undef, QUERY_LIST, !THROW_ERROR)) {
-                    ThrowUserError('query_name_exists', {'name' => $query_name});
+                if ($query) {
+                    ThrowUserError('query_name_exists', {name     => $query_name,
+                                                         query_id => $query_id});
                 }
                 $is_new_name = 1;
             }
@@ -661,9 +701,13 @@ DefineColumn("percentage_complete",
 DefineColumn("relevance"         , "relevance"                  , "Relevance"        );
 DefineColumn("deadline"          , $dbh->sql_date_format('bugs.deadline', '%Y-%m-%d') . " AS deadline", "Deadline");
 
-foreach my $field (Bugzilla->get_fields({ custom => 1, obsolete => 0})) {
+foreach my $field (Bugzilla->active_custom_fields) {
+    # Multi-select fields are not (yet) supported in buglists.
+    next if $field->type == FIELD_TYPE_MULTI_SELECT;
     DefineColumn($field->name, 'bugs.' . $field->name, $field->description);
 }
+
+Bugzilla::Hook::process("buglist-columns", {'columns' => $columns} );
 
 ################################################################################
 # Display Column Determination
@@ -789,8 +833,12 @@ if ($format->{'extension'} eq 'atom') {
       'priority',
       'bug_severity',
       'assigned_to_realname',
-      'bug_status'
+      'bug_status',
+      'product',
+      'component',
+      'resolution'
     );
+    push(@required_atom_columns, 'target_milestone') if Bugzilla->params->{'usetargetmilestone'};
 
     foreach my $required (@required_atom_columns) {
         push(@selectcolumns, $required) if !grep($_ eq $required,@selectcolumns);
@@ -858,6 +906,7 @@ if ($order) {
             # A custom list of columns.  Make sure each column is valid.
             foreach my $fragment (split(/,/, $order)) {
                 $fragment = trim($fragment);
+                next unless $fragment;
                 # Accept an order fragment matching a column name, with
                 # asc|desc optionally following (to specify the direction)
                 if (grep($fragment =~ /^\Q$_\E(\s+(asc|desc))?$/, @columnnames, keys(%$columns))) {
@@ -878,11 +927,12 @@ if ($order) {
             $order = join(",", @order);
             # Now that we have checked that all columns in the order are valid,
             # detaint the order string.
-            trick_taint($order);
+            trick_taint($order) if $order;
         };
     }
 }
-else {
+
+if (!$order) {
     # DEFAULT
     $order = "bugs.bug_status, bugs.priority, map_assigned_to.login_name, bugs.bug_id";
 }
@@ -948,7 +998,7 @@ if (defined $cgi->param('limit')) {
 }
 elsif ($fulltext) {
     $query .= " " . $dbh->sql_limit(FULLTEXT_BUGLIST_LIMIT);
-    $vars->{'sorted_by_relevance'} = 1;
+    $vars->{'message'} = 'buglist_sorted_by_relevance' if ($cgi->param('order') =~ /^relevance/);
 }
 
 
@@ -964,14 +1014,9 @@ if ($cgi->param('debug')) {
 
 # Time to use server push to display an interim message to the user until
 # the query completes and we can display the bug list.
-my $disposition = '';
 if ($serverpush) {
-    $filename =~ s/\\/\\\\/g; # escape backslashes
-    $filename =~ s/"/\\"/g; # escape quotes
-    $disposition = qq#inline; filename="$filename"#;
-
-    print $cgi->multipart_init(-content_disposition => $disposition);
-    print $cgi->multipart_start();
+    print $cgi->multipart_init();
+    print $cgi->multipart_start(-type => 'text/html');
 
     # Generate and return the UI (HTML page) from the appropriate template.
     $template->process("list/server-push.html.tmpl", $vars)
@@ -1072,7 +1117,7 @@ if (@bugidlist) {
      "LEFT JOIN group_control_map " .
             "ON group_control_map.product_id = bugs.product_id " .
            "AND group_control_map.group_id = bug_group_map.group_id " .
-         "WHERE bugs.bug_id IN (" . join(',',@bugidlist) . ") " .
+         "WHERE " . $dbh->sql_in('bugs.bug_id', \@bugidlist) . 
             $dbh->sql_group_by('bugs.bug_id'));
     $sth->execute();
     while (my ($bug_id, $min_membercontrol) = $sth->fetchrow_array()) {
@@ -1101,9 +1146,8 @@ $vars->{'buglist_joined'} = join(',', @bugidlist);
 $vars->{'columns'} = $columns;
 $vars->{'displaycolumns'} = \@displaycolumns;
 
-my @openstates = BUG_STATE_OPEN;
-$vars->{'openstates'} = \@openstates;
-$vars->{'closedstates'} = ['CLOSED', 'VERIFIED', 'RESOLVED'];
+$vars->{'openstates'} = [BUG_STATE_OPEN];
+$vars->{'closedstates'} = [map {$_->name} closed_bug_statuses()];
 
 # The list of query fields in URL query string format, used when creating
 # URLs to the same query results page with different parameters (such as
@@ -1114,7 +1158,17 @@ $vars->{'urlquerypart'} = $params->canonicalise_query('order',
                                                       'cmdtype',
                                                       'query_based_on');
 $vars->{'order'} = $order;
-$vars->{'caneditbugs'} = Bugzilla->user->in_group('editbugs');
+$vars->{'caneditbugs'} = 1;
+
+if (!Bugzilla->user->in_group('editbugs')) {
+    foreach my $product (keys %$bugproducts) {
+        my $prod = new Bugzilla::Product({name => $product});
+        if (!Bugzilla->user->in_group('editbugs', $prod->id)) {
+            $vars->{'caneditbugs'} = 0;
+            last;
+        }
+    }
+}
 
 my @bugowners = keys %$bugowners;
 if (scalar(@bugowners) > 1 && Bugzilla->user->in_group('editbugs')) {
@@ -1132,32 +1186,68 @@ $vars->{'quip'} = GetQuip();
 $vars->{'currenttime'} = time();
 
 # The following variables are used when the user is making changes to multiple bugs.
-if ($dotweak) {
+if ($dotweak && scalar @bugs) {
+    if (!$vars->{'caneditbugs'}) {
+        _close_standby_message('text/html', 'inline', $serverpush);
+        ThrowUserError('auth_failure', {group  => 'editbugs',
+                                        action => 'modify',
+                                        object => 'multiple_bugs'});
+    }
     $vars->{'dotweak'} = 1;
     $vars->{'use_keywords'} = 1 if Bugzilla::Keyword::keyword_count();
+  
+    # issue_session_token needs to write to the master DB.
+    Bugzilla->switch_to_main_db();
+    $vars->{'token'} = issue_session_token('buglist_mass_change');
+    Bugzilla->switch_to_shadow_db();
 
     $vars->{'products'} = Bugzilla->user->get_enterable_products;
     $vars->{'platforms'} = get_legal_field_values('rep_platform');
     $vars->{'op_sys'} = get_legal_field_values('op_sys');
     $vars->{'priorities'} = get_legal_field_values('priority');
     $vars->{'severities'} = get_legal_field_values('bug_severity');
-    $vars->{'resolutions'} = Bugzilla::Bug->settable_resolutions;
+    $vars->{'resolutions'} = get_legal_field_values('resolution');
 
     $vars->{'unconfirmedstate'} = 'UNCONFIRMED';
 
-    $vars->{'bugstatuses'} = [ keys %$bugstatuses ];
+    # Convert bug statuses to their ID.
+    my @bug_statuses = map {$dbh->quote($_)} keys %$bugstatuses;
+    my $bug_status_ids =
+      $dbh->selectcol_arrayref('SELECT id FROM bug_status
+                               WHERE ' . $dbh->sql_in('value', \@bug_statuses));
 
-    # The groups to which the user belongs.
-    $vars->{'groups'} = GetGroups();
+    # This query collects new statuses which are common to all current bug statuses.
+    # It also accepts transitions where the bug status doesn't change.
+    $bug_status_ids =
+      $dbh->selectcol_arrayref(
+            'SELECT DISTINCT sw1.new_status
+               FROM status_workflow sw1
+         INNER JOIN bug_status
+                 ON bug_status.id = sw1.new_status
+              WHERE bug_status.isactive = 1
+                AND NOT EXISTS 
+                   (SELECT * FROM status_workflow sw2
+                     WHERE sw2.old_status != sw1.new_status 
+                           AND '
+                         . $dbh->sql_in('sw2.old_status', $bug_status_ids)
+                         . ' AND NOT EXISTS 
+                           (SELECT * FROM status_workflow sw3
+                             WHERE sw3.new_status = sw1.new_status
+                                   AND sw3.old_status = sw2.old_status))');
+
+    $vars->{'current_bug_statuses'} = [keys %$bugstatuses];
+    $vars->{'new_bug_statuses'} = Bugzilla::Status->new_from_list($bug_status_ids);
+
+    # The groups the user belongs to and which are editable for the given buglist.
+    my @products = keys %$bugproducts;
+    $vars->{'groups'} = GetGroups(\@products);
 
     # If all bugs being changed are in the same product, the user can change
     # their version and component, so generate a list of products, a list of
     # versions for the product (if there is only one product on the list of
     # products), and a list of components for the product.
-    $vars->{'bugproducts'} = [ keys %$bugproducts ];
-    if (scalar(@{$vars->{'bugproducts'}}) == 1) {
-        my $product = new Bugzilla::Product(
-            {name => $vars->{'bugproducts'}->[0]});
+    if (scalar(@products) == 1) {
+        my $product = new Bugzilla::Product({name => $products[0]});
         $vars->{'versions'} = [map($_->name ,@{$product->versions})];
         $vars->{'components'} = [map($_->name, @{$product->components})];
         $vars->{'targetmilestones'} = [map($_->name, @{$product->milestones})]
@@ -1177,7 +1267,7 @@ $vars->{'defaultsavename'} = $cgi->param('query_based_on');
 # Generate HTTP headers
 
 my $contenttype;
-my $disp = "inline";
+my $disposition = "inline";
 
 if ($format->{'extension'} eq "html" && !$agent) {
     if ($order) {
@@ -1209,25 +1299,13 @@ else {
 if ($format->{'extension'} eq "csv") {
     # We set CSV files to be downloaded, as they are designed for importing
     # into other programs.
-    $disp = "attachment";
+    $disposition = "attachment";
 }
 
-if ($serverpush) {
-    # close the "please wait" page, then open the buglist page
-    print $cgi->multipart_end();
-    my @extra;
-    push @extra, (-charset => "utf8") if Bugzilla->params->{"utf8"};
-    print $cgi->multipart_start(-type => $contenttype, 
-                                -content_disposition => $disposition, 
-                                @extra);
-} else {
-    # Suggest a name for the bug list if the user wants to save it as a file.
-    # If we are doing server push, then we did this already in the HTTP headers
-    # that started the server push, so we don't have to do it again here.
-    print $cgi->header(-type => $contenttype,
-                       -content_disposition => "$disp; filename=$filename");
-}
+# Suggest a name for the bug list if the user wants to save it as a file.
+$disposition .= "; filename=\"$filename\"";
 
+_close_standby_message($contenttype, $disposition, $serverpush);
 
 ################################################################################
 # Content Generation

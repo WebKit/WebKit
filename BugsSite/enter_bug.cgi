@@ -35,7 +35,7 @@
 
 use strict;
 
-use lib qw(.);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -49,6 +49,7 @@ use Bugzilla::Classification;
 use Bugzilla::Keyword;
 use Bugzilla::Token;
 use Bugzilla::Field;
+use Bugzilla::Status;
 
 my $user = Bugzilla->login(LOGIN_REQUIRED);
 
@@ -59,6 +60,9 @@ my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
 my $template = Bugzilla->template;
 my $vars = {};
+
+# All pages point to the same part of the documentation.
+$vars->{'doc_section'} = 'bugreports.html';
 
 my $product_name = trim($cgi->param('product') || '');
 # Will contain the product object the bug is created in.
@@ -257,49 +261,69 @@ sub pickos {
             /\(.*OSF.*\)/ && do {push @os, "OSF/1";};
             /\(.*Linux.*\)/ && do {push @os, "Linux";};
             /\(.*Solaris.*\)/ && do {push @os, "Solaris";};
-            /\(.*SunOS 5.*\)/ && do {push @os, "Solaris";};
-            /\(.*SunOS.*sun4u.*\)/ && do {push @os, "Solaris";};
-            /\(.*SunOS.*\)/ && do {push @os, "SunOS";};
+            /\(.*SunOS.*\)/ && do {
+              /\(.*SunOS 5.11.*\)/ && do {push @os, ("OpenSolaris", "Opensolaris", "Solaris 11");};
+              /\(.*SunOS 5.10.*\)/ && do {push @os, "Solaris 10";};
+              /\(.*SunOS 5.9.*\)/ && do {push @os, "Solaris 9";};
+              /\(.*SunOS 5.8.*\)/ && do {push @os, "Solaris 8";};
+              /\(.*SunOS 5.7.*\)/ && do {push @os, "Solaris 7";};
+              /\(.*SunOS 5.6.*\)/ && do {push @os, "Solaris 6";};
+              /\(.*SunOS 5.5.*\)/ && do {push @os, "Solaris 5";};
+              /\(.*SunOS 5.*\)/ && do {push @os, "Solaris";};
+              /\(.*SunOS.*sun4u.*\)/ && do {push @os, "Solaris";};
+              /\(.*SunOS.*i86pc.*\)/ && do {push @os, "Solaris";};
+              /\(.*SunOS.*\)/ && do {push @os, "SunOS";};
+            };
             /\(.*HP-?UX.*\)/ && do {push @os, "HP-UX";};
-            /\(.*BSD\/(?:OS|386).*\)/ && do {push @os, "BSDI";};
-            /\(.*FreeBSD.*\)/ && do {push @os, "FreeBSD";};
-            /\(.*OpenBSD.*\)/ && do {push @os, "OpenBSD";};
-            /\(.*NetBSD.*\)/ && do {push @os, "NetBSD";};
+            /\(.*BSD.*\)/ && do {
+              /\(.*BSD\/(?:OS|386).*\)/ && do {push @os, "BSDI";};
+              /\(.*FreeBSD.*\)/ && do {push @os, "FreeBSD";};
+              /\(.*OpenBSD.*\)/ && do {push @os, "OpenBSD";};
+              /\(.*NetBSD.*\)/ && do {push @os, "NetBSD";};
+            };
             /\(.*BeOS.*\)/ && do {push @os, "BeOS";};
             /\(.*AIX.*\)/ && do {push @os, "AIX";};
             /\(.*OS\/2.*\)/ && do {push @os, "OS/2";};
             /\(.*QNX.*\)/ && do {push @os, "Neutrino";};
             /\(.*VMS.*\)/ && do {push @os, "OpenVMS";};
-            /\(.*Windows XP.*\)/ && do {push @os, "Windows XP";};
-            /\(.*Windows NT 6\.0.*\)/ && do {push @os, "Windows Vista";};
-            /\(.*Windows NT 5\.2.*\)/ && do {push @os, "Windows Server 2003";};
-            /\(.*Windows NT 5\.1.*\)/ && do {push @os, "Windows XP";};
-            /\(.*Windows 2000.*\)/ && do {push @os, "Windows 2000";};
-            /\(.*Windows NT 5.*\)/ && do {push @os, "Windows 2000";};
-            /\(.*Win.*9[8x].*4\.9.*\)/ && do {push @os, "Windows ME";};
-            /\(.*Win(?:dows |)M[Ee].*\)/ && do {push @os, "Windows ME";};
-            /\(.*Win(?:dows |)98.*\)/ && do {push @os, "Windows 98";};
-            /\(.*Win(?:dows |)95.*\)/ && do {push @os, "Windows 95";};
-            /\(.*Win(?:dows |)16.*\)/ && do {push @os, "Windows 3.1";};
-            /\(.*Win(?:dows[ -]|)NT.*\)/ && do {push @os, "Windows NT";};
-            /\(.*Windows.*NT.*\)/ && do {push @os, "Windows NT";};
+            /\(.*Win.*\)/ && do {
+              /\(.*Windows XP.*\)/ && do {push @os, "Windows XP";};
+              /\(.*Windows NT 6\.0.*\)/ && do {push @os, "Windows Vista";};
+              /\(.*Windows NT 5\.2.*\)/ && do {push @os, "Windows Server 2003";};
+              /\(.*Windows NT 5\.1.*\)/ && do {push @os, "Windows XP";};
+              /\(.*Windows 2000.*\)/ && do {push @os, "Windows 2000";};
+              /\(.*Windows NT 5.*\)/ && do {push @os, "Windows 2000";};
+              /\(.*Win.*9[8x].*4\.9.*\)/ && do {push @os, "Windows ME";};
+              /\(.*Win(?:dows |)M[Ee].*\)/ && do {push @os, "Windows ME";};
+              /\(.*Win(?:dows |)98.*\)/ && do {push @os, "Windows 98";};
+              /\(.*Win(?:dows |)95.*\)/ && do {push @os, "Windows 95";};
+              /\(.*Win(?:dows |)16.*\)/ && do {push @os, "Windows 3.1";};
+              /\(.*Win(?:dows[ -]|)NT.*\)/ && do {push @os, "Windows NT";};
+              /\(.*Windows.*NT.*\)/ && do {push @os, "Windows NT";};
+            };
+            /\(.*Mac OS X.*\)/ && do {
+              /\(.*Intel.*Mac OS X 10.5.*\)/ && do {push @os, "Mac OS X 10.5";};
+              /\(.*Intel.*Mac OS X.*\)/ && do {push @os, "Mac OS X 10.4";};
+              /\(.*Mac OS X.*\)/ && do {push @os, ("Mac OS X 10.3", "Mac OS X 10.0", "Mac OS X");};
+            };
             /\(.*32bit.*\)/ && do {push @os, "Windows 95";};
             /\(.*16bit.*\)/ && do {push @os, "Windows 3.1";};
-            /\(.*Mac OS 9.*\)/ && do {push @os, "Mac System 9.x";};
-            /\(.*Mac OS 8\.6.*\)/ && do {push @os, "Mac System 8.6";};
-            /\(.*Mac OS 8\.5.*\)/ && do {push @os, "Mac System 8.5";};
-        # Bugzilla doesn't have an entry for 8.1
-            /\(.*Mac OS 8\.1.*\)/ && do {push @os, "Mac System 8.0";};
-            /\(.*Mac OS 8\.0.*\)/ && do {push @os, "Mac System 8.0";};
-            /\(.*Mac OS 8[^.].*\)/ && do {push @os, "Mac System 8.0";};
-            /\(.*Mac OS 8.*\)/ && do {push @os, "Mac System 8.6";};
-            /\(.*Intel.*Mac OS X.*\)/ && do {push @os, "Mac OS X 10.4";};
-            /\(.*Mac OS X.*\)/ && do {push @os, ("Mac OS X 10.3", "Mac OS X 10.0");};
-            /\(.*Darwin.*\)/ && do {push @os, "Mac OS X 10.0";};
+            /\(.*Mac OS \d.*\)/ && do {
+              /\(.*Mac OS 9.*\)/ && do {push @os, ("Mac System 9.x", "Mac System 9.0");};
+              /\(.*Mac OS 8\.6.*\)/ && do {push @os, ("Mac System 8.6", "Mac System 8.5");};
+              /\(.*Mac OS 8\.5.*\)/ && do {push @os, "Mac System 8.5";};
+              /\(.*Mac OS 8\.1.*\)/ && do {push @os, ("Mac System 8.1", "Mac System 8.0");};
+              /\(.*Mac OS 8\.0.*\)/ && do {push @os, "Mac System 8.0";};
+              /\(.*Mac OS 8[^.].*\)/ && do {push @os, "Mac System 8.0";};
+              /\(.*Mac OS 8.*\)/ && do {push @os, "Mac System 8.6";};
+            };
+            /\(.*Darwin.*\)/ && do {push @os, ("Mac OS X 10.0", "Mac OS X");};
         # Silly
-            /\(.*Mac.*PowerPC.*\)/ && do {push @os, "Mac System 9.x";};
-            /\(.*Mac.*PPC.*\)/ && do {push @os, "Mac System 9.x";};
-            /\(.*Mac.*68k.*\)/ && do {push @os, "Mac System 8.0";};
+            /\(.*Mac.*\)/ && do {
+              /\(.*Mac.*PowerPC.*\)/ && do {push @os, "Mac System 9.x";};
+              /\(.*Mac.*PPC.*\)/ && do {push @os, "Mac System 9.x";};
+              /\(.*Mac.*68k.*\)/ && do {push @os, "Mac System 8.0";};
+            };
         # Evil
             /Amiga/i && do {push @os, "Other";};
             /WinMosaic/ && do {push @os, "Windows 95";};
@@ -359,8 +383,7 @@ $vars->{'cloned_bug_id'}         = $cloned_bug_id;
 $vars->{'token'}             = issue_session_token('createbug:');
 
 
-my @enter_bug_fields = Bugzilla->get_fields({ custom => 1, obsolete => 0, 
-                                              enter_bug => 1 });
+my @enter_bug_fields = grep { $_->enter_bug } Bugzilla->active_custom_fields;
 foreach my $field (@enter_bug_fields) {
     $vars->{$field->name} = formvalue($field->name);
 }
@@ -368,48 +391,45 @@ foreach my $field (@enter_bug_fields) {
 if ($cloned_bug_id) {
 
     $default{'component_'}    = $cloned_bug->component;
-    $default{'priority'}      = $cloned_bug->{'priority'};
-    $default{'bug_severity'}  = $cloned_bug->{'bug_severity'};
-    $default{'rep_platform'}  = $cloned_bug->{'rep_platform'};
-    $default{'op_sys'}        = $cloned_bug->{'op_sys'};
+    $default{'priority'}      = $cloned_bug->priority;
+    $default{'bug_severity'}  = $cloned_bug->bug_severity;
+    $default{'rep_platform'}  = $cloned_bug->rep_platform;
+    $default{'op_sys'}        = $cloned_bug->op_sys;
 
-    $vars->{'short_desc'}     = $cloned_bug->{'short_desc'};
-    $vars->{'bug_file_loc'}   = $cloned_bug->{'bug_file_loc'};
+    $vars->{'short_desc'}     = $cloned_bug->short_desc;
+    $vars->{'bug_file_loc'}   = $cloned_bug->bug_file_loc;
     $vars->{'keywords'}       = $cloned_bug->keywords;
     $vars->{'dependson'}      = $cloned_bug_id;
     $vars->{'blocked'}        = "";
-    $vars->{'deadline'}       = $cloned_bug->{'deadline'};
+    $vars->{'deadline'}       = $cloned_bug->deadline;
 
     if (defined $cloned_bug->cc) {
-        $vars->{'cc'}         = join (" ", @{$cloned_bug->cc});
+        $vars->{'cc'}         = join (", ", @{$cloned_bug->cc});
     } else {
         $vars->{'cc'}         = formvalue('cc');
     }
 
     foreach my $field (@enter_bug_fields) {
-        $vars->{$field->name} = $cloned_bug->{$field->name};
+        my $field_name = $field->name;
+        $vars->{$field_name} = $cloned_bug->$field_name;
     }
 
-# We need to ensure that we respect the 'insider' status of
-# the first comment, if it has one. Either way, make a note
-# that this bug was cloned from another bug.
-
-    $cloned_bug->longdescs();
-    my $isprivate             = $cloned_bug->{'longdescs'}->[0]->{'isprivate'};
+    # We need to ensure that we respect the 'insider' status of
+    # the first comment, if it has one. Either way, make a note
+    # that this bug was cloned from another bug.
+    # We cannot use $cloned_bug->longdescs because this method
+    # depends on the "comment_sort_order" user pref, and we
+    # really want the first comment of the bug.
+    my $bug_desc = Bugzilla::Bug::GetComments($cloned_bug_id, 'oldest_to_newest');
+    my $isprivate = $bug_desc->[0]->{'isprivate'};
 
     $vars->{'comment'}        = "";
     $vars->{'commentprivacy'} = 0;
 
-    if ( !($isprivate) ||
-         ( ( Bugzilla->params->{"insidergroup"} ) && 
-           ( Bugzilla->user->in_group(Bugzilla->params->{"insidergroup"}) ) ) 
-       ) {
-        $vars->{'comment'}        = $cloned_bug->{'longdescs'}->[0]->{'body'};
+    if (!$isprivate || Bugzilla->user->is_insider) {
+        $vars->{'comment'}        = $bug_desc->[0]->{'body'};
         $vars->{'commentprivacy'} = $isprivate;
     }
-
-# Ensure that the groupset information is set up for later use.
-    $cloned_bug->groups();
 
 } # end of cloned bug entry form
 
@@ -453,7 +473,7 @@ $vars->{'version'} = [map($_->name, @{$product->versions})];
 
 if ( ($cloned_bug_id) &&
      ($product->name eq $cloned_bug->product ) ) {
-    $default{'version'} = $cloned_bug->{'version'};
+    $default{'version'} = $cloned_bug->version;
 } elsif (formvalue('version')) {
     $default{'version'} = formvalue('version');
 } elsif (defined $cgi->cookie("VERSION-" . $product->name) &&
@@ -474,39 +494,38 @@ if ( Bugzilla->params->{'usetargetmilestone'} ) {
 }
 
 # Construct the list of allowable statuses.
-#
-# * If the product requires votes to confirm:
-#   users with privs   : NEW + ASSI + UNCO
-#   users with no privs: UNCO
-#
-# * If the product doesn't require votes to confirm:
-#   users with privs   : NEW + ASSI
-#   users with no privs: NEW (as these users cannot reassign
-#                             bugs to them, it doesn't make sense
-#                             to let them mark bugs as ASSIGNED)
+my $initial_statuses = Bugzilla::Status->can_change_to();
+# Exclude closed states from the UI, even if the workflow allows them.
+# The back-end code will still accept them, though.
+@$initial_statuses = grep { $_->is_open } @$initial_statuses;
 
-my @status;
-if ($has_editbugs || $has_canconfirm) {
-    @status = ('NEW', 'ASSIGNED');
-}
-elsif (!$product->votes_to_confirm) {
-    @status = ('NEW');
-}
-if ($product->votes_to_confirm) {
-    push(@status, 'UNCONFIRMED');
+my @status = map { $_->name } @$initial_statuses;
+# UNCONFIRMED is illegal if votes_to_confirm = 0.
+@status = grep {$_ ne 'UNCONFIRMED'} @status unless $product->votes_to_confirm;
+scalar(@status) || ThrowUserError('no_initial_bug_status');
+
+# If the user has no privs...
+unless ($has_editbugs || $has_canconfirm) {
+    # ... use UNCONFIRMED if available, else use the first status of the list.
+    my $bug_status = (grep {$_ eq 'UNCONFIRMED'} @status) ? 'UNCONFIRMED' : $status[0];
+    @status = ($bug_status);
 }
 
-$vars->{'bug_status'} = \@status; 
+$vars->{'bug_status'} = \@status;
 
 # Get the default from a template value if it is legitimate.
-# Otherwise, set the default to the first item on the list.
+# Otherwise, and only if the user has privs, set the default
+# to the first confirmed bug status on the list, if available.
 
 if (formvalue('bug_status') && (lsearch(\@status, formvalue('bug_status')) >= 0)) {
     $default{'bug_status'} = formvalue('bug_status');
-} else {
+} elsif (scalar @status == 1) {
     $default{'bug_status'} = $status[0];
 }
- 
+else {
+    $default{'bug_status'} = ($status[0] ne 'UNCONFIRMED') ? $status[0] : $status[1];
+}
+
 my $grouplist = $dbh->selectall_arrayref(
                   q{SELECT DISTINCT groups.id, groups.name, groups.description,
                                     membercontrol, othercontrol
@@ -540,9 +559,9 @@ foreach my $row (@$grouplist) {
     #
     if ( ($cloned_bug_id) &&
          ($product->name eq $cloned_bug->product ) ) {
-        foreach my $i (0..(@{$cloned_bug->{'groups'}}-1) ) {
-            if ($cloned_bug->{'groups'}->[$i]->{'bit'} == $id) {
-                $check = $cloned_bug->{'groups'}->[$i]->{'ison'};
+        foreach my $i (0..(@{$cloned_bug->groups} - 1) ) {
+            if ($cloned_bug->groups->[$i]->{'bit'} == $id) {
+                $check = $cloned_bug->groups->[$i]->{'ison'};
             }
         }
     }

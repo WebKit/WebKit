@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -26,6 +25,7 @@
   #           voting: 
   #            name: name of product
   #            bugs: list of bugs the user has voted for
+  #            bug_ids: list of bug ids the user has voted for
   #            onevoteonly: one or more votes allowed per bug?
   #            total: users current vote count for the product
   #            maxvotes: max votes allowed for a user in this product
@@ -34,6 +34,8 @@
   # bug_id: number; if the user is voting for a bug, this is the bug id
   #
   # canedit: boolean; Should the votes be presented in a form, or readonly? 
+  #
+  # all_bug_ids: List of all bug ids the user has voted for, across all products
   #%]
 
 [% PROCESS global/variables.none.tmpl %]
@@ -90,7 +92,10 @@
         [% END %]
         <tr>
           <th>[% product.name FILTER html %]</th>
-          <td colspan="3">
+          <td colspan="2" ><a href="buglist.cgi?bug_id=
+              [%- product.bug_ids.join(",") FILTER url_quote %]">([% terms.bug %] list)</a>
+          </td>
+          <td>
             [% IF product.maxperbug < product.maxvotes AND
                   product.maxperbug > 1 %]
               <font size="-1">
@@ -143,7 +148,9 @@
     </table>
 
     [% IF canedit %]
-      <input type="submit" value="Change My Votes" id="change">
+      <input type="submit" value="Change My Votes" id="change"> or 
+      <a href="buglist.cgi?bug_id=[% all_bug_ids.join(",") FILTER url_quote %]">view all
+        as [% terms.bug %] list</a>
       <br>
       <br>
       To change your votes,
@@ -155,6 +162,9 @@
         change the checkbox
       [% END %]
       and then click <b>Change My Votes</b>.
+    [% ELSE %]
+       <a href="buglist.cgi?bug_id=[% all_bug_ids.join(",") FILTER url_quote %]">View all
+         as [% terms.bug %] list</a>
     [% END %]
   </form>
 [% ELSE %]

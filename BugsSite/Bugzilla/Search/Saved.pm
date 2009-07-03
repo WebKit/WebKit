@@ -55,7 +55,7 @@ use constant VALIDATORS => {
     link_in_footer => \&_check_link_in_footer,
 };
 
-use constant UPDATE_COLUMNS => qw(query query_type);
+use constant UPDATE_COLUMNS => qw(name query query_type);
 
 ##############
 # Validators #
@@ -79,6 +79,8 @@ sub _check_query {
     $query || ThrowUserError("buglist_parameters_required");
     my $cgi = new Bugzilla::CGI($query);
     $cgi->clean_search_url;
+    # Don't store the query name as a parameter.
+    $cgi->delete('known_name');
     return $cgi->query_string;
 }
 
@@ -97,13 +99,12 @@ sub create {
     Bugzilla->login(LOGIN_REQUIRED);
     my $dbh = Bugzilla->dbh;
     $class->check_required_create_fields(@_);
+    $dbh->bz_start_transaction();
     my $params = $class->run_create_validators(@_);
 
     # Right now you can only create a Saved Search for the current user.
     $params->{userid} = Bugzilla->user->id;
 
-    $dbh->bz_lock_tables('namedqueries WRITE',
-                         'namedqueries_link_in_footer WRITE');
     my $lif = delete $params->{link_in_footer};
     my $obj = $class->insert_create_data($params);
     if ($lif) {
@@ -111,11 +112,29 @@ sub create {
                   (user_id, namedquery_id) VALUES (?,?)',
                  undef, $params->{userid}, $obj->id);
     }
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     return $obj;
 }
 
+sub preload {
+    my ($searches) = @_;
+    my $dbh = Bugzilla->dbh;
+
+    return unless scalar @$searches;
+
+    my @query_ids = map { $_->id } @$searches;
+    my $queries_in_footer = $dbh->selectcol_arrayref(
+        'SELECT namedquery_id
+           FROM namedqueries_link_in_footer
+          WHERE ' . $dbh->sql_in('namedquery_id', \@query_ids) . ' AND user_id = ?',
+          undef, Bugzilla->user->id);
+
+    my %links_in_footer = map { $_ => 1 } @$queries_in_footer;
+    foreach my $query (@$searches) {
+        $query->{link_in_footer} = ($links_in_footer{$query->id}) ? 1 : 0;
+    }
+}
 #####################
 # Complex Accessors #
 #####################
@@ -170,6 +189,23 @@ sub shared_with_group {
     return $self->{shared_with_group};
 }
 
+sub shared_with_users {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    if (!exists $self->{shared_with_users}) {
+        $self->{shared_with_users} =
+          $dbh->selectrow_array('SELECT COUNT(*)
+                                   FROM namedqueries_link_in_footer
+                             INNER JOIN namedqueries
+                                     ON namedquery_id = id
+                                  WHERE namedquery_id = ?
+                                    AND user_id != userid',
+                                  undef, $self->id);
+    }
+    return $self->{shared_with_users};
+}
+
 ####################
 # Simple Accessors #
 ####################
@@ -188,6 +224,7 @@ sub user {
 # Mutators #
 ############
 
+sub set_name       { $_[0]->set('name',       $_[1]); }
 sub set_url        { $_[0]->set('query',      $_[1]); }
 sub set_query_type { $_[0]->set('query_type', $_[1]); }
 
@@ -208,6 +245,7 @@ Bugzilla::Search::Saved - A saved search
  my $edit_link  = $query->edit_link;
  my $search_url = $query->url;
  my $owner      = $query->user;
+ my $num_subscribers = $query->shared_with_users;
 
 =head1 DESCRIPTION
 
@@ -229,6 +267,12 @@ documented below.
 Does not accept a bare C<name> argument. Instead, accepts only an id.
 
 See also: L<Bugzilla::Object/new>.
+
+=item C<preload>
+
+Sets C<link_in_footer> for all given saved searches at once, for the
+currently logged in user. This is much faster than calling this method
+for each saved search individually.
 
 =back
 
@@ -261,5 +305,10 @@ True if the search contains only a list of Bug IDs.
 
 The L<Bugzilla::Group> that this search is shared with. C<undef> if
 this search isn't shared.
+
+=item C<shared_with_users>
+
+Returns how many users (besides the author of the saved search) are
+using the saved search, i.e. have it displayed in their footer.
 
 =back

@@ -62,8 +62,7 @@
   '"value${chartnum}-${rownum}-${colnum}"', 
   '"type${chartnum}-${rownum}-${colnum}"', 
   'field.name', 
-  'field.description', 
-  'type.name', 
+  'type.name',
   'type.description', 
   '"${chartnum}-${rownum}-${newor}"', 
   '"${chartnum}-${newand}-0"', 
@@ -191,8 +190,7 @@
 
 'list/edit-multiple.html.tmpl' => [
   'group.id', 
-  'knum', 
-  'menuname', 
+  'menuname',
 ],
 
 'list/list.rdf.tmpl' => [
@@ -214,11 +212,6 @@
 
 'list/list.js.tmpl' => [
   'bug.bug_id', 
-],
-
-'global/help.html.tmpl' => [
-  'h.id', 
-  'h.html', 
 ],
 
 'global/choose-product.html.tmpl' => [
@@ -281,8 +274,7 @@
 ],
 
 'bug/comments.html.tmpl' => [
-  'comment.isprivate', 
-  'comment.time', 
+  'comment.id',
   'bug.bug_id',
 ],
 
@@ -321,10 +313,7 @@
   '" size=\"$size\"" IF size',
   '" maxlength=\"$maxlength\"" IF maxlength',
   'flag.status',
-],
-
-'bug/knob.html.tmpl' => [
-  'knum', 
+  '" spellcheck=\"$spellcheck\"" IF spellcheck',
 ],
 
 'bug/navigate.html.tmpl' => [
@@ -335,7 +324,6 @@
 ],
 
 'bug/show-multiple.html.tmpl' => [
-  'bug.bug_id', 
   'attachment.id', 
   'flag.status',
 ],
@@ -392,14 +380,9 @@
 ],
 
 'bug/create/create-guided.html.tmpl' => [
-  'matches.0', 
   'tablecolour',
   'sel',
   'productstring', 
-],
-
-'bug/activity/show.html.tmpl' => [
-  'bug_id', 
 ],
 
 'bug/activity/table.html.tmpl' => [
@@ -413,10 +396,8 @@
 ],
 
 'attachment/created.html.tmpl' => [
-  'attachid', 
-  'bugid', 
-  'contenttype', 
-  '"$terms.bug $bugid" FILTER bug_link(bugid)',
+  'attachment.id',
+  'attachment.bug_id',
 ],
 
 'attachment/edit.html.tmpl' => [
@@ -432,14 +413,17 @@
   'obsolete_attachments',
 ],
 
+'attachment/midair.html.tmpl' => [
+  'attachment.id',
+],
+
 'attachment/show-multiple.html.tmpl' => [
   'a.id',
   'flag.status'
 ],
 
 'attachment/updated.html.tmpl' => [
-  'attachid', 
-  '"$terms.bug $bugid" FILTER bug_link(bugid)',
+  'attachment.id',
 ],
 
 'attachment/diff-header.html.tmpl' => [
@@ -459,11 +443,23 @@
   'file.plus_lines',
   'bonsai_prefix',
   'section.old_start',
-  'section_num'
+  'section_num',
+  'current_line_old',
+  'current_line_new',
+  'curr_old',
+  'curr_new'
+],
+
+'admin/admin.html.tmpl' => [
+  'class'
 ],
 
 'admin/table.html.tmpl' => [
   'link_uri'
+],
+
+'admin/params/common.html.tmpl' => [
+  'sortlist_separator', 
 ],
 
 'admin/products/groupcontrol/confirm-edit.html.tmpl' => [
@@ -521,14 +517,15 @@
 ],
 
 'admin/users/confirm-delete.html.tmpl' => [
-  'andstring',
-  'responsibilityterms.$responsibility',
+  'attachments',
   'reporter',
   'assignee_or_qa',
   'cc',
+  'component_cc',
   'flags.requestee',
   'flags.setter',
   'longdescs',
+  'quips',
   'votes',
   'series',
   'watch.watched',
@@ -541,12 +538,20 @@
 'admin/users/edit.html.tmpl' => [
   'otheruser.id',
   'group.id',
-  'perms.directbless',
-  'perms.directmember',
 ],
 
 'admin/components/edit.html.tmpl' => [
   'comp.bug_count'
+],
+
+'admin/workflow/edit.html.tmpl' => [
+  'status.id',
+  'new_status.id',
+],
+
+'admin/workflow/comment.html.tmpl' => [
+  'status.id',
+  'new_status.id',
 ],
 
 'account/login.html.tmpl' => [

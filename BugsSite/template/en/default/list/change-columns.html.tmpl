@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -41,7 +40,7 @@
   <input type="hidden" name="rememberedquery" value="[% buffer FILTER html %]">
   [% FOREACH column = masterlist %]
     <input type="checkbox" id="[% column %]" name="column_[% column %]"
-      [% "checked='checked'" IF lsearch(collist, column) != -1 %]>
+      [%+ "checked='checked'" IF lsearch(collist, column) != -1 %]>
     <label for="[% column %]">
       [% (field_descs.${column} || column) FILTER html %]
     </label>
@@ -50,28 +49,35 @@
 
   <p>
     <input id="nosplitheader" type="radio" name="splitheader" value="0"
-      [% "checked='checked'" IF NOT splitheader %]>
+      [%+ "checked='checked'" IF NOT splitheader %]>
     <label for="nosplitheader">
       Normal headers (prettier)
     </label>
     <br>
 
     <input id="splitheader" type="radio" name="splitheader" value="1"
-      [% "checked='checked'" IF splitheader %]>
+      [%+ "checked='checked'" IF splitheader %]>
     <label for="splitheader">
       Stagger headers (often makes list more compact)
     </label>
   </p>
 
+  [% IF saved_search %]
+    <p>
+      <input type="hidden" name="saved_search"
+             value="[% saved_search.id FILTER html%]" >
+      <input type="checkbox" id="save_columns_for_search" checked="checked" 
+             name="save_columns_for_search" value="1">
+      <label for="save_columns_for_search">Save this column list only 
+        for search '[% saved_search.name FILTER html %]'</label>
+    </p>
+  [% END %]
+
   <p>
     <input type="submit" id="change" value="Change Columns">
   </p>
-</form>
 
-<form action="colchange.cgi">
-  <input type="hidden" name="rememberedquery" value="[% buffer FILTER html %]">
-  <input type="hidden" name="resetit" value="1">
-  <input type="submit" id="reset" 
+  <input type="submit" id="resetit" name="resetit" 
          value="Reset to [% terms.Bugzilla %] default">
 </form>
 

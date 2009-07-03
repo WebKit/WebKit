@@ -33,8 +33,9 @@
 use AnyDBM_File;
 use strict;
 use IO::Handle;
+use Cwd;
 
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -50,16 +51,19 @@ use Bugzilla::Field;
 $| = 1;
 
 # Tidy up after graphing module
+my $cwd = Cwd::getcwd();
 if (chdir("graphs")) {
     unlink <./*.gif>;
     unlink <./*.png>;
-    chdir("..");
+    # chdir("..") doesn't work if graphs is a symlink, see bug 429378
+    chdir($cwd);
 }
 
 # This is a pure command line script.
 Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
 
 my $dbh = Bugzilla->switch_to_shadow_db();
+
 
 # To recreate the daily statistics,  run "collectstats.pl --regenerate" .
 my $regenerate = 0;
@@ -73,19 +77,21 @@ my $datadir = bz_locations()->{'datadir'};
 my @myproducts = map {$_->name} Bugzilla::Product->get_all;
 unshift(@myproducts, "-All-");
 
-# As we can now customize the list of resolutions, looking at the actual list
-# of available resolutions only is not enough as some now removed resolutions
+# As we can now customize statuses and resolutions, looking at the current list
+# of legal values only is not enough as some now removed statuses and resolutions
 # may have existed in the past, or have been renamed. We want them all.
-my @resolutions = @{get_legal_field_values('resolution')};
-my $old_resolutions =
-    $dbh->selectcol_arrayref('SELECT bugs_activity.added
+my $fields = {};
+foreach my $field ('bug_status', 'resolution') {
+    my $values = get_legal_field_values($field);
+    my $old_values = $dbh->selectcol_arrayref(
+                             "SELECT bugs_activity.added
                                 FROM bugs_activity
                           INNER JOIN fielddefs
                                   ON fielddefs.id = bugs_activity.fieldid
-                           LEFT JOIN resolution
-                                  ON resolution.value = bugs_activity.added
+                           LEFT JOIN $field
+                                  ON $field.value = bugs_activity.added
                                WHERE fielddefs.name = ?
-                                 AND resolution.id IS NULL
+                                 AND $field.id IS NULL
 
                                UNION
 
@@ -93,18 +99,20 @@ my $old_resolutions =
                                 FROM bugs_activity
                           INNER JOIN fielddefs
                                   ON fielddefs.id = bugs_activity.fieldid
-                           LEFT JOIN resolution
-                                  ON resolution.value = bugs_activity.removed
+                           LEFT JOIN $field
+                                  ON $field.value = bugs_activity.removed
                                WHERE fielddefs.name = ?
-                                 AND resolution.id IS NULL',
-                               undef, ('resolution', 'resolution'));
+                                 AND $field.id IS NULL",
+                               undef, ($field, $field));
 
-push(@resolutions, @$old_resolutions);
+    push(@$values, @$old_values);
+    $fields->{$field} = $values;
+}
+
+my @statuses = @{$fields->{'bug_status'}};
+my @resolutions = @{$fields->{'resolution'}};
 # Exclude "" from the resolution list.
 @resolutions = grep {$_} @resolutions;
-
-# Actually, the list of statuses is predefined. This will change in the near future.
-my @statuses = qw(NEW ASSIGNED REOPENED UNCONFIRMED RESOLVED VERIFIED CLOSED);
 
 my $tstart = time;
 foreach (@myproducts) {
@@ -394,13 +402,13 @@ sub regenerate_stats {
     # database was created, and the end date from the current day.
     # If there were no bugs in the search, return early.
     my $query = q{SELECT } .
-                $dbh->sql_to_days('creation_ts') . q{ AS start, } . 
-                $dbh->sql_to_days('current_date') . q{ AS end, } . 
+                $dbh->sql_to_days('creation_ts') . q{ AS start_day, } . 
+                $dbh->sql_to_days('current_date') . q{ AS end_day, } . 
                 $dbh->sql_to_days("'1970-01-01'") . 
                  qq{ FROM bugs $from_product 
                    WHERE } . $dbh->sql_to_days('creation_ts') . 
                          qq{ IS NOT NULL $and_product 
-                ORDER BY start } . $dbh->sql_limit(1);
+                ORDER BY start_day } . $dbh->sql_limit(1);
     my ($start, $end, $base) = $dbh->selectrow_array($query, undef, @values);
 
     if (!defined $start) {
@@ -557,7 +565,7 @@ sub CollectSeriesData {
     my $serieses = $dbh->selectall_hashref("SELECT series_id, query, creator " .
                       "FROM series " .
                       "WHERE frequency != 0 AND " . 
-                      "($days_since_epoch + series_id) % frequency = 0",
+                      "MOD(($days_since_epoch + series_id), frequency) = 0",
                       "series_id");
 
     # We prepare the insertion into the data table, for efficiency.

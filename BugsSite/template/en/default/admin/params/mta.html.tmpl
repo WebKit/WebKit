@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -55,6 +54,12 @@
                  "<b>must</b> leave it on, or no $terms.bug mail will be sent.",
 
   smtpserver => "The SMTP server address (if using SMTP for mail delivery).",
+
+  smtp_username => "The username to pass to the SMTP server for SMTP authentication. " _
+                   "Leave this field empty if your SMTP server doesn't require authentication.",
+
+  smtp_password => "The password to pass to the SMTP server for SMTP authentication. " _
+                   "This field has no effect if the smtp_username parameter is left empty.",
 
   smtp_debug => "If enabled, this will print detailed information to your" _
                 " web server's error log about the communication between" _

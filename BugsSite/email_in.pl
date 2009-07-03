@@ -29,6 +29,8 @@ BEGIN {
     chdir(File::Basename::dirname($0)); 
 }
 
+use lib qw(. lib);
+
 use Data::Dumper;
 use Email::Address;
 use Email::Reply qw(reply);
@@ -36,7 +38,7 @@ use Email::MIME;
 use Email::MIME::Attachment::Stripper;
 use Getopt::Long qw(:config bundling);
 use Pod::Usage;
-use Encode qw(encode decode);
+use Encode;
 
 use Bugzilla;
 use Bugzilla::Bug qw(ValidateBugID);
@@ -45,6 +47,7 @@ use Bugzilla::Error;
 use Bugzilla::Mailer;
 use Bugzilla::User;
 use Bugzilla::Util;
+use Bugzilla::Token;
 
 #############
 # Constants #
@@ -53,45 +56,6 @@ use Bugzilla::Util;
 # This is the USENET standard line for beginning a signature block
 # in a message. RFC-compliant mailers use this.
 use constant SIGNATURE_DELIMITER => '-- ';
-
-# These fields must all be defined or post_bug complains. They don't have
-# to have values--they just have to be defined. There's not yet any
-# way to require custom fields have values, for enter_bug, so we don't
-# have to worry about those yet.
-use constant REQUIRED_ENTRY_FIELDS => qw(
-    reporter
-    short_desc
-    product
-    component
-    version
-
-    assigned_to
-    rep_platform
-    op_sys
-    priority
-    bug_severity
-    bug_file_loc
-);
-
-# Fields that must be defined during process_bug. They *do* have to
-# have values. The script will grab their values from the current
-# bug object, if they're not specified.
-use constant REQUIRED_PROCESS_FIELDS => qw(
-    dependson
-    blocked
-    version
-    product
-    target_milestone
-    rep_platform
-    op_sys
-    priority
-    bug_severity
-    bug_file_loc
-    component
-    short_desc
-    reporter_accessible
-    cclist_accessible
-);
 
 # $input_email is a global so that it can be used in die_handler.
 our ($input_email, %switch);
@@ -124,7 +88,7 @@ sub parse_mail {
     debug_print("Body:\n" . $body, 3);
 
     $body = remove_leading_blank_lines($body);
-    my @body_lines = split("\n", $body);
+    my @body_lines = split(/\r?\n/s, $body);
 
     # If there are fields specified.
     if ($body =~ /^\s*@/s) {
@@ -143,6 +107,16 @@ sub parse_mail {
             
             if ($line =~ /^@(\S+)\s*=\s*(.*)\s*/) {
                 $current_field = lc($1);
+                # It's illegal to pass the reporter field as you could
+                # override the "From:" field of the message and bypass
+                # authentication checks, such as PGP.
+                if ($current_field eq 'reporter') {
+                    # We reset the $current_field variable to something
+                    # post_bug and process_bug will ignore, in case the
+                    # attacker splits the reporter field on several lines.
+                    $current_field = 'illegal_field';
+                    next;
+                }
                 $fields{$current_field} = $2;
             }
             else {
@@ -178,15 +152,6 @@ sub post_bug {
 
     debug_print('Posting a new bug...');
 
-    $fields{'rep_platform'} ||= Bugzilla->params->{'defaultplatform'};
-    $fields{'op_sys'}   ||= Bugzilla->params->{'defaultopsys'};
-    $fields{'priority'} ||= Bugzilla->params->{'defaultpriority'};
-    $fields{'bug_severity'} ||= Bugzilla->params->{'defaultseverity'};
-
-    foreach my $field (REQUIRED_ENTRY_FIELDS) {
-        $fields{$field} ||= '';
-    }
-
     my $cgi = Bugzilla->cgi;
     foreach my $field (keys %fields) {
         $cgi->param(-name => $field, -value => $fields{$field});
@@ -211,36 +176,21 @@ sub process_bug {
     ValidateBugID($bug_id);
     my $bug = new Bugzilla::Bug($bug_id);
 
-    if ($fields{'assigned_to'}) {
-        $fields{'knob'} = 'reassign';
+    if ($fields{'bug_status'}) {
+        $fields{'knob'} = $fields{'bug_status'};
     }
-    if (my $status = $fields{'bug_status'}) {
-        $fields{'knob'} = 'confirm' if $status =~ /NEW/i;
-        $fields{'knob'} = 'accept'  if $status =~ /ASSIGNED/i;
-        $fields{'knob'} = 'clearresolution' if $status =~ /REOPENED/i;
-        $fields{'knob'} = 'verify'  if $status =~ /VERIFIED/i;
-        $fields{'knob'} = 'close'   if $status =~ /CLOSED/i;
+    # If no status is given, then we only want to change the resolution.
+    elsif ($fields{'resolution'}) {
+        $fields{'knob'} = 'change_resolution';
+        $fields{'resolution_knob_change_resolution'} = $fields{'resolution'};
     }
     if ($fields{'dup_id'}) {
         $fields{'knob'} = 'duplicate';
     }
-    if ($fields{'resolution'}) {
-        $fields{'knob'} = 'resolve';
-    }
 
-    # Make sure we don't get prompted if we have to change the default
-    # groups.
-    if ($fields{'product'}) {
-        $fields{'addtonewgroup'} = 0;
-    }
-
-    foreach my $field (REQUIRED_PROCESS_FIELDS) {
-        my $value = $bug->$field;
-        if (ref $value) {
-            $value = join(',', @$value);
-        }
-        $fields{$field} ||= $value;
-    }
+    # Move @cc to @newcc as @cc is used by process_bug.cgi to remove
+    # users from the CC list when @removecc is set.
+    $fields{'newcc'} = delete $fields{'cc'} if $fields{'cc'};
 
     # Make it possible to remove CCs.
     if ($fields{'removecc'}) {
@@ -253,6 +203,7 @@ sub process_bug {
         $cgi->param(-name => $field, -value => $fields{$field});
     }
     $cgi->param('longdesclength', scalar $bug->longdescs);
+    $cgi->param('token', issue_hash_token([$bug->id, $bug->delta_ts]));
 
     require 'process_bug.cgi';
 }
@@ -297,15 +248,16 @@ sub get_text_alternative {
     foreach my $part (@parts) {
         my $ct = $part->content_type || 'text/plain';
         my $charset = 'iso-8859-1';
-        if ($ct =~ /charset=([^;]+)/) {
+        # The charset may be quoted.
+        if ($ct =~ /charset="?([^;"]+)/) {
             $charset= $1;
         }
         debug_print("Part Content-Type: $ct", 2);
         debug_print("Part Character Encoding: $charset", 2);
         if (!$ct || $ct =~ /^text\/plain/i) {
             $body = $part->body;
-            if (Bugzilla->params->{'utf8'}) {
-                $body = encode('UTF-8', decode($charset, $body));
+            if (Bugzilla->params->{'utf8'} && !utf8::is_utf8($body)) {
+                $body = Encode::decode($charset, $body);
             }
             last;
         }
@@ -337,6 +289,8 @@ sub html_strip {
     $var =~ s/\&gt;/>/g;
     $var =~ s/\&quot;/\"/g;
     $var =~ s/&#64;/@/g;
+    # Also remove undesired newlines and consecutive spaces.
+    $var =~ s/[\n\s]+/ /gms;
     return $var;
 }
 
@@ -359,10 +313,12 @@ sub die_handler {
        $msg =~ s/at .+ line.*$//ms;
        $msg =~ s/^Compilation failed in require.+$//ms;
        $msg = html_strip($msg);
-       my $reply = reply(to => $input_email, top_post => 1, body => "$msg\n");
+       my $from = Bugzilla->params->{'mailfrom'};
+       my $reply = reply(to => $input_email, from => $from, top_post => 1, 
+                         body => "$msg\n");
        MessageToMTA($reply->as_string);
     }
-    print STDERR $msg;
+    print STDERR "$msg\n";
     # We exit with a successful value, because we don't want the MTA
     # to *also* send a failure notice.
     exit;
@@ -388,6 +344,11 @@ my $mail_text = join("", @mail_lines);
 my $mail_fields = parse_mail($mail_text);
 
 my $username = $mail_fields->{'reporter'};
+# If emailsuffix is in use, we have to remove it from the email address.
+if (my $suffix = Bugzilla->params->{'emailsuffix'}) {
+    $username =~ s/\Q$suffix\E$//i;
+}
+
 my $user = Bugzilla::User->new({ name => $username })
     || ThrowUserError('invalid_username', { name => $username });
 
@@ -512,9 +473,9 @@ another email.
 
 =head3 Adding/Removing CCs
 
-You can't just add CCs to a bug by using the C<@cc> parameter like you
-can when you're filing a bug. To add CCs, you can specify them in a
-comma-separated list in C<@newcc>.
+To add CCs, you can specify them in a comma-separated list in C<@cc>.
+For backward compatibility, C<@newcc> can also be used. If both are
+present, C<@cc> takes precedence.
 
 To remove CCs, specify them as a comma-separated list in C<@removecc>.
 

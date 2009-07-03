@@ -176,7 +176,7 @@ sub directive_ok {
     return 1 if $directive =~ /^(IF|END|UNLESS|FOREACH|PROCESS|INCLUDE|
                                  BLOCK|USE|ELSE|NEXT|LAST|DEFAULT|FLUSH|
                                  ELSIF|SET|SWITCH|CASE|WHILE|RETURN|STOP|
-                                 TRY|CATCH|FINAL|THROW|CLEAR|MACRO)/x;
+                                 TRY|CATCH|FINAL|THROW|CLEAR|MACRO|FILTER)/x;
 
     # ? :
     if ($directive =~ /.+\?(.+):(.+)/) {
@@ -190,7 +190,7 @@ sub directive_ok {
     return 1 if $directive =~ /^[0-9]+$/;
 
     # Simple assignments
-    return 1 if $directive =~ /^[\w\.\$]+\s+=\s+/;
+    return 1 if $directive =~ /^[\w\.\$\{\}]+\s+=\s+/;
 
     # Conditional literals with either sort of quotes 
     # There must be no $ in the string for it to be a literal
@@ -211,7 +211,7 @@ sub directive_ok {
     return 1 if $directive =~ /^(time2str|url)\(/;
 
     # Safe Template Toolkit virtual methods
-    return 1 if $directive =~ /\.(length$|size$|push\()/;
+    return 1 if $directive =~ /\.(length$|size$|push\(|delete\()/;
 
     # Special Template Toolkit loop variable
     return 1 if $directive =~ /^loop\.(index|count)$/;

@@ -14,6 +14,7 @@
 #
 # Contributor(s): Tiago R. Mello <timello@async.com.br>
 #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+#                 Frédéric Buclin <LpSolit@gmail.com>
 
 use strict;
 
@@ -21,6 +22,7 @@ package Bugzilla::Milestone;
 
 use base qw(Bugzilla::Object);
 
+use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
 
@@ -31,6 +33,8 @@ use Bugzilla::Error;
 use constant DEFAULT_SORTKEY => 0;
 
 use constant DB_TABLE => 'milestones';
+use constant NAME_FIELD => 'value';
+use constant LIST_ORDER => 'sortkey, value';
 
 use constant DB_COLUMNS => qw(
     id
@@ -39,8 +43,26 @@ use constant DB_COLUMNS => qw(
     sortkey
 );
 
-use constant NAME_FIELD => 'value';
-use constant LIST_ORDER => 'sortkey, value';
+use constant REQUIRED_CREATE_FIELDS => qw(
+    name
+    product
+);
+
+use constant UPDATE_COLUMNS => qw(
+    value
+    sortkey
+);
+
+use constant VALIDATORS => {
+    product => \&_check_product,
+    sortkey => \&_check_sortkey,
+};
+
+use constant UPDATE_VALIDATORS => {
+    value => \&_check_value,
+};
+
+################################
 
 sub new {
     my $class = shift;
@@ -71,6 +93,119 @@ sub new {
     return $class->SUPER::new(@_);
 }
 
+sub run_create_validators {
+    my $class  = shift;
+    my $params = $class->SUPER::run_create_validators(@_);
+
+    my $product = delete $params->{product};
+    $params->{product_id} = $product->id;
+    $params->{value} = $class->_check_value($params->{name}, $product);
+    delete $params->{name};
+
+    return $params;
+}
+
+sub update {
+    my $self = shift;
+    my $changes = $self->SUPER::update(@_);
+
+    if (exists $changes->{value}) {
+        my $dbh = Bugzilla->dbh;
+        # The milestone value is stored in the bugs table instead of its ID.
+        $dbh->do('UPDATE bugs SET target_milestone = ?
+                  WHERE target_milestone = ? AND product_id = ?',
+                 undef, ($self->name, $changes->{value}->[0], $self->product_id));
+
+        # The default milestone also stores the value instead of the ID.
+        $dbh->do('UPDATE products SET defaultmilestone = ?
+                  WHERE id = ? AND defaultmilestone = ?',
+                 undef, ($self->name, $self->product_id, $changes->{value}->[0]));
+    }
+    return $changes;
+}
+
+sub remove_from_db {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    # The default milestone cannot be deleted.
+    if ($self->name eq $self->product->default_milestone) {
+        ThrowUserError('milestone_is_default', { milestone => $self });
+    }
+
+    if ($self->bug_count) {
+        # We don't want to delete bugs when deleting a milestone.
+        # Bugs concerned are reassigned to the default milestone.
+        my $bug_ids =
+          $dbh->selectcol_arrayref('SELECT bug_id FROM bugs
+                                    WHERE product_id = ? AND target_milestone = ?',
+                                    undef, ($self->product->id, $self->name));
+
+        my $timestamp = $dbh->selectrow_array('SELECT NOW()');
+
+        $dbh->do('UPDATE bugs SET target_milestone = ?, delta_ts = ?
+                   WHERE ' . $dbh->sql_in('bug_id', $bug_ids),
+                 undef, ($self->product->default_milestone, $timestamp));
+
+        require Bugzilla::Bug;
+        import Bugzilla::Bug qw(LogActivityEntry);
+        foreach my $bug_id (@$bug_ids) {
+            LogActivityEntry($bug_id, 'target_milestone',
+                             $self->name,
+                             $self->product->default_milestone,
+                             Bugzilla->user->id, $timestamp);
+        }
+    }
+
+    $dbh->do('DELETE FROM milestones WHERE id = ?', undef, $self->id);
+}
+
+################################
+# Validators
+################################
+
+sub _check_value {
+    my ($invocant, $name, $product) = @_;
+
+    $name = trim($name);
+    $name || ThrowUserError('milestone_blank_name');
+    if (length($name) > MAX_MILESTONE_SIZE) {
+        ThrowUserError('milestone_name_too_long', {name => $name});
+    }
+
+    $product = $invocant->product if (ref $invocant);
+    my $milestone = new Bugzilla::Milestone({product => $product, name => $name});
+    if ($milestone && (!ref $invocant || $milestone->id != $invocant->id)) {
+        ThrowUserError('milestone_already_exists', { name    => $milestone->name,
+                                                     product => $product->name });
+    }
+    return $name;
+}
+
+sub _check_sortkey {
+    my ($invocant, $sortkey) = @_;
+
+    # Keep a copy in case detaint_signed() clears the sortkey
+    my $stored_sortkey = $sortkey;
+
+    if (!detaint_signed($sortkey) || $sortkey < MIN_SMALLINT || $sortkey > MAX_SMALLINT) {
+        ThrowUserError('milestone_sortkey_invalid', {sortkey => $stored_sortkey});
+    }
+    return $sortkey;
+}
+
+sub _check_product {
+    my ($invocant, $product) = @_;
+    return Bugzilla->user->check_can_admin_product($product->name);
+}
+
+################################
+# Methods
+################################
+
+sub set_name { $_[0]->set('value', $_[1]); }
+sub set_sortkey { $_[0]->set('sortkey', $_[1]); }
+
 sub bug_count {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
@@ -92,39 +227,12 @@ sub name       { return $_[0]->{'value'};      }
 sub product_id { return $_[0]->{'product_id'}; }
 sub sortkey    { return $_[0]->{'sortkey'};    }
 
-################################
-#####     Subroutines      #####
-################################
+sub product {
+    my $self = shift;
 
-sub check_milestone {
-    my ($product, $milestone_name) = @_;
-
-    unless ($milestone_name) {
-        ThrowUserError('milestone_not_specified');
-    }
-
-    my $milestone = new Bugzilla::Milestone({ product => $product,
-                                              name    => $milestone_name });
-    unless ($milestone) {
-        ThrowUserError('milestone_not_valid',
-                       {'product' => $product->name,
-                        'milestone' => $milestone_name});
-    }
-    return $milestone;
-}
-
-sub check_sort_key {
-    my ($milestone_name, $sortkey) = @_;
-    # Keep a copy in case detaint_signed() clears the sortkey
-    my $stored_sortkey = $sortkey;
-
-    if (!detaint_signed($sortkey) || $sortkey < -32768
-        || $sortkey > 32767) {
-        ThrowUserError('milestone_sortkey_invalid',
-                       {'name' => $milestone_name,
-                        'sortkey' => $stored_sortkey});
-    }
-    return $sortkey;
+    require Bugzilla::Product;
+    $self->{'product'} ||= new Bugzilla::Product($self->product_id);
+    return $self->{'product'};
 }
 
 1;
@@ -139,13 +247,21 @@ Bugzilla::Milestone - Bugzilla product milestone class.
 
     use Bugzilla::Milestone;
 
-    my $milestone = new Bugzilla::Milestone(
-        { product => $product, name => 'milestone_value' });
+    my $milestone = new Bugzilla::Milestone({ name => $name, product => $product });
 
+    my $name       = $milestone->name;
     my $product_id = $milestone->product_id;
-    my $value = $milestone->value;
+    my $product    = $milestone->product;
+    my $sortkey    = $milestone->sortkey;
 
-    my $milestone = $hash_ref->{'milestone_value'};
+    my $milestone = Bugzilla::Milestone->create(
+        { name => $name, product => $product, sortkey => $sortkey });
+
+    $milestone->set_name($new_name);
+    $milestone->set_sortkey($new_sortkey);
+    $milestone->update();
+
+    $milestone->remove_from_db;
 
 =head1 DESCRIPTION
 
@@ -155,15 +271,47 @@ Milestone.pm represents a Product Milestone object.
 
 =over
 
-=item C<new($product_id, $value)>
+=item C<new({name => $name, product => $product})>
 
  Description: The constructor is used to load an existing milestone
-              by passing a product id and a milestone value.
+              by passing a product object and a milestone name.
 
- Params:      $product_id - Integer with a Bugzilla product id.
-              $value - String with a milestone value.
+ Params:      $product - a Bugzilla::Product object.
+              $name - the name of a milestone (string).
 
  Returns:     A Bugzilla::Milestone object.
+
+=item C<name()>
+
+ Description: Name (value) of the milestone.
+
+ Params:      none.
+
+ Returns:     The name of the milestone.
+
+=item C<product_id()>
+
+ Description: ID of the product the milestone belongs to.
+
+ Params:      none.
+
+ Returns:     The ID of a product.
+
+=item C<product()>
+
+ Description: The product object of the product the milestone belongs to.
+
+ Params:      none.
+
+ Returns:     A Bugzilla::Product object.
+
+=item C<sortkey()>
+
+ Description: Sortkey of the milestone.
+
+ Params:      none.
+
+ Returns:     The sortkey of the milestone.
 
 =item C<bug_count()>
 
@@ -173,22 +321,55 @@ Milestone.pm represents a Product Milestone object.
 
  Returns:     Integer with the number of bugs.
 
+=item C<set_name($new_name)>
+
+ Description: Changes the name of the milestone.
+
+ Params:      $new_name - new name of the milestone (string). This name
+                          must be unique within the product.
+
+ Returns:     Nothing.
+
+=item C<set_sortkey($new_sortkey)>
+
+ Description: Changes the sortkey of the milestone.
+
+ Params:      $new_sortkey - new sortkey of the milestone (signed integer).
+
+ Returns:     Nothing.
+
+=item C<update()>
+
+ Description: Writes the new name and/or the new sortkey into the DB.
+
+ Params:      none.
+
+ Returns:     A hashref with changes made to the milestone object.
+
+=item C<remove_from_db()>
+
+ Description: Deletes the current milestone from the DB. The object itself
+              is not destroyed.
+
+ Params:      none.
+
+ Returns:     Nothing.
+
 =back
 
-=head1 SUBROUTINES
+=head1 CLASS METHODS
 
 =over
 
-=item C<check_milestone($product, $milestone_name)>
+=item C<create({name => $name, product => $product, sortkey => $sortkey})>
 
- Description: Checks if a milestone name was passed in
-              and if it is a valid milestone.
+ Description: Create a new milestone for the given product.
 
- Params:      $product - Bugzilla::Product object.
-              $milestone_name - String with a milestone name.
+ Params:      $name    - name of the new milestone (string). This name
+                         must be unique within the product.
+              $product - a Bugzilla::Product object.
+              $sortkey - the sortkey of the new milestone (signed integer)
 
- Returns:     Bugzilla::Milestone object.
+ Returns:     A Bugzilla::Milestone object.
 
 =back
-
-=cut

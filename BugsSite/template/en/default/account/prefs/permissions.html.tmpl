@@ -1,4 +1,3 @@
-[%# 1.0@bugzilla.org %]
 [%# The contents of this file are subject to the Mozilla Public
   # License Version 1.1 (the "License"); you may not use this file
   # except in compliance with the License. You may obtain a copy of
@@ -36,7 +35,7 @@
   <tr>
     <td>
       [% IF has_bits.size %]
-        You have the following permission [% terms.bits %] set on your account:
+        You have the following permission bits set on your account:
         <table align="center">
           [% FOREACH bit_description = has_bits %]
             <tr>
@@ -63,7 +62,7 @@
         [% END %]
 
       [% ELSE %]
-        There are no permission [% terms.bits %] set on your account.
+        There are no permission bits set on your account.
       [% END %]
 
       [% IF user.groups.editusers %]
@@ -72,7 +71,7 @@
         all permissions for all users.
       [% ELSIF set_bits.size %]
         <br>
-        And you can turn on or off the following [% terms.bits %] for
+        And you can turn on or off the following bits for
         <a href="editusers.cgi">other users</a>:
           <table align="center">
           [% FOREACH bit_description = set_bits %]
