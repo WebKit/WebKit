@@ -253,7 +253,7 @@ class Git(SCM):
         self.run_command(['git', 'reset', '--hard', 'trunk'])
     
     def local_commits(self):
-        return self.run_command('git', 'log', '--pretty=oneline', 'HEAD...trunk').splitlines()
+        return self.run_command(['git', 'log', '--pretty=oneline', 'HEAD...trunk']).splitlines()
 
     def working_directory_is_clean(self):
         return self.run_command(['git', 'diff-index', 'HEAD']) == ""
