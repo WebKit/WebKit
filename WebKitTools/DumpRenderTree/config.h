@@ -36,6 +36,7 @@
 
 #if PLATFORM(WIN)
 #define WTF_PLATFORM_CF 1 
+#define WTF_PLATFORM_CG 1
 
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500
