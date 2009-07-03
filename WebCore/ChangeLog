@@ -1,3 +1,19 @@
+2009-07-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Background audio stops playing when JS GC runs
+        https://bugs.webkit.org/show_bug.cgi?id=26956
+        
+        Ensure we keep the Audio object around while it is playing, so that it
+        doesn't get collected.
+        
+        Not testable because there's no way to know whether the audio keeps
+        playing without holding a reference to it.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::isObservableThroughDOM):
+
 2009-07-02  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Jan Alonzo.
