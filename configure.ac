@@ -4,6 +4,13 @@ m4_define([webkit_major_version], [1])
 m4_define([webkit_minor_version], [1])
 m4_define([webkit_micro_version], [10])
 
+# This is the version we'll be using as part of our User-Agent string
+# e.g., AppleWebKit/$(webkit_user_agent_version) ...
+#
+# Sourced from WebCore/Configurations/Version.xcconfig
+m4_define([webkit_user_agent_major_version], [531])
+m4_define([webkit_user_agent_minor_version], [2])
+
 AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
 AC_CONFIG_MACRO_DIR([autotools])
@@ -16,9 +23,13 @@ AC_CANONICAL_HOST
 WEBKIT_MAJOR_VERSION=webkit_major_version
 WEBKIT_MINOR_VERSION=webkit_minor_version
 WEBKIT_MICRO_VERSION=webkit_micro_version
+WEBKIT_USER_AGENT_MAJOR_VERSION=webkit_user_agent_major_version
+WEBKIT_USER_AGENT_MINOR_VERSION=webkit_user_agent_minor_version
 AC_SUBST(WEBKIT_MAJOR_VERSION)
 AC_SUBST(WEBKIT_MINOR_VERSION)
 AC_SUBST(WEBKIT_MICRO_VERSION)
+AC_SUBST(WEBKIT_USER_AGENT_MAJOR_VERSION)
+AC_SUBST(WEBKIT_USER_AGENT_MINOR_VERSION)
 
 AC_CONFIG_SRCDIR([WebCore/config.h])
 

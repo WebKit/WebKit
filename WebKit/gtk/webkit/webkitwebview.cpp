@@ -934,9 +934,6 @@ static void webkit_web_view_dispose(GObject* object)
 
         gtk_target_list_unref(priv->paste_target_list);
         priv->paste_target_list = NULL;
-
-        delete priv->userAgent;
-        priv->userAgent = NULL;
     }
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);

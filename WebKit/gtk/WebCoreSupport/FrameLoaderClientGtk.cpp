@@ -64,9 +64,6 @@
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <stdio.h>
-#if PLATFORM(UNIX)
-#include <sys/utsname.h>
-#endif
 
 using namespace WebCore;
 
@@ -74,7 +71,6 @@ namespace WebKit {
 
 FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     : m_frame(frame)
-    , m_userAgent("")
     , m_policyDecision(0)
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
@@ -88,86 +84,10 @@ FrameLoaderClient::~FrameLoaderClient()
         g_object_unref(m_policyDecision);
 }
 
-static String agentPlatform()
-{
-#ifdef GDK_WINDOWING_X11
-    return "X11";
-#elif defined(GDK_WINDOWING_WIN32)
-    return "Windows";
-#elif defined(GDK_WINDOWING_QUARTZ)
-    return "Macintosh";
-#elif defined(GDK_WINDOWING_DIRECTFB)
-    return "DirectFB";
-#else
-    notImplemented();
-    return "Unknown";
-#endif
-}
-
-static String agentOS()
-{
-#if PLATFORM(DARWIN)
-#if PLATFORM(X86)
-    return "Intel Mac OS X";
-#else
-    return "PPC Mac OS X";
-#endif
-#elif PLATFORM(UNIX)
-    struct utsname name;
-    if (uname(&name) != -1)
-        return String::format("%s %s", name.sysname, name.machine);
-    else
-        return "Unknown";
-#elif PLATFORM(WIN_OS)
-    // FIXME: Compute the Windows version
-    return "Windows";
-#else
-    notImplemented();
-    return "Unknown";
-#endif
-}
-
-static String composeUserAgent()
-{
-    // This is a liberal interpretation of http://www.mozilla.org/build/revised-user-agent-strings.html
-    // See also http://developer.apple.com/internet/safari/faq.html#anchor2
-
-    String ua;
-
-    // Product
-    ua += "Mozilla/5.0";
-
-    // Comment
-    ua += " (";
-    ua += agentPlatform(); // Platform
-    ua += "; U; "; // Security
-    ua += agentOS(); // OS-or-CPU
-    ua += "; ";
-    ua += defaultLanguage(); // Localization information
-    ua += ") ";
-
-    // WebKit Product
-    // FIXME: The WebKit version is hardcoded
-    static const String webKitVersion = "528.5+";
-    ua += "AppleWebKit/" + webKitVersion;
-    ua += " (KHTML, like Gecko, ";
-    // We mention Safari since many broken sites check for it (OmniWeb does this too)
-    // We re-use the WebKit version, though it doesn't seem to matter much in practice
-    ua += "Safari/" + webKitVersion;
-    ua += ") ";
-
-    // Vendor Product
-    ua += g_get_prgname();
-
-    return ua;
-}
-
 String FrameLoaderClient::userAgent(const KURL&)
 {
-    if (m_userAgent.isEmpty())
-        m_userAgent = composeUserAgent();
-
-    return m_userAgent;
+    WebKitWebSettings* settings = webkit_web_view_get_settings(getViewFromFrame(m_frame));
+    return String::fromUTF8(webkit_web_settings_get_user_agent(settings));
 }
 
 static void notifyStatus(WebKitWebFrame* frame, WebKitLoadStatus loadStatus)

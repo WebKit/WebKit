@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
+ * Copyright (C) 2009 Jan Michael Alonzo <jmalonzo@gmail.com
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,13 +54,16 @@ struct _WebKitWebSettingsClass {
 };
 
 WEBKIT_API GType
-webkit_web_settings_get_type (void);
+webkit_web_settings_get_type          (void);
 
 WEBKIT_API WebKitWebSettings *
-webkit_web_settings_new      (void);
+webkit_web_settings_new               (void);
 
 WEBKIT_API WebKitWebSettings *
-webkit_web_settings_copy     (WebKitWebSettings *web_settings);
+webkit_web_settings_copy              (WebKitWebSettings *web_settings);
+
+WEBKIT_API G_CONST_RETURN gchar *
+webkit_web_settings_get_user_agent    (WebKitWebSettings *web_settings);
 
 G_END_DECLS
 

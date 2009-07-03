@@ -3,6 +3,7 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2008 Collabora Ltd.
  * Copyright (C) 2008 Holger Hans Peter Freyther
+ * Copyright (C) 2009 Jan Michael Alonzo
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,13 +22,21 @@
  */
 
 #include "config.h"
-
 #include "webkitwebsettings.h"
-#include "webkitprivate.h"
 
-#include <glib/gi18n-lib.h>
+#include "webkitprivate.h"
+#include "webkitversion.h"
+
+#include "CString.h"
 #include "FileSystem.h"
 #include "PluginDatabase.h"
+#include "Language.h"
+#include "PlatformString.h"
+
+#include <glib/gi18n-lib.h>
+#if PLATFORM(UNIX)
+#include <sys/utsname.h>
+#endif
 
 /**
  * SECTION:webkitwebsettings
@@ -81,6 +90,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_html5_database;
     gboolean enable_html5_local_storage;
     gboolean enable_xss_auditor;
+    gchar* user_agent;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -115,8 +125,66 @@ enum {
     PROP_ENABLE_CARET_BROWSING,
     PROP_ENABLE_HTML5_DATABASE,
     PROP_ENABLE_HTML5_LOCAL_STORAGE,
-    PROP_ENABLE_XSS_AUDITOR
+    PROP_ENABLE_XSS_AUDITOR,
+    PROP_USER_AGENT
 };
+
+// Create a default user agent string
+// This is a liberal interpretation of http://www.mozilla.org/build/revised-user-agent-strings.html
+// See also http://developer.apple.com/internet/safari/faq.html#anchor2
+static String webkit_get_user_agent()
+{
+    gchar* platform;
+    gchar* osVersion;
+
+#if PLATFORM(X11)
+    platform = g_strdup("X11");
+#elif PLATFORM(WIN_OS)
+    platform = g_strdup("Windows");
+#elif PLATFORM(MAC)
+    platform = g_strdup("Macintosh");
+#elif defined(GDK_WINDOWING_DIRECTFB)
+    platform = g_strdup("DirectFB");
+#else
+    platform = g_strdup("Unknown");
+#endif
+
+   // FIXME: platform/version detection can be shared.
+#if PLATFORM(DARWIN)
+
+#if PLATFORM(X86)
+    osVersion = g_strdup("Intel Mac OS X");
+#else
+    osVersion = g_strdup("PPC Mac OS X");
+#endif
+
+#elif PLATFORM(UNIX)
+    struct utsname name;
+    if (uname(&name) != -1)
+        osVersion = g_strdup_printf("%s %s", name.sysname, name.machine);
+    else
+        osVersion = g_strdup("Unknown");
+
+#elif PLATFORM(WIN_OS)
+    // FIXME: Compute the Windows version
+    osVersion = g_strdup("Windows");
+
+#else
+    osVersion = g_strdup("Unknown");
+#endif
+
+    // We mention Safari since many broken sites check for it (OmniWeb does this too)
+    // We re-use the WebKit version, though it doesn't seem to matter much in practice
+
+    DEFINE_STATIC_LOCAL(const String, uaVersion, (String::format("%d.%d+", WEBKIT_USER_AGENT_MAJOR_VERSION, WEBKIT_USER_AGENT_MINOR_VERSION)));
+    DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (%s; U; %s; %s) AppleWebKit/%s (KHTML, like Gecko) Safari/%s",
+                                                                platform, osVersion, defaultLanguage().utf8().data(), uaVersion.utf8().data(), uaVersion.utf8().data())));
+
+    g_free(osVersion);
+    g_free(platform);
+
+    return staticUA;
+}
 
 static void webkit_web_settings_finalize(GObject* object);
 
@@ -474,6 +542,25 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          FALSE,
                                                          flags));
 
+    /**
+     * WebKitWebSettings:user-agent:
+     *
+     * The User-Agent string used by WebKitGtk.
+     *
+     * This will return a default User-Agent string if a custom string wasn't
+     * provided by the application. Setting this property to a NULL value or
+     * an empty string will result in the User-Agent string being reset to the
+     * default value.
+     *
+     * Since: 1.1.11
+     */
+    g_object_class_install_property(gobject_class, PROP_USER_AGENT,
+                                    g_param_spec_string("user-agent",
+                                                        _("User Agent"),
+                                                        _("The User-Agent string used by WebKitGtk"),
+                                                        webkit_get_user_agent().utf8().data(),
+                                                        flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -511,6 +598,8 @@ static void webkit_web_settings_finalize(GObject* object)
 
     g_slist_foreach(priv->spell_checking_languages_list, free_spell_checking_language, NULL);
     g_slist_free(priv->spell_checking_languages_list);
+
+    g_free(priv->user_agent);
 
     G_OBJECT_CLASS(webkit_web_settings_parent_class)->finalize(object);
 }
@@ -639,6 +728,13 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_XSS_AUDITOR:
         priv->enable_xss_auditor = g_value_get_boolean(value);
         break;
+    case PROP_USER_AGENT:
+        g_free(priv->user_agent);
+        if (!g_value_get_string(value) || !strlen(g_value_get_string(value)))
+            priv->user_agent = g_strdup(webkit_get_user_agent().utf8().data());
+        else
+            priv->user_agent = g_strdup(g_value_get_string(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -735,6 +831,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_ENABLE_XSS_AUDITOR:
         g_value_set_boolean(value, priv->enable_xss_auditor);
         break;
+    case PROP_USER_AGENT:
+        g_value_set_string(value, priv->user_agent);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -794,6 +893,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-html5-database", priv->enable_html5_database,
                  "enable-html5-local-storage", priv->enable_html5_local_storage,
                  "enable-xss-auditor", priv->enable_xss_auditor,
+                 "user-agent", webkit_web_settings_get_user_agent(web_settings),
                  NULL));
 
     return copy;
@@ -833,4 +933,22 @@ GSList* webkit_web_settings_get_spell_languages(WebKitWebView *web_view)
     GSList* list = priv->spell_checking_languages_list;
 
     return list;
+}
+
+/**
+ * webkit_web_settings_get_user_agent:
+ * @web_settings: a #WebKitWebSettings
+ *
+ * Returns the User-Agent string currently used by the web view(s) associated
+ * with the @web_settings.
+ *
+ * Since: 1.1.11
+ */
+G_CONST_RETURN gchar* webkit_web_settings_get_user_agent(WebKitWebSettings* webSettings)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(webSettings), NULL);
+
+    WebKitWebSettingsPrivate* priv = webSettings->priv;
+
+    return priv->user_agent;
 }

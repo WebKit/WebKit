@@ -173,7 +173,6 @@ namespace WebKit {
     private:
         WebKitWebFrame* m_frame;
         WebCore::ResourceResponse m_response;
-        WebCore::String m_userAgent;
         WebKitWebPolicyDecision* m_policyDecision;
 
         // Plugin view to redirect data to
