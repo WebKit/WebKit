@@ -126,7 +126,7 @@ WebInspector.ResourcesPanel = function()
 
     this.resourcesTreeElement.expand();
 
-    var panelEnablerHeading = WebInspector.UIString("You need to enable resource tracking to use the this panel.");
+    var panelEnablerHeading = WebInspector.UIString("You need to enable resource tracking to use this panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling resource tracking will reload the page and make page loading slower.");
     var panelEnablerButton = WebInspector.UIString("Enable resource tracking");
 
