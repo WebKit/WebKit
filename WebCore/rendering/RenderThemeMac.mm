@@ -1658,20 +1658,6 @@ String RenderThemeMac::extraMediaControlsStyleSheet()
     else
         return String();
 }
-
-bool RenderThemeMac::hitTestMediaControlPart(RenderObject* o, const IntPoint& absPoint)
-{
-    if (!o->isBox())
-        return false;
-        
-    if (mediaControllerTheme() == MediaControllerThemeQT) {
-        ControlPart part = o->style()->appearance();
-        FloatPoint localPoint = o->absoluteToLocal(absPoint, false, true);  // respect transforms
-        return wkHitTestMediaUIPart(part - MediaFullscreenButtonPart, MediaControllerThemeQT, CGRect(toRenderBox(o)->borderBoxRect()), CGPoint(localPoint));
-    }
-    else
-        return RenderTheme::hitTestMediaControlPart(o, absPoint);
-}
 #endif
 
 NSPopUpButtonCell* RenderThemeMac::popupButton() const

@@ -130,8 +130,6 @@ protected:
     virtual bool paintMediaCurrentTime(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
     virtual bool paintMediaTimeRemaining(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
-    // Media controls
-    virtual bool hitTestMediaControlPart(RenderObject*, const IntPoint& absPoint);
     virtual String extraMediaControlsStyleSheet();
 #endif
 
