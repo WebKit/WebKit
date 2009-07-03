@@ -1,3 +1,17 @@
+2009-07-02  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26815
+        [Gtk] text-selection-changed events are not issued for the correct
+        object when the selection spans multiple objects
+
+        Get the focused node from the end of the selection, not the start,
+        so we can detect when we cross object boundaries.
+
+        * editing/gtk/SelectionControllerGtk.cpp:
+        (WebCore::SelectionController::notifyAccessibilityForSelectionChange):
+
 2009-07-02  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
