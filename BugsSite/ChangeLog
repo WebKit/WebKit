@@ -1,5 +1,11 @@
 2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
 
+        Changed Perl scripts to use #!/usr/bin/env perl
+
+        perl -pi -e 's@#\!/usr/bin/perl@#\!/usr/bin/env perl@' *.cgi *.pl */*.pl
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
         Replace Bugzilla favicon with webkit.org favicon
 
         * favicon.ico: Removed.

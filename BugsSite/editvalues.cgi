@@ -1,4 +1,4 @@
-#!/usr/bin/perl -wT
+#!/usr/bin/env perl -wT
 # The contents of this file are subject to the Mozilla Public
 # License Version 1.1 (the "License"); you may not use this file
 # except in compliance with the License. You may obtain a copy of
