@@ -1,5 +1,13 @@
 2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
 
+        Config file for contrib/recode.pl when upgrading bugs.webkit.org
+
+        Current as of midday on Wednesday, July 1, 2009.
+
+        * contrib/recode-overrides.txt: Added.
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
         Workaround for WebKit Bug 9630 when running contrib/recode.pl
 
         A number of WebKit nightly builds included Bug 9630 which caused
