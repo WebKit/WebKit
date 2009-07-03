@@ -6,28 +6,27 @@
            'LDAPserver' => '',
            'LDAPstarttls' => 0,
            'LDAPuidattribute' => 'uid',
+           'RADIUS_NAS_IP' => '',
+           'RADIUS_email_suffix' => '',
+           'RADIUS_secret' => '',
+           'RADIUS_server' => '',
            'allow_attach_url' => 0,
            'allow_attachment_deletion' => 0,
-           'allowbugdeletion' => 0,
+           'allow_attachment_display' => '1',
+           'allowbugdeletion' => '1',
            'allowemailchange' => '1',
            'allowuserdeletion' => 0,
            'announcehtml' => '',
+           'attachment_base' => '',
            'auth_env_email' => '',
            'auth_env_id' => '',
            'auth_env_realname' => '',
            'bonsai_url' => '',
            'chartgroup' => 'editbugs',
-           'commentonaccept' => 0,
+           'commentonchange_resolution' => 0,
            'commentonclearresolution' => 0,
-           'commentonclose' => 0,
-           'commentonconfirm' => 0,
-           'commentoncreate' => '1',
            'commentonduplicate' => 0,
-           'commentonreassign' => 0,
            'commentonreassignbycomponent' => 0,
-           'commentonreopen' => '1',
-           'commentonresolve' => 0,
-           'commentonverify' => 0,
            'confirmuniqueusermatch' => 1,
            'convert_uncompressed_images' => 0,
            'cookiedomain' => '',
@@ -35,26 +34,25 @@
            'createemailregexp' => '.*',
            'cvsroot' => '',
            'cvsroot_get' => '',
-           'defaultlanguage' => 'en',
            'defaultopsys' => 'Mac OS X 10.5',
            'defaultplatform' => '',
            'defaultpriority' => 'P2',
            'defaultquery' => 'bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailqa_contact2=1&order=Importance&long_desc_type=substring',
            'defaultseverity' => 'Normal',
            'docs_urlbase' => 'docs/html/',
+           'duplicate_or_move_bug_status' => 'RESOLVED',
            'emailregexp' => '^[\\w\\.\\+\\-=]+@[\\w\\.\\-]+\\.[\\w\\-]+$',
            'emailregexpdesc' => 'A legal address must contain exactly one \'@\', and at least one \'.\' after the @.',
            'emailsuffix' => '',
            'globalwatchers' => '',
            'insidergroup' => '',
-           'languages' => 'en',
            'letsubmitterchoosemilestone' => 1,
            'letsubmitterchoosepriority' => 1,
            'loginnetmask' => '32',
            'lxr_root' => '',
            'lxr_url' => '',
            'mail_delivery_method' => 'Sendmail',
-           'mailfrom' => 'bugzilla-daemon',
+           'mailfrom' => 'bugzilla-daemon@webkit.org',
            'maintainer' => 'admin@webkit.org',
            'makeproductgroups' => 0,
            'maxattachmentsize' => '20000',
@@ -73,21 +71,6 @@
            'musthavemilestoneonaccept' => 0,
            'mybugstemplate' => 'buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=%userid%&amp;emailtype1=exact&amp;emailassigned_to1=1&amp;emailreporter1=1',
            'noresolveonopenblockers' => 0,
-           'passwordmail' => 'From: bugzilla-daemon@webkit.org
-To: %mailaddress%
-Subject: Your Bugzilla password.
-
-To use the wonders of Bugzilla, you can use the following:
-
- E-mail address: %login%
-       Password: %password%
-
- To change your password, go to:
- %urlbase%userprefs.cgi
-
-
-
-',
            'proxy_url' => '',
            'querysharegroup' => 'editbugs',
            'quicksearch_comment_cutoff' => '4',
@@ -102,6 +85,8 @@ To use the wonders of Bugzilla, you can use the following:
            'showallproducts' => 0,
            'shutdownhtml' => '',
            'smtp_debug' => 0,
+           'smtp_password' => '',
+           'smtp_username' => '',
            'smtpserver' => 'localhost',
            'specific_search_allow_empty_words' => 0,
            'ssl' => 'always',
@@ -124,67 +109,7 @@ To use the wonders of Bugzilla, you can use the following:
            'usetargetmilestone' => 0,
            'usevisibilitygroups' => 0,
            'usevotes' => 1,
-           'voteremovedmail' => 'From: bugzilla-daemon@webkit.org
-To: %to%
-Subject: [Bug %bugid%] Some or all of your votes have been removed.
-
-Some or all of your votes have been removed from bug %bugid%.
-
-%votesoldtext%
-
-%votesnewtext%
-
-Reason: %reason%
-
-%urlbase%show_bug.cgi?id=%bugid%
-
-
-
-',
-           'webdotbase' => 'http://www.research.att.com/~north/cgi-bin/webdot.cgi/%urlbase%',
-           'whinedays' => 7,
-           'whinemail' => '&tFrom: %maintainer%
-To: %email%
-Subject: Your Bugzilla buglist needs attention.
-
-[This e-mail has been automatically generated.]
-
-You have one or more bugs assigned to you in the Bugzilla 
-bugsystem (%urlbase%) that require
-attention.
-
-All of these bugs are in the NEW or REOPENED state, and have not
-been touched in %whinedays% days or more.  You need to take a look
-at them, and decide on an initial action.
-
-Generally, this means one of three things:
-
-(1) You decide this bug is really quick to deal with (like, it\'s INVALID),
-    and so you get rid of it immediately.
-(2) You decide the bug doesn\'t belong to you, and you reassign it to someone
-    else.  (Hint: if you don\'t know who to reassign it to, make sure that
-    the Component field seems reasonable, and then use the "Reassign bug to
-    default assignee of selected component; option.)
-(3) You decide the bug belongs to you, but you can\'t solve it this moment.
-    Just use the "Accept bug" command.
-
-To get a list of all NEW/REOPENED bugs, you can use this URL (bookmark
-it if you like!):
-
- %urlbase%buglist.cgi?bug_status=NEW&bug_status=REOPENED&assigned_to=%userid%
-
-Or, you can use the general query page, at
-%urlbase%query.cgi
-
-Appended below are the individual URLs to get to all of your NEW bugs that
-haven\'t been touched for a week or more.
-
-You will get this message once a day until you\'ve dealt with these bugs!
-
-
-
-',
-           'utf8' => '0',
+           'utf8' => '1',
            'webdotbase' => 'http://www.research.att.com/~north/cgi-bin/webdot.cgi/%urlbase%',
            'whinedays' => 7
          );
