@@ -263,7 +263,7 @@ foreach my $table ($dbh->bz_table_list_real) {
                     # We only show failures if they don't appear to be
                     # ASCII.
                     if ($switch{'show-failures'} && !$encoding
-                        && !is_valid_utf8($data)) 
+                        && !is_valid_utf8($data) && !$overrides{$digest}) 
                     {
                         my $truncated = trunc($data, $should_truncate);
                         print "Row: [$pk_line]\n",

@@ -1,5 +1,13 @@
 2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
 
+        Don't print "Failed to guess" warning if an override is available
+
+        * contrib/recode.pl: Check that %overrides does NOT contain a
+        key matching the current digest before printing out the warning
+        about a failed charset guess.
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
         Added --[no-]truncate switch to contrib/recode.pl
 
         * contrib/recode.pl: Added --[no-]truncate switch to make
