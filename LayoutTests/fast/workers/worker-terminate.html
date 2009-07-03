@@ -43,10 +43,9 @@ worker4.onmessage = function(evt) {
     worker4.postMessage("eval true");
     worker4.terminate();
     log("Received message from worker4.");
+    setTimeout("log('DONE'); if (window.layoutTestController) layoutTestController.notifyDone()", 1000);
 }
 worker4.postMessage("eval true");
-
-setTimeout("log('DONE'); if (window.layoutTestController) layoutTestController.notifyDone()", 500);
 
 </script>
 </body>
