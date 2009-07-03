@@ -63,7 +63,8 @@ use constant SPECIAL_KEYS => {
 
 # "truncate" is a file operation in perl, so we can't use that name.
 sub trunc {
-    my ($str) = @_;
+    my ($str, $should_truncate) = @_;
+    return $str if !$should_truncate;
     my $truncated = substr($str, 0, MAX_STRING_LEN);
     if (length($truncated) ne length($str)) {
         $truncated .= '...';
@@ -130,7 +131,7 @@ sub is_valid_utf8 {
 
 my %switch;
 GetOptions(\%switch, 'dry-run', 'guess', 'charset=s', 'show-failures',
-                     'overrides=s', 'help|h');
+                     'overrides=s', 'truncate!', 'help|h');
 
 pod2usage({ -verbose => 1 }) if $switch{'help'};
 
@@ -217,6 +218,8 @@ foreach my $table ($dbh->bz_table_list_real) {
         }
     }
 
+    my $should_truncate = exists $switch{'truncate'} ? $switch{'truncate'} : 1;
+
     foreach my $column (@columns) {
         my $def = $dbh->bz_column_info($table, $column);
         # If this is a text column, it may need work.
@@ -262,7 +265,7 @@ foreach my $table ($dbh->bz_table_list_real) {
                     if ($switch{'show-failures'} && !$encoding
                         && !is_valid_utf8($data)) 
                     {
-                        my $truncated = trunc($data);
+                        my $truncated = trunc($data, $should_truncate);
                         print "Row: [$pk_line]\n",
                               "Failed to guess: Key: $digest",
                               " DATA: $truncated\n";
@@ -287,8 +290,8 @@ foreach my $table ($dbh->bz_table_list_real) {
                     my $decoded = encode('utf8', decode($encoding, $data));
                     if ($switch{'dry-run'} && $data ne $decoded) {
                         print "Row:  [$pk_line]\n",
-                              "From: [" . trunc($data) . "] Key: $digest\n",
-                              "To:   [" . trunc($decoded) . "]",
+                              "From: [" . trunc($data, $should_truncate) . "] Key: $digest\n",
+                              "To:   [" . trunc($decoded, $should_truncate) . "]",
                               " Encoding : $encoding\n";
                     }
                     else {
@@ -312,7 +315,7 @@ to UTF-8.
 =head1 SYNOPSIS
 
  contrib/recode.pl [--guess [--show-failures]] [--charset=iso-8859-2]
-                   [--overrides=file_name]
+                   [--overrides=file_name] [--[no-]truncate]
 
   --dry-run        Don't modify the database.
 
@@ -325,6 +328,8 @@ to UTF-8.
 
   --overrides      Specify a file containing overrides. See --help
                    for more info.
+
+  --[no-]truncate  Truncate from/to string output (default: yes).
 
   --help           Display detailed help.
 
@@ -376,5 +381,10 @@ If --guess fails to guess a charset, print out the data it failed on.
 This is a way of specifying certain encodings to override the encodings of 
 --guess. The file is a series of lines. The line should start with the Key 
 from --dry-run, and then a space, and then the encoding you'd like to use.
+
+=item  --[no-]truncate
+
+This specifies whether the from/to text that is converted should be
+truncated or not.  The default is to truncate the text.
 
 =back
