@@ -1,5 +1,16 @@
 2009-07-02  Brent Fulgham  <bfulgham@webkit.org>
 
+        Windows build fix, no review.
+
+
+        Reverting PixelDumpSupportWin.cpp change to avoid strange
+        error on the build-bot.
+ 
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView):
+
+2009-07-02  Brent Fulgham  <bfulgham@webkit.org>
+
         Build fix, no review.
 
         * DumpRenderTree/config.h:
