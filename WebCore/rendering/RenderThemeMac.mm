@@ -1477,6 +1477,21 @@ void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
 
 #if ENABLE(VIDEO)
 
+// Utility to scale when the UI part are not scaled by wkDrawMediaUIPart
+static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect &originalRect)
+{
+    float zoomLevel = o->style()->effectiveZoom();
+    FloatRect unzoomedRect(originalRect);
+    if (zoomLevel != 1.0f && mediaControllerTheme() == MediaControllerThemeQT) {
+        unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
+        unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
+        paintInfo.context->translate(unzoomedRect.x(), unzoomedRect.y());
+        paintInfo.context->scale(FloatSize(zoomLevel, zoomLevel));
+        paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
+    }
+    return unzoomedRect;
+}
+
 bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
@@ -1558,7 +1573,10 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const RenderObject::
         currentTime = player->currentTime();
     }
  
-    wkDrawMediaSliderTrack(mediaControllerTheme(), paintInfo.context->platformContext(), r, timeLoaded, currentTime, duration);
+    paintInfo.context->save();
+    FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
+    wkDrawMediaSliderTrack(mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, timeLoaded, currentTime, duration);
+    paintInfo.context->restore();
     return false;
 }
 
@@ -1613,8 +1631,10 @@ bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const RenderObject::
     if (!node)
         return false;
 
-    LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaCurrentTimeDisplay, mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
+    paintInfo.context->save();
+    FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
+    wkDrawMediaUIPart(MediaCurrentTimeDisplay, mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, node->active());
+    paintInfo.context->restore();
     return false;
 }
 
@@ -1624,8 +1644,10 @@ bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const RenderObject
     if (!node)
         return false;
 
-    LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaTimeRemainingDisplay, mediaControllerTheme(), paintInfo.context->platformContext(), r, node->active());
+    paintInfo.context->save();
+    FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
+    wkDrawMediaUIPart(MediaTimeRemainingDisplay, mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, node->active());
+    paintInfo.context->restore();
     return false;
 }
 

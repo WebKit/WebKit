@@ -99,6 +99,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-box-flex: 1;
     height: 13px;
     padding: 0px;
+    margin: 0px;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {

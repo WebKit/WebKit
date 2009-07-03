@@ -125,8 +125,13 @@ void MediaControlElement::updateStyle()
                 sibling = sibling->nextSibling();
             parent()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
         }
-    } else if (renderer())
+    } else if (renderer()) {
         renderer()->setStyle(style);
+
+        // Make sure that if there is any innerText renderer, it is updated as well.
+        if (firstChild() && firstChild()->renderer())
+            firstChild()->renderer()->setStyle(style);
+    }
 }
 
 // ----------------------------
