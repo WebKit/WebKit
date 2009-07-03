@@ -2102,6 +2102,9 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
     }
     freeClipboard();
     dragState().m_dragSrc = 0;
+    // In case the drag was ended due to an escape key press we need to ensure
+    // that consecutive mousemove events don't reinitiate the drag and drop.
+    m_mouseDownMayStartDrag = false;
 }
     
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
