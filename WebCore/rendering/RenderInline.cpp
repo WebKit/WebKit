@@ -749,14 +749,14 @@ void RenderInline::dirtyLineBoxes(bool fullLayout)
         m_lineBoxes.dirtyLineBoxes();
 }
 
-InlineFlowBox* RenderInline::createFlowBox()
+InlineFlowBox* RenderInline::createInlineFlowBox() 
 {
     return new (renderArena()) InlineFlowBox(this);
 }
 
-InlineFlowBox* RenderInline::createInlineFlowBox()
+InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 {
-    InlineFlowBox* flowBox = createFlowBox();
+    InlineFlowBox* flowBox = createInlineFlowBox();
     m_lineBoxes.appendLineBox(flowBox);
     return flowBox;
 }

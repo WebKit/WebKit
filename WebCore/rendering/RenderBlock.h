@@ -142,7 +142,8 @@ public:
 
     virtual void updateBeforeAfterContent(PseudoId);
 
-    RootInlineBox* createRootInlineBox();
+    RootInlineBox* createAndAppendRootInlineBox();
+    virtual RootInlineBox* createRootInlineBox(); // Subclassed by SVG and Ruby.
 
     // Called to lay out the legend for a fieldset.
     virtual RenderObject* layoutLegend(bool /*relayoutChildren*/) { return 0; }
@@ -342,7 +343,6 @@ protected:
     virtual bool hasLineIfEmpty() const;
     bool layoutOnlyPositionedObjects();
 
-    virtual RootInlineBox* createRootBox(); // Subclassed by SVG.
     
 private:
     Position positionForBox(InlineBox*, bool start = true) const;

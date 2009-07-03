@@ -40,7 +40,7 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&);
     
 private:
-    virtual InlineFlowBox* createFlowBox();
+    virtual InlineFlowBox* createInlineFlowBox();
 };
 
 }

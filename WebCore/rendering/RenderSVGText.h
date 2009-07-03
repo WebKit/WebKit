@@ -65,7 +65,7 @@ private:
     // FIXME: This can be removed when localTransform() is removed from RenderObject
     virtual TransformationMatrix localTransform() const { return m_localTransform; }
 
-    virtual RootInlineBox* createRootBox();
+    virtual RootInlineBox* createRootInlineBox();
 
     TransformationMatrix m_localTransform;
 };
