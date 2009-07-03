@@ -345,4 +345,14 @@ String imageTitle(const String& filename, const IntSize& size)
     return String::fromUTF8(string.get());
 }
 
+String mediaElementLoadingStateText()
+{
+    return String::fromUTF8(_("Loading..."));
+}
+
+String mediaElementLiveBroadcastStateText()
+{
+    return String::fromUTF8(_("Live Broadcast"));
+}
+
 }
