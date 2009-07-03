@@ -1,5 +1,16 @@
 2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
 
+        Workaround for WebKit Bug 9630 when running contrib/recode.pl
+
+        A number of WebKit nightly builds included Bug 9630 which caused
+        non-breaking space characters (0xA0) to be submitted within the
+        content of textarea elements.
+
+        * contrib/recode.pl: To work around these 0xA0 characters, try
+        an encoding of cp1252 and use it if it works.
+
+2009-07-02  David D. Kilzer  <ddkilzer@apple.com>
+
         Don't print "Failed to guess" warning if an override is available
 
         * contrib/recode.pl: Check that %overrides does NOT contain a

@@ -101,6 +101,14 @@ sub do_guess {
         $encoding = $decoded_as if $decoded_as;
     }
 
+    # Workaround for WebKit Bug 9630 which caused WebKit nightly builds
+    # to send non-breaking space characters (0xA0) when submitting
+    # textarea content to Bugzilla.
+    if (!$encoding) {
+        my $decoder = guess_encoding($data, qw(cp1252));
+        $encoding = $decoder->name if ref $decoder;
+    }
+
     return $encoding;
 }
 
