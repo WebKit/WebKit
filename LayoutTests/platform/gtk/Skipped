@@ -5959,3 +5959,24 @@ http/tests/security/drag-over-remote-content-iframe.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
 http/tests/security/clipboard/clipboard-file-access.html
+
+# Requires expected results that we don't have atm
+editing/inserting/break-blockquote-after-delete.html
+fast/box-shadow/transform-fringing.html
+fast/css/nth-child-dynamic.html
+fast/dom/HTMLTableColElement/resize-table-using-col-width.html
+fast/forms/search-vertical-alignment.html
+fast/frames/viewsource-on-image-file.html
+fast/repaint/background-generated.html
+fast/text/text-large-negative-letter-spacing-with-opacity.html
+fast/text/text-letter-spacing.html
+media/controls-strict.html
+svg/batik/filters/feTile.svg
+svg/custom/createImageElement.svg
+svg/custom/js-update-image-and-display2.svg
+svg/custom/js-update-image-and-display3.svg
+svg/custom/js-update-image-and-display.svg
+svg/custom/outer-svg-unknown-feature.svg
+svg/filters/feMerge.svg
+svg/filters/feOffset.svg
+svg/filters/feTile.svg
