@@ -56,19 +56,25 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
     -webkit-appearance: none;
-    height: 25px;
+    -webkit-box-orient: horizontal;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    -webkit-box-flex: 1;
+    text-align: right;
+    height: auto;
 }
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
-    display: inline-block;
+    display: -webkit-box;
+    -webkit-box-flex: 0;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
     cursor: default;
     font: -webkit-small-control;
-    font-size: .09em;
-    text-align: center;
+    font-size: 9px;
     overflow: hidden;
-    line-height: 13px;
     height: 13px;
     width: 45px;
 }
@@ -76,19 +82,23 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
 audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
     -webkit-appearance: media-time-remaining-display;
     -webkit-user-select: none;
-    display: inline-block;
+    display: -webkit-box;
+    -webkit-box-flex: 0;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
     cursor: default;
     font: -webkit-small-control;
-    font-size: .09em;
-    text-align: center;
+    font-size: 9px;
     overflow: hidden;
-    line-height: 13px;
     height: 13px;
     width: 45px;
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
+    display: -webkit-box;
+    -webkit-box-flex: 1;
     height: 13px;
+    padding: 0px;
 }
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
@@ -133,7 +143,7 @@ audio::-webkit-media-controls-status-display, video::-webkit-media-controls-stat
     -webkit-box-flex: 1;
     font: -webkit-small-control;
     color: white;
-    font-size: 0.6em;
+    font-size: 10px;
     line-height: 13px;
     overflow: hidden;
     text-shadow: 1px 1px 0px black;
