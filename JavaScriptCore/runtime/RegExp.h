@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -53,7 +54,7 @@ namespace JSC {
         bool isValid() const { return !m_constructionError; }
         const char* errorMessage() const { return m_constructionError; }
 
-        int match(const UString&, int startOffset, OwnArrayPtr<int>* ovector = 0);
+        int match(const UString&, int startOffset, Vector<int, 32>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
     private:

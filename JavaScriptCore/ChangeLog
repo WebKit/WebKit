@@ -1,3 +1,33 @@
+2009-07-03  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Maciej Stachowiak (and revised slightly)
+
+        RegExp::match to be optimized
+        https://bugs.webkit.org/show_bug.cgi?id=26957
+
+        Allow regexp matching to use Vectors with inline capacity instead of
+        allocating a new ovector buffer every time.
+        
+        ~5% speedup on SunSpider string-unpack-code test, 0.3% on SunSpider overall.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructorPrivate::RegExpConstructorPrivate):
+        (JSC::RegExpConstructorPrivate::lastOvector):
+        (JSC::RegExpConstructorPrivate::tempOvector):
+        (JSC::RegExpConstructorPrivate::changeLastOvector):
+        (JSC::RegExpConstructor::performMatch):
+        (JSC::RegExpMatchesArray::RegExpMatchesArray):
+        (JSC::RegExpMatchesArray::fillArrayInstance):
+        (JSC::RegExpConstructor::getBackref):
+        (JSC::RegExpConstructor::getLastParen):
+        (JSC::RegExpConstructor::getLeftContext):
+        (JSC::RegExpConstructor::getRightContext):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSplit):
+
 2009-06-30  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

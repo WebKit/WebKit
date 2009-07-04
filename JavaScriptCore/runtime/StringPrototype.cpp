@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -575,7 +576,7 @@ JSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec, JSObject*, JSValue t
         }
         int pos = 0;
         while (i != limit && pos < s.size()) {
-            OwnArrayPtr<int> ovector;
+            Vector<int, 32> ovector;
             int mpos = reg->match(s, pos, &ovector);
             if (mpos < 0)
                 break;
