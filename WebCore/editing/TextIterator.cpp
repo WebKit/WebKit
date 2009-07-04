@@ -143,7 +143,7 @@ unsigned BitStack::size() const
 
 // --------
 
-static inline Node* parentOrShadowParent(Node* node)
+static inline Node* parentCrossingShadowBoundaries(Node* node)
 {
     if (Node* parent = node->parentNode())
         return parent;
@@ -155,12 +155,45 @@ static inline Node* parentOrShadowParent(Node* node)
 static unsigned depthCrossingShadowBoundaries(Node* node)
 {
     unsigned depth = 0;
-    for (Node* parent = parentOrShadowParent(node); parent; parent = parentOrShadowParent(parent))
+    for (Node* parent = parentCrossingShadowBoundaries(node); parent; parent = parentCrossingShadowBoundaries(parent))
         ++depth;
     return depth;
 }
 
 #endif
+
+// This function is like Range::pastLastNode, except for the fact that it can climb up out of shadow trees.
+static Node* nextInPreOrderCrossingShadowBoundaries(Node* rangeEndContainer, int rangeEndOffset)
+{
+    if (!rangeEndContainer)
+        return 0;
+    if (rangeEndOffset >= 0 && !rangeEndContainer->offsetInCharacters()) {
+        if (Node* next = rangeEndContainer->childNode(rangeEndOffset))
+            return next;
+    }
+    for (Node* node = rangeEndContainer; node; node = parentCrossingShadowBoundaries(node)) {
+        if (Node* next = node->nextSibling())
+            return next;
+    }
+    return 0;
+}
+
+static Node* previousInPostOrderCrossingShadowBoundaries(Node* rangeStartContainer, int rangeStartOffset)
+{
+    if (!rangeStartContainer)
+        return 0;
+    if (rangeStartOffset > 0 && !rangeStartContainer->offsetInCharacters()) {
+        if (Node* previous = rangeStartContainer->childNode(rangeStartOffset - 1))
+            return previous;
+    }
+    for (Node* node = rangeStartContainer; node; node = parentCrossingShadowBoundaries(node)) {
+        if (Node* previous = node->previousSibling())
+            return previous;
+    }
+    return 0;
+}
+
+// --------
 
 static inline bool fullyClipsContents(Node* node)
 {
@@ -192,7 +225,7 @@ static void setUpFullyClippedStack(BitStack& stack, Node* node)
 {
     // Put the nodes in a vector so we can iterate in reverse order.
     Vector<Node*, 100> ancestry;
-    for (Node* parent = parentOrShadowParent(node); parent; parent = parentOrShadowParent(parent))
+    for (Node* parent = parentCrossingShadowBoundaries(node); parent; parent = parentCrossingShadowBoundaries(parent))
         ancestry.append(parent);
 
     // Call pushFullyClippedState on each node starting with the earliest ancestor.
@@ -262,7 +295,7 @@ TextIterator::TextIterator(const Range* r, bool emitCharactersBetweenAllVisibleP
     m_handledChildren = false;
 
     // calculate first out of bounds node
-    m_pastEndNode = r->pastLastNode();
+    m_pastEndNode = nextInPreOrderCrossingShadowBoundaries(endContainer, endOffset);
 
     // initialize node processing state
     m_needAnotherNewline = false;
@@ -349,14 +382,14 @@ void TextIterator::advance()
             next = m_node->nextSibling();
             if (!next) {
                 bool pastEnd = m_node->traverseNextNode() == m_pastEndNode;
-                Node* parentNode = parentOrShadowParent(m_node);
+                Node* parentNode = parentCrossingShadowBoundaries(m_node);
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(parentNode))
                         return;
                     bool haveRenderer = m_node->renderer();
                     m_node = parentNode;
                     m_fullyClippedStack.pop();
-                    parentNode = parentOrShadowParent(m_node);
+                    parentNode = parentCrossingShadowBoundaries(m_node);
                     if (haveRenderer)
                         exitNode();
                     if (m_positionNode) {
@@ -880,14 +913,14 @@ Node* TextIterator::node() const
 
 // --------
 
-SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator() : m_positionNode(0)
+SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator()
+    : m_positionNode(0)
 {
 }
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r)
+    : m_positionNode(0)
 {
-    m_positionNode = 0;
-
     if (!r)
         return;
 
@@ -929,15 +962,8 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r)
 
     m_lastTextNode = 0;
     m_lastCharacter = '\n';
-    
-    if (startOffset == 0 || !startNode->firstChild()) {
-        m_pastStartNode = startNode->previousSibling();
-        while (!m_pastStartNode && startNode->parentNode()) {
-            startNode = startNode->parentNode();
-            m_pastStartNode = startNode->previousSibling();
-        }
-    } else
-        m_pastStartNode = startNode->childNode(startOffset - 1);
+
+    m_pastStartNode = previousInPostOrderCrossingShadowBoundaries(startNode, startOffset);
 
     advance();
 }
@@ -984,7 +1010,7 @@ void SimplifiedBackwardsTextIterator::advance()
             // Exit all other containers.
             next = m_node->previousSibling();
             while (!next) {
-                Node* parentNode = parentOrShadowParent(m_node);
+                Node* parentNode = parentCrossingShadowBoundaries(m_node);
                 if (!parentNode)
                     break;
                 m_node = parentNode;
@@ -1050,26 +1076,22 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
 {    
     // We can use a linefeed in place of a tab because this simple iterator is only used to
     // find boundaries, not actual content.  A linefeed breaks words, sentences, and paragraphs.
-    if (shouldEmitNewlineForNode(m_node) ||
-        shouldEmitNewlineAfterNode(m_node) ||
-        shouldEmitTabBeforeNode(m_node)) {
+    if (shouldEmitNewlineForNode(m_node) || shouldEmitNewlineAfterNode(m_node) || shouldEmitTabBeforeNode(m_node)) {
         unsigned index = m_node->nodeIndex();
-        // The start of this emitted range is wrong, ensuring correctness would require
-        // VisiblePositions and so would be slow.  previousBoundary expects this.
+        // The start of this emitted range is wrong. Ensuring correctness would require
+        // VisiblePositions and so would be slow. previousBoundary expects this.
         emitCharacter('\n', m_node->parentNode(), index + 1, index + 1);
     }
-    
     return true;
 }
 
 void SimplifiedBackwardsTextIterator::exitNode()
 {
-    if (shouldEmitNewlineForNode(m_node) ||
-        shouldEmitNewlineBeforeNode(m_node) ||
-        shouldEmitTabBeforeNode(m_node))
-        // The start of this emitted range is wrong, ensuring correctness would require
-        // VisiblePositions and so would be slow.  previousBoundary expects this.
+    if (shouldEmitNewlineForNode(m_node) || shouldEmitNewlineBeforeNode(m_node) || shouldEmitTabBeforeNode(m_node)) {
+        // The start of this emitted range is wrong. Ensuring correctness would require
+        // VisiblePositions and so would be slow. previousBoundary expects this.
         emitCharacter('\n', m_node, 0, 0);
+    }
 }
 
 void SimplifiedBackwardsTextIterator::emitCharacter(UChar c, Node* node, int startOffset, int endOffset)

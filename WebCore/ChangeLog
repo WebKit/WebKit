@@ -1,3 +1,33 @@
+2009-07-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r44670-r44680): Typing is suprisingly slow in password field on reddit.com
+        https://bugs.webkit.org/show_bug.cgi?id=26959
+
+        The code to handle iteration boundaries was malfunctioning when the boundary was
+        at the edge of a shadow tree. This happens all the time with <input> elements.
+
+        It's not immediately obvious how to make a regression test for this since the
+        symptom was a performance problem, not incorrect behavior. I'll add a test if I
+        figure out a way to make one.
+
+        * editing/TextIterator.cpp:
+        (WebCore::parentCrossingShadowBoundaries): Renamed from parentOrShadowParent.
+        (WebCore::depthCrossingShadowBoundaries): Updated for name change.
+        (WebCore::nextInPreOrderCrossingShadowBoundaries): Added.
+        (WebCore::previousInPostOrderCrossingShadowBoundaries): Added.
+        (WebCore::setUpFullyClippedStack): Updated for name change.
+        (WebCore::TextIterator::TextIterator): Updated for name change. Use
+        nextInPreOrderCrossingShadowBoundaries instead of Range::pastLastNode to fix the bug.
+        (WebCore::TextIterator::advance): Updated for name change.
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        Tweaked formatting.
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Ditto. Changed code that
+        initializes m_pastStartNode to use previousInPostOrderCrossingShadowBoundaries.
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode): Tweaked formatting.
+        (WebCore::SimplifiedBackwardsTextIterator::exitNode): Ditto.
+
 2009-07-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
