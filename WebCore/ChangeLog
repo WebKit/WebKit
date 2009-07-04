@@ -4,6 +4,7 @@
 
         REGRESSION (r44670-r44680): Typing is suprisingly slow in password field on reddit.com
         https://bugs.webkit.org/show_bug.cgi?id=26959
+        rdar://problem/7029882
 
         The code to handle iteration boundaries was malfunctioning when the boundary was
         at the edge of a shadow tree. This happens all the time with <input> elements.
