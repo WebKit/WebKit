@@ -1,3 +1,18 @@
+2009-07-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix <rdar://problem/6964278> REGRESSION (r42118): Scrolling redraw
+          problem in FileMaker Pro
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        Perform layout if needed, even on Mac OS X versions that have
+        -viewWillDraw. This prevents attempts to draw without layout in case
+        -viewWillDraw was not called due to NSView issues or the client
+        did something during the display operation that re-invalidated the
+        layout.
+
 2009-07-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
