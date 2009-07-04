@@ -206,7 +206,7 @@ JSValue RegExpConstructor::getLastParen(ExecState* exec) const
 {
     unsigned i = d->lastNumSubPatterns;
     if (i > 0) {
-        ASSERT(d->lastOvector);
+        ASSERT(!d->lastOvector().isEmpty());
         int start = d->lastOvector()[2 * i];
         if (start >= 0)
             return jsSubstring(exec, d->lastInput, start, d->lastOvector()[2 * i + 1] - start);
