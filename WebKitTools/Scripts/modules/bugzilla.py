@@ -148,7 +148,7 @@ class Bugzilla:
             attachment['id'] = str(element.find('attachid').string)
             attachment['url'] = self.attachment_url_for_id(attachment['id'])
             attachment['name'] = unicode(element.find('desc').string)
-            attachment['type'] = str(element.find('ctype').string)
+            attachment['type'] = str(element.find('type').string)
 
             review_flag = element.find('flag', attrs={"name" : "review"})
             if review_flag and review_flag['status'] == '+':
@@ -257,7 +257,7 @@ class Bugzilla:
             return
 
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
-        self.browser.select_form(nr=0)
+        self.browser.select_form(nr=1)
         self.browser.find_control('isobsolete').items[0].selected = True
         # Also clear any review flag (to remove it from review/commit queues)
         self.browser.find_control(type='select', nr=0).value = ("X",)
