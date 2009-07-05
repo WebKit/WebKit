@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leopard</title>
+  <style>
+  body {
+      background: url('resources/Aurora.jpg');
+      -webkit-background-size: 100% 100%;
+      font-family: "Lucida Grande";
+      height: 800px;
+  }
+
+  #features {
+      position: relative;
+      width: 400px;
+      list-style: none;
+  }
+
+  #features > li > .picture {
+      -webkit-transition-property: -webkit-transform;
+      -webkit-transition-duration: 500ms;
+      -webkit-transition-timing-function: ease-in;
+      -webkit-transform: rotate(-5deg);
+      opacity: 0.2;
+      border: 5px solid white;
+      background-color: gray;
+      position: absolute;
+      left: 20%;
+      width: 380px;
+      height: 180px;
+      top: 30px;
+  }
+
+  #features > li.enabled > .picture {
+      -webkit-transition-timing-function: ease-out;
+      -webkit-transform:rotate(10deg);
+  }
+
+  #features > li > .description {
+      -webkit-transition-property: -webkit-transform;
+      -webkit-transition-duration: 560ms;
+      -webkit-transition-timing-function: ease-in;
+      line-height: 1.4em;
+      position: absolute;
+      background-color: black;
+      color: white;
+      margin: 10px;
+      padding: 10px;
+      border: 3px solid white;
+      -webkit-border-radius: 9px;
+      font-size: 16px;
+      left: 20%;
+      top: 330px;
+      width: 350px;
+  }
+
+  #features > li.enabled > .description {
+      -webkit-transform:translate3d(100px,0,0);
+  }
+  </style>
+  <script>
+  if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+  }
+
+  function init()
+  {
+      document.getElementById("item").className = "enabled";
+      setTimeout(check, 800);
+  }
+  
+  function log(s)
+  {
+    var results = document.getElementById('results');
+    results.innerHTML += s + '<br>';
+  }
+
+  function check()
+  {
+      var transform = window.getComputedStyle(document.getElementById('description')).webkitTransform;
+      if (transform == "matrix(1, 0, 0, 1, 100, 0)")
+          log('transform="'+transform+'" as expected: PASS');
+        else
+        log('transform="'+transform+'", expected "matrix(1, 0, 0, 1, 100, 0)": FAIL');
+
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+  }
+  </script>
+</head>
+<body onload="init()">
+
+<ul id="features">
+<li id="item">
+    <div class="picture"></div>
+  <div id="description" class="description">
+    <b>Spaces</b> lets you group your application windows and banish
+    clutter completely. Leopard gives you a space for everything and
+    makes it easy to switch between your spaces. Start by simply
+    clicking the Spaces icon in the Dock.
+  </div>
+</li>
+</ul>
+<div id="results"></div>
+</body>
+</html>
