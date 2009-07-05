@@ -1,3 +1,27 @@
+2009-07-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Xan Lopez.
+
+        Always initialize WebCore.
+
+        It is possible that WebKitWebSettings and other classes get
+        constructed before the WebKitWebView. In this case WebCore is
+        not yet properly initialized. Add webkit_init to every class
+        that can be constructed by API users.
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_class_init):
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_class_init):
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_class_init):
+        * webkit/webkitwebhistoryitem.cpp:
+        (webkit_web_history_item_class_init):
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        * webkit/webkitwebwindowfeatures.cpp:
+        (webkit_web_window_features_class_init):
+
 2009-07-03  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez and Gustavo Noronha.

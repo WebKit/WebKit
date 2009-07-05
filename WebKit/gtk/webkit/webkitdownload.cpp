@@ -208,6 +208,8 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     objectClass->get_property = webkit_download_get_property;
     objectClass->set_property = webkit_download_set_property;
 
+    webkit_init();
+
     /**
      * WebKitDownload::error:
      * @download: the object on which the signal is emitted

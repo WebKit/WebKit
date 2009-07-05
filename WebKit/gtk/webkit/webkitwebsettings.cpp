@@ -199,6 +199,8 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     gobject_class->set_property = webkit_web_settings_set_property;
     gobject_class->get_property = webkit_web_settings_get_property;
 
+    webkit_init();
+
     GParamFlags flags = (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 
     g_object_class_install_property(gobject_class,

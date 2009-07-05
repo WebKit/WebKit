@@ -100,6 +100,8 @@ static void webkit_web_window_features_class_init(WebKitWebWindowFeaturesClass* 
 
     GParamFlags flags = (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 
+    webkit_init();
+
     /**
      * WebKitWebWindowFeatures:x:
      *
