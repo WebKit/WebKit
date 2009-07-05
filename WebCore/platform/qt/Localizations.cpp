@@ -352,5 +352,15 @@ String imageTitle(const String& filename, const IntSize& size)
     return QCoreApplication::translate("QWebPage", "%1 (%2x%3 pixels)", "Title string for images").arg(filename).arg(size.width()).arg(size.height());
 }
 
+String mediaElementLoadingStateText()
+{
+    return QCoreApplication::translate("QWebPage", "Loading...", "Media controller status message when the media is loading");
+}
+
+String mediaElementLiveBroadcastStateText()
+{
+    return QCoreApplication::translate("QWebPage", "Live Broadcast", "Media controller status message when watching a live broadcast");
+}
+
 }
 // vim: ts=4 sw=4 et

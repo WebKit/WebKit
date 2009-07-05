@@ -1,3 +1,16 @@
+2009-07-05  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed link fix for Qt.
+
+        Fix Qt link error by adding two new localized strings
+
+        In r45474 two new strings got added to LocalizedStrings.h add
+        the definition of them to Qt.
+
+        * platform/qt/Localizations.cpp:
+        (WebCore::mediaElementLoadingStateText):
+        (WebCore::mediaElementLiveBroadcastStateText):
+
 2009-07-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.
