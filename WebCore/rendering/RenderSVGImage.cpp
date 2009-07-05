@@ -2,7 +2,7 @@
     Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
     Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
-    Copyright (C) 2007, 2008 Rob Buis <buis@kde.org>
+    Copyright (C) 2007, 2008, 2009 Rob Buis <buis@kde.org>
     Copyright (C) 2009, Google, Inc.
 
     This library is free software; you can redistribute it and/or
@@ -227,9 +227,7 @@ FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
 void RenderSVGImage::imageChanged(WrappedImagePtr image, const IntRect* rect)
 {
     RenderImage::imageChanged(image, rect);
-
-    // We override to invalidate a larger rect, since SVG images can draw outside their "bounds"
-    repaintRectangle(absoluteClippedOverflowRect());    // FIXME: Isn't this just repaint()?
+    repaint();
 }
 
 IntRect RenderSVGImage::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
