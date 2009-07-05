@@ -827,7 +827,7 @@ void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
     Frame *frame = focusController->focusedFrame();
     focusController->setActive(true);
     if (frame) {
-        frame->selection()->setFocused(true);
+        focusController->setFocused(true);
     } else {
         focusController->setFocusedFrame(QWebFramePrivate::core(mainFrame));
     }
@@ -840,10 +840,7 @@ void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
     // focusInEvent() we can re-activate the frame.
     FocusController *focusController = page->focusController();
     focusController->setActive(false);
-    Frame *frame = focusController->focusedFrame();
-    if (frame) {
-        frame->selection()->setFocused(false);
-    }
+    focusController->setFocused(false);
 }
 
 void QWebPagePrivate::dragEnterEvent(QDragEnterEvent *ev)
