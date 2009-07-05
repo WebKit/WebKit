@@ -59,14 +59,14 @@ using namespace WTF;
 
 namespace JSC {
 
-extern const HashTable arrayTable;
-extern const HashTable jsonTable;
-extern const HashTable dateTable;
-extern const HashTable mathTable;
-extern const HashTable numberTable;
-extern const HashTable regExpTable;
-extern const HashTable regExpConstructorTable;
-extern const HashTable stringTable;
+extern JSC_CONST_HASHTABLE HashTable arrayTable;
+extern JSC_CONST_HASHTABLE HashTable jsonTable;
+extern JSC_CONST_HASHTABLE HashTable dateTable;
+extern JSC_CONST_HASHTABLE HashTable mathTable;
+extern JSC_CONST_HASHTABLE HashTable numberTable;
+extern JSC_CONST_HASHTABLE HashTable regExpTable;
+extern JSC_CONST_HASHTABLE HashTable regExpConstructorTable;
+extern JSC_CONST_HASHTABLE HashTable stringTable;
 
 struct VPtrSet {
     VPtrSet();

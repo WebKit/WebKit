@@ -268,7 +268,7 @@ sub output() {
     }
     print "   { 0, 0, 0, 0 }\n";
     print "};\n\n";
-    print "extern const struct HashTable $name =\n";
+    print "extern JSC_CONST_HASHTABLE HashTable $name =\n";
     print "    \{ $compactSize, $compactHashSizeMask, $nameEntries, 0 \};\n";
     print "} // namespace\n";
 }

@@ -1910,7 +1910,7 @@ tableSizeLoop:
     push(@implContent, "};\n\n");
     my $perfectSizeMask = $perfectSize - 1;
     my $compactSizeMask = $numEntries - 1;
-    push(@implContent, "static const HashTable $name =\n");
+    push(@implContent, "static JSC_CONST_HASHTABLE HashTable $name =\n");
     push(@implContent, "#if ENABLE(PERFECT_HASH_SIZE)\n");
     push(@implContent, "    { $perfectSizeMask, $nameEntries, 0 };\n");
     push(@implContent, "#else\n");
