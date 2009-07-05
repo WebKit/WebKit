@@ -117,10 +117,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
                 bool equal = true;
 
                 if (implAnim) {
-                    // If we are post active don't bother setting the active flag. This will cause
-                    // this animation to get removed at the end of this function
-                    if (!implAnim->postActive())
-                        implAnim->setActive(true);
+                    implAnim->setActive(true);
                     
                     // This might be a transition that is just finishing. That would be the case
                     // if it were postActive. But we still need to check for equality because
@@ -186,61 +183,51 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
     if (m_keyframeAnimations.isEmpty() && !targetStyle->hasAnimations())
         return;
 
-    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
-    
-    if (currentStyle && currentStyle->hasAnimations() && targetStyle->hasAnimations() && *(currentStyle->animations()) == *(targetStyle->animations())) {
-        // The current and target animations are the same so we just need to toss any 
-        // animation which is finished (postActive)
-        for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
-            if (it->second->postActive())
-                it->second->setIndex(-1);
-        }
-    } else {
-        // Mark all existing animations as no longer active
-        for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it)
-            it->second->setIndex(-1);
-            
-        // Toss the animation order map
-        m_keyframeAnimationOrderMap.clear();
+    // Nothing to do if the current and target animations are the same
+    if (currentStyle && currentStyle->hasAnimations() && targetStyle->hasAnimations() && *(currentStyle->animations()) == *(targetStyle->animations()))
+        return;
         
-        // Now mark any still active animations as active and add any new animations
-        if (targetStyle->animations()) {
-            int numAnims = targetStyle->animations()->size();
-            for (int i = 0; i < numAnims; ++i) {
-                const Animation* anim = targetStyle->animations()->animation(i);
-                AtomicString animationName(anim->name());
+    // Mark all existing animations as no longer active
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it)
+        it->second->setIndex(-1);
+        
+    // Toss the animation order map
+    m_keyframeAnimationOrderMap.clear();
+    
+    // Now mark any still active animations as active and add any new animations
+    if (targetStyle->animations()) {
+        int numAnims = targetStyle->animations()->size();
+        for (int i = 0; i < numAnims; ++i) {
+            const Animation* anim = targetStyle->animations()->animation(i);
+            AtomicString animationName(anim->name());
 
-                if (!anim->isValidAnimation())
-                    continue;
+            if (!anim->isValidAnimation())
+                continue;
+            
+            // See if there is a current animation for this name
+            RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(animationName.impl());
                 
-                // See if there is a current animation for this name
-                RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(animationName.impl());
-                
-                if (keyframeAnim) {
-                    // If this animation is postActive, skip it so it gets removed at the end of this function
-                    if (keyframeAnim->postActive())
-                        continue;
-                    
-                    // This one is still active
+            if (keyframeAnim) {
+                // There is one so it is still active
 
-                    // Animations match, but play states may differ. update if needed
-                    keyframeAnim->updatePlayState(anim->playState() == AnimPlayStatePlaying);
-                                
-                    // Set the saved animation to this new one, just in case the play state has changed
-                    keyframeAnim->setAnimation(anim);
-                    keyframeAnim->setIndex(i);
-                } else if ((anim->duration() || anim->delay()) && anim->iterationCount()) {
-                    keyframeAnim = KeyframeAnimation::create(const_cast<Animation*>(anim), renderer, i, this, currentStyle ? currentStyle : targetStyle);
-                    m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
-                }
-                
-                // Add this to the animation order map
-                if (keyframeAnim)
-                    m_keyframeAnimationOrderMap.append(keyframeAnim->name().impl());
+                // Animations match, but play states may differ. update if needed
+                keyframeAnim->updatePlayState(anim->playState() == AnimPlayStatePlaying);
+                            
+                // Set the saved animation to this new one, just in case the play state has changed
+                keyframeAnim->setAnimation(anim);
+                keyframeAnim->setIndex(i);
+            } else if ((anim->duration() || anim->delay()) && anim->iterationCount()) {
+                keyframeAnim = KeyframeAnimation::create(const_cast<Animation*>(anim), renderer, i, this, currentStyle ? currentStyle : targetStyle);
+                m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
             }
+            
+            // Add this to the animation order map
+            if (keyframeAnim)
+                m_keyframeAnimationOrderMap.append(keyframeAnim->name().impl());
         }
     }
-    
+
     // Make a list of animations to be removed
     Vector<AtomicStringImpl*> animsToBeRemoved;
     kfend = m_keyframeAnimations.end();
@@ -284,6 +271,8 @@ PassRefPtr<RenderStyle> CompositeAnimation::animate(RenderObject* renderer, Rend
         if (keyframeAnim)
             keyframeAnim->animate(this, renderer, currentStyle, targetStyle, resultStyle);
     }
+
+    cleanupFinishedAnimations();
 
     return resultStyle ? resultStyle.release() : targetStyle;
 }
@@ -373,6 +362,50 @@ PassRefPtr<KeyframeAnimation> CompositeAnimation::getAnimationForProperty(int pr
     }
     
     return retval;
+}
+
+void CompositeAnimation::cleanupFinishedAnimations()
+{
+    if (isSuspended())
+        return;
+
+    // Make a list of transitions to be deleted
+    Vector<int> finishedTransitions;
+    if (!m_transitions.isEmpty()) {
+        CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
+
+        for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != transitionsEnd; ++it) {
+            ImplicitAnimation* anim = it->second.get();
+            if (!anim)
+                continue;
+            if (anim->postActive())
+                finishedTransitions.append(anim->animatingProperty());
+        }
+        
+        // Delete them
+        size_t finishedTransitionCount = finishedTransitions.size();
+        for (size_t i = 0; i < finishedTransitionCount; ++i)
+            m_transitions.remove(finishedTransitions[i]);
+    }
+
+    // Make a list of animations to be deleted
+    Vector<AtomicStringImpl*> finishedAnimations;
+    if (!m_keyframeAnimations.isEmpty()) {
+        AnimationNameMap::const_iterator animationsEnd = m_keyframeAnimations.end();
+
+        for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != animationsEnd; ++it) {
+            KeyframeAnimation* anim = it->second.get();
+            if (!anim)
+                continue;
+            if (anim->postActive())
+                finishedAnimations.append(anim->name().impl());
+        }
+
+        // Delete them
+        size_t finishedAnimationCount = finishedAnimations.size();
+        for (size_t i = 0; i < finishedAnimationCount; ++i)
+            m_keyframeAnimations.remove(finishedAnimations[i]);
+    }
 }
 
 void CompositeAnimation::suspendAnimations()

@@ -1,3 +1,13 @@
+2009-07-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert the previous commit because it broke the
+        animations/transition-and-animation-1.html
+        testcase.
+
+        * transitions/extra-transition-expected.txt: Removed.
+        * transitions/extra-transition.html: Removed.
+        * transitions/resources/Aurora.jpg: Removed.
+
 2009-07-05  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

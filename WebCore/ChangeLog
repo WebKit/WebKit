@@ -1,3 +1,20 @@
+2009-07-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert the previous commit because it broke the
+        animations/transition-and-animation-1.html
+        testcase.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::getTimeToNextEvent):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateStyleIfNeededDispatcherFired):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::cleanupFinishedAnimations):
+        * page/animation/CompositeAnimation.h:
+
 2009-07-05  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
