@@ -1,3 +1,15 @@
+2009-07-05  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Fix two qdoc warnings.
+
+        Added missing \property for QWebFrame::hasFocus and added \a
+        tag for pos of QWebPage::frameAt.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebpage.cpp:
+
 2009-07-04  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

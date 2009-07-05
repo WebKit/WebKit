@@ -951,6 +951,7 @@ qreal QWebFrame::zoomFactor() const
 }
 
 /*!
+    \property QWebFrame::focus
     \since 4.6
 
     Returns true if this frame has keyboard input focus; otherwise, returns false.
