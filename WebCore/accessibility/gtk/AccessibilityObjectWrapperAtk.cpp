@@ -559,7 +559,7 @@ static gunichar webkit_accessible_text_get_character_at_offset(AtkText* text, gi
 static gint webkit_accessible_text_get_caret_offset(AtkText* text)
 {
     // TODO: Verify this for RTL text.
-    return core(text)->selection().start().offsetInContainerNode();
+    return core(text)->selection().end().offsetInContainerNode();
 }
 
 static AtkAttributeSet* webkit_accessible_text_get_run_attributes(AtkText* text, gint offset, gint* start_offset, gint* end_offset)
