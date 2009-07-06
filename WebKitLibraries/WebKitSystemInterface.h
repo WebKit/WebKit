@@ -258,6 +258,8 @@ void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
 
 unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
 
+BOOL WKIsLatchingWheelEvent(NSEvent *);
+    
 #ifdef __cplusplus
 }
 #endif
