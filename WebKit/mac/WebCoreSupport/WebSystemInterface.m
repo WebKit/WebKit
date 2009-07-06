@@ -60,6 +60,7 @@ void InitWebCoreSystemInterface(void)
     INIT(GetWheelEventDeltas);
     INIT(HitTestMediaUIPart);
     INIT(InitializeMaximumHTTPConnectionCountPerHost);
+    INIT(IsLatchingWheelEvent);
     INIT(MeasureMediaUIPart);
     INIT(PopupMenu);
     INIT(SetCGFontRenderingMode);

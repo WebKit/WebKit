@@ -154,6 +154,8 @@ EventHandler::EventHandler(Frame* frame)
     , m_capturingMouseEventsNode(0)
     , m_clickCount(0)
     , m_mouseDownTimestamp(0)
+    , m_useLatchedWheelEventNode(false)
+    , m_widgetIsLatched(false)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
     , m_sendingEventToSubview(false)
@@ -193,6 +195,7 @@ void EventHandler::clear()
     m_mousePressed = false;
     m_capturesDragging = false;
     m_capturingMouseEventsNode = 0;
+    m_latchedWheelEventNode = 0;
 }
 
 void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& result)
@@ -1715,16 +1718,38 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         return false;
     IntPoint vPoint = view->windowToContents(e.pos());
 
-    HitTestRequest request(HitTestRequest::ReadOnly);
-    HitTestResult result(vPoint);
-    doc->renderView()->layer()->hitTest(request, result);
-    Node* node = result.innerNode();
+    Node* node;
+    bool isOverWidget;
+    bool didSetLatchedNode = false;
+    
+    if (m_useLatchedWheelEventNode) {
+        if (!m_latchedWheelEventNode) {
+            HitTestRequest request(HitTestRequest::ReadOnly);
+            HitTestResult result(vPoint);
+            doc->renderView()->layer()->hitTest(request, result);
+            m_latchedWheelEventNode = result.innerNode();
+            m_widgetIsLatched = result.isOverWidget();
+            didSetLatchedNode = true;
+        }
+        
+        node = m_latchedWheelEventNode.get();
+        isOverWidget = m_widgetIsLatched;
+    } else {
+        if (m_latchedWheelEventNode)
+            m_latchedWheelEventNode = 0;
+        
+        HitTestRequest request(HitTestRequest::ReadOnly);
+        HitTestResult result(vPoint);
+        doc->renderView()->layer()->hitTest(request, result);
+        node = result.innerNode();
+        isOverWidget = result.isOverWidget();
+    }
     
     if (node) {
         // Figure out which view to send the event to.
         RenderObject* target = node->renderer();
         
-        if (result.isOverWidget() && target && target->isWidget()) {
+        if (isOverWidget && target && target->isWidget()) {
             Widget* widget = static_cast<RenderWidget*>(target)->widget();
 
             if (widget && passWheelEventToWidget(e, widget)) {

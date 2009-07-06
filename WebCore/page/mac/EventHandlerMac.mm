@@ -45,6 +45,7 @@
 #include "RuntimeApplicationChecks.h"
 #include "Scrollbar.h"
 #include "Settings.h"
+#include "WebCoreSystemInterface.h"
 #include <objc/objc-runtime.h>
 #include <wtf/StdLibExtras.h>
 
@@ -107,6 +108,8 @@ bool EventHandler::wheelEvent(NSEvent *event)
 
     CurrentEventScope scope(event);
 
+    m_useLatchedWheelEventNode = wkIsLatchingWheelEvent(event);
+    
     PlatformWheelEvent wheelEvent(event, page->chrome()->platformWindow());
     handleWheelEvent(wheelEvent);
 

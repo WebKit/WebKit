@@ -1001,6 +1001,7 @@ _wkGetPreferredExtensionForMIMEType
 _wkGetWheelEventDeltas
 _wkHitTestMediaUIPart
 _wkInitializeMaximumHTTPConnectionCountPerHost
+_wkIsLatchingWheelEvent
 _wkMeasureMediaUIPart
 _wkPopupMenu
 _wkQTIncludeOnlyModernMediaFileTypes
