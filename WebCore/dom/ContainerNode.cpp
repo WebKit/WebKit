@@ -600,6 +600,8 @@ void ContainerNode::insertedIntoDocument()
 void ContainerNode::removedFromDocument()
 {
     Node::removedFromDocument();
+    if (document()->cssTarget() == this) 
+        document()->setCSSTarget(0); 
     setInDocument(false);
     removedFromTree(false);
     for (Node* child = m_firstChild; child; child = child->nextSibling())
