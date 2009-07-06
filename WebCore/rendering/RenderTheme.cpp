@@ -42,6 +42,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static Color& customFocusRingColor()
+{
+    DEFINE_STATIC_LOCAL(Color, color, ());
+    return color;
+}
+
 RenderTheme::RenderTheme()
 #if USE(NEW_THEME)
     : m_theme(platformTheme())
@@ -853,9 +859,14 @@ Color RenderTheme::platformInactiveTextSearchHighlightColor() const
     return Color(255, 255, 0); // Yellow.
 }
 
-Color RenderTheme::focusRingColor() const
+void RenderTheme::setCustomFocusRingColor(const Color& c)
 {
-    return Color(0, 0, 0); // Black.
+    customFocusRingColor() = c;
+}
+
+Color RenderTheme::focusRingColor()
+{
+    return customFocusRingColor().isValid() ? customFocusRingColor() : defaultTheme()->platformFocusRingColor();
 }
 
 } // namespace WebCore

@@ -1,3 +1,46 @@
+2009-07-06  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r45285): focus rings are black on windows safari
+        https://bugs.webkit.org/show_bug.cgi?id=26821
+        <rdar://problem/7018252>
+
+        Add a mechanism for setting a custom focus ring color, and relocate the 
+        determination of focus ring color to base class RenderTheme.
+
+        No new tests.  Already-existing tests run in pixel mode would have caught this regression
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue): Move the responsibility
+        of determining focus color to base class RenderTheme.
+        * rendering/RenderTheme.cpp:
+        (WebCore::customFocusRingColor): Added static local.
+        (WebCore::RenderTheme::setCustomFocusRingColor): Added
+        (WebCore::RenderTheme::focusRingColor): Use custom color over platform color.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::platformFocusRingColor): default implementation, black color
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderTheme::themeForPage): Circumstances that lead to returning the RenderThemeWin
+        are the same under which we want to use the focus ring color from SafariTheme.
+        (WebCore::RenderThemeSafari::platformFocusRingColor): Renamed from focusRingColor
+        * rendering/RenderThemeSafari.h:
+
+        Renaming focusRingColor to platformFocusRingColor in these files:
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::platformFocusRingColor):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::platformFocusRingColor):
+        * rendering/RenderThemeChromiumSkia.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformFocusRingColor):
+
+        Cleanup leftover from removal of WebCore::Color in r45285 in these files:
+        * WebCore.order:
+        * platform/graphics/Color.h:
+
 2009-07-06  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Hyatt.

@@ -172,7 +172,7 @@ Color RenderThemeChromiumMac::activeListBoxSelectionBackgroundColor() const
     return Color(static_cast<int>(255.0 * [color redComponent]), static_cast<int>(255.0 * [color greenComponent]), static_cast<int>(255.0 * [color blueComponent]));
 }
 
-Color RenderThemeChromiumMac::focusRingColor() const
+Color RenderThemeChromiumMac::platformFocusRingColor() const
 {
     if (ChromiumBridge::layoutTestMode())
         return oldAquaFocusRingColor();

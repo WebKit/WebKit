@@ -157,7 +157,7 @@ Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor() const
     return Color::black;
 }
 
-Color RenderThemeMac::focusRingColor() const
+Color RenderThemeMac::platformFocusRingColor() const
 {
     if (usesTestModeFocusRingColor())
         return oldAquaFocusRingColor();
