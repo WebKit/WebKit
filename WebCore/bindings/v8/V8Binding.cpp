@@ -38,7 +38,6 @@
 #include "StringBuffer.h"
 
 #include <v8.h>
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -102,7 +101,7 @@ String v8ValueToWebCoreString(v8::Handle<v8::Value> object)
         int value = object->Int32Value();
         // Most numbers used are <= 100. Even if they aren't used there's very little in using the space.
         const int kLowNumbers = 100;
-        DEFINE_STATIC_LOCAL(AtomicString*, lowNumbers, [kLowNumbers + 1]);
+        static AtomicString lowNumbers[kLowNumbers + 1];
         String webCoreString;
         if (0 <= value && value <= kLowNumbers) {
             webCoreString = lowNumbers[value];
