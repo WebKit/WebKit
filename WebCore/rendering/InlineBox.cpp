@@ -88,10 +88,10 @@ void InlineBox::showTreeForThis() const
 int InlineBox::height() const
 {
 #if ENABLE(SVG)
-    if (isSVG())
-        return svgBoxHeight();
+    if (hasVirtualHeight())
+        return virtualHeight();
 #endif
-
+    
     if (renderer()->isText())
         return m_isText ? renderer()->style(m_firstLine)->font().height() : 0;
     if (renderer()->isBox() && parent())

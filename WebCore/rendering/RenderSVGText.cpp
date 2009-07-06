@@ -92,7 +92,7 @@ void RenderSVGText::layout()
 RootInlineBox* RenderSVGText::createRootInlineBox() 
 {
     RootInlineBox* box = new (renderArena()) SVGRootInlineBox(this);
-    box->setIsSVG(true);
+    box->setHasVirtualHeight();
     return box;
 }
 

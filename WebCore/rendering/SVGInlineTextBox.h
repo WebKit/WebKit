@@ -38,7 +38,7 @@ namespace WebCore {
     public:
         SVGInlineTextBox(RenderObject* obj);
 
-        virtual int svgBoxHeight() const { return m_height; }
+        virtual int virtualHeight() const { return m_height; }
         void setHeight(int h) { m_height = h; }
 
         virtual int selectionTop();

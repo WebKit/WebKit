@@ -49,7 +49,7 @@ public:
         , m_dirty(false)
         , m_extracted(false)
 #if ENABLE(SVG)
-        , m_isSVG(false)
+        , m_hasVirtualHeight(false)
 #endif
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)
@@ -82,7 +82,7 @@ public:
         , m_dirty(dirty)
         , m_extracted(extracted)
 #if ENABLE(SVG)
-        , m_isSVG(false)
+        , m_hasVirtualHeight(false)
 #endif
         , m_endsWithBreak(false)
         , m_hasSelectedChildren(false)   
@@ -129,18 +129,22 @@ public:
 #ifndef NDEBUG
     void showTreeForThis() const;
 #endif
+
+    bool isText() const { return m_isText; }
+    void setIsText(bool b) { m_isText = b; }
+ 
     virtual bool isInlineBox() { return false; }
     virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() { return false; }
     virtual bool isRootInlineBox() const { return false; }
 #if ENABLE(SVG) 
     virtual bool isSVGRootInlineBox() { return false; }
-    bool isSVG() const { return m_isSVG; }
-    void setIsSVG(bool b) { m_isSVG = b; }
-#endif
-    bool isText() const { return m_isText; }
-    void setIsText(bool b) { m_isText = b; }
 
+    bool hasVirtualHeight() const { return m_hasVirtualHeight; }
+    void setHasVirtualHeight() { m_hasVirtualHeight = true; }
+    virtual int virtualHeight() const { ASSERT_NOT_REACHED(); return 0; }
+#endif
+    
     bool isConstructed() { return m_constructed; }
     virtual void setConstructed()
     {
@@ -243,11 +247,6 @@ public:
         return 0;
     }
 
-protected:
-#if ENABLE(SVG)
-    virtual int svgBoxHeight() const { return 0; }
-#endif
-
 private:
     InlineBox* m_next; // The next element on the same line as us.
     InlineBox* m_prev; // The previous element on the same line as us.
@@ -272,10 +271,7 @@ private:
 protected:
     bool m_dirty : 1;
     bool m_extracted : 1;
-
-#if ENABLE(SVG)
-    bool m_isSVG : 1;
-#endif
+    bool m_hasVirtualHeight : 1;
 
     // for RootInlineBox
     bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.

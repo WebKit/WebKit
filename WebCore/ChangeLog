@@ -1,3 +1,35 @@
+2009-07-06  Roland Steiner  <rolandsteiner@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        generalize the special height treatment for SVG (to be re-used for ruby):
+            renamed InlineBox::m_isSVG to m_hasVirtualHeight
+            renamed InlineBox::isSVG() to hasVirtualHeight()
+            renamed InlineBox::setIsSVG() to setHasVirtualHeight()
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::height):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::isText):
+        (WebCore::InlineBox::setIsText):
+        (WebCore::InlineBox::isSVGRootInlineBox):
+        (WebCore::InlineBox::hasVirtualHeight):
+        (WebCore::InlineBox::setHasVirtualHeight):
+        (WebCore::InlineBox::virtualHeight):
+        * rendering/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::createFlowBox):
+        * rendering/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::createTextBox):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::createRootBox):
+        * rendering/SVGInlineFlowBox.h:
+        (WebCore::SVGInlineFlowBox::virtualHeight):
+        * rendering/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::virtualHeight):
+        * rendering/SVGRootInlineBox.h:
+        (WebCore::SVGRootInlineBox::virtualHeight):
+
 2009-07-06  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Darin Adler.
