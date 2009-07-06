@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
   <title>CSS 2D Transforms Module Level 3</title>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
   <link rel="stylesheet" type="text/css" href="default.css">
   <style type="text/css">
     .rhs { white-space: pre-wrap; }
@@ -120,8 +121,8 @@
         that adjust the position of the affected content without changing the
         normal layout of that content (much like relative positioning) and (2)
         transformation of the content prior to layout that affects the layout
-        of that content. See <a
-        href="http://lists.w3.org/Archives/Public/www-style/2007Oct/0209">http://lists.w3.org/Archives/Public/www-style/2007Oct/0209</a>
+        of that content. See <a href="http://lists.w3.org/Archives/Public/www-style/2007Oct/0209">
+            http://lists.w3.org/Archives/Public/www-style/2007Oct/0209</a>
         for examples of both cases. The "transform" property (as defined in
         this document) is equally useful for both roles. This document is
         focused on satisfying the first role. There is, however, an
@@ -336,34 +337,45 @@
           specifies an identity transform.
         </dd>
         <dt>
-          <span class="prop-value">matrix(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;)</span>
+          <span class="prop-value">matrix(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, 
+            &lt;number&gt;, &lt;number&gt;)
+          </span>
         </dt>
         <dd>
-          specifies a 2D transformation in the form of a <a href="http://www.w3.org/TR/SVG/coords.html#TransformMatrixDefined">transformation matrix</a> of six values. <span class="prop-value">matrix(a,b,c,d,e,f)</span> is equivalent to applying the transformation matrix <strong>[a b c d e f]</strong>.
+          specifies a 2D transformation in the form of a 
+          <a href="http://www.w3.org/TR/SVG/coords.html#TransformMatrixDefined">transformation matrix</a> 
+          of six values. <span class="prop-value">matrix(a,b,c,d,e,f)</span> is equivalent to applying 
+          the transformation matrix <strong>[a b c d e f]</strong>.
         </dd>
         <dt>
           <span class="prop-value">translate(&lt;translation-value&gt;[, &lt;translation-value&gt;])</span>
         </dt>
         <dd>
-          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">2D translation</a> by the vector [tx, ty], where tx is the first translation-value parameter and ty is the optional second translation-value parameter. If <em>&lt;ty&gt;</em> is not provided, ty has zero as a value.
+          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">2D translation</a> by 
+          the vector [tx, ty], where tx is the first translation-value parameter and ty is the optional second 
+          translation-value parameter. If <em>&lt;ty&gt;</em> is not provided, ty has zero as a value.
         </dd>
         <dt>
           <span class="prop-value">translateX(&lt;translation-value&gt;)</span>
         </dt>
         <dd>
-          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">translation</a> by the given amount in the X direction.
+          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">translation</a> by the given 
+          amount in the X direction.
         </dd>
         <dt>
           <span class="prop-value">translateY(&lt;translation-value&gt;)</span>
         </dt>
         <dd>
-          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">translation</a> by the given amount in the Y direction.
+          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#TranslationDefined">translation</a> by the given 
+          amount in the Y direction.
         </dd>
         <dt>
           <span class="prop-value">scale(&lt;number&gt;[, &lt;number&gt;])</span>
         </dt>
         <dd>
-          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#ScalingDefined">2D scale</a> operation by the [sx,sy] scaling vector described by the 2 parameters. If the second parameter is not provided, it is takes a value equal to the first.
+          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#ScalingDefined">2D scale</a> operation by the [sx,sy] 
+          scaling vector described by the 2 parameters. If the second parameter is not provided, it is takes a value 
+          equal to the first.
         </dd>
         <dt>
           <span class="prop-value">scaleX(&lt;number&gt;)</span>
@@ -381,19 +393,22 @@
           <span class="prop-value">rotate(&lt;angle&gt;)</span>
         </dt>
         <dd>
-          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#RotationDefined">2D rotation</a> by the angle specified in the parameter about the origin of the element, as defined by the <em>transform-origin</em> property.
+          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#RotationDefined">2D rotation</a> by the angle 
+          specified in the parameter about the origin of the element, as defined by the <em>transform-origin</em> property.
         </dd>
         <dt>
           <span class="prop-value">skewX(&lt;angle&gt;)</span>
         </dt>
         <dd>
-          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#SkewXDefined">skew transformation along the X axis</a> by the given angle.
+          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#SkewXDefined">skew transformation along the X axis</a> 
+          by the given angle.
         </dd>
         <dt>
           <span class="prop-value">skewY(&lt;angle&gt;)</span>
         </dt>
         <dd>
-          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#SkewYDefined">skew transformation along the Y axis</a> by the given angle.
+          specifies a <a href="http://www.w3.org/TR/SVG/coords.html#SkewYDefined">skew transformation along the Y axis</a> 
+          by the given angle.
         </dd>
         <dt>
           <span class="prop-value">skew(&lt;angle&gt; [, &lt;angle&gt;])</span>
@@ -411,7 +426,11 @@
         Transform Values and Lists
       </h2>
       <p>
-        The &lt;translation-value&gt; values are defined as [&lt;percentage&gt; | &lt;length&gt;]. All other value types are described <a href="http://www.w3.org/TR/REC-CSS2/syndata.html#values">as CSS types</a>. If a list of transforms is provided, then the net effect is as if each transform had been specified separately in the order provided. For example,
+        The &lt;translation-value&gt; values are defined as [&lt;percentage&gt; | &lt;length&gt;]. All other value 
+        types are described 
+        <a href="http://www.w3.org/TR/REC-CSS2/syndata.html#values">as CSS types</a>. If a list of transforms is 
+        provided, then the net effect is as if each transform had been specified separately in the order provided. 
+        For example,
       </p>
       <pre>
   &lt;div style="transform:translate(-10px,-20px) scale(2) rotate(45deg) translate(5px,10px)"/&gt;
@@ -445,7 +464,10 @@
       height: 100px; width: 100px;
       transform: translate(80px, 80px) scale(1.5, 1.5) rotate(45deg);
   }
-  </pre>Move the element by 80 pixels in both the X and Y directions, then scale the element by 150%, then rotate it 45 degrees clockwise about the Z axis. Note that the scale and rotate operate about the center of the element, since the element has the default transform-origin of 50% 50%.
+  </pre>
+  Move the element by 80 pixels in both the X and Y directions, then scale the element by 150%, then rotate it 45 
+  degrees clockwise about the Z axis. Note that the scale and rotate operate about the center of the element, 
+  since the element has the default transform-origin of 50% 50%.
         <div class="figure">
           <img src="compound_transform.png" alt="The transform specified above">
         </div>
@@ -483,13 +505,10 @@
               For matrix:
                 <ul>
                   <li>
-                    the matrix is
-                    decomposed using <a
-                    href="http://tog.acm.org/GraphicsGems/gemsii/unmatrix.c">the
-                    method described by unmatrix</a> into separate translation,
-                    scale, rotation and skew matrices, then each
-                    decomposed matrix is interpolated numerically, and finally
-                    combined in order to produce a resulting 3x2 matrix.
+                    the matrix is decomposed using the technique described in "Matrix decomposition 
+                    for animation" below into separate translation, scale, rotation, skew, and 
+                    perspective components, then each decomposed component is interpolated numerically, 
+                    and finally combined in order to produce a resulting 3x2 matrix.
                   </li>
                 </ul>
             </li>
@@ -551,7 +570,168 @@
           </ul>
         </li>
       </ul>
+      
+      <h2 id="matrix-decomposition">
+          Matrix decomposition for animation
+      </h2>
+      <p>
+          When interpolating between 2 matrices, each is decomposed into the corresponding
+          translation, rotation, scale, skew, and perspective values. Not all matrices can be 
+          accurately described by these values. Those that can't are decomposed into the most
+          accurate representation possible, using the technique below. This technique is taken
+          from The "unmatrix" method in "Graphics Gems II, edited by Jim Arvo". The pseudocode
+          below works on a 4x4 homogeneous matrix. A 3x2 2D matrix is therefore first converted
+          to 4x4 homogeneous form.
+      </p>
+      <pre>
+          Input: matrix       ; a 4x4 matrix
+          Output: translation ; a 3 component vector
+                  rotation    ; euler angles, represented as a 3 component vector
+                  scale       ; a 3 component vector
+                  skew        ; skew factors XY,XZ,YZ represented as a 3 component vector
+                  perspective ; a 4 component vector
+          Returns false if the matrix cannot be decomposed, true if it can
+          
+          Supporting functions (point is a 3 component vector, matrix is a 4x4 matrix):
+            float  determinant(matrix)          returns the 4x4 determinant of the matrix
+            matrix inverse(matrix)              returns the inverse of the passed matrix
+            matrix transpose(matrix)            returns the transpose of the passed matrix
+            point  multVecMatrix(point, matrix) multiplies the passed point by the passed matrix 
+                                                and returns the transformed point
+            float  length(point)                returns the length of the passed vector
+            point  normalize(point)             normalizes the length of the passed point to 1
+            float  dot(point, point)            returns the dot product of the passed points
+            float  cos(float)                   returns the cosine of the passed angle in radians
+            float  asin(float)                  returns the arcsine in radians of the passed value
+            float  atan2(float y, float x)      returns the principal value of the arc tangent of 
+                                                y/x, using the signs of both arguments to determine 
+                                                the quadrant of the return value
 
+          Decomposition also makes use of the following function:
+            point combine(point a, point b, float ascl, float bscl)
+                result[0] = (ascl * a[0]) + (bscl * b[0])
+                result[1] = (ascl * a[1]) + (bscl * b[1])
+                result[2] = (ascl * a[2]) + (bscl * b[2])
+                return result
+        
+        
+          // Normalize the matrix.
+          if (matrix[3][3] == 0)
+              return false
+
+          for (i = 0; i < 4; i++)
+              for (j = 0; j < 4; j++)
+                  matrix[i][j] /= matrix[3][3]
+
+          // perspectiveMatrix is used to solve for perspective, but it also provides
+          // an easy way to test for singularity of the upper 3x3 component.
+          perspectiveMatrix = matrix
+
+          for (i = 0; i < 3; i++)
+              perspectiveMatrix[i][3] = 0
+              
+          perspectiveMatrix[3][3] = 1
+
+          if (determinant(perspectiveMatrix) == 0)
+              return false
+
+          // First, isolate perspective.
+          if (matrix[0][3] != 0 || matrix[1][3] != 0 || matrix[2][3] != 0)
+              // rightHandSide is the right hand side of the equation.
+              rightHandSide[0] = matrix[0][3];
+              rightHandSide[1] = matrix[1][3];
+              rightHandSide[2] = matrix[2][3];
+              rightHandSide[3] = matrix[3][3];
+
+              // Solve the equation by inverting perspectiveMatrix and multiplying
+              // rightHandSide by the inverse.
+              inversePerspectiveMatrix = inverse(perspectiveMatrix)
+              transposedInversePerspectiveMatrix = transposeMatrix4(inversePerspectiveMatrix)
+              perspective = multVecMatrix(rightHandSide, transposedInversePerspectiveMatrix)
+
+               // Clear the perspective partition
+              matrix[0][3] = matrix[1][3] = matrix[2][3] = 0
+              matrix[3][3] = 1
+          else
+              // No perspective.
+              perspective[0] = perspective[1] = perspective[2] = 0
+              perspective[3] = 1
+
+          // Next take care of translation
+          translate[0] = matrix[3][0]
+          matrix[3][0] = 0
+          translate[1] = matrix[3][1]
+          matrix[3][1] = 0
+          translate[2] = matrix[3][2]
+          matrix[3][2] = 0
+
+          // Now get scale and shear. 'row' is a 3 element array of 3 component vectors
+          for (i = 0; i < 3; i++)
+              row[i][0] = matrix[i][0]
+              row[i][1] = matrix[i][1]
+              row[i][2] = matrix[i][2]
+
+          // Compute X scale factor and normalize first row.
+          scale[0] = length(row[0])
+          row[0] = normalize(row[0])
+
+          // Compute XY shear factor and make 2nd row orthogonal to 1st.
+          skew[0] = dot(row[0], row[1])
+          row[1] = combine(row[1], row[0], 1.0, -skew[0])
+
+          // Now, compute Y scale and normalize 2nd row.
+          scale[1] = length(row[1])
+          row[1] = normalize(row[1])
+          skew[0] /= scale[1];
+
+          // Compute XZ and YZ shears, orthogonalize 3rd row
+          skew[1] = dot(row[0], row[2])
+          row[2] = combine(row[2], row[0], 1.0, -skew[1])
+          skew[2] = dot(row[1], row[2])
+          row[2] = combine(row[2], row[1], 1.0, -skew[2])
+
+          // Next, get Z scale and normalize 3rd row.
+          scale[2] = length(row[2])
+          row[2] = normalize(row[2])
+          skew[1] /= scale[2]
+          skew[2] /= scale[2]
+
+          // At this point, the matrix (in rows) is orthonormal.
+          // Check for a coordinate system flip.  If the determinant
+          // is -1, then negate the matrix and the scaling factors.
+          pdum3 = cross(row[1], row[2])
+          if (dot(row[0], pdum3) < 0)
+              for (i = 0; i < 3; i++) {
+                  scale[0] *= -1;
+                  row[i][0] *= -1
+                  row[i][1] *= -1
+                  row[i][2] *= -1
+
+          // Now, get the rotations ou
+          rotate[1] = asin(-row[0][2]);
+          if (cos(rotate[1]) != 0)
+             rotate[0] = atan2(row[1][2], row[2][2]);
+             rotate[2] = atan2(row[0][1], row[0][0]);
+          else
+             rotate[0] = atan2(-row[2][0], row[1][1]);
+             rotate[2] = 0;
+
+          return true;
+      </pre>
+      <p>
+          Each component of each returned value is linearly interpolated with the corresponding
+          component of the other matrix. The resulting components are then recomposed into a 
+          final matrix as though combining the following transform functions:
+      </p>
+      <pre>
+          matrix3d(1,0,0,0, 0,1,0,0, 0,0,1,0, perspective[0], perspective[1], perspective[2], perspective[3])
+          translate3d(translation[0], translation[1], translation[2])
+          rotateX(rotation[0]) rotateY(rotation[1]) rotateZ(rotation[2])
+          matrix3d(1,0,0,0, 0,1,0,0, 0,skew[2],1,0, 0,0,0,1)
+          matrix3d(1,0,0,0, 0,1,0,0, skew[1],0,1,0, 0,0,0,1)
+          matrix3d(1,0,0,0, skew[0],1,0,0, 0,0,1,0, 0,0,0,1)
+          scale3d(scale[0], scale[1], scale[2])
+      </pre>
       <h2 id="dom-interfaces">
         DOM Interfaces
       </h2>
@@ -622,7 +802,8 @@
         </dt>
         <dd>
           <p>
-            The following 2 functions are added to the <code>Window</code> interface. They provide conversions between the page and node coordinate spaces.
+            The following 2 functions are added to the <code>Window</code> interface. They provide conversions 
+            between the page and node coordinate spaces.
           </p>
           <dl>
 
@@ -652,9 +833,9 @@
                 </dt>
                 <dd>
                   <div class='method'>
-                    The <code>convertPointFromPageToNode</code> method returns a point in the coordinate space of the
-                    passed Node that is at the same location in the page as the passed point, which is in the coordinate
-                    space of the page.
+                    The <code>convertPointFromPageToNode</code> method returns a point in the coordinate space of 
+                    the passed Node that is at the same location in the page as the passed point, which is in the
+                    coordinate space of the page.
                     <div class='parameters'>
                       <b>Parameters</b>
                       <div class='paramtable'>
@@ -669,7 +850,8 @@
                             <code class='parameter-name'>point</code> of type <code>Point</code>
                           </dt>
                           <dd>
-                            The point, in the page's coordinate space, for which the desired point, in the Node's coordinate space, should be returned.<br>
+                            The point, in the page's coordinate space, for which the desired point, in the Node's
+                            coordinate space, should be returned.<br>
                           </dd>
                         </dl>
                       </div>
@@ -691,11 +873,11 @@
                     <div>
                       <b>No Exceptions</b>
                     </div>
-                  </div>
                 </dd> <!-- convertPointFromPageToNode -->
                 <!-- ============================================================ -->
                 <dt>
-                  <code class='method-name'><a id="DOM-Window-convertPointFromNodeToPage" name='DOM-Window-convertPointFromNodeToPage'>convertPointFromNodeToPage</a></code>
+                  <code class='method-name'><a id="DOM-Window-convertPointFromNodeToPage"
+                    name='DOM-Window-convertPointFromNodeToPage'>convertPointFromNodeToPage</a></code>
                 </dt>
                 <dd>
                   <div class='method'>
@@ -716,7 +898,8 @@
                             <code class='parameter-name'>point</code> of type <code>Point</code>
                           </dt>
                           <dd>
-                            The point, in the Node's coordinate space, for which the desired point, in the page's coordinate space, should be returned.<br>
+                            The point, in the Node's coordinate space, for which the desired point, in the page's
+                            coordinate space, should be returned.<br>
                           </dd>
                         </dl>
                       </div>
@@ -738,7 +921,6 @@
                     <div>
                       <b>No Exceptions</b>
                     </div>
-                  </div>
                 </dd> <!-- convertPointFromNodeToPage -->
               </dl>
             </dd> <!-- Methods -->
@@ -793,7 +975,8 @@
             <dd>
               <dl>
                 <dt>
-                  <code class='attribute-name'><a id="DOM-CSSMatrix-matrix" name='DOM-CSSMatrix-matrix'>a-f</a></code> of type <code>float</code>
+                  <code class='attribute-name'><a id="DOM-CSSMatrix-matrix" name='DOM-CSSMatrix-matrix'>a-f</a></code> 
+                  of type <code>float</code>
                 </dt>
                 <dd>
                   Each of these attributes represents one of the values in the 3x2 matrix.<br>
@@ -813,8 +996,9 @@
                 </dt>
                 <dd>
                   <div class='method'>
-                    The <code>setMatrixValue</code> method replaces the existing matrix with one computed from parsing the passed string
-                    as though it had been assigned to the transform property in a CSS style rule.
+                    The <code>setMatrixValue</code> method replaces the existing matrix with one computed from 
+                    parsing the passed string as though it had been assigned to the transform property in a CSS 
+                    style rule.
                     <div class='parameters'>
                       <b>Parameters</b>
                       <div class='paramtable'>
@@ -850,11 +1034,13 @@
 
                 <!-- ===================================================== -->
                 <dt>
-                  <code class='method-name'><a id="DOM-CSSMatrix-multiply" name='DOM-CSSMatrix-multiply'>multiply</a></code>
+                  <code class='method-name'><a id="DOM-CSSMatrix-multiply"
+                       name='DOM-CSSMatrix-multiply'>multiply</a></code>
                 </dt>
                 <dd>
                   <div class='method'>
-                    The <code>multiply</code> method returns a new CSSMatrix which is the result of this matrix multiplied by the passed matrix, with the passed matrix to the right. This matrix is not modified.
+                    The <code>multiply</code> method returns a new CSSMatrix which is the result of this matrix 
+                    multiplied by the passed matrix, with the passed matrix to the right. This matrix is not modified.
                     <div class='parameters'>
                       <b>Parameters</b>
                       <div class='paramtable'>
@@ -889,11 +1075,13 @@
 
                 <!-- ===================================================== -->
                 <dt>
-                  <code class='method-name'><a id="DOM-CSSMatrix-inverse" name='DOM-CSSMatrix-inverse'>inverse</a></code>
+                  <code class='method-name'><a id="DOM-CSSMatrix-inverse"
+                       name='DOM-CSSMatrix-inverse'>inverse</a></code>
                 </dt>
                 <dd>
                   <div class='method'>
-                    The <code>inverse</code> method returns a new matrix which is the inverse of this matrix. This matrix is not modified.
+                    The <code>inverse</code> method returns a new matrix which is the inverse of this matrix. This 
+                    matrix is not modified.
                     <div class='parameters'>
                       <b>No Parameters</b>
                     </div><!-- parameters -->
@@ -929,11 +1117,14 @@
 
                 <!-- ===================================================== -->
                 <dt>
-                  <code class='method-name'><a id="DOM-CSSMatrix-translate" name='DOM-CSSMatrix-translate'>translate</a></code>
+                  <code class='method-name'><a id="DOM-CSSMatrix-translate" 
+                    name='DOM-CSSMatrix-translate'>translate</a></code>
                 </dt>
                 <dd>
                   <div class='method'>
-                    The <code>translate</code> method returns a new matrix which is this matrix post multiplied by a translation matrix containing the passed values. This matrix is not modified.
+                    The <code>translate</code> method returns a new matrix which is this matrix post multiplied 
+                    by a translation matrix containing the passed 
+                    values. This matrix is not modified.
                     <div class='parameters'>
                       <b>Parameters</b>
                       <div class='paramtable'>
@@ -969,7 +1160,8 @@
                     <div>
                       <b>No Exceptions</b>
                     </div>
-                  </div><!-- ======================================================================================================= -->
+                  </div>
+                  <!-- ===================================================================================== -->
                 </dd> <!-- translate() -->
 
                 <!-- ===================================================== -->
@@ -978,7 +1170,10 @@
                 </dt>
                 <dd>
                   <div class='method'>
-                    The <code>scale</code> method returns a new matrix which is this matrix post multiplied by a scale matrix containing the passed values. If the z component is undefined, a 1 value is used in its place. If the y component is undefined, the x component value is used in its place. This matrix is not modified.
+                    The <code>scale</code> method returns a new matrix which is this matrix post multiplied by a 
+                    scale matrix containing the passed values. If the z component is undefined, a 1 value is used in 
+                    its place. If the y component is undefined, the x component value is used in its 
+                    place. This matrix is not modified.
                     <div class='parameters'>
                       <b>Parameters</b>
                       <div class='paramtable'>
@@ -1014,7 +1209,8 @@
                     <div>
                       <b>No Exceptions</b>
                     </div>
-                  </div><!-- ======================================================================================================= -->
+                  </div>
+                  <!-- ========================================================================================-->
                 </dd> <!-- scale() -->
 
                 <!-- ===================================================== -->
@@ -1023,7 +1219,8 @@
                 </dt>
                 <dd>
                   <div class='method'>
-                    The <code>rotate</code> method returns a new matrix which is this matrix post multiplied by a rotation matrix. The rotation value is in degrees. This matrix is not modified.
+                    The <code>rotate</code> method returns a new matrix which is this matrix post multiplied by 
+                    a rotation matrix. The rotation value is in degrees. This matrix is not modified.
                     <div class='parameters'>
                       <b>Parameters</b>
                       <div class='paramtable'>
@@ -1054,7 +1251,7 @@
                       <b>No Exceptions</b>
                     </div>
                   </div>
-                  <!-- ======================================================================================================= -->
+                  <!-- ====================================================================================== -->
                 </dd> <!-- rotate() -->
 
               </dl><!-- methods -->
@@ -1115,7 +1312,8 @@
             <dd>
               <dl>
                 <dt>
-                  <code class='attribute-name'><a id="DOM-CSSTransformValue-operationType" name='DOM-CSSTransformValue-operationType'>operationType</a></code> of type <code>unsigned short</code>
+                  <code class='attribute-name'><a id="DOM-CSSTransformValue-operationType" name='DOM-CSSTransformValue-operationType'>operationType</a></code> 
+                  of type <code>unsigned short</code>
                 </dt>
                 <dd>
                   One of the listed operation types.<br>
@@ -1161,7 +1359,9 @@
                             <code>NOT_SUPPORTED_ERROR</code>
                           </dt>
                           <dd>
-                            Thrown when the CSSTranformValue can not be converted into a CSSMatrix, such as when the CSSTransformValue contains percentage units and is being called on an object with unknown dimensions.
+                            Thrown when the CSSTranformValue can not be converted into a CSSMatrix, such as when 
+                            the CSSTransformValue contains percentage units and is being called on an object with 
+                            unknown dimensions.
                           </dd>
                         </dl>
                       </div>

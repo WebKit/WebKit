@@ -4,6 +4,7 @@
 <html lang=en>
  <head>
   <title>CSS 2D Transforms Module Level 3</title>
+  <meta content="text/html;charset=UTF-8" http-equiv=Content-type>
   <link href=default.css rel=stylesheet type="text/css">
 
   <style type="text/css">
@@ -21,14 +22,14 @@
 
    <h1>CSS 2D Transforms Module Level 3</h1>
 
-   <h2 class="no-num no-toc" id=longstatus-date>Editor's Draft 14 April 2009</h2>
+   <h2 class="no-num no-toc" id=longstatus-date>Editor's Draft 6 July 2009</h2>
 
    <dl>
     <dt>This version:
 
     <dd> <a
-     href="http://www.w3.org/TR/2009/ED-css3-2d-transforms-20090414">http://dev.w3.org/csswg/css3-2d-transforms/</a>
-     <!--http://www.w3.org/TR/2009/WD-css3-2d-transforms-20090414-->
+     href="http://www.w3.org/TR/2009/ED-css3-2d-transforms-20090706">http://dev.w3.org/csswg/css3-2d-transforms/</a>
+     <!--http://www.w3.org/TR/2009/WD-css3-2d-transforms-20090706-->
 
     <dt>Latest version:
 
@@ -134,22 +135,25 @@
    <li><a href="#animation"><span class=secno>6 </span> Transitions and
     animations between transform values </a>
 
-   <li><a href="#dom-interfaces"><span class=secno>7 </span> DOM Interfaces
+   <li><a href="#matrix-decomposition"><span class=secno>7 </span> Matrix
+    decomposition for animation </a>
+
+   <li><a href="#dom-interfaces"><span class=secno>8 </span> DOM Interfaces
     </a>
     <ul class=toc>
-     <li><a href="#point-interface"><span class=secno>7.1 </span> Point </a>
+     <li><a href="#point-interface"><span class=secno>8.1 </span> Point </a>
 
-     <li><a href="#window-interface"><span class=secno>7.2 </span> Window
+     <li><a href="#window-interface"><span class=secno>8.2 </span> Window
       </a>
 
-     <li><a href="#cssmatrix-interface"><span class=secno>7.3 </span>
+     <li><a href="#cssmatrix-interface"><span class=secno>8.3 </span>
       CSSMatrix </a>
 
-     <li><a href="#csstransformvalue-interface"><span class=secno>7.4 </span>
+     <li><a href="#csstransformvalue-interface"><span class=secno>8.4 </span>
       CSSTransformValue </a>
     </ul>
 
-   <li><a href="#references"><span class=secno>8 </span>References</a>
+   <li><a href="#references"><span class=secno>9 </span>References</a>
     <ul class=toc>
      <li class=no-num><a href="#normative-references">Normative
       references</a>
@@ -223,8 +227,9 @@
    changing the normal layout of that content (much like relative
    positioning) and (2) transformation of the content prior to layout that
    affects the layout of that content. See <a
-   href="http://lists.w3.org/Archives/Public/www-style/2007Oct/0209">http://lists.w3.org/Archives/Public/www-style/2007Oct/0209</a>
-   for examples of both cases. The "transform" property (as defined in this
+   href="http://lists.w3.org/Archives/Public/www-style/2007Oct/0209">
+   http://lists.w3.org/Archives/Public/www-style/2007Oct/0209</a> for
+   examples of both cases. The "transform" property (as defined in this
    document) is equally useful for both roles. This document is focused on
    satisfying the first role. There is, however, an architectural question
    that arises because there needs to be a way to distinguish which role an
@@ -384,7 +389,7 @@
    <dd> specifies an identity transform.
 
    <dt> <span class=prop-value>matrix(&lt;number&gt;, &lt;number&gt;,
-    &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;)</span>
+    &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;) </span>
 
    <dd> specifies a 2D transformation in the form of a <a
     href="http://www.w3.org/TR/SVG/coords.html#TransformMatrixDefined">transformation
@@ -541,12 +546,11 @@
 
      <li> For matrix:
       <ul>
-       <li> the matrix is decomposed using <a
-        href="http://tog.acm.org/GraphicsGems/gemsii/unmatrix.c">the method
-        described by unmatrix</a> into separate translation, scale, rotation
-        and skew matrices, then each decomposed matrix is interpolated
-        numerically, and finally combined in order to produce a resulting 3x2
-        matrix.
+       <li> the matrix is decomposed using the technique described in "Matrix
+        decomposition for animation" below into separate translation, scale,
+        rotation, skew, and perspective components, then each decomposed
+        component is interpolated numerically, and finally combined in order
+        to produce a resulting 3x2 matrix.
       </ul>
     </ul>
 
@@ -597,12 +601,175 @@
     </ul>
   </ul>
 
-  <h2 id=dom-interfaces><span class=secno>7 </span> DOM Interfaces</h2>
+  <h2 id=matrix-decomposition><span class=secno>7 </span> Matrix
+   decomposition for animation</h2>
+
+  <p> When interpolating between 2 matrices, each is decomposed into the
+   corresponding translation, rotation, scale, skew, and perspective values.
+   Not all matrices can be accurately described by these values. Those that
+   can't are decomposed into the most accurate representation possible, using
+   the technique below. This technique is taken from The "unmatrix" method in
+   "Graphics Gems II, edited by Jim Arvo". The pseudocode below works on a
+   4x4 homogeneous matrix. A 3x2 2D matrix is therefore first converted to
+   4x4 homogeneous form.
+
+  <pre>
+          Input: matrix       ; a 4x4 matrix
+          Output: translation ; a 3 component vector
+                  rotation    ; euler angles, represented as a 3 component vector
+                  scale       ; a 3 component vector
+                  skew        ; skew factors XY,XZ,YZ represented as a 3 component vector
+                  perspective ; a 4 component vector
+          Returns false if the matrix cannot be decomposed, true if it can
+          
+          Supporting functions (point is a 3 component vector, matrix is a 4x4 matrix):
+            float  determinant(matrix)          returns the 4x4 determinant of the matrix
+            matrix inverse(matrix)              returns the inverse of the passed matrix
+            matrix transpose(matrix)            returns the transpose of the passed matrix
+            point  multVecMatrix(point, matrix) multiplies the passed point by the passed matrix 
+                                                and returns the transformed point
+            float  length(point)                returns the length of the passed vector
+            point  normalize(point)             normalizes the length of the passed point to 1
+            float  dot(point, point)            returns the dot product of the passed points
+            float  cos(float)                   returns the cosine of the passed angle in radians
+            float  asin(float)                  returns the arcsine in radians of the passed value
+            float  atan2(float y, float x)      returns the principal value of the arc tangent of 
+                                                y/x, using the signs of both arguments to determine 
+                                                the quadrant of the return value
+
+          Decomposition also makes use of the following function:
+            point combine(point a, point b, float ascl, float bscl)
+                result[0] = (ascl * a[0]) + (bscl * b[0])
+                result[1] = (ascl * a[1]) + (bscl * b[1])
+                result[2] = (ascl * a[2]) + (bscl * b[2])
+                return result
+        
+        
+          // Normalize the matrix.
+          if (matrix[3][3] == 0)
+              return false
+
+          for (i = 0; i < 4; i++)
+              for (j = 0; j < 4; j++)
+                  matrix[i][j] /= matrix[3][3]
+
+          // perspectiveMatrix is used to solve for perspective, but it also provides
+          // an easy way to test for singularity of the upper 3x3 component.
+          perspectiveMatrix = matrix
+
+          for (i = 0; i < 3; i++)
+              perspectiveMatrix[i][3] = 0
+              
+          perspectiveMatrix[3][3] = 1
+
+          if (determinant(perspectiveMatrix) == 0)
+              return false
+
+          // First, isolate perspective.
+          if (matrix[0][3] != 0 || matrix[1][3] != 0 || matrix[2][3] != 0)
+              // rightHandSide is the right hand side of the equation.
+              rightHandSide[0] = matrix[0][3];
+              rightHandSide[1] = matrix[1][3];
+              rightHandSide[2] = matrix[2][3];
+              rightHandSide[3] = matrix[3][3];
+
+              // Solve the equation by inverting perspectiveMatrix and multiplying
+              // rightHandSide by the inverse.
+              inversePerspectiveMatrix = inverse(perspectiveMatrix)
+              transposedInversePerspectiveMatrix = transposeMatrix4(inversePerspectiveMatrix)
+              perspective = multVecMatrix(rightHandSide, transposedInversePerspectiveMatrix)
+
+               // Clear the perspective partition
+              matrix[0][3] = matrix[1][3] = matrix[2][3] = 0
+              matrix[3][3] = 1
+          else
+              // No perspective.
+              perspective[0] = perspective[1] = perspective[2] = 0
+              perspective[3] = 1
+
+          // Next take care of translation
+          translate[0] = matrix[3][0]
+          matrix[3][0] = 0
+          translate[1] = matrix[3][1]
+          matrix[3][1] = 0
+          translate[2] = matrix[3][2]
+          matrix[3][2] = 0
+
+          // Now get scale and shear. 'row' is a 3 element array of 3 component vectors
+          for (i = 0; i < 3; i++)
+              row[i][0] = matrix[i][0]
+              row[i][1] = matrix[i][1]
+              row[i][2] = matrix[i][2]
+
+          // Compute X scale factor and normalize first row.
+          scale[0] = length(row[0])
+          row[0] = normalize(row[0])
+
+          // Compute XY shear factor and make 2nd row orthogonal to 1st.
+          skew[0] = dot(row[0], row[1])
+          row[1] = combine(row[1], row[0], 1.0, -skew[0])
+
+          // Now, compute Y scale and normalize 2nd row.
+          scale[1] = length(row[1])
+          row[1] = normalize(row[1])
+          skew[0] /= scale[1];
+
+          // Compute XZ and YZ shears, orthogonalize 3rd row
+          skew[1] = dot(row[0], row[2])
+          row[2] = combine(row[2], row[0], 1.0, -skew[1])
+          skew[2] = dot(row[1], row[2])
+          row[2] = combine(row[2], row[1], 1.0, -skew[2])
+
+          // Next, get Z scale and normalize 3rd row.
+          scale[2] = length(row[2])
+          row[2] = normalize(row[2])
+          skew[1] /= scale[2]
+          skew[2] /= scale[2]
+
+          // At this point, the matrix (in rows) is orthonormal.
+          // Check for a coordinate system flip.  If the determinant
+          // is -1, then negate the matrix and the scaling factors.
+          pdum3 = cross(row[1], row[2])
+          if (dot(row[0], pdum3) < 0)
+              for (i = 0; i < 3; i++) {
+                  scale[0] *= -1;
+                  row[i][0] *= -1
+                  row[i][1] *= -1
+                  row[i][2] *= -1
+
+          // Now, get the rotations ou
+          rotate[1] = asin(-row[0][2]);
+          if (cos(rotate[1]) != 0)
+             rotate[0] = atan2(row[1][2], row[2][2]);
+             rotate[2] = atan2(row[0][1], row[0][0]);
+          else
+             rotate[0] = atan2(-row[2][0], row[1][1]);
+             rotate[2] = 0;
+
+          return true;
+      </pre>
+
+  <p> Each component of each returned value is linearly interpolated with the
+   corresponding component of the other matrix. The resulting components are
+   then recomposed into a final matrix as though combining the following
+   transform functions:
+
+  <pre>
+          matrix3d(1,0,0,0, 0,1,0,0, 0,0,1,0, perspective[0], perspective[1], perspective[2], perspective[3])
+          translate3d(translation[0], translation[1], translation[2])
+          rotateX(rotation[0]) rotateY(rotation[1]) rotateZ(rotation[2])
+          matrix3d(1,0,0,0, 0,1,0,0, 0,skew[2],1,0, 0,0,0,1)
+          matrix3d(1,0,0,0, 0,1,0,0, skew[1],0,1,0, 0,0,0,1)
+          matrix3d(1,0,0,0, skew[0],1,0,0, 0,0,1,0, 0,0,0,1)
+          scale3d(scale[0], scale[1], scale[2])
+      </pre>
+
+  <h2 id=dom-interfaces><span class=secno>8 </span> DOM Interfaces</h2>
 
   <p> This section describes the interfaces and functionality added to the
    DOM to support runtime access to the functionality described above.
 
-  <h3 id=point-interface><span class=secno>7.1 </span> Point</h3>
+  <h3 id=point-interface><span class=secno>8.1 </span> Point</h3>
 
   <dl>
    <dt> <b>Interface <i><a id=DOM-Point name=DOM-Point>Point</a></i></b>
@@ -647,7 +814,7 @@
   </dl>
   <!-- ====================================================================== -->
 
-  <h3 id=window-interface><span class=secno>7.2 </span> Window</h3>
+  <h3 id=window-interface><span class=secno>8.2 </span> Window</h3>
 
   <dl>
    <dt> <b>Interface <i><a id=DOM-Window name=DOM-Window>Window</a></i></b>
@@ -776,7 +943,7 @@
   </dl>
   <!-- ============================================================ -->
 
-  <h3 id=cssmatrix-interface><span class=secno>7.3 </span> CSSMatrix</h3>
+  <h3 id=cssmatrix-interface><span class=secno>8.3 </span> CSSMatrix</h3>
 
   <dl>
    <dt> <b>Interface <i><a id=DOM-CSSMatrix
@@ -970,7 +1137,7 @@
 
          <div> <b>No Exceptions</b></div>
         </div>
-        <!-- ======================================================================================================= -->
+        <!-- ===================================================================================== -->
         </dd>
        <!-- translate() -->
        <!-- ===================================================== -->
@@ -1012,7 +1179,7 @@
 
          <div> <b>No Exceptions</b></div>
         </div>
-        <!-- ======================================================================================================= -->
+        <!-- ========================================================================================-->
         </dd>
        <!-- scale() -->
        <!-- ===================================================== -->
@@ -1047,7 +1214,7 @@
 
          <div> <b>No Exceptions</b></div>
         </div>
-        <!-- ======================================================================================================= -->
+        <!-- ====================================================================================== -->
         </dd>
        <!-- rotate() -->
       </dl>
@@ -1058,7 +1225,7 @@
   </dl>
   <!-- ============================================================ -->
 
-  <h3 id=csstransformvalue-interface><span class=secno>7.4 </span>
+  <h3 id=csstransformvalue-interface><span class=secno>8.4 </span>
    CSSTransformValue</h3>
 
   <dl>
@@ -1223,7 +1390,7 @@ Ian Hickson, Eric Meyer (The OPAL Group), Jeff Veen.
 </ul>
 -->
 
-  <h2 id=references><span class=secno>8 </span>References</h2>
+  <h2 id=references><span class=secno>9 </span>References</h2>
 
   <h3 class=no-num id=normative-references>Normative references</h3>
   <!--begin-normative-->
