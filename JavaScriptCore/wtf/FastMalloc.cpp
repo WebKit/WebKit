@@ -1526,10 +1526,6 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
   // necessary.  We do not bother resetting the stale pagemap
   // entries for the pieces we are merging together because we only
   // care about the pagemap entries for the boundaries.
-  //
-  // Note that the spans we merge into "span" may come out of
-  // a "returned" list.  For simplicity, we move these into the
-  // "normal" list of the appropriate size class.
   const PageID p = span->start;
   const Length n = span->length;
   Span* prev = GetDescriptor(p-1);
@@ -1560,10 +1556,19 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
 
   Event(span, 'D', span->length);
   span->free = 1;
-  if (span->length < kMaxPages) {
-    DLL_Prepend(&free_[span->length].normal, span);
-  } else {
-    DLL_Prepend(&large_.normal, span);
+#if TCMALLOC_TRACK_DECOMMITED_SPANS
+  if (span->decommitted) {
+    if (span->length < kMaxPages)
+      DLL_Prepend(&free_[span->length].returned, span);
+    else
+      DLL_Prepend(&large_.returned, span);
+  } else
+#endif
+  {
+    if (span->length < kMaxPages)
+      DLL_Prepend(&free_[span->length].normal, span);
+    else
+      DLL_Prepend(&large_.normal, span);
   }
   free_pages_ += n;
 

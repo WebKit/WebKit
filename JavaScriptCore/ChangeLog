@@ -1,3 +1,20 @@
+2009-07-06  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Darin Adler and Mark Rowe.
+
+        Decommitted spans are added to the list of normal spans rather than 
+        the returned spans in TCMalloc_PageHeap::Delete().
+        https://bugs.webkit.org/show_bug.cgi?id=26998
+        
+        In TCMalloc_PageHeap::Delete(), the deleted span can be decommitted in 
+        the process of merging with neighboring spans that are also decommitted.  
+        The merged span needs to be placed in the list of returned spans (spans 
+        whose memory has been returned to the system).  Right now it's always added 
+        to the list of the normal spans which can theoretically cause thrashing.  
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::Delete):
+
 2009-07-05  Lars Knoll  <lars.knoll@nokia.com>
 
         Reviewed by Maciej Stachowiak.
