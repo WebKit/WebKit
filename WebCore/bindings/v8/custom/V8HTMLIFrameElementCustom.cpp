@@ -40,7 +40,7 @@ namespace WebCore {
 ACCESSOR_SETTER(HTMLIFrameElementSrc)
 {
     HTMLIFrameElement* iframe = V8Proxy::convertDOMWrapperToNode<HTMLIFrameElement>(info.Holder());
-    String v = toWebCoreStringWithNullCheck(value);
+    String v = valueToStringWithNullCheck(value);
 
     if (!allowSettingFrameSrcToJavascriptUrl(iframe, v))
         return;

@@ -201,7 +201,7 @@ NAMED_PROPERTY_SETTER(CSSStyleDeclaration)
     if (!propInfo)
         return notHandledByInterceptor();
 
-    String propertyValue = toWebCoreStringWithNullCheck(value);
+    String propertyValue = valueToStringWithNullCheck(value);
     if (propInfo->hadPixelOrPosPrefix)
         propertyValue.append("px");
 

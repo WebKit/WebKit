@@ -1,3 +1,51 @@
+2009-07-06  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, build fix.
+
+        Roll out r45559 to fix Chromium canary.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26857
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Binding.cpp: Removed.
+        * bindings/v8/V8Binding.h:
+        (WebCore::toInt32):
+        (WebCore::toWebCoreString):
+        (WebCore::fromWebCoreString):
+        (WebCore::toWebCoreStringWithNullCheck):
+        (WebCore::isUndefinedOrNull):
+        (WebCore::v8Boolean):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::getListenerFunction):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::handleConsoleMessage):
+        (WebCore::V8Proxy::compileScript):
+        (WebCore::V8Proxy::sourceName):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::handleConsoleMessage):
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::NAMED_PROPERTY_SETTER):
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        (WebCore::V8CustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLIFrameElementCustom.cpp:
+        (WebCore::ACCESSOR_SETTER):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp:
+        (WebCore::removeElement):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::SetTimeoutOrInterval):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-07-06  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

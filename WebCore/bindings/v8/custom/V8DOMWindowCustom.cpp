@@ -277,9 +277,9 @@ CALLBACK_FUNC_DECL(DOMWindowPostMessage)
     if (args.Length() > 2) {
         if (V8Proxy::isWrapperOfType(args[1], V8ClassIndex::MESSAGEPORT))
             port = V8Proxy::convertToNativeObject<MessagePort>(V8ClassIndex::MESSAGEPORT, args[1]);
-        targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
+        targetOrigin = valueToStringWithNullOrUndefinedCheck(args[2]);
     } else {
-        targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[1]);
+        targetOrigin = valueToStringWithNullOrUndefinedCheck(args[1]);
     }
 
     if (tryCatch.HasCaught())
@@ -562,9 +562,9 @@ CALLBACK_FUNC_DECL(DOMWindowShowModalDialog)
     if (!canShowModalDialogNow(frame) || !allowPopUp())
         return v8::Undefined();
 
-    String url = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
+    String url = valueToStringWithNullOrUndefinedCheck(args[0]);
     v8::Local<v8::Value> dialogArgs = args[1];
-    String featureArgs = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
+    String featureArgs = valueToStringWithNullOrUndefinedCheck(args[2]);
 
     const HashMap<String, String> features = parseModalDialogFeatures(featureArgs);
 
@@ -651,7 +651,7 @@ CALLBACK_FUNC_DECL(DOMWindowOpen)
     if (!page)
         return v8::Undefined();
 
-    String urlString = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
+    String urlString = valueToStringWithNullOrUndefinedCheck(args[0]);
     AtomicString frameName = (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1]));
 
     // Because FrameTree::find() returns true for empty strings, we must check
@@ -700,7 +700,7 @@ CALLBACK_FUNC_DECL(DOMWindowOpen)
     // Parse the values, and then work with a copy of the parsed values
     // so we can restore the values we may not want to overwrite after
     // we do the multiple monitor fixes.
-    WindowFeatures rawFeatures(toWebCoreStringWithNullOrUndefinedCheck(args[2]));
+    WindowFeatures rawFeatures(valueToStringWithNullOrUndefinedCheck(args[2]));
     WindowFeatures windowFeatures(rawFeatures);
     FloatRect screenRect = screenAvailableRect(page->mainFrame()->view());
 

@@ -71,11 +71,11 @@ static void handleConsoleMessage(v8::Handle<v8::Message> message, v8::Handle<v8:
     
     v8::Handle<v8::String> errorMessageString = message->Get();
     ASSERT(!errorMessageString.IsEmpty());
-    String errorMessage = toWebCoreString(errorMessageString);
+    String errorMessage = ToWebCoreString(errorMessageString);
     
     v8::Handle<v8::Value> resourceName = message->GetScriptResourceName();
     bool useURL = (resourceName.IsEmpty() || !resourceName->IsString());
-    String resourceNameString = useURL ? workerContext->url() : toWebCoreString(resourceName);
+    String resourceNameString = useURL ? workerContext->url() : ToWebCoreString(resourceName);
     
     workerContext->addMessage(ConsoleDestination, JSMessageSource, ErrorMessageLevel, errorMessage, message->GetLineNumber(), resourceNameString);
 }
