@@ -1,3 +1,20 @@
+2009-07-06  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Bug 15135: REGRESSION (r19843-r19850): Changing a flexbox's
+        contents makes its container scroll to the top
+        https://bugs.webkit.org/show_bug.cgi?id=15135
+
+        Delay updateing scroll bar of descendants of flexbox until their
+        positions are determined.  In this way we can prevent descendants
+        of flexible boxes from changing positions of their scrollbars
+        using tentative positions.
+
+        * fast/flexbox/repaint-scrollbar-expected.txt: Added.
+        * fast/flexbox/repaint-scrollbar.html: Added.
+        * fast/flexbox/resources/repaint-scrollbar.js: Added.
+
 2009-07-06  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Maciej Stachowiak.

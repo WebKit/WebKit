@@ -336,7 +336,9 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         }
         child = iterator.next();
     }
-    
+
+    RenderBlock::startDelayUpdateScrollInfo();
+
     // We do 2 passes.  The first pass is simply to lay everyone out at
     // their preferred widths.  The second pass handles flexing the children.
     do {
@@ -561,7 +563,9 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
     } while (haveFlex);
 
     m_flexingChildren = false;
-    
+
+    RenderBlock::finishDelayUpdateScrollInfo();
+
     if (remainingSpace > 0 && ((style()->direction() == LTR && style()->boxPack() != BSTART) ||
                                (style()->direction() == RTL && style()->boxPack() != BEND))) {
         // Children must be repositioned.
@@ -789,6 +793,8 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         }
     }
 
+    RenderBlock::startDelayUpdateScrollInfo();
+
     // We do 2 passes.  The first pass is simply to lay everyone out at
     // their preferred widths.  The second pass handles flexing the children.
     // Our first pass is done without flexing.  We simply lay the children
@@ -976,6 +982,8 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 haveFlex = false;
         }        
     } while (haveFlex);
+
+    RenderBlock::finishDelayUpdateScrollInfo();
 
     if (style()->boxPack() != BSTART && remainingSpace > 0) {
         // Children must be repositioned.

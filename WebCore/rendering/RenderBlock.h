@@ -329,6 +329,14 @@ public:
     // style from this RenderBlock.
     RenderBlock* createAnonymousBlock() const;
 
+    // Delay update scrollbar until finishDelayRepaint() will be
+    // called.  This function is used when a flexbox is layouting its
+    // descendant.  If multiple startDelayRepaint() is called,
+    // finishDelayRepaint() will do nothing until finishDelayRepaint()
+    // is called same times.
+    static void startDelayUpdateScrollInfo();
+    static void finishDelayUpdateScrollInfo();
+
 private:
     void adjustPointToColumnContents(IntPoint&) const;
     void adjustForBorderFit(int x, int& left, int& right) const; // Helper function for borderFitAdjust
@@ -356,6 +364,8 @@ private:
     int layoutColumns(int endOfContent = -1);
 
     bool expandsToEncloseOverhangingFloats() const;
+
+    void updateScrollInfoAfterLayout();
 
 protected:
     struct FloatingObject {

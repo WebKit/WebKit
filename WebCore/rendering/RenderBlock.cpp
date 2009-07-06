@@ -84,6 +84,10 @@ static PercentHeightContainerMap* gPercentHeightContainerMap = 0;
     
 typedef WTF::HashMap<RenderBlock*, ListHashSet<RenderInline*>*> ContinuationOutlineTableMap;
 
+typedef WTF::HashSet<RenderBlock*> DelayedUpdateScrollInfoSet;
+static int gDelayUpdateScrollInfo = 0;
+static DelayedUpdateScrollInfoSet* gDelayedUpdateScrollInfoSet = 0;
+
 // Our MarginInfo state used when laying out block children.
 RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
 {
@@ -688,6 +692,42 @@ bool RenderBlock::isSelfCollapsingBlock() const
     return false;
 }
 
+void RenderBlock::startDelayUpdateScrollInfo() {
+    if (gDelayUpdateScrollInfo == 0) {
+        ASSERT(!gDelayedUpdateScrollInfoSet);
+        gDelayedUpdateScrollInfoSet = new DelayedUpdateScrollInfoSet;
+    }
+    ASSERT(gDelayedUpdateScrollInfoSet);
+    ++gDelayUpdateScrollInfo;
+}
+
+void RenderBlock::finishDelayUpdateScrollInfo() {
+    --gDelayUpdateScrollInfo;
+    ASSERT(gDelayUpdateScrollInfo >= 0);
+    if (gDelayUpdateScrollInfo == 0) {
+        ASSERT(gDelayedUpdateScrollInfoSet);
+
+        for (DelayedUpdateScrollInfoSet::iterator it = gDelayedUpdateScrollInfoSet->begin(); it != gDelayedUpdateScrollInfoSet->end(); ++it) {
+            RenderBlock* block = *it;
+            if (block->hasOverflowClip()) {
+                block->layer()->updateScrollInfoAfterLayout();
+            }
+        }
+
+        delete gDelayedUpdateScrollInfoSet;
+        gDelayedUpdateScrollInfoSet = 0;
+    }
+}
+
+void RenderBlock::updateScrollInfoAfterLayout() {
+    if (hasOverflowClip()) {
+        if (gDelayUpdateScrollInfo)
+            gDelayedUpdateScrollInfoSet->add(this);
+        else
+            layer()->updateScrollInfoAfterLayout();
+    }
+}
+
 void RenderBlock::layout()
 {
     // Update our first letter info now.
@@ -844,8 +884,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
-    if (hasOverflowClip())
-        layer()->updateScrollInfoAfterLayout();
+    updateScrollInfoAfterLayout();
 
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
@@ -1465,8 +1504,7 @@ bool RenderBlock::layoutOnlyPositionedObjects()
 
     statePusher.pop();
 
-    if (hasOverflowClip())
-        layer()->updateScrollInfoAfterLayout();
+    updateScrollInfoAfterLayout();
 
     setNeedsLayout(false);
     return true;
