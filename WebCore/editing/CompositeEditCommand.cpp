@@ -1041,6 +1041,8 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
 // to determine if the split is necessary. Returns the last split node.
 PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, bool splitAncestor)
 {
+    ASSERT(start != end);
+
     RefPtr<Node> node;
     for (node = start; node && node->parent() != end; node = node->parent()) {
         VisiblePosition positionInParent(Position(node->parent(), 0), DOWNSTREAM);

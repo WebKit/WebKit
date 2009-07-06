@@ -163,6 +163,12 @@ void IndentOutdentCommand::indentIntoBlockquote(const VisiblePosition& endOfCurr
     moveParagraph(startOfParagraph(endOfCurrentParagraph), endOfCurrentParagraph, VisiblePosition(Position(insertionPoint, 0)), true);
 }
 
+bool IndentOutdentCommand::isAtUnsplittableElement(const Position& pos) const
+{
+    Node* node = pos.node();
+    return node == editableRootForPosition(pos) || node == enclosingNodeOfType(pos, &isTableCell);
+}
+
 void IndentOutdentCommand::indentRegion()
 {
     VisibleSelection selection = selectionForParagraphIteration(endingSelection());
@@ -174,10 +180,10 @@ void IndentOutdentCommand::indentRegion()
     ASSERT(!startOfSelection.isNull());
     ASSERT(!endOfSelection.isNull());
 
-    // Special case empty root editable elements because there's nothing to split
+    // Special case empty unsplittable elements because there's nothing to split
     // and there's nothing to move.
     Position start = startOfSelection.deepEquivalent().downstream();
-    if (start.node() == editableRootForPosition(start)) {
+    if (isAtUnsplittableElement(start)) {
         RefPtr<Element> blockquote = createIndentBlockquoteElement(document());
         insertNodeAt(blockquote, start);
         RefPtr<Element> placeholder = createBreakElement(document());
