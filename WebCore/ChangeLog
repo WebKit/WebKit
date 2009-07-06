@@ -1,3 +1,51 @@
+2009-07-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7008093> Media controller can’t be used to scrub when movie is 
+        narrow — track is too narrow
+
+        Do not show media controller time display elements when the a movie is too narrow.
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+            The 'state' parameter to wkDrawMediaUIPart is now an unsigned bitfield.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlTimeDisplayElement::MediaControlTimeDisplayElement):
+            Give current time and time remaining controls a common base class.
+        (WebCore::MediaControlTimeDisplayElement::setVisible):
+            New method, hide and show the element.
+        * rendering/MediaControlElements.h:
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::RenderMedia):
+            Initialize m_previousVisible.
+        (WebCore::RenderMedia::layout):
+            Show/hide the time display elements as the movie width changes.
+        (WebCore::RenderMedia::createCurrentTimeDisplay):
+        (WebCore::RenderMedia::createTimeRemainingDisplay):
+            Base class is now MediaControlTimeDisplayElement, not MediaControlElement.
+        (WebCore::RenderMedia::shouldShowTimeDisplayControls):
+            New, decide if time display elements should be visible or not.
+        * rendering/RenderMedia.h:
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::):
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton):
+        (WebCore::RenderThemeMac::paintMediaMuteButton):
+        (WebCore::RenderThemeMac::paintMediaPlayButton):
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton):
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaSliderThumb):
+        (WebCore::RenderThemeMac::paintMediaRewindButton):
+        (WebCore::RenderThemeMac::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderThemeMac::paintMediaControlsBackground):
+        (WebCore::RenderThemeMac::paintMediaCurrentTime):
+        (WebCore::RenderThemeMac::paintMediaTimeRemaining):
+            The 'state' parameter to wkDrawMediaUIPart is now an unsigned bitfield.
+
 2009-07-06  David Kilzer  <ddkilzer@apple.com>
 
         Bug 27000: Minor clean up to runtime_root.{cpp|h}

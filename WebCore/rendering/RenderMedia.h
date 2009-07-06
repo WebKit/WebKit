@@ -71,6 +71,8 @@ public:
 
     static String formatTime(float time);
 
+    bool shouldShowTimeDisplayControls() const;
+
     void updateFromElement();
     void updatePlayer();
     void updateControls();
@@ -118,8 +120,8 @@ private:
     RefPtr<MediaControlTimelineElement> m_timeline;
     RefPtr<MediaControlFullscreenButtonElement> m_fullscreenButton;
     RefPtr<MediaControlTimelineContainerElement> m_timelineContainer;
-    RefPtr<MediaControlElement> m_currentTimeDisplay;
-    RefPtr<MediaControlElement> m_timeRemainingDisplay;
+    RefPtr<MediaControlTimeDisplayElement> m_currentTimeDisplay;
+    RefPtr<MediaControlTimeDisplayElement> m_timeRemainingDisplay;
     RefPtr<MediaControlStatusDisplayElement> m_statusDisplay;
     RenderObjectChildList m_children;
     Node* m_lastUnderNode;

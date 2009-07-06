@@ -470,5 +470,27 @@ bool MediaControlFullscreenButtonElement::rendererIsNeeded(RenderStyle* style)
 
 // ----------------------------
 
+MediaControlTimeDisplayElement::MediaControlTimeDisplayElement(Document* doc, PseudoId pseudo, HTMLMediaElement* element)
+    : MediaControlElement(doc, pseudo, element)
+    , m_cachedWidth(Length(0, Fixed))
+{
+}
+
+void MediaControlTimeDisplayElement::setVisible(bool visible)
+{
+    if (!renderer() || !renderer()->style())
+        return;
+
+    if (!m_cachedWidth.value()) {
+        RenderStyle* style = m_mediaElement->renderer()->getCachedPseudoStyle(m_pseudoStyleId);
+        if (!style)
+            return;
+        m_cachedWidth = style->width();
+    }
+
+    renderer()->style()->setWidth(visible ? m_cachedWidth : Length(0, Fixed));
+}
+
+
 } //namespace WebCore
 #endif // enable(video)

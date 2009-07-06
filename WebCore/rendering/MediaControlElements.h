@@ -200,6 +200,16 @@ public:
 
 // ----------------------------
 
+class MediaControlTimeDisplayElement : public MediaControlElement {
+public:
+    MediaControlTimeDisplayElement(Document*, PseudoId, HTMLMediaElement*);
+    void setVisible(bool);
+private:
+    Length m_cachedWidth;
+};
+
+// ----------------------------
+
 class RenderMediaControlShadowRoot : public RenderBlock {
 public:
     RenderMediaControlShadowRoot(Element* e) : RenderBlock(e) { }
@@ -207,6 +217,7 @@ public:
 };
     
 // ----------------------------
+
 
 } //namespace WebCore
 #endif // enable(video)
