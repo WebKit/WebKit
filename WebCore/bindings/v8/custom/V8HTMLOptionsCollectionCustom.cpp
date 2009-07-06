@@ -67,7 +67,7 @@ CALLBACK_FUNC_DECL(HTMLOptionsCollectionAdd)
     else {
         bool ok;
         v8::TryCatch try_catch;
-        int index = ToInt32(args[1], ok);
+        int index = toInt32(args[1], ok);
 
         if (try_catch.HasCaught())
             return v8::Undefined();

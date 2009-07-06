@@ -562,7 +562,7 @@ END
             $getterString = "imp_instance";
         }
         if ($nativeType eq "String") {
-            $getterString = "ToString($getterString)";
+            $getterString = "toString($getterString)";
         }
 
         my $result;
@@ -1053,7 +1053,7 @@ sub GenerateImplementation
     push(@implFixedHeader,
          "#include \"config.h\"\n" .
          "#include \"V8Proxy.h\"\n" .
-         "#include \"v8_binding.h\"\n\n" .
+         "#include \"V8Binding.h\"\n\n" .
          "#undef LOG\n\n");
 
     my $conditionalString;
@@ -1799,15 +1799,15 @@ sub JSValueToNative
     return "static_cast<$type>($value->NumberValue())" if $type eq "float" or $type eq "double";
     return "$value->NumberValue()" if $type eq "SVGNumber";
 
-    return "ToInt32($value${maybeOkParam})" if $type eq "unsigned long" or $type eq "unsigned short" or $type eq "long";
+    return "toInt32($value${maybeOkParam})" if $type eq "unsigned long" or $type eq "unsigned short" or $type eq "long";
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
 
-    return "ToWebCoreString($value)" if $type eq "AtomicString" or $type eq "DOMUserData";
+    return "toWebCoreString($value)" if $type eq "AtomicString" or $type eq "DOMUserData";
     if ($type eq "DOMString") {
-        return "valueToStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
-        return "valueToStringWithNullOrUndefinedCheck($value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
-        return "ToWebCoreString($value)";
+        return "toWebCoreStringWithNullCheck($value)" if $signature->extendedAttributes->{"ConvertNullToNullString"};
+        return "toWebCoreStringWithNullOrUndefinedCheck($value)" if $signature->extendedAttributes->{"ConvertUndefinedOrNullToNullString"};
+        return "toWebCoreString($value)";
     }
 
     if ($type eq "NodeFilter") {

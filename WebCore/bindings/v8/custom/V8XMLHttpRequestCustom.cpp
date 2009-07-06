@@ -345,10 +345,10 @@ CALLBACK_FUNC_DECL(XMLHttpRequestOpen)
     ExceptionCode ec = 0;
     String user, passwd;
     if (args.Length() >= 4 && !args[3]->IsUndefined()) {
-        user = valueToStringWithNullCheck(args[3]);
+        user = toWebCoreStringWithNullCheck(args[3]);
 
         if (args.Length() >= 5 && !args[4]->IsUndefined()) {
-            passwd = valueToStringWithNullCheck(args[4]);
+            passwd = toWebCoreStringWithNullCheck(args[4]);
             xmlHttpRequest->open(method, url, async, user, passwd, ec);
         } else
             xmlHttpRequest->open(method, url, async, user, ec);
@@ -384,7 +384,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestSend)
             ASSERT(document);
             xmlHttpRequest->send(document, ec);
         } else
-            xmlHttpRequest->send(valueToStringWithNullCheck(arg), ec);
+            xmlHttpRequest->send(toWebCoreStringWithNullCheck(arg), ec);
     }
 
     if (ec)
