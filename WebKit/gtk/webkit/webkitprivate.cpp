@@ -166,8 +166,13 @@ void webkit_init()
     Pasteboard::generalPasteboard()->setHelper(new WebKit::PasteboardHelperGtk());
 
     SoupSession* session = webkit_get_default_session();
+
     SoupSessionFeature* authDialog = static_cast<SoupSessionFeature*>(g_object_new(WEBKIT_TYPE_SOUP_AUTH_DIALOG, NULL));
     g_signal_connect(authDialog, "current-toplevel", G_CALLBACK(currentToplevelCallback), NULL);
     soup_session_add_feature(session, authDialog);
     g_object_unref(authDialog);
+
+    SoupSessionFeature* sniffer = static_cast<SoupSessionFeature*>(g_object_new(SOUP_TYPE_CONTENT_SNIFFER, NULL));
+    soup_session_add_feature(session, sniffer);
+    g_object_unref(sniffer);
 }

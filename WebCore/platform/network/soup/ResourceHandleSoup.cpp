@@ -242,21 +242,38 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
     // we got, when we finish downloading.
     soup_message_body_set_accumulate(msg->response_body, FALSE);
 
+    if (msg->status_code == SOUP_STATUS_NOT_MODIFIED) {
+        RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
+        if (!handle)
+            return;
+        ResourceHandleInternal* d = handle->getInternal();
+        if (d->m_cancelled)
+            return;
+        ResourceHandleClient* client = handle->client();
+        if (!client)
+            return;
+
+        fillResponseFromMessage(msg, &d->m_response);
+        client->didReceiveResponse(handle.get(), d->m_response);
+    }
+}
+
+static void contentSniffedCallback(SoupMessage* msg, const char* sniffedType, GHashTable *params, gpointer data)
+{
+    if (sniffedType) {
+        const char* officialType = soup_message_headers_get_one(msg->response_headers, "Content-Type");
+
+        if (!officialType || strcmp(officialType, sniffedType))
+            soup_message_headers_set_content_type(msg->response_headers, sniffedType, params);
+    }
+
     // The 304 status code (SOUP_STATUS_NOT_MODIFIED) needs to be fed
     // into WebCore, as opposed to other kinds of redirections, which
     // are handled by soup directly, so we special-case it here and in
     // gotChunk.
     if (SOUP_STATUS_IS_TRANSPORT_ERROR(msg->status_code)
-        || (SOUP_STATUS_IS_REDIRECTION(msg->status_code) && (msg->status_code != SOUP_STATUS_NOT_MODIFIED)))
-        return;
-
-    // We still don't know anything about Content-Type, so we will try
-    // sniffing the contents of the file, and then report that we got
-    // headers; we will not do content sniffing for 304 responses,
-    // though, since they do not have a body.
-    const char* contentType = soup_message_headers_get_content_type(msg->response_headers, NULL);
-    if ((msg->status_code != SOUP_STATUS_NOT_MODIFIED)
-        && (!contentType || !g_ascii_strcasecmp(contentType, "text/plain")))
+        || (SOUP_STATUS_IS_REDIRECTION(msg->status_code) && (msg->status_code != SOUP_STATUS_NOT_MODIFIED))
+        || (msg->status_code == SOUP_STATUS_UNAUTHORIZED))
         return;
 
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
@@ -270,7 +287,6 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
         return;
 
     fillResponseFromMessage(msg, &d->m_response);
-    d->m_reportedHeaders = true;
     client->didReceiveResponse(handle.get(), d->m_response);
 }
 
@@ -290,21 +306,6 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
     ResourceHandleClient* client = handle->client();
     if (!client)
         return;
-
-    if (!d->m_reportedHeaders) {
-        gboolean uncertain;
-        char* contentType = g_content_type_guess(d->m_request.url().lastPathComponent().utf8().data(), reinterpret_cast<const guchar*>(chunk->data), chunk->length, &uncertain);
-        soup_message_headers_set_content_type(msg->response_headers, contentType, NULL);
-        g_free(contentType);
-
-        fillResponseFromMessage(msg, &d->m_response);
-        client->didReceiveResponse(handle.get(), d->m_response);
-        d->m_reportedHeaders = true;
-
-        // the didReceiveResponse call above may have cancelled the request
-        if (d->m_cancelled)
-            return;
-    }
 
     client->didReceiveData(handle.get(), chunk->data, chunk->length, false);
 }
@@ -471,6 +472,7 @@ bool ResourceHandle::startHttp(String urlString)
     d->m_msg = request().toSoupMessage();
     g_signal_connect(d->m_msg, "restarted", G_CALLBACK(restartedCallback), this);
     g_signal_connect(d->m_msg, "got-headers", G_CALLBACK(gotHeadersCallback), this);
+    g_signal_connect(d->m_msg, "content-sniffed", G_CALLBACK(contentSniffedCallback), this);
     g_signal_connect(d->m_msg, "got-chunk", G_CALLBACK(gotChunkCallback), this);
 
     g_object_set_data(G_OBJECT(d->m_msg), "resourceHandle", reinterpret_cast<void*>(this));
