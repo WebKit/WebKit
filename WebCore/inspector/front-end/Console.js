@@ -260,16 +260,7 @@ WebInspector.Console.prototype = {
             return;
 
         var reportCompletions = this._reportCompletions.bind(this, bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix);
-        if (expressionString) {
-            this._evalInInspectedWindow(expressionString, reportCompletions);
-        } else {
-            // There is no expressionString, so the completion should happen against global properties.
-            // Or if the debugger is paused, against properties in scope of the selected call frame.
-            if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
-                reportCompletions(WebInspector.panels.scripts.variablesInScopeForSelectedCallFrame());
-            else
-                reportCompletions(InspectorController.inspectedWindow());
-        }
+        this._evalInInspectedWindow(expressionString, reportCompletions);
     },
     
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result) {
@@ -397,7 +388,6 @@ WebInspector.Console.prototype = {
             WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, callback);
             return;
         }
-
         this.doEvalInWindow(expression, callback);
     },
     
@@ -431,6 +421,11 @@ WebInspector.Console.prototype = {
     
     doEvalInWindow: function(expression, callback)
     {
+        if (!expression) {
+            // There is no expression, so the completion should happen against global properties.
+            expression = "this";
+        }
+
         // Surround the expression in with statements to inject our command line API so that
         // the window object properties still take more precedent than our API functions.
         expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";

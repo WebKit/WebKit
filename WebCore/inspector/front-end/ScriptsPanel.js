@@ -370,8 +370,14 @@ WebInspector.ScriptsPanel.prototype = {
 
     doEvalInCallFrame: function(callFrame, code, callback)
     {
+        var panel = this;
         function delayedEvaluation()
         {
+            if (!code) {
+                // Evaluate into properties in scope of the selected call frame.
+                callback(panel._variablesInScope(callFrame));
+                return;
+            }
             try {
                 callback(callFrame.evaluate(code));
             } catch (e) {
@@ -381,20 +387,15 @@ WebInspector.ScriptsPanel.prototype = {
         setTimeout(delayedEvaluation, 0);
     },
 
-    variablesInScopeForSelectedCallFrame: function()
+    _variablesInScope: function(callFrame)
     {
-        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
-        if (!this._paused || !selectedCallFrame)
-            return {};
-
         var result = {};
-        var scopeChain = selectedCallFrame.scopeChain;
+        var scopeChain = callFrame.scopeChain;
         for (var i = 0; i < scopeChain.length; ++i) {
             var scopeObject = scopeChain[i];
             for (var property in scopeObject)
                 result[property] = true;
         }
-
         return result;
     },
 
