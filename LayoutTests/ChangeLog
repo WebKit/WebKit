@@ -1,3 +1,25 @@
+2009-07-06  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make unconfirmed IME text affect textarea's value.
+        This matches input and contentEditable elements as well
+        IE and Firefox.
+
+        This fixes https://bugs.webkit.org/show_bug.cgi?id=25061.
+
+        Input elements would go down this code path because it
+        would always get a null compositionNode from frame->editor().
+        Special casing compositionNodes is wrong because we explicitly
+        want unconfirmed IME input in the textarea's value (assuming we
+        want to match IE and Firefox here).
+
+        This change is originally created by Ojan Vafai <ojan@chromium.org> and
+        I just changed its manual tests with an automated test on his behalf.
+ 
+        * platform/mac/editing/input/text-control-ime-input-expected.txt: Added.
+        * platform/mac/editing/input/text-control-ime-input.html: Added.
+
 2009-07-06  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.
