@@ -1041,7 +1041,7 @@ void AnimationBase::getTimeToNextEvent(double& time, bool& isLooping) const
     double nextIterationTime = m_totalDuration;
 
     if (m_totalDuration < 0 || elapsedDuration < m_totalDuration) {
-        durationLeft = m_animation->duration() - fmod(elapsedDuration, m_animation->duration());
+        durationLeft = m_animation->duration() > 0 ? (m_animation->duration() - fmod(elapsedDuration, m_animation->duration())) : 0;
         nextIterationTime = elapsedDuration + durationLeft;
     }
     
