@@ -196,6 +196,9 @@ void DumpRenderTree::open(const QUrl& url)
 
     resetJSObjects();
 
+    QFocusEvent ev(QEvent::FocusIn);
+    m_page->event(&ev);
+
     qt_dump_frame_loader(url.toString().contains("loading/"));
     m_page->mainFrame()->load(url);
 }

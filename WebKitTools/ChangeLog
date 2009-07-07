@@ -1,3 +1,15 @@
+2009-07-06  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Fix various layout tests with Qt's DRT.
+
+        Remember to set the focus on the web page before
+        loading.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::open):
+
 2009-07-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø and Holger Freyther.
