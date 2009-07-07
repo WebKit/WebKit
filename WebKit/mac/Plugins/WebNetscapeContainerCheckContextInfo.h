@@ -28,7 +28,7 @@
 
 #import "WebBaseNetscapePluginView.h"
 
-#if USE(PLUGIN_HOST_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 @interface WebNetscapeContainerCheckContextInfo : NSObject {
     uint32 _checkRequestID;
@@ -43,4 +43,4 @@
 
 @end
 
-#endif // USE(PLUGIN_HOST_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

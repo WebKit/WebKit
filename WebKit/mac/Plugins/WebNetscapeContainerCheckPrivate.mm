@@ -30,7 +30,7 @@
 
 #import "WebNetscapePluginView.h"
 
-#if USE(PLUGIN_HOST_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 WKNBrowserContainerCheckFuncs *browserContainerCheckFuncs()
 {
@@ -45,4 +45,4 @@ WKNBrowserContainerCheckFuncs *browserContainerCheckFuncs()
     return &funcs;
 }
 
-#endif // USE(PLUGIN_HOST_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

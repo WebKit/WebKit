@@ -25,7 +25,7 @@
 
 #import "WebNetscapeContainerCheckContextInfo.h"
 
-#if USE(PLUGIN_HOST_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 @implementation WebNetscapeContainerCheckContextInfo
 
@@ -58,4 +58,4 @@
 
 @end
 
-#endif // USE(PLUGIN_HOST_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
