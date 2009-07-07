@@ -333,7 +333,11 @@ static NSArray *additionalWebPlugInPaths;
         
         for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
             NSView *subview = [subviews objectAtIndex:subviewIndex]; 
-            if ([subview isKindOfClass:[WebBaseNetscapePluginView class]] || [WebPluginController isPlugInView:subview]) 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+            if ([subview isKindOfClass:[WebBaseNetscapePluginView class]] || [WebPluginController isPlugInView:subview])
+#else
+            if ([WebPluginController isPlugInView:subview])
+#endif
                 [pluginInstanceViews removeObject:subview]; 
         }
     }
@@ -345,10 +349,13 @@ static NSArray *additionalWebPlugInPaths;
     NSArray *pli = [pluginInstanceViews allObjects];
     NSEnumerator *enumerator = [pli objectEnumerator];
     while ((view = [enumerator nextObject]) != nil) {
+#if ENABLE(NETSCAPE_PLUGIN_API)
         if ([view isKindOfClass:[WebBaseNetscapePluginView class]]) {
             ASSERT([view respondsToSelector:@selector(stop)]);
             [view performSelector:@selector(stop)];
-        } else if ([WebPluginController isPlugInView:view]) {
+        } else
+#endif
+        if ([WebPluginController isPlugInView:view]) {
             ASSERT([[view superview] isKindOfClass:[WebHTMLView class]]);
             ASSERT([[view superview] respondsToSelector:@selector(_destroyAllWebPlugins)]);
             // this will actually destroy all plugin instances for a webHTMLView and remove them from this list

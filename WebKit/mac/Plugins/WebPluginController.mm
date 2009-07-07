@@ -246,8 +246,10 @@ static NSMutableSet *pluginViews = nil;
             [view pluginDestroy];
         }
         
+#if ENABLE(NETSCAPE_PLUGIN_API)
         if (Frame* frame = core([self webFrame]))
             frame->script()->cleanupScriptObjectsForPlugin(self);
+#endif
         
         [pluginViews removeObject:view];
         [[_documentView _webView] removePluginInstanceView:view];
@@ -296,8 +298,10 @@ static void cancelOutstandingCheck(const void *item, void *context)
             [aView pluginDestroy];
         }
         
+#if ENABLE(NETSCAPE_PLUGIN_API)
         if (Frame* frame = core([self webFrame]))
             frame->script()->cleanupScriptObjectsForPlugin(self);
+#endif
         
         [pluginViews removeObject:aView];
         [[_documentView _webView] removePluginInstanceView:aView];
