@@ -1,5 +1,18 @@
 2009-07-06  David Kilzer  <ddkilzer@apple.com>
 
+        Bug 27002: Build fix when DASHBOARD_SUPPORT is disabled with -Wunused-parameter
+
+        <https://bugs.webkit.org/show_bug.cgi?id=27002>
+
+        Reviewed by Geoff Garen.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::prepareGradientForDashboard):
+        Mark gradient as an unused parameter when DASHBOARD_SUPPORT is
+        disabled.
+
+2009-07-06  David Kilzer  <ddkilzer@apple.com>
+
         Bug 27001: Fix improper use of PassRefPtr<Node> to RefPtr<Node>
 
         <https://bugs.webkit.org/show_bug.cgi?id=27001>
