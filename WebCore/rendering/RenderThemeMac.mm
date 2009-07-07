@@ -1491,7 +1491,7 @@ void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
 #if ENABLE(VIDEO)
 
 enum WKMediaControllerThemeState { 
-    MediaUIPartDisbledFlag = 1 << 0,
+    MediaUIPartDisabledFlag = 1 << 0,
     MediaUIPartPressedFlag = 1 << 1,
     MediaUIPartDrawEndCapsFlag = 1 << 3,
 };
