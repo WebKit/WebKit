@@ -1,3 +1,23 @@
+2009-07-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Tor Arne Vestbø and Holger Freyther.
+
+        Fix timeout timer handling in Qt DRT.
+
+        Use QBasicTimer instead of startTimer/killTimer, to fix the
+        problem that starting the timeout timer did not stop a
+        previously started timer, causing multiple emissions of timeout.
+        The timerEvent() implementation now also checks the timer id, to
+        protect against double timeouts.
+
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        (LayoutTestController::waitUntilDone):
+        (LayoutTestController::notifyDone):
+        (LayoutTestController::timerEvent):
+        * DumpRenderTree/qt/jsobjects.h:
+
 2009-07-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Maciej Stachowiak.
