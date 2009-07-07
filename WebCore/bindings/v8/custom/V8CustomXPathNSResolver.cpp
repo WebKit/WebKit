@@ -80,7 +80,7 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     if (try_catch.HasCaught())
         return String();
 
-    return valueToStringWithNullCheck(retval);
+    return toWebCoreStringWithNullCheck(retval);
 }
 
 } // namespace WebCore

@@ -54,7 +54,7 @@ CALLBACK_FUNC_DECL(SQLTransactionExecuteSql)
         return v8::Undefined();
     }
 
-    String statement = ToWebCoreString(args[0]);
+    String statement = toWebCoreString(args[0]);
 
     Vector<SQLValue> sqlValues;
 
@@ -75,7 +75,7 @@ CALLBACK_FUNC_DECL(SQLTransactionExecuteSql)
             else if (value->IsNumber())
                 sqlValues.append(SQLValue(value->NumberValue()));
             else
-                sqlValues.append(SQLValue(ToWebCoreString(value)));
+                sqlValues.append(SQLValue(toWebCoreString(value)));
         }
     }
 

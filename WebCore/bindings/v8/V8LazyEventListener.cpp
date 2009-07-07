@@ -110,7 +110,7 @@ v8::Local<v8::Function> V8LazyEventListener::getListenerFunction()
             if (!value.IsEmpty()) {
                 ASSERT(value->IsFunction());
                 v8::Local<v8::Function> listenerFunction = v8::Local<v8::Function>::Cast(value);
-                listenerFunction->SetName(v8::String::New(FromWebCoreString(m_functionName), m_functionName.length()));
+                listenerFunction->SetName(v8::String::New(fromWebCoreString(m_functionName), m_functionName.length()));
 
                 m_listener = v8::Persistent<v8::Function>::New(listenerFunction);
 #ifndef NDEBUG

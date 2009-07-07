@@ -105,13 +105,13 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetStrokeColor)
     switch (args.Length()) {
     case 1:
         if (args[0]->IsString())
-            context->setStrokeColor(ToWebCoreString(args[0]));
+            context->setStrokeColor(toWebCoreString(args[0]));
         else
             context->setStrokeColor(toFloat(args[0]));
         break;
     case 2:
         if (args[0]->IsString())
-            context->setStrokeColor(ToWebCoreString(args[0]), toFloat(args[1]));
+            context->setStrokeColor(toWebCoreString(args[0]), toFloat(args[1]));
         else
             context->setStrokeColor(toFloat(args[0]), toFloat(args[1]));
         break;
@@ -135,13 +135,13 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetFillColor)
     switch (args.Length()) {
     case 1:
         if (args[0]->IsString())
-            context->setFillColor(ToWebCoreString(args[0]));
+            context->setFillColor(toWebCoreString(args[0]));
         else 
             context->setFillColor(toFloat(args[0]));
         break;
     case 2:
         if (args[0]->IsString())
-            context->setFillColor(ToWebCoreString(args[0]), toFloat(args[1]));
+            context->setFillColor(toWebCoreString(args[0]), toFloat(args[1]));
         else
             context->setFillColor(toFloat(args[0]), toFloat(args[1]));
         break;
@@ -184,13 +184,13 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetShadow)
         break;
     case 4:
         if (args[3]->IsString())
-            context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), ToWebCoreString(args[3]));
+            context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toWebCoreString(args[3]));
         else
             context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]));
         break;
     case 5:
         if (args[3]->IsString())
-            context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), ToWebCoreString(args[3]), toFloat(args[4]));
+            context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toWebCoreString(args[3]), toFloat(args[4]));
         else
             context->setShadow(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]));
         break;
@@ -291,7 +291,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImageFromRect)
 
     if (V8HTMLImageElement::HasInstance(arg)) {
         HTMLImageElement* image_element = V8Proxy::convertDOMWrapperToNode<HTMLImageElement>(arg);
-        context->drawImageFromRect(image_element,  toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), toFloat(args[5]), toFloat(args[6]), toFloat(args[7]), toFloat(args[8]), ToWebCoreString(args[9]));
+        context->drawImageFromRect(image_element,  toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), toFloat(args[5]), toFloat(args[6]), toFloat(args[7]), toFloat(args[8]), toWebCoreString(args[9]));
     } else
         V8Proxy::throwError(V8Proxy::TypeError, "drawImageFromRect: Invalid type of arguments");
 
@@ -308,7 +308,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DCreatePattern)
     if (V8HTMLImageElement::HasInstance(arg)) {
         HTMLImageElement* image_element = V8Proxy::convertDOMWrapperToNode<HTMLImageElement>(arg);
         ExceptionCode ec = 0;
-        RefPtr<CanvasPattern> pattern = context->createPattern(image_element, valueToStringWithNullCheck(args[1]), ec);
+        RefPtr<CanvasPattern> pattern = context->createPattern(image_element, toWebCoreStringWithNullCheck(args[1]), ec);
         if (ec != 0) {
             V8Proxy::setDOMException(ec);
             return notHandledByInterceptor();
@@ -319,7 +319,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DCreatePattern)
     if (V8HTMLCanvasElement::HasInstance(arg)) {
         HTMLCanvasElement* canvas_element = V8Proxy::convertDOMWrapperToNode<HTMLCanvasElement>(arg);
         ExceptionCode ec = 0;
-        RefPtr<CanvasPattern> pattern = context->createPattern(canvas_element, valueToStringWithNullCheck(args[1]), ec);
+        RefPtr<CanvasPattern> pattern = context->createPattern(canvas_element, toWebCoreStringWithNullCheck(args[1]), ec);
         if (ec != 0) {
             V8Proxy::setDOMException(ec);
             return notHandledByInterceptor();
@@ -345,7 +345,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DFillText)
         return notHandledByInterceptor();
     }
 
-    String text = ToWebCoreString(args[0]);
+    String text = toWebCoreString(args[0]);
     float x = toFloat(args[1]);
     float y = toFloat(args[2]);
 
@@ -371,7 +371,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeText)
         return notHandledByInterceptor();
     }
 
-    String text = ToWebCoreString(args[0]);
+    String text = toWebCoreString(args[0]);
     float x = toFloat(args[1]);
     float y = toFloat(args[2]);
 
