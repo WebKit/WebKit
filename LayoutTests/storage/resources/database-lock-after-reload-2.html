@@ -1,0 +1,59 @@
+<html>
+<head>
+<script>
+var database;
+
+function log(message)
+{
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+function finishTest()
+{
+    log("Test part 2 Complete");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function errorFunction(tx, error)
+{
+    log("Test failed - " + error.message);
+    finishTest();
+}
+
+function addData(db)
+{
+    db.transaction(function(tx) { 
+        log("Inserting some data");
+
+        tx.executeSql("INSERT INTO DataTest (testData) VALUES (?)", ["A"], function(tx, result) { }, errorFunction);
+    }, function(){}, function() { 
+        finishTest();
+    });
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    try {
+        database = openDatabase("DatabaseLockTest", "1.0", "Test for database locking", 5242880);
+        addData(database);
+    } catch(e) {
+        log("Error - could not open database");
+        finishTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<pre id="console">
+</pre>
+</body>
+
+</html>

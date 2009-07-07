@@ -1,3 +1,19 @@
+2009-07-07  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Antti Koivisto.
+
+        HTML5 Database becomes locked if a transaction is in progress when the page is refreshed.
+        https://bugs.webkit.org/show_bug.cgi?id=25711
+
+        Tests fix for https://bugs.webkit.org/show_bug.cgi?id=25711, where
+        web storage databases could become locked until the browser is
+        shut down if the page is refreshed whilst a transaction is in
+        progress.
+
+        * storage/database-lock-after-reload-expected.txt: Added.
+        * storage/database-lock-after-reload.html: Added.
+        * storage/resources/database-lock-after-reload-2.html: Added.
+
 2009-07-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

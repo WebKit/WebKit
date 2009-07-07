@@ -99,6 +99,17 @@ void* DatabaseThread::databaseThread()
 
     LOG(StorageAPI, "About to detach thread %i and clear the ref to DatabaseThread %p, which currently has %i ref(s)", m_threadID, this, refCount());
 
+    // Close the databases that we ran transactions on. This ensures that if any transactions are still open, they are rolled back and we don't leave the database in an
+    // inconsistent or locked state.
+    if (m_openDatabaseSet.size() > 0) {
+        // As the call to close will modify the original set, we must take a copy to iterate over.
+        DatabaseSet openSetCopy;
+        openSetCopy.swap(m_openDatabaseSet);
+        DatabaseSet::iterator end = openSetCopy.end();
+        for (DatabaseSet::iterator it = openSetCopy.begin(); it != end; ++it)
+           (*it)->close();
+    }
+
     // Detach the thread so its resources are no longer of any concern to anyone else
     detachThread(m_threadID);
 
@@ -106,6 +117,22 @@ void* DatabaseThread::databaseThread()
     m_selfRef = 0;
 
     return 0;
+}
+
+void DatabaseThread::recordDatabaseOpen(Database* database) 
+{
+    ASSERT(currentThread() == m_threadID);
+    ASSERT(database);
+    ASSERT(!m_openDatabaseSet.contains(database));
+    m_openDatabaseSet.add(database);
+}
+
+void DatabaseThread::recordDatabaseClosed(Database* database) 
+{
+    ASSERT(currentThread() == m_threadID);
+    ASSERT(database);
+    ASSERT(m_queue.killed() || m_openDatabaseSet.contains(database));
+    m_openDatabaseSet.remove(database);
 }
 
 void DatabaseThread::scheduleTask(PassRefPtr<DatabaseTask> task)

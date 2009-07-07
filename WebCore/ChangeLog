@@ -1,3 +1,29 @@
+2009-07-07  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Antti Koivisto.
+
+        HTML5 Database becomes locked if a transaction is in progress when the page is refreshed.
+        https://bugs.webkit.org/show_bug.cgi?id=25711
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=25711 where web
+        storage databases could become locked until the browser is shut
+        down if the page is refreshed whilst a transaction is in progress.
+
+        Test: storage/database-lock-after-reload.html
+
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::close): add code to inform the database thread we've closed the database.
+        (WebCore::Database::performOpenAndVerify): add code to inform the database thread we've opened a database.
+        * storage/Database.h:
+        (WebCore::Database::opened): return true iff the underlying sqlite database has been opened but not closed.
+        * storage/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::databaseThread): Before the database thread terminates, close any databases that ran transactions in this thread.
+        (WebCore::DatabaseThread::recordDatabaseOpen): Records a database that executed a transaction in this thread.
+        (WebCore::DatabaseThread::recordDatabaseClosed): Removes a database from the set of open databases.
+        * storage/DatabaseThread.h:
+        (WebCore::DatabaseThread::getThreadID): return the thread id for the database thread.
+
 2009-07-07  Jiahua Huang  <jhuangjiahua@gmail.com>
 
         Reviewed by Jan Alonzo.

@@ -100,6 +100,7 @@ public:
     bool deleted() const { return m_deleted; }
 
     void close();
+    bool opened() const { return m_opened; }
     
     void stop();
     bool stopped() const { return m_stopped; }
@@ -140,6 +141,8 @@ private:
     bool m_deleted;
     
     bool m_stopped;
+
+    bool m_opened;
 
     SQLiteDatabase m_sqliteDatabase;
     RefPtr<DatabaseAuthorizer> m_databaseAuthorizer;

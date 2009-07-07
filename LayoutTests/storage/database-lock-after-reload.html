@@ -1,0 +1,69 @@
+<html>
+<head>
+<script>
+var database;
+
+function log(message)
+{
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+function finishTest()
+{
+    log("Test part 1 Complete");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function errorFunction(tx, error)
+{
+    log("Test failed - " + error.message);
+    finishTest();
+}
+
+function addData(db)
+{
+    db.transaction(function(tx) { 
+        log("Inserting some data");
+        // Insert a large amount of data that will take a little while to run. Schedule a timout to run that will load a new page
+        // whilst the transaction is still in progress, interrupting the transaction. This should not leave the database locked and on
+        // the next page we should be able to insert some more data.
+        tx.executeSql("INSERT INTO DataTest (testData) VALUES (randomBlob(524200 ))", [], function(tx, result) { }, errorFunction);
+        location.href = "./resources/database-lock-after-reload-2.html";
+    }, errorFunction, function() { 
+        finishTest();
+    });
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.clearAllDatabases();
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    try {
+        database = openDatabase("DatabaseLockTest", "1.0", "Test for database locking", 5242880);
+    } catch (e) {
+        log("Error - could not open database");
+        finishTest();
+    }
+    
+    database.transaction(function(tx) {
+        log("Adding a table");
+        tx.executeSql("CREATE TABLE DataTest (testData)", [], function(tx, result) { }, errorFunction); 
+    }, errorFunction, function() { 
+        addData(database); 
+    });
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<pre id="console">
+</pre>
+</body>
+
+</html>
