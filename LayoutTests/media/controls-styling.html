@@ -1,0 +1,24 @@
+<html>
+<head>
+    <script src="video-paint-test.js"></script>
+    <style>
+    .override {
+        letter-spacing: 30px;
+        word-spacing: 30px;
+        line-height: 100px;
+        text-transform: capitalize;
+        text-indent: 10px;
+        text-shadow: red 1px 1px 1px;
+        text-decoration: underline;
+        color: blue;
+    }
+    </style>
+</head>
+<body onload="init()">
+<p>The look of the controls should not change.</p>
+<div class="override">
+    <video controls src="content/test.mp4"></video>
+</div>
+<video controls src="content/test.mp4"></video>
+</body>
+</html>

@@ -108,6 +108,11 @@ void MediaControlElement::updateStyle()
     if (!style)
         return;
 
+    // text-decoration can't be overrided from CSS. So we do it here.
+    // See https://bugs.webkit.org/show_bug.cgi?id=27015
+    style->setTextDecoration(TDNONE);
+    style->setTextDecorationsInEffect(TDNONE);
+
     bool needsRenderer = rendererIsNeeded(style) && parent() && parent()->renderer();
     if (renderer() && !needsRenderer)
         detach();
