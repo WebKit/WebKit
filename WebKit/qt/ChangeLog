@@ -1,3 +1,12 @@
+2009-07-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Add Qt DRT hook for clearing the frame name.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_clearFrameName):
+
 2009-07-05  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

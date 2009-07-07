@@ -5260,5 +5260,4 @@ fast/frames/frame-unload-crash.html
 fast/loader/onunload-form-submit-crash-2.html
 fast/loader/onunload-form-submit-crash.html
 fast/loader/plain-text-document.html
-fast/loader/subframe-self-close.html
 

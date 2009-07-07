@@ -1,3 +1,13 @@
+2009-07-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Clear the main frame's name between loading pages, like in r36652. This
+        reduces the side-effects between test cases.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::open):
+
 2009-07-06  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

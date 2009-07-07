@@ -53,7 +53,7 @@
 extern void qt_drt_run(bool b);
 extern void qt_dump_set_accepts_editing(bool b);
 extern void qt_dump_frame_loader(bool b);
-
+extern void qt_drt_clearFrameName(QWebFrame* qFrame);
 
 namespace WebCore {
 
@@ -198,6 +198,8 @@ void DumpRenderTree::open(const QUrl& url)
 
     QFocusEvent ev(QEvent::FocusIn);
     m_page->event(&ev);
+
+    qt_drt_clearFrameName(m_page->mainFrame());
 
     qt_dump_frame_loader(url.toString().contains("loading/"));
     m_page->mainFrame()->load(url);

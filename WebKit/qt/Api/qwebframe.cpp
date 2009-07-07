@@ -166,6 +166,12 @@ int QWEBKIT_EXPORT qt_drt_numberOfActiveAnimations(QWebFrame *qframe)
     return controller->numberOfActiveAnimations();
 }
 
+void QWEBKIT_EXPORT qt_drt_clearFrameName(QWebFrame* qFrame)
+{
+    Frame* frame = QWebFramePrivate::core(qFrame);
+    frame->tree()->clearName();
+}
+
 void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebFrameData *frameData)
 {
     q = qframe;
