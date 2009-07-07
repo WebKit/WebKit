@@ -1786,7 +1786,6 @@ fast/forms/slider-transformed.html
 fast/forms/slider-zoomed.html
 fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-input-event.html
-fast/forms/textarea-metrics.html
 fast/forms/textarea-paste-newline.html
 fast/forms/textarea-scrollbar-height.html
 fast/forms/textarea-scrolled-endline-caret.html

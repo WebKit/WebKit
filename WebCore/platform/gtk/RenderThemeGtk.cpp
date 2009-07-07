@@ -320,11 +320,6 @@ bool RenderThemeGtk::paintTextField(RenderObject* o, const RenderObject::PaintIn
     return paintMozWidget(this, MOZ_GTK_ENTRY, o, i, rect);
 }
 
-void RenderThemeGtk::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
-{
-    adjustTextFieldStyle(selector, style, e);
-}
-
 bool RenderThemeGtk::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     return paintTextField(o, i, r);

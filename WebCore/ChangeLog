@@ -1,3 +1,17 @@
+2009-07-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] textarea height property works only if other property are defined
+        https://bugs.webkit.org/show_bug.cgi?id=18984
+
+        Let WebCore handle textarea's metrics instead of readjusting it RenderthemeGtk.
+
+        Test: fast/forms/textarea-metrics.html
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        * platform/gtk/RenderThemeGtk.h:
+
 2009-07-07  Ben Murdoch  <benm@google.com>
 
         Reviewed by Antti Koivisto.
