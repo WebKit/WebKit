@@ -1,3 +1,20 @@
+2009-07-07  Gregory Hughes  <gfhughesVO+webkit@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        AX: Some webpages do not send AXLoadComplete
+        https://bugs.webkit.org/show_bug.cgi?id=26995
+
+        When sending the AXLayoutComplete notification it is possible
+        that the AXObjectCache was cleared, resulting in no valid
+        object to send the notification to. This fix ensures that an
+        AX object is created and cached if one does not already exist.
+
+        Not able to add a test because notifications get sent after the layout test is completed.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
 2009-07-06  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
