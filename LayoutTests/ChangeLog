@@ -1,3 +1,11 @@
+2009-07-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Added all current failing Qt DRT tests to the skip list, for a fresh start.
+
+        * platform/qt/Skipped:
+
 2009-07-06  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
