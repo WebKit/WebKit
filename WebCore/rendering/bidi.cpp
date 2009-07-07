@@ -1120,6 +1120,17 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             }
             lastFloat = m_floatingObjects->last();
         }
+        size_t floatCount = floats.size();
+        // Floats that did not have layout did not repaint when we laid them out. They would have
+        // painted by now if they had moved, but if they stayed at (0, 0), they still need to be
+        // painted.
+        for (size_t i = 0; i < floatCount; ++i) {
+            if (!floats[i].everHadLayout) {
+                RenderBox* f = floats[i].object;
+                if (!f->x() && !f->y() && f->checkForRepaintDuringLayout())
+                    f->repaint();
+            }
+        }
     }
 
     // Now add in the bottom border/padding.
