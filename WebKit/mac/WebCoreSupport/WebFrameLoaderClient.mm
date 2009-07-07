@@ -1537,6 +1537,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const KURL& baseURL, 
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
+#if ENABLE(MAC_JAVA_BRIDGE)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *view = nil;
@@ -1596,6 +1597,9 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAp
     END_BLOCK_OBJC_EXCEPTIONS;
     
     return new PluginWidget;
+#else
+    return 0;
+#endif // ENABLE(MAC_JAVA_BRIDGE)
 }
 
 String WebFrameLoaderClient::overrideMediaType() const
