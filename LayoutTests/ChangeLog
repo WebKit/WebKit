@@ -1,3 +1,12 @@
+2009-07-07  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add a specific leopard result for controls-styling.html, given that it doesn't
+        use the new controller look.
+
+        * platform/mac-leopard/media/controls-styling-expected.txt: Added.
+
 2009-07-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
