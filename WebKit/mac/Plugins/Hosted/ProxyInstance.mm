@@ -287,6 +287,9 @@ MethodList ProxyInstance::methodsNamed(const Identifier& identifier)
     if (!reply.get())
         return MethodList();
 
+    if (!reply->m_result && !m_instanceProxy->hostProxy()->shouldCacheMissingPropertiesAndMethods())
+        return MethodList();
+
     // Add a new entry to the map unless an entry was added while we were in waitForReply.
     pair<MethodMap::iterator, bool> mapAddResult = m_methods.add(identifier.ustring().rep(), 0);
     if (mapAddResult.second && reply->m_result)
@@ -315,6 +318,9 @@ Field* ProxyInstance::fieldNamed(const Identifier& identifier)
     
     auto_ptr<NetscapePluginInstanceProxy::BooleanReply> reply = m_instanceProxy->waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
     if (!reply.get())
+        return 0;
+    
+    if (!reply->m_result && !m_instanceProxy->hostProxy()->shouldCacheMissingPropertiesAndMethods())
         return 0;
     
     // Add a new entry to the map unless an entry was added while we were in waitForReply.

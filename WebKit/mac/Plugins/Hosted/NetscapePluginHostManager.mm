@@ -88,7 +88,11 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPackage(WebNetscapePl
         return 0;
     }
     
-    NetscapePluginHostProxy* hostProxy = new NetscapePluginHostProxy(clientPort, pluginHostPort, pluginHostPSN);
+    // Since Flash NPObjects add methods dynamically, we don't want to cache when a property/method doesn't exist
+    // on an object because it could be added later.
+    bool shouldCacheMissingPropertiesAndMethods = ![[[package bundle] bundleIdentifier] isEqualToString:@"com.macromedia.Flash Player.plugin"];
+    
+    NetscapePluginHostProxy* hostProxy = new NetscapePluginHostProxy(clientPort, pluginHostPort, pluginHostPSN, shouldCacheMissingPropertiesAndMethods);
     
     CFRetain(package);
     result.first->second = hostProxy;

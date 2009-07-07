@@ -88,7 +88,7 @@ static PluginProxyMap& pluginProxyMap()
     return pluginProxyMap;
 }
 
-NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort, const ProcessSerialNumber& pluginHostPSN)
+NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort, const ProcessSerialNumber& pluginHostPSN, bool shouldCacheMissingPropertiesAndMethods)
     : m_clientPort(clientPort)
     , m_portSet(MACH_PORT_NULL)
     , m_pluginHostPort(pluginHostPort)
@@ -96,6 +96,7 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     , m_menuBarIsVisible(true)
     , m_pluginHostPSN(pluginHostPSN)
     , m_processingRequests(0)
+    , m_shouldCacheMissingPropertiesAndMethods(shouldCacheMissingPropertiesAndMethods)
 {
     pluginProxyMap().add(m_clientPort, this);
     

@@ -41,7 +41,7 @@ class NetscapePluginInstanceProxy;
 
 class NetscapePluginHostProxy {
 public:
-    NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort, const ProcessSerialNumber& pluginHostPSN);
+    NetscapePluginHostProxy(mach_port_t clientPort, mach_port_t pluginHostPort, const ProcessSerialNumber& pluginHostPSN, bool shouldCacheMissingPropertiesAndMethods);
     
     mach_port_t port() const { return m_pluginHostPort; }
     mach_port_t clientPort() const { return m_clientPort; }
@@ -60,6 +60,8 @@ public:
     
     bool processRequests();
     bool isProcessingRequests() const { return m_processingRequests; }
+    
+    bool shouldCacheMissingPropertiesAndMethods() const { return m_shouldCacheMissingPropertiesAndMethods; }
     
 private:
     ~NetscapePluginHostProxy();
@@ -91,6 +93,8 @@ private:
     const ProcessSerialNumber m_pluginHostPSN;
     
     unsigned m_processingRequests;
+    
+    bool m_shouldCacheMissingPropertiesAndMethods;
 };
     
 } // namespace WebKit
