@@ -10,9 +10,9 @@ function runTest()
     var f = document.getElementById('theFrame');
     var r = document.getElementById('result');
     if (f.contentDocument.URL == 'about:blank')
-        r.innerHTML = "SUCCESS: Did not crash and loaded about:blank correctly"
+        r.innerHTML = "SUCCESS: Did not crash and loaded about:blank correctly";
     else
-        r.innerHTML = "FAILED: Did not crash but did not load about:blank correctly"
+        r.innerHTML = "FAILED: Did not crash but did not load about:blank correctly";
         
     if (window.layoutTestController)
         layoutTestController.notifyDone();
