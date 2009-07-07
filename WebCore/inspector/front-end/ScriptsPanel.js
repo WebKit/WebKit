@@ -170,7 +170,7 @@ WebInspector.ScriptsPanel = function()
 
     // Continue.
     var handler = this.pauseButton.click.bind(this.pauseButton);
-    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.F5);
+    var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.F8);
     this._shortcuts[shortcut] = handler;
     var shortcut = WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.KeyCodes.Slash, platformSpecificModifier);
     this._shortcuts[shortcut] = handler;

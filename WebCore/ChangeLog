@@ -1,3 +1,14 @@
+2009-07-07  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Change 'Continue debug' shortcut from F5 to F8 for consistency with Firebug.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23849
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+
 2009-07-06  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by Maciej Stachowiak.
