@@ -1,3 +1,19 @@
+2009-07-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=27025> / <rdar://problem/7033448>.
+        Bug 27025: Crashes and regression test failures related to regexps in 64-bit
+
+        For x86_64 RegexGenerator uses rbx, a callee-save register, as a scratch register but
+        neglects to save and restore it.  The change in handling of the output vector in r45545
+        altered code generation so that the RegExp::match was now storing important data in rbx,
+        which caused crashes and bogus results when it was clobbered.
+
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateEnter): Save rbx.
+        (JSC::Yarr::RegexGenerator::generateReturn): Restore rbx.
+
 2009-07-06  Ada Chan  <adachan@apple.com>
 
         Reviewed by Darin Adler and Mark Rowe.
