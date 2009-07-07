@@ -46,6 +46,7 @@
 #import "Image.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "MediaControlElements.h"
+#import "RenderMedia.h"
 #import "RenderSlider.h"
 #import "RenderView.h"
 #import "SharedBuffer.h"
@@ -1816,7 +1817,7 @@ bool RenderThemeChromiumMac::paintMediaFullscreenButton(RenderObject* o, const R
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaFullscreenButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, 
+    wkDrawMediaUIPart(MediaFullscreenButton, MediaControllerThemeClassic,  paintInfo.context->platformContext(), r, 
         node->active() ? MediaUIPartPressedFlag : 0);
 #endif
     return false;
