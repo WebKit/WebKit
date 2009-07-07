@@ -451,7 +451,7 @@ static WebCore::HTMLMediaElement* mediaProxyClient(DOMElement* element)
         return nil;
     }
 
-    Node* node = [element _node];
+    Element* node = core(element);
     if (!node || (!node->hasTagName(HTMLNames::videoTag) && !node->hasTagName(HTMLNames::audioTag))) {
         LOG_ERROR("invalid media element passed");
         return nil;
