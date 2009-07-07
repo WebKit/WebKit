@@ -1,3 +1,16 @@
+2009-07-06  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 27003: Build fix when USE(PLUGIN_HOST_PROCESS) is disabled
+
+        <https://bugs.webkit.org/show_bug.cgi?id=27003>
+
+        Reviewed by Geoff Garen.
+
+        * Plugins/WebNetscapeContainerCheckContextInfo.h: Added #if
+        USE(PLUGIN_HOST_PROCESS)/#endif guards.
+        * Plugins/WebNetscapeContainerCheckContextInfo.mm: Ditto.
+        * Plugins/WebNetscapeContainerCheckPrivate.mm: Ditto.
+
 2009-07-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adele Peterson.

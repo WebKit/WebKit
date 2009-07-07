@@ -30,6 +30,8 @@
 
 #import "WebNetscapePluginView.h"
 
+#if USE(PLUGIN_HOST_PROCESS)
+
 WKNBrowserContainerCheckFuncs *browserContainerCheckFuncs()
 {
     static WKNBrowserContainerCheckFuncs funcs = {
@@ -42,3 +44,5 @@ WKNBrowserContainerCheckFuncs *browserContainerCheckFuncs()
     
     return &funcs;
 }
+
+#endif // USE(PLUGIN_HOST_PROCESS)
