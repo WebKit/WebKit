@@ -761,6 +761,34 @@ void Element::detach()
     ContainerNode::detach();
 }
 
+bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle)
+{
+    ASSERT(currentStyle = renderStyle());
+
+    if (!renderer() || !currentStyle)
+        return false;
+
+    RenderStyle::PseudoStyleCache pseudoStyleCache;
+    currentStyle->getPseudoStyleCache(pseudoStyleCache);
+    size_t cacheSize = pseudoStyleCache.size();
+    for (size_t i = 0; i < cacheSize; ++i) {
+        RefPtr<RenderStyle> newPseudoStyle;
+        PseudoId pseudoId = pseudoStyleCache[i]->styleType();
+        if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED)
+            newPseudoStyle = renderer()->uncachedFirstLineStyle(newStyle);
+        else
+            newPseudoStyle = renderer()->getUncachedPseudoStyle(pseudoId, newStyle, newStyle);
+
+        if (*newPseudoStyle != *pseudoStyleCache[i]) {
+            if (pseudoId < FIRST_INTERNAL_PSEUDOID)
+                newStyle->setHasPseudoStyle(pseudoId);
+            newStyle->addCachedPseudoStyle(newPseudoStyle);
+            return true;
+        }
+    }
+    return false;
+}
+
 void Element::recalcStyle(StyleChange change)
 {
     RenderStyle* currentStyle = renderStyle();
@@ -811,7 +839,7 @@ void Element::recalcStyle(StyleChange change)
                 newStyle->setChildrenAffectedByDirectAdjacentRules();
         }
 
-        if (ch != NoChange) {
+        if (ch != NoChange || pseudoStyleCacheIsInvalid(currentStyle, newStyle.get())) {
             setRenderStyle(newStyle);
         } else if (needsStyleRecalc() && (styleChangeType() != AnimationStyleChange) && (document()->usesSiblingRules() || document()->usesDescendantRules())) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get

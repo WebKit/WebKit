@@ -307,6 +307,9 @@ public:
     RenderStyle* getCachedPseudoStyle(PseudoId) const;
     RenderStyle* addCachedPseudoStyle(PassRefPtr<RenderStyle>);
 
+    typedef Vector<RenderStyle*, 10> PseudoStyleCache;
+    void getPseudoStyleCache(PseudoStyleCache&) const;
+
     bool affectedByHoverRules() const { return noninherited_flags._affectedByHover; }
     bool affectedByActiveRules() const { return noninherited_flags._affectedByActive; }
     bool affectedByDragRules() const { return noninherited_flags._affectedByDrag; }

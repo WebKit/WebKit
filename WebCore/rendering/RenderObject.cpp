@@ -1980,6 +1980,27 @@ void RenderObject::layout()
     setNeedsLayout(false);
 }
 
+PassRefPtr<RenderStyle> RenderObject::uncachedFirstLineStyle(RenderStyle* style) const
+{
+    if (!document()->usesFirstLineRules())
+        return 0;
+
+    ASSERT(!isText());
+
+    RefPtr<RenderStyle> result;
+
+    if (isBlockFlow()) {
+        if (RenderBlock* firstLineBlock = this->firstLineBlock())
+            result = firstLineBlock->getUncachedPseudoStyle(FIRST_LINE, style, firstLineBlock == this ? style : 0);
+    } else if (!isAnonymous() && isRenderInline()) {
+        RenderStyle* parentStyle = parent()->firstLineStyle();
+        if (parentStyle != parent()->style())
+            result = getUncachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle, style);
+    }
+
+    return result.release();
+}
+
 RenderStyle* RenderObject::firstLineStyleSlowCase() const
 {
     ASSERT(document()->usesFirstLineRules());
@@ -2016,13 +2037,15 @@ RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* pa
     return 0;
 }
 
-PassRefPtr<RenderStyle> RenderObject::getUncachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const
+PassRefPtr<RenderStyle> RenderObject::getUncachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle, RenderStyle* ownStyle) const
 {
-    if (pseudo < FIRST_INTERNAL_PSEUDOID && !style()->hasPseudoStyle(pseudo))
+    if (pseudo < FIRST_INTERNAL_PSEUDOID && !ownStyle && !style()->hasPseudoStyle(pseudo))
         return 0;
     
-    if (!parentStyle)
+    if (!parentStyle) {
+        ASSERT(!ownStyle);
         parentStyle = style();
+    }
 
     Node* n = node();
     while (n && !n->isElementNode())

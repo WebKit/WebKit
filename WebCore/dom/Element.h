@@ -170,6 +170,8 @@ public:
     virtual void formatForDebugger(char* buffer, unsigned length) const;
 #endif
 
+    bool pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle);
+
     String innerText() const;
     String outerText() const;
  

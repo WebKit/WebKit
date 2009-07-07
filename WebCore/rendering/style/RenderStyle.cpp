@@ -225,6 +225,13 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
     return m_cachedPseudoStyle.get();
 }
 
+void RenderStyle::getPseudoStyleCache(PseudoStyleCache& cache) const
+{
+    ASSERT(cache.isEmpty());
+    for (RenderStyle* pseudoStyle = m_cachedPseudoStyle.get(); pseudoStyle; pseudoStyle = pseudoStyle->m_cachedPseudoStyle.get())
+        cache.append(pseudoStyle);
+}
+
 bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
 {
     return inherited_flags != other->inherited_flags ||

@@ -1,5 +1,35 @@
 2009-07-07  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt and Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=26963
+          <rdar://problem/7030998> Reproducible crash at
+          FontCache::getFontData() when a custom font is used in a pseudo-style
+
+        Test: fast/css/pseudo-cache-stale.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::pseudoStyleCacheIsInvalid): Added. Given the old
+        style and the new style, goes over cached pseudo-styles in the old
+        style and re-resolves the same style types off the new style. If any of
+        the new pseudo-styles is different from the currently cached
+        corresponding style, returns true. Otherwise, returns false.
+        (WebCore::Element::recalcStyle): Validate the pseudo-style cache before
+        deciding to keep the existing style.
+        * dom/Element.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::uncachedFirstLineStyle): Added this version that
+        returns an uncached first-line style based off the given style.
+        (WebCore::RenderObject::getUncachedPseudoStyle): Added the 'ownStyle'
+        parameter.
+        * rendering/RenderObject.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getPseudoStyleCache): Added. Returns the cached
+        pseudo-styles in the passed-in vector.
+        * rendering/style/RenderStyle.h:
+
+2009-07-07  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Simon Fraser.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=27042
