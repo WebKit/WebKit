@@ -99,7 +99,7 @@ class SCM:
 
         return_code = patch_apply_process.wait()
         if return_code:
-            raise ScriptError("Patch " + patch['url'] + " failed to download and apply.")
+            raise ScriptError("Patch %s from bug %s failed to download and apply." % (patch['url'], patch['bug_id']))
 
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []

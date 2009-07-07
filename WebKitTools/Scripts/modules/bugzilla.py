@@ -143,6 +143,7 @@ class Bugzilla:
         attachments = []
         for element in soup.findAll('attachment'):
             attachment = {}
+            attachment['bug_id'] = bug_id
             attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
             attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
             attachment['id'] = str(element.find('attachid').string)
@@ -293,6 +294,6 @@ class Bugzilla:
         if comment_text:
             log(comment_text)
             self.browser['comment'] = comment_text
-        self.browser['knob'] = ['resolve']
+        self.browser['bug_status'] = ['RESOLVED']
         self.browser['resolution'] = ['FIXED']
         self.browser.submit()
