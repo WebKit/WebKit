@@ -1,3 +1,21 @@
+2009-07-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        fast/js/global-recursion-on-full-stack.html is a little finicky.
+
+        The test recurses down the JS stack to find the bottom (catching this with an exception),
+        then tries to call a host function (document.write), switch writes new '<script>' code,
+        and expects this code to be run, then expects this code to try to call 'f();' again,
+        which it expects to fail, and it expects to catch that exception.  However it is possible
+        that one of the earlier stages (the call to document.write, entering the interpreter to
+        run the new global code) will fail, depending on exactly how much stack space was free at
+        the point the last call to f() failed.
+
+        Tweak the test to make it work.
+
+        * fast/js/global-recursion-on-full-stack.html:
+
 2009-07-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

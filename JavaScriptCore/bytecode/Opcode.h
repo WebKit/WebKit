@@ -44,7 +44,6 @@ namespace JSC {
         macro(op_create_arguments, 1) \
         macro(op_convert_this, 2) \
         \
-        macro(op_unexpected_load, 3) \
         macro(op_new_object, 2) \
         macro(op_new_array, 4) \
         macro(op_new_regexp, 3) \

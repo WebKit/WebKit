@@ -363,15 +363,6 @@ void CodeBlock::dump(ExecState* exec) const
         } while (i < m_constantRegisters.size());
     }
 
-    if (m_rareData && !m_rareData->m_unexpectedConstants.isEmpty()) {
-        printf("\nUnexpected Constants:\n");
-        size_t i = 0;
-        do {
-            printf("  k%u = %s\n", static_cast<unsigned>(i), valueToSourceString(exec, m_rareData->m_unexpectedConstants[i]).ascii());
-            ++i;
-        } while (i < m_rareData->m_unexpectedConstants.size());
-    }
-    
     if (m_rareData && !m_rareData->m_regexps.isEmpty()) {
         printf("\nm_regexps:\n");
         size_t i = 0;
@@ -504,12 +495,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_convert_this: {
             int r0 = (++it)->u.operand;
             printf("[%4d] convert_this %s\n", location, registerName(r0).c_str());
-            break;
-        }
-        case op_unexpected_load: {
-            int r0 = (++it)->u.operand;
-            int k0 = (++it)->u.operand;
-            printf("[%4d] unexpected_load\t %s, %s\n", location, registerName(r0).c_str(), constantName(exec, k0, unexpectedConstant(k0)).c_str());
             break;
         }
         case op_new_object: {
@@ -1084,7 +1069,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             int errorType = (++it)->u.operand;
             int k0 = (++it)->u.operand;
-            printf("[%4d] new_error\t %s, %d, %s\n", location, registerName(r0).c_str(), errorType, constantName(exec, k0, unexpectedConstant(k0)).c_str());
+            printf("[%4d] new_error\t %s, %d, %s\n", location, registerName(r0).c_str(), errorType, constantName(exec, k0, getConstant(k0)).c_str());
             break;
         }
         case op_jsr: {
@@ -1142,7 +1127,6 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
 #define FOR_EACH_MEMBER_VECTOR_RARE_DATA(macro) \
     macro(regexps) \
     macro(functions) \
-    macro(unexpectedConstants) \
     macro(exceptionHandlers) \
     macro(immediateSwitchJumpTables) \
     macro(characterSwitchJumpTables) \
@@ -1267,7 +1251,6 @@ void CodeBlock::dumpStatistics()
 
 CodeBlock::CodeBlock(ScopeNode* ownerNode)
     : m_numCalleeRegisters(0)
-    , m_numConstants(0)
     , m_numVars(0)
     , m_numParameters(0)
     , m_ownerNode(ownerNode)
@@ -1290,7 +1273,6 @@ CodeBlock::CodeBlock(ScopeNode* ownerNode)
 
 CodeBlock::CodeBlock(ScopeNode* ownerNode, CodeType codeType, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset)
     : m_numCalleeRegisters(0)
-    , m_numConstants(0)
     , m_numVars(0)
     , m_numParameters(0)
     , m_ownerNode(ownerNode)
@@ -1455,10 +1437,6 @@ void CodeBlock::mark()
         for (size_t i = 0; i < m_rareData->m_functions.size(); ++i)
             m_rareData->m_functions[i]->body()->mark();
 
-        for (size_t i = 0; i < m_rareData->m_unexpectedConstants.size(); ++i) {
-            if (!m_rareData->m_unexpectedConstants[i].marked())
-                m_rareData->m_unexpectedConstants[i].mark();
-        }
         m_rareData->m_evalCodeCache.mark();
     }
 }
@@ -1757,7 +1735,6 @@ void CodeBlock::shrinkToFit()
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
         m_rareData->m_functions.shrinkToFit();
-        m_rareData->m_unexpectedConstants.shrinkToFit();
         m_rareData->m_regexps.shrinkToFit();
         m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
         m_rareData->m_characterSwitchJumpTables.shrinkToFit();

@@ -124,25 +124,22 @@ namespace JSC  {
             setCalleeArguments(0);
         }
 
-    private:
-        friend class Arguments;
-        friend class JSActivation;
-        friend class JSGlobalObject;
-        friend class Interpreter;
-        friend struct CallFrameClosure;
+        // Read a register from the codeframe (or constant from the CodeBlock).
+        inline Register& r(int);
 
+        static CallFrame* noCaller() { return reinterpret_cast<CallFrame*>(HostCallFrameFlag); }
         int returnValueRegister() const { return this[RegisterFile::ReturnValueRegister].i(); }
 
+        bool hasHostCallFrameFlag() const { return reinterpret_cast<intptr_t>(this) & HostCallFrameFlag; }
+        CallFrame* addHostCallFrameFlag() const { return reinterpret_cast<CallFrame*>(reinterpret_cast<intptr_t>(this) | HostCallFrameFlag); }
+        CallFrame* removeHostCallFrameFlag() { return reinterpret_cast<CallFrame*>(reinterpret_cast<intptr_t>(this) & ~HostCallFrameFlag); }
+
+    private:
         void setArgumentCount(int count) { this[RegisterFile::ArgumentCount] = count; }
         void setCallee(JSFunction* callee) { this[RegisterFile::Callee] = callee; }
         void setCodeBlock(CodeBlock* codeBlock) { this[RegisterFile::CodeBlock] = codeBlock; }
 
         static const intptr_t HostCallFrameFlag = 1;
-
-        static CallFrame* noCaller() { return reinterpret_cast<CallFrame*>(HostCallFrameFlag); }
-        bool hasHostCallFrameFlag() const { return reinterpret_cast<intptr_t>(this) & HostCallFrameFlag; }
-        CallFrame* addHostCallFrameFlag() const { return reinterpret_cast<CallFrame*>(reinterpret_cast<intptr_t>(this) | HostCallFrameFlag); }
-        CallFrame* removeHostCallFrameFlag() { return reinterpret_cast<CallFrame*>(reinterpret_cast<intptr_t>(this) & ~HostCallFrameFlag); }
 
         ExecState();
         ~ExecState();

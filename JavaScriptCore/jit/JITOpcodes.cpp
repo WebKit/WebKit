@@ -505,13 +505,6 @@ void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
     RECORD_JUMP_TARGET(target + 3);
 }
 
-void JIT::emit_op_unexpected_load(Instruction* currentInstruction)
-{
-    JSValue v = m_codeBlock->unexpectedConstant(currentInstruction[2].u.operand);
-    move(ImmPtr(JSValue::encode(v)), regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_jsr(Instruction* currentInstruction)
 {
     int retAddrDst = currentInstruction[1].u.operand;
@@ -759,7 +752,7 @@ void JIT::emit_op_new_error(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, JITStubs::cti_op_new_error);
     stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->unexpectedConstant(currentInstruction[3].u.operand))));
+    stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[3].u.operand))));
     stubCall.addArgument(Imm32(m_bytecodeIndex));
     stubCall.call(currentInstruction[1].u.operand);
 }
@@ -828,7 +821,7 @@ void JIT::emit_op_enter(Instruction*)
     // Even though CTI doesn't use them, we initialize our constant
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
-    size_t count = m_codeBlock->m_numVars + m_codeBlock->numberOfConstantRegisters();
+    size_t count = m_codeBlock->m_numVars;
     for (size_t j = 0; j < count; ++j)
         emitInitRegister(j);
 
@@ -839,7 +832,7 @@ void JIT::emit_op_enter_with_activation(Instruction* currentInstruction)
     // Even though CTI doesn't use them, we initialize our constant
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
-    size_t count = m_codeBlock->m_numVars + m_codeBlock->numberOfConstantRegisters();
+    size_t count = m_codeBlock->m_numVars;
     for (size_t j = 0; j < count; ++j)
         emitInitRegister(j);
 

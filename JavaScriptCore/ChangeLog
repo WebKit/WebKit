@@ -1,3 +1,75 @@
+2009-07-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Stop loading constants into the register file.
+
+        Instead, use high register values (highest bit bar the sign bit set) to indicate
+        constants in the instruction stream, and when we encounter such a value load it
+        directly from the CodeBlock.
+
+        Since constants are no longer copied into the register file, this patch renders
+        the 'unexpected constant' mechanism redundant, and removes it.
+
+        2% improvement, thanks to Sam Weinig.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::mark):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isTemporaryRegisterIndex):
+        (JSC::CodeBlock::constantRegister):
+        (JSC::CodeBlock::isConstantRegisterIndex):
+        (JSC::CodeBlock::getConstant):
+        (JSC::ExecState::r):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::preserveLastVar):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::addConstantValue):
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        (JSC::BytecodeGenerator::emitNewError):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::noCaller):
+        (JSC::ExecState::hasHostCallFrameFlag):
+        (JSC::ExecState::addHostCallFrameFlag):
+        (JSC::ExecState::removeHostCallFrameFlag):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolve):
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveBase):
+        (JSC::Interpreter::resolveBaseAndProperty):
+        (JSC::Interpreter::resolveBaseAndFunc):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::createExceptionScope):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadDouble):
+        (JSC::JIT::emitLoadInt32ToDouble):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_error):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emit_op_enter_with_activation):
+        * parser/Nodes.cpp:
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::DeleteValueNode::emitBytecode):
+        (JSC::PrefixResolveNode::emitBytecode):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        * wtf/Platform.h:
+
 2009-07-07  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

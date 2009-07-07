@@ -46,6 +46,12 @@
 #include "StructureStubInfo.h"
 #endif
 
+// Register numbers used in bytecode operations have different meaning accoring to their ranges:
+//      0x80000000-0xFFFFFFFF  Negative indicies from the CallFrame pointer are entries in the call frame, see RegisterFile.h.
+//      0x00000000-0x3FFFFFFF  Forwards indices from the CallFrame pointer are local vars and temporaries with the function's callframe.
+//      0x40000000-0x7FFFFFFF  Positive indices from 0x40000000 specify entries in the constant pool on the CodeBlock.
+static const int FirstConstantRegisterIndex = 0x40000000;
+
 namespace JSC {
 
     class ExecState;
@@ -248,19 +254,9 @@ namespace JSC {
             return false;
         }
 
-        ALWAYS_INLINE bool isConstantRegisterIndex(int index)
-        {
-            return index >= m_numVars && index < m_numVars + m_numConstants;
-        }
-
-        ALWAYS_INLINE JSValue getConstant(int index)
-        {
-            return m_constantRegisters[index - m_numVars].jsValue();
-        }
-
         ALWAYS_INLINE bool isTemporaryRegisterIndex(int index)
         {
-            return index >= m_numVars + m_numConstants;
+            return index >= m_numVars;
         }
 
         HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset);
@@ -400,7 +396,9 @@ namespace JSC {
 
         size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
         void addConstantRegister(const Register& r) { return m_constantRegisters.append(r); }
-        Register& constantRegister(int index) { return m_constantRegisters[index]; }
+        Register& constantRegister(int index) { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
+        ALWAYS_INLINE bool isConstantRegisterIndex(int index) { return index >= FirstConstantRegisterIndex; }
+        ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].jsValue(); }
 
         unsigned addFunctionExpression(FuncExprNode* n) { unsigned size = m_functionExpressions.size(); m_functionExpressions.append(n); return size; }
         FuncExprNode* functionExpression(int index) const { return m_functionExpressions[index].get(); }
@@ -409,9 +407,6 @@ namespace JSC {
         FuncDeclNode* function(int index) const { ASSERT(m_rareData); return m_rareData->m_functions[index].get(); }
 
         bool hasFunctions() const { return m_functionExpressions.size() || (m_rareData && m_rareData->m_functions.size()); }
-
-        unsigned addUnexpectedConstant(JSValue v) { createRareDataIfNecessary(); unsigned size = m_rareData->m_unexpectedConstants.size(); m_rareData->m_unexpectedConstants.append(v); return size; }
-        JSValue unexpectedConstant(int index) const { ASSERT(m_rareData); return m_rareData->m_unexpectedConstants[index]; }
 
         unsigned addRegExp(RegExp* r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
@@ -441,11 +436,6 @@ namespace JSC {
         // FIXME: Make these remaining members private.
 
         int m_numCalleeRegisters;
-        // NOTE: numConstants holds the number of constant registers allocated
-        // by the code generator, not the number of constant registers used.
-        // (Duplicate constants are uniqued during code generation, and spare
-        // constant registers may be allocated.)
-        int m_numConstants;
         int m_numVars;
         int m_numParameters;
 
@@ -519,7 +509,6 @@ namespace JSC {
 
             // Rare Constants
             Vector<RefPtr<FuncDeclNode> > m_functions;
-            Vector<JSValue> m_unexpectedConstants;
             Vector<RefPtr<RegExp> > m_regexps;
 
             // Jump Tables
@@ -573,6 +562,14 @@ namespace JSC {
     private:
         int m_baseScopeDepth;
     };
+
+    inline Register& ExecState::r(int index)
+    {
+        CodeBlock* codeBlock = this->codeBlock();
+        if (codeBlock->isConstantRegisterIndex(index))
+            return codeBlock->constantRegister(index);
+        return this[index];
+    }
 
 } // namespace JSC
 

@@ -275,7 +275,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_throw)
         DEFINE_OP(op_to_jsnumber)
         DEFINE_OP(op_to_primitive)
-        DEFINE_OP(op_unexpected_load)
 
         case op_get_array_length:
         case op_get_by_id_chain:

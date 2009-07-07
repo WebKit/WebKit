@@ -601,7 +601,7 @@ RegisterID* PostfixErrorNode::emitBytecode(BytecodeGenerator& generator, Registe
 RegisterID* DeleteResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (generator.registerFor(m_ident))
-        return generator.emitUnexpectedLoad(generator.finalDestination(dst), false);
+        return generator.emitLoad(generator.finalDestination(dst), false);
 
     generator.emitExpressionInfo(divot(), startOffset(), endOffset());
     RegisterID* base = generator.emitResolveBase(generator.tempDestination(dst), m_ident);
@@ -636,7 +636,7 @@ RegisterID* DeleteValueNode::emitBytecode(BytecodeGenerator& generator, Register
     generator.emitNode(generator.ignoredResult(), m_expr);
 
     // delete on a non-location expression ignores the value and returns true
-    return generator.emitUnexpectedLoad(generator.finalDestination(dst), true);
+    return generator.emitLoad(generator.finalDestination(dst), true);
 }
 
 // ------------------------------ VoidNode -------------------------------------
@@ -688,7 +688,7 @@ RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
         if (generator.isLocalConstant(m_ident)) {
             if (dst == generator.ignoredResult())
                 return 0;
-            RefPtr<RegisterID> r0 = generator.emitUnexpectedLoad(generator.finalDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);
+            RefPtr<RegisterID> r0 = generator.emitLoad(generator.finalDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);
             return generator.emitBinaryOp(op_add, r0.get(), local, r0.get(), OperandTypes());
         }
 
