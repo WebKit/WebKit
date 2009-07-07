@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
+#include "TextResourceDecoder.h"
 #include "Image.h"
 #include "RenderImage.h"
 #include "KURL.h"
@@ -163,7 +164,9 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
 
     if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, textHtml)) {
         ASSERT(data->data);
-        String html = String::fromUTF8(reinterpret_cast<gchar*>(data->data), data->length * data->format / 8);
+        RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/plain", "UTF-8", true);
+        String html = decoder->decode(reinterpret_cast<char*>(data->data), data->length);
+        html += decoder->flush();
         gtk_selection_data_free(data);
 
         if (!html.isEmpty()) {
