@@ -1,3 +1,21 @@
+2009-07-06  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 27001: Fix improper use of PassRefPtr<Node> to RefPtr<Node>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=27001>
+
+        Reviewed by Geoff Garen.
+
+        PassRefPtr<> should only be used for arguments to functions that
+        take ownership of the object, or as return values from functions
+        that relinquish ownership of the object.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::increaseSelectionListLevelOrdered): Changed
+        stack-allocated PassRefPtr<Node> to RefPtr<Node> and call
+        release() on returned object.
+        (WebCore::Editor::increaseSelectionListLevelUnordered): Ditto.
+
 2009-07-06  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
