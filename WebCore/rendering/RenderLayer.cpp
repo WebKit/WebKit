@@ -167,7 +167,7 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_has3DTransformedDescendant(false)
 #if USE(ACCELERATED_COMPOSITING)
     , m_hasCompositingDescendant(false)
-    , m_mustOverlayCompositedLayers(false)
+    , m_mustOverlapCompositedLayers(false)
 #endif
     , m_marquee(0)
     , m_staticX(0)
@@ -231,7 +231,7 @@ void RenderLayer::rendererContentChanged()
 {
     // This can get called when video becomes accelerated, so the layers may change.
     if (compositor()->updateLayerCompositingState(this))
-        compositor()->setCompositingLayersNeedUpdate();
+        compositor()->setCompositingLayersNeedRebuild();
 
     if (m_backing)
         m_backing->rendererContentChanged();
@@ -2976,7 +2976,7 @@ void RenderLayer::dirtyZOrderLists()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer()->documentBeingDestroyed())
-        compositor()->setCompositingLayersNeedUpdate();
+        compositor()->setCompositingLayersNeedRebuild();
 #endif
 }
 
@@ -2995,7 +2995,7 @@ void RenderLayer::dirtyNormalFlowList()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer()->documentBeingDestroyed())
-        compositor()->setCompositingLayersNeedUpdate();
+        compositor()->setCompositingLayersNeedRebuild();
 #endif
 }
 
@@ -3185,7 +3185,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle*)
     updateTransform();
 
     if (compositor()->updateLayerCompositingState(this))
-        compositor()->setCompositingLayersNeedUpdate();
+        compositor()->setCompositingLayersNeedRebuild();
     else if (m_backing)
         m_backing->updateGraphicsLayerGeometry();
 

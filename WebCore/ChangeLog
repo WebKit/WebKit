@@ -1,3 +1,101 @@
+2009-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Make use of geometry information to decide which layers become composited.
+
+        <rdar://problem/7011947>
+        <https://bugs.webkit.org/show_bug.cgi?id=27021>
+        
+        In addition to looking at painting order, also, optionally, take layer
+        overlap into account when deciding which RenderLayers need to be composited.
+
+        No testcase because DRT doesn't dump which layers are composited.
+        
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayers):
+        Removed the unused CompositingUpdate parameter, and just do an early return
+        when there is no view.
+        
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::rendererContentChanged):
+        (WebCore::RenderLayer::dirtyZOrderLists):
+        (WebCore::RenderLayer::dirtyNormalFlowList):
+        (WebCore::RenderLayer::styleChanged):
+        (WebCore::RenderLayer::mustOverlapCompositedLayers):
+        (WebCore::RenderLayer::setMustOverlapCompositedLayers):
+        Change "overlay" to "overlap" for consistency with the use of "overlap"
+        elsewhere.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        compositingLayersNeedUpdate() renamed to compositingLayersNeedRebuild().
+        
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::RenderLayerBacking::startTransition):
+        Tell the compositor that we started an accelerated animation or transition.
+        
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::compositingLayersNeedRebuild):
+        Renamed, since it's explicitly about changes in hierarchy now.
+        
+        (WebCore::RenderLayerCompositor::setCompositingConsultsOverlap):
+        (WebCore::RenderLayerCompositor::compositingConsultsOverlap):
+        New getter and setter for whether compositing should take overlap into account.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        Add m_compositingConsultsOverlap, re-order some member variables.
+        
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingEnabledFlag):
+        Whitespace cleanup and method rename.
+        
+        (WebCore::RenderLayerCompositor::setCompositingLayersNeedRebuild):
+        Method and variable renaming.
+        
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        Now we have to run through the layer hierarchy every time if looking
+        at overlap, because changes in layout can now alter compositing behavior.
+        We minimize work by tracking whether we actually need to change the layer
+        hierarchy via needLayerRebuild.
+        
+        (WebCore::RenderLayerCompositor::updateBacking):
+        3D transforms turn off overlap mode.
+        
+        (WebCore::RenderLayerCompositor::layerWasAdded):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        Method rename.
+        
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::overlapsCompositedLayers):
+        Utility methods to add a layer to the overlapMap (computing the absolute
+        bounding box only if we haven't already done so), and testing the map
+        entries.
+        
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        If a layer would composite only because it comes after other compositing
+        layers in the painting order, then consult the overlap map to determine whether
+        it overlaps, and thus actually needs to composite.
+        
+        Add layers to the map when they must be composited.
+        
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        Only do re-parenting work if the updateHierarchy flag is set.
+        
+        (WebCore::RenderLayerCompositor::didStartAcceleratedAnimation):
+        When we start an accelerated transition or animation, we stop looking at
+        overlap because we can no longer guarantee correct front-to-back ordering while the
+        accelerated animation is running.
+
+        (WebCore::RenderLayerCompositor::needsToBeComposited):
+        Method renames.
+        
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setMaximalOutlineSize):
+        Add comment indicating that this could be optimized.
+
 2009-07-07  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -417,20 +417,18 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void FrameView::updateCompositingLayers(CompositingUpdate updateType)
+void FrameView::updateCompositingLayers()
 {
     RenderView* view = m_frame->contentRenderer();
-    if (view && view->compositor()) {
-        // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
-        view->compositor()->cacheAcceleratedCompositingEnabledFlag();
-    }
-    
-    if (!view || !view->usesCompositing())
+    if (!view)
         return;
 
-    if (updateType == ForcedCompositingUpdate)
-        view->compositor()->setCompositingLayersNeedUpdate();
+    // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
+    view->compositor()->cacheAcceleratedCompositingEnabledFlag();
     
+    if (!view->usesCompositing())
+        return;
+
     view->compositor()->updateCompositingLayers();
 }
 
