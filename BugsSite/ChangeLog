@@ -1,3 +1,50 @@
+2009-07-07  David Kilzer  <ddkilzer@apple.com>
+
+        Updated BugsSite with local changes on server
+
+        The new files were created by checksetup.pl during the upgrade
+        to Bugzilla 3.2.3.  The rest are self-explanatory.
+
+        * data: Added "bugzilla-update.xml" to svn:ignore.
+        * data/attachments: Added "groups.*" to svn:ignore.
+        * data/params: Updated for a few changed parameters.
+
+        * lib/.htaccess: Added.
+        * skins/contrib/Dusk/IE-fixes.css: Added.
+        * skins/contrib/Dusk/admin.css: Added.
+        * skins/contrib/Dusk/create_attachment.css: Added.
+        * skins/contrib/Dusk/dependency-tree.css: Added.
+        * skins/contrib/Dusk/duplicates.css: Added.
+        * skins/contrib/Dusk/editusers.css: Added.
+        * skins/contrib/Dusk/help.css: Added.
+        * skins/contrib/Dusk/index.css: Added.
+        * skins/contrib/Dusk/panel.css: Added.
+        * skins/contrib/Dusk/params.css: Added.
+        * skins/contrib/Dusk/release-notes.css: Added.
+        * skins/contrib/Dusk/show_bug.css: Added.
+        * skins/contrib/Dusk/show_multiple.css: Added.
+        * skins/contrib/Dusk/summarize-time.css: Added.
+        * skins/contrib/Dusk/voting.css: Added.
+        * skins/contrib/Dusk/yui: Added.
+        * skins/contrib/Dusk/yui/calendar.css: Added.
+        * skins/custom/IE-fixes.css: Added.
+        * skins/custom/admin.css: Added.
+        * skins/custom/buglist.css: Added.
+        * skins/custom/create_attachment.css: Added.
+        * skins/custom/dependency-tree.css: Added.
+        * skins/custom/duplicates.css: Added.
+        * skins/custom/editusers.css: Added.
+        * skins/custom/help.css: Added.
+        * skins/custom/panel.css: Added.
+        * skins/custom/params.css: Added.
+        * skins/custom/release-notes.css: Added.
+        * skins/custom/show_bug.css: Added.
+        * skins/custom/show_multiple.css: Added.
+        * skins/custom/summarize-time.css: Added.
+        * skins/custom/voting.css: Added.
+        * skins/custom/yui: Added.
+        * skins/custom/yui/calendar.css: Added.
+
 2009-07-03  David Kilzer  <ddkilzer@apple.com>
 
         Bug 26958: Change edit link to review link in request messages
