@@ -1219,11 +1219,9 @@ v8::Local<v8::Function> V8Proxy::getConstructor(V8ClassIndex::V8WrapperType type
 v8::Local<v8::Object> V8Proxy::createWrapperFromCache(V8ClassIndex::V8WrapperType type)
 {
     int classIndex = V8ClassIndex::ToInt(type);
-    v8::Local<v8::Value> cachedObject = m_wrapperBoilerplates->Get(v8::Integer::New(classIndex));
-    if (cachedObject->IsObject()) {
-        v8::Local<v8::Object> object = v8::Local<v8::Object>::Cast(cachedObject);
-        return object->Clone();
-    }
+    v8::Local<v8::Object> clone(m_wrapperBoilerplates->CloneElementAt(classIndex));
+    if (!clone.IsEmpty())
+        return clone;
 
     // Not in cache.
     initContextIfNeeded();
@@ -2407,13 +2405,14 @@ PassRefPtr<NodeFilter> V8Proxy::wrapNativeNodeFilter(v8::Handle<v8::Value> filte
     return NodeFilter::create(condition);
 }
 
-v8::Local<v8::Object> V8Proxy::instantiateV8Object(V8ClassIndex::V8WrapperType descriptorType, V8ClassIndex::V8WrapperType cptrType, void* impl)
+v8::Local<v8::Object> V8Proxy::instantiateV8Object(V8Proxy* proxy, V8ClassIndex::V8WrapperType descriptorType, V8ClassIndex::V8WrapperType cptrType, void* impl)
 {
     // Make a special case for document.all
     if (descriptorType == V8ClassIndex::HTMLCOLLECTION && static_cast<HTMLCollection*>(impl)->type() == DocAll)
         descriptorType = V8ClassIndex::UNDETECTABLEHTMLCOLLECTION;
 
-    V8Proxy* proxy = V8Proxy::retrieve();
+    if (!proxy)
+        V8Proxy* proxy = V8Proxy::retrieve();
     v8::Local<v8::Object> instance;
     if (proxy)
         instance = proxy->createWrapperFromCache(descriptorType);
@@ -2784,33 +2783,54 @@ v8::Handle<v8::Value> V8Proxy::convertEventToV8Object(Event* event)
     return result;
 }
 
+
+static const V8ClassIndex::V8WrapperType mapping[] = {
+    V8ClassIndex::INVALID_CLASS_INDEX,    // NONE
+    V8ClassIndex::INVALID_CLASS_INDEX,    // ELEMENT_NODE needs special treatment
+    V8ClassIndex::ATTR,                   // ATTRIBUTE_NODE
+    V8ClassIndex::TEXT,                   // TEXT_NODE
+    V8ClassIndex::CDATASECTION,           // CDATA_SECTION_NODE
+    V8ClassIndex::ENTITYREFERENCE,        // ENTITY_REFERENCE_NODE
+    V8ClassIndex::ENTITY,                 // ENTITY_NODE
+    V8ClassIndex::PROCESSINGINSTRUCTION,  // PROCESSING_INSTRUCTION_NODE
+    V8ClassIndex::COMMENT,                // COMMENT_NODE
+    V8ClassIndex::INVALID_CLASS_INDEX,    // DOCUMENT_NODE needs special treatment
+    V8ClassIndex::DOCUMENTTYPE,           // DOCUMENT_TYPE_NODE
+    V8ClassIndex::DOCUMENTFRAGMENT,       // DOCUMENT_FRAGMENT_NODE
+    V8ClassIndex::NOTATION,               // NOTATION_NODE
+    V8ClassIndex::NODE,                   // XPATH_NAMESPACE_NODE
+};
+
 // Caller checks node is not null.
 v8::Handle<v8::Value> V8Proxy::convertNodeToV8Object(Node* node)
 {
     if (!node)
         return v8::Null();
 
-    // Find the context to which the node belongs and create the wrapper
-    // in that context. If the node is not in a document, the current
-    // context is used.
+    // Find a proxy for this node.
     //
-    // Getting the context might initialize the context which can instantiate
-    // a document wrapper. Therefore, we get the context before checking if
-    // the node already has a wrapper.
-    v8::Local<v8::Context> v8Context;
+    // Note that if proxy is found, we might initialize the context which can
+    // instantiate a document wrapper.  Therefore, we get the proxy before
+    // checking if the node already has a wrapper.
+    V8Proxy* proxy = 0;
     Document* document = node->document();
-    if (document)
-        v8Context = V8Proxy::context(document->frame());
+    if (document) {
+        Frame* frame = document->frame();
+        proxy = retrieve(frame);
+        if (proxy)
+            proxy->initContextIfNeeded();
+    }
 
-    v8::Handle<v8::Object> wrapper = getDOMNodeMap().get(node);
+    DOMWrapperMap<Node>& domNodeMap = proxy ? proxy->m_domNodeMap : getDOMNodeMap();
+    v8::Handle<v8::Object> wrapper = domNodeMap.get(node);
     if (!wrapper.IsEmpty())
         return wrapper;
 
     bool isDocument = false; // document type node has special handling
     V8ClassIndex::V8WrapperType type;
 
-    switch (node->nodeType()) {
-    case Node::ELEMENT_NODE:
+    Node::NodeType nodeType = node->nodeType();
+    if (nodeType == Node::ELEMENT_NODE) {
         if (node->isHTMLElement())
             type = htmlElementType(static_cast<HTMLElement*>(node));
 #if ENABLE(SVG)
@@ -2819,26 +2839,7 @@ v8::Handle<v8::Value> V8Proxy::convertNodeToV8Object(Node* node)
 #endif
         else
             type = V8ClassIndex::ELEMENT;
-        break;
-    case Node::ATTRIBUTE_NODE:
-        type = V8ClassIndex::ATTR;
-        break;
-    case Node::TEXT_NODE:
-        type = V8ClassIndex::TEXT;
-        break;
-    case Node::CDATA_SECTION_NODE:
-        type = V8ClassIndex::CDATASECTION;
-        break;
-    case Node::ENTITY_NODE:
-        type = V8ClassIndex::ENTITY;
-        break;
-    case Node::PROCESSING_INSTRUCTION_NODE:
-        type = V8ClassIndex::PROCESSINGINSTRUCTION;
-        break;
-    case Node::COMMENT_NODE:
-        type = V8ClassIndex::COMMENT;
-        break;
-    case Node::DOCUMENT_NODE: {
+    } else if (nodeType == Node::DOCUMENT_NODE) {
         isDocument = true;
         Document* document = static_cast<Document*>(node);
         if (document->isHTMLDocument())
@@ -2849,29 +2850,21 @@ v8::Handle<v8::Value> V8Proxy::convertNodeToV8Object(Node* node)
 #endif
         else
             type = V8ClassIndex::DOCUMENT;
-        break;
+    } else {
+        ASSERT(nodeType < sizeof(mapping)/sizeof(mapping[0]));
+        type = mapping[nodeType];
+        ASSERT(type != V8ClassIndex::INVALID_CLASS_INDEX);
     }
-    case Node::DOCUMENT_TYPE_NODE:
-        type = V8ClassIndex::DOCUMENTTYPE;
-        break;
-    case Node::NOTATION_NODE:
-        type = V8ClassIndex::NOTATION;
-        break;
-    case Node::DOCUMENT_FRAGMENT_NODE:
-        type = V8ClassIndex::DOCUMENTFRAGMENT;
-        break;
-    case Node::ENTITY_REFERENCE_NODE:
-        type = V8ClassIndex::ENTITYREFERENCE;
-        break;
-    default:
-        type = V8ClassIndex::NODE;
-    }
+
+    v8::Local<v8::Context> v8Context;
+    if (proxy)
+        v8Context = proxy->context();
 
     // Enter the node's context and create the wrapper in that context.
     if (!v8Context.IsEmpty())
         v8Context->Enter();
 
-    v8::Local<v8::Object> result = instantiateV8Object(type, V8ClassIndex::NODE, node);
+    v8::Local<v8::Object> result = instantiateV8Object(proxy, type, V8ClassIndex::NODE, node);
 
     // Exit the node's context if it was entered.
     if (!v8Context.IsEmpty())
@@ -2886,11 +2879,9 @@ v8::Handle<v8::Value> V8Proxy::convertNodeToV8Object(Node* node)
     }
 
     node->ref();
-    setJSWrapperForDOMNode(node, v8::Persistent<v8::Object>::New(result));
+    domNodeMap.set(node, v8::Persistent<v8::Object>::New(result));
 
     if (isDocument) {
-        Document* document = static_cast<Document*>(node);
-        V8Proxy* proxy = V8Proxy::retrieve(document->frame());
         if (proxy)
             proxy->updateDocumentWrapper(result);
 

@@ -185,7 +185,7 @@ namespace WebCore {
             GeneralError
         };
 
-        explicit V8Proxy(Frame* frame) : m_frame(frame), m_inlineCode(false), m_timerCallback(false), m_recursion(0) { }
+        explicit V8Proxy(Frame* frame) : m_frame(frame), m_domNodeMap(getDOMNodeMap()), m_inlineCode(false), m_timerCallback(false), m_recursion(0) { }
 
         ~V8Proxy();
 
@@ -556,7 +556,13 @@ namespace WebCore {
         // For example, a HTML element has HTMLELEMENT for the first V8WrapperType, but always
         // use NODE as the second V8WrapperType. JS wrapper stores the second
         // V8WrapperType and the void* as internal fields.
-        static v8::Local<v8::Object> instantiateV8Object(V8ClassIndex::V8WrapperType, V8ClassIndex::V8WrapperType, void*);
+        static v8::Local<v8::Object> instantiateV8Object(V8ClassIndex::V8WrapperType descType, V8ClassIndex::V8WrapperType cptrType, void* impl)
+        {
+            return instantiateV8Object(NULL, descType, cptrType, impl);
+        }
+
+        static v8::Local<v8::Object> instantiateV8Object(V8Proxy*, V8ClassIndex::V8WrapperType, V8ClassIndex::V8WrapperType, void*);
+
 
         static const char* rangeExceptionName(int exceptionCode);
         static const char* eventExceptionName(int exceptionCode);
@@ -594,6 +600,8 @@ namespace WebCore {
 
         v8::Persistent<v8::Object> m_global;
         v8::Persistent<v8::Value> m_document;
+
+        DOMWrapperMap<Node>& m_domNodeMap;
 
         // Utility context holding JavaScript functions used internally.
         static v8::Persistent<v8::Context> m_utilityContext;
