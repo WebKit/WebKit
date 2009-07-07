@@ -1423,23 +1423,35 @@ static int mediaControllerTheme()
 {
     static const long minimumQuickTimeVersion = 0x07600000; // 7.6
     static SInt32 quickTimeVersion = 0;
+    static int controllerTheme = -1;
+    
+    if (controllerTheme != -1)
+        return controllerTheme;
+
+    controllerTheme = MediaControllerThemeClassic;
 
     if (!quickTimeVersion) {
         OSErr err;
         err = Gestalt(gestaltQuickTime, &quickTimeVersion);
         if (err != noErr)
-            return MediaControllerThemeClassic;
+            return controllerTheme;
     }
     if (quickTimeVersion < minimumQuickTimeVersion)
-        return MediaControllerThemeClassic;
+        return controllerTheme;
 
-    // keep the feature off for now without an explicit opt-in
     Boolean validKey;
     Boolean useQTMediaUI = CFPreferencesGetAppBooleanValue(CFSTR("UseQuickTimeMediaUI"), CFSTR("com.apple.WebCore"), &validKey);
-    if (!validKey || !useQTMediaUI)
-        return MediaControllerThemeClassic;
 
-    return MediaControllerThemeQT;
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    if (validKey && !useQTMediaUI)
+        return controllerTheme;
+#else
+    if (!validKey || !useQTMediaUI)
+        return controllerTheme;
+#endif
+
+    controllerTheme = MediaControllerThemeQT;
+    return controllerTheme;
 }
 #endif
 

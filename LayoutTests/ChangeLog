@@ -1,3 +1,15 @@
+2009-07-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7035474> Make new media controller UI default on SnowLeopard
+
+        Disable media tests that depend on controller size/position on SnowLeopard until
+        <rdar://problem/6502936> Update run-webkit-tests to deal with new media controller look
+        has been fixed
+
+        * platform/mac-snowleopard/Skipped:
+
 2009-07-06  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Hyatt.
