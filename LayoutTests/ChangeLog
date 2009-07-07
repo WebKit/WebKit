@@ -1,3 +1,18 @@
+2009-07-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        revise test expectations for bug 26088
+        http://bugs.webkit.org/show_bug.cgi?id=26088
+
+        generate pixel expectations, move location of generic expected file
+        for the crash test.
+
+        * fast/text/text-large-negative-letter-spacing-with-opacity-expected.txt: Copied from platform/mac/fast/text/text-large-negative-letter-spacing-with-opacity-expected.txt.
+        * platform/mac/fast/text/text-large-negative-letter-spacing-with-opacity-expected.txt: Removed.
+        * platform/mac/fast/text/text-letter-spacing-expected.checksum: Added.
+        * platform/mac/fast/text/text-letter-spacing-expected.png: Added.
+
 2009-07-07  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
