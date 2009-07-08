@@ -26,102 +26,24 @@
 #include "config.h"
 #include "StorageNamespace.h"
 
-#if ENABLE(DOM_STORAGE)
+#include "StorageNamespaceImpl.h"
 
-#include <wtf/StdLibExtras.h>
+#if PLATFORM(CHROMIUM)
+#error "Chromium should not compile this file and instead define its own version of these factories that navigate the multi-process boundry."
+#endif
+
+#if ENABLE(DOM_STORAGE)
 
 namespace WebCore {
 
-typedef HashMap<String, StorageNamespace*> LocalStorageNamespaceMap;
-
-static LocalStorageNamespaceMap& localStorageNamespaceMap()
-{
-    DEFINE_STATIC_LOCAL(LocalStorageNamespaceMap, localStorageNamespaceMap, ());
-    return localStorageNamespaceMap;
-}
-
 PassRefPtr<StorageNamespace> StorageNamespace::localStorageNamespace(const String& path)
 {
-    const String lookupPath = path.isNull() ? String("") : path;
-    LocalStorageNamespaceMap::iterator it = localStorageNamespaceMap().find(lookupPath);
-    if (it == localStorageNamespaceMap().end()) {
-        RefPtr<StorageNamespace> storageNamespace = adoptRef(new StorageNamespace(LocalStorage, lookupPath));
-        localStorageNamespaceMap().set(lookupPath, storageNamespace.get());
-        return storageNamespace.release();
-    }
-
-    return it->second;
+    return StorageNamespaceImpl::localStorageNamespace(path);
 }
 
 PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace()
 {
-    return adoptRef(new StorageNamespace(SessionStorage, String()));
-}
-
-StorageNamespace::StorageNamespace(StorageType storageType, const String& path)
-    : m_storageType(storageType)
-    , m_path(path.copy())  // FIXME: Is the .copy necessary?
-    , m_syncManager(0)
-#ifndef NDEBUG
-    , m_isShutdown(false)
-#endif
-{
-    if (m_storageType == LocalStorage && !m_path.isEmpty())
-        m_syncManager = StorageSyncManager::create(m_path);
-}
-
-StorageNamespace::~StorageNamespace()
-{
-    ASSERT(isMainThread());
-
-    if (m_storageType == LocalStorage) {
-        ASSERT(localStorageNamespaceMap().get(m_path) == this);
-        localStorageNamespaceMap().remove(m_path);
-    }
-}
-
-PassRefPtr<StorageNamespace> StorageNamespace::copy()
-{
-    ASSERT(isMainThread());
-    ASSERT(!m_isShutdown);
-
-    RefPtr<StorageNamespace> newNamespace = adoptRef(new StorageNamespace(m_storageType, m_path));
-
-    StorageAreaMap::iterator end = m_storageAreaMap.end();
-    for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i) {
-        RefPtr<StorageArea> areaCopy = i->second->copy(i->first.get());
-        newNamespace->m_storageAreaMap.set(i->first, areaCopy.release());
-    }
-
-    return newNamespace.release();
-}
-
-PassRefPtr<StorageArea> StorageNamespace::storageArea(SecurityOrigin* origin)
-{
-    ASSERT(isMainThread());
-    ASSERT(!m_isShutdown);
-
-    RefPtr<StorageArea> storageArea;
-    if (storageArea = m_storageAreaMap.get(origin))
-        return storageArea.release();
-
-    storageArea = StorageArea::create(m_storageType, origin, m_syncManager);
-    m_storageAreaMap.set(origin, storageArea);
-    return storageArea.release();
-}
-
-void StorageNamespace::close()
-{
-    ASSERT(isMainThread());
-    ASSERT(!m_isShutdown);
-
-    StorageAreaMap::iterator end = m_storageAreaMap.end();
-    for (StorageAreaMap::iterator it = m_storageAreaMap.begin(); it != end; ++it)
-        it->second->close();
-
-#ifndef NDEBUG
-    m_isShutdown = true;
-#endif
+    return StorageNamespaceImpl::sessionStorageNamespace();
 }
 
 } // namespace WebCore

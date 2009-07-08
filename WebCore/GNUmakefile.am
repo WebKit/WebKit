@@ -2105,6 +2105,8 @@ webcore_sources += \
 	WebCore/storage/Storage.h \
 	WebCore/storage/StorageArea.cpp \
 	WebCore/storage/StorageArea.h \
+	WebCore/storage/StorageAreaImpl.cpp \
+	WebCore/storage/StorageAreaImpl.h \
 	WebCore/storage/StorageAreaSync.cpp \
 	WebCore/storage/StorageAreaSync.h \
 	WebCore/storage/StorageEvent.cpp \
@@ -2113,6 +2115,8 @@ webcore_sources += \
 	WebCore/storage/StorageMap.h \
 	WebCore/storage/StorageNamespace.cpp \
 	WebCore/storage/StorageNamespace.h \
+	WebCore/storage/StorageNamespaceImpl.cpp \
+	WebCore/storage/StorageNamespaceImpl.h \
 	WebCore/storage/StorageSyncManager.cpp \
 	WebCore/storage/StorageSyncManager.h
 endif # END ENABLE_DOM_STORAGE

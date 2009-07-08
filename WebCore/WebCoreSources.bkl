@@ -1021,9 +1021,11 @@ This file contains the list of files needed to build WebCore.
         storage/SQLTransaction.cpp
         storage/Storage.cpp
         storage/StorageArea.cpp
+        storage/StorageAreaImpl.cpp
         storage/StorageAreaSync.cpp
         storage/StorageEvent.cpp
         storage/StorageNamespace.cpp
+        storage/StorageNamespaceImpl.cpp
         storage/StorageMap.cpp
         storage/StorageSyncManager.cpp
     </set>

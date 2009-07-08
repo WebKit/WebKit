@@ -39,32 +39,16 @@ namespace WebCore {
     class StorageArea;
     class StorageSyncManager;
 
+    // This interface is required for Chromium since these actions need to be proxied between processes.
     class StorageNamespace : public RefCounted<StorageNamespace> {
     public:
-        ~StorageNamespace();
-
         static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path);
         static PassRefPtr<StorageNamespace> sessionStorageNamespace();
 
-        PassRefPtr<StorageArea> storageArea(SecurityOrigin*);
-        PassRefPtr<StorageNamespace> copy();
-        void close();
-
-    private:
-        StorageNamespace(StorageType, const String& path);
-
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> StorageAreaMap;
-        StorageAreaMap m_storageAreaMap;
-
-        StorageType m_storageType;
-
-        // Only used if m_storageType == LocalStorage and the path was not "" in our constructor.
-        String m_path;
-        RefPtr<StorageSyncManager> m_syncManager;
-
-#ifndef NDEBUG
-        bool m_isShutdown;
-#endif
+        virtual ~StorageNamespace() { }
+        virtual PassRefPtr<StorageArea> storageArea(SecurityOrigin*) = 0;
+        virtual PassRefPtr<StorageNamespace> copy() = 0;
+        virtual void close() = 0;
     };
 
 } // namespace WebCore
