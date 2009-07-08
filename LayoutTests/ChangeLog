@@ -1,3 +1,12 @@
+2009-07-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27049 - In dumpBackForwardList() mode, DRT should normalize file urls.
+
+        * fast/loader/subframe-navigate-during-main-frame-load-expected.txt: Make the results agnostic to the layout of 
+          filesystem on the testing machine.
+
 2009-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

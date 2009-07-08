@@ -406,6 +406,24 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
     BSTR url;
     if (FAILED(item->URLString(&url)))
         return;
+
+    if (wcsstr(url, L"file:/") == url) {
+        static wchar_t* layoutTestsString = L"/LayoutTests/";
+        static wchar_t* fileTestString = L"(file test):";
+        
+        wchar_t* result = wcsstr(url, layoutTestsString);
+        if (result == NULL)
+            return;
+        wchar_t* start = result + wcslen(layoutTestsString);
+
+        BSTR newURL = SysAllocStringLen(NULL, SysStringLen(url));
+        wcscpy(newURL, fileTestString);
+        wcscpy(newURL + wcslen(fileTestString), start);
+
+        SysFreeString(url);
+        url = newURL;
+    }
+
     printf("%S", url ? url : L"");
     SysFreeString(url);
 

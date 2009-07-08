@@ -4,7 +4,7 @@ The iframe navigation should *not* result in a second back-history item being cr
 
 
 ============== Back Forward List ==============
-        file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/subframe-navigate-during-main-frame-load.html  **nav target**
-curr->  file:///Volumes/Data/svn/OpenSource/LayoutTests/fast/loader/resources/subframe-navigate-during-main-frame-load2.html  **nav target**
+        (file test):fast/loader/subframe-navigate-during-main-frame-load.html  **nav target**
+curr->  (file test):fast/loader/resources/subframe-navigate-during-main-frame-load2.html  **nav target**
             data:text/html,%3Cbody%20onload=%22layoutTestController.notifyDone();%22%3E%3C/body%3E (in frame "subframe")
 ===============================================

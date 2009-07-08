@@ -615,7 +615,18 @@ static void dumpHistoryItem(WebHistoryItem *item, int indent, BOOL current)
     }
     for (int i = start; i < indent; i++)
         putchar(' ');
-    printf("%s", [[item URLString] UTF8String]);
+    
+    NSString *urlString = [item URLString];
+    if ([[NSURL URLWithString:urlString] isFileURL]) {
+        NSRange range = [urlString rangeOfString:@"/LayoutTests/"];
+
+        range.length = range.length + range.location;
+        range.location = 0;
+        
+        urlString = [urlString stringByReplacingCharactersInRange:range withString:@"(file test):"];
+    }
+    
+    printf("%s", [urlString UTF8String]);
     NSString *target = [item target];
     if (target && [target length] > 0)
         printf(" (in frame \"%s\")", [target UTF8String]);
