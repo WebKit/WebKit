@@ -116,6 +116,20 @@ bool XSSAuditor::canLoadObject(const String& url) const
     return true;
 }
 
+bool XSSAuditor::canSetBaseElementURL(const String& url) const
+{
+    if (!isEnabled())
+        return true;
+    
+    KURL baseElementURL(m_frame->document()->url(), url);
+    if (m_frame->document()->url().baseAsString() != baseElementURL.baseAsString() && findInRequest(url)) {
+        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request"));
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
+        return false;
+    }
+    return true;
+}
+
 String XSSAuditor::decodeURL(const String& str, const TextEncoding& encoding, bool allowNullCharacters,
                              bool allowNonNullControlCharacters)
 {

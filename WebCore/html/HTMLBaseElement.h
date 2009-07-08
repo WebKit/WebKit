@@ -48,6 +48,7 @@ public:
     void setTarget(const String&);
 
 protected:
+    String m_hrefAttrValue;
     String m_href;
     String m_target;
 };

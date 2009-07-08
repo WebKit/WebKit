@@ -1,3 +1,27 @@
+2009-07-08  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=26918
+        
+        Prevents injection of HTML Base tag.
+
+        Tests: http/tests/security/xssAuditor/base-href-control-char.html
+               http/tests/security/xssAuditor/base-href-null-char.html
+               http/tests/security/xssAuditor/base-href-safe.html
+               http/tests/security/xssAuditor/base-href-safe2.html
+               http/tests/security/xssAuditor/base-href-scheme-relative.html
+               http/tests/security/xssAuditor/base-href.html
+
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::parseMappedAttribute):
+        (WebCore::HTMLBaseElement::process): Modified to call XSSAuditor::canSetBaseElementURL
+        to determine if it is safe to use base element URL.
+        * html/HTMLBaseElement.h: Added field m_hrefAttrValue to store unparsed base element URL.
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canSetBaseElementURL):
+        * page/XSSAuditor.h:
+
 2009-07-08  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.
