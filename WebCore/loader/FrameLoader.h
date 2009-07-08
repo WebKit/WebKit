@@ -261,7 +261,7 @@ namespace WebCore {
 
         void submitForm(const char* action, const String& url,
             PassRefPtr<FormData>, const String& target, const String& contentType, const String& boundary,
-            bool lockHistory, bool lockBackForwardList, PassRefPtr<Event>, PassRefPtr<FormState>);
+            bool lockHistory, PassRefPtr<Event>, PassRefPtr<FormState>);
 
         void stop();
         void stopLoading(bool sendUnload, DatabasePolicy = DatabasePolicyStop);
@@ -492,7 +492,7 @@ namespace WebCore {
         void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier);
 
         static bool isLocationChange(const ScheduledRedirection&);
-        void scheduleFormSubmission(const FrameLoadRequest&, bool lockHistory, bool lockBackForwardList, PassRefPtr<Event>, PassRefPtr<FormState>);
+        void scheduleFormSubmission(const FrameLoadRequest&, bool lockHistory, PassRefPtr<Event>, PassRefPtr<FormState>);
 
         void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, PassRefPtr<FormState>); // Calls continueLoadAfterNavigationPolicy
         void load(DocumentLoader*);                                                         // Calls loadWithDocumentLoader   

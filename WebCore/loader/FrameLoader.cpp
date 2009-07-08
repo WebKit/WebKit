@@ -487,7 +487,7 @@ Frame* FrameLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL
 
 void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<FormData> formData,
     const String& target, const String& contentType, const String& boundary,
-    bool lockHistory, bool lockBackForwardList, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
+    bool lockHistory, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
 {
     ASSERT(action);
     ASSERT(strcmp(action, "GET") == 0 || strcmp(action, "POST") == 0);
@@ -559,7 +559,7 @@ void FrameLoader::submitForm(const char* action, const String& url, PassRefPtr<F
     frameRequest.resourceRequest().setURL(u);
     addHTTPOriginIfNeeded(frameRequest.resourceRequest(), outgoingOrigin());
 
-    targetFrame->loader()->scheduleFormSubmission(frameRequest, lockHistory, lockBackForwardList, event, formState);
+    targetFrame->loader()->scheduleFormSubmission(frameRequest, lockHistory, event, formState);
 }
 
 void FrameLoader::stopLoading(bool sendUnload, DatabasePolicy databasePolicy)
@@ -1363,7 +1363,7 @@ void FrameLoader::scheduleLocationChange(const String& url, const String& referr
 }
 
 void FrameLoader::scheduleFormSubmission(const FrameLoadRequest& frameRequest,
-    bool lockHistory, bool lockBackForwardList, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
+    bool lockHistory, PassRefPtr<Event> event, PassRefPtr<FormState> formState)
 {
     ASSERT(m_frame->page());
     ASSERT(!frameRequest.isEmpty());
@@ -1371,13 +1371,11 @@ void FrameLoader::scheduleFormSubmission(const FrameLoadRequest& frameRequest,
     // FIXME: Do we need special handling for form submissions where the URL is the same
     // as the current one except for the fragment part? See scheduleLocationChange above.
 
-    lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame);
-    
     // Handle a location change of a page with no document as a special case.
     // This may happen when a frame changes the location of another frame.
     bool duringLoad = !m_committedFirstRealDocumentLoad;
 
-    scheduleRedirection(new ScheduledRedirection(frameRequest, lockHistory, lockBackForwardList, event, formState, duringLoad));
+    scheduleRedirection(new ScheduledRedirection(frameRequest, lockHistory, mustLockBackForwardList(m_frame), event, formState, duringLoad));
 }
 
 void FrameLoader::scheduleRefresh(bool wasUserGesture)

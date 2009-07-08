@@ -328,7 +328,7 @@ static void transferMailtoPostFormDataToURL(RefPtr<FormData>& data, KURL& url, c
     url.setQuery(query);
 }
 
-void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockHistory, bool lockBackForwardList)
+void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockHistory)
 {
     FrameView* view = document()->view();
     Frame* frame = document()->frame();
@@ -389,14 +389,14 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool lockH
                 m_url = url.string();
             }
 
-            frame->loader()->submitForm("POST", m_url, data.release(), m_target, m_formDataBuilder.encodingType(), String(), lockHistory, lockBackForwardList, event, formState.release());
+            frame->loader()->submitForm("POST", m_url, data.release(), m_target, m_formDataBuilder.encodingType(), String(), lockHistory, event, formState.release());
         } else {
             Vector<char> boundary = m_formDataBuilder.generateUniqueBoundaryString();
-            frame->loader()->submitForm("POST", m_url, createFormData(boundary.data()), m_target, m_formDataBuilder.encodingType(), boundary.data(), lockHistory, lockBackForwardList, event, formState.release());
+            frame->loader()->submitForm("POST", m_url, createFormData(boundary.data()), m_target, m_formDataBuilder.encodingType(), boundary.data(), lockHistory, event, formState.release());
         }
     } else {
         m_formDataBuilder.setIsMultiPartForm(false);
-        frame->loader()->submitForm("GET", m_url, createFormData(CString()), m_target, String(), String(), lockHistory, lockBackForwardList, event, formState.release());
+        frame->loader()->submitForm("GET", m_url, createFormData(CString()), m_target, String(), String(), lockHistory, event, formState.release());
     }
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
