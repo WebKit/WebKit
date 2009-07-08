@@ -178,7 +178,7 @@ class Bugzilla:
     def fetch_bug_ids_from_commit_queue(self):
         # FIXME: We should have an option for restricting the search by email.  Example:
         # unassigned_only = "&emailassigned_to1=1&emailtype1=substring&email1=unassigned"
-        commit_queue_url = "https://bugs.webkit.org/buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
+        commit_queue_url = self.bug_server + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
         log("Loading commit queue")
 
         page = urllib2.urlopen(commit_queue_url)
@@ -216,7 +216,7 @@ class Bugzilla:
         if self.dryrun:
             self.authenticated = True
             return
-        self.browser.open(self.bug_server + "/index.cgi?GoAheadAndLogIn=1")
+        self.browser.open(self.bug_server + "index.cgi?GoAheadAndLogIn=1")
         self.browser.select_form(name="login")
         self.browser['Bugzilla_login'] = username
         self.browser['Bugzilla_password'] = password
@@ -238,7 +238,7 @@ class Bugzilla:
             log(comment_text)
             return
         
-        self.browser.open(self.bug_server + "/attachment.cgi?action=enter&bugid=" + bug_id)
+        self.browser.open(self.bug_server + "attachment.cgi?action=enter&bugid=" + bug_id)
         self.browser.select_form(name="entryform")
         self.browser['description'] = description
         self.browser['ispatch'] = ("1",)
