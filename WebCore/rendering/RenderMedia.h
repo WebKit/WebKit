@@ -131,9 +131,9 @@ private:
     Timer<RenderMedia> m_opacityAnimationTimer;
     bool m_mouseOver;
     double m_opacityAnimationStartTime;
+    double m_opacityAnimationDuration;
     float m_opacityAnimationFrom;
     float m_opacityAnimationTo;
-    EVisibility m_previousVisible;
 };
 
 } // namespace WebCore

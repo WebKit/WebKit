@@ -45,7 +45,8 @@ using namespace HTMLNames;
 static const double cTimeUpdateRepeatDelay = 0.2;
 static const double cOpacityAnimationRepeatDelay = 0.05;
 // FIXME get this from style
-static const double cOpacityAnimationDuration = 0.1;
+static const double cOpacityAnimationDurationFadeIn = 0.1;
+static const double cOpacityAnimationDurationFadeOut = 0.3;
 
 RenderMedia::RenderMedia(HTMLMediaElement* video)
     : RenderReplaced(video)
@@ -53,9 +54,9 @@ RenderMedia::RenderMedia(HTMLMediaElement* video)
     , m_opacityAnimationTimer(this, &RenderMedia::opacityAnimationTimerFired)
     , m_mouseOver(false)
     , m_opacityAnimationStartTime(0)
+    , m_opacityAnimationDuration(cOpacityAnimationDurationFadeIn)
     , m_opacityAnimationFrom(0)
     , m_opacityAnimationTo(1.0f)
-    , m_previousVisible(VISIBLE)
 {
 }
 
@@ -65,9 +66,9 @@ RenderMedia::RenderMedia(HTMLMediaElement* video, const IntSize& intrinsicSize)
     , m_opacityAnimationTimer(this, &RenderMedia::opacityAnimationTimerFired)
     , m_mouseOver(false)
     , m_opacityAnimationStartTime(0)
+    , m_opacityAnimationDuration(cOpacityAnimationDurationFadeIn)
     , m_opacityAnimationFrom(0)
     , m_opacityAnimationTo(1.0f)
-    , m_previousVisible(VISIBLE)
 {
 }
 
@@ -308,10 +309,14 @@ void RenderMedia::updateControls()
         m_timeUpdateTimer.startRepeating(cTimeUpdateRepeatDelay);
     }
 
-    m_previousVisible = style()->visibility();
     
-    if (m_panel)
+    if (m_panel) {
+        // update() might alter the opacity of the element, especially if we are in the middle
+        // of an animation. This is the only element concerned as we animate only this element.
+        float opacityBeforeChangingStyle = m_panel->renderer() ? m_panel->renderer()->style()->opacity() : 0;
         m_panel->update();
+        changeOpacity(m_panel.get(), opacityBeforeChangingStyle);
+    }
     if (m_muteButton)
         m_muteButton->update();
     if (m_playButton)
@@ -336,6 +341,7 @@ void RenderMedia::updateControls()
         m_statusDisplay->update();
     if (m_fullscreenButton)
         m_fullscreenButton->update();
+
     updateTimeDisplay();
     updateControlVisibility();
 }
@@ -390,26 +396,34 @@ void RenderMedia::updateControlVisibility()
     if (!media->hasVideo())
         return;
 
-    // do fading manually, css animations don't work well with shadow trees
-    bool visible = style()->visibility() == VISIBLE && (m_mouseOver || media->canPlay());
-    if (visible == (m_opacityAnimationTo > 0))
+    // Don't fade if the media element is not visible
+    if (style()->visibility() != VISIBLE)
+        return;
+    
+    bool shouldHideController = !m_mouseOver && !media->canPlay();
+
+    // Do fading manually, css animations don't work with shadow trees
+
+    float animateFrom = m_panel->renderer()->style()->opacity();
+    float animateTo = shouldHideController ? 0.0f : 1.0f;
+
+    if (animateFrom == animateTo)
         return;
 
-    if (style()->visibility() != m_previousVisible) {
-        // don't fade gradually if it the element has just changed visibility
-        m_previousVisible = style()->visibility();
-        m_opacityAnimationTo = m_previousVisible == VISIBLE ? 1.0f : 0;
-        changeOpacity(m_panel.get(), m_opacityAnimationTo);
-        return;
+    if (m_opacityAnimationTimer.isActive()) {
+        if (m_opacityAnimationTo == animateTo)
+            return;
+        m_opacityAnimationTimer.stop();
     }
 
-    if (visible) {
-        m_opacityAnimationFrom = m_panel->renderer()->style()->opacity();
-        m_opacityAnimationTo = 1.0f;
-    } else {
-        m_opacityAnimationFrom = m_panel->renderer()->style()->opacity();
-        m_opacityAnimationTo = 0;
-    }
+    if (animateFrom < animateTo)
+        m_opacityAnimationDuration = cOpacityAnimationDurationFadeIn;
+    else
+        m_opacityAnimationDuration = cOpacityAnimationDurationFadeOut;
+
+    m_opacityAnimationFrom = animateFrom;
+    m_opacityAnimationTo = animateTo;
+
     m_opacityAnimationStartTime = currentTime();
     m_opacityAnimationTimer.startRepeating(cOpacityAnimationRepeatDelay);
 }
@@ -428,11 +442,11 @@ void RenderMedia::changeOpacity(HTMLElement* e, float opacity)
 void RenderMedia::opacityAnimationTimerFired(Timer<RenderMedia>*)
 {
     double time = currentTime() - m_opacityAnimationStartTime;
-    if (time >= cOpacityAnimationDuration) {
-        time = cOpacityAnimationDuration;
+    if (time >= m_opacityAnimationDuration) {
+        time = m_opacityAnimationDuration;
         m_opacityAnimationTimer.stop();
     }
-    float opacity = narrowPrecisionToFloat(m_opacityAnimationFrom + (m_opacityAnimationTo - m_opacityAnimationFrom) * time / cOpacityAnimationDuration);
+    float opacity = narrowPrecisionToFloat(m_opacityAnimationFrom + (m_opacityAnimationTo - m_opacityAnimationFrom) * time / m_opacityAnimationDuration);
     changeOpacity(m_panel.get(), opacity);
 }
 
