@@ -292,11 +292,12 @@ void RenderMedia::updateControls()
             createSeekBackButton();
             createSeekForwardButton();
             createFullscreenButton();
-        }
-        if (m_timelineContainer) {
-            createCurrentTimeDisplay();
-            createTimeline();
-            createTimeRemainingDisplay();
+            if (m_timelineContainer) {
+                createCurrentTimeDisplay();
+                createTimeline();
+                createTimeRemainingDisplay();
+            }
+            m_panel->attach();
         }
     }
 

@@ -75,7 +75,6 @@ void MediaControlShadowRootElement::updateStyle()
     }
 }
 
-
 // ----------------------------
     
 
@@ -99,38 +98,63 @@ void MediaControlElement::update()
     updateStyle();
 }
 
-void MediaControlElement::updateStyle()
+RenderStyle* MediaControlElement::styleForElement()
 {
-    if (!m_mediaElement || !m_mediaElement->renderer())
-        return;
-
     RenderStyle* style = m_mediaElement->renderer()->getCachedPseudoStyle(m_pseudoStyleId);
     if (!style)
-        return;
-
+        return 0;
+    
     // text-decoration can't be overrided from CSS. So we do it here.
     // See https://bugs.webkit.org/show_bug.cgi?id=27015
     style->setTextDecoration(TDNONE);
     style->setTextDecorationsInEffect(TDNONE);
 
+    return style;
+}
+
+bool MediaControlElement::rendererIsNeeded(RenderStyle* style)
+{
+    return HTMLDivElement::rendererIsNeeded(style) && parent() && parent()->renderer();
+}
+    
+void MediaControlElement::attach()
+{
+    RenderStyle* style = styleForElement();
+    if (!style)
+        return;
+    bool needsRenderer = rendererIsNeeded(style);
+    if (!needsRenderer)
+        return;
+    RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style);
+    if (!renderer)
+        return;
+    renderer->setStyle(style);
+    setRenderer(renderer);
+    if (parent() && parent()->renderer()) {
+        // Find next sibling with a renderer to determine where to insert.
+        Node* sibling = nextSibling();
+        while (sibling && !sibling->renderer())
+            sibling = sibling->nextSibling();
+        parent()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
+    }
+    ContainerNode::attach();
+}
+
+void MediaControlElement::updateStyle()
+{
+    if (!m_mediaElement || !m_mediaElement->renderer())
+        return;
+
+    RenderStyle* style = styleForElement();
+    if (!style)
+        return;
+
     bool needsRenderer = rendererIsNeeded(style) && parent() && parent()->renderer();
     if (renderer() && !needsRenderer)
         detach();
-    else if (!renderer() && needsRenderer) {
-        RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style);
-        if (!renderer)
-            return;
-        renderer->setStyle(style);
-        setRenderer(renderer);
-        setAttached();
-        if (parent() && parent()->renderer()) {
-            // Find next sibling with a renderer to determine where to insert.
-            Node* sibling = nextSibling();
-            while (sibling && !sibling->renderer())
-                sibling = sibling->nextSibling();
-            parent()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
-        }
-    } else if (renderer()) {
+    else if (!renderer() && needsRenderer)
+        attach();
+    else if (renderer()) {
         renderer()->setStyle(style);
 
         // Make sure that if there is any innerText renderer, it is updated as well.
@@ -233,36 +257,58 @@ void MediaControlInputElement::update()
     updateStyle();
 }
 
+RenderStyle* MediaControlInputElement::styleForElement()
+{
+    return m_mediaElement->renderer()->getCachedPseudoStyle(m_pseudoStyleId);
+}
+
+bool MediaControlInputElement::rendererIsNeeded(RenderStyle* style)
+{
+    return HTMLInputElement::rendererIsNeeded(style) && parent() && parent()->renderer();
+}
+
+void MediaControlInputElement::attach()
+{
+    RenderStyle* style = styleForElement();
+    if (!style)
+        return;
+    
+    bool needsRenderer = rendererIsNeeded(style);
+    if (!needsRenderer)
+        return;
+    RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style);
+    if (!renderer)
+        return;
+    renderer->setStyle(style);
+    setRenderer(renderer);
+    if (parent() && parent()->renderer()) {
+        // Find next sibling with a renderer to determine where to insert.
+        Node* sibling = nextSibling();
+        while (sibling && !sibling->renderer())
+            sibling = sibling->nextSibling();
+        parent()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
+    }  
+    ContainerNode::attach();
+}
+
 void MediaControlInputElement::updateStyle()
 {
     if (!m_mediaElement || !m_mediaElement->renderer())
         return;
-
-    RenderStyle* style = m_mediaElement->renderer()->getCachedPseudoStyle(m_pseudoStyleId);
+    
+    RenderStyle* style = styleForElement();
     if (!style)
         return;
-
+    
     bool needsRenderer = rendererIsNeeded(style) && parent() && parent()->renderer();
     if (renderer() && !needsRenderer)
         detach();
-    else if (!renderer() && needsRenderer) {
-        RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style);
-        if (!renderer)
-            return;
-        renderer->setStyle(style);
-        setRenderer(renderer);
-        setAttached();
-        if (parent() && parent()->renderer()) {
-            // Find next sibling with a renderer to determine where to insert.
-            Node* sibling = nextSibling();
-            while (sibling && !sibling->renderer())
-                sibling = sibling->nextSibling();
-            parent()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
-        }
-    } else if (renderer())
+    else if (!renderer() && needsRenderer)
+        attach();
+    else if (renderer())
         renderer()->setStyle(style);
 }
-
+    
 bool MediaControlInputElement::hitTest(const IntPoint& absPoint)
 {
     if (renderer() && renderer()->style()->hasAppearance())

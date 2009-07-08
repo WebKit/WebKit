@@ -1,3 +1,38 @@
+2009-07-07  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27047
+
+        We need to make sure that when we reattach, we also reattach
+        the children in every MediaControlElement. Else we may end up
+        having no remaining or elapsed time.
+
+        We have to handle that, because we are using a special shadow
+        tree in the DOM, and that we are ourselves handling
+        attaching/detaching the renderer.
+
+        The strategy here is to try to implement ::attach(), and try
+        to reuse as much code as we can from the super class, including
+        children attachement.
+
+        Test: media/controls-after-reload.html
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::styleForElement): Code factoring.
+        (WebCore::MediaControlElement::rendererIsNeeded): Code factoring.
+        (WebCore::MediaControlElement::attach): Implement attach
+        and call super class so that children are also attached.
+        (WebCore::MediaControlElement::updateStyle): Use attach()
+        (WebCore::MediaControlInputElement::styleForElement): Code factoring.
+        (WebCore::MediaControlInputElement::rendererIsNeeded): Code factoring.
+        (WebCore::MediaControlInputElement::attach): See above.
+        (WebCore::MediaControlInputElement::updateStyle): Use attach()
+        * rendering/MediaControlElements.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateControls): Directly run attach() on
+        the m_panel, which is a root node for our shadow tree.
+
 2009-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
