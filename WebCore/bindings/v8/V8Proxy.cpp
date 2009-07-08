@@ -508,7 +508,7 @@ private:
 };
 
 // Create object groups for DOM tree nodes.
-static void gcPrologue()
+void V8GCController::gcPrologue()
 {
     v8::HandleScope scope;
 
@@ -551,7 +551,7 @@ ACTIVE_DOM_OBJECT_TYPES(MAKE_CASE)
 }
 };
 
-static void gcEpilogue()
+void V8GCController::gcEpilogue()
 {
     v8::HandleScope scope;
 
