@@ -1,5 +1,15 @@
 2009-07-08  Pierre d'Herbemont  <pdherbemont@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Add special test results for media/controls-after-reload.html
+        and media/controls-styling.html on Windows.
+
+        * platform/win/media/controls-after-reload-expected.txt: Added.
+        * platform/win/media/controls-styling-expected.txt: Added.
+
+2009-07-08  Pierre d'Herbemont  <pdherbemont@apple.com>
+
         Fix the Leopard test result for media/controls-after-reload.txt.
 
         * platform/mac-leopard/media/controls-after-reload-expected.txt:
