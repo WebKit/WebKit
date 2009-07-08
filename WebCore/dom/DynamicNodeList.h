@@ -37,8 +37,8 @@ namespace WebCore {
 
     class DynamicNodeList : public NodeList {
     public:
-        struct Caches {
-            Caches();
+        struct Caches : RefCounted<Caches>{
+            static PassRefPtr<Caches> create();
             void reset();
 
             unsigned cachedLength;
@@ -46,7 +46,8 @@ namespace WebCore {
             unsigned lastItemOffset;
             bool isLengthCacheValid : 1;
             bool isItemCacheValid : 1;
-            unsigned refCount;
+        protected:
+            Caches();
         };
 
         virtual ~DynamicNodeList();
@@ -68,7 +69,7 @@ namespace WebCore {
         virtual bool nodeMatches(Element*) const = 0;
 
         RefPtr<Node> m_rootNode;
-        mutable Caches* m_caches;
+        mutable RefPtr<Caches> m_caches;
         bool m_ownsCaches;
 
     private:
