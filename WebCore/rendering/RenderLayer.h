@@ -382,6 +382,7 @@ public:
 
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
     IntRect repaintRect() const { return m_repaintRect; }
+    void computeRepaintRects();
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }
     
     int staticX() const { return m_staticX; }

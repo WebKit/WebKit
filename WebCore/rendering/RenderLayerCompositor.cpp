@@ -223,6 +223,10 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             layer->clearBacking();
             layerChanged = true;
 
+            // The layer's cached repaints rects are relative to the repaint container, so change when
+            // compositing changes; we need to update them here.
+            layer->computeRepaintRects();
+
             // If we need to repaint, do so now that we've removed the backing
             if (shouldRepaint == CompositingChangeRepaintNow)
                 repaintOnCompositingChange(layer);

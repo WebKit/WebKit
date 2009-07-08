@@ -1,3 +1,23 @@
+2009-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Repaint issue after layer drops out of composited mode.
+        <https://bugs.webkit.org/show_bug.cgi?id=27022>
+
+        RenderLayers cache repaint rects in the form of m_repaintRect and m_outlineBox,
+        and expect these to stay valid from one style change to the next. These rects
+        are relative to the repaint container, so if a layer stops being composited,
+        we need to recompute them.
+        
+        Test: compositing/repaint/layer-repaint-rects.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeRepaintRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2009-07-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt and Darin Adler.

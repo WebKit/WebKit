@@ -1,3 +1,17 @@
+2009-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Repaint issue after layer drops out of composited mode.
+        <https://bugs.webkit.org/show_bug.cgi?id=27022>
+
+        Test for repainting on the next style change after a layer stops being composited.
+
+        * compositing/repaint/layer-repaint-rects.html: Added.
+        * platform/mac/compositing/repaint/layer-repaint-rects-expected.checksum: Added.
+        * platform/mac/compositing/repaint/layer-repaint-rects-expected.png: Added.
+        * platform/mac/compositing/repaint/layer-repaint-rects-expected.txt: Added.
+
 2009-07-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt and Darin Adler.

@@ -328,6 +328,13 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags)
         m_marquee->updateMarqueePosition();
 }
 
+void RenderLayer::computeRepaintRects()
+{
+    RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
+    m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
+    m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer);
+}
+
 void RenderLayer::updateTransform()
 {
     // hasTransform() on the renderer is also true when there is transform-style: preserve-3d or perspective set,
