@@ -175,6 +175,14 @@
         * storage/database-lock-after-reload.html: Added.
         * storage/resources/database-lock-after-reload-2.html: Added.
 
+2009-07-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Remove non-existing tests from the Qt skipped list.
+
+        * platform/qt/Skipped:
+
 2009-07-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

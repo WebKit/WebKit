@@ -6,7 +6,6 @@ editing/selection/5109817.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
 editing/selection/caret-and-focus-ring.html
-fast/events/popup-blocking-click-in-iframe.html
 
 # -------- crashes
 
@@ -996,8 +995,6 @@ fast/css-generated-content/012.html
 fast/css-generated-content/hover-style-change.html
 fast/css-generated-content/positioned-background-hit-test-crash.html
 fast/css-generated-content/wbr-with-before-content.html
-fast/css/computed-style-without-renderer.html
-fast/css/computed-style.html
 fast/css/css2-system-fonts.html
 fast/css/namespaces/003.xml
 fast/css/namespaces/007.xml
@@ -2210,7 +2207,6 @@ editing/selection/caret-rtl-2.html
 editing/selection/caret-rtl.html
 editing/selection/clear-selection.html
 editing/selection/contenteditable-click-inside.html
-editing/selection/contenteditable-click-outside.html
 editing/selection/display-table-text.html
 editing/selection/drag-in-iframe.html
 editing/selection/drag-text-delay.html
@@ -2856,7 +2852,6 @@ fast/css/list-outline.html
 fast/css/live-cssrules.html
 fast/css/margin-bottom-form-element-quirk.html
 fast/css/margin-bottom-form-element-strict.html
-fast/css/marginComputedStyle.html
 fast/css/margin-top-bottom-dynamic.html
 fast/css/MarqueeLayoutTest.html
 fast/css/max-height-none.html
@@ -3081,7 +3076,6 @@ fast/forms/checkbox-radio-onchange.html
 fast/forms/control-clip.html
 fast/forms/control-clip-overflow.html
 fast/forms/disabled-select-change-index.html
-fast/forms/dragging-to-disabled-file-input.html
 fast/forms/encoding-test.html
 fast/forms/fieldset-align.html
 fast/forms/fieldset-with-float.html
@@ -5053,7 +5047,6 @@ transforms/2d/transform-origin-borderbox.html
 transforms/2d/zoom-menulist.html
 transforms/no_transform_hit_testing.html
 transitions/transition-drt-api.html
-transitions/transition-drt-api.htmlfast/canvas/canvas-as-image-incremental-repaint.html
 
 # Bug 25037: [Qt] Implement layoutTestController.waitForPolicyDelegate <https://bugs.webkit.org/show_bug.cgi?id=25037>
 fast/encoding/mailto-always-utf-8.html
