@@ -30087,14 +30087,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\StorageAreaImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\StorageAreaImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\StorageAreaSync.cpp"
 				>
 			</File>
@@ -30124,14 +30116,6 @@
 			</File>
 			<File
 				RelativePath="..\storage\StorageNamespace.h"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\StorageNamespaceImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\storage\StorageNamespaceImpl.h"
 				>
 			</File>
 			<File

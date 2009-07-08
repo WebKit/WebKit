@@ -50,23 +50,45 @@ namespace WebCore {
     typedef int ExceptionCode;
     enum StorageType { LocalStorage, SessionStorage };
 
-    // This interface is required for Chromium since these actions need to be proxied between processes.
     class StorageArea : public ThreadSafeShared<StorageArea> {
     public:
         static PassRefPtr<StorageArea> create(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
-        virtual ~StorageArea() { }
-        virtual PassRefPtr<StorageArea> copy(SecurityOrigin*) = 0;
+        PassRefPtr<StorageArea> copy(SecurityOrigin*);
 
         // The HTML5 DOM Storage API
-        virtual unsigned length() const = 0;
-        virtual String key(unsigned index, ExceptionCode& ec) const = 0;
-        virtual String getItem(const String& key) const = 0;
-        virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame) = 0;
-        virtual void removeItem(const String& key, Frame* sourceFrame) = 0;
-        virtual void clear(Frame* sourceFrame) = 0;
+        unsigned length() const;
+        String key(unsigned index, ExceptionCode& ec) const;
+        String getItem(const String& key) const;
+        void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame);
+        void removeItem(const String& key, Frame* sourceFrame);
+        void clear(Frame* sourceFrame);
 
-        virtual bool contains(const String& key) const = 0;
-        virtual void close() = 0;
+        bool contains(const String& key) const;
+        void close();
+
+        // Could be called from a background thread.
+        void importItem(const String& key, const String& value);
+        SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
+
+    protected:
+        StorageArea(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
+        StorageArea(SecurityOrigin*, StorageArea*);
+
+    private:
+        void blockUntilImportComplete() const;
+
+        void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
+
+        StorageType m_storageType;
+        RefPtr<SecurityOrigin> m_securityOrigin;
+        RefPtr<StorageMap> m_storageMap;
+
+        RefPtr<StorageAreaSync> m_storageAreaSync;
+        RefPtr<StorageSyncManager> m_storageSyncManager;
+
+#ifndef NDEBUG
+        bool m_isShutdown;
+#endif
     };
 
 } // namespace WebCore
