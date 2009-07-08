@@ -1,3 +1,14 @@
+2009-07-08  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Extending the PlatformFileHandle definition from PLATFORM(WIN) to
+        PLATFORM(WIN_OS)
+
+        https://bugs.webkit.org/show_bug.cgi?id=27013
+
+        * platform/FileSystem.h:
+
 2009-07-08  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

@@ -53,7 +53,7 @@
 
 typedef const struct __CFData* CFDataRef;
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN_OS)
 // These are to avoid including <winbase.h> in a header for Chromium
 typedef void *HANDLE;
 // Assuming STRICT
@@ -65,31 +65,7 @@ namespace WebCore {
 
 class CString;
 
-#if PLATFORM(WIN)
-typedef HANDLE PlatformFileHandle;
-typedef HMODULE PlatformModule;
-// FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
-// avoid using Windows headers in headers.  We'd rather move this into the .cpp.
-const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1);
-
-struct PlatformModuleVersion {
-    unsigned leastSig;
-    unsigned mostSig;
-
-    PlatformModuleVersion(unsigned)
-        : leastSig(0)
-        , mostSig(0)
-    {
-    }
-
-    PlatformModuleVersion(unsigned lsb, unsigned msb)
-        : leastSig(lsb)
-        , mostSig(msb)
-    {
-    }
-
-};
-#elif PLATFORM(QT)
+#if PLATFORM(QT)
 
 typedef QFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
@@ -120,6 +96,30 @@ typedef QLibrary* PlatformModule;
 typedef unsigned PlatformModuleVersion;
 #endif
 
+#elif PLATFORM(WIN_OS)
+typedef HANDLE PlatformFileHandle;
+typedef HMODULE PlatformModule;
+// FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
+// avoid using Windows headers in headers.  We'd rather move this into the .cpp.
+const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1);
+
+struct PlatformModuleVersion {
+    unsigned leastSig;
+    unsigned mostSig;
+
+    PlatformModuleVersion(unsigned)
+        : leastSig(0)
+        , mostSig(0)
+    {
+    }
+
+    PlatformModuleVersion(unsigned lsb, unsigned msb)
+        : leastSig(lsb)
+        , mostSig(msb)
+    {
+    }
+
+};
 #else
 typedef int PlatformFileHandle;
 #if PLATFORM(GTK)
