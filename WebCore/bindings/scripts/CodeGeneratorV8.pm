@@ -1174,7 +1174,7 @@ sub GenerateImplementation
     my $has_attributes = 0;
     if (@$attributes) {
         $has_attributes = 1;
-        push(@implContent, "static const BatchedAttribute attrs[] = {\n");
+        push(@implContent, "static const BatchedAttribute ${interfaceName}_attrs[] = {\n");
         GenerateBatchedAttributeData($interfaceName, $attributes);
         push(@implContent, "};\n");
     }
@@ -1183,7 +1183,7 @@ sub GenerateImplementation
     my $has_constants = 0;
     if (@{$dataNode->constants}) {
         $has_constants = 1;
-        push(@implContent, "static const BatchedConstant consts[] = {\n");
+        push(@implContent, "static const BatchedConstant ${interfaceName}_consts[] = {\n");
     }
     foreach my $constant (@{$dataNode->constants}) {
         my $name = $constant->name;
@@ -1234,7 +1234,7 @@ END
     # Set up our attributes if we have them
     if ($has_attributes) {
         push(@implContent, <<END);
-  batchConfigureAttributes(instance, proto, attrs, sizeof(attrs)/sizeof(*attrs));
+  batchConfigureAttributes(instance, proto, ${interfaceName}_attrs, sizeof(${interfaceName}_attrs)/sizeof(*${interfaceName}_attrs));
 END
     }
 
@@ -1328,7 +1328,7 @@ END
 
     if ($has_constants) {
         push(@implContent, <<END);
-  batchConfigureConstants(desc, proto, consts, sizeof(consts)/sizeof(*consts));
+  batchConfigureConstants(desc, proto, ${interfaceName}_consts, sizeof(${interfaceName}_consts)/sizeof(*${interfaceName}_consts));
 END
     }
 
