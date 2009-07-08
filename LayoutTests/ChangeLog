@@ -1,3 +1,12 @@
+2009-07-08  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Holger Freyther a while ago.
+
+        Add two more tests to the Qt skip list due to missing DRT
+        features.
+
+        * platform/qt/Skipped:
+
 2009-07-08  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.
