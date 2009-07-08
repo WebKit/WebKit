@@ -89,8 +89,7 @@ private:
     Timer<RenderImage> m_highQualityRepaintTimer;
 };
 
-class RenderImageScaleObserver
-{
+class RenderImageScaleObserver {
 public:
     static bool shouldImagePaintAtLowQuality(RenderImage*, const IntSize&);
 

@@ -33,8 +33,7 @@
 
 namespace WebCore {
 
-class RenderTableCol : public RenderBox
-{
+class RenderTableCol : public RenderBox {
 public:
     RenderTableCol(Node*);
 

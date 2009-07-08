@@ -753,8 +753,8 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
 
 void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, DocumentMarker marker, RenderStyle* style, const Font& font)
 {
-   // Use same y positioning and height as for selection, so that when the selection and this highlight are on
-   // the same word there are no pieces sticking out.
+    // Use same y positioning and height as for selection, so that when the selection and this highlight are on
+    // the same word there are no pieces sticking out.
     int y = selectionTop();
     int h = selectionHeight();
     

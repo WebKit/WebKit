@@ -94,7 +94,7 @@ void AutoTableLayout::recalcColumn(int effCol)
                         w.setRawValue(32760);
                     if (w.isNegative())
                         w.setValue(0);
-                    switch(w.type()) {
+                    switch (w.type()) {
                     case Fixed:
                         // ignore width=0
                         if (w.value() > 0 && (int)l.width.type() != Percent) {
@@ -573,7 +573,7 @@ void AutoTableLayout::layout()
                     int reduction = min(w,  excess);
                     // the lines below might look inconsistent, but that's the way it's handled in mozilla
                     excess -= reduction;
-                    int newWidth = max(int (m_layoutStruct[i].effMinWidth), w - reduction);
+                    int newWidth = max(static_cast<int>(m_layoutStruct[i].effMinWidth), w - reduction);
                     available += w - newWidth;
                     m_layoutStruct[i].calcWidth = newWidth;
                 }

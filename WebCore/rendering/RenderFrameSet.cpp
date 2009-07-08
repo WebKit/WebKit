@@ -65,7 +65,7 @@ inline HTMLFrameSetElement* RenderFrameSet::frameSet() const
 
 static Color borderStartEdgeColor()
 {
-    return Color(170,170,170);
+    return Color(170, 170, 170);
 }
 
 static Color borderEndEdgeColor()

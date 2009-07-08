@@ -32,8 +32,7 @@ namespace WebCore {
 
 class String;
 
-class TextControlInnerElement : public HTMLDivElement
-{
+class TextControlInnerElement : public HTMLDivElement {
 public:
     TextControlInnerElement(Document*, Node* shadowParent = 0);
     

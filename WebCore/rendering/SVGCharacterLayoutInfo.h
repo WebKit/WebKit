@@ -44,8 +44,7 @@ class SVGNumberList;
 class SVGTextPositioningElement;
 
 template<class Type>
-class PositionedVector : public Vector<Type>
-{
+class PositionedVector : public Vector<Type> {
 public:
     PositionedVector<Type>()
         : m_position(0)

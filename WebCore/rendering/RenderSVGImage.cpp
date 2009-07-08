@@ -59,7 +59,7 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
         float widthToHeightMultiplier = srcRect.height() / srcRect.width();
         if (origDestHeight > (origDestWidth * widthToHeightMultiplier)) {
             destRect.setHeight(origDestWidth * widthToHeightMultiplier);
-            switch(aspectRatio->align()) {
+            switch (aspectRatio->align()) {
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
@@ -74,7 +74,7 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
         }
         if (origDestWidth > (origDestHeight / widthToHeightMultiplier)) {
             destRect.setWidth(origDestHeight / widthToHeightMultiplier);
-            switch(aspectRatio->align()) {
+            switch (aspectRatio->align()) {
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
@@ -93,7 +93,7 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
         if (origDestHeight < (origDestWidth * widthToHeightMultiplier)) {
             float destToSrcMultiplier = srcRect.width() / destRect.width();
             srcRect.setHeight(destRect.height() * destToSrcMultiplier);
-            switch(aspectRatio->align()) {
+            switch (aspectRatio->align()) {
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
@@ -110,7 +110,7 @@ void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& s
         if (origDestWidth < (origDestHeight / widthToHeightMultiplier)) {
             float destToSrcMultiplier = srcRect.height() / destRect.height();
             srcRect.setWidth(destRect.width() * destToSrcMultiplier);
-            switch(aspectRatio->align()) {
+            switch (aspectRatio->align()) {
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
                 case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:

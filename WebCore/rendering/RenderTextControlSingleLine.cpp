@@ -744,8 +744,8 @@ int RenderTextControlSingleLine::selectedIndex() const
 
 bool RenderTextControlSingleLine::itemIsSeparator(unsigned listIndex) const
 {
-   // The separator will be the second to last item in our list.
-   return static_cast<int>(listIndex) == (listSize() - 2);
+    // The separator will be the second to last item in our list.
+    return static_cast<int>(listIndex) == (listSize() - 2);
 }
 
 bool RenderTextControlSingleLine::itemIsLabel(unsigned listIndex) const

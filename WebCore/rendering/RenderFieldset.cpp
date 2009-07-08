@@ -99,7 +99,7 @@ RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
         int b = borderTop();
         int h = legend->height();
         legend->setLocation(xPos, max((b-h)/2, 0));
-        setHeight(max(b,h) + paddingTop());
+        setHeight(max(b, h) + paddingTop());
     }
     return legend;
 }

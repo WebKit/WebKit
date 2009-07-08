@@ -78,8 +78,7 @@ private:
 
 // ----------------------------
 
-class MediaControlElement : public HTMLDivElement
-{
+class MediaControlElement : public HTMLDivElement {
 public:
     MediaControlElement(Document*, PseudoId, HTMLMediaElement*);
     virtual void attach();

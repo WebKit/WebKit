@@ -641,7 +641,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, bool
     // objects horizontally.  The total width of the line can be increased if we end up
     // justifying text.
     int x = leftOffset(height(), firstLine);
-    switch(textAlign) {
+    switch (textAlign) {
         case LEFT:
         case WEBKIT_LEFT:
             // The direction of the block should determine what happens with wide lines.  In

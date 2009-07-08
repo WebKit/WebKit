@@ -692,7 +692,8 @@ bool RenderBlock::isSelfCollapsingBlock() const
     return false;
 }
 
-void RenderBlock::startDelayUpdateScrollInfo() {
+void RenderBlock::startDelayUpdateScrollInfo()
+{
     if (gDelayUpdateScrollInfo == 0) {
         ASSERT(!gDelayedUpdateScrollInfoSet);
         gDelayedUpdateScrollInfoSet = new DelayedUpdateScrollInfoSet;
@@ -701,7 +702,8 @@ void RenderBlock::startDelayUpdateScrollInfo() {
     ++gDelayUpdateScrollInfo;
 }
 
-void RenderBlock::finishDelayUpdateScrollInfo() {
+void RenderBlock::finishDelayUpdateScrollInfo()
+{
     --gDelayUpdateScrollInfo;
     ASSERT(gDelayUpdateScrollInfo >= 0);
     if (gDelayUpdateScrollInfo == 0) {
@@ -719,7 +721,8 @@ void RenderBlock::finishDelayUpdateScrollInfo() {
     }
 }
 
-void RenderBlock::updateScrollInfoAfterLayout() {
+void RenderBlock::updateScrollInfoAfterLayout()
+{
     if (hasOverflowClip()) {
         if (gDelayUpdateScrollInfo)
             gDelayedUpdateScrollInfoSet->add(this);
@@ -2461,10 +2464,10 @@ bool RenderBlock::positionNewFloats()
         if (o->style()->floating() == FLEFT) {
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
-            int fx = leftRelOffset(y,lo, false, &heightRemainingLeft);
-            while (rightRelOffset(y,ro, false, &heightRemainingRight)-fx < fwidth) {
+            int fx = leftRelOffset(y, lo, false, &heightRemainingLeft);
+            while (rightRelOffset(y, ro, false, &heightRemainingRight)-fx < fwidth) {
                 y += min(heightRemainingLeft, heightRemainingRight);
-                fx = leftRelOffset(y,lo, false, &heightRemainingLeft);
+                fx = leftRelOffset(y, lo, false, &heightRemainingLeft);
             }
             fx = max(0, fx);
             f->m_left = fx;
@@ -2472,8 +2475,8 @@ bool RenderBlock::positionNewFloats()
         } else {
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
-            int fx = rightRelOffset(y,ro, false, &heightRemainingRight);
-            while (fx - leftRelOffset(y,lo, false, &heightRemainingLeft) < fwidth) {
+            int fx = rightRelOffset(y, ro, false, &heightRemainingRight);
+            while (fx - leftRelOffset(y, lo, false, &heightRemainingLeft) < fwidth) {
                 y += min(heightRemainingLeft, heightRemainingRight);
                 fx = rightRelOffset(y, ro, false, &heightRemainingRight);
             }
@@ -2498,7 +2501,7 @@ void RenderBlock::newLine(EClear clear)
     positionNewFloats();
     // set y position
     int newY = 0;
-    switch(clear)
+    switch (clear)
     {
         case CLEFT:
             newY = leftBottom();
@@ -2669,12 +2672,12 @@ int
 RenderBlock::floatBottom() const
 {
     if (!m_floatingObjects) return 0;
-    int bottom=0;
+    int bottom = 0;
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
         if (r->m_bottom>bottom)
-            bottom=r->m_bottom;
+            bottom = r->m_bottom;
     return bottom;
 }
 
@@ -2959,12 +2962,12 @@ int
 RenderBlock::leftBottom()
 {
     if (!m_floatingObjects) return 0;
-    int bottom=0;
+    int bottom = 0;
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
         if (r->m_bottom > bottom && r->type() == FloatingObject::FloatLeft)
-            bottom=r->m_bottom;
+            bottom = r->m_bottom;
 
     return bottom;
 }
@@ -2973,12 +2976,12 @@ int
 RenderBlock::rightBottom()
 {
     if (!m_floatingObjects) return 0;
-    int bottom=0;
+    int bottom = 0;
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it )
         if (r->m_bottom>bottom && r->type() == FloatingObject::FloatRight)
-            bottom=r->m_bottom;
+            bottom = r->m_bottom;
 
     return bottom;
 }
@@ -3940,8 +3943,7 @@ void RenderBlock::calcPrefWidths()
     setPrefWidthsDirty(false);
 }
 
-struct InlineMinMaxIterator
-{
+struct InlineMinMaxIterator {
 /* InlineMinMaxIterator is a class that will iterate over all render objects that contribute to
    inline min/max width calculations.  Note the following about the way it walks:
    (1) Positioned content is skipped (since it does not contribute to min/max width of a block)

@@ -39,7 +39,7 @@
 #include <string.h>
 #include <wtf/Assertions.h>
 
-#define ROUNDUP(x,y) ((((x)+((y)-1))/(y))*(y))
+#define ROUNDUP(x, y) ((((x)+((y)-1))/(y))*(y))
 
 namespace WebCore {
 

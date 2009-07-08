@@ -460,7 +460,7 @@ void RenderLayer::updateVisibilityStatus()
                 else {
                     do {
                         r = r->parent();
-                        if (r==renderer())
+                        if (r == renderer())
                             r = 0;
                     } while (r && !r->nextSibling());
                     if (r)
@@ -2637,13 +2637,13 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& cl
         }
         
         if (renderer()->hasOverflowClip()) {
-            IntRect newOverflowClip = toRenderBox(renderer())->overflowClipRect(x,y);
+            IntRect newOverflowClip = toRenderBox(renderer())->overflowClipRect(x, y);
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer()->isPositioned() || renderer()->isRelPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer()->hasClip()) {
-            IntRect newPosClip = toRenderBox(renderer())->clipRect(x,y);
+            IntRect newPosClip = toRenderBox(renderer())->clipRect(x, y);
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -2693,10 +2693,10 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
         // This layer establishes a clip of some kind.
         if (renderer()->hasOverflowClip())
-            foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(x,y));
+            foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(x, y));
         if (renderer()->hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            IntRect newPosClip = toRenderBox(renderer())->clipRect(x,y);
+            IntRect newPosClip = toRenderBox(renderer())->clipRect(x, y);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);

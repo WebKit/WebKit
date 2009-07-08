@@ -235,7 +235,7 @@ void RenderMarquee::updateMarqueeStyle()
     // to a marquee of 200px.
     if (isHorizontal()) {
         if (s->height().isFixed() && s->height().value() < s->fontSize())
-            s->setHeight(Length(s->fontSize(),Fixed));
+            s->setHeight(Length(s->fontSize(), Fixed));
     } else if (s->height().isAuto())  //vertical marquee with no specified height
         s->setHeight(Length(200, Fixed)); 
    
@@ -309,4 +309,3 @@ void RenderMarquee::timerFired(Timer<RenderMarquee>*)
 }
 
 } // namespace WebCore
-

@@ -1562,7 +1562,7 @@ int RenderBox::calcReplacedWidthUsing(Length width) const
         default:
             return intrinsicSize().width();
      }
- }
+}
 
 int RenderBox::calcReplacedHeight() const
 {

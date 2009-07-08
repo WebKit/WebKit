@@ -304,7 +304,7 @@ void RenderMedia::updateControls()
     if (media->canPlay()) {
         if (m_timeUpdateTimer.isActive())
             m_timeUpdateTimer.stop();
-    } else if (style()->visibility() == VISIBLE && m_timeline && m_timeline->renderer() && m_timeline->renderer()->style()->display() != NONE ) {
+    } else if (style()->visibility() == VISIBLE && m_timeline && m_timeline->renderer() && m_timeline->renderer()->style()->display() != NONE) {
         m_timeUpdateTimer.startRepeating(cTimeUpdateRepeatDelay);
     }
 

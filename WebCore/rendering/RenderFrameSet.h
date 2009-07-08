@@ -32,8 +32,7 @@ class MouseEvent;
 
 enum FrameEdge { LeftFrameEdge, RightFrameEdge, TopFrameEdge, BottomFrameEdge };
 
-struct FrameEdgeInfo
-{
+struct FrameEdgeInfo {
     FrameEdgeInfo(bool preventResize = false, bool allowBorder = true)
         : m_preventResize(4)
         , m_allowBorder(4)

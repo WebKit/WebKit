@@ -133,7 +133,7 @@ String RenderThemeChromiumSkia::extraMediaControlsStyleSheet()
 
 bool RenderThemeChromiumSkia::supportsHover(const RenderStyle* style) const
 {
-  return true;
+    return true;
 }
 
 bool RenderThemeChromiumSkia::supportsFocusRing(const RenderStyle* style) const

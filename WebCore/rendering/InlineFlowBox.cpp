@@ -1037,7 +1037,7 @@ int InlineFlowBox::placeEllipsisBox(bool ltr, int blockLeftEdge, int blockRightE
     int visibleLeftEdge = blockLeftEdge;
     int visibleRightEdge = blockRightEdge;
 
-    while(box) {
+    while (box) {
         int currResult = box->placeEllipsisBox(ltr, visibleLeftEdge, visibleRightEdge, ellipsisWidth, foundBox);
         if (currResult != -1 && result == -1)
             result = currResult;

@@ -470,7 +470,7 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
 
     MediaControlInputElement::defaultEventHandler(event);
 
-     if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent ) {
+    if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent) {
         return;
     }
 

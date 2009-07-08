@@ -390,11 +390,11 @@ void SVGCharacterLayoutInfo::addStackContent(StackType type, const PositionedFlo
         dyStackChanged = true;
         dyStack.append(list);
         break;
-   case AngleStack:
+    case AngleStack:
         angleStackChanged = true;
         angleStack.append(list);
         break; 
-   default:
+    default:
         ASSERT_NOT_REACHED();
     }
 }

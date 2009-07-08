@@ -774,7 +774,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                         break;
                     case BSRight:
                         drawLineForBoxSide(graphicsContext, x1, y1 + max((adjbw1 * 2 + 1) / 3, 0),
-                                   x1 + third, y2 - max(( adjbw2 * 2 + 1) / 3, 0),
+                                   x1 + third, y2 - max((adjbw2 * 2 + 1) / 3, 0),
                                    s, c, textcolor, SOLID, adjbw1bigthird, adjbw2bigthird);
                         drawLineForBoxSide(graphicsContext, x2 - third, y1 + max((-adjbw1 * 2 + 1) / 3, 0),
                                    x2, y2 - max((-adjbw2 * 2 + 1) / 3, 0),
@@ -1738,8 +1738,8 @@ IntSize RenderObject::offsetFromContainer(RenderObject* o) const
 
 IntRect RenderObject::localCaretRect(InlineBox*, int, int* extraWidthToEndOfLine)
 {
-   if (extraWidthToEndOfLine)
-       *extraWidthToEndOfLine = 0;
+    if (extraWidthToEndOfLine)
+        *extraWidthToEndOfLine = 0;
 
     return IntRect();
 }

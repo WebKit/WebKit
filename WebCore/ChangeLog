@@ -1,3 +1,81 @@
+2009-07-08  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        WebKit needs a style linting tool
+        https://bugs.webkit.org/show_bug.cgi?id=25884
+
+        Fix bunch of style issues in WebCore/rendering.
+        This patch is created to demonstrate cpplint.py.
+
+        No testcase because it's just a style fixes.
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeEllipsisBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        * rendering/MediaControlElements.h:
+        * rendering/RenderArena.cpp:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::startDelayUpdateScrollInfo):
+        (WebCore::RenderBlock::finishDelayUpdateScrollInfo):
+        (WebCore::RenderBlock::updateScrollInfoAfterLayout):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::newLine):
+        (WebCore::RenderBlock::floatBottom):
+        (WebCore::RenderBlock::leftBottom):
+        (WebCore::RenderBlock::rightBottom):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcReplacedWidthUsing):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::layoutLegend):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::FlexBoxIterator):
+        (WebCore::FlexBoxIterator::reset):
+        (WebCore::FlexBoxIterator::first):
+        (WebCore::FlexBoxIterator::next):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::borderStartEdgeColor):
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateVisibilityStatus):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::panScroll):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::updateMarqueeStyle):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::updateControls):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::localCaretRect):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::adjustRectsForAspectRatio):
+        * rendering/RenderSlider.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::outerBorderBottom):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::itemIsSeparator):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::supportsHover):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::supportsFocusRing):
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGCharacterLayoutInfo::addStackContent):
+        * rendering/SVGCharacterLayoutInfo.h:
+        * rendering/TextControlInnerElements.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::computeHorizontalPositionsForLine):
+
 2009-07-07  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

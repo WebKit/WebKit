@@ -416,22 +416,22 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
 
     int yDelta = currentMousePosition.y() - panStartMousePosition.y();
 
-   // If the point is too far from the center we limit the speed
+    // If the point is too far from the center we limit the speed
     yDelta = max(min(yDelta, maxSpeed), -maxSpeed);
     
-    if(abs(yDelta) < iconRadius) // at the center we let the space for the icon
+    if (abs(yDelta) < iconRadius) // at the center we let the space for the icon
         return;
 
     if (yDelta > 0)
         //offsetY = view()->viewHeight();
         absOffset.move(0, listHeight());
-   else if (yDelta < 0)
-       yDelta--;
+    else if (yDelta < 0)
+        yDelta--;
 
     // Let's attenuate the speed
     yDelta /= speedReducer;
 
-    IntPoint scrollPoint(0,0);
+    IntPoint scrollPoint(0, 0);
     scrollPoint.setY(absOffset.y() + yDelta);
     int newOffset = scrollToward(scrollPoint);
     if (newOffset < 0) 
