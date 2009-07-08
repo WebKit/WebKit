@@ -31,7 +31,7 @@
 #if PLATFORM(CG)
 #include "PixelDumpSupportCG.h"
 #elif PLATFORM(CAIRO)
-#include "PixelDumpSupportCG.h"
+#include "PixelDumpSupportCairo.h"
 #endif
 
 #include "DumpRenderTree.h"
