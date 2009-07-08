@@ -18,6 +18,15 @@
         * DumpRenderTree/win/DumpRenderTree.cpp:
         (dumpHistoryItem):
 
+2009-07-07  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Correct git url of the Qt test-fonts.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
 2009-07-07  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.
