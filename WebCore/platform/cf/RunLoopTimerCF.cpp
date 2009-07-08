@@ -29,7 +29,7 @@
 #include "config.h"
 #include "RunLoopTimer.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && HAVE(RUNLOOP_TIMER)
 
 namespace WebCore {
 
@@ -81,4 +81,4 @@ bool RunLoopTimerBase::isActive() const
 
 } // namespace WebCore
 
-#endif
+#endif // PLATFORM(MAC) && HAVE(RUNLOOP_TIMER)
