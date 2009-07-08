@@ -20,28 +20,47 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#include "config.h"
-#include "StorageArea.h"
 
-#if PLATFORM(CHROMIUM)
-#error "Chromium should not compile this file and instead define its own version of these factories that navigate the multi-process boundry."
-#endif
+#ifndef StorageNamespaceImpl_h
+#define StorageNamespaceImpl_h
 
 #if ENABLE(DOM_STORAGE)
 
-#include "StorageAreaImpl.h"
+#include "StorageNamespace.h"
 
 namespace WebCore {
 
-PassRefPtr<StorageArea> StorageArea::create(StorageType storageType, SecurityOrigin* origin, PassRefPtr<StorageSyncManager> syncManager)
-{
-    return StorageAreaImpl::create(storageType, origin, syncManager);
-}
+    class StorageNamespaceImpl : public StorageNamespace {
+    public:
+        static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path);
+        static PassRefPtr<StorageNamespace> sessionStorageNamespace();
 
-}
+        virtual ~StorageNamespaceImpl();
+        virtual PassRefPtr<StorageArea> storageArea(SecurityOrigin*);
+        virtual PassRefPtr<StorageNamespace> copy();
+        virtual void close();
+
+    private:
+        StorageNamespaceImpl(StorageType, const String& path);
+
+        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> StorageAreaMap;
+        StorageAreaMap m_storageAreaMap;
+
+        StorageType m_storageType;
+
+        // Only used if m_storageType == LocalStorage and the path was not "" in our constructor.
+        String m_path;
+        RefPtr<StorageSyncManager> m_syncManager;
+
+#ifndef NDEBUG
+        bool m_isShutdown;
+#endif
+    };
+
+} // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)
 
+#endif // StorageNamespaceImpl_h

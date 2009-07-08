@@ -37,7 +37,7 @@
 namespace WebCore {
 
     class Frame;
-    class StorageArea;    
+    class StorageArea;
     class StorageSyncManager;
     
     class StorageAreaSync : public RefCounted<StorageAreaSync> {
@@ -57,7 +57,6 @@ namespace WebCore {
     private:
         StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageArea> storageArea);
 
-        
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
         Timer<StorageAreaSync> m_syncTimer;        

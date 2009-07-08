@@ -23,58 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StorageArea_h
-#define StorageArea_h
+#ifndef StorageAreaImpl_h
+#define StorageAreaImpl_h
 
 #if ENABLE(DOM_STORAGE)
 
-#include "PlatformString.h"
-#include "SecurityOrigin.h"
-#include "StorageAreaSync.h"
-#include "StorageMap.h"
-#include "StorageSyncManager.h"
-
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "StorageArea.h"
 
 namespace WebCore {
 
-    class Frame;
-    class Page;
-    class SecurityOrigin;
-    class StorageAreaSync;
-    class StorageMap;
-    class StorageSyncManager;
-    typedef int ExceptionCode;
-    enum StorageType { LocalStorage, SessionStorage };
-
-    // This interface is required for Chromium since these actions need to be proxied between processes.
-    class StorageArea : public ThreadSafeShared<StorageArea> {
+    class StorageAreaImpl : public StorageArea {
     public:
         static PassRefPtr<StorageArea> create(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
-        virtual ~StorageArea() { }
-        virtual PassRefPtr<StorageArea> copy(SecurityOrigin*) = 0;
+        virtual ~StorageAreaImpl();
+        virtual PassRefPtr<StorageArea> copy(SecurityOrigin*);
 
         // The HTML5 DOM Storage API
-        virtual unsigned length() const = 0;
-        virtual String key(unsigned index, ExceptionCode& ec) const = 0;
-        virtual String getItem(const String& key) const = 0;
-        virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame) = 0;
-        virtual void removeItem(const String& key, Frame* sourceFrame) = 0;
-        virtual void clear(Frame* sourceFrame) = 0;
+        virtual unsigned length() const;
+        virtual String key(unsigned index, ExceptionCode& ec) const;
+        virtual String getItem(const String& key) const;
+        virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame);
+        virtual void removeItem(const String& key, Frame* sourceFrame);
+        virtual void clear(Frame* sourceFrame);
 
-        virtual bool contains(const String& key) const = 0;
-        virtual void close() = 0;
+        virtual bool contains(const String& key) const;
+        virtual void close();
 
         // Could be called from a background thread.
-        virtual void importItem(const String& key, const String& value) = 0;
-        virtual SecurityOrigin* securityOrigin() = 0;
+        void importItem(const String& key, const String& value);
+        SecurityOrigin* securityOrigin();
+
+    private:
+        StorageAreaImpl(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
+        StorageAreaImpl(SecurityOrigin*, StorageAreaImpl*);
+
+        void blockUntilImportComplete() const;
+
+        void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
+
+        StorageType m_storageType;
+        RefPtr<SecurityOrigin> m_securityOrigin;
+        RefPtr<StorageMap> m_storageMap;
+
+        RefPtr<StorageAreaSync> m_storageAreaSync;
+        RefPtr<StorageSyncManager> m_storageSyncManager;
+
+#ifndef NDEBUG
+        bool m_isShutdown;
+#endif
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(DOM_STORAGE)
 
-#endif // StorageArea_h
+#endif // StorageAreaImpl_h
