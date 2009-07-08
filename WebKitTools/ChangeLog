@@ -1,5 +1,12 @@
 2009-07-07  Brady Eidson  <beidson@apple.com>
 
+        Tiger build fix, work around missing NSString API.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpHistoryItem):
+
+2009-07-07  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Mark Rowe.
 
         https://bugs.webkit.org/show_bug.cgi?id=27049 - In dumpBackForwardList() mode, DRT should normalize file urls.

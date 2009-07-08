@@ -619,11 +619,7 @@ static void dumpHistoryItem(WebHistoryItem *item, int indent, BOOL current)
     NSString *urlString = [item URLString];
     if ([[NSURL URLWithString:urlString] isFileURL]) {
         NSRange range = [urlString rangeOfString:@"/LayoutTests/"];
-
-        range.length = range.length + range.location;
-        range.location = 0;
-        
-        urlString = [urlString stringByReplacingCharactersInRange:range withString:@"(file test):"];
+        urlString = [@"(file test):" stringByAppendingString:[urlString substringFromIndex:(range.length + range.location)]];
     }
     
     printf("%s", [urlString UTF8String]);
