@@ -1,3 +1,13 @@
+2009-07-07  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Missed a call to FocusController::setFocused(true) when handling WM_SETFOCUS in WebView.
+        https://bugs.webkit.org/show_bug.cgi?id=27057
+
+        * WebView.cpp:
+        (WebViewWndProc):
+
 2009-07-02  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Adam Roben.
