@@ -59,8 +59,6 @@ namespace WebCore {
 
         friend class ::QWebFrame;
         void callPolicyFunction(FramePolicyFunction function, PolicyAction action);
-    private slots:
-        void slotCallPolicyFunction(int);
     signals:
         void loadStarted();
         void loadProgress(int d);

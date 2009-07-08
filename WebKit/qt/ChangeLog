@@ -1,3 +1,11 @@
+2009-07-08  Pradeepto Bhattacharya  <pradeepto@kde.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Build fix.
+
+        * WebCoreSupport/FrameLoaderClientQt.h: Removed the slot slotCallPolicyFunction().
+
 2009-07-08  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
