@@ -334,21 +334,19 @@ foreach my $prefix (sort keys %files) {
     print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
     print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
-    $bugDescription = "SHORT DESCRIPTION/BUG TITLE GOES HERE (OOPS!)" unless $bugDescription;
-    print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl);
-
-    $bugURL = "BUG URL GOES HERE (pass --bug= to autofill)" unless $bugURL;
-    print CHANGE_LOG normalizeLineEndings("        $bugURL\n\n", $endl);
+    $bugDescription = "Need a short description and bug URL (OOPS!)" unless $bugDescription;
+    print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
+    print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
+    print CHANGE_LOG "\n";
 
     # We could pre-populate this with the git commit log or with the bug description.
-    print CHANGE_LOG normalizeLineEndings("        DETAILED DESCRIPTION OF THE CHANGES GOES HERE. (OOPS!) SEE:\n", $endl);
-    print CHANGE_LOG normalizeLineEndings("        http://webkit.org/coding/contributing.html FOR MORE INFORMATION\n\n", $endl);
+    print ("-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n");
 
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         if ($didChangeRegressionTests) {
             print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @addedRegressionTests), $endl);
         } else {
-            print CHANGE_LOG normalizeLineEndings("        LIST OF TESTS, OR EXPLANATION WHY TESTING IS IMPOSSIBLE GOES HERE (OOPS!)\n\n", $endl);
+            print CHANGE_LOG normalizeLineEndings("        No new tests. (OOPS!)\n\n", $endl);
         }
     }
 
