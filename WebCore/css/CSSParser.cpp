@@ -1317,7 +1317,8 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueNone)
             valid_primitive = true;
         else {
-            if (validUnit(value, FNumber|FNonNeg, m_strict)) {
+            // Accepting valueless numbers is a quirk of the -webkit prefixed version of the property.
+            if (validUnit(value, FNumber|FLength|FNonNeg, m_strict)) {
                 RefPtr<CSSValue> val = CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
                 if (val) {
                     addProperty(propId, val.release(), important);

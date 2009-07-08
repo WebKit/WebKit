@@ -1,3 +1,20 @@
+2009-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        -webkit-perspective should be a Length
+        https://bugs.webkit.org/show_bug.cgi?id=27066
+
+        * platform/mac/transforms/3d/general/perspective-non-layer-expected.checksum: Added.
+        * platform/mac/transforms/3d/general/perspective-non-layer-expected.png: Added.
+        * platform/mac/transforms/3d/general/perspective-non-layer-expected.txt: Added.
+        Add missing results for existing test.
+        
+        * platform/mac/transforms/3d/general/perspective-units-expected.checksum: Added.
+        * platform/mac/transforms/3d/general/perspective-units-expected.png: Added.
+        * platform/mac/transforms/3d/general/perspective-units-expected.txt: Added.
+        * transforms/3d/general/perspective-units.html: Added.
+
 2009-07-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mark Rowe.
