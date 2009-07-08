@@ -62,7 +62,6 @@ namespace WebCore {
     private slots:
         void slotCallPolicyFunction(int);
     signals:
-        void sigCallPolicyFunction(int);
         void loadStarted();
         void loadProgress(int d);
         void loadFinished(bool);
@@ -209,7 +208,6 @@ namespace WebCore {
         QWebFrame *m_webFrame;
         ResourceResponse m_response;
         bool m_firstData;
-        FramePolicyFunction m_policyFunction;
 
         // Plugin view to redirect data to
         WebCore::PluginView* m_pluginView;
