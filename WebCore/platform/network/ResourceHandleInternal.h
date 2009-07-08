@@ -35,7 +35,7 @@
 #include <CFNetwork/CFURLConnectionPriv.h>
 #endif
 
-#if USE(WININET)
+#if USE(WININET) || (USE(CURL) && PLATFORM(WIN))
 #include <winsock2.h>
 #include <windows.h>
 #endif
