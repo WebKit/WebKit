@@ -1055,6 +1055,13 @@ static bool fastDocumentTeardownEnabled()
 #endif
 }
 
+// Indicates if the WebView is in the midst of a user gesture.
+- (BOOL)_isProcessingUserGesture
+{
+    WebFrame *frame = [self mainFrame];
+    return core(frame)->loader()->isProcessingUserGesture();
+}
+
 + (NSString *)_MIMETypeForFile:(NSString *)path
 {
     NSString *extension = [path pathExtension];

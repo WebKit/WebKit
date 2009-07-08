@@ -316,7 +316,7 @@ namespace WebCore {
         bool openedByDOM() const;
         void setOpenedByDOM();
 
-        bool userGestureHint();
+        bool isProcessingUserGesture();
 
         void resetMultipleFormSubmissionProtection();
 
