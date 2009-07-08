@@ -1,3 +1,23 @@
+2009-07-08  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstream V8 npruntime bindings.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27094
+
+        * bindings/v8/npruntime.cpp: Upstreamed from src.chromium.org.
+        (StringKey::operator==):
+        (StringKey::StringKeyHash::hash):
+        (StringKey::StringKeyHash::equal):
+        (StringKeyHashTraits::constructDeletedValue):
+        (StringKeyHashTraits::isDeletedValue):
+        (getStringIdentifierMap):
+        (getIntIdentifierMap):
+        * bindings/v8/npruntime_impl.h: Upstreamed from src.chromium.org.
+        * bindings/v8/npruntime_internal.h: Upstreamed from src.chromium.org.
+        * bindings/v8/npruntime_priv.h: Upstreamed from src.chromium.org.
+
 2009-07-08  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher.
