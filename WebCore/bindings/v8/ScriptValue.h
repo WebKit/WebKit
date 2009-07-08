@@ -53,7 +53,7 @@ public:
 
         m_value = v8::Persistent<v8::Value>::New(value);
 #ifndef NDEBUG
-        V8Proxy::registerGlobalHandle(SCRIPTVALUE, this, m_value);
+        V8GCController::registerGlobalHandle(SCRIPTVALUE, this, m_value);
 #endif
     }
 
@@ -64,7 +64,7 @@ public:
 
         m_value = v8::Persistent<v8::Value>::New(value.m_value);
 #ifndef NDEBUG
-        V8Proxy::registerGlobalHandle(SCRIPTVALUE, this, m_value);
+        V8GCController::registerGlobalHandle(SCRIPTVALUE, this, m_value);
 #endif
     }
 
@@ -80,7 +80,7 @@ public:
 
         m_value = v8::Persistent<v8::Value>::New(value.m_value);
 #ifndef NDEBUG
-        V8Proxy::registerGlobalHandle(SCRIPTVALUE, this, m_value);
+        V8GCController::registerGlobalHandle(SCRIPTVALUE, this, m_value);
 #endif
 
         return *this;
@@ -122,7 +122,7 @@ public:
             return;
 
 #ifndef NDEBUG
-        V8Proxy::unregisterGlobalHandle(this, m_value);
+        V8GCController::unregisterGlobalHandle(this, m_value);
 #endif
         m_value.Dispose();
         m_value.Clear();

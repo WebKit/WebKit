@@ -50,7 +50,7 @@ ScheduledAction::ScheduledAction(v8::Handle<v8::Function> func, int argc, v8::Ha
     m_function = v8::Persistent<v8::Function>::New(func);
 
 #ifndef NDEBUG
-    V8Proxy::registerGlobalHandle(SCHEDULED_ACTION, this, m_function);
+    V8GCController::registerGlobalHandle(SCHEDULED_ACTION, this, m_function);
 #endif
 
     m_argc = argc;
@@ -60,7 +60,7 @@ ScheduledAction::ScheduledAction(v8::Handle<v8::Function> func, int argc, v8::Ha
             m_argv[i] = v8::Persistent<v8::Value>::New(argv[i]);
 
 #ifndef NDEBUG
-    V8Proxy::registerGlobalHandle(SCHEDULED_ACTION, this, m_argv[i]);
+    V8GCController::registerGlobalHandle(SCHEDULED_ACTION, this, m_argv[i]);
 #endif
         }
     } else
@@ -73,13 +73,13 @@ ScheduledAction::~ScheduledAction()
         return;
 
 #ifndef NDEBUG
-    V8Proxy::unregisterGlobalHandle(this, m_function);
+    V8GCController::unregisterGlobalHandle(this, m_function);
 #endif
     m_function.Dispose();
 
     for (int i = 0; i < m_argc; i++) {
 #ifndef NDEBUG
-        V8Proxy::unregisterGlobalHandle(this, m_argv[i]);
+        V8GCController::unregisterGlobalHandle(this, m_argv[i]);
 #endif
         m_argv[i].Dispose();
     }

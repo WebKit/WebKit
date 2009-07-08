@@ -65,6 +65,8 @@ V8ExtensionList V8Proxy::m_extensions;
 const char* V8Proxy::kContextDebugDataType = "type";
 const char* V8Proxy::kContextDebugDataValue = "value";
 
+// Begin V8GCController.cpp
+
 #ifndef NDEBUG
 // Keeps track of global handles created (not JS wrappers
 // of DOM objects). Often these global handles are source
@@ -77,13 +79,13 @@ const char* V8Proxy::kContextDebugDataValue = "value";
 // When creating a persistent handle, call:
 //
 // #ifndef NDEBUG
-//    V8Proxy::registerGlobalHandle(type, host, handle);
+//    V8GCController::registerGlobalHandle(type, host, handle);
 // #endif
 //
 // When releasing the handle, call:
 //
 // #ifndef NDEBUG
-//    V8Proxy::unregisterGlobalHandle(type, host, handle);
+//    V8GCController::unregisterGlobalHandle(type, host, handle);
 // #endif
 //
 typedef HashMap<v8::Value*, GlobalHandleInfo*> GlobalHandleMap;
@@ -106,13 +108,13 @@ static void enumerateGlobalHandles()
     }
 }
 
-void V8Proxy::registerGlobalHandle(GlobalHandleType type, void* host, v8::Persistent<v8::Value> handle)
+void V8GCController::registerGlobalHandle(GlobalHandleType type, void* host, v8::Persistent<v8::Value> handle)
 {
     ASSERT(!globalHandleMap().contains(*handle));
     globalHandleMap().set(*handle, new GlobalHandleInfo(host, type));
 }
 
-void V8Proxy::unregisterGlobalHandle(void* host, v8::Persistent<v8::Value> handle)
+void V8GCController::unregisterGlobalHandle(void* host, v8::Persistent<v8::Value> handle)
 {
     ASSERT(globalHandleMap().contains(*handle));
     GlobalHandleInfo* info = globalHandleMap().take(*handle);
@@ -120,6 +122,8 @@ void V8Proxy::unregisterGlobalHandle(void* host, v8::Persistent<v8::Value> handl
     delete info;
 }
 #endif // ifndef NDEBUG
+
+// End V8GCController.cpp
 
 void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, v8::Handle<v8::ObjectTemplate> proto, const BatchedAttribute* attributes, size_t attributeCount)
 {
@@ -279,6 +283,8 @@ SVGElement* V8Proxy::svgContext(void* object)
 
 #endif
 
+// Begin V8GCController.cpp
+
 // A map from a DOM node to its JS wrapper, the wrapper
 // is kept as a strong reference to survive GCs.
 static DOMObjectMap& gcProtectedMap()
@@ -287,7 +293,7 @@ static DOMObjectMap& gcProtectedMap()
     return staticGcProtectedMap;
 }
 
-void V8Proxy::gcProtect(void* domObject)
+void V8GCController::gcProtect(void* domObject)
 {
     if (!domObject)
         return;
@@ -304,7 +310,7 @@ void V8Proxy::gcProtect(void* domObject)
     gcProtectedMap().set(domObject, *v8::Persistent<v8::Object>::New(wrapper));
 }
 
-void V8Proxy::gcUnprotect(void* domObject)
+void V8GCController::gcUnprotect(void* domObject)
 {
     if (!domObject)
         return;
@@ -567,6 +573,8 @@ static void gcEpilogue()
 #endif
 }
 
+// End V8GCController.cpp
+
 typedef HashMap<int, v8::FunctionTemplate*> FunctionTemplateMap;
 
 bool AllowAllocation::m_current = false;
@@ -795,7 +803,7 @@ void V8Proxy::destroyGlobal()
 {
     if (!m_global.IsEmpty()) {
 #ifndef NDEBUG
-        unregisterGlobalHandle(this, m_global);
+        V8GCController::unregisterGlobalHandle(this, m_global);
 #endif
         m_global.Dispose();
         m_global.Clear();
@@ -1663,7 +1671,7 @@ void V8Proxy::updateDocumentWrapper(v8::Handle<v8::Value> wrapper)
     ASSERT(m_document.IsEmpty());
     m_document = v8::Persistent<v8::Value>::New(wrapper);
 #ifndef NDEBUG
-    registerGlobalHandle(PROXY, this, m_document);
+    V8GCController::registerGlobalHandle(PROXY, this, m_document);
 #endif
 }
 
@@ -1671,7 +1679,7 @@ void V8Proxy::clearDocumentWrapper()
 {
     if (!m_document.IsEmpty()) {
 #ifndef NDEBUG
-        unregisterGlobalHandle(this, m_document);
+        V8GCController::unregisterGlobalHandle(this, m_document);
 #endif
         m_document.Dispose();
         m_document.Clear();
@@ -1722,7 +1730,7 @@ void V8Proxy::disposeContextHandles()
 
     if (!m_wrapperBoilerplates.IsEmpty()) {
 #ifndef NDEBUG
-        unregisterGlobalHandle(this, m_wrapperBoilerplates);
+        V8GCController::unregisterGlobalHandle(this, m_wrapperBoilerplates);
 #endif
         m_wrapperBoilerplates.Dispose();
         m_wrapperBoilerplates.Clear();
@@ -1730,7 +1738,7 @@ void V8Proxy::disposeContextHandles()
 
     if (!m_objectPrototype.IsEmpty()) {
 #ifndef NDEBUG
-        unregisterGlobalHandle(this, m_objectPrototype);
+        V8GCController::unregisterGlobalHandle(this, m_objectPrototype);
 #endif
         m_objectPrototype.Dispose();
         m_objectPrototype.Clear();
@@ -2029,8 +2037,8 @@ void V8Proxy::initContextIfNeeded()
         v8::V8::IgnoreOutOfMemoryException();
         v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
 
-        v8::V8::SetGlobalGCPrologueCallback(&gcPrologue);
-        v8::V8::SetGlobalGCEpilogueCallback(&gcEpilogue);
+        v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
+        v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
 
         v8::V8::AddMessageListener(handleConsoleMessage);
 
@@ -2056,7 +2064,7 @@ void V8Proxy::initContextIfNeeded()
             return;
         }
 #ifndef NDEBUG
-        registerGlobalHandle(PROXY, this, m_global);
+        V8GCController::registerGlobalHandle(PROXY, this, m_global);
 #endif
     }
 
@@ -2079,8 +2087,8 @@ void V8Proxy::initContextIfNeeded()
         return;
     }
 #ifndef NDEBUG
-    registerGlobalHandle(PROXY, this, m_objectPrototype);
-    registerGlobalHandle(PROXY, this, m_wrapperBoilerplates);
+    V8GCController::registerGlobalHandle(PROXY, this, m_objectPrototype);
+    V8GCController::registerGlobalHandle(PROXY, this, m_wrapperBoilerplates);
 #endif
 
     if (!installDOMWindow(v8Context, m_frame->domWindow()))

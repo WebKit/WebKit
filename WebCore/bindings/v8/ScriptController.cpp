@@ -77,12 +77,12 @@ bool ScriptController::isSafeScript(Frame* target)
 
 void ScriptController::gcProtectJSWrapper(void* domObject)
 {
-    V8Proxy::gcProtect(domObject);
+    V8GCController::gcProtect(domObject);
 }
 
 void ScriptController::gcUnprotectJSWrapper(void* domObject)
 {
-    V8Proxy::gcUnprotect(domObject);
+    V8GCController::gcUnprotect(domObject);
 }
 
 ScriptController::ScriptController(Frame* frame)

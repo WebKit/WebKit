@@ -60,7 +60,7 @@ static void freeV8NPObject(NPObject* npObject)
 {
     V8NPObject* v8NpObject = reinterpret_cast<V8NPObject*>(npObject);
 #ifndef NDEBUG
-    V8Proxy::UnregisterGlobalHandle(v8NpObject, v8NpObject->v8Object);
+    V8GCController::UnregisterGlobalHandle(v8NpObject, v8NpObject->v8Object);
 #endif
     v8NpObject->v8Object.Dispose();
     free(v8NpObject);

@@ -54,7 +54,7 @@ V8LazyEventListener::~V8LazyEventListener()
     // Dispose wrapped function
     if (!m_wrappedFunction.IsEmpty()) {
 #ifndef NDEBUG
-        V8Proxy::unregisterGlobalHandle(this, m_wrappedFunction);
+        V8GCController::unregisterGlobalHandle(this, m_wrappedFunction);
 #endif
         m_wrappedFunction.Dispose();
         m_wrappedFunction.Clear();
@@ -114,7 +114,7 @@ v8::Local<v8::Function> V8LazyEventListener::getListenerFunction()
 
                 m_listener = v8::Persistent<v8::Function>::New(listenerFunction);
 #ifndef NDEBUG
-                V8Proxy::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
+                V8GCController::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
 #endif
             }
         }
@@ -218,7 +218,7 @@ v8::Local<v8::Function> V8LazyEventListener::getWrappedListenerFunction()
                 }
 
 #ifndef NDEBUG
-                V8Proxy::registerGlobalHandle(EVENT_LISTENER, this, m_wrappedFunction);
+                V8GCController::registerGlobalHandle(EVENT_LISTENER, this, m_wrappedFunction);
 #endif
                 m_wrappedFunction->SetName(v8::String::New(fromWebCoreString(m_functionName), m_functionName.length()));
             }

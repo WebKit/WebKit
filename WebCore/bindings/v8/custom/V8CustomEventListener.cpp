@@ -40,7 +40,7 @@ V8EventListener::V8EventListener(Frame* frame, v8::Local<v8::Object> listener, b
 {
     m_listener = v8::Persistent<v8::Object>::New(listener);
 #ifndef NDEBUG
-    V8Proxy::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
+    V8GCController::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
 #endif
 }
 

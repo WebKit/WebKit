@@ -1,3 +1,53 @@
+2009-07-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [V8] Move garbage collector related functions from V8Proxy to V8GCController
+        https://bugs.webkit.org/show_bug.cgi?id=26967
+
+        This patch just moves the functions around in V8Proxy.  We'll actually
+        move them to a separate file in another patch.
+
+        * bindings/v8/NPV8Object.cpp:
+        (freeV8NPObject):
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::~ScheduledAction):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::gcProtectJSWrapper):
+        (WebCore::ScriptController::gcUnprotectJSWrapper):
+        * bindings/v8/ScriptInstance.cpp:
+        (WebCore::V8ScriptInstance::clear):
+        (WebCore::V8ScriptInstance::set):
+        * bindings/v8/ScriptValue.h:
+        (WebCore::ScriptValue::ScriptValue):
+        (WebCore::ScriptValue::operator=):
+        (WebCore::ScriptValue::clear):
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::disposeListenerObject):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::~V8LazyEventListener):
+        (WebCore::V8LazyEventListener::getListenerFunction):
+        (WebCore::V8LazyEventListener::getWrappedListenerFunction):
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        (WebCore::V8NodeFilterCondition::V8NodeFilterCondition):
+        (WebCore::V8NodeFilterCondition::~V8NodeFilterCondition):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8GCController::registerGlobalHandle):
+        (WebCore::V8GCController::unregisterGlobalHandle):
+        (WebCore::V8GCController::gcProtect):
+        (WebCore::V8GCController::gcUnprotect):
+        (WebCore::V8Proxy::destroyGlobal):
+        (WebCore::V8Proxy::updateDocumentWrapper):
+        (WebCore::V8Proxy::clearDocumentWrapper):
+        (WebCore::V8Proxy::disposeContextHandles):
+        (WebCore::V8Proxy::initContextIfNeeded):
+        * bindings/v8/V8Proxy.h:
+        (WebCore::):
+        (WebCore::GlobalHandleInfo::GlobalHandleInfo):
+        * bindings/v8/custom/V8CustomEventListener.cpp:
+        (WebCore::V8EventListener::V8EventListener):
+
 2009-07-08  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

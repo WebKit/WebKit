@@ -44,14 +44,14 @@ V8NodeFilterCondition::V8NodeFilterCondition(v8::Handle<v8::Value> filter)
     : m_filter(v8::Persistent<v8::Value>::New(filter))
 {
 #ifndef NDEBUG
-    V8Proxy::registerGlobalHandle(NODE_FILTER, this, m_filter);
+    V8GCController::registerGlobalHandle(NODE_FILTER, this, m_filter);
 #endif
 }
 
 V8NodeFilterCondition::~V8NodeFilterCondition()
 {
 #ifndef NDEBUG
-    V8Proxy::unregisterGlobalHandle(this, m_filter);
+    V8GCController::unregisterGlobalHandle(this, m_filter);
 #endif
     m_filter.Dispose();
     m_filter.Clear();
