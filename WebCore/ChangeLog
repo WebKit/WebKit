@@ -1,3 +1,37 @@
+2009-07-08  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=27071
+        
+        Resolves issue when HTTP parameters contain null- and  non-null-control- characters.
+
+        Tests: http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char.html
+               http/tests/security/xssAuditor/embed-tag-control-char.html
+               http/tests/security/xssAuditor/embed-tag-null-char.html
+               http/tests/security/xssAuditor/embed-tag.html
+               http/tests/security/xssAuditor/link-onclick-control-char.html
+               http/tests/security/xssAuditor/link-onclick-null-char.html
+               http/tests/security/xssAuditor/object-embed-tag-control-char.html
+               http/tests/security/xssAuditor/object-embed-tag-null-char.html
+               http/tests/security/xssAuditor/object-embed-tag.html
+               http/tests/security/xssAuditor/object-tag.html
+               http/tests/security/xssAuditor/script-tag-post-control-char.html
+               http/tests/security/xssAuditor/script-tag-post-null-char.html
+               http/tests/security/xssAuditor/script-tag-with-source-control-char.html
+               http/tests/security/xssAuditor/script-tag-with-source-null-char.html
+
+        * page/XSSAuditor.cpp:
+        (WebCore::isNonNullControlCharacter): Called by XSSAuditor::decodeURL.
+        (WebCore::XSSAuditor::canEvaluate):
+        (WebCore::XSSAuditor::canCreateInlineEventListener):
+        (WebCore::XSSAuditor::canLoadObject):
+        (WebCore::XSSAuditor::decodeURL): Added parameters matchNullCharacters,
+        and matchNonNullControlCharacters.
+        (WebCore::XSSAuditor::findInRequest): Added parameters matchNullCharacters,
+        and matchNonNullControlCharacters.
+        * page/XSSAuditor.h:
+
 2009-07-08  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Dimitri Glazkov.

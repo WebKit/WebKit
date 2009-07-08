@@ -89,11 +89,12 @@ namespace WebCore {
         bool canLoadObject(const String& url) const;
 
     private:
-        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool allowNullCharacters = false);
+        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool allowNullCharacters = false,
+                                bool allowNonNullControlCharacters = true);
 
-        bool findInRequest(const String&) const;
+        bool findInRequest(const String&, bool matchNullCharacters = true, bool matchNonNullControlCharacters = true) const;
 
-        bool findInRequest(Frame*, const String&) const;
+        bool findInRequest(Frame*, const String&, bool matchNullCharacters = true, bool matchNonNullControlCharacters = true) const;
 
         // The frame to audit.
         Frame* m_frame;

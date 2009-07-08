@@ -1,3 +1,42 @@
+2009-07-08  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27071
+
+        Tests that HTTP parameters that contain null- and non-null-control characters are 
+        properly handled by XSSAuditor.
+        
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location-inline-event-null-char.html: Added.
+        * http/tests/security/xssAuditor/embed-tag-control-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/embed-tag-control-char.html: Added.
+        * http/tests/security/xssAuditor/embed-tag-expected.txt: Added.
+        * http/tests/security/xssAuditor/embed-tag-null-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/embed-tag-null-char.html: Added.
+        * http/tests/security/xssAuditor/embed-tag.html: Added.
+        * http/tests/security/xssAuditor/link-onclick-control-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/link-onclick-control-char.html: Added.
+        * http/tests/security/xssAuditor/link-onclick-null-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/link-onclick-null-char.html: Added.
+        * http/tests/security/xssAuditor/object-embed-tag-control-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/object-embed-tag-control-char.html: Added.
+        * http/tests/security/xssAuditor/object-embed-tag-expected.txt: Added.
+        * http/tests/security/xssAuditor/object-embed-tag-null-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/object-embed-tag-null-char.html: Added.
+        * http/tests/security/xssAuditor/object-embed-tag.html: Added.
+        * http/tests/security/xssAuditor/object-tag-expected.txt: Added.
+        * http/tests/security/xssAuditor/object-tag.html: Added.
+        * http/tests/security/xssAuditor/resources/execGetURL.swf: Added.
+        * http/tests/security/xssAuditor/script-tag-post-control-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-post-control-char.html: Added.
+        * http/tests/security/xssAuditor/script-tag-post-null-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-post-null-char.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-control-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-control-char.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-null-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-null-char.html: Added.
+
 2009-07-08  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.
