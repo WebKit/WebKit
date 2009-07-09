@@ -1,3 +1,59 @@
+2009-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Improve the appearance of text in compositing layers when -[CALayer geometryFlipped]
+        is not available.
+        <rdar://problem/6120614>
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsOrientation):
+        (WebCore::GraphicsLayer::contentsOrientation):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        Add a m_contentsOrientation member and getter/setter to control whether
+        the contents of this layer have a transform applied to them before display.
+
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        New method to return the default contents orientation.
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::flipTransform):
+        Convenience method to return a transform with a Y flip.
+
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::setSize):
+        After the size changes we have to update the contentsTransform.
+
+        (WebCore::GraphicsLayerCA::setGeometryOrientation):
+        (WebCore::GraphicsLayerCA::geometryOrientation):
+        If -setGeometryFlipped: is not available, use a children transform.
+        
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        Tiled layers have issues with flipped contentsTransform, so just use
+        top-down drawing for them. Call updateContentsTransform() to set the
+        new contents transform after swapping layers.
+        
+        (WebCore::GraphicsLayerCA::defaultContentsOrientation):
+        Use bottom-up when -geometryFlipped is not available, otherwise top-down.
+        
+        (WebCore::GraphicsLayerCA::updateContentsTransform):
+        Set the layer contents transform based on contentsOrientation().
+
+        (WebCore::GraphicsLayerCA::setContentsLayer):
+        We have to manually flip contents layers if we're not using -geometryFlipped.
+        
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        Do early return if layerContents is nil. Flip the CTM if the layer has
+        bottom-up coordinates, so that CG sees a CTM with no flip.
+        Do the CGContextRestoreGState() after drawing the debug indicator.
+        
+        (-[WebLayer setNeedsDisplayInRect:]):
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer setNeedsDisplayInRect:]):
+        Need to map the dirty rect through the contentsTransform.
+
 2009-07-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

@@ -74,12 +74,13 @@ using namespace WebCore;
 - (void)setNeedsDisplayInRect:(CGRect)dirtyRect
 {
     if (m_layerOwner && m_layerOwner->client() && m_layerOwner->drawsContent()) {
-        [super setNeedsDisplayInRect:dirtyRect];
+        [super setNeedsDisplayInRect:CGRectApplyAffineTransform(dirtyRect, [self contentsTransform])];
 
 #ifndef NDEBUG
         if (m_layerOwner->showRepaintCounter()) {
             CGRect bounds = [self bounds];
-            [super setNeedsDisplayInRect:CGRectMake(bounds.origin.x, bounds.origin.y, 46, 25)];
+            CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 46, 25);
+            [super setNeedsDisplayInRect:CGRectApplyAffineTransform(indicatorRect, [self contentsTransform])];
         }
 #endif
     }

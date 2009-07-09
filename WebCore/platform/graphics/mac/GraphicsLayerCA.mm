@@ -213,6 +213,15 @@ static NSString* getValueFunctionNameForTransformOperation(TransformOperation::O
 }
 #endif
 
+#if !HAVE_MODERN_QUARTZCORE
+static TransformationMatrix flipTransform()
+{
+    TransformationMatrix flipper;
+    flipper.flipY();
+    return flipper;
+}
+#endif
+
 static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction& timingFunction)
 {
     switch (timingFunction.type()) {
@@ -324,6 +333,10 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_layer.adoptNS([[WebLayer alloc] init]);
     [m_layer.get() setLayerOwner:this];
+
+#if !HAVE_MODERN_QUARTZCORE
+    setContentsOrientation(defaultContentsOrientation());
+#endif
 
 #ifndef NDEBUG
     updateDebugIndicators();
@@ -543,9 +556,8 @@ void GraphicsLayerCA::setSize(const FloatSize& size)
 
     if (m_transformLayer) {
         [m_transformLayer.get() setBounds:rect];
-    
-        // the anchor of the contents layer is always at 0.5, 0.5, so the position
-        // is center-relative
+        // The anchor of the contents layer is always at 0.5, 0.5, so the position
+        // is center-relative.
         [m_layer.get() setPosition:centerPoint];
     }
     
@@ -554,6 +566,7 @@ void GraphicsLayerCA::setSize(const FloatSize& size)
         swapFromOrToTiledLayer(needTiledLayer);
     
     [m_layer.get() setBounds:rect];
+    updateContentsTransform();
 
     // Note that we don't resize m_contentsLayer. It's up the caller to do that.
 
@@ -1163,11 +1176,19 @@ void GraphicsLayerCA::setGeometryOrientation(CompositingCoordinatesOrientation o
 {
     switch (orientation) {
     case CompositingCoordinatesTopDown:
+#if HAVE_MODERN_QUARTZCORE
         [m_layer.get() setGeometryFlipped:NO];
+#else
+        setChildrenTransform(TransformationMatrix());
+#endif
         break;
         
     case CompositingCoordinatesBottomUp:
+#if HAVE_MODERN_QUARTZCORE
         [m_layer.get() setGeometryFlipped:YES];
+#else
+        setChildrenTransform(flipTransform());
+#endif
         break;
     }
 }
@@ -1175,7 +1196,13 @@ void GraphicsLayerCA::setGeometryOrientation(CompositingCoordinatesOrientation o
 GraphicsLayerCA::CompositingCoordinatesOrientation GraphicsLayerCA::geometryOrientation() const
 {
     // CoreAnimation defaults to bottom-up
-    return [m_layer.get() isGeometryFlipped] ? CompositingCoordinatesBottomUp : CompositingCoordinatesTopDown;
+    bool layerFlipped;
+#if HAVE_MODERN_QUARTZCORE
+    layerFlipped = [m_layer.get() isGeometryFlipped];
+#else
+    layerFlipped = childrenTransform().m22() == -1;
+#endif
+    return layerFlipped ? CompositingCoordinatesBottomUp : CompositingCoordinatesTopDown;
 }
 
 void GraphicsLayerCA::setBasicAnimation(AnimatedPropertyID property, TransformOperation::OperationType operationType, short index, void* fromVal, void* toVal, bool isTransition, const Animation* transition, double beginTime)
@@ -1465,6 +1492,15 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool userTiledLayer)
             [tiledLayer setContentsGravity:@"bottomLeft"];
         else
             [tiledLayer setContentsGravity:@"topLeft"];
+
+#if !HAVE_MODERN_QUARTZCORE
+        // Tiled layer has issues with flipped coordinates.
+        setContentsOrientation(CompositingCoordinatesTopDown);
+#endif
+    } else {
+#if !HAVE_MODERN_QUARTZCORE
+        setContentsOrientation(defaultContentsOrientation());
+#endif
     }
     
     [m_layer.get() setLayerOwner:this];
@@ -1483,6 +1519,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool userTiledLayer)
 #ifndef NDEBUG
     [m_layer.get() setZPosition:[oldLayer.get() zPosition]];
 #endif
+    updateContentsTransform();
     
 #ifndef NDEBUG
     String name = String::format("CALayer(%p) GraphicsLayer(%p) ", m_layer.get(), this) + m_name;
@@ -1506,6 +1543,27 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool userTiledLayer)
 #endif
 }
 
+GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const
+{
+#if !HAVE_MODERN_QUARTZCORE
+    // Older QuartzCore does not support -geometryFlipped, so we manually flip the root
+    // layer geometry, and then flip the contents of each layer back so that the CTM for CG
+    // is unflipped, allowing it to do the correct font auto-hinting.
+    return CompositingCoordinatesBottomUp;
+#else
+    return CompositingCoordinatesTopDown;
+#endif
+}
+
+void GraphicsLayerCA::updateContentsTransform()
+{
+    if (contentsOrientation() == CompositingCoordinatesBottomUp) {
+        CGAffineTransform contentsTransform = CGAffineTransformMakeScale(1, -1);
+        contentsTransform = CGAffineTransformTranslate(contentsTransform, 0, -[m_layer.get() bounds].size.height);
+        [m_layer.get() setContentsTransform:contentsTransform];
+    }
+}
+
 void GraphicsLayerCA::setContentsLayer(WebLayer* contentsLayer)
 {
     if (contentsLayer == m_contentsLayer)
@@ -1523,7 +1581,16 @@ void GraphicsLayerCA::setContentsLayer(WebLayer* contentsLayer)
         [contentsLayer setStyle:[NSDictionary dictionaryWithObject:nullActionsDictionary() forKey:@"actions"]];
         m_contentsLayer.adoptNS([contentsLayer retain]);
 
-        [m_contentsLayer.get() setAnchorPoint:CGPointZero];
+        if (defaultContentsOrientation() == CompositingCoordinatesBottomUp) {
+            CATransform3D flipper = {
+                1.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, -1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f};
+            [m_contentsLayer.get() setTransform:flipper];
+            [m_contentsLayer.get() setAnchorPoint:CGPointMake(0.0f, 1.0f)];
+        } else
+            [m_contentsLayer.get() setAnchorPoint:CGPointZero];
 
         // Insert the content layer first. Video elements require this, because they have
         // shadow content that must display in front of the video.
