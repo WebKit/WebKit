@@ -1,3 +1,12 @@
+2009-07-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Steve Falkenburg.
+
+        Roll out r43848. The quirk is no longer necessary.
+
+        * WebView/WebView.mm:
+        (-[WebView WebCore::_userAgentForURL:WebCore::]):
+
 2009-07-09  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

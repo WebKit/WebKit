@@ -5162,11 +5162,7 @@ static WebFrameView *containingFrameView(NSView *view)
 - (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url
 {
     if (_private->useSiteSpecificSpoofing) {
-        if (url.host() == "ads.pointroll.com") {
-            // <rdar://problem/6899044> Can't see Apple ad on nytimes.com unless I spoof the user agent
-            DEFINE_STATIC_LOCAL(const String, uaForAdsPointroll, ("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_7; en-us) AppleWebKit/525.28.3 (KHTML, like Gecko) Version/3.2.3 Safari/525.28.3"));
-            return uaForAdsPointroll;
-        }
+        // No current site-specific spoofs.
     }
 
     if (_private->userAgent.isNull())

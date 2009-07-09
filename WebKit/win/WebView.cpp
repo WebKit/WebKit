@@ -2137,18 +2137,10 @@ exit:
     return versionStr;
 }
 
-const String& WebView::userAgentForKURL(const KURL& url)
+const String& WebView::userAgentForKURL(const KURL&)
 {
     if (m_userAgentOverridden)
         return m_userAgentCustom;
-
-    if (allowSiteSpecificHacks()) {
-        if (url.host() == "ads.pointroll.com") {
-            // <rdar://problem/6899044> Can't see Apple ad on nytimes.com unless I spoof the user agent
-            DEFINE_STATIC_LOCAL(const String, uaForAdsPointroll, ("Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/525.28.3 (KHTML, like Gecko) Version/3.2.3 Safari/525.29"));
-            return uaForAdsPointroll;
-        }
-    }
 
     if (!m_userAgentStandard.length())
         m_userAgentStandard = WebView::standardUserAgentWithApplicationName(m_applicationName);
