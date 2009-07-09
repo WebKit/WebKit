@@ -28,7 +28,6 @@ namespace WebCore {
 
 class Scrollbar;
 
-// FIXME: Why doesn't this class just cache a HitTestResult instead of copying all of HitTestResult's fields over?
 class MouseEventWithHitTestResults {
 public:
     MouseEventWithHitTestResults(const PlatformMouseEvent&, const HitTestResult&);
@@ -46,6 +45,6 @@ private:
     HitTestResult m_hitTestResult;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // MouseEventWithHitTestResults_h
