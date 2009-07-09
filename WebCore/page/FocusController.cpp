@@ -67,16 +67,20 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
     if (m_focusedFrame == frame)
         return;
 
-    if (m_focusedFrame && m_focusedFrame->view()) {
-        m_focusedFrame->selection()->setFocused(false);
-        m_focusedFrame->document()->dispatchWindowEvent(eventNames().blurEvent, false, false);
+    RefPtr<Frame> oldFrame = m_focusedFrame;
+    RefPtr<Frame> newFrame = frame;
+
+    m_focusedFrame = newFrame;
+
+    // Now that the frame is updated, fire events and update the selection focused states of both frames.
+    if (oldFrame && oldFrame->view()) {
+        oldFrame->selection()->setFocused(false);
+        oldFrame->document()->dispatchWindowEvent(eventNames().blurEvent, false, false);
     }
 
-    m_focusedFrame = frame;
-
-    if (m_focusedFrame && m_focusedFrame->view() && isFocused()) {
-        m_focusedFrame->selection()->setFocused(true);
-        m_focusedFrame->document()->dispatchWindowEvent(eventNames().focusEvent, false, false);
+    if (newFrame && newFrame->view() && isFocused()) {
+        newFrame->selection()->setFocused(true);
+        newFrame->document()->dispatchWindowEvent(eventNames().focusEvent, false, false);
     }
 }
 
