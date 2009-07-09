@@ -371,7 +371,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
         webkit_web_policy_decision_use(m_policyDecision);
 }
 
-Widget* FrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+PassRefPtr<Widget> FrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     /* Check if we want to embed a GtkWidget, fallback to plugins later */
     CString urlString = url.string().utf8();
@@ -389,9 +389,9 @@ Widget* FrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInEle
     g_signal_emit_by_name(getViewFromFrame(m_frame), "create-plugin-widget",
                           mimeTypeString.data(), urlString.data(), hash.get(), &gtkWidget);
     if (gtkWidget)
-        return new GtkPluginWidget(gtkWidget);
+        return adoptRef(new GtkPluginWidget(gtkWidget));
 
-    PluginView* pluginView = PluginView::create(core(m_frame), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
+    RefPtr<PluginView> pluginView = PluginView::create(core(m_frame), pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
 
     if (pluginView->status() == PluginStatusLoadedSuccessfully)
         return pluginView;
@@ -433,7 +433,7 @@ void FrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     m_hasSentResponseToPlugin = false;
 }
 
-Widget* FrameLoaderClient::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
+PassRefPtr<Widget> FrameLoaderClient::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
                                                   const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     notImplemented();

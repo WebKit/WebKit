@@ -102,7 +102,7 @@ public:
 
     virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const WebCore::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
                                const WebCore::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
-    virtual WebCore::Widget* createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&, const Vector<WebCore::String>&, const Vector<WebCore::String>&, const WebCore::String&, bool loadManually);
+    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&, const Vector<WebCore::String>&, const Vector<WebCore::String>&, const WebCore::String&, bool loadManually);
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget);
 
     virtual bool shouldUsePluginDocument(const WebCore::String& mimeType) const;

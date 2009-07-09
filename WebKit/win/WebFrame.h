@@ -286,7 +286,7 @@ public:
     virtual void dispatchDidFailLoad(const WebCore::ResourceError&);
     virtual void startDownload(const WebCore::ResourceRequest&);
         
-    virtual WebCore::Widget* createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const Vector<WebCore::String>& paramNames, const Vector<WebCore::String>& paramValues);
+    virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const Vector<WebCore::String>& paramNames, const Vector<WebCore::String>& paramValues);
 
     virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WebCore::String& mimeType);
     virtual WebCore::String overrideMediaType() const;

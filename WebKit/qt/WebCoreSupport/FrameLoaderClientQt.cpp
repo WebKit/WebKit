@@ -1062,7 +1062,7 @@ public:
     }
 };
 
-Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames,
+PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames,
                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
 //     qDebug()<<"------ Creating plugin in FrameLoaderClientQt::createPlugin for "<<url.prettyURL() << mimeType;
@@ -1126,7 +1126,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, HTMLPlugInE
                 QWidget* view = m_webFrame->page()->view();
                 if (view)
                     widget->setParent(view);
-                QtPluginWidget* w = new QtPluginWidget();
+                RefPtr<QtPluginWidget> w = adoptRef(new QtPluginWidget());
                 w->setPlatformWidget(widget);
                 // Make sure it's invisible until properly placed into the layout
                 w->setFrameRect(IntRect(0, 0, 0, 0));
@@ -1135,7 +1135,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, HTMLPlugInE
             // FIXME: make things work for widgetless plugins as well
             delete object;
     } else { // NPAPI Plugins
-        PluginView* pluginView = PluginView::create(m_frame, pluginSize, element, url,
+        RefPtr<PluginView> pluginView = PluginView::create(m_frame, pluginSize, element, url,
             paramNames, paramValues, mimeType, loadManually);
         return pluginView;
     }
@@ -1150,7 +1150,7 @@ void FrameLoaderClientQt::redirectDataToPlugin(Widget* pluginWidget)
     m_hasSentResponseToPlugin = false;
 }
 
-Widget* FrameLoaderClientQt::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
+PassRefPtr<Widget> FrameLoaderClientQt::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL,
                                                     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     notImplemented();

@@ -1,3 +1,23 @@
+2009-07-09  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Make Widget RefCounted to fix:
+
+        <rdar://problem/7038831> REGRESSION (TOT): In Mail, a crash occurs 
+        at WebCore::Widget::afterMouseDown() after clicking To Do's close 
+        box
+        <rdar://problem/6978804> WER #16: Repro Access Violation in 
+        WebCore::PluginView::bindingInstance (1310178023)
+        -and-
+        <rdar://problem/6991251> WER #13: Crash in WebKit!
+        WebCore::PluginView::performRequest+203 (1311461169) 
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        (WebCore::FrameLoaderClientQt::createJavaAppletWidget):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2009-07-08  Pradeepto Bhattacharya  <pradeepto@kde.org>
 
         Reviewed by Ariya Hidayat.

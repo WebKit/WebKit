@@ -1447,11 +1447,13 @@ void FrameView::layoutIfNeededRecursive()
     if (needsLayout())
         layout();
 
-    const HashSet<Widget*>* viewChildren = children();
-    HashSet<Widget*>::const_iterator end = viewChildren->end();
-    for (HashSet<Widget*>::const_iterator current = viewChildren->begin(); current != end; ++current)
-        if ((*current)->isFrameView())
-            static_cast<FrameView*>(*current)->layoutIfNeededRecursive();
+    const HashSet<RefPtr<Widget> >* viewChildren = children();
+    HashSet<RefPtr<Widget> >::const_iterator end = viewChildren->end();
+    for (HashSet<RefPtr<Widget> >::const_iterator current = viewChildren->begin(); current != end; ++current) {
+        Widget* widget = (*current).get();
+        if (widget->isFrameView())
+            static_cast<FrameView*>(widget)->layoutIfNeededRecursive();
+    }
 
     // layoutIfNeededRecursive is called when we need to make sure layout is up-to-date before
     // painting, so we need to flush out any deferred repaints too.

@@ -1771,7 +1771,7 @@ void Frame::createView(const IntSize& viewportSize,
         frameView->setParentVisible(true);
 
     if (ownerRenderer())
-        ownerRenderer()->setWidget(frameView.get());
+        ownerRenderer()->setWidget(frameView);
 
     if (HTMLFrameOwnerElement* owner = ownerElement())
         view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);

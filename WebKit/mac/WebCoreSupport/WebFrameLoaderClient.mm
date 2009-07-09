@@ -1404,7 +1404,7 @@ public:
 #define NETSCAPE_PLUGIN_VIEW WebNetscapePluginView
 #endif
 
-Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElement* element, const KURL& url,
+PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElement* element, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -1433,7 +1433,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElemen
         [arguments release];
 
         if (view)
-            return new PluginWidget(view);
+            return adoptRef(new PluginWidget(view));
     }
 
     NSString *MIMEType;
@@ -1483,7 +1483,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElemen
                 loadManually:loadManually
                 element:element] autorelease];
             
-            return new NetscapePluginWidget(pluginView);
+            return adoptRef(new NetscapePluginWidget(pluginView));
         } 
 #endif
     } else
@@ -1505,7 +1505,7 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElemen
     }
     
     ASSERT(view);
-    return new PluginWidget(view);
+    return adoptRef(new PluginWidget(view));
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -1535,7 +1535,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
     
-Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const KURL& baseURL, 
+PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const KURL& baseURL, 
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
 #if ENABLE(MAC_JAVA_BRIDGE)
@@ -1593,11 +1593,11 @@ Widget* WebFrameLoaderClient::createJavaAppletWidget(const IntSize& size, HTMLAp
     }
 
     ASSERT(view);
-    return new PluginWidget(view);
+    return adoptRef(new PluginWidget(view));
 
     END_BLOCK_OBJC_EXCEPTIONS;
     
-    return new PluginWidget;
+    return adoptRef(new PluginWidget);
 #else
     return 0;
 #endif // ENABLE(MAC_JAVA_BRIDGE)

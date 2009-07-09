@@ -305,7 +305,7 @@ namespace WebCore {
         void handledOnloadEvents();
         String userAgent(const KURL&) const;
 
-        Widget* createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
+        PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const HashMap<String, String>& args);
 
         void dispatchWindowObjectAvailable();
         void dispatchDocumentElementAvailable();

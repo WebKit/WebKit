@@ -41,13 +41,11 @@ RenderPart::~RenderPart()
     clearWidget();
 }
 
-void RenderPart::setWidget(Widget* widget)
+void RenderPart::setWidget(PassRefPtr<Widget> widget)
 {
     if (widget == this->widget())
         return;
 
-    if (widget && widget->isFrameView())
-        static_cast<FrameView*>(widget)->ref();
     RenderWidget::setWidget(widget);
 
     // make sure the scrollbars are set correctly for restore
@@ -57,18 +55,6 @@ void RenderPart::setWidget(Widget* widget)
 
 void RenderPart::viewCleared()
 {
-}
-
-void RenderPart::deleteWidget(Widget* widget)
-{
-    // Since deref ends up calling setWidget back on us, need to make sure
-    // that widget is already 0 so it won't do any work.
-    ASSERT(!this->widget());
-
-    if (widget && widget->isFrameView())
-        static_cast<FrameView*>(widget)->deref();
-    else
-        delete widget;
 }
 
 }

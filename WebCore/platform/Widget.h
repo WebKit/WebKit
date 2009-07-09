@@ -73,6 +73,8 @@ typedef wxWindow* PlatformWidget;
 #include "IntRect.h"
 #include "IntSize.h"
 
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
 class Cursor;
@@ -98,11 +100,11 @@ class WidgetPrivate;
 // Scrollbar - Mac, Gtk
 // Plugin - Mac, Windows (windowed only), Qt (windowed only, widget is an HWND on windows), Gtk (windowed only)
 //
-class Widget {
+class Widget : public RefCounted<Widget> {
 public:
     Widget(PlatformWidget = 0);
     virtual ~Widget();
-    
+
     PlatformWidget platformWidget() const { return m_widget; }
     void setPlatformWidget(PlatformWidget widget)
     { 

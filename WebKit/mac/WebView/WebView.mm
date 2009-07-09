@@ -1693,10 +1693,10 @@ static inline IMP getMethod(id o, SEL s)
 {    
     NSView *documentView = [[kit(frameView->frame()) frameView] documentView];
 
-    const HashSet<Widget*>* children = frameView->children();
-    HashSet<Widget*>::const_iterator end = children->end();
-    for (HashSet<Widget*>::const_iterator it = children->begin(); it != end; ++it) {
-        Widget* widget = *it;
+    const HashSet<RefPtr<Widget> >* children = frameView->children();
+    HashSet<RefPtr<Widget> >::const_iterator end = children->end();
+    for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(); it != end; ++it) {
+        Widget* widget = (*it).get();
         if (widget->isFrameView()) {
             [self _addScrollerDashboardRegionsForFrameView:static_cast<FrameView*>(widget) dashboardRegions:regions];
             continue;

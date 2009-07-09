@@ -26,7 +26,6 @@
 #ifndef Scrollbar_h
 #define Scrollbar_h
 
-#include <wtf/RefCounted.h>
 #include "ScrollTypes.h"
 #include "Timer.h"
 #include "Widget.h"
@@ -45,7 +44,7 @@ class PlatformMouseEvent;
 const int cScrollbarPixelsPerLineStep = 40;
 const int cAmountToKeepWhenPaging = 40;
 
-class Scrollbar : public Widget, public RefCounted<Scrollbar> {
+class Scrollbar : public Widget {
 protected:
     Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
 

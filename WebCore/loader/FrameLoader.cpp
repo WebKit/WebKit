@@ -1689,7 +1689,7 @@ static HTMLPlugInElement* toPlugInElement(Node* node)
 bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String& mimeType, 
     const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
-    Widget* widget = 0;
+    RefPtr<Widget> widget;
 
     if (renderer && !useFallback) {
         HTMLPlugInElement* element = toPlugInElement(renderer->node());
@@ -5069,7 +5069,7 @@ void FrameLoader::dispatchWindowObjectAvailable()
     }
 }
 
-Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const HashMap<String, String>& args)
+PassRefPtr<Widget> FrameLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const HashMap<String, String>& args)
 {
     String baseURLString;
     String codeBaseURLString;
@@ -5097,7 +5097,7 @@ Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletEleme
         baseURLString = m_frame->document()->baseURL().string();
     KURL baseURL = completeURL(baseURLString);
 
-    Widget* widget = m_client->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
+    RefPtr<Widget> widget = m_client->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
     if (!widget)
         return 0;
 

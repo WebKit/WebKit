@@ -1,3 +1,103 @@
+2009-07-09  Beth Dakin and Jon Honeycutt <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Make Widget RefCounted to fix or make fixable:
+
+        <rdar://problem/7038831> REGRESSION (TOT): In Mail, a crash occurs 
+        at WebCore::Widget::afterMouseDown() after clicking To Do's close 
+        box
+        <rdar://problem/6978804> WER #16: Repro Access Violation in 
+        WebCore::PluginView::bindingInstance (1310178023)
+        -and-
+        <rdar://problem/6991251> WER #13: Crash in WebKit!
+        WebCore::PluginView::performRequest+203 (1311461169) 
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::createPlugin):
+        Changed to return PassRefPtr
+        (WebCore::EmptyFrameLoaderClient::createJavaAppletWidget):
+        Ditto.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSubframe):
+        (WebCore::FrameLoader::loadPlugin):
+        Make the widget variable a RefPtr. Use .get() when passing it to
+        RenderPart::setWidget().
+        (WebCore::FrameLoader::createJavaAppletWidget):
+        Make the widget variable a RefPtr.
+
+        * loader/FrameLoader.h:
+        Changed the return type of createJavaAppletWidget().
+
+        * loader/FrameLoaderClient.h:
+        Change the return types of createPlugin() and 
+        createJavaAppletWidget().
+
+        * page/Frame.cpp:
+        (WebCore::Frame::createView):
+        No need to call .get() since setWidget() takes a RefPtr.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutIfNeededRecursive):
+        children() now returns a HashSet of RefPtrs.
+
+        * page/FrameView.h:
+        Remove inheritance from RefCounted; we pick this up from ScrollView
+        through Widget.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::addChild):
+        addChild() now takes a PassRefPtr and m_children now keeps a 
+        HashSet of RefPtrs.
+
+        * platform/ScrollView.h:
+        ScrollView constructor is now protected.
+        (WebCore::ScrollView::children):
+        m_children is now a HashSet of RefPtrs.
+
+        * platform/Scrollbar.h:
+        Remove inheritance from RefCounted; we pick this up from ScrollView
+        through Widget.
+
+        * platform/Widget.h:
+        Inherit from RefCounted. Cleaned up some whitespace. Make m_widget 
+        a RefPtr.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::create):
+        Adopt the PluginView when returning it.
+
+        * plugins/PluginView.h:
+        Changed create() to return a PassRefPtr.
+
+        * rendering/RenderApplet.cpp:
+        Receive result in a RefPtr when calling createJavaAppletWidget().
+
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::setWidget): 
+        setWidget() now takes a PassRefPtr. Also removed the manual ref of 
+        FrameViews. This is handled by having m_widget be a RefPtr. Removed 
+        deleteWidget().
+
+        * rendering/RenderPart.h:
+        Removed override of deleteWidget().
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+        (WebCore::RenderWidget::setWidget):
+        (WebCore::RenderWidget::paint):
+        (WebCore::RenderWidget::setOverlapTestResult):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        Use .get().
+        (WebCore::RenderWidget::clearWidget):
+        Don't call deleteWidget(). It was removed. 
+
+        * rendering/RenderWidget.h:
+        Removed deleteWidget(). Made m_widget a RefPtr.
+        (WebCore::RenderWidget::widget):
+        Use .get().
+
 2009-07-09  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

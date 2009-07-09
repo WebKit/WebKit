@@ -185,10 +185,10 @@ namespace WebCore {
 
         virtual PassRefPtr<Frame> createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                    const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) ;
-        virtual Widget* createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);
+        virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);
         virtual void redirectDataToPlugin(Widget* pluginWidget);
 
-        virtual Widget* createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues);
+        virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
         virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
         virtual String overrideMediaType() const;

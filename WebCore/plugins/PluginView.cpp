@@ -666,7 +666,7 @@ bool PluginView::isCallingPlugin()
     return s_callingPlugin > 0;
 }
 
-PluginView* PluginView::create(Frame* parentFrame, const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+PassRefPtr<PluginView> PluginView::create(Frame* parentFrame, const IntSize& size, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     // if we fail to find a plugin for this MIME type, findPlugin will search for
     // a plugin by the file extension and update the MIME type, so pass a mutable String
@@ -679,7 +679,7 @@ PluginView* PluginView::create(Frame* parentFrame, const IntSize& size, Element*
         plugin = PluginDatabase::installedPlugins()->findPlugin(url, mimeTypeCopy);
     }
 
-    return new PluginView(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeTypeCopy, loadManually);
+    return adoptRef(new PluginView(parentFrame, size, plugin, element, url, paramNames, paramValues, mimeTypeCopy, loadManually));
 }
 
 void PluginView::freeStringArray(char** stringArray, int length)

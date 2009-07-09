@@ -58,11 +58,12 @@ ScrollView::~ScrollView()
     platformDestroy();
 }
 
-void ScrollView::addChild(Widget* child) 
+void ScrollView::addChild(PassRefPtr<Widget> prpChild) 
 {
+    Widget* child = prpChild.get();
     ASSERT(child != this && !child->parent());
     child->setParent(this);
-    m_children.add(child);
+    m_children.add(prpChild);
     if (child->platformWidget())
         platformAddChild(child);
 }
@@ -709,8 +710,8 @@ void ScrollView::frameRectsChanged()
     if (platformWidget())
         return;
 
-    HashSet<Widget*>::const_iterator end = m_children.end();
-    for (HashSet<Widget*>::const_iterator current = m_children.begin(); current != end; ++current)
+    HashSet<RefPtr<Widget> >::const_iterator end = m_children.end();
+    for (HashSet<RefPtr<Widget> >::const_iterator current = m_children.begin(); current != end; ++current)
         (*current)->frameRectsChanged();
 }
 
@@ -845,8 +846,8 @@ void ScrollView::setParentVisible(bool visible)
     if (!isSelfVisible())
         return;
         
-    HashSet<Widget*>::iterator end = m_children.end();
-    for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
+    HashSet<RefPtr<Widget> >::iterator end = m_children.end();
+    for (HashSet<RefPtr<Widget> >::iterator it = m_children.begin(); it != end; ++it)
         (*it)->setParentVisible(visible);
 }
 
@@ -855,8 +856,8 @@ void ScrollView::show()
     if (!isSelfVisible()) {
         setSelfVisible(true);
         if (isParentVisible()) {
-            HashSet<Widget*>::iterator end = m_children.end();
-            for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
+            HashSet<RefPtr<Widget> >::iterator end = m_children.end();
+            for (HashSet<RefPtr<Widget> >::iterator it = m_children.begin(); it != end; ++it)
                 (*it)->setParentVisible(true);
         }
     }
@@ -868,8 +869,8 @@ void ScrollView::hide()
 {
     if (isSelfVisible()) {
         if (isParentVisible()) {
-            HashSet<Widget*>::iterator end = m_children.end();
-            for (HashSet<Widget*>::iterator it = m_children.begin(); it != end; ++it)
+            HashSet<RefPtr<Widget> >::iterator end = m_children.end();
+            for (HashSet<RefPtr<Widget> >::iterator it = m_children.begin(); it != end; ++it)
                 (*it)->setParentVisible(false);
         }
         setSelfVisible(false);
