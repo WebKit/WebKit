@@ -626,7 +626,7 @@ END
         my $classIndex = uc($attrType);
         push(@implContentDecls, "    return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, wrapper);\n");
     } else {
-        push(@implContentDecls, "    return ".NativeToJSValue($attribute->signature, $result).";\n");
+        push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "    ").";\n");
     }
 
     push(@implContentDecls, "  }\n\n");  # end of getter
@@ -1549,7 +1549,7 @@ sub GenerateFunctionCallString()
         my $classIndex = uc($returnType);
         $result .= $indent . "return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, wrapper);\n";
     } else {
-        $result .= $indent . "return " . NativeToJSValue($function->signature, $return) . ";\n";
+        $result .= $indent . ReturnNativeToJSValue($function->signature, $return, $indent) . ";\n";
     }
 
     return $result;
@@ -1976,33 +1976,34 @@ sub IsDOMNodeType
 }
 
 
-sub NativeToJSValue
+sub ReturnNativeToJSValue
 {
     my $signature = shift;
     my $value = shift;
+    my $indent = shift;
     my $type = $codeGenerator->StripModule($signature->type);
     my $className= "V8$type";
 
-    return "v8::Date::New(static_cast<double>($value))" if $type eq "DOMTimeStamp";
-    return "$value ? v8::True() : v8::False()" if $type eq "boolean";
-    return "v8::Undefined()" if $type eq "void";
+    return "return v8::Date::New(static_cast<double>($value))" if $type eq "DOMTimeStamp";
+    return "return $value ? v8::True() : v8::False()" if $type eq "boolean";
+    return "return v8::Undefined()" if $type eq "void";
 
     # For all the types where we use 'int' as the representation type,
     # we use Integer::New which has a fast Smi conversion check.
-    return "v8::Integer::New($value)" if GetNativeType($type) eq "int";
+    return "return v8::Integer::New($value)" if GetNativeType($type) eq "int";
 
-    return "v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
+    return "return v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType";
 
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
         if (defined $conv) {
-            return "v8StringOrNull($value)" if $conv eq "Null";
-            return "v8StringOrUndefined($value)" if $conv eq "Undefined";
-            return "v8StringOrFalse($value)" if $conv eq "False";
+            return "return v8StringOrNull($value)" if $conv eq "Null";
+            return "return v8StringOrUndefined($value)" if $conv eq "Undefined";
+            return "return v8StringOrFalse($value)" if $conv eq "False";
 
             die "Unknown value for ConvertNullStringTo extended attribute";
         }
-        return "v8String($value)";
+        return "return v8String($value)";
     }
 
     # V8 specific.
@@ -2012,30 +2013,32 @@ sub NativeToJSValue
 
     # special case for non-DOM node interfaces
     if (IsDOMNodeType($type)) {
-        return "V8DOMWrapper::convertNodeToV8Object($value)";
+        return "return V8DOMWrapper::convertNodeToV8Object($value)";
     }
 
     if ($type eq "EventTarget" or $type eq "SVGElementInstance") {
-        return "V8DOMWrapper::convertEventTargetToV8Object($value)";
+        return "return V8DOMWrapper::convertEventTargetToV8Object($value)";
     }
 
     if ($type eq "Event") {
-        return "V8DOMWrapper::convertEventToV8Object($value)";
+        return "return V8DOMWrapper::convertEventToV8Object($value)";
     }
 
     if ($type eq "EventListener") {
-        return "V8DOMWrapper::convertEventListenerToV8Object($value)";
+        return "return V8DOMWrapper::convertEventListenerToV8Object($value)";
     }
 
     if ($type eq "RGBColor") {
-        return "V8DOMWrapper::convertToV8Object(V8ClassIndex::RGBCOLOR, new RGBColor($value))";
+        my $construct = "RefPtr<RGBColor> rgbcolor = RGBColor::create($value);\n";
+        my $convert = "V8DOMWrapper::convertToV8Object(V8ClassIndex::RGBCOLOR, WTF::getPtr(rgbcolor))";
+        return $construct . $indent . "return " . $convert;
     }
 
     if ($type eq "WorkerContext" or $type eq "WorkerLocation" or $type eq "WorkerNavigator") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         my $classIndex = uc($type);
 
-        return "WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::$classIndex, $value)";
+        return "return WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::$classIndex, $value)";
     }
 
     else {
@@ -2047,7 +2050,7 @@ sub NativeToJSValue
             $value = GenerateSVGStaticPodTypeWrapper($type, $value);
         }
 
-        return "V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, $value)";
+        return "return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, $value)";
     }
 }
 

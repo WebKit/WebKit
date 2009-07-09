@@ -1,3 +1,12 @@
+2009-07-09  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Update the V8 bindings codegenerator to use the RGBColor::create
+        method to handle refcounts for RGBColor objects correctly.
+        
+       * bindings/scripts/CodeGeneratorV8.pm: Use RGBColor::create to create RGBColor objects.
+
 2009-07-09  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
