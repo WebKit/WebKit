@@ -1,3 +1,14 @@
+2009-07-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Enter the Frame's context before creating new objects in setContextDebugId.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27112
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setContextDebugId):
+
 2009-07-09  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.

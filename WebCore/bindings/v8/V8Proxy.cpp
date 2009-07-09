@@ -2840,6 +2840,7 @@ bool V8Proxy::setContextDebugId(int debugId)
     if (!m_context->GetData()->IsUndefined())
         return false;
 
+    v8::Context::Scope contextScope(m_context);
     v8::Handle<v8::Object> contextData = v8::Object::New();
     contextData->Set(v8::String::New(kContextDebugDataType), v8::String::New("page"));
     contextData->Set(v8::String::New(kContextDebugDataValue), v8::Integer::New(debugId));
