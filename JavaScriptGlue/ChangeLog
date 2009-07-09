@@ -1,3 +1,20 @@
+2009-07-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        - fix <rdar://problem/6971484> REGRESSION (r30534): "Scrolling Credits"
+          effect does not scroll on iMovie 7.1.4 on Tiger
+
+        In <http://trac.webkit.org/changeset/30534>, the prototype of
+        JSObject::put() which UserObjectImp had been overriding changed, but
+        UserObjectImp wasn't updated, so its override was no longer getting
+        called after that.
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::put): Match the current prototype of JSObject::put().
+        The PutPropertySlot argument is unused.
+        * UserObjectImp.h: Ditto.
+
 2009-06-19  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
 
         Reviewed by Darin Adler.
