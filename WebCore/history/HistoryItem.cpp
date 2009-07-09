@@ -287,14 +287,16 @@ void HistoryItem::collapseDailyVisitsToWeekly()
         m_weeklyVisitCounts.shrink(maxWeeklyCounts);
 }
 
-void HistoryItem::recordVisitAtTime(double time)
+void HistoryItem::recordVisitAtTime(double time, VisitCountBehavior visitCountBehavior)
 {
     padDailyCountsForNewVisit(time);
 
     m_lastVisitedTime = time;
-    m_visitCount++;
 
-    m_dailyVisitCounts[0]++;
+    if (visitCountBehavior == IncreaseVisitCount) {
+        ++m_visitCount;
+        ++m_dailyVisitCounts[0];
+    }
 
     collapseDailyVisitsToWeekly();
 }
@@ -305,10 +307,10 @@ void HistoryItem::setLastVisitedTime(double time)
         recordVisitAtTime(time);
 }
 
-void HistoryItem::visited(const String& title, double time)
+void HistoryItem::visited(const String& title, double time, VisitCountBehavior visitCountBehavior)
 {
     m_title = title;
-    recordVisitAtTime(time);
+    recordVisitAtTime(time, visitCountBehavior);
 }
 
 int HistoryItem::visitCount() const

@@ -806,7 +806,8 @@ void WebFrameLoaderClient::updateGlobalHistory()
     [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
                                           withTitle:loader->title()
                                              method:loader->originalRequestCopy().httpMethod()
-                                         wasFailure:loader->urlForHistoryReflectsFailure()];
+                                         wasFailure:loader->urlForHistoryReflectsFailure()
+                                 increaseVisitCount:!loader->clientRedirectSourceForHistory()]; // Do not increase visit count due to navigations that were not initiated by the user directly, avoiding growth from programmatic reloads.
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()

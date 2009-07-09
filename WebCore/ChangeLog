@@ -1,3 +1,19 @@
+2009-07-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/6921671> Visit counter shouldn't be incremented by redirects.
+
+        Can't test this functionality with layout tests.
+
+        * WebCore.base.exp:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::recordVisitAtTime):
+        (WebCore::HistoryItem::visited):
+        * history/HistoryItem.h:
+        Only increase visit count if explicitly told to. Now, some visits change last access time,
+        but do not increase visit count.
+
 2009-07-09  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

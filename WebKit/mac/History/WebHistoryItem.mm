@@ -421,9 +421,9 @@ static WebWindowWatcher *_windowWatcher = nil;
     return core(_private)->scrollPoint();
 }
 
-- (void)_visitedWithTitle:(NSString *)title
+- (void)_visitedWithTitle:(NSString *)title increaseVisitCount:(BOOL)increaseVisitCount
 {
-    core(_private)->visited(title, [NSDate timeIntervalSinceReferenceDate]);
+    core(_private)->visited(title, [NSDate timeIntervalSinceReferenceDate], increaseVisitCount ? IncreaseVisitCount : DoNotIncreaseVisitCount);
 }
 
 - (void)_recordInitialVisit

@@ -79,7 +79,7 @@ private:
     int ageInDaysLimit;
 }
 
-- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title;
+- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title increaseVisitCount:(BOOL)increaseVisitCount;
 
 - (BOOL)addItem:(WebHistoryItem *)entry discardDuplicate:(BOOL)discardDuplicate;
 - (void)addItems:(NSArray *)newEntries;
@@ -269,7 +269,7 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
     }
 }
 
-- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title
+- (WebHistoryItem *)visitedURL:(NSURL *)url withTitle:(NSString *)title increaseVisitCount:(BOOL)increaseVisitCount
 {
     ASSERT(url);
     ASSERT(title);
@@ -284,7 +284,7 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
         BOOL itemWasInDateCaches = [self removeItemFromDateCaches:entry];
         ASSERT_UNUSED(itemWasInDateCaches, itemWasInDateCaches);
 
-        [entry _visitedWithTitle:title];
+        [entry _visitedWithTitle:title increaseVisitCount:increaseVisitCount];
     } else {
         LOG(History, "Adding new global history entry for %@", url);
         entry = [[WebHistoryItem alloc] initWithURLString:URLString title:title lastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
@@ -790,9 +790,9 @@ static WebHistoryDateKey timeIntervalForBeginningOfDay(NSTimeInterval interval)
 
 @implementation WebHistory (WebInternal)
 
-- (void)_visitedURL:(NSURL *)url withTitle:(NSString *)title method:(NSString *)method wasFailure:(BOOL)wasFailure
+- (void)_visitedURL:(NSURL *)url withTitle:(NSString *)title method:(NSString *)method wasFailure:(BOOL)wasFailure increaseVisitCount:(BOOL)increaseVisitCount
 {
-    WebHistoryItem *entry = [_historyPrivate visitedURL:url withTitle:title];
+    WebHistoryItem *entry = [_historyPrivate visitedURL:url withTitle:title increaseVisitCount:increaseVisitCount];
 
     HistoryItem* item = core(entry);
     item->setLastVisitWasFailure(wasFailure);
