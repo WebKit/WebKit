@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 #if PLATFORM(WIN)
 typedef struct HBITMAP__* HBITMAP;
 typedef struct HBRUSH__* HBRUSH;
+typedef struct HDC__* HDC;
 typedef struct HFONT__* HFONT;
 typedef struct HPALETTE__* HPALETTE;
 typedef struct HPEN__* HPEN;
@@ -47,6 +49,7 @@ namespace WTF {
 #if PLATFORM(WIN)
     void deleteOwnedPtr(HBITMAP);
     void deleteOwnedPtr(HBRUSH);
+    void deleteOwnedPtr(HDC);
     void deleteOwnedPtr(HFONT);
     void deleteOwnedPtr(HPALETTE);
     void deleteOwnedPtr(HPEN);
