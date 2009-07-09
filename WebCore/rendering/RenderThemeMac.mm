@@ -1421,7 +1421,7 @@ typedef enum {
 
 static int mediaControllerTheme()
 {
-    static const long minimumQuickTimeVersion = 0x07600000; // 7.6
+    static const long minimumQuickTimeVersion = 0x07630000; // 7.6.3
     static SInt32 quickTimeVersion = 0;
     static int controllerTheme = -1;
     
