@@ -106,19 +106,32 @@ void RenderMedia::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     RenderReplaced::styleDidChange(diff, oldStyle);
 
     if (m_controlsShadowRoot) {
-        m_panel->updateStyle();
-        m_muteButton->updateStyle();
-        m_playButton->updateStyle();
-        m_seekBackButton->updateStyle();
-        m_seekForwardButton->updateStyle();
-        m_rewindButton->updateStyle();
-        m_returnToRealtimeButton->updateStyle();
-        m_statusDisplay->updateStyle();
-        m_timelineContainer->updateStyle();
-        m_timeline->updateStyle();
-        m_fullscreenButton->updateStyle();
-        m_currentTimeDisplay->updateStyle();
-        m_timeRemainingDisplay->updateStyle();
+        if (m_panel)
+            m_panel->updateStyle();
+        if (m_muteButton)
+            m_muteButton->updateStyle();
+        if (m_playButton)
+            m_playButton->updateStyle();
+        if (m_seekBackButton)
+            m_seekBackButton->updateStyle();
+        if (m_seekForwardButton)
+            m_seekForwardButton->updateStyle();
+        if (m_rewindButton)
+            m_rewindButton->updateStyle();
+        if (m_returnToRealtimeButton)
+            m_returnToRealtimeButton->updateStyle();
+        if (m_statusDisplay)
+            m_statusDisplay->updateStyle();
+        if (m_timelineContainer)
+            m_timelineContainer->updateStyle();
+        if (m_timeline)
+            m_timeline->updateStyle();
+        if (m_fullscreenButton)
+            m_fullscreenButton->updateStyle();
+        if (m_currentTimeDisplay)
+            m_currentTimeDisplay->updateStyle();
+        if (m_timeRemainingDisplay)
+            m_timeRemainingDisplay->updateStyle();
     }
 }
 
