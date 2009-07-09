@@ -401,6 +401,10 @@
 #endif
 #endif /* !defined(HAVE_ACCESSIBILITY) */
 
+#if PLATFORM(UNIX) && !PLATFORM(SYMBIAN)
+#define HAVE_SIGNAL_H 1
+#endif
+
 #if PLATFORM(DARWIN)
 
 #define HAVE_ERRNO_H 1

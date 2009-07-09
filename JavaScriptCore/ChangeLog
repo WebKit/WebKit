@@ -1,3 +1,19 @@
+2009-07-09  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Guard singal.h dependency with HAVE(SIGNAL_H) to enable building jsc
+        on SYMBIAN.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27026
+
+        Based on Norbert Leser's work.
+
+        * jsc.cpp:
+        (printUsageStatement):
+        (parseArguments):
+        * wtf/Platform.h:
+
 2009-07-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
