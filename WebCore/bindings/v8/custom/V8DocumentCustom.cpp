@@ -52,16 +52,16 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
 {
     INC_STATS("DOM.Document.evaluate()");
 
-    Document* document = V8Proxy::convertDOMWrapperToNode<Document>(args.Holder());
+    Document* document = V8DOMWrapper::convertDOMWrapperToNode<Document>(args.Holder());
     ExceptionCode ec = 0;
     String expression = toWebCoreString(args[0]);
     Node* contextNode = 0;
     if (V8Node::HasInstance(args[1]))
-        contextNode = V8Proxy::convertDOMWrapperToNode<Node>(args[1]);
+        contextNode = V8DOMWrapper::convertDOMWrapperToNode<Node>(args[1]);
 
     XPathNSResolver* resolver = 0;
     if (V8XPathNSResolver::HasInstance(args[2]))
-        resolver = V8Proxy::convertToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, args[2]);
+        resolver = V8DOMWrapper::convertToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, args[2]);
     else if (args[2]->IsObject())
         resolver = new V8CustomXPathNSResolver(args[2]->ToObject());
     else if (!args[2]->IsNull() && !args[2]->IsUndefined())
@@ -70,7 +70,7 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     int type = toInt32(args[3]);
     XPathResult* inResult = 0;
     if (V8XPathResult::HasInstance(args[4]))
-        inResult = V8Proxy::convertToNativeObject<XPathResult>(V8ClassIndex::XPATHRESULT, args[4]);
+        inResult = V8DOMWrapper::convertToNativeObject<XPathResult>(V8ClassIndex::XPATHRESULT, args[4]);
 
     v8::TryCatch exceptionCatcher;
     RefPtr<XPathResult> result = document->evaluate(expression, contextNode, resolver, type, inResult, ec);
@@ -80,20 +80,20 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     if (ec)
         return throwError(ec);
 
-    return V8Proxy::convertToV8Object(V8ClassIndex::XPATHRESULT, result.get());
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::XPATHRESULT, result.get());
 }
 
 CALLBACK_FUNC_DECL(DocumentGetCSSCanvasContext)
 {
     INC_STATS("DOM.Document.getCSSCanvasContext");
     v8::Handle<v8::Value> holder = args.Holder();
-    Document* imp = V8Proxy::convertDOMWrapperToNode<Document>(holder);
+    Document* imp = V8DOMWrapper::convertDOMWrapperToNode<Document>(holder);
     String contextId = toWebCoreString(args[0]);
     String name = toWebCoreString(args[1]);
     int width = toInt32(args[2]);
     int height = toInt32(args[3]);
     CanvasRenderingContext2D* result = imp->getCSSCanvasContext(contextId, name, width, height);
-    return V8Proxy::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASRENDERINGCONTEXT2D, result);
 }
 
 } // namespace WebCore

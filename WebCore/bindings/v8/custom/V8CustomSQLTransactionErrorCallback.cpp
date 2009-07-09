@@ -61,7 +61,7 @@ void V8CustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
     v8::Context::Scope scope(context);
 
     v8::Handle<v8::Value> argv[] = {
-        V8Proxy::convertToV8Object(V8ClassIndex::SQLERROR, error)
+        V8DOMWrapper::convertToV8Object(V8ClassIndex::SQLERROR, error)
     };
 
     // Protect the frame until the callback returns.

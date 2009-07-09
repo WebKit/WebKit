@@ -44,14 +44,14 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(HTMLSelectElementRemove)
 {
     INC_STATS("DOM.HTMLSelectElement.remove");
-    HTMLSelectElement* imp = V8Proxy::convertDOMWrapperToNode<HTMLSelectElement>(args.Holder());
+    HTMLSelectElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLSelectElement>(args.Holder());
     return removeElement(imp, args);
 }
 
 v8::Handle<v8::Value> removeElement(HTMLSelectElement* imp, const v8::Arguments& args) 
 {
     if (V8HTMLOptionElement::HasInstance(args[0])) {
-        HTMLOptionElement* element = V8Proxy::convertDOMWrapperToNode<HTMLOptionElement>(args[0]);
+        HTMLOptionElement* element = V8DOMWrapper::convertDOMWrapperToNode<HTMLOptionElement>(args[0]);
         imp->remove(element->index());
         return v8::Undefined();
     }

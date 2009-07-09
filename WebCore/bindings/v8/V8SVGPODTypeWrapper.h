@@ -363,7 +363,7 @@ public:
 template <class P>
 P V8SVGPODTypeUtil::toSVGPODType(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Value> object, bool& ok)
 {
-    void *wrapper = V8Proxy::convertToSVGPODTypeImpl(type, object);
+    void *wrapper = V8DOMWrapper::convertToSVGPODTypeImpl(type, object);
     if (wrapper == NULL) {
         ok = false;
         return P();

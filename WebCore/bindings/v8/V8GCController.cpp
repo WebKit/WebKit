@@ -111,7 +111,7 @@ static void enumerateDOMObjectMap(DOMObjectMap& wrapperMap)
 {
     for (DOMObjectMap::iterator it = wrapperMap.begin(), end = wrapperMap.end(); it != end; ++it) {
         v8::Persistent<v8::Object> wrapper(it->second);
-        V8ClassIndex::V8WrapperType type = V8Proxy::domWrapperType(wrapper);
+        V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
         void* object = it->first;
         UNUSED_PARAM(type);
         UNUSED_PARAM(object);
@@ -122,7 +122,7 @@ class DOMObjectVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
     {
-        V8ClassIndex::V8WrapperType type = V8Proxy::domWrapperType(wrapper);
+        V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
         UNUSED_PARAM(type);
         UNUSED_PARAM(object);
     }
@@ -181,7 +181,7 @@ public:
     void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
     {
         ASSERT(wrapper.IsWeak());
-        V8ClassIndex::V8WrapperType type = V8Proxy::domWrapperType(wrapper);
+        V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
         switch (type) {
 #define MAKE_CASE(TYPE, NAME)                             \
         case V8ClassIndex::TYPE: {                    \
@@ -217,8 +217,8 @@ public:
             // As ports are always entangled in pairs only perform the entanglement
             // once for each pair (see ASSERT in MessagePort::unentangle()).
             if (port1 < port2) {
-                v8::Handle<v8::Value> port1Wrapper = V8Proxy::convertToV8Object(V8ClassIndex::MESSAGEPORT, port1);
-                v8::Handle<v8::Value> port2Wrapper = V8Proxy::convertToV8Object(V8ClassIndex::MESSAGEPORT, port2);
+                v8::Handle<v8::Value> port1Wrapper = V8DOMWrapper::convertToV8Object(V8ClassIndex::MESSAGEPORT, port1);
+                v8::Handle<v8::Value> port2Wrapper = V8DOMWrapper::convertToV8Object(V8ClassIndex::MESSAGEPORT, port2);
                 ASSERT(port1Wrapper->IsObject());
                 v8::Handle<v8::Object>::Cast(port1Wrapper)->SetInternalField(V8Custom::kMessagePortEntangledPortIndex, port2Wrapper);
                 ASSERT(port2Wrapper->IsObject());
@@ -226,8 +226,8 @@ public:
             }
         } else {
             // Remove the wrapper entanglement when a port is not entangled.
-            if (V8Proxy::domObjectHasJSWrapper(port1)) {
-                v8::Handle<v8::Value> wrapper = V8Proxy::convertToV8Object(V8ClassIndex::MESSAGEPORT, port1);
+            if (V8DOMWrapper::domObjectHasJSWrapper(port1)) {
+                v8::Handle<v8::Value> wrapper = V8DOMWrapper::convertToV8Object(V8ClassIndex::MESSAGEPORT, port1);
                 ASSERT(wrapper->IsObject());
                 v8::Handle<v8::Object>::Cast(wrapper)->SetInternalField(V8Custom::kMessagePortEntangledPortIndex, v8::Undefined());
             }
@@ -386,7 +386,7 @@ class GCEpilogueVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(void* object, v8::Persistent<v8::Object> wrapper)
     {
-        V8ClassIndex::V8WrapperType type = V8Proxy::domWrapperType(wrapper);
+        V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
         switch (type) {
 #define MAKE_CASE(TYPE, NAME)                                           \
         case V8ClassIndex::TYPE: {                                  \

@@ -50,10 +50,10 @@ namespace WebCore {
 static v8::Handle<v8::Value> toV8(CanvasStyle* style)
 {
     if (style->canvasGradient())
-        return V8Proxy::convertToV8Object(V8ClassIndex::CANVASGRADIENT, style->canvasGradient());
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASGRADIENT, style->canvasGradient());
 
     if (style->canvasPattern())
-        return V8Proxy::convertToV8Object(V8ClassIndex::CANVASPATTERN, style->canvasPattern());
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, style->canvasPattern());
 
     return v8String(style->color());
 }
@@ -64,35 +64,35 @@ static PassRefPtr<CanvasStyle> toCanvasStyle(v8::Handle<v8::Value> value)
         return CanvasStyle::create(toWebCoreString(value));
 
     if (V8CanvasGradient::HasInstance(value))
-        return CanvasStyle::create(V8Proxy::convertDOMWrapperToNative<CanvasGradient>(value));
+        return CanvasStyle::create(V8DOMWrapper::convertDOMWrapperToNative<CanvasGradient>(value));
 
     if (V8CanvasPattern::HasInstance(value))
-        return CanvasStyle::create(V8Proxy::convertDOMWrapperToNative<CanvasPattern>(value));
+        return CanvasStyle::create(V8DOMWrapper::convertDOMWrapperToNative<CanvasPattern>(value));
 
     return 0;
 }
 
 ACCESSOR_GETTER(CanvasRenderingContext2DStrokeStyle)
 {
-    CanvasRenderingContext2D* impl = V8Proxy::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
+    CanvasRenderingContext2D* impl = V8DOMWrapper::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     return toV8(impl->strokeStyle());
 }
 
 ACCESSOR_SETTER(CanvasRenderingContext2DStrokeStyle)
 {
-    CanvasRenderingContext2D* impl = V8Proxy::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
+    CanvasRenderingContext2D* impl = V8DOMWrapper::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     impl->setStrokeStyle(toCanvasStyle(value));
 }
 
 ACCESSOR_GETTER(CanvasRenderingContext2DFillStyle)
 {
-    CanvasRenderingContext2D* impl = V8Proxy::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
+    CanvasRenderingContext2D* impl = V8DOMWrapper::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     return toV8(impl->fillStyle());
 }
 
 ACCESSOR_SETTER(CanvasRenderingContext2DFillStyle)
 {
-    CanvasRenderingContext2D* impl = V8Proxy::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
+    CanvasRenderingContext2D* impl = V8DOMWrapper::convertDOMWrapperToNative<CanvasRenderingContext2D>(info.Holder());
     impl->setFillStyle(toCanvasStyle(value));
 }
 
@@ -101,7 +101,7 @@ ACCESSOR_SETTER(CanvasRenderingContext2DFillStyle)
 CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetStrokeColor)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.setStrokeColor()");
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
     switch (args.Length()) {
     case 1:
         if (args[0]->IsString())
@@ -131,7 +131,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetStrokeColor)
 CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetFillColor)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.setFillColor()");
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
     switch (args.Length()) {
     case 1:
         if (args[0]->IsString())
@@ -161,7 +161,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetFillColor)
 CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeRect)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.strokeRect()");
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
     if (args.Length() == 5)
         context->strokeRect(toFloat(args[0]), toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]));
     else if (args.Length() == 4)
@@ -176,7 +176,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeRect)
 CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetShadow)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.setShadow()");
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
 
     switch (args.Length()) {
     case 3:
@@ -211,13 +211,13 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DSetShadow)
 CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.drawImage()");
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
 
     v8::Handle<v8::Value> arg = args[0];
 
     if (V8HTMLImageElement::HasInstance(arg)) {
         ExceptionCode ec = 0;
-        HTMLImageElement* image_element = V8Proxy::convertDOMWrapperToNode<HTMLImageElement>(arg);
+        HTMLImageElement* image_element = V8DOMWrapper::convertDOMWrapperToNode<HTMLImageElement>(arg);
         switch (args.Length()) {
         case 3:
             context->drawImage(image_element, toFloat(args[1]), toFloat(args[2]));
@@ -249,7 +249,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
     // HTMLCanvasElement
     if (V8HTMLCanvasElement::HasInstance(arg)) {
         ExceptionCode ec = 0;
-        HTMLCanvasElement* canvas_element = V8Proxy::convertDOMWrapperToNode<HTMLCanvasElement>(arg);
+        HTMLCanvasElement* canvas_element = V8DOMWrapper::convertDOMWrapperToNode<HTMLCanvasElement>(arg);
         switch (args.Length()) {
         case 3:
             context->drawImage(canvas_element, toFloat(args[1]), toFloat(args[2]));
@@ -285,12 +285,12 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
 CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImageFromRect)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.drawImageFromRect()");
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
 
     v8::Handle<v8::Value> arg = args[0];
 
     if (V8HTMLImageElement::HasInstance(arg)) {
-        HTMLImageElement* image_element = V8Proxy::convertDOMWrapperToNode<HTMLImageElement>(arg);
+        HTMLImageElement* image_element = V8DOMWrapper::convertDOMWrapperToNode<HTMLImageElement>(arg);
         context->drawImageFromRect(image_element,  toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), toFloat(args[5]), toFloat(args[6]), toFloat(args[7]), toFloat(args[8]), toWebCoreString(args[9]));
     } else
         V8Proxy::throwError(V8Proxy::TypeError, "drawImageFromRect: Invalid type of arguments");
@@ -301,30 +301,30 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImageFromRect)
 CALLBACK_FUNC_DECL(CanvasRenderingContext2DCreatePattern)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.createPattern()");
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
 
     v8::Handle<v8::Value> arg = args[0];
 
     if (V8HTMLImageElement::HasInstance(arg)) {
-        HTMLImageElement* image_element = V8Proxy::convertDOMWrapperToNode<HTMLImageElement>(arg);
+        HTMLImageElement* image_element = V8DOMWrapper::convertDOMWrapperToNode<HTMLImageElement>(arg);
         ExceptionCode ec = 0;
         RefPtr<CanvasPattern> pattern = context->createPattern(image_element, toWebCoreStringWithNullCheck(args[1]), ec);
         if (ec != 0) {
             V8Proxy::setDOMException(ec);
             return notHandledByInterceptor();
         }
-        return V8Proxy::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.get());
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.get());
     }
 
     if (V8HTMLCanvasElement::HasInstance(arg)) {
-        HTMLCanvasElement* canvas_element = V8Proxy::convertDOMWrapperToNode<HTMLCanvasElement>(arg);
+        HTMLCanvasElement* canvas_element = V8DOMWrapper::convertDOMWrapperToNode<HTMLCanvasElement>(arg);
         ExceptionCode ec = 0;
         RefPtr<CanvasPattern> pattern = context->createPattern(canvas_element, toWebCoreStringWithNullCheck(args[1]), ec);
         if (ec != 0) {
             V8Proxy::setDOMException(ec);
             return notHandledByInterceptor();
         }
-        return V8Proxy::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.get());
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.get());
     }
 
     V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
@@ -335,7 +335,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DFillText)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.fillText()");
 
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
 
     // Two forms:
     // * fillText(text, x, y)
@@ -361,7 +361,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DFillText)
 CALLBACK_FUNC_DECL(CanvasRenderingContext2DStrokeText)
 {
     INC_STATS("DOM.CanvasRenderingContext2D.strokeText()");
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
 
     // Two forms:
     // * strokeText(text, x, y)
@@ -396,7 +396,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DPutImageData)
         return notHandledByInterceptor();
     }
 
-    CanvasRenderingContext2D* context = V8Proxy::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
+    CanvasRenderingContext2D* context = V8DOMWrapper::convertToNativeObject<CanvasRenderingContext2D>(V8ClassIndex::CANVASRENDERINGCONTEXT2D, args.Holder());
 
     ImageData* imageData = 0;
 
@@ -404,8 +404,8 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DPutImageData)
     // convertToNativeObject() expects it to be correct. If the argument was incorrect
     // we leave it null, and putImageData() will throw the correct exception
     // (TYPE_MISMATCH_ERR).
-    if (V8Proxy::isWrapperOfType(args[0], V8ClassIndex::IMAGEDATA))
-        imageData = V8Proxy::convertToNativeObject<ImageData>(V8ClassIndex::IMAGEDATA, args[0]);
+    if (V8DOMWrapper::isWrapperOfType(args[0], V8ClassIndex::IMAGEDATA))
+        imageData = V8DOMWrapper::convertToNativeObject<ImageData>(V8ClassIndex::IMAGEDATA, args[0]);
 
     ExceptionCode ec = 0;
 

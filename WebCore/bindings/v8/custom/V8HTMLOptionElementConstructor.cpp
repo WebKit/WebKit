@@ -81,9 +81,9 @@ CALLBACK_FUNC_DECL(HTMLOptionElementConstructor)
         }
     }
 
-    V8Proxy::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::NODE), option.get());
+    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::NODE), option.get());
     option->ref();
-    V8Proxy::setJSWrapperForDOMNode(option.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setJSWrapperForDOMNode(option.get(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
 }
 

@@ -34,17 +34,17 @@ namespace WebCore {
 
 ACCESSOR_GETTER(DocumentLocation)
 {
-    Document* document = V8Proxy::convertDOMWrapperToNative<Document>(info.Holder());
+    Document* document = V8DOMWrapper::convertDOMWrapperToNative<Document>(info.Holder());
     if (!document->frame())
         return v8::Null();
 
     DOMWindow* window = document->frame()->domWindow();
-    return V8Proxy::convertToV8Object(V8ClassIndex::LOCATION, window->location());
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::LOCATION, window->location());
 }
 
 ACCESSOR_SETTER(DocumentLocation)
 {
-    Document* document = V8Proxy::convertDOMWrapperToNative<Document>(info.Holder());
+    Document* document = V8DOMWrapper::convertDOMWrapperToNative<Document>(info.Holder());
     if (!document->frame())
         return;
 

@@ -123,7 +123,7 @@ void V8AbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     v8::Context::Scope scope(v8Context);
 
     // Get the V8 wrapper for the event object.
-    v8::Handle<v8::Value> jsEvent = V8Proxy::convertEventToV8Object(event);
+    v8::Handle<v8::Value> jsEvent = V8DOMWrapper::convertEventToV8Object(event);
 
     invokeEventHandler(v8Context, event, jsEvent, isWindowEvent);
 
@@ -150,7 +150,7 @@ v8::Local<v8::Object> V8AbstractEventListener::getReceiverObject(Event* event, b
         return v8::Context::GetCurrent()->Global();
 
     EventTarget* target = event->currentTarget();
-    v8::Handle<v8::Value> value = V8Proxy::convertEventTargetToV8Object(target);
+    v8::Handle<v8::Value> value = V8DOMWrapper::convertEventTargetToV8Object(target);
     if (value.IsEmpty())
         return v8::Local<v8::Object>();
     return v8::Local<v8::Object>::New(v8::Handle<v8::Object>::Cast(value));

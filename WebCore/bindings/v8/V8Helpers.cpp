@@ -40,7 +40,7 @@ namespace WebCore {
 
 void wrapNPObject(v8::Handle<v8::Object> object, NPObject* npObject)
 {
-    V8Proxy::setDOMWrapper(object, V8ClassIndex::NPOBJECT, npObject);
+    V8DOMWrapper::setDOMWrapper(object, V8ClassIndex::NPOBJECT, npObject);
 }
 
 v8::Local<v8::Context> toV8Context(NPP npp, NPObject* npObject)

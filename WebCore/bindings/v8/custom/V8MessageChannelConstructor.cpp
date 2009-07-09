@@ -72,11 +72,11 @@ CALLBACK_FUNC_DECL(MessageChannelConstructor)
     // Create references from the MessageChannel wrapper to the two
     // MessagePort wrappers to make sure that the MessagePort wrappers
     // stay alive as long as the MessageChannel wrapper is around.
-    messageChannel->SetInternalField(kMessageChannelPort1Index, V8Proxy::convertToV8Object(V8ClassIndex::MESSAGEPORT, obj->port1()));
-    messageChannel->SetInternalField(kMessageChannelPort2Index, V8Proxy::convertToV8Object(V8ClassIndex::MESSAGEPORT, obj->port2()));
+    messageChannel->SetInternalField(kMessageChannelPort1Index, V8DOMWrapper::convertToV8Object(V8ClassIndex::MESSAGEPORT, obj->port1()));
+    messageChannel->SetInternalField(kMessageChannelPort2Index, V8DOMWrapper::convertToV8Object(V8ClassIndex::MESSAGEPORT, obj->port2()));
 
     // Setup the standard wrapper object internal fields.
-    V8Proxy::setDOMWrapper(messageChannel, V8ClassIndex::MESSAGECHANNEL, obj.get());
+    V8DOMWrapper::setDOMWrapper(messageChannel, V8ClassIndex::MESSAGECHANNEL, obj.get());
     return toV8(obj.release(), messageChannel);
 }
 

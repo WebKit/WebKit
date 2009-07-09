@@ -122,11 +122,11 @@ WorkerContextExecutionProxy* WorkerContextExecutionProxy::retrieve()
 {
     v8::Handle<v8::Context> context = v8::Context::GetCurrent();
     v8::Handle<v8::Object> global = context->Global();
-    global = V8Proxy::lookupDOMWrapper(V8ClassIndex::WORKERCONTEXT, global);
+    global = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::WORKERCONTEXT, global);
     // Return 0 if the current executing context is not the worker context.
     if (global.IsEmpty())
         return 0;
-    WorkerContext* workerContext = V8Proxy::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, global);
+    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, global);
     return workerContext->script()->proxy();
 }
 
@@ -174,9 +174,9 @@ void WorkerContextExecutionProxy::initContextIfNeeded()
     }
 
     // Wrap the object.
-    V8Proxy::setDOMWrapper(jsWorkerContext, V8ClassIndex::ToInt(V8ClassIndex::WORKERCONTEXT), m_workerContext);
+    V8DOMWrapper::setDOMWrapper(jsWorkerContext, V8ClassIndex::ToInt(V8ClassIndex::WORKERCONTEXT), m_workerContext);
 
-    V8Proxy::setJSWrapperForDOMObject(m_workerContext, v8::Persistent<v8::Object>::New(jsWorkerContext));
+    V8DOMWrapper::setJSWrapperForDOMObject(m_workerContext, v8::Persistent<v8::Object>::New(jsWorkerContext));
     m_workerContext->ref();
 
     // Insert the object instance as the prototype of the shadow object.
@@ -191,7 +191,7 @@ v8::Local<v8::Function> WorkerContextExecutionProxy::GetConstructor(V8ClassIndex
     // Enter the context of the proxy to make sure that the function is
     // constructed in the context corresponding to this proxy.
     v8::Context::Scope scope(m_context);
-    v8::Handle<v8::FunctionTemplate> functionTemplate = V8Proxy::getTemplate(type);
+    v8::Handle<v8::FunctionTemplate> functionTemplate = V8DOMWrapper::getTemplate(type);
 
     // Getting the function might fail if we're running out of stack or memory.
     v8::TryCatch tryCatch;
@@ -219,7 +219,7 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::V8Wr
         if (!object.IsEmpty())
             static_cast<Worker*>(impl)->ref();
         result = v8::Persistent<v8::Object>::New(object);
-        V8Proxy::setJSWrapperForDOMObject(impl, result);
+        V8DOMWrapper::setJSWrapperForDOMObject(impl, result);
         return result;
     }
 
@@ -251,7 +251,7 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::ToV8Object(V8ClassIndex::V8Wr
                 ASSERT(false);
             }
             result = v8::Persistent<v8::Object>::New(object);
-            V8Proxy::setJSWrapperForDOMObject(impl, result);
+            V8DOMWrapper::setJSWrapperForDOMObject(impl, result);
         }
     }
     return result;
@@ -279,7 +279,7 @@ v8::Handle<v8::Value> WorkerContextExecutionProxy::EventToV8Object(Event* event)
     }
 
     event->ref();  // fast ref
-    V8Proxy::setJSWrapperForDOMObject(event, v8::Persistent<v8::Object>::New(result));
+    V8DOMWrapper::setJSWrapperForDOMObject(event, v8::Persistent<v8::Object>::New(result));
 
     return result;
 }
@@ -325,12 +325,12 @@ v8::Local<v8::Object> WorkerContextExecutionProxy::toV8(V8ClassIndex::V8WrapperT
     if (proxy)
         function = proxy->GetConstructor(descType);
     else
-        function = V8Proxy::getTemplate(descType)->GetFunction();
+        function = V8DOMWrapper::getTemplate(descType)->GetFunction();
 
     v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
     if (!instance.IsEmpty()) {
         // Avoid setting the DOM wrapper for failed allocations.
-        V8Proxy::setDOMWrapper(instance, V8ClassIndex::ToInt(cptrType), impl);
+        V8DOMWrapper::setDOMWrapper(instance, V8ClassIndex::ToInt(cptrType), impl);
     }
     return instance;
 }

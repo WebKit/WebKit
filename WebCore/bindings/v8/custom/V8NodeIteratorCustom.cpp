@@ -53,13 +53,13 @@ static inline v8::Handle<v8::Value> toV8(PassRefPtr<Node> object, ExceptionCode 
     if (!object)
         return v8::Null();
 
-    return V8Proxy::convertNodeToV8Object(object.get());
+    return V8DOMWrapper::convertNodeToV8Object(object.get());
 }
 
 CALLBACK_FUNC_DECL(NodeIteratorNextNode)
 {
     INC_STATS("DOM.NodeIterator.nextNode()");
-    NodeIterator* nodeIterator = V8Proxy::convertToNativeObject<NodeIterator>(V8ClassIndex::NODEITERATOR, args.Holder());
+    NodeIterator* nodeIterator = V8DOMWrapper::convertToNativeObject<NodeIterator>(V8ClassIndex::NODEITERATOR, args.Holder());
 
     ExceptionCode ec = 0;
     ScriptState state;
@@ -70,7 +70,7 @@ CALLBACK_FUNC_DECL(NodeIteratorNextNode)
 CALLBACK_FUNC_DECL(NodeIteratorPreviousNode)
 {
     INC_STATS("DOM.NodeIterator.previousNode()");
-    NodeIterator* nodeIterator = V8Proxy::convertToNativeObject<NodeIterator>(V8ClassIndex::NODEITERATOR, args.Holder());
+    NodeIterator* nodeIterator = V8DOMWrapper::convertToNativeObject<NodeIterator>(V8ClassIndex::NODEITERATOR, args.Holder());
 
     ExceptionCode ec = 0;
     ScriptState state;

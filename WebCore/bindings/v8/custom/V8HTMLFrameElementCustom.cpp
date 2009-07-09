@@ -39,7 +39,7 @@ namespace WebCore {
 
 ACCESSOR_SETTER(HTMLFrameElementSrc)
 {
-    HTMLFrameElement* frame = V8Proxy::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());
+    HTMLFrameElement* frame = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());
     String srcValue = toWebCoreStringWithNullCheck(value);
 
     if (!allowSettingFrameSrcToJavascriptUrl(frame, srcValue))
@@ -50,7 +50,7 @@ ACCESSOR_SETTER(HTMLFrameElementSrc)
 
 ACCESSOR_SETTER(HTMLFrameElementLocation)
 {
-    HTMLFrameElement* frame = V8Proxy::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());
+    HTMLFrameElement* frame = V8DOMWrapper::convertDOMWrapperToNode<HTMLFrameElement>(info.Holder());
     String locationValue = toWebCoreStringWithNullCheck(value);
 
     if (!allowSettingFrameSrcToJavascriptUrl(frame, locationValue))

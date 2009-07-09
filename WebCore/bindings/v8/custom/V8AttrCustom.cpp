@@ -42,7 +42,7 @@ namespace WebCore {
 
 ACCESSOR_SETTER(AttrValue)
 {
-    Attr* imp = V8Proxy::convertDOMWrapperToNode<Attr>(info.Holder());
+    Attr* imp = V8DOMWrapper::convertDOMWrapperToNode<Attr>(info.Holder());
     String attrValue = toWebCoreStringWithNullCheck(value);
     Element* ownerElement = imp->ownerElement();
 

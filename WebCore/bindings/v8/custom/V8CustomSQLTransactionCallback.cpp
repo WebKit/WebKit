@@ -62,7 +62,7 @@ void V8CustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
     v8::Context::Scope scope(context);
 
     v8::Handle<v8::Value> argv[] = {
-        V8Proxy::convertToV8Object(V8ClassIndex::SQLTRANSACTION, transaction)
+        V8DOMWrapper::convertToV8Object(V8ClassIndex::SQLTRANSACTION, transaction)
     };
 
     // Protect the frame until the callback returns.

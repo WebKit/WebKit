@@ -47,7 +47,7 @@ namespace WebCore {
 ACCESSOR_GETTER(ClipboardTypes)
 {
     INC_STATS("DOM.Clipboard.types()");
-    Clipboard* clipboard = V8Proxy::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, info.Holder());
+    Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, info.Holder());
 
     HashSet<String> types = clipboard->types();
     if (types.isEmpty())
@@ -65,7 +65,7 @@ ACCESSOR_GETTER(ClipboardTypes)
 CALLBACK_FUNC_DECL(ClipboardClearData)
 {
     INC_STATS("DOM.Clipboard.clearData()");
-    Clipboard* clipboard = V8Proxy::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
+    Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
 
     if (!args.Length()) {
         clipboard->clearAllData();
@@ -83,7 +83,7 @@ CALLBACK_FUNC_DECL(ClipboardClearData)
 CALLBACK_FUNC_DECL(ClipboardGetData)
 {
     INC_STATS("DOM.Clipboard.getData()");
-    Clipboard* clipboard = V8Proxy::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
+    Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
 
     if (args.Length() != 1)
         return throwError("getData: Invalid number of arguments", V8Proxy::SyntaxError);
@@ -99,7 +99,7 @@ CALLBACK_FUNC_DECL(ClipboardGetData)
 CALLBACK_FUNC_DECL(ClipboardSetData)
 {
     INC_STATS("DOM.Clipboard.setData()");
-    Clipboard* clipboard = V8Proxy::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
+    Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
 
     if (args.Length() != 2)
         return throwError("setData: Invalid number of arguments", V8Proxy::SyntaxError);
@@ -112,7 +112,7 @@ CALLBACK_FUNC_DECL(ClipboardSetData)
 CALLBACK_FUNC_DECL(ClipboardSetDragImage)
 {
     INC_STATS("DOM.Clipboard.setDragImage()");
-    Clipboard* clipboard = V8Proxy::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
+    Clipboard* clipboard = V8DOMWrapper::convertToNativeObject<Clipboard>(V8ClassIndex::CLIPBOARD, args.Holder());
 
     if (!clipboard->isForDragging())
         return v8::Undefined();
@@ -125,7 +125,7 @@ CALLBACK_FUNC_DECL(ClipboardSetDragImage)
 
     Node* node = 0;
     if (V8Node::HasInstance(args[0]))
-        node = V8Proxy::convertDOMWrapperToNode<Node>(args[0]);
+        node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]);
 
     if (!node || !node->isElementNode())
         return throwError("setDragImageFromElement: Invalid first argument");

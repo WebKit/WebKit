@@ -53,7 +53,7 @@ CALLBACK_FUNC_DECL(SQLResultSetRowListItem)
         return v8::Undefined();
     }
 
-    SQLResultSetRowList* rowList = V8Proxy::convertToNativeObject<SQLResultSetRowList>(V8ClassIndex::SQLRESULTSETROWLIST, args.Holder());
+    SQLResultSetRowList* rowList = V8DOMWrapper::convertToNativeObject<SQLResultSetRowList>(V8ClassIndex::SQLRESULTSETROWLIST, args.Holder());
 
     unsigned long index = args[0]->IntegerValue();
     if (index < 0 || index >= rowList->length()) {

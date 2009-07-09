@@ -69,7 +69,7 @@ short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
     v8::Handle<v8::Object> object = v8::Context::GetCurrent()->Global();
     v8::Handle<v8::Function> callback = v8::Handle<v8::Function>::Cast(m_filter);
     OwnArrayPtr<v8::Handle<v8::Value> > args(new v8::Handle<v8::Value>[1]);
-    args[0] = V8Proxy::convertToV8Object(V8ClassIndex::NODE, node);
+    args[0] = V8DOMWrapper::convertToV8Object(V8ClassIndex::NODE, node);
 
     V8Proxy* proxy = V8Proxy::retrieve();
     ASSERT(proxy);

@@ -43,39 +43,39 @@ namespace WebCore {
 
 ACCESSOR_SETTER(EventReturnValue)
 {
-    Event* event = V8Proxy::convertDOMWrapperToNative<Event>(info.Holder());
+    Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
     event->setDefaultPrevented(!value->BooleanValue());
 }
 
 ACCESSOR_GETTER(EventDataTransfer)
 {
-    Event* event = V8Proxy::convertDOMWrapperToNative<Event>(info.Holder());
+    Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
 
     if (event->isDragEvent())
-        return V8Proxy::convertToV8Object(V8ClassIndex::CLIPBOARD, static_cast<MouseEvent*>(event)->clipboard());
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CLIPBOARD, static_cast<MouseEvent*>(event)->clipboard());
 
     return v8::Undefined();
 }
 
 ACCESSOR_GETTER(EventClipboardData)
 {
-    Event* event = V8Proxy::convertDOMWrapperToNative<Event>(info.Holder());
+    Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
 
     if (event->isClipboardEvent())
-        return V8Proxy::convertToV8Object(V8ClassIndex::CLIPBOARD, static_cast<ClipboardEvent*>(event)->clipboard());
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CLIPBOARD, static_cast<ClipboardEvent*>(event)->clipboard());
 
     return v8::Undefined();
 }
 
 ACCESSOR_GETTER(EventSrcElement)
 {
-    Event* event = V8Proxy::convertDOMWrapperToNative<Event>(info.Holder());
-    return V8Proxy::convertEventTargetToV8Object(event->target());
+    Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
+    return V8DOMWrapper::convertEventTargetToV8Object(event->target());
 }
 
 ACCESSOR_GETTER(EventReturnValue)
 {
-    Event* event = V8Proxy::convertDOMWrapperToNative<Event>(info.Holder());
+    Event* event = V8DOMWrapper::convertDOMWrapperToNative<Event>(info.Holder());
     return event->defaultPrevented() ? v8::False() : v8::True();
 }
 

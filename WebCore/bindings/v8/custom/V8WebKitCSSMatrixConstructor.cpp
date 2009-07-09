@@ -59,7 +59,7 @@ CALLBACK_FUNC_DECL(WebKitCSSMatrixConstructor)
         throwError(ec);
 
     // Transform the holder into a wrapper object for the matrix.
-    V8Proxy::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::WEBKITCSSMATRIX), matrix.get());
+    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::WEBKITCSSMATRIX), matrix.get());
     return toV8(matrix.release(), args.Holder());
 }
 

@@ -55,15 +55,15 @@ CALLBACK_FUNC_DECL(HTMLAudioElementConstructor)
 
     // Make sure the document is added to the DOM Node map. Otherwise, the HTMLAudioElement instance
     // may end up being the only node in the map and get garbage-ccollected prematurely.
-    V8Proxy::convertNodeToV8Object(document);
+    V8DOMWrapper::convertNodeToV8Object(document);
 
     RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(HTMLNames::audioTag, V8Proxy::retrieveFrame()->document());
     if (args.Length() > 0)
         audio->setSrc(toWebCoreString(args[0]));
 
-    V8Proxy::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::NODE), audio.get());
+    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::NODE), audio.get());
     audio->ref();
-    V8Proxy::setJSWrapperForDOMNode(audio.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setJSWrapperForDOMNode(audio.get(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
 }
 

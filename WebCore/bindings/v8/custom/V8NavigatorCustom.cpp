@@ -41,7 +41,7 @@ ACCESSOR_GETTER(NavigatorAppVersion)
 {
     INC_STATS("DOM.Navigator.appVersion");
     v8::Handle<v8::Object> holder = info.Holder();
-    Navigator* navigator = V8Proxy::convertToNativeObject<Navigator>(V8ClassIndex::NAVIGATOR, holder);
+    Navigator* navigator = V8DOMWrapper::convertToNativeObject<Navigator>(V8ClassIndex::NAVIGATOR, holder);
     return v8StringOrUndefined(navigator->appVersion());
 }
 

@@ -59,11 +59,11 @@ CALLBACK_FUNC_DECL(XMLHttpRequestConstructor)
 #endif
         context = V8Proxy::retrieveFrame()->document();
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
-    V8Proxy::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::XMLHTTPREQUEST), xmlHttpRequest.get());
+    V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::XMLHTTPREQUEST), xmlHttpRequest.get());
 
     // Add object to the wrapper map.
     xmlHttpRequest->ref();
-    V8Proxy::setJSWrapperForActiveDOMObject(xmlHttpRequest.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(xmlHttpRequest.get(), v8::Persistent<v8::Object>::New(args.Holder()));
     return args.Holder();
 }
 

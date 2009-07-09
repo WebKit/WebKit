@@ -62,7 +62,7 @@ CALLBACK_FUNC_DECL(DatabaseTransaction)
         return v8::Undefined();
     }
 
-    Database* database = V8Proxy::convertToNativeObject<Database>(V8ClassIndex::DATABASE, args.Holder());
+    Database* database = V8DOMWrapper::convertToNativeObject<Database>(V8ClassIndex::DATABASE, args.Holder());
 
     Frame* frame = V8Proxy::retrieveFrame();
 

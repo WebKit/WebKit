@@ -46,7 +46,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(SVGMatrixInverse)
 {
     INC_STATS("DOM.SVGMatrix.inverse()");
-    TransformationMatrix matrix = *V8Proxy::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, args.Holder());
+    TransformationMatrix matrix = *V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, args.Holder());
     ExceptionCode ec = 0;
     TransformationMatrix result = matrix.inverse();
 
@@ -58,13 +58,13 @@ CALLBACK_FUNC_DECL(SVGMatrixInverse)
         return v8::Handle<v8::Value>();
     }
 
-    return V8Proxy::convertToV8Object(V8ClassIndex::SVGMATRIX, new V8SVGStaticPODTypeWrapper<TransformationMatrix>(result));
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, new V8SVGStaticPODTypeWrapper<TransformationMatrix>(result));
 }
 
 CALLBACK_FUNC_DECL(SVGMatrixRotateFromVector)
 {
     INC_STATS("DOM.SVGMatrix.rotateFromVector()");
-    TransformationMatrix matrix = *V8Proxy::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, args.Holder());
+    TransformationMatrix matrix = *V8DOMWrapper::convertToNativeObject<V8SVGPODTypeWrapper<TransformationMatrix> >(V8ClassIndex::SVGMATRIX, args.Holder());
     ExceptionCode ec = 0;
     float x = toFloat(args[0]);
     float y = toFloat(args[1]);
@@ -78,7 +78,7 @@ CALLBACK_FUNC_DECL(SVGMatrixRotateFromVector)
         return v8::Handle<v8::Value>();
     }
 
-    return V8Proxy::convertToV8Object(V8ClassIndex::SVGMATRIX, new V8SVGStaticPODTypeWrapper<TransformationMatrix>(result));
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, new V8SVGStaticPODTypeWrapper<TransformationMatrix>(result));
 }
 
 } // namespace WebCore
