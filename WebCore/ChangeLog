@@ -1,3 +1,58 @@
+2009-07-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [V8] Move V8DOMWrapper to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=27121
+
+        * bindings/v8/V8DOMWrapper.cpp: Added.
+        (WebCore::GetToStringName):
+        (WebCore::ConstructorToString):
+        (WebCore::V8DOMWrapper::convertSVGElementInstanceToV8Object):
+        (WebCore::V8DOMWrapper::convertSVGObjectWithContextToV8Object):
+        (WebCore::V8DOMWrapper::domObjectHasJSWrapper):
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMObject):
+        (WebCore::V8DOMWrapper::setJSWrapperForActiveDOMObject):
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMNode):
+        (WebCore::V8DOMWrapper::getTemplate):
+        (WebCore::V8DOMWrapper::convertToV8Object):
+        (WebCore::V8DOMWrapper::setHiddenWindowReference):
+        (WebCore::V8DOMWrapper::domWrapperType):
+        (WebCore::V8DOMWrapper::convertToNativeObjectImpl):
+        (WebCore::V8DOMWrapper::convertToSVGPODTypeImpl):
+        (WebCore::V8DOMWrapper::lookupDOMWrapper):
+        (WebCore::V8DOMWrapper::convertDOMWrapperToNodeHelper):
+        (WebCore::V8DOMWrapper::wrapNativeNodeFilter):
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        (WebCore::V8DOMWrapper::setDOMWrapper):
+        (WebCore::V8DOMWrapper::maybeDOMWrapper):
+        (WebCore::V8DOMWrapper::isDOMEventWrapper):
+        (WebCore::V8DOMWrapper::isWrapperOfType):
+        (WebCore::V8DOMWrapper::htmlElementType):
+        (WebCore::V8DOMWrapper::svgElementType):
+        (WebCore::V8DOMWrapper::convertEventToV8Object):
+        (WebCore::):
+        (WebCore::V8DOMWrapper::convertNodeToV8Object):
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        (WebCore::V8DOMWrapper::convertEventListenerToV8Object):
+        (WebCore::V8DOMWrapper::convertDOMImplementationToV8Object):
+        (WebCore::V8DOMWrapper::convertStyleSheetToV8Object):
+        (WebCore::V8DOMWrapper::convertCSSValueToV8Object):
+        (WebCore::V8DOMWrapper::convertCSSRuleToV8Object):
+        (WebCore::V8DOMWrapper::convertWindowToV8Object):
+        * bindings/v8/V8DOMWrapper.h: Added.
+        (WebCore::V8DOMWrapper::convertDOMWrapperToNative):
+        (WebCore::V8DOMWrapper::wrapCPointer):
+        (WebCore::V8DOMWrapper::extractCPointer):
+        (WebCore::V8DOMWrapper::convertDOMWrapperToNode):
+        (WebCore::V8DOMWrapper::convertToV8Object):
+        (WebCore::V8DOMWrapper::convertToNativeObject):
+        (WebCore::V8DOMWrapper::convertToNativeEvent):
+        (WebCore::V8DOMWrapper::extractCPointerImpl):
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+
 2009-07-09  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Adele Peterson.
