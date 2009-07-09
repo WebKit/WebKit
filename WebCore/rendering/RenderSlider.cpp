@@ -126,42 +126,51 @@ private:
     virtual bool isShadowNode() const { return true; }
     virtual Node* shadowParentNode() { return m_shadowParent; }
 
+    FloatPoint m_offsetToThumb;
     Node* m_shadowParent;
-    FloatPoint m_initialClickPoint;       // initial click point in RenderSlider-local coordinates
-    int m_initialPosition;
     bool m_inDragMode;
 };
 
 SliderThumbElement::SliderThumbElement(Document* document, Node* shadowParent)
     : HTMLDivElement(divTag, document)
     , m_shadowParent(shadowParent)
-    , m_initialPosition(0)
     , m_inDragMode(false)
 {
 }
 
 void SliderThumbElement::defaultEventHandler(Event* event)
 {
+    if (!event->isMouseEvent()) {
+        HTMLDivElement::defaultEventHandler(event);
+        return;
+    }
+
+    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+    bool isLeftButton = mouseEvent->button() == LeftButton;
     const AtomicString& eventType = event->type();
-    if (eventType == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
-        MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-        RenderSlider* slider;
-        if (document()->frame() && renderer() &&
-                (slider = static_cast<RenderSlider*>(renderer()->parent())) &&
-                slider->mouseEventIsInThumb(mouseEvent)) {
-            
-            // Cache the initial point where the mouse down occurred, in slider coordinates
-            m_initialClickPoint = slider->absoluteToLocal(mouseEvent->absoluteLocation(), false, true);
-            // Cache the initial position of the thumb.
-            m_initialPosition = slider->currentPosition();
-            m_inDragMode = true;
-            
-            document()->frame()->eventHandler()->setCapturingMouseEventsNode(m_shadowParent);
-            
-            event->setDefaultHandled();
-            return;
+
+    if (eventType == eventNames().mousedownEvent && isLeftButton) {
+        if (document()->frame() && renderer()) {
+            RenderSlider* slider = static_cast<RenderSlider*>(renderer()->parent());
+            if (slider) {
+                if (slider->mouseEventIsInThumb(mouseEvent)) {
+                    // We selected the thumb, we want the cursor to always stay at
+                    // the same position relative to the thumb.
+                    m_offsetToThumb = slider->mouseEventOffsetToThumb(mouseEvent);
+                } else {
+                    // We are outside the thumb, move the thumb to the point were
+                    // we clicked. We'll be exactly at the center of the thumb.
+                    m_offsetToThumb.setX(0);
+                    m_offsetToThumb.setY(0);
+                }
+
+                m_inDragMode = true;
+                document()->frame()->eventHandler()->setCapturingMouseEventsNode(m_shadowParent);
+                event->setDefaultHandled();
+                return;
+            }
         }
-    } else if (eventType == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
+    } else if (eventType == eventNames().mouseupEvent && isLeftButton) {
         if (m_inDragMode) {
             if (Frame* frame = document()->frame())
                 frame->eventHandler()->setCapturingMouseEventsNode(0);      
@@ -169,18 +178,16 @@ void SliderThumbElement::defaultEventHandler(Event* event)
             event->setDefaultHandled();
             return;
         }
-    } else if (eventType == eventNames().mousemoveEvent && event->isMouseEvent()) {
+    } else if (eventType == eventNames().mousemoveEvent) {
         if (m_inDragMode && renderer() && renderer()->parent()) {
-            // Move the slider
-            MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
             RenderSlider* slider = static_cast<RenderSlider*>(renderer()->parent());
-
-            FloatPoint curPoint = slider->absoluteToLocal(mouseEvent->absoluteLocation(), false, true);
-            IntPoint eventOffset(m_initialPosition + curPoint.x() - m_initialClickPoint.x() + renderBox()->width() / 2, 
-                m_initialPosition + curPoint.y() - m_initialClickPoint.y() + renderBox()->height() / 2);
-            slider->setValueForPosition(slider->positionForOffset(eventOffset));
-            event->setDefaultHandled();
-            return;
+            if (slider) {
+                FloatPoint curPoint = slider->absoluteToLocal(mouseEvent->absoluteLocation(), false, true);
+                IntPoint eventOffset(curPoint.x() + m_offsetToThumb.x(), curPoint.y() + m_offsetToThumb.y());
+                slider->setValueForPosition(slider->positionForOffset(eventOffset));
+                event->setDefaultHandled();
+                return;
+            }
         }
     }
 
@@ -385,6 +392,17 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
     FloatPoint localPoint = m_thumb->renderBox()->absoluteToLocal(evt->absoluteLocation(), false, true);
     IntRect thumbBounds = m_thumb->renderBox()->borderBoxRect();
     return thumbBounds.contains(roundedIntPoint(localPoint));
+}
+
+FloatPoint RenderSlider::mouseEventOffsetToThumb(MouseEvent* evt)
+{
+    ASSERT (m_thumb && m_thumb->renderer());
+    FloatPoint localPoint = m_thumb->renderBox()->absoluteToLocal(evt->absoluteLocation(), false, true);
+    IntRect thumbBounds = m_thumb->renderBox()->borderBoxRect();
+    FloatPoint offset;
+    offset.setX(thumbBounds.x() + thumbBounds.width() / 2 - localPoint.x());
+    offset.setY(thumbBounds.y() + thumbBounds.height() / 2 - localPoint.y());
+    return offset;
 }
 
 void RenderSlider::setValueForPosition(int position)

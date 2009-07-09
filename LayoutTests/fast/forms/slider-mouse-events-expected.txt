@@ -1,8 +1,18 @@
-This tests that slider controls get mousedown, mousemove, input, and mouseup events.
+This tests that slider controls get mousedown, mousemove, input, and mouseup events and properly set its value.
 
 mousemove
 mousedown
+0
 mousemove
 input
 mouseup
+38
+mousemove
+mousedown
+input
+3
+mousemove
+input
+mouseup
+20
 

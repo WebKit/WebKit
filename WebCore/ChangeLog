@@ -2,6 +2,31 @@
 
         Reviewed by Simon Fraser.
 
+        Make sure we can click outside the slider thumb and start dragging.
+        https://bugs.webkit.org/show_bug.cgi?id=26229
+
+        Previously we were assuming that if the thumb hasn't been clicked, we
+        wouldn't issue any value change upon dragging.
+
+        We need to handle the two different cases:
+        - Clicked in the thumb, we need to make sure the cursor is always pointing
+        the same slider thumb point.
+        - Clicked outside, the cursor should always be pointing to the center of
+        the thumb.
+
+        For simplicity, we don't remember the original point of the mouse down,
+        but a vector between that point and the thumb.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::SliderThumbElement::SliderThumbElement):
+        (WebCore::SliderThumbElement::defaultEventHandler):
+        (WebCore::RenderSlider::mouseEventVectorToThumb): Utility function.
+        * rendering/RenderSlider.h:
+
+2009-07-08  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
         https://bugs.webkit.org/show_bug.cgi?id=27100
         <rdar://problem/7042621>
 

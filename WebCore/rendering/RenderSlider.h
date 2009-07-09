@@ -47,6 +47,7 @@ namespace WebCore {
         virtual void updateFromElement();
 
         bool mouseEventIsInThumb(MouseEvent*);
+        FloatPoint mouseEventOffsetToThumb(MouseEvent*);
 
         void setValueForPosition(int position);
         void setPositionFromValue();
