@@ -1373,10 +1373,12 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/LocalStorageThread.h \
         storage/Storage.h \
         storage/StorageArea.h \
+        storage/StorageAreaImpl.h \
         storage/StorageAreaSync.h \
         storage/StorageEvent.h \
         storage/StorageMap.h \
         storage/StorageNamespace.h \
+        storage/StorageNamespaceImpl.h \
         storage/StorageSyncManager.h
 
     SOURCES += \
@@ -1385,10 +1387,12 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/LocalStorageThread.cpp \
         storage/Storage.cpp \
         storage/StorageArea.cpp \
+        storage/StorageAreaImpl.cpp \
         storage/StorageAreaSync.cpp \
         storage/StorageEvent.cpp \
         storage/StorageMap.cpp \
         storage/StorageNamespace.cpp \
+        storage/StorageNamespaceImpl.cpp \
         storage/StorageSyncManager.cpp
 
     IDL_BINDINGS += \

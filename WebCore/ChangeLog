@@ -1,3 +1,9 @@
+2009-07-09  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build.
+
+        * WebCore.pro: Add new storage impl files to the build.
+
 2009-07-08  Adam Barth  <abarth@webkit.org>
 
         Rubber stamped by Eric Seidel.
