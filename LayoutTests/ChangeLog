@@ -1,3 +1,26 @@
+2009-07-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Possible crashes when mouse clicks not dispatched because range input destroyed while 
+        thumb is being dragged (e.g. scrub to end of movie)
+        <rdar://problem/7037494> 
+        https://bugs.webkit.org/show_bug.cgi?id=27101
+
+        Tests deleting a control while capturing mouse events.
+
+        * fast/forms/search-delete-while-cancel-button-clicked-expected.txt: Added.
+        * fast/forms/search-delete-while-cancel-button-clicked.html: Added.
+        * fast/forms/slider-delete-while-dragging-thumb-expected.txt: Added.
+        * fast/forms/slider-delete-while-dragging-thumb.html: Added.
+        * media/audio-delete-while-slider-thumb-clicked-expected.txt: Added.
+        * media/audio-delete-while-slider-thumb-clicked.html: Added.
+        * media/audio-delete-while-step-button-clicked-expected.txt: Added.
+        * media/audio-delete-while-step-button-clicked.html: Added.
+
+        * platform/mac-snowleopard/Skipped:
+            Skip the new media controller tests until <rdar://problem/6502936> is fixed.
+
 2009-07-08  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Simon Fraser.

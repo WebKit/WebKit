@@ -29,6 +29,8 @@ svg/hixie/perf/007.xml
 # <rdar://problem/6502936> Update run-webkit-tests to deal with new media controller look
 # has been fixed
 media/audio-controls-rendering.html
+media/audio-delete-while-slider-thumb-clicked.html
+media/audio-delete-while-step-button-clicked.html
 media/controls-strict.html
 media/video-controls-rendering.html
 media/video-controls-transformed.html

@@ -121,6 +121,7 @@ public:
     bool inDragMode() const { return m_inDragMode; }
 
     virtual void defaultEventHandler(Event*);
+    virtual void detach();
 
 private:        
     virtual bool isShadowNode() const { return true; }
@@ -192,6 +193,15 @@ void SliderThumbElement::defaultEventHandler(Event* event)
     }
 
     HTMLDivElement::defaultEventHandler(event);
+}
+
+void SliderThumbElement::detach()
+{
+    if (m_inDragMode) {
+        if (Frame* frame = document()->frame())
+            frame->eventHandler()->setCapturingMouseEventsNode(0);      
+    }
+    HTMLDivElement::detach();
 }
 
 RenderSlider::RenderSlider(HTMLInputElement* element)

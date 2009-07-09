@@ -420,6 +420,16 @@ void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonE
     m_mediaElement->setCurrentTime(m_mediaElement->currentTime() + seekTime, ec);
 }
 
+void MediaControlSeekButtonElement::detach()
+{
+    if (m_capturing) {
+        if (Frame* frame = document()->frame())
+            frame->eventHandler()->setCapturingMouseEventsNode(0);      
+    }
+    MediaControlInputElement::detach();
+}
+
+
 // ----------------------------
 
 MediaControlRewindButtonElement::MediaControlRewindButtonElement(Document* doc, HTMLMediaElement* element)

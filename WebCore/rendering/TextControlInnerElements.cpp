@@ -172,6 +172,16 @@ SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document* doc)
 {
 }
 
+void SearchFieldCancelButtonElement::detach()
+{
+    if (m_capturing) {
+        if (Frame* frame = document()->frame())
+            frame->eventHandler()->setCapturingMouseEventsNode(0);      
+    }
+    TextControlInnerElement::detach();
+}
+
+
 void SearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
 {
     // If the element is visible, on mouseup, clear the value, and set selection

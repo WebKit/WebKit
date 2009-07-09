@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            function log(msg)
+            {
+                var console = document.getElementById('console');
+                console.innerHTML = console.innerHTML + msg + "<br>";
+            }
+            
+            function buttonClick()
+            {
+                if (document.getElementById('audio'))
+                    log("<br>FAIL: audio element not deleted!!");
+
+                log("<br>clicking button");
+
+                // click the button
+                var button = document.getElementById('button');
+                eventSender.mouseMoveTo(button.offsetLeft + 20, button.offsetTop + 7);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+
+                layoutTestController.notifyDone();
+            }
+            
+            function deleteAudio()
+            {
+                // delete the search
+                log("<br>deleting audio element");
+                var audio = document.getElementById('audio');
+                audio.parentNode.removeChild(audio);
+
+                setTimeout(buttonClick, 10);
+            }
+            
+            function drag()
+            {
+                if (!window.layoutTestController)
+                    return;
+
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+
+                var audio = document.getElementById('audio');
+
+                var middle = audio.offsetLeft + (audio.offsetWidth / 2);
+                var bottom = audio.offsetTop + audio.offsetHeight;
+                
+                var x = middle + 16 + 16 + 8;
+                var y = bottom - 8;
+
+                // drag slider, leave the mouse down
+                log("clicking in controller");
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+
+                log("clicking on thumb");
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(x, y + 20);
+
+                setTimeout(deleteAudio, 10);
+            }
+
+        </script>
+    </head>
+    <body >
+        This tests that events don't continue to target a slider thumb if the media element is deleted while scrubbing.
+        <br>
+        <input type="button" id="button" value="Click Me!" onmouseup="log('button click!')"> 
+        <br>
+        <audio id="audio" ontimeupdate="log('timeupdate')" onload="drag()" controls src="content/test.wav"></audio><br><br>
+        <div id="console"></div>
+    </body>
+</html>

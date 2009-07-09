@@ -63,6 +63,7 @@ class SearchFieldCancelButtonElement : public TextControlInnerElement {
 public:
     SearchFieldCancelButtonElement(Document*);
     virtual void defaultEventHandler(Event*);
+    virtual void detach();
 private:
     bool m_capturing;
 };

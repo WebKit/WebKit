@@ -163,6 +163,7 @@ class MediaControlSeekButtonElement : public MediaControlInputElement {
 public:
     MediaControlSeekButtonElement(Document*, HTMLMediaElement*, bool forward);
     virtual void defaultEventHandler(Event*);
+    virtual void detach();
     void seekTimerFired(Timer<MediaControlSeekButtonElement>*);
 
 private:
