@@ -1557,11 +1557,15 @@ GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContent
 
 void GraphicsLayerCA::updateContentsTransform()
 {
+#if !HAVE_MODERN_QUARTZCORE
     if (contentsOrientation() == CompositingCoordinatesBottomUp) {
         CGAffineTransform contentsTransform = CGAffineTransformMakeScale(1, -1);
         contentsTransform = CGAffineTransformTranslate(contentsTransform, 0, -[m_layer.get() bounds].size.height);
         [m_layer.get() setContentsTransform:contentsTransform];
     }
+#else
+    ASSERT(contentsOrientation() == CompositingCoordinatesTopDown);
+#endif
 }
 
 void GraphicsLayerCA::setContentsLayer(WebLayer* contentsLayer)

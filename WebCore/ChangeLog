@@ -118,6 +118,20 @@
 
 2009-07-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Build fix for SnowLeopard.
+        
+        Avoid using the contentsTransform methods if not on Leopard, because
+        we don't need to call them.
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::updateContentsTransform):
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer setNeedsDisplayInRect:]):
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer setNeedsDisplayInRect:]):
+
+2009-07-09  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
 
         Improve the appearance of text in compositing layers when -[CALayer geometryFlipped]
