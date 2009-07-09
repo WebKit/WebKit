@@ -75,6 +75,16 @@
 
 2009-07-08  Pierre d'Herbemont  <pdherbemont@apple.com>
 
+        Rubber-stamped by Simon Fraser.
+
+        Fix the media/controls-after-reload.html and media/controls-styling.html
+        on windows. (Needed a line at end of file)
+
+        * platform/win/media/controls-after-reload-expected.txt:
+        * platform/win/media/controls-styling-expected.txt:
+
+2009-07-08  Pierre d'Herbemont  <pdherbemont@apple.com>
+
         Reviewed by Simon Fraser.
 
         Add special test results for media/controls-after-reload.html
