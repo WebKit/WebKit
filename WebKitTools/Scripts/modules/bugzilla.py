@@ -1,4 +1,5 @@
 # Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (c) 2009 Apple Inc. All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -33,6 +34,8 @@ import re
 import subprocess
 import sys
 import urllib2
+
+from datetime import datetime # used in timestamp()
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/modules
 # so this import should always succeed.
@@ -70,6 +73,9 @@ def read_config(key):
         return None
     return value.rstrip('\n')
 
+def timestamp():
+    return datetime.now().strftime("%Y%m%d%H%M%S")
+
 class Bugzilla:
     def __init__(self, dryrun=False):
         self.dryrun = dryrun
@@ -81,6 +87,8 @@ class Bugzilla:
         self.browser = Browser()
         # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script
         self.browser.set_handle_robots(False)
+
+    bug_server_regex = "https?\://bugs\.webkit\.org/"
 
     # This could eventually be a text file
     reviewer_usernames_to_full_names = {
@@ -246,7 +254,7 @@ class Bugzilla:
             log(comment_text)
             self.browser['comment'] = comment_text
         self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
-        self.browser.add_file(patch_file_object, "text/plain", "bugzilla_requires_a_filename.patch")
+        self.browser.add_file(patch_file_object, "text/plain", "bug-%s-%s.patch" % (bug_id, timestamp()))
         self.browser.submit()
 
     def obsolete_attachment(self, attachment_id, comment_text = None):

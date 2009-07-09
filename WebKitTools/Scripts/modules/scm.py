@@ -1,4 +1,5 @@
 # Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (c) 2009 Apple Inc. All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -154,6 +155,9 @@ class SCM:
     def supports_local_commits():
         raise NotImplementedError, "subclasses must implement"
 
+    def create_patch_from_local_commit(self, commit_id):
+        pass
+
     def commit_locally_with_message(self, message):
         pass
 
@@ -290,7 +294,10 @@ class Git(SCM):
         return self.push_local_commits_to_server()
 
     # Git-specific methods:
-    
+
+    def create_patch_from_local_commit(self, commit_id):
+        return self.run_command(['git', 'diff', commit_id + "^.." + commit_id])
+
     def commit_locally_with_message(self, message):
         self.run_command(['git', 'commit', '--all', '-F', '-'], input=message)
         

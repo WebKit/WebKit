@@ -1,3 +1,50 @@
+2009-07-08  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 27062: bugzilla-tool: post-commits should read bug id from commit log and actually work
+
+        <https://bugs.webkit.org/show_bug.cgi?id=27062>
+
+        Reviewed by Eric Seidel.
+
+        Removed the required BUGID argument from the "post-commits"
+        command and replaced it with a -b|--bug-id switch or parsing the
+        commit log message for the bug URL.  Fixed a bug in the
+        "post-commits" that would ignore the COMMITISH used and post a
+        patch of local changes against HEAD.  Added --no-commit switch
+        to disable using the bulk of the ChangeLog entry as the comment
+        for the new patch.
+
+        * Scripts/bugzilla-tool:
+        (bug_id_from_commit_message): Added.  Returns a bug id from the
+        commit log message, thus enforcing the need for a bug URL in the
+        message.
+        (PostCommitsAsPatchesToBug.__init__): Updated help description
+        to match new behavior of pulling bug ids from commit log
+        messages instead of from the command line.  Added -b|--bug-id
+        switch and --no-comment switch.
+        (PostCommitsAsPatchesToBug.execute): Updated to use
+        bug_id_from_commit_message() to pull bug ids from commit log
+        messages.  Also switched from SCM.create_patch() to use
+        SCM.create_patch_from_local_commit() to fix a bug where local
+        repository changes were posted as a patch instead of the
+        specific COMMITISH.  Fall back to -b|--bug-id if no URL is found
+        in the commit log message.  Don't specify a comment for the
+        patch if --no-comment is used.  Set cherry_pick argument to True
+        for Git.commit_ids_from_range_arguments() since we don't want
+        implicit commit range behavior for this command.
+
+        * Scripts/modules/bugzilla.py: Import datetime module.
+        (timestamp): Added.  Returns a timestamp in the form of
+        "YYYYMMDDhhmmss".
+        (Bugzilla.bug_server_regex): Added static attribute.
+        (Bugzilla.add_patch_to_bug): Construct a more meaningful patch
+        file name using the bug_id and timestamp().
+
+        * Scripts/modules/scm.py:
+        (SCM.create_patch_from_local_commit): Added.
+        (Git.create_patch_from_local_commit): Added.  Runs "git diff" to
+        return a patch for the given commit_id.
+
 2009-07-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Mark Rowe.

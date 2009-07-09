@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # Copyright (c) 2009, Google Inc. All rights reserved.
+# Copyright (c) 2009 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -100,6 +101,10 @@ def modified_changelogs(scm):
         if os.path.basename(path) == "ChangeLog":
             changelog_paths.append(path)
     return changelog_paths
+
+def bug_id_from_commit_message(commit_message):
+    match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", commit_message, re.MULTILINE)
+    return match.group('bug_id')
 
 def commit_message_for_this_commit(scm):
     changelog_paths = modified_changelogs(scm)
@@ -407,37 +412,45 @@ class PostDiffAsPatchToBug(Command):
 class PostCommitsAsPatchesToBug(Command):
     def __init__(self):
         options = [
+            make_option("-b", "--bug-id", action="store", type="string", dest="bug_id", help="Specify bug id if no URL is provided in the commit log."),
+            make_option("--no-comment", action="store_false", dest="comment", default=True, help="Do not use commit log message as a comment for the patch."),
             make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting new ones."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
         ]
-        Command.__init__(self, 'Attaches a range of local commits to a bug as patch files.', 'BUGID COMMITISH', options=options)
+        Command.__init__(self, 'Attaches a range of local commits to bugs as patch files.', 'COMMITISH', options=options)
 
     def execute(self, options, args, tool):
-        bug_id = args[0]
-        
         if not tool.scm().supports_local_commits():
             error(tool.scm().display_name() + " does not support local commits.")
-        
-        commit_ids = tool.scm().commit_ids_from_range_arguments(args[1:])
-        
+
+        commit_ids = tool.scm().commit_ids_from_range_arguments(args, cherry_pick=True)
+
         if len(commit_ids) > 10:
-            error("Are you sure you want to attach %s to bug %s?" % (pluralize('patch', len(commit_ids)), bug_id))
+            error("Are you sure you want to attach %s patches?" % (pluralize('patch', len(commit_ids))))
             # Could add a --patches-limit option.
 
-        if options.obsolete_patches:
-            PostDiffAsPatchToBug.obsolete_patches_on_bug(bug_id, tool.bugs)
-        
-        log("Attaching %s as patches to bug %s" % (pluralize('commit', len(commit_ids)), bug_id))
+        have_obsoleted_patches = set()
         for commit_id in commit_ids:
             commit_message = tool.scm().commit_message_for_commit(commit_id)
             commit_lines = commit_message.splitlines()
-            
+
+            bug_id = options.bug_id or bug_id_from_commit_message(commit_message)
+            if not bug_id:
+                log("Skipping %s: No bug id found in commit log or specified with --bug-id." % commit_id)
+                continue
+
+            if options.obsolete_patches and bug_id not in have_obsoleted_patches:
+                PostDiffAsPatchToBug.obsolete_patches_on_bug(bug_id, tool.bugs)
+                have_obsoleted_patches.update(bug_id)
+
             description = commit_lines[0]
-            comment_text = "\n".join(commit_lines[1:])
-            comment_text += "---\n"
-            comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
-        
-            diff = tool.scm().create_patch()
+            comment_text = None
+            if (options.comment):
+                comment_text = "\n".join(commit_lines[1:])
+                comment_text += "\n---\n"
+                comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
+
+            diff = tool.scm().create_patch_from_local_commit(commit_id)
             diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review)
 
