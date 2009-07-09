@@ -1309,13 +1309,13 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
             return false;
         }
         
-        // check for one-dimensional image
-        RenderImage* image = toRenderImage(m_renderer);
-        if (image->height() <= 1 || image->width() <= 1)
-            return true;
-        
-        // check whether rendered image was stretched from one-dimensional file image
         if (isNativeImage()) {
+            // check for one-dimensional image
+            RenderImage* image = toRenderImage(m_renderer);
+            if (image->height() <= 1 || image->width() <= 1)
+                return true;
+            
+            // check whether rendered image was stretched from one-dimensional file image
             if (image->cachedImage()) {
                 IntSize imageSize = image->cachedImage()->imageSize(image->view()->zoomFactor());
                 return imageSize.height() <= 1 || imageSize.width() <= 1;
