@@ -694,7 +694,7 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
     return hr;
 }
 
-void WebHistory::visitedURL(const KURL& url, const String& title, const String& httpMethod, bool wasFailure)
+void WebHistory::visitedURL(const KURL& url, const String& title, const String& httpMethod, bool wasFailure, bool increaseVisitCount)
 {
     RetainPtr<CFStringRef> urlString(AdoptCF, url.string().createCFString());
 
@@ -707,7 +707,7 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
         // Remove the item from date caches before changing its last visited date.  Otherwise we might get duplicate entries
         // as seen in <rdar://problem/6570573>.
         removeItemFromDateCaches(entry);
-        entryPrivate->visitedWithTitle(BString(title));
+        entryPrivate->visitedWithTitle(BString(title), increaseVisitCount);
     } else {
         COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
         if (!item)

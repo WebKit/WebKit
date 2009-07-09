@@ -118,7 +118,7 @@ public:
 
     // WebHistory
     static WebHistory* sharedHistory();
-    void visitedURL(const WebCore::KURL&, const WebCore::String& title, const WebCore::String& httpMethod, bool wasFailure);
+    void visitedURL(const WebCore::KURL&, const WebCore::String& title, const WebCore::String& httpMethod, bool wasFailure, bool increaseVisitCount);
     void addVisitedLinksToPageGroup(WebCore::PageGroup&);
 
     COMPtr<IWebHistoryItem> itemForURLString(const WebCore::String&) const;

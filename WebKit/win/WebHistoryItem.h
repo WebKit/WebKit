@@ -102,7 +102,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE lastVisitWasHTTPNonGet(BOOL* HTTPNonGet);
     virtual HRESULT STDMETHODCALLTYPE setLastVisitWasHTTPNonGet(BOOL HTTPNonGet);
     virtual HRESULT STDMETHODCALLTYPE redirectURLs(IEnumVARIANT**);
-    virtual HRESULT STDMETHODCALLTYPE visitedWithTitle(BSTR title);
+    virtual HRESULT STDMETHODCALLTYPE visitedWithTitle(BSTR title, BOOL increaseVisitCount);
     virtual HRESULT STDMETHODCALLTYPE getDailyVisitCounts(int* number, int** counts);
     virtual HRESULT STDMETHODCALLTYPE getWeeklyVisitCounts(int* number, int** counts);
     virtual HRESULT STDMETHODCALLTYPE recordInitialVisit();

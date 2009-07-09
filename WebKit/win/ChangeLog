@@ -1,3 +1,23 @@
+2009-07-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6921671> Visit count shouldn't be incremented by redirects.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: (WebFrameLoaderClient::updateGlobalHistory):
+        Do not increase visit count if there is a redirect source. As a result, only pages that were
+        explicitly visited by the user (by typing a URL, choosing one from bookmarks, or clicking
+        a link) will be counted.
+
+        * Interfaces/IWebHistoryItemPrivate.idl:
+        * WebHistory.cpp:
+        (WebHistory::visitedURL):
+        * WebHistory.h:
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::visitedWithTitle):
+        * WebHistoryItem.h:
+        Marshal this new argument all the way down to WebCore.
+
 2009-07-09  Beth Dakin and Jon Honeycutt <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
