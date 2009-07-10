@@ -1916,6 +1916,17 @@ webcoregtk_sources += \
 	WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
 
 # ---
+# Channel mesaging support
+# ---
+if ENABLE_CHANNEL_MESSAGING
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_CHANNEL_MESSAGING=1
+
+webcore_cppflags += \
+	-DENABLE_CHANNEL_MESSAGING=1
+
+endif # END ENABLE_CHANNEL_MESSAGING
+
+# ---
 # Freetype font backend
 # ---
 if USE_FREETYPE

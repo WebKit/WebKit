@@ -82,7 +82,6 @@ module threads {
 #if ENABLE_CHANNEL_MESSAGING
         attribute [JSCCustomGetter] MessageChannelConstructor MessageChannel;
 #endif
-
         attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest;
     };
 

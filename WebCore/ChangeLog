@@ -1,3 +1,16 @@
+2009-07-09  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, fix for previous commit.
+
+        The change http://trac.webkit.org/changeset/45695 did not correctly
+        enabled GTL and QT build flags. This caused layout tests failure.
+        This is speculative fix for those failures.
+
+        * GNUmakefile.am: added ENABLE_CHANNEL_MESSAGING flag.
+        * WebCore.pro: ditto.
+        * page/DOMWindow.idl: touched to cause recompile.
+        * workers/WorkerContext.idl: ditto.
+
 2009-07-09  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Alexey Proskuryakov.
