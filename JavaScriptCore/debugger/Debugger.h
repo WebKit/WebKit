@@ -38,7 +38,7 @@ namespace JSC {
         virtual ~Debugger();
 
         void attach(JSGlobalObject*);
-        void detach(JSGlobalObject*);
+        virtual void detach(JSGlobalObject*);
 
         virtual void sourceParsed(ExecState*, const SourceCode&, int errorLine, const UString& errorMsg) = 0;
         virtual void exception(const DebuggerCallFrame&, intptr_t sourceID, int lineno) = 0;

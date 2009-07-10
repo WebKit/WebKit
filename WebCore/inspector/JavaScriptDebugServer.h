@@ -39,6 +39,7 @@
 
 namespace JSC {
     class DebuggerCallFrame;
+    class JSGlobalObject;
 }
 
 namespace WebCore {
@@ -99,6 +100,8 @@ namespace WebCore {
 
         void dispatchFunctionToListeners(JavaScriptExecutionCallback, Page*);
         void pauseIfNeeded(Page*);
+        
+        virtual void detach(JSC::JSGlobalObject*);
 
         virtual void sourceParsed(JSC::ExecState*, const JSC::SourceCode&, int errorLine, const JSC::UString& errorMsg);
         virtual void callEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);

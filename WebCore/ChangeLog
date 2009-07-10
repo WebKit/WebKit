@@ -1,3 +1,20 @@
+2009-07-10  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::dynamicGlobalObject):
+        * inspector/JavaScriptCallFrame.h: New helper method, used below.
+
+        * inspector/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::detach): In the special case
+        where we detach from a window currently executing JavaScript,
+        manually tear down our representation of the JavaScript
+        call stack, since we won't get any more callbacks from JavaScriptCore
+        to automatically tear it down. It's too bad that WebCore is
+        responsible for this kind of tracking -- in the future, it would
+        be nice if more of the breakpoint handling was inside of JavaScriptCore.
+
 2009-07-10  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Antti Koivisto.

@@ -62,6 +62,14 @@ const JSC::ScopeChainNode* JavaScriptCallFrame::scopeChain() const
     return m_debuggerCallFrame.scopeChain();
 }
 
+JSC::JSGlobalObject* JavaScriptCallFrame::dynamicGlobalObject() const
+{
+    ASSERT(m_isValid);
+    if (!m_isValid)
+        return 0;
+    return m_debuggerCallFrame.dynamicGlobalObject();
+}
+
 String JavaScriptCallFrame::functionName() const
 {
     ASSERT(m_isValid);
