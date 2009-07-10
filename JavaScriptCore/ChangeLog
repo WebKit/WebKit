@@ -1,5 +1,12 @@
 2009-07-10  Mark Rowe  <mrowe@apple.com>
 
+        Second part of the "make Windows happier" dance.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-07-10  Mark Rowe  <mrowe@apple.com>
+
         Try and make the Windows build happy.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
