@@ -1,5 +1,13 @@
 2009-07-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed, build fix.
+
+        Windows build fix for the last change.
+
+        * wtf/dtoa.cpp: Forgot to include Vector.h
+
+2009-07-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin Adler.
 
         REGRESSION: crash in edge cases of floating point parsing.

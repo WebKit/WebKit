@@ -148,6 +148,7 @@
 #include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Vector.h>
 #include <wtf/Threading.h>
 
 #include <stdio.h>
