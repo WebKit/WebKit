@@ -239,8 +239,12 @@ void PluginView::performRequest(PluginRequest* request)
             m_streams.add(stream);
             stream->start();
         } else {
+            // If the target frame is our frame, we could destroy the
+            // PluginView, so we protect it. <rdar://problem/6991251>
+            RefPtr<PluginView> protect(this);
+
             m_parentFrame->loader()->load(request->frameLoadRequest().resourceRequest(), targetFrameName, false);
-      
+
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
                 PluginView::setCurrentPluginView(this);
