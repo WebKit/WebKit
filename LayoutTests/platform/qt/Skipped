@@ -10,6 +10,9 @@ fast/loader/subframe-navigate-during-main-frame-load.html
 fast/events/popup-blocking-click-in-iframe.html
 
 # -------- crashes
+fast/events/tabindex-focus-chain.html
+fast/loader/empty-embed-src-attribute.html
+fast/text/find-hidden-text.html
 
 # ------- missing eventSender.beginDragWithFiles
 editing/pasteboard/file-input-files-access.html
@@ -5142,7 +5145,6 @@ fast/events/stop-load-in-unload-handler-using-document-write.html
 fast/events/stop-load-in-unload-handler-using-window-stop.html
 fast/events/stopPropagation-submit.html
 fast/events/tabindex-focus-blur-all.html
-fast/events/tabindex-focus-chain.html
 fast/forms/option-mouseevents.html
 fast/forms/search-abs-pos-cancel-button.html
 fast/forms/select-cache-desynchronization.html
@@ -5177,7 +5179,6 @@ fast/images/image-in-map.html
 fast/inline-block/004.html
 fast/inline-block/005.html
 fast/loader/cancel-load-during-port-block-timer.html
-fast/loader/empty-embed-src-attribute.html
 fast/loader/javascript-url-hierarchical-execution.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/null-request-after-willSendRequest.html
@@ -5189,7 +5190,6 @@ fast/parser/xml-declaration-missing-ending-mark.html
 fast/replaced/table-percent-height-text-controls.html
 fast/table/giantRowspan.html
 fast/table/height-percent-test.html
-fast/text/find-hidden-text.html
 fast/xmlhttprequest/xmlhttprequest-gc.html
 fast/xmlhttprequest/xmlhttprequest-get.xhtml
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
@@ -5240,5 +5240,4 @@ tables/mozilla_expected_failures/bugs/bug23847.html
 tables/mozilla_expected_failures/bugs/bug128876.html
 transforms/2d/transform-2d.html
 transitions/opacity-transition-zindex.html
-
 

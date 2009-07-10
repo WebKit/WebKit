@@ -1,3 +1,11 @@
+2009-07-10  Simon Hausmann  <hausmann@webkit.org>
+
+        No Review, just re-ordering Qt DRT skip list.
+
+        Moved skipped crash tests to the crash section.
+
+        * platform/qt/Skipped:
+
 2009-07-10  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Darin Adler.
