@@ -1142,6 +1142,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([axRole isEqualToString:NSAccessibilityMenuButtonRole])
         return NSAccessibilityRoleDescription(NSAccessibilityMenuButtonRole, [self subrole]);
     
+    if ([axRole isEqualToString:NSAccessibilityToolbarRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityToolbarRole, [self subrole]);
+
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 
