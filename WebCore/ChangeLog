@@ -70,6 +70,17 @@
 
 2009-07-09  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        A more robust fix for <rdar://problem/6930280> Reproducible crash at
+        USA Today photo gallery
+
+        Reviewed by Steve Falkenburg.
+
+        * plugins/win/PluginMessageThrottlerWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::messageThrottleTimerFired):
+        Protect the PluginView from destruction before calling its window proc.
+
+2009-07-09  Jon Honeycutt  <jhoneycutt@apple.com>
+
         <rdar://problem/6978804> WER #16: Repro Access Violation in
         WebCore::PluginView::bindingInstance (1310178023)
 
