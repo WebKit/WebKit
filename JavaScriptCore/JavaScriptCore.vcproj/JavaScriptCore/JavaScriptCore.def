@@ -100,7 +100,6 @@ EXPORTS
     ?despecifyFunctionTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@@Z
     ?destroy@Heap@JSC@@QAEXXZ
     ?destroy@Rep@UString@JSC@@QAEXXZ
-    ?detach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?equal@Identifier@JSC@@SA_NPBURep@UString@2@PBD@Z
     ?equal@JSC@@YA_NPBURep@UString@1@0@Z
