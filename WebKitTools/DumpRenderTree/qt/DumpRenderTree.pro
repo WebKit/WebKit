@@ -6,6 +6,8 @@ INCLUDEPATH += /usr/include/freetype2
 INCLUDEPATH += ../../../JavaScriptCore
 DESTDIR = ../../../bin
 
+CONFIG += link_pkgconfig
+PKGCONFIG += fontconfig
 
 QT = core gui
 macx: QT += xml network
