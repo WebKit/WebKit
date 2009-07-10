@@ -981,33 +981,19 @@ void InlineFlowBox::paintTextDecorations(RenderObject::PaintInfo& paintInfo, int
     }
 }
 
-InlineBox* InlineFlowBox::firstLeafChild()
-{
-    return firstLeafChildAfterBox();
-}
-
-InlineBox* InlineFlowBox::lastLeafChild()
-{
-    return lastLeafChildBeforeBox();
-}
-
-InlineBox* InlineFlowBox::firstLeafChildAfterBox(InlineBox* start)
+InlineBox* InlineFlowBox::firstLeafChild() const
 {
     InlineBox* leaf = 0;
-    for (InlineBox* box = start ? start->nextOnLine() : firstChild(); box && !leaf; box = box->nextOnLine())
-        leaf = box->firstLeafChild();
-    if (start && !leaf && parent())
-        return parent()->firstLeafChildAfterBox(this);
+    for (InlineBox* child = firstChild(); child && !leaf; child = child->nextOnLine())
+        leaf = child->isLeaf() ? child : static_cast<InlineFlowBox*>(child)->firstLeafChild();
     return leaf;
 }
 
-InlineBox* InlineFlowBox::lastLeafChildBeforeBox(InlineBox* start)
+InlineBox* InlineFlowBox::lastLeafChild() const
 {
     InlineBox* leaf = 0;
-    for (InlineBox* box = start ? start->prevOnLine() : lastChild(); box && !leaf; box = box->prevOnLine())
-        leaf = box->lastLeafChild();
-    if (start && !leaf && parent())
-        return parent()->lastLeafChildBeforeBox(this);
+    for (InlineBox* child = lastChild(); child && !leaf; child = child->prevOnLine())
+        leaf = child->isLeaf() ? child : static_cast<InlineFlowBox*>(child)->lastLeafChild();
     return leaf;
 }
 

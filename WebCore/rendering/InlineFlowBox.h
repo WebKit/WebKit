@@ -58,13 +58,13 @@ public:
     InlineFlowBox* prevFlowBox() const { return static_cast<InlineFlowBox*>(m_prevLine); }
     InlineFlowBox* nextFlowBox() const { return static_cast<InlineFlowBox*>(m_nextLine); }
 
-    InlineBox* firstChild() { checkConsistency(); return m_firstChild; }
-    InlineBox* lastChild() { checkConsistency(); return m_lastChild; }
+    InlineBox* firstChild() const { checkConsistency(); return m_firstChild; }
+    InlineBox* lastChild() const { checkConsistency(); return m_lastChild; }
 
-    virtual InlineBox* firstLeafChild();
-    virtual InlineBox* lastLeafChild();
-    InlineBox* firstLeafChildAfterBox(InlineBox* start = 0);
-    InlineBox* lastLeafChildBeforeBox(InlineBox* start = 0);
+    virtual bool isLeaf() const { return false; }
+    
+    InlineBox* firstLeafChild() const;
+    InlineBox* lastLeafChild() const;
 
     virtual void setConstructed()
     {

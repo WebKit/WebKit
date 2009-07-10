@@ -2,6 +2,35 @@
 
         Reviewed by Maciej Stachowiak.
 
+        added InlineBox::isLeaf()
+        firstLeafChild()/lastLeafChild() not virtual and not callable on InlineBox anymore.
+        firstLeafChild()/lastLeafChild() will no longer return a node outside of the given subtree.   
+        Removed firstLeafChildAfterBox()/lastLeafChildBeforeBox()
+        Removed potentially quadratic behavior if all nodes before/after a given box are empty InlineFlowBoxes
+
+        Currently, these methods are called on RootInlineBox objects only, so above changes should not have
+        any observable effect (only the removal of the square performance behavior could apply, 
+        but the conditions for that are probably of a rather theoretical nature).
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nextLeafChild):
+        (WebCore::InlineBox::prevLeafChild):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::isLeaf):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::firstLeafChild):
+        (WebCore::InlineFlowBox::lastLeafChild):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::firstChild):
+        (WebCore::InlineFlowBox::lastChild):
+        (WebCore::InlineFlowBox::isLeaf):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::closestLeafChildForXPos):
+
+2009-07-09  Roland Steiner  <rolandsteiner@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
         Added InlineBox::baselinePosition() and lineHeight() methods
         (adapted remaining code accordingly to use those methods)
 

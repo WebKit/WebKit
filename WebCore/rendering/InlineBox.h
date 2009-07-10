@@ -175,10 +175,10 @@ public:
     bool nextOnLineExists() const;
     bool prevOnLineExists() const;
 
-    virtual InlineBox* firstLeafChild();
-    virtual InlineBox* lastLeafChild();
-    InlineBox* nextLeafChild();
-    InlineBox* prevLeafChild();
+    virtual bool isLeaf() const { return true; }
+    
+    InlineBox* nextLeafChild() const;
+    InlineBox* prevLeafChild() const;
         
     RenderObject* renderer() const { return m_renderer; }
 

@@ -355,8 +355,8 @@ static bool isEditableLeaf(InlineBox* leaf)
 
 InlineBox* RootInlineBox::closestLeafChildForXPos(int x, bool onlyEditableLeaves)
 {
-    InlineBox* firstLeaf = firstLeafChildAfterBox();
-    InlineBox* lastLeaf = lastLeafChildBeforeBox();
+    InlineBox* firstLeaf = firstLeafChild();
+    InlineBox* lastLeaf = lastLeafChild();
     if (firstLeaf == lastLeaf && (!onlyEditableLeaves || isEditableLeaf(firstLeaf)))
         return firstLeaf;
 
