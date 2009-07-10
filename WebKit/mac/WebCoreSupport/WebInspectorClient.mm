@@ -43,6 +43,8 @@
 
 using namespace WebCore;
 
+static const char* const inspectorStartsAttachedName = "inspectorStartsAttached";
+
 @interface WebInspectorWindowController : NSWindowController <NSWindowDelegate> {
 @private
     WebView *_inspectedWebView;
@@ -191,10 +193,6 @@ void WebInspectorClient::updateWindowTitle() const
 
     [preferences release];
 
-    NSNumber *attached = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitInspectorAttachedKey];
-    ASSERT(!attached || [attached isKindOfClass:[NSNumber class]]);
-    _shouldAttach = attached ? [attached boolValue] : YES;
-
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]];
     [[_webView mainFrame] loadRequest:request];
@@ -318,6 +316,10 @@ void WebInspectorClient::updateWindowTitle() const
     }
 
     _visible = YES;
+    
+    // If no preference is set - default to an attached window
+    InspectorController::Setting shouldAttach = [_inspectedWebView page]->inspectorController()->setting(inspectorStartsAttachedName);
+    _shouldAttach = (shouldAttach.type() == InspectorController::Setting::BooleanType) ? shouldAttach.booleanValue() : true;
 
     if (_shouldAttach) {
         WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
@@ -353,15 +355,13 @@ void WebInspectorClient::updateWindowTitle() const
     if (_attachedToInspectedWebView)
         return;
 
-    _shouldAttach = YES;
+    [_inspectedWebView page]->inspectorController()->setSetting(inspectorStartsAttachedName, InspectorController::Setting(true));
     _movingWindows = YES;
 
     [self close];
     [self showWindow:nil];
 
     _movingWindows = NO;
-
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitInspectorAttachedKey];
 }
 
 - (void)detach
@@ -369,7 +369,7 @@ void WebInspectorClient::updateWindowTitle() const
     if (!_attachedToInspectedWebView)
         return;
 
-    _shouldAttach = NO;
+    [_inspectedWebView page]->inspectorController()->setSetting(inspectorStartsAttachedName, InspectorController::Setting(false));
     _movingWindows = YES;
 
     [self close];
@@ -377,7 +377,6 @@ void WebInspectorClient::updateWindowTitle() const
 
     _movingWindows = NO;
 
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:WebKitInspectorAttachedKey];
 }
 
 - (void)setAttachedWindowHeight:(unsigned)height
