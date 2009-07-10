@@ -15,9 +15,9 @@
         
             video = media = document.getElementsByTagName('video')[0];
 
-            testExpected("video.canPlayType()", "no");
-            testExpected("video.canPlayType('video/')", "no");
-            testExpected("video.canPlayType('video/blahblah')", "no");
+            testExpected("video.canPlayType()", "");
+            testExpected("video.canPlayType('video/')", "");
+            testExpected("video.canPlayType('video/blahblah')", "");
             testExpected("video.canPlayType('video/mpeg; codecs=&quot;avc1.4D400C&quot;')", "maybe");
             testExpected("video.canPlayType('        video/mp4  ; video/mp4; codecs=&quot;mp4v.20.8, mp4a.40.2&quot;')", "maybe");
             testExpected("video.canPlayType('audio/mpeg')", "probably");

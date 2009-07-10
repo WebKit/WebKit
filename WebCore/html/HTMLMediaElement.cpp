@@ -391,7 +391,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     switch (support)
     {
         case MediaPlayer::IsNotSupported:
-            canPlay = "no";
+            canPlay = "";
             break;
         case MediaPlayer::MayBeSupported:
             canPlay = "maybe";
