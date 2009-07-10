@@ -89,6 +89,9 @@ param
 plaintext interfaceName=HTMLElement
 pre
 q interfaceName=HTMLQuoteElement
+rp interfaceName=HTMLElement
+rt interfaceName=HTMLElement
+ruby interfaceName=HTMLElement
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser

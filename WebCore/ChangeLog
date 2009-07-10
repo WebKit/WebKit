@@ -1,3 +1,33 @@
+2009-07-09  Roland Steiner  <rolandsteiner@google.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement the part of HTML5 spec that deals with parsing of <rp> and <rt> tags
+        in that their end tags are optional if followed by <rp>/<rt>.
+
+        Also specify a new accessibility role "annotation" for <rp> and <rt>.
+
+        Affected code parts are not enclosed in #IF ENABLE(RUBY), since the parsing
+        is not affected by whether ruby is rendered properly or not (in fact, it may 
+        be more profound without ruby layouting, since the contents of <rp> are not hidden).
+
+        Test: fast/ruby/parse-rp.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::roleValue):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::endTagRequirement):
+        (WebCore::HTMLElement::tagPriority):
+        (WebCore::inlineTagList):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::rpCreateErrorCheck):
+        (WebCore::HTMLParser::rtCreateErrorCheck):
+        (WebCore::HTMLParser::getNode):
+        * html/HTMLParser.h:
+        * html/HTMLTagNames.in:
+
 2009-07-09  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, fix for previous commit.

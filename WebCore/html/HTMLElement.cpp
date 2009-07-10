@@ -79,7 +79,7 @@ HTMLTagStatus HTMLElement::endTagRequirement() const
 {
     if (hasLocalName(wbrTag))
         return TagStatusForbidden;
-    if (hasLocalName(dtTag) || hasLocalName(ddTag))
+    if (hasLocalName(dtTag) || hasLocalName(ddTag) || hasLocalName(rpTag) || hasLocalName(rtTag))
         return TagStatusOptional;
 
     // Same values as <span>.  This way custom tag name elements will behave like inline spans.
@@ -90,9 +90,9 @@ int HTMLElement::tagPriority() const
 {
     if (hasLocalName(wbrTag))
         return 0;
-    if (hasLocalName(addressTag) || hasLocalName(ddTag) || hasLocalName(dtTag) || hasLocalName(noscriptTag))
+    if (hasLocalName(addressTag) || hasLocalName(ddTag) || hasLocalName(dtTag) || hasLocalName(noscriptTag) || hasLocalName(rpTag) || hasLocalName(rtTag))
         return 3;
-    if (hasLocalName(centerTag) || hasLocalName(nobrTag))
+    if (hasLocalName(centerTag) || hasLocalName(nobrTag) || hasLocalName(rubyTag))
         return 5;
     if (hasLocalName(noembedTag) || hasLocalName(noframesTag))
         return 10;
@@ -875,6 +875,9 @@ static HashSet<AtomicStringImpl*>* inlineTagList()
         tagList.add(audioTag.localName().impl());
         tagList.add(videoTag.localName().impl());
 #endif
+        tagList.add(rpTag.localName().impl());
+        tagList.add(rtTag.localName().impl());
+        tagList.add(rubyTag.localName().impl());
     }
     return &tagList;
 }

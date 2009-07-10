@@ -2325,6 +2325,9 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
     if (node && node->hasTagName(dtTag))
         return DefinitionListTermRole;
 
+    if (node && (node->hasTagName(rpTag) || node->hasTagName(rtTag)))
+        return AnnotationRole;
+    
     if (m_renderer->isBlockFlow() || (node && node->hasTagName(labelTag)))
         return GroupRole;
     

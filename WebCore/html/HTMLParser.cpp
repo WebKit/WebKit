@@ -793,6 +793,20 @@ bool HTMLParser::dtCreateErrorCheck(Token* t, RefPtr<Node>& result)
     return true;
 }
 
+bool HTMLParser::rpCreateErrorCheck(Token*, RefPtr<Node>&)
+{
+    popBlock(rpTag);
+    popBlock(rtTag);
+    return true;
+}
+
+bool HTMLParser::rtCreateErrorCheck(Token*, RefPtr<Node>&)
+{
+    popBlock(rpTag);
+    popBlock(rtTag);
+    return true;
+}
+
 bool HTMLParser::nestedCreateErrorCheck(Token* t, RefPtr<Node>&)
 {
     popBlock(t->tagName);
@@ -917,6 +931,8 @@ PassRefPtr<Node> HTMLParser::getNode(Token* t)
         gFunctionMap.set(pTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
         gFunctionMap.set(plaintextTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
         gFunctionMap.set(preTag.localName().impl(), &HTMLParser::pCloserCreateErrorCheck);
+        gFunctionMap.set(rpTag.localName().impl(), &HTMLParser::rpCreateErrorCheck);
+        gFunctionMap.set(rtTag.localName().impl(), &HTMLParser::rtCreateErrorCheck);
         gFunctionMap.set(sTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
         gFunctionMap.set(selectTag.localName().impl(), &HTMLParser::selectCreateErrorCheck);
         gFunctionMap.set(smallTag.localName().impl(), &HTMLParser::nestedStyleCreateErrorCheck);
