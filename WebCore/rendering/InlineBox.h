@@ -205,6 +205,9 @@ public:
 
     int height() const;
 
+    inline int baselinePosition(bool isRootLineBox) const { return renderer()->baselinePosition(m_firstLine, isRootLineBox); }
+    inline int lineHeight(bool isRootLineBox) const { return renderer()->lineHeight(m_firstLine, isRootLineBox); }
+
     virtual int topOverflow() const { return y(); }
     virtual int bottomOverflow() const { return y() + height(); }
     virtual int leftOverflow() const { return x(); }

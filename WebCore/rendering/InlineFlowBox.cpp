@@ -371,7 +371,7 @@ void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
         if (curr->renderer()->isPositioned())
             continue; // Positioned placeholders don't affect calculations.
         if (curr->y() == PositionTop || curr->y() == PositionBottom) {
-            int lineHeight = curr->renderer()->lineHeight(m_firstLine);
+            int lineHeight = curr->lineHeight(false);
             if (curr->y() == PositionTop) {
                 if (maxAscent + maxDescent < lineHeight)
                     maxDescent = lineHeight - maxAscent;
@@ -404,11 +404,11 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
 {
     if (isRootInlineBox()) {
         // Examine our root box.
-        int lineHeight = renderer()->lineHeight(m_firstLine, true);
-        int baseline = renderer()->baselinePosition(m_firstLine, true);
+        int height = lineHeight(true);
+        int baseline = baselinePosition(true);
         if (hasTextChildren() || strictMode) {
             int ascent = baseline;
-            int descent = lineHeight - ascent;
+            int descent = height - ascent;
             if (maxAscent < ascent)
                 maxAscent = ascent;
             if (maxDescent < descent)
@@ -456,8 +456,8 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
                 }
             }
         } else {
-            lineHeight = curr->renderer()->lineHeight(m_firstLine);
-            baseline = curr->renderer()->baselinePosition(m_firstLine);
+            lineHeight = curr->lineHeight(false);
+            baseline = curr->baselinePosition(false);
         }
 
         curr->setY(verticalPositionForBox(curr, m_firstLine));
@@ -485,8 +485,8 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
                                          int& topPosition, int& bottomPosition, int& selectionTop, int& selectionBottom)
 {
     if (isRootInlineBox())
-        setY(yPos + max(0, maxAscent - renderer()->baselinePosition(m_firstLine, true))); // Place our root box.
-    
+        setY(yPos + max(0, maxAscent - baselinePosition(true))); // Place our root box.
+
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isPositioned())
             continue; // Positioned placeholders don't affect calculations.
@@ -501,11 +501,11 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
         if (curr->y() == PositionTop)
             curr->setY(yPos);
         else if (curr->y() == PositionBottom)
-            curr->setY(yPos + maxHeight - curr->renderer()->lineHeight(m_firstLine));
+            curr->setY(yPos + maxHeight - curr->lineHeight(false));
         else {
             if ((isInlineFlow && !static_cast<InlineFlowBox*>(curr)->hasTextChildren()) && !curr->boxModelObject()->hasHorizontalBordersOrPadding() && !strictMode)
                 childAffectsTopBottomPos = false;
-            int posAdjust = maxAscent - curr->renderer()->baselinePosition(m_firstLine);
+            int posAdjust = maxAscent - curr->baselinePosition(false);
             if (!childAffectsTopBottomPos)
                 posAdjust = max(0, posAdjust);
             curr->setY(curr->y() + yPos + posAdjust);
@@ -521,7 +521,8 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
         int overflowBottom = 0;
         if (curr->isText() || curr->isInlineFlowBox()) {
             const Font& font = curr->renderer()->style(m_firstLine)->font();
-            newY += curr->renderer()->baselinePosition(m_firstLine) - font.ascent();
+            newY += curr->baselinePosition(false) - font.ascent();
+
             for (ShadowData* shadow = curr->renderer()->style()->textShadow(); shadow; shadow = shadow->next) {
                 overflowTop = min(overflowTop, shadow->y - shadow->blur);
                 overflowBottom = max(overflowBottom, shadow->y + shadow->blur);
@@ -565,7 +566,7 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
 
     if (isRootInlineBox()) {
         const Font& font = renderer()->style(m_firstLine)->font();
-        setY(y() + renderer()->baselinePosition(m_firstLine, true) - font.ascent());
+        setY(y() + baselinePosition(true) - font.ascent());
         if (hasTextChildren() || strictMode) {
             selectionTop = min(selectionTop, y());
             selectionBottom = max(selectionBottom, y() + height());
