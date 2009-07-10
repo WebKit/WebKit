@@ -1,3 +1,47 @@
+2009-07-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=27137
+          <rdar://problem/7043124> REGRESSION (r44311): Reproducible crash due
+          to infinite recursion into FrameLoader::gotoAnchor() ->
+          FrameView::layout()
+
+        Test: fast/loader/goto-anchor-infinite-layout.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor): Moved the code to update layout,
+        find the renderer to scroll to, and scroll from here to methods on
+        FrameView, and replaced it with a call to
+        FrameView::maintainScrollPositionAtAnchor().
+        (WebCore::FrameLoader::completed): Call maintainScrollPositionAtAnchor()
+        instead of setLockedToAnchor().
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Removed initialization of
+        m_lockedToAnchor.
+        (WebCore::FrameView::reset): Reset m_maintainScrollPositionAnchor instead
+        of m_lockedToAnchor.
+        (WebCore::FrameView::layout): Removed the code related to scrolling to
+        the anchor from here, because scrolling can trigger events which
+        invalidate the layout, and as such, belongs with the post-layout tasks.
+        (WebCore::FrameView::maintainScrollPositionAtAnchor): Added. When called
+        with a node scrolls the view to the top of that node and maintains it
+        scrolled to the top of the node during subsequent layouts, until
+        this function is called with 0 or other things trigger scrolling.
+        (WebCore::FrameView::scrollRectIntoViewRecursively): Reset
+        m_maintainScrollPositionAnchor.
+        (WebCore::FrameView::setScrollPosition): Ditto.
+        (WebCore::FrameView::scrollToAnchor): Added. Scrolls to the top of
+        m_maintainScrollPositionAnchor, if it is set.
+        (WebCore::FrameView::performPostLayoutTasks): Call scrollToAnchor().
+        (WebCore::FrameView::setWasScrolledByUser): Reset
+        m_maintainScrollPositionAnchor.
+
+        * page/FrameView.h: Removed lockedToAnchor(), setLockedToAnchor(),
+        and m_lockedToAnchor. Added maintainScrollPositionAtAnchor() and
+        m_maintainScrollPositionAnchor.
+
 2009-07-04  Sriram Yadavalli  <sriram.yadavalli@nokia.com>
 
         Reviewed by Simon Hausmann.

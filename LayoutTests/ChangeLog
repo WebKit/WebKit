@@ -1,3 +1,15 @@
+2009-07-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=27137
+          <rdar://problem/7043124> REGRESSION (r44311): Reproducible crash due
+          to infinite recursion into FrameLoader::gotoAnchor() ->
+          FrameView::layout()
+
+        * fast/loader/goto-anchor-infinite-layout-expected.txt: Added.
+        * fast/loader/goto-anchor-infinite-layout.html: Added.
+
 2009-07-09  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.

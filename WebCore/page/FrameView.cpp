@@ -111,7 +111,6 @@ FrameView::FrameView(Frame* frame)
     , m_shouldUpdateWhileOffscreen(true)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
-    , m_lockedToAnchor(false)
 {
     init();
 }
@@ -185,7 +184,7 @@ void FrameView::reset()
     m_isPainting = false;
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
-    m_lockedToAnchor = false;
+    m_maintainScrollPositionAnchor = 0;
 }
 
 bool FrameView::isFrameView() const 
@@ -666,9 +665,6 @@ void FrameView::layout(bool allowSubtree)
         ASSERT(m_enqueueEvents);
     }
 
-    if (lockedToAnchor())
-        m_frame->loader()->gotoAnchor();
-
     m_nestedLayoutCount--;
 }
 
@@ -751,11 +747,27 @@ void FrameView::restoreScrollbar()
     setScrollbarsSuppressed(false);
 }
 
+void FrameView::maintainScrollPositionAtAnchor(Node* anchorNode)
+{
+    m_maintainScrollPositionAnchor = anchorNode;
+    if (!m_maintainScrollPositionAnchor)
+        return;
+
+    // We need to update the layout before scrolling, otherwise we could
+    // really mess things up if an anchor scroll comes at a bad moment.
+    m_frame->document()->updateStyleIfNeeded();
+    // Only do a layout if changes have occurred that make it necessary.
+    if (m_frame->contentRenderer() && m_frame->contentRenderer()->needsLayout())
+        layout();
+    else
+        scrollToAnchor();
+}
+
 void FrameView::scrollRectIntoViewRecursively(const IntRect& r)
 {
     bool wasInProgrammaticScroll = m_inProgrammaticScroll;
     m_inProgrammaticScroll = true;
-    setLockedToAnchor(false);
+    m_maintainScrollPositionAnchor = 0;
     ScrollView::scrollRectIntoViewRecursively(r);
     m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
@@ -764,7 +776,7 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
     bool wasInProgrammaticScroll = m_inProgrammaticScroll;
     m_inProgrammaticScroll = true;
-    setLockedToAnchor(false);
+    m_maintainScrollPositionAnchor = 0;
     ScrollView::setScrollPosition(scrollPoint);
     m_inProgrammaticScroll = wasInProgrammaticScroll;
 }
@@ -1118,6 +1130,27 @@ void FrameView::resumeScheduledEvents()
     ASSERT(m_scheduledEvents.isEmpty() || m_enqueueEvents);
 }
 
+void FrameView::scrollToAnchor()
+{
+    RefPtr<Node> anchorNode = m_maintainScrollPositionAnchor;
+    if (!anchorNode)
+        return;
+
+    if (!anchorNode->renderer())
+        return;
+
+    IntRect rect;
+    if (anchorNode != m_frame->document())
+        rect = anchorNode->getRect();
+
+    // Scroll nested layers and frames to reveal the anchor.
+    // Align to the top and to the closest side (this matches other browsers).
+    anchorNode->renderer()->enclosingLayer()->scrollRectToVisible(rect, true, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
+
+    // scrollRectToVisible can call into scrollRectIntoViewRecursively(), which resets m_maintainScrollPositionAnchor.
+    m_maintainScrollPositionAnchor = anchorNode;
+}
+
 bool FrameView::updateWidgets()
 {
     if (m_nestedLayoutCount > 1 || !m_widgetUpdateSet || m_widgetUpdateSet->isEmpty())
@@ -1161,7 +1194,9 @@ void FrameView::performPostLayoutTasks()
         if (updateWidgets())
             break;
     }
-    
+
+    scrollToAnchor();
+
     resumeScheduledEvents();
 
     if (!root->printing()) {
@@ -1351,7 +1386,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
 {
     if (m_inProgrammaticScroll)
         return;
-    setLockedToAnchor(false);
+    m_maintainScrollPositionAnchor = 0;
     m_wasScrolledByUser = wasScrolledByUser;
 }
 
