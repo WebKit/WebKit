@@ -258,10 +258,12 @@ static bool lastEventIsMouseUp()
     return false;
 }
 
-bool EventHandler::passMouseDownEventToWidget(Widget* widget)
+bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
 {
     // FIXME: This function always returns true. It should be changed either to return
     // false in some cases or the return value should be removed.
+    
+    RefPtr<Widget> widget = pWidget;
 
     if (!widget) {
         LOG_ERROR("hit a RenderWidget without a corresponding Widget, means a frame is half-constructed");
@@ -304,9 +306,9 @@ bool EventHandler::passMouseDownEventToWidget(Widget* widget)
     ASSERT(!m_sendingEventToSubview);
     m_sendingEventToSubview = true;
     NSView *outerView = widget->getOuterView();
-    widget->beforeMouseDown(outerView, widget);
+    widget->beforeMouseDown(outerView, widget.get());
     [view mouseDown:currentNSEvent()];
-    widget->afterMouseDown(outerView, widget);
+    widget->afterMouseDown(outerView, widget.get());
     m_sendingEventToSubview = false;
     
     if (!wasDeferringLoading)
