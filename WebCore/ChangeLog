@@ -1,3 +1,10 @@
+2009-07-10  Brady Eidson  <beidson@apple.com>
+
+        Style cleanup over my last patch.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::~XMLHttpRequest):
+
 2009-07-10  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoffrey Garen.

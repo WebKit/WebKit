@@ -157,8 +157,8 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
 XMLHttpRequest::~XMLHttpRequest()
 {
     if (m_didTellLoaderAboutRequest) {
-            cache()->loader()->nonCacheRequestComplete(m_url);
-            m_didTellLoaderAboutRequest = false;
+        cache()->loader()->nonCacheRequestComplete(m_url);
+        m_didTellLoaderAboutRequest = false;
     }
     if (m_upload)
         m_upload->disconnectXMLHttpRequest();
