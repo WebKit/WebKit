@@ -1141,7 +1141,7 @@ void FrameView::scrollToAnchor()
 
     IntRect rect;
     if (anchorNode != m_frame->document())
-        rect = anchorNode->getRect();
+        rect = anchorNode->getRect(true);
 
     // Scroll nested layers and frames to reveal the anchor.
     // Align to the top and to the closest side (this matches other browsers).
