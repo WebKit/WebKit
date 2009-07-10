@@ -1,3 +1,18 @@
+2009-07-10  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/27115> bugzilla-tool: extract duplicate logging methods into a module
+
+        Reviewed by Adam Roben.
+
+        * Scripts/bugzilla-tool: Removed error() and log() methods and
+        added import of new logging module.
+        * Scripts/modules/bugzilla.py: Ditto.  Removed "import sys".
+        * Scripts/modules/scm.py: Ditto.
+
+        * Scripts/modules/logging.py: Added.
+        (log): Added.
+        (error): Added.  Prefix error messages with "ERROR: ".
+
 2009-07-10  Adam Roben  <aroben@apple.com>
 
         Sort all our Xcode projects

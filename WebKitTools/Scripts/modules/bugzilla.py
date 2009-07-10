@@ -32,10 +32,12 @@
 import getpass
 import re
 import subprocess
-import sys
 import urllib2
 
 from datetime import datetime # used in timestamp()
+
+# Import WebKit-specific modules.
+from modules.logging import error, log
 
 # WebKit includes a built copy of BeautifulSoup in Scripts/modules
 # so this import should always succeed.
@@ -53,13 +55,6 @@ sudo easy_install mechanize
 Or from the web:
 http://wwwsearch.sourceforge.net/mechanize/
 """
-    exit(1)
-
-def log(string):
-    print >> sys.stderr, string
-
-def error(string):
-    log(string)
     exit(1)
 
 # FIXME: This should not depend on git for config storage

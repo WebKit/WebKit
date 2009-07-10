@@ -41,14 +41,8 @@ from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_o
 
 # Import WebKit-specific modules.
 from modules.bugzilla import Bugzilla
+from modules.logging import error, log
 from modules.scm import detect_scm_system, ScriptError
-
-def log(string):
-    print >> sys.stderr, string
-
-def error(string):
-    log(string)
-    exit(1)
 
 def plural(noun):
     # This is a dumb plural() implementation which was just enough for our uses.

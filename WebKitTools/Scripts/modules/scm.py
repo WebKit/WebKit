@@ -32,14 +32,9 @@
 import os
 import re
 import subprocess
-import sys
 
-def log(string):
-    print >> sys.stderr, string
-
-def error(string):
-    log(string)
-    exit(1)
+# Import WebKit-specific modules.
+from modules.logging import error, log
 
 def detect_scm_system(path):
     if SVN.in_working_directory(path):
