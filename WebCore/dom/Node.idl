@@ -23,9 +23,9 @@ module core {
     interface [
         CustomMarkFunction,
         CustomPushEventHandlerScope,
+        CustomToJS,
         GenerateConstructor,
         GenerateNativeConverter,
-        GenerateToJS,
         InlineGetOwnPropertySlot,
         Polymorphic,
         InterfaceUUID=84BA0D7A-7E3E-4a7b-B6FB-7653E8FB54ED,

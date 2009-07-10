@@ -21,6 +21,7 @@
 module css {
 
     interface [
+        CustomToJS,
         GenerateConstructor,
         Polymorphic,
         InterfaceUUID=9fd62a7b-539d-4500-bd6c-ec075abbc404,

@@ -140,14 +140,6 @@ sub AvoidInclusionOfType
     return 0;
 }
 
-sub UsesManualToJSImplementation
-{
-    my $type = shift;
-
-    return 1 if $type eq "Node" or $type eq "Document" or $type eq "HTMLCollection" or $type eq "SVGPathSeg" or $type eq "StyleSheet" or $type eq "CSSRule" or $type eq "CSSValue" or $type eq "Event" or $type eq "ImageData" or $type eq "Element" or $type eq "Text" or $type eq "SVGElementInstance";
-    return 0;
-}
-
 sub IndexGetterReturnsStrings
 {
     my $type = shift;
@@ -629,7 +621,7 @@ sub GenerateHeader
         push(@headerContent, "}\n\n");
     }
 
-    if (!$hasParent || $dataNode->extendedAttributes->{"GenerateToJS"}) {
+    if (!$hasParent || $dataNode->extendedAttributes->{"GenerateToJS"} || $dataNode->extendedAttributes->{"CustomToJS"}) {
         if ($podType) {
             push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSSVGPODTypeWrapper<$podType>*, SVGElement* context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
@@ -1505,7 +1497,7 @@ sub GenerateImplementation
         }
     }
 
-    if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !UsesManualToJSImplementation($implClassName)) {
+    if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !$dataNode->extendedAttributes->{"CustomToJS"}) {
         if ($podType) {
             push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSSVGPODTypeWrapper<$podType>* object, SVGElement* context)\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {

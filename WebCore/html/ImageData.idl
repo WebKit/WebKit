@@ -29,8 +29,8 @@
 module html {
 
     interface [
+        CustomToJS,
         GenerateConstructor,
-        GenerateToJS
     ] ImageData {
         readonly attribute long width;
         readonly attribute long height;

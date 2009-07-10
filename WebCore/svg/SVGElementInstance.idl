@@ -31,7 +31,7 @@ module svg {
         CustomListeners,
         CustomMarkFunction,
         CustomPushEventHandlerScope,
-        GenerateToJS,
+        CustomToJS,
         GenerateNativeConverter
     ] SVGElementInstance
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

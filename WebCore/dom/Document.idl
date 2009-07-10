@@ -21,8 +21,8 @@
 module core {
 
     interface [
+        CustomToJS,
         GenerateConstructor,
-        GenerateToJS,
         GenerateNativeConverter,
         CustomMarkFunction,
         InlineGetOwnPropertySlot,
