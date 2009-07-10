@@ -134,13 +134,13 @@
 		29B97315FDCFA39411CA2CEA /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				29B97316FDCFA39411CA2CEA /* main.m */,
 				5D1067620FE63758002A2868 /* WebKitLauncherURLProtocol.h */,
 				5D1067630FE63758002A2868 /* WebKitLauncherURLProtocol.m */,
 				5DA88F790FC813EB00AB2F62 /* WebKitNightlyEnabler.h */,
 				5D650F3509DB8B370075E9A8 /* WebKitNightlyEnabler.m */,
 				5DA88F6B0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h */,
 				5DA88F6C0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m */,
-				29B97316FDCFA39411CA2CEA /* main.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -181,9 +181,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DA88F6D0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h in Headers */,
-				5DA88F7A0FC813EB00AB2F62 /* WebKitNightlyEnabler.h in Headers */,
 				5D1067640FE63758002A2868 /* WebKitLauncherURLProtocol.h in Headers */,
+				5DA88F7A0FC813EB00AB2F62 /* WebKitNightlyEnabler.h in Headers */,
+				5DA88F6D0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,10 +253,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D41141C0A50A9DE00C84CF0 /* VERSION in Resources */,
-				5D650F3A09DB8B410075E9A8 /* WebKitNightlyEnabler.dylib in Resources */,
 				5D4DF982097F89FB0083D5E5 /* start.html in Resources */,
+				5D41141C0A50A9DE00C84CF0 /* VERSION in Resources */,
 				5DB70525097B94CD009875EC /* webkit.icns in Resources */,
+				5D650F3A09DB8B410075E9A8 /* WebKitNightlyEnabler.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,9 +299,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D1067650FE63758002A2868 /* WebKitLauncherURLProtocol.m in Sources */,
 				5D650F3609DB8B370075E9A8 /* WebKitNightlyEnabler.m in Sources */,
 				5DA88F6E0FC8136000AB2F62 /* WebKitNightlyEnablerSparkle.m in Sources */,
-				5D1067650FE63758002A2868 /* WebKitLauncherURLProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

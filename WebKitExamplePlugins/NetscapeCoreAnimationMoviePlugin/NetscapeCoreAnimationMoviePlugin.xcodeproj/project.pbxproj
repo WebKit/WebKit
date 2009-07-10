@@ -45,8 +45,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A6250420DCBC81B006898C8 /* Cocoa.framework in Frameworks */,
-				1A8C87AA0EF2FBB3003F6E81 /* QuartzCore.framework in Frameworks */,
 				1A8001470FDB2E65000F3646 /* QTKit.framework in Frameworks */,
+				1A8C87AA0EF2FBB3003F6E81 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,14 +77,14 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8D576317048677EA00EA77CD /* Info.plist */,
+				8D5B49A704867FD3000E48DA /* InfoPlist.strings */,
 				1A8001140FDB2CB2000F3646 /* Pause.tiff */,
 				1A8001150FDB2CB2000F3646 /* Play.tiff */,
 				1A8001160FDB2CB2000F3646 /* SliderTrackCenter.tiff */,
 				1A8001170FDB2CB2000F3646 /* SliderTrackLeft.tiff */,
 				1A8001180FDB2CB2000F3646 /* SliderTrackRight.tiff */,
 				1A8001190FDB2CB2000F3646 /* Thumb.tiff */,
-				8D576317048677EA00EA77CD /* Info.plist */,
-				8D5B49A704867FD3000E48DA /* InfoPlist.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";

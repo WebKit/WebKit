@@ -1,3 +1,15 @@
+2009-07-10  Adam Roben  <aroben@apple.com>
+
+        Sort all our Xcode projects
+
+        Accomplished using sort-Xcode-project-file.
+
+        Requested by Dave Kilzer.
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj/project.pbxproj:
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj/project.pbxproj:
+
 2009-06-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Kevin Decker.

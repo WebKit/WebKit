@@ -332,11 +332,11 @@
 			isa = PBXGroup;
 			children = (
 				141BF448096A45C800E0753C /* Info.plist */,
+				1AC6C77F0D07589B00CD3161 /* main.cpp */,
 				1AC6C7800D07589B00CD3161 /* PluginObject.cpp */,
 				141BF447096A45C800E0753C /* PluginObject.h */,
 				1AC6C7810D07589B00CD3161 /* TestObject.cpp */,
 				1A8F024C0BB9B056008CFA34 /* TestObject.h */,
-				1AC6C77F0D07589B00CD3161 /* main.cpp */,
 			);
 			path = TestNetscapePlugIn.subproj;
 			sourceTree = "<group>";
@@ -499,6 +499,7 @@
 				BCA18B380C9B021900114369 /* AppleScriptController.h in Headers */,
 				A8B91BFF0CF522B4008F91FF /* CheckedMalloc.h in Headers */,
 				BCA18B7A0C9B08F100114369 /* DumpRenderTreeDraggingInfo.h in Headers */,
+				A8D79CEA0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.h in Headers */,
 				BCA18C0B0C9B59EF00114369 /* DumpRenderTreeMac.h in Headers */,
 				A8B91AE20CF3B372008F91FF /* DumpRenderTreePasteboard.h in Headers */,
 				9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */,
@@ -515,14 +516,13 @@
 				BCA18B7F0C9B08F100114369 /* ObjCPluginFunction.h in Headers */,
 				BCB284C70CFA83C4007E533E /* PixelDumpSupport.h in Headers */,
 				BCB284D00CFA83CC007E533E /* PixelDumpSupportCG.h in Headers */,
+				933BF5AB0F93FA5C000F0441 /* PlainTextController.h in Headers */,
 				BCA18B650C9B08C200114369 /* PolicyDelegate.h in Headers */,
 				BCA18B670C9B08C200114369 /* ResourceLoadDelegate.h in Headers */,
 				BCA18B3C0C9B024900114369 /* TextInputController.h in Headers */,
 				BCA18B690C9B08C200114369 /* UIDelegate.h in Headers */,
 				BC9D90250C97472E0099A4A3 /* WorkQueue.h in Headers */,
 				BC9D90260C97472E0099A4A3 /* WorkQueueItem.h in Headers */,
-				933BF5AB0F93FA5C000F0441 /* PlainTextController.h in Headers */,
-				A8D79CEA0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,9 +627,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
 				1AC6C84A0D07638600CD3161 /* PluginObject.cpp in Sources */,
 				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
-				1AC6C8490D07638600CD3161 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +645,7 @@
 				A8B91BFD0CF522B4008F91FF /* CheckedMalloc.cpp in Sources */,
 				BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */,
 				BCA18B7B0C9B08F100114369 /* DumpRenderTreeDraggingInfo.mm in Sources */,
+				A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */,
 				A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.m in Sources */,
 				A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */,
 				BCA18B620C9B08C200114369 /* EditingDelegate.mm in Sources */,
@@ -659,17 +660,16 @@
 				BCA18B320C9B01B400114369 /* ObjCController.m in Sources */,
 				BCA18B7E0C9B08F100114369 /* ObjCPlugin.m in Sources */,
 				BCA18B800C9B08F100114369 /* ObjCPluginFunction.m in Sources */,
+				8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */,
 				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
+				933BF5AC0F93FA5C000F0441 /* PlainTextController.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
 				BCA18B490C9B02C400114369 /* TextInputController.m in Sources */,
 				BCA18B6A0C9B08C200114369 /* UIDelegate.mm in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
 				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
-				933BF5AC0F93FA5C000F0441 /* PlainTextController.mm in Sources */,
-				A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */,
-				8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

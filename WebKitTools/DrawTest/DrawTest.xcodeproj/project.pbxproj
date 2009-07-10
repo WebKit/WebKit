@@ -248,11 +248,11 @@
 				A8C006D40898634600BA5114 /* DrawTestInspectorController.m in Sources */,
 				A8C006D30898634600BA5114 /* DrawTestToolbarController.m in Sources */,
 				A8C006D20898634600BA5114 /* DrawTestView.m in Sources */,
-				A8C006CF0898634600BA5114 /* SVGTest.m in Sources */,
+				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				A8C006D00898634600BA5114 /* ScalingImageView.m in Sources */,
+				A8C006CF0898634600BA5114 /* SVGTest.m in Sources */,
 				A8C006E30898634600BA5114 /* TestController.m in Sources */,
 				A8C006E20898634600BA5114 /* TestViewerSplitView.m in Sources */,
-				8D11072D0486CEB800E47090 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
