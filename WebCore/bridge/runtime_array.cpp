@@ -36,9 +36,11 @@ namespace JSC {
 
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &JSArray::info, 0, 0 };
 
-RuntimeArray::RuntimeArray(ExecState* exec, Bindings::Array* a)
-    : JSObject(getDOMStructure<RuntimeArray>(exec))
-    , _array(a)
+RuntimeArray::RuntimeArray(ExecState* exec, Bindings::Array* array)
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+    // We need to pass in the right global object for "array".
+    : JSObject(deprecatedGetDOMStructure<RuntimeArray>(exec))
+    , _array(array)
 {
 }
 

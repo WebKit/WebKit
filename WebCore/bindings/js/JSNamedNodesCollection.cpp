@@ -43,7 +43,9 @@ const ClassInfo JSNamedNodesCollection::s_info = { "Collection", 0, 0, 0 };
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
 JSNamedNodesCollection::JSNamedNodesCollection(ExecState* exec, const Vector<RefPtr<Node> >& nodes)
-    : DOMObject(getDOMStructure<JSNamedNodesCollection>(exec))
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+    // we should use the global object from the nodes.
+    : DOMObject(deprecatedGetDOMStructure<JSNamedNodesCollection>(exec))
     , m_nodes(new Vector<RefPtr<Node> >(nodes))
 {
 }

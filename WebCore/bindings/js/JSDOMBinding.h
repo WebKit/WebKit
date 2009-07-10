@@ -86,8 +86,9 @@ namespace WebCore {
             return structure;
         return cacheDOMStructure(globalObject, WrapperClass::createStructure(WrapperClass::createPrototype(exec, globalObject)), &WrapperClass::s_info);
     }
-    template<class WrapperClass> inline JSC::Structure* getDOMStructure(JSC::ExecState* exec)
+    template<class WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure(JSC::ExecState* exec)
     {
+        // FIXME: This function is wrong.  It uses the wrong global object for creating the prototype structure.
         return getDOMStructure<WrapperClass>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()));
     }
     template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject)
@@ -99,7 +100,8 @@ namespace WebCore {
     {
         ASSERT(object);
         ASSERT(!getCachedDOMObjectWrapper(exec->globalData(), object));
-        WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec), object);
+        // FIXME: new (exec) could use a different globalData than the globalData this wrapper is cached on.
+        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), object);
         cacheDOMObjectWrapper(exec->globalData(), object, wrapper);
         return wrapper;
     }
@@ -118,7 +120,7 @@ namespace WebCore {
     {
         ASSERT(object);
         ASSERT(!getCachedDOMObjectWrapper(exec->globalData(), object));
-        WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec), object, context);
+        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), object, context);
         cacheDOMObjectWrapper(exec->globalData(), object, wrapper);
         return wrapper;
     }
@@ -137,7 +139,9 @@ namespace WebCore {
     {
         ASSERT(node);
         ASSERT(!getCachedDOMNodeWrapper(node->document(), node));
-        WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec), node);
+        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), node);
+        // FIXME: The entire function can be removed, once we fix caching.
+        // This function is a one-off hack to make Nodes cache in the right global object.
         cacheDOMNodeWrapper(node->document(), node, wrapper);
         return wrapper;
     }

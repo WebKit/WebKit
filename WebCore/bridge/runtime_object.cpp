@@ -41,7 +41,9 @@ using namespace Bindings;
 const ClassInfo RuntimeObjectImp::s_info = { "RuntimeObject", 0, 0, 0 };
 
 RuntimeObjectImp::RuntimeObjectImp(ExecState* exec, PassRefPtr<Instance> i)
-    : JSObject(getDOMStructure<RuntimeObjectImp>(exec))
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+    // We need to pass in the right global object for "i".
+    : JSObject(deprecatedGetDOMStructure<RuntimeObjectImp>(exec))
     , instance(i)
 {
     instance->rootObject()->addRuntimeObject(this);

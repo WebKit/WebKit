@@ -41,8 +41,11 @@ ASSERT_CLASS_FITS_IN_CELL(RuntimeMethod);
 
 const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", 0, 0, 0 };
 
-RuntimeMethod::RuntimeMethod(ExecState* exec, const Identifier& ident, Bindings::MethodList& m) 
-    : InternalFunction(&exec->globalData(), getDOMStructure<RuntimeMethod>(exec), ident)
+RuntimeMethod::RuntimeMethod(ExecState* exec, const Identifier& ident, Bindings::MethodList& m)
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+    // exec-globalData() is also likely wrong.
+    // Callers will need to pass in the right global object corresponding to this native object "m".
+    : InternalFunction(&exec->globalData(), deprecatedGetDOMStructure<RuntimeMethod>(exec), ident)
     , _methodList(new MethodList(m))
 {
 }

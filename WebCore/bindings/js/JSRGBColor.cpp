@@ -49,7 +49,9 @@ ASSERT_CLASS_FITS_IN_CELL(JSRGBColor);
 const ClassInfo JSRGBColor::s_info = { "RGBColor", 0, &JSRGBColorTable, 0 };
 
 JSRGBColor::JSRGBColor(ExecState* exec, unsigned color)
-    : DOMObject(getDOMStructure<JSRGBColor>(exec))
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+    // This will be fixed when JSRGBColor wraps css/RGBColor instead of being custom.
+    : DOMObject(deprecatedGetDOMStructure<JSRGBColor>(exec))
     , m_color(color)
 {
 }
