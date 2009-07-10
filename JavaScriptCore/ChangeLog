@@ -1,3 +1,18 @@
+2009-07-10  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        ParserArenaDeletable should override delete
+        https://bugs.webkit.org/show_bug.cgi?id=26790
+
+        ParserArenaDeletable overrides new, but it does not override delete.
+        ParserArenaDeletable must be freed by fastFree
+        because it is allocated by fastMalloc.
+
+        * parser/NodeConstructors.h:
+        (JSC::ParserArenaDeletable::operator delete):
+        * parser/Nodes.h:
+
 2009-07-10  Adam Roben  <aroben@apple.com>
 
         Sort all our Xcode projects

@@ -39,6 +39,11 @@ namespace JSC {
         return fastMalloc(size);
     }
 
+    inline void ParserArenaDeletable::operator delete(void* p)
+    {
+        fastFree(p);
+    }
+
     inline ParserArenaRefCounted::ParserArenaRefCounted(JSGlobalData* globalData)
     {
         globalData->parser->arena().derefWithArena(adoptRef(this));

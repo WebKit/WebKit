@@ -109,6 +109,8 @@ namespace JSC {
         // Objects created with this version of new are not deleted when the arena is deleted.
         // Other arrangements must be made.
         void* operator new(size_t);
+
+        void operator delete(void*);
     };
 
     class ParserArenaRefCounted : public RefCounted<ParserArenaRefCounted> {
