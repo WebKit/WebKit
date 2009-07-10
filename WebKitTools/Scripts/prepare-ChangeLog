@@ -340,7 +340,7 @@ foreach my $prefix (sort keys %files) {
     print CHANGE_LOG "\n";
 
     # We could pre-populate this with the git commit log or with the bug description.
-    print ("-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n");
+    print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
 
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         if ($didChangeRegressionTests) {
