@@ -1,3 +1,37 @@
+2009-07-10  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26496 and <rdar://problem/7046520>
+        REGRESSION: XHR stream connection blocks iFrame loading and resource downloading
+
+        With this test we ended up going over the maximum-connections-per-host limit that CFNetwork expected.
+        When that happened, the first request that was over the limit ended up in a bizarre state where it 
+        wasn't fully serviced until after the long running XHR was complete.
+
+        Loader and Loader::Host work together to try to not exceed the max-connection limit but non-cache
+        resources - such as XHR - could still end up causing this limit to be exceeded.
+
+        This fix adds a workaround specifically for XHR while we hash out a more thorough solution that will
+        handle this at the resource handle level.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::nonCacheRequestInFlight):
+        (WebCore::Loader::nonCacheRequestComplete):
+        (WebCore::Loader::Host::Host):
+        (WebCore::Loader::Host::nonCacheRequestInFlight):
+        (WebCore::Loader::Host::nonCacheRequestComplete):
+        (WebCore::Loader::Host::servePendingRequests): Take nonCacheRequestsInFlight into account.
+        * loader/loader.h:
+        (WebCore::Loader::Host::processingResource): Take nonCacheRequestsInFlight into account.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::~XMLHttpRequest): 
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously): Bump the nonCacheRequestInFlight count.
+        (WebCore::XMLHttpRequest::didFail): Decrement that count if the Loader was notified.
+        (WebCore::XMLHttpRequest::didFinishLoading): Ditto.
+
 2009-07-10  Antti Koivisto  <antti@apple.com>
 
         Try to unbreak non-Mac build.

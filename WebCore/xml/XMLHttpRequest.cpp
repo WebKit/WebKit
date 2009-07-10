@@ -22,6 +22,7 @@
 #include "config.h"
 #include "XMLHttpRequest.h"
 
+#include "Cache.h"
 #include "CString.h"
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightResultCache.h"
@@ -145,6 +146,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     , m_uploadComplete(false)
     , m_sameOriginRequest(true)
     , m_inPreflight(false)
+    , m_didTellLoaderAboutRequest(false)
     , m_receivedLength(0)
     , m_lastSendLineNumber(0)
     , m_exceptionCode(0)
@@ -154,6 +156,10 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
 
 XMLHttpRequest::~XMLHttpRequest()
 {
+    if (m_didTellLoaderAboutRequest) {
+            cache()->loader()->nonCacheRequestComplete(m_url);
+            m_didTellLoaderAboutRequest = false;
+    }
     if (m_upload)
         m_upload->disconnectXMLHttpRequest();
 }
@@ -681,6 +687,10 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
         // a request is in progress because we need to keep the listeners alive,
         // and they are referenced by the JavaScript wrapper.
         setPendingActivity(this);
+        
+        ASSERT(!m_didTellLoaderAboutRequest);
+        cache()->loader()->nonCacheRequestInFlight(m_url);
+        m_didTellLoaderAboutRequest = true;
     }
 }
 
@@ -961,6 +971,11 @@ String XMLHttpRequest::statusText(ExceptionCode& ec) const
 
 void XMLHttpRequest::didFail(const ResourceError& error)
 {
+    if (m_didTellLoaderAboutRequest) {
+        cache()->loader()->nonCacheRequestComplete(m_url);
+        m_didTellLoaderAboutRequest = false;
+    }
+    
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
         return;
@@ -982,6 +997,11 @@ void XMLHttpRequest::didFailRedirectCheck()
 
 void XMLHttpRequest::didFinishLoading(unsigned long identifier)
 {
+    if (m_didTellLoaderAboutRequest) {
+        cache()->loader()->nonCacheRequestComplete(m_url);
+        m_didTellLoaderAboutRequest = false;
+    }
+
     if (m_error)
         return;
 
