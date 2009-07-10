@@ -255,7 +255,7 @@ bool PluginPackage::load()
             return false;
 
         // Load the library
-        m_module = ::LoadLibraryW(m_path.charactersWithNullTermination());
+        m_module = ::LoadLibraryExW(m_path.charactersWithNullTermination(), 0, LOAD_WITH_ALTERED_SEARCH_PATH);
 
         if (!::SetCurrentDirectoryW(currentPath)) {
             if (m_module)

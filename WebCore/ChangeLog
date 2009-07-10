@@ -1,3 +1,17 @@
+2009-07-10  Steve Falkenburg  <sfalken@apple.com>
+
+        <rdar://problem/7048741> REGRESSION: Error about missing SwMenuX.dll opening pages with Shockwave
+        
+        Use altered search path while loading plug-ins. This modifies the DLL search order
+        to look in the directory containing the plug-in even if a call to SetDllDirectory
+        was previously made. Use of SetDllDirectory removes the current directory from the search path,
+        breaking the previous strategy for locating any dependent DLLs of the plug-in.
+        
+        Reviewed by Jon Honeycutt.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::load): Use LoadLibraryEx with LOAD_WITH_ALTERED_SEARCH_PATH
+
 2009-07-10  Adam Roben  <aroben@apple.com>
 
         Sort all our Xcode projects
