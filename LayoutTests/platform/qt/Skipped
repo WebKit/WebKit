@@ -920,8 +920,6 @@ fast/forms/menulist-width-change.html
 # reference, so we don't introduce regressions.
 css1/box_properties/clear.html
 css2.1/t040306-syntax-01-f.html
-dom/xhtml/level2/html/HTMLBaseElement01.xhtml
-dom/xhtml/level2/html/HTMLBaseElement02.xhtml
 editing/deleting/5144139-2.html
 editing/deleting/5300379.html
 editing/deleting/5408255.html

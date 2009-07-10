@@ -1,3 +1,14 @@
+2009-07-09  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        Re-enabled dom/xhtml/level2/html/HTMLBaseElement0{1,2} for the Qt DRT,
+        as there's now a cross-platform result and it passes.
+
+        * platform/qt/Skipped:
+        * platform/qt/dom/xhtml/level2/html/HTMLBaseElement01-expected.txt: Removed.
+        * platform/qt/dom/xhtml/level2/html/HTMLBaseElement02-expected.txt: Removed.
+
 2009-07-08  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger Freyther.
