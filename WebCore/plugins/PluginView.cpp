@@ -485,6 +485,11 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
     if (!m_plugin || !m_plugin->pluginFuncs()->getvalue)
         return 0;
 
+    // On Windows, calling Java's NPN_GetValue can allow the message loop to
+    // run, allowing loading to take place or JavaScript to run. Protect the
+    // PluginView from destruction. <rdar://problem/6978804>
+    RefPtr<PluginView> protect(this);
+
     NPError npErr;
     {
         PluginView::setCurrentPluginView(this);
@@ -493,6 +498,13 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
         npErr = m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginScriptableNPObject, &object);
         setCallingPlugin(false);
         PluginView::setCurrentPluginView(0);
+    }
+
+    if (hasOneRef()) {
+        // The renderer for the PluginView was destroyed during the above call, and
+        // the PluginView will be destroyed when this function returns, so we
+        // return null.
+        return 0;
     }
 
     if (npErr != NPERR_NO_ERROR || !object)
