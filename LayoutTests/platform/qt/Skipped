@@ -857,6 +857,7 @@ svg/hixie/viewbox/preserveAspectRatio/002.xml
 
 # ------- <video> support
 media
+fast/forms/slider-delete-while-dragging-thumb.html
 
 # ------ storage support
 storage
