@@ -1,3 +1,13 @@
+2009-07-09  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix chromium build bustage due to Widget being a RefCounted class.
+        https://bugs.webkit.org/show_bug.cgi?id=27139
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        * platform/chromium/PopupMenuChromium.h:
+
 2009-07-09  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

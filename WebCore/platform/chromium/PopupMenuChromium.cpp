@@ -80,7 +80,7 @@ static const PopupContainerSettings dropDownSettings = {
 
 // This class uses WebCore code to paint and handle events for a drop-down list
 // box ("combobox" on Windows).
-class PopupListBox : public FramelessScrollView, public RefCounted<PopupListBox> {
+class PopupListBox : public FramelessScrollView {
 public:
     static PassRefPtr<PopupListBox> create(PopupMenuClient* client, const PopupContainerSettings& settings)
     {
