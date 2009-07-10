@@ -225,9 +225,11 @@ void QNetworkReplyHandler::finish()
         resetState();
         start();
     } else if (m_reply->error() != QNetworkReply::NoError
-               // a web page that returns 403/404 can still have content
+               // a web page that returns 401/403/404 can still have content
                && m_reply->error() != QNetworkReply::ContentOperationNotPermittedError
-               && m_reply->error() != QNetworkReply::ContentNotFoundError) {
+               && m_reply->error() != QNetworkReply::ContentNotFoundError
+               && m_reply->error() != QNetworkReply::AuthenticationRequiredError
+               && m_reply->error() != QNetworkReply::ProxyAuthenticationRequiredError) {
         QUrl url = m_reply->url();
         ResourceError error(url.host(), m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(),
                             url.toString(), m_reply->errorString());
