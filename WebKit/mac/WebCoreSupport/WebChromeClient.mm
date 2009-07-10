@@ -656,6 +656,21 @@ String WebChromeClient::generateReplacementFile(const String& path)
     return [[m_webView _UIDelegateForwarder] webView:m_webView generateReplacementFile:path];
 }
 
+void WebChromeClient::formStateDidChange(const WebCore::Node* node)
+{
+    CallUIDelegate(m_webView, @selector(webView:formStateDidChangeForNode:), kit(const_cast<WebCore::Node*>(node)));
+}
+
+void WebChromeClient::formDidFocus(const WebCore::Node* node)
+{
+    CallUIDelegate(m_webView, @selector(webView:formStateDidFocusNode:), kit(const_cast<WebCore::Node*>(node)));
+}
+
+void WebChromeClient::formDidBlur(const WebCore::Node* node)
+{
+    CallUIDelegate(m_webView, @selector(webView:formStateDidBlurNode:), kit(const_cast<WebCore::Node*>(node)));
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
