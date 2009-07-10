@@ -1,3 +1,25 @@
+2009-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fix crash when changing the zoom level in http://iphone.akamai.com/
+        <rdar://problem/7029077>
+
+        RenderLayerBacking's paintIntoLayer() method called updateLayerListsIfNeeded(),
+        which could potentially destroy that compositing layer, causing a crash.
+        Prevent this from happening by not doing a compositing update from paintIntoLayer().
+
+        The existing updateLayerListsIfNeeded() was renamed to updateCompositingAndLayerListsIfNeeded(),
+        and still does the compositing update. The new updateLayerListsIfNeeded() does not touch
+        compositing layers, and is still called from paintIntoLayer().
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateLayerListsIfNeeded):
+        (WebCore::RenderLayer::updateCompositingAndLayerListsIfNeeded):
+        * rendering/RenderLayer.h:
+
 2009-07-10  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Darin Adler.

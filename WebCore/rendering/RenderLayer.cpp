@@ -2109,7 +2109,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     int ty = y - renderBoxY();
                              
     // Ensure our lists are up-to-date.
-    updateLayerListsIfNeeded();
+    updateCompositingAndLayerListsIfNeeded();
 
     bool selectionOnly = paintRestriction == PaintRestrictionSelectionOnly || paintRestriction == PaintRestrictionSelectionOnlyBlackText;
     bool forceBlackText = paintRestriction == PaintRestrictionSelectionOnlyBlackText;
@@ -2399,7 +2399,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Ensure our lists and 3d status are up-to-date.
-    updateLayerListsIfNeeded();
+    updateCompositingAndLayerListsIfNeeded();
     update3DTransformedDescendantStatus();
     
     RefPtr<HitTestingTransformState> localTransformState;
@@ -3072,6 +3072,12 @@ void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderL
 
 void RenderLayer::updateLayerListsIfNeeded()
 {
+    updateZOrderLists();
+    updateNormalFlowList();
+}
+
+void RenderLayer::updateCompositingAndLayerListsIfNeeded()
+{
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->inCompositingMode()) {
         if ((isStackingContext() && m_zOrderListsDirty) || m_normalFlowListDirty)
@@ -3079,8 +3085,7 @@ void RenderLayer::updateLayerListsIfNeeded()
         return;
     }
 #endif
-    updateZOrderLists();
-    updateNormalFlowList();
+    updateLayerListsIfNeeded();
 }
 
 void RenderLayer::repaintIncludingDescendants()
