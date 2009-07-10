@@ -4292,6 +4292,8 @@ static BOOL isInPasswordField(Frame* coreFrame)
     BOOL aIsItalic = ([fm traitsOfFont:a] & NSItalicFontMask) != 0;
     BOOL bIsItalic = ([fm traitsOfFont:b] & NSItalicFontMask) != 0;
 
+    BOOL aIsBold = aWeight > MIN_BOLD_WEIGHT;
+
     if ([aFamilyName isEqualToString:bFamilyName]) {
         NSString *familyNameForCSS = aFamilyName;
 
@@ -4301,7 +4303,8 @@ static BOOL isInPasswordField(Frame* coreFrame)
         
         // Find the font the same way the rendering code would later if it encountered this CSS.
         NSFontTraitMask traits = aIsItalic ? NSFontItalicTrait : 0;
-        NSFont *foundFont = [WebFontCache fontWithFamily:aFamilyName traits:traits weight:aWeight size:aPointSize];
+        int weight = aIsBold ? STANDARD_BOLD_WEIGHT : STANDARD_WEIGHT;
+        NSFont *foundFont = [WebFontCache fontWithFamily:aFamilyName traits:traits weight:weight size:aPointSize];
 
         // If we don't find a font with the same Postscript name, then we'll have to use the
         // Postscript name to make the CSS specific enough.
@@ -4321,8 +4324,9 @@ static BOOL isInPasswordField(Frame* coreFrame)
     else if (aPointSize > soa)
         [style _setFontSizeDelta:@"1px"];
 
+    // FIXME: Map to the entire range of CSS weight values.
     if (aWeight == bWeight)
-        [style setFontWeight:aWeight > MIN_BOLD_WEIGHT ? @"bold" : @"normal"];
+        [style setFontWeight:aIsBold ? @"bold" : @"normal"];
 
     if (aIsItalic == bIsItalic)
         [style setFontStyle:aIsItalic ? @"italic" :  @"normal"];

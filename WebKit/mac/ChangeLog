@@ -1,3 +1,16 @@
+2009-07-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson and Dan Bernstein.
+
+        <rdar://problem/7024972> Cannot set font to Helvetica Neue Light in Mail compose window
+
+        No regression test because this only affects the font panel.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _addToStyle:fontA:fontB:]): Fix code that detects whether the font would
+        survive a round trip by using the weight corresponding to "bold" or "normal" rather than
+        the actual weight number.
+
 2009-07-09  Beth Dakin and Jon Honeycutt <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.
