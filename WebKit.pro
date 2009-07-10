@@ -7,6 +7,6 @@ SUBDIRS += \
         WebKit/qt/QtLauncher \
         WebKit/qt/tests
 
-!win32: SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
+!win32:!symbian: SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
 
 include(WebKit/qt/docs/docs.pri)
