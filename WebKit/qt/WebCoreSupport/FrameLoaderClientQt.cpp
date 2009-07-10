@@ -948,32 +948,35 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     if (!m_webFrame)
         return 0;
 
-    QWebFrameData frameData;
+    QWebFrameData frameData(m_frame->page(), m_frame, ownerElement, name);
     frameData.url = url;
-    frameData.name = name;
-    frameData.ownerElement = ownerElement;
     frameData.referrer = referrer;
     frameData.allowsScrolling = allowsScrolling;
     frameData.marginWidth = marginWidth;
     frameData.marginHeight = marginHeight;
 
-    QWebFrame* webFrame = new QWebFrame(m_webFrame, &frameData);
-    emit m_webFrame->page()->frameCreated(webFrame);
+    QPointer<QWebFrame> webFrame = new QWebFrame(m_webFrame, &frameData);
+    // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
+    if (!webFrame->d->frame->page()) {
+        frameData.frame.release();
+        ASSERT(webFrame.isNull());
+        return 0;
+    }
 
-    RefPtr<Frame> childFrame = adoptRef(webFrame->d->frame);
+    emit m_webFrame->page()->frameCreated(webFrame);
 
     // ### set override encoding if we have one
 
     FrameLoadType loadType = m_frame->loader()->loadType();
     FrameLoadType childLoadType = FrameLoadTypeRedirectWithLockedBackForwardList;
 
-    childFrame->loader()->loadURLIntoChildFrame(frameData.url, frameData.referrer, childFrame.get());
+    frameData.frame->loader()->loadURLIntoChildFrame(frameData.url, frameData.referrer, frameData.frame.get());
 
     // The frame's onload handler may have removed it from the document.
-    if (!childFrame->tree()->parent())
+    if (!frameData.frame->tree()->parent())
         return 0;
 
-    return childFrame.release();
+    return frameData.frame.release();
 }
 
 ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& _mimeType)

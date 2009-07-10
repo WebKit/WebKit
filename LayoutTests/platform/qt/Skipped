@@ -5179,7 +5179,6 @@ fast/inline-block/004.html
 fast/inline-block/005.html
 fast/loader/cancel-load-during-port-block-timer.html
 fast/loader/empty-embed-src-attribute.html
-fast/loader/frame-creation-removal.html
 fast/loader/javascript-url-hierarchical-execution.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/null-request-after-willSendRequest.html

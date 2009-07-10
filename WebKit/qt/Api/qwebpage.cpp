@@ -325,11 +325,7 @@ bool QWebPagePrivate::acceptNavigationRequest(QWebFrame *frame, const QNetworkRe
 void QWebPagePrivate::createMainFrame()
 {
     if (!mainFrame) {
-        QWebFrameData frameData;
-        frameData.ownerElement = 0;
-        frameData.allowsScrolling = true;
-        frameData.marginWidth = 0;
-        frameData.marginHeight = 0;
+        QWebFrameData frameData(page);
         mainFrame = new QWebFrame(q, &frameData);
 
         emit q->frameCreated(mainFrame);

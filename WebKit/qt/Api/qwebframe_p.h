@@ -43,9 +43,16 @@ class QWebPage;
 class QWebFrameData
 {
 public:
+    QWebFrameData(WebCore::Page*, WebCore::Frame* parentFrame = 0,
+                  WebCore::HTMLFrameOwnerElement* = 0,
+                  const WebCore::String& frameName = WebCore::String());
+
     WebCore::KURL url;
     WebCore::String name;
     WebCore::HTMLFrameOwnerElement* ownerElement;
+    WebCore::Page* page;
+    RefPtr<WebCore::Frame> frame;
+    WebCore::FrameLoaderClientQt* frameLoaderClient;
 
     WebCore::String referrer;
     bool allowsScrolling;
@@ -67,8 +74,7 @@ public:
         , marginWidth(-1)
         , marginHeight(-1)
         {}
-    void init(QWebFrame *qframe, WebCore::Page *page,
-              QWebFrameData *frameData);
+    void init(QWebFrame* qframe, QWebFrameData* frameData);
 
     inline QWebFrame *parentFrame() { return qobject_cast<QWebFrame*>(q->parent()); }
 
