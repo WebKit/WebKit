@@ -94,28 +94,7 @@ int main(int argc, char* argv[])
 {
 #ifdef Q_WS_X11
     FcInit();
-    FcConfig *config = FcConfigCreate();
-    QByteArray fontDir = getenv("WEBKIT_TESTFONTS");
-    if (fontDir.isEmpty() || !QDir(fontDir).exists()) {
-        fprintf(stderr,
-                "\n\n"
-                "----------------------------------------------------------------------\n"
-                "WEBKIT_TESTFONTS environment variable is not set correctly.\n"
-                "This variable has to point to the directory containing the fonts\n"
-                "you can clone from git://gitorious.org/qtwebkit/testfonts.git\n"
-                "----------------------------------------------------------------------\n"
-);
-        exit(1);
-    }
-    char currentPath[PATH_MAX+1];
-    getcwd(currentPath, PATH_MAX);
-    QByteArray configFile = currentPath;
-    configFile += "/WebKitTools/DumpRenderTree/qt/fonts.conf";
-    if (!FcConfigParseAndLoad (config, (FcChar8*) configFile.data(), true))
-        qFatal("Couldn't load font configuration file");
-    if (!FcConfigAppFontAddDir (config, (FcChar8*) fontDir.data()))
-        qFatal("Couldn't add font dir!");
-    FcConfigSetCurrent(config);
+    WebCore::DumpRenderTree::initializeFonts();
 #endif
     QApplication app(argc, argv);
 #ifdef Q_WS_X11

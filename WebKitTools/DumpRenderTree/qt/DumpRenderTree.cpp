@@ -41,11 +41,16 @@
 #include <QApplication>
 #include <QUrl>
 #include <QFocusEvent>
+#include <QFontDatabase>
 
 #include <qwebpage.h>
 #include <qwebframe.h>
 #include <qwebview.h>
 #include <qwebsettings.h>
+
+#ifdef Q_WS_X11
+#include <fontconfig/fontconfig.h>
+#endif
 
 #include <unistd.h>
 #include <qdebug.h>
@@ -198,6 +203,11 @@ void DumpRenderTree::open(const QUrl& url)
 
     QFocusEvent ev(QEvent::FocusIn);
     m_page->event(&ev);
+
+    QFontDatabase::removeAllApplicationFonts();
+#if defined(Q_WS_X11)
+    initializeFonts();
+#endif
 
     qt_drt_clearFrameName(m_page->mainFrame());
 
@@ -361,6 +371,45 @@ int DumpRenderTree::windowCount() const
     }
     return count + 1;
 }
+
+#if defined(Q_WS_X11)
+void DumpRenderTree::initializeFonts()
+{
+    static int numFonts = -1;
+
+    // Some test cases may add or remove application fonts (via @font-face).
+    // Make sure to re-initialize the font set if necessary.
+    FcFontSet* appFontSet = FcConfigGetFonts(0, FcSetApplication);
+    if (appFontSet && numFonts >= 0 && appFontSet->nfont == numFonts)
+        return;
+
+    QByteArray fontDir = getenv("WEBKIT_TESTFONTS");
+    if (fontDir.isEmpty() || !QDir(fontDir).exists()) {
+        fprintf(stderr,
+                "\n\n"
+                "----------------------------------------------------------------------\n"
+                "WEBKIT_TESTFONTS environment variable is not set correctly.\n"
+                "This variable has to point to the directory containing the fonts\n"
+                "you can clone from git://gitorious.org/qtwebkit/testfonts.git\n"
+                "----------------------------------------------------------------------\n"
+               );
+        exit(1);
+    }
+    char currentPath[PATH_MAX+1];
+    getcwd(currentPath, PATH_MAX);
+    QByteArray configFile = currentPath;
+    FcConfig *config = FcConfigCreate();
+    configFile += "/WebKitTools/DumpRenderTree/qt/fonts.conf";
+    if (!FcConfigParseAndLoad (config, (FcChar8*) configFile.data(), true))
+        qFatal("Couldn't load font configuration file");
+    if (!FcConfigAppFontAddDir (config, (FcChar8*) fontDir.data()))
+        qFatal("Couldn't add font dir!");
+    FcConfigSetCurrent(config);
+
+    appFontSet = FcConfigGetFonts(config, FcSetApplication);
+    numFonts = appFontSet->nfont;
+}
+#endif
 
 }
 

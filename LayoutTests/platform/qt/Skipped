@@ -5243,16 +5243,4 @@ tables/mozilla_expected_failures/bugs/bug128876.html
 transforms/2d/transform-2d.html
 transitions/opacity-transition-zindex.html
 
-fast/dom/inner-text-001.html
-fast/events/frame-tab-focus.html
-fast/events/mousemove-after-drag-over-scrollbar.html
-fast/events/scroll-to-anchor-in-overflow-hidden.html
-fast/flexbox/repaint-scrollbar.html
-fast/forms/button-state-restore.html
-fast/forms/input-multiple.html
-fast/forms/select-script-onchange.html
-fast/frames/frame-unload-crash.html
-fast/loader/onunload-form-submit-crash-2.html
-fast/loader/onunload-form-submit-crash.html
-fast/loader/plain-text-document.html
 
