@@ -103,8 +103,13 @@ def modified_changelogs(scm):
     return changelog_paths
 
 def bug_id_from_commit_message(commit_message):
+    match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", commit_message, re.MULTILINE)
+    if match:
+        return match.group('bug_id')
     match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", commit_message, re.MULTILINE)
-    return match.group('bug_id')
+    if match:
+        return match.group('bug_id')
+    return None
 
 def commit_message_for_this_commit(scm):
     changelog_paths = modified_changelogs(scm)

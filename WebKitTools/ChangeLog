@@ -1,3 +1,13 @@
+2009-07-09  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/27114> bugzilla-tool: Parse short bug URL from commit log messages
+
+        Reviewed by Adam Roben.
+
+        * Scripts/bugzilla-tool:
+        (bug_id_from_commit_message): Check for the short bug URL before
+        checking for the longer bugs.webkit.org URL.
+
 2009-07-08  David Kilzer  <ddkilzer@apple.com>
 
         Bug 27062: bugzilla-tool: post-commits should read bug id from commit log and actually work
