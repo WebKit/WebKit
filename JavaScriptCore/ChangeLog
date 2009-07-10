@@ -1,5 +1,12 @@
 2009-07-09  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by NOBODY (Build fix).
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
+2009-07-09  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin Adler.
 
         Bug 27016 - Interpreter crashes due to invalid array indexes
