@@ -98,7 +98,7 @@ void MediaControlElement::update()
     updateStyle();
 }
 
-RenderStyle* MediaControlElement::styleForElement()
+PassRefPtr<RenderStyle> MediaControlElement::styleForElement()
 {
     RenderStyle* style = m_mediaElement->renderer()->getCachedPseudoStyle(m_pseudoStyleId);
     if (!style)
@@ -119,16 +119,16 @@ bool MediaControlElement::rendererIsNeeded(RenderStyle* style)
     
 void MediaControlElement::attach()
 {
-    RenderStyle* style = styleForElement();
+    RefPtr<RenderStyle> style = styleForElement();
     if (!style)
         return;
-    bool needsRenderer = rendererIsNeeded(style);
+    bool needsRenderer = rendererIsNeeded(style.get());
     if (!needsRenderer)
         return;
-    RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style);
+    RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style.get());
     if (!renderer)
         return;
-    renderer->setStyle(style);
+    renderer->setStyle(style.get());
     setRenderer(renderer);
     if (parent() && parent()->renderer()) {
         // Find next sibling with a renderer to determine where to insert.
@@ -145,21 +145,21 @@ void MediaControlElement::updateStyle()
     if (!m_mediaElement || !m_mediaElement->renderer())
         return;
 
-    RenderStyle* style = styleForElement();
+    RefPtr<RenderStyle> style = styleForElement();
     if (!style)
         return;
 
-    bool needsRenderer = rendererIsNeeded(style) && parent() && parent()->renderer();
+    bool needsRenderer = rendererIsNeeded(style.get()) && parent() && parent()->renderer();
     if (renderer() && !needsRenderer)
         detach();
     else if (!renderer() && needsRenderer)
         attach();
     else if (renderer()) {
-        renderer()->setStyle(style);
+        renderer()->setStyle(style.get());
 
         // Make sure that if there is any innerText renderer, it is updated as well.
         if (firstChild() && firstChild()->renderer())
-            firstChild()->renderer()->setStyle(style);
+            firstChild()->renderer()->setStyle(style.get());
     }
 }
 
@@ -258,7 +258,7 @@ void MediaControlInputElement::update()
     updateStyle();
 }
 
-RenderStyle* MediaControlInputElement::styleForElement()
+PassRefPtr<RenderStyle> MediaControlInputElement::styleForElement()
 {
     return m_mediaElement->renderer()->getCachedPseudoStyle(m_pseudoStyleId);
 }
@@ -270,17 +270,17 @@ bool MediaControlInputElement::rendererIsNeeded(RenderStyle* style)
 
 void MediaControlInputElement::attach()
 {
-    RenderStyle* style = styleForElement();
+    RefPtr<RenderStyle> style = styleForElement();
     if (!style)
         return;
     
-    bool needsRenderer = rendererIsNeeded(style);
+    bool needsRenderer = rendererIsNeeded(style.get());
     if (!needsRenderer)
         return;
-    RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style);
+    RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style.get());
     if (!renderer)
         return;
-    renderer->setStyle(style);
+    renderer->setStyle(style.get());
     setRenderer(renderer);
     if (parent() && parent()->renderer()) {
         // Find next sibling with a renderer to determine where to insert.
@@ -297,17 +297,17 @@ void MediaControlInputElement::updateStyle()
     if (!m_mediaElement || !m_mediaElement->renderer())
         return;
     
-    RenderStyle* style = styleForElement();
+    RefPtr<RenderStyle> style = styleForElement();
     if (!style)
         return;
     
-    bool needsRenderer = rendererIsNeeded(style) && parent() && parent()->renderer();
+    bool needsRenderer = rendererIsNeeded(style.get()) && parent() && parent()->renderer();
     if (renderer() && !needsRenderer)
         detach();
     else if (!renderer() && needsRenderer)
         attach();
     else if (renderer())
-        renderer()->setStyle(style);
+        renderer()->setStyle(style.get());
 }
     
 bool MediaControlInputElement::hitTest(const IntPoint& absPoint)
@@ -534,23 +534,32 @@ bool MediaControlFullscreenButtonElement::rendererIsNeeded(RenderStyle* style)
 
 MediaControlTimeDisplayElement::MediaControlTimeDisplayElement(Document* doc, PseudoId pseudo, HTMLMediaElement* element)
     : MediaControlElement(doc, pseudo, element)
-    , m_cachedWidth(Length(0, Fixed))
+    , m_isVisible(true)
 {
+}
+
+PassRefPtr<RenderStyle> MediaControlTimeDisplayElement::styleForElement()
+{
+    RefPtr<RenderStyle> style = MediaControlElement::styleForElement();
+    if (!m_isVisible) {
+        style = RenderStyle::clone(style.get());
+        style->setWidth(Length(0, Fixed));
+    }
+    return style;
 }
 
 void MediaControlTimeDisplayElement::setVisible(bool visible)
 {
+    // This function is used during the RenderMedia::layout()
+    // call, where we cannot change the renderer at this time.
     if (!renderer() || !renderer()->style())
         return;
 
-    if (!m_cachedWidth.value()) {
-        RenderStyle* style = m_mediaElement->renderer()->getCachedPseudoStyle(m_pseudoStyleId);
-        if (!style)
-            return;
-        m_cachedWidth = style->width();
-    }
-
-    renderer()->style()->setWidth(visible ? m_cachedWidth : Length(0, Fixed));
+    if (visible == m_isVisible)
+        return;
+    m_isVisible = visible;
+    RefPtr<RenderStyle> style = styleForElement();
+    renderer()->setStyle(style.get());
 }
 
 

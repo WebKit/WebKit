@@ -543,7 +543,7 @@ bool RenderMedia::shouldShowTimeDisplayControls() const
         return false;
 
     int width = mediaElement()->renderBox()->width();
-    return width >= minWidthToDisplayTimeDisplays;
+    return width >= minWidthToDisplayTimeDisplays * style()->effectiveZoom();
 }
 
 } // namespace WebCore

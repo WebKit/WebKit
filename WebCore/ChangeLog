@@ -1,3 +1,40 @@
+2009-07-09  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Full page zoom breaks remaining and elapsed time display in the <video> controller.
+        https://bugs.webkit.org/show_bug.cgi?id=27123
+
+        We are changing the size of the time remaining and time elapsed field, to
+        automatically hide them, when the controller is too short.
+
+        Because we toggle the size between 0 and the previous value of the
+        controller, we miss any width change that may occur during full page zoom,
+        and we fail to restore a correct width.
+
+        This change fixes that problem by using a cloned style on which we
+        set the width to 0, and restoring the previous style when going back to
+        the normal width.
+
+        We take care about properly using the cloned style or the pseudo style,
+        by overriding styleForElement().
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::styleForElement):
+        (WebCore::MediaControlElement::attach):
+        (WebCore::MediaControlElement::updateStyle):
+        (WebCore::MediaControlInputElement::styleForElement):
+        (WebCore::MediaControlInputElement::attach):
+        (WebCore::MediaControlInputElement::updateStyle):
+        (WebCore::MediaControlTimeDisplayElement::MediaControlTimeDisplayElement):
+        (WebCore::MediaControlTimeDisplayElement::styleForElement):
+        (WebCore::MediaControlTimeDisplayElement::setVisible):
+        * rendering/MediaControlElements.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::shouldShowTimeDisplayControls): Make sure
+        we take in account the zoom level when deciding if we should hide the 
+        ellapsed and remaining time.
+
 2009-07-09  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Adler.
