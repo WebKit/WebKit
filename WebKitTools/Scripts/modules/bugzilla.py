@@ -30,6 +30,7 @@
 # WebKit's Python module for interacting with Bugzilla
 
 import getpass
+import platform
 import re
 import subprocess
 import urllib2
@@ -57,6 +58,39 @@ http://wwwsearch.sourceforge.net/mechanize/
 """
     exit(1)
 
+def credentials_from_git():
+    return [read_config("username"), read_config("password")]
+
+def credentials_from_keychain(username=None):
+    if not is_mac_os_x():
+        return [username, None]
+
+    command = "/usr/bin/security %s -g -s %s" % ("find-internet-password", Bugzilla.bug_server_host)
+    if username:
+        command += " -a %s" % username
+
+    log('Reading Keychain for %s account and password.  Click "Allow" to continue...' % Bugzilla.bug_server_host)
+    keychain_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    value = keychain_process.communicate()[0]
+    exit_code = keychain_process.wait()
+
+    if exit_code:
+        return [username, None]
+
+    match = re.search('^\s*"acct"<blob>="(?P<username>.+)"', value, re.MULTILINE)
+    if match:
+        username = match.group('username')
+
+    password = None
+    match = re.search('^password: "(?P<password>.+)"', value, re.MULTILINE)
+    if match:
+        password = match.group('password')
+
+    return [username, password]
+
+def is_mac_os_x():
+    return platform.mac_ver()[0]
+
 # FIXME: This should not depend on git for config storage
 def read_config(key):
     # Need a way to read from svn too
@@ -68,6 +102,19 @@ def read_config(key):
         return None
     return value.rstrip('\n')
 
+def read_credentials():
+    (username, password) = credentials_from_git()
+
+    if not username or not password:
+        (username, password) = credentials_from_keychain(username)
+
+    if not username:
+        username = raw_input("Bugzilla login: ")
+    if not password:
+        password = getpass.getpass("Bugzilla password for %s: " % username)
+
+    return [username, password]
+
 def timestamp():
     return datetime.now().strftime("%Y%m%d%H%M%S")
 
@@ -75,15 +122,15 @@ class Bugzilla:
     def __init__(self, dryrun=False):
         self.dryrun = dryrun
         self.authenticated = False
-        
-        # Defaults (until we support better option parsing):
-        self.bug_server = "https://bugs.webkit.org/"
-        
+
         self.browser = Browser()
         # Ignore bugs.webkit.org/robots.txt until we fix it to allow this script
         self.browser.set_handle_robots(False)
 
-    bug_server_regex = "https?\://bugs\.webkit\.org/"
+    # Defaults (until we support better option parsing):
+    bug_server_host = "bugs.webkit.org"
+    bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
+    bug_server_url = "https://%s/" % bug_server_host
 
     # This could eventually be a text file
     reviewer_usernames_to_full_names = {
@@ -128,13 +175,13 @@ class Bugzilla:
 
     def bug_url_for_bug_id(self, bug_id, xml=False):
         content_type = "&ctype=xml" if xml else ""
-        return "%sshow_bug.cgi?id=%s%s" % (self.bug_server, bug_id, content_type)
+        return "%sshow_bug.cgi?id=%s%s" % (self.bug_server_url, bug_id, content_type)
     
     def attachment_url_for_id(self, attachment_id, action="view"):
         action_param = ""
         if action and action != "view":
             action_param = "&action=" + action
-        return "%sattachment.cgi?id=%s%s" % (self.bug_server, attachment_id, action_param)
+        return "%sattachment.cgi?id=%s%s" % (self.bug_server_url, attachment_id, action_param)
 
     def fetch_attachments_from_bug(self, bug_id):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
@@ -181,7 +228,7 @@ class Bugzilla:
     def fetch_bug_ids_from_commit_queue(self):
         # FIXME: We should have an option for restricting the search by email.  Example:
         # unassigned_only = "&emailassigned_to1=1&emailtype1=substring&email1=unassigned"
-        commit_queue_url = self.bug_server + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
+        commit_queue_url = self.bug_server_url + "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review%2B"
         log("Loading commit queue")
 
         page = urllib2.urlopen(commit_queue_url)
@@ -202,24 +249,19 @@ class Bugzilla:
             patches_to_land += patches
         return patches_to_land
 
-    def authenticate(self, username=None, password=None):
+    def authenticate(self):
         if self.authenticated:
             return
 
-        if not username:
-            username = read_config("username")
-            if not username:
-                username = raw_input("Bugzilla login: ")
-        if not password:
-            password = read_config("password")
-            if not password:
-                password = getpass.getpass("Bugzilla password for %s: " % username)
-
-        log("Logging in as %s..." % username)
         if self.dryrun:
+            log("Skipping log in for dry run...")
             self.authenticated = True
             return
-        self.browser.open(self.bug_server + "index.cgi?GoAheadAndLogIn=1")
+
+        (username, password) = read_credentials()
+
+        log("Logging in as %s..." % username)
+        self.browser.open(self.bug_server_url + "index.cgi?GoAheadAndLogIn=1")
         self.browser.select_form(name="login")
         self.browser['Bugzilla_login'] = username
         self.browser['Bugzilla_password'] = password
@@ -241,7 +283,7 @@ class Bugzilla:
             log(comment_text)
             return
         
-        self.browser.open(self.bug_server + "attachment.cgi?action=enter&bugid=" + bug_id)
+        self.browser.open(self.bug_server_url + "attachment.cgi?action=enter&bugid=" + bug_id)
         self.browser.select_form(name="entryform")
         self.browser['description'] = description
         self.browser['ispatch'] = ("1",)

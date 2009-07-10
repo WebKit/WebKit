@@ -1,5 +1,34 @@
 2009-07-10  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/27117> bugzilla-tool: use Mac OS X keychain for authentication
+
+        Reviewed by Eric Seidel.
+
+        Try reading credentials from git config first, then keychain if
+        running on Mac OS X, else prompt at the command-line.
+
+        * Scripts/modules/bugzilla.py: Added "import platform".
+        (credentials_from_git): Added.
+        (credentials_from_keychain): Added.
+        (is_mac_os_x): Added.
+        (read_credentials): Added.
+        (Bugzilla.__init__): Moved instance attribute bug_server to a
+        static attribute named bug-server_url.
+        (Bugzilla.bug_server_host): Added.  Extracted host name from
+        bug_server_url.
+        (Bugzilla.bug_server_regex): Updated to be created using
+        bug_server_host.
+        (Bugzilla.bug_server_url): Renamed from bug_server.
+        (Bugzilla.bug_url_for_bug_id): Updated for renaming of
+        bug_server to bug_server_url.
+        (Bugzilla.attachment_url_for_id): Ditto.
+        (Bugzilla.fetch_bug_ids_from_commit_queue): Ditto.
+        (Bugzilla.authenticate): Ditto.  Updated to use
+        read_credentials().
+        (Bugzilla.add_patch_to_bug): Ditto.
+
+2009-07-10  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/27115> bugzilla-tool: extract duplicate logging methods into a module
 
         Reviewed by Adam Roben.
