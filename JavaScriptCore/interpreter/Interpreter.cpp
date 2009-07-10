@@ -3150,7 +3150,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
                     goto vm_throw;
                 }
                 Register* argsBuffer = callFrame->registers() + argsOffset;
-                for (unsigned i = 0; i < argCount; ++i) {
+                for (int32_t i = 0; i < argCount; ++i) {
                     argsBuffer[i] = asObject(arguments)->get(callFrame, i);
                     CHECK_FOR_EXCEPTION();
                 }
