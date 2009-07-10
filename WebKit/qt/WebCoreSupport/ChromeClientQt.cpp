@@ -288,8 +288,9 @@ void ChromeClientQt::setStatusbarText(const String& msg)
 
 bool ChromeClientQt::shouldInterruptJavaScript()
 {
-    notImplemented();
-    return false;
+    bool shouldInterrupt = false;
+    QMetaObject::invokeMethod(m_webPage, "shouldInterruptJavaScript", Qt::DirectConnection, Q_RETURN_ARG(bool, shouldInterrupt));
+    return shouldInterrupt;
 }
 
 bool ChromeClientQt::tabsToLinks() const

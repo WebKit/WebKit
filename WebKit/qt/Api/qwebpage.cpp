@@ -1421,6 +1421,24 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
 }
 
 /*!
+    \class QWebPage::shouldInterruptJavaScript
+    \since 4.6
+    This function is called when a JavaScript program is running for a long period of time.
+
+    If the user wanted to stop the JavaScript the implementation should return true; otherwise false.
+
+    The default implementation executes the query using QMessageBox::information with QMessageBox::Yes and QMessageBox::No buttons.
+*/
+bool QWebPage::shouldInterruptJavaScript()
+{
+#ifdef QT_NO_MESSAGEBOX
+    return false;
+#else
+    return QMessageBox::Yes == QMessageBox::information(d->view, tr("JavaScript Problem - %1").arg(mainFrame()->url().host()), tr("The script on this page appears to have a problem. Do you want to stop the script?"), QMessageBox::Yes, QMessageBox::No);
+#endif
+}
+
+/*!
     This function is called whenever WebKit wants to create a new window of the given \a type, for
     example when a JavaScript program requests to open a document in a new window.
 

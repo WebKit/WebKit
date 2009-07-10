@@ -288,6 +288,9 @@ public:
 
     inline QWebPagePrivate* handle() const { return d; }
 
+public Q_SLOTS:
+    bool shouldInterruptJavaScript();
+
 Q_SIGNALS:
     void loadStarted();
     void loadProgress(int progress);
