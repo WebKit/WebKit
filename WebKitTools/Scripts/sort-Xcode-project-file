@@ -155,7 +155,7 @@ sub sortChildrenByFileName($$)
     if ((!$aSuffix && !$isFile{$aFileName} && $bSuffix) || ($aSuffix && !$bSuffix && !$isFile{$bFileName})) {
         return !$aSuffix ? -1 : 1;
     }
-    return $aFileName cmp $bFileName;
+    return lc($aFileName) cmp lc($bFileName);
 }
 
 sub sortFilesByFileName($$)
@@ -163,5 +163,5 @@ sub sortFilesByFileName($$)
     my ($a, $b) = @_;
     my $aFileName = $1 if $a =~ /^\s*[A-Z0-9]{24} \/\* (.+) in /;
     my $bFileName = $1 if $b =~ /^\s*[A-Z0-9]{24} \/\* (.+) in /;
-    return $aFileName cmp $bFileName;
+    return lc($aFileName) cmp lc($bFileName);
 }
