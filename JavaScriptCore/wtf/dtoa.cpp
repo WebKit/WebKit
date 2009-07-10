@@ -255,6 +255,8 @@ typedef union { double d; uint32_t L[2]; } U;
 #define Big0 (Frac_mask1 | Exp_msk1 * (DBL_MAX_EXP + Bias - 1))
 #define Big1 0xffffffff
 
+
+// FIXME: we should remove non-Pack_32 mode since it is unused and unmaintained
 #ifndef Pack_32
 #define Pack_32
 #endif
@@ -278,25 +280,41 @@ typedef union { double d; uint32_t L[2]; } U;
 #define Kmax 15
 
 struct BigInt {
-    BigInt() : sign(0), wds(0) { }
-    BigInt(const BigInt& other) : sign(other.sign), wds(other.wds) 
-    {
-        for (int i = 0; i < 64; ++i)
-            x[i] = other.x[i];
-    }
+    BigInt() : sign(0) { }
+    int sign;
 
-    BigInt& operator=(const BigInt& other) 
+    void clear()
     {
-        sign = other.sign;
-        wds = other.wds;
-        for (int i = 0; i < 64; ++i)
-            x[i] = other.x[i];        
-        return *this;
+        sign = 0;
+        m_words.clear();
     }
     
-    int sign;
-    int wds;
-    uint32_t x[64];
+    size_t size() const
+    {
+        return m_words.size();
+    }
+
+    void resize(size_t s)
+    {
+        m_words.resize(s);
+    }
+            
+    uint32_t* words()
+    {
+        return m_words.data();
+    }
+
+    const uint32_t* words() const
+    {
+        return m_words.data();
+    }
+    
+    void append(uint32_t w)
+    {
+        m_words.append(w);
+    }
+    
+    Vector<uint32_t, 16> m_words;
 };
 
 static void multadd(BigInt& b, int m, int a)    /* multiply by m and add a */
@@ -307,8 +325,8 @@ static void multadd(BigInt& b, int m, int a)    /* multiply by m and add a */
     uint32_t carry;
 #endif
 
-    int wds = b.wds;
-    uint32_t* x = b.x;
+    int wds = b.size();
+    uint32_t* x = b.words();
     int i = 0;
     carry = a;
     do {
@@ -331,10 +349,8 @@ static void multadd(BigInt& b, int m, int a)    /* multiply by m and add a */
 #endif
     } while (++i < wds);
 
-    if (carry) {
-        b.x[wds++] = (uint32_t)carry;
-        b.wds = wds;
-    }
+    if (carry)
+        b.append((uint32_t)carry);
 }
 
 static void s2b(BigInt& b, const char* s, int nd0, int nd, uint32_t y9)
@@ -346,12 +362,12 @@ static void s2b(BigInt& b, const char* s, int nd0, int nd, uint32_t y9)
     for (k = 0, y = 1; x > y; y <<= 1, k++) { }
 #ifdef Pack_32
     b.sign = 0;
-    b.x[0] = y9;
-    b.wds = 1;
+    b.resize(1);
+    b.words()[0] = y9;
 #else
     b.sign = 0;
-    b.x[0] = y9 & 0xffff;
-    b.wds = (b->x[1] = y9 >> 16) ? 2 : 1;
+    b.resize((b->x[1] = y9 >> 16) ? 2 : 1);
+    b.words()[0] = y9 & 0xffff;
 #endif
 
     int i = 9;
@@ -440,8 +456,8 @@ static int lo0bits (uint32_t* y)
 static void i2b(BigInt& b, int i)
 {
     b.sign = 0;
-    b.x[0] = i;
-    b.wds = 1;
+    b.resize(1);
+    b.words()[0] = i;
 }
 
 static void mult(BigInt& aRef, const BigInt& bRef)
@@ -459,23 +475,24 @@ static void mult(BigInt& aRef, const BigInt& bRef)
     uint32_t carry, z;
 #endif
 
-    if (a->wds < b->wds) {
+    if (a->size() < b->size()) {
         const BigInt* tmp = a;
         a = b;
         b = tmp;
     }
     
-    wa = a->wds;
-    wb = b->wds;
+    wa = a->size();
+    wb = b->size();
     wc = wa + wb;
+    c.resize(wc);
 
-    for (xc = c.x, xa = xc + wc; xc < xa; xc++)
+    for (xc = c.words(), xa = xc + wc; xc < xa; xc++)
         *xc = 0;
-    xa = a->x;
+    xa = a->words();
     xae = xa + wa;
-    xb = b->x;
+    xb = b->words();
     xbe = xb + wb;
-    xc0 = c.x;
+    xc0 = c.words();
 #ifdef USE_LONG_LONG
     for (; xb < xbe; xc0++) {
         if ((y = *xb++)) {
@@ -537,8 +554,8 @@ static void mult(BigInt& aRef, const BigInt& bRef)
     }
 #endif
 #endif
-    for (xc0 = c.x, xc = xc0 + wc; wc > 0 && !*--xc; --wc) { }
-    c.wds = wc;
+    for (xc0 = c.words(), xc = xc0 + wc; wc > 0 && !*--xc; --wc) { }
+    c.resize(wc);
     aRef = c;
 }
 
@@ -617,14 +634,20 @@ static ALWAYS_INLINE void lshift(BigInt& b, int k)
     int n = k >> 4;
 #endif
 
-    int n1 = n + b.wds + 1;
+    int origSize = b.size();
+    int n1 = n + origSize + 1;
 
-    const uint32_t* srcStart = b.x;
-    uint32_t* dstStart = b.x;
-    const uint32_t* src = srcStart + b.wds - 1;
+    if (k &= 0x1f)
+        b.resize(b.size() + n + 1);
+    else
+        b.resize(b.size() + n);
+
+    const uint32_t* srcStart = b.words();
+    uint32_t* dstStart = b.words();
+    const uint32_t* src = srcStart + origSize - 1;
     uint32_t* dst = dstStart + n1 - 1;
 #ifdef Pack_32
-    if (k &= 0x1f) {
+    if (k) {
         uint32_t hiSubword = 0;
         int s = 32 - k;
         for (; src >= srcStart; --src) {
@@ -633,7 +656,8 @@ static ALWAYS_INLINE void lshift(BigInt& b, int k)
         }
         *dst = hiSubword;
         ASSERT(dst == dstStart + n);
-        b.wds = b.wds + n + (b.x[n1 - 1] != 0);
+
+        b.resize(origSize + n + (b.words()[n1 - 1] != 0));
     }
 #else
     if (k &= 0xf) {
@@ -652,10 +676,11 @@ static ALWAYS_INLINE void lshift(BigInt& b, int k)
         do {
             *--dst = *src--;
         } while (src >= srcStart);
-        b.wds = b.wds + n;
     }
     for (dst = dstStart + n; dst != dstStart; )
         *--dst = 0;
+
+    ASSERT(b.size() <= 1 || b.words()[b.size() - 1]);
 }
 
 static int cmp(const BigInt& a, const BigInt& b)
@@ -663,15 +688,15 @@ static int cmp(const BigInt& a, const BigInt& b)
     const uint32_t *xa, *xa0, *xb, *xb0;
     int i, j;
 
-    i = a.wds;
-    j = b.wds;
-    ASSERT(i <= 1 || a.x[i - 1]);
-    ASSERT(j <= 1 || b.x[j - 1]);
+    i = a.size();
+    j = b.size();
+    ASSERT(i <= 1 || a.words()[i - 1]);
+    ASSERT(j <= 1 || b.words()[j - 1]);
     if (i -= j)
         return i;
-    xa0 = a.x;
+    xa0 = a.words();
     xa = xa0 + j;
-    xb0 = b.x;
+    xb0 = b.words();
     xb = xb0 + j;
     for (;;) {
         if (*--xa != *--xb)
@@ -692,8 +717,8 @@ static ALWAYS_INLINE void diff(BigInt& c, const BigInt& aRef, const BigInt& bRef
     i = cmp(*a, *b);
     if (!i) {
         c.sign = 0;
-        c.wds = 1;
-        c.x[0] = 0;
+        c.resize(1);
+        c.words()[0] = 0;
         return;
     }
     if (i < 0) {
@@ -704,15 +729,16 @@ static ALWAYS_INLINE void diff(BigInt& c, const BigInt& aRef, const BigInt& bRef
     } else
         i = 0;
 
-    c.wds = 0;
-    c.sign = i;
-    wa = a->wds;
-    const uint32_t* xa = a->x;
+    wa = a->size();
+    const uint32_t* xa = a->words();
     const uint32_t* xae = xa + wa;
-    wb = b->wds;
-    const uint32_t* xb = b->x;
+    wb = b->size();
+    const uint32_t* xb = b->words();
     const uint32_t* xbe = xb + wb;
-    xc = c.x;
+
+    c.resize(wa);
+    c.sign = i;
+    xc = c.words();
 #ifdef USE_LONG_LONG
     unsigned long long borrow = 0;
     do {
@@ -757,7 +783,7 @@ static ALWAYS_INLINE void diff(BigInt& c, const BigInt& aRef, const BigInt& bRef
 #endif
     while (!*--xc)
         wa--;
-    c.wds = wa;
+    c.resize(wa);
 }
 
 static double ulp(U *x)
@@ -804,8 +830,8 @@ static double b2d(const BigInt& a, int* e)
 #define d0 word0(&d)
 #define d1 word1(&d)
 
-    xa0 = a.x;
-    xa = xa0 + a.wds;
+    xa0 = a.words();
+    xa = xa0 + a.size();
     y = *--xa;
     ASSERT(y);
     k = hi0bits(y);
@@ -860,11 +886,11 @@ static ALWAYS_INLINE void d2b(BigInt& b, U* d, int* e, int* bits)
 
     b.sign = 0;
 #ifdef Pack_32
-    b.wds = 1;
+    b.resize(1);
 #else
-    b.wds = 2;
+    b.resize(2);
 #endif
-    x = b.x;
+    x = b.words();
 
     z = d0 & Frac_mask;
     d0 &= 0x7fffffff;    /* clear sign bit, which we ignore */
@@ -881,17 +907,21 @@ static ALWAYS_INLINE void d2b(BigInt& b, U* d, int* e, int* bits)
             z >>= k;
         } else
             x[0] = y;
+            if (z) {
+                b.resize(2);
+                x[1] = z;
+            }
+
 #ifndef Sudden_Underflow
-        i =
+        i = b.size();
 #endif
-            b.wds = (x[1] = z) ? 2 : 1;
     } else {
         k = lo0bits(&z);
         x[0] = z;
 #ifndef Sudden_Underflow
-        i =
+        i = 1;
 #endif
-            b.wds = 1;
+        b.resize(1);
         k += 32;
     }
 #else
@@ -929,7 +959,7 @@ static ALWAYS_INLINE void d2b(BigInt& b, U* d, int* e, int* bits)
         k += 32;
     } while (!x[i])
         --i;
-    b->wds = i + 1;
+    b->resize(i + 1);
 #endif
 #ifndef Sudden_Underflow
     if (de) {
@@ -958,9 +988,9 @@ static double ratio(const BigInt& a, const BigInt& b)
     dval(&da) = b2d(a, &ka);
     dval(&db) = b2d(b, &kb);
 #ifdef Pack_32
-    k = ka - kb + 32 * (a.wds - b.wds);
+    k = ka - kb + 32 * (a.size() - b.size());
 #else
-    k = ka - kb + 16 * (a.wds - b.wds);
+    k = ka - kb + 16 * (a.size() - b.size());
 #endif
     if (k > 0)
         word0(&da) += k * Exp_msk1;
@@ -1452,12 +1482,12 @@ undfl:
 #endif
                 ) {
 #ifdef SET_INEXACT
-                if (!delta->x[0] && delta->wds <= 1)
+                if (!delta->words()[0] && delta->size() <= 1)
                     inexact = 0;
 #endif
                 break;
             }
-            if (!delta.x[0] && delta.wds <= 1) {
+            if (!delta.words()[0] && delta.size() <= 1) {
                 /* exact result */
 #ifdef SET_INEXACT
                 inexact = 0;
@@ -1700,7 +1730,7 @@ ret:
 
 static ALWAYS_INLINE int quorem(BigInt& b, BigInt& S)
 {
-    int n;
+    size_t n;
     uint32_t *bx, *bxe, q, *sx, *sxe;
 #ifdef USE_LONG_LONG
     unsigned long long borrow, carry, y, ys;
@@ -1710,14 +1740,16 @@ static ALWAYS_INLINE int quorem(BigInt& b, BigInt& S)
     uint32_t si, z, zs;
 #endif
 #endif
+    ASSERT(b.size() <= 1 || b.words()[b.size() - 1]);
+    ASSERT(S.size() <= 1 || S.words()[S.size() - 1]);
 
-    n = S.wds;
-    ASSERT_WITH_MESSAGE(b.wds <= n, "oversize b in quorem");
-    if (b.wds < n)
+    n = S.size();
+    ASSERT_WITH_MESSAGE(b.size() <= n, "oversize b in quorem");
+    if (b.size() < n)
         return 0;
-    sx = S.x;
+    sx = S.words();
     sxe = sx + --n;
-    bx = b.x;
+    bx = b.words();
     bxe = bx + n;
     q = *bxe / (*sxe + 1);    /* ensure q <= true quotient */
     ASSERT_WITH_MESSAGE(q <= 9, "oversized quotient in quorem");
@@ -1752,18 +1784,18 @@ static ALWAYS_INLINE int quorem(BigInt& b, BigInt& S)
 #endif
         } while (sx <= sxe);
         if (!*bxe) {
-            bx = b.x;
+            bx = b.words();
             while (--bxe > bx && !*bxe)
                 --n;
-            b.wds = n;
+            b.resize(n);
         }
     }
     if (cmp(b, S) >= 0) {
         q++;
         borrow = 0;
         carry = 0;
-        bx = b.x;
-        sx = S.x;
+        bx = b.words();
+        sx = S.words();
         do {
 #ifdef USE_LONG_LONG
             ys = *sx++ + carry;
@@ -1791,12 +1823,12 @@ static ALWAYS_INLINE int quorem(BigInt& b, BigInt& S)
 #endif
 #endif
         } while (sx <= sxe);
-        bx = b.x;
+        bx = b.words();
         bxe = bx + n;
         if (!*bxe) {
             while (--bxe > bx && !*bxe)
                 --n;
-            b.wds = n;
+            b.resize(n);
         }
     }
     return q;
@@ -2027,7 +2059,8 @@ void dtoa(char* result, double dd, int ndigits, int* decpt, int* sign, char** rv
         dval(&eps) = (ieps * dval(&u)) + 7.;
         word0(&eps) -= (P - 1) * Exp_msk1;
         if (ilim == 0) {
-            S = mhi = BigInt();
+            S.clear();
+            mhi.clear();
             dval(&u) -= 5.;
             if (dval(&u) > dval(&eps))
                 goto one_digit;
@@ -2090,7 +2123,8 @@ fast_failed:
         /* Yes. */
         ds = tens[k];
         if (ndigits < 0 && ilim <= 0) {
-            S = mhi = BigInt();
+            S.clear();
+            mhi.clear();
             if (ilim < 0 || dval(&u) <= 5 * ds)
                 goto no_digits;
             goto one_digit;
@@ -2132,7 +2166,8 @@ bump_up:
 
     m2 = b2;
     m5 = b5;
-    mhi = mlo = BigInt();
+    mhi.clear();
+    mlo.clear();
     if (leftright) {
         i =
 #ifndef Sudden_Underflow
@@ -2186,10 +2221,10 @@ bump_up:
      * can do shifts and ors to compute the numerator for q.
      */
 #ifdef Pack_32
-    if ((i = ((s5 ? 32 - hi0bits(S.x[S.wds - 1]) : 1) + s2) & 0x1f))
+    if ((i = ((s5 ? 32 - hi0bits(S.words()[S.size() - 1]) : 1) + s2) & 0x1f))
         i = 32 - i;
 #else
-    if ((i = ((s5 ? 32 - hi0bits(S.x[S.wds - 1]) : 1) + s2) & 0xf))
+    if ((i = ((s5 ? 32 - hi0bits(S.words()[S.size() - 1]) : 1) + s2) & 0xf))
         i = 16 - i;
 #endif
     if (i > 4) {
@@ -2252,7 +2287,7 @@ bump_up:
                 goto ret;
             }
             if (j < 0 || (j == 0 && !(word1(&u) & 1))) {
-                if (!b.x[0] && b.wds <= 1) {
+                if (!b.words()[0] && b.size() <= 1) {
 #ifdef SET_INEXACT
                     inexact = 0;
 #endif
@@ -2287,7 +2322,7 @@ round_9_up:
     } else
         for (i = 1;; i++) {
             *s++ = dig = quorem(b,S) + '0';
-            if (!b.x[0] && b.wds <= 1) {
+            if (!b.words()[0] && b.size() <= 1) {
 #ifdef SET_INEXACT
                 inexact = 0;
 #endif

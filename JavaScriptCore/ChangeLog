@@ -1,3 +1,41 @@
+2009-07-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: crash in edge cases of floating point parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=27110
+        <rdar://problem/7044458>
+        
+        Tests: fast/css/number-parsing-crash.html
+               fast/css/number-parsing-crash.html
+               fast/js/number-parsing-crash.html
+        
+        * wtf/dtoa.cpp:
+        (WTF::BigInt::BigInt): Converted this to more a proper class, using a Vector
+        with inline capacity
+
+        (WTF::lshift): Rearranged logic somewhat nontrivially to deal with the new way of sizing BigInts.
+        Added an assertion to verify that invariants are maintained.
+
+        All other functions are adapted fairly mechanically to the above changes.
+        (WTF::BigInt::clear):
+        (WTF::BigInt::size):
+        (WTF::BigInt::resize):
+        (WTF::BigInt::words):
+        (WTF::BigInt::append):
+        (WTF::multadd):
+        (WTF::s2b):
+        (WTF::i2b):
+        (WTF::mult):
+        (WTF::cmp):
+        (WTF::diff):
+        (WTF::b2d):
+        (WTF::d2b):
+        (WTF::ratio):
+        (WTF::strtod):
+        (WTF::quorem):
+        (WTF::dtoa):
+
 2009-07-09  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Alexey Proskuryakov.
