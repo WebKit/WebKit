@@ -56,7 +56,7 @@ my @features = (
       define => "ENABLE_3D_RENDERING", default => (isAppleMacWebKit() && isSnowLeopard()), value => \$threeDRenderingSupport },
 
     { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
-      define => "ENABLE_CHANNEL_MESSAGING", default => 0, value => \$channelMessagingSupport },
+      define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 
     { option => "coverage", desc => "Toggle code coverage support",
       define => "", default => 0, value => \$coverageSupport },

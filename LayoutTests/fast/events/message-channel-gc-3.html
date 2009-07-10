@@ -26,10 +26,10 @@ if (window.layoutTestController) {
 function test1()
 {
     var channel = new MessageChannel;
-    
+
     channel.port1.onmessage = function(evt) { log("PASS: message delivered. Port: " + evt.target); test2(); }
     channel.port2.postMessage("msg");
-    
+
     channel = 0;
     gc();
 }
@@ -37,9 +37,9 @@ function test1()
 function test2()
 {
     var channel = new MessageChannel;
-    
+
     channel.port2.close();
-    
+
     channel = 0;
     gc();
     log("PASS: port closed.");

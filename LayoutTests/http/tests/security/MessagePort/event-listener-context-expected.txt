@@ -1,4 +1,5 @@
 Test that JS code cannot be planted into an unsuspecting subframe via MessagePort and navigation.
 
-PASS
+PASS: got exception while creating port from closed frame's constructor: ReferenceError: MessageChannel constructor associated document is unavailable
+DONE
 

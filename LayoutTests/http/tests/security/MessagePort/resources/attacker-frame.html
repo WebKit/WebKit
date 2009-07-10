@@ -4,11 +4,7 @@ window.createClosure = function() {
     var MessageChannelConstructor = window.MessageChannel;
     var channel;
     return function() {
-        channel = new MessageChannelConstructor;
-        channel.port1.onmessage = function() { channel.port1.postMessage(document.body.innerHTML) }
-        channel.port1.addEventListener("message", function() { channel.port1.postMessage(document.body.innerHTML) }, false);
-        channel.port1.start();
-        return channel.port2;
+        return new MessageChannelConstructor;
     }
 }
 </script>

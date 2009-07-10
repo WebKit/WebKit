@@ -309,8 +309,8 @@ AC_MSG_RESULT([$enable_3D_transforms])
 AC_MSG_CHECKING([whether to enable HTML5 Channel Messaging support])
 AC_ARG_ENABLE(channel_messaging,
               AC_HELP_STRING([--enable-channel-messaging],
-                             [enable HTML5 channel messaging support [default=no]]),
-              [],[enable_channel_messaging="no"])
+                             [enable HTML5 channel messaging support [default=yes]]),
+              [],[enable_channel_messaging="yes"])
 AC_MSG_RESULT([$enable_channel_messaging])
 
 # check whether to enable JavaScript debugger/profiler support

@@ -13,7 +13,6 @@ if (window.layoutTestController) {
 }
 
 var closure;
-var mainPort;
 var failed;
 
 function test()
@@ -26,17 +25,20 @@ function test()
 
 function test2()
 {
-    mainPort = closure();
-    mainPort.postMessage("ping");
-    mainPort.onmessage = function(evt) { if (/sensitive/.test(evt.data)) failed = true; }
-    mainPort.start();
-    setTimeout(test3, 100);
+   try {
+      var channel = closure();
+    } catch (ex) {
+      log("PASS: got exception while creating port from closed frame's constructor: " + ex);
+      done();
+      return;
+    }
+    log("FAIL: Creating MessageChannel from closed frame does not throw exception");
+    done();
 }
 
-function test3()
+function done()
 {
-    log(failed ? "FAIL" : "PASS");
-
+    log("DONE");
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }

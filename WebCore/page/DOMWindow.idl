@@ -520,7 +520,7 @@ module window {
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING) && V8_BINDING
-        // window.toString() requires special handling in V8
+        // window.toString() requires special handling in V8.
         [V8DoNotCheckSignature, DoNotCheckDomainSecurity, Custom, DontEnum] DOMString toString();
 #endif // defined(V8_BINDING)
     };
