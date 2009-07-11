@@ -29,8 +29,7 @@
 
 namespace WebCore {
 
-class EditingText : public Text
-{
+class EditingText : public Text {
 public:
     EditingText(Document *impl, const String &text);
     EditingText(Document *impl);

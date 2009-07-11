@@ -43,8 +43,7 @@ namespace WebCore {
     class SVGAnimationElement : public SVGSMILElement,
                                 public SVGTests,
                                 public SVGExternalResourcesRequired,
-                                public ElementTimeControl
-    {
+                                public ElementTimeControl {
     public:
         SVGAnimationElement(const QualifiedName&, Document*);
         virtual ~SVGAnimationElement();

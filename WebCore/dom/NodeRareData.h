@@ -46,7 +46,8 @@ struct NodeListsNodeData {
     typedef HashMap<QualifiedName, RefPtr<DynamicNodeList::Caches> > TagCacheMap;
     TagCacheMap m_tagNodeListCaches;
 
-    static PassOwnPtr<NodeListsNodeData> create() {
+    static PassOwnPtr<NodeListsNodeData> create()
+    {
         return new NodeListsNodeData;
     }
     

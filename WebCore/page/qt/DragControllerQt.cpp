@@ -31,8 +31,7 @@
 #include "FrameView.h"
 #include "Page.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 // FIXME: These values are straight out of DragControllerMac, so probably have 
 // little correlation with Qt standards...

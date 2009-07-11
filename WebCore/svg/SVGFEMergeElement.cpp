@@ -49,7 +49,7 @@ bool SVGFEMergeElement::build(SVGResourceFilter* filterResource)
         }
     }
 
-    if(mergeInputs.isEmpty())
+    if (mergeInputs.isEmpty())
         return false;
 
     RefPtr<FilterEffect> effect = FEMerge::create(mergeInputs);

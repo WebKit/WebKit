@@ -246,7 +246,7 @@ bool SVGPathParser::parseSVG(const String& s, bool process)
 
         bool relative = false;
 
-        switch(command)
+        switch (command)
         {
             case 'm':
                 relative = true;
@@ -625,7 +625,7 @@ void SVGPathParser::calculateArc(bool relative, double& curx, double& cury, doub
 
     n_segs = (int) (int) ceil(fabs(th_arc / (piDouble * 0.5 + 0.001)));
 
-    for(i = 0; i < n_segs; i++) {
+    for (i = 0; i < n_segs; i++) {
         double sin_th, cos_th;
         double a00, a01, a10, a11;
         double x1, y1, x2, y2, x3, y3;

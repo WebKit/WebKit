@@ -793,7 +793,7 @@ String Frame::jsStatusBarText() const
 
 String Frame::jsDefaultStatusBarText() const
 {
-   return m_kjsDefaultStatusBarText;
+    return m_kjsDefaultStatusBarText;
 }
 
 void Frame::setNeedsReapplyStyles()

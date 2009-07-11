@@ -169,7 +169,8 @@ void Console::addMessage(MessageSource source, MessageLevel level, const String&
     printf(" %s\n", message.utf8().data());
 }
 
-void Console::addMessage(MessageLevel level, ScriptCallStack* callStack, bool acceptNoArguments) {
+void Console::addMessage(MessageLevel level, ScriptCallStack* callStack, bool acceptNoArguments)
+{
     Page* page = this->page();
     if (!page)
         return;

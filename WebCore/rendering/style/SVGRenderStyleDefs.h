@@ -60,13 +60,13 @@
 #define SVG_RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL_REFCOUNTED(Data, Group, Variable, Type, Name, Initial) \
     Data* Name() const { return Group->Variable.get(); } \
     void set##Type(PassRefPtr<Data> obj) { \
-        if(!(Group->Variable == obj)) \
+        if (!(Group->Variable == obj)) \
             Group.access()->Variable = obj; \
     } \
     static Data* initial##Type() { return Initial; }
 
 #define SVG_RS_SET_VARIABLE(Group, Variable, Value) \
-    if(!(Group->Variable == Value)) \
+    if (!(Group->Variable == Value)) \
         Group.access()->Variable = Value;
 
 namespace WebCore {

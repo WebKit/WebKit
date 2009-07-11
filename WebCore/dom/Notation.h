@@ -29,8 +29,7 @@
 
 namespace WebCore {
 
-class Notation : public ContainerNode
-{
+class Notation : public ContainerNode {
 public:
     Notation(Document*);
     Notation(Document*, const String& name, const String& publicId, const String& systemId);

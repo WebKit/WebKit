@@ -72,7 +72,7 @@ String WMLSetvarElement::name() const
 
 String WMLSetvarElement::value() const
 {
-   return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::valueAttr));
+    return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::valueAttr));
 }
 
 }

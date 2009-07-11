@@ -26,8 +26,7 @@
 
 namespace WebCore {
 
-class HTMLMenuElement : public HTMLElement
-{
+class HTMLMenuElement : public HTMLElement {
 public:
     HTMLMenuElement(const QualifiedName&, Document*);
     

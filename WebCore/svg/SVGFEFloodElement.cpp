@@ -55,7 +55,7 @@ bool SVGFEFloodElement::build(SVGResourceFilter* filterResource)
 {
     FilterEffect* input = filterResource->builder()->getEffectById(in1());
 
-    if(!input)
+    if (!input)
         return false;
 
     RefPtr<RenderStyle> filterStyle = styleForRenderer();

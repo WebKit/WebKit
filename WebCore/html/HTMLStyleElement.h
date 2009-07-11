@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLStyleElement : public HTMLElement, public StyleElement
-{
+class HTMLStyleElement : public HTMLElement, public StyleElement {
 public:
     HTMLStyleElement(const QualifiedName&, Document*, bool createdByParser);
 

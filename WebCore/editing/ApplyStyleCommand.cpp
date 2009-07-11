@@ -787,7 +787,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
         styleWithoutEmbedding->removeProperty(CSSPropertyUnicodeBidi);
         styleWithoutEmbedding->removeProperty(CSSPropertyDirection);
         removeInlineStyle(styleWithoutEmbedding, removeStart, end);
-   } else
+    } else
         removeInlineStyle(style, removeStart, end);
 
     start = startPosition();
@@ -857,7 +857,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclaration *style)
         styleWithoutEmbedding->removeProperty(CSSPropertyUnicodeBidi);
         styleWithoutEmbedding->removeProperty(CSSPropertyDirection);
         applyInlineStyleToRange(styleWithoutEmbedding.get(), start, end);
-   } else
+    } else
         applyInlineStyleToRange(style, start, end);
 
     // Remove dummy style spans created by splitting text elements.

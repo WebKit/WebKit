@@ -1,3 +1,263 @@
+2009-07-10  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        WebKit needs a style linting tool
+        https://bugs.webkit.org/show_bug.cgi?id=25884
+
+        Fix bunch of style issues by autofix of cpplint.
+        This patch is created to demonstrate the autofix of cpplint.py.
+
+        No new testcases because it's a style fix
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseMediaQuery):
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::skipCommaInDashboardRegion):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::ShadowParseContext::commitValue):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::ShadowParseContext::commitColor):
+        (WebCore::BorderImageParseContext::commitNumber):
+        (WebCore::BorderImageParseContext::commitWidth):
+        (WebCore::BorderImageParseContext::commitRule):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::text):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/MediaList.cpp:
+        (WebCore::MediaList::deleteMedium):
+        * css/MediaQuery.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::parseAspectRatio):
+        * css/MediaQueryEvaluator.h:
+        * css/MediaQueryExp.h:
+        (WebCore::MediaQueryExp::operator==):
+        * css/WebKitCSSMatrix.h:
+        * dom/Comment.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Document.h:
+        (WebCore::Document::setHasDashboardRegions):
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::nodeName):
+        * dom/DocumentFragment.h:
+        * dom/DynamicNodeList.h:
+        * dom/EditingText.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchAttrAdditionEvent):
+        * dom/NamedAttrMap.cpp:
+        (WebCore::NamedNodeMap::item):
+        * dom/Node.cpp:
+        (WebCore::Node::nodeValue):
+        (WebCore::Node::nodeIndex):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::create):
+        * dom/Notation.h:
+        * dom/ProcessingInstruction.h:
+        * dom/Range.cpp:
+        (WebCore::Range::processContents):
+        * dom/StyledElement.cpp:
+        (WebCore::toHex):
+        * dom/XMLTokenizerLibxml2.cpp:
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::~PendingStartElementNSCallback):
+        (WebCore::PendingCallbacks::PendingStartElementNSCallback::call):
+        (WebCore::PendingCallbacks::):
+        (WebCore::OffsetBuffer::readOutBytes):
+        (WebCore::handleElementNamespaces):
+        (WebCore::handleElementAttributes):
+        (WebCore::attributesStartElementNsHandler):
+        * dom/XMLTokenizerQt.cpp:
+        (WebCore::attributesStartElementNsHandler):
+        (WebCore::XMLTokenizer::parseStartElement):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeNode):
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainText):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::directionOfEnclosingBlock):
+        * editing/SmartReplaceICU.cpp:
+        (WebCore::addAllCodePoints):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::icon):
+        (WebCore::HistoryItem::adoptVisitCounts):
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyFillColor):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setActive):
+        (WebCore::HTMLAnchorElement::isLiveLink):
+        * html/HTMLAppletElement.h:
+        * html/HTMLAudioElement.h:
+        * html/HTMLBRElement.h:
+        * html/HTMLBaseElement.h:
+        * html/HTMLBaseFontElement.h:
+        * html/HTMLDListElement.h:
+        * html/HTMLDirectoryElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::HTMLFieldSetElement):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::reset):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::parseMappedAttribute):
+        * html/HTMLHeadElement.h:
+        * html/HTMLHtmlElement.h:
+        * html/HTMLImageElement.h:
+        (WebCore::HTMLImageElement::setLoadManually):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selection):
+        * html/HTMLIsIndexElement.h:
+        * html/HTMLMarqueeElement.cpp:
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::):
+        * html/HTMLMenuElement.h:
+        * html/HTMLMetaElement.h:
+        * html/HTMLModElement.h:
+        * html/HTMLOListElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::childrenChanged):
+        * html/HTMLParamElement.h:
+        * html/HTMLQuoteElement.h:
+        * html/HTMLStyleElement.h:
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::deleteRow):
+        * html/HTMLTitleElement.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseNonHTMLText):
+        (WebCore::HTMLTokenizer::parseEntity):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::write):
+        * html/HTMLUListElement.h:
+        * html/HTMLVideoElement.h:
+        * html/TimeRanges.h:
+        (WebCore::TimeRanges::Range::Range):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::enableResourceTracking):
+        (WebCore::InspectorController::disableResourceTracking):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::newInspectorJSONObject):
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        * page/Frame.cpp:
+        (WebCore::Frame::jsDefaultStatusBarText):
+        * page/android/DragControllerAndroid.cpp:
+        (WebCore::DragController::dragOperation):
+        * page/android/EventHandlerAndroid.cpp:
+        (WebCore::EventHandler::tabsToAllControls):
+        (WebCore::EventHandler::eventActivatedView):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::updateStyleIfNeededDispatcherFired):
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::dragOperation):
+        * page/qt/DragControllerQt.cpp:
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/win/FrameWin.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::mouseEventOffsetToThumb):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setVerticalAlignLength):
+        (WebCore::InheritedFlags::setUnicodeBidi):
+        (WebCore::InheritedFlags::setCursor):
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/StyleInheritedData.h:
+        (WebCore::StyleInheritedData::operator!=):
+        * storage/DatabaseTask.h:
+        * svg/GradientAttributes.h:
+        * svg/LinearGradientAttributes.h:
+        * svg/PatternAttributes.h:
+        * svg/RadialGradientAttributes.h:
+        * svg/SVGAnimatedPathData.h:
+        * svg/SVGAnimatedPoints.h:
+        * svg/SVGAnimationElement.h:
+        * svg/SVGClipPathElement.h:
+        * svg/SVGElementInstance.h:
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::build):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::build):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::build):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::build):
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::build):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::build):
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::build):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::build):
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::build):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::parseMappedAttribute):
+        * svg/SVGList.h:
+        * svg/SVGListTraits.h:
+        (WebCore::):
+        * svg/SVGMPathElement.h:
+        * svg/SVGMetadataElement.h:
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::SVGPathParser::parseSVG):
+        (WebCore::SVGPathParser::calculateArc):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSegClosePath.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGSetElement.h:
+        * svg/SVGSwitchElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::parseMappedAttribute):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTitleElement.h:
+        * svg/SVGTransformable.cpp:
+        (WebCore::):
+        * svg/SVGViewSpec.cpp:
+        (WebCore::):
+        * svg/animation/SMILTime.cpp:
+        (WebCore::operator+):
+        (WebCore::operator-):
+        (WebCore::operator*):
+        * svg/animation/SVGSMILElement.h:
+        * svg/graphics/SVGResource.cpp:
+        (WebCore::clientMap):
+        * wml/WMLPostfieldElement.cpp:
+        (WebCore::WMLPostfieldElement::value):
+        * wml/WMLSetvarElement.cpp:
+        (WebCore::WMLSetvarElement::value):
+        * workers/WorkerRunLoop.cpp:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection):
+        * xml/XPathPath.h:
+
 2009-07-10  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

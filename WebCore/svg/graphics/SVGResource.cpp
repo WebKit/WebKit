@@ -50,7 +50,8 @@ struct ResourceSet {
 
 typedef HashMap<SVGStyledElement*, ResourceSet*> ResourceClientMap;
 
-static ResourceClientMap& clientMap() {
+static ResourceClientMap& clientMap()
+{
     DEFINE_STATIC_LOCAL(ResourceClientMap, map, ());
     return map;
 }

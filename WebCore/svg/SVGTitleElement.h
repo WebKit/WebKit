@@ -27,11 +27,9 @@
 #include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
 
-namespace WebCore
-{
+namespace WebCore {
     class SVGTitleElement : public SVGStyledElement,
-                            public SVGLangSpace
-    {
+                            public SVGLangSpace {
     public:
         SVGTitleElement(const QualifiedName&, Document*);
 

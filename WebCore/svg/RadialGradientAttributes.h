@@ -26,8 +26,7 @@
 
 #if ENABLE(SVG)
 
-namespace WebCore
-{
+namespace WebCore {
     struct RadialGradientAttributes : GradientAttributes {
         RadialGradientAttributes()
             : m_cx(0.5)

@@ -162,7 +162,7 @@ bool MediaQueryEvaluator::eval(const MediaList* mediaList, CSSStyleSelector* sty
 
 static bool parseAspectRatio(CSSValue* value, int& h, int& v)
 {
-    if (value->isValueList()){
+    if (value->isValueList()) {
         CSSValueList* valueList = static_cast<CSSValueList*>(value);
         if (valueList->length() == 3) {
             CSSValue* i0 = valueList->itemWithoutBoundsCheck(0);

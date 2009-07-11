@@ -64,7 +64,8 @@ private:
     // We consider all the Ranges to be semi-bounded as follow: [start, end[
     struct Range {
         Range() { }
-        Range(float start, float end) {
+        Range(float start, float end)
+        {
             m_start = start;
             m_end = end;
         }

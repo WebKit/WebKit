@@ -50,7 +50,8 @@ DragOperation DragController::dragOperation(DragData* dragData)
     return dragData->containsURL() && !m_didInitiateDrag ? DragOperationCopy : DragOperationNone;
 }
 
-bool DragController::isCopyKeyDown() {
+bool DragController::isCopyKeyDown()
+{
     return ::GetAsyncKeyState(VK_CONTROL);
 }
     

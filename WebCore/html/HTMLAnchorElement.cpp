@@ -249,7 +249,7 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
         if (Settings* settings = document()->settings())
             editableLinkBehavior = settings->editableLinkBehavior();
             
-        switch(editableLinkBehavior) {
+        switch (editableLinkBehavior) {
             default:
             case EditableLinkDefaultBehavior:
             case EditableLinkAlwaysLive:
@@ -497,7 +497,7 @@ bool HTMLAnchorElement::isLiveLink() const
     if (Settings* settings = document()->settings())
         editableLinkBehavior = settings->editableLinkBehavior();
         
-    switch(editableLinkBehavior) {
+    switch (editableLinkBehavior) {
         default:
         case EditableLinkDefaultBehavior:
         case EditableLinkAlwaysLive:

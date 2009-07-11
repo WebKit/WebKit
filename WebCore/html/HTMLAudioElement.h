@@ -32,8 +32,7 @@
 
 namespace WebCore {
 
-class HTMLAudioElement : public HTMLMediaElement
-{
+class HTMLAudioElement : public HTMLMediaElement {
 public:
     HTMLAudioElement(const QualifiedName&, Document*);
     

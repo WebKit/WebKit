@@ -60,7 +60,7 @@ bool SVGFEOffsetElement::build(SVGResourceFilter* filterResource)
 {
     FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
 
-    if(!input1)
+    if (!input1)
         return false;
 
     RefPtr<FilterEffect> effect = FEOffset::create(input1, dx(), dy());

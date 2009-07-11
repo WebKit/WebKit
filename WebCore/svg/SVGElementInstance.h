@@ -44,8 +44,7 @@ namespace WebCore {
 
     // SVGElementInstance mimics Node, but without providing all its functionality
     class SVGElementInstance : public TreeShared<SVGElementInstance>,
-                               public EventTarget
-    {
+                               public EventTarget {
     public:
         SVGElementInstance(SVGUseElement*, SVGElement* originalElement);
         virtual ~SVGElementInstance();

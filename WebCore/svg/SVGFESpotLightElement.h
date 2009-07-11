@@ -23,10 +23,8 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFELightElement.h"
 
-namespace WebCore
-{
-    class SVGFESpotLightElement : public SVGFELightElement
-    {
+namespace WebCore {
+    class SVGFESpotLightElement : public SVGFELightElement {
     public:
         SVGFESpotLightElement(const QualifiedName&, Document*);
         virtual ~SVGFESpotLightElement();

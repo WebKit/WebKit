@@ -27,8 +27,7 @@
 
 namespace WebCore {
 
-class HTMLParamElement : public HTMLElement
-{
+class HTMLParamElement : public HTMLElement {
     friend class HTMLAppletElement;
 public:
     HTMLParamElement(const QualifiedName&, Document*);

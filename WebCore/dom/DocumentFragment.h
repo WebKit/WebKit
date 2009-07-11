@@ -30,8 +30,7 @@
 
 namespace WebCore {
 
-class DocumentFragment : public ContainerNode
-{
+class DocumentFragment : public ContainerNode {
 public:
     DocumentFragment(Document*);
 

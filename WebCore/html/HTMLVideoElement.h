@@ -35,8 +35,7 @@ namespace WebCore {
 
 class HTMLImageLoader;
 
-class HTMLVideoElement : public HTMLMediaElement
-{
+class HTMLVideoElement : public HTMLMediaElement {
 public:
     HTMLVideoElement(const QualifiedName&, Document*);
     

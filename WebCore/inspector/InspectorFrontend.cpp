@@ -61,7 +61,8 @@ InspectorFrontend::~InspectorFrontend()
     m_webInspector = ScriptObject();
 }
 
-InspectorJSONObject InspectorFrontend::newInspectorJSONObject() {
+InspectorJSONObject InspectorFrontend::newInspectorJSONObject()
+{
     return InspectorJSONObject::createNew(m_scriptState);
 }
 

@@ -26,10 +26,8 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGComponentTransferFunctionElement.h"
 
-namespace WebCore
-{
-    class SVGFEFuncRElement : public SVGComponentTransferFunctionElement
-    {
+namespace WebCore {
+    class SVGFEFuncRElement : public SVGComponentTransferFunctionElement {
     public:
         SVGFEFuncRElement(const QualifiedName&, Document*);
         virtual ~SVGFEFuncRElement();

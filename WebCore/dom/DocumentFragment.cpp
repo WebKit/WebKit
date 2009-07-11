@@ -34,7 +34,7 @@ DocumentFragment::DocumentFragment(Document *doc) : ContainerNode(doc)
 
 String DocumentFragment::nodeName() const
 {
-  return "#document-fragment";
+    return "#document-fragment";
 }
 
 Node::NodeType DocumentFragment::nodeType() const

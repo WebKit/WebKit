@@ -86,7 +86,7 @@ void SVGFEImageElement::notifyFinished(CachedResource*)
 
 bool SVGFEImageElement::build(SVGResourceFilter* filterResource)
 {
-    if(!m_cachedImage)
+    if (!m_cachedImage)
         return false;
 
     RefPtr<FilterEffect> effect = FEImage::create(m_cachedImage.get());

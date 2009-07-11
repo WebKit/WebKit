@@ -154,12 +154,12 @@ bool SVGTransformable::parseTransformValue(unsigned type, const UChar*& ptr, con
     return true;
 }
 
-static const UChar skewXDesc[] =  {'s','k','e','w', 'X'};
-static const UChar skewYDesc[] =  {'s','k','e','w', 'Y'};
-static const UChar scaleDesc[] =  {'s','c','a','l', 'e'};
-static const UChar translateDesc[] =  {'t','r','a','n', 's', 'l', 'a', 't', 'e'};
-static const UChar rotateDesc[] =  {'r','o','t','a', 't', 'e'};
-static const UChar matrixDesc[] =  {'m','a','t','r', 'i', 'x'};
+static const UChar skewXDesc[] =  {'s', 'k', 'e', 'w', 'X'};
+static const UChar skewYDesc[] =  {'s', 'k', 'e', 'w', 'Y'};
+static const UChar scaleDesc[] =  {'s', 'c', 'a', 'l', 'e'};
+static const UChar translateDesc[] =  {'t', 'r', 'a', 'n', 's', 'l', 'a', 't', 'e'};
+static const UChar rotateDesc[] =  {'r', 'o', 't', 'a', 't', 'e'};
+static const UChar matrixDesc[] =  {'m', 'a', 't', 'r', 'i', 'x'};
 
 static inline bool parseAndSkipType(const UChar*& currTransform, const UChar* end, unsigned short& type)
 {

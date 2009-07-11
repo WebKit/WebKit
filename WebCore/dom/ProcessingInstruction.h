@@ -33,8 +33,7 @@ namespace WebCore {
 class StyleSheet;
 class CSSStyleSheet;
 
-class ProcessingInstruction : public ContainerNode, private CachedResourceClient
-{
+class ProcessingInstruction : public ContainerNode, private CachedResourceClient {
 public:
     ProcessingInstruction(Document*);
     ProcessingInstruction(Document*, const String& target, const String& data);

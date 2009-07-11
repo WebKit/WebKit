@@ -26,8 +26,7 @@
 
 namespace WebCore {
 
-class HTMLDirectoryElement : public HTMLElement
-{
+class HTMLDirectoryElement : public HTMLElement {
 public:
     HTMLDirectoryElement(const QualifiedName&, Document*);
 

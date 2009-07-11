@@ -27,10 +27,8 @@
 #include "SVGFEFlood.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
-namespace WebCore
-{
-    class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes
-    {
+namespace WebCore {
+    class SVGFEFloodElement : public SVGFilterPrimitiveStandardAttributes {
     public:
         SVGFEFloodElement(const QualifiedName&, Document*);
         virtual ~SVGFEFloodElement();

@@ -725,7 +725,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
         for (; leftParent != commonRoot; leftParent = leftParent->parentNode()) {
             if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
                 RefPtr<Node> leftContentsParent = leftParent->cloneNode(false);
-                leftContentsParent->appendChild(leftContents,ec);
+                leftContentsParent->appendChild(leftContents, ec);
                 leftContents = leftContentsParent;
             }
 
@@ -733,11 +733,11 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
             for (; n; n = next) {
                 next = n->nextSibling();
                 if (action == EXTRACT_CONTENTS)
-                    leftContents->appendChild(n,ec); // will remove n from leftParent
+                    leftContents->appendChild(n, ec); // will remove n from leftParent
                 else if (action == CLONE_CONTENTS)
-                    leftContents->appendChild(n->cloneNode(true),ec);
+                    leftContents->appendChild(n->cloneNode(true), ec);
                 else
-                    leftParent->removeChild(n,ec);
+                    leftParent->removeChild(n, ec);
             }
             n = leftParent->nextSibling();
         }
@@ -795,7 +795,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
         for (; rightParent != commonRoot; rightParent = rightParent->parentNode()) {
             if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
                 RefPtr<Node> rightContentsParent = rightParent->cloneNode(false);
-                rightContentsParent->appendChild(rightContents,ec);
+                rightContentsParent->appendChild(rightContents, ec);
                 rightContents = rightContentsParent;
             }
             Node* prev;

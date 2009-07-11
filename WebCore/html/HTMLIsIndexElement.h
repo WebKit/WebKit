@@ -27,8 +27,7 @@
 
 namespace WebCore {
 
-class HTMLIsIndexElement : public HTMLInputElement
-{
+class HTMLIsIndexElement : public HTMLInputElement {
 public:
     HTMLIsIndexElement(const QualifiedName&, Document *doc, HTMLFormElement *f = 0);
 

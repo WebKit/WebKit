@@ -60,7 +60,7 @@ bool SVGFEComponentTransferElement::build(SVGResourceFilter* filterResource)
 {
     FilterEffect* input1 = filterResource->builder()->getEffectById(in1());
     
-    if(!input1)
+    if (!input1)
         return false;
 
     ComponentTransferFunction red;

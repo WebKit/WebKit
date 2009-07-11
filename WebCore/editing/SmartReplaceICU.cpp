@@ -37,7 +37,8 @@
 
 namespace WebCore {
 
-static void addAllCodePoints(USet* smartSet, const String& string) {
+static void addAllCodePoints(USet* smartSet, const String& string)
+{
     const UChar* characters = string.characters();
     for (size_t i = 0; i < string.length(); i++)
         uset_add(smartSet, characters[i]);

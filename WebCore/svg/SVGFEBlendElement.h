@@ -27,10 +27,8 @@
 #include "FEBlend.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
-namespace WebCore
-{
-    class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes
-    {
+namespace WebCore {
+    class SVGFEBlendElement : public SVGFilterPrimitiveStandardAttributes {
     public:
         SVGFEBlendElement(const QualifiedName&, Document*);
         virtual ~SVGFEBlendElement();

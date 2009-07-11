@@ -195,7 +195,8 @@ private:
     };  
     
     struct PendingStartElementNSCallback : public PendingCallback {
-        virtual ~PendingStartElementNSCallback() {
+        virtual ~PendingStartElementNSCallback()
+        {
             xmlFree(xmlLocalName);
             xmlFree(xmlPrefix);
             xmlFree(xmlURI);
@@ -208,7 +209,8 @@ private:
             xmlFree(attributes);
         }
         
-        virtual void call(XMLTokenizer* tokenizer) {
+        virtual void call(XMLTokenizer* tokenizer)
+        {
             tokenizer->startElementNs(xmlLocalName, xmlPrefix, xmlURI, 
                                       nb_namespaces, const_cast<const xmlChar**>(namespaces),
                                       nb_attributes, nb_defaulted, const_cast<const xmlChar**>(attributes));
@@ -312,7 +314,7 @@ private:
     struct PendingErrorCallback: public PendingCallback {
         virtual ~PendingErrorCallback() 
         {
-            free (message);
+            free(message);
         }
         
         virtual void call(XMLTokenizer* tokenizer) 
@@ -344,7 +346,8 @@ class OffsetBuffer {
 public:
     OffsetBuffer(const Vector<char>& b) : m_buffer(b), m_currentOffset(0) { }
     
-    int readOutBytes(char* outputBuffer, unsigned askedToRead) {
+    int readOutBytes(char* outputBuffer, unsigned askedToRead)
+    {
         unsigned bytesLeft = m_buffer.size() - m_currentOffset;
         unsigned lenToCopy = min(askedToRead, bytesLeft);
         if (lenToCopy) {
@@ -668,7 +671,7 @@ typedef struct _xmlSAX2Namespace xmlSAX2Namespace;
 static inline void handleElementNamespaces(Element* newElement, const xmlChar** libxmlNamespaces, int nb_namespaces, ExceptionCode& ec)
 {
     xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
-    for(int i = 0; i < nb_namespaces; i++) {
+    for (int i = 0; i < nb_namespaces; i++) {
         String namespaceQName = "xmlns";
         String namespaceURI = toString(namespaces[i].uri);
         if (namespaces[i].prefix)
@@ -691,7 +694,7 @@ typedef struct _xmlSAX2Attributes xmlSAX2Attributes;
 static inline void handleElementAttributes(Element* newElement, const xmlChar** libxmlAttributes, int nb_attributes, ExceptionCode& ec)
 {
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
-    for(int i = 0; i < nb_attributes; i++) {
+    for (int i = 0; i < nb_attributes; i++) {
         String attrLocalName = toString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);
         String attrValue = toString(attributes[i].value, valueLength);
@@ -1407,7 +1410,7 @@ static void attributesStartElementNsHandler(void* closure, const xmlChar* xmlLoc
     state->gotAttributes = true;
     
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
-    for(int i = 0; i < nb_attributes; i++) {
+    for (int i = 0; i < nb_attributes; i++) {
         String attrLocalName = toString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);
         String attrValue = toString(attributes[i].value, valueLength);

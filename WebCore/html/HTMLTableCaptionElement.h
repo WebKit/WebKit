@@ -30,8 +30,7 @@
 
 namespace WebCore {
 
-class HTMLTableCaptionElement : public HTMLTablePartElement
-{
+class HTMLTableCaptionElement : public HTMLTablePartElement {
 public:
     HTMLTableCaptionElement(const QualifiedName&, Document*);
     

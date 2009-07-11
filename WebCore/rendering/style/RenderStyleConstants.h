@@ -110,7 +110,7 @@ enum EVerticalAlign {
     TEXT_BOTTOM, TOP, BOTTOM, BASELINE_MIDDLE, LENGTH
 };
 
-enum EClear{
+enum EClear {
     CNONE = 0, CLEFT = 1, CRIGHT = 2, CBOTH = 3
 };
 

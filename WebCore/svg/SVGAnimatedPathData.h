@@ -25,12 +25,10 @@
 
 #if ENABLE(SVG)
 
-namespace WebCore
-{
+namespace WebCore {
     class SVGPathSegList;
 
-    class SVGAnimatedPathData
-    {
+    class SVGAnimatedPathData {
     public:
         SVGAnimatedPathData();
         virtual ~SVGAnimatedPathData();

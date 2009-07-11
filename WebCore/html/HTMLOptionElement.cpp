@@ -152,10 +152,10 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
 void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-   HTMLSelectElement* select = ownerSelectElement();
-   if (select)
-       select->childrenChanged(changedByParser);
-   HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLSelectElement* select = ownerSelectElement();
+    if (select)
+        select->childrenChanged(changedByParser);
+    HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const

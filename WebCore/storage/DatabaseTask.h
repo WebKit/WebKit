@@ -45,8 +45,7 @@ class SQLCallback;
 class SQLTransaction;
 class VersionChangeCallback;
 
-class DatabaseTask : public ThreadSafeShared<DatabaseTask>
-{
+class DatabaseTask : public ThreadSafeShared<DatabaseTask> {
     friend class Database;
 public:
     virtual ~DatabaseTask();
@@ -76,8 +75,7 @@ private:
     OwnPtr<ThreadCondition> m_synchronousCondition;
 };
 
-class DatabaseOpenTask : public DatabaseTask
-{
+class DatabaseOpenTask : public DatabaseTask {
 public:
     static PassRefPtr<DatabaseOpenTask> create(Database* db) { return adoptRef(new DatabaseOpenTask(db)); }
 
@@ -96,8 +94,7 @@ private:
     bool m_success;
 };
 
-class DatabaseCloseTask : public DatabaseTask
-{
+class DatabaseCloseTask : public DatabaseTask {
 public:
     static PassRefPtr<DatabaseCloseTask> create(Database* db) { return adoptRef(new DatabaseCloseTask(db)); }
 
@@ -110,8 +107,7 @@ private:
 #endif
 };
 
-class DatabaseTransactionTask : public DatabaseTask
-{
+class DatabaseTransactionTask : public DatabaseTask {
 public:
     static PassRefPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransaction> transaction) { return adoptRef(new DatabaseTransactionTask(transaction)); }
 
@@ -129,8 +125,7 @@ private:
     RefPtr<SQLTransaction> m_transaction;
 };
 
-class DatabaseTableNamesTask : public DatabaseTask
-{
+class DatabaseTableNamesTask : public DatabaseTask {
 public:
     static PassRefPtr<DatabaseTableNamesTask> create(Database* db) { return adoptRef(new DatabaseTableNamesTask(db)); }
 

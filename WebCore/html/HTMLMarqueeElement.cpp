@@ -34,7 +34,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
- // WinIE uses 60ms as the minimum delay by default.
+// WinIE uses 60ms as the minimum delay by default.
 const int defaultMinimumDelay = 60;
 
 HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document* doc)

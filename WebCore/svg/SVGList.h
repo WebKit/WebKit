@@ -165,8 +165,7 @@ namespace WebCore {
     };
 
     template<typename Item>
-    class SVGPODList : public SVGList<RefPtr<SVGPODListItem<Item> > >
-    {
+    class SVGPODList : public SVGList<RefPtr<SVGPODListItem<Item> > > {
     public:
         Item initialize(Item newItem, ExceptionCode& ec)
         {

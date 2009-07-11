@@ -30,8 +30,7 @@ namespace WebCore {
 
 class String;
 
-class HTMLModElement : public HTMLElement
-{
+class HTMLModElement : public HTMLElement {
 public:
     HTMLModElement(const QualifiedName&, Document*);
 

@@ -99,7 +99,7 @@ PassRefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionC
     return r.release();
 }
 
-void HTMLTableSectionElement::deleteRow( int index, ExceptionCode& ec)
+void HTMLTableSectionElement::deleteRow(int index, ExceptionCode& ec)
 {
     RefPtr<HTMLCollection> children = rows();
     int numRows = children ? (int)children->length() : 0;

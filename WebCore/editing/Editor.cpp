@@ -1066,9 +1066,9 @@ void Editor::paste()
 
 void Editor::pasteAsPlainText()
 {
-   if (!canPaste())
+    if (!canPaste())
         return;
-   pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
+    pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
 }
 
 void Editor::performDelete()

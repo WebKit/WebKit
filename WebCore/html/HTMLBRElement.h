@@ -28,8 +28,7 @@ namespace WebCore {
 
 class String;
 
-class HTMLBRElement : public HTMLElement
-{
+class HTMLBRElement : public HTMLElement {
 public:
     HTMLBRElement(const QualifiedName&, Document*);
     ~HTMLBRElement();

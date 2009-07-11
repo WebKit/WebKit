@@ -34,14 +34,12 @@ namespace WebCore {
     struct SVGListTraits { };
 
     template<typename Item>
-    struct SVGListTraits<true, Item>
-    {
+    struct SVGListTraits<true, Item> {
         static Item nullItem() { return Item(); } 
     };
 
     template<>
-    struct SVGListTraits<false, double>
-    {
+    struct SVGListTraits<false, double> {
         static double nullItem() { return 0.0; }
     };
 

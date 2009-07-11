@@ -174,7 +174,7 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
     switch (m_type) {
         case ColorString: {
             Color c = Color(m_color);
-            if (c.isValid()){
+            if (c.isValid()) {
                 context->setFillColor(c.rgb());
                 break;
             }
@@ -185,7 +185,7 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
         }
         case ColorStringWithAlpha: {
             Color c = Color(m_color);
-            if (c.isValid()){
+            if (c.isValid()) {
                 context->setFillColor(colorWithOverrideAlpha(c.rgb(), m_alpha));
                 break;
             }

@@ -27,8 +27,7 @@
 
 #include "SVGURIReference.h"
 
-namespace WebCore
-{
+namespace WebCore {
     enum SVGTextPathMethodType {
         SVG_TEXTPATH_METHODTYPE_UNKNOWN = 0,
         SVG_TEXTPATH_METHODTYPE_ALIGN = 1,
@@ -42,8 +41,7 @@ namespace WebCore
     };
 
     class SVGTextPathElement : public SVGTextContentElement,
-                               public SVGURIReference
-    {
+                               public SVGURIReference {
     public:
         // Forward declare these enums in the w3c naming scheme, for IDL generation
         enum {

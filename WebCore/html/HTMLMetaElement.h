@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLMetaElement : public HTMLElement
-{
+class HTMLMetaElement : public HTMLElement {
 public:
     HTMLMetaElement(const QualifiedName&, Document*);
     ~HTMLMetaElement();

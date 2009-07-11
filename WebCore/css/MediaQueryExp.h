@@ -36,8 +36,7 @@
 namespace WebCore {
 class CSSParserValueList;
 
-class MediaQueryExp
-{
+class MediaQueryExp {
 public:
     MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values);
     ~MediaQueryExp();
@@ -46,7 +45,8 @@ public:
 
     CSSValue* value() const { return m_value.get(); }
 
-    bool operator==(const MediaQueryExp& other) const  {
+    bool operator==(const MediaQueryExp& other) const
+    {
         return (other.m_mediaFeature == m_mediaFeature)
             && ((!other.m_value && !m_value)
                 || (other.m_value && m_value && other.m_value->cssText() == m_value->cssText()));

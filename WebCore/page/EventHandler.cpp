@@ -398,7 +398,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     m_mouseDownMayStartAutoscroll = m_mouseDownMayStartSelect || 
         (m_mousePressNode && m_mousePressNode->renderBox() && m_mousePressNode->renderBox()->canBeProgramaticallyScrolled(true));
 
-   return swallowEvent;
+    return swallowEvent;
 }
 
 bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event)
@@ -970,7 +970,7 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
             // If the link is editable, then we need to check the settings to see whether or not the link should be followed
             if (editable) {
                 ASSERT(m_frame->settings());
-                switch(m_frame->settings()->editableLinkBehavior()) {
+                switch (m_frame->settings()->editableLinkBehavior()) {
                     default:
                     case EditableLinkDefaultBehavior:
                     case EditableLinkAlwaysLive:
@@ -1162,7 +1162,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
             invalidateClick();
             return true;
         }
-   }
+    }
 #endif
 
     m_clickCount = mouseEvent.clickCount();
@@ -2052,7 +2052,7 @@ void EventHandler::handleKeyboardSelectionMovement(KeyboardEvent* event)
     
 void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 {
-   if (event->type() == eventNames().keydownEvent) {
+    if (event->type() == eventNames().keydownEvent) {
         m_frame->editor()->handleKeyboardEvent(event);
         if (event->defaultHandled())
             return;
@@ -2062,14 +2062,14 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
        // provides KB navigation and selection for enhanced accessibility users
        if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
            handleKeyboardSelectionMovement(event);       
-   }
-   if (event->type() == eventNames().keypressEvent) {
+    }
+    if (event->type() == eventNames().keypressEvent) {
         m_frame->editor()->handleKeyboardEvent(event);
         if (event->defaultHandled())
             return;
         if (event->charCode() == ' ')
             defaultSpaceEventHandler(event);
-   }
+    }
 }
 
 bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLocation) const

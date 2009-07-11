@@ -30,8 +30,7 @@
 
 namespace WebCore {
 
-class HTMLHeadElement : public HTMLElement
-{
+class HTMLHeadElement : public HTMLElement {
 public:
     HTMLHeadElement(const QualifiedName&, Document*);
     ~HTMLHeadElement();

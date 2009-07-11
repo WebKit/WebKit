@@ -139,7 +139,7 @@ void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
     ec = NOT_FOUND_ERR;
 
     if (oldQuery) {
-        for(size_t i = 0; i < m_queries.size(); ++i) {
+        for (size_t i = 0; i < m_queries.size(); ++i) {
             MediaQuery* a = m_queries[i];
             if (*a == *oldQuery) {
                 m_queries.remove(i);

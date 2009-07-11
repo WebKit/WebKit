@@ -347,7 +347,7 @@ bool CSSParser::parseMediaQuery(MediaList* queries, const String& string)
     m_mediaQuery = 0;
     // can't use { because tokenizer state switches from mediaquery to initial state when it sees { token.
     // instead insert one " " (which is WHITESPACE in CSSGrammar.y)
-    setupParser ("@-webkit-mediaquery ", string, "} ");
+    setupParser("@-webkit-mediaquery ", string, "} ");
     cssyyparse(this);
 
     bool ok = false;
@@ -408,7 +408,7 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
         return false;
 
     bool b = false;
-    switch(value->unit) {
+    switch (value->unit) {
     case CSSPrimitiveValue::CSS_NUMBER:
         b = (unitflags & FNumber);
         if (!b && ((unitflags & (FLength | FAngle | FTime)) && (value->fValue == 0 || !strict))) {
@@ -1049,7 +1049,7 @@ bool CSSParser::parseValue(int propId, bool important)
         } else {
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             bool is_valid = true;
-            while(is_valid && value) {
+            while (is_valid && value) {
                 switch (value->id) {
                 case CSSValueBlink:
                     break;
@@ -2577,7 +2577,7 @@ bool CSSParser::parseAnimationProperty(int propId, RefPtr<CSSValue>& result)
 #define DASHBOARD_REGION_NUM_PARAMETERS  6
 #define DASHBOARD_REGION_SHORT_NUM_PARAMETERS  2
 
-static CSSParserValue* skipCommaInDashboardRegion (CSSParserValueList *args)
+static CSSParserValue* skipCommaInDashboardRegion(CSSParserValueList *args)
 {
     if (args->size() == (DASHBOARD_REGION_NUM_PARAMETERS*2-1) ||
          args->size() == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
@@ -2632,7 +2632,7 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
         
         int numArgs = args->size();
         if ((numArgs != DASHBOARD_REGION_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_NUM_PARAMETERS*2-1)) &&
-            (numArgs != DASHBOARD_REGION_SHORT_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1))){
+            (numArgs != DASHBOARD_REGION_SHORT_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1))) {
             valid = false;
             break;
         }
@@ -2648,7 +2648,7 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
 
         // Second arg is a type.
         arg = args->next();
-        arg = skipCommaInDashboardRegion (args);
+        arg = skipCommaInDashboardRegion(args);
         if (arg->unit != CSSPrimitiveValue::CSS_IDENT) {
             valid = false;
             break;
@@ -2678,7 +2678,7 @@ bool CSSParser::parseDashboardRegions(int propId, bool important)
             int i;
             for (i = 0; i < 4; i++) {
                 arg = args->next();
-                arg = skipCommaInDashboardRegion (args);
+                arg = skipCommaInDashboardRegion(args);
 
                 valid = arg->id == CSSValueAuto || validUnit(arg, FLength, m_strict);
                 if (!valid)
@@ -3439,7 +3439,8 @@ struct ShadowParseContext {
 
     bool allowLength() { return allowX || allowY || allowBlur; }
 
-    void commitValue() {
+    void commitValue()
+    {
         // Handle the ,, case gracefully by doing nothing.
         if (x || y || blur || color) {
             if (!values)
@@ -3455,7 +3456,8 @@ struct ShadowParseContext {
         allowY = allowBlur = false;  
     }
 
-    void commitLength(CSSParserValue* v) {
+    void commitLength(CSSParserValue* v)
+    {
         RefPtr<CSSPrimitiveValue> val = CSSPrimitiveValue::create(v->fValue, (CSSPrimitiveValue::UnitTypes)v->unit);
 
         if (allowX) {
@@ -3472,7 +3474,8 @@ struct ShadowParseContext {
         }
     }
 
-    void commitColor(PassRefPtr<CSSPrimitiveValue> val) {
+    void commitColor(PassRefPtr<CSSPrimitiveValue> val)
+    {
         color = val;
         allowColor = false;
         if (allowX)
@@ -3604,8 +3607,7 @@ bool CSSParser::parseReflect(int propId, bool important)
     return true;
 }
 
-struct BorderImageParseContext
-{
+struct BorderImageParseContext {
     BorderImageParseContext()
     : m_allowBreak(false)
     , m_allowNumber(false)
@@ -3627,7 +3629,8 @@ struct BorderImageParseContext
     bool allowRule() const { return m_allowRule; }
 
     void commitImage(PassRefPtr<CSSValue> image) { m_image = image; m_allowNumber = true; }
-    void commitNumber(CSSParserValue* v) {
+    void commitNumber(CSSParserValue* v)
+    {
         PassRefPtr<CSSPrimitiveValue> val = CSSPrimitiveValue::create(v->fValue, (CSSPrimitiveValue::UnitTypes)v->unit);
         if (!m_top)
             m_top = val;
@@ -3644,7 +3647,8 @@ struct BorderImageParseContext
         m_allowNumber = !m_left;
     }
     void commitSlash() { m_allowBreak = m_allowSlash = m_allowNumber = false; m_allowWidth = true; }
-    void commitWidth(CSSParserValue* val) {
+    void commitWidth(CSSParserValue* val)
+    {
         if (!m_borderTop)
             m_borderTop = val;
         else if (!m_borderRight)
@@ -3659,14 +3663,16 @@ struct BorderImageParseContext
         m_allowBreak = m_allowRule = true;
         m_allowWidth = !m_borderLeft;
     }
-    void commitRule(int keyword) {
+    void commitRule(int keyword)
+    {
         if (!m_horizontalRule)
             m_horizontalRule = keyword;
         else if (!m_verticalRule)
             m_verticalRule = keyword;
         m_allowRule = !m_verticalRule;
     }
-    PassRefPtr<CSSValue> commitBorderImage(CSSParser* p, bool important) {
+    PassRefPtr<CSSValue> commitBorderImage(CSSParser* p, bool important)
+    {
         // We need to clone and repeat values for any omissions.
         if (!m_right) {
             m_right = CSSPrimitiveValue::create(m_top->getDoubleValue(), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
@@ -4292,7 +4298,7 @@ int CSSParser::lex(void* yylvalWithoutType)
     int length;
     UChar* t = text(&length);
 
-    switch(token) {
+    switch (token) {
     case WHITESPACE:
     case SGML_CD:
     case INCLUDES:
@@ -4375,7 +4381,7 @@ UChar* CSSParser::text(int *length)
 {
     UChar* start = yytext;
     int l = yyleng;
-    switch(yyTok) {
+    switch (yyTok) {
     case STRING:
         l--;
         /* nobreak */

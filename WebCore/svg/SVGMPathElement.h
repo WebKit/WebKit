@@ -32,8 +32,7 @@ namespace WebCore {
     
     class SVGMPathElement : public SVGElement,
                                    SVGURIReference,
-                                   SVGExternalResourcesRequired
-    {
+                                   SVGExternalResourcesRequired {
     public:
         SVGMPathElement(const QualifiedName&, Document*);
         virtual ~SVGMPathElement();

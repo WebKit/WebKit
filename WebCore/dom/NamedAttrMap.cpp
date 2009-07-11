@@ -164,7 +164,7 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, Except
     return r.release();
 }
 
-PassRefPtr<Node> NamedNodeMap::item (unsigned index) const
+PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
 {
     if (index >= length())
         return 0;

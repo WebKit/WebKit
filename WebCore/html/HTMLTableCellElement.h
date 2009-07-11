@@ -32,8 +32,7 @@
 
 namespace WebCore {
 
-class HTMLTableCellElement : public HTMLTablePartElement
-{
+class HTMLTableCellElement : public HTMLTablePartElement {
 public:
     HTMLTableCellElement(const QualifiedName&, Document*);
     ~HTMLTableCellElement();

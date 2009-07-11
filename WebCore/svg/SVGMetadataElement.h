@@ -26,10 +26,8 @@
 
 #include "SVGElement.h"
 
-namespace WebCore
-{
-    class SVGMetadataElement : public SVGElement
-    {
+namespace WebCore {
+    class SVGMetadataElement : public SVGElement {
     public:
         SVGMetadataElement(const QualifiedName&, Document*);
         virtual ~SVGMetadataElement();

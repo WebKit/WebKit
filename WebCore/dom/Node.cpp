@@ -495,7 +495,7 @@ void Node::setTabIndexExplicitly(short i)
 
 String Node::nodeValue() const
 {
-  return String();
+    return String();
 }
 
 void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
@@ -777,7 +777,7 @@ unsigned Node::nodeIndex() const
 {
     Node *_tempNode = previousSibling();
     unsigned count=0;
-    for( count=0; _tempNode; count++ )
+    for ( count=0; _tempNode; count++ )
         _tempNode = _tempNode->previousSibling();
     return count;
 }

@@ -67,7 +67,7 @@ public:
     CachedImage* cachedImage() const { return m_imageLoader.image(); }
     void setCachedImage(CachedImage* i) { m_imageLoader.setImage(i); };
 
-    void setLoadManually (bool loadManually) { m_imageLoader.setLoadManually(loadManually); }
+    void setLoadManually(bool loadManually) { m_imageLoader.setLoadManually(loadManually); }
 
     String name() const;
     void setName(const String&);

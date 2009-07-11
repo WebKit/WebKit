@@ -26,8 +26,7 @@
 
 namespace WebCore {
 
-class HTMLBaseElement : public HTMLElement
-{
+class HTMLBaseElement : public HTMLElement {
 public:
     HTMLBaseElement(const QualifiedName&, Document*);
     ~HTMLBaseElement();

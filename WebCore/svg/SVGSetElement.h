@@ -26,11 +26,9 @@
 
 #include "SVGAnimateElement.h"
 
-namespace WebCore
-{
+namespace WebCore {
     // SVGAnimateElement implements superset of the functionality.
-    class SVGSetElement : public SVGAnimateElement
-    {
+    class SVGSetElement : public SVGAnimateElement {
     public:
         SVGSetElement(const QualifiedName&, Document*);
     };

@@ -29,13 +29,11 @@
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
-namespace WebCore
-{
+namespace WebCore {
     class SVGSwitchElement : public SVGStyledTransformableElement,
                              public SVGTests,
                              public SVGLangSpace,
-                             public SVGExternalResourcesRequired
-    {
+                             public SVGExternalResourcesRequired {
     public:
         SVGSwitchElement(const QualifiedName&, Document*);
         virtual ~SVGSwitchElement();

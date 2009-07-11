@@ -59,8 +59,7 @@ void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
         setX2BaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::y2Attr)
         setY2BaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else
-    {
+    else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
         if (SVGLangSpace::parseMappedAttribute(attr))

@@ -66,8 +66,7 @@ using namespace std;
 namespace WebCore {
 
 #if QT_VERSION >= 0x040400
-class EntityResolver : public QXmlStreamEntityResolver
-{
+class EntityResolver : public QXmlStreamEntityResolver {
     virtual QString resolveUndeclaredEntity(const QString &name);
 };
 
@@ -354,7 +353,7 @@ static void attributesStartElementNsHandler(AttributeParseState* state, const QX
 
     state->gotAttributes = true;
 
-    for(int i = 0; i < attrs.count(); i++) {
+    for (int i = 0; i < attrs.count(); i++) {
         const QXmlStreamAttribute& attr = attrs[i];
         String attrLocalName = attr.name();
         String attrValue     = attr.value();
@@ -540,7 +539,7 @@ void XMLTokenizer::parseStartElement()
     String prefix    = prefixFromQName(m_stream.qualifiedName().toString());
 
     if (m_parsingFragment && uri.isNull()) {
-        Q_ASSERT (prefix.isNull());
+        Q_ASSERT(prefix.isNull());
         uri = m_defaultNamespaceURI;
     }
 

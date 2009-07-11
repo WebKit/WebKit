@@ -26,8 +26,7 @@
 
 namespace WebCore {
 
-class HTMLDListElement : public HTMLElement
-{
+class HTMLDListElement : public HTMLElement {
 public:
     HTMLDListElement(const QualifiedName&, Document*);
 

@@ -25,12 +25,10 @@
 
 #if ENABLE(SVG)
 
-namespace WebCore
-{
+namespace WebCore {
     class SVGPointList;
 
-    class SVGAnimatedPoints
-    {
+    class SVGAnimatedPoints {
     public:
         SVGAnimatedPoints();
         virtual ~SVGAnimatedPoints();

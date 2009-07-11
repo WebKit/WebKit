@@ -28,8 +28,7 @@ namespace WebCore {
 
 class String;
 
-class HTMLQuoteElement : public HTMLElement
-{
+class HTMLQuoteElement : public HTMLElement {
 public:
     HTMLQuoteElement(const QualifiedName&, Document*);
     

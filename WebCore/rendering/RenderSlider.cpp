@@ -406,7 +406,7 @@ bool RenderSlider::mouseEventIsInThumb(MouseEvent* evt)
 
 FloatPoint RenderSlider::mouseEventOffsetToThumb(MouseEvent* evt)
 {
-    ASSERT (m_thumb && m_thumb->renderer());
+    ASSERT(m_thumb && m_thumb->renderer());
     FloatPoint localPoint = m_thumb->renderBox()->absoluteToLocal(evt->absoluteLocation(), false, true);
     IntRect thumbBounds = m_thumb->renderBox()->borderBoxRect();
     FloatPoint offset;

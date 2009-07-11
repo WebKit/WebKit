@@ -28,8 +28,7 @@
 
 namespace WebCore {
 
-class HTMLTitleElement : public HTMLElement
-{
+class HTMLTitleElement : public HTMLElement {
 public:
     HTMLTitleElement(const QualifiedName&, Document*);
     ~HTMLTitleElement();

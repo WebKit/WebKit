@@ -34,7 +34,7 @@ typedef struct HBITMAP__* HBITMAP;
 namespace WebCore {
 
     HBITMAP imageFromSelection(Frame* frame, bool forceWhiteText);
-    void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor,Vector<IntRect>& pages, int& pageHeight);
+    void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& pages, int& pageHeight);
 
 }
 

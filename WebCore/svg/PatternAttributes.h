@@ -24,8 +24,7 @@
 
 #if ENABLE(SVG)
 
-namespace WebCore
-{
+namespace WebCore {
     struct PatternAttributes {
         PatternAttributes()
             : m_x()

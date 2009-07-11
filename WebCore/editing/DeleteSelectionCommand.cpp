@@ -365,7 +365,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         updateLayout();
         RenderObject *r = node->renderer();
         if (r && r->isTableCell() && static_cast<RenderTableCell*>(r)->contentHeight() <= 0)
-            insertBlockPlaceholder(Position(node,0));
+            insertBlockPlaceholder(Position(node, 0));
         return;
     }
     

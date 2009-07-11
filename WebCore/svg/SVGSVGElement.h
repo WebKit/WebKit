@@ -33,8 +33,7 @@
 #include "SVGTests.h"
 #include "SVGZoomAndPan.h"
 
-namespace WebCore
-{
+namespace WebCore {
     class SVGAngle;
     class SVGLength;
     class SVGTransform;
@@ -46,8 +45,7 @@ namespace WebCore
                           public SVGLangSpace,
                           public SVGExternalResourcesRequired,
                           public SVGFitToViewBox,
-                          public SVGZoomAndPan
-    {
+                          public SVGZoomAndPan {
     public:
         SVGSVGElement(const QualifiedName&, Document*);
         virtual ~SVGSVGElement();

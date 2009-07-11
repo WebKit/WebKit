@@ -34,8 +34,7 @@
 namespace WebCore {
 class MediaQueryExp;
 
-class MediaQuery
-{
+class MediaQuery {
 public:
     enum Restrictor {
         Only, Not, None

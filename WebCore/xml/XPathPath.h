@@ -72,8 +72,7 @@ namespace WebCore {
             bool m_absolute;
         };
 
-        class Path : public Expression
-        {
+        class Path : public Expression {
         public:
             Path(Filter*, LocationPath*);
             virtual ~Path();

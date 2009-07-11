@@ -24,8 +24,7 @@
 
 #if ENABLE(SVG)
 
-namespace WebCore
-{
+namespace WebCore {
     struct GradientAttributes {
         GradientAttributes()
             : m_spreadMethod(SpreadMethodPad)

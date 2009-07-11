@@ -27,10 +27,8 @@
 
 #include "SVGPathSeg.h"
 
-namespace WebCore
-{
-    class SVGPathSegClosePath : public SVGPathSeg
-    {
+namespace WebCore {
+    class SVGPathSegClosePath : public SVGPathSeg {
     public:
         static PassRefPtr<SVGPathSegClosePath> create() { return adoptRef(new SVGPathSegClosePath); }
         virtual ~SVGPathSegClosePath();

@@ -56,8 +56,7 @@ namespace WebCore {
                            public SVGTests,
                            public SVGLangSpace,
                            public SVGExternalResourcesRequired,
-                           public SVGAnimatedPathData
-    {
+                           public SVGAnimatedPathData {
     public:
         SVGPathElement(const QualifiedName&, Document*);
         virtual ~SVGPathElement();

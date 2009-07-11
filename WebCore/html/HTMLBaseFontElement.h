@@ -26,8 +26,7 @@
 
 namespace WebCore {
 
-class HTMLBaseFontElement : public HTMLElement
-{
+class HTMLBaseFontElement : public HTMLElement {
 public:
     HTMLBaseFontElement(const QualifiedName&, Document* doc);
 

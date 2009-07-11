@@ -149,7 +149,7 @@ protected:
     WebKitCSSMatrix();
     WebKitCSSMatrix(const WebKitCSSMatrix&);
     WebKitCSSMatrix(const TransformationMatrix&);
-    WebKitCSSMatrix(const String&, ExceptionCode& );
+    WebKitCSSMatrix(const String&, ExceptionCode&);
 
     TransformationMatrix m_matrix;
 };

@@ -29,8 +29,7 @@
 
 namespace WebCore {
 
-class Comment : public CharacterData
-{
+class Comment : public CharacterData {
 public:
     Comment(Document*, const String &_text);
     Comment(Document*);

@@ -34,8 +34,7 @@ namespace WebCore {
 
 class HTMLTableElement;
 
-class HTMLTableColElement : public HTMLTablePartElement
-{
+class HTMLTableColElement : public HTMLTablePartElement {
 public:
     HTMLTableColElement(const QualifiedName& tagName, Document*);
 

@@ -250,7 +250,8 @@ void SelectionController::willBeModified(EAlteration alter, EDirection direction
     }
 }
 
-TextDirection SelectionController::directionOfEnclosingBlock() {
+TextDirection SelectionController::directionOfEnclosingBlock()
+{
     Node* n = m_sel.extent().node();
     Node* enclosingBlockNode = enclosingBlock(n);
     if (!enclosingBlockNode)

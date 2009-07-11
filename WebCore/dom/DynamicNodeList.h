@@ -37,7 +37,7 @@ namespace WebCore {
 
     class DynamicNodeList : public NodeList {
     public:
-        struct Caches : RefCounted<Caches>{
+        struct Caches : RefCounted<Caches> {
             static PassRefPtr<Caches> create();
             void reset();
 

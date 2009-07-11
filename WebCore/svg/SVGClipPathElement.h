@@ -35,8 +35,7 @@ namespace WebCore {
     class SVGClipPathElement : public SVGStyledTransformableElement,
                                public SVGTests,
                                public SVGLangSpace,
-                               public SVGExternalResourcesRequired
-    {
+                               public SVGExternalResourcesRequired {
     public:
         SVGClipPathElement(const QualifiedName&, Document*);
         virtual ~SVGClipPathElement();

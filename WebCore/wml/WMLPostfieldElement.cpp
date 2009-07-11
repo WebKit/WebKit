@@ -59,7 +59,7 @@ String WMLPostfieldElement::name() const
 
 String WMLPostfieldElement::value() const
 {
-   return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::valueAttr));
+    return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::valueAttr));
 }
 
 static inline CString encodedString(const TextEncoding& encoding, const String& data)

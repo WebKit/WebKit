@@ -44,7 +44,7 @@ public:
     ~StyleInheritedData();
 
     bool operator==(const StyleInheritedData& o) const;
-    bool operator!=( const StyleInheritedData& o) const
+    bool operator!=(const StyleInheritedData& o) const
     {
         return !(*this == o);
     }
