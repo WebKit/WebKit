@@ -1,3 +1,51 @@
+2009-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable support for accelerated compositing and 3d transforms on Leopard.
+        <https://bugs.webkit.org/show_bug.cgi?id=20166>
+        <rdar://problem/6120614>
+
+        Reviewed by Oliver Hunt.
+        
+        Add Leopard-specific pixel results for compositing and 3d-transform tests, since
+        there are gamma differences between Leopard and SnowLeopard. Also some layer
+        intersection behavior differs betweeen the two.
+
+        * platform/mac-leopard/compositing/direct-image-compositing-expected.checksum: Added.
+        * platform/mac-leopard/compositing/direct-image-compositing-expected.png: Added.
+        * platform/mac-leopard/compositing/geometry/root-layer-update-expected.checksum: Added.
+        * platform/mac-leopard/compositing/geometry/root-layer-update-expected.png: Added.
+        * platform/mac-leopard/compositing/overflow/overflow-positioning-expected.checksum: Added.
+        * platform/mac-leopard/compositing/overflow/overflow-positioning-expected.png: Added.
+        * platform/mac-leopard/compositing/repaint/become-overlay-composited-layer-expected.checksum: Added.
+        * platform/mac-leopard/compositing/repaint/become-overlay-composited-layer-expected.png: Added.
+        * platform/mac-leopard/compositing/repaint/layer-repaint-rects-expected.checksum: Added.
+        * platform/mac-leopard/compositing/repaint/layer-repaint-rects-expected.png: Added.
+        * platform/mac-leopard/transforms/3d/general/perspective-units-expected.checksum: Added.
+        * platform/mac-leopard/transforms/3d/general/perspective-units-expected.png: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-2-expected.checksum: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-2-expected.png: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.checksum: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.png: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-deep-expected.checksum: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-deep-expected.png: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-expected.checksum: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-expected.png: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-origins-expected.checksum: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.checksum: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.checksum: Added.
+        * platform/mac-leopard/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png: Added.
+
+        * platform/mac-tiger/fast/media/mq-transform-02-expected.checksum: Renamed from LayoutTests/platform/mac-leopard/fast/media/mq-transform-02-expected.checksum.
+        * platform/mac-tiger/fast/media/mq-transform-02-expected.png: Renamed from LayoutTests/platform/mac-leopard/fast/media/mq-transform-02-expected.png.
+        * platform/mac-tiger/fast/media/mq-transform-02-expected.txt: Renamed from LayoutTests/platform/mac-leopard/fast/media/mq-transform-02-expected.txt.
+        * platform/mac-tiger/fast/media/mq-transform-03-expected.checksum: Renamed from LayoutTests/platform/mac-leopard/fast/media/mq-transform-03-expected.checksum.
+        * platform/mac-tiger/fast/media/mq-transform-03-expected.png: Renamed from LayoutTests/platform/mac-leopard/fast/media/mq-transform-03-expected.png.
+        * platform/mac-tiger/fast/media/mq-transform-03-expected.txt: Renamed from LayoutTests/platform/mac-leopard/fast/media/mq-transform-03-expected.txt.
+        Fix the media query results for leopard, which now supports 3d transforms. Move the 3d-disabled results
+        to the Tiger directory.
+
 2009-07-10  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

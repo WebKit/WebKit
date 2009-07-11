@@ -635,7 +635,7 @@
 
 /* Accelerated compositing */
 #if PLATFORM(MAC)
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if !defined(BUILDING_ON_TIGER)
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 #endif
