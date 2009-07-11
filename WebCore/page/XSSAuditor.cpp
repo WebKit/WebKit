@@ -28,6 +28,7 @@
 #include "XSSAuditor.h"
 
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 #include "Console.h"
 #include "CString.h"
@@ -35,6 +36,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "KURL.h"
+#include "PreloadScanner.h"
 #include "ResourceResponseBase.h"
 #include "ScriptSourceCode.h"
 #include "Settings.h"
@@ -69,7 +71,7 @@ bool XSSAuditor::canEvaluate(const String& sourceCode) const
     if (!isEnabled())
         return true;
 
-    if (findInRequest(sourceCode, false)) {
+    if (findInRequest(sourceCode, false, true, false)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
@@ -82,7 +84,7 @@ bool XSSAuditor::canEvaluateJavaScriptURL(const String& code) const
     if (!isEnabled())
         return true;
 
-    if (findInRequest(code, false, false)) {
+    if (findInRequest(code, false, false, true, true)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
@@ -144,7 +146,7 @@ bool XSSAuditor::canSetBaseElementURL(const String& url) const
 }
 
 String XSSAuditor::decodeURL(const String& str, const TextEncoding& encoding, bool allowNullCharacters,
-                             bool allowNonNullControlCharacters)
+                             bool allowNonNullControlCharacters, bool decodeHTMLentities, bool leaveUndecodableHTMLEntitiesUntouched)
 {
     String result;
     String url = str;
@@ -154,6 +156,8 @@ String XSSAuditor::decodeURL(const String& str, const TextEncoding& encoding, bo
     String decodedResult = encoding.decode(result.utf8().data(), result.length());
     if (!decodedResult.isEmpty())
         result = decodedResult;
+    if (decodeHTMLentities)
+        result = decodeHTMLEntities(result, leaveUndecodableHTMLEntitiesUntouched);
     if (!allowNullCharacters)
         result = StringImpl::createStrippingNullCharacters(result.characters(), result.length());
     if (!allowNonNullControlCharacters) {
@@ -164,18 +168,59 @@ String XSSAuditor::decodeURL(const String& str, const TextEncoding& encoding, bo
     return result;
 }
 
-bool XSSAuditor::findInRequest(const String& string, bool matchNullCharacters, bool matchNonNullControlCharacters) const
+String XSSAuditor::decodeHTMLEntities(const String& str, bool leaveUndecodableHTMLEntitiesUntouched)
+{
+    SegmentedString source(str);
+    SegmentedString sourceShadow;
+    Vector<UChar> result;
+    
+    while (!source.isEmpty()) {
+        UChar cc = *source;
+        source.advance();
+        
+        if (cc != '&') {
+            result.append(cc);
+            continue;
+        }
+        
+        if (leaveUndecodableHTMLEntitiesUntouched)
+            sourceShadow = source;
+        bool notEnoughCharacters = false;
+        unsigned entity = PreloadScanner::consumeEntity(source, notEnoughCharacters);
+        // We ignore notEnoughCharacters because we might as well use this loop
+        // to copy the remaining characters into |result|.
+
+        if (entity > 0xFFFF) {
+            result.append(U16_LEAD(entity));
+            result.append(U16_TRAIL(entity));
+        } else if (!leaveUndecodableHTMLEntitiesUntouched || entity != 0xFFFD){
+            result.append(entity);
+        } else {
+            result.append('&');
+            if (leaveUndecodableHTMLEntitiesUntouched)
+                source = sourceShadow;
+        }
+    }
+    
+    return String::adopt(result);
+}
+
+bool XSSAuditor::findInRequest(const String& string, bool matchNullCharacters, bool matchNonNullControlCharacters,
+                               bool decodeHTMLentities, bool leaveUndecodableHTMLEntitiesUntouched) const
 {
     bool result = false;
     Frame* parentFrame = m_frame->tree()->parent();
     if (parentFrame && m_frame->document()->url() == blankURL())
-        result = findInRequest(parentFrame, string, matchNullCharacters, matchNonNullControlCharacters);
+        result = findInRequest(parentFrame, string, matchNullCharacters, matchNonNullControlCharacters, 
+                               decodeHTMLentities, leaveUndecodableHTMLEntitiesUntouched);
     if (!result)
-        result = findInRequest(m_frame, string, matchNullCharacters, matchNonNullControlCharacters);
+        result = findInRequest(m_frame, string, matchNullCharacters, matchNonNullControlCharacters, 
+                               decodeHTMLentities, leaveUndecodableHTMLEntitiesUntouched);
     return result;
 }
 
-bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool matchNullCharacters, bool matchNonNullControlCharacters) const
+bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool matchNullCharacters, bool matchNonNullControlCharacters,
+                               bool decodeHTMLentities, bool leaveUndecodableHTMLEntitiesUntouched) const
 {
     ASSERT(frame->document());
     String pageURL = frame->document()->url().string();
@@ -194,7 +239,7 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool matchNul
     if (string.length() < pageURL.length()) {
         // The string can actually fit inside the pageURL.
         String decodedPageURL = decodeURL(pageURL, frame->document()->decoder()->encoding(), matchNullCharacters,
-                                          matchNonNullControlCharacters);
+                                          matchNonNullControlCharacters, decodeHTMLentities, leaveUndecodableHTMLEntitiesUntouched);
         if (decodedPageURL.find(string, 0, false) != -1)
            return true;  // We've found the smoking gun.
     }
@@ -208,7 +253,7 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool matchNul
             // code is less than or equal to the length of the url-encoded
             // string.
             String decodedFormData = decodeURL(formData, frame->document()->decoder()->encoding(), matchNullCharacters,
-                                               matchNonNullControlCharacters);
+                                               matchNonNullControlCharacters, decodeHTMLentities, leaveUndecodableHTMLEntitiesUntouched);
             if (decodedFormData.find(string, 0, false) != -1)
                 return true;  // We found the string in the POST data.
         }

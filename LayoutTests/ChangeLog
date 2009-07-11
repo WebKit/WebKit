@@ -2,6 +2,31 @@
 
         Reviewed by Adam Barth.
 
+        https://bugs.webkit.org/show_bug.cgi?id=26921
+
+        Tests protection against HTML entities encoded attacks.
+
+        * http/tests/security/xssAuditor/inline-event-HTML-entities-expected.txt: Added.
+        * http/tests/security/xssAuditor/inline-event-HTML-entities.html: Added.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-control-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-control-char.html: Added.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-named-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-named.html: Added.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char.html: Added.
+        * http/tests/security/xssAuditor/javascript-link-HTML-entities.html: Added.
+        * http/tests/security/xssAuditor/link-onclick-entities-expected.txt: Added.
+        * http/tests/security/xssAuditor/link-onclick-entities.html: Added.
+        * http/tests/security/xssAuditor/script-tag-entities-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-entities.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-entities-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-entities.html: Added.
+
+2009-07-10  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+
         https://bugs.webkit.org/show_bug.cgi?id=27151
 
         Tests prevention of JavaScript URLs that contain null- and non-null control characters.
