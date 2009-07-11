@@ -193,7 +193,14 @@ void ScriptController::evaluateInNewContext(const Vector<ScriptSourceCode>& sour
 // Evaluate a script file in the environment of this proxy.
 ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {
-    if (!m_XSSAuditor->canEvaluate(sourceCode.source())) {
+    String sourceURL = sourceCode.jsSourceCode().provider()->url();
+    
+    if (sourceURL.isNull() && !m_XSSAuditor->canEvaluateJavaScriptURL(sourceCode.source())) {
+        // This JavaScript URL is not safe to be evaluated.
+        return JSValue();
+    }
+    
+    if (!sourceURL.isNull() && !m_XSSAuditor->canEvaluate(sourceCode.source())) {
         // This script is not safe to be evaluated.
         return ScriptValue();
     }

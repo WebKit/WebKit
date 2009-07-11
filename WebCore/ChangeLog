@@ -1,3 +1,27 @@
+2009-07-10  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27151
+
+        Fixes issue where JavaScript URLs that contain null- and non-null control characters can
+        bypass XSSAuditor.
+
+        Tests: http/tests/security/xssAuditor/javascript-link-control-char.html
+               http/tests/security/xssAuditor/javascript-link-null-char.html
+               http/tests/security/xssAuditor/javascript-link.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): Separated out logic for JavaScript URLs from 
+        inline scripts. For JavaScript URLs, calls XSSAuditor::canEvaluateJavaScriptURL.
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate): Made similar changes to evaluate() as in
+        bindings/js/ScriptController.cpp.
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canEvaluateJavaScriptURL): Separated out logic for JavaScript URLs
+        into its own method.
+        * page/XSSAuditor.h:
+
 2009-07-10  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Kilzer.

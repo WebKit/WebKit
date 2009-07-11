@@ -74,6 +74,10 @@ namespace WebCore {
         // based on the content of any user-submitted data.
         bool canEvaluate(const String& sourceCode) const;
 
+        // Determines whether the JavaScript URL should be allowed or denied execution
+        // based on the content of any user-submitted data.
+        bool canEvaluateJavaScriptURL(const String& code) const;
+
         // Determines whether the event listener should be created based on the
         // content of any user-submitted data.
         bool canCreateInlineEventListener(const String& functionName, const String& code) const;
