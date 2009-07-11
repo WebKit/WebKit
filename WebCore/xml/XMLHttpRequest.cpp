@@ -688,9 +688,15 @@ void XMLHttpRequest::loadRequestAsynchronously(ResourceRequest& request)
         // and they are referenced by the JavaScript wrapper.
         setPendingActivity(this);
         
-        ASSERT(!m_didTellLoaderAboutRequest);
-        cache()->loader()->nonCacheRequestInFlight(m_url);
-        m_didTellLoaderAboutRequest = true;
+        // For now we should only balance the nonCached request count for main-thread XHRs and not
+        // Worker XHRs, as the Cache is not thread-safe.
+        // This will become irrelevant after https://bugs.webkit.org/show_bug.cgi?id=27165 is resolved.
+        if (!scriptExecutionContext()->isWorkerContext()) {
+            ASSERT(isMainThread());
+            ASSERT(!m_didTellLoaderAboutRequest);
+            cache()->loader()->nonCacheRequestInFlight(m_url);
+            m_didTellLoaderAboutRequest = true;
+        }
     }
 }
 

@@ -1,3 +1,16 @@
+2009-07-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        A worker-thread inspired follow-up for:
+        https://bugs.webkit.org/show_bug.cgi?id=26496 and <rdar://problem/7046520>
+        REGRESSION: XHR stream connection blocks iFrame loading and resource downloading
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously): Don't perform the XHR compensation when the XHR
+          is running on a worker thread. Accessing the global Cache data structures from a non-main thread is
+          not currently supported.
+
 2009-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         Enable support for accelerated compositing and 3d transforms on Leopard.
