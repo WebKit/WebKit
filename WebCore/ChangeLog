@@ -1,3 +1,49 @@
+2009-07-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7049066>.
+        Update SnowLeopard media controller layout.
+
+        * css/mediaControlsQT.css:
+            Update for new layout.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::movieLoadType):
+            Added to replace isStreaming.
+        * html/HTMLMediaElement.h:
+            Declare movieLoadType, remove isStreaming.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlStatusDisplayElement::update):
+            Use movieLoadType instead of isStreaming.
+        (WebCore::MediaControlTimelineContainerElement::rendererIsNeeded):
+            MediaControlElement is the base class, not HTMLInputElement.
+        (WebCore::MediaControlStatusDisplayElement::rendererIsNeeded):
+            Ditto.
+        (WebCore::MediaControlRewindButtonElement::rendererIsNeeded):
+            Don't display rewind button for live streams.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::rendererIsNeeded):
+            MediaControlInputElement is the base class, not HTMLInputElement.
+        * rendering/MediaControlElements.h:
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::getMediaUIPartStateFlags):
+            New, return wkDrawMediaUIPart flags.
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton):
+        (WebCore::RenderThemeMac::paintMediaMuteButton):
+        (WebCore::RenderThemeMac::paintMediaPlayButton):
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton):
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaSliderThumb):
+        (WebCore::RenderThemeMac::paintMediaRewindButton):
+        (WebCore::RenderThemeMac::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderThemeMac::paintMediaControlsBackground):
+        (WebCore::RenderThemeMac::paintMediaCurrentTime):
+        (WebCore::RenderThemeMac::paintMediaTimeRemaining):
+            Use getMediaUIPartStateFlags.
+
 2009-07-10  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Adele Peterson.

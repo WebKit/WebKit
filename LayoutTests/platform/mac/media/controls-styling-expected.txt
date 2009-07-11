@@ -20,19 +20,19 @@ layer at (18,42) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
 layer at (18,257) size 320x25
   RenderFlexibleBox (positioned) {DIV} at (0,215) size 320x25
-    RenderButton {INPUT} at (7,4) size 16x16
-    RenderButton {INPUT} at (297,4) size 16x16
-    RenderButton {INPUT} at (37,4) size 16x16
-    RenderFlexibleBox {DIV} at (60,6) size 230x13
-      RenderSlider {INPUT} at (45,0) size 140x13
-        RenderBlock {DIV} at (0,2) size 11x9
-layer at (78,263) size 45x13
-  RenderFlexibleBox {DIV} at (0,0) size 45x13 [color=#000000]
+    RenderButton {INPUT} at (6,3) size 18x18
+    RenderButton {INPUT} at (297,5) size 15x14
+    RenderButton {INPUT} at (32,4) size 16x16
+    RenderFlexibleBox {DIV} at (49,4) size 246x17
+      RenderSlider {INPUT} at (45,4) size 156x13
+        RenderBlock {DIV} at (0,1) size 12x10
+layer at (67,263) size 45x13
+  RenderFlexibleBox {DIV} at (0,2) size 45x13 [color=#FFFFFF]
     RenderBlock (anonymous) at (9,1) size 26x11
       RenderText {#text} at (0,0) size 26x11
         text run at (0,0) width 26: "00:00"
-layer at (263,263) size 45x13
-  RenderFlexibleBox {DIV} at (185,0) size 45x13 [color=#000000]
+layer at (268,263) size 45x13 scrollHeight 14
+  RenderFlexibleBox {DIV} at (201,2) size 45x13 [color=#FFFFFF]
     RenderBlock (anonymous) at (6,1) size 32x11
       RenderText {#text} at (0,0) size 32x11
         text run at (0,0) width 32: "-00:06"
@@ -40,19 +40,19 @@ layer at (8,282) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
 layer at (8,497) size 320x25
   RenderFlexibleBox (positioned) {DIV} at (0,215) size 320x25
-    RenderButton {INPUT} at (7,4) size 16x16
-    RenderButton {INPUT} at (297,4) size 16x16
-    RenderButton {INPUT} at (37,4) size 16x16
-    RenderFlexibleBox {DIV} at (60,6) size 230x13
-      RenderSlider {INPUT} at (45,0) size 140x13
-        RenderBlock {DIV} at (0,2) size 11x9
-layer at (68,503) size 45x13
-  RenderFlexibleBox {DIV} at (0,0) size 45x13
+    RenderButton {INPUT} at (6,3) size 18x18
+    RenderButton {INPUT} at (297,5) size 15x14
+    RenderButton {INPUT} at (32,4) size 16x16
+    RenderFlexibleBox {DIV} at (49,4) size 246x17
+      RenderSlider {INPUT} at (45,4) size 156x13
+        RenderBlock {DIV} at (0,1) size 12x10
+layer at (57,503) size 45x13
+  RenderFlexibleBox {DIV} at (0,2) size 45x13 [color=#FFFFFF]
     RenderBlock (anonymous) at (9,1) size 26x11
       RenderText {#text} at (0,0) size 26x11
         text run at (0,0) width 26: "00:00"
-layer at (253,503) size 45x13
-  RenderFlexibleBox {DIV} at (185,0) size 45x13
+layer at (258,503) size 45x13 scrollHeight 14
+  RenderFlexibleBox {DIV} at (201,2) size 45x13 [color=#FFFFFF]
     RenderBlock (anonymous) at (6,1) size 32x11
       RenderText {#text} at (0,0) size 32x11
         text run at (0,0) width 32: "-00:06"

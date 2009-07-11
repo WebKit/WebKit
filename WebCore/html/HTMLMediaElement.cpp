@@ -901,10 +901,9 @@ HTMLMediaElement::ReadyState HTMLMediaElement::readyState() const
     return m_readyState;
 }
 
-bool HTMLMediaElement::isStreaming() const
+MediaPlayer::MovieLoadType HTMLMediaElement::movieLoadType() const
 {
-    MediaPlayer::MovieLoadType loadType = m_player ? m_player->movieLoadType() : MediaPlayer::Unknown;
-    return loadType == MediaPlayer::LiveStream;
+    return m_player ? m_player->movieLoadType() : MediaPlayer::Unknown;
 }
 
 bool HTMLMediaElement::seeking() const

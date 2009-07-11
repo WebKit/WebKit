@@ -78,6 +78,8 @@ public:
     // Pauses playback without changing any states or generating events
     void setPausedInternal(bool);
     
+    MediaPlayer::MovieLoadType movieLoadType() const;
+    
     bool inActiveDocument() const { return m_inActiveDocument; }
     
 // DOM API
@@ -97,8 +99,6 @@ public:
     PassRefPtr<TimeRanges> buffered() const;
     void load(ExceptionCode&);
     String canPlayType(const String& mimeType) const;
-
-    bool isStreaming() const;
 
 // ready state
     enum ReadyState { HAVE_NOTHING, HAVE_METADATA, HAVE_CURRENT_DATA, HAVE_FUTURE_DATA, HAVE_ENOUGH_DATA };

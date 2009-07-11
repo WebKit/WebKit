@@ -220,7 +220,7 @@ typedef enum {
 } WKMediaControllerThemeStyle;
 
 typedef enum {
-    WKMediaControllerFlagDisbled = 1 << 0,
+    WKMediaControllerFlagDisabled = 1 << 0,
     WKMediaControllerFlagPressed = 1 << 1,
     WKMediaControllerFlagDrawEndCaps = 1 << 3,
 } WKMediaControllerThemeState;
