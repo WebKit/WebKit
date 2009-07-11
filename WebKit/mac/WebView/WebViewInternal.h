@@ -70,8 +70,10 @@ namespace WebCore {
 
 - (BOOL)_becomingFirstResponderFromOutside;
 
+#if ENABLE(ICONDATABASE)
 - (void)_registerForIconNotification:(BOOL)listen;
 - (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
+#endif
 
 - (void)_setMouseDownEvent:(NSEvent *)event;
 - (void)_cancelUpdateMouseoverTimer;

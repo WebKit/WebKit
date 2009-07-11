@@ -1,3 +1,30 @@
+2009-07-10  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 27007: Build fixes when ICONDATABASE is disabled
+
+        <https://bugs.webkit.org/show_bug.cgi?id=27007>
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebIconDatabase.mm:
+        (defaultClient): Return 0 if ICONDATABASE is disabled.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveIcon): Commented out
+        the body of the method if ICONDATABASE is disabled.
+        (WebFrameLoaderClient::registerForIconNotification): Ditto.
+        * WebCoreSupport/WebIconDatabaseClient.mm: Added #if
+        ENABLE(ICONDATABASE)/#endif guard to source.
+        * WebView/WebView.mm:
+        (-[WebView setFrameLoadDelegate:]): Wrapped code that starts the
+        icon database machinery in #if ENABLE(ICONDATABASE)/#endif.
+        (-[WebView _registerForIconNotification:]): Wrapped method in
+        #if ENABLE(ICONDATABASE)/#endif guard.
+        (-[WebView _dispatchDidReceiveIconFromWebFrame:]): Ditto.
+        * WebView/WebViewInternal.h: Wrapped methods in #if
+        ENABLE(ICONDATABASE)/#endif guard.
+        (-[WebView _registerForIconNotification:]):
+        (-[WebView _dispatchDidReceiveIconFromWebFrame:]):
+
 2009-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by John Sullivan.

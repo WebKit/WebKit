@@ -65,8 +65,12 @@ NSSize WebIconLargeSize = {128, 128};
 
 static WebIconDatabaseClient* defaultClient()
 {
+#if ENABLE(ICONDATABASE)
     static WebIconDatabaseClient* defaultClient = new WebIconDatabaseClient();
     return defaultClient;
+#else
+    return 0;
+#endif
 }
 
 @interface WebIconDatabase (WebReallyInternal)

@@ -29,9 +29,9 @@
 #import "WebIconDatabaseClient.h"
 
 #import "WebIconDatabaseInternal.h"
-
 #import <WebCore/PlatformString.h>
 
+#if ENABLE(ICONDATABASE)
 
 bool WebIconDatabaseClient::performImport()
 {
@@ -55,3 +55,5 @@ void WebIconDatabaseClient::dispatchDidAddIconForPageURL(const WebCore::String& 
     // instead of us doing it every iteration
     [[WebIconDatabase sharedIconDatabase] _sendNotificationForURL:pageURL];
 }
+
+#endif // ENABLE(ICONDATABASE)

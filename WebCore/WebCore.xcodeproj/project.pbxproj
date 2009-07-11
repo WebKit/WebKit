@@ -684,6 +684,7 @@
 		441B055C0CD77A2D007C1F18 /* DOMHTMLEmbedElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFB0CB84E88007647C5 /* DOMHTMLEmbedElementPrivate.h */; };
 		441B055E0CD77A48007C1F18 /* DOMHTMLIFrameElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFD0CB84EA5007647C5 /* DOMHTMLIFrameElementPrivate.h */; };
 		441B05600CD77A65007C1F18 /* DOMHTMLObjectElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFF0CB84EC3007647C5 /* DOMHTMLObjectElementPrivate.h */; };
+		445C8DB710015FC90031531A /* IconDatabaseNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 445C8DB610015FC90031531A /* IconDatabaseNone.cpp */; };
 		447D69030FA626810015CCB1 /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = 447D69010FA626810015CCB1 /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447D69040FA626810015CCB1 /* RuntimeApplicationChecks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 447D69020FA626810015CCB1 /* RuntimeApplicationChecks.mm */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
@@ -5628,6 +5629,7 @@
 		4429AAFD0CB84EA5007647C5 /* DOMHTMLIFrameElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLIFrameElementPrivate.h; sourceTree = "<group>"; };
 		4429AAFF0CB84EC3007647C5 /* DOMHTMLObjectElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLObjectElementPrivate.h; sourceTree = "<group>"; };
 		4429AB070CB84F81007647C5 /* DOMTextEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTextEventInternal.h; sourceTree = "<group>"; };
+		445C8DB610015FC90031531A /* IconDatabaseNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabaseNone.cpp; sourceTree = "<group>"; };
 		447D69010FA626810015CCB1 /* RuntimeApplicationChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecks.h; sourceTree = "<group>"; };
 		447D69020FA626810015CCB1 /* RuntimeApplicationChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecks.mm; sourceTree = "<group>"; };
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
@@ -10061,6 +10063,7 @@
 				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
 				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
 				51E1ECB80C91C90400DC255B /* IconDatabaseClient.h */,
+				445C8DB610015FC90031531A /* IconDatabaseNone.cpp */,
 				1A2D753C0DE47FAB00F0A648 /* IconFetcher.cpp */,
 				1A2D753B0DE47FAB00F0A648 /* IconFetcher.h */,
 				513F14510AB634C400094DDF /* IconLoader.cpp */,
@@ -17871,6 +17874,7 @@
 				0B8C56D40F28627F000502E1 /* HTTPHeaderMap.cpp in Sources */,
 				514C76720CE923A1007EF3CD /* HTTPParsers.cpp in Sources */,
 				5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */,
+				445C8DB710015FC90031531A /* IconDatabaseNone.cpp in Sources */,
 				1A2D753E0DE47FAB00F0A648 /* IconFetcher.cpp in Sources */,
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
 				B275358E0B053A66002CE64F /* IconMac.mm in Sources */,

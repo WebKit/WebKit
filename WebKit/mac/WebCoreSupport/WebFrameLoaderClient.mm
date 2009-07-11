@@ -539,9 +539,11 @@ void WebFrameLoaderClient::dispatchWillClose()
 
 void WebFrameLoaderClient::dispatchDidReceiveIcon()
 {
+#if ENABLE(ICONDATABASE)
     WebView *webView = getWebView(m_webFrame.get());   
     ASSERT(m_webFrame == [webView mainFrame]);
     [webView _dispatchDidReceiveIconFromWebFrame:m_webFrame.get()];
+#endif
 }
 
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
@@ -1636,7 +1638,9 @@ void WebFrameLoaderClient::windowObjectCleared()
 
 void WebFrameLoaderClient::registerForIconNotification(bool listen)
 {
+#if ENABLE(ICONDATABASE)
     [[m_webFrame.get() webView] _registerForIconNotification:listen];
+#endif
 }
 
 void WebFrameLoaderClient::didPerformFirstNavigation() const

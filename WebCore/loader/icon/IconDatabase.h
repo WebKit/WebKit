@@ -165,6 +165,7 @@ private:
     HashSet<String> m_pageURLsPendingImport;
     HashSet<String> m_pageURLsInterestedInIcons;
     HashSet<IconRecord*> m_iconsPendingReading;
+#endif // ENABLE(ICONDATABASE)
 
 // *** Sync Thread Only ***
 public:
@@ -174,6 +175,7 @@ public:
     
     bool shouldStopThreadActivity() const;
 
+#if ENABLE(ICONDATABASE)
 private:    
     static void* iconDatabaseSyncThreadStart(void *);
     void* iconDatabaseSyncThread();
@@ -238,4 +240,4 @@ IconDatabase* iconDatabase();
 
 } // namespace WebCore
 
-#endif
+#endif // IconDatabase_h

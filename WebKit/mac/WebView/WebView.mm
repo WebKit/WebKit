@@ -2708,9 +2708,11 @@ static bool needsWebViewInitThreadWorkaround()
     _private->frameLoadDelegate = delegate;
     [self _cacheFrameLoadDelegateImplementations];
 
+#if ENABLE(ICONDATABASE)
     // If this delegate wants callbacks for icons, fire up the icon database.
     if (_private->frameLoadDelegateImplementations.didReceiveIconForFrameFunc)
         [WebIconDatabase sharedIconDatabase];
+#endif
 }
 
 - frameLoadDelegate
@@ -5117,6 +5119,7 @@ static WebFrameView *containingFrameView(NSView *view)
     return _private->becomingFirstResponderFromOutside;
 }
 
+#if ENABLE(ICONDATABASE)
 - (void)_receivedIconChangedNotification:(NSNotification *)notification
 {
     // Get the URL for this notification
@@ -5157,6 +5160,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
     [self _didChangeValueForKey:_WebMainFrameIconKey];
 }
+#endif // ENABLE(ICONDATABASE)
 
 // Get the appropriate user-agent string for a particular URL.
 - (WebCore::String)_userAgentForURL:(const WebCore::KURL&)url
