@@ -1,3 +1,19 @@
+2009-07-10  Daniel Bates  <dbates@intudata.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27151
+
+        Tests prevention of JavaScript URLs that contain null- and non-null control characters.
+
+        * http/tests/security/xssAuditor/javascript-link-control-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-control-char.html: Added.
+        * http/tests/security/xssAuditor/javascript-link-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-null-char-expected.txt: Added.
+        * http/tests/security/xssAuditor/javascript-link-null-char.html: Added.
+        * http/tests/security/xssAuditor/javascript-link.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag-click-and-notify.pl: Added.
+
 2009-07-10  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Adele Peterson.
