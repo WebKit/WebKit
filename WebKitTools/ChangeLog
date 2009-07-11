@@ -1,5 +1,29 @@
 2009-07-10  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/27167> bugzilla-tool: hide help for unsupported commands
+
+        Reviewed by Eric Seidel.
+
+        When bugzilla-tool -h|--help is invoked in an svn working
+        directory, don't print help for commands that are only supported
+        on git working directories.
+
+        * Scripts/bugzilla-tool:
+        (Command.__init__): Added requires_local_commits argument with a
+        default of False.  Set self.requires_local_commits attribute.
+        (PostCommitsAsPatchesToBug.execute): Removed
+        SCM.supports_local_commits() check since this is now handled by
+        BugzillaTool.main().
+        (PostCommitsAsPatchesToBug.__init__): Added
+        requires_local_commits=True argument to Command.__init__().
+        (BugzillaTool.commands_usage): Don't print help for commands if
+        they require local commits and the current SCM doesn't support
+        them.
+        (BugzillaTool.main): If command_object requires local commits
+        and the current SCM doesn't, exit with an error message.
+
+2009-07-10  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/27117> bugzilla-tool: use Mac OS X keychain for authentication
 
         Reviewed by Eric Seidel.

@@ -124,11 +124,12 @@ def commit_message_for_this_commit(scm):
 
 
 class Command:
-    def __init__(self, help_text, argument_names="", options=[]):
+    def __init__(self, help_text, argument_names="", options=[], requires_local_commits=False):
         self.help_text = help_text
         self.argument_names = argument_names
         self.options = options
         self.option_parser = HelpPrintingOptionParser(usage=SUPPRESS_USAGE, add_help_option=False, option_list=self.options)
+        self.requires_local_commits = requires_local_commits
     
     def name_with_arguments(self, command_name):
         usage_string = command_name
@@ -209,11 +210,13 @@ class ApplyPatchesFromBug(Command):
         
         self.apply_patches(patches, tool.scm(), options.local_commit)
 
+
 def bug_comment_from_commit_text(scm, commit_text):
     match = re.search(scm.commit_success_regexp(), commit_text, re.MULTILINE)
     svn_revision = match.group('svn_revision')
     commit_text += ("\nhttp://trac.webkit.org/changeset/%s" % svn_revision)
     return commit_text
+
 
 class LandAndUpdateBug(Command):
     def __init__(self):
@@ -268,6 +271,7 @@ class LandAndUpdateBug(Command):
         else:
             log(comment_text)
             log("No bug id provided.")
+
 
 class LandPatchesFromBugs(Command):
     def __init__(self):
@@ -357,6 +361,7 @@ class LandPatchesFromBugs(Command):
         for bug_id in args:
             self.land_patches(bug_id, bugs_to_patches[bug_id], options, tool)
 
+
 class CommitMessageForCurrentDiff(Command):
     def __init__(self):
         Command.__init__(self, 'Prints a commit message suitable for the uncommitted changes.')
@@ -416,12 +421,9 @@ class PostCommitsAsPatchesToBug(Command):
             make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting new ones."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
         ]
-        Command.__init__(self, 'Attaches a range of local commits to bugs as patch files.', 'COMMITISH', options=options)
+        Command.__init__(self, 'Attaches a range of local commits to bugs as patch files.', 'COMMITISH', options=options, requires_local_commits=True)
 
     def execute(self, options, args, tool):
-        if not tool.scm().supports_local_commits():
-            error(tool.scm().display_name() + " does not support local commits.")
-
         commit_ids = tool.scm().commit_ids_from_range_arguments(args, cherry_pick=True)
 
         if len(commit_ids) > 10:
@@ -464,12 +466,14 @@ class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
             return "\n" + epilog + "\n"
         return ""
 
+
 class HelpPrintingOptionParser(OptionParser):
     def error(self, msg):
         self.print_usage(sys.stderr)
         error_message = "%s: error: %s\n" % (self.get_prog_name(), msg)
         error_message += "\nType '" + self.get_prog_name() + " --help' to see usage.\n"
         self.exit(2, error_message)
+
 
 class BugzillaTool:
     def __init__(self):
@@ -490,7 +494,7 @@ class BugzillaTool:
         
         self.global_option_parser = HelpPrintingOptionParser(usage=self.usage_line(), formatter=NonWrappingEpilogIndentedHelpFormatter(), epilog=self.commands_usage())
         self.global_option_parser.add_option("--dry-run", action="store_true", dest="dryrun", help="do not touch remote servers", default=False)
-    
+
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
         original_cwd = os.path.abspath('.')
@@ -507,17 +511,20 @@ class BugzillaTool:
                 error("FATAL: Failed to determine the SCM system for either %s or %s" % (original_cwd, webkit_directory))
         
         return self.cached_scm
-    
+
     @staticmethod
     def usage_line():
         return "Usage: %prog [options] command [command-options] [command-arguments]"
-    
+
     def commands_usage(self):
         commands_text = "Commands:\n"
         longest_name_length = 0
         command_rows = []
+        scm_supports_local_commits = self.scm().supports_local_commits()
         for command in self.commands:
             command_object = command['object']
+            if command_object.requires_local_commits and not scm_supports_local_commits:
+                continue
             command_name_and_args = command_object.name_with_arguments(command['name'])
             command_rows.append({ 'name-and-args': command_name_and_args, 'object': command_object })
             longest_name_length = max([longest_name_length, len(command_name_and_args)])
@@ -577,8 +584,12 @@ class BugzillaTool:
         command = self.command_by_name(command_name)
         if not command:
             self.global_option_parser.error(command_name + " is not a recognized command")
-        
+
         command_object = command['object']
+
+        if command_object.requires_local_commits and not self.scm().supports_local_commits():
+            error(command_name + " requires local commits using %s in %s." % (self.scm().display_name(), self.scm().checkout_root))
+
         (command_options, command_args) = command_object.parse_args(args_after_command_name)
         return command_object.execute(command_options, command_args, self)
 
