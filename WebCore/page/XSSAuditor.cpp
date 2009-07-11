@@ -77,19 +77,6 @@ bool XSSAuditor::canEvaluate(const String& sourceCode) const
     return true;
 }
 
-bool XSSAuditor::canEvaluateJavaScriptURL(const String& code) const
-{
-    if (!isEnabled())
-        return true;
-
-    if (findInRequest(code, false, false)) {
-        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
-        return false;
-    }
-    return true;
-}
-
 bool XSSAuditor::canCreateInlineEventListener(const String&, const String& code) const
 {
     if (!isEnabled())
