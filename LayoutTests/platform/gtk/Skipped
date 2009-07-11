@@ -4066,6 +4066,9 @@ media/video-src-invalid-remove.html
 media/video-src-plus-source.html
 media/video-src-remove.html
 media/video-volume.html
+# Failing media tests with changesets for reference:
+# http://trac.webkit.org/changeset/45311
+media/video-canvas-source.html
 #   Tests timing out
 media/unsupported-rtsp.html
 #   Tests generating new results
@@ -5953,25 +5956,35 @@ webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
 
 # Tests that failed because we don't have an eventSender implementation
-http/tests/local/drag-over-remote-content.html
-http/tests/security/drag-over-remote-content-iframe.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
+fast/forms/search-delete-while-cancel-button-clicked.html
+fast/forms/slider-delete-while-dragging-thumb.html
+http/tests/local/drag-over-remote-content.html
+http/tests/security/drag-over-remote-content-iframe.html
 http/tests/security/clipboard/clipboard-file-access.html
+media/audio-delete-while-slider-thumb-clicked.html
+media/audio-delete-while-step-button-clicked.html
 
 # Requires expected results that we don't have atm
 editing/inserting/break-blockquote-after-delete.html
 fast/box-shadow/transform-fringing.html
 fast/css/nth-child-dynamic.html
+fast/css/pseudo-cache-stale.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/forms/search-vertical-alignment.html
 fast/frames/viewsource-on-image-file.html
 fast/repaint/background-generated.html
+fast/repaint/float-in-new-block-with-layout-delta.html
+fast/repaint/float-new-in-block.html
 fast/text/text-large-negative-letter-spacing-with-opacity.html
 fast/text/text-letter-spacing.html
+media/controls-after-reload.html
 media/controls-strict.html
+media/controls-styling.html
 svg/batik/filters/feTile.svg
 svg/custom/createImageElement.svg
+svg/custom/createImageElement2.xhtml
 svg/custom/js-update-image-and-display2.svg
 svg/custom/js-update-image-and-display3.svg
 svg/custom/js-update-image-and-display.svg
@@ -5979,3 +5992,21 @@ svg/custom/outer-svg-unknown-feature.svg
 svg/filters/feMerge.svg
 svg/filters/feOffset.svg
 svg/filters/feTile.svg
+
+# ------------------
+# REGRESSIONS: Enable these tests again once these bugs are fixed.
+# ------------------
+
+# See Bug #27143 - https://bugs.webkit.org/show_bug.cgi?id=27143
+http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
+http/tests/xmlhttprequest/cache-override.html
+http/tests/xmlhttprequest/small-chunks-response-text.html
+
+# See Bug #27144 - https://bugs.webkit.org/show_bug.cgi?id=27144
+storage/database-lock-after-reload.html
+
+# See Bug #27145 - https://bugs.webkit.org/show_bug.cgi?id=27145
+fast/loader/subframe-navigate-during-main-frame-load.html
+
+# See Bug #27171 - https://bugs.webkit.org/show_bug.cgi?id=27171
+fast/events/frame-programmatic-focus.html
