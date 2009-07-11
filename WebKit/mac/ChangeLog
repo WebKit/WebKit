@@ -1,3 +1,31 @@
+2009-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Flashing as hardware layers are created and destroyed in some content
+        <rdar://problem/7032246>
+        
+        There's a window of time between the end of one runloop cycle, after CA layers changes
+        have been committed, and the window display at the start of the next cycle when 
+        CA may push updates to the screen before AppKit has drawn the view contents. If
+        we know that we need to do drawing synchronization (which we do when content moves
+        between a layer and the view), then we need to call -disableScreenUpdatesUntilFlush
+        from the existing runloop observer that is set up when layers need repainting to
+        ensure that layer updates don't reach the screen before view-based painting does.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]):
+        Tweak the comments
+        
+        * WebView/WebView.mm:
+        (viewUpdateRunLoopObserverCallBack):
+        (-[WebView _scheduleViewUpdate]):
+        Add a big comment to explain the timing of things.
+        Call -disableScreenUpdatesUntilFlush when the view _needsOneShotDrawingSynchronization.
+
+ 2009-07-09  Brian Weinstein  <bweinstein@apple.com>
+ 
+         Reviewed by Tim Hatcher.
 2009-07-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig with the power of Grayskull.

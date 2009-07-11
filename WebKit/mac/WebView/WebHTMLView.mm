@@ -3181,9 +3181,13 @@ WEBCORE_COMMAND(yankAndSelect)
         
 #if USE(ACCELERATED_COMPOSITING)
     if ([[self _webView] _needsOneShotDrawingSynchronization]) {
-        // Disable screen updates so that drawing into the NSView and
-        // CALayer updates appear on the screen at the same time.
+        // Disable screen updates so that any layer changes committed here
+        // don't show up on the screen before the window flush at the end
+        // of the current window display.
         [[self window] disableScreenUpdatesUntilFlush];
+        
+        // Make sure any layer changes that happened as a result of layout
+        // via -viewWillDraw are committed.
         [CATransaction flush];
         [[self _webView] _setNeedsOneShotDrawingSynchronization:NO];
     }

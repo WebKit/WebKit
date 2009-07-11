@@ -5391,19 +5391,45 @@ static WebFrameView *containingFrameView(NSView *view)
         [self didChangeValueForKey:UsingAcceleratedCompositingProperty];
 }
 
+/*
+    The order of events with compositing updates is this:
+    
+   Start of runloop                                        End of runloop
+        |                                                       |
+      --|-------------------------------------------------------|--
+           ^                                           ^     ^
+           |                                           |     |
+    NSWindow update,                                   |  CA commit
+     NSView drawing                                    |
+        flush                                          |
+                                      viewUpdateRunLoopObserverCallBack
+
+    The viewUpdateRunLoopObserverCallBack is required to ensure that
+    layout has happened before CA commits layer changes (it's analagous to
+    -viewWillDraw for NSViews).
+    
+    CA commits on a run loop observer at the end of the cycle.
+    It is also rendering via a CV display link continuously. So we have to
+    ensure that layer updates committed at the end of the runloop cycle don't get
+    to the screen via the display link until the window flush at the start
+    of the next cycle. Thus, viewUpdateRunLoopObserverCallBack has to
+    call -disableScreenUpdatesUntilFlush to stop screen updates until the flush
+    at the start of the next runloop cycle.
+    
+    See also -[WebView drawRect:], where we also do a -disableScreenUpdatesUntilFlush.
+*/
+
 static void viewUpdateRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActivity, void* info)
 {
     WebView* webView = reinterpret_cast<WebView*>(info);
     [webView _viewWillDrawInternal];
     [webView _clearViewUpdateRunLoopObserver];
+    if ([webView _needsOneShotDrawingSynchronization])
+        [[webView window] disableScreenUpdatesUntilFlush];
 }
 
 - (void)_scheduleViewUpdate
 {
-    // This is the compositing equivalent of -viewWillDraw. When we know that compositing layers
-    // have been set as needing display, we have to make an eager layout happen before the
-    // layers get committed by CoreAnimation.
-
     if (_private->viewUpdateRunLoopObserver)
         return;
 
