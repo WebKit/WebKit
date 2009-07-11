@@ -1,5 +1,14 @@
 2009-07-10  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/27173> svn-apply: Fix typo in git command used to find deleted files
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/svn-apply:
+        (scmWillDeleteFile): Changed 'head' to 'HEAD'.
+
+2009-07-10  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/27167> bugzilla-tool: hide help for unsupported commands
 
         Reviewed by Eric Seidel.
