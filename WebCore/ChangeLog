@@ -1,3 +1,46 @@
+2009-07-10  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19562
+        Added build stuff and stub for the ValidityState class, part of HTML5
+        section Forms:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#validitystate
+
+        Test: fast/forms/ValidityState-001.html
+
+        * DerivedSources.cpp: Fix aimed to include ValidityState files
+        * DerivedSources.make: ditto
+        * GNUmakefile.am: ditto
+        * WebCore.gypi: ditto
+        * WebCore.pro: ditto
+        * WebCore.vcproj/WebCore.vcproj: ditto
+        * WebCore.xcodeproj/project.pbxproj: ditto
+        * WebCoreSources.bkl: ditto
+        * html/HTMLButtonElement.idl: "validity" attribute
+        * html/HTMLFieldSetElement.idl: ditto
+        * html/HTMLFormControlElement.cpp: object getter
+        (WebCore::HTMLFormControlElement::validity):
+        * html/HTMLFormControlElement.h: ditto
+        * html/HTMLInputElement.idl: "validity" attribute
+        * html/HTMLSelectElement.idl: ditto
+        * html/HTMLTextAreaElement.idl: ditto
+        * html/ValidityState.cpp: Added.
+        (WebCore::ValidityState::ValidityState):
+        (WebCore::ValidityState::valid): validation flag
+        * html/ValidityState.h: Added.
+        (WebCore::ValidityState::create): creation routine
+        (WebCore::ValidityState::control): ValidityState's parent getter
+        (WebCore::ValidityState::valueMissing): validation flag
+        (WebCore::ValidityState::typeMismatch): ditto
+        (WebCore::ValidityState::patternMismatch): ditto
+        (WebCore::ValidityState::tooLong): ditto
+        (WebCore::ValidityState::rangeUnderflow): ditto
+        (WebCore::ValidityState::rangeOverflow): ditto
+        (WebCore::ValidityState::stepMismatch): ditto
+        (WebCore::ValidityState::customError): ditto
+        * html/ValidityState.idl: Added.
+
 2009-07-10  Brady Eidson  <beidson@apple.com>
 
         Style cleanup over my last patch.

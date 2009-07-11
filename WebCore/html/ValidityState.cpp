@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * This file is part of the WebKit project.
+ *
+ * Copyright (C) 2009 Michelangelo De Simone <micdesim@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -15,20 +17,27 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
+ *
  */
 
-module html {
+#include "config.h"
+#include "ValidityState.h"
+#include "HTMLFormControlElement.h"
 
-    interface [
-        GenerateConstructor,
-        InterfaceUUID=cf9e4c4c-a1c9-4740-ad6c-6e5ea94a51a5,
-        ImplementationUUID=93573758-96db-415d-9bdc-ee7238604094
-    ] HTMLFieldSetElement : HTMLElement {
-        readonly attribute HTMLFormElement form;
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
-        readonly attribute ValidityState   validity;
-#endif
-        readonly attribute boolean         willValidate;
-    };
+namespace WebCore {
 
+ValidityState::ValidityState(HTMLFormControlElement* parent)
+    : m_control(parent)
+{
+    ASSERT(parent);
 }
+
+bool ValidityState::valid()
+{
+    bool someError = typeMismatch() || stepMismatch() || rangeUnderflow() || rangeOverflow() ||
+                       tooLong() || patternMismatch() || valueMissing() || customError();
+
+    return !someError;
+}
+
+} // namespace

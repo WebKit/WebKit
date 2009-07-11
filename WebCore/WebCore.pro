@@ -411,6 +411,7 @@ IDL_BINDINGS += \
     html/ImageData.idl \
     html/MediaError.idl \
     html/TextMetrics.idl \
+    html/ValidityState.idl \
     html/VoidCallback.idl \
     inspector/InspectorController.idl \
     page/BarInfo.idl \
@@ -841,6 +842,7 @@ SOURCES += \
     html/HTMLViewSourceDocument.cpp \
     html/ImageData.cpp \
     html/PreloadScanner.cpp \
+    html/ValidityState.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/InspectorDatabaseResource.cpp \
     inspector/InspectorDOMStorageResource.cpp \

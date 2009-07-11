@@ -41,6 +41,9 @@ module html {
 #endif
 
         readonly attribute HTMLFormElement form;
+#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+        readonly attribute ValidityState   validity;
+#endif
         readonly attribute boolean         willValidate;
 
         // Modified in DOM Level 2:

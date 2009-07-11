@@ -360,6 +360,7 @@ DOM_CLASSES = \
     TimeRanges \
     TreeWalker \
     UIEvent \
+    ValidityState \
     VoidCallback \
     WebKitAnimationEvent \
     WebKitCSSKeyframeRule \

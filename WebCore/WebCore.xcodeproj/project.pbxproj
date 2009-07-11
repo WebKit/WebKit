@@ -204,6 +204,16 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
+		1528C9CA10076C47006560E0 /* ValidityState.idl in Resources */ = {isa = PBXBuildFile; fileRef = 1528C9C710076C47006560E0 /* ValidityState.idl */; };
+		1528C9CB10076C47006560E0 /* ValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1528C9C810076C47006560E0 /* ValidityState.h */; };
+		1528C9CC10076C47006560E0 /* ValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1528C9C910076C47006560E0 /* ValidityState.cpp */; };
+		1528C9CF10076D15006560E0 /* JSValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1528C9CD10076D15006560E0 /* JSValidityState.cpp */; };
+		1528C9D010076D15006560E0 /* JSValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1528C9CE10076D15006560E0 /* JSValidityState.h */; };
+		1528C9D510076D4A006560E0 /* DOMValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1528C9D310076D4A006560E0 /* DOMValidityState.h */; };
+		1528C9D610076D4A006560E0 /* DOMValidityState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1528C9D410076D4A006560E0 /* DOMValidityState.mm */; };
+		1528C9D810076D6D006560E0 /* DOMValidityStateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1528C9D710076D6D006560E0 /* DOMValidityStateInternal.h */; };
+		15A92E4E1007768800BC7AA5 /* DOMValidityState.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1528C9D310076D4A006560E0 /* DOMValidityState.h */; };
+		15A92E4F1007769000BC7AA5 /* DOMValidityStateInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1528C9D710076D6D006560E0 /* DOMValidityStateInternal.h */; };
 		185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 185BCF260F3279CE000EA262 /* ThreadTimers.cpp */; };
 		185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = 185BCF270F3279CE000EA262 /* ThreadTimers.h */; };
 		188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 188604B10F2E654A000B6443 /* DOMTimer.cpp */; };
@@ -4900,6 +4910,8 @@
 				933A14760B7D1BAF00A53FFD /* DOMTextEvent.h in Copy Generated Headers */,
 				85526D050AB0B979000302EA /* DOMTreeWalker.h in Copy Generated Headers */,
 				85C7F4D00AAF83F6004014DD /* DOMUIEvent.h in Copy Generated Headers */,
+				15A92E4E1007768800BC7AA5 /* DOMValidityState.h in Copy Generated Headers */,
+				15A92E4F1007769000BC7AA5 /* DOMValidityStateInternal.h in Copy Generated Headers */,
 				85DF34600AAFC2D400E59AE3 /* DOMWheelEvent.h in Copy Generated Headers */,
 				85E9E0A80AB3A11900069CD0 /* DOMXPathExpression.h in Copy Generated Headers */,
 				85E9E0AA0AB3A11900069CD0 /* DOMXPathNSResolver.h in Copy Generated Headers */,
@@ -5099,6 +5111,14 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameElementBase.h; sourceTree = "<group>"; };
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
+		1528C9C710076C47006560E0 /* ValidityState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ValidityState.idl; sourceTree = "<group>"; };
+		1528C9C810076C47006560E0 /* ValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidityState.h; sourceTree = "<group>"; };
+		1528C9C910076C47006560E0 /* ValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidityState.cpp; sourceTree = "<group>"; };
+		1528C9CD10076D15006560E0 /* JSValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValidityState.cpp; sourceTree = "<group>"; };
+		1528C9CE10076D15006560E0 /* JSValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValidityState.h; sourceTree = "<group>"; };
+		1528C9D310076D4A006560E0 /* DOMValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMValidityState.h; sourceTree = "<group>"; };
+		1528C9D410076D4A006560E0 /* DOMValidityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMValidityState.mm; sourceTree = "<group>"; };
+		1528C9D710076D6D006560E0 /* DOMValidityStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMValidityStateInternal.h; sourceTree = "<group>"; };
 		185BCF260F3279CE000EA262 /* ThreadTimers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadTimers.cpp; sourceTree = "<group>"; };
 		185BCF270F3279CE000EA262 /* ThreadTimers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadTimers.h; sourceTree = "<group>"; };
 		188604B10F2E654A000B6443 /* DOMTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTimer.cpp; sourceTree = "<group>"; };
@@ -11231,6 +11251,8 @@
 				85992EB90AA5069500AC0785 /* DOMHTMLTitleElement.mm */,
 				85BA4D090AA688680088052D /* DOMHTMLUListElement.h */,
 				85BA4D0A0AA688680088052D /* DOMHTMLUListElement.mm */,
+				1528C9D310076D4A006560E0 /* DOMValidityState.h */,
+				1528C9D410076D4A006560E0 /* DOMValidityState.mm */,
 			);
 			name = HTML;
 			sourceTree = "<group>";
@@ -11469,6 +11491,7 @@
 				85E7118A0AC5D5350053270F /* DOMTextInternal.h */,
 				850B41C10AD9E7E700A6ED4F /* DOMTreeWalkerInternal.h */,
 				85989DC90ACC8BBD00A0BC51 /* DOMUIEventInternal.h */,
+				1528C9D710076D6D006560E0 /* DOMValidityStateInternal.h */,
 				85989DCA0ACC8BBD00A0BC51 /* DOMWheelEventInternal.h */,
 				85E7118B0AC5D5350053270F /* DOMXPathExpressionInternal.h */,
 				85E7118C0AC5D5350053270F /* DOMXPathResultInternal.h */,
@@ -11919,6 +11942,9 @@
 				E446139D0CD6331000FADA75 /* TimeRanges.cpp */,
 				E446139E0CD6331000FADA75 /* TimeRanges.h */,
 				E446139F0CD6331000FADA75 /* TimeRanges.idl */,
+				1528C9C910076C47006560E0 /* ValidityState.cpp */,
+				1528C9C810076C47006560E0 /* ValidityState.h */,
+				1528C9C710076C47006560E0 /* ValidityState.idl */,
 				E44613B40CD6344E00FADA75 /* VoidCallback.h */,
 				E44613A00CD6331000FADA75 /* VoidCallback.idl */,
 			);
@@ -12110,6 +12136,8 @@
 				BCEF45F40E687B5C001C1287 /* JSTextMetrics.h */,
 				E44614120CD6826900FADA75 /* JSTimeRanges.cpp */,
 				E44614130CD6826900FADA75 /* JSTimeRanges.h */,
+				1528C9CD10076D15006560E0 /* JSValidityState.cpp */,
+				1528C9CE10076D15006560E0 /* JSValidityState.h */,
 				BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */,
 				BC8243280D0CE8A200460C8F /* JSVoidCallback.h */,
 			);
@@ -15592,6 +15620,8 @@
 				850B41C30AD9E7E700A6ED4F /* DOMTreeWalkerInternal.h in Headers */,
 				85C7F4910AAF79DC004014DD /* DOMUIEvent.h in Headers */,
 				85989DD00ACC8BBD00A0BC51 /* DOMUIEventInternal.h in Headers */,
+				1528C9D510076D4A006560E0 /* DOMValidityState.h in Headers */,
+				1528C9D810076D6D006560E0 /* DOMValidityStateInternal.h in Headers */,
 				BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */,
 				31C0FF490E4CEFDD007D6FE5 /* DOMWebKitAnimationEvent.h in Headers */,
 				31C0FF4B0E4CEFDD007D6FE5 /* DOMWebKitAnimationEventInternal.h in Headers */,
@@ -16190,6 +16220,7 @@
 				E446141B0CD6826900FADA75 /* JSTimeRanges.h in Headers */,
 				1A750D5D0A90DEE1000FF215 /* JSTreeWalker.h in Headers */,
 				A86629CF09DA2B47009633A5 /* JSUIEvent.h in Headers */,
+				1528C9D010076D15006560E0 /* JSValidityState.h in Headers */,
 				BC82432C0D0CE8A200460C8F /* JSVoidCallback.h in Headers */,
 				31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */,
 				316FE0720E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h in Headers */,
@@ -16816,6 +16847,7 @@
 				D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */,
 				656581B209D14EE6000E61D7 /* UserAgentStyleSheets.h in Headers */,
 				7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */,
+				1528C9CB10076C47006560E0 /* ValidityState.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
@@ -17037,6 +17069,7 @@
 				85136CA50AED665900F90A3D /* southResizeCursor.png in Resources */,
 				85136CA60AED665900F90A3D /* southWestResizeCursor.png in Resources */,
 				ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */,
+				1528C9CA10076C47006560E0 /* ValidityState.idl in Resources */,
 				46D4F24B0AF97E810035385A /* verticalTextCursor.png in Resources */,
 				85136CA70AED665900F90A3D /* waitCursor.png in Resources */,
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
@@ -17635,6 +17668,7 @@
 				85526CD30AB0B7DA000302EA /* DOMTreeWalker.mm in Sources */,
 				85C7F4920AAF79DC004014DD /* DOMUIEvent.mm in Sources */,
 				BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */,
+				1528C9D610076D4A006560E0 /* DOMValidityState.mm in Sources */,
 				31C0FF4A0E4CEFDD007D6FE5 /* DOMWebKitAnimationEvent.mm in Sources */,
 				316FE07E0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm in Sources */,
 				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
@@ -18275,6 +18309,7 @@
 				1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */,
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,
 				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
+				1528C9CF10076D15006560E0 /* JSValidityState.cpp in Sources */,
 				BC82432B0D0CE8A200460C8F /* JSVoidCallback.cpp in Sources */,
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
 				316FE0710E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp in Sources */,
@@ -18845,6 +18880,7 @@
 				D086FE9909D53AAB005BC74D /* UnlinkCommand.cpp in Sources */,
 				65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */,
 				7284ADDD0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp in Sources */,
+				1528C9CC10076C47006560E0 /* ValidityState.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
 				A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */,
