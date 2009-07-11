@@ -348,7 +348,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitLocalFileContentSniffingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitXSSAuditorEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitXSSAuditorEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAcceleratedCompositingEnabledPreferenceKey,
         nil];
 

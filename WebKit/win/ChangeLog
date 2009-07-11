@@ -1,3 +1,12 @@
+2009-07-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig with the power of Grayskull.
+
+        Enable XSSAuditor by default.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+
 2009-07-09  Drew Wilson  <atwilson@google.com>
 
         Reviewed by Alexey Proskuryakov.
