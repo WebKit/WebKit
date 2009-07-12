@@ -1,3 +1,17 @@
+2009-07-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Bug 27187 - Match Gecko behaviour for canvas path mutation APIs on an empty path
+        <https://bugs.webkit.org/show_bug.cgi?id=27187>
+
+        Add tests for the behaviour of effected APIs.
+
+        * fast/canvas/canvas-modify-emptyPath-expected.txt: Added.
+        * fast/canvas/canvas-modify-emptyPath.html: Added.
+        * fast/canvas/resources/canvas-modify-emptyPath.js: Added.
+        (getColor):
+
 2009-07-11  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti Koivisto.

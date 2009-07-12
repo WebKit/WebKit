@@ -1,0 +1,17 @@
+This tests behaviour of path modification APIs on an empty path.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test lineTo
+PASS getColor(50,50) is [0,128,0,255]
+Test lineTo sequence
+PASS getColor(50,50) is [0,128,0,255]
+Test quadraticCurveTo
+PASS getColor(50,50) is [0,128,0,255]
+Test bezierCurveTo
+PASS getColor(50,50) is [0,128,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
