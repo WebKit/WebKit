@@ -43,8 +43,10 @@
 #include "FrameView.h"
 #include "HostWindow.h"
 #include "HTMLNames.h"
+#include "InlineTextBox.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "RenderText.h"
 
 #include <atk/atk.h>
 #include <glib.h>
@@ -513,6 +515,96 @@ static void updateLayout(GtkWidget* widget, gpointer dummy, gpointer userData)
    pango_layout_context_changed(static_cast<PangoLayout*>(data));
 }
 
+#define IS_HIGH_SURROGATE(u)  ((UChar)(u) >= (UChar)0xd800 && (UChar)(u) <= (UChar)0xdbff)
+#define IS_LOW_SURROGATE(u)   ((UChar)(u) >= (UChar)0xdc00 && (UChar)(u) <= (UChar)0xdfff)
+
+static void UTF16ToUTF8(const UChar* aText, gint aLength, char* &text, gint &length)
+{
+    gboolean needCopy = FALSE;
+    int i;
+
+    for (i = 0; i < aLength; i++) {
+        if (!aText[i] || IS_LOW_SURROGATE(aText[i])) {
+            needCopy = TRUE;
+            break;
+        } else if (IS_HIGH_SURROGATE(aText[i])) {
+            if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
+                i++;
+            else {
+                needCopy = TRUE;
+                break;
+            }
+        }
+    }
+
+    if (needCopy) {
+        /* Pango doesn't correctly handle nuls.  We convert them to 0xff. */
+        /* Also "validate" UTF-16 text to make sure conversion doesn't fail. */
+
+        UChar* p = (UChar*)g_memdup(aText, aLength * sizeof(aText[0]));
+
+        /* don't need to reset i */
+        for (i = 0; i < aLength; i++) {
+            if (!p[i] || IS_LOW_SURROGATE(p[i]))
+                p[i] = 0xFFFD;
+            else if (IS_HIGH_SURROGATE(p[i])) {
+                if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
+                    i++;
+                else
+                    p[i] = 0xFFFD;
+            }
+        }
+
+        aText = p;
+    }
+
+    glong items_written;
+    text = g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(aText), aLength, NULL, &items_written, NULL);
+    length = items_written;
+
+    if (needCopy)
+        g_free((gpointer)aText);
+
+}
+
+static gchar* g_substr(const gchar* string, gint start, gint end)
+{
+    gsize len = end - start + 1;
+    gchar* output = static_cast<gchar*>(g_malloc0(len + 1));
+    return g_utf8_strncpy(output, string +start, len);
+}
+
+// This function is not completely general, is it's tied to the
+// internals of WebCore's text presentation.
+static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int from, int to)
+{
+    gchar* utf8 = 0;
+    gint newLength = 0;
+    UTF16ToUTF8(characters, length, utf8, newLength);
+    if (!utf8)
+        return NULL;
+
+    gchar *pos = g_substr(utf8, from, to);
+    g_free(utf8);
+    gint len = strlen(pos);
+    GString* ret = g_string_new_len(NULL, len);
+
+    // WebCore introduces line breaks in the text that do not reflect
+    // the layout you see on the screen, replace them with spaces
+    while (len > 0) {
+        gint index, start;
+        pango_find_paragraph_boundary(pos, len, &index, &start);
+        g_string_append_len(ret, pos, index);
+        if (index == start)
+            break;
+        g_string_append_c(ret, ' ');
+        pos += start;
+        len -= start;
+    }
+
+    return g_string_free(ret, FALSE);
+}
+
 static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
 {
     gpointer data = g_object_get_data(G_OBJECT(textObject), "webkit-accessible-pango-layout");
@@ -530,7 +622,26 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
 
     g_signal_connect(webView, "style-set", G_CALLBACK(updateLayout), textObject);
     g_signal_connect(webView, "direction-changed", G_CALLBACK(updateLayout), textObject);
-    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), webkit_accessible_text_get_text(textObject, 0, -1));
+
+    GString* str = g_string_new(NULL);
+
+    AccessibilityRenderObject* accObject = static_cast<AccessibilityRenderObject*>(coreObject);
+    if (!accObject)
+        return 0;
+    RenderText* renderText = static_cast<RenderText*>(accObject->renderer());
+    if (!renderText)
+        return 0;
+
+    // Create a string with the layout as it appears on the screen
+    InlineTextBox* box = renderText->firstTextBox();
+    while (box) {
+        gchar *text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
+        g_string_append(str, text);
+        g_string_append(str, "\n");
+        box = box->nextTextBox();
+    }
+
+    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), g_string_free(str, FALSE));
     g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-pango-layout", layout, g_object_unref);
     return layout;
 }
