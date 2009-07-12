@@ -1215,7 +1215,7 @@ MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const String& type, c
 
     // We check the "modern" type cache first, as it doesn't require QTKitServer to start.
     if (mimeModernTypesCache().contains(type) || mimeCommonTypesCache().contains(type))
-        return (codecs && !codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported);
+        return codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
 
     return MediaPlayer::IsNotSupported;
 }
