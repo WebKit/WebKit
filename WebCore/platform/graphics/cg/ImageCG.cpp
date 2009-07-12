@@ -205,7 +205,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         imageObserver()->didDraw(this);
 }
 
-void Image::drawPatternCallback(void* info, CGContextRef context)
+static void drawPatternCallback(void* info, CGContextRef context)
 {
     CGImageRef image = (CGImageRef)info;
     CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), CGImageGetHeight(image))), image);

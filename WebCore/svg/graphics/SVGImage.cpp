@@ -222,7 +222,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
 bool SVGImage::dataChanged(bool allDataReceived)
 {
     // Don't do anything if is an empty image.
-    if (!m_data->size())
+    if (!data()->size())
         return true;
 
     if (allDataReceived) {
@@ -251,7 +251,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         loader->commitProvisionalLoad(0);
         loader->setResponseMIMEType("image/svg+xml");
         loader->begin(KURL()); // create the empty document
-        loader->write(m_data->data(), m_data->size());
+        loader->write(data()->data(), data()->size());
         loader->end();
         frame->view()->setTransparent(true); // SVG Images are transparent.
     }

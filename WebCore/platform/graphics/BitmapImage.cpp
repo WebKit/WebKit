@@ -86,7 +86,7 @@ void BitmapImage::destroyDecodedData(bool destroyAll)
 
     destroyMetadataAndNotify(framesCleared);
 
-    m_source.clear(destroyAll, clearBeforeFrame, m_data.get(), m_allDataReceived);
+    m_source.clear(destroyAll, clearBeforeFrame, data(), m_allDataReceived);
     return;
 }
 
@@ -163,7 +163,7 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     
     // Feed all the data we've seen so far to the image decoder.
     m_allDataReceived = allDataReceived;
-    m_source.setData(m_data.get(), allDataReceived);
+    m_source.setData(data(), allDataReceived);
     
     // Clear the frame count.
     m_haveFrameCount = false;

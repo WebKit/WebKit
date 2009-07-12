@@ -1,3 +1,25 @@
+2009-07-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - Image cleanup
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData): Use the data() accessor
+        instead of the m_data member.
+        (WebCore::BitmapImage::dataChanged): Ditto.
+        * platform/graphics/Image.h: Re-ordered #includes and class
+        declarations. Removed the drawPatternCallback() declaration. Made member
+        variables private.
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::drawPatternCallback): Changed this from a member function to a
+        static function.
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged): Use the data() accessor
+        instead of the m_data member.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): Ditto.
+
 2009-07-12  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Darin Adler.
