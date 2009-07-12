@@ -1,5 +1,12 @@
 2009-07-12  Dan Bernstein  <mitz@apple.com>
 
+        - Windows build fix
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::dataChanged):
+
+2009-07-12  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         - Image cleanup
