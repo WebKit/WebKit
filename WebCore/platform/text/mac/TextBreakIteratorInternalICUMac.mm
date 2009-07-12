@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,41 +21,79 @@
 #include "config.h"
 #include "TextBreakIteratorInternalICU.h"
 
+#include <wtf/RetainPtr.h>
+
 namespace WebCore {
 
 static const int maxLocaleStringLength = 32;
 
-// This code was swiped from the CarbonCore UnicodeUtilities. One change from that is to use the empty
-// string instead of the "old locale model" as the ultimate fallback. This change is per the UnicodeUtilities
-// engineer.
+static inline RetainPtr<CFStringRef> textBreakLocalePreference()
+{
+    RetainPtr<CFPropertyListRef> locale(AdoptCF, CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
+        kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    if (!locale || CFGetTypeID(locale.get()) != CFStringGetTypeID())
+        return 0;
+    return static_cast<CFStringRef>(locale.get());
+}
+
+static RetainPtr<CFStringRef> topLanguagePreference()
+{
+    RetainPtr<CFPropertyListRef> languages(AdoptCF, CFPreferencesCopyValue(CFSTR("AppleLanguages"),
+        kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    if (!languages || CFGetTypeID(languages.get()) != CFArrayGetTypeID())
+        return 0;
+    CFArrayRef languagesArray = static_cast<CFArrayRef>(languages.get());
+    if (CFArrayGetCount(languagesArray) < 1)
+        return 0;
+    const void* value = CFArrayGetValueAtIndex(languagesArray, 0);
+    if (!value || CFGetTypeID(value) != CFStringGetTypeID())
+        return 0;
+    return static_cast<CFStringRef>(value);
+}
+
+static RetainPtr<CFStringRef> canonicalLanguageIdentifier(CFStringRef locale)
+{
+    if (!locale)
+        return 0;
+    RetainPtr<CFStringRef> canonicalLocale(AdoptCF,
+        CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, locale));
+    if (!canonicalLocale)
+        return locale;
+    return canonicalLocale;
+}
+
+static void getLocale(CFStringRef locale, char localeStringBuffer[maxLocaleStringLength])
+{
+    // Empty string means "root locale", and that is what we use if we can't get a preference.
+    localeStringBuffer[0] = 0;
+    if (!locale)
+        return;
+    CFStringGetCString(locale, localeStringBuffer, maxLocaleStringLength, kCFStringEncodingASCII);
+}
+
+static void getSearchLocale(char localeStringBuffer[maxLocaleStringLength])
+{
+    getLocale(canonicalLanguageIdentifier(topLanguagePreference().get()).get(), localeStringBuffer);
+}
+
+const char* currentSearchLocaleID()
+{
+    static char localeStringBuffer[maxLocaleStringLength];
+    static bool gotSearchLocale = false;
+    if (!gotSearchLocale) {
+        getSearchLocale(localeStringBuffer);
+        gotSearchLocale = true;
+    }
+    return localeStringBuffer;
+}
+
 static void getTextBreakLocale(char localeStringBuffer[maxLocaleStringLength])
 {
-    // Empty string means "root locale", which is what we use if we can't use a pref.
-
-    // We get the parts string from AppleTextBreakLocale pref.
-    // If that fails then look for the first language in the AppleLanguages pref.
-    CFStringRef prefLocaleStr = (CFStringRef)CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
-        kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-    if (!prefLocaleStr) {
-        CFArrayRef appleLangArr = (CFArrayRef)CFPreferencesCopyValue(CFSTR("AppleLanguages"),
-            kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-        if (appleLangArr)  {
-            // Take the topmost language. Retain so that we can blindly release later.                                                                                                   
-            prefLocaleStr = (CFStringRef)CFArrayGetValueAtIndex(appleLangArr, 0);
-            if (prefLocaleStr)
-                CFRetain(prefLocaleStr); 
-            CFRelease(appleLangArr);
-        }
-    }
-    if (prefLocaleStr) {
-        // Canonicalize pref string in case it is not in the canonical format.
-        CFStringRef canonLocaleCFStr = CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, prefLocaleStr);
-        if (canonLocaleCFStr) {
-            CFStringGetCString(canonLocaleCFStr, localeStringBuffer, maxLocaleStringLength, kCFStringEncodingASCII);
-            CFRelease(canonLocaleCFStr);
-        }
-        CFRelease(prefLocaleStr);
-    }
+    // If there is no text break locale, use the top language preference.
+    RetainPtr<CFStringRef> locale = textBreakLocalePreference();
+    if (!locale)
+        locale = topLanguagePreference();
+    getLocale(canonicalLanguageIdentifier(locale.get()).get(), localeStringBuffer);
 }
 
 const char* currentTextBreakLocaleID()

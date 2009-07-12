@@ -42,6 +42,7 @@
 #include "visible_units.h"
 
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
+#include "TextBreakIteratorInternalICU.h"
 #include <unicode/usearch.h>
 #endif
 
@@ -1405,13 +1406,9 @@ static UStringSearch* createSearcher()
     // Provide a non-empty pattern and non-empty text so usearch_open will not fail,
     // but it doesn't matter exactly what it is, since we don't perform any searches
     // without setting both the pattern and the text.
-
-    // Pass empty string for the locale for now to get the Unicode Collation Algorithm,
-    // rather than something locale-specific.
-
     UErrorCode status = U_ZERO_ERROR;
-    UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, "", 0, &status);
-    ASSERT(status == U_ZERO_ERROR);
+    UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, currentSearchLocaleID(), 0, &status);
+    ASSERT(status == U_ZERO_ERROR || status == U_USING_FALLBACK_WARNING);
     return searcher;
 }
 
