@@ -298,7 +298,9 @@ void Path::clear()
 
 bool Path::isEmpty() const
 {
-    return m_path->isEmpty();
+    // Don't use QPainterPath::isEmpty(), as that also returns true if there's only
+    // one initial MoveTo element in the path.
+    return m_path->elementCount() == 0;
 }
 
 String Path::debugString() const
