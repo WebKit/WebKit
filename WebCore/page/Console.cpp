@@ -128,18 +128,6 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
         case ErrorMessageLevel:
             levelString = "ERROR";
             break;
-        case ObjectMessageLevel:
-            levelString = "OBJECT";
-            break;
-        case TraceMessageLevel:
-            levelString = "TRACE";
-            break;
-        case StartGroupMessageLevel:
-            levelString = "START GROUP";
-            break;
-        case EndGroupMessageLevel:
-            levelString = "END GROUP";
-            break;
         default:
             ASSERT_NOT_REACHED();
             levelString = "UNKNOWN";
@@ -149,16 +137,16 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
     printf("%s %s:", sourceString, levelString);
 }
 
-void Console::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
     Page* page = this->page();
     if (!page)
         return;
 
     if (source == JSMessageSource || source == WMLMessageSource)
-        page->chrome()->client()->addMessageToConsole(source, level, message, lineNumber, sourceURL);
+        page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
 
-    page->inspectorController()->addMessageToConsole(source, level, message, lineNumber, sourceURL);
+    page->inspectorController()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
 
     if (!Console::shouldPrintExceptions())
         return;
@@ -169,7 +157,7 @@ void Console::addMessage(MessageSource source, MessageLevel level, const String&
     printf(" %s\n", message.utf8().data());
 }
 
-void Console::addMessage(MessageLevel level, ScriptCallStack* callStack, bool acceptNoArguments)
+void Console::addMessage(MessageType type, MessageLevel level, ScriptCallStack* callStack, bool acceptNoArguments)
 {
     Page* page = this->page();
     if (!page)
@@ -182,9 +170,9 @@ void Console::addMessage(MessageLevel level, ScriptCallStack* callStack, bool ac
 
     String message;
     if (getFirstArgumentAsString(callStack->state(), lastCaller, message))
-        page->chrome()->client()->addMessageToConsole(JSMessageSource, level, message, lastCaller.lineNumber(), lastCaller.sourceURL().prettyURL());
+        page->chrome()->client()->addMessageToConsole(JSMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL().prettyURL());
 
-    page->inspectorController()->addMessageToConsole(JSMessageSource, level, callStack);
+    page->inspectorController()->addMessageToConsole(JSMessageSource, type, level, callStack);
 
     if (!Console::shouldPrintExceptions())
         return;
@@ -208,7 +196,7 @@ void Console::debug(ScriptCallStack* callStack)
 
 void Console::error(ScriptCallStack* callStack)
 {
-    addMessage(ErrorMessageLevel, callStack);
+    addMessage(LogMessageType, ErrorMessageLevel, callStack);
 }
 
 void Console::info(ScriptCallStack* callStack)
@@ -218,12 +206,12 @@ void Console::info(ScriptCallStack* callStack)
 
 void Console::log(ScriptCallStack* callStack)
 {
-    addMessage(LogMessageLevel, callStack);
+    addMessage(LogMessageType, LogMessageLevel, callStack);
 }
 
 void Console::dir(ScriptCallStack* callStack)
 {
-    addMessage(ObjectMessageLevel, callStack);
+    addMessage(ObjectMessageType, LogMessageLevel, callStack);
 }
 
 void Console::dirxml(ScriptCallStack* callStack)
@@ -234,7 +222,7 @@ void Console::dirxml(ScriptCallStack* callStack)
 
 void Console::trace(ScriptCallStack* callStack)
 {
-    addMessage(TraceMessageLevel, callStack, true);
+    addMessage(TraceMessageType, LogMessageLevel, callStack, true);
 
     if (!shouldPrintExceptions())
         return;
@@ -252,7 +240,7 @@ void Console::assertCondition(bool condition, ScriptCallStack* callStack)
         return;
 
     // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19135> It would be nice to prefix assertion failures with a message like "Assertion failed: ".
-    addMessage(ErrorMessageLevel, callStack, true);
+    addMessage(LogMessageType, ErrorMessageLevel, callStack, true);
 }
 
 void Console::count(ScriptCallStack* callStack)
@@ -350,7 +338,7 @@ void Console::timeEnd(const String& title, ScriptCallStack* callStack)
     String message = title + String::format(": %.0fms", elapsed);
 
     const ScriptCallFrame& lastCaller = callStack->at(0);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, lastCaller.lineNumber(), lastCaller.sourceURL().string());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.lineNumber(), lastCaller.sourceURL().string());
 }
 
 void Console::group(ScriptCallStack* callStack)
@@ -373,7 +361,7 @@ void Console::groupEnd()
 
 void Console::warn(ScriptCallStack* callStack)
 {
-    addMessage(WarningMessageLevel, callStack);
+    addMessage(LogMessageType, WarningMessageLevel, callStack);
 }
 
 static bool printExceptions = false;

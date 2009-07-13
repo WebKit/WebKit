@@ -99,7 +99,7 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
     if (settings->privateBrowsingEnabled())
         return;
 
-    impl()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
+    impl()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String()); // FIXME: provide a real line number and source URL.
 }
 
 ExecState* JSDOMWindowBase::globalExec()

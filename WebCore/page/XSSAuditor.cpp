@@ -73,7 +73,7 @@ bool XSSAuditor::canEvaluate(const String& sourceCode) const
 
     if (findInRequest(sourceCode, false, true, false)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
     }
     return true;
@@ -86,7 +86,7 @@ bool XSSAuditor::canEvaluateJavaScriptURL(const String& code) const
 
     if (findInRequest(code, false, false, true, true)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
     }
     return true;
@@ -99,7 +99,7 @@ bool XSSAuditor::canCreateInlineEventListener(const String&, const String& code)
 
     if (findInRequest(code)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
     }
     return true;
@@ -112,7 +112,7 @@ bool XSSAuditor::canLoadExternalScriptFromSrc(const String& url) const
 
     if (findInRequest(url)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
     }
     return true;
@@ -125,7 +125,7 @@ bool XSSAuditor::canLoadObject(const String& url) const
 
     if (findInRequest(url, false, false)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request"));
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
     }
     return true;
@@ -139,7 +139,7 @@ bool XSSAuditor::canSetBaseElementURL(const String& url) const
     KURL baseElementURL(m_frame->document()->url(), url);
     if (m_frame->document()->url().host() != baseElementURL.host() && findInRequest(url)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request"));
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, consoleMessage, 1, String());
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
     }
     return true;

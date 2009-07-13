@@ -395,20 +395,20 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
     m_showAfterVisible = CurrentPanel;
 }
 
-void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, ScriptCallStack* callStack)
+void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, ScriptCallStack* callStack)
 {
     if (!enabled())
         return;
 
-    addConsoleMessage(callStack->state(), new ConsoleMessage(source, level, callStack, m_groupLevel, level == TraceMessageLevel));
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, type, level, callStack, m_groupLevel, type == TraceMessageType));
 }
 
-void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
 {
     if (!enabled())
         return;
 
-    addConsoleMessage(0, new ConsoleMessage(source, level, message, lineNumber, sourceID, m_groupLevel));
+    addConsoleMessage(0, new ConsoleMessage(source, type, level, message, lineNumber, sourceID, m_groupLevel));
 }
 
 void InspectorController::addConsoleMessage(ScriptState* scriptState, ConsoleMessage* consoleMessage)
@@ -440,7 +440,7 @@ void InspectorController::startGroup(MessageSource source, ScriptCallStack* call
 {
     ++m_groupLevel;
 
-    addConsoleMessage(callStack->state(), new ConsoleMessage(source, StartGroupMessageLevel, callStack, m_groupLevel));
+    addConsoleMessage(callStack->state(), new ConsoleMessage(source, StartGroupMessageType, LogMessageLevel, callStack, m_groupLevel));
 }
 
 void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL)
@@ -450,7 +450,7 @@ void InspectorController::endGroup(MessageSource source, unsigned lineNumber, co
 
     --m_groupLevel;
 
-    addConsoleMessage(0, new ConsoleMessage(source, EndGroupMessageLevel, String(), lineNumber, sourceURL, m_groupLevel));
+    addConsoleMessage(0, new ConsoleMessage(source, EndGroupMessageType, LogMessageLevel, String(), lineNumber, sourceURL, m_groupLevel));
 }
 
 void InspectorController::attachWindow()
@@ -1100,7 +1100,7 @@ void InspectorController::addProfileFinishedMessageToConsole(PassRefPtr<Profile>
     message += "/";
     message += UString::from(profile->uid());
     message += "\" finished.";
-    addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceURL);
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
 void InspectorController::addStartProfilingMessageToConsole(const UString& title, unsigned lineNumber, const UString& sourceURL)
@@ -1108,7 +1108,7 @@ void InspectorController::addStartProfilingMessageToConsole(const UString& title
     UString message = "Profile \"webkit-profile://";
     message += encodeWithURLEscapeSequences(title);
     message += "/0\" started.";
-    addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceURL);
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
 void InspectorController::addScriptProfile(Profile* profile)
@@ -1508,7 +1508,7 @@ void InspectorController::count(const String& title, unsigned lineNumber, const 
     m_counts.add(identifier, count);
 
     String message = String::format("%s: %d", title.utf8().data(), count);
-    addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceID);
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceID);
 }
 
 void InspectorController::startTiming(const String& title)

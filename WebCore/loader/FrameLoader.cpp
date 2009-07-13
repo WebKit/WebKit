@@ -2389,7 +2389,7 @@ void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
     if (!frame)
         return;
 
-    frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "Not allowed to load local resource: " + url, 0, String());
+    frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Not allowed to load local resource: " + url, 0, String());
 }
 
 bool FrameLoader::shouldHideReferrer(const KURL& url, const String& referrer)
@@ -2606,7 +2606,7 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
             targetDocument->url().string().utf8().data(), activeDocument->url().string().utf8().data());
 
         // FIXME: should we print to the console of the activeFrame as well?
-        targetFrame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, 1, String());
+        targetFrame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());
     }
     
     return false;

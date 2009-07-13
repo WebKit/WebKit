@@ -483,7 +483,7 @@ body.console-visible #console {
     background-image: none;
 }
 
-.console-message::before, .console-user-command::before, #console-prompt::before, .console-group-title-level::before {
+.console-message::before, .console-user-command::before, #console-prompt::before, .console-group-title::before {
     position: absolute;
     display: block;
     content: "";
@@ -529,18 +529,18 @@ body.console-visible #console {
     margin-left: 16px;
 }
 
-.console-group-title-level {
+.console-group-title {
     font-weight: bold;
 }
 
-.console-group-title-level::before {
+.console-group-title::before {
     background-image: url(Images/disclosureTriangleSmallDown.png);
     top: 0.6em;
     width: 11px;
     height: 12px;
 }
 
-.console-group.collapsed .console-group-title-level::before {
+.console-group.collapsed .console-group-title::before {
     background-image: url(Images/disclosureTriangleSmallRight.png);
 }
 

@@ -64,7 +64,7 @@ namespace WebCore {
         SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
         virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
-        virtual void addMessage(MessageDestination, MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL) = 0;
+        virtual void addMessage(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL) = 0;
         virtual void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString) = 0;
         virtual void scriptImported(unsigned long, const String&) = 0;
         

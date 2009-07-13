@@ -198,7 +198,7 @@ WebInspector.Console.prototype = {
 
         this.messages.push(msg);
 
-        if (msg.level === WebInspector.ConsoleMessage.MessageLevel.EndGroup) {
+        if (msg.type === WebInspector.ConsoleMessage.MessageType.EndGroup) {
             if (this.groupLevel < 1)
                 return;
 
@@ -206,7 +206,7 @@ WebInspector.Console.prototype = {
 
             this.currentGroup = this.currentGroup.parentGroup;
         } else {
-            if (msg.level === WebInspector.ConsoleMessage.MessageLevel.StartGroup) {
+            if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup) {
                 this.groupLevel++;
 
                 var group = new WebInspector.ConsoleGroup(this.currentGroup, this.groupLevel);
@@ -576,23 +576,24 @@ WebInspector.Console.prototype = {
 
 WebInspector.Console.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel, repeatCount)
+WebInspector.ConsoleMessage = function(source, type, level, line, url, groupLevel, repeatCount)
 {
     this.source = source;
+    this.type = type;
     this.level = level;
     this.line = line;
     this.url = url;
     this.groupLevel = groupLevel;
     this.repeatCount = repeatCount;
-    if (arguments.length > 6)
-        this.setMessageBody(Array.prototype.slice.call(arguments, 6));
+    if (arguments.length > 7)
+        this.setMessageBody(Array.prototype.slice.call(arguments, 7));
 }
 
 WebInspector.ConsoleMessage.prototype = {
     setMessageBody: function(args)
     {
-        switch (this.level) {
-            case WebInspector.ConsoleMessage.MessageLevel.Trace:
+        switch (this.type) {
+            case WebInspector.ConsoleMessage.MessageType.Trace:
                 var span = document.createElement("span");
                 span.addStyleClass("console-formatted-trace");
                 var stack = Array.prototype.slice.call(args);
@@ -602,7 +603,7 @@ WebInspector.ConsoleMessage.prototype = {
                 span.appendChild(document.createTextNode(funcNames.join("\n")));
                 this.formattedMessage = span;
                 break;
-            case WebInspector.ConsoleMessage.MessageLevel.Object:
+            case WebInspector.ConsoleMessage.MessageType.Object:
                 this.formattedMessage = this._format(["%O", args[0]]);
                 break;
             default:
@@ -720,8 +721,10 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageLevel.Error:
                 element.addStyleClass("console-error-level");
                 break;
-            case WebInspector.ConsoleMessage.MessageLevel.StartGroup:
-                element.addStyleClass("console-group-title-level");
+        }
+        
+        if (this.type === WebInspector.ConsoleMessage.MessageType.StartGroup) {
+            element.addStyleClass("console-group-title");
         }
 
         if (this.elementsTreeOutline) {
@@ -788,6 +791,25 @@ WebInspector.ConsoleMessage.prototype = {
                 break;
         }
 
+        var typeString;
+        switch (this.type) {
+            case WebInspector.ConsoleMessage.MessageType.Log:
+                typeString = "Log";
+                break;
+            case WebInspector.ConsoleMessage.MessageType.Object:
+                typeString = "Object";
+                break;
+            case WebInspector.ConsoleMessage.MessageType.Trace:
+                typeString = "Trace";
+                break;
+            case WebInspector.ConsoleMessage.MessageType.StartGroup:
+                typeString = "Start Group";
+                break;
+            case WebInspector.ConsoleMessage.MessageType.EndGroup:
+                typeString = "End Group";
+                break;
+        }
+        
         var levelString;
         switch (this.level) {
             case WebInspector.ConsoleMessage.MessageLevel.Tip:
@@ -802,21 +824,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageLevel.Error:
                 levelString = "Error";
                 break;
-            case WebInspector.ConsoleMessage.MessageLevel.Object:
-                levelString = "Object";
-                break;
-            case WebInspector.ConsoleMessage.MessageLevel.Trace:
-                levelString = "Trace";
-                break;
-            case WebInspector.ConsoleMessage.MessageLevel.StartGroup:
-                levelString = "Start Group";
-                break;
-            case WebInspector.ConsoleMessage.MessageLevel.EndGroup:
-                levelString = "End Group";
-                break;
         }
 
-        return sourceString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
+        return sourceString + " " + typeString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
     },
 
     isEqual: function(msg, disreguardGroup)
@@ -825,6 +835,7 @@ WebInspector.ConsoleMessage.prototype = {
             return false;
 
         var ret = (this.source == msg.source)
+            && (this.type == msg.type)
             && (this.level == msg.level)
             && (this.line == msg.line)
             && (this.url == msg.url)
@@ -844,15 +855,19 @@ WebInspector.ConsoleMessage.MessageSource = {
     Other: 5
 }
 
+WebInspector.ConsoleMessage.MessageType = {
+    Log: 0,
+    Object: 1,
+    Trace: 2,
+    StartGroup: 3,
+    EndGroup: 4
+}
+
 WebInspector.ConsoleMessage.MessageLevel = {
     Tip: 0,
     Log: 1,
     Warning: 2,
-    Error: 3,
-    Object: 4,
-    Trace: 5,
-    StartGroup: 6,
-    EndGroup: 7
+    Error: 3
 }
 
 WebInspector.ConsoleCommand = function(command)
@@ -883,7 +898,7 @@ WebInspector.ConsoleCommandResult = function(result, exception, originatingComma
     var line = (exception ? result.line : -1);
     var url = (exception ? result.sourceURL : null);
 
-    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, level, line, url, null, 1, message);
+    WebInspector.ConsoleMessage.call(this, WebInspector.ConsoleMessage.MessageSource.JS, WebInspector.ConsoleMessage.MessageType.Log, level, line, url, null, 1, message);
 
     this.originatingCommand = originatingCommand;
 }
@@ -920,7 +935,7 @@ WebInspector.ConsoleGroup.prototype = {
     {
         var element = msg.toMessageElement();
         
-        if (msg.level === WebInspector.ConsoleMessage.MessageLevel.StartGroup) {
+        if (msg.type === WebInspector.ConsoleMessage.MessageType.StartGroup) {
             this.messagesElement.parentNode.insertBefore(element, this.messagesElement);
             element.addEventListener("click", this._titleClicked.bind(this), true);
         } else
@@ -932,7 +947,7 @@ WebInspector.ConsoleGroup.prototype = {
 
     _titleClicked: function(event)
     {
-        var groupTitleElement = event.target.enclosingNodeOrSelfWithClass("console-group-title-level");
+        var groupTitleElement = event.target.enclosingNodeOrSelfWithClass("console-group-title");
         if (groupTitleElement) {
             var groupElement = groupTitleElement.enclosingNodeOrSelfWithClass("console-group");
             if (groupElement)

@@ -1,3 +1,100 @@
+2009-07-12  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Refactor ConsoleMessage to add MessageType attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=20625
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::printErrorMessage):
+        * dom/Document.cpp:
+        (WebCore::Document::reportException):
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::reportErrorToConsole):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::addToConsole):
+        (WebCore::ConsoleMessage::isEqual):
+        * inspector/ConsoleMessage.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::addMessageToConsole):
+        (WebCore::InspectorController::startGroup):
+        (WebCore::InspectorController::endGroup):
+        (WebCore::InspectorController::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorController::addStartProfilingMessageToConsole):
+        (WebCore::InspectorController::count):
+        * inspector/InspectorController.h:
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype.addMessage):
+        (WebInspector.ConsoleMessage): Added type property.
+        (WebInspector.ConsoleMessage.prototype.toMessageElement):
+        (WebInspector.ConsoleMessage.prototype.toString):
+        (WebInspector.ConsoleMessage.prototype.isEqual):
+        (WebInspector.ConsoleCommandResult):
+        (WebInspector.ConsoleGroup.prototype.addMessage):
+        (WebInspector.ConsoleGroup.prototype._titleClicked):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._addTip):
+        (WebInspector.Resource.prototype._checkWarning):
+        * inspector/front-end/inspector.css: Changed ".console-group-title-level" to ".console-group-title"
+        * inspector/front-end/inspector.js:
+        (WebInspector.addMessageToConsole):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::printAccessDeniedMessage):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::addMessageToConsole):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::reportLocalLoadFailed):
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        * page/ChromeClient.h:
+        * page/Console.cpp:
+        (WebCore::printMessageSourceAndLevelPrefix):
+        (WebCore::Console::addMessage):
+        (WebCore::Console::error):
+        (WebCore::Console::log):
+        (WebCore::Console::dir):
+        (WebCore::Console::trace):
+        (WebCore::Console::assertCondition):
+        (WebCore::Console::timeEnd):
+        (WebCore::Console::warn):
+        * page/Console.h: Added MessageType enum.
+        (WebCore::):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessageTimerFired):
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canEvaluate):
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+        (WebCore::XSSAuditor::canLoadObject):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::reportWarning):
+        (WebCore::SVGDocumentExtensions::reportError):
+        * wml/WMLErrorHandling.cpp:
+        (WebCore::reportWMLError):
+        * workers/GenericWorkerTask.h: Added GenericWorkerTask8 for the extra argument.
+        (WebCore::GenericWorkerTask8::create):
+        (WebCore::GenericWorkerTask8::GenericWorkerTask8):
+        (WebCore::GenericWorkerTask8::performTask):
+        (WebCore::createCallbackTask):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::addMessage):
+        (WebCore::WorkerContext::importScripts):
+        * workers/WorkerContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::postConsoleMessageTask):
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerObjectProxy.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::reportUnsafeUsage):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::parseErrorFunc):
+
 2009-07-12  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

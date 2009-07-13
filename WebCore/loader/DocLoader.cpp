@@ -247,7 +247,7 @@ void DocLoader::printAccessDeniedMessage(const KURL& url) const
                        m_doc->url().string().utf8().data());
 
     // FIXME: provide a real line number and source URL.
-    frame()->domWindow()->console()->addMessage(OtherMessageSource, ErrorMessageLevel, message, 1, String());
+    frame()->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());
 }
 
 void DocLoader::setAutoLoadImages(bool enable)

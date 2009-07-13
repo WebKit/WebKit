@@ -1672,7 +1672,7 @@ void HTMLParser::reportErrorToConsole(HTMLParserErrorCode errorCode, const Atomi
     message.replace("%tag1", tag1);
     message.replace("%tag2", tag2);
 
-    frame->domWindow()->console()->addMessage(HTMLMessageSource,
+    frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, 
         isWarning(errorCode) ? WarningMessageLevel : ErrorMessageLevel,
         message, lineNumber, m_document->url().string());
 }

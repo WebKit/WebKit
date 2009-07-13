@@ -146,9 +146,9 @@ void WorkerContext::reportException(const String& errorMessage, int lineNumber, 
     m_thread->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
-void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
-    m_thread->workerObjectProxy().postConsoleMessageToWorkerObject(destination, source, level, message, lineNumber, sourceURL);
+    m_thread->workerObjectProxy().postConsoleMessageToWorkerObject(destination, source, type, level, message, lineNumber, sourceURL);
 }
 
 void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const ScriptString&)
@@ -299,7 +299,7 @@ void WorkerContext::importScripts(const Vector<String>& urls, const String& call
         }
 
         scriptExecutionContext()->scriptImported(scriptLoader.identifier(), scriptLoader.script());
-        scriptExecutionContext()->addMessage(InspectorControllerDestination, JSMessageSource, LogMessageLevel, "Worker script imported: \"" + *it + "\".", callerLine, callerURL);
+        scriptExecutionContext()->addMessage(InspectorControllerDestination, JSMessageSource, LogMessageType, LogMessageLevel, "Worker script imported: \"" + *it + "\".", callerLine, callerURL);
 
         ScriptValue exception;
         m_script->evaluate(ScriptSourceCode(scriptLoader.script(), *it), &exception);

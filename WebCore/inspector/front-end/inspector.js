@@ -979,6 +979,7 @@ WebInspector.addMessageToConsole = function(payload)
 {
     var consoleMessage = new WebInspector.ConsoleMessage(
         payload.source,
+        payload.type,
         payload.level,
         payload.line,
         payload.url,

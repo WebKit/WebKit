@@ -89,13 +89,13 @@ void SVGDocumentExtensions::unpauseAnimations()
 void SVGDocumentExtensions::reportWarning(const String& message)
 {
     if (Frame* frame = m_doc->frame())
-        frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "Warning: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
+        frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Warning: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
 }
 
 void SVGDocumentExtensions::reportError(const String& message)
 {
     if (Frame* frame = m_doc->frame())
-        frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "Error: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
+        frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error: " + message, m_doc->tokenizer() ? m_doc->tokenizer()->lineNumber() : 1, String());
 }
 
 void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* obj)
