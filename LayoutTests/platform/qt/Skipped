@@ -860,9 +860,6 @@ svg/hixie/viewbox/preserveAspectRatio/002.xml
 media
 fast/forms/slider-delete-while-dragging-thumb.html
 
-# ------ storage support
-storage
-
 # ------ web archive support
 webarchive
 svg/webarchive
@@ -876,6 +873,18 @@ fast/xsl
 # Missing LayoutTestController implementations and database related delegate callback
 storage/quota-tracking.html
 storage/success-callback.html
+storage/database-lock-after-reload.html
+storage/hash-change-with-xhr.html
+storage/private-browsing-readonly.html
+storage/quota-tracking.html
+storage/success-callback.html
+storage/transaction-error-callback.html
+storage/domstorage/localstorage/iframe-events.html
+storage/domstorage/localstorage/private-browsing-affects-storage.html
+storage/domstorage/localstorage/window-open.html
+storage/domstorage/sessionstorage/iframe-events.html
+storage/domstorage/sessionstorage/private-browsing-affects-storage.html
+storage/domstorage/sessionstorage/window-open.html
 
 # most of the http tests need work
 http/tests/incremental

@@ -35,6 +35,8 @@
 #include <qdir.h>
 #include <qdebug.h>
 #include <qfont.h>
+#include <qwebsettings.h>
+#include <qdesktopservices.h>
 
 #ifdef Q_WS_X11
 #include <qx11info_x11.h>
@@ -131,6 +133,9 @@ int main(int argc, char* argv[])
         qInstallMsgHandler(messageHandler);
 
     WebCore::DumpRenderTree dumper;
+
+    QString dbDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation) + QDir::separator() + "qtwebkitdrt";
+    QWebSettings::setOfflineStoragePath(dbDir);
 
     if (args.last() == QLatin1String("-")) {
         dumper.open();
