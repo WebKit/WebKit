@@ -308,7 +308,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(FILE, File)                                                       \
     V(FILELIST, FileList)                                               \
     V(HISTORY, History)                                                 \
-    V(UNDETECTABLEHTMLCOLLECTION, UndetectableHTMLCollection)           \
+    V(HTMLALLCOLLECTION, HTMLAllCollection)                             \
     V(HTMLCOLLECTION, HTMLCollection)                                   \
     V(HTMLOPTIONSCOLLECTION, HTMLOptionsCollection)                     \
     V(IMAGEDATA, ImageData)                                             \

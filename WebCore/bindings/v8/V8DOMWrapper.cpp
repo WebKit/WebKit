@@ -229,7 +229,7 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     case V8ClassIndex::WEBKITCSSTRANSFORMVALUE:
         setCollectionIndexedGetter<WebKitCSSTransformValue, CSSValue>(descriptor, V8ClassIndex::CSSVALUE);
         break;
-    case V8ClassIndex::UNDETECTABLEHTMLCOLLECTION:
+    case V8ClassIndex::HTMLALLCOLLECTION:
         descriptor->InstanceTemplate()->MarkAsUndetectable(); // fall through
     case V8ClassIndex::HTMLCOLLECTION:
         descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLCollection));
@@ -684,7 +684,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
 {
     // Make a special case for document.all
     if (descriptorType == V8ClassIndex::HTMLCOLLECTION && static_cast<HTMLCollection*>(impl)->type() == DocAll)
-        descriptorType = V8ClassIndex::UNDETECTABLEHTMLCOLLECTION;
+        descriptorType = V8ClassIndex::HTMLALLCOLLECTION;
 
     if (!proxy)
         V8Proxy* proxy = V8Proxy::retrieve();

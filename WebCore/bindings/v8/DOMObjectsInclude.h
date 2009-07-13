@@ -205,7 +205,7 @@
 namespace WebCore {
 
     // A helper class for undetectable document.all
-    class UndetectableHTMLCollection : public HTMLCollection {
+    class HTMLAllCollection : public HTMLCollection {
     };
 
 } // namespace WebCore

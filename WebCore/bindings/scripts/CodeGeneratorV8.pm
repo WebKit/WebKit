@@ -234,7 +234,7 @@ sub AddClassForwardIfNeeded
 sub GetImplementationFileName
 {
     my $iface = shift;
-    return "HTMLCollection.h" if $iface eq "UndetectableHTMLCollection";
+    return "HTMLCollection.h" if $iface eq "HTMLAllCollection";
     return "Event.h" if $iface eq "DOMTimeStamp";
     return "NamedAttrMap.h" if $iface eq "NamedNodeMap";
     return "NameNodeList.h" if $iface eq "NodeList";
@@ -1560,7 +1560,7 @@ sub GenerateFunctionCallString()
 sub GetClassName
 {
     my $type = shift;
-    return "HTMLCollection" if $type eq "UndetectableHTMLCollection";
+    return "HTMLCollection" if $type eq "HTMLAllCollection";
     return $type;
 }
 
