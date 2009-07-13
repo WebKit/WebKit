@@ -5943,6 +5943,3 @@ storage/database-lock-after-reload.html
 
 # See Bug #27145 - https://bugs.webkit.org/show_bug.cgi?id=27145
 fast/loader/subframe-navigate-during-main-frame-load.html
-
-# See Bug #27171 - https://bugs.webkit.org/show_bug.cgi?id=27171
-fast/events/frame-programmatic-focus.html

@@ -560,6 +560,17 @@ static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allo
     frame->view()->adjustViewSize();
 }
 
+static void webkit_web_view_grab_focus(GtkWidget* widget)
+{
+    if (GTK_WIDGET_IS_SENSITIVE(widget)) {
+        WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+        FocusController* focusController = core(webView)->focusController();
+        core(webView)->focusController()->setFocused(true);
+    }
+
+    return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->grab_focus(widget);
+}
+
 static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus* event)
 {
     // TODO: Improve focus handling as suggested in
@@ -567,10 +578,10 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
     if (GTK_WIDGET_TOPLEVEL(toplevel) && gtk_window_has_toplevel_focus(GTK_WINDOW(toplevel))) {
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+        FocusController* focusController = core(webView)->focusController();
 
-        Frame* frame = core(webView)->mainFrame();
-        core(webView)->focusController()->setActive(frame);
-        core(webView)->focusController()->setFocused(true);
+        focusController->setActive(core(webView)->mainFrame());
+        focusController->setFocused(true);
     }
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 }
@@ -1776,6 +1787,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     widgetClass->scroll_event = webkit_web_view_scroll_event;
     widgetClass->size_allocate = webkit_web_view_size_allocate;
     widgetClass->popup_menu = webkit_web_view_popup_menu_handler;
+    widgetClass->grab_focus = webkit_web_view_grab_focus;
     widgetClass->focus_in_event = webkit_web_view_focus_in_event;
     widgetClass->focus_out_event = webkit_web_view_focus_out_event;
     widgetClass->get_accessible = webkit_web_view_get_accessible;
