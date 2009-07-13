@@ -96,7 +96,7 @@ String pathGetFileName(const String& path)
 
 String directoryName(const String& path)
 {
-    return String(QFileInfo(path).baseName());
+    return String(QFileInfo(path).absolutePath());
 }
 
 Vector<String> listDirectory(const String& path, const String& filter)
