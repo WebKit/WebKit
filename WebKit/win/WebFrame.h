@@ -35,6 +35,7 @@
 
 #pragma warning(push, 0)
 #include <WebCore/FrameWin.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/ResourceHandleClient.h>
@@ -49,6 +50,7 @@ namespace WebCore {
     class DocumentLoader;
     class Element;
     class Frame;
+    class GraphicsContext;
     class HTMLFrameOwnerElement;
     class IntRect;
     class Page;
@@ -58,6 +60,12 @@ namespace WebCore {
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
+
+#if PLATFORM(CG)
+typedef struct CGContext PlatformGraphicsContext;
+#elif PLATFORM(CAIRO)
+typedef struct _cairo PlatformGraphicsContext;
+#endif
 
 class WebFrame;
 class WebFramePolicyListener;
@@ -334,6 +342,9 @@ protected:
     void setPrinting(bool printing, float minPageWidth, float maxPageWidth, bool adjustViewSize);
     void headerAndFooterHeights(float*, float*);
     WebCore::IntRect printerMarginRect(HDC);
+    void spoolPage (PlatformGraphicsContext* pctx, WebCore::GraphicsContext* spoolCtx, HDC printDC, IWebUIDelegate*, float headerHeight, float footerHeight, UINT page, UINT pageCount);
+    void drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate*, const WebCore::IntRect& pageRect, float headerHeight);
+    void drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate*, const WebCore::IntRect& pageRect, UINT page, UINT pageCount, float headerHeight, float footerHeight);
 
 protected:
     ULONG               m_refCount;

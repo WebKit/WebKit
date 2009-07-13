@@ -2,6 +2,22 @@
 
         Reviewed by Adam Roben.
 
+        Refactor WebFrame::spoolPages for easier sharing with Windows Cairo.
+        https://bugs.webkit.org/show_bug.cgi?id=27240.
+
+        * WebFrame.cpp:
+        (WebFrame::printHeader): New shared method to print the header.
+        (WebFrame::printFooter): New shared method to print the footer.
+        (WebFrame::spoolPage): New conditionally-compiled method to print
+         a page.
+        (WebFrame::spoolPages): Revised to call the platform-specific spoolPage
+         for each page.
+        * WebFrame.h: Add new method prototypes.
+
+2009-07-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
         Add new configuration flag for redistributable Windows build.
         https://bugs.webkit.org/show_bug.cgi=27087
 

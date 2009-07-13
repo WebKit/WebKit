@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,13 +98,19 @@
 #include <wtf/MathExtras.h>
 #pragma warning(pop)
 
+#if PLATFORM(CG)
 #include <CoreGraphics/CoreGraphics.h>
+#elif PLATFORM(CAIRO)
+#include <cairo-win32.h>
+#endif
 
+#if PLATFORM(CG)
 // CG SPI used for printing
 extern "C" {
     CGAffineTransform CGContextGetBaseCTM(CGContextRef c); 
     void CGContextSetBaseCTM(CGContextRef c, CGAffineTransform m); 
 }
+#endif
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -1850,6 +1856,98 @@ HRESULT STDMETHODCALLTYPE WebFrame::getPrintedPageCount(
     return S_OK;
 }
 
+void WebFrame::drawHeader(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, const IntRect& pageRect, float headerHeight)
+{
+    int x = pageRect.x();
+    int y = 0;
+    RECT headerRect = {x, y, x+pageRect.width(), y+static_cast<int>(headerHeight)};
+    ui->drawHeaderInRect(d->webView, &headerRect, static_cast<OLE_HANDLE>(reinterpret_cast<LONG64>(pctx)));
+}
+
+void WebFrame::drawFooter(PlatformGraphicsContext* pctx, IWebUIDelegate* ui, const IntRect& pageRect, UINT page, UINT pageCount, float headerHeight, float footerHeight)
+{
+    int x = pageRect.x();
+    int y = max((int)headerHeight+pageRect.height(), m_pageHeight-static_cast<int>(footerHeight));
+    RECT footerRect = {x, y, x+pageRect.width(), y+static_cast<int>(footerHeight)};
+    ui->drawFooterInRect(d->webView, &footerRect, static_cast<OLE_HANDLE>(reinterpret_cast<LONG64>(pctx)), page+1, pageCount);
+}
+
+#if PLATFORM(CG)
+void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCtx, HDC printDC, IWebUIDelegate* ui, float headerHeight, float footerHeight, UINT page, UINT pageCount)
+{
+    Frame* coreFrame = core(this);
+
+    IntRect pageRect = m_pageRects[page];
+
+    CGContextSaveGState(pctx);
+
+    IntRect printRect = printerRect(printDC);
+    CGRect mediaBox = CGRectMake(CGFloat(0),
+                                 CGFloat(0),
+                                 CGFloat(printRect.width()),
+                                 CGFloat(printRect.height()));
+
+    CGContextBeginPage(pctx, &mediaBox);
+
+    // FIXME: Could some of this coordinate space manipulation be shared with Cairo?
+    CGFloat scale = static_cast<float>(mediaBox.size.width)/static_cast<float>(pageRect.width());
+    CGAffineTransform ctm = CGContextGetBaseCTM(pctx);
+    ctm = CGAffineTransformScale(ctm, -scale, -scale);
+    ctm = CGAffineTransformTranslate(ctm, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()+headerHeight)); // reserves space for header
+    CGContextScaleCTM(pctx, scale, scale);
+    CGContextTranslateCTM(pctx, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()+headerHeight));   // reserves space for header
+    CGContextSetBaseCTM(pctx, ctm);
+
+    coreFrame->view()->paintContents(spoolCtx, pageRect);
+
+    CGContextTranslateCTM(pctx, CGFloat(pageRect.x()), CGFloat(pageRect.y())-headerHeight);
+
+    if (headerHeight)
+        drawHeader(pctx, ui, pageRect, headerHeight);
+
+    if (footerHeight)
+        drawFooter(pctx, ui, pageRect, page, pageCount, headerHeight, footerHeight);
+
+    CGContextEndPage(pctx);
+    CGContextRestoreGState(pctx);
+}
+#elif PLATFORM(CAIRO)
+void WebFrame::spoolPage(PlatformGraphicsContext* pctx, GraphicsContext* spoolCtx, HDC printDC, IWebUIDelegate* ui, float headerHeight, float footerHeight, UINT page, UINT pageCount)
+{
+    Frame* coreFrame = core(this);
+
+    IntRect pageRect = m_pageRects[page];
+
+    cairo_save(pctx);
+
+    IntRect printRect = printerRect(printDC);
+    IntRect mediaBox(0, 0, printRect.width(), printRect.height());
+
+    ::StartPage(printDC);
+
+    // FIXME: Could some of this coordinate space manipulation be shared with CG?
+    float scale = static_cast<float>(mediaBox.size().width())/static_cast<float>(pageRect.width());
+    cairo_scale(pctx, -scale, -scale);
+    cairo_translate(pctx, -pageRect.x(), -pageRect.y()+headerHeight);
+    cairo_scale(pctx, scale, scale);
+    cairo_translate(pctx, -pageRect.x(), -pageRect.y()+headerHeight);   // reserves space for header
+
+    coreFrame->view()->paintContents(spoolCtx, pageRect);
+
+    cairo_translate(pctx, pageRect.x(), pageRect.y()-headerHeight);
+
+    if (headerHeight)
+        drawHeader(pctx, ui, pageRect, headerHeight);
+    
+    if (footerHeight)
+        drawFooter(pctx, ui, pageRect, page, pageCount, headerHeight, footerHeight);
+
+    cairo_show_page(pctx);
+    ::EndPage(printDC);
+    cairo_restore(pctx);
+}
+#endif
+
 HRESULT STDMETHODCALLTYPE WebFrame::spoolPages( 
     /* [in] */ HDC printDC,
     /* [in] */ UINT startPage,
@@ -1893,47 +1991,8 @@ HRESULT STDMETHODCALLTYPE WebFrame::spoolPages(
     GraphicsContext spoolCtx(pctx);
     spoolCtx.setShouldIncludeChildWindows(true);
 
-    for (UINT ii = startPage; ii < endPage; ii++) {
-        IntRect pageRect = m_pageRects[ii];
-
-        CGContextSaveGState(pctx);
-
-        IntRect printRect = printerRect(printDC);
-        CGRect mediaBox = CGRectMake(CGFloat(0),
-                                     CGFloat(0),
-                                     CGFloat(printRect.width()),
-                                     CGFloat(printRect.height()));
-
-        CGContextBeginPage(pctx, &mediaBox);
-
-        CGFloat scale = (float)mediaBox.size.width/ (float)pageRect.width();
-        CGAffineTransform ctm = CGContextGetBaseCTM(pctx);
-        ctm = CGAffineTransformScale(ctm, -scale, -scale);
-        ctm = CGAffineTransformTranslate(ctm, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()+headerHeight)); // reserves space for header
-        CGContextScaleCTM(pctx, scale, scale);
-        CGContextTranslateCTM(pctx, CGFloat(-pageRect.x()), CGFloat(-pageRect.y()+headerHeight));   // reserves space for header
-        CGContextSetBaseCTM(pctx, ctm);
-
-        coreFrame->view()->paintContents(&spoolCtx, pageRect);
-
-        CGContextTranslateCTM(pctx, CGFloat(pageRect.x()), CGFloat(pageRect.y())-headerHeight);
-
-        int x = pageRect.x();
-        int y = 0;
-        if (headerHeight) {
-            RECT headerRect = {x, y, x+pageRect.width(), y+(int)headerHeight};
-            ui->drawHeaderInRect(d->webView, &headerRect, (OLE_HANDLE)(LONG64)pctx);
-        }
-
-        if (footerHeight) {
-            y = max((int)headerHeight+pageRect.height(), m_pageHeight-(int)footerHeight);
-            RECT footerRect = {x, y, x+pageRect.width(), y+(int)footerHeight};
-            ui->drawFooterInRect(d->webView, &footerRect, (OLE_HANDLE)(LONG64)pctx, ii+1, pageCount);
-        }
-
-        CGContextEndPage(pctx);
-        CGContextRestoreGState(pctx);
-    }
+    for (UINT ii = startPage; ii < endPage; ii++)
+        spoolPage(pctx, &spoolCtx, printDC, ui.get(), headerHeight, footerHeight, ii, pageCount);
  
     return S_OK;
 }
@@ -2120,4 +2179,3 @@ void WebFrame::updateBackground()
 
     coreFrame->view()->updateBackgroundRecursively(backgroundColor, webView()->transparent());
 }
-
