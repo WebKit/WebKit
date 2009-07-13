@@ -2862,8 +2862,6 @@
             'rendering/TextControlInnerElements.h',
             'rendering/TransformState.cpp',
             'rendering/TransformState.h',
-            'rendering/bidi.cpp',
-            'rendering/bidi.h',
             'rendering/break_lines.cpp',
             'rendering/break_lines.h',
             'storage/ChangeVersionWrapper.cpp',
