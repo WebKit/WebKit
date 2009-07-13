@@ -1,3 +1,23 @@
+2009-07-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Tweak mouseout-dead-subframe.html to be more robust.
+
+        The test calls notifyDone() and then dumpAsText(). The latter call has no effect
+        as notifyDone() performs the dump, but it passes in the mac DRT because the mime-type
+        of the .html file is detected as text/plain and therefore the text is dumped instead
+        of the render tree.
+
+        Changed the testcase to call dumpAsText() first and then notifyDone(), to make it
+        pass without relying on the mime type detection.
+
+        That also makes the test pass in the Qt DRT.
+
+        * fast/events/mouseout-dead-subframe.html: Swapped notifyDone() and dumpAsText() calls to
+        call the former before the latter.
+        * platform/qt/Skipped: Removed skipped test.
+
 2009-07-13  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.

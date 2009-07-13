@@ -5133,7 +5133,6 @@ fast/encoding/hebrew/8859-8-i.html
 fast/encoding/hebrew/logical.html
 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html
 fast/events/crash-on-mutate-during-drop.html
-fast/events/mouseout-dead-subframe.html
 fast/events/mouseup-from-button2.html
 fast/events/mouseup-outside-button.html
 fast/events/onunload-clears-onbeforeunload.html
