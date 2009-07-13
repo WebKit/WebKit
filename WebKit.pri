@@ -21,7 +21,11 @@ building-libs {
             LIBS += -framework QtWebKit
             QMAKE_FRAMEWORKPATH = $$OUTPUT_DIR/lib $$QMAKE_FRAMEWORKPATH
         } else {
-            LIBS += -lQtWebKit
+            win32-*|wince* {
+                LIBS += -lQtWebKit$${QT_MAJOR_VERSION}
+            } else {
+                LIBS += -lQtWebKit
+            }
         }
     }
     DEPENDPATH += $$PWD/WebKit/qt/Api
