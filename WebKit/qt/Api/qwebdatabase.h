@@ -46,6 +46,7 @@ public:
     QWebSecurityOrigin origin() const;
 
     static void removeDatabase(const QWebDatabase &db);
+    static void removeAllDatabases();
 
 private:
     QWebDatabase(QWebDatabasePrivate* priv);

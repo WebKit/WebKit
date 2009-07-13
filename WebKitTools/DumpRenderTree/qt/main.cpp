@@ -36,6 +36,7 @@
 #include <qdebug.h>
 #include <qfont.h>
 #include <qwebsettings.h>
+#include <qwebdatabase.h>
 #include <qdesktopservices.h>
 
 #ifdef Q_WS_X11
@@ -136,6 +137,7 @@ int main(int argc, char* argv[])
 
     QString dbDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation) + QDir::separator() + "qtwebkitdrt";
     QWebSettings::setOfflineStoragePath(dbDir);
+    QWebDatabase::removeAllDatabases();
 
     if (args.last() == QLatin1String("-")) {
         dumper.open();

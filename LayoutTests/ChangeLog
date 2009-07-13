@@ -2,6 +2,15 @@
 
         Reviewed by Ariya Hidayat.
 
+        Enable a bunch of more storage layout tests for the Qt DRT, now that
+        they pass.
+
+        * platform/qt/Skipped:
+
+2009-07-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
         Enable some storage layout tests in the Qt DRT, as the pass now.
 
         * platform/qt/Skipped:

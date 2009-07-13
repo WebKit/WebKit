@@ -2,6 +2,27 @@
 
         Reviewed by Ariya Hidayat.
 
+        Added support for database callbacks, storage quota setting,
+        and clearing of all databases.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::dumpDatabaseQuota):
+        * DumpRenderTree/qt/DumpRenderTree.h:
+        * DumpRenderTree/qt/jsobjects.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::setDatabaseQuota):
+        (LayoutTestController::clearAllDatabases):
+        * DumpRenderTree/qt/jsobjects.h:
+        (LayoutTestController::shouldDumpDatabaseCallbacks):
+        (LayoutTestController::dumpDatabaseCallbacks):
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
+2009-07-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
         Setup the path in the Qt DRT for HTML 5 Databases, to enable some of
         the storage layout tests.
 

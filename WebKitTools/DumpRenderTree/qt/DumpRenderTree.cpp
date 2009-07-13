@@ -47,6 +47,7 @@
 #include <qwebframe.h>
 #include <qwebview.h>
 #include <qwebsettings.h>
+#include <qwebsecurityorigin.h>
 
 #ifdef Q_WS_X11
 #include <fontconfig/fontconfig.h>
@@ -154,6 +155,8 @@ DumpRenderTree::DumpRenderTree()
     m_page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
     connect(m_page->mainFrame(), SIGNAL(titleChanged(const QString&)),
             SLOT(titleChanged(const QString&)));
+    connect(m_page, SIGNAL(databaseQuotaExceeded(QWebFrame*,QString)),
+            this, SLOT(dumpDatabaseQuota(QWebFrame*,QString)));
 
     m_eventSender = new EventSender(m_page);
     m_textInputController = new TextInputController(m_page);
@@ -348,6 +351,19 @@ void DumpRenderTree::connectFrame(QWebFrame *frame)
     connect(frame, SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(initJSObjects()));
     connect(frame, SIGNAL(provisionalLoad()),
             layoutTestController(), SLOT(provisionalLoad()));
+}
+
+void DumpRenderTree::dumpDatabaseQuota(QWebFrame* frame, const QString& dbName)
+{
+    if (!m_controller->shouldDumpDatabaseCallbacks())
+        return;
+    QWebSecurityOrigin origin = frame->securityOrigin();
+    printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n",
+           origin.scheme().toUtf8().data(),
+           origin.host().toUtf8().data(),
+           origin.port(),
+           dbName.toUtf8().data());
+    origin.setDatabaseQuota(5 * 1024 * 1024);
 }
 
 QWebPage *DumpRenderTree::createWindow()

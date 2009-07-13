@@ -30,6 +30,8 @@
 #include <qwebpage.h>
 #include <qwebhistory.h>
 #include <qwebframe.h>
+#include <qwebsecurityorigin.h>
+#include <qwebdatabase.h>
 #include <qevent.h>
 #include <qapplication.h>
 #include <qevent.h>
@@ -118,6 +120,7 @@ void LayoutTestController::reset()
     m_canOpenWindows = false;
     m_waitForDone = false;
     m_dumpTitleChanges = false;
+    m_dumpDatabaseCallbacks = false;
     m_timeoutTimer.stop();
     m_topLoadingFrame = 0;
     qt_dump_editing_callbacks(false);
@@ -298,6 +301,18 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
 void LayoutTestController::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495
+}
+
+void LayoutTestController::setDatabaseQuota(int size)
+{
+    if (!m_topLoadingFrame)
+        return;
+    m_topLoadingFrame->securityOrigin().setDatabaseQuota(size);
+}
+
+void LayoutTestController::clearAllDatabases()
+{
+    QWebDatabase::removeAllDatabases();
 }
 
 EventSender::EventSender(QWebPage *parent)

@@ -160,6 +160,20 @@ void QWebDatabase::removeDatabase(const QWebDatabase &db)
 }
 
 /*!
+  \since 4.6
+
+  Deletes all web databases in the configured offline storage path.
+
+  \sa QWebSettings::setOfflineStoragePath()
+*/
+void QWebDatabase::removeAllDatabases()
+{
+#if ENABLE(DATABASE)
+    DatabaseTracker::tracker().deleteAllDatabases();
+#endif
+}
+
+/*!
     Destroys the web database object. The data within this database is \b not destroyed.
 */
 QWebDatabase::~QWebDatabase()
