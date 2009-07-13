@@ -2,6 +2,34 @@
 
         Reviewed by Ariya Hidayat.
 
+        Added loadStarted() and loadFinished() signals to QWebFrame,
+        to allow load tracking of individual frames, as opposed to
+        QWebPage's loadStarted/loadFinished signals that are emitted
+        whenever _any_ child frame loads/finishes.
+
+        * Api/qwebframe.cpp: Document new signals.
+        * Api/qwebframe.h: Add new signals.
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame): Connect new signals.
+
+2009-07-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Add hooks for the GCController JavaScript interface needed by the
+        Qt DRT.
+
+        Fixed sort order of includes in qwebframe.cpp.
+
+        * Api/qwebframe.cpp:
+        (qt_drt_javaScriptObjectsCount):
+        (qt_drt_garbageCollector_collect):
+        (qt_drt_garbageCollector_collectOnAlternateThread):
+
+2009-07-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
         Add hooks for the GCController JavaScript interface needed by the
         Qt DRT.
 

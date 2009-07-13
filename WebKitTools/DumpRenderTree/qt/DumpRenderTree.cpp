@@ -148,7 +148,7 @@ DumpRenderTree::DumpRenderTree()
     connect(m_page, SIGNAL(frameCreated(QWebFrame *)), this, SLOT(connectFrame(QWebFrame *)));
     connectFrame(m_page->mainFrame());
 
-    connect(m_page, SIGNAL(loadFinished(bool)), m_controller, SLOT(maybeDump(bool)));
+    connect(m_page->mainFrame(), SIGNAL(loadFinished(bool)), m_controller, SLOT(maybeDump(bool)));
 
     m_page->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
     m_page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);

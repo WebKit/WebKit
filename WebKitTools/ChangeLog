@@ -2,6 +2,34 @@
 
         Reviewed by Ariya Hidayat.
 
+        Make the test output more robust by dumping only when the main
+        frame finishes loading, instead of when _any_ frame finishes.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree): Connect to the
+        main frame's loadFinished() signal instead of the page's one.
+
+2009-07-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Implement the GCController DRT interface.
+
+        * DumpRenderTree/qt/DumpRenderTree.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree): Allocate the GCController.
+        (WebCore::DumpRenderTree::initJSObjects): Register the interface with the JS engine.
+        * DumpRenderTree/qt/DumpRenderTree.h: Declare m_gcController.
+        * DumpRenderTree/qt/jsobjects.cpp: Implement GCController.
+        (GCController::GCController):
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/qt/jsobjects.h: Declare GCController.
+
+2009-07-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
         Implement the GCController DRT interface in the Qt DRT.
 
         * DumpRenderTree/qt/DumpRenderTree.cpp:

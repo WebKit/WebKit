@@ -1295,6 +1295,25 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 */
 
 /*!
+    \fn void QWebFrame::loadStarted()
+    \since 4.6
+
+    This signal is emitted when a new load of this frame is started.
+
+    \sa loadFinished()
+*/
+
+/*!
+    \fn void QWebFrame::loadFinished(bool ok)
+    \since 4.6
+
+    This signal is emitted when a load of this frame is finished.
+    \a ok will indicate whether the load was successful or any error occurred.
+
+    \sa loadStarted()
+*/
+
+/*!
     \class QWebHitTestResult
     \since 4.4
     \brief The QWebHitTestResult class provides information about the web
