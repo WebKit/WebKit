@@ -872,9 +872,7 @@ fast/xsl
 # ------- storage support
 # Missing LayoutTestController implementations and database related delegate callback
 storage/domstorage/localstorage/iframe-events.html
-storage/domstorage/localstorage/window-open.html
 storage/domstorage/sessionstorage/iframe-events.html
-storage/domstorage/sessionstorage/window-open.html
 
 # most of the http tests need work
 http/tests/incremental
