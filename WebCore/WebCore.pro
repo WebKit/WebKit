@@ -2184,8 +2184,6 @@ HEADERS += $$WEBKIT_API_HEADERS
     target.path = $$[QT_INSTALL_LIBS]
     headers.files = $$WEBKIT_API_HEADERS
     headers.path = $$[QT_INSTALL_HEADERS]/QtWebKit
-    prf.files = $$PWD/../WebKit/qt/Api/qtwebkit.prf
-    prf.path = $$[QT_INSTALL_PREFIX]/mkspecs/features
 
     VERSION=$${QT_MAJOR_VERSION}.$${QT_MINOR_VERSION}.$${QT_PATCH_VERSION}
 
@@ -2198,7 +2196,7 @@ HEADERS += $$WEBKIT_API_HEADERS
     }
 
 
-    INSTALLS += target headers prf
+    INSTALLS += target headers
 
     unix {
         CONFIG += create_pc create_prl
