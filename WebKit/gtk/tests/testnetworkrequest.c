@@ -36,7 +36,7 @@ static void test_network_request_create_destroy()
     request = WEBKIT_NETWORK_REQUEST(g_object_new(WEBKIT_TYPE_NETWORK_REQUEST, "uri", "http://debian.org/", NULL));
     g_assert(WEBKIT_IS_NETWORK_REQUEST(request));
     message = webkit_network_request_get_message(request);
-    g_assert(message);
+    g_assert(!message);
     g_object_unref(request);
 
     /* Test creation with SoupMessage */
