@@ -36,7 +36,13 @@
 
 #if PLATFORM(WIN)
 #define WTF_PLATFORM_CF 1 
+#if defined(WIN_CAIRO)
+#define WTF_PLATFORM_CAIRO 1
+#define WTF_USE_CURL 1
+#else
 #define WTF_PLATFORM_CG 1
+#define WTF_USE_CFNETWORK 1
+#endif
 
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0500

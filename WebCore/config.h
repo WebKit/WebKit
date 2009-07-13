@@ -107,9 +107,20 @@
 #endif
 
 #if PLATFORM(WIN)
+#if defined(WIN_CAIRO)
+#undef WTF_PLATFORM_CG
+#define WTF_PLATFORM_CAIRO 1
+#undef WTF_USE_CFNETWORK
+#define WTF_USE_CURL 1
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+#endif
+#else
 #define WTF_PLATFORM_CG 1
 #undef WTF_PLATFORM_CAIRO
 #define WTF_USE_CFNETWORK 1
+#undef WTF_USE_CURL
+#endif
 #undef WTF_USE_WININET
 #define WTF_PLATFORM_CF 1
 #define WTF_USE_PTHREADS 0

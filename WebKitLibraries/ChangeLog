@@ -1,3 +1,13 @@
+2009-07-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add new configuration flag for redistributable Windows build.
+        https://bugs.webkit.org/show_bug.cgi=27087
+        
+        * win/tools/vsprops/WinCairo.vsprops: Added.  Defines the
+          new WIN_CAIRO flag used to drive non-Apple Windows build.
+
 2009-07-10  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.

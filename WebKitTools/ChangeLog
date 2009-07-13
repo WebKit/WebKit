@@ -1,3 +1,15 @@
+2009-07-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add new configuration flag for redistributable Windows build.
+        https://bugs.webkit.org/show_bug.cgi=27087
+
+        * DumpRenderTree/config.h: Check for presence of WIN_CAIRO and
+          select appropriate configuration. Defaults to standard Apple build.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Add new WinCairo.vsprops
+          to Debug_Cairo and Release_Cairo targets.
+
 2009-07-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Ariya Hidayat.

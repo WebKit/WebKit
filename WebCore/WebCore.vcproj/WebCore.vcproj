@@ -184,7 +184,7 @@
 		<Configuration
 			Name="Debug_Cairo|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCairo.vsprops;.\WebCoreCURL.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCairo.vsprops;.\WebCoreCURL.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -239,7 +239,7 @@
 		<Configuration
 			Name="Release_Cairo|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCairo.vsprops;.\WebCoreCURL.vsprops"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\release.vsprops;$(WebKitLibrariesDir)\tools\vsprops\WinCairo.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCairo.vsprops;.\WebCoreCURL.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -24259,14 +24259,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\DOMDataGridDataSource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DOMDataGridDataSource.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\CollectionCache.cpp"
 				>
 				<FileConfiguration
@@ -24304,6 +24296,14 @@
 			</File>
 			<File
 				RelativePath="..\html\DataGridDataSource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMDataGridDataSource.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMDataGridDataSource.h"
 				>
 			</File>
 			<File
