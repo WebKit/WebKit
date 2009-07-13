@@ -1626,6 +1626,7 @@ webcore_sources += \
 	WebCore/rendering/RenderBR.h \
 	WebCore/rendering/RenderBlock.cpp \
 	WebCore/rendering/RenderBlock.h \
+	WebCore/rendering/RenderBlockLineLayout.cpp \
 	WebCore/rendering/RenderBox.cpp \
 	WebCore/rendering/RenderBox.h \
 	WebCore/rendering/RenderBoxModelObject.cpp \
@@ -1731,8 +1732,6 @@ webcore_sources += \
 	WebCore/rendering/TextControlInnerElements.h \
 	WebCore/rendering/TransformState.cpp \
 	WebCore/rendering/TransformState.h \
-	WebCore/rendering/bidi.cpp \
-	WebCore/rendering/bidi.h \
 	WebCore/rendering/break_lines.cpp \
 	WebCore/rendering/break_lines.h \
 	WebCore/rendering/style/BindingURI.cpp \

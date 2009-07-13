@@ -918,7 +918,6 @@ This file contains the list of files needed to build WebCore.
 
     <set append="1" var="WEBCORE_SOURCES_RENDERING">
         rendering/AutoTableLayout.cpp
-        rendering/bidi.cpp
         rendering/break_lines.cpp
         rendering/CounterNode.cpp
         rendering/EllipsisBox.cpp
@@ -933,6 +932,7 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderArena.cpp
         rendering/RenderBR.cpp
         rendering/RenderBlock.cpp
+        rendering/RenderBlockLineLayout.cpp
         rendering/RenderBox.cpp
         rendering/RenderBoxModelObject.cpp
         rendering/RenderButton.cpp

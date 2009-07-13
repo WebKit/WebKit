@@ -1022,7 +1022,6 @@ SOURCES += \
     plugins/PluginStream.cpp \
     plugins/PluginView.cpp \
     rendering/AutoTableLayout.cpp \
-    rendering/bidi.cpp \
     rendering/break_lines.cpp \
     rendering/CounterNode.cpp \
     rendering/EllipsisBox.cpp \
@@ -1035,6 +1034,7 @@ SOURCES += \
     rendering/RenderApplet.cpp \
     rendering/RenderArena.cpp \
     rendering/RenderBlock.cpp \
+    rendering/RenderBlockLineLayout.cpp \
     rendering/RenderBox.cpp \
     rendering/RenderBoxModelObject.cpp \
     rendering/RenderBR.cpp \
