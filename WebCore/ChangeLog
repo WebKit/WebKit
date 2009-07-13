@@ -1,3 +1,11 @@
+2009-07-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Update WebCore.gyp in preparation to hooking it up.
+
+        * WebCore.gypi: Added files that were mid-stream while switching over.
+
 2009-07-13  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, another small fix for Chromium build.
