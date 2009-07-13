@@ -77,7 +77,7 @@ static void handleConsoleMessage(v8::Handle<v8::Message> message, v8::Handle<v8:
     bool useURL = (resourceName.IsEmpty() || !resourceName->IsString());
     String resourceNameString = useURL ? workerContext->url() : toWebCoreString(resourceName);
     
-    workerContext->addMessage(ConsoleDestination, JSMessageSource, ErrorMessageLevel, errorMessage, message->GetLineNumber(), resourceNameString);
+    workerContext->addMessage(ConsoleDestination, JSMessageSource, LogMessageType, ErrorMessageLevel, errorMessage, message->GetLineNumber(), resourceNameString);
 }
 
 WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerContext)

@@ -152,7 +152,7 @@ void JavaScriptConsoleMessage::addToPage(Page* page) const
 {
     ASSERT(page);
     Console* console = page->mainFrame()->domWindow()->console();
-    console->addMessage(JSMessageSource, ErrorMessageLevel, m_string, m_lineNumber, m_sourceID);
+    console->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, m_string, m_lineNumber, m_sourceID);
 }
 
 // The ConsoleMessageManager handles all console messages that stem
