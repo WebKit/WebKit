@@ -4,6 +4,7 @@
 WebKitWebSettings
 webkit_web_settings_copy
 webkit_web_settings_new
+webkit_web_settings_get_user_agent
 <SUBSECTION Standard>
 WEBKIT_WEB_SETTINGS
 WEBKIT_IS_WEB_SETTINGS
