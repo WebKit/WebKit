@@ -1286,6 +1286,9 @@ sub openDumpTool()
             $ENV{DBUS_SESSION_BUS_ADDRESS} = $dbusAddress;
         }
     }
+    if (isQt()) {
+        $ENV{QTWEBKIT_PLUGIN_PATH} = productDir() . "/lib/plugins";
+    }
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
     $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
