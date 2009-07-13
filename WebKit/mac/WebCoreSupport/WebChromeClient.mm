@@ -676,12 +676,19 @@ void WebChromeClient::formDidBlur(const WebCore::Node* node)
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    WebFrameView *frameView = [kit(frame) frameView];
-    WebHTMLView *documentView = (WebHTMLView *)[frameView documentView];
+
+    NSView *documentView = [[kit(frame) frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]]) {
+        // We should never be attaching when we don't have a WebHTMLView.
+        ASSERT(!graphicsLayer);
+        return;
+    }
+
+    WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
     if (graphicsLayer)
-        [documentView attachRootLayer:graphicsLayer->nativeLayer()];
+        [webHTMLView attachRootLayer:graphicsLayer->nativeLayer()];
     else
-        [documentView detachRootLayer];
+        [webHTMLView detachRootLayer];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
