@@ -45,6 +45,7 @@ class QWebFrame;
 class LayoutTestController;
 class EventSender;
 class TextInputController;
+class GCController;
 
 namespace WebCore {
 
@@ -95,6 +96,7 @@ private:
 
     EventSender *m_eventSender;
     TextInputController *m_textInputController;
+    GCController* m_gcController;
 
     QFile *m_stdin;
     QSocketNotifier* m_notifier;

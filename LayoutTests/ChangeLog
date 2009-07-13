@@ -1,3 +1,13 @@
+2009-07-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Remove fast/frames/removal-before-attach-crash.html and
+        fast/dom/StyleSheet/ownerNode-lifetime-2.html from the Qt DRT skip
+        list, as they pass now with support for the GCController.
+
+        * platform/qt/Skipped:
+
 2009-07-13  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         <https://bugs.webkit.org/show_bug.cgi?id=27171> [Gtk]

@@ -157,6 +157,7 @@ DumpRenderTree::DumpRenderTree()
 
     m_eventSender = new EventSender(m_page);
     m_textInputController = new TextInputController(m_page);
+    m_gcController = new GCController(m_page);
 
     QObject::connect(this, SIGNAL(quit()), qApp, SLOT(quit()), Qt::QueuedConnection);
     qt_drt_run(true);
@@ -250,6 +251,7 @@ void DumpRenderTree::initJSObjects()
     frame->addToJavaScriptWindowObject(QLatin1String("layoutTestController"), m_controller);
     frame->addToJavaScriptWindowObject(QLatin1String("eventSender"), m_eventSender);
     frame->addToJavaScriptWindowObject(QLatin1String("textInputController"), m_textInputController);
+    frame->addToJavaScriptWindowObject(QLatin1String("GCController"), m_gcController);
 }
 
 

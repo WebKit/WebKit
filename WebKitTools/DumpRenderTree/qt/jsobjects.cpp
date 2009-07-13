@@ -530,3 +530,28 @@ void TextInputController::doCommand(const QString &command)
     QKeyEvent event2(QEvent::KeyRelease, keycode, modifiers);
     QApplication::sendEvent(parent(), &event2);
 }
+
+GCController::GCController(QWebPage* parent)
+    : QObject(parent)
+{
+}
+
+extern int qt_drt_javaScriptObjectsCount();
+extern void qt_drt_garbageCollector_collect();
+
+extern void qt_drt_garbageCollector_collectOnAlternateThread(bool waitUntilDone);
+
+void GCController::collect() const
+{
+    qt_drt_garbageCollector_collect();
+}
+
+void GCController::collectOnAlternateThread(bool waitUntilDone) const
+{
+    qt_drt_garbageCollector_collectOnAlternateThread(waitUntilDone);
+}
+
+size_t GCController::getJSObjectCount() const
+{
+    return qt_drt_javaScriptObjectsCount();
+}

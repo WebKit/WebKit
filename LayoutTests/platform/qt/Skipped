@@ -109,7 +109,6 @@ fast/dom/Window/window-properties.html
 # ------- failures for tests with results
 fast/forms/drag-out-of-textarea.html
 fast/frames/frame-src-attribute.html
-fast/frames/removal-before-attach-crash.html
 fast/loader/user-style-sheet-resource-load-callbacks.html
 fast/overflow/003.xml
 fast/text/international/bidi-menulist.html
@@ -2971,7 +2970,6 @@ fast/dom/Range/surroundContents-1.html
 fast/dom/row-inner-text.html
 fast/dom/setPrimitiveValue.html
 fast/dom/stripNullFromTextNodes.html
-fast/dom/StyleSheet/ownerNode-lifetime-2.html
 fast/dom/Window/btoa-pnglet.html
 fast/dom/Window/open-existing-pop-up-blocking.html
 fast/dom/Window/Plug-ins.html

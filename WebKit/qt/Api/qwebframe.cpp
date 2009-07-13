@@ -20,73 +20,71 @@
 
 #include "config.h"
 #include "qwebframe.h"
-#include "qwebpage.h"
-#include "qwebpage_p.h"
-#include "qwebframe_p.h"
-#include "qwebsecurityorigin.h"
-#include "qwebsecurityorigin_p.h"
-#include "qwebelement.h"
-
-#include "DocumentLoader.h"
-#include "FocusController.h"
-#include "FrameLoaderClientQt.h"
-#include "Frame.h"
-#include "FrameTree.h"
-#include "FrameView.h"
-#include "IconDatabase.h"
-#include "InspectorController.h"
-#include "Page.h"
-#include "PutPropertySlot.h"
-#include "ResourceRequest.h"
-#include "RenderView.h"
-#include "SelectionController.h"
-#include "Scrollbar.h"
-#include "PrintContext.h"
-#include "SubstituteData.h"
-
-#include "markup.h"
-#include "htmlediting.h"
-#include "RenderTreeAsText.h"
-#include "Element.h"
-#include "Document.h"
-#include "DragData.h"
-#include "RenderView.h"
-#include "GraphicsContext.h"
-#include "PlatformMouseEvent.h"
-#include "PlatformWheelEvent.h"
-#include "GraphicsContext.h"
-#include "HitTestResult.h"
 
 #include "CallFrame.h"
+#include "Document.h"
+#include "DocumentLoader.h"
+#include "DragData.h"
+#include "Element.h"
+#include "FocusController.h"
+#include "Frame.h"
+#include "FrameLoaderClientQt.h"
+#include "FrameTree.h"
+#include "FrameView.h"
+#include "GCController.h"
+#include "GraphicsContext.h"
+#include "HTMLMetaElement.h"
+#include "HitTestResult.h"
+#include "IconDatabase.h"
+#include "InspectorController.h"
 #include "JSDOMBinding.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowBase.h"
 #include "JSLock.h"
 #include "JSObject.h"
-#include "qt_instance.h"
-#include "qt_runtime.h"
-#include "runtime.h"
-#include "runtime_object.h"
-#include "runtime_root.h"
+#include "NodeList.h"
+#include "Page.h"
+#include "PlatformMouseEvent.h"
+#include "PlatformWheelEvent.h"
+#include "PrintContext.h"
+#include "PutPropertySlot.h"
+#include "RenderTreeAsText.h"
+#include "RenderView.h"
+#include "ResourceRequest.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-
+#include "Scrollbar.h"
+#include "SelectionController.h"
+#include "SubstituteData.h"
+#include "htmlediting.h"
+#include "markup.h"
+#include "qt_instance.h"
+#include "qt_runtime.h"
+#include "qwebelement.h"
+#include "qwebframe_p.h"
+#include "qwebpage.h"
+#include "qwebpage_p.h"
+#include "qwebsecurityorigin.h"
+#include "qwebsecurityorigin_p.h"
+#include "runtime.h"
+#include "runtime_object.h"
+#include "runtime_root.h"
 #include "wtf/HashMap.h"
-
+#include <QMultiMap>
 #include <qdebug.h>
 #include <qevent.h>
 #include <qfileinfo.h>
 #include <qpainter.h>
-#include <QMultiMap>
-#if QT_VERSION >= 0x040400
-#include <qnetworkrequest.h>
-#else
+#include <qprinter.h>
+#include <qregion.h>
+
+#if QT_VERSION < 0x040400
 #include "qwebnetworkinterface.h"
 #endif
-#include <qregion.h>
-#include <qprinter.h>
-#include "HTMLMetaElement.h"
-#include "NodeList.h"
+
+#if QT_VERSION >= 0x040400
+#include <qnetworkrequest.h>
+#endif
 
 using namespace WebCore;
 
@@ -170,6 +168,21 @@ void QWEBKIT_EXPORT qt_drt_clearFrameName(QWebFrame* qFrame)
 {
     Frame* frame = QWebFramePrivate::core(qFrame);
     frame->tree()->clearName();
+}
+
+int QWEBKIT_EXPORT qt_drt_javaScriptObjectsCount()
+{
+    return JSDOMWindowBase::commonJSGlobalData()->heap.globalObjectCount();
+}
+
+void QWEBKIT_EXPORT qt_drt_garbageCollector_collect()
+{
+    gcController().garbageCollectNow();
+}
+
+void QWEBKIT_EXPORT qt_drt_garbageCollector_collectOnAlternateThread(bool waitUntilDone)
+{
+    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
 }
 
 QWebFrameData::QWebFrameData(WebCore::Page* parentPage, WebCore::Frame* parentFrame,
