@@ -196,6 +196,7 @@ void DumpRenderTree::open(const QUrl& url)
     int width = isW3CTest ? 480 : maxViewWidth;
     int height = isW3CTest ? 360 : maxViewHeight;
     m_page->view()->resize(QSize(width, height));
+    m_page->setFixedContentsSize(QSize());
     m_page->setViewportSize(QSize(width, height));
 
     // Reset so that any current loads are stopped
