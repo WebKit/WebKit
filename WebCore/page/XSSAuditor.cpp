@@ -105,12 +105,12 @@ bool XSSAuditor::canCreateInlineEventListener(const String&, const String& code)
     return true;
 }
 
-bool XSSAuditor::canLoadExternalScriptFromSrc(const String& url) const
+bool XSSAuditor::canLoadExternalScriptFromSrc(const String& context, const String& url) const
 {
     if (!isEnabled())
         return true;
 
-    if (findInRequest(url)) {
+    if (findInRequest(context + url)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;

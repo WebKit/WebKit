@@ -213,6 +213,10 @@ private:
 
     Token m_currentToken;
 
+    // This buffer holds the raw characters we've seen between the beginning of
+    // the attribute name and the first character of the attribute value.
+    Vector<UChar, 32> m_rawAttributeBeforeValue;
+
     // Tokenizer flags
     //////////////////
     // are we in quotes within a html tag

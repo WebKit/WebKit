@@ -1256,6 +1256,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
             break;
         case AttributeName:
         {
+            m_rawAttributeBeforeValue.clear();
             int ll = min(src.length(), CBUFLEN - cBufferPos);
             while (ll--) {
                 UChar curchar = *src;
@@ -1278,6 +1279,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                 else
                     m_cBuffer[cBufferPos++] = curchar;
                     
+                m_rawAttributeBeforeValue.append(curchar);
                 src.advance(m_lineNumber);
             }
             if (cBufferPos == CBUFLEN) {
@@ -1309,6 +1311,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                         state.setTagState(SearchValue);
                         if (inViewSourceMode())
                             m_currentToken.addViewSourceChar(curchar);
+                        m_rawAttributeBeforeValue.append(curchar);
                         src.advancePastNonNewline();
                     } else {
                         m_currentToken.addAttribute(m_attrName, emptyAtom, inViewSourceMode());
@@ -1318,11 +1321,12 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                     }
                     break;
                 }
-                if (inViewSourceMode())
-                    m_currentToken.addViewSourceChar(curchar);
-                    
+
                 lastIsSlash = curchar == '/';
 
+                if (inViewSourceMode())
+                    m_currentToken.addViewSourceChar(curchar);
+                m_rawAttributeBeforeValue.append(curchar);
                 src.advance(m_lineNumber);
             }
             break;
@@ -1335,6 +1339,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                         state.setTagState(QuotedValue);
                         if (inViewSourceMode())
                             m_currentToken.addViewSourceChar(curchar);
+                        m_rawAttributeBeforeValue.append(curchar);
                         src.advancePastNonNewline();
                     } else
                         state.setTagState(Value);
@@ -1343,6 +1348,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                 }
                 if (inViewSourceMode())
                     m_currentToken.addViewSourceChar(curchar);
+                m_rawAttributeBeforeValue.append(curchar);
                 src.advance(m_lineNumber);
             }
             break;
@@ -1391,6 +1397,13 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                                 m_currentToken.addViewSourceChar('x');
                         } else if (inViewSourceMode())
                             m_currentToken.addViewSourceChar('v');
+
+                        if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_parser->skipMode() && m_attrName == srcAttr) {
+                            String context(m_rawAttributeBeforeValue.data(), m_rawAttributeBeforeValue.size());
+                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(context, attributeValue))
+                                attributeValue = blankURL().string();
+                        }
+
                         m_currentToken.addAttribute(m_attrName, attributeValue, inViewSourceMode());
                         m_dest = m_buffer;
                         state.setTagState(SearchAttribute);
@@ -1421,6 +1434,13 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                     // '/' does not delimit in IE!
                     if (isASCIISpace(curchar) || curchar == '>') {
                         AtomicString attributeValue(m_buffer + 1, m_dest - m_buffer - 1);
+
+                        if (m_currentToken.beginTag && m_currentToken.tagName == scriptTag && !inViewSourceMode() && !m_parser->skipMode() && m_attrName == srcAttr) {
+                            String context(m_rawAttributeBeforeValue.data(), m_rawAttributeBeforeValue.size());
+                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(context, attributeValue))
+                                attributeValue = blankURL().string();
+                        }
+
                         m_currentToken.addAttribute(m_attrName, attributeValue, inViewSourceMode());
                         if (inViewSourceMode())
                             m_currentToken.addViewSourceChar('v');
@@ -1473,11 +1493,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString& src, State state)
                 m_scriptTagCharsetAttrValue = String();
                 if (m_currentToken.attrs && !m_fragment) {
                     if (m_doc->frame() && m_doc->frame()->script()->isEnabled()) {
-                        if ((a = m_currentToken.attrs->getAttributeItem(srcAttr))) {
+                        if ((a = m_currentToken.attrs->getAttributeItem(srcAttr)))
                             m_scriptTagSrcAttrValue = m_doc->completeURL(parseURL(a->value())).string();
-                            if (m_XSSAuditor && !m_XSSAuditor->canLoadExternalScriptFromSrc(a->value()))
-                                m_scriptTagSrcAttrValue = String();
-                        }
                     }
                 }
             }

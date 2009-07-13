@@ -1,3 +1,29 @@
+2009-07-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Facebook Chat is broken due to XSS auditor
+        https://bugs.webkit.org/show_bug.cgi?id=27179
+
+        Instead of just using the script's URL as to detect an XSS attack, we
+        now use a bit of context before the URL.  In particular, we use the
+        bytes from the beginning of the attribute name to the end of the
+        attribute value.  In virtually all injection attacks, the attacker
+        would need to supply the attribute name as well as the attribute value.
+        However, in the Facebook false positive, the attribute name is not
+        present in the URL.
+
+        Tests: http/tests/security/xssAuditor/script-tag-src-redirect-safe.html
+               http/tests/security/xssAuditor/script-tag-with-source-double-quote.html
+               http/tests/security/xssAuditor/script-tag-with-source-no-quote.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        * html/HTMLTokenizer.h:
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::canLoadExternalScriptFromSrc):
+        * page/XSSAuditor.h:
+
 2009-07-12  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Timothy Hatcher.

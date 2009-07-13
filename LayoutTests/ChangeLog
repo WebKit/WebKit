@@ -1,3 +1,22 @@
+2009-07-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Facebook Chat is broken due to XSS auditor
+        https://bugs.webkit.org/show_bug.cgi?id=27179
+
+        Add some more test coverage to our handling of script tags with src
+        attributes.  Also, ensure that we don't raise the alarm when a URL
+        parameter is injected directly into the attribute value.
+
+        * http/tests/security/xssAuditor/resources/echo-script-src.pl: Added.
+        * http/tests/security/xssAuditor/script-tag-src-redirect-safe-expected.txt: Copied from LayoutTests/http/tests/security/xssAuditor/base-href-safe-expected.txt.
+        * http/tests/security/xssAuditor/script-tag-src-redirect-safe.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-double-quote-expected.txt: Copied from LayoutTests/http/tests/security/xssAuditor/anchor-url-dom-write-location-expected.txt.
+        * http/tests/security/xssAuditor/script-tag-with-source-double-quote.html: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-no-quote-expected.txt: Copied from LayoutTests/http/tests/security/xssAuditor/anchor-url-dom-write-location-expected.txt.
+        * http/tests/security/xssAuditor/script-tag-with-source-no-quote.html: Added.
+
 2009-07-12  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
