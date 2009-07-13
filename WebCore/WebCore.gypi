@@ -48,6 +48,7 @@
             'dom/EventException.idl',
             'dom/EventListener.idl',
             'dom/EventTarget.idl',
+            'dom/HTMLAllCollection.idl',
             'dom/KeyboardEvent.idl',
             'dom/MessageChannel.idl',
             'dom/MessageEvent.idl',
