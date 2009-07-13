@@ -1,3 +1,24 @@
+2009-07-13  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Upstream fixes to NPV8Object.cpp that make ~30 layout tests pass.
+        https://bugs.webkit.org/show_bug.cgi?id=27127
+
+        There were a number of bugs introduced during the last upstreaming
+        effort that broke around 30 layout tests.  This fixes those bugs.
+        It also has compile fixes to match the recent cutting apart of
+        V8Proxy.
+
+        * bindings/v8/NPV8Object.cpp:
+        (freeV8NPObject):
+        (npCreateV8ScriptObject):
+        (NPN_Invoke):
+        (NPN_InvokeDefault):
+        (NPN_EvaluateHelper):
+        (NPN_SetException):
+        (NPN_Construct):
+
 2009-07-13  Mads Ager  <ager@chromium.org>
 
         Reviewed by Adam Barth.

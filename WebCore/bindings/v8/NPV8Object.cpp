@@ -35,6 +35,7 @@
 #include "PlatformString.h"
 #include "ScriptController.h"
 #include "V8CustomBinding.h"
+#include "V8GCController.h"
 #include "V8Helpers.h"
 #include "V8NPUtils.h"
 #include "V8Proxy.h"
@@ -43,11 +44,14 @@
 
 #include <stdio.h>
 #include <v8.h>
+#include <wtf/StringExtras.h>
 
 using WebCore::toV8Context;
 using WebCore::toV8Proxy;
 using WebCore::V8ClassIndex;
 using WebCore::V8Custom;
+using WebCore::V8DOMWrapper;
+using WebCore::V8GCController;
 using WebCore::V8Proxy;
 
 // FIXME: Comments on why use malloc and free.
@@ -60,7 +64,7 @@ static void freeV8NPObject(NPObject* npObject)
 {
     V8NPObject* v8NpObject = reinterpret_cast<V8NPObject*>(npObject);
 #ifndef NDEBUG
-    V8GCController::UnregisterGlobalHandle(v8NpObject, v8NpObject->v8Object);
+    V8GCController::unregisterGlobalHandle(v8NpObject, v8NpObject->v8Object);
 #endif
     v8NpObject->v8Object.Dispose();
     free(v8NpObject);
@@ -98,19 +102,21 @@ NPClass* npScriptObjectClass = &V8NPObjectClass;
 
 NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, WebCore::DOMWindow* root)
 {
-    v8::Local<v8::Value> typeIndex = object->GetInternalField(V8Custom::kDOMWrapperTypeIndex);
     // Check to see if this object is already wrapped.
-    if (object->InternalFieldCount() == V8Custom::kNPObjectInternalFieldCount && typeIndex->IsNumber() && typeIndex->Uint32Value() == V8ClassIndex::NPOBJECT) {
+    if (object->InternalFieldCount() == V8Custom::kNPObjectInternalFieldCount) {
+        v8::Local<v8::Value> typeIndex = object->GetInternalField(V8Custom::kDOMWrapperTypeIndex);
+        if (typeIndex->IsNumber() && typeIndex->Uint32Value() == V8ClassIndex::NPOBJECT) {
 
-        NPObject* returnValue = V8Proxy::ToNativeObject<NPObject>(V8ClassIndex::NPOBJECT, object);
-        NPN_RetainObject(returnValue);
-        return returnValue;
+            NPObject* returnValue = V8DOMWrapper::convertToNativeObject<NPObject>(V8ClassIndex::NPOBJECT, object);
+            NPN_RetainObject(returnValue);
+            return returnValue;
+        }
     }
 
     V8NPObject* v8npObject = reinterpret_cast<V8NPObject*>(NPN_CreateObject(npp, &V8NPObjectClass));
     v8npObject->v8Object = v8::Persistent<v8::Object>::New(object);
 #ifndef NDEBUG
-    V8Proxy::RegisterGlobalHandle(WebCore::NPOBJECT, v8npObject, v8npObject->v8Object);
+    V8GCController::registerGlobalHandle(WebCore::NPOBJECT, v8npObject, v8npObject->v8Object);
 #endif
     v8npObject->rootObject = root;
     return reinterpret_cast<NPObject*>(v8npObject);
@@ -122,8 +128,8 @@ bool NPN_Invoke(NPP npp, NPObject* npObject, NPIdentifier methodName, const NPVa
         return false;
 
     if (npObject->_class != npScriptObjectClass) {
-        if (npObject->_class->invokeDefault)
-            return npObject->_class->invokeDefault(npObject, arguments, argumentCount, result);
+        if (npObject->_class->invoke)
+            return npObject->_class->invoke(npObject, methodName, arguments, argumentCount, result);
 
         VOID_TO_NPVARIANT(*result);
         return true;
@@ -167,7 +173,7 @@ bool NPN_Invoke(NPP npp, NPObject* npObject, NPIdentifier methodName, const NPVa
     // Call the function object.
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(functionObject);
     OwnArrayPtr<v8::Handle<v8::Value> > argv(createValueListFromVariantArgs(arguments, argumentCount, npObject));
-    v8::Local<v8::Value> resultObject = proxy->CallFunction(function, v8NpObject->v8Object, argumentCount, argv.get());
+    v8::Local<v8::Value> resultObject = proxy->callFunction(function, v8NpObject->v8Object, argumentCount, argv.get());
 
     // If we had an error, return false.  The spec is a little unclear here, but says "Returns true if the method was
     // successfully invoked".  If we get an error return value, was that successfully invoked?
@@ -215,7 +221,7 @@ bool NPN_InvokeDefault(NPP npp, NPObject* npObject, const NPVariant* arguments, 
         ASSERT(proxy);
 
         OwnArrayPtr<v8::Handle<v8::Value> > argv(createValueListFromVariantArgs(arguments, argumentCount, npObject));
-        resultObject = proxy->CallFunction(function, functionObject, argumentCount, argv.get());
+        resultObject = proxy->callFunction(function, functionObject, argumentCount, argv.get());
     }
     // If we had an error, return false.  The spec is a little unclear here, but says "Returns true if the method was
     // successfully invoked".  If we get an error return value, was that successfully invoked?
@@ -253,7 +259,7 @@ bool NPN_EvaluateHelper(NPP npp, bool popupsAllowed, NPObject* npObject, NPStrin
 
     WebCore::String filename;
     if (!popupsAllowed)
-        filename = "npScript";
+        filename = "npscript";
 
     WebCore::String script = WebCore::String::fromUTF8(npScript->UTF8Characters, npScript->UTF8Length);
     v8::Local<v8::Value> v8result = proxy->evaluate(WebCore::ScriptSourceCode(script, WebCore::KURL(filename)), 0);
@@ -401,7 +407,7 @@ void NPN_SetException(NPObject* npObject, const NPUTF8 *message)
         return;
 
     v8::Context::Scope scope(context);
-    V8Proxy::ThrowError(V8Proxy::GENERAL_ERROR, message);
+    V8Proxy::throwError(V8Proxy::GeneralError, message);
 }
 
 bool NPN_Enumerate(NPP npp, NPObject* npObject, NPIdentifier** identifier, uint32_t* count)
@@ -485,7 +491,7 @@ bool NPN_Construct(NPP npp, NPObject* npObject, const NPVariant* arguments, uint
             ASSERT(proxy);
 
             OwnArrayPtr<v8::Handle<v8::Value> > argv(createValueListFromVariantArgs(arguments, argumentCount, npObject));
-            resultObject = proxy->NewInstance(ctor, argumentCount, argv.get());
+            resultObject = proxy->newInstance(ctor, argumentCount, argv.get());
         }
 
         if (resultObject.IsEmpty())
