@@ -1094,7 +1094,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     [super setLayer:newLayer];
 
-    if (_pluginLayer) {
+    if (newLayer && _pluginLayer) {
+        _pluginLayer.get().frame = [newLayer frame];
         _pluginLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
         [newLayer addSublayer:_pluginLayer.get()];
     }

@@ -121,6 +121,7 @@ extern "C" {
 
 - (void)setLayer:(CALayer *)newLayer
 {
+    // FIXME: This should use the same implementation as WebNetscapePluginView (and move to the base class).
     [super setLayer:newLayer];
     
     if (_pluginLayer)
