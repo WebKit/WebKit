@@ -47,6 +47,10 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(WebKitCSSMatrixConstructor)
 {
     INC_STATS("DOM.WebKitCSSMatrix.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.");
+
     // FIXME: The logic here is almost exact duplicate of V8::constructDOMObject.
     // Consider refactoring to reduce duplication.
     String cssValue;
