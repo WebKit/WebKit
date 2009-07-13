@@ -89,7 +89,7 @@ bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8
 
     v8::Handle<v8::Value> result = proxy->callFunction(callbackFunction, thisObject, argc, argv);
 
-    callbackReturnValue = result.IsEmpty() && result->IsBoolean() && result->BooleanValue();
+    callbackReturnValue = !result.IsEmpty() && result->IsBoolean() && result->BooleanValue();
 
     return exceptionCatcher.HasCaught();
 }
