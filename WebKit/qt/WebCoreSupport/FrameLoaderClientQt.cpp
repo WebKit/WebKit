@@ -679,6 +679,11 @@ void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const c
     if (m_pluginView) {
         if (!m_hasSentResponseToPlugin) {
             m_pluginView->didReceiveResponse(loader->response());
+            // didReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
+            // setting up this stream can cause the main document load to be cancelled, setting m_pluginView
+            // to null
+            if (!m_pluginView)
+                return;
             m_hasSentResponseToPlugin = true;
         }
         m_pluginView->didReceiveData(data, length);

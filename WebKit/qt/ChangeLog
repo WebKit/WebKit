@@ -2,6 +2,25 @@
 
         Reviewed by Ariya Hidayat.
 
+        Fix crash with plugins when the plugin stream is cancelled.
+
+        Similar to r26667 handle the case where didReceiveResponse on the
+        plugin view results in failure to set up the stream and
+        setMainDocumentError being called instead. This will set the
+        m_pluginView back to 0 and we need check for it before calling
+        didReceiveData.
+
+        This was triggered by consecutive execution of
+        LayoutTests/plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html
+        followed by LayoutTests/scrollbars/scrollbar-crash-on-refresh.html
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::committedLoad):
+
+2009-07-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
         Added QWebDatabase::removeAllDatabases, as a way to delete all
         databases from the offline storage path.
 
