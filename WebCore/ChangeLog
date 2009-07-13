@@ -1,3 +1,20 @@
+2009-07-13  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix memory leak in the V8 binding layer. 
+        https://bugs.webkit.org/show_bug.cgi?id=27163
+
+        Reinitializing the context is not necessary when clearing the proxy for navigation
+        and it will lead us to hold on to an empty context for each frame.
+
+        Test for empty context instead of empty global object handle when
+        updating the document for a context.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::clearForNavigation):
+        (WebCore::V8Proxy::updateDocument):
+
 2009-07-13  John Gregg  <johnnyg@google.com>
 
         Reviewed by David Levin.
