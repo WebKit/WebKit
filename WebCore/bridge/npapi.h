@@ -341,8 +341,6 @@ typedef enum {
      */
     NPPVpluginWantsAllNetworkStreams = 18,
 
-    NPPVpluginPrivateModeBool = 19,
-    
     /* Checks to see if the plug-in would like the browser to load the "src" attribute. */
     NPPVpluginCancelSrcStream = 20,
 
