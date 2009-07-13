@@ -4084,6 +4084,7 @@ media/video-timeupdate-during-playback.html
 media/video-transformed.html
 media/video-zoom-controls.html
 media/video-zoom.html
+media/audio-data-url.html
 
 # Tests in plugins/ directory
 #   These tests require ObjC plugin, do not bother trying to get them to work

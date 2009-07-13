@@ -1,3 +1,17 @@
+2009-07-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27197
+        QuickTime supports data: urls, add a layout test.
+
+        * media/audio-data-url-expected.txt: Added.
+        * media/audio-data-url.html: Added.
+            New test.
+
+        * platform/gtk/Skipped:
+            Skip the new test.
+
 2009-07-12  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Darin Adler.
