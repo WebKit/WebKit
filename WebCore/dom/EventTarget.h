@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+    class AbstractWorker;
     class AtomicString;
     class DOMApplicationCache;
     class DOMWindow;
@@ -45,6 +46,7 @@ namespace WebCore {
     class Node;
     class SVGElementInstance;
     class ScriptExecutionContext;
+    class SharedWorker;
     class Worker;
     class WorkerContext;
     class XMLHttpRequest;
@@ -68,6 +70,10 @@ namespace WebCore {
 #if ENABLE(WORKERS)
         virtual Worker* toWorker();
         virtual WorkerContext* toWorkerContext();
+#endif
+
+#if ENABLE(SHARED_WORKERS)
+        virtual SharedWorker* toSharedWorker();
 #endif
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

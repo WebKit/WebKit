@@ -409,6 +409,14 @@ AC_ARG_ENABLE(wml,
               [],[enable_wml="no"])
 AC_MSG_RESULT([$enable_wml])
 
+# check whether to enable SharedWorkers support
+AC_MSG_CHECKING([whether to enable SharedWorkers support])
+AC_ARG_ENABLE(shared_workers,
+              AC_HELP_STRING([--enable-shared-workers],
+                             [enable support for SharedWorkers [default=no]]),
+              [],[enable_shared_workers="no"])
+AC_MSG_RESULT([$enable_shared_workers])
+
 # check whether to enable Web Workers support
 AC_MSG_CHECKING([whether to enable Web Workers support])
 AC_ARG_ENABLE(workers,
@@ -691,6 +699,7 @@ AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WML],[test "$enable_wml" = "yes"])
 AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
+AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 
@@ -729,6 +738,7 @@ Features:
  HTML5 client-side database storage support               : $enable_database
  HTML5 video element support                              : $enable_video
  Icon database support                                    : $enable_icon_database
+ SharedWorkers support                                    : $enable_shared_workers
  SVG support                                              : $enable_svg
  SVG animation support                                    : $enable_svg_animation
  SVG fonts support                                        : $enable_svg_fonts

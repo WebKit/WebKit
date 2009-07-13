@@ -1,3 +1,94 @@
+2009-07-13  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Add ENABLE(SHARED_WORKERS) flag and define SharedWorker APIs
+        https://bugs.webkit.org/show_bug.cgi?id=26932
+
+        Initial IDL definition and bindings for SharedWorkers.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Added new files for SharedWorker support.
+        * DerivedSources.make:
+        Added new files for SharedWorker support.
+        * GNUmakefile.am:
+        Added new files for SharedWorker support.
+        * WebCore.gypi:
+        Added new files for SharedWorker support.
+        * WebCore.pro:
+        Added new files for SharedWorker support.
+        * WebCore.xcodeproj/project.pbxproj:
+        Added new files for SharedWorker support.
+        * bindings/js/JSAbstractWorkerCustom.cpp: Added.
+        (WebCore::JSAbstractWorker::mark):
+        Custom mark handler that marks the event listeners.
+        (WebCore::JSAbstractWorker::addEventListener):
+        (WebCore::JSAbstractWorker::removeEventListener):
+        (WebCore::JSAbstractWorker::toJS):
+        Custom toJS handler which differentiates between various subclasses.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::sharedWorker):
+        SharedWorker constructor (only enabled when SHARED_WORKERS is
+        enabled).
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        (WebCore::toEventTarget):
+        Added support for converting to/from SharedWorkers.
+        * bindings/js/JSSharedWorkerConstructor.cpp: Added.
+        (WebCore::JSSharedWorkerConstructor::JSSharedWorkerConstructor):
+        (WebCore::constructSharedWorker):
+        (WebCore::JSSharedWorkerConstructor::getConstructData):
+        * bindings/js/JSSharedWorkerConstructor.h: Added.
+        (WebCore::JSSharedWorkerConstructor::classInfo):
+        * bindings/js/JSSharedWorkerCustom.cpp: Added.
+        (WebCore::JSSharedWorker::mark):
+        Custom mark function that marks the internal MessagePort.
+        * bindings/v8/DOMObjectsInclude.h:
+        Updated to include new header files.
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8AbstractWorkerCustom.cpp: Added.
+        (WebCore::getEventListener):
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        (WebCore::CALLBACK_FUNC_DECL):
+        V8 handlers for add/removeEventListener().
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8SharedWorkerCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        Custom constructor for SharedWorker.
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toSharedWorker):
+        * dom/EventTarget.h:
+        * page/DOMWindow.idl:
+        * workers/AbstractWorker.cpp: Added.
+        (WebCore::AbstractWorker::AbstractWorker):
+        Common base class for SharedWorker and (soon) Worker. The functions below were copied from Worker.cpp.
+        This is the first step in refactoring Worker to derive from AbstractWorker to enable code sharing.
+        (WebCore::AbstractWorker::~AbstractWorker):
+        (WebCore::AbstractWorker::addEventListener):
+        (WebCore::AbstractWorker::removeEventListener):
+        (WebCore::AbstractWorker::dispatchEvent):
+        (WebCore::AbstractWorker::dispatchLoadErrorEvent):
+        (WebCore::AbstractWorker::dispatchScriptErrorEvent):
+        * workers/AbstractWorker.h: Added.
+        Definitions of functionality shared by Worker.h and SharedWorker.h. In a future patch, Worker will derive from AbstractWorker.
+        (WebCore::AbstractWorker::scriptExecutionContext):
+        (WebCore::AbstractWorker::setOnerror):
+        (WebCore::AbstractWorker::onerror):
+        (WebCore::AbstractWorker::eventListeners):
+        (WebCore::AbstractWorker::refEventTarget):
+        (WebCore::AbstractWorker::derefEventTarget):
+        * workers/AbstractWorker.idl: Added.
+        * workers/SharedWorker.cpp: Added.
+        (WebCore::SharedWorker::SharedWorker):
+        (WebCore::SharedWorker::~SharedWorker):
+        * workers/SharedWorker.h: Added.
+        (WebCore::SharedWorker::create):
+        (WebCore::SharedWorker::port):
+        (WebCore::SharedWorker::toSharedWorker):
+        * workers/SharedWorker.idl: Added.
+
 2009-07-13  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

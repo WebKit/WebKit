@@ -376,6 +376,11 @@
 #include "V8WorkerNavigator.h"
 #endif
 
+#if ENABLE(SHARED_WORKERS)
+#include "V8AbstractWorker.h"
+#include "V8SharedWorker.h"
+#endif
+
 namespace WebCore {
 
 FunctionTemplateFactory V8ClassIndex::GetFactory(V8WrapperType type)

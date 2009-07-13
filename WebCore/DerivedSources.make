@@ -45,6 +45,7 @@ VPATH = \
 
 DOM_CLASSES = \
     AbstractView \
+    AbstractWorker \
     Attr \
     BarInfo \
     CDATASection \
@@ -200,6 +201,7 @@ DOM_CLASSES = \
     Range \
     RangeException \
     Rect \
+    SharedWorker \
     SQLError \
     SQLResultSet \
     SQLResultSetRowList \

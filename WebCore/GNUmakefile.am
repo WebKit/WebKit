@@ -250,6 +250,8 @@ IDL_BINDINGS += \
 	WebCore/plugins/MimeTypeArray.idl \
 	WebCore/plugins/Plugin.idl \
 	WebCore/plugins/PluginArray.idl \
+	WebCore/workers/AbstractWorker.idl \
+	WebCore/workers/SharedWorker.idl \
 	WebCore/workers/Worker.idl \
 	WebCore/workers/WorkerContext.idl \
 	WebCore/workers/WorkerLocation.idl \
@@ -2339,6 +2341,27 @@ webcore_sources += \
 	WebCore/workers/WorkerScriptLoaderClient.h \
 	WebCore/workers/WorkerThread.cpp \
 	WebCore/workers/WorkerThread.h
+endif
+
+# ---
+# SharedWorker support
+# ---
+if ENABLE_SHARED_WORKERS
+FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_WORKERS=1
+
+webcore_cppflags += \
+	-DENABLE_SHARED_WORKERS=1
+
+webcore_built_sources += \
+	WebCore/bindings/js/JSAbstractWorkerCustom.cpp \
+	WebCore/bindings/js/JSSharedWorkerConstructor.cpp \
+	WebCore/bindings/js/JSSharedWorkerConstructor.h \
+	WebCore/bindings/js/JSSharedWorkerCustom.cpp \
+	WebCore/workers/AbstractWorker.cpp \
+	WebCore/workers/AbstractWorker.h \
+	WebCore/workers/SharedWorker.cpp \
+	WebCore/workers/SharedWorker.h
+
 endif
 
 # ----

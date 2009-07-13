@@ -1,3 +1,14 @@
+2009-07-13  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Add ENABLE(SHARED_WORKERS) flag and define SharedWorker APIs
+        https://bugs.webkit.org/show_bug.cgi?id=26932
+
+        Added support for --shared-workers (turned off by default)
+
+        * Scripts/build-webkit:
+
 2009-07-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

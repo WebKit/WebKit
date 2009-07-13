@@ -126,6 +126,11 @@ namespace WebCore {
         static const int kWorkerContextInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
 #endif
 
+#if ENABLE(SHARED_WORKERS)
+        static const int kAbstractWorkerRequestCacheIndex = kDefaultWrapperInternalFieldCount + 0;
+        static const int kAbstractWorkerInternalFieldCount = kDefaultWrapperInternalFieldCount + 1;
+#endif
+
         static const int kDOMWindowConsoleIndex = kDefaultWrapperInternalFieldCount + 0;
         static const int kDOMWindowHistoryIndex = kDefaultWrapperInternalFieldCount + 1;
         static const int kDOMWindowLocationbarIndex = kDefaultWrapperInternalFieldCount + 2;
@@ -485,6 +490,13 @@ namespace WebCore {
         DECLARE_CALLBACK(WorkerContextClearInterval);
         DECLARE_CALLBACK(WorkerContextAddEventListener);
         DECLARE_CALLBACK(WorkerContextRemoveEventListener);
+#endif
+
+#if ENABLE(SHARED_WORKERS)
+        DECLARE_PROPERTY_ACCESSOR(AbstractWorkerOnerror);
+        DECLARE_CALLBACK(AbstractWorkerAddEventListener);
+        DECLARE_CALLBACK(AbstractWorkerRemoveEventListener);
+        DECLARE_CALLBACK(SharedWorkerConstructor);
 #endif
 
 #undef DECLARE_INDEXED_ACCESS_CHECK

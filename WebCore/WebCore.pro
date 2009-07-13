@@ -123,6 +123,7 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 !contains(DEFINES, ENABLE_XSLT=.): DEFINES += ENABLE_XSLT=0
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 !contains(DEFINES, ENABLE_WML=.): DEFINES += ENABLE_WML=0
+!contains(DEFINES, ENABLE_SHARED_WORKERS=.): DEFINES += ENABLE_SHARED_WORKERS=0
 !contains(DEFINES, ENABLE_WORKERS=.): DEFINES += ENABLE_WORKERS=1
 !contains(DEFINES, ENABLE_XHTMLMP=.): DEFINES += ENABLE_XHTMLMP=0
 
@@ -1441,6 +1442,21 @@ contains(DEFINES, ENABLE_WORKERS=1) {
         workers/WorkerRunLoop.cpp \
         workers/WorkerThread.cpp \
         workers/WorkerScriptLoader.cpp
+}
+
+contains(DEFINES, SHARED_WORKERS=1) {
+    FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_WORKERS=1
+
+    IDL_BINDINGS += \
+        workers/AbstractWorker.idl \
+        workers/SharedWorker.idl
+
+    SOURCES += \
+        bindings/js/JSAbstractWorkerCustom.cpp \
+        bindings/js/JSSharedWorkerConstructor.cpp \
+        bindings/js/JSSharedWorkerCustom.cpp \
+        workers/AbstractWorker.cpp \
+        workers/SharedWorker.cpp
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {

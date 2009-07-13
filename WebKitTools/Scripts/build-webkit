@@ -46,10 +46,10 @@ my $makeArgs;
 
 my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $domStorageSupport,
     $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
-    $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $svgSupport, $svgAnimationSupport,
-    $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport, $svgForeignObjectSupport,
-    $svgUseSupport, $videoSupport, $wmlSupport, $workersSupport, $xpathSupport, $xsltSupport,
-    $coverageSupport);
+    $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $sharedWorkersSupport, $svgSupport,
+    $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
+    $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $wmlSupport, $workersSupport,
+    $xpathSupport, $xsltSupport, $coverageSupport);
 
 my @features = (
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
@@ -84,6 +84,9 @@ my @features = (
 
     { option => "offline-web-applications", desc => "Toggle Offline Web Application Support",
       define => "ENABLE_OFFLINE_WEB_APPLICATIONS", default => 1, value => \$offlineWebApplicationSupport },
+
+    { option => "shared-workers", desc => "Toggle SharedWorkers support",
+      define => "ENABLE_SHARED_WORKERS", default => 0, value => \$sharedWorkersSupport },
 
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },

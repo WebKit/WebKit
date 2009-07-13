@@ -45,6 +45,7 @@
 #include "JSMessageChannelConstructor.h"
 #include "JSMessagePort.h"
 #include "JSOptionConstructor.h"
+#include "JSSharedWorkerConstructor.h"
 #include "JSWebKitCSSMatrixConstructor.h"
 #include "JSWebKitPointConstructor.h"
 #include "JSWorkerConstructor.h"
@@ -473,6 +474,13 @@ JSValue JSDOMWindow::messageChannel(ExecState* exec) const
 JSValue JSDOMWindow::worker(ExecState* exec) const
 {
     return getDOMConstructor<JSWorkerConstructor>(exec);
+}
+#endif
+
+#if ENABLE(SHARED_WORKERS)
+JSValue JSDOMWindow::sharedWorker(ExecState* exec) const
+{
+    return getDOMConstructor<JSSharedWorkerConstructor>(exec, this);
 }
 #endif
 

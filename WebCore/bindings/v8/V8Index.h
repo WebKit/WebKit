@@ -65,6 +65,17 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #define WORKER_NONNODE_WRAPPER_TYPES(V)
 #endif
 
+#if ENABLE(SHARED_WORKERS)
+#define SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                    \
+    V(SHAREDWORKER, SharedWorker)
+
+#define SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)                          \
+    V(ABSTRACTWORKER, AbstractWorker)
+#else
+#define SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)
+#define SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)
+#endif
+
 #define DOM_NODE_TYPES(V)                                               \
     V(ATTR, Attr)                                                       \
     V(CHARACTERDATA, CharacterData)                                     \
@@ -267,7 +278,8 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #define ACTIVE_DOM_OBJECT_TYPES(V)                                      \
     V(MESSAGEPORT, MessagePort)                                         \
     V(XMLHTTPREQUEST, XMLHttpRequest)                                   \
-    WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)
+    WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                               \
+    SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)
 
 // NOTE: DOM_OBJECT_TYPES is split into two halves because
 //       Visual Studio's Intellinonsense crashes when macros get
@@ -365,6 +377,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(XSLTPROCESSOR, XSLTProcessor)                                     \
     ACTIVE_DOM_OBJECT_TYPES(V)                                          \
     VIDEO_NONNODE_TYPES(V)                                              \
+    SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)                              \
     WORKER_NONNODE_WRAPPER_TYPES(V)
 
 #if ENABLE(DATABASE)

@@ -1,0 +1,59 @@
+<body>
+<p>Test SharedWorker constructor functionality. Should print a series of PASS messages, followed with DONE.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+try {
+    new SharedWorker({toString:function(){throw "exception"}}, "name")
+    log("FAIL: toString exception not propagated.");
+} catch (ex) {
+    if (ex == "exception")
+        log("PASS: toString exception propagated correctly.");
+    else
+        log("FAIL: unexpected exception (" + ex + ") received instead of one propagated from toString.");
+}
+
+try {
+    var foo = {toString:function(){new Worker(foo)}}
+    new SharedWorker(foo, name);
+    log("FAIL: no exception when trying to create workers recursively");
+} catch (ex) {
+    log("PASS: trying to create workers recursively resulted in an exception (" + ex + ")");
+}
+
+try {
+    new SharedWorker();
+    log("FAIL: invoking SharedWorker constructor without arguments did not result in an exception");
+} catch (ex) {
+    log("PASS: invoking SharedWorker constructor without arguments resulted in an exception (" + ex + ")");
+}
+
+try {
+    var worker = new SharedWorker("resources/worker-common.js");
+    log("FAIL: Constructor succeeded when no name is passed");
+} catch (ex) {
+    log("PASS: invoking SharedWorker constructor without name resulted in an exception (" + ex + ")");
+}
+
+try {
+    var worker = new SharedWorker("resources/worker-common.js", "name");
+    log ("PASS: SharedWorker constructor succeeded: " + worker);
+} catch (ex) {
+    log("FAIL: invoking SharedWorker constructor resulted in an exception (" + ex + ")");
+}
+
+log("DONE");
+if (window.layoutTestController)
+    layoutTestController.notifyDone();
+
+</script>
+</body>
