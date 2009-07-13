@@ -1,0 +1,697 @@
+# Dutch translation of webkit-gtk
+# Released under the same license as webkit-gtk
+# Reinout van Schouwen <reinouts@gnome.org>, 2009
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit 1.1.10\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2009-04-09 19:09-0300\n"
+"PO-Revision-Date: 2009-07-05 18:58+0100\n"
+"Last-Translator: Reinout van Schouwen <reinouts@gnome.org>\n"
+"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:425
+msgid "Upload File"
+msgstr "Bestand uploaden"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:61
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:139
+msgid "Input _Methods"
+msgstr "Invoer_methoden"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:78
+msgid "LRM _Left-to-right mark"
+msgstr "LRM _Links-naar-rechts markering"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:79
+msgid "RLM _Right-to-left mark"
+msgstr "RLM _Rechts-naar-links markering"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:80
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE Links-naar-rechts _inbedding"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:81
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE Rechts-naar-links i_nbedding"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:82
+msgid "LRO Left-to-right _override"
+msgstr "LRO Links-naar-rechts _tenietdoen"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:83
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO Rechts-naar-links t_enietdoen"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:84
+msgid "PDF _Pop directional formatting"
+msgstr "PDF _Pop richtingsformattering"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:85
+msgid "ZWS _Zero width space"
+msgstr "ZWS Spatie _zonder breedte"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:86
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ _koppelaar zonder breedte"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:87
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ Niet-k_oppelaar zonder breedte"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:109
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:134
+msgid "_Insert Unicode Control Character"
+msgstr "_Unicode controleteken invoegen "
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:250
+msgid "Network Request"
+msgstr "Netwerkaanvraag"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:251
+msgid "The network request for the URI that should be downloaded"
+msgstr "De netwerkaanvraag voor de te downloaden URI"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:265
+msgid "Destination URI"
+msgstr "Bestemmings-URI"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:266
+msgid "The destination URI where to save the file"
+msgstr "De bestemmings-URI waar dit bestand opgeslagen moet worden"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:280
+msgid "Suggested Filename"
+msgstr "Gesuggereerde bestandsnaam"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:281
+msgid "The filename suggested as default when saving"
+msgstr "De standaard gesuggereerde bestandsnaam bij het opslaan"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:294
+msgid "Progress"
+msgstr "Voortgang"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:295
+msgid "Determines the current progress of the download"
+msgstr "Bepaalt de huidige voortgang van de download"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:308
+msgid "Status"
+msgstr "Status"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:309
+msgid "Determines the current status of the download"
+msgstr "Bepaalt de huidige status van de download"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:324
+msgid "Current Size"
+msgstr "Huidige grootte"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:325
+msgid "The length of the data already downloaded"
+msgstr "De hoeveelheid reeds gedownloade data"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:339
+msgid "Total Size"
+msgstr "Totale grootte"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:340
+msgid "The total size of the file"
+msgstr "De totale grootte van het bestand"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:469
+msgid "User cancelled the download"
+msgstr "Downloaden door gebruiker gestopt"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:244
+#, c-format
+msgid "A username and password are being requested by the site %s"
+msgstr "De site %s vraagt een gebruikersnaam en wachtwoord"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:269
+msgid "Username:"
+msgstr "Gebruikersnaam:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:271
+msgid "Password:"
+msgstr "Wachtwoord:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:281
+msgid "Remember password"
+msgstr "Wachtwoord onthouden"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:211
+msgid "Name"
+msgstr "Naam"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:212
+msgid "The name of the frame"
+msgstr "Naam van het frame"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:218
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:154
+#: WebKit/gtk/webkit/webkitwebview.cpp:1715
+msgid "Title"
+msgstr "Titel"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:219
+msgid "The document title of the frame"
+msgstr "De titel van het huidige frame"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:225
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:186
+#: WebKit/gtk/webkit/webkitwebview.cpp:1729
+msgid "URI"
+msgstr "URI"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:226
+msgid "The current URI of the contents displayed by the frame"
+msgstr "De huidige URI van de in het frame weergegeven inhoud"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:155
+msgid "The title of the history item"
+msgstr "De titel van het geschiedenis-item"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:170
+msgid "Alternate Title"
+msgstr "Alternatieve titel"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:171
+msgid "The alternate title of the history item"
+msgstr "De alternatieve titel van het geschiedenis-item"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:187
+msgid "The URI of the history item"
+msgstr "De URI van het geschiedenis-item"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:202
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:167
+msgid "Original URI"
+msgstr "Originele URI"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:203
+msgid "The original URI of the history item"
+msgstr "De originele URI van het geschiedenis-item"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:218
+msgid "Last visited Time"
+msgstr "Laatst bezocht op:"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:219
+msgid "The time at which the history item was last visited"
+msgstr "De tijd waarop het geschiedenis-item het laatst is bezocht"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:260
+msgid "Web View"
+msgstr "Webweergave"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:261
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "De webweergave die die Webinspector zelf weergeeft"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:274
+msgid "Inspected URI"
+msgstr "Geïnspecteerde URI"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:275
+msgid "The URI that is currently being inspected"
+msgstr "De URI die momenteel geïnspecteerd wordt"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:291
+msgid "Enable JavaScript profiling"
+msgstr "JavaScript-profilering inschakelen"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:292
+msgid "Profile the executed JavaScript."
+msgstr "De uitgevoerde JavaScript profileren."
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:152
+msgid "Reason"
+msgstr "Reden"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:153
+msgid "The reason why this navigation is occurring"
+msgstr "De reden waarom deze navigatie optreedt"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:168
+msgid "The URI that was requested as the target for the navigation"
+msgstr "De URI die werd aangevraagd als bestemming voor de navigatie"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:180
+msgid "Button"
+msgstr "Knop"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:181
+msgid "The button used to click"
+msgstr "De knop voor het klikken"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:196
+msgid "Modifier state"
+msgstr "Staat van de optietoets"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:197
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "Een bitmask dat de staat van de optietoets representeert"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:129
+msgid "Default Encoding"
+msgstr "Standaardcodering"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:130
+msgid "The default encoding used to display text."
+msgstr "De standaardcodering om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:138
+msgid "Cursive Font Family"
+msgstr "Cursive-lettertypefamilie"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:139
+msgid "The default Cursive font family used to display text."
+msgstr "De standaard Cursive-lettertypefamilie om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:147
+msgid "Default Font Family"
+msgstr "Standaard lettertypefamilie"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:148
+msgid "The default font family used to display text."
+msgstr "De standaard lettertypefamilie om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:156
+msgid "Fantasy Font Family"
+msgstr "Fantasy-lettertypefamilie"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:157
+msgid "The default Fantasy font family used to display text."
+msgstr "De standaard Fantasy-lettertypefamilie om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:165
+msgid "Monospace Font Family"
+msgstr "Monospace-lettertypefamilie"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:166
+msgid "The default font family used to display monospace text."
+msgstr "De standaard lettertypefamilie om vaste-breedte-tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:174
+msgid "Sans Serif Font Family"
+msgstr "Sans Serif-lettertypefamilie"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:175
+msgid "The default Sans Serif font family used to display text."
+msgstr "De standaard Sans Serif-lettertypefamilie om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:183
+msgid "Serif Font Family"
+msgstr "Serif-lettertypefamilie"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:184
+msgid "The default Serif font family used to display text."
+msgstr "De standaard Serif-lettertypefamilie om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:192
+msgid "Default Font Size"
+msgstr "Standaard korpsgrootte"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:193
+msgid "The default font size used to display text."
+msgstr "De standaard korpsgrootte om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:201
+msgid "Default Monospace Font Size"
+msgstr "Standaard Monospace-lettergrootte"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:202
+msgid "The default font size used to display monospace text."
+msgstr "De standaard lettergrootte om vaste-breedte-tekst weer te geven."
+
+# Korpsgrootte/lettergrootte?
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:210
+msgid "Minimum Font Size"
+msgstr "Minimum korpsgrootte"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:211
+msgid "The minimum font size used to display text."
+msgstr "De minimum lettergrootte om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:219
+msgid "Minimum Logical Font Size"
+msgstr "Minimum logische korpsgrootte"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:220
+msgid "The minimum logical font size used to display text."
+msgstr "De minimum logische korpsgrootte om tekst weer te geven."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:239
+msgid "Enforce 96 DPI"
+msgstr "96 DPI afdwingen"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:240
+msgid "Enforce a resolution of 96 DPI"
+msgstr "Een resolutie van 96 DPI afdwingen"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:248
+msgid "Auto Load Images"
+msgstr "Afbeeldingen automatisch laden"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:249
+msgid "Load images automatically."
+msgstr "Automatisch afbeeldingen laden."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:257
+msgid "Auto Shrink Images"
+msgstr "Afbeeldingen automatisch verkleinen"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:258
+msgid "Automatically shrink standalone images to fit."
+msgstr "Automatisch losstaande afbeeldingen passend maken."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:266
+msgid "Print Backgrounds"
+msgstr "Achtergronden afdrukken"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:267
+msgid "Whether background images should be printed."
+msgstr "Of achtergrondafbeeldingen afgedrukt moeten worden."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:275
+msgid "Enable Scripts"
+msgstr "Scripts inschakelen"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:276
+msgid "Enable embedded scripting languages."
+msgstr "Ingebedde scripttalen inschakelen."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:284
+msgid "Enable Plugins"
+msgstr "Plugins inschakelen"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:285
+msgid "Enable embedded plugin objects."
+msgstr "Ingebedde plugin-objecten inschakelen."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:293
+msgid "Resizable Text Areas"
+msgstr "Tekstgebieden van grootte veranderbaar"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:294
+msgid "Whether text areas are resizable."
+msgstr "Of de grootte van tekstgebieden gewijzigd kan worden."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:301
+msgid "User Stylesheet URI"
+msgstr "URI van gebruikersstijlblad"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:302
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr "De URI van een stijlblad dat wordt toegepast op elke pagina."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:317
+msgid "Zoom Stepping Value"
+msgstr "Stapgrootte voor in- en uitzoomen"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:318
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "De hoeveelheid waarmee het zoomniveau verandert bij het in- en uitzoomen."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:336
+msgid "Enable Developer Extras"
+msgstr "Extraatjes voor ontwikkelaars"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:337
+msgid "Enables special extensions that help developers"
+msgstr "Schakelt speciale uitbreidingen in die ontwikkelaars helpen"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:357
+msgid "Enable Private Browsing"
+msgstr "Privé-browsen inschakelen"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:358
+msgid "Enables private browsing mode"
+msgstr "Schakelt de stand voor privé-browsen in"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1716
+msgid "Returns the @web_view's document title"
+msgstr "Geeft de documenttitel van de @web_view terug"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1730
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "Geeft de huidige URI terug van de inhoud die de @web_view weergeeft"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1743
+msgid "Copy target list"
+msgstr "Kopieerdoellijst"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1744
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr ""
+"De lijst met targets die deze webweergave ondersteunt voor het kopiëren van het klembord"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1757
+msgid "Paste target list"
+msgstr "Plakdoellijst"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1758
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr ""
+"De lijst met targets die deze webview ondersteunt voor het plakken van het klembord"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1764
+msgid "Settings"
+msgstr "Instellingen"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1765
+msgid "An associated WebKitWebSettings instance"
+msgstr "Een geassocieerde instantie van WebKitWebSettings"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1778
+msgid "Web Inspector"
+msgstr "Web-inspector"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1779
+msgid "The associated WebKitWebInspector instance"
+msgstr "De geassocieerde instantie van WebKitWebInspector"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1799
+msgid "Editable"
+msgstr "Bewerkbaar"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1800
+msgid "Whether content can be modified by the user"
+msgstr "Of de tekst gewijzigd kan worden door de gebruiker"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1806
+msgid "Transparent"
+msgstr "Transparant"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1807
+msgid "Whether content has a transparent background"
+msgstr "Of de inhoud een transparante achtergrond heeft"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1820
+msgid "Zoom level"
+msgstr "Zoomniveau"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1821
+msgid "The level of zoom of the content"
+msgstr "Zoomfactor van de inhoud"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1836
+msgid "Full content zoom"
+msgstr "Zoomen op volledige inhoud"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1837
+msgid "Whether the full content is scaled when zooming"
+msgstr "Of de volledige inhoud op schaal wordt gebracht bij het zoomen"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1850
+msgid "Encoding"
+msgstr "Codering"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1851
+msgid "The default encoding of the web view"
+msgstr "Standaard codering van de webweergave"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1864
+msgid "Custom Encoding"
+msgstr "Aangepaste codering"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:1865
+msgid "The custom encoding of the web view"
+msgstr "De aangepaste codering van de webweergave"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:51
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:56
+msgid "Submit"
+msgstr "Indienen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:61
+msgid "Reset"
+msgstr "Herinitialiseren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:66
+msgid "_Searchable Index"
+msgstr "Door_zoekbare index"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:71
+msgid "Choose File"
+msgstr "Kies een bestand"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:76
+msgid "(None)"
+msgstr "(Geen)"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:81
+msgid "Open Link in New _Window"
+msgstr "Verwijzing openen in _nieuw venster"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:86
+msgid "_Download Linked File"
+msgstr "Bestand _downloaden"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:91
+msgid "Copy Link Loc_ation"
+msgstr "Verwijzings_adres kopiëren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:96
+msgid "Open _Image in New Window"
+msgstr "Af_beelding openen in nieuw venster"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:101
+msgid "Sa_ve Image As"
+msgstr "Afbeelding opslaan _als…"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:106
+msgid "Cop_y Image"
+msgstr "Afbeelding _kopiëren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:111
+msgid "Open _Frame in New Window"
+msgstr "_Deelvenster openen in nieuw venster"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:162
+msgid "_Reload"
+msgstr "Ve_rversen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:179
+msgid "No Guesses Found"
+msgstr "Geen suggesties gevonden"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:184
+msgid "_Ignore Spelling"
+msgstr "Spelling _negeren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:189
+msgid "_Learn Spelling"
+msgstr "_Spelling leren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:194
+msgid "_Search the Web"
+msgstr "Het web door_zoeken"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:199
+msgid "_Look Up in Dictionary"
+msgstr "O_pzoeken in woordenboek"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:204
+msgid "_Open Link"
+msgstr "Koppeling _openen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:209
+msgid "Ignore _Grammar"
+msgstr "_Grammatica negeren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:214
+msgid "Spelling and _Grammar"
+msgstr "Spelling en _grammatica"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:219
+msgid "_Show Spelling and Grammar"
+msgstr "Spelling en grammatica _tonen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:219
+msgid "_Hide Spelling and Grammar"
+msgstr "Spelling en grammatica ver_bergen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:224
+msgid "_Check Document Now"
+msgstr "Het document nu _controleren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:229
+msgid "Check Spelling While _Typing"
+msgstr "_Spelling controleren tijdens het typen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:234
+msgid "Check _Grammar With Spelling"
+msgstr "_Grammatica controleren naast spelling"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:239
+msgid "_Font"
+msgstr "_Lettertype"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:262
+msgid "_Outline"
+msgstr "_Omtrek"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:267
+msgid "Inspect _Element"
+msgstr "_Element inspecteren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:272
+msgid "No recent searches"
+msgstr "Geen recente zoekopdrachten"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:277
+msgid "Recent searches"
+msgstr "Recente zoekopdrachten"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:282
+msgid "_Clear recent searches"
+msgstr "Recente zoekopdrachten _wissen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:287
+msgid "term"
+msgstr "term"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:292
+msgid "definition"
+msgstr "definitie"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:297
+msgid "press"
+msgstr "druk"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:302
+msgid "select"
+msgstr "selecteren"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:307
+msgid "activate"
+msgstr "activeren"
+
+# check / uncheck is aankruisen / deselecteren?
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:312
+msgid "uncheck"
+msgstr "deselecteren"
+
+# check / uncheck is aankruisen / deselecteren?
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:317
+msgid "check"
+msgstr "aankruisen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:322
+msgid "jump"
+msgstr "springen"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:328
+msgid " files"
+msgstr " bestanden"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:333
+msgid "Unknown"
+msgstr "Onbekend"

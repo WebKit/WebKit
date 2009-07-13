@@ -1,3 +1,11 @@
+2009-07-13  Reinout van Schouwen  <reinouts@gnome.org>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=26980> [Gtk] Updated Dutch translation
+
+        Rubber-stamped by Jan Alonzo.
+
+        * nl.po: Added.
+
 2009-06-28  Miloš Popović  <gpopac@gmail.com>
 
         Rubber-stamped by Jan Alonzo.
