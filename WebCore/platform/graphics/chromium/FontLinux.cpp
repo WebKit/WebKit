@@ -529,13 +529,19 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x,
             // code-point index. Because of ligatures, several code-points may
             // have gone into a single glyph. We iterate over the clusters log
             // and find the first code-point which contributed to the glyph.
+
+            // Some shapers (i.e. Khmer) will produce cluster logs which report
+            // that /no/ code points contributed to certain glyphs. Because of
+            // this, we take any code point which contributed to the glyph in
+            // question, or any subsequent glyph. If we run off the end, then
+            // we take the last code point.
             const unsigned short* log = walker.logClusters();
             for (unsigned j = 0; j < walker.numCodePoints(); ++j) {
-                if (log[j] == glyphIndex)
+                if (log[j] >= glyphIndex)
                     return basePosition + j;
             }
 
-            ASSERT_NOT_REACHED();
+            return basePosition + walker.numCodePoints() - 1;
         }
 
         x -= walker.width();
