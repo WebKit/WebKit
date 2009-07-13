@@ -892,7 +892,6 @@ fast/forms/001.html
 fast/forms/focus2.html
 fast/forms/search-cancel-button-mouseup.html
 fast/frames/001.html
-fast/js/date-DST-time-cusps.html
 fast/text/monospace-width-cache.html
 
 # Disabled worker threads
@@ -3286,9 +3285,7 @@ fast/invalid/nestedh3s.html
 fast/invalid/table-inside-stray-table-content.html
 fast/invalid/table-residual-style-crash.html
 fast/invalid/td-inside-object.html
-fast/js/exceptions-thrown-in-callbacks.html
 fast/js/global-constructors.html
-fast/js/navigator-mimeTypes-length.html
 fast/layers/add-layer-with-nested-stacking.html
 fast/layers/inline-dirty-z-order-lists.html
 fast/layers/layer-content-visibility-change.html
