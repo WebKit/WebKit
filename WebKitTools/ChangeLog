@@ -1,3 +1,17 @@
+2009-07-13  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        prepare-ChangeLog should decode HTML entities in short description
+        https://bugs.webkit.org/show_bug.cgi?id=27122
+
+        Decode the short description by adding a function which decodes HTML
+        entities. It can decode &, <, >, ", and ' . They may be sufficient
+        as the description seems to be encoded by xml_quote in
+        http://mxr.mozilla.org/bugzilla/source/Bugzilla/Util.pm
+
+        * Scripts/prepare-ChangeLog:
+
 2009-07-13  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.

@@ -92,6 +92,7 @@ sub processPaths(\@);
 sub reviewerAndDescriptionForGitCommit($);
 sub normalizeLineEndings($$);
 sub normalizePath($);
+sub decodeEntities($);
 
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
@@ -254,7 +255,7 @@ if ($bugNumber) {
     # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
     my $descriptionLine = `curl --silent "$bugXMLURL" | grep short_desc`;
     $descriptionLine =~ /<short_desc>(.*)<\/short_desc>/;
-    $bugDescription = $1;
+    $bugDescription = decodeEntities($1);
     print STDERR "  Description from bug $bugNumber:\n    \"$bugDescription\".\n";
 }
 
@@ -1556,4 +1557,15 @@ sub normalizePath($)
     my ($path) = @_;
     $path =~ s/\\/\//g;
     return $path;
+}
+
+sub decodeEntities($)
+{
+    my ($text) = @_;
+    $text =~ s/\&lt;/</g;
+    $text =~ s/\&gt;/>/g;
+    $text =~ s/\&quot;/\"/g;
+    $text =~ s/\&apos;/\'/g;
+    $text =~ s/\&amp;/\&/g;
+    return $text;
 }
