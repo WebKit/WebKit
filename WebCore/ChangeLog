@@ -1,3 +1,28 @@
+2009-07-13  Peter Kasting  <pkasting@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=19562
+        Back out previous patch for this bug (too many problems).
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::form):
+        * html/HTMLInputElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/ValidityState.cpp: Removed.
+        * html/ValidityState.h: Removed.
+        * html/ValidityState.idl: Removed.
+
 2009-07-13  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

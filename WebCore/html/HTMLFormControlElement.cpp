@@ -39,7 +39,6 @@
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
-#include "ValidityState.h"
 
 namespace WebCore {
 
@@ -62,14 +61,6 @@ HTMLFormControlElement::~HTMLFormControlElement()
 {
     if (m_form)
         m_form->removeFormElement(this);
-}
-
-ValidityState* HTMLFormControlElement::validity()
-{
-    if (!m_validityState)
-        m_validityState = ValidityState::create(this);
-
-    return m_validityState.get();
 }
 
 void HTMLFormControlElement::parseMappedAttribute(MappedAttribute *attr)

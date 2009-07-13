@@ -228,7 +228,6 @@ IDL_BINDINGS += \
 	WebCore/html/HTMLVideoElement.idl \
 	WebCore/html/ImageData.idl \
 	WebCore/html/TextMetrics.idl \
-	WebCore/html/ValidityState.idl \
 	WebCore/html/VoidCallback.idl \
 	WebCore/inspector/JavaScriptCallFrame.idl \
 	WebCore/inspector/InspectorController.idl \
@@ -1082,8 +1081,6 @@ webcore_sources += \
 	WebCore/html/PreloadScanner.cpp \
 	WebCore/html/PreloadScanner.h \
 	WebCore/html/TextMetrics.h \
-	WebCore/html/ValidityState.cpp \
-	WebCore/html/ValidityState.h \
 	WebCore/html/VoidCallback.h \
 	WebCore/icu/unicode/parseerr.h \
 	WebCore/icu/unicode/platform.h \

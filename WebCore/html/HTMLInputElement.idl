@@ -28,9 +28,6 @@ module html {
                  attribute [ConvertNullToNullString] DOMString defaultValue;
                  attribute boolean         defaultChecked;
         readonly attribute HTMLFormElement form;
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
-        readonly attribute ValidityState   validity;
-#endif
                  attribute [ConvertNullToNullString] DOMString accept;
                  attribute [ConvertNullToNullString] DOMString accessKey;
                  attribute [ConvertNullToNullString] DOMString align;
@@ -72,7 +69,7 @@ module html {
         readonly attribute URL             absoluteImageURL;
 #endif
 
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
+#if !defined(LANGUAGE_COM)
         readonly attribute FileList files;
 #endif
     };

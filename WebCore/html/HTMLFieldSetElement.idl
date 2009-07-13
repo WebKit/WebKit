@@ -25,9 +25,6 @@ module html {
         ImplementationUUID=93573758-96db-415d-9bdc-ee7238604094
     ] HTMLFieldSetElement : HTMLElement {
         readonly attribute HTMLFormElement form;
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
-        readonly attribute ValidityState   validity;
-#endif
         readonly attribute boolean         willValidate;
     };
 

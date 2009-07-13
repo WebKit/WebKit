@@ -27,9 +27,6 @@ module html {
     ] HTMLTextAreaElement : HTMLElement {
                  attribute  [ConvertNullToNullString] DOMString            defaultValue;
         readonly attribute  HTMLFormElement      form;
-#if !defined(LANGUAGE_COM) || !LANGUAGE_COM
-        readonly attribute  ValidityState        validity;
-#endif
                  attribute  [ConvertNullToNullString] DOMString            accessKey;
                  attribute  long                 cols;
                  attribute  boolean              disabled;

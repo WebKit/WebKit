@@ -395,7 +395,6 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSTextMetrics.cpp
         DerivedSources/WebCore/JSTreeWalker.cpp
         DerivedSources/WebCore/JSUIEvent.cpp
-        DerivedSources/WebCore/JSValidityState.cpp
         DerivedSources/WebCore/JSWebKitAnimationEvent.cpp
         DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp
         DerivedSources/WebCore/JSWebKitCSSKeyframesRule.cpp
@@ -654,7 +653,6 @@ This file contains the list of files needed to build WebCore.
         html/HTMLViewSourceDocument.cpp
         html/ImageData.cpp
         html/PreloadScanner.cpp
-        html/ValidityState.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_INSPECTOR">
