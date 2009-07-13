@@ -141,6 +141,7 @@ enum {
     MOVE_CURSOR,
     PRINT_REQUESTED,
     PLUGIN_WIDGET,
+    CLOSE_WEB_VIEW,
     LAST_SIGNAL
 };
 
@@ -692,6 +693,11 @@ static gboolean webkit_web_view_real_web_view_ready(WebKitWebView*)
     return FALSE;
 }
 
+static gboolean webkit_web_view_real_close_web_view(WebKitWebView*)
+{
+    return FALSE;
+}
+
 static WebKitNavigationResponse webkit_web_view_real_navigation_requested(WebKitWebView*, WebKitWebFrame*, WebKitNetworkRequest*)
 {
     return WEBKIT_NAVIGATION_RESPONSE_ACCEPT;
@@ -1103,6 +1109,26 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_FROM_CLASS(webViewClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
             G_STRUCT_OFFSET (WebKitWebViewClass, web_view_ready),
+            g_signal_accumulator_true_handled,
+            NULL,
+            webkit_marshal_BOOLEAN__VOID,
+            G_TYPE_BOOLEAN, 0);
+
+    /**
+     * WebKitWebView::close-web-view:
+     * @web_view: the object on which the signal is emitted
+     * @return: %TRUE to stop handlers from being invoked for the event or
+     * %FALSE to propagate the event furter
+     *
+     * Emitted when closing a WebView is requested. This occurs when a call
+     * is made from JavaScript's window.close function.
+     *
+     * Since 1.1.11
+     */
+    webkit_web_view_signals[CLOSE_WEB_VIEW] = g_signal_new("close-web-view",
+            G_TYPE_FROM_CLASS(webViewClass),
+            (GSignalFlags)G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET (WebKitWebViewClass, close_web_view),
             g_signal_accumulator_true_handled,
             NULL,
             webkit_marshal_BOOLEAN__VOID,
@@ -1719,6 +1745,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      */
     webViewClass->create_web_view = webkit_web_view_real_create_web_view;
     webViewClass->web_view_ready = webkit_web_view_real_web_view_ready;
+    webViewClass->close_web_view = webkit_web_view_real_close_web_view;
     webViewClass->navigation_requested = webkit_web_view_real_navigation_requested;
     webViewClass->window_object_cleared = webkit_web_view_real_window_object_cleared;
     webViewClass->choose_file = webkit_web_view_real_choose_file;
@@ -2049,7 +2076,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     gboolean autoLoadImages, autoShrinkImages, printBackgrounds,
         enableScripts, enablePlugins, enableDeveloperExtras, resizableTextAreas,
         enablePrivateBrowsing, enableCaretBrowsing, enableHTML5Database, enableHTML5LocalStorage,
-        enableXSSAuditor;
+        enableXSSAuditor, javascriptCanOpenWindows;
 
     g_object_get(webSettings,
                  "default-encoding", &defaultEncoding,
@@ -2072,6 +2099,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-html5-database", &enableHTML5Database,
                  "enable-html5-local-storage", &enableHTML5LocalStorage,
                  "enable-xss-auditor", &enableXSSAuditor,
+                 "javascript-can-open-windows-automatically", &javascriptCanOpenWindows,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -2094,6 +2122,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setDatabasesEnabled(enableHTML5Database);
     settings->setLocalStorageEnabled(enableHTML5LocalStorage);
     settings->setXSSAuditorEnabled(enableXSSAuditor);
+    settings->setJavaScriptCanOpenWindowsAutomatically(javascriptCanOpenWindows);
 
     g_free(defaultEncoding);
     g_free(cursiveFontFamily);
@@ -2172,6 +2201,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setLocalStorageEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-xss-auditor"))
         settings->setXSSAuditorEnabled(g_value_get_boolean(&value));
+    else if (name == g_intern_string("javascript-can-open-windows-automatically"))
+        settings->setJavaScriptCanOpenWindowsAutomatically(g_value_get_boolean(&value));
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);
@@ -3378,4 +3409,16 @@ void webkit_web_view_move_cursor(WebKitWebView* webView, GtkMovementStep step, g
 
     gboolean handled;
     g_signal_emit(webView, webkit_web_view_signals[MOVE_CURSOR], 0, step, count, &handled);
+}
+
+void webkit_web_view_set_group_name(WebKitWebView* webView, const gchar* groupName)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    if (!priv->corePage)
+        return;
+
+    priv->corePage->setGroupName(String::fromUTF8(groupName));
 }

@@ -1,3 +1,26 @@
+2009-07-13  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=26718 [Gtk] Add support for javascript windows for DRT
+
+        Reviewed by Gustavo Noronha and Xan Lopez.
+
+        Support running of tests that open and close JS windows automatically.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpFramesAsText):
+        (dumpBackForwardListForAllWebViews):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (dump):
+        (runTest):
+        (webViewClose):
+        (createWebView):
+        (webViewCreate):
+        (main):
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::windowCount):
+        (LayoutTestController::setPopupBlockingEnabled):
+
 2009-07-13  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Maciej Stachowiak.

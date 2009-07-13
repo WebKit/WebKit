@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Nuanti Ltd.
+ * Copyright (C) 2009 Jan Michael Alonzo <jmalonzo@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -230,8 +231,8 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
 
 int LayoutTestController::windowCount()
 {
-    // FIXME: implement
-    return 1;
+    // +1 -> including the main view
+    return g_slist_length(webViewList) + 1;
 }
 
 void LayoutTestController::setPrivateBrowsingEnabled(bool flag)
@@ -279,9 +280,14 @@ void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
     // FIXME: implement
 }
 
-void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
+void LayoutTestController::setPopupBlockingEnabled(bool flag)
 {
-    // FIXME: implement
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
+    g_object_set(G_OBJECT(settings), "javascript-can-open-windows-automatically", !flag, NULL);
+
 }
 
 bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id) 

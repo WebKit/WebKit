@@ -91,6 +91,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_html5_local_storage;
     gboolean enable_xss_auditor;
     gchar* user_agent;
+    gboolean javascript_can_open_windows_automatically;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -126,7 +127,8 @@ enum {
     PROP_ENABLE_HTML5_DATABASE,
     PROP_ENABLE_HTML5_LOCAL_STORAGE,
     PROP_ENABLE_XSS_AUDITOR,
-    PROP_USER_AGENT
+    PROP_USER_AGENT,
+    PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY
 };
 
 // Create a default user agent string
@@ -563,6 +565,22 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                         webkit_get_user_agent().utf8().data(),
                                                         flags));
 
+    /**
+    * WebKitWebSettings:javascript-can-open-windows-automatically
+    *
+    * Whether JavaScript can open popup windows automatically without user
+    * intervention.
+    *
+    * Since 1.1.11
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
+                                    g_param_spec_boolean("javascript-can-open-windows-automatically",
+                                                         _("JavaScript can open windows automatically"),
+                                                         _("Whether JavaScript can open windows automatically"),
+                                                         FALSE,
+                                                         flags));
+
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
@@ -737,6 +755,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
         else
             priv->user_agent = g_strdup(g_value_get_string(value));
         break;
+    case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
+        priv->javascript_can_open_windows_automatically = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -836,6 +857,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_USER_AGENT:
         g_value_set_string(value, priv->user_agent);
         break;
+    case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
+        g_value_set_boolean(value, priv->javascript_can_open_windows_automatically);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -896,6 +920,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-html5-local-storage", priv->enable_html5_local_storage,
                  "enable-xss-auditor", priv->enable_xss_auditor,
                  "user-agent", webkit_web_settings_get_user_agent(web_settings),
+                 "javascript-can-open-windows-automatically", priv->javascript_can_open_windows_automatically,
                  NULL));
 
     return copy;

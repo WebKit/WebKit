@@ -74,6 +74,8 @@ struct _WebKitWebViewClass {
 
     gboolean                   (* web_view_ready)          (WebKitWebView* web_view);
 
+    gboolean                   (* close_web_view)         (WebKitWebView* web_view);
+
     WebKitNavigationResponse   (* navigation_requested)   (WebKitWebView        *web_view,
                                                            WebKitWebFrame       *frame,
                                                            WebKitNetworkRequest *request);
@@ -121,7 +123,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
     void (*_webkit_reserved5) (void);
-    void (*_webkit_reserved6) (void);
 };
 
 WEBKIT_API GType
