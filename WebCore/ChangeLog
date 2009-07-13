@@ -1,3 +1,18 @@
+2009-07-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=27234
+        <rdar://problem/7054356>
+
+        Add null page check in HTMLDocument::hasFocus.
+
+        Test: fast/dom/HTMLDocument/hasFocus-frameless-crash.html
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::hasFocus): Add page null check.
+        (WebCore::HTMLDocument::createTokenizer): Cleanup page null check.
+
 2009-07-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
