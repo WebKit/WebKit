@@ -196,6 +196,7 @@ public:
     Vector<String> guessesForMisspelledSelection();
     Vector<String> guessesForUngrammaticalSelection();
     Vector<String> guessesForMisspelledOrUngrammaticalSelection(bool& misspelled, bool& ungrammatical);
+    bool spellCheckingEnabledInFocusedNode() const;
     void markMisspellingsAfterTypingToPosition(const VisiblePosition&);
     void markMisspellings(const VisibleSelection&, RefPtr<Range>& firstMisspellingRange);
     void markBadGrammar(const VisibleSelection&);

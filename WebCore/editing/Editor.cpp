@@ -2258,20 +2258,9 @@ static void markMisspellingsOrBadGrammar(Editor* editor, const VisibleSelection&
     Node* editableNode = searchRange->startContainer();
     if (!editableNode || !editableNode->isContentEditable())
         return;
-    
-    // Ascend the DOM tree to find a "spellcheck" attribute.
-    // When we find a "spellcheck" attribute, retrieve its value and exit if its value is "false".
-    const Node* node = editor->frame()->document()->focusedNode();
-    while (node) {
-        if (node->isElementNode()) {
-            const WebCore::AtomicString& value = static_cast<const Element*>(node)->getAttribute(spellcheckAttr);
-            if (equalIgnoringCase(value, "true"))
-                break;
-            if (equalIgnoringCase(value, "false"))
-                return;
-        }
-        node = node->parent();
-    }
+
+    if (!editor->spellCheckingEnabledInFocusedNode())
+        return;
 
     // Get the spell checker if it is available
     if (!editor->client())
@@ -2287,6 +2276,24 @@ static void markMisspellingsOrBadGrammar(Editor* editor, const VisibleSelection&
             markAllBadGrammarInRange(editor->client(), searchRange.get());
 #endif
     }    
+}
+
+bool Editor::spellCheckingEnabledInFocusedNode() const
+{
+    // Ascend the DOM tree to find a "spellcheck" attribute.
+    // When we find a "spellcheck" attribute, retrieve its value and return false if its value is "false".
+    const Node* node = frame()->document()->focusedNode();
+    while (node) {
+        if (node->isElementNode()) {
+            const WebCore::AtomicString& value = static_cast<const Element*>(node)->getAttribute(spellcheckAttr);
+            if (equalIgnoringCase(value, "true"))
+                return true;
+            if (equalIgnoringCase(value, "false"))
+                return false;
+        }
+        node = node->parent();
+    }
+    return true;
 }
 
 void Editor::markMisspellings(const VisibleSelection& selection, RefPtr<Range>& firstMisspellingRange)
@@ -2325,7 +2332,10 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(bool markSpelling, Range* 
     Node* editableNode = spellingRange->startContainer();
     if (!editableNode || !editableNode->isContentEditable())
         return;
-    
+
+    if (!spellCheckingEnabledInFocusedNode())
+        return;
+
     // Expand the range to encompass entire paragraphs, since text checking needs that much context.
     int spellingRangeStartOffset = 0;
     int spellingRangeEndOffset = 0;

@@ -1,3 +1,18 @@
+2009-07-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        spellcheck="false" is ignored
+        <rdar://problem/7054177>
+
+        * editing/Editor.cpp:
+        (WebCore::markMisspellingsOrBadGrammar): Moved code to check the
+            spellcheck attribute from here...
+        (WebCore::Editor::spellCheckingEnabledInFocusedNode): ...to here.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Bail out
+            if spell chcking is disabled by the spellcheck attribute.
+        * editing/Editor.h:
+
 2009-07-13  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
