@@ -1,3 +1,11 @@
+2009-07-12  Brent Fulgham  <bfulgham@gmail.com>
+
+        Speculative build fix after http://trac.webkit.org/changeset/45786.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::addMessageToConsole):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2009-07-09  Beth Dakin and Jon Honeycutt <bdakin@apple.com>
 
         Reviewed by Dave Hyatt.

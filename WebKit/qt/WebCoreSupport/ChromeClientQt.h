@@ -83,7 +83,7 @@ namespace WebCore {
 
         virtual void setResizable(bool);
 
-        virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message,
+        virtual void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message,
                                          unsigned int lineNumber, const String& sourceID);
 
         virtual bool canRunBeforeUnloadConfirmPanel();
