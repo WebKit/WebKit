@@ -373,10 +373,10 @@ void PluginView::setNPWindowIfNeeded()
     m_npWindow.height = m_windowRect.height();
 
     // TODO: (also clip against scrollbars, etc.)
-    m_npWindow.clipRect.left = 0;
-    m_npWindow.clipRect.top = 0;
-    m_npWindow.clipRect.right = m_windowRect.width();
-    m_npWindow.clipRect.bottom = m_windowRect.height();
+    m_npWindow.clipRect.left = max(0, m_windowRect.x());
+    m_npWindow.clipRect.top = max(0, m_windowRect.y());
+    m_npWindow.clipRect.right = m_windowRect.x() + m_windowRect.width();
+    m_npWindow.clipRect.bottom = m_windowRect.y() + m_windowRect.height();
 
     PluginView::setCurrentPluginView(this);
     JSC::JSLock::DropAllLocks dropAllLocks(false);
