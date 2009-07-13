@@ -1421,13 +1421,17 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
 }
 
 /*!
-    \class QWebPage::shouldInterruptJavaScript
+    \fn bool QWebPage::shouldInterruptJavaScript()
     \since 4.6
     This function is called when a JavaScript program is running for a long period of time.
 
     If the user wanted to stop the JavaScript the implementation should return true; otherwise false.
 
     The default implementation executes the query using QMessageBox::information with QMessageBox::Yes and QMessageBox::No buttons.
+
+    \warning Because of binary compatibility constraints, this function is not virtual. If you want to
+    provide your own implementation in a QWebPage subclass, reimplement the shouldInterruptJavaScript()
+    slot in your subclass instead. QtWebKit will dynamically detect the slot and call it.
 */
 bool QWebPage::shouldInterruptJavaScript()
 {
