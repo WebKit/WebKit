@@ -98,6 +98,7 @@ int main(int argc, char* argv[])
 #ifdef Q_WS_X11
     FcInit();
     WebCore::DumpRenderTree::initializeFonts();
+    QApplication::setGraphicsSystem("raster");
 #endif
     QApplication app(argc, argv);
 #ifdef Q_WS_X11
