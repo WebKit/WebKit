@@ -1,4 +1,22 @@
 =================
+WebKitGTK+ 1.1.11
+=================
+
+What's new in WebKitGTK+ 1.1.11?
+
+  - WebKit has got a new feature - a XSS auditor, that should improve
+    security; this feature is still experimental, and disabled by
+    default, but applications can enable it using the setting.
+  - The hackish content sniffing code that was beig used to avoid
+    pages requesting downloads instead of displaying content has been
+    replaced by usage of a new Soup feature, which implements proper
+    content sniffing.
+  - More accessibility work, including fixes for problems which were
+    critical for a possible GNOME 2.28 release.
+  - Pasting rich text from other browsers should now work as expected.
+  - The usual amount of misc fixes.
+
+=================
 WebKitGTK+ 1.1.10
 =================
 

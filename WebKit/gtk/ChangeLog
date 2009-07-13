@@ -1,5 +1,11 @@
 2009-07-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed. Late NEWS file for 1.1.11.
+
+        * NEWS:
+
+2009-07-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         Unreviewed. Changes to the doc control files for 1.1.11.
 
         * docs/webkitgtk-docs.sgml:
