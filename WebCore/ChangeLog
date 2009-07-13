@@ -1,3 +1,13 @@
+2009-07-12  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Inspector: Duplicate Computation in Autocompletion
+        https://bugs.webkit.org/show_bug.cgi?id=26778
+
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype._completionsReady):
+
 2009-07-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
