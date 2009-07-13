@@ -399,6 +399,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSQuarantinedObjectWrapper.h \
 	WebCore/bindings/js/JSRGBColor.cpp \
 	WebCore/bindings/js/JSRGBColor.h \
+	WebCore/bindings/js/JSSharedWorkerConstructor.h \
 	WebCore/bindings/js/JSStorageCustom.h \
 	WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	WebCore/bindings/js/JSStyleSheetListCustom.cpp \

@@ -138,6 +138,7 @@ javascriptcore_sources += \
 	JavaScriptCore/assembler/X86Assembler.h \
 	JavaScriptCore/assembler/AbstractMacroAssembler.h \
 	JavaScriptCore/assembler/AssemblerBuffer.h \
+	JavaScriptCore/assembler/CodeLocation.h \
 	JavaScriptCore/assembler/MacroAssembler.h \
 	JavaScriptCore/assembler/MacroAssemblerCodeRef.h \
 	JavaScriptCore/assembler/MacroAssemblerX86.h \
