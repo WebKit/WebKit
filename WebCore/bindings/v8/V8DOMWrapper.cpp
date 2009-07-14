@@ -1062,7 +1062,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertNodeToV8Object(Node* node)
             proxy->initContextIfNeeded();
     }
 
-    DOMWrapperMap<Node>& domNodeMap = proxy ? proxy->domNodeMap() : getDOMNodeMap();
+    DOMWrapperMap<Node>& domNodeMap = getDOMNodeMap();
     v8::Handle<v8::Object> wrapper = domNodeMap.get(node);
     if (!wrapper.IsEmpty())
         return wrapper;

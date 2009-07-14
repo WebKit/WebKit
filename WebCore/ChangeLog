@@ -2,6 +2,24 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [V8] Fix isolated world wrappers for Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=27271
+
+        Previously, we keepy a pointer to the DOMMap on V8Proxy, but this
+        caused us to miss the branch in V8DOMMap.cpp for isolated worlds.
+
+        I have tests, but I can't land them until I get this feature under
+        control.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertNodeToV8Object):
+        * bindings/v8/V8Proxy.h:
+        (WebCore::V8Proxy::V8Proxy):
+
+2009-07-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         [V8] Fix isolated world crash on getting window.location
         https://bugs.webkit.org/show_bug.cgi?id=27268
 
