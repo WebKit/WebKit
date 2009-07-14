@@ -33,6 +33,7 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "StorageAreaImpl.h"
+#include "StorageSyncManager.h"
 
 namespace WebCore {
 

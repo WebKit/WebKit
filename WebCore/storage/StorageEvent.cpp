@@ -33,6 +33,20 @@
 
 namespace WebCore {
 
+PassRefPtr<StorageEvent> StorageEvent::create()
+{
+    return adoptRef(new StorageEvent);
+}
+
+StorageEvent::StorageEvent()
+{
+}
+
+PassRefPtr<StorageEvent> StorageEvent::create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, PassRefPtr<DOMWindow> source, Storage* storageArea)
+{
+    return adoptRef(new StorageEvent(type, key, oldValue, newValue, uri, source, storageArea));
+}
+
 StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, PassRefPtr<DOMWindow> source, Storage* storageArea)
     : Event(type, false, true)
     , m_key(key)

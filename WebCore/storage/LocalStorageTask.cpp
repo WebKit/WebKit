@@ -49,6 +49,10 @@ LocalStorageTask::LocalStorageTask(Type type, PassRefPtr<LocalStorageThread> thr
     ASSERT(m_type == TerminateThread);
 }
 
+LocalStorageTask::~LocalStorageTask()
+{
+}
+
 void LocalStorageTask::performTask()
 {
     switch (m_type) {

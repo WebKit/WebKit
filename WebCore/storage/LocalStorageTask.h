@@ -49,6 +49,9 @@ namespace WebCore {
         void performTask();
 
     private:
+        friend class ThreadSafeShared<LocalStorageTask>;
+        ~LocalStorageTask();
+
         LocalStorageTask(Type, PassRefPtr<StorageAreaSync>);
         LocalStorageTask(Type, PassRefPtr<LocalStorageThread>);
 
