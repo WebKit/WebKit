@@ -36,6 +36,7 @@
 #include "V8Proxy.h"
 
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -46,8 +47,9 @@ NAMED_PROPERTY_GETTER(NodeList)
     String key = toWebCoreString(name);
 
     // Length property cannot be overridden.
-    if (key == "length")
-        return v8::Number::New(list->length());
+    DEFINE_STATIC_LOCAL(const AtomicString, length, ("length"));
+    if (key == length)
+        return v8::Integer::New(list->length());
 
     RefPtr<Node> result = list->itemWithName(key);
     if (!result)
