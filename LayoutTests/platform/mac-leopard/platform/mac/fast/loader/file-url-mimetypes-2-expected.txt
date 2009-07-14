@@ -88,7 +88,7 @@ example-pic.pic has MIME type application/octet-stream
 example-pict.pict has MIME type image/pict
 example-pl.pl has MIME type text/x-perl-script
 example-plist.plist has MIME type application/octet-stream
-example-pls.pls has MIME type audio/scpl
+example-pls.pls has MIME type audio/scpls
 example-pm.pm has MIME type text/x-perl-script
 example-png.png has MIME type image/png
 example-pnm.pnm has MIME type image/x-portable-anymap
