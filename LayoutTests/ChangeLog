@@ -1,3 +1,15 @@
+2009-07-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26925
+        <rdar://problem/7027850> URL Fragment Breaks Application Cache Loads
+
+        * http/tests/appcache/main-resource-hash-expected.txt: Added.
+        * http/tests/appcache/main-resource-hash.html: Added.
+        * http/tests/appcache/resources/main-resource-hash-frame.html: Added.
+        * http/tests/appcache/resources/main-resource-hash-frame.manifest: Added.
+
 2009-07-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

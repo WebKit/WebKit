@@ -1,3 +1,33 @@
+2009-07-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26925
+        <rdar://problem/7027850> URL Fragment Breaks Application Cache Loads
+
+        Test: http/tests/appcache/main-resource-hash.html
+
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::resourceForURL):
+        (WebCore::ApplicationCache::resourceForRequest):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::cacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::fallbackCacheForMainRequest):
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::addEntry):
+        Remove URL fragment at appcache code borders.
+
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::create):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::findOrCreateCacheGroup):
+        (WebCore::ApplicationCacheStorage::cacheGroupForURL):
+        (WebCore::ApplicationCacheStorage::fallbackCacheGroupForURL):
+        Assert that there is no URL fragment in URL at key points in appcache code.
+
 2009-07-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

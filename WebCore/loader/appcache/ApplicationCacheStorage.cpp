@@ -126,11 +126,12 @@ ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const KURL& manif
 
 ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KURL& manifestURL)
 {
+    ASSERT(!manifestURL.hasRef());
+
     std::pair<CacheGroupMap::iterator, bool> result = m_cachesInMemory.add(manifestURL, 0);
     
     if (!result.second) {
         ASSERT(result.first->second);
-        
         return result.first->second;
     }
 
@@ -175,6 +176,8 @@ void ApplicationCacheStorage::loadManifestHostHashes()
 
 ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url)
 {
+    ASSERT(!url.hasRef());
+    
     loadManifestHostHashes();
     
     // Hash the host name and see if there's a manifest with the same host.
@@ -248,6 +251,8 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url
 
 ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const KURL& url)
 {
+    ASSERT(!url.hasRef());
+
     // Check if an appropriate cache already exists in memory.
     CacheGroupMap::const_iterator end = m_cachesInMemory.end();
     for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it) {

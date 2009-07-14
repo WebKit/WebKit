@@ -106,6 +106,7 @@ unsigned ApplicationCache::removeResource(const String& url)
     
 ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
 {
+    ASSERT(!KURL(url).hasRef());
     return m_resources.get(url).get();
 }    
 
@@ -125,8 +126,12 @@ ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceReq
     // We only care about HTTP/HTTPS GET requests.
     if (!requestIsHTTPOrHTTPSGet(request))
         return false;
-    
-    return resourceForURL(request.url());
+
+    KURL url(request.url());
+    if (url.hasRef())
+        url.removeRef();
+
+    return resourceForURL(url);
 }
 
 void ApplicationCache::setOnlineWhitelist(const Vector<KURL>& onlineWhitelist)
