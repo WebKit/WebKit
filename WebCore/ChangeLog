@@ -1,3 +1,43 @@
+2009-07-14  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Do not do unnecessary conversions from v8::Handle<v8::Value> to
+        v8::Handle<v8::Object> and accompanying changes.
+        https://bugs.webkit.org/show_bug.cgi?id=26953
+
+        Three things:
+
+        1) do not cast from v8::Value to v8::Object if unnecessary---casts are cheap,
+        but are not free (they check for emptiness of handle);
+        2) inline conversion from wrapper to node;
+        3) simplify case to an ASSERT.
+
+        This is just a refactoring, so no new tests are needed.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluateInNewContext):
+        (WebCore::V8Proxy::convertToSVGPODTypeImpl):
+        * bindings/v8/V8Proxy.h:
+        (WebCore::V8Proxy::convertDOMWrapperToNative):
+        (WebCore::V8Proxy::convertToNativeObject):
+        (WebCore::V8Proxy::convertToNativeEvent):
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+        (WebCore::toCanvasStyle):
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8CustomBinding.cpp:
+        (WebCore::V8Custom::GetTargetFrame):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        (WebCore::V8Custom::ClearTimeoutImpl):
+        (WebCore::NAMED_ACCESS_CHECK):
+        (WebCore::INDEXED_ACCESS_CHECK):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+
 2009-07-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
@@ -3290,7 +3330,7 @@
         (WebCore::RenderView::setMaximalOutlineSize):
         Add comment indicating that this could be optimized.
 
-2009-07-07  Anton Muhin  <antonm@chromium.org>
+2009-07-14  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Darin Fisher.
 

@@ -148,7 +148,25 @@ namespace WebCore {
         template <class C>
         static C* convertToNativeObject(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Value> object)
         {
-            return static_cast<C*>(convertToNativeObjectImpl(type, object));
+            // Native event listener is per frame, it cannot be handled by this generic function.
+            ASSERT(type != V8ClassIndex::EVENTLISTENER);
+            ASSERT(type != V8ClassIndex::EVENTTARGET);
+
+            ASSERT(maybeDOMWrapper(object));
+
+#ifndef NDEBUG
+            const bool typeIsValid =
+#define MAKE_CASE(TYPE, NAME) (type != V8ClassIndex::TYPE) &&
+                DOM_NODE_TYPES(MAKE_CASE)
+#if ENABLE(SVG)
+                SVG_NODE_TYPES(MAKE_CASE)
+#endif
+#undef MAKE_CASE
+                true;
+            ASSERT(typeIsValid);
+#endif
+
+            return convertDOMWrapperToNative<C>(object);
         }
 
         static V8ClassIndex::V8WrapperType domWrapperType(v8::Handle<v8::Object>);
@@ -190,8 +208,6 @@ namespace WebCore {
 
         // Check whether a V8 value is a DOM Event wrapper.
         static bool isDOMEventWrapper(v8::Handle<v8::Value>);
-
-        static void* convertToNativeObjectImpl(V8ClassIndex::V8WrapperType, v8::Handle<v8::Value>);
 
         static v8::Handle<v8::Value> convertStyleSheetToV8Object(StyleSheet*);
         static v8::Handle<v8::Value> convertCSSValueToV8Object(CSSValue*);

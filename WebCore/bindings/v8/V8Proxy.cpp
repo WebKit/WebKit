@@ -527,7 +527,7 @@ void V8Proxy::evaluateInNewContext(const Vector<ScriptSourceCode>& sources)
     // Set up the DOM window as the prototype of the new global object.
     v8::Handle<v8::Context> windowContext = m_context;
     v8::Handle<v8::Object> windowGlobal = windowContext->Global();
-    v8::Handle<v8::Value> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, windowGlobal);
+    v8::Handle<v8::Object> windowWrapper = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, windowGlobal);
 
     ASSERT(V8DOMWrapper::convertDOMWrapperToNative<DOMWindow>(windowWrapper) == m_frame->domWindow());
 

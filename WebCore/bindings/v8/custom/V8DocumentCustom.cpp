@@ -61,7 +61,7 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
 
     XPathNSResolver* resolver = 0;
     if (V8XPathNSResolver::HasInstance(args[2]))
-        resolver = V8DOMWrapper::convertToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, args[2]);
+        resolver = V8DOMWrapper::convertToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, v8::Handle<v8::Object>::Cast(args[2]));
     else if (args[2]->IsObject())
         resolver = new V8CustomXPathNSResolver(args[2]->ToObject());
     else if (!args[2]->IsNull() && !args[2]->IsUndefined())
@@ -70,7 +70,7 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     int type = toInt32(args[3]);
     XPathResult* inResult = 0;
     if (V8XPathResult::HasInstance(args[4]))
-        inResult = V8DOMWrapper::convertToNativeObject<XPathResult>(V8ClassIndex::XPATHRESULT, args[4]);
+        inResult = V8DOMWrapper::convertToNativeObject<XPathResult>(V8ClassIndex::XPATHRESULT, v8::Handle<v8::Object>::Cast(args[4]));
 
     v8::TryCatch exceptionCatcher;
     RefPtr<XPathResult> result = document->evaluate(expression, contextNode, resolver, type, inResult, ec);

@@ -800,7 +800,7 @@ sub GenerateFunctionCallback
         push(@implContentDecls, "    $nativeClassName* imp = &imp_instance;\n");
     } else {
         push(@implContentDecls, <<END);
-    v8::Handle<v8::Value> holder = args.Holder();
+    v8::Handle<v8::Object> holder = args.Holder();
 END
         HolderToNative($dataNode, $implClassName, $classIndex);
     }
@@ -1858,7 +1858,7 @@ sub JSValueToNative
 
         # Perform type checks on the parameter, if it is expected Node type,
         # return NULL.
-        return "V8${type}::HasInstance($value) ? V8DOMWrapper::convertToNativeObject<${implClassName}>(V8ClassIndex::${classIndex}, $value) : 0";
+        return "V8${type}::HasInstance($value) ? V8DOMWrapper::convertToNativeObject<${implClassName}>(V8ClassIndex::${classIndex}, v8::Handle<v8::Object>::Cast($value)) : 0";
     }
 }
 

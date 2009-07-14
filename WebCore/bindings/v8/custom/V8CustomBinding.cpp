@@ -118,7 +118,7 @@ Frame* V8Custom::GetTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value>
     Frame* target = 0;
     switch (V8ClassIndex::FromInt(data->Int32Value())) {
     case V8ClassIndex::DOMWINDOW: {
-        v8::Handle<v8::Value> window = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
+        v8::Handle<v8::Object> window = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, host);
         if (window.IsEmpty())
             return target;
 

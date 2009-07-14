@@ -599,37 +599,6 @@ V8ClassIndex::V8WrapperType V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> 
     return V8ClassIndex::FromInt(type->Int32Value());
 }
 
-void* V8DOMWrapper::convertToNativeObjectImpl(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Value> object)
-{
-    // Native event listener is per frame, it cannot be handled by this generic function.
-    ASSERT(type != V8ClassIndex::EVENTLISTENER);
-    ASSERT(type != V8ClassIndex::EVENTTARGET);
-
-    ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
-
-    switch (type) {
-#define MAKE_CASE(TYPE, NAME) case V8ClassIndex::TYPE:
-        DOM_NODE_TYPES(MAKE_CASE)
-#if ENABLE(SVG)
-        SVG_NODE_TYPES(MAKE_CASE)
-#endif
-        ASSERT_NOT_REACHED();
-        return 0;
-    case V8ClassIndex::XMLHTTPREQUEST:
-        return convertDOMWrapperToNative<XMLHttpRequest>(object);
-    case V8ClassIndex::EVENT:
-        return convertDOMWrapperToNative<Event>(object);
-    case V8ClassIndex::CSSRULE:
-        return convertDOMWrapperToNative<CSSRule>(object);
-    default:
-        break;
-    }
-#undef MAKE_CASE
-
-    return convertDOMWrapperToNative<void>(object);
-}
-
-
 void* V8DOMWrapper::convertToSVGPODTypeImpl(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Value> object)
 {
     return isWrapperOfType(object, type) ? convertDOMWrapperToNative<void>(object) : 0;
