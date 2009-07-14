@@ -1875,11 +1875,6 @@ tryAgain:
 
 PassRefPtr<Range> findPlainText(const Range* range, const String& target, bool forward, bool caseSensitive)
 {
-    // We can't search effectively for a string that's entirely made of collapsible
-    // whitespace, so we won't even try. This also takes care of the empty string case.
-    if (isAllCollapsibleWhitespace(target))
-        return collapsedToBoundary(range, forward);
-
     // First, find the text.
     size_t matchStart;
     size_t matchLength;
