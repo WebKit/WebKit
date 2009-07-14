@@ -247,7 +247,7 @@ void ScriptController::bindToWindowObject(Frame* frame, const String& key, NPObj
 
     v8::Context::Scope scope(v8Context);
 
-    v8::Handle<v8::Object> value = CreateV8ObjectForNPObject(object, 0);
+    v8::Handle<v8::Object> value = createV8ObjectForNPObject(object, 0);
 
     // Attach to the global object.
     v8::Handle<v8::Object> global = v8Context->Global();
@@ -311,7 +311,7 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
     // NPObject as part of its wrapper. However, before accessing the object
     // it must consult the NPN_Registry.
 
-    v8::Local<v8::Object> wrapper = CreateV8ObjectForNPObject(npObject, 0);
+    v8::Local<v8::Object> wrapper = createV8ObjectForNPObject(npObject, 0);
 
     // Track the plugin object. We've been given a reference to the object.
     m_pluginObjects.set(widget, npObject);
