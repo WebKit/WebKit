@@ -99,6 +99,7 @@ static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-in
 static const char* const resourceTrackingEnabledSettingName = "resourceTrackingEnabled";
 static const char* const debuggerEnabledSettingName = "debuggerEnabled";
 static const char* const profilerEnabledSettingName = "profilerEnabled";
+static const char* const lastActivePanelSettingName = "lastActivePanel";
 
 bool InspectorController::addSourceToFrame(const String& mimeType, const String& source, Node* frameNode)
 {
@@ -168,7 +169,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_page(0)
     , m_scriptState(0)
     , m_windowVisible(false)
-    , m_showAfterVisible(ElementsPanel)
+    , m_showAfterVisible(CurrentPanel)
     , m_nextIdentifier(-2)
     , m_groupLevel(0)
     , m_searchingForNode(false)
@@ -371,14 +372,20 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
     if (m_windowVisible) {
         setAttachedWindow(attached);
         populateScriptObjects();
+
+        if (m_showAfterVisible == CurrentPanel) {
+          Setting lastActivePanelSetting = setting(lastActivePanelSettingName);
+          if (lastActivePanelSetting.type() == Setting::StringType)
+              m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting.string());
+        }
+
         if (m_nodeToFocus)
             focusNode();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_attachDebuggerWhenShown)
             enableDebugger();
 #endif
-        if (m_showAfterVisible != CurrentPanel)
-            showPanel(m_showAfterVisible);
+        showPanel(m_showAfterVisible);
     } else {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         // If the window is being closed with the debugger enabled,
@@ -391,7 +398,6 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
 #endif
         resetScriptObjects();
     }
-
     m_showAfterVisible = CurrentPanel;
 }
 
@@ -480,6 +486,11 @@ void InspectorController::setAttachedWindowHeight(unsigned height)
     if (!enabled())
         return;
     m_client->setAttachedWindowHeight(height);
+}
+
+void InspectorController::storeLastActivePanel(const String& panelName)
+{
+    setSetting(lastActivePanelSettingName, Setting(panelName));
 }
 
 void InspectorController::toggleSearchForNodeInPage()
@@ -1527,6 +1538,22 @@ bool InspectorController::stopTiming(const String& title, double& elapsed)
     
     elapsed = currentTime() * 1000 - startTime;
     return true;
+}
+
+InspectorController::SpecialPanels InspectorController::specialPanelForJSName(const String& panelName)
+{
+    if (panelName == "elements")
+        return ElementsPanel;
+    else if (panelName == "resources")
+        return ResourcesPanel;
+    else if (panelName == "scripts")
+        return ScriptsPanel;
+    else if (panelName == "profiles")
+        return ProfilesPanel;
+    else if (panelName == "databases")
+        return DatabasesPanel;
+    else
+        return ElementsPanel;
 }
 
 } // namespace WebCore

@@ -117,6 +117,11 @@ var WebInspector = {
                 }
             }
         }
+        
+        for (var panelName in WebInspector.panels) {
+            if (WebInspector.panels[panelName] == x)
+                InspectorController.storeLastActivePanel(panelName);
+        }
     },
 
     get attached()
@@ -306,8 +311,6 @@ WebInspector.loaded = function()
             toolbarElement.insertBefore(panelToolbarItem, toolbarElement.firstChild);
         previousToolbarItem = panelToolbarItem;
     }
-
-    this.currentPanel = this.panels.elements;
 
     this.resourceCategories = {
         documents: new WebInspector.ResourceCategory(WebInspector.UIString("Documents"), "documents"),

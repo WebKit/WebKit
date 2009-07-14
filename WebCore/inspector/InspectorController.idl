@@ -87,6 +87,7 @@ module core {
         void setPauseOnExceptions(in boolean pauseOnExceptions);
         void addBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
         void removeBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
+        void storeLastActivePanel(in DOMString panelName);
 
         [Custom] Array profiles();
 #endif
