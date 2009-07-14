@@ -58,6 +58,8 @@ public:
     const AtomicString& coords() const;
     void setCoords(const AtomicString&);
 
+    virtual bool draggable() const;
+
     KURL href() const;
     void setHref(const AtomicString&);
 

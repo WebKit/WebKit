@@ -69,6 +69,7 @@ defer
 dir
 direction
 disabled
+draggable
 enctype
 end
 expanded

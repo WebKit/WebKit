@@ -143,6 +143,13 @@ void HTMLElement::parseMappedAttribute(MappedAttribute *attr)
     } else if (attr->name() == dirAttr) {
         addCSSProperty(attr, CSSPropertyDirection, attr->value());
         addCSSProperty(attr, CSSPropertyUnicodeBidi, hasLocalName(bdoTag) ? CSSValueBidiOverride : CSSValueEmbed);
+    } else if (attr->name() == draggableAttr) {
+        const AtomicString& value = attr->value();
+        if (equalIgnoringCase(value, "true")) {
+            addCSSProperty(attr, CSSPropertyWebkitUserDrag, CSSValueElement);
+            addCSSProperty(attr, CSSPropertyWebkitUserSelect, CSSValueNone);
+        } else if (equalIgnoringCase(value, "false"))
+            addCSSProperty(attr, CSSPropertyWebkitUserDrag, CSSValueNone);
     }
 // standard events
     else if (attr->name() == onclickAttr) {
@@ -690,6 +697,16 @@ void HTMLElement::setContentEditable(const String &enabled)
     }
     else
         setAttribute(contenteditableAttr, enabled.isEmpty() ? "true" : enabled);
+}
+
+bool HTMLElement::draggable() const
+{
+    return equalIgnoringCase(getAttribute(draggableAttr), "true");
+}
+
+void HTMLElement::setDraggable(bool value)
+{
+    setAttribute(draggableAttr, value ? "true" : "false");
 }
 
 void HTMLElement::click()

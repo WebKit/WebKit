@@ -1,3 +1,31 @@
+2009-07-13  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Darin Adler and Maciej Stachowiak.
+
+        Implement HTML5 draggable
+        https://bugs.webkit.org/show_bug.cgi?id=26262
+
+        This adds support for the HTML5 draggable attribute and its DOM binding. It maps the draggable property
+        to the CSS properties -webkit-user-drag and -webkit-user-select respectively.
+
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/multipage/editing.html#the-draggable-attribute
+
+        Test: fast/html/draggable.html
+
+        * css/html.css:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::draggable):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::draggable):
+        (WebCore::HTMLElement::setDraggable):
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::draggable):
+        * html/HTMLImageElement.h:
+
 2009-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

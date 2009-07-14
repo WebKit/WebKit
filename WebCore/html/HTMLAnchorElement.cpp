@@ -350,6 +350,17 @@ void HTMLAnchorElement::setCoords(const AtomicString& value)
     setAttribute(coordsAttr, value);
 }
 
+bool HTMLAnchorElement::draggable() const
+{
+    // Should be draggable if we have an href attribute.
+    const AtomicString& value = getAttribute(draggableAttr);
+    if (equalIgnoringCase(value, "true"))
+        return true;
+    if (equalIgnoringCase(value, "false"))
+        return false;
+    return hasAttribute(hrefAttr);
+}
+
 KURL HTMLAnchorElement::href() const
 {
     return document()->completeURL(getAttribute(hrefAttr));

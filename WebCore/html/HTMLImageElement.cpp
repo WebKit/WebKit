@@ -319,6 +319,12 @@ void HTMLImageElement::setBorder(const String& value)
     setAttribute(borderAttr, value);
 }
 
+bool HTMLImageElement::draggable() const
+{
+    // Image elements are draggable by default.
+    return !equalIgnoringCase(getAttribute(draggableAttr), "false");
+}
+
 void HTMLImageElement::setHeight(int value)
 {
     setAttribute(heightAttr, String::number(value));

@@ -36,6 +36,7 @@ module html {
                  attribute [ConvertNullToNullString, Reflect=class] DOMString className;
 
                  attribute long            tabIndex;
+                 attribute boolean         draggable;
 
         // Extensions
                  attribute [ConvertNullToNullString] DOMString innerHTML
