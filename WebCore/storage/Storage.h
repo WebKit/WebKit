@@ -28,6 +28,8 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "StorageArea.h"
+
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -35,7 +37,6 @@
 namespace WebCore {
 
     class Frame;
-    class StorageArea;
     class String;
     typedef int ExceptionCode;
 
@@ -55,9 +56,6 @@ namespace WebCore {
         void disconnectFrame() { m_frame = 0; }
 
     private:
-        friend class RefCounted<Storage>;
-        ~Storage();
-
         Storage(Frame*, PassRefPtr<StorageArea>);
             
         Frame* m_frame;

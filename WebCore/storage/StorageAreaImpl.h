@@ -30,13 +30,7 @@
 
 #include "StorageArea.h"
 
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
-
-    class SecurityOrigin;
-    class StorageMap;
-    class StorageAreaSync;
 
     class StorageAreaImpl : public StorageArea {
     public:

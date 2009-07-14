@@ -28,15 +28,16 @@
 
 #if ENABLE(DOM_STORAGE)
 
-#include "PlatformString.h"
+#include "SecurityOriginHash.h"
+#include "StorageArea.h"
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    class SecurityOrigin;
     class StorageArea;
+    class StorageSyncManager;
 
     // This interface is required for Chromium since these actions need to be proxied between processes.
     class StorageNamespace : public RefCounted<StorageNamespace> {

@@ -29,14 +29,23 @@
 #if ENABLE(DOM_STORAGE)
 
 #include "PlatformString.h"
+#include "SecurityOrigin.h"
+#include "StorageAreaSync.h"
+#include "StorageMap.h"
+#include "StorageSyncManager.h"
 
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
     class Frame;
+    class Page;
     class SecurityOrigin;
+    class StorageAreaSync;
+    class StorageMap;
     class StorageSyncManager;
     typedef int ExceptionCode;
     enum StorageType { LocalStorage, SessionStorage };

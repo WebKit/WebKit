@@ -1,3 +1,28 @@
+2009-07-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        Revert http://trac.webkit.org/changeset/45864 after
+        breaking of Windows build.
+
+        * storage/LocalStorageTask.cpp:
+        * storage/LocalStorageTask.h:
+        * storage/Storage.cpp:
+        * storage/Storage.h:
+        * storage/StorageArea.cpp:
+        * storage/StorageArea.h:
+        * storage/StorageAreaImpl.cpp:
+        * storage/StorageAreaImpl.h:
+        * storage/StorageAreaSync.cpp:
+        * storage/StorageAreaSync.h:
+        * storage/StorageEvent.cpp:
+        * storage/StorageEvent.h:
+        (WebCore::StorageEvent::create):
+        (WebCore::StorageEvent::StorageEvent):
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceImpl.cpp:
+        * storage/StorageNamespaceImpl.h:
+        * storage/StorageSyncManager.cpp:
+        * storage/StorageSyncManager.h:
+
 2009-07-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Adler.
