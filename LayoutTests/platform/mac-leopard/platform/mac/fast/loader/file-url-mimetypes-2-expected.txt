@@ -14,7 +14,7 @@ example-m.m has MIME type text/plain
 example-m15.m15 has MIME type video/mpeg
 example-m2v.m2v has MIME type video/mpeg2
 example-m3u.m3u has MIME type audio/x-mpegurl
-example-m4a.m4a has MIME type audio/mp4
+example-m4a.m4a has MIME type application/octet-stream
 example-m4b.m4b has MIME type application/octet-stream
 example-m4p.m4p has MIME type audio/x-m4p
 example-m4v.m4v has MIME type application/octet-stream
@@ -88,7 +88,7 @@ example-pic.pic has MIME type application/octet-stream
 example-pict.pict has MIME type image/pict
 example-pl.pl has MIME type text/x-perl-script
 example-plist.plist has MIME type application/octet-stream
-example-pls.pls has MIME type audio/x-scpls
+example-pls.pls has MIME type audio/scpl
 example-pm.pm has MIME type text/x-perl-script
 example-png.png has MIME type image/png
 example-pnm.pnm has MIME type image/x-portable-anymap
@@ -105,7 +105,7 @@ example-pptx.pptx has MIME type application/vnd.openxmlformats-officedocument.pr
 example-ps.ps has MIME type application/postscript
 example-psd.psd has MIME type image/vnd.adobe.photoshop
 example-py.py has MIME type text/x-python-script
-example-qif.qif has MIME type application/octet-stream
+example-qif.qif has MIME type image/x-quicktime
 example-qt.qt has MIME type video/quicktime
 example-qti.qti has MIME type image/x-quicktime
 example-qtif.qtif has MIME type image/x-quicktime

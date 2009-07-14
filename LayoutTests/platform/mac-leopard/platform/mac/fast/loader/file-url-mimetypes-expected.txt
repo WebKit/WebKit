@@ -16,7 +16,7 @@ example-aiff.aiff has MIME type audio/aiff
 example-app.app has MIME type application/octet-stream
 example-applescript.applescript has MIME type text/plain
 example-arw.arw has MIME type application/octet-stream
-example-as.as has MIME type application/octet-stream
+example-as.as has MIME type text/plain
 example-asc.asc has MIME type text/plain
 example-asf.asf has MIME type video/x-ms-asf
 example-asx.asx has MIME type video/x-ms-asx
@@ -54,7 +54,7 @@ example-dls.dls has MIME type audio/dls
 example-dlyan.dlyan has MIME type text/plain
 example-dmg.dmg has MIME type application/x-diskcopy
 example-dms.dms has MIME type application/octet-stream
-example-dng.dng has MIME type image/x-adobe-dng
+example-dng.dng has MIME type application/octet-stream
 example-doc.doc has MIME type application/msword
 example-docm.docm has MIME type application/vnd.ms-word.document.macroenabled.12
 example-docx.docx has MIME type application/vnd.openxmlformats-officedocument.wordprocessingml.document
@@ -104,7 +104,7 @@ example-icc.icc has MIME type application/octet-stream
 example-ice.ice has MIME type x-conference/x-cooltalk
 example-icm.icm has MIME type application/octet-stream
 example-icns.icns has MIME type application/octet-stream
-example-ico.ico has MIME type image/vnd.microsoft.icon
+example-ico.ico has MIME type image/x-icon
 example-ics.ics has MIME type text/calendar
 example-ief.ief has MIME type image/ief
 example-iges.iges has MIME type model/iges
