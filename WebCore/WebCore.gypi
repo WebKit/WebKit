@@ -834,6 +834,8 @@
             'css/MediaQueryExp.h',
             'css/Pair.h',
             'css/Rect.h',
+            'css/RGBColor.cpp',
+            'css/RGBColor.h',
             'css/SVGCSSComputedStyleDeclaration.cpp',
             'css/SVGCSSParser.cpp',
             'css/SVGCSSStyleSelector.cpp',
