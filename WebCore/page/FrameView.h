@@ -207,11 +207,7 @@ private:
 
     virtual void repaintContentRectangle(const IntRect&, bool immediate);
     virtual void contentsResized() { setNeedsLayout(); }
-    virtual void visibleContentsResized()
-    {
-        if (needsLayout())
-            layout();
-    }
+    virtual void visibleContentsResized();
 
     // Override ScrollView methods to do point conversion via renderers, in order to
     // take transforms into account.

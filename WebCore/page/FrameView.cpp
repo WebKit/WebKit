@@ -825,6 +825,19 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
     ScrollView::repaintContentRectangle(r, immediate);
 }
 
+void FrameView::visibleContentsResized()
+{
+    // We check to make sure the view is attached to a frame() as this method can
+    // be triggered before the view is attached by Frame::createView(...) setting
+    // various values such as setScrollBarModes(...) for example.  An ASSERT is
+    // triggered when a view is layout before being attached to a frame().
+    if (!frame()->view())
+        return;
+
+    if (needsLayout())
+        layout();
+}
+
 void FrameView::beginDeferredRepaints()
 {
     Page* page = m_frame->page();
