@@ -851,12 +851,12 @@ void HTMLMediaElement::returnToRealtime()
 
 bool HTMLMediaElement::supportsFullscreen() const
 {
-    return m_player->supportsFullscreen();
+    return m_player ? m_player->supportsFullscreen() : false;
 }
 
 bool HTMLMediaElement::supportsSave() const
 {
-    return m_player->supportsSave();
+    return m_player ? m_player->supportsSave() : false;
 }
     
 void HTMLMediaElement::seek(float time, ExceptionCode& ec)
