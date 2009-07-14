@@ -1,3 +1,36 @@
+2009-07-14  Albert J. Wong  <ajwong@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add HTMLMediaElement::supportSave() and a
+        HitTestResult::absoluteMediaURL() functions
+        https://bugs.webkit.org/show_bug.cgi?id=27246
+
+        Added an implementation of supportsSave() into HTMLMediaElement
+        that delegates to MediaPlayerPrivateImpl so that the media engine
+        is able to signal whether or not a media source supports saving.
+
+        Also added a function to HitTestResult that allows for retrieval
+        of the currentSrc associated with the "hit" media element. 
+        
+        These functions are just pipeing with no visible UI change so there
+        are no related layout test changes.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::supportsFullscreen): 
+        (WebCore::HTMLMediaElement::supportsSave):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsSave):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::supportsFullscreen):
+        (WebCore::MediaPlayerPrivateInterface::supportsSave):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::altDisplayString):
+        (WebCore::HitTestResult::absoluteMediaURL):
+        * rendering/HitTestResult.h:
+
 2009-07-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

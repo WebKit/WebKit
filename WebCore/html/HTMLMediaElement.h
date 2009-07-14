@@ -69,7 +69,8 @@ public:
     void rewind(float timeDelta);
     void returnToRealtime();
     
-    virtual bool supportsFullscreen() const { return false; }
+    virtual bool supportsFullscreen() const;
+    virtual bool supportsSave() const;
 
     void scheduleLoad();
     
