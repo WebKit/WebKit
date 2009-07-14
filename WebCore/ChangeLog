@@ -1,3 +1,22 @@
+2009-07-10  Matt Perry  <mpcomplete@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] Rename the didCreate/DestroyScriptContext calls to make it
+        clear that that those refer to the frame's contxt.  Add another
+        similar call for when creating contexts via evaluateInNewContext.
+        https://bugs.webkit.org/show_bug.cgi?id=27104
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluateInNewContext):
+        (WebCore::V8Proxy::disposeContextHandles):
+        (WebCore::V8Proxy::initContextIfNeeded):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::didCreateScriptContextForFrame):
+        (WebCore::EmptyFrameLoaderClient::didDestroyScriptContextForFrame):
+        (WebCore::EmptyFrameLoaderClient::didCreateIsolatedScriptContext):
+        * loader/FrameLoaderClient.h:
+
 2009-07-14  Brent Fulgham  <bfulgham@webkit.org>
 
         Revert http://trac.webkit.org/changeset/45864 after

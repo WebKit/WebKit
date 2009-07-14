@@ -287,8 +287,9 @@ public:
     virtual void registerForIconNotification(bool) { }
 
 #if USE(V8)
-    virtual void didCreateScriptContext() { }
-    virtual void didDestroyScriptContext() { }
+    virtual void didCreateScriptContextForFrame() { }
+    virtual void didDestroyScriptContextForFrame() { }
+    virtual void didCreateIsolatedScriptContext() { }
 #endif
 
 #if PLATFORM(MAC)

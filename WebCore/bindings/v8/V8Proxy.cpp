@@ -553,6 +553,8 @@ void V8Proxy::evaluateInNewContext(const Vector<ScriptSourceCode>& sources)
     // original context.
     global->Set(v8::String::New("contentWindow"), windowGlobal);
 
+    m_frame->loader()->client()->didCreateIsolatedScriptContext();
+
     // Run code in the new context.
     for (size_t i = 0; i < sources.size(); ++i)
         evaluate(sources[i], 0);
@@ -938,7 +940,7 @@ void V8Proxy::clearDocumentWrapperCache()
 void V8Proxy::disposeContextHandles()
 {
     if (!m_context.IsEmpty()) {
-        m_frame->loader()->client()->didDestroyScriptContext();
+        m_frame->loader()->client()->didDestroyScriptContextForFrame();
         m_context.Dispose();
         m_context.Clear();
     }
@@ -1307,7 +1309,7 @@ void V8Proxy::initContextIfNeeded()
 
     setSecurityToken();
 
-    m_frame->loader()->client()->didCreateScriptContext();
+    m_frame->loader()->client()->didCreateScriptContextForFrame();
     m_frame->loader()->dispatchWindowObjectAvailable();
 }
 
