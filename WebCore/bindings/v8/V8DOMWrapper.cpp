@@ -582,6 +582,12 @@ void V8DOMWrapper::setHiddenWindowReference(Frame* frame, const int internalInde
     if (v8Context.IsEmpty())
         return;
 
+    if (V8IsolatedWorld* world = V8IsolatedWorld::getEntered()) {
+       v8Context = world->context();
+       if (frame != V8Proxy::retrieveFrame(v8Context))
+           return;
+    }
+
     ASSERT(internalIndex < V8Custom::kDOMWindowInternalFieldCount);
 
     v8::Handle<v8::Object> global = v8Context->Global();

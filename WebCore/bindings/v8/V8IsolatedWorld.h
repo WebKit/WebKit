@@ -73,6 +73,8 @@ namespace WebCore {
         //
         static V8IsolatedWorld* getEntered();
 
+        v8::Handle<v8::Context> context() { return m_context; }
+
         DOMDataStore* getDOMDataStore() const { return m_domDataStore.getStore(); }
 
     private:
