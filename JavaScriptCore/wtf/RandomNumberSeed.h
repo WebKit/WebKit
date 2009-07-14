@@ -38,6 +38,12 @@
 #include <unistd.h>
 #endif
 
+#if PLATFORM(WINCE)
+extern "C" {
+void init_by_array(unsigned long init_key[],int key_length);
+}
+#endif
+
 // Internal JavaScriptCore usage only
 namespace WTF {
 
@@ -45,8 +51,19 @@ inline void initializeRandomNumberGenerator()
 {
 #if PLATFORM(DARWIN)
     // On Darwin we use arc4random which initialises itself.
+#elif PLATFORM(WINCE)
+    // initialize rand()
+    srand(static_cast<unsigned>(time(0)));
+
+    // use rand() to initialize the real RNG
+    unsigned long initializationBuffer[4];
+    initializationBuffer[0] = (rand() << 16) | rand();
+    initializationBuffer[1] = (rand() << 16) | rand();
+    initializationBuffer[2] = (rand() << 16) | rand();
+    initializationBuffer[3] = (rand() << 16) | rand();
+    init_by_array(initializationBuffer, 4);
 #elif COMPILER(MSVC) && defined(_CRT_RAND_S)
-    // On Windows we use rand_s which intialises itself
+    // On Windows we use rand_s which initialises itself
 #elif PLATFORM(UNIX)
     // srandomdev is not guaranteed to exist on linux so we use this poor seed, this should be improved
     timeval time;

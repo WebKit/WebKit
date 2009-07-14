@@ -1,3 +1,26 @@
+2009-07-06  George Staikos  <george.staikos@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Authors: George Staikos <george.staikos@torchmobile.com>, Joe Mason <joe.mason@torchmobile.com>, Makoto Matsumoto <matumoto@math.keio.ac.jp>, Takuji Nishimura
+
+        https://bugs.webkit.org/show_bug.cgi?id=27030
+        Implement custom RNG for WinCE using Mersenne Twister
+
+        * wtf/RandomNumber.cpp:
+        (WTF::randomNumber):
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator):
+        * wtf/wince/mt19937ar.c: Added.
+        (init_genrand):
+        (init_by_array):
+        (genrand_int32):
+        (genrand_int31):
+        (genrand_real1):
+        (genrand_real2):
+        (genrand_real3):
+        (genrand_res53):
+
 2009-07-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed make dist build fix.
