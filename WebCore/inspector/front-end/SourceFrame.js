@@ -199,6 +199,8 @@ WebInspector.SourceFrame.prototype = {
     {
         WebInspector.addMainEventListeners(this.element.contentDocument);
         this.element.contentDocument.addEventListener("mousedown", this._documentMouseDown.bind(this), true);
+        this.element.contentDocument.addEventListener("keydown", WebInspector.documentKeyDown.bind(WebInspector), true);
+        this.element.contentDocument.addEventListener("keyup", WebInspector.documentKeyUp.bind(WebInspector), true);
         this.element.contentDocument.addEventListener("webkitAnimationEnd", this._highlightLineEnds.bind(this), false);
 
         var headElement = this.element.contentDocument.getElementsByTagName("head")[0];

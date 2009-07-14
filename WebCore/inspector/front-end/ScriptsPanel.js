@@ -56,6 +56,7 @@ WebInspector.ScriptsPanel = function()
     this.filesSelectElement.className = "status-bar-item";
     this.filesSelectElement.id = "scripts-files";
     this.filesSelectElement.addEventListener("change", this._changeVisibleFile.bind(this), false);
+    this.filesSelectElement.handleKeyEvent = this.handleKeyEvent.bind(this);
     this.topStatusBar.appendChild(this.filesSelectElement);
 
     this.functionsSelectElement = document.createElement("select");
