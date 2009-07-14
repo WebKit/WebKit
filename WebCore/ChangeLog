@@ -1,3 +1,20 @@
+2009-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Image rendered as layer contents looks different from image rendered via CG.
+        <rdar://problem/7048830> 
+        
+        Fix a visible color profile difference between between images rendered via Core Graphics
+        and those rendered via a compositing layer, by assigning the GenericRGB profile to
+        untagged images (which come through as having the DeviceRGB profile) when they are set
+        as layer contents.
+
+        Test: compositing/color-matching/image-color-matching.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+
 2009-07-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver Hunt.

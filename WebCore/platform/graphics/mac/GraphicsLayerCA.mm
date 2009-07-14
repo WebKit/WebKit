@@ -1129,8 +1129,18 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
             [m_contentsLayer.get() setMinificationFilter:kCAFilterTrilinear];
 #endif
-            CGImageRef theImage = image->nativeImageForCurrentFrame();
-            [m_contentsLayer.get() setContents:(id)theImage];
+            RetainPtr<CGImageRef> theImage(image->nativeImageForCurrentFrame());
+            CGColorSpaceRef colorSpace = CGImageGetColorSpace(theImage.get());
+
+            static CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
+            if (CFEqual(colorSpace, deviceRGB)) {
+                // CoreGraphics renders images tagged with DeviceRGB using GenericRGB. When we hand such
+                // images to CA we need to tag them similarly so CA rendering matches CG rendering.
+                static CGColorSpaceRef genericRGB = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+                theImage.adoptCF(CGImageCreateCopyWithColorSpace(theImage.get(), genericRGB));
+            }
+
+            [m_contentsLayer.get() setContents:(id)theImage.get()];
         }
         END_BLOCK_OBJC_EXCEPTIONS
     } else

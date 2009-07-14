@@ -1,3 +1,20 @@
+2009-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Image rendered as layer contents looks different from image rendered via CG.
+        <rdar://problem/7048830> 
+        
+        Testcase which compares image colors between images rendered via CG, and those
+        rendered as the contents of composited layers.
+
+        * compositing/color-matching/image-color-matching.html: Added.
+        * compositing/color-matching/resources/genericRGB.png: Added.
+        * compositing/color-matching/resources/no-profile.png: Added.
+        * platform/mac/compositing/color-matching/image-color-matching-expected.checksum: Added.
+        * platform/mac/compositing/color-matching/image-color-matching-expected.png: Added.
+        * platform/mac/compositing/color-matching/image-color-matching-expected.txt: Added.
+
 2009-07-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.
