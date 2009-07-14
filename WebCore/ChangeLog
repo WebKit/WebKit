@@ -1,3 +1,22 @@
+2009-07-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Straight quotes should match fancy quotes in in-page search
+        https://bugs.webkit.org/show_bug.cgi?id=27217
+
+        Tests: fast/text/find-quotes.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::foldQuoteMark): Added.
+        (WebCore::foldQuoteMarks): Added.
+        (WebCore::SearchBuffer::SearchBuffer): Call foldQuoteMarks on the target string.
+        (WebCore::SearchBuffer::append): Call foldQuoteMarks on characters as they are
+        added to the search buffer.
+
+        * platform/text/CharacterNames.h: Added more quotation mark character names.
+        Sorted character names with the sort tool.
+
 2009-07-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
