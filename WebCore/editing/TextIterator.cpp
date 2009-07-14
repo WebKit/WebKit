@@ -1408,7 +1408,7 @@ static UStringSearch* createSearcher()
     // without setting both the pattern and the text.
     UErrorCode status = U_ZERO_ERROR;
     UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, currentSearchLocaleID(), 0, &status);
-    ASSERT(status == U_ZERO_ERROR || status == U_USING_FALLBACK_WARNING);
+    ASSERT(status == U_ZERO_ERROR || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
     return searcher;
 }
 
