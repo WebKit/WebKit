@@ -309,34 +309,18 @@ PassRefPtr<Element> HTMLDocument::createElement(const AtomicString& name, Except
     return HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, lowerName, xhtmlNamespaceURI), this, 0, false);
 }
 
-static void addItemToMap(HTMLDocument::NameCountMap& map, const AtomicString& name)
+static void addItemToMap(HashCountedSet<AtomicStringImpl*>& map, const AtomicString& name)
 {
     if (name.isEmpty())
         return;
- 
-    HTMLDocument::NameCountMap::iterator it = map.find(name.impl()); 
-    if (it == map.end())
-        map.set(name.impl(), 1);
-    else
-        ++(it->second);
+    map.add(name.impl());
 }
 
-static void removeItemFromMap(HTMLDocument::NameCountMap& map, const AtomicString& name)
+static void removeItemFromMap(HashCountedSet<AtomicStringImpl*>& map, const AtomicString& name)
 {
     if (name.isEmpty())
         return;
- 
-    HTMLDocument::NameCountMap::iterator it = map.find(name.impl()); 
-    if (it == map.end())
-        return;
-
-    int oldVal = it->second;
-    ASSERT(oldVal != 0);
-    int newVal = oldVal - 1;
-    if (newVal == 0)
-        map.remove(it);
-    else
-        it->second = newVal;
+    map.remove(name.impl());
 }
 
 void HTMLDocument::addNamedItem(const AtomicString& name)
@@ -344,7 +328,7 @@ void HTMLDocument::addNamedItem(const AtomicString& name)
     addItemToMap(m_namedItemCounts, name);
 }
 
-void HTMLDocument::removeNamedItem(const AtomicString &name)
+void HTMLDocument::removeNamedItem(const AtomicString& name)
 { 
     removeItemFromMap(m_namedItemCounts, name);
 }
