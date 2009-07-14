@@ -227,4 +227,9 @@ bool Path::isEmpty() const
     return true;
 }
 
+bool Path::hasCurrentPoint() const
+{
+    return !isEmpty();
+}
+
 }

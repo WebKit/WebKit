@@ -245,7 +245,12 @@ void Path::clear()
 bool Path::isEmpty() const
 {
     return CGPathIsEmpty(m_path);
- }
+}
+
+bool Path::hasCurrentPoint() const
+{
+    return !isEmpty();
+}
 
 static void CGPathToCFStringApplierFunction(void* info, const CGPathElement *element)
 {
