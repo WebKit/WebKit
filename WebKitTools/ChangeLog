@@ -1,3 +1,15 @@
+2009-07-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] DumpRenderTree no longer builds with Qt4.4
+        https://bugs.webkit.org/show_bug.cgi?id=27257
+
+        Flag Qt 4.5 dependency to allow building with Qt 4.4.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+
 2009-07-13  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.

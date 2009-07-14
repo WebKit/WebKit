@@ -98,7 +98,9 @@ int main(int argc, char* argv[])
 #ifdef Q_WS_X11
     FcInit();
     WebCore::DumpRenderTree::initializeFonts();
+#if QT_VERSION >= 0x040500
     QApplication::setGraphicsSystem("raster");
+#endif
 #endif
     QApplication app(argc, argv);
 #ifdef Q_WS_X11
