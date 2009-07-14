@@ -44,7 +44,7 @@ namespace JSC {
     class ProfileGenerator;
     class UString;
 
-    class Profiler {
+    class Profiler : public FastAllocBase {
     public:
         static Profiler** enabledProfilerReference()
         {
