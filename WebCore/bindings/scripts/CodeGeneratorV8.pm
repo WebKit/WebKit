@@ -547,39 +547,46 @@ END
 
     my $getterString;
     if ($getterStringUsesImp) {
-        $getterString = "imp->$getterFunc(";
+        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+        if ($reflect || $reflectURL) {
+            $implIncludes{"HTMLNames.h"} = 1;
+            my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
+            my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
+            $getterString = "imp->$getAttributeFunctionName(HTMLNames::${contentAttributeName}Attr";
+        } else {
+            $getterString = "imp->$getterFunc(";
+        }
         $getterString .= "ec" if $useExceptions;
         $getterString .= ")";
         if (IsRefPtrType($returnType)) {
             $implIncludes{"wtf/GetPtr.h"} = 1;
             $getterString = "WTF::getPtr(" . $getterString . ")";
         }
-        if ($nativeType eq "int" and
-            $attribute->signature->extendedAttributes->{"ConvertFromString"}) {
-                $getterString .= ".toInt()";
-            }
-        } else {
-            $getterString = "imp_instance";
+        if ($nativeType eq "int" and $attribute->signature->extendedAttributes->{"ConvertFromString"}) {
+            $getterString .= ".toInt()";
         }
-        if ($nativeType eq "String") {
-            $getterString = "toString($getterString)";
-        }
+    } else {
+        $getterString = "imp_instance";
+    }
 
-        my $result;
-        my $wrapper;
+    if ($nativeType eq "String") {
+        $getterString = "toString($getterString)";
+    }
 
-        if ($attrIsPodType) {
-            $implIncludes{"V8SVGPODTypeWrapper.h"} = 1;
+    my $result;
+    my $wrapper;
 
-            my $getter = $getterString;
-            $getter =~ s/imp->//;
-            $getter =~ s/\(\)//;
-            my $setter = "set" . WK_ucfirst($getter);
+    if ($attrIsPodType) {
+        $implIncludes{"V8SVGPODTypeWrapper.h"} = 1;
 
-            my $implClassIsAnimatedType = $codeGenerator->IsSVGAnimatedType($implClassName);
-            if (not $implClassIsAnimatedType
-                and $codeGenerator->IsPodTypeWithWriteableProperties($attrType)
-                and not defined $attribute->signature->extendedAttributes->{"Immutable"}) {
+        my $getter = $getterString;
+        $getter =~ s/imp->//;
+        $getter =~ s/\(\)//;
+        my $setter = "set" . WK_ucfirst($getter);
+
+        my $implClassIsAnimatedType = $codeGenerator->IsSVGAnimatedType($implClassName);
+        if (not $implClassIsAnimatedType and $codeGenerator->IsPodTypeWithWriteableProperties($attrType) and not defined $attribute->signature->extendedAttributes->{"Immutable"}) {
             if (IsPodType($implClassName)) {
                 $wrapper = "new V8SVGStaticPODTypeWrapperWithPODTypeParent<$nativeType, $implClassName>($getterString, imp_wrapper)";
             } else {
@@ -718,7 +725,16 @@ END
     if ($implClassName eq "double") {
         push(@implContentDecls, "    *imp = $result;\n");
     } else {
-        push(@implContentDecls, "    imp->set" . WK_ucfirst($attrName) . "(" . $result);
+        my $implSetterFunctionName = WK_ucfirst($attrName);
+        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+        if ($reflect || $reflectURL) {
+            $implIncludes{"HTMLNames.h"} = 1;
+            my $contentAttributeName = ($reflect || $reflectURL) eq "1" ? $attrName : ($reflect || $reflectURL);
+            push(@implContentDecls, "    imp->setAttribute(HTMLNames::${contentAttributeName}Attr, $result");
+        } else {
+            push(@implContentDecls, "    imp->set$implSetterFunctionName(" . $result);
+        }
         push(@implContentDecls, ", ec") if $useExceptions;
         push(@implContentDecls, ");\n");
     }
