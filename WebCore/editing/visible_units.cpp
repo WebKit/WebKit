@@ -1178,9 +1178,6 @@ VisiblePosition logicalStartOfLine(const VisiblePosition& c)
 {
     VisiblePosition visPos = logicalStartPositionForLine(c);
     
-    if (visPos.isNull())
-        return c.honorEditableBoundaryAtOrAfter(visPos);
-
     return c.honorEditableBoundaryAtOrAfter(visPos);
 }
 
