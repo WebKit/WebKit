@@ -30,6 +30,7 @@ Programs_GtkLauncher_LDFLAGS = \
 
 # DumpRenderTree
 dumprendertree_cppflags := \
+	-DUSE_SYSTEM_MALLOC \
 	-I$(srcdir)/WebKitTools/DumpRenderTree \
 	-I$(srcdir)/WebKitTools/DumpRenderTree/gtk \
 	-I$(srcdir)/WebKit/gtk \
