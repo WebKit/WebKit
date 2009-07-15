@@ -629,3 +629,4 @@ http/tests/history/back-to-post.php
 http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 media/video-empty-source.html
+fast/events/frame-programmatic-focus.html
