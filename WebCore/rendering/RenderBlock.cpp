@@ -1013,13 +1013,13 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
     if (!child->isRunIn() || !child->childrenInline() && !child->isReplaced())
         return false;
 
-    RenderBlock* blockRunIn = toRenderBlock(child);
     // Get the next non-positioned/non-floating RenderBlock.
+    RenderBlock* blockRunIn = toRenderBlock(child);
     RenderObject* curr = blockRunIn->nextSibling();
     while (curr && curr->isFloatingOrPositioned())
         curr = curr->nextSibling();
 
-    if (!curr || !curr->isRenderBlock() || !curr->childrenInline() || curr->isRunIn())
+    if (!curr || !curr->isRenderBlock() || !curr->childrenInline() || curr->isRunIn() || curr->isAnonymous())
         return false;
 
     RenderBlock* currBlock = toRenderBlock(curr);
