@@ -1,3 +1,15 @@
+2009-07-15  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Need to update DOM Storage files in GYPI file.
+        https://bugs.webkit.org/show_bug.cgi?id=27317
+
+        Need to update DOM Storage files in the GYPI file.  They're pretty out
+        of date and we're on the path towards enabling them for everyone!
+
+        * WebCore.gypi:
+
 2009-07-15  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.
