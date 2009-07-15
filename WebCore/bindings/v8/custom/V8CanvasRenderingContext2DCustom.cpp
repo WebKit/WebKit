@@ -274,6 +274,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
         default:
             return throwError("drawImage: Invalid number of arguments", V8Proxy::SyntaxError);
         }
+        return v8::Undefined();
     }
 
 #if ENABLE(VIDEO)

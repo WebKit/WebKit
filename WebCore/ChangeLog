@@ -1,3 +1,16 @@
+2009-07-15  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by David Levin.
+
+        [V8] Layout test failures for drawImage in Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=27311
+
+        Fixing several canvas layout tests failures due to a
+        missing return statement in CanvasRenderingContext2DDrawImage() which
+        was accidentally removed in r45929.
+
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+
 2009-07-15  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Eric Seidel.
