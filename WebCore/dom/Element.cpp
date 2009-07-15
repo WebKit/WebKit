@@ -590,6 +590,12 @@ PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const 
 
 void Element::attributeChanged(Attribute* attr, bool)
 {
+    recalcStyleIfNeededAfterAttributeChanged(attr);
+    updateAfterAttributeChanged(attr);
+}
+
+void Element::updateAfterAttributeChanged(Attribute* attr)
+{
     if (!document()->axObjectCache()->accessibilityEnabled())
         return;
 
@@ -602,7 +608,13 @@ void Element::attributeChanged(Attribute* attr, bool)
         document()->axObjectCache()->handleAriaRoleChanged(renderer());
     }
 }
-
+    
+void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)
+{
+    if (document()->attached() && document()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
+        setNeedsStyleRecalc();
+}
+        
 void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list)
 {
     document()->incDOMTreeVersion();

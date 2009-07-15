@@ -136,6 +136,11 @@ public:
     // This method is called whenever an attribute is added, changed or removed.
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
+    // The implementation of Element::attributeChanged() calls the following two functions.
+    // They are separated to allow a different flow of control in StyledElement::attributeChanged().
+    void recalcStyleIfNeededAfterAttributeChanged(Attribute*);
+    void updateAfterAttributeChanged(Attribute*);
+
     // not part of the DOM
     void setAttributeMap(PassRefPtr<NamedNodeMap>);
 

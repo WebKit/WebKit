@@ -1,3 +1,29 @@
+2009-07-15  Kai Brüning  <kai@granus.net>
+
+        Reviewed by Dave Hyatt.
+
+        CSS21 attribute selectors not dynamic for xml.
+        https://bugs.webkit.org/show_bug.cgi?id=25072
+
+        Moved the relevant test in StyledElement::attributeChanged()
+        to a new function Element::recalcStyleIfNeededAfterAttributeChanged()
+        so it can be called from both StyledElement::attributeChanged()
+        and Element::attributeChanged().
+        Refactored Element::attributeChanged() into
+        Element::updateAfterAttributeChanged() and
+        Element::recalcStyleIfNeededAfterAttributeChanged(), which are called
+        separately from StyledElement::attributeChanged().
+
+        Test: fast/css/attribute-selector-dynamic.xml
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::updateAfterAttributeChanged):
+        (WebCore::Element::recalcStyleIfNeededAfterAttributeChanged):
+        * dom/Element.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+
 2009-07-15  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by David Levin.

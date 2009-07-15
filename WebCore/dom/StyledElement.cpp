@@ -194,8 +194,8 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     if (needToParse)
         parseMappedAttribute(mappedAttr);
 
-    if (entry == eNone && ownerDocument()->attached() && ownerDocument()->styleSelector()->hasSelectorForAttribute(attr->name().localName()))
-        setNeedsStyleRecalc();
+    if (entry == eNone)
+        recalcStyleIfNeededAfterAttributeChanged(attr);
 
     if (checkDecl && mappedAttr->decl()) {
         // Add the decl to the table in the appropriate spot.
@@ -206,7 +206,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         if (namedAttrMap)
             mappedAttributes()->declAdded();
     }
-    Element::attributeChanged(attr, preserveDecls);
+    updateAfterAttributeChanged(attr);
 }
 
 bool StyledElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
