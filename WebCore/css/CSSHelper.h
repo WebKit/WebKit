@@ -26,14 +26,12 @@ namespace WebCore {
 
     class String;
 
-    // Deprecated.
-    // FIXME: Rename to deprecatedParseURL.
     // Used in many inappropriate contexts throughout WebCore. We'll have to examine and test
     // each call site to find out whether it needs the various things this function does. That
     // includes trimming leading and trailing control characters (including whitespace), removing
     // url() or URL() if it surrounds the entire string, removing matching quote marks if present,
-    // and stripping all characters in the range U+0000-U+0012. Probably no caller needs this.
-    String parseURL(const String&);
+    // and stripping all characters in the range U+0000-U+000C. Probably no caller needs this.
+    String deprecatedParseURL(const String&);
 
     // We always assume 96 CSS pixels in a CSS inch. This is the cold hard truth of the Web.
     // At high DPI, we may scale a CSS pixel, but the ratio of the CSS pixel to the so-called

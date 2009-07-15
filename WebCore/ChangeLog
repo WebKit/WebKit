@@ -1,5 +1,79 @@
 2009-07-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Renamed parseURL to deprecatedParseURL.
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::setValue): Renamed.
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::allowSettingSrcToJavascriptURL): Renamed.
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        (WebCore::allowSettingJavascriptURL): Renamed.
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        (WebCore::JSHTMLIFrameElement::setSrc): Renamed.
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _getURLAttribute:]): Renamed.
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:]): Renamed.
+        * bindings/v8/custom/V8CustomBinding.cpp:
+        (WebCore::allowSettingFrameSrcToJavascriptUrl): Renamed.
+        * css/CSSHelper.cpp:
+        (WebCore::deprecatedParseURL): Renamed.
+        * css/CSSHelper.h: Renamed and updated comment.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler): Renamed.
+        (WebCore::HTMLAnchorElement::parseMappedAttribute): Renamed.
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::parseMappedAttribute): Renamed.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute): Renamed.
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute): Renamed.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseMappedAttribute): Renamed.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute): Renamed.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute): Renamed.
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::sourceURI): Renamed.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute): Renamed.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute): Renamed.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute): Renamed.
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::parseMappedAttribute): Renamed.
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): Renamed.
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::processAttribute): Renamed.
+        (WebCore::PreloadScanner::emitCSSRule): Renamed.
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::declareAndWriteDragImage): Renamed.
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage): Renamed.
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage): Renamed.
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::declareAndWriteDragImage): Renamed.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteImageURL): Renamed.
+        (WebCore::HitTestResult::absoluteMediaURL): Renamed.
+        (WebCore::HitTestResult::absoluteLinkURL): Renamed.
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler): Renamed.
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::sourceURI): Renamed.
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::defaultEventHandler): Renamed.
+        * wml/WMLImageLoader.cpp:
+        (WebCore::WMLImageLoader::sourceURI): Renamed.
+
+2009-07-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         CSSHelper.h's parseURL is a function that no one should ever call

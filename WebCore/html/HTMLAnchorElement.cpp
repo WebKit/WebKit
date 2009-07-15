@@ -179,7 +179,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
             return;
         }
 
-        String url = parseURL(getAttribute(hrefAttr));
+        String url = deprecatedParseURL(getAttribute(hrefAttr));
 
         ASSERT(evt->target());
         ASSERT(evt->target()->toNode());
@@ -268,7 +268,7 @@ void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
         if (wasLink != isLink())
             setNeedsStyleRecalc();
         if (isLink()) {
-            String parsedURL = parseURL(attr->value());
+            String parsedURL = deprecatedParseURL(attr->value());
             if (document()->isDNSPrefetchEnabled()) {
                 if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
                     prefetchDNS(document()->completeURL(parsedURL).host());

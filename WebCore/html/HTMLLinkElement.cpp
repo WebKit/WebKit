@@ -116,7 +116,7 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
         tokenizeRelAttribute(attr->value(), m_isStyleSheet, m_alternate, m_isIcon, m_isDNSPrefetch);
         process();
     } else if (attr->name() == hrefAttr) {
-        m_url = document()->completeURL(parseURL(attr->value()));
+        m_url = document()->completeURL(deprecatedParseURL(attr->value()));
         process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();

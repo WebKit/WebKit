@@ -110,7 +110,7 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
         if (attr->value().string()[0] == '#')
             usemap = attr->value();
         else
-            usemap = document()->completeURL(parseURL(attr->value())).string();
+            usemap = document()->completeURL(deprecatedParseURL(attr->value())).string();
         setIsLink(!attr->isNull());
     } else if (attrName == ismapAttr)
         ismap = true;

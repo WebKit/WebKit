@@ -98,9 +98,9 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute* attr)
         if (!isImageType() && m_imageLoader)
             m_imageLoader.clear();
     } else if (attr->name() == codeAttr)
-        m_url = parseURL(value.string());
+        m_url = deprecatedParseURL(value.string());
     else if (attr->name() == srcAttr) {
-        m_url = parseURL(value.string());
+        m_url = deprecatedParseURL(value.string());
         if (renderer() && isImageType()) {
             if (!m_imageLoader)
                 m_imageLoader.set(new HTMLImageLoader(this));

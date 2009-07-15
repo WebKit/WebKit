@@ -468,7 +468,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     ASSERT(name);
     WebCore::Element* element = core(self);
     ASSERT(element);
-    return element->document()->completeURL(parseURL(element->getAttribute(name)));
+    return element->document()->completeURL(deprecatedParseURL(element->getAttribute(name)));
 }
 
 - (BOOL)isFocused

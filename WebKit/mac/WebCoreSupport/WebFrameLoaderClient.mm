@@ -1495,7 +1495,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
         errorCode = WebKitErrorCannotLoadPlugIn;
 
     if (errorCode) {
-        KURL pluginPageURL = document->completeURL(parseURL(parameterValue(paramNames, paramValues, "pluginspage")));
+        KURL pluginPageURL = document->completeURL(deprecatedParseURL(parameterValue(paramNames, paramValues, "pluginspage")));
         if (!pluginPageURL.protocolInHTTPFamily())
             pluginPageURL = KURL();
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode

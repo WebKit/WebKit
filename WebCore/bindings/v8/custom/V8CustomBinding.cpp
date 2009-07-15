@@ -49,7 +49,7 @@ namespace WebCore {
 
 bool allowSettingFrameSrcToJavascriptUrl(HTMLFrameElementBase* frame, String value)
 {
-    if (protocolIs(parseURL(value), "javascript")) {
+    if (protocolIs(deprecatedParseURL(value), "javascript")) {
         Node* contentDoc = frame->contentDocument();
         if (contentDoc && !V8Proxy::checkNodeSecurity(contentDoc))
             return false;

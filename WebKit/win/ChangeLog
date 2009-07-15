@@ -1,3 +1,12 @@
+2009-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Renamed parseURL to deprecatedParseURL.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createPlugin): Renamed.
+
 2009-07-14  Steve Falkenburg  <sfalken@apple.com>
 
         Reorganize JavaScriptCore headers into:

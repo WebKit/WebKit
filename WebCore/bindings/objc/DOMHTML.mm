@@ -70,7 +70,7 @@
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    NSURL *baseURL = core(self)->completeURL(WebCore::parseURL(baseURLString));
+    NSURL *baseURL = core(self)->completeURL(WebCore::deprecatedParseURL(baseURLString));
     return [self createDocumentFragmentWithMarkupString:markupString baseURL:baseURL];
 }
 

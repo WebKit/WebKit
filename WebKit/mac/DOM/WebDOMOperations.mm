@@ -93,8 +93,8 @@ using namespace WebCore;
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    // FIXME: Is parseURL appropriate here?
-    return core(self)->completeURL(parseURL(string));
+    // FIXME: Is deprecatedParseURL appropriate here?
+    return core(self)->completeURL(deprecatedParseURL(string));
 }
 
 @end

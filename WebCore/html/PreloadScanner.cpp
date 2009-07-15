@@ -696,12 +696,12 @@ void PreloadScanner::processAttribute()
     String value(m_attributeValue.data(), m_attributeValue.size());
     if (tag == scriptTag || tag == imgTag) {
         if (attribute == srcAttr && m_urlToLoad.isEmpty())
-            m_urlToLoad = parseURL(value);
+            m_urlToLoad = deprecatedParseURL(value);
         else if (attribute == charsetAttr)
             m_charset = value;
     } else if (tag == linkTag) {
         if (attribute == hrefAttr && m_urlToLoad.isEmpty())
-            m_urlToLoad = parseURL(value);
+            m_urlToLoad = deprecatedParseURL(value);
         else if (attribute == relAttr) {
             bool styleSheet = false;
             bool alternate = false;
@@ -848,7 +848,7 @@ void PreloadScanner::emitCSSRule()
     String rule(m_cssRule.data(), m_cssRule.size());
     if (equalIgnoringCase(rule, "import") && !m_cssRuleValue.isEmpty()) {
         String value(m_cssRuleValue.data(), m_cssRuleValue.size());
-        String url = parseURL(value);
+        String url = deprecatedParseURL(value);
         if (!url.isEmpty())
             m_document->docLoader()->preload(CachedResource::CSSStyleSheet, url, String(), scanningBody());
     }

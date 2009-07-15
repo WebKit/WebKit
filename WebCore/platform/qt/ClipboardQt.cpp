@@ -257,7 +257,7 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
     if (imageURL.isEmpty()) 
         return;
 
-    KURL fullURL = frame->document()->completeURL(parseURL(imageURL));
+    KURL fullURL = frame->document()->completeURL(deprecatedParseURL(imageURL));
     if (fullURL.isEmpty()) 
         return;
 

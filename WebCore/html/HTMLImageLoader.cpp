@@ -50,7 +50,7 @@ void HTMLImageLoader::dispatchLoadEvent()
 
 String HTMLImageLoader::sourceURI(const AtomicString& attr) const
 {
-    return parseURL(attr);
+    return deprecatedParseURL(attr);
 }
 
 void HTMLImageLoader::notifyFinished(CachedResource*)

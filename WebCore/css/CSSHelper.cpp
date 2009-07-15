@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-String parseURL(const String& url)
+String deprecatedParseURL(const String& url)
 {
     StringImpl* i = url.impl();
     if (!i)

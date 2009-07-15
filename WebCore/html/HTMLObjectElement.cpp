@@ -82,7 +82,7 @@ void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
         if (!isImageType() && m_imageLoader)
           m_imageLoader.clear();
     } else if (attr->name() == dataAttr) {
-        m_url = parseURL(val);
+        m_url = deprecatedParseURL(val);
         if (renderer())
           m_needWidgetUpdate = true;
         if (renderer() && isImageType()) {

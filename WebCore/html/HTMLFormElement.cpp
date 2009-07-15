@@ -429,7 +429,7 @@ void HTMLFormElement::reset()
 void HTMLFormElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == actionAttr)
-        m_url = parseURL(attr->value());
+        m_url = deprecatedParseURL(attr->value());
     else if (attr->name() == targetAttr)
         m_target = attr->value();
     else if (attr->name() == methodAttr)
