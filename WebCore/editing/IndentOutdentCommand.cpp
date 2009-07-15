@@ -57,18 +57,9 @@ static PassRefPtr<HTMLBlockquoteElement> createIndentBlockquoteElement(Document*
     return element.release();
 }
 
-static bool isIndentBlockquote(const Node* node)
-{
-    if (!node || !node->hasTagName(blockquoteTag) || !node->isElementNode())
-        return false;
-
-    const Element* elem = static_cast<const Element*>(node);
-    return elem->getAttribute(classAttr) == indentBlockquoteString();
-}
-
 static bool isListOrIndentBlockquote(const Node* node)
 {
-    return node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || isIndentBlockquote(node));
+    return node && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(blockquoteTag));
 }
 
 IndentOutdentCommand::IndentOutdentCommand(Document* document, EIndentType typeOfAction, int marginInPixels)
@@ -83,10 +74,10 @@ PassRefPtr<Element> IndentOutdentCommand::prepareBlockquoteLevelForInsertion(con
     int currentBlockquoteLevel = 0;
     int lastBlockquoteLevel = 0;
     Node* node = currentParagraph.deepEquivalent().node();
-    while ((node = enclosingNodeOfType(Position(node->parentNode(), 0), &isIndentBlockquote)))
+    while ((node = enclosingNodeWithTag(Position(node->parentNode(), 0), blockquoteTag)))
         currentBlockquoteLevel++;
     node = lastBlockquote.get();
-    while ((node = enclosingNodeOfType(Position(node->parentNode(), 0), &isIndentBlockquote)))
+    while ((node = enclosingNodeWithTag(Position(node->parentNode(), 0), blockquoteTag)))
         lastBlockquoteLevel++;
     while (currentBlockquoteLevel > lastBlockquoteLevel) {
         RefPtr<Element> newBlockquote = createIndentBlockquoteElement(document());
@@ -95,7 +86,7 @@ PassRefPtr<Element> IndentOutdentCommand::prepareBlockquoteLevelForInsertion(con
         lastBlockquoteLevel++;
     }
     while (currentBlockquoteLevel < lastBlockquoteLevel) {
-        lastBlockquote = static_cast<Element*>(enclosingNodeOfType(Position(lastBlockquote->parentNode(), 0), isIndentBlockquote));
+        lastBlockquote = static_cast<Element*>(enclosingNodeWithTag(Position(lastBlockquote->parentNode(), 0), blockquoteTag));
         lastBlockquoteLevel--;
     }
     RefPtr<Element> placeholder = createBreakElement(document());
@@ -238,7 +229,7 @@ void IndentOutdentCommand::outdentParagraph()
         return;
     }
     
-    // The selection is inside a blockquote
+    // The selection is inside a blockquote i.e. enclosingNode is a blockquote
     VisiblePosition positionInEnclosingBlock = VisiblePosition(Position(enclosingNode, 0));
     VisiblePosition startOfEnclosingBlock = startOfBlock(positionInEnclosingBlock);
     VisiblePosition lastPositionInEnclosingBlock = VisiblePosition(Position(enclosingNode, enclosingNode->childNodeCount()));
@@ -252,8 +243,8 @@ void IndentOutdentCommand::outdentParagraph()
         // just removed one, then this assumption isn't true. By splitting the next containing blockquote after this node, we keep this assumption true
         if (splitPoint) {
             if (Node* splitPointParent = splitPoint->parentNode()) {
-                if (isIndentBlockquote(splitPointParent)
-                    && !isIndentBlockquote(splitPoint)
+                if (splitPointParent->hasTagName(blockquoteTag)
+                    && !splitPoint->hasTagName(blockquoteTag)
                     && isContentEditable(splitPointParent->parentNode())) // We can't outdent if there is no place to go!
                     splitElement(static_cast<Element*>(splitPointParent), splitPoint);
             }
@@ -269,10 +260,14 @@ void IndentOutdentCommand::outdentParagraph()
 
         return;
     }
-    Node* enclosingBlockFlow = enclosingBlockFlowElement(visibleStartOfParagraph);
+    Node* enclosingBlockFlow = enclosingBlock(visibleStartOfParagraph.deepEquivalent().node());
     RefPtr<Node> splitBlockquoteNode = enclosingNode;
     if (enclosingBlockFlow != enclosingNode)
-        splitBlockquoteNode = splitTreeToNode(enclosingBlockFlowElement(visibleStartOfParagraph), enclosingNode, true);
+        splitBlockquoteNode = splitTreeToNode(enclosingBlockFlow, enclosingNode, true);
+    else {
+        // We split the blockquote at where we start outdenting.
+        splitElement(static_cast<Element*>(enclosingNode), visibleStartOfParagraph.deepEquivalent().node());
+    }
     RefPtr<Node> placeholder = createBreakElement(document());
     insertNodeBefore(placeholder, splitBlockquoteNode);
     moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), VisiblePosition(Position(placeholder.get(), 0)), true);

@@ -1,3 +1,23 @@
+2009-07-14  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Outdenting a line inside a blockquote tag does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=25315
+        https://bugs.webkit.org/show_bug.cgi?id=25316
+
+        The expected result for /editing/execCommand/outdent-selection-expected.html
+        was rebaselined since the original expected result was wrong (Bug 25315).
+        Namely, "ipsum" moved to the same paragraph as "more Lorem!"
+        ("ipsum" was in the blockblock immediately below "more Lorem!")
+        and "Dolor" was moved above the list items "Foo", "Bar", and "Baz".
+
+        * editing/execCommand/outdent-regular-blockquote-expected.txt: Added.
+        * editing/execCommand/outdent-regular-blockquote.html: Added.
+        * platform/mac/editing/execCommand/outdent-selection-expected.checksum:
+        * platform/mac/editing/execCommand/outdent-selection-expected.png:
+        * platform/mac/editing/execCommand/outdent-selection-expected.txt:
+
 2009-07-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

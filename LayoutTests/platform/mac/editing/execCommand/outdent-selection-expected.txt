@@ -17,20 +17,19 @@ layer at (0,0) size 800x600
             text run at (0,18) width 279: "that's not in a list is pulled out of position."
       RenderBlock (anonymous) at (0,36) size 784x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,54) size 784x194
-        RenderBlock (anonymous) at (0,0) size 784x54
+      RenderBlock {DIV} at (0,54) size 784x212
+        RenderBlock (anonymous) at (0,0) size 784x36
           RenderInline {SPAN} at (0,0) size 42x18
             RenderText {#text} at (0,0) size 42x18
               text run at (0,0) width 42: "Lorem"
           RenderBR {BR} at (42,14) size 0x0
-          RenderText {#text} at (0,18) size 87x18
-            text run at (0,18) width 87: "more Lorem! "
-          RenderText {#text} at (87,18) size 38x18
-            text run at (87,18) width 38: "ipsum"
-          RenderBR {BR} at (125,32) size 0x0
-          RenderText {#text} at (0,36) size 37x18
-            text run at (0,36) width 37: "Dolor"
-          RenderBR {BR} at (37,50) size 0x0
+          RenderText {#text} at (0,18) size 83x18
+            text run at (0,18) width 83: "more Lorem!"
+        RenderBlock {BLOCKQUOTE} at (40,36) size 744x0
+        RenderBlock (anonymous) at (0,36) size 784x18
+          RenderText {#text} at (0,0) size 38x18
+            text run at (0,0) width 38: "ipsum"
+          RenderBR {BR} at (38,14) size 0x0
         RenderBlock {BLOCKQUOTE} at (40,54) size 744x54
           RenderBlock (anonymous) at (0,0) size 744x54
             RenderText {#text} at (0,0) size 25x18
@@ -43,13 +42,15 @@ layer at (0,0) size 800x600
               text run at (0,36) width 25: "Baz"
             RenderBR {BR} at (25,50) size 0x0
           RenderBlock {UL} at (0,70) size 744x0
-          RenderBlock (anonymous) at (0,70) size 744x0
-        RenderBlock (anonymous) at (0,124) size 784x18
-          RenderText {#text} at (0,0) size 82x18
-            text run at (0,0) width 82: "Dinner time?"
-          RenderBR {BR} at (82,14) size 0x0
-        RenderBlock {UL} at (0,158) size 784x0
-        RenderBlock (anonymous) at (0,158) size 784x36
+        RenderBlock (anonymous) at (0,124) size 784x36
+          RenderText {#text} at (0,0) size 37x18
+            text run at (0,0) width 37: "Dolor"
+          RenderBR {BR} at (37,14) size 0x0
+          RenderText {#text} at (0,18) size 82x18
+            text run at (0,18) width 82: "Dinner time?"
+          RenderBR {BR} at (82,32) size 0x0
+        RenderBlock {UL} at (0,176) size 784x0
+        RenderBlock (anonymous) at (0,176) size 784x36
           RenderText {#text} at (0,0) size 34x18
             text run at (0,0) width 34: "Sum!"
           RenderBR {BR} at (34,14) size 0x0
@@ -58,4 +59,4 @@ layer at (0,0) size 800x600
               text run at (0,18) width 38: "Thing"
           RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 5 of child 0 {#text} of child 16 {SPAN} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 5 of child 0 {#text} of child 17 {SPAN} of child 4 {DIV} of child 1 {BODY} of child 0 {HTML} of document

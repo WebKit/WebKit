@@ -1,3 +1,23 @@
+2009-07-14  Ryosuke Niwa  <rniwa@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Outdenting a line inside a blockquote tag does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=25316
+
+        The bug was caused by the code checking whether the blockquote is created by WebKit or not.
+        We simply remove this code to be consistent with Firefox and Internet Explorer.
+        Also, enclosingBlockFlow == enclosingNode in outdentParagraph isn't a sufficient condition to insert
+        the placeholder before the enclosingNode because there could be contents before the current paragraph.
+        Instead, we should split the enclosingNode (which is a blockquote) at the starting position of outdentation.
+        It turned out that this solves the bug 25315 also: https://bugs.webkit.org/show_bug.cgi?id=25315
+
+        Test: editing/execCommand/outdent-regular-blockquote.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::isIndentBlockquote): no longer checks whether a blockquote is created by WebKit or not.
+        (WebCore::IndentOutdentCommand::outdentParagraph): takes care of the case enclosingBlockFlow == enclosingNode
+
 2009-07-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
