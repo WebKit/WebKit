@@ -34,8 +34,6 @@ unix {
     lessThan(QT_MINOR_VERSION, 4): QMAKE_PKGCONFIG_REQUIRES += QtXml
 }
 
-include($$OUTPUT_DIR/config.pri)
-
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
 
@@ -179,11 +177,6 @@ INCLUDEPATH += \
     $$PWD/page/qt \
     $$PWD/../WebKit/qt/WebCoreSupport \
 
-# Make sure storage/ appears before JavaScriptCore/. Both provide LocalStorage.h
-# but the header from the former include path is included across directories while
-# LocalStorage.h is included only from files within the same directory
-INCLUDEPATH = $$PWD/storage $$INCLUDEPATH
-
 INCLUDEPATH +=  $$PWD/accessibility \
                 $$PWD/ForwardingHeaders \
                 $$PWD/platform \
@@ -195,6 +188,7 @@ INCLUDEPATH +=  $$PWD/accessibility \
                 $$PWD/svg/graphics/filters \
                 $$PWD/platform/sql \
                 $$PWD/platform/text \
+                $$PWD/storage \
                 $$PWD/loader \
                 $$PWD/loader/appcache \
                 $$PWD/loader/archive \
@@ -998,7 +992,6 @@ SOURCES += \
     platform/Scrollbar.cpp \
     platform/ScrollbarThemeComposite.cpp \
     platform/ScrollView.cpp \
-#    platform/SearchPopupMenu.cpp \
     platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
     platform/text/String.cpp \

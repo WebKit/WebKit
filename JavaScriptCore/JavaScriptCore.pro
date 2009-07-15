@@ -33,8 +33,6 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR
     }
 }
 
-include($$OUTPUT_DIR/config.pri)
-
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wreturn-type -fno-strict-aliasing
 #QMAKE_CXXFLAGS += -Wall -Wno-undef -Wno-unused-parameter
