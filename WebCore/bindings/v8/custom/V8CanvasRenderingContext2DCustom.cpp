@@ -43,6 +43,7 @@
 #include "V8CustomBinding.h"
 #include "V8HTMLCanvasElement.h"
 #include "V8HTMLImageElement.h"
+#include "V8HTMLVideoElement.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -240,8 +241,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
             }
             break;
         default:
-            V8Proxy::throwError(V8Proxy::SyntaxError, "drawImage: Invalid number of arguments");
-            return v8::Undefined();
+            return throwError("drawImage: Invalid number of arguments", V8Proxy::SyntaxError);
         }
         return v8::Undefined();
     }
@@ -272,11 +272,42 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DDrawImage)
             }
             break;
         default:
-            V8Proxy::throwError(V8Proxy::SyntaxError, "drawImage: Invalid number of arguments");
-            return v8::Undefined();
+            return throwError("drawImage: Invalid number of arguments", V8Proxy::SyntaxError);
+        }
+    }
+
+#if ENABLE(VIDEO)
+    // HTMLVideoElement
+    if (V8HTMLVideoElement::HasInstance(arg)) {
+        ExceptionCode ec = 0;
+        HTMLVideoElement* video_element = V8DOMWrapper::convertDOMWrapperToNode<HTMLVideoElement>(arg);
+        switch (args.Length()) {
+        case 3:
+            context->drawImage(video_element, toFloat(args[1]), toFloat(args[2]));
+            break;
+        case 5:
+            context->drawImage(video_element, toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4]), ec);
+            if (ec != 0) {
+                V8Proxy::setDOMException(ec);
+                return notHandledByInterceptor();
+            }
+            break;
+        case 9:
+            context->drawImage(video_element,
+                FloatRect(toFloat(args[1]), toFloat(args[2]), toFloat(args[3]), toFloat(args[4])),
+                FloatRect(toFloat(args[5]), toFloat(args[6]), toFloat(args[7]), toFloat(args[8])),
+                ec);
+            if (ec != 0) {
+                V8Proxy::setDOMException(ec);
+                return notHandledByInterceptor();
+            }
+            break;
+        default:
+            return throwError("drawImage: Invalid number of arguments", V8Proxy::SyntaxError);
         }
         return v8::Undefined();
     }
+#endif
 
     V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
     return notHandledByInterceptor();

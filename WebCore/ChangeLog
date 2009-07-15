@@ -1,3 +1,12 @@
+2009-07-07  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Changed CanvasRenderingContext2DDrawImage() to accept HTMLVideoElement
+        as a parameter of drawImage() for HTMLCanvasElement.
+
+        * bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp:
+
 2009-07-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.
