@@ -136,8 +136,8 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
 #undef ERROR
 #endif
 
-#if PLATFORM(WIN_OS)
-/* FIXME: Change to use something other than ASSERT to avoid this conflict with win32. */
+#if PLATFORM(WIN_OS) || PLATFORM(SYMBIAN)
+/* FIXME: Change to use something other than ASSERT to avoid this conflict with the underlying platform */
 #undef ASSERT
 #endif
 
