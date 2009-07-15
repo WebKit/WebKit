@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Torch Mobile Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,12 +56,21 @@ void initializeMainThreadPlatform()
     if (threadingWindowHandle)
         return;
 
+#if PLATFORM(WINCE)
+    WNDCLASS wcex;
+    memset(&wcex, 0, sizeof(WNDCLASS));
+#else
     WNDCLASSEX wcex;
     memset(&wcex, 0, sizeof(WNDCLASSEX));
     wcex.cbSize = sizeof(WNDCLASSEX);
+#endif
     wcex.lpfnWndProc    = ThreadingWindowWndProc;
     wcex.lpszClassName  = kThreadingWindowClassName;
+#if PLATFORM(WINCE)
+    RegisterClass(&wcex);
+#else
     RegisterClassEx(&wcex);
+#endif
 
     threadingWindowHandle = CreateWindow(kThreadingWindowClassName, 0, 0,
        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, 0, 0);
