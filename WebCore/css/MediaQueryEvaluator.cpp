@@ -40,6 +40,7 @@
 #include "MediaList.h"
 #include "MediaQuery.h"
 #include "MediaQueryExp.h"
+#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderStyle.h"
 #include "PlatformScreen.h"

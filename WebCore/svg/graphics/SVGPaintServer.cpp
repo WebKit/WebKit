@@ -31,6 +31,7 @@
 #include "SVGPaintServer.h"
 
 #include "GraphicsContext.h"
+#include "NodeRenderStyle.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "SVGPaintServerSolid.h"
