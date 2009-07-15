@@ -25,6 +25,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "MappedAttribute.h"
+#include "Path.h"
 #include "RenderObject.h"
 
 using namespace std;

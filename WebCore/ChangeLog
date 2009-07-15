@@ -1,3 +1,9 @@
+2009-07-15  Adam Treat  <adam.treat@torchmobile.com>
+
+        Fix the Qt build.
+
+        * html/HTMLAreaElement.cpp:
+
 2009-07-15  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Darin Fisher.
@@ -307,7 +313,7 @@
         (WebCore::JSXSLTProcessorConstructor::JSXSLTProcessorConstructor):
         * bindings/js/JSXSLTProcessorConstructor.h:
 
-2009-07-15  Kai BrŸning  <kai@granus.net>
+2009-07-15  Kai Brï¿½ning  <kai@granus.net>
 
         Reviewed by Dave Hyatt.
 
