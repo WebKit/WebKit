@@ -1,7 +1,7 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLBlockquoteElement.h"
 
@@ -28,24 +29,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLBlockquoteElement::HTMLBlockquoteElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+HTMLBlockquoteElement::HTMLBlockquoteElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(blockquoteTag));
-}
-
-HTMLBlockquoteElement::~HTMLBlockquoteElement()
-{
-}
-
-String HTMLBlockquoteElement::cite() const
-{
-    return getAttribute(citeAttr);
-}
-
-void HTMLBlockquoteElement::setCite(const String &value)
-{
-    setAttribute(citeAttr, value);
 }
 
 }

@@ -1,3 +1,72 @@
+2009-07-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Next step in making DOM attribute getter/setters consistently use AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=25425
+
+        This covers eight DOM classes, and for each one of the classes:
+
+        - Changes the IDL to use the Reflect syntax for all simple cases.
+        - Removes unused functions in the classes, mainly newly unused ones that were
+          used for reflection before.
+        - Removes unneeded explicitly defined destructors.
+        - Explicitly declares destructors as virtual.
+        - Removes unneeded includes.
+        - Makes members protected or private rather than public where possible.
+        - Renames "doc" to "document".
+        - Tweaks formatting to match our latest style in a few places.
+        - Improves some FIXME comments.
+
+        Over time we'll want to do this for all HTML DOM classes.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        * html/HTMLAnchorElement.h:
+        (WebCore::HTMLAnchorElement::endTagRequirement):
+        (WebCore::HTMLAnchorElement::tagPriority):
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAppletElement.cpp:
+        * html/HTMLAppletElement.h:
+        * html/HTMLAppletElement.idl:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::parseMappedAttribute):
+        * html/HTMLAreaElement.h:
+        (WebCore::HTMLAreaElement::endTagRequirement):
+        (WebCore::HTMLAreaElement::tagPriority):
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::parseMappedAttribute):
+        * html/HTMLBRElement.h:
+        * html/HTMLBRElement.idl:
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::HTMLBaseElement):
+        (WebCore::HTMLBaseElement::removedFromDocument):
+        (WebCore::HTMLBaseElement::process):
+        * html/HTMLBaseElement.h:
+        * html/HTMLBaseElement.idl:
+        * html/HTMLBaseFontElement.cpp:
+        (WebCore::HTMLBaseFontElement::HTMLBaseFontElement):
+        * html/HTMLBaseFontElement.h:
+        (WebCore::HTMLBaseFontElement::endTagRequirement):
+        (WebCore::HTMLBaseFontElement::tagPriority):
+        * html/HTMLBaseFontElement.idl:
+        * html/HTMLBlockquoteElement.cpp:
+        (WebCore::HTMLBlockquoteElement::HTMLBlockquoteElement):
+        * html/HTMLBlockquoteElement.h:
+        (WebCore::HTMLBlockquoteElement::tagPriority):
+        * html/HTMLBlockquoteElement.idl:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::HTMLBodyElement):
+        (WebCore::HTMLBodyElement::addSubresourceAttributeURLs):
+        * html/HTMLBodyElement.h:
+        (WebCore::HTMLBodyElement::endTagRequirement):
+        (WebCore::HTMLBodyElement::tagPriority):
+        * html/HTMLBodyElement.idl:
+        Made changes as described above.
+
+        * loader/FrameLoader.cpp: Removed unneeded include of HTMLAnchorElement.h.
+
 2009-07-14  Steve Falkenburg  <sfalken@apple.com>
 
         Reorganize JavaScriptCore headers into:

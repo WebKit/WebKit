@@ -34,43 +34,26 @@ class Path;
 class HTMLAreaElement : public HTMLAnchorElement {
 public:
     HTMLAreaElement(const QualifiedName&, Document*);
-    ~HTMLAreaElement();
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-
-    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual ~HTMLAreaElement();
 
     bool isDefault() const { return m_shape == Default; }
 
     bool mapMouseEvent(int x, int y, const IntSize&, HitTestResult&);
 
-    virtual IntRect getRect(RenderObject*) const;
-
-    const AtomicString& accessKey() const;
-    void setAccessKey(const AtomicString&);
-
-    const AtomicString& alt() const;
-    void setAlt(const AtomicString&);
-
-    const AtomicString& coords() const;
-    void setCoords(const AtomicString&);
+    IntRect getRect(RenderObject*) const;
 
     KURL href() const;
-    void setHref(const AtomicString&);
 
     bool noHref() const;
     void setNoHref(bool);
 
-    const AtomicString& shape() const;
-    void setShape(const AtomicString&);
-
-    virtual bool isFocusable() const;
-
-    virtual String target() const;
-    void setTarget(const AtomicString&);
-
 private:
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
+    virtual void parseMappedAttribute(MappedAttribute*);
+    virtual bool isFocusable() const;
+    virtual String target() const;
+
     enum Shape { Default, Poly, Rect, Circle, Unknown };
     Path getRegion(const IntSize&) const;
 

@@ -22,13 +22,9 @@
 #include "config.h"
 #include "HTMLAreaElement.h"
 
-#include "Document.h"
-#include "FloatRect.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "Length.h"
 #include "MappedAttribute.h"
-#include "Path.h"
 #include "RenderObject.h"
 
 using namespace std;
@@ -52,7 +48,7 @@ HTMLAreaElement::~HTMLAreaElement()
     delete [] m_coords;
 }
 
-void HTMLAreaElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLAreaElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == shapeAttr) {
         if (equalIgnoringCase(attr->value(), "default"))
@@ -152,44 +148,9 @@ Path HTMLAreaElement::getRegion(const IntSize& size) const
     return path;
 }
 
-const AtomicString& HTMLAreaElement::accessKey() const
-{
-    return getAttribute(accesskeyAttr);
-}
-
-void HTMLAreaElement::setAccessKey(const AtomicString& value)
-{
-    setAttribute(accesskeyAttr, value);
-}
-
-const AtomicString& HTMLAreaElement::alt() const
-{
-    return getAttribute(altAttr);
-}
-
-void HTMLAreaElement::setAlt(const AtomicString& value)
-{
-    setAttribute(altAttr, value);
-}
-
-const AtomicString& HTMLAreaElement::coords() const
-{
-    return getAttribute(coordsAttr);
-}
-
-void HTMLAreaElement::setCoords(const AtomicString& value)
-{
-    setAttribute(coordsAttr, value);
-}
-
 KURL HTMLAreaElement::href() const
 {
     return document()->completeURL(getAttribute(hrefAttr));
-}
-
-void HTMLAreaElement::setHref(const AtomicString& value)
-{
-    setAttribute(hrefAttr, value);
 }
 
 bool HTMLAreaElement::noHref() const
@@ -202,16 +163,6 @@ void HTMLAreaElement::setNoHref(bool noHref)
     setAttribute(nohrefAttr, noHref ? "" : 0);
 }
 
-const AtomicString& HTMLAreaElement::shape() const
-{
-    return getAttribute(shapeAttr);
-}
-
-void HTMLAreaElement::setShape(const AtomicString& value)
-{
-    setAttribute(shapeAttr, value);
-}
-
 bool HTMLAreaElement::isFocusable() const
 {
     return HTMLElement::isFocusable();
@@ -220,11 +171,6 @@ bool HTMLAreaElement::isFocusable() const
 String HTMLAreaElement::target() const
 {
     return getAttribute(targetAttr);
-}
-
-void HTMLAreaElement::setTarget(const AtomicString& value)
-{
-    setAttribute(targetAttr, value);
 }
 
 }

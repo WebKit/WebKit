@@ -1,8 +1,8 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,10 +38,6 @@ HTMLBRElement::HTMLBRElement(const QualifiedName& tagName, Document *doc)
     ASSERT(hasTagName(brTag));
 }
 
-HTMLBRElement::~HTMLBRElement()
-{
-}
-
 bool HTMLBRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == clearAttr) {
@@ -52,7 +48,7 @@ bool HTMLBRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLBRElement::parseMappedAttribute(MappedAttribute *attr)
+void HTMLBRElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == clearAttr) {
         // If the string is empty, then don't add the clear property. 
@@ -74,16 +70,6 @@ RenderObject* HTMLBRElement::createRenderer(RenderArena* arena, RenderStyle* sty
         return RenderObject::createObject(this, style);
 
      return new (arena) RenderBR(this);
-}
-
-String HTMLBRElement::clear() const
-{
-    return getAttribute(clearAttr);
-}
-
-void HTMLBRElement::setClear(const String &value)
-{
-    setAttribute(clearAttr, value);
 }
 
 }

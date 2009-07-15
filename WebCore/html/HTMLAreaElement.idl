@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,13 +25,13 @@ module html {
         InterfaceUUID=aac98729-47d3-4623-8c5b-004783af5bd6,
         ImplementationUUID=f0631a41-5f55-40e5-a879-c09e663c26ba
     ] HTMLAreaElement : HTMLElement {
-        attribute [ConvertNullToNullString] DOMString accessKey;
-        attribute [ConvertNullToNullString] DOMString alt;
-        attribute [ConvertNullToNullString] DOMString coords;
-        attribute [ConvertNullToNullString] DOMString href;
+        attribute [ConvertNullToNullString, Reflect=accesskey] DOMString accessKey;
+        attribute [ConvertNullToNullString, Reflect] DOMString alt;
+        attribute [ConvertNullToNullString, Reflect] DOMString coords;
+        attribute [ConvertNullToNullString, ReflectURL] DOMString href;
         attribute boolean noHref;
-        attribute [ConvertNullToNullString] DOMString shape;
-        attribute [ConvertNullToNullString] DOMString target;
+        attribute [ConvertNullToNullString, Reflect] DOMString shape;
+        attribute [ConvertNullToNullString, Reflect] DOMString target;
 
         // IE Extensions
         readonly attribute DOMString hash;

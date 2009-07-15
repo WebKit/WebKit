@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,13 +24,9 @@
 #include "config.h"
 #include "HTMLBodyElement.h"
 
-#include "CSSHelper.h"
-#include "CSSMutableStyleDeclaration.h"
-#include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
-#include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -43,8 +39,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLBodyElement::HTMLBodyElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+HTMLBodyElement::HTMLBodyElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(bodyTag));
 }
@@ -194,16 +190,6 @@ void HTMLBodyElement::setALink(const String& value)
     setAttribute(alinkAttr, value);
 }
 
-String HTMLBodyElement::background() const
-{
-    return getAttribute(backgroundAttr);
-}
-
-void HTMLBodyElement::setBackground(const String& value)
-{
-    setAttribute(backgroundAttr, value);
-}
-
 String HTMLBodyElement::bgColor() const
 {
     return getAttribute(bgcolorAttr);
@@ -315,7 +301,7 @@ void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 
-    addSubresourceURL(urls, document()->completeURL(background()));
+    addSubresourceURL(urls, document()->completeURL(getAttribute(backgroundAttr)));
 }
 
 void HTMLBodyElement::didMoveToNewOwnerDocument()

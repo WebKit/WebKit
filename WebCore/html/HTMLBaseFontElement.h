@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef HTMLBaseFontElement_h
 #define HTMLBaseFontElement_h
 
@@ -28,21 +29,16 @@ namespace WebCore {
 
 class HTMLBaseFontElement : public HTMLElement {
 public:
-    HTMLBaseFontElement(const QualifiedName&, Document* doc);
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-
-    String color() const;
-    void setColor(const String &);
-
-    String face() const;
-    void setFace(const String &);
+    HTMLBaseFontElement(const QualifiedName&, Document*);
 
     int size() const;
     void setSize(int);
+
+private:
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
 };
 
-} //namespace
+} // namespace
 
 #endif

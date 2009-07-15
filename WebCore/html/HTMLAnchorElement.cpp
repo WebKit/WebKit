@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -24,48 +24,33 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
-#include "CSSHelper.h"
 #include "DNS.h"
-#include "Document.h"
-#include "Event.h"
-#include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "MappedAttribute.h"
 #include "MouseEvent.h"
-#include "MutationEvent.h"
 #include "Page.h"
-#include "RenderBox.h"
 #include "RenderImage.h"
-#include "ResourceRequest.h"
-#include "SelectionController.h"
 #include "Settings.h"
-#include "UIEvent.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAnchorElement::HTMLAnchorElement(Document* doc)
-    : HTMLElement(aTag, doc)
+HTMLAnchorElement::HTMLAnchorElement(Document* document)
+    : HTMLElement(aTag, document)
     , m_rootEditableElementForSelectionOnMouseDown(0)
     , m_wasShiftKeyDownOnMouseDown(false)
 {
 }
 
-HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document* doc)
-    : HTMLElement(tagName, doc)
+HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
     , m_rootEditableElementForSelectionOnMouseDown(0)
     , m_wasShiftKeyDownOnMouseDown(false)
-{
-}
-
-HTMLAnchorElement::~HTMLAnchorElement()
 {
 }
 
@@ -320,36 +305,6 @@ bool HTMLAnchorElement::canStartSelection() const
     return isContentEditable();
 }
 
-const AtomicString& HTMLAnchorElement::accessKey() const
-{
-    return getAttribute(accesskeyAttr);
-}
-
-void HTMLAnchorElement::setAccessKey(const AtomicString& value)
-{
-    setAttribute(accesskeyAttr, value);
-}
-
-const AtomicString& HTMLAnchorElement::charset() const
-{
-    return getAttribute(charsetAttr);
-}
-
-void HTMLAnchorElement::setCharset(const AtomicString& value)
-{
-    setAttribute(charsetAttr, value);
-}
-
-const AtomicString& HTMLAnchorElement::coords() const
-{
-    return getAttribute(coordsAttr);
-}
-
-void HTMLAnchorElement::setCoords(const AtomicString& value)
-{
-    setAttribute(coordsAttr, value);
-}
-
 bool HTMLAnchorElement::draggable() const
 {
     // Should be draggable if we have an href attribute.
@@ -371,54 +326,9 @@ void HTMLAnchorElement::setHref(const AtomicString& value)
     setAttribute(hrefAttr, value);
 }
 
-const AtomicString& HTMLAnchorElement::hreflang() const
-{
-    return getAttribute(hreflangAttr);
-}
-
-void HTMLAnchorElement::setHreflang(const AtomicString& value)
-{
-    setAttribute(hreflangAttr, value);
-}
-
 const AtomicString& HTMLAnchorElement::name() const
 {
     return getAttribute(nameAttr);
-}
-
-void HTMLAnchorElement::setName(const AtomicString& value)
-{
-    setAttribute(nameAttr, value);
-}
-
-const AtomicString& HTMLAnchorElement::rel() const
-{
-    return getAttribute(relAttr);
-}
-
-void HTMLAnchorElement::setRel(const AtomicString& value)
-{
-    setAttribute(relAttr, value);
-}
-
-const AtomicString& HTMLAnchorElement::rev() const
-{
-    return getAttribute(revAttr);
-}
-
-void HTMLAnchorElement::setRev(const AtomicString& value)
-{
-    setAttribute(revAttr, value);
-}
-
-const AtomicString& HTMLAnchorElement::shape() const
-{
-    return getAttribute(shapeAttr);
-}
-
-void HTMLAnchorElement::setShape(const AtomicString& value)
-{
-    setAttribute(shapeAttr, value);
 }
 
 short HTMLAnchorElement::tabIndex() const
@@ -430,21 +340,6 @@ short HTMLAnchorElement::tabIndex() const
 String HTMLAnchorElement::target() const
 {
     return getAttribute(targetAttr);
-}
-
-void HTMLAnchorElement::setTarget(const AtomicString& value)
-{
-    setAttribute(targetAttr, value);
-}
-
-const AtomicString& HTMLAnchorElement::type() const
-{
-    return getAttribute(typeAttr);
-}
-
-void HTMLAnchorElement::setType(const AtomicString& value)
-{
-    setAttribute(typeAttr, value);
 }
 
 String HTMLAnchorElement::hash() const

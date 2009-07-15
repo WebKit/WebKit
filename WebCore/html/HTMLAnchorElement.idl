@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,17 +25,17 @@ module html {
         InterfaceUUID=0c74cef8-b1f7-4b44-83a9-8deeb376a257,
         ImplementationUUID=30f797d5-d145-498e-a126-d8e9ddeedea3
     ] HTMLAnchorElement : HTMLElement {
-        attribute [ConvertNullToNullString] DOMString accessKey;
-        attribute [ConvertNullToNullString] DOMString charset;
-        attribute [ConvertNullToNullString] DOMString coords;
-        attribute [ConvertNullToNullString] DOMString href;
-        attribute [ConvertNullToNullString] DOMString hreflang;
-        attribute [ConvertNullToNullString] DOMString name;
-        attribute [ConvertNullToNullString] DOMString rel;
-        attribute [ConvertNullToNullString] DOMString rev;
-        attribute [ConvertNullToNullString] DOMString shape;
-        attribute [ConvertNullToNullString] DOMString target;
-        attribute [ConvertNullToNullString] DOMString type;
+        attribute [ConvertNullToNullString, Reflect=accesskey] DOMString accessKey;
+        attribute [ConvertNullToNullString, Reflect] DOMString charset;
+        attribute [ConvertNullToNullString, Reflect] DOMString coords;
+        attribute [ConvertNullToNullString, ReflectURL] DOMString href;
+        attribute [ConvertNullToNullString, Reflect] DOMString hreflang;
+        attribute [ConvertNullToNullString, Reflect] DOMString name;
+        attribute [ConvertNullToNullString, Reflect] DOMString rel;
+        attribute [ConvertNullToNullString, Reflect] DOMString rev;
+        attribute [ConvertNullToNullString, Reflect] DOMString shape;
+        attribute [ConvertNullToNullString, Reflect] DOMString target;
+        attribute [ConvertNullToNullString, Reflect] DOMString type;
 
         // IE Extensions
         readonly attribute DOMString hash;

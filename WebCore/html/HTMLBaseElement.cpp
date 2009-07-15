@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,9 +26,7 @@
 #include "CSSHelper.h"
 #include "Document.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "HTMLNames.h"
-#include "KURL.h"
 #include "MappedAttribute.h"
 #include "XSSAuditor.h"
 
@@ -36,14 +34,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLBaseElement::HTMLBaseElement(const QualifiedName& qName, Document* doc)
-    : HTMLElement(qName, doc)
+HTMLBaseElement::HTMLBaseElement(const QualifiedName& qName, Document* document)
+    : HTMLElement(qName, document)
 {
     ASSERT(hasTagName(baseTag));
-}
-
-HTMLBaseElement::~HTMLBaseElement()
-{
 }
 
 void HTMLBaseElement::parseMappedAttribute(MappedAttribute* attr)
@@ -69,8 +63,8 @@ void HTMLBaseElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
 
-    // Since the document doesn't have a base element...
-    // (This will break in the case of multiple base elements, but that's not valid anyway (?))
+    // Since the document doesn't have a base element, clear the base URL and target.
+    // FIXME: This does not handle the case of multiple base elements correctly.
     document()->setBaseElementURL(KURL());
     document()->setBaseElementTarget(String());
 }
@@ -86,17 +80,7 @@ void HTMLBaseElement::process()
     if (!m_target.isEmpty())
         document()->setBaseElementTarget(m_target);
 
-    // ### should changing a document's base URL dynamically automatically update all images, stylesheets etc?
-}
-
-void HTMLBaseElement::setHref(const String &value)
-{
-    setAttribute(hrefAttr, value);
-}
-
-void HTMLBaseElement::setTarget(const String &value)
-{
-    setAttribute(targetAttr, value);
+    // FIXME: Changing a document's base URL should probably automatically update the resolved relative URLs of all images, stylesheets, etc.
 }
 
 }

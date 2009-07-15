@@ -54,7 +54,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "HTMLAnchorElement.h"
 #include "HTMLAppletElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElement.h"

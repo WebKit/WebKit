@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@ module html {
         InterfaceUUID=e84b14bc-b0aa-431f-83c4-fcc297e354b0,
         ImplementationUUID=c10d45a4-b042-45d0-b170-6ac7173ee823
     ] HTMLBRElement : HTMLElement {
-        attribute [ConvertNullToNullString] DOMString clear;
+        attribute [ConvertNullToNullString, Reflect] DOMString clear;
     };
 
 }

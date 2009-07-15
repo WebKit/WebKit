@@ -25,12 +25,12 @@ module html {
         InterfaceUUID=4789afc6-2d9e-4f3b-8c27-12abc9d4a014,
         ImplementationUUID=d2e16911-2f7e-4d58-a92c-94700d445b38
     ] HTMLBodyElement : HTMLElement {
-        attribute [ConvertNullToNullString] DOMString aLink;
-        attribute [ConvertNullToNullString] DOMString background;
-        attribute [ConvertNullToNullString] DOMString bgColor;
-        attribute [ConvertNullToNullString] DOMString link;
-        attribute [ConvertNullToNullString] DOMString text;
-        attribute [ConvertNullToNullString] DOMString vLink;
+        attribute [ConvertNullToNullString, Reflect=alink] DOMString aLink;
+        attribute [ConvertNullToNullString, Reflect] DOMString background;
+        attribute [ConvertNullToNullString, Reflect=bgcolor] DOMString bgColor;
+        attribute [ConvertNullToNullString, Reflect] DOMString link;
+        attribute [ConvertNullToNullString, Reflect] DOMString text;
+        attribute [ConvertNullToNullString, Reflect=vlink] DOMString vLink;
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
 #if !defined(LANGUAGE_COM) || !LANGUAGE_COM
@@ -42,12 +42,6 @@ module html {
         attribute [DontEnum] EventListener onresize;
         attribute [DontEnum] EventListener onstorage;
         attribute [DontEnum] EventListener onunload;
-
-        // Overrides of Element attributes.
-        // attribute [DontEnum] EventListener onblur;
-        // attribute [DontEnum] EventListener onerror;
-        // attribute [DontEnum] EventListener onfocus;
-        // attribute [DontEnum] EventListener onload;
 
         // Not implemented yet.
         // attribute [DontEnum] EventListener onafterprint;

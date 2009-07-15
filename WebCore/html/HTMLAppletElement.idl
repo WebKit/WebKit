@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -29,25 +29,25 @@ module html {
         InterfaceUUID=9b5cb4a8-c156-4b55-afdb-c60938a4d1b1,
         ImplementationUUID=56544372-675e-40dd-ba39-fa708a4c7678
     ] HTMLAppletElement : HTMLElement {
-                 attribute [ConvertNullToNullString] DOMString align;
-                 attribute [ConvertNullToNullString] DOMString alt;
-                 attribute [ConvertNullToNullString] DOMString archive;
-                 attribute [ConvertNullToNullString] DOMString code;
-                 attribute [ConvertNullToNullString] DOMString codeBase;
-                 attribute [ConvertNullToNullString] DOMString height;
+                 attribute [ConvertNullToNullString, Reflect] DOMString align;
+                 attribute [ConvertNullToNullString, Reflect] DOMString alt;
+                 attribute [ConvertNullToNullString, Reflect] DOMString archive;
+                 attribute [ConvertNullToNullString, Reflect] DOMString code;
+                 attribute [ConvertNullToNullString, Reflect=codebase] DOMString codeBase;
+                 attribute [ConvertNullToNullString, Reflect] DOMString height;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute [ConvertNullToNullString] DOMString hspace;
+                 attribute [ConvertNullToNullString, Reflect] DOMString hspace;
 #else
                  attribute [ConvertFromString] long hspace;
 #endif
-                 attribute [ConvertNullToNullString] DOMString name;
-                 attribute [ConvertNullToNullString] DOMString object;
+                 attribute [ConvertNullToNullString, Reflect] DOMString name;
+                 attribute [ConvertNullToNullString, Reflect] DOMString object;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute [ConvertNullToNullString] DOMString vspace;
+                 attribute [ConvertNullToNullString, Reflect] DOMString vspace;
 #else
                  attribute [ConvertFromString] long vspace;
 #endif
-                 attribute [ConvertNullToNullString] DOMString width;
+                 attribute [ConvertNullToNullString, Reflect] DOMString width;
     };
 
 }

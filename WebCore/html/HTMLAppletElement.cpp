@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -24,14 +24,11 @@
 #include "config.h"
 #include "HTMLAppletElement.h"
 
-#include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
 #include "RenderApplet.h"
-#include "RenderInline.h"
 #include "Settings.h"
-#include "ScriptController.h"
 
 namespace WebCore {
 
@@ -41,10 +38,6 @@ HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document* doc
     : HTMLPlugInElement(tagName, doc)
 {
     ASSERT(hasTagName(appletTag));
-}
-
-HTMLAppletElement::~HTMLAppletElement()
-{
 }
 
 void HTMLAppletElement::parseMappedAttribute(MappedAttribute* attr)
@@ -163,46 +156,6 @@ void HTMLAppletElement::finishParsingChildren()
         renderer()->setNeedsLayout(true); // This will cause it to create its widget & the Java applet
 }
 
-String HTMLAppletElement::alt() const
-{
-    return getAttribute(altAttr);
-}
-
-void HTMLAppletElement::setAlt(const String &value)
-{
-    setAttribute(altAttr, value);
-}
-
-String HTMLAppletElement::archive() const
-{
-    return getAttribute(archiveAttr);
-}
-
-void HTMLAppletElement::setArchive(const String &value)
-{
-    setAttribute(archiveAttr, value);
-}
-
-String HTMLAppletElement::code() const
-{
-    return getAttribute(codeAttr);
-}
-
-void HTMLAppletElement::setCode(const String &value)
-{
-    setAttribute(codeAttr, value);
-}
-
-String HTMLAppletElement::codeBase() const
-{
-    return getAttribute(codebaseAttr);
-}
-
-void HTMLAppletElement::setCodeBase(const String &value)
-{
-    setAttribute(codebaseAttr, value);
-}
-
 String HTMLAppletElement::hspace() const
 {
     return getAttribute(hspaceAttr);
@@ -211,16 +164,6 @@ String HTMLAppletElement::hspace() const
 void HTMLAppletElement::setHspace(const String &value)
 {
     setAttribute(hspaceAttr, value);
-}
-
-String HTMLAppletElement::object() const
-{
-    return getAttribute(objectAttr);
-}
-
-void HTMLAppletElement::setObject(const String &value)
-{
-    setAttribute(objectAttr, value);
 }
 
 String HTMLAppletElement::vspace() const
