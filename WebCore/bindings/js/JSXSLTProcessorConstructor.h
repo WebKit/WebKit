@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-    class JSXSLTProcessorConstructor : public DOMObject {
+    class JSXSLTProcessorConstructor : public DOMConstructorObject {
     public:
         JSXSLTProcessorConstructor(JSC::ExecState*);
         static const JSC::ClassInfo s_info;

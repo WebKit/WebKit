@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-    class JSWorkerConstructor : public DOMObject {
+    class JSWorkerConstructor : public DOMConstructorObject {
     public:
         JSWorkerConstructor(JSC::ExecState*);
 

@@ -1,3 +1,25 @@
+2009-07-15  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for: Bug 25205 -  XMLHttpRequest instance is not an instanceof XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=25205
+
+        In addition to for XMLHttpRequest, this also fixes for:
+        - Audio
+        - Image
+        - MessageChannel
+        - Option
+        - WebKitCSSMatrix
+        - WebKitPoint
+        - Worker
+        - XSLTProcessor
+
+        * fast/js/instanceof-operator-expected.txt: Added.
+        * fast/js/instanceof-operator.html: Added.
+        * fast/js/resources/instanceof-operator-dummy-worker.js: Added.
+        * fast/js/resources/instanceof-operator.js: Added.
+
 2009-07-15  Kai Brüning  <kai@granus.net>
 
         Reviewed by Dave Hyatt.

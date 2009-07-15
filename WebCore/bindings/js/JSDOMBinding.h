@@ -59,6 +59,21 @@ namespace WebCore {
 #endif
     };
 
+    // Base class for all constructor objects in this binding except Window.
+    class DOMConstructorObject : public DOMObject {
+    public:
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+        {
+            return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, JSC::HasStandardGetOwnPropertySlot | JSC::ImplementsHasInstance));
+        }
+
+    protected:
+        explicit DOMConstructorObject(PassRefPtr<JSC::Structure> structure)
+            : DOMObject(structure)
+        {
+        }
+    };
+
     DOMObject* getCachedDOMObjectWrapper(JSC::JSGlobalData&, void* objectHandle);
     void cacheDOMObjectWrapper(JSC::JSGlobalData&, void* objectHandle, DOMObject* wrapper);
     void forgetDOMObject(JSC::JSGlobalData&, void* objectHandle);

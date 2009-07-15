@@ -24,7 +24,7 @@
 
 namespace WebCore {
 
-class JSXMLHttpRequestConstructor : public DOMObject {
+class JSXMLHttpRequestConstructor : public DOMConstructorObject {
 public:
     JSXMLHttpRequestConstructor(JSC::ExecState*, JSDOMGlobalObject*);
     ScriptExecutionContext* scriptExecutionContext() const;

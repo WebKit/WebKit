@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class JSWebKitCSSMatrixConstructor : public DOMObject {
+class JSWebKitCSSMatrixConstructor : public DOMConstructorObject {
 public:
     JSWebKitCSSMatrixConstructor(JSC::ExecState*);
     static const JSC::ClassInfo s_info;

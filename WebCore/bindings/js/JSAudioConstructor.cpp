@@ -42,7 +42,7 @@ namespace WebCore {
 const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", 0, 0, 0 };
 
 JSAudioConstructor::JSAudioConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMObject(JSAudioConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+    : DOMConstructorObject(JSAudioConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
     , m_globalObject(globalObject)
 {
     ASSERT(globalObject->scriptExecutionContext());

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-    class JSMessageChannelConstructor : public DOMObject {
+    class JSMessageChannelConstructor : public DOMConstructorObject {
     public:
         JSMessageChannelConstructor(JSC::ExecState*, JSDOMGlobalObject*);
         virtual ~JSMessageChannelConstructor();
