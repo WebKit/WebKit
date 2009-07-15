@@ -377,6 +377,8 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
           Setting lastActivePanelSetting = setting(lastActivePanelSettingName);
           if (lastActivePanelSetting.type() == Setting::StringType)
               m_showAfterVisible = specialPanelForJSName(lastActivePanelSetting.string());
+          else
+              m_showAfterVisible = ElementsPanel;
         }
 
         if (m_nodeToFocus)

@@ -67,6 +67,7 @@ module core {
         boolean resourceTrackingEnabled();
         void enableResourceTracking(in boolean always);
         void disableResourceTracking(in boolean always);
+        void storeLastActivePanel(in DOMString panelName);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
         void enableDebuggerFromFrontend(in boolean always);
@@ -87,7 +88,6 @@ module core {
         void setPauseOnExceptions(in boolean pauseOnExceptions);
         void addBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
         void removeBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
-        void storeLastActivePanel(in DOMString panelName);
 
         [Custom] Array profiles();
 #endif
