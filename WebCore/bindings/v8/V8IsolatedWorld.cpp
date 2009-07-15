@@ -78,6 +78,7 @@ void V8IsolatedWorld::evaluate(const Vector<ScriptSourceCode>& sources, V8Proxy*
     // We need to create the world before touching DOM wrappers.
     V8IsolatedWorld* world = new V8IsolatedWorld(context);
 
+    V8Proxy::installHiddenObjectPrototype(context);
     proxy->installDOMWindow(context, proxy->frame()->domWindow());
     for (size_t i = 0; i < sources.size(); ++i)
         proxy->evaluate(sources[i], 0);

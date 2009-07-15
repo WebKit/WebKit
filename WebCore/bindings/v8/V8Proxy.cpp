@@ -65,6 +65,8 @@ V8ExtensionList V8Proxy::m_extensions;
 const char* V8Proxy::kContextDebugDataType = "type";
 const char* V8Proxy::kContextDebugDataValue = "value";
 
+static char hiddenObjectPrototypeKey[] = "hiddenObjectPrototypeKey";
+
 void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, v8::Handle<v8::ObjectTemplate> proto, const BatchedAttribute* attributes, size_t attributeCount)
 {
     for (size_t i = 0; i < attributeCount; ++i) {
@@ -698,37 +700,6 @@ v8::Local<v8::Value> V8Proxy::newInstance(v8::Handle<v8::Function> constructor, 
     return result;
 }
 
-v8::Local<v8::Function> V8Proxy::getConstructor(V8ClassIndex::V8WrapperType type)
-{
-    // A DOM constructor is a function instance created from a DOM constructor
-    // template. There is one instance per context. A DOM constructor is
-    // different from a normal function in two ways:
-    //   1) it cannot be called as constructor (aka, used to create a DOM object)
-    //   2) its __proto__ points to Object.prototype rather than
-    //      Function.prototype.
-    // The reason for 2) is that, in Safari, a DOM constructor is a normal JS
-    // object, but not a function. Hotmail relies on the fact that, in Safari,
-    // HTMLElement.__proto__ == Object.prototype.
-    //
-    // m_objectPrototype is a cache of the original Object.prototype.
-
-    ASSERT(isContextInitialized());
-    // Enter the context of the proxy to make sure that the
-    // function is constructed in the context corresponding to
-    // this proxy.
-    v8::Context::Scope scope(m_context);
-    v8::Handle<v8::FunctionTemplate> functionTemplate = V8DOMWrapper::getTemplate(type);
-    // Getting the function might fail if we're running out of
-    // stack or memory.
-    v8::TryCatch tryCatch;
-    v8::Local<v8::Function> value = functionTemplate->GetFunction();
-    if (value.IsEmpty())
-      return v8::Local<v8::Function>();
-    // Hotmail fix, see comments above.
-    value->Set(v8::String::New("__proto__"), m_objectPrototype);
-    return value;
-}
-
 v8::Local<v8::Object> V8Proxy::createWrapperFromCache(V8ClassIndex::V8WrapperType type)
 {
     int classIndex = V8ClassIndex::ToInt(type);
@@ -739,7 +710,7 @@ v8::Local<v8::Object> V8Proxy::createWrapperFromCache(V8ClassIndex::V8WrapperTyp
     // Not in cache.
     initContextIfNeeded();
     v8::Context::Scope scope(m_context);
-    v8::Local<v8::Function> function = getConstructor(type);
+    v8::Local<v8::Function> function = V8DOMWrapper::getConstructor(type, getHiddenObjectPrototype(m_context));
     v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
     if (!instance.IsEmpty()) {
         m_wrapperBoilerplates->Set(v8::Integer::New(classIndex), instance);
@@ -750,10 +721,9 @@ v8::Local<v8::Object> V8Proxy::createWrapperFromCache(V8ClassIndex::V8WrapperTyp
 
 bool V8Proxy::isContextInitialized()
 {
-    // m_context, m_global, m_objectPrototype and m_wrapperBoilerplates should
+    // m_context, m_global, and m_wrapperBoilerplates should
     // all be non-empty if if m_context is non-empty.
     ASSERT(m_context.IsEmpty() || !m_global.IsEmpty());
-    ASSERT(m_context.IsEmpty() || !m_objectPrototype.IsEmpty());
     ASSERT(m_context.IsEmpty() || !m_wrapperBoilerplates.IsEmpty());
     return !m_context.IsEmpty();
 }
@@ -951,14 +921,6 @@ void V8Proxy::disposeContextHandles()
 #endif
         m_wrapperBoilerplates.Dispose();
         m_wrapperBoilerplates.Clear();
-    }
-
-    if (!m_objectPrototype.IsEmpty()) {
-#ifndef NDEBUG
-        V8GCController::unregisterGlobalHandle(this, m_objectPrototype);
-#endif
-        m_objectPrototype.Dispose();
-        m_objectPrototype.Clear();
     }
 }
 
@@ -1177,7 +1139,7 @@ bool V8Proxy::installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* windo
         return false;
 
     // Create a new JS window object and use it as the prototype for the  shadow global object.
-    v8::Handle<v8::Function> windowConstructor = getConstructor(V8ClassIndex::DOMWINDOW);
+    v8::Handle<v8::Function> windowConstructor = V8DOMWrapper::getConstructor(V8ClassIndex::DOMWINDOW, getHiddenObjectPrototype(context));
     v8::Local<v8::Object> jsWindow = SafeAllocation::newInstance(windowConstructor);
     // Bail out if allocation failed.
     if (jsWindow.IsEmpty())
@@ -1279,26 +1241,14 @@ void V8Proxy::initContextIfNeeded()
 #endif
     }
 
-    // Allocate strings used during initialization.
-    v8::Handle<v8::String> objectString = v8::String::New("Object");
-    v8::Handle<v8::String> prototypeString = v8::String::New("prototype");
-    // Bail out if allocation failed.
-    if (objectString.IsEmpty() || prototypeString.IsEmpty()) {
-        disposeContextHandles();
-        return;
-    }
-
-    // Allocate clone cache and pre-allocated objects
-    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(m_global->Get(objectString));
-    m_objectPrototype = v8::Persistent<v8::Value>::New(object->Get(prototypeString));
+    installHiddenObjectPrototype(m_context);
     m_wrapperBoilerplates = v8::Persistent<v8::Array>::New(v8::Array::New(V8ClassIndex::WRAPPER_TYPE_COUNT));
     // Bail out if allocation failed.
-    if (m_objectPrototype.IsEmpty()) {
+    if (m_wrapperBoilerplates.IsEmpty()) {
         disposeContextHandles();
         return;
     }
 #ifndef NDEBUG
-    V8GCController::registerGlobalHandle(PROXY, this, m_objectPrototype);
     V8GCController::registerGlobalHandle(PROXY, this, m_wrapperBoilerplates);
 #endif
 
@@ -1520,6 +1470,26 @@ int V8Proxy::contextDebugId(v8::Handle<v8::Context> context)
         return -1;
     v8::Handle<v8::Value> data = context->GetData()->ToObject()->Get( v8::String::New(kContextDebugDataValue));
     return data->IsInt32() ? data->Int32Value() : -1;
+}
+
+v8::Handle<v8::Value> V8Proxy::getHiddenObjectPrototype(v8::Handle<v8::Context> context)
+{
+    return context->Global()->GetHiddenValue(v8::String::New(hiddenObjectPrototypeKey));
+}
+
+void V8Proxy::installHiddenObjectPrototype(v8::Handle<v8::Context> context)
+{
+    v8::Handle<v8::String> objectString = v8::String::New("Object");
+    v8::Handle<v8::String> prototypeString = v8::String::New("prototype");
+    v8::Handle<v8::String> hiddenObjectPrototypeString = v8::String::New(hiddenObjectPrototypeKey);
+    // Bail out if allocation failed.
+    if (objectString.IsEmpty() || prototypeString.IsEmpty() || hiddenObjectPrototypeString.IsEmpty())
+        return;
+
+    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(context->Global()->Get(objectString));
+    v8::Handle<v8::Value> objectPrototype = object->Get(prototypeString);
+
+    context->Global()->SetHiddenValue(hiddenObjectPrototypeString, objectPrototype);
 }
 
 }  // namespace WebCore

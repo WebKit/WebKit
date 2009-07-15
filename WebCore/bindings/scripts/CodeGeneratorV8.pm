@@ -422,17 +422,12 @@ END
     if ($classIndex eq "DOMWINDOW") {
         push(@implContentDecls, <<END);
     DOMWindow* window = V8DOMWrapper::convertToNativeObject<DOMWindow>(V8ClassIndex::DOMWINDOW, info.Holder());
-    Frame* frame = window->frame();
-    if (frame) {
-      // Get the proxy corresponding to the DOMWindow if possible to
-      // make sure that the constructor function is constructed in the
-      // context of the DOMWindow and not in the context of the caller.
-      return V8Proxy::retrieve(frame)->getConstructor(type);
-    }
+    // Get the proxy corresponding to the DOMWindow if possible to
+    // make sure that the constructor function is constructed in the
+    // context of the DOMWindow and not in the context of the caller.
+    return V8DOMWrapper::getConstructor(type, window);
 END
-  }
-
-    if ($classIndex eq "WORKERCONTEXT") {
+    } elsif ($classIndex eq "WORKERCONTEXT") {
         $implIncludes{"WorkerContextExecutionProxy.h"} = 1;
         push(@implContentDecls, <<END);
     return WorkerContextExecutionProxy::retrieve()->GetConstructor(type);

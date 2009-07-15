@@ -453,6 +453,44 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     return descriptor;
 }
 
+v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType type, v8::Handle<v8::Value> objectPrototype)
+{
+    // A DOM constructor is a function instance created from a DOM constructor
+    // template. There is one instance per context. A DOM constructor is
+    // different from a normal function in two ways:
+    //   1) it cannot be called as constructor (aka, used to create a DOM object)
+    //   2) its __proto__ points to Object.prototype rather than
+    //      Function.prototype.
+    // The reason for 2) is that, in Safari, a DOM constructor is a normal JS
+    // object, but not a function. Hotmail relies on the fact that, in Safari,
+    // HTMLElement.__proto__ == Object.prototype.
+    v8::Handle<v8::FunctionTemplate> functionTemplate = getTemplate(type);
+    // Getting the function might fail if we're running out of
+    // stack or memory.
+    v8::TryCatch tryCatch;
+    v8::Local<v8::Function> value = functionTemplate->GetFunction();
+    if (value.IsEmpty())
+        return v8::Local<v8::Function>();
+    // Hotmail fix, see comments above.
+    value->Set(v8::String::New("__proto__"), objectPrototype);
+    return value;
+}
+
+v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType type, DOMWindow* window)
+{
+    Frame* frame = window->frame();
+    if (!frame)
+        return v8::Local<v8::Function>();
+
+    v8::Handle<v8::Context> context = getWrapperContext(frame);
+    if (context.IsEmpty())
+        return v8::Local<v8::Function>();
+    // Enter the scope for this DOMWindow to get the correct constructor.
+    v8::Context::Scope scope(context);
+
+    return getConstructor(type, V8Proxy::getHiddenObjectPrototype(context));
+}
+
 v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperType type, void* impl)
 {
     ASSERT(type != V8ClassIndex::EVENTLISTENER);
@@ -609,7 +647,7 @@ v8::Handle<v8::Object> V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::V8WrapperTyp
     if (value.IsEmpty())
         return notHandledByInterceptor();
 
-    v8::Handle<v8::FunctionTemplate> descriptor = V8DOMWrapper::getTemplate(type);
+    v8::Handle<v8::FunctionTemplate> descriptor = getTemplate(type);
     while (value->IsObject()) {
         v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
         if (descriptor->HasInstance(object))

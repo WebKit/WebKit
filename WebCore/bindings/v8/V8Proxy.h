@@ -239,9 +239,6 @@ namespace WebCore {
         // Call the function as constructor with the given arguments.
         v8::Local<v8::Value> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
 
-        // Returns the dom constructor function for the given node type.
-        v8::Local<v8::Function> getConstructor(V8ClassIndex::V8WrapperType);
-
         // To create JS Wrapper objects, we create a cache of a 'boiler plate'
         // object, and then simply Clone that object each time we need a new one.
         // This is faster than going through the full object creation process.
@@ -349,6 +346,10 @@ namespace WebCore {
         bool setContextDebugId(int id);
         static int contextDebugId(v8::Handle<v8::Context>);
 
+        static v8::Handle<v8::Value> getHiddenObjectPrototype(v8::Handle<v8::Context>);
+        // WARNING: Call |installHiddenObjectPrototype| only on fresh contexts!
+        static void installHiddenObjectPrototype(v8::Handle<v8::Context>);
+
         // Registers an extension to be available on webpages with a particular scheme
         // If the scheme argument is empty, the extension is available on all pages.
         // Will only affect v8 contexts initialized after this call. Takes ownership
@@ -357,7 +358,7 @@ namespace WebCore {
 
         // FIXME: Separate these concerns from V8Proxy?
         v8::Persistent<v8::Context> createNewContext(v8::Handle<v8::Object> global);
-        bool installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* window);
+        static bool installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* window);
 
         void initContextIfNeeded();
         void updateDocumentWrapper(v8::Handle<v8::Value> wrapper);
@@ -409,11 +410,10 @@ namespace WebCore {
 
         v8::Persistent<v8::Context> m_context;
         // For each possible type of wrapper, we keep a boilerplate object.
-        // The boilerplate is used to create additional wrappers of the same type.
-        // We keep a single persistent handle to an array of the activated
-        // boilerplates.
+        // The boilerplate is used to create additional wrappers of the same
+        // type.  We keep a single persistent handle to an array of the
+        // activated boilerplates.
         v8::Persistent<v8::Array> m_wrapperBoilerplates;
-        v8::Persistent<v8::Value> m_objectPrototype;
 
         v8::Persistent<v8::Object> m_global;
         v8::Persistent<v8::Value> m_document;
