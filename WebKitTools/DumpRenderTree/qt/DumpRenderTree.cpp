@@ -79,6 +79,9 @@ public:
     bool javaScriptConfirm(QWebFrame *frame, const QString& msg);
     bool javaScriptPrompt(QWebFrame *frame, const QString& msg, const QString& defaultValue, QString* result);
 
+public slots:
+    bool shouldInterruptJavaScript() { return false; }
+
 private slots:
     void setViewGeometry(const QRect &r)
     {
