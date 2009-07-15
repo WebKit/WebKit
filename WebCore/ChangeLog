@@ -12,6 +12,9 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [V8] drawImage method of HTMLCanvasElement to accept HTMLVideoElement as argument
+        https://bugs.webkit.org/show_bug.cgi?id=27170
+
         Changed CanvasRenderingContext2DDrawImage() to accept HTMLVideoElement
         as a parameter of drawImage() for HTMLCanvasElement.
 
