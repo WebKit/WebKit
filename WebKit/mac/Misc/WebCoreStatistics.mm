@@ -38,6 +38,7 @@
 #import <WebCore/GlyphPageTreeNode.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/JSDOMWindow.h>
+#import <WebCore/PageCache.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/RenderView.h>
 
@@ -190,6 +191,21 @@ using namespace WebCore;
 + (void)returnFreeMemoryToSystem
 {
     WTF::releaseFastMallocFreeMemory();
+}
+
++ (int)cachedPageCount
+{
+    return pageCache()->pageCount();
+}
+
++ (int)cachedFrameCount
+{
+    return pageCache()->frameCount();
+}
+
++ (int)autoreleasedPageCount
+{
+    return pageCache()->autoreleasedPageCount();
 }
 
 // Deprecated

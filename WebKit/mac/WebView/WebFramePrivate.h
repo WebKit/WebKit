@@ -45,6 +45,14 @@ extern NSString *WebPageCacheEntryDateKey;
 extern NSString *WebPageCacheDataSourceKey;
 extern NSString *WebPageCacheDocumentViewKey;
 
+extern NSString *WebFrameMainDocumentError;
+extern NSString *WebFrameHasPlugins;
+extern NSString *WebFrameHasUnloadListener;
+extern NSString *WebFrameUsesDatabases;
+extern NSString *WebFrameUsesGeolocation;
+extern NSString *WebFrameUsesApplicationCache;
+extern NSString *WebFrameCanSuspendActiveDOMObjects;
+
 typedef enum {
     WebFrameLoadTypeStandard,
     WebFrameLoadTypeBack,
@@ -100,4 +108,5 @@ typedef enum {
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 
+- (NSMutableDictionary *)_cacheabilityDictionary;
 @end

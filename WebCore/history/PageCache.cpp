@@ -63,6 +63,23 @@ void PageCache::setCapacity(int capacity)
     prune();
 }
 
+int PageCache::frameCount() const
+{
+    int frameCount = 0;
+    for (HistoryItem* current = m_head; current; current = current->m_next) {
+        ++frameCount;
+        ASSERT(current->m_cachedPage);
+        frameCount += current->m_cachedPage ? current->m_cachedPage->cachedMainFrame()->descendantFrameCount() : 0;
+    }
+    
+    return frameCount;
+}
+
+int PageCache::autoreleasedPageCount() const
+{
+    return m_autoreleaseSet.size();
+}
+
 void PageCache::add(PassRefPtr<HistoryItem> prpItem, PassRefPtr<CachedPage> cachedPage)
 {
     ASSERT(prpItem);

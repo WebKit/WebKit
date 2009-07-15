@@ -155,4 +155,13 @@ CachedFramePlatformData* CachedFrame::cachedFramePlatformData()
     return m_cachedFramePlatformData.get();
 }
 
+int CachedFrame::descendantFrameCount() const
+{
+    int count = m_childFrames.size();
+    for (size_t i = 0; i < m_childFrames.size(); ++i)
+        count += m_childFrames[i]->descendantFrameCount();
+    
+    return count;
+}
+
 } // namespace WebCore

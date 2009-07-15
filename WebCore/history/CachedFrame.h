@@ -60,6 +60,8 @@ public:
 
     void setCachedFramePlatformData(CachedFramePlatformData*);
     CachedFramePlatformData* cachedFramePlatformData();
+    
+    int descendantFrameCount() const;
 
 private:
     CachedFrame(Frame*);

@@ -64,6 +64,10 @@
 + (NSDictionary *)memoryStatistics;
 + (void)returnFreeMemoryToSystem;
 
++ (int)cachedPageCount;
++ (int)cachedFrameCount;
++ (int)autoreleasedPageCount;
+
 // Deprecated, but used by older versions of Safari.
 + (void)emptyCache;
 + (void)setCacheDisabled:(BOOL)disabled;

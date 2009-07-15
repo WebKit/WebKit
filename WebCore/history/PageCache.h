@@ -49,6 +49,10 @@ namespace WebCore {
         CachedPage* get(HistoryItem* item) { return item ? item->m_cachedPage.get() : 0; }
 
         void releaseAutoreleasedPagesNow();
+        
+        int pageCount() const { return m_size; }
+        int frameCount() const;
+        int autoreleasedPageCount() const;
 
     private:
         typedef HashSet<RefPtr<CachedPage> > CachedPageSet;

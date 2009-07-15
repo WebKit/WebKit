@@ -60,6 +60,7 @@
 #import <WebCore/DocLoader.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/EventNames.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
@@ -130,6 +131,14 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 NSString *WebPageCacheEntryDateKey = @"WebPageCacheEntryDateKey";
 NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
 NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
+
+NSString *WebFrameMainDocumentError = @"WebFrameMainDocumentErrorKey";
+NSString *WebFrameHasPlugins = @"WebFrameHasPluginsKey";
+NSString *WebFrameHasUnloadListener = @"WebFrameHasUnloadListenerKey";
+NSString *WebFrameUsesDatabases = @"WebFrameUsesDatabasesKey";
+NSString *WebFrameUsesGeolocation = @"WebFrameUsesGeolocationKey";
+NSString *WebFrameUsesApplicationCache = @"WebFrameUsesApplicationCacheKey";
+NSString *WebFrameCanSuspendActiveDOMObjects = @"WebFrameCanSuspendActiveDOMObjectsKey";
 
 // FIXME: Remove when this key becomes publicly defined
 NSString *NSAccessibilityEnhancedUserInterfaceAttribute = @"AXEnhancedUserInterface";
@@ -1149,6 +1158,40 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     DOMDocumentFragment *fragment = [self _documentFragmentWithMarkupString:markupString baseURLString:baseURLString];
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:NO];
+}
+
+- (NSMutableDictionary *)_cacheabilityDictionary
+{
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    
+    FrameLoader* frameLoader = _private->coreFrame->loader();
+    DocumentLoader* documentLoader = frameLoader->documentLoader();
+    if (documentLoader && !documentLoader->mainDocumentError().isNull())
+        [result setObject:(NSError *)documentLoader->mainDocumentError() forKey:WebFrameMainDocumentError];
+        
+    if (frameLoader->containsPlugins())
+        [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasPlugins];
+    
+    if (DOMWindow* domWindow = _private->coreFrame->domWindow()) {
+        if (domWindow->hasEventListener(eventNames().unloadEvent))
+            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasUnloadListener];
+            
+        if (domWindow->optionalApplicationCache())
+            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesApplicationCache];
+    }
+    
+    if (Document* document = _private->coreFrame->document()) {
+        if (document->hasOpenDatabases())
+            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesDatabases];
+            
+        if (document->usingGeolocation())
+            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesGeolocation];
+            
+        if (!document->canSuspendActiveDOMObjects())
+            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameCanSuspendActiveDOMObjects];
+    }
+    
+    return result;
 }
 
 @end
