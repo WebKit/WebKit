@@ -1,3 +1,46 @@
+2009-07-15  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Bug 25151 - workers that fail to load scripts not firing error event.
+        https://bugs.webkit.org/show_bug.cgi?id=25151
+
+        This fixes the problem that an error event is not fired when the worker
+        script fails to load. Some reasons this may occur are an invalid URL for
+        the worker script or a cross-origin redirect.
+
+        We also moves the code to complete the URL and check its origin from
+        Worker constructor to WorkerScriptLoader loading functions in order to
+        move the exception throwing logic out of the scope of Worker constructor.
+        Due to this change, we also remove the output ExceptionCode parameter
+        in the worker constructor. Corresponding JS/V8 binding codes have been
+        updated to reflect this change.
+
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::constructWorker):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL):
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::notifyFinished):
+        * workers/Worker.h:
+        (WebCore::Worker::create):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScripts):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::toCrossOriginRedirectPolicy):
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        (WebCore::notifyLoadErrorTask):
+        (WebCore::WorkerScriptLoader::createResourceRequest):
+        (WebCore::WorkerScriptLoader::didFail):
+        (WebCore::WorkerScriptLoader::didFailRedirectCheck):
+        (WebCore::WorkerScriptLoader::didReceiveAuthenticationCancellation):
+        (WebCore::WorkerScriptLoader::notifyError):
+        * workers/WorkerScriptLoader.h:
+        (WebCore::):
+        (WebCore::WorkerScriptLoader::url):
+
 2009-07-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

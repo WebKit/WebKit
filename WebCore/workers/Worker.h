@@ -33,7 +33,6 @@
 #include "ActiveDOMObject.h"
 #include "EventListener.h"
 #include "EventTarget.h"
-#include "KURL.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -51,7 +50,7 @@ namespace WebCore {
 
     class Worker : public RefCounted<Worker>, public ActiveDOMObject, private WorkerScriptLoaderClient, public EventTarget {
     public:
-        static PassRefPtr<Worker> create(const String& url, ScriptExecutionContext* context, ExceptionCode& ec) { return adoptRef(new Worker(url, context, ec)); }
+        static PassRefPtr<Worker> create(const String& url, ScriptExecutionContext* context) { return adoptRef(new Worker(url, context)); }
         ~Worker();
 
         virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
@@ -88,14 +87,13 @@ namespace WebCore {
         EventListener* onerror() const { return m_onErrorListener.get(); }
 
     private:
-        Worker(const String&, ScriptExecutionContext*, ExceptionCode&);
+        Worker(const String&, ScriptExecutionContext*);
 
         virtual void notifyFinished();
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
 
-        KURL m_scriptURL;
         OwnPtr<WorkerScriptLoader> m_scriptLoader;
 
         WorkerContextProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.

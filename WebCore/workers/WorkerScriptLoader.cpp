@@ -31,12 +31,15 @@
 
 #include "WorkerScriptLoader.h"
 
+#include "GenericWorkerTask.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerContext.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -47,24 +50,59 @@ WorkerScriptLoader::WorkerScriptLoader()
 {
 }
 
-void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, CrossOriginRedirectPolicy crossOriginRedirectPolicy)
+static CrossOriginRedirectPolicy toCrossOriginRedirectPolicy(CrossOriginLoadPolicy crossOriginLoadPolicy)
 {
-    ResourceRequest request(url);
-    request.setHTTPMethod("GET");
+    return (crossOriginLoadPolicy == DenyCrossOriginLoad) ? DenyCrossOriginRedirect : AllowCrossOriginRedirect;
+}
+
+void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, URLCompletionPolicy urlCompletionPolicy, CrossOriginLoadPolicy crossOriginLoadPolicy)
+{
+    OwnPtr<ResourceRequest> request(createResourceRequest(scriptExecutionContext, url, urlCompletionPolicy, crossOriginLoadPolicy));
+    if (!request)
+        return;
 
     ASSERT(scriptExecutionContext->isWorkerContext());
-    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), request, *this, AllowStoredCredentials, crossOriginRedirectPolicy);
+    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), *request, *this, AllowStoredCredentials, toCrossOriginRedirectPolicy(crossOriginLoadPolicy));
 }
     
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, CrossOriginRedirectPolicy crossOriginRedirectPolicy, WorkerScriptLoaderClient* client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, URLCompletionPolicy urlCompletionPolicy, CrossOriginLoadPolicy crossOriginLoadPolicy, WorkerScriptLoaderClient* client)
 {
     ASSERT(client);
     m_client = client;
 
-    ResourceRequest request(url);
-    request.setHTTPMethod("GET");
+    OwnPtr<ResourceRequest> request(createResourceRequest(scriptExecutionContext, url, urlCompletionPolicy, crossOriginLoadPolicy));
+    if (!request)
+        return;
 
-    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, request, DoNotSendLoadCallbacks, DoNotSniffContent, AllowStoredCredentials, crossOriginRedirectPolicy);
+    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, *request, DoNotSendLoadCallbacks, DoNotSniffContent, AllowStoredCredentials, toCrossOriginRedirectPolicy(crossOriginLoadPolicy));
+}
+
+static void notifyLoadErrorTask(ScriptExecutionContext* context, WorkerScriptLoader* loader)
+{
+    UNUSED_PARAM(context);
+    loader->notifyError();
+}
+
+PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest(ScriptExecutionContext* scriptExecutionContext, const String& url, URLCompletionPolicy urlCompletionPolicy, CrossOriginLoadPolicy crossOriginLoadPolicy)
+{
+    if (urlCompletionPolicy == CompleteURL) {
+        m_url = scriptExecutionContext->completeURL(url);
+        if (url.isEmpty() || !m_url.isValid()) {
+            scriptExecutionContext->postTask(createCallbackTask(&notifyLoadErrorTask, this));
+            return 0;
+        }
+    } else
+        m_url = KURL(url);
+
+    if (crossOriginLoadPolicy == DenyCrossOriginLoad && !scriptExecutionContext->securityOrigin()->canAccess(SecurityOrigin::create(m_url).get())) {
+        scriptExecutionContext->postTask(createCallbackTask(&notifyLoadErrorTask, this));
+        return 0;
+    }
+
+    OwnPtr<ResourceRequest> request(new ResourceRequest(m_url));
+    request->setHTTPMethod("GET");
+
+    return request.release();
 }
     
 void WorkerScriptLoader::didReceiveResponse(const ResourceResponse& response)
@@ -111,17 +149,20 @@ void WorkerScriptLoader::didFinishLoading(unsigned long identifier)
 
 void WorkerScriptLoader::didFail(const ResourceError&)
 {
-    m_failed = true;
-    notifyFinished();
+    notifyError();
 }
 
 void WorkerScriptLoader::didFailRedirectCheck()
 {
-    m_failed = true;
-    notifyFinished();
+    notifyError();
 }
 
 void WorkerScriptLoader::didReceiveAuthenticationCancellation(const ResourceResponse&)
+{
+    notifyError();
+}
+
+void WorkerScriptLoader::notifyError()
 {
     m_failed = true;
     notifyFinished();

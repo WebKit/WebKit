@@ -7,22 +7,53 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
+function runNextTest()
+{
+    testIndex++;
+    if (testIndex > totalTests) {
+        log("DONE");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    } else {
+        eval("test" + testIndex + "();");
+    }
+}
+
+function test1()
+{
+    var worker = new Worker('http://localhost:8000/workers/resources/worker-redirect-target.js');
+    worker.onerror = function(evt) {
+        log("SUCCESS: threw error when attempting to cross origin while loading the worker script.");
+        runNextTest();
+    }
+    worker.onmessage = function(evt) {
+        log("FAIL: executed script when redirect cross origin.");
+        runNextTest();
+    }
+}
+
+function test2()
+{
+    var worker = new Worker('/resources/redirect.php?url=http://localhost:8000/workers/resources/worker-redirect-target.js');
+    worker.onerror = function(evt) {
+        log("SUCCESS: threw error when attempting to redirected cross origin while loading the worker script.");
+        runNextTest();
+    }
+    worker.onmessage = function(evt) {
+        log("FAIL: executed script when redirect cross origin.");
+        runNextTest();
+    }
+}
+
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
 
-var worker = new Worker('/resources/redirect.php?url=http://localhost:8000/workers/resources/worker-redirect-target.js');
-worker.onerror = function(evt) {
-    log("SUCCESS: threw error when attempting to redirected cross origin while loading the worker script.");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
-worker.onmessage = function(evt) {
-    log("FAIL: executed script when redirect cross origin.");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-}
+var totalTests = 2;
+var testIndex = 0;
+runNextTest();
+
 </script>
 </body>
 </html>

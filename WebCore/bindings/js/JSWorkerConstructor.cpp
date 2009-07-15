@@ -59,9 +59,7 @@ static JSObject* constructWorker(ExecState* exec, JSObject*, const ArgList& args
 
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
     
-    ExceptionCode ec = 0;
-    RefPtr<Worker> worker = Worker::create(scriptURL, window->document(), ec);
-    setDOMException(exec, ec);
+    RefPtr<Worker> worker = Worker::create(scriptURL, window->document());
 
     return asObject(toJS(exec, worker.release()));
 }
