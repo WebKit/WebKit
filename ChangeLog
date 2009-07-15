@@ -1,3 +1,13 @@
+2009-07-15  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Fix the Qt/Mac build by disabling TestNetscapePlugin
+
+        We should fix and enable this once we run DRT for Qt/Mac
+
+        * WebKit.pro:
+
 2009-07-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build fix. Require the correct libsoup version now that
