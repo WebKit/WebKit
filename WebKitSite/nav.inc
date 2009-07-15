@@ -25,7 +25,6 @@
         <li><a href="/coding/coding-style.html">Code Style Guidelines</a></li>
         <li><a href="http://trac.webkit.org/wiki/Web Inspector">Web Inspector</a></li>
         <li><a href="http://trac.webkit.org/wiki/WebDevelopers">Web Developer Resources</a></li>
-        <li><a href="/docs/hierarchy.html">DOM Interfaces</a></li>
         <li><a href="/demos/">Demos</a></li>
 
         <li class="subtitle">Testing</li>
