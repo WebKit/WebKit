@@ -251,6 +251,7 @@ namespace WebCore {
 
         static v8::Local<v8::Object> instantiateV8Object(V8Proxy*, V8ClassIndex::V8WrapperType, V8ClassIndex::V8WrapperType, void*);
 
+        static v8::Handle<v8::Context> V8DOMWrapper::getWrapperContext(Frame*);
     };
 
 }

@@ -578,19 +578,13 @@ void V8DOMWrapper::setHiddenWindowReference(Frame* frame, const int internalInde
     // Get DOMWindow
     if (!frame)
         return; // Object might be detached from window
-    v8::Handle<v8::Context> v8Context = V8Proxy::context(frame);
-    if (v8Context.IsEmpty())
+    v8::Handle<v8::Context> context = getWrapperContext(frame);
+    if (context.IsEmpty())
         return;
-
-    if (V8IsolatedWorld* world = V8IsolatedWorld::getEntered()) {
-       v8Context = world->context();
-       if (frame != V8Proxy::retrieveFrame(v8Context))
-           return;
-    }
 
     ASSERT(internalIndex < V8Custom::kDOMWindowInternalFieldCount);
 
-    v8::Handle<v8::Object> global = v8Context->Global();
+    v8::Handle<v8::Object> global = context->Global();
     // Look for real DOM wrapper.
     global = V8DOMWrapper::lookupDOMWrapper(V8ClassIndex::DOMWINDOW, global);
     ASSERT(!global.IsEmpty());
@@ -663,16 +657,22 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
 
     if (!proxy)
         V8Proxy* proxy = V8Proxy::retrieve();
+    if (V8IsolatedWorld::getEntered()) {
+        // This effectively disables the wrapper cache for isolated worlds.
+        proxy = 0;
+        // FIXME: Do we need a wrapper cache for the isolated world?  We should
+        // see if the performance gains are worth while.
+    }
     v8::Local<v8::Object> instance;
     if (proxy)
         instance = proxy->createWrapperFromCache(descriptorType);
     else {
-        v8::Local<v8::Function> function = V8DOMWrapper::getTemplate(descriptorType)->GetFunction();
+        v8::Local<v8::Function> function = getTemplate(descriptorType)->GetFunction();
         instance = SafeAllocation::newInstance(function);
     }
     if (!instance.IsEmpty()) {
         // Avoid setting the DOM wrapper for failed allocations.
-        V8DOMWrapper::setDOMWrapper(instance, V8ClassIndex::ToInt(cptrType), impl);
+        setDOMWrapper(instance, V8ClassIndex::ToInt(cptrType), impl);
     }
     return instance;
 }
@@ -1097,19 +1097,19 @@ v8::Handle<v8::Value> V8DOMWrapper::convertNodeToV8Object(Node* node)
         ASSERT(type != V8ClassIndex::INVALID_CLASS_INDEX);
     }
 
-    v8::Local<v8::Context> v8Context;
+    v8::Handle<v8::Context> context;
     if (proxy)
-        v8Context = proxy->context();
+        context = getWrapperContext(proxy->frame());
 
     // Enter the node's context and create the wrapper in that context.
-    if (!v8Context.IsEmpty())
-        v8Context->Enter();
+    if (!context.IsEmpty())
+        context->Enter();
 
     v8::Local<v8::Object> result = instantiateV8Object(proxy, type, V8ClassIndex::NODE, node);
 
     // Exit the node's context if it was entered.
-    if (!v8Context.IsEmpty())
-        v8Context->Exit();
+    if (!context.IsEmpty())
+        context->Exit();
 
     if (result.IsEmpty()) {
         // If instantiation failed it's important not to add the result
@@ -1359,13 +1359,28 @@ v8::Handle<v8::Value> V8DOMWrapper::convertWindowToV8Object(DOMWindow* window)
     }
 
     // Otherwise, return the global object associated with this frame.
-    v8::Handle<v8::Context> v8Context = V8Proxy::context(frame);
-    if (v8Context.IsEmpty())
+    v8::Handle<v8::Context> context = getWrapperContext(frame);
+    if (context.IsEmpty())
         return v8::Handle<v8::Object>();
 
-    v8::Handle<v8::Object> global = v8Context->Global();
+    v8::Handle<v8::Object> global = context->Global();
     ASSERT(!global.IsEmpty());
     return global;
+}
+
+v8::Handle<v8::Context> V8DOMWrapper::getWrapperContext(Frame* frame)
+{
+    v8::Handle<v8::Context> context = V8Proxy::context(frame);
+    if (context.IsEmpty())
+        return v8::Handle<v8::Context>();
+
+    if (V8IsolatedWorld* world = V8IsolatedWorld::getEntered()) {
+       context = world->context();
+       if (frame != V8Proxy::retrieveFrame(context))
+          return v8::Handle<v8::Context>();
+    }
+
+    return context;
 }
 
 }  // namespace WebCore
