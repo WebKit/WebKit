@@ -947,14 +947,10 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
-    // Rules for animation:
+    // Rule for animation:
     //
-    //  1)  If functionList is empty or we don't have a big rotation, we do a matrix animation. We could
-    //      use component animation for lists without a big rotation, but there is no need to, and this
-    //      is more efficient.
-    //
-    //  2)  Otherwise we do a component hardware animation.
-    bool isMatrixAnimation = !isValid || !hasBigRotation;
+    //  If functionLists don't match we do a matrix animation, otherwise we do a component hardware animation.
+    bool isMatrixAnimation = !isValid;
         
     // Set transform to identity since we are animating components and we need the base
     // to be the identity transform.

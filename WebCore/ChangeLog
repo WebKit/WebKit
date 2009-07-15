@@ -1,3 +1,25 @@
+2009-07-15  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Incorrect animation when trying to duplicate effect of transform-origin
+        https://bugs.webkit.org/show_bug.cgi?id=27310
+
+        The bug is that matrix animation is being used when animating
+        a list of transform functions that match in the from and to states.
+        This sometimes works. But because of the way CA does matrix animation
+        function lists like the one shown in the testcase animate incorrectly.
+
+        This fixes the bug by always doing component animation
+        as long as the function lists match. This allows CA
+        to animate the components and then recompose the result
+        into the correct matrix.
+
+        Test: animations/transform-origin-vs-functions.html
+
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::animateTransform):
+
 2009-07-15  Albert J. Wong  <ajwong@chromium.org>
 
         Reviewed by David Levin.
