@@ -1,3 +1,13 @@
+2009-07-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows Build fix.
+
+        Visual Studio reset our intermediate directory on us.
+        This sets it back.
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj:
+
 2009-07-15  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

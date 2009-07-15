@@ -140,7 +140,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCF.vsprops"
 			CharacterSet="1"
