@@ -28,8 +28,6 @@
 
 #if ENABLE(DOM_STORAGE)
 
-#include "StorageArea.h"
-
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -37,13 +35,15 @@
 namespace WebCore {
 
     class Frame;
+    class StorageArea;
     class String;
     typedef int ExceptionCode;
 
     class Storage : public RefCounted<Storage> {
     public:
         static PassRefPtr<Storage> create(Frame*, PassRefPtr<StorageArea>);
-        
+        ~Storage();
+
         unsigned length() const;
         String key(unsigned index, ExceptionCode&) const;
         String getItem(const String&) const;

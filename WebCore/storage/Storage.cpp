@@ -47,6 +47,10 @@ Storage::Storage(Frame* frame, PassRefPtr<StorageArea> storageArea)
     ASSERT(m_storageArea);
 }
 
+Storage::~Storage()
+{
+}
+
 unsigned Storage::length() const
 {
     if (!m_frame)

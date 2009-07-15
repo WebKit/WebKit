@@ -42,6 +42,8 @@ namespace WebCore {
     public:
         enum Type { AreaImport, AreaSync, TerminateThread };
 
+        ~LocalStorageTask();
+
         static PassRefPtr<LocalStorageTask> createImport(PassRefPtr<StorageAreaSync> area) { return adoptRef(new LocalStorageTask(AreaImport, area)); }
         static PassRefPtr<LocalStorageTask> createSync(PassRefPtr<StorageAreaSync> area) { return adoptRef(new LocalStorageTask(AreaSync, area)); }
         static PassRefPtr<LocalStorageTask> createTerminate(PassRefPtr<LocalStorageThread> thread) { return adoptRef(new LocalStorageTask(TerminateThread, thread)); }

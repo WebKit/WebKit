@@ -1,3 +1,43 @@
+2009-07-15  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Cleanup DOM Storage dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=27180
+
+        DOM Storage had several unnecessary (and probably unintended)
+        dependencies.  This patch replaces many includes of header files with
+        forward declaration of classes, making some destructors explicit, and
+        taking some factories out of the header files.
+
+        This will allow things like StorageAreaSync to take a StorageAreaImpl*
+        (as it should) rather than a StorageArea* which previously weren't
+        possible because the dependencies were such a tangled mess.
+
+        * storage/LocalStorageTask.cpp:
+        (WebCore::LocalStorageTask::~LocalStorageTask):
+        * storage/LocalStorageTask.h:
+        * storage/Storage.cpp:
+        (WebCore::Storage::~Storage):
+        * storage/Storage.h:
+        * storage/StorageArea.cpp:
+        * storage/StorageArea.h:
+        * storage/StorageAreaImpl.cpp:
+        * storage/StorageAreaImpl.h:
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::~StorageAreaSync):
+        * storage/StorageAreaSync.h:
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::create):
+        (WebCore::StorageEvent::StorageEvent):
+        * storage/StorageEvent.h:
+        * storage/StorageNamespace.h:
+        * storage/StorageNamespaceImpl.cpp:
+        * storage/StorageNamespaceImpl.h:
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::~StorageSyncManager):
+        * storage/StorageSyncManager.h:
+
 2009-07-15  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

@@ -28,6 +28,10 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "SecurityOriginHash.h"
+#include "StringHash.h"
+#include "StorageArea.h"
+#include "StorageSyncManager.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

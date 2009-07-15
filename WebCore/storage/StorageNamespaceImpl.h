@@ -28,7 +28,13 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "PlatformString.h"
+#include "SecurityOriginHash.h"
+#include "StorageArea.h"
 #include "StorageNamespace.h"
+
+#include <wtf/HashMap.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

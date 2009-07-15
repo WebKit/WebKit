@@ -28,9 +28,9 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "PlatformString.h"
 #include "SQLiteDatabase.h"
 #include "StringHash.h"
-#include "StorageSyncManager.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 
@@ -42,12 +42,9 @@ namespace WebCore {
     
     class StorageAreaSync : public RefCounted<StorageAreaSync> {
     public:
-#ifndef NDEBUG
-        ~StorageAreaSync();
-#endif
-
         static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageArea> storageArea);
-        
+        ~StorageAreaSync();
+
         void scheduleFinalSync();
         void blockUntilImportComplete() const;
 
