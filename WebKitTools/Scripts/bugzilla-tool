@@ -96,15 +96,6 @@ def modified_changelogs(scm):
             changelog_paths.append(path)
     return changelog_paths
 
-def bug_id_from_commit_message(commit_message):
-    match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", commit_message, re.MULTILINE)
-    if match:
-        return match.group('bug_id')
-    match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", commit_message, re.MULTILINE)
-    if match:
-        return match.group('bug_id')
-    return None
-
 def commit_message_for_this_commit(scm):
     changelog_paths = modified_changelogs(scm)
     if not len(changelog_paths):
@@ -120,7 +111,7 @@ def commit_message_for_this_commit(scm):
         changelog_messages.append(changelog_entry)
     
     # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
-    return ''.join(changelog_messages)
+    return CommitMessage(''.join(changelog_messages).splitlines())
 
 
 class Command:
@@ -194,7 +185,7 @@ class ApplyPatchesFromBug(Command):
             scm.apply_patch(patch)
             if commit_each:
                 commit_message = commit_message_for_this_commit(scm)
-                scm.commit_locally_with_message(commit_message or patch['name'])
+                scm.commit_locally_with_message(commit_message.message() or patch['name'])
 
     def execute(self, options, args, tool):
         bug_id = args[0]
@@ -317,7 +308,7 @@ class LandPatchesFromBugs(Command):
             if options.test:
                 cls.run_webkit_tests()
         commit_message = commit_message_for_this_commit(scm)
-        commit_log = scm.commit_with_message(commit_message)
+        commit_log = scm.commit_with_message(commit_message.message())
         return bug_comment_from_commit_text(scm, commit_log)
 
     @classmethod
@@ -368,7 +359,7 @@ class CommitMessageForCurrentDiff(Command):
 
     def execute(self, options, args, tool):
         os.chdir(tool.scm().checkout_root)
-        print "%s" % commit_message_for_this_commit(tool.scm())
+        print "%s" % commit_message_for_this_commit(tool.scm()).message()
 
 
 class ObsoleteAttachmentsOnBug(Command):
@@ -432,10 +423,9 @@ class PostCommitsAsPatchesToBug(Command):
 
         have_obsoleted_patches = set()
         for commit_id in commit_ids:
-            commit_message = tool.scm().commit_message_for_commit(commit_id)
-            commit_lines = commit_message.splitlines()
+            commit_message = tool.scm().commit_message_for_local_commit(commit_id)
 
-            bug_id = options.bug_id or bug_id_from_commit_message(commit_message)
+            bug_id = options.bug_id or commit_message.parse_bug_id()
             if not bug_id:
                 log("Skipping %s: No bug id found in commit log or specified with --bug-id." % commit_id)
                 continue
@@ -444,11 +434,11 @@ class PostCommitsAsPatchesToBug(Command):
                 PostDiffAsPatchToBug.obsolete_patches_on_bug(bug_id, tool.bugs)
                 have_obsoleted_patches.update(bug_id)
 
-            description = commit_lines[0]
+            description = commit_message.description(lstrip=True, strip_url=True)
             comment_text = None
             if (options.comment):
-                comment_text = "\n".join(commit_lines[1:])
-                comment_text += "\n---\n"
+                comment_text = commit_message.body(lstrip=True)
+                comment_text += "---\n"
                 comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
 
             diff = tool.scm().create_patch_from_local_commit(commit_id)

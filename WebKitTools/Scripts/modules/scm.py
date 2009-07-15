@@ -45,8 +45,51 @@ def detect_scm_system(path):
     
     return None
 
+def first_non_empty_line_after_index(lines, index=0):
+    first_non_empty_line = index
+    for line in lines[index:]:
+        if re.match("^\s*$", line):
+            first_non_empty_line += 1
+        else:
+            break
+    return first_non_empty_line
+
+
+class CommitMessage:
+    def __init__(self, message):
+        self.message = message[first_non_empty_line_after_index(message, 0):]
+
+    def body(self, lstrip=False):
+        lines = self.message[first_non_empty_line_after_index(self.message, 1):]
+        if lstrip:
+            lines = [line.lstrip() for line in lines]
+        return "\n".join(lines) + "\n"
+
+    def description(self, lstrip=False, strip_url=False):
+        line = self.message[0]
+        if lstrip:
+            line = line.lstrip()
+        if strip_url:
+            line = re.sub("^(\s*)<.+> ", "\1", line)
+        return line
+
+    def message(self):
+        return "\n".join(self.message) + "\n"
+
+    def parse_bug_id(self):
+        for line in self.message:
+            match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", line)
+            if match:
+                return match.group('bug_id')
+            match = re.search(Bugzilla.bug_server_regex + "show_bug\.cgi\?id=(?P<bug_id>\d+)", line)
+            if match:
+                return match.group('bug_id')
+        return None
+
+
 class ScriptError(Exception):
     pass
+
 
 class SCM:
     def __init__(self, cwd, dryrun=False):
@@ -162,6 +205,7 @@ class SCM:
     def local_commits(self):
         return []
 
+
 class SVN(SCM):
     def __init__(self, cwd, dryrun=False):
         SCM.__init__(self, cwd, dryrun)
@@ -225,6 +269,7 @@ class SVN(SCM):
         if self.dryrun:
             return "Dry run, no remote commit."
         return self.run_command(['svn', 'commit', '-m', message])
+
 
 # All git-specific logic should go here.
 class Git(SCM):
@@ -315,7 +360,7 @@ class Git(SCM):
 
         return self.run_command(['git', 'rev-list'] + revisions).splitlines()
 
-    def commit_message_for_commit(self, commit_id):
+    def commit_message_for_local_commit(self, commit_id):
         commit_lines = self.run_command(['git', 'cat-file', 'commit', commit_id]).splitlines()
 
         # Skip the git headers.
@@ -324,7 +369,7 @@ class Git(SCM):
             first_line_after_headers += 1
             if line == "":
                 break
-        return "\n".join(commit_lines[first_line_after_headers:])
+        return CommitMessage(commit_lines[first_line_after_headers:])
 
     def files_changed_summary_for_commit(self, commit_id):
         return self.run_command(['git', 'diff-tree', '--shortstat', '--no-commit-id', commit_id])

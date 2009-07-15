@@ -1,3 +1,34 @@
+2009-07-10  David Kilzer  <ddkilzer@apple.com>
+
+        bugzilla-tool: create CommitMessage class
+
+        Reviewed by Eric Seidel.
+
+        Create a CommitMessage class to encapsulate related code.
+
+        * Scripts/bugzilla-tool:
+         (bug_id_from_commit_message): Moved to
+         CommitMessage.parse_bug_id().
+         (commit_message_for_this_commit): Return a CommitMessage.
+         (ApplyPatchesFromBug.apply_patches): Use CommitMessage.message().
+         (LandPatchesFromBugs.build_and_commit): Ditto.
+         (CommitMessageForCurrentDiff.execute): Ditto.
+         (PostCommitsAsPatchesToBug.execute): Switched from
+         Git.commit_message_for_commit() to
+         Git.commit_message_for_local_commit().  Switched from
+         bug_id_from_commit_message() to CommitMessage.parse_bug_id().
+
+         * Scripts/modules/scm.py:
+         (first_non_empty_line_after_index): Added.
+         (CommitMessage.__init__): Added.
+         (CommitMessage.body): Added.
+         (CommitMessage.description): Added.
+         (CommitMessage.message): Added.
+         (CommitMessage.parse_bug_id): Added.  Moved from
+         bug_id_from_commit_message() in bugzilla-tool.
+         (Git.commit_message_for_local_commit): Renamed from
+         commit_message_for_commit().  Return a CommitMessage.
+
 2009-07-15  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by David Kilzer.
