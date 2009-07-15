@@ -849,11 +849,6 @@ void HTMLMediaElement::returnToRealtime()
     setCurrentTime(maxTimeSeekable(), e);
 }  
 
-bool HTMLMediaElement::supportsFullscreen() const
-{
-    return m_player ? m_player->supportsFullscreen() : false;
-}
-
 bool HTMLMediaElement::supportsSave() const
 {
     return m_player ? m_player->supportsSave() : false;

@@ -1,3 +1,26 @@
+2009-07-14  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        HTMLMediaElement::supportsFullscreen() should return false
+        https://bugs.webkit.org/show_bug.cgi?id=27284
+
+        (Reverting a part of 45875)
+
+        HTMLVideoElement::supportsFullscreen() will properly do the
+        job, and check if the backend supports fullscreen.
+
+        HTMLVideoElement is the only subclass to support fullscreen
+        (conditionnaly). HTMLAudioElement fullscreen is not supported
+        and is a different kind of fullscreen, if it comes to be wanted.
+
+        No test can be done currently given that none of the media
+        backends support fullscreen.
+
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::supportsFullscreen):
+
 2009-07-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Dimitri Glazkov.
