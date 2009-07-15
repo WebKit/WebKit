@@ -1,3 +1,16 @@
+2009-07-15  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adding the Win SQLite VFS implementation for Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26940
+
+        * platform/chromium/ChromiumBridge.h:
+        * platform/sql/chromium: Added.
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp: Added.
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp: Added.
+
 2009-07-15  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
