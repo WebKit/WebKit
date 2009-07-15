@@ -44,7 +44,6 @@ use strict;
 use warnings;
 
 use Config;
-use Cwd;
 use File::Basename;
 use File::Spec;
 use File::stat;
@@ -55,12 +54,14 @@ use Time::gmtime;
 
 sub binarycmp($$);
 sub canonicalizePath($);
+sub chdirAndGetDifference($);
+sub determineSvnRoot();
 sub findBaseUrl($);
 sub findMimeType($;$);
 sub findModificationType($);
 sub findSourceFileAndRevision($);
 sub fixChangeLogPatch($);
-sub generateDiff($);
+sub generateDiff($$);
 sub generateFileList($\%);
 sub isBinaryMimeType($);
 sub manufacturePatchForAdditionWithHistory($);
@@ -94,9 +95,12 @@ for my $path (keys %paths) {
     generateFileList($path, %diffFiles);
 }
 
+my $svnRoot = determineSvnRoot();
+my $prefix = chdirAndGetDifference($svnRoot);
+
 # Generate the diffs, in a order chosen for easy reviewing.
 for my $path (sort patchpathcmp values %diffFiles) {
-    generateDiff($path);
+    generateDiff($path, $prefix);
 }
 
 exit 0;
@@ -252,10 +256,10 @@ sub fixChangeLogPatch($)
     return $newPatch;
 }
 
-sub generateDiff($)
+sub generateDiff($$)
 {
-    my ($fileData) = @_;
-    my $file = $fileData->{path};
+    my ($fileData, $prefix) = @_;
+    my $file = File::Spec->catdir($prefix, $fileData->{path});
     my $patch;
     if ($fileData->{modificationType} eq "additionWithHistory") {
         manufacturePatchForAdditionWithHistory($fileData);
@@ -446,4 +450,30 @@ sub testfilecmp($$)
 {
     my ($fileDataA, $fileDataB) = @_;
     return $fileDataA->{isTestFile} <=> $fileDataB->{isTestFile};
+}
+
+sub chdirAndGetDifference($)
+{
+    my ($newdir) = @_;
+    my $before = File::Spec->rel2abs( File::Spec->curdir() );
+    chdir $newdir;
+    my $after = File::Spec->rel2abs( File::Spec->curdir() );
+    return File::Spec->abs2rel($before, $after);
+}
+
+sub determineSvnRoot()
+{
+    my $last = '';
+    my $path = '.';
+    my $parent = '../';
+    my $devnull = File::Spec->devnull();
+    my $exitCode;
+    while (1) {
+        $exitCode = system("svn info $path 2> $devnull > $devnull")/256;
+        last if $exitCode;
+        $last = $path;
+        $path = $parent . $path;
+    }
+
+    return File::Spec->rel2abs($last);
 }
