@@ -1,3 +1,14 @@
+2009-07-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Reorganize JavaScriptCore headers into:
+        API: include/JavaScriptCore/
+        Private: include/private/JavaScriptCore/
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/ImageDiff.vcproj:
+
 2009-07-14  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Levin.

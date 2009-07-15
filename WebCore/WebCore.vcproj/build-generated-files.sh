@@ -57,9 +57,15 @@ export BUILT_PRODUCTS_DIR="$XDSTROOT/obj/WebCore"
 
 if [ -e "$XDSTROOT/include/JavaScriptCore/create_hash_table" ]; then
     export CREATE_HASH_TABLE="$XDSTROOT/include/JavaScriptCore/create_hash_table"
-else
+elif [ -e "$XDSTROOT/include/private/JavaScriptCore/create_hash_table" ]; then
+    export CREATE_HASH_TABLE="$XDSTROOT/include/private/JavaScriptCore/create_hash_table"
+elif [ -e "$SDKROOT/include/JavaScriptCore/create_hash_table" ]; then
     export CREATE_HASH_TABLE="$SDKROOT/include/JavaScriptCore/create_hash_table"
+elif [ -e "$SDKROOT/include/private/JavaScriptCore/create_hash_table" ]; then
+    export CREATE_HASH_TABLE="$SDKROOT/include/private/JavaScriptCore/create_hash_table"
 fi
+
+echo ${CREATE_HASH_TABLE}
 
 mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources"

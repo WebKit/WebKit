@@ -140,6 +140,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\testapiCommon.vsprops"
 			CharacterSet="1"

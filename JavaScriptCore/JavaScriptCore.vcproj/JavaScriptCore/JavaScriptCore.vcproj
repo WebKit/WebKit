@@ -140,6 +140,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Internal|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug.vsprops;$(WebKitLibrariesDir)\tools\vsprops\debug_internal.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCF.vsprops"
 			CharacterSet="1"
@@ -588,19 +589,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\DateInstance.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\DateInstance.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\DateConversion.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\runtime\DateConversion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\DateInstance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\DateInstance.h"
 				>
 			</File>
 			<File
@@ -796,19 +797,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSONObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSONObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\JSObject.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSONObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSONObject.h"
 				>
 			</File>
 			<File
