@@ -2,6 +2,7 @@
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * The Original Code is Mozilla Communicator client code, released
  * March 31, 1998.
@@ -517,7 +518,7 @@ void msToGregorianDateTime(double ms, bool outputIsUTC, GregorianDateTime& tm)
     tm.year     =  year - 1900;
     tm.isDST    =  dstOff != 0.0;
 
-    tm.utcOffset = static_cast<long>((dstOff + utcOff) / msPerSecond);
+    tm.utcOffset = outputIsUTC ? 0 : static_cast<long>((dstOff + utcOff) / msPerSecond);
     tm.timeZone = NULL;
 }
 
