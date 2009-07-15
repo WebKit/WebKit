@@ -405,6 +405,12 @@
 #define HAVE_SIGNAL_H 1
 #endif
 
+#if !PLATFORM(WIN_OS) && !PLATFORM(SOLARIS) && !PLATFORM(SYMBIAN) && !COMPILER(RVCT)
+#define HAVE_TM_GMTOFF 1
+#define HAVE_TM_ZONE 1
+#define HAVE_TIMEGM 1
+#endif     
+
 #if PLATFORM(DARWIN)
 
 #define HAVE_ERRNO_H 1

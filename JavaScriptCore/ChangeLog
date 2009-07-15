@@ -1,3 +1,21 @@
+2009-07-15  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Dave Kilzer.
+
+        Turn off non-portable date manipulations for SYMBIAN
+        https://bugs.webkit.org/show_bug.cgi?id=27064
+
+        Introduce HAVE(TM_GMTOFF), HAVE(TM_ZONE) and HAVE(TIMEGM) guards 
+        and place the rules for controlling the guards in Platform.h.
+        Turn off these newly introduced guards for SYMBIAN.
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateUTCOffset):
+        * wtf/DateMath.h:
+        (WTF::GregorianDateTime::GregorianDateTime):
+        (WTF::GregorianDateTime::operator tm):
+        * wtf/Platform.h:
+
 2009-07-15  Norbert Leser  <norbert.leser@nokia.com>
 
         Reviewed by Simon Hausmann.

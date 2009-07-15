@@ -375,14 +375,19 @@ static int32_t calculateUTCOffset()
     localt.tm_wday = 0;
     localt.tm_yday = 0;
     localt.tm_isdst = 0;
-#if PLATFORM(WIN_OS) || PLATFORM(SOLARIS) || COMPILER(RVCT)
+#if HAVE(TM_GMTOFF)
+    localt.tm_gmtoff = 0;
+#endif
+#if HAVE(TM_ZONE)
+    localt.tm_zone = 0;
+#endif
+    
+#if HAVE(TIMEGM)
+    time_t utcOffset = timegm(&localt) - mktime(&localt);
+#else
     // Using a canned date of 01/01/2009 on platforms with weaker date-handling foo.
     localt.tm_year = 109;
     time_t utcOffset = 1230768000 - mktime(&localt);
-#else
-    localt.tm_zone = 0;
-    localt.tm_gmtoff = 0;
-    time_t utcOffset = timegm(&localt) - mktime(&localt);
 #endif
 
     return static_cast<int32_t>(utcOffset * 1000);
