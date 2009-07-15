@@ -36,11 +36,15 @@
 #include "MediaList.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
+#include <wtf/FastMalloc.h>
 #include <stdlib.h>
 #include <string.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
+
+#define YYMALLOC fastMalloc
+#define YYFREE fastFree
 
 #define YYENABLE_NLS 0
 #define YYLTYPE_IS_TRIVIAL 1

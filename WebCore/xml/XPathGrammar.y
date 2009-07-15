@@ -37,6 +37,10 @@
 #include "XPathPath.h"
 #include "XPathPredicate.h"
 #include "XPathVariableReference.h"
+#include <wtf/FastMalloc.h>
+
+#define YYMALLOC fastMalloc
+#define YYFREE fastFree
 
 #define YYENABLE_NLS 0
 #define YYLTYPE_IS_TRIVIAL 1
