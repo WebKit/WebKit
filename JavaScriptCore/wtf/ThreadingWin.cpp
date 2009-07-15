@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Torch Mobile, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,7 +90,14 @@
 #if !USE(PTHREADS) && PLATFORM(WIN_OS)
 #include "ThreadSpecific.h"
 #endif
+#if !PLATFORM(WINCE)
 #include <process.h>
+#endif
+#if HAVE(ERRNO_H)
+#include <errno.h>
+#else
+#define NO_ERRNO
+#endif
 #include <windows.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
@@ -210,9 +218,21 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     unsigned threadIdentifier = 0;
     ThreadIdentifier threadID = 0;
     ThreadFunctionInvocation* invocation = new ThreadFunctionInvocation(entryPoint, data);
+#if PLATFORM(WINCE)
+    // This is safe on WINCE, since CRT is in the core and innately multithreaded.
+    // On desktop Windows, need to use _beginthreadex (not available on WinCE) if using any CRT functions
+    HANDLE threadHandle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)wtfThreadEntryPoint, invocation, 0, (LPDWORD)&threadIdentifier);
+#else
     HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, invocation, 0, &threadIdentifier));
+#endif
     if (!threadHandle) {
+#if PLATFORM(WINCE)
+        LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, ::GetLastError());
+#elif defined(NO_ERRNO)
+        LOG_ERROR("Failed to create thread at entry point %p with data %p.", entryPoint, data);
+#else
         LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, errno);
+#endif
         return 0;
     }
 
