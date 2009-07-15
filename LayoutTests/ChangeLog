@@ -1,3 +1,22 @@
+2009-06-08  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Setting white-space and word-wrap via CSS in textarea doesn't override the wrap attribute
+        https://bugs.webkit.org/show_bug.cgi?id=26254
+
+        Make it so that setting white-space and word-wrap via CSS
+        overrides the wrap attribute.
+
+        This involves having the shadow div in the textarea inherit
+        the CSS from its parent instead of hard-coding it in
+        RenderTextControlMultiline.
+
+        * fast/forms/basic-textareas.html:
+        * platform/mac/fast/forms/basic-textareas-expected.checksum:
+        * platform/mac/fast/forms/basic-textareas-expected.png:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+
 2009-07-15  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

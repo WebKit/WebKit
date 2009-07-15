@@ -27,6 +27,7 @@
 #include "HTMLTextAreaElement.h"
 
 #include "ChromeClient.h"
+#include "CSSValueKeywords.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -172,6 +173,15 @@ void HTMLTextAreaElement::parseMappedAttribute(MappedAttribute* attr)
             wrap = SoftWrap;
         if (wrap != m_wrap) {
             m_wrap = wrap;
+
+            if (shouldWrapText()) {
+                addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePreWrap);
+                addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);
+            } else {
+                addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValuePre);
+                addCSSProperty(attr, CSSPropertyWordWrap, CSSValueNormal);
+            }
+
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
