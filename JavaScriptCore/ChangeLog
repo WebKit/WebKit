@@ -2,6 +2,21 @@
 
         Reviewed by Darin Adler.
 
+        Add NoncopyableCustomAllocated to Noncopyable.h.
+        https://bugs.webkit.org/show_bug.cgi?id=27228
+        
+        Some classes which inherited from Noncopyable overrides operator new
+        since Noncopyable'll be inherited from FastAllocBase, Noncopyable.h 
+        needs to be extended with this new class to support the overriding. 
+
+        * wtf/Noncopyable.h:
+        (WTFNoncopyable::NoncopyableCustomAllocated::NoncopyableCustomAllocated):
+        (WTFNoncopyable::NoncopyableCustomAllocated::~NoncopyableCustomAllocated):
+
+2009-07-14  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
         Allow custom memory allocation control for JavaScriptCore's IdentifierTable class
         https://bugs.webkit.org/show_bug.cgi?id=27260
 
