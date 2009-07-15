@@ -204,6 +204,13 @@
 		14E8378E09F85D4F00B85AE4 /* JSEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 14E8378D09F85D4F00B85AE4 /* JSEvent.h */; };
 		14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
+		15C7708C100D3C6A005BA267 /* ValidityState.idl in Resources */ = {isa = PBXBuildFile; fileRef = 15C77089100D3C6A005BA267 /* ValidityState.idl */; };
+		15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C7708A100D3C6A005BA267 /* ValidityState.h */; };
+		15C7708E100D3C6B005BA267 /* ValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C7708B100D3C6A005BA267 /* ValidityState.cpp */; };
+		15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C77091100D3CA8005BA267 /* JSValidityState.h */; };
+		15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C77092100D3CA8005BA267 /* JSValidityState.cpp */; };
+		15C770A5100D41CD005BA267 /* DOMValidityState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15C770A3100D41CD005BA267 /* DOMValidityState.mm */; };
+		15C770A6100D41CD005BA267 /* DOMValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C770A4100D41CD005BA267 /* DOMValidityState.h */; };
 		185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 185BCF260F3279CE000EA262 /* ThreadTimers.cpp */; };
 		185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = 185BCF270F3279CE000EA262 /* ThreadTimers.h */; };
 		188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 188604B10F2E654A000B6443 /* DOMTimer.cpp */; };
@@ -5113,6 +5120,13 @@
 		14E8378D09F85D4F00B85AE4 /* JSEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEvent.h; sourceTree = "<group>"; };
 		14FFE31B0AE1963300136BF5 /* HTMLFrameElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFrameElementBase.h; sourceTree = "<group>"; };
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
+		15C77089100D3C6A005BA267 /* ValidityState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ValidityState.idl; sourceTree = "<group>"; };
+		15C7708A100D3C6A005BA267 /* ValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidityState.h; sourceTree = "<group>"; };
+		15C7708B100D3C6A005BA267 /* ValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidityState.cpp; sourceTree = "<group>"; };
+		15C77091100D3CA8005BA267 /* JSValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValidityState.h; sourceTree = "<group>"; };
+		15C77092100D3CA8005BA267 /* JSValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValidityState.cpp; sourceTree = "<group>"; };
+		15C770A3100D41CD005BA267 /* DOMValidityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMValidityState.mm; sourceTree = "<group>"; };
+		15C770A4100D41CD005BA267 /* DOMValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMValidityState.h; sourceTree = "<group>"; };
 		185BCF260F3279CE000EA262 /* ThreadTimers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadTimers.cpp; sourceTree = "<group>"; };
 		185BCF270F3279CE000EA262 /* ThreadTimers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadTimers.h; sourceTree = "<group>"; };
 		188604B10F2E654A000B6443 /* DOMTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTimer.cpp; sourceTree = "<group>"; };
@@ -11266,6 +11280,8 @@
 				85992EB90AA5069500AC0785 /* DOMHTMLTitleElement.mm */,
 				85BA4D090AA688680088052D /* DOMHTMLUListElement.h */,
 				85BA4D0A0AA688680088052D /* DOMHTMLUListElement.mm */,
+				15C770A3100D41CD005BA267 /* DOMValidityState.mm */,
+				15C770A4100D41CD005BA267 /* DOMValidityState.h */,
 			);
 			name = HTML;
 			sourceTree = "<group>";
@@ -11954,6 +11970,9 @@
 				E446139D0CD6331000FADA75 /* TimeRanges.cpp */,
 				E446139E0CD6331000FADA75 /* TimeRanges.h */,
 				E446139F0CD6331000FADA75 /* TimeRanges.idl */,
+				15C7708B100D3C6A005BA267 /* ValidityState.cpp */,
+				15C7708A100D3C6A005BA267 /* ValidityState.h */,
+				15C77089100D3C6A005BA267 /* ValidityState.idl */,
 				E44613B40CD6344E00FADA75 /* VoidCallback.h */,
 				E44613A00CD6331000FADA75 /* VoidCallback.idl */,
 			);
@@ -12145,6 +12164,8 @@
 				BCEF45F40E687B5C001C1287 /* JSTextMetrics.h */,
 				E44614120CD6826900FADA75 /* JSTimeRanges.cpp */,
 				E44614130CD6826900FADA75 /* JSTimeRanges.h */,
+				15C77092100D3CA8005BA267 /* JSValidityState.cpp */,
+				15C77091100D3CA8005BA267 /* JSValidityState.h */,
 				BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */,
 				BC8243280D0CE8A200460C8F /* JSVoidCallback.h */,
 			);
@@ -16980,6 +17001,9 @@
 				415B7C630FF5A767006770F7 /* JSSharedWorkerConstructor.h in Headers */,
 				41D07A7F0FF935CA0095EDCE /* JSSharedWorker.h in Headers */,
 				418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */,
+				15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */,
+				15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */,
+				15C770A6100D41CD005BA267 /* DOMValidityState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17090,6 +17114,7 @@
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				41E1B1D20FF5986900576B3B /* AbstractWorker.idl in Resources */,
 				41E1B1D50FF5986900576B3B /* SharedWorker.idl in Resources */,
+				15C7708C100D3C6A005BA267 /* ValidityState.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19007,6 +19032,9 @@
 				415B7C590FF598E6006770F7 /* JSSharedWorkerCustom.cpp in Sources */,
 				41D07A7E0FF935CA0095EDCE /* JSSharedWorker.cpp in Sources */,
 				418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */,
+				15C7708E100D3C6B005BA267 /* ValidityState.cpp in Sources */,
+				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
+				15C770A5100D41CD005BA267 /* DOMValidityState.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

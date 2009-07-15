@@ -1,0 +1,8 @@
+Each form control in this document exposes a validity attribute that returns a live instance of ValidityState.
+
+   
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
