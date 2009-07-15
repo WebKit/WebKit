@@ -357,6 +357,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(TEXTMETRICS, TextMetrics)                                         \
     V(TREEWALKER, TreeWalker)                                           \
     V(UIEVENT, UIEvent)                                                 \
+    V(VALIDITYSTATE, ValidityState)                                     \
     V(WEBKITANIMATIONEVENT, WebKitAnimationEvent)                       \
     V(WEBKITCSSKEYFRAMERULE, WebKitCSSKeyframeRule)                     \
     V(WEBKITCSSKEYFRAMESRULE, WebKitCSSKeyframesRule)                   \

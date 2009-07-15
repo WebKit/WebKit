@@ -300,6 +300,7 @@
 #include "bindings/V8TimeRanges.cpp"
 #include "bindings/V8TreeWalker.cpp"
 #include "bindings/V8UIEvent.cpp"
+#include "bindings/V8ValidityState.cpp"
 #include "bindings/V8WebKitAnimationEvent.cpp"
 #include "bindings/V8WebKitCSSKeyframeRule.cpp"
 #include "bindings/V8WebKitCSSKeyframesRule.cpp"
