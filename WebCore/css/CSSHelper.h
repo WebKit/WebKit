@@ -1,7 +1,6 @@
 /*
- * This file is part of the CSS implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,15 +26,19 @@ namespace WebCore {
 
     class String;
 
-    /*
-     * mostly just removes the url("...") brace
-     */
-    String parseURL(const String& url);
+    // Deprecated.
+    // FIXME: Rename to deprecatedParseURL.
+    // Used in many inappropriate contexts throughout WebCore. We'll have to examine and test
+    // each call site to find out whether it needs the various things this function does. That
+    // includes trimming leading and trailing control characters (including whitespace), removing
+    // url() or URL() if it surrounds the entire string, removing matching quote marks if present,
+    // and stripping all characters in the range U+0000-U+0012. Probably no caller needs this.
+    String parseURL(const String&);
 
     // We always assume 96 CSS pixels in a CSS inch. This is the cold hard truth of the Web.
     // At high DPI, we may scale a CSS pixel, but the ratio of the CSS pixel to the so-called
     // "absolute" CSS length units like inch and pt is always fixed and never changes.
-    const float cssPixelsPerInch = 96.0f;
+    const float cssPixelsPerInch = 96;
 
 } // namespace WebCore
 

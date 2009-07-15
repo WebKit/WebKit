@@ -205,24 +205,26 @@ bool StringImpl::containsOnlyWhitespace()
     return true;
 }
 
-PassRefPtr<StringImpl> StringImpl::substring(unsigned pos, unsigned len)
+PassRefPtr<StringImpl> StringImpl::substring(unsigned start, unsigned length)
 {
-    if (pos >= m_length)
+    if (start >= m_length)
         return empty();
-    if (len > m_length - pos)
-        len = m_length - pos;
-    return create(m_data + pos, len);
+    unsigned maxLength = m_length - start;
+    if (length >= maxLength) {
+        if (!start)
+            return this;
+        length = maxLength;
+    }
+    return create(m_data + start, length);
 }
 
-PassRefPtr<StringImpl> StringImpl::substringCopy(unsigned pos, unsigned len)
+PassRefPtr<StringImpl> StringImpl::substringCopy(unsigned start, unsigned length)
 {
-    if (pos >= m_length)
-        pos = m_length;
-    if (len > m_length - pos)
-        len = m_length - pos;
-    if (!len)
+    start = min(start, m_length);
+    length = min(length, m_length - start);
+    if (!length)
         return adoptRef(new StringImpl);
-    return substring(pos, len);
+    return create(m_data + start, length);
 }
 
 UChar32 StringImpl::characterStartingAt(unsigned i)

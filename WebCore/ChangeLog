@@ -1,5 +1,42 @@
 2009-07-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        CSSHelper.h's parseURL is a function that no one should ever call
+        Part 1: Eliminate callers in the CSS parser.
+        https://bugs.webkit.org/show_bug.cgi?id=26599
+
+        Test: fast/css/uri-token-parsing.html
+
+        * css/CSSHelper.h: Added a comment explaining why nobody should ever call this
+        function. A FIXME suggests a next step, which would be to rename it deprecatedParseURL.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Removed unneeded call to parseURL;
+        CSSParser::text already takes care of parsing the URI token syntax, and the
+        parseURL function does no good.
+        (WebCore::CSSParser::parseContent): Ditto.
+        (WebCore::CSSParser::parseFillImage): Ditto.
+        (WebCore::CSSParser::parseFontFaceSrc): Ditto.
+        (WebCore::CSSParser::parseBorderImage): Ditto.
+        (WebCore::isCSSWhitespace): Added. Helper function that makes the text function
+        easier to read.
+        (WebCore::CSSParser::text): Tweak logic so that leading and trailing whitespace
+        are both trimmed before removing the quote marks. Changed to use the
+        isCSSWhitespace, isASCIIHexDigit, and toASCIIHexValue functions for clarity.
+
+        * css/CSSParser.h: Removed stray "public:" in this header.
+
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::substring): Optimized the case where the substring covers
+        the entire string, so we just share the StringImpl instead of making a new one.
+        This case came up in earlier versions of the CSS parser changes above.
+        (WebCore::StringImpl::substringCopy): Streamlined the logic here and made it
+        not call substring any more. Before, this was relying on the substring function
+        always making a copy of any non-empty substring.
+
+2009-07-15  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         After double-clicking a word, using Shift-arrow to select behaves unpredictably
