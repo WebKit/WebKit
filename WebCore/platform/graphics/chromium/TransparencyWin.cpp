@@ -478,6 +478,7 @@ void TransparencyWin::compositeTextComposite()
 
     // Now the layer has text with the proper color and opacity.
     SkCanvas* destCanvas = canvasForContext(*m_destContext);
+    destCanvas->save();
 
     // We want to use Untransformed space (see above)
     SkMatrix identity;
@@ -507,4 +508,3 @@ void TransparencyWin::makeLayerOpaque()
 }
 
 } // namespace WebCore
-
