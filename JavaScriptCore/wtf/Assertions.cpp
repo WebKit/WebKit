@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +46,10 @@
 #include <crtdbg.h>
 #endif
 
+#if PLATFORM(WINCE)
+#include <winbase.h>
+#endif
+
 extern "C" {
 
 WTF_ATTRIBUTE_PRINTF(1, 0)
@@ -66,7 +71,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
         CFRelease(str);
         CFRelease(cfFormat);
     } else
-#elif COMPILER(MSVC) && !PLATFORM(WINCE)
+#elif COMPILER(MSVC) && !defined(WINCEBASIC)
     if (IsDebuggerPresent()) {
         size_t size = 1024;
 
@@ -77,7 +82,20 @@ static void vprintf_stderr_common(const char* format, va_list args)
                 break;
 
             if (_vsnprintf(buffer, size, format, args) != -1) {
+#if PLATFORM(WINCE)
+                // WinCE only supports wide chars
+                wchar_t* wideBuffer = (wchar_t*)malloc(size * sizeof(wchar_t));
+                if (wideBuffer == NULL)
+                    break;
+                for (unsigned int i = 0; i < size; ++i) {
+                    if (!(wideBuffer[i] = buffer[i]))
+                        break;
+                }
+                OutputDebugStringW(wideBuffer);
+                free(wideBuffer);
+#else
                 OutputDebugStringA(buffer);
+#endif
                 free(buffer);
                 break;
             }
@@ -101,7 +119,7 @@ static void printf_stderr_common(const char* format, ...)
 
 static void printCallSite(const char* file, int line, const char* function)
 {
-#if PLATFORM(WIN) && defined _DEBUG
+#if PLATFORM(WIN) && !PLATFORM(WINCE) && defined _DEBUG
     _CrtDbgReport(_CRT_WARN, file, line, NULL, "%s\n", function);
 #else
     printf_stderr_common("(%s:%d %s)\n", file, line, function);
