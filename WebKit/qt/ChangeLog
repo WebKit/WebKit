@@ -1,3 +1,15 @@
+2009-07-15  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27285
+
+        When the user clicks a link with a target attribute, the newly created window should be visible.
+        Make new windows created in Qtlauncher visible.
+
+        * QtLauncher/main.cpp:
+        (WebPage::createWindow):
+
 2009-07-14  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by Zack Rusin.

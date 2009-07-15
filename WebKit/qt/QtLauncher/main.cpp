@@ -310,6 +310,7 @@ private:
 QWebPage *WebPage::createWindow(QWebPage::WebWindowType)
 {
     MainWindow *mw = new MainWindow;
+    mw->show();
     return mw->webPage();
 }
 
