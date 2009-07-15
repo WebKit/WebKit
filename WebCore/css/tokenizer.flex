@@ -73,6 +73,7 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 "!"{w}"important"       {yyTok = IMPORTANT_SYM; return yyTok;}
 
 {num}em                 {yyTok = EMS; return yyTok;}
+{num}rem                {yyTok = REMS; return yyTok;}
 {num}__qem              {yyTok = QEMS; return yyTok;} /* quirky ems */
 {num}ex                 {yyTok = EXS; return yyTok;}
 {num}px                 {yyTok = PXS; return yyTok;}

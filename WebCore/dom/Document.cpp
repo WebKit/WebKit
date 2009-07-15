@@ -361,11 +361,14 @@ Document::Document(Frame* frame, bool isXHTML)
     m_inDocument = true;
     m_inStyleRecalc = false;
     m_closeAfterStyleRecalc = false;
+
     m_usesDescendantRules = false;
     m_usesSiblingRules = false;
     m_usesFirstLineRules = false;
     m_usesFirstLetterRules = false;
     m_usesBeforeAfterRules = false;
+    m_usesRemUnits = false;
+
     m_gotoAnchorNeededAfterStylesheetsLoad = false;
  
     m_styleSelector = 0;

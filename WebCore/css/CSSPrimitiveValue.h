@@ -78,11 +78,13 @@ public:
         // This is used internally for unknown identifiers 
         CSS_PARSER_IDENTIFIER = 107,
         
-        // This unit is in CSS 3, but that isn't a finished standard yet
-        CSS_TURN = 108
+        // These are from CSS3 Values and Units, but that isn't a finished standard yet
+        CSS_TURN = 108,
+        CSS_REMS = 109
     };
     
-    static bool isUnitTypeLength(int type) { return type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG; }
+    static bool isUnitTypeLength(int type) { return (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) ||
+                                                    type == CSSPrimitiveValue::CSS_REMS; }
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int ident);
     static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue);
@@ -112,15 +114,15 @@ public:
      * this is screen/printer dependent, so we probably need a config option for this,
      * and some tool to calibrate.
      */
-    int computeLengthInt(RenderStyle*);
-    int computeLengthInt(RenderStyle*, double multiplier);
-    int computeLengthIntForLength(RenderStyle*);
-    int computeLengthIntForLength(RenderStyle*, double multiplier);
-    short computeLengthShort(RenderStyle*);
-    short computeLengthShort(RenderStyle*, double multiplier);
-    float computeLengthFloat(RenderStyle*, bool computingFontSize = false);
-    float computeLengthFloat(RenderStyle*, double multiplier, bool computingFontSize = false);
-    double computeLengthDouble(RenderStyle*, double multiplier = 1.0, bool computingFontSize = false);
+    int computeLengthInt(RenderStyle* currStyle, RenderStyle* rootStyle);
+    int computeLengthInt(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier);
+    int computeLengthIntForLength(RenderStyle* currStyle, RenderStyle* rootStyle);
+    int computeLengthIntForLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier);
+    short computeLengthShort(RenderStyle* currStyle, RenderStyle* rootStyle);
+    short computeLengthShort(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier);
+    float computeLengthFloat(RenderStyle* currStyle, RenderStyle* rootStyle, bool computingFontSize = false);
+    float computeLengthFloat(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier, bool computingFontSize = false);
+    double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }

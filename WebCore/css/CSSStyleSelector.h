@@ -152,7 +152,7 @@ public:
 
         void addKeyframeStyle(PassRefPtr<WebKitCSSKeyframesRule> rule);
 
-        static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, TransformOperations& outOperations);
+        static bool createTransformOperations(CSSValue* inValue, RenderStyle* inStyle, RenderStyle* rootStyle, TransformOperations& outOperations);
 
     private:
         enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
@@ -266,6 +266,7 @@ public:
 
         RefPtr<RenderStyle> m_style;
         RenderStyle* m_parentStyle;
+        RenderStyle* m_rootElementStyle;
         Element* m_element;
         StyledElement* m_styledElement;
         Node* m_parentNode;

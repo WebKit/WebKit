@@ -1,3 +1,65 @@
+2009-07-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27283
+
+        Implement the new 'rem' unit from CSS3.
+
+        Added some rem-* tests in fast/css.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validUnit):
+        (WebCore::unitFromString):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::lex):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthInt):
+        (WebCore::CSSPrimitiveValue::computeLengthIntForLength):
+        (WebCore::CSSPrimitiveValue::computeLengthShort):
+        (WebCore::CSSPrimitiveValue::computeLengthFloat):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        (WebCore::CSSPrimitiveValue::cssText):
+        (WebCore::CSSPrimitiveValue::parserValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::):
+        (WebCore::CSSPrimitiveValue::isUnitTypeLength):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::convertToLength):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapFillSize):
+        (WebCore::CSSStyleSelector::mapFillXPosition):
+        (WebCore::CSSStyleSelector::mapFillYPosition):
+        (WebCore::CSSStyleSelector::createTransformOperations):
+        * css/CSSStyleSelector.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::device_heightMediaFeatureEval):
+        (WebCore::device_widthMediaFeatureEval):
+        (WebCore::heightMediaFeatureEval):
+        (WebCore::widthMediaFeatureEval):
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        * css/tokenizer.flex:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::usesRemUnits):
+        (WebCore::Document::setUsesRemUnits):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::cssPrimitiveToLength):
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        (WebCore::dashArrayFromRenderingStyle):
+        * svg/graphics/SVGPaintServer.h:
+
 2009-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, build fix.

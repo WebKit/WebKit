@@ -85,7 +85,7 @@ namespace WebCore {
     SVGPaintServer* getPaintServerById(Document*, const AtomicString&);
 
     void applyStrokeStyleToContext(GraphicsContext*, RenderStyle*, const RenderObject*);
-    DashArray dashArrayFromRenderingStyle(const RenderStyle* style);
+    DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle);
 } // namespace WebCore
 
 #endif

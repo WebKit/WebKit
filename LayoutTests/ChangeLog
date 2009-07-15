@@ -1,3 +1,20 @@
+2009-07-14  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add layout tests for the new CSS3 'rem' unit type.
+
+        * fast/css/rem-dynamic-scaling.html: Added.
+        * fast/css/rem-units-on-root.html: Added.
+        * fast/css/remove-shorthand-expected.checksum: Added.
+        * fast/css/remove-shorthand-expected.png: Added.
+        * platform/mac/fast/css/rem-dynamic-scaling-expected.checksum: Added.
+        * platform/mac/fast/css/rem-dynamic-scaling-expected.png: Added.
+        * platform/mac/fast/css/rem-dynamic-scaling-expected.txt: Added.
+        * platform/mac/fast/css/rem-units-on-root-expected.checksum: Added.
+        * platform/mac/fast/css/rem-units-on-root-expected.png: Added.
+        * platform/mac/fast/css/rem-units-on-root-expected.txt: Added.
+
 2009-07-15  Brian Weinstein  <bweinstein@apple.com>
 
         Rubberstamped by Mark Rowe.

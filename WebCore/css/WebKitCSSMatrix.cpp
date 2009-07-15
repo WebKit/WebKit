@@ -72,7 +72,7 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
         // requires style (i.e., param uses 'ems' or 'exs')
         PassRefPtr<CSSValue> val =  styleDeclaration->getPropertyCSSValue(CSSPropertyWebkitTransform);
         TransformOperations operations;
-        if (!CSSStyleSelector::createTransformOperations(val.get(), 0, operations)) {
+        if (!CSSStyleSelector::createTransformOperations(val.get(), 0, 0, operations)) {
             ec = SYNTAX_ERR;
             return;
         }

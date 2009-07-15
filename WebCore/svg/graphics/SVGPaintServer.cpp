@@ -158,7 +158,7 @@ void applyStrokeStyleToContext(GraphicsContext* context, RenderStyle* style, con
     if (style->svgStyle()->joinStyle() == MiterJoin)
         context->setMiterLimit(style->svgStyle()->strokeMiterLimit());
 
-    const DashArray& dashes = dashArrayFromRenderingStyle(object->style());
+    const DashArray& dashes = dashArrayFromRenderingStyle(object->style(), object->document()->documentElement()->renderStyle());
     float dashOffset = SVGRenderStyle::cssPrimitiveToLength(object, style->svgStyle()->strokeDashOffset(), 0.0f);
     context->setLineDash(dashes, dashOffset);
 }
@@ -201,7 +201,7 @@ void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTa
 }
 #endif
 
-DashArray dashArrayFromRenderingStyle(const RenderStyle* style)
+DashArray dashArrayFromRenderingStyle(const RenderStyle* style, RenderStyle* rootStyle)
 {
     DashArray array;
     
@@ -214,7 +214,7 @@ DashArray dashArrayFromRenderingStyle(const RenderStyle* style)
             if (!dash)
                 continue;
 
-            array.append((float) dash->computeLengthFloat(const_cast<RenderStyle*>(style)));
+            array.append((float) dash->computeLengthFloat(const_cast<RenderStyle*>(style), rootStyle));
         }
     }
 

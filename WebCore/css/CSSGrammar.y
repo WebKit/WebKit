@@ -93,7 +93,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 49
+%expect 50
 
 %nonassoc LOWEST_PREC
 
@@ -145,6 +145,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token MEDIA_NOT
 %token MEDIA_AND
 
+%token <number> REMS
 %token <number> QEMS
 %token <number> EMS
 %token <number> EXS
@@ -1407,7 +1408,15 @@ unary_term:
   | EMS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EMS; }
   | QEMS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSParserValue::Q_EMS; }
   | EXS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EXS; }
-    ;
+  | REMS maybe_space {
+      $$.id = 0;
+      $$.fValue = $1;
+      $$.unit = CSSPrimitiveValue::CSS_REMS;
+      CSSParser* p = static_cast<CSSParser*>(parser);
+      if (Document* doc = p->document())
+          doc->setUsesRemUnits(true);
+  }
+  ;
 
 variable_reference:
   VARCALL {
