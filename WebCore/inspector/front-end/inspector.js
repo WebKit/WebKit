@@ -591,6 +591,7 @@ WebInspector.animateStyle = function(animations, duration, callback, complete)
         var start = null;
         var current = null;
         var end = null;
+        var key = null;
         for (key in animation) {
             if (key === "element")
                 element = animation[key];

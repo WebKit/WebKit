@@ -332,7 +332,7 @@ WebInspector.DatabasesPanel.prototype = {
         var nodes = [];
         
         var length = domStorage.length;
-        for (index = 0; index < domStorage.length; index++) {
+        for (var index = 0; index < domStorage.length; index++) {
             var data = {};
        
             var key = String(domStorage.key(index));

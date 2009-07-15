@@ -409,8 +409,8 @@ WebInspector.Console.prototype = {
                 }, \
                 dir: function() { return console.dir.apply(console, arguments) }, \
                 dirxml: function() { return console.dirxml.apply(console, arguments) }, \
-                keys: function(o) { var a = []; for (k in o) a.push(k); return a; }, \
-                values: function(o) { var a = []; for (k in o) a.push(o[k]); return a; }, \
+                keys: function(o) { var a = []; for (var k in o) a.push(k); return a; }, \
+                values: function(o) { var a = []; for (var k in o) a.push(o[k]); return a; }, \
                 profile: function() { return console.profile.apply(console, arguments) }, \
                 profileEnd: function() { return console.profileEnd.apply(console, arguments) } \
             };");

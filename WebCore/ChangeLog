@@ -1,3 +1,19 @@
+2009-07-14  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Inspector: Remove Unintended Global Variables
+        https://bugs.webkit.org/show_bug.cgi?id=27203
+
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype._ensureCommandLineAPIInstalled):
+        * inspector/front-end/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel.prototype.dataGridForDOMStorage):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/inspector.js:
+        (WebInspector.animateStyle):
+
 2009-07-14  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Adele Peterson.

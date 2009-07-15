@@ -156,7 +156,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         var hasSubProperties = false;
         var type = typeof childObject;
         if (childObject && (type === "object" || type === "function")) {
-            for (subPropertyName in childObject) {
+            for (var subPropertyName in childObject) {
                 if (subPropertyName === "__treeElementIdentifier")
                     continue;
                 hasSubProperties = true;
