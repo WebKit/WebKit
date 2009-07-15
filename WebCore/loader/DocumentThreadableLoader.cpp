@@ -164,7 +164,8 @@ void DocumentThreadableLoader::didFinishLoading(SubresourceLoader* loader)
 void DocumentThreadableLoader::didFail(SubresourceLoader* loader, const ResourceError& error)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(loader, loader == m_loader);
+    // m_loader may be null if we arrive here via SubresourceLoader::create in the ctor
+    ASSERT_UNUSED(loader, loader == m_loader || !m_loader);
 
     m_client->didFail(error);
 }
