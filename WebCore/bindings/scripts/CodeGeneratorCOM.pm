@@ -596,9 +596,15 @@ sub GenerateCPPAttribute
 
         # FIXME: CHECK EXCEPTION AND DO SOMETHING WITH IT
 
-        my $setterCall = "    impl${implementationClassWithoutNamespace}()->${setterName}(" . join(", ", @setterParams) . ");\n";
-
-        push(@setterImplementation, $setterCall);
+        my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+        my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+        if ($reflect || $reflectURL) {
+            $CPPImplementationWebCoreIncludes{"HTMLNames.h"} = 1;
+            my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
+            push(@setterImplementation, "    impl${implementationClassWithoutNamespace}()->setAttribute(WebCore::HTMLNames::${contentAttributeName}Attr, " . join(", ", @setterParams) . ");\n");
+        } else {
+            push(@setterImplementation, "    impl${implementationClassWithoutNamespace}()->${setterName}(" . join(", ", @setterParams) . ");\n");
+        }
         push(@setterImplementation, "    return S_OK;\n");
         push(@setterImplementation, "}\n\n");
 
@@ -611,7 +617,17 @@ sub GenerateCPPAttribute
     push(@getterImplementation, "    if (!result)\n");
     push(@getterImplementation, "        return E_POINTER;\n\n");
 
-    my $implementationGetter = "impl${implementationClassWithoutNamespace}()->" . $codeGenerator->WK_lcfirst($attributeName) . "(" . ($hasGetterException ? "ec" : ""). ")";
+    my $implementationGetter;
+    my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
+    my $reflectURL = $attribute->signature->extendedAttributes->{"ReflectURL"};
+    if ($reflect || $reflectURL) {
+        $implIncludes{"HTMLNames.h"} = 1;
+        my $contentAttributeName = (($reflect || $reflectURL) eq "1") ? $attributeName : ($reflect || $reflectURL);
+        my $getAttributeFunctionName = $reflectURL ? "getURLAttribute" : "getAttribute";
+        $implementationGetter = "impl${implementationClassWithoutNamespace}()->${getAttributeFunctionName}(WebCore::HTMLNames::${contentAttributeName}Attr)";
+    } else {
+        $implementationGetter = "impl${implementationClassWithoutNamespace}()->" . $codeGenerator->WK_lcfirst($attributeName) . "(" . ($hasGetterException ? "ec" : ""). ")";
+    }
 
     push(@getterImplementation, "    WebCore::ExceptionCode ec = 0;\n") if $hasGetterException;
 
