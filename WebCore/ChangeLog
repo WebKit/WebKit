@@ -1,5 +1,13 @@
 2009-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, build fix.
+
+        Remove extraneous qualifier, accidentally added in http://trac.webkit.org/changeset/45884.
+
+        * bindings/v8/V8DOMWrapper.h: Removed extraneous qualifier.
+
+2009-07-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Darin Fisher.
 
         [V8] Update bindings for ValiditeState patch.
