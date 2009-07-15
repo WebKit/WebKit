@@ -1,0 +1,56 @@
+<html> 
+<head>
+<script>
+    function doubleClickWord()
+    {
+        var start = document.getElementById("start");
+        
+        var x = start.offsetLeft + 2;
+        var y = start.offsetTop + 10;
+        
+        eventSender.leapForward(1000);
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.leapForward(1);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.leapForward(1000);
+    }
+
+    function runTest()
+    {
+        if (!window.eventSender || !window.layoutTestController)
+            return;
+
+        layoutTestController.dumpAsText();
+
+        doubleClickWord();
+        getSelection().modify("extend", "backward", "character");
+        getSelection().modify("extend", "backward", "character");
+        doubleClickWord();
+        getSelection().modify("extend", "backward", "character");
+        getSelection().modify("extend", "backward", "character");
+
+        var result;
+        var selectedText = getSelection().toString();
+        if (selectedText == "a paragraph")
+            result = "SUCCESS: The selection was extended to the left of the word.";
+        else
+            result = "FAILURE: The selected text is \"" + selectedText + "\".";
+        document.getElementById("result").firstChild.data = result;
+    }
+</script>
+</head>
+<body onload="runTest()">
+<p>This tests modifying a selection created with a double click with shift arrow key.</p>
+<p style="color:green">
+    This test does not run interactively.
+    It uses the event sender to do mouse clicks.
+    To run it manually, double click on the blue "g", then press shift-left-arrow twice.
+    Then repeat those steps again.
+    The selection should include the words "a paragraph".
+</p>
+<p>This is a para<span style="color:blue" id="start">g</span>raph.</p>
+<p id="result">TEST HAS NOT RUN</p>
+</body>

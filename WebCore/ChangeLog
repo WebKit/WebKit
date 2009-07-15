@@ -1,3 +1,30 @@
+2009-07-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        After double-clicking a word, using Shift-arrow to select behaves unpredictably
+        https://bugs.webkit.org/show_bug.cgi?id=27177
+        rdar://problem/7034324
+
+        Test: editing/selection/extend-selection-after-double-click.html
+
+        The bug was due to the m_lastChangeWasHorizontalExtension flag, which was not
+        being cleared in many cases where it should have been.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::setSelection): Set m_lastChangeWasHorizontalExtension
+        to false. This catches all sorts of cases that don't flow through the modify function.
+        Before, the flag would reflect the last call to the modify function, which was not
+        necessarily the last selection change.
+        (WebCore::SelectionController::willBeModified): Rearrange function for clarity.
+        Remove code that sets m_lastChangeWasHorizontalExtension; that is now handled elsewhere. 
+        (WebCore::SelectionController::modify): Call setLastChangeWasHorizontalExtension after
+        setSelection when setting up a trial selection controller, since setSelection now
+        clears that flag. Also changed both trial selection controller cases to set the flag,
+        although it's not strictly necessary in both cases. Added code to set
+        m_lastChangeWasHorizontalExtension when extending the selection, which used to be
+        handled in willBeModified. Now we need to do it after the selection change.
+
 2009-07-15  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Dimitri Glazkov.
