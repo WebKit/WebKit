@@ -1,3 +1,12 @@
+2009-07-15  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Rubber-stamped by Jan Alonzo.
+
+        [Gtk] en_GB translation
+        https://bugs.webkit.org/show_bug.cgi?id=27244
+
+        * en_GB.po: Added.
+
 2009-07-13  Reinout van Schouwen  <reinouts@gnome.org>
 
         <https://bugs.webkit.org/show_bug.cgi?id=26980> [Gtk] Updated Dutch translation
