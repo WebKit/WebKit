@@ -34,7 +34,7 @@
 namespace JSC {
 static const unsigned numCharactersToStore = 0x100;
 
-class SmallStringsStorage : Noncopyable {
+class SmallStringsStorage : public Noncopyable {
 public:
     SmallStringsStorage();
 

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class StringBuffer : Noncopyable {
+class StringBuffer : public Noncopyable {
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)

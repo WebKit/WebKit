@@ -39,7 +39,7 @@ typedef unsigned short Glyph;
 
 const float cGlyphWidthUnknown = -1;
 
-class GlyphWidthMap : Noncopyable {
+class GlyphWidthMap : public Noncopyable {
 public:
     GlyphWidthMap() : m_filledPrimaryPage(false) { }
     ~GlyphWidthMap() { if (m_pages) { deleteAllValues(*m_pages); } }

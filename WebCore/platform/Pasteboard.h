@@ -76,7 +76,7 @@ class Node;
 class Range;
 class String;
     
-class Pasteboard : Noncopyable {
+class Pasteboard : public Noncopyable {
 public:
 #if PLATFORM(MAC)
     //Helper functions to allow Clipboard to share code

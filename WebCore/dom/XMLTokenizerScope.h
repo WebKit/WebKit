@@ -36,7 +36,7 @@ namespace WebCore {
 
     class DocLoader;
 
-    class XMLTokenizerScope : Noncopyable {
+    class XMLTokenizerScope : public Noncopyable {
     public:
         XMLTokenizerScope(DocLoader* docLoader);
         ~XMLTokenizerScope();

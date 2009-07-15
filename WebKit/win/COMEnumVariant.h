@@ -34,7 +34,7 @@
 #include "COMVariantSetter.h"
 
 template<typename ContainerType>
-class COMEnumVariant : public IEnumVARIANT, Noncopyable {
+class COMEnumVariant : public IEnumVARIANT, public Noncopyable {
 public:
     static COMEnumVariant* adopt(ContainerType&);
     static COMEnumVariant* createInstance(const ContainerType&);

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-    class ClassNamesData : Noncopyable {
+    class ClassNamesData : public Noncopyable {
     public:
         ClassNamesData(const String& string, bool shouldFoldCase)
             : m_string(string), m_shouldFoldCase(shouldFoldCase), m_createdVector(false)

@@ -33,7 +33,7 @@ namespace WebCore {
 class AtomicString;
 class Node;
 
-class HTMLParserQuirks : Noncopyable {
+class HTMLParserQuirks : public Noncopyable {
 public:
     HTMLParserQuirks() { }
     virtual ~HTMLParserQuirks() { }

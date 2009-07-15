@@ -34,7 +34,7 @@ namespace WTF {
 
     template <typename T> class PassOwnPtr;
 
-    template <typename T> class OwnPtr : Noncopyable {
+    template <typename T> class OwnPtr : public Noncopyable {
     public:
         typedef typename RemovePointer<T>::Type ValueType;
         typedef ValueType* PtrType;

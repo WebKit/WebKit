@@ -37,7 +37,7 @@ namespace WebCore {
     class CachedPage;
     class HistoryItem;
     
-    class PageCache : Noncopyable {
+    class PageCache : public Noncopyable {
     public:
         friend PageCache* pageCache();
 

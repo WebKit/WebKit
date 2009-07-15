@@ -31,7 +31,7 @@
 
 namespace JSC {
     
-    class MarkedArgumentBuffer : Noncopyable {
+    class MarkedArgumentBuffer : public Noncopyable {
     private:
         static const unsigned inlineCapacity = 8;
         typedef Vector<Register, inlineCapacity> VectorType;

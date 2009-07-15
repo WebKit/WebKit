@@ -83,7 +83,7 @@ public:
 private:
     static const int noSplit = -1;
 
-    class GridAxis : Noncopyable {
+    class GridAxis : public Noncopyable {
     public:
         GridAxis();
         void resize(int);

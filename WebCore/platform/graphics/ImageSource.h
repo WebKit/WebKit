@@ -83,7 +83,7 @@ typedef NativeImageSkia* NativeImagePtr;
 const int cAnimationLoopOnce = -1;
 const int cAnimationNone = -2;
 
-class ImageSource : Noncopyable {
+class ImageSource : public Noncopyable {
 public:
     ImageSource();
     ~ImageSource();

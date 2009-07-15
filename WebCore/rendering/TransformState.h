@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class TransformState : Noncopyable {
+class TransformState : public Noncopyable {
 public:
     enum TransformDirection { ApplyTransformDirection, UnapplyInverseTransformDirection };
     enum TransformAccumulation { FlattenTransform, AccumulateTransform };

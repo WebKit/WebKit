@@ -36,7 +36,7 @@ class Frame;
 class ResourceResponse;
 struct ProgressItem;
 
-class ProgressTracker : Noncopyable {
+class ProgressTracker : public Noncopyable {
 public:
     ProgressTracker();
     ~ProgressTracker();

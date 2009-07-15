@@ -268,7 +268,7 @@ namespace WTF {
     };
 
     template<typename T>
-    class VectorBufferBase : Noncopyable {
+    class VectorBufferBase : public Noncopyable {
     public:
         void allocateBuffer(size_t newCapacity)
         {

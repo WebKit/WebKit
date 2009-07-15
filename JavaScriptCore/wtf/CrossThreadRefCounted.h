@@ -51,7 +51,7 @@ namespace WTF {
     // with respect to the original and any other copies.  The underlying m_data is jointly
     // owned by the original instance and all copies.
     template<class T>
-    class CrossThreadRefCounted : Noncopyable {
+    class CrossThreadRefCounted : public Noncopyable {
     public:
         static PassRefPtr<CrossThreadRefCounted<T> > create(T* data)
         {

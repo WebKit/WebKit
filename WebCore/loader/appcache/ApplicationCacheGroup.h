@@ -52,7 +52,7 @@ enum ApplicationCacheUpdateOption {
     ApplicationCacheUpdateWithoutBrowsingContext
 };
 
-class ApplicationCacheGroup : Noncopyable, ResourceHandleClient {
+class ApplicationCacheGroup : public Noncopyable, ResourceHandleClient {
 public:
     ApplicationCacheGroup(const KURL& manifestURL, bool isCopy = false);    
     ~ApplicationCacheGroup();

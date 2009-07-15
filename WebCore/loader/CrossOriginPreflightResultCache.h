@@ -32,7 +32,7 @@ namespace WebCore {
     class HTTPHeaderMap;
     class ResourceResponse;
 
-    class CrossOriginPreflightResultCacheItem : Noncopyable {
+    class CrossOriginPreflightResultCacheItem : public Noncopyable {
     public:
         CrossOriginPreflightResultCacheItem(bool credentials)
             : m_absoluteExpiryTime(0)
@@ -57,7 +57,7 @@ namespace WebCore {
         HeadersSet m_headers;
     };
 
-    class CrossOriginPreflightResultCache : Noncopyable {
+    class CrossOriginPreflightResultCache : public Noncopyable {
     public:
         static CrossOriginPreflightResultCache& shared();
 

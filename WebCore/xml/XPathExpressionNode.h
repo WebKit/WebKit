@@ -53,7 +53,7 @@ namespace WebCore {
             virtual ~ParseNode() { }
         };
 
-        class Expression : public ParseNode, Noncopyable {
+        class Expression : public ParseNode, public Noncopyable {
         public:
             static EvaluationContext& evaluationContext();
 

@@ -59,7 +59,7 @@ namespace WTF {
 void ThreadSpecificThreadExit();
 #endif
 
-template<typename T> class ThreadSpecific : Noncopyable {
+template<typename T> class ThreadSpecific : public Noncopyable {
 public:
     ThreadSpecific();
     T* operator->();

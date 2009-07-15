@@ -2,6 +2,45 @@
 
         Reviewed by Darin Adler.
 
+        Change all Noncopyable inheriting visibility to public.
+        https://bugs.webkit.org/show_bug.cgi?id=27225
+
+        Change all Noncopyable inheriting visibility to public because
+        it is needed to the custom allocation framework (bug #20422).
+
+        * bytecode/SamplingTool.h:
+        * bytecompiler/RegisterID.h:
+        * interpreter/CachedCall.h:
+        * interpreter/RegisterFile.h:
+        * parser/Lexer.h:
+        * parser/Parser.h:
+        * runtime/ArgList.h:
+        * runtime/BatchedTransitionOptimizer.h:
+        * runtime/Collector.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLock.h:
+        * runtime/JSONObject.cpp:
+        * runtime/SmallStrings.cpp:
+        * runtime/SmallStrings.h:
+        * wtf/CrossThreadRefCounted.h:
+        * wtf/GOwnPtr.h:
+        * wtf/Locker.h:
+        * wtf/MessageQueue.h:
+        * wtf/OwnArrayPtr.h:
+        * wtf/OwnFastMallocPtr.h:
+        * wtf/OwnPtr.h:
+        * wtf/RefCounted.h:
+        * wtf/ThreadSpecific.h:
+        * wtf/Threading.h:
+        * wtf/Vector.h:
+        * wtf/unicode/Collator.h:
+
+2009-07-14  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
         Change ParserArenaRefCounted's superclass to RefCountedCustomAllocated
         https://bugs.webkit.org/show_bug.cgi?id=27249
 

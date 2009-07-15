@@ -38,7 +38,7 @@ class GraphicsContext;
 class RenderObject;
 class VisiblePosition;
 
-class SelectionController : Noncopyable {
+class SelectionController : public Noncopyable {
 public:
     enum EAlteration { MOVE, EXTEND };
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };

@@ -38,7 +38,7 @@ class PlatformContextSkia;
 namespace WebCore {
 
 // This class just holds onto a PlatformContextSkia for GraphicsContext.
-class GraphicsContextPlatformPrivate : Noncopyable {
+class GraphicsContextPlatformPrivate : public Noncopyable {
 public:
     GraphicsContextPlatformPrivate(PlatformContextSkia* platformContext)
         : m_context(platformContext) { }

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-    class GCController : Noncopyable {
+    class GCController : public Noncopyable {
         friend GCController& gcController();
 
     public:

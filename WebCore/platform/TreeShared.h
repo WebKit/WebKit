@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-template<class T> class TreeShared : Noncopyable {
+template<class T> class TreeShared : public Noncopyable {
 public:
     TreeShared()
         : m_refCount(0)

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class HostWindow : Noncopyable {
+class HostWindow : public Noncopyable {
 public:
     virtual ~HostWindow() { }
 

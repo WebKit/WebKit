@@ -76,7 +76,7 @@ static void updateTaskTimer(int maxInterval = 1000)
     setSharedTimerFireDelay(static_cast<float>(intervalInMS) / 1000);
 }
 
-class QTMovieWinPrivate : Noncopyable {
+class QTMovieWinPrivate : public Noncopyable {
 public:
     QTMovieWinPrivate();
     ~QTMovieWinPrivate();

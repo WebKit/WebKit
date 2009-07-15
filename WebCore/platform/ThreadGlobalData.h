@@ -38,7 +38,7 @@ namespace WebCore {
     struct TECConverterWrapper;
     class ThreadTimers;
 
-    class ThreadGlobalData : Noncopyable {
+    class ThreadGlobalData : public Noncopyable {
     public:
         ThreadGlobalData();
         ~ThreadGlobalData();

@@ -73,7 +73,7 @@ NSEvent *EventHandler::currentNSEvent()
     return currentNSEventSlot().get();
 }
 
-class CurrentEventScope : Noncopyable {
+class CurrentEventScope : public Noncopyable {
 public:
     CurrentEventScope(NSEvent *);
     ~CurrentEventScope();

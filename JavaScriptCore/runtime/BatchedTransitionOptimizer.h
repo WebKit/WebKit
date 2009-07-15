@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-    class BatchedTransitionOptimizer : Noncopyable {
+    class BatchedTransitionOptimizer : public Noncopyable {
     public:
         BatchedTransitionOptimizer(JSObject* object)
             : m_object(object)

@@ -69,7 +69,7 @@ extern const int GeneralDragHysteresis;
 
 enum HitTestScrollbars { ShouldHitTestScrollbars, DontHitTestScrollbars };
 
-class EventHandler : Noncopyable {
+class EventHandler : public Noncopyable {
 public:
     EventHandler(Frame*);
     ~EventHandler();

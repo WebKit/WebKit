@@ -50,7 +50,7 @@ namespace JSC {
 
     class ExecState;
 
-    class JSLock : Noncopyable {
+    class JSLock : public Noncopyable {
     public:
         JSLock(ExecState*);
 
@@ -85,7 +85,7 @@ namespace JSC {
 
         bool m_lockingForReal;
 
-        class DropAllLocks : Noncopyable {
+        class DropAllLocks : public Noncopyable {
         public:
             DropAllLocks(ExecState* exec);
             DropAllLocks(bool);

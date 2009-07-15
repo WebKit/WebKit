@@ -32,7 +32,7 @@
 #include "Interpreter.h"
 
 namespace JSC {
-    class CachedCall : Noncopyable {
+    class CachedCall : public Noncopyable {
     public:
         CachedCall(CallFrame* callFrame, JSFunction* function, int argCount, JSValue* exception)
             : m_valid(false)

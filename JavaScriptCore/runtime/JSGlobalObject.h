@@ -391,7 +391,7 @@ namespace JSC {
         return globalData().dynamicGlobalObject;
     }
 
-    class DynamicGlobalObjectScope : Noncopyable {
+    class DynamicGlobalObjectScope : public Noncopyable {
     public:
         DynamicGlobalObjectScope(CallFrame* callFrame, JSGlobalObject* dynamicGlobalObject) 
             : m_dynamicGlobalObjectSlot(callFrame->globalData().dynamicGlobalObject)

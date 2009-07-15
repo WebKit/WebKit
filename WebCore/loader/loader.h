@@ -38,7 +38,7 @@ namespace WebCore {
     class KURL;
     class Request;
 
-    class Loader : Noncopyable {
+    class Loader : public Noncopyable {
     public:
         Loader();
         ~Loader();

@@ -1,3 +1,92 @@
+2009-07-14  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Change all Noncopyable inheriting visibility to public.
+        https://bugs.webkit.org/show_bug.cgi?id=27225
+
+        Change all Noncopyable inheriting visibility to public because
+        it is needed to the custom allocation framework (bug #20422).
+
+        * bindings/js/GCController.h:
+        * bindings/js/WorkerScriptController.h:
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::):
+        * bridge/runtime.h:
+        * css/CSSSelector.h:
+        * css/CSSSelectorList.h:
+        * css/CSSStyleSelector.h:
+        * dom/ClassNames.h:
+        * dom/MessagePortChannel.h:
+        * dom/XMLTokenizerLibxml2.cpp:
+        * dom/XMLTokenizerScope.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/SelectionController.h:
+        * editing/TextIterator.cpp:
+        * history/PageCache.h:
+        * html/CanvasRenderingContext2D.h:
+        * html/HTMLParser.h:
+        * html/HTMLParserQuirks.h:
+        * html/PreloadScanner.h:
+        * loader/Cache.h:
+        * loader/CrossOriginPreflightResultCache.h:
+        * loader/FrameLoader.h:
+        * loader/ProgressTracker.h:
+        * loader/ThreadableLoader.h:
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/archive/ArchiveResourceCollection.h:
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconLoader.h:
+        * loader/icon/PageURLRecord.h:
+        * loader/loader.h:
+        * page/ContextMenuController.h:
+        * page/EventHandler.h:
+        * page/FrameTree.h:
+        * page/Page.h:
+        * page/PageGroup.h:
+        * page/PageGroupLoadDeferrer.h:
+        * page/mac/EventHandlerMac.mm:
+        * platform/AutodrainedPool.h:
+        * platform/ContextMenu.h:
+        * platform/EventLoop.h:
+        * platform/HostWindow.h:
+        * platform/Pasteboard.h:
+        * platform/PurgeableBuffer.h:
+        * platform/RunLoopTimer.h:
+        * platform/ThreadGlobalData.h:
+        * platform/ThreadTimers.h:
+        * platform/Timer.h:
+        * platform/TreeShared.h:
+        * platform/graphics/FontData.h:
+        * platform/graphics/GlyphWidthMap.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/skia/GraphicsContextPlatformPrivate.h:
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/win/QTMovieWin.cpp:
+        * platform/mac/LocalCurrentGraphicsContext.h:
+        * platform/network/FormDataBuilder.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        * platform/text/StringBuffer.h:
+        * platform/text/TextCodec.h:
+        * platform/win/WindowMessageBroadcaster.h:
+        * rendering/CounterNode.h:
+        * rendering/LayoutState.h:
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderView.h:
+        * rendering/TransformState.h:
+        * svg/SVGAnimatedProperty.h:
+        * svg/SynchronizableTypeWrapper.h:
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerRunLoop.cpp:
+        * xml/XPathExpressionNode.h:
+        * xml/XPathParser.h:
+        * xml/XPathPredicate.h:
+        * xml/XPathStep.h:
+
 2009-07-14  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.

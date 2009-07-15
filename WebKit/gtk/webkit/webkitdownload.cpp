@@ -47,7 +47,7 @@ using namespace WebCore;
  * out what is to be downloaded, and do it itself.
  */
 
-class DownloadClient : Noncopyable, public ResourceHandleClient {
+class DownloadClient : public Noncopyable, public ResourceHandleClient {
     public:
         DownloadClient(WebKitDownload*);
 

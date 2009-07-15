@@ -37,7 +37,7 @@ namespace WebCore {
 
     class WindowMessageListener;
 
-    class WindowMessageBroadcaster : Noncopyable {
+    class WindowMessageBroadcaster : public Noncopyable {
     public:
         static void addListener(HWND, WindowMessageListener*);
         static void removeListener(HWND, WindowMessageListener*);

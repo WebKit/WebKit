@@ -45,7 +45,7 @@ namespace WebCore {
     class String;
     class WorkerContext;
 
-    class WorkerScriptController : Noncopyable {
+    class WorkerScriptController : public Noncopyable {
     public:
         WorkerScriptController(WorkerContext*);
         ~WorkerScriptController();

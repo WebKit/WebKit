@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-template <typename T> class Locker : Noncopyable {
+template <typename T> class Locker : public Noncopyable {
 public:
     Locker(T& lockable) : m_lockable(lockable) { m_lockable.lock(); }
     ~Locker() { m_lockable.unlock(); }

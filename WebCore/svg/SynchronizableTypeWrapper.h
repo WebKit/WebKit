@@ -26,7 +26,7 @@
 namespace WebCore {
 
     template<typename StoredType>
-    class SynchronizableTypeWrapperBase : Noncopyable {
+    class SynchronizableTypeWrapperBase : public Noncopyable {
     protected:
         SynchronizableTypeWrapperBase();
 

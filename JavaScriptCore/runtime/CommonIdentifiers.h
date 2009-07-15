@@ -70,7 +70,7 @@
 
 namespace JSC {
 
-    class CommonIdentifiers : Noncopyable {
+    class CommonIdentifiers : public Noncopyable {
     private:
         CommonIdentifiers(JSGlobalData*);
         friend class JSGlobalData;

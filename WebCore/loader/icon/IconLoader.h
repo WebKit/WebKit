@@ -38,7 +38,7 @@ class Frame;
 class KURL;
 class SharedBuffer;
 
-class IconLoader : private SubresourceLoaderClient, Noncopyable {
+class IconLoader : private SubresourceLoaderClient, public Noncopyable {
 public:
     static std::auto_ptr<IconLoader> create(Frame*);
     ~IconLoader();

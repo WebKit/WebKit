@@ -30,7 +30,7 @@ class CString;
 class Document;
 class TextEncoding;
 
-class FormDataBuilder : Noncopyable {
+class FormDataBuilder : public Noncopyable {
 public:
     FormDataBuilder();
     ~FormDataBuilder();

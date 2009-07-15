@@ -31,7 +31,7 @@ class GraphicsContext;
     
 // This class automatically saves and restores the current NSGraphicsContext for
 // functions which call out into AppKit and rely on the currentContext being set
-class LocalCurrentGraphicsContext : Noncopyable {
+class LocalCurrentGraphicsContext : public Noncopyable {
 public:
     LocalCurrentGraphicsContext(GraphicsContext* graphicsContext);
     ~LocalCurrentGraphicsContext();

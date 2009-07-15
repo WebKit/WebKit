@@ -33,7 +33,7 @@ namespace WebCore {
 
 class SimpleFontData;
 
-class FontData : Noncopyable {
+class FontData : public Noncopyable {
 public:
     FontData()
         : m_maxGlyphPageTreeLevel(0)

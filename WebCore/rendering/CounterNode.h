@@ -37,7 +37,7 @@ namespace WebCore {
 
 class RenderObject;
 
-class CounterNode : Noncopyable {
+class CounterNode : public Noncopyable {
 public:
     CounterNode(RenderObject*, bool isReset, int value);
 

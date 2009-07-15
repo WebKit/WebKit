@@ -72,7 +72,7 @@ using namespace std;
 
 namespace WebCore {
 
-class PendingCallbacks : Noncopyable {
+class PendingCallbacks : public Noncopyable {
 public:
     ~PendingCallbacks()
     {

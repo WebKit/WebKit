@@ -39,7 +39,7 @@ namespace JSC {
 
     template <typename T> struct ParserArenaData : ParserArenaDeletable { T data; };
 
-    class Parser : Noncopyable {
+    class Parser : public Noncopyable {
     public:
         template <class ParsedNode> PassRefPtr<ParsedNode> parse(ExecState*, Debugger*, const SourceCode&, int* errLine = 0, UString* errMsg = 0);
         template <class ParsedNode> PassRefPtr<ParsedNode> reparse(JSGlobalData*, ParsedNode*);

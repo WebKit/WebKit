@@ -37,7 +37,7 @@ namespace WTF {
     template<> void freeOwnedGPtr<GDir>(GDir*);
     template<> void freeOwnedGPtr<GHashTable>(GHashTable*);
 
-    template <typename T> class GOwnPtr : Noncopyable {
+    template <typename T> class GOwnPtr : public Noncopyable {
     public:
         explicit GOwnPtr(T* ptr = 0) : m_ptr(ptr) { }
         ~GOwnPtr() { freeOwnedGPtr(m_ptr); }

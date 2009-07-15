@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class ArchiveResourceCollection : Noncopyable {
+class ArchiveResourceCollection : public Noncopyable {
 public:
     ArchiveResourceCollection();
 

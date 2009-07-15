@@ -31,7 +31,7 @@
 
 namespace WebCore {
     
-    class PurgeableBuffer : Noncopyable {
+    class PurgeableBuffer : public Noncopyable {
     public:
         static PurgeableBuffer* create(const char* data, size_t);
         static PurgeableBuffer* create(const Vector<char>& v) { return create(v.data(), v.size()); }

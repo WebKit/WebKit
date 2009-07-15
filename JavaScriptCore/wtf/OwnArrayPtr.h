@@ -27,7 +27,7 @@
 
 namespace WTF {
 
-    template <typename T> class OwnArrayPtr : Noncopyable {
+    template <typename T> class OwnArrayPtr : public Noncopyable {
     public:
         explicit OwnArrayPtr(T* ptr = 0) : m_ptr(ptr) { }
         ~OwnArrayPtr() { safeDelete(); }

@@ -37,7 +37,7 @@ namespace WebCore {
 
 // Time intervals are all in seconds.
 
-class RunLoopTimerBase : Noncopyable {
+class RunLoopTimerBase : public Noncopyable {
 public:
     virtual ~RunLoopTimerBase();
 

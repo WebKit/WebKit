@@ -60,7 +60,7 @@
 // responsible for managing the painting state which is store in separate
 // SkPaint objects. This class provides the adaptor that allows the painting
 // state to be pushed and popped along with the bitmap.
-class PlatformContextSkia : Noncopyable {
+class PlatformContextSkia : public Noncopyable {
 public:
     // For printing, there shouldn't be any canvas. canvas can be NULL. If you
     // supply a NULL canvas, you can also call setCanvas later.

@@ -33,7 +33,7 @@ namespace JSC {
 
     class RegExp;
 
-    class Lexer : Noncopyable {
+    class Lexer : public Noncopyable {
     public:
         // Character manipulation functions.
         static bool isWhiteSpace(int character);

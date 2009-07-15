@@ -43,7 +43,7 @@ namespace WebCore {
     class IntRect;
     class String;
 
-    class ImageBuffer : Noncopyable {
+    class ImageBuffer : public Noncopyable {
     public:
         // Will return a null pointer on allocation failure.
         static PassOwnPtr<ImageBuffer> create(const IntSize& size, bool grayScale)

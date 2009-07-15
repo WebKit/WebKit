@@ -62,7 +62,7 @@ enum IconLoadDecision {
     IconLoadUnknown
 };
 
-class IconDatabase : Noncopyable {
+class IconDatabase : public Noncopyable {
 
 // *** Main Thread Only ***
 public:

@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-    class JSCell : Noncopyable {
+    class JSCell : public Noncopyable {
         friend class GetterSetter;
         friend class Heap;
         friend class JIT;

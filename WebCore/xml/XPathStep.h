@@ -39,7 +39,7 @@ namespace WebCore {
 
         class Predicate;
         
-        class Step : public ParseNode, Noncopyable {
+        class Step : public ParseNode, public Noncopyable {
         public:
             enum Axis {
                 AncestorAxis, AncestorOrSelfAxis, AttributeAxis,

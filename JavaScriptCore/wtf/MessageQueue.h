@@ -45,7 +45,7 @@ namespace WTF {
     };
 
     template<typename DataType>
-    class MessageQueue : Noncopyable {
+    class MessageQueue : public Noncopyable {
     public:
         MessageQueue() : m_killed(false) { }
         

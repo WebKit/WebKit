@@ -60,7 +60,7 @@ enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
 
 // --- ReplacementFragment helper class
 
-class ReplacementFragment : Noncopyable {
+class ReplacementFragment : public Noncopyable {
 public:
     ReplacementFragment(Document*, DocumentFragment*, bool matchStyle, const VisibleSelection&);
 

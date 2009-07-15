@@ -111,7 +111,7 @@ namespace WebCore {
         void* m_argument;
     };
 
-    class FrameLoader : Noncopyable {
+    class FrameLoader : public Noncopyable {
     public:
         FrameLoader(Frame*, FrameLoaderClient*);
         ~FrameLoader();

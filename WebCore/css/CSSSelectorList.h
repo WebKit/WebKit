@@ -31,7 +31,7 @@
 
 namespace WebCore {
     
-    class CSSSelectorList : Noncopyable {
+    class CSSSelectorList : public Noncopyable {
     public:
         CSSSelectorList() : m_selectorArray(0) { }
         ~CSSSelectorList();

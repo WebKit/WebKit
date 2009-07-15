@@ -39,7 +39,7 @@ struct UCollator;
 
 namespace WTF {
 
-    class Collator : Noncopyable {
+    class Collator : public Noncopyable {
     public:
         enum Result { Equal = 0, Greater = 1, Less = -1 };
 

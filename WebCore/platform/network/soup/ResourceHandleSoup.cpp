@@ -55,7 +55,7 @@
 
 namespace WebCore {
 
-class WebCoreSynchronousLoader : public ResourceHandleClient, Noncopyable {
+class WebCoreSynchronousLoader : public ResourceHandleClient, public Noncopyable {
 public:
     WebCoreSynchronousLoader(ResourceError&, ResourceResponse &, Vector<char>&);
     ~WebCoreSynchronousLoader();

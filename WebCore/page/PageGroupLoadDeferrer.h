@@ -28,7 +28,7 @@ namespace WebCore {
     class Frame;
     class Page;
 
-    class PageGroupLoadDeferrer : Noncopyable {
+    class PageGroupLoadDeferrer : public Noncopyable {
     public:
         PageGroupLoadDeferrer(Page*, bool deferSelf);
         ~PageGroupLoadDeferrer();

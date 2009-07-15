@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-    class RegisterID : Noncopyable {
+    class RegisterID : public Noncopyable {
     public:
         RegisterID()
             : m_refCount(0)

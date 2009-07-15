@@ -26,7 +26,7 @@ namespace WebCore {
 
     class Frame;
 
-    class FrameTree : Noncopyable {
+    class FrameTree : public Noncopyable {
     public:
         FrameTree(Frame* thisFrame, Frame* parentFrame) 
             : m_thisFrame(thisFrame)

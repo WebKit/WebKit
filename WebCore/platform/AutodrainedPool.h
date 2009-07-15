@@ -39,7 +39,7 @@ class NSAutoreleasePool;
 
 namespace WebCore {
 
-class AutodrainedPool : Noncopyable {
+class AutodrainedPool : public Noncopyable {
 public:
     AutodrainedPool(int iterationLimit = 1);
     ~AutodrainedPool();

@@ -56,7 +56,7 @@ namespace WebCore {
 
     typedef char UnencodableReplacementArray[32];
 
-    class TextCodec : Noncopyable {
+    class TextCodec : public Noncopyable {
     public:
         virtual ~TextCodec();
 

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class TimerHeapElement;
 
-class TimerBase : Noncopyable {
+class TimerBase : public Noncopyable {
 public:
     TimerBase();
     virtual ~TimerBase();
