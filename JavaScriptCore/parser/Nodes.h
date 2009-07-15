@@ -113,7 +113,7 @@ namespace JSC {
         void operator delete(void*);
     };
 
-    class ParserArenaRefCounted : public RefCounted<ParserArenaRefCounted> {
+    class ParserArenaRefCounted : public RefCountedCustomAllocated<ParserArenaRefCounted> {
     protected:
         ParserArenaRefCounted(JSGlobalData*);
 
