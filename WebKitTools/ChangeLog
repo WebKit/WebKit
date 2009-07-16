@@ -1,5 +1,17 @@
 2009-07-16  Peter Kasting  <pkasting@google.com>
 
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27323
+        Improve support for WebKit checkouts hosted inside other checkouts
+        (possible for some ports, e.g. Chromium).
+
+        * Scripts/svn-create-patch: Determine SVN root by looking for Repository
+          Root string and aborting when it's missing or different than what
+          we've already seen.
+
+2009-07-16  Peter Kasting  <pkasting@google.com>
+
         Reviewed by Adam Roben.
 
         https://bugs.webkit.org/show_bug.cgi?id=27323

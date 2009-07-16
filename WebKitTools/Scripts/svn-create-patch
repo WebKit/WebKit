@@ -470,14 +470,30 @@ sub determineSvnRoot()
 {
     my $last = '';
     my $path = '.';
-    my $parent = '../';
+    my $parent = '..';
     my $devnull = File::Spec->devnull();
-    my $exitCode;
+    my $repositoryRoot;
     while (1) {
-        $exitCode = system("svn info $path 2> $devnull > $devnull")/256;
-        last if $exitCode;
+        my $thisRoot;
+        open INFO, "svn info '$path' |" or die;
+        while (<INFO>) {
+            if (/^Repository Root: (.+)/) {
+                $thisRoot = $1;
+            }
+        }
+        close INFO;
+
+        # It's possible (e.g. for developers of some ports) to have a WebKit
+        # checkout in a subdirectory of another checkout.  So abort if the
+        # repository root suddenly changes.
+        last if !$thisRoot;
+        if (!$repositoryRoot) {
+            $repositoryRoot = $thisRoot;
+        }
+        last if $thisRoot ne $repositoryRoot;
+
         $last = $path;
-        $path = $parent . $path;
+        $path = File::Spec->catdir($parent, $path);
     }
 
     return File::Spec->rel2abs($last);
