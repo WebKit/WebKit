@@ -1318,11 +1318,6 @@ CodeBlock::~CodeBlock()
             callLinkInfo->callee->removeCaller(callLinkInfo);
     }
 
-    for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
-        if (Structure* structure = m_methodCallLinkInfos[i].cachedStructure)
-            structure->deref();
-    }
-
     unlinkCallers();
 #endif
 
@@ -1341,6 +1336,14 @@ void CodeBlock::unlinkCallers()
         currentCaller->setUnlinked();
     }
     m_linkedCallerList.clear();
+
+    for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
+        if (m_methodCallLinkInfos[i].cachedStructure) {
+            m_methodCallLinkInfos[i].cachedStructure->deref();
+            m_methodCallLinkInfos[i].cachedStructure = 0;
+            JIT::unlinkMethodCall(&m_methodCallLinkInfos[i]);
+        }
+    }
 }
 #endif
 
