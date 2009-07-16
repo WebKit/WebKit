@@ -173,13 +173,20 @@ void RenderBoxModelObject::updateBoxModelInfoFromStyle()
 
 int RenderBoxModelObject::relativePositionOffsetX() const
 {
+    // Objects that shrink to avoid floats normally use available line width when computing containing block width.  However
+    // in the case of relative positioning using percentages, we can't do this.  The offset should always be resolved using the
+    // available width of the containing block.  Therefore we don't use containingBlockWidthForContent() here, but instead explicitly
+    // call availableWidth on our containing block.
     if (!style()->left().isAuto()) {
+        RenderBlock* cb = containingBlock();
         if (!style()->right().isAuto() && containingBlock()->style()->direction() == RTL)
-            return -style()->right().calcValue(containingBlockWidthForContent());
-        return style()->left().calcValue(containingBlockWidthForContent());
+            return -style()->right().calcValue(cb->availableWidth());
+        return style()->left().calcValue(cb->availableWidth());
     }
-    if (!style()->right().isAuto())
-        return -style()->right().calcValue(containingBlockWidthForContent());
+    if (!style()->right().isAuto()) {
+        RenderBlock* cb = containingBlock();
+        return -style()->right().calcValue(cb->availableWidth());
+    }
     return 0;
 }
 
