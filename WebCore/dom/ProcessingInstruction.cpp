@@ -123,7 +123,7 @@ void ProcessingInstruction::checkStyleSheet()
         bool isCSS = type.isEmpty() || type == "text/css";
 #if ENABLE(XSLT)
         m_isXSL = (type == "text/xml" || type == "text/xsl" || type == "application/xml" ||
-                   type == "application/xhtml+xml" || type == "application/rss+xml" || type == "application/atom=xml");
+                   type == "application/xhtml+xml" || type == "application/rss+xml" || type == "application/atom+xml");
         if (!isCSS && !m_isXSL)
 #else
         if (!isCSS)

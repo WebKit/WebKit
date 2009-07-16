@@ -1,3 +1,12 @@
+2009-07-15  Jakub Wieczorek  <faw217@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix a typo: application/atom=xml -> application/atom+xml.
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+
 2009-07-16  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Oliver Hunt.
