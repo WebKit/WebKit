@@ -95,6 +95,8 @@ namespace WebCore {
 
         ~MessagePortChannel();
 
+        PlatformMessagePortChannel* channel() const { return m_channel.get(); }
+
     private:
         MessagePortChannel(PassRefPtr<PlatformMessagePortChannel>);
         RefPtr<PlatformMessagePortChannel> m_channel;
