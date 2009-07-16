@@ -1,3 +1,14 @@
+2009-07-15  David Levin  <levin@chromium.org>
+
+        Layout test fix, reverting previous change.
+
+        Reverting r45962 as it caused several layout test failures.
+
+        * fast/forms/basic-textareas.html:
+        * platform/mac/fast/forms/basic-textareas-expected.checksum:
+        * platform/mac/fast/forms/basic-textareas-expected.png:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+
 2009-06-08  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
