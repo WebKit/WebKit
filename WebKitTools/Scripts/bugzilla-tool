@@ -42,7 +42,7 @@ from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_o
 # Import WebKit-specific modules.
 from modules.bugzilla import Bugzilla
 from modules.logging import error, log
-from modules.scm import detect_scm_system, ScriptError
+from modules.scm import CommitMessage, detect_scm_system, ScriptError
 
 def plural(noun):
     # This is a dumb plural() implementation which was just enough for our uses.
