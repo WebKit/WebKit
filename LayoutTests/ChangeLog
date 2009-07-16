@@ -1,3 +1,22 @@
+2009-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Setting white-space and word-wrap via CSS in textarea doesn't override the wrap attribute
+        https://bugs.webkit.org/show_bug.cgi?id=26254
+
+        Make it so that setting white-space and word-wrap via CSS
+        overrides the wrap attribute.
+
+        This involves having the shadow div in the textarea inherit
+        the CSS from its parent instead of hard-coding it in
+        RenderTextControlMultiline.
+
+        * fast/forms/basic-textareas.html:
+        * platform/mac/fast/forms/basic-textareas-expected.checksum:
+        * platform/mac/fast/forms/basic-textareas-expected.png:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+
 2009-07-15  David Levin  <levin@chromium.org>
 
         Layout test fix, reverting previous change.
@@ -138,7 +157,7 @@
         * fast/js/resources/instanceof-operator-dummy-worker.js: Added.
         * fast/js/resources/instanceof-operator.js: Added.
 
-2009-07-15  Kai Br�ning  <kai@granus.net>
+2009-07-15  Kai Brning  <kai@granus.net>
 
         Reviewed by Dave Hyatt.
 
@@ -1230,7 +1249,7 @@
         * storage/database-lock-after-reload.html: Added.
         * storage/resources/database-lock-after-reload-2.html: Added.
 
-2009-07-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+2009-07-08  Tor Arne VestbÃ¸  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.
 

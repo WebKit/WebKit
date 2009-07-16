@@ -106,19 +106,6 @@ PassRefPtr<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const R
     textBlockStyle->inheritFrom(startStyle);
 
     adjustInnerTextStyle(startStyle, textBlockStyle.get());
-
-    // FIXME: This code should just map wrap into CSS in the DOM code.
-    // Then here we should set the textBlockStyle appropriately based off this
-    // object's style()->whiteSpace() and style->wordWrap().
-    // Set word wrap property based on wrap attribute.
-    if (static_cast<HTMLTextAreaElement*>(node())->shouldWrapText()) {
-        textBlockStyle->setWhiteSpace(PRE_WRAP);
-        textBlockStyle->setWordWrap(BreakWordWrap);
-    } else {
-        textBlockStyle->setWhiteSpace(PRE);
-        textBlockStyle->setWordWrap(NormalWordWrap);
-    }
-
     textBlockStyle->setDisplay(BLOCK);
 
     return textBlockStyle.release();

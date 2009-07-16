@@ -360,6 +360,8 @@ textarea {
     resize: auto;
     cursor: auto;
     padding: 2px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 input::-webkit-input-placeholder, isindex::-webkit-input-placeholder {

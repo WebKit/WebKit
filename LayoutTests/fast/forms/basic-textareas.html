@@ -4,7 +4,7 @@
 var docToAppendTo;
 function addTextarea(properties, opt_innerHTML) {
     var title = docToAppendTo.createTextNode();
-    title.nodeValue = ''; 
+    title.nodeValue = '';
     var wrapper = docToAppendTo.createElement('div');
     wrapper.style.cssText = 'display:inline-block;border:1px solid blue;font-size:12px;';
     var textarea = docToAppendTo.createElement('textarea');
@@ -19,7 +19,7 @@ function addTextarea(properties, opt_innerHTML) {
             textarea[property] = value;
     }
     textarea.innerHTML = opt_innerHTML ||
-        'Lorem ipsum dolor ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuv';
+        "Lorem ipsum  dolor ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuv";
 
     var span = document.createElement('span');
     span.style.cssText = 'display:inline-block;width:80px;';
@@ -33,7 +33,7 @@ function addTextarea(properties, opt_innerHTML) {
 function addAllTextareas(iframe, compatMode) {
     iframe.style.cssText = 'width:100%;border:0;'
     docToAppendTo = iframe.contentWindow.document;
-    
+
     docToAppendTo.body.style.cssText = 'margin:0';
 
     if (docToAppendTo.compatMode != compatMode)
@@ -43,7 +43,7 @@ function addAllTextareas(iframe, compatMode) {
     compatModeTitle.innerHTML = 'CompatMode: ' + docToAppendTo.compatMode;
     compatModeTitle.style.cssText = 'margin:5px 0;font-weight:bold;';
     docToAppendTo.body.appendChild(compatModeTitle);
-    
+
     addTextarea({}, 'Lorem ipsum dolor');
     addTextarea({disabled: 'true'});
     addTextarea({style: 'padding:10px'});
@@ -70,7 +70,14 @@ function addAllTextareas(iframe, compatMode) {
     addTextarea({wrap: 'off'});
     addTextarea({wrap: 'hard'});
     addTextarea({wrap: 'soft'});
-    
+    addTextarea({style: 'white-space:normal'});
+    addTextarea({style: 'white-space:pre'});
+    addTextarea({style: 'white-space:prewrap'});
+    addTextarea({style: 'white-space:nowrap'});
+    addTextarea({style: 'white-space:pre-line'});
+    addTextarea({style: 'word-wrap:normal'});
+    addTextarea({wrap: 'off', style: 'white-space:pre-wrap'});
+
     iframe.style.height = docToAppendTo.body.offsetHeight + 5 + 'px';
 }
 
