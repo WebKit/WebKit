@@ -415,7 +415,15 @@ class PostCommitsAsPatchesToBug(Command):
         Command.__init__(self, 'Attaches a range of local commits to bugs as patch files.', 'COMMITISH', options=options, requires_local_commits=True)
 
     def execute(self, options, args, tool):
-        commit_ids = tool.scm().commit_ids_from_range_arguments(args, cherry_pick=True)
+        if not args:
+            error("%s argument is required" % self.argument_names)
+
+        commit_ids = []
+        for commitish in args:
+            results = tool.scm().commit_ids_from_range_arguments([commitish], cherry_pick=True)
+            if not results or len(results) < 1:
+                error("unable to parse commit from '%s'" % commitish)
+            commit_ids += results
 
         if len(commit_ids) > 10:
             error("Are you sure you want to attach %s patches?" % (pluralize('patch', len(commit_ids))))

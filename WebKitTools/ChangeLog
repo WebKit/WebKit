@@ -1,5 +1,15 @@
 2009-07-16  David D. Kilzer  <ddkilzer@webkit.org>
 
+        <http://webkit.org/b/27241> bugzilla-tool post-commits silently fails with bad args
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/bugzilla-tool:
+        (PostCommitsAsPatchesToBug.execute): Added more error checking
+        when consuming arguments.
+
+2009-07-16  David D. Kilzer  <ddkilzer@webkit.org>
+
         TOOL FIX: scm.py: CommitMessage.message is ambiguous
 
         Fixes this error when running bugzilla-tool apply-patches
