@@ -70,7 +70,7 @@ bool Path::isEmpty() const
 
 bool Path::hasCurrentPoint() const
 {
-    return true;
+    return m_path->getPoints(NULL, 0) != 0;
 }
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const

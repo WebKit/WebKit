@@ -1,3 +1,18 @@
+2009-07-16  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27292
+        Improve handling of <canvas> path operations on an empty path.
+        Implement Skia's Path::hasCurrentPoint().
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::lineTo):
+        (WebCore::CanvasRenderingContext2D::quadraticCurveTo):
+        (WebCore::CanvasRenderingContext2D::bezierCurveTo):
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::hasCurrentPoint):
+
 2009-07-15  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Eric Seidel.
