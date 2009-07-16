@@ -119,7 +119,8 @@ my $parseOptionsResult =
                "open|o!" => \$openChangeLogs,
                "update!" => \$updateChangeLogs);
 if (!$parseOptionsResult || $showHelp) {
-    print STDERR basename($0) . " [-d|--diff] [-h|--help] [-o|--open] [--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
+    print STDERR basename($0) . " [--bug] [-d|--diff] [-h|--help] [-o|--open] [--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
+    print STDERR "  --bug          Fill in the ChangeLog bug information from the given bug.\n";
     print STDERR "  -d|--diff      Spew diff to stdout when running\n";
     print STDERR "  --git-commit   Populate the ChangeLogs from the specified git commit\n";
     print STDERR "  --git-index    Populate the ChangeLogs from the git index only\n";
