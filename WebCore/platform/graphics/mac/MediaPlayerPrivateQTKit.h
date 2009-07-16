@@ -158,6 +158,8 @@ private:
     void cacheMovieScale();
     bool metaDataAvailable() const { return m_qtMovie && m_readyState >= MediaPlayer::HaveMetadata; }
 
+    bool isReadyForRendering() const;
+    
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
     RetainPtr<QTMovieView> m_qtMovieView;

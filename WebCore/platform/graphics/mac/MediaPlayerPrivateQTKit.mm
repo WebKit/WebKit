@@ -840,6 +840,11 @@ void MediaPlayerPrivate::cacheMovieScale()
         m_scaleFactor.setHeight(initialSize.height / naturalSize.height);
 }
 
+bool MediaPlayerPrivate::isReadyForRendering() const
+{
+    return m_readyState >= MediaPlayer::HaveMetadata && m_player->visible();
+}
+
 void MediaPlayerPrivate::updateStates()
 {
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
@@ -928,7 +933,7 @@ void MediaPlayerPrivate::updateStates()
         }
     }
 
-    if (loadState >= QTMovieLoadStateLoaded && !hasSetUpVideoRendering() && m_player->visible())
+    if (isReadyForRendering() && !hasSetUpVideoRendering())
         setUpVideoRendering();
 
     if (seeking())
@@ -1340,7 +1345,7 @@ void MediaPlayerPrivate::sawUnsupportedTracks()
 bool MediaPlayerPrivate::supportsAcceleratedRendering() const
 {
     // When in the media document we render via QTMovieView, which is already accelerated.
-    return getQTMovieLayerClass() != Nil && !m_player->inMediaDocument();
+    return isReadyForRendering() && getQTMovieLayerClass() != Nil && !m_player->inMediaDocument();
 }
 
 void MediaPlayerPrivate::acceleratedRenderingStateChanged()

@@ -1,3 +1,21 @@
+2009-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video size sometimes jumps just after the video starts loading
+        https://bugs.webkit.org/show_bug.cgi?id=27352
+
+        Ensure that the media player is at or after the 'HaveMetadata' state so that
+        the instrinsic size is known before we create the layer for video. This avoids
+        a flash caused by computing the video rect using the default intrinsic size, and then
+        re-computing it when that size changes.
+        
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::isReadyForRendering):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::supportsAcceleratedRendering):
+
 2009-07-16  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Antti Koivisto.
