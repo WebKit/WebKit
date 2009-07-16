@@ -169,7 +169,10 @@ sub findMimeType($;$)
     open PROPGET, "svn propget svn:mime-type $args '$file' |" or die;
     my $mimeType = <PROPGET>;
     close PROPGET;
-    chomp $mimeType if $mimeType;
+    # svn may output a different EOL sequence than $/, so avoid chomp.
+    if ($mimeType) {
+        $mimeType =~ s/\r?\n$//g;
+    }
     return $mimeType;
 }
 
@@ -283,7 +286,8 @@ sub generateFileList($\%)
     my %testDirectories = map { $_ => 1 } qw(LayoutTests);
     open STAT, "svn stat '$statPath' |" or die;
     while (my $line = <STAT>) {
-        chomp $line;
+        # svn may output a different EOL sequence than $/, so avoid chomp.
+        $line =~ s/\r?\n$//g;
         my $stat;
         my $path;
         if (eval "v$svnVersion" ge v1.6) { 

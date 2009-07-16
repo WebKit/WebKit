@@ -324,7 +324,7 @@ foreach my $prefix (sort keys %files) {
     # We want to match the ChangeLog's line endings in case it doesn't match
     # the native line endings for this version of perl.
     my $endl = "\n";
-    if ($old_change_log[0] =~ /(\r?\n)/g) {
+    if ($old_change_log[0] =~ /(\r?\n)$/g) {
         $endl = "$1";
     }
     open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
@@ -339,7 +339,7 @@ foreach my $prefix (sort keys %files) {
     $bugDescription = "Need a short description and bug URL (OOPS!)" unless $bugDescription;
     print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
     print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
-    print CHANGE_LOG "\n";
+    print CHANGE_LOG normalizeLineEndings("\n", $endl);
 
     # We could pre-populate this with the git commit log or with the bug description.
     print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -353,7 +353,7 @@ foreach my $prefix (sort keys %files) {
     }
 
     foreach my $file (sort @{$files{$prefix}}) {
-        my $file_stem = normalizePath(substr $file, length $prefix);
+        my $file_stem = substr $file, length $prefix;
         print CHANGE_LOG normalizeLineEndings("        * $file_stem:$function_lists{$file}\n", $endl);;
     }
     print CHANGE_LOG normalizeLineEndings("\n", $endl), @old_change_log;
@@ -1280,7 +1280,7 @@ sub createPatchCommand($)
 
 sub diffHeaderFormat()
 {
-    return qr/^Index: (\S+)$/ if $isSVN;
+    return qr/^Index: (\S+)\r?\n?$/ if $isSVN;
     return qr/^diff --git a\/.+ b\/(.+)$/ if $isGit;
 }
 
@@ -1290,7 +1290,7 @@ sub findOriginalFileFromSvn($)
     my $baseUrl;
     open INFO, "$SVN info . |" or die;
     while (<INFO>) {
-        if (/^URL: (.+)/) {
+        if (/^URL: (.+\S+)\r?\n?$/) {
             $baseUrl = $1;
         }
     }
@@ -1298,7 +1298,7 @@ sub findOriginalFileFromSvn($)
     my $sourceFile;
     open INFO, "$SVN info '$file' |" or die;
     while (<INFO>) {
-        if (/^Copied From URL: (.+)/) {
+        if (/^Copied From URL: (.+\S+)\r?\n?$/) {
             $sourceFile = File::Spec->abs2rel($1, $baseUrl);
         }
     }
@@ -1319,15 +1319,16 @@ sub generateFileList(\@\@\%)
         if ($isSVN) {
             my $matches;
             if (eval "v$svnVersion" ge v1.6) {
-                $matches = /^([ACDMR]).{6} (.+)$/;
+                $matches = /^([ACDMR]).{6} (.+\S+)\r?\n?$/;
                 $status = $1;
                 $file = $2;
             } else {
-                $matches = /^([ACDMR]).{5} (.+)$/;
+                $matches = /^([ACDMR]).{5} (.+\S+)\r?\n?$/;
                 $status = $1;
                 $file = $2;
             }
             if ($matches) {
+                $file = normalizePath($file);
                 $original = findOriginalFileFromSvn($file) if substr($_, 3, 1) eq "+";
             } else {
                 print;  # error output from svn stat
@@ -1335,11 +1336,11 @@ sub generateFileList(\@\@\%)
         } elsif ($isGit) {
             if (/^([ADM])\t(.+)$/) {
                 $status = $1;
-                $file = $2;
+                $file = normalizePath($2);
             } elsif (/^([CR])[0-9]{1,3}\t([^\t]+)\t([^\t\n]+)$/) { # for example: R90%    newfile    oldfile
                 $status = $1;
-                $original = $2;
-                $file = $3;
+                $original = normalizePath($2);
+                $file = normalizePath($3);
             } else {
                 print;  # error output from git diff
             }

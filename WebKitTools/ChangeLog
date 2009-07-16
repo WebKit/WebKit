@@ -1,11 +1,19 @@
-2009-07-16  Joseph Pecoraro  <joepeck02@gmail.com>
+2009-07-16  Peter Kasting  <pkasting@google.com>
 
-        Reviewed by Darin Adler.
+        Reviewed by Adam Roben.
 
-        WebKitTools/Scripts/svn-create-patch is broken
-        https://bugs.webkit.org/show_bug.cgi?id=27328
+        https://bugs.webkit.org/show_bug.cgi?id=27323
+        Improve support for non-Cygwin SVNs on Windows, as well as WebKit
+        checkouts hosted inside other checkouts.
 
-        * Scripts/svn-create-patch: one line fix for unusual perl behavior
+        * Scripts/commit-log-editor: Modify regex so that trailing whitespace
+          (e.g. \r) isn't included in filenames.
+        * Scripts/prepare-ChangeLog: Fix a case of adding "\n" to the ChangeLog
+          without normalizing.  Normalize file paths early instead of late so
+          all stages of the script work.  Modify regexes so that trailing
+          whitespace (e.g. \r) isn't included in filenames.
+        * Scripts/svn-create-patch: Use a regex instead of chomp so we cut off
+          line endings even if they don't match Perl's.
 
 2009-07-16  David Levin  <levin@chromium.org>
 
