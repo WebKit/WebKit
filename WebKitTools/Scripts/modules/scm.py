@@ -57,16 +57,16 @@ def first_non_empty_line_after_index(lines, index=0):
 
 class CommitMessage:
     def __init__(self, message):
-        self.message = message[first_non_empty_line_after_index(message, 0):]
+        self.message_lines = message[first_non_empty_line_after_index(message, 0):]
 
     def body(self, lstrip=False):
-        lines = self.message[first_non_empty_line_after_index(self.message, 1):]
+        lines = self.message_lines[first_non_empty_line_after_index(self.message_lines, 1):]
         if lstrip:
             lines = [line.lstrip() for line in lines]
         return "\n".join(lines) + "\n"
 
     def description(self, lstrip=False, strip_url=False):
-        line = self.message[0]
+        line = self.message_lines[0]
         if lstrip:
             line = line.lstrip()
         if strip_url:
@@ -74,10 +74,10 @@ class CommitMessage:
         return line
 
     def message(self):
-        return "\n".join(self.message) + "\n"
+        return "\n".join(self.message_lines) + "\n"
 
     def parse_bug_id(self):
-        for line in self.message:
+        for line in self.message_lines:
             match = re.search("http\://webkit\.org/b/(?P<bug_id>\d+)", line)
             if match:
                 return match.group('bug_id')

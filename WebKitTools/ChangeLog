@@ -1,5 +1,24 @@
 2009-07-16  David D. Kilzer  <ddkilzer@webkit.org>
 
+        TOOL FIX: scm.py: CommitMessage.message is ambiguous
+
+        Fixes this error when running bugzilla-tool apply-patches
+        --local-commit:
+
+        File "bugzilla-tool", line 188, in apply_patches
+          scm.commit_locally_with_message(commit_message.message() or patch['name'])
+        TypeError: 'list' object is not callable
+
+        * Scripts/modules/scm.py: After r45940 (and r45971), rename
+        CommitMessage.message attribute to CommitMessage.message_lines.
+        (CommitMessage.__init__):
+        (CommitMessage.body):
+        (CommitMessage.description):
+        (CommitMessage.message):
+        (CommitMessage.parse_bug_id):
+
+2009-07-16  David D. Kilzer  <ddkilzer@webkit.org>
+
         TOOL FIX: bugzilla-tool: import CommitMessage class
 
         * Scripts/bugzilla-tool: After r45940, the CommitMessage class
