@@ -1,3 +1,15 @@
+2009-07-16  Benjamin C Meyer  <benjamin.meyer@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Add new action to qwebpage to reload without cache.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateAction):
+        (QWebPagePrivate::updateNavigationActions):
+        (QWebPage::triggerAction):
+        * Api/qwebpage.h:
+
 2009-07-16  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Darin Adler.

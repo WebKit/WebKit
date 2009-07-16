@@ -182,6 +182,7 @@ static const char* editorCommandWebActions[] =
     "InsertLineBreak", // InsertLineSeparator
 
     "SelectAll", // SelectAll
+    0, // ReloadAndBypassCache,
 
     "PasteAndMatchStyle", // PasteAndMatchStyle
     "RemoveFormat", // RemoveFormat
@@ -456,6 +457,7 @@ void QWebPagePrivate::updateAction(QWebPage::WebAction action)
             enabled = loader->isLoading();
             break;
         case QWebPage::Reload:
+        case QWebPage::ReloadAndBypassCache:
             enabled = !loader->isLoading();
             break;
 #ifndef QT_NO_UNDOSTACK
@@ -501,6 +503,7 @@ void QWebPagePrivate::updateNavigationActions()
     updateAction(QWebPage::Forward);
     updateAction(QWebPage::Stop);
     updateAction(QWebPage::Reload);
+    updateAction(QWebPage::ReloadAndBypassCache);
 }
 
 void QWebPagePrivate::updateEditorActions()
@@ -1142,6 +1145,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     \value Forward Navigate forward in the history of navigated links.
     \value Stop Stop loading the current page.
     \value Reload Reload the current page.
+    \value ReloadAndBypassCache Reload the current page, but do not use any local cache. (Added in Qt 4.6)
     \value Cut Cut the content currently selected into the clipboard.
     \value Copy Copy the content currently selected into the clipboard.
     \value Paste Paste content from the clipboard.
@@ -1566,7 +1570,10 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             mainFrame()->d->frame->loader()->stopForUserCancel();
             break;
         case Reload:
-            mainFrame()->d->frame->loader()->reload();
+            mainFrame()->d->frame->loader()->reload(/*endtoendreload*/false);
+            break;
+        case ReloadAndBypassCache:
+            mainFrame()->d->frame->loader()->reload(/*endtoendreload*/true);
             break;
         case SetTextDirectionDefault:
             editor->setBaseWritingDirection(NaturalWritingDirection);

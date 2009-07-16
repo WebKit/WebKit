@@ -149,6 +149,7 @@ public:
         InsertLineSeparator,
 
         SelectAll,
+        ReloadAndBypassCache,
 
         PasteAndMatchStyle,
         RemoveFormat,
