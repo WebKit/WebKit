@@ -1086,9 +1086,6 @@ class CpplintTest(CpplintTestBase):
         self.assert_lint('CHECK(some_iterator == obj.end())', '')
         self.assert_lint('EXPECT_TRUE(some_iterator == obj.end())', '')
         self.assert_lint('EXPECT_FALSE(some_iterator == obj.end())', '')
-        self.assert_lint('CHECK(some_pointer != NULL)', '')
-        self.assert_lint('EXPECT_TRUE(some_pointer != NULL)', '')
-        self.assert_lint('EXPECT_FALSE(some_pointer != NULL)', '')
 
         self.assert_lint('CHECK(CreateTestFile(dir, (1 << 20)));', '')
         self.assert_lint('CHECK(CreateTestFile(dir, (1 >> 20)));', '')
@@ -1649,7 +1646,7 @@ class CpplintTest(CpplintTestBase):
         cpplint.process_file_data(file_path, 'h', [], error_collector)
         expected_guard = ''
         matcher = re.compile(
-            'No \#ifndef header guard found\, suggested CPP variable is\: ([A-Z_]+) ')
+            'No \#ifndef header guard found\, suggested CPP variable is\: ([A-Z_0-9]+) ')
         for error in error_collector.result_list():
             matches = matcher.match(error)
             if matches:
@@ -2907,8 +2904,46 @@ class WebKitStyleTest(CpplintTestBase):
 
         # 3. Tests for true/false, null/non-null, and zero/non-zero should
         #    all be done without equality comparisons.
-        # FIXME: Implement this.
-        pass
+        self.assert_lint(
+            'if (count == 0)',
+            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
+            '  [readability/comparison_to_zero] [5]')
+        self.assert_lint(
+            'if (string != NULL)',
+            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
+            '  [readability/comparison_to_zero] [5]')
+        self.assert_lint(
+            'if (condition == true)',
+            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
+            '  [readability/comparison_to_zero] [5]')
+        self.assert_lint(
+            'if (myVariable != /* Why would anyone put a comment here? */ false)',
+            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
+            '  [readability/comparison_to_zero] [5]')
+
+        self.assert_lint(
+            'if (0 /* This comment also looks odd to me. */ != aLongerVariableName)',
+            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
+            '  [readability/comparison_to_zero] [5]')
+        self.assert_lint(
+            'if (NULL == thisMayBeNull)',
+            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
+            '  [readability/comparison_to_zero] [5]')
+        self.assert_lint(
+            'if (true != anotherCondition)',
+            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
+            '  [readability/comparison_to_zero] [5]')
+        self.assert_lint(
+            'if (false == myBoolValue)',
+            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
+            '  [readability/comparison_to_zero] [5]')
+
+        self.assert_lint(
+            'if (fontType == trueType)',
+            '')
+        self.assert_lint(
+            'if (othertrue == fontType)',
+            '')
 
     def test_names(self):
         # FIXME: Implement this.

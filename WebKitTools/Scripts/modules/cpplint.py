@@ -119,6 +119,7 @@ _ERROR_CATEGORIES = '''\
     readability/braces
     readability/casting
     readability/check
+    readability/comparison_to_zero
     readability/constructors
     readability/fn_size
     readability/function
@@ -1787,6 +1788,16 @@ def check_check(filename, clean_lines, line_number, error):
             break
 
 
+def check_for_comparisons_to_zero(filename, clean_lines, line_number, error):
+    # Get the line without comments and strings.
+    line = clean_lines.elided[line_number]
+
+    # Include NULL here so that users don't have to convert NULL to 0 first and then get this error.
+    if search(r'[=!]=\s*(NULL|0|true|false)\W', line) or search(r'\W(NULL|0|true|false)\s*[=!]=', line):
+        error(filename, line_number, 'readability/comparison_to_zero', 5,
+	      'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.')
+
+
 def get_line_width(line):
     """Determines the width of the line in column positions.
 
@@ -1878,6 +1889,7 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
     check_braces(filename, clean_lines, line_number, error)
     check_spacing(filename, clean_lines, line_number, error)
     check_check(filename, clean_lines, line_number, error)
+    check_for_comparisons_to_zero(filename, clean_lines, line_number, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
