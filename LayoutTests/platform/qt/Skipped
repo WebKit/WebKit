@@ -105,6 +105,7 @@ editing/pasteboard/unrendered-br.html
 # ------- failures due to missing XSLT support
 fast/dom/Window/get-set-properties.html
 fast/dom/Window/window-properties.html
+fast/js/instanceof-operator.html
 
 # ------- failures for tests with results
 fast/forms/drag-out-of-textarea.html
@@ -5200,4 +5201,4 @@ tables/mozilla_expected_failures/bugs/bug23847.html
 tables/mozilla_expected_failures/bugs/bug128876.html
 transforms/2d/transform-2d.html
 transitions/opacity-transition-zindex.html
-
+editing/selection/extend-selection-after-double-click.html

@@ -1,3 +1,16 @@
+2009-07-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Adam Treat.
+
+        Skip two tests for the Qt DRT to keep the results green.
+
+        fast/js/instanceof-operator.html because it requires XSLT support.
+
+        editing/selection/extend-selection-after-double-click.html needs
+        investigation for the Qt port after r45945
+
+        * platform/qt/Skipped:
+
 2009-07-15  David Levin  <levin@chromium.org>
 
         Rubber-stamped by Oliver Hunt.
