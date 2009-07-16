@@ -359,7 +359,12 @@
 #define _INC_ASSERT    // disable "assert.h"
 #define assert(x)
 
+// _countof is only included in CE6; for CE5 we need to define it ourself
+#ifndef _countof
+#define _countof(x) (sizeof(x) / sizeof((x)[0]))
 #endif
+
+#endif  // PLATFORM(WINCE) && !PLATFORM(QT)
 
 /* for Unicode, KDE uses Qt */
 #if PLATFORM(KDE) || PLATFORM(QT)
