@@ -221,7 +221,7 @@ namespace JSC {
     }
 #endif
 
-    class CodeBlock : public WTF::FastAllocBase {
+    class CodeBlock : public FastAllocBase {
         friend class JIT;
     public:
         CodeBlock(ScopeNode* ownerNode);
@@ -493,7 +493,7 @@ namespace JSC {
 
         SymbolTable m_symbolTable;
 
-        struct ExceptionInfo {
+        struct ExceptionInfo : FastAllocBase {
             Vector<ExpressionRangeInfo> m_expressionInfo;
             Vector<LineInfo> m_lineInfo;
             Vector<GetByIdExceptionInfo> m_getByIdExceptionInfo;
@@ -504,7 +504,7 @@ namespace JSC {
         };
         OwnPtr<ExceptionInfo> m_exceptionInfo;
 
-        struct RareData {
+        struct RareData : FastAllocBase {
             Vector<HandlerInfo> m_exceptionHandlers;
 
             // Rare Constants
