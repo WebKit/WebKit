@@ -458,6 +458,7 @@ sub chdirAndGetDifference($)
     my $before = File::Spec->rel2abs( File::Spec->curdir() );
     chdir $newdir;
     my $after = File::Spec->rel2abs( File::Spec->curdir() );
+    return "." if $after eq $before;
     return File::Spec->abs2rel($before, $after);
 }
 
