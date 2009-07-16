@@ -1,0 +1,13 @@
+This test checks if pattern changes after the source canvas is modified. See https://bugs.webkit.org/show_bug.cgi?id=20578 .
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getPixel(ctx, 1,1) is [0,255,0,255]
+PASS getPixel(ctx, 98,1) is [0,255,0,255]
+PASS getPixel(ctx, 1,48) is [0,255,0,255]
+PASS getPixel(ctx, 98,48) is [0,255,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
