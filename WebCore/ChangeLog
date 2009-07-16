@@ -1,3 +1,17 @@
+2009-07-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Antti Koivisto.
+        Patch by Brady Eidson and Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26496
+        <rdar://problem/7065391> Microsoft Outlook Web Access fails because XHR stream connection blocks script loading/revalidation
+
+        After refreshing a page and when all CachedResources on that page are in validation mode, they got an exemption
+        from the connection-per-host limit.  Removing that exemption makes the test case load smoothly after reloads.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::servePendingRequests): Remove the resourceIsCacheValidator exemption to the connection-per-host limit.
+
 2009-07-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

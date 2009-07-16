@@ -291,7 +291,7 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         // resources that we would want to push to the front of the queue. Just hand off the remaining resources
         // to the networking layer.
         bool parsedAndStylesheetsKnown = !docLoader->doc()->parsing() && docLoader->doc()->haveStylesheetsLoaded();
-        if (!parsedAndStylesheetsKnown && !resourceIsCacheValidator && m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
+        if (!parsedAndStylesheetsKnown && m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
             serveLowerPriority = false;
             return;
         }
