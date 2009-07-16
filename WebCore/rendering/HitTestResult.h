@@ -23,6 +23,7 @@
 #define HitTestResult_h
 
 #include "IntPoint.h"
+#include "TextDirection.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -64,9 +65,9 @@ public:
     Frame* targetFrame() const;
     IntRect boundingBox() const;
     bool isSelected() const;
-    String spellingToolTip() const;
+    String spellingToolTip(TextDirection&) const;
     String replacedString() const;
-    String title() const;
+    String title(TextDirection&) const;
     String altDisplayString() const;
     String titleDisplayString() const;
     Image* image() const;

@@ -364,7 +364,7 @@ void ChromeClientQt::mouseDidMoveOverElement(const HitTestResult& result, unsign
     }
 }
 
-void ChromeClientQt::setToolTip(const String &tip)
+void ChromeClientQt::setToolTip(const String &tip, TextDirection)
 {
 #ifndef QT_NO_TOOLTIP
     QWidget* view = m_webPage->view();

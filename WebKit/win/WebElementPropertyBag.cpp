@@ -156,10 +156,13 @@ HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Read(LPCOLESTR pszPropName, VAR
         else
             V_BOOL(pVar) = VARIANT_FALSE;
         return S_OK;
-    } else if (isEqual(WebElementSpellingToolTipKey, key))
-        return convertStringToVariant(pVar, m_result->spellingToolTip());
-    else if (isEqual(WebElementTitleKey, key))
-        return convertStringToVariant(pVar, m_result->title());
+    } else if (isEqual(WebElementSpellingToolTipKey, key)) {
+        TextDirection dir;
+        return convertStringToVariant(pVar, m_result->spellingToolTip(dir));
+    } else if (isEqual(WebElementTitleKey, key)) {
+        TextDirection dir;
+        return convertStringToVariant(pVar, m_result->title(dir));
+    }
     else if (isEqual(WebElementLinkURLKey, key))
         return convertStringToVariant(pVar, m_result->absoluteLinkURL().string());
     else if (isEqual(WebElementLinkTargetFrameKey, key)) {

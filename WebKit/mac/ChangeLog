@@ -1,3 +1,23 @@
+2009-07-16  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix tooltip does not get its directionality from its element's directionality.
+        https://bugs.webkit.org/show_bug.cgi?id=24187
+
+        Per mitz's suggestion in comment #6, while getting the plain-text 
+        title, we also get the directionality of the title. How to handle 
+        the directionality is up to clients. Clients could ignore it, 
+        or use attribute or unicode control characters to display the title
+        as what they want.
+
+        * Misc/WebElementDictionary.mm:
+        (-[WebElementDictionary _spellingToolTip]): Change spellingToolTip caller due to signature change.
+        (-[WebElementDictionary _title]): Change title caller due to signature change.
+        * WebCoreSupport/WebChromeClient.h: Add directionality as 2nd parameter to setToolTip().
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setToolTip): Add directionality as 2nd parameter to setToopTip() (without handling it yet).
+
 2009-07-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

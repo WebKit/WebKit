@@ -192,7 +192,8 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSString *)_spellingToolTip
 {
-    return NSStringOrNil(_result->spellingToolTip());
+    TextDirection dir;
+    return NSStringOrNil(_result->spellingToolTip(dir));
 }
 
 - (NSImage *)_image
@@ -219,7 +220,8 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSString *)_title
 {
-    return NSStringOrNil(_result->title());
+    TextDirection dir;
+    return NSStringOrNil(_result->title(dir));
 }
 
 - (NSURL *)_absoluteLinkURL

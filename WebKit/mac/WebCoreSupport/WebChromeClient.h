@@ -101,7 +101,7 @@ public:
 
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags);
 
-    virtual void setToolTip(const WebCore::String&);
+    virtual void setToolTip(const WebCore::String&, WebCore::TextDirection);
 
     virtual void print(WebCore::Frame*);
 #if ENABLE(DATABASE)

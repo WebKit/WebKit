@@ -48,6 +48,9 @@ namespace WebCore {
         // popup will be handled by the external embedder.
         virtual void popupOpened(PopupContainer* popupContainer, const IntRect& bounds,
                                  bool focusOnShow, bool handleExternal) = 0;
+        // TODO(xji): added temprarily to make Chromium compile after pick up this
+        // Webkit patch. Should be removed after adding it in Chromium's own code.
+        virtual void setToolTip(const String& tooltip_text, TextDirection dir) { }
     };
 
 } // namespace WebCore
