@@ -5943,3 +5943,20 @@ storage/database-lock-after-reload.html
 
 # See Bug #27145 - https://bugs.webkit.org/show_bug.cgi?id=27145
 fast/loader/subframe-navigate-during-main-frame-load.html
+
+# This port doesn't support isolated worlds yet.
+http/tests/security/isolatedWorld/all-window-properties.html
+http/tests/security/isolatedWorld/all-window-prototypes.html
+http/tests/security/isolatedWorld/body-properties.html
+http/tests/security/isolatedWorld/body-prototype.html
+http/tests/security/isolatedWorld/document-properties.html
+http/tests/security/isolatedWorld/document-prototype.html
+http/tests/security/isolatedWorld/global-variables.html
+http/tests/security/isolatedWorld/image-properties.html
+http/tests/security/isolatedWorld/image-prototype.html
+http/tests/security/isolatedWorld/location-properties.html
+http/tests/security/isolatedWorld/location-prototype.html
+http/tests/security/isolatedWorld/number-prototype.html
+http/tests/security/isolatedWorld/object-prototype.html
+http/tests/security/isolatedWorld/string-prototype.html
+http/tests/security/isolatedWorld/window-properties.html

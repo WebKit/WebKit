@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="console"></div>
+<script>
+Object.prototype.foo = "FAIL: Visible in isolated world.";
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.queueScriptInIsolatedWorld(
+    "document.getElementById('console').innerHTML = {}.foo");
+}
+</script>
+</body>
+</html>

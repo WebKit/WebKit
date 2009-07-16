@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="console"></div>
+<script>
+for (p in window) {
+  var obj = window[p];
+  if (obj)
+    obj.__proto__.foo = "FAIL: Visible in isolated world.";
+}
+
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.queueScriptInIsolatedWorld(
+    "(function() {\n" +
+    "  for (p in window) {\n" +
+    "    var obj = window[p];\n" +
+    "    if (obj && obj.foo) {\n" +
+    "      var div = document.createElement('div');\n" +
+    "      div.innerHTML = p + ': ' + obj.foo;\n" +
+    "      document.getElementById('console').appendChild(div);\n" +
+    "    }\n" +
+    "    var div = document.createElement('div');\n" +
+    "    div.innerHTML = 'Done.'\n" +
+    "    document.getElementById('console').appendChild(div);\n" +
+    "  }\n" +
+    "})();");
+}
+</script>
+</body>
+</html>

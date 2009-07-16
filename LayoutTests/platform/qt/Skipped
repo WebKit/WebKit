@@ -5202,3 +5202,20 @@ tables/mozilla_expected_failures/bugs/bug128876.html
 transforms/2d/transform-2d.html
 transitions/opacity-transition-zindex.html
 editing/selection/extend-selection-after-double-click.html
+
+# This port doesn't support isolated worlds yet.
+http/tests/security/isolatedWorld/all-window-properties.html
+http/tests/security/isolatedWorld/all-window-prototypes.html
+http/tests/security/isolatedWorld/body-properties.html
+http/tests/security/isolatedWorld/body-prototype.html
+http/tests/security/isolatedWorld/document-properties.html
+http/tests/security/isolatedWorld/document-prototype.html
+http/tests/security/isolatedWorld/global-variables.html
+http/tests/security/isolatedWorld/image-properties.html
+http/tests/security/isolatedWorld/image-prototype.html
+http/tests/security/isolatedWorld/location-properties.html
+http/tests/security/isolatedWorld/location-prototype.html
+http/tests/security/isolatedWorld/number-prototype.html
+http/tests/security/isolatedWorld/object-prototype.html
+http/tests/security/isolatedWorld/string-prototype.html
+http/tests/security/isolatedWorld/window-properties.html
