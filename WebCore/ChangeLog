@@ -1,3 +1,25 @@
+2009-07-15  Adam Langley  <agl@google.com>
+
+        No review: reverting previous change.
+
+        Revert r45959:
+
+        2009-07-15  Dumitru Daniliuc  <dumi@chromium.org>
+        Reviewed by Dimitri Glazkov.
+
+        Adding the Win SQLite VFS implementation for Chromium.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26940
+
+
+        The Chromium side of this patch was landed in 20839, but broke the build. It
+        was reverted in r20840. Thus, I'm reverting this side of the patch too.
+
+        * WebCore.gypi:
+        * platform/chromium/ChromiumBridge.h:
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp: Removed.
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp: Removed.
+
 2009-07-15  David Levin  <levin@chromium.org>
 
         Layout test fix, reverting previous change.
