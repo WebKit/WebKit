@@ -36,6 +36,7 @@
 
 #include "V8DOMWindow.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "HashMap.h"
 #include "ScriptController.h"
 
@@ -80,6 +81,9 @@ void V8IsolatedWorld::evaluate(const Vector<ScriptSourceCode>& sources, V8Proxy*
 
     V8Proxy::installHiddenObjectPrototype(context);
     proxy->installDOMWindow(context, proxy->frame()->domWindow());
+
+    proxy->frame()->loader()->client()->didCreateIsolatedScriptContext();
+
     for (size_t i = 0; i < sources.size(); ++i)
         proxy->evaluate(sources[i], 0);
 
