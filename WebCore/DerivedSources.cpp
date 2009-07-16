@@ -25,6 +25,7 @@
 
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
+#include "JSAbstractWorker.cpp"
 #include "JSAttr.cpp"
 #include "JSBarInfo.cpp"
 #include "JSCanvasGradient.cpp"
@@ -171,6 +172,7 @@
 #include "JSRangeException.cpp"
 #include "JSRect.cpp"
 #include "JSScreen.cpp"
+#include "JSSharedWorker.cpp"
 #include "JSSQLError.cpp"
 #include "JSSQLResultSet.cpp"
 #include "JSSQLResultSetRowList.cpp"

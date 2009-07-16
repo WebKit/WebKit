@@ -418,6 +418,54 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSAbstractWorker.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSAbstractWorker.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSAttr.cpp"
 				>
 				<FileConfiguration
@@ -7671,6 +7719,54 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSScreen.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSSharedWorker.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSSharedWorker.h"
 				>
 			</File>
 			<File
@@ -23799,7 +23895,23 @@
 			Name="workers"
 			>
 			<File
+				RelativePath="..\workers\AbstractWorker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\AbstractWorker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\GenericWorkerTask.h"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\SharedWorker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\SharedWorker.h"
 				>
 			</File>
 			<File
@@ -28002,6 +28114,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSAbstractWorkerCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSAttrCustom.cpp"
 					>
 				</File>
@@ -28419,6 +28535,18 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSRGBColor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSSharedWorkerConstructor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSSharedWorkerConstructor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSSharedWorkerCustom.cpp"
 					>
 				</File>
 				<File

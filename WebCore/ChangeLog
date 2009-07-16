@@ -1,3 +1,19 @@
+2009-07-16  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Added SHARED_WORKER flag to Windows build files, as well as associated .ccp/.h files.
+        Added missing V8 bindings to the AllInOne file
+
+        https://bugs.webkit.org/show_bug.cgi?id=27321
+
+        * WebCore.vcproj/WebCore.vcproj:
+        Added missing files to build.
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        Added missing V8 bindings (V8AbstractWorker.cpp and V8SharedWorker.cpp)
+        * DerivedSources.cpp
+        Added missing JS bindings (JSAbstractWorker.cpp and JSSharedWorker.cpp)
+
 2009-07-16  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by David Levin.
