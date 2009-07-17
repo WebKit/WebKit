@@ -184,8 +184,10 @@
 #include "bindings/V8SQLResultSet.cpp"
 #include "bindings/V8SQLResultSetRowList.cpp"
 #include "bindings/V8SQLTransaction.cpp"
+#if ENABLE(DOM_STORAGE)
 #include "bindings/V8Storage.cpp"
 #include "bindings/V8StorageEvent.cpp"
+#endif
 #include "bindings/V8StyleSheet.cpp"
 #include "bindings/V8StyleSheetList.cpp"
 #include "bindings/V8SVGAElement.cpp"
