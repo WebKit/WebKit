@@ -28,6 +28,7 @@
 
 #include <wtf/Forward.h>
 #include "HTMLNames.h"
+#include "ExceptionCode.h"
 
 namespace WebCore {
 
@@ -61,6 +62,7 @@ Position previousVisuallyDistinctCandidate(const Position&);
 bool isEditablePosition(const Position&);
 bool isRichlyEditablePosition(const Position&);
 Element* editableRootForPosition(const Position&);
+Element* unsplittableElementForPosition(const Position&);
 bool isBlock(const Node*);
 Node* enclosingBlock(Node*);
 
@@ -71,6 +73,10 @@ const String& nonBreakingSpaceString();
 
 Position positionBeforeNode(const Node*);
 Position positionAfterNode(const Node*);
+VisiblePosition visiblePositionBeforeNode(const Node*);
+VisiblePosition visiblePositionAfterNode(const Node*);
+PassRefPtr<Range> createRange(PassRefPtr<Document>, const VisiblePosition& start, const VisiblePosition& end, ExceptionCode&);
+PassRefPtr<Range> extendRangeToWrappingNodes(PassRefPtr<Range> rangeToExtend, const Range* maximumRange, const Node* rootNode);
 
 PassRefPtr<Range> avoidIntersectionWithNode(const Range*, Node*);
 VisibleSelection avoidIntersectionWithNode(const VisibleSelection&, Node*);
@@ -134,8 +140,9 @@ bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
 
 VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
 
-int indexForVisiblePosition(VisiblePosition&);
-bool isVisibilyAdjacent(const Position& first, const Position& second);
+int indexForVisiblePosition(const VisiblePosition&);
+bool isVisiblyAdjacent(const Position& first, const Position& second);
+bool isNodeVisiblyContainedWithin(Node*, const Range*);
 }
 
 #endif

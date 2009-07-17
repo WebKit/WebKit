@@ -1,3 +1,33 @@
+2009-07-17  Ryosuke Niwa  <ryosuke.niwa@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        htmlediting.cpp needs more utility functions to fix the bug 26816
+        https://bugs.webkit.org/show_bug.cgi?id=27038
+
+        In order to fix the bug 26816, we need several utility functions be added to htmlediting.cpp
+
+        No tests because functions haven't been used anywhere yet.
+
+        * dom/Range.cpp:
+        (WebCore::Range::create):
+        (WebCore::Range::comparePoint): added const qualifier
+        (WebCore::Range::compareNode): added const qualifier
+        * dom/Range.h:
+        * editing/htmlediting.cpp:
+        (WebCore::unsplittableElementForPosition): find the enclosing unsplittable element (editing root & table cell)
+        (WebCore::positionBeforeNode): added ASSERT(node)
+        (WebCore::positionAfterNode): added ASSERT(node)
+        (WebCore::visiblePositionBeforeNode):
+        (WebCore::visiblePositionAfterNode):
+        (WebCore::createRange): create a range object from two visible positions
+        (WebCore::extendRangeToWrappingNodes): extend range to include nodes that starts and ends at the boundaries
+        (WebCore::canMergeLists): typo
+        (WebCore::indexForVisiblePosition): added const qualifier
+        (WebCore::isVisiblyAdjacent): typo
+        (WebCore::isNodeVisiblyContainedWithin): determine if a node is inside a range or within the visible boundaries of the range
+        * editing/htmlediting.h:
+
 2009-07-17  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Darin Adler.

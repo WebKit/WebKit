@@ -59,10 +59,10 @@ public:
     void setStart(PassRefPtr<Node> container, int offset, ExceptionCode&);
     void setEnd(PassRefPtr<Node> container, int offset, ExceptionCode&);
     void collapse(bool toStart, ExceptionCode&);
-    bool isPointInRange(Node* refNode, int offset, ExceptionCode& ec);
-    short comparePoint(Node* refNode, int offset, ExceptionCode& ec);
+    bool isPointInRange(Node* refNode, int offset, ExceptionCode&);
+    short comparePoint(Node* refNode, int offset, ExceptionCode&) const;
     enum CompareResults { NODE_BEFORE, NODE_AFTER, NODE_BEFORE_AND_AFTER, NODE_INSIDE };
-    CompareResults compareNode(Node* refNode, ExceptionCode&);
+    CompareResults compareNode(Node* refNode, ExceptionCode&) const;
     enum CompareHow { START_TO_START, START_TO_END, END_TO_END, END_TO_START };
     short compareBoundaryPoints(CompareHow, const Range* sourceRange, ExceptionCode&) const;
     static short compareBoundaryPoints(Node* containerA, int offsetA, Node* containerB, int offsetB);

@@ -90,6 +90,7 @@ PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, PassRefPtr<N
 
 PassRefPtr<Range> Range::create(PassRefPtr<Document> ownerDocument, const Position& start, const Position& end)
 {
+    // FIXME: we shouldn't be using deprecatedEditingOffset here
     return adoptRef(new Range(ownerDocument, start.node(), start.deprecatedEditingOffset(), end.node(), end.deprecatedEditingOffset()));
 }
 
@@ -294,7 +295,7 @@ bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
         && compareBoundaryPoints(refNode, offset, m_end.container(), m_end.offset()) <= 0;
 }
 
-short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec)
+short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec) const
 {
     // http://developer.mozilla.org/en/docs/DOM:range.comparePoint
     // This method returns -1, 0 or 1 depending on if the point described by the 
@@ -332,7 +333,7 @@ short Range::comparePoint(Node* refNode, int offset, ExceptionCode& ec)
     return 0;
 }
 
-Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec)
+Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec) const
 {
     // http://developer.mozilla.org/en/docs/DOM:range.compareNode
     // This method returns 0, 1, 2, or 3 based on if the node is before, after,

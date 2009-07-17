@@ -207,6 +207,20 @@ Element* editableRootForPosition(const Position& p)
     return node->rootEditableElement();
 }
 
+// Finds the enclosing element until which the tree can be split.
+// When a user hits ENTER, he/she won't expect this element to be split into two.
+// You may pass it as the second argument of splitTreeToNode.
+Element* unsplittableElementForPosition(const Position& p)
+{
+    // Since enclosingNodeOfType won't search beyond the highest root editable node,
+    // this code works even if the closest table cell was outside of the root editable node.
+    Element* enclosingCell = static_cast<Element*>(enclosingNodeOfType(p, &isTableCell, true));
+    if (enclosingCell)
+        return enclosingCell;
+
+    return editableRootForPosition(p);
+}
+
 bool isContentEditable(const Node* node)
 {
     return node->isContentEditable();
@@ -565,14 +579,77 @@ Node* isLastPositionBeforeTable(const VisiblePosition& visiblePosition)
 
 Position positionBeforeNode(const Node* node)
 {
-    // FIXME: This should ASSERT(node->parentNode())
+    ASSERT(node);
+    // FIXME: Should ASSERT(node->parentNode()) but doing so results in editing/deleting/delete-ligature-001.html crashing
     return Position(node->parentNode(), node->nodeIndex());
 }
 
 Position positionAfterNode(const Node* node)
 {
-    // FIXME: This should ASSERT(node->parentNode())
+    ASSERT(node);
+    // FIXME: Should ASSERT(node->parentNode()) but doing so results in editing/deleting/delete-ligature-001.html crashing
     return Position(node->parentNode(), node->nodeIndex() + 1);
+}
+
+// Returns the visible position at the beginning of a node
+VisiblePosition visiblePositionBeforeNode(Node* node)
+{
+    ASSERT(node);
+    if (node->childNodeCount())
+        return VisiblePosition(node, 0, DOWNSTREAM);
+    ASSERT(node->parentNode());
+    return positionBeforeNode(node);
+}
+
+// Returns the visible position at the ending of a node
+VisiblePosition visiblePositionAfterNode(Node* node)
+{
+    ASSERT(node);
+    if (node->childNodeCount())
+        return VisiblePosition(node, node->childNodeCount(), DOWNSTREAM);
+    ASSERT(node->parentNode());
+    return positionAfterNode(node);
+}
+
+// Create a range object with two visible positions, start and end.
+// create(PassRefPtr<Document>, const Position&, const Position&); will use deprecatedEditingOffset
+// Use this function instead of create a regular range object (avoiding editing offset).
+PassRefPtr<Range> createRange(PassRefPtr<Document> document, const VisiblePosition& start, const VisiblePosition& end, ExceptionCode& ec)
+{
+    ec = 0;
+    RefPtr<Range> selectedRange = Range::create(document);
+    selectedRange->setStart(start.deepEquivalent().containerNode(), start.deepEquivalent().computeOffsetInContainerNode(), ec);
+    if (!ec)
+        selectedRange->setEnd(end.deepEquivalent().containerNode(), end.deepEquivalent().computeOffsetInContainerNode(), ec);
+    return selectedRange.release();
+}
+
+// Extend rangeToExtend to include nodes that wraps range and visibly starts and ends inside or at the boudnaries of maximumRange
+// e.g. if the original range spaned "hello" in <div>hello</div>, then this function extends the range to contain div's around it.
+// Call this function before copying / moving paragraphs to contain all wrapping nodes.
+// This function stops extending the range immediately below rootNode; i.e. the extended range can contain a child node of rootNode
+// but it can never contain rootNode itself.
+PassRefPtr<Range> extendRangeToWrappingNodes(PassRefPtr<Range> range, const Range* maximumRange, const Node* rootNode)
+{
+    ASSERT(range);
+    ASSERT(maximumRange);
+
+    ExceptionCode ec = 0;
+    Node* ancestor = range->commonAncestorContainer(ec);// find the cloeset common ancestor
+    Node* highestNode = 0;
+    // traverse through ancestors as long as they are contained within the range, content-editable, and below rootNode (could be =0).
+    while (ancestor && ancestor->isContentEditable() && isNodeVisiblyContainedWithin(ancestor, maximumRange) && ancestor != rootNode) {
+        highestNode = ancestor;
+        ancestor = ancestor->parentNode();
+    }
+
+    if (!highestNode)
+        return range;
+
+    // Create new range with the highest editable node contained within the range
+    RefPtr<Range> extendedRange = Range::create(range->ownerDocument());
+    extendedRange->selectNode(highestNode, ec);
+    return extendedRange.release();
 }
 
 bool isListElement(Node *n)
@@ -746,7 +823,7 @@ bool canMergeLists(Element* firstList, Element* secondList)
     return firstList->hasTagName(secondList->tagQName())// make sure the list types match (ol vs. ul)
     && isContentEditable(firstList) && isContentEditable(secondList)// both lists are editable
     && firstList->rootEditableElement() == secondList->rootEditableElement()// don't cross editing boundaries
-    && isVisibilyAdjacent(positionAfterNode(firstList), positionBeforeNode(secondList));
+    && isVisiblyAdjacent(positionAfterNode(firstList), positionBeforeNode(secondList));
     // Make sure there is no visible content between this li and the previous list
 }
 
@@ -974,7 +1051,7 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
 }
 
 
-int indexForVisiblePosition(VisiblePosition& visiblePosition)
+int indexForVisiblePosition(const VisiblePosition& visiblePosition)
 {
     if (visiblePosition.isNull())
         return 0;
@@ -983,9 +1060,27 @@ int indexForVisiblePosition(VisiblePosition& visiblePosition)
     return TextIterator::rangeLength(range.get(), true);
 }
 
-bool isVisibilyAdjacent(const Position& first, const Position& second)
+// Determines whether two positions are visibly next to each other (first then second)
+// while ignoring whitespaces and unrendered nodes
+bool isVisiblyAdjacent(const Position& first, const Position& second)
 {
     return VisiblePosition(first) == VisiblePosition(second.upstream());
+}
+
+// Determines whether a node is inside a range or visibly starts and ends at the boundaries of the range.
+// Call this function to determine whether a node is visibly fit inside selectedRange
+bool isNodeVisiblyContainedWithin(Node* node, const Range* selectedRange)
+{
+    ASSERT(node);
+    ASSERT(selectedRange);
+    // If the node is inside the range, then it surely is contained within
+    ExceptionCode ec = 0;
+    if (selectedRange->compareNode(node, ec) == Range::NODE_INSIDE)
+        return true;
+
+    // If the node starts and ends at where selectedRange starts and ends, the node is contained within
+    return visiblePositionBeforeNode(node) == selectedRange->startPosition()
+        && visiblePositionAfterNode(node) == selectedRange->endPosition();
 }
 
 PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
