@@ -2314,6 +2314,7 @@ webcore_built_nosources += \
 	WebCore/bindings/js/JSWorkerContextBase.lut.h
 
 webcore_sources += \
+	WebCore/bindings/js/JSAbstractWorkerCustom.cpp \
 	WebCore/bindings/js/JSWorkerConstructor.cpp \
 	WebCore/bindings/js/JSWorkerConstructor.h \
 	WebCore/bindings/js/JSWorkerContextBase.cpp \
@@ -2324,6 +2325,8 @@ webcore_sources += \
 	WebCore/bindings/js/WorkerScriptController.h \
 	WebCore/page/WorkerNavigator.cpp \
 	WebCore/page/WorkerNavigator.h \
+	WebCore/workers/AbstractWorker.cpp \
+	WebCore/workers/AbstractWorker.h \
 	WebCore/workers/GenericWorkerTask.h \
 	WebCore/workers/Worker.cpp \
 	WebCore/workers/Worker.h \
@@ -2355,12 +2358,9 @@ webcore_cppflags += \
 	-DENABLE_SHARED_WORKERS=1
 
 webcore_built_sources += \
-	WebCore/bindings/js/JSAbstractWorkerCustom.cpp \
 	WebCore/bindings/js/JSSharedWorkerConstructor.cpp \
 	WebCore/bindings/js/JSSharedWorkerConstructor.h \
 	WebCore/bindings/js/JSSharedWorkerCustom.cpp \
-	WebCore/workers/AbstractWorker.cpp \
-	WebCore/workers/AbstractWorker.h \
 	WebCore/workers/SharedWorker.cpp \
 	WebCore/workers/SharedWorker.h
 

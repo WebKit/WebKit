@@ -1,3 +1,12 @@
+2009-07-17  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix for symbol lookup error.
+
+        Move AbstractWorker from SHARED_WORKERS to WORKERS as Worker derives from it now
+        Changed in http://trac.webkit.org/changeset/46048
+
+        * GNUmakefile.am:
+
 2009-07-17  Ryosuke Niwa  <ryosuke.niwa@gmail.com>
 
         Reviewed by Eric Seidel.
