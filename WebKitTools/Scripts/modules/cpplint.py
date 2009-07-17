@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2009 Google Inc. All rights reserved.
 #
@@ -1685,6 +1686,15 @@ def check_braces(filename, clean_lines, line_number, error):
           and not search(r'\b(if|for|while|switch)\b', line)):
         error(filename, line_number, 'whitespace/braces', 4,
               'Place brace on its own line for function definitions.')
+
+    if (match(r'\s*}\s*$', line) and line_number > 1):
+        # We check if a closed brace has started a line to see if a
+        # one line control statement was previous.
+        previous_line = clean_lines.elided[line_number - 2]
+        if (previous_line.find('{') > 0
+            and search(r'\b(if|for|while|else)\b', previous_line)):
+            error(filename, line_number, 'whitespace/braces', 4,
+                  'One line control clauses should not use braces.')
 
     # An else clause should be on the same line as the preceding closing brace.
     if match(r'\s*else\s*', line):

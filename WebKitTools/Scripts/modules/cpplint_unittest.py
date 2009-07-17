@@ -2789,8 +2789,10 @@ class WebKitStyleTest(CpplintTestBase):
         self.assert_multi_line_lint(
             'if (condition) {\n'
             '    doSomething();\n'
+            '    doSomethingAgain();\n'
             '} else {\n'
             '    doSomethingElse();\n'
+            '    doSomethingElseAgain();\n'
             '}\n',
             '')
         self.assert_multi_line_lint(
@@ -2804,15 +2806,18 @@ class WebKitStyleTest(CpplintTestBase):
             '    doSomething();\n'
             'else {\n'
             '    doSomethingElse();\n'
+            '    doSomethingElseAgain();\n'
             '}\n',
             '')
 
         self.assert_multi_line_lint(
             'if (condition) {\n'
             '    doSomething();\n'
+            '    doSomethingAgain();\n'
             '}\n'
             'else {\n'
             '    doSomethingElse();\n'
+            '    doSomethingElseAgain();\n'
             '}\n',
             'An else should appear on the same line as the preceding }  [whitespace/newline] [4]')
         self.assert_multi_line_lint(
@@ -2867,6 +2872,46 @@ class WebKitStyleTest(CpplintTestBase):
             '    int foo;\n'
             '};\n',
             'This { should be at the end of the previous line  [whitespace/braces] [4]')
+
+        self.assert_multi_line_lint(
+            'if (true) {\n'
+            '    int foo;\n'
+            '}\n',
+            'One line control clauses should not use braces.  [whitespace/braces] [4]')
+
+        self.assert_multi_line_lint(
+            'for (; foo; bar) {\n'
+            '    int foo;\n'
+            '}\n',
+            'One line control clauses should not use braces.  [whitespace/braces] [4]')
+
+        self.assert_multi_line_lint(
+            'while (true) {\n'
+            '    int foo;\n'
+            '}\n',
+            'One line control clauses should not use braces.  [whitespace/braces] [4]')
+
+        self.assert_multi_line_lint(
+            'if (true)\n'
+            '    int foo;\n'
+            'else {\n'
+            '    int foo;\n'
+            '}\n',
+            'One line control clauses should not use braces.  [whitespace/braces] [4]')
+
+        self.assert_multi_line_lint(
+            'if (true) {\n'
+            '    // Some comment\n'
+            '    int foo;\n'
+            '}\n',
+            '')
+
+        self.assert_multi_line_lint(
+            'if (true) {\n'
+            '    myFunction(reallyLongParam1, reallyLongParam2,\n'
+            '               reallyLongParam3);\n'
+            '}\n',
+            '')
 
         # 3. One-line control clauses should not use braces unless
         #    comments are included or a single statement spans multiple
