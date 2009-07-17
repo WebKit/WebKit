@@ -24,11 +24,17 @@
 <td><div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff) 1 1 text;'></div></td> <!-- CSS3 hot spot - invalid, should have comma after hotspot coords -->
 </tr>
 </table>
-<p>In each of the blue boxes below, the cursor should show the text cursor, since all hotspot definitions are ignored in quirks mode.</p>
+<p>In each of the blue boxes below, the cursor should show the text cursor, since they contain invalid hotspots.</p>
 <table><tr>
 <td><div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff) 1, text;'></div></td> <!-- CSS3 hot spot - ignored in IE -->
-<td><div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff) 1 2, text;'></div></td> <!-- CSS3 hot spot - ignored in IE -->
  <td><div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff) 1 2 3, text;'></div></td> <!-- CSS3 hot spot - ignored in IE -->
+</tr>
+</table>
+
+<p>In each of the blue boxes below, the cursor should show the help, since they contain valid hotspots.</p>
+<table><tr>
+<td><div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff) 1 2;'></div></td> <!-- CSS3 hot spot - ignored in IE -->
+<td><div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff) 1 2, text;'></div></td> <!-- CSS3 hot spot - ignored in IE -->
 </tr>
 </table>
 
@@ -43,7 +49,7 @@
 </td><td>
 <div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff), text;'><div style="width:50px;height:50px;background-color:gray;cursor:foobar"></div></div>
 </td><td>
-<div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff), text;'><div style="width:50px;height:50px;background-color:gray;cursor:url(resources/helpCursor.tiff) 1 2 3, text"></div></div>
+<div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff), text;'><div style="width:50px;height:50px;background-color:gray;cursor:url(resources/helpCursor.tiff) 1 2, text"></div></div>
 </td><td>
 <div style='width:100px;height:100px;background-color:lightblue; cursor:url(resources/helpCursor.tiff), text;'><div style="width:50px;height:50px;background-color:gray;cursor:url(nonexistant.png), text"></div></div>
 </td></tr>

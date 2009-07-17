@@ -822,18 +822,17 @@ bool CSSParser::parseValue(int propId, bool important)
             }
             IntPoint hotspot;
             int nrcoords = coords.size();
-            if (nrcoords > 0 && nrcoords != 2) {
-                if (m_strict) // only support hotspot pairs in strict mode
-                    return false;
-            } else if (m_strict && nrcoords == 2)
+            if (nrcoords > 0 && nrcoords != 2)
+                return false;
+            if (nrcoords == 2)
                 hotspot = IntPoint(coords[0], coords[1]);
-            if (m_strict || coords.size() == 0) {
-                if (!uri.isNull() && m_styleSheet) {
-                    // FIXME: The completeURL call should be done when using the CSSCursorImageValue,
-                    // not when creating it.
-                    list->append(CSSCursorImageValue::create(m_styleSheet->completeURL(uri), hotspot));
-                }
+          
+            if (!uri.isNull() && m_styleSheet) {
+                // FIXME: The completeURL call should be done when using the CSSCursorImageValue,
+                // not when creating it.
+                list->append(CSSCursorImageValue::create(m_styleSheet->completeURL(uri), hotspot));
             }
+
             if ((m_strict && !value) || (value && !(value->unit == CSSParserValue::Operator && value->iValue == ',')))
                 return false;
             value = m_valueList->next(); // comma

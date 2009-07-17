@@ -1,3 +1,19 @@
+2009-07-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=27390 CSS custom 
+        cursor hotspots should work in quirks mode
+        - and corresponding <rdar://problem/6554340>
+
+        Enable hotspots in quirks mode.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+
+        Update this manual test to reflect the fact that hotspots are now 
+        expected to work in quirks mode.
+        * manual-tests/css3-cursor-fallback-quirks.html:
+
 2009-07-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Steve Falkenburg.
