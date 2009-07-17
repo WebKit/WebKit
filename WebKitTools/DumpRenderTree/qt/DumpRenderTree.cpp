@@ -60,6 +60,7 @@ extern void qt_drt_run(bool b);
 extern void qt_dump_set_accepts_editing(bool b);
 extern void qt_dump_frame_loader(bool b);
 extern void qt_drt_clearFrameName(QWebFrame* qFrame);
+extern void qt_drt_overwritePluginDirectories();
 
 namespace WebCore {
 
@@ -143,6 +144,8 @@ DumpRenderTree::DumpRenderTree()
     : m_stdin(0)
     , m_notifier(0)
 {
+    qt_drt_overwritePluginDirectories();
+
     m_controller = new LayoutTestController(this);
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
 

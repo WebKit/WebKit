@@ -59,6 +59,7 @@
 #include "Scrollbar.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
+#include "PluginDatabase.h"
 #include "ProgressTracker.h"
 #include "RefPtr.h"
 #include "HashMap.h"
@@ -98,6 +99,18 @@
 #endif
 
 using namespace WebCore;
+
+void QWEBKIT_EXPORT qt_drt_overwritePluginDirectories()
+{
+    PluginDatabase* db = PluginDatabase::installedPlugins(/* populate */ false);
+
+    Vector<String> paths;
+    String qtPath(getenv("QTWEBKIT_PLUGIN_PATH"));
+    qtPath.split(UChar(':'), /* allowEmptyEntries */ false, paths);
+
+    db->setPluginDirectories(paths);
+    db->refresh();
+}
 
 bool QWebPagePrivate::drtRun = false;
 void QWEBKIT_EXPORT qt_drt_run(bool b)

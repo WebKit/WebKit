@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,12 +43,18 @@ namespace WebCore {
     class PluginPackage;
 
     typedef HashSet<RefPtr<PluginPackage>, PluginPackageHash> PluginSet;
-  
+
     class PluginDatabase {
     public:
-        static PluginDatabase* installedPlugins();
+        // The first call to installedPlugins creates the plugin database
+        // and by default populates it with the plugins installed on the system.
+        // For testing purposes, it is possible to not populate the database
+        // automatically, as the plugins might affect the DRT results by
+        // writing to a.o. stderr.
+        static PluginDatabase* installedPlugins(bool populate = true);
 
         bool refresh();
+        void clear();
         Vector<PluginPackage*> plugins() const;
         bool isMIMETypeRegistered(const String& mimeType);
         void addExtraPluginDirectory(const String&);
@@ -57,9 +64,13 @@ namespace WebCore {
 
         PluginPackage* findPlugin(const KURL&, String& mimeType);
 
-    private:
-        void setPluginDirectories(const Vector<String>& directories) { m_pluginDirectories = directories; }
+        void setPluginDirectories(const Vector<String>& directories)
+        {
+            clear();
+            m_pluginDirectories = directories;
+        }
 
+    private:
         void getPluginPathsInDirectories(HashSet<String>&) const;
         void getDeletedPlugins(PluginSet&) const;
 

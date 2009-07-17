@@ -1,3 +1,19 @@
+2009-07-17  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        Make it possible to set the plugin directories from the DRT.
+        Part of https://bugs.webkit.org/show_bug.cgi?id=27215
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::installedPlugins): Now optionally takes
+        a populate argument, so we can avoid loading system plugins from the
+        DRT and thus avoid their strerr errors that can make tests fail.
+        (WebCore::PluginDatabase::clear): Make is possible to clear the
+        database. Called from setPluginDirectories.
+        * plugins/PluginDatabase.h:
+        (WebCore::PluginDatabase::setPluginDirectories): Make public
+
 2009-07-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
