@@ -117,6 +117,8 @@ void CSSSelector::extractPseudoType() const
     DEFINE_STATIC_LOCAL(AtomicString, notStr, ("not("));
     DEFINE_STATIC_LOCAL(AtomicString, onlyChild, ("only-child"));
     DEFINE_STATIC_LOCAL(AtomicString, onlyOfType, ("only-of-type"));
+    DEFINE_STATIC_LOCAL(AtomicString, optional, ("optional"));
+    DEFINE_STATIC_LOCAL(AtomicString, required, ("required"));
     DEFINE_STATIC_LOCAL(AtomicString, resizer, ("-webkit-resizer"));
     DEFINE_STATIC_LOCAL(AtomicString, root, ("root"));
     DEFINE_STATIC_LOCAL(AtomicString, scrollbar, ("-webkit-scrollbar"));
@@ -286,6 +288,10 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoSingleButton;
     else if (m_value == noButton)
         m_pseudoType = PseudoNoButton;
+    else if (m_value == optional)
+        m_pseudoType = PseudoOptional;
+    else if (m_value == required)
+        m_pseudoType = PseudoRequired;
     else if (m_value == scrollbarCorner) {
         element = true;
         m_pseudoType = PseudoScrollbarCorner;

@@ -1,3 +1,65 @@
+2009-07-17  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25551
+        Added support for the "required" attribute, the valueMissing flag
+        to the ValidityState object and :required/:optional CSS pseudoclasses.
+        Part of HTML5 sec. Forms specs.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#attr-input-required
+
+        Tests: fast/css/pseudo-required-optional-001.html
+               fast/css/pseudo-required-optional-002.html
+               fast/css/pseudo-required-optional-003.html
+               fast/css/pseudo-required-optional-004.html
+               fast/css/pseudo-required-optional-005.html
+               fast/css/pseudo-required-optional-006.html
+               fast/forms/ValidityState-valueMissing-001.html
+               fast/forms/ValidityState-valueMissing-002.html
+               fast/forms/ValidityState-valueMissing-003.html
+               fast/forms/ValidityState-valueMissing-004.html
+               fast/forms/ValidityState-valueMissing-005.html
+               fast/forms/ValidityState-valueMissing-006.html
+               fast/forms/ValidityState-valueMissing-007.html
+               fast/forms/ValidityState-valueMissing-008.html
+               fast/forms/ValidityState-valueMissing-009.html
+               fast/forms/required-attribute-001.html
+               fast/forms/required-attribute-002.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType): pseudoRequired/pseudoOptional
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::): ditto
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): ditto
+        * dom/Element.h:
+        (WebCore::Element::isOptionalFormControl): check for optional controls
+        (WebCore::Element::isRequiredFormControl): check for required controls
+        * html/HTMLAttributeNames.in: required attribute
+        * html/HTMLButtonElement.h:
+        (WebCore::HTMLButtonElement::isOptionalFormControl): ditto
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::required): requiredAttr getter
+        (WebCore::HTMLFormControlElement::setRequired): requiredAttr setter
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::valueMissing): method definition
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::valueMissing): validation code
+        (WebCore::HTMLInputElement::isRequiredFormControl): ditto
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isOptionalFormControl): ditto
+        * html/HTMLInputElement.idl: required DOM attribute
+        * html/HTMLSelectElement.h:
+        (WebCore::HTMLSelectElement::isOptionalFormControl): ditto
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::valueMissing): validation code
+        (WebCore::HTMLTextAreaElement::isOptionalFormControl): ditto
+        (WebCore::HTMLTextAreaElement::isRequiredFormControl): ditto
+        * html/HTMLTextAreaElement.idl: required DOM attribute
+        * html/ValidityState.cpp:
+        * html/ValidityState.h:
+        (WebCore::ValidityState::valueMissing): validation flag
+
 2009-07-17  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

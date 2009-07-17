@@ -204,6 +204,16 @@ void HTMLFormControlElement::setAutofocus(bool b)
     setAttribute(autofocusAttr, b ? "autofocus" : 0);
 }
 
+bool HTMLFormControlElement::required() const
+{
+    return hasAttribute(requiredAttr);
+}
+
+void HTMLFormControlElement::setRequired(bool b)
+{
+    setAttribute(requiredAttr, b ? "required" : 0);
+}
+
 void HTMLFormControlElement::recalcStyle(StyleChange change)
 {
     HTMLElement::recalcStyle(change);

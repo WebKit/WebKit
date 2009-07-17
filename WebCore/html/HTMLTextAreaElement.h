@@ -52,6 +52,8 @@ public:
 
     virtual bool isTextFormControl() const { return true; }
 
+    virtual bool valueMissing() const { return isRequiredFormControl() && !disabled() && !readOnly() && value().isEmpty(); }
+
     int selectionStart();
     int selectionEnd();
 
@@ -95,6 +97,9 @@ private:
     enum WrapMethod { NoWrap, SoftWrap, HardWrap };
 
     void updateValue() const;
+
+    virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
+    virtual bool isRequiredFormControl() const { return required(); }
 
     int m_rows;
     int m_cols;

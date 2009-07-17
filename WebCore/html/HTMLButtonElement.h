@@ -61,6 +61,7 @@ public:
     
 private:
     enum Type { SUBMIT, RESET, BUTTON };
+    virtual bool isOptionalFormControl() const { return true; }
 
     Type m_type;
     bool m_activeSubmit;

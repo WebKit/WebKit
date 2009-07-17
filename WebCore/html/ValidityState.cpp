@@ -22,7 +22,6 @@
 
 #include "config.h"
 #include "ValidityState.h"
-#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 

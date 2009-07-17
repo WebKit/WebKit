@@ -195,6 +195,7 @@ progress
 prompt
 readonly
 rel
+required
 results
 rev
 role

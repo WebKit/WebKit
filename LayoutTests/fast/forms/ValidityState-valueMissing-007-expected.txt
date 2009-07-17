@@ -1,0 +1,4 @@
+There are two radio buttons below with the same name, only one is required (which means the whole group is required), the other one is checked and leads the required attribute to be satisfied: no missing value.
+
+ 
+SUCCESS

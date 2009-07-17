@@ -36,6 +36,7 @@ module html {
                  attribute  boolean              autofocus;
                  attribute  [ConvertNullToNullString] DOMString            name;
                  attribute  boolean              readOnly;
+                 attribute  boolean              required;
                  attribute  long                 rows;
         readonly attribute  DOMString            type;
                  attribute  [ConvertNullToNullString] DOMString            value;

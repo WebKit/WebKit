@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>required attribute presence test</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        log((v[0].required && v[1].required) ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>There are two form control elements below, both required.</p>
+<input name="victim" required />
+<textarea name="victim" required></textarea>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

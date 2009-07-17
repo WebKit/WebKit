@@ -114,6 +114,39 @@ bool HTMLInputElement::autoComplete() const
     return true;
 }
 
+bool HTMLInputElement::valueMissing() const
+{
+    if (!isRequiredFormControl() || readOnly() || disabled())
+        return false;
+
+    switch (inputType()) {
+        case TEXT:
+        case SEARCH:
+        case URL:
+        case TELEPHONE:
+        case EMAIL:
+        case PASSWORD:
+        case NUMBER:
+        case FILE:
+            return value().isEmpty();
+        case CHECKBOX:
+            return !checked();
+        case RADIO:
+            return !document()->checkedRadioButtons().checkedButtonForGroup(name());
+        case HIDDEN:
+        case RANGE:
+        case SUBMIT:
+        case IMAGE:
+        case RESET:
+        case BUTTON:
+        case ISINDEX:
+            break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
 {
     if (HTMLFormElement* form = element->form())
@@ -1577,6 +1610,37 @@ void HTMLInputElement::unregisterForActivationCallbackIfNeeded()
 {
     if (!needsActivationCallback())
         document()->unregisterForDocumentActivationCallbacks(this);
+}
+
+bool HTMLInputElement::isRequiredFormControl() const
+{
+    if (!required())
+        return false;
+
+    switch (inputType()) {
+        case TEXT:
+        case SEARCH:
+        case URL:
+        case TELEPHONE:
+        case EMAIL:
+        case PASSWORD:
+        case NUMBER:
+        case CHECKBOX:
+        case RADIO:
+        case FILE:
+            return true;
+        case HIDDEN:
+        case RANGE:
+        case SUBMIT:
+        case IMAGE:
+        case RESET:
+        case BUTTON:
+        case ISINDEX:
+            return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void HTMLInputElement::cacheSelection(int start, int end)

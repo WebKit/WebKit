@@ -23,12 +23,11 @@
 #ifndef ValidityState_h
 #define ValidityState_h
 
+#include "HTMLFormControlElement.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-    class HTMLFormControlElement;
 
     class ValidityState : public RefCounted<ValidityState> {
     public:
@@ -39,7 +38,7 @@ namespace WebCore {
 
         HTMLFormControlElement* control() const { return m_control; }
 
-        bool valueMissing() { return false; }
+        bool valueMissing() { return control()->valueMissing(); }
         bool typeMismatch() { return false; }
         bool patternMismatch() { return false; }
         bool tooLong() { return false; }
