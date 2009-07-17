@@ -184,6 +184,8 @@
 #include "bindings/V8SQLResultSet.cpp"
 #include "bindings/V8SQLResultSetRowList.cpp"
 #include "bindings/V8SQLTransaction.cpp"
+#include "bindings/V8Storage.cpp"
+#include "bindings/V8StorageEvent.cpp"
 #include "bindings/V8StyleSheet.cpp"
 #include "bindings/V8StyleSheetList.cpp"
 #include "bindings/V8SVGAElement.cpp"
