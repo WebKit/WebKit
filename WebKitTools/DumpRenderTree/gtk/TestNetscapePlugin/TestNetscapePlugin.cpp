@@ -278,8 +278,6 @@ NP_Initialize (NPNetscapeFuncs *aMozillaVTable, NPPluginFuncs *aPluginVTable)
     if ((aMozillaVTable->version >> 8) > NP_VERSION_MAJOR)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
 
-    if (aMozillaVTable->size < sizeof (NPNetscapeFuncs))
-        return NPERR_INVALID_FUNCTABLE_ERROR;
     if (aPluginVTable->size < sizeof (NPPluginFuncs))
         return NPERR_INVALID_FUNCTABLE_ERROR;
 
