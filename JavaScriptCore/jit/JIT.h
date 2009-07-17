@@ -391,7 +391,6 @@ namespace JSC {
 
         static void linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode&, CallLinkInfo*, int callerArgCount, JSGlobalData*);
         static void unlinkCall(CallLinkInfo*);
-        static void unlinkMethodCall(MethodCallLinkInfo*);
 
     private:
         struct JSRInfo {
