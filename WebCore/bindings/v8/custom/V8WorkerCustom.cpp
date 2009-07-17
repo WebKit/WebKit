@@ -50,19 +50,17 @@ CALLBACK_FUNC_DECL(WorkerConstructor)
 {
     INC_STATS(L"DOM.Worker.Constructor");
 
-    if (!args.IsConstructCall()) {
+    if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
-    }
 
-    if (args.Length() == 0) {
+    if (!args.Length())
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
-    }
 
     v8::TryCatch tryCatch;
     v8::Handle<v8::String> scriptUrl = args[0]->ToString();
-    if (tryCatch.HasCaught()) {
+    if (tryCatch.HasCaught())
         return throwError(tryCatch.Exception());
-    }
+
     if (scriptUrl.IsEmpty())
         return v8::Undefined();
 
@@ -144,78 +142,6 @@ ACCESSOR_SETTER(WorkerOnmessage)
             createHiddenDependency(info.Holder(), value, V8Custom::kWorkerRequestCacheIndex);
         }
     }
-}
-
-ACCESSOR_GETTER(WorkerOnerror)
-{
-    INC_STATS(L"DOM.Worker.onerror._get");
-    Worker* worker = V8DOMWrapper::convertToNativeObject<Worker>(V8ClassIndex::WORKER, info.Holder());
-    if (worker->onerror()) {
-        V8ObjectEventListener* listener = static_cast<V8ObjectEventListener*>(worker->onerror());
-        v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-        return v8Listener;
-    }
-    return v8::Undefined();
-}
-
-ACCESSOR_SETTER(WorkerOnerror)
-{
-    INC_STATS(L"DOM.Worker.onerror._set");
-    Worker* worker = V8DOMWrapper::convertToNativeObject<Worker>(V8ClassIndex::WORKER, info.Holder());
-    V8ObjectEventListener* oldListener = static_cast<V8ObjectEventListener*>(worker->onerror());
-    if (value->IsNull()) {
-        if (oldListener) {
-            v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
-            removeHiddenDependency(info.Holder(), oldV8Listener, V8Custom::kWorkerRequestCacheIndex);
-        }
-
-        // Clear the listener.
-        worker->setOnerror(0);
-    } else {
-        RefPtr<EventListener> listener = getEventListener(worker, value, false);
-        if (listener) {
-            if (oldListener) {
-                v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
-                removeHiddenDependency(info.Holder(), oldV8Listener, V8Custom::kWorkerRequestCacheIndex);
-            }
-
-            worker->setOnerror(listener);
-            createHiddenDependency(info.Holder(), value, V8Custom::kWorkerRequestCacheIndex);
-        }
-    }
-}
-
-CALLBACK_FUNC_DECL(WorkerAddEventListener)
-{
-    INC_STATS(L"DOM.Worker.addEventListener()");
-    Worker* worker = V8DOMWrapper::convertToNativeObject<Worker>(V8ClassIndex::WORKER, args.Holder());
-
-    RefPtr<EventListener> listener = getEventListener(worker, args[1], false);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        worker->addEventListener(type, listener, useCapture);
-
-        createHiddenDependency(args.Holder(), args[1], V8Custom::kWorkerRequestCacheIndex);
-    }
-    return v8::Undefined();
-}
-
-CALLBACK_FUNC_DECL(WorkerRemoveEventListener)
-{
-    INC_STATS(L"DOM.Worker.removeEventListener()");
-    Worker* worker = V8DOMWrapper::convertToNativeObject<Worker>(V8ClassIndex::WORKER, args.Holder());
-
-    RefPtr<EventListener> listener = getEventListener(worker, args[1], true);
-    if (listener) {
-        String type = toWebCoreString(args[0]);
-        bool useCapture = args[2]->BooleanValue();
-        worker->removeEventListener(type, listener.get(), useCapture);
-
-        removeHiddenDependency(args.Holder(), args[1], V8Custom::kWorkerRequestCacheIndex);
-    }
-
-    return v8::Undefined();
 }
 
 } // namespace WebCore

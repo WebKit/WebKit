@@ -10,12 +10,14 @@ function log(message)
 function runNextTest()
 {
     testIndex++;
-    if (testIndex > totalTests) {
+    // Loop until there are no more tests to run
+    var testName = 'test' + testIndex;
+    if (window[testName]) {
+        window[testName]();
+    } else {
         log("DONE");
         if (window.layoutTestController)
             layoutTestController.notifyDone();
-    } else {
-        eval("test" + testIndex + "();");
     }
 }
 
@@ -98,12 +100,28 @@ function test6()
     }
 }
 
+function test7()
+{
+    try {
+        var worker = new Worker("resources/worker-common.js");
+        // Make sure attributes from both Worker and AbstractWorker are visible.
+        if (!worker.postMessage)
+            log("FAIL: worker.postMessage did not exist.");
+        else if (!worker.addEventListener)
+            log("FAIL: worker.addEventListener did not exist.");
+        else
+            log("PASS: Successfully created worker.");
+    } catch (ex) {
+        log("FAIL: unexpected exception (" + ex + ") thrown when creating worker");
+    }
+    runNextTest();
+}
+
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
 
-var totalTests = 6;
 var testIndex = 0;
 runNextTest();
 

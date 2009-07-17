@@ -26,24 +26,18 @@
 
 module threads {
 
-    interface [CustomMarkFunction, Conditional=WORKERS] Worker {
+    interface [
+        Conditional=WORKERS,
+        CustomMarkFunction,
+        GenerateNativeConverter,
+        GenerateToJS
+    ] Worker : AbstractWorker {
 
-        attribute EventListener onerror;
         attribute EventListener onmessage;
         void postMessage(in DOMString message, in [Optional] MessagePort messagePort)
             raises(DOMException);
 
         void terminate();
-
-        // EventTarget interface
-        [Custom] void addEventListener(in DOMString type, 
-                                       in EventListener listener, 
-                                       in boolean useCapture);
-        [Custom] void removeEventListener(in DOMString type, 
-                                          in EventListener listener, 
-                                          in boolean useCapture);
-        boolean dispatchEvent(in Event evt)
-            raises(EventException);
     };
 
 }

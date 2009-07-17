@@ -371,6 +371,7 @@
 #endif
 
 #if ENABLE(WORKERS)
+#include "V8AbstractWorker.h"
 #include "V8Worker.h"
 #include "V8WorkerContext.h"
 #include "V8WorkerLocation.h"
@@ -378,7 +379,6 @@
 #endif
 
 #if ENABLE(SHARED_WORKERS)
-#include "V8AbstractWorker.h"
 #include "V8SharedWorker.h"
 #endif
 

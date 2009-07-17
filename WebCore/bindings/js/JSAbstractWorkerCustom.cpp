@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(SHARED_WORKERS)
+#if ENABLE(WORKERS)
 
 #include "JSAbstractWorker.h"
 
@@ -90,4 +90,4 @@ JSValue toJS(ExecState* exec, AbstractWorker* baseObject)
 
 } // namespace WebCore
 
-#endif // ENABLE(SHARED_WORKERS)
+#endif // ENABLE(WORKERS)

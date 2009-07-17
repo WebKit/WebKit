@@ -1418,11 +1418,13 @@ contains(DEFINES, ENABLE_WORKERS=1) {
 
     IDL_BINDINGS += \
         page/WorkerNavigator.idl \
+        workers/AbstractWorker.idl \
         workers/Worker.idl \
         workers/WorkerContext.idl \
         workers/WorkerLocation.idl
 
     SOURCES += \
+        bindings/js/JSAbstractWorkerCustom.cpp \
         bindings/js/JSWorkerConstructor.cpp \
         bindings/js/JSWorkerContextBase.cpp \
         bindings/js/JSWorkerContextCustom.cpp \
@@ -1430,6 +1432,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
         bindings/js/WorkerScriptController.cpp \
         loader/WorkerThreadableLoader.cpp \
         page/WorkerNavigator.cpp \
+        workers/AbstractWorker.cpp \
         workers/Worker.cpp \
         workers/WorkerContext.cpp \
         workers/WorkerLocation.cpp \
@@ -1443,14 +1446,11 @@ contains(DEFINES, SHARED_WORKERS=1) {
     FEATURE_DEFINES_JAVASCRIPT += ENABLE_SHARED_WORKERS=1
 
     IDL_BINDINGS += \
-        workers/AbstractWorker.idl \
         workers/SharedWorker.idl
 
     SOURCES += \
-        bindings/js/JSAbstractWorkerCustom.cpp \
         bindings/js/JSSharedWorkerConstructor.cpp \
         bindings/js/JSSharedWorkerCustom.cpp \
-        workers/AbstractWorker.cpp \
         workers/SharedWorker.cpp
 }
 

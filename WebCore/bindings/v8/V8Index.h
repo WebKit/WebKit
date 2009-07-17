@@ -57,6 +57,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(WORKER, Worker)
 
 #define WORKER_NONNODE_WRAPPER_TYPES(V)                                 \
+    V(ABSTRACTWORKER, AbstractWorker)                                   \
     V(WORKERCONTEXT, WorkerContext)                                     \
     V(WORKERLOCATION, WorkerLocation)                                   \
     V(WORKERNAVIGATOR, WorkerNavigator)
@@ -68,9 +69,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
 #if ENABLE(SHARED_WORKERS)
 #define SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)                    \
     V(SHAREDWORKER, SharedWorker)
-
-#define SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)                          \
-    V(ABSTRACTWORKER, AbstractWorker)
+#define SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)
 #else
 #define SHARED_WORKER_ACTIVE_OBJECT_WRAPPER_TYPES(V)
 #define SHARED_WORKER_NONNODE_WRAPPER_TYPES(V)

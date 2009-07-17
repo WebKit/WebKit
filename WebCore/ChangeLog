@@ -1,3 +1,48 @@
+2009-07-17  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by David Levin.
+
+        Need to refactor Worker to derive from AbstractWorker
+        https://bugs.webkit.org/show_bug.cgi?id=26948
+
+        Changed Worker to derive from AbstractWorker, which involved moving
+        AbstractWorker files from being wrapped by ENABLE_SHARED_WORKERS to
+        ENABLE_WORKERS.
+
+        Removed obsolete functionality from the JS/V8 bindings that is now
+        inherited from AbstractWorker.
+
+        * WebCore.pro:
+        Moved AbstractWorker files out of SHARED_WORKERS section and into WORKERS.
+        * bindings/js/JSAbstractWorkerCustom.cpp:
+        Changed to be wrapped by ENABLE(WORKERS), not ENABLE(SHARED_WORKERS).
+        * bindings/js/JSWorkerCustom.cpp:
+        Removed obsolete event listener code (now in base class)
+        (WebCore::JSWorker::mark):
+        No longer need to explicitly mark event listeners (handled by base class).
+        * bindings/v8/V8Index.h:
+        Moved AbstractWorker lines out of SHARED_WORKERS section and into WORKERS.
+        * bindings/v8/custom/V8AbstractWorkerCustom.cpp:
+        Changed to be wrapped by ENABLE(WORKERS), not ENABLE(SHARED_WORKERS).
+        * bindings/v8/custom/V8CustomBinding.h:
+        Moved AbstractWorker lines out of SHARED_WORKERS section and into WORKERS.
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        Removed obsolete event listener code that now lives in the base class.
+        (WebCore::V8WorkerConstructor): Cleaned up legacy style nits.
+        * workers/AbstractWorker.cpp:
+        Changed to be wrapped by ENABLE(WORKERS), not ENABLE(SHARED_WORKERS).
+        * workers/AbstractWorker.h:
+        Changed to be wrapped by ENABLE(WORKERS), not ENABLE(SHARED_WORKERS).
+        * workers/Worker.cpp:
+        Removed event listener code (now in base class).
+        (WebCore::Worker::Worker): Now derives from AbstractWorker.
+        (WebCore::Worker::notifyFinished): Calls dispatchLoadErrorEvent on base class.
+        * workers/Worker.h:
+        Removed APIs that now live in the base class.
+        * workers/Worker.idl:
+        Now derives from AbstractWorker.
+        Removed APIs that live in the base class, and added a GenerateToJS flag.
+
 2009-07-17  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
