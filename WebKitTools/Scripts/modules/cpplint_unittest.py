@@ -2877,6 +2877,9 @@ class WebKitStyleTest(CpplintTestBase):
             '};\n',
             'This { should be at the end of the previous line  [whitespace/braces] [4]')
 
+        # 3. One-line control clauses should not use braces unless
+        #    comments are included or a single statement spans multiple
+        #    lines.
         self.assert_multi_line_lint(
             'if (true) {\n'
             '    int foo;\n'
@@ -2916,11 +2919,6 @@ class WebKitStyleTest(CpplintTestBase):
             '               reallyLongParam3);\n'
             '}\n',
             '')
-
-        # 3. One-line control clauses should not use braces unless
-        #    comments are included or a single statement spans multiple
-        #    lines.
-        # FIXME: No tests for this rule.
 
         # 4. Control clauses without a body should use empty braces.
         self.assert_multi_line_lint(
