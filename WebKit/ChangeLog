@@ -1,5 +1,70 @@
 2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
 
+        Reviewed by Oliver Hunt.
+
+        Added EditorClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        Adding two files, EditorClientHaiku.h and EditorClientHaiku.cpp
+
+        * haiku/WebCoreSupport/EditorClientHaiku.cpp: Added.
+        (WebCore::EditorClientHaiku::EditorClientHaiku):
+        (WebCore::EditorClientHaiku::setPage):
+        (WebCore::EditorClientHaiku::pageDestroyed):
+        (WebCore::EditorClientHaiku::shouldDeleteRange):
+        (WebCore::EditorClientHaiku::shouldShowDeleteInterface):
+        (WebCore::EditorClientHaiku::smartInsertDeleteEnabled):
+        (WebCore::EditorClientHaiku::isSelectTrailingWhitespaceEnabled):
+        (WebCore::EditorClientHaiku::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientHaiku::toggleContinuousSpellChecking):
+        (WebCore::EditorClientHaiku::isGrammarCheckingEnabled):
+        (WebCore::EditorClientHaiku::toggleGrammarChecking):
+        (WebCore::EditorClientHaiku::spellCheckerDocumentTag):
+        (WebCore::EditorClientHaiku::isEditable):
+        (WebCore::EditorClientHaiku::shouldBeginEditing):
+        (WebCore::EditorClientHaiku::shouldEndEditing):
+        (WebCore::EditorClientHaiku::shouldInsertNode):
+        (WebCore::EditorClientHaiku::shouldInsertText):
+        (WebCore::EditorClientHaiku::shouldChangeSelectedRange):
+        (WebCore::EditorClientHaiku::shouldApplyStyle):
+        (WebCore::EditorClientHaiku::shouldMoveRangeAfterDelete):
+        (WebCore::EditorClientHaiku::didBeginEditing):
+        (WebCore::EditorClientHaiku::respondToChangedContents):
+        (WebCore::EditorClientHaiku::respondToChangedSelection):
+        (WebCore::EditorClientHaiku::didEndEditing):
+        (WebCore::EditorClientHaiku::didWriteSelectionToPasteboard):
+        (WebCore::EditorClientHaiku::didSetSelectionTypesForPasteboard):
+        (WebCore::EditorClientHaiku::registerCommandForUndo):
+        (WebCore::EditorClientHaiku::registerCommandForRedo):
+        (WebCore::EditorClientHaiku::clearUndoRedoOperations):
+        (WebCore::EditorClientHaiku::canUndo):
+        (WebCore::EditorClientHaiku::canRedo):
+        (WebCore::EditorClientHaiku::undo):
+        (WebCore::EditorClientHaiku::redo):
+        (WebCore::EditorClientHaiku::handleKeyboardEvent):
+        (WebCore::EditorClientHaiku::handleInputMethodKeydown):
+        (WebCore::EditorClientHaiku::textFieldDidBeginEditing):
+        (WebCore::EditorClientHaiku::textFieldDidEndEditing):
+        (WebCore::EditorClientHaiku::textDidChangeInTextField):
+        (WebCore::EditorClientHaiku::doTextFieldCommandFromEvent):
+        (WebCore::EditorClientHaiku::textWillBeDeletedInTextField):
+        (WebCore::EditorClientHaiku::textDidChangeInTextArea):
+        (WebCore::EditorClientHaiku::ignoreWordInSpellDocument):
+        (WebCore::EditorClientHaiku::learnWord):
+        (WebCore::EditorClientHaiku::checkSpellingOfString):
+        (WebCore::EditorClientHaiku::getAutoCorrectSuggestionForMisspelledWord):
+        (WebCore::EditorClientHaiku::checkGrammarOfString):
+        (WebCore::EditorClientHaiku::updateSpellingUIWithGrammarString):
+        (WebCore::EditorClientHaiku::updateSpellingUIWithMisspelledWord):
+        (WebCore::EditorClientHaiku::showSpellingUI):
+        (WebCore::EditorClientHaiku::spellingUIIsShowing):
+        (WebCore::EditorClientHaiku::getGuessesForWord):
+        (WebCore::EditorClientHaiku::setInputMethodState):
+        (WebCore::EditorClientHaiku::isEditing):
+        * haiku/WebCoreSupport/EditorClientHaiku.h: Added.
+
+2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
+
         Reviewed by Eric Seidel.
 
         Added DragClient for Haiku WebCore support.
