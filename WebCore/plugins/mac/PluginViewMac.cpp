@@ -146,6 +146,7 @@ void PluginView::init()
 
     if (!start()) {
         m_status = PluginStatusCanNotLoadPlugin;
+        stop(); // Make sure we unregister the plugin
         return;
     }
 
@@ -179,6 +180,7 @@ void PluginView::init()
         m_status = PluginStatusCanNotLoadPlugin;
         LOG(Plugins, "Plug-in '%s' uses unsupported event model %s",
                 m_plugin->name().utf8().data(), prettyNameForEventModel(m_eventModel));
+        stop();
         return;
     }
 
@@ -187,6 +189,7 @@ void PluginView::init()
         m_status = PluginStatusCanNotLoadPlugin;
         LOG(Plugins, "Plug-in '%s' uses unsupported drawing model %s",
                 m_plugin->name().utf8().data(), prettyNameForDrawingModel(m_drawingModel));
+        stop();
         return;
     }
 
@@ -528,6 +531,9 @@ void PluginView::forceRedraw()
 
 void PluginView::handleMouseEvent(MouseEvent* event)
 {
+    if (!m_isStarted)
+        return;
+
     EventRecord record;
 
     if (event->type() == eventNames().mousemoveEvent) {
@@ -571,6 +577,9 @@ void PluginView::handleMouseEvent(MouseEvent* event)
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 {
+    if (!m_isStarted)
+        return;
+
     LOG(Plugins, "PluginView::handleKeyboardEvent() ----------------- ");
 
     LOG(Plugins, "PV::hKE(): KE.keyCode: 0x%02X, KE.charCode: %d",

@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        PluginViewMac: Stop the plugin when loading fails
+
+        Also, prevent event propagation when in the stopped state
+
+        * plugins/mac/PluginViewMac.cpp:
+
+2009-07-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         PluginViewMac: Allow query and set of drawing and event models
 
         We now support querying and setting of the drawing and event model,
