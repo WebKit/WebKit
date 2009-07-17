@@ -77,6 +77,7 @@ $ENV{'LC_ALL'} = 'C';
 
 my $showHelp;
 my $svnVersion = `svn --version --quiet`;
+my $devNull = File::Spec->devnull();
 
 my $result = GetOptions(
     "help"       => \$showHelp,
@@ -171,7 +172,7 @@ sub findMimeType($;$)
     close PROPGET;
     # svn may output a different EOL sequence than $/, so avoid chomp.
     if ($mimeType) {
-        $mimeType =~ s/\r?\n$//g;
+        $mimeType =~ s/[\r\n]+$//g;
     }
     return $mimeType;
 }
@@ -287,7 +288,7 @@ sub generateFileList($\%)
     open STAT, "svn stat '$statPath' |" or die;
     while (my $line = <STAT>) {
         # svn may output a different EOL sequence than $/, so avoid chomp.
-        $line =~ s/\r?\n$//g;
+        $line =~ s/[\r\n]+$//g;
         my $stat;
         my $path;
         if (eval "v$svnVersion" ge v1.6) { 
@@ -339,7 +340,7 @@ sub manufacturePatchForAdditionWithHistory($)
         my $mimeType = findMimeType($file, $sourceRevision);
         print "svn:mime-type = ${mimeType}\n\n";
     } else {
-        print `svn cat ${sourceFile} | diff -u /dev/null - | tail -n +3`;
+        print `svn cat ${sourceFile} | diff -u $devNull - | tail -n +3`;
     }
 }
 
@@ -471,14 +472,15 @@ sub determineSvnRoot()
     my $last = '';
     my $path = '.';
     my $parent = '..';
-    my $devnull = File::Spec->devnull();
     my $repositoryRoot;
     while (1) {
         my $thisRoot;
-        open INFO, "svn info '$path' |" or die;
+        # Ignore error messages in case we've run past the root of the checkout.
+        open INFO, "svn info '$path' 2> $devNull |" or die;
         while (<INFO>) {
             if (/^Repository Root: (.+)/) {
                 $thisRoot = $1;
+                { local $/ = undef; <INFO>; }  # Consume the rest of the input.
             }
         }
         close INFO;
