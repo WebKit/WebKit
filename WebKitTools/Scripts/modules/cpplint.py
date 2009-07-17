@@ -1805,7 +1805,7 @@ def check_for_comparisons_to_zero(filename, clean_lines, line_number, error):
     # Include NULL here so that users don't have to convert NULL to 0 first and then get this error.
     if search(r'[=!]=\s*(NULL|0|true|false)\W', line) or search(r'\W(NULL|0|true|false)\s*[=!]=', line):
         error(filename, line_number, 'readability/comparison_to_zero', 5,
-	      'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.')
+              'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.')
 
 
 def get_line_width(line):
