@@ -793,16 +793,7 @@ String AccessibilityRenderObject::stringValue() const
         RenderFileUploadControl* uploadControl = static_cast<RenderFileUploadControl*>(m_renderer);
         return uploadControl->fileTextValue();
     }
-
-    if (isImage() || isInputImage() || isNativeImage()) {
-        Node* node = m_renderer->node();
-        if (node && node->isHTMLElement()) {
-            const AtomicString& alt = static_cast<HTMLElement*>(node)->getAttribute(altAttr);
-            if (!alt.isEmpty())
-                return alt;
-        }
-    }
-
+    
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
@@ -982,7 +973,17 @@ String AccessibilityRenderObject::accessibilityDescription() const
     String ariaDescription = ariaDescribedByAttribute();
     if (!ariaDescription.isEmpty())
         return ariaDescription;
-
+    
+    if (isImage() || isInputImage() || isNativeImage()) {
+        Node* node = m_renderer->node();
+        if (node && node->isHTMLElement()) {
+            const AtomicString& alt = static_cast<HTMLElement*>(node)->getAttribute(altAttr);
+            if (alt.isEmpty())
+                return String();
+            return alt;
+        }
+    }
+    
     if (isWebArea()) {
         Document *document = m_renderer->document();
         Node* owner = document->ownerElement();
@@ -999,13 +1000,6 @@ String AccessibilityRenderObject::accessibilityDescription() const
         owner = document->body();
         if (owner && owner->isHTMLElement())
             return static_cast<HTMLElement*>(owner)->getAttribute(nameAttr);
-    } else {
-        Node* node = m_renderer->node();
-        if (node && node->isHTMLElement()) {
-            const AtomicString& title = static_cast<HTMLElement*>(node)->getAttribute(titleAttr);
-            if (!title.isEmpty())
-                return title;
-        }
     }
     
     if (roleValue() == DefinitionListTermRole)
