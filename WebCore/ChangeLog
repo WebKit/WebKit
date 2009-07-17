@@ -1,3 +1,30 @@
+2009-07-16  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add a sessionStorageEnabled setting to the settings class.
+        https://bugs.webkit.org/show_bug.cgi?id=27318
+
+        Allow LocalStorage to be enabled without enabling SessionStorage at
+        runtime.  There is a settings class setting for localStorage, but not
+        for sessionStorage.  We want to be able to test one of these features
+        without necessarily enabling the other.
+
+        SessionStorage defaults to true so as to not change behavior and
+        because there really aren't any security concerns around SessionStorage
+        (unlike LocalsStorage).  The flag is needed in Chromium only because
+        we want to enable the compile time flag in the default build, but don't
+        want it on by default until it's been thoroughly tested.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):  Check the new flag
+        (WebCore::DOMWindow::localStorage):  A bit of cleanup
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):  Default the flag to true
+        (WebCore::Settings::setSessionStorageEnabled):  Add the new flag
+        * page/Settings.h:
+        (WebCore::Settings::sessionStorageEnabled):  Get the new flag
+
 2009-07-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
