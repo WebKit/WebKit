@@ -149,20 +149,48 @@ void PluginView::init()
         return;
     }
 
-    setPlatformPluginWidget(m_parentFrame->view()->hostWindow()->platformWindow());
+    if (m_drawingModel == NPDrawingModel(-1)) {
+        // We default to QuickDraw, even though we don't support it,
+        // since that's what Safari does, and some plugins expect this
+        // behavior and never set the drawing model explicitly.
+#ifndef NP_NO_QUICKDRAW
+        m_drawingModel = NPDrawingModelQuickDraw;
+#else
+        // QuickDraw not available, so we have to default to CoreGraphics
+        m_drawingModel = NPDrawingModelCoreGraphics;
+#endif
+    }
 
-    m_npCgContext.window = 0;
-    m_npCgContext.context = 0;
-    m_npWindow.window = (void*)&m_npCgContext;
-    m_npWindow.type = NPWindowTypeWindow;
-    m_npWindow.x = 0;
-    m_npWindow.y = 0;
-    m_npWindow.width = 0;
-    m_npWindow.height = 0;
-    m_npWindow.clipRect.left = 0;
-    m_npWindow.clipRect.top = 0;
-    m_npWindow.clipRect.right = 0;
-    m_npWindow.clipRect.bottom = 0;
+    if (m_eventModel == NPEventModel(-1)) {
+        // If the plug-in did not specify an event model
+        // we default to Carbon, when it is available.
+#ifndef NP_NO_CARBON
+        m_eventModel = NPEventModelCarbon;
+#else
+        m_eventModel = NPEventModelCocoa;
+#endif
+    }
+
+    // Gracefully handle unsupported drawing or event models. We can do this
+    // now since the drawing and event model can only be set during NPP_New.
+    NPBool eventModelSupported, drawingModelSupported;
+    if (getValueStatic(NPNVariable(NPNVsupportsCarbonBool + m_eventModel), &eventModelSupported) != NPERR_NO_ERROR
+            || !eventModelSupported) {
+        m_status = PluginStatusCanNotLoadPlugin;
+        LOG(Plugins, "Plug-in '%s' uses unsupported event model %s",
+                m_plugin->name().utf8().data(), prettyNameForEventModel(m_eventModel));
+        return;
+    }
+
+    if (getValueStatic(NPNVariable(NPNVsupportsQuickDrawBool + m_drawingModel), &drawingModelSupported) != NPERR_NO_ERROR
+            || !drawingModelSupported) {
+        m_status = PluginStatusCanNotLoadPlugin;
+        LOG(Plugins, "Plug-in '%s' uses unsupported drawing model %s",
+                m_plugin->name().utf8().data(), prettyNameForDrawingModel(m_drawingModel));
+        return;
+    }
+
+    setPlatformPluginWidget(m_parentFrame->view()->hostWindow()->platformWindow());
 
     show();
 
@@ -237,6 +265,30 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
         *static_cast<NPBool*>(value) = true;
         return NPERR_NO_ERROR;
 
+#ifndef NP_NO_CARBON
+    case NPNVsupportsCarbonBool:
+        *static_cast<NPBool*>(value) = true;
+        return NPERR_NO_ERROR;
+
+#endif
+    case NPNVsupportsCocoaBool:
+        *static_cast<NPBool*>(value) = false;
+        return NPERR_NO_ERROR;
+
+    // CoreGraphics is the only drawing model we support
+    case NPNVsupportsCoreGraphicsBool:
+        *static_cast<NPBool*>(value) = true;
+        return NPERR_NO_ERROR;
+
+#ifndef NP_NO_QUICKDRAW
+    // QuickDraw is deprecated in 10.5 and not supported on 64-bit
+    case NPNVsupportsQuickDrawBool:
+#endif
+    case NPNVsupportsOpenGLBool:
+    case NPNVsupportsCoreAnimationBool:
+        *static_cast<NPBool*>(value) = false;
+        return NPERR_NO_ERROR;
+
     default:
         return NPERR_GENERIC_ERROR;
     }
@@ -284,10 +336,6 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 
         return NPERR_NO_ERROR;
     }
-
-    case NPNVsupportsCoreGraphicsBool:
-        *static_cast<NPBool*>(value) = true;
-        return NPERR_NO_ERROR;
 
     default:
         return getValueStatic(variable, value);
@@ -370,6 +418,7 @@ void PluginView::setNPWindowIfNeeded()
     if (!newWindowRef)
         return;
 
+    m_npWindow.type = NPWindowTypeWindow;
     m_npWindow.window = (void*)&m_npCgContext;
     m_npCgContext.window = newWindowRef;
     m_npCgContext.context = newContextRef;
@@ -422,7 +471,7 @@ void PluginView::updatePluginWidget()
 
 void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 {
-    if (!m_isStarted) {
+    if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully) {
         paintMissingPluginIcon(context, rect);
         return;
     }

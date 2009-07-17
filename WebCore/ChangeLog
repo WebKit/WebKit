@@ -2,6 +2,23 @@
 
         Reviewed by Simon Hausmann.
 
+        PluginViewMac: Allow query and set of drawing and event models
+
+        We now support querying and setting of the drawing and event model,
+        but we still only support the CoreGraphics drawing model, and the
+        Carbon event model.
+
+        If unsupported drawing or event models are detected we show the
+        missing-plugin icon.
+
+        * plugins/PluginView.cpp:
+        * plugins/PluginView.h:
+        * plugins/mac/PluginViewMac.cpp:
+
+2009-07-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Initialize two PluginView members using memset
 
         m_npWindow is used on all platforms, not just for XP_UNIX,
