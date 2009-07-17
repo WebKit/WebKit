@@ -1,3 +1,12 @@
+2009-07-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Revert 45987.  Tests did not pass on Windows.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::appendFormData):
+
 2009-07-16  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
