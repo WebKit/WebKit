@@ -9,7 +9,7 @@
         (WebCore::PluginDatabase::installedPlugins): Now optionally takes
         a populate argument, so we can avoid loading system plugins from the
         DRT and thus avoid their strerr errors that can make tests fail.
-        (WebCore::PluginDatabase::clear): Make is possible to clear the
+        (WebCore::PluginDatabase::clear): Make it possible to clear the
         database. Called from setPluginDirectories.
         * plugins/PluginDatabase.h:
         (WebCore::PluginDatabase::setPluginDirectories): Make public
