@@ -1,3 +1,23 @@
+2009-07-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r41238) Repainted portion of a scaled image does not line up with full image
+        https://bugs.webkit.org/show_bug.cgi?id=26747
+        rdar://problem/7009243
+
+        Test: fast/repaint/background-misaligned.html
+
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled): Moved a variable definition closer to where
+        it is used.
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw): In the subimage code path, compute a
+        pixel-aligned source rect, because the subiamge is always pixel-aligned
+        in source space, and adjust the destination rect to preserve the
+        source -> destination mapping. Clip to the (original) destination rect
+        to prevent bleeding out.
+
 2009-07-16  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

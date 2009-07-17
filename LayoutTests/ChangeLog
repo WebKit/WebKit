@@ -1,3 +1,20 @@
+2009-07-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r41238) Repainted portion of a scaled image does not line up with full image
+        https://bugs.webkit.org/show_bug.cgi?id=26747
+        rdar://problem/7009243
+
+        * fast/repaint/background-misaligned.html: Added.
+        * platform/mac/fast/backgrounds/size/backgroundSize15-expected.checksum:
+        * platform/mac/fast/backgrounds/size/backgroundSize15-expected.png:
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.checksum:
+        * platform/mac/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/mac/fast/repaint/background-misaligned-expected.checksum: Added.
+        * platform/mac/fast/repaint/background-misaligned-expected.png: Added.
+        * platform/mac/fast/repaint/background-misaligned-expected.txt: Added.
+
 2009-07-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
