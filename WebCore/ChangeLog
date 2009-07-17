@@ -2,6 +2,18 @@
 
         Reviewed by Simon Hausmann.
 
+        Initialize two PluginView members using memset
+
+        m_npWindow is used on all platforms, not just for XP_UNIX,
+        so always initialize it. m_npCgContext on the other hand
+        is only used for XP_MACOSX.
+
+        * plugins/PluginView.cpp:
+
+2009-07-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Add more debug logging in PluginView
 
         * plugins/PluginView.cpp: Add debug for setValue

@@ -602,8 +602,9 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 
     setParameters(paramNames, paramValues);
 
-#ifdef XP_UNIX
-    m_npWindow.ws_info = 0;
+    memset(&m_npWindow, 0, sizeof(m_npWindow));
+#if defined(XP_MACOSX)
+    memset(&m_npCgContext, 0, sizeof(m_npCgContext));
 #endif
 
     m_mode = m_loadManually ? NP_FULL : NP_EMBED;
