@@ -126,6 +126,7 @@ _ERROR_CATEGORIES = '''\
     readability/function
     readability/multiline_comment
     readability/multiline_string
+    readability/null
     readability/streams
     readability/todo
     readability/utf8
@@ -758,7 +759,7 @@ class CleansedLines(object):
         self._num_lines = len(lines)
         for line_number in range(len(lines)):
             self.lines.append(cleanse_comments(lines[line_number]))
-            elided = self._collapse_strings(lines[line_number])
+            elided = self.collapse_strings(lines[line_number])
             self.elided.append(cleanse_comments(elided))
 
     def num_lines(self):
@@ -766,7 +767,7 @@ class CleansedLines(object):
         return self._num_lines
 
     @staticmethod
-    def _collapse_strings(elided):
+    def collapse_strings(elided):
         """Collapses strings and chars on a line to simple "" or '' blocks.
 
         We nix strings first so we're not fooled by text like '"http://"'
@@ -1808,6 +1809,19 @@ def check_for_comparisons_to_zero(filename, clean_lines, line_number, error):
               'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.')
 
 
+def check_for_null(filename, clean_lines, line_number, error):
+    line = clean_lines.elided[line_number]
+    if search(r'\bNULL\b', line):
+        error(filename, line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
+        return
+
+    line = clean_lines.raw_lines[line_number]
+    # See if NULL occurs in any comments in the line. If the search for NULL using the raw line
+    # matches, then do the check with strings collapsed to avoid giving errors for
+    # NULLs occurring in strings.
+    if search(r'\bNULL\b', line) and search(r'\bNULL\b', CleansedLines.collapse_strings(line)):
+        error(filename, line_number, 'readability/null', 4, 'Use 0 instead of NULL.')
+
 def get_line_width(line):
     """Determines the width of the line in column positions.
 
@@ -1900,6 +1914,7 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
     check_spacing(filename, clean_lines, line_number, error)
     check_check(filename, clean_lines, line_number, error)
     check_for_comparisons_to_zero(filename, clean_lines, line_number, error)
+    check_for_null(filename, clean_lines, line_number, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')

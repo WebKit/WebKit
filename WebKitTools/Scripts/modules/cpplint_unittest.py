@@ -203,6 +203,14 @@ class CpplintTestBase(unittest.TestCase):
     def assert_lint(self, code, expected_message):
         self.assertEquals(expected_message, self.perform_single_line_lint(code))
 
+    def assert_lint_one_of_many_errors_re(self, code, expected_message_re):
+        messages = self.perform_single_line_lint(code)
+        for message in messages:
+            if re.search(expected_message_re, message):
+                return
+
+        self.assertEquals(expected_message, messages)
+
     def assert_multi_line_lint(self, code, expected_message):
         self.assertEquals(expected_message, self.perform_multi_line_lint(code))
 
@@ -274,7 +282,7 @@ class CpplintTest(CpplintTestBase):
             'Using C-style cast.  Use static_cast<int>(...) instead'
             '  [readability/casting] [4]')
         self.assert_lint(
-            'int *a = (int *)NULL;',
+            'int *a = (int *)DEFINED_VALUE;',
             'Using C-style cast.  Use reinterpret_cast<int *>(...) instead'
             '  [readability/casting] [4]')
 
@@ -290,10 +298,6 @@ class CpplintTest(CpplintTestBase):
             'uint64 a = (uint64)1.0;',
             'Using C-style cast.  Use static_cast<uint64>(...) instead'
             '  [readability/casting] [4]')
-
-        # These shouldn't be recognized casts.
-        self.assert_lint('u a = (u)NULL;', '')
-        self.assert_lint('uint a = (uint)NULL;', '')
 
     # Test taking address of casts (runtime/casting)
     def test_runtime_casting(self):
@@ -1991,7 +1995,7 @@ class CleansedLinesTest(unittest.TestCase):
         self.assertEquals(0, clean_lines.num_lines())
 
     def test_collapse_strings(self):
-        collapse = cpplint.CleansedLines._collapse_strings
+        collapse = cpplint.CleansedLines.collapse_strings
         self.assertEquals('""', collapse('""'))             # ""     (empty)
         self.assertEquals('"""', collapse('"""'))           # """    (bad)
         self.assertEquals('""', collapse('"xyz"'))          # "xyz"  (string)
@@ -2941,7 +2945,27 @@ class WebKitStyleTest(CpplintTestBase):
         #    it should be written as NULL. In Objective-C and Objective-C++,
         #    follow the guideline for C or C++, respectively, but use nil to
         #    represent a null Objective-C object.
-        # FIXME: Implement this.
+        self.assert_lint(
+            'functionCall(NULL)',
+            'Use 0 instead of NULL.'
+            '  [readability/null] [5]')
+        self.assert_lint(
+            "// Don't use NULL in comments since it isn't in code.",
+            'Use 0 instead of NULL.'
+            '  [readability/null] [4]')
+        self.assert_lint(
+            '"A string with NULL"  // and a comment with NULL is tricky to flag correctly in cpplint.',
+            'Use 0 instead of NULL.'
+            '  [readability/null] [4]')
+        self.assert_lint(
+            '"A string containing NULL is ok"',
+            '')
+        self.assert_lint(
+            'if (aboutNULL)',
+            '')
+        self.assert_lint(
+            'myVariable = NULLify',
+            '')
 
         # 2. C++ and C bool values should be written as true and
         #    false. Objective-C BOOL values should be written as YES and NO.
@@ -2953,10 +2977,9 @@ class WebKitStyleTest(CpplintTestBase):
             'if (count == 0)',
             'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
             '  [readability/comparison_to_zero] [5]')
-        self.assert_lint(
+        self.assert_lint_one_of_many_errors_re(
             'if (string != NULL)',
-            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
-            '  [readability/comparison_to_zero] [5]')
+            r'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons\.')
         self.assert_lint(
             'if (condition == true)',
             'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
@@ -2970,10 +2993,9 @@ class WebKitStyleTest(CpplintTestBase):
             'if (0 /* This comment also looks odd to me. */ != aLongerVariableName)',
             'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
             '  [readability/comparison_to_zero] [5]')
-        self.assert_lint(
+        self.assert_lint_one_of_many_errors_re(
             'if (NULL == thisMayBeNull)',
-            'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'
-            '  [readability/comparison_to_zero] [5]')
+            r'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons\.')
         self.assert_lint(
             'if (true != anotherCondition)',
             'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.'

@@ -1,3 +1,19 @@
+2009-07-17  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Treat.
+
+        cpplint should flag usages of NULL.
+        https://bugs.webkit.org/show_bug.cgi?id=27341
+
+        * Scripts/modules/cpplint.py: Add the check for NULL test and call it.
+          Make the collapse_strings method public.
+        * Scripts/modules/cpplint_unittest.py: Add several tests to verify
+          the check for NULL behavior. Adjust existing tests due to the
+          new NULL check:
+           1. Several had NULL removed (or were just removed completely).
+           2. Two tests now do an assert that allows the caller to check
+              that a particular error is one of several that was returned.
+
 2009-07-17  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by David Levin.
