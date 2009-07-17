@@ -191,6 +191,10 @@ void RenderFlexibleBox::calcPrefWidths()
     }
 
     int toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
+    
+    if (hasOverflowClip() && style()->overflowY() == OSCROLL)
+        toAdd += verticalScrollbarWidth();
+
     m_minPrefWidth += toAdd;
     m_maxPrefWidth += toAdd;
 

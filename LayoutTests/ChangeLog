@@ -1,3 +1,16 @@
+2009-07-17  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27379
+        Absolutely-positioned elements with a scrollbar wrap prematurely.  Make sure to include
+        the vertical scrollbar width for overflow:scroll elements.
+
+        * fast/css/positioned-overflow-scroll.html: Added.
+        * platform/mac/fast/css/positioned-overflow-scroll-expected.checksum: Added.
+        * platform/mac/fast/css/positioned-overflow-scroll-expected.png: Added.
+        * platform/mac/fast/css/positioned-overflow-scroll-expected.txt: Added.
+
 2009-07-17  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Simon Hausmann.
