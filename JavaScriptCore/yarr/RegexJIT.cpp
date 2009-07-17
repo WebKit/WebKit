@@ -43,18 +43,17 @@ namespace JSC { namespace Yarr {
 class RegexGenerator : private MacroAssembler {
     friend void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
-#if PLATFORM_ARM_ARCH(7)
+#if PLATFORM(ARM)
     static const RegisterID input = ARM::r0;
     static const RegisterID index = ARM::r1;
     static const RegisterID length = ARM::r2;
-
     static const RegisterID output = ARM::r4;
+
     static const RegisterID regT0 = ARM::r5;
     static const RegisterID regT1 = ARM::r6;
 
     static const RegisterID returnRegister = ARM::r0;
-#endif
-#if PLATFORM(X86)
+#elif PLATFORM(X86)
     static const RegisterID input = X86::eax;
     static const RegisterID index = X86::edx;
     static const RegisterID length = X86::ecx;
@@ -64,8 +63,7 @@ class RegexGenerator : private MacroAssembler {
     static const RegisterID regT1 = X86::esi;
 
     static const RegisterID returnRegister = X86::eax;
-#endif
-#if PLATFORM(X86_64)
+#elif PLATFORM(X86_64)
     static const RegisterID input = X86::edi;
     static const RegisterID index = X86::esi;
     static const RegisterID length = X86::edx;
@@ -1309,7 +1307,10 @@ class RegexGenerator : private MacroAssembler {
     #else
         loadPtr(Address(X86::ebp, 2 * sizeof(void*)), output);
     #endif
-#elif PLATFORM_ARM_ARCH(7)
+#elif PLATFORM(ARM)
+#if !PLATFORM_ARM_ARCH(7)
+        push(ARM::lr);
+#endif
         push(ARM::r4);
         push(ARM::r5);
         push(ARM::r6);
@@ -1327,7 +1328,7 @@ class RegexGenerator : private MacroAssembler {
         pop(X86::edi);
         pop(X86::ebx);
         pop(X86::ebp);
-#elif PLATFORM_ARM_ARCH(7)
+#elif PLATFORM(ARM)
         pop(ARM::r6);
         pop(ARM::r5);
         pop(ARM::r4);

@@ -34,6 +34,10 @@
 #include "MacroAssemblerARMv7.h"
 namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 
+#elif PLATFORM(ARM)
+#include "MacroAssemblerARM.h"
+namespace JSC { typedef MacroAssemblerARM MacroAssemblerBase; };
+
 #elif PLATFORM(X86)
 #include "MacroAssemblerX86.h"
 namespace JSC { typedef MacroAssemblerX86 MacroAssemblerBase; };

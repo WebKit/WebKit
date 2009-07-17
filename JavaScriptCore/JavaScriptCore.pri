@@ -119,6 +119,7 @@ SOURCES += \
     bytecode/CodeBlock.cpp \
     bytecode/StructureStubInfo.cpp \
     bytecode/JumpTable.cpp \
+    assembler/ARMAssembler.cpp \
     jit/JIT.cpp \
     jit/JITCall.cpp \
     jit/JITArithmetic.cpp \

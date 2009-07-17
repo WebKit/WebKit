@@ -442,6 +442,7 @@ public:
         {
         }
 
+        void enableLatePatch() { }
     private:
         JmpSrc(int offset)
             : m_offset(offset)

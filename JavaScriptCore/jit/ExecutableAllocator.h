@@ -213,6 +213,21 @@ private:
 #elif PLATFORM_ARM_ARCH(7) && PLATFORM(IPHONE)
         sys_dcache_flush(code, size);
         sys_icache_invalidate(code, size);
+#elif PLATFORM(ARM)
+    #if COMPILER(GCC) && (GCC_VERSION >= 30406)
+        __clear_cache(reinterpret_cast<char*>(code), reinterpret_cast<char*>(code) + size);
+    #else
+        const int syscall = 0xf0002;
+        __asm __volatile (
+               "mov     r0, %0\n"
+               "mov     r1, %1\n"
+               "mov     r7, %2\n"
+               "mov     r2, #0x0\n"
+               "swi     0x00000000\n"
+           :
+           :   "r" (code), "r" (reinterpret_cast<char*>(code) + size), "r" (syscall)
+           :   "r0", "r1", "r7");
+    #endif // COMPILER(GCC) && (GCC_VERSION >= 30406)
 #else
 #error "ExecutableAllocator::cacheFlush not implemented on this platform."
 #endif

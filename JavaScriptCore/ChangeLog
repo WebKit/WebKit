@@ -2,6 +2,192 @@
 
         Reviewed by Gavin Barraclough.
 
+        Add YARR support for generic ARM platforms (disabled by default).
+        https://bugs.webkit.org/show_bug.cgi?id=24986
+
+        Add generic ARM port for MacroAssembler. It supports the whole
+        MacroAssembler functionality except floating point.
+
+        The class JmpSrc is extended with a flag which enables to patch
+        the jump destination offset during execution. This feature is
+        required for generic ARM port.
+
+        Signed off by Zoltan Herczeg <zherczeg@inf.u-szeged.hu>
+        Signed off by Gabor Loki <loki@inf.u-szeged.hu>
+
+        * JavaScriptCore.pri:
+        * assembler/ARMAssembler.cpp: Added.
+        (JSC::ARMAssembler::getLdrImmAddress):
+        (JSC::ARMAssembler::linkBranch):
+        (JSC::ARMAssembler::patchConstantPoolLoad):
+        (JSC::ARMAssembler::getOp2):
+        (JSC::ARMAssembler::genInt):
+        (JSC::ARMAssembler::getImm):
+        (JSC::ARMAssembler::moveImm):
+        (JSC::ARMAssembler::dataTransfer32):
+        (JSC::ARMAssembler::baseIndexTransfer32):
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/ARMAssembler.h: Added.
+        (JSC::ARM::):
+        (JSC::ARMAssembler::ARMAssembler):
+        (JSC::ARMAssembler::):
+        (JSC::ARMAssembler::JmpSrc::JmpSrc):
+        (JSC::ARMAssembler::JmpSrc::enableLatePatch):
+        (JSC::ARMAssembler::JmpDst::JmpDst):
+        (JSC::ARMAssembler::JmpDst::isUsed):
+        (JSC::ARMAssembler::JmpDst::used):
+        (JSC::ARMAssembler::emitInst):
+        (JSC::ARMAssembler::and_r):
+        (JSC::ARMAssembler::ands_r):
+        (JSC::ARMAssembler::eor_r):
+        (JSC::ARMAssembler::eors_r):
+        (JSC::ARMAssembler::sub_r):
+        (JSC::ARMAssembler::subs_r):
+        (JSC::ARMAssembler::rsb_r):
+        (JSC::ARMAssembler::rsbs_r):
+        (JSC::ARMAssembler::add_r):
+        (JSC::ARMAssembler::adds_r):
+        (JSC::ARMAssembler::adc_r):
+        (JSC::ARMAssembler::adcs_r):
+        (JSC::ARMAssembler::sbc_r):
+        (JSC::ARMAssembler::sbcs_r):
+        (JSC::ARMAssembler::rsc_r):
+        (JSC::ARMAssembler::rscs_r):
+        (JSC::ARMAssembler::tst_r):
+        (JSC::ARMAssembler::teq_r):
+        (JSC::ARMAssembler::cmp_r):
+        (JSC::ARMAssembler::orr_r):
+        (JSC::ARMAssembler::orrs_r):
+        (JSC::ARMAssembler::mov_r):
+        (JSC::ARMAssembler::movs_r):
+        (JSC::ARMAssembler::bic_r):
+        (JSC::ARMAssembler::bics_r):
+        (JSC::ARMAssembler::mvn_r):
+        (JSC::ARMAssembler::mvns_r):
+        (JSC::ARMAssembler::mul_r):
+        (JSC::ARMAssembler::muls_r):
+        (JSC::ARMAssembler::mull_r):
+        (JSC::ARMAssembler::ldr_imm):
+        (JSC::ARMAssembler::ldr_un_imm):
+        (JSC::ARMAssembler::dtr_u):
+        (JSC::ARMAssembler::dtr_ur):
+        (JSC::ARMAssembler::dtr_d):
+        (JSC::ARMAssembler::dtr_dr):
+        (JSC::ARMAssembler::ldrh_r):
+        (JSC::ARMAssembler::ldrh_d):
+        (JSC::ARMAssembler::ldrh_u):
+        (JSC::ARMAssembler::strh_r):
+        (JSC::ARMAssembler::push_r):
+        (JSC::ARMAssembler::pop_r):
+        (JSC::ARMAssembler::poke_r):
+        (JSC::ARMAssembler::peek_r):
+        (JSC::ARMAssembler::clz_r):
+        (JSC::ARMAssembler::bkpt):
+        (JSC::ARMAssembler::lsl):
+        (JSC::ARMAssembler::lsr):
+        (JSC::ARMAssembler::asr):
+        (JSC::ARMAssembler::lsl_r):
+        (JSC::ARMAssembler::lsr_r):
+        (JSC::ARMAssembler::asr_r):
+        (JSC::ARMAssembler::size):
+        (JSC::ARMAssembler::ensureSpace):
+        (JSC::ARMAssembler::label):
+        (JSC::ARMAssembler::align):
+        (JSC::ARMAssembler::jmp):
+        (JSC::ARMAssembler::patchPointerInternal):
+        (JSC::ARMAssembler::patchConstantPoolLoad):
+        (JSC::ARMAssembler::patchPointer):
+        (JSC::ARMAssembler::repatchInt32):
+        (JSC::ARMAssembler::repatchPointer):
+        (JSC::ARMAssembler::repatchLoadPtrToLEA):
+        (JSC::ARMAssembler::linkJump):
+        (JSC::ARMAssembler::relinkJump):
+        (JSC::ARMAssembler::linkCall):
+        (JSC::ARMAssembler::relinkCall):
+        (JSC::ARMAssembler::getRelocatedAddress):
+        (JSC::ARMAssembler::getDifferenceBetweenLabels):
+        (JSC::ARMAssembler::getCallReturnOffset):
+        (JSC::ARMAssembler::getOp2Byte):
+        (JSC::ARMAssembler::placeConstantPoolBarrier):
+        (JSC::ARMAssembler::RM):
+        (JSC::ARMAssembler::RS):
+        (JSC::ARMAssembler::RD):
+        (JSC::ARMAssembler::RN):
+        (JSC::ARMAssembler::getConditionalField):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::JmpSrc::enableLatePatch):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Call::enableLatePatch):
+        (JSC::AbstractMacroAssembler::Jump::enableLatePatch):
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.h: Added.
+        (JSC::MacroAssemblerARM::):
+        (JSC::MacroAssemblerARM::add32):
+        (JSC::MacroAssemblerARM::and32):
+        (JSC::MacroAssemblerARM::lshift32):
+        (JSC::MacroAssemblerARM::mul32):
+        (JSC::MacroAssemblerARM::not32):
+        (JSC::MacroAssemblerARM::or32):
+        (JSC::MacroAssemblerARM::rshift32):
+        (JSC::MacroAssemblerARM::sub32):
+        (JSC::MacroAssemblerARM::xor32):
+        (JSC::MacroAssemblerARM::load32):
+        (JSC::MacroAssemblerARM::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::loadPtrWithPatchToLEA):
+        (JSC::MacroAssemblerARM::load16):
+        (JSC::MacroAssemblerARM::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::store32):
+        (JSC::MacroAssemblerARM::pop):
+        (JSC::MacroAssemblerARM::push):
+        (JSC::MacroAssemblerARM::move):
+        (JSC::MacroAssemblerARM::swap):
+        (JSC::MacroAssemblerARM::signExtend32ToPtr):
+        (JSC::MacroAssemblerARM::zeroExtend32ToPtr):
+        (JSC::MacroAssemblerARM::branch32):
+        (JSC::MacroAssemblerARM::branch16):
+        (JSC::MacroAssemblerARM::branchTest32):
+        (JSC::MacroAssemblerARM::jump):
+        (JSC::MacroAssemblerARM::branchAdd32):
+        (JSC::MacroAssemblerARM::mull32):
+        (JSC::MacroAssemblerARM::branchMul32):
+        (JSC::MacroAssemblerARM::branchSub32):
+        (JSC::MacroAssemblerARM::breakpoint):
+        (JSC::MacroAssemblerARM::nearCall):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::ret):
+        (JSC::MacroAssemblerARM::set32):
+        (JSC::MacroAssemblerARM::setTest32):
+        (JSC::MacroAssemblerARM::tailRecursiveCall):
+        (JSC::MacroAssemblerARM::makeTailRecursiveCall):
+        (JSC::MacroAssemblerARM::moveWithPatch):
+        (JSC::MacroAssemblerARM::branchPtrWithPatch):
+        (JSC::MacroAssemblerARM::storePtrWithPatch):
+        (JSC::MacroAssemblerARM::supportsFloatingPoint):
+        (JSC::MacroAssemblerARM::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerARM::loadDouble):
+        (JSC::MacroAssemblerARM::storeDouble):
+        (JSC::MacroAssemblerARM::addDouble):
+        (JSC::MacroAssemblerARM::subDouble):
+        (JSC::MacroAssemblerARM::mulDouble):
+        (JSC::MacroAssemblerARM::convertInt32ToDouble):
+        (JSC::MacroAssemblerARM::branchDouble):
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerARM::ARMCondition):
+        (JSC::MacroAssemblerARM::prepareCall):
+        (JSC::MacroAssemblerARM::call32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::JmpSrc::enableLatePatch):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+        * wtf/Platform.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::generateEnter):
+        (JSC::Yarr::RegexGenerator::generateReturn):
+
+2009-07-17  Gabor Loki  <loki@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
         Extend AssemblerBuffer with constant pool handling mechanism.
         https://bugs.webkit.org/show_bug.cgi?id=24986
 
