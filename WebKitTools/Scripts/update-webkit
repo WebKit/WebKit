@@ -37,6 +37,7 @@ use Getopt::Long;
 use webkitdirs;
 
 sub runSvnUpdate();
+sub normalizePath($);
 
 # Handle options
 my $quiet = '';
@@ -79,7 +80,11 @@ sub runSvnUpdate()
     my @conflictedChangeLogs;
     while (my $line = <UPDATE>) {
         print $line;
-        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.+)\s*$/ && basename($1) eq "ChangeLog";
+        $line =~ m/^C\s+(.*\S+)\s*$/;
+        if ($1) {
+          my $filename = normalizePath($1);
+          push @conflictedChangeLogs, $filename if basename($filename) eq "ChangeLog";
+        }
     }
     close UPDATE or die;
 
@@ -89,4 +94,11 @@ sub runSvnUpdate()
         (system($resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs) == 0)
             or die "Could not open resolve-ChangeLogs script: $!.\n";
     }
+}
+
+sub normalizePath($)
+{
+    my ($path) = @_;
+    $path =~ s/\\/\//g;
+    return $path;
 }

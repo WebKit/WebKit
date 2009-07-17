@@ -298,7 +298,7 @@ if (@logs && $updateChangeLogs && $isSVN) {
     my @conflictedChangeLogs;
     while (my $line = <ERRORS>) {
         print STDERR "    ", $line;
-        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.+)\s*$/;
+        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.*\S+)\s*$/;
     }
     close ERRORS;
 
@@ -1290,7 +1290,7 @@ sub findOriginalFileFromSvn($)
     my $baseUrl;
     open INFO, "$SVN info . |" or die;
     while (<INFO>) {
-        if (/^URL: (.+\S+)\r?\n?$/) {
+        if (/^URL: (.*\S+)\r?\n?$/) {
             $baseUrl = $1;
         }
     }
@@ -1298,7 +1298,7 @@ sub findOriginalFileFromSvn($)
     my $sourceFile;
     open INFO, "$SVN info '$file' |" or die;
     while (<INFO>) {
-        if (/^Copied From URL: (.+\S+)\r?\n?$/) {
+        if (/^Copied From URL: (.*\S+)\r?\n?$/) {
             $sourceFile = File::Spec->abs2rel($1, $baseUrl);
         }
     }
@@ -1319,11 +1319,11 @@ sub generateFileList(\@\@\%)
         if ($isSVN) {
             my $matches;
             if (eval "v$svnVersion" ge v1.6) {
-                $matches = /^([ACDMR]).{6} (.+\S+)\r?\n?$/;
+                $matches = /^([ACDMR]).{6} (.*\S+)\r?\n?$/;
                 $status = $1;
                 $file = $2;
             } else {
-                $matches = /^([ACDMR]).{5} (.+\S+)\r?\n?$/;
+                $matches = /^([ACDMR]).{5} (.*\S+)\r?\n?$/;
                 $status = $1;
                 $file = $2;
             }
