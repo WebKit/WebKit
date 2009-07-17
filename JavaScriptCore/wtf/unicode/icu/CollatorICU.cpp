@@ -32,12 +32,12 @@
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
 
 #include "Assertions.h"
-#include "RetainPtr.h"
 #include "Threading.h"
 #include <unicode/ucol.h>
 #include <string.h>
 
 #if PLATFORM(DARWIN)
+#include "RetainPtr.h"
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
