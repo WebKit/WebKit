@@ -418,6 +418,8 @@ void PluginView::status(const char* message)
 
 NPError PluginView::setValue(NPPVariable variable, void* value)
 {
+    LOG(Plugins, "PluginView::setValue(%s): ", prettyNameForNPPVariable(variable, value).data());
+
     switch (variable) {
     case NPPVpluginWindowBool:
         m_isWindowed = value;

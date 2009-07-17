@@ -1,5 +1,17 @@
 2009-07-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Simon Hausmann.
+
+        Add more debug logging in PluginView
+
+        * plugins/PluginView.cpp: Add debug for setValue
+        * plugins/gtk/PluginViewGtk.cpp: Add debug for getValue
+        * plugins/mac/PluginViewMac.cpp: Add debug for getValue and more
+        * plugins/qt/PluginViewQt.cpp: Add debug for getValue
+        * plugins/win/PluginViewWin.cpp: Add debug for getValue
+
+2009-07-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Reviewed by Holger Freyther.
 
         Use same license in PluginDebug.cpp as in the original PluginDebug.h

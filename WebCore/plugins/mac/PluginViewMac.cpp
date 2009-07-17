@@ -127,6 +127,8 @@ static inline IntPoint topLevelOffsetFor(PlatformWidget widget)
 
 void PluginView::init()
 {
+    LOG(Plugins, "PluginView::init(): Initializing plug-in '%s'", m_plugin->name().utf8().data());
+
     if (m_haveInitialized)
         return;
     m_haveInitialized = true;
@@ -193,6 +195,8 @@ void PluginView::stop()
     if (!m_isStarted)
         return;
 
+    LOG(Plugins, "PluginView::stop(): Stopping plug-in '%s'", m_plugin->name().utf8().data());
+
     HashSet<RefPtr<PluginStream> > streams = m_streams;
     HashSet<RefPtr<PluginStream> >::iterator end = streams.end();
     for (HashSet<RefPtr<PluginStream> >::iterator it = streams.begin(); it != end; ++it) {
@@ -218,9 +222,11 @@ void PluginView::stop()
     m_instance->pdata = 0;
 }
 
+// Used before the plugin view has been initialized properly, and as a
+// fallback for variables that do not require a view to resolve.
 NPError PluginView::getValueStatic(NPNVariable variable, void* value)
 {
-    LOG(Plugins, "PluginView::getValueStatic(%d)", variable);
+    LOG(Plugins, "PluginView::getValueStatic(%s)", prettyNameForNPNVariable(variable).data());
 
     switch (variable) {
     case NPNVToolkit:
@@ -236,9 +242,10 @@ NPError PluginView::getValueStatic(NPNVariable variable, void* value)
     }
 }
 
+// Used only for variables that need a view to resolve
 NPError PluginView::getValue(NPNVariable variable, void* value)
 {
-    LOG(Plugins, "PluginView::getValue(%d)", variable);
+    LOG(Plugins, "PluginView::getValue(%s)", prettyNameForNPNVariable(variable).data());
 
     switch (variable) {
     case NPNVWindowNPObject: {
@@ -377,6 +384,11 @@ void PluginView::setNPWindowIfNeeded()
     m_npWindow.clipRect.top = max(0, m_windowRect.y());
     m_npWindow.clipRect.right = m_windowRect.x() + m_windowRect.width();
     m_npWindow.clipRect.bottom = m_windowRect.y() + m_windowRect.height();
+
+    LOG(Plugins, "PluginView::setNPWindowIfNeeded(): window=%p, context=%p,"
+            " window.x:%d window.y:%d window.width:%d window.height:%d window.clipRect size:%dx%d",
+            newWindowRef, newContextRef, m_npWindow.x, m_npWindow.y, m_npWindow.width, m_npWindow.height,
+            m_npWindow.clipRect.right - m_npWindow.clipRect.left, m_npWindow.clipRect.bottom - m_npWindow.clipRect.top);
 
     PluginView::setCurrentPluginView(this);
     JSC::JSLock::DropAllLocks dropAllLocks(false);
