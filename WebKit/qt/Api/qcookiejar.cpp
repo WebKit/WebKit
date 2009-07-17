@@ -26,7 +26,8 @@ uint qHash(const QUrl&);
 
 class QCookieJarPrivate {
     public:
-        QCookieJarPrivate() {
+        QCookieJarPrivate()
+        {
             enabled = true;
         }
         bool enabled;
@@ -34,7 +35,8 @@ class QCookieJarPrivate {
 };
 
 
-uint qHash(const QUrl& url) {
+uint qHash(const QUrl& url)
+{
     return qHash(url.toString());
 }
 
@@ -98,8 +100,8 @@ void QCookieJar::setCookieJar(QCookieJar *jar)
 
 QCookieJar *QCookieJar::cookieJar()
 {
-    if (!gJar) {
+    if (!gJar)
         setCookieJar(new QCookieJar);
-    }
+
     return gJar;
 }

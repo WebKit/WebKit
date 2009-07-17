@@ -46,8 +46,7 @@
 
 using namespace WebCore;
 
-class QWebElementPrivate
-{
+class QWebElementPrivate {
 public:
 };
 
@@ -743,7 +742,7 @@ QStringList QWebElement::functions() const
             continue;
 
         JSC::UString ustring = (*it).ustring();
-        names << QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size());
+        names << QString::fromUtf16((const ushort*)ustring.rep()->data(), ustring.size());
     }
 
     if (state->hadException())
@@ -868,7 +867,7 @@ QStringList QWebElement::scriptableProperties() const
             continue;
 
         JSC::UString ustring = (*it).ustring();
-        names << QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size());
+        names << QString::fromUtf16((const ushort*)ustring.rep()->data(), ustring.size());
     }
 
     if (exec->hadException())

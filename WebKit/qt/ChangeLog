@@ -1,5 +1,81 @@
 2009-07-17  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
+        Reviewed by Adam Treat.
+
+        Coding style fixes.
+
+        * Api/qcookiejar.cpp:
+        (QCookieJarPrivate::QCookieJarPrivate):
+        (qHash):
+        (QCookieJar::cookieJar):
+        * Api/qwebelement.cpp:
+        (QWebElement::functions):
+        (QWebElement::scriptableProperties):
+        * Api/qwebframe.cpp:
+        (QWebFrame::metaData):
+        (QWebFrame::scrollBarValue):
+        (QWebFrame::scroll):
+        (QWebFrame::scrollPosition):
+        (QWebFrame::print):
+        * Api/qwebnetworkinterface.cpp:
+        (decodePercentEncoding):
+        (QWebNetworkRequestPrivate::init):
+        (QWebNetworkRequestPrivate::setURL):
+        (QWebNetworkRequest::QWebNetworkRequest):
+        (QWebNetworkRequest::operator=):
+        (QWebNetworkRequest::setUrl):
+        (QWebNetworkRequest::setHttpHeader):
+        (QWebNetworkRequest::httpHeaderField):
+        (QWebNetworkRequest::setHttpHeaderField):
+        (QWebNetworkRequest::setPostData):
+        (QWebNetworkJob::setResponse):
+        (QWebNetworkJob::frame):
+        (QWebNetworkManager::add):
+        (QWebNetworkManager::cancel):
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::data):
+        (QWebNetworkManager::finished):
+        (QWebNetworkManager::addHttpJob):
+        (QWebNetworkManager::cancelHttpJob):
+        (QWebNetworkManager::httpConnectionClosed):
+        (QWebNetworkInterfacePrivate::sendFileData):
+        (QWebNetworkInterfacePrivate::parseDataUrl):
+        (QWebNetworkManager::doWork):
+        (QWebNetworkInterface::setDefaultInterface):
+        (QWebNetworkInterface::defaultInterface):
+        (QWebNetworkInterface::QWebNetworkInterface):
+        (QWebNetworkInterface::addJob):
+        (QWebNetworkInterface::cancelJob):
+        (WebCoreHttp::WebCoreHttp):
+        (WebCoreHttp::request):
+        (WebCoreHttp::scheduleNextRequest):
+        (WebCoreHttp::getConnection):
+        (WebCoreHttp::onResponseHeaderReceived):
+        (WebCoreHttp::onReadyRead):
+        (WebCoreHttp::onRequestFinished):
+        (WebCoreHttp::onAuthenticationRequired):
+        (WebCoreHttp::onProxyAuthenticationRequired):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPagePrivate::shortcutOverrideEvent):
+        (QWebPage::inputMethodQuery):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::updatePositionDependentActions):
+        (QWebPage::userAgentForUrl):
+        (QWebPagePrivate::_q_onLoadProgressChanged):
+        (QWebPage::totalBytes):
+        (QWebPage::bytesReceived):
+        * Api/qwebsettings.cpp:
+        (QWebSettings::iconForUrl):
+        (QWebSettings::setObjectCacheCapacities):
+        * Api/qwebview.cpp:
+        (QWebView::paintEvent):
+        (QWebView::changeEvent):
+
+2009-07-17  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
         Reviewed by Simon Hausmann.
 
         Overwrite the plugin directories for the DRT.

@@ -266,7 +266,7 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , view(0)
-    , viewportSize(QSize(0,0))
+    , viewportSize(QSize(0, 0))
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
     JSC::initializeThreading();
@@ -663,12 +663,12 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
         Pasteboard::generalPasteboard()->setSelectionMode(true);
         WebCore::Frame* focusFrame = page->focusController()->focusedOrMainFrame();
         if (ev->button() == Qt::LeftButton) {
-            if(focusFrame && (focusFrame->editor()->canCopy() || focusFrame->editor()->canDHTMLCopy())) {
+            if (focusFrame && (focusFrame->editor()->canCopy() || focusFrame->editor()->canDHTMLCopy())) {
                 focusFrame->editor()->copy();
                 ev->setAccepted(true);
             }
         } else if (ev->button() == Qt::MidButton) {
-            if(focusFrame && (focusFrame->editor()->canPaste() || focusFrame->editor()->canDHTMLPaste())) {
+            if (focusFrame && (focusFrame->editor()->canPaste() || focusFrame->editor()->canDHTMLPaste())) {
                 focusFrame->editor()->paste();
                 ev->setAccepted(true);
             }
@@ -948,7 +948,7 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         QString preedit = ev->preeditString();
         // ### FIXME: use the provided QTextCharFormat (use color at least)
         Vector<CompositionUnderline> underlines;
-        underlines.append(CompositionUnderline(0, preedit.length(), Color(0,0,0), false));
+        underlines.append(CompositionUnderline(0, preedit.length(), Color(0, 0, 0), false));
         editor->setComposition(preedit, underlines, preedit.length(), 0);
     }
     ev->accept();
@@ -984,9 +984,8 @@ void QWebPagePrivate::shortcutOverrideEvent(QKeyEvent* event)
                 }
         }
 #ifndef QT_NO_SHORTCUT
-        else if (editorActionForKeyEvent(event) != QWebPage::NoWebAction) {
+        else if (editorActionForKeyEvent(event) != QWebPage::NoWebAction)
             event->accept();
-        }
 #endif
     }
 }
@@ -1052,12 +1051,11 @@ bool QWebPagePrivate::handleScrolling(QKeyEvent *ev, Frame *frame)
 */
 QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
 {
-    switch(property) {
+    switch (property) {
     case Qt::ImMicroFocus: {
         Frame *frame = d->page->focusController()->focusedFrame();
-        if (frame) {
+        if (frame)
             return QVariant(frame->selection()->absoluteCaretBounds());
-        }
         return QVariant();
     }
     case Qt::ImFont: {
@@ -1070,9 +1068,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
         Frame *frame = d->page->focusController()->focusedFrame();
         if (frame) {
             VisibleSelection selection = frame->selection()->selection();
-            if (selection.isCaret()) {
+            if (selection.isCaret())
                 return QVariant(selection.start().deprecatedEditingOffset());
-            }
         }
         return QVariant();
     }
@@ -1080,9 +1077,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
         Frame *frame = d->page->focusController()->focusedFrame();
         if (frame) {
             Document *document = frame->document();
-            if (document->focusedNode()) {
+            if (document->focusedNode())
                 return QVariant(document->focusedNode()->nodeValue());
-            }
         }
         return QVariant();
     }
@@ -1430,9 +1426,8 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
     bool ok = false;
 #ifndef QT_NO_INPUTDIALOG
     QString x = QInputDialog::getText(d->view, tr("JavaScript Prompt - %1").arg(mainFrame()->url().host()), msg, QLineEdit::Normal, defaultValue, &ok);
-    if (ok && result) {
+    if (ok && result)
         *result = x;
-    }
 #endif
     return ok;
 }
@@ -2285,9 +2280,8 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     originallyEnabledWebActions &= ~visitedWebActions; // Mask out visited actions (they're part of the menu)
     for (int i = 0; i < QWebPage::WebActionCount; ++i) {
         if (originallyEnabledWebActions.at(i)) {
-            if (QAction *a = this->action(QWebPage::WebAction(i))) {
+            if (QAction *a = this->action(QWebPage::WebAction(i)))
                 a->setEnabled(true);
-            }
         }
     }
 
@@ -2653,7 +2647,7 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
 
 #if defined Q_OS_WIN32
     QString ver;
-    switch(QSysInfo::WindowsVersion) {
+    switch (QSysInfo::WindowsVersion) {
         case QSysInfo::WV_32s:
             ver = "Windows 3.1";
             break;
@@ -2727,7 +2721,8 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
 }
 
 
-void QWebPagePrivate::_q_onLoadProgressChanged(int) {
+void QWebPagePrivate::_q_onLoadProgressChanged(int)
+{
     m_totalBytes = page->progress()->totalPageAndResourceBytesToLoad();
     m_bytesReceived = page->progress()->totalBytesReceived();
 }
@@ -2739,7 +2734,8 @@ void QWebPagePrivate::_q_onLoadProgressChanged(int) {
 
     \sa bytesReceived()
 */
-quint64 QWebPage::totalBytes() const {
+quint64 QWebPage::totalBytes() const
+{
     return d->m_totalBytes;
 }
 
@@ -2749,7 +2745,8 @@ quint64 QWebPage::totalBytes() const {
 
     \sa totalBytes()
 */
-quint64 QWebPage::bytesReceived() const {
+quint64 QWebPage::bytesReceived() const
+{
     return d->m_bytesReceived;
 }
 

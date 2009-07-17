@@ -479,10 +479,10 @@ QString QWebFrame::title() const
 */
 QMultiMap<QString, QString> QWebFrame::metaData() const
 {
-    if(!d->frame->document())
-       return QMap<QString,QString>();
+    if (!d->frame->document())
+       return QMap<QString, QString>();
 
-    QMultiMap<QString,QString> map;
+    QMultiMap<QString, QString> map;
     Document* doc = d->frame->document();
     RefPtr<NodeList> list = doc->getElementsByTagName("meta");
     unsigned len = list->length();
@@ -815,9 +815,8 @@ int QWebFrame::scrollBarValue(Qt::Orientation orientation) const
 {
     Scrollbar *sb;
     sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
-    if (sb) {
+    if (sb)
         return sb->value();
-    }
     return 0;
 }
 
@@ -867,7 +866,7 @@ QRect QWebFrame::scrollBarGeometry(Qt::Orientation orientation) const
   \since 4.5
   Scrolls the frame \a dx pixels to the right and \a dy pixels downward. Both
   \a dx and \a dy may be negative.
-  
+
   \sa QWebFrame::scrollPosition
 */
 
@@ -875,7 +874,7 @@ void QWebFrame::scroll(int dx, int dy)
 {
     if (!d->frame->view())
         return;
-    
+
     d->frame->view()->scrollBy(IntSize(dx, dy));
 }
 
@@ -888,7 +887,7 @@ void QWebFrame::scroll(int dx, int dy)
 QPoint QWebFrame::scrollPosition() const
 {
     if (!d->frame->view())
-        return QPoint(0,0);
+        return QPoint(0, 0);
 
     IntSize ofs = d->frame->view()->scrollOffset();
     return QPoint(ofs.width(), ofs.height());
@@ -1127,7 +1126,7 @@ void QWebFrame::print(QPrinter *printer) const
 
     int docCopies;
     int pageCopies;
-    if (printer->collateCopies() == true){
+    if (printer->collateCopies()) {
         docCopies = 1;
         pageCopies = printer->numCopies();
     } else {
