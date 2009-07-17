@@ -18,6 +18,7 @@ fast/text/find-hidden-text.html
 editing/pasteboard/file-input-files-access.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
+fast/forms/get-file-upload.html
 http/tests/security/clipboard/clipboard-file-access.html
 
 # ------- failing editing tests

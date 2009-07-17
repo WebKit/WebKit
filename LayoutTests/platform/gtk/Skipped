@@ -1738,6 +1738,7 @@ fast/forms/focus-control-to-page.html
 fast/forms/focus-selection-input.html
 fast/forms/focus-selection-textarea.html
 fast/forms/form-and-frame-interaction-retains-values.html
+fast/forms/get-file-upload.html
 fast/forms/input-radio-checked-tab.html
 fast/forms/input-select-on-click.html
 fast/forms/input-type-change-in-onfocus-keyboard.html
