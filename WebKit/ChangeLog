@@ -1,3 +1,25 @@
+2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added ContextMenuClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        Adding two files, ContextMenuClientHaiku.h
+        and ContextMenuClientHaiku.cpp
+
+        * haiku/WebCoreSupport/ContextMenuClientHaiku.cpp: Added.
+        (WebCore::ContextMenuClientHaiku::contextMenuDestroyed):
+        (WebCore::ContextMenuClientHaiku::getCustomMenuFromDefaultItems):
+        (WebCore::ContextMenuClientHaiku::contextMenuItemSelected):
+        (WebCore::ContextMenuClientHaiku::downloadURL):
+        (WebCore::ContextMenuClientHaiku::lookUpInDictionary):
+        (WebCore::ContextMenuClientHaiku::speak):
+        (WebCore::ContextMenuClientHaiku::isSpeaking):
+        (WebCore::ContextMenuClientHaiku::stopSpeaking):
+        (WebCore::ContextMenuClientHaiku::searchWithGoogle):
+        * haiku/WebCoreSupport/ContextMenuClientHaiku.h: Added.
+
 2009-07-10  Adam Roben  <aroben@apple.com>
 
         Sort all our Xcode projects
