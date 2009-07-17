@@ -1675,10 +1675,11 @@ def check_braces(filename, clean_lines, line_number, error):
         # the lifetime of stack-allocated variables.  We don't detect this
         # perfectly: we just don't complain if the last non-whitespace
         # character on the previous non-blank line is ';', ':', '{', '}',
-        # ')', or ') const'.  We also allow '#' for #endif and '=' for
-        # array initialization.
+        # ')', or ') const' and doesn't begin with 'if|for|while|switch|else'.
+        # We also allow '#' for #endif and '=' for array initialization.
         previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
-        if (not search(r'[;:}{)=]\s*$|\)\s*const\s*$', previous_line)
+        if ((not search(r'[;:}{)=]\s*$|\)\s*const\s*$', previous_line)
+             or search(r'\b(if|for|while|switch|else)\b', previous_line))
             and previous_line.find('#') < 0):
             error(filename, line_number, 'whitespace/braces', 4,
                   'This { should be at the end of the previous line')

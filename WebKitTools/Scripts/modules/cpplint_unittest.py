@@ -2876,6 +2876,60 @@ class WebKitStyleTest(CpplintTestBase):
             '    int foo;\n'
             '};\n',
             'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '{\n'
+            '    int foo;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'for (int i = 0; i < 10; i++)\n'
+            '{\n'
+            '    int foo;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'while (true)\n'
+            '{\n'
+            '    int foo;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'switch (type)\n'
+            '{\n'
+            'case foo: return;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '{\n'
+            '    int foo;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'for (int i = 0; i < 10; i++)\n'
+            '{\n'
+            '    int foo;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'while (true)\n'
+            '{\n'
+            '    int foo;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'switch (type)\n'
+            '{\n'
+            'case foo: return;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'else if (type)\n'
+            '{\n'
+            'case foo: return;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
 
         # 3. One-line control clauses should not use braces unless
         #    comments are included or a single statement spans multiple
