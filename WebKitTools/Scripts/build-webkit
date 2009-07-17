@@ -48,7 +48,7 @@ my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $domSto
     $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
     $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $sharedWorkersSupport, $svgSupport,
     $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
-    $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $wmlSupport, $workersSupport,
+    $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport);
 
 my @features = (
@@ -111,6 +111,9 @@ my @features = (
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },
+
+    { option => "web-sockets", desc => "Toggle Web Sockets support",
+      define => "ENABLE_WEB_SOCKETS", default => 1, value=> \$webSocketsSupport },
 
     { option => "wml", desc => "Toggle WML support",
       define => "ENABLE_WML", default => 0, value => \$wmlSupport },

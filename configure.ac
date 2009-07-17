@@ -495,6 +495,14 @@ if test "$enable_svg_animation" = "yes" || \
    fi
 fi
 
+# check whether to enable Web Socket support
+AC_MSG_CHECKING([whether to enable Web Sockets support])
+AC_ARG_ENABLE(web_sockets,
+              AC_HELP_STRING([--enable-web-sockets],
+                             [enable support for Web Sockets [default=yes]]),
+              [],[enable_web_sockets="no"])
+AC_MSG_RESULT([$enable_web_sockets])
+
 # check whether to enable code coverage
 AC_MSG_CHECKING([whether to enable code coverage support])
 AC_ARG_ENABLE(coverage,
@@ -702,6 +710,7 @@ AM_CONDITIONAL([ENABLE_WORKERS],[test "$enable_workers" = "yes"])
 AM_CONDITIONAL([ENABLE_SHARED_WORKERS],[test "$enable_shared_workers" = "yes"])
 AM_CONDITIONAL([SVG_FLAGS],[test "$svg_flags" = "yes"])
 AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
+AM_CONDITIONAL([ENABLE_WEB_SOCKETS],[test "$enable_web_sockets" = "yes"])
 
 AC_CONFIG_FILES([
 GNUmakefile
@@ -746,6 +755,7 @@ Features:
  SVG as image support                                     : $enable_svg_as_image
  SVG use element support                                  : $enable_svg_use
  WML support                                              : $enable_wml
+ Web Sockets support                                      : $enable_web_sockets
  Web Workers support                                      : $enable_workers
  XPATH support                                            : $enable_xpath
  XSLT support                                             : $enable_xslt
