@@ -287,11 +287,8 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         Request* request = requestsPending.first();
         DocLoader* docLoader = request->docLoader();
         bool resourceIsCacheValidator = request->cachedResource()->isCacheValidator();
-        // If the document is fully parsed and there are no pending stylesheets there won't be any more 
-        // resources that we would want to push to the front of the queue. Just hand off the remaining resources
-        // to the networking layer.
-        bool parsedAndStylesheetsKnown = !docLoader->doc()->parsing() && docLoader->doc()->haveStylesheetsLoaded();
-        if (!parsedAndStylesheetsKnown && m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
+
+        if (m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
             serveLowerPriority = false;
             return;
         }
