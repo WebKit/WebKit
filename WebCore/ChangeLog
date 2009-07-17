@@ -1,3 +1,60 @@
+2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added a second bunch of Haiku-specific files for WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        Adding four files, ContextMenuHaiku.cpp, ContextMenuItemHaiku.cpp,
+        DragDataHaiku.cpp and DragImageHaiku.cpp
+
+        * platform/haiku/ContextMenuHaiku.cpp: Added.
+        (WebCore::ContextMenuReceiver::ContextMenuReceiver):
+        (WebCore::ContextMenuReceiver::HandleMessage):
+        (WebCore::ContextMenuReceiver::Result):
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::platformDescription):
+        (WebCore::ContextMenu::setPlatformDescription):
+        * platform/haiku/ContextMenuItemHaiku.cpp: Added.
+        (ContextMenuItem::ContextMenuItem):
+        (ContextMenuItem::~ContextMenuItem):
+        (ContextMenuItem::releasePlatformDescription):
+        (ContextMenuItem::type):
+        (ContextMenuItem::setType):
+        (ContextMenuItem::action):
+        (ContextMenuItem::setAction):
+        (ContextMenuItem::title):
+        (ContextMenuItem::setTitle):
+        (ContextMenuItem::platformSubMenu):
+        (ContextMenuItem::setSubMenu):
+        (ContextMenuItem::setChecked):
+        (ContextMenuItem::setEnabled):
+        (ContextMenuItem::enabled):
+        * platform/haiku/DragDataHaiku.cpp: Added.
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asColor):
+        (WebCore::DragData::createClipboard):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/haiku/DragImageHaiku.cpp: Added.
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        (WebCore::createDragImageIconForCachedImage):
+
 2009-07-16  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Darin Fisher and Brett Wilson.
