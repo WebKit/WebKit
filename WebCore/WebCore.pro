@@ -160,61 +160,62 @@ CONFIG(compute_defaults) {
     error("Done computing defaults")
 }
 
-# Ensure that we pick up WebCore's config.h over JavaScriptCore's
-INCLUDEPATH = $$PWD $$INCLUDEPATH
-
-include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
-
 RESOURCES += \
     $$PWD/../WebCore/inspector/front-end/WebKit.qrc \
     $$PWD/../WebCore/WebCore.qrc
-INCLUDEPATH += \
-    $$PWD/platform/qt \
-    $$PWD/platform/network/qt \
+
+include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
+
+INCLUDEPATH = \
+    $$PWD \
+    $$PWD/accessibility \
+    $$PWD/bindings/js \
+    $$PWD/bridge \
+    $$PWD/bridge/c \
+    $$PWD/css \
+    $$PWD/dom \
+    $$PWD/dom/default \
+    $$PWD/editing \
+    $$PWD/history \
+    $$PWD/html \
+    $$PWD/inspector \
+    $$PWD/loader \
+    $$PWD/loader/appcache \
+    $$PWD/loader/archive \
+    $$PWD/loader/icon \
+    $$PWD/page \
+    $$PWD/page/animation \
+    $$PWD/platform \
+    $$PWD/platform/animation \
+    $$PWD/platform/graphics \
     $$PWD/platform/graphics/filters \
     $$PWD/platform/graphics/transforms \
-    $$PWD/platform/graphics/qt \
-    $$PWD/page/qt \
-    $$PWD/../WebKit/qt/WebCoreSupport \
+    $$PWD/platform/image-decoders \
+    $$PWD/platform/network \
+    $$PWD/platform/sql \
+    $$PWD/platform/text \
+    $$PWD/plugins \
+    $$PWD/rendering \
+    $$PWD/rendering/style \
+    $$PWD/storage \
+    $$PWD/svg \
+    $$PWD/svg/animation \
+    $$PWD/svg/graphics \
+    $$PWD/svg/graphics/filters \
+    $$PWD/wml \
+    $$PWD/workers \
+    $$PWD/xml \
+    $$GENERATED_SOURCES_DIR \
+    $$INCLUDEPATH
 
-INCLUDEPATH +=  $$PWD/accessibility \
-                $$PWD/ForwardingHeaders \
-                $$PWD/platform \
-                $$PWD/platform/animation \
-                $$PWD/platform/network \
-                $$PWD/platform/graphics \
-                $$PWD/svg/animation \
-                $$PWD/svg/graphics \
-                $$PWD/svg/graphics/filters \
-                $$PWD/platform/sql \
-                $$PWD/platform/text \
-                $$PWD/storage \
-                $$PWD/loader \
-                $$PWD/loader/appcache \
-                $$PWD/loader/archive \
-                $$PWD/loader/icon \
-                $$PWD/css \
-                $$PWD/dom \
-                $$PWD/dom/default \
-                $$PWD/page \
-                $$PWD/page/animation \
-                $$PWD/editing \
-                $$PWD/rendering \
-                $$PWD/rendering/style \
-                $$PWD/history \
-                $$PWD/inspector \
-                $$PWD/xml \
-                $$PWD/html \
-                $$PWD/wml \
-                $$PWD/workers \
-                $$PWD/bindings/js \
-                $$PWD/svg \
-                $$PWD/platform/image-decoders \
-                $$PWD/plugins \
-                $$PWD/bridge \
-                $$PWD/bridge/c \
-                $$PWD/bridge/qt
-INCLUDEPATH *=  $$GENERATED_SOURCES_DIR
+INCLUDEPATH = \
+    $$PWD/bridge/qt \
+    $$PWD/page/qt \
+    $$PWD/platform/graphics/qt \
+    $$PWD/platform/network/qt \
+    $$PWD/platform/qt \
+    $$PWD/../WebKit/qt/WebCoreSupport \
+    $$INCLUDEPATH
 
 QT += network
 lessThan(QT_MINOR_VERSION, 4): QT += xml

@@ -9,24 +9,26 @@ CONFIG(debug, debug|release) {
     OBJECTS_DIR = obj/release
 }
 
-INCLUDEPATH += $$GENERATED_SOURCES_DIR \
-               $$PWD \
-               $$PWD/parser \
-               $$PWD/bytecompiler \
-               $$PWD/debugger \
-               $$PWD/runtime \
-               $$PWD/wtf \
-               $$PWD/wtf/unicode \
-               $$PWD/interpreter \
-               $$PWD/jit \
-               $$PWD/profiler \
-               $$PWD/wrec \
-               $$PWD/yarr \
-               $$PWD/API \
-               $$PWD/.. \
-               $$PWD/ForwardingHeaders \
-               $$PWD/bytecode \
-               $$PWD/assembler \
+INCLUDEPATH = \
+    $$PWD \
+    $$PWD/.. \
+    $$PWD/assembler \
+    $$PWD/bytecode \
+    $$PWD/bytecompiler \
+    $$PWD/debugger \
+    $$PWD/interpreter \
+    $$PWD/jit \
+    $$PWD/parser \
+    $$PWD/profiler \
+    $$PWD/runtime \
+    $$PWD/wrec \
+    $$PWD/wtf \
+    $$PWD/wtf/unicode \
+    $$PWD/yarr \
+    $$PWD/API \
+    $$PWD/ForwardingHeaders \
+    $$GENERATED_SOURCES_DIR \
+    $$INCLUDEPATH
 
 DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF
 
