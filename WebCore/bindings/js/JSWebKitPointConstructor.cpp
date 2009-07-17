@@ -36,10 +36,10 @@ using namespace JSC;
 
 const ClassInfo JSWebKitPointConstructor::s_info = { "WebKitPointConstructor", 0, 0, 0 };
 
-JSWebKitPointConstructor::JSWebKitPointConstructor(ExecState* exec)
-    : DOMConstructorObject(JSWebKitPointConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+JSWebKitPointConstructor::JSWebKitPointConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
+    : DOMConstructorObject(JSWebKitPointConstructor::createStructure(globalObject->objectPrototype()))
 {
-    putDirect(exec->propertyNames().prototype, JSWebKitPointPrototype::self(exec, exec->lexicalGlobalObject()), None);
+    putDirect(exec->propertyNames().prototype, JSWebKitPointPrototype::self(exec, globalObject), None);
     putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly|DontDelete|DontEnum);
 }
 

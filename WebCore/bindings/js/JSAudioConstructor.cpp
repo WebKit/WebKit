@@ -42,13 +42,13 @@ namespace WebCore {
 const ClassInfo JSAudioConstructor::s_info = { "AudioConstructor", 0, 0, 0 };
 
 JSAudioConstructor::JSAudioConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSAudioConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+    : DOMConstructorObject(JSAudioConstructor::createStructure(globalObject->objectPrototype()))
     , m_globalObject(globalObject)
 {
     ASSERT(globalObject->scriptExecutionContext());
     ASSERT(globalObject->scriptExecutionContext()->isDocument());
 
-    putDirect(exec->propertyNames().prototype, JSHTMLAudioElementPrototype::self(exec, exec->lexicalGlobalObject()), None);
+    putDirect(exec->propertyNames().prototype, JSHTMLAudioElementPrototype::self(exec, globalObject), None);
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 

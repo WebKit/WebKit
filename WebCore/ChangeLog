@@ -1,3 +1,57 @@
+2009-07-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Some constructor objects exposed on Window have the wrong prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=27276
+
+        Several Constructor classes were already being passed a global object
+        during construction, but they were ignoring it for prototype lookup.
+        I've fixed those to use the passed global object instead.
+
+        Most of these Constructor classes should just be auto-generated, but I
+        refrained from changing them over to auto-gen in this patch.
+
+        Fixed CodeGeneratorJS to pass a global object to getDOMConstructor when
+        available, otherwise default to deprecatedGlobalObjectForPrototype(exec)
+        to match existing behavior.
+
+        Test: fast/dom/prototype-inheritance.html
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor): use the existing globalObject pointer for prototype lookup
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::deprecatedGlobalObjectForPrototype): Make it easy to detect where the wrong global object is being used.
+        (WebCore::deprecatedGetDOMStructure):
+        * bindings/js/JSDOMGlobalObject.h: remove error-prone getDOMConstructor, require passing JSDOMGlobalObject*
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::webKitPoint): pass "this" for the global object.
+        (WebCore::JSDOMWindow::webKitCSSMatrix): pass "this" for the global object.
+        (WebCore::JSDOMWindow::xsltProcessor): pass "this" for the global object.
+        (WebCore::JSDOMWindow::worker): pass "this" for the global object.
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor): use the existing globalObject pointer for prototype lookup
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor): use the existing globalObject pointer for prototype lookup
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor): use the existing globalObject pointer for prototype lookup
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp:
+        (WebCore::JSWebKitCSSMatrixConstructor::JSWebKitCSSMatrixConstructor): add new globalObject parameter and use it
+        * bindings/js/JSWebKitCSSMatrixConstructor.h:
+        * bindings/js/JSWebKitPointConstructor.cpp:
+        (WebCore::JSWebKitPointConstructor::JSWebKitPointConstructor): add new globalObject parameter and use it
+        * bindings/js/JSWebKitPointConstructor.h:
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::JSWorkerConstructor::JSWorkerConstructor): add new globalObject parameter and use it
+        * bindings/js/JSWorkerConstructor.h:
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor): use the existing globalObject pointer for prototype lookup
+         -- XMLHttpRequest constructor was also missing a length.  Added one.
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::JSXSLTProcessorConstructor::JSXSLTProcessorConstructor):
+        * bindings/js/JSXSLTProcessorConstructor.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2009-07-17  Dan Bernstein  <mitz@apple.com>
 
         Build fix

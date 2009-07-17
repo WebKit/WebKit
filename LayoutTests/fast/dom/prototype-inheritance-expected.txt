@@ -1,0 +1,249 @@
+Make sure prototypes are set up using the window a property came from, instead of the lexical global object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS inner.Attr.isInner is true
+PASS inner.Audio.isInner is true
+PASS inner.CDATASection.isInner is true
+PASS inner.CSSCharsetRule.isInner is true
+PASS inner.CSSFontFaceRule.isInner is true
+PASS inner.CSSImportRule.isInner is true
+PASS inner.CSSMediaRule.isInner is true
+PASS inner.CSSPageRule.isInner is true
+PASS inner.CSSPrimitiveValue.isInner is true
+PASS inner.CSSRule.isInner is true
+PASS inner.CSSRuleList.isInner is true
+PASS inner.CSSStyleDeclaration.isInner is true
+PASS inner.CSSStyleRule.isInner is true
+PASS inner.CSSStyleSheet.isInner is true
+PASS inner.CSSValue.isInner is true
+PASS inner.CSSValueList.isInner is true
+PASS inner.CSSVariablesDeclaration.isInner is true
+PASS inner.CSSVariablesRule.isInner is true
+PASS inner.CanvasRenderingContext2D.isInner is true
+PASS inner.CharacterData.isInner is true
+PASS inner.ClientRect.isInner is true
+PASS inner.ClientRectList.isInner is true
+PASS inner.Clipboard.isInner is true
+PASS inner.Comment.isInner is true
+PASS inner.Counter.isInner is true
+PASS inner.DOMException.isInner is true
+PASS inner.DOMImplementation.isInner is true
+PASS inner.DOMParser.isInner is true
+PASS inner.Document.isInner is true
+PASS inner.DocumentFragment.isInner is true
+PASS inner.DocumentType.isInner is true
+PASS inner.Element.isInner is true
+PASS inner.Entity.isInner is true
+PASS inner.EntityReference.isInner is true
+PASS inner.EvalError.isInner is true
+PASS inner.Event.isInner is true
+PASS inner.EventException.isInner is true
+PASS inner.File.isInner is true
+PASS inner.FileList.isInner is true
+PASS inner.HTMLAnchorElement.isInner is true
+PASS inner.HTMLAppletElement.isInner is true
+PASS inner.HTMLAreaElement.isInner is true
+PASS inner.HTMLAudioElement.isInner is true
+PASS inner.HTMLBRElement.isInner is true
+PASS inner.HTMLBaseElement.isInner is true
+PASS inner.HTMLBaseFontElement.isInner is true
+PASS inner.HTMLBlockquoteElement.isInner is true
+PASS inner.HTMLBodyElement.isInner is true
+PASS inner.HTMLButtonElement.isInner is true
+PASS inner.HTMLCanvasElement.isInner is true
+PASS inner.HTMLCollection.isInner is true
+PASS inner.HTMLDListElement.isInner is true
+PASS inner.HTMLDataGridCellElement.isInner is true
+PASS inner.HTMLDataGridColElement.isInner is true
+PASS inner.HTMLDataGridElement.isInner is true
+PASS inner.HTMLDirectoryElement.isInner is true
+PASS inner.HTMLDivElement.isInner is true
+PASS inner.HTMLDocument.isInner is true
+PASS inner.HTMLElement.isInner is true
+PASS inner.HTMLEmbedElement.isInner is true
+PASS inner.HTMLFieldSetElement.isInner is true
+PASS inner.HTMLFontElement.isInner is true
+PASS inner.HTMLFormElement.isInner is true
+PASS inner.HTMLFrameElement.isInner is true
+PASS inner.HTMLFrameSetElement.isInner is true
+PASS inner.HTMLHRElement.isInner is true
+PASS inner.HTMLHeadElement.isInner is true
+PASS inner.HTMLHeadingElement.isInner is true
+PASS inner.HTMLHtmlElement.isInner is true
+PASS inner.HTMLIFrameElement.isInner is true
+PASS inner.HTMLImageElement.isInner is true
+PASS inner.HTMLInputElement.isInner is true
+PASS inner.HTMLIsIndexElement.isInner is true
+PASS inner.HTMLLIElement.isInner is true
+PASS inner.HTMLLabelElement.isInner is true
+PASS inner.HTMLLegendElement.isInner is true
+PASS inner.HTMLLinkElement.isInner is true
+PASS inner.HTMLMapElement.isInner is true
+PASS inner.HTMLMarqueeElement.isInner is true
+PASS inner.HTMLMediaElement.isInner is true
+PASS inner.HTMLMenuElement.isInner is true
+PASS inner.HTMLMetaElement.isInner is true
+PASS inner.HTMLModElement.isInner is true
+PASS inner.HTMLOListElement.isInner is true
+PASS inner.HTMLObjectElement.isInner is true
+PASS inner.HTMLOptGroupElement.isInner is true
+PASS inner.HTMLOptionElement.isInner is true
+PASS inner.HTMLParagraphElement.isInner is true
+PASS inner.HTMLParamElement.isInner is true
+PASS inner.HTMLPreElement.isInner is true
+PASS inner.HTMLQuoteElement.isInner is true
+PASS inner.HTMLScriptElement.isInner is true
+PASS inner.HTMLSelectElement.isInner is true
+PASS inner.HTMLStyleElement.isInner is true
+PASS inner.HTMLTableCaptionElement.isInner is true
+PASS inner.HTMLTableCellElement.isInner is true
+PASS inner.HTMLTableColElement.isInner is true
+PASS inner.HTMLTableElement.isInner is true
+PASS inner.HTMLTableRowElement.isInner is true
+PASS inner.HTMLTableSectionElement.isInner is true
+PASS inner.HTMLTextAreaElement.isInner is true
+PASS inner.HTMLTitleElement.isInner is true
+PASS inner.HTMLUListElement.isInner is true
+PASS inner.HTMLVideoElement.isInner is true
+PASS inner.Image.isInner is true
+PASS inner.KeyboardEvent.isInner is true
+PASS inner.MediaError.isInner is true
+PASS inner.MediaList.isInner is true
+PASS inner.MessageChannel.isInner is true
+PASS inner.MessageEvent.isInner is true
+PASS inner.MessagePort.isInner is true
+PASS inner.MimeType.isInner is true
+PASS inner.MimeTypeArray.isInner is true
+PASS inner.MouseEvent.isInner is true
+PASS inner.MutationEvent.isInner is true
+PASS inner.NamedNodeMap.isInner is true
+PASS inner.Node.isInner is true
+PASS inner.NodeFilter.isInner is true
+PASS inner.NodeList.isInner is true
+PASS inner.Notation.isInner is true
+PASS inner.Option.isInner is true
+PASS inner.OverflowEvent.isInner is true
+PASS inner.Plugin.isInner is true
+PASS inner.PluginArray.isInner is true
+PASS inner.ProcessingInstruction.isInner is true
+PASS inner.ProgressEvent.isInner is true
+PASS inner.Range.isInner is true
+PASS inner.RangeError.isInner is true
+PASS inner.RangeException.isInner is true
+PASS inner.Rect.isInner is true
+PASS inner.ReferenceError.isInner is true
+PASS inner.SVGAngle.isInner is true
+PASS inner.SVGColor.isInner is true
+PASS inner.SVGException.isInner is true
+PASS inner.SVGGradientElement.isInner is true
+PASS inner.SVGLength.isInner is true
+PASS inner.SVGMarkerElement.isInner is true
+PASS inner.SVGPaint.isInner is true
+PASS inner.SVGPathSeg.isInner is true
+PASS inner.SVGPreserveAspectRatio.isInner is true
+PASS inner.SVGRenderingIntent.isInner is true
+PASS inner.SVGTextContentElement.isInner is true
+PASS inner.SVGTextPathElement.isInner is true
+PASS inner.SVGTransform.isInner is true
+PASS inner.SVGUnitTypes.isInner is true
+PASS inner.Storage.isInner is true
+PASS inner.StorageEvent.isInner is true
+PASS inner.StyleSheet.isInner is true
+PASS inner.StyleSheetList.isInner is true
+PASS inner.SyntaxError.isInner is true
+PASS inner.Text.isInner is true
+PASS inner.TextEvent.isInner is true
+PASS inner.TextMetrics.isInner is true
+PASS inner.TypeError.isInner is true
+PASS inner.UIEvent.isInner is true
+PASS inner.URIError.isInner is true
+PASS inner.WebKitAnimationEvent.isInner is true
+PASS inner.WebKitCSSKeyframeRule.isInner is true
+PASS inner.WebKitCSSKeyframesRule.isInner is true
+PASS inner.WebKitCSSMatrix.isInner is true
+PASS inner.WebKitCSSTransformValue.isInner is true
+PASS inner.WebKitPoint.isInner is true
+PASS inner.WebKitTransitionEvent.isInner is true
+PASS inner.WheelEvent.isInner is true
+PASS inner.Worker.isInner is true
+PASS inner.XMLDocument.isInner is true
+PASS inner.XMLHttpRequest.isInner is true
+PASS inner.XMLHttpRequestException.isInner is true
+PASS inner.XMLHttpRequestUpload.isInner is true
+PASS inner.XMLSerializer.isInner is true
+PASS inner.XPathEvaluator.isInner is true
+PASS inner.XPathException.isInner is true
+PASS inner.XPathResult.isInner is true
+PASS inner.XSLTProcessor.isInner is true
+PASS inner.accessibilityController.isInner is true
+FAIL inner.addEventListener.isInner should be true. Was false.
+FAIL inner.alert.isInner should be true. Was false.
+PASS inner.appleScriptController.isInner is true
+FAIL inner.applicationCache.isInner should be true. Was false.
+FAIL inner.atob.isInner should be true. Was false.
+FAIL inner.blur.isInner should be true. Was false.
+FAIL inner.btoa.isInner should be true. Was false.
+FAIL inner.captureEvents.isInner should be true. Was false.
+FAIL inner.clearInterval.isInner should be true. Was false.
+FAIL inner.clearTimeout.isInner should be true. Was false.
+FAIL inner.clientInformation.isInner should be true. Was false.
+FAIL inner.close.isInner should be true. Was false.
+FAIL inner.confirm.isInner should be true. Was false.
+FAIL inner.console.isInner should be true. Was false.
+FAIL inner.devicePixelRatio.isInner should be true. Was false.
+FAIL inner.dispatchEvent.isInner should be true. Was false.
+PASS inner.document.isInner is true
+FAIL inner.find.isInner should be true. Was false.
+FAIL inner.focus.isInner should be true. Was false.
+FAIL inner.frameElement.isInner should be true. Was false.
+PASS inner.frames.isInner is true
+FAIL inner.getComputedStyle.isInner should be true. Was false.
+FAIL inner.getMatchedCSSRules.isInner should be true. Was false.
+FAIL inner.getSelection.isInner should be true. Was false.
+PASS inner.history.isInner is true
+FAIL inner.isInner.isInner should be true. Was false.
+FAIL inner.localStorage.isInner should be true. Was false.
+PASS inner.location.isInner is true
+FAIL inner.locationbar.isInner should be true. Was false.
+FAIL inner.menubar.isInner should be true. Was false.
+FAIL inner.moveBy.isInner should be true. Was false.
+FAIL inner.moveTo.isInner should be true. Was false.
+FAIL inner.name.isInner should be true. Was false.
+FAIL inner.navigator.isInner should be true. Was false.
+FAIL inner.offscreenBuffering.isInner should be true. Was false.
+FAIL inner.open.isInner should be true. Was false.
+FAIL inner.openDatabase.isInner should be true. Was false.
+FAIL inner.outerHeight.isInner should be true. Was false.
+FAIL inner.outerWidth.isInner should be true. Was false.
+FAIL inner.personalbar.isInner should be true. Was false.
+PASS inner.plainText.isInner is true
+FAIL inner.postMessage.isInner should be true. Was false.
+FAIL inner.print.isInner should be true. Was false.
+FAIL inner.prompt.isInner should be true. Was false.
+FAIL inner.releaseEvents.isInner should be true. Was false.
+FAIL inner.removeEventListener.isInner should be true. Was false.
+FAIL inner.resizeBy.isInner should be true. Was false.
+FAIL inner.resizeTo.isInner should be true. Was false.
+FAIL inner.screen.isInner should be true. Was false.
+FAIL inner.screenTop.isInner should be true. Was false.
+FAIL inner.screenY.isInner should be true. Was false.
+FAIL inner.scroll.isInner should be true. Was false.
+FAIL inner.scrollBy.isInner should be true. Was false.
+FAIL inner.scrollTo.isInner should be true. Was false.
+FAIL inner.scrollbars.isInner should be true. Was false.
+PASS inner.self.isInner is true
+FAIL inner.sessionStorage.isInner should be true. Was false.
+FAIL inner.setInterval.isInner should be true. Was false.
+FAIL inner.setTimeout.isInner should be true. Was false.
+FAIL inner.statusbar.isInner should be true. Was false.
+FAIL inner.stop.isInner should be true. Was false.
+FAIL inner.toolbar.isInner should be true. Was false.
+FAIL inner.webkitConvertPointFromNodeToPage.isInner should be true. Was false.
+FAIL inner.webkitConvertPointFromPageToNode.isInner should be true. Was false.
+PASS inner.window.isInner is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -38,10 +38,10 @@ namespace WebCore {
 const ClassInfo JSMessageChannelConstructor::s_info = { "MessageChannelConstructor", 0, 0, 0 };
 
 JSMessageChannelConstructor::JSMessageChannelConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSMessageChannelConstructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+    : DOMConstructorObject(JSMessageChannelConstructor::createStructure(globalObject->objectPrototype()))
     , m_globalObject(globalObject)
 {
-    putDirect(exec->propertyNames().prototype, JSMessageChannelPrototype::self(exec, exec->lexicalGlobalObject()), None);
+    putDirect(exec->propertyNames().prototype, JSMessageChannelPrototype::self(exec, globalObject), None);
 }
 
 JSMessageChannelConstructor::~JSMessageChannelConstructor()

@@ -1,3 +1,14 @@
+2009-07-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Some constructor objects exposed on Window have the wrong prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=27276
+
+        * fast/dom/prototype-inheritance-expected.txt: Added.
+        * fast/dom/prototype-inheritance.html: Added.
+        * fast/dom/resources/prototype-inheritance.js: Added.
+
 2009-07-17  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Darin Adler.

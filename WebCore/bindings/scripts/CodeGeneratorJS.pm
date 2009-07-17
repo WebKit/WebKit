@@ -520,7 +520,7 @@ sub GenerateHeader
     push(@headerContent, "    virtual JSC::JSValue lookupSetter(JSC::ExecState*, const JSC::Identifier& propertyName);\n") if $dataNode->extendedAttributes->{"CustomLookupSetter"};
 
     # Constructor object getter
-    push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*);\n") if $dataNode->extendedAttributes->{"GenerateConstructor"};
+    push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if $dataNode->extendedAttributes->{"GenerateConstructor"};
 
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
@@ -1132,8 +1132,10 @@ sub GenerateImplementation
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
                     my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
                     $constructorType =~ s/Constructor$//;
-                    push(@implContent, "    UNUSED_PARAM(slot);\n");
-                    push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec);\n");
+                    push(@implContent, "    ${className}* castedThis = static_cast<$className*>(asObject(slot.slotBase()));\n");
+                    # Constructor attribute is only used by DOMWindow.idl, so it's correct to pass castedThis as the global object
+                    # Once DOMObjects have a back-pointer to the globalObject we can pass castedThis->globalObject()
+                    push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis);\n");
                 } elsif (!@{$attribute->getterExceptions}) {
                     push(@implContent, "    UNUSED_PARAM(exec);\n");
                     if ($podType) {
@@ -1191,9 +1193,9 @@ sub GenerateImplementation
             if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
                 my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
-                push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
+                push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, const Identifier&, const PropertySlot&)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    return static_cast<$className*>(asObject(slot.slotBase()))->getConstructor(exec);\n");
+                push(@implContent, "    return ${className}::getConstructor(exec, deprecatedGlobalObjectForPrototype(exec));\n");
                 push(@implContent, "}\n");
             }
         }
@@ -1338,8 +1340,8 @@ sub GenerateImplementation
     }
 
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
-        push(@implContent, "JSValue ${className}::getConstructor(ExecState* exec)\n{\n");
-        push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec);\n");
+        push(@implContent, "JSValue ${className}::getConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
+        push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
     }
 
@@ -2027,10 +2029,10 @@ sub constructorFor
 my $implContent = << "EOF";
 class ${className}Constructor : public DOMObject {
 public:
-    ${className}Constructor(ExecState* exec)
-        : DOMObject(${className}Constructor::createStructure(exec->lexicalGlobalObject()->objectPrototype()))
+    ${className}Constructor(ExecState* exec, JSDOMGlobalObject* globalObject)
+        : DOMObject(${className}Constructor::createStructure(globalObject->objectPrototype()))
     {
-        putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, exec->lexicalGlobalObject()), None);
+        putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), None);
     }
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual const ClassInfo* classInfo() const { return &s_info; }
