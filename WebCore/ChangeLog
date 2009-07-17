@@ -1,3 +1,27 @@
+2009-07-17  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK+] Crash in screenAvailable due a null Widget*
+
+        JSDOMWindow::open called screenAvailableRect(0). The other
+        Screen methods can be called with a null widget as well, fix the
+        crashing test by checking for null.
+
+        In screenRect and screenAvailableRect it is not tried to use
+        a default screen as the existing implementation didn't try either
+        in case of not having a toplevel widget.
+
+        LayoutTests/fast/frames/crash-removed-iframe.html caused a crash.
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::getVisual): New method to get a visual or return zero.
+        (WebCore::screenDepth): Use getVisual.
+        (WebCore::screenDepthPerComponent): Use getVisual.
+        (WebCore::screenIsMonochrome): Use screenDepth which will do the null checking
+        (WebCore::screenRect): Check for !widget.
+        (WebCore::screenAvailableRect): Check for !widget.
+
 2009-07-17  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.
