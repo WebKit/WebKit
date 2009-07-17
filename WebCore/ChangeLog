@@ -1,3 +1,81 @@
+2009-07-16  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Darin Fisher and Brett Wilson.
+
+        Refactor Skia implementation of gradients and patterns.
+
+        http://bugs.webkit.org/show_bug.cgi?id=26618
+
+        The following layout tests were breaking on Chromium/Linux:
+
+        LayoutTests/svg/custom/js-late-gradient-creation.svg (bad baseline PNG)
+        LayoutTests/svg/custom/js-late-gradient-and-object.creation.svg
+        LayoutTests/svg/custom/js-late-pattern-creation.svg (bad baseline PNG)
+        LayoutTests/svg/custom/js-late-pattern-and-object-creation.svg
+
+        I could've fixed these the easy way, by copying the same 5
+        lines of code we use everywhere we need patterns or gradients, but
+        I decided to fix it the hard way:  by refactoring the code so that
+        PlatformContextSkia::setupPaintForFilling() and
+        PlatformContextSkia::setupPaintForStroking() do the right thing,
+        and also handle gradients and patterns.
+        
+        This required pushing the gradients and patterns set in 
+        (generic) GraphicsContext::setFillPattern() and friends down into
+        PlatformContextSkia.  For this, I followed the setPlatformXXX()
+        pattern used elsewhere in GraphicsContext, and stubbed them out on
+        the other platforms with #if !PLATFORM(SKIA).  This also required
+        pushing changes to the gradientSpaceTransform from the Gradient into 
+        GradientSkia.
+
+        Since it's a Skia context, I decided to cache the values as
+        SkShaders.  There were existing m_pattern and m_gradient SkShaders,
+        but they were unused, and whose use was ambiguous, so I
+        replaced them with one SkShader each for filling and stroking.
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::setGradientSpaceTransform):
+        (WebCore::Gradient::setPlatformGradientSpaceTransform):
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+        (WebCore::GraphicsContext::setPlatformFillGradient):
+        (WebCore::GraphicsContext::setPlatformFillPattern):
+        (WebCore::GraphicsContext::setPlatformStrokeGradient):
+        (WebCore::GraphicsContext::setPlatformStrokePattern):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/skia/GradientSkia.cpp:
+        (WebCore::Gradient::setPlatformGradientSpaceTransform):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformFillGradient):
+        (WebCore::GraphicsContext::setPlatformFillPattern):
+        (WebCore::GraphicsContext::setPlatformStrokeGradient):
+        (WebCore::GraphicsContext::setPlatformStrokePattern):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::State::State):
+        (PlatformContextSkia::State::~State):
+        (PlatformContextSkia::drawRect):
+        (PlatformContextSkia::setupPaintCommon):
+        (PlatformContextSkia::setupPaintForFilling):
+        (PlatformContextSkia::setupPaintForStroking):
+        (PlatformContextSkia::setFillColor):
+        (PlatformContextSkia::setStrokeColor):
+        (PlatformContextSkia::setStrokeShader):
+        (PlatformContextSkia::setFillShader):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::skiaDrawText):
+        (WebCore::paintSkiaText):
+        * svg/graphics/SVGPaintServer.cpp:
+        (WebCore::SVGPaintServer::teardown):
+
 2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by Oliver Hunt.

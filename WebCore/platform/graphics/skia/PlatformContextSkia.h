@@ -117,13 +117,13 @@ public:
     void setFillRule(SkPath::FillType);
     void setXfermodeMode(SkXfermode::Mode);
     void setFillColor(SkColor);
+    void setFillShader(SkShader*);
     void setStrokeStyle(WebCore::StrokeStyle);
     void setStrokeColor(SkColor);
     void setStrokeThickness(float thickness);
+    void setStrokeShader(SkShader*);
     void setTextDrawingMode(int mode);
     void setUseAntialiasing(bool enable);
-    void setGradient(SkShader*);
-    void setPattern(SkShader*);
     void setDashPathEffect(SkDashPathEffect*);
 
     SkDrawLooper* getDrawLooper() const;

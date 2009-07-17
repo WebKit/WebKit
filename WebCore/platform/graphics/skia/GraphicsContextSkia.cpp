@@ -687,13 +687,6 @@ void GraphicsContext::fillPath()
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
 
-    if (colorSpace == PatternColorSpace) {
-        SkShader* pat = state.fillPattern->createPlatformPattern(getCTM());
-        paint.setShader(pat);
-        pat->unref();
-    } else if (colorSpace == GradientColorSpace)
-        paint.setShader(state.fillGradient->platformGradient());
-
     platformContext()->canvas()->drawPath(path, paint);
 }
 
@@ -713,14 +706,6 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
-
-    if (colorSpace == PatternColorSpace) {
-        SkShader* pat = state.fillPattern->createPlatformPattern(getCTM());
-        paint.setShader(pat);
-        pat->unref();
-    } else if (colorSpace == GradientColorSpace)
-        paint.setShader(state.fillGradient->platformGradient());
-
     platformContext()->canvas()->drawRect(r, paint);
 }
 
@@ -947,6 +932,24 @@ void GraphicsContext::setPlatformFillColor(const Color& color)
     platformContext()->setFillColor(color.rgb());
 }
 
+void GraphicsContext::setPlatformFillGradient(Gradient* gradient)
+{
+    if (paintingDisabled())
+        return;
+
+    platformContext()->setFillShader(gradient->platformGradient());
+}
+
+void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
+{
+    if (paintingDisabled())
+        return;
+
+    SkShader* pat = pattern->createPlatformPattern(getCTM());
+    platformContext()->setFillShader(pat);
+    pat->safeUnref();
+}
+
 void GraphicsContext::setPlatformShadow(const IntSize& size,
                                         int blurInt,
                                         const Color& color)
@@ -1015,6 +1018,24 @@ void GraphicsContext::setPlatformStrokeThickness(float thickness)
     platformContext()->setStrokeThickness(thickness);
 }
 
+void GraphicsContext::setPlatformStrokeGradient(Gradient* gradient)
+{
+    if (paintingDisabled())
+        return;
+
+    platformContext()->setStrokeShader(gradient->platformGradient());
+}
+
+void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
+{
+    if (paintingDisabled())
+        return;
+
+    SkShader* pat = pattern->createPlatformPattern(getCTM());
+    platformContext()->setStrokeShader(pat);
+    pat->safeUnref();
+}
+
 void GraphicsContext::setPlatformTextDrawingMode(int mode)
 {
     if (paintingDisabled())
@@ -1077,13 +1098,6 @@ void GraphicsContext::strokePath()
     SkPaint paint;
     platformContext()->setupPaintForStroking(&paint, 0, 0);
 
-    if (colorSpace == PatternColorSpace) {
-        SkShader* pat = state.strokePattern->createPlatformPattern(getCTM());
-        paint.setShader(pat);
-        pat->unref();
-    } else if (colorSpace == GradientColorSpace)
-        paint.setShader(state.strokeGradient->platformGradient());
-
     platformContext()->canvas()->drawPath(path, paint);
 }
 
@@ -1101,13 +1115,6 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
     SkPaint paint;
     platformContext()->setupPaintForStroking(&paint, 0, 0);
     paint.setStrokeWidth(WebCoreFloatToSkScalar(lineWidth));
-
-    if (colorSpace == PatternColorSpace) {
-        SkShader* pat = state.strokePattern->createPlatformPattern(getCTM());
-        paint.setShader(pat);
-        pat->unref();
-    } else if (colorSpace == GradientColorSpace)
-        paint.setShader(state.strokeGradient->platformGradient());
 
     platformContext()->canvas()->drawRect(rect, paint);
 }

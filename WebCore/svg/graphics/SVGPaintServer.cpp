@@ -193,8 +193,8 @@ void SVGPaintServer::teardown(GraphicsContext*& context, const RenderObject*, SV
     // added back to the context after filling. This is because internally it
     // calls CGContextFillPath() which closes the path.
     context->beginPath();
-    context->platformContext()->setGradient(0);
-    context->platformContext()->setPattern(0);
+    context->platformContext()->setFillShader(0);
+    context->platformContext()->setStrokeShader(0);
 }
 #else
 void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool) const

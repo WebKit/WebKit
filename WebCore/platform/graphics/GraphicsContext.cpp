@@ -214,6 +214,7 @@ void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
     }
     m_common->state.strokeColorSpace = PatternColorSpace;
     m_common->state.strokePattern = pattern;
+    setPlatformStrokePattern(m_common->state.strokePattern.get());
 }
 
 void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
@@ -225,6 +226,7 @@ void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
     }
     m_common->state.fillColorSpace = PatternColorSpace;
     m_common->state.fillPattern = pattern;
+    setPlatformFillPattern(m_common->state.fillPattern.get());
 }
 
 void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
@@ -236,6 +238,7 @@ void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
     }
     m_common->state.strokeColorSpace = GradientColorSpace;
     m_common->state.strokeGradient = gradient;
+    setPlatformStrokeGradient(m_common->state.strokeGradient.get());
 }
 
 void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
@@ -247,6 +250,7 @@ void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
     }
     m_common->state.fillColorSpace = GradientColorSpace;
     m_common->state.fillGradient = gradient;
+    setPlatformFillGradient(m_common->state.fillGradient.get());
 }
 
 Gradient* GraphicsContext::fillGradient() const
@@ -507,6 +511,24 @@ void GraphicsContext::fillRect(const FloatRect& rect, Generator& generator)
         return;
     generator.fill(this, rect);
 }
+
+#if !PLATFORM(SKIA)
+void GraphicsContext::setPlatformFillGradient(Gradient*)
+{
+}
+
+void GraphicsContext::setPlatformFillPattern(Pattern*)
+{
+}
+
+void GraphicsContext::setPlatformStrokeGradient(Gradient*)
+{
+}
+
+void GraphicsContext::setPlatformStrokePattern(Pattern*)
+{
+}
+#endif
 
 #if !PLATFORM(CG) && !PLATFORM(SKIA)
 // Implement this if you want to go ahead and push the drawing mode into your native context
