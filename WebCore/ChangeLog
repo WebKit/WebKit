@@ -1,3 +1,17 @@
+2009-07-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix of <rdar://problem/5712795> Win: Cannot change the height of the docked Web Inspector (14272)
+        https://bugs.webkit.org/show_bug.cgi?id=14272
+        
+        Moved preference setting for attached inspector height and inspector height calculation from
+        WebInspectorClient.mm into InspectorController.cpp, to make this code cross-platform and enable
+        Windows resizing of attached inspector.
+
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+
 2009-07-17  Dan Bernstein  <mitz@apple.com>
 
         Another attempt at fixing the build after r46063

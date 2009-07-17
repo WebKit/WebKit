@@ -152,9 +152,6 @@ void WebInspectorClient::updateWindowTitle() const
 
 #pragma mark -
 
-#define WebKitInspectorAttachedKey @"WebKitInspectorAttached"
-#define WebKitInspectorAttachedViewHeightKey @"WebKitInspectorAttachedViewHeight"
-
 @implementation WebInspectorWindowController
 - (id)init
 {
@@ -331,8 +328,6 @@ void WebInspectorClient::updateWindowTitle() const
         [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMinYMargin)];
 
         _attachedToInspectedWebView = YES;
-
-        [self setAttachedWindowHeight:[[NSUserDefaults standardUserDefaults] integerForKey:WebKitInspectorAttachedViewHeightKey]];
     } else {
         _attachedToInspectedWebView = NO;
 
@@ -381,23 +376,19 @@ void WebInspectorClient::updateWindowTitle() const
 
 - (void)setAttachedWindowHeight:(unsigned)height
 {
-    [[NSUserDefaults standardUserDefaults] setInteger:height forKey:WebKitInspectorAttachedViewHeightKey];
-
     if (!_attachedToInspectedWebView)
         return;
 
     WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
     NSRect frameViewRect = [frameView frame];
 
-    CGFloat attachedHeight = round(MAX(250.0, MIN(height, (NSHeight([_inspectedWebView frame]) * 0.75))));
-
     // Setting the height based on the difference is done to work with
     // Safari's find banner. This assumes the previous height is the Y origin.
-    CGFloat heightDifference = (NSMinY(frameViewRect) - attachedHeight);
+    CGFloat heightDifference = (NSMinY(frameViewRect) - height);
     frameViewRect.size.height += heightDifference;
-    frameViewRect.origin.y = attachedHeight;
+    frameViewRect.origin.y = height;
 
-    [_webView setFrame:NSMakeRect(0.0, 0.0, NSWidth(frameViewRect), attachedHeight)];
+    [_webView setFrame:NSMakeRect(0.0, 0.0, NSWidth(frameViewRect), height)];
     [frameView setFrame:frameViewRect];
 }
 

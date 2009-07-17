@@ -1,3 +1,18 @@
+2009-07-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix of <rdar://problem/5712795> Win: Cannot change the height of the docked Web Inspector (14272)
+        https://bugs.webkit.org/show_bug.cgi?id=14272
+        
+        Removed size calculation code from [WebInspectorWindowController setInitialAttachedHeight] into
+        InspectorController.cpp to make it cross platform, and use InspectorController to store the 
+        user's preferred size for an attached window, instead of NSUserDefaults.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController showWindow:]):
+        (-[WebInspectorWindowController setAttachedWindowHeight:]):
+
 2009-07-16  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by David Levin.

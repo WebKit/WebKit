@@ -57,8 +57,6 @@ static LPCTSTR kWebInspectorWindowClassName = TEXT("WebInspectorWindowClass");
 static ATOM registerWindowClass();
 static LPCTSTR kWebInspectorPointerProp = TEXT("WebInspectorPointer");
 
-static const unsigned defaultAttachedHeight = 300;
-
 static const IntRect& defaultWindowRect()
 {
     static IntRect rect(60, 200, 750, 650);
@@ -255,7 +253,30 @@ void WebInspectorClient::detachWindow()
 
 void WebInspectorClient::setAttachedWindowHeight(unsigned height)
 {
-    // FIXME: implement this.
+    if (!m_attached)
+        return;
+
+    HWND hostWindow;
+    if (!SUCCEEDED(m_inspectedWebView->hostWindow((OLE_HANDLE*)&hostWindow)))
+        return;
+
+    RECT hostWindowRect;
+    GetClientRect(hostWindow, &hostWindowRect);
+
+    RECT inspectedRect;
+    GetClientRect(m_inspectedWebViewHwnd, &inspectedRect);
+
+    int totalHeight = hostWindowRect.bottom - hostWindowRect.top;
+    int webViewWidth = inspectedRect.right - inspectedRect.left;
+
+    SetWindowPos(m_webViewHwnd, 0, 0, totalHeight - height, webViewWidth, height, SWP_NOZORDER);
+
+    // We want to set the inspected web view height to the totalHeight, because the height adjustment
+    // of the inspected web view happens in onWebViewWindowPosChanging, not here.
+    SetWindowPos(m_inspectedWebViewHwnd, 0, 0, 0, webViewWidth, totalHeight, SWP_NOZORDER);
+
+    RedrawWindow(m_webViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW); 
+    RedrawWindow(m_inspectedWebViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
 }
 
 void WebInspectorClient::highlight(Node*)
@@ -413,9 +434,13 @@ void WebInspectorClient::onWebViewWindowPosChanging(WPARAM, LPARAM lParam)
     if (windowPos->flags & SWP_NOSIZE)
         return;
 
-    windowPos->cy -= defaultAttachedHeight;
+    RECT inspectorRect;
+    GetClientRect(m_webViewHwnd, &inspectorRect);
+    unsigned inspectorHeight = inspectorRect.bottom - inspectorRect.top;
 
-    ::SetWindowPos(m_webViewHwnd, 0, windowPos->x, windowPos->y + windowPos->cy, windowPos->cx, defaultAttachedHeight, SWP_NOZORDER);
+    windowPos->cy -= inspectorHeight;
+
+    SetWindowPos(m_webViewHwnd, 0, windowPos->x, windowPos->y + windowPos->cy, windowPos->cx, inspectorHeight, SWP_NOZORDER);
 }
 
 static LRESULT CALLBACK WebInspectorWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

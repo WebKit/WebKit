@@ -99,7 +99,12 @@ static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-in
 static const char* const resourceTrackingEnabledSettingName = "resourceTrackingEnabled";
 static const char* const debuggerEnabledSettingName = "debuggerEnabled";
 static const char* const profilerEnabledSettingName = "profilerEnabled";
+static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
 static const char* const lastActivePanelSettingName = "lastActivePanel";
+
+static const unsigned defaultAttachedHeight = 300;
+static const float minimumAttachedHeight = 250.0;
+static const float maximumAttachedHeightRatio = 0.75;
 
 bool InspectorController::addSourceToFrame(const String& mimeType, const String& source, Node* frameNode)
 {
@@ -461,11 +466,27 @@ void InspectorController::endGroup(MessageSource source, unsigned lineNumber, co
     addConsoleMessage(0, new ConsoleMessage(source, EndGroupMessageType, LogMessageLevel, String(), lineNumber, sourceURL, m_groupLevel));
 }
 
+static unsigned constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight)
+{
+    return round(max(minimumAttachedHeight,
+        min(static_cast<float>(preferredHeight), totalWindowHeight * maximumAttachedHeightRatio)));
+}
+
 void InspectorController::attachWindow()
 {
     if (!enabled())
         return;
+
+    unsigned inspectedPageHeight = m_inspectedPage->mainFrame()->view()->visibleHeight();
+
     m_client->attachWindow();
+
+    Setting attachedHeight = setting(inspectorAttachedHeightName);
+    unsigned preferredHeight = attachedHeight.type() == Setting::IntegerType ? attachedHeight.integerValue() : defaultAttachedHeight;
+
+    // We need to constrain the window height here in case the user has resized the inspected page's window so that
+    // the user's preferred height would be too big to display.
+    m_client->setAttachedWindowHeight(constrainedAttachedWindowHeight(preferredHeight, inspectedPageHeight));
 }
 
 void InspectorController::detachWindow()
@@ -487,7 +508,13 @@ void InspectorController::setAttachedWindowHeight(unsigned height)
 {
     if (!enabled())
         return;
-    m_client->setAttachedWindowHeight(height);
+    
+    unsigned totalHeight = m_page->mainFrame()->view()->visibleHeight() + m_inspectedPage->mainFrame()->view()->visibleHeight();
+    unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
+    
+    setSetting(inspectorAttachedHeightName, Setting(attachedHeight));
+    
+    m_client->setAttachedWindowHeight(attachedHeight);
 }
 
 void InspectorController::storeLastActivePanel(const String& panelName)
@@ -648,7 +675,18 @@ void InspectorController::close()
 void InspectorController::showWindow()
 {
     ASSERT(enabled());
+
+    unsigned inspectedPageHeight = m_inspectedPage->mainFrame()->view()->visibleHeight();
+
     m_client->showWindow();
+
+    Setting attachedHeight = setting(inspectorAttachedHeightName);
+    unsigned preferredHeight = attachedHeight.type() == Setting::IntegerType ? attachedHeight.integerValue() : defaultAttachedHeight;
+
+    // This call might not go through (if the window starts out detached), but if the window is initially created attached,
+    // InspectorController::attachWindow is never called, so we need to make sure to set the attachedWindowHeight.
+    // FIXME: Clean up code so we only have to call setAttachedWindowHeight in InspectorController::attachWindow
+    m_client->setAttachedWindowHeight(constrainedAttachedWindowHeight(preferredHeight, inspectedPageHeight));
 }
 
 void InspectorController::closeWindow()

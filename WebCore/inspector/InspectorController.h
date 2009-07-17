@@ -113,6 +113,12 @@ public:
             m_simpleContent.m_boolean = value;
         }
 
+        explicit Setting(unsigned value)
+            : m_type(IntegerType)
+        {
+            m_simpleContent.m_integer = value;
+        }
+
         explicit Setting(const String& value)
             : m_type(StringType)
         {
