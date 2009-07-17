@@ -1,3 +1,10 @@
+2009-07-17  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build by removing implicit float <-> double conversions.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::constrainedAttachedWindowHeight):
+
 2009-07-17  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
