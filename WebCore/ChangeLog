@@ -1,5 +1,13 @@
 2009-07-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Holger Freyther.
+
+        Use same license in PluginDebug.cpp as in the original PluginDebug.h
+
+        * plugins/PluginDebug.cpp: Use license from PluginDebug.h
+
+2009-07-17  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Reviewed by Simon Hausmann.
 
         Add more debugging functionality for the WebCore NPAPI layer
