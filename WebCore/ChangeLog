@@ -1,3 +1,26 @@
+2009-07-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        [V8] Centralize hidden property names
+        https://bugs.webkit.org/show_bug.cgi?id=27359
+
+        No behavior change.  Just moving these names to a central location.
+        I'll move the rest of our hidden property names as I sweep though the
+        bindings.
+
+        * WebCore.gypi:
+        * bindings/v8/V8HiddenPropertyName.cpp: Added.
+        (WebCore::V8HiddenPropertyName::objectPrototype):
+        (WebCore::V8HiddenPropertyName::isolatedWorld):
+        * bindings/v8/V8HiddenPropertyName.h: Added.
+        * bindings/v8/V8IsolatedWorld.cpp:
+        (WebCore::V8IsolatedWorld::V8IsolatedWorld):
+        (WebCore::V8IsolatedWorld::getEntered):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::getHiddenObjectPrototype):
+        (WebCore::V8Proxy::installHiddenObjectPrototype):
+
 2009-07-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

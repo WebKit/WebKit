@@ -42,6 +42,7 @@
 #include "V8CustomBinding.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
+#include "V8HiddenPropertyName.h"
 #include "V8Index.h"
 #include "V8IsolatedWorld.h"
 #include "WorkerContextExecutionProxy.h"
@@ -64,8 +65,6 @@ V8ExtensionList V8Proxy::m_extensions;
 
 const char* V8Proxy::kContextDebugDataType = "type";
 const char* V8Proxy::kContextDebugDataValue = "value";
-
-static char hiddenObjectPrototypeKey[] = "hiddenObjectPrototypeKey";
 
 void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, v8::Handle<v8::ObjectTemplate> proto, const BatchedAttribute* attributes, size_t attributeCount)
 {
@@ -1474,14 +1473,14 @@ int V8Proxy::contextDebugId(v8::Handle<v8::Context> context)
 
 v8::Handle<v8::Value> V8Proxy::getHiddenObjectPrototype(v8::Handle<v8::Context> context)
 {
-    return context->Global()->GetHiddenValue(v8::String::New(hiddenObjectPrototypeKey));
+    return context->Global()->GetHiddenValue(V8HiddenPropertyName::objectPrototype());
 }
 
 void V8Proxy::installHiddenObjectPrototype(v8::Handle<v8::Context> context)
 {
     v8::Handle<v8::String> objectString = v8::String::New("Object");
     v8::Handle<v8::String> prototypeString = v8::String::New("prototype");
-    v8::Handle<v8::String> hiddenObjectPrototypeString = v8::String::New(hiddenObjectPrototypeKey);
+    v8::Handle<v8::String> hiddenObjectPrototypeString = V8HiddenPropertyName::objectPrototype();
     // Bail out if allocation failed.
     if (objectString.IsEmpty() || prototypeString.IsEmpty() || hiddenObjectPrototypeString.IsEmpty())
         return;
