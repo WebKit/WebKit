@@ -32,6 +32,7 @@
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
 
 #include "Assertions.h"
+#include "RetainPtr.h"
 #include "Threading.h"
 #include <unicode/ucol.h>
 #include <string.h>
@@ -60,11 +61,16 @@ std::auto_ptr<Collator> Collator::userDefault()
 {
 #if PLATFORM(DARWIN) && PLATFORM(CF)
     // Mac OS X doesn't set UNIX locale to match user-selected one, so ICU default doesn't work.
-    CFStringRef collationOrder = (CFStringRef)CFPreferencesCopyValue(CFSTR("AppleCollationOrder"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    RetainPtr<CFLocaleRef> currentLocale(AdoptCF, CFLocaleCopyCurrent());
+    CFStringRef collationOrder = (CFStringRef)CFLocaleGetValue(currentLocale.get(), kCFLocaleCollatorIdentifier);
+#else
+    RetainPtr<CFStringRef> collationOrderRetainer(AdoptCF, (CFStringRef)CFPreferencesCopyValue(CFSTR("AppleCollationOrder"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    CFStringRef collationOrder = collationOrderRetainer.get();
+#endif
     char buf[256];
     if (collationOrder) {
         CFStringGetCString(collationOrder, buf, sizeof(buf), kCFStringEncodingASCII);
-        CFRelease(collationOrder);
         return std::auto_ptr<Collator>(new Collator(buf));
     } else
         return std::auto_ptr<Collator>(new Collator(""));
