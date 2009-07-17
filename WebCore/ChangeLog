@@ -1,3 +1,19 @@
+2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Added Haiku-specific files for WebCore/platform/text/.
+        https://bugs.webkit.org/show_bug.cgi?id=26949
+
+        Adding two new files, StringHaiku.cpp
+        and TextBreakIteratorInternalICUHaiku.cpp
+
+        * platform/text/haiku/StringHaiku.cpp: Added.
+        (WebCore::String::String):
+        (WebCore::String::operator BString):
+        * platform/text/haiku/TextBreakIteratorInternalICUHaiku.cpp: Added.
+        (WebCore::currentTextBreakLocaleID):
+
 2009-07-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
