@@ -28859,6 +28859,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\PluginDebug.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\PluginDebug.h"
 				>
 			</File>

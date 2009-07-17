@@ -867,6 +867,7 @@ This file contains the list of files needed to build WebCore.
         plugins/PluginArray.cpp
         plugins/PluginData.cpp
         plugins/PluginDatabase.cpp
+        plugins/PluginDebug.cpp
         plugins/PluginInfoStore.cpp
         plugins/PluginMainThreadScheduler.cpp
         plugins/PluginPackage.cpp

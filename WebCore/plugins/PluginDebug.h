@@ -28,30 +28,27 @@
 
 #include "Logging.h"
 #include "npruntime_internal.h"
+#include "CString.h"
+
+#define LOG_NPERROR(err) if (err != NPERR_NO_ERROR) LOG_VERBOSE(Plugins, "%s\n", prettyNameForNPError(err))
+#define LOG_PLUGIN_NET_ERROR() LOG_VERBOSE(Plugins, "Stream failed due to problems with network, disk I/O, lack of memory, or other problems.\n")
 
 #if !LOG_DISABLED
 
-static const char* const errorStrings[] = {
-    "No errors occurred.", /* NPERR_NO_ERROR */
-    "Error with no specific error code occurred.", /* NPERR_GENERIC_ERROR */
-    "Invalid instance passed to the plug-in.", /* NPERR_INVALID_INSTANCE_ERROR */
-    "Function table invalid.", /* NPERR_INVALID_FUNCTABLE_ERROR */
-    "Loading of plug-in failed.", /* NPERR_MODULE_LOAD_FAILED_ERROR */
-    "Memory allocation failed.", /* NPERR_OUT_OF_MEMORY_ERROR */
-    "Plug-in missing or invalid.", /* NPERR_INVALID_PLUGIN_ERROR */
-    "Plug-in directory missing or invalid.", /* NPERR_INVALID_PLUGIN_DIR_ERROR */
-    "Versions of plug-in and Communicator do not match.", /* NPERR_INCOMPATIBLE_VERSION_ERROR */
-    "Parameter missing or invalid.", /* NPERR_INVALID_PARAM */
-    "URL missing or invalid.", /* NPERR_INVALID_URL */
-    "File missing or invalid.", /* NPERR_FILE_NOT_FOUND */
-    "Stream contains no data.", /* NPERR_NO_DATA */
-    "Seekable stream expected.", /* NPERR_STREAM_NOT_SEEKABLE */
-    "Unknown error code"
-};
+namespace WebCore {
 
+const char* prettyNameForNPError(NPError error);
+
+CString prettyNameForNPNVariable(NPNVariable variable);
+CString prettyNameForNPPVariable(NPPVariable variable, void* value);
+
+#ifdef XP_MACOSX
+const char* prettyNameForDrawingModel(NPDrawingModel drawingModel);
+const char* prettyNameForEventModel(NPEventModel eventModel);
 #endif
 
-#define LOG_NPERROR(err) if (err != NPERR_NO_ERROR) LOG_VERBOSE(Plugins, "%s\n", errorStrings[err])
-#define LOG_PLUGIN_NET_ERROR() LOG_VERBOSE(Plugins, "Stream failed due to problems with network, disk I/O, lack of memory, or other problems.\n")
+} // namespace WebCore
 
-#endif
+#endif // !LOG_DISABLED
+
+#endif // PluginDebug_h

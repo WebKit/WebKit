@@ -1011,6 +1011,7 @@ SOURCES += \
     platform/text/UnicodeRange.cpp \
     platform/Widget.cpp \
     plugins/PluginDatabase.cpp \
+    plugins/PluginDebug.cpp \
     plugins/PluginInfoStore.cpp \
     plugins/PluginPackage.cpp \
     plugins/PluginStream.cpp \

@@ -2602,6 +2602,7 @@
             'plugins/PluginData.h',
             'plugins/PluginDatabase.cpp',
             'plugins/PluginDatabase.h',
+            'plugins/PluginDebug.cpp',
             'plugins/PluginDebug.h',
             'plugins/PluginInfoStore.cpp',
             'plugins/PluginInfoStore.h',
