@@ -368,14 +368,14 @@ static void loadURL(BSTR urlBStr)
     IWebFrame* frame = 0;
     IWebMutableURLRequest* request = 0;
 
-
     static BSTR methodBStr = SysAllocString(TEXT("GET"));
 
     if (urlBStr && urlBStr[0] && (PathFileExists(urlBStr) || PathIsUNC(urlBStr))) {
         TCHAR fileURL[INTERNET_MAX_URL_LENGTH];
         DWORD fileURLLength = sizeof(fileURL)/sizeof(fileURL[0]);
+
         if (SUCCEEDED(UrlCreateFromPath(urlBStr, fileURL, &fileURLLength, 0)))
-            urlBStr = fileURL;
+            SysReAllocString(&urlBStr, fileURL);
     }
 
     HRESULT hr = gWebView->mainFrame(&frame);
