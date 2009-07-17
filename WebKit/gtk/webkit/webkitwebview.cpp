@@ -565,7 +565,11 @@ static void webkit_web_view_grab_focus(GtkWidget* widget)
     if (GTK_WIDGET_IS_SENSITIVE(widget)) {
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
         FocusController* focusController = core(webView)->focusController();
-        core(webView)->focusController()->setFocused(true);
+
+        if (Frame* frame = focusController->focusedFrame())
+            focusController->setFocused(true);
+        else
+            focusController->setFocusedFrame(core(webView)->mainFrame());
     }
 
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->grab_focus(widget);
@@ -580,8 +584,12 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
         FocusController* focusController = core(webView)->focusController();
 
-        focusController->setActive(core(webView)->mainFrame());
-        focusController->setFocused(true);
+        focusController->setActive(true);
+
+        if (Frame* frame = focusController->focusedFrame())
+            focusController->setFocused(true);
+        else
+            focusController->setFocusedFrame(core(webView)->mainFrame());
     }
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 }

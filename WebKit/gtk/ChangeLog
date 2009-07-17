@@ -1,3 +1,22 @@
+2009-07-16  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Jan Alonzo.
+
+        [GTK+] Update the focus handling code.
+
+        Change focus-in to always call setActive(true), call
+        FocusController::setFocusedFrame when no focused frame exists
+        other SelectionController::setActive. This is matching Windows
+        and Qt.
+
+        On focus-out call FocusController::setActive(false) and
+        SelectionController::setFocued(false). This is matching Windows
+        and Qt as well.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_focus_in_event):
+        (webkit_web_view_focus_out_event):
+
 2009-07-16  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.
