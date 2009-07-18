@@ -1,3 +1,31 @@
+2009-07-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] Move event listener methods from V8Proxy to V8EventListenerList
+        https://bugs.webkit.org/show_bug.cgi?id=27408
+
+        Move some event listener code out of V8Proxy and into the event
+        listener list.
+
+        I'd like to remove these methods from V8Proxy entirely and just expose
+        getters for the lists themselves, but I'll do that in a follow up
+        patch.
+
+        * bindings/v8/V8EventListenerList.cpp:
+        (WebCore::V8EventListenerList::findWrapper):
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::findOrCreateWrapper):
+        * bindings/v8/V8ObjectEventListener.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::findV8EventListener):
+        (WebCore::V8Proxy::findOrCreateV8EventListener):
+        (WebCore::V8Proxy::removeV8EventListener):
+        (WebCore::V8Proxy::findObjectEventListener):
+        (WebCore::V8Proxy::findOrCreateObjectEventListener):
+        (WebCore::V8Proxy::removeObjectEventListener):
+        * bindings/v8/V8Proxy.h:
+
 2009-07-18  Jeremy Orlow  <jorlow@chromium.org>
 
         Rubber stamped by Adam Barth.

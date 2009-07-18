@@ -54,6 +54,25 @@ static void weakObjectEventListenerCallback(v8::Persistent<v8::Value>, void* par
     listener->disposeListenerObject();
 }
 
+// Object event listeners (such as XmlHttpRequest and MessagePort) are
+// different from listeners on DOM nodes. An object event listener wrapper
+// only holds a weak reference to the JS function. A strong reference can
+// create a cycle.
+//
+// The lifetime of these objects is bounded by the life time of its JS
+// wrapper. So we can create a hidden reference from the JS wrapper to
+// to its JS function.
+//
+//                          (map)
+//              XHR      <----------  JS_wrapper
+//               |             (hidden) :  ^
+//               V                      V  : (may reachable by closure)
+//           V8_listener  --------> JS_function
+//                         (weak)  <-- may create a cycle if it is strong
+//
+// The persistent reference is made weak in the constructor
+// of V8ObjectEventListener.
+
 V8ObjectEventListener::V8ObjectEventListener(Frame* frame, v8::Local<v8::Object> listener, bool isInline)
     : V8EventListener(frame, listener, isInline)
 {

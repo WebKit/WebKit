@@ -361,100 +361,34 @@ void V8Proxy::destroyGlobal()
     }
 }
 
-
-// Event listeners
-
-static V8EventListener* findEventListenerInList(V8EventListenerList& list, v8::Local<v8::Value> listener, bool isInline)
+PassRefPtr<V8EventListener> V8Proxy::findV8EventListener(v8::Local<v8::Value> object, bool isAttribute)
 {
-    ASSERT(v8::Context::InContext());
-
-    if (!listener->IsObject())
-        return 0;
-
-    return list.find(listener->ToObject(), isInline);
+    return m_eventListeners.findWrapper(object, isAttribute);
 }
 
-// Find an existing wrapper for a JS event listener in the map.
-PassRefPtr<V8EventListener> V8Proxy::findV8EventListener(v8::Local<v8::Value> listener, bool isInline)
+PassRefPtr<V8EventListener> V8Proxy::findOrCreateV8EventListener(v8::Local<v8::Value> object, bool isAttribute)
 {
-    return findEventListenerInList(m_eventListeners, listener, isInline);
-}
-
-PassRefPtr<V8EventListener> V8Proxy::findOrCreateV8EventListener(v8::Local<v8::Value> object, bool isInline)
-{
-    ASSERT(v8::Context::InContext());
-
-    if (!object->IsObject())
-        return 0;
-
-    V8EventListener* wrapper = findEventListenerInList(m_eventListeners, object, isInline);
-    if (wrapper)
-        return wrapper;
-
-    // Create a new one, and add to cache.
-    RefPtr<V8EventListener> newListener = V8EventListener::create(m_frame, v8::Local<v8::Object>::Cast(object), isInline);
-    m_eventListeners.add(newListener.get());
-
-    return newListener;
-}
-
-// Object event listeners (such as XmlHttpRequest and MessagePort) are
-// different from listeners on DOM nodes. An object event listener wrapper
-// only holds a weak reference to the JS function. A strong reference can
-// create a cycle.
-//
-// The lifetime of these objects is bounded by the life time of its JS
-// wrapper. So we can create a hidden reference from the JS wrapper to
-// to its JS function.
-//
-//                          (map)
-//              XHR      <----------  JS_wrapper
-//               |             (hidden) :  ^
-//               V                      V  : (may reachable by closure)
-//           V8_listener  --------> JS_function
-//                         (weak)  <-- may create a cycle if it is strong
-//
-// The persistent reference is made weak in the constructor
-// of V8ObjectEventListener.
-
-PassRefPtr<V8EventListener> V8Proxy::findObjectEventListener( v8::Local<v8::Value> listener, bool isInline)
-{
-    return findEventListenerInList(m_xhrListeners, listener, isInline);
-}
-
-PassRefPtr<V8EventListener> V8Proxy::findOrCreateObjectEventListener(v8::Local<v8::Value> object, bool isInline)
-{
-    ASSERT(v8::Context::InContext());
-
-    if (!object->IsObject())
-        return 0;
-
-    V8EventListener* wrapper = findEventListenerInList(m_xhrListeners, object, isInline);
-    if (wrapper)
-        return wrapper;
-
-    // Create a new one, and add to cache.
-    RefPtr<V8EventListener> newListener = V8ObjectEventListener::create(m_frame, v8::Local<v8::Object>::Cast(object), isInline);
-    m_xhrListeners.add(newListener.get());
-
-    return newListener.release();
-}
-
-
-static void removeEventListenerFromList(V8EventListenerList& list, V8EventListener* listener)
-{
-    list.remove(listener);
+    return m_eventListeners.findOrCreateWrapper<V8EventListener>(m_frame, object, isAttribute);
 }
 
 void V8Proxy::removeV8EventListener(V8EventListener* listener)
 {
-    removeEventListenerFromList(m_eventListeners, listener);
+    m_eventListeners.remove(listener);
 }
 
+PassRefPtr<V8EventListener> V8Proxy::findObjectEventListener( v8::Local<v8::Value> object, bool isAttribute)
+{
+    return m_xhrListeners.findWrapper(object, isAttribute);
+}
+
+PassRefPtr<V8EventListener> V8Proxy::findOrCreateObjectEventListener(v8::Local<v8::Value> object, bool isAttribute)
+{
+    return m_xhrListeners.findOrCreateWrapper<V8ObjectEventListener>(m_frame, object, isAttribute);
+}
 
 void V8Proxy::removeObjectEventListener(V8ObjectEventListener* listener)
 {
-    removeEventListenerFromList(m_xhrListeners, listener);
+    m_xhrListeners.remove(listener);
 }
 
 static void disconnectEventListenersInList(V8EventListenerList& list)
@@ -467,13 +401,11 @@ static void disconnectEventListenersInList(V8EventListenerList& list)
     list.clear();
 }
 
-
 void V8Proxy::disconnectEventListeners()
 {
     disconnectEventListenersInList(m_eventListeners);
     disconnectEventListenersInList(m_xhrListeners);
 }
-
 
 v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const String& fileName, int baseLine)
 {

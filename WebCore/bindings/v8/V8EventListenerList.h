@@ -35,7 +35,10 @@
 #include <wtf/Vector.h>
 #include <wtf/HashMap.h>
 
+#include "PassRefPtr.h"
+
 namespace WebCore {
+    class Frame;
     class V8EventListener;
     class V8EventListenerListIterator;
 
@@ -67,6 +70,10 @@ namespace WebCore {
         void clear();
         size_t size() { return m_table.size(); }
 
+        PassRefPtr<V8EventListener> findWrapper(v8::Local<v8::Value>, bool isAttribute);
+        template<typename WrapperType>
+        PassRefPtr<V8EventListener> findOrCreateWrapper(Frame*, v8::Local<v8::Value>, bool isAttribute);
+
     private:
         ListenerMultiMap m_table;
 
@@ -91,6 +98,25 @@ namespace WebCore {
         V8EventListenerList* m_list;
         V8EventListenerList::ListenerMultiMap::iterator m_iter;
         size_t m_vectorIndex;
+    };
+
+    template<typename WrapperType>
+    PassRefPtr<V8EventListener> V8EventListenerList::findOrCreateWrapper(Frame* frame, v8::Local<v8::Value> object, bool isAttribute)
+    {
+        ASSERT(v8::Context::InContext());
+        if (!object->IsObject())
+            return 0;
+
+        // FIXME: Should this be v8::Local<v8::Object>::Cast instead?
+        V8EventListener* wrapper = find(object->ToObject(), isAttribute);
+        if (wrapper)
+            return wrapper;
+
+        // Create a new one, and add to cache.
+        RefPtr<WrapperType> newListener = WrapperType::create(frame, v8::Local<v8::Object>::Cast(object), isAttribute);
+        add(newListener.get());
+
+        return newListener;
     };
 
 } // namespace WebCore

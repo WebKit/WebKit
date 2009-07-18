@@ -196,14 +196,14 @@ namespace WebCore {
 
         bool isEnabled();
 
-        // Find/Create/Remove event listener wrappers.
+        // FIXME: Replace these APIs with a getter for m_eventListeners
         PassRefPtr<V8EventListener> findV8EventListener(v8::Local<v8::Value> listener, bool isHtml);
         PassRefPtr<V8EventListener> findOrCreateV8EventListener(v8::Local<v8::Value> listener, bool isHtml);
+        void removeV8EventListener(V8EventListener*);
 
+        // FIXME: Replace these APIs with a getter for m_xhrListeners
         PassRefPtr<V8EventListener> findObjectEventListener(v8::Local<v8::Value> listener, bool isHtml);
         PassRefPtr<V8EventListener> findOrCreateObjectEventListener(v8::Local<v8::Value> listener, bool isHtml);
-
-        void removeV8EventListener(V8EventListener*);
         void removeObjectEventListener(V8ObjectEventListener*);
 
 #if ENABLE(SVG)

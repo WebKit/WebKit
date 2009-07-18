@@ -182,4 +182,14 @@ V8EventListener* V8EventListenerList::find(v8::Local<v8::Object> object, bool is
     return 0;
 }
 
+PassRefPtr<V8EventListener> V8EventListenerList::findWrapper(v8::Local<v8::Value> object, bool isAttribute)
+{
+    ASSERT(v8::Context::InContext());
+    if (!object->IsObject())
+        return 0;
+
+    // FIXME: Should this be v8::Local<v8::Object>::Cast instead?
+    return find(object->ToObject(), isAttribute);
+}
+
 } // namespace WebCore
