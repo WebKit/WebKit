@@ -44,9 +44,7 @@ namespace WebCore {
     // This interface is required for Chromium since these actions need to be proxied between processes.
     class StorageArea : public ThreadSafeShared<StorageArea> {
     public:
-        static PassRefPtr<StorageArea> create(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
         virtual ~StorageArea() { }
-        virtual PassRefPtr<StorageArea> copy(SecurityOrigin*) = 0;
 
         // The HTML5 DOM Storage API
         virtual unsigned length() const = 0;
@@ -55,13 +53,7 @@ namespace WebCore {
         virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame) = 0;
         virtual void removeItem(const String& key, Frame* sourceFrame) = 0;
         virtual void clear(Frame* sourceFrame) = 0;
-
         virtual bool contains(const String& key) const = 0;
-        virtual void close() = 0;
-
-        // Could be called from a background thread.
-        virtual void importItem(const String& key, const String& value) = 0;
-        virtual SecurityOrigin* securityOrigin() = 0;
     };
 
 } // namespace WebCore

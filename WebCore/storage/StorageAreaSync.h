@@ -37,12 +37,12 @@
 namespace WebCore {
 
     class Frame;
-    class StorageArea;
+    class StorageAreaImpl;
     class StorageSyncManager;
     
     class StorageAreaSync : public RefCounted<StorageAreaSync> {
     public:
-        static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageArea> storageArea);
+        static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea);
         ~StorageAreaSync();
 
         void scheduleFinalSync();
@@ -52,7 +52,7 @@ namespace WebCore {
         void scheduleClear();
         
     private:
-        StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageArea> storageArea);
+        StorageAreaSync(PassRefPtr<StorageSyncManager> storageSyncManager, PassRefPtr<StorageAreaImpl> storageArea);
 
         void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
@@ -62,7 +62,7 @@ namespace WebCore {
         
         bool m_finalSyncScheduled;
 
-        RefPtr<StorageArea> m_storageArea;
+        RefPtr<StorageAreaImpl> m_storageArea;
         RefPtr<StorageSyncManager> m_syncManager;
 
         // The database handle will only ever be opened and used on the background thread.

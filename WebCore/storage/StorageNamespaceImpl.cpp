@@ -30,7 +30,7 @@
 
 #include "SecurityOriginHash.h"
 #include "StringHash.h"
-#include "StorageArea.h"
+#include "StorageAreaImpl.h"
 #include "StorageSyncManager.h"
 #include <wtf/StdLibExtras.h>
 
@@ -93,7 +93,7 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
 
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i) {
-        RefPtr<StorageArea> areaCopy = i->second->copy(i->first.get());
+        RefPtr<StorageAreaImpl> areaCopy = i->second->copy(i->first.get());
         newNamespace->m_storageAreaMap.set(i->first, areaCopy.release());
     }
 
@@ -105,11 +105,11 @@ PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(SecurityOrigin* origin
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
 
-    RefPtr<StorageArea> storageArea;
+    RefPtr<StorageAreaImpl> storageArea;
     if (storageArea = m_storageAreaMap.get(origin))
         return storageArea.release();
 
-    storageArea = StorageArea::create(m_storageType, origin, m_syncManager);
+    storageArea = new StorageAreaImpl(m_storageType, origin, m_syncManager);
     m_storageAreaMap.set(origin, storageArea);
     return storageArea.release();
 }

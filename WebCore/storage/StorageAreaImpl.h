@@ -40,27 +40,26 @@ namespace WebCore {
 
     class StorageAreaImpl : public StorageArea {
     public:
-        static PassRefPtr<StorageArea> create(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
+        StorageAreaImpl(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
         virtual ~StorageAreaImpl();
-        virtual PassRefPtr<StorageArea> copy(SecurityOrigin*);
 
-        // The HTML5 DOM Storage API
+        // The HTML5 DOM Storage API (and contains)
         virtual unsigned length() const;
         virtual String key(unsigned index, ExceptionCode& ec) const;
         virtual String getItem(const String& key) const;
         virtual void setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame);
         virtual void removeItem(const String& key, Frame* sourceFrame);
         virtual void clear(Frame* sourceFrame);
-
         virtual bool contains(const String& key) const;
-        virtual void close();
+
+        PassRefPtr<StorageAreaImpl> copy(SecurityOrigin*);
+        void close();
 
         // Could be called from a background thread.
         void importItem(const String& key, const String& value);
         SecurityOrigin* securityOrigin();
 
     private:
-        StorageAreaImpl(StorageType, SecurityOrigin*, PassRefPtr<StorageSyncManager>);
         StorageAreaImpl(SecurityOrigin*, StorageAreaImpl*);
 
         void blockUntilImportComplete() const;

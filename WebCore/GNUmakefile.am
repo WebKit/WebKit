@@ -2120,7 +2120,6 @@ webcore_sources += \
 	WebCore/storage/LocalStorageThread.h \
 	WebCore/storage/Storage.cpp \
 	WebCore/storage/Storage.h \
-	WebCore/storage/StorageArea.cpp \
 	WebCore/storage/StorageArea.h \
 	WebCore/storage/StorageAreaImpl.cpp \
 	WebCore/storage/StorageAreaImpl.h \

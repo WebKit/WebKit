@@ -30263,10 +30263,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\StorageArea.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\storage\StorageArea.h"
 				>
 			</File>

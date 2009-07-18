@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+    class StorageAreaImpl;
+
     class StorageNamespaceImpl : public StorageNamespace {
     public:
         static PassRefPtr<StorageNamespace> localStorageNamespace(const String& path);
@@ -51,7 +53,7 @@ namespace WebCore {
     private:
         StorageNamespaceImpl(StorageType, const String& path);
 
-        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> StorageAreaMap;
+        typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl>, SecurityOriginHash> StorageAreaMap;
         StorageAreaMap m_storageAreaMap;
 
         StorageType m_storageType;
