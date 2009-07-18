@@ -256,8 +256,8 @@ int InlineFlowBox::placeBoxesHorizontally(int xPos, int& leftPosition, int& righ
     int boxShadowLeft = 0;
     int boxShadowRight = 0;
     for (ShadowData* boxShadow = renderer()->style(m_firstLine)->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-        boxShadowLeft = min(boxShadow->x - boxShadow->blur, boxShadowLeft);
-        boxShadowRight = max(boxShadow->x + boxShadow->blur, boxShadowRight);
+        boxShadowLeft = min(boxShadow->x - boxShadow->blur - boxShadow->spread, boxShadowLeft);
+        boxShadowRight = max(boxShadow->x + boxShadow->blur + boxShadow->spread, boxShadowRight);
     }
     leftPosition = min(xPos + boxShadowLeft, leftPosition);
 
@@ -529,8 +529,8 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
             }
 
             for (ShadowData* boxShadow = curr->renderer()->style(m_firstLine)->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-                overflowTop = min(overflowTop, boxShadow->y - boxShadow->blur);
-                overflowBottom = max(overflowBottom, boxShadow->y + boxShadow->blur);
+                overflowTop = min(overflowTop, boxShadow->y - boxShadow->blur - boxShadow->spread);
+                overflowBottom = max(overflowBottom, boxShadow->y + boxShadow->blur + boxShadow->spread);
             }
 
             for (ShadowData* textShadow = curr->renderer()->style(m_firstLine)->textShadow(); textShadow; textShadow = textShadow->next) {
@@ -601,8 +601,8 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
     int shadowLeft = 0;
     int shadowRight = 0;
     for (ShadowData* boxShadow = renderer()->style(m_firstLine)->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-        shadowLeft = min(boxShadow->x - boxShadow->blur, shadowLeft);
-        shadowRight = max(boxShadow->x + boxShadow->blur, shadowRight);
+        shadowLeft = min(boxShadow->x - boxShadow->blur - boxShadow->spread, shadowLeft);
+        shadowRight = max(boxShadow->x + boxShadow->blur + boxShadow->spread, shadowRight);
     }
     for (ShadowData* textShadow = renderer()->style(m_firstLine)->textShadow(); textShadow; textShadow = textShadow->next) {
         shadowLeft = min(textShadow->x - textShadow->blur, shadowLeft);

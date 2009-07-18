@@ -28,6 +28,7 @@ ShadowData::ShadowData(const ShadowData& o)
     : x(o.x)
     , y(o.y)
     , blur(o.blur)
+    , spread(o.spread)
     , color(o.color)
 {
     next = o.next ? new ShadowData(*o.next) : 0;
@@ -39,7 +40,7 @@ bool ShadowData::operator==(const ShadowData& o) const
         (next && o.next && *next != *o.next))
         return false;
     
-    return x == o.x && y == o.y && blur == o.blur && color == o.color;
+    return x == o.x && y == o.y && blur == o.blur && spread == o.spread && color == o.color;
 }
 
 } // namespace WebCore

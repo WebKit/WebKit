@@ -1,3 +1,89 @@
+2009-07-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add spread radius support to -webkit-box-shadow
+        https://bugs.webkit.org/show_bug.cgi?id=27417
+
+        Test: fast/box-shadow/spread.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForShadow): Added a property ID parameter and used it to
+            include the spread length for box-shadow but not for text-shadow.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+            Pass the property ID to valueForShadow().
+
+        * css/CSSParser.cpp:
+        (WebCore::ShadowParseContext::ShadowParseContext): Added property,
+            spread, and allowSpread members. Added a property ID parameter to
+            the constructor. Initialize the property and allowSpread members.
+        (WebCore::ShadowParseContext::allowLength): Added allowSpread.
+        (WebCore::ShadowParseContext::commitValue): Pass the spread value to
+            the ShadowValue constructor. Reset allowSpread.
+        (WebCore::ShadowParseContext::commitLength): Allow spread after blur
+            for the box-shadow property.
+        (WebCore::ShadowParseContext::commitColor): Reset allowSpread.
+        (WebCore::CSSParser::parseShadow): Pass the property ID to
+            ShadowParseContext().
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Get the spread value from
+            the shadow value and pass it to the ShadowData constructor.
+
+        * css/ShadowValue.cpp:
+        (WebCore::ShadowValue::ShadowValue): Added spread.
+        (WebCore::ShadowValue::cssText): Added spread.
+
+        * css/ShadowValue.h:
+        (WebCore::ShadowValue::create): Added spread.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc): Blend the spread value.
+        (WebCore::PropertyWrapperShadow::blend): Added 0 spread to the default
+            shadow.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Account for spread in
+            the visual overflow calculations.
+        (WebCore::InlineFlowBox::placeBoxesVertically): Ditto.
+        (WebCore::InlineFlowBox::paint): Ditto.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowHeight): Ditto.
+        (WebCore::RenderBlock::overflowWidth): Ditto.
+        (WebCore::RenderBlock::overflowLeft): Ditto.
+        (WebCore::RenderBlock::overflowTop): Ditto.
+        (WebCore::RenderBlock::overflowRect): Ditto.
+        (WebCore::RenderBlock::layoutBlock): Ditto.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow): Inflate the shadow-
+            casting rect by the shadow spread value. Adjust border radii if
+            necessary.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Account for spread in the
+            visual overflow calculations.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateRects): Ditto.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded): Account for spread.
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow): Ditto.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::adjustOverflowForBoxShadowAndReflect): Ditto.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow): Assert that text shadows do not
+            have spread.
+
+        * rendering/style/ShadowData.cpp:
+        (WebCore::ShadowData::ShadowData): Added spread.
+        (WebCore::ShadowData::operator==): Compare spread.
+        * rendering/style/ShadowData.h:
+        (WebCore::ShadowData::ShadowData): Added spread.
+
 2009-07-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Jan Alonzo.

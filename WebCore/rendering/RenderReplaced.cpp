@@ -333,7 +333,7 @@ void RenderReplaced::adjustOverflowForBoxShadowAndReflect()
     for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
         IntRect shadow = borderBoxRect();
         shadow.move(boxShadow->x, boxShadow->y);
-        shadow.inflate(boxShadow->blur);
+        shadow.inflate(boxShadow->blur + boxShadow->spread);
         overflow.unite(shadow);
     }
 

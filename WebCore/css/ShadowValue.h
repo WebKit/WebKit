@@ -35,9 +35,10 @@ public:
     static PassRefPtr<ShadowValue> create(PassRefPtr<CSSPrimitiveValue> x,
         PassRefPtr<CSSPrimitiveValue> y,
         PassRefPtr<CSSPrimitiveValue> blur,
+        PassRefPtr<CSSPrimitiveValue> spread,
         PassRefPtr<CSSPrimitiveValue> color)
     {
-        return adoptRef(new ShadowValue(x, y, blur, color));
+        return adoptRef(new ShadowValue(x, y, blur, spread, color));
     }
 
     virtual String cssText() const;
@@ -45,12 +46,14 @@ public:
     RefPtr<CSSPrimitiveValue> x;
     RefPtr<CSSPrimitiveValue> y;
     RefPtr<CSSPrimitiveValue> blur;
+    RefPtr<CSSPrimitiveValue> spread;
     RefPtr<CSSPrimitiveValue> color;
 
 private:
     ShadowValue(PassRefPtr<CSSPrimitiveValue> x,
         PassRefPtr<CSSPrimitiveValue> y,
         PassRefPtr<CSSPrimitiveValue> blur,
+        PassRefPtr<CSSPrimitiveValue> spread,
         PassRefPtr<CSSPrimitiveValue> color);
 };
 

@@ -4539,10 +4539,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             int x = item->x->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
             int y = item->y->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
             int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle, zoomFactor) : 0;
+            int spread = item->spread ? item->spread->computeLengthInt(style(), m_rootElementStyle, zoomFactor) : 0;
             Color color;
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
-            ShadowData* shadowData = new ShadowData(x, y, blur, color.isValid() ? color : Color::transparent);
+            ShadowData* shadowData = new ShadowData(x, y, blur, spread, color.isValid() ? color : Color::transparent);
             if (id == CSSPropertyTextShadow)
                 m_style->setTextShadow(shadowData, i != 0);
             else

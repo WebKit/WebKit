@@ -117,7 +117,8 @@ static inline ShadowData* blendFunc(const AnimationBase* anim, const ShadowData*
 {  
     ASSERT(from && to);
     return new ShadowData(blendFunc(anim, from->x, to->x, progress), blendFunc(anim, from->y, to->y, progress), 
-                          blendFunc(anim, from->blur, to->blur, progress), blendFunc(anim, from->color, to->color, progress));
+                          blendFunc(anim, from->blur, to->blur, progress), blendFunc(anim, from->spread, to->spread, progress),
+                          blendFunc(anim, from->color, to->color, progress));
 }
 
 static inline TransformOperations blendFunc(const AnimationBase* anim, const TransformOperations& from, const TransformOperations& to, double progress)
@@ -300,7 +301,7 @@ public:
     {
         ShadowData* shadowA = (a->*m_getter)();
         ShadowData* shadowB = (b->*m_getter)();
-        ShadowData defaultShadowData(0, 0, 0, Color::transparent);
+        ShadowData defaultShadowData(0, 0, 0, 0, Color::transparent);
 
         if (!shadowA)
             shadowA = &defaultShadowData;

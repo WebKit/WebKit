@@ -1138,20 +1138,24 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
     bool hasBorderRadius = s->hasBorderRadius();
     bool hasOpaqueBackground = s->backgroundColor().isValid() && s->backgroundColor().alpha() == 255;
     for (ShadowData* shadow = s->boxShadow(); shadow; shadow = shadow->next) {
-        context->save();
-
         IntSize shadowOffset(shadow->x, shadow->y);
         int shadowBlur = shadow->blur;
+        int shadowSpread = shadow->spread;
         IntRect fillRect(rect);
+        fillRect.inflate(shadowSpread);
+        if (fillRect.isEmpty())
+            continue;
 
         IntRect shadowRect(rect);
-        shadowRect.inflate(shadowBlur);
+        shadowRect.inflate(shadowBlur + shadowSpread);
         shadowRect.move(shadowOffset);
+
+        context->save();
         context->clip(shadowRect);
 
         // Move the fill just outside the clip, adding 1 pixel separation so that the fill does not
         // bleed in (due to antialiasing) if the context is transformed.
-        IntSize extraOffset(w + max(0, shadowOffset.width()) + shadowBlur + 1, 0);
+        IntSize extraOffset(w + max(0, shadowOffset.width()) + shadowBlur + 2 * shadowSpread + 1, 0);
         shadowOffset -= extraOffset;
         fillRect.move(extraOffset);
 
@@ -1170,6 +1174,20 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
             IntSize topRightToClipOut = topRight;
             IntSize bottomLeftToClipOut = bottomLeft;
             IntSize bottomRightToClipOut = bottomRight;
+
+            if (shadowSpread < 0) {
+                topLeft.expand(shadowSpread, shadowSpread);
+                topLeft.clampNegativeToZero();
+
+                topRight.expand(shadowSpread, shadowSpread);
+                topRight.clampNegativeToZero();
+
+                bottomLeft.expand(shadowSpread, shadowSpread);
+                bottomLeft.clampNegativeToZero();
+
+                bottomRight.expand(shadowSpread, shadowSpread);
+                bottomRight.clampNegativeToZero();
+            }
 
             // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
             // when painting the shadow. On the other hand, it introduces subpixel gaps along the

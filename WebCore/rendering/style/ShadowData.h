@@ -36,15 +36,17 @@ struct ShadowData {
         : x(0)
         , y(0)
         , blur(0)
+        , spread(0)
         , next(0)
     {
     }
 
-    ShadowData(int _x, int _y, int _blur, const Color& _color)
-        : x(_x)
-        , y(_y)
-        , blur(_blur)
-        , color(_color)
+    ShadowData(int x, int y, int blur, int spread, const Color& color)
+        : x(x)
+        , y(y)
+        , blur(blur)
+        , spread(spread)
+        , color(color)
         , next(0)
     {
     }
@@ -62,6 +64,7 @@ struct ShadowData {
     int x;
     int y;
     int blur;
+    int spread;
     Color color;
     ShadowData* next;
 };

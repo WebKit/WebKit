@@ -261,7 +261,7 @@ static const int computedProperties[] = {
 
 const unsigned numComputedProperties = sizeof(computedProperties) / sizeof(computedProperties[0]);
 
-static PassRefPtr<CSSValue> valueForShadow(const ShadowData* shadow)
+static PassRefPtr<CSSValue> valueForShadow(const ShadowData* shadow, CSSPropertyID propertyID)
 {
     if (!shadow)
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
@@ -271,8 +271,9 @@ static PassRefPtr<CSSValue> valueForShadow(const ShadowData* shadow)
         RefPtr<CSSPrimitiveValue> x = CSSPrimitiveValue::create(s->x, CSSPrimitiveValue::CSS_PX);
         RefPtr<CSSPrimitiveValue> y = CSSPrimitiveValue::create(s->y, CSSPrimitiveValue::CSS_PX);
         RefPtr<CSSPrimitiveValue> blur = CSSPrimitiveValue::create(s->blur, CSSPrimitiveValue::CSS_PX);
+        RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? 0 : CSSPrimitiveValue::create(s->spread, CSSPrimitiveValue::CSS_PX);
         RefPtr<CSSPrimitiveValue> color = CSSPrimitiveValue::createColor(s->color.rgb());
-        list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), color.release()));
+        list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), color.release()));
     }
     return list.release();
 }
@@ -722,7 +723,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitBoxReflect:
             return valueForReflection(style->boxReflect());
         case CSSPropertyWebkitBoxShadow:
-            return valueForShadow(style->boxShadow());
+            return valueForShadow(style->boxShadow(), static_cast<CSSPropertyID>(propertyID));
         case CSSPropertyCaptionSide:
             return CSSPrimitiveValue::create(style->captionSide());
         case CSSPropertyClear:
@@ -1049,7 +1050,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyTextIndent:
             return CSSPrimitiveValue::create(style->textIndent());
         case CSSPropertyTextShadow:
-            return valueForShadow(style->textShadow());
+            return valueForShadow(style->textShadow(), static_cast<CSSPropertyID>(propertyID));
         case CSSPropertyWebkitTextSecurity:
             return CSSPrimitiveValue::create(style->textSecurity());
         case CSSPropertyWebkitTextSizeAdjust:
