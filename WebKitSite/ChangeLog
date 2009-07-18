@@ -1,5 +1,11 @@
 2009-07-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the font to match the rest of the blog site.
+
+        * blog-files/3d-transforms/image-flip.html:
+
+2009-07-17  Simon Fraser  <simon.fraser@apple.com>
+
         Move the image flip effect into an iframe to avoid the long
         blog page tripping a bug on Leopard.
 
