@@ -5893,27 +5893,40 @@ webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
 
 # Tests that failed because we don't have an eventSender implementation
+editing/selection/extend-selection-after-double-click.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
 fast/forms/search-delete-while-cancel-button-clicked.html
 fast/forms/slider-delete-while-dragging-thumb.html
+http/tests/appcache/main-resource-hash.html
 http/tests/local/drag-over-remote-content.html
 http/tests/security/drag-over-remote-content-iframe.html
 http/tests/security/clipboard/clipboard-file-access.html
 media/audio-delete-while-slider-thumb-clicked.html
 media/audio-delete-while-step-button-clicked.html
 
+# Tests that require editing callbacks (and possibly Glib DOM bindings)
+editing/text-iterator/thai-cursor-movement.html
+
 # Requires expected results that we don't have atm
 editing/inserting/break-blockquote-after-delete.html
 fast/box-shadow/transform-fringing.html
+fast/css/attribute-selector-dynamic.xml
+fast/css/nested-floating-relative-position-percentages.html
 fast/css/nth-child-dynamic.html
+fast/css/positioned-overflow-scroll.html
 fast/css/pseudo-cache-stale.html
+fast/css/rem-dynamic-scaling.html
+fast/css/rem-units-on-root.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/forms/search-vertical-alignment.html
 fast/frames/viewsource-on-image-file.html
 fast/repaint/background-generated.html
+fast/repaint/background-misaligned.html
 fast/repaint/float-in-new-block-with-layout-delta.html
 fast/repaint/float-new-in-block.html
+fast/text/international/khmer-selection.html
+fast/text/shadow-translucent-fill.html
 fast/text/text-large-negative-letter-spacing-with-opacity.html
 fast/text/text-letter-spacing.html
 media/controls-after-reload.html
