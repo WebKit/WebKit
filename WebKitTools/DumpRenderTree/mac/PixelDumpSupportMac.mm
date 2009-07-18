@@ -34,7 +34,7 @@
 
 #include "LayoutTestController.h"
 #include <CoreGraphics/CGBitmapContext.h>
-#ifndef BUILDING_ON_LEOPARD
+#if !defined(BUILDING_ON_TIGER)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/CGLMacro.h>
 #endif
@@ -154,14 +154,17 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
         }
     } else {
 
-        // Make sure the view has been painted.
-        [view displayIfNeeded];
-
         if (onscreen) {
 #if !defined(BUILDING_ON_TIGER)
+            // displayIfNeeded does not update the CA layers if the layer-hosting view was not marked as needing display, so
+            // we're at the mercy of CA's display-link callback to update layers in time. So we need to force a display of the view
+            // to get AppKit to update the CA layers synchronously.
+            // FIXME: this will break repaint testing if we have compositing in repaint tests
+            // (displayWebView() painted gray over the webview, but we'll be making everything repaint again).
+            [view display];
+
             // Ask the window server to provide us a composited version of the *real* window content including surfaces (i.e. OpenGL content)
             // Note that the returned image might differ very slightly from the window backing because of dithering artifacts in the window server compositor
-            
             CGImageRef image = CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, [[view window] windowNumber], kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque);
             CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image), CGImageGetHeight(image)), image);
             CGImageRelease(image);
@@ -220,6 +223,9 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool inc
             [window setLevel:oldLevel];
 #endif
         } else {
+            // Make sure the view has been painted.
+            [view displayIfNeeded];
+
             // Grab directly the contents of the window backing buffer (this ignores any surfaces on the window)
             // FIXME: This path is suboptimal: data is read from window backing store, converted to RGB8 then drawn again into an RGBA8 bitmap
             [view lockFocus];

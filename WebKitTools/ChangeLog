@@ -1,3 +1,17 @@
+2009-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        DRT doesn't reliably snapshot composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=27399
+        
+        If we're doing an "onscreen" pixel capture, it means that we're snapshotting a view
+        with composited content. In that case we need to force the view to display so that
+        the composited layers are rendered to the screen.
+
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        (createBitmapContextFromWebView):
+
 2009-07-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
