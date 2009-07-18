@@ -1,5 +1,17 @@
 2009-07-18  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Jan Alonzo.
+
+        Minor FrameLoader.cpp cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=27406
+
+        No behavior change.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeIfJavaScriptURL):
+
+2009-07-18  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Fisher.
 
         [V8] Move event listener methods from V8Proxy to V8EventListenerList
