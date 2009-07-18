@@ -1000,8 +1000,15 @@ void V8Proxy::updateDocument()
     if (!m_frame->document())
         return;
 
-    if (m_context.IsEmpty())
+    if (m_global.IsEmpty())
         return;
+
+    // There is an existing JavaScript wrapper for the global object
+    // of this frame. JavaScript code in other frames might hold a
+    // reference to this wrapper. We eagerly initialize the JavaScript
+    // context for the new document to make property access on the
+    // global object wrapper succeed.
+    initContextIfNeeded();
 
     // We have a new document and we need to update the cache.
     updateDocumentWrapperCache();
