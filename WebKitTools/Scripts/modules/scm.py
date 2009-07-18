@@ -216,10 +216,25 @@ class SVN(SCM):
         return os.path.isdir(os.path.join(path, '.svn'))
     
     @staticmethod
+    def find_uuid(path):
+        if not SVN.in_working_directory(path):
+            return None
+        info = SVN.run_command(['svn', 'info', path])
+        match = re.search("^Repository UUID: (?P<uuid>.+)$", info, re.MULTILINE)
+        if not match:
+            raise ScriptError('svn info did not contain a UUID.')
+        return match.group('uuid')
+    
+    @staticmethod
     def find_checkout_root(path):
+        uuid = SVN.find_uuid(path)
+        # If |path| is not in a working directory, we're supposed to return |path|.
+        if not uuid:
+            return path
+        # Search up the directory hierarchy until we find a different UUID.
         last_path = None
         while True:
-            if not SVN.in_working_directory(path):
+            if uuid != SVN.find_uuid(path):
                 return last_path
             last_path = path
             (path, last_component) = os.path.split(path)
