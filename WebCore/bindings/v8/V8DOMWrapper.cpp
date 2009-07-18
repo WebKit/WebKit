@@ -711,7 +711,9 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, V8ClassI
         proxy = 0;
         // FIXME: Do we need a wrapper cache for the isolated world?  We should
         // see if the performance gains are worth while.
-    }
+    } else if (!proxy)
+        proxy = V8Proxy::retrieve();
+
     v8::Local<v8::Object> instance;
     if (proxy)
         instance = proxy->createWrapperFromCache(descriptorType);
