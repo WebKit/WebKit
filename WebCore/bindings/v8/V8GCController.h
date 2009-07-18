@@ -44,8 +44,7 @@ namespace WebCore {
     V(EVENT_LISTENER)             \
     V(NODE_FILTER)                \
     V(SCRIPTINSTANCE)             \
-    V(SCRIPTVALUE)                \
-    V(DATASOURCE)
+    V(SCRIPTVALUE)
 
 
     // Host information of persistent handles.

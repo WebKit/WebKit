@@ -6,8 +6,6 @@
         if (window.layoutTestController)
             layoutTestController.dumpAsText();
 
-        try {
-            
         function log(msg)
         {
             document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
@@ -16,7 +14,7 @@
         var datagrid = document.getElementById('test');
 
         // Test initial value.
-        if (datagrid.dataSource === null) {
+        if (datagrid.dataSource == null) {
             log("PASS: Initial value of datagrid.dataSource is null.");
         } else {
             log("FAIL: Initial value of datagrid.dataSource was not null. Was " + datagrid.dataSource + ".");
@@ -24,18 +22,18 @@
 
         // Test setting to a JS number
         datagrid.dataSource = 10;
-        if (datagrid.dataSource === 10) {
+        if (datagrid.dataSource == 10) {
             log("PASS: Allowed setting datagrid.dataSource to a number.");
         } else {
-            log("FAIL: Did not allow setting datagrid.dataSource to a number.");
+            log("FAIL: Did not allowed setting datagrid.dataSource to a number.");
         }
 
         // Test setting to a JS number
         datagrid.dataSource = "Test String";
-        if (datagrid.dataSource === "Test String") {
+        if (datagrid.dataSource == "Test String") {
             log("PASS: Allowed setting datagrid.dataSource to a string.");
         } else {
-            log("FAIL: Did not allow setting datagrid.dataSource to a string.");
+            log("FAIL: Did not allowed setting datagrid.dataSource to a string.");
         }
 
         // Test setting dataSource to an object.
@@ -44,19 +42,15 @@
         if (datagrid.dataSource == dataSource) {
             log("PASS: Allowed setting datagrid.dataSource to an object.");
         } else {
-            log("FAIL: Did not allow setting datagrid.dataSource to an object.");
+            log("FAIL: Did not allowed setting datagrid.dataSource to an object.");
         }
 
-        // Test setting dataSource to null.
+        // Test setting dataSource to an object.
         datagrid.dataSource = null;
-        if (datagrid.dataSource === null) {
+        if (datagrid.dataSource == null) {
             log("PASS: Allowed setting datagrid.dataSource to null.");
         } else {
-            log("FAIL: Did not allow setting datagrid.dataSource to null.");
-        }
-        
-        } catch (exception) {
-            log("FAIL: Threw exception " + exception);
+            log("FAIL: Did not allowed setting datagrid.dataSource to null.");
         }
     </script>
 </body>

@@ -406,6 +406,8 @@ namespace WebCore {
 
         DECLARE_CALLBACK(NodeFilterAcceptNode);
 
+        DECLARE_PROPERTY_ACCESSOR(HTMLDataGridElementDataSource);
+
         DECLARE_CALLBACK(HTMLFormElementSubmit);
 
         DECLARE_NAMED_PROPERTY_GETTER(DOMWindow);
@@ -450,12 +452,6 @@ namespace WebCore {
         DECLARE_CALLBACK(SQLResultSetRowListItem);
 
         DECLARE_INDEXED_PROPERTY_GETTER(ClientRectList);
-  
-#if ENABLE(DATAGRID)
-        DECLARE_PROPERTY_ACCESSOR(HTMLDataGridElementDataSource);
-        DECLARE_INDEXED_PROPERTY_GETTER(DataGridColumnList);
-        DECLARE_NAMED_PROPERTY_GETTER(DataGridColumnList);
-#endif      
 
 #if ENABLE(DOM_STORAGE)
         DECLARE_INDEXED_PROPERTY_GETTER(Storage);

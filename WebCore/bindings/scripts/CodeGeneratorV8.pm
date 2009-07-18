@@ -243,18 +243,6 @@ sub GetImplementationFileName
     return "${iface}.h";
 }
 
-# If the node has a [Conditional=XXX] attribute, returns an "ENABLE(XXX)" string for use in an #if.
-sub GenerateConditionalString
-{
-    my $node = shift;
-    my $conditional = $node->extendedAttributes->{"Conditional"};
-    if ($conditional) {
-        return "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-    } else {
-        return "";
-    }
-}
-
 sub GenerateHeader
 {
     my $object = shift;
@@ -269,12 +257,17 @@ sub GenerateHeader
     $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode);
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
     # - Add default header template
     @headerContent = split("\r", $headerTemplate);
 
-    push(@headerContent, "\n#if ${conditionalString}\n\n") if $conditionalString;
+    my $conditionalString;
+    if ($conditional) {
+        $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        push(@headerContent, "\n#if ${conditionalString}\n\n");
+    }
+
     push(@headerContent, "\n#ifndef $className" . "_H");
     push(@headerContent, "\n#define $className" . "_H\n\n");
 
@@ -317,7 +310,7 @@ END
     push(@headerContent, "}\n\n");
     push(@headerContent, "#endif // $className" . "_H\n");
 
-    push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
+    push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditional;
 }
 
 
@@ -910,138 +903,134 @@ sub GenerateBatchedAttributeData
             $accessControl = "v8::ALL_CAN_WRITE";
         } elsif ($attrExt->{"DoNotCheckDomainSecurity"}) {
             $accessControl = "v8::ALL_CAN_READ";
-            if (!($attribute->type =~ /^readonly/) && !($attrExt->{"V8ReadOnly"})) {
-                $accessControl .= "|v8::ALL_CAN_WRITE";
-            }
+        if (!($attribute->type =~ /^readonly/) && !($attrExt->{"V8ReadOnly"})) {
+            $accessControl .= "|v8::ALL_CAN_WRITE";
         }
-        if ($attrExt->{"V8DisallowShadowing"}) {
-            $accessControl .= "|v8::PROHIBITS_OVERWRITING";
-        }
-        $accessControl = "static_cast<v8::AccessControl>(" . $accessControl . ")";
+    }
+    if ($attrExt->{"V8DisallowShadowing"}) {
+        $accessControl .= "|v8::PROHIBITS_OVERWRITING";
+    }
+    $accessControl = "static_cast<v8::AccessControl>(" . $accessControl . ")";
 
-        my $customAccessor =
-            $attrExt->{"Custom"} ||
-            $attrExt->{"CustomSetter"} ||
-            $attrExt->{"CustomGetter"} ||
-            $attrExt->{"V8Custom"} ||
-            $attrExt->{"V8CustomSetter"} ||
-            $attrExt->{"V8CustomGetter"} ||
-            "";
-        if ($customAccessor eq 1) {
-            # use the naming convension, interface + (capitalize) attr name
-            $customAccessor = $interfaceName . WK_ucfirst($attrName);
-        }
+    my $customAccessor =
+        $attrExt->{"Custom"} ||
+        $attrExt->{"CustomSetter"} ||
+        $attrExt->{"CustomGetter"} ||
+        $attrExt->{"V8Custom"} ||
+        $attrExt->{"V8CustomSetter"} ||
+        $attrExt->{"V8CustomGetter"} ||
+        "";
+    if ($customAccessor eq 1) {
+        # use the naming convension, interface + (capitalize) attr name
+        $customAccessor = $interfaceName . WK_ucfirst($attrName);
+    }
 
-        my $getter;
-        my $setter;
-        my $propAttr = "v8::None";
-        my $hasCustomSetter = 0;
+    my $getter;
+    my $setter;
+    my $propAttr = "v8::None";
+    my $hasCustomSetter = 0;
 
-        # Check attributes.
-        if ($attrExt->{"DontEnum"}) {
-            $propAttr .= "|v8::DontEnum";
-        }
-        if ($attrExt->{"V8DisallowShadowing"}) {
-            $propAttr .= "|v8::DontDelete";
-        }
+    # Check attributes.
+    if ($attrExt->{"DontEnum"}) {
+        $propAttr .= "|v8::DontEnum";
+    }
+    if ($attrExt->{"V8DisallowShadowing"}) {
+        $propAttr .= "|v8::DontDelete";
+    }
 
-        my $on_proto = "0 /* on instance */";
-        my $data = "V8ClassIndex::INVALID_CLASS_INDEX /* no data */";
+    my $on_proto = "0 /* on instance */";
+    my $data = "V8ClassIndex::INVALID_CLASS_INDEX /* no data */";
 
-        # Constructor
-        if ($attribute->signature->type =~ /Constructor$/) {
-            my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
-            $constructorType =~ s/Constructor$//;
-            my $constructorIndex = uc($constructorType);
-            $data = "V8ClassIndex::${constructorIndex}";
-            $getter = "${interfaceName}Internal::${interfaceName}ConstructorGetter";
-            $setter = "0";
-            $propAttr = "v8::ReadOnly";
+    # Constructor
+    if ($attribute->signature->type =~ /Constructor$/) {
+        my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
+        $constructorType =~ s/Constructor$//;
+        my $constructorIndex = uc($constructorType);
+        $data = "V8ClassIndex::${constructorIndex}";
+        $getter = "${interfaceName}Internal::${interfaceName}ConstructorGetter";
+        $setter = "0";
+        $propAttr = "v8::ReadOnly";
 
-        # EventListeners
-        } elsif ($attribute->signature->type eq "EventListener") {
-            if ($interfaceName eq "DOMWindow") {
-                $getter = "V8Custom::v8DOMWindowEventHandlerAccessorGetter";
-                $setter = "V8Custom::v8DOMWindowEventHandlerAccessorSetter";
-            } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "HTMLBodyElement" || $interfaceName eq "SVGElementInstance" || $interfaceName eq "HTMLFrameSetElement") {
-                $getter = "V8Custom::v8ElementEventHandlerAccessorGetter";
-                $setter = "V8Custom::v8ElementEventHandlerAccessorSetter";
-            } else {
-                $getter = "V8Custom::v8${customAccessor}AccessorGetter";
-                if ($interfaceName eq "WorkerContext" and $attrName eq "self") {
-                    $setter = "0";
-                    $propAttr = "v8::ReadOnly";
-                } else {
-                    $setter = "V8Custom::v8${customAccessor}AccessorSetter";
-                }
-            }
-
-        # Custom Getter and Setter
-        } elsif ($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
+    # EventListeners
+    } elsif ($attribute->signature->type eq "EventListener") {
+        if ($interfaceName eq "DOMWindow") {
+            $getter = "V8Custom::v8DOMWindowEventHandlerAccessorGetter";
+            $setter = "V8Custom::v8DOMWindowEventHandlerAccessorSetter";
+        } elsif ($interfaceName eq "Element" || $interfaceName eq "Document" || $interfaceName eq "HTMLBodyElement" || $interfaceName eq "SVGElementInstance" || $interfaceName eq "HTMLFrameSetElement") {
+            $getter = "V8Custom::v8ElementEventHandlerAccessorGetter";
+            $setter = "V8Custom::v8ElementEventHandlerAccessorSetter";
+        } else {
             $getter = "V8Custom::v8${customAccessor}AccessorGetter";
             if ($interfaceName eq "WorkerContext" and $attrName eq "self") {
                 $setter = "0";
                 $propAttr = "v8::ReadOnly";
             } else {
-                $hasCustomSetter = 1;
                 $setter = "V8Custom::v8${customAccessor}AccessorSetter";
             }
-
-        # Custom Setter
-        } elsif ($attrExt->{"CustomSetter"} || $attrExt->{"V8CustomSetter"}) {
-            $hasCustomSetter = 1;
-            $getter = "${interfaceName}Internal::${attrName}AttrGetter";
-            $setter = "V8Custom::v8${customAccessor}AccessorSetter";
-
-        # Custom Getter
-        } elsif ($attrExt->{"CustomGetter"}) {
-            $getter = "V8Custom::v8${customAccessor}AccessorGetter";
-            $setter = "${interfaceName}Internal::${attrName}AttrSetter";
-
-        # Replaceable
-        } elsif ($attrExt->{"Replaceable"}) {
-            # Replaceable accessor is put on instance template with ReadOnly attribute.
-            $getter = "${interfaceName}Internal::${attrName}AttrGetter";
-            $setter = "0";
-
-            # Mark to avoid duplicate v8::ReadOnly flags in output.
-            $hasCustomSetter = 1;
-
-            # Handle the special case of window.top being marked upstream as Replaceable.
-            # FIXME: Investigate why [Replaceable] is not marked as ReadOnly
-            # upstream and reach parity.
-            if (!($interfaceName eq "DOMWindow" and $attrName eq "top")) {
-                $propAttr .= "|v8::ReadOnly";
-            }
-
-        # Normal
-        } else {
-            $getter = "${interfaceName}Internal::${attrName}AttrGetter";
-            $setter = "${interfaceName}Internal::${attrName}AttrSetter";
         }
 
-        if ($attrExt->{"Replaceable"} && !$hasCustomSetter) {
+    # Custom Getter and Setter
+    } elsif ($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
+        $getter = "V8Custom::v8${customAccessor}AccessorGetter";
+        if ($interfaceName eq "WorkerContext" and $attrName eq "self") {
             $setter = "0";
+            $propAttr = "v8::ReadOnly";
+        } else {
+            $hasCustomSetter = 1;
+            $setter = "V8Custom::v8${customAccessor}AccessorSetter";
+        }
+
+    # Custom Setter
+    } elsif ($attrExt->{"CustomSetter"} || $attrExt->{"V8CustomSetter"}) {
+        $hasCustomSetter = 1;
+        $getter = "${interfaceName}Internal::${attrName}AttrGetter";
+        $setter = "V8Custom::v8${customAccessor}AccessorSetter";
+
+    # Custom Getter
+    } elsif ($attrExt->{"CustomGetter"}) {
+        $getter = "V8Custom::v8${customAccessor}AccessorGetter";
+        $setter = "${interfaceName}Internal::${attrName}AttrSetter";
+
+    # Replaceable
+    } elsif ($attrExt->{"Replaceable"}) {
+        # Replaceable accessor is put on instance template with ReadOnly attribute.
+        $getter = "${interfaceName}Internal::${attrName}AttrGetter";
+        $setter = "0";
+
+        # Mark to avoid duplicate v8::ReadOnly flags in output.
+        $hasCustomSetter = 1;
+
+        # Handle the special case of window.top being marked upstream as Replaceable.
+        # FIXME: Investigate why [Replaceable] is not marked as ReadOnly
+        # upstream and reach parity.
+        if (!($interfaceName eq "DOMWindow" and $attrName eq "top")) {
             $propAttr .= "|v8::ReadOnly";
         }
 
-        # Read only attributes
-        if ($attribute->type =~ /^readonly/ || $attrExt->{"V8ReadOnly"}) {
-            $setter = "0";
-        }
+    # Normal
+    } else {
+        $getter = "${interfaceName}Internal::${attrName}AttrGetter";
+        $setter = "${interfaceName}Internal::${attrName}AttrSetter";
+    }
 
-        # An accessor can be installed on the proto
-        if ($attrExt->{"v8OnProto"}) {
-            $on_proto = "1 /* on proto */";
-        }
+    if ($attrExt->{"Replaceable"} && !$hasCustomSetter) {
+        $setter = "0";
+        $propAttr .= "|v8::ReadOnly";
+    }
 
-        my $commentInfo = "Attribute '$attrName' (Type: '" . $attribute->type .
-                          "' ExtAttr: '" . join(' ', keys(%{$attrExt})) . "')";
-        
-        my $conditionalString = GenerateConditionalString($attribute->signature);
-        push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
+    # Read only attributes
+    if ($attribute->type =~ /^readonly/ || $attrExt->{"V8ReadOnly"}) {
+        $setter = "0";
+    }
 
-        push(@implContent, <<END);
+    # An accessor can be installed on the proto
+    if ($attrExt->{"v8OnProto"}) {
+        $on_proto = "1 /* on proto */";
+    }
+
+    my $commentInfo = "Attribute '$attrName' (Type: '" . $attribute->type .
+                      "' ExtAttr: '" . join(' ', keys(%{$attrExt})) . "')";
+    push(@implContent, <<END);
   // $commentInfo
   { "$attrName",
     $getter,
@@ -1051,7 +1040,6 @@ sub GenerateBatchedAttributeData
     static_cast<v8::PropertyAttribute>($propAttr),
     $on_proto },
 END
-        push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
     }
 }
 
@@ -1066,7 +1054,7 @@ sub GenerateImplementation
     my $classIndex = uc($codeGenerator->StripModule($interfaceName));
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
-    my $conditionalString = GenerateConditionalString($dataNode);
+    my $conditional = $dataNode->extendedAttributes->{"Conditional"};
 
     @allParents = $codeGenerator->FindParentsRecursively($dataNode);
 
@@ -1079,7 +1067,11 @@ sub GenerateImplementation
          "#include \"V8Binding.h\"\n\n" .
          "#undef LOG\n\n");
 
-    push(@implFixedHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
+    my $conditionalString;
+    if ($conditional) {
+        $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+        push(@implFixedHeader, "\n#if ${conditionalString}\n\n");
+    }
 
     if ($className =~ /^V8SVGAnimated/) {
         AddIncludesForSVGAnimatedType($interfaceName);
@@ -1395,7 +1387,7 @@ END
 } // namespace WebCore
 END
 
-    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditional;
 }
 
 

@@ -1,3 +1,19 @@
+2009-07-18  Jeremy Orlow  <jorlow@chromium.org>
+
+        Rubber stamped by Adam Barth.
+
+        Revert https://bugs.webkit.org/show_bug.cgi?id=27383
+        https://bugs.webkit.org/show_bug.cgi?id=27407
+
+        Revert Jens' patch.  I believe he forgot to include a file.
+
+        * fast/dom/HTMLDataGridElement/DataGridColumns-basic-expected.txt:
+        * fast/dom/HTMLDataGridElement/DataGridColumns-basic.html:
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes.html:
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom-expected.txt:
+        * fast/dom/HTMLDataGridElement/DataGridColumns-dom.html:
+        * fast/dom/HTMLDataGridElement/DataGridDataSource-basic.html:
+
 2009-07-17  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.
