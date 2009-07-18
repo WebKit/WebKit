@@ -193,7 +193,7 @@ String XSSAuditor::decodeHTMLEntities(const String& str, bool leaveUndecodableHT
         if (entity > 0xFFFF) {
             result.append(U16_LEAD(entity));
             result.append(U16_TRAIL(entity));
-        } else if (!leaveUndecodableHTMLEntitiesUntouched || entity != 0xFFFD){
+        } else if (entity && (!leaveUndecodableHTMLEntitiesUntouched || entity != 0xFFFD)){
             result.append(entity);
         } else {
             result.append('&');
