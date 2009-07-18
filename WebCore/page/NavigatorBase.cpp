@@ -29,6 +29,10 @@
 
 #include "NetworkStateNotifier.h"
 #include "PlatformString.h"
+#if PLATFORM(LINUX)
+#include "sys/utsname.h"
+#include <wtf/StdLibExtras.h>
+#endif
 
 #ifndef WEBCORE_NAVIGATOR_PLATFORM
 #if PLATFORM(MAC) && (PLATFORM(PPC) || PLATFORM(PPC64))
@@ -37,6 +41,8 @@
 #define WEBCORE_NAVIGATOR_PLATFORM "MacIntel"
 #elif PLATFORM(WIN_OS)
 #define WEBCORE_NAVIGATOR_PLATFORM "Win32"
+#elif PLATFORM(SYMBIAN)
+#define WEBCORE_NAVIGATOR_PLATFORM "Symbian"
 #else
 #define WEBCORE_NAVIGATOR_PLATFORM ""
 #endif
@@ -79,7 +85,15 @@ String NavigatorBase::appVersion() const
 
 String NavigatorBase::platform() const
 {
+#if PLATFORM(LINUX)
+    if (String("") != WEBCORE_NAVIGATOR_PLATFORM)
+        return WEBCORE_NAVIGATOR_PLATFORM;
+    struct utsname osname;
+    DEFINE_STATIC_LOCAL(String, platformName, (uname(&osname) >= 0 ? String(osname.sysname) + String(" ") + String(osname.machine) : ""));
+    return platformName;
+#else
     return WEBCORE_NAVIGATOR_PLATFORM;
+#endif
 }
 
 String NavigatorBase::appCodeName() const
