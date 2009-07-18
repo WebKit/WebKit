@@ -50,39 +50,42 @@ _bugzilla-tool_complete()
     esac
 
     if [ $COMP_CWORD -eq 1 ]; then
-        __bugzilla-tool_generate_reply "--help bugs-to-commit patches-to-commit reviewed-patches apply-patches land-diff land-patches commit-message obsolete-attachments post-diff post-commits"
+        __bugzilla-tool_generate_reply "--help apply-patches bugs-to-commit commit-message land-diff land-patches obsolete-attachments patches-to-commit post-commits post-diff reviewed-patches"
         return
     fi
 
     case "$command" in
         apply-patches)
-            __bugzilla-tool_generate_reply "--no-update --force-clean --no-clean --local-commit"
+            __bugzilla-tool_generate_reply "--force-clean --local-commit --no-clean --no-update"
+            return
+            ;;
+        commit-message)
             return
             ;;
         land-diff)
-            __bugzilla-tool_generate_reply "-r --reviewer --no-close --no-build --no-test"
+            __bugzilla-tool_generate_reply "--no-build --no-close --no-test --reviewer= -r"
             return
             ;;
         land-patches)
-            __bugzilla-tool_generate_reply "--force-clean --no-clean --no-build --no-test"
+            __bugzilla-tool_generate_reply "--force-clean --no-build --no-clean --no-test"
             return
             ;;
-        commit-message|obsolete-attachments)
+        obsolete-attachments)
             return
             ;;
         post-diff)
-            __bugzilla-tool_generate_reply "--no-obsolete --no-review -m --description"
+            __bugzilla-tool_generate_reply "--description --no-obsolete --no-review -m"
             return
             ;;
         post-commits)
-            __bugzilla-tool_generate_reply "-b --bug-id= --no-comment --no-obsolete --no-review"
+            __bugzilla-tool_generate_reply "--bug-id= --no-comment --no-obsolete --no-review -b"
             return
             ;;
     esac
 }
 
 complete -F _bugzilla-tool_complete bugzilla-tool
-complete -W "-c --continue --no-continue -f --fix-merged -h --help -w --warnings --no-warnings" resolve-ChangeLogs
-complete -W "--bug -d --dif --git-commit --git-index --git-reviewer -h --help -o --open --no-update --update" prepare-ChangeLog
-complete -W "--debug -clean --help -h" build-webkit
-complete -W "--add-platform-exceptions --complex-text -c --configuration -g --guard-malloc --help -h -i --ignore-tests --no-http --no-launch-safari --no-new-test-results --http --launch-safari --new-test-results -l --leaks -p --pixel-tests --tolerance --platform --port -q --quiet --reset-results -o --results-directory --random --reverse --root --no-sample-on-timeout --sample-on-timeout -1 --singly --skipped --slowest --strict --no-strip-editing-callbacks --strip-editing-callbacks -t --threaded --timeout --valgrind -v --verbose -m --merge-leak-depth --use-remote-links-to-tests" run-webkit-tests
+complete -W "--continue --fix-merged --help --no-continue --no-warnings --warnings -c -f -h -w" resolve-ChangeLogs
+complete -W "--bug --diff --git-commit --git-index --git-reviewer --help --no-update --open --update -d -h -o" prepare-ChangeLog
+complete -W "--clean --debug --help -h" build-webkit
+complete -W "--add-platform-exceptions --complex-text --configuration --guard-malloc --help --http --ignore-tests --launch-safari --leaks --merge-leak-depth --new-test-results --no-http --no-launch-safari --no-new-test-results --no-sample-on-timeout --no-strip-editing-callbacks --pixel-tests --platform --port --quiet --random --reset-results --results-directory --reverse --root --sample-on-timeout --singly --skipped --slowest --strict --strip-editing-callbacks --threaded --timeout --tolerance --use-remote-links-to-tests --valgrind --verbose -1 -c -g -h -i -l -m -o -p -q -t -v" run-webkit-tests

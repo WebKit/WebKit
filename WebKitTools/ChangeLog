@@ -1,3 +1,14 @@
+2009-07-17  David Levin  <levin@chromium.org>
+
+        Reviewed by Mark Rowe.
+
+        webkit-tools-completion.sh has two typos and sorting issues.
+        https://bugs.webkit.org/show_bug.cgi?id=27401
+
+        * Scripts/webkit-tools-completion.sh: Fix two typos "--dif" and "-clean".
+          Also, sort all lists including items in the case statement and flags for
+          the commands.
+
 2009-07-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by David Kilzer.
