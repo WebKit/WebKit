@@ -34,7 +34,7 @@
 
 #include "LayoutTestController.h"
 #include <CoreGraphics/CGBitmapContext.h>
-#if !defined(BUILDING_ON_TIGER)
+#if defined(BUILDING_ON_TIGER)
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/CGLMacro.h>
 #endif
