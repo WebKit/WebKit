@@ -4,6 +4,7 @@
 
         Add spread radius support to -webkit-box-shadow
         https://bugs.webkit.org/show_bug.cgi?id=27417
+        rdar://problem/7072267
 
         Test: fast/box-shadow/spread.html
 
