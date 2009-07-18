@@ -727,15 +727,16 @@ bool FrameLoader::executeIfJavaScriptURL(const KURL& url, bool userGesture, bool
     if (m_frame->page() && !m_frame->page()->javaScriptURLsAreAllowed())
         return true;
 
-    String script = decodeURLEscapeSequences(url.string().substring(strlen("javascript:")));
+    const int javascriptSchemeLength = sizeof("javascript:") - 1;
+
+    String script = decodeURLEscapeSequences(url.string().substring(javascriptSchemeLength);
     ScriptValue result = executeScript(script, userGesture);
 
     String scriptResult;
     if (!result.getString(scriptResult))
         return true;
 
-    SecurityOrigin* currentSecurityOrigin = 0;
-    currentSecurityOrigin = m_frame->document()->securityOrigin();
+    SecurityOrigin* currentSecurityOrigin = m_frame->document()->securityOrigin();
 
     // FIXME: We should always replace the document, but doing so
     //        synchronously can cause crashes:
