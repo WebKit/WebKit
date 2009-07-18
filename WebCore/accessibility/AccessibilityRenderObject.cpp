@@ -55,6 +55,7 @@
 #include "LocalizedStrings.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "RenderButton.h"
 #include "RenderFieldset.h"
 #include "RenderFileUploadControl.h"
 #include "RenderHTMLCanvas.h"
@@ -773,6 +774,9 @@ String AccessibilityRenderObject::stringValue() const
     if (m_renderer->isListMarker())
         return static_cast<RenderListMarker*>(m_renderer)->text();
     
+    if (m_renderer->isRenderButton())
+        return static_cast<RenderButton*>(m_renderer)->text();
+
     if (isWebArea()) {
         if (m_renderer->document()->frame())
             return String();

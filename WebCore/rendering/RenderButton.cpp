@@ -164,6 +164,11 @@ void RenderButton::setText(const String& str)
     }
 }
 
+String RenderButton::text() const
+{
+    return m_buttonText ? m_buttonText->text() : 0;
+}
+
 void RenderButton::updateBeforeAfterContent(PseudoId type)
 {
     if (m_inner)
