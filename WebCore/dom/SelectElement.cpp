@@ -49,8 +49,13 @@
 
 #if PLATFORM(MAC)
 #define ARROW_KEYS_POP_MENU 1
+#define SPACE_OR_RETURN_POP_MENU 0
+#elif PLATFORM(GTK)
+#define ARROW_KEYS_POP_MENU 0
+#define SPACE_OR_RETURN_POP_MENU 1
 #else
 #define ARROW_KEYS_POP_MENU 0
+#define SPACE_OR_RETURN_POP_MENU 0
 #endif
 
 using std::min;
@@ -567,7 +572,17 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
         int keyCode = static_cast<KeyboardEvent*>(event)->keyCode();
         bool handled = false;
 
-#if ARROW_KEYS_POP_MENU
+#if SPACE_OR_RETURN_POP_MENU
+        if (keyCode == ' ' || keyCode == '\r') {
+            element->focus();
+            // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
+            // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
+            saveLastSelection(data, element);
+            if (RenderMenuList* menuList = static_cast<RenderMenuList*>(element->renderer()))
+                menuList->showPopup();
+            handled = true;
+        }
+#elif ARROW_KEYS_POP_MENU
         if (keyCode == ' ') {
             element->focus();
             // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
