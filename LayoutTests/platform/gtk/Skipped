@@ -5955,9 +5955,6 @@ http/tests/xmlhttprequest/small-chunks-response-text.html
 # See Bug #27144 - https://bugs.webkit.org/show_bug.cgi?id=27144
 storage/database-lock-after-reload.html
 
-# See Bug #27145 - https://bugs.webkit.org/show_bug.cgi?id=27145
-fast/loader/subframe-navigate-during-main-frame-load.html
-
 # This port doesn't support isolated worlds yet.
 http/tests/security/isolatedWorld/all-window-properties.html
 http/tests/security/isolatedWorld/all-window-prototypes.html

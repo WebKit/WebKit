@@ -161,7 +161,25 @@ static void dumpHistoryItem(WebKitWebHistoryItem* item, int indent, bool current
     }
     for (int i = start; i < indent; i++)
         putchar(' ');
-    printf("%s", webkit_web_history_item_get_uri(item));
+
+    // normalize file URLs.
+    const gchar* uri = webkit_web_history_item_get_uri(item);
+    gchar* uriScheme = g_uri_parse_scheme(uri);
+    if (g_strcmp0(uriScheme, "file") == 0) {
+        gchar* pos = g_strstr_len(uri, -1, "/LayoutTests/");
+        if (!pos)
+            return;
+
+        GString* result = g_string_sized_new(strlen(uri));
+        result = g_string_append(result, "(file test):");
+        result = g_string_append(result, pos + strlen("/LayoutTests/"));
+        printf("%s", result->str);
+        g_string_free(result, TRUE);
+    } else
+        printf("%s", uri);
+
+    g_free(uriScheme);
+
     const gchar* target = webkit_web_history_item_get_target(item);
     if (target && strlen(target) > 0)
         printf(" (in frame \"%s\")", target);
