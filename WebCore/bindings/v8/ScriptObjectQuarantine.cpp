@@ -66,9 +66,17 @@ bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& qu
     ASSERT(frame);
     ASSERT(storage);
 
-    // FIXME: Implement when DOM Storage V8 bindings are enabled
+#if ENABLE(DOM_STORAGE)
+    v8::HandleScope handleScope;
+    v8::Local<v8::Context> context = V8Proxy::context(frame);
+    v8::Context::Scope scope(context);
+
+    v8::Handle<v8::Value> v8Storage = V8DOMWrapper::convertToV8Object(V8ClassIndex::STORAGE, storage);
+    quarantinedObject = ScriptObject(v8::Local<v8::Object>(v8::Object::Cast(*v8Storage)));
+#else
     ASSERT_NOT_REACHED();
     quarantinedObject = ScriptObject();
+#endif
     return true;
 }
 
