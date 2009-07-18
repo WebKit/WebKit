@@ -8,6 +8,8 @@
             layoutTestController.waitUntilDone();
         }
 
+        try{
+
         function log(msg)
         {
             document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
@@ -72,6 +74,10 @@
             log("PASS: The first column is the primary column.");
         } else {
             log("FAIL: The first column is not the primary column as expected.");
+        }
+
+        } catch (exception) {
+            log("FAIL: Threw exception " + exception);
         }
 
         if (window.layoutTestController)

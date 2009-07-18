@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,58 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8GCController_h
-#define V8GCController_h
+#include "config.h"
 
-#include <v8.h>
+#if ENABLE(DATAGRID)
+
+#include "V8DataGridDataSource.h"
+
+#include "Document.h"
+#include "Frame.h"
+#include "HTMLDataGridElement.h"
+#include "V8HTMLDataGridElement.h"
+
 
 namespace WebCore {
 
+V8DataGridDataSource::V8DataGridDataSource(v8::Handle<v8::Value> dataSource, Frame* frame)
+    : m_dataSource(v8::Persistent<v8::Value>::New(dataSource))
+    , m_frame(frame)
+{
 #ifndef NDEBUG
-
-#define GlobalHandleTypeList(V)   \
-    V(PROXY)                      \
-    V(NPOBJECT)                   \
-    V(SCHEDULED_ACTION)           \
-    V(EVENT_LISTENER)             \
-    V(NODE_FILTER)                \
-    V(SCRIPTINSTANCE)             \
-    V(SCRIPTVALUE)                \
-    V(DATASOURCE)
-
-
-    // Host information of persistent handles.
-    enum GlobalHandleType {
-#define ENUM(name) name,
-        GlobalHandleTypeList(ENUM)
-#undef ENUM
-    };
-
-    class GlobalHandleInfo {
-    public:
-        GlobalHandleInfo(void* host, GlobalHandleType type) : m_host(host), m_type(type) { }
-        void* m_host;
-        GlobalHandleType m_type;
-    };
-
-#endif // NDEBUG
-
-    class V8GCController {
-    public:
-        // Protect/Unprotect JS wrappers of a DOM object.
-        static void gcProtect(void* domObject);
-        static void gcUnprotect(void* domObject);
-
-#ifndef NDEBUG
-        // For debugging and leak detection purpose.
-        static void registerGlobalHandle(GlobalHandleType, void*, v8::Persistent<v8::Value>);
-        static void unregisterGlobalHandle(void*, v8::Persistent<v8::Value>);
+    V8GCController::registerGlobalHandle(DATASOURCE, this, m_dataSource);
 #endif
-
-        static void gcPrologue();
-        static void gcEpilogue();
-    };
-
 }
 
-#endif // V8GCController_h
+V8DataGridDataSource::~V8DataGridDataSource()
+{
+#ifndef NDEBUG
+    V8GCController::unregisterGlobalHandle(this, m_dataSource);
+#endif
+    m_dataSource.Dispose();
+    m_dataSource.Clear();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(DATAGRID)

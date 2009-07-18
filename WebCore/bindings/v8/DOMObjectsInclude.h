@@ -153,6 +153,11 @@
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
 
+#if ENABLE(DATAGRID)
+#include "DataGridColumn.h"
+#include "DataGridColumnList.h"
+#endif // DATAGRID
+
 #if ENABLE(DOM_STORAGE)
 #include "Storage.h"
 #include "StorageEvent.h"

@@ -8,6 +8,8 @@
             layoutTestController.waitUntilDone();
         }
 
+        try {
+
         function log(msg)
         {
             document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
@@ -46,17 +48,27 @@
             log("FAIL: Expected one column in the list but have " + datagrid.columns.length + " columns instead.");
         }
         
-        // Make sure the column we got back from add is the one in the list.
-        if (datagrid.columns[0] == column) {
-            log("PASS: The column at index 0 is the column we got back from add.");
+        // Use item(0) to make sure the column we got back from add is the one in the list.
+        var gotColumn = datagrid.columns.item(0);
+        if (gotColumn == column) {
+            log("PASS: The column at item(0) is the column we got back from add.");
         } else {
-            log("FAIL: The column at index 0 is not the one we expected.");
+            log("FAIL: The column at item(0) (" + gotColumn + ") is not the one we expected (" + column + ").");
         }
         
-        if (datagrid.columns["fromcol"] == column) {
+        // Use [0] to make sure the column we got back from add is the one in the list.
+        gotColumn = datagrid.columns[0];
+        if (gotColumn == column) {
+            log("PASS: The column at index 0 is the column we got back from add.");
+        } else {
+            log("FAIL: The column at index 0 (" + gotColumn + ") is not the one we expected (" + column + ").");
+        }
+        
+        gotColumn = datagrid.columns["fromcol"];
+        if (gotColumn == column) {
             log("PASS: The column when referenced by name is the one we got back from add.");
         } else {
-            log("FAIL: The column when referenced by name is not the one we expected.");
+            log("FAIL: The column when referenced by name (" + gotColumn + ") is not the one we expected (" + column + ").");
         }
 
         // Examine the column's properties to make sure they are what we expected.
@@ -95,6 +107,10 @@
             log("PASS: The column returned from add is now the primary column.");
         } else {
             log("FAIL: The column is not the primary column as expected.");
+        }
+
+        } catch (exception) {
+            log("FAIL: Threw exception " + exception);
         }
 
         if (window.layoutTestController)

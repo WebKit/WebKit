@@ -7,14 +7,29 @@
             layoutTestController.dumpAsText();
             layoutTestController.waitUntilDone();
         }
+        
+        try {
 
         function log(msg)
         {
             document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
         }
-
+        
+        function expectBinding(what, obj, classname)
+        {
+            var desc = String(obj);
+            var expectedDesc = "[object " + classname + "]";
+            if (desc == expectedDesc) {
+                log("PASS: " + what + " JS binding is " + desc);
+            } else {
+                log("FAIL: " + what + " JS binding is " + desc + "(expected " + expectedDesc + ")");
+            }
+        }
+        
+        // Test binding of <datagrid> to JS HTMLDataGridElement:
         var datagrid = document.getElementById('test');
-
+        expectBinding("datagrid", datagrid, "HTMLDataGridElement");
+        
         // Test initial value.
         if (datagrid.columns != null) {
             log("PASS: Initial value of datagrid.columns is defined.");
@@ -22,6 +37,9 @@
             log("FAIL: Initial value of datagrid.columns was null.");
         }
 
+        // Test binding of <dcol> to JS DataGridColumnList:
+        expectBinding("datagrid.columns", datagrid.columns, "DataGridColumnList");
+        
         // Test initial length.
         if (datagrid.columns.length == 2) {
             log("PASS: Initial length of datagrid.columns is 2.");
@@ -31,6 +49,7 @@
         
         // Test adding a column.
         var newCol = document.createElement("dcol");
+        expectBinding("newCol", newCol, "HTMLDataGridColElement");
         newCol.setAttribute("id", "date");
         newCol.setAttribute("label", "Date Received");
         newCol.setAttribute("type", "text");
@@ -98,7 +117,11 @@
         } else {
             log("FAIL: There is a primary column, but there should not be.");
         }
-    
+            
+        } catch (exception) {
+            log("FAIL: Threw exception " + exception);
+        }
+        
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     </script>
