@@ -54,12 +54,15 @@ sub resolveChangeLog($);
 sub resolveConflict($);
 sub showStatus($;$);
 sub usageAndExit();
+sub normalizePath($);
 
 my $isGit = isGit();
 my $isSVN = isSVN();
 
 my $SVN = "svn";
 my $GIT = "git";
+
+my $svnVersion = `svn --version --quiet` if $isSVN;
 
 my $fixMerged;
 my $gitRebaseContinue = 0;
@@ -164,7 +167,10 @@ sub conflictFiles($)
         my $currentRevision;
         open INFO, "-|", $SVN, "info", $file || die;
         while (my $line = <INFO>) {
-            $currentRevision = $1 if $line =~ m/^Revision: ([0-9]+)/;
+            if ($line =~ m/^Revision: ([0-9]+)/) {
+                $currentRevision = $1;
+                { local $/ = undef; <INFO>; }  # Consume rest of input.
+            }
         }
         close INFO;
         $fileNewer = "${file}.r${currentRevision}" if -e "${file}.r${currentRevision}";
@@ -236,15 +242,24 @@ sub findUnmergedChangeLogs()
     open STAT, "-|", $statCommand or die "The status failed: $!.\n";
     while (<STAT>) {
         if ($isSVN) {
-            if (/^([C]).{5} (.+)$/) {
-                my $file = findChangeLog($2);
+            my $matches;
+            my $file;
+            if (eval "v$svnVersion" ge v1.6) {
+                $matches = /^([C]).{6} (.*\S+)\s*$/;
+                $file = $2;
+            } else {
+                $matches = /^([C]).{5} (.*\S+)\s*$/;
+                $file = $2;
+            }
+            if ($matches) {
+                $file = findChangeLog(normalizePath($file));
                 push @results, $file if $file;
             } else {
                 print;  # error output from svn stat
             }
         } elsif ($isGit) {
             if (/^([U])\t(.+)$/) {
-                my $file = findChangeLog($2);
+                my $file = findChangeLog(normalizePath($2));
                 push @results, $file if $file;
             } else {
                 print;  # error output from git diff
@@ -419,7 +434,7 @@ sub mergeChanges($$$)
         rename($fileMine, "$fileMine.save");
         rename($fileOlder, "$fileOlder.save");
     } else {
-        open(DIFF, "-|", qw(diff -u), $fileOlder, $fileMine) || die;
+        open(DIFF, "-|", qw(diff -u -a --binary), $fileOlder, $fileMine) || die;
         $patch = <DIFF>;
         close(DIFF);
     }
@@ -427,7 +442,7 @@ sub mergeChanges($$$)
     unlink("${fileNewer}.orig");
     unlink("${fileNewer}.rej");
 
-    open(PATCH, "| patch --fuzz=3 $fileNewer > /dev/null") || die;
+    open(PATCH, "| patch --fuzz=3 --binary $fileNewer > /dev/null") || die;
     print PATCH fixChangeLogPatch($patch);
     close(PATCH);
 
@@ -533,4 +548,11 @@ sub showStatus($;$)
     } else {
         die "Unknown version control system";
     }
+}
+
+sub normalizePath($)
+{
+    my ($path) = @_;
+    $path =~ s/\\/\//g;
+    return $path;
 }
