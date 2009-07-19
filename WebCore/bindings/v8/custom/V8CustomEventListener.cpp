@@ -49,7 +49,7 @@ V8EventListener::~V8EventListener()
     if (m_frame) {
         V8Proxy* proxy = V8Proxy::retrieve(m_frame);
         if (proxy)
-            proxy->removeV8EventListener(this);
+            proxy->eventListeners()->remove(this);
     }
 
     disposeListenerObject();

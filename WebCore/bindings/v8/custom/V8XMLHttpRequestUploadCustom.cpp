@@ -74,7 +74,7 @@ ACCESSOR_SETTER(XMLHttpRequestUploadOnabort)
         if (!proxy)
             return;
 
-        RefPtr<EventListener> listener = proxy->findOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
         if (listener) {
             xmlHttpRequestUpload->setOnabort(listener);
             createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
@@ -113,7 +113,7 @@ ACCESSOR_SETTER(XMLHttpRequestUploadOnerror)
         if (!proxy)
             return;
 
-        RefPtr<EventListener> listener = proxy->findOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
         if (listener) {
             xmlHttpRequestUpload->setOnerror(listener);
             createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
@@ -152,7 +152,7 @@ ACCESSOR_SETTER(XMLHttpRequestUploadOnload)
         if (!proxy)
             return;
 
-        RefPtr<EventListener> listener = proxy->findOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
         if (listener) {
             xmlHttpRequestUpload->setOnload(listener);
             createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
@@ -191,7 +191,7 @@ ACCESSOR_SETTER(XMLHttpRequestUploadOnloadstart)
         if (!proxy)
             return;
 
-        RefPtr<EventListener> listener = proxy->findOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
         if (listener) {
             xmlHttpRequestUpload->setOnloadstart(listener);
             createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
@@ -230,7 +230,7 @@ ACCESSOR_SETTER(XMLHttpRequestUploadOnprogress)
         if (!proxy)
             return;
 
-        RefPtr<EventListener> listener = proxy->findOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
         if (listener) {
             xmlHttpRequestUpload->setOnprogress(listener);
             createHiddenDependency(info.Holder(), value, V8Custom::kXMLHttpRequestCacheIndex);
@@ -248,7 +248,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestUploadAddEventListener)
     if (!proxy)
         return v8::Undefined();
 
-    RefPtr<EventListener> listener = proxy->findOrCreateObjectEventListener(args[1], false);
+    RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), args[1], false);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
@@ -269,7 +269,7 @@ CALLBACK_FUNC_DECL(XMLHttpRequestUploadRemoveEventListener)
     if (!proxy)
         return v8::Undefined(); // Probably leaked.
 
-    RefPtr<EventListener> listener = proxy->findObjectEventListener(args[1], false);
+    RefPtr<EventListener> listener = proxy->objectListeners()->findWrapper(args[1], false);
 
     if (listener) {
         String type = toWebCoreString(args[0]);

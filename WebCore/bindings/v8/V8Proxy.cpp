@@ -361,36 +361,6 @@ void V8Proxy::destroyGlobal()
     }
 }
 
-PassRefPtr<V8EventListener> V8Proxy::findV8EventListener(v8::Local<v8::Value> object, bool isAttribute)
-{
-    return m_eventListeners.findWrapper(object, isAttribute);
-}
-
-PassRefPtr<V8EventListener> V8Proxy::findOrCreateV8EventListener(v8::Local<v8::Value> object, bool isAttribute)
-{
-    return m_eventListeners.findOrCreateWrapper<V8EventListener>(m_frame, object, isAttribute);
-}
-
-void V8Proxy::removeV8EventListener(V8EventListener* listener)
-{
-    m_eventListeners.remove(listener);
-}
-
-PassRefPtr<V8EventListener> V8Proxy::findObjectEventListener( v8::Local<v8::Value> object, bool isAttribute)
-{
-    return m_xhrListeners.findWrapper(object, isAttribute);
-}
-
-PassRefPtr<V8EventListener> V8Proxy::findOrCreateObjectEventListener(v8::Local<v8::Value> object, bool isAttribute)
-{
-    return m_xhrListeners.findOrCreateWrapper<V8ObjectEventListener>(m_frame, object, isAttribute);
-}
-
-void V8Proxy::removeObjectEventListener(V8ObjectEventListener* listener)
-{
-    m_xhrListeners.remove(listener);
-}
-
 static void disconnectEventListenersInList(V8EventListenerList& list)
 {
     V8EventListenerList::iterator it = list.begin();
@@ -404,7 +374,7 @@ static void disconnectEventListenersInList(V8EventListenerList& list)
 void V8Proxy::disconnectEventListeners()
 {
     disconnectEventListenersInList(m_eventListeners);
-    disconnectEventListenersInList(m_xhrListeners);
+    disconnectEventListenersInList(m_objectListeners);
 }
 
 v8::Handle<v8::Script> V8Proxy::compileScript(v8::Handle<v8::String> code, const String& fileName, int baseLine)

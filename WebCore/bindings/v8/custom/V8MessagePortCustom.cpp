@@ -65,7 +65,7 @@ ACCESSOR_SETTER(MessagePortOnmessage)
         if (!proxy)
             return;
 
-        RefPtr<EventListener> listener = proxy->findOrCreateObjectEventListener(value, false);
+        RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), value, false);
         if (listener) {
             messagePort->setOnmessage(listener);
             createHiddenDependency(info.Holder(), value, V8Custom::kMessagePortRequestCacheIndex);
@@ -82,7 +82,7 @@ CALLBACK_FUNC_DECL(MessagePortAddEventListener)
     if (!proxy)
         return v8::Undefined();
 
-    RefPtr<EventListener> listener = proxy->findOrCreateObjectEventListener(args[1], false);
+    RefPtr<EventListener> listener = proxy->objectListeners()->findOrCreateWrapper<V8ObjectEventListener>(proxy->frame(), args[1], false);
     if (listener) {
         String type = toWebCoreString(args[0]);
         bool useCapture = args[2]->BooleanValue();
@@ -102,7 +102,7 @@ CALLBACK_FUNC_DECL(MessagePortRemoveEventListener)
     if (!proxy)
         return v8::Undefined(); // probably leaked
 
-    RefPtr<EventListener> listener = proxy->findObjectEventListener(args[1], false);
+    RefPtr<EventListener> listener = proxy->objectListeners()->findWrapper(args[1], false);
 
     if (listener) {
         String type = toWebCoreString(args[0]);

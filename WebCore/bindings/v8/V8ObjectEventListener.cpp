@@ -45,7 +45,7 @@ static void weakObjectEventListenerCallback(v8::Persistent<v8::Value>, void* par
     if (frame) {
         V8Proxy* proxy = V8Proxy::retrieve(frame);
         if (proxy)
-            proxy->removeObjectEventListener(listener);
+            proxy->objectListeners()->remove(listener);
 
         // Because the listener is no longer in the list, it must be disconnected from the frame to avoid dangling frame pointer
         // in the destructor.
@@ -85,7 +85,7 @@ V8ObjectEventListener::~V8ObjectEventListener()
         ASSERT(!m_listener.IsEmpty());
         V8Proxy* proxy = V8Proxy::retrieve(m_frame);
         if (proxy)
-            proxy->removeObjectEventListener(this);
+            proxy->objectListeners()->remove(this);
     }
 
     disposeListenerObject();

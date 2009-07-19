@@ -196,15 +196,8 @@ namespace WebCore {
 
         bool isEnabled();
 
-        // FIXME: Replace these APIs with a getter for m_eventListeners
-        PassRefPtr<V8EventListener> findV8EventListener(v8::Local<v8::Value> listener, bool isHtml);
-        PassRefPtr<V8EventListener> findOrCreateV8EventListener(v8::Local<v8::Value> listener, bool isHtml);
-        void removeV8EventListener(V8EventListener*);
-
-        // FIXME: Replace these APIs with a getter for m_xhrListeners
-        PassRefPtr<V8EventListener> findObjectEventListener(v8::Local<v8::Value> listener, bool isHtml);
-        PassRefPtr<V8EventListener> findOrCreateObjectEventListener(v8::Local<v8::Value> listener, bool isHtml);
-        void removeObjectEventListener(V8ObjectEventListener*);
+        V8EventListenerList* eventListeners() { return &m_eventListeners; }
+        V8EventListenerList* objectListeners() { return &m_objectListeners; }
 
 #if ENABLE(SVG)
         static void setSVGContext(void*, SVGElement*);
@@ -429,7 +422,7 @@ namespace WebCore {
 
         // A list of event listeners create for XMLHttpRequest object for this frame,
         // the list gets cleared when removing all timeouts.
-        V8EventListenerList m_xhrListeners;
+        V8EventListenerList m_objectListeners;
 
         // True for <a href="javascript:foo()"> and false for <script>foo()</script>.
         // Only valid during execution.
