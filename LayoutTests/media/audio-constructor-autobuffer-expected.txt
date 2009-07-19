@@ -1,0 +1,16 @@
+Test that Audio() sets 'autobuffer' attribute.
+
+RUN(media = new Audio())
+
+++ Test initial attribute value
+EXPECTED (media.getAttribute('autobuffer') != 'null') OK
+EXPECTED (media.autobuffer == 'true') OK
+
+RUN(media.src = 'content/test.wav')
+RUN(media.load())
+
+++ Test after 'load' event
+EXPECTED (media.getAttribute('autobuffer') != 'null') OK
+EXPECTED (media.autobuffer == 'true') OK
+END OF TEST
+

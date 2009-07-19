@@ -66,6 +66,7 @@ static JSObject* constructAudio(ExecState* exec, JSObject* constructor, const Ar
         return throwError(exec, ReferenceError, "Audio constructor associated document is unavailable");
 
     RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(HTMLNames::audioTag, document);
+    audio->setAutobuffer(true);
     if (args.size() > 0) {
         audio->setSrc(args.at(0).toString(exec));
         audio->scheduleLoad();
