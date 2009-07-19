@@ -1,3 +1,11 @@
+2009-07-19  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Remove unused member variable.
+
+        * svg/SVGPolyElement.h:
+
 2009-07-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

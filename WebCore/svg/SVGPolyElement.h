@@ -58,7 +58,6 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        bool m_ignoreAttributeChanges : 1;
         mutable RefPtr<SVGPointList> m_points;
     };
 
