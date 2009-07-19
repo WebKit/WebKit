@@ -39,7 +39,7 @@ CONFIG -= warn_on
 
 # Disable a few warnings on Windows. The warnings are also
 # disabled in WebKitLibraries/win/tools/vsprops/common.vsprops
-win32-*: QMAKE_CXXFLAGS += -wd4291 -wd4344
+win32-msvc*: QMAKE_CXXFLAGS += -wd4291 -wd4344
 
 unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections 
 unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
