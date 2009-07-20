@@ -252,18 +252,6 @@ void RenderThemeQt::adjustRepaintRect(const RenderObject* o, IntRect& rect)
     }
 }
 
-bool RenderThemeQt::isControlStyled(const RenderStyle* style, const BorderData& border,
-                                     const FillLayer& background, const Color& backgroundColor) const
-{
-    if (style->appearance() == TextFieldPart
-        || style->appearance() == TextAreaPart
-        || style->appearance() == ListboxPart) {
-        return style->border() != border;
-    }
-
-    return RenderTheme::isControlStyled(style, border, background, backgroundColor);
-}
-
 Color RenderThemeQt::platformActiveSelectionBackgroundColor() const
 {
     QPalette pal = QApplication::palette();

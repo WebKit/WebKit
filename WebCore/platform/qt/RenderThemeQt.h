@@ -58,9 +58,6 @@ public:
 
     virtual void adjustRepaintRect(const RenderObject* o, IntRect& r);
 
-    virtual bool isControlStyled(const RenderStyle*, const BorderData&,
-                                 const FillLayer&, const Color&) const;
-
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;

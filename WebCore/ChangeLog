@@ -11,6 +11,25 @@
 
 2009-07-20  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Reviewed by and done with Tor Arne Vestbø.
+
+        Fix fast/css/pseudo-required-optional-*.html in the Qt build
+        after r46062.
+
+        These tests triggered a bug in RenderThemeQt where we did not fall back
+        to the unstyled painting of text areas and input fields when they have
+        a styled background.
+
+        Our re-implementation of isControlStyled incorrectly only checked the
+        border for determining whether to style or not. The base-implementation
+        performs the same check, but also includes the background. Removing
+        our implementation fixes the appearance.
+
+        * platform/qt/RenderThemeQt.cpp: Removed isControlStyled reimplementation.
+        * platform/qt/RenderThemeQt.h: Ditto.
+
+2009-07-20  Simon Hausmann  <simon.hausmann@nokia.com>
+
         Rubber-stamped by Tor Arne Vestbø.
 
         Add missing (sorted) header files to the HEADERS variable in the qmake
