@@ -1160,12 +1160,17 @@ class CpplintTest(CpplintTestBase):
         self.assert_lint('for ( ; foo; bar) {', '')
         self.assert_lint('for ( ; foo; bar ) {', '')
         self.assert_lint('for (foo; bar; ) {', '')
+        self.assert_lint('foreach (foo, foos ) {', 'Mismatching spaces inside () in foreach'
+                         '  [whitespace/parens] [5]')
+        self.assert_lint('foreach ( foo, foos) {', 'Mismatching spaces inside () in foreach'
+                         '  [whitespace/parens] [5]')
         self.assert_lint('while (  foo  ) {', 'Should have zero or one spaces inside'
                          ' ( and ) in while  [whitespace/parens] [5]')
 
     def test_spacing_for_fncall(self):
         self.assert_lint('if (foo) {', '')
         self.assert_lint('for (foo;bar;baz) {', '')
+        self.assert_lint('foreach (foo, foos) {', '')
         self.assert_lint('while (foo) {', '')
         self.assert_lint('switch (foo) {', '')
         self.assert_lint('new (RenderArena()) RenderInline(document())', '')
@@ -2943,6 +2948,12 @@ class WebKitStyleTest(CpplintTestBase):
         self.assert_multi_line_lint(
             'for (; foo; bar) {\n'
             '    int foo;\n'
+            '}\n',
+            'One line control clauses should not use braces.  [whitespace/braces] [4]')
+
+        self.assert_multi_line_lint(
+            'foreach (foo, foos) {\n'
+            '    int bar;\n'
             '}\n',
             'One line control clauses should not use braces.  [whitespace/braces] [4]')
 

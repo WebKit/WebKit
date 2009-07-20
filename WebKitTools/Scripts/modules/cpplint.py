@@ -1269,13 +1269,14 @@ def check_spacing_for_function_call(filename, line, line_number, error):
       error: The function to call with any errors found.
     """
 
-    # Since function calls often occur inside if/for/while/switch
+    # Since function calls often occur inside if/for/foreach/while/switch
     # expressions - which have their own, more liberal conventions - we
     # first see if we should be looking inside such an expression for a
     # function call, to which we can apply more strict standards.
     function_call = line    # if there's no control flow construct, look at whole line
     for pattern in (r'\bif\s*\((.*)\)\s*{',
                     r'\bfor\s*\((.*)\)\s*{',
+                    r'\bforeach\s*\((.*)\)\s*{',
                     r'\bwhile\s*\((.*)\)\s*[{;]',
                     r'\bswitch\s*\((.*)\)\s*{'):
         matched = search(pattern, line)
@@ -1283,7 +1284,7 @@ def check_spacing_for_function_call(filename, line, line_number, error):
             function_call = matched.group(1)    # look inside the parens for function calls
             break
 
-    # Except in if/for/while/switch, there should never be space
+    # Except in if/for/foreach/while/switch, there should never be space
     # immediately inside parens (eg "f( 3, 4 )").  We make an exception
     # for nested parens ( (a+b) + c ).  Likewise, there should never be
     # a space before a ( when it's a function argument.  I assume it's a
@@ -1297,7 +1298,7 @@ def check_spacing_for_function_call(filename, line, line_number, error):
     # Note that we assume the contents of [] to be short enough that
     # they'll never need to wrap.
     if (  # Ignore control structures.
-        not search(r'\b(if|for|while|switch|return|new|delete)\b', function_call)
+        not search(r'\b(if|for|foreach|while|switch|return|new|delete)\b', function_call)
         # Ignore pointers/references to functions.
         and not search(r' \([^)]+\)\([^)]*(\)|,$)', function_call)
         # Ignore pointers/references to arrays.
@@ -1561,17 +1562,17 @@ def check_spacing(filename, clean_lines, line_number, error):
               'Extra space for operator %s' % matched.group(1))
 
     # A pet peeve of mine: no spaces after an if, while, switch, or for
-    matched = search(r' (if\(|for\(|while\(|switch\()', line)
+    matched = search(r' (if\(|for\(|foreach\(|while\(|switch\()', line)
     if matched:
         error(filename, line_number, 'whitespace/parens', 5,
               'Missing space before ( in %s' % matched.group(1))
 
-    # For if/for/while/switch, the left and right parens should be
+    # For if/for/foreach/while/switch, the left and right parens should be
     # consistent about how many spaces are inside the parens, and
     # there should either be zero or one spaces inside the parens.
     # We don't want: "if ( foo)" or "if ( foo   )".
     # Exception: "for ( ; foo; bar)" and "for (foo; bar; )" are allowed.
-    matched = search(r'\b(if|for|while|switch)\s*\(([ ]*)(.).*[^ ]+([ ]*)\)\s*{\s*$',
+    matched = search(r'\b(if|for|foreach|while|switch)\s*\(([ ]*)(.).*[^ ]+([ ]*)\)\s*{\s*$',
                      line)
     if matched:
         if len(matched.group(2)) != len(matched.group(4)):
@@ -1685,7 +1686,7 @@ def check_braces(filename, clean_lines, line_number, error):
                   'This { should be at the end of the previous line')
     elif (search(r'\)\s*(const\s*)?{\s*$', line)
           and line.count('(') == line.count(')')
-          and not search(r'\b(if|for|while|switch)\b', line)):
+          and not search(r'\b(if|for|foreach|while|switch)\b', line)):
         error(filename, line_number, 'whitespace/braces', 4,
               'Place brace on its own line for function definitions.')
 
@@ -1694,7 +1695,7 @@ def check_braces(filename, clean_lines, line_number, error):
         # one line control statement was previous.
         previous_line = clean_lines.elided[line_number - 2]
         if (previous_line.find('{') > 0
-            and search(r'\b(if|for|while|else)\b', previous_line)):
+            and search(r'\b(if|for|foreach|while|else)\b', previous_line)):
             error(filename, line_number, 'whitespace/braces', 4,
                   'One line control clauses should not use braces.')
 
