@@ -1,3 +1,16 @@
+2009-07-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26716
+        [Gtk] Each XMLHttpRequest leaks memory.
+
+        Free the SoupURI we create to check the URI. Fix suggested by John
+        Kjellberg.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::):
+
 2009-07-20  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Holger Freyther.
