@@ -5,6 +5,8 @@ SOURCES = jsc.cpp
 QT -= gui
 CONFIG -= app_bundle
 CONFIG += building-libs
+win32-*: CONFIG += console
+win32-msvc*: CONFIG += exceptions_off stl_off
 
 include($$PWD/../WebKit.pri)
 

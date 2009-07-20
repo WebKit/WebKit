@@ -1,3 +1,12 @@
+2009-07-20  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Qt build fix with MSVC and MinGW.
+
+        * jsc.pro: Make sure jsc is a console application, and turn off
+        exceptions and stl support to fix the build.
+
 2009-07-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
