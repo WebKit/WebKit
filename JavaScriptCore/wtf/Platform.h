@@ -365,7 +365,7 @@
 #define _countof(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
-#endif  // PLATFORM(WINCE) && !PLATFORM(QT)
+#endif  /* PLATFORM(WINCE) && !PLATFORM(QT) */
 
 /* for Unicode, KDE uses Qt */
 #if PLATFORM(KDE) || PLATFORM(QT)

@@ -1,3 +1,14 @@
+2009-07-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Do not use C++-style comments in preprocessor directives.
+
+        GCC does not like this in some configurations, using C-style
+        comments is safer.
+
+        * wtf/Platform.h:
+
 2009-07-17  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Steve Falkenburg.
