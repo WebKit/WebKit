@@ -1,3 +1,14 @@
+2009-07-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Change the glib version check to check for the first unstable
+        release with g_mapped_file_unref. Otherwise this would be useless
+        until 2.22 is released, a few months from now.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::startHttp):
+
 2009-07-20  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.

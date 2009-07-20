@@ -527,14 +527,14 @@ bool ResourceHandle::startHttp(String urlString)
 
                         return false;
                     }
-#if GLIB_CHECK_VERSION(2, 22, 0)
+
                     SoupBuffer* soupBuffer = soup_buffer_new_with_owner(g_mapped_file_get_contents(fileMapping),
                                                                         g_mapped_file_get_length(fileMapping),
-                                                                        fileMapping, reinterpret_cast<GDestroyNotify>(g_mapped_file_unref));
+                                                                        fileMapping,
+#if GLIB_CHECK_VERSION(2, 21, 3)
+                                                                        reinterpret_cast<GDestroyNotify>(g_mapped_file_unref));
 #else
-                    SoupBuffer* soupBuffer = soup_buffer_new_with_owner(g_mapped_file_get_contents(fileMapping),
-                                                                        g_mapped_file_get_length(fileMapping),
-                                                                        fileMapping, reinterpret_cast<GDestroyNotify>(g_mapped_file_free));
+                                                                        reinterpret_cast<GDestroyNotify>(g_mapped_file_free));
 #endif
                     soup_message_body_append_buffer(d->m_msg->request_body, soupBuffer);
                     soup_buffer_free(soupBuffer);
