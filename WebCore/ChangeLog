@@ -1,3 +1,19 @@
+2009-07-20  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adding the Win SQLite VFS implementation for Chromium, and stubs
+        for the Mac and Linux VFSs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26940
+
+        * WebCore.gypi:
+        * platform/chromium/ChromiumBridge.h:
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp: Added.
+        * platform/sql/chromium/SQLiteFileSystemChromiumLinux.cpp: Added.
+        * platform/sql/chromium/SQLiteFileSystemChromiumMac.cpp: Added.
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp: Added.
+
 2009-07-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
