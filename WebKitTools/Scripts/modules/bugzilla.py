@@ -139,6 +139,7 @@ class Bugzilla:
         "aroben" : "Adam Roben",
         "ap" : "Alexey Proskuryakov",
         "ariya.hidayat" : "Ariya Hidayat",
+        "barraclough" : "Gavin Barraclough",
         "beidson" : "Brady Eidson",
         "darin" : "Darin Adler",
         "ddkilzer" : "David Kilzer",
