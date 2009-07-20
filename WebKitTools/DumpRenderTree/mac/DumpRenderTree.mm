@@ -257,7 +257,7 @@ static void activateFonts()
     NSURL *resourcesDirectory = [NSURL URLWithString:@"DumpRenderTree.resources" relativeToURL:[[NSBundle mainBundle] executableURL]];
     for (unsigned i = 0; fontFileNames[i]; ++i) {
         NSURL *fontURL = [resourcesDirectory URLByAppendingPathComponent:[NSString stringWithUTF8String:fontFileNames[i]]];
-        [fontURLs addObject:fontURL];
+        [fontURLs addObject:[fontURL absoluteURL]];
     }
 
     CFArrayRef errors = 0;
