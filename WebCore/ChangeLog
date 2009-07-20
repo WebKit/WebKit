@@ -1,3 +1,15 @@
+2009-07-20  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27349
+        Add GraphicsContext implementation for the WinCE port.
+
+        Written by Yong Li <yong.li@torchmobile.com>, George Staikos <george.staikos@torchmobile.com> and Lyon Chen <lyon.chen@torchmobile.com>
+        with trivial style fixes by Adam Treat <adam.treat@torchmobile.com>
+
+        * platform/graphics/wince/GraphicsContextWince.cpp: Added.
+
 2009-07-20  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
