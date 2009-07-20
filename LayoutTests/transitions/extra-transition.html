@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leopard</title>
+  <title>Test that transition does not start when it shouldn't</title>
   <style>
   body {
       background: url('resources/Aurora.jpg');
@@ -67,7 +67,7 @@
   function init()
   {
       document.getElementById("item").className = "enabled";
-      setTimeout(check, 800);
+      setTimeout(check, 1000);
   }
   
   function log(s)
