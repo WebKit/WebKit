@@ -1,3 +1,9 @@
+    2009-07-20  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix release builds after r46136
+
+        * dom/Element.cpp:
+
 2009-07-17  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by Eric Seidel.

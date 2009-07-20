@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "NamedNodeMap.h"
 #include "NodeList.h"
+#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderView.h"
 #include "TextIterator.h"
