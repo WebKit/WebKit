@@ -388,9 +388,15 @@ PlatformWidget ChromeClient::platformWindow() const
     return GTK_WIDGET(m_webView);
 }
 
-void ChromeClient::contentsSizeChanged(Frame*, const IntSize&) const
+void ChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
-    notImplemented();
+    // We need to queue a resize request only if the size changed,
+    // otherwise we get into an infinite loop!
+    GtkWidget* widget = GTK_WIDGET(m_webView);
+    if (GTK_WIDGET_REALIZED(widget) &&
+        (widget->requisition.height != size.height()) &&
+        (widget->requisition.width != size.width()))
+        gtk_widget_queue_resize_no_redraw(widget);
 }
 
 void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned modifierFlags)
