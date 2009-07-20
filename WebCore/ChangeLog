@@ -1,3 +1,31 @@
+2009-07-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        [V8] Factor V8ConsoleMessage out of V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=27421
+
+        No behavior change.
+
+        * WebCore.gypi:
+        * bindings/v8/V8ConsoleMessage.cpp: Added.
+        (WebCore::V8ConsoleMessage::V8ConsoleMessage):
+        (WebCore::V8ConsoleMessage::dispatchNow):
+        (WebCore::V8ConsoleMessage::dispatchLater):
+        (WebCore::V8ConsoleMessage::processDelayed):
+        (WebCore::V8ConsoleMessage::handler):
+        * bindings/v8/V8ConsoleMessage.h: Added.
+        (WebCore::V8ConsoleMessage::Scope::Scope):
+        (WebCore::V8ConsoleMessage::Scope::~Scope):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::logInfo):
+        (WebCore::reportUnsafeAccessTo):
+        (WebCore::V8Proxy::runScript):
+        (WebCore::V8Proxy::callFunction):
+        (WebCore::V8Proxy::newInstance):
+        (WebCore::V8Proxy::initContextIfNeeded):
+        (WebCore::V8Proxy::processConsoleMessages):
+
 2009-07-19  Rob Buis  <rwlbuis@gmail.com>
 
         Reviewed by Adam Barth.

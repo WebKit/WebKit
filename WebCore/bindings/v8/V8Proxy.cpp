@@ -39,6 +39,7 @@
 #include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8Collection.h"
+#include "V8ConsoleMessage.h"
 #include "V8CustomBinding.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
@@ -130,149 +131,13 @@ typedef HashMap<int, v8::FunctionTemplate*> FunctionTemplateMap;
 
 bool AllowAllocation::m_current = false;
 
-// JavaScriptConsoleMessages encapsulate everything needed to
-// log messages originating from JavaScript to the Chrome console.
-class JavaScriptConsoleMessage {
-public:
-    JavaScriptConsoleMessage(const String& string, const String& sourceID, unsigned lineNumber)
-        : m_string(string)
-        , m_sourceID(sourceID)
-        , m_lineNumber(lineNumber)
-        { 
-        }
-
-    void addToPage(Page*) const;
-
-private:
-    const String m_string;
-    const String m_sourceID;
-    const unsigned m_lineNumber;
-};
-
-void JavaScriptConsoleMessage::addToPage(Page* page) const
-{
-    ASSERT(page);
-    Console* console = page->mainFrame()->domWindow()->console();
-    console->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, m_string, m_lineNumber, m_sourceID);
-}
-
-// The ConsoleMessageManager handles all console messages that stem
-// from JavaScript. It keeps a list of messages that have been delayed but
-// it makes sure to add all messages to the console in the right order.
-class ConsoleMessageManager {
-public:
-    // Add a message to the console. May end up calling JavaScript code
-    // indirectly through the inspector so only call this function when
-    // it is safe to do allocations.
-    static void addMessage(Page*, const JavaScriptConsoleMessage&);
-
-    // Add a message to the console but delay the reporting until it
-    // is safe to do so: Either when we leave JavaScript execution or
-    // when adding other console messages. The primary purpose of this
-    // method is to avoid calling into V8 to handle console messages
-    // when the VM is in a state that does not support GCs or allocations.
-    // Delayed messages are always reported in the page corresponding
-    // to the active context.
-    static void addDelayedMessage(const JavaScriptConsoleMessage&);
-
-    // Process any delayed messages. May end up calling JavaScript code
-    // indirectly through the inspector so only call this function when
-    // it is safe to do allocations.
-    static void processDelayedMessages();
-
-private:
-    // All delayed messages are stored in this vector. If the vector
-    // is NULL, there are no delayed messages.
-    static Vector<JavaScriptConsoleMessage>* m_delayed;
-};
-
-Vector<JavaScriptConsoleMessage>* ConsoleMessageManager::m_delayed = 0;
-
-void ConsoleMessageManager::addMessage(Page* page, const JavaScriptConsoleMessage& message)
-{
-    // Process any delayed messages to make sure that messages
-    // appear in the right order in the console.
-    processDelayedMessages();
-    message.addToPage(page);
-}
-
-void ConsoleMessageManager::addDelayedMessage(const JavaScriptConsoleMessage& message)
-{
-    if (!m_delayed) {
-        // Allocate a vector for the delayed messages. Will be
-        // deallocated when the delayed messages are processed
-        // in processDelayedMessages().
-        m_delayed = new Vector<JavaScriptConsoleMessage>();
-    }
-    m_delayed->append(message);
-}
-
-void ConsoleMessageManager::processDelayedMessages()
-{
-    // If we have a delayed vector it cannot be empty.
-    if (!m_delayed)
-        return;
-    ASSERT(!m_delayed->isEmpty());
-
-    // Add the delayed messages to the page of the active
-    // context. If that for some bizarre reason does not
-    // exist, we clear the list of delayed messages to avoid
-    // posting messages. We still deallocate the vector.
-    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
-    Page* page = 0;
-    if (frame)
-        page = frame->page();
-    if (!page)
-        m_delayed->clear();
-
-    // Iterate through all the delayed messages and add them
-    // to the console.
-    const int size = m_delayed->size();
-    for (int i = 0; i < size; i++)
-        m_delayed->at(i).addToPage(page);
-
-    // Deallocate the delayed vector.
-    delete m_delayed;
-    m_delayed = 0;
-}
-
-// Convenience class for ensuring that delayed messages in the
-// ConsoleMessageManager are processed quickly.
-class ConsoleMessageScope {
-public:
-    ConsoleMessageScope() { ConsoleMessageManager::processDelayedMessages(); }
-    ~ConsoleMessageScope() { ConsoleMessageManager::processDelayedMessages(); }
-};
-
 void logInfo(Frame* frame, const String& message, const String& url)
 {
     Page* page = frame->page();
     if (!page)
         return;
-    JavaScriptConsoleMessage consoleMessage(message, url, 0);
-    ConsoleMessageManager::addMessage(page, consoleMessage);
-}
-
-static void handleConsoleMessage(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
-{
-    // Use the frame where JavaScript is called from.
-    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!frame)
-        return;
-
-    Page* page = frame->page();
-    if (!page)
-        return;
-
-    v8::Handle<v8::String> errorMessageString = message->Get();
-    ASSERT(!errorMessageString.IsEmpty());
-    String errorMessage = toWebCoreString(errorMessageString);
-
-    v8::Handle<v8::Value> resourceName = message->GetScriptResourceName();
-    bool useURL = resourceName.IsEmpty() || !resourceName->IsString();
-    String resourceNameString = useURL ? frame->document()->url() : toWebCoreString(resourceName);
-    JavaScriptConsoleMessage consoleMessage(errorMessage, resourceNameString, message->GetLineNumber());
-    ConsoleMessageManager::addMessage(page, consoleMessage);
+    V8ConsoleMessage consoleMessage(message, url, 0);
+    consoleMessage.dispatchNow(page);
 }
 
 enum DelayReporting {
@@ -304,20 +169,19 @@ static void reportUnsafeAccessTo(Frame* target, DelayReporting delay)
     // Build a console message with fake source ID and line number.
     const String kSourceID = "";
     const int kLineNumber = 1;
-    JavaScriptConsoleMessage message(str, kSourceID, kLineNumber);
+    V8ConsoleMessage message(str, kSourceID, kLineNumber);
 
     if (delay == ReportNow) {
         // NOTE: Safari prints the message in the target page, but it seems like
         // it should be in the source page. Even for delayed messages, we put it in
-        // the source page; see ConsoleMessageManager::processDelayedMessages().
-        ConsoleMessageManager::addMessage(source->page(), message);
-
+        // the source page; see V8ConsoleMessage::processDelayed().
+        message.dispatchNow(source->page());
     } else {
         ASSERT(delay == ReportLater);
         // We cannot safely report the message eagerly, because this may cause
         // allocations and GCs internally in V8 and we cannot handle that at this
         // point. Therefore we delay the reporting.
-        ConsoleMessageManager::addDelayedMessage(message);
+        message.dispatchLater();
     }
 }
 
@@ -530,7 +394,7 @@ v8::Local<v8::Value> V8Proxy::runScript(v8::Handle<v8::Script> script, bool isIn
     // Run the script and keep track of the current recursion depth.
     v8::Local<v8::Value> result;
     {
-        ConsoleMessageScope scope;
+        V8ConsoleMessage::Scope scope;
         m_recursion++;
 
         // See comment in V8Proxy::callFunction.
@@ -563,7 +427,7 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
     // contrast to the script evaluations.
     v8::Local<v8::Value> result;
     {
-        ConsoleMessageScope scope;
+        V8ConsoleMessage::Scope scope;
 
         // Evaluating the JavaScript could cause the frame to be deallocated,
         // so we start the keep alive timer here.
@@ -587,7 +451,7 @@ v8::Local<v8::Value> V8Proxy::newInstance(v8::Handle<v8::Function> constructor, 
     // V8Proxy::callFunction.
     v8::Local<v8::Value> result;
     {
-        ConsoleMessageScope scope;
+        V8ConsoleMessage::Scope scope;
 
         // See comment in V8Proxy::callFunction.
         m_frame->keepAlive();
@@ -1121,7 +985,7 @@ void V8Proxy::initContextIfNeeded()
         v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
         v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
 
-        v8::V8::AddMessageListener(handleConsoleMessage);
+        v8::V8::AddMessageListener(&V8ConsoleMessage::handler);
 
         v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
 
@@ -1280,7 +1144,7 @@ void V8Proxy::bindJsObjectToWindow(Frame* frame, const char* name, int type, v8:
 
 void V8Proxy::processConsoleMessages()
 {
-    ConsoleMessageManager::processDelayedMessages();
+    V8ConsoleMessage::processDelayed();
 }
 
 // Create the utility context for holding JavaScript functions used internally
