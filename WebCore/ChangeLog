@@ -1,3 +1,49 @@
+2009-07-20  Balazs Kelemen  <kelemen.balazs.3@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] font cache reworking
+        https://bugs.webkit.org/show_bug.cgi?id=27265
+
+        Reimplemented Qt's FontCache in a way that follows the shared one.
+        Now we can release its elements when those became inactive.
+        FontFallbackList had been changed to be able to hold WebCore fonts in its list and to be able to release a FontData what is in the cache.
+
+        No change in behavior, so no tests.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey):
+        (WebCore::FontPlatformDataCacheKey::isHashTableDeletedValue):
+        (WebCore::FontPlatformDataCacheKey::): Key type for the cache of FontPlatformData objects.
+        It can be constructed from a FontPlatformData or from a FontDescription. The keys have to be consistent
+        with FontPlatformData::FontPlatformData(const FontDescription&) - if we create the same
+        FontPlatformData from two FontDescription then we have to create the same key from them, and vica versa.
+        (WebCore::FontPlatformDataCacheKey::operator==):
+        (WebCore::FontPlatformDataCacheKey::hash):
+        (WebCore::FontPlatformDataCacheKey::computeHash):
+        (WebCore::FontPlatformDataCacheKey::hashTableDeletedSize):
+        (WebCore::FontPlatformDataCacheKeyHash::hash):
+        (WebCore::FontPlatformDataCacheKeyHash::equal):
+        (WebCore::FontPlatformDataCacheKeyTraits::emptyValue):
+        (WebCore::FontPlatformDataCacheKeyTraits::constructDeletedValue):
+        (WebCore::FontPlatformDataCacheKeyTraits::isDeletedValue):
+        (WebCore::FontCache::getCachedFontPlatformData): Get a FontDescription and returns a FontPlatformData.
+        (WebCore::FontCache::getCachedFontData): Get a FontPlatformData and returns a SimpleFontData.
+        (WebCore::FontCache::releaseFontData): Get a SimpleFontData and releases it from the cache. Also releases the appropriate FontPlatformData.
+        (WebCore::FontCache::purgeInactiveFontData): Frees inactive elements.
+        (WebCore::FontCache::invalidate): Frees all inactive elements (call purgeInactiveFontData with default argument)
+        * platform/graphics/qt/FontFallbackListQt.cpp:
+        (WebCore::FontFallbackList::releaseFontData):
+        (WebCore::FontFallbackList::fontDataAt):
+        * platform/graphics/qt/FontPlatformData.h:
+        (WebCore::FontPlatformData::family): Getter. It is needed for FontPlatformDataCacheKey.
+        (WebCore::FontPlatformData::bold): Ditto.
+        (WebCore::FontPlatformData::italic): Ditto.
+        (WebCore::FontPlatformData::smallCaps): Ditto.
+        (WebCore::FontPlatformData::pixelSize): Ditto.
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Set m_bold.
+
 2009-07-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Holger Freyther.

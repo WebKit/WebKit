@@ -41,6 +41,11 @@ public:
 
     QFont font() const { return m_font; }
     float size() const { return m_size; }
+    QString family() const { return m_font.family(); }
+    bool bold() const { return m_bold; }
+    bool italic() const { return m_font.italic(); }
+    bool smallCaps() const { return m_font.capitalization() == QFont::SmallCaps; }
+    int pixelSize() const { return m_font.pixelSize(); }
 
     float m_size;
     bool m_bold;

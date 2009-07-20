@@ -41,9 +41,10 @@ FontPlatformData::FontPlatformData(const FontDescription& description, int wordS
     m_font.setPixelSize(qRound(description.computedSize()));
     m_font.setItalic(description.italic());
     // FIXME: Map all FontWeight values to QFont weights.
-    if (description.weight() >= FontWeight600)
+    if (description.weight() >= FontWeight600) {
         m_font.setWeight(QFont::Bold);
-    else
+        m_bold = true;
+    } else
         m_font.setWeight(QFont::Normal);
 
     bool smallCaps = description.smallCaps();

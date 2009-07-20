@@ -25,6 +25,7 @@
 #include "FontFallbackList.h"
 
 #include "Font.h"
+#include "FontCache.h"
 #include "SegmentedFontData.h"
 
 #include <QDebug>
@@ -58,9 +59,15 @@ void FontFallbackList::invalidate(WTF::PassRefPtr<WebCore::FontSelector> fontSel
 
 void FontFallbackList::releaseFontData()
 {
-    if (m_fontList.size())
-        delete m_fontList[0].first;
-    m_fontList.clear();
+    unsigned numFonts = m_fontList.size();
+    for (unsigned i = 0; i < numFonts; ++i) {
+        if (m_fontList[i].second)
+            delete m_fontList[i].first;
+        else {
+            ASSERT(!m_fontList[i].first->isSegmented());
+            fontCache()->releaseFontData(static_cast<const SimpleFontData*>(m_fontList[i].first));
+        }
+    }
 }
 
 void FontFallbackList::determinePitch(const WebCore::Font* font) const
@@ -83,6 +90,14 @@ const FontData* FontFallbackList::fontDataAt(const WebCore::Font* _font, unsigne
     if (index != 0)
         return 0;
 
+    // Search for the WebCore font that is already in the list
+    for (int i = m_fontList.size() - 1; i >= 0; --i) {
+        pair<const FontData*, bool> item = m_fontList[i];
+        // item.second means that the item was created locally or not
+        if (!item.second)
+            return item.first;
+    }
+
     // Use the FontSelector to get a WebCore font and then fallback to Qt
     const FontDescription& description = _font->fontDescription();
     const FontFamily* family = &description.family();
@@ -92,6 +107,10 @@ const FontData* FontFallbackList::fontDataAt(const WebCore::Font* _font, unsigne
             if (data) {
                 if (data->isLoading())
                     m_loadingCustomFonts = true;
+                if (!data->isCustomFont()) {
+                    // Custom fonts can be freed anytime so we must not hold them
+                    m_fontList.append(pair<const FontData*, bool>(data, false));
+                }
                 return data;
             }
         }
@@ -101,8 +120,8 @@ const FontData* FontFallbackList::fontDataAt(const WebCore::Font* _font, unsigne
     if (m_fontList.size())
         return m_fontList[0].first;
 
-    const FontData* result = new SimpleFontData(FontPlatformData(description), _font->wordSpacing(), _font->letterSpacing());
-    m_fontList.append(pair<const FontData*, bool>(result, result->isCustomFont()));
+    const FontData* result = new SimpleFontData(FontPlatformData(description, _font->wordSpacing(), _font->letterSpacing()), true);
+    m_fontList.append(pair<const FontData*, bool>(result, true));
     return result;
 }
 
