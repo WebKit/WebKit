@@ -47,7 +47,10 @@ INCLUDEPATH += $$PWD/WebKit/qt/Api
 
 symbian {
     QMAKE_CXXFLAGS.ARMCC += --gnu --no_parse_templates
+    DEFINES *= QT_NO_UITOOLS
 }
+
+contains(DEFINES, QT_NO_UITOOLS): CONFIG -= uitools
 
 #
 # For builds inside Qt we interpret the output rule and the input of each extra compiler manually
