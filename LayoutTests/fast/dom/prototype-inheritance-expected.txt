@@ -177,10 +177,8 @@ PASS inner.XPathEvaluator.isInner is true
 PASS inner.XPathException.isInner is true
 PASS inner.XPathResult.isInner is true
 PASS inner.XSLTProcessor.isInner is true
-PASS inner.accessibilityController.isInner is true
 FAIL inner.addEventListener.isInner should be true. Was false.
 FAIL inner.alert.isInner should be true. Was false.
-PASS inner.appleScriptController.isInner is true
 FAIL inner.applicationCache.isInner should be true. Was false.
 FAIL inner.atob.isInner should be true. Was false.
 FAIL inner.blur.isInner should be true. Was false.
@@ -190,8 +188,11 @@ FAIL inner.clearInterval.isInner should be true. Was false.
 FAIL inner.clearTimeout.isInner should be true. Was false.
 FAIL inner.clientInformation.isInner should be true. Was false.
 FAIL inner.close.isInner should be true. Was false.
+FAIL inner.closed.isInner should be true. Was false.
 FAIL inner.confirm.isInner should be true. Was false.
 FAIL inner.console.isInner should be true. Was false.
+FAIL inner.defaultStatus.isInner should be true. Was false.
+FAIL inner.defaultstatus.isInner should be true. Was false.
 FAIL inner.devicePixelRatio.isInner should be true. Was false.
 FAIL inner.dispatchEvent.isInner should be true. Was false.
 PASS inner.document.isInner is true
@@ -203,7 +204,10 @@ FAIL inner.getComputedStyle.isInner should be true. Was false.
 FAIL inner.getMatchedCSSRules.isInner should be true. Was false.
 FAIL inner.getSelection.isInner should be true. Was false.
 PASS inner.history.isInner is true
+FAIL inner.innerHeight.isInner should be true. Was false.
+FAIL inner.innerWidth.isInner should be true. Was false.
 FAIL inner.isInner.isInner should be true. Was false.
+FAIL inner.length.isInner should be true. Was false.
 FAIL inner.localStorage.isInner should be true. Was false.
 PASS inner.location.isInner is true
 FAIL inner.locationbar.isInner should be true. Was false.
@@ -217,8 +221,9 @@ FAIL inner.open.isInner should be true. Was false.
 FAIL inner.openDatabase.isInner should be true. Was false.
 FAIL inner.outerHeight.isInner should be true. Was false.
 FAIL inner.outerWidth.isInner should be true. Was false.
+FAIL inner.pageXOffset.isInner should be true. Was false.
+FAIL inner.pageYOffset.isInner should be true. Was false.
 FAIL inner.personalbar.isInner should be true. Was false.
-PASS inner.plainText.isInner is true
 FAIL inner.postMessage.isInner should be true. Was false.
 FAIL inner.print.isInner should be true. Was false.
 FAIL inner.prompt.isInner should be true. Was false.
@@ -227,16 +232,21 @@ FAIL inner.removeEventListener.isInner should be true. Was false.
 FAIL inner.resizeBy.isInner should be true. Was false.
 FAIL inner.resizeTo.isInner should be true. Was false.
 FAIL inner.screen.isInner should be true. Was false.
+FAIL inner.screenLeft.isInner should be true. Was false.
 FAIL inner.screenTop.isInner should be true. Was false.
+FAIL inner.screenX.isInner should be true. Was false.
 FAIL inner.screenY.isInner should be true. Was false.
 FAIL inner.scroll.isInner should be true. Was false.
 FAIL inner.scrollBy.isInner should be true. Was false.
 FAIL inner.scrollTo.isInner should be true. Was false.
+FAIL inner.scrollX.isInner should be true. Was false.
+FAIL inner.scrollY.isInner should be true. Was false.
 FAIL inner.scrollbars.isInner should be true. Was false.
 PASS inner.self.isInner is true
 FAIL inner.sessionStorage.isInner should be true. Was false.
 FAIL inner.setInterval.isInner should be true. Was false.
 FAIL inner.setTimeout.isInner should be true. Was false.
+FAIL inner.status.isInner should be true. Was false.
 FAIL inner.statusbar.isInner should be true. Was false.
 FAIL inner.stop.isInner should be true. Was false.
 FAIL inner.toolbar.isInner should be true. Was false.

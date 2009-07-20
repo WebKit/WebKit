@@ -11,6 +11,7 @@ var skippedProperties = [
     "GCController", "layoutTestController",
     "objCController", "textInputController", "navigationController",
     "eventSender", "objCPlugin", "objCPluginFunction",
+    "appleScriptController", "plainText", "accessibilityController",
 ];
 
 var skippedPropertiesSet = {};
@@ -32,12 +33,14 @@ for (var x = 0; x < windowProperites.length; x++) {
     if (skippedPropertiesSet[property])
         continue;
 
-    // Skip null properties (like on* listeners)
     var value = inner[property];
-    if (!value)
+    // Skip functions/properties on window which won't be on inner (like the ones defined in this test)
+    if (value === undefined)
         continue;
-
-    shouldBeTrue("inner." + property + ".isInner")
+    // Skip enumerable properties which default to null (like on* listeners)
+    if (value === null)
+        continue;
+    shouldBeTrue("inner." + property + ".isInner");
 }
 
 document.body.removeChild(subframe);
