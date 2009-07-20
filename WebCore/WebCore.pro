@@ -80,6 +80,9 @@ win32-g++ {
     QMAKE_LIBDIR_POST += $$split(TMPPATH,";")
 }
 
+# Assume that symbian OS always comes with sqlite
+symbian:!CONFIG(QTDIR_build): CONFIG += system-sqlite
+
 # Try to locate sqlite3 source
 CONFIG(QTDIR_build) {
     SQLITE3SRCDIR = $$QT_SOURCE_TREE/src/3rdparty/sqlite/
@@ -2234,24 +2237,23 @@ contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=0) {
 }
 
 contains(DEFINES, ENABLE_SQLITE=1) {
-    # somewhat copied from src/plugins/sqldrivers/sqlite/sqlite.pro
-    CONFIG(QTDIR_build):system-sqlite {
-        LIBS *= $$QT_LFLAGS_SQLITE
-        QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
-    } else {
-        exists( $${SQLITE3SRCDIR}/sqlite3.c )  {
-            # we have source - use it
-            CONFIG(release, debug|release):DEFINES *= NDEBUG
-            DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE 
-            contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
-                DEFINES+=SQLITE_THREADSAFE=0
-            }
+    !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
+            # Build sqlite3 into WebCore from source
+            # somewhat copied from $$QT_SOURCE_TREE/src/plugins/sqldrivers/sqlite/sqlite.pro
             INCLUDEPATH += $${SQLITE3SRCDIR}
             SOURCES += $${SQLITE3SRCDIR}/sqlite3.c
+            DEFINES += SQLITE_CORE SQLITE_OMIT_LOAD_EXTENSION SQLITE_OMIT_COMPLETE
+            CONFIG(release, debug|release): DEFINES *= NDEBUG
+            contains(DEFINES, ENABLE_SINGLE_THREADED=1): DEFINES += SQLITE_THREADSAFE=0
+    } else {
+        # Use sqlite3 from the underlying OS
+        CONFIG(QTDIR_build) {
+            QMAKE_CXXFLAGS *= $$QT_CFLAGS_SQLITE
+            LIBS *= $$QT_LFLAGS_SQLITE
         } else {
-            # fall back to platform library
-            INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
-            LIBS += -lsqlite3
+            INCLUDEPATH += $${SQLITE3SRCDIR}
+            symbian: LIBS += -lsqlite3.lib
+            else: LIBS += -lsqlite3
         }
     }
 
