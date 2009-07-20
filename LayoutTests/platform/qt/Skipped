@@ -122,6 +122,7 @@ editing/pasteboard/unrendered-br.html
 fast/dom/Window/get-set-properties.html
 fast/dom/Window/window-properties.html
 fast/js/instanceof-operator.html
+fast/dom/prototype-inheritance.html
 
 # ------- failures for tests with results
 fast/forms/drag-out-of-textarea.html

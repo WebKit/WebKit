@@ -1,3 +1,12 @@
+2009-07-19  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Xan Lopez.
+
+        Skip new fast/dom/prototype-inheritance.html test in the Qt DRT
+        due to missing features/properties in the window object.
+
+        * platform/qt/Skipped:
+
 2009-07-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
