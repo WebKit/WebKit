@@ -30,7 +30,7 @@
 
 namespace WTF {
 
-struct NewThreadContext {
+struct NewThreadContext : FastAllocBase {
     NewThreadContext(ThreadFunction entryPoint, void* data, const char* name)
         : entryPoint(entryPoint)
         , data(data)
