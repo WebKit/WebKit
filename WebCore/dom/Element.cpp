@@ -33,7 +33,6 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "Document.h"
-#include "Editor.h"
 #include "ElementRareData.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
@@ -43,11 +42,8 @@
 #include "HTMLNames.h"
 #include "NamedNodeMap.h"
 #include "NodeList.h"
-#include "NodeRenderStyle.h"
 #include "Page.h"
-#include "PlatformString.h"
-#include "RenderBlock.h"
-#include "SelectionController.h"
+#include "RenderView.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
 
@@ -382,8 +378,10 @@ int Element::clientWidth()
     bool inCompatMode = document()->inCompatMode();
     if ((!inCompatMode && document()->documentElement() == this) ||
         (inCompatMode && isHTMLElement() && document()->body() == this)) {
-        if (FrameView* view = document()->view())
-            return adjustForAbsoluteZoom(view->layoutWidth(), document()->renderer());
+        if (FrameView* view = document()->view()) {
+            if (RenderView* renderView = document()->renderView())
+                return adjustForAbsoluteZoom(view->layoutWidth(), renderView);
+        }
     }
     
     if (RenderBox* rend = renderBox())
@@ -401,8 +399,10 @@ int Element::clientHeight()
 
     if ((!inCompatMode && document()->documentElement() == this) ||
         (inCompatMode && isHTMLElement() && document()->body() == this)) {
-        if (FrameView* view = document()->view())
-            return adjustForAbsoluteZoom(view->layoutHeight(), document()->renderer());
+        if (FrameView* view = document()->view()) {
+            if (RenderView* renderView = document()->renderView())
+                return adjustForAbsoluteZoom(view->layoutHeight(), renderView);
+        }
     }
     
     if (RenderBox* rend = renderBox())

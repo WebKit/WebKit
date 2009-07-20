@@ -704,6 +704,7 @@ This file contains the list of files needed to build WebCore.
         loader/MediaDocument.cpp
         loader/NavigationAction.cpp
         loader/NetscapePlugInStreamLoader.cpp
+        loader/PlaceholderDocument.cpp
         loader/PluginDocument.cpp
         loader/ProgressTracker.cpp
         loader/Request.cpp

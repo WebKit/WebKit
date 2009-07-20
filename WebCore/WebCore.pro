@@ -879,6 +879,7 @@ SOURCES += \
     loader/MediaDocument.cpp \
     loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \
+    loader/PlaceholderDocument.cpp \
     loader/PluginDocument.cpp \
     loader/ProgressTracker.cpp \
     loader/Request.cpp \
@@ -1541,6 +1542,7 @@ HEADERS += \
     loader/MediaDocument.h \
     loader/NavigationAction.h \
     loader/NetscapePlugInStreamLoader.h \
+    loader/PlaceholderDocument.h \
     loader/PluginDocument.h \
     loader/ProgressTracker.h \
     loader/Request.h \

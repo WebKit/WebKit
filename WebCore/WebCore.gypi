@@ -1488,6 +1488,8 @@
             'loader/NavigationAction.h',
             'loader/NetscapePlugInStreamLoader.cpp',
             'loader/NetscapePlugInStreamLoader.h',
+            'loader/PlaceholderDocument.cpp',
+            'loader/PlaceholderDocument.h',
             'loader/PluginDocument.cpp',
             'loader/PluginDocument.h',
             'loader/ProgressTracker.cpp',

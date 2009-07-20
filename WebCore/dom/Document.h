@@ -797,6 +797,8 @@ public:
 protected:
     Document(Frame*, bool isXHTML);
 
+    void setStyleSelector(CSSStyleSelector* styleSelector) {  m_styleSelector = styleSelector; }
+
 private:
     virtual void refScriptExecutionContext() { ref(); }
     virtual void derefScriptExecutionContext() { deref(); }

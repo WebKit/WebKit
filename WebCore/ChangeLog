@@ -1,3 +1,43 @@
+2009-07-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        When loading a custom view into a frame, the old document is still
+        around
+        <rdar://problem/5145841>
+
+        Safari fires onload before PDF is loaded into the browser
+        <rdar://problem/6618869>
+
+        Test: fast/loader/non-html-load-event.html
+
+        * GNUmakefile.am: Added PlaceholderDocument.{cpp,h}
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+        * dom/Document.h:
+        (WebCore::Document::setStyleSelector): Added this protected accessor for
+            PlaceholderDocument to use.
+        * dom/Element.cpp:
+        (WebCore::Element::clientWidth): Check whether the document has a
+            renderer.
+        (WebCore::Element::clientHeight): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin): Create a PlaceholderDocument for frames
+            that do not use an HTML view. Do not nullify the content size in
+            that case.
+        (WebCore::FrameLoader::transitionToCommitted): For frames that do not
+            use an HTML view, call receivedFirstData(), which sets up the
+            frame with a new PlaceHolderDocument.
+        * loader/PlaceholderDocument.cpp: Added.
+        (WebCore::PlaceholderDocument::attach): Sets up the style selector but
+            does not create a RenderView.
+        * loader/PlaceholderDocument.h: Added.
+        (WebCore::PlaceholderDocument::create):
+        (WebCore::PlaceholderDocument::PlaceholderDocument):
+
 2009-07-20  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

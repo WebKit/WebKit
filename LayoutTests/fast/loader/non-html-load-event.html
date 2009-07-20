@@ -1,0 +1,11 @@
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function frameLoaded()
+    {
+        document.getElementById("result").firstChild.data = "PASS";
+    }
+</script>
+<iframe src="../images/resources/green_rectangle.pdf" onload="frameLoaded()"></iframe>
+<div id="result">FAIL</div>

@@ -1190,6 +1190,8 @@ webcore_sources += \
 	WebCore/loader/NavigationAction.h \
 	WebCore/loader/NetscapePlugInStreamLoader.cpp \
 	WebCore/loader/NetscapePlugInStreamLoader.h \
+	WebCore/loader/PlaceholderDocument.cpp \
+	WebCore/loader/PlaceholderDocument.h \
 	WebCore/loader/PluginDocument.cpp \
 	WebCore/loader/PluginDocument.h \
 	WebCore/loader/ProgressTracker.cpp \
