@@ -695,8 +695,7 @@ void GraphicsLayerCA::setPreserves3D(bool preserves3D)
         [m_transformLayer.get() setTransform:[m_layer.get() transform]];
         [m_layer.get() setTransform:CATransform3DIdentity];
         
-        // Transfer the opacity from the old layer to the transform layer.
-        [m_transformLayer.get() setOpacity:m_opacity];
+        // Set the old layer to opacity of 1. Further down we will set the opacity on the transform layer.
         [m_layer.get() setOpacity:1];
 
         // Move this layer to be a child of the transform layer.
@@ -722,7 +721,6 @@ void GraphicsLayerCA::setPreserves3D(bool preserves3D)
 #endif
         [m_layer.get() setContentsRect:[m_transformLayer.get() contentsRect]];
         [m_layer.get() setTransform:[m_transformLayer.get() transform]];
-        [m_layer.get() setOpacity:[m_transformLayer.get() opacity]];
 #ifndef NDEBUG
         [m_layer.get() setZPosition:[m_transformLayer.get() zPosition]];
 #endif
@@ -730,6 +728,8 @@ void GraphicsLayerCA::setPreserves3D(bool preserves3D)
         // Release the transform layer.
         m_transformLayer = 0;
     }
+
+    updateOpacityOnLayer();
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -837,7 +837,7 @@ void GraphicsLayerCA::setBackfaceVisibility(bool visible)
 
 bool GraphicsLayerCA::setOpacity(float opacity, const Animation* transition, double beginTime)
 {
-    if (forceSoftwareAnimation())
+    if (forceSoftwareAnimation() && transition)
         return false;
         
     float clampedOpacity = max(0.0f, min(opacity, 1.0f));
@@ -857,7 +857,7 @@ bool GraphicsLayerCA::setOpacity(float opacity, const Animation* transition, dou
         //
         if (animIndex < 0 || m_animations[animIndex].isTransition()) {
             BEGIN_BLOCK_OBJC_EXCEPTIONS
-            [primaryLayer() setOpacity:opacity];
+            updateOpacityOnLayer();
             if (animIndex >= 0) {
                 removeAllAnimationsForProperty(AnimatedPropertyOpacity);
                 animIndex = -1;
@@ -882,6 +882,12 @@ bool GraphicsLayerCA::setOpacity(float opacity, const Animation* transition, dou
             return false;
         }
     }
+    
+#if !HAVE_MODERN_QUARTZCORE
+    // Older versions of QuartzCore do not handle opacity in transform layers properly. So we will
+    // always do software animation in that case
+    return false;
+#endif
     
     // If an animation is running, ignore this transition, but still save the value.
     if (animIndex >= 0 && !m_animations[animIndex].isTransition())
@@ -1052,7 +1058,13 @@ bool GraphicsLayerCA::animateTransform(const TransformValueList& valueList, cons
 
 bool GraphicsLayerCA::animateFloat(AnimatedPropertyID property, const FloatValueList& valueList, const Animation* animation, double beginTime)
 {
-    if (forceSoftwareAnimation() || valueList.size() < 2)
+    if (forceSoftwareAnimation() || valueList.size() < 2
+#if !HAVE_MODERN_QUARTZCORE
+        // Older versions of QuartzCore do not handle opacity in transform layers properly. So we will
+        // always do software animation in that case
+        || property == AnimatedPropertyOpacity
+#endif
+    )
         return false;
         
     // if there is already is an animation for this property and it hasn't changed, ignore it.
@@ -1518,7 +1530,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool userTiledLayer)
     [m_layer.get() setPosition:[oldLayer.get() position]];
     [m_layer.get() setAnchorPoint:[oldLayer.get() anchorPoint]];
     [m_layer.get() setOpaque:[oldLayer.get() isOpaque]];
-    [m_layer.get() setOpacity:[oldLayer.get() opacity]];
+    updateOpacityOnLayer();
     [m_layer.get() setTransform:[oldLayer.get() transform]];
     [m_layer.get() setSublayerTransform:[oldLayer.get() sublayerTransform]];
     [m_layer.get() setDoubleSided:[oldLayer.get() isDoubleSided]];
@@ -1620,6 +1632,22 @@ void GraphicsLayerCA::setContentsLayer(WebLayer* contentsLayer)
 #endif
 
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void GraphicsLayerCA::setOpacityInternal(float accumulatedOpacity)
+{
+    [(preserves3D() ? m_layer.get() : primaryLayer()) setOpacity:accumulatedOpacity];
+}
+
+void GraphicsLayerCA::updateOpacityOnLayer()
+{
+#if !HAVE_MODERN_QUARTZCORE
+    // Distribute opacity either to our own layer or to our children. We pass in the 
+    // contribution from our parent(s).
+    distributeOpacity(parent() ? parent()->accumulatedOpacity() : 1);
+#else
+    [primaryLayer() setOpacity:m_opacity];
+#endif
 }
 
 } // namespace WebCore

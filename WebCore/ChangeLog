@@ -1,3 +1,33 @@
+2009-07-20  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Handle opacity and opacity animations on transform layers in Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=27398
+
+        This makes two changes, and only for Leopard. 
+
+        First, whenever opacity is changed on a layer I propagate the 
+        change into the content layer and all the children if the layer 
+        on which opacity is set is a transform layer (preserve3D is true). 
+        The opacity set is the accumulated opacity from this layer
+        and all its direct ancestor transform layers. Second, I turn off all 
+        hardware opacity animation.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::accumulatedOpacity):
+        (WebCore::GraphicsLayer::distributeOpacity):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setOpacityInternal):
+        * platform/graphics/mac/GraphicsLayerCA.h:
+        * platform/graphics/mac/GraphicsLayerCA.mm:
+        (WebCore::GraphicsLayerCA::setPreserves3D):
+        (WebCore::GraphicsLayerCA::setOpacity):
+        (WebCore::GraphicsLayerCA::animateFloat):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::setOpacityInternal):
+        (WebCore::GraphicsLayerCA::updateOpacityOnLayer):
+
 2009-07-20  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by Adam Roben.

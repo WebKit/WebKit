@@ -316,7 +316,12 @@ public:
 
     static String propertyIdToString(AnimatedPropertyID);
     
+    virtual void distributeOpacity(float);
+    virtual float accumulatedOpacity() const;
+
 protected:
+    virtual void setOpacityInternal(float) { }
+    
     GraphicsLayer(GraphicsLayerClient*);
 
     void dumpProperties(TextStream&, int indent) const;
