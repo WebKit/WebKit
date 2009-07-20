@@ -93,12 +93,10 @@
 #define WTF_PLATFORM_SOLARIS 1
 #endif
 
-#if defined (__S60__) || defined (__SYMBIAN32__)
+#if defined (__SYMBIAN32__)
 /* we are cross-compiling, it is not really windows */
 #undef WTF_PLATFORM_WIN_OS
 #undef WTF_PLATFORM_WIN
-#undef WTF_PLATFORM_CAIRO
-#define WTF_PLATFORM_S60 1
 #define WTF_PLATFORM_SYMBIAN 1
 #endif
 
@@ -115,7 +113,7 @@
 /* should be used regardless of operating environment */
 #if   PLATFORM(DARWIN)     \
    || PLATFORM(FREEBSD)    \
-   || PLATFORM(S60)        \
+   || PLATFORM(SYMBIAN)    \
    || PLATFORM(NETBSD)     \
    || defined(unix)        \
    || defined(__unix)      \
@@ -370,8 +368,6 @@
 /* for Unicode, KDE uses Qt */
 #if PLATFORM(KDE) || PLATFORM(QT)
 #define WTF_USE_QT4_UNICODE 1
-#elif PLATFORM(SYMBIAN)
-#define WTF_USE_SYMBIAN_UNICODE 1
 #elif PLATFORM(GTK)
 /* The GTK+ Unicode backend is configurable */
 #else
