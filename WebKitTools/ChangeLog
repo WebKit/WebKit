@@ -1,3 +1,14 @@
+2009-07-20  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27323
+        Use shorter, more correct code for determining the current directory,
+        which works better with symbolic links on some systems.  Also switch
+        from checking repository root to checking UUID, to match scm.py.
+
+        * Scripts/svn-create-patch:
+
 2009-07-20  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Dan Bernstein.

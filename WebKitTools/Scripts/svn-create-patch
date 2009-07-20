@@ -44,6 +44,7 @@ use strict;
 use warnings;
 
 use Config;
+use Cwd;
 use File::Basename;
 use File::Spec;
 use File::stat;
@@ -460,9 +461,9 @@ sub testfilecmp($$)
 sub chdirAndGetDifference($)
 {
     my ($newdir) = @_;
-    my $before = File::Spec->rel2abs( File::Spec->curdir() );
+    my $before = Cwd::getcwd();
     chdir $newdir;
-    my $after = File::Spec->rel2abs( File::Spec->curdir() );
+    my $after = Cwd::getcwd();
     return "." if $after eq $before;
     return File::Spec->abs2rel($before, $after);
 }
@@ -472,14 +473,14 @@ sub determineSvnRoot()
     my $last = '';
     my $path = '.';
     my $parent = '..';
-    my $repositoryRoot;
+    my $repositoryUUID;
     while (1) {
-        my $thisRoot;
+        my $thisUUID;
         # Ignore error messages in case we've run past the root of the checkout.
         open INFO, "svn info '$path' 2> $devNull |" or die;
         while (<INFO>) {
-            if (/^Repository Root: (.+)/) {
-                $thisRoot = $1;
+            if (/^Repository UUID: (.+)/) {
+                $thisUUID = $1;
                 { local $/ = undef; <INFO>; }  # Consume the rest of the input.
             }
         }
@@ -487,12 +488,12 @@ sub determineSvnRoot()
 
         # It's possible (e.g. for developers of some ports) to have a WebKit
         # checkout in a subdirectory of another checkout.  So abort if the
-        # repository root suddenly changes.
-        last if !$thisRoot;
-        if (!$repositoryRoot) {
-            $repositoryRoot = $thisRoot;
+        # repository UUID suddenly changes.
+        last if !$thisUUID;
+        if (!$repositoryUUID) {
+            $repositoryUUID = $thisUUID;
         }
-        last if $thisRoot ne $repositoryRoot;
+        last if $thisUUID ne $repositoryUUID;
 
         $last = $path;
         $path = File::Spec->catdir($parent, $path);
