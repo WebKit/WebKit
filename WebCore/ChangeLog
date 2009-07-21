@@ -1,3 +1,21 @@
+2009-07-21  Yong Li  <yong.li@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27509
+        Add font-related files for the WinCE port.
+
+        Written by Yong Li <yong.li@torchmobile.com>
+
+        * platform/graphics/wince/FontCacheWince.cpp: Added.
+        * platform/graphics/wince/FontCustomPlatformData.cpp: Added.
+        * platform/graphics/wince/FontCustomPlatformData.h: Added.
+        * platform/graphics/wince/FontPlatformData.cpp: Added.
+        * platform/graphics/wince/FontPlatformData.h: Added.
+        * platform/graphics/wince/FontWince.cpp: Added.
+        * platform/graphics/wince/GlyphPageTreeNodeWince.cpp: Added.
+        * platform/graphics/wince/SimpleFontDataWince.cpp: Added.
+
 2009-07-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         Fix the Windows build, and update the comment on top now that wx uses WebCorePrefix.h too.
