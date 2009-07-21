@@ -2670,18 +2670,13 @@ def process_file_data(filename, file_extension, lines, error):
     check_for_new_line_at_eof(filename, lines, error)
 
 
-def process_file(filename, vlevel, error=error):
+def process_file(filename, error=error):
     """Does google-lint on a single file.
 
     Args:
       filename: The name of the file to parse.
-      vlevel: The level of errors to report.  Every error of confidence
-      >= verbose_level will be reported.  0 is a good default.
       error: The function to call with any errors found.
     """
-
-    _set_verbose_level(vlevel)
-
     try:
         # Support the UNIX convention of using "-" for stdin.  Note that
         # we are not opening the file with universal newline support
@@ -2857,7 +2852,7 @@ that you notice that it flags incorrectly.
 
     _cpplint_state.reset_error_count()
     for filename in filenames:
-        process_file(filename, _cpplint_state.verbose_level)
+        process_file(filename)
     sys.stderr.write('Total errors found: %d\n' % _cpplint_state.error_count)
     sys.exit(_cpplint_state.error_count > 0)
 

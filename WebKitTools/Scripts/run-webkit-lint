@@ -1,0 +1,130 @@
+#!/usr/bin/python
+#
+# Copyright (C) 2009 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#    * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#    * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""Script to run the linter for source code of WebKit."""
+
+import os
+import os.path
+import sys
+
+import modules.cpplint as cpplint
+from modules.diff_parser import DiffParser
+from modules.scm import detect_scm_system
+
+
+# Override the usage of the lint tool.
+cpplint._USAGE = """
+Syntax: %(program_name)s [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
+
+  The style guidelines this tries to follow are those in
+    http://webkit.org/coding/coding-style.html
+
+  Every problem is given a confidence score from 1-5, with 5 meaning we are
+  certain of the problem, and 1 meaning it could be a legitimate construct.
+  This will miss some errors, and is not a substitute for a code review.
+
+  To prevent specific lines from being linted, add a '// NOLINT' comment to the
+  end of the line.
+
+  Linted extensions are .cc, .cpp, and .h.  Other file types will be ignored.
+
+  Flags:
+
+    output=vs7
+      By default, the output is formatted to ease emacs parsing.  Visual Studio
+      compatible output (vs7) may also be used.  Other formats are unsupported.
+
+    verbose=#
+      Specify a number 0-5 to restrict errors to certain verbosity levels.
+
+    filter=-x,+y,...
+      Specify a comma-separated list of category-filters to apply: only
+      error messages whose category names pass the filters will be printed.
+      (Category names are printed with the message and look like
+      "[whitespace/indent]".)  Filters are evaluated left to right.
+      "-FOO" and "FOO" means "do not print categories that start with FOO".
+      "+FOO" means "do print categories that start with FOO".
+
+      Examples: --filter=-whitespace,+whitespace/braces
+                --filter=whitespace,runtime/printf,+runtime/printf_format
+                --filter=-,+build/include_what_you_use
+
+      To see a list of all the categories used in %(program_name)s, pass no arg:
+         --filter=
+""" % {'program_name': sys.argv[0]}
+
+
+def process_patch(patch_string):
+    """Does lint on a single patch.
+
+    Args:
+      patch_string: A string of a patch.
+    """
+    patch = DiffParser(patch_string.splitlines())
+    for filename, diff in patch.files.iteritems():
+        file_extension = os.path.splitext(filename)[1]
+
+        if file_extension in ['.cc', '.cpp', '.h']:
+            line_numbers = set()
+
+            def error_for_patch(filename, line_number, category, confidence, message):
+                """Wrapper function of cpplint.error for patches.
+
+                This function outputs errors only if the line number
+                corresponds to lines which are modified or added.
+                """
+                if not line_numbers:
+                    for line in diff.lines:
+                        line_numbers.add(line[1])
+
+                if line_number in line_numbers:
+                    cpplint.error(filename, line_number, category, confidence, message)
+
+            cpplint.process_file(filename, error=error_for_patch)
+
+
+def main():
+    cpplint.use_webkit_styles()
+    args = cpplint.parse_arguments(sys.argv[1:])
+    if args:
+        sys.stderr.write("ERROR: We don't support files as arguments for now.\n" + cpplint._USAGE)
+        sys.exit(1)
+
+    cwd = os.path.abspath('.')
+    scm = detect_scm_system(cwd)
+
+    process_patch(scm.create_patch())
+
+    sys.stderr.write('Total errors found: %d\n' % cpplint.error_count())
+    sys.exit(cpplint.error_count() > 0)
+
+
+if __name__ == "__main__":
+    main()
