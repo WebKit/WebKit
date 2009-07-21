@@ -53,6 +53,7 @@ CSSParserValue CSSFunctionValue::parserValue() const
 {
     CSSParserValue val;
     val.id = 0;
+    val.isInt = false;
     val.unit = CSSParserValue::Function;
     val.function = new CSSParserFunction;
     val.function->name.characters = const_cast<UChar*>(m_name.characters());

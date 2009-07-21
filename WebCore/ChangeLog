@@ -1,3 +1,15 @@
+2009-07-21  James Hawkins  <jhawkins@google.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27453
+        Initialize isInt when creating a CSSParserValue for a function.
+
+        No change in behavior, so no tests.
+
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::parserValue):
+
 2009-07-20  Jens Alfke  <snej@google.com>
  
          Reviewed by David Levin.
