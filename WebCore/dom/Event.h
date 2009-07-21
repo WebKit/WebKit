@@ -119,7 +119,10 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         virtual bool isStorageEvent() const;
 #endif
-
+#if ENABLE(WORKERS)
+        virtual bool isErrorEvent() const;
+#endif
+        
         bool propagationStopped() const { return m_propagationStopped; }
 
         bool defaultPrevented() const { return m_defaultPrevented; }

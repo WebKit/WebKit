@@ -124,6 +124,7 @@ IDL_BINDINGS += \
 	WebCore/dom/Element.idl \
 	WebCore/dom/Entity.idl \
 	WebCore/dom/EntityReference.idl \
+	WebCore/dom/ErrorEvent.idl \
 	WebCore/dom/Event.idl \
 	WebCore/dom/EventException.idl \
 	WebCore/dom/KeyboardEvent.idl \
@@ -662,6 +663,8 @@ webcore_sources += \
 	WebCore/dom/Entity.h \
 	WebCore/dom/EntityReference.cpp \
 	WebCore/dom/EntityReference.h \
+	WebCore/dom/ErrorEvent.cpp \
+	WebCore/dom/ErrorEvent.h \
 	WebCore/dom/Event.cpp \
 	WebCore/dom/Event.h \
 	WebCore/dom/EventException.h \

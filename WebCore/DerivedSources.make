@@ -92,6 +92,7 @@ DOM_CLASSES = \
     ElementTimeControl \
     Entity \
     EntityReference \
+    ErrorEvent \
     Event \
     EventException \
     EventListener \

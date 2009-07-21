@@ -280,6 +280,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSElement.cpp
         DerivedSources/WebCore/JSEntity.cpp
         DerivedSources/WebCore/JSEntityReference.cpp
+        DerivedSources/WebCore/JSErrorEvent.cpp
         DerivedSources/WebCore/JSEvent.cpp
         DerivedSources/WebCore/JSEventException.cpp
         DerivedSources/WebCore/JSFile.cpp
@@ -449,6 +450,7 @@ This file contains the list of files needed to build WebCore.
         dom/Element.cpp
         dom/Entity.cpp
         dom/EntityReference.cpp
+        dom/ErrorEvent.cpp
         dom/Event.cpp
         dom/EventNames.cpp
         dom/EventTarget.cpp
