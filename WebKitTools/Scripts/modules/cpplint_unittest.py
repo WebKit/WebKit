@@ -2950,6 +2950,12 @@ class WebKitStyleTest(CpplintTestBase):
             '}\n',
             'This { should be at the end of the previous line  [whitespace/braces] [4]')
         self.assert_multi_line_lint(
+            'foreach (Foo* foo, foos)\n'
+            '{\n'
+            '    int bar;\n'
+            '}\n',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
             'switch (type)\n'
             '{\n'
             'case foo: return;\n'

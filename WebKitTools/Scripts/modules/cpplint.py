@@ -1740,7 +1740,7 @@ def check_braces(filename, clean_lines, line_number, error):
         # We also allow '#' for #endif and '=' for array initialization.
         previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
         if ((not search(r'[;:}{)=]\s*$|\)\s*const\s*$', previous_line)
-             or search(r'\b(if|for|while|switch|else)\b', previous_line))
+             or search(r'\b(if|for|foreach|while|switch|else)\b', previous_line))
             and previous_line.find('#') < 0):
             error(filename, line_number, 'whitespace/braces', 4,
                   'This { should be at the end of the previous line')
