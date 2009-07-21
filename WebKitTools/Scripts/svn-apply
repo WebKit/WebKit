@@ -254,7 +254,7 @@ sub fixChangeLogPatch($)
     my $patch = shift;
     my $contextLineCount = 3;
 
-    return $patch if $patch !~ /\n@@ -1,(\d+) \+1,(\d+) @@\n( .*\n)+(\+.*\n)+( .*\n){$contextLineCount}$/m;
+    return $patch if $patch !~ /\n@@ -1,(\d+) \+1,(\d+) @@\r?\n( .*\r?\n)+(\+.*\r?\n)+( .*\r?\n){$contextLineCount}$/m;
     my ($oldLineCount, $newLineCount) = ($1, $2);
     return $patch if $oldLineCount <= $contextLineCount;
 
@@ -358,7 +358,7 @@ sub patch($)
     my ($patch) = @_;
     return if !$patch;
 
-    unless ($patch =~ m|^Index: ([^\n]+)|) {
+    unless ($patch =~ m|^Index: ([^\r\n]+)|) {
         my $separator = '-' x 67;
         warn "Failed to find 'Index:' in:\n$separator\n$patch\n$separator\n";
         return;
@@ -369,7 +369,7 @@ sub patch($)
     my $addition = 0;
     my $isBinary = 0;
 
-    $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\n/ || $patch =~ /\n@@ -0,0 .* @@/);
+    $addition = 1 if ($patch =~ /\n--- .+\(revision 0\)\r?\n/ || $patch =~ /\n@@ -0,0 .* @@/);
     $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
     $isBinary = 1 if $patch =~ /\nCannot display: file marked as a binary type\./;
 
