@@ -46,8 +46,8 @@ my $makeArgs;
 
 my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $domStorageSupport,
     $filtersSupport, $geolocationSupport, $gnomeKeyringSupport, $iconDatabaseSupport,
-    $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $sharedWorkersSupport, $svgSupport,
-    $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
+    $javaScriptDebuggerSupport, $offlineWebApplicationSupport, $rubySupport, $sharedWorkersSupport, 
+    $svgSupport, $svgAnimationSupport, $svgAsImageSupport, $svgDOMObjCBindingsSupport, $svgFontsSupport,
     $svgForeignObjectSupport, $svgUseSupport, $videoSupport, $webSocketsSupport, $wmlSupport, $workersSupport,
     $xpathSupport, $xsltSupport, $coverageSupport);
 
@@ -84,6 +84,9 @@ my @features = (
 
     { option => "offline-web-applications", desc => "Toggle Offline Web Application Support",
       define => "ENABLE_OFFLINE_WEB_APPLICATIONS", default => 1, value => \$offlineWebApplicationSupport },
+
+    { option => "ruby", desc => "Toggle HTML5 Ruby support",
+      define => "ENABLE_RUBY", default => 1, value => \$rubySupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
       define => "ENABLE_SHARED_WORKERS", default => 0, value => \$sharedWorkersSupport },

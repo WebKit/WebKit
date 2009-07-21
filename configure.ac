@@ -353,6 +353,14 @@ AC_ARG_ENABLE(icon_database,
               [],[enable_icon_database="yes"])
 AC_MSG_RESULT([$enable_icon_database])
 
+# check whether to enable HTML5 ruby support
+AC_MSG_CHECKING([whether to enable HTML5 ruby support])
+AC_ARG_ENABLE(ruby,
+              AC_HELP_STRING([--enable-ruby],
+                             [enable HTML5 ruby support [default=yes]]),
+              [],[enable_ruby="yes"])
+AC_MSG_RESULT([$enable_ruby])
+
 # check whether to enable HTML5 audio/video support
 AC_MSG_CHECKING([whether to enable HTML5 video support])
 AC_ARG_ENABLE(video,
@@ -696,6 +704,7 @@ AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
+AM_CONDITIONAL([ENABLE_RUBY],[test "$enable_ruby" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_ANIMATION],[test "$enable_svg_animation" = "yes"])
@@ -745,6 +754,7 @@ Features:
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 client-side session and persistent storage support : $enable_dom_storage
  HTML5 client-side database storage support               : $enable_database
+ HTML5 ruby support                                       : $enable_ruby
  HTML5 video element support                              : $enable_video
  Icon database support                                    : $enable_icon_database
  SharedWorkers support                                    : $enable_shared_workers
