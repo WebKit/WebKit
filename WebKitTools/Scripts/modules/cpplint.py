@@ -2670,14 +2670,14 @@ def process_file_data(filename, file_extension, lines, error):
     check_for_new_line_at_eof(filename, lines, error)
 
 
-def process_file(filename, vlevel):
+def process_file(filename, vlevel, error=error):
     """Does google-lint on a single file.
 
     Args:
       filename: The name of the file to parse.
-
       vlevel: The level of errors to report.  Every error of confidence
       >= verbose_level will be reported.  0 is a good default.
+      error: The function to call with any errors found.
     """
 
     _set_verbose_level(vlevel)
