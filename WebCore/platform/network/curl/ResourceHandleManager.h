@@ -32,7 +32,7 @@
 #include "Timer.h"
 #include "ResourceHandleClient.h"
 
-#if defined(WIN32) || defined(_WIN32)
+#if PLATFORM(WIN)
 #include <winsock2.h>
 #include <windows.h>
 #endif

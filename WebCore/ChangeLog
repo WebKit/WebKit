@@ -1,3 +1,9 @@
+2009-07-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Don't include winsock2.h on wx, it conflicts with wx's inclusion of winsock.
+
+        * platform/network/curl/ResourceHandleManager.h:
+
 2009-07-21  Adam Roben  <aroben@apple.com>
 
         Roll out r46153, r46154, and r46155
