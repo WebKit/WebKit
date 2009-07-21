@@ -2785,9 +2785,6 @@ def parse_arguments(args):
             if not filters:
                 print_categories()
 
-    if not filenames:
-        print_usage('No files were specified.')
-
     _set_output_format(output_format)
     _set_verbose_level(verbosity)
     _set_filters(filters)
@@ -2843,6 +2840,8 @@ that you notice that it flags incorrectly.
     use_webkit_styles()
 
     filenames = parse_arguments(sys.argv[1:])
+    if not filenames:
+        print_usage('No files were specified.')
 
     # Change stderr to write with replacement characters so we don't die
     # if we try to print something containing non-ASCII characters.

@@ -1504,19 +1504,20 @@ class CpplintTest(CpplintTestBase):
             cpplint._USAGE = ''
             cpplint._ERROR_CATEGORIES = ''
 
-            self.assertRaises(SystemExit, cpplint.parse_arguments, [])
             self.assertRaises(SystemExit, cpplint.parse_arguments, ['--badopt'])
             self.assertRaises(SystemExit, cpplint.parse_arguments, ['--help'])
-            self.assertRaises(SystemExit, cpplint.parse_arguments, ['--v=0'])
             self.assertRaises(SystemExit, cpplint.parse_arguments, ['--filter='])
             # This is illegal because all filters must start with + or -
-            self.assertRaises(SystemExit, cpplint.parse_arguments, ['--filter=foo'])
-            self.assertRaises(SystemExit, cpplint.parse_arguments,
+            self.assertRaises(ValueError, cpplint.parse_arguments, ['--filter=foo'])
+            self.assertRaises(ValueError, cpplint.parse_arguments,
                               ['--filter=+a,b,-c'])
 
             self.assertEquals(['foo.cc'], cpplint.parse_arguments(['foo.cc']))
             self.assertEquals(old_output_format, cpplint._cpplint_state.output_format)
             self.assertEquals(old_verbose_level, cpplint._cpplint_state.verbose_level)
+
+            self.assertEquals([], cpplint.parse_arguments([]))
+            self.assertEquals([], cpplint.parse_arguments(['--v=0']))
 
             self.assertEquals(['foo.cc'],
                               cpplint.parse_arguments(['--v=1', 'foo.cc']))
