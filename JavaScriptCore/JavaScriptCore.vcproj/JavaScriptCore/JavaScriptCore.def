@@ -258,7 +258,7 @@ EXPORTS
     ?toUInt32@UString@JSC@@QBEIPA_N@Z
     ?toUInt32@UString@JSC@@QBEIPA_N_N@Z
     ?toUInt32SlowCase@JSC@@YAINAA_N@Z
-    ?tryFastCalloc@WTF@@YA?AUTryMallocReturnValue@1@II@Z
+    ?tryFastCalloc@WTF@@YAPAXII@Z
     ?tryLock@Mutex@WTF@@QAE_NXZ
     ?type@DebuggerCallFrame@JSC@@QBE?AW4Type@12@XZ
     ?unlock@JSLock@JSC@@SAX_N@Z

@@ -821,8 +821,8 @@ JSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec, JSObject*, JSValu
     if (a0.getUInt32(smallInteger) && smallInteger <= 9) {
         unsigned stringSize = s.size();
         unsigned bufferSize = 22 + stringSize;
-        UChar* buffer;
-        if (!tryFastMalloc(bufferSize * sizeof(UChar)).getValue(buffer))
+        UChar* buffer = static_cast<UChar*>(tryFastMalloc(bufferSize * sizeof(UChar)));
+        if (!buffer)
             return jsUndefined();
         buffer[0] = '<';
         buffer[1] = 'f';
@@ -869,8 +869,8 @@ JSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec, JSObject*, JSValue th
     unsigned linkTextSize = linkText.size();
     unsigned stringSize = s.size();
     unsigned bufferSize = 15 + linkTextSize + stringSize;
-    UChar* buffer;
-    if (!tryFastMalloc(bufferSize * sizeof(UChar)).getValue(buffer))
+    UChar* buffer = static_cast<UChar*>(tryFastMalloc(bufferSize * sizeof(UChar)));
+    if (!buffer)
         return jsUndefined();
     buffer[0] = '<';
     buffer[1] = 'a';
