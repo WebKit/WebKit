@@ -1,5 +1,11 @@
 2009-07-21  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Fix the Windows build, and update the comment on top now that wx uses WebCorePrefix.h too.
+
+        * WebCorePrefix.h:
+
+2009-07-21  Kevin Ollivier  <kevino@theolliviers.com>
+
         WebCorePrefix.h build fixes for non-Mac and wx / CURL builds.
 
         * WebCorePrefix.h:

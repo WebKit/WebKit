@@ -18,8 +18,8 @@
  *
  */
 
-/* This prefix file is for use on Mac OS X and Windows only. It should contain only:
- *    1) files to precompile on Mac OS X and Windows for faster builds
+/* This prefix file should contain only:
+ *    1) files to precompile for faster builds
  *    2) in one case at least: OS-X-specific performance bug workarounds
  *    3) the special trick to catch us using new or delete without including "config.h"
  * The project should be able to build without this header, although we rarely test that.
@@ -105,7 +105,7 @@
 
 #include <time.h>
 
-#if defined(__APPLE__)
+#ifndef BUILDING_WX__
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
 #endif
