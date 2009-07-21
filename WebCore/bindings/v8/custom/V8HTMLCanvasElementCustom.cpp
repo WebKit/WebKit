@@ -41,7 +41,7 @@ namespace WebCore {
 CALLBACK_FUNC_DECL(HTMLCanvasElementGetContext)
 {
     INC_STATS("DOM.HTMLCanvasElement.context");
-    v8::Handle<v8::Value> holder = args.Holder();
+    v8::Handle<v8::Object> holder = args.Holder();
     HTMLCanvasElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLCanvasElement>(holder);
     String contextId = toWebCoreString(args[0]);
     CanvasRenderingContext2D* result = imp->getContext(contextId);

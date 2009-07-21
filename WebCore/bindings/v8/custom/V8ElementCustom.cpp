@@ -74,7 +74,7 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNode)
     if (!V8Attr::HasInstance(args[0]))
         return throwError(TYPE_MISMATCH_ERR);
 
-    Attr* newAttr = V8DOMWrapper::convertDOMWrapperToNode<Attr>(args[0]);
+    Attr* newAttr = V8DOMWrapper::convertDOMWrapperToNode<Attr>(v8::Handle<v8::Object>::Cast(args[0]));
     Element* element = V8DOMWrapper::convertDOMWrapperToNode<Element>(args.Holder());
 
     if (!allowSettingSrcToJavascriptURL(element, newAttr->name(), newAttr->value()))
@@ -113,7 +113,7 @@ CALLBACK_FUNC_DECL(ElementSetAttributeNodeNS)
     if (!V8Attr::HasInstance(args[0]))
         return throwError(TYPE_MISMATCH_ERR);
 
-    Attr* newAttr = V8DOMWrapper::convertDOMWrapperToNode<Attr>(args[0]);
+    Attr* newAttr = V8DOMWrapper::convertDOMWrapperToNode<Attr>(v8::Handle<v8::Object>::Cast(args[0]));
     Element* element = V8DOMWrapper::convertDOMWrapperToNode<Element>(args.Holder());
 
     if (!allowSettingSrcToJavascriptURL(element, newAttr->name(), newAttr->value()))

@@ -88,11 +88,11 @@ CALLBACK_FUNC_DECL(NodeRemoveEventListener)
 CALLBACK_FUNC_DECL(NodeInsertBefore)
 {
     INC_STATS("DOM.Node.insertBefore");
-    v8::Handle<v8::Value> holder = args.Holder();
+    v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8DOMWrapper::convertDOMWrapperToNode<Node>(holder);
     ExceptionCode ec = 0;
-    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]) : 0;
-    Node* refChild = V8Node::HasInstance(args[1]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(args[1]) : 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    Node* refChild = V8Node::HasInstance(args[1]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[1])) : 0;
     bool success = imp->insertBefore(newChild, refChild, ec, true);
     if (ec) {
         V8Proxy::setDOMException(ec);
@@ -107,11 +107,11 @@ CALLBACK_FUNC_DECL(NodeInsertBefore)
 CALLBACK_FUNC_DECL(NodeReplaceChild)
 {
     INC_STATS("DOM.Node.replaceChild");
-    v8::Handle<v8::Value> holder = args.Holder();
+    v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8DOMWrapper::convertDOMWrapperToNode<Node>(holder);
     ExceptionCode ec = 0;
-    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]) : 0;
-    Node* oldChild = V8Node::HasInstance(args[1]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(args[1]) : 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0])) : 0;
+    Node* oldChild = V8Node::HasInstance(args[1]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[1])) : 0;
     bool success = imp->replaceChild(newChild, oldChild, ec, true);
     if (ec) {
         V8Proxy::setDOMException(ec);
@@ -125,10 +125,10 @@ CALLBACK_FUNC_DECL(NodeReplaceChild)
 CALLBACK_FUNC_DECL(NodeRemoveChild)
 {
     INC_STATS("DOM.Node.removeChild");
-    v8::Handle<v8::Value> holder = args.Holder();
+    v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8DOMWrapper::convertDOMWrapperToNode<Node>(holder);
     ExceptionCode ec = 0;
-    Node* oldChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]) : 0;
+    Node* oldChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     bool success = imp->removeChild(oldChild, ec);
     if (ec) {
         V8Proxy::setDOMException(ec);
@@ -143,10 +143,10 @@ CALLBACK_FUNC_DECL(NodeRemoveChild)
 CALLBACK_FUNC_DECL(NodeAppendChild)
 {
     INC_STATS("DOM.Node.appendChild");
-    v8::Handle<v8::Value> holder = args.Holder();
+    v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8DOMWrapper::convertDOMWrapperToNode<Node>(holder);
     ExceptionCode ec = 0;
-    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]) : 0;
+    Node* newChild = V8Node::HasInstance(args[0]) ? V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0])) : 0;
     bool success = imp->appendChild(newChild, ec, true );
     if (ec) {
         V8Proxy::setDOMException(ec);

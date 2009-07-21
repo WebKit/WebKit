@@ -57,7 +57,7 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
     String expression = toWebCoreString(args[0]);
     Node* contextNode = 0;
     if (V8Node::HasInstance(args[1]))
-        contextNode = V8DOMWrapper::convertDOMWrapperToNode<Node>(args[1]);
+        contextNode = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[1]));
 
     XPathNSResolver* resolver = 0;
     if (V8XPathNSResolver::HasInstance(args[2]))
@@ -86,7 +86,7 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
 CALLBACK_FUNC_DECL(DocumentGetCSSCanvasContext)
 {
     INC_STATS("DOM.Document.getCSSCanvasContext");
-    v8::Handle<v8::Value> holder = args.Holder();
+    v8::Handle<v8::Object> holder = args.Holder();
     Document* imp = V8DOMWrapper::convertDOMWrapperToNode<Document>(holder);
     String contextId = toWebCoreString(args[0]);
     String name = toWebCoreString(args[1]);

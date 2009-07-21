@@ -125,7 +125,7 @@ CALLBACK_FUNC_DECL(ClipboardSetDragImage)
 
     Node* node = 0;
     if (V8Node::HasInstance(args[0]))
-        node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]);
+        node = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
 
     if (!node || !node->isElementNode())
         return throwError("setDragImageFromElement: Invalid first argument");

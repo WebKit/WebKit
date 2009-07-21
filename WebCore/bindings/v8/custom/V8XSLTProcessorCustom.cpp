@@ -60,7 +60,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorImportStylesheet)
 
     XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
 
-    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]);
+    Node* node = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
     imp->importStylesheet(node);
     return v8::Undefined();
 }
@@ -74,8 +74,8 @@ CALLBACK_FUNC_DECL(XSLTProcessorTransformToFragment)
 
     XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
 
-    Node* source = V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]);
-    Document* owner = V8DOMWrapper::convertDOMWrapperToNode<Document>(args[1]);
+    Node* source = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
+    Document* owner = V8DOMWrapper::convertDOMWrapperToNode<Document>(v8::Handle<v8::Object>::Cast(args[1]));
     RefPtr<DocumentFragment> result = imp->transformToFragment(source, owner);
     return V8DOMWrapper::convertNodeToV8Object(result.get());
 }
@@ -90,7 +90,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorTransformToDocument)
 
     XSLTProcessor* imp = V8DOMWrapper::convertToNativeObject<XSLTProcessor>(V8ClassIndex::XSLTPROCESSOR, args.Holder());
 
-    Node* source = V8DOMWrapper::convertDOMWrapperToNode<Node>(args[0]);
+    Node* source = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
     if (!source)
         return v8::Undefined();
 

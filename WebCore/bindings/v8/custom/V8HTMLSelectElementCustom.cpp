@@ -51,7 +51,7 @@ CALLBACK_FUNC_DECL(HTMLSelectElementRemove)
 v8::Handle<v8::Value> removeElement(HTMLSelectElement* imp, const v8::Arguments& args) 
 {
     if (V8HTMLOptionElement::HasInstance(args[0])) {
-        HTMLOptionElement* element = V8DOMWrapper::convertDOMWrapperToNode<HTMLOptionElement>(args[0]);
+        HTMLOptionElement* element = V8DOMWrapper::convertDOMWrapperToNode<HTMLOptionElement>(v8::Handle<v8::Object>::Cast(args[0]));
         imp->remove(element->index());
         return v8::Undefined();
     }

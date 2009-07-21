@@ -59,7 +59,7 @@ CALLBACK_FUNC_DECL(HTMLOptionsCollectionAdd)
         return v8::Undefined();
     }
     HTMLOptionsCollection* imp = V8DOMWrapper::convertToNativeObject<HTMLOptionsCollection>(V8ClassIndex::HTMLOPTIONSCOLLECTION, args.Holder());
-    HTMLOptionElement* option = V8DOMWrapper::convertDOMWrapperToNode<HTMLOptionElement>(args[0]);
+    HTMLOptionElement* option = V8DOMWrapper::convertDOMWrapperToNode<HTMLOptionElement>(v8::Handle<v8::Object>(v8::Handle<v8::Object>::Cast(args[0])));
 
     ExceptionCode ec = 0;
     if (args.Length() < 2)
