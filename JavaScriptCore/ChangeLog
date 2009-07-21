@@ -2,6 +2,15 @@
 
         Reviewed by NOBODY (Build fix).
 
+        Build fix attempt #2
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-07-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
         Build fix attempt #1
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
