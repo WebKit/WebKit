@@ -675,4 +675,10 @@
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 
+#if COMPILER(GCC)
+#define WARN_UNUSED_RETURN __attribute__ ((warn_unused_result))
+#else
+#define WARN_UNUSED_RETURN
+#endif
+
 #endif /* WTF_Platform_h */

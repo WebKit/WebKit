@@ -343,8 +343,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
         }
     }
 
-    storage = static_cast<ArrayStorage*>(tryFastRealloc(storage, storageSize(newVectorLength)));
-    if (!storage) {
+    if (!tryFastRealloc(storage, storageSize(newVectorLength)).getValue(storage)) {
         throwOutOfMemoryError(exec);
         return;
     }
@@ -462,8 +461,7 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     ASSERT(newLength <= MAX_STORAGE_VECTOR_INDEX);
     unsigned newVectorLength = increasedVectorLength(newLength);
 
-    storage = static_cast<ArrayStorage*>(tryFastRealloc(storage, storageSize(newVectorLength)));
-    if (!storage)
+    if (!tryFastRealloc(storage, storageSize(newVectorLength)).getValue(storage))
         return false;
 
     Heap::heap(this)->reportExtraMemoryCost(storageSize(newVectorLength) - storageSize(vectorLength));

@@ -64,7 +64,9 @@ ImageBuffer::ImageBuffer(const IntSize& size, bool grayScale, bool& success)
         bytesPerRow *= 4;
     }
 
-    m_data.m_data = tryFastCalloc(size.height(), bytesPerRow);
+    if (!tryFastCalloc(size.height(), bytesPerRow).getValue(m_data.m_data))
+        return;
+
     ASSERT((reinterpret_cast<size_t>(m_data.m_data) & 2) == 0);
 
     CGColorSpaceRef colorSpace = grayScale ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();

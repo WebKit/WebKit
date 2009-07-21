@@ -1,3 +1,17 @@
+2009-07-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make it harder to misuse try* allocation routines
+        https://bugs.webkit.org/show_bug.cgi?id=27469
+
+        Add forwarding header for PossiblyNull type, and add missing null check
+        to ImageBuffer creation.
+
+        * ForwardingHeaders/wtf/PossiblyNull.h: Added.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2009-07-20  Adam Langley  <agl@google.com>
 
         Reviewed by Eric Seidel.

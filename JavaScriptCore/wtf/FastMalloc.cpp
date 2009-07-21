@@ -172,10 +172,10 @@ void* fastZeroedMalloc(size_t n)
     return result;
 }
     
-void* tryFastZeroedMalloc(size_t n) 
+TryMallocReturnValue tryFastZeroedMalloc(size_t n) 
 {
-    void* result = tryFastMalloc(n);
-    if (!result)
+    void* result;
+    if (!tryFastMalloc(n).getValue(result))
         return 0;
     memset(result, 0, n);
     return result;
@@ -194,7 +194,7 @@ void* tryFastZeroedMalloc(size_t n)
 
 namespace WTF {
 
-void* tryFastMalloc(size_t n) 
+TryMallocReturnValue tryFastMalloc(size_t n) 
 {
     ASSERT(!isForbidden());
 
@@ -230,7 +230,7 @@ void* fastMalloc(size_t n)
     return result;
 }
 
-void* tryFastCalloc(size_t n_elements, size_t element_size)
+TryMallocReturnValue tryFastCalloc(size_t n_elements, size_t element_size)
 {
     ASSERT(!isForbidden());
 
@@ -285,7 +285,7 @@ void fastFree(void* p)
 #endif
 }
 
-void* tryFastRealloc(void* p, size_t n)
+TryMallocReturnValue tryFastRealloc(void* p, size_t n)
 {
     ASSERT(!isForbidden());
 
@@ -3387,7 +3387,7 @@ void* fastMalloc(size_t size)
     return malloc<true>(size);
 }
 
-void* tryFastMalloc(size_t size)
+TryMallocReturnValue tryFastMalloc(size_t size)
 {
     return malloc<false>(size);
 }
@@ -3448,7 +3448,7 @@ void* fastCalloc(size_t n, size_t elem_size)
     return calloc<true>(n, elem_size);
 }
 
-void* tryFastCalloc(size_t n, size_t elem_size)
+TryMallocReturnValue tryFastCalloc(size_t n, size_t elem_size)
 {
     return calloc<false>(n, elem_size);
 }
@@ -3512,7 +3512,7 @@ void* fastRealloc(void* old_ptr, size_t new_size)
     return realloc<true>(old_ptr, new_size);
 }
 
-void* tryFastRealloc(void* old_ptr, size_t new_size)
+TryMallocReturnValue tryFastRealloc(void* old_ptr, size_t new_size)
 {
     return realloc<false>(old_ptr, new_size);
 }

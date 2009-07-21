@@ -1,3 +1,54 @@
+2009-07-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make it harder to misuse try* allocation routines
+        https://bugs.webkit.org/show_bug.cgi?id=27469
+
+        Jump through a few hoops to make it much harder to accidentally
+        miss null-checking of values returned by the try-* allocation
+        routines.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::putSlowCase):
+        (JSC::JSArray::increaseVectorLength):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncLink):
+        * runtime/UString.cpp:
+        (JSC::allocChars):
+        (JSC::reallocChars):
+        (JSC::expandCapacity):
+        (JSC::UString::Rep::reserveCapacity):
+        (JSC::UString::expandPreCapacity):
+        (JSC::createRep):
+        (JSC::concatenate):
+        (JSC::UString::spliceSubstringsWithSeparators):
+        (JSC::UString::replaceRange):
+        (JSC::UString::append):
+        (JSC::UString::operator=):
+        * runtime/UString.h:
+        (JSC::UString::Rep::createEmptyBuffer):
+        * wtf/FastMalloc.cpp:
+        (WTF::tryFastZeroedMalloc):
+        (WTF::tryFastMalloc):
+        (WTF::tryFastCalloc):
+        (WTF::tryFastRealloc):
+        (WTF::TCMallocStats::tryFastMalloc):
+        (WTF::TCMallocStats::tryFastCalloc):
+        (WTF::TCMallocStats::tryFastRealloc):
+        * wtf/FastMalloc.h:
+        (WTF::TryMallocReturnValue::TryMallocReturnValue):
+        (WTF::TryMallocReturnValue::~TryMallocReturnValue):
+        (WTF::TryMallocReturnValue::operator Maybe<T>):
+        (WTF::TryMallocReturnValue::getValue):
+        * wtf/PossiblyNull.h:
+        (WTF::PossiblyNull::PossiblyNull):
+        (WTF::PossiblyNull::~PossiblyNull):
+        (WTF::PossiblyNull::getValue):
+        * wtf/Platform.h:
+
 2009-07-20  Gavin Barraclough  <barraclough@apple.com>
 
         RS Oliver Hunt.
