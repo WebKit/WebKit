@@ -146,7 +146,6 @@ void IndentOutdentCommand::appendParagraphIntoNode(const VisiblePosition& start,
     // Extend the range so that we can append wrapping nodes as well if they're containd within the paragraph
     ExceptionCode ec = 0;
     RefPtr<Range> selectedRange = createRange(document(), start, end, ec);
-    selectedRange->startPosition().showTreeForThis();
     RefPtr<Range> extendedRange = extendRangeToWrappingNodes(selectedRange, selectedRange.get(), newParent->parentNode());
     newParent->appendChild(extendedRange->extractContents(ec), ec);
 
