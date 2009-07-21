@@ -2,6 +2,7 @@
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
+ *  Copyright (C) 2009 Google, Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,6 +23,7 @@
 #define JSDOMBinding_h
 
 #include "JSDOMGlobalObject.h"
+#include "Document.h" // For DOMConstructorWithDocument
 #include <runtime/Completion.h>
 #include <runtime/Lookup.h>
 #include <runtime/JSFunction.h>
@@ -59,8 +61,38 @@ namespace WebCore {
 #endif
     };
 
-    // Base class for all constructor objects in this binding except Window.
-    class DOMConstructorObject : public DOMObject {
+    // FIXME: This class should colapse into DOMObject once all DOMObjects are
+    // updated to store a globalObject pointer.
+    class DOMObjectWithGlobalPointer : public DOMObject {
+    public:
+        JSDOMGlobalObject* globalObject() const { return m_globalObject; }
+
+        ScriptExecutionContext* scriptExecutionContext() const
+        {
+            return m_globalObject->scriptExecutionContext();
+        }
+
+    protected:
+        DOMObjectWithGlobalPointer(PassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
+            : DOMObject(structure)
+            , m_globalObject(globalObject)
+        {
+            ASSERT(globalObject->scriptExecutionContext());
+        }
+
+        void mark()
+        {
+            DOMObject::mark();
+            if (!m_globalObject->marked())
+                m_globalObject->mark();
+        }
+
+    private:
+        JSDOMGlobalObject* m_globalObject;
+    };
+
+    // Base class for all constructor objects in the JSC bindings.
+    class DOMConstructorObject : public DOMObjectWithGlobalPointer {
     public:
         static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
         {
@@ -68,9 +100,26 @@ namespace WebCore {
         }
 
     protected:
-        explicit DOMConstructorObject(PassRefPtr<JSC::Structure> structure)
-            : DOMObject(structure)
+        DOMConstructorObject(PassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
+            : DOMObjectWithGlobalPointer(structure, globalObject)
         {
+        }
+    };
+
+    // Constructors using this base class depend on being in a Document and
+    // can never be used from a WorkerContext.
+    class DOMConstructorWithDocument : public DOMConstructorObject {
+    public:
+        Document* document() const
+        {
+            return static_cast<Document*>(scriptExecutionContext());
+        }
+
+    protected:
+        DOMConstructorWithDocument(PassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
+            : DOMConstructorObject(structure, globalObject)
+        {
+            ASSERT(globalObject->scriptExecutionContext()->isDocument());
         }
     };
 

@@ -34,21 +34,15 @@
 
 namespace WebCore {
 
-    class JSAudioConstructor : public DOMConstructorObject {
+    class JSAudioConstructor : public DOMConstructorWithDocument {
     public:
         JSAudioConstructor(JSC::ExecState*, JSDOMGlobalObject*);
 
-        Document* document() const;
-
         static const JSC::ClassInfo s_info;
-
-        virtual void mark();
     private:
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 
         virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
-
-        JSDOMGlobalObject* m_globalObject;
     };
 
 } // namespace WebCore

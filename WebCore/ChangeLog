@@ -1,3 +1,54 @@
+2009-07-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        All DOMConstructorObjects should hold a pointer to the JSDOMGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=27478
+
+        This is just moving code.
+        I've added two new classes: DOMObjectWithGlobalPointer and DOMConstructorWithDocument.
+
+        DOMObjectWithGlobalPointer is a new baseclass for DOMConstructorObject.
+        (It's a baseclass because eventually all DOMObjects will have a global pointer, but
+        I'll be moving them onto DOMObjectWithGlobalPointer in stages.)
+
+        DOMConstructorWithDocument is a new baseclass for the 3 constructor objects
+        which require a backpointer to the Document to function.  I made this a subclass of
+        DOMConstructorObject to make clear that most constructors can hold no-such assumptions
+        about having a back-pointer to the Document (since many constructors can be used from Workers).
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSAudioConstructor.h:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWithGlobalPointer::globalObject):
+        (WebCore::DOMObjectWithGlobalPointer::scriptExecutionContext):
+        (WebCore::DOMObjectWithGlobalPointer::DOMObjectWithGlobalPointer):
+        (WebCore::DOMObjectWithGlobalPointer::mark):
+        (WebCore::DOMConstructorObject::DOMConstructorObject):
+        (WebCore::DOMConstructorWithDocument::document):
+        (WebCore::DOMConstructorWithDocument::DOMConstructorWithDocument):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        * bindings/js/JSImageConstructor.h:
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::JSMessageChannelConstructor):
+        * bindings/js/JSMessageChannelConstructor.h:
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor):
+        * bindings/js/JSOptionConstructor.h:
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp:
+        (WebCore::JSWebKitCSSMatrixConstructor::JSWebKitCSSMatrixConstructor):
+        * bindings/js/JSWebKitPointConstructor.cpp:
+        (WebCore::JSWebKitPointConstructor::JSWebKitPointConstructor):
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::JSWorkerConstructor::JSWorkerConstructor):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor):
+        * bindings/js/JSXMLHttpRequestConstructor.h:
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::JSXSLTProcessorConstructor::JSXSLTProcessorConstructor):
+
 2009-07-21  James Hawkins  <jhawkins@google.com>
 
         Reviewed by David Hyatt.

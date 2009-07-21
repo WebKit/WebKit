@@ -42,7 +42,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSXSLTProcessorConstructor);
 const ClassInfo JSXSLTProcessorConstructor::s_info = { "XSLTProcessorConsructor", 0, 0, 0 };
 
 JSXSLTProcessorConstructor::JSXSLTProcessorConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSXSLTProcessorConstructor::createStructure(globalObject->objectPrototype()))
+    : DOMConstructorObject(JSXSLTProcessorConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
     putDirect(exec->propertyNames().prototype, JSXSLTProcessorPrototype::self(exec, globalObject), None);
 }
