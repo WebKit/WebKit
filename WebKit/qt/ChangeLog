@@ -2,6 +2,24 @@
 
         Reviewed by Simon Hausmann.
 
+        [Qt] Add test for loading webpages...
+
+        Performance test for loading webpages. Wait for the loadFinished
+        signal to be fired. This should include a non empty layout.
+
+        * tests/benchmarks/loading/tst_loading.cpp: Added.
+        (waitForSignal):
+        (tst_Loading::init):
+        (tst_Loading::cleanup):
+        (tst_Loading::load_data):
+        (tst_Loading::load):
+        * tests/benchmarks/loading/tst_loading.pro: Added.
+        * tests/tests.pro:
+
+2009-07-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon Hausmann.
+
         [Qt] Add a test case for drawing a simple viewrect to a QPixmap
 
         * tests/benchmarks/painting/tst_painting.cpp: Added.
