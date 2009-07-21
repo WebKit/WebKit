@@ -1,3 +1,15 @@
+2009-07-21  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by David Levin.
+
+        We can't match implementation file and primary header exactly
+        since we have so many files in WebKit where the port suffix
+        is appended to the filename.
+
+        Example: FooQt.cpp and the primary header is Foo.h.
+
+        * Scripts/modules/cpplint.py:
+
 2009-07-21  Jakob Petsovits  <jakob.petsovits@torchmobile.com>
 
         Reviewed by David Levin.

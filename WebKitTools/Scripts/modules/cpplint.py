@@ -2127,18 +2127,12 @@ def _classify_include(filename, include, is_system):
     if include == "config.h":
         return _CONFIG_HEADER
 
-    # If the target file and the include we're checking share a
-    # basename then we consider it the primary header.
+    # If the target file basename starts with the include we're checking
+    # then we consider it the primary header.
     target_base = FileInfo(filename).base_name()
     include_base = FileInfo(include).base_name()
 
-    # As a special case, if the target_base ends with 'Custom' we remove this
-    # when considering the match.  Thus, FooCustom.cpp will consider Foo.h as
-    # a primary header.  This is for files in WebCore/bindings/js for instance.
-    if target_base.endswith('Custom'):
-       target_base = target_base[:-len('Custom')]
-
-    if target_base == include_base:
+    if target_base.startswith(include_base):
         return _PRIMARY_HEADER
 
     return _OTHER_HEADER
