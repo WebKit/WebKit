@@ -1717,6 +1717,71 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
             break
 
 
+def check_switch_indentation(filename, clean_lines, line_number, error):
+    """Looks for indentation errors inside of switch statements.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number] # Get rid of comments and strings.
+
+    switch_match = match(r'(?P<switch_indentation>\s*)switch\s*\(.+\)\s*{\s*$', line)
+    if not switch_match:
+        return
+
+    switch_indentation = switch_match.group('switch_indentation')
+    inner_indentation = switch_indentation + ' ' * 4
+    line_offset = 0
+    encountered_nested_switch = False
+
+    for current_line in clean_lines.elided[line_number + 1:]:
+        line_offset += 1
+
+        # Skip not only empty lines but also those with preprocessor directives.
+        if current_line.strip() == '' or current_line.startswith('#'):
+            continue
+
+        if match(r'\s*switch\s*\(.+\)\s*{\s*$', current_line):
+            # Complexity alarm - another switch statement nested inside the one
+            # that we're currently testing. We'll need to track the extent of
+            # that inner switch if the upcoming label tests are still supposed
+            # to work correctly. Let's not do that; instead, we'll finish
+            # checking this line, and then leave it like that. Assuming the
+            # indentation is done consistently (even if incorrectly), this will
+            # still catch all indentation issues in practice.
+            encountered_nested_switch = True
+
+        current_indentation_match = match(r'(?P<indentation>\s*)(?P<remaining_line>.*)$', current_line);
+        current_indentation = current_indentation_match.group('indentation')
+        remaining_line = current_indentation_match.group('remaining_line')
+
+        if remaining_line.startswith('}'):
+            break # The end of the switch statement.
+        elif match(r'(default|case\s+.*)\s*:\s*$', remaining_line):
+            if current_indentation != switch_indentation:
+                error(filename, line_number + line_offset, 'whitespace/indent', 4,
+                      'A case label should not be indented, but line up with its switch statement.')
+                # Don't throw an error for multiple badly indented labels,
+                # one should be enough to figure out the problem.
+                break
+        elif not match(r'\w+\s*:\s*$', remaining_line):
+            # It's not a goto label (which we don't care about), so check if
+            # it's indented at least as far as the switch plus 4 spaces.
+            if not current_indentation.startswith(inner_indentation):
+                error(filename, line_number + line_offset, 'whitespace/indent', 4,
+                      'Non-label code inside switch statements should be indented.')
+                # Don't throw an error for multiple badly indented statements,
+                # one should be enough to figure out the problem.
+                break
+
+        if encountered_nested_switch:
+            break
+
+
 def check_braces(filename, clean_lines, line_number, error):
     """Looks for misplaced braces (e.g. at the end of line).
 
@@ -1973,6 +2038,7 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
 
     # Some more style checks
     check_namespace_indentation(filename, clean_lines, line_number, file_extension, error)
+    check_switch_indentation(filename, clean_lines, line_number, error)
     check_braces(filename, clean_lines, line_number, error)
     check_spacing(filename, clean_lines, line_number, error)
     check_check(filename, clean_lines, line_number, error)

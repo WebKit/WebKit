@@ -2746,16 +2746,75 @@ class WebKitStyleTest(CpplintTestBase):
 
         # 5. A case label should line up with its switch statement. The
         #    case statement is indented.
-        # FIXME: No tests for this rule. The following should fail.
-        # self.assert_multi_line_lint(
-        #     '    switch (condition) {\n'
-        #     '        case fooCondition:\n'
-        #     '        case barCondition:\n'
-        #     '            i++;\n'
-        #     '            break;\n'
-        #     '        default:\n'
-        #     '            i--;\n',
-        #     '')
+        self.assert_multi_line_lint(
+            '    switch (condition) {\n'
+            '    case fooCondition:\n'
+            '    case barCondition:\n'
+            '        i++;\n'
+            '        break;\n'
+            '    default:\n'
+            '        i--;\n'
+            '    }\n',
+            '')
+        self.assert_multi_line_lint(
+            '    switch (condition) {\n'
+            '    case fooCondition:\n'
+            '        switch (otherCondition) {\n'
+            '        default:\n'
+            '            return;\n'
+            '        }\n'
+            '    default:\n'
+            '        i--;\n'
+            '    }\n',
+            '')
+        self.assert_multi_line_lint(
+            '    switch (condition) {\n'
+            '        case fooCondition:\n'
+            '        case barCondition:\n'
+            '            i++;\n'
+            '            break;\n'
+            '        default:\n'
+            '            i--;\n'
+            '    }\n',
+            'A case label should not be indented, but line up with its switch statement.'
+            '  [whitespace/indent] [4]')
+        self.assert_multi_line_lint(
+            '    switch (condition) {\n'
+            '    case fooCondition:\n'
+            '    case barCondition:\n'
+            '        switch (otherCondition) {\n'
+            '            default:\n'
+            '            return;\n'
+            '        }\n'
+            '    default:\n'
+            '        i--;\n'
+            '    }\n',
+            'A case label should not be indented, but line up with its switch statement.'
+            '  [whitespace/indent] [4]')
+        self.assert_multi_line_lint(
+            '    switch (condition) {\n'
+            '    case fooCondition:\n'
+            '    case barCondition:\n'
+            '    i++;\n'
+            '    break;\n\n'
+            '    default:\n'
+            '    i--;\n'
+            '    }\n',
+            'Non-label code inside switch statements should be indented.'
+            '  [whitespace/indent] [4]')
+        self.assert_multi_line_lint(
+            '    switch (condition) {\n'
+            '    case fooCondition:\n'
+            '    case barCondition:\n'
+            '        switch (otherCondition) {\n'
+            '        default:\n'
+            '        return;\n'
+            '        }\n'
+            '    default:\n'
+            '        i--;\n'
+            '    }\n',
+            'Non-label code inside switch statements should be indented.'
+            '  [whitespace/indent] [4]')
 
         # 6. Boolean expressions at the same nesting level that span
         #   multiple lines should have their operators on the left side of
