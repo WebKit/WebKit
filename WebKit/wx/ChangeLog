@@ -1,3 +1,11 @@
+2009-07-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Adding isSpeaking() to ContextMenuClientWx.
+
+        * WebKitSupport/ContextMenuClientWx.cpp:
+        (WebCore::ContextMenuClientWx::isSpeaking):
+        * WebKitSupport/ContextMenuClientWx.h:
+
 2009-07-16  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Darin Adler.

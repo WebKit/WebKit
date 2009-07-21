@@ -83,4 +83,10 @@ void ContextMenuClientWx::stopSpeaking()
     notImplemented();
 }
 
+bool ContextMenuClientWx::isSpeaking()
+{
+    notImplemented();
+    return false;
+}
+
 }
