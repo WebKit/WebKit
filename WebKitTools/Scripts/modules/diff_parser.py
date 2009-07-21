@@ -83,8 +83,8 @@ class DiffFile:
     """Contains the information for one file in a patch.
 
     The field "lines" is a list which contains tuples in this format:
-       (old_line_number, new_line_number, line_string)
-    If old_line_number is zero, it means this line is newly added.
+       (deleted_line_number, new_line_number, line_string)
+    If deleted_line_number is zero, it means this line is newly added.
     If new_line_number is zero, it means this line is deleted.
     """
 
@@ -95,11 +95,11 @@ class DiffFile:
     def add_new_line(self, line_number, line):
         self.lines.append((0, line_number, line))
 
-    def add_old_line(self, line_number, line):
+    def add_deleted_line(self, line_number, line):
         self.lines.append((line_number, 0, line))
 
-    def add_unchanged_line(self, old_line_number, new_line_number, line):
-        self.lines.append((old_line_number, new_line_number, line))
+    def add_unchanged_line(self, deleted_line_number, new_line_number, line):
+        self.lines.append((deleted_line_number, new_line_number, line))
 
 
 class DiffParser:
@@ -148,7 +148,7 @@ class DiffParser:
                     current_file.add_new_line(new_diff_line, line[1:])
                     new_diff_line += 1
                 elif line.startswith('-'):
-                    current_file.add_old_line(old_diff_line, line[1:])
+                    current_file.add_deleted_line(old_diff_line, line[1:])
                     old_diff_line += 1
                 elif line.startswith(' '):
                     current_file.add_unchanged_line(old_diff_line, new_diff_line, line[1:])
