@@ -37,11 +37,11 @@ module threads {
 
         // WorkerGlobalScope
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-                 attribute [Replaceable] WorkerContext self;
+        attribute [Replaceable] WorkerContext self;
 #endif
-                 attribute [Replaceable] WorkerLocation location;
+        attribute [Replaceable] WorkerLocation location;
         void close();
-        //         attribute EventListener onerror;
+        attribute EventListener onerror;
 
         // WorkerUtils
         [Custom] void importScripts(/*[Variadic] in DOMString urls */);
