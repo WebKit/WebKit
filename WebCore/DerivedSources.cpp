@@ -352,5 +352,5 @@
 // want StaticConstructors.h to "pollute" all the source files we #include here
 // accidentally, so we'll throw an error whenever any file includes it.
 #ifdef StaticConstructors_h
-#error Don't include any file in DerivedSources.cpp that includes StaticConstructors.h
+#error Do not include any file in DerivedSources.cpp that includes StaticConstructors.h
 #endif

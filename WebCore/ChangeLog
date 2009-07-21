@@ -1,3 +1,11 @@
+2009-07-21  Albert Astals Cid <aacid@kde.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Change #error line not to have a ' (single quote)
+
+        * DerivedSources.cpp:
+
 2009-07-21  Roland Steiner  <rolandsteiner@google.com>
 
         Reviewed by David Levin.
