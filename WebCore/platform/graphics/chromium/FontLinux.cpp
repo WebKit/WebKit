@@ -34,6 +34,7 @@
 #include "FloatRect.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
+#include "HarfbuzzSkia.h"
 #include "NotImplemented.h"
 #include "PlatformContextSkia.h"
 #include "SimpleFontData.h"
@@ -43,11 +44,6 @@
 #include "SkTemplates.h"
 #include "SkTypeface.h"
 #include "SkUtils.h"
-
-extern "C" {
-#include "harfbuzz-shaper.h"
-#include "harfbuzz-unicode.h"
-}
 
 namespace WebCore {
 
@@ -114,9 +110,6 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
     }
 }
 
-extern const HB_FontClass harfbuzzSkiaClass;
-extern HB_Error harfbuzzSkiaGetTable(void* voidface, const HB_Tag, HB_Byte* buffer, HB_UInt* len);
-
 // Harfbuzz uses 26.6 fixed point values for pixel offsets. However, we don't
 // handle subpixel positioning so this function is used to truncate Harfbuzz
 // values to a number of pixels.
@@ -173,8 +166,6 @@ public:
         fastFree(m_item.font);
         deleteGlyphArrays();
         delete[] m_item.log_clusters;
-        if (m_item.face)
-            HB_FreeFace(m_item.face);
     }
 
     void reset()
@@ -298,11 +289,9 @@ private:
         if (!fontData->containsCharacters(m_item.string + m_item.item.pos, m_item.item.length))
             fontData = m_font->fontDataForCharacters(m_item.string + m_item.item.pos, m_item.item.length);
         const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
+        m_item.face = platformData.harfbuzzFace();
         void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
         m_item.font->userData = opaquePlatformData;
-        if (m_item.face)
-            HB_FreeFace(m_item.face);
-        m_item.face = HB_NewFace(opaquePlatformData, harfbuzzSkiaGetTable);
     }
 
     HB_FontRec* allocHarfbuzzFont()

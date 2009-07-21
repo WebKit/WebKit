@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "HarfbuzzSkia.h"
 #include "StringImpl.h"
 #include "NotImplemented.h"
 
@@ -39,11 +40,17 @@
 
 namespace WebCore {
 
+FontPlatformData::RefCountedHarfbuzzFace::~RefCountedHarfbuzzFace()
+{
+    HB_FreeFace(m_harfbuzzFace);
+}
+
 FontPlatformData::FontPlatformData(const FontPlatformData& src)
     : m_typeface(src.m_typeface)
     , m_textSize(src.m_textSize)
     , m_fakeBold(src.m_fakeBold)
     , m_fakeItalic(src.m_fakeItalic)
+    , m_harfbuzzFace(src.m_harfbuzzFace)
 {
     m_typeface->safeRef();
 }
@@ -62,6 +69,7 @@ FontPlatformData::FontPlatformData(const FontPlatformData& src, float textSize)
     , m_textSize(textSize)
     , m_fakeBold(src.m_fakeBold)
     , m_fakeItalic(src.m_fakeItalic)
+    , m_harfbuzzFace(src.m_harfbuzzFace)
 {
     m_typeface->safeRef();
 }
@@ -78,6 +86,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& src)
     m_textSize = src.m_textSize;
     m_fakeBold = src.m_fakeBold;
     m_fakeItalic = src.m_fakeItalic;
+    m_harfbuzzFace = src.m_harfbuzzFace;
 
     return *this;
 }
@@ -138,6 +147,14 @@ bool FontPlatformData::isFixedPitch() const
 {
     notImplemented();
     return false;
+}
+
+HB_FaceRec_* FontPlatformData::harfbuzzFace() const
+{
+    if (!m_harfbuzzFace)
+        m_harfbuzzFace = RefCountedHarfbuzzFace::create(HB_NewFace(const_cast<FontPlatformData*>(this), harfbuzzSkiaGetTable));
+
+    return m_harfbuzzFace->face();
 }
 
 }  // namespace WebCore

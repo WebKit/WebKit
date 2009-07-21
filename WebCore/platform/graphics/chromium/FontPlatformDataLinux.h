@@ -38,6 +38,8 @@ class SkPaint;
 class SkTypeface;
 typedef uint32_t SkFontID;
 
+struct HB_FaceRec_;
+
 namespace WebCore {
 
 class FontDescription;
@@ -104,12 +106,34 @@ public:
     FontPlatformData& operator=(const FontPlatformData&);
     bool isHashTableDeletedValue() const { return m_typeface == hashTableDeletedFontValue(); }
 
+    HB_FaceRec_* harfbuzzFace() const;
+
 private:
+    class RefCountedHarfbuzzFace : public RefCounted<RefCountedHarfbuzzFace> {
+    public:
+        static PassRefPtr<RefCountedHarfbuzzFace> create(HB_FaceRec_* harfbuzzFace)
+        {
+            return adoptRef(new RefCountedHarfbuzzFace(harfbuzzFace));
+        }
+
+        ~RefCountedHarfbuzzFace();
+
+        HB_FaceRec_* face() const { return m_harfbuzzFace; }
+
+    private:
+        RefCountedHarfbuzzFace(HB_FaceRec_* harfbuzzFace) : m_harfbuzzFace(harfbuzzFace)
+        {
+        }
+
+        HB_FaceRec_* m_harfbuzzFace;
+    };
+
     // FIXME: Could SkAutoUnref be used here?
     SkTypeface* m_typeface;
     float m_textSize;
     bool m_fakeBold;
     bool m_fakeItalic;
+    mutable RefPtr<RefCountedHarfbuzzFace> m_harfbuzzFace;
 
     SkTypeface* hashTableDeletedFontValue() const { return reinterpret_cast<SkTypeface*>(-1); }
 };
