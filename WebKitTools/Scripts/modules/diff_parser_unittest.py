@@ -74,12 +74,20 @@ index ce21720..324929e 100644
  }
  
  bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const
+diff --git a/LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum b/LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum
+new file mode 100644
+index 0000000..6db26bd
+--- /dev/null
++++ b/LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum
+@@ -0,0 +1 @@
++61a373ee739673a9dcd7bac62b9f182e
+\ No newline at end of file
 '''.splitlines()
 
 
     def test_diff_parser(self):
         parser = diff_parser.DiffParser(self._PATCH)
-        self.assertEquals(2, len(parser.files))
+        self.assertEquals(3, len(parser.files))
 
         self.assertTrue('WebCore/rendering/style/StyleFlexibleBoxData.h' in parser.files)
         diff = parser.files['WebCore/rendering/style/StyleFlexibleBoxData.h']
@@ -112,6 +120,11 @@ index ce21720..324929e 100644
         self.assertEquals((85, 88), diff.lines[20][0:2])
         self.assertEquals((86, 89), diff.lines[21][0:2])
         self.assertEquals((87, 90), diff.lines[22][0:2])
+
+        # Check if a newly added file is correctly handled.
+        diff = parser.files['LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum']
+        self.assertEquals(1, len(diff.lines))
+        self.assertEquals((0, 1), diff.lines[0][0:2])
 
 
 if __name__ == '__main__':

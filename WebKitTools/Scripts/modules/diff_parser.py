@@ -122,6 +122,7 @@ class DiffParser:
         old_diff_line = None
         new_diff_line = None
         for line in diff_input:
+            line = line.rstrip("\n")
             if state == _INITIAL_STATE:
                 transform_line = get_diff_converter(line)
             line = transform_line(line)
@@ -154,7 +155,7 @@ class DiffParser:
                     current_file.add_unchanged_line(old_diff_line, new_diff_line, line[1:])
                     old_diff_line += 1
                     new_diff_line += 1
-                elif line == '\\ No newline at end of file\n':
+                elif line == '\\ No newline at end of file':
                     # Nothing to do.  We may still have some added lines.
                     pass
                 else:
