@@ -51,14 +51,14 @@ static QWidget* qwidgetForPage(const Page* page)
 
     return frameView->qwidget();
 }
-    
+
 FloatRect screenRect(const Page* page)
 {
     QWidget* qw = qwidgetForPage(page);
     if (!qw)
         return FloatRect();
 
-    // Taken from KGlobalSettings::desktopGeometry    
+    // Taken from KGlobalSettings::desktopGeometry
     QDesktopWidget* dw = QApplication::desktop();
     if (!dw)
         return FloatRect();
@@ -81,7 +81,7 @@ FloatRect usableScreenRect(const Page* page)
     if (!qw)
         return FloatRect();
 
-    // Taken from KGlobalSettings::desktopGeometry    
+    // Taken from KGlobalSettings::desktopGeometry
     QDesktopWidget* dw = QApplication::desktop();
     if (!dw)
         return FloatRect();

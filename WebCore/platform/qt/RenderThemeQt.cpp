@@ -143,10 +143,10 @@ RenderThemeQt::~RenderThemeQt()
 // for some widget painting, we need to fallback to Windows style
 QStyle* RenderThemeQt::fallbackStyle()
 {
-    if(!m_fallbackStyle)
+    if (!m_fallbackStyle)
         m_fallbackStyle = QStyleFactory::create(QLatin1String("windows"));
 
-    if(!m_fallbackStyle)
+    if (!m_fallbackStyle)
         m_fallbackStyle = QApplication::style();
 
     return m_fallbackStyle;
@@ -227,9 +227,8 @@ static QRect inflateButtonRect(const QRect& originalRect, QStyle* style)
         int paddingBottom = originalRect.bottom() - layoutRect.bottom();
 
         return originalRect.adjusted(-paddingLeft, -paddingTop, paddingRight, paddingBottom);
-    } else {
+    } else
         return originalRect;
-    }
 }
 
 void RenderThemeQt::adjustRepaintRect(const RenderObject* o, IntRect& rect)
@@ -325,11 +324,10 @@ void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
 
         // If the style supports layout rects we use that, and  compensate accordingly
         // in paintButton() below.
-        if (!layoutRect.isNull()) {
+        if (!layoutRect.isNull())
             size.setHeight(layoutRect.height());
-        } else {
+        else
             size.setHeight(pushButtonSize.height());
-        }
 
         break;
     }
@@ -480,14 +478,13 @@ bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     option.state |= QStyle::State_Small;
 
     ControlPart appearance = applyTheme(option, o);
-    if(appearance == PushButtonPart || appearance == ButtonPart) {
+    if (appearance == PushButtonPart || appearance == ButtonPart) {
         option.rect = inflateButtonRect(option.rect, qStyle());
         p.drawControl(QStyle::CE_PushButton, option);
-    } else if(appearance == RadioPart) {
+    } else if (appearance == RadioPart)
        p.drawControl(QStyle::CE_RadioButton, option);
-    } else if(appearance == CheckboxPart) {
+    else if (appearance == CheckboxPart)
        p.drawControl(QStyle::CE_CheckBox, option);
-    }
 
     return false;
 }
@@ -585,7 +582,7 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
 
     const QPoint topLeft = r.topLeft();
     p.painter->translate(topLeft);
-    opt.rect.moveTo(QPoint(0,0));
+    opt.rect.moveTo(QPoint(0, 0));
     opt.rect.setSize(r.size());
 
     p.drawComplexControl(QStyle::CC_ComboBox, opt);
@@ -765,7 +762,7 @@ ControlPart RenderThemeQt::applyTheme(QStyleOption& option, RenderObject* o) con
         }
     }
 
-    if(result == RadioPart || result == CheckboxPart)
+    if (result == RadioPart || result == CheckboxPart)
         option.state |= (isChecked(o) ? QStyle::State_On : QStyle::State_Off);
 
     // If the webview has a custom palette, use it
@@ -793,10 +790,10 @@ String RenderThemeQt::extraMediaControlsStyleSheet()
 }
 
 // Helper class to transform the painter's world matrix to the object's content area, scaled to 0,0,100,100
-class WorldMatrixTransformer
-{
+class WorldMatrixTransformer {
 public:
-    WorldMatrixTransformer(QPainter* painter, RenderObject* renderObject, const IntRect& r) : m_painter(painter) {
+    WorldMatrixTransformer(QPainter* painter, RenderObject* renderObject, const IntRect& r) : m_painter(painter)
+    {
         RenderStyle* style = renderObject->style();
         m_originalTransform = m_painter->transform();
         m_painter->translate(r.x() + style->paddingLeft().value(), r.y() + style->paddingTop().value());
@@ -824,7 +821,7 @@ HTMLMediaElement* RenderThemeQt::getMediaElementFromRenderObject(RenderObject* o
 void RenderThemeQt::paintMediaBackground(QPainter* painter, const IntRect& r) const
 {
     painter->setPen(Qt::NoPen);
-    static QColor transparentBlack(0,0,0,100);
+    static QColor transparentBlack(0, 0, 0, 100);
     painter->setBrush(transparentBlack);
     painter->drawRoundedRect(r.x(), r.y(), r.width(), r.height(), 5.0, 5.0);
 }
@@ -839,7 +836,7 @@ QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
 
 bool RenderThemeQt::paintMediaFullscreenButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)
 {
-   return RenderTheme::paintMediaFullscreenButton(o, paintInfo, r);
+    return RenderTheme::paintMediaFullscreenButton(o, paintInfo, r);
 }
 
 bool RenderThemeQt::paintMediaMuteButton(RenderObject* o, const RenderObject::PaintInfo& paintInfo, const IntRect& r)

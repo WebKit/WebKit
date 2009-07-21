@@ -38,9 +38,9 @@ PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
 {
     m_timestamp = WTF::currentTime();
 
-    QMouseEvent *me = 0;
+    QMouseEvent* me = 0;
 
-    switch(event->type()) {
+    switch (event->type()) {
     case QEvent::MouseMove:
         m_eventType = MouseEventMoved;
         me = static_cast<QMouseEvent *>(event);

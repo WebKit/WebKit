@@ -27,8 +27,7 @@
 #include <QtGui/qicon.h>
 #include <QtCore/qshareddata.h>
 
-namespace WebCore
-{
+namespace WebCore {
     class Settings;
 }
 
@@ -38,8 +37,7 @@ QT_BEGIN_NAMESPACE
 class QUrl;
 QT_END_NAMESPACE
 
-class QWEBKIT_EXPORT QWebSettings
-{
+class QWEBKIT_EXPORT QWebSettings {
 public:
     enum FontFamily {
         StandardFont,

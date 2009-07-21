@@ -71,29 +71,29 @@ static QStyle::SubControl scPart(const ScrollbarPart& part)
         case ForwardButtonEndPart:
             return QStyle::SC_ScrollBarAddLine;
     }
-    
+
     return QStyle::SC_None;
 }
 
-static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc) 
-{ 
-    switch (sc) { 
-        case QStyle::SC_None: 
-            return NoPart; 
-        case QStyle::SC_ScrollBarSubLine: 
-            return BackButtonStartPart; 
-        case QStyle::SC_ScrollBarSubPage: 
-            return BackTrackPart; 
-        case QStyle::SC_ScrollBarSlider: 
-            return ThumbPart; 
-        case QStyle::SC_ScrollBarAddPage: 
-            return ForwardTrackPart; 
-        case QStyle::SC_ScrollBarAddLine: 
-            return ForwardButtonStartPart; 
+static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
+{
+    switch (sc) {
+        case QStyle::SC_None:
+            return NoPart;
+        case QStyle::SC_ScrollBarSubLine:
+            return BackButtonStartPart;
+        case QStyle::SC_ScrollBarSubPage:
+            return BackTrackPart;
+        case QStyle::SC_ScrollBarSlider:
+            return ThumbPart;
+        case QStyle::SC_ScrollBarAddPage:
+            return ForwardTrackPart;
+        case QStyle::SC_ScrollBarAddLine:
+            return ForwardButtonStartPart;
     }
-    return NoPart; 
+    return NoPart;
 }
- 
+
 static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar, QWidget* widget = 0)
 {
     static QStyleOptionSlider opt;

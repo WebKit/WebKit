@@ -36,8 +36,7 @@ namespace WebCore {
 class RenderStyle;
 class HTMLMediaElement;
 
-class RenderThemeQt : public RenderTheme
-{
+class RenderThemeQt : public RenderTheme {
 private:
     RenderThemeQt(Page* page);
     virtual ~RenderThemeQt();
@@ -151,8 +150,7 @@ private:
     QStyle* m_fallbackStyle;
 };
 
-class StylePainter
-{
+class StylePainter {
 public:
     explicit StylePainter(const RenderObject::PaintInfo& paintInfo);
     explicit StylePainter(GraphicsContext* context);

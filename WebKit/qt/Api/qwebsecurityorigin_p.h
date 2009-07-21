@@ -23,8 +23,7 @@
 #include "SecurityOrigin.h"
 #include "RefPtr.h"
 
-class QWebSecurityOriginPrivate : public QSharedData
-{
+class QWebSecurityOriginPrivate : public QSharedData {
 public:
     QWebSecurityOriginPrivate(WebCore::SecurityOrigin* o)
     {

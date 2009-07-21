@@ -40,7 +40,7 @@ public:
     virtual ScrollbarPart hitTest(Scrollbar*, const PlatformMouseEvent&);
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
-    
+
     virtual void invalidatePart(Scrollbar*, ScrollbarPart);
 
     virtual int thumbPosition(Scrollbar*);

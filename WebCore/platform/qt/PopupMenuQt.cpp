@@ -68,8 +68,7 @@ void PopupMenu::populate(const IntRect& r)
         if (client()->itemIsSeparator(i)) {
             //FIXME: better seperator item
             m_popup->insertItem(i, QString::fromLatin1("---"));
-        }
-        else {
+        } else {
             //PopupMenuStyle style = client()->itemStyle(i);
             m_popup->insertItem(i, client()->itemText(i));
 #if 0

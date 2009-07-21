@@ -61,9 +61,9 @@ ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readable
     : Clipboard(policy, true)
     , m_readableData(readableClipboard)
     , m_writableData(0)
-{ 
+{
     Q_ASSERT(policy == ClipboardReadable || policy == ClipboardTypesReadable);
-}    
+}
 
 ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, bool forDragging)
     : Clipboard(policy, forDragging)
@@ -76,7 +76,7 @@ ClipboardQt::ClipboardQt(ClipboardAccessPolicy policy, bool forDragging)
     if (policy != ClipboardWritable) {
         Q_ASSERT(!forDragging);
         m_readableData = QApplication::clipboard()->mimeData();
-    } 
+    }
 #endif
 }
 
@@ -104,7 +104,7 @@ void ClipboardQt::clearData(const String& type)
             if (format != toClearType)
                 formats[format] = m_writableData->data(format);
         }
-        
+
         m_writableData->clear();
         QMap<QString, QByteArray>::const_iterator it, end = formats.constEnd();
         for (it = formats.begin(); it != end; ++it)
@@ -122,11 +122,11 @@ void ClipboardQt::clearData(const String& type)
 #endif
 }
 
-void ClipboardQt::clearAllData() 
+void ClipboardQt::clearAllData()
 {
     if (policy() != ClipboardWritable)
         return;
-    
+
 #ifndef QT_NO_CLIPBOARD
     if (!isForDragging())
         QApplication::clipboard()->setMimeData(0);
@@ -136,21 +136,21 @@ void ClipboardQt::clearAllData()
     m_writableData = 0;
 }
 
-String ClipboardQt::getData(const String& type, bool& success) const 
+String ClipboardQt::getData(const String& type, bool& success) const
 {
 
     if (policy() != ClipboardReadable) {
         success = false;
         return String();
     }
-    
+
     ASSERT(m_readableData);
     QByteArray data = m_readableData->data(QString(type));
     success = !data.isEmpty();
     return String(data.data(), data.size());
 }
 
-bool ClipboardQt::setData(const String& type, const String& data) 
+bool ClipboardQt::setData(const String& type, const String& data)
 {
     if (policy() != ClipboardWritable)
         return false;
@@ -187,7 +187,7 @@ PassRefPtr<FileList> ClipboardQt::files() const
     return 0;
 }
 
-void ClipboardQt::setDragImage(CachedImage* image, const IntPoint& point) 
+void ClipboardQt::setDragImage(CachedImage* image, const IntPoint& point)
 {
     setDragImage(image, 0, point);
 }
@@ -207,7 +207,7 @@ void ClipboardQt::setDragImage(CachedImage* image, Node *node, const IntPoint &l
     m_dragImage = image;
     if (m_dragImage)
         m_dragImage->addClient(this);
-    
+
     m_dragLoc = loc;
     m_dragImageElement = node;
 }
@@ -226,9 +226,9 @@ static CachedImage* getCachedImage(Element* element)
     // Attempt to pull CachedImage from element
     ASSERT(element);
     RenderObject* renderer = element->renderer();
-    if (!renderer || !renderer->isImage()) 
+    if (!renderer || !renderer->isImage())
         return 0;
-    
+
     RenderImage* image = static_cast<RenderImage*>(renderer);
     if (image->cachedImage() && !image->cachedImage()->errorOccurred())
         return image->cachedImage();
@@ -236,7 +236,7 @@ static CachedImage* getCachedImage(Element* element)
     return 0;
 }
 
-void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame) 
+void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
 {
     ASSERT(frame);
     Q_UNUSED(url);
@@ -254,11 +254,11 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
         m_writableData->setImageData(*pixmap);
 
     AtomicString imageURL = element->getAttribute(HTMLNames::srcAttr);
-    if (imageURL.isEmpty()) 
+    if (imageURL.isEmpty())
         return;
 
     KURL fullURL = frame->document()->completeURL(deprecatedParseURL(imageURL));
-    if (fullURL.isEmpty()) 
+    if (fullURL.isEmpty())
         return;
 
     QList<QUrl> urls;
@@ -274,7 +274,7 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
 void ClipboardQt::writeURL(const KURL& url, const String& title, Frame* frame)
 {
     ASSERT(frame);
-    
+
     QList<QUrl> urls;
     urls.append(frame->document()->completeURL(url.string()));
     if (!m_writableData)
@@ -287,11 +287,11 @@ void ClipboardQt::writeURL(const KURL& url, const String& title, Frame* frame)
 #endif
 }
 
-void ClipboardQt::writeRange(Range* range, Frame* frame) 
+void ClipboardQt::writeRange(Range* range, Frame* frame)
 {
     ASSERT(range);
     ASSERT(frame);
-    
+
     if (!m_writableData)
         m_writableData = new QMimeData;
     QString text = frame->selectedText();
@@ -304,7 +304,7 @@ void ClipboardQt::writeRange(Range* range, Frame* frame)
 #endif
 }
 
-bool ClipboardQt::hasData() 
+bool ClipboardQt::hasData()
 {
     const QMimeData *data = m_readableData ? m_readableData : m_writableData;
     if (!data)

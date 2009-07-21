@@ -35,8 +35,7 @@
 
 #include <wtf/RefPtr.h>
 
-namespace WebCore
-{
+namespace WebCore {
     class ChromeClientQt;
     class ContextMenuClientQt;
     class ContextMenuItem;
@@ -66,14 +65,13 @@ class QMenu;
 class QBitArray;
 QT_END_NAMESPACE
 
-class QWebPagePrivate
-{
+class QWebPagePrivate {
 public:
-    QWebPagePrivate(QWebPage *);
+    QWebPagePrivate(QWebPage*);
     ~QWebPagePrivate();
     void createMainFrame();
 #ifndef QT_NO_CONTEXTMENU
-    QMenu *createContextMenu(const WebCore::ContextMenu *webcoreMenu, const QList<WebCore::ContextMenuItem> *items, QBitArray *visitedWebActions);
+    QMenu* createContextMenu(const WebCore::ContextMenu* webcoreMenu, const QList<WebCore::ContextMenuItem>* items, QBitArray* visitedWebActions);
 #endif
     void _q_onLoadProgressChanged(int);
     void _q_webActionTriggered(bool checked);

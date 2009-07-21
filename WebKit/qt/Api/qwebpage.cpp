@@ -129,29 +129,29 @@ QString QWEBKIT_EXPORT qt_webpage_groupName(QWebPage* page)
 }
 
 // Lookup table mapping QWebPage::WebActions to the associated Editor commands
-static const char* editorCommandWebActions[] = 
+static const char* editorCommandWebActions[] =
 {
     0, // OpenLink,
 
     0, // OpenLinkInNewWindow,
     0, // OpenFrameInNewWindow,
-    
+
     0, // DownloadLinkToDisk,
     0, // CopyLinkToClipboard,
-    
+
     0, // OpenImageInNewWindow,
     0, // DownloadImageToDisk,
     0, // CopyImageToClipboard,
-    
+
     0, // Back,
     0, // Forward,
     0, // Stop,
     0, // Reload,
-    
+
     "Cut", // Cut,
     "Copy", // Copy,
     "Paste", // Paste,
-    
+
     "Undo", // Undo,
     "Redo", // Redo,
     "MoveForward", // MoveToNextChar,
@@ -180,15 +180,15 @@ static const char* editorCommandWebActions[] =
     "MoveToEndOfDocumentAndModifySelection", // SelectEndOfDocument,
     "DeleteWordBackward", // DeleteStartOfWord,
     "DeleteWordForward", // DeleteEndOfWord,
-    
+
     0, // SetTextDirectionDefault,
     0, // SetTextDirectionLeftToRight,
     0, // SetTextDirectionRightToLeft,
-    
+
     "ToggleBold", // ToggleBold,
     "ToggleItalic", // ToggleItalic,
     "ToggleUnderline", // ToggleUnderline,
-    
+
     0, // InspectElement,
 
     "InsertNewline", // InsertParagraphSeparator
@@ -220,7 +220,6 @@ const char* QWebPagePrivate::editorCommandForWebActions(QWebPage::WebAction acti
 {
     if ((action > QWebPage::NoWebAction) && (action < int(sizeof(editorCommandWebActions) / sizeof(const char*))))
         return editorCommandWebActions[action];
-    
     return 0;
 }
 
@@ -419,9 +418,8 @@ QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMen
                 if (anyEnabledAction) {
                     subMenu->setTitle(item.title());
                     menu->addAction(subMenu->menuAction());
-                } else {
+                } else
                     delete subMenu;
-                }
                 break;
             }
         }
@@ -838,11 +836,10 @@ void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
     FocusController *focusController = page->focusController();
     Frame *frame = focusController->focusedFrame();
     focusController->setActive(true);
-    if (frame) {
+    if (frame)
         focusController->setFocused(true);
-    } else {
+    else
         focusController->setFocusedFrame(QWebFramePrivate::core(mainFrame));
-    }
 }
 
 void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
@@ -1643,9 +1640,8 @@ QSize QWebPage::fixedContentsSize() const
     QWebFrame* frame = d->mainFrame;
     if (frame) {
         WebCore::FrameView* view = frame->d->frame->view();
-        if (view && view->useFixedLayout()) {
+        if (view && view->useFixedLayout())
             return d->mainFrame->d->frame->view()->fixedLayoutSize();
-        }
     }
 
     return d->fixedLayoutSize;
@@ -2153,9 +2149,8 @@ void QWebPage::setContentEditable(bool editable)
                 frame->applyEditingStyleToBodyElement();
                 // FIXME: mac port calls this if there is no selectedDOMRange
                 //frame->setSelectionFromNone();
-            } else {
+            } else
                 frame->removeEditingStyleFromBodyElement();
-            }
         }
 
         d->updateEditorActions();
@@ -2223,9 +2218,8 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
 
     if (QWebFrame* webFrame = frameAt(event->pos())) {
         Frame* frame = QWebFramePrivate::core(webFrame);
-        if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(PlatformMouseEvent(event, 1).pos())) {
+        if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(PlatformMouseEvent(event, 1).pos()))
             return scrollbar->contextMenu(PlatformMouseEvent(event, 1));
-        }
     }
 
     WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
@@ -2404,9 +2398,8 @@ bool QWebPage::findText(const QString &subString, FindFlags options)
         if (subString.isEmpty()) {
             d->page->unmarkAllTextMatches();
             return true;
-        } else {
+        } else
             return d->page->markAllMatchesForText(subString, caseSensitivity, true, 0);
-        }
     } else {
         ::FindDirection direction = ::FindDirectionForward;
         if (options & FindBackward)

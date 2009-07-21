@@ -36,7 +36,7 @@ struct ExtensionMap {
     const char* mimeType;
 };
 
-static const ExtensionMap extensionMap [] = {
+static const ExtensionMap extensionMap[] = {
     { "bmp", "image/bmp" },
     { "css", "text/css" },
     { "gif", "image/gif" },

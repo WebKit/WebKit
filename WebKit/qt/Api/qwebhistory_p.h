@@ -25,8 +25,7 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/qshareddata.h>
 
-class Q_AUTOTEST_EXPORT QWebHistoryItemPrivate : public QSharedData
-{
+class Q_AUTOTEST_EXPORT QWebHistoryItemPrivate : public QSharedData {
 public:
     static QExplicitlySharedDataPointer<QWebHistoryItemPrivate> get(QWebHistoryItem *q)
     {
@@ -65,8 +64,7 @@ public:
     WebCore::HistoryItem *item;
 };
 
-class QWebHistoryPrivate : public QSharedData
-{
+class QWebHistoryPrivate : public QSharedData {
 public:
     QWebHistoryPrivate(WebCore::BackForwardList *l)
     {

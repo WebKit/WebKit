@@ -36,8 +36,7 @@ namespace WebCore {
     class ResourceHandle;
 }
 
-struct QWebNetworkRequestPrivate
-{
+struct QWebNetworkRequestPrivate {
     QUrl url;
     QHttpRequestHeader httpHeader;
     QByteArray postData;
@@ -47,8 +46,7 @@ struct QWebNetworkRequestPrivate
     void setURL(const QUrl &u);
 };
 
-class QWebNetworkJobPrivate
-{
+class QWebNetworkJobPrivate {
 public:
     QWebNetworkJobPrivate()
         : ref(1)
@@ -70,8 +68,7 @@ public:
     QString errorString;
 };
 
-class QWebNetworkManager : public QObject
-{
+class QWebNetworkManager : public QObject {
     Q_OBJECT
 public:
     enum JobMode {
@@ -162,18 +159,17 @@ namespace WebCore {
         int port;
     };
 
-    class WebCoreHttp : public QObject
-    {
+    class WebCoreHttp : public QObject {
         Q_OBJECT
     public:
-        WebCoreHttp(QObject *parent, const HostInfo&);
+        WebCoreHttp(QObject* parent, const HostInfo&);
         ~WebCoreHttp();
 
         void request(QWebNetworkJob* resource);
         void cancel(QWebNetworkJob*);
 
     signals:
-        void connectionClosed(const WebCore::HostInfo &);
+        void connectionClosed(const WebCore::HostInfo&);
 
     private slots:
         void onResponseHeaderReceived(const QHttpResponseHeader& resp);
@@ -182,8 +178,8 @@ namespace WebCore {
         void onDone(bool);
         void onStateChanged(int);
         void onSslErrors(const QList<QSslError>&);
-        void onAuthenticationRequired(const QString& hostname, quint16 port, QAuthenticator *);
-        void onProxyAuthenticationRequired(const QNetworkProxy& proxy, QAuthenticator *);
+        void onAuthenticationRequired(const QString& hostname, quint16 port, QAuthenticator*);
+        void onProxyAuthenticationRequired(const QNetworkProxy& proxy, QAuthenticator*);
 
         void scheduleNextRequest();
 
@@ -192,11 +188,11 @@ namespace WebCore {
     public:
         HostInfo info;
     private:
-        QList<QWebNetworkJob *> m_pendingRequests;
+        QList<QWebNetworkJob*> m_pendingRequests;
         struct HttpConnection {
             HttpConnection() : http(0), current(0), id(-1) {}
-            QHttp *http;
-            QWebNetworkJob *current;
+            QHttp* http;
+            QWebNetworkJob* current;
             int id; // the QHttp id
         };
         HttpConnection connection[2];
@@ -205,13 +201,12 @@ namespace WebCore {
 
 }
 
-class QWebNetworkInterfacePrivate
-{
+class QWebNetworkInterfacePrivate {
 public:
-    void sendFileData(QWebNetworkJob* job, int statusCode, const QByteArray &data);
+    void sendFileData(QWebNetworkJob* job, int statusCode, const QByteArray& data);
     void parseDataUrl(QWebNetworkJob* job);
 
-    QWebNetworkInterface *q;
+    QWebNetworkInterface* q;
 };
 
 #endif

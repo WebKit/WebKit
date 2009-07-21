@@ -254,7 +254,7 @@ const Cursor& rowResizeCursor()
 {
     return Cursors::self()->SplitVCursor;
 }
-    
+
 const Cursor& middlePanningCursor()
 {
     return moveCursor();
@@ -298,7 +298,7 @@ const Cursor& southWestPanningCursor()
 const Cursor& westPanningCursor()
 {
     return westResizeCursor();
-}    
+}
 
 const Cursor& verticalTextCursor()
 {
@@ -342,7 +342,7 @@ const Cursor& noneCursor()
 
 const Cursor& notAllowedCursor()
 {
-   return Cursors::self()->NoDropCursor;
+    return Cursors::self()->NoDropCursor;
 }
 
 const Cursor& zoomInCursor()

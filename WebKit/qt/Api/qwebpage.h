@@ -59,8 +59,7 @@ namespace WebCore {
     struct FrameLoadRequest;
 }
 
-class QWEBKIT_EXPORT QWebPage : public QObject
-{
+class QWEBKIT_EXPORT QWebPage : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(bool modified READ isModified)

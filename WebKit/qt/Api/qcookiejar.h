@@ -26,8 +26,7 @@
 
 class QCookieJarPrivate;
 
-class QWEBKIT_EXPORT QCookieJar : public QObject
-{
+class QWEBKIT_EXPORT QCookieJar : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled)
@@ -40,15 +39,15 @@ public:
 
     bool isEnabled() const;
 
-    static void setCookieJar(QCookieJar *jar);
-    static QCookieJar *cookieJar();
+    static void setCookieJar(QCookieJar* jar);
+    static QCookieJar* cookieJar();
 
 public slots:
     virtual void setEnabled(bool enabled);
 
 private:
     friend class QCookieJarPrivate;
-    QCookieJarPrivate *d;
+    QCookieJarPrivate* d;
 };
 
 

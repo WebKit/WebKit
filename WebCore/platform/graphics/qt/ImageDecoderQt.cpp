@@ -118,7 +118,7 @@ ImageDecoderQt::ReadContext::ReadResult
             // Attempt to construct an empty image of the matching size and format
             // for efficient reading
             QImage newImage = m_dataFormat != QImage::Format_Invalid  ?
-                          QImage(m_size,m_dataFormat) : QImage();
+                          QImage(m_size, m_dataFormat) : QImage();
             m_target.push_back(ImageData(newImage));
         }
 
@@ -137,8 +137,8 @@ ImageDecoderQt::ReadContext::ReadResult
             const bool supportsAnimation = m_reader.supportsAnimation();
 
             if (debugImageDecoderQt)
-                qDebug() << "readImage(): #" << m_target.size() << " complete, " << m_size << " format " << m_dataFormat
-                <<  " supportsAnimation=" <<  supportsAnimation ;
+                qDebug() << "readImage(): #" << m_target.size() << " complete, " << m_size
+                    << " format " << m_dataFormat <<  " supportsAnimation=" <<  supportsAnimation;
             // No point in readinfg further
             if (!supportsAnimation)
                 return ReadComplete;
@@ -158,7 +158,7 @@ ImageDecoderQt::ReadContext::IncrementalReadResult
     // set state to reflect complete header, etc.
     // For now, we read the whole image.
 
-    const qint64 startPos = m_buffer.pos ();
+    const qint64 startPos = m_buffer.pos();
     // Oops, failed. Rewind.
     if (!m_reader.read(&imageData.m_image)) {
         m_buffer.seek(startPos);
@@ -236,7 +236,7 @@ void ImageDecoderQt::setData(const IncomingData &data, bool allDataReceived)
     if (debugImageDecoderQt)
         qDebug()  << " read returns " << readResult;
 
-    switch ( readResult)    {
+    switch (readResult) {
     case ReadContext::ReadFailed:
         m_failed = true;
         break;

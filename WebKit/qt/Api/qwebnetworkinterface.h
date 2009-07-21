@@ -44,8 +44,7 @@ namespace WebCore {
 }
 
 struct QWebNetworkRequestPrivate;
-class QWEBKIT_EXPORT QWebNetworkRequest
-{
+class QWEBKIT_EXPORT QWebNetworkRequest {
 public:
     enum Method {
         Get,
@@ -82,8 +81,7 @@ private:
     friend class QWebObjectPluginConnector;
 };
 
-class QWEBKIT_EXPORT QWebNetworkJob
-{
+class QWEBKIT_EXPORT QWebNetworkJob {
 public:
 
     QUrl url() const;
@@ -102,7 +100,7 @@ public:
     bool deref();
 
     QWebNetworkInterface *networkInterface() const;
-    
+
     QWebFrame *frame() const;
 
 protected:
@@ -130,8 +128,7 @@ private:
 
 class QWebNetworkInterfacePrivate;
 
-class QWEBKIT_EXPORT QWebNetworkInterface : public QObject
-{
+class QWEBKIT_EXPORT QWebNetworkInterface : public QObject {
     Q_OBJECT
 public:
     QWebNetworkInterface(QObject *parent = 0);
@@ -147,7 +144,7 @@ protected:
     void started(QWebNetworkJob*);
     void data(QWebNetworkJob*, const QByteArray &data);
     void finished(QWebNetworkJob*, int errorCode);
-    
+
 signals:
     void sslErrors(QWebFrame *frame, const QUrl& url, const QList<QSslError>& errors, bool *continueAnyway);
     void authenticate(QWebFrame *frame, const QUrl& url, const QString& hostname, quint16 port, QAuthenticator *auth);

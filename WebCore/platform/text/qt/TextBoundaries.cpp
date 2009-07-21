@@ -39,8 +39,7 @@
 #if QT_VERSION >= 0x040400
 #include <qtextboundaryfinder.h>
 
-namespace WebCore
-{
+namespace WebCore {
 
 int findNextWordFromIndex(UChar const* buffer, int len, int position, bool forward)
 {
@@ -78,9 +77,8 @@ void findWordBoundary(UChar const* buffer, int len, int position, int* start, in
 }
 
 #else
-namespace WebCore
-{
-    
+namespace WebCore {
+
 int findNextWordFromIndex(UChar const* buffer, int len, int position, bool forward)
 {
     QString str(reinterpret_cast<QChar const*>(buffer), len);

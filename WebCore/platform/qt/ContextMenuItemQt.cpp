@@ -68,7 +68,7 @@ void ContextMenuItem::setType(ContextMenuItemType type)
 }
 
 ContextMenuAction ContextMenuItem::action() const
-{ 
+{
     return m_platformDescription.action;
 }
 
@@ -77,7 +77,7 @@ void ContextMenuItem::setAction(ContextMenuAction action)
     m_platformDescription.action = action;
 }
 
-String ContextMenuItem::title() const 
+String ContextMenuItem::title() const
 {
     return m_platformDescription.title;
 }

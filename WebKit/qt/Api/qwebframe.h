@@ -60,8 +60,7 @@ class QWebFrameData;
 class QWebHitTestResultPrivate;
 class QWebFrame;
 
-class QWEBKIT_EXPORT QWebHitTestResult
-{
+class QWEBKIT_EXPORT QWebHitTestResult {
 public:
     QWebHitTestResult();
     QWebHitTestResult(const QWebHitTestResult &other);
@@ -102,8 +101,7 @@ private:
     friend class QWebPage;
 };
 
-class QWEBKIT_EXPORT QWebFrame : public QObject
-{
+class QWEBKIT_EXPORT QWebFrame : public QObject {
     Q_OBJECT
     Q_PROPERTY(qreal textSizeMultiplier READ textSizeMultiplier WRITE setTextSizeMultiplier DESIGNABLE false)
     Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor)

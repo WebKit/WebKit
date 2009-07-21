@@ -31,7 +31,7 @@
 namespace WebCore {
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fileName)
-{ 
+{
     if (fileName.isEmpty())
         return 0;
 

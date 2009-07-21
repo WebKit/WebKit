@@ -31,8 +31,7 @@
 #include "wtf/RefPtr.h"
 #include "Frame.h"
 
-namespace WebCore
-{
+namespace WebCore {
     class FrameLoaderClientQt;
     class FrameView;
     class HTMLFrameOwnerElement;
@@ -40,8 +39,7 @@ namespace WebCore
 }
 class QWebPage;
 
-class QWebFrameData
-{
+class QWebFrameData {
 public:
     QWebFrameData(WebCore::Page*, WebCore::Frame* parentFrame = 0,
                   WebCore::HTMLFrameOwnerElement* = 0,
@@ -60,8 +58,7 @@ public:
     int marginHeight;
 };
 
-class QWebFramePrivate
-{
+class QWebFramePrivate {
 public:
     QWebFramePrivate()
         : q(0)
@@ -82,7 +79,7 @@ public:
     WebCore::Scrollbar* verticalScrollBar() const;
 
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
-    Qt::ScrollBarPolicy verticalScrollBarPolicy; 
+    Qt::ScrollBarPolicy verticalScrollBarPolicy;
 
     static WebCore::Frame* core(QWebFrame*);
     static QWebFrame* kit(WebCore::Frame*);
@@ -99,8 +96,7 @@ public:
     int marginHeight;
 };
 
-class QWebHitTestResultPrivate
-{
+class QWebHitTestResultPrivate {
 public:
     QWebHitTestResultPrivate() : isContentEditable(false), isContentSelected(false), isScrollBar(false) {}
     QWebHitTestResultPrivate(const WebCore::HitTestResult &hitTest);

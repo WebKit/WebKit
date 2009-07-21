@@ -44,8 +44,8 @@
 #define methodDebug() qDebug() << "PasteboardQt: " << __FUNCTION__;
 
 namespace WebCore {
-    
-Pasteboard::Pasteboard() 
+
+Pasteboard::Pasteboard()
     : m_selectionMode(false)
 {
 }
@@ -71,7 +71,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame)
     md->setHtml(html);
 
 #ifndef QT_NO_CLIPBOARD
-    QApplication::clipboard()->setMimeData(md, m_selectionMode ? 
+    QApplication::clipboard()->setMimeData(md, m_selectionMode ?
             QClipboard::Selection : QClipboard::Clipboard);
 #endif
 }
@@ -84,7 +84,7 @@ bool Pasteboard::canSmartReplace()
 String Pasteboard::plainText(Frame*)
 {
 #ifndef QT_NO_CLIPBOARD
-    return QApplication::clipboard()->text(m_selectionMode ? 
+    return QApplication::clipboard()->text(m_selectionMode ?
             QClipboard::Selection : QClipboard::Clipboard);
 #else
     return String();

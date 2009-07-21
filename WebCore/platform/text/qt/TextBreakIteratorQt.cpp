@@ -36,8 +36,7 @@
 
 namespace WebCore {
 
-    class TextBreakIterator : public QTextBoundaryFinder
-    {
+    class TextBreakIterator : public QTextBoundaryFinder {
     };
     static QTextBoundaryFinder* iterator = 0;
     static unsigned char buffer[1024];
@@ -138,17 +137,18 @@ namespace WebCore {
 
 namespace WebCore {
 
-    class TextBreakIterator
-    {
+    class TextBreakIterator {
     public:
         virtual int first() = 0;
         virtual int next() = 0;
         virtual int previous() = 0;
-        inline int following(int pos) {
+        inline int following(int pos)
+        {
             currentPos = pos;
             return next();
         }
-        inline int preceding(int pos) {
+        inline int preceding(int pos)
+        {
             currentPos = pos;
             return previous();
         }
@@ -157,16 +157,14 @@ namespace WebCore {
         int length;
     };
 
-    class WordBreakIteratorQt : public TextBreakIterator
-    {
+    class WordBreakIteratorQt : public TextBreakIterator {
     public:
         virtual int first();
         virtual int next();
         virtual int previous();
     };
 
-    class CharBreakIteratorQt : public TextBreakIterator
-    {
+    class CharBreakIteratorQt : public TextBreakIterator {
     public:
         virtual int first();
         virtual int next();
@@ -174,12 +172,14 @@ namespace WebCore {
         QTextLayout layout;
     };
 
-    int WordBreakIteratorQt::first() {
+    int WordBreakIteratorQt::first()
+    {
         currentPos = 0;
         return currentPos;
     }
 
-    int WordBreakIteratorQt::next() {
+    int WordBreakIteratorQt::next()
+    {
         if (currentPos >= length) {
             currentPos = -1;
             return currentPos;
@@ -194,7 +194,9 @@ namespace WebCore {
         }
         return currentPos;
     }
-    int WordBreakIteratorQt::previous() {
+
+    int WordBreakIteratorQt::previous()
+    {
         if (currentPos <= 0) {
             currentPos = -1;
             return currentPos;
@@ -210,18 +212,22 @@ namespace WebCore {
         return currentPos;
     }
 
-    int CharBreakIteratorQt::first() {
+    int CharBreakIteratorQt::first()
+    {
         currentPos = 0;
         return currentPos;
     }
 
-    int CharBreakIteratorQt::next() {
+    int CharBreakIteratorQt::next()
+    {
         if (currentPos >= length)
             return -1;
         currentPos = layout.nextCursorPosition(currentPos);
         return currentPos;
     }
-    int CharBreakIteratorQt::previous() {
+
+    int CharBreakIteratorQt::previous()
+    {
         if (currentPos <= 0)
             return -1;
         currentPos = layout.previousCursorPosition(currentPos);
@@ -252,7 +258,7 @@ TextBreakIterator* characterBreakIterator(const UChar* string, int length)
     iterator->length = length;
     iterator->currentPos = 0;
     iterator->layout.setText(QString(reinterpret_cast<const QChar*>(string), length));
-    
+
     return iterator;
 }
 

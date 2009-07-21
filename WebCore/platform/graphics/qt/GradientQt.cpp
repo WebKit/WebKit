@@ -67,7 +67,7 @@ QGradient* Gradient::platformGradient()
         ++stopIterator;
     }
 
-    switch(m_spreadMethod) {
+    switch (m_spreadMethod) {
     case SpreadMethodPad:
         m_gradient->setSpread(QGradient::PadSpread);
         break;

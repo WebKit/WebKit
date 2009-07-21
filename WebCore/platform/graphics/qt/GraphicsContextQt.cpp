@@ -155,7 +155,7 @@ static Qt::PenStyle toQPenStyle(StrokeStyle style)
 
 static inline Qt::FillRule toQtFillRule(WindRule rule)
 {
-    switch(rule) {
+    switch (rule) {
     case RULE_EVENODD:
         return Qt::OddEvenFill;
     case RULE_NONZERO:
@@ -165,8 +165,7 @@ static inline Qt::FillRule toQtFillRule(WindRule rule)
     return Qt::OddEvenFill;
 }
 
-struct TransparencyLayer
-{
+struct TransparencyLayer {
     TransparencyLayer(const QPainter* p, const QRect &rect)
         : pixmap(rect.width(), rect.height())
     {
@@ -198,8 +197,7 @@ private:
     TransparencyLayer & operator=(const TransparencyLayer &) { return *this; }
 };
 
-class GraphicsContextPlatformPrivate
-{
+class GraphicsContextPlatformPrivate {
 public:
     GraphicsContextPlatformPrivate(QPainter* painter);
     ~GraphicsContextPlatformPrivate();
@@ -217,7 +215,7 @@ public:
 
     bool antiAliasingForRectsAndLines;
 
-    QStack<TransparencyLayer *> layers;
+    QStack<TransparencyLayer*> layers;
     QPainter* redirect;
 
     QBrush solidColor;
@@ -242,9 +240,8 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p)
         antiAliasingForRectsAndLines = painter->testRenderHint(QPainter::Antialiasing);
         // FIXME: Maybe only enable in SVG mode?
         painter->setRenderHint(QPainter::Antialiasing, true);
-    } else {
+    } else
         antiAliasingForRectsAndLines = false;
-    }
 }
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
@@ -265,7 +262,7 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
 
 GraphicsContext::~GraphicsContext()
 {
-    while(!m_data->layers.isEmpty())
+    while (!m_data->layers.isEmpty())
         endTransparencyLayer();
 
     destroyGraphicsContextPrivate(m_common);
@@ -280,7 +277,7 @@ PlatformGraphicsContext* GraphicsContext::platformContext() const
 TransformationMatrix GraphicsContext::getCTM() const
 {
     QTransform matrix(platformContext()->combinedTransform());
-    return TransformationMatrix(matrix.m11(), matrix.m12(), 0, matrix.m13(), 
+    return TransformationMatrix(matrix.m11(), matrix.m12(), 0, matrix.m13(),
                                 matrix.m21(), matrix.m22(), 0, matrix.m23(),
                                            0,            0, 1,            0,
                                 matrix.m31(), matrix.m32(), 0, matrix.m33());
@@ -1126,8 +1123,9 @@ void GraphicsContext::concatCTM(const TransformationMatrix& transform)
 
     m_data->p()->setWorldTransform(transform, true);
 
-    // Transformations to the context shouldn't transform the currentPath. 
-    // We have to undo every change made to the context from the currentPath to avoid wrong drawings.
+    // Transformations to the context shouldn't transform the currentPath.
+    // We have to undo every change made to the context from the currentPath
+    // to avoid wrong drawings.
     if (!m_data->currentPath.isEmpty() && transform.isInvertible()) {
         QTransform matrix = transform.inverse();
         m_data->currentPath = m_data->currentPath * matrix;
@@ -1210,7 +1208,7 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     bitmapInfo.bmiHeader.biClrImportant  = 0;
 
     void* pixels = 0;
-    HBITMAP bitmap = ::CreateDIBSection(NULL, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
+    HBITMAP bitmap = ::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
     if (!bitmap)
         return 0;
 

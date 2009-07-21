@@ -170,8 +170,8 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
         return;
     }
 
-    FloatPoint p1p0((p0.x() - p1.x()),(p0.y() - p1.y()));
-    FloatPoint p1p2((p2.x() - p1.x()),(p2.y() - p1.y()));
+    FloatPoint p1p0((p0.x() - p1.x()), (p0.y() - p1.y()));
+    FloatPoint p1p2((p2.x() - p1.x()), (p2.y() - p1.y()));
     float p1p0_length = sqrtf(p1p0.x() * p1p0.x() + p1p0.y() * p1p0.y());
     float p1p2_length = sqrtf(p1p2.x() * p1p2.x() + p1p2.y() * p1p2.y());
 
@@ -216,7 +216,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
     float factor_p1p2 = tangent / p1p2_length;
     FloatPoint t_p1p2((p1.x() + factor_p1p2 * p1p2.x()), (p1.y() + factor_p1p2 * p1p2.y()));
-    FloatPoint orth_p1p2((t_p1p2.x() - p.x()),(t_p1p2.y() - p.y()));
+    FloatPoint orth_p1p2((t_p1p2.x() - p.x()), (t_p1p2.y() - p.y()));
     float orth_p1p2_length = sqrtf(orth_p1p2.x() * orth_p1p2.x() + orth_p1p2.y() * orth_p1p2.y());
     float ea = acos(orth_p1p2.x() / orth_p1p2_length);
     if (orth_p1p2.y() < 0)
@@ -300,7 +300,7 @@ bool Path::isEmpty() const
 {
     // Don't use QPainterPath::isEmpty(), as that also returns true if there's only
     // one initial MoveTo element in the path.
-    return m_path->elementCount() == 0;
+    return !m_path->elementCount();
 }
 
 bool Path::hasCurrentPoint() const

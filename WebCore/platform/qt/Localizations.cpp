@@ -60,7 +60,7 @@ String searchableIndexIntroduction()
 {
     return QCoreApplication::translate("QWebPage", "This is a searchable index. Enter search keywords: ", "text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index'");
 }
-    
+
 String fileButtonChooseFileLabel()
 {
     return QCoreApplication::translate("QWebPage", "Choose File", "title for file button used in HTML forms");
@@ -183,7 +183,7 @@ String contextMenuItemTagSpellingMenu()
 
 String contextMenuItemTagShowSpellingPanel(bool show)
 {
-    return show ? QCoreApplication::translate("QWebPage", "Show Spelling and Grammar", "menu item title") : 
+    return show ? QCoreApplication::translate("QWebPage", "Show Spelling and Grammar", "menu item title") :
                   QCoreApplication::translate("QWebPage", "Hide Spelling and Grammar", "menu item title");
 }
 

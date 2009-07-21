@@ -34,8 +34,7 @@ class QWebSecurityOriginPrivate;
 class QWebDatabase;
 class QWebFrame;
 
-class QWEBKIT_EXPORT QWebSecurityOrigin
-{
+class QWEBKIT_EXPORT QWebSecurityOrigin {
 public:
     static QList<QWebSecurityOrigin> allOrigins();
 

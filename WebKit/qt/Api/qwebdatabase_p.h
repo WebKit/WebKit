@@ -27,8 +27,7 @@
 #include "RefPtr.h"
 
 
-class QWebDatabasePrivate : public QSharedData
-{
+class QWebDatabasePrivate : public QSharedData {
 public:
     WebCore::String name;
     WTF::RefPtr<WebCore::SecurityOrigin> origin;

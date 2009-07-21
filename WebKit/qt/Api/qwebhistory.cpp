@@ -239,7 +239,7 @@ void QWebHistory::clear()
 {
     RefPtr<WebCore::HistoryItem> current = d->lst->currentItem();
     int capacity = d->lst->capacity();
-    d->lst->setCapacity(0);    
+    d->lst->setCapacity(0);
 
     WebCore::Page* page = d->lst->page();
     if (page && page->groupPtr())

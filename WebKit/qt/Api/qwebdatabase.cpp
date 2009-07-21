@@ -44,7 +44,8 @@ using namespace WebCore;
 /*!
     Constructs a web database from \a other.
 */
-QWebDatabase::QWebDatabase(const QWebDatabase& other) : d(other.d)
+QWebDatabase::QWebDatabase(const QWebDatabase& other)
+    : d(other.d)
 {
 }
 
@@ -152,7 +153,7 @@ QWebSecurityOrigin QWebDatabase::origin() const
     Removes the database, \a db, from its security origin. All data stored in this database
     will be destroyed.
 */
-void QWebDatabase::removeDatabase(const QWebDatabase &db)
+void QWebDatabase::removeDatabase(const QWebDatabase& db)
 {
 #if ENABLE(DATABASE)
     DatabaseTracker::tracker().deleteDatabase(db.d->origin.get(), db.d->name);

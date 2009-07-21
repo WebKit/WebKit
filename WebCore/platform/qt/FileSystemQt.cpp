@@ -64,7 +64,7 @@ bool getFileSize(const String& path, long long& result)
 {
     QFileInfo info(path);
     result = info.size();
-    return info.exists(); 
+    return info.exists();
 }
 
 bool getFileModificationTime(const String& path, time_t& result)
@@ -156,7 +156,7 @@ bool unloadModule(PlatformModule module)
         delete module;
         return true;
     }
-                        
+
     return false;
 #endif
 }

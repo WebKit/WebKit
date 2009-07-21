@@ -1,3 +1,141 @@
+2009-07-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix Qt code to follow the WebKit Coding Style.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::qstring):
+        (WebCore::fixSpacing):
+        * platform/graphics/qt/FontQt43.cpp:
+        (WebCore::generateComponents):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::cursorToX):
+        * platform/graphics/qt/GradientQt.cpp:
+        (WebCore::Gradient::platformGradient):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::toQtFillRule):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::getWindowsContext):
+        * platform/graphics/qt/IconQt.cpp:
+        (WebCore::Icon::paint):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::ReadContext::read):
+        (WebCore::ImageDecoderQt::ReadContext::readImageLines):
+        (WebCore::ImageDecoderQt::setData):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::create):
+        (WebCore::MediaPlayerPrivate::bytesLoaded):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::isEmpty):
+        * platform/graphics/qt/TransformationMatrixQt.cpp:
+        (WebCore::TransformationMatrix::operator QTransform):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::ClipboardQt):
+        (WebCore::ClipboardQt::clearData):
+        (WebCore::ClipboardQt::clearAllData):
+        (WebCore::ClipboardQt::getData):
+        (WebCore::ClipboardQt::setData):
+        (WebCore::ClipboardQt::setDragImage):
+        (WebCore::getCachedImage):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeURL):
+        (WebCore::ClipboardQt::writeRange):
+        (WebCore::ClipboardQt::hasData):
+        * platform/qt/ClipboardQt.h:
+        * platform/qt/ContextMenuItemQt.cpp:
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::title):
+        * platform/qt/CursorQt.cpp:
+        (WebCore::westPanningCursor):
+        (WebCore::notAllowedCursor):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asFragment):
+        * platform/qt/DragImageQt.cpp:
+        (WebCore::createDragImageIconForCachedImage):
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::getFileSize):
+        (WebCore::unloadModule):
+        * platform/qt/Localizations.cpp:
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::plainText):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::populate):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::fallbackStyle):
+        (WebCore::inflateButtonRect):
+        (WebCore::RenderThemeQt::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQt::paintButton):
+        (WebCore::RenderThemeQt::paintMenuList):
+        (WebCore::RenderThemeQt::applyTheme):
+        (WebCore::WorldMatrixTransformer::WorldMatrixTransformer):
+        (WebCore::RenderThemeQt::paintMediaBackground):
+        (WebCore::RenderThemeQt::paintMediaFullscreenButton):
+        * platform/qt/RenderThemeQt.h:
+        * platform/qt/ScreenQt.cpp:
+        (WebCore::screenRect):
+        (WebCore::usableScreenRect):
+        * platform/qt/ScrollbarQt.cpp:
+        (WebCore::Scrollbar::contextMenu):
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::scPart):
+        (WebCore::scrollbarPart):
+        * platform/qt/ScrollbarThemeQt.h:
+        * platform/qt/SharedBufferQt.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (PluginDatabase::defaultPluginDirectories):
+        (PluginDatabase::getPluginPathsInDirectories):
+        (PluginDatabase::isPreferredPluginDirectory):
+        (WebCore::getSupportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        (WebCore::userIdleTime):
+        (WebCore::prefetchDNS):
+        * platform/text/qt/StringQt.cpp:
+        (WebCore::String::String):
+        * platform/text/qt/TextBoundaries.cpp:
+        * platform/text/qt/TextBreakIteratorQt.cpp:
+        (WebCore::TextBreakIterator::following):
+        (WebCore::TextBreakIterator::preceding):
+        (WebCore::WordBreakIteratorQt::first):
+        (WebCore::WordBreakIteratorQt::next):
+        (WebCore::WordBreakIteratorQt::previous):
+        (WebCore::CharBreakIteratorQt::first):
+        (WebCore::CharBreakIteratorQt::next):
+        (WebCore::CharBreakIteratorQt::previous):
+        (WebCore::characterBreakIterator):
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::userAgentStatic):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::init):
+
 2009-07-21  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by David Levin.

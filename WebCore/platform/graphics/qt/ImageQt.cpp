@@ -83,7 +83,6 @@ bool FrameData::clear(bool clearMetadata)
 }
 
 
-    
 // ================================================
 // Image Class
 // ================================================
@@ -93,7 +92,6 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
     return StillImage::create(loadResourcePixmap(name));
 }
 
-    
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const TransformationMatrix& patternTransform,
                         const FloatPoint& phase, CompositeOperator op, const FloatRect& destRect)
 {
@@ -103,9 +101,8 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
 
     QPixmap pixmap = *framePixmap;
     QRect tr = QRectF(tileRect).toRect();
-    if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height()) {
+    if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height())
         pixmap = pixmap.copy(tr);
-    }
 
     QBrush b(pixmap);
     b.setTransform(patternTransform);
@@ -129,7 +126,7 @@ void BitmapImage::initPlatformData()
 void BitmapImage::invalidatePlatformData()
 {
 }
-    
+
 // Drawing Routines
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
                        const FloatRect& src, CompositeOperator op)
@@ -139,7 +136,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     QPixmap* image = nativeImageForCurrentFrame();
     if (!image)
         return;
-    
+
     if (mayFillWithSolidColor()) {
         fillWithSolidColor(ctxt, dst, solidColor(), op);
         return;
@@ -158,7 +155,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         painter->setCompositionMode(QPainter::CompositionMode_Source);
 
     // Test using example site at
-    // http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html    
+    // http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
     painter->drawPixmap(dst, *image, src);
 
     ctxt->restore();

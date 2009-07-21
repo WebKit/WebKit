@@ -75,22 +75,49 @@
 using namespace WebCore;
 
 #if defined(Q_OS_WINCE)
-Vector<String> PluginDatabase::defaultPluginDirectories() { notImplemented(); return Vector<String>(); }
-void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const { notImplemented(); }
-bool PluginDatabase::isPreferredPluginDirectory(const String& directory) { notImplemented(); return false; }
+Vector<String> PluginDatabase::defaultPluginDirectories()
+{
+    notImplemented();
+    return Vector<String>();
+}
+
+void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
+{
+    notImplemented();
+}
+
+bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
+{
+    notImplemented();
+    return false;
+}
 #endif
 
 namespace WebCore {
 
-void getSupportedKeySizes(Vector<String>&) { notImplemented(); }
-String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
+void getSupportedKeySizes(Vector<String>&)
+{
+    notImplemented();
+}
+
+String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url)
+{
+    return String();
+}
 
 #if !defined(Q_OS_WIN)
 // defined in win/SystemTimeWin.cpp, which is compiled for the Qt/Windows port
-float userIdleTime() { notImplemented(); return FLT_MAX; } // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed
+float userIdleTime()
+{
+    notImplemented();
+    return FLT_MAX; // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed
+}
 #endif
 
-void prefetchDNS(const String& hostname) { notImplemented(); }
+void prefetchDNS(const String& hostname)
+{
+    notImplemented();
+}
 
 }
 

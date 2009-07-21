@@ -124,7 +124,7 @@ float ImageSource::frameDurationAtIndex(size_t index)
 {
     if (!m_decoder)
         return 0;
-    
+
     // Many annoying ads specify a 0 duration to make an image flash as quickly
     // as possible.  We follow WinIE's behavior and use a duration of 100 ms
     // for any frames that specify a duration of <= 50 ms.  See
@@ -138,17 +138,17 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
     if (!m_decoder || !m_decoder->supportsAlpha())
         return false;
-    
-    const QPixmap* source = m_decoder->imageAtIndex( index);
+
+    const QPixmap* source = m_decoder->imageAtIndex(index);
     if (!source)
         return false;
-    
+
     return source->hasAlphaChannel();
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)
 {
-    return (m_decoder && m_decoder->imageAtIndex(index) != 0);
+    return (m_decoder && m_decoder->imageAtIndex(index));
 }
 
 void ImageSource::clear(bool destroyAll, size_t clearBeforeFrame, SharedBuffer* data, bool allDataReceived)

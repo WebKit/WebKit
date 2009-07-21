@@ -1,3 +1,78 @@
+2009-07-20  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix Qt code to follow the WebKit Coding Style.
+
+        * Api/qcookiejar.cpp:
+        (QCookieJar::setCookieJar):
+        (QCookieJar::cookieJar):
+        * Api/qcookiejar.h:
+        * Api/qwebdatabase.cpp:
+        (QWebDatabase::QWebDatabase):
+        (QWebDatabase::removeDatabase):
+        * Api/qwebdatabase.h:
+        * Api/qwebdatabase_p.h:
+        * Api/qwebelement.h:
+        * Api/qwebframe.cpp:
+        (QWebFrame::title):
+        (QWebFrame::print):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebhistory.cpp:
+        (QWebHistory::clear):
+        * Api/qwebhistory.h:
+        * Api/qwebhistory_p.h:
+        * Api/qwebhistoryinterface.cpp:
+        (gCleanupInterface):
+        (QWebHistoryInterface::setDefaultInterface):
+        (QWebHistoryInterface::defaultInterface):
+        (QWebHistoryInterface::QWebHistoryInterface):
+        * Api/qwebhistoryinterface.h:
+        * Api/qwebnetworkinterface.cpp:
+        (QWebNetworkManager::started):
+        (QWebNetworkManager::finished):
+        (QWebNetworkInterfacePrivate::parseDataUrl):
+        (QWebNetworkInterface::addJob):
+        (WebCoreHttp::onResponseHeaderReceived):
+        (WebCoreHttp::onReadyRead):
+        * Api/qwebnetworkinterface.h:
+        * Api/qwebnetworkinterface_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::editorCommandForWebActions):
+        (QWebPagePrivate::createContextMenu):
+        (QWebPagePrivate::focusInEvent):
+        (QWebPage::fixedContentsSize):
+        (QWebPage::setContentEditable):
+        (QWebPage::swallowContextMenuEvent):
+        (QWebPage::findText):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebpluginfactory.h:
+        * Api/qwebsecurityorigin.h:
+        * Api/qwebsecurityorigin_p.h:
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::QWebSettingsPrivate):
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::globalSettings):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::fontSize):
+        (QWebSettings::setUserStyleSheetUrl):
+        (QWebSettings::setDefaultTextEncoding):
+        (QWebSettings::setIconDatabasePath):
+        (QWebSettings::iconDatabasePath):
+        (QWebSettings::iconForUrl):
+        (QWebSettings::setWebGraphic):
+        (QWebSettings::setFontFamily):
+        (QWebSettings::fontFamily):
+        (QWebSettings::testAttribute):
+        (qt_websettings_setLocalStorageDatabasePath):
+        * Api/qwebsettings.h:
+        * Api/qwebview.cpp:
+        (QWebView::setPage):
+        (QWebView::event):
+        * Api/qwebview.h:
+
 2009-07-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon Hausmann.

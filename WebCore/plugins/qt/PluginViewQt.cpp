@@ -287,7 +287,7 @@ const char* PluginView::userAgent()
 
 const char* PluginView::userAgentStatic()
 {
-    //FIXME - Just say we are Mozilla
+    // FIXME - Just say we are Mozilla
     return MozillaUserAgent;
 }
 
@@ -301,10 +301,10 @@ NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32 len, const c
     if (!fileExists(filename))
         return NPERR_FILE_NOT_FOUND;
 
-    //FIXME - read the file data into buffer
+    // FIXME - read the file data into buffer
     FILE* fileHandle = fopen((filename.utf8()).data(), "r");
 
-    if (fileHandle == 0)
+    if (!fileHandle)
         return NPERR_FILE_NOT_FOUND;
 
     //buffer.resize();
@@ -492,7 +492,7 @@ void PluginView::init()
         m_status = PluginStatusCanNotLoadPlugin;
         return;
     }
-    show ();
+    show();
 
     NPSetWindowCallbackStruct *wsi = new NPSetWindowCallbackStruct();
 

@@ -493,7 +493,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
     m_autoRepeat = event->isAutoRepeat();
     m_ctrlKey = (state & Qt::ControlModifier) != 0;
     m_altKey = (state & Qt::AltModifier) != 0;
-    m_metaKey = (state & Qt::MetaModifier) != 0;    
+    m_metaKey = (state & Qt::MetaModifier) != 0;
     m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event->key());
     m_nativeVirtualKeyCode = event->nativeVirtualKey();
     m_isKeypad = (state & Qt::KeypadModifier) != 0;

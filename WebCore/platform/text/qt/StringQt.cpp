@@ -41,7 +41,7 @@ String::String(const QString& qstr)
 
 String::String(const QStringRef& ref)
 {
-    if (!ref.string()) 
+    if (!ref.string())
         return;
     m_impl = StringImpl::create(reinterpret_cast<const UChar*>(ref.unicode()), ref.length());
 }

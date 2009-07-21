@@ -87,7 +87,7 @@ static void gCleanupJar()
 }
 
 
-void QCookieJar::setCookieJar(QCookieJar *jar)
+void QCookieJar::setCookieJar(QCookieJar* jar)
 {
     if (!gRoutineAdded) {
         qAddPostRoutine(gCleanupJar);
@@ -98,7 +98,7 @@ void QCookieJar::setCookieJar(QCookieJar *jar)
 }
 
 
-QCookieJar *QCookieJar::cookieJar()
+QCookieJar* QCookieJar::cookieJar()
 {
     if (!gJar)
         setCookieJar(new QCookieJar);
