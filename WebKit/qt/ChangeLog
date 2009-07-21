@@ -1,3 +1,19 @@
+2009-07-21  Volker Hilsheimer <volker.hilsheimer@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Various improvements to the API documentation.
+
+        * Updated link to W3c Database spec
+        * Formatting fixes, cleanups
+        * Add missing \since 4.6 tags to QWebPage::frameAt
+        * Extend QWebDatabase and QWebSecurityOrigin docs.
+
+        * Api/qwebdatabase.cpp: 
+        * Api/qwebpage.cpp:
+        * Api/qwebsecurityorigin.cpp:
+        * Api/qwebview.cpp:
+
 2009-07-21  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Simon Hausmann.

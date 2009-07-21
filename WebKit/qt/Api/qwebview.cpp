@@ -268,19 +268,24 @@ void QWebView::setPage(QWebPage* page)
     'ftp'. The result is then passed through QUrl's tolerant parser, and
     in the case or success, a valid QUrl is returned, or else a QUrl().
 
-    Examples
-    - webkit.org becomes http://webkit.org
-    - ftp.webkit.org becomes ftp://ftp.webkit.org
-    - localhost becomes http://localhost
-    - /home/user/test.html becomes file:///home/user/test.html (if exists)
+    \section2 Examples:
 
-    Tips when dealing with URLs and strings
-    - When creating a QString from a QByteArray or a char*, always use
+    \list
+    \o webkit.org becomes http://webkit.org
+    \o ftp.webkit.org becomes ftp://ftp.webkit.org
+    \o localhost becomes http://localhost
+    \o /home/user/test.html becomes file:///home/user/test.html (if exists)
+    \endlist
+
+    \section2 Tips when dealing with URLs and strings:
+
+    \list
+    \o When creating a QString from a QByteArray or a char*, always use
       QString::fromUtf8().
-    - Do not use QUrl(string), nor QUrl::toString() anywhere where the URL might
-      be used, such as in the location bar, as those functions loose data.
-      Instead use QUrl::fromEncoded() and QUrl::toEncoded(), respectively.
-
+    \o Do not use QUrl(string), nor QUrl::toString() anywhere where the URL might
+       be used, such as in the location bar, as those functions loose data.
+       Instead use QUrl::fromEncoded() and QUrl::toEncoded(), respectively.
+    \endlist
  */
 QUrl QWebView::guessUrlFromString(const QString &string)
 {
