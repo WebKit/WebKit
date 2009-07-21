@@ -1,3 +1,18 @@
+2009-07-21  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27388
+
+        Fix dotted and dashed borders on Chromium/skia.  This follows
+        the logic in the Cg path, so results are much closer to Safari now 
+        (some tests won't be exactly the same due to font layout differences).
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::setupPaintForStroking):
+
 2009-07-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

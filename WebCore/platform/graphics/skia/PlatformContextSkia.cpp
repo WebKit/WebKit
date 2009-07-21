@@ -338,20 +338,26 @@ float PlatformContextSkia::setupPaintForStroking(SkPaint* paint, SkRect* rect, i
             width = m_state->m_dashRatio * width;
             // Fall through.
         case WebCore::DottedStroke:
-            SkScalar dashLength;
-            if (length) {
-                // Determine about how many dashes or dots we should have.
-                float roundedWidth = roundf(width);
-                int numDashes = roundedWidth ? (length / roundedWidth) : length;
-                if (!(numDashes & 1))
-                    numDashes++;    // Make it odd so we end on a dash/dot.
-                // Use the number of dashes to determine the length of a
-                // dash/dot, which will be approximately width
-                dashLength = SkScalarDiv(SkIntToScalar(length), SkIntToScalar(numDashes));
-            } else
-                dashLength = SkFloatToScalar(width);
-            SkScalar intervals[2] = { dashLength, dashLength };
-            paint->setPathEffect(new SkDashPathEffect(intervals, 2, 0))->unref();
+            // Truncate the width, since we don't want fuzzy dots or dashes.
+            int dashLength = static_cast<int>(width);
+            // Subtract off the endcaps, since they're rendered separately.
+            int distance = length - 2 * static_cast<int>(m_state->m_strokeThickness);
+            int phase = 1;
+            if (dashLength > 1) {
+                // Determine how many dashes or dots we should have.
+                int numDashes = distance / dashLength;
+                int remainder = distance % dashLength;
+                // Adjust the phase to center the dashes within the line.
+                if (numDashes % 2 == 0)
+                    // Even:  shift right half a dash, minus half the remainder
+                    phase = (dashLength - remainder) / 2;
+                else
+                    // Odd:  shift right a full dash, minus half the remainder
+                    phase = dashLength - remainder / 2;
+            }
+            SkScalar dashLengthSk = SkIntToScalar(dashLength);
+            SkScalar intervals[2] = { dashLengthSk, dashLengthSk };
+            paint->setPathEffect(new SkDashPathEffect(intervals, 2, SkIntToScalar(phase)))->unref();
         }
     }
 
