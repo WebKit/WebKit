@@ -36,6 +36,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "markup.h"
 #include "Page.h"
+#include "PlatformString.h"
 #include "RenderTreeAsText.h"
 #include "RenderObject.h"
 #include "RenderView.h"
