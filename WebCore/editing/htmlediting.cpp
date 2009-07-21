@@ -592,7 +592,7 @@ Position positionAfterNode(const Node* node)
 }
 
 // Returns the visible position at the beginning of a node
-static VisiblePosition visiblePositionBeforeNode(Node* node)
+VisiblePosition visiblePositionBeforeNode(Node* node)
 {
     ASSERT(node);
     if (node->childNodeCount())
@@ -602,7 +602,7 @@ static VisiblePosition visiblePositionBeforeNode(Node* node)
 }
 
 // Returns the visible position at the ending of a node
-static VisiblePosition visiblePositionAfterNode(Node* node)
+VisiblePosition visiblePositionAfterNode(Node* node)
 {
     ASSERT(node);
     if (node->childNodeCount())

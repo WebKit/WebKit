@@ -73,8 +73,8 @@ const String& nonBreakingSpaceString();
 
 Position positionBeforeNode(const Node*);
 Position positionAfterNode(const Node*);
-VisiblePosition visiblePositionBeforeNode(const Node*);
-VisiblePosition visiblePositionAfterNode(const Node*);
+VisiblePosition visiblePositionBeforeNode(Node*);
+VisiblePosition visiblePositionAfterNode(Node*);
 PassRefPtr<Range> createRange(PassRefPtr<Document>, const VisiblePosition& start, const VisiblePosition& end, ExceptionCode&);
 PassRefPtr<Range> extendRangeToWrappingNodes(PassRefPtr<Range> rangeToExtend, const Range* maximumRange, const Node* rootNode);
 

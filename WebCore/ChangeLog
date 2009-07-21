@@ -1,4 +1,44 @@
-    2009-07-20  Dan Bernstein  <mitz@apple.com>
+2009-07-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Refactoring of indentRegion to fix bugs 26816 and 25317
+        https://bugs.webkit.org/show_bug.cgi?id=26816
+        https://bugs.webkit.org/show_bug.cgi?id=25317
+        https://bugs.webkit.org/show_bug.cgi?id=23995 (partially)
+
+        This patch implements appendParagraphIntoNode, a simpler specialized version of moveParagraph
+        and replaces all calls inside indentRegion. The following is the new behavior of indentRegion.
+
+        1. We try to indent as many wrapping nodes as possible.
+           e.g. when indenting "hello" in <div>hello</div>, we try to indent div as well.
+        2. We do not delete any wrapping elements
+           With moveParagraph, we used to remove all wrapping nodes, and replaced with a blockquote.
+           This was causing https://bugs.webkit.org/show_bug.cgi?id=23995 for indentation.
+           With appendParagraphIntoNode, we can preserve all wrapping nodes.
+        3. We only split the tree until the closest block node instead of until the root editable node.
+           This behavioral change fixes the bug 25317.
+        4. When multiple paragraphs are indented, we indent the highest common ancestor within the selection.
+           e.g. when a list is a child node of a div, and the entire div is intended,
+                we enclose the div by a single blockquote.
+
+        Note that new behavior is more consistent with that of Internet Explorer and Firefox.
+        To demonstrate this, the following tests are added.
+
+        Tests: editing/execCommand/indent-div-inside-list.html
+               editing/execCommand/indent-nested-blockquotes.html
+               editing/execCommand/indent-nested-div.html
+               editing/execCommand/indent-second-paragraph-in-blockquote.html
+
+        * editing/IndentOutdentCommand.cpp: prepareBlockquoteLevelForInsertion is removed
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem): uses appendParagraphIntoNode now
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote): uses appendParagraphIntoNode now
+        (WebCore::IndentOutdentCommand::appendParagraphIntoNode): removes a paragraph and appends it to a new node
+        (WebCore::IndentOutdentCommand::removeUnnecessaryLineBreakAt): removes a break element at the specified position
+        (WebCore::IndentOutdentCommand::indentRegion): exhibits the described behavior
+        * editing/IndentOutdentCommand.h: updated prototype
+
+2009-07-20  Dan Bernstein  <mitz@apple.com>
 
         Try to fix release builds after r46136
 
