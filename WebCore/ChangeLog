@@ -1,3 +1,27 @@
+2009-07-21  Paul Godavari  <paul@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] popup menus can crash when the selected index is -1
+        https://bugs.webkit.org/show_bug.cgi?id=27275
+
+        Crash reports from users indicate a crash can occur when PopupListBox::isSelectableItem
+        is passed an index of less than 0 (which is possible under certain circumstances). This
+        change prevents such a value from causing a crash by enforcing valid index values passed
+        by all callers of isSelectableItem. isSelectableItem is now a private method of
+        PopupListBox, as there are no external callers.
+
+        Also cleaned up a small amount of code for style and grammar errors.
+
+        No automatic test is provided since we cannot send events to the child window used by
+        the popup menu.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::acceptIndex):
+        (WebCore::PopupListBox::selectIndex):
+        (WebCore::PopupListBox::isSelectableItem):
+        (WebCore::PopupListBox::selectPreviousRow):
+
 2009-07-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Don't include winsock2.h on wx, it conflicts with wx's inclusion of winsock.
