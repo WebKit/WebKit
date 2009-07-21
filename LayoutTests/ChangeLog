@@ -1,3 +1,10 @@
+2009-07-20  Dan Bernstein  <mitz@apple.com>
+
+        Correct expected results from r46136, which accidentally included the
+        DumpRenderTree header and trailer
+
+        * fast/loader/non-html-load-event-expected.txt:
+
 2009-07-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
