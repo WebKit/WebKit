@@ -444,6 +444,11 @@ def _set_filters(filters):
     _cpplint_state.set_filters(filters)
 
 
+def error_count():
+    """Returns the global count of reported errors."""
+    return _cpplint_state.error_count
+
+
 class _FunctionState(object):
     """Tracks current function name and the number of lines in its body."""
 

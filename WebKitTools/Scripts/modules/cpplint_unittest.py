@@ -2658,6 +2658,16 @@ class NoNonVirtualDestructorsTest(CpplintTestBase):
              'virtual method(s), one declared at line 2.  [runtime/virtual] [4]'])
 
 
+class CppLintStateTest(unittest.TestCase):
+    def test_error_count(self):
+        self.assertEquals(0, cpplint.error_count())
+        cpplint._cpplint_state.increment_error_count()
+        cpplint._cpplint_state.increment_error_count()
+        self.assertEquals(2, cpplint.error_count())
+        cpplint._cpplint_state.reset_error_count()
+        self.assertEquals(0, cpplint.error_count())
+
+
 class WebKitStyleTest(CpplintTestBase):
 
     # for http://webkit.org/coding/coding-style.html
