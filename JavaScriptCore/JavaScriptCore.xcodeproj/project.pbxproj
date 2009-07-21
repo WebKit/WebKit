@@ -135,6 +135,10 @@
 		86CC85A30EE79B7400288682 /* JITCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CC85A20EE79B7400288682 /* JITCall.cpp */; };
 		86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */; };
 		86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CCEFDD0F413F8900FD7F9E /* JITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86D3B2BF10156BDE002865E7 /* ARMAssembler.cpp */; };
+		86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C010156BDE002865E7 /* ARMAssembler.h */; };
+		86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */; };
+		86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */; };
 		86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */; };
 		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; };
 		86EAC4950F93E8D1008EC948 /* RegexCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EAC48D0F93E8D1008EC948 /* RegexCompiler.cpp */; };
@@ -640,6 +644,10 @@
 		86CC85A20EE79B7400288682 /* JITCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCall.cpp; sourceTree = "<group>"; };
 		86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess.cpp; sourceTree = "<group>"; };
 		86CCEFDD0F413F8900FD7F9E /* JITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCode.h; sourceTree = "<group>"; };
+		86D3B2BF10156BDE002865E7 /* ARMAssembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARMAssembler.cpp; sourceTree = "<group>"; };
+		86D3B2C010156BDE002865E7 /* ARMAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMAssembler.h; sourceTree = "<group>"; };
+		86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblerBufferWithConstantPool.h; sourceTree = "<group>"; };
+		86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARM.h; sourceTree = "<group>"; };
 		86DB645F0F954E9100D7D921 /* ExecutableAllocatorWin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorWin.cpp; sourceTree = "<group>"; };
 		86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorFixedVMPool.cpp; sourceTree = "<group>"; };
 		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
@@ -1545,17 +1553,21 @@
 		9688CB120ED12B4E001D649F /* assembler */ = {
 			isa = PBXGroup;
 			children = (
-				860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */,
-				86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */,
-				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
 				86E116B00FE75AC800B512BC /* CodeLocation.h */,
-				86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */,
-				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
 				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
+				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
+				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
+				86D3B2BF10156BDE002865E7 /* ARMAssembler.cpp */,
+				86D3B2C010156BDE002865E7 /* ARMAssembler.h */,
+				86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */,
+				9688CB140ED12B4E001D649F /* X86Assembler.h */,
+				860161DF0F3A83C100F84710 /* AbstractMacroAssembler.h */,
+				86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */,
+				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
+				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
 				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */,
-				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
-				9688CB140ED12B4E001D649F /* X86Assembler.h */,
+				86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */,
 			);
 			path = assembler;
 			sourceTree = "<group>";
@@ -1863,6 +1875,9 @@
 				1429DAE00ED2645B00B89619 /* WRECGenerator.h in Headers */,
 				1429DABF0ED263E700B89619 /* WRECParser.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
+				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
+				86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */,
+				86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2225,6 +2240,7 @@
 				1429DA820ED2482900B89619 /* WRECFunctors.cpp in Sources */,
 				1429DAE10ED2645B00B89619 /* WRECGenerator.cpp in Sources */,
 				1429DAC00ED263E700B89619 /* WRECParser.cpp in Sources */,
+				86D3B2C310156BDE002865E7 /* ARMAssembler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,11 @@
+2009-07-20  Gavin Barraclough  <barraclough@apple.com>
+
+        RS Oliver Hunt.
+
+        Add ARM assembler files to xcodeproj, for convenience editing.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2009-07-20  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by David Levin.
