@@ -87,7 +87,7 @@ void V8IsolatedWorld::evaluate(const Vector<ScriptSourceCode>& sources, V8Proxy*
 }
 
 V8IsolatedWorld::V8IsolatedWorld(v8::Handle<v8::Context> context)
-    : m_context(context)
+    : m_context(v8::Persistent<v8::Context>::New(context))
 {
     ++isolatedWorldCount;
     m_context.MakeWeak(this, &contextWeakReferenceCallback);
@@ -97,6 +97,8 @@ V8IsolatedWorld::V8IsolatedWorld(v8::Handle<v8::Context> context)
 V8IsolatedWorld::~V8IsolatedWorld()
 {
     --isolatedWorldCount;
+    m_context.Dispose();
+    m_context.Clear();
 }
 
 V8IsolatedWorld* V8IsolatedWorld::getEntered()

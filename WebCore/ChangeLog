@@ -1,3 +1,17 @@
+2009-07-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        V8IsolatedWorld keeps a handle to a disposed context
+        https://bugs.webkit.org/show_bug.cgi?id=27397
+
+        Make a copy of the context handle before making it weak.  We don't want
+        to make the original handle weak because we want it to survive for the
+        length of the V8IsolatedWorld::evaluate method.
+
+        * bindings/v8/V8IsolatedWorld.cpp:
+        (WebCore::V8IsolatedWorld::V8IsolatedWorld):
+
 2009-07-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
