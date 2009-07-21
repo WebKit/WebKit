@@ -54,7 +54,6 @@ public:
     \class QWebElement
     \since 4.6
     \brief The QWebElement class provides convenience access to DOM elements in a QWebFrame.
-    \preliminary
 
     QWebElement is the main class to provide easy access to the document model.
     The document model is represented by a tree-like structure of DOM elements.
