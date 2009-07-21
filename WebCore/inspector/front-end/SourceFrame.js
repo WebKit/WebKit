@@ -27,6 +27,7 @@ WebInspector.SourceFrame = function(element, addBreakpointDelegate)
 {
     this.messages = [];
     this.breakpoints = [];
+    this._shortcuts = {};
 
     this.addBreakpointDelegate = addBreakpointDelegate;
 
@@ -199,9 +200,15 @@ WebInspector.SourceFrame.prototype = {
     {
         WebInspector.addMainEventListeners(this.element.contentDocument);
         this.element.contentDocument.addEventListener("mousedown", this._documentMouseDown.bind(this), true);
-        this.element.contentDocument.addEventListener("keydown", WebInspector.documentKeyDown.bind(WebInspector), true);
+        this.element.contentDocument.addEventListener("keydown", this._documentKeyDown.bind(this), true);
         this.element.contentDocument.addEventListener("keyup", WebInspector.documentKeyUp.bind(WebInspector), true);
         this.element.contentDocument.addEventListener("webkitAnimationEnd", this._highlightLineEnds.bind(this), false);
+
+        // Register 'eval' shortcut.
+        var isMac = InspectorController.platform().indexOf("mac-") === 0;
+        var platformSpecificModifier = isMac ? WebInspector.KeyboardShortcut.Modifiers.Meta : WebInspector.KeyboardShortcut.Modifiers.Ctrl;
+        var shortcut = WebInspector.KeyboardShortcut.makeKey(69 /* 'E' */, platformSpecificModifier | WebInspector.KeyboardShortcut.Modifiers.Shift);
+        this._shortcuts[shortcut] = this._evalSelectionInCallFrame.bind(this);
 
         var headElement = this.element.contentDocument.getElementsByTagName("head")[0];
         if (!headElement) {
@@ -286,6 +293,34 @@ WebInspector.SourceFrame.prototype = {
             sourceRow._breakpointObject.enabled = !sourceRow._breakpointObject.enabled;
         else if (this.addBreakpointDelegate)
             this.addBreakpointDelegate(this.lineNumberForSourceRow(sourceRow));
+    },
+
+    _documentKeyDown: function(event)
+    {
+        var shortcut = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
+        var handler = this._shortcuts[shortcut];
+        if (handler) {
+            handler(event);
+            event.preventDefault();
+        } else {
+            WebInspector.documentKeyDown(event);
+        }
+    },
+
+    _evalSelectionInCallFrame: function(event)
+    {
+        if (!WebInspector.panels.scripts || !WebInspector.panels.scripts.paused)
+            return;
+
+        var selection = this.element.contentWindow.getSelection();
+        if (!selection.rangeCount)
+            return;
+
+        var expression = selection.getRangeAt(0).toString().trimWhitespace();
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, function(result, exception) {
+            WebInspector.showConsole();
+            WebInspector.console.addMessage(new WebInspector.ConsoleCommandResult(result, exception));
+        });
     },
 
     _breakpointEnableChanged: function(event)
