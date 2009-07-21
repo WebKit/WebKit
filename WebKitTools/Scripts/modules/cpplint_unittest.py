@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8; -*-
 #
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009 Torch Mobile Inc.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -127,17 +128,18 @@ class CpplintTestBase(unittest.TestCase):
         return error_collector.results()
 
     # Perform lint over multiple lines and return the error message.
-    def perform_multi_line_lint(self, code):
+    def perform_multi_line_lint(self, code, file_name):
         error_collector = ErrorCollector(self.assert_)
         lines = code.split('\n')
-        cpplint.remove_multi_line_comments('foo.h', lines, error_collector)
+        cpplint.remove_multi_line_comments(file_name, lines, error_collector)
         lines = cpplint.CleansedLines(lines)
+        ext = file_name[file_name.rfind('.') + 1:]
         class_state = cpplint._ClassState()
         for i in xrange(lines.num_lines()):
-            cpplint.check_style('foo.h', lines, i, 'h', error_collector)
-            cpplint.check_for_non_standard_constructs('foo.h', lines, i, class_state,
+            cpplint.check_style(file_name, lines, i, ext, error_collector)
+            cpplint.check_for_non_standard_constructs(file_name, lines, i, class_state,
                                                       error_collector)
-        class_state.check_finished('foo.h', error_collector)
+        class_state.check_finished(file_name, error_collector)
         return error_collector.results()
 
     # Similar to perform_multi_line_lint, but calls check_language instead of
@@ -211,11 +213,11 @@ class CpplintTestBase(unittest.TestCase):
 
         self.assertEquals(expected_message, messages)
 
-    def assert_multi_line_lint(self, code, expected_message):
-        self.assertEquals(expected_message, self.perform_multi_line_lint(code))
+    def assert_multi_line_lint(self, code, expected_message, file_name='foo.h'):
+        self.assertEquals(expected_message, self.perform_multi_line_lint(code, file_name))
 
-    def assert_multi_line_lint_re(self, code, expected_message_re):
-        message = self.perform_multi_line_lint(code)
+    def assert_multi_line_lint_re(self, code, expected_message_re, file_name='foo.h'):
+        message = self.perform_multi_line_lint(code, file_name)
         if not re.search(expected_message_re, message):
             self.fail('Message was:\n' + message + 'Expected match to "' + expected_message_re + '"')
 
@@ -2673,11 +2675,74 @@ class WebKitStyleTest(CpplintTestBase):
         # FIXME: No tests for 8-spaces.
 
         # 3. In a header, code inside a namespace should be indented.
-        # FIXME: No tests for this rule.
+        self.assert_multi_line_lint(
+            'namespace WebCore {\n\n'
+            '    class Document {\n'
+            '        int myVariable;\n'
+            '    };\n'
+            '}',
+            '',
+            'foo.h')
+        self.assert_multi_line_lint(
+            'namespace OuterNamespace {\n'
+            '    namespace InnerNamespace {\n'
+            '        class Document {\n'
+            '        };\n'
+            '    };\n'
+            '}',
+            '',
+            'foo.h')
+        self.assert_multi_line_lint(
+            'namespace WebCore {\n'
+            '#if 0\n'
+            '    class Document {\n'
+            '    };\n'
+            '#endif\n'
+            '}',
+            '',
+            'foo.h')
+        self.assert_multi_line_lint(
+            'namespace WebCore {\n'
+            'class Document {\n'
+            '};\n'
+            '}',
+            'In a header, code inside a namespace should be indented.'
+            '  [whitespace/indent] [4]',
+            'foo.h')
 
         # 4. In an implementation file (files with the extension .cpp, .c
         #    or .mm), code inside a namespace should not be indented.
-        # FIXME: No tests for this rule.
+        self.assert_multi_line_lint(
+            'namespace WebCore {\n\n'
+            'bool Document::Foo()\n'
+            '{\n'
+            '    return true;\n'
+            '}',
+            '',
+            'foo.cpp')
+        self.assert_multi_line_lint(
+            'namespace OuterNamespace {\n'
+            'namespace InnerNamespace {\n'
+            'Document::Foo() { }\n'
+            '}',
+            '',
+            'foo.cpp')
+        self.assert_multi_line_lint(
+            '    namespace WebCore {\n\n'
+            '    void Document::Foo()\n'
+            '    {\n'
+            'start:  // infinite loops are fun!\n'
+            '        goto start;\n'
+            '    }',
+            '',
+            'foo.cpp')
+        self.assert_multi_line_lint(
+            'namespace WebCore {\n'
+            '    Document::Foo() { }\n'
+            '}',
+            'In an implementation file, code inside a namespace should not be indented.'
+            '  [whitespace/indent] [4]',
+            'foo.cpp')
 
         # 5. A case label should line up with its switch statement. The
         #    case statement is indented.

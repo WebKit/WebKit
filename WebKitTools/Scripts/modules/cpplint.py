@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009 Torch Mobile Inc.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -1656,6 +1657,66 @@ def get_previous_non_blank_line(clean_lines, line_number):
     return ('', -1)
 
 
+def check_namespace_indentation(filename, clean_lines, line_number, file_extension, error):
+    """Looks for indentation errors inside of namespaces.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_extension: The extension (dot not included) of the file.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number] # Get rid of comments and strings.
+
+    namespace_match = match(r'(?P<namespace_indentation>\s*)namespace\s+\S+\s*{\s*$', line)
+    if not namespace_match:
+        return
+
+    namespace_indentation = namespace_match.group('namespace_indentation')
+
+    is_header_file = file_extension == 'h'
+    is_implementation_file = not is_header_file
+    line_offset = 0
+
+    if is_header_file:
+        inner_indentation = namespace_indentation + ' ' * 4
+
+        for current_line in clean_lines.raw_lines[line_number + 1:]:
+            line_offset += 1
+
+            # Skip not only empty lines but also those with preprocessor directives.
+            # Goto labels don't occur in header files, so no need to check for those.
+            if current_line.strip() == '' or current_line.startswith('#'):
+                continue
+
+            if not current_line.startswith(inner_indentation):
+                # If something unindented was discovered, make sure it's a closing brace.
+                if not current_line.startswith(namespace_indentation + '}'):
+                    error(filename, line_number + line_offset, 'whitespace/indent', 4,
+                          'In a header, code inside a namespace should be indented.')
+                break
+
+    if is_implementation_file:
+        for current_line in clean_lines.raw_lines[line_number + 1:]:
+            line_offset += 1
+
+            # Skip not only empty lines but also those with (goto) labels.
+            if current_line.strip() == '' or match(r'\w+\s*:', current_line):
+                continue
+
+            remaining_line = current_line[len(namespace_indentation):]
+            if not match(r'\S', remaining_line):
+                error(filename, line_number + line_offset, 'whitespace/indent', 4,
+                      'In an implementation file, code inside a namespace should not be indented.')
+
+            # Just check the first non-empty line in any case, because
+            # otherwise we would need to count opened and closed braces,
+            # which is obviously a lot more complicated.
+            break
+
+
 def check_braces(filename, clean_lines, line_number, error):
     """Looks for misplaced braces (e.g. at the end of line).
 
@@ -1666,7 +1727,7 @@ def check_braces(filename, clean_lines, line_number, error):
       error: The function to call with any errors found.
     """
 
-    line = clean_lines.elided[line_number]        # get rid of comments and strings
+    line = clean_lines.elided[line_number] # Get rid of comments and strings.
 
     if match(r'\s*{\s*$', line):
         # We allow an open brace to start a line in the case where someone
@@ -1911,6 +1972,7 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
               'More than one command on the same line')
 
     # Some more style checks
+    check_namespace_indentation(filename, clean_lines, line_number, file_extension, error)
     check_braces(filename, clean_lines, line_number, error)
     check_spacing(filename, clean_lines, line_number, error)
     check_check(filename, clean_lines, line_number, error)
