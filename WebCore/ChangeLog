@@ -1,3 +1,74 @@
+2009-07-21  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by David Levin.
+
+        Added a first bunch of Haiku-specific files for WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=26988
+
+        * platform/haiku/ClipboardHaiku.cpp: Added.
+        (WebCore::ClipboardHaiku::ClipboardHaiku):
+        (WebCore::ClipboardHaiku::clearData):
+        (WebCore::ClipboardHaiku::clearAllData):
+        (WebCore::ClipboardHaiku::getData):
+        (WebCore::ClipboardHaiku::setData):
+        (WebCore::ClipboardHaiku::types):
+        (WebCore::ClipboardHaiku::files):
+        (WebCore::ClipboardHaiku::dragLocation):
+        (WebCore::ClipboardHaiku::dragImage):
+        (WebCore::ClipboardHaiku::setDragImage):
+        (WebCore::ClipboardHaiku::dragImageElement):
+        (WebCore::ClipboardHaiku::setDragImageElement):
+        (WebCore::ClipboardHaiku::createDragImage):
+        (WebCore::ClipboardHaiku::declareAndWriteDragImage):
+        (WebCore::ClipboardHaiku::writeURL):
+        (WebCore::ClipboardHaiku::writeRange):
+        (WebCore::ClipboardHaiku::hasData):
+        * platform/haiku/ClipboardHaiku.h: Added.
+        (WebCore::ClipboardHaiku::create):
+        (WebCore::ClipboardHaiku::~ClipboardHaiku):
+        * platform/haiku/CookieJarHaiku.cpp: Added.
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        * platform/haiku/CursorHaiku.cpp: Added.
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::operator=):
+        (WebCore::pointerCursor):
+        (WebCore::moveCursor):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        (WebCore::northSouthResizeCursor):
+        (WebCore::eastWestResizeCursor):
+        (WebCore::northEastSouthWestResizeCursor):
+        (WebCore::northWestSouthEastResizeCursor):
+        (WebCore::columnResizeCursor):
+        (WebCore::rowResizeCursor):
+        (WebCore::verticalTextCursor):
+        (WebCore::cellCursor):
+        (WebCore::contextMenuCursor):
+        (WebCore::noDropCursor):
+        (WebCore::copyCursor):
+        (WebCore::progressCursor):
+        (WebCore::aliasCursor):
+        (WebCore::noneCursor):
+        (WebCore::notAllowedCursor):
+        (WebCore::zoomInCursor):
+        (WebCore::zoomOutCursor):
+        (WebCore::grabCursor):
+        (WebCore::grabbingCursor):
+
 2009-07-21  Albert Astals Cid <aacid@kde.org>
 
         Reviewed by Tor Arne Vestbø.
