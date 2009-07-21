@@ -53,6 +53,45 @@ ACCESSOR_GETTER(WorkerContextSelf)
     return WorkerContextExecutionProxy::WorkerContextToV8Object(workerContext);
 }
 
+ACCESSOR_GETTER(WorkerContextOnerror)
+{
+    INC_STATS(L"DOM.WorkerContext.onerror._get");
+    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
+    if (workerContext->onerror()) {
+        V8WorkerContextEventListener* listener = static_cast<V8WorkerContextEventListener*>(workerContext->onerror());
+        v8::Local<v8::Object> v8Listener = listener->getListenerObject();
+        return v8Listener;
+    }
+    return v8::Undefined();
+}
+
+ACCESSOR_SETTER(WorkerContextOnerror)
+{
+    INC_STATS(L"DOM.WorkerContext.onerror._set");
+    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
+    V8WorkerContextEventListener* oldListener = static_cast<V8WorkerContextEventListener*>(workerContext->onerror());
+    if (value->IsNull()) {
+        if (workerContext->onerror()) {
+            v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
+            removeHiddenDependency(info.Holder(), oldV8Listener, V8Custom::kWorkerContextRequestCacheIndex);
+        }
+
+        // Clear the listener.
+        workerContext->setOnerror(0);
+    } else {
+        RefPtr<V8EventListener> listener = workerContext->script()->proxy()->findOrCreateEventListener(v8::Local<v8::Object>::Cast(value), false, false);
+        if (listener) {
+            if (oldListener) {
+                v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
+                removeHiddenDependency(info.Holder(), oldV8Listener, V8Custom::kWorkerContextRequestCacheIndex);
+            }
+
+            workerContext->setOnerror(listener);
+            createHiddenDependency(info.Holder(), value, V8Custom::kWorkerContextRequestCacheIndex);
+        }
+    }
+}
+
 ACCESSOR_GETTER(WorkerContextOnmessage)
 {
     INC_STATS(L"DOM.WorkerContext.onmessage._get");
