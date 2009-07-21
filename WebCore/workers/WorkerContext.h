@@ -84,8 +84,8 @@ namespace WebCore {
         WorkerContext* self() { return this; }
         WorkerLocation* location() const;
         void close();
-        void setOnerror(PassRefPtr<EventListener> eventListener) { m_onErrorListener = eventListener; }
-        EventListener* onerror() const { return m_onErrorListener.get(); }
+        void setOnerror(PassRefPtr<EventListener> eventListener) { m_onerrorListener = eventListener; }
+        EventListener* onerror() const { return m_onerrorListener.get(); }
 
         // WorkerUtils
         void importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode&);
@@ -142,7 +142,7 @@ namespace WebCore {
         OwnPtr<WorkerScriptController> m_script;
         WorkerThread* m_thread;
 
-        RefPtr<EventListener> m_onErrorListener;
+        RefPtr<EventListener> m_onerrorListener;
         RefPtr<EventListener> m_onmessageListener;
         EventListenersMap m_eventListeners;
 
