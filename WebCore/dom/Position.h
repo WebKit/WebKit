@@ -70,7 +70,7 @@ public:
     // For creating offset positions:
     Position(PassRefPtr<Node> anchorNode, int offset, AnchorType);
 
-    AnchorType anchorType() const { return m_anchorType; }
+    AnchorType anchorType() const { return static_cast<AnchorType>(m_anchorType); }
 
     void clear() { m_anchorNode.clear(); m_offset = 0; m_anchorType = PositionIsOffsetInAnchor; m_isLegacyEditingPosition = false; }
 
@@ -172,7 +172,7 @@ private:
     // returns true, then other places in editing will treat m_offset == 0 as "before the anchor"
     // and m_offset > 0 as "after the anchor node".  See rangeCompliantEquivalent for more info.
     int m_offset;
-    AnchorType m_anchorType : 2;
+    unsigned m_anchorType : 2;
     bool m_isLegacyEditingPosition : 1;
 };
 
