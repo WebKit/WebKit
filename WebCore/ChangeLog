@@ -1,3 +1,19 @@
+2009-07-20  Jens Alfke  <snej@google.com>
+ 
+         Reviewed by David Levin.
+ 
+         Bug 27448: [Chromium] On Mac, arrow keys should cause Select to pop up its menu.
+         Mac build of Chromium doesn't follow Mac HI guidelines to pop up the menu when
+         an arrow key is pressed.
+         https://bugs.webkit.org/show_bug.cgi?id=27448
+ 
+         No new tests; affects only control response to user input.
+ 
+         * dom/SelectElement.cpp:
+         Changed definition of ARROW_KEYS_POP_MENU to make it true in Mac Chromium,
+         so it will behave compatibly with Mac HI guidelines on pop-up menus.
+         It's not possible to have PLATFORM(MAC) be true in the Mac build of Chromium.
+ 
 2009-07-21  Paul Godavari  <paul@chromium.org>
 
         Reviewed by Eric Seidel.

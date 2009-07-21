@@ -47,7 +47,9 @@
 #include "WMLSelectElement.h"
 #endif
 
-#if PLATFORM(MAC)
+// Configure platform-specific behavior when focused pop-up receives arrow/space/return keystroke.
+// (PLATFORM(MAC) is always false in Chromium, hence the extra test.)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && PLATFORM(DARWIN))
 #define ARROW_KEYS_POP_MENU 1
 #define SPACE_OR_RETURN_POP_MENU 0
 #elif PLATFORM(GTK)
