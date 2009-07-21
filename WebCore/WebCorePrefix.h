@@ -45,8 +45,10 @@
 #define WINVER 0x0500
 #endif
 
+#ifndef WTF_USE_CURL
 #ifndef _WINSOCKAPI_
 #define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+#endif
 #endif
 
 // If we don't define these, they get defined in windef.h. 
@@ -65,7 +67,13 @@
 #if defined(__APPLE__)
 #include <regex.h>
 #endif
+
+// On Linux this causes conflicts with libpng because there are two impls. of
+// longjmp - see here: https://bugs.launchpad.net/ubuntu/+source/libpng/+bug/218409
+#ifndef BUILDING_WX__
 #include <setjmp.h>
+#endif
+
 #include <signal.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -97,8 +105,10 @@
 
 #include <time.h>
 
+#if defined(__APPLE__)
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
+#endif
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
