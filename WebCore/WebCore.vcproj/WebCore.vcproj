@@ -21843,6 +21843,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\RGBColor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\RGBColor.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\css\ShadowValue.cpp"
 				>
 			</File>
