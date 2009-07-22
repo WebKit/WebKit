@@ -172,6 +172,7 @@
 #include "JSRange.cpp"
 #include "JSRangeException.cpp"
 #include "JSRect.cpp"
+#include "JSRGBColor.cpp"
 #include "JSScreen.cpp"
 #include "JSSharedWorker.cpp"
 #include "JSSQLError.cpp"

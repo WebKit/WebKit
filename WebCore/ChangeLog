@@ -1,6 +1,12 @@
 2009-07-21  Sam Weinig  <sam@webkit.org>
 
-        Attempt to fix the GTK build
+        Attempt to fix the Windows build.
+
+        * DerivedSources.cpp:
+
+2009-07-21  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the GTK build.
 
         * GNUmakefile.am:
 
