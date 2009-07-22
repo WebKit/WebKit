@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Google, Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,24 +28,29 @@
 #define RGBColor_h
 
 #include "CSSPrimitiveValue.h"
+#include "Color.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class RGBColor : public RefCounted<RGBColor> {
     public:
-        // FIXME: Make constructor private once codegenerator changes
-        // have landed upstream.
-        RGBColor(unsigned rgbColor) : m_rgbColor(rgbColor) { }
-
         static PassRefPtr<RGBColor> create(unsigned rgbColor);
 
         PassRefPtr<CSSPrimitiveValue> red();
         PassRefPtr<CSSPrimitiveValue> green();
         PassRefPtr<CSSPrimitiveValue> blue();
+        PassRefPtr<CSSPrimitiveValue> alpha();
+
+        Color color() const { return Color(m_rgbColor); }
 
     private:
-        unsigned m_rgbColor;
+        RGBColor(unsigned rgbColor)
+            : m_rgbColor(rgbColor)
+        {
+        }
+
+        RGBA32 m_rgbColor;
     };
 
 } // namespace WebCore

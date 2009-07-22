@@ -283,7 +283,7 @@ bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
             CSSValue* value = parser.m_parsedProperties[0]->value();
             if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
                 CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-                color = primitiveValue->getRGBColorValue();
+                color = primitiveValue->getRGBA32Value();
             }
         } else
             return false;

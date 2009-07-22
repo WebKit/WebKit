@@ -23,6 +23,7 @@
 #define CSSPrimitiveValue_h
 
 #include "CSSValue.h"
+#include "Color.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -30,6 +31,7 @@ namespace WebCore {
 class Counter;
 class DashboardRegion;
 class Pair;
+class RGBColor;
 class Rect;
 class RenderStyle;
 class StringImpl;
@@ -150,8 +152,8 @@ public:
     Rect* getRectValue(ExceptionCode&) const;
     Rect* getRectValue() const { return m_type != CSS_RECT ? 0 : m_value.rect; }
 
-    unsigned getRGBColorValue(ExceptionCode&) const;
-    unsigned getRGBColorValue() const { return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
+    RGBColor* getRGBColorValue(ExceptionCode&) const;
+    RGBA32 getRGBA32Value() const { return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
 
     Pair* getPairValue(ExceptionCode&) const;
     Pair* getPairValue() const { return m_type != CSS_PAIR ? 0 : m_value.pair; }

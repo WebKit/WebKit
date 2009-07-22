@@ -264,7 +264,6 @@ STYLESHEETS_EMBED = \
 
 DOMLUT_FILES += \
     bindings/js/JSDOMWindowBase.cpp \
-    bindings/js/JSRGBColor.cpp \
     bindings/js/JSWorkerContextBase.cpp
 
 IDL_BINDINGS += \
@@ -285,6 +284,7 @@ IDL_BINDINGS += \
     css/CSSVariablesDeclaration.idl \
     css/CSSVariablesRule.idl \
     css/MediaList.idl \
+    css/RGBColor.idl \
     css/Rect.idl \
     css/StyleSheet.idl \
     css/StyleSheetList.idl \
@@ -516,7 +516,6 @@ SOURCES += \
     bindings/js/JSNodeListCustom.cpp \
     bindings/js/JSOptionConstructor.cpp \
     bindings/js/JSQuarantinedObjectWrapper.cpp \
-    bindings/js/JSRGBColor.cpp \
     bindings/js/JSStyleSheetCustom.cpp \
     bindings/js/JSStyleSheetListCustom.cpp \
     bindings/js/JSTextCustom.cpp \

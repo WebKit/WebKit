@@ -125,7 +125,7 @@ FAIL TryAllocate('HTMLOptionsCollection') should be exception. Was no constructo
 FAIL TryAllocate('Location') should be exception. Was no constructor.
 FAIL TryAllocate('Navigator') should be exception. Was no constructor.
 FAIL TryAllocate('NodeIterator') should be exception. Was no constructor.
-FAIL TryAllocate('RGBColor') should be exception. Was no constructor.
+PASS TryAllocate('RGBColor') is 'exception'
 FAIL TryAllocate('Screen') should be exception. Was no constructor.
 FAIL TryAllocate('TreeWalker') should be exception. Was no constructor.
 FAIL TryAllocate('XPathExpression') should be exception. Was no constructor.

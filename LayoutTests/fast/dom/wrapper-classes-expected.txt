@@ -102,8 +102,8 @@ PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').__proto__) is 'CSSPrimitiveValuePrototype'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').constructor) is 'CSSPrimitiveValueConstructor'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').getRGBColorValue()) is 'RGBColor'
-FAIL jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').getRGBColorValue().__proto__) should be RGBColorPrototype. Was Object.
-FAIL jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').getRGBColorValue().constructor) should be RGBColorConstructor. Was Function.
+PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').getRGBColorValue().__proto__) is 'RGBColorPrototype'
+PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('color').getRGBColorValue().constructor) is 'RGBColorConstructor'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('clip').getRectValue()) is 'Rect'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('clip').getRectValue().__proto__) is 'RectPrototype'
 PASS jsWrapperClass(stylesheet.cssRules.item(0).style.getPropertyCSSValue('clip').getRectValue().constructor) is 'RectConstructor'

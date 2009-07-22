@@ -25,6 +25,7 @@
 #include "SVGColor.h"
 
 #include "CSSParser.h"
+#include "RGBColor.h"
 #include "SVGException.h"
 
 namespace WebCore {
@@ -61,9 +62,9 @@ unsigned short SVGColor::colorType() const
     return m_colorType;
 }
 
-unsigned SVGColor::rgbColor() const
+RGBColor* SVGColor::rgbColor() const
 {
-    return m_color.rgb();
+    return RGBColor::create(m_color.rgb()).releaseRef();
 }
 
 void SVGColor::setRGBColor(const String& rgbColor, ExceptionCode& ec)

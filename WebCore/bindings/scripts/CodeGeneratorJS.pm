@@ -168,7 +168,7 @@ sub AddIncludesForType
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
     if ($codeGenerator->IsPrimitiveType($type) or AvoidInclusionOfType($type)
-        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "RGBColor" or $type eq "Array") {
+        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array") {
     } elsif ($type =~ /SVGPathSeg/) {
         $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
@@ -1676,11 +1676,6 @@ sub NativeToJSValue
         }
         $implIncludes{"<runtime/JSString.h>"} = 1;
         return "jsString(exec, $value)";
-    }
-
-    if ($type eq "RGBColor") {
-        $implIncludes{"JS$type.h"} = 1;
-        return "getJSRGBColor(exec, $value)";
     }
 
     if ($codeGenerator->IsPodType($type)) {

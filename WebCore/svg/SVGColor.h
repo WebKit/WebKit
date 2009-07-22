@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+    class RGBColor;
+
     class SVGColor : public CSSValue {
     public:
         static PassRefPtr<SVGColor> create(const String& color)
@@ -55,7 +57,7 @@ namespace WebCore {
         // 'SVGColor' functions
         unsigned short colorType() const;
 
-        unsigned rgbColor() const;
+        RGBColor* rgbColor() const;
         
         static Color colorFromRGBColorString(const String&);
 

@@ -1,3 +1,16 @@
+2009-07-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Changes for https://bugs.webkit.org/show_bug.cgi?id=27242
+        JSC bindings should use an auto-bound RGBColor class instead of hand-rolled JSRGBColor
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+
 2009-07-21  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough, RS olliej fix to make the test pass.

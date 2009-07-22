@@ -522,11 +522,6 @@ sub AddIncludesForType
         return;
     }
 
-    if ($type eq "RGBColor") {
-        $implIncludes{"DOMRGBColorInternal.h"} = 1;
-        return;
-    }
-
     if ($type eq "DOMWindow") {
         $implIncludes{"DOMAbstractViewInternal.h"} = 1;
         $implIncludes{"DOMWindow.h"} = 1;
@@ -924,8 +919,6 @@ sub GenerateHeader
 
         if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
             push(@internalHeaderContent, "#import <WebCore/SVGAnimatedTemplate.h>\n\n");
-        } elsif ($interfaceName eq "RGBColor") {
-            push(@internalHeaderContent, "#import <WebCore/Color.h>\n\n");
         } else {
             push(@internalHeaderContent, "namespace WebCore {\n");
             $startedNamespace = 1;

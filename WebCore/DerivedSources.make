@@ -393,9 +393,7 @@ DOM_CLASSES = \
 .PHONY : all
 
 all : \
-    $(filter-out JSEventListener.h JSEventTarget.h JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
-    \
-    JSRGBColor.lut.h \
+    $(filter-out JSEventListener.h JSEventTarget.h,$(DOM_CLASSES:%=JS%.h)) \
     \
     JSJavaScriptCallFrame.h \
     \
@@ -543,15 +541,6 @@ endif
 
 UserAgentStyleSheets.h : css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 	perl $< $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
-
-# --------
-
-# lookup tables for old-style JavaScript bindings
-
-%.lut.h: %.cpp $(CREATE_HASH_TABLE)
-	$(CREATE_HASH_TABLE) $< -n WebCore > $@
-%Table.cpp: %.cpp $(CREATE_HASH_TABLE)
-	$(CREATE_HASH_TABLE) $< -n WebCore > $@
 
 # --------
 

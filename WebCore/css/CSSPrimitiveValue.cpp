@@ -30,6 +30,7 @@
 #include "ExceptionCode.h"
 #include "Node.h"
 #include "Pair.h"
+#include "RGBColor.h"
 #include "Rect.h"
 #include "RenderStyle.h"
 #include <wtf/ASCIICType.h>
@@ -642,7 +643,7 @@ Rect* CSSPrimitiveValue::getRectValue(ExceptionCode& ec) const
     return m_value.rect;
 }
 
-unsigned CSSPrimitiveValue::getRGBColorValue(ExceptionCode& ec) const
+RGBColor* CSSPrimitiveValue::getRGBColorValue(ExceptionCode& ec) const
 {
     ec = 0;
     if (m_type != CSS_RGBCOLOR) {
@@ -650,7 +651,8 @@ unsigned CSSPrimitiveValue::getRGBColorValue(ExceptionCode& ec) const
         return 0;
     }
 
-    return m_value.rgbcolor;
+    // FIMXE: This should not return a new object for each invocation.
+    return RGBColor::create(m_value.rgbcolor).releaseRef();
 }
 
 Pair* CSSPrimitiveValue::getPairValue(ExceptionCode& ec) const

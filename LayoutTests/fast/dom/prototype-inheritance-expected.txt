@@ -129,6 +129,7 @@ PASS inner.Plugin.isInner is true
 PASS inner.PluginArray.isInner is true
 PASS inner.ProcessingInstruction.isInner is true
 PASS inner.ProgressEvent.isInner is true
+PASS inner.RGBColor.isInner is true
 PASS inner.Range.isInner is true
 PASS inner.RangeError.isInner is true
 PASS inner.RangeException.isInner is true

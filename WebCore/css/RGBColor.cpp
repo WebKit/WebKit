@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008, 2009 Google, Inc.  All rights reserved.
+ * Copyright (C) 2009 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +50,12 @@ PassRefPtr<CSSPrimitiveValue> RGBColor::blue()
 {
     unsigned value = m_rgbColor & 0xFF;
     return CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
+}
+
+PassRefPtr<CSSPrimitiveValue> RGBColor::alpha()
+{
+    float value = static_cast<float>((m_rgbColor >> 24) & 0xFF) / 0xFF;
+    return WebCore::CSSPrimitiveValue::create(value, WebCore::CSSPrimitiveValue::CSS_NUMBER);
 }
 
 } // namespace WebCore

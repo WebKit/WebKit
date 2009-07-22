@@ -31,115 +31,74 @@
 #import "CSSPrimitiveValue.h"
 #import "ColorMac.h"
 #import "DOMCSSPrimitiveValueInternal.h"
+#import "ExceptionHandlers.h"
+#import "RGBColor.h"
+#import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"
 #import "WebScriptObjectPrivate.h"
-#import <runtime/InitializeThreading.h>
+#import <wtf/GetPtr.h>
 
-static NSMapTable* RGBColorWrapperCache;
-
-static id getWrapperForRGB(WebCore::RGBA32 value)
-{
-    if (!RGBColorWrapperCache)
-        return nil;
-    return static_cast<id>(NSMapGet(RGBColorWrapperCache, reinterpret_cast<const void*>(value)));
-}
-
-static void setWrapperForRGB(id wrapper, WebCore::RGBA32 value)
-{
-    if (!RGBColorWrapperCache)
-        // No need to retain/free either impl key, or id value.  Items will be removed
-        // from the cache in dealloc methods.
-        RGBColorWrapperCache = createWrapperCacheWithIntegerKeys();
-    NSMapInsert(RGBColorWrapperCache, reinterpret_cast<const void*>(value), wrapper);
-}
-
-static void removeWrapperForRGB(WebCore::RGBA32 value)
-{
-    if (!RGBColorWrapperCache)
-        return;
-    NSMapRemove(RGBColorWrapperCache, reinterpret_cast<const void*>(value));
-}
+#define IMPL reinterpret_cast<WebCore::RGBColor*>(_internal)
 
 @implementation DOMRGBColor
 
-+ (void)initialize
-{
-    JSC::initializeThreading();
-#ifndef BUILDING_ON_TIGER
-    WebCoreObjCFinalizeOnMainThread(self);
-#endif
-}
-
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainThread([DOMRGBColor class], self))
-        return;
-    
-    removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
-    _internal = 0;
+    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); }
+    if (_internal)
+        IMPL->deref();
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_internal)
+        IMPL->deref();
+    [super finalize];
 }
 
 - (DOMCSSPrimitiveValue *)red
 {
-    WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    int value = (rgb >> 16) & 0xFF;
-    return kit(WebCore::CSSPrimitiveValue::create(value, WebCore::CSSPrimitiveValue::CSS_NUMBER).get());
+    return kit(WTF::getPtr(IMPL->red()));
 }
 
 - (DOMCSSPrimitiveValue *)green
 {
-    WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    int value = (rgb >> 8) & 0xFF;
-    return kit(WebCore::CSSPrimitiveValue::create(value, WebCore::CSSPrimitiveValue::CSS_NUMBER).get());
+    return kit(WTF::getPtr(IMPL->green()));
 }
 
 - (DOMCSSPrimitiveValue *)blue
 {
-    WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    int value = rgb & 0xFF;
-    return kit(WebCore::CSSPrimitiveValue::create(value, WebCore::CSSPrimitiveValue::CSS_NUMBER).get());
+    return kit(WTF::getPtr(IMPL->blue()));
 }
 
 - (DOMCSSPrimitiveValue *)alpha
 {
-    WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    float value = static_cast<float>(WebCore::Color(rgb).alpha()) / 0xFF;
-    return kit(WebCore::CSSPrimitiveValue::create(value, WebCore::CSSPrimitiveValue::CSS_NUMBER).get());
-    
+    return kit(WTF::getPtr(IMPL->alpha()));
 }
 
 - (NSColor *)color
 {
-    WebCore::RGBA32 rgb = reinterpret_cast<uintptr_t>(_internal);
-    return WebCore::nsColor(WebCore::Color(rgb));
+    return WebCore::nsColor(IMPL->color());
 }
 
 @end
 
-@implementation DOMRGBColor (WebPrivate)
-
-// FIXME: this should be removed once all internal Apple uses of it have been replaced with
-// calls to the public method, color without the leading underscore.
-- (NSColor *)_color
+WebCore::RGBColor* core(DOMRGBColor *wrapper)
 {
-    return [self color];
+    return wrapper ? reinterpret_cast<WebCore::RGBColor*>(wrapper->_internal) : 0;
 }
 
-@end
-
-WebCore::RGBA32 core(DOMRGBColor *color)
+DOMRGBColor *kit(WebCore::RGBColor* value)
 {
-     return color ? static_cast<WebCore::RGBA32>(reinterpret_cast<uintptr_t>(color->_internal)) : 0;
-}
-
-DOMRGBColor *kit(WebCore::RGBA32 value)
-{
-    if (DOMRGBColor *wrapper = getWrapperForRGB(value))
+    { DOM_ASSERT_MAIN_THREAD(); WebCoreThreadViolationCheckRoundOne(); };
+    if (!value)
+        return nil;
+    if (DOMRGBColor *wrapper = getDOMWrapper(value))
         return [[wrapper retain] autorelease];
-
     DOMRGBColor *wrapper = [[DOMRGBColor alloc] _init];
     wrapper->_internal = reinterpret_cast<DOMObjectInternal*>(value);
-    setWrapperForRGB(wrapper, value);
+    value->ref();
+    addDOMWrapper(wrapper, value);
     return [wrapper autorelease];
 }

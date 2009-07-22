@@ -125,7 +125,6 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSPluginCustom.cpp
         bindings/js/JSPluginArrayCustom.cpp
         bindings/js/JSQuarantinedObjectWrapper.cpp
-        bindings/js/JSRGBColor.cpp
         bindings/js/JSSQLResultSetRowListCustom.cpp
         bindings/js/JSSQLTransactionCustom.cpp
         bindings/js/JSStorageCustom.cpp
@@ -382,6 +381,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSRange.cpp
         DerivedSources/WebCore/JSRangeException.cpp
         DerivedSources/WebCore/JSRect.cpp
+        DerivedSources/WebCore/JSRGBColor.cpp
         DerivedSources/WebCore/JSScreen.cpp
         DerivedSources/WebCore/JSStorage.cpp
         DerivedSources/WebCore/JSStorageEvent.cpp
