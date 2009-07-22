@@ -28,43 +28,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "HTMLDataGridElement.h"
 
-#include "Document.h"
-#include "V8Binding.h"
-#include "V8CustomBinding.h"
-#include "V8DataGridDataSource.h"
-#include "V8Proxy.h"
+#ifndef V8DataGridDataSource_h
+#define V8DataGridDataSource_h
 
 #if ENABLE(DATAGRID)
 
+#include "DataGridDataSource.h"
+#include <v8.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-ACCESSOR_GETTER(HTMLDataGridElementDataSource)
+class Frame;
+class HTMLDataGridElement;
+
+class V8DataGridDataSource : public DataGridDataSource {
+public:
+    static PassRefPtr<V8DataGridDataSource> create(v8::Handle<v8::Value> dataSource, Frame* frame)
+    {
+        return adoptRef(new V8DataGridDataSource(dataSource, frame));
+    }
+
+    virtual ~V8DataGridDataSource();
+
+    virtual bool isJSDataGridDataSource() const { return true; }
+    v8::Handle<v8::Value> jsDataSource() const { return m_dataSource; }
+
+private:
+    V8DataGridDataSource(v8::Handle<v8::Value>, Frame*);
+
+    v8::Persistent<v8::Value> m_dataSource;
+    RefPtr<Frame> m_frame;
+};
+
+inline V8DataGridDataSource* asV8DataGridDataSource(DataGridDataSource* dataSource)
 {
-    INC_STATS("DOM.HTMLDataGridElement.dataSource._get");
-    v8::Handle<v8::Object> holder = info.Holder();
-    HTMLDataGridElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLDataGridElement>(holder);
-    DataGridDataSource* dataSource = imp->dataSource();
-    if (dataSource && dataSource->isJSDataGridDataSource())
-        return asV8DataGridDataSource(dataSource)->jsDataSource();
-    return v8::Null();
+    ASSERT(dataSource->isJSDataGridDataSource());
+    return static_cast<V8DataGridDataSource*>(dataSource);
 }
 
-ACCESSOR_SETTER(HTMLDataGridElementDataSource)
+inline const V8DataGridDataSource* asV8DataGridDataSource(const DataGridDataSource* dataSource)
 {
-    INC_STATS("DOM.HTMLDataGridElement.dataSource._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    HTMLDataGridElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLDataGridElement>(holder);
-    RefPtr<DataGridDataSource> dataSource;
-    if (!value.IsEmpty()) {
-        Frame *frame = imp->document()->frame();
-        dataSource = V8DataGridDataSource::create(value, frame);
-    }
-    imp->setDataSource(dataSource.get());
+    ASSERT(dataSource->isJSDataGridDataSource());
+    return static_cast<const V8DataGridDataSource*>(dataSource);
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(DATAGRID)
+#endif // V8DataGridDataSource_h

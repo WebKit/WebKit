@@ -29,40 +29,35 @@
  */
 
 #include "config.h"
-#include "HTMLDataGridElement.h"
-
-#include "Document.h"
-#include "V8Binding.h"
-#include "V8CustomBinding.h"
-#include "V8DataGridDataSource.h"
-#include "V8Proxy.h"
 
 #if ENABLE(DATAGRID)
 
+#include "V8DataGridDataSource.h"
+
+#include "Document.h"
+#include "Frame.h"
+#include "HTMLDataGridElement.h"
+#include "V8HTMLDataGridElement.h"
+
+
 namespace WebCore {
 
-ACCESSOR_GETTER(HTMLDataGridElementDataSource)
+V8DataGridDataSource::V8DataGridDataSource(v8::Handle<v8::Value> dataSource, Frame* frame)
+    : m_dataSource(v8::Persistent<v8::Value>::New(dataSource))
+    , m_frame(frame)
 {
-    INC_STATS("DOM.HTMLDataGridElement.dataSource._get");
-    v8::Handle<v8::Object> holder = info.Holder();
-    HTMLDataGridElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLDataGridElement>(holder);
-    DataGridDataSource* dataSource = imp->dataSource();
-    if (dataSource && dataSource->isJSDataGridDataSource())
-        return asV8DataGridDataSource(dataSource)->jsDataSource();
-    return v8::Null();
+#ifndef NDEBUG
+    V8GCController::registerGlobalHandle(DATASOURCE, this, m_dataSource);
+#endif
 }
 
-ACCESSOR_SETTER(HTMLDataGridElementDataSource)
+V8DataGridDataSource::~V8DataGridDataSource()
 {
-    INC_STATS("DOM.HTMLDataGridElement.dataSource._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    HTMLDataGridElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLDataGridElement>(holder);
-    RefPtr<DataGridDataSource> dataSource;
-    if (!value.IsEmpty()) {
-        Frame *frame = imp->document()->frame();
-        dataSource = V8DataGridDataSource::create(value, frame);
-    }
-    imp->setDataSource(dataSource.get());
+#ifndef NDEBUG
+    V8GCController::unregisterGlobalHandle(this, m_dataSource);
+#endif
+    m_dataSource.Dispose();
+    m_dataSource.Clear();
 }
 
 } // namespace WebCore

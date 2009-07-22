@@ -29,42 +29,47 @@
  */
 
 #include "config.h"
-#include "HTMLDataGridElement.h"
+#include "DataGridColumnList.h"
 
 #include "Document.h"
 #include "V8Binding.h"
 #include "V8CustomBinding.h"
-#include "V8DataGridDataSource.h"
 #include "V8Proxy.h"
 
 #if ENABLE(DATAGRID)
 
 namespace WebCore {
 
-ACCESSOR_GETTER(HTMLDataGridElementDataSource)
+INDEXED_PROPERTY_GETTER(DataGridColumnList)
 {
-    INC_STATS("DOM.HTMLDataGridElement.dataSource._get");
-    v8::Handle<v8::Object> holder = info.Holder();
-    HTMLDataGridElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLDataGridElement>(holder);
-    DataGridDataSource* dataSource = imp->dataSource();
-    if (dataSource && dataSource->isJSDataGridDataSource())
-        return asV8DataGridDataSource(dataSource)->jsDataSource();
-    return v8::Null();
+    INC_STATS("DataGridColumnList.IndexedPropertyGetter");
+    DataGridColumnList* imp = V8DOMWrapper::convertToNativeObject<DataGridColumnList>(V8ClassIndex::DATAGRIDCOLUMNLIST, info.Holder());
+    DataGridColumn* result = imp->item(index);
+    if (!result)
+        return notHandledByInterceptor();
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::DATAGRIDCOLUMN, result);
 }
 
-ACCESSOR_SETTER(HTMLDataGridElementDataSource)
+NAMED_PROPERTY_GETTER(DataGridColumnList)
 {
-    INC_STATS("DOM.HTMLDataGridElement.dataSource._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    HTMLDataGridElement* imp = V8DOMWrapper::convertDOMWrapperToNode<HTMLDataGridElement>(holder);
-    RefPtr<DataGridDataSource> dataSource;
-    if (!value.IsEmpty()) {
-        Frame *frame = imp->document()->frame();
-        dataSource = V8DataGridDataSource::create(value, frame);
-    }
-    imp->setDataSource(dataSource.get());
+    INC_STATS("DataGridColumnList.NamedPropertyGetter");
+    // Search the prototype chain first.
+    v8::Handle<v8::Value> value = info.Holder()->GetRealNamedPropertyInPrototypeChain(name);
+    if (!value.IsEmpty())
+        return value;
+    
+    // Then look for IDL defined properties on the object itself.
+    if (info.Holder()->HasRealNamedCallbackProperty(name))
+        return notHandledByInterceptor();
+    
+    // Finally, look up a column by name.
+    DataGridColumnList* imp = V8DOMWrapper::convertToNativeObject<DataGridColumnList>(V8ClassIndex::DATAGRIDCOLUMNLIST, info.Holder());
+    DataGridColumn* result = imp->itemWithName(toWebCoreString(name));
+    if (!result)
+        return notHandledByInterceptor();
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::DATAGRIDCOLUMN, result);
 }
-
+    
 } // namespace WebCore
 
-#endif // ENABLE(DATAGRID)
+#endif ENABLE(DATAGRID)
