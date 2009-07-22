@@ -34,6 +34,8 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
+#include "LinkBuffer.h"
+#include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 

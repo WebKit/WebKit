@@ -1367,59 +1367,59 @@ public:
         ASSERT(to.m_offset != -1);
 
         char* code = reinterpret_cast<char*>(m_formatter.data());
-        patchRel32(code + from.m_offset, code + to.m_offset);
+        setRel32(code + from.m_offset, code + to.m_offset);
     }
     
     static void linkJump(void* code, JmpSrc from, void* to)
     {
         ASSERT(from.m_offset != -1);
 
-        patchRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
+        setRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
     }
 
     static void linkCall(void* code, JmpSrc from, void* to)
     {
         ASSERT(from.m_offset != -1);
 
-        patchRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
+        setRel32(reinterpret_cast<char*>(code) + from.m_offset, to);
     }
 
 #if PLATFORM(X86_64)
-    static void patchPointerForCall(void* where, void* value)
+    static void linkPointerForCall(void* where, void* value)
     {
         reinterpret_cast<void**>(where)[-1] = value;
     }
 #endif
 
-    static void patchPointer(void* code, JmpDst where, void* value)
+    static void linkPointer(void* code, JmpDst where, void* value)
     {
         ASSERT(where.m_offset != -1);
 
-        patchPointer(reinterpret_cast<char*>(code) + where.m_offset, value);
+        setPointer(reinterpret_cast<char*>(code) + where.m_offset, value);
     }
 
     static void relinkJump(void* from, void* to)
     {
         ExecutableAllocator::MakeWritable unprotect(reinterpret_cast<char*>(from) - sizeof(int32_t), sizeof(int32_t));
-        patchRel32(from, to);
+        setRel32(from, to);
     }
     
     static void relinkCall(void* from, void* to)
     {
         ExecutableAllocator::MakeWritable unprotect(reinterpret_cast<char*>(from) - sizeof(int32_t), sizeof(int32_t));
-        patchRel32(from, to);
+        setRel32(from, to);
     }
 
     static void repatchInt32(void* where, int32_t value)
     {
         ExecutableAllocator::MakeWritable unprotect(reinterpret_cast<char*>(where) - sizeof(int32_t), sizeof(int32_t));
-        patchInt32(where, value);
+        setInt32(where, value);
     }
 
     static void repatchPointer(void* where, void* value)
     {
         ExecutableAllocator::MakeWritable unprotect(reinterpret_cast<char*>(where) - sizeof(void*), sizeof(void*));
-        patchPointer(where, value);
+        setPointer(where, value);
     }
 
     static void repatchLoadPtrToLEA(void* where)
@@ -1477,22 +1477,22 @@ public:
 
 private:
 
-    static void patchPointer(void* where, void* value)
+    static void setPointer(void* where, void* value)
     {
         reinterpret_cast<void**>(where)[-1] = value;
     }
 
-    static void patchInt32(void* where, int32_t value)
+    static void setInt32(void* where, int32_t value)
     {
         reinterpret_cast<int32_t*>(where)[-1] = value;
     }
 
-    static void patchRel32(void* from, void* to)
+    static void setRel32(void* from, void* to)
     {
         intptr_t offset = reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from);
         ASSERT(offset == static_cast<int32_t>(offset));
 
-        patchInt32(from, offset);
+        setInt32(from, offset);
     }
 
     class X86InstructionFormatter {

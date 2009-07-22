@@ -554,7 +554,7 @@ namespace ARM {
 
         // Patch pointers
 
-        static void patchPointer(void* code, JmpDst from, void* to)
+        static void linkPointer(void* code, JmpDst from, void* to)
         {
             patchPointerInternal(reinterpret_cast<intptr_t>(code) + from.m_offset, to);
         }

@@ -1612,6 +1612,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\assembler\LinkBuffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\assembler\RepatchBuffer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\assembler\AssemblerBuffer.h"
 				>
 			</File>

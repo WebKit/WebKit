@@ -28,6 +28,7 @@
 
 #include "ASCIICType.h"
 #include "JSGlobalData.h"
+#include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include "RegexCompiler.h"
 

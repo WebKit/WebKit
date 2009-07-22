@@ -34,6 +34,8 @@
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"
+#include "LinkBuffer.h"
+#include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
 
@@ -47,19 +49,19 @@ namespace JSC {
 
 void ctiPatchNearCallByReturnAddress(ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction)
 {
-    MacroAssembler::RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer;
     repatchBuffer.relinkNearCallerToTrampoline(returnAddress, newCalleeFunction);
 }
 
 void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction)
 {
-    MacroAssembler::RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer;
     repatchBuffer.relinkCallerToTrampoline(returnAddress, newCalleeFunction);
 }
 
 void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction)
 {
-    MacroAssembler::RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer;
     repatchBuffer.relinkCallerToFunction(returnAddress, newCalleeFunction);
 }
 
