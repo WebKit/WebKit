@@ -2157,6 +2157,21 @@ class OrderOfIncludesTest(CpplintTestBase):
                                          '#include "a.h"\n', # Should still flag this.
                                          'Alphabetical sorting problem.  [build/include_order] [4]')
 
+    def test_check_wtf_includes(self):
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "foo.h"\n'
+                                         '\n'
+                                         '#include <wtf/Assertions.h>\n',
+                                         '')
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "foo.h"\n'
+                                         '\n'
+                                         '#include "wtf/Assertions.h"\n',
+                                         'wtf includes should be <wtf/file.h> instead of "wtf/file.h".'
+                                         '  [build/include] [4]')
+
     def test_classify_include(self):
         classify_include = cpplint._classify_include
         self.assertEqual(cpplint._CONFIG_HEADER,

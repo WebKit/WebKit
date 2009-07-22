@@ -1,5 +1,15 @@
 2009-07-21  Jakob Petsovits  <jakob.petsovits@torchmobile.com>
 
+         Reviewed by Adam Treat.
+
+         Add check for correct wtf includes to cpplint.
+         https://bugs.webkit.org/show_bug.cgi?id=27524
+
+         * Scripts/modules/cpplint.py:
+         * Scripts/modules/cpplint_unittest.py:
+
+2009-07-21  Jakob Petsovits  <jakob.petsovits@torchmobile.com>
+
         Reviewed by David Levin.
 
         Add checks for multi-line boolean operator placement.

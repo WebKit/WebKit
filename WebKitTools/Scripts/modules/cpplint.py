@@ -2221,15 +2221,18 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
                           '%s Should be: config.h, primary header, blank line, and then alphabetically sorted.' %
                           error_message)
 
-    # Look for any of the stream classes that are part of standard C++.
-    matched = _RE_PATTERN_INCLUDE.match(line)
-    if matched:
-        include = matched.group(2)
+        # Look for any of the stream classes that are part of standard C++.
         if match(r'(f|ind|io|i|o|parse|pf|stdio|str|)?stream$', include):
             # Many unit tests use cout, so we exempt them.
             if not _is_test_filename(filename):
                 error(filename, line_number, 'readability/streams', 3,
                       'Streams are highly discouraged.')
+
+        # Look for specific includes to fix.
+        if include.startswith('wtf/') and not is_system:
+            error(filename, line_number, 'build/include', 4,
+                  'wtf includes should be <wtf/file.h> instead of "wtf/file.h".')
+
 
 def check_language(filename, clean_lines, line_number, file_extension, include_state,
                    error):
