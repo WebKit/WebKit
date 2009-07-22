@@ -581,7 +581,7 @@ static void webkit_web_view_grab_focus(GtkWidget* widget)
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
         FocusController* focusController = core(webView)->focusController();
 
-        if (Frame* frame = focusController->focusedFrame())
+        if (focusController->focusedFrame())
             focusController->setFocused(true);
         else
             focusController->setFocusedFrame(core(webView)->mainFrame());
@@ -601,7 +601,7 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
 
         focusController->setActive(true);
 
-        if (Frame* frame = focusController->focusedFrame())
+        if (focusController->focusedFrame())
             focusController->setFocused(true);
         else
             focusController->setFocusedFrame(core(webView)->mainFrame());

@@ -1,3 +1,13 @@
+2009-07-22  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Remove unused variables.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_grab_focus):
+        (webkit_web_view_focus_in_event):
+
 2009-07-21  Priit Laes  <plaes@plaes.org>
 
         Reviewed by Holger Freyther.
