@@ -101,7 +101,7 @@ JSValue toJS(ExecState* exec, Event* event)
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WheelEvent, event);
 #if ENABLE(SVG)
         else if (event->isSVGZoomEvent())
-            wrapper = CREATE_SVG_OBJECT_WRAPPER(exec, SVGZoomEvent, event, 0);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, SVGZoomEvent, event);
 #endif
         else
             wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, UIEvent, event);

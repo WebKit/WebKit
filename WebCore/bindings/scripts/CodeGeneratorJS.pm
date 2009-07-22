@@ -119,7 +119,10 @@ sub GetParentClassName
     my $dataNode = shift;
 
     return $dataNode->extendedAttributes->{"LegacyParent"} if $dataNode->extendedAttributes->{"LegacyParent"};
-    return "DOMObject" if @{$dataNode->parents} eq 0;
+    if (@{$dataNode->parents} eq 0) {
+        return "DOMObjectWithSVGContext" if IsSVGTypeNeedingContextParameter($dataNode->name);
+        return "DOMObject";
+    }
     return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
 }
 
@@ -219,11 +222,13 @@ sub IsSVGTypeNeedingContextParameter
 {
     my $implClassName = shift;
 
-    if ($implClassName =~ /SVG/ and not $implClassName =~ /Element/) {
-        return 1 unless $implClassName =~ /SVGPaint/ or $implClassName =~ /SVGColor/ or $implClassName =~ /SVGDocument/;
+    return 0 unless $implClassName =~ /SVG/;
+    return 0 if $implClassName =~ /Element/;
+    my @noContextNeeded = ("SVGPaint", "SVGColor", "SVGDocument", "SVGZoomEvent");
+    foreach (@noContextNeeded) {
+        return 0 if $implClassName eq $_;
     }
-
-    return 0;
+    return 1;
 }
 
 sub HashValueForClassAndName
@@ -358,6 +363,7 @@ sub GenerateHeader
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
     my $conditional = $dataNode->extendedAttributes->{"Conditional"};
+    my $needsSVGContext = IsSVGTypeNeedingContextParameter($interfaceName);
 
     # - Add default header template
     @headerContentHeader = split("\r", $headerTemplate);
@@ -375,7 +381,8 @@ sub GenerateHeader
     if ($hasParent) {
         $headerIncludes{"$parentClassName.h"} = 1;
     } else {
-        $headerIncludes{"JSDOMBinding.h"} = 1;
+        $headerIncludes{"DOMObjectWithSVGContext.h"} = $needsSVGContext;
+        $headerIncludes{"JSDOMBinding.h"} = !$needsSVGContext;
         $headerIncludes{"<runtime/JSGlobalObject.h>"} = 1;
         $headerIncludes{"<runtime/ObjectPrototype.h>"} = 1;
     }
@@ -569,23 +576,11 @@ sub GenerateHeader
     }
 
     if (!$hasParent) {
-        if ($podType) {
-            push(@headerContent, "    JSSVGPODTypeWrapper<$podType>* impl() const { return m_impl.get(); }\n");
-            push(@headerContent, "    SVGElement* context() const { return m_context.get(); }\n\n");
-            push(@headerContent, "private:\n");
-            push(@headerContent, "    RefPtr<SVGElement> m_context;\n");
-            push(@headerContent, "    RefPtr<JSSVGPODTypeWrapper<$podType> > m_impl;\n");
-        } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@headerContent, "    $implClassName* impl() const { return m_impl.get(); }\n");
-            push(@headerContent, "    SVGElement* context() const { return m_context.get(); }\n\n");
-            push(@headerContent, "private:\n");
-            push(@headerContent, "    RefPtr<SVGElement> m_context;\n");
-            push(@headerContent, "    RefPtr<$implClassName > m_impl;\n");
-        } else {
-            push(@headerContent, "    $implClassName* impl() const { return m_impl.get(); }\n\n");
-            push(@headerContent, "private:\n");
-            push(@headerContent, "    RefPtr<$implClassName> m_impl;\n");
-        }
+        # Extra space after JSSVGPODTypeWrapper<> to make RefPtr<Wrapper<> > compile.
+        my $implType = $podType ? "JSSVGPODTypeWrapper<$podType> " : $implClassName;
+        push(@headerContent, "    $implType* impl() const { return m_impl.get(); }\n\n");
+        push(@headerContent, "private:\n");
+        push(@headerContent, "    RefPtr<$implType> m_impl;\n");
     } elsif ($dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
         push(@headerContent, "    $implClassName* impl() const\n");
         push(@headerContent, "    {\n");
@@ -981,21 +976,13 @@ sub GenerateImplementation
         push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
         push(@implContent, "    : $parentClassName(structure, impl, shell)\n");
     } else {
-        my $contextArg = "";
-        if ($needsSVGContext) {
-            if ($hasParent && !$parentNeedsSVGContext) {
-                $contextArg = ", SVGElement*";
-            } else {
-                $contextArg = ", SVGElement* context";
-            }
-        }
+        my $contextArg = $needsSVGContext ? ", SVGElement* context" : "";
         push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl$contextArg)\n");
         if ($hasParent) {
             push(@implContent, "    : $parentClassName(structure, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
         } else {
-            push(@implContent, "    : $parentClassName(structure)\n");
-            push(@implContent, "    , m_context(context)\n") if $needsSVGContext;
-            push(@implContent, "    , m_impl(impl)\n");  
+            push(@implContent, "    : $parentClassName(structure" . ($needsSVGContext ? ", context" : "") . ")\n");
+            push(@implContent, "    , m_impl(impl)\n");
         }
     }
     push(@implContent, "{\n");
@@ -1720,11 +1707,12 @@ sub NativeToJSValue
         }
 
         if ($implClassNameForValueConversion eq "") {
-            if (IsSVGTypeNeedingContextParameter($implClassName)) {
-                return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), castedThisObj->context())" if $inFunctionCall eq 1;
+            # SVGZoomEvent has no context() pointer, and is also not an SVGElement.
+            # This is not a problem, because SVGZoomEvent has no read/write properties.
+            return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), 0)" if $implClassName eq "SVGZoomEvent";
 
-                # Special case: SVGZoomEvent - it doesn't have a context, but it's no problem, as there are no readwrite props
-                return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), 0)" if $implClassName eq "SVGZoomEvent";
+            if (IsSVGTypeNeedingContextParameter($implClassName)) {
+                return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), castedThisObj->context())" if $inFunctionCall;
                 return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), $thisValue->context())";
             } else {
                 return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), imp)";

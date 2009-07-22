@@ -399,6 +399,7 @@
             'accessibility/win/AccessibilityObjectWrapperWin.h',
             'accessibility/wx/AccessibilityObjectWx.cpp',
             'bindings/js/CachedScriptSourceProvider.h',
+            'bindings/js/DOMObjectWithSVGContext.h',
             'bindings/js/GCController.cpp',
             'bindings/js/GCController.h',
             'bindings/js/JSAttrCustom.cpp',

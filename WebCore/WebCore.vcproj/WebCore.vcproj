@@ -28170,6 +28170,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\DOMObjectWithSVGContext.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\GCController.cpp"
 					>
 				</File>
