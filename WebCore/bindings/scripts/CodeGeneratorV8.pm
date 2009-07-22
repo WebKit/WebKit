@@ -113,7 +113,6 @@ sub WK_lcfirst
 sub IsPodType
 {
     my $type = shift;
-    return 0 if $type eq "RGBColor";
     return $codeGenerator->IsPodType($type);
 }
 
@@ -596,7 +595,7 @@ END
         }
 
         push(@implContentDecls, "    void* wrapper = $wrapper;\n");
-    } elsif ($nativeType ne "RGBColor") {
+    } else {
         push(@implContentDecls, "    $nativeType v = ");
 
         push(@implContentDecls, "$getterString;\n");
@@ -609,11 +608,7 @@ END
         if (IsRefPtrType($returnType)) {
             $result = "WTF::getPtr(" . $result . ")";
         }
-    } else {
-        # Special case: RGBColor is noncopyable
-        $result = $getterString;
     }
-
 
     if (IsSVGTypeNeedingContextParameter($attrType) && !$skipContext) {
         my $resultObject = $result;
@@ -1699,7 +1694,6 @@ sub GetNativeType
     return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
     return "DOMTimeStamp" if $type eq "DOMTimeStamp";
     return "unsigned" if $type eq "unsigned int";
-    return "unsigned" if $type eq "RGBColor";
     return "Node*" if $type eq "EventTarget" and $isParameter;
 
     return "String" if $type eq "DOMUserData";  # FIXME: Temporary hack?
@@ -2037,12 +2031,6 @@ sub ReturnNativeToJSValue
 
     if ($type eq "EventListener") {
         return "return V8DOMWrapper::convertEventListenerToV8Object($value)";
-    }
-
-    if ($type eq "RGBColor") {
-        my $construct = "RefPtr<RGBColor> rgbcolor = RGBColor::create($value);\n";
-        my $convert = "V8DOMWrapper::convertToV8Object(V8ClassIndex::RGBCOLOR, WTF::getPtr(rgbcolor))";
-        return $construct . $indent . "return " . $convert;
     }
 
     if ($type eq "WorkerContext" or $type eq "WorkerLocation" or $type eq "WorkerNavigator") {
