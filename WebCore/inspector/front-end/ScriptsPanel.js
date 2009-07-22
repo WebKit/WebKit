@@ -360,12 +360,12 @@ WebInspector.ScriptsPanel.prototype = {
             updateInterface = true;
 
         var self = this;
-        function updatingCallbackWrapper(result)
+        function updatingCallbackWrapper(result, exception)
         {
-            callback(result);
+            callback(result, exception);
             if (updateInterface)
                 self.sidebarPanes.scopechain.update(selectedCallFrame);
-        }        
+        }
         this.doEvalInCallFrame(selectedCallFrame, code, updatingCallbackWrapper);
     },
 

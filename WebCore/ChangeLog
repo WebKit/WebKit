@@ -1,3 +1,18 @@
+2009-07-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspector: Print console command message upon evaluate
+        selection request; Handle errors in evaluation request
+        properly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27535
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._evalSelectionInCallFrame):
+
 2009-07-22  Xan Lopez  <xlopez@igalia.com>
 
         Attempt to fix the GTK+ build.

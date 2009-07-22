@@ -319,7 +319,9 @@ WebInspector.SourceFrame.prototype = {
         var expression = selection.getRangeAt(0).toString().trimWhitespace();
         WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false, function(result, exception) {
             WebInspector.showConsole();
-            WebInspector.console.addMessage(new WebInspector.ConsoleCommandResult(result, exception));
+            var commandMessage = new WebInspector.ConsoleCommand(expression);
+            WebInspector.console.addMessage(commandMessage);
+            WebInspector.console.addMessage(new WebInspector.ConsoleCommandResult(result, exception, commandMessage));
         });
     },
 
