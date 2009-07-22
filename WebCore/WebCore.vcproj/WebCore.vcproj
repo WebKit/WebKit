@@ -28878,6 +28878,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptSourceProvider.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScriptState.cpp"
 					>
 				</File>

@@ -4337,6 +4337,7 @@
 		C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
+		CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */; };
 		D05CED290A40BB2C00C5AF38 /* FormatBlockCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */; };
 		D05CED2A0A40BB2C00C5AF38 /* FormatBlockCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */; };
 		D06C0D8F0CFD11460065F43F /* RemoveFormatCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */; };
@@ -9206,6 +9207,7 @@
 		C55E38BC10040D5D00A56BDB /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
+		CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptSourceProvider.h; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
 		D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormatBlockCommand.h; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
@@ -13540,6 +13542,7 @@
 				412A68460F6B03DD000EA66E /* ScriptObjectQuarantine.cpp */,
 				419536500F68222400D0C679 /* ScriptObjectQuarantine.h */,
 				934CC1090EDB223900A658F2 /* ScriptSourceCode.h */,
+				CE54FD371016D9A6008B44C8 /* ScriptSourceProvider.h */,
 				4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */,
 				41C760B00EDE03D300C1655F /* ScriptState.h */,
 				416F45EF0ED7B311008215B6 /* ScriptString.h */,
@@ -17024,6 +17027,7 @@
 				2ECF7ADD10162B3800427DE7 /* JSErrorEvent.h in Headers */,
 				2ECF7AE210162B5800427DE7 /* ErrorEvent.h in Headers */,
 				A8EDB03D1016849400FE8113 /* DOMObjectWithSVGContext.h in Headers */,
+				CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

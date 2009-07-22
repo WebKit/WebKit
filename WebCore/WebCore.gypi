@@ -573,6 +573,7 @@
             'bindings/js/ScriptObjectQuarantine.cpp',
             'bindings/js/ScriptObjectQuarantine.h',
             'bindings/js/ScriptSourceCode.h',
+            'bindings/js/ScriptSourceProvider.h',
             'bindings/js/ScriptState.cpp',
             'bindings/js/ScriptState.h',
             'bindings/js/ScriptString.h',

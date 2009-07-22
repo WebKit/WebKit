@@ -29,11 +29,12 @@
 #ifndef StringSourceProvider_h
 #define StringSourceProvider_h
 
+#include "ScriptSourceProvider.h"
 #include <parser/SourceCode.h>
 
 namespace WebCore {
 
-    class StringSourceProvider : public JSC::SourceProvider {
+    class StringSourceProvider : public ScriptSourceProvider {
     public:
         static PassRefPtr<StringSourceProvider> create(const String& source, const String& url) { return adoptRef(new StringSourceProvider(source, url)); }
 
@@ -44,7 +45,7 @@ namespace WebCore {
 
     private:
         StringSourceProvider(const String& source, const String& url)
-            : SourceProvider(url)
+            : ScriptSourceProvider(url)
             , m_source(source)
         {
         }

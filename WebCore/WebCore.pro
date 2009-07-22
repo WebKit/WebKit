@@ -1133,6 +1133,7 @@ HEADERS += \
     accessibility/AccessibilityTableHeaderContainer.h \
     accessibility/AccessibilityTableRow.h \
     accessibility/AXObjectCache.h \
+    bindings/js/CachedScriptSourceProvider.h \
     bindings/js/DOMObjectWithSVGContext.h \
     bindings/js/GCController.h \
     bindings/js/JSAudioConstructor.h \
@@ -1192,8 +1193,11 @@ HEADERS += \
     bindings/js/ScriptFunctionCall.h \
     bindings/js/ScriptObject.h \
     bindings/js/ScriptObjectQuarantine.h \
+    bindings/js/ScriptSourceCode.h \
+    bindings/js/ScriptSourceProvider.h \
     bindings/js/ScriptState.h \
     bindings/js/ScriptValue.h \
+    bindings/js/StringSourceProvider.h \
     bindings/js/WorkerScriptController.h \
     bridge/c/c_class.h \
     bridge/c/c_instance.h \
