@@ -1,3 +1,9 @@
+2009-07-22  Xan Lopez  <xlopez@igalia.com>
+
+        Attempt to fix the GTK+ build.
+
+        * GNUmakefile.am:
+
 2009-07-21  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Fix the Qt build.
