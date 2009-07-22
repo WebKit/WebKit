@@ -36,7 +36,7 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&isGitDirectory &isGit &isSVNDirectory &isSVN &makeFilePathRelative);
+   @EXPORT      = qw(&isGitDirectory &isGit &isSVNDirectory &isSVN &determineSVNRoot &makeFilePathRelative);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
@@ -102,6 +102,41 @@ sub isSVN()
 
     $isSVN = isSVNDirectory(".");
     return $isSVN;
+}
+
+sub determineSVNRoot()
+{
+    my $devNull = File::Spec->devnull();
+    my $last = '';
+    my $path = '.';
+    my $parent = '..';
+    my $repositoryUUID;
+    while (1) {
+        my $thisUUID;
+        # Ignore error messages in case we've run past the root of the checkout.
+        open INFO, "svn info '$path' 2> $devNull |" or die;
+        while (<INFO>) {
+            if (/^Repository UUID: (.+)/) {
+                $thisUUID = $1;
+                { local $/ = undef; <INFO>; }  # Consume the rest of the input.
+            }
+        }
+        close INFO;
+
+        # It's possible (e.g. for developers of some ports) to have a WebKit
+        # checkout in a subdirectory of another checkout.  So abort if the
+        # repository UUID suddenly changes.
+        last if !$thisUUID;
+        if (!$repositoryUUID) {
+            $repositoryUUID = $thisUUID;
+        }
+        last if $thisUUID ne $repositoryUUID;
+
+        $last = $path;
+        $path = File::Spec->catdir($parent, $path);
+    }
+
+    return File::Spec->rel2abs($last);
 }
 
 sub svnRevisionForDirectory($)

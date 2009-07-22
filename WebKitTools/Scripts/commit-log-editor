@@ -179,21 +179,7 @@ sub topLevelSourceDirectory
         chomp(my $gitDir = `git rev-parse --git-dir`);
         return dirname($gitDir);
     } elsif (isSVN()) {
-        open(INFO, "-|", qw(svn info)) or die;
-        my ($root, $url);
-        while (my $line = <INFO>) {
-            if ($line =~ /^Repository Root: (.*)$/) {
-                $root = $1;
-            } elsif ($line =~ /^URL: (.*)$/) {
-                $url = $1;
-            }
-        }
-        close(INFO);
-
-        my $path = $url;
-        $path =~ s/^\Q$root\E//;
-        $path =~ s/^\/?(branches\/[^\/]*|trunk)\/?//;
-        return File::Spec->rel2abs(File::Spec->catdir(map { ".." } File::Spec->splitdir($path)));
+        return determineSVNRoot();
     }
 }
 

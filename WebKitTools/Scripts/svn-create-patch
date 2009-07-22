@@ -44,19 +44,21 @@ use strict;
 use warnings;
 
 use Config;
-use Cwd;
+use Cwd qw();  # "qw()" prevents warnings if we later (indirectly) "use POSIX;".
 use File::Basename;
 use File::Spec;
 use File::stat;
+use FindBin;
 use Getopt::Long;
+use lib $FindBin::Bin;
 use MIME::Base64;
 use POSIX qw(:errno_h);
 use Time::gmtime;
+use VCSUtils;
 
 sub binarycmp($$);
 sub canonicalizePath($);
 sub chdirAndGetDifference($);
-sub determineSvnRoot();
 sub findBaseUrl($);
 sub findMimeType($;$);
 sub findModificationType($);
@@ -97,7 +99,7 @@ for my $path (keys %paths) {
     generateFileList($path, %diffFiles);
 }
 
-my $svnRoot = determineSvnRoot();
+my $svnRoot = determineSVNRoot();
 my $prefix = chdirAndGetDifference($svnRoot);
 
 # Generate the diffs, in a order chosen for easy reviewing.
@@ -466,38 +468,4 @@ sub chdirAndGetDifference($)
     my $after = Cwd::getcwd();
     return "." if $after eq $before;
     return File::Spec->abs2rel($before, $after);
-}
-
-sub determineSvnRoot()
-{
-    my $last = '';
-    my $path = '.';
-    my $parent = '..';
-    my $repositoryUUID;
-    while (1) {
-        my $thisUUID;
-        # Ignore error messages in case we've run past the root of the checkout.
-        open INFO, "svn info '$path' 2> $devNull |" or die;
-        while (<INFO>) {
-            if (/^Repository UUID: (.+)/) {
-                $thisUUID = $1;
-                { local $/ = undef; <INFO>; }  # Consume the rest of the input.
-            }
-        }
-        close INFO;
-
-        # It's possible (e.g. for developers of some ports) to have a WebKit
-        # checkout in a subdirectory of another checkout.  So abort if the
-        # repository UUID suddenly changes.
-        last if !$thisUUID;
-        if (!$repositoryUUID) {
-            $repositoryUUID = $thisUUID;
-        }
-        last if $thisUUID ne $repositoryUUID;
-
-        $last = $path;
-        $path = File::Spec->catdir($parent, $path);
-    }
-
-    return File::Spec->rel2abs($last);
 }
