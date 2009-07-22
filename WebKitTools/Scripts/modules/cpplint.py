@@ -2902,20 +2902,25 @@ def print_categories():
     sys.exit(0)
 
 
-def parse_arguments(args):
+def parse_arguments(args, additional_flags=[]):
     """Parses the command line arguments.
 
     This may set the output format and verbosity level as side-effects.
 
     Args:
       args: The command line arguments:
+      additional_flags: A list of strings which specifies flags we allow.
 
     Returns:
-      The list of filenames to lint.
+      A tuple of (filenames, flags)
+
+      filenames: The list of filenames to lint.
+      flags: The dict of the flag names and the flag values.
     """
+    flags = ['help', 'output=', 'verbose=', 'filter='] + additional_flags
+    additional_flag_values = {}
     try:
-        (opts, filenames) = getopt.getopt(args, '', ['help', 'output=', 'verbose=',
-                                                     'filter='])
+        (opts, filenames) = getopt.getopt(args, '', flags)
     except getopt.GetoptError:
         print_usage('Invalid arguments.')
 
@@ -2936,12 +2941,14 @@ def parse_arguments(args):
             filters = val
             if not filters:
                 print_categories()
+        else:
+            additional_flag_values[opt] = val
 
     _set_output_format(output_format)
     _set_verbose_level(verbosity)
     _set_filters(filters)
 
-    return filenames
+    return (filenames, additional_flag_values)
 
 
 def use_webkit_styles():
@@ -2989,7 +2996,7 @@ that you notice that it flags incorrectly.
 
     use_webkit_styles()
 
-    filenames = parse_arguments(sys.argv[1:])
+    (filenames, flags) = parse_arguments(sys.argv[1:])
     if not filenames:
         print_usage('No files were specified.')
 

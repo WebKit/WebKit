@@ -1495,42 +1495,52 @@ class CpplintTest(CpplintTestBase):
             self.assertRaises(ValueError, cpplint.parse_arguments,
                               ['--filter=+a,b,-c'])
 
-            self.assertEquals(['foo.cc'], cpplint.parse_arguments(['foo.cc']))
+            self.assertEquals((['foo.cc'], {}), cpplint.parse_arguments(['foo.cc']))
             self.assertEquals(old_output_format, cpplint._cpplint_state.output_format)
             self.assertEquals(old_verbose_level, cpplint._cpplint_state.verbose_level)
 
-            self.assertEquals([], cpplint.parse_arguments([]))
-            self.assertEquals([], cpplint.parse_arguments(['--v=0']))
+            self.assertEquals(([], {}), cpplint.parse_arguments([]))
+            self.assertEquals(([], {}), cpplint.parse_arguments(['--v=0']))
 
-            self.assertEquals(['foo.cc'],
+            self.assertEquals((['foo.cc'], {}),
                               cpplint.parse_arguments(['--v=1', 'foo.cc']))
             self.assertEquals(1, cpplint._cpplint_state.verbose_level)
-            self.assertEquals(['foo.h'],
+            self.assertEquals((['foo.h'], {}),
                               cpplint.parse_arguments(['--v=3', 'foo.h']))
             self.assertEquals(3, cpplint._cpplint_state.verbose_level)
-            self.assertEquals(['foo.cpp'],
+            self.assertEquals((['foo.cpp'], {}),
                               cpplint.parse_arguments(['--verbose=5', 'foo.cpp']))
             self.assertEquals(5, cpplint._cpplint_state.verbose_level)
             self.assertRaises(ValueError,
                               cpplint.parse_arguments, ['--v=f', 'foo.cc'])
 
-            self.assertEquals(['foo.cc'],
+            self.assertEquals((['foo.cc'], {}),
                               cpplint.parse_arguments(['--output=emacs', 'foo.cc']))
             self.assertEquals('emacs', cpplint._cpplint_state.output_format)
-            self.assertEquals(['foo.h'],
+            self.assertEquals((['foo.h'], {}),
                               cpplint.parse_arguments(['--output=vs7', 'foo.h']))
             self.assertEquals('vs7', cpplint._cpplint_state.output_format)
             self.assertRaises(SystemExit,
                               cpplint.parse_arguments, ['--output=blah', 'foo.cc'])
 
             filt = '-,+whitespace,-whitespace/indent'
-            self.assertEquals(['foo.h'],
+            self.assertEquals((['foo.h'], {}),
                               cpplint.parse_arguments(['--filter='+filt, 'foo.h']))
             self.assertEquals(['-', '+whitespace', '-whitespace/indent'],
                               cpplint._cpplint_state.filters)
 
-            self.assertEquals(['foo.cc', 'foo.h'],
+            self.assertEquals((['foo.cc', 'foo.h'], {}),
                               cpplint.parse_arguments(['foo.cc', 'foo.h']))
+
+            self.assertEquals((['foo.cc'], {'--foo': ''}),
+                              cpplint.parse_arguments(['--foo', 'foo.cc'], ['foo']))
+            self.assertEquals((['foo.cc'], {'--foo': 'bar'}),
+                              cpplint.parse_arguments(['--foo=bar', 'foo.cc'], ['foo=']))
+            self.assertEquals((['foo.cc'], {}),
+                              cpplint.parse_arguments(['foo.cc'], ['foo=']))
+            self.assertRaises(SystemExit,
+                              cpplint.parse_arguments,
+                              ['--footypo=bar', 'foo.cc'], ['foo='])
         finally:
             cpplint._USAGE = old_usage
             cpplint._ERROR_CATEGORIES = old_error_categories

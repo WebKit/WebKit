@@ -41,7 +41,7 @@ from modules.scm import detect_scm_system
 
 # Override the usage of the lint tool.
 cpplint._USAGE = """
-Syntax: %(program_name)s [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
+Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7] [--filter=-x,+y,...]
 
   The style guidelines this tries to follow are those in
     http://webkit.org/coding/coding-style.html
@@ -57,12 +57,19 @@ Syntax: %(program_name)s [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
 
   Flags:
 
+    verbose=#
+      Specify a number 0-5 to restrict errors to certain verbosity levels.
+
+    git-commit=<COMMITISH>
+      Check style for a specified git commit.
+      Note that the program checks style based on current local file
+      instead of actual diff of the git commit.  So, if the files are
+      updated after the specified git commit, the information of line
+      number may be wrong.
+
     output=vs7
       By default, the output is formatted to ease emacs parsing.  Visual Studio
       compatible output (vs7) may also be used.  Other formats are unsupported.
-
-    verbose=#
-      Specify a number 0-5 to restrict errors to certain verbosity levels.
 
     filter=-x,+y,...
       Specify a comma-separated list of category-filters to apply: only
@@ -112,7 +119,8 @@ def process_patch(patch_string):
 
 def main():
     cpplint.use_webkit_styles()
-    args = cpplint.parse_arguments(sys.argv[1:])
+
+    (args, flags) = cpplint.parse_arguments(sys.argv[1:], ["git-commit="])
     if args:
         sys.stderr.write("ERROR: We don't support files as arguments for now.\n" + cpplint._USAGE)
         sys.exit(1)
@@ -120,7 +128,10 @@ def main():
     cwd = os.path.abspath('.')
     scm = detect_scm_system(cwd)
 
-    process_patch(scm.create_patch())
+    if "--git-commit" in flags:
+        process_patch(scm.create_patch_from_local_commit(flags["--git-commit"]))
+    else:
+        process_patch(scm.create_patch())
 
     sys.stderr.write('Total errors found: %d\n' % cpplint.error_count())
     sys.exit(cpplint.error_count() > 0)
