@@ -1,3 +1,9 @@
+2009-07-21  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Fix the Qt build.
+
+        * WebCore.pro: Add RGBColor.cpp to the build, remove JSRGBColor.
+
 2009-07-21  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

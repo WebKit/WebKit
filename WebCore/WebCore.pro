@@ -607,6 +607,7 @@ SOURCES += \
     css/MediaQuery.cpp \
     css/MediaQueryEvaluator.cpp \
     css/MediaQueryExp.cpp \
+    css/RGBColor.cpp \
     css/ShadowValue.cpp \
     css/StyleBase.cpp \
     css/StyleList.cpp \
@@ -1173,8 +1174,6 @@ HEADERS += \
     bindings/js/JSOptionConstructor.h \
     bindings/js/JSPluginElementFunctions.h \
     bindings/js/JSQuarantinedObjectWrapper.h \
-    bindings/js/JSRGBColor.h \
-    bindings/js/JSRGBColor.h \
     bindings/js/JSSharedWorkerConstructor.h \
     bindings/js/JSStorageCustom.h \
     bindings/js/JSWebKitCSSMatrixConstructor.h \
@@ -1263,6 +1262,7 @@ HEADERS += \
     css/MediaQueryEvaluator.h \
     css/MediaQueryExp.h \
     css/MediaQuery.h \
+    css/RGBColor.h \
     css/ShadowValue.h \
     css/StyleBase.h \
     css/StyleList.h \
