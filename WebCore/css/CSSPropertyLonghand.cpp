@@ -128,10 +128,10 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
 
     static const int backgroundProperties[] = {
         CSSPropertyBackgroundAttachment,
-        CSSPropertyWebkitBackgroundClip,
+        CSSPropertyBackgroundClip,
         CSSPropertyBackgroundColor,
         CSSPropertyBackgroundImage,
-        CSSPropertyWebkitBackgroundOrigin,
+        CSSPropertyBackgroundOrigin,
         CSSPropertyBackgroundPositionX,
         CSSPropertyBackgroundPositionY,
         CSSPropertyBackgroundRepeat,

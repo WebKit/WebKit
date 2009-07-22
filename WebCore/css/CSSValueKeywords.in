@@ -543,15 +543,11 @@ round
 # border-box/content-box/padding-box should be used instead.
 #
 border
+border-box
 content
+content-box
 padding
 padding-box
-
-#
-# CSS_PROP_BOX_SIZING
-#
-border-box
-content-box
 
 #
 # CSS_PROP__KHTML_RTL_ORDERING

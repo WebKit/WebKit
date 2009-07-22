@@ -10,8 +10,10 @@
 
 background
 background-attachment
+background-clip
 background-color
 background-image
+background-origin
 background-position
 background-position-x
 background-position-y

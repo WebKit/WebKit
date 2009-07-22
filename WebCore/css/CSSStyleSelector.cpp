@@ -2904,12 +2904,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBackgroundAttachment:
         HANDLE_BACKGROUND_VALUE(attachment, Attachment, value)
         return;
+    case CSSPropertyBackgroundClip:
     case CSSPropertyWebkitBackgroundClip:
         HANDLE_BACKGROUND_VALUE(clip, Clip, value)
         return;
     case CSSPropertyWebkitBackgroundComposite:
         HANDLE_BACKGROUND_VALUE(composite, Composite, value)
         return;
+    case CSSPropertyBackgroundOrigin:
     case CSSPropertyWebkitBackgroundOrigin:
         HANDLE_BACKGROUND_VALUE(origin, Origin, value)
         return;

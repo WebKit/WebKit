@@ -2,7 +2,7 @@ Test for http://bugs.webkit.org/show_bug.cgi?id=9284 Quirksmode (CSS1): Removing
 
 Starting with a declaration containing all properties that are constituents of shortcuts, see what is removed when a shortcut property is removed. The shortcut’s constituents and only them should be removed.
 
-Removing background removes background-image, background-repeat, background-attachment, -webkit-background-clip, -webkit-background-origin, background-color, background-position.
+Removing background removes background-image, background-repeat, background-attachment, background-origin, background-clip, background-color, background-position.
 Removing background-position removes background-position.
 Removing border removes border-top-width, border-right-width, border-bottom-width, border-left-width, border-top-style, border-right-style, border-bottom-style, border-left-style, border-top-color, border-right-color, border-bottom-color, border-left-color.
 Removing border-top removes border-top-width, border-top-style, border-top-color.
@@ -20,7 +20,7 @@ Removing list-style removes list-style-type, list-style-position, list-style-ima
 Removing margin removes margin-top, margin-right, margin-bottom, margin-left.
 Removing -webkit-margin-collapse removes -webkit-margin-top-collapse, -webkit-margin-bottom-collapse.
 Removing -webkit-marquee removes -webkit-marquee-direction, -webkit-marquee-increment, -webkit-marquee-repetition, -webkit-marquee-style, -webkit-marquee-speed.
-Removing -webkit-mask removes -webkit-mask-image, -webkit-mask-repeat, -webkit-mask-attachment, -webkit-mask-position-x, -webkit-mask-position-y, -webkit-mask-clip, -webkit-mask-origin.
+Removing -webkit-mask removes -webkit-mask-image, -webkit-mask-repeat, -webkit-mask-attachment, -webkit-mask-position-x, -webkit-mask-position-y, -webkit-mask-origin, -webkit-mask-clip.
 Removing -webkit-mask-position removes -webkit-mask-position-x, -webkit-mask-position-y.
 Removing overflow removes overflow-x, overflow-y.
 Removing padding removes padding-top, padding-right, padding-bottom, padding-left.

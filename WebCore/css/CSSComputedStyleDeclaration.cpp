@@ -52,8 +52,10 @@ namespace WebCore {
 // List of all properties we know how to compute, omitting shorthands.
 static const int computedProperties[] = {
     CSSPropertyBackgroundAttachment,
+    CSSPropertyBackgroundClip,
     CSSPropertyBackgroundColor,
     CSSPropertyBackgroundImage,
+    CSSPropertyBackgroundOrigin,
     CSSPropertyBackgroundPosition, // more-specific background-position-x/y are non-standard
     CSSPropertyBackgroundRepeat,
     CSSPropertyBorderBottomColor,
@@ -641,9 +643,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->backgroundAttachment())
                 return CSSPrimitiveValue::createIdentifier(CSSValueScroll);
             return CSSPrimitiveValue::createIdentifier(CSSValueFixed);
+        case CSSPropertyBackgroundClip:
+        case CSSPropertyBackgroundOrigin:
         case CSSPropertyWebkitBackgroundClip:
         case CSSPropertyWebkitBackgroundOrigin: {
-            EFillBox box = (propertyID == CSSPropertyWebkitBackgroundClip ? style->backgroundClip() : style->backgroundOrigin());
+            EFillBox box = (propertyID == CSSPropertyWebkitBackgroundClip || propertyID == CSSPropertyBackgroundClip) ? style->backgroundClip() : style->backgroundOrigin();
             return CSSPrimitiveValue::create(box);
         }
         case CSSPropertyBackgroundPosition: {

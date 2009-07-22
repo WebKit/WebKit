@@ -59,4 +59,4 @@ PASS: t.style.cssText should be background-position: 10px 15px, 20px 25px, 30px 
 t.setAttribute('style', 'background: url(about:blank) 80% 80%;');
 t.style.backgroundPositionY = '50px'
 style.cssText =
-background-image: url(about:blank); background-repeat: initial; background-attachment: initial; -webkit-background-clip: initial; -webkit-background-origin: initial; background-color: initial; background-position: 80% 50px;
+background-image: url(about:blank); background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: initial; background-position: 80% 50px;
