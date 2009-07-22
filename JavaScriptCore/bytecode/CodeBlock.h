@@ -115,12 +115,14 @@ namespace JSC {
     struct MethodCallLinkInfo {
         MethodCallLinkInfo()
             : cachedStructure(0)
+            , cachedPrototypeStructure(0)
         {
         }
 
         CodeLocationCall callReturnLocation;
         CodeLocationDataLabelPtr structureLabel;
         Structure* cachedStructure;
+        Structure* cachedPrototypeStructure;
     };
 
     struct FunctionRegisterInfo {

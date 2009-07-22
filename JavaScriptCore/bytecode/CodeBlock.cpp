@@ -1319,8 +1319,12 @@ CodeBlock::~CodeBlock()
     }
 
     for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
-        if (Structure* structure = m_methodCallLinkInfos[i].cachedStructure)
+        if (Structure* structure = m_methodCallLinkInfos[i].cachedStructure) {
             structure->deref();
+            // Both members must be filled at the same time
+            ASSERT(m_methodCallLinkInfos[i].cachedPrototypeStructure);
+            m_methodCallLinkInfos[i].cachedPrototypeStructure->deref();
+        }
     }
 
     unlinkCallers();

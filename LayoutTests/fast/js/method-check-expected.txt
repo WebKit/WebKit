@@ -1,0 +1,7 @@
+This test yields PASS, if malloc does not reuse the memory address for the structure of String prototype
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS true is true
+
