@@ -2094,6 +2094,12 @@ class OrderOfIncludesTest(CpplintTestBase):
                                          '')
 
         self.assert_language_rules_check('foo.h',
+                                         '#include "a.h"\n'
+                                         '#include "B.h"\n'
+                                         '#include "c.h"\n',
+                                         '')
+
+        self.assert_language_rules_check('foo.h',
                                          '#include <assert.h>\n'
                                          '#include "bar.h"\n',
                                          'Alphabetical sorting problem.  [build/include_order] [4]')
