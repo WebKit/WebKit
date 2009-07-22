@@ -392,7 +392,7 @@ class _CppLintState(object):
                 self.filters.append(clean_filter)
         for filter in self.filters:
             if not (filter.startswith('+') or filter.startswith('-')):
-                raise ValueError('Every filter in --filters must start with '
+                raise ValueError('Every filter in --filter must start with '
                                  '+ or - (%s does not)' % filter)
 
     def reset_error_count(self):
@@ -613,7 +613,7 @@ def _should_print_error(category, confidence):
             if category.startswith(one_filter[1:]):
                 is_filtered = False
         else:
-            assert False  # should have been checked for in SetFilter.
+            assert False  # should have been checked for in set_filter.
     if is_filtered:
         return False
 
