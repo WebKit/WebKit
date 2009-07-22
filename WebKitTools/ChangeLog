@@ -64,6 +64,24 @@
 
         Reviewed by Adam Treat.
 
+        Fix false positives in namespace indentation checks.
+        https://bugs.webkit.org/show_bug.cgi?id=27567
+
+        The regular expression detecting goto labels (in order
+        to skip those) was too permissive, which caused other
+        code like "Foo::Bar()" to be treated as a label too,
+        thereby not stopping the processing loop as expected.
+
+        Now comes with a stricter regexp, and more demanding
+        test cases to check for these issues.
+
+        * Scripts/modules/cpplint.py:
+        * Scripts/modules/cpplint_unittest.py:
+
+2009-07-22  Jakob Petsovits  <jakob.petsovits@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
         Fix cpplint generating false positives for
         "primary" includes in headers.
         https://bugs.webkit.org/show_bug.cgi?id=27553

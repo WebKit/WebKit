@@ -1709,7 +1709,9 @@ def check_namespace_indentation(filename, clean_lines, line_number, file_extensi
             line_offset += 1
 
             # Skip not only empty lines but also those with (goto) labels.
-            if current_line.strip() == '' or match(r'\w+\s*:', current_line):
+            # The goto label regexp accepts spaces or the beginning of a
+            # comment (if anything) after the initial colon.
+            if current_line.strip() == '' or match(r'\w+\s*:([\s\/].*)?$', current_line):
                 continue
 
             remaining_line = current_line[len(namespace_indentation):]

@@ -2764,9 +2764,11 @@ class WebKitStyleTest(CpplintTestBase):
         #    or .mm), code inside a namespace should not be indented.
         self.assert_multi_line_lint(
             'namespace WebCore {\n\n'
-            'bool Document::Foo()\n'
+            'Document::Foo()\n'
+            '    : foo(bar)\n'
+            '    , boo(far)\n'
             '{\n'
-            '    return true;\n'
+            '    stuff();\n'
             '}',
             '',
             'foo.cpp')
@@ -2775,6 +2777,13 @@ class WebKitStyleTest(CpplintTestBase):
             'namespace InnerNamespace {\n'
             'Document::Foo() { }\n'
             '}',
+            '',
+            'foo.cpp')
+        self.assert_multi_line_lint(
+            '    namespace WebCore {\n\n'
+            'start:  // Pointless code, but tests the label regexp.\n'
+            '    goto start;\n'
+            '    }',
             '',
             'foo.cpp')
         self.assert_multi_line_lint(
