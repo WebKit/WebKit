@@ -2193,22 +2193,13 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
 @end
 
-@interface NSString (WebHTMLViewFileInternal)
-- (BOOL)matchesExtensionEquivalent:(NSString *)extension;
-@end
-
-@implementation NSString (WebHTMLViewFileInternal)
-
-- (BOOL)matchesExtensionEquivalent:(NSString *)extension
+static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
 {
-    if ([self hasSuffix:extension])
-        return YES;
-    else if ([extension isEqualToString:@"jpeg"] && [self hasSuffix:@"jpg"])
-        return YES;
-    return NO;
+    NSString *extensionAsSuffix = [@"." stringByAppendingString:extension];
+    return [filename _webkit_hasCaseInsensitiveSuffix:extensionAsSuffix]
+        || ([extension _webkit_isCaseInsensitiveEqualToString:@"jpeg"]
+            && [filename _webkit_hasCaseInsensitiveSuffix:@".jpg"]);
 }
-
-@end
 
 #ifdef BUILDING_ON_TIGER
 
@@ -3481,7 +3472,7 @@ done:
         wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
         NSString* filename = [response suggestedFilename];
         NSString* trueExtension(tiffResource->image()->filenameExtension());
-        if (![filename matchesExtensionEquivalent:trueExtension])
+        if (!matchesExtensionOrEquivalent(filename, trueExtension))
             filename = [[filename stringByAppendingString:@"."] stringByAppendingString:trueExtension];
         [wrapper setPreferredFilename:filename];
     }
