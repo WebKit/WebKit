@@ -72,7 +72,7 @@ namespace WebCore {
 
         // Determines whether the script should be allowed or denied execution
         // based on the content of any user-submitted data.
-        bool canEvaluate(const String& sourceCode) const;
+        bool canEvaluate(const String& code) const;
 
         // Determines whether the JavaScript URL should be allowed or denied execution
         // based on the content of any user-submitted data.
@@ -99,17 +99,15 @@ namespace WebCore {
         bool canSetBaseElementURL(const String& url) const;
 
     private:
-        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool allowNullCharacters = false,
-                                bool allowNonNullControlCharacters = true, bool decodeHTMLentities = true, 
-                                bool leaveUndecodableHTMLEntitiesUntouched = false);
+        static String canonicalize(const String&);
         
-        static String decodeHTMLEntities(const String&, bool leaveUndecodableHTMLEntitiesUntouched = false);
+        static String decodeURL(const String& url, const TextEncoding& encoding = UTF8Encoding(), bool decodeHTMLentities = true);
+        
+        static String decodeHTMLEntities(const String&, bool leaveUndecodableHTMLEntitiesUntouched = true);
 
-        bool findInRequest(const String&, bool matchNullCharacters = true, bool matchNonNullControlCharacters = true,
-                           bool decodeHTMLentities = true, bool leaveUndecodableHTMLEntitiesUntouched = false) const;
+        bool findInRequest(const String&, bool decodeHTMLentities = true) const;
 
-        bool findInRequest(Frame*, const String&, bool matchNullCharacters = true, bool matchNonNullControlCharacters = true,
-                           bool decodeHTMLentities = true, bool leaveUndecodableHTMLEntitiesUntouched = false) const;
+        bool findInRequest(Frame*, const String&, bool decodeHTMLentities = true) const;
 
         // The frame to audit.
         Frame* m_frame;

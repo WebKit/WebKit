@@ -46,9 +46,9 @@ using namespace WTF;
 
 namespace WebCore {
 
-static bool isNonNullControlCharacter(UChar c)
+static bool isNonCanonicalCharacter(UChar c)
 {
-    return (c > '\0' && c < ' ') || c == 127;
+    return (c == '\\' || c == '0' || c < ' ' || c == 127);
 }
 
 XSSAuditor::XSSAuditor(Frame* frame)
@@ -66,12 +66,12 @@ bool XSSAuditor::isEnabled() const
     return (settings && settings->xssAuditorEnabled());
 }
 
-bool XSSAuditor::canEvaluate(const String& sourceCode) const
+bool XSSAuditor::canEvaluate(const String& code) const
 {
     if (!isEnabled())
         return true;
 
-    if (findInRequest(sourceCode, false, true, false)) {
+    if (findInRequest(code, false)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
@@ -84,7 +84,7 @@ bool XSSAuditor::canEvaluateJavaScriptURL(const String& code) const
     if (!isEnabled())
         return true;
 
-    if (findInRequest(code, false, false, true, true)) {
+    if (findInRequest(code)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request.\n"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
@@ -123,7 +123,7 @@ bool XSSAuditor::canLoadObject(const String& url) const
     if (!isEnabled())
         return true;
 
-    if (findInRequest(url, false, false)) {
+    if (findInRequest(url)) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute a JavaScript script. Source code of script found within request"));
         m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
@@ -145,11 +145,16 @@ bool XSSAuditor::canSetBaseElementURL(const String& url) const
     return true;
 }
 
-String XSSAuditor::decodeURL(const String& str, const TextEncoding& encoding, bool allowNullCharacters,
-                             bool allowNonNullControlCharacters, bool decodeHTMLentities, bool leaveUndecodableHTMLEntitiesUntouched)
+String XSSAuditor::canonicalize(const String& string)
+{
+    String result = decodeHTMLEntities(string);
+    return result.removeCharacters(&isNonCanonicalCharacter);
+}
+
+String XSSAuditor::decodeURL(const String& string, const TextEncoding& encoding, bool decodeHTMLentities)
 {
     String result;
-    String url = str;
+    String url = string;
 
     url.replace('+', ' ');
     result = decodeURLEscapeSequences(url);
@@ -157,20 +162,13 @@ String XSSAuditor::decodeURL(const String& str, const TextEncoding& encoding, bo
     if (!decodedResult.isEmpty())
         result = decodedResult;
     if (decodeHTMLentities)
-        result = decodeHTMLEntities(result, leaveUndecodableHTMLEntitiesUntouched);
-    if (!allowNullCharacters)
-        result = StringImpl::createStrippingNullCharacters(result.characters(), result.length());
-    if (!allowNonNullControlCharacters) {
-        decodedResult = result.removeCharacters(&isNonNullControlCharacter);
-        if (!decodedResult.isEmpty())
-            result = decodedResult;
-    }
+        result = decodeHTMLEntities(result);
     return result;
 }
 
-String XSSAuditor::decodeHTMLEntities(const String& str, bool leaveUndecodableHTMLEntitiesUntouched)
+String XSSAuditor::decodeHTMLEntities(const String& string, bool leaveUndecodableHTMLEntitiesUntouched)
 {
-    SegmentedString source(str);
+    SegmentedString source(string);
     SegmentedString sourceShadow;
     Vector<UChar> result;
     
@@ -205,22 +203,18 @@ String XSSAuditor::decodeHTMLEntities(const String& str, bool leaveUndecodableHT
     return String::adopt(result);
 }
 
-bool XSSAuditor::findInRequest(const String& string, bool matchNullCharacters, bool matchNonNullControlCharacters,
-                               bool decodeHTMLentities, bool leaveUndecodableHTMLEntitiesUntouched) const
+bool XSSAuditor::findInRequest(const String& string, bool decodeHTMLentities) const
 {
     bool result = false;
     Frame* parentFrame = m_frame->tree()->parent();
     if (parentFrame && m_frame->document()->url() == blankURL())
-        result = findInRequest(parentFrame, string, matchNullCharacters, matchNonNullControlCharacters, 
-                               decodeHTMLentities, leaveUndecodableHTMLEntitiesUntouched);
+        result = findInRequest(parentFrame, string, decodeHTMLentities);
     if (!result)
-        result = findInRequest(m_frame, string, matchNullCharacters, matchNonNullControlCharacters, 
-                               decodeHTMLentities, leaveUndecodableHTMLEntitiesUntouched);
+        result = findInRequest(m_frame, string, decodeHTMLentities);
     return result;
 }
 
-bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool matchNullCharacters, bool matchNonNullControlCharacters,
-                               bool decodeHTMLentities, bool leaveUndecodableHTMLEntitiesUntouched) const
+bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeHTMLentities) const
 {
     ASSERT(frame->document());
     String pageURL = frame->document()->url().string();
@@ -236,11 +230,11 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool matchNul
     if (string.isEmpty())
         return false;
 
+    String canonicalizedString = canonicalize(string);
     if (string.length() < pageURL.length()) {
         // The string can actually fit inside the pageURL.
-        String decodedPageURL = decodeURL(pageURL, frame->document()->decoder()->encoding(), matchNullCharacters,
-                                          matchNonNullControlCharacters, decodeHTMLentities, leaveUndecodableHTMLEntitiesUntouched);
-        if (decodedPageURL.find(string, 0, false) != -1)
+        String decodedPageURL = canonicalize(decodeURL(pageURL, frame->document()->decoder()->encoding(), decodeHTMLentities));
+        if (decodedPageURL.find(canonicalizedString, 0, false) != -1)
            return true;  // We've found the smoking gun.
     }
 
@@ -252,9 +246,8 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool matchNul
             // the url-encoded POST data because the length of the url-decoded
             // code is less than or equal to the length of the url-encoded
             // string.
-            String decodedFormData = decodeURL(formData, frame->document()->decoder()->encoding(), matchNullCharacters,
-                                               matchNonNullControlCharacters, decodeHTMLentities, leaveUndecodableHTMLEntitiesUntouched);
-            if (decodedFormData.find(string, 0, false) != -1)
+            String decodedFormData = canonicalize(decodeURL(formData, frame->document()->decoder()->encoding(), decodeHTMLentities));
+            if (decodedFormData.find(canonicalizedString, 0, false) != -1)
                 return true;  // We found the string in the POST data.
         }
     }
