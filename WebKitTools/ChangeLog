@@ -1,3 +1,18 @@
+2009-07-22  Jakob Petsovits  <jakob.petsovits@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        cpplint generates false positives for primary includes
+        https://bugs.webkit.org/show_bug.cgi?id=27544
+
+        Fix false positives for instances when cpplint would
+        normally classify multiple includes as primary: After
+        the first primary include, classify subsequent ones as
+        "other" includes even if they look like primary ones.
+
+        * Scripts/modules/cpplint.py:
+        * Scripts/modules/cpplint_unittest.py:
+
 2009-07-22  Gabor Rapcsanyi  <rapcsanyi.gabor@stud.u-szeged.hu>
 
         Reviewed by Simon Hausmann.

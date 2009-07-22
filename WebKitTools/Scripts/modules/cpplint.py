@@ -291,6 +291,11 @@ class _IncludeState(dict):
     def __init__(self):
         dict.__init__(self)
         self._section = self._INITIAL_SECTION
+        self._visited_primary_section = False
+        self.header_types = dict();
+
+    def visited_primary_section(self):
+        return self._visited_primary_section
 
     def check_next_include_order(self, header_type, file_is_header):
         """Returns a non-empty error message if the next header is out of order.
@@ -331,6 +336,7 @@ class _IncludeState(dict):
             elif self._section < self._CONFIG_SECTION:
                 error_message = before_error_message
             self._section = self._PRIMARY_SECTION
+            self._visited_primary_section = True
         else:
             assert header_type == _OTHER_HEADER
             if not file_is_header and self._section < self._PRIMARY_SECTION:
@@ -2104,13 +2110,14 @@ def _is_test_filename(filename):
     return False
 
 
-def _classify_include(filename, include, is_system):
+def _classify_include(filename, include, is_system, include_state):
     """Figures out what kind of header 'include' is.
 
     Args:
       filename: The current file cpplint is running over.
       include: The path to a #included file.
       is_system: True if the #include used <> rather than "".
+      include_state: An _IncludeState instance in which the headers are inserted.
 
     Returns:
       One of the _XXX_HEADER constants.
@@ -2137,7 +2144,13 @@ def _classify_include(filename, include, is_system):
     target_base = FileInfo(filename).base_name()
     include_base = FileInfo(include).base_name()
 
-    if target_base.startswith(include_base):
+    # If we haven't encountered a primary header, then be lenient in checking.
+    if not include_state.visited_primary_section() and target_base.startswith(include_base):
+        return _PRIMARY_HEADER
+    # If we already encountered a primary header, perform a strict comparison.
+    # In case the two filename bases are the same then the above lenient check
+    # probably was a false positive.
+    elif include_state.visited_primary_section() and target_base == include_base:
         return _PRIMARY_HEADER
 
     return _OTHER_HEADER
@@ -2183,8 +2196,9 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
             # using a number of techniques. The include_state object keeps
             # track of the highest type seen, and complains if we see a
             # lower type after that.
-            header_type = _classify_include(filename, include, is_system)
+            header_type = _classify_include(filename, include, is_system, include_state)
             error_message = include_state.check_next_include_order(header_type, filename.endswith('.h'))
+            include_state.header_types[line_number] = header_type
 
             # Check to make sure we have a blank line after primary header.
             if not error_message and header_type == _PRIMARY_HEADER:
@@ -2205,8 +2219,7 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
                     previous_line = clean_lines.lines[previous_line_number]
                     previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
                  if previous_match:
-                    previous_include = previous_match.group(2)
-                    previous_header_type = _classify_include(filename, previous_include, (previous_match.group(1) == '<'))
+                    previous_header_type = include_state.header_types[previous_line_number]
                     if previous_header_type == _OTHER_HEADER and previous_line.strip() > line.strip():
                         error(filename, line_number, 'build/include_order', 4,
                               'Alphabetical sorting problem.')

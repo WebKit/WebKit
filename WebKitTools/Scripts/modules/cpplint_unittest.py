@@ -2174,30 +2174,46 @@ class OrderOfIncludesTest(CpplintTestBase):
 
     def test_classify_include(self):
         classify_include = cpplint._classify_include
+        include_state = cpplint._IncludeState()
         self.assertEqual(cpplint._CONFIG_HEADER,
                          classify_include('foo/foo.cpp',
                                           'config.h',
-                                          False))
+                                          False, include_state))
         self.assertEqual(cpplint._PRIMARY_HEADER,
                          classify_include('foo/internal/foo.cpp',
                                           'foo/public/foo.h',
-                                          False))
+                                          False, include_state))
         self.assertEqual(cpplint._PRIMARY_HEADER,
                          classify_include('foo/internal/foo.cpp',
                                           'foo/other/public/foo.h',
-                                          False))
+                                          False, include_state))
         self.assertEqual(cpplint._OTHER_HEADER,
                          classify_include('foo/internal/foo.cpp',
                                           'foo/other/public/foop.h',
-                                          False))
+                                          False, include_state))
         self.assertEqual(cpplint._OTHER_HEADER,
                          classify_include('foo/foo.cpp',
                                           'string',
-                                          True))
+                                          True, include_state))
         self.assertEqual(cpplint._PRIMARY_HEADER,
                          classify_include('fooCustom.cpp',
                                           'foo.h',
-                                          False))
+                                          False, include_state))
+        # Tricky example where both includes might be classified as primary.
+        self.assert_language_rules_check('ScrollbarThemeWince.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "ScrollbarThemeWince.h"\n'
+                                         '\n'
+                                         '#include "Scrollbar.h"\n',
+                                         '')
+        self.assert_language_rules_check('ScrollbarThemeWince.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "Scrollbar.h"\n'
+                                         '\n'
+                                         '#include "ScrollbarThemeWince.h"\n',
+                                         'Found header this file implements after a header this file implements.'
+                                         ' Should be: config.h, primary header, blank line, and then alphabetically sorted.'
+                                         '  [build/include_order] [4]')
 
     def test_try_drop_common_suffixes(self):
         self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo-inl.h'))
