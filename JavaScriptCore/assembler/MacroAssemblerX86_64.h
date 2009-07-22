@@ -32,6 +32,8 @@
 
 #include "MacroAssemblerX86Common.h"
 
+#define REPTACH_OFFSET_CALL_R11 3
+
 namespace JSC {
 
 class MacroAssemblerX86_64 : public MacroAssemblerX86Common {
@@ -446,6 +448,29 @@ public:
     bool supportsFloatingPoint() const { return true; }
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
     bool supportsFloatingPointTruncate() const { return true; }
+
+private:
+    friend class LinkBuffer;
+    friend class RepatchBuffer;
+
+    static void linkCall(void* code, Call call, FunctionPtr function)
+    {
+        if (!call.isFlagSet(Call::Near))
+            X86Assembler::linkPointer(code, X86Assembler::labelFor(call.m_jmp, -REPTACH_OFFSET_CALL_R11), function.value());
+        else
+            X86Assembler::linkCall(code, call.m_jmp, function.value());
+    }
+
+    static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
+    {
+        X86Assembler::repatchPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
+    }
+
+    static void repatchCall(CodeLocationCall call, FunctionPtr destination)
+    {
+        X86Assembler::repatchPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
+    }
+
 };
 
 } // namespace JSC

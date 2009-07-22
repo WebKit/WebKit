@@ -769,6 +769,25 @@ protected:
         }
     }
 
+private:
+    friend class LinkBuffer;
+    friend class RepatchBuffer;
+
+    static void linkCall(void* code, Call call, FunctionPtr function)
+    {
+        ARMAssembler::linkCall(code, call.m_jmp, function.value());
+    }
+
+    static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
+    {
+        ARMAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
+    }
+
+    static void repatchCall(CodeLocationCall call, FunctionPtr destination)
+    {
+        ARMAssembler::relinkCall(call.dataLocation(), destination.executableAddress());
+    }
+
 };
 
 }

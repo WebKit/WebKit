@@ -35,11 +35,6 @@
 
 #if ENABLE(ASSEMBLER)
 
-// FIXME: keep transitioning this out into MacroAssemblerX86_64.
-#if PLATFORM(X86_64)
-#define REPTACH_OFFSET_CALL_R11 3
-#endif
-
 namespace JSC {
 
 class LinkBuffer;
@@ -295,7 +290,7 @@ public:
     class Call {
         template<class TemplateAssemblerType>
         friend class AbstractMacroAssembler;
-        friend class LinkBuffer;
+
     public:
         enum Flags {
             None = 0x0,
@@ -330,8 +325,8 @@ public:
             m_jmp.enableLatePatch();
         }
 
-    private:
         JmpSrc m_jmp;
+    private:
         Flags m_flags;
     };
 
@@ -485,24 +480,12 @@ public:
 protected:
     AssemblerType m_assembler;
 
-private:
     friend class LinkBuffer;
     friend class RepatchBuffer;
 
     static void linkJump(void* code, Jump jump, CodeLocationLabel target)
     {
         AssemblerType::linkJump(code, jump.m_jmp, target.dataLocation());
-    }
-
-    static void linkCall(void* code, Call call, FunctionPtr function)
-    {
-#if PLATFORM(X86_64)
-        if (!call.isFlagSet(Call::Near)) {
-            char* callLocation = reinterpret_cast<char*>(getLinkerAddress(code, call.m_jmp)) - REPTACH_OFFSET_CALL_R11;
-            AssemblerType::linkPointerForCall(callLocation, function.value());
-        } else
-#endif
-        AssemblerType::linkCall(code, call.m_jmp, function.value());
     }
 
     static void linkPointer(void* code, typename AssemblerType::JmpDst label, void* value)
@@ -528,24 +511,6 @@ private:
     static void repatchJump(CodeLocationJump jump, CodeLocationLabel destination)
     {
         AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
-    }
-
-    static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
-    {
-#if PLATFORM(X86_64)
-        AssemblerType::repatchPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
-#else
-        AssemblerType::relinkCall(call.dataLocation(), destination.executableAddress());
-#endif
-    }
-
-    static void repatchCall(CodeLocationCall call, FunctionPtr destination)
-    {
-#if PLATFORM(X86_64)
-        AssemblerType::repatchPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation(), destination.executableAddress());
-#else
-        AssemblerType::relinkCall(call.dataLocation(), destination.executableAddress());
-#endif
     }
 
     static void repatchNearCall(CodeLocationNearCall nearCall, CodeLocationLabel destination)

@@ -1,3 +1,30 @@
+2009-07-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move call linking / repatching down from AbstractMacroAssembler into MacroAssemblerARCH classes.
+        ( https://bugs.webkit.org/show_bug.cgi?id=27527 )
+
+        This allows the implementation to be defined per architecture.  Specifically this addresses the
+        fact that x86-64 MacroAssembler implements far calls as a load to register, followed by a call
+        to register.  Patching the call actually requires the pointer load to be patched, rather than
+        the call to be patched.  This is implementation detail specific to MacroAssemblerX86_64, and as
+        such is best handled there.
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::linkCall):
+        (JSC::MacroAssemblerARM::repatchCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::linkCall):
+        (JSC::MacroAssemblerARMv7::repatchCall):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::linkCall):
+        (JSC::MacroAssemblerX86::repatchCall):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::linkCall):
+        (JSC::MacroAssemblerX86_64::repatchCall):
+
 2009-07-21  Adam Treat  <adam.treat@torchmobile.com>
 
         Reviewed by George Staikos.
