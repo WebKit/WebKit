@@ -1262,6 +1262,7 @@ sub openDumpTool()
     my $dyldLibraryPath = $ENV{'DYLD_LIBRARY_PATH'};
     my $dbusAddress = $ENV{'DBUS_SESSION_BUS_ADDRESS'};
     my $display = $ENV{'DISPLAY'};
+    my $xauthority = $ENV{'XAUTHORITY'};
     my $testfonts = $ENV{'WEBKIT_TESTFONTS'};
 
     my $homeDrive = $ENV{'HOMEDRIVE'};
@@ -1273,6 +1274,9 @@ sub openDumpTool()
             $ENV{DISPLAY} = $display;
         } else {
             $ENV{DISPLAY} = ":1";
+        }
+        if (defined $xauthority) {
+            $ENV{XAUTHORITY} = $xauthority;
         }
         $ENV{'WEBKIT_TESTFONTS'} = $testfonts if defined($testfonts);
         $ENV{HOME} = $homeDir;
