@@ -1,5 +1,11 @@
 2009-07-21  Dan Bernstein  <mitz@apple.com>
 
+        Correct relative path in the test after moving it.
+
+        * platform/mac/fast/loader/non-html-load-event.html:
+
+2009-07-21  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Mark Rowe.
 
         Move fast/loader/non-html-load-event.html under platform/mac because
