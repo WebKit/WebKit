@@ -515,7 +515,14 @@ sub AddIncludesForType
 {
     my $type = $codeGenerator->StripModule(shift);
 
-    return if $codeGenerator->IsNonPointerType($type) or IsNativeObjCType($type);
+    return if $codeGenerator->IsNonPointerType($type);
+
+    if (IsNativeObjCType($type)) {
+        if ($type eq "Color") {
+            $implIncludes{"ColorMac.h"} = 1;
+        }
+        return;
+    }
 
     if ($codeGenerator->IsStringType($type)) {
         $implIncludes{"KURL.h"} = 1;
@@ -1190,6 +1197,9 @@ sub GenerateImplementation
                 $getterContentTail .= ")";
             } elsif (IsProtocolType($idlType) and $idlType ne "EventTarget") {
                 $getterContentHead = "kit($getterContentHead";
+                $getterContentTail .= ")";
+            } elsif ($idlType eq "Color") {
+                $getterContentHead = "WebCore::nsColor($getterContentHead";
                 $getterContentTail .= ")";
             } elsif (ConversionNeeded($attribute->signature->type)) {
                 $getterContentHead = "kit(WTF::getPtr($getterContentHead";
