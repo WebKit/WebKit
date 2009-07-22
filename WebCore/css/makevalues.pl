@@ -26,9 +26,9 @@ use warnings;
 open NAMES, "<CSSValueKeywords.in" || die "Could not open CSSValueKeywords.in";
 my @names = ();
 while (<NAMES>) {
-  next if (m/#/);
-  chomp $_;
-  next if ($_ eq "");
+  next if (m/(^#)|(^\s*$)/);
+  # Input may use a different EOL sequence than $/, so avoid chomp.
+  $_ =~ s/[\r\n]+$//g;
   push @names, $_;
 }
 close(NAMES);

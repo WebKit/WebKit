@@ -1,3 +1,14 @@
+2009-07-22  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27323
+        Handle any type of line endings in WebCore/css/*CSSPropertyNames.in.
+
+        * DerivedSources.make:
+        * css/makeprop.pl:
+        * css/makevalues.pl:
+
 2009-07-22  Paul Godavari  <paul@chromium.org>
 
         Reviewed by Darin Fisher.

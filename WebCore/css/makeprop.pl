@@ -26,9 +26,9 @@ use warnings;
 open NAMES, "<CSSPropertyNames.in" || die "Could not find CSSPropertyNames.in";
 my @names = ();
 while (<NAMES>) {
-  next if (m/#/);
-  chomp $_;
-  next if ($_ eq "");
+  next if (m/(^#)|(^\s*$)/);
+  # Input may use a different EOL sequence than $/, so avoid chomp.
+  $_ =~ s/[\r\n]+$//g;
   push @names, $_;
 }
 close(NAMES);
