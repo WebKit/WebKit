@@ -33,8 +33,8 @@
 
 #include "StringImpl.h"
 #include <wtf/RefPtr.h>
+#include <SkPaint.h>
 
-class SkPaint;
 class SkTypeface;
 typedef uint32_t SkFontID;
 
@@ -107,6 +107,13 @@ public:
     bool isHashTableDeletedValue() const { return m_typeface == hashTableDeletedFontValue(); }
 
     HB_FaceRec_* harfbuzzFace() const;
+
+    // -------------------------------------------------------------------------
+    // Global font preferences...
+
+    static void setHinting(SkPaint::Hinting);
+    static void setAntiAlias(bool on);
+    static void setSubpixelGlyphs(bool on);
 
 private:
     class RefCountedHarfbuzzFace : public RefCounted<RefCountedHarfbuzzFace> {

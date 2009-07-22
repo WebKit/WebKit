@@ -1,3 +1,22 @@
+2009-07-22  Adam Langley  <agl@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Chromium Linux: add static functions to FontPlatformData which allow
+        for setting the global font rendering preferences.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27513
+        http://code.google.com/p/chromium/issues/detail?id=12179
+
+        This should not affect any layout tests.
+
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::setHinting):
+        (WebCore::FontPlatformData::setAntiAlias):
+        (WebCore::FontPlatformData::setSubpixelGlyphs):
+        (WebCore::FontPlatformData::setupPaint):
+        * platform/graphics/chromium/FontPlatformDataLinux.h:
+
 2009-07-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.
