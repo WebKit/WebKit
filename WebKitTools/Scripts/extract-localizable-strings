@@ -44,9 +44,11 @@
 
 use strict;
 
+sub UnescapeHexSequence($);
+
 my %isDebugMacro = ( ASSERT_WITH_MESSAGE => 1, LOG_ERROR => 1, ERROR => 1, NSURL_ERROR => 1, FATAL => 1, LOG => 1, LOG_WARNING => 1, UI_STRING_LOCALIZE_LATER => 1, LPCTSTR_UI_STRING_LOCALIZE_LATER => 1, UNLOCALIZED_STRING => 1, UNLOCALIZED_LPCTSTR => 1, dprintf => 1, NSException => 1, NSLog => 1, printf => 1 );
 
-@ARGV >= 1 or die "Usage: extract-localizable-strings <exceptions file> [ directory... ]\nDid you mean to run extract-webkit-localizable-strings instead?\n";
+@ARGV >= 1 or die "Usage: extract-localizable-strings <exceptions file> [ directory... ]\nDid you mean to run update-webkit-localizable-strings instead?\n";
 
 my $exceptionsFile = shift @ARGV;
 -f $exceptionsFile or die "Couldn't find exceptions file $exceptionsFile\n";
@@ -264,6 +266,29 @@ handleString:
     close SOURCE;
 }
 
+# Unescapes C language hexadecimal escape sequences.
+sub UnescapeHexSequence($)
+{
+    my ($originalStr) = @_;
+
+    my $escapedStr = $originalStr;
+    my $unescapedStr = "";
+
+    for (;;) {
+        if ($escapedStr =~ s-^\\x([[:xdigit:]]+)--) {
+            if (256 <= hex($1)) {
+                print "Hexadecimal escape sequence out of range: \\x$1\n";
+                return undef;
+            }
+            $unescapedStr .= pack("H*", $1);
+        } elsif ($escapedStr =~ s-^(.)--) {
+            $unescapedStr .= $1;
+        } else {
+            return $unescapedStr;
+        }
+    }
+}
+
 my %stringByKey;
 my %commentByKey;
 my %fileByKey;
@@ -274,6 +299,21 @@ sub HandleUIString
     my ($string, $key, $comment, $file, $line) = @_;
 
     my $bad = 0;
+    $string = UnescapeHexSequence($string);
+    if (!defined($string)) {
+        print "$file:$line:ERROR:string has an illegal hexadecimal escape sequence\n";
+        $bad = 1;
+    }
+    $key = UnescapeHexSequence($key);
+    if (!defined($key)) {
+        print "$file:$line:ERROR:key has an illegal hexadecimal escape sequence\n";
+        $bad = 1;
+    }
+    $comment = UnescapeHexSequence($comment);
+    if (!defined($comment)) {
+        print "$file:$line:ERROR:comment has an illegal hexadecimal escape sequence\n";
+        $bad = 1;
+    }
     if (grep { $_ == 0xFFFD } unpack "U*", $string) {
         print "$file:$line:ERROR:string for translation has illegal UTF-8 -- most likely a problem with the Text Encoding of the source file\n";
         $bad = 1;

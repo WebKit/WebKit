@@ -99,7 +99,7 @@ String WebCore::mediaElementLiveBroadcastStateText() { return String(LPCTSTR_UI_
 
 String WebCore::imageTitle(const String& filename, const IntSize& size) 
 { 
-    static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("%@ %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"));
+    static RetainPtr<CFStringRef> format(AdoptCF, UI_STRING("%@ %d\xC3\x97%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"));
 
     RetainPtr<CFStringRef> filenameCF(AdoptCF, filename.createCFString());
     RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormat(0, 0, format.get(), filenameCF.get(), size.width(), size.height()));

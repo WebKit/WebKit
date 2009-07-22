@@ -1,3 +1,25 @@
+2009-07-22  Takeshi Yoshino  <tyoshino@google.com>
+
+        Reviewed by Darin Adler.
+
+        VC++ 2005 Express failed to build WebKit due to raw UTF-8 string in WebKit/win/WebCoreLocalizedStrings.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=26375
+
+        Replace a multiplication sign (U+00D7) encoded in UTF-8 (0xC3 0x97) in WebCoreLocalizedStrings.cpp
+        with hex escape sequences.
+
+        VC2005 failed to build due to this raw UTF-8 data in source code. Here's the warning message (
+        treated as an error and stopped build).
+
+        WebCoreLocalizedStrings.cpp : warning C4819: The file contains a character that cannot be
+        represented in the current code page (932). Save the file in Unicode format to prevent data loss
+
+        A change on WebKitTools/Scripts/extract-localizable-strings is attached to this change not to break
+        localized string generation process.
+
+        * WebCoreLocalizedStrings.cpp:
+        (WebCore::imageTitle):
+
 2009-07-21  Roland Steiner  <rolandsteiner@google.com>
 
         Reviewed by David Levin.
