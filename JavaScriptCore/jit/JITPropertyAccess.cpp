@@ -503,13 +503,13 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     
     CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
     stubInfo->stubRoutine = entryLabel;
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relinkCallerToTrampoline(returnAddress, entryLabel);
 }
 
-void JIT::patchGetByIdSelf(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ReturnAddressPtr returnAddress)
+void JIT::patchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ReturnAddressPtr returnAddress)
 {
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(codeBlock);
 
     // We don't want to patch more than once - in future go to cti_op_get_by_id_generic.
     // Should probably go to JITStubs::cti_op_get_by_id_fail, but that doesn't do anything interesting right now.
@@ -527,9 +527,9 @@ void JIT::patchGetByIdSelf(StructureStubInfo* stubInfo, Structure* structure, si
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetGetByIdPropertyMapOffset), offset);
 }
 
-void JIT::patchMethodCallProto(MethodCallLinkInfo& methodCallLinkInfo, JSFunction* callee, Structure* structure, JSObject* proto)
+void JIT::patchMethodCallProto(CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, JSFunction* callee, Structure* structure, JSObject* proto)
 {
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(codeBlock);
 
     ASSERT(!methodCallLinkInfo.cachedStructure);
     methodCallLinkInfo.cachedStructure = structure;
@@ -546,9 +546,9 @@ void JIT::patchMethodCallProto(MethodCallLinkInfo& methodCallLinkInfo, JSFunctio
     repatchBuffer.repatch(methodCallLinkInfo.structureLabel.dataLabelPtrAtOffset(patchOffsetMethodCheckPutFunction), callee);
 }
 
-void JIT::patchPutByIdReplace(StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ReturnAddressPtr returnAddress)
+void JIT::patchPutByIdReplace(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ReturnAddressPtr returnAddress)
 {
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(codeBlock);
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     // Should probably go to JITStubs::cti_op_put_by_id_fail, but that doesn't do anything interesting right now.
@@ -598,7 +598,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, entryLabel);
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
@@ -644,7 +644,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, entryLabel);
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
@@ -676,7 +676,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
@@ -721,7 +721,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
@@ -775,7 +775,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, entryLabel);
 }
 
@@ -823,7 +823,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
-    RepatchBuffer repatchBuffer;
+    RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(jumpLocation, entryLabel);
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.

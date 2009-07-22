@@ -165,28 +165,20 @@ private:
 class MacroAssemblerCodeRef {
 public:
     MacroAssemblerCodeRef()
-#ifndef NDEBUG
         : m_size(0)
-#endif
     {
     }
 
     MacroAssemblerCodeRef(void* code, PassRefPtr<ExecutablePool> executablePool, size_t size)
         : m_code(code)
         , m_executablePool(executablePool)
+        , m_size(size)
     {
-#ifndef NDEBUG
-        m_size = size;
-#else
-        UNUSED_PARAM(size);
-#endif
     }
 
     MacroAssemblerCodePtr m_code;
     RefPtr<ExecutablePool> m_executablePool;
-#ifndef NDEBUG
     size_t m_size;
-#endif
 };
 
 } // namespace JSC

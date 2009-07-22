@@ -57,14 +57,14 @@ void ARMAssembler::linkBranch(void* code, JmpSrc from, void* to)
         int diff = reinterpret_cast<ARMWord*>(to) - reinterpret_cast<ARMWord*>(insn + 2);
 
         if ((diff <= BOFFSET_MAX && diff >= BOFFSET_MIN)) {
-            ExecutableAllocator::MakeWritable unprotect(insn, sizeof(ARMWord));
             *insn = B | getConditionalField(*insn) | (diff & BRANCH_MASK);
+            ExecutableAllocator::cacheFlush(insn, sizeof(ARMWord));
             return;
         }
     }
     ARMWord* addr = getLdrImmAddress(insn);
-    ExecutableAllocator::MakeWritable unprotect(addr, sizeof(ARMWord));
     *addr = reinterpret_cast<ARMWord>(to);
+    ExecutableAllocator::cacheFlush(addr, sizeof(ARMWord));
 }
 
 void ARMAssembler::patchConstantPoolLoad(void* loadAddr, void* constPoolAddr)

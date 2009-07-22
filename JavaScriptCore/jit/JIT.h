@@ -171,9 +171,9 @@ namespace JSC {
     };
 
     // Near calls can only be patched to other JIT code, regular calls can be patched to JIT code or relinked to stub functions.
-    void ctiPatchNearCallByReturnAddress(ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction);
-    void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction);
-    void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction);
+    void ctiPatchNearCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction);
+    void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, MacroAssemblerCodePtr newCalleeFunction);
+    void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAddress, FunctionPtr newCalleeFunction);
 
     class JIT : private MacroAssembler {
         friend class JITStubCall;
@@ -379,9 +379,9 @@ namespace JSC {
             jit.privateCompileCTIMachineTrampolines(executablePool, globalData, ctiArrayLengthTrampoline, ctiStringLengthTrampoline, ctiVirtualCallPreLink, ctiVirtualCallLink, ctiVirtualCall, ctiNativeCallThunk);
         }
 
-        static void patchGetByIdSelf(StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
-        static void patchPutByIdReplace(StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
-        static void patchMethodCallProto(MethodCallLinkInfo&, JSFunction*, Structure*, JSObject*);
+        static void patchGetByIdSelf(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
+        static void patchPutByIdReplace(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
+        static void patchMethodCallProto(CodeBlock* codeblock, MethodCallLinkInfo&, JSFunction*, Structure*, JSObject*);
 
         static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, ReturnAddressPtr returnAddress)
         {
@@ -389,7 +389,7 @@ namespace JSC {
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        static void linkCall(JSFunction* callee, CodeBlock* calleeCodeBlock, JITCode&, CallLinkInfo*, int callerArgCount, JSGlobalData*);
+        static void linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JITCode&, CallLinkInfo*, int callerArgCount, JSGlobalData*);
         static void unlinkCall(CallLinkInfo*);
 
     private:

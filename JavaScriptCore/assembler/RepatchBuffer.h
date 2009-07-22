@@ -45,8 +45,18 @@ class RepatchBuffer {
     typedef MacroAssemblerCodePtr CodePtr;
 
 public:
-    RepatchBuffer()
+    RepatchBuffer(CodeBlock* codeBlock)
     {
+        JITCode& code = codeBlock->getJITCode();
+        m_start = code.start();
+        m_size = code.size();
+
+        ExecutableAllocator::makeWritable(m_start, m_size);
+    }
+
+    ~RepatchBuffer()
+    {
+        ExecutableAllocator::makeExecutable(m_start, m_size);
     }
 
     void relink(CodeLocationJump jump, CodeLocationLabel destination)
@@ -113,6 +123,10 @@ public:
     {
         relinkNearCallerToTrampoline(returnAddress, CodeLocationLabel(newCalleeFunction));
     }
+
+private:
+    void* m_start;
+    size_t m_size;
 };
 
 } // namespace JSC

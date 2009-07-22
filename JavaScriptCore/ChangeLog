@@ -1,3 +1,99 @@
+2009-07-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        With ENABLE(ASSEMBLER_WX_EXCLUSIVE), only change permissions once per repatch event.
+        ( https://bugs.webkit.org/show_bug.cgi?id=27564 )
+
+        Currently we change permissions forwards and backwards for each instruction modified,
+        instead we should only change permissions once per complete repatching event.
+
+        2.5% progression running with ENABLE(ASSEMBLER_WX_EXCLUSIVE) enabled,
+        which recoups 1/3 of the penalty of running with this mode enabled.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::linkBranch):
+            - Replace usage of MakeWritable with cacheFlush.
+        
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::patchPointerInternal):
+        (JSC::ARMAssembler::repatchLoadPtrToLEA):
+            - Replace usage of MakeWritable with cacheFlush.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::relinkJump):
+        (JSC::ARMv7Assembler::relinkCall):
+        (JSC::ARMv7Assembler::repatchInt32):
+        (JSC::ARMv7Assembler::repatchPointer):
+        (JSC::ARMv7Assembler::repatchLoadPtrToLEA):
+        (JSC::ARMv7Assembler::setInt32):
+            - Replace usage of MakeWritable with cacheFlush.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::performFinalization):
+            - Make explicit call to cacheFlush.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+            - Make size always available.
+
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::RepatchBuffer):
+        (JSC::RepatchBuffer::~RepatchBuffer):
+            - Add calls to MakeWritable & makeExecutable.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::relinkJump):
+        (JSC::X86Assembler::relinkCall):
+        (JSC::X86Assembler::repatchInt32):
+        (JSC::X86Assembler::repatchPointer):
+        (JSC::X86Assembler::repatchLoadPtrToLEA):
+            - Remove usage of MakeWritable.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getJITCode):
+            - Provide access to CodeBlock's JITCode.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::makeExecutable):
+        (JSC::ExecutableAllocator::cacheFlush):
+            - Remove MakeWritable, make cacheFlush public.
+
+        * jit/JIT.cpp:
+        (JSC::ctiPatchNearCallByReturnAddress):
+        (JSC::ctiPatchCallByReturnAddress):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::unlinkCall):
+        (JSC::JIT::linkCall):
+            - Add CodeBlock argument to RepatchBuffer.
+
+        * jit/JIT.h:
+            - Pass CodeBlock argument for use by RepatchBuffer.
+
+        * jit/JITCode.h:
+        (JSC::JITCode::start):
+        (JSC::JITCode::size):
+            - Provide access to code start & size.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchMethodCallProto):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+            - Add CodeBlock argument to RepatchBuffer.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+            - Pass CodeBlock argument for use by RepatchBuffer.
+
 2009-07-21  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
