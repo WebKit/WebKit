@@ -2052,6 +2052,14 @@ class OrderOfIncludesTest(CpplintTestBase):
     def test_check_next_include_order__no_self(self):
         self.assertEqual('Header file should not contain itself.',
                          self.include_state.check_next_include_order(cpplint._PRIMARY_HEADER, True))
+        # Test actual code to make sure that header types are correctly assigned.
+        self.assert_language_rules_check('Foo.h',
+                                         '#include "Foo.h"\n',
+                                         'Header file should not contain itself. Should be: alphabetically sorted.'
+                                         '  [build/include_order] [4]')
+        self.assert_language_rules_check('FooBar.h',
+                                         '#include "Foo.h"\n',
+                                         '')
 
     def test_check_next_include_order__likely_then_config(self):
         self.assertEqual('Found header this file implements before WebCore config.h.',

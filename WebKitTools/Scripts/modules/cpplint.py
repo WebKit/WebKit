@@ -2139,6 +2139,12 @@ def _classify_include(filename, include, is_system, include_state):
     if include == "config.h":
         return _CONFIG_HEADER
 
+    # There cannot be primary includes in header files themselves. Only an
+    # include exactly matches the header filename will be is flagged as
+    # primary, so that it triggers the "don't include yourself" check.
+    if filename.endswith('.h') and filename != include:
+        return _OTHER_HEADER;
+
     # If the target file basename starts with the include we're checking
     # then we consider it the primary header.
     target_base = FileInfo(filename).base_name()
