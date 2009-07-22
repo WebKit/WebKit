@@ -41,6 +41,7 @@ for (var x = 0; x < windowProperites.length; x++) {
     if (value === null)
         continue;
     shouldBeTrue("inner." + property + ".isInner");
+    shouldBeTrue("inner." + property + ".constructor.isInner");
 }
 
 document.body.removeChild(subframe);
