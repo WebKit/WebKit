@@ -109,7 +109,10 @@ def process_patch(patch_string):
                 """
                 if not line_numbers:
                     for line in diff.lines:
-                        line_numbers.add(line[1])
+                        # When deleted line is not set, it means that
+                        # the line is newly added.
+                        if not line[0]:
+                            line_numbers.add(line[1])
 
                 if line_number in line_numbers:
                     cpplint.error(filename, line_number, category, confidence, message)

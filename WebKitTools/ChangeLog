@@ -2,6 +2,17 @@
 
         Reviewed by David Levin.
 
+        run-webkit-lint checks code which are not changed
+        https://bugs.webkit.org/show_bug.cgi?id=27529
+
+        Add check if the line is newly added.
+
+        * Scripts/run-webkit-lint:
+
+2009-07-22  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by David Levin.
+
         run-webkit-lint should have --git-commit option
         https://bugs.webkit.org/show_bug.cgi?id=27528
 
