@@ -48,9 +48,13 @@ public:
     explicit WebCoreStringResource(const String& string)
         : m_impl(string.impl())
     {
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(2 * length());
     }
 
-    virtual ~WebCoreStringResource() { }
+    virtual ~WebCoreStringResource()
+    {
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(-2 * length());
+    }
 
     const uint16_t* data() const
     {

@@ -1,3 +1,20 @@
+2009-07-22  Mads Ager  <ager@chromium.org>
+
+        Reviewed by David Levin.
+
+        Inform V8 of the amount of WebCore string memory it is keeping alive.
+        https://bugs.webkit.org/show_bug.cgi?id=27537
+
+        V8 uses external strings that are backed by WebCore strings. Since
+        the external strings themselves are small, V8 has no way of
+        knowing how much memory it is actually holding on to. With this
+        change, we inform V8 of the amount of WebCore string data it is
+        holding on to with external strings.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::WebCoreStringResource::WebCoreStringResource):
+        (WebCore::WebCoreStringResource::~WebCoreStringResource):
+
 2009-07-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.
