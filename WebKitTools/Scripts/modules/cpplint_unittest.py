@@ -1126,9 +1126,10 @@ class CpplintTest(CpplintTestBase):
             '}\n',
             '')
         self.assert_multi_line_lint(
-            'if (condition &&\n'
-            '    condition2 &&\n'
-            '    condition3) {\n',
+            'if (condition\n'
+            '    && condition2\n'
+            '    && condition3) {\n'
+            '}\n',
             '')
 
     def test_mismatching_spaces_in_parens(self):
@@ -2819,12 +2820,16 @@ class WebKitStyleTest(CpplintTestBase):
         # 6. Boolean expressions at the same nesting level that span
         #   multiple lines should have their operators on the left side of
         #   the line instead of the right side.
-        # FIXME: No tests for this rule. The following should fail.
-        # self.assert_multi_line_lint(
-        #     '    return attr->name() == srcAttr ||\n'
-        #     '        attr->name() == lowsrcAttr ||\n'
-        #     '        (attr->name() == usemapAttr && attr->value().domString()[0] != \'#\');\n',
-        #     '')
+        self.assert_multi_line_lint(
+            '    return attr->name() == srcAttr\n'
+            '        || attr->name() == lowsrcAttr;\n',
+            '')
+        self.assert_multi_line_lint(
+            '    return attr->name() == srcAttr ||\n'
+            '        attr->name() == lowsrcAttr;\n',
+            'Boolean expressions that span multiple lines should have their '
+            'operators on the left side of the line instead of the right side.'
+            '  [whitespace/operators] [4]')
 
     def test_spacing(self):
         # 1. Do not place spaces around unary operators.

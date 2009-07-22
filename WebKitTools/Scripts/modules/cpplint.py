@@ -1426,7 +1426,7 @@ def check_spacing(filename, clean_lines, line_number, error):
 
     # Before nixing comments, check if the line is blank for no good
     # reason.  This includes the first line after a block is opened, and
-    # blank lines at the end of a function (ie, right before a line like '}'
+    # blank lines at the end of a function (ie, right before a line like '}').
     if is_blank_line(line):
         elided = clean_lines.elided
         previous_line = elided[line_number - 1]
@@ -1439,7 +1439,7 @@ def check_spacing(filename, clean_lines, line_number, error):
             and previous_line[:previous_brace].find('namespace') == -1):
             # OK, we have a blank line at the start of a code block.  Before we
             # complain, we check if it is an exception to the rule: The previous
-            # non-empty line has the paramters of a function header that are indented
+            # non-empty line has the parameters of a function header that are indented
             # 4 spaces (because they did not fit in a 80 column line when placed on
             # the same line as the function name).  We also check for the case where
             # the previous line is indented 6 spaces, which may happen when the
@@ -2035,6 +2035,11 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
                  and cleansed_line.find('break;') != -1)):
         error(filename, line_number, 'whitespace/newline', 4,
               'More than one command on the same line')
+
+    if cleansed_line.strip().endswith('||') or cleansed_line.strip().endswith('&&'):
+        error(filename, line_number, 'whitespace/operators', 4,
+              'Boolean expressions that span multiple lines should have their '
+              'operators on the left side of the line instead of the right side.')
 
     # Some more style checks
     check_namespace_indentation(filename, clean_lines, line_number, file_extension, error)
