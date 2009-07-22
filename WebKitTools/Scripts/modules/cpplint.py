@@ -2226,7 +2226,7 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
                     previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
                  if previous_match:
                     previous_header_type = include_state.header_types[previous_line_number]
-                    if previous_header_type == _OTHER_HEADER and previous_line.strip().lower() > line.strip().lower():
+                    if previous_header_type == _OTHER_HEADER and previous_line.strip() > line.strip():
                         error(filename, line_number, 'build/include_order', 4,
                               'Alphabetical sorting problem.')
 
