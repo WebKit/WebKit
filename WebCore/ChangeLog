@@ -1,3 +1,15 @@
+2009-07-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27599
+        'const unsigned' in return value
+
+        Remove const modifier from unsigned return value, as it does not
+        make sense.
+
+        * dom/ErrorEvent.h:
+
 2009-07-22  Jens Alfke  <snej@chromium.org>
 
         Reviewed by David Levin.
