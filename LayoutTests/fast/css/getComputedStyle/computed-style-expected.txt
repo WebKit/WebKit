@@ -70,6 +70,7 @@ text-align: auto;
 text-decoration: none;
 text-indent: 0px;
 text-shadow: none;
+text-overflow: clip;
 text-transform: none;
 top: auto;
 unicode-bidi: normal;

@@ -146,6 +146,8 @@ rect: style.getPropertyValue(text-indent) : 0px
 rect: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-shadow) : none
 rect: style.getPropertyCSSValue(text-shadow) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-overflow) : clip
+rect: style.getPropertyCSSValue(text-overflow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-transform) : none
 rect: style.getPropertyCSSValue(text-transform) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(top) : auto
@@ -548,6 +550,8 @@ g: style.getPropertyValue(text-indent) : 0px
 g: style.getPropertyCSSValue(text-indent) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-shadow) : none
 g: style.getPropertyCSSValue(text-shadow) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-overflow) : clip
+g: style.getPropertyCSSValue(text-overflow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-transform) : none
 g: style.getPropertyCSSValue(text-transform) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(top) : auto
