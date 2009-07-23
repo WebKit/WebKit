@@ -19,11 +19,11 @@ PASS superscript toggle
 PASS superscript removing sup
 PASS superscript removing vertical-align: super
 PASS strikethrough toggle
-FAIL strikethrough removing strike -- <strike><span class="Apple-style-span" style="text-decoration: none;">test</span></strike>
+PASS strikethrough removing strike
 PASS strikethrough removing text-decoration: line-through
-FAIL strikethrough removing s -- <s><span class="Apple-style-span" style="text-decoration: none;">test</span></s>
+PASS strikethrough removing s
 PASS underline toggle
-FAIL underline removing u -- <u><span class="Apple-style-span" style="text-decoration: none;">test</span></u>
+PASS underline removing u
 PASS underline removing text-decoration: underline
 PASS successfullyParsed is true
 

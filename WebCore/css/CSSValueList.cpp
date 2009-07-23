@@ -84,6 +84,17 @@ bool CSSValueList::removeAll(CSSValue* val)
     
     return found;
 }
+    
+bool CSSValueList::hasValue(CSSValue* val)
+{
+    // FIXME: we should be implementing operator== to CSSValue and its derived classes
+    // to make comparison more flexible and fast.
+    for (size_t index = 0; index < m_values.size(); index++) {
+        if (m_values.at(index)->cssText() == val->cssText())
+            return true;
+    }
+    return false;
+}
 
 String CSSValueList::cssText() const
 {

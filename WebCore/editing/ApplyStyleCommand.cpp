@@ -98,13 +98,12 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position& po
     Document* document = position.node() ? position.node()->document() : 0;
     if (!document || !document->frame())
         return;
-        
-    bool useHTMLFormattingTags = !document->frame()->editor()->shouldStyleWithCSS();
-            
-    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
-    
-    String styleText("");
 
+    bool useHTMLFormattingTags = !document->frame()->editor()->shouldStyleWithCSS();
+    RefPtr<CSSMutableStyleDeclaration> mutableStyle = style->makeMutable();
+    // We shouldn't have both text-decoration and -webkit-text-decorations-in-effect because that wouldn't make sense.
+    ASSERT(!mutableStyle->getPropertyCSSValue(CSSPropertyTextDecoration) || !mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect));
+    String styleText("");
     bool addedDirection = false;
     CSSMutableStyleDeclaration::const_iterator end = mutableStyle->end();
     for (CSSMutableStyleDeclaration::const_iterator it = mutableStyle->begin(); it != end; ++it) {
@@ -130,12 +129,12 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position& po
         }
 
         // Add this property
-
-        if (property->id() == CSSPropertyWebkitTextDecorationsInEffect) {
-            // we have to special-case text decorations
-            // FIXME: Why?
+        if (property->id() == CSSPropertyTextDecoration || property->id() == CSSPropertyWebkitTextDecorationsInEffect) {
+            // Always use text-decoration because -webkit-text-decoration-in-effect is internal.
             CSSProperty alteredProperty(CSSPropertyTextDecoration, property->value(), property->isImportant());
-            styleText += alteredProperty.cssText();
+            // We don't add "text-decoration: none" because it doesn't override the existing text decorations; i.e. redundant
+            if (alteredProperty.cssText() != "none")
+                styleText += alteredProperty.cssText();
         } else
             styleText += property->cssText();
 
@@ -962,6 +961,25 @@ bool ApplyStyleCommand::implicitlyStyledElementShouldBeRemovedWhenApplyingStyle(
             if (elem->hasLocalName(iTag) || elem->hasLocalName(emTag))
                 return true;
             break;
+        case CSSPropertyTextDecoration:
+        case CSSPropertyWebkitTextDecorationsInEffect:
+                ASSERT(property.value());
+                if (property.value()->isValueList()) {
+                    CSSValueList* valueList = static_cast<CSSValueList*>(property.value());
+                    DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
+                    DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
+                    // Because style is new style to be applied, we delete element only if the element is not used in style.
+                    if (!valueList->hasValue(underline.get()) && elem->hasLocalName(uTag))
+                        return true;
+                    if (!valueList->hasValue(lineThrough.get()) && (elem->hasLocalName(strikeTag) || elem->hasLocalName(sTag)))
+                        return true;
+                } else {
+                    // If the value is NOT a list, then it must be "none", in which case we should remove all text decorations.
+                    ASSERT(property.value()->cssText() == "none");
+                    if (elem->hasLocalName(uTag) || elem->hasLocalName(strikeTag) || elem->hasLocalName(sTag))
+                        return true;
+                }
+                break;
         }
     }
     return false;
