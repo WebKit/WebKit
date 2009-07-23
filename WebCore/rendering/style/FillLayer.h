@@ -42,7 +42,7 @@ public:
     StyleImage* image() const { return m_image.get(); }
     Length xPosition() const { return m_xPosition; }
     Length yPosition() const { return m_yPosition; }
-    bool attachment() const { return m_attachment; }
+    EFillAttachment attachment() const { return static_cast<EFillAttachment>(m_attachment); }
     EFillBox clip() const { return static_cast<EFillBox>(m_clip); }
     EFillBox origin() const { return static_cast<EFillBox>(m_origin); }
     EFillRepeat repeat() const { return static_cast<EFillRepeat>(m_repeat); }
@@ -65,7 +65,7 @@ public:
     void setImage(StyleImage* i) { m_image = i; m_imageSet = true; }
     void setXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
     void setYPosition(const Length& l) { m_yPosition = l; m_yPosSet = true; }
-    void setAttachment(bool b) { m_attachment = b; m_attachmentSet = true; }
+    void setAttachment(EFillAttachment attachment) { m_attachment = attachment; m_attachmentSet = true; }
     void setClip(EFillBox b) { m_clip = b; m_clipSet = true; }
     void setOrigin(EFillBox b) { m_origin = b; m_originSet = true; }
     void setRepeat(EFillRepeat r) { m_repeat = r; m_repeatSet = true; }
@@ -104,7 +104,7 @@ public:
 
     bool hasFixedImage() const
     {
-        if (m_image && !m_attachment)
+        if (m_image && m_attachment == FixedBackgroundAttachment)
             return true;
         return m_next ? m_next->hasFixedImage() : false;
     }
@@ -114,7 +114,7 @@ public:
     void fillUnsetProperties();
     void cullEmptyLayers();
 
-    static bool initialFillAttachment(EFillLayerType) { return true; }
+    static EFillAttachment initialFillAttachment(EFillLayerType) { return ScrollBackgroundAttachment; }
     static EFillBox initialFillClip(EFillLayerType) { return BorderFillBox; }
     static EFillBox initialFillOrigin(EFillLayerType type) { return type == BackgroundFillLayer ? PaddingFillBox : BorderFillBox; }
     static EFillRepeat initialFillRepeat(EFillLayerType) { return RepeatFill; }
@@ -133,7 +133,7 @@ public:
     Length m_xPosition;
     Length m_yPosition;
 
-    bool m_attachment : 1;
+    unsigned m_attachment : 2; // EFillAttachment
     unsigned m_clip : 2; // EFillBox
     unsigned m_origin : 2; // EFillBox
     unsigned m_repeat : 2; // EFillRepeat

@@ -657,9 +657,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitBackgroundComposite:
             return CSSPrimitiveValue::create(style->backgroundComposite());
         case CSSPropertyBackgroundAttachment:
-            if (style->backgroundAttachment())
-                return CSSPrimitiveValue::createIdentifier(CSSValueScroll);
-            return CSSPrimitiveValue::createIdentifier(CSSValueFixed);
+            return CSSPrimitiveValue::create(style->backgroundAttachment());
         case CSSPropertyBackgroundClip:
         case CSSPropertyBackgroundOrigin:
         case CSSPropertyWebkitBackgroundClip:
@@ -927,9 +925,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMaskRepeat:
             return CSSPrimitiveValue::create(style->maskRepeat());
         case CSSPropertyWebkitMaskAttachment:
-            if (style->maskAttachment())
-                return CSSPrimitiveValue::createIdentifier(CSSValueScroll);
-            return CSSPrimitiveValue::createIdentifier(CSSValueFixed);
+            return CSSPrimitiveValue::create(style->maskAttachment());
         case CSSPropertyWebkitMaskComposite:
             return CSSPrimitiveValue::create(style->maskComposite());
         case CSSPropertyWebkitMaskClip:

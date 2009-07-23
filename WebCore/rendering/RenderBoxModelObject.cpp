@@ -329,6 +329,18 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         clippedToBorderRadius = true;
     }
 
+    bool clippedWithLocalScrolling = hasOverflowClip() && bgLayer->attachment() == LocalBackgroundAttachment;
+    if (clippedWithLocalScrolling) {
+        // Clip to the overflow area.
+        context->save();
+        context->clip(toRenderBox(this)->overflowClipRect(tx, ty));
+        
+        // Now adjust our tx, ty, w, h to reflect a scrolled content box with borders at the ends.
+        layer()->subtractScrolledContentOffset(tx, ty);
+        w = bLeft + layer()->scrollWidth() + bRight;
+        h = borderTop() + layer()->scrollHeight() + borderBottom();
+    }
+    
     if (bgLayer->clip() == PaddingFillBox || bgLayer->clip() == ContentFillBox) {
         // Clip to the padding or content boxes as necessary.
         bool includePadding = bgLayer->clip() == ContentFillBox;
@@ -472,6 +484,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (clippedToBorderRadius)
         // Undo the border radius clip
         context->restore();
+        
+    if (clippedWithLocalScrolling) // Undo the clip for local background attachments.
+        context->restore();
 }
 
 IntSize RenderBoxModelObject::calculateBackgroundSize(const FillLayer* bgLayer, int scaledWidth, int scaledHeight) const
@@ -528,9 +543,9 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgL
     int rh = 0;
 
     // CSS2 chapter 14.2.1
-
-    if (bgLayer->attachment()) {
-        // Scroll
+    bool fixedAttachment = bgLayer->attachment() == FixedBackgroundAttachment;
+    if (!fixedAttachment) {
+        // Scroll and Local
         if (bgLayer->origin() != BorderFillBox) {
             left = borderLeft();
             right = borderRight();
@@ -560,7 +575,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgL
         pw = w - left - right;
         ph = h - top - bottom;
     } else {
-        // Fixed
+        // Fixed background attachment.
         IntRect vr = viewRect();
         cx = vr.x();
         cy = vr.y();
@@ -574,7 +589,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgL
     int ch;
 
     IntSize scaledImageSize;
-    if (isRoot() && bgLayer->attachment())
+    if (isRoot() && !fixedAttachment)
         scaledImageSize = calculateBackgroundSize(bgLayer, rw, rh);
     else
         scaledImageSize = calculateBackgroundSize(bgLayer, pw, ph);
@@ -585,7 +600,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgL
     EFillRepeat backgroundRepeat = bgLayer->repeat();
     
     int xPosition;
-    if (isRoot() && bgLayer->attachment())
+    if (isRoot() && !fixedAttachment)
         xPosition = bgLayer->xPosition().calcMinValue(rw - scaledImageWidth, true);
     else
         xPosition = bgLayer->xPosition().calcMinValue(pw - scaledImageWidth, true);
@@ -599,7 +614,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgL
     }
     
     int yPosition;
-    if (isRoot() && bgLayer->attachment())
+    if (isRoot() && !fixedAttachment)
         yPosition = bgLayer->yPosition().calcMinValue(rh - scaledImageHeight, true);
     else 
         yPosition = bgLayer->yPosition().calcMinValue(ph - scaledImageHeight, true);
@@ -612,7 +627,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* bgL
         ch = scaledImageHeight + min(yPosition + top, 0);
     }
 
-    if (!bgLayer->attachment()) {
+    if (fixedAttachment) {
         sx += max(tx - cx, 0);
         sy += max(ty - cy, 0);
     }

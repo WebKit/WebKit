@@ -523,7 +523,7 @@ public:
     StyleImage* backgroundImage() const { return background->m_background.m_image.get(); }
     EFillRepeat backgroundRepeat() const { return static_cast<EFillRepeat>(background->m_background.m_repeat); }
     CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(background->m_background.m_composite); }
-    bool backgroundAttachment() const { return background->m_background.m_attachment; }
+    EFillAttachment backgroundAttachment() const { return static_cast<EFillAttachment>(background->m_background.m_attachment); }
     EFillBox backgroundClip() const { return static_cast<EFillBox>(background->m_background.m_clip); }
     EFillBox backgroundOrigin() const { return static_cast<EFillBox>(background->m_background.m_origin); }
     Length backgroundXPosition() const { return background->m_background.m_xPosition; }
@@ -535,7 +535,7 @@ public:
     StyleImage* maskImage() const { return rareNonInheritedData->m_mask.m_image.get(); }
     EFillRepeat maskRepeat() const { return static_cast<EFillRepeat>(rareNonInheritedData->m_mask.m_repeat); }
     CompositeOperator maskComposite() const { return static_cast<CompositeOperator>(rareNonInheritedData->m_mask.m_composite); }
-    bool maskAttachment() const { return rareNonInheritedData->m_mask.m_attachment; }
+    EFillAttachment maskAttachment() const { return static_cast<EFillAttachment>(rareNonInheritedData->m_mask.m_attachment); }
     EFillBox maskClip() const { return static_cast<EFillBox>(rareNonInheritedData->m_mask.m_clip); }
     EFillBox maskOrigin() const { return static_cast<EFillBox>(rareNonInheritedData->m_mask.m_origin); }
     Length maskXPosition() const { return rareNonInheritedData->m_mask.m_xPosition; }

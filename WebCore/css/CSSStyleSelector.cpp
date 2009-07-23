@@ -5151,10 +5151,13 @@ void CSSStyleSelector::mapFillAttachment(FillLayer* layer, CSSValue* value)
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch (primitiveValue->getIdent()) {
         case CSSValueFixed:
-            layer->setAttachment(false);
+            layer->setAttachment(FixedBackgroundAttachment);
             break;
         case CSSValueScroll:
-            layer->setAttachment(true);
+            layer->setAttachment(ScrollBackgroundAttachment);
+            break;
+        case CSSValueLocal:
+            layer->setAttachment(LocalBackgroundAttachment);
             break;
         default:
             return;

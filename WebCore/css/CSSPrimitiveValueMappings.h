@@ -298,6 +298,37 @@ template<> inline CSSPrimitiveValue::operator ControlPart() const
         return ControlPart(m_value.ident - CSSValueCheckbox + 1);
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillAttachment e)
+    : m_type(CSS_IDENT)
+{
+    switch (e) {
+        case ScrollBackgroundAttachment:
+            m_value.ident = CSSValueScroll;
+            break;
+        case LocalBackgroundAttachment:
+            m_value.ident = CSSValueLocal;
+            break;
+        case FixedBackgroundAttachment:
+            m_value.ident = CSSValueFixed;
+            break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EFillAttachment() const
+{
+    switch (m_value.ident) {
+        case CSSValueScroll:
+            return ScrollBackgroundAttachment;
+        case CSSValueLocal:
+            return LocalBackgroundAttachment;
+        case CSSValueFixed:
+            return FixedBackgroundAttachment;
+        default:
+            ASSERT_NOT_REACHED();
+            return ScrollBackgroundAttachment;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillBox e)
     : m_type(CSS_IDENT)
 {
