@@ -1,3 +1,23 @@
+2009-07-22  Steve Falkenburg  <sfalken@apple.com>
+
+        Checkpoint new Windows nightly launcher.
+        
+        Reviewed by Mark Rowe.
+
+        * WebKitLauncherWin: Added.
+        * WebKitLauncherWin/Resource.h: Added.
+        * WebKitLauncherWin/WebKitLauncherWin.cpp: Added.
+        (getStringValue): Retrieve a string registry value.
+        (applePathFromRegistry): Get an Apple-related path out of the registry.
+        (copyEnvironmentVariable): Copy an environment variable.
+        (safariInstallDir): Helper function to get the install directory for Safari.
+        (safariBrowserExe): Helper function to get the full path of the Safari executable.
+        (_tWinMain): Locate Safari and launch it after setting up an environment variable.
+        * WebKitLauncherWin/WebKitLauncherWin.h: Added.
+        * WebKitLauncherWin/WebKitLauncherWin.rc: Added.
+        * WebKitLauncherWin/WebKitLauncherWin.vcproj: Added.
+        * WebKitLauncherWin/webkit.ico: Added.
+
 2009-07-22  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Treat.
