@@ -1,3 +1,16 @@
+2009-07-23  David Levin  <levin@chromium.org>
+
+        Rubber-stamped by Oliver Hunt.
+
+        3 (speculative) fixes for the new layout test: select-popup-pagekeys
+         - Help Windows to pass by adding platform results.
+         - Fix the general expected results.
+         - Fix select-popup-pagekeys on gtk which doesn't seem to implement eventSender.
+
+        * fast/forms/select-popup-pagekeys-expected.txt:
+        * fast/forms/select-popup-pagekeys.html:
+        * platform/win/fast/forms/select-popup-pagekeys-expected.txt: Added.
+
 2009-07-22  Jens Alfke  <snej@chromium.org>
 
         Reviewed by David Levin.
