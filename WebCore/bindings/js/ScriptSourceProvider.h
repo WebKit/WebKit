@@ -39,12 +39,10 @@ namespace WebCore {
             : SourceProvider(url, hasBOMs)
         {
         }
-        
-        virtual ~ScriptSourceProvider() { }
-        
+
         virtual const String& source() const = 0;
     };
-    
+
 } // namespace WebCore
 
 #endif // ScriptSourceProvider_h
