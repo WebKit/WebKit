@@ -1185,7 +1185,7 @@ bool CSSParser::parseValue(int propId, bool important)
         valid_primitive = validUnit(value, FLength, m_strict);
         break;
     case CSSPropertyTextShadow: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
-    case CSSPropertyWebkitBoxShadow:
+    case CSSPropertyBoxShadow:
         if (id == CSSValueNone)
             valid_primitive = true;
         else
@@ -3537,7 +3537,7 @@ struct ShadowParseContext {
         } else if (allowBlur) {
             blur = val.release();
             allowBlur = false;
-            allowSpread = property == CSSPropertyWebkitBoxShadow;
+            allowSpread = property == CSSPropertyBoxShadow;
         } else if (allowSpread) {
             spread = val.release();
             allowSpread = false;
@@ -4949,12 +4949,19 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
             ++length;
         }
 
-        // Honor -webkit-opacity as a synonym for opacity.
-        // This was the only syntax that worked in Safari 1.1, and may be in use on some websites and widgets.
-        if (strcmp(buffer, "-webkit-opacity") == 0) {
-            const char * const opacity = "opacity";
-            name = opacity;
-            length = strlen(opacity);
+        if (hasPrefix(buffer, length, "-webkit")) {
+            if (strcmp(buffer, "-webkit-opacity") == 0) {
+                // Honor -webkit-opacity as a synonym for opacity.
+                // This was the only syntax that worked in Safari 1.1, and may be in use on some websites and widgets.
+                const char* const opacity = "opacity";
+                name = opacity;
+                length = strlen(opacity);
+            } else if (strcmp(buffer, "-webkit-box-shadow") == 0) {
+                // CSS Backgrounds/Borders.  -webkit-box-shadow worked in Safari 4 and earlier.
+                const char* const boxShadow = "box-shadow";
+                name = boxShadow;
+                length = strlen(boxShadow);
+            }
         }
     }
 
