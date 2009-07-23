@@ -2,6 +2,20 @@
 
          Reviewed by Adam Treat.
 
+         Fix false positives for switch statement indentation check in cpplint.
+         https://bugs.webkit.org/show_bug.cgi?id=27615
+
+         Makes one-line case statements (e.g. "case foo: bar();") work.
+         Also a few general improvements to the robustness and readability of
+         the check, and more test cases.
+
+         * Scripts/modules/cpplint.py:
+         * Scripts/modules/cpplint_unittest.py:
+
+2009-07-23  Jakob Petsovits  <jakob.petsovits@torchmobile.com>
+
+         Reviewed by Adam Treat.
+
          Add check for line-breaking rule #3 to cpplint.
          https://bugs.webkit.org/show_bug.cgi?id=27610
 

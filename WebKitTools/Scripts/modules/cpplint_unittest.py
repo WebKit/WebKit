@@ -2829,11 +2829,26 @@ class WebKitStyleTest(CpplintTestBase):
             '')
         self.assert_multi_line_lint(
             '    switch (condition) {\n'
+            '    case fooCondition: break;\n'
+            '    default: return;\n'
+            '    }\n',
+            '')
+        self.assert_multi_line_lint(
+            '    switch (condition) {\n'
             '        case fooCondition:\n'
             '        case barCondition:\n'
             '            i++;\n'
             '            break;\n'
             '        default:\n'
+            '            i--;\n'
+            '    }\n',
+            'A case label should not be indented, but line up with its switch statement.'
+            '  [whitespace/indent] [4]')
+        self.assert_multi_line_lint(
+            '    switch (condition) {\n'
+            '        case fooCondition:\n'
+            '            break;\n'
+            '    default:\n'
             '            i--;\n'
             '    }\n',
             'A case label should not be indented, but line up with its switch statement.'

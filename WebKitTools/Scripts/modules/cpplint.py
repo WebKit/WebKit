@@ -1768,24 +1768,30 @@ def check_switch_indentation(filename, clean_lines, line_number, error):
         current_indentation = current_indentation_match.group('indentation')
         remaining_line = current_indentation_match.group('remaining_line')
 
-        if remaining_line.startswith('}'):
-            break # The end of the switch statement.
-        elif match(r'(default|case\s+.*)\s*:\s*$', remaining_line):
+        # End the check at the end of the switch statement.
+        if remaining_line.startswith('}') and current_indentation == switch_indentation:
+            break
+        # Case and default branches should not be indented. The regexp also
+        # catches single-line cases like "default: break;" but does not trigger
+        # on stuff like "Document::Foo();".
+        elif match(r'(default|case\s+.*)\s*:([^:].*)?$', remaining_line):
             if current_indentation != switch_indentation:
                 error(filename, line_number + line_offset, 'whitespace/indent', 4,
                       'A case label should not be indented, but line up with its switch statement.')
                 # Don't throw an error for multiple badly indented labels,
                 # one should be enough to figure out the problem.
                 break
-        elif not match(r'\w+\s*:\s*$', remaining_line):
-            # It's not a goto label (which we don't care about), so check if
-            # it's indented at least as far as the switch plus 4 spaces.
-            if not current_indentation.startswith(inner_indentation):
-                error(filename, line_number + line_offset, 'whitespace/indent', 4,
-                      'Non-label code inside switch statements should be indented.')
-                # Don't throw an error for multiple badly indented statements,
-                # one should be enough to figure out the problem.
-                break
+        # We ignore goto labels at the very beginning of a line.
+        elif match(r'\w+\s*:\s*$', remaining_line):
+            continue
+        # It's not a goto label, so check if it's indented at least as far as
+        # the switch statement plus one more level of indentation.
+        elif not current_indentation.startswith(inner_indentation):
+            error(filename, line_number + line_offset, 'whitespace/indent', 4,
+                  'Non-label code inside switch statements should be indented.')
+            # Don't throw an error for multiple badly indented statements,
+            # one should be enough to figure out the problem.
+            break
 
         if encountered_nested_switch:
             break
