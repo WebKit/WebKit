@@ -1,3 +1,13 @@
+2009-07-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Rebaseline the Qt results for computed-style.html and
+        computed-style-without-rendered.html after r46240, similar to r46252.
+
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2009-07-23  David Levin  <levin@chromium.org>
 
          Rubber-stamped by Oliver Hunt.
