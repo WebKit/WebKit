@@ -80,62 +80,12 @@ void AccessibilityObject::detach()
 #endif    
 }
 
-AccessibilityObject* AccessibilityObject::firstChild() const
-{
-    return 0;
-}
-
-AccessibilityObject* AccessibilityObject::lastChild() const
-{
-    return 0;
-}
-
-AccessibilityObject* AccessibilityObject::previousSibling() const
-{
-    return 0;
-}
-
-AccessibilityObject* AccessibilityObject::nextSibling() const
-{
-    return 0;
-}
-
-AccessibilityObject* AccessibilityObject::parentObject() const
-{
-    return 0;
-}
-
 AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 {
     AccessibilityObject* parent;
     for (parent = parentObject(); parent && parent->accessibilityIsIgnored(); parent = parent->parentObject())
         ;
     return parent;
-}
-
-AccessibilityObject* AccessibilityObject::parentObjectIfExists() const
-{
-    return 0;
-}
-    
-int AccessibilityObject::layoutCount() const
-{
-    return 0;
-}
-    
-String AccessibilityObject::text() const
-{
-    return String();
-}
-    
-String AccessibilityObject::helpText() const
-{
-    return String();   
-}
-
-String AccessibilityObject::textUnderElement() const
-{
-    return String();
 }
 
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)
@@ -148,144 +98,11 @@ bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
     return isARIAInput(ariaRole) || ariaRole == TextAreaRole || ariaRole == ButtonRole 
     || ariaRole == ComboBoxRole || ariaRole == SliderRole; 
 }
-    
-int AccessibilityObject::intValue() const
-{
-    return 0;
-}
-
-String AccessibilityObject::stringValue() const
-{
-    return String();
-}
-
-String AccessibilityObject::ariaAccessiblityName(const String&) const
-{
-    return String();
-}
-
-String AccessibilityObject::ariaLabeledByAttribute() const
-{
-    return String();
-}
-
-String AccessibilityObject::title() const
-{
-    return String();
-}
-
-String AccessibilityObject::ariaDescribedByAttribute() const
-{
-    return String();
-}
-
-String AccessibilityObject::accessibilityDescription() const
-{
-    return String();
-}
-
-IntRect AccessibilityObject::boundingBoxRect() const
-{
-    return IntRect();
-}
-
-IntRect AccessibilityObject::elementRect() const
-{
-    return IntRect();
-}
-
-IntSize AccessibilityObject::size() const
-{
-    return IntSize();
-}
 
 IntPoint AccessibilityObject::clickPoint() const
 {
     IntRect rect = elementRect();
     return IntPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
-}
-    
-void AccessibilityObject::linkedUIElements(AccessibilityChildrenVector&) const
-{
-    return;
-}
-    
-AccessibilityObject* AccessibilityObject::titleUIElement() const
-{
-     return 0;   
-}
-
-int AccessibilityObject::textLength() const
-{
-    return 0;
-}
-
-PassRefPtr<Range> AccessibilityObject::ariaSelectedTextDOMRange() const
-{
-    return 0;
-}
-
-String AccessibilityObject::selectedText() const
-{
-    return String();
-}
-
-const AtomicString& AccessibilityObject::accessKey() const
-{
-    return nullAtom;
-}
-
-VisibleSelection AccessibilityObject::selection() const
-{
-    return VisibleSelection();
-}
-
-PlainTextRange AccessibilityObject::selectedTextRange() const
-{
-    return PlainTextRange();
-}
-
-unsigned AccessibilityObject::selectionStart() const
-{
-    return selectedTextRange().start;
-}
-
-unsigned AccessibilityObject::selectionEnd() const
-{
-    return selectedTextRange().length;
-}
-
-void AccessibilityObject::setSelectedText(const String&)
-{
-    // TODO: set selected text (ReplaceSelectionCommand). <rdar://problem/4712125>
-    notImplemented();
-}
-
-void AccessibilityObject::setSelectedTextRange(const PlainTextRange&)
-{
-}
-
-void AccessibilityObject::makeRangeVisible(const PlainTextRange&)
-{
-    // TODO: make range visible (scrollRectToVisible).  <rdar://problem/4712101>
-    notImplemented();
-}
-
-KURL AccessibilityObject::url() const
-{
-    return KURL();
-}
-
-void AccessibilityObject::setFocused(bool)
-{
-}
-
-void AccessibilityObject::setValue(const String&)
-{
-}
-
-void AccessibilityObject::setSelected(bool)
-{
 }
 
 bool AccessibilityObject::press() const
@@ -312,53 +129,6 @@ String AccessibilityObject::language() const
     }
     
     return parent->language();
-}
-    
-AXObjectCache* AccessibilityObject::axObjectCache() const
-{
-    return 0;
-}
-
-Widget* AccessibilityObject::widget() const
-{
-    return 0;
-}
-
-Widget* AccessibilityObject::widgetForAttachmentView() const
-{
-    return 0;
-}
-
-Element* AccessibilityObject::anchorElement() const
-{
-    return 0;   
-}
-
-Element* AccessibilityObject::actionElement() const
-{
-    return 0;
-}
-
-// This function is like a cross-platform version of - (WebCoreTextMarkerRange*)textMarkerRange. It returns
-// a Range that we can convert to a WebCoreRange in the Obj-C file
-VisiblePositionRange AccessibilityObject::visiblePositionRange() const
-{
-    return VisiblePositionRange();
-}
-
-VisiblePositionRange AccessibilityObject::visiblePositionRangeForLine(unsigned) const
-{
-    return VisiblePositionRange();
-}
-
-VisiblePosition AccessibilityObject::visiblePositionForIndex(int) const
-{
-    return VisiblePosition();
-}
-    
-int AccessibilityObject::indexForVisiblePosition(const VisiblePosition&) const
-{
-    return 0;
 }
     
 VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositions(const VisiblePosition& visiblePos1, const VisiblePosition& visiblePos2) const
@@ -619,11 +389,6 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
     return String::adopt(resultVector);
 }
 
-IntRect AccessibilityObject::boundsForVisiblePositionRange(const VisiblePositionRange&) const
-{
-    return IntRect();
-}
-
 int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     // FIXME: Multi-byte support
@@ -649,25 +414,6 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
     }
     
     return length;
-}
-
-void AccessibilityObject::setSelectedVisiblePositionRange(const VisiblePositionRange&) const
-{
-}
-
-VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint&) const
-{
-    return VisiblePosition();
-}
-
-VisiblePosition AccessibilityObject::nextVisiblePosition(const VisiblePosition& visiblePos) const
-{
-    return visiblePos.next();
-}
-
-VisiblePosition AccessibilityObject::previousVisiblePosition(const VisiblePosition& visiblePos) const
-{
-    return visiblePos.previous();
 }
 
 VisiblePosition AccessibilityObject::nextWordEnd(const VisiblePosition& visiblePos) const
@@ -818,12 +564,6 @@ VisiblePosition AccessibilityObject::previousParagraphStartPosition(const Visibl
     return startOfParagraph(previousPos);
 }
 
-// NOTE: Consider providing this utility method as AX API
-VisiblePosition AccessibilityObject::visiblePositionForIndex(unsigned, bool) const
-{
-    return VisiblePosition();
-}
-
 AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
@@ -869,19 +609,6 @@ PlainTextRange AccessibilityObject::plainTextRangeForVisiblePositionRange(const 
     return PlainTextRange(index1, index2 - index1);
 }
 
-// NOTE: Consider providing this utility method as AX API
-int AccessibilityObject::index(const VisiblePosition&) const
-{
-    return -1;
-}
-
-// Given a line number, the range of characters of the text associated with this accessibility
-// object that contains the line number.
-PlainTextRange AccessibilityObject::doAXRangeForLine(unsigned) const
-{
-    return PlainTextRange();
-}
-
 // The composed character range in the text associated with this accessibility object that
 // is specified by the given screen coordinates. This parameterized attribute returns the
 // complete range of characters (including surrogate pairs of multi-byte glyphs) at the given
@@ -897,35 +624,12 @@ PlainTextRange AccessibilityObject::doAXRangeForPosition(const IntPoint& point) 
     return PlainTextRange(i, 1);
 }
 
-// The composed character range in the text associated with this accessibility object that
-// is specified by the given index value. This parameterized attribute returns the complete
-// range of characters (including surrogate pairs of multi-byte glyphs) at the given index.
-PlainTextRange AccessibilityObject::doAXRangeForIndex(unsigned) const
-{
-    return PlainTextRange();
-}
-
 // Given a character index, the range of text associated with this accessibility object
 // over which the style in effect at that character index applies.
 PlainTextRange AccessibilityObject::doAXStyleRangeForIndex(unsigned index) const
 {
     VisiblePositionRange range = styleRangeForPosition(visiblePositionForIndex(index, false));
     return plainTextRangeForVisiblePositionRange(range);
-}
-
-// A substring of the text associated with this accessibility object that is
-// specified by the given character range.
-String AccessibilityObject::doAXStringForRange(const PlainTextRange&) const
-{
-    return String();
-}
-
-// The bounding rectangle of the text associated with this accessibility object that is
-// specified by the given range. This is the bounding rectangle a sighted user would see
-// on the display screen, in pixels.
-IntRect AccessibilityObject::doAXBoundsForRange(const PlainTextRange&) const
-{
-    return IntRect();
 }
 
 // Given an indexed character, the line number of the text associated with this accessibility
@@ -945,74 +649,12 @@ FrameView* AccessibilityObject::documentFrameView() const
         return 0;
 
     return object->documentFrameView();
-}    
-
-AccessibilityObject* AccessibilityObject::doAccessibilityHitTest(const IntPoint&) const
-{
-    return 0;
-}
-
-AccessibilityObject* AccessibilityObject::focusedUIElement() const
-{
-    return 0;
-}
-
-AccessibilityObject* AccessibilityObject::observableObject() const
-{
-    return 0;
-}
-
-AccessibilityRole AccessibilityObject::roleValue() const
-{
-    return UnknownRole;
-}
-    
-AccessibilityRole AccessibilityObject::ariaRoleAttribute() const
-{
-    return UnknownRole;
-}
-
-bool AccessibilityObject::isPresentationalChildOfAriaRole() const
-{
-    return false;
-}
-
-bool AccessibilityObject::ariaRoleHasPresentationalChildren() const
-{
-    return false;
 }
 
 void AccessibilityObject::clearChildren()
 {
     m_haveChildren = false;
     m_children.clear();
-}
-
-void AccessibilityObject::childrenChanged()
-{
-    return;
-}
-
-void AccessibilityObject::addChildren()
-{
-}
-
-void AccessibilityObject::selectedChildren(AccessibilityChildrenVector&)
-{
-}
-
-void AccessibilityObject::visibleChildren(AccessibilityChildrenVector&)
-{
-}
-    
-unsigned AccessibilityObject::axObjectID() const
-{
-    return m_id;
-}
-
-void AccessibilityObject::setAXObjectID(unsigned axObjectID)
-{
-    m_id = axObjectID;
 }
 
 const String& AccessibilityObject::actionVerb() const
@@ -1042,10 +684,6 @@ const String& AccessibilityObject::actionVerb() const
         default:
             return noAction;
     }
-}
-
-void AccessibilityObject::updateBackingStore()
-{
 }
     
 } // namespace WebCore
