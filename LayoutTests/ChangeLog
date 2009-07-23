@@ -1,3 +1,13 @@
+2009-07-23  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27554
+        Expose the value of text-overflow in getComputedStyle.
+
+        * fast/css/getComputedStyle/getComputedStyle-text-overflow-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-text-overflow.html: Added.
+
 2009-07-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by David Hyatt.

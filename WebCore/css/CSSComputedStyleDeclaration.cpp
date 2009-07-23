@@ -125,6 +125,7 @@ static const int computedProperties[] = {
     CSSPropertyTextDecoration,
     CSSPropertyTextIndent,
     CSSPropertyTextShadow,
+    CSSPropertyTextOverflow,
     CSSPropertyTextTransform,
     CSSPropertyTop,
     CSSPropertyUnicodeBidi,
@@ -1026,6 +1027,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->textIndent());
         case CSSPropertyTextShadow:
             return valueForShadow(style->textShadow(), static_cast<CSSPropertyID>(propertyID));
+        case CSSPropertyTextOverflow:
+            if (style->textOverflow())
+                return CSSPrimitiveValue::createIdentifier(CSSValueEllipsis);
+            return CSSPrimitiveValue::createIdentifier(CSSValueClip);
         case CSSPropertyWebkitTextSecurity:
             return CSSPrimitiveValue::create(style->textSecurity());
         case CSSPropertyWebkitTextSizeAdjust:
@@ -1307,7 +1312,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyTextLineThroughMode:
         case CSSPropertyTextLineThroughStyle:
         case CSSPropertyTextLineThroughWidth:
-        case CSSPropertyTextOverflow:
         case CSSPropertyTextOverline:
         case CSSPropertyTextOverlineColor:
         case CSSPropertyTextOverlineMode:
