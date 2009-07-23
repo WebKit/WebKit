@@ -1,3 +1,16 @@
+2009-07-23  Norbert Leser  <norbert.leser@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Fix for missing mmap features in Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=24540
+
+        Fix, conditionally for PLATFORM(SYMBIAN), as an alternative 
+        to missing support for the MAP_ANON property flag in mmap. 
+        It utilizes Symbian specific memory allocation features.
+
+        * runtime/Collector.cpp
+
 2009-07-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
