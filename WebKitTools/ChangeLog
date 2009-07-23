@@ -1,3 +1,13 @@
+2009-07-23  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Update default state of the XSS auditor in GTK DumpRenderTree to match Mac and Windows
+        in hopes of fixing some layout test failures seen on the build bot.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2009-07-23  Jakob Petsovits  <jakob.petsovits@torchmobile.com>
 
          Reviewed by Adam Treat.

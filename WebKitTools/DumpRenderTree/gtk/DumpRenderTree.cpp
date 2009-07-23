@@ -267,7 +267,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
                  "enable-spell-checking", TRUE,
                  "enable-html5-database", TRUE,
                  "enable-html5-local-storage", TRUE,
-                 "enable-xss-auditor", TRUE,
+                 "enable-xss-auditor", FALSE,
                  "javascript-can-open-windows-automatically", TRUE,
                  NULL);
 
