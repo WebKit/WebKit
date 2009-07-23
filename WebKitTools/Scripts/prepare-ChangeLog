@@ -4,7 +4,7 @@
 #
 #  Copyright (C) 2000, 2001 Eazel, Inc.
 #  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
-#  Copyright (C) 2009 Torchmobile, Inc.
+#  Copyright (C) 2009 Torch Mobile, Inc.
 #
 #  prepare-ChangeLog is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public
@@ -41,8 +41,7 @@
 #   Handle yacc source files too (other languages?).
 #   Help merge when there are ChangeLog conflicts or if there's
 #     already a partly written ChangeLog entry.
-#   Add command line option to put the ChangeLog into a separate
-#     file or just spew it out stdout.
+#   Add command line option to put the ChangeLog into a separate file.
 #   Add SVN version numbers for commit (can't do that until
 #     the changes are checked in, though).
 #   Work around diff stupidity where deleting a function that starts
@@ -104,6 +103,7 @@ my $gitCommit = 0;
 my $gitIndex = "";
 my $gitReviewer = "";
 my $openChangeLogs = 0;
+my $writeChangeLogs = 1;
 my $showHelp = 0;
 my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
 my $updateChangeLogs = 1;
@@ -117,6 +117,7 @@ my $parseOptionsResult =
                "git-reviewer:s" => \$gitReviewer,
                "help|h!" => \$showHelp,
                "open|o!" => \$openChangeLogs,
+               "write!" => \$writeChangeLogs,
                "update!" => \$updateChangeLogs);
 if (!$parseOptionsResult || $showHelp) {
     print STDERR basename($0) . " [--bug] [-d|--diff] [-h|--help] [-o|--open] [--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
@@ -129,6 +130,7 @@ if (!$parseOptionsResult || $showHelp) {
     print STDERR "  -h|--help      Show this help message\n";
     print STDERR "  -o|--open      Open ChangeLogs in an editor when done\n";
     print STDERR "  --[no-]update  Update ChangeLogs from svn before adding entry (default: update)\n";
+    print STDERR "  --[no-]write   Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
     exit 1;
 }
 
@@ -285,9 +287,35 @@ foreach my $file (sort keys %function_lists) {
     }
 }
 
+# Build the list of ChangeLog prefixes in the correct project order
+my @prefixes;
+my %prefixesSort;
+foreach my $prefix (keys %files) {
+    my $prefixDir = substr($prefix, 0, length($prefix) - 1); # strip trailing /
+    my $sortKey = lc $prefix;
+    $sortKey = "top level" unless length $sortKey;
+
+    if ($prefixDir eq "top level") {
+        $sortKey = "";
+    } elsif ($prefixDir eq "Tools") {
+        $sortKey = "-, just after top level";
+    } elsif ($prefixDir eq "WebBrowser") {
+        $sortKey = lc "WebKit, WebBrowser after";
+    } elsif ($prefixDir eq "WebCore") {
+        $sortKey = lc "WebFoundation, WebCore after";
+    } elsif ($prefixDir eq "LayoutTests") {
+        $sortKey = lc "~, LayoutTests last";
+    }
+
+    $prefixesSort{$sortKey} = $prefix;
+}
+foreach my $prefixSort (sort keys %prefixesSort) {
+    push @prefixes, $prefixesSort{$prefixSort};
+}
+
 # Get the latest ChangeLog files from svn.
 my @logs = ();
-foreach my $prefix (sort keys %files) {
+foreach my $prefix (@prefixes) {
     push @logs, File::Spec->catfile($prefix || ".", "ChangeLog");
 }
 
@@ -312,22 +340,30 @@ if (@logs && $updateChangeLogs && $isSVN) {
     }
 }
 
-# Write out a new ChangeLog file.
-foreach my $prefix (sort keys %files) {
-    my $changeLogPath = File::Spec->catfile($prefix || ".", "ChangeLog");
-    print STDERR "  Editing the ${changeLogPath} file.\n";
-    open OLD_CHANGE_LOG, ${changeLogPath} or die "Could not open ${changeLogPath} file: $!.\n";
-    # It's less efficient to read the whole thing into memory than it would be
-    # to read it while we prepend to it later, but I like doing this part first.
-    my @old_change_log = <OLD_CHANGE_LOG>;
-    close OLD_CHANGE_LOG;
-    # We want to match the ChangeLog's line endings in case it doesn't match
-    # the native line endings for this version of perl.
+# Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
+foreach my $prefix (@prefixes) {
     my $endl = "\n";
-    if ($old_change_log[0] =~ /(\r?\n)$/g) {
-        $endl = "$1";
+    my @old_change_log;
+
+    if ($writeChangeLogs) {
+        my $changeLogPath = File::Spec->catfile($prefix || ".", "ChangeLog");
+        print STDERR "  Editing the ${changeLogPath} file.\n";
+        open OLD_CHANGE_LOG, ${changeLogPath} or die "Could not open ${changeLogPath} file: $!.\n";
+        # It's less efficient to read the whole thing into memory than it would be
+        # to read it while we prepend to it later, but I like doing this part first.
+        @old_change_log = <OLD_CHANGE_LOG>;
+        close OLD_CHANGE_LOG;
+        # We want to match the ChangeLog's line endings in case it doesn't match
+        # the native line endings for this version of perl.
+        if ($old_change_log[0] =~ /(\r?\n)$/g) {
+            $endl = "$1";
+        }
+        open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
+    } else {
+        open CHANGE_LOG, ">-" or die "Could not write to STDOUT\n.";
+        print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @prefixes) == 1;
     }
-    open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
+
     print CHANGE_LOG normalizeLineEndings("$date  $name  <$emailAddress>\n\n", $endl);
 
     my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
@@ -341,8 +377,10 @@ foreach my $prefix (sort keys %files) {
     print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
     print CHANGE_LOG normalizeLineEndings("\n", $endl);
 
-    # We could pre-populate this with the git commit log or with the bug description.
-    print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
+    if ($writeChangeLogs) {
+        # We could pre-populate this with the git commit log or with the bug description.
+        print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
+    }
 
     if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
         if ($didChangeRegressionTests) {
@@ -354,9 +392,15 @@ foreach my $prefix (sort keys %files) {
 
     foreach my $file (sort @{$files{$prefix}}) {
         my $file_stem = substr $file, length $prefix;
-        print CHANGE_LOG normalizeLineEndings("        * $file_stem:$function_lists{$file}\n", $endl);;
+        print CHANGE_LOG normalizeLineEndings("        * $file_stem:$function_lists{$file}\n", $endl);
     }
-    print CHANGE_LOG normalizeLineEndings("\n", $endl), @old_change_log;
+
+    if ($writeChangeLogs) {
+        print CHANGE_LOG normalizeLineEndings("\n", $endl), @old_change_log;
+    } else {
+        print CHANGE_LOG "\n";
+    }
+
     close CHANGE_LOG;
 }
 
