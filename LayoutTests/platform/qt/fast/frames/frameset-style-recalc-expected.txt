@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600
+      RenderFrame {FRAME} at (0,0) size 800x200
+        layer at (0,0) size 800x200
+          RenderView at (0,0) size 800x200
+        layer at (0,0) size 800x200
+          RenderBlock {HTML} at (0,0) size 800x200
+            RenderBody {BODY} at (8,8) size 784x179
+              RenderBlock {P} at (0,0) size 784x34
+                RenderText {#text} at (0,0) size 49x17
+                  text run at (0,0) width 49: "Test for "
+                RenderInline {I} at (0,0) size 715x34
+                  RenderInline {A} at (0,0) size 275x17 [color=#0000EE]
+                    RenderText {#text} at (49,0) size 275x17
+                      text run at (49,0) width 275: "https://bugs.webkit.org/show_bug.cgi?id=19348"
+                  RenderText {#text} at (324,0) size 715x34
+                    text run at (324,0) width 4: " "
+                    text run at (328,0) width 387: "REGRESSION (r34193): Setting the size of a frame with javascript"
+                    text run at (0,17) width 208: "document.body.row no longer works"
+                RenderText {#text} at (208,17) size 4x17
+                  text run at (208,17) width 4: "."
+              RenderBlock {P} at (0,47) size 784x17
+                RenderText {#text} at (0,0) size 186x17
+                  text run at (0,0) width 186: "This frame should be 200px tall."
+        layer at (0,100) size 100x100
+          RenderBlock (positioned) {DIV} at (0,100) size 100x100 [bgcolor=#008000]
+      RenderFrame {FRAME} at (0,206) size 800x394
+        layer at (0,0) size 800x394
+          RenderView at (0,0) size 800x394
+        layer at (0,0) size 800x394
+          RenderBlock {HTML} at (0,0) size 800x394
+            RenderBody {BODY} at (8,8) size 784x378
