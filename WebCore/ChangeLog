@@ -1,3 +1,33 @@
+2009-07-23  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Holger Freyther.
+
+        Fix crashes with the QObject bindings after garbage collection.
+
+        There is one QtInstance per wrapped QObject, and that QtInstance keeps
+        references to cached JSObjects for slots. When those objects get
+        deleted due to GC, then they becoming dangling pointers.
+
+        When a cached member dies, it is now removed from the QtInstance's
+        cache.
+
+        As we cannot track the lifetime of the children, we have to remove
+        them from QtInstance alltogether. They are not cached and were
+        only used for mark(), but we _want_ them to be subject to gc.
+
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::~QtInstance): Minor coding style cleanup,
+        use qDeleteAll().
+        (JSC::Bindings::QtInstance::removeCachedMethod): New function, to
+        clean m_methods and m_defaultMethod.
+        (JSC::Bindings::QtInstance::mark): Avoid marking already marked objects.
+        (JSC::Bindings::QtField::valueFromInstance): Don't save children for
+        marking.
+        * bridge/qt/qt_instance.h: Declare removeCachedMethod.
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMethod::~QtRuntimeMethod): Call removeCachedMethod
+        with this on the instance.
+
 2009-07-23  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark Rowe.

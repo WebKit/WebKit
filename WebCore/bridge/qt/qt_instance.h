@@ -65,6 +65,8 @@ public:
     virtual bool getOwnPropertySlot(JSObject*, ExecState*, const Identifier&, PropertySlot&);
     virtual void put(JSObject*, ExecState*, const Identifier&, JSValue, PutPropertySlot&);
 
+    void removeCachedMethod(JSObject*);
+
     static QtInstance* getInstance(JSObject*);
 
 private:
@@ -81,7 +83,6 @@ private:
     QObject* m_hashkey;
     mutable QHash<QByteArray, JSObject*> m_methods;
     mutable QHash<QString, QtField*> m_fields;
-    mutable QSet<JSValue> m_children;
     mutable QtRuntimeMetaMethod* m_defaultMethod;
     QScriptEngine::ValueOwnership m_ownership;
 };

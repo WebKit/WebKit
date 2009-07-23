@@ -916,6 +916,8 @@ QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, const
 
 QtRuntimeMethod::~QtRuntimeMethod()
 {
+    QW_D(QtRuntimeMethod);
+    d->m_instance->removeCachedMethod(this);
     delete d_ptr;
 }
 

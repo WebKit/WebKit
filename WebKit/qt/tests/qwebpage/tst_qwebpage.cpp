@@ -109,6 +109,7 @@ private slots:
     void backActionUpdate();
     void frameAt();
     void requestCache();
+    void protectBindingsRuntimeObjectsFromCollector();
 
 private:
 
@@ -1162,6 +1163,31 @@ void tst_QWebPage::frameAt()
     webPage->mainFrame()->load(url);
     QTRY_COMPARE(loadSpy.count(), 1);
     frameAtHelper(webPage, webPage->mainFrame(), webPage->mainFrame()->pos());
+}
+
+// import a little DRT helper function to trigger the garbage collector
+void QWEBKIT_EXPORT qt_drt_garbageCollector_collect();
+
+void tst_QWebPage::protectBindingsRuntimeObjectsFromCollector()
+{
+    QSignalSpy loadSpy(m_view, SIGNAL(loadFinished(bool)));
+
+    PluginPage* newPage = new PluginPage(m_view);
+    m_view->setPage(newPage);
+
+    m_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+
+    m_view->setHtml(QString("<html><body><object type='application/x-qt-plugin' classid='lineedit' id='mylineedit'/></body></html>"));
+    QTRY_COMPARE(loadSpy.count(), 1);
+
+    newPage->mainFrame()->evaluateJavaScript("function testme(text) { var lineedit = document.getElementById('mylineedit'); lineedit.setText(text); lineedit.selectAll(); }");
+
+    newPage->mainFrame()->evaluateJavaScript("testme('foo')");
+
+    qt_drt_garbageCollector_collect();
+
+    // don't crash!
+    newPage->mainFrame()->evaluateJavaScript("testme('bar')");
 }
 
 QTEST_MAIN(tst_QWebPage)
