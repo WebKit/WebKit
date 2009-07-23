@@ -2974,6 +2974,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     cssprops.input = WALDOCSSPROPS
     cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES $$SVGCSSPROPERTIES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
+    cssprops.variable_out =
     cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES SVGCSSPROPERTIES
     addExtraCompilerWithHeader(cssprops)
 
@@ -2982,6 +2983,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     cssvalues.input = WALDOCSSVALUES
     cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$SVGCSSVALUES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
+    cssvalues.variable_out =
     cssvalues.depend = ${QMAKE_FILE_NAME} SVGCSSVALUES
     addExtraCompilerWithHeader(cssvalues)
 } else {
@@ -2990,6 +2992,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     cssprops.input = WALDOCSSPROPS
     cssprops.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} $$DASHBOARDSUPPORTCSSPROPERTIES > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makeprop.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.gperf
     cssprops.CONFIG = target_predeps no_link
+    cssprops.variable_out =
     cssprops.depend = ${QMAKE_FILE_NAME} DASHBOARDSUPPORTCSSPROPERTIES
     addExtraCompilerWithHeader(cssprops)
 
@@ -2998,6 +3001,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     cssvalues.input = WALDOCSSVALUES
     cssvalues.commands = perl -ne \"print lc\" ${QMAKE_FILE_NAME} > $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}${QMAKE_FILE_BASE}.in && cd $$GENERATED_SOURCES_DIR && perl $$PWD/css/makevalues.pl && $(DEL_FILE) ${QMAKE_FILE_BASE}.in ${QMAKE_FILE_BASE}.strip ${QMAKE_FILE_BASE}.gperf
     cssvalues.CONFIG = target_predeps no_link
+    cssvalues.variable_out =
     cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}${QMAKE_FILE_BASE}.h
     addExtraCompiler(cssvalues)
 }
@@ -3054,6 +3058,7 @@ tokenizer.commands = flex -t < ${QMAKE_FILE_NAME} | perl $$PWD/css/maketokenizer
 tokenizer.dependency_type = TYPE_C
 tokenizer.input = TOKENIZER
 tokenizer.CONFIG += target_predeps no_link
+tokenizer.variable_out =
 addExtraCompiler(tokenizer)
 
 # GENERATOR 4: CSS grammar
@@ -3108,6 +3113,7 @@ entities.commands = gperf -a -L ANSI-C -C -G -c -o -t --key-positions="*" -N fin
 entities.input = ENTITIES_GPERF
 entities.dependency_type = TYPE_C
 entities.CONFIG = target_predeps no_link
+entities.variable_out =
 entities.clean = ${QMAKE_FILE_OUT}
 addExtraCompiler(entities)
 
@@ -3117,6 +3123,7 @@ doctypestrings.input = DOCTYPESTRINGS
 doctypestrings.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > ${QMAKE_FILE_OUT} && echo // bogus >> ${QMAKE_FILE_OUT} && gperf -CEot -L ANSI-C --key-positions="*" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
 doctypestrings.dependency_type = TYPE_C
 doctypestrings.CONFIG += target_predeps no_link
+doctypestrings.variable_out =
 doctypestrings.clean = ${QMAKE_FILE_OUT}
 addExtraCompiler(doctypestrings)
 
@@ -3125,6 +3132,7 @@ colordata.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}ColorData.c
 colordata.commands = perl -e \"print \'$${LITERAL_HASH}include <string.h>\';\" > ${QMAKE_FILE_OUT} && echo // bogus >> ${QMAKE_FILE_OUT} && gperf -CDEot -L ANSI-C --key-positions="*" -N findColor -D -s 2 < ${QMAKE_FILE_NAME} >> ${QMAKE_FILE_OUT}
 colordata.input = COLORDAT_GPERF
 colordata.CONFIG = target_predeps no_link
+colordata.variable_out =
 addExtraCompiler(colordata)
 
 # GENERATOR 9:
