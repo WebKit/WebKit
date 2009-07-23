@@ -123,6 +123,7 @@ _ERROR_CATEGORIES = '''\
     readability/check
     readability/comparison_to_zero
     readability/constructors
+    readability/control_flow
     readability/fn_size
     readability/function
     readability/multiline_comment
@@ -1866,6 +1867,96 @@ def check_braces(filename, clean_lines, line_number, error):
               "You don't need a ; after a }")
 
 
+def check_exit_statement_simplifications(filename, clean_lines, line_number, error):
+    """Looks for else or else-if statements that should be written as an
+    if statement when the prior if concludes with a return, break, continue or
+    goto statement.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number] # Get rid of comments and strings.
+
+    else_match = match(r'(?P<else_indentation>\s*)(\}\s*)?else(\s+if\s*\(|(?P<else>\s*(\{\s*)?\Z))', line)
+    if not else_match:
+        return
+
+    else_indentation = else_match.group('else_indentation')
+    inner_indentation = else_indentation + ' ' * 4
+
+    previous_lines = clean_lines.elided[:line_number]
+    previous_lines.reverse()
+    line_offset = 0
+    encountered_exit_statement = False
+
+    for current_line in previous_lines:
+        line_offset -= 1
+
+        # Skip not only empty lines but also those with preprocessor directives
+        # and goto labels.
+        if current_line.strip() == '' or current_line.startswith('#') or match(r'\w+\s*:\s*$', current_line):
+            continue
+
+        # Skip lines with closing braces on the original indentation level.
+        # Even though the styleguide says they should be on the same line as
+        # the "else if" statement, we also want to check for instances where
+        # the current code does not comply with the coding style. Thus, ignore
+        # these lines and proceed to the line before that.
+        if current_line == else_indentation + '}':
+            continue
+
+        current_indentation_match = match(r'(?P<indentation>\s*)(?P<remaining_line>.*)$', current_line);
+        current_indentation = current_indentation_match.group('indentation')
+        remaining_line = current_indentation_match.group('remaining_line')
+
+        # As we're going up the lines, the first real statement to encounter
+        # has to be an exit statement (return, break, continue or goto) -
+        # otherwise, this check doesn't apply.
+        if not encountered_exit_statement:
+            # We only want to find exit statements if they are on exactly
+            # the same level of indentation as expected from the code inside
+            # the block. If the indentation doesn't strictly match then we
+            # might have a nested if or something, which must be ignored.
+            if current_indentation != inner_indentation:
+                break
+            if match(r'(return(\W+.*)|(break|continue)\s*;|goto\s*\w+;)$', remaining_line):
+                encountered_exit_statement = True
+                continue
+            break
+
+        # When code execution reaches this point, we've found an exit statement
+        # as last statement of the previous block. Now we only need to make
+        # sure that the block belongs to an "if", then we can throw an error.
+
+        # Skip lines with opening braces on the original indentation level,
+        # similar to the closing braces check above. ("if (condition)\n{")
+        if current_line == else_indentation + '{':
+            continue
+
+        # Skip everything that's further indented than our "else" or "else if".
+        if current_indentation.startswith(else_indentation) and current_indentation != else_indentation:
+            continue
+
+        # So we've got a line with same (or less) indentation. Is it an "if"?
+        # If yes: throw an error. If no: don't throw an error.
+        # Whatever the outcome, this is the end of our loop.
+        if match(r'if\s*\(', remaining_line):
+            if else_match.start('else') != -1:
+                error(filename, line_number + line_offset, 'readability/control_flow', 4,
+                      'An else statement can be removed when the prior "if" '
+                      'concludes with a return, break, continue or goto statement.')
+            else:
+                error(filename, line_number + line_offset, 'readability/control_flow', 4,
+                      'An else if statement should be written as an if statement '
+                      'when the prior "if" concludes with a return, break, '
+                      'continue or goto statement.')
+        break
+
+
 def replaceable_check(operator, macro, line):
     """Determine whether a basic CHECK can be replaced with a more specific one.
 
@@ -2030,11 +2121,18 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
               'Weird number of spaces at line-start.  '
               'Are you using a 4-space indent?')
     # Labels should always be indented at least one space.
-    elif not initial_spaces and line[:2] != '//' and search(r'[^:]:\s*$', line):
-        error(filename, line_number, 'whitespace/labels', 4,
-              'Labels should always be indented at least one space.  '
-              'If this is a member-initializer list in a constructor, '
-              'the colon should be on the line after the definition header.')
+    elif not initial_spaces and line[:2] != '//':
+        label_match = match(r'(?P<label>[^:]+):\s*$', line)
+
+        if label_match:
+            label = label_match.group('label')
+            # Only throw errors for stuff that is definitely not a goto label,
+            # because goto labels can in fact occur at the start of the line.
+            if label in ['public', 'private', 'protected'] or label.find(' ') != -1:
+                error(filename, line_number, 'whitespace/labels', 4,
+                      'Labels should always be indented at least one space.  '
+                      'If this is a member-initializer list in a constructor, '
+                      'the colon should be on the line after the definition header.')
 
     if (cleansed_line.count(';') > 1
         # for loops are allowed two ;'s (and may run over two lines).
@@ -2057,6 +2155,7 @@ def check_style(filename, clean_lines, line_number, file_extension, error):
     check_namespace_indentation(filename, clean_lines, line_number, file_extension, error)
     check_switch_indentation(filename, clean_lines, line_number, error)
     check_braces(filename, clean_lines, line_number, error)
+    check_exit_statement_simplifications(filename, clean_lines, line_number, error)
     check_spacing(filename, clean_lines, line_number, error)
     check_check(filename, clean_lines, line_number, error)
     check_for_comparisons_to_zero(filename, clean_lines, line_number, error)

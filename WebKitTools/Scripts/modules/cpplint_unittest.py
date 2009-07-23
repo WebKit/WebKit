@@ -3015,7 +3015,117 @@ class WebKitStyleTest(CpplintTestBase):
 
         # 3. An else if statement should be written as an if statement
         #    when the prior if concludes with a return statement.
-        # FIXME: No tests for this.
+        self.assert_multi_line_lint(
+            'if (motivated) {\n'
+            '    if (liquid)\n'
+            '        return money;\n'
+            '} else if (tired)\n'
+            '    break;\n',
+            '')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '    doSomething();\n'
+            'else if (otherCondition)\n'
+            '    doSomethingElse();\n',
+            '')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '    doSomething();\n'
+            'else\n'
+            '    doSomethingElse();\n',
+            '')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '    returnValue = foo;\n'
+            'else if (otherCondition)\n'
+            '    returnValue = bar;\n',
+            '')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '    returnValue = foo;\n'
+            'else\n'
+            '    returnValue = bar;\n',
+            '')
+        self.assert_multi_line_lint(
+            'if (condition)\n'
+            '    doSomething();\n'
+            'else if (liquid)\n'
+            '    return money;\n'
+            'else if (broke)\n'
+            '    return favor;\n'
+            'else\n'
+            '    sleep(28800);\n',
+            '')
+        self.assert_multi_line_lint(
+            'if (liquid) {\n'
+            '    prepare();\n'
+            '    return money;\n'
+            '} else if (greedy) {\n'
+            '    keep();\n'
+            '    return nothing;\n'
+            '}\n',
+            'An else if statement should be written as an if statement when the '
+            'prior "if" concludes with a return, break, continue or goto statement.'
+            '  [readability/control_flow] [4]')
+        self.assert_multi_line_lint(
+            '    if (stupid) {\n'
+            'infiniteLoop:\n'
+            '        goto infiniteLoop;\n'
+            '    } else if (evil)\n'
+            '        goto hell;\n',
+            'An else if statement should be written as an if statement when the '
+            'prior "if" concludes with a return, break, continue or goto statement.'
+            '  [readability/control_flow] [4]')
+        self.assert_multi_line_lint(
+            'if (liquid)\n'
+            '{\n'
+            '    prepare();\n'
+            '    return money;\n'
+            '}\n'
+            'else if (greedy)\n'
+            '    keep();\n',
+            ['This { should be at the end of the previous line  [whitespace/braces] [4]',
+            'An else should appear on the same line as the preceding }  [whitespace/newline] [4]',
+            'An else if statement should be written as an if statement when the '
+            'prior "if" concludes with a return, break, continue or goto statement.'
+            '  [readability/control_flow] [4]'])
+        self.assert_multi_line_lint(
+            'if (gone)\n'
+            '    return;\n'
+            'else if (here)\n'
+            '    go();\n',
+            'An else if statement should be written as an if statement when the '
+            'prior "if" concludes with a return, break, continue or goto statement.'
+            '  [readability/control_flow] [4]')
+        self.assert_multi_line_lint(
+            'if (gone)\n'
+            '    return;\n'
+            'else\n'
+            '    go();\n',
+            'An else statement can be removed when the prior "if" concludes '
+            'with a return, break, continue or goto statement.'
+            '  [readability/control_flow] [4]')
+        self.assert_multi_line_lint(
+            'if (motivated) {\n'
+            '    prepare();\n'
+            '    continue;\n'
+            '} else {\n'
+            '    cleanUp();\n'
+            '    break;\n'
+            '}\n',
+            'An else statement can be removed when the prior "if" concludes '
+            'with a return, break, continue or goto statement.'
+            '  [readability/control_flow] [4]')
+        self.assert_multi_line_lint(
+            'if (tired)\n'
+            '    break;\n'
+            'else {\n'
+            '    prepare();\n'
+            '    continue;\n'
+            '}\n',
+            'An else statement can be removed when the prior "if" concludes '
+            'with a return, break, continue or goto statement.'
+            '  [readability/control_flow] [4]')
 
     def test_braces(self):
         # 1. Function definitions: place each brace on its own line.

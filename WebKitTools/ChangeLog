@@ -1,3 +1,21 @@
+2009-07-23  Jakob Petsovits  <jakob.petsovits@torchmobile.com>
+
+         Reviewed by Adam Treat.
+
+         Add check for line-breaking rule #3 to cpplint.
+         https://bugs.webkit.org/show_bug.cgi?id=27610
+
+         "An else if statement should be written as an if statement when
+         the prior if concludes with a return statement."
+
+         Implemented by a multi-line (kind of back-tracking) algorithm.
+         Comes with loads of unit tests. Fixes the check for label indentation
+         to be not so overzealous, as it didn't allow for completely unindented
+         goto labels (at the very start of a line).
+
+         * Scripts/modules/cpplint.py:
+         * Scripts/modules/cpplint_unittest.py:
+
 2009-07-23  Eli Fidler  <eli.fidler@torchmobile.com>
 
          Reviewed by Adam Treat.
