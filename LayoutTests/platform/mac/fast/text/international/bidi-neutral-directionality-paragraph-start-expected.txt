@@ -24,12 +24,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 676x18
           text run at (0,0) width 676: "If the test is successful, the question marks should be on the far left and far right of the next two paragraphs."
       RenderBlock {P} at (0,208) size 784x20
-        RenderText {#text} at (0,2) size 65x18
+        RenderText {#text} at (0,2) size 68x18
           text run at (0,2) width 11: "? "
-          text run at (11,2) width 23 RTL: "\x{FEB2} \x{FEED}"
-          text run at (34,2) width 31: "hello"
+          text run at (11,2) width 26 RTL: "\x{FEB2} \x{FEED}"
+          text run at (37,2) width 31: "hello"
       RenderBlock {P} at (0,244) size 784x20
-        RenderText {#text} at (715,2) size 69x18
-          text run at (715,2) width 27 RTL: " \x{FEB2} \x{FEED}"
+        RenderText {#text} at (712,2) size 72x18
+          text run at (712,2) width 30 RTL: " \x{FEB2} \x{FEED}"
           text run at (742,2) width 31: "hello"
           text run at (773,2) width 11 RTL: "? "

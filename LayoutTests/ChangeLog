@@ -2,6 +2,18 @@
 
         Rubber-stamped by Dan Bernstein.
 
+        Update layout test results for two international text tests that are failing due to font differences.
+
+        * platform/mac-leopard/fast/text/international/thai-baht-space-expected.checksum: Renamed from LayoutTests/platform/mac/fast/text/international/thai-baht-space-expected.checksum.
+        * platform/mac-leopard/fast/text/international/thai-baht-space-expected.png: Renamed from LayoutTests/platform/mac/fast/text/international/thai-baht-space-expected.png.
+        * platform/mac-leopard/fast/text/international/thai-baht-space-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/thai-baht-space-expected.txt.
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt:
+        * platform/mac/fast/text/international/thai-baht-space-expected.txt:
+
+2009-07-23  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
         Update layout test results for two CSS 2.1 counter tests that are failing due to font differences.
 
         * platform/mac-leopard/css2.1/t1202-counter-04-b-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t1202-counter-04-b-expected.txt.
