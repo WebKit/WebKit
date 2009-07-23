@@ -5040,9 +5040,6 @@ fast/dom/getClientRects.html
 fast/dom/location-assign.html
 fast/dom/tabindex-clamp.html
 fast/dom/Document/document-charset.html
-fast/dom/HTMLDataGridElement/DataGridColumns-basic.html
-fast/dom/HTMLDataGridElement/DataGridColumns-dom-attributes.html
-fast/dom/HTMLDataGridElement/DataGridColumns-dom.html
 fast/dom/HTMLScriptElement/nested-execution.html
 fast/dom/Window/custom-constructors.html
 fast/dom/Window/webkitConvertPoint.html
