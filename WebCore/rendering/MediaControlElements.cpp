@@ -556,14 +556,15 @@ PassRefPtr<RenderStyle> MediaControlTimeDisplayElement::styleForElement()
 
 void MediaControlTimeDisplayElement::setVisible(bool visible)
 {
+    if (visible == m_isVisible)
+        return;
+    m_isVisible = visible;
+
     // This function is used during the RenderMedia::layout()
     // call, where we cannot change the renderer at this time.
     if (!renderer() || !renderer()->style())
         return;
 
-    if (visible == m_isVisible)
-        return;
-    m_isVisible = visible;
     RefPtr<RenderStyle> style = styleForElement();
     renderer()->setStyle(style.get());
 }
