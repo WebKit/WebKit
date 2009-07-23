@@ -1,3 +1,77 @@
+2009-07-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        [CSS3 Backgrounds and Borders] Add support for inset box shadows
+        https://bugs.webkit.org/show_bug.cgi?id=27582
+
+        Test: fast/box-shadow/inset.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForShadow): Set the ShadowValue’s shadow style to 'inset'
+            as needed.
+
+        * css/CSSParser.cpp:
+        (WebCore::ShadowParseContext::ShadowParseContext): Added style and allowStyle
+            members. Initialize the allowStyle member.
+        (WebCore::ShadowParseContext::commitValue): Pass the style value to the
+            ShadowValue constructor. Reset allowStyle.
+        (WebCore::ShadowParseContext::commitLength): Update allowStyle.
+        (WebCore::ShadowParseContext::commitColor): Ditto.
+        (WebCore::ShadowParseContext::commitStyle): Added. Sets the style member and
+            updates the state.
+        (WebCore::CSSParser::parseShadow): Parse the 'inset' keyword.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Get the style value from the
+            shadow value and pass it to the ShadowData constructor.
+
+        * css/ShadowValue.cpp:
+        (WebCore::ShadowValue::ShadowValue): Added style.
+        (WebCore::ShadowValue::cssText): Added style.
+
+        * css/ShadowValue.h:
+        (WebCore::ShadowValue::create): Added style.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc): Added a blend function for shadow styles. When blending
+            between normal and inset shadows, all intermediate values map to normal.
+        (WebCore::PropertyWrapperShadow::blend): Added normal style to the default
+            shadow.
+            
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxShadow): Added a shadow style parameter,
+            which is passed through to RenderBoxModelObject::paintBoxShadow().
+
+        (WebCore::InlineFlowBox::paintBoxDecorations): Paint inset shadows on top of
+            the background.
+
+        * rendering/InlineFlowBox.h:
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations): Paint inset shadows on top of the
+            background.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow): Added a shadow style
+            parameter, and code to paint inset shadows.
+
+        * rendering/RenderBoxModelObject.h:
+
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations): Paint inset shadows on top of
+            the background.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations): Ditto.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations): Ditto.
+
+        * rendering/style/ShadowData.h:
+        Added a ShadowStyle enum.
+        (WebCore::ShadowData::ShadowData): Add and initialize a style member.
+
 2009-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build with UNUSED_PARAM(frame) for when ENABLE(3D_RENDERING) is not defined.

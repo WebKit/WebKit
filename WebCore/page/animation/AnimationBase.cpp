@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,12 +113,23 @@ static inline IntSize blendFunc(const AnimationBase* anim, const IntSize& from, 
                    blendFunc(anim, from.height(), to.height(), progress));
 }
 
+static inline ShadowStyle blendFunc(const AnimationBase* anim, ShadowStyle from, ShadowStyle to, double progress)
+{
+    if (from == to)
+        return to;
+
+    double fromVal = from == Normal ? 1 : 0;
+    double toVal = to == Normal ? 1 : 0;
+    double result = blendFunc(anim, fromVal, toVal, progress);
+    return result > 0 ? Normal : Inset;
+}
+
 static inline ShadowData* blendFunc(const AnimationBase* anim, const ShadowData* from, const ShadowData* to, double progress)
 {  
     ASSERT(from && to);
     return new ShadowData(blendFunc(anim, from->x, to->x, progress), blendFunc(anim, from->y, to->y, progress), 
                           blendFunc(anim, from->blur, to->blur, progress), blendFunc(anim, from->spread, to->spread, progress),
-                          blendFunc(anim, from->color, to->color, progress));
+                          blendFunc(anim, from->style, to->style, progress), blendFunc(anim, from->color, to->color, progress));
 }
 
 static inline TransformOperations blendFunc(const AnimationBase* anim, const TransformOperations& from, const TransformOperations& to, double progress)
@@ -301,7 +312,7 @@ public:
     {
         ShadowData* shadowA = (a->*m_getter)();
         ShadowData* shadowB = (b->*m_getter)();
-        ShadowData defaultShadowData(0, 0, 0, 0, Color::transparent);
+        ShadowData defaultShadowData(0, 0, 0, 0, Normal, Color::transparent);
 
         if (!shadowA)
             shadowA = &defaultShadowData;

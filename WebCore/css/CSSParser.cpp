@@ -3486,6 +3486,7 @@ struct ShadowParseContext {
         , allowBlur(false)
         , allowSpread(false)
         , allowColor(true)
+        , allowStyle(prop == CSSPropertyBoxShadow)
         , allowBreak(true)
     {
     }
@@ -3495,12 +3496,12 @@ struct ShadowParseContext {
     void commitValue()
     {
         // Handle the ,, case gracefully by doing nothing.
-        if (x || y || blur || spread || color) {
+        if (x || y || blur || spread || color || style) {
             if (!values)
                 values = CSSValueList::createCommaSeparated();
-            
+
             // Construct the current shadow value and add it to the list.
-            values->append(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), color.release()));
+            values->append(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
         }
 
         // Now reset for the next shadow value.
@@ -3508,6 +3509,7 @@ struct ShadowParseContext {
         y = 0;
         blur = 0;
         spread = 0;
+        style = 0;
         color = 0;
 
         allowX = true;
@@ -3515,7 +3517,8 @@ struct ShadowParseContext {
         allowBreak = true;
         allowY = false;
         allowBlur = false;
-        allowSpread = false;  
+        allowSpread = false;
+        allowStyle = property == CSSPropertyBoxShadow;
     }
 
     void commitLength(CSSParserValue* v)
@@ -3527,12 +3530,14 @@ struct ShadowParseContext {
             allowX = false;
             allowY = true;
             allowColor = false;
+            allowStyle = false;
             allowBreak = false;
         } else if (allowY) {
             y = val.release();
             allowY = false;
             allowBlur = true;
             allowColor = true;
+            allowStyle = property == CSSPropertyBoxShadow;
             allowBreak = true;
         } else if (allowBlur) {
             blur = val.release();
@@ -3548,11 +3553,26 @@ struct ShadowParseContext {
     {
         color = val;
         allowColor = false;
+        if (allowX) {
+            allowStyle = false;
+            allowBreak = false;
+        } else {
+            allowBlur = false;
+            allowSpread = false;
+            allowStyle = property == CSSPropertyBoxShadow;
+        }
+    }
+
+    void commitStyle(CSSParserValue* v)
+    {
+        style = CSSPrimitiveValue::createIdentifier(v->id);
+        allowStyle = false;
         if (allowX)
             allowBreak = false;
         else {
             allowBlur = false;
             allowSpread = false;
+            allowColor = false;
         }
     }
 
@@ -3563,6 +3583,7 @@ struct ShadowParseContext {
     RefPtr<CSSPrimitiveValue> y;
     RefPtr<CSSPrimitiveValue> blur;
     RefPtr<CSSPrimitiveValue> spread;
+    RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> color;
 
     bool allowX;
@@ -3570,6 +3591,7 @@ struct ShadowParseContext {
     bool allowBlur;
     bool allowSpread;
     bool allowColor;
+    bool allowStyle;
     bool allowBreak;
 };
 
@@ -3594,6 +3616,11 @@ bool CSSParser::parseShadow(int propId, bool important)
 
             // A length is allowed here.  Construct the value and add it.
             context.commitLength(val);
+        } else if (val->id == CSSValueInset) {
+            if (!context.allowStyle)
+                return false;
+
+            context.commitStyle(val);
         } else {
             // The only other type of value that's ok is a color value.
             RefPtr<CSSPrimitiveValue> parsedColor;

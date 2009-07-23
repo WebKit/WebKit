@@ -275,8 +275,9 @@ static PassRefPtr<CSSValue> valueForShadow(const ShadowData* shadow, CSSProperty
         RefPtr<CSSPrimitiveValue> y = CSSPrimitiveValue::create(s->y, CSSPrimitiveValue::CSS_PX);
         RefPtr<CSSPrimitiveValue> blur = CSSPrimitiveValue::create(s->blur, CSSPrimitiveValue::CSS_PX);
         RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? 0 : CSSPrimitiveValue::create(s->spread, CSSPrimitiveValue::CSS_PX);
+        RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || s->style == Normal ? 0 : CSSPrimitiveValue::createIdentifier(CSSValueInset);
         RefPtr<CSSPrimitiveValue> color = CSSPrimitiveValue::createColor(s->color.rgb());
-        list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), color.release()));
+        list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
     }
     return list.release();
 }

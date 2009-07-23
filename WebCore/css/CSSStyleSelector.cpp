@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -4542,10 +4542,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             int y = item->y->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
             int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle, zoomFactor) : 0;
             int spread = item->spread ? item->spread->computeLengthInt(style(), m_rootElementStyle, zoomFactor) : 0;
+            ShadowStyle shadowStyle = item->style && item->style->getIdent() == CSSValueInset ? Inset : Normal;
             Color color;
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
-            ShadowData* shadowData = new ShadowData(x, y, blur, spread, color.isValid() ? color : Color::transparent);
+            ShadowData* shadowData = new ShadowData(x, y, blur, spread, shadowStyle, color.isValid() ? color : Color::transparent);
             if (id == CSSPropertyTextShadow)
                 m_style->setTextShadow(shadowData, i != 0);
             else

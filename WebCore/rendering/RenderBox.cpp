@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -607,7 +607,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
-    paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Normal);
 
     // If we have a native theme appearance, paint that before painting our background.
     // The theme will tell us whether or not we should also paint the CSS background.
@@ -621,6 +621,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
         if (style()->hasAppearance())
             theme()->paintDecorations(this, paintInfo, IntRect(tx, ty, w, h));
     }
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if ((!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, IntRect(tx, ty, w, h)))) && style()->hasBorder())

@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -514,9 +514,10 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
             ty += captionHeight;
     }
 
-    paintBoxShadow(paintInfo.context, tx, ty, w, h, style());
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Normal);
     
     paintFillLayers(paintInfo, style()->backgroundColor(), style()->backgroundLayers(), tx, ty, w, h);
+    paintBoxShadow(paintInfo.context, tx, ty, w, h, style(), Inset);
 
     if (style()->hasBorder() && !collapseBorders())
         paintBorder(paintInfo.context, tx, ty, w, h, style());
