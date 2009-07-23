@@ -1945,6 +1945,10 @@ def check_for_comparisons_to_zero(filename, clean_lines, line_number, error):
 
 
 def check_for_null(filename, clean_lines, line_number, error):
+    # This check doesn't apply to C or Objective-C implementation files.
+    if filename.endswith('.c') or filename.endswith('.m'):
+        return
+
     line = clean_lines.elided[line_number]
     if search(r'\bNULL\b', line):
         error(filename, line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
@@ -2825,7 +2829,7 @@ def process_file_data(filename, file_extension, lines, error):
 
 
 def process_file(filename, error=error):
-    """Does google-lint on a single file.
+    """Performs cpplint on a single file.
 
     Args:
       filename: The name of the file to parse.
@@ -2868,8 +2872,8 @@ def process_file(filename, error=error):
     # When reading from stdin, the extension is unknown, so no cpplint tests
     # should rely on the extension.
     if (filename != '-' and file_extension != 'cc' and file_extension != 'h'
-        and file_extension != 'cpp'):
-        sys.stderr.write('Ignoring %s; not a .cc or .h file\n' % filename)
+        and file_extension != 'cpp' and file_extension != 'c'):
+        sys.stderr.write('Ignoring %s; not a .cc, .cpp, .c or .h file\n' % filename)
     else:
         process_file_data(filename, file_extension, lines, error)
         if carriage_return_found and os.linesep != '\r\n':

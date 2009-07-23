@@ -110,15 +110,16 @@ class CpplintTestBase(unittest.TestCase):
     """Provides some useful helper functions for cpplint tests."""
 
     # Perform lint on single line of input and return the error message.
-    def perform_single_line_lint(self, code):
+    def perform_single_line_lint(self, code, file_name):
         error_collector = ErrorCollector(self.assert_)
         lines = code.split('\n')
-        cpplint.remove_multi_line_comments('foo.h', lines, error_collector)
+        cpplint.remove_multi_line_comments(file_name, lines, error_collector)
         clean_lines = cpplint.CleansedLines(lines)
         include_state = cpplint._IncludeState()
         function_state = cpplint._FunctionState()
+        ext = file_name[file_name.rfind('.') + 1:]
         class_state = cpplint._ClassState()
-        cpplint.process_line('foo.cc', 'cc', clean_lines, 0,
+        cpplint.process_line(file_name, ext, clean_lines, 0,
                              include_state, function_state,
                              class_state, error_collector)
         # Single-line lint tests are allowed to fail the 'unlintable function'
@@ -202,11 +203,11 @@ class CpplintTestBase(unittest.TestCase):
         return error_collector.results()
 
     # Perform lint and compare the error message with "expected_message".
-    def assert_lint(self, code, expected_message):
-        self.assertEquals(expected_message, self.perform_single_line_lint(code))
+    def assert_lint(self, code, expected_message, file_name='foo.cc'):
+        self.assertEquals(expected_message, self.perform_single_line_lint(code, file_name))
 
-    def assert_lint_one_of_many_errors_re(self, code, expected_message_re):
-        messages = self.perform_single_line_lint(code)
+    def assert_lint_one_of_many_errors_re(self, code, expected_message_re, file_name='foo.cc'):
+        messages = self.perform_single_line_lint(code, file_name)
         for message in messages:
             if re.search(expected_message_re, message):
                 return
@@ -1854,7 +1855,7 @@ class CpplintTest(CpplintTestBase):
 
     def assert_lintLogCodeOnError(self, code, expected_message):
         # Special assert_lint which logs the input code on error.
-        result = self.perform_single_line_lint(code)
+        result = self.perform_single_line_lint(code, 'foo.cc')
         if result != expected_message:
             self.fail('For code: "%s"\nGot: "%s"\nExpected: "%s"'
                       % (code, result, expected_message))
@@ -3189,24 +3190,39 @@ class WebKitStyleTest(CpplintTestBase):
         self.assert_lint(
             'functionCall(NULL)',
             'Use 0 instead of NULL.'
-            '  [readability/null] [5]')
+            '  [readability/null] [5]',
+            'foo.cpp')
         self.assert_lint(
             "// Don't use NULL in comments since it isn't in code.",
             'Use 0 instead of NULL.'
-            '  [readability/null] [4]')
+            '  [readability/null] [4]',
+            'foo.cpp')
         self.assert_lint(
             '"A string with NULL"  // and a comment with NULL is tricky to flag correctly in cpplint.',
             'Use 0 instead of NULL.'
-            '  [readability/null] [4]')
+            '  [readability/null] [4]',
+            'foo.cpp')
         self.assert_lint(
             '"A string containing NULL is ok"',
-            '')
+            '',
+            'foo.cpp')
         self.assert_lint(
             'if (aboutNULL)',
-            '')
+            '',
+            'foo.cpp')
         self.assert_lint(
             'myVariable = NULLify',
-            '')
+            '',
+            'foo.cpp')
+        # Make sure that the NULL check does not apply to C and Objective-C files.
+        self.assert_lint(
+            'functionCall(NULL)',
+            '',
+            'foo.c')
+        self.assert_lint(
+            'functionCall(NULL)',
+            '',
+            'foo.m')
 
         # 2. C++ and C bool values should be written as true and
         #    false. Objective-C BOOL values should be written as YES and NO.
