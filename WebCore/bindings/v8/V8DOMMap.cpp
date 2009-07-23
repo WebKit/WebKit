@@ -297,6 +297,7 @@ public:
     }
 
     static DOMData* getCurrent();
+    static DOMData* getCurrentMainThread(); // Caller must be on the main thread.
     virtual DOMDataStore& getStore() = 0;
 
     template<typename T>
@@ -401,7 +402,8 @@ void DOMDataStore::InternalDOMWrapperMap<KeyType>::forget(KeyType* object)
 
 DOMWrapperMap<Node>& getDOMNodeMap()
 {
-    return DOMData::getCurrent()->getStore().domNodeMap();
+    // Nodes only exist on the main thread.
+    return DOMData::getCurrentMainThread()->getStore().domNodeMap();
 }
 
 DOMWrapperMap<void>& getDOMObjectMap()
@@ -429,15 +431,20 @@ DOMWrapperMap<void>& getDOMSVGObjectWithContextMap()
 
 #endif // ENABLE(SVG)
 
-// static
 DOMData* DOMData::getCurrent()
 {
-    if (WTF::isMainThread()) {
-        DEFINE_STATIC_LOCAL(MainThreadDOMData, mainThreadDOMData, ());
-        return &mainThreadDOMData;
-    }
+    if (WTF::isMainThread())
+        return getCurrentMainThread();
+
     DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<ChildThreadDOMData>, childThreadDOMData, ());
     return childThreadDOMData;
+}
+
+DOMData* DOMData::getCurrentMainThread()
+{
+    ASSERT(WTF::isMainThread());
+    DEFINE_STATIC_LOCAL(MainThreadDOMData, mainThreadDOMData, ());
+    return &mainThreadDOMData;
 }
 
 // Called when the dead object is not in GC thread's map. Go through all thread maps to find the one containing it.
@@ -446,7 +453,6 @@ DOMData* DOMData::getCurrent()
 // * This can be called on any thread that has GC running.
 // * Only one V8 instance is running at a time due to V8::Locker. So we don't need to worry about concurrency.
 template<typename T>
-// static
 void DOMData::handleWeakObject(DOMDataStore::DOMWrapperMapType mapType, v8::Handle<v8::Object> v8Object, T* domObject)
 {
 
@@ -527,7 +533,6 @@ static void weakSVGObjectWithContextCallback(v8::Persistent<v8::Value> v8Object,
 
 #endif  // ENABLE(SVG)
 
-// static
 void DOMData::derefObject(V8ClassIndex::V8WrapperType type, void* domObject)
 {
     switch (type) {
@@ -571,13 +576,11 @@ void DOMData::derefDelayedObjects()
     m_delayedObjectMap.clear();
 }
 
-// static
 void DOMData::derefDelayedObjectsInCurrentThread(void*)
 {
     getCurrent()->derefDelayedObjects();
 }
 
-// static
 template<typename T>
 void DOMData::removeObjectsFromWrapperMap(DOMWrapperMap<T>& domMap)
 {
