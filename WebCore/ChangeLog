@@ -1,5 +1,12 @@
 2009-07-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the build with UNUSED_PARAM(frame) for when ENABLE(3D_RENDERING) is not defined.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::transform_3dMediaFeatureEval):
+
+2009-07-23  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Adele Peterson.
 
         3d-transforms media query needs to look check that accelerated compositing is enabled

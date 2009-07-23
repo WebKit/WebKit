@@ -480,6 +480,7 @@ static bool transform_3dMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
     returnValueIfNoParameter = threeDEnabled;
     have3dRendering = threeDEnabled ? 1 : 0;
 #else
+    UNUSED_PARAM(frame);
     returnValueIfNoParameter = false;
     have3dRendering = 0;
 #endif
