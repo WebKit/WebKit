@@ -70,6 +70,21 @@ void CSSValueList::prepend(PassRefPtr<CSSValue> val)
     m_values.prepend(val);
 }
 
+bool CSSValueList::removeAll(CSSValue* val)
+{
+    bool found = false;
+    // FIXME: we should be implementing operator== to CSSValue and its derived classes
+    // to make comparison more flexible and fast.
+    for (size_t index = 0; index < m_values.size(); index++) {
+        if (m_values.at(index)->cssText() == val->cssText()) {
+            m_values.remove(index);
+            found = true;
+        }
+    }
+    
+    return found;
+}
+
 String CSSValueList::cssText() const
 {
     String result = "";

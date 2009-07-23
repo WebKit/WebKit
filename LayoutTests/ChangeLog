@@ -1,3 +1,27 @@
+2009-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        execCommand('underline' / 'strikeThrough') doesn't work properly with multiple styles in text-decoration
+        https://bugs.webkit.org/show_bug.cgi?id=27476
+
+        toggle-text-decorations checks whether we can toggle text decorations with multiple styles properly.
+        e.g. execCommand("underline") should modify "text-decoration: underline overline" to "text-decoration: overline"
+
+        getComputedStyle-text-decorations checks whether the CSS value of text decoration and its computed style are
+        both space-separated CSSValueList instead of CSSPrimitiveValue or comma-separated CSSValueList.
+
+        * editing/execCommand/resources/toggle-text-decorations.js: Added.
+        (testSingleToggle):
+        * editing/execCommand/toggle-text-decorations-expected.txt: Added.
+        * editing/execCommand/toggle-text-decorations.html: Added.
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration.html: Added.
+        * fast/css/getComputedStyle/resources: Added.
+        * fast/css/getComputedStyle/resources/TEMPLATE.html: Added.
+        * fast/css/getComputedStyle/resources/getComputedStyle-text-decoration.js: Added.
+        (expect):
+
 2009-07-22  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.

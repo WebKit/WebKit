@@ -599,6 +599,23 @@ static PassRefPtr<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
     return CSSPrimitiveValue::create(family.string(), CSSPrimitiveValue::CSS_STRING);
 }
 
+static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration)
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    if (textDecoration & UNDERLINE)
+        list->append(CSSPrimitiveValue::createIdentifier(CSSValueUnderline));
+    if (textDecoration & OVERLINE)
+        list->append(CSSPrimitiveValue::createIdentifier(CSSValueOverline));
+    if (textDecoration & LINE_THROUGH)
+        list->append(CSSPrimitiveValue::createIdentifier(CSSValueLineThrough));
+    if (textDecoration & BLINK)
+        list->append(CSSPrimitiveValue::createIdentifier(CSSValueBlink));
+
+    if (!list->length())
+        return CSSPrimitiveValue::createIdentifier(CSSValueNone);
+    return list;
+}
+
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
 {
     Node* node = m_node.get();
@@ -1003,52 +1020,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->tableLayout());
         case CSSPropertyTextAlign:
             return CSSPrimitiveValue::create(style->textAlign());
-        case CSSPropertyTextDecoration: {
-            String string;
-            if (style->textDecoration() & UNDERLINE)
-                string += "underline";
-            if (style->textDecoration() & OVERLINE) {
-                if (string.length())
-                    string += " ";
-                string += "overline";
-            }
-            if (style->textDecoration() & LINE_THROUGH) {
-                if (string.length())
-                    string += " ";
-                string += "line-through";
-            }
-            if (style->textDecoration() & BLINK) {
-                if (string.length())
-                    string += " ";
-                string += "blink";
-            }
-            if (!string.length())
-                return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-            return CSSPrimitiveValue::create(string, CSSPrimitiveValue::CSS_STRING);
-        }
-        case CSSPropertyWebkitTextDecorationsInEffect: {
-            String string;
-            if (style->textDecorationsInEffect() & UNDERLINE)
-                string += "underline";
-            if (style->textDecorationsInEffect() & OVERLINE) {
-                if (string.length())
-                    string += " ";
-                string += "overline";
-            }
-            if (style->textDecorationsInEffect() & LINE_THROUGH) {
-                if (string.length())
-                    string += " ";
-                string += "line-through";
-            }
-            if (style->textDecorationsInEffect() & BLINK) {
-                if (string.length())
-                    string += " ";
-                string += "blink";
-            }
-            if (!string.length())
-                return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-            return CSSPrimitiveValue::create(string, CSSPrimitiveValue::CSS_STRING);
-        }
+        case CSSPropertyTextDecoration:
+            return renderTextDecorationFlagsToCSSValue(style->textDecoration());
+        case CSSPropertyWebkitTextDecorationsInEffect:
+            return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());
         case CSSPropertyWebkitTextFillColor:
             return currentColorOrValidColor(style.get(), style->textFillColor());
         case CSSPropertyTextIndent:

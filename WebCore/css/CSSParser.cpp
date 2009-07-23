@@ -1054,7 +1054,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueNone) {
             valid_primitive = true;
         } else {
-            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
             bool is_valid = true;
             while (is_valid && value) {
                 switch (value->id) {

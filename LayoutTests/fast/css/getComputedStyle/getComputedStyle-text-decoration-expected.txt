@@ -1,0 +1,13 @@
+Test to make sure text-decoration property returns CSSValueList properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text decoration should be CSSValueList
+PASS text decoration should be separated by a single space
+PASS computed style of text decoration should be CSSValueList
+PASS computed style of text decoration should be separated by a single space
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

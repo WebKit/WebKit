@@ -1,3 +1,34 @@
+2009-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        execCommand('underline' / 'strikeThrough') doesn't work properly with multiple styles in text-decoration
+        https://bugs.webkit.org/show_bug.cgi?id=27476
+
+        executeStrikethrough and executeUnderline were toggling between "line-through" / "underline" and "none".
+        This patch adds executeToggleStyleInList that toggles a style in CSSValueList instead of toggling the entire value.
+        It modifies CSSComputedStyleDeclaration to return CSSValueList instead of CSSPrimitiveValue for text decorations,
+        and adds removeAll member function to CSSValueList.
+
+        Tests: editing/execCommand/toggle-text-decorations.html
+               fast/css/getComputedStyle/getComputedStyle-text-decoration.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationFlagsToCSSValue): Creates a CSSValueList
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Returns a CSSValueList instead of CSSValue
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Text decorations are space separated instead of comma separated
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::removeAll): Removes all values that match the specified value
+        * css/CSSValueList.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::applyCommandToFrame): Apply style to a frame using specified command
+        (WebCore::executeApplyStyle): Uses applyCommandToFrame
+        (WebCore::executeToggleStyleInList): Uses applyCommandToFrame
+        (WebCore::executeToggleStyle): Toggles a style in CSSValueList
+        (WebCore::executeStrikethrough): Uses executeToggleStyleInList
+        (WebCore::executeUnderline): Uses executeToggleStyleInList
+
 2009-07-22  Daniel Bates  <dbates@intudata.com>
 
         Reviewed by Adam Barth.
