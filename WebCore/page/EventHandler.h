@@ -271,6 +271,8 @@ private:
 
     void updateSelectionForMouseDrag(Node* targetNode, const IntPoint& localPoint);
 
+    void updateLastScrollbarUnderMouse(Scrollbar*, bool);
+
     bool capturesDragging() const { return m_capturesDragging; }
 
 #if PLATFORM(MAC) && defined(__OBJC__)

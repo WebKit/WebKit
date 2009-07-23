@@ -1,3 +1,23 @@
+2009-07-22  Viet-Trung Luu  <viettrungluu@gmail.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27289
+        When a mouse click occurs on a scrollbar without a preceding mouse move
+        onto it, the release isn't handled correctly (since
+        EventHandler::m_lastScrollbarUnderMouse isn't set on mouse down, but
+        only on mouse move). (Side comment: That scrollbar-handling code
+        in EventHandler is ugly. It should be fixed properly.)
+
+        Tests: scrollbars/scrollbar-miss-mousemove.html
+               scrollbars/scrollbar-miss-mousemove-disabled.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::updateLastScrollbarUnderMouse):
+        * page/EventHandler.h:
+
 2009-07-23  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by David Levin.
