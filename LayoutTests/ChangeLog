@@ -1,3 +1,14 @@
+2009-07-23  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Update layout test results for two CSS 2.1 counter tests that are failing due to font differences.
+
+        * platform/mac-leopard/css2.1/t1202-counter-04-b-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t1202-counter-04-b-expected.txt.
+        * platform/mac-leopard/css2.1/t1202-counters-04-b-expected.txt: Copied from LayoutTests/platform/mac/css2.1/t1202-counters-04-b-expected.txt.
+        * platform/mac/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/mac/css2.1/t1202-counters-04-b-expected.txt:
+
 2009-07-23  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Layout test fix so no review.
