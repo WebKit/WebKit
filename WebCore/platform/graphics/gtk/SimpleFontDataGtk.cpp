@@ -99,7 +99,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
     if (!face)
         return false;
 
-    for (unsigned i = 0; i < length; i++) {
+    for (int i = 0; i < length; i++) {
         if (FcFreeTypeCharIndex(face, characters[i]) == 0) {
             cairo_ft_scaled_font_unlock_face(m_platformData.m_scaledFont);
             return false;

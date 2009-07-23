@@ -1,3 +1,14 @@
+2009-07-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix a couple of compiler warnings.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (copySurface):
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+
 2009-07-22  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by David Levin.
