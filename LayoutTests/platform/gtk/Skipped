@@ -1767,6 +1767,7 @@ fast/forms/select-dirty-parent-pref-widths.html
 fast/forms/select-double-onchange.html
 fast/forms/select-empty-list.html
 fast/forms/select-enter-key.html
+fast/forms/select-popup-pagekeys.html
 fast/forms/search-styled.html
 fast/forms/select-script-onchange.html
 fast/forms/select-type-ahead-list-box-no-selection.html

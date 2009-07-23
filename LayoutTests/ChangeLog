@@ -1,6 +1,29 @@
 2009-07-23  David Levin  <levin@chromium.org>
 
+         Rubber-stamped by Oliver Hunt.
+
+        Improve keyboard navigation of Select elements.
+        Home/End and PageUp/PageDn buttons do not do anything in drop down lists,
+        on non-Mac platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=22784
+
+        One more round of speculative fixes:
+         - Really fix the general and win expected results.  (They were missing a return.)
+         - Disable the test for gtk (and remove the attempted workaround for that platform).
+
+        * fast/forms/select-popup-pagekeys-expected.txt:
+        * fast/forms/select-popup-pagekeys.html:
+        * platform/gtk/Skipped:
+        * platform/win/fast/forms/select-popup-pagekeys-expected.txt:
+
+2009-07-23  David Levin  <levin@chromium.org>
+
         Rubber-stamped by Oliver Hunt.
+
+        Improve keyboard navigation of Select elements.
+        Home/End and PageUp/PageDn buttons do not do anything in drop down lists,
+        on non-Mac platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=22784
 
         3 (speculative) fixes for the new layout test: select-popup-pagekeys
          - Help Windows to pass by adding platform results.

@@ -8,7 +8,7 @@
     }
     
     function sendKey(element, key) {
-        if (window.layoutTestController && eventSender) {
+        if (window.layoutTestController) {
             key = key.substr(0,1).toLowerCase() + key.substr(1); // lowercase 1st letter for eventSender
             eventSender.keyDown(key);
         } else {
