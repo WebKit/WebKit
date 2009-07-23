@@ -26,7 +26,7 @@
 static void test_webkit_web_settings_user_agent(void)
 {
     WebKitWebSettings* settings;
-    WebKitWebView* webView;
+    GtkWidget* webView;
     gchar* defaultUserAgent;
     gchar* userAgent;
     g_test_bug("17375");
@@ -34,7 +34,7 @@ static void test_webkit_web_settings_user_agent(void)
     webView = webkit_web_view_new();
     g_object_ref_sink(webView);
 
-    settings = webkit_web_view_get_settings(webView);
+    settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView));
     defaultUserAgent = g_strdup(webkit_web_settings_get_user_agent(settings));
 
     // test a custom UA string

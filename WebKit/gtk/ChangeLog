@@ -1,5 +1,14 @@
 2009-07-22  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Mark Rowe.
+
+        Fix compiler warning.
+
+        * tests/testwebsettings.c:
+        (test_webkit_web_settings_user_agent):
+
+2009-07-22  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Gustavo Noronha.
 
         Remove unused variables.
