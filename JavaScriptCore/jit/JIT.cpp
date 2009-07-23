@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JIT.h"
 
+#include "MacroAssemblerX86Common.h"
+
 #if ENABLE(JIT)
 
 #include "CodeBlock.h"
