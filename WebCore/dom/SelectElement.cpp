@@ -516,6 +516,29 @@ void SelectElement::reset(SelectElementData& data, Element* element)
 
     element->setNeedsStyleRecalc();
 }
+    
+#if !ARROW_KEYS_POP_MENU
+enum SkipDirection {
+    SkipBackwards = -1,
+    SkipForwards = 1
+};
+
+// Returns the index of the next valid list item |skip| items past |listIndex| in direction |direction|.
+static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, SkipDirection direction, int skip)
+{
+    int lastGoodIndex = listIndex;
+    int size = listItems.size();
+    for (listIndex += direction; listIndex >= 0 && listIndex < size; listIndex += direction) {
+        --skip;
+        if (!listItems[listIndex]->disabled() && isOptionElement(listItems[listIndex])) {
+            lastGoodIndex = listIndex;
+            if (skip <= 0)
+                break;
+        }
+    }
+    return lastGoodIndex;
+}
+#endif
 
 void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element* element, Event* event, HTMLFormElement* htmlForm)
 {
@@ -542,24 +565,30 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
         }
 #else
         const Vector<Element*>& listItems = data.listItems(element);
-        int size = listItems.size();
 
         int listIndex = optionToListIndex(data, element, selectedIndex(data, element));
         if (keyIdentifier == "Down" || keyIdentifier == "Right") {
-            for (listIndex += 1;
-                 listIndex >= 0 && listIndex < size && (listItems[listIndex]->disabled() || !isOptionElement(listItems[listIndex]));
-                 ++listIndex) { }
-            if (listIndex >= 0 && listIndex < size)
-                setSelectedIndex(data, element, listToOptionIndex(data, element, listIndex));
+            listIndex = nextValidIndex(listItems, listIndex, SkipForwards, 1);
             handled = true;
         } else if (keyIdentifier == "Up" || keyIdentifier == "Left") {
-            for (listIndex -= 1;
-                 listIndex >= 0 && listIndex < size && (listItems[listIndex]->disabled() || !isOptionElement(listItems[listIndex]));
-                 --listIndex) { }
-            if (listIndex >= 0 && listIndex < size)
-                setSelectedIndex(data, element, listToOptionIndex(data, element, listIndex));
+            listIndex = nextValidIndex(listItems, listIndex, SkipBackwards, 1);
+            handled = true;
+        } else if (keyIdentifier == "PageDown") {
+            listIndex = nextValidIndex(listItems, listIndex, SkipForwards, 3);
+            handled = true;
+        } else if (keyIdentifier == "PageUp") {
+            listIndex = nextValidIndex(listItems, listIndex, SkipBackwards, 3);
+            handled = true;
+        } else if (keyIdentifier == "Home") {
+            listIndex = nextValidIndex(listItems, -1, SkipForwards, 1);
+            handled = true;
+        } else if (keyIdentifier == "End") {
+            listIndex = nextValidIndex(listItems, listItems.size(), SkipBackwards, 1);
             handled = true;
         }
+        
+        if (handled && listIndex >= 0 && listIndex < listItems.size())
+            setSelectedIndex(data, element, listToOptionIndex(data, element, listIndex));
 #endif
         if (handled)
             event->setDefaultHandled();

@@ -1,3 +1,21 @@
+2009-07-22  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by David Levin.
+
+        Bug 22784: Improve keyboard navigation of Select elements.
+        Home/End and PageUp/PageDn buttons do not do anything in drop down lists,
+        on non-Mac platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=22784
+        http://code.google.com/p/chromium/issues/detail?id=4576
+
+        New test: LayoutTests/fast/forms/select-popup-pagekeys.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::nextValidIndex): 
+        New utility fn for traversing items of a select's list.
+        (WebCore::SelectElement::menuListDefaultEventHandler):
+        Added code to handle Home/End and PageUp/PageDn when ARROW_KEYS_POP_MENU is false.
+
 2009-07-23  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark Rowe.
