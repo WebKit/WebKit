@@ -1451,11 +1451,6 @@ static const int inheritableProperties[] = {
 
 static const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);
 
-void CSSComputedStyleDeclaration::removeComputedInheritablePropertiesFrom(CSSMutableStyleDeclaration* declaration)
-{
-    declaration->removePropertiesInSet(inheritableProperties, numInheritableProperties);
-}
-
 bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const
 {
     if (property->id() == CSSPropertyFontSize && property->value()->isPrimitiveValue() && m_node) {
@@ -1472,7 +1467,11 @@ bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property
     return CSSStyleDeclaration::cssPropertyMatches(property);
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::copyInheritableProperties() const
+// FIXME: deprecatedCopyInheritableProperties is used for two purposes:
+// 1.  Calculating the typing style.
+// 2.  Moving HTML subtrees and seeking to remove redundant styles.
+// These tasks should be broken out into two separate functions.  New code should not use this function.
+PassRefPtr<CSSMutableStyleDeclaration> CSSComputedStyleDeclaration::deprecatedCopyInheritableProperties() const
 {
     RefPtr<CSSMutableStyleDeclaration> style = copyPropertiesInSet(inheritableProperties, numInheritableProperties);
     if (style && m_node && m_node->computedStyle()) {

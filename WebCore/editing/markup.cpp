@@ -292,8 +292,8 @@ static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style
     if (!blockquote || !blockquote->parentNode())
         return;
             
-    RefPtr<CSSMutableStyleDeclaration> parentStyle = Position(blockquote->parentNode(), 0).computedStyle()->copyInheritableProperties();
-    RefPtr<CSSMutableStyleDeclaration> blockquoteStyle = Position(blockquote, 0).computedStyle()->copyInheritableProperties();
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = Position(blockquote->parentNode(), 0).computedStyle()->deprecatedCopyInheritableProperties();
+    RefPtr<CSSMutableStyleDeclaration> blockquoteStyle = Position(blockquote, 0).computedStyle()->deprecatedCopyInheritableProperties();
     parentStyle->diff(blockquoteStyle.get());
     blockquoteStyle->diff(style);
 }
@@ -303,7 +303,7 @@ static void removeDefaultStyles(CSSMutableStyleDeclaration* style, Document* doc
     if (!document || !document->documentElement())
         return;
             
-    RefPtr<CSSMutableStyleDeclaration> documentStyle = computedStyle(document->documentElement())->copyInheritableProperties();
+    RefPtr<CSSMutableStyleDeclaration> documentStyle = computedStyle(document->documentElement())->deprecatedCopyInheritableProperties();
     documentStyle->diff(style);
 }
 
@@ -930,7 +930,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     
     Node* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
     if (checkAncestor->renderer()) {
-        RefPtr<CSSMutableStyleDeclaration> checkAncestorStyle = computedStyle(checkAncestor)->copyInheritableProperties();
+        RefPtr<CSSMutableStyleDeclaration> checkAncestorStyle = computedStyle(checkAncestor)->deprecatedCopyInheritableProperties();
         if (!propertyMissingOrEqualToNone(checkAncestorStyle.get(), CSSPropertyWebkitTextDecorationsInEffect))
             specialCommonAncestor = enclosingNodeOfType(Position(checkAncestor, 0), &elementHasTextDecorationProperty);
     }
@@ -1000,7 +1000,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     // Add a wrapper span with the styles that all of the nodes in the markup inherit.
     Node* parentOfLastClosed = lastClosed ? lastClosed->parentNode() : 0;
     if (parentOfLastClosed && parentOfLastClosed->renderer()) {
-        RefPtr<CSSMutableStyleDeclaration> style = computedStyle(parentOfLastClosed)->copyInheritableProperties();
+        RefPtr<CSSMutableStyleDeclaration> style = computedStyle(parentOfLastClosed)->deprecatedCopyInheritableProperties();
 
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
         // us differentiate those styles from ones that the user has applied.  This helps us
@@ -1032,7 +1032,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         // Add a style span with the document's default styles.  We add these in a separate
         // span so that at paste time we can differentiate between document defaults and user
         // applied styles.
-        RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle(document->documentElement())->copyInheritableProperties();
+        RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle(document->documentElement())->deprecatedCopyInheritableProperties();
         
         if (defaultStyle->length() > 0) {
             Vector<UChar> openTag;

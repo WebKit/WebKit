@@ -260,8 +260,8 @@ static void removeEnclosingAnchorStyle(CSSMutableStyleDeclaration* style, const 
     if (!enclosingAnchor || !enclosingAnchor->parentNode())
         return;
             
-    RefPtr<CSSMutableStyleDeclaration> parentStyle = Position(enclosingAnchor->parentNode(), 0).computedStyle()->copyInheritableProperties();
-    RefPtr<CSSMutableStyleDeclaration> anchorStyle = Position(enclosingAnchor, 0).computedStyle()->copyInheritableProperties();
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = Position(enclosingAnchor->parentNode(), 0).computedStyle()->deprecatedCopyInheritableProperties();
+    RefPtr<CSSMutableStyleDeclaration> anchorStyle = Position(enclosingAnchor, 0).computedStyle()->deprecatedCopyInheritableProperties();
     parentStyle->diff(anchorStyle.get());
     anchorStyle->diff(style);
 }
@@ -280,7 +280,7 @@ void DeleteSelectionCommand::saveTypingStyleState()
         
     // Figure out the typing style in effect before the delete is done.
     RefPtr<CSSComputedStyleDeclaration> computedStyle = positionBeforeTabSpan(m_selectionToDelete.start()).computedStyle();
-    m_typingStyle = computedStyle->copyInheritableProperties();
+    m_typingStyle = computedStyle->deprecatedCopyInheritableProperties();
     
     removeEnclosingAnchorStyle(m_typingStyle.get(), m_selectionToDelete.start());
     
@@ -288,7 +288,7 @@ void DeleteSelectionCommand::saveTypingStyleState()
     // We'll use this later in computeTypingStyleAfterDelete if we end up outside of a Mail blockquote
     if (nearestMailBlockquote(m_selectionToDelete.start().node())) {
         computedStyle = m_selectionToDelete.end().computedStyle();
-        m_deleteIntoBlockquoteStyle = computedStyle->copyInheritableProperties();
+        m_deleteIntoBlockquoteStyle = computedStyle->deprecatedCopyInheritableProperties();
     } else
         m_deleteIntoBlockquoteStyle = 0;
 }
