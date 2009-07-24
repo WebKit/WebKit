@@ -1,3 +1,14 @@
+2009-07-24  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Build fix for Qt.
+
+        Fix build issue introduced in 46344
+        ([Bug 22700] ApplicationCache should have size limit)
+
+        Remove method only added to the Qt ChromeClient.
+
+        * WebCoreSupport/ChromeClientQt.h:
+
 2009-07-24  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Anders Carlsson.
