@@ -1,3 +1,14 @@
+2009-07-24  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Simon Hausmann.
+
+        Add a command line option to run-javascriptcore-tests to explicitly opt out of attempting to rebuild JavaScriptCore.
+        This is primarily useful to speed up the build bots where one machine builds JavaScriptCore and a second runs the tests,
+        leading to situations where the build system unnecessarily feels that the need to recompile.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * Scripts/run-javascriptcore-tests:
+
 2009-07-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Eric Seidel.
