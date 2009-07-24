@@ -1,3 +1,16 @@
+2009-07-24  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Adam Barth.
+
+       Added layout tests to exercise various use cases for calling functions defined on Worker global scope.
+
+        Storing a reference to WorkerContext.postMessage() and calling it later yields a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=27419
+
+        * fast/workers/resources/worker-call.js: Added.
+        * fast/workers/worker-call-expected.txt: Added.
+        * fast/workers/worker-call.html: Added.
+
 2009-07-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

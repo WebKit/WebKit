@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+    class JSDedicatedWorkerContext;
+    class JSWorkerContext;
     class WorkerContext;
 
     class JSWorkerContextBase : public JSDOMGlobalObject {
@@ -55,6 +57,9 @@ namespace WebCore {
     // Always ignores the execState and passed globalObject, WorkerContext is itself a globalObject and will always use its own prototype chain.
     JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, WorkerContext*);
     JSC::JSValue toJS(JSC::ExecState*, WorkerContext*);
+
+    JSDedicatedWorkerContext* toJSDedicatedWorkerContext(JSC::JSValue);
+    JSWorkerContext* toJSWorkerContext(JSC::JSValue);
 
 } // namespace WebCore
 

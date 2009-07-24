@@ -1368,6 +1368,10 @@ sub GenerateImplementation
                 push(@implContent, "    $className* castedThisObj = toJSDOMWindow(thisValue.toThisObject(exec));\n");
                 push(@implContent, "    if (!castedThisObj)\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
+            } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
+                push(@implContent, "    $className* castedThisObj = to${className}(thisValue.toThisObject(exec));\n");
+                push(@implContent, "    if (!castedThisObj)\n");
+                push(@implContent, "        return throwError(exec, TypeError);\n");
             } else {
                 push(@implContent, "    if (!thisValue.isObject(&${className}::s_info))\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
