@@ -48,6 +48,11 @@ namespace WebCore {
 
 static bool isNonCanonicalCharacter(UChar c)
 {
+    // Note, we don't remove backslashes like PHP stripslashes(), which among other things converts "\\0" to the \0 character.
+    // Instead, we remove backslashes and zeros (since the string "\\0" =(remove backslashes)=> "0"). However, this has the 
+    // adverse effect that we remove any legitimate zeros from a string.
+    //
+    // For instance: new String("http://localhost:8000") => new String("http://localhost:8").
     return (c == '\\' || c == '0' || c < ' ' || c == 127);
 }
 
@@ -231,6 +236,9 @@ bool XSSAuditor::findInRequest(Frame* frame, const String& string, bool decodeHT
         return false;
 
     String canonicalizedString = canonicalize(string);
+    if (canonicalizedString.isEmpty())
+        return false;
+
     if (string.length() < pageURL.length()) {
         // The string can actually fit inside the pageURL.
         String decodedPageURL = canonicalize(decodeURL(pageURL, frame->document()->decoder()->encoding(), decodeHTMLentities));
