@@ -845,7 +845,9 @@ void InspectorController::addResource(InspectorResource* resource)
 void InspectorController::removeResource(InspectorResource* resource)
 {
     m_resources.remove(resource->identifier());
-    m_knownResources.remove(resource->requestURL());
+    String requestURL = resource->requestURL();
+    if (!requestURL.isNull())
+        m_knownResources.remove(requestURL);
 
     Frame* frame = resource->frame();
     ResourcesMap* resourceMap = m_frameResources.get(frame);

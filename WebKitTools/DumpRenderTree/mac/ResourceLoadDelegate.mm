@@ -122,6 +122,11 @@
         printf("%s\n", [string UTF8String]);
     }
 
+    if (!done && gLayoutTestController->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
+        printf("Returning null for this redirect\n");
+        return nil;
+    }
+
     NSURL *url = [newRequest URL];
     NSString *host = [url host];
     if (host

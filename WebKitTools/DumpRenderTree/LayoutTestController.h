@@ -152,6 +152,9 @@ public:
     bool waitToDump() const { return m_waitToDump; }
     void setWaitToDump(bool waitToDump);
 
+    bool willSendRequestReturnsNullOnRedirect() const { return m_willSendRequestReturnsNullOnRedirect; }
+    void setWillSendRequestReturnsNullOnRedirect(bool returnsNull) { m_willSendRequestReturnsNullOnRedirect = returnsNull; }
+
     bool windowIsKey() const { return m_windowIsKey; }
     void setWindowIsKey(bool windowIsKey);
 
@@ -189,6 +192,7 @@ private:
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
+    bool m_willSendRequestReturnsNullOnRedirect;
     bool m_windowIsKey;
 
     bool m_globalFlag;
