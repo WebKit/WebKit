@@ -29,7 +29,7 @@ function runTests() {
     context.fillStyle = '#0f0';
     context.fillRect(0, 0, canvas.width, canvas.height);
     debug("Test passed.");
-    if (layoutTestController)
+    if (window.layoutTestController)
         layoutTestController.dumpAsText();
 }
 </script>

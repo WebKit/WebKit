@@ -1,7 +1,7 @@
 <html>
 <body style="margin:0">
 <script>
-if (layoutTestController) {
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
@@ -16,7 +16,7 @@ properly even is there was no mouse move onto the scrollbar; this is the
 enabled control case. On success, the offset should be 0.<p/>
 <div id="console"></div>
 <script>
-if (eventSender) {
+if (window.eventSender) {
     document.getElementById('overflow').style.display = "none";
     eventSender.mouseMoveTo(390, 10);
     document.getElementById('overflow').style.display = "";

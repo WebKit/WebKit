@@ -18,7 +18,7 @@ function init() {
         layoutTestController.dumpAsText();
     
     input.focus();
-    if (eventSender) {
+    if (window.eventSender) {
         eventSender.keyDown("\t");
         eventSender.keyDown("\t", new Array("shiftKey"));
     }

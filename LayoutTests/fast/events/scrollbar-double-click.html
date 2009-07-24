@@ -1,6 +1,6 @@
 <body style="margin:0">
 <script>
-if (layoutTestController) {
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
@@ -14,7 +14,7 @@ if (layoutTestController) {
 <div id="console"></div>
 
 <script>
-if (eventSender) {
+if (window.eventSender) {
     eventSender.mouseMoveTo(390, 300);
     eventSender.mouseDown();
     eventSender.mouseUp();

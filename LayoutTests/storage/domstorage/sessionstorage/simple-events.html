@@ -3,7 +3,7 @@
 <script src="resources/clearSessionStorage.js"></script>
 <script>
 
-if (layoutTestController) {
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
@@ -15,7 +15,7 @@ function log(a)
 
 function finish()
 {
-    if (layoutTestController)
+    if (window.layoutTestController)
         layoutTestController.notifyDone()
 }
 

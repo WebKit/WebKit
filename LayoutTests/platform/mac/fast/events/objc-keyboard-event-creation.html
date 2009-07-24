@@ -14,10 +14,10 @@ function init() {
     input.addEventListener("keypress", keyevent, true);
     input.addEventListener("keyup", keyevent, true);
    
-    if (layoutTestController)
+    if (window.layoutTestController)
         layoutTestController.dumpAsText();
     
-    if (eventSender)
+    if (window.eventSender)
         eventSender.fireKeyboardEventsToElement(input);
 }
 </script>

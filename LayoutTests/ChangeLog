@@ -1,5 +1,51 @@
 2009-07-23  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Brady Eidson.
+
+        Fix layout tests that incorrectly attempt to detect whether they're running inside DumpRenderTree
+        using "if (layoutTestController)".
+
+        * editing/execCommand/25256.html:
+        * editing/execCommand/25320.html:
+        * fast/canvas/arc-crash.html:
+        * fast/css/emptyStyleTag.html:
+        * fast/events/js-keyboard-event-creation.html:
+        * fast/events/scrollbar-double-click.html:
+        * fast/forms/select-no-name.html:
+        * fast/history/window-open.html:
+        * platform/mac/fast/events/objc-event-api.html:
+        * platform/mac/fast/events/objc-keyboard-event-creation.html:
+        * scrollbars/scrollbar-miss-mousemove-disabled.html:
+        * scrollbars/scrollbar-miss-mousemove.html:
+        * storage/domstorage/localstorage/clear.html:
+        * storage/domstorage/localstorage/delete-removal.html:
+        * storage/domstorage/localstorage/enumerate-storage.html:
+        * storage/domstorage/localstorage/index-get-and-set.html:
+        * storage/domstorage/localstorage/onstorage-attribute-markup.html:
+        * storage/domstorage/localstorage/onstorage-attribute-setattribute.html:
+        * storage/domstorage/localstorage/private-browsing-affects-storage.html:
+        * storage/domstorage/localstorage/resources/window-open-second.html:
+        * storage/domstorage/localstorage/simple-events.html:
+        * storage/domstorage/localstorage/simple-usage.html:
+        * storage/domstorage/localstorage/string-conversion.html:
+        * storage/domstorage/localstorage/window-open.html:
+        * storage/domstorage/sessionstorage/clear.html:
+        * storage/domstorage/sessionstorage/delete-removal.html:
+        * storage/domstorage/sessionstorage/enumerate-storage.html:
+        * storage/domstorage/sessionstorage/index-get-and-set.html:
+        * storage/domstorage/sessionstorage/onstorage-attribute-markup.html:
+        * storage/domstorage/sessionstorage/onstorage-attribute-setattribute.html:
+        * storage/domstorage/sessionstorage/private-browsing-affects-storage.html:
+        * storage/domstorage/sessionstorage/resources/window-open-second.html:
+        * storage/domstorage/sessionstorage/simple-events.html:
+        * storage/domstorage/sessionstorage/simple-usage.html:
+        * storage/domstorage/sessionstorage/string-conversion.html:
+        * storage/domstorage/sessionstorage/window-open.html:
+        * storage/domstorage/window-attributes-exist.html:
+        * svg/custom/stop-crash.svg:
+
+2009-07-23  Mark Rowe  <mrowe@apple.com>
+
         And now with some valid JavaScript syntax!
 
         * http/tests/misc/redirect-to-about-blank.html:

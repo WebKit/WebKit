@@ -1,7 +1,7 @@
 <html>
 <body style="margin:0">
 <script>
-if (layoutTestController) {
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
@@ -116,7 +116,7 @@ properly even is there was no mouse move onto the scrollbar; this is the
 disabled control case. On success, the text should begin with "zx".<p/>
 <div id="console"></div>
 <script>
-if (eventSender) {
+if (window.eventSender) {
     document.form1.text1.disabled = true;
     document.form1.style.display = "none";
     eventSender.mouseMoveTo(390, 10);

@@ -29,7 +29,7 @@
     function childLoaded()
     {
         childWindow.close();
-        if (layoutTestController) {
+        if (window.layoutTestController) {
             document.getElementById("result").innerText = layoutTestController.webHistoryItemCount === 1 ? "PASS" : "FAIL";
             layoutTestController.notifyDone();
         }

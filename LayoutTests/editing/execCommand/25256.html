@@ -5,7 +5,7 @@
 edit = document.getElementById("edit");
 edit.focus();
 document.execCommand("JustifyRight");
-if (layoutTestController) {
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     document.body.innerText = document.getElementById("description").innerText + "\n\n" + edit.innerHTML;
 }
