@@ -104,8 +104,11 @@ WebInspector.SourceView.prototype = {
     {
         delete this._frameNeedsSetup;
         this.sourceFrame.removeEventListener("content loaded", this._contentLoaded, this);
-
-        if (this.resource.type === WebInspector.Resource.Type.Script) {
+        
+        if (this.resource.type === WebInspector.Resource.Type.Script
+            || this.resource.mimeType === 'application/json'
+            || this.resource.mimeType === 'application/javascript'
+            || /\.js(on)?$/.test(this.resource.lastPathComponent) ) {
             this.sourceFrame.addEventListener("syntax highlighting complete", this._syntaxHighlightingComplete, this);
             this.sourceFrame.syntaxHighlightJavascript();
         } else

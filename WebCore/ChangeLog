@@ -1,3 +1,13 @@
+2009-07-24  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Inspector: Should Syntax Highlight JSON
+        https://bugs.webkit.org/show_bug.cgi?id=27503
+
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype._contentLoaded):
+
 2009-07-24  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Eric Seidel.
