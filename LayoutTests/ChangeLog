@@ -1,5 +1,11 @@
 2009-07-24  Mark Rowe  <mrowe@apple.com>
 
+        Skip a plug-in test that fails an assertion around 50% of the time.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-07-24  Mark Rowe  <mrowe@apple.com>
+
         Skip two SVG tests that are giving unexpected results.
 
         * platform/mac-snowleopard/Skipped:
