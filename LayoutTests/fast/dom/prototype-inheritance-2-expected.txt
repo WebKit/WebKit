@@ -1,0 +1,329 @@
+Make sure prototypes are set up using the window a property came from, instead of the lexical global object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL Array from inner.console.profiles
+FAIL Attr from inner.document.activeElement.attributes.0
+FAIL AttrConstructor from inner.document.activeElement.attributes.0.constructor
+FAIL AttrPrototype from inner.document.activeElement.attributes.0.__proto__
+FAIL BarInfo from inner.menubar
+FAIL BarInfoPrototype from inner.menubar.__proto__
+FAIL Boolean from inner.offscreenBuffering
+FAIL CSSRuleList from inner.document.styleSheets.0.cssRules
+FAIL CSSRuleListConstructor from inner.document.styleSheets.0.rules.constructor
+FAIL CSSRuleListPrototype from inner.document.styleSheets.0.cssRules.__proto__
+FAIL CSSStyleDeclaration from inner.document.scripts.0.style
+FAIL CSSStyleDeclarationConstructor from inner.document.activeElement.style.constructor
+FAIL CSSStyleDeclarationPrototype from inner.document.scripts.0.style.__proto__
+FAIL CSSStyleSheet from inner.document.styleSheets.0
+FAIL CSSStyleSheetConstructor from inner.document.styleSheets.0.constructor
+FAIL CSSStyleSheetPrototype from inner.document.styleSheets.0.__proto__
+FAIL CharacterDataPrototype from inner.document.activeElement.attributes.0.lastChild.__proto__.__proto__
+FAIL Collection from inner.document.forms.testForm
+FAIL Console from inner.console
+FAIL ConsolePrototype from inner.console.__proto__
+FAIL DOMApplicationCache from inner.applicationCache
+FAIL DOMApplicationCachePrototype from inner.applicationCache.__proto__
+FAIL DOMImplementation from inner.document.implementation
+FAIL DOMImplementationConstructor from inner.document.implementation.constructor
+FAIL DOMImplementationPrototype from inner.document.implementation.__proto__
+PASS DOMWindow from inner
+PASS DOMWindowPrototype from inner.__proto__
+FAIL DataGridColumnList from inner.document.activeElement.childNodes.14.columns
+FAIL DataGridColumnListConstructor from inner.document.activeElement.childNodes.14.columns.constructor
+FAIL DataGridColumnListPrototype from inner.document.activeElement.childNodes.14.columns.__proto__
+PASS DocumentPrototype from inner.document.__proto__.__proto__
+FAIL ElementPrototype from inner.document.activeElement.__proto__.__proto__.__proto__
+FAIL Function from inner.document.location.pathname.constructor
+FAIL HTMLAnchorElement from inner.document.activeElement.firstElementChild
+FAIL HTMLAnchorElementConstructor from inner.document.activeElement.firstElementChild.constructor
+FAIL HTMLAnchorElementPrototype from inner.document.activeElement.firstElementChild.__proto__
+FAIL HTMLAppletElement from inner.document.applets.0
+FAIL HTMLAppletElementConstructor from inner.document.applets.0.constructor
+FAIL HTMLAppletElementPrototype from inner.document.applets.0.__proto__
+FAIL HTMLAreaElement from inner.document.activeElement.childNodes.2
+FAIL HTMLAreaElementConstructor from inner.document.activeElement.childNodes.2.constructor
+FAIL HTMLAreaElementPrototype from inner.document.activeElement.childNodes.2.__proto__
+FAIL HTMLAudioElement from inner.document.activeElement.childNodes.3
+FAIL HTMLAudioElementConstructor from inner.document.activeElement.childNodes.3.constructor
+FAIL HTMLAudioElementPrototype from inner.document.activeElement.childNodes.3.__proto__
+FAIL HTMLBRElement from inner.document.activeElement.childNodes.4
+FAIL HTMLBRElementConstructor from inner.document.activeElement.childNodes.4.constructor
+FAIL HTMLBRElementPrototype from inner.document.activeElement.childNodes.4.__proto__
+FAIL HTMLBaseElement from inner.document.activeElement.childNodes.6
+FAIL HTMLBaseElementConstructor from inner.document.activeElement.childNodes.6.constructor
+FAIL HTMLBaseElementPrototype from inner.document.activeElement.childNodes.6.__proto__
+FAIL HTMLBaseFontElement from inner.document.activeElement.childNodes.7
+FAIL HTMLBaseFontElementConstructor from inner.document.activeElement.childNodes.7.constructor
+FAIL HTMLBaseFontElementPrototype from inner.document.activeElement.childNodes.7.__proto__
+FAIL HTMLBodyElement from inner.document.activeElement
+FAIL HTMLBodyElementConstructor from inner.document.activeElement.constructor
+FAIL HTMLBodyElementPrototype from inner.document.activeElement.__proto__
+FAIL HTMLButtonElement from inner.document.activeElement.childNodes.9
+FAIL HTMLButtonElementConstructor from inner.document.activeElement.childNodes.9.constructor
+FAIL HTMLButtonElementPrototype from inner.document.activeElement.childNodes.9.__proto__
+FAIL HTMLCanvasElement from inner.document.activeElement.childNodes.10
+FAIL HTMLCanvasElementConstructor from inner.document.activeElement.childNodes.10.constructor
+FAIL HTMLCanvasElementPrototype from inner.document.activeElement.childNodes.10.__proto__
+FAIL HTMLCollection from inner.document.links
+FAIL HTMLCollectionPrototype from inner.document.activeElement.childNodes.47.options.__proto__
+FAIL HTMLDListElement from inner.document.activeElement.childNodes.11
+FAIL HTMLDListElementConstructor from inner.document.activeElement.childNodes.11.constructor
+FAIL HTMLDListElementPrototype from inner.document.activeElement.childNodes.11.__proto__
+FAIL HTMLDataGridElement from inner.document.activeElement.childNodes.14
+FAIL HTMLDataGridElementConstructor from inner.document.activeElement.childNodes.14.constructor
+FAIL HTMLDataGridElementPrototype from inner.document.activeElement.childNodes.14.__proto__
+FAIL HTMLDivElement from inner.document.plugins.0.previousElementSibling
+FAIL HTMLDivElementConstructor from inner.document.plugins.0.previousElementSibling.constructor
+FAIL HTMLDivElementPrototype from inner.document.plugins.0.previousElementSibling.__proto__
+PASS HTMLDocument from inner.document
+FAIL HTMLDocumentConstructor from inner.document.constructor
+PASS HTMLDocumentPrototype from inner.document.__proto__
+FAIL HTMLElement from inner.document.scripts.0.previousElementSibling
+FAIL HTMLElementConstructor from inner.document.scripts.0.previousElementSibling.constructor
+FAIL HTMLElementPrototype from inner.document.activeElement.__proto__.__proto__
+FAIL HTMLEmbedElement from inner.document.plugins.0
+FAIL HTMLEmbedElementConstructor from inner.document.plugins.0.constructor
+FAIL HTMLEmbedElementPrototype from inner.document.plugins.0.__proto__
+FAIL HTMLFieldSetElement from inner.document.plugins.0.nextElementSibling
+FAIL HTMLFieldSetElementConstructor from inner.document.plugins.0.nextElementSibling.constructor
+FAIL HTMLFieldSetElementPrototype from inner.document.plugins.0.nextElementSibling.__proto__
+FAIL HTMLFontElement from inner.document.activeElement.childNodes.19
+FAIL HTMLFontElementConstructor from inner.document.activeElement.childNodes.19.constructor
+FAIL HTMLFontElementPrototype from inner.document.activeElement.childNodes.19.__proto__
+FAIL HTMLFormElement from inner.document.activeElement.lastElementChild
+FAIL HTMLFormElementConstructor from inner.document.activeElement.lastElementChild.constructor
+FAIL HTMLFormElementPrototype from inner.document.activeElement.lastElementChild.__proto__
+FAIL HTMLFrameSetElement from inner.document.activeElement.childNodes.21
+FAIL HTMLFrameSetElementConstructor from inner.document.activeElement.childNodes.21.constructor
+FAIL HTMLFrameSetElementPrototype from inner.document.activeElement.childNodes.21.__proto__
+FAIL HTMLHRElement from inner.document.activeElement.childNodes.22
+FAIL HTMLHRElementConstructor from inner.document.activeElement.childNodes.22.constructor
+FAIL HTMLHRElementPrototype from inner.document.activeElement.childNodes.22.__proto__
+FAIL HTMLHeadElement from inner.document.activeElement.previousElementSibling
+FAIL HTMLHeadElementConstructor from inner.document.activeElement.previousElementSibling.constructor
+FAIL HTMLHeadElementPrototype from inner.document.activeElement.previousElementSibling.__proto__
+FAIL HTMLHtmlElement from inner.document.documentElement
+FAIL HTMLHtmlElementConstructor from inner.document.documentElement.constructor
+FAIL HTMLHtmlElementPrototype from inner.document.documentElement.__proto__
+FAIL HTMLIFrameElement from inner.document.activeElement.childNodes.24
+FAIL HTMLIFrameElementConstructor from inner.document.activeElement.childNodes.24.constructor
+FAIL HTMLIFrameElementPrototype from inner.document.activeElement.childNodes.24.__proto__
+FAIL HTMLImageElement from inner.document.images.0
+FAIL HTMLImageElementConstructor from inner.document.images.0.constructor
+FAIL HTMLImageElementPrototype from inner.document.images.0.__proto__
+FAIL HTMLInputElement from inner.document.activeElement.childNodes.26
+FAIL HTMLInputElementConstructor from inner.document.activeElement.childNodes.26.constructor
+FAIL HTMLInputElementPrototype from inner.document.activeElement.childNodes.26.__proto__
+FAIL HTMLLIElement from inner.document.activeElement.childNodes.28
+FAIL HTMLLIElementConstructor from inner.document.activeElement.childNodes.28.constructor
+FAIL HTMLLIElementPrototype from inner.document.activeElement.childNodes.28.__proto__
+FAIL HTMLLabelElement from inner.document.activeElement.childNodes.29
+FAIL HTMLLabelElementConstructor from inner.document.activeElement.childNodes.29.constructor
+FAIL HTMLLabelElementPrototype from inner.document.activeElement.childNodes.29.__proto__
+FAIL HTMLLegendElement from inner.document.activeElement.childNodes.30
+FAIL HTMLLegendElementConstructor from inner.document.activeElement.childNodes.30.constructor
+FAIL HTMLLegendElementPrototype from inner.document.activeElement.childNodes.30.__proto__
+FAIL HTMLLinkElement from inner.document.activeElement.childNodes.31
+FAIL HTMLLinkElementConstructor from inner.document.activeElement.childNodes.31.constructor
+FAIL HTMLLinkElementPrototype from inner.document.activeElement.childNodes.31.__proto__
+FAIL HTMLMapElement from inner.document.activeElement.childNodes.32
+FAIL HTMLMapElementConstructor from inner.document.activeElement.childNodes.32.constructor
+FAIL HTMLMapElementPrototype from inner.document.activeElement.childNodes.32.__proto__
+FAIL HTMLMarqueeElement from inner.document.activeElement.childNodes.33
+FAIL HTMLMarqueeElementConstructor from inner.document.activeElement.childNodes.33.constructor
+FAIL HTMLMarqueeElementPrototype from inner.document.activeElement.childNodes.33.__proto__
+FAIL HTMLMediaElementPrototype from inner.document.activeElement.childNodes.3.__proto__.__proto__
+FAIL HTMLMenuElement from inner.document.activeElement.childNodes.35
+FAIL HTMLMenuElementConstructor from inner.document.activeElement.childNodes.35.constructor
+FAIL HTMLMenuElementPrototype from inner.document.activeElement.childNodes.35.__proto__
+FAIL HTMLMetaElement from inner.document.activeElement.childNodes.36
+FAIL HTMLMetaElementConstructor from inner.document.activeElement.childNodes.36.constructor
+FAIL HTMLMetaElementPrototype from inner.document.activeElement.childNodes.36.__proto__
+FAIL HTMLOListElement from inner.document.activeElement.childNodes.38
+FAIL HTMLOListElementConstructor from inner.document.activeElement.childNodes.38.constructor
+FAIL HTMLOListElementPrototype from inner.document.activeElement.childNodes.38.__proto__
+FAIL HTMLObjectElement from inner.document.activeElement.childNodes.39
+FAIL HTMLObjectElementConstructor from inner.document.activeElement.childNodes.39.constructor
+FAIL HTMLObjectElementPrototype from inner.document.activeElement.childNodes.39.__proto__
+FAIL HTMLOptGroupElement from inner.document.activeElement.childNodes.40
+FAIL HTMLOptGroupElementConstructor from inner.document.activeElement.childNodes.40.constructor
+FAIL HTMLOptGroupElementPrototype from inner.document.activeElement.childNodes.40.__proto__
+FAIL HTMLOptionElement from inner.document.activeElement.childNodes.41
+FAIL HTMLOptionElementConstructor from inner.document.activeElement.childNodes.41.constructor
+FAIL HTMLOptionElementPrototype from inner.document.activeElement.childNodes.41.__proto__
+FAIL HTMLOptionsCollection from inner.document.activeElement.childNodes.47.options
+FAIL HTMLParagraphElement from inner.document.activeElement.childNodes.42
+FAIL HTMLParagraphElementConstructor from inner.document.activeElement.childNodes.42.constructor
+FAIL HTMLParagraphElementPrototype from inner.document.activeElement.childNodes.42.__proto__
+FAIL HTMLParamElement from inner.document.activeElement.childNodes.43
+FAIL HTMLParamElementConstructor from inner.document.activeElement.childNodes.43.constructor
+FAIL HTMLParamElementPrototype from inner.document.activeElement.childNodes.43.__proto__
+FAIL HTMLPreElement from inner.document.activeElement.childNodes.44
+FAIL HTMLPreElementConstructor from inner.document.activeElement.childNodes.44.constructor
+FAIL HTMLPreElementPrototype from inner.document.activeElement.childNodes.44.__proto__
+FAIL HTMLScriptElement from inner.document.scripts.0
+FAIL HTMLScriptElementConstructor from inner.document.scripts.0.constructor
+FAIL HTMLScriptElementPrototype from inner.document.scripts.0.__proto__
+FAIL HTMLSelectElement from inner.document.activeElement.childNodes.47
+FAIL HTMLSelectElementConstructor from inner.document.scripts.0.nextElementSibling.constructor
+FAIL HTMLSelectElementPrototype from inner.document.activeElement.childNodes.47.__proto__
+FAIL HTMLStyleElement from inner.document.activeElement.childNodes.48
+FAIL HTMLStyleElementConstructor from inner.document.activeElement.childNodes.48.constructor
+FAIL HTMLStyleElementPrototype from inner.document.activeElement.childNodes.48.__proto__
+FAIL HTMLTableCaptionElement from inner.document.activeElement.childNodes.49
+FAIL HTMLTableCaptionElementConstructor from inner.document.activeElement.childNodes.49.constructor
+FAIL HTMLTableCaptionElementPrototype from inner.document.activeElement.childNodes.49.__proto__
+FAIL HTMLTableCellElement from inner.document.activeElement.childNodes.50
+FAIL HTMLTableCellElementConstructor from inner.document.activeElement.childNodes.50.constructor
+FAIL HTMLTableCellElementPrototype from inner.document.activeElement.childNodes.50.__proto__
+FAIL HTMLTableColElement from inner.document.activeElement.childNodes.51
+FAIL HTMLTableColElementConstructor from inner.document.activeElement.childNodes.51.constructor
+FAIL HTMLTableColElementPrototype from inner.document.activeElement.childNodes.51.__proto__
+FAIL HTMLTableElement from inner.document.activeElement.childNodes.52
+FAIL HTMLTableElementConstructor from inner.document.activeElement.childNodes.52.constructor
+FAIL HTMLTableElementPrototype from inner.document.activeElement.childNodes.52.__proto__
+FAIL HTMLTableRowElement from inner.document.activeElement.childNodes.53
+FAIL HTMLTableRowElementConstructor from inner.document.activeElement.childNodes.53.constructor
+FAIL HTMLTableRowElementPrototype from inner.document.activeElement.childNodes.53.__proto__
+FAIL HTMLTextAreaElement from inner.document.activeElement.childNodes.55
+FAIL HTMLTextAreaElementConstructor from inner.document.activeElement.childNodes.55.constructor
+FAIL HTMLTextAreaElementPrototype from inner.document.activeElement.childNodes.55.__proto__
+FAIL HTMLTitleElement from inner.document.activeElement.childNodes.56
+FAIL HTMLTitleElementConstructor from inner.document.activeElement.childNodes.56.constructor
+FAIL HTMLTitleElementPrototype from inner.document.activeElement.childNodes.56.__proto__
+FAIL HTMLUListElement from inner.document.activeElement.childNodes.57
+FAIL HTMLUListElementConstructor from inner.document.activeElement.childNodes.57.constructor
+FAIL HTMLUListElementPrototype from inner.document.activeElement.childNodes.57.__proto__
+FAIL HTMLVideoElement from inner.document.activeElement.childNodes.58
+FAIL HTMLVideoElementConstructor from inner.document.activeElement.childNodes.58.constructor
+FAIL HTMLVideoElementPrototype from inner.document.activeElement.childNodes.58.__proto__
+PASS History from inner.history
+PASS HistoryPrototype from inner.history.__proto__
+PASS Location from inner.document.location
+PASS LocationPrototype from inner.document.location.__proto__
+FAIL MediaList from inner.document.styleSheets.0.media
+FAIL MediaListConstructor from inner.document.styleSheets.0.media.constructor
+FAIL MediaListPrototype from inner.document.styleSheets.0.media.__proto__
+FAIL MimeType from inner.clientInformation.mimeTypes.0
+FAIL MimeTypeArray from inner.clientInformation.mimeTypes
+FAIL MimeTypeArrayConstructor from inner.clientInformation.mimeTypes.constructor
+FAIL MimeTypeArrayPrototype from inner.clientInformation.mimeTypes.__proto__
+FAIL MimeTypeConstructor from inner.clientInformation.mimeTypes.0.constructor
+FAIL MimeTypePrototype from inner.clientInformation.mimeTypes.0.__proto__
+FAIL NamedNodeMap from inner.document.activeElement.previousElementSibling.attributes
+FAIL Navigator from inner.clientInformation
+FAIL NavigatorPrototype from inner.clientInformation.__proto__
+FAIL NodeList from inner.document.documentElement.childNodes
+FAIL NodeListConstructor from inner.document.childNodes.constructor
+FAIL NodeListPrototype from inner.document.documentElement.childNodes.__proto__
+PASS NodePrototype from inner.document.__proto__.__proto__.__proto__
+FAIL Number from inner.pageXOffset
+FAIL Object from inner.document.forms.testForm.__proto__
+FAIL Plugin from inner.clientInformation.mimeTypes.0.enabledPlugin
+FAIL PluginArray from inner.clientInformation.plugins
+FAIL PluginArrayConstructor from inner.clientInformation.plugins.constructor
+FAIL PluginArrayPrototype from inner.clientInformation.plugins.__proto__
+FAIL PluginConstructor from inner.clientInformation.plugins.0.constructor
+FAIL PluginPrototype from inner.clientInformation.mimeTypes.0.enabledPlugin.__proto__
+FAIL Screen from inner.screen
+FAIL ScreenPrototype from inner.screen.__proto__
+FAIL Storage from inner.localStorage
+FAIL StorageConstructor from inner.localStorage.constructor
+FAIL StoragePrototype from inner.localStorage.__proto__
+FAIL String from inner.name
+FAIL StyleSheetList from inner.document.styleSheets
+FAIL StyleSheetListConstructor from inner.document.styleSheets.constructor
+FAIL StyleSheetListPrototype from inner.document.styleSheets.__proto__
+FAIL StyleSheetPrototype from inner.document.styleSheets.0.__proto__.__proto__
+FAIL Text from inner.document.activeElement.attributes.0.firstChild
+FAIL TextConstructor from inner.document.activeElement.attributes.0.lastChild.constructor
+FAIL TextPrototype from inner.document.activeElement.attributes.0.lastChild.__proto__
+FAIL TimeRanges from inner.document.activeElement.childNodes.3.played
+FAIL TimeRangesPrototype from inner.document.activeElement.childNodes.3.played.__proto__
+FAIL ValidityState from inner.document.plugins.0.nextElementSibling.validity
+FAIL ValidityStatePrototype from inner.document.plugins.0.nextElementSibling.validity.__proto__
+PASS XSLTProcessorConsructor from inner.XSLTProcessor
+Never found Audio
+Never found CDATASection
+Never found CSSCharsetRule
+Never found CSSFontFaceRule
+Never found CSSImportRule
+Never found CSSMediaRule
+Never found CSSPageRule
+Never found CSSPrimitiveValue
+Never found CSSRule
+Never found CSSStyleRule
+Never found CSSValue
+Never found CSSValueList
+Never found CSSVariablesDeclaration
+Never found CSSVariablesRule
+Never found CanvasRenderingContext2D
+Never found CharacterData
+Never found ClientRect
+Never found ClientRectList
+Never found Clipboard
+Never found Comment
+Never found Counter
+Never found DOMParser
+Never found Document
+Never found DocumentFragment
+Never found DocumentType
+Never found Element
+Never found Entity
+Never found EntityReference
+Never found File
+Never found FileList
+Never found HTMLBlockquoteElement
+Never found HTMLDataGridCellElement
+Never found HTMLDataGridColElement
+Never found HTMLDirectoryElement
+Never found HTMLFrameElement
+Never found HTMLHeadingElement
+Never found HTMLIsIndexElement
+Never found HTMLMediaElement
+Never found HTMLModElement
+Never found HTMLQuoteElement
+Never found HTMLTableSectionElement
+Never found Image
+Never found MessageChannel
+Never found MessagePort
+Never found Node
+Never found NodeFilter
+Never found Notation
+Never found Option
+Never found ProcessingInstruction
+Never found RGBColor
+Never found Range
+Never found Rect
+Never found SVGAngle
+Never found SVGColor
+Never found SVGGradientElement
+Never found SVGLength
+Never found SVGMarkerElement
+Never found SVGPaint
+Never found SVGPathSeg
+Never found SVGPreserveAspectRatio
+Never found SVGRenderingIntent
+Never found SVGTextContentElement
+Never found SVGTextPathElement
+Never found SVGTransform
+Never found SVGUnitTypes
+Never found StyleSheet
+Never found TextMetrics
+Never found WebKitCSSKeyframeRule
+Never found WebKitCSSKeyframesRule
+Never found WebKitCSSMatrix
+Never found WebKitCSSTransformValue
+Never found WebKitPoint
+Never found Worker
+Never found XMLHttpRequest
+Never found XMLHttpRequestUpload
+Never found XMLSerializer
+Never found XPathEvaluator
+Never found XPathResult
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
