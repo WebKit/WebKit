@@ -536,6 +536,13 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 #endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+void WebChromeClient::reachedMaxAppCacheSize(int64_t spaceNeeded)
+{
+    // FIXME: Free some space.
+}
+#endif
     
 void WebChromeClient::populateVisitedLinks()
 {

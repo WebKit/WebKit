@@ -150,6 +150,18 @@ int SQLiteDatabase::pageSize()
     return m_pageSize;
 }
 
+int64_t SQLiteDatabase::freeSpaceSize()
+{
+    MutexLocker locker(m_authorizerLock);
+    enableAuthorizer(false);
+    // Note: freelist_count was added in SQLite 3.4.1.
+    SQLiteStatement statement(*this, "PRAGMA freelist_count");
+    int64_t size = statement.getColumnInt64(0) * pageSize();
+
+    enableAuthorizer(true);
+    return size;
+}
+
 void SQLiteDatabase::setSynchronous(SynchronousPragma sync)
 {
     executeCommand(String::format("PRAGMA synchronous = %i", sync));

@@ -401,6 +401,14 @@ void ChromeClientQt::exceededDatabaseQuota(Frame* frame, const String& databaseN
 }
 #endif
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+void ChromeClientQt::reachedMaxAppCacheSize(int64_t spaceNeeded)
+{
+    // FIXME: Free some space.
+    notImplemented();
+}
+#endif
+
 void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {
     RefPtr<FileChooser> fileChooser = prpFileChooser;

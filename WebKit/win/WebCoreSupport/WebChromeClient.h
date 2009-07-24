@@ -106,6 +106,10 @@ public:
     virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String&);
 #endif
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
+#endif
+
     virtual void populateVisitedLinks();
 
     virtual bool paintCustomScrollbar(WebCore::GraphicsContext*, const WebCore::FloatRect&, WebCore::ScrollbarControlSize, 

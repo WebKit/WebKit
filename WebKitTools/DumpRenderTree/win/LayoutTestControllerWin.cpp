@@ -699,6 +699,11 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     printf("ERROR: LayoutTestController::setDatabaseQuota() not implemented\n");
 }
 
+void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
+{
+    printf("ERROR: LayoutTestController::setAppCacheMaximumSize() not implemented\n");
+}
+
 bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
     COMPtr<IDOMDocument> document;

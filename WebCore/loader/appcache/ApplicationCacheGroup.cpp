@@ -31,6 +31,7 @@
 #include "ApplicationCache.h"
 #include "ApplicationCacheResource.h"
 #include "ApplicationCacheStorage.h"
+#include "ChromeClient.h"
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "DOMWindow.h"
@@ -53,6 +54,7 @@ ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL, bool isCop
     , m_isObsolete(false)
     , m_completionType(None)
     , m_isCopy(isCopy)
+    , m_calledReachedMaxAppCacheSize(false)
 {
 }
 
@@ -673,6 +675,15 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     startLoadingEntry();
 }
 
+void ApplicationCacheGroup::didReachMaxAppCacheSize()
+{
+    ASSERT(m_frame);
+    ASSERT(m_cacheBeingUpdated);
+    m_frame->page()->chrome()->client()->reachedMaxAppCacheSize(cacheStorage().spaceNeeded(m_cacheBeingUpdated->estimatedSizeInStorage()));
+    m_calledReachedMaxAppCacheSize = true;
+    checkIfLoadIsComplete();
+}
+
 void ApplicationCacheGroup::cacheUpdateFailed()
 {
     stopLoading();
@@ -751,7 +762,15 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
         // FIXME: Fetch the resource from manifest URL again, and check whether it is identical to the one used for update (in case the application was upgraded server-side in the meanwhile). (<rdar://problem/6467625>)
 
         ASSERT(m_cacheBeingUpdated);
-        m_cacheBeingUpdated->setManifestResource(m_manifestResource.release());
+        if (m_manifestResource)
+            m_cacheBeingUpdated->setManifestResource(m_manifestResource.release());
+        else {
+            // We can get here as a result of retrying the Complete step, following
+            // a failure of the cache storage to save the newest cache due to hitting
+            // the maximum size. In such a case, m_manifestResource may be 0, as
+            // the manifest was already set on the newest cache object.
+            ASSERT(cacheStorage().isMaximumSizeReached() && m_calledReachedMaxAppCacheSize);
+        }
 
         RefPtr<ApplicationCache> oldNewestCache = (m_newestCache == m_cacheBeingUpdated) ? 0 : m_newestCache;
 
@@ -763,28 +782,44 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
             // Fire the success events.
             postListenerTask(isUpgradeAttempt ? &DOMApplicationCache::callUpdateReadyListener : &DOMApplicationCache::callCachedListener, m_associatedDocumentLoaders);
         } else {
-            // Run the "cache failure steps"
-            // Fire the error events to all pending master entries, as well any other cache hosts
-            // currently associated with a cache in this group.
-            postListenerTask(&DOMApplicationCache::callErrorListener, m_associatedDocumentLoaders);
-            // Disassociate the pending master entries from the failed new cache. Note that
-            // all other loaders in the m_associatedDocumentLoaders are still associated with
-            // some other cache in this group. They are not associated with the failed new cache.
+            if (cacheStorage().isMaximumSizeReached() && !m_calledReachedMaxAppCacheSize) {
+                // We ran out of space. All the changes in the cache storage have
+                // been rolled back. We roll back to the previous state in here,
+                // as well, call the chrome client asynchronously and retry to
+                // save the new cache.
 
-            // Need to copy loaders, because the cache group may be destroyed at the end of iteration.
-            Vector<DocumentLoader*> loaders;
-            copyToVector(m_pendingMasterResourceLoaders, loaders);
-            size_t count = loaders.size();
-            for (size_t i = 0; i != count; ++i)
-                disassociateDocumentLoader(loaders[i]); // This can delete this group.
-
-            // Reinstate the oldNewestCache, if there was one.
-            if (oldNewestCache) {
-                // This will discard the failed new cache.
-                setNewestCache(oldNewestCache.release());
-            } else {
-                // We must have been deleted by the last call to disassociateDocumentLoader().
+                // Save a reference to the new cache.
+                m_cacheBeingUpdated = m_newestCache.release();
+                if (oldNewestCache) {
+                    // Reinstate the oldNewestCache.
+                    setNewestCache(oldNewestCache.release());
+                }
+                scheduleReachedMaxAppCacheSizeCallback();
                 return;
+            } else {
+                // Run the "cache failure steps"
+                // Fire the error events to all pending master entries, as well any other cache hosts
+                // currently associated with a cache in this group.
+                postListenerTask(&DOMApplicationCache::callErrorListener, m_associatedDocumentLoaders);
+                // Disassociate the pending master entries from the failed new cache. Note that
+                // all other loaders in the m_associatedDocumentLoaders are still associated with
+                // some other cache in this group. They are not associated with the failed new cache.
+
+                // Need to copy loaders, because the cache group may be destroyed at the end of iteration.
+                Vector<DocumentLoader*> loaders;
+                copyToVector(m_pendingMasterResourceLoaders, loaders);
+                size_t count = loaders.size();
+                for (size_t i = 0; i != count; ++i)
+                    disassociateDocumentLoader(loaders[i]); // This can delete this group.
+
+                // Reinstate the oldNewestCache, if there was one.
+                if (oldNewestCache) {
+                    // This will discard the failed new cache.
+                    setNewestCache(oldNewestCache.release());
+                } else {
+                    // We must have been deleted by the last call to disassociateDocumentLoader().
+                    return;
+                }
             }
         }
         break;
@@ -796,6 +831,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
     m_completionType = None;
     m_updateStatus = Idle;
     m_frame = 0;
+    m_calledReachedMaxAppCacheSize = false;
 }
 
 void ApplicationCacheGroup::startLoadingEntry()
@@ -879,7 +915,34 @@ void ApplicationCacheGroup::associateDocumentLoaderWithCache(DocumentLoader* loa
     ASSERT(!m_associatedDocumentLoaders.contains(loader));
     m_associatedDocumentLoaders.add(loader);
 }
- 
+
+class ChromeClientCallbackTimer: public TimerBase {
+public:
+    ChromeClientCallbackTimer(ApplicationCacheGroup* cacheGroup)
+        : m_cacheGroup(cacheGroup)
+    {
+    }
+
+private:
+    virtual void fired()
+    {
+        m_cacheGroup->didReachMaxAppCacheSize();
+        delete this;
+    }
+    // Note that there is no need to use a RefPtr here. The ApplicationCacheGroup instance is guaranteed
+    // to be alive when the timer fires since invoking the ChromeClient callback is part of its normal
+    // update machinery and nothing can yet cause it to get deleted.
+    ApplicationCacheGroup* m_cacheGroup;
+};
+
+void ApplicationCacheGroup::scheduleReachedMaxAppCacheSizeCallback()
+{
+    ASSERT(isMainThread());
+    ChromeClientCallbackTimer* timer = new ChromeClientCallbackTimer(this);
+    timer->startOneShot(0);
+    // The timer will delete itself once it fires.
+}
+
 class CallCacheListenerTask : public ScriptExecutionContext::Task {
     typedef void (DOMApplicationCache::*ListenerFunction)();
 public:
@@ -932,7 +995,7 @@ void ApplicationCacheGroup::clearStorageID()
     for (HashSet<ApplicationCache*>::const_iterator it = m_caches.begin(); it != end; ++it)
         (*it)->clearStorageID();
 }
-    
+
 
 }
 

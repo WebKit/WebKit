@@ -107,6 +107,9 @@ public:
 #if ENABLE(DATABASE)
     virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String& databaseName);
 #endif
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
+#endif
     virtual void populateVisitedLinks();
 
 #if ENABLE(DASHBOARD_SUPPORT)

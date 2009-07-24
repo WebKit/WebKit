@@ -95,6 +95,7 @@ private:
     static void postListenerTask(ListenerFunction, const HashSet<DocumentLoader*>&);
     static void postListenerTask(ListenerFunction, const Vector<RefPtr<DocumentLoader> >& loaders);
     static void postListenerTask(ListenerFunction, DocumentLoader*);
+    void scheduleReachedMaxAppCacheSizeCallback();
 
     PassRefPtr<ResourceHandle> createResourceHandle(const KURL&, ApplicationCacheResource* newestCachedResource);
 
@@ -106,6 +107,7 @@ private:
     void didReceiveManifestResponse(const ResourceResponse&);
     void didReceiveManifestData(const char*, int);
     void didFinishLoadingManifest();
+    void didReachMaxAppCacheSize();
     
     void startLoadingEntry();
     void deliverDelayedMainResources();
@@ -163,12 +165,19 @@ private:
 
     // Whether this cache group is a copy that's only used for transferring the cache to another file.
     bool m_isCopy;
+
+    // This flag is set immediately after the ChromeClient::reachedMaxAppCacheSize() callback is invoked as a result of the storage layer failing to save a cache
+    // due to reaching the maximum size of the application cache database file. This flag is used by ApplicationCacheGroup::checkIfLoadIsComplete() to decide
+    // the course of action in case of this failure (i.e. call the ChromeClient callback or run the failure steps).
+    bool m_calledReachedMaxAppCacheSize;
     
     RefPtr<ResourceHandle> m_currentHandle;
     RefPtr<ApplicationCacheResource> m_currentResource;
     
     RefPtr<ApplicationCacheResource> m_manifestResource;
     RefPtr<ResourceHandle> m_manifestHandle;
+
+    friend class ChromeClientCallbackTimer;
 };
 
 } // namespace WebCore

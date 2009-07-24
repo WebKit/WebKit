@@ -39,6 +39,7 @@ namespace WebCore {
 ApplicationCache::ApplicationCache()
     : m_group(0)
     , m_manifest(0)
+    , m_estimatedSizeInStorage(0)
     , m_storageID(0)
 {
 }
@@ -86,7 +87,9 @@ void ApplicationCache::addResource(PassRefPtr<ApplicationCacheResource> resource
         // Add the resource to the storage.
         cacheStorage().store(resource.get(), this);
     }
-    
+
+    m_estimatedSizeInStorage += resource->estimatedSizeInStorage();
+
     m_resources.set(url, resource);
 }
 
@@ -100,7 +103,9 @@ unsigned ApplicationCache::removeResource(const String& url)
     unsigned type = it->second->type();
 
     m_resources.remove(it);
-    
+
+    m_estimatedSizeInStorage -= it->second->estimatedSizeInStorage();
+
     return type;
 }    
     

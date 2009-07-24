@@ -116,6 +116,11 @@ public:
 #if ENABLE(DATABASE)
     virtual void exceededDatabaseQuota(Frame*, const String&);
 #endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
+#endif
+
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
 
     virtual void formStateDidChange(const Node*) { }

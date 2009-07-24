@@ -308,6 +308,8 @@
 		A7D3C5BD0B5773C5002CA450 /* WebPasteboardHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */; };
 		AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
+		B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */; };
+		B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E464B0FD8A96800A9D9DE /* WebViewData.h */; };
 		BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */; };
 		BC542C420FD7766F00D8AB5D /* WebDelegateImplementationCaching.h in Headers */ = {isa = PBXBuildFile; fileRef = BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */; };
@@ -564,6 +566,8 @@
 		A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPasteboardHelper.mm; sourceTree = "<group>"; };
 		AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMOperationsInternal.h; sourceTree = "<group>"; };
 		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCache.h; sourceTree = "<group>"; };
+		B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCache.mm; sourceTree = "<group>"; };
 		BC2E464B0FD8A96800A9D9DE /* WebViewData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewData.h; sourceTree = "<group>"; };
 		BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewData.mm; sourceTree = "<group>"; };
 		BC542C400FD7766F00D8AB5D /* WebDelegateImplementationCaching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDelegateImplementationCaching.h; sourceTree = "<group>"; };
@@ -1133,6 +1137,8 @@
 				14D8252D0AF955090004F057 /* WebChromeClient.h */,
 				14D8252E0AF955090004F057 /* WebChromeClient.mm */,
 				065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */,
+				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
+				B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */,
 				065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */,
 				A70936AD0B5608DC00CDB48E /* WebDragClient.h */,
 				A70936AE0B5608DC00CDB48E /* WebDragClient.mm */,
@@ -1266,6 +1272,7 @@
 				1AAF5CEC0EDDE1FE008D883D /* NetscapePluginHostProxy.h in Headers */,
 				1AAF5CEE0EDDE1FE008D883D /* NetscapePluginInstanceProxy.h in Headers */,
 				1A2DBE9F0F251E3A0036F8A6 /* ProxyInstance.h in Headers */,
+				B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */,
 				9398109A0824BF01008DF038 /* WebArchive.h in Headers */,
 				5DE92FEF0BD7017E0059A5FD /* WebAssertions.h in Headers */,
 				939810290824BF01008DF038 /* WebAuthenticationPanel.h in Headers */,
@@ -1656,6 +1663,7 @@
 				939810DD0824BF01008DF038 /* npapi.mm in Sources */,
 				1CCFFD130B1F81F2002EE926 /* OldWebAssertions.c in Sources */,
 				1A2DBEA00F251E3A0036F8A6 /* ProxyInstance.mm in Sources */,
+				B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */,
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810BC0824BF01008DF038 /* WebBackForwardList.mm in Sources */,

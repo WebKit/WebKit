@@ -100,6 +100,9 @@ namespace WebKit {
 #if ENABLE(DATABASE)
         virtual void exceededDatabaseQuota(WebCore::Frame*, const WebCore::String&);
 #endif
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+        virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
+#endif
         virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
 
         virtual void formStateDidChange(const WebCore::Node*) { }

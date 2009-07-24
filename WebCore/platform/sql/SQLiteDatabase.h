@@ -83,6 +83,9 @@ public:
     int64_t maximumSize();
     void setMaximumSize(int64_t);
     
+    // Gets the number of unused bytes in the database file.
+    int64_t freeSpaceSize();
+
     // The SQLite SYNCHRONOUS pragma can be either FULL, NORMAL, or OFF
     // FULL - Any writing calls to the DB block until the data is actually on the disk surface
     // NORMAL - SQLite pauses at some critical moments when writing, but much less than FULL
