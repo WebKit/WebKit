@@ -47,6 +47,7 @@
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "RenderText.h"
+#include "TextEncoding.h"
 
 #include <atk/atk.h>
 #include <glib.h>
@@ -517,59 +518,7 @@ static void updateLayout(GtkWidget* widget, gpointer dummy, gpointer userData)
    pango_layout_context_changed(static_cast<PangoLayout*>(data));
 }
 
-#define IS_HIGH_SURROGATE(u)  ((UChar)(u) >= (UChar)0xd800 && (UChar)(u) <= (UChar)0xdbff)
-#define IS_LOW_SURROGATE(u)   ((UChar)(u) >= (UChar)0xdc00 && (UChar)(u) <= (UChar)0xdfff)
-
-static void UTF16ToUTF8(const UChar* aText, gint aLength, char* &text, gint &length)
-{
-    gboolean needCopy = FALSE;
-    int i;
-
-    for (i = 0; i < aLength; i++) {
-        if (!aText[i] || IS_LOW_SURROGATE(aText[i])) {
-            needCopy = TRUE;
-            break;
-        } else if (IS_HIGH_SURROGATE(aText[i])) {
-            if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
-                i++;
-            else {
-                needCopy = TRUE;
-                break;
-            }
-        }
-    }
-
-    if (needCopy) {
-        /* Pango doesn't correctly handle nuls.  We convert them to 0xff. */
-        /* Also "validate" UTF-16 text to make sure conversion doesn't fail. */
-
-        UChar* p = (UChar*)g_memdup(aText, aLength * sizeof(aText[0]));
-
-        /* don't need to reset i */
-        for (i = 0; i < aLength; i++) {
-            if (!p[i] || IS_LOW_SURROGATE(p[i]))
-                p[i] = 0xFFFD;
-            else if (IS_HIGH_SURROGATE(p[i])) {
-                if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
-                    i++;
-                else
-                    p[i] = 0xFFFD;
-            }
-        }
-
-        aText = p;
-    }
-
-    glong items_written;
-    text = g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(aText), aLength, NULL, &items_written, NULL);
-    length = items_written;
-
-    if (needCopy)
-        g_free((gpointer)aText);
-
-}
-
-static gchar* g_substr(const gchar* string, gint start, gint end)
+static gchar* utf8Substr(const gchar* string, gint start, gint end)
 {
     ASSERT(string);
     glong strLen = g_utf8_strlen(string, -1);
@@ -585,30 +534,29 @@ static gchar* g_substr(const gchar* string, gint start, gint end)
 // internals of WebCore's text presentation.
 static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int from, int to)
 {
-    gchar* utf8 = 0;
-    gint newLength = 0;
-    UTF16ToUTF8(characters, length, utf8, newLength);
-    if (!utf8)
-        return NULL;
-
-    gchar *pos = g_substr(utf8, from, to);
-    g_free(utf8);
-    gint len = strlen(pos);
+    CString stringUTF8 = UTF8Encoding().encode(characters, length, QuestionMarksForUnencodables);
+    gchar* utf8String = utf8Substr(stringUTF8.data(), from, to);
+    if (!g_utf8_validate(utf8String, -1, NULL)) {
+        g_free(utf8String);
+        return 0;
+    }
+    gsize len = strlen(utf8String);
     GString* ret = g_string_new_len(NULL, len);
 
     // WebCore introduces line breaks in the text that do not reflect
     // the layout you see on the screen, replace them with spaces
     while (len > 0) {
         gint index, start;
-        pango_find_paragraph_boundary(pos, len, &index, &start);
-        g_string_append_len(ret, pos, index);
+        pango_find_paragraph_boundary(utf8String, len, &index, &start);
+        g_string_append_len(ret, utf8String, index);
         if (index == start)
             break;
         g_string_append_c(ret, ' ');
-        pos += start;
+        utf8String += start;
         len -= start;
     }
 
+    g_free(utf8String);
     return g_string_free(ret, FALSE);
 }
 
