@@ -1453,6 +1453,12 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
     {
         WebInspector.SidebarTreeElement.prototype.onattach.call(this);
 
+        var link = document.createElement("a");
+        link.href = this.resource.url;
+        link.className = "invisible";
+        while (this._listItemNode.firstChild)
+            link.appendChild(this._listItemNode.firstChild);
+        this._listItemNode.appendChild(link);
         this._listItemNode.addStyleClass("resources-category-" + this.resource.category.name);
     },
 

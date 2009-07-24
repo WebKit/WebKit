@@ -2,6 +2,16 @@
 
         Reviewed by Timothy Hatcher.
 
+        Dragging a resource in the sidebar should drag it's URL
+        https://bugs.webkit.org/show_bug.cgi?id=14410
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceSidebarTreeElement.prototype.onattach):
+
+2009-07-24  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
         Double click on a resource in the sidebar should open that resource in Safari
         https://bugs.webkit.org/show_bug.cgi?id=14409
 
