@@ -1,3 +1,18 @@
+2009-07-24  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Simon Hausmann.
+
+        [QT] Implement originalUrl getter method to the API
+        https://bugs.webkit.org/show_bug.cgi?id=25867
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::originalUrl):
+        * Api/qwebframe.h:
+        * tests/qwebframe/qwebframe.qrc:
+        * tests/qwebframe/test1.html: Added.
+        * tests/qwebframe/test2.html: Added.
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-07-24  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Build fix for Qt.

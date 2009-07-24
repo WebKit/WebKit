@@ -2,5 +2,7 @@
 <qresource prefix="/">
 <file>image.png</file>
 <file>style.css</file>
+<file>test1.html</file>
+<file>test2.html</file>
 </qresource>
 </RCC>

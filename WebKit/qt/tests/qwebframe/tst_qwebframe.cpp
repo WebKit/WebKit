@@ -31,6 +31,7 @@
 #include <QComboBox>
 #include <QRegExp>
 #include <QNetworkRequest>
+#include <QNetworkReply>
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -573,6 +574,7 @@ private slots:
     void progressSignal();
     void urlChange();
     void domCycles();
+    void originalUrl();
     void setHtml();
     void setHtmlWithResource();
     void ipv6HostEncoding();
@@ -2157,6 +2159,93 @@ void tst_QWebFrame::domCycles()
     m_view->setHtml("<html><body>");
     QVariant v = m_page->mainFrame()->evaluateJavaScript("document");
     QVERIFY(v.type() == QVariant::Map);
+}
+
+class FakeReply : public QNetworkReply {
+    Q_OBJECT
+
+    public:
+        FakeReply(const QNetworkRequest& request, QObject* parent = 0)
+            : QNetworkReply(parent)
+        {
+            setOperation(QNetworkAccessManager::GetOperation);
+            setRequest(request);
+            if (request.url() == QUrl("qrc:/test1.html")) {
+                setHeader(QNetworkRequest::LocationHeader, QString("qrc:/test2.html"));
+                setAttribute(QNetworkRequest::RedirectionTargetAttribute, QUrl("qrc:/test2.html"));
+            } else
+                setError(QNetworkReply::HostNotFoundError, tr("Invalid URL"));
+
+            open(QIODevice::ReadOnly);
+            QTimer::singleShot(0, this, SLOT(timeout()));
+        }
+        ~FakeReply()
+        {
+            close();
+        }
+        virtual void abort() {}
+        virtual void close() {}
+    protected:
+        qint64 readData(char* data, qint64 maxSize)
+        {
+            return 0;
+        }
+    private slots:
+        void timeout()
+        {
+            if (request().url() == QUrl("qrc://test1.html"))
+                emit error(this->error());
+            else if (request().url() == QUrl("http://abcdef.abcdef/"))
+                emit metaDataChanged();
+
+            emit readyRead();
+            emit finished();
+        }
+};
+
+class FakeNetworkManager : public QNetworkAccessManager {
+public:
+    FakeNetworkManager(QObject* parent) : QNetworkAccessManager(parent) { }
+
+protected:
+    virtual QNetworkReply* createRequest(Operation op, const QNetworkRequest& request, QIODevice* outgoingData)
+    {
+        if (op == QNetworkAccessManager::GetOperation
+            && (request.url().toString() == "qrc:/test1.html"
+            ||  request.url().toString() == "http://abcdef.abcdef/"))
+            return new FakeReply(request, this);
+
+        return QNetworkAccessManager::createRequest(op, request, outgoingData);
+    }
+};
+
+void tst_QWebFrame::originalUrl()
+{
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+
+    // in few seconds, the image should be completely loaded
+    QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
+    FakeNetworkManager* networkManager = new FakeNetworkManager(&page);
+    page.setNetworkAccessManager(networkManager);
+
+    frame->setUrl(QUrl("qrc:/test1.html"));
+    QTest::qWait(200);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(frame->originalUrl(), QUrl("qrc:/test1.html"));
+    QCOMPARE(frame->url(), QUrl("qrc:/test2.html"));
+
+    frame->setUrl(QUrl("qrc:/non-existent.html"));
+    QTest::qWait(200);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(frame->originalUrl(), QUrl("qrc:/non-existent.html"));
+    QCOMPARE(frame->url(), QUrl("qrc:/non-existent.html"));
+
+    frame->setUrl(QUrl("http://abcdef.abcdef"));
+    QTest::qWait(200);
+    QCOMPARE(spy.count(), 3);
+    QCOMPARE(frame->originalUrl(), QUrl("http://abcdef.abcdef/"));
+    QCOMPARE(frame->url(), QUrl("http://abcdef.abcdef/"));
 }
 
 void tst_QWebFrame::setHtml()
