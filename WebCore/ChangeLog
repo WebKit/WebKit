@@ -1,3 +1,14 @@
+2009-07-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add the shadow style member to the ShadowData constructor and ==
+        operator
+
+        * rendering/style/ShadowData.cpp:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::operator==):
+
 2009-07-24  Jian Li  <jianli@chromium.org>
 
         Reviewed by Eric Seidel.

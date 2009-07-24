@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@ ShadowData::ShadowData(const ShadowData& o)
     , y(o.y)
     , blur(o.blur)
     , spread(o.spread)
+    , style(o.style)
     , color(o.color)
 {
     next = o.next ? new ShadowData(*o.next) : 0;
@@ -40,7 +41,7 @@ bool ShadowData::operator==(const ShadowData& o) const
         (next && o.next && *next != *o.next))
         return false;
     
-    return x == o.x && y == o.y && blur == o.blur && spread == o.spread && color == o.color;
+    return x == o.x && y == o.y && blur == o.blur && spread == o.spread && style == o.style && color == o.color;
 }
 
 } // namespace WebCore
