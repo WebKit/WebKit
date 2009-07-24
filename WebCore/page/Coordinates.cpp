@@ -31,7 +31,7 @@ namespace WebCore {
 String Coordinates::toString() const
 {
     return String::format("coordinate(%.6lg, %.6lg, %.6lg, %.6lg, %.6lg, %.6lg, %.6lg)",
-                          m_latitude, m_longitude, m_altitude, m_accuracy, 
+                          m_latitude, m_longitude, m_altitude, m_accuracy,
                           m_altitudeAccuracy, m_heading, m_speed);
 }
 
