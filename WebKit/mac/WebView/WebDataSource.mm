@@ -342,7 +342,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return [WebView canShowMIMETypeAsHTML:MIMEType];
 }
 
--(void)_makeRepresentation
+- (void)_makeRepresentation
 {
     Class repClass = [[self class] _representationClassForMIMEType:[self _responseMIMEType]];
     
@@ -354,6 +354,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     }
     
     [_private->representation setDataSource:self];
+    _private->loader->setTitle([_private->representation title]);
 }
 
 - (DocumentLoader*)_documentLoader

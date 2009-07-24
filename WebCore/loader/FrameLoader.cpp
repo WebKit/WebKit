@@ -5094,8 +5094,7 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
 {
     m_client->didChangeTitle(loader);
 
-    // The title doesn't get communicated to the WebView until we are committed.
-    if (loader->isCommitted()) {
+    if (loader == m_documentLoader) {
         // Must update the entries in the back-forward list too.
         if (m_currentHistoryItem)
             m_currentHistoryItem->setTitle(loader->title());
