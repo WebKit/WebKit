@@ -133,7 +133,7 @@ void StyleChange::init(PassRefPtr<CSSStyleDeclaration> style, const Position& po
             // Always use text-decoration because -webkit-text-decoration-in-effect is internal.
             CSSProperty alteredProperty(CSSPropertyTextDecoration, property->value(), property->isImportant());
             // We don't add "text-decoration: none" because it doesn't override the existing text decorations; i.e. redundant
-            if (alteredProperty.cssText() != "none")
+            if (!equalIgnoringCase(alteredProperty.value()->cssText(), "none"))
                 styleText += alteredProperty.cssText();
         } else
             styleText += property->cssText();
@@ -1093,11 +1093,17 @@ static bool hasTextDecorationProperty(Node *node)
 
 static Node* highestAncestorWithTextDecoration(Node *node)
 {
-    Node *result = NULL;
+    ASSERT(node);
+    Node* result = 0;
+    Node* unsplittableElement = unsplittableElementForPosition(Position(node, 0));
 
     for (Node *n = node; n; n = n->parentNode()) {
         if (hasTextDecorationProperty(n))
             result = n;
+        // Should stop at the editable root (cannot cross editing boundary) and
+        // also stop at the unsplittable element to be consistent with other UAs
+        if (n == unsplittableElement)
+            break;
     }
 
     return result;
