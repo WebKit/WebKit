@@ -620,6 +620,9 @@ http/tests/cookies/simple-cookies-expired.html
 # Bug 26481: Implement layoutTestController.dispatchPendingLoadRequests <https://bugs.webkit.org/show_bug.cgi?id=26481>
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 
+# <rdar://problem/7091605> http/tests/cache/subresource-expiration.html fails intermittently
+http/tests/cache/subresource-expiration.html
+
 # Try and get Windows buildbots back in green
 # FIXME: File bugs and examine these tests
 fast/css/pseudo-cache-stale.html
