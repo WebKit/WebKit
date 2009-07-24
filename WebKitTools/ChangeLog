@@ -1,5 +1,13 @@
 2009-07-23  Brady Eidson  <beidson@apple.com>
 
+        Remove accidentally checked in code.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (waitUntilDoneWatchdogFired):
+        (LayoutTestController::setWaitToDump):
+
+2009-07-23  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Geoff Garen.
 
         WebCore has a few places that don't gracefully handle a null request returned from willSendRequest.

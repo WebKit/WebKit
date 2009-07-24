@@ -310,20 +310,20 @@ void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
 
 static const CFTimeInterval waitToDumpWatchdogInterval = 10.0;
 
-//static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
-//{
-//    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
-//    fprintf(stderr, "%s", message);
-//    fprintf(stdout, "%s", message);
-//    dump();
-//}
+static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
+{
+    const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
+    fprintf(stderr, "%s", message);
+    fprintf(stdout, "%s", message);
+    dump();
+}
 
 void LayoutTestController::setWaitToDump(bool waitUntilDone)
 {
     m_waitToDump = waitUntilDone;
     if (m_waitToDump && !waitToDumpWatchdog) {
-//        waitToDumpWatchdog = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogInterval, 0, 0, 0, waitUntilDoneWatchdogFired, NULL);
-//        CFRunLoopAddTimer(CFRunLoopGetCurrent(), waitToDumpWatchdog, kCFRunLoopCommonModes);
+        waitToDumpWatchdog = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogInterval, 0, 0, 0, waitUntilDoneWatchdogFired, NULL);
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), waitToDumpWatchdog, kCFRunLoopCommonModes);
     }
 }
 
