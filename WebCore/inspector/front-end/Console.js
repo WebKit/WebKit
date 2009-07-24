@@ -412,7 +412,19 @@ WebInspector.Console.prototype = {
                 keys: function(o) { var a = []; for (var k in o) a.push(k); return a; }, \
                 values: function(o) { var a = []; for (var k in o) a.push(o[k]); return a; }, \
                 profile: function() { return console.profile.apply(console, arguments) }, \
-                profileEnd: function() { return console.profileEnd.apply(console, arguments) } \
+                profileEnd: function() { return console.profileEnd.apply(console, arguments) }, \
+                _inspectedNodes: [], \
+                _addInspectedNode: function(node) { \
+                    var inspectedNodes = _inspectorCommandLineAPI._inspectedNodes; \
+                    inspectedNodes.unshift(node); \
+                    if (inspectedNodes.length >= 5) \
+                        inspectedNodes.pop(); \
+                }, \
+                get $0() { return _inspectorCommandLineAPI._inspectedNodes[0] }, \
+                get $1() { return _inspectorCommandLineAPI._inspectedNodes[1] }, \
+                get $2() { return _inspectorCommandLineAPI._inspectedNodes[2] }, \
+                get $3() { return _inspectorCommandLineAPI._inspectedNodes[3] }, \
+                get $4() { return _inspectorCommandLineAPI._inspectedNodes[4] }
             };");
 
             inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(this.clearMessages.bind(this));
