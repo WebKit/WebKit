@@ -172,7 +172,7 @@ class CpplintTestBase(unittest.TestCase):
         Returns:
           The accumulated errors.
         """
-        file_name = 'foo.cc'
+        file_name = 'foo.cpp'
         error_collector = ErrorCollector(self.assert_)
         function_state = cpplint._FunctionState()
         lines = code.split('\n')
@@ -203,10 +203,10 @@ class CpplintTestBase(unittest.TestCase):
         return error_collector.results()
 
     # Perform lint and compare the error message with "expected_message".
-    def assert_lint(self, code, expected_message, file_name='foo.cc'):
+    def assert_lint(self, code, expected_message, file_name='foo.cpp'):
         self.assertEquals(expected_message, self.perform_single_line_lint(code, file_name))
 
-    def assert_lint_one_of_many_errors_re(self, code, expected_message_re, file_name='foo.cc'):
+    def assert_lint_one_of_many_errors_re(self, code, expected_message_re, file_name='foo.cpp'):
         messages = self.perform_single_line_lint(code, file_name)
         for message in messages:
             if re.search(expected_message_re, message):
@@ -232,7 +232,7 @@ class CpplintTestBase(unittest.TestCase):
 
     def assert_blank_lines_check(self, lines, start_errors, end_errors):
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data('foo.cc', 'cc', lines, error_collector)
+        cpplint.process_file_data('foo.cpp', 'cpp', lines, error_collector)
         self.assertEquals(
             start_errors,
             error_collector.results().count(
@@ -352,12 +352,12 @@ class CpplintTest(CpplintTestBase):
             'hierarchy, use static_cast<> to upcast.  Google doesn\'t support '
             'RTTI.  [runtime/rtti] [5]')
         # dynamic_cast is disallowed in most files.
-        self.assert_language_rules_check('foo.cc', statement, error_message)
+        self.assert_language_rules_check('foo.cpp', statement, error_message)
         self.assert_language_rules_check('foo.h', statement, error_message)
         # It is explicitly allowed in tests, however.
-        self.assert_language_rules_check('foo_test.cc', statement, '')
-        self.assert_language_rules_check('foo_unittest.cc', statement, '')
-        self.assert_language_rules_check('foo_regtest.cc', statement, '')
+        self.assert_language_rules_check('foo_test.cpp', statement, '')
+        self.assert_language_rules_check('foo_unittest.cpp', statement, '')
+        self.assert_language_rules_check('foo_regtest.cpp', statement, '')
 
     # We cannot test this functionality because of difference of
     # function definitions.  Anyway, we may never enable this.
@@ -454,7 +454,7 @@ class CpplintTest(CpplintTestBase):
                           '  [build/include_what_you_use] [4]',
                           self.perform_include_what_you_use(code, 'foo.h'))
         self.assertEquals('',
-                          self.perform_include_what_you_use(code, 'foo.cc'))
+                          self.perform_include_what_you_use(code, 'foo.cpp'))
 
     def test_include_what_you_use(self):
         self.assert_include_what_you_use(
@@ -587,7 +587,7 @@ class CpplintTest(CpplintTestBase):
         message = self.perform_include_what_you_use(
             '#include "config.h"\n'
             '#include "blah/a.h"\n',
-            filename='blah/a.cc',
+            filename='blah/a.cpp',
             io=MockIo(mock_header_contents))
         self.assertEquals(message, '')
 
@@ -597,17 +597,17 @@ class CpplintTest(CpplintTestBase):
                #include "blah/a.h"
 
                std::set<int> foo;''',
-            filename='blah/a.cc',
+            filename='blah/a.cpp',
             io=MockIo(mock_header_contents))
         self.assertEquals(message, '')
 
-        # If there's just a cc and the header can't be found then it's ok.
+        # If there's just a .cpp and the header can't be found then it's ok.
         message = self.perform_include_what_you_use(
             '''#include "config.h"
                #include "blah/a.h"
 
                std::set<int> foo;''',
-            filename='blah/a.cc')
+            filename='blah/a.cpp')
         self.assertEquals(message, '')
 
         # Make sure we find the headers with relative paths.
@@ -617,35 +617,35 @@ class CpplintTest(CpplintTestBase):
                #include "%s/a.h"
 
                std::set<int> foo;''' % os.path.basename(os.getcwd()),
-            filename='a.cc',
+            filename='a.cpp',
             io=MockIo(mock_header_contents))
         self.assertEquals(message, 'Add #include <set> for set<>  '
                                    '[build/include_what_you_use] [4]')
 
     def test_files_belong_to_same_module(self):
         f = cpplint.files_belong_to_same_module
-        self.assertEquals((True, ''), f('a.cc', 'a.h'))
-        self.assertEquals((True, ''), f('base/google.cc', 'base/google.h'))
-        self.assertEquals((True, ''), f('base/google_test.cc', 'base/google.h'))
+        self.assertEquals((True, ''), f('a.cpp', 'a.h'))
+        self.assertEquals((True, ''), f('base/google.cpp', 'base/google.h'))
+        self.assertEquals((True, ''), f('base/google_test.cpp', 'base/google.h'))
         self.assertEquals((True, ''),
-                          f('base/google_unittest.cc', 'base/google.h'))
+                          f('base/google_unittest.cpp', 'base/google.h'))
         self.assertEquals((True, ''),
-                          f('base/internal/google_unittest.cc',
+                          f('base/internal/google_unittest.cpp',
                             'base/public/google.h'))
         self.assertEquals((True, 'xxx/yyy/'),
-                          f('xxx/yyy/base/internal/google_unittest.cc',
+                          f('xxx/yyy/base/internal/google_unittest.cpp',
                             'base/public/google.h'))
         self.assertEquals((True, 'xxx/yyy/'),
-                          f('xxx/yyy/base/google_unittest.cc',
+                          f('xxx/yyy/base/google_unittest.cpp',
                             'base/public/google.h'))
         self.assertEquals((True, ''),
-                          f('base/google_unittest.cc', 'base/google-inl.h'))
+                          f('base/google_unittest.cpp', 'base/google-inl.h'))
         self.assertEquals((True, '/home/build/google3/'),
-                          f('/home/build/google3/base/google.cc', 'base/google.h'))
+                          f('/home/build/google3/base/google.cpp', 'base/google.h'))
 
         self.assertEquals((False, ''),
-                          f('/home/build/google3/base/google.cc', 'basu/google.h'))
-        self.assertEquals((False, ''), f('a.cc', 'b.h'))
+                          f('/home/build/google3/base/google.cpp', 'basu/google.h'))
+        self.assertEquals((False, ''), f('a.cpp', 'b.h'))
 
     def test_cleanse_line(self):
         self.assertEquals('int foo = 0;  ',
@@ -688,10 +688,10 @@ class CpplintTest(CpplintTestBase):
             'ugly and unnecessary, and you should use concatenation instead".'
             '  [readability/multiline_string] [5]')
 
-        file_path = 'mydir/foo.cc'
+        file_path = 'mydir/foo.cpp'
 
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'cc',
+        cpplint.process_file_data(file_path, 'cpp',
                                   ['const char* str = "This is a\\',
                                    ' multiline string.";'],
                                   error_collector)
@@ -1332,7 +1332,7 @@ class CpplintTest(CpplintTestBase):
     def test_newline_at_eof(self):
         def do_test(self, data, is_missing_eof):
             error_collector = ErrorCollector(self.assert_)
-            cpplint.process_file_data('foo.cc', 'cc', data.split('\n'),
+            cpplint.process_file_data('foo.cpp', 'cpp', data.split('\n'),
                                       error_collector)
             # The warning appears only once.
             self.assertEquals(
@@ -1348,7 +1348,7 @@ class CpplintTest(CpplintTestBase):
         def do_test(self, raw_bytes, has_invalid_utf8):
             error_collector = ErrorCollector(self.assert_)
             cpplint.process_file_data(
-                'foo.cc', 'cc',
+                'foo.cpp', 'cpp',
                 unicode(raw_bytes, 'utf8', 'replace').split('\n'),
                 error_collector)
             # The warning appears only once.
@@ -1383,7 +1383,7 @@ class CpplintTest(CpplintTestBase):
 
     def test_allow_blank_line_before_closing_namespace(self):
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data('foo.cc', 'cc',
+        cpplint.process_file_data('foo.cpp', 'cpp',
                                   ['namespace {', '', '}  // namespace'],
                                   error_collector)
         self.assertEquals(0, error_collector.results().count(
@@ -1392,7 +1392,7 @@ class CpplintTest(CpplintTestBase):
 
     def test_allow_blank_line_before_if_else_chain(self):
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data('foo.cc', 'cc',
+        cpplint.process_file_data('foo.cpp', 'cpp',
                                   ['if (hoge) {',
                                    '',  # No warning
                                    '} else if (piyo) {',
@@ -1409,7 +1409,7 @@ class CpplintTest(CpplintTestBase):
 
     def test_else_on_same_line_as_closing_braces(self):
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data('foo.cc', 'cc',
+        cpplint.process_file_data('foo.cpp', 'cpp',
                                   ['if (hoge) {',
                                    '',
                                    '}',
@@ -1496,15 +1496,15 @@ class CpplintTest(CpplintTestBase):
             self.assertRaises(ValueError, cpplint.parse_arguments,
                               ['--filter=+a,b,-c'])
 
-            self.assertEquals((['foo.cc'], {}), cpplint.parse_arguments(['foo.cc']))
+            self.assertEquals((['foo.cpp'], {}), cpplint.parse_arguments(['foo.cpp']))
             self.assertEquals(old_output_format, cpplint._cpplint_state.output_format)
             self.assertEquals(old_verbose_level, cpplint._cpplint_state.verbose_level)
 
             self.assertEquals(([], {}), cpplint.parse_arguments([]))
             self.assertEquals(([], {}), cpplint.parse_arguments(['--v=0']))
 
-            self.assertEquals((['foo.cc'], {}),
-                              cpplint.parse_arguments(['--v=1', 'foo.cc']))
+            self.assertEquals((['foo.cpp'], {}),
+                              cpplint.parse_arguments(['--v=1', 'foo.cpp']))
             self.assertEquals(1, cpplint._cpplint_state.verbose_level)
             self.assertEquals((['foo.h'], {}),
                               cpplint.parse_arguments(['--v=3', 'foo.h']))
@@ -1513,16 +1513,16 @@ class CpplintTest(CpplintTestBase):
                               cpplint.parse_arguments(['--verbose=5', 'foo.cpp']))
             self.assertEquals(5, cpplint._cpplint_state.verbose_level)
             self.assertRaises(ValueError,
-                              cpplint.parse_arguments, ['--v=f', 'foo.cc'])
+                              cpplint.parse_arguments, ['--v=f', 'foo.cpp'])
 
-            self.assertEquals((['foo.cc'], {}),
-                              cpplint.parse_arguments(['--output=emacs', 'foo.cc']))
+            self.assertEquals((['foo.cpp'], {}),
+                              cpplint.parse_arguments(['--output=emacs', 'foo.cpp']))
             self.assertEquals('emacs', cpplint._cpplint_state.output_format)
             self.assertEquals((['foo.h'], {}),
                               cpplint.parse_arguments(['--output=vs7', 'foo.h']))
             self.assertEquals('vs7', cpplint._cpplint_state.output_format)
             self.assertRaises(SystemExit,
-                              cpplint.parse_arguments, ['--output=blah', 'foo.cc'])
+                              cpplint.parse_arguments, ['--output=blah', 'foo.cpp'])
 
             filt = '-,+whitespace,-whitespace/indent'
             self.assertEquals((['foo.h'], {}),
@@ -1530,18 +1530,18 @@ class CpplintTest(CpplintTestBase):
             self.assertEquals(['-', '+whitespace', '-whitespace/indent'],
                               cpplint._cpplint_state.filters)
 
-            self.assertEquals((['foo.cc', 'foo.h'], {}),
-                              cpplint.parse_arguments(['foo.cc', 'foo.h']))
+            self.assertEquals((['foo.cpp', 'foo.h'], {}),
+                              cpplint.parse_arguments(['foo.cpp', 'foo.h']))
 
-            self.assertEquals((['foo.cc'], {'--foo': ''}),
-                              cpplint.parse_arguments(['--foo', 'foo.cc'], ['foo']))
-            self.assertEquals((['foo.cc'], {'--foo': 'bar'}),
-                              cpplint.parse_arguments(['--foo=bar', 'foo.cc'], ['foo=']))
-            self.assertEquals((['foo.cc'], {}),
-                              cpplint.parse_arguments(['foo.cc'], ['foo=']))
+            self.assertEquals((['foo.cpp'], {'--foo': ''}),
+                              cpplint.parse_arguments(['--foo', 'foo.cpp'], ['foo']))
+            self.assertEquals((['foo.cpp'], {'--foo': 'bar'}),
+                              cpplint.parse_arguments(['--foo=bar', 'foo.cpp'], ['foo=']))
+            self.assertEquals((['foo.cpp'], {}),
+                              cpplint.parse_arguments(['foo.cpp'], ['foo=']))
             self.assertRaises(SystemExit,
                               cpplint.parse_arguments,
-                              ['--footypo=bar', 'foo.cc'], ['foo='])
+                              ['--footypo=bar', 'foo.cpp'], ['foo='])
         finally:
             cpplint._USAGE = old_usage
             cpplint._ERROR_CATEGORIES = old_error_categories
@@ -1591,8 +1591,8 @@ class CpplintTest(CpplintTestBase):
         # named namespaces are OK.
         self.assert_language_rules_check('foo.h', 'namespace foo {', '')
         self.assert_language_rules_check('foo.h', 'namespace foonamespace {', '')
-        self.assert_language_rules_check('foo.cc', 'namespace {', '')
-        self.assert_language_rules_check('foo.cc', 'namespace foo {', '')
+        self.assert_language_rules_check('foo.cpp', 'namespace {', '')
+        self.assert_language_rules_check('foo.cpp', 'namespace foo {', '')
 
     def test_build_class(self):
         # Test that the linter can parse to the end of class definitions,
@@ -1855,7 +1855,7 @@ class CpplintTest(CpplintTestBase):
 
     def assert_lintLogCodeOnError(self, code, expected_message):
         # Special assert_lint which logs the input code on error.
-        result = self.perform_single_line_lint(code, 'foo.cc')
+        result = self.perform_single_line_lint(code, 'foo.cpp')
         if result != expected_message:
             self.fail('For code: "%s"\nGot: "%s"\nExpected: "%s"'
                       % (code, result, expected_message))
@@ -1927,18 +1927,18 @@ class CpplintTest(CpplintTestBase):
 
         copyright_line = '// Copyright 2008 Google Inc. All Rights Reserved.'
 
-        file_path = 'mydir/googleclient/foo.cc'
+        file_path = 'mydir/googleclient/foo.cpp'
 
         # There should be a copyright message in the first 10 lines
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'cc', [], error_collector)
+        cpplint.process_file_data(file_path, 'cpp', [], error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(legal_copyright_message))
 
         error_collector = ErrorCollector(self.assert_)
         cpplint.process_file_data(
-            file_path, 'cc',
+            file_path, 'cpp',
             ['' for unused_i in range(10)] + [copyright_line],
             error_collector)
         self.assertEquals(
@@ -1947,14 +1947,14 @@ class CpplintTest(CpplintTestBase):
 
         # Test that warning isn't issued if Copyright line appears early enough.
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'cc', [copyright_line], error_collector)
+        cpplint.process_file_data(file_path, 'cpp', [copyright_line], error_collector)
         for message in error_collector.result_list():
             if message.find('legal/copyright') != -1:
                 self.fail('Unexpected error: %s' % message)
 
         error_collector = ErrorCollector(self.assert_)
         cpplint.process_file_data(
-            file_path, 'cc',
+            file_path, 'cpp',
             ['' for unused_i in range(9)] + [copyright_line],
             error_collector)
         for message in error_collector.result_list():
@@ -2036,13 +2036,13 @@ class OrderOfIncludesTest(CpplintTestBase):
         self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo-inl.h'))
         self.assertEqual('foo/bar/foo',
                          cpplint._drop_common_suffixes('foo/bar/foo_inl.h'))
-        self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo.cc'))
+        self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo.cpp'))
         self.assertEqual('foo/foo_unusualinternal',
                          cpplint._drop_common_suffixes('foo/foo_unusualinternal.h'))
         self.assertEqual('',
-                         cpplint._drop_common_suffixes('_test.cc'))
+                         cpplint._drop_common_suffixes('_test.cpp'))
         self.assertEqual('test',
-                         cpplint._drop_common_suffixes('test.cc'))
+                         cpplint._drop_common_suffixes('test.cpp'))
 
 
 class OrderOfIncludesTest(CpplintTestBase):
@@ -2238,13 +2238,13 @@ class OrderOfIncludesTest(CpplintTestBase):
         self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo-inl.h'))
         self.assertEqual('foo/bar/foo',
                          cpplint._drop_common_suffixes('foo/bar/foo_inl.h'))
-        self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo.cc'))
+        self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo.cpp'))
         self.assertEqual('foo/foo_unusualinternal',
                          cpplint._drop_common_suffixes('foo/foo_unusualinternal.h'))
         self.assertEqual('',
-                         cpplint._drop_common_suffixes('_test.cc'))
+                         cpplint._drop_common_suffixes('_test.cpp'))
         self.assertEqual('test',
-                         cpplint._drop_common_suffixes('test.cc'))
+                         cpplint._drop_common_suffixes('test.cpp'))
         self.assertEqual('test',
                          cpplint._drop_common_suffixes('test.cpp'))
 

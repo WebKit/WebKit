@@ -53,7 +53,7 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7]
   To prevent specific lines from being linted, add a '// NOLINT' comment to the
   end of the line.
 
-  Linted extensions are .cc, .cpp, and .h.  Other file types will be ignored.
+  Linted extensions are .cpp, .c and .h.  Other file types will be ignored.
 
   Flags:
 
@@ -98,7 +98,7 @@ def process_patch(patch_string):
     for filename, diff in patch.files.iteritems():
         file_extension = os.path.splitext(filename)[1]
 
-        if file_extension in ['.cc', '.cpp', '.h']:
+        if file_extension in ['.cpp', '.c', '.h']:
             line_numbers = set()
 
             def error_for_patch(filename, line_number, category, confidence, message):

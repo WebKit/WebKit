@@ -73,7 +73,7 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
   end of the line.
 
   The files passed in will be linted; at least one file must be provided.
-  Linted extensions are .cc, .cpp, and .h.  Other file types will be ignored.
+  Linted extensions are .cpp, .c and .h.  Other file types will be ignored.
 
   Flags:
 
@@ -570,8 +570,8 @@ class FileInfo:
     def split(self):
         """Splits the file into the directory, basename, and extension.
 
-        For 'chrome/browser/browser.cc', Split() would
-        return ('chrome/browser', 'browser', '.cc')
+        For 'chrome/browser/browser.cpp', Split() would
+        return ('chrome/browser', 'browser', '.cpp')
 
         Returns:
           A tuple of (directory, basename, extension).
@@ -2172,19 +2172,19 @@ _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
 _RE_PATTERN_INCLUDE = re.compile(r'^\s*#\s*include\s*([<"])([^>"]*)[>"].*$')
 # Matches the first component of a filename delimited by -s and _s. That is:
 #  _RE_FIRST_COMPONENT.match('foo').group(0) == 'foo'
-#  _RE_FIRST_COMPONENT.match('foo.cc').group(0) == 'foo'
-#  _RE_FIRST_COMPONENT.match('foo-bar_baz.cc').group(0) == 'foo'
-#  _RE_FIRST_COMPONENT.match('foo_bar-baz.cc').group(0) == 'foo'
+#  _RE_FIRST_COMPONENT.match('foo.cpp').group(0) == 'foo'
+#  _RE_FIRST_COMPONENT.match('foo-bar_baz.cpp').group(0) == 'foo'
+#  _RE_FIRST_COMPONENT.match('foo_bar-baz.cpp').group(0) == 'foo'
 _RE_FIRST_COMPONENT = re.compile(r'^[^-_.]+')
 
 
 def _drop_common_suffixes(filename):
-    """Drops common suffixes like _test.cc or -inl.h from filename.
+    """Drops common suffixes like _test.cpp or -inl.h from filename.
 
     For example:
       >>> _drop_common_suffixes('foo/foo-inl.h')
       'foo/foo'
-      >>> _drop_common_suffixes('foo/bar/foo.cc')
+      >>> _drop_common_suffixes('foo/bar/foo.cpp')
       'foo/bar/foo'
       >>> _drop_common_suffixes('foo/foo_internal.h')
       'foo/foo'
@@ -2197,7 +2197,7 @@ def _drop_common_suffixes(filename):
     Returns:
       The filename with the common suffix removed.
     """
-    for suffix in ('test.cc', 'regtest.cc', 'unittest.cc',
+    for suffix in ('test.cpp', 'regtest.cpp', 'unittest.cpp',
                    'inl.h', 'impl.h', 'internal.h'):
         if (filename.endswith(suffix) and len(filename) > len(suffix)
             and filename[-len(suffix) - 1] in ('-', '_')):
@@ -2214,9 +2214,9 @@ def _is_test_filename(filename):
     Returns:
       True if 'filename' looks like a test, False otherwise.
     """
-    if (filename.endswith('_test.cc')
-        or filename.endswith('_unittest.cc')
-        or filename.endswith('_regtest.cc')):
+    if (filename.endswith('_test.cpp')
+        or filename.endswith('_unittest.cpp')
+        or filename.endswith('_regtest.cpp')):
         return True
     return False
 
@@ -2685,45 +2685,45 @@ for _header, _templates in _HEADERS_CONTAINING_TEMPLATES:
              _header))
 
 
-def files_belong_to_same_module(filename_cc, filename_h):
+def files_belong_to_same_module(filename_cpp, filename_h):
     """Check if these two filenames belong to the same module.
 
     The concept of a 'module' here is a as follows:
-    foo.h, foo-inl.h, foo.cc, foo_test.cc and foo_unittest.cc belong to the
+    foo.h, foo-inl.h, foo.cpp, foo_test.cpp and foo_unittest.cpp belong to the
     same 'module' if they are in the same directory.
     some/path/public/xyzzy and some/path/internal/xyzzy are also considered
     to belong to the same module here.
 
-    If the filename_cc contains a longer path than the filename_h, for example,
-    '/absolute/path/to/base/sysinfo.cc', and this file would include
+    If the filename_cpp contains a longer path than the filename_h, for example,
+    '/absolute/path/to/base/sysinfo.cpp', and this file would include
     'base/sysinfo.h', this function also produces the prefix needed to open the
     header. This is used by the caller of this function to more robustly open the
     header file. We don't have access to the real include paths in this context,
     so we need this guesswork here.
 
-    Known bugs: tools/base/bar.cc and base/bar.h belong to the same module
+    Known bugs: tools/base/bar.cpp and base/bar.h belong to the same module
     according to this implementation. Because of this, this function gives
     some false positives. This should be sufficiently rare in practice.
 
     Args:
-      filename_cc: is the path for the .cc file
+      filename_cpp: is the path for the .cpp file
       filename_h: is the path for the header path
 
     Returns:
       Tuple with a bool and a string:
-      bool: True if filename_cc and filename_h belong to the same module.
+      bool: True if filename_cpp and filename_h belong to the same module.
       string: the additional prefix needed to open the header file.
     """
 
-    if not filename_cc.endswith('.cc'):
+    if not filename_cpp.endswith('.cpp'):
         return (False, '')
-    filename_cc = filename_cc[:-len('.cc')]
-    if filename_cc.endswith('_unittest'):
-        filename_cc = filename_cc[:-len('_unittest')]
-    elif filename_cc.endswith('_test'):
-        filename_cc = filename_cc[:-len('_test')]
-    filename_cc = filename_cc.replace('/public/', '/')
-    filename_cc = filename_cc.replace('/internal/', '/')
+    filename_cpp = filename_cpp[:-len('.cpp')]
+    if filename_cpp.endswith('_unittest'):
+        filename_cpp = filename_cpp[:-len('_unittest')]
+    elif filename_cpp.endswith('_test'):
+        filename_cpp = filename_cpp[:-len('_test')]
+    filename_cpp = filename_cpp.replace('/public/', '/')
+    filename_cpp = filename_cpp.replace('/internal/', '/')
 
     if not filename_h.endswith('.h'):
         return (False, '')
@@ -2733,10 +2733,10 @@ def files_belong_to_same_module(filename_cc, filename_h):
     filename_h = filename_h.replace('/public/', '/')
     filename_h = filename_h.replace('/internal/', '/')
 
-    files_belong_to_same_module = filename_cc.endswith(filename_h)
+    files_belong_to_same_module = filename_cpp.endswith(filename_h)
     common_path = ''
     if files_belong_to_same_module:
-        common_path = filename_cc[:-len(filename_h)]
+        common_path = filename_cpp[:-len(filename_h)]
     return files_belong_to_same_module, common_path
 
 
@@ -2812,7 +2812,7 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error,
                 required[header] = (line_number, template)
 
     # The policy is that if you #include something in foo.h you don't need to
-    # include it again in foo.cc. Here, we will look at possible includes.
+    # include it again in foo.cpp. Here, we will look at possible includes.
     # Let's copy the include_state so it is only messed up within this function.
     include_state = include_state.copy()
 
@@ -2824,14 +2824,14 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error,
 
     # For Emacs's flymake.
     # If cpplint is invoked from Emacs's flymake, a temporary file is generated
-    # by flymake and that file name might end with '_flymake.cc'. In that case,
+    # by flymake and that file name might end with '_flymake.cpp'. In that case,
     # restore original file name here so that the corresponding header file can be
     # found.
-    # e.g. If the file name is 'foo_flymake.cc', we should search for 'foo.h'
+    # e.g. If the file name is 'foo_flymake.cpp', we should search for 'foo.h'
     # instead of 'foo_flymake.h'
-    emacs_flymake_suffix = '_flymake.cc'
+    emacs_flymake_suffix = '_flymake.cpp'
     if abs_filename.endswith(emacs_flymake_suffix):
-        abs_filename = abs_filename[:-len(emacs_flymake_suffix)] + '.cc'
+        abs_filename = abs_filename[:-len(emacs_flymake_suffix)] + '.cpp'
 
     # include_state is modified during iteration, so we iterate over a copy of
     # the keys.
@@ -2841,12 +2841,12 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error,
         if same_module and update_include_state(fullpath, include_state, io):
             header_found = True
 
-    # If we can't find the header file for a .cc, assume it's because we don't
+    # If we can't find the header file for a .cpp, assume it's because we don't
     # know where to look. In that case we'll give up as we're not sure they
     # didn't include it in the .h file.
     # FIXME: Do a better job of finding .h files so we are confident that
     #        not having the .h file means there isn't one.
-    if filename.endswith('.cc') and not header_found:
+    if filename.endswith('.cpp') and not header_found:
         return
 
     # All the lines have been processed, report the errors found.
@@ -2976,9 +2976,9 @@ def process_file(filename, error=error):
 
     # When reading from stdin, the extension is unknown, so no cpplint tests
     # should rely on the extension.
-    if (filename != '-' and file_extension != 'cc' and file_extension != 'h'
-        and file_extension != 'cpp' and file_extension != 'c'):
-        sys.stderr.write('Ignoring %s; not a .cc, .cpp, .c or .h file\n' % filename)
+    if (filename != '-' and file_extension != 'h' and file_extension != 'cpp'
+        and file_extension != 'c'):
+        sys.stderr.write('Ignoring %s; not a .cpp, .c or .h file\n' % filename)
     else:
         process_file_data(filename, file_extension, lines, error)
         if carriage_return_found and os.linesep != '\r\n':
