@@ -38,6 +38,11 @@
 
 namespace WebCore {
 
+PassRefPtr<V8CustomXPathNSResolver> V8CustomXPathNSResolver::create(v8::Handle<v8::Object> resolver)
+{
+    return adoptRef(new V8CustomXPathNSResolver(resolver));
+}
+
 V8CustomXPathNSResolver::V8CustomXPathNSResolver(v8::Handle<v8::Object> resolver)
     : m_resolver(resolver)
 {

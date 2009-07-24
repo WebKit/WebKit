@@ -58,7 +58,7 @@ CALLBACK_FUNC_DECL(SVGMatrixInverse)
         return v8::Handle<v8::Value>();
     }
 
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, new V8SVGStaticPODTypeWrapper<TransformationMatrix>(result));
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(result));
 }
 
 CALLBACK_FUNC_DECL(SVGMatrixRotateFromVector)
@@ -78,7 +78,7 @@ CALLBACK_FUNC_DECL(SVGMatrixRotateFromVector)
         return v8::Handle<v8::Value>();
     }
 
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, new V8SVGStaticPODTypeWrapper<TransformationMatrix>(result));
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::SVGMATRIX, V8SVGStaticPODTypeWrapper<TransformationMatrix>::create(result));
 }
 
 } // namespace WebCore

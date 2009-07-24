@@ -53,7 +53,7 @@ static inline v8::Handle<v8::Value> toV8(PassRefPtr<Node> object, ExceptionCode 
     if (!object)
         return v8::Null();
 
-    return V8DOMWrapper::convertNodeToV8Object(object.get());
+    return V8DOMWrapper::convertNodeToV8Object(object);
 }
 
 CALLBACK_FUNC_DECL(NodeIteratorNextNode)

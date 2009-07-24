@@ -345,7 +345,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DCreatePattern)
             V8Proxy::setDOMException(ec);
             return notHandledByInterceptor();
         }
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.get());
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.release());
     }
 
     if (V8HTMLCanvasElement::HasInstance(arg)) {
@@ -356,7 +356,7 @@ CALLBACK_FUNC_DECL(CanvasRenderingContext2DCreatePattern)
             V8Proxy::setDOMException(ec);
             return notHandledByInterceptor();
         }
-        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.get());
+        return V8DOMWrapper::convertToV8Object(V8ClassIndex::CANVASPATTERN, pattern.release());
     }
 
     V8Proxy::setDOMException(TYPE_MISMATCH_ERR);

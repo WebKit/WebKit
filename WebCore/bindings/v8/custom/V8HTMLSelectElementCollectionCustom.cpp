@@ -62,7 +62,7 @@ NAMED_PROPERTY_GETTER(HTMLSelectElementCollection)
         return notHandledByInterceptor();
 
     if (items.size() == 1)
-        return V8DOMWrapper::convertNodeToV8Object(items.at(0).get());
+        return V8DOMWrapper::convertNodeToV8Object(items.at(0).release());
 
     NodeList* list = new V8NamedNodesCollection(items);
     return V8DOMWrapper::convertToV8Object(V8ClassIndex::NODELIST, list);

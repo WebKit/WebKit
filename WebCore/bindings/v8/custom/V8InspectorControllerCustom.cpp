@@ -124,7 +124,7 @@ CALLBACK_FUNC_DECL(InspectorControllerSearch)
         if (newStart == startVisiblePosition(searchRange.get(), DOWNSTREAM))
             break;
 
-        result->Set(v8::Number::New(index++), V8DOMWrapper::convertToV8Object<Range>(V8ClassIndex::RANGE, resultRange.get()));
+        result->Set(v8::Number::New(index++), V8DOMWrapper::convertToV8Object(V8ClassIndex::RANGE, resultRange.release()));
 
         setStart(searchRange.get(), newStart);
     } while (true);

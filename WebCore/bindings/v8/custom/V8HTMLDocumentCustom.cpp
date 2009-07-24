@@ -97,7 +97,7 @@ NAMED_PROPERTY_GETTER(HTMLDocument)
         return V8DOMWrapper::convertNodeToV8Object(node);
     }
 
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::HTMLCOLLECTION, items.get());
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::HTMLCOLLECTION, items.release());
 }
 
 // HTMLDocument ----------------------------------------------------------------
@@ -180,8 +180,7 @@ ACCESSOR_GETTER(HTMLDocumentAll)
     v8::HandleScope scope;
     v8::Handle<v8::Object> holder = info.Holder();
     HTMLDocument* htmlDocument = V8DOMWrapper::convertDOMWrapperToNode<HTMLDocument>(holder);
-    RefPtr<HTMLCollection> collection = WTF::getPtr(htmlDocument->all());
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::HTMLCOLLECTION, WTF::getPtr(collection));
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::HTMLCOLLECTION, htmlDocument->all());
 }
 
 ACCESSOR_SETTER(HTMLDocumentAll)

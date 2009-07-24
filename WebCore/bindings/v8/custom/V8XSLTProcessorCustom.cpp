@@ -77,7 +77,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorTransformToFragment)
     Node* source = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[0]));
     Document* owner = V8DOMWrapper::convertDOMWrapperToNode<Document>(v8::Handle<v8::Object>::Cast(args[1]));
     RefPtr<DocumentFragment> result = imp->transformToFragment(source, owner);
-    return V8DOMWrapper::convertNodeToV8Object(result.get());
+    return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
 
@@ -98,7 +98,7 @@ CALLBACK_FUNC_DECL(XSLTProcessorTransformToDocument)
     if (!result)
         return v8::Undefined();
 
-    return V8DOMWrapper::convertNodeToV8Object(result.get());
+    return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
 

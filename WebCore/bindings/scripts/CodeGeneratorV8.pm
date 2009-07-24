@@ -560,10 +560,6 @@ END
         }
         $getterString .= "ec" if $useExceptions;
         $getterString .= ")";
-        if (IsRefPtrType($returnType)) {
-            $implIncludes{"wtf/GetPtr.h"} = 1;
-            $getterString = "WTF::getPtr(" . $getterString . ")";
-        }
         if ($nativeType eq "int" and $attribute->signature->extendedAttributes->{"ConvertFromString"}) {
             $getterString .= ".toInt()";
         }
@@ -589,19 +585,22 @@ END
         my $implClassIsAnimatedType = $codeGenerator->IsSVGAnimatedType($implClassName);
         if (not $implClassIsAnimatedType and $codeGenerator->IsPodTypeWithWriteableProperties($attrType) and not defined $attribute->signature->extendedAttributes->{"Immutable"}) {
             if (IsPodType($implClassName)) {
-                $wrapper = "new V8SVGStaticPODTypeWrapperWithPODTypeParent<$nativeType, $implClassName>($getterString, imp_wrapper)";
+                my $wrapper = "V8SVGStaticPODTypeWrapperWithPODTypeParent<$nativeType, $implClassName>::create($getterString, imp_wrapper)";
+                push(@implContentDecls, "    RefPtr<V8SVGStaticPODTypeWrapperWithPODTypeParent<$nativeType, $implClassName> > wrapper = $wrapper;\n");
             } else {
-                $wrapper = "new V8SVGStaticPODTypeWrapperWithParent<$nativeType, $implClassName>(imp, &${implClassName}::$getter, &${implClassName}::$setter)";
+                my $wrapper = "V8SVGStaticPODTypeWrapperWithParent<$nativeType, $implClassName>::create(imp, &${implClassName}::$getter, &${implClassName}::$setter)";
+                push(@implContentDecls, "    RefPtr<V8SVGStaticPODTypeWrapperWithParent<$nativeType, $implClassName> > wrapper = $wrapper;\n");
             }
         } else {
             if ($implClassIsAnimatedType) {
-                $wrapper = "V8SVGDynamicPODTypeWrapperCache<$nativeType, $implClassName>::lookupOrCreateWrapper(imp, &${implClassName}::$getter, &${implClassName}::$setter)";
+                my $wrapper = "V8SVGDynamicPODTypeWrapperCache<$nativeType, $implClassName>::lookupOrCreateWrapper(imp, &${implClassName}::$getter, &${implClassName}::$setter)";
+                push(@implContentDecls, "    RefPtr<V8SVGPODTypeWrapper<" . $nativeType . "> > wrapper = $wrapper;\n");
             } else {
-                $wrapper = GenerateSVGStaticPodTypeWrapper($returnType, $getterString);
+                my $wrapper = GenerateSVGStaticPodTypeWrapper($returnType, $getterString);
+                push(@implContentDecls, "    RefPtr<V8SVGStaticPODTypeWrapper<" . $nativeType . "> > wrapper = $wrapper;\n");
             }
         }
 
-        push(@implContentDecls, "    void* wrapper = $wrapper;\n");
     } else {
         push(@implContentDecls, "    $nativeType v = ");
 
@@ -612,9 +611,6 @@ END
         }
 
         $result = "v";
-        if (IsRefPtrType($returnType)) {
-            $result = "WTF::getPtr(" . $result . ")";
-        }
     }
 
     if (IsSVGTypeNeedingContextParameter($attrType) && !$skipContext) {
@@ -622,14 +618,15 @@ END
         if ($attrIsPodType) {
             $resultObject = "wrapper";
         }
-
+        $resultObject = "WTF::getPtr(" . $resultObject . ")";
         push(@implContentDecls, GenerateSVGContextAssignment($implClassName, $resultObject, "    "));
     }
 
     if ($attrIsPodType) {
         my $classIndex = uc($attrType);
-        push(@implContentDecls, "    return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, wrapper);\n");
+        push(@implContentDecls, "    return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, wrapper.release());\n");
     } else {
+        $result .= ".release()" if (IsRefPtrType($attrType));
         push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "    ").";\n");
     }
 
@@ -1480,13 +1477,6 @@ sub GenerateFunctionCallString()
     }
     $functionString .= ")";
 
-    if ((IsRefPtrType($returnType) || $returnsListItemPodType) && !$nodeToReturn) {
-        # We don't use getPtr when $nodeToReturn because that situation is
-        # special-cased below to return a bool.
-        $implIncludes{"wtf/GetPtr.h"} = 1;
-        $functionString = "WTF::getPtr(" . $functionString . ")";
-    }
-
     if ($nodeToReturn) {
         # Special case for insertBefore, replaceChild, removeChild and
         # appendChild functions from Node.
@@ -1516,18 +1506,14 @@ sub GenerateFunctionCallString()
     }
 
     my $return = "result";
-    if (IsRefPtrType($returnType) || $returnsListItemPodType) {
-        $implIncludes{"wtf/GetPtr.h"} = 1;
-        $return = "WTF::getPtr(" . $return . ")";
-    }
 
     # If the return type is a POD type, separate out the wrapper generation
     if ($returnsListItemPodType) {
-        $result .= $indent . "V8SVGPODTypeWrapper<" . $nativeReturnType . ">* wrapper = new ";
-        $result .= "V8SVGPODTypeWrapperCreatorForList<" . $nativeReturnType . ">($return, imp->associatedAttributeName());\n";
+        $result .= $indent . "RefPtr<V8SVGPODTypeWrapper<" . $nativeReturnType . "> > wrapper = ";
+        $result .= "V8SVGPODTypeWrapperCreatorForList<" . $nativeReturnType . ">::create($return, imp->associatedAttributeName());\n";
         $return = "wrapper";
     } elsif ($returnsPodType) {
-        $result .= $indent . "V8SVGPODTypeWrapper<" . $nativeReturnType . ">* wrapper = ";
+        $result .= $indent . "RefPtr<V8SVGPODTypeWrapper<" . $nativeReturnType . "> > wrapper = ";
         $result .= GenerateSVGStaticPodTypeWrapper($returnType, $return) . ";\n";
         $return = "wrapper";
     }
@@ -1535,7 +1521,7 @@ sub GenerateFunctionCallString()
     my $generatedSVGContextRetrieval = 0;
     # If the return type needs an SVG context, output it
     if (IsSVGTypeNeedingContextParameter($returnType)) {
-        $result .= GenerateSVGContextAssignment($implClassName, $return, $indent);
+        $result .= GenerateSVGContextAssignment($implClassName, $return . ".get()", $indent);
         $generatedSVGContextRetrieval = 1;
     }
 
@@ -1561,8 +1547,9 @@ sub GenerateFunctionCallString()
 
     if ($returnsPodType) {
         my $classIndex = uc($returnType);
-        $result .= $indent . "return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, wrapper);\n";
+        $result .= $indent . "return V8DOMWrapper::convertToV8Object(V8ClassIndex::$classIndex, wrapper.release());\n";
     } else {
+        $return .= ".release()" if (IsRefPtrType($returnType));
         $result .= $indent . ReturnNativeToJSValue($function->signature, $return, $indent) . ";\n";
     }
 
@@ -2056,6 +2043,7 @@ sub ReturnNativeToJSValue
     else {
         $implIncludes{"wtf/RefCounted.h"} = 1;
         $implIncludes{"wtf/RefPtr.h"} = 1;
+        $implIncludes{"wtf/GetPtr.h"} = 1;
         my $classIndex = uc($type);
 
         if (IsPodType($type)) {
@@ -2074,7 +2062,7 @@ sub GenerateSVGStaticPodTypeWrapper {
     $implIncludes{"V8SVGPODTypeWrapper.h"} = 1;
 
     my $nativeType = GetNativeType($type);
-    return "new V8SVGStaticPODTypeWrapper<$nativeType>($value)";
+    return "V8SVGStaticPODTypeWrapper<$nativeType>::create($value)";
 }
 
 # Internal helper
@@ -2134,7 +2122,7 @@ sub GenerateSVGContextAssignment
     my $indent = shift;
 
     $result = GenerateSVGContextRetrieval($srcType, $indent);
-    $result .=   $indent . "V8Proxy::setSVGContext($value, context);\n";
+    $result .= $indent . "V8Proxy::setSVGContext($value, context);\n";
 
     return $result;
 }

@@ -52,35 +52,35 @@ CALLBACK_FUNC_DECL(DocumentEvaluate)
 {
     INC_STATS("DOM.Document.evaluate()");
 
-    Document* document = V8DOMWrapper::convertDOMWrapperToNode<Document>(args.Holder());
+    RefPtr<Document> document = V8DOMWrapper::convertDOMWrapperToNode<Document>(args.Holder());
     ExceptionCode ec = 0;
     String expression = toWebCoreString(args[0]);
-    Node* contextNode = 0;
+    RefPtr<Node> contextNode;
     if (V8Node::HasInstance(args[1]))
         contextNode = V8DOMWrapper::convertDOMWrapperToNode<Node>(v8::Handle<v8::Object>::Cast(args[1]));
 
-    XPathNSResolver* resolver = 0;
+    RefPtr<XPathNSResolver> resolver;
     if (V8XPathNSResolver::HasInstance(args[2]))
         resolver = V8DOMWrapper::convertToNativeObject<XPathNSResolver>(V8ClassIndex::XPATHNSRESOLVER, v8::Handle<v8::Object>::Cast(args[2]));
     else if (args[2]->IsObject())
-        resolver = new V8CustomXPathNSResolver(args[2]->ToObject());
+        resolver = V8CustomXPathNSResolver::create(args[2]->ToObject());
     else if (!args[2]->IsNull() && !args[2]->IsUndefined())
         return throwError(TYPE_MISMATCH_ERR);
 
     int type = toInt32(args[3]);
-    XPathResult* inResult = 0;
+    RefPtr<XPathResult> inResult;
     if (V8XPathResult::HasInstance(args[4]))
         inResult = V8DOMWrapper::convertToNativeObject<XPathResult>(V8ClassIndex::XPATHRESULT, v8::Handle<v8::Object>::Cast(args[4]));
 
     v8::TryCatch exceptionCatcher;
-    RefPtr<XPathResult> result = document->evaluate(expression, contextNode, resolver, type, inResult, ec);
+    RefPtr<XPathResult> result = document->evaluate(expression, contextNode.get(), resolver.get(), type, inResult.get(), ec);
     if (exceptionCatcher.HasCaught())
         return throwError(exceptionCatcher.Exception());
 
     if (ec)
         return throwError(ec);
 
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::XPATHRESULT, result.get());
+    return V8DOMWrapper::convertToV8Object(V8ClassIndex::XPATHRESULT, result.release());
 }
 
 CALLBACK_FUNC_DECL(DocumentGetCSSCanvasContext)

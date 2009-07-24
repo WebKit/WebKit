@@ -55,7 +55,7 @@ NAMED_PROPERTY_GETTER(NodeList)
     if (!result)
         return notHandledByInterceptor();
 
-    return V8DOMWrapper::convertNodeToV8Object(result.get());
+    return V8DOMWrapper::convertNodeToV8Object(result.release());
 }
 
 } // namespace WebCore

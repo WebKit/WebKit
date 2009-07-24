@@ -31,6 +31,7 @@
 #ifndef V8DOMWrapper_h
 #define V8DOMWrapper_h
 
+#include "Event.h"
 #include "Node.h"
 #include "NodeFilter.h"
 #include "PlatformString.h" // for WebCore::String
@@ -140,6 +141,11 @@ namespace WebCore {
         static v8::Handle<v8::Value> convertToV8Object(V8ClassIndex::V8WrapperType, void*);
 
         // Fast-path for Node objects.
+        static v8::Handle<v8::Value> convertNodeToV8Object(PassRefPtr<Node> node)
+        {
+            return convertNodeToV8Object(node.get());
+        }
+
         static v8::Handle<v8::Value> convertNodeToV8Object(Node*);
 
         template <class C>
@@ -168,6 +174,11 @@ namespace WebCore {
 
         static V8ClassIndex::V8WrapperType domWrapperType(v8::Handle<v8::Object>);
 
+        static v8::Handle<v8::Value> convertEventToV8Object(PassRefPtr<Event> event)
+        {
+            return convertEventToV8Object(event.get());
+        }
+
         static v8::Handle<v8::Value> convertEventToV8Object(Event*);
 
         static Event* convertToNativeEvent(v8::Handle<v8::Value> jsEvent)
@@ -177,8 +188,19 @@ namespace WebCore {
             return convertDOMWrapperToNative<Event>(v8::Handle<v8::Object>::Cast(jsEvent));
         }
 
+        static v8::Handle<v8::Value> convertEventTargetToV8Object(PassRefPtr<EventTarget> eventTarget)
+        {
+            return convertEventTargetToV8Object(eventTarget.get());
+        }
+
         static v8::Handle<v8::Value> convertEventTargetToV8Object(EventTarget*);
+
         // Wrap and unwrap JS event listeners.
+        static v8::Handle<v8::Value> convertEventListenerToV8Object(PassRefPtr<Event> eventListener)
+        {
+            return convertEventListenerToV8Object(eventListener.get());
+        }
+
         static v8::Handle<v8::Value> convertEventListenerToV8Object(EventListener*);
 
         // DOMImplementation is a singleton and it is handled in a special
