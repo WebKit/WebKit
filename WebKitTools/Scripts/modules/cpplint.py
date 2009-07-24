@@ -2291,77 +2291,80 @@ def check_include_line(filename, clean_lines, line_number, include_state, error)
 
     line = clean_lines.lines[line_number]
 
-    # we shouldn't include a file more than once. actually, there are a
-    # handful of instances where doing so is okay, but in general it's
-    # not.
     matched = _RE_PATTERN_INCLUDE.search(line)
-    if matched:
-        include = matched.group(2)
-        is_system = (matched.group(1) == '<')
-        if include in include_state:
-            error(filename, line_number, 'build/include', 4,
-                  '"%s" already included at %s:%s' %
-                  (include, filename, include_state[include]))
+    if not matched:
+        return
+
+    include = matched.group(2)
+    is_system = (matched.group(1) == '<')
+
+    # Look for any of the stream classes that are part of standard C++.
+    if match(r'(f|ind|io|i|o|parse|pf|stdio|str|)?stream$', include):
+        # Many unit tests use cout, so we exempt them.
+        if not _is_test_filename(filename):
+            error(filename, line_number, 'readability/streams', 3,
+                  'Streams are highly discouraged.')
+
+    # Look for specific includes to fix.
+    if include.startswith('wtf/') and not is_system:
+        error(filename, line_number, 'build/include', 4,
+              'wtf includes should be <wtf/file.h> instead of "wtf/file.h".')
+
+    duplicate_header = include in include_state
+    if duplicate_header:
+        error(filename, line_number, 'build/include', 4,
+              '"%s" already included at %s:%s' %
+              (include, filename, include_state[include]))
+    else:
+        include_state[include] = line_number
+
+    header_type = _classify_include(filename, include, is_system, include_state)
+    include_state.header_types[line_number] = header_type
+
+    # Only proceed if this isn't a duplicate header.
+    if duplicate_header:
+        return
+
+    # We want to ensure that headers appear in the right order:
+    # 1) for implementation files: config.h, primary header, blank line, alphabetically sorted
+    # 2) for header files: alphabetically sorted
+    # The include_state object keeps track of the last type seen
+    # and complains if the header types are out of order or missing.
+    error_message = include_state.check_next_include_order(header_type, filename.endswith('.h'))
+
+    # Check to make sure we have a blank line after primary header.
+    if not error_message and header_type == _PRIMARY_HEADER:
+         next_line = clean_lines.raw_lines[line_number + 1]
+         if not is_blank_line(next_line):
+            error(filename, line_number, 'build/include_order', 4,
+                  'You should add a blank line after implementation file\'s own header.')
+
+    # Check to make sure all headers besides config.h and the primary header are
+    # alphabetically sorted.
+    if not error_message and header_type == _OTHER_HEADER:
+         previous_line_number = line_number - 1;
+         previous_line = clean_lines.lines[previous_line_number]
+         previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
+         while (not previous_match and previous_line_number > 0
+                and not search(r'\A(#if|#ifdef|#ifndef|#else|#elif|#endif)', previous_line)):
+            previous_line_number -= 1;
+            previous_line = clean_lines.lines[previous_line_number]
+            previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
+         if previous_match:
+            previous_header_type = include_state.header_types[previous_line_number]
+            if previous_header_type == _OTHER_HEADER and previous_line.strip() > line.strip():
+                error(filename, line_number, 'build/include_order', 4,
+                      'Alphabetical sorting problem.')
+
+    if error_message:
+        if filename.endswith('.h'):
+            error(filename, line_number, 'build/include_order', 4,
+                  '%s Should be: alphabetically sorted.' %
+                  error_message)
         else:
-            include_state[include] = line_number
-
-            # We want to ensure that headers appear in the right order:
-            # 1) for implementation files: config.h, primary header, blank line, alphabetically sorted
-            # 2) for header files: alphabetically sorted
-            #
-            # We classify each include statement as one of 4 types
-            # using a number of techniques. The include_state object keeps
-            # track of the highest type seen, and complains if we see a
-            # lower type after that.
-            header_type = _classify_include(filename, include, is_system, include_state)
-            error_message = include_state.check_next_include_order(header_type, filename.endswith('.h'))
-            include_state.header_types[line_number] = header_type
-
-            # Check to make sure we have a blank line after primary header.
-            if not error_message and header_type == _PRIMARY_HEADER:
-                 next_line = clean_lines.raw_lines[line_number + 1]
-                 if not is_blank_line(next_line):
-                    error(filename, line_number, 'build/include_order', 4,
-                          'You should add a blank line after implementation file\'s own header.')
-
-            # Check to make sure all headers besides config.h and the primary header are
-            # alphabetically sorted.
-            if not error_message and header_type == _OTHER_HEADER:
-                 previous_line_number = line_number - 1;
-                 previous_line = clean_lines.lines[previous_line_number]
-                 previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
-                 while (not previous_match and previous_line_number > 0
-                        and not search(r'\A(#if|#ifdef|#ifndef|#else|#elif|#endif)', previous_line)):
-                    previous_line_number -= 1;
-                    previous_line = clean_lines.lines[previous_line_number]
-                    previous_match = _RE_PATTERN_INCLUDE.search(previous_line)
-                 if previous_match:
-                    previous_header_type = include_state.header_types[previous_line_number]
-                    if previous_header_type == _OTHER_HEADER and previous_line.strip() > line.strip():
-                        error(filename, line_number, 'build/include_order', 4,
-                              'Alphabetical sorting problem.')
-
-            if error_message:
-                if filename.endswith('.h'):
-                    error(filename, line_number, 'build/include_order', 4,
-                          '%s Should be: alphabetically sorted.' %
-                          error_message)
-                else:
-                    error(filename, line_number, 'build/include_order', 4,
-                          '%s Should be: config.h, primary header, blank line, and then alphabetically sorted.' %
-                          error_message)
-
-        # Look for any of the stream classes that are part of standard C++.
-        if match(r'(f|ind|io|i|o|parse|pf|stdio|str|)?stream$', include):
-            # Many unit tests use cout, so we exempt them.
-            if not _is_test_filename(filename):
-                error(filename, line_number, 'readability/streams', 3,
-                      'Streams are highly discouraged.')
-
-        # Look for specific includes to fix.
-        if include.startswith('wtf/') and not is_system:
-            error(filename, line_number, 'build/include', 4,
-                  'wtf includes should be <wtf/file.h> instead of "wtf/file.h".')
+            error(filename, line_number, 'build/include_order', 4,
+                  '%s Should be: config.h, primary header, blank line, and then alphabetically sorted.' %
+                  error_message)
 
 
 def check_language(filename, clean_lines, line_number, file_extension, include_state,

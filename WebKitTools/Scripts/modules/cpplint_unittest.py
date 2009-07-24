@@ -2091,7 +2091,7 @@ class OrderOfIncludesTest(CpplintTestBase):
         self.assertEqual('Found header this file implements after other header.',
                          self.include_state.check_next_include_order(cpplint._PRIMARY_HEADER, False))
 
-    def test_check_alpabetical_include_order(self):
+    def test_check_alphabetical_include_order(self):
         self.assert_language_rules_check('foo.h',
                                          '#include "a.h"\n'
                                          '#include "c.h"\n'
@@ -2175,6 +2175,15 @@ class OrderOfIncludesTest(CpplintTestBase):
                                          '#include "bar.h"\n'
                                          '#include "a.h"\n', # Should still flag this.
                                          'Alphabetical sorting problem.  [build/include_order] [4]')
+
+        # Check that after an already included error, the sorting rules still work.
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "foo.h"\n'
+                                         '\n'
+                                         '#include "foo.h"\n'
+                                         '#include "g.h"\n',
+                                         '"foo.h" already included at foo.cpp:1  [build/include] [4]')
 
     def test_check_wtf_includes(self):
         self.assert_language_rules_check('foo.cpp',
