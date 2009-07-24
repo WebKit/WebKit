@@ -75,6 +75,7 @@
 #include "bindings/V8Element.cpp"
 #include "bindings/V8Entity.cpp"
 #include "bindings/V8EntityReference.cpp"
+#include "bindings/V8ErrorEvent.cpp"
 #include "bindings/V8Event.cpp"
 #include "bindings/V8EventException.cpp"
 #include "bindings/V8File.cpp"

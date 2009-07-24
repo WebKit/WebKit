@@ -1059,6 +1059,10 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventToV8Object(Event* event)
         type = V8ClassIndex::WEBKITANIMATIONEVENT;
     else if (event->isWebKitTransitionEvent())
         type = V8ClassIndex::WEBKITTRANSITIONEVENT;
+#if ENABLE(WORKERS)
+    else if (event->isErrorEvent())
+        type = V8ClassIndex::ERROREVENT;
+#endif
 
 
     v8::Handle<v8::Object> result = instantiateV8Object(type, V8ClassIndex::EVENT, event);

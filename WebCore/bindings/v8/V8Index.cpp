@@ -157,6 +157,7 @@
 #include "V8DOMCoreException.h"
 #include "V8DOMParser.h"
 #include "V8DOMWindow.h"
+#include "V8ErrorEvent.h"
 #include "V8Event.h"
 #include "V8EventException.h"
 #include "V8KeyboardEvent.h"

@@ -65,6 +65,7 @@
 #include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "Entity.h"
+#include "ErrorEvent.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "Event.h"
