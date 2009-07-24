@@ -116,12 +116,12 @@ FloatRect Chrome::pageRect() const
 {
     return m_client->pageRect();
 }
-        
+
 float Chrome::scaleFactor()
 {
     return m_client->scaleFactor();
 }
-    
+
 void Chrome::focus() const
 {
     m_client->focus();
@@ -141,7 +141,7 @@ void Chrome::takeFocus(FocusDirection direction) const
 {
     m_client->takeFocus(direction);
 }
-    
+
 Page* Chrome::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features) const
 {
     Page* newPage = m_client->createWindow(frame, request, features);
@@ -235,7 +235,7 @@ bool Chrome::canRunBeforeUnloadConfirmPanel()
 
 bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 {
-    // Defer loads in case the client method runs a new event loop that would 
+    // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
@@ -249,7 +249,7 @@ void Chrome::closeWindowSoon()
 
 void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 {
-    // Defer loads in case the client method runs a new event loop that would 
+    // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
@@ -259,7 +259,7 @@ void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 
 bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 {
-    // Defer loads in case the client method runs a new event loop that would 
+    // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
@@ -269,16 +269,16 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 
 bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const String& defaultValue, String& result)
 {
-    // Defer loads in case the client method runs a new event loop that would 
+    // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     ASSERT(frame);
     bool ok = m_client->runJavaScriptPrompt(frame, frame->displayStringModifiedByEncoding(prompt), frame->displayStringModifiedByEncoding(defaultValue), result);
-    
+
     if (ok)
         result = frame->displayStringModifiedByEncoding(result);
-    
+
     return ok;
 }
 
@@ -290,7 +290,7 @@ void Chrome::setStatusbarText(Frame* frame, const String& status)
 
 bool Chrome::shouldInterruptJavaScript()
 {
-    // Defer loads in case the client method runs a new event loop that would 
+    // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
@@ -330,7 +330,7 @@ void Chrome::setToolTip(const HitTestResult& result)
                 if (input->inputType() == HTMLInputElement::SUBMIT)
                     if (HTMLFormElement* form = input->form()) {
                         toolTip = form->action();
-                        if (form->renderer()) 
+                        if (form->renderer())
                             toolTipDirection = form->renderer()->style()->direction();
                         else
                             toolTipDirection = LTR;
@@ -374,7 +374,7 @@ void Chrome::setToolTip(const HitTestResult& result)
             }
         }
     }
-    
+
     m_client->setToolTip(toolTip, toolTipDirection);
 }
 
@@ -385,7 +385,7 @@ void Chrome::print(Frame* frame)
 
 void Chrome::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-    // Defer loads in case the client method runs a new event loop that would 
+    // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
@@ -432,10 +432,10 @@ bool ChromeClient::shouldReplaceWithGeneratedFileForUpload(const String&, String
 String ChromeClient::generateReplacementFile(const String&)
 {
     ASSERT_NOT_REACHED();
-    return String(); 
+    return String();
 }
 
-bool ChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 
+bool ChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize,
                                         ScrollbarControlState, ScrollbarPart, bool,
                                         float, float, ScrollbarControlPartMask)
 {

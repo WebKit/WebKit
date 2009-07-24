@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Update WebCore/page/Chrome.cpp to conform to WebKit
+        Style Guidelines as identified by cpplint.py.
+        https://bugs.webkit.org/show_bug.cgi?id=27608
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runBeforeUnloadConfirmPanel):
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        (WebCore::Chrome::shouldInterruptJavaScript):
+        (WebCore::Chrome::setToolTip):
+        (WebCore::Chrome::requestGeolocationPermissionForFrame):
+        (WebCore::ChromeClient::generateReplacementFile):
+        (WebCore::ChromeClient::paintCustomScrollbar):
+
+2009-07-24  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Eric Seidel.
+
         Update WebCore/page/Coordinates.cpp to conform to WebKit
         Style Guidelines as identified by cpplint.py.
         https://bugs.webkit.org/show_bug.cgi?id=27614
