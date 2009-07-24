@@ -644,6 +644,10 @@ body.console-visible #console {
     margin-right: -6px;
 }
 
+.console-group-messages .add-attribute {
+    display: none;
+}
+
 .console-formatted-object, .console-formatted-node {
     position: relative;
     display: inline-block;
@@ -1093,6 +1097,11 @@ body.console-visible #console {
 .webkit-html-external-link:hover {
     /* Keep this in sync with view-source.css (.webkit-html-external-link:hover) */
     text-decoration: underline;
+}
+
+.add-attribute {
+    margin-left: 1px;
+    margin-right: 1px;
 }
 
 .placard {

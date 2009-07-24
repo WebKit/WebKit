@@ -255,6 +255,10 @@ WebInspector.ElementsTreeElement = function(node)
 
     // The title will be updated in onattach.
     TreeElement.call(this, "", node, titleInfo.hasChildren);
+    
+    // Can add attributes
+    if (this.representedObject.nodeType == Node.ELEMENT_NODE)
+        this._canAddAttributes = true;
 }
 
 WebInspector.ElementsTreeElement.prototype = {
@@ -296,9 +300,36 @@ WebInspector.ElementsTreeElement.prototype = {
                 this.listItemElement.addStyleClass("hovered");
             } else
                 this.listItemElement.removeStyleClass("hovered");
+            if (this._canAddAttributes)
+                this.toggleNewAttributeButton();
         }
     },
 
+    toggleNewAttributeButton: function()
+    {
+        function removeWhenEditing(event)
+        {
+            if (this._addAttributeElement && this._addAttributeElement.parentNode)
+                this._addAttributeElement.parentNode.removeChild(this._addAttributeElement);
+            delete this._addAttributeElement;
+        }
+
+        if (!this._addAttributeElement && this._hovered && !this._editing) {
+            var span = document.createElement("span");
+            span.className = "add-attribute";
+            span.textContent = "\u2026";
+            span.addEventListener("dblclick", removeWhenEditing.bind(this), false);
+            this._addAttributeElement = span;
+
+            var tag = this.listItemElement.getElementsByClassName("webkit-html-tag")[0];
+            this._insertInLastAttributePosition(tag, span);
+        } else if (!this._hovered && this._addAttributeElement) {
+            if (this._addAttributeElement.parentNode)
+                this._addAttributeElement.parentNode.removeChild(this._addAttributeElement);
+            delete this._addAttributeElement;
+        }
+    },
+    
     updateSelection: function()
     {
         var listItemElement = this.listItemElement;
@@ -483,7 +514,7 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._editing)
             return;
 
-        if (this._startEditing(event))
+        if (this._startEditing(event, treeElement))
             return;
 
         if (this.treeOutline.panel) {
@@ -495,7 +526,20 @@ WebInspector.ElementsTreeElement.prototype = {
             this.expand();
     },
 
-    _startEditing: function(event)
+    _insertInLastAttributePosition: function(tag, node)
+    {
+        if (tag.getElementsByClassName("webkit-html-attribute").length > 0)
+            tag.insertBefore(node, tag.lastChild);
+        else {
+            var nodeName = tag.textContent.match(/^<(.*?)>$/)[1];
+            tag.textContent = '';
+            tag.appendChild(document.createTextNode('<'+nodeName));
+            tag.appendChild(node);
+            tag.appendChild(document.createTextNode('>'));
+        }
+    },
+
+    _startEditing: function(event, treeElement)
     {
         if (this.treeOutline.focusedDOMNode != this.representedObject)
             return;
@@ -511,7 +555,35 @@ WebInspector.ElementsTreeElement.prototype = {
         if (attribute)
             return this._startEditingAttribute(attribute, event);
 
+        var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
+        if (newAttribute)
+            return this._addNewAttribute(event, treeElement);
+
         return false;
+    },
+
+    _addNewAttribute: function(event, treeElement)
+    {
+        var attr = document.createElement("span");
+        attr.className = "webkit-html-attribute";
+        attr.style.marginLeft = "2px"; // overrides the .editing margin rule
+        attr.style.marginRight = "2px"; // overrides the .editing margin rule
+        var name = document.createElement("span");
+        name.className = "webkit-html-attribute-name new-attribute";
+        name.textContent = " ";
+        var value = document.createElement("span");
+        value.className = "webkit-html-attribute-value";
+        attr.appendChild(name);
+        attr.appendChild(value);
+
+        var tag = treeElement.listItemElement.getElementsByClassName("webkit-html-tag")[0];
+        this._insertInLastAttributePosition(tag, attr);
+
+        // Start editing the attr span and highlight it first
+        // NOTE: _startEditingAttribute only looks at the "target", so we
+        // can fake an object here instead of passing the "event" with the
+        // wrong target element
+        return this._startEditingAttribute(attr, {target: attr});
     },
 
     _startEditingAttribute: function(attribute, event)
@@ -571,7 +643,7 @@ WebInspector.ElementsTreeElement.prototype = {
         parseContainerElement.innerHTML = "<span " + newText + "></span>";
         var parseElement = parseContainerElement.firstChild;
         if (!parseElement || !parseElement.hasAttributes()) {
-            this._editingCancelled(element, context);
+            this._editingCancelled(element, attributeName);
             return;
         }
 
