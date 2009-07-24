@@ -52,6 +52,8 @@ namespace WebCore {
     };
 
     // Returns a JSWorkerContext or jsNull()
+    // Always ignores the execState and passed globalObject, WorkerContext is itself a globalObject and will always use its own prototype chain.
+    JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, WorkerContext*);
     JSC::JSValue toJS(JSC::ExecState*, WorkerContext*);
 
 } // namespace WebCore

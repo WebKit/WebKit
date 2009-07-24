@@ -1,3 +1,100 @@
+2009-07-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Update CodeGeneratorJS.pm to support passing JSDOMGlobalObject* to toJS calls
+        https://bugs.webkit.org/show_bug.cgi?id=27643
+
+        This is an attempt to make this change as small as possible.
+        I started by including all changes to CodeGeneratorJS.pm from bug 27634,
+        and then made the minimal amount of other changes needed to support that change.
+
+        Most toJS implementations ignore their passed JSDOMGlobalObject.
+        There are stub 2-argument toJS, toJSNewlyCreated implementations to help compiling.
+        All places where it is not clear what we should pass as the global object
+        (or where the global object is simply not available, like for some SVG bindings)
+        we pass deprecatedGlobalObjectForPrototype instead.
+
+        * bindings/js/JSCDATASectionCustom.cpp:
+        (WebCore::toJSNewlyCreated): add ignored JSDOMGlobalObject*
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException): pass the wrong globalObject for now
+        * bindings/js/JSDOMBinding.h:
+            Pass the wrong global object to the CREATE_ macros for now.
+            In the next change we'll come back and pass the correct one.
+            That will require changes to make_names.pl.
+        (WebCore::DOMObjectWithGlobalPointer::scriptExecutionContext):
+        (WebCore::DOMObjectWithGlobalPointer::DOMObjectWithGlobalPointer):
+        (WebCore::DOMObjectWithGlobalPointer::~DOMObjectWithGlobalPointer):
+        (WebCore::createDOMObjectWrapper):
+        (WebCore::getDOMObjectWrapper):
+        (WebCore::createDOMNodeWrapper):
+        (WebCore::getDOMNodeWrapper):
+        (WebCore::toJS): added to convert 2 arg calls to 3 arg calls to limit the scope of this change.
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::toJS): DOMWindow always uses its own prototype chain.
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated): add ignored JSDOMGlobalObject*
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSEventTarget.h:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapper): pass globalObject to toJS(Document*) to avoid recursion
+        (WebCore::toJSNewlyCreated): add ignored JSDOMGlobalObject*
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::toJS): pass globalObject along
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::inverse): pass wrong globalObject for now.
+        (WebCore::JSSVGMatrix::rotateFromVector): pass wrong globalObject for now.
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSSVGPathSegListCustom.cpp:
+            All of these methods need a globalObject, but most SVG binding don't have
+            space for one, so we just pass the lexicalGlobalObject for now.
+        (WebCore::JSSVGPathSegList::initialize):
+        (WebCore::JSSVGPathSegList::getItem):
+        (WebCore::JSSVGPathSegList::insertItemBefore):
+        (WebCore::JSSVGPathSegList::replaceItem):
+        (WebCore::JSSVGPathSegList::removeItem):
+        (WebCore::JSSVGPathSegList::appendItem):
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::finishGetter): pass wrong globalObject for now.
+        (WebCore::finishSetter):
+        (WebCore::finishSetterReadOnlyResult):
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        (WebCore::finishGetter): pass wrong globalObject for now.
+        (WebCore::finishSetter):
+        (WebCore::finishSetterReadOnlyResult):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS): add ignored JSDOMGlobalObject*
+        * bindings/js/JSTextCustom.cpp:
+        (WebCore::toJSNewlyCreated): add ignored JSDOMGlobalObject*
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::toJS): WorkerContext always uses its own prototype chain since it's a GlobalObject subclass.
+        * bindings/js/JSWorkerContextBase.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+            All generated toJS calls now pass a globalObject.
+            All generated toJS implementations now expect a globalObject.
+            Simplified all the slot casts by using a "castedThis" local.
+            SVG bindings which don't have a globalObject() accessor pass the deprecated lexicalGlobalObject instead.
+            Simplified printing of constructor objects using a $constructorClassName variable.
+            All generated constructor functions follow the construct$className form to match the custom constructors.
+
 2009-07-24  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.

@@ -172,6 +172,13 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
     return globalData;
 }
 
+// JSDOMGlobalObject* is ignored, accesing a window in any context will
+// use that DOMWindow's prototype chain.
+JSValue toJS(ExecState* exec, JSDOMGlobalObject*, DOMWindow* domWindow)
+{
+    return toJS(exec, domWindow);
+}
+
 JSValue toJS(ExecState*, DOMWindow* domWindow)
 {
     if (!domWindow)

@@ -79,7 +79,7 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
     frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false, userGesture);
 }
 
-JSValue toJS(ExecState* exec, Document* document)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject*, Document* document)
 {
     if (!document)
         return jsNull();

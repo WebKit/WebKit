@@ -57,7 +57,7 @@ JSValue JSSVGPathSegList::initialize(ExecState* exec, const ArgList& args)
 
     SVGPathSeg* obj = WTF::getPtr(imp->initialize(newItem, ec));
 
-    JSC::JSValue result = toJS(exec, obj, m_context.get());
+    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), obj, m_context.get());
     setDOMException(exec, ec);
 
     m_context->svgAttributeChanged(imp->associatedAttributeName());    
@@ -78,7 +78,7 @@ JSValue JSSVGPathSegList::getItem(ExecState* exec, const ArgList& args)
     SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
     SVGPathSeg* obj = WTF::getPtr(imp->getItem(index, ec));
 
-    JSC::JSValue result = toJS(exec, obj, m_context.get());
+    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), obj, m_context.get());
     setDOMException(exec, ec);
     return result;
 }
@@ -97,7 +97,7 @@ JSValue JSSVGPathSegList::insertItemBefore(ExecState* exec, const ArgList& args)
 
     SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
 
-    JSC::JSValue result = toJS(exec, WTF::getPtr(imp->insertItemBefore(newItem, index, ec)), m_context.get());
+    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), WTF::getPtr(imp->insertItemBefore(newItem, index, ec)), m_context.get());
     setDOMException(exec, ec);
 
     m_context->svgAttributeChanged(imp->associatedAttributeName());    
@@ -118,7 +118,7 @@ JSValue JSSVGPathSegList::replaceItem(ExecState* exec, const ArgList& args)
 
     SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
 
-    JSC::JSValue result = toJS(exec, WTF::getPtr(imp->replaceItem(newItem, index, ec)), m_context.get());
+    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), WTF::getPtr(imp->replaceItem(newItem, index, ec)), m_context.get());
     setDOMException(exec, ec);
 
     m_context->svgAttributeChanged(imp->associatedAttributeName());    
@@ -140,7 +140,7 @@ JSValue JSSVGPathSegList::removeItem(ExecState* exec, const ArgList& args)
 
     RefPtr<SVGPathSeg> obj(imp->removeItem(index, ec));
 
-    JSC::JSValue result = toJS(exec, obj.get(), m_context.get());
+    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), obj.get(), m_context.get());
     setDOMException(exec, ec);
 
     m_context->svgAttributeChanged(imp->associatedAttributeName());    
@@ -154,7 +154,7 @@ JSValue JSSVGPathSegList::appendItem(ExecState* exec, const ArgList& args)
 
     SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
 
-    JSC::JSValue result = toJS(exec, WTF::getPtr(imp->appendItem(newItem, ec)), m_context.get());
+    JSC::JSValue result = toJS(exec, deprecatedGlobalObjectForPrototype(exec), WTF::getPtr(imp->appendItem(newItem, ec)), m_context.get());
     setDOMException(exec, ec);
 
     m_context->svgAttributeChanged(imp->associatedAttributeName());    

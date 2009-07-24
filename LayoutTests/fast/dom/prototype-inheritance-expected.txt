@@ -357,8 +357,8 @@ FAIL inner.addEventListener.isInner should be true. Was false.
 FAIL inner.addEventListener.constructor.isInner should be true. Was false.
 FAIL inner.alert.isInner should be true. Was false.
 FAIL inner.alert.constructor.isInner should be true. Was false.
-FAIL inner.applicationCache.isInner should be true. Was false.
-FAIL inner.applicationCache.constructor.isInner should be true. Was false.
+PASS inner.applicationCache.isInner is true
+PASS inner.applicationCache.constructor.isInner is true
 FAIL inner.atob.isInner should be true. Was false.
 FAIL inner.atob.constructor.isInner should be true. Was false.
 FAIL inner.blur.isInner should be true. Was false.
@@ -371,16 +371,16 @@ FAIL inner.clearInterval.isInner should be true. Was false.
 FAIL inner.clearInterval.constructor.isInner should be true. Was false.
 FAIL inner.clearTimeout.isInner should be true. Was false.
 FAIL inner.clearTimeout.constructor.isInner should be true. Was false.
-FAIL inner.clientInformation.isInner should be true. Was false.
-FAIL inner.clientInformation.constructor.isInner should be true. Was false.
+PASS inner.clientInformation.isInner is true
+PASS inner.clientInformation.constructor.isInner is true
 FAIL inner.close.isInner should be true. Was false.
 FAIL inner.close.constructor.isInner should be true. Was false.
 FAIL inner.closed.isInner should be true. Was false.
 FAIL inner.closed.constructor.isInner should be true. Was false.
 FAIL inner.confirm.isInner should be true. Was false.
 FAIL inner.confirm.constructor.isInner should be true. Was false.
-FAIL inner.console.isInner should be true. Was false.
-FAIL inner.console.constructor.isInner should be true. Was false.
+PASS inner.console.isInner is true
+PASS inner.console.constructor.isInner is true
 FAIL inner.defaultStatus.isInner should be true. Was false.
 FAIL inner.defaultStatus.constructor.isInner should be true. Was false.
 FAIL inner.defaultstatus.isInner should be true. Was false.
@@ -415,22 +415,22 @@ FAIL inner.isInner.isInner should be true. Was false.
 FAIL inner.isInner.constructor.isInner should be true. Was false.
 FAIL inner.length.isInner should be true. Was false.
 FAIL inner.length.constructor.isInner should be true. Was false.
-FAIL inner.localStorage.isInner should be true. Was false.
-FAIL inner.localStorage.constructor.isInner should be true. Was false.
+PASS inner.localStorage.isInner is true
+PASS inner.localStorage.constructor.isInner is true
 PASS inner.location.isInner is true
 PASS inner.location.constructor.isInner is true
-FAIL inner.locationbar.isInner should be true. Was false.
-FAIL inner.locationbar.constructor.isInner should be true. Was false.
-FAIL inner.menubar.isInner should be true. Was false.
-FAIL inner.menubar.constructor.isInner should be true. Was false.
+PASS inner.locationbar.isInner is true
+PASS inner.locationbar.constructor.isInner is true
+PASS inner.menubar.isInner is true
+PASS inner.menubar.constructor.isInner is true
 FAIL inner.moveBy.isInner should be true. Was false.
 FAIL inner.moveBy.constructor.isInner should be true. Was false.
 FAIL inner.moveTo.isInner should be true. Was false.
 FAIL inner.moveTo.constructor.isInner should be true. Was false.
 FAIL inner.name.isInner should be true. Was false.
 FAIL inner.name.constructor.isInner should be true. Was false.
-FAIL inner.navigator.isInner should be true. Was false.
-FAIL inner.navigator.constructor.isInner should be true. Was false.
+PASS inner.navigator.isInner is true
+PASS inner.navigator.constructor.isInner is true
 FAIL inner.offscreenBuffering.isInner should be true. Was false.
 FAIL inner.offscreenBuffering.constructor.isInner should be true. Was false.
 FAIL inner.open.isInner should be true. Was false.
@@ -445,8 +445,8 @@ FAIL inner.pageXOffset.isInner should be true. Was false.
 FAIL inner.pageXOffset.constructor.isInner should be true. Was false.
 FAIL inner.pageYOffset.isInner should be true. Was false.
 FAIL inner.pageYOffset.constructor.isInner should be true. Was false.
-FAIL inner.personalbar.isInner should be true. Was false.
-FAIL inner.personalbar.constructor.isInner should be true. Was false.
+PASS inner.personalbar.isInner is true
+PASS inner.personalbar.constructor.isInner is true
 FAIL inner.postMessage.isInner should be true. Was false.
 FAIL inner.postMessage.constructor.isInner should be true. Was false.
 FAIL inner.print.isInner should be true. Was false.
@@ -461,8 +461,8 @@ FAIL inner.resizeBy.isInner should be true. Was false.
 FAIL inner.resizeBy.constructor.isInner should be true. Was false.
 FAIL inner.resizeTo.isInner should be true. Was false.
 FAIL inner.resizeTo.constructor.isInner should be true. Was false.
-FAIL inner.screen.isInner should be true. Was false.
-FAIL inner.screen.constructor.isInner should be true. Was false.
+PASS inner.screen.isInner is true
+PASS inner.screen.constructor.isInner is true
 FAIL inner.screenLeft.isInner should be true. Was false.
 FAIL inner.screenLeft.constructor.isInner should be true. Was false.
 FAIL inner.screenTop.isInner should be true. Was false.
@@ -481,24 +481,24 @@ FAIL inner.scrollX.isInner should be true. Was false.
 FAIL inner.scrollX.constructor.isInner should be true. Was false.
 FAIL inner.scrollY.isInner should be true. Was false.
 FAIL inner.scrollY.constructor.isInner should be true. Was false.
-FAIL inner.scrollbars.isInner should be true. Was false.
-FAIL inner.scrollbars.constructor.isInner should be true. Was false.
+PASS inner.scrollbars.isInner is true
+PASS inner.scrollbars.constructor.isInner is true
 PASS inner.self.isInner is true
 PASS inner.self.constructor.isInner is true
-FAIL inner.sessionStorage.isInner should be true. Was false.
-FAIL inner.sessionStorage.constructor.isInner should be true. Was false.
+PASS inner.sessionStorage.isInner is true
+PASS inner.sessionStorage.constructor.isInner is true
 FAIL inner.setInterval.isInner should be true. Was false.
 FAIL inner.setInterval.constructor.isInner should be true. Was false.
 FAIL inner.setTimeout.isInner should be true. Was false.
 FAIL inner.setTimeout.constructor.isInner should be true. Was false.
 FAIL inner.status.isInner should be true. Was false.
 FAIL inner.status.constructor.isInner should be true. Was false.
-FAIL inner.statusbar.isInner should be true. Was false.
-FAIL inner.statusbar.constructor.isInner should be true. Was false.
+PASS inner.statusbar.isInner is true
+PASS inner.statusbar.constructor.isInner is true
 FAIL inner.stop.isInner should be true. Was false.
 FAIL inner.stop.constructor.isInner should be true. Was false.
-FAIL inner.toolbar.isInner should be true. Was false.
-FAIL inner.toolbar.constructor.isInner should be true. Was false.
+PASS inner.toolbar.isInner is true
+PASS inner.toolbar.constructor.isInner is true
 FAIL inner.webkitConvertPointFromNodeToPage.isInner should be true. Was false.
 FAIL inner.webkitConvertPointFromNodeToPage.constructor.isInner should be true. Was false.
 FAIL inner.webkitConvertPointFromPageToNode.isInner should be true. Was false.

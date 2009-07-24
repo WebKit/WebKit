@@ -65,7 +65,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJS(ExecState* exec, EventTarget* target)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject*, EventTarget* target)
 {
     if (!target)
         return jsNull();

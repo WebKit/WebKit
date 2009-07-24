@@ -192,7 +192,7 @@ void JSNode::mark()
     ASSERT(marked());
 }
 
-static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, Node* node)
+static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     ASSERT(node);
     ASSERT(!getCachedDOMNodeWrapper(node->document(), node));
@@ -229,7 +229,7 @@ static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, Node* node)
             break;
         case Node::DOCUMENT_NODE:
             // we don't want to cache the document itself in the per-document dictionary
-            return toJS(exec, static_cast<Document*>(node));
+            return toJS(exec, globalObject, static_cast<Document*>(node));
         case Node::DOCUMENT_TYPE_NODE:
             wrapper = CREATE_DOM_NODE_WRAPPER(exec, DocumentType, node);
             break;
@@ -249,15 +249,15 @@ static ALWAYS_INLINE JSValue createWrapper(ExecState* exec, Node* node)
     return wrapper;    
 }
     
-JSValue toJSNewlyCreated(ExecState* exec, Node* node)
+JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     if (!node)
         return jsNull();
     
-    return createWrapper(exec, node);
+    return createWrapper(exec, globalObject, node);
 }
     
-JSValue toJS(ExecState* exec, Node* node)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     if (!node)
         return jsNull();
@@ -266,7 +266,7 @@ JSValue toJS(ExecState* exec, Node* node)
     if (wrapper)
         return wrapper;
 
-    return createWrapper(exec, node);
+    return createWrapper(exec, globalObject, node);
 }
 
 } // namespace WebCore

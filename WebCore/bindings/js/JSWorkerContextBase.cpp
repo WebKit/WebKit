@@ -57,6 +57,11 @@ ScriptExecutionContext* JSWorkerContextBase::scriptExecutionContext() const
     return m_impl.get();
 }
 
+JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerContext* workerContext)
+{
+    return toJS(exec, workerContext);
+}
+
 JSValue toJS(ExecState*, WorkerContext* workerContext)
 {
     if (!workerContext)

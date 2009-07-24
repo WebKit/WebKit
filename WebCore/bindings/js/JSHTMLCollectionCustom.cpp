@@ -125,7 +125,7 @@ JSValue JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
     return getNamedItems(exec, this, Identifier(exec, args.at(0).toString(exec)));
 }
 
-JSValue toJS(ExecState* exec, HTMLCollection* collection)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject*, HTMLCollection* collection)
 {
     if (!collection)
         return jsNull();

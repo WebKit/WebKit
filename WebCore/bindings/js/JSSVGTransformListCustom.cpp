@@ -39,7 +39,7 @@ static JSValue finishGetter(ExecState* exec, ExceptionCode& ec, SVGElement* cont
         setDOMException(exec, ec);
         return jsUndefined();
     }
-    return toJS(exec, JSSVGPODTypeWrapperCreatorForList<SVGTransform>::create(item.get(), list->associatedAttributeName()).get(), context);
+    return toJS(exec, deprecatedGlobalObjectForPrototype(exec), JSSVGPODTypeWrapperCreatorForList<SVGTransform>::create(item.get(), list->associatedAttributeName()).get(), context);
 }
 
 static JSValue finishSetter(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGTransformList* list, PassRefPtr<PODListItem> item)
@@ -50,7 +50,7 @@ static JSValue finishSetter(ExecState* exec, ExceptionCode& ec, SVGElement* cont
     }
     const QualifiedName& attributeName = list->associatedAttributeName();
     context->svgAttributeChanged(attributeName);
-    return toJS(exec, JSSVGPODTypeWrapperCreatorForList<SVGTransform>::create(item.get(), attributeName).get(), context);
+    return toJS(exec, deprecatedGlobalObjectForPrototype(exec), JSSVGPODTypeWrapperCreatorForList<SVGTransform>::create(item.get(), attributeName).get(), context);
 }
 
 static JSValue finishSetterReadOnlyResult(ExecState* exec, ExceptionCode& ec, SVGElement* context, SVGTransformList* list, PassRefPtr<PODListItem> item)
@@ -60,7 +60,7 @@ static JSValue finishSetterReadOnlyResult(ExecState* exec, ExceptionCode& ec, SV
         return jsUndefined();
     }
     context->svgAttributeChanged(list->associatedAttributeName());
-    return toJS(exec, JSSVGStaticPODTypeWrapper<SVGTransform>::create(*item).get(), context);
+    return toJS(exec, deprecatedGlobalObjectForPrototype(exec), JSSVGStaticPODTypeWrapper<SVGTransform>::create(*item).get(), context);
 }
 
 JSValue JSSVGTransformList::clear(ExecState* exec, const ArgList&)
