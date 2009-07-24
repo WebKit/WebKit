@@ -35,18 +35,24 @@ function constructorPropertiesOnWindow(globalObject)
 
 var constructorNames = constructorPropertiesOnWindow(inner);
 
+var argumentsForConstructor = {
+    'Worker' : "'foo'",
+}
+
 for (var x = 0; x < constructorNames.length; x++) {
     var constructorName = constructorNames[x];
+    var arguments = argumentsForConstructor[constructorName] || "";
+    var argumentsString = "(" + arguments + ")";
     // Test first to see if the object is constructable
     var constructedObject;
     try {
-        constructedObject = eval("new inner." + constructorName);
+        constructedObject = eval("new inner." + constructorName + argumentsString);
     } catch(e) {
         continue;
     }
 
-    shouldBeTrue("(new inner." + constructorName + ").isInner");
-    shouldBeTrue("(new inner." + constructorName + ").constructor.isInner");
+    shouldBeTrue("(new inner." + constructorName + argumentsString + ").isInner");
+    shouldBeTrue("(new inner." + constructorName + argumentsString + ").constructor.isInner");
 }
 
 document.body.removeChild(subframe);

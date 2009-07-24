@@ -1,3 +1,26 @@
+2009-07-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Fix the last of the x-frame constructor calls to have the right prototype chains
+        https://bugs.webkit.org/show_bug.cgi?id=27645
+
+        Fix the last few constructors to use their stored globalObject pointer when
+        constructing objects instead of the lexicalGlobalObject().
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::constructAudio):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::constructImage):
+        * bindings/js/JSMessageChannelConstructor.cpp:
+        (WebCore::JSMessageChannelConstructor::construct):
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::constructHTMLOptionElement):
+        * bindings/js/JSWebKitPointConstructor.cpp:
+        (WebCore::constructWebKitPoint):
+        * bindings/js/JSWorkerConstructor.cpp:
+        (WebCore::constructWorker):
+
 2009-07-24  Jian Li  <jianli@chromium.org>
 
         Reviewed by Adam Barth.

@@ -48,8 +48,10 @@ JSWorkerConstructor::JSWorkerConstructor(ExecState* exec, JSDOMGlobalObject* glo
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
-static JSObject* constructWorker(ExecState* exec, JSObject*, const ArgList& args)
+static JSObject* constructWorker(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
+    JSWorkerConstructor* jsConstructor = static_cast<JSWorkerConstructor*>(constructor);
+
     if (args.size() == 0)
         return throwError(exec, SyntaxError, "Not enough arguments");
 
@@ -57,11 +59,12 @@ static JSObject* constructWorker(ExecState* exec, JSObject*, const ArgList& args
     if (exec->hadException())
         return 0;
 
+    // FIXME: Why do we use the lexical global object here?
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
-    
+
     RefPtr<Worker> worker = Worker::create(scriptURL, window->document());
 
-    return asObject(toJS(exec, worker.release()));
+    return asObject(toJS(exec, jsConstructor->globalObject(), worker.release()));
 }
 
 ConstructType JSWorkerConstructor::getConstructData(ConstructData& constructData)

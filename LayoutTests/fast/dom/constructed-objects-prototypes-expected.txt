@@ -3,26 +3,28 @@ Make sure prototypes are set up using the window a property came from, instead o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL (new inner.Audio).isInner should be true. Was false.
-FAIL (new inner.Audio).constructor.isInner should be true. Was false.
-PASS (new inner.DOMParser).isInner is true
-PASS (new inner.DOMParser).constructor.isInner is true
-FAIL (new inner.Image).isInner should be true. Was false.
-FAIL (new inner.Image).constructor.isInner should be true. Was false.
-FAIL (new inner.MessageChannel).isInner should be true. Was false.
-FAIL (new inner.MessageChannel).constructor.isInner should be true. Was false.
-FAIL (new inner.Option).isInner should be true. Was false.
-FAIL (new inner.Option).constructor.isInner should be true. Was false.
-PASS (new inner.WebKitCSSMatrix).isInner is true
-PASS (new inner.WebKitCSSMatrix).constructor.isInner is true
-FAIL (new inner.WebKitPoint).isInner should be true. Was false.
-FAIL (new inner.WebKitPoint).constructor.isInner should be true. Was false.
-PASS (new inner.XMLHttpRequest).isInner is true
-PASS (new inner.XMLHttpRequest).constructor.isInner is true
-PASS (new inner.XMLSerializer).isInner is true
-PASS (new inner.XMLSerializer).constructor.isInner is true
-PASS (new inner.XPathEvaluator).isInner is true
-PASS (new inner.XPathEvaluator).constructor.isInner is true
+PASS (new inner.Audio()).isInner is true
+PASS (new inner.Audio()).constructor.isInner is true
+PASS (new inner.DOMParser()).isInner is true
+PASS (new inner.DOMParser()).constructor.isInner is true
+PASS (new inner.Image()).isInner is true
+PASS (new inner.Image()).constructor.isInner is true
+PASS (new inner.MessageChannel()).isInner is true
+PASS (new inner.MessageChannel()).constructor.isInner is true
+PASS (new inner.Option()).isInner is true
+PASS (new inner.Option()).constructor.isInner is true
+PASS (new inner.WebKitCSSMatrix()).isInner is true
+PASS (new inner.WebKitCSSMatrix()).constructor.isInner is true
+PASS (new inner.WebKitPoint()).isInner is true
+PASS (new inner.WebKitPoint()).constructor.isInner is true
+PASS (new inner.Worker('foo')).isInner is true
+PASS (new inner.Worker('foo')).constructor.isInner is true
+PASS (new inner.XMLHttpRequest()).isInner is true
+PASS (new inner.XMLHttpRequest()).constructor.isInner is true
+PASS (new inner.XMLSerializer()).isInner is true
+PASS (new inner.XMLSerializer()).constructor.isInner is true
+PASS (new inner.XPathEvaluator()).isInner is true
+PASS (new inner.XPathEvaluator()).constructor.isInner is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
