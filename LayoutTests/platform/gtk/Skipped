@@ -5913,6 +5913,11 @@ editing/text-iterator/thai-cursor-movement.html
 
 # Requires expected results that we don't have atm
 editing/inserting/break-blockquote-after-delete.html
+fast/backgrounds/size/backgroundSize20.html
+fast/backgrounds/size/backgroundSize21.html
+fast/backgrounds/size/backgroundSize22.html
+fast/box-shadow/inset.html
+fast/box-shadow/spread.html
 fast/box-shadow/transform-fringing.html
 fast/css/attribute-selector-dynamic.xml
 fast/css/nested-floating-relative-position-percentages.html
@@ -5924,6 +5929,7 @@ fast/css/rem-units-on-root.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/forms/search-vertical-alignment.html
 fast/frames/viewsource-on-image-file.html
+fast/overflow/overflow-with-local-background-attachment.html
 fast/repaint/background-generated.html
 fast/repaint/background-misaligned.html
 fast/repaint/float-in-new-block-with-layout-delta.html
@@ -5932,6 +5938,7 @@ fast/text/international/khmer-selection.html
 fast/text/shadow-translucent-fill.html
 fast/text/text-large-negative-letter-spacing-with-opacity.html
 fast/text/text-letter-spacing.html
+media/audio-no-installed-engines.html
 media/controls-after-reload.html
 media/controls-strict.html
 media/controls-styling.html
@@ -5947,16 +5954,23 @@ svg/filters/feOffset.svg
 svg/filters/feTile.svg
 
 # ------------------
-# REGRESSIONS: Enable these tests again once these bugs are fixed.
+# Tests with bugs attached : Enable these tests again once these bugs are fixed.
 # ------------------
 
-# See Bug #27143 - https://bugs.webkit.org/show_bug.cgi?id=27143
+# REGRESSION: See Bug #27143 - https://bugs.webkit.org/show_bug.cgi?id=27143
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
 http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/small-chunks-response-text.html
 
-# See Bug #27144 - https://bugs.webkit.org/show_bug.cgi?id=27144
+# REGRESSION: See Bug #27144 - https://bugs.webkit.org/show_bug.cgi?id=27144
 storage/database-lock-after-reload.html
+
+# See Bug #27637 - https://bugs.webkit.org/show_bug.cgi?id=27637
+fast/history/saves-state-after-fragment-nav.html
+
+# See Bug #27638 - https://bugs.webkit.org/show_bug.cgi?id=27638
+fast/dom/Window/window-screen-properties.html
+fast/forms/textarea-metrics.html
 
 # This port doesn't support isolated worlds yet.
 http/tests/security/isolatedWorld/all-window-properties.html
