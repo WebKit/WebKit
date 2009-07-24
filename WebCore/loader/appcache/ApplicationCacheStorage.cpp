@@ -379,9 +379,11 @@ bool ApplicationCacheStorage::isMaximumSizeReached() const
 int64_t ApplicationCacheStorage::spaceNeeded(int64_t cacheToSave)
 {
     int64_t spaceNeeded = 0;
-    int64_t currentSize = 0;
-    if (!getFileSize(m_cacheFile, currentSize))
+    long long fileSize = 0;
+    if (!getFileSize(m_cacheFile, fileSize))
         return 0;
+
+    int64_t currentSize = fileSize;
 
     // Determine the amount of free space we have available.
     int64_t totalAvailableSize = 0;

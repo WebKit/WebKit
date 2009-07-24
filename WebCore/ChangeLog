@@ -1,3 +1,15 @@
+2009-07-24  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Build fix for 64 bit Linux.
+
+        int64_t is long on Linux 64 bit and not long long, thus
+        getFileSize with a int64_t out value fails to build.
+
+        Use a temporary to work around the problem.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::spaceNeeded):
+
 2009-07-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
