@@ -40,7 +40,7 @@ namespace WebCore {
 
 void JSMessagePort::mark()
 {
-    DOMObject::mark();
+    Base::mark();
 
     markIfNotNull(m_impl->onmessage());
 

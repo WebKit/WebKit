@@ -34,7 +34,7 @@ void JSNodeIterator::mark()
     if (NodeFilter* filter = m_impl->filter())
         filter->mark();
     
-    DOMObject::mark();
+    Base::mark();
 }
 
 JSValue JSNodeIterator::nextNode(ExecState* exec, const ArgList&)

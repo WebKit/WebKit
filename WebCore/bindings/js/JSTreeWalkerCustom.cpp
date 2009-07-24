@@ -34,7 +34,7 @@ void JSTreeWalker::mark()
     if (NodeFilter* filter = m_impl->filter())
         filter->mark();
     
-    DOMObject::mark();
+    Base::mark();
 }
     
 JSValue JSTreeWalker::parentNode(ExecState* exec, const ArgList&)

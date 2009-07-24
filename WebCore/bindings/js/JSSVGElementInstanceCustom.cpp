@@ -39,7 +39,7 @@ namespace WebCore {
 
 void JSSVGElementInstance::mark()
 {
-    DOMObject::mark();
+    Base::mark();
 
     // Mark the wrapper for our corresponding element, so it can mark its event handlers.
     JSNode* correspondingWrapper = getCachedDOMNodeWrapper(impl()->correspondingElement()->document(), impl()->correspondingElement());

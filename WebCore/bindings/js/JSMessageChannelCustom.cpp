@@ -34,7 +34,7 @@ namespace WebCore {
     
 void JSMessageChannel::mark()
 {
-    DOMObject::mark();
+    Base::mark();
 
     if (MessagePort* port = m_impl->port1()) {
         DOMObject* wrapper = getCachedDOMObjectWrapper(*Heap::heap(this)->globalData(), port);

@@ -38,7 +38,7 @@ namespace WebCore {
 void JSNodeFilter::mark()
 {
     impl()->mark();
-    DOMObject::mark();
+    Base::mark();
 }
 
 JSValue JSNodeFilter::acceptNode(ExecState* exec, const ArgList& args)
