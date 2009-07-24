@@ -1,5 +1,11 @@
 2009-07-23  Mark Rowe  <mrowe@apple.com>
 
+        Skip two new tests for GTK that use eventSender.
+
+        * platform/gtk/Skipped:
+
+2009-07-23  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Brady Eidson.
 
         Fix layout tests that incorrectly attempt to detect whether they're running inside DumpRenderTree
