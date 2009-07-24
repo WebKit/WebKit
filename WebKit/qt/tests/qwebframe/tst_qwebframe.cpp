@@ -29,6 +29,7 @@
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QComboBox>
+#include <QPicture>
 #include <QRegExp>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -587,6 +588,7 @@ private slots:
     void baseUrl_data();
     void baseUrl();
     void hasSetFocus();
+    void render();
 
 private:
     QString  evalJS(const QString&s) {
@@ -2560,6 +2562,47 @@ void tst_QWebFrame::hasSetFocus()
 
     m_page->mainFrame()->setFocus();
     QVERIFY(m_page->mainFrame()->hasFocus());
+}
+
+void tst_QWebFrame::render()
+{
+    QString html("<html>" \
+                    "<head><style>" \
+                       "body, iframe { margin: 0px; border: none; }" \
+                    "</style></head>" \
+                    "<body><iframe width='100px' height='100px'/></body>" \
+                 "</html>");
+
+    QWebPage page;
+    page.mainFrame()->setHtml(html);
+
+    QList<QWebFrame*> frames = page.mainFrame()->childFrames();
+    QWebFrame *frame = frames.at(0);
+    QString innerHtml("<body style='margin: 0px;'><img src='qrc:/image.png'/></body>");
+    frame->setHtml(innerHtml);
+
+    QPicture picture;
+
+    // render clipping to Viewport
+    frame->setClipRenderToViewport(true);
+    QPainter painter1(&picture);
+    frame->render(&painter1);
+    painter1.end();
+
+    QSize size = page.mainFrame()->contentsSize();
+    page.setViewportSize(size);
+    QCOMPARE(size.width(), picture.boundingRect().width());   // 100px
+    QCOMPARE(size.height(), picture.boundingRect().height()); // 100px
+
+    // render without clipping to Viewport
+    frame->setClipRenderToViewport(false);
+    QPainter painter2(&picture);
+    frame->render(&painter2);
+    painter2.end();
+
+    QImage resource(":/image.png");
+    QCOMPARE(resource.width(), picture.boundingRect().width());   // resource width: 128px
+    QCOMPARE(resource.height(), picture.boundingRect().height()); // resource height: 128px
 }
 
 QTEST_MAIN(tst_QWebFrame)

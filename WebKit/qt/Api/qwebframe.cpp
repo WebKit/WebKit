@@ -232,7 +232,7 @@ WebCore::Scrollbar* QWebFramePrivate::verticalScrollBar() const
     return frame->view()->verticalScrollbar();
 }
 
-void QWebFramePrivate::renderPrivate(QPainter *painter, const QRegion &clip, bool contents)
+void QWebFramePrivate::renderPrivate(QPainter *painter, const QRegion &clip)
 {
     if (!frame->view() || !frame->contentRenderer())
         return;
@@ -246,7 +246,7 @@ void QWebFramePrivate::renderPrivate(QPainter *painter, const QRegion &clip, boo
 
     GraphicsContext context(painter);
 
-    if (!contents)
+    if (clipRenderToViewport)
         view->paint(&context, vector.first());
     else
         view->paintContents(&context, vector.first());
@@ -255,7 +255,7 @@ void QWebFramePrivate::renderPrivate(QPainter *painter, const QRegion &clip, boo
         const QRect& clipRect = vector.at(i);
         painter->save();
         painter->setClipRect(clipRect, Qt::IntersectClip);
-        if (!contents)
+        if (clipRenderToViewport)
             view->paint(&context, clipRect);
         else
             view->paintContents(&context, clipRect);
@@ -948,12 +948,23 @@ void QWebFrame::render(QPainter *painter)
 }
 
 /*!
-  \since 4.6
-  Render the frame's \a contents into \a painter while clipping to \a contents.
+    \since 4.6
+    \property QWebFrame::clipRenderToViewport
+
+    Returns true if render will clip content to viewport; otherwise returns false.
 */
-void QWebFrame::renderContents(QPainter *painter, const QRegion &contents)
+bool QWebFrame::clipRenderToViewport() const
 {
-    d->renderPrivate(painter, contents, true);
+    return d->clipRenderToViewport;
+}
+
+/*!
+    \since 4.6
+    Sets whether the content of a frame will be clipped to viewport when rendered.
+*/
+void QWebFrame::setClipRenderToViewport(bool clipRenderToViewport)
+{
+    d->clipRenderToViewport = clipRenderToViewport;
 }
 
 /*!

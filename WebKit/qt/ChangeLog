@@ -1,3 +1,22 @@
+2009-07-24  Andre Pedralho  <andre.pedralho@openbossa.org>
+
+        Reviewed by Adam Treat.
+
+        Removed void QWebFrame::renderContents(...) and added the Q_PROPERTY
+        clipRenderToViewport to control whether QWebFrame::render would call
+        FrameView::paintContents rather than FrameView::paint and do not clip
+        the frame content to viewport.
+
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderPrivate):
+        (QWebFrame::clipRenderToViewport):
+        (QWebFrame::setClipRenderToViewport):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-07-24  Antonio Gomes   <antonio.gomes@openbossa.org>
 
         Reviewed by Simon Hausmann.
