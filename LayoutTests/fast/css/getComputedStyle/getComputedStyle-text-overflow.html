@@ -46,12 +46,9 @@
     }
     
     function runTests() {
-        if (!window.eventSender)
-            return;
-
         if (window.layoutTestController)
             layoutTestController.dumpAsText();
-    
+
         checkComputedTextOverflow(document.getElementById("ellipsis"), "div with text-overflow set to ellipsis", "ellipsis");
         checkComputedTextOverflow(document.getElementById("clip"), "div with text-overflow set to clip", "clip");
         checkComputedTextOverflow(document.getElementById("default"), "div with no text-overflow set", "clip");
