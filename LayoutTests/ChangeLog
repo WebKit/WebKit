@@ -1,5 +1,11 @@
 2009-07-24  Mark Rowe  <mrowe@apple.com>
 
+        Skip two plug-in tests that are failing.
+
+        * platform/mac-snowleopard/Skipped:
+
+2009-07-24  Mark Rowe  <mrowe@apple.com>
+
         Land correct results for a SnowLeopard-only accessibility test.
 
         * platform/mac/accessibility/table-multi-bodies-expected.txt:

@@ -8,6 +8,10 @@ media/video-size-intrinsic-scale.html
 plugins/netscape-plugin-setwindow-size.html
 plugins/netscape-plugin-setwindow-size-2.html
 
+# <rdar://problem/7091352> Two plug-in tests show missing NPP_Destroy call
+plugins/netscape-destroy-plugin-script-objects.html
+plugins/open-and-close-window-with-plugin.html
+
 # <rdar://problem/6778137> post-goback-repost-policy.html is failing
 http/tests/navigation/post-goback-repost-policy.html
 
