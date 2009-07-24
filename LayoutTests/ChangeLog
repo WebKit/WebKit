@@ -1,5 +1,16 @@
 2009-07-23  Pierre d'Herbemont  <pdherbemont@apple.com>
 
+        Fix layout tests, no review.
+
+        Actually add the video-layer tests results for leopard, that were
+        forgotten in r46302. Also add test results for windows.
+
+        * platform/mac-leopard/fast/layers/video-layer-expected.png: Added.
+        * platform/mac-leopard/fast/layers/video-layer-expected.txt: Added.
+        * platform/win/fast/layers/video-layer-expected.txt: Added.
+
+2009-07-23  Pierre d'Herbemont  <pdherbemont@apple.com>
+
         Reviewed by Simon Fraser.
 
         Following changes on the video controls, video-layer tests results need to
