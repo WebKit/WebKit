@@ -1,5 +1,17 @@
 2009-07-23  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed Oliver Hunt.
+
+        Fix DumpRenderTree to not fail an assertion on launch on a new machine.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting): Disable the XSS auditor.  It being enabled
+        breaks all of the JavaScript tests within testStringByEvaluatingJavaScriptFromString,
+        which causes us to exit due to an assertion failure.  It's not clear why the XSS auditor
+        decides to interfere with these tests.
+
+2009-07-23  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Update default state of the XSS auditor in GTK DumpRenderTree to match Mac and Windows
