@@ -136,6 +136,7 @@ class Bugzilla:
     reviewer_usernames_to_full_names = {
         "abarth" : "Adam Barth",
         "adele" : "Adele Peterson",
+        "andersca" : "Anders Carlsson",
         "aroben" : "Adam Roben",
         "ap" : "Alexey Proskuryakov",
         "ariya.hidayat" : "Ariya Hidayat",
