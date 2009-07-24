@@ -1460,6 +1460,11 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
     {
         WebInspector.panels.resources.showResource(this.resource);
     },
+    
+    ondblclick: function(treeElement, event)
+    {
+        InspectorController.inspectedWindow().open(this.resource.url);
+    },
 
     get mainTitle()
     {
