@@ -1,6 +1,12 @@
 2009-07-24  Dan Bernstein  <mitz@apple.com>
 
-        Build fix.
+        Another attempted build fix 
+
+        * bindings/js/JSAbstractWorkerCustom.cpp:
+
+2009-07-24  Dan Bernstein  <mitz@apple.com>
+
+        Attempted build fix
 
         * bindings/js/JSAbstractWorkerCustom.cpp:
         (WebCore::toJS):

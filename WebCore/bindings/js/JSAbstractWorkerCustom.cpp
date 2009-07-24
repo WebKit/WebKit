@@ -82,12 +82,6 @@ JSValue JSAbstractWorker::removeEventListener(ExecState* exec, const ArgList& ar
     return jsUndefined();
 }
 
-static JSValue toJS(ExecState* exec, AbstractWorker* baseObject)
-{
-    // Just call the JSEventTarget implementation of toJS(), which already differentiates between the different implementations.
-    return toJS(exec, static_cast<EventTarget*>(baseObject));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
