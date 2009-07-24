@@ -48,7 +48,8 @@ void JSCustomPositionCallback::handleEvent(Geoposition* geoposition, bool& raise
     
     if (!m_frame->script()->isEnabled())
         return;
-    
+
+    // FIXME: This is likely the wrong globalObject (for prototype chains at least)
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
     
@@ -67,10 +68,10 @@ void JSCustomPositionCallback::handleEvent(Geoposition* geoposition, bool& raise
     }
     
     RefPtr<JSCustomPositionCallback> protect(this);
-    
+
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, geoposition));
-    
+    args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), geoposition));
+
     globalObject->globalData()->timeoutChecker.start();
     call(exec, function, callType, callData, m_callback, args);
     globalObject->globalData()->timeoutChecker.stop();

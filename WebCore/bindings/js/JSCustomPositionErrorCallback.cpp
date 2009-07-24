@@ -48,7 +48,8 @@ void JSCustomPositionErrorCallback::handleEvent(PositionError* positionError)
     
     if (!m_frame->script()->isEnabled())
         return;
-    
+
+    // FIXME: This is likely the wrong globalObject (for prototype chains at least)
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
     
@@ -69,7 +70,7 @@ void JSCustomPositionErrorCallback::handleEvent(PositionError* positionError)
     RefPtr<JSCustomPositionErrorCallback> protect(this);
     
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, positionError));
+    args.append(toJS(exec, deprecatedGlobalObjectForPrototype(exec), positionError));
     
     globalObject->globalData()->timeoutChecker.start();
     call(exec, function, callType, callData, m_callback, args);
