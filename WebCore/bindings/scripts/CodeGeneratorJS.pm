@@ -120,8 +120,13 @@ sub GetParentClassName
 
     return $dataNode->extendedAttributes->{"LegacyParent"} if $dataNode->extendedAttributes->{"LegacyParent"};
     if (@{$dataNode->parents} eq 0) {
+        # FIXME: SVG types requiring a context() pointer do not have enough
+        # space to hold a globalObject pointer as well w/o hitting the CELL_SIZE limit.
+        # This could be fixed by moving context() into the various impl() classes.
+        # Until then, we special case these SVG bindings and allow them to return
+        # the wrong prototypes and constructors during x-frame access.  See bug 27088.
         return "DOMObjectWithSVGContext" if IsSVGTypeNeedingContextParameter($dataNode->name);
-        return "DOMObject";
+        return "DOMObjectWithGlobalPointer";
     }
     return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
 }
@@ -427,10 +432,12 @@ sub GenerateHeader
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
-    } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-        push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, PassRefPtr<$implType>, SVGElement* context);\n");
-    } else {
+    } elsif ($interfaceName eq "WorkerContext") {
         push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, PassRefPtr<$implType>);\n");
+    } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
+        push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<$implType>, SVGElement* context);\n");
+    } else {
+        push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<$implType>);\n");
     }
 
     # Destructor
@@ -975,13 +982,17 @@ sub GenerateImplementation
         AddIncludesForType("JSDOMWindowShell");
         push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
         push(@implContent, "    : $parentClassName(structure, impl, shell)\n");
+    } elsif ($interfaceName eq "WorkerContext") {
+        AddIncludesForType("WorkerContext");
+        push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl)\n");
+        push(@implContent, "    : $parentClassName(structure, impl)\n");
     } else {
         my $contextArg = $needsSVGContext ? ", SVGElement* context" : "";
-        push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl$contextArg)\n");
+        push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, JSDOMGlobalObject* globalObject, PassRefPtr<$implType> impl$contextArg)\n");
         if ($hasParent) {
-            push(@implContent, "    : $parentClassName(structure, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
+            push(@implContent, "    : $parentClassName(structure, globalObject, impl" . ($parentNeedsSVGContext ? ", context" : "") . ")\n");
         } else {
-            push(@implContent, "    : $parentClassName(structure" . ($needsSVGContext ? ", context" : "") . ")\n");
+            push(@implContent, "    : $parentClassName(structure, globalObject" . ($needsSVGContext ? ", context" : "") . ")\n");
             push(@implContent, "    , m_impl(impl)\n");
         }
     }
@@ -1180,9 +1191,17 @@ sub GenerateImplementation
             if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
                 my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
-                push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, const Identifier&, const PropertySlot&)\n");
+                push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, const Identifier&, const PropertySlot& slot)\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    return ${className}::getConstructor(exec, deprecatedGlobalObjectForPrototype(exec));\n");
+                if (IsSVGTypeNeedingContextParameter($interfaceName)) {
+                    # FIXME: SVG bindings with a context pointer have no space to store a globalObject
+                    # so we use deprecatedGlobalObjectForPrototype instead.
+                    push(@implContent, "    UNUSED_PARAM(slot);\n");
+                    push(@implContent, "    return ${className}::getConstructor(exec, deprecatedGlobalObjectForPrototype(exec));\n");
+                } else {
+                    push(@implContent, "    ${className}* domObject = static_cast<$className*>(asObject(slot.slotBase()));\n");
+                    push(@implContent, "    return ${className}::getConstructor(exec, domObject->globalObject());\n");
+                }
                 push(@implContent, "}\n");
             }
         }
@@ -2010,10 +2029,10 @@ sub constructorFor
     my $canConstruct = shift;
 
 my $implContent = << "EOF";
-class ${className}Constructor : public DOMObject {
+class ${className}Constructor : public DOMConstructorObject {
 public:
     ${className}Constructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-        : DOMObject(${className}Constructor::createStructure(globalObject->objectPrototype()))
+        : DOMConstructorObject(${className}Constructor::createStructure(globalObject->objectPrototype()), globalObject)
     {
         putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), None);
     }

@@ -35,10 +35,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue getNamedItems(ExecState* exec, HTMLCollection* impl, const Identifier& propertyName)
+static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, const Identifier& propertyName)
 {
     Vector<RefPtr<Node> > namedItems;
-    impl->namedItems(propertyName, namedItems);
+    collection->impl()->namedItems(propertyName, namedItems);
 
     if (namedItems.isEmpty())
         return jsUndefined();
@@ -46,7 +46,7 @@ static JSValue getNamedItems(ExecState* exec, HTMLCollection* impl, const Identi
     if (namedItems.size() == 1)
         return toJS(exec, namedItems[0].get());
 
-    return new (exec) JSNamedNodesCollection(exec, namedItems);
+    return new (exec) JSNamedNodesCollection(exec, collection->globalObject(), namedItems);
 }
 
 // HTMLCollections are strange objects, they support both get and call,
@@ -57,7 +57,8 @@ static JSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec, JSObject* funct
         return jsUndefined();
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
-    HTMLCollection* collection = static_cast<JSHTMLCollection*>(function)->impl();
+    JSHTMLCollection* jsCollection = static_cast<JSHTMLCollection*>(function);
+    HTMLCollection* collection = jsCollection->impl();
 
     // Also, do we need the TypeError test here ?
 
@@ -70,7 +71,7 @@ static JSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec, JSObject* funct
             return toJS(exec, collection->item(index));
 
         // Support for document.images('<name>') etc.
-        return getNamedItems(exec, collection, Identifier(exec, string));
+        return getNamedItems(exec, jsCollection, Identifier(exec, string));
     }
 
     // The second arg, if set, is the index of the item we want
@@ -97,15 +98,17 @@ CallType JSHTMLCollection::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-bool JSHTMLCollection::canGetItemsForName(ExecState* exec, HTMLCollection* thisObj, const Identifier& propertyName)
+bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection, const Identifier& propertyName)
 {
-    return !getNamedItems(exec, thisObj, propertyName).isUndefined();
+    Vector<RefPtr<Node> > namedItems;
+    collection->namedItems(propertyName, namedItems);
+    return !namedItems.isEmpty();
 }
 
 JSValue JSHTMLCollection::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSHTMLCollection* thisObj = static_cast<JSHTMLCollection*>(asObject(slot.slotBase()));
-    return getNamedItems(exec, thisObj->impl(), propertyName);
+    return getNamedItems(exec, thisObj, propertyName);
 }
 
 JSValue JSHTMLCollection::item(ExecState* exec, const ArgList& args)
@@ -114,12 +117,12 @@ JSValue JSHTMLCollection::item(ExecState* exec, const ArgList& args)
     uint32_t index = args.at(0).toString(exec).toUInt32(&ok, false);
     if (ok)
         return toJS(exec, impl()->item(index));
-    return getNamedItems(exec, impl(), Identifier(exec, args.at(0).toString(exec)));
+    return getNamedItems(exec, this, Identifier(exec, args.at(0).toString(exec)));
 }
 
 JSValue JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
 {
-    return getNamedItems(exec, impl(), Identifier(exec, args.at(0).toString(exec)));
+    return getNamedItems(exec, this, Identifier(exec, args.at(0).toString(exec)));
 }
 
 JSValue toJS(ExecState* exec, HTMLCollection* collection)

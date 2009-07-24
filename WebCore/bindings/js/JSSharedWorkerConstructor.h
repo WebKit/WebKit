@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-    class JSSharedWorkerConstructor : public DOMObject {
+    class JSSharedWorkerConstructor : public DOMConstructorObject {
     public:
         JSSharedWorkerConstructor(JSC::ExecState*, JSDOMGlobalObject*);
 

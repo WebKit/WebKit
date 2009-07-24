@@ -173,7 +173,7 @@ namespace WebCore {
         ASSERT(object);
         ASSERT(!getCachedDOMObjectWrapper(exec->globalData(), object));
         // FIXME: new (exec) could use a different globalData than the globalData this wrapper is cached on.
-        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), object);
+        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), deprecatedGlobalObjectForPrototype(exec), object);
         cacheDOMObjectWrapper(exec->globalData(), object, wrapper);
         return wrapper;
     }
@@ -192,7 +192,7 @@ namespace WebCore {
     {
         ASSERT(object);
         ASSERT(!getCachedDOMObjectWrapper(exec->globalData(), object));
-        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), object, context);
+        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), deprecatedGlobalObjectForPrototype(exec), object, context);
         cacheDOMObjectWrapper(exec->globalData(), object, wrapper);
         return wrapper;
     }
@@ -211,7 +211,7 @@ namespace WebCore {
     {
         ASSERT(node);
         ASSERT(!getCachedDOMNodeWrapper(node->document(), node));
-        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), node);
+        WrapperClass* wrapper = new (exec) WrapperClass(deprecatedGetDOMStructure<WrapperClass>(exec), deprecatedGlobalObjectForPrototype(exec), node);
         // FIXME: The entire function can be removed, once we fix caching.
         // This function is a one-off hack to make Nodes cache in the right global object.
         cacheDOMNodeWrapper(node->document(), node, wrapper);

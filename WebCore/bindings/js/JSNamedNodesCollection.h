@@ -35,9 +35,9 @@ namespace WebCore {
 
     // Internal class, used for the collection return by e.g. document.forms.myinput
     // when multiple nodes have the same name.
-    class JSNamedNodesCollection : public DOMObject {
+    class JSNamedNodesCollection : public DOMObjectWithGlobalPointer {
     public:
-        JSNamedNodesCollection(JSC::ExecState*, const Vector<RefPtr<Node> >&);
+        JSNamedNodesCollection(JSC::ExecState*, JSDOMGlobalObject*, const Vector<RefPtr<Node> >&);
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
 

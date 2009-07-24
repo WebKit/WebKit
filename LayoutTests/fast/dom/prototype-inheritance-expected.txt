@@ -390,7 +390,7 @@ FAIL inner.devicePixelRatio.constructor.isInner should be true. Was false.
 FAIL inner.dispatchEvent.isInner should be true. Was false.
 FAIL inner.dispatchEvent.constructor.isInner should be true. Was false.
 PASS inner.document.isInner is true
-FAIL inner.document.constructor.isInner should be true. Was false.
+PASS inner.document.constructor.isInner is true
 FAIL inner.find.isInner should be true. Was false.
 FAIL inner.find.constructor.isInner should be true. Was false.
 FAIL inner.focus.isInner should be true. Was false.

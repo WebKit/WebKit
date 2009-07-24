@@ -67,6 +67,9 @@ namespace WebCore {
 
         JSListenersMap& jsEventListeners();
 
+        // Make binding code generation easier.
+        JSDOMGlobalObject* globalObject() { return this; }
+
         void setCurrentEvent(Event*);
         Event* currentEvent() const;
 

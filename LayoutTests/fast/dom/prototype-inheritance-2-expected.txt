@@ -78,7 +78,7 @@ FAIL HTMLDivElement from inner.document.plugins.0.previousElementSibling
 FAIL HTMLDivElementConstructor from inner.document.plugins.0.previousElementSibling.constructor
 FAIL HTMLDivElementPrototype from inner.document.plugins.0.previousElementSibling.__proto__
 PASS HTMLDocument from inner.document
-FAIL HTMLDocumentConstructor from inner.document.constructor
+PASS HTMLDocumentConstructor from inner.document.constructor
 PASS HTMLDocumentPrototype from inner.document.__proto__
 FAIL HTMLElement from inner.document.scripts.0.previousElementSibling
 FAIL HTMLElementConstructor from inner.document.scripts.0.previousElementSibling.constructor

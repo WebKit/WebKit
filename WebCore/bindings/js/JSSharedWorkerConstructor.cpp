@@ -45,7 +45,7 @@ namespace WebCore {
 const ClassInfo JSSharedWorkerConstructor::s_info = { "SharedWorkerConstructor", 0, 0, 0 };
 
 JSSharedWorkerConstructor::JSSharedWorkerConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMObject(JSSharedWorkerConstructor::createStructure(globalObject->objectPrototype()))
+    : DOMConstructorObject(JSSharedWorkerConstructor::createStructure(globalObject->objectPrototype()))
 {
     putDirect(exec->propertyNames().prototype, JSSharedWorkerPrototype::self(exec, globalObject), None);
     // Host functions have a length property describing the number of expected arguments.

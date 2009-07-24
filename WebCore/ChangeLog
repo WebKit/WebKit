@@ -1,3 +1,67 @@
+2009-07-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make most DOMObjects hold onto a JSDOMGlobalObject*
+        https://bugs.webkit.org/show_bug.cgi?id=27588
+
+        This change is almost entirely plumbing.  Only one functional
+        change as part of this all (window.document.constructor has the correct prototype)
+        Changes are detailed below.
+
+        inner.document.constructor is fixed because all properties on the window
+        object are created with the correct globalObject (instead of the lexical one).
+        Since all objects now carry a globalObject pointer, when document creates
+        HTMLDocumentConstructor it now has the right globalObject to use.
+
+        Tests:
+          fast/dom/prototype-inheritance.html
+          fast/dom/prototype-inheritance-2.html
+
+        * bindings/js/DOMObjectWithSVGContext.h:
+        (WebCore::DOMObjectWithSVGContext::DOMObjectWithSVGContext):
+            Update the comment and add an ignored globalObject argument.
+        * bindings/js/JSDOMBinding.h:
+            Pass a globalObject to all DOMObjects during creation.  Currently it's the wrong global object.
+            Once toJS is passed a globalObject it will be the right one.
+        (WebCore::createDOMObjectWrapper):
+        (WebCore::createDOMNodeWrapper):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::globalObject): Makes binding generation easier.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::history): JSHistory is now passed a globalObject, but since it has no custom constructor it doesn't use it.
+        (WebCore::JSDOMWindow::location): JSLocation is now passed a globalObject, but since it has no custom constructor it doesn't use it.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location): JSLocation is now passed a globalObject, but since it has no custom constructor it doesn't use it.
+        * bindings/js/JSHTMLAllCollection.h:
+        (WebCore::JSHTMLAllCollection::JSHTMLAllCollection):
+        * bindings/js/JSHTMLCollectionCustom.cpp: Re-factoring needed to pass globalObject to JSNamedNodesCollection constructor.
+        (WebCore::getNamedItems):
+        (WebCore::callHTMLCollection):
+        (WebCore::JSHTMLCollection::canGetItemsForName):
+        (WebCore::JSHTMLCollection::nameGetter):
+        (WebCore::JSHTMLCollection::item):
+        (WebCore::JSHTMLCollection::namedItem):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/JSNamedNodesCollection.cpp:
+             Now passed globalObject.  This is tested by inner.document.forms.testForm.
+             The passed globalObject is still wrong until toJS is fixed.
+        (WebCore::JSNamedNodesCollection::JSNamedNodesCollection):
+        * bindings/js/JSNamedNodesCollection.h:
+        * bindings/js/JSSharedWorkerConstructor.cpp:
+             Add DOMConstructorObject missed by http://trac.webkit.org/changeset/45938
+             This class is not compiled by default, so not testable.
+        (WebCore::JSSharedWorkerConstructor::JSSharedWorkerConstructor):
+        * bindings/js/JSSharedWorkerConstructor.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+             Make all bindings objects carry a globalObject pointer using DOMObjectWithGlobalPointer.
+             SVG bindings which need a context() pointer do not have enough space for globalObject() too.
+             WorkerContext does not need a globalObject (it is one), so special case it.
+             Make all .constructor calls use the stored globalObject().  This is what fixes window.document.constructor.
+             Make all constructors inherit from DOMConstructorObject for consistency.  Since the auto-bound constructors
+             override createStructure anyway, there is no functional change here.  Just completing work started in r45938.
+
 2009-07-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Geoff Garen.

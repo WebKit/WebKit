@@ -56,8 +56,7 @@ JSValue JSDocument::location(ExecState* exec) const
     if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec->globalData(), location))
         return wrapper;
 
-    JSDOMWindow* window = static_cast<JSDOMWindow*>(exec->lexicalGlobalObject());
-    JSLocation* jsLocation = new (exec) JSLocation(getDOMStructure<JSLocation>(exec, window), location);
+    JSLocation* jsLocation = new (exec) JSLocation(getDOMStructure<JSLocation>(exec, globalObject()), globalObject(), location);
     cacheDOMObjectWrapper(exec->globalData(), location, jsLocation);
     return jsLocation;
 }

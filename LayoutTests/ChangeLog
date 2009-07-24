@@ -1,3 +1,18 @@
+2009-07-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make most DOMObjects hold onto a JSDOMGlobalObject*
+        https://bugs.webkit.org/show_bug.cgi?id=27588
+
+        inner.document.constructor is fixed because all properties on the window
+        object are created with the correct globalObject (instead of the lexical one).
+        Since all objects now carry a globalObject pointer, when document creates
+        HTMLDocumentConstructor it now has the right globalObject to use.
+
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+
 2009-07-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Eric Seidel.

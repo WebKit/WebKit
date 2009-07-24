@@ -35,8 +35,8 @@ namespace WebCore {
 
     class JSHTMLAllCollection : public JSHTMLCollection {
     public:
-        JSHTMLAllCollection(PassRefPtr<JSC::Structure> structure, PassRefPtr<HTMLCollection> collection)
-            : JSHTMLCollection(structure, collection)
+        JSHTMLAllCollection(PassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject, PassRefPtr<HTMLCollection> collection)
+            : JSHTMLCollection(structure, globalObject, collection)
         {
         }
 
