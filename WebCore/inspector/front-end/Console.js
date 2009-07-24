@@ -424,7 +424,7 @@ WebInspector.Console.prototype = {
                 get $1() { return _inspectorCommandLineAPI._inspectedNodes[1] }, \
                 get $2() { return _inspectorCommandLineAPI._inspectedNodes[2] }, \
                 get $3() { return _inspectorCommandLineAPI._inspectedNodes[3] }, \
-                get $4() { return _inspectorCommandLineAPI._inspectedNodes[4] }
+                get $4() { return _inspectorCommandLineAPI._inspectedNodes[4] } \
             };");
 
             inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(this.clearMessages.bind(this));

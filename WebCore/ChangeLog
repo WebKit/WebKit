@@ -1,3 +1,13 @@
+2009-07-24  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Timothy Hatcher.
+
+        REGRESSION: inspector seems broken in ToT WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=27646
+
+        * inspector/front-end/Console.js:
+        (WebInspector.Console.prototype._ensureCommandLineAPIInstalled):
+
 2009-07-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
