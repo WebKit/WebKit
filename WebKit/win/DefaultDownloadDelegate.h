@@ -28,7 +28,9 @@
 #include "COMPtr.h"
 #include "WebKit.h"
 
+#if PLATFORM(CFNETWORK)
 #include <CFNetwork/CFURLDownloadPriv.h>
+#endif
 #include <wtf/HashSet.h>
 
 class DefaultDownloadDelegate : public IWebDownloadDelegate

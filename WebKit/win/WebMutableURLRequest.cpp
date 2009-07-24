@@ -30,7 +30,9 @@
 #include "WebKit.h"
 #include "MarshallingHelpers.h"
 #include "WebKit.h"
+#if PLATFORM(CFNETWORK)
 #include <CFNetwork/CFURLRequestPriv.h>
+#endif
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
