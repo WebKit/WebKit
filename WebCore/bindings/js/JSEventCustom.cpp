@@ -76,10 +76,10 @@ namespace WebCore {
 
 JSValue JSEvent::clipboardData(ExecState* exec) const
 {
-    return impl()->isClipboardEvent() ? toJS(exec, impl()->clipboardData()) : jsUndefined();
+    return impl()->isClipboardEvent() ? toJS(exec, globalObject(), impl()->clipboardData()) : jsUndefined();
 }
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject*, Event* event)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
 {
     JSLock lock(false);
 
@@ -92,45 +92,45 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject*, Event* event)
 
     if (event->isUIEvent()) {
         if (event->isKeyboardEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, KeyboardEvent, event);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, KeyboardEvent, event);
         else if (event->isTextEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, TextEvent, event);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, TextEvent, event);
         else if (event->isMouseEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, MouseEvent, event);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, MouseEvent, event);
         else if (event->isWheelEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WheelEvent, event);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WheelEvent, event);
 #if ENABLE(SVG)
         else if (event->isSVGZoomEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, SVGZoomEvent, event);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, SVGZoomEvent, event);
 #endif
         else
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, UIEvent, event);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, UIEvent, event);
     } else if (event->isMutationEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, MutationEvent, event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, MutationEvent, event);
     else if (event->isOverflowEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, OverflowEvent, event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, OverflowEvent, event);
     else if (event->isMessageEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, MessageEvent, event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, MessageEvent, event);
     else if (event->isProgressEvent()) {
         if (event->isXMLHttpRequestProgressEvent())
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, XMLHttpRequestProgressEvent, event);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, XMLHttpRequestProgressEvent, event);
         else
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, ProgressEvent, event);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, ProgressEvent, event);
     }
 #if ENABLE(DOM_STORAGE)
     else if (event->isStorageEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, StorageEvent, event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, StorageEvent, event);
 #endif
     else if (event->isWebKitAnimationEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WebKitAnimationEvent, event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WebKitAnimationEvent, event);
     else if (event->isWebKitTransitionEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, WebKitTransitionEvent, event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, WebKitTransitionEvent, event);
 #if ENABLE(WORKERS)
     else if (event->isErrorEvent())
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, ErrorEvent, event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, ErrorEvent, event);
 #endif
     else
-        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, Event, event);
+        wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, Event, event);
 
     return wrapper;
 }

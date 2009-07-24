@@ -875,22 +875,23 @@ sub printWrapperFunctions
         }
 
         # Hack for the media tags
+        # FIXME: This should have been done via a CustomWrapper attribute and a separate *Custom file.
         if ($tags{$tagName}{"wrapperOnlyIfMediaIsAvailable"}) {
             print F <<END
-static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
+static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{'namespace'}Element> element)
 {
     if (!MediaPlayer::isAvailable())
-        return CREATE_DOM_NODE_WRAPPER(exec, $parameters{'namespace'}Element, element.get());
-    return CREATE_DOM_NODE_WRAPPER(exec, ${JSInterfaceName}, element.get());
+        return CREATE_DOM_NODE_WRAPPER(exec, globalObject, $parameters{'namespace'}Element, element.get());
+    return CREATE_DOM_NODE_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
 }
 
 END
 ;
         } else {
             print F <<END
-static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
+static JSNode* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{'namespace'}Element> element)
 {
-    return CREATE_DOM_NODE_WRAPPER(exec, ${JSInterfaceName}, element.get());
+    return CREATE_DOM_NODE_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
 }
 
 END
@@ -931,7 +932,7 @@ namespace WebCore {
 
 using namespace $parameters{'namespace'}Names;
 
-typedef JSNode* (*Create$parameters{'namespace'}ElementWrapperFunction)(ExecState*, PassRefPtr<$parameters{'namespace'}Element>);
+typedef JSNode* (*Create$parameters{'namespace'}ElementWrapperFunction)(ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{'namespace'}Element>);
 
 END
 ;
@@ -939,7 +940,7 @@ END
     printWrapperFunctions($F);
 
     print F <<END
-JSNode* createJS$parameters{'namespace'}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
+JSNode* createJS$parameters{'namespace'}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{'namespace'}Element> element)
 {   
     typedef HashMap<WebCore::AtomicStringImpl*, Create$parameters{'namespace'}ElementWrapperFunction> FunctionMap;
     DEFINE_STATIC_LOCAL(FunctionMap, map, ());
@@ -969,8 +970,8 @@ END
     }
     Create$parameters{'namespace'}ElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
     if (createWrapperFunction)
-        return createWrapperFunction(exec, element);
-    return CREATE_DOM_NODE_WRAPPER(exec, $parameters{'namespace'}Element, element.get());
+        return createWrapperFunction(exec, globalObject, element);
+    return CREATE_DOM_NODE_WRAPPER(exec, globalObject, $parameters{'namespace'}Element, element.get());
 }
 
 }
@@ -1006,9 +1007,10 @@ namespace JSC {
 namespace WebCore {
 
     class JSNode;
+    class JSDOMGlobalObject;
     class $parameters{'namespace'}Element;
 
-    JSNode* createJS$parameters{'namespace'}Wrapper(JSC::ExecState*, PassRefPtr<$parameters{'namespace'}Element>);
+    JSNode* createJS$parameters{'namespace'}Wrapper(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<$parameters{'namespace'}Element>);
 
 }
  

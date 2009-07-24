@@ -13,12 +13,12 @@ FAIL (new inner.MessageChannel).isInner should be true. Was false.
 FAIL (new inner.MessageChannel).constructor.isInner should be true. Was false.
 FAIL (new inner.Option).isInner should be true. Was false.
 FAIL (new inner.Option).constructor.isInner should be true. Was false.
-FAIL (new inner.WebKitCSSMatrix).isInner should be true. Was false.
-FAIL (new inner.WebKitCSSMatrix).constructor.isInner should be true. Was false.
+PASS (new inner.WebKitCSSMatrix).isInner is true
+PASS (new inner.WebKitCSSMatrix).constructor.isInner is true
 FAIL (new inner.WebKitPoint).isInner should be true. Was false.
 FAIL (new inner.WebKitPoint).constructor.isInner should be true. Was false.
-FAIL (new inner.XMLHttpRequest).isInner should be true. Was false.
-FAIL (new inner.XMLHttpRequest).constructor.isInner should be true. Was false.
+PASS (new inner.XMLHttpRequest).isInner is true
+PASS (new inner.XMLHttpRequest).constructor.isInner is true
 PASS (new inner.XMLSerializer).isInner is true
 PASS (new inner.XMLSerializer).constructor.isInner is true
 PASS (new inner.XPathEvaluator).isInner is true

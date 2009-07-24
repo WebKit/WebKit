@@ -2,6 +2,63 @@
 
         Reviewed by Adam Barth.
 
+        Update all CREATE_DOM_*_WRAPPER callers to pass globalObject
+        https://bugs.webkit.org/show_bug.cgi?id=27644
+
+        This is another attempt at making the change for bug 27634 smaller.
+        I included the changes to make_names.pl as well as any file which
+        used CREATE_DOM_*_WRAPPER macros.
+
+        The changes to the construct* functions are what fix the cases in
+        fast/dom/constructed-objects-prototypes.html
+
+        The changes to passing globalObject through CREATE_* are what fix
+        fast/dom/prototype-inheritance-2.html
+
+        * bindings/js/JSCDATASectionCustom.cpp:
+        (WebCore::toJSNewlyCreated): pass globalObject.
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS): pass globalObject.
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS): pass globalObject.
+        * bindings/js/JSDOMBinding.h: updated macros to pass globalObject.
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS): pass globalObject.
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::setAttributeNode): use globalObject() for wrapping return value.
+        (WebCore::JSElement::setAttributeNodeNS): use globalObject() for wrapping return value.
+        (WebCore::toJSNewlyCreated): pass globalObject.
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::JSEvent::clipboardData): pass globalObject.
+        (WebCore::toJS): pass globalObject.
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems): use globalObject() for wrapping returned collection items.
+        (WebCore::callHTMLCollection): use globalObject() for wrapping returned collection items.
+        (WebCore::JSHTMLCollection::item): use globalObject() for wrapping returned collection items.
+        (WebCore::toJS): pass globalObject.
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS): pass globalObject.
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapper): pass globalObject.
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS): pass globalObject.
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS): pass globalObject.
+        * bindings/js/JSTextCustom.cpp:
+        (WebCore::toJSNewlyCreated): pass globalObject.
+        * bindings/js/JSWebKitCSSMatrixConstructor.cpp:
+        (WebCore::constructWebKitCSSMatrix): use constructors globalObject when constructing
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::constructXMLHttpRequest): use constructors globalObject when constructing
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::constructXSLTProcessor): use constructors globalObject when constructing
+        * dom/make_names.pl:
+            Pass globalObject through CREATE_* macros and various support functions.
+
+2009-07-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Update CodeGeneratorJS.pm to support passing JSDOMGlobalObject* to toJS calls
         https://bugs.webkit.org/show_bug.cgi?id=27643
 

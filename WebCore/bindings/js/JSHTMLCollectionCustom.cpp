@@ -44,7 +44,7 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, cons
         return jsUndefined();
 
     if (namedItems.size() == 1)
-        return toJS(exec, namedItems[0].get());
+        return toJS(exec, collection->globalObject(), namedItems[0].get());
 
     return new (exec) JSNamedNodesCollection(exec, collection->globalObject(), namedItems);
 }
@@ -68,7 +68,7 @@ static JSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec, JSObject* funct
         UString string = args.at(0).toString(exec);
         unsigned index = string.toUInt32(&ok, false);
         if (ok)
-            return toJS(exec, collection->item(index));
+            return toJS(exec, jsCollection->globalObject(), collection->item(index));
 
         // Support for document.images('<name>') etc.
         return getNamedItems(exec, jsCollection, Identifier(exec, string));
@@ -83,7 +83,7 @@ static JSValue JSC_HOST_CALL callHTMLCollection(ExecState* exec, JSObject* funct
         Node* node = collection->namedItem(pstr);
         while (node) {
             if (!index)
-                return toJS(exec, node);
+                return toJS(exec, jsCollection->globalObject(), node);
             node = collection->nextNamedItem(pstr);
             --index;
         }
@@ -116,7 +116,7 @@ JSValue JSHTMLCollection::item(ExecState* exec, const ArgList& args)
     bool ok;
     uint32_t index = args.at(0).toString(exec).toUInt32(&ok, false);
     if (ok)
-        return toJS(exec, impl()->item(index));
+        return toJS(exec, globalObject(), impl()->item(index));
     return getNamedItems(exec, this, Identifier(exec, args.at(0).toString(exec)));
 }
 
@@ -125,7 +125,7 @@ JSValue JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
     return getNamedItems(exec, this, Identifier(exec, args.at(0).toString(exec)));
 }
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject*, HTMLCollection* collection)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, HTMLCollection* collection)
 {
     if (!collection)
         return jsNull();
@@ -137,14 +137,14 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject*, HTMLCollection* collection)
 
     switch (collection->type()) {
         case SelectOptions:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLOptionsCollection, collection);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLOptionsCollection, collection);
             break;
         case DocAll:
             typedef HTMLCollection HTMLAllCollection;
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLAllCollection, collection);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLAllCollection, collection);
             break;
         default:
-            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, HTMLCollection, collection);
+            wrapper = CREATE_DOM_OBJECT_WRAPPER(exec, globalObject, HTMLCollection, collection);
             break;
     }
 
