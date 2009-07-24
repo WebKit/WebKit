@@ -1,0 +1,29 @@
+Make sure prototypes are set up using the window a property came from, instead of the lexical global object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL (new inner.Audio).isInner should be true. Was false.
+FAIL (new inner.Audio).constructor.isInner should be true. Was false.
+FAIL (new inner.DOMParser).isInner should be true. Was false.
+FAIL (new inner.DOMParser).constructor.isInner should be true. Was false.
+FAIL (new inner.Image).isInner should be true. Was false.
+FAIL (new inner.Image).constructor.isInner should be true. Was false.
+FAIL (new inner.MessageChannel).isInner should be true. Was false.
+FAIL (new inner.MessageChannel).constructor.isInner should be true. Was false.
+FAIL (new inner.Option).isInner should be true. Was false.
+FAIL (new inner.Option).constructor.isInner should be true. Was false.
+FAIL (new inner.WebKitCSSMatrix).isInner should be true. Was false.
+FAIL (new inner.WebKitCSSMatrix).constructor.isInner should be true. Was false.
+FAIL (new inner.WebKitPoint).isInner should be true. Was false.
+FAIL (new inner.WebKitPoint).constructor.isInner should be true. Was false.
+FAIL (new inner.XMLHttpRequest).isInner should be true. Was false.
+FAIL (new inner.XMLHttpRequest).constructor.isInner should be true. Was false.
+FAIL (new inner.XMLSerializer).isInner should be true. Was false.
+FAIL (new inner.XMLSerializer).constructor.isInner should be true. Was false.
+FAIL (new inner.XPathEvaluator).isInner should be true. Was false.
+FAIL (new inner.XPathEvaluator).constructor.isInner should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
