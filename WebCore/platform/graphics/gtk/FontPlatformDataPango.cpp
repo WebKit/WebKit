@@ -34,10 +34,6 @@
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
 
-#if !defined(PANGO_VERSION_CHECK)
-#define PANGO_VERSION_CHECK(major,minor,micro) 0
-#endif
-
 // Use cairo-ft i a recent enough Pango version isn't available
 #if !PANGO_VERSION_CHECK(1,18,0)
 #include <cairo-ft.h>
@@ -113,14 +109,14 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
         cairo_font_face_t* face = cairo_ft_font_face_create_for_pattern(fcfont->font_pattern);
         double size;
         if (FcPatternGetDouble(fcfont->font_pattern, FC_PIXEL_SIZE, 0, &size) != FcResultMatch)
-          size = 12.0;
+            size = 12.0;
         cairo_matrix_t fontMatrix;
         cairo_matrix_init_scale(&fontMatrix, size, size);
         cairo_font_options_t* fontOptions;
         if (pango_cairo_context_get_font_options(m_context))
-          fontOptions = cairo_font_options_copy(pango_cairo_context_get_font_options(m_context));
+            fontOptions = cairo_font_options_copy(pango_cairo_context_get_font_options(m_context));
         else
-          fontOptions = cairo_font_options_create();
+            fontOptions = cairo_font_options_create();
         cairo_matrix_t ctm;
         cairo_matrix_init_identity(&ctm);
         m_scaledFont = cairo_scaled_font_create(face, &fontMatrix, &ctm, fontOptions);

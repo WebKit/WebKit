@@ -44,12 +44,6 @@
 #include <pango/pangofc-fontmap.h>
 #endif
 
-#if !defined(PANGO_VERSION_CHECK)
-// PANGO_VERSION_CHECK() and pango_layout_get_line_readonly() appeared in 1.5.2
-#define pango_layout_get_line_readonly pango_layout_get_line
-#define PANGO_VERSION_CHECK(major,minor,micro) 0
-#endif
-
 namespace WebCore {
 
 #define IS_HIGH_SURROGATE(u)  ((UChar)(u) >= (UChar)0xd800 && (UChar)(u) <= (UChar)0xdbff)
