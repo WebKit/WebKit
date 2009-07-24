@@ -352,8 +352,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
         [self _setRepresentation:(id <WebDocumentRepresentation>)newRep];
         [newRep release];
     }
-    
+
     [_private->representation setDataSource:self];
+
+    // The following is a no-op for WebHTMLRepresentation, but for custom document types
+    // like the ones that Safari uses for bookmarks it is the only way the DocumentLoader
+    // will get the proper title.
     _private->loader->setTitle([_private->representation title]);
 }
 
