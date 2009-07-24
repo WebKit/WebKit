@@ -1,3 +1,17 @@
+2009-07-24  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by David Levin.
+
+        Reverting r46157, since it may be causing problems with Chromium
+        reliability (see http://crbug.com/17569).
+
+        https://bugs.webkit.org/show_bug.cgi?id=27388
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::setupPaintForStroking):
+
 2009-07-24  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.
