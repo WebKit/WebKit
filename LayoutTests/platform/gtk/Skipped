@@ -3728,6 +3728,7 @@ http/tests/appcache/manifest-parsing.html
 http/tests/appcache/manifest-redirect-2.html
 http/tests/appcache/manifest-redirect.html
 http/tests/appcache/manifest-with-empty-file.html
+http/tests/appcache/max-size.html
 http/tests/appcache/non-html.xhtml
 http/tests/appcache/offline-access.html
 http/tests/appcache/online-whitelist.html
