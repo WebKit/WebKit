@@ -373,6 +373,7 @@
 
 #if ENABLE(WORKERS)
 #include "V8AbstractWorker.h"
+#include "V8DedicatedWorkerContext.h"
 #include "V8Worker.h"
 #include "V8WorkerContext.h"
 #include "V8WorkerLocation.h"

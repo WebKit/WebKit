@@ -31,10 +31,9 @@
 #include "WorkerScriptController.h"
 
 #include "JSDOMBinding.h"
-#include "JSWorkerContext.h"
+#include "JSDedicatedWorkerContext.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-#include "WorkerContext.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
 #include <interpreter/Interpreter.h>
@@ -71,11 +70,15 @@ void WorkerScriptController::initScript()
     // Explicitly protect the global object's prototype so it isn't collected
     // when we allocate the global object. (Once the global object is fully
     // constructed, it can mark its own prototype.)
-    RefPtr<Structure> prototypeStructure = JSWorkerContextPrototype::createStructure(jsNull());
-    ProtectedPtr<JSWorkerContextPrototype> prototype = new (m_globalData.get()) JSWorkerContextPrototype(prototypeStructure.release());
+    RefPtr<Structure> workerContextPrototypeStructure = JSWorkerContextPrototype::createStructure(jsNull());
+    ProtectedPtr<JSWorkerContextPrototype> workerContextPrototype = new (m_globalData.get()) JSWorkerContextPrototype(workerContextPrototypeStructure.release());
 
-    RefPtr<Structure> structure = JSWorkerContext::createStructure(prototype);
-    m_workerContextWrapper = new (m_globalData.get()) JSWorkerContext(structure.release(), m_workerContext);
+    // FIXME: When we add SharedWorkerContext, generate the correct wrapper here.
+    RefPtr<Structure> dedicatedContextPrototypeStructure = JSDedicatedWorkerContextPrototype::createStructure(workerContextPrototype);
+    ProtectedPtr<JSDedicatedWorkerContextPrototype> dedicatedContextPrototype = new (m_globalData.get()) JSDedicatedWorkerContextPrototype(dedicatedContextPrototypeStructure.release());
+    RefPtr<Structure> structure = JSDedicatedWorkerContext::createStructure(dedicatedContextPrototype);
+
+    m_workerContextWrapper = new (m_globalData.get()) JSDedicatedWorkerContext(structure.release(), static_cast<DedicatedWorkerContext*>(m_workerContext));
 }
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)

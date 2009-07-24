@@ -2002,6 +2002,54 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSDedicatedWorkerContext.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\WebCore\DerivedSources\JSDedicatedWorkerContext.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDocument.cpp"
 				>
 				<FileConfiguration
@@ -24019,6 +24067,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\DedicatedWorkerContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\DedicatedWorkerContext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\GenericWorkerTask.h"
 				>
 			</File>
@@ -28354,6 +28410,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDedicatedWorkerContextCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDocumentCustom.cpp"
 					>
 				</File>
@@ -28755,10 +28815,6 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSWorkerContextCustom.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\JSWorkerContextCustom.h"
 					>
 				</File>
 				<File

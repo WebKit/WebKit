@@ -390,6 +390,14 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         break;
     }
 
+    case V8ClassIndex::DEDICATEDWORKERCONTEXT: {
+        // Reserve internal fields for keeping event listeners.
+        v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
+        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
+        instanceTemplate->SetInternalFieldCount(V8Custom::kDedicatedWorkerContextInternalFieldCount);
+        break;
+    }
+
     case V8ClassIndex::WORKER: {
         // Reserve one more internal field for keeping event listeners.
         v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
@@ -401,9 +409,11 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
     case V8ClassIndex::WORKERCONTEXT: {
         // Reserve one more internal field for keeping event listeners.
         v8::Local<v8::ObjectTemplate> instanceTemplate = descriptor->InstanceTemplate();
-        instanceTemplate->SetInternalFieldCount(V8Custom::kWorkerContextInternalFieldCount);
+        ASSERT(instanceTemplate->InternalFieldCount() == V8Custom::kDefaultWrapperInternalFieldCount);
+        instanceTemplate->SetInternalFieldCount(V8Custom::kWorkerContextMinimumInternalFieldCount);
         break;
     }
+
 #endif // WORKERS
 
     // The following objects are created from JavaScript.

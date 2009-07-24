@@ -49,7 +49,7 @@ namespace WebCore {
 ACCESSOR_GETTER(WorkerContextSelf)
 {
     INC_STATS(L"DOM.WorkerContext.self._get");
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
+    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(info.Holder());
     return WorkerContextExecutionProxy::WorkerContextToV8Object(workerContext);
 }
 
@@ -92,48 +92,9 @@ ACCESSOR_SETTER(WorkerContextOnerror)
     }
 }
 
-ACCESSOR_GETTER(WorkerContextOnmessage)
-{
-    INC_STATS(L"DOM.WorkerContext.onmessage._get");
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
-    if (workerContext->onmessage()) {
-        V8WorkerContextEventListener* listener = static_cast<V8WorkerContextEventListener*>(workerContext->onmessage());
-        v8::Local<v8::Object> v8Listener = listener->getListenerObject();
-        return v8Listener;
-    }
-    return v8::Undefined();
-}
-
-ACCESSOR_SETTER(WorkerContextOnmessage)
-{
-    INC_STATS(L"DOM.WorkerContext.onmessage._set");
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, info.Holder());
-    V8WorkerContextEventListener* oldListener = static_cast<V8WorkerContextEventListener*>(workerContext->onmessage());
-    if (value->IsNull()) {
-        if (workerContext->onmessage()) {
-            v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
-            removeHiddenDependency(info.Holder(), oldV8Listener, V8Custom::kWorkerContextRequestCacheIndex);
-        }
-
-        // Clear the listener.
-        workerContext->setOnmessage(0);
-    } else {
-        RefPtr<V8EventListener> listener = workerContext->script()->proxy()->findOrCreateEventListener(v8::Local<v8::Object>::Cast(value), false, false);
-        if (listener) {
-            if (oldListener) {
-                v8::Local<v8::Object> oldV8Listener = oldListener->getListenerObject();
-                removeHiddenDependency(info.Holder(), oldV8Listener, V8Custom::kWorkerContextRequestCacheIndex);
-            }
-
-            workerContext->setOnmessage(listener);
-            createHiddenDependency(info.Holder(), value, V8Custom::kWorkerContextRequestCacheIndex);
-        }
-    }
-}
-
 v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singleShot)
 {
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, args.Holder());
+    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
 
     int argumentCount = args.Length();
     if (argumentCount < 1)
@@ -182,7 +143,7 @@ CALLBACK_FUNC_DECL(WorkerContextImportScripts)
         urls.append(toWebCoreString(scriptUrl));
     }
 
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, args.Holder());
+    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
 
     ExceptionCode ec = 0;
     workerContext->importScripts(urls, callerURL, callerLine, ec);
@@ -207,7 +168,7 @@ CALLBACK_FUNC_DECL(WorkerContextSetInterval) {
 CALLBACK_FUNC_DECL(WorkerContextAddEventListener)
 {
     INC_STATS(L"DOM.WorkerContext.addEventListener()");
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, args.Holder());
+    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
 
     RefPtr<V8EventListener> listener = workerContext->script()->proxy()->findOrCreateEventListener(v8::Local<v8::Object>::Cast(args[1]), false, false);
 
@@ -224,7 +185,7 @@ CALLBACK_FUNC_DECL(WorkerContextAddEventListener)
 CALLBACK_FUNC_DECL(WorkerContextRemoveEventListener)
 {
     INC_STATS(L"DOM.WorkerContext.removeEventListener()");
-    WorkerContext* workerContext = V8DOMWrapper::convertToNativeObject<WorkerContext>(V8ClassIndex::WORKERCONTEXT, args.Holder());
+    WorkerContext* workerContext = V8DOMWrapper::convertDOMWrapperToNative<WorkerContext>(args.Holder());
     WorkerContextExecutionProxy* proxy = workerContext->script()->proxy();
 
     RefPtr<V8EventListener> listener = proxy->findOrCreateEventListener(v8::Local<v8::Object>::Cast(args[1]), false, true);

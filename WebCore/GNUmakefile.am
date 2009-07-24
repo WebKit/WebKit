@@ -251,6 +251,7 @@ IDL_BINDINGS += \
 	WebCore/plugins/Plugin.idl \
 	WebCore/plugins/PluginArray.idl \
 	WebCore/workers/AbstractWorker.idl \
+	WebCore/workers/DedicatedWorkerContext.idl \
 	WebCore/workers/SharedWorker.idl \
 	WebCore/workers/Worker.idl \
 	WebCore/workers/WorkerContext.idl \
@@ -2329,6 +2330,7 @@ webcore_built_nosources += \
 
 webcore_sources += \
 	WebCore/bindings/js/JSAbstractWorkerCustom.cpp \
+	WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
 	WebCore/bindings/js/JSWorkerConstructor.cpp \
 	WebCore/bindings/js/JSWorkerConstructor.h \
 	WebCore/bindings/js/JSWorkerContextBase.cpp \
@@ -2341,6 +2343,8 @@ webcore_sources += \
 	WebCore/page/WorkerNavigator.h \
 	WebCore/workers/AbstractWorker.cpp \
 	WebCore/workers/AbstractWorker.h \
+	WebCore/workers/DedicatedWorkerContext.cpp \
+	WebCore/workers/DedicatedWorkerContext.h \
 	WebCore/workers/GenericWorkerTask.h \
 	WebCore/workers/Worker.cpp \
 	WebCore/workers/Worker.h \

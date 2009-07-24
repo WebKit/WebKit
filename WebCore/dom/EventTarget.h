@@ -38,6 +38,7 @@ namespace WebCore {
 
     class AbstractWorker;
     class AtomicString;
+    class DedicatedWorkerContext;
     class DOMApplicationCache;
     class DOMWindow;
     class Event;
@@ -48,7 +49,6 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SharedWorker;
     class Worker;
-    class WorkerContext;
     class XMLHttpRequest;
     class XMLHttpRequestUpload;
 
@@ -69,7 +69,7 @@ namespace WebCore {
 #endif
 #if ENABLE(WORKERS)
         virtual Worker* toWorker();
-        virtual WorkerContext* toWorkerContext();
+        virtual DedicatedWorkerContext* toDedicatedWorkerContext();
 #endif
 
 #if ENABLE(SHARED_WORKERS)

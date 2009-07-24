@@ -78,6 +78,7 @@ DOM_CLASSES = \
     Counter \
     DataGridColumn \
     DataGridColumnList \
+    DedicatedWorkerContext \
     DOMApplicationCache \
     DOMCoreException \
     DOMImplementation \

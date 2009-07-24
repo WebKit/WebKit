@@ -30,11 +30,11 @@
 
 #include "WorkerThread.h"
 
+#include "DedicatedWorkerContext.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-#include "WorkerContext.h"
 #include "WorkerObjectProxy.h"
 
 #include <utility>
@@ -101,9 +101,9 @@ void* WorkerThread::workerThread()
 {
     {
         MutexLocker lock(m_threadCreationMutex);
-        m_workerContext = WorkerContext::create(m_startupData->m_scriptURL, m_startupData->m_userAgent, this);
+        m_workerContext = DedicatedWorkerContext::create(m_startupData->m_scriptURL, m_startupData->m_userAgent, this);
         if (m_runLoop.terminated()) {
-            // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet, 
+            // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,
             // forbidExecution() couldn't be called from stop().
            m_workerContext->script()->forbidExecution();
         }

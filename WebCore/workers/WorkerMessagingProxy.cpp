@@ -31,13 +31,13 @@
 
 #include "WorkerMessagingProxy.h"
 
+#include "DedicatedWorkerContext.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "GenericWorkerTask.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
-#include "WorkerContext.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
@@ -59,7 +59,7 @@ private:
     virtual void performTask(ScriptExecutionContext* scriptContext)
     {
         ASSERT(scriptContext->isWorkerContext());
-        WorkerContext* context = static_cast<WorkerContext*>(scriptContext);
+        DedicatedWorkerContext* context = static_cast<DedicatedWorkerContext*>(scriptContext);
         RefPtr<MessagePort> port;
         if (m_channel) {
             port = MessagePort::create(*scriptContext);

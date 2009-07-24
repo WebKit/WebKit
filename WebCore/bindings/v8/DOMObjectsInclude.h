@@ -199,6 +199,7 @@
 #endif // SVG
 
 #if ENABLE(WORKERS)
+#include "DedicatedWorkerContext.h"
 #include "Worker.h"
 #include "WorkerContext.h"
 #include "WorkerLocation.h"

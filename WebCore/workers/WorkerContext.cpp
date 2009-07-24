@@ -36,7 +36,7 @@
 #include "DOMWindow.h"
 #include "Event.h"
 #include "EventException.h"
-#include "MessageEvent.h"
+#include "MessagePort.h"
 #include "NotImplemented.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
@@ -65,8 +65,6 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
 WorkerContext::~WorkerContext()
 {
     ASSERT(currentThread() == m_thread->threadID());
-
-    m_thread->workerObjectProxy().workerContextDestroyed();
 }
 
 ScriptExecutionContext* WorkerContext::scriptExecutionContext() const
@@ -163,22 +161,6 @@ void WorkerContext::scriptImported(unsigned long, const String&)
     notImplemented();
 }
 
-void WorkerContext::postMessage(const String& message, ExceptionCode& ec)
-{
-    postMessage(message, 0, ec);
-}
-
-void WorkerContext::postMessage(const String& message, MessagePort* port, ExceptionCode& ec)
-{
-    if (m_closing)
-        return;
-    // Disentangle the port in preparation for sending it to the remote context.
-    OwnPtr<MessagePortChannel> channel = port ? port->disentangle(ec) : 0;
-    if (ec)
-        return;
-    m_thread->workerObjectProxy().postMessageToWorkerObject(message, channel.release());
-}
-
 void WorkerContext::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType);
@@ -253,23 +235,6 @@ int WorkerContext::setInterval(ScheduledAction* action, int timeout)
 void WorkerContext::clearInterval(int timeoutId)
 {
     DOMTimer::removeById(scriptExecutionContext(), timeoutId);
-}
-
-void WorkerContext::dispatchMessage(const String& message, PassRefPtr<MessagePort> port)
-{
-    // Since close() stops the thread event loop, this should not ever get called while closing.
-    ASSERT(!m_closing);
-    RefPtr<Event> evt = MessageEvent::create(message, "", "", 0, port);
-
-    if (m_onmessageListener.get()) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onmessageListener->handleEvent(evt.get(), false);
-    }
-
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec);
-    ASSERT(!ec);
 }
 
 void WorkerContext::importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode& ec)

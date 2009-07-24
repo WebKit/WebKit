@@ -28,9 +28,10 @@ module threads {
 
     interface [
         Conditional=WORKERS,
-        DelegatingGetOwnPropertySlot,
         CustomMarkFunction,
+        DelegatingGetOwnPropertySlot,
         ExtendsDOMGlobalObject,
+        IsWorkerContext,
         LegacyParent=JSWorkerContextBase,
         NoStaticTables
     ] WorkerContext {
@@ -48,12 +49,6 @@ module threads {
                  attribute [Replaceable] WorkerNavigator navigator;
         // Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
         // DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize);
-
-
-        // DedicatedWorkerGlobalScope
-        void postMessage(in DOMString message, in [Optional] MessagePort messagePort)
-            raises(DOMException);
-                 attribute EventListener onmessage;
 
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);

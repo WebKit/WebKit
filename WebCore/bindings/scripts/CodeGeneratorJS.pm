@@ -432,7 +432,7 @@ sub GenerateHeader
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
-    } elsif ($interfaceName eq "WorkerContext") {
+    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, PassRefPtr<$implType>);\n");
     } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
         push(@headerContent, "    $className(PassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<$implType>, SVGElement* context);\n");
@@ -653,7 +653,7 @@ sub GenerateHeader
     push(@headerContent, "public:\n");
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    void* operator new(size_t);\n");
-    } elsif ($interfaceName eq "WorkerContext") {
+    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    void* operator new(size_t, JSC::JSGlobalData*);\n");
     } else {
         push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);\n");
@@ -903,7 +903,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    return JSDOMWindow::commonJSGlobalData()->heap.allocate(size);\n");
         push(@implContent, "}\n\n");
-    } elsif ($interfaceName eq "WorkerContext") {
+    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@implContent, "void* ${className}Prototype::operator new(size_t size, JSGlobalData* globalData)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return globalData->heap.allocate(size);\n");
@@ -982,8 +982,8 @@ sub GenerateImplementation
         AddIncludesForType("JSDOMWindowShell");
         push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
         push(@implContent, "    : $parentClassName(structure, impl, shell)\n");
-    } elsif ($interfaceName eq "WorkerContext") {
-        AddIncludesForType("WorkerContext");
+    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
+        AddIncludesForType($interfaceName);
         push(@implContent, "${className}::$className(PassRefPtr<Structure> structure, PassRefPtr<$implType> impl)\n");
         push(@implContent, "    : $parentClassName(structure, impl)\n");
     } else {

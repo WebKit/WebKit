@@ -89,7 +89,7 @@ Worker* EventTarget::toWorker()
     return 0;
 }
 
-WorkerContext* EventTarget::toWorkerContext()
+DedicatedWorkerContext* EventTarget::toDedicatedWorkerContext()
 {
     return 0;
 }

@@ -1,3 +1,102 @@
+2009-07-24  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Adam Barth.
+
+        Refactor WorkerContext to move DedicatedWorker-specific APIs into DedicatedWorkerContext
+        https://bugs.webkit.org/show_bug.cgi?id=27420
+
+        No new tests as the existing tests already provide sufficient coverage (this is just a refactoring with no new functionality).
+
+        * DerivedSources.cpp:
+        Added JSDerivedWorkerContext.cpp
+        * DerivedSources.make:
+        Added DerivedWorkerContext files
+        * GNUmakefile.am:
+        Added DerivedWorkerContext files
+        * WebCore.gypi:
+        Added DerivedWorkerContext files
+        * WebCore.pro:
+        Added DerivedWorkerContext files
+        * WebCore.vcproj/WebCore.vcproj:
+        Added DerivedWorkerContext files
+        * WebCore.xcodeproj/project.pbxproj:
+        Added DerivedWorkerContext files
+        * bindings/js/JSDedicatedWorkerContextCustom.cpp: Added.
+        (WebCore::JSDedicatedWorkerContext::mark):
+        Custom mark function for onmessage event handler.
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        Supports conversion to JSDedicatedWorkerContext.
+        (WebCore::toEventTarget):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::mark):
+        Moved onmessage mark handling into DedicatedWorkerContext.
+        * bindings/js/WorkerScriptController.cpp:
+        Added appropriate casts to DedicatedWorkerContext for postMessage().
+        (WebCore::WorkerScriptController::initScript):
+        Manually sets up the prototype chain for the worker context.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Changed special case code for WorkerContext to be triggered by new IsWorkerContext attribute.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        Changed hard-coded tests for WorkerContext to support DedicatedWorkerContext.
+        * bindings/v8/DOMObjectsInclude.h:
+        Added DedicatedWorkerContext.h
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        Added V8DedicatedWorkerContext.cpp
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::getTemplate):
+        Added code to reserve extra fields for V8DedicatedWorkerContext.
+        * bindings/v8/V8Index.cpp:
+        Now includes V8DedicatedWorkerContext.h in addition to V8WorkerContext.h
+        * bindings/v8/V8Index.h:
+        Added DedicatedWorkerContext as a non-node wrapper type.
+        Removed WORKERCONTEXT as a valid template type.
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+        Creates DedicatedWorkerContext instead of WorkerContext.
+        (WebCore::WorkerContextExecutionProxy::EventTargetToV8Object):
+        Returns DedicatedWorkerContext instead of WorkerContext.
+        (WebCore::WorkerContextExecutionProxy::retrieve):
+        Refactored to deal with DedicatedWorkerContext.
+        * bindings/v8/custom/V8AbstractWorkerCustom.cpp:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp: Added.
+        Moved onmessage code from V8WorkerContextCustom.cpp
+        (WebCore::ACCESSOR_GETTER):
+        (WebCore::ACCESSOR_SETTER):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        Moved onmessage code to V8DedicatedWorkerContextCustom.cpp
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toDedicatedWorkerContext):
+        * dom/EventTarget.h:
+        * workers/DedicatedWorkerContext.cpp: Added.
+        Moved DedicatedWorker-only APIs from WorkerContext.
+        (WebCore::DedicatedWorkerContext::DedicatedWorkerContext):
+        (WebCore::DedicatedWorkerContext::~DedicatedWorkerContext):
+        (WebCore::DedicatedWorkerContext::reportException):
+        (WebCore::DedicatedWorkerContext::postMessage):
+        (WebCore::DedicatedWorkerContext::dispatchMessage):
+        * workers/DedicatedWorkerContext.h: Added.
+        Moved DedicatedWorker-only APIs from WorkerContext.
+        (WebCore::DedicatedWorkerContext::create):
+        (WebCore::DedicatedWorkerContext::toDedicatedWorkerContext):
+        (WebCore::DedicatedWorkerContext::setOnmessage):
+        (WebCore::DedicatedWorkerContext::onmessage):
+        * workers/DedicatedWorkerContext.idl: Added.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::~WorkerContext):
+        Moved code that notifies parent that worker is closing down into DedicatedWorkerContext.
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::isClosing):
+        Exposed closing flag as an API so derived classes can access it.
+        * workers/WorkerContext.idl:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::MessageWorkerContextTask::performTask):
+        Calls into DedicatedWorkerContext to handle message.
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        Creates a DedicatedWorkerContext when the thread starts up.
+
 2009-07-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

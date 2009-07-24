@@ -2378,6 +2378,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
     IDL_BINDINGS += \
         page/WorkerNavigator.idl \
         workers/AbstractWorker.idl \
+        workers/DedicatedWorkerContext.idl \
         workers/Worker.idl \
         workers/WorkerContext.idl \
         workers/WorkerLocation.idl

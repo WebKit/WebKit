@@ -64,6 +64,7 @@
 #include "bindings/V8Database.cpp"
 #include "bindings/V8DataGridColumn.cpp"
 #include "bindings/V8DataGridColumnList.cpp"
+#include "bindings/V8DedicatedWorkerContext.cpp"
 #include "bindings/V8Document.cpp"
 #include "bindings/V8DocumentFragment.cpp"
 #include "bindings/V8DocumentType.cpp"
