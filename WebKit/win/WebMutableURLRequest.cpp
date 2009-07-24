@@ -30,7 +30,6 @@
 #include "WebKit.h"
 #include "MarshallingHelpers.h"
 #include "WebKit.h"
-#include <CFNetwork/CFURLRequestPriv.h>
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
@@ -41,6 +40,10 @@
 #pragma warning(pop)
 
 #include <wtf/RetainPtr.h>
+
+#if USE(CFNETWORK)
+#include <CFNetwork/CFURLRequestPriv.h>
+#endif
 
 using namespace WebCore;
 

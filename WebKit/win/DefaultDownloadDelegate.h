@@ -27,9 +27,11 @@
 
 #include "COMPtr.h"
 #include "WebKit.h"
-
-#include <CFNetwork/CFURLDownloadPriv.h>
 #include <wtf/HashSet.h>
+
+#if USE(CFNETWORK)
+#include <CFNetwork/CFURLDownloadPriv.h>
+#endif
 
 class DefaultDownloadDelegate : public IWebDownloadDelegate
 {

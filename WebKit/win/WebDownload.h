@@ -28,10 +28,12 @@
 
 #include "COMPtr.h"
 #include "WebKit.h"
-
-#include <CFNetwork/CFURLDownloadPriv.h>
 #include <WebCore/PlatformString.h>
 #include <wtf/RetainPtr.h>
+
+#if USE(CFNETWORK)
+#include <CFNetwork/CFURLDownloadPriv.h>
+#endif
 
 namespace WebCore {
     class KURL;
