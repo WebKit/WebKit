@@ -1,5 +1,44 @@
 2009-07-24  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Xan Lopez.
+
+        Fix dozens of "Deallocation of a pointer not malloced" messages seen while running
+        layout tests on the build bot.
+
+        Memory allocated via FastMalloc was being deleted via the system memory allocator
+        due to an inconsistent including of FastMalloc.h.  We address this by including it
+        from config.h and including config.h from every implementation file, as in our other
+        projects.
+
+        * DumpRenderTree/ForwardingHeaders/wtf/FastMalloc.h: Copied from JavaScriptGlue/ForwardingHeaders/wtf/FastMalloc.h.
+        * DumpRenderTree/config.h:
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        * DumpRenderTree/mac/AppleScriptController.m:
+        * DumpRenderTree/mac/CheckedMalloc.cpp:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.m:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/EditingDelegate.mm:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        * DumpRenderTree/mac/GCControllerMac.mm:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        * DumpRenderTree/mac/NavigationController.m:
+        * DumpRenderTree/mac/ObjCController.m:
+        * DumpRenderTree/mac/ObjCPlugin.m:
+        * DumpRenderTree/mac/ObjCPluginFunction.m:
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        * DumpRenderTree/mac/PlainTextController.mm:
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        * DumpRenderTree/mac/TextInputController.m:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        * DumpRenderTree/mac/WorkQueueItemMac.mm:
+
+2009-07-24  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Simon Hausmann.
 
         Add a command line option to run-javascriptcore-tests to explicitly opt out of attempting to rebuild JavaScriptCore.

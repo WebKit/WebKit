@@ -26,6 +26,12 @@
 
 #include <wtf/Platform.h>
 
+#ifdef __cplusplus
+#undef new
+#undef delete
+#include <wtf/FastMalloc.h>
+#endif
+
 #if PLATFORM(WIN_OS) && !COMPILER(GCC)
 #define JS_EXPORTDATA __declspec(dllimport)
 #define WEBKIT_EXPORTDATA __declspec(dllimport)

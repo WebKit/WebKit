@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
+#import "config.h"
 #import "EditingDelegate.h"
 
 #import "DumpRenderTree.h"

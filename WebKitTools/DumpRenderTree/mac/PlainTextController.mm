@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "config.h"
 #import "PlainTextController.h"
 
 #import <WebKit/WebKit.h>

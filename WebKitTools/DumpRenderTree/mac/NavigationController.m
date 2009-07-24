@@ -26,9 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+#import "NavigationController.h"
+
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebScriptObject.h>
-#import "NavigationController.h"
+
 
 @implementation NavigationController
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)selector

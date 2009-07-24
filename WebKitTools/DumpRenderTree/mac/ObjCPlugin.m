@@ -24,10 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
+#import "config.h"
 #import "ObjCPlugin.h"
-#import <objc/objc-runtime.h>
-#import <WebKit/WebKit.h>
 
+#import <WebKit/WebKit.h>
+#import <objc/objc-runtime.h>
 
 // === NSObject category to expose almost everything to JavaScript ===
 

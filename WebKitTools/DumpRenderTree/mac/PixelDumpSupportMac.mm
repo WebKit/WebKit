@@ -28,16 +28,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DumpRenderTree.h" 
+#include "config.h"
 #include "PixelDumpSupport.h"
 #include "PixelDumpSupportCG.h"
 
+#include "DumpRenderTree.h" 
 #include "LayoutTestController.h"
 #include <CoreGraphics/CGBitmapContext.h>
-#if defined(BUILDING_ON_TIGER)
-#include <OpenGL/OpenGL.h>
-#include <OpenGL/CGLMacro.h>
-#endif
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
 
@@ -45,6 +42,11 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
+
+#if defined(BUILDING_ON_TIGER)
+#include <OpenGL/OpenGL.h>
+#include <OpenGL/CGLMacro.h>
+#endif
 
 // To ensure pixel tests consistency, we need to always render in the same colorspace.
 // Unfortunately, because of AppKit / WebKit constraints, we can't render directly in the colorspace of our choice.
