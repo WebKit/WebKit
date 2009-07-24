@@ -38,7 +38,7 @@ Object.type = function(obj, win)
     win = win || window;
 
     if (obj instanceof win.Node)
-        return "node";
+        return (obj.nodeType === undefined ? type : "node");
     if (obj instanceof win.String)
         return "string";
     if (obj instanceof win.Array)
