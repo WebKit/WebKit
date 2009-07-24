@@ -32,12 +32,12 @@
 
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "htmlediting.h"
 #include "Node.h"
 #include "PlatformString.h"
 #include "Range.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
+#include "htmlediting.h"
 
 namespace WebCore {
 
@@ -220,7 +220,7 @@ void DOMSelection::setBaseAndExtent(Node* baseNode, int baseOffset, Node* extent
     }
     VisiblePosition visibleBase = VisiblePosition(baseNode, baseOffset, DOWNSTREAM);
     VisiblePosition visibleExtent = VisiblePosition(extentNode, extentOffset, DOWNSTREAM);
-    
+
     m_frame->selection()->moveTo(visibleBase, visibleExtent);
 }
 
@@ -245,9 +245,9 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
         alter = SelectionController::EXTEND;
     else if (equalIgnoringCase(alterString, "move"))
         alter = SelectionController::MOVE;
-    else 
+    else
         return;
-    
+
     SelectionController::EDirection direction;
     if (equalIgnoringCase(directionString, "forward"))
         direction = SelectionController::FORWARD;
@@ -259,7 +259,7 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
         direction = SelectionController::RIGHT;
     else
         return;
-        
+
     TextGranularity granularity;
     if (equalIgnoringCase(granularityString, "character"))
         granularity = CharacterGranularity;
@@ -336,7 +336,7 @@ void DOMSelection::addRange(Range* r)
         return;
 
     SelectionController* selection = m_frame->selection();
-    
+
     if (selection->isNone()) {
         selection->setSelection(VisibleSelection(r));
         return;
@@ -385,7 +385,7 @@ void DOMSelection::deleteFromDocument()
     ExceptionCode ec = 0;
     selectedRange->deleteContents(ec);
     ASSERT(!ec);
-    
+
     setBaseAndExtent(selectedRange->startContainer(ec), selectedRange->startOffset(ec), selectedRange->startContainer(ec), selectedRange->startOffset(ec), ec);
     ASSERT(!ec);
 }
