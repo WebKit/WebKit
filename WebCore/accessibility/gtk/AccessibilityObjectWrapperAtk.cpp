@@ -571,9 +571,14 @@ static void UTF16ToUTF8(const UChar* aText, gint aLength, char* &text, gint &len
 
 static gchar* g_substr(const gchar* string, gint start, gint end)
 {
-    gsize len = end - start + 1;
-    gchar* output = static_cast<gchar*>(g_malloc0(len + 1));
-    return g_utf8_strncpy(output, string +start, len);
+    ASSERT(string);
+    glong strLen = g_utf8_strlen(string, -1);
+    if (start > strLen || end > strLen)
+        return 0;
+    gchar* startPtr = g_utf8_offset_to_pointer(string, start);
+    gsize lenInBytes = g_utf8_offset_to_pointer(string, end) -  startPtr + 1;
+    gchar* output = static_cast<gchar*>(g_malloc0(lenInBytes + 1));
+    return g_utf8_strncpy(output, startPtr, end - start + 1);
 }
 
 // This function is not completely general, is it's tied to the

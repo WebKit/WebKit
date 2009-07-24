@@ -1,3 +1,17 @@
+2009-07-24  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Jan Alonzo.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25415
+        [GTK][ATK] Please implement support for get_text_at_offset
+
+        Fix confusion in g_substr between length in bytes and length in
+        characters. Was causing crashes in some situations when dealing
+        with non-ASCII text encoded as UTF8.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (g_substr):
+
 2009-07-24  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Timothy Hatcher.
