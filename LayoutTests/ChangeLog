@@ -1,5 +1,17 @@
 2009-07-23  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Dan Bernstein.
+
+        Update layout test results for three tests related to text fields as their metrics
+        have changed slightly since the results were last updated.
+
+        * platform/mac-leopard/fast/forms/text-control-intrinsic-widths-expected.txt: Copied from LayoutTests/fast/forms/text-control-intrinsic-widths-expected.txt.
+        * platform/mac/fast/forms/input-text-maxlength-expected.txt:
+        * platform/mac/fast/forms/input-text-paste-maxlength-expected.txt:
+        * platform/mac/fast/forms/text-control-intrinsic-widths-expected.txt: Renamed from LayoutTests/fast/forms/text-control-intrinsic-widths-expected.txt.
+
+2009-07-23  Mark Rowe  <mrowe@apple.com>
+
         Windows appears to match the Leopard results for the CSS 2.1 counter tests that were failing.
 
         * platform/win/css2.1/t1202-counter-04-b-expected.txt: Copied from LayoutTests/platform/mac-leopard/css2.1/t1202-counter-04-b-expected.txt.
