@@ -37,14 +37,10 @@
 #include <wtf/MathExtras.h>
 #include <unicode/uchar.h>
 #include <unicode/unorm.h>
-#if PLATFORM(CG)
 #include <ApplicationServices/ApplicationServices.h>
-#endif
 #include <mlang.h>
 #include <tchar.h>
-#if PLATFORM(CG)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
 
 namespace WebCore {
 

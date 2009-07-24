@@ -29,9 +29,7 @@
 #include "COMPtr.h"
 #include "WebKit.h"
 
-#if PLATFORM(CFNETWORK)
 #include <CFNetwork/CFURLDownloadPriv.h>
-#endif
 #include <WebCore/PlatformString.h>
 #include <wtf/RetainPtr.h>
 
