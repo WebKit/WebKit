@@ -62,27 +62,29 @@ WorkerScriptController::~WorkerScriptController()
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {
+    return evaluate(sourceCode, 0);
+}
+
+ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
+{
     {
         MutexLocker lock(m_sharedDataMutex);
         if (m_executionForbidden)
             return ScriptValue();
     }
 
-    v8::Local<v8::Value> result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startLine() - 1);
-    m_workerContext->thread()->workerObjectProxy().reportPendingActivity(m_workerContext->hasPendingActivity());
-    return ScriptValue();
-}
+    WorkerContextExecutionState state;
+    ScriptValue result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startLine() - 1, &state);
+    if (state.hadException) {
+        if (exception)
+            *exception = state.exception;
+        else
+            m_workerContext->reportException(state.errorMessage, state.lineNumber, state.sourceURL);
+    }
 
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
-{
-    v8::TryCatch exceptionCatcher;
-    ScriptValue result = evaluate(sourceCode);
-    if (exceptionCatcher.HasCaught()) {
-        *exception = ScriptValue(exceptionCatcher.Exception());
-        throwError(exceptionCatcher.Exception());
-        return ScriptValue();
-    } else
-        return result;
+    m_workerContext->thread()->workerObjectProxy().reportPendingActivity(m_workerContext->hasPendingActivity());
+
+    return result;
 }
 
 void WorkerScriptController::forbidExecution()
@@ -92,9 +94,9 @@ void WorkerScriptController::forbidExecution()
     m_executionForbidden = true;
 }
 
-void WorkerScriptController::setException(ScriptValue /* exception */)
+void WorkerScriptController::setException(ScriptValue exception)
 {
-    notImplemented();
+    throwError(*exception.v8Value());
 }
 
 } // namespace WebCore

@@ -344,16 +344,34 @@ bool WorkerContextExecutionProxy::forgetV8EventObject(Event* event)
         return false;
 }
 
-v8::Local<v8::Value> WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, int baseLine)
+ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, int baseLine, WorkerContextExecutionState* state)
 {
     v8::HandleScope hs;
 
     initContextIfNeeded();
     v8::Context::Scope scope(m_context);
 
+    v8::TryCatch exceptionCatcher;
+
     v8::Local<v8::String> scriptString = v8ExternalString(script);
     v8::Handle<v8::Script> compiledScript = V8Proxy::compileScript(scriptString, fileName, baseLine);
-    return runScript(compiledScript);
+    v8::Local<v8::Value> result = runScript(compiledScript);
+
+    if (exceptionCatcher.HasCaught()) {
+        v8::Local<v8::Message> message = exceptionCatcher.Message();
+        state->hadException = true;
+        state->exception = ScriptValue(exceptionCatcher.Exception());
+        state->errorMessage = toWebCoreString(message->Get());
+        state->lineNumber = message->GetLineNumber();
+        state->sourceURL = toWebCoreString(message->GetScriptResourceName());
+        exceptionCatcher.Reset();
+    } else
+        state->hadException = false;
+
+    if (result.IsEmpty() || result->IsUndefined())
+        return ScriptValue();
+
+    return ScriptValue(result);
 }
 
 v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Script> script)
