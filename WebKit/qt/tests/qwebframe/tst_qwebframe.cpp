@@ -575,7 +575,7 @@ private slots:
     void progressSignal();
     void urlChange();
     void domCycles();
-    void originalUrl();
+    void requestedUrl();
     void setHtml();
     void setHtmlWithResource();
     void ipv6HostEncoding();
@@ -2221,7 +2221,7 @@ protected:
     }
 };
 
-void tst_QWebFrame::originalUrl()
+void tst_QWebFrame::requestedUrl()
 {
     QWebPage page;
     QWebFrame* frame = page.mainFrame();
@@ -2234,19 +2234,19 @@ void tst_QWebFrame::originalUrl()
     frame->setUrl(QUrl("qrc:/test1.html"));
     QTest::qWait(200);
     QCOMPARE(spy.count(), 1);
-    QCOMPARE(frame->originalUrl(), QUrl("qrc:/test1.html"));
+    QCOMPARE(frame->requestedUrl(), QUrl("qrc:/test1.html"));
     QCOMPARE(frame->url(), QUrl("qrc:/test2.html"));
 
     frame->setUrl(QUrl("qrc:/non-existent.html"));
     QTest::qWait(200);
     QCOMPARE(spy.count(), 2);
-    QCOMPARE(frame->originalUrl(), QUrl("qrc:/non-existent.html"));
+    QCOMPARE(frame->requestedUrl(), QUrl("qrc:/non-existent.html"));
     QCOMPARE(frame->url(), QUrl("qrc:/non-existent.html"));
 
     frame->setUrl(QUrl("http://abcdef.abcdef"));
     QTest::qWait(200);
     QCOMPARE(spy.count(), 3);
-    QCOMPARE(frame->originalUrl(), QUrl("http://abcdef.abcdef/"));
+    QCOMPARE(frame->requestedUrl(), QUrl("http://abcdef.abcdef/"));
     QCOMPARE(frame->url(), QUrl("http://abcdef.abcdef/"));
 }
 

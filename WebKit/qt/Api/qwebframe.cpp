@@ -282,9 +282,9 @@ void QWebFramePrivate::renderPrivate(QPainter *painter, const QRegion &clip)
 
     The QWebFrame class also offers methods to retrieve both the URL currently
     loaded by the frame (see url()) as well as the URL originally requested
-    to be loaded (see originalUrl()). These methods make possible the retrieval
+    to be loaded (see requestedUrl()). These methods make possible the retrieval
     of the URL before and after a DNS resolution or a redirection occurs during
-    the load process. The originalUrl() also matches to the URL added to the
+    the load process. The requestedUrl() also matches to the URL added to the
     frame history (\l{QwebHistory}) if load is successful.
 
     The title of an HTML frame can be accessed with the title() property.
@@ -529,14 +529,14 @@ QUrl QWebFrame::url() const
 
 /*!
     \since 4.6
-    \property QWebFrame::originalUrl
+    \property QWebFrame::requestedUrl
 
-    The original url loaded by the frame currently viewed. The URL may differ from
+    The URL requested to loaded by the frame currently viewed. The URL may differ from
     the one returned by url() if a DNS resolution or a redirection occurs.
 
     \sa url(), setUrl()
 */
-QUrl QWebFrame::originalUrl() const
+QUrl QWebFrame::requestedUrl() const
 {
     if (!d->frame->loader()->activeDocumentLoader()
         || !d->frameLoaderClient->m_loadSucceeded)

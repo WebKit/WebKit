@@ -107,7 +107,7 @@ class QWEBKIT_EXPORT QWebFrame : public QObject {
     Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor)
     Q_PROPERTY(QString title READ title)
     Q_PROPERTY(QUrl url READ url WRITE setUrl)
-    Q_PROPERTY(QUrl originalUrl READ originalUrl)
+    Q_PROPERTY(QUrl requestedUrl READ requestedUrl)
     Q_PROPERTY(QUrl baseUrl READ baseUrl)
     Q_PROPERTY(QIcon icon READ icon)
     Q_PROPERTY(QSize contentsSize READ contentsSize)
@@ -142,7 +142,7 @@ public:
     QString title() const;
     void setUrl(const QUrl &url);
     QUrl url() const;
-    QUrl originalUrl() const;
+    QUrl requestedUrl() const;
     QUrl baseUrl() const;
     QIcon icon() const;
     QMultiMap<QString, QString> metaData() const;
