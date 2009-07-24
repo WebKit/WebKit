@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 # Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+# Copyright (C) 2009 Torch Mobile Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -140,14 +141,30 @@ for my $changeLog (@changeLogs) {
 
 my $first = 1;
 open NEWLOG, ">$log.edit" or die;
-for my $sortKey (sort keys %changeLogSort) {
-    my $label = $changeLogSort{$sortKey};
-    if (keys %changeLogSort > 1) {
-        print NEWLOG normalizeLineEndings("\n", $endl) if !$first;
-        $first = 0;
-        print NEWLOG normalizeLineEndings("$label:\n\n", $endl);
+if (isGit() && scalar keys %changeLogSort == 0) {
+    # populate git commit message with WebKit-format ChangeLog entries unless explicitly disabled
+    my $branch = gitBranch();
+    chomp(my $webkitGenerateCommitMessage = `git config --bool branch.$branch.webkitGenerateCommitMessage`);
+    if ($webkitGenerateCommitMessage eq "") {
+        chomp($webkitGenerateCommitMessage = `git config --bool core.webkitGenerateCommitMessage`);
     }
-    print NEWLOG normalizeLineEndings($changeLogContents{$label}, $endl);
+    if ($webkitGenerateCommitMessage ne "false") {
+        open CHANGELOG_ENTRIES, "-|", "prepare-ChangeLog --git-index --no-write" or die "prepare-ChangeLog failed: $!.\n";
+        while (<CHANGELOG_ENTRIES>) {
+            print NEWLOG normalizeLineEndings($_, $endl);
+        }
+        close CHANGELOG_ENTRIES;
+    }
+} else {
+    for my $sortKey (sort keys %changeLogSort) {
+        my $label = $changeLogSort{$sortKey};
+        if (keys %changeLogSort > 1) {
+            print NEWLOG normalizeLineEndings("\n", $endl) if !$first;
+            $first = 0;
+            print NEWLOG normalizeLineEndings("$label:\n\n", $endl);
+        }
+        print NEWLOG normalizeLineEndings($changeLogContents{$label}, $endl);
+    }
 }
 print NEWLOG $logContents;
 close NEWLOG;
