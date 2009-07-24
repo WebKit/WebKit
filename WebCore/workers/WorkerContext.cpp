@@ -64,7 +64,6 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
 
 WorkerContext::~WorkerContext()
 {
-    ASSERT(currentThread() == m_thread->threadID());
 }
 
 ScriptExecutionContext* WorkerContext::scriptExecutionContext() const
