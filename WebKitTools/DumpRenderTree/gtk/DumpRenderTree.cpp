@@ -31,6 +31,7 @@
 #include "config.h"
 #include "DumpRenderTree.h"
 
+#include "GCController.h"
 #include "LayoutTestController.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
@@ -68,6 +69,7 @@ static int dumpPixels;
 static int dumpTree = 1;
 
 LayoutTestController* gLayoutTestController = 0;
+static GCController* gcController = 0;
 static WebKitWebView* webView;
 static GtkWidget* container;
 WebKitWebFrame* mainFrame = 0;
@@ -480,6 +482,9 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
 
     gLayoutTestController->makeWindowObject(context, windowObject, &exception);
     assert(!exception);
+
+    gcController->makeWindowObject(context, windowObject, &exception);
+    ASSERT(!exception);
 }
 
 static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message, unsigned int line, const gchar* sourceId, gpointer data)
@@ -659,6 +664,8 @@ int main(int argc, char* argv[])
 
     setDefaultsToConsistentStateValuesForTesting();
 
+    gcController = new GCController();
+
     if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
         char filenameBuffer[2048];
         printSeparators = true;
@@ -677,6 +684,9 @@ int main(int argc, char* argv[])
         for (int i = optind; i != argc; ++i)
             runTest(argv[i]);
     }
+
+    delete gcController;
+    gcController = 0;
 
     g_object_unref(webView);
 

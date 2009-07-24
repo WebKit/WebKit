@@ -40,9 +40,11 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include <glib/gi18n-lib.h>
+#include "GCController.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "JSDOMWindow.h"
+#include "JSLock.h"
 #include "PrintContext.h"
 #include "RenderView.h"
 #include "RenderTreeAsText.h"
@@ -835,3 +837,21 @@ void webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame)
 
     core(frame)->tree()->clearName();
 }
+
+void webkit_gc_collect_javascript_objects()
+{
+    gcController().garbageCollectNow();
+}
+
+void webkit_gc_collect_javascript_objects_on_alternate_thread(gboolean waitUntilDone)
+{
+    gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
+}
+
+gsize webkit_gc_count_javascript_objects()
+{
+    JSC::JSLock lock(false);
+    return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
+
+}
+

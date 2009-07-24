@@ -234,6 +234,15 @@ extern "C" {
 
     GHashTable*
     webkit_history_items(void);
+
+    WEBKIT_API void
+    webkit_gc_collect_javascript_objects();
+
+    WEBKIT_API void
+    webkit_gc_collect_javascript_objects_on_alternate_thread(gboolean waitUntilDone);
+
+    WEBKIT_API gsize
+    webkit_gc_count_javascript_objects();
 }
 
 #endif

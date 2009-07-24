@@ -1,3 +1,18 @@
+2009-07-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] Add implementation of GCController for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=27636
+
+        Add SPI for GCController to use.
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebframe.cpp:
+        (webkit_gc_collect_javascript_objects):
+        (webkit_gc_collect_javascript_objects_on_alternate_thread):
+        (webkit_gc_count_javascript_objects):
+
 2009-07-22  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Mark Rowe.
