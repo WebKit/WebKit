@@ -1,5 +1,12 @@
 2009-07-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
+        Skip transitions/change-values-during-transition.html which
+        pass/fails intermittently
+
+        * platform/gtk/Skipped:
+
+2009-07-23  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
         Skip tests that require expected outputs. Also skip failing tests,
         with bugs raised against the failures.
 

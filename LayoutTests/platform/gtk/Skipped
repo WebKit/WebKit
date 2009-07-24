@@ -5971,6 +5971,7 @@ fast/history/saves-state-after-fragment-nav.html
 # See Bug #27638 - https://bugs.webkit.org/show_bug.cgi?id=27638
 fast/dom/Window/window-screen-properties.html
 fast/forms/textarea-metrics.html
+transitions/change-values-during-transition.html
 
 # This port doesn't support isolated worlds yet.
 http/tests/security/isolatedWorld/all-window-properties.html
