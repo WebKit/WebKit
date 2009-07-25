@@ -1,10 +1,11 @@
 // [Name] post-data-to-server.js
 
 createWMLTestCase("Complex data posting example", false);
-    
+
+var categorySelect;
+var descInput;
 var titleInput;
 var urlInput;
-var descInput;
 
 function setupTestDocument() {
     var cardElement = testDocument.documentElement.firstChild;
@@ -45,27 +46,28 @@ function setupTestDocument() {
     var fieldsetElement1 = createWMLElement("fieldset");
     fieldsetElement1.textContent = "Category:";
 
-    var selectElement = createWMLElement("select");
-    selectElement.setAttribute("name", "category");
-    selectElement.setAttribute("value", "wap");
-    selectElement.setAttribute("title", "Section?");
+    categorySelect = createWMLElement("select");
+    categorySelect.setAttribute("name", "category");
+    categorySelect.setAttribute("value", "wap");
+    categorySelect.setAttribute("title", "Section?");
+    categorySelect.setAttribute("multiple", "yes");
 
     var optionElement1 = createWMLElement("option");
     optionElement1.textContent = "Computers";
     optionElement1.setAttribute("value", "computers");
-    selectElement.appendChild(optionElement1);
+    categorySelect.appendChild(optionElement1);
 
     var optionElement2 = createWMLElement("option");
     optionElement2.textContent = "WAP";
     optionElement2.setAttribute("value", "wap");
-    selectElement.appendChild(optionElement2);
+    categorySelect.appendChild(optionElement2);
 
     var optionElement3 = createWMLElement("option");
     optionElement3.textContent = "Gateways";
     optionElement3.setAttribute("value", "gateways");
-    selectElement.appendChild(optionElement3);
+    categorySelect.appendChild(optionElement3);
 
-    fieldsetElement1.appendChild(selectElement);
+    fieldsetElement1.appendChild(categorySelect);
     cardElement.appendChild(fieldsetElement1);
 
     // Title
@@ -114,6 +116,7 @@ function prepareTest() {
     sendTextToControl(titleInput, "[title] TEST PASSED");
     sendTextToControl(urlInput, "[url] TEST PASSED");
     sendTextToControl(descInput, "[desc] TEST PASSED");
+    categorySelect.focus();
 
     testDocument.getElementById("top").focus();
     startTest(25, 15);

@@ -1,3 +1,17 @@
+2009-07-25  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] Make http/tests/wml/post-data-to-server.* more understable
+        https://bugs.webkit.org/show_bug.cgi?id=27675
+
+        Slightly cleanup this patch so it's easier to figure out what the expected result for <select> element is.
+
+        * http/tests/wml/post-data-to-server-expected.txt:
+        * http/tests/wml/resources/post-data-to-server.js:
+        (setupTestDocument):
+        (prepareTest):
+
 2009-07-24  Mark Rowe  <mrowe@apple.com>
 
         Skip a test that is failing intermittently on the Windows build bot.

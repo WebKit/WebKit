@@ -16,8 +16,8 @@ Frame: '<!--framePath //<!--frame0-->-->'
 --------
 This page was requested with an HTTP POST
 
-The query parameters are: category=wap;title=%5Btitle%5D%20TEST%20PASSED;url=%5Burl%5D%20TEST%20PASSED;desc=%5Bdesc%5D%20TEST%20PASSED
-Form content category: 'wap'
+The query parameters are: category=;title=%5Btitle%5D%20TEST%20PASSED;url=%5Burl%5D%20TEST%20PASSED;desc=%5Bdesc%5D%20TEST%20PASSED
+Form content category: ''
 Form content title : '[title] TEST PASSED'
 Form content url : '[url] TEST PASSED'
 Form content desc : '[desc] TEST PASSED'
