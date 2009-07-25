@@ -122,6 +122,17 @@ void WMLDoElement::insertedIntoDocument()
         eventHandlingElement->registerDoElement(this, document());
 }
 
+void WMLDoElement::attach()
+{
+    WMLElement::attach();
+
+    // The call to updateFromElement() needs to go after the call through
+    // to the base class's attach() because that can sometimes do a close
+    // on the renderer.
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
 RenderObject* WMLDoElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     if (!m_isActive || m_isOptional || m_isNoop)

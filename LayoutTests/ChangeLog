@@ -2,6 +2,22 @@
 
         Reviewed by George Staikos.
 
+        [WML] WMLDoElement doesn't update its RenderButton object upon attach()
+        https://bugs.webkit.org/show_bug.cgi?id=27676
+
+        Update layout test results after fixing WMLDoElement::attach() not calling updateFromElement().
+
+        * platform/mac/fast/wml/do-element-optional-attr-expected.txt:
+        * platform/mac/fast/wml/do-shadow-expected.txt:
+        * platform/mac/fast/wml/do-template-expected.txt:
+        * platform/mac/fast/wml/err-invalid-location-for-varref-expected.txt:
+        * platform/mac/fast/wml/err-invalid-variable-name-expected.txt:
+        * platform/mac/fast/wml/err-samename-do-expected.txt:
+
+2009-07-25  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         [WML] Make http/tests/wml/post-data-to-server.* more understable
         https://bugs.webkit.org/show_bug.cgi?id=27675
 
