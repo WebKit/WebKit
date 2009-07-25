@@ -2387,6 +2387,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
 
     SOURCES += \
         bindings/js/JSAbstractWorkerCustom.cpp \
+        bindings/js/JSDedicatedWorkerContextCustom.cpp \
         bindings/js/JSWorkerConstructor.cpp \
         bindings/js/JSWorkerContextBase.cpp \
         bindings/js/JSWorkerContextCustom.cpp \
@@ -2395,6 +2396,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
         loader/WorkerThreadableLoader.cpp \
         page/WorkerNavigator.cpp \
         workers/AbstractWorker.cpp \
+        workers/DedicatedWorkerContext.cpp \
         workers/Worker.cpp \
         workers/WorkerContext.cpp \
         workers/WorkerLocation.cpp \
