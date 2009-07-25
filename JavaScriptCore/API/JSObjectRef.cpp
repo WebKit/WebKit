@@ -449,7 +449,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
     return result;
 }
 
-struct OpaqueJSPropertyNameArray {
+struct OpaqueJSPropertyNameArray : FastAllocBase {
     OpaqueJSPropertyNameArray(JSGlobalData* globalData)
         : refCount(0)
         , globalData(globalData)
