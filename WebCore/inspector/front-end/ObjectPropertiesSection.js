@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +59,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
         if (this.extraProperties)
             for (var prop in this.extraProperties)
                 properties.push(prop);
-        properties.sort();
+        properties.sort(this._displaySort);
 
         this.propertiesTreeOutline.removeChildren();
 
@@ -79,6 +80,44 @@ WebInspector.ObjectPropertiesSection.prototype = {
             var infoElement = new TreeElement(title, null, false);
             this.propertiesTreeOutline.appendChild(infoElement);
         }
+    },
+
+    _displaySort: function(a,b) {
+
+        // if used elsewhere make sure to
+        //  - convert a and b to strings (not needed here, properties are all strings)
+        //  - check if a == b (not needed here, no two properties can be the same)
+
+        var diff = 0;
+        var chunk = /^\d+|^\D+/;
+        var chunka, chunkb, anum, bnum;
+        while (diff === 0) {
+            if (!a && b)
+                return -1;
+            if (!b && a)
+                return 1;
+            chunka = a.match(chunk)[0];
+            chunkb = b.match(chunk)[0];
+            anum = !isNaN(chunka);
+            bnum = !isNaN(chunkb);
+            if (anum && !bnum)
+                return -1;
+            if (bnum && !anum)
+                return 1;
+            if (anum && bnum) {
+                diff = chunka - chunkb;
+                if (diff === 0 && chunka.length !== chunkb.length) {
+                    if (!+chunka && !+chunkb) // chunks are strings of all 0s (special case)
+                        return chunka.length - chunkb.length;
+                    else
+                        return chunkb.length - chunka.length;
+                }
+            } else if (chunka !== chunkb)
+                return (chunka < chunkb) ? -1 : 1;
+            a = a.substring(chunka.length);
+            b = b.substring(chunkb.length);
+        }
+        return diff;
     }
 }
 
@@ -109,7 +148,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.removeChildren();
 
         var childObject = this.safePropertyValue(this.parentObject, this.propertyName);
-        var properties = Object.sortedProperties(childObject);
+        var properties = Object.sortedProperties(childObject, WebInspector.ObjectPropertiesSection.prototype._displaySort);
         for (var i = 0; i < properties.length; ++i) {
             var propertyName = properties[i];
             if (propertyName === "__treeElementIdentifier")

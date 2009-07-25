@@ -94,12 +94,12 @@ Object.describe = function(obj, abbreviated)
     }
 }
 
-Object.sortedProperties = function(obj)
+Object.sortedProperties = function(obj, sortFunc)
 {
     var properties = [];
     for (var prop in obj)
         properties.push(prop);
-    properties.sort();
+    properties.sort(sortFunc);
     return properties;
 }
 
