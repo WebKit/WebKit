@@ -1,3 +1,15 @@
+2009-07-25  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Windows build break due to warning C4819
+        https://bugs.webkit.org/show_bug.cgi?id=27416
+
+        Disable C4819 warning to fix build.
+
+        * WebCore.vcproj/QTMovieWin.vcproj:
+        * WebCore.vcproj/WebCore.vcproj:
+
 2009-07-25  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Reviewed by Kevin McCullough.

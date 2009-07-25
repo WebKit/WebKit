@@ -366,6 +366,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4819"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -374,6 +375,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4819"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -382,6 +384,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4819"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -390,6 +393,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4819"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -398,6 +402,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
+						DisableSpecificWarnings="4819"
 					/>
 				</FileConfiguration>
 			</File>
@@ -31145,6 +31150,46 @@
 			<File
 				RelativePath="..\wml\WMLSelectElement.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableSpecificWarnings="4819"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableSpecificWarnings="4819"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableSpecificWarnings="4819"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableSpecificWarnings="4819"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						DisableSpecificWarnings="4819"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\wml\WMLSelectElement.h"
@@ -31212,6 +31257,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
+					DisableSpecificWarnings="4819"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -31220,6 +31266,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
+					DisableSpecificWarnings="4819"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -31228,6 +31275,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
+					DisableSpecificWarnings="4819"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -31236,6 +31284,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
+					DisableSpecificWarnings="4819"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -31244,6 +31293,7 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
+					DisableSpecificWarnings="4819"
 				/>
 			</FileConfiguration>
 		</File>
