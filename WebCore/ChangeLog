@@ -5,7 +5,7 @@
         Canvas: rotation of 'no-repeat' pattern still has small error
         https://bugs.webkit.org/show_bug.cgi?id=26749
 
-        Use (1<<23)/2 as steps of no-repeat pattern to make the error less
+        Use 1<<22 as steps of no-repeat pattern to make the error less
         than 0.5.  The previous value may cause 1 pixel errors.
 
         Add another test to show this bug clearly.
