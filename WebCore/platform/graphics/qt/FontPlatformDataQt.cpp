@@ -21,6 +21,8 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "PlatformString.h"
+
 namespace WebCore {
 
 FontPlatformData::FontPlatformData(const FontDescription& description, int wordSpacing, int letterSpacing)
@@ -77,5 +79,12 @@ FontPlatformData::FontPlatformData()
     , m_oblique(false)
 {
 }
+
+#ifndef NDEBUG
+String FontPlatformData::description() const
+{
+    return String();
+}
+#endif
 
 }

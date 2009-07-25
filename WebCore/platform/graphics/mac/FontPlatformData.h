@@ -45,6 +45,8 @@ typedef UInt32 ATSUFontID;
 
 namespace WebCore {
 
+class String;
+
 #ifndef BUILDING_ON_TIGER
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
 #endif
@@ -116,6 +118,10 @@ struct FontPlatformData {
     CGFontRef cgFont() const { return m_cgFont.get(); }
 #else
     CGFontRef cgFont() const { return m_cgFont; }
+#endif
+
+#ifndef NDEBUG
+    String description() const;
 #endif
 
 private:

@@ -1,3 +1,56 @@
+2009-07-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add functions to print the glyph page trees for debugging
+        https://bugs.webkit.org/show_bug.cgi?id=27671
+
+        * platform/graphics/FontData.h: Defined a description() method.
+
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::showSubtree): Added. Prints the node and
+            its descendants.
+        (showGlyphPageTrees): Added. Prints all glyph page trees.
+        (showGlyphPageTree): Added. Prints the glyph page tree for a given page.
+        * platform/graphics/GlyphPageTreeNode.h:
+
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::description): Added.
+
+        * platform/graphics/SegmentedFontData.h:
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::description): Added. Uses the platform data
+            as the description for non-svg, non-custom fonts.
+        * platform/graphics/SimpleFontData.h:
+
+        * platform/graphics/gtk/FontPlatformData.h:
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::description): Added. Returns a null string.
+        * platform/graphics/gtk/FontPlatformDataPango.cpp:
+        (WebCore::FontPlatformData::description): Added. Returns a null string.
+
+        * platform/graphics/mac/FontPlatformData.h:
+        * platform/graphics/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::description): Added. Returns the
+            description of the CGFont, the size and the synthetic style flags,
+            if set.
+
+        * platform/graphics/qt/FontPlatformData.h:
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::description): Added. Returns a null string.
+
+        * platform/graphics/win/FontPlatformData.h:
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::description): Added. Returns a null string.
+
+        * platform/graphics/wince/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::description): Added. Returns a null string.
+        * platform/graphics/wince/FontPlatformData.h:
+
+        * platform/graphics/wx/FontPlatformData.h:
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::description): Added. Returns a null string.
+
 2009-07-24  Mads Ager  <ager@chromium.org>
 
         Reviewed by Adam Barth.

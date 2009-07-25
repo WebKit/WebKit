@@ -24,10 +24,11 @@
 #define FontPlatformData_h
 
 #include "FontDescription.h"
-
 #include <QFont>
 
 namespace WebCore {
+
+class String;
 
 class FontPlatformData
 {
@@ -46,6 +47,10 @@ public:
     bool italic() const { return m_font.italic(); }
     bool smallCaps() const { return m_font.capitalization() == QFont::SmallCaps; }
     int pixelSize() const { return m_font.pixelSize(); }
+
+#ifndef NDEBUG
+    String description() const;
+#endif
 
     float m_size;
     bool m_bold;

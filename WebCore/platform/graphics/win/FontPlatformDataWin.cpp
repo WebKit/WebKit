@@ -85,4 +85,11 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
 {
 }
 
+#ifndef NDEBUG
+String FontPlatformData::description() const
+{
+    return String();
+}
+#endif
+
 }

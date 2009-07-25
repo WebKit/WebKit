@@ -27,7 +27,7 @@
 #include "FontPlatformData.h"
 
 #include "FontDescription.h"
-
+#include "PlatformString.h"
 #include <wx/defs.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -121,5 +121,12 @@ FontPlatformData::~FontPlatformData()
     m_fontState = UNINITIALIZED;
     m_font = 0;
 }
+
+#ifndef NDEBUG
+String FontPlatformData::description() const
+{
+    return String();
+}
+#endif
 
 }

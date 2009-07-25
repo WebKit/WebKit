@@ -40,6 +40,8 @@
 
 namespace WebCore {
 
+class String;
+
 class FontHolder: public WTF::RefCounted<FontHolder>
 {
 public:
@@ -111,7 +113,9 @@ public:
 
     bool isHashTableDeletedValue() const { return m_fontState == DELETED; }
     
-    
+#ifndef NDEBUG
+    String description() const;
+#endif
 
 private:
     WTF::RefPtr<FontHolder> m_font;

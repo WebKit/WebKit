@@ -190,4 +190,16 @@ bool SimpleFontData::isSegmented() const
     return false;
 }
 
+#ifndef NDEBUG
+String SimpleFontData::description() const
+{
+    if (isSVGFont())
+        return "[SVG font]";
+    if (isCustomFont())
+        return "[custom font]";
+
+    return platformData().description();
+}
+#endif
+
 } // namespace WebCore

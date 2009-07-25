@@ -259,4 +259,11 @@ bool FontPlatformData::operator==(const FontPlatformData& other) const
     return FcPatternEqual(m_pattern, other.m_pattern);
 }
 
+#ifndef NDEBUG
+String FontPlatformData::description() const
+{
+    return String();
+}
+#endif
+
 }

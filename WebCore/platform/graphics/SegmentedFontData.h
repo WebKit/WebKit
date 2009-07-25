@@ -59,6 +59,10 @@ public:
     unsigned numRanges() const { return m_ranges.size(); }
     const FontDataRange& rangeAt(unsigned i) const { return m_ranges[i]; }
 
+#ifndef NDEBUG
+    virtual String description() const;
+#endif
+
 private:
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
     virtual bool containsCharacters(const UChar*, int length) const;

@@ -24,6 +24,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontData.h"
+#include "PlatformString.h"
 #include "SimpleFontData.h"
 #include "UnicodeRange.h"
 #include "wtf/OwnPtr.h"
@@ -521,5 +522,11 @@ LONG FontPlatformData::adjustedGDIFontWeight(LONG gdiFontWeight, const String& f
     return gdiFontWeight;
 }
 
+#ifndef NDEBUG
+String FontPlatformData::description() const
+{
+    return String();
 }
+#endif
 
+}
