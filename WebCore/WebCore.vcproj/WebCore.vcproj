@@ -6326,7 +6326,7 @@
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.cpcpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpcpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6370,11 +6370,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
 				>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.cpp"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -6418,7 +6418,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorController.h"
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSInspectorBackend.h"
 				>
 			</File>
 			<File
@@ -28598,7 +28598,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSInspectorControllerCustom.cpp"
+					RelativePath="..\bindings\js\JSInspectorBackendCustom.cpp"
 					>
 				</File>
 				<File
@@ -30624,6 +30624,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\ConsoleMessage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorBackend.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorBackend.h"
 				>
 			</File>
 			<File
