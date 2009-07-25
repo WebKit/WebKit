@@ -1098,12 +1098,18 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         // Call setDataSource on the document view after it has been placed in the view hierarchy.
         // This what we for the top-level view, so should do this for views in subframes as well.
         [documentView setDataSource:dataSource];
+
+        // The following is a no-op for WebHTMLRepresentation, but for custom document types
+        // like the ones that Safari uses for bookmarks it is the only way the DocumentLoader
+        // will get the proper title.
+        if (DocumentLoader* documentLoader = [dataSource _documentLoader])
+            documentLoader->setTitle([dataSource pageTitle]);
     }
-    
+
     if (HTMLFrameOwnerElement* owner = coreFrame->ownerElement())
         coreFrame->view()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarAlwaysOff);
         
-    // If the WebHTMLView implicitly became first responder, make sure to set the focused frame properly.
+    // If the dorument view implicitly became first responder, make sure to set the focused frame properly.
     if (usesDocumentViews && [[documentView window] firstResponder] == documentView) {
         page->focusController()->setFocusedFrame(coreFrame);
         page->focusController()->setFocused(true);
