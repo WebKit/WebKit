@@ -1,3 +1,60 @@
+2009-07-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Split InspectorController into InspectorController
+        and InspectorBackend. Everything frontend needs from InspectorController
+        will slowly migrate into the InspectorBackend.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27541
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSInspectorBackendCustom.cpp: Added.
+        (WebCore::JSInspectorBackend::highlightDOMNode):
+        (WebCore::JSInspectorBackend::search):
+        (WebCore::JSInspectorBackend::databaseTableNames):
+        (WebCore::JSInspectorBackend::inspectedWindow):
+        (WebCore::JSInspectorBackend::setting):
+        (WebCore::JSInspectorBackend::setSetting):
+        (WebCore::JSInspectorBackend::wrapCallback):
+        (WebCore::JSInspectorBackend::currentCallFrame):
+        (WebCore::JSInspectorBackend::profiles):
+        * bindings/v8/custom/V8InspectorBackendCustom.cpp: Added.
+        (WebCore::CALLBACK_FUNC_DECL):
+        * bindings/js/JSInspectorControllerCustom.cpp: Removed.
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        * bindings/js/ScriptObject.h:
+        * bindings/v8/DOMObjectsInclude.h:
+        * bindings/v8/DerivedSourcesAllInOne.cpp:
+        * bindings/v8/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        * bindings/v8/ScriptObject.h:
+        * bindings/v8/V8Index.cpp:
+        * bindings/v8/V8Index.h:
+        * bindings/v8/custom/V8CustomBinding.h:
+        * bindings/v8/custom/V8InspectorControllerCustom.cpp: Removed.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorBackend):
+        * inspector/InspectorBackend.cpp: Added.
+        * inspector/InspectorBackend.h: Added.
+        (WebCore::InspectorBackend::create):
+        (WebCore::InspectorBackend::inspectorController):
+        * inspector/InspectorBackend.idl: Added.
+        * inspector/InspectorController.idl: Removed.
+        * inspector/front-end/Resource.js:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+
 2009-07-25  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by George Staikos.

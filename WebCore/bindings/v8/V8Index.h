@@ -334,7 +334,7 @@ typedef v8::Persistent<v8::FunctionTemplate> (*FunctionTemplateFactory)();
     V(HTMLOPTIONSCOLLECTION, HTMLOptionsCollection)                     \
     V(IMAGEDATA, ImageData)                                             \
     V(CANVASPIXELARRAY, CanvasPixelArray)                               \
-    V(INSPECTORCONTROLLER, InspectorController)                         \
+    V(INSPECTORBACKEND, InspectorBackend)                               \
     V(KEYBOARDEVENT, KeyboardEvent)                                     \
     V(LOCATION, Location)                                               \
     V(MEDIALIST, MediaList)

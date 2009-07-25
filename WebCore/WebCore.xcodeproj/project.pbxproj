@@ -688,9 +688,8 @@
 		41E1B1D30FF5986900576B3B /* SharedWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E1B1CD0FF5986900576B3B /* SharedWorker.cpp */; };
 		41E1B1D40FF5986900576B3B /* SharedWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CE0FF5986900576B3B /* SharedWorker.h */; };
 		41E1B1D50FF5986900576B3B /* SharedWorker.idl in Resources */ = {isa = PBXBuildFile; fileRef = 41E1B1CF0FF5986900576B3B /* SharedWorker.idl */; };
-		41F060CD0F5EEB2B00A07EAC /* JSInspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F060CB0F5EEB2B00A07EAC /* JSInspectorController.cpp */; };
-		41F060CE0F5EEB2B00A07EAC /* JSInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F060CC0F5EEB2B00A07EAC /* JSInspectorController.h */; };
-		41F0616A0F5EFBDD00A07EAC /* JSInspectorControllerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F061690F5EFBDD00A07EAC /* JSInspectorControllerCustom.cpp */; };
+		41F060CD0F5EEB2B00A07EAC /* JSInspectorBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F060CB0F5EEB2B00A07EAC /* JSInspectorBackend.cpp */; };
+		41F060CE0F5EEB2B00A07EAC /* JSInspectorBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F060CC0F5EEB2B00A07EAC /* JSInspectorBackend.h */; };
 		41F061740F5F00AC00A07EAC /* InspectorDOMStorageResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */; };
 		41F061750F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */; };
 		41F0618E0F5F069800A07EAC /* ConsoleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F0618C0F5F069800A07EAC /* ConsoleMessage.h */; };
@@ -1023,6 +1022,10 @@
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */; };
 		7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */; };
+		7A74ECB71018399A00BF939E /* InspectorBackend.idl in Resources */ = {isa = PBXBuildFile; fileRef = 7A74ECB61018399A00BF939E /* InspectorBackend.idl */; };
+		7A74ECBA101839A600BF939E /* InspectorBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECB8101839A500BF939E /* InspectorBackend.cpp */; };
+		7A74ECBB101839A600BF939E /* InspectorBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A74ECB9101839A600BF939E /* InspectorBackend.h */; };
+		7A74ECBD101839DA00BF939E /* JSInspectorBackendCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECBC101839DA00BF939E /* JSInspectorBackendCustom.cpp */; };
 		7AB6F8870FB9D27100805D02 /* InspectorJSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB6F8850FB9D27100805D02 /* InspectorJSONObject.cpp */; };
 		7AB6F8880FB9D27100805D02 /* InspectorJSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB6F8860FB9D27100805D02 /* InspectorJSONObject.h */; };
 		7AED3E050FBB1EAA00D2B03C /* InspectorFrontend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */; };
@@ -5656,10 +5659,8 @@
 		41E1B1CD0FF5986900576B3B /* SharedWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedWorker.cpp; path = workers/SharedWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CE0FF5986900576B3B /* SharedWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedWorker.h; path = workers/SharedWorker.h; sourceTree = "<group>"; };
 		41E1B1CF0FF5986900576B3B /* SharedWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SharedWorker.idl; path = workers/SharedWorker.idl; sourceTree = "<group>"; };
-		41F060AA0F5EE8BB00A07EAC /* InspectorController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InspectorController.idl; sourceTree = "<group>"; };
-		41F060CB0F5EEB2B00A07EAC /* JSInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorController.cpp; sourceTree = "<group>"; };
-		41F060CC0F5EEB2B00A07EAC /* JSInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorController.h; sourceTree = "<group>"; };
-		41F061690F5EFBDD00A07EAC /* JSInspectorControllerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorControllerCustom.cpp; sourceTree = "<group>"; };
+		41F060CB0F5EEB2B00A07EAC /* JSInspectorBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorBackend.cpp; sourceTree = "<group>"; };
+		41F060CC0F5EEB2B00A07EAC /* JSInspectorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInspectorBackend.h; sourceTree = "<group>"; };
 		41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDOMStorageResource.h; sourceTree = "<group>"; };
 		41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMStorageResource.cpp; sourceTree = "<group>"; };
 		41F0618C0F5F069800A07EAC /* ConsoleMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleMessage.h; sourceTree = "<group>"; };
@@ -6045,6 +6046,10 @@
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
 		7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroupLoadDeferrer.cpp; sourceTree = "<group>"; };
 		7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroupLoadDeferrer.h; sourceTree = "<group>"; };
+		7A74ECB61018399A00BF939E /* InspectorBackend.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InspectorBackend.idl; sourceTree = "<group>"; };
+		7A74ECB8101839A500BF939E /* InspectorBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackend.cpp; sourceTree = "<group>"; };
+		7A74ECB9101839A600BF939E /* InspectorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackend.h; sourceTree = "<group>"; };
+		7A74ECBC101839DA00BF939E /* JSInspectorBackendCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorBackendCustom.cpp; sourceTree = "<group>"; };
 		7AB6F8850FB9D27100805D02 /* InspectorJSONObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorJSONObject.cpp; sourceTree = "<group>"; };
 		7AB6F8860FB9D27100805D02 /* InspectorJSONObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorJSONObject.h; sourceTree = "<group>"; };
 		7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontend.cpp; sourceTree = "<group>"; };
@@ -9812,8 +9817,8 @@
 		1C5FAECA0DCFD8C900D58F78 /* Inspector */ = {
 			isa = PBXGroup;
 			children = (
-				41F060CB0F5EEB2B00A07EAC /* JSInspectorController.cpp */,
-				41F060CC0F5EEB2B00A07EAC /* JSInspectorController.h */,
+				41F060CB0F5EEB2B00A07EAC /* JSInspectorBackend.cpp */,
+				41F060CC0F5EEB2B00A07EAC /* JSInspectorBackend.h */,
 				1C5FAECF0DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp */,
 				1C5FAED00DCFD90100D58F78 /* JSJavaScriptCallFrame.h */,
 			);
@@ -9826,10 +9831,12 @@
 				1C81B9590E97330800266E07 /* front-end */,
 				41F0618D0F5F069800A07EAC /* ConsoleMessage.cpp */,
 				41F0618C0F5F069800A07EAC /* ConsoleMessage.h */,
+				7A74ECB8101839A500BF939E /* InspectorBackend.cpp */,
+				7A74ECB9101839A600BF939E /* InspectorBackend.h */,
+				7A74ECB61018399A00BF939E /* InspectorBackend.idl */,
 				1C81B9580E97330800266E07 /* InspectorClient.h */,
 				1C81B9570E97330800266E07 /* InspectorController.cpp */,
 				1C81B9560E97330800266E07 /* InspectorController.h */,
-				41F060AA0F5EE8BB00A07EAC /* InspectorController.idl */,
 				41F062130F5F192600A07EAC /* InspectorDatabaseResource.cpp */,
 				41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */,
 				41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */,
@@ -13673,7 +13680,7 @@
 				BC17F9650B64EBB8004A65CB /* JSHTMLSelectElementCustom.cpp */,
 				AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */,
 				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
-				41F061690F5EFBDD00A07EAC /* JSInspectorControllerCustom.cpp */,
+				7A74ECBC101839DA00BF939E /* JSInspectorBackendCustom.cpp */,
 				1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
 				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,
@@ -16104,7 +16111,7 @@
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				C091588B0DB4209200E55AF4 /* JSInspectedObjectWrapper.h in Headers */,
 				C091588D0DB4209200E55AF4 /* JSInspectorCallbackWrapper.h in Headers */,
-				41F060CE0F5EEB2B00A07EAC /* JSInspectorController.h in Headers */,
+				41F060CE0F5EEB2B00A07EAC /* JSInspectorBackend.h in Headers */,
 				1C5FAED20DCFD90100D58F78 /* JSJavaScriptCallFrame.h in Headers */,
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
@@ -17048,6 +17055,7 @@
 				2ECF7AE210162B5800427DE7 /* ErrorEvent.h in Headers */,
 				A8EDB03D1016849400FE8113 /* DOMObjectWithSVGContext.h in Headers */,
 				CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */,
+				7A74ECBB101839A600BF939E /* InspectorBackend.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17161,6 +17169,7 @@
 				15C7708C100D3C6A005BA267 /* ValidityState.idl in Resources */,
 				4162A452101145AE00DFF3ED /* DedicatedWorkerContext.idl in Resources */,
 				2ECF7AE310162B5800427DE7 /* ErrorEvent.idl in Resources */,
+				7A74ECB71018399A00BF939E /* InspectorBackend.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18181,8 +18190,7 @@
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
 				C091588A0DB4209200E55AF4 /* JSInspectedObjectWrapper.cpp in Sources */,
 				C091588C0DB4209200E55AF4 /* JSInspectorCallbackWrapper.cpp in Sources */,
-				41F060CD0F5EEB2B00A07EAC /* JSInspectorController.cpp in Sources */,
-				41F0616A0F5EFBDD00A07EAC /* JSInspectorControllerCustom.cpp in Sources */,
+				41F060CD0F5EEB2B00A07EAC /* JSInspectorBackend.cpp in Sources */,
 				1C5FAED10DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp in Sources */,
 				1C5FAEE70DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp in Sources */,
 				A86629D409DA2B48009633A5 /* JSKeyboardEvent.cpp in Sources */,
@@ -19087,6 +19095,8 @@
 				2ECF7ADC10162B3800427DE7 /* JSErrorEvent.cpp in Sources */,
 				2ECF7AE110162B5800427DE7 /* ErrorEvent.cpp in Sources */,
 				BCAEFCAE1016CE4A0040D34E /* DOMRGBColor.mm in Sources */,
+				7A74ECBA101839A600BF939E /* InspectorBackend.cpp in Sources */,
+				7A74ECBD101839DA00BF939E /* JSInspectorBackendCustom.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

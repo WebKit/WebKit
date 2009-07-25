@@ -341,12 +341,6 @@ WebInspector.Resource.prototype = {
         }
     },
 
-    get documentNode() {
-        if ("identifier" in this)
-            return InspectorController.getResourceDocumentNode(this.identifier);
-        return null;
-    },
-
     get requestHeaders()
     {
         if (this._requestHeaders === undefined)

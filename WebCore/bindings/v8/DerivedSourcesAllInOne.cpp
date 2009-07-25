@@ -152,7 +152,7 @@
 #include "bindings/V8HTMLUListElement.cpp"
 #include "bindings/V8HTMLVideoElement.cpp"
 #include "bindings/V8ImageData.cpp"
-#include "bindings/V8InspectorController.cpp"
+#include "bindings/V8InspectorBackend.cpp"
 #include "bindings/V8KeyboardEvent.cpp"
 #include "bindings/V8Location.cpp"
 #include "bindings/V8MediaError.cpp"

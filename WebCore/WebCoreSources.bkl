@@ -105,8 +105,8 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSImageConstructor.cpp
         bindings/js/JSImageDataCustom.cpp
         bindings/js/JSInspectedObjectWrapper.cpp
+        bindings/js/JSInspectorBackendCustom.cpp
         bindings/js/JSInspectorCallbackWrapper.cpp
-        bindings/js/JSInspectorControllerCustom.cpp
         bindings/js/JSJavaScriptCallFrameCustom.cpp
         bindings/js/JSLocationCustom.cpp
         bindings/js/JSMessageChannelConstructor.cpp
@@ -353,7 +353,7 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSHTMLUListElement.cpp
         DerivedSources/WebCore/JSHistory.cpp
         DerivedSources/WebCore/JSImageData.cpp
-        DerivedSources/WebCore/JSInspectorController.cpp
+        DerivedSources/WebCore/JSInspectorBackend.cpp
         DerivedSources/WebCore/JSJavaScriptCallFrame.cpp
         DerivedSources/WebCore/JSKeyboardEvent.cpp
         DerivedSources/WebCore/JSLocation.cpp
@@ -661,6 +661,7 @@ This file contains the list of files needed to build WebCore.
 
     <set append="1" var="WEBCORE_SOURCES_INSPECTOR">
         inspector/ConsoleMessage.cpp
+        inspector/InspectorBackend.cpp
         inspector/InspectorDatabaseResource.cpp
         inspector/InspectorDOMStorageResource.cpp
         inspector/InspectorController.cpp

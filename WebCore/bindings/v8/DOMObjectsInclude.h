@@ -85,7 +85,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLOptionsCollection.h"
 #include "ImageData.h"
-#include "InspectorController.h"
+#include "InspectorBackend.h"
 #include "KeyboardEvent.h"
 #include "Location.h"
 #include "MediaError.h"

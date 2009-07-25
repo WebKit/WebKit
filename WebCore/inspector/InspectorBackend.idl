@@ -33,24 +33,23 @@
 module core {
     interface [
         GenerateConstructor
-    ] InspectorController {
-        [ImplementationFunction=hideHighlight] void hideDOMNodeHighlight();
+    ] InspectorBackend {
+        void hideDOMNodeHighlight();
         [Custom] void highlightDOMNode(in Node node);
-        [ImplementationFunction=scriptObjectReady] void loaded();
-        [ImplementationFunction=close] void windowUnloading();
-        [ImplementationFunction=attachWindow] void attach();
-        [ImplementationFunction=detachWindow] void detach();
+        void loaded();
+        void windowUnloading();
+        void attach();
+        void detach();
 
         void closeWindow();
-        [ImplementationFunction=clearConsoleMessages] void clearMessages();
-        [ImplementationFunction=toggleSearchForNodeInPage] void toggleNodeSearch();
+        void clearMessages();
+        void toggleNodeSearch();
 
-        [ImplementationFunction=windowVisible] boolean isWindowVisible();
-        [ImplementationFunction=searchingForNodeInPage] boolean searchingForNode();
+        boolean isWindowVisible();
+        boolean searchingForNode();
 
         void addResourceSourceToFrame(in long identifier, in Node frame);
         boolean addSourceToFrame(in DOMString mimeType, in DOMString sourceValue, in Node frame);
-        [Custom] Node getResourceDocumentNode(in long long identifier);
         [Custom] void search(in Node node, in DOMString query);
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
         [Custom] DOMObject databaseTableNames(in Database database);
@@ -70,24 +69,31 @@ module core {
         void storeLastActivePanel(in DOMString panelName);
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        void enableDebuggerFromFrontend(in boolean always);
+        boolean debuggerEnabled();
+        void enableDebugger(in boolean always);
         void disableDebugger(in boolean always);
+
+        void addBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
+        void removeBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
+
         void pauseInDebugger();
         void resumeDebugger();
+
         void stepOverStatementInDebugger();
         void stepIntoStatementInDebugger();
         void stepOutOfFunctionInDebugger();
-        boolean debuggerEnabled();
+
+        [Custom] DOMObject currentCallFrame();
+
         boolean pauseOnExceptions();
+        void setPauseOnExceptions(in boolean pauseOnExceptions);
+
         boolean profilerEnabled();
-        [ImplementationFunction=startUserInitiatedProfiling] void startProfiling();
-        [ImplementationFunction=stopUserInitiatedProfiling] void stopProfiling();
         void enableProfiler(in boolean always);
         void disableProfiler(in boolean always);
-        [Custom] DOMObject currentCallFrame();
-        void setPauseOnExceptions(in boolean pauseOnExceptions);
-        void addBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
-        void removeBreakpoint(in DOMString sourceID, in unsigned long lineNumber);
+
+        void startProfiling();
+        void stopProfiling();
 
         [Custom] Array profiles();
 #endif

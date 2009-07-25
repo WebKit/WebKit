@@ -386,23 +386,22 @@ namespace WebCore {
         DECLARE_CALLBACK(TreeWalkerNextSibling);
         DECLARE_CALLBACK(TreeWalkerPreviousSibling);
 
-        DECLARE_CALLBACK(InspectorControllerProfiles);
-        DECLARE_CALLBACK(InspectorControllerHighlightDOMNode);
-        DECLARE_CALLBACK(InspectorControllerAddResourceSourceToFrame);
-        DECLARE_CALLBACK(InspectorControllerGetResourceDocumentNode);
-        DECLARE_CALLBACK(InspectorControllerAddSourceToFrame);
-        DECLARE_CALLBACK(InspectorControllerSearch);
-        DECLARE_CALLBACK(InspectorControllerSetting);
-        DECLARE_CALLBACK(InspectorControllerInspectedWindow);
-        DECLARE_CALLBACK(InspectorControllerSetSetting);
-        DECLARE_CALLBACK(InspectorControllerCurrentCallFrame);
-        DECLARE_CALLBACK(InspectorControllerDebuggerEnabled);
-        DECLARE_CALLBACK(InspectorControllerPauseOnExceptions);
-        DECLARE_CALLBACK(InspectorControllerProfilerEnabled);
+        DECLARE_CALLBACK(InspectorBackendProfiles);
+        DECLARE_CALLBACK(InspectorBackendHighlightDOMNode);
+        DECLARE_CALLBACK(InspectorBackendAddResourceSourceToFrame);
+        DECLARE_CALLBACK(InspectorBackendAddSourceToFrame);
+        DECLARE_CALLBACK(InspectorBackendSearch);
+        DECLARE_CALLBACK(InspectorBackendSetting);
+        DECLARE_CALLBACK(InspectorBackendInspectedWindow);
+        DECLARE_CALLBACK(InspectorBackendSetSetting);
+        DECLARE_CALLBACK(InspectorBackendCurrentCallFrame);
+        DECLARE_CALLBACK(InspectorBackendDebuggerEnabled);
+        DECLARE_CALLBACK(InspectorBackendPauseOnExceptions);
+        DECLARE_CALLBACK(InspectorBackendProfilerEnabled);
 #if ENABLE(DATABASE)
-        DECLARE_CALLBACK(InspectorControllerDatabaseTableNames);
+        DECLARE_CALLBACK(InspectorBackendDatabaseTableNames);
 #endif
-        DECLARE_CALLBACK(InspectorControllerWrapCallback);
+        DECLARE_CALLBACK(InspectorBackendWrapCallback);
 
         DECLARE_CALLBACK(NodeIteratorNextNode);
         DECLARE_CALLBACK(NodeIteratorPreviousNode);

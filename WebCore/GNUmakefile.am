@@ -231,7 +231,7 @@ IDL_BINDINGS += \
 	WebCore/html/ValidityState.idl \
 	WebCore/html/VoidCallback.idl \
 	WebCore/inspector/JavaScriptCallFrame.idl \
-	WebCore/inspector/InspectorController.idl \
+	WebCore/inspector/InspectorBackend.idl \
 	WebCore/page/BarInfo.idl \
 	WebCore/page/Console.idl \
 	WebCore/page/Coordinates.idl \
@@ -365,11 +365,11 @@ webcore_sources += \
 	WebCore/bindings/js/JSImageConstructor.cpp \
 	WebCore/bindings/js/JSImageConstructor.h \
 	WebCore/bindings/js/JSImageDataCustom.cpp \
+	WebCore/bindings/js/JSInspectorBackendCustom.cpp \
 	WebCore/bindings/js/JSInspectedObjectWrapper.cpp \
 	WebCore/bindings/js/JSInspectedObjectWrapper.h \
 	WebCore/bindings/js/JSInspectorCallbackWrapper.cpp \
 	WebCore/bindings/js/JSInspectorCallbackWrapper.h \
-	WebCore/bindings/js/JSInspectorControllerCustom.cpp \
 	WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	WebCore/bindings/js/JSLazyEventListener.cpp \
 	WebCore/bindings/js/JSLazyEventListener.h \
@@ -1118,6 +1118,8 @@ webcore_sources += \
 	WebCore/icu/unicode/uversion.h \
 	WebCore/inspector/ConsoleMessage.cpp \
 	WebCore/inspector/ConsoleMessage.h \
+	WebCore/inspector/InspectorBackend.cpp \
+	WebCore/inspector/InspectorBackend.h \
 	WebCore/inspector/InspectorDatabaseResource.cpp \
 	WebCore/inspector/InspectorDatabaseResource.h \
 	WebCore/inspector/InspectorDOMStorageResource.cpp \

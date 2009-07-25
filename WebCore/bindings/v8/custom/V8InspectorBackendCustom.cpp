@@ -29,12 +29,13 @@
  */
 
 #include "config.h"
-#include "InspectorController.h"
+#include "InspectorBackend.h"
 
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "ExceptionCode.h"
+#include "InspectorController.h"
 #include "InspectorResource.h"
 #include "NotImplemented.h"
 #include "Node.h"
@@ -49,9 +50,9 @@
 
 namespace WebCore {
 
-CALLBACK_FUNC_DECL(InspectorControllerHighlightDOMNode)
+CALLBACK_FUNC_DECL(InspectorBackendHighlightDOMNode)
 {
-    INC_STATS("InspectorController.highlightDOMNode()");
+    INC_STATS("InspectorBackend.highlightDOMNode()");
 
     if (args.Length() < 1)
         return v8::Undefined();
@@ -60,42 +61,15 @@ CALLBACK_FUNC_DECL(InspectorControllerHighlightDOMNode)
     if (!node)
         return v8::Undefined();
 
-    InspectorController* inspectorController = V8DOMWrapper::convertToNativeObject<InspectorController>(V8ClassIndex::INSPECTORCONTROLLER, args.Holder());
-    inspectorController->highlight(node);
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    inspectorBackend->highlight(node);
 
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(InspectorControllerGetResourceDocumentNode)
+CALLBACK_FUNC_DECL(InspectorBackendSearch)
 {
-    INC_STATS("InspectorController.getResourceDocumentNode()");
-
-    if (args.Length() < 1)
-        return v8::Undefined();
-
-    if (!args[1]->IsNumber())
-        return v8::Undefined();
-
-    unsigned identifier = args[1]->Int32Value();
-
-    InspectorController* inspectorController = V8DOMWrapper::convertToNativeObject<InspectorController>(V8ClassIndex::INSPECTORCONTROLLER, args.Holder());
-    RefPtr<InspectorResource> resource = inspectorController->resources().get(identifier);
-    ASSERT(resource);
-    if (!resource)
-        return v8::Undefined();
-
-    Frame* frame = resource->frame();
-    Document* document = frame->document();
-
-    if (document->isPluginDocument() || document->isImageDocument() || document->isMediaDocument())
-        return v8::Undefined();
-
-    return V8DOMWrapper::convertToV8Object(V8ClassIndex::DOCUMENT, document);
-}
-
-CALLBACK_FUNC_DECL(InspectorControllerSearch)
-{
-    INC_STATS("InspectorController.search()");
+    INC_STATS("InspectorBackend.search()");
 
     if (args.Length() < 2)
         return v8::Undefined();
@@ -133,25 +107,28 @@ CALLBACK_FUNC_DECL(InspectorControllerSearch)
 }
 
 #if ENABLE(DATABASE)
-CALLBACK_FUNC_DECL(InspectorControllerDatabaseTableNames)
+CALLBACK_FUNC_DECL(InspectorBackendDatabaseTableNames)
 {
-    INC_STATS("InspectorController.databaseTableNames()");
+    INC_STATS("InspectorBackend.databaseTableNames()");
     v8::Local<v8::Array> result = v8::Array::New(0);
     return result;
 }
 #endif
 
-CALLBACK_FUNC_DECL(InspectorControllerInspectedWindow)
+CALLBACK_FUNC_DECL(InspectorBackendInspectedWindow)
 {
-    INC_STATS("InspectorController.inspectedWindow()");
+    INC_STATS("InspectorBackend.inspectedWindow()");
 
-    InspectorController* inspectorController = V8DOMWrapper::convertToNativeObject<InspectorController>(V8ClassIndex::INSPECTORCONTROLLER, args.Holder());
-    return V8DOMWrapper::convertToV8Object<DOMWindow>(V8ClassIndex::DOMWINDOW, inspectorController->inspectedPage()->mainFrame()->domWindow());
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    InspectorController* ic = inspectorBackend->inspectorController();
+    if (!ic)
+        return v8::Undefined();
+    return V8DOMWrapper::convertToV8Object<DOMWindow>(V8ClassIndex::DOMWINDOW, ic->inspectedPage()->mainFrame()->domWindow());
 }
 
-CALLBACK_FUNC_DECL(InspectorControllerSetting)
+CALLBACK_FUNC_DECL(InspectorBackendSetting)
 {
-    INC_STATS("InspectorController.setting()");
+    INC_STATS("InspectorBackend.setting()");
 
     if (args.Length() < 1)
         return v8::Undefined();
@@ -160,8 +137,11 @@ CALLBACK_FUNC_DECL(InspectorControllerSetting)
     if (key.isEmpty())
         return v8::Undefined();
 
-    InspectorController* inspectorController = V8DOMWrapper::convertToNativeObject<InspectorController>(V8ClassIndex::INSPECTORCONTROLLER, args.Holder());
-    const InspectorController::Setting& setting = inspectorController ->setting(key);
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    InspectorController* ic = inspectorBackend->inspectorController();
+    if (!ic)
+        return v8::Undefined();
+    const InspectorController::Setting& setting = ic->setting(key);
 
     switch (setting.type()) {
         default:
@@ -186,9 +166,9 @@ CALLBACK_FUNC_DECL(InspectorControllerSetting)
     }
 }
 
-CALLBACK_FUNC_DECL(InspectorControllerSetSetting)
+CALLBACK_FUNC_DECL(InspectorBackendSetSetting)
 {
-    INC_STATS("InspectorController.setSetting()");
+    INC_STATS("InspectorBackend.setSetting()");
     if (args.Length() < 2)
         return v8::Undefined();
 
@@ -221,15 +201,17 @@ CALLBACK_FUNC_DECL(InspectorControllerSetSetting)
     } else
         return v8::Undefined();
 
-    InspectorController* inspectorController = V8DOMWrapper::convertToNativeObject<InspectorController>(V8ClassIndex::INSPECTORCONTROLLER, args.Holder());
-    inspectorController->setSetting(key, setting);
+    InspectorBackend* inspectorBackend = V8DOMWrapper::convertToNativeObject<InspectorBackend>(V8ClassIndex::INSPECTORBACKEND, args.Holder());
+    InspectorController* ic = inspectorBackend->inspectorController();
+    if (ic)
+        inspectorBackend->inspectorController()->setSetting(key, setting);
 
     return v8::Undefined();
 }
 
-CALLBACK_FUNC_DECL(InspectorControllerWrapCallback)
+CALLBACK_FUNC_DECL(InspectorBackendWrapCallback)
 {
-    INC_STATS("InspectorController.wrapCallback()");
+    INC_STATS("InspectorBackend.wrapCallback()");
     return args[0];
 }
 
