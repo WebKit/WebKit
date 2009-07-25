@@ -306,9 +306,11 @@ WebInspector.loaded = function()
     var toolbarElement = document.getElementById("toolbar");
     var previousToolbarItem = toolbarElement.children[0];
 
+    this.panelOrder = [];
     for (var panelName in this.panels) {
         var panel = this.panels[panelName];
         var panelToolbarItem = panel.toolbarItem;
+        this.panelOrder.push(panel);
         panelToolbarItem.addEventListener("click", this._toolbarItemClicked.bind(this));
         if (previousToolbarItem)
             toolbarElement.insertBefore(panelToolbarItem, previousToolbarItem.nextSibling);
@@ -527,6 +529,36 @@ WebInspector.documentKeyDown = function(event)
                             this.currentPanel.jumpToPreviousSearchResult();
                     } else if (this.currentPanel.jumpToNextSearchResult)
                         this.currentPanel.jumpToNextSearchResult();
+                    event.preventDefault();
+                }
+
+                break;
+
+            case "U+005B": // [ key
+                if (isMac)
+                    var isRotateLeft = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
+                else
+                    var isRotateLeft = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
+
+                if (isRotateLeft) {
+                    var index = this.panelOrder.indexOf(this.currentPanel);
+                    index = (index === 0) ? this.panelOrder.length - 1 : index - 1;
+                    this.panelOrder[index].toolbarItem.click();
+                    event.preventDefault();
+                }
+
+                break;
+
+            case "U+005D": // ] key
+                if (isMac)
+                    var isRotateRight = event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey;
+                else
+                    var isRotateRight = event.ctrlKey && !event.shiftKey && !event.metaKey && !event.altKey;
+
+                if (isRotateRight) {
+                    var index = this.panelOrder.indexOf(this.currentPanel);
+                    index = (index + 1) % this.panelOrder.length;
+                    this.panelOrder[index].toolbarItem.click();
                     event.preventDefault();
                 }
 

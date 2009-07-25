@@ -1,3 +1,14 @@
+2009-07-25  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Kevin McCullough.
+
+        Inspector: Keyboard Shortcuts to Switch Panels
+        https://bugs.webkit.org/show_bug.cgi?id=27286
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded): save a list of the order of the panels
+        (WebInspector.documentKeyDown): handle the keyboard shortcuts to traverse the panels
+
 2009-07-25  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by George Staikos.
