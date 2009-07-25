@@ -1,3 +1,9 @@
+2009-07-24  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Not reviewed. Add Kevin McCullough as reviewer in bugzilla.py
+
+        * Scripts/modules/bugzilla.py:
+
 2009-07-24  Eli Fidler  <eli.fidler@torchmobile.com>
 
         Reviewed by Adam Treat.

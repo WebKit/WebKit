@@ -153,6 +153,7 @@ class Bugzilla:
         "jmalonzo" : "Jan Alonzo",
         "justin.garcia" : "Justin Garcia",
         "kevino" : "Kevin Ollivier",
+        "kmccullough" : "Kevin McCullough",
         "koivisto" : "Antti Koivisto",
         "levin" : "David Levin",
         "mitz" : "Dan Bernstein",
