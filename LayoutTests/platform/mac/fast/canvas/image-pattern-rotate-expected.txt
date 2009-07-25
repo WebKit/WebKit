@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x82
+  RenderBlock {HTML} at (0,0) size 800x82
+    RenderBody {BODY} at (8,8) size 784x66
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 327x18
+          text run at (0,0) width 327: "You should see (almost) straight vertical line below."
+      RenderBlock {DIV} at (0,18) size 784x48
+        RenderBlock {DIV} at (0,0) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,3) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,6) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,9) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,12) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,15) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,18) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,21) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,24) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,27) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,30) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,33) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,36) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,39) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,42) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
+        RenderBlock {DIV} at (0,45) size 784x3
+          RenderHTMLCanvas {CANVAS} at (0,0) size 3x3
