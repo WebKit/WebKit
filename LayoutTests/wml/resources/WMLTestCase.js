@@ -9,17 +9,18 @@ function createWMLElement(name) {
     return testDocument.createElementNS(wmlNS, "wml:" + name);
 }
 
-function createWMLTestCase(testDescription, substitutesVariables, testName) {
+function createWMLTestCase(testDescription, substitutesVariables, testName, executeImmediately) {
     // Setup default test options
     if (substitutesVariables == null) {
         substitutesVariables = true;
     }
 
     // Setup default test name
-    var usesDefaultTestDocument = false;
     if (testName == null) {
-        usesDefaultTestDocument = true;
+        executeImmediately = false; // Only honored, when testName != null
         testName = relativePathToLayoutTests + "/wml/resources/test-document.wml";
+    } else if (executeImmediately == null) {
+        executeImmediately = true;
     }
 
     // Initialize JS test
@@ -49,6 +50,7 @@ function createWMLTestCase(testDescription, substitutesVariables, testName) {
                 setupTestDocument();
             }
 
+            assureLayout();
             executeTest();
             return;
         }
@@ -62,8 +64,9 @@ function createWMLTestCase(testDescription, substitutesVariables, testName) {
         testDocument.initializeWMLPageState();
 
         // Handle the case of a special WML test document. That's always the case for static WML testcases
-        //(which are NOT created manually using JS in prepareTest). Fire off test immediately for those.
-        if (!usesDefaultTestDocument) {
+        // (which are NOT created manually using JS in prepareTest). Fire off test immediately for those.
+        if (executeImmediately) {
+            assureLayout();
             executeTest();
         }
     }
@@ -71,7 +74,20 @@ function createWMLTestCase(testDescription, substitutesVariables, testName) {
     bodyElement.insertBefore(iframeElement, document.getElementById("description"));
 }
 
-function triggerUpdate(x, y) {
+function assureLayout() {
+    // Assure initial layout finished (variable substitions happen on attach time)
+    var cards = testDocument.getElementsByTagName("card");
+    for (var i = 0; i < cards.length; ++i) {
+        cards[i].offsetTop;
+    }
+}
+
+function startTest(x, y) {
+    assureLayout();
+    triggerMouseEvent(x, y);
+}
+
+function triggerMouseEvent(x, y) {
     // Translation due to HTML content above the WML document in the iframe
     x = x + iframeElement.offsetLeft;
     y = y + iframeElement.offsetTop;
@@ -81,11 +97,6 @@ function triggerUpdate(x, y) {
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
-}
-
-function startTest(x, y) {
-    // Assure first layout finished
-    window.setTimeout("triggerUpdate(" + x + ", " + y + ")", 0);
 }
 
 function completeTest() {

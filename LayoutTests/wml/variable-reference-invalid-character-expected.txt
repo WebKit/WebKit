@@ -2,6 +2,8 @@ CONSOLE MESSAGE: line 0: A variable reference uses invalid syntax.
 CONSOLE MESSAGE: line 0: A variable reference uses invalid syntax.
 CONSOLE MESSAGE: line 0: A variable reference uses invalid syntax.
 CONSOLE MESSAGE: line 0: A variable reference uses invalid syntax.
+CONSOLE MESSAGE: line 0: A variable reference uses invalid syntax.
+CONSOLE MESSAGE: line 0: A variable reference uses invalid syntax.
 WML layout tests - using XHTML scripting
 
 

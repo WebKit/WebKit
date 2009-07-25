@@ -1,0 +1,21 @@
+WML layout tests - using XHTML scripting
+
+
+Tests newcontext attribute handling on cards within the same deck
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result1.textContent is "Test 1/3: var1=''"
+PASS result2.textContent is "Test 2/3: var1=''"
+PASS result3.textContent is "Test 3/3: var2='PASS'"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Test 2/3: var1=''
+Test 3/3: var2='PASS'

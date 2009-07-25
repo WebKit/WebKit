@@ -2,6 +2,20 @@
 
         Reviewed by George Staikos.
 
+        [WML] Variable substitution is buggy
+        https://bugs.webkit.org/show_bug.cgi?id=27677
+
+        Substitute variables upon attach() time instead of insertedIntoDocument(). Otherwhise variable substitution
+        won't work during inter-deck jumps (same URL, different fragment). Covered by new test fast/wml/newcontext-same-deck.html.
+
+        * dom/Text.cpp:
+        (WebCore::Text::attach):
+        * dom/Text.h:
+
+2009-07-25  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         [WML] WMLDoElement doesn't update its RenderButton object upon attach()
         https://bugs.webkit.org/show_bug.cgi?id=27676
 

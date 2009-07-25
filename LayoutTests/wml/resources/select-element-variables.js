@@ -39,7 +39,7 @@ function setupTestDocument() {
 }
 
 function prepareTest() {
-    shouldBeEqualToString("resultElement.textContent", "Selection result: '$result'");
+    shouldBeEqualToString("resultElement.textContent", "Selection result: ''");
     startTest(25, 15);
 }
 

@@ -260,6 +260,19 @@ RenderObject *Text::createRenderer(RenderArena* arena, RenderStyle*)
 
 void Text::attach()
 {
+#if ENABLE(WML)
+    if (document()->isWMLDocument() && !containsOnlyWhitespace()) {
+        String text = m_data;
+        ASSERT(!text.isEmpty());
+
+        text = substituteVariableReferences(text, document());
+
+        ExceptionCode code = 0;
+        setData(text, code);
+        ASSERT(!code);
+    }
+#endif
+
     createRendererIfNeeded();
     CharacterData::attach();
 }
@@ -318,29 +331,6 @@ PassRefPtr<Text> Text::createWithLengthLimit(Document* doc, const String& text, 
         
     return new Text(doc, nodeText);
 }
-
-#if ENABLE(WML)
-void Text::insertedIntoDocument()
-{
-    CharacterData::insertedIntoDocument();
-
-    if (!parentNode()->isWMLElement() || !length())
-        return;
-
-    WMLPageState* pageState = wmlPageStateForDocument(document());
-    if (!pageState->hasVariables())
-        return;
-
-    String text = data();
-    if (!text.impl() || text.impl()->containsOnlyWhitespace())
-        return;
-
-    text = substituteVariableReferences(text, document());
-
-    ExceptionCode ec;
-    setData(text, ec);
-}
-#endif
 
 #ifndef NDEBUG
 void Text::formatForDebugger(char *buffer, unsigned length) const
