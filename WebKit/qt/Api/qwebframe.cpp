@@ -1086,8 +1086,11 @@ QWebElement QWebFrame::documentElement() const
 
 /*!
     \since 4.6
-    Returns a new collection of elements that are children of the frame's
-    document element and that match the given CSS selector \a selectorQuery.
+    Returns a new list of elements matching the given CSS selector \a selectorQuery.
+    If there are no matching elements, an empty list is returned.
+
+    \l{http://www.w3.org/TR/REC-CSS2/selector.html#q1}{Standard CSS2 selector} syntax is
+    used for the query.
 
     \sa QWebElement::findAll()
 */
@@ -1099,8 +1102,11 @@ QList<QWebElement> QWebFrame::findAllElements(const QString &selectorQuery) cons
 /*!
     \since 4.6
     Returns the first element in the frame's document that matches the
-    given CSS selector \a selectorQuery. Returns a null element if there is no
-    match.
+    given CSS selector \a selectorQuery. If there is no matching element, a
+    null element is returned.
+
+    \l{http://www.w3.org/TR/REC-CSS2/selector.html#q1}{Standard CSS2 selector} syntax is
+    used for the query.
 
     \sa QWebElement::findFirst()
 */

@@ -68,6 +68,9 @@ public:
     only the span elements that are children of the paragraph that is classified
     as "intro" paragraph.
 
+    Using findFirst() is more efficient than calling findAll() and extracting the first element
+    only in the returned list.
+
     Alternatively you can manually traverse the document using firstChild() and nextSibling():
 
     \snippet webkitsnippets/webelement/main.cpp Traversing with QWebElement
@@ -176,10 +179,13 @@ bool QWebElement::isNull() const
 }
 
 /*!
-    Returns a new collection of elements that are children of this element
-    and that match the given CSS selector \a selectorQuery.
+    Returns a new list of child elements matching the given CSS selector \a selectorQuery.
+    If there are no matching elements, an empty list is returned.
 
-    The query is specified using \l{http://www.w3.org/TR/REC-CSS2/selector.html#q1}{standard CSS2 selectors}.
+    \l{http://www.w3.org/TR/REC-CSS2/selector.html#q1}{Standard CSS2 selector} syntax is
+    used for the query.
+
+    \note This search is performed recursively.
 */
 QList<QWebElement> QWebElement::findAll(const QString &selectorQuery) const
 {
@@ -203,9 +209,10 @@ QList<QWebElement> QWebElement::findAll(const QString &selectorQuery) const
 /*!
     Returns the first child element that matches the given CSS selector \a selectorQuery.
 
-    This function is equivalent to calling findAll() and taking only the
-    first element in the returned collection of elements. However calling
-    this function is more efficient.
+    \l{http://www.w3.org/TR/REC-CSS2/selector.html#q1}{Standard CSS2 selector} syntax is
+    used for the query.
+
+    \note This search is performed recursively.
 */
 QWebElement QWebElement::findFirst(const QString &selectorQuery) const
 {

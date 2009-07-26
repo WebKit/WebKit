@@ -2,6 +2,16 @@
 
         Reviewed by Simon Hausmann.
 
+        Clean up documentation of QWebElement's findFirst and findAll functions,
+        as well as their QWebFrame counterparts.
+
+        * Api/qwebelement.cpp:
+        * Api/qwebframe.cpp:
+
+2009-07-26  Kavindra Palaraja  <kavindra.palaraja@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Various documentation cleanups
 
         * Fixed qdoc warnings
