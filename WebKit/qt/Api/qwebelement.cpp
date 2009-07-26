@@ -53,20 +53,19 @@ public:
 /*!
     \class QWebElement
     \since 4.6
-    \brief The QWebElement class provides convenience access to DOM elements in a QWebFrame.
+    \brief The QWebElement class provides convenient access to DOM elements in a QWebFrame.
 
-    QWebElement is the main class to provide easy access to the document model.
+    QWebElement is the main class to easily access to the document model.
     The document model is represented by a tree-like structure of DOM elements.
     The root of the tree is called the document element and can be accessed using QWebFrame::documentElement().
 
-    You can reach specific elements by using the findAll() and findFirst() functions, which
-    allow the use of CSS selectors to identify elements.
+    You can reach specific elements using findAll() and findFirst(); the elements
+    are identified through CSS selectors.
 
     \snippet webkitsnippets/webelement/main.cpp FindAll
 
-    The first list contains all span elements in the document. The second list contains
-    only the span elements that are children of the paragraph that is classified
-    as "intro" paragraph.
+    The first list contains all \c span elements in the document. The second list contains
+    \c span elements that are children of \c p, classified with \c intro.
 
     Using findFirst() is more efficient than calling findAll() and extracting the first element
     only in the returned list.
@@ -76,17 +75,23 @@ public:
     \snippet webkitsnippets/webelement/main.cpp Traversing with QWebElement
 
     The underlying content of QWebElement is explicitly shared. Creating a copy of a QWebElement
-    does not create a copy of the content, both instances point to the same underlying element.
+    does not create a copy of the content. Instead, both instances point to the same element.
 
-    The element's attributes can be read using attribute() and changed using setAttribute().
+    The element's attributes can be read using attribute() and modified with setAttribute().
 
-    The content of the child elements can be converted to plain text using toPlainText() and to
-    x(html) using toXml(), and it is possible to replace the content using setPlainText() and setXml().
+    The contents of child elements can be converted to plain text with toPlainText() and to
+    XHTML using toInnerXml(). To also include the element's tag in the output, use toOuterXml().
 
-    Depending on the type of the underlying element there may be extra functionality available, not
-    covered through QWebElement's API. For example a HTML form element can be triggered to submit the
-    entire form. These list of these functions is available through functions() and they can be called
-    directly using callFunction().
+    It is possible to replace the contents using setPlainText() and setInnerXml(). To replace
+    the element itself and its contents, use setOuterXml().
+
+    In the JavaScript DOM interfaces, elements can have additional functions depending on their
+    type. For example an HTML form element can be triggered to submit the entire form to the
+    web server using the submit() function. A list of these special functions can be obtained
+    in QWebElement using functions(); they can be invoked using callFunction().
+
+    Similarly element specific properties can be obtained using scriptableProperties() and
+    read/written using scriptableProperty()/setScriptableProperty().
 */
 
 /*!
