@@ -146,7 +146,7 @@ public:
     if you do not require QWidget attributes. Nevertheless, QtWebKit depends
     on QtGui, so you should use a QApplication instead of QCoreApplication.
 
-    \sa {Previewer Example}, {Browser}
+    \sa {Previewer Example}, {Browser}, {Form Extractor}, {Google Chat}, {Fancy Browser}
 */
 
 /*!
@@ -268,7 +268,7 @@ void QWebView::setPage(QWebPage* page)
     'ftp'. The result is then passed through QUrl's tolerant parser, and
     in the case or success, a valid QUrl is returned, or else a QUrl().
 
-    \section2 Examples:
+    \section1 Examples:
 
     \list
     \o webkit.org becomes http://webkit.org

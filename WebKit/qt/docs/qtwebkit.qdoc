@@ -57,15 +57,12 @@
 
     \section1 Configuring the Build Process
 
-    Applications that use QtWebKit's classes need to be configured to be built
+    Applications using QtWebKit's classes need to be configured to be built
     against the QtWebKit module. The following declaration in a \c qmake
     project file ensures that an application is compiled and linked
     appropriately:
 
     \snippet webkitsnippets/qtwebkit_build_snippet.qdoc 0
-
-    This line is necessary because only the QtCore and QtGui modules are used
-    in the default build process.
 
     To include the definitions of the module's classes, use the following
     directive:
@@ -80,17 +77,24 @@
 
     \snippet webkitsnippets/simple/main.cpp Using QWebView
 
-    QWebView acts as a view onto Web pages, each of which is represented by an
-    instance of the QWebPage class. QWebPage provides access to the document
-    structure in a page, describing features such as frames, the navigation
-    history, and the undo/redo stack for editable content.
+    QWebView is used to view Web pages. An instance of QWebView has one
+    QWebPage. QWebPage provides access to the document structure in a page,
+    describing features such as frames, the navigation history, and the
+    undo/redo stack for editable content.
 
     HTML documents can be nested using frames in a frameset. An individual
-    frame in HTML is represented using the QWebFrame class. It includes the
+    frame in HTML is represented using the QWebFrame class. This class includes the
     bridge to the JavaScript window object and can be painted using QPainter.
-    Each QWebPage has one QWebFrame object as its main frame.
+    Each QWebPage has one QWebFrame object as its main frame, and the main frame
+    may contain many child frames.
 
-    Individual browser features, defaults and other settings can be configured
+    Individual elements of an HTML document can be accessed via DOM JavaScript
+    interfaces from within a web page. The equivalent of this API in QtWebKit
+    is represented by QWebElement. QWebElement objects are obtained using QWebFrame's
+    \l{QWebFrame::}{findAllElements()} and \l{QWebFrame::}{findFirstElement()}
+    functions with CSS selector queries.
+
+    Common web browser features, defaults and other settings can be configured
     through the QWebSettings class. It is possible to provide defaults for all
     QWebPage instances through the default settings. Individual attributes
     can be overidden by the page specific settings object.
@@ -100,7 +104,7 @@
     Since WebKit supports the Netscape Plugin API, Qt applications can display
     Web pages that embed common plugins, as long as the user has the appropriate
     binary files for those plugins installed and the \l{QWebSettings::PluginsEnabled}
-    attribute is set for the application.
+    attribute is enabled for the application.
 
     The following locations are searched for plugins:
 

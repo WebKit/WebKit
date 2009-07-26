@@ -853,6 +853,7 @@ void QWebNetworkManager::doWork()
 
 /*!
   \class QWebNetworkInterface
+  \internal
 
   The QWebNetworkInterface class provides an abstraction layer for
   WebKit's network interface.  It allows to completely replace or

@@ -2,6 +2,22 @@
 
         Reviewed by Simon Hausmann.
 
+        Various documentation cleanups
+
+        * Fixed qdoc warnings
+        * Hide QWebNetworkInterface from the class overview
+        * Mention QWebElement in the module overview
+        * More cleanups
+
+        * Api/qwebframe.cpp:
+        * Api/qwebnetworkinterface.cpp:
+        * Api/qwebview.cpp:
+        * docs/qtwebkit.qdoc:
+
+2009-07-26  Kavindra Palaraja  <kavindra.palaraja@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
         Added missing class diagram referenced from the docs, taken from the Qt
         documentation.
 

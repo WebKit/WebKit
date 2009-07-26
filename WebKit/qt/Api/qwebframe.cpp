@@ -285,7 +285,7 @@ void QWebFramePrivate::renderPrivate(QPainter *painter, const QRegion &clip)
     to be loaded (see requestedUrl()). These methods make possible the retrieval
     of the URL before and after a DNS resolution or a redirection occurs during
     the load process. The requestedUrl() also matches to the URL added to the
-    frame history (\l{QwebHistory}) if load is successful.
+    frame history (\l{QWebHistory}) if load is successful.
 
     The title of an HTML frame can be accessed with the title() property.
     Additionally, a frame may also specify an icon, which can be accessed
