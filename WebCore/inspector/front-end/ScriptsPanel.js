@@ -133,13 +133,11 @@ WebInspector.ScriptsPanel = function()
     for (var pane in this.sidebarPanes)
         this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
 
-    // FIXME: remove the following line of code when the Breakpoints pane has content.
-    this.sidebarElement.removeChild(this.sidebarPanes.breakpoints.element);
-
     this.sidebarPanes.callstack.expanded = true;
     this.sidebarPanes.callstack.addEventListener("call frame selected", this._callFrameSelected, this);
 
     this.sidebarPanes.scopechain.expanded = true;
+    this.sidebarPanes.breakpoints.expanded = true;
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -297,6 +295,11 @@ WebInspector.ScriptsPanel.prototype = {
             this._sourceIDMap[sourceID] = (resource || script);
 
         this._addScriptToFilesMenu(script);
+    },
+
+    scriptOrResourceForID: function(id)
+    {
+        return this._sourceIDMap[id];
     },
 
     addBreakpoint: function(breakpoint)

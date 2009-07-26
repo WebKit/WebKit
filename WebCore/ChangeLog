@@ -1,3 +1,29 @@
+2009-07-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Implement the breakpoints sidebar pane.
+        This change adds simple UI support into the existing
+        BreakpointSidebarPane.
+
+        https://bugs.webkit.org/show_bug.cgi?id=11175
+
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.set enabled):
+        (WebInspector.Breakpoint.prototype.get label):
+        (WebInspector.Breakpoint.prototype.get id):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.BreakpointsSidebarPane):
+        (WebInspector.BreakpointsSidebarPane.prototype.addBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype._appendBreakpointElement):
+        (WebInspector.BreakpointsSidebarPane.prototype._appendBreakpointElement.labelClicked):
+        (WebInspector.BreakpointsSidebarPane.prototype.removeBreakpoint):
+        (WebInspector.BreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.scriptOrResourceForID):
+        * inspector/front-end/inspector.css:
+
 2009-07-16  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Oliver Hunt.

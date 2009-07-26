@@ -3116,3 +3116,41 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     border-left: 1px solid rgb(184, 184, 184);
     margin-left: -1px;
 }
+
+ol.breakpoint-list {
+    -webkit-padding-start: 2px;
+    list-style: none;
+    margin: 0;
+}
+
+.breakpoint-list li {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin: 4px 0;
+}
+
+.breakpoint-list .checkbox-elem {
+    font-size: 10px;
+    margin: 0 4px;
+    vertical-align: top;
+    position: relative;
+    z-index: 1;
+}
+
+.breakpoint-list .source-text {
+    font-family: monospace;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin: 2px 0 0px 20px;
+}
+
+.breakpoint-list a {
+    color: rgb(33%, 33%, 33%);
+    cursor: pointer;
+}
+
+.breakpoint-list a:hover {
+    color: rgb(15%, 15%, 15%);
+}

@@ -29,6 +29,7 @@ WebInspector.Breakpoint = function(url, line, sourceID)
     this.line = line;
     this.sourceID = sourceID;
     this._enabled = true;
+    this._sourceText = "";
 }
 
 WebInspector.Breakpoint.prototype = {
@@ -48,6 +49,28 @@ WebInspector.Breakpoint.prototype = {
             this.dispatchEventToListeners("enabled");
         else
             this.dispatchEventToListeners("disabled");
+    },
+
+    get sourceText()
+    {
+        return this._sourceText;
+    },
+
+    set sourceText(text)
+    {
+        this._sourceText = text;
+        this.dispatchEventToListeners("text-changed");
+    },
+
+    get label()
+    {
+        var displayName = (this.url ? WebInspector.displayNameForURL(this.url) : WebInspector.UIString("(program)"));
+        return displayName + ":" + this.line;
+    },
+
+    get id()
+    {
+        return this.sourceID + ":" + this.line;
     }
 }
 

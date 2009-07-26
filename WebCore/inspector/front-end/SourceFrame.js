@@ -371,6 +371,8 @@ WebInspector.SourceFrame.prototype = {
         if (!sourceRow)
             return;
 
+        breakpoint.sourceText = sourceRow.getElementsByClassName('webkit-line-content')[0].textContent;
+
         this._drawBreakpointImagesIfNeeded();
 
         sourceRow._breakpointObject = breakpoint;
