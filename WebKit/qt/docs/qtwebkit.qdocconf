@@ -9,6 +9,7 @@ outputdir = $OUTPUT_DIR/doc/html
 outputformats = HTML
 sources.fileextensions  = "*.cpp *.doc *.qdoc *.h"
 exampledirs = $SRCDIR/WebKit/qt/docs
+imagedirs = $SRCDIR/WebKit/qt/docs
 
 indexes = $QTDIR/doc/html/qt.index
 

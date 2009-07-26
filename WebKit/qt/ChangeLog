@@ -1,3 +1,14 @@
+2009-07-26  Kavindra Palaraja  <kavindra.palaraja@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added missing class diagram referenced from the docs, taken from the Qt
+        documentation.
+
+        * docs/qtwebkit.qdocconf: Register the image directory with
+        qdoc.
+        * docs/qwebview-diagram.png: Added.
+
 2009-07-24  Antonio Gomes   <antonio.gomes@openbossa.org>
 
         Reviewed by Adam Treat.
