@@ -5918,6 +5918,7 @@ fast/backgrounds/size/backgroundSize22.html
 fast/box-shadow/inset.html
 fast/box-shadow/spread.html
 fast/box-shadow/transform-fringing.html
+fast/canvas/image-pattern-rotate.html
 fast/css/attribute-selector-dynamic.xml
 fast/css/nested-floating-relative-position-percentages.html
 fast/css/nth-child-dynamic.html

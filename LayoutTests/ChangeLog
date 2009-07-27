@@ -1,3 +1,10 @@
+2009-07-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Add fast/canvas/image-pattern-rotate.html to Skipped as it needs
+        platform-specific expected results.
+
+        * platform/gtk/Skipped:
+
 2009-07-16  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Reviewed by Oliver Hunt.
