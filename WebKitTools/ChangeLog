@@ -1,3 +1,11 @@
+2009-07-27  Gabor Rapcsanyi  <rapcsanyi.gabor@stud.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Generating remote links causes a lot of unnecessary spew on Qt build bot too
+
+        * Scripts/run-webkit-tests:
+
 2009-07-25  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.
