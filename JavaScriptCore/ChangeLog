@@ -1,5 +1,12 @@
 2009-07-27  Brian Weinstein  <bweinstein@apple.com>
 
+        Fix of misuse of sort command.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-07-27  Brian Weinstein  <bweinstein@apple.com>
+
         Build fix for Windows.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
