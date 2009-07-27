@@ -1,3 +1,15 @@
+2009-07-27  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correct, no review.
+
+        Final correction for WinCairo builds.
+        CoreServices only exists in Apple builds, but
+        some of its internal includes (e.g., <windows.h>) are needed
+        for other Windows targets.
+
+        * WebCorePrefix.h: When building for WinCairo, make sure
+          to include <windows.h>, <stdio.h>, and <ConditionalMacros.h>
+
 2009-07-27  Michelangelo De Simone  <micdesim@gmail.com>
 
         Reviewed by Darin Adler.
