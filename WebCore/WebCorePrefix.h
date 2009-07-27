@@ -107,6 +107,9 @@
 
 #ifndef BUILDING_WX__
 #include <CoreFoundation/CoreFoundation.h>
+#endif
+
+#if defined(__APPLE__)
 #include <CoreServices/CoreServices.h>
 #endif
 
