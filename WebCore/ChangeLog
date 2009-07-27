@@ -1,5 +1,14 @@
 2009-07-26  Brent Fulgham  <bfulgham@webkit.org>
 
+        Build correct, no review.
+
+        Change in r46407 broke Apple Windows build.
+
+        * WebCorePrefix.h: Use WTF_PLATFORM_CG to decide if
+          CoreServices.h should be included.
+
+2009-07-26  Brent Fulgham  <bfulgham@webkit.org>
+
         Build correction, no review.
 
         Change in r46195 broke WinCairo build.
