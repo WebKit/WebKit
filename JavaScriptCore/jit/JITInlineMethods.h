@@ -179,7 +179,7 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
 
 #if PLATFORM(X86) || PLATFORM(X86_64)
 
-ALWAYS_INLINE void JIT::preverveReturnAddressAfterCall(RegisterID reg)
+ALWAYS_INLINE void JIT::preserveReturnAddressAfterCall(RegisterID reg)
 {
     pop(reg);
 }
@@ -196,7 +196,7 @@ ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
 
 #elif PLATFORM_ARM_ARCH(7)
 
-ALWAYS_INLINE void JIT::preverveReturnAddressAfterCall(RegisterID reg)
+ALWAYS_INLINE void JIT::preserveReturnAddressAfterCall(RegisterID reg)
 {
     move(linkRegister, reg);
 }

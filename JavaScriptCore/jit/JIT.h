@@ -663,7 +663,7 @@ namespace JSC {
         void restoreArgumentReferenceForTrampoline();
 
         Call emitNakedCall(CodePtr function = CodePtr());
-        void preverveReturnAddressAfterCall(RegisterID);
+        void preserveReturnAddressAfterCall(RegisterID);
         void restoreReturnAddressBeforeReturn(RegisterID);
         void restoreReturnAddressBeforeReturn(Address);
 

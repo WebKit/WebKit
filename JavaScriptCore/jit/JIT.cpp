@@ -404,7 +404,7 @@ void JIT::privateCompile()
 #endif
 
     // Could use a pop_m, but would need to offset the following instruction if so.
-    preverveReturnAddressAfterCall(regT2);
+    preserveReturnAddressAfterCall(regT2);
     emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
 
     Jump slowRegisterFileCheck;
@@ -562,7 +562,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_body)), regT3);
     loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT0);
     Jump hasCodeBlock1 = branchTestPtr(NonZero, regT0);
-    preverveReturnAddressAfterCall(regT3);
+    preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callJSFunction1 = call();
     emitGetJITStubArg(1, regT2);
@@ -574,7 +574,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     // Check argCount matches callee arity.
     Jump arityCheckOkay1 = branch32(Equal, Address(regT0, OBJECT_OFFSETOF(CodeBlock, m_numParameters)), regT1);
-    preverveReturnAddressAfterCall(regT3);
+    preserveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     emitPutJITStubArg(regT0, 4);
     restoreArgumentReference();
@@ -588,7 +588,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     
     compileOpCallInitializeCallFrame();
 
-    preverveReturnAddressAfterCall(regT3);
+    preserveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     restoreArgumentReference();
     Call callDontLazyLinkCall = call();
@@ -603,7 +603,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_body)), regT3);
     loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT0);
     Jump hasCodeBlock2 = branchTestPtr(NonZero, regT0);
-    preverveReturnAddressAfterCall(regT3);
+    preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callJSFunction2 = call();
     emitGetJITStubArg(1, regT2);
@@ -615,7 +615,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     // Check argCount matches callee arity.
     Jump arityCheckOkay2 = branch32(Equal, Address(regT0, OBJECT_OFFSETOF(CodeBlock, m_numParameters)), regT1);
-    preverveReturnAddressAfterCall(regT3);
+    preserveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     emitPutJITStubArg(regT0, 4);
     restoreArgumentReference();
@@ -629,7 +629,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     compileOpCallInitializeCallFrame();
 
-    preverveReturnAddressAfterCall(regT3);
+    preserveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     restoreArgumentReference();
     Call callLazyLinkCall = call();
@@ -643,7 +643,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_body)), regT3);
     loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT0);
     Jump hasCodeBlock3 = branchTestPtr(NonZero, regT0);
-    preverveReturnAddressAfterCall(regT3);
+    preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callJSFunction3 = call();
     emitGetJITStubArg(1, regT2);
@@ -656,7 +656,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     // Check argCount matches callee arity.
     Jump arityCheckOkay3 = branch32(Equal, Address(regT0, OBJECT_OFFSETOF(CodeBlock, m_numParameters)), regT1);
-    preverveReturnAddressAfterCall(regT3);
+    preserveReturnAddressAfterCall(regT3);
     emitPutJITStubArg(regT3, 2);
     emitPutJITStubArg(regT0, 4);
     restoreArgumentReference();
@@ -677,7 +677,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 
     
     Label nativeCallThunk = align();
-    preverveReturnAddressAfterCall(regT0);
+    preserveReturnAddressAfterCall(regT0);
     emitPutToCallFrameHeader(regT0, RegisterFile::ReturnPC); // Push return address
 
     // Load caller frame's scope chain into this callframe so that whatever we call can
