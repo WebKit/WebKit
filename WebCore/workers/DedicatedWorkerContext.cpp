@@ -55,7 +55,12 @@ DedicatedWorkerContext::~DedicatedWorkerContext()
 
 void DedicatedWorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
 {
-    thread()->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
+    bool errorHandled = false;
+    if (onerror())
+        errorHandled = onerror()->reportError(errorMessage, sourceURL, lineNumber);
+
+    if (!errorHandled)
+        thread()->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
 void DedicatedWorkerContext::postMessage(const String& message, ExceptionCode& ec)

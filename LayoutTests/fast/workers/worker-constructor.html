@@ -7,13 +7,22 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
+var testCases = [
+    "testArgumentException",
+    "testRecursiveWorkerCreation",
+    "testNoArgument",
+    "testEmptyScriptUrl",
+    "testInvalidScriptUrl",
+    "testNotExistentScriptUrl",
+    "testSuccessWorkerCreation",
+];
+var testIndex = 0;
+
 function runNextTest()
 {
-    testIndex++;
-    // Loop until there are no more tests to run
-    var testName = 'test' + testIndex;
-    if (window[testName]) {
-        window[testName]();
+    if (testIndex < testCases.length) {
+        testIndex++;
+        window[testCases[testIndex - 1]]();
     } else {
         log("DONE");
         if (window.layoutTestController)
@@ -21,7 +30,7 @@ function runNextTest()
     }
 }
 
-function test1()
+function testArgumentException()
 {
     try {
         new Worker({toString:function(){throw "exception"}})
@@ -35,7 +44,7 @@ function test1()
     runNextTest();
 }
 
-function test2()
+function testRecursiveWorkerCreation()
 {
     try {
         var foo = {toString:function(){new Worker(foo)}}
@@ -47,7 +56,7 @@ function test2()
     runNextTest();
 }
 
-function test3()
+function testNoArgument()
 {
     try {
         new Worker();
@@ -58,7 +67,7 @@ function test3()
     runNextTest();
 }
 
-function test4()
+function testEmptyScriptUrl()
 {
     try {
         var worker = new Worker("");
@@ -72,7 +81,7 @@ function test4()
     }
 }
 
-function test5()
+function testInvalidScriptUrl()
 {
     try {
         var worker = new Worker("invalidurl://");
@@ -86,7 +95,7 @@ function test5()
     }
 }
 
-function test6()
+function testNotExistentScriptUrl()
 {
     try {
         var worker = new Worker("does-not-exist.js");
@@ -100,7 +109,7 @@ function test6()
     }
 }
 
-function test7()
+function testSuccessWorkerCreation()
 {
     try {
         var worker = new Worker("resources/worker-common.js");
@@ -122,7 +131,6 @@ if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
 }
 
-var testIndex = 0;
 runNextTest();
 
 </script>

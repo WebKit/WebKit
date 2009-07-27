@@ -153,6 +153,53 @@ void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
     }
 }
 
+bool JSEventListener::reportError(const String& message, const String& url, int lineNumber)
+{
+    JSLock lock(false);
+
+    JSObject* jsFunction = this->jsFunction();
+    if (!jsFunction)
+        return false;
+
+    JSDOMGlobalObject* globalObject = m_globalObject;
+    if (!globalObject)
+        return false;
+
+    ExecState* exec = globalObject->globalExec();
+
+    CallData callData;
+    CallType callType = jsFunction->getCallData(callData);
+
+    if (callType == CallTypeNone)
+        return false;
+
+    MarkedArgumentBuffer args;
+    args.append(jsString(exec, message));
+    args.append(jsString(exec, url));
+    args.append(jsNumber(exec, lineNumber));
+
+    // If this event handler is the first JavaScript to execute, then the
+    // dynamic global object should be set to the global object of the
+    // window in which the event occurred.
+    JSGlobalData* globalData = globalObject->globalData();
+    DynamicGlobalObjectScope globalObjectScope(exec, globalData->dynamicGlobalObject ? globalData->dynamicGlobalObject : globalObject);    
+
+    JSValue thisValue = globalObject->toThisObject(exec);
+
+    globalObject->globalData()->timeoutChecker.start();
+    JSValue returnValue = call(exec, jsFunction, callType, callData, thisValue, args);
+    globalObject->globalData()->timeoutChecker.stop();
+
+    // If an error occurs while handling the script error, it should be bubbled up.
+    if (exec->hadException()) {
+        exec->clearException();
+        return false;
+    }
+    
+    bool bubbleEvent;
+    return returnValue.getBoolean(bubbleEvent) && !bubbleEvent;
+}
+
 bool JSEventListener::virtualisAttribute() const
 {
     return m_isAttribute;

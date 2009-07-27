@@ -138,11 +138,6 @@ bool WorkerContext::hasPendingActivity() const
     return false;
 }
 
-void WorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
-{
-    m_thread->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
-}
-
 void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
     m_thread->workerObjectProxy().postConsoleMessageToWorkerObject(destination, source, type, level, message, lineNumber, sourceURL);

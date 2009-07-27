@@ -56,7 +56,7 @@ namespace WebCore {
 
         // Utility routines to generate appropriate error events for loading and script exceptions.
         void dispatchLoadErrorEvent();
-        void dispatchScriptErrorEvent(const String& errorMessage, const String& sourceURL, int);
+        bool dispatchScriptErrorEvent(const String& errorMessage, const String& sourceURL, int);
 
         void setOnerror(PassRefPtr<EventListener> eventListener) { m_onErrorListener = eventListener; }
         EventListener* onerror() const { return m_onErrorListener.get(); }

@@ -67,7 +67,7 @@ namespace WebCore {
 
         bool hasPendingActivity() const;
 
-        virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL);
+        virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL) = 0;
         virtual void addMessage(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
         virtual void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString);
         virtual void scriptImported(unsigned long identifier, const String& sourceString);

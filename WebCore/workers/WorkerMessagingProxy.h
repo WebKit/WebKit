@@ -82,6 +82,7 @@ namespace WebCore {
     private:
         friend class MessageWorkerTask;
         friend class WorkerContextDestroyedTask;
+        friend class WorkerExceptionTask;
         friend class WorkerThreadActivityReportTask;
 
         virtual ~WorkerMessagingProxy();

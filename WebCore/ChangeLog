@@ -1,3 +1,40 @@
+2009-07-27  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix error handling in dedicated worker and worker context.
+        https://bugs.webkit.org/show_bug.cgi?id=27525
+
+        The following problems have been fixed:
+        1) The uncaught runtime script error is not reported using the
+        WorkerGlobalScope object's onerror attribute.
+        2) If the error is still not handled afterwards (onerror attribute
+        is not defined as a function or it returns true), the error should
+        be reported back to the associated Worker object by firing an
+        ErrorEvent.
+        3) If the error is still not handled by the associated Worker
+        object, the error should be reported to the user.
+
+        Test: fast/workers/worker-script-error.html
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::reportError):
+        * bindings/js/JSEventListener.h:
+        * dom/EventListener.h:
+        (WebCore::EventListener::reportError): adds a function to call
+        EventListener as a function with 3 arguments to report an error.
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::dispatchScriptErrorEvent):
+        * workers/AbstractWorker.h:
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore::DedicatedWorkerContext::reportException):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::reportException):
+        * workers/WorkerContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerExceptionTask::performTask):
+        * workers/WorkerMessagingProxy.h:
+
 2009-07-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

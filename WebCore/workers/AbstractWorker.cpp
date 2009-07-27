@@ -115,18 +115,23 @@ void AbstractWorker::dispatchLoadErrorEvent()
     ASSERT(!ec);
 }
 
-void AbstractWorker::dispatchScriptErrorEvent(const String& message, const String& sourceURL, int lineNumber)
+bool AbstractWorker::dispatchScriptErrorEvent(const String& message, const String& sourceURL, int lineNumber)
 {
+    bool handled = false;
     RefPtr<ErrorEvent> event = ErrorEvent::create(message, sourceURL, static_cast<unsigned>(lineNumber));
     if (m_onErrorListener) {
         event->setTarget(this);
         event->setCurrentTarget(this);
         m_onErrorListener->handleEvent(event.get(), true);
+        if (event->defaultPrevented())
+            handled = true;
     }
 
     ExceptionCode ec = 0;
     dispatchEvent(event.release(), ec);
     ASSERT(!ec);
+
+    return handled;
 }
 
 } // namespace WebCore

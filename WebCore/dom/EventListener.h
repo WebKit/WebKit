@@ -21,6 +21,7 @@
 #ifndef EventListener_h
 #define EventListener_h
 
+#include "PlatformString.h"
 #include <wtf/RefCounted.h>
 
 namespace JSC {
@@ -35,6 +36,8 @@ namespace WebCore {
     public:
         virtual ~EventListener() { }
         virtual void handleEvent(Event*, bool isWindowEvent = false) = 0;
+        // Return true to indicate that the error is handled.
+        virtual bool reportError(const String& /*message*/, const String& /*url*/, int /*lineNumber*/) { return false; }
         virtual bool wasCreatedFromMarkup() const { return false; }
 
 #if USE(JSC)
