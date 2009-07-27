@@ -54,31 +54,31 @@ using namespace WebCore;
 
 + (size_t)javaScriptObjectsCount
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
 }
 
 + (size_t)javaScriptGlobalObjectsCount
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return JSDOMWindow::commonJSGlobalData()->heap.globalObjectCount();
 }
 
 + (size_t)javaScriptProtectedObjectsCount
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return JSDOMWindow::commonJSGlobalData()->heap.protectedObjectCount();
 }
 
 + (size_t)javaScriptProtectedGlobalObjectsCount
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return JSDOMWindow::commonJSGlobalData()->heap.protectedGlobalObjectCount();
 }
 
 + (NSCountedSet *)javaScriptProtectedObjectTypeCounts
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     
     NSCountedSet *result = [NSCountedSet set];
 
@@ -143,13 +143,13 @@ using namespace WebCore;
 
 + (BOOL)shouldPrintExceptions
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return Console::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     Console::setShouldPrintExceptions(print);
 }
 
@@ -176,7 +176,7 @@ using namespace WebCore;
 + (NSDictionary *)memoryStatistics
 {
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     Heap::Statistics jsHeapStatistics = JSDOMWindow::commonJSGlobalData()->heap.statistics();
     return [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSNumber numberWithInt:fastMallocStatistics.heapSize], @"FastMallocHeapSize",
@@ -216,7 +216,7 @@ using namespace WebCore;
 
 + (size_t)javaScriptReferencedObjectsCount
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return JSDOMWindow::commonJSGlobalData()->heap.protectedObjectCount();
 }
 

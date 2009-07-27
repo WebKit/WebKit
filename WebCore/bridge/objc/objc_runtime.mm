@@ -96,15 +96,15 @@ JSValue ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) 
     
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
 
-    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
         if (id objcValue = [targetObject valueForKey:(NSString *)_name.get()])
             result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, instance->rootObject());
     } @catch(NSException* localException) {
-        JSLock::lock(false);
+        JSLock::lock(SilenceAssertionsOnly);
         throwError(exec, GeneralError, [localException reason]);
-        JSLock::unlock(false);
+        JSLock::unlock(SilenceAssertionsOnly);
     }
 
     // Work around problem in some versions of GCC where result gets marked volatile and
@@ -125,14 +125,14 @@ void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id value = convertValueToObjcObject(exec, aValue);
 
-    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
         [targetObject setValue:value forKey:(NSString *)_name.get()];
     } @catch(NSException* localException) {
-        JSLock::lock(false);
+        JSLock::lock(SilenceAssertionsOnly);
         throwError(exec, GeneralError, [localException reason]);
-        JSLock::unlock(false);
+        JSLock::unlock(SilenceAssertionsOnly);
     }
 }
 

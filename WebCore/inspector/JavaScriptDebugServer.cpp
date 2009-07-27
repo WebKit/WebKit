@@ -554,7 +554,7 @@ void JavaScriptDebugServer::recompileAllJSFunctionsSoon()
 
 void JavaScriptDebugServer::recompileAllJSFunctions(Timer<JavaScriptDebugServer>*)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     JSGlobalData* globalData = JSDOMWindow::commonJSGlobalData();
 
     // If JavaScript is running, it's not safe to recompile, since we'll end

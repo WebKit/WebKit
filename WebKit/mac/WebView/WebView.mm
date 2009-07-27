@@ -3948,7 +3948,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
     JSValue result = coreFrame->loader()->executeScript(script, true).jsValue();
     if (!result) // FIXME: pass errors
         return 0;
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return aeDescFromJSValue(coreFrame->script()->globalObject()->globalExec(), result);
 }
 

@@ -61,7 +61,7 @@ void JSEventListener::markJSFunction()
 
 void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     JSObject* jsFunction = this->jsFunction();
     if (!jsFunction)
@@ -155,7 +155,7 @@ void JSEventListener::handleEvent(Event* event, bool isWindowEvent)
 
 bool JSEventListener::reportError(const String& message, const String& url, int lineNumber)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     JSObject* jsFunction = this->jsFunction();
     if (!jsFunction)

@@ -91,7 +91,7 @@ void QtRuntimeObjectImp::invalidate()
 
 void QtRuntimeObjectImp::removeFromCache()
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     QtInstance* key = cachedObjects.key(this);
     if (key)
         cachedObjects.remove(key);
@@ -110,7 +110,7 @@ QtInstance::QtInstance(QObject* o, PassRefPtr<RootObject> rootObject, QScriptEng
 
 QtInstance::~QtInstance()
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     cachedObjects.remove(this);
     cachedInstances.remove(m_hashkey);
@@ -138,7 +138,7 @@ QtInstance::~QtInstance()
 
 PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObject> rootObject, QScriptEngine::ValueOwnership ownership)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     foreach(QtInstance* instance, cachedInstances.values(o)) {
         if (instance->rootObject() == rootObject)
@@ -192,7 +192,7 @@ Class* QtInstance::getClass() const
 
 RuntimeObjectImp* QtInstance::createRuntimeObject(ExecState* exec)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     RuntimeObjectImp* ret = static_cast<RuntimeObjectImp*>(cachedObjects.value(this));
     if (!ret) {
         ret = new (exec) QtRuntimeObjectImp(exec, this);

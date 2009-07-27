@@ -112,7 +112,7 @@ WebScriptObject* ScriptController::windowScriptObject()
         return 0;
 
     if (!m_windowScriptObject) {
-        JSC::JSLock lock(false);
+        JSC::JSLock lock(JSC::SilenceAssertionsOnly);
         JSC::Bindings::RootObject* root = bindingRootObject();
         m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(windowShell()) originRootObject:root rootObject:root];
     }

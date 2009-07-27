@@ -84,7 +84,7 @@ static JSValueRef getLineNumber(JSContextRef ctx, JSObjectRef thisObject, JSStri
 
 static JSValueRef getTotalTime(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -95,7 +95,7 @@ static JSValueRef getTotalTime(JSContextRef ctx, JSObjectRef thisObject, JSStrin
 
 static JSValueRef getSelfTime(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -106,7 +106,7 @@ static JSValueRef getSelfTime(JSContextRef ctx, JSObjectRef thisObject, JSString
 
 static JSValueRef getTotalPercent(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -117,7 +117,7 @@ static JSValueRef getTotalPercent(JSContextRef ctx, JSObjectRef thisObject, JSSt
 
 static JSValueRef getSelfPercent(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -128,7 +128,7 @@ static JSValueRef getSelfPercent(JSContextRef ctx, JSObjectRef thisObject, JSStr
 
 static JSValueRef getNumberOfCalls(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -139,7 +139,7 @@ static JSValueRef getNumberOfCalls(JSContextRef ctx, JSObjectRef thisObject, JSS
 
 static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -186,7 +186,7 @@ static JSValueRef getChildren(JSContextRef ctx, JSObjectRef thisObject, JSString
 
 static JSValueRef getParent(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -198,7 +198,7 @@ static JSValueRef getParent(JSContextRef ctx, JSObjectRef thisObject, JSStringRe
 
 static JSValueRef getHead(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -210,7 +210,7 @@ static JSValueRef getHead(JSContextRef ctx, JSObjectRef thisObject, JSStringRef,
 
 static JSValueRef getVisible(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);
@@ -221,7 +221,7 @@ static JSValueRef getVisible(JSContextRef ctx, JSObjectRef thisObject, JSStringR
 
 static JSValueRef getCallUID(JSContextRef ctx, JSObjectRef thisObject, JSStringRef, JSValueRef*)
 {
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
 
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileNodeClass()))
         return JSValueMakeUndefined(ctx);

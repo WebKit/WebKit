@@ -50,50 +50,52 @@ namespace JSC {
 
     class ExecState;
 
+    enum JSLockBehavior { SilenceAssertionsOnly, LockForReal };
+
     class JSLock : public Noncopyable {
     public:
         JSLock(ExecState*);
 
-        JSLock(bool lockingForReal)
-            : m_lockingForReal(lockingForReal)
+        JSLock(JSLockBehavior lockBehavior)
+            : m_lockBehavior(lockBehavior)
         {
 #ifdef NDEBUG
             // Locking "not for real" is a debug-only feature.
-            if (!lockingForReal)
+            if (lockBehavior == SilenceAssertionsOnly)
                 return;
 #endif
-            lock(lockingForReal);
+            lock(lockBehavior);
         }
 
         ~JSLock()
         { 
 #ifdef NDEBUG
             // Locking "not for real" is a debug-only feature.
-            if (!m_lockingForReal)
+            if (lockBehavior == SilenceAssertionsOnly)
                 return;
 #endif
-            unlock(m_lockingForReal); 
+            unlock(m_lockBehavior); 
         }
         
-        static void lock(bool);
-        static void unlock(bool);
+        static void lock(JSLockBehavior);
+        static void unlock(JSLockBehavior);
         static void lock(ExecState*);
         static void unlock(ExecState*);
 
         static intptr_t lockCount();
         static bool currentThreadIsHoldingLock();
 
-        bool m_lockingForReal;
+        JSLockBehavior m_lockBehavior;
 
         class DropAllLocks : public Noncopyable {
         public:
             DropAllLocks(ExecState* exec);
-            DropAllLocks(bool);
+            DropAllLocks(JSLockBehavior);
             ~DropAllLocks();
             
         private:
             intptr_t m_lockCount;
-            bool m_lockingForReal;
+            JSLockBehavior m_lockBehavior;
         };
     };
 

@@ -383,7 +383,7 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
     if (!page()->settings()->testAttribute(QWebSettings::JavascriptEnabled))
         return;
 
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
     JSDOMWindow* window = toJSDOMWindow(d->frame);
     JSC::Bindings::RootObject* root = d->frame->script()->bindingRootObject();
     if (!window) {

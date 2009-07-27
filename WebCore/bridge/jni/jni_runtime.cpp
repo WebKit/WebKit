@@ -316,7 +316,7 @@ static void appendClassName(UString& aString, const char* className)
 const char *JavaMethod::signature() const 
 {
     if (!_signature) {
-        JSLock lock(false);
+        JSLock lock(SilenceAssertionsOnly);
 
         UString signatureBuilder("(");
         for (int i = 0; i < _numParameters; i++) {

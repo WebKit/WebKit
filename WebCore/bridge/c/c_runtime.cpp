@@ -47,7 +47,7 @@ JSValue CField::valueFromInstance(ExecState* exec, const Instance* inst) const
 
         bool result;
         {
-            JSLock::DropAllLocks dropAllLocks(false);
+            JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
             result = obj->_class->getProperty(obj, _fieldIdentifier, &property);
         }
         if (result) {
@@ -68,7 +68,7 @@ void CField::setValueToInstance(ExecState *exec, const Instance *inst, JSValue a
         convertValueToNPVariant(exec, aValue, &variant);
 
         {
-            JSLock::DropAllLocks dropAllLocks(false);
+            JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
             obj->_class->setProperty(obj, _fieldIdentifier, &variant);
         }
 

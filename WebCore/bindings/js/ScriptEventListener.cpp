@@ -71,7 +71,7 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, Attribu
 
     // Ensure that 'node' has a JavaScript wrapper to mark the event listener we're creating.
     {
-        JSLock lock(false);
+        JSLock lock(SilenceAssertionsOnly);
         toJS(globalObject->globalExec(), node);
     }
 

@@ -53,42 +53,42 @@ static bool handleException(ScriptState* scriptState)
 
 bool ScriptArray::set(ScriptState* scriptState, unsigned index, const ScriptObject& value)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     jsArray()->put(scriptState, index, value.jsObject());
     return handleException(scriptState);
 }
 
 bool ScriptArray::set(ScriptState* scriptState, unsigned index, const String& value)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     jsArray()->put(scriptState, index, jsString(scriptState, value));
     return handleException(scriptState);
 }
 
 bool ScriptArray::set(ScriptState* scriptState, unsigned index, double value)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     jsArray()->put(scriptState, index, jsNumber(scriptState, value));
     return handleException(scriptState);
 }
 
 bool ScriptArray::set(ScriptState* scriptState, unsigned index, long long value)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     jsArray()->put(scriptState, index, jsNumber(scriptState, value));
     return handleException(scriptState);
 }
 
 bool ScriptArray::set(ScriptState* scriptState, unsigned index, int value)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     jsArray()->put(scriptState, index, jsNumber(scriptState, value));
     return handleException(scriptState);
 }
 
 bool ScriptArray::set(ScriptState* scriptState, unsigned index, bool value)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     jsArray()->put(scriptState, index, jsBoolean(value));
     return handleException(scriptState);
 }
@@ -100,7 +100,7 @@ unsigned ScriptArray::length(ScriptState*)
 
 ScriptArray ScriptArray::createNew(ScriptState* scriptState)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return ScriptArray(constructEmptyArray(scriptState));
 }
 

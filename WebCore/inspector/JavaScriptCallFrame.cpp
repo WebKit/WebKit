@@ -104,7 +104,7 @@ JSValue JavaScriptCallFrame::evaluate(const UString& script, JSValue& exception)
     if (!m_isValid)
         return jsNull();
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return m_debuggerCallFrame.evaluate(script, exception);
 }
 

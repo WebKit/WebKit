@@ -44,7 +44,7 @@ CClass::CClass(NPClass* aClass)
 
 CClass::~CClass()
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     deleteAllValues(_methods);
     _methods.clear();
@@ -86,7 +86,7 @@ MethodList CClass::methodsNamed(const Identifier& identifier, Instance* instance
     if (_isa->hasMethod && _isa->hasMethod(obj, ident)){
         Method* aMethod = new CMethod(ident); // deleted in the CClass destructor
         {
-            JSLock lock(false);
+            JSLock lock(SilenceAssertionsOnly);
             _methods.set(identifier.ustring().rep(), aMethod);
         }
         methodList.append(aMethod);
@@ -107,7 +107,7 @@ Field* CClass::fieldNamed(const Identifier& identifier, Instance* instance) cons
     if (_isa->hasProperty && _isa->hasProperty(obj, ident)){
         aField = new CField(ident); // deleted in the CClass destructor
         {
-            JSLock lock(false);
+            JSLock lock(SilenceAssertionsOnly);
             _fields.set(identifier.ustring().rep(), aField);
         }
     }

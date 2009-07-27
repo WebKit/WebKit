@@ -491,7 +491,7 @@ JSPropertyNameArrayRef JSPropertyNameArrayRetain(JSPropertyNameArrayRef array)
 void JSPropertyNameArrayRelease(JSPropertyNameArrayRef array)
 {
     if (--array->refCount == 0) {
-        JSLock lock(array->globalData->isSharedInstance);
+        JSLock lock(array->globalData->isSharedInstance ? LockForReal : SilenceAssertionsOnly);
         delete array;
     }
 }
@@ -511,7 +511,7 @@ void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStri
     PropertyNameArray* propertyNames = toJS(array);
 
     propertyNames->globalData()->heap.registerThread();
-    JSLock lock(propertyNames->globalData()->isSharedInstance);
+    JSLock lock(propertyNames->globalData()->isSharedInstance ? LockForReal : SilenceAssertionsOnly);
 
     propertyNames->add(propertyName->identifier(propertyNames->globalData()));
 }

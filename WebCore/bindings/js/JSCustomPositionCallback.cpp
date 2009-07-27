@@ -53,7 +53,7 @@ void JSCustomPositionCallback::handleEvent(Geoposition* geoposition, bool& raise
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
     
-    JSC::JSLock lock(false);
+    JSC::JSLock lock(SilenceAssertionsOnly);
     
     JSValue function = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;

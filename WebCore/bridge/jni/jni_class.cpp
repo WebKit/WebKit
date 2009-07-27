@@ -60,7 +60,7 @@ JavaClass::JavaClass(jobject anInstance)
         jobject aJField = env->GetObjectArrayElement((jobjectArray)fields, i);
         JavaField *aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
         {
-            JSLock lock(false);
+            JSLock lock(SilenceAssertionsOnly);
             _fields.set(aField->name(), aField);
         }
         env->DeleteLocalRef(aJField);
@@ -74,7 +74,7 @@ JavaClass::JavaClass(jobject anInstance)
         JavaMethod *aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
         MethodList* methodList;
         {
-            JSLock lock(false);
+            JSLock lock(SilenceAssertionsOnly);
 
             methodList = _methods.get(aMethod->name());
             if (!methodList) {
@@ -90,7 +90,7 @@ JavaClass::JavaClass(jobject anInstance)
 JavaClass::~JavaClass() {
     free((void *)_name);
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     deleteAllValues(_fields);
     _fields.clear();

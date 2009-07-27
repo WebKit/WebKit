@@ -259,13 +259,13 @@ JSValue JSInspectorBackend::currentCallFrame(ExecState* exec, const ArgList&)
     // FIXME: I am not sure if this is actually needed. Can we just use exec?
     ExecState* globalExec = callFrame->scopeChain()->globalObject()->globalExec();
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     return JSInspectedObjectWrapper::wrap(globalExec, toJS(exec, callFrame));
 }
 
 JSValue JSInspectorBackend::profiles(JSC::ExecState* exec, const JSC::ArgList&)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     MarkedArgumentBuffer result;
     InspectorController* ic = impl()->inspectorController();
     if (!ic)

@@ -44,7 +44,7 @@ void JSNodeFilterCondition::mark()
 
 short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) const
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     CallData callData;
     CallType callType = m_filter.getCallData(callData);

@@ -82,7 +82,7 @@ Class *JavaInstance::getClass() const
 
 JSValue JavaInstance::stringValue(ExecState* exec) const
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     
     jstring stringValue = (jstring)callJNIMethod<jobject>(_instance->_instance, "toString", "()Ljava/lang/String;");
     JNIEnv *env = getJNIEnv();

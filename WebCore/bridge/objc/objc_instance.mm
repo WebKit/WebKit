@@ -64,7 +64,7 @@ void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
     }
 
     if (!s_exceptionEnvironment || s_exceptionEnvironment == exec->dynamicGlobalObject()) {
-        JSLock lock(false);
+        JSLock lock(SilenceAssertionsOnly);
         throwError(exec, GeneralError, s_exception);
     }
 
@@ -128,7 +128,7 @@ JSValue ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodList
 {
     JSValue result = jsUndefined();
     
-    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     setGlobalException(nil);
     
@@ -249,7 +249,7 @@ JSValue ObjcInstance::invokeDefaultMethod(ExecState* exec, const ArgList &args)
 {
     JSValue result = jsUndefined();
 
-    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
     setGlobalException(nil);
     
 @try {
@@ -302,7 +302,7 @@ bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier& p
     if (![targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)])
         return false;
 
-    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     // This check is not really necessary because NSObject implements
     // setValue:forUndefinedKey:, and unfortnately the default implementation
@@ -330,7 +330,7 @@ JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifier
     
     id targetObject = getObject();
 
-    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     // This check is not really necessary because NSObject implements
     // valueForUndefinedKey:, and unfortnately the default implementation

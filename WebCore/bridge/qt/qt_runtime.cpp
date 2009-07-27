@@ -167,7 +167,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
         return QVariant();
     }
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     JSRealType type = valueRealType(exec, value);
     if (hint == QMetaType::Void) {
         switch(type) {
@@ -770,7 +770,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         return jsNull();
     }
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     if (type == QMetaType::Bool)
         return jsBoolean(variant.toBool());
@@ -1347,7 +1347,7 @@ JSValue QtRuntimeMetaMethod::call(ExecState* exec, JSObject* functionObject, JSV
         return jsUndefined();
 
     // We have to pick a method that matches..
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     QObject *obj = d->m_instance->getObject();
     if (obj) {
@@ -1440,7 +1440,7 @@ JSValue QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionObjec
 {
     QtRuntimeConnectionMethodData* d = static_cast<QtRuntimeConnectionMethod *>(functionObject)->d_func();
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     QObject* sender = d->m_instance->getObject();
 
@@ -1670,7 +1670,7 @@ void QtConnectionObject::execute(void **argv)
 
         int argc = parameterTypes.count();
 
-        JSLock lock(false);
+        JSLock lock(SilenceAssertionsOnly);
 
         // ### Should the Interpreter/ExecState come from somewhere else?
         RefPtr<RootObject> ro = m_instance->rootObject();

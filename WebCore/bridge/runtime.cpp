@@ -80,7 +80,7 @@ void Instance::end()
 
 RuntimeObjectImp* Instance::createRuntimeObject(ExecState* exec)
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     
     return new (exec) RuntimeObjectImp(exec, this);
 }

@@ -280,7 +280,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     
     // Look up the function object.
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
@@ -325,7 +325,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSValue result;
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     
     [self _rootObject]->globalObject()->globalData()->timeoutChecker.start();
     Completion completion = JSC::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)));
@@ -360,7 +360,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     PutPropertySlot slot;
     [self _imp]->put(exec, Identifier(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
@@ -386,7 +386,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         // Need to scope this lock to ensure that we release the lock before calling
         // [super valueForKey:key] which might throw an exception and bypass the JSLock destructor,
         // leaving the lock permanently held
-        JSLock lock(false);
+        JSLock lock(SilenceAssertionsOnly);
         
         JSValue result = [self _imp]->get(exec, Identifier(exec, String(key)));
         
@@ -402,7 +402,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if ([resultObj isKindOfClass:[WebUndefined class]])
         resultObj = [super valueForKey:key];    // defaults to throwing an exception
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     _didExecute(self);
     
     return resultObj;
@@ -416,7 +416,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     [self _imp]->deleteProperty(exec, Identifier(exec, String(key)));
 
     if (exec->hadException()) {
@@ -434,7 +434,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return @"Undefined";
     }
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     
     id result = convertValueToObjcValue(exec, [self _imp], ObjcObjectType).objectValue;
@@ -454,7 +454,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     JSValue result = [self _imp]->get(exec, index);
 
     if (exec->hadException()) {
@@ -478,7 +478,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
     [self _imp]->put(exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
@@ -509,7 +509,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (value.isObject()) {
         JSObject* object = asObject(value);
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock(false);
+        JSLock lock(SilenceAssertionsOnly);
         
         if (object->classInfo() != &RuntimeObjectImp::s_info) {
             JSValue runtimeObject = object->get(exec, Identifier(exec, "__apple_runtime_object"));

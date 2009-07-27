@@ -46,7 +46,7 @@ class JavaString
 public:
     JavaString()
     {
-        JSLock lock(false);
+        JSLock lock(SilenceAssertionsOnly);
         _rep = UString().rep();
     }
 
@@ -55,7 +55,7 @@ public:
         int _size = e->GetStringLength (s);
         const jchar *uc = getUCharactersFromJStringInEnv (e, s);
         {
-            JSLock lock(false);
+            JSLock lock(SilenceAssertionsOnly);
             _rep = UString(reinterpret_cast<const UChar*>(uc), _size).rep();
         }
         releaseUCharactersForJStringInEnv (e, s, uc);
@@ -71,13 +71,13 @@ public:
     
     ~JavaString()
     {
-        JSLock lock(false);
+        JSLock lock(SilenceAssertionsOnly);
         _rep = 0;
     }
     
     const char *UTF8String() const { 
         if (_utf8String.c_str() == 0) {
-            JSLock lock(false);
+            JSLock lock(SilenceAssertionsOnly);
             _utf8String = UString(_rep).UTF8String();
         }
         return _utf8String.c_str();

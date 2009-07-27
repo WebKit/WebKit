@@ -170,7 +170,7 @@ Heap::~Heap()
 
 void Heap::destroy()
 {
-    JSLock lock(false);
+    JSLock lock(SilenceAssertionsOnly);
 
     if (!m_globalData)
         return;

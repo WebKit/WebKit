@@ -90,10 +90,10 @@ static NSMutableSet *pluginViews = nil;
     NSView *view = nil;
 
     if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
-        JSC::JSLock::DropAllLocks dropAllLocks(false);
+        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
         view = [viewFactory plugInViewWithArguments:arguments];
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
-        JSC::JSLock::DropAllLocks dropAllLocks(false);
+        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
         view = [viewFactory pluginViewWithArguments:arguments];
     }
     
@@ -147,10 +147,10 @@ static NSMutableSet *pluginViews = nil;
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
         if ([aView respondsToSelector:@selector(webPlugInStart)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [aView webPlugInStart];
         } else if ([aView respondsToSelector:@selector(pluginStart)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [aView pluginStart];
         }
     }
@@ -170,10 +170,10 @@ static NSMutableSet *pluginViews = nil;
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
         if ([aView respondsToSelector:@selector(webPlugInStop)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [aView webPlugInStop];
         } else if ([aView respondsToSelector:@selector(pluginStop)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [aView pluginStop];
         }
     }
@@ -197,10 +197,10 @@ static NSMutableSet *pluginViews = nil;
         
         LOG(Plugins, "initializing plug-in %@", view);
         if ([view respondsToSelector:@selector(webPlugInInitialize)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [view webPlugInInitialize];
         } else if ([view respondsToSelector:@selector(pluginInitialize)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [view pluginInitialize];
         }
 
@@ -210,15 +210,15 @@ static NSMutableSet *pluginViews = nil;
         if (_started) {
             LOG(Plugins, "starting plug-in %@", view);
             if ([view respondsToSelector:@selector(webPlugInStart)]) {
-                JSC::JSLock::DropAllLocks dropAllLocks(false);
+                JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
                 [view webPlugInStart];
             } else if ([view respondsToSelector:@selector(pluginStart)]) {
-                JSC::JSLock::DropAllLocks dropAllLocks(false);
+                JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
                 [view pluginStart];
             }
             
             if ([view respondsToSelector:@selector(setContainingWindow:)]) {
-                JSC::JSLock::DropAllLocks dropAllLocks(false);
+                JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
                 [view setContainingWindow:[_documentView window]];
             }
         }
@@ -230,19 +230,19 @@ static NSMutableSet *pluginViews = nil;
     if ([_views containsObject:view]) {
         if (_started) {
             if ([view respondsToSelector:@selector(webPlugInStop)]) {
-                JSC::JSLock::DropAllLocks dropAllLocks(false);
+                JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
                 [view webPlugInStop];
             } else if ([view respondsToSelector:@selector(pluginStop)]) {
-                JSC::JSLock::DropAllLocks dropAllLocks(false);
+                JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
                 [view pluginStop];
             }
         }
         
         if ([view respondsToSelector:@selector(webPlugInDestroy)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [view webPlugInDestroy];
         } else if ([view respondsToSelector:@selector(pluginDestroy)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [view pluginDestroy];
         }
         
@@ -291,10 +291,10 @@ static void cancelOutstandingCheck(const void *item, void *context)
     for (i = 0; i < count; i++) {
         id aView = [_views objectAtIndex:i];
         if ([aView respondsToSelector:@selector(webPlugInDestroy)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [aView webPlugInDestroy];
         } else if ([aView respondsToSelector:@selector(pluginDestroy)]) {
-            JSC::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
             [aView pluginDestroy];
         }
         
