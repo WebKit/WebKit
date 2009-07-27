@@ -125,7 +125,15 @@ bool WMLOptionElement::selected() const
 
 void WMLOptionElement::setSelectedState(bool selected)
 {
+    if (this->selected() == selected)
+        return;
+
     OptionElement::setSelectedState(m_data, this, selected);
+
+    if (WMLSelectElement* select = ownerSelectElement(this)) {
+        if (select->multiple() || selected)
+            handleIntrinsicEventIfNeeded();
+    }
 }
 
 String WMLOptionElement::value() const
