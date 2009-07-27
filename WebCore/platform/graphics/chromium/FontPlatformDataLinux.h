@@ -43,6 +43,7 @@ struct HB_FaceRec_;
 namespace WebCore {
 
 class FontDescription;
+class String;
 
 // -----------------------------------------------------------------------------
 // FontPlatformData is the handle which WebKit has on a specific face. A face
@@ -105,6 +106,10 @@ public:
     bool operator==(const FontPlatformData&) const;
     FontPlatformData& operator=(const FontPlatformData&);
     bool isHashTableDeletedValue() const { return m_typeface == hashTableDeletedFontValue(); }
+
+#ifndef NDEBUG
+    String description() const;
+#endif
 
     HB_FaceRec_* harfbuzzFace() const;
 

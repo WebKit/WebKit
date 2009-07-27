@@ -32,8 +32,9 @@
 #include "FontPlatformData.h"
 
 #include "HarfbuzzSkia.h"
-#include "StringImpl.h"
 #include "NotImplemented.h"
+#include "PlatformString.h"
+#include "StringImpl.h"
 
 #include "SkPaint.h"
 #include "SkTypeface.h"
@@ -108,6 +109,13 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& src)
 
     return *this;
 }
+
+#ifndef NDEBUG
+String FontPlatformData::description() const
+{
+    return String();
+}
+#endif
 
 void FontPlatformData::setupPaint(SkPaint* paint) const
 {
