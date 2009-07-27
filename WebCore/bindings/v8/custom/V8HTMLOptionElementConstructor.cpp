@@ -50,11 +50,15 @@ CALLBACK_FUNC_DECL(HTMLOptionElementConstructor)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
 
-    Document* document = V8Proxy::retrieveFrame()->document();
+    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    if (!frame)
+        return throwError("Option constructor associated frame is unavailable", V8Proxy::ReferenceError);
+
+    Document* document = frame->document();
     if (!document)
         return throwError("Option constructor associated document is unavailable", V8Proxy::ReferenceError);
 
-    RefPtr<HTMLOptionElement> option = new HTMLOptionElement(HTMLNames::optionTag, V8Proxy::retrieveFrame()->document());
+    RefPtr<HTMLOptionElement> option = new HTMLOptionElement(HTMLNames::optionTag, document);
 
     ExceptionCode ec = 0;
     RefPtr<Text> text = document->createTextNode("");

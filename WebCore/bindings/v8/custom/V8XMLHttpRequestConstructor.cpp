@@ -55,9 +55,15 @@ CALLBACK_FUNC_DECL(XMLHttpRequestConstructor)
     WorkerContextExecutionProxy* proxy = WorkerContextExecutionProxy::retrieve();
     if (proxy)
         context = proxy->workerContext();
-    else
+    else {
 #endif
-        context = V8Proxy::retrieveFrame()->document();
+        Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+        if (!frame)
+            return throwError("XMLHttpRequest constructor's associated frame is not available", V8Proxy::ReferenceError);
+        context = frame->document();
+#if ENABLE(WORKERS)
+    }
+#endif
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
     V8DOMWrapper::setDOMWrapper(args.Holder(), V8ClassIndex::ToInt(V8ClassIndex::XMLHTTPREQUEST), xmlHttpRequest.get());
 

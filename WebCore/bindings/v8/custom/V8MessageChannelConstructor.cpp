@@ -57,7 +57,7 @@ CALLBACK_FUNC_DECL(MessageChannelConstructor)
     if (proxy)
         context = proxy->workerContext();
     else {
-        Frame* frame = V8Proxy::retrieveFrame();
+        Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
         if (!frame)
             return v8::Undefined();
         context = frame->document();

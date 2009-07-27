@@ -68,7 +68,7 @@ void convertV8ObjectToNPVariant(v8::Local<v8::Value> object, NPObject* owner, NP
         char* utf8_chars = strdup(*utf8);
         STRINGN_TO_NPVARIANT(utf8_chars, utf8.length(), *result);
     } else if (object->IsObject()) {
-        WebCore::DOMWindow* window = WebCore::V8Proxy::retrieveWindow();
+        WebCore::DOMWindow* window = WebCore::V8Proxy::retrieveWindow(WebCore::V8Proxy::currentContext());
         NPObject* npobject = npCreateV8ScriptObject(0, v8::Handle<v8::Object>::Cast(object), window);
         if (npobject)
             _NPN_RegisterObject(npobject, owner);

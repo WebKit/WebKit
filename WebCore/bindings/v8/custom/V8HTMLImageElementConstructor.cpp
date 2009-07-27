@@ -49,7 +49,11 @@ CALLBACK_FUNC_DECL(HTMLImageElementConstructor)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
 
-    Document* document = V8Proxy::retrieveFrame()->document();
+    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    if (!frame)
+        return throwError("Image constructor associated frame is unavailable", V8Proxy::ReferenceError);
+
+    Document* document = frame->document();
     if (!document)
         return throwError("Image constructor associated document is unavailable", V8Proxy::ReferenceError);
 
@@ -57,7 +61,7 @@ CALLBACK_FUNC_DECL(HTMLImageElementConstructor)
     // may end up being the only node in the map and get garbage-ccollected prematurely.
     V8DOMWrapper::convertNodeToV8Object(document);
 
-    RefPtr<HTMLImageElement> image = new HTMLImageElement(HTMLNames::imgTag, V8Proxy::retrieveFrame()->document());
+    RefPtr<HTMLImageElement> image = new HTMLImageElement(HTMLNames::imgTag, document);
     if (args.Length() > 0) {
         image->setWidth(toInt32(args[0]));
         if (args.Length() > 1)

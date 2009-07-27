@@ -1,3 +1,37 @@
+2009-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Dave Levin.
+
+        [V8] Remove parameterless frame/window retrieval methods from V8Proxy.
+        https://bugs.webkit.org/show_bug.cgi?id=27737
+
+        Refactoring, no new behavior, covered by existing tests.
+
+        * bindings/v8/ScriptCallStack.cpp:
+        (WebCore::ScriptCallStack::ScriptCallStack):
+        * bindings/v8/V8NPUtils.cpp:
+        (convertV8ObjectToNPVariant): Ditto.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::retrieve): Ditto.
+        (WebCore::V8Proxy::canAccessPrivate): Ditto.
+        * bindings/v8/V8Proxy.h: Removed parameterless retrieveWindow/retrieveProxy decls.
+        * bindings/v8/custom/V8DatabaseCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Changed to use V8Proxy::retrieveFrameForCurrentContext().
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Ditto.
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Ditto.
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Ditto.
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Ditto.
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Ditto.
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Ditto.
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::CALLBACK_FUNC_DECL): Ditto.
+
 2009-07-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

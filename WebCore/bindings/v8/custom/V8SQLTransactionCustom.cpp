@@ -81,7 +81,7 @@ CALLBACK_FUNC_DECL(SQLTransactionExecuteSql)
 
     SQLTransaction* transaction = V8DOMWrapper::convertToNativeObject<SQLTransaction>(V8ClassIndex::SQLTRANSACTION, args.Holder());
 
-    Frame* frame = V8Proxy::retrieveFrame();
+    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
 
     RefPtr<SQLStatementCallback> callback;
     if (args.Length() > 2) {

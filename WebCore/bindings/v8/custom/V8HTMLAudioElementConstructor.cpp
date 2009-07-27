@@ -49,7 +49,11 @@ CALLBACK_FUNC_DECL(HTMLAudioElementConstructor)
     if (!args.IsConstructCall())
         return throwError("DOM object constructor cannot be called as a function.");
 
-    Document* document = V8Proxy::retrieveFrame()->document();
+    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    if (!frame)
+        return throwError("Audio constructor associated frame is unavailable", V8Proxy::ReferenceError);
+
+    Document* document = frame->document();
     if (!document)
         return throwError("Audio constructor associated document is unavailable", V8Proxy::ReferenceError);
 
@@ -57,7 +61,7 @@ CALLBACK_FUNC_DECL(HTMLAudioElementConstructor)
     // may end up being the only node in the map and get garbage-ccollected prematurely.
     V8DOMWrapper::convertNodeToV8Object(document);
 
-    RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(HTMLNames::audioTag, V8Proxy::retrieveFrame()->document());
+    RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(HTMLNames::audioTag, document);
     if (args.Length() > 0)
         audio->setSrc(toWebCoreString(args[0]));
 
