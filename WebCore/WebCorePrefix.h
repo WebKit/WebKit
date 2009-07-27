@@ -107,10 +107,9 @@
 
 #ifndef BUILDING_WX__
 #include <CoreFoundation/CoreFoundation.h>
-#endif
-
-#ifdef WTF_PLATFORM_CG
+#ifndef WIN_CAIRO
 #include <CoreServices/CoreServices.h>
+#endif
 #endif
 
 #ifdef __OBJC__

@@ -1,3 +1,13 @@
+2009-07-27  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correct, no review.
+
+        Change in r46407 broke Apple Windows build.
+        Switch to WinCairo-only test, to avoid any
+        other platform break.
+
+        * WebCorePrefix.h: 
+
 2009-07-26  Brent Fulgham  <bfulgham@webkit.org>
 
         Build correct, no review.
