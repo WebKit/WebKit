@@ -154,7 +154,7 @@ BOOL WINAPI PluginView::hookedEndPaint(HWND hWnd, const PAINTSTRUCT* lpPaint)
          "push   %3\n"
          "call   *%4\n"
          : "=a" (result)
-         : "a" (endPaintSysCall), "g" (lpPaint), "g" (hWnd), "g" (*endPaint)
+         : "a" (endPaintSysCall), "g" (lpPaint), "g" (hWnd), "m" (*endPaint)
         );
     return result;
 #else
