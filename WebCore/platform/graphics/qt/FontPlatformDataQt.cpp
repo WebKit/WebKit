@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Holger Hans Peter Freyther
+    Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -42,12 +43,9 @@ FontPlatformData::FontPlatformData(const FontDescription& description, int wordS
     m_font.setFamily(familyName);
     m_font.setPixelSize(qRound(description.computedSize()));
     m_font.setItalic(description.italic());
-    // FIXME: Map all FontWeight values to QFont weights.
-    if (description.weight() >= FontWeight600) {
-        m_font.setWeight(QFont::Bold);
-        m_bold = true;
-    } else
-        m_font.setWeight(QFont::Normal);
+
+    m_font.setWeight(toQFontWeight(description.weight()));
+    m_bold = m_font.bold();
 
     bool smallCaps = description.smallCaps();
     m_font.setCapitalization(smallCaps ? QFont::SmallCaps : QFont::MixedCase);

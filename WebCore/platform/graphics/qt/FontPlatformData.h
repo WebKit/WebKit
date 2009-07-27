@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2008 Holger Hans Peter Freyther
+    Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -39,6 +40,27 @@ public:
     FontPlatformData();
     FontPlatformData(const FontDescription&, int wordSpacing = 0, int letterSpacing = 0);
     FontPlatformData(const QFont&, bool bold);
+
+    static inline QFont::Weight toQFontWeight(FontWeight fontWeight)
+    {
+        switch (fontWeight) {
+        case FontWeight100:
+        case FontWeight200:
+            return QFont::Light;  // QFont::Light == Weight of 25
+        case FontWeight600:
+            return QFont::DemiBold;  // QFont::DemiBold == Weight of 63
+        case FontWeight700:
+        case FontWeight800:
+            return QFont::Bold;  // QFont::Bold == Weight of 75
+        case FontWeight900:
+            return QFont::Black;  // QFont::Black == Weight of 87
+        case FontWeight300:
+        case FontWeight400:
+        case FontWeight500:
+        default:
+            return QFont::Normal;  // QFont::Normal == Weight of 50
+        }
+    }
 
     QFont font() const { return m_font; }
     float size() const { return m_size; }

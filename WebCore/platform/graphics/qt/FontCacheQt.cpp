@@ -65,7 +65,7 @@ public:
         , m_hash(0)
     {
         // FIXME: Map all FontWeight values to QFont weights in FontPlatformData's ctor and follow it here
-        if (description.weight() >= FontWeight600)
+        if (FontPlatformData::toQFontWeight(description.weight()) > QFont::Normal)
             m_bold = true;
 
         const FontFamily* family = &description.family();
