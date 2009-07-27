@@ -1319,6 +1319,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
 
     var oldText = element.textContent;
     var oldHandleKeyEvent = element.handleKeyEvent;
+    var moveDirection = "";
 
     element.addStyleClass("editing");
 
@@ -1356,7 +1357,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     function editingCommitted() {
         cleanUpAfterEditing.call(this);
 
-        committedCallback(this, this.textContent, oldText, context);
+        committedCallback(this, this.textContent, oldText, context, moveDirection);
     }
 
     element.handleKeyEvent = function(event) {
@@ -1372,7 +1373,8 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
             editingCancelled.call(element);
             event.preventDefault();
             event.handled = true;
-        }
+        } else if (event.keyIdentifier === "U+0009") // Tab key
+            moveDirection = (event.shiftKey ? "backward" : "forward");
     }
 
     element.addEventListener("blur", blurEventListener, false);

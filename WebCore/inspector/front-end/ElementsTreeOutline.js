@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -255,8 +256,7 @@ WebInspector.ElementsTreeElement = function(node)
 
     // The title will be updated in onattach.
     TreeElement.call(this, "", node, titleInfo.hasChildren);
-    
-    // Can add attributes
+
     if (this.representedObject.nodeType == Node.ELEMENT_NODE)
         this._canAddAttributes = true;
 }
@@ -553,16 +553,16 @@ WebInspector.ElementsTreeElement.prototype = {
 
         var attribute = event.target.enclosingNodeOrSelfWithClass("webkit-html-attribute");
         if (attribute)
-            return this._startEditingAttribute(attribute, event);
+            return this._startEditingAttribute(attribute, event.target);
 
         var newAttribute = event.target.enclosingNodeOrSelfWithClass("add-attribute");
         if (newAttribute)
-            return this._addNewAttribute(event, treeElement);
+            return this._addNewAttribute(treeElement.listItemElement);
 
         return false;
     },
 
-    _addNewAttribute: function(event, treeElement)
+    _addNewAttribute: function(listItemElement)
     {
         var attr = document.createElement("span");
         attr.className = "webkit-html-attribute";
@@ -576,17 +576,28 @@ WebInspector.ElementsTreeElement.prototype = {
         attr.appendChild(name);
         attr.appendChild(value);
 
-        var tag = treeElement.listItemElement.getElementsByClassName("webkit-html-tag")[0];
+        var tag = listItemElement.getElementsByClassName("webkit-html-tag")[0];
         this._insertInLastAttributePosition(tag, attr);
-
-        // Start editing the attr span and highlight it first
-        // NOTE: _startEditingAttribute only looks at the "target", so we
-        // can fake an object here instead of passing the "event" with the
-        // wrong target element
-        return this._startEditingAttribute(attr, {target: attr});
+        return this._startEditingAttribute(attr, attr);
     },
 
-    _startEditingAttribute: function(attribute, event)
+    _triggerEditAttribute: function(attributeName)
+    {
+        var attributeElements = this.listItemElement.getElementsByClassName("webkit-html-attribute-name");
+        for (var i = 0, len = attributeElements.length; i < len; ++i) {
+            if (attributeElements[i].textContent === attributeName) {
+                for (var elem = attributeElements[i].nextSibling; elem; elem = elem.nextSibling) {
+                    if (elem.nodeType !== Node.ELEMENT_NODE)
+                        continue;
+
+                    if (elem.hasStyleClass("webkit-html-attribute-value"))
+                        return this._startEditingAttribute(attributeElements[i].parentNode, elem);
+                }
+            }
+        }
+    },
+
+    _startEditingAttribute: function(attribute, elementForSelection)
     {
         if (WebInspector.isBeingEdited(attribute))
             return true;
@@ -617,7 +628,7 @@ WebInspector.ElementsTreeElement.prototype = {
         this._editing = true;
 
         WebInspector.startEditing(attribute, this._attributeEditingCommitted.bind(this), this._editingCancelled.bind(this), attributeName);
-        window.getSelection().setBaseAndExtent(event.target, 0, event.target, 1);
+        window.getSelection().setBaseAndExtent(elementForSelection, 0, elementForSelection, 1);
 
         return true;
     },
@@ -635,15 +646,56 @@ WebInspector.ElementsTreeElement.prototype = {
         return true;
     },
 
-    _attributeEditingCommitted: function(element, newText, oldText, attributeName)
+    _attributeEditingCommitted: function(element, newText, oldText, attributeName, moveDirection)
     {
         delete this._editing;
+
+        // Before we do anything, determine where we should move
+        // next based on the current element's settings
+        var moveToAttribute;
+        var newAttribute;
+        if (moveDirection) {
+            var found = false;
+            var attributes = this.representedObject.attributes;
+            for (var i = 0, len = attributes.length; i < len; ++i) {
+                if (attributes[i].name === attributeName) {
+                    found = true;
+                    if (moveDirection === "backward" && i > 0)
+                        moveToAttribute = attributes[i - 1].name;
+                    else if (moveDirection === "forward" && i < attributes.length - 1)
+                        moveToAttribute = attributes[i + 1].name;
+                    else if (moveDirection === "forward" && i === attributes.length - 1)
+                        newAttribute = true;
+                }
+            }
+
+            if (!found && moveDirection === "backward")
+                moveToAttribute = attributes[attributes.length - 1].name;
+            else if (!found && moveDirection === "forward" && !/^\s*$/.test(newText))
+                newAttribute = true;
+        }
+
+        function moveToNextAttributeIfNeeded() {
+            if (moveToAttribute)
+                this._triggerEditAttribute(moveToAttribute);
+            else if (newAttribute)
+                this._addNewAttribute(this.listItemElement);
+        }
 
         var parseContainerElement = document.createElement("span");
         parseContainerElement.innerHTML = "<span " + newText + "></span>";
         var parseElement = parseContainerElement.firstChild;
-        if (!parseElement || !parseElement.hasAttributes()) {
+
+        if (!parseElement) {
             this._editingCancelled(element, attributeName);
+            moveToNextAttributeIfNeeded.call(this);
+            return;
+        }
+
+        if (!parseElement.hasAttributes()) {
+            InspectorController.inspectedWindow().Element.prototype.removeAttribute.call(this.representedObject, attributeName);
+            this._updateTitle();
+            moveToNextAttributeIfNeeded.call(this);
             return;
         }
 
@@ -651,7 +703,9 @@ WebInspector.ElementsTreeElement.prototype = {
         for (var i = 0; i < parseElement.attributes.length; ++i) {
             var attr = parseElement.attributes[i];
             foundOriginalAttribute = foundOriginalAttribute || attr.name === attributeName;
-            InspectorController.inspectedWindow().Element.prototype.setAttribute.call(this.representedObject, attr.name, attr.value);
+            try {
+                InspectorController.inspectedWindow().Element.prototype.setAttribute.call(this.representedObject, attr.name, attr.value);
+            } catch(e) {} // ignore invalid attribute (innerHTML doesn't throw errors, but this can)
         }
 
         if (!foundOriginalAttribute)
@@ -660,6 +714,8 @@ WebInspector.ElementsTreeElement.prototype = {
         this._updateTitle();
 
         this.treeOutline.focusedNodeChanged(true);
+
+        moveToNextAttributeIfNeeded.call(this);
     },
 
     _textNodeEditingCommitted: function(element, newText)

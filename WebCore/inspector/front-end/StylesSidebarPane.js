@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -387,6 +388,11 @@ WebInspector.StylePropertiesSection.prototype = {
                 child = child.traverseNextTreeElement(false, null, true);
             }
         }
+
+        if (this._afterUpdate) {
+            this._afterUpdate(this);
+            delete this._afterUpdate;
+        }
     },
 
     onpopulate: function()
@@ -425,6 +431,26 @@ WebInspector.StylePropertiesSection.prototype = {
             var item = new WebInspector.StylePropertyTreeElement(style, name, isShorthand, inherited, overloaded, disabled);
             this.propertiesTreeOutline.appendChild(item);
         }
+    },
+
+    findTreeElementWithName: function(name)
+    {
+        var treeElement = this.propertiesTreeOutline.children[0];
+        while (treeElement) {
+            if (treeElement.name === name)
+                return treeElement;
+            treeElement = treeElement.traverseNextTreeElement(true, null, true);
+        }
+        return null;
+    },
+
+    addNewBlankProperty: function()
+    {
+        var item = new WebInspector.StylePropertyTreeElement(this.styleRule.style, "", false, false, false, false);
+        this.propertiesTreeOutline.appendChild(item);
+        item.listItemElement.textContent = "";
+        item._newProperty = true;
+        return item;
     }
 }
 
@@ -558,10 +584,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var nameElement = document.createElement("span");
         nameElement.className = "name";
         nameElement.textContent = this.name;
+        this.nameElement = nameElement;
 
         var valueElement = document.createElement("span");
         valueElement.className = "value";
         valueElement.innerHTML = htmlValue;
+        this.valueElement = valueElement;
 
         if (priority) {
             var priorityElement = document.createElement("span");
@@ -843,14 +871,56 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.editingEnded(context);
     },
 
-    editingCommitted: function(element, userInput, previousContent, context)
+    editingCommitted: function(element, userInput, previousContent, context, moveDirection)
     {
         this.editingEnded(context);
 
-        if (userInput === previousContent)
-            return; // nothing changed, so do nothing else
+        // Determine where to move to before making changes
+        var newProperty = false;
+        var moveToPropertyName;
+        var moveTo = (moveDirection === "forward" ? this.nextSibling : this.previousSibling);
+        if (moveTo)
+            moveToPropertyName = moveTo.name;
+        else if (moveDirection === "forward")
+            newProperty = true;
 
-        this.applyStyleText(userInput, true);
+        // Make the Changes and trigger the moveToNextCallback after updating
+        var blankInput = /^\s*$/.test(userInput);
+        if (userInput !== previousContent || (this._newProperty && blankInput)) { // only if something changed, or adding a new style and it was blank
+            this.treeOutline.section._afterUpdate = moveToNextCallback.bind(this, this._newProperty, !blankInput);
+            this.applyStyleText(userInput, true);
+        } else
+            moveToNextCallback(this._newProperty, false, this.treeOutline.section, false);
+
+        // The Callback to start editing the next property
+        function moveToNextCallback(alreadyNew, valueChanged, section) {
+            if (!moveDirection)
+                return;
+
+            // User just tabbed through without changes
+            if (moveTo && moveTo.parent) {
+                moveTo.startEditing(moveTo.valueElement);
+                return;
+            }
+
+            // User has made a change then tabbed, wiping all the original treeElements,
+            // recalculate the new treeElement for the same property we were going to edit next
+            if (moveTo && !moveTo.parent) {
+                var treeElement = section.findTreeElementWithName(moveToPropertyName);
+                if (treeElement)
+                    treeElement.startEditing(treeElement.valueElement);
+                return;
+            }
+
+            // Create a new attribute in this section
+            if (newProperty) {
+                if (alreadyNew && !valueChanged)
+                    return;
+
+                var item = section.addNewBlankProperty();
+                item.startEditing();
+            }
+        }
     },
 
     applyStyleText: function(styleText, updateInterface)
@@ -876,7 +946,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         if (!styleTextLength) {
             if (updateInterface) {
-                // The user deleted the everything, so remove the tree element and update.
+                // The user deleted everything, so remove the tree element and update.
+                if (!this._newProperty)
+                    delete this.treeOutline.section._afterUpdate;
                 if (this.treeOutline.section && this.treeOutline.section.pane)
                     this.treeOutline.section.pane.update();
                 this.parent.removeChild(this);
@@ -886,7 +958,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         if (!tempStyle.length) {
             // The user typed something, but it didn't parse. Just abort and restore
-            // the original title for this property.
+            // the original title for this property.  If this was a new attribute and
+            // we couldn't parse, then just remove it.
+            if (this._newProperty) {
+                this.parent.removeChild(this);
+                return;
+            }
             if (updateInterface)
                 this.updateTitle();
             return;

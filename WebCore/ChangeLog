@@ -1,3 +1,30 @@
+2009-07-27  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Inspector: Tab Through Element Attributes and CSS Properties When Editing
+
+        https://bugs.webkit.org/show_bug.cgi?id=27673
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement):
+        (WebInspector.ElementsTreeElement.prototype._startEditing): refactored parameter
+        (WebInspector.ElementsTreeElement.prototype._addNewAttribute): refactored to remove excess
+        (WebInspector.ElementsTreeElement.prototype._triggerEditAttribute): provide an attribute name and this will start editing it
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted.moveToNextAttributeIfNeeded): move between attributes
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertiesSection.prototype.findTreeElementWithName): search through treeElements for a style property name
+        (WebInspector.StylePropertiesSection.prototype.addNewBlankProperty): initialize a blank property for adding new properties
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle): add references to the name and value elements
+        (WebInspector.StylePropertyTreeElement.prototype.):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/inspector.js:
+        (WebInspector.startEditing.editingCommitted): include the move direction as a parameter to the commit callback
+        (WebInspector.startEditing.element.handleKeyEvent): handle the tab key to specify the move direction
+        (WebInspector.startEditing):
+
 2009-07-27  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Adam Treat.
