@@ -1,36 +1,33 @@
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
- <card title="Anchor Tag">
-  <p>
-  This is an anchor bound to go task<br/>
-   <anchor>Next page
-  <go href="cards.wml"/>
-   </anchor>
-  </p>
+    <card title="Anchor Tag">
+        <p>This is an anchor bound to go task<br/>
+            <anchor>
+                Next page
+                <go href="anchor-img-element.wml"/>
+            </anchor>
+        </p>
 
-   <p>
-   This an anchor bound to prev task<br/>
-   <anchor title="Previous" >Prev page
-   <prev/>
-   </anchor>
-  </p>
+        <p>This an anchor bound to prev task<br/>
+            <anchor title="Previous" >Prev page
+                <prev/>
+            </anchor>
+        </p>
 
-   <p>
-    This an anchor bound to refresh task<br/>
-    <anchor title="Refresh">Refresh $var
-    <refresh> 
-    <setvar name="var" value="me"/>
-    </refresh>
-    </anchor>
-  </p>
+        <p>This an anchor bound to refresh task<br/>
+            <anchor title="Refresh">Refresh $var
+                <refresh> 
+                    <setvar name="var" value="me"/>
+                </refresh>
+            </anchor>
+        </p>
 
-   <p>
-   This is an anchor contains img element, bound to prev task <br/>
-   <anchor title="click to go back">
-   <prev/>
-   <img src="../resources/smile.gif" />
-   </anchor>
-   </p>
- </card>
-</wml> 
+        <p>This is an anchor contains img element, bound to prev task<br/>
+            <anchor title="click to go back">
+                <prev/>
+                <img src="resources/smiley.png"/>
+            </anchor>
+        </p>
+    </card>
+</wml>

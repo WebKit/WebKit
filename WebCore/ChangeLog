@@ -1,3 +1,57 @@
+2009-07-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] Manual WML tests aren't properly working
+        https://bugs.webkit.org/show_bug.cgi?id=27718
+
+        Fix file paths in the manual WML layout tests, remove unneeded tests (already covered by DRT tests).
+        Add missing resources directory and test image. Reformat all testcases to a common style.
+        Add new StartTests.wml file, which should be used as starting point to crawl through the manual tests.
+
+        Filing bugs soon for all tests exposing bugs (7 in total).
+
+        * manual-tests/wml/StartTests.wml: Added.
+        * manual-tests/wml/a-br-element.wml:
+        * manual-tests/wml/a-element.wml:
+        * manual-tests/wml/a-img-element.wml:
+        * manual-tests/wml/access-target.wml:
+        * manual-tests/wml/anchor-br-element.wml:
+        * manual-tests/wml/anchor-element.wml:
+        * manual-tests/wml/anchor-img-element.wml:
+        * manual-tests/wml/card-newcontext-attr.wml:
+        * manual-tests/wml/card-onenterbackward.wml:
+        * manual-tests/wml/card-onenterforward.wml:
+        * manual-tests/wml/card-ontimer.wml:
+        * manual-tests/wml/card-title-attr.wml: Removed.
+        * manual-tests/wml/deck-access-control.wml:
+        * manual-tests/wml/go-element.wml: Removed.
+        * manual-tests/wml/input-emptyok.wml: Removed.
+        * manual-tests/wml/input-format.wml:
+        * manual-tests/wml/onevent-go.wml:
+        * manual-tests/wml/onevent-noop.wml:
+        * manual-tests/wml/onevent-prev.wml:
+        * manual-tests/wml/onevent-refresh.wml:
+        * manual-tests/wml/onevent-shadow.wml:
+        * manual-tests/wml/postfield-get.wml: Removed.
+        * manual-tests/wml/postfield-post.wml: Removed.
+        * manual-tests/wml/resources: Added.
+        * manual-tests/wml/resources/smiley.png: Added.
+        * manual-tests/wml/select-element.wml:
+        * manual-tests/wml/select-onpick-event.wml:
+        * manual-tests/wml/setvar-element.wml:
+        * manual-tests/wml/targetdeck.wml:
+        * manual-tests/wml/task-go-in-anchor.wml:
+        * manual-tests/wml/task-noop-in-do.wml:
+        * manual-tests/wml/task-noop-in-onevent.wml: Removed.
+        * manual-tests/wml/task-prev-in-anchor.wml:
+        * manual-tests/wml/task-refresh-in-anchor.wml:
+        * manual-tests/wml/template-go.wml:
+        * manual-tests/wml/template-onevent.wml: Removed.
+        * manual-tests/wml/template-ontimer.wml:
+        * manual-tests/wml/timer.wml:
+        * manual-tests/wml/variable-substitution.wml:
+
 2009-07-27  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Dimitri Glazkov.

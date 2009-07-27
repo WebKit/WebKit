@@ -1,30 +1,33 @@
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
- <card id="card1" title="Test variable substitution">
- <p> Test for variable substitution </p>
- <p> Click "Refersh" to refresh the card, and the varaible references in the card will be substitued</p>
-  <anchor> Refresh <br/>
-  <refresh> 
-  <setvar name="hi" value="hello"/>
-  <setvar name="name" value=" Yi chao"/>
-  <setvar name="name2" value="$(name:e)"/>
-  <setvar name="name3" value="$(name2:u)"/>
-  </refresh>
-  </anchor>
-  <p>set hi = "hello", name = " Yi chao" <br/>
-  <![CDATA[$(hi),$name]]> => $(hi),$name <br/>
-  <![CDATA[$hi,$(name:esCape)]]> => $hi,$(name:esCape) <br/>
-  <![CDATA[$hi,$(name:e)]]> => $hi,$(name:e) <br/>
-  <![CDATA[$hi,$(name:U)]]> => $hi,$(name:U) <br/>
-  </p>
-  <p>set name2 = $$(name:e) <br/>
-  <![CDATA[$(hi),$(name2)]]> => $(hi),$(name2) <br/>
-  <![CDATA[$(hi),$$(name:e)]]> => $(hi),$$(name:e) <br/>
-  </p>
-  <p>set name3 = $$(name2:u) <br/>
-  <![CDATA[$(hi),$name3]]> => $(hi),$name3<br/>
-  <![CDATA[$(hi),$(name3:e)]]> => $(hi),$(name3:e) <br/>
-  </p>
- </card>
+    <card id="card1" title="Test variable substitution">
+        <p>Test for variable substitution</p>
+        <p>Click "Refersh" to refresh the card, and the varaible references in the card will be substitued</p>
+        <anchor>Refresh<br/>
+            <refresh> 
+                <setvar name="hi" value="hello"/>
+                <setvar name="name" value=" Yi chao"/>
+                <setvar name="name2" value="$(name:e)"/>
+                <setvar name="name3" value="$(name2:u)"/>
+            </refresh>
+        </anchor>
+
+        <p>set hi = "hello", name = " Yi chao"<br/>
+        <![CDATA[$(hi),$name]]> => $(hi),$name<br/>
+        <![CDATA[$hi,$(name:escape)]]> => $hi,$(name:escape)<br/>
+        <![CDATA[$hi,$(name:e)]]> => $hi,$(name:e)<br/>
+        <![CDATA[$hi,$(name:u)]]> => $hi,$(name:u)<br/>
+        </p>
+
+        <p>set name2 = $$(name:e)<br/>
+        <![CDATA[$(hi),$(name2)]]> => $(hi),$(name2)<br/>
+        <![CDATA[$(hi),$$(name:e)]]> => $(hi),$$(name:e)<br/>
+        </p>
+
+        <p>set name3 = $$(name2:u)<br/>
+        <![CDATA[$(hi),$name3]]> => $(hi),$name3<br/>
+        <![CDATA[$(hi),$(name3:e)]]> => $(hi),$(name3:e)<br/>
+        </p>
+    </card>
 </wml>

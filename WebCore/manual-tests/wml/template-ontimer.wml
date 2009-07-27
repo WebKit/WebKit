@@ -2,16 +2,15 @@
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
 "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
-<template ontimer="#card2">
-</template>
-<card id="card1">
-<p>Test for template ontimer event in WML</p>
-<p>This is Card one,we will jump to card 2 after 5s because of the template ontimer event</p>
-<timer value="50"/>
-</card>
-<card id="card2" title="card 2">
-<p>
-This is card 2
-</p>
-</card>
+    <template ontimer="#card2"/>
+
+    <card id="card1">
+        <p>Test for template ontimer event in WML</p>
+        <p>This is Card one,we will jump to card 2 after 5s because of the template ontimer event</p>
+        <timer value="50"/>
+    </card>
+    
+    <card id="card2" title="card 2">
+        <p>This is card 2</p>
+    </card>
 </wml>

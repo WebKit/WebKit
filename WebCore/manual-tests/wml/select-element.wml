@@ -1,27 +1,24 @@
 <?xml version="1.0"?>
-<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
-"http://www.wapforum.org/DTD/wml_1.1.xml">
-
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
-<card id="card1" title="Select Test">
-<p> Test for select element in WML </p>
-<p> You can select one or more options, and then click 'Answer', the second card will tell you what you selected</p>
-<p>
-<select name="cars" title="SELECT" multiple="true" >
-  <option value="volvo" >Volvo</option>
-  <option value="fiat">Fiat</option>
-  <option value="saab">Saab</option>
-  <option value="audi">Audi</option>
-</select>
-</p>
-<do type="accept" label="Answer">
-  <go href="#card2"/>
-</do>
-</card>
+    <card id="card1" title="Select Test">
+        <p>Test for select element in WML</p>
+        <p>You can select one or more options, and then click 'Answer', the second card will tell you what you selected</p>
+        <p>
+            <select name="cars" title="SELECT" multiple="true">
+                <option value="volvo" >Volvo</option>
+                <option value="fiat">Fiat</option>
+                <option value="saab">Saab</option>
+                <option value="audi">Audi</option>
+            </select>
+        </p>
 
-<card id="card2" title="Answer">
-<p>
-You selected: $(cars)
-</p>
-</card>
+        <do type="accept" label="Answer">
+            <go href="#card2"/>
+        </do>
+    </card>
+
+    <card id="card2" title="Answer">
+        <p>You selected: $(cars)</p>
+    </card>
 </wml>

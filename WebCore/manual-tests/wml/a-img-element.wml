@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
- <card title="A element Test">
-  <p>Test for A element including img element. </p>
-  <p>
-   <a href="../test.wml" title="Next Page"><img src="../resources/smile.gif"/></a>
-  </p>
- </card>
-</wml> 
-
+    <card title="A element Test">
+        <p>Test for A element including img element. </p>
+        <p>
+            <a href="StartTests.wml" title="Next Page"><img src="resources/smiley.png"/></a>
+        </p>
+    </card>
+</wml>

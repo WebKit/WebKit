@@ -1,18 +1,16 @@
 <?xml version="1.0"?>
-<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
-"http://www.wapforum.org/DTD/wml_1.1.xml">
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
+    <card id="card1" title="Card 1"> 
+        <timer name="T" value="30"/>
+        <onevent type="ontimer">
+            <refresh>
+                <setvar name="var" value="VARIABLE"/>
+            </refresh>
+        </onevent>
 
-<card id="card1" title="Card 1"> 
- <timer name="T" value="30"/>
- <onevent type="ontimer">
- <refresh>
- <setvar name="var" value="VARIABLE"/>
- </refresh>
- </onevent>
-<p>Test for onevent element which binds refresh task with ontimer event</p>
-<p> When the timer timeout(3s), the page will be refresh. As a consequence, we can see the following variable reference has been substituted</p>
-<p align="center"> Here is a variable : var = $var </p>
-</card>
+        <p>Test for onevent element which binds refresh task with ontimer event</p>
+        <p>When the timer timeout(3s), the page will be refresh. As a consequence, we can see the following variable reference has been substituted</p>
+        <p align="center"> Here is a variable : var = $var</p>
+    </card>
 </wml> 
-

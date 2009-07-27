@@ -1,12 +1,10 @@
 <?xml version="1.0" ?>
-<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
-"http://www.wapforum.org/DTD/wml_1.1.xml">
-
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
 <wml>
-<card title="Anchor Tag">
-<p> Test for WML img enclosed with anchor element, when the mouse move into the image, the tip "go to test.wml" will appear</p>
-<p>
-<anchor title="go to test.wml"><img src="../resources/smile.gif"/> <go href="../test.wml"/></anchor>
-</p>
-</card>
+    <card title="Anchor Tag">
+        <p>Test for WML img enclosed with anchor element, when the mouse move into the image, the tip "go to StartTests.wml" will appear</p>
+        <p>
+            <anchor title="go to StartTests.wml"><img src="resources/smiley.png"/> <go href="StartTests.wml"/></anchor>
+        </p>
+    </card>
 </wml>
