@@ -271,7 +271,7 @@ void PluginDatabase::clear()
 {
     m_plugins.clear();
     m_pluginsByPath.clear();
-
+    m_pluginPathsWithTimes.clear();
     m_registeredMIMETypes.clear();
 }
 
