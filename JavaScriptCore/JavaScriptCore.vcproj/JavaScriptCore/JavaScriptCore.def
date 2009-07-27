@@ -1,9 +1,7 @@
-LIBRARY    "JavaScriptCore"
 
-EXPORTS
     ??0Collator@WTF@@QAE@PBD@Z
     ??0Debugger@JSC@@QAE@XZ
-    ??0DropAllLocks@JSLock@JSC@@QAE@_N@Z
+    ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@ABVIdentifier@1@@Z
     ??0JSByteArray@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@PAVByteArray@4@PBUClassInfo@1@@Z
     ??0JSFunction@JSC@@QAE@PAVExecState@1@V?$PassRefPtr@VStructure@JSC@@@WTF@@HABVIdentifier@1@P6I?AVJSValue@1@0PAVJSObject@1@V61@ABVArgList@1@@Z@Z
@@ -168,7 +166,7 @@ EXPORTS
     ?jsRegExpExecute@@YAHPBUJSRegExp@@PB_WHHPAHH@Z
     ?jsRegExpFree@@YAXPAUJSRegExp@@@Z
     ?jsString@JSC@@YAPAVJSString@1@PAVJSGlobalData@1@ABVUString@1@@Z
-    ?lock@JSLock@JSC@@SAX_N@Z
+    ?lock@JSLock@JSC@@SAXW4JSLockBehavior@2@@Z
     ?lock@Mutex@WTF@@QAEXXZ
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?lookupGetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
@@ -261,7 +259,7 @@ EXPORTS
     ?tryFastCalloc@WTF@@YAPAXII@Z
     ?tryLock@Mutex@WTF@@QAE_NXZ
     ?type@DebuggerCallFrame@JSC@@QBE?AW4Type@12@XZ
-    ?unlock@JSLock@JSC@@SAX_N@Z
+    ?unlock@JSLock@JSC@@SAXW4JSLockBehavior@2@@Z
     ?unlock@Mutex@WTF@@QAEXXZ
     ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?unprotect@Heap@JSC@@QAEXVJSValue@2@@Z
@@ -274,3 +272,5 @@ EXPORTS
     WTFReportAssertionFailure
     WTFReportAssertionFailureWithMessage
     WTFReportError
+EXPORTS
+LIBRARY    "JavaScriptCore"

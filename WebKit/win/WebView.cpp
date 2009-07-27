@@ -2820,7 +2820,7 @@ HRESULT STDMETHODCALLTYPE WebView::stringByEvaluatingJavaScriptFromString(
     if (!scriptExecutionResult)
         return E_FAIL;
     else if (scriptExecutionResult.isString()) {
-        JSLock lock(SilenceAssertionsOnly);
+        JSLock lock(JSC::SilenceAssertionsOnly);
         *result = BString(String(scriptExecutionResult.getString()));
     }
 
