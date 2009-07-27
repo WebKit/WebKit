@@ -1,3 +1,13 @@
+2009-07-27  Volker Hilsheimer <volker.hilsheimer@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        QWebView's "enabled" parameter should default to true, as with QGraphicsView and
+        QPainter.
+
+        * Api/qwebview.cpp: Add reference to QPainter::renderHints().
+        * Api/qwebview.h: Add default for enabled argument.
+
 2009-07-26  Kavindra Palaraja  <kavindra.palaraja@nokia.com>
 
         Reviewed by Simon Hausmann.
