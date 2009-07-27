@@ -38,7 +38,7 @@ if [ "$TINYVERSION" == "" ]; then
 fi
 
 if [ "$RC_PROJECTSOURCEVERSION" == "" ]; then
-    PROPOSEDVERSION=$(cat "$SRCPATH/VERSION")
+    PROPOSEDVERSION=`cat $SRCPATH/VERSION | sed -r 's/(.*\S+)\s*$/\1/'`
 else
     PROPOSEDVERSION="$RC_PROJECTSOURCEVERSION"
 fi
@@ -52,7 +52,7 @@ fi
 if [ "$BLDVARIANTVERSION" == "" ]; then
     BLDVARIANTVERSION=0
 fi
-SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed 's/^Revision: \(.*\)/\1/'`
+SVNOPENSOURCEREVISION=`svn info | grep '^Revision' | sed -r 's/^Revision: (.*\S+)\s*$/\1/'`
 
 BLDNMBR="$PROPOSEDVERSION"
 BLDNMBRSHORT="$BLDNMBR"

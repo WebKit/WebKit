@@ -1,3 +1,13 @@
+2009-07-27  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27323
+        Correctly parse command output, even when the line endings are not LF,
+        so that we don't create an autoversion.h that MSVC chokes on.
+
+        * win/tools/scripts/auto-version.sh:
+
 2009-07-13  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
