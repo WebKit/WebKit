@@ -227,13 +227,6 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
     }
     statement.finalize();
     
-    SQLiteStatement sequenceStatement(m_database, "SELECT seq FROM sqlite_sequence WHERE name='Databases';");
-
-    // FIXME: More informative error handling here, even though these steps should never fail
-    if (sequenceStatement.prepare() != SQLResultOk)
-        return String();
-    result = sequenceStatement.step();
-
     String fileName = SQLiteFileSystem::getFileNameForNewDatabase(originPath, origin->databaseIdentifier(), name, &m_database);
     if (!addDatabase(origin, name, fileName))
         return String();

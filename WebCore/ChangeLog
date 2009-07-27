@@ -1,3 +1,19 @@
+2009-07-27  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Removing a no-op block of code in DatabaseTracker.cpp that
+        should've been removed in the patch for bug 26054.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27666
+
+        All tests in WebCore/storage pass.
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::fullPathForDatabase): Removed a no-op
+        block of code that was moved to SQLiteFileSystem.cpp and should
+        have been removed from DatabaseTracker.cpp
+
 2009-07-27  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
