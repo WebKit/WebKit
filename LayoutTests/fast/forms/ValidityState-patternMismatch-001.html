@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>basic patternMismatch test</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        v = document.getElementsByName("victim");
+        log(!v[0].validity.patternMismatch ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<p>There is an input type text with pattern attribute set to [0-9][A-Z]{3}, checking its validity.patternMismatch flag.</p>
+<input name="victim" pattern="[0-9][A-Z]{3}" value="0AAA"/>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

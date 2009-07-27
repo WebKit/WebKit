@@ -1,3 +1,34 @@
+2009-07-27  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25552
+        Added new "pattern" attribute to HTMLInputElement and validation code
+        (validity.patternMismatch) as per HTML5 specs.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#attr-input-pattern
+
+        Tests: fast/forms/ValidityState-002.html
+               fast/forms/ValidityState-patternMismatch-001.html
+               fast/forms/ValidityState-patternMismatch-002.html
+               fast/forms/ValidityState-patternMismatch-003.html
+               fast/forms/ValidityState-patternMismatch-004.html
+               fast/forms/ValidityState-patternMismatch-005.html
+               fast/forms/ValidityState-patternMismatch-006.html
+               fast/forms/ValidityState-patternMismatch-007.html
+               fast/forms/pattern-attribute-001.html
+               fast/forms/pattern-attribute-002.html
+               fast/forms/pattern-attribute-003.html
+
+        * html/HTMLAttributeNames.in: pattern attribute
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::patternMismatch): method definition
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::patternMismatch): validation method
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/ValidityState.h:
+        (WebCore::ValidityState::patternMismatch): validation flag
+
 2009-07-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

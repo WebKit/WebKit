@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>basic patternMismatch test 7</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        log(!v[0].validity.patternMismatch ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<input name="victim" type="text" pattern="" value="Lorem Ipsum"/>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

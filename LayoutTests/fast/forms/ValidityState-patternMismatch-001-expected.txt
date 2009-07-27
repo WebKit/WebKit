@@ -1,0 +1,4 @@
+There is an input type text with pattern attribute set to [0-9][A-Z]{3}, checking its validity.patternMismatch flag.
+
+
+SUCCESS

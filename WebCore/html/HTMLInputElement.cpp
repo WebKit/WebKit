@@ -47,6 +47,7 @@
 #include "MappedAttribute.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "RegularExpression.h"
 #include "RenderButton.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
@@ -141,6 +142,46 @@ bool HTMLInputElement::valueMissing() const
         case BUTTON:
         case ISINDEX:
             break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool HTMLInputElement::patternMismatch() const
+{
+    switch (inputType()) {
+        case ISINDEX:
+        case CHECKBOX:
+        case RADIO:
+        case SUBMIT:
+        case RESET:
+        case FILE:
+        case HIDDEN:
+        case IMAGE:
+        case BUTTON:
+        case RANGE:
+        case NUMBER:
+            return false;
+        case TEXT:
+        case SEARCH:
+        case URL:
+        case TELEPHONE:
+        case EMAIL:
+        case PASSWORD:
+            const AtomicString& pattern = getAttribute(patternAttr);
+            String value = this->value();
+
+            // Empty values can't be mismatched
+            if (pattern.isEmpty() || value.isEmpty())
+                return false;
+
+            RegularExpression patternRegExp(pattern, TextCaseSensitive);
+            int matchLength = 0;
+            int valueLength = value.length();
+            int matchOffset = patternRegExp.match(value, 0, &matchLength);
+
+            return matchOffset != 0 || matchLength != valueLength;
     }
 
     ASSERT_NOT_REACHED();

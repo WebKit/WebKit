@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>basic patternMismatch test 6</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        v = document.getElementsByName("victim");
+        for (i = 0; i < v.length; i++)
+            log(v[i].validity.patternMismatch ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<input name="victim" type="text" pattern="((4\.[0-3])|(2\.[0-3]))" value="Something 4.0"/>
+<input name="victim" type="text" pattern="\w" value="*"/>
+<input name="victim" type="email" pattern="[0-9]" value="something"/>
+<input name="victim" type="text" pattern=".{5,}" value="1234" />
+<input name="victim" type="text" pattern=".{5,}" value="*)$!" />
+<input name="victim" type="text" pattern=".{5,}" value="(^$!" />
+<input name="victim" type="text" pattern="0|1|2|3|4|5|6|7|8|" value="a" />
+<input name="victim" type="text" pattern="^(foo).*" value="a foo"/>
+<input name="victim" type="text" pattern="\w" value="134"/>
+<input name="victim" type="text" pattern="\." value="\."/>
+<input name="victim" type="text" pattern="\)\(" value=") ("/>
+<input name="victim" type="text" pattern="ab" value="a"/>
+<input name="victim" type="text" pattern="ab" value="b"/>
+<input name="victim" type="text" pattern="^ab" value="abc"/>
+<input name="victim" type="text" pattern="^\(" value="(something"/>
+<input name="victim" type="text" pattern="\)\\" value="something)\"/>
+<input name="victim" type="text" pattern="...\)\([b]{3}" value="adf)(bbbTEST"/>
+<input name="victim" type="text" pattern="foo\\" value="food"/>
+<input name="victim" type="text" pattern="^" value="wrong"/>
+<input name="victim" type="text" pattern="$" value="wrong"/>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

@@ -1,3 +1,34 @@
+2009-07-27  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25552
+        First series of tests for the "pattern" attribute and related validation
+        code
+
+        * fast/forms/ValidityState-002-expected.txt: Copied from LayoutTests/fast/forms/willvalidate-001-expected.txt.
+        * fast/forms/ValidityState-002.html: Added.
+        * fast/forms/ValidityState-patternMismatch-001-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch-001.html: Added.
+        * fast/forms/ValidityState-patternMismatch-002-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch-002.html: Added.
+        * fast/forms/ValidityState-patternMismatch-003-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch-003.html: Added.
+        * fast/forms/ValidityState-patternMismatch-004-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch-004.html: Added.
+        * fast/forms/ValidityState-patternMismatch-005-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch-005.html: Added.
+        * fast/forms/ValidityState-patternMismatch-006-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch-006.html: Added.
+        * fast/forms/ValidityState-patternMismatch-007-expected.txt: Added.
+        * fast/forms/ValidityState-patternMismatch-007.html: Added.
+        * fast/forms/pattern-attribute-001-expected.txt: Added.
+        * fast/forms/pattern-attribute-001.html: Added.
+        * fast/forms/pattern-attribute-002-expected.txt: Added.
+        * fast/forms/pattern-attribute-002.html: Added.
+        * fast/forms/pattern-attribute-003-expected.txt: Added.
+        * fast/forms/pattern-attribute-003.html: Added.
+
 2009-07-27  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

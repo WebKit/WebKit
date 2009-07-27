@@ -91,6 +91,7 @@ public:
     virtual bool isTextFormControl() const { return isTextField(); }
 
     virtual bool valueMissing() const;
+    virtual bool patternMismatch() const;
 
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }

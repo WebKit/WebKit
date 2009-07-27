@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>basic patternMismatch test 4</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function test() {
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        log(v[0].validity.patternMismatch ? "SUCCESS" : "FAILURE");
+        v[0].value = "someone@somewhere.com";
+        log(!v[0].validity.patternMismatch ? "SUCCESS" : "FAILURE");
+    }
+</script>
+</head>
+<body onload="test()">
+<input name="victim" type="text" pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" value="Wrong!"/>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

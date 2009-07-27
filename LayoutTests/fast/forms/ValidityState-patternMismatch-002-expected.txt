@@ -1,0 +1,4 @@
+There is an input type text with no pattern attribute.
+
+
+SUCCESS

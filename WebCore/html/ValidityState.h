@@ -40,7 +40,7 @@ namespace WebCore {
 
         bool valueMissing() { return control()->valueMissing(); }
         bool typeMismatch() { return false; }
-        bool patternMismatch() { return false; }
+        bool patternMismatch() { return control()->patternMismatch(); }
         bool tooLong() { return false; }
         bool rangeUnderflow() { return false; }
         bool rangeOverflow() { return false; }

@@ -185,6 +185,7 @@ onwebkitanimationstart
 onwebkitanimationiteration
 onwebkitanimationend
 onwebkittransitionend
+pattern
 placeholder
 pluginurl
 poster
