@@ -206,6 +206,8 @@ void PluginView::init()
 
 PluginView::~PluginView()
 {
+    LOG(Plugins, "PluginView::~PluginView()");
+
     stop();
 
     deleteAllValues(m_requests);
@@ -347,6 +349,8 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 }
 void PluginView::setParent(ScrollView* parent)
 {
+    LOG(Plugins, "PluginView::setParent(%p)", parent);
+
     Widget::setParent(parent);
 
     if (parent)

@@ -1,5 +1,13 @@
 2009-07-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        Reviewed by Simon Hausmann.
+
+        Add some more debug logging to PluginViewMac.
+
+        * plugins/mac/PluginViewMac.cpp:
+
+2009-07-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         Reviewed by Jan Michael Alonzo.
 
         Remove dead code from the GTK NPAPI implementation.
