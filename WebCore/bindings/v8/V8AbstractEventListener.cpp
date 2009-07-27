@@ -67,11 +67,11 @@ void V8AbstractEventListener::invokeEventHandler(v8::Handle<v8::Context> v8Conte
         tryCatch.SetVerbose(true);
 
         // Save the old 'event' property so we can restore it later.
-        v8::Local<v8::Value> savedEvent = v8Context->Global()->GetHiddenValue(eventSymbol);
+        v8::Local<v8::Value> savedEvent = v8Context->Global()->Get(eventSymbol);
         tryCatch.Reset();
 
         // Make the event available in the global object, so DOMWindow can expose it.
-        v8Context->Global()->SetHiddenValue(eventSymbol, jsEvent);
+        v8Context->Global()->Set(eventSymbol, jsEvent);
         tryCatch.Reset();
 
         // Call the event handler.
@@ -80,9 +80,9 @@ void V8AbstractEventListener::invokeEventHandler(v8::Handle<v8::Context> v8Conte
 
         // Restore the old event. This must be done for all exit paths through this method.
         if (savedEvent.IsEmpty())
-            v8Context->Global()->SetHiddenValue(eventSymbol, v8::Undefined());
+            v8Context->Global()->Set(eventSymbol, v8::Undefined());
         else
-            v8Context->Global()->SetHiddenValue(eventSymbol, savedEvent);
+            v8Context->Global()->Set(eventSymbol, savedEvent);
         tryCatch.Reset();
     }
 

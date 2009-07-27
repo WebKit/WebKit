@@ -1,3 +1,15 @@
+2009-07-27  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a regression introduced in r42671, which caused the js event 
+        object to be hidden (some websites depend on being able to access it).
+
+        https://bugs.webkit.org/show_bug.cgi?id=27719
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler): Make the event object visible to javascript, instead of hidden.
+
 2009-07-27  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Dimitri Glazkov.
