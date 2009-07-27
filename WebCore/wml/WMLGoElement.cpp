@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -102,9 +102,6 @@ void WMLGoElement::executeTask(Event*)
     // FIXME: 'newcontext' handling not implemented for external cards
     bool inSameDeck = doc->url().path() == url.path();
     if (inSameDeck && url.hasRef()) {
-        // Force frame loader to load the URL with fragment identifier
-        loader->setForceReloadWmlDeck(true);
-
         if (WMLCardElement* card = WMLCardElement::findNamedCardInDocument(doc, url.ref())) {
             if (card->isNewContext())
                 pageState->reset();

@@ -1,3 +1,68 @@
+2009-07-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] History handling / page cache / loading is buggy and depends on several hacks
+        https://bugs.webkit.org/show_bug.cgi?id=27707
+
+        Redesign WML history/loading handling. In detail:
+
+        - Remove FrameLoader::setForceReloadWmlDeck(). WML used to force a special loading behaviour
+          by calling this method from WMLGoElement & friends - instead teach FrameLoader to detect
+          WML content itself.
+
+          WML content is usually a standalone WML document (isWMLDocument()=true) or as special case
+          an XHTML document which embeds a WML document (that's the way the WML layout tests work).
+          Force WML loading behaviour even for XHTML document which embed WML documents. This only
+          applies to our layout tests, not for any real world site. Though it gives us a perfect
+          way to test the WML loading code even when we're not operating on a standalone WML document.
+
+          Whenever a WMLCardElement is inserted into the document it will check wheter it's inserted
+          in a standalone WML document or wheter the main frame document is different. If it differs
+          the main frame documents' "containsWMLContent" property is set to true.
+
+          -> Make FrameLoader::shouldReload() use the new frameContainsWMLContent() method, which
+             checks if the associated frame document is a WML document or wheter it contains WML content.
+
+        - Change FrameLoader::loadItem() to use the new frameContainsWMLContent() method for 'shouldScroll'
+          detection. WML documents (or those containing WML content) always want new loads even for in-page
+          navigation. No "scroll to anchor" mechanism should apply.
+
+        - Modify FrameLoader::canCachePageContainingThisFrame() to check for !frameContainsWMLContent().
+          WML pages should never be cached, potential security problem due the use of variables (per spec).
+
+        Add two new WML tests which were broken before, testing onenterforward/onenterbackward event handling
+        and history navigation (<prev/> task).
+
+        Tests: wml/enter-card-with-events.html
+               wml/enter-first-card-with-events.html
+
+        * dom/Document.cpp: Initialize new 'm_containsWMLContent' property.
+        (WebCore::Document::Document):
+        * dom/Document.h: Add new helper methods and 'm_containsWMLContent" variable (explained above).
+        (WebCore::Document::setContainsWMLContent):
+        (WebCore::Document::containsWMLContent):
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::clearWMLPageHistory): Renamed from clearWmlPageHistory() & slight cleanup.
+        * history/BackForwardList.h:
+        * loader/FrameLoader.cpp: Rework WML loading behaviour (explained above).
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::frameContainsWMLContent):
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::shouldReload):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * wml/WMLCardElement.cpp: 
+        (WebCore::WMLCardElement::handleIntrinsicEventIfNeeded): No need anymore to manually track history length.
+        (WebCore::WMLCardElement::insertedIntoDocument): Handle setting containsWMLContent on the main frame document.
+        * wml/WMLGoElement.cpp: 
+        (WebCore::WMLGoElement::executeTask): Remove call to FrameLoader::setForceReloadWmlDeck()
+        * wml/WMLPageState.cpp: Remove 'm_historyLength' - no need anymore to track history length on our own.
+        (WebCore::WMLPageState::WMLPageState):
+        (WebCore::WMLPageState::dump):
+        (WebCore::WMLPageState::reset):
+        * wml/WMLPageState.h:
+
 2009-07-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Adam Roben.

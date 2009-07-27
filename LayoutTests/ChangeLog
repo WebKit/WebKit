@@ -1,3 +1,28 @@
+2009-07-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] History handling / page cache / loading is buggy and depends on several hacks
+        https://bugs.webkit.org/show_bug.cgi?id=27707
+
+        Add two new WML layout tests after redesigning WML history/loading handling.
+
+        * wml/enter-card-with-events-expected.txt: Added.
+        * wml/enter-card-with-events.html: Added.
+        * wml/enter-first-card-with-events-expected.txt: Added.
+        * wml/enter-first-card-with-events.html: Added.
+        * wml/resources/WMLTestCase.js:
+        * wml/resources/enter-card-with-events.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/enter-card-with-events.wml: Added.
+        * wml/resources/enter-first-card-with-events.js: Added.
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+        * wml/resources/enter-first-card-with-events.wml: Added.
+
 2009-07-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Add fast/canvas/image-pattern-rotate.html to Skipped as it needs

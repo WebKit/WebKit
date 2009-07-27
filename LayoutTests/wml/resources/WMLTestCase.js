@@ -9,7 +9,7 @@ function createWMLElement(name) {
     return testDocument.createElementNS(wmlNS, "wml:" + name);
 }
 
-function createWMLTestCase(testDescription, substitutesVariables, testName, executeImmediately) {
+function createWMLTestCase(testDescription, substitutesVariables, testName, executeImmediately, needsReset) {
     // Setup default test options
     if (substitutesVariables == null) {
         substitutesVariables = true;
@@ -23,12 +23,18 @@ function createWMLTestCase(testDescription, substitutesVariables, testName, exec
         executeImmediately = true;
     }
 
+    // Some tests may want to handle resetting the page state themselves
+    if (needsReset == null) {
+        needsReset = true;
+    }
+
     // Initialize JS test
     description(testDescription);
     bodyElement = document.getElementsByTagName("body")[0];
 
     // Clear variable state & history
-    document.resetWMLPageState();
+    if (needsReset)
+        document.resetWMLPageState();
 
     // Setup DRT specific settings
     if (window.layoutTestController) {

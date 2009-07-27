@@ -28,6 +28,7 @@
 #include "HTMLNames.h"
 #include "MappedAttribute.h"
 #include "NodeList.h"
+#include "Page.h"
 #include "RenderStyle.h"
 #include "WMLDocument.h"
 #include "WMLDoElement.h"
@@ -131,20 +132,21 @@ void WMLCardElement::handleIntrinsicEventIfNeeded()
     FrameLoader* loader = frame->loader();
     if (!loader)
         return;
-    
-    int currentHistoryLength = loader->getHistoryLength();
-    int lastHistoryLength = pageState->historyLength();
 
     // Calculate the entry method of current card 
     WMLIntrinsicEventType eventType = WMLIntrinsicEventUnknown;
-    if (lastHistoryLength > currentHistoryLength)
-        eventType = WMLIntrinsicEventOnEnterBackward;
-    else if (lastHistoryLength < currentHistoryLength)
-        eventType = WMLIntrinsicEventOnEnterForward;
 
-    // Synchronize history length with WMLPageState
-    pageState->setHistoryLength(currentHistoryLength);
- 
+    switch (loader->loadType()) {
+    case FrameLoadTypeReload:
+        break;
+    case FrameLoadTypeBack:
+        eventType = WMLIntrinsicEventOnEnterBackward;
+        break;
+    default:
+        eventType = WMLIntrinsicEventOnEnterForward;
+        break;
+    }
+
     // Figure out target event handler
     WMLIntrinsicEventHandler* eventHandler = this->eventHandler();
     bool hasIntrinsicEvent = false;
@@ -241,12 +243,24 @@ void WMLCardElement::parseMappedAttribute(MappedAttribute* attr)
 void WMLCardElement::insertedIntoDocument()
 {
     WMLElement::insertedIntoDocument();
+    Document* document = this->document();
 
     // The first card inserted into a document, is visible by default.
     if (!m_isVisible) {
-        RefPtr<NodeList> nodeList = document()->getElementsByTagName("card");
+        RefPtr<NodeList> nodeList = document->getElementsByTagName("card");
         if (nodeList && nodeList->length() == 1 && nodeList->item(0) == this)
             m_isVisible = true;
+    }
+
+    // For the WML layout tests we embed WML content in a XHTML document. Navigating to different cards
+    // within the same deck has a different behaviour in HTML than in WML. HTML wants to "scroll to anchor"
+    // (see FrameLoader) but WML wants a reload. Notify the root document of the layout test that we want
+    // to mimic WML behaviour. This is rather tricky, but has been tested extensively. Usually it's not possible
+    // at all to embed WML in HTML, it's not designed that way, we're just "abusing" it for dynamically created layout tests.
+    if (document->page() && document->page()->mainFrame()) {
+        Document* rootDocument = document->page()->mainFrame()->document();
+        if (rootDocument && rootDocument != document)
+            rootDocument->setContainsWMLContent(true);
     }
 }
 

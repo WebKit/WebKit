@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
- *
+ * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2004-2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +24,7 @@
 #if ENABLE(WML)
 #include "WMLPageState.h"
 
+#include "CString.h"
 #include "HistoryItem.h"
 #include "KURL.h"
 #include "Page.h"
@@ -33,7 +33,6 @@ namespace WebCore {
 
 WMLPageState::WMLPageState(Page* page)
     : m_page(page)
-    , m_historyLength(0)
     , m_activeCard(0)
     , m_hasDeckAccess(false)
 {
@@ -44,17 +43,27 @@ WMLPageState::~WMLPageState()
     m_variables.clear();
 }
 
+#ifndef NDEBUG
+// Debugging helper for use within gdb
+void WMLPageState::dump()
+{
+    WMLVariableMap::iterator it = m_variables.begin();
+    WMLVariableMap::iterator end = m_variables.end();
+
+    fprintf(stderr, "Dumping WMLPageState (this=%p) associated with Page (page=%p)...\n", this, m_page);
+    for (; it != end; ++it)
+        fprintf(stderr, "\t-> name: '%s'\tvalue: '%s'\n", (*it).first.latin1().data(), (*it).second.latin1().data());
+}
+#endif
+
 void WMLPageState::reset()
 {
-    // remove all the variables in the current browser context
+    // Remove all the variables
     m_variables.clear();
 
-    // clear the navigation history state 
-    if (m_page)
-        m_page->backForwardList()->clearWmlPageHistory();
-
-    // reset implementation-specfic state if UA has
-    m_historyLength = 0;
+    // Clear the navigation history state 
+    if (BackForwardList* list = m_page ? m_page->backForwardList() : 0)
+        list->clearWMLPageHistory();
 }
 
 bool WMLPageState::setNeedCheckDeckAccess(bool need)

@@ -39,6 +39,10 @@ public:
     WMLPageState(Page*);
     virtual ~WMLPageState();
 
+#ifndef NDEBUG
+    void dump();
+#endif
+
     // reset the browser context when 'newcontext' attribute
     // of card element is performed as part of go task
     void reset();

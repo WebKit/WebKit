@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+    <card id="card1">
+        <onevent type="onenterbackward">
+            <go href="#card3">
+                <setvar name="result" value="DONE"/>
+            </go>
+        </onevent>
+        <a href="#card2">Next Test</a>
+    </card>
+
+    <card id="card2">
+        <anchor>
+            <prev/>
+            Next Test
+        </anchor>
+        Test 1/2 PASSED.
+    </card>
+
+    <card id="card3">
+        Test 2/2 PASSED.
+        <p style="display: none" id="resultIndicator">$result</p>
+    </card>
+</wml>

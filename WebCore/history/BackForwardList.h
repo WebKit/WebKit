@@ -97,7 +97,7 @@ public:
     HistoryItemVector& entries();
     
 #if ENABLE(WML)
-    void clearWmlPageHistory();
+    void clearWMLPageHistory();
 #endif
 
 private:
