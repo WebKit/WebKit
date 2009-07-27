@@ -1,3 +1,10 @@
+2009-07-27  Adam Treat  <adam.treat@torchmobile.com>
+
+        Speculative build fix for Windows and WinCE.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::load):
+
 2009-07-27  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Darin Adler.

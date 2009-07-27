@@ -278,9 +278,15 @@ bool PluginPackage::load()
     NP_InitializeFuncPtr NP_Initialize = 0;
     NPError npErr;
 
-    NP_Initialize = (NP_InitializeFuncPtr)GetProcAddress(m_module, _T("NP_Initialize"));
-    NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)GetProcAddress(m_module, _T("NP_GetEntryPoints"));
-    m_NPP_Shutdown = (NPP_ShutdownProcPtr)GetProcAddress(m_module, _T("NP_Shutdown"));
+#if PLATFORM(WINCE)
+    NP_Initialize = (NP_InitializeFuncPtr)GetProcAddress(m_module, L"NP_Initialize");
+    NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)GetProcAddress(m_module, L"NP_GetEntryPoints");
+    m_NPP_Shutdown = (NPP_ShutdownProcPtr)GetProcAddress(m_module, L"NP_Shutdown");
+#else
+    NP_Initialize = (NP_InitializeFuncPtr)GetProcAddress(m_module, "NP_Initialize");
+    NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)GetProcAddress(m_module, "NP_GetEntryPoints");
+    m_NPP_Shutdown = (NPP_ShutdownProcPtr)GetProcAddress(m_module, "NP_Shutdown");
+#endif
 
     if (!NP_Initialize || !NP_GetEntryPoints || !m_NPP_Shutdown)
         goto abort;
