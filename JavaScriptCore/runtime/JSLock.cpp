@@ -205,7 +205,7 @@ JSLock::DropAllLocks::~DropAllLocks()
 #else
 
 JSLock::JSLock(ExecState*)
-    : m_lockBehavior(false)
+    : m_lockBehavior(SilenceAssertionsOnly)
 {
 }
 
