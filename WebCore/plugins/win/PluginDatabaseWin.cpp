@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd.  All rights reserved.
+ * Copyright (C) 2008-2009 Torch Mobile, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +36,47 @@
 
 #if COMPILER(MINGW)
 #define _countof(x) (sizeof(x)/sizeof(x[0]))
+#endif
+
+#if PLATFORM(WINCE)
+// WINCE doesn't support Registry Key Access Rights. The parameter should always be 0
+#define KEY_ENUMERATE_SUB_KEYS 0
+
+DWORD SHGetValue(HKEY hkey, LPCWSTR pszSubKey, LPCWSTR pszValue, LPDWORD pdwType, LPVOID pvData, LPDWORD pcbData)
+{
+    HKEY key;
+    if (RegOpenKeyEx(hkey, pszSubKey, 0, 0, &key) == ERROR_SUCCESS) {
+        DWORD result = RegQueryValueEx(key, pszValue, 0, pdwType, (LPBYTE)pvData, pcbData);
+        RegCloseKey(key);
+        return result;
+    }
+    return ERROR_INVALID_NAME;
+}
+
+BOOL PathRemoveFileSpec(LPWSTR moduleFileNameStr)
+{
+    if (!*moduleFileNameStr)
+        return FALSE;
+
+    LPWSTR lastPos = 0;
+    LPWSTR curPos = moduleFileNameStr;
+    do {
+        if (*curPos == L'/' || *curPos == L'\\')
+            lastPos = curPos;
+    } while (*++curPos);
+
+    if (lastPos == curPos - 1)
+        return FALSE;
+
+    if (lastPos)
+        *lastPos = 0;
+    else {
+        moduleFileNameStr[0] = L'\\';
+        moduleFileNameStr[1] = 0;
+    }
+
+    return TRUE;
+}
 #endif
 
 namespace WebCore {
@@ -210,12 +252,14 @@ static inline void addMozillaPluginDirectories(Vector<String>& directories)
 
 static inline void addWindowsMediaPlayerPluginDirectory(Vector<String>& directories)
 {
+#if !PLATFORM(WINCE)
     // The new WMP Firefox plugin is installed in \PFiles\Plugins if it can't find any Firefox installs
     WCHAR pluginDirectoryStr[_MAX_PATH + 1];
     DWORD pluginDirectorySize = ::ExpandEnvironmentStringsW(TEXT("%SYSTEMDRIVE%\\PFiles\\Plugins"), pluginDirectoryStr, _countof(pluginDirectoryStr));
 
     if (pluginDirectorySize > 0 && pluginDirectorySize <= _countof(pluginDirectoryStr))
         directories.append(String(pluginDirectoryStr, pluginDirectorySize - 1));
+#endif
 
     DWORD type;
     WCHAR installationDirectoryStr[_MAX_PATH];
@@ -311,6 +355,7 @@ exit:
 
 static inline void addMacromediaPluginDirectories(Vector<String>& directories)
 {
+#if !PLATFORM(WINCE)
     WCHAR systemDirectoryStr[MAX_PATH];
 
     if (GetSystemDirectory(systemDirectoryStr, _countof(systemDirectoryStr)) == 0)
@@ -323,6 +368,7 @@ static inline void addMacromediaPluginDirectories(Vector<String>& directories)
 
     PathCombine(macromediaDirectoryStr, systemDirectoryStr, TEXT("macromed\\Shockwave 10"));
     directories.append(macromediaDirectoryStr);
+#endif
 }
 
 Vector<String> PluginDatabase::defaultPluginDirectories()
