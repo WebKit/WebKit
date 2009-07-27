@@ -552,31 +552,34 @@ int HTMLInputElement::selectionEnd() const
     return toRenderTextControl(renderer())->selectionEnd();
 }
 
+static bool isTextFieldWithRenderer(HTMLInputElement* element)
+{
+    if (!element->isTextField())
+        return false;
+
+    element->document()->updateLayoutIgnorePendingStylesheets();
+    if (!element->renderer())
+        return false;
+
+    return true;
+}
+
 void HTMLInputElement::setSelectionStart(int start)
 {
-    if (!isTextField())
-        return;
-    if (!renderer())
-        return;
-    toRenderTextControl(renderer())->setSelectionStart(start);
+    if (isTextFieldWithRenderer(this))
+        toRenderTextControl(renderer())->setSelectionStart(start);
 }
 
 void HTMLInputElement::setSelectionEnd(int end)
 {
-    if (!isTextField())
-        return;
-    if (!renderer())
-        return;
-    toRenderTextControl(renderer())->setSelectionEnd(end);
+    if (isTextFieldWithRenderer(this))
+        toRenderTextControl(renderer())->setSelectionEnd(end);
 }
 
 void HTMLInputElement::select()
 {
-    if (!isTextField())
-        return;
-    if (!renderer())
-        return;
-    toRenderTextControl(renderer())->select();
+    if (isTextFieldWithRenderer(this))
+        toRenderTextControl(renderer())->select();
 }
 
 void HTMLInputElement::setSelectionRange(int start, int end)

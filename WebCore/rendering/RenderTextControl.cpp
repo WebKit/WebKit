@@ -235,7 +235,7 @@ void RenderTextControl::setSelectionRange(int start, int end)
     end = max(end, 0);
     start = min(max(start, 0), end);
 
-    document()->updateLayout();
+    ASSERT(!document()->childNeedsAndNotInStyleRecalc());
 
     if (style()->visibility() == HIDDEN || !m_innerText || !m_innerText->renderer() || !m_innerText->renderBox()->height()) {
         cacheSelection(start, end);

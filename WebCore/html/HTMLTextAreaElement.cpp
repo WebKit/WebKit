@@ -107,32 +107,34 @@ int HTMLTextAreaElement::selectionEnd()
     return toRenderTextControl(renderer())->selectionEnd();
 }
 
+static RenderTextControl* rendererAfterUpdateLayout(HTMLTextAreaElement* element)
+{
+    element->document()->updateLayoutIgnorePendingStylesheets();
+    return toRenderTextControl(element->renderer());
+}
+
 void HTMLTextAreaElement::setSelectionStart(int start)
 {
-    if (!renderer())
-        return;
-    toRenderTextControl(renderer())->setSelectionStart(start);
+    if (RenderTextControl* renderer = rendererAfterUpdateLayout(this))
+        renderer->setSelectionStart(start);
 }
 
 void HTMLTextAreaElement::setSelectionEnd(int end)
 {
-    if (!renderer())
-        return;
-    toRenderTextControl(renderer())->setSelectionEnd(end);
+    if (RenderTextControl* renderer = rendererAfterUpdateLayout(this))
+        renderer->setSelectionEnd(end);
 }
 
 void HTMLTextAreaElement::select()
 {
-    if (!renderer())
-        return;
-    toRenderTextControl(renderer())->select();
+    if (RenderTextControl* renderer = rendererAfterUpdateLayout(this))
+        renderer->select();
 }
 
 void HTMLTextAreaElement::setSelectionRange(int start, int end)
 {
-    if (!renderer())
-        return;
-    toRenderTextControl(renderer())->setSelectionRange(start, end);
+    if (RenderTextControl* renderer = rendererAfterUpdateLayout(this))
+        renderer->setSelectionRange(start, end);
 }
 
 void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -239,7 +241,8 @@ bool HTMLTextAreaElement::isMouseFocusable() const
 void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
 {
     ASSERT(renderer());
-    
+    ASSERT(!document()->childNeedsAndNotInStyleRecalc());
+
     if (!restorePreviousSelection || m_cachedSelectionStart < 0) {
 #if ENABLE(ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL)
         // Devices with trackballs or d-pads may focus on a textarea in route

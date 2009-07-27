@@ -1,3 +1,44 @@
+2009-07-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27474
+        Fixes crashes due to renderer getting destroyed in updateLayout.
+        We need to call updateLayout before we call into the renderer.
+        Removed the updateLayout call from RenderTextControl and moved it
+        into the calling sites.
+        
+        Also changes updateLayout to updateLayoutIgnorePendingStylesheets so
+        this works with pending stylesheets. Unfortunately, this seems to be
+        untestable. Loading an external stylesheet and then having an inline
+        script hit this code did not result in an pending stylesheets.
+        
+        The are other cases of this bug in the rendering code. I'll file a 
+        followup bug to audit the calls to updateLayout.
+
+        Test: fast/dom/text-control-crash-on-select.html
+
+        * dom/Document.h:
+        (WebCore::Document::inStyleRecalc): Added so the ASSERTs in updateFocusAppearance
+            and setSelectionRange could deal with cases of reentrancy into updateLayout
+            calls. This happens in a couple layout tests.
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::updateSelectionRange):
+        * html/HTMLInputElement.cpp:
+        (WebCore::isTextFieldWithRendererAfterUpdateLayout):
+        (WebCore::HTMLInputElement::setSelectionStart):
+        (WebCore::HTMLInputElement::setSelectionEnd):
+        (WebCore::HTMLInputElement::select):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::rendererAfterUpdateLayout):
+        (WebCore::HTMLTextAreaElement::setSelectionStart):
+        (WebCore::HTMLTextAreaElement::setSelectionEnd):
+        (WebCore::HTMLTextAreaElement::select):
+        (WebCore::HTMLTextAreaElement::setSelectionRange):
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setSelectionRange):
+
 2009-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Dave Levin.
