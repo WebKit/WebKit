@@ -45,6 +45,7 @@ typedef struct HFONT__ *HFONT;
 namespace WebCore {
 
 class FontDescription;
+class String;
 
 class FontPlatformData {
 public:
@@ -77,6 +78,10 @@ public:
     { 
         return m_font == other.m_font && m_size == other.m_size;
     }
+
+#ifndef NDEBUG
+    String description() const;
+#endif
 
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
