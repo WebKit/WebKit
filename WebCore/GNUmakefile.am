@@ -417,6 +417,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	WebCore/bindings/js/ScheduledAction.cpp \
 	WebCore/bindings/js/ScheduledAction.h \
+	WebCore/bindings/js/ScriptArray.cpp \
+	WebCore/bindings/js/ScriptArray.h \
 	WebCore/bindings/js/ScriptCachedFrameData.cpp \
 	WebCore/bindings/js/ScriptCachedFrameData.h \
 	WebCore/bindings/js/ScriptCallFrame.cpp \

@@ -28862,6 +28862,14 @@
 					RelativePath="..\bindings\js\ScheduledAction.h"
 					>
 				</File>
+                                <File
+                                        RelativePath="..\bindings\js\ScriptArray.cpp"
+                                        >
+                                </File>
+                                <File
+                                        RelativePath="..\bindings\js\ScriptArray.h"
+                                        >
+                                </File>
 				<File
 					RelativePath="..\bindings\js\ScriptCachedFrameData.cpp"
 					>

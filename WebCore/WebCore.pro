@@ -536,6 +536,7 @@ SOURCES += \
     bindings/js/JSEventListener.cpp \
     bindings/js/JSLazyEventListener.cpp \
     bindings/js/JSPluginElementFunctions.cpp \
+    bindings/js/ScriptArray.cpp \
     bindings/js/ScriptCachedFrameData.cpp \
     bindings/js/ScriptCallFrame.cpp \
     bindings/js/ScriptCallStack.cpp \
@@ -1186,6 +1187,7 @@ HEADERS += \
     bindings/js/JSXMLHttpRequestConstructor.h \
     bindings/js/JSXSLTProcessorConstructor.h \
     bindings/js/ScheduledAction.h \
+    bindings/js/ScriptArray.h \
     bindings/js/ScriptCachedFrameData.h \
     bindings/js/ScriptCallFrame.h \
     bindings/js/ScriptCallStack.h \
