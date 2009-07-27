@@ -10,19 +10,61 @@ PASS AttrPrototype from inner.document.activeElement.attributes.0.__proto__
 PASS BarInfo from inner.menubar
 PASS BarInfoPrototype from inner.menubar.__proto__
 FAIL Boolean from inner.offscreenBuffering
-PASS CSSRuleList from inner.document.styleSheets.0.cssRules
+PASS CSSCharsetRule from inner.document.getElementById("dummyStyle").sheet.cssRules.0
+PASS CSSCharsetRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.0.constructor
+PASS CSSCharsetRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.0.__proto__
+PASS CSSFontFaceRule from inner.document.getElementById("dummyStyle").sheet.cssRules.3
+PASS CSSFontFaceRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.3.constructor
+PASS CSSFontFaceRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.3.__proto__
+PASS CSSImportRule from inner.document.getElementById("dummyStyle").sheet.cssRules.1
+PASS CSSImportRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.1.constructor
+PASS CSSImportRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.1.__proto__
+PASS CSSMediaRule from inner.document.getElementById("dummyStyle").sheet.cssRules.2
+PASS CSSMediaRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.2.constructor
+PASS CSSMediaRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.2.__proto__
+PASS CSSPrimitiveValue from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip)
+PASS CSSPrimitiveValueConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).constructor
+PASS CSSPrimitiveValuePrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).__proto__
+PASS CSSRuleList from inner.document.getElementById("dummyStyle").sheet.cssRules
 PASS CSSRuleListConstructor from inner.document.styleSheets.0.rules.constructor
 PASS CSSRuleListPrototype from inner.document.styleSheets.0.cssRules.__proto__
-PASS CSSStyleDeclaration from inner.document.scripts.0.style
+PASS CSSRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.0.__proto__.__proto__
+PASS CSSStyleDeclaration from inner.document.getElementById("styledSpan").style
 PASS CSSStyleDeclarationConstructor from inner.document.activeElement.style.constructor
 PASS CSSStyleDeclarationPrototype from inner.document.scripts.0.style.__proto__
+PASS CSSStyleRule from inner.document.getElementById("dummyStyle").sheet.cssRules.4
+PASS CSSStyleRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.4.constructor
+PASS CSSStyleRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.4.__proto__
 PASS CSSStyleSheet from inner.document.styleSheets.0
 PASS CSSStyleSheetConstructor from inner.document.styleSheets.0.constructor
 PASS CSSStyleSheetPrototype from inner.document.styleSheets.0.__proto__
-PASS CharacterDataPrototype from inner.document.activeElement.attributes.0.lastChild.__proto__.__proto__
+PASS CSSValue from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-animation-timing-function).0
+PASS CSSValueConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-animation-timing-function).0.constructor
+PASS CSSValueList from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-transition-timing-function)
+PASS CSSValueListConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-position).constructor
+PASS CSSValueListPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(-webkit-transition-timing-function).__proto__
+PASS CSSValuePrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(background-clip).__proto__.__proto__
+FAIL CanvasPattern from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "")
+FAIL CanvasPatternPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "").__proto__
+PASS CanvasRenderingContext2D from inner.document.getElementsByTagName("canvas")[0].getContext("2d")
+PASS CanvasRenderingContext2DConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").constructor
+PASS CanvasRenderingContext2DPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").__proto__
+PASS CharacterDataPrototype from inner.document.activeElement.childNodes.61.__proto__.__proto__
+PASS ClientRect from inner.document.body.getBoundingClientRect()
+PASS ClientRectConstructor from inner.document.body.getBoundingClientRect().constructor
+PASS ClientRectList from inner.document.body.getClientRects()
+PASS ClientRectListConstructor from inner.document.body.getClientRects().constructor
+PASS ClientRectListPrototype from inner.document.body.getClientRects().__proto__
+PASS ClientRectPrototype from inner.document.body.getBoundingClientRect().__proto__
 PASS Collection from inner.document.forms.testForm
+PASS Comment from inner.document.activeElement.lastElementChild.previousElementSibling.previousSibling
+PASS CommentConstructor from inner.document.activeElement.childNodes.61.constructor
+PASS CommentPrototype from inner.document.activeElement.childNodes.61.__proto__
 PASS Console from inner.console
 PASS ConsolePrototype from inner.console.__proto__
+PASS Counter from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue()
+PASS CounterConstructor from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue().constructor
+PASS CounterPrototype from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue().__proto__
 PASS DOMApplicationCache from inner.applicationCache
 PASS DOMApplicationCachePrototype from inner.applicationCache.__proto__
 PASS DOMImplementation from inner.document.implementation
@@ -34,7 +76,7 @@ PASS DataGridColumnList from inner.document.activeElement.childNodes.14.columns
 PASS DataGridColumnListConstructor from inner.document.activeElement.childNodes.14.columns.constructor
 PASS DataGridColumnListPrototype from inner.document.activeElement.childNodes.14.columns.__proto__
 PASS DocumentPrototype from inner.document.__proto__.__proto__
-PASS ElementPrototype from inner.document.activeElement.__proto__.__proto__.__proto__
+PASS ElementPrototype from inner.document.activeElement.lastElementChild.__proto__.__proto__
 FAIL Function from inner.document.location.pathname.constructor
 PASS HTMLAnchorElement from inner.document.activeElement.firstElementChild
 PASS HTMLAnchorElementConstructor from inner.document.activeElement.firstElementChild.constructor
@@ -66,7 +108,7 @@ PASS HTMLButtonElementPrototype from inner.document.activeElement.childNodes.9._
 PASS HTMLCanvasElement from inner.document.activeElement.childNodes.10
 PASS HTMLCanvasElementConstructor from inner.document.activeElement.childNodes.10.constructor
 PASS HTMLCanvasElementPrototype from inner.document.activeElement.childNodes.10.__proto__
-PASS HTMLCollection from inner.document.links
+FAIL HTMLCollection from inner.document.testForm
 PASS HTMLCollectionPrototype from inner.document.activeElement.childNodes.47.options.__proto__
 PASS HTMLDListElement from inner.document.activeElement.childNodes.11
 PASS HTMLDListElementConstructor from inner.document.activeElement.childNodes.11.constructor
@@ -80,9 +122,9 @@ PASS HTMLDivElementPrototype from inner.document.plugins.0.previousElementSiblin
 PASS HTMLDocument from inner.document
 PASS HTMLDocumentConstructor from inner.document.constructor
 PASS HTMLDocumentPrototype from inner.document.__proto__
-PASS HTMLElement from inner.document.scripts.0.previousElementSibling
-PASS HTMLElementConstructor from inner.document.scripts.0.previousElementSibling.constructor
-PASS HTMLElementPrototype from inner.document.activeElement.__proto__.__proto__
+PASS HTMLElement from inner.document.activeElement.lastElementChild
+PASS HTMLElementConstructor from inner.document.activeElement.lastElementChild.constructor
+PASS HTMLElementPrototype from inner.document.activeElement.lastElementChild.__proto__
 PASS HTMLEmbedElement from inner.document.plugins.0
 PASS HTMLEmbedElementConstructor from inner.document.plugins.0.constructor
 PASS HTMLEmbedElementPrototype from inner.document.plugins.0.__proto__
@@ -92,9 +134,9 @@ PASS HTMLFieldSetElementPrototype from inner.document.plugins.0.nextElementSibli
 PASS HTMLFontElement from inner.document.activeElement.childNodes.19
 PASS HTMLFontElementConstructor from inner.document.activeElement.childNodes.19.constructor
 PASS HTMLFontElementPrototype from inner.document.activeElement.childNodes.19.__proto__
-PASS HTMLFormElement from inner.document.activeElement.lastElementChild
-PASS HTMLFormElementConstructor from inner.document.activeElement.lastElementChild.constructor
-PASS HTMLFormElementPrototype from inner.document.activeElement.lastElementChild.__proto__
+PASS HTMLFormElement from inner.document.activeElement.childNodes.59
+PASS HTMLFormElementConstructor from inner.document.forms.0.constructor
+PASS HTMLFormElementPrototype from inner.document.forms.0.__proto__
 PASS HTMLFrameSetElement from inner.document.activeElement.childNodes.21
 PASS HTMLFrameSetElementConstructor from inner.document.activeElement.childNodes.21.constructor
 PASS HTMLFrameSetElementPrototype from inner.document.activeElement.childNodes.21.__proto__
@@ -113,7 +155,7 @@ PASS HTMLIFrameElementPrototype from inner.document.activeElement.childNodes.24.
 PASS HTMLImageElement from inner.document.images.0
 PASS HTMLImageElementConstructor from inner.document.images.0.constructor
 PASS HTMLImageElementPrototype from inner.document.images.0.__proto__
-PASS HTMLInputElement from inner.document.activeElement.childNodes.26
+FAIL HTMLInputElement from inner.document.testForm[0].testInput
 PASS HTMLInputElementConstructor from inner.document.activeElement.childNodes.26.constructor
 PASS HTMLInputElementPrototype from inner.document.activeElement.childNodes.26.__proto__
 PASS HTMLLIElement from inner.document.activeElement.childNodes.28
@@ -169,9 +211,9 @@ PASS HTMLScriptElementPrototype from inner.document.scripts.0.__proto__
 PASS HTMLSelectElement from inner.document.activeElement.childNodes.47
 PASS HTMLSelectElementConstructor from inner.document.scripts.0.nextElementSibling.constructor
 PASS HTMLSelectElementPrototype from inner.document.activeElement.childNodes.47.__proto__
-PASS HTMLStyleElement from inner.document.activeElement.childNodes.48
-PASS HTMLStyleElementConstructor from inner.document.activeElement.childNodes.48.constructor
-PASS HTMLStyleElementPrototype from inner.document.activeElement.childNodes.48.__proto__
+PASS HTMLStyleElement from inner.document.activeElement.lastElementChild.previousElementSibling
+PASS HTMLStyleElementConstructor from inner.document.activeElement.lastElementChild.previousElementSibling.constructor
+PASS HTMLStyleElementPrototype from inner.document.activeElement.lastElementChild.previousElementSibling.__proto__
 PASS HTMLTableCaptionElement from inner.document.activeElement.childNodes.49
 PASS HTMLTableCaptionElementConstructor from inner.document.activeElement.childNodes.49.constructor
 PASS HTMLTableCaptionElementPrototype from inner.document.activeElement.childNodes.49.__proto__
@@ -220,52 +262,55 @@ PASS NodeListConstructor from inner.document.childNodes.constructor
 PASS NodeListPrototype from inner.document.documentElement.childNodes.__proto__
 PASS NodePrototype from inner.document.__proto__.__proto__.__proto__
 FAIL Number from inner.pageXOffset
-PASS Object from inner.document.forms.testForm.__proto__
+PASS Object from inner.document.location.__proto__.__proto__
 PASS Plugin from inner.clientInformation.mimeTypes.0.enabledPlugin
 PASS PluginArray from inner.clientInformation.plugins
 PASS PluginArrayConstructor from inner.clientInformation.plugins.constructor
 PASS PluginArrayPrototype from inner.clientInformation.plugins.__proto__
 PASS PluginConstructor from inner.clientInformation.plugins.0.constructor
 PASS PluginPrototype from inner.clientInformation.mimeTypes.0.enabledPlugin.__proto__
+PASS RGBColor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor
+PASS RGBColorConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.constructor
+PASS RGBColorPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).rgbColor.__proto__
+PASS Rect from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("clip").getRectValue()
+PASS RectConstructor from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("clip").getRectValue().constructor
+PASS RectPrototype from inner.document.getElementById("styledSpan").style.getPropertyCSSValue("clip").getRectValue().__proto__
+PASS SVGColorPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).__proto__.__proto__
+PASS SVGPaint from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill)
+PASS SVGPaintConstructor from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).constructor
+PASS SVGPaintPrototype from inner.getComputedStyle(inner.document.body).getPropertyCSSValue(fill).__proto__
 PASS Screen from inner.screen
 PASS ScreenPrototype from inner.screen.__proto__
 PASS Storage from inner.localStorage
 PASS StorageConstructor from inner.localStorage.constructor
 PASS StoragePrototype from inner.localStorage.__proto__
-FAIL String from inner.name
+FAIL String from inner.document.location.pathname
 PASS StyleSheetList from inner.document.styleSheets
 PASS StyleSheetListConstructor from inner.document.styleSheets.constructor
 PASS StyleSheetListPrototype from inner.document.styleSheets.__proto__
 PASS StyleSheetPrototype from inner.document.styleSheets.0.__proto__.__proto__
 PASS Text from inner.document.activeElement.attributes.0.firstChild
-PASS TextConstructor from inner.document.activeElement.attributes.0.lastChild.constructor
-PASS TextPrototype from inner.document.activeElement.attributes.0.lastChild.__proto__
+PASS TextConstructor from inner.document.activeElement.lastElementChild.previousElementSibling.lastChild.constructor
+PASS TextPrototype from inner.document.activeElement.lastElementChild.previousElementSibling.lastChild.__proto__
 PASS TimeRanges from inner.document.activeElement.childNodes.3.played
 PASS TimeRangesPrototype from inner.document.activeElement.childNodes.3.played.__proto__
 PASS ValidityState from inner.document.plugins.0.nextElementSibling.validity
 PASS ValidityStatePrototype from inner.document.plugins.0.nextElementSibling.validity.__proto__
+PASS WebKitCSSKeyframeRule from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0
+PASS WebKitCSSKeyframeRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0.constructor
+PASS WebKitCSSKeyframeRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.0.__proto__
+PASS WebKitCSSKeyframesRule from inner.document.getElementById("dummyStyle").sheet.cssRules.5
+PASS WebKitCSSKeyframesRuleConstructor from inner.document.getElementById("dummyStyle").sheet.cssRules.5.constructor
+PASS WebKitCSSKeyframesRulePrototype from inner.document.getElementById("dummyStyle").sheet.cssRules.5.__proto__
 PASS XSLTProcessorConsructor from inner.XSLTProcessor
 Never found Audio
 Never found CDATASection
-Never found CSSCharsetRule
-Never found CSSFontFaceRule
-Never found CSSImportRule
-Never found CSSMediaRule
 Never found CSSPageRule
-Never found CSSPrimitiveValue
 Never found CSSRule
-Never found CSSStyleRule
-Never found CSSValue
-Never found CSSValueList
 Never found CSSVariablesDeclaration
 Never found CSSVariablesRule
-Never found CanvasRenderingContext2D
 Never found CharacterData
-Never found ClientRect
-Never found ClientRectList
 Never found Clipboard
-Never found Comment
-Never found Counter
 Never found DOMParser
 Never found Document
 Never found DocumentFragment
@@ -294,15 +339,12 @@ Never found NodeFilter
 Never found Notation
 Never found Option
 Never found ProcessingInstruction
-Never found RGBColor
 Never found Range
-Never found Rect
 Never found SVGAngle
 Never found SVGColor
 Never found SVGGradientElement
 Never found SVGLength
 Never found SVGMarkerElement
-Never found SVGPaint
 Never found SVGPathSeg
 Never found SVGPreserveAspectRatio
 Never found SVGRenderingIntent
@@ -312,8 +354,6 @@ Never found SVGTransform
 Never found SVGUnitTypes
 Never found StyleSheet
 Never found TextMetrics
-Never found WebKitCSSKeyframeRule
-Never found WebKitCSSKeyframesRule
 Never found WebKitCSSMatrix
 Never found WebKitCSSTransformValue
 Never found WebKitPoint

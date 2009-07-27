@@ -73,7 +73,20 @@ function makeCrawlObject(value, valuePath)
 
 function evalToCrawlObject(path)
 {
-    return makeCrawlObject(eval(path), path);
+    // This allows us to add things to the end of the crawl list
+    // without the early-eval changing the test results.
+    function LazyEvalCrawlObject(path){
+        this.valuePath = path;
+        var value;
+
+        this.__defineGetter__("value", function(){
+            if (!value)
+                value = eval(this.valuePath);
+            return value;
+        });
+    }
+
+    return new LazyEvalCrawlObject(path);
 }
 
 function pushPropertyValuesWithUnseenTypes(toCrawl, parentObject, parentPath)
@@ -88,6 +101,11 @@ function pushPropertyValuesWithUnseenTypes(toCrawl, parentObject, parentPath)
         var property = propertiesToCrawl[x];
         var value = parentObject[property];
         var valuePath = parentPath + "." + property;
+        // CSSStyleDeclaration.item() just returns property names, but we want to crawl the actual CSS values
+        if (parentType == "CSSStyleDeclaration" && parseInt(property)) { // This will skip 0, but that should be OK.
+            valuePath = parentPath + ".getPropertyCSSValue(" + value + ")"
+            value = parentObject.getPropertyCSSValue(value);
+        }
         var type = classNameForObject(value);
         if (!type)
             continue;
@@ -100,17 +118,23 @@ function pushPropertyValuesWithUnseenTypes(toCrawl, parentObject, parentPath)
     }
 }
 
-function crawl(toCrawl) {
-    while (toCrawl.length) {
-        var crawlTarget = toCrawl.shift();
-        var object = crawlTarget.value;
-        var type = classNameForObject(object);
-        // If we've already seen an object of this type, and it's not a collection, ignore it.
-        if (resultsByType[type] && !object.item && !object.length)
-            continue;
+function crawl(crawlStarts) {
+    while (crawlStarts.length) {
+        var toCrawl = [crawlStarts.shift()];
+        while (toCrawl.length) {
+            var crawlTarget = toCrawl.shift();
+            var object = crawlTarget.value;
+            var type = classNameForObject(object);
+            // If we've already seen an object of this type, and it's not a collection
+            if (resultsByType[type] && !object.item && !object.length) {
+                // Make sure this isn't a new failure before skipping it.
+                if (object.isInner || object.isInner === resultsByType[type].value)
+                    continue;
+            }
 
-        resultsByType[type] = makeCrawlObject(object.isInner, crawlTarget.valuePath);
-        pushPropertyValuesWithUnseenTypes(toCrawl, object, crawlTarget.valuePath);
+            resultsByType[type] = makeCrawlObject(object.isInner, crawlTarget.valuePath);
+            pushPropertyValuesWithUnseenTypes(toCrawl, object, crawlTarget.valuePath);
+        }
     }
 }
 
@@ -154,16 +178,42 @@ for (var x = 0; x < constructorNames.length; x++) {
         continue; // <html> causes a parse error.
     htmlToAdd += "<" + tagName + "></" + tagName + ">";
 }
-htmlToAdd += "<form name='testForm'></form><form name='testForm'></form>";
+htmlToAdd += "<form name='testForm'><input name='testInput'></form><form name='testForm'></form>";
+htmlToAdd += "<!-- test -->";
+styleContents = "@charset 'UTF-8';";
+styleContents += "@import url('dummy.css') print;\n"; // Our parser seems to want this rule first?
+styleContents += "@variables { Ignored: 2em; }\n"; // For when variables are turned back on
+styleContents += "@page { margin: 3cm; }\n"; // Current WebKit ignores @page
+styleContents += "@media print { body { margin: 3cm; } }\n"
+styleContents += "@font-face {font-family:'Times';}\n";
+styleContents += "ignored {font-family: var(Ignored);}\n"; // a CSSStyleRule
+styleContents += "@-webkit-keyframes fade { 0% { opacity: 0; } }\n"; // a WebKitCSSKeyframesRule
+
+htmlToAdd += "<style id='dummyStyle'>" + styleContents + "</style>";
+htmlToAdd += "<span id='styledSpan' style='clip: rect(0, 0, 1, 1); content: counter(dummy, square);'></span>";
+
 inner.document.body.innerHTML = htmlToAdd;
 
-var toCrawl = [
+var crawlStartPaths = [
     evalToCrawlObject('inner.document.location'), // window.location is tested by other tests, so test document.location in this one.
+    //evalToCrawlObject('inner.testForm'), // Causes many failures
     evalToCrawlObject('inner.document.forms.testForm'), // NamedNodesCollection has the wrong prototype, test that.
     evalToCrawlObject('inner'),
+    evalToCrawlObject('inner.document.testForm'),
+    evalToCrawlObject('inner.document.testForm[0].testInput'),
+    evalToCrawlObject('inner.document.getElementsByTagName("canvas")[0].getContext("2d")'), // for CanvasRenderingContext2D
+    evalToCrawlObject('inner.document.getElementsByTagName("canvas")[0].getContext("2d").createPattern(inner.document.getElementsByTagName("img")[0], "")'), // for CanvasRenderingContext2D
+    evalToCrawlObject('inner.document.body.getClientRects()'), // For ClientRectList
+    evalToCrawlObject('inner.document.body.getBoundingClientRect()'), // For ClientRect, getClientRects() returns an empty list for in our test, not sure why.
+    evalToCrawlObject('inner.getComputedStyle(inner.document.body)'),
+    evalToCrawlObject('inner.document.getElementById("dummyStyle").sheet.cssRules'), // For various CSSRule subclasses
+    evalToCrawlObject('inner.document.getElementById("styledSpan").style'),
+    evalToCrawlObject('inner.document.getElementById("styledSpan").style.getPropertyCSSValue("clip").getRectValue()'),
+    evalToCrawlObject('inner.document.getElementById("styledSpan").style.getPropertyCSSValue("content")[0].getCounterValue()'),
     // Can add more stuff to crawl here.
 ];
-crawl(toCrawl);
+
+crawl(crawlStartPaths);
 var sortedTypes = propertiesOnObject(resultsByType).sort();
 
 // Run the actual tests
@@ -190,6 +240,6 @@ for (var x = 0; x < constructorNames.length; x++) {
         debug("Never found " + expectedObjectName);
 }
 
-document.body.removeChild(subframe);
+//document.body.removeChild(subframe);
 
 var successfullyParsed = true;
