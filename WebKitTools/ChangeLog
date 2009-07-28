@@ -1,3 +1,11 @@
+2009-07-28  Zoltan Horvath  <hzoltan@inf.u-szeged.hu>
+
+        Reviewed by Simon Hausmann.
+
+        Implement test result archive support for the Qt port.
+
+        * BuildSlaveSupport/test-result-archive:
+
 2009-07-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
