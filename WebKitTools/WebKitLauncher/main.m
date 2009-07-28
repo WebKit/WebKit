@@ -172,19 +172,34 @@ static BOOL checkFrameworkPath(NSString *frameworkPath)
     return [[NSFileManager defaultManager] fileExistsAtPath:frameworkPath isDirectory:&isDirectory] && isDirectory;
 }
 
+static BOOL checkSafariVersion(NSBundle *safariBundle)
+{
+    NSString *safariBundleVersion = [[safariBundle infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
+    NSString *majorComponent = [[safariBundleVersion componentsSeparatedByString:@"."] objectAtIndex:0];
+    NSString *majorVersion = [majorComponent substringFromIndex:[majorComponent length] - 3];
+    return [majorVersion intValue] >= 530;
+}
+
 int main(int argc, char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     NSString *systemVersion = currentMacOSXVersion();
-    NSBundle *safariBundle = locateSafariBundle();
-    NSString *executablePath = [safariBundle executablePath];
     NSString *frameworkPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:systemVersion];
     NSString *pathToEnablerLib = [[NSBundle mainBundle] pathForResource:@"WebKitNightlyEnabler" ofType:@"dylib"];
 
+    NSBundle *safariBundle = locateSafariBundle();
+    NSString *executablePath = [safariBundle executablePath];
+
     if (!checkFrameworkPath(frameworkPath))
-        displayErrorAndQuit([NSString stringWithFormat:@"Mac OS X %@ is Not Supported", systemVersion],
+        displayErrorAndQuit([NSString stringWithFormat:@"Mac OS X %@ is not supported", systemVersion],
                             [NSString stringWithFormat:@"Nightly builds of WebKit are not supported on Mac OS X %@ at this time.", systemVersion]);
+
+    if (!checkSafariVersion(safariBundle)) {
+        NSString *safariVersion = [[safariBundle localizedInfoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        displayErrorAndQuit([NSString stringWithFormat:@"Safari %@ is not supported", safariVersion],
+                            [NSString stringWithFormat:@"Nightly builds of WebKit are not supported with Safari %@ at this time. Please update to a newer version of Safari.", safariVersion]);
+    }
 
     if ([frameworkPath rangeOfString:@":"].location != NSNotFound ||
         [pathToEnablerLib rangeOfString:@":"].location != NSNotFound)

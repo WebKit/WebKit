@@ -1,3 +1,13 @@
+2009-07-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Prevent nightly builds of WebKit from launching against old Safari versions that we no longer work with.
+
+        * WebKitLauncher/main.m:
+        (checkSafariVersion): Add a minimum required Safari version of 4.0.  This matches the requirement on Windows.
+        (main): If the minimum version requirement is not met, display an alert and bail out.
+
 2009-07-28  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Treat.
