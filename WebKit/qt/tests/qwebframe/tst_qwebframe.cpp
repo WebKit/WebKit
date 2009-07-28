@@ -589,6 +589,7 @@ private slots:
     void baseUrl();
     void hasSetFocus();
     void render();
+    void scrollPosition();
 
 private:
     QString  evalJS(const QString&s) {
@@ -2616,6 +2617,30 @@ void tst_QWebFrame::render()
     QImage resource(":/image.png");
     QCOMPARE(resource.width(), picture.boundingRect().width());   // resource width: 128px
     QCOMPARE(resource.height(), picture.boundingRect().height()); // resource height: 128px
+}
+
+void tst_QWebFrame::scrollPosition()
+{
+    // enlarged image in a small viewport, to provoke the scrollbars to appear
+    QString html("<html><body><img src='qrc:/image.png' height=500 width=500/></body></html>");
+
+    QWebPage page;
+    page.setViewportSize(QSize(200, 200));
+
+    QWebFrame* frame = page.mainFrame();
+    frame->setHtml(html);
+    frame->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
+    frame->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
+
+    // try to set the scroll offset programmatically
+    frame->setScrollPosition(QPoint(23, 29));
+    QCOMPARE(frame->scrollPosition().x(), 23);
+    QCOMPARE(frame->scrollPosition().y(), 29);
+
+    int x = frame->evaluateJavaScript("window.scrollX").toInt();
+    int y = frame->evaluateJavaScript("window.scrollY").toInt();
+    QCOMPARE(x, 23);
+    QCOMPARE(y, 29);
 }
 
 QTEST_MAIN(tst_QWebFrame)

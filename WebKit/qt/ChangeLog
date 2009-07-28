@@ -1,3 +1,12 @@
+2009-07-28  Ariya Hidayat  <ariya.hidayat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Added tests to ensure that scroll position can be changed
+        programmatically, even when the scroll bar policy is set to off.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2009-07-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
