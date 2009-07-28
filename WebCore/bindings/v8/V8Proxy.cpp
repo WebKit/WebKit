@@ -863,6 +863,10 @@ v8::Persistent<v8::Context> V8Proxy::createNewContext(v8::Handle<v8::Object> glo
 {
     v8::Persistent<v8::Context> result;
 
+    // The activeDocumentLoader pointer could be NULL during frame shutdown.
+    if (!m_frame->loader()->activeDocumentLoader())
+        return result;
+
     // Create a new environment using an empty template for the shadow
     // object. Reuse the global object if one has been created earlier.
     v8::Persistent<v8::ObjectTemplate> globalTemplate = V8DOMWindow::GetShadowObjectTemplate();
