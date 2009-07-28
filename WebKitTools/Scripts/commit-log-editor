@@ -36,10 +36,26 @@ use FindBin;
 use lib $FindBin::Bin;
 use VCSUtils;
 use webkitdirs;
+use Term::ReadKey;
 
 sub normalizeLineEndings($$);
 
+sub usage
+{
+    print "Usage: [--help] [--regenerate-log] <log file>\n";
+    exit 1;
+}
+
+my $help = checkForArgumentAndRemoveFromARGV("--help");
+if ($help) {
+    usage();
+}
+
+my $regenerateLog = checkForArgumentAndRemoveFromARGV("--regenerate-log");
 my $log = $ARGV[0];
+if (!$log) {
+    usage();
+}
 
 my $baseDir = baseProductDir();
 
@@ -77,7 +93,12 @@ while (<LOG>) {
         }
     }
 
-    $logContents .= $_;
+    if(!isGit() || (/^#/)) {
+        $logContents .= $_;
+    } else {
+        # $_ contains the current git log message
+        # (without the log comment info). We don't need it.
+    }
     $existingLog = isGit() && !(/^#/ || /^\s*$/) unless $existingLog;
 
     push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && (/^M....(.*ChangeLog)\r?\n?$/ || /^#\tmodified:   (.*ChangeLog)/) && !/-ChangeLog/;
@@ -91,9 +112,18 @@ if ($logContents =~ /(\r?\n)/g) {
     $endl = $1;
 }
 
+my $keepExistingLog = 1;
+if ($regenerateLog && $existingLog && scalar(@changeLogs) > 0) {
+    print "Existing log message detected, Use 'r' to regenerate log message from ChangeLogs, or any other key to keep the existing message.\n";
+    ReadMode('cbreak');
+    my $key = ReadKey(0);
+    ReadMode('normal');
+    $keepExistingLog = 0 if ($key eq "r");
+}
+
 # Don't change anything if there's already a log message
 # (as can happen with git-commit --amend)
-exec $editor, @ARGV if $existingLog;
+exec $editor, @ARGV if $existingLog && $keepExistingLog;
 
 my $topLevel = topLevelSourceDirectory();
 
