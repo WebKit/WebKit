@@ -1,6 +1,6 @@
 This is the main frame of a 2-frame document. Each frame is in the same security origin and therefore shares the same sessionStorage object. As a result, each frame should receive a StorageEvent when either frame changes the sessionStorage object.
 
-Main frame about to change sessionStorage...
+Main frame about to run setItem on sessionStorage...
 Main Frame received StorageEvent:
 Key - Main Frame
 New Value - SET
@@ -12,6 +12,58 @@ Storage Area - This window's window.sessionStorage
 Subframe received storage event:
 Key - Main Frame
 New Value - SET
+Old Value - null
+URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Storage Area - This window's window.sessionStorage
+
+Subframe about to change sessionStorage...
+Main Frame received StorageEvent:
+Key - Subframe
+New Value - SET
+Old Value - null
+URI - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
+Source - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
+Storage Area - This window's window.sessionStorage
+
+Subframe received storage event:
+Key - Subframe
+New Value - SET
+Old Value - null
+URI - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
+Source - LayoutTests/storage/domstorage/sessionstorage/resources/iframe-events-second.html
+Storage Area - This window's window.sessionStorage
+
+Main frame about to run removeItem on sessionStorage...
+Main Frame received StorageEvent:
+Key - Main Frame
+New Value - null
+Old Value - SET
+URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Storage Area - This window's window.sessionStorage
+
+Subframe received storage event:
+Key - Main Frame
+New Value - null
+Old Value - SET
+URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Storage Area - This window's window.sessionStorage
+
+Subframe about to change sessionStorage...
+Main frame about to clear sessionStorage...
+Main Frame received StorageEvent:
+Key - 
+New Value - null
+Old Value - null
+URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
+Storage Area - This window's window.sessionStorage
+
+Subframe received storage event:
+Key - 
+New Value - null
 Old Value - null
 URI - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html
 Source - LayoutTests/storage/domstorage/sessionstorage/iframe-events.html

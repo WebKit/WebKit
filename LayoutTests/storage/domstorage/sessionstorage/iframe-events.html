@@ -48,8 +48,12 @@ function startTest()
     }
  
     window.addEventListener("storage", handleStorageEvent, false);
-    log("Main frame about to change sessionStorage...");
+    log("Main frame about to run setItem on sessionStorage...");
     sessionStorage.setItem("Main Frame", "SET");
+    log("Main frame about to run removeItem on sessionStorage...");
+    sessionStorage.removeItem("Main Frame");
+    log("Main frame about to clear sessionStorage...");
+    sessionStorage.clear();
 }
 
 </script>

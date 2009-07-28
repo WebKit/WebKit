@@ -19,19 +19,27 @@ function runTest()
         return;
     }
     
-    log("foo is: " + sessionStorage.foo);
+    log("foo (before anything) is: " + sessionStorage.foo);
     sessionStorage.foo = "bar";
-    log("foo is: " + sessionStorage.foo);
+    log("foo (after a named property setter set) is: " + sessionStorage.foo);
     delete sessionStorage.foo;
-    log("foo is: " + sessionStorage.foo);
+    log("foo (after a delete) is: " + sessionStorage.foo);
     sessionStorage["foo"] = "bar";
-    log("foo is: " + sessionStorage.foo);
+    log("foo (after an indexed setter set) is: " + sessionStorage.foo);
+    delete sessionStorage.FOO;
+    log("foo (after deleting FOO (not foo)) is : " + sessionStorage.foo);
     delete sessionStorage.foo;
-    log("foo is: " + sessionStorage.foo);
+    log("foo (after a delete) is: " + sessionStorage.foo);
     sessionStorage.setItem("foo", "bar");
-    log("foo is: " + sessionStorage.foo);
+    log("foo (after calling setItem) is: " + sessionStorage.foo);
     delete sessionStorage.foo;
-    log("foo is: " + sessionStorage.foo);
+    log("foo (after a delete) is: " + sessionStorage.foo);
+    delete sessionStorage.foo;
+    log("foo (after a redundant delete) is: " + sessionStorage.foo);
+    sessionStorage.foo = "bar";
+    log("foo (after a named property setter set) is: " + sessionStorage.foo);
+    delete sessionStorage["foo"];
+    log("foo (after an indexed delete) is: " + sessionStorage.foo);
 }
 
 </script>

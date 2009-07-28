@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="resources/clearSessionStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function handleStorageEvent()
+{
+    if (!window.event) {
+        log("Global event not available.");
+        return;
+    }
+    
+    log("Storage event fired:");
+    log("Key           - " + event.key);
+    log("New Value     - " + event.newValue);
+    log("Old Value     - " + event.oldValue);
+    log("");
+}
+
+function runTest()
+{
+    if (!window.sessionStorage) {
+        log("window.sessionStorage DOES NOT exist");
+        return;
+    }
+
+    window.onstorage = handleStorageEvent;
+    
+    window.sessionStorage.setItem("FOO", "BAR");
+    window.sessionStorage.setItem("FU", "BAR");
+    window.sessionStorage.removeItem("FOO");
+    window.sessionStorage.removeItem("FU");
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This is a test to make sure SessionStorage mutations fire StorageEvents that are caught by the event listener corresponding to window.onstorage.<br>
+<div id="logger"></div>
+</body>
+</html>
