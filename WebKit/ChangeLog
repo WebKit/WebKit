@@ -1,3 +1,69 @@
+2009-07-28  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by David Levin.
+
+        Added ChromeClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        * haiku/WebCoreSupport/ChromeClientHaiku.cpp: Added.
+        (WebCore::ChromeClientHaiku::ChromeClientHaiku):
+        (WebCore::ChromeClientHaiku::~ChromeClientHaiku):
+        (WebCore::ChromeClientHaiku::chromeDestroyed):
+        (WebCore::ChromeClientHaiku::setWindowRect):
+        (WebCore::ChromeClientHaiku::windowRect):
+        (WebCore::ChromeClientHaiku::pageRect):
+        (WebCore::ChromeClientHaiku::scaleFactor):
+        (WebCore::ChromeClientHaiku::focus):
+        (WebCore::ChromeClientHaiku::unfocus):
+        (WebCore::ChromeClientHaiku::canTakeFocus):
+        (WebCore::ChromeClientHaiku::takeFocus):
+        (WebCore::ChromeClientHaiku::createWindow):
+        (WebCore::ChromeClientHaiku::createModalDialog):
+        (WebCore::ChromeClientHaiku::show):
+        (WebCore::ChromeClientHaiku::canRunModal):
+        (WebCore::ChromeClientHaiku::runModal):
+        (WebCore::ChromeClientHaiku::setToolbarsVisible):
+        (WebCore::ChromeClientHaiku::toolbarsVisible):
+        (WebCore::ChromeClientHaiku::setStatusbarVisible):
+        (WebCore::ChromeClientHaiku::statusbarVisible):
+        (WebCore::ChromeClientHaiku::setScrollbarsVisible):
+        (WebCore::ChromeClientHaiku::scrollbarsVisible):
+        (WebCore::ChromeClientHaiku::setMenubarVisible):
+        (WebCore::ChromeClientHaiku::menubarVisible):
+        (WebCore::ChromeClientHaiku::setResizable):
+        (WebCore::ChromeClientHaiku::addMessageToConsole):
+        (WebCore::ChromeClientHaiku::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientHaiku::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientHaiku::closeWindowSoon):
+        (WebCore::ChromeClientHaiku::runJavaScriptAlert):
+        (WebCore::ChromeClientHaiku::runJavaScriptConfirm):
+        (WebCore::ChromeClientHaiku::runJavaScriptPrompt):
+        (WebCore::ChromeClientHaiku::setStatusbarText):
+        (WebCore::ChromeClientHaiku::shouldInterruptJavaScript):
+        (WebCore::ChromeClientHaiku::tabsToLinks):
+        (WebCore::ChromeClientHaiku::windowResizerRect):
+        (WebCore::ChromeClientHaiku::repaint):
+        (WebCore::ChromeClientHaiku::scroll):
+        (WebCore::ChromeClientHaiku::screenToWindow):
+        (WebCore::ChromeClientHaiku::windowToScreen):
+        (WebCore::ChromeClientHaiku::platformWindow):
+        (WebCore::ChromeClientHaiku::contentsSizeChanged):
+        (WebCore::ChromeClientHaiku::scrollRectIntoView):
+        (WebCore::ChromeClientHaiku::addToDirtyRegion):
+        (WebCore::ChromeClientHaiku::scrollBackingStore):
+        (WebCore::ChromeClientHaiku::updateBackingStore):
+        (WebCore::ChromeClientHaiku::mouseDidMoveOverElement):
+        (WebCore::ChromeClientHaiku::setToolTip):
+        (WebCore::ChromeClientHaiku::print):
+        (WebCore::ChromeClientHaiku::exceededDatabaseQuota):
+        (WebCore::ChromeClientWx::reachedMaxAppCacheSize):
+        (WebCore::ChromeClientHaiku::requestGeolocationPermissionForFrame):
+        (WebCore::ChromeClientHaiku::runOpenPanel):
+        (WebCore::ChromeClientHaiku::setCursor):
+        (WebCore::ChromeClientHaiku::formStateDidChange):
+        (WebCore::ChromeClientHaiku::createHTMLParserQuirks):
+        * haiku/WebCoreSupport/ChromeClientHaiku.h: Added.
+
 2009-07-28  Robert Hogan  <robert@roberthogan.net>
 
         Reviewed by Simon Hausmann.
