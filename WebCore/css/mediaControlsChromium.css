@@ -26,7 +26,7 @@
 /* Chromium default media controls */
 
 audio {
-    width: 200px;
+    width: 300px;
     height: 32px;
 }
 
@@ -35,7 +35,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 100%;
+    height: 32px;
     z-index: 0;
 }
 
@@ -105,9 +105,9 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     right: 0px;
 
     height: 20px;
-    width: 48px;
+    width: 58px;
 
-    text-align: center;
+    text-align: right;
     font-family: Arial;
     font-weight: bold;
     color: white;
@@ -129,9 +129,9 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     right: 0px;
 
     height: 20px;
-    width: 48px;
+    width: 58px;
 
-    text-align: center;
+    text-align: right;
     font-family: Arial;
     font-weight: bold;
     color: white;
@@ -143,7 +143,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     top: auto;
     bottom: 9px;
     left: 0px;
-    right: 50px;
+    right: 60px;
     height: 13px;
 
     background: rgba(0, 0, 0, 0.6);
