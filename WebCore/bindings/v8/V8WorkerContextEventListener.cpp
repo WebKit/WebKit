@@ -35,6 +35,7 @@
 #include "V8WorkerContextEventListener.h"
 
 #include "Event.h"
+#include "V8Binding.h"
 #include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
@@ -75,6 +76,52 @@ void V8WorkerContextEventListener::handleEvent(Event* event, bool isWindowEvent)
     v8::Handle<v8::Value> jsEvent = WorkerContextExecutionProxy::EventToV8Object(event);
 
     invokeEventHandler(context, event, jsEvent, isWindowEvent);
+}
+
+bool V8WorkerContextEventListener::reportError(const String& message, const String& url, int lineNumber)
+{
+    // Is the EventListener disconnected?
+    if (disconnected())
+        return false;
+
+    // The callback function can clear the event listener and destroy 'this' object. Keep a local reference to it.
+    RefPtr<V8AbstractEventListener> protect(this);
+
+    v8::HandleScope handleScope;
+
+    v8::Handle<v8::Context> context = m_proxy->GetContext();
+    if (context.IsEmpty())
+        return false;
+
+    // Enter the V8 context in which to perform the event handling.
+    v8::Context::Scope scope(context);
+
+    v8::Local<v8::Value> returnValue;
+    {
+        // Catch exceptions thrown in calling the function so they do not propagate to javascript code that caused the event to fire.
+        v8::TryCatch tryCatch;
+        tryCatch.SetVerbose(true);
+
+        // Call the function.
+        if (!m_listener.IsEmpty() && m_listener->IsFunction()) {
+            v8::Local<v8::Function> callFunction = v8::Local<v8::Function>::New(v8::Persistent<v8::Function>::Cast(m_listener));
+            v8::Local<v8::Object> thisValue = v8::Context::GetCurrent()->Global();
+
+            v8::Handle<v8::Value> parameters[3] = { v8String(message), v8String(url), v8::Integer::New(lineNumber) };
+            returnValue = callFunction->Call(thisValue, 3, parameters);
+        }
+
+        // If an error occurs while handling the script error, it should be bubbled up.
+        if (tryCatch.HasCaught()) {
+            tryCatch.Reset();
+            return false;
+        }
+    }
+
+    // If the function returns false, then the error is handled. Otherwise, the error is not handled.
+    bool errorHandled = returnValue->IsBoolean() && !returnValue->BooleanValue();
+
+    return errorHandled;
 }
 
 v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(v8::Handle<v8::Value> jsEvent, Event* event, bool isWindowEvent)

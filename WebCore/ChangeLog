@@ -1,3 +1,14 @@
+2009-07-27  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        [V8] Implement EventListener::reportError for V8 event listeners in worker context. 
+        https://bugs.webkit.org/show_bug.cgi?id=27731
+
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::reportError):
+        * bindings/v8/V8WorkerContextEventListener.h:
+
 2009-07-27  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Eric Seidel and David Levin.
