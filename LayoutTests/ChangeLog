@@ -1,3 +1,23 @@
+2009-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        createMarkup does not handle CSS properly
+        https://bugs.webkit.org/show_bug.cgi?id=27660
+        
+        inline-style-after-indentoutdent tests whether the original inline style is preserved after outdentation
+        immediately after indentation.
+
+        * editing/deleting/pruning-after-merge-2.html: Replaced b that contains div with a div with font-weight
+        * editing/execCommand/inline-style-after-indentoutdent-expected.txt: Added.
+        * editing/execCommand/inline-style-after-indentoutdent.html: Added.
+        * editing/execCommand/resources/inline-style-after-indentoutdent.js: Added.
+        (testCreateMarkup):
+        (shouldBeSameAfterCreateMarkup):
+        * platform/mac/editing/deleting/delete-3857753-fix-expected.txt: extra i tag is added (still passes pixel tests)
+        * platform/mac/editing/deleting/pruning-after-merge-2-expected.txt: extra div as explained above
+        * platform/mac/editing/pasteboard/display-block-on-spans-expected.txt: bug 26483 appearing
+
 2009-07-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Rubber-stamped by George Staikos.

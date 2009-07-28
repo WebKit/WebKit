@@ -22,8 +22,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 25x28
             text run at (0,0) width 25: "on"
           RenderInline {SPAN} at (0,0) size 12x28
-            RenderText {#text} at (25,0) size 12x28
-              text run at (25,0) width 12: "o"
+            RenderInline {I} at (0,0) size 12x28
+              RenderText {#text} at (25,0) size 12x28
+                text run at (25,0) width 12: "o"
       RenderBlock {DIV} at (14,42) size 756x28
         RenderInline {B} at (0,0) size 54x28
           RenderText {#text} at (0,0) size 54x28

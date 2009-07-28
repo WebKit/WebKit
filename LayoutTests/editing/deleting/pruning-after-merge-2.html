@@ -4,7 +4,7 @@ if (window.layoutTestController)
 </script>
 <p>This tests to see if deletion correctly prunes the containers of the paragraph being moved during a merge.  You should see 'foo<b>bar</b>' below.</p>
 
-<div id="test" contenteditable="true"><div>foo</div><div style="border: 1px solid blue; padding: 5px"><b><div style="border: 1px solid red; padding: 5px">bar</div></b></div></div>
+<div id="test" contenteditable="true"><div>foo</div><div style="border: 1px solid blue; padding: 5px; font-weight: bold;"><div style="border: 1px solid red; padding: 5px">bar</div></div></div>
 
 <script>
 var e = document.getElementById("test");
