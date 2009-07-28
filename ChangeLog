@@ -1,3 +1,14 @@
+2009-07-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Use automake 1.11 SILENT_RULES when present, for cleaner build
+        output. You can disable it by passing --disable-silent-rules to
+        configure or V=1 to make.
+
+        * autotools/dolt.m4:
+        * configure.ac:
+
 2009-07-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -40,6 +40,9 @@ AC_SUBST([LIBWEBKITGTK_VERSION])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects tar-ustar])
 
+# Use AM_SILENT_RULES if present
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
 # host checking - inspired by the GTK+ configure.in
 # TODO: move these to webkit.m4?
 AC_MSG_CHECKING([for native Win32])
