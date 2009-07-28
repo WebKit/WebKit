@@ -1,5 +1,11 @@
 2009-07-27  Brady Eidson  <beidson@apple.com>
 
+        Didn't mean to check this guy in.
+
+        * http/tests/appcache/max-size-expected.txt:
+
+2009-07-27  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=27755
