@@ -1,3 +1,17 @@
+2009-07-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
+        [WML] <do> elements with a <noop> task shouldn't be exposed to the user
+        https://bugs.webkit.org/show_bug.cgi?id=27724
+
+        Fix WMLNoopElement to disable it's parent WMLDoElement, as required by the spec.
+        Moved manual-tests/wml/task-noop-in-do.wml to LayoutTests/fast/wml/task-noop-in-do.wml.
+
+        * manual-tests/wml/task-noop-in-do.wml: Removed.
+        * wml/WMLNoopElement.cpp:
+        (WebCore::WMLNoopElement::insertedIntoDocument):
+
 2009-07-28  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Simon Hausmann.

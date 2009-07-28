@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {wml} at (0,0) size 800x84
+    RenderBlock {card} at (8,16) size 784x52
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 271x18
+          text run at (0,0) width 271: "Test for Noop task in do element of WML."
+      RenderBlock {p} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 310x18
+          text run at (0,0) width 310: "If it passes, you should not see the \"Back\" button"
+      RenderBlock (anonymous) at (0,68) size 784x0
