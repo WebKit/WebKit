@@ -2188,7 +2188,7 @@ class FakeReply : public QNetworkReply {
         virtual void abort() {}
         virtual void close() {}
     protected:
-        qint64 readData(char* data, qint64 maxSize)
+        qint64 readData(char*, qint64)
         {
             return 0;
         }
