@@ -112,18 +112,18 @@ NPIdentifier getStringIdentifier(v8::Handle<v8::String> str)
 {
     const int kStackBufferSize = 100;
 
-    int bufferLength = str->Length() + 1;
+    int bufferLength = str->Utf8Length() + 1;
     if (bufferLength <= kStackBufferSize) {
         // Use local stack buffer to avoid heap allocations for small strings. Here we should only use the stack space for
         // stackBuffer when it's used, not when we use the heap.
         //
-        // WriteAscii is guaranteed to generate a null-terminated string because bufferLength is constructed to be one greater
+        // WriteUtf8 is guaranteed to generate a null-terminated string because bufferLength is constructed to be one greater
         // than the string length.
         char stackBuffer[kStackBufferSize];
-        str->WriteAscii(stackBuffer, 0, bufferLength);
+        str->WriteUtf8(stackBuffer, bufferLength);
         return NPN_GetStringIdentifier(stackBuffer);
     }
 
-    v8::String::AsciiValue ascii(str);
-    return NPN_GetStringIdentifier(*ascii);
+    v8::String::Utf8Value utf8(str);
+    return NPN_GetStringIdentifier(*utf8);
 }
