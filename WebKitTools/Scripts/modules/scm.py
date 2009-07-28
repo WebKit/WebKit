@@ -35,6 +35,7 @@ import subprocess
 
 # Import WebKit-specific modules.
 from modules.logging import error, log
+from modules.bugzilla import Bugzilla
 
 def detect_scm_system(path):
     if SVN.in_working_directory(path):

@@ -1,3 +1,14 @@
+2009-07-27  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by David Levin.
+
+        "bugzilla-tool post-commit head" doesn't work because it can't find the bug id from the commit load.
+        https://bugs.webkit.org/show_bug.cgi?id=27747
+
+        modules.bugzilla is not found because not included.
+
+        * Scripts/modules/scm.py: Properly import modules.bugzilla.
+
 2009-07-24  Pierre d'Herbemont  <pdherbemont@apple.com>
 
         Reviewed by David Kilzer.
