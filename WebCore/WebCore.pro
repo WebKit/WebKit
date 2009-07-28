@@ -3162,10 +3162,10 @@ addExtraCompilerWithHeader(xpathbison)
 # The appropriate Apple-maintained Version.xcconfig file for WebKit version information is in WebKit/mac/Configurations/.
 webkitversion.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}WebKitVersion.h
 webkitversion.commands = perl $$PWD/../WebKit/scripts/generate-webkitversion.pl --config $$PWD/../WebKit/mac/Configurations/Version.xcconfig --outputDir $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}
-WEBKITVERSION_SCRIPT = $$PWD/platform/generate-webkitversion.pl
+WEBKITVERSION_SCRIPT = $$PWD/../WebKit/scripts/generate-webkitversion.pl
 webkitversion.input = WEBKITVERSION_SCRIPT
 webkitversion.CONFIG = target_predeps
-webkitversion.depend = $$PWD/platform/generate-webkitversion.pl
+webkitversion.depend = $$PWD/../WebKit/scripts/generate-webkitversion.pl
 webkitversion.variable_out = GENERATED_SOURCES
 webkitversion.clean = ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}WebKitVersion.h
 addExtraCompiler(webkitversion)
