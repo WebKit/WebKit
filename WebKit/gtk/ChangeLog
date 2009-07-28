@@ -1,3 +1,12 @@
+2009-07-28  Priit Laes  <plaes@plaes.org>
+
+        Reviewed by Xan Lopez.
+
+        Fix mnemonics in the soup authentication dialog.
+
+        * webkit/webkitsoupauthdialog.c:
+        (show_auth_dialog):
+
 2009-07-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
