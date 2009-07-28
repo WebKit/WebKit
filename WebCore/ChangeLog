@@ -1,3 +1,15 @@
+2009-07-27  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fix of <rdar://5015949> Drag Icon is not produced for over sized images.
+        
+        Implemented the createDragImageIconForCachedImage function by using the Windows 
+        SHFILEINFO structure.
+
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageIconForCachedImage):
+
 2009-07-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.

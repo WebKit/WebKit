@@ -56,10 +56,26 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
     return image;
 }
         
-DragImageRef createDragImageIconForCachedImage(CachedImage*)
+DragImageRef createDragImageIconForCachedImage(CachedImage* image)
 {
-    //FIXME: Provide icon for image type <rdar://problem/5015949>
-    return 0;     
+    if (!image)
+        return 0;
+
+    String filename = image->response().suggestedFilename();
+    
+    SHFILEINFO shfi = {0};
+    if (FAILED(SHGetFileInfo(static_cast<LPCWSTR>(filename.charactersWithNullTermination()), FILE_ATTRIBUTE_NORMAL,
+        &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES)))
+        return 0;
+
+    ICONINFO iconInfo;
+    if (FAILED(GetIconInfo(shfi.hIcon, &iconInfo)))
+        return 0;
+
+    DestroyIcon(shfi.hIcon);
+    DeleteObject(iconInfo.hbmMask);
+
+    return iconInfo.hbmColor;
 }
     
 }
