@@ -1,3 +1,9 @@
+2009-07-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        * NEWS: update for 1.1.12 release.
+
 2009-07-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Build fix.

@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 1.1.12
+=================
+
+What's new in WebKitGTK+ 1.1.12?
+
+  - Fix WebKitSoupAuthDialog to only save passwords in gnome-keyring
+    (if enabled) when authentication succeeds.
+  - Implement a proper size_request method for WebKitWebView. The
+    widget will request the size of the whole page as its size
+    requisition.
+  - Many a11y improvements.
+  - The usual amount of other misc fixes.
+
+=================
 WebKitGTK+ 1.1.11
 =================
 
