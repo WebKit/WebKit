@@ -37,33 +37,16 @@ win32-* {
     LIBS += -lwinmm
 }
 
-# Default rules to turn JIT on/off
-!contains(DEFINES, ENABLE_JIT=.) {
-    isEqual(QT_ARCH,i386)|isEqual(QT_ARCH,windows) {
-        # Require gcc >= 4.1
-        CONFIG(release):linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
-            DEFINES += ENABLE_JIT=1
-        }
-        win32-msvc* {
-            DEFINES += ENABLE_JIT=1
-        }
-    }
+# In debug mode JIT disabled until crash fixed
+win32-* {
+    CONFIG(debug):!contains(DEFINES, ENABLE_JIT=1): DEFINES+=ENABLE_JIT=0
 }
 
-# Rules when JIT enabled
-contains(DEFINES, ENABLE_JIT=1) {
-    !contains(DEFINES, ENABLE_YARR=.): DEFINES += ENABLE_YARR=1
-    !contains(DEFINES, ENABLE_YARR_JIT=.): DEFINES += ENABLE_YARR_JIT=1
-    !contains(DEFINES, ENABLE_JIT_OPTIMIZE_CALL=.): DEFINES += ENABLE_JIT_OPTIMIZE_CALL=1
-    !contains(DEFINES, ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS=.): DEFINES += ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS=1
-    !contains(DEFINES, ENABLE_JIT_OPTIMIZE_ARITHMETIC=.): DEFINES += ENABLE_JIT_OPTIMIZE_ARITHMETIC=1
-    linux-g++* {
-        !contains(DEFINES, WTF_USE_JIT_STUB_ARGUMENT_VA_LIST=.): DEFINES += WTF_USE_JIT_STUB_ARGUMENT_VA_LIST=1
+# Rules when JIT enabled (not disabled)
+!contains(DEFINES, ENABLE_JIT=0) {
+    linux-g++*:greaterThan(QT_GCC_MAJOR_VERSION,3):greaterThan(QT_GCC_MINOR_VERSION,0) {
         QMAKE_CXXFLAGS += -fno-stack-protector
         QMAKE_CFLAGS += -fno-stack-protector
-    }
-    win32-msvc* {
-        !contains(DEFINES, WTF_USE_JIT_STUB_ARGUMENT_REGISTER=.): DEFINES += WTF_USE_JIT_STUB_ARGUMENT_REGISTER=1
     }
 }
 

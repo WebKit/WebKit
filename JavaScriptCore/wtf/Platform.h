@@ -566,6 +566,7 @@
 #endif
 
 #if !defined(ENABLE_JIT)
+
 /* The JIT is tested & working on x86_64 Mac */
 #if PLATFORM(X86_64) && PLATFORM(MAC)
     #define ENABLE_JIT 1
@@ -581,7 +582,21 @@
 #elif PLATFORM(X86) && PLATFORM(WIN)
     #define ENABLE_JIT 1
 #endif
+
+#if PLATFORM(X86) && PLATFORM(QT)
+#if PLATFORM(WIN_OS) && COMPILER(MINGW) && GCC_VERSION >= 40100
+    #define ENABLE_JIT 1
+    #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
+#elif PLATFORM(WIN_OS) && COMPILER(MSVC)
+    #define ENABLE_JIT 1
+    #define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
+#elif PLATFORM(LINUX) && GCC_VERSION >= 40100
+    #define ENABLE_JIT 1
+    #define WTF_USE_JIT_STUB_ARGUMENT_VA_LIST 1
 #endif
+#endif /* PLATFORM(QT) && PLATFORM(X86) */
+
+#endif /* !defined(ENABLE_JIT) */
 
 #if ENABLE(JIT)
 #ifndef ENABLE_JIT_OPTIMIZE_CALL
@@ -620,15 +635,29 @@
 #endif
 
 /* Yet Another Regex Runtime. */
+#if !defined(ENABLE_YARR_JIT)
+
 /* YARR supports x86 & x86-64, and has been tested on Mac and Windows. */
-#if (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(MAC)) \
- || (!defined(ENABLE_YARR_JIT) && PLATFORM(X86_64) && PLATFORM(MAC)) \
+#if (PLATFORM(X86) && PLATFORM(MAC)) \
+ || (PLATFORM(X86_64) && PLATFORM(MAC)) \
  /* Under development, temporarily disabled until 16Mb link range limit in assembler is fixed. */ \
- || (!defined(ENABLE_YARR_JIT) && PLATFORM_ARM_ARCH(7) && PLATFORM(IPHONE) && 0) \
- || (!defined(ENABLE_YARR_JIT) && PLATFORM(X86) && PLATFORM(WIN))
+ || (PLATFORM_ARM_ARCH(7) && PLATFORM(IPHONE) && 0) \
+ || (PLATFORM(X86) && PLATFORM(WIN))
 #define ENABLE_YARR 1
 #define ENABLE_YARR_JIT 1
 #endif
+
+#if PLATFORM(X86) && PLATFORM(QT)
+#if (PLATFORM(WIN_OS) && COMPILER(MINGW) && GCC_VERSION >= 40100) \
+ || (PLATFORM(WIN_OS) && COMPILER(MSVC)) \
+ || (PLATFORM(LINUX) && GCC_VERSION >= 40100)
+#define ENABLE_YARR 1
+#define ENABLE_YARR_JIT 1
+#endif
+#endif
+
+#endif /* !defined(ENABLE_YARR_JIT) */
+
 /* Sanity Check */
 #if ENABLE(YARR_JIT) && !ENABLE(YARR)
 #error "YARR_JIT requires YARR"
