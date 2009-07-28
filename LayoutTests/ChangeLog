@@ -1,3 +1,12 @@
+2009-07-28  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        Remove a lot of tests from Windows Skip list which now pass. Will watch buildbot
+        to make sure there are no regressions/this commit doesn't cause failures.
+
+        * platform/win/Skipped:
+        
 2009-07-28  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Adam Barth.

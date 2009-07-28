@@ -108,10 +108,6 @@ fast/events/standalone-image-drag-to-editable.html
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
 
-# DRT is not fully implemented in boomer <rdar://problem/5128261>
-fast/dom/Window/setting-properties-on-closed-window.html
-svg/custom/use-events-crash.svg
-
 # Emacs bindings are used in LayoutTests which fail on boomer. <rdar://problem/5137352>
 fast/events/keydown-1.html
 
@@ -142,9 +138,6 @@ plugins/plugin-javascript-access.html
 plugins/root-object-premature-delete-crash.html
 plugins/throw-on-dealloc.html
 plugins/undefined-property-crash.html
-
-# Debug C Runtime assertion <rdar://problem/5079945>
-svg/custom/mask-excessive-malloc.svg
 
 # String::Number prints floating point numbers differently on Win than X. <rdar://problem/5127993>
 svg/hixie/perf/001.xml
@@ -200,57 +193,13 @@ editing/pasteboard/emacs-cntl-y-001.html
 # <rdar://5508270> Intermittently time out
 editing/selection/5057506-2.html
 editing/selection/5057506.html
-fast/dom/Window/window-early-properties.html
-fast/frames/frameElement-widthheight.html
-fast/frames/frame-js-url-clientWidth.html
-fast/loader/local-svg-parsed-as-svg.svg
-svg/custom/image-clipped-hit.svg
-svg/custom/use-clipped-hit.svg
 
 # We can't make platform specifc results so keep this here for now
 # This test is dependant on DRT being able to open windows.
 fast/dom/Window/new-window-opener.html
 
-# SVG filter support not implemented <rdar://5555151>
-svg/W3C-SVG-1.1/filters-blend-01-b.svg
-svg/W3C-SVG-1.1/filters-color-01-b.svg
-svg/W3C-SVG-1.1/filters-composite-02-b.svg
-svg/W3C-SVG-1.1/filters-comptran-01-b.svg
-svg/W3C-SVG-1.1/filters-diffuse-01-f.svg
-svg/W3C-SVG-1.1/filters-displace-01-f.svg
-svg/W3C-SVG-1.1/filters-example-01-b.svg
-svg/W3C-SVG-1.1/filters-gauss-01-b.svg
-svg/W3C-SVG-1.1/filters-image-01-b.svg
-svg/W3C-SVG-1.1/filters-light-01-f.svg
-svg/W3C-SVG-1.1/filters-offset-01-b.svg
-svg/W3C-SVG-1.1/filters-specular-01-f.svg
-svg/W3C-SVG-1.1/filters-tile-01-b.svg
-svg/batik/filters/filterRegions.svg
-svg/custom/empty-merge.svg
-svg/custom/feComponentTransfer-Discrete.svg
-svg/custom/feComponentTransfer-Gamma.svg
-svg/custom/feComponentTransfer-Linear.svg
-svg/custom/feComponentTransfer-Table.svg
-svg/custom/feDisplacementMap-01.svg
-svg/custom/filter-source-alpha.svg
-svg/custom/image-with-transform-clip-filter.svg
-svg/custom/invalid-css.svg
-svg/custom/non-opaque-filters.svg
-svg/custom/text-filter.svg
-svg/custom/visibility-override-filter.svg
-
-# Crash in CFURLConnectionSendCallbacks <rdar://5631739>
-fast/inspector/cssURLQuotes.html
-
-# <rdar://problem/5228259> Leopard regression test failures: svg/W3C-SVG-1.1/animate-elem...
-svg/W3C-SVG-1.1/animate-elem-06-t.svg
-svg/W3C-SVG-1.1/animate-elem-07-t.svg
-
 # <rdar://problem/5228278> Leopard SVG regression test failures due to different path dimensions
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
-svg/W3C-SVG-1.1/paths-data-01-t.svg
-svg/W3C-SVG-1.1/text-path-01-b.svg
-svg/custom/control-points-for-S-and-T.svg
 
 # <rdar://problem/5539818> REGRESSION (Leopard): http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html failing
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
@@ -259,25 +208,14 @@ http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 svg/batik/text/textOnPath.svg
 svg/batik/text/verticalTextOnPath.svg
 
-# <rdar://5667273>
-editing/selection/fake-drag.html
-
 # <rdar://5667279> Undefined value exception
 http/tests/xmlhttprequest/XMLHttpRequestException.html
-
-# <rdar://5667302>
-svg/dom/animated-tearoff-equality.xhtml
-svg/dom/animated-tearoff-lifespan.xhtml
 
 # <rdar://5670235> Sometimes spews output into the next test
 http/tests/security/cross-frame-access-put.html
 
 # <rdar://5673685>
 fast/forms/input-readonly-autoscroll.html
-
-# <rdar://5673709>
-fast/xsl/sort-locale.xml
-fast/xsl/sort-unicode.xml
 
 # <rdar://5683523> Failing on at least one bot
 fast/dom/Window/window-screen-properties.html
@@ -304,32 +242,12 @@ http/tests/security/cross-frame-access-port-explicit-domain.html
 # <rdar://problem/5713126> Times out
 http/tests/security/cross-frame-access-port.html
 
-# <rdar://problem/5713127>
-media/video-display-toggle.html
-
-# <rdar://problem/5720767>
-svg/W3C-SVG-1.1/text-tselect-02-f.svg
-
 # <rdar://5723121>
 http/tests/xmlhttprequest/cookies.html
-
-# <rdar://5723142>
-svg/custom/frame-getSVGDocument.html
 
 # <rdar://5723191>
 http/tests/navigation/javascriptlink-frames.html
 
-# <rdar://problem/5787707> fast/canvas/canvas-getImageData.html fails on windows
-fast/canvas/canvas-getImageData.html
-
-# <rdar://problem/5787717> REGRESSION: editing/pasteboard/5478250.html fails on Windows
-editing/pasteboard/5478250.html
-
-#<rdar://problem/5787743> REGRESSION: Crash at WTF::Collator::CreateCollator() running fast/js/kde/StringObject.html on Windows
-fast/js/kde/StringObject.html
-
-# <rdar://problem/5787793> REGRESSION: svg/custom/acid3-test-77.html fails on windows 
-svg/custom/acid3-test-77.html
 
 #<rdar://problem/5829342> REGRESSION: fast/canvas/toDataURL-supportedTypes.html fails on Windows
 fast/canvas/toDataURL-supportedTypes.html
@@ -343,9 +261,6 @@ http/tests/misc/frame-default-enc-same-domain.html
 
 #<rdar://problem/5829328> REGRESSION: fast/frames/viewsource-empty-attribute-value.html fails on Windows intermittently
 fast/frames/viewsource-empty-attribute-value.html
-
-# <rdar://5848161> REGRESSION (r31438?): Crash beneath ResourceHandle::setDefersLoading (null CFURLConnection)
-fast/loader/simultaneous-reloads-assert.html
 
 # <rdar://problem/5539822> REGRESSION (Leopard): svg/custom/stroke-width-click.svg test failing
 svg/custom/stroke-width-click.svg
