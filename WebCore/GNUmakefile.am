@@ -2328,9 +2328,6 @@ FEATURE_DEFINES_JAVASCRIPT += ENABLE_WORKERS=1
 webcore_cppflags += \
 	-DENABLE_WORKERS=1
 
-webcore_built_nosources += \
-	WebCore/bindings/js/JSWorkerContextBase.lut.h
-
 webcore_sources += \
 	WebCore/bindings/js/JSAbstractWorkerCustom.cpp \
 	WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
@@ -3201,10 +3198,6 @@ DerivedSources/UserAgentStyleSheetsData.cpp: DerivedSources/UserAgentStyleSheets
 DerivedSources/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
 	$(PERL) $< $@ DerivedSources/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
-# lookup tables for old-style JavaScript bindings
-WebCore/%.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/WebCore/%.cpp
-	$(PERL) $^ -n WebCore > $@
-
 # HTML tag and attribute names
 DerivedSources/HTMLElementFactory.cpp: DerivedSources/HTMLNames.cpp;
 DerivedSources/HTMLElementFactory.h: DerivedSources/HTMLElementFactory.cpp;
@@ -3354,6 +3347,5 @@ dist_webresources_DATA = \
 # Clean rules for WebCore
 
 CLEANFILES += \
-	libWebCoreJS.la \
-	WebCore/bindings/js/JSWorkerContextBase.lut.h
+	libWebCoreJS.la
 
