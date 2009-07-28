@@ -2,6 +2,22 @@
 
         Reviewed by George Staikos.
 
+        [WML] Variable substitution recursion seems to have bugs
+        https://bugs.webkit.org/show_bug.cgi?id=27726
+
+        Allow <setvar> elements to depend on the value specified by preceeding <setvar> elements.
+        Required by the specification - assure it only works in linear order. A setvar element may
+        not depend on the variable state of a following setvar element, only the previous ones.
+
+        Extend wml/variable-reference-valid.html layout test to cover these cases.
+
+        * wml/WMLTaskElement.cpp:
+        (WebCore::WMLTaskElement::storeVariableState):
+
+2009-07-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by George Staikos.
+
         [WML] Page title doesn't update after variable substitution, if it contained variables
         https://bugs.webkit.org/show_bug.cgi?id=27725
 

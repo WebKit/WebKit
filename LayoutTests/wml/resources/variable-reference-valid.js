@@ -17,18 +17,22 @@ function setupTestDocument() {
     setvarElement1.setAttribute("value", "TEST PASSED");
     refreshElement.appendChild(setvarElement1);
 
+    // 'var2' doesn't exist yet, so the value will be empty
     var setvarElement2 = createWMLElement("setvar");
-    setvarElement2.setAttribute("name", "var2");
-
-    // FIXME: Use $(var:escape) instead of TEST%20PASSED.
-    // This doesn't work at the moment. Investigate.
-    setvarElement2.setAttribute("value", "TEST%20PASSED");
+    setvarElement2.setAttribute("name", "wontwork");
+    setvarElement2.setAttribute("value", "$var2");
     refreshElement.appendChild(setvarElement2);
 
+    // 'var' already exists, so the value will be "TEST%20PASSED"
     var setvarElement3 = createWMLElement("setvar");
-    setvarElement3.setAttribute("name", "v");
-    setvarElement3.setAttribute("value", "TEST PASSED");
+    setvarElement3.setAttribute("name", "var2");
+    setvarElement3.setAttribute("value", "$(var:escape)");
     refreshElement.appendChild(setvarElement3);
+
+    var setvarElement4 = createWMLElement("setvar");
+    setvarElement4.setAttribute("name", "v");
+    setvarElement4.setAttribute("value", "TEST PASSED");
+    refreshElement.appendChild(setvarElement4);
 
     pElement1 = createWMLElement("p");
     pElement1.textContent = "Result: $var";
@@ -53,6 +57,10 @@ function setupTestDocument() {
     pElement6 = createWMLElement("p");
     pElement6.textContent = "Result: $(v:e)";
     cardElement.appendChild(pElement6);
+
+    pElement7 = createWMLElement("p");
+    pElement7.textContent = "Result: $wontwork";
+    cardElement.appendChild(pElement7);
 }
 
 function prepareTest() {
@@ -62,6 +70,7 @@ function prepareTest() {
     shouldBeEqualToString("pElement4.textContent", "Result: $(var2:unesc)");
     shouldBeEqualToString("pElement5.textContent", "Result: $v");
     shouldBeEqualToString("pElement6.textContent", "Result: $(v:e)");
+    shouldBeEqualToString("pElement7.textContent", "Result: $wontwork");
 
     startTest(25, 15);
 }
@@ -73,6 +82,7 @@ function executeTest() {
     shouldBeEqualToString("pElement4.textContent", "Result: TEST PASSED");
     shouldBeEqualToString("pElement5.textContent", "Result: TEST PASSED");
     shouldBeEqualToString("pElement6.textContent", "Result: TEST%20PASSED");
+    shouldBeEqualToString("pElement7.textContent", "Result: ");
 
     completeTest();
 }

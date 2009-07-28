@@ -78,14 +78,18 @@ void WMLTaskElement::storeVariableState(WMLPageState* pageState)
 
     for (; it != end; ++it) {
         WMLSetvarElement* setterElement = (*it);
-        if (setterElement->name().isEmpty())
+
+        String name = setterElement->name();
+        if (name.isEmpty())
             continue;
 
-        variables.set(setterElement->name(), setterElement->value());
-    }
+        String value = setterElement->value();
+        variables.set(name, value);
 
-    if (variables.isEmpty())
-        return;
+        // The next setvar element may depend on this variable value. It's safe to store the current
+        // name value pair in the page state, as the whole page state is replaced soon by this new map
+        pageState->storeVariable(name, value);
+    }
 
     pageState->storeVariables(variables);
 }
