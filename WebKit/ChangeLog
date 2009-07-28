@@ -2,6 +2,135 @@
 
         Reviewed by David Levin.
 
+        Added FrameLoaderClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        * haiku/WebCoreSupport/FrameLoaderClientHaiku.cpp: Added.
+        (WebCore::FrameLoaderClientHaiku::FrameLoaderClientHaiku):
+        (WebCore::FrameLoaderClientHaiku::setFrame):
+        (WebCore::FrameLoaderClientHaiku::setWebView):
+        (WebCore::FrameLoaderClientHaiku::detachFrameLoader):
+        (WebCore::FrameLoaderClientHaiku::hasWebView):
+        (WebCore::FrameLoaderClientHaiku::hasBackForwardList):
+        (WebCore::FrameLoaderClientHaiku::resetBackForwardList):
+        (WebCore::FrameLoaderClientHaiku::provisionalItemIsTarget):
+        (WebCore::FrameLoaderClientHaiku::makeRepresentation):
+        (WebCore::FrameLoaderClientHaiku::forceLayout):
+        (WebCore::FrameLoaderClientHaiku::forceLayoutForNonHTML):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForCommit):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForBackForwardNavigation):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForReload):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForStandardLoad):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForInternalLoad):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryAfterClientRedirect):
+        (WebCore::FrameLoaderClientHaiku::setCopiesOnScroll):
+        (WebCore::FrameLoaderClientHaiku::tokenForLoadErrorReset):
+        (WebCore::FrameLoaderClientHaiku::resetAfterLoadError):
+        (WebCore::FrameLoaderClientHaiku::doNotResetAfterLoadError):
+        (WebCore::FrameLoaderClientHaiku::willCloseDocument):
+        (WebCore::FrameLoaderClientHaiku::detachedFromParent2):
+        (WebCore::FrameLoaderClientHaiku::detachedFromParent3):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidCancelClientRedirect):
+        (WebCore::FrameLoaderClientHaiku::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientHaiku::dispatchWillClose):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFirstVisuallyNonEmptyLayout):
+        (WebCore::FrameLoaderClientHaiku::dispatchShow):
+        (WebCore::FrameLoaderClientHaiku::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientHaiku::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidLoadMainResource):
+        (WebCore::FrameLoaderClientHaiku::revertToProvisionalState):
+        (WebCore::FrameLoaderClientHaiku::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientHaiku::postProgressEstimateChangedNotification):
+        (WebCore::FrameLoaderClientHaiku::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientHaiku::progressStarted):
+        (WebCore::FrameLoaderClientHaiku::progressCompleted):
+        (WebCore::FrameLoaderClientHaiku::setMainFrameDocumentReady):
+        (WebCore::FrameLoaderClientHaiku::willChangeTitle):
+        (WebCore::FrameLoaderClientHaiku::didChangeTitle):
+        (WebCore::FrameLoaderClientHaiku::finishedLoading):
+        (WebCore::FrameLoaderClientHaiku::canShowMIMEType):
+        (WebCore::FrameLoaderClientHaiku::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientHaiku::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientHaiku::frameLoadCompleted):
+        (WebCore::FrameLoaderClientHaiku::saveViewStateToItem):
+        (WebCore::FrameLoaderClientHaiku::restoreViewState):
+        (WebCore::FrameLoaderClientHaiku::restoreScrollPositionAndViewState):
+        (WebCore::FrameLoaderClientHaiku::provisionalLoadStarted):
+        (WebCore::FrameLoaderClientHaiku::shouldTreatURLAsSameAsCurrent):
+        (WebCore::FrameLoaderClientHaiku::addHistoryItemForFragmentScroll):
+        (WebCore::FrameLoaderClientHaiku::didFinishLoad):
+        (WebCore::FrameLoaderClientHaiku::prepareForDataSourceReplacement):
+        (WebCore::FrameLoaderClientHaiku::setTitle):
+        (WebCore::FrameLoaderClientHaiku::userAgent):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientHaiku::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientHaiku::canHandleRequest):
+        (WebCore::FrameLoaderClientHaiku::partClearedInBegin):
+        (WebCore::FrameLoaderClientHaiku::updateGlobalHistory):
+        (WebCore::FrameLoaderClientHaiku::updateGlobalHistoryRedirectLinks):
+        (WebCore::FrameLoaderClientHaiku::shouldGoToHistoryItem):
+        (WebCore::FrameLoaderClientHaiku::saveScrollPositionAndViewStateToItem):
+        (WebCore::FrameLoaderClientHaiku::canCachePage):
+        (WebCore::FrameLoaderClientHaiku::setMainDocumentError):
+        (WebCore::FrameLoaderClientHaiku::committedLoad):
+        (WebCore::FrameLoaderClientHaiku::cancelledError):
+        (WebCore::FrameLoaderClientHaiku::blockedError):
+        (WebCore::FrameLoaderClientHaiku::cannotShowURLError):
+        (WebCore::FrameLoaderClientHaiku::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientHaiku::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientHaiku::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientHaiku::shouldFallBack):
+        (WebCore::FrameLoaderClientHaiku::createDocumentLoader):
+        (WebCore::FrameLoaderClientHaiku::download):
+        (WebCore::FrameLoaderClientHaiku::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientHaiku::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientHaiku::shouldUseCredentialStorage):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidLoadResourceByXMLHttpRequest):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFailLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchCreatePage):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientHaiku::dispatchUnableToImplementPolicy):
+        (WebCore::FrameLoaderClientHaiku::startDownload):
+        (WebCore::FrameLoaderClientHaiku::createFrame):
+        (WebCore::FrameLoaderClientHaiku::objectContentType):
+        (WebCore::FrameLoaderClientHaiku::createPlugin):
+        (WebCore::FrameLoaderClientHaiku::redirectDataToPlugin):
+        (WebCore::FrameLoaderClientHaiku::pluginWillHandleLoadError):
+        (WebCore::FrameLoaderClientHaiku::createJavaAppletWidget):
+        (WebCore::FrameLoaderClientHaiku::overrideMediaType):
+        (WebCore::FrameLoaderClientHaiku::windowObjectCleared):
+        (WebCore::FrameLoaderClientHaiku::documentElementAvailable):
+        (WebCore::FrameLoaderClientHaiku::didPerformFirstNavigation):
+        (WebCore::FrameLoaderClientHaiku::registerForIconNotification):
+        (WebCore::FrameLoaderClientHaiku::savePlatformDataToCachedFrame):
+        (WebCore::FrameLoaderClientHaiku::transitionToCommittedFromCachedFrame):
+        (WebCore::FrameLoaderClientHaiku::transitionToCommittedForNewPage):
+        * haiku/WebCoreSupport/FrameLoaderClientHaiku.h: Added.
+        (WebCore::FrameLoaderClientHaiku::~FrameLoaderClientHaiku):
+
+2009-07-28  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by David Levin.
+
         Added ChromeClient for Haiku WebCore support.
         https://bugs.webkit.org/show_bug.cgi?id=26952
 
