@@ -2544,16 +2544,29 @@ void tst_QWebFrame::baseUrl()
 
 void tst_QWebFrame::hasSetFocus()
 {
-    QSignalSpy loadSpy(m_page, SIGNAL(loadFinished(bool)));
-    QUrl url = QUrl("qrc:///frametest/iframe.html");
-    m_page->mainFrame()->load(url);
+    QString html("<html><body><p>top</p>" \
+                    "<iframe width='80%' height='30%'/>" \
+                 "</body></html>");
 
-    ::waitForSignal(m_page, SIGNAL(loadFinished(bool)));
+    QSignalSpy loadSpy(m_page, SIGNAL(loadFinished(bool)));
+    m_page->mainFrame()->setHtml(html);
+
+    QTest::qWait(200);
+    QCOMPARE(loadSpy.size(), 1);
+
+    QList<QWebFrame*> children = m_page->mainFrame()->childFrames();
+    QWebFrame* frame = children.at(0);
+    QString innerHtml("<html><body><p>another iframe</p>" \
+                        "<iframe width='80%' height='30%'/>" \
+                      "</body></html>");
+    frame->setHtml(innerHtml);
+
+    QTest::qWait(200);
+    QCOMPARE(loadSpy.size(), 2);
 
     m_page->mainFrame()->setFocus();
     QVERIFY(m_page->mainFrame()->hasFocus());
 
-    QList<QWebFrame*> children = m_page->mainFrame()->childFrames();
     for (int i = 0; i < children.size(); ++i) {
         children.at(i)->setFocus();
         QVERIFY(children.at(i)->hasFocus());
