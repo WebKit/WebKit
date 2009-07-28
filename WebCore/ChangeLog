@@ -1,3 +1,18 @@
+2009-07-27  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Eric Seidel and David Levin.
+
+        Re-apply chromium/skia border fix (originally landed in r46157,
+        reverted in r46363), since it was not the cause of the reliability
+        failures in Chromium.
+
+        http://bugs.webkit.org/show_bug.cgi?id=27388
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (PlatformContextSkia::setupPaintForStroking):
+
 2009-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Justin Garcia.
