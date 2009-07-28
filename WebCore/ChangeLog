@@ -1,3 +1,12 @@
+2009-07-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Tor Arne Vestbø
+
+        Make equality checks for logging channel names ignore casing.
+
+        * platform/Logging.cpp:
+        (WebCore::getChannelFromName):
+
 2009-07-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Xan Lopez.

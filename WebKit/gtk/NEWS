@@ -11,6 +11,8 @@ What's new in WebKitGTK+ 1.1.12?
     requisition.
   - Many a11y improvements.
   - The usual amount of other misc fixes.
+  - WEBKIT_DEBUG variable now accepts channel names in any case
+    again.
 
 =================
 WebKitGTK+ 1.1.11
