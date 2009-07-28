@@ -158,9 +158,24 @@ void DOMDataStore::weakActiveDOMObjectCallback(v8::Persistent<v8::Value> v8Objec
 
 void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> v8Object, void* domObject)
 {
-    v8::HandleScope scope;
-    ASSERT(v8Object->IsObject());
-    DOMData::handleWeakObject<Node>(DOMDataStore::DOMNodeMap, v8::Handle<v8::Object>::Cast(v8Object), static_cast<Node*>(domObject));
+    ASSERT(WTF::isMainThread());
+
+    Node* node = static_cast<Node*>(domObject);
+
+    WTF::MutexLocker locker(DOMDataStore::allStoresMutex());
+    DOMDataList& list = DOMDataStore::allStores();
+    for (size_t i = 0; i < list.size(); ++i) {
+        DOMDataStore* store = list[i];
+        HashMap<Node*, v8::Object*>& domMapImpl = store->domNodeMap().impl();
+        HashMap<Node*, v8::Object*>::iterator it = domMapImpl.find(node);
+        if (it == domMapImpl.end() || it->second != *v8Object)
+            continue;
+        ASSERT(store->domData()->owningThread() == WTF::currentThread());
+        v8Object.Dispose();
+        domMapImpl.remove(it);
+        node->deref();  // Nobody overrides Node::deref so it's safe
+        break;  // There might be at most one wrapper for the node in world's maps
+    }
 }
 
 #if ENABLE(SVG)
