@@ -2156,7 +2156,8 @@ SOURCES += \
     ../WebKit/qt/Api/qwebhistoryinterface.cpp \
     ../WebKit/qt/Api/qwebpluginfactory.cpp \
     ../WebKit/qt/Api/qwebsecurityorigin.cpp \
-    ../WebKit/qt/Api/qwebdatabase.cpp
+    ../WebKit/qt/Api/qwebdatabase.cpp \
+    ../WebKit/qt/Api/qwebkitversion.cpp
 
 
     win32-*|wince*: SOURCES += platform/win/SystemTimeWin.cpp
@@ -3158,6 +3159,19 @@ xpathbison.CONFIG = target_predeps
 xpathbison.dependency_type = TYPE_C
 xpathbison.variable_out = GENERATED_SOURCES
 addExtraCompilerWithHeader(xpathbison)
+
+# GENERATOR 11: WebKit Version
+# The appropriate Apple-maintained Version.xcconfig file for WebKit version information is in WebKit/mac/Configurations/.
+webkitversion.output = $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}WebKitVersion.h
+webkitversion.commands = perl $$PWD/../WebKit/scripts/generate-webkitversion.pl --config $$PWD/../WebKit/mac/Configurations/Version.xcconfig --outputDir $${GENERATED_SOURCES_DIR}$${QMAKE_DIR_SEP}
+WEBKITVERSION_SCRIPT = $$PWD/platform/generate-webkitversion.pl
+webkitversion.input = WEBKITVERSION_SCRIPT
+webkitversion.CONFIG = target_predeps
+webkitversion.depend = $$PWD/platform/generate-webkitversion.pl
+webkitversion.variable_out = GENERATED_SOURCES
+webkitversion.clean = ${QMAKE_VAR_GENERATED_SOURCES_DIR_SLASH}WebKitVersion.h
+addExtraCompiler(webkitversion)
+
 
 include($$PWD/../WebKit/qt/Api/headers.pri)
 HEADERS += $$WEBKIT_API_HEADERS

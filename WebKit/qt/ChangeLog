@@ -1,3 +1,31 @@
+2009-07-28  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        Add WebKit version API to Qt.
+
+        Get the current version of WebKit from WebKit/mac/Configurations/Version.xcconfig
+        at compile time and make it available to Qt applications through
+        qWebKitVersion().
+
+        Also amend the User Agent string to place the Safari clause outside
+        the final bracket and to the end of the UA string.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27158
+
+        Minor build tweak by Simon Hausmann (adding export macros to new functions).
+
+        * Api/headers.pri:
+        * Api/qwebkitversion.cpp: Added.
+        (webKitVersion):
+        (webKitMajorVersion):
+        (webKitMinorVersion):
+        * Api/qwebkitversion.h: Added.
+        * Api/qwebpage.cpp:
+        (QWebPage::userAgentForUrl):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::getWebKitVersion):
+
 2009-07-28  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Ariya Hidayat.

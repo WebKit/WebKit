@@ -28,6 +28,7 @@
 #include "qwebhistory.h"
 #include "qwebhistory_p.h"
 #include "qwebsettings.h"
+#include "qwebkitversion.h"
 
 #include "Frame.h"
 #include "FrameTree.h"
@@ -2530,7 +2531,7 @@ QWebPluginFactory *QWebPage::pluginFactory() const
 
     The default implementation returns the following value:
 
-    "Mozilla/5.0 (%Platform%; %Security%; %Subplatform%; %Locale%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko, Safari/419.3) %AppVersion"
+    "Mozilla/5.0 (%Platform%; %Security%; %Subplatform%; %Locale%) AppleWebKit/%WebKitVersion% (KHTML, like Gecko) %AppVersion Safari/%WebKitVersion%"
 
     In this string the following values are replaced at run-time:
     \list
@@ -2538,7 +2539,7 @@ QWebPluginFactory *QWebPage::pluginFactory() const
     \o %Security% expands to U if SSL is enabled, otherwise N. SSL is enabled if QSslSocket::supportsSsl() returns true.
     \o %Locale% is replaced with QLocale::name(). The locale is determined from the view of the QWebPage. If no view is set on the QWebPage,
     then a default constructed QLocale is used instead.
-    \o %WebKitVersion% currently expands to 527+
+    \o %WebKitVersion% is the version of WebKit the application was compiled against.
     \o %AppVersion% expands to QCoreApplication::applicationName()/QCoreApplication::applicationVersion() if they're set; otherwise defaulting to Qt and the current Qt version.
     \endlist
 */
@@ -2696,12 +2697,13 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
     ua.append(QLatin1String(") "));
 
     // webkit/qt version
-    ua.append(QLatin1String("AppleWebKit/" WEBKIT_VERSION " (KHTML, like Gecko, Safari/419.3) "));
+    ua.append(QString(QLatin1String("AppleWebKit/%1 (KHTML, like Gecko) "))
+                      .arg(QString(qWebKitVersion())));
 
     // Application name/version
     QString appName = QCoreApplication::applicationName();
     if (!appName.isEmpty()) {
-        ua.append(QLatin1Char(' ') + appName);
+        ua.append(appName);
 #if QT_VERSION >= 0x040400
         QString appVer = QCoreApplication::applicationVersion();
         if (!appVer.isEmpty())
@@ -2712,6 +2714,10 @@ QString QWebPage::userAgentForUrl(const QUrl& url) const
         ua.append(QLatin1String("Qt/"));
         ua.append(QLatin1String(qVersion()));
     }
+
+    ua.append(QString(QLatin1String(" Safari/%1"))
+                      .arg(qWebKitVersion()));
+
     return ua;
 }
 
