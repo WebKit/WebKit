@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -126,10 +126,10 @@ bool PluginDatabase::refresh()
     PluginSet::const_iterator end = m_plugins.end();
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
         // Get MIME types
+        MIMEToDescriptionsMap::const_iterator map_it = (*it)->mimeToDescriptions().begin();
         MIMEToDescriptionsMap::const_iterator map_end = (*it)->mimeToDescriptions().end();
-        for (MIMEToDescriptionsMap::const_iterator map_it = (*it)->mimeToDescriptions().begin(); map_it != map_end; ++map_it) {
+        for (; map_it != map_end; ++map_it)
             m_registeredMIMETypes.add(map_it->first);
-        }
     }
 
     return true;
@@ -219,7 +219,7 @@ PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)
 {
     PluginPackage* plugin = pluginForMIMEType(mimeType);
     String filename = url.string();
-    
+
     if (!plugin) {
         String filename = url.lastPathComponent();
         if (!filename.endsWith("/")) {
@@ -233,7 +233,7 @@ PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)
         }
     }
 
-    // FIXME: if no plugin could be found, query Windows for the mime type 
+    // FIXME: if no plugin could be found, query Windows for the mime type
     // corresponding to the extension.
 
     return plugin;
