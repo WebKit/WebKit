@@ -89,7 +89,10 @@
 
 - (NSString *)_drt_descriptionSuitableForTestResult
 {
-    return [NSString stringWithFormat:@"<NSURLResponse %@>", [[self URL] _drt_descriptionSuitableForTestResult]];
+    int statusCode = 0;
+    if ([self isKindOfClass:[NSHTTPURLResponse class]])
+        statusCode = [(NSHTTPURLResponse *)self statusCode];
+    return [NSString stringWithFormat:@"<NSURLResponse %@, http status code %i>", [[self URL] _drt_descriptionSuitableForTestResult], statusCode];
 }
 
 @end
@@ -98,7 +101,10 @@
 
 - (NSString *)_drt_descriptionSuitableForTestResult
 {
-    return [NSString stringWithFormat:@"<NSURLRequest URL %@, main document URL %@>", [[self URL] _drt_descriptionSuitableForTestResult], [[self mainDocumentURL] _drt_descriptionSuitableForTestResult]];
+    NSString *httpMethod = [self HTTPMethod];
+    if (!httpMethod)
+        httpMethod = @"(none)";
+    return [NSString stringWithFormat:@"<NSURLRequest URL %@, main document URL %@, http method %@>", [[self URL] _drt_descriptionSuitableForTestResult], [[self mainDocumentURL] _drt_descriptionSuitableForTestResult], httpMethod];
 }
 
 @end

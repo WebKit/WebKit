@@ -87,8 +87,15 @@ static wstring descriptionSuitableForTestResult(IWebURLRequest* request)
     
     wstring mainDocumentURL = urlSuitableForTestResult(wstringFromBSTR(mainDocumentURLBSTR));
     ::SysFreeString(mainDocumentURLBSTR);
+    
+    BSTR httpMethodBSTR;
+    if (FAILED(request->HTTPMethod(&httpMethodBSTR)))
+        return wstring();
+    
+    wstring httpMethod = wstringFromBSTR(httpMethodBSTR);
+    ::SysFreeString(httpMethodBSTR);
 
-    return L"<NSURLRequest URL " + url + L", main document URL " + mainDocumentURL + L">";
+    return L"<NSURLRequest URL " + url + L", main document URL " + mainDocumentURL + L", http method " + httpMethod + L">";
 }
 
 static wstring descriptionSuitableForTestResult(IWebURLResponse* response)
@@ -103,7 +110,12 @@ static wstring descriptionSuitableForTestResult(IWebURLResponse* response)
     wstring url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
     ::SysFreeString(urlBSTR);
 
-    return L"<NSURLResponse " + url + L">";
+    int statusCode = 0;
+    COMPtr<IWebHTTPURLResponse> httpResponse;
+    if (response && SUCCEEDED(response->QueryInterface(&httpResponse)))
+        httpResponse->statusCode(&statusCode);
+    
+    return L"<NSURLResponse " + url + L", http status code " + wstringFromInt(statusCode) + L">";
 }
 
 static wstring descriptionSuitableForTestResult(IWebError* error, unsigned long identifier)
