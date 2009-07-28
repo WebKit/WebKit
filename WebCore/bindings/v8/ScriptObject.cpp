@@ -43,8 +43,9 @@
 
 namespace WebCore {
 
-ScriptObject::ScriptObject(v8::Handle<v8::Object> v8Object)
+ScriptObject::ScriptObject(ScriptState* scriptState, v8::Handle<v8::Object> v8Object)
     : ScriptValue(v8Object)
+    , m_scriptState(scriptState)
 {
 }
 
@@ -54,51 +55,51 @@ v8::Local<v8::Object> ScriptObject::v8Object() const
     return v8::Local<v8::Object>(v8::Object::Cast(*v8Value()));
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const String& name, const String& value)
+bool ScriptObject::set(const String& name, const String& value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8String(name), v8String(value));
     return scope.success();
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
+bool ScriptObject::set(const char* name, const ScriptObject& value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::String::New(name), value.v8Value());
     return scope.success();
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, const String& value)
+bool ScriptObject::set(const char* name, const String& value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::String::New(name), v8String(value));
     return scope.success();
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, double value)
+bool ScriptObject::set(const char* name, double value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::String::New(name), v8::Number::New(value));
     return scope.success();
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, long long value)
+bool ScriptObject::set(const char* name, long long value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::String::New(name), v8::Number::New(value));
     return scope.success();
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, int value)
+bool ScriptObject::set(const char* name, int value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::String::New(name), v8::Number::New(value));
     return scope.success();
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, bool value)
+bool ScriptObject::set(const char* name, bool value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::String::New(name), v8Boolean(value));
     return scope.success();
 }
@@ -106,7 +107,7 @@ bool ScriptObject::set(ScriptState* scriptState, const char* name, bool value)
 ScriptObject ScriptObject::createNew(ScriptState* scriptState)
 {
     ScriptScope scope(scriptState);
-    return ScriptObject(v8::Object::New());
+    return ScriptObject(scriptState, v8::Object::New());
 }
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
@@ -133,7 +134,7 @@ bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptO
     if (!v8Value->IsObject())
         return false;
 
-    value = ScriptObject(v8::Handle<v8::Object>(v8::Object::Cast(*v8Value)));
+    value = ScriptObject(scriptState, v8::Handle<v8::Object>(v8::Object::Cast(*v8Value)));
     return true;
 }
 

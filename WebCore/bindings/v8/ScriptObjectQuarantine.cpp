@@ -72,7 +72,7 @@ bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& qu
     v8::Context::Scope scope(context);
 
     v8::Handle<v8::Value> v8Storage = V8DOMWrapper::convertToV8Object(V8ClassIndex::STORAGE, storage);
-    quarantinedObject = ScriptObject(v8::Local<v8::Object>(v8::Object::Cast(*v8Storage)));
+    quarantinedObject = ScriptObject(frame->script()->state(), v8::Local<v8::Object>(v8::Object::Cast(*v8Storage)));
 #else
     ASSERT_NOT_REACHED();
     quarantinedObject = ScriptObject();
@@ -85,11 +85,12 @@ bool getQuarantinedScriptObject(Node* node, ScriptObject& quarantinedObject)
     ASSERT(node);
 
     v8::HandleScope handleScope;
-    v8::Local<v8::Context> context = V8Proxy::context(node->document()->page()->mainFrame());
+    Frame* frame = node->document()->page()->mainFrame();
+    v8::Local<v8::Context> context = V8Proxy::context(frame);
     v8::Context::Scope scope(context);
 
     v8::Handle<v8::Value> v8Node = V8DOMWrapper::convertNodeToV8Object(node);
-    quarantinedObject = ScriptObject(v8::Local<v8::Object>(v8::Object::Cast(*v8Node)));
+    quarantinedObject = ScriptObject(frame->script()->state(), v8::Local<v8::Object>(v8::Object::Cast(*v8Node)));
 
     return true;
 }
@@ -99,11 +100,12 @@ bool getQuarantinedScriptObject(DOMWindow* domWindow, ScriptObject& quarantinedO
     ASSERT(domWindow);
 
     v8::HandleScope handleScope;
-    v8::Local<v8::Context> context = V8Proxy::context(domWindow->frame());
+    Frame* frame = domWindow->frame();
+    v8::Local<v8::Context> context = V8Proxy::context(frame);
     v8::Context::Scope scope(context);
 
     v8::Handle<v8::Value> v8DomWindow = V8DOMWrapper::convertToV8Object(V8ClassIndex::DOMWINDOW, domWindow);
-    quarantinedObject = ScriptObject(v8::Local<v8::Object>(v8::Object::Cast(*v8DomWindow)));
+    quarantinedObject = ScriptObject(frame->script()->state(), v8::Local<v8::Object>(v8::Object::Cast(*v8DomWindow)));
 
     return true;
 }

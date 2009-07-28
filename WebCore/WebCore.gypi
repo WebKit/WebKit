@@ -1409,8 +1409,6 @@
             'inspector/InspectorDOMStorageResource.h',
             'inspector/InspectorFrontend.cpp',
             'inspector/InspectorFrontend.h',
-            'inspector/InspectorJSONObject.cpp',
-            'inspector/InspectorJSONObject.h',
             'inspector/InspectorResource.cpp',
             'inspector/InspectorResource.h',
             'inspector/JavaScriptCallFrame.cpp',

@@ -852,7 +852,6 @@ SOURCES += \
     inspector/InspectorController.cpp \
     inspector/InspectorFrontend.cpp \
     inspector/InspectorResource.cpp \
-    inspector/InspectorJSONObject.cpp \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
@@ -1508,7 +1507,6 @@ HEADERS += \
     inspector/InspectorDatabaseResource.h \
     inspector/InspectorDOMStorageResource.h \
     inspector/InspectorFrontend.h \
-    inspector/InspectorJSONObject.h \
     inspector/InspectorResource.h \
     inspector/JavaScriptCallFrame.h \
     inspector/JavaScriptDebugServer.h \

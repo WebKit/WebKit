@@ -1,3 +1,73 @@
+2009-07-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Dmitry Glazkov.
+
+        Web Inspector: encapsulate ScriptState into the ScriptObject, get rid of
+        InspectorJSONObject.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27766
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/ScriptArray.cpp:
+        (WebCore::ScriptArray::ScriptArray):
+        (WebCore::ScriptArray::set):
+        (WebCore::ScriptArray::length):
+        (WebCore::ScriptArray::createNew):
+        * bindings/js/ScriptArray.h:
+        * bindings/js/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::construct):
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptObject::ScriptObject):
+        (WebCore::ScriptObject::set):
+        (WebCore::ScriptObject::createNew):
+        (WebCore::ScriptGlobalObject::get):
+        * bindings/js/ScriptObject.h:
+        * bindings/js/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject):
+        * bindings/v8/ScriptArray.cpp:
+        (WebCore::ScriptArray::ScriptArray):
+        (WebCore::ScriptArray::set):
+        (WebCore::ScriptArray::length):
+        (WebCore::ScriptArray::createNew):
+        * bindings/v8/ScriptArray.h:
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptFunctionCall::construct):
+        * bindings/v8/ScriptObject.cpp:
+        (WebCore::ScriptObject::ScriptObject):
+        (WebCore::ScriptObject::set):
+        (WebCore::ScriptObject::createNew):
+        (WebCore::ScriptGlobalObject::get):
+        * bindings/v8/ScriptObject.h:
+        (WebCore::ScriptObject::ScriptObject):
+        * bindings/v8/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject):
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToConsole):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorFrontend.cpp:
+        (WebCore::InspectorFrontend::newScriptArray):
+        (WebCore::InspectorFrontend::newScriptObject):
+        (WebCore::InspectorFrontend::addMessageToConsole):
+        (WebCore::InspectorFrontend::addResource):
+        (WebCore::InspectorFrontend::updateResource):
+        (WebCore::InspectorFrontend::addDatabase):
+        (WebCore::InspectorFrontend::addDOMStorage):
+        * inspector/InspectorFrontend.h:
+        * inspector/InspectorJSONObject.cpp: Removed.
+        * inspector/InspectorJSONObject.h: Removed.
+        * inspector/InspectorResource.cpp:
+        (WebCore::populateHeadersObject):
+        (WebCore::InspectorResource::createScriptObject):
+        (WebCore::InspectorResource::updateScriptObject):
+
 2009-07-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

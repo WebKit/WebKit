@@ -32,8 +32,8 @@
 #include "ConsoleMessage.h"
 
 #include "InspectorFrontend.h"
-#include "InspectorJSONObject.h"
 #include "ScriptCallStack.h"
+#include "ScriptObject.h"
 #include "ScriptObjectQuarantine.h"
 
 namespace WebCore {
@@ -77,7 +77,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, S
 
 void ConsoleMessage::addToConsole(InspectorFrontend* frontend)
 {
-    InspectorJSONObject jsonObj = frontend->newInspectorJSONObject();
+    ScriptObject jsonObj = frontend->newScriptObject();
     jsonObj.set("source", static_cast<int>(m_source));
     jsonObj.set("type", static_cast<int>(m_type));
     jsonObj.set("level", static_cast<int>(m_level));

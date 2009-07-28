@@ -30,7 +30,8 @@
 #ifndef InspectorFrontend_h
 #define InspectorFrontend_h
 
-#include "InspectorJSONObject.h"
+#include "ScriptArray.h"
+#include "ScriptObject.h"
 #include "ScriptState.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -53,12 +54,14 @@ namespace WebCore {
     public:
         InspectorFrontend(ScriptState*, ScriptObject webInspector);
         ~InspectorFrontend();
-        InspectorJSONObject newInspectorJSONObject();
 
-        void addMessageToConsole(const InspectorJSONObject& messageObj, const Vector<ScriptString>& frames, const Vector<ScriptValue> wrappedArguments, const String& message);
+        ScriptArray newScriptArray();
+        ScriptObject newScriptObject();
+
+        void addMessageToConsole(const ScriptObject& messageObj, const Vector<ScriptString>& frames, const Vector<ScriptValue> wrappedArguments, const String& message);
         
-        bool addResource(long long identifier, const InspectorJSONObject& resourceObj);
-        bool updateResource(long long identifier, const InspectorJSONObject& resourceObj);
+        bool addResource(long long identifier, const ScriptObject& resourceObj);
+        bool updateResource(long long identifier, const ScriptObject& resourceObj);
         void removeResource(long long identifier);
 
         void updateFocusedNode(Node* node);
@@ -86,11 +89,11 @@ namespace WebCore {
 #endif
 
 #if ENABLE(DATABASE)
-        bool addDatabase(const InspectorJSONObject& dbObj);
+        bool addDatabase(const ScriptObject& dbObj);
 #endif
         
 #if ENABLE(DOM_STORAGE)
-        bool addDOMStorage(const InspectorJSONObject& domStorageObj);
+        bool addDOMStorage(const ScriptObject& domStorageObj);
 #endif
 
     private:

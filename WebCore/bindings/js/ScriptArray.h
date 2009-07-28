@@ -40,17 +40,17 @@ namespace WebCore {
 
     class ScriptArray : public ScriptObject {
     public:
-        ScriptArray(JSC::JSArray*);
+        ScriptArray(ScriptState*, JSC::JSArray*);
         ScriptArray() {}
         JSC::JSArray* jsArray() const { return asArray(jsValue()); }
 
-        bool set(ScriptState*, unsigned index, const ScriptObject&);
-        bool set(ScriptState*, unsigned index, const String&);
-        bool set(ScriptState*, unsigned index, double);
-        bool set(ScriptState*, unsigned index, long long);
-        bool set(ScriptState*, unsigned index, int);
-        bool set(ScriptState*, unsigned index, bool);
-        unsigned length(ScriptState*);
+        bool set(unsigned index, const ScriptObject&);
+        bool set(unsigned index, const String&);
+        bool set(unsigned index, double);
+        bool set(unsigned index, long long);
+        bool set(unsigned index, int);
+        bool set(unsigned index, bool);
+        unsigned length();
 
         static ScriptArray createNew(ScriptState*);
     };

@@ -42,19 +42,22 @@ namespace WebCore {
 
     class ScriptObject : public ScriptValue {
     public:
-        ScriptObject(JSC::JSObject*);
+        ScriptObject(ScriptState*, JSC::JSObject*);
         ScriptObject() {}
         JSC::JSObject* jsObject() const { return asObject(jsValue()); }
 
-        bool set(ScriptState*, const String& name, const String&);
-        bool set(ScriptState*, const char* name, const ScriptObject&);
-        bool set(ScriptState*, const char* name, const String&);
-        bool set(ScriptState*, const char* name, double);
-        bool set(ScriptState*, const char* name, long long);
-        bool set(ScriptState*, const char* name, int);
-        bool set(ScriptState*, const char* name, bool);
+        bool set(const String& name, const String&);
+        bool set(const char* name, const ScriptObject&);
+        bool set(const char* name, const String&);
+        bool set(const char* name, double);
+        bool set(const char* name, long long);
+        bool set(const char* name, int);
+        bool set(const char* name, bool);
 
         static ScriptObject createNew(ScriptState*);
+    
+    protected:
+        ScriptState* m_scriptState;
     };
 
     class ScriptGlobalObject {

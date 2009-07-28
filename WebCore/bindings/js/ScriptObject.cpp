@@ -40,8 +40,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScriptObject::ScriptObject(JSObject* object)
+ScriptObject::ScriptObject(ScriptState* scriptState, JSObject* object)
     : ScriptValue(object)
+    , m_scriptState(scriptState)
 {
 }
 
@@ -54,66 +55,66 @@ static bool handleException(ScriptState* scriptState)
     return false;
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const String& name, const String& value)
+bool ScriptObject::set(const String& name, const String& value)
 {
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    jsObject()->put(scriptState, Identifier(scriptState, name), jsString(scriptState, value), slot);
-    return handleException(scriptState);
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), jsString(m_scriptState, value), slot);
+    return handleException(m_scriptState);
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
+bool ScriptObject::set(const char* name, const ScriptObject& value)
 {
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    jsObject()->put(scriptState, Identifier(scriptState, name), value.jsObject(), slot);
-    return handleException(scriptState);
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), value.jsObject(), slot);
+    return handleException(m_scriptState);
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, const String& value)
+bool ScriptObject::set(const char* name, const String& value)
 {
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    jsObject()->put(scriptState, Identifier(scriptState, name), jsString(scriptState, value), slot);
-    return handleException(scriptState);
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), jsString(m_scriptState, value), slot);
+    return handleException(m_scriptState);
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, double value)
+bool ScriptObject::set(const char* name, double value)
 {
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    jsObject()->put(scriptState, Identifier(scriptState, name), jsNumber(scriptState, value), slot);
-    return handleException(scriptState);
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), jsNumber(m_scriptState, value), slot);
+    return handleException(m_scriptState);
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, long long value)
+bool ScriptObject::set(const char* name, long long value)
 {
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    jsObject()->put(scriptState, Identifier(scriptState, name), jsNumber(scriptState, value), slot);
-    return handleException(scriptState);
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), jsNumber(m_scriptState, value), slot);
+    return handleException(m_scriptState);
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, int value)
+bool ScriptObject::set(const char* name, int value)
 {
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    jsObject()->put(scriptState, Identifier(scriptState, name), jsNumber(scriptState, value), slot);
-    return handleException(scriptState);
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), jsNumber(m_scriptState, value), slot);
+    return handleException(m_scriptState);
 }
 
-bool ScriptObject::set(ScriptState* scriptState, const char* name, bool value)
+bool ScriptObject::set(const char* name, bool value)
 {
     JSLock lock(SilenceAssertionsOnly);
     PutPropertySlot slot;
-    jsObject()->put(scriptState, Identifier(scriptState, name), jsBoolean(value), slot);
-    return handleException(scriptState);
+    jsObject()->put(m_scriptState, Identifier(m_scriptState, name), jsBoolean(value), slot);
+    return handleException(m_scriptState);
 }
 
 ScriptObject ScriptObject::createNew(ScriptState* scriptState)
 {
     JSLock lock(SilenceAssertionsOnly);
-    return ScriptObject(constructEmptyObject(scriptState));
+    return ScriptObject(scriptState, constructEmptyObject(scriptState));
 }
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
@@ -141,7 +142,7 @@ bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptO
     if (!jsValue.isObject())
         return false;
 
-    value = ScriptObject(asObject(jsValue));
+    value = ScriptObject(scriptState, asObject(jsValue));
     return true;
 }
 

@@ -43,63 +43,63 @@
 
 namespace WebCore {
 
-ScriptArray::ScriptArray(v8::Handle<v8::Array> v8Array)
-    : ScriptObject(v8Array)
+ScriptArray::ScriptArray(ScriptState* scriptState, v8::Handle<v8::Array> v8Array)
+    : ScriptObject(scriptState, v8Array)
 {
 }
 
-bool ScriptArray::set(ScriptState* scriptState, unsigned index, const ScriptObject& value)
+bool ScriptArray::set(unsigned index, const ScriptObject& value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::Integer::New(index), value.v8Value());
     return scope.success();
 }
 
-bool ScriptArray::set(ScriptState* scriptState, unsigned index, const String& value)
+bool ScriptArray::set(unsigned index, const String& value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::Integer::New(index), v8String(value));
     return scope.success();
 }
 
-bool ScriptArray::set(ScriptState* scriptState, unsigned index, double value)
+bool ScriptArray::set(unsigned index, double value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::Integer::New(index), v8::Number::New(value));
     return scope.success();
 }
 
-bool ScriptArray::set(ScriptState* scriptState, unsigned index, long long value)
+bool ScriptArray::set(unsigned index, long long value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::Integer::New(index), v8::Number::New(value));
     return scope.success();
 }
 
-bool ScriptArray::set(ScriptState* scriptState, unsigned index, int value)
+bool ScriptArray::set(unsigned index, int value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::Integer::New(index), v8::Number::New(value));
     return scope.success();
 }
 
-bool ScriptArray::set(ScriptState* scriptState, unsigned index, bool value)
+bool ScriptArray::set(unsigned index, bool value)
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     v8Object()->Set(v8::Integer::New(index), v8Boolean(value));
     return scope.success();
 }
 
-unsigned ScriptArray::length(ScriptState* scriptState)
+unsigned ScriptArray::length()
 {
-    ScriptScope scope(scriptState);
+    ScriptScope scope(m_scriptState);
     return v8::Array::Cast(*v8Value())->Length();
 }
 
 ScriptArray ScriptArray::createNew(ScriptState* scriptState)
 {
     ScriptScope scope(scriptState);
-    return ScriptArray(v8::Array::New());
+    return ScriptArray(scriptState, v8::Array::New());
 }
 
 } // namespace WebCore

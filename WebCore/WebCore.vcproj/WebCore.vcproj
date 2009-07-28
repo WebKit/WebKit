@@ -30684,14 +30684,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorJSONObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorJSONObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorResource.cpp"
 				>
 			</File>

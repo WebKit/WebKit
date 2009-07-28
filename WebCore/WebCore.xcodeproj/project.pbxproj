@@ -1028,8 +1028,6 @@
 		7A74ECBA101839A600BF939E /* InspectorBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECB8101839A500BF939E /* InspectorBackend.cpp */; };
 		7A74ECBB101839A600BF939E /* InspectorBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A74ECB9101839A600BF939E /* InspectorBackend.h */; };
 		7A74ECBD101839DA00BF939E /* JSInspectorBackendCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECBC101839DA00BF939E /* JSInspectorBackendCustom.cpp */; };
-		7AB6F8870FB9D27100805D02 /* InspectorJSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AB6F8850FB9D27100805D02 /* InspectorJSONObject.cpp */; };
-		7AB6F8880FB9D27100805D02 /* InspectorJSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB6F8860FB9D27100805D02 /* InspectorJSONObject.h */; };
 		7AED3E050FBB1EAA00D2B03C /* InspectorFrontend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */; };
 		7AED3E060FBB1EAA00D2B03C /* InspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */; };
 		845E72F80FD261EE00A87D79 /* Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 845E72F70FD261EE00A87D79 /* Filter.h */; };
@@ -6054,8 +6052,6 @@
 		7A74ECB8101839A500BF939E /* InspectorBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackend.cpp; sourceTree = "<group>"; };
 		7A74ECB9101839A600BF939E /* InspectorBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackend.h; sourceTree = "<group>"; };
 		7A74ECBC101839DA00BF939E /* JSInspectorBackendCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorBackendCustom.cpp; sourceTree = "<group>"; };
-		7AB6F8850FB9D27100805D02 /* InspectorJSONObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorJSONObject.cpp; sourceTree = "<group>"; };
-		7AB6F8860FB9D27100805D02 /* InspectorJSONObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorJSONObject.h; sourceTree = "<group>"; };
 		7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontend.cpp; sourceTree = "<group>"; };
 		7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontend.h; sourceTree = "<group>"; };
 		845E72F70FD261EE00A87D79 /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Filter.h; path = filters/Filter.h; sourceTree = "<group>"; };
@@ -9847,8 +9843,6 @@
 				41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */,
 				7AED3E030FBB1EAA00D2B03C /* InspectorFrontend.cpp */,
 				7AED3E040FBB1EAA00D2B03C /* InspectorFrontend.h */,
-				7AB6F8850FB9D27100805D02 /* InspectorJSONObject.cpp */,
-				7AB6F8860FB9D27100805D02 /* InspectorJSONObject.h */,
 				41F062000F5F0B6600A07EAC /* InspectorResource.cpp */,
 				41F061FF0F5F0B6600A07EAC /* InspectorResource.h */,
 				1C81BA030E97348300266E07 /* JavaScriptCallFrame.cpp */,
@@ -15958,7 +15952,6 @@
 				41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */,
 				41F061740F5F00AC00A07EAC /* InspectorDOMStorageResource.h in Headers */,
 				7AED3E060FBB1EAA00D2B03C /* InspectorFrontend.h in Headers */,
-				7AB6F8880FB9D27100805D02 /* InspectorJSONObject.h in Headers */,
 				41F062010F5F0B6600A07EAC /* InspectorResource.h in Headers */,
 				B27535720B053814002CE64F /* IntPoint.h in Headers */,
 				B27535740B053814002CE64F /* IntRect.h in Headers */,
@@ -18002,7 +17995,6 @@
 				41F062150F5F192600A07EAC /* InspectorDatabaseResource.cpp in Sources */,
 				41F061750F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp in Sources */,
 				7AED3E050FBB1EAA00D2B03C /* InspectorFrontend.cpp in Sources */,
-				7AB6F8870FB9D27100805D02 /* InspectorJSONObject.cpp in Sources */,
 				41F062020F5F0B6600A07EAC /* InspectorResource.cpp in Sources */,
 				B27535600B053814002CE64F /* IntPointCG.cpp in Sources */,
 				B275357C0B053814002CE64F /* IntPointMac.mm in Sources */,
