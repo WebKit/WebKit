@@ -28,8 +28,8 @@ function startTest()
     
     // Enumerate localStorage, appending each key onto an array
     var enumeratedArray = new Array();
-    for (var n in localStorage)
-        enumeratedArray.push(n);
+    for (var i=0; i<localStorage.length; ++i)
+        enumeratedArray.push(localStorage.key(i));
 
     // Sort the array, since the storage order isn't guaranteed
     enumeratedArray.sort();
@@ -41,7 +41,7 @@ function startTest()
 </script>
 </head>
 <body onload="startTest();">
-This test checks to see that you can enumerate a Storage object and get only the keys as a result.  The built-in properties of the Storage object should be ignored.  The test operates on the localStorage object.<br>
+This test attempts to enumerate all the keys in localStorage with .length + .key().  The built-in properties of the Storage object should be ignored.  The test operates on the localStorage object.<br>
 <div id="logger"></div>
 </body>
 </html>

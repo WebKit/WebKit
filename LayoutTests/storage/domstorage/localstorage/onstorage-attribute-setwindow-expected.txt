@@ -1,0 +1,22 @@
+This is a test to make sure LocalStorage mutations fire StorageEvents that are caught by the event listener corresponding to window.onstorage.
+Storage event fired:
+Key - FOO
+New Value - BAR
+Old Value - null
+
+Storage event fired:
+Key - FU
+New Value - BAR
+Old Value - null
+
+Storage event fired:
+Key - FOO
+New Value - null
+Old Value - BAR
+
+Storage event fired:
+Key - FU
+New Value - null
+Old Value - BAR
+
+

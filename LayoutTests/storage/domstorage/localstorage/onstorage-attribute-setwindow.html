@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="resources/clearLocalStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function handleStorageEvent()
+{
+    if (!window.event) {
+        log("Global event not available.");
+        return;
+    }
+    
+    log("Storage event fired:");
+    log("Key           - " + event.key);
+    log("New Value     - " + event.newValue);
+    log("Old Value     - " + event.oldValue);
+    log("");
+}
+
+function runTest()
+{
+    if (!window.localStorage) {
+        log("window.localStorage DOES NOT exist");
+        return;
+    }
+
+    window.onstorage = handleStorageEvent;
+    
+    window.localStorage.setItem("FOO", "BAR");
+    window.localStorage.setItem("FU", "BAR");
+    window.localStorage.removeItem("FOO");
+    window.localStorage.removeItem("FU");
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This is a test to make sure LocalStorage mutations fire StorageEvents that are caught by the event listener corresponding to window.onstorage.<br>
+<div id="logger"></div>
+</body>
+</html>
