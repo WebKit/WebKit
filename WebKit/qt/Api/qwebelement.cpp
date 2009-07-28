@@ -642,7 +642,7 @@ static bool setupScriptObject(WebCore::Element* element, ScriptObject& object, S
     if (!thisObject)
         return false;
 
-    object = ScriptObject(thisObject);
+    object = ScriptObject(state, thisObject);
     return true;
 }
 
