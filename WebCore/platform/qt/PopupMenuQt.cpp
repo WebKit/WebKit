@@ -34,10 +34,10 @@
 
 #include <QAction>
 #include <QDebug>
-#include <QMenu>
-#include <QPoint>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QMenu>
+#include <QPoint>
 #include <QWidgetAction>
 
 namespace WebCore {
@@ -65,24 +65,10 @@ void PopupMenu::populate(const IntRect& r)
 
     int size = client()->listSize();
     for (int i = 0; i < size; i++) {
-        if (client()->itemIsSeparator(i)) {
-            //FIXME: better seperator item
-            m_popup->insertItem(i, QString::fromLatin1("---"));
-        } else {
-            //PopupMenuStyle style = client()->itemStyle(i);
+        if (client()->itemIsSeparator(i))
+            m_popup->insertSeparator(i);
+        else
             m_popup->insertItem(i, client()->itemText(i));
-#if 0
-            item = new QListWidgetItem(client()->itemText(i));
-            m_actions.insert(item, i);
-            if (style->font() != Font())
-                item->setFont(style->font());
-
-            Qt::ItemFlags flags = Qt::ItemIsSelectable;
-            if (client()->itemIsEnabled(i))
-                flags |= Qt::ItemIsEnabled;
-            item->setFlags(flags);
-#endif
-        }
     }
 }
 

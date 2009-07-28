@@ -1,3 +1,15 @@
+2009-07-28  Mike Fenton  <mike.fenton@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        Replace hardcoded separator text with proper separator.
+        Also adjusts include order as per style guidelines.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27763
+
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::populate):
+
 2009-07-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Steve Falkenburg.
