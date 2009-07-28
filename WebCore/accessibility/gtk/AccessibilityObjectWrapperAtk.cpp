@@ -506,18 +506,6 @@ static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
     return gailTextUtil;
 }
 
-// We can use the same callback for both 'style-set' and
-// 'direction-changed', since we don't care about neither of their
-// second parameters.
-static void updateLayout(GtkWidget* widget, gpointer dummy, gpointer userData)
-{
-   gpointer data = g_object_get_data(G_OBJECT(userData), "webkit-accessible-pango-layout");
-   if (!data)
-       return;
-
-   pango_layout_context_changed(static_cast<PangoLayout*>(data));
-}
-
 static gchar* utf8Substr(const gchar* string, gint start, gint end)
 {
     ASSERT(string);
@@ -562,10 +550,6 @@ static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int fro
 
 static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
 {
-    gpointer data = g_object_get_data(G_OBJECT(textObject), "webkit-accessible-pango-layout");
-    if (data)
-        return static_cast<PangoLayout*>(data);
-
     AccessibilityObject* coreObject = core(textObject);
 
     HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
@@ -574,9 +558,6 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     PlatformWidget webView = hostWindow->platformWindow();
     if (!webView)
         return 0;
-
-    g_signal_connect(webView, "style-set", G_CALLBACK(updateLayout), textObject);
-    g_signal_connect(webView, "direction-changed", G_CALLBACK(updateLayout), textObject);
 
     GString* str = g_string_new(NULL);
 
