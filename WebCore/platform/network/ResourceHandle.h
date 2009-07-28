@@ -191,12 +191,6 @@ public:
     void fireFailure(Timer<ResourceHandle>*);
 
 private:
-#if USE(SOUP)
-    bool startData(String urlString);
-    bool startHttp(String urlString);
-    bool startGio(KURL url);
-#endif
-
     void scheduleFailure(FailureType);
 
     bool start(Frame*);
