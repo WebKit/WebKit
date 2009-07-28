@@ -30,6 +30,7 @@ namespace WebCore {
 
 bool applicationIsAppleMail();
 bool applicationIsSafari();
+bool applicationIsMicrosoftMessenger();
 
 } // namespace WebCore
 

@@ -1242,8 +1242,17 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return getWebView(self);
 }
 
+static bool needsMicrosoftMessengerDOMDocumentWorkaround()
+{
+    static bool needsWorkaround = applicationIsMicrosoftMessenger() && [[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] compare:@"7.1" options:NSNumericSearch] == NSOrderedAscending;
+    return needsWorkaround;
+}
+
 - (DOMDocument *)DOMDocument
 {
+    if (needsMicrosoftMessengerDOMDocumentWorkaround() && !pthread_main_np())
+        return nil;
+
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;

@@ -1,3 +1,19 @@
+2009-07-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7091036> REGRESSION: Microsoft Messenger crashes during file send/receive due to use of WebKit on non-main thread
+
+        In some situations Microsoft Messenger can attempt to manipulate the DOM from a secondary thread while
+        updating its file transfer progress bar.  This results in corruption of WebCore data structures that is
+        quickly followed by a crash.  We can work around this by having -[WebFrame DOMDocument] return nil when
+        called from a secondary thread by Microsoft Messenger, which has the effect of turning its attempts at
+        DOM manipulation in to no-ops.
+
+        * WebView/WebFrame.mm:
+        (needsMicrosoftMessengerDOMDocumentWorkaround):
+        (-[WebFrame DOMDocument]):
+
 2009-07-27  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

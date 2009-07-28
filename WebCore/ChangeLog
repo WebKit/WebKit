@@ -1,3 +1,16 @@
+2009-07-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7091036> REGRESSION: Microsoft Messenger crashes during file send/receive due to use of WebKit on non-main thread
+
+        Add a method for detecting if we're being used within Microsoft Messenger.
+
+        * WebCore.base.exp: Export applicationIsMicrosoftMessenger and sort existing entries.
+        * platform/mac/RuntimeApplicationChecks.h:
+        * platform/mac/RuntimeApplicationChecks.mm:
+        (WebCore::applicationIsMicrosoftMessenger):
+
 2009-07-27  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

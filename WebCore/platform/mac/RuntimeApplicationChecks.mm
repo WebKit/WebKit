@@ -41,4 +41,10 @@ bool applicationIsSafari()
     return isSafari;
 }
 
+bool applicationIsMicrosoftMessenger()
+{
+    static bool isMicrosoftMessenger = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.microsoft.Messenger"];
+    return isMicrosoftMessenger;
+}
+
 } // namespace WebCore
