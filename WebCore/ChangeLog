@@ -1,3 +1,9 @@
+2009-07-28  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Unreviewed make dist build fix.
+
+        * GNUmakefile.am:
+
 2009-07-28  Mike Fenton  <mike.fenton@torchmobile.com>
 
         Reviewed by Adam Treat.
