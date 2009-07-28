@@ -1,3 +1,40 @@
+2009-07-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        fix more obvious global object lookups
+        https://bugs.webkit.org/show_bug.cgi?id=27745
+
+        No new tests for these changes.  I believe in many cases
+        testing to be impossible.  Lack of testing justification next to
+        each change below.  The remaining pieces of bug 27634 will all
+        need tests.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::updateDocument): not testable.
+        * bindings/js/JSDataGridColumnListCustom.cpp:
+        (WebCore::JSDataGridColumnList::nameGetter): no testing for this incomplete feature.
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent): would require outer frame to trigger an event in the inner frame
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS): covered by other tests, always correct to pass the globalObject through.
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::JSHTMLElement::pushEventHandlerScope): unclear when this could be triggered.
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::remove): toJS seems superfluous here to begin with.
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::parseCode): would require outer frame to trigger inner frame event.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::jsObjectForPluginElement): only used for NPAPI binding, unclear how to test.
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener): unclear how to test.
+        * bindings/js/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set): unclear how to test/inspector only.
+        * bindings/js/ScriptObjectQuarantine.cpp:
+        (WebCore::getQuarantinedScriptObject): unclear how to test.
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]): unclear how to test.
+
 2009-07-27  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by George Staikos.

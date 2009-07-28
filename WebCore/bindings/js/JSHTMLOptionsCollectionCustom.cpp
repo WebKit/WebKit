@@ -91,7 +91,7 @@ JSValue JSHTMLOptionsCollection::add(ExecState* exec, const ArgList& args)
 JSValue JSHTMLOptionsCollection::remove(ExecState* exec, const ArgList& args)
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
-    JSHTMLSelectElement* base = static_cast<JSHTMLSelectElement*>(asObject(toJS(exec, imp->base())));
+    JSHTMLSelectElement* base = static_cast<JSHTMLSelectElement*>(asObject(toJS(exec, globalObject(), imp->base())));
     return base->remove(exec, args);
 }
 

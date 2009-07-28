@@ -327,7 +327,7 @@ JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)
     // Create a JSObject bound to this element
     JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = globalObject()->globalExec();
-    JSValue jsElementValue = toJS(exec, plugin);
+    JSValue jsElementValue = toJS(exec, globalObject(), plugin);
     if (!jsElementValue || !jsElementValue.isObject())
         return 0;
     

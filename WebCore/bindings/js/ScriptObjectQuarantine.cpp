@@ -69,10 +69,11 @@ bool getQuarantinedScriptObject(Database* database, ScriptObject& quarantinedObj
     if (!frame)
         return false;
 
-    ExecState* exec = toJSDOMWindow(frame)->globalExec();
+    JSDOMGlobalObject* globalObject = toJSDOMWindow(frame);
+    ExecState* exec = globalObject->globalExec();
 
     JSLock lock(SilenceAssertionsOnly);
-    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, database))));
+    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, globalObject, database))));
 
     return true;
 }
@@ -84,10 +85,11 @@ bool getQuarantinedScriptObject(Frame* frame, Storage* storage, ScriptObject& qu
     ASSERT(frame);
     ASSERT(storage);
 
-    ExecState* exec = toJSDOMWindow(frame)->globalExec();
+    JSDOMGlobalObject* globalObject = toJSDOMWindow(frame);
+    ExecState* exec = globalObject->globalExec();
 
     JSLock lock(SilenceAssertionsOnly);
-    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, storage))));
+    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, globalObject, storage))));
 
     return true;
 }
@@ -100,7 +102,8 @@ bool getQuarantinedScriptObject(Node* node, ScriptObject& quarantinedObject)
         return false;
 
     JSLock lock(SilenceAssertionsOnly);
-    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, node))));
+    // FIXME: Should use some sort of globalObjectFromNode()
+    quarantinedObject = ScriptObject(asObject(JSInspectedObjectWrapper::wrap(exec, toJS(exec, deprecatedGlobalObjectForPrototype(exec), node))));
 
     return true;
 }

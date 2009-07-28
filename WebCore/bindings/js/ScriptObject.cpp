@@ -126,7 +126,8 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorBackend* value)
 {
     JSLock lock(SilenceAssertionsOnly);
-    scriptState->lexicalGlobalObject()->putDirect(Identifier(scriptState, name), toJS(scriptState, value));
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
+    globalObject->putDirect(Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
 }
 

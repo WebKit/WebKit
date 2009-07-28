@@ -65,7 +65,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue toJS(ExecState* exec, JSDOMGlobalObject*, EventTarget* target)
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* target)
 {
     if (!target)
         return jsNull();
@@ -73,32 +73,32 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject*, EventTarget* target)
 #if ENABLE(SVG)
     // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
     if (SVGElementInstance* instance = target->toSVGElementInstance())
-        return toJS(exec, instance);
+        return toJS(exec, globalObject, instance);
 #endif
     
     if (Node* node = target->toNode())
-        return toJS(exec, node);
+        return toJS(exec, globalObject, node);
 
     if (DOMWindow* domWindow = target->toDOMWindow())
-        return toJS(exec, domWindow);
+        return toJS(exec, globalObject, domWindow);
 
     if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
-        return toJS(exec, xhr);
+        return toJS(exec, globalObject, xhr);
 
     if (XMLHttpRequestUpload* upload = target->toXMLHttpRequestUpload())
-        return toJS(exec, upload);
+        return toJS(exec, globalObject, upload);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (DOMApplicationCache* cache = target->toDOMApplicationCache())
-        return toJS(exec, cache);
+        return toJS(exec, globalObject, cache);
 #endif
 
     if (MessagePort* messagePort = target->toMessagePort())
-        return toJS(exec, messagePort);
+        return toJS(exec, globalObject, messagePort);
 
 #if ENABLE(WORKERS)
     if (Worker* worker = target->toWorker())
-        return toJS(exec, worker);
+        return toJS(exec, globalObject, worker);
 
     if (DedicatedWorkerContext* workerContext = target->toDedicatedWorkerContext())
         return toJSDOMGlobalObject(workerContext);
@@ -106,7 +106,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject*, EventTarget* target)
 
 #if ENABLE(SHARED_WORKERS)
     if (SharedWorker* sharedWorker = target->toSharedWorker())
-        return toJS(exec, sharedWorker);
+        return toJS(exec, globalObject, sharedWorker);
 #endif
 
     ASSERT_NOT_REACHED();
