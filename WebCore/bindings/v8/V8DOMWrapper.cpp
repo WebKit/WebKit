@@ -291,9 +291,6 @@ v8::Persistent<v8::FunctionTemplate> V8DOMWrapper::getTemplate(V8ClassIndex::V8W
         descriptor->InstanceTemplate()->SetNamedPropertyHandler(USE_NAMED_PROPERTY_GETTER(HTMLFormElement));
         descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(HTMLFormElement), 0, 0, 0, nodeCollectionIndexedPropertyEnumerator<HTMLFormElement>, v8::Integer::New(V8ClassIndex::NODE));
         break;
-    case V8ClassIndex::CANVASPIXELARRAY:
-        descriptor->InstanceTemplate()->SetIndexedPropertyHandler(USE_INDEXED_PROPERTY_GETTER(CanvasPixelArray), USE_INDEXED_PROPERTY_SETTER(CanvasPixelArray));
-        break;
     case V8ClassIndex::STYLESHEET:  // fall through
     case V8ClassIndex::CSSSTYLESHEET: {
         // We add an extra internal field to hold a reference to
@@ -575,6 +572,11 @@ v8::Handle<v8::Value> V8DOMWrapper::convertToV8Object(V8ClassIndex::V8WrapperTyp
                 setJSWrapperForActiveDOMObject(impl, result);
             else
                 setJSWrapperForDOMObject(impl, result);
+
+            if (type == V8ClassIndex::CANVASPIXELARRAY) {
+                CanvasPixelArray* pixels = reinterpret_cast<CanvasPixelArray*>(impl);
+                result->SetIndexedPropertiesToPixelData(pixels->data()->data(), pixels->length());
+            }
 
             // Special case for non-node objects associated with a
             // DOMWindow. Both Safari and FF let the JS wrappers for these
