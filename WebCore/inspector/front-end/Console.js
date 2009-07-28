@@ -430,7 +430,14 @@ WebInspector.Console.prototype = {
             inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(this.clearMessages.bind(this));
         }
     },
-    
+
+    addInspectedNode: function(node)
+    {
+        var inspectedWindow = InspectorController.inspectedWindow();
+        this._ensureCommandLineAPIInstalled(inspectedWindow);
+        inspectedWindow._inspectorCommandLineAPI._addInspectedNode(node);
+    },
+
     doEvalInWindow: function(expression, callback)
     {
         if (!expression) {
