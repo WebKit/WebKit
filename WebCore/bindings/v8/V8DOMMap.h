@@ -115,9 +115,6 @@ namespace WebCore {
         OwnPtr<DOMDataStore> m_store;
     };
 
-    // Callback when JS wrapper of active DOM object is dead.
-    void weakActiveDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
-
     // A map from DOM node to its JS wrapper.
     DOMWrapperMap<Node>& getDOMNodeMap();
     void visitDOMNodesInCurrentThread(DOMWrapperMap<Node>::Visitor*);

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8GCController.h"
 
+#include "DOMDataStore.h"
 #include "DOMObjectsInclude.h"
 #include "V8DOMMap.h"
 #include "V8Index.h"
@@ -388,14 +389,14 @@ public:
     {
         V8ClassIndex::V8WrapperType type = V8DOMWrapper::domWrapperType(wrapper);
         switch (type) {
-#define MAKE_CASE(TYPE, NAME)                                           \
-        case V8ClassIndex::TYPE: {                                  \
-          NAME* impl = static_cast<NAME*>(object);                  \
-          if (impl->hasPendingActivity()) {                         \
-            ASSERT(!wrapper.IsWeak());                              \
-            wrapper.MakeWeak(impl, &weakActiveDOMObjectCallback);   \
-          }                                                         \
-          break;                                                    \
+#define MAKE_CASE(TYPE, NAME)                                                   \
+        case V8ClassIndex::TYPE: {                                              \
+          NAME* impl = static_cast<NAME*>(object);                              \
+          if (impl->hasPendingActivity()) {                                     \
+            ASSERT(!wrapper.IsWeak());                                          \
+            wrapper.MakeWeak(impl, &DOMDataStore::weakActiveDOMObjectCallback); \
+          }                                                                     \
+          break;                                                                \
         }
 ACTIVE_DOM_OBJECT_TYPES(MAKE_CASE)
         default:
