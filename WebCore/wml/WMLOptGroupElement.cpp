@@ -44,11 +44,6 @@ WMLOptGroupElement::~WMLOptGroupElement()
 {
 }
 
-String WMLOptGroupElement::title() const
-{
-    return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::titleAttr));
-}
-
 const AtomicString& WMLOptGroupElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, optgroup, ("optgroup"));

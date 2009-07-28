@@ -32,8 +32,6 @@ public:
     WMLSelectElement(const QualifiedName&, Document*);
     virtual ~WMLSelectElement();
 
-    virtual String title() const;
-
     virtual const AtomicString& formControlName() const;
     virtual const AtomicString& formControlType() const;
  

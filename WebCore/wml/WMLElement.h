@@ -37,6 +37,8 @@ public:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttribute*);
 
+    virtual String title() const;
+
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

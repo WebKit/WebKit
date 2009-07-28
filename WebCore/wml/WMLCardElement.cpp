@@ -206,11 +206,6 @@ void WMLCardElement::handleDeckLevelTaskOverridesIfNeeded()
         (*it)->setActive(!cardDoElementNames.contains((*it)->name()));
 }
 
-String WMLCardElement::title() const
-{
-    return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::titleAttr));
-}
-
 void WMLCardElement::parseMappedAttribute(MappedAttribute* attr)
 {
     WMLIntrinsicEventType eventType = WMLIntrinsicEventUnknown;

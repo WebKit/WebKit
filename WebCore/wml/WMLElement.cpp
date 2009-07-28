@@ -77,6 +77,11 @@ void WMLElement::parseMappedAttribute(MappedAttribute* attr)
     }
 }
 
+String WMLElement::title() const
+{
+    return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::titleAttr));
+}
+
 bool WMLElement::rendererIsNeeded(RenderStyle* style)
 {
     return document()->documentElement() == this || style->display() != NONE;
