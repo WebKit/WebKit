@@ -1,3 +1,14 @@
+2009-07-28  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Ariya Hidayat.
+
+        Fix compilation with the precompiled header.
+
+        * WebKit_pch.h: Don't include JSDOMBinding.h and MathObject.h,
+        as they include AtomicString.h. AtomicString.cpp needs to enable
+        a #define before including AtomicString.h, which breaks if the PCH
+        forces the inclusion beforehand.
+
 2009-07-28  Ariya Hidayat  <ariya.hidayat@nokia.com>
 
         Reviewed by Simon Hausmann.
