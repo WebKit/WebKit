@@ -69,8 +69,10 @@ DragImageRef createDragImageIconForCachedImage(CachedImage* image)
         return 0;
 
     ICONINFO iconInfo;
-    if (FAILED(GetIconInfo(shfi.hIcon, &iconInfo)))
+    if (!GetIconInfo(shfi.hIcon, &iconInfo)) {
+        DestroyIcon(shfi.hIcon);
         return 0;
+    }
 
     DestroyIcon(shfi.hIcon);
     DeleteObject(iconInfo.hbmMask);
