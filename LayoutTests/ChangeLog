@@ -1,5 +1,15 @@
 2009-07-27  Brady Eidson  <beidson@apple.com>
 
+        Update Windows specific results for these 5 tests.
+
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt:
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt:
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt:
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt:
+        * platform/win/http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow-expected.txt:
+
+2009-07-27  Brady Eidson  <beidson@apple.com>
+
         Didn't mean to check this guy in.
 
         * http/tests/appcache/max-size-expected.txt:
