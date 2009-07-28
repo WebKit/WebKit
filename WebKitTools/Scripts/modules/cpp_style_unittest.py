@@ -30,7 +30,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Unit test for cpplint.py."""
+"""Unit test for cpp_style.py."""
 
 # FIXME: Add a good test that tests UpdateIncludeState.
 
@@ -39,16 +39,16 @@ import os
 import random
 import re
 import unittest
-import cpplint
+import cpp_style
 
 
-# This class works as an error collector and replaces cpplint.Error
+# This class works as an error collector and replaces cpp_style.Error
 # function for the unit tests.  We also verify each category we see
-# is in cpplint._ERROR_CATEGORIES, to help keep that list up to date.
+# is in cpp_style._ERROR_CATEGORIES, to help keep that list up to date.
 class ErrorCollector:
     # These are a global list, covering all categories seen ever.
     _ERROR_CATEGORIES = [x.strip()    # get rid of leading whitespace
-                         for x in cpplint._ERROR_CATEGORIES.split()]
+                         for x in cpp_style._ERROR_CATEGORIES.split()]
     _SEEN_ERROR_CATEGORIES = {}
 
     def __init__(self, assert_fn):
@@ -62,7 +62,7 @@ class ErrorCollector:
                         'Message "%s" has category "%s",'
                         ' which is not in _ERROR_CATEGORIES' % (message, category))
         self._SEEN_ERROR_CATEGORIES[category] = 1
-        if cpplint._should_print_error(category, confidence):
+        if cpp_style._should_print_error(category, confidence):
             self._errors.append('%s  [%s] [%d]' % (message, category, confidence))
 
     def results(self):
@@ -106,22 +106,22 @@ class MockIo:
         return self.mock_file
 
 
-class CpplintTestBase(unittest.TestCase):
-    """Provides some useful helper functions for cpplint tests."""
+class CppStyleTestBase(unittest.TestCase):
+    """Provides some useful helper functions for cpp_style tests."""
 
     # Perform lint on single line of input and return the error message.
     def perform_single_line_lint(self, code, file_name):
         error_collector = ErrorCollector(self.assert_)
         lines = code.split('\n')
-        cpplint.remove_multi_line_comments(file_name, lines, error_collector)
-        clean_lines = cpplint.CleansedLines(lines)
-        include_state = cpplint._IncludeState()
-        function_state = cpplint._FunctionState()
+        cpp_style.remove_multi_line_comments(file_name, lines, error_collector)
+        clean_lines = cpp_style.CleansedLines(lines)
+        include_state = cpp_style._IncludeState()
+        function_state = cpp_style._FunctionState()
         ext = file_name[file_name.rfind('.') + 1:]
-        class_state = cpplint._ClassState()
-        cpplint.process_line(file_name, ext, clean_lines, 0,
-                             include_state, function_state,
-                             class_state, error_collector)
+        class_state = cpp_style._ClassState()
+        cpp_style.process_line(file_name, ext, clean_lines, 0,
+                               include_state, function_state,
+                               class_state, error_collector)
         # Single-line lint tests are allowed to fail the 'unlintable function'
         # check.
         error_collector.remove_if_present(
@@ -132,14 +132,14 @@ class CpplintTestBase(unittest.TestCase):
     def perform_multi_line_lint(self, code, file_name):
         error_collector = ErrorCollector(self.assert_)
         lines = code.split('\n')
-        cpplint.remove_multi_line_comments(file_name, lines, error_collector)
-        lines = cpplint.CleansedLines(lines)
+        cpp_style.remove_multi_line_comments(file_name, lines, error_collector)
+        lines = cpp_style.CleansedLines(lines)
         ext = file_name[file_name.rfind('.') + 1:]
-        class_state = cpplint._ClassState()
+        class_state = cpp_style._ClassState()
         for i in xrange(lines.num_lines()):
-            cpplint.check_style(file_name, lines, i, ext, error_collector)
-            cpplint.check_for_non_standard_constructs(file_name, lines, i, class_state,
-                                                      error_collector)
+            cpp_style.check_style(file_name, lines, i, ext, error_collector)
+            cpp_style.check_for_non_standard_constructs(file_name, lines, i, class_state,
+                                                        error_collector)
         class_state.check_finished(file_name, error_collector)
         return error_collector.results()
 
@@ -147,24 +147,24 @@ class CpplintTestBase(unittest.TestCase):
     # check_for_non_standard_constructs
     def perform_language_rules_check(self, file_name, code):
         error_collector = ErrorCollector(self.assert_)
-        include_state = cpplint._IncludeState()
+        include_state = cpp_style._IncludeState()
         lines = code.split('\n')
-        cpplint.remove_multi_line_comments(file_name, lines, error_collector)
-        lines = cpplint.CleansedLines(lines)
+        cpp_style.remove_multi_line_comments(file_name, lines, error_collector)
+        lines = cpp_style.CleansedLines(lines)
         ext = file_name[file_name.rfind('.') + 1:]
         for i in xrange(lines.num_lines()):
-            cpplint.check_language(file_name, lines, i, ext, include_state,
-                                   error_collector)
+            cpp_style.check_language(file_name, lines, i, ext, include_state,
+                                     error_collector)
         return error_collector.results()
 
     def perform_function_lengths_check(self, code):
         """Perform Lint function length check on block of code and return warnings.
 
         Builds up an array of lines corresponding to the code and strips comments
-        using cpplint functions.
+        using cpp_style functions.
 
         Establishes an error collector and invokes the function length checking
-        function following cpplint's pattern.
+        function following cpp_style's pattern.
 
         Args:
           code: C++ source code expected to generate a warning message.
@@ -174,32 +174,32 @@ class CpplintTestBase(unittest.TestCase):
         """
         file_name = 'foo.cpp'
         error_collector = ErrorCollector(self.assert_)
-        function_state = cpplint._FunctionState()
+        function_state = cpp_style._FunctionState()
         lines = code.split('\n')
-        cpplint.remove_multi_line_comments(file_name, lines, error_collector)
-        lines = cpplint.CleansedLines(lines)
+        cpp_style.remove_multi_line_comments(file_name, lines, error_collector)
+        lines = cpp_style.CleansedLines(lines)
         for i in xrange(lines.num_lines()):
-            cpplint.check_for_function_lengths(file_name, lines, i,
-                                               function_state, error_collector)
+            cpp_style.check_for_function_lengths(file_name, lines, i,
+                                                 function_state, error_collector)
         return error_collector.results()
 
     def perform_include_what_you_use(self, code, filename='foo.h', io=codecs):
         # First, build up the include state.
         error_collector = ErrorCollector(self.assert_)
-        include_state = cpplint._IncludeState()
+        include_state = cpp_style._IncludeState()
         lines = code.split('\n')
-        cpplint.remove_multi_line_comments(filename, lines, error_collector)
-        lines = cpplint.CleansedLines(lines)
+        cpp_style.remove_multi_line_comments(filename, lines, error_collector)
+        lines = cpp_style.CleansedLines(lines)
         for i in xrange(lines.num_lines()):
-            cpplint.check_language(filename, lines, i, '.h', include_state,
-                                   error_collector)
+            cpp_style.check_language(filename, lines, i, '.h', include_state,
+                                     error_collector)
         # We could clear the error_collector here, but this should
         # also be fine, since our IncludeWhatYouUse unittests do not
         # have language problems.
 
         # Second, look for missing includes.
-        cpplint.check_for_include_what_you_use(filename, lines, include_state,
-                                               error_collector, io)
+        cpp_style.check_for_include_what_you_use(filename, lines, include_state,
+                                                 error_collector, io)
         return error_collector.results()
 
     # Perform lint and compare the error message with "expected_message".
@@ -232,7 +232,7 @@ class CpplintTestBase(unittest.TestCase):
 
     def assert_blank_lines_check(self, lines, start_errors, end_errors):
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data('foo.cpp', 'cpp', lines, error_collector)
+        cpp_style.process_file_data('foo.cpp', 'cpp', lines, error_collector)
         self.assertEquals(
             start_errors,
             error_collector.results().count(
@@ -245,31 +245,31 @@ class CpplintTestBase(unittest.TestCase):
                 '  [whitespace/blank_line] [3]'))
 
 
-class CpplintTest(CpplintTestBase):
+class CppStyleTest(CppStyleTestBase):
 
     # Test get line width.
     def test_get_line_width(self):
-        self.assertEquals(0, cpplint.get_line_width(''))
-        self.assertEquals(10, cpplint.get_line_width(u'x' * 10))
-        self.assertEquals(16, cpplint.get_line_width(u'都|道|府|県|支庁'))
+        self.assertEquals(0, cpp_style.get_line_width(''))
+        self.assertEquals(10, cpp_style.get_line_width(u'x' * 10))
+        self.assertEquals(16, cpp_style.get_line_width(u'都|道|府|県|支庁'))
 
     def test_find_next_multi_line_comment_start(self):
-        self.assertEquals(1, cpplint.find_next_multi_line_comment_start([''], 0))
+        self.assertEquals(1, cpp_style.find_next_multi_line_comment_start([''], 0))
 
         lines = ['a', 'b', '/* c']
-        self.assertEquals(2, cpplint.find_next_multi_line_comment_start(lines, 0))
+        self.assertEquals(2, cpp_style.find_next_multi_line_comment_start(lines, 0))
 
         lines = ['char a[] = "/*";']  # not recognized as comment.
-        self.assertEquals(1, cpplint.find_next_multi_line_comment_start(lines, 0))
+        self.assertEquals(1, cpp_style.find_next_multi_line_comment_start(lines, 0))
 
     def test_find_next_multi_line_comment_end(self):
-        self.assertEquals(1, cpplint.find_next_multi_line_comment_end([''], 0))
+        self.assertEquals(1, cpp_style.find_next_multi_line_comment_end([''], 0))
         lines = ['a', 'b', ' c */']
-        self.assertEquals(2, cpplint.find_next_multi_line_comment_end(lines, 0))
+        self.assertEquals(2, cpp_style.find_next_multi_line_comment_end(lines, 0))
 
     def test_remove_multi_line_comments_from_range(self):
         lines = ['a', '  /* comment ', ' * still comment', ' comment */   ', 'b']
-        cpplint.remove_multi_line_comments_from_range(lines, 1, 4)
+        cpp_style.remove_multi_line_comments_from_range(lines, 1, 4)
         self.assertEquals(['a', '// dummy', '// dummy', '// dummy', 'b'], lines)
 
     def test_spaces_at_end_of_line(self):
@@ -431,7 +431,7 @@ class CpplintTest(CpplintTestBase):
             'Using sizeof(type).  Use sizeof(varname) instead if possible'
             '  [runtime/sizeof] [1]')
 
-    # Test typedef cases.  There was a bug that cpplint misidentified
+    # Test typedef cases.  There was a bug that cpp_style misidentified
     # typedef for pointer to function as C-style cast and produced
     # false-positive error messages.
     def test_typedef_for_pointer_to_function(self):
@@ -623,7 +623,7 @@ class CpplintTest(CpplintTestBase):
                                    '[build/include_what_you_use] [4]')
 
     def test_files_belong_to_same_module(self):
-        f = cpplint.files_belong_to_same_module
+        f = cpp_style.files_belong_to_same_module
         self.assertEquals((True, ''), f('a.cpp', 'a.h'))
         self.assertEquals((True, ''), f('base/google.cpp', 'base/google.h'))
         self.assertEquals((True, ''), f('base/google_test.cpp', 'base/google.h'))
@@ -649,17 +649,17 @@ class CpplintTest(CpplintTestBase):
 
     def test_cleanse_line(self):
         self.assertEquals('int foo = 0;  ',
-                          cpplint.cleanse_comments('int foo = 0;  // danger!'))
+                          cpp_style.cleanse_comments('int foo = 0;  // danger!'))
         self.assertEquals('int o = 0;',
-                          cpplint.cleanse_comments('int /* foo */ o = 0;'))
+                          cpp_style.cleanse_comments('int /* foo */ o = 0;'))
         self.assertEquals('foo(int a, int b);',
-                          cpplint.cleanse_comments('foo(int a /* abc */, int b);'))
+                          cpp_style.cleanse_comments('foo(int a /* abc */, int b);'))
         self.assertEqual('f(a, b);',
-                         cpplint.cleanse_comments('f(a, /* name */ b);'))
+                         cpp_style.cleanse_comments('f(a, /* name */ b);'))
         self.assertEqual('f(a, b);',
-                         cpplint.cleanse_comments('f(a /* name */, b);'))
+                         cpp_style.cleanse_comments('f(a /* name */, b);'))
         self.assertEqual('f(a, b);',
-                         cpplint.cleanse_comments('f(a, /* name */b);'))
+                         cpp_style.cleanse_comments('f(a, /* name */b);'))
 
     def test_multi_line_comments(self):
         # missing explicit is bad
@@ -691,10 +691,10 @@ class CpplintTest(CpplintTestBase):
         file_path = 'mydir/foo.cpp'
 
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'cpp',
-                                  ['const char* str = "This is a\\',
-                                   ' multiline string.";'],
-                                  error_collector)
+        cpp_style.process_file_data(file_path, 'cpp',
+                                    ['const char* str = "This is a\\',
+                                     ' multiline string.";'],
+                                    error_collector)
         self.assertEquals(
             2,  # One per line.
             error_collector.result_list().count(multiline_string_error_message))
@@ -1332,8 +1332,8 @@ class CpplintTest(CpplintTestBase):
     def test_newline_at_eof(self):
         def do_test(self, data, is_missing_eof):
             error_collector = ErrorCollector(self.assert_)
-            cpplint.process_file_data('foo.cpp', 'cpp', data.split('\n'),
-                                      error_collector)
+            cpp_style.process_file_data('foo.cpp', 'cpp', data.split('\n'),
+                                        error_collector)
             # The warning appears only once.
             self.assertEquals(
                 int(is_missing_eof),
@@ -1347,7 +1347,7 @@ class CpplintTest(CpplintTestBase):
     def test_invalid_utf8(self):
         def do_test(self, raw_bytes, has_invalid_utf8):
             error_collector = ErrorCollector(self.assert_)
-            cpplint.process_file_data(
+            cpp_style.process_file_data(
                 'foo.cpp', 'cpp',
                 unicode(raw_bytes, 'utf8', 'replace').split('\n'),
                 error_collector)
@@ -1367,11 +1367,11 @@ class CpplintTest(CpplintTestBase):
         do_test(self, '\xef\xbf\xbd\n', True)
 
     def test_is_blank_line(self):
-        self.assert_(cpplint.is_blank_line(''))
-        self.assert_(cpplint.is_blank_line(' '))
-        self.assert_(cpplint.is_blank_line(' \t\r\n'))
-        self.assert_(not cpplint.is_blank_line('int a;'))
-        self.assert_(not cpplint.is_blank_line('{'))
+        self.assert_(cpp_style.is_blank_line(''))
+        self.assert_(cpp_style.is_blank_line(' '))
+        self.assert_(cpp_style.is_blank_line(' \t\r\n'))
+        self.assert_(not cpp_style.is_blank_line('int a;'))
+        self.assert_(not cpp_style.is_blank_line('{'))
 
     def test_blank_lines_check(self):
         self.assert_blank_lines_check(['{\n', '\n', '\n', '}\n'], 1, 1)
@@ -1383,40 +1383,40 @@ class CpplintTest(CpplintTestBase):
 
     def test_allow_blank_line_before_closing_namespace(self):
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data('foo.cpp', 'cpp',
-                                  ['namespace {', '', '}  // namespace'],
-                                  error_collector)
+        cpp_style.process_file_data('foo.cpp', 'cpp',
+                                    ['namespace {', '', '}  // namespace'],
+                                    error_collector)
         self.assertEquals(0, error_collector.results().count(
             'Blank line at the end of a code block.  Is this needed?'
             '  [whitespace/blank_line] [3]'))
 
     def test_allow_blank_line_before_if_else_chain(self):
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data('foo.cpp', 'cpp',
-                                  ['if (hoge) {',
-                                   '',  # No warning
-                                   '} else if (piyo) {',
-                                   '',  # No warning
-                                   '} else if (piyopiyo) {',
-                                   '  hoge = true;',  # No warning
-                                   '} else {',
-                                   '',  # Warning on this line
-                                   '}'],
-                                error_collector)
+        cpp_style.process_file_data('foo.cpp', 'cpp',
+                                    ['if (hoge) {',
+                                     '',  # No warning
+                                     '} else if (piyo) {',
+                                     '',  # No warning
+                                     '} else if (piyopiyo) {',
+                                     '  hoge = true;',  # No warning
+                                     '} else {',
+                                     '',  # Warning on this line
+                                     '}'],
+                                    error_collector)
         self.assertEquals(1, error_collector.results().count(
             'Blank line at the end of a code block.  Is this needed?'
             '  [whitespace/blank_line] [3]'))
 
     def test_else_on_same_line_as_closing_braces(self):
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data('foo.cpp', 'cpp',
-                                  ['if (hoge) {',
-                                   '',
-                                   '}',
-                                   ' else {'  # Warning on this line
-                                   '',
-                                   '}'],
-                                  error_collector)
+        cpp_style.process_file_data('foo.cpp', 'cpp',
+                                    ['if (hoge) {',
+                                     '',
+                                     '}',
+                                     ' else {'  # Warning on this line
+                                     '',
+                                     '}'],
+                                    error_collector)
         self.assertEquals(1, error_collector.results().count(
             'An else should appear on the same line as the preceding }'
             '  [whitespace/newline] [4]'))
@@ -1478,81 +1478,81 @@ class CpplintTest(CpplintTestBase):
                          'Tab found; better to use spaces  [whitespace/tab] [1]')
 
     def test_parse_arguments(self):
-        old_usage = cpplint._USAGE
-        old_error_categories = cpplint._ERROR_CATEGORIES
-        old_output_format = cpplint._cpplint_state.output_format
-        old_verbose_level = cpplint._cpplint_state.verbose_level
-        old_filters = cpplint._cpplint_state.filters
+        old_usage = cpp_style._USAGE
+        old_error_categories = cpp_style._ERROR_CATEGORIES
+        old_output_format = cpp_style._cpp_style_state.output_format
+        old_verbose_level = cpp_style._cpp_style_state.verbose_level
+        old_filters = cpp_style._cpp_style_state.filters
         try:
             # Don't print usage during the tests, or filter categories
-            cpplint._USAGE = ''
-            cpplint._ERROR_CATEGORIES = ''
+            cpp_style._USAGE = ''
+            cpp_style._ERROR_CATEGORIES = ''
 
-            self.assertRaises(SystemExit, cpplint.parse_arguments, ['--badopt'])
-            self.assertRaises(SystemExit, cpplint.parse_arguments, ['--help'])
-            self.assertRaises(SystemExit, cpplint.parse_arguments, ['--filter='])
+            self.assertRaises(SystemExit, cpp_style.parse_arguments, ['--badopt'])
+            self.assertRaises(SystemExit, cpp_style.parse_arguments, ['--help'])
+            self.assertRaises(SystemExit, cpp_style.parse_arguments, ['--filter='])
             # This is illegal because all filters must start with + or -
-            self.assertRaises(ValueError, cpplint.parse_arguments, ['--filter=foo'])
-            self.assertRaises(ValueError, cpplint.parse_arguments,
+            self.assertRaises(ValueError, cpp_style.parse_arguments, ['--filter=foo'])
+            self.assertRaises(ValueError, cpp_style.parse_arguments,
                               ['--filter=+a,b,-c'])
 
-            self.assertEquals((['foo.cpp'], {}), cpplint.parse_arguments(['foo.cpp']))
-            self.assertEquals(old_output_format, cpplint._cpplint_state.output_format)
-            self.assertEquals(old_verbose_level, cpplint._cpplint_state.verbose_level)
+            self.assertEquals((['foo.cpp'], {}), cpp_style.parse_arguments(['foo.cpp']))
+            self.assertEquals(old_output_format, cpp_style._cpp_style_state.output_format)
+            self.assertEquals(old_verbose_level, cpp_style._cpp_style_state.verbose_level)
 
-            self.assertEquals(([], {}), cpplint.parse_arguments([]))
-            self.assertEquals(([], {}), cpplint.parse_arguments(['--v=0']))
+            self.assertEquals(([], {}), cpp_style.parse_arguments([]))
+            self.assertEquals(([], {}), cpp_style.parse_arguments(['--v=0']))
 
             self.assertEquals((['foo.cpp'], {}),
-                              cpplint.parse_arguments(['--v=1', 'foo.cpp']))
-            self.assertEquals(1, cpplint._cpplint_state.verbose_level)
+                              cpp_style.parse_arguments(['--v=1', 'foo.cpp']))
+            self.assertEquals(1, cpp_style._cpp_style_state.verbose_level)
             self.assertEquals((['foo.h'], {}),
-                              cpplint.parse_arguments(['--v=3', 'foo.h']))
-            self.assertEquals(3, cpplint._cpplint_state.verbose_level)
+                              cpp_style.parse_arguments(['--v=3', 'foo.h']))
+            self.assertEquals(3, cpp_style._cpp_style_state.verbose_level)
             self.assertEquals((['foo.cpp'], {}),
-                              cpplint.parse_arguments(['--verbose=5', 'foo.cpp']))
-            self.assertEquals(5, cpplint._cpplint_state.verbose_level)
+                              cpp_style.parse_arguments(['--verbose=5', 'foo.cpp']))
+            self.assertEquals(5, cpp_style._cpp_style_state.verbose_level)
             self.assertRaises(ValueError,
-                              cpplint.parse_arguments, ['--v=f', 'foo.cpp'])
+                              cpp_style.parse_arguments, ['--v=f', 'foo.cpp'])
 
             self.assertEquals((['foo.cpp'], {}),
-                              cpplint.parse_arguments(['--output=emacs', 'foo.cpp']))
-            self.assertEquals('emacs', cpplint._cpplint_state.output_format)
+                              cpp_style.parse_arguments(['--output=emacs', 'foo.cpp']))
+            self.assertEquals('emacs', cpp_style._cpp_style_state.output_format)
             self.assertEquals((['foo.h'], {}),
-                              cpplint.parse_arguments(['--output=vs7', 'foo.h']))
-            self.assertEquals('vs7', cpplint._cpplint_state.output_format)
+                              cpp_style.parse_arguments(['--output=vs7', 'foo.h']))
+            self.assertEquals('vs7', cpp_style._cpp_style_state.output_format)
             self.assertRaises(SystemExit,
-                              cpplint.parse_arguments, ['--output=blah', 'foo.cpp'])
+                              cpp_style.parse_arguments, ['--output=blah', 'foo.cpp'])
 
             filt = '-,+whitespace,-whitespace/indent'
             self.assertEquals((['foo.h'], {}),
-                              cpplint.parse_arguments(['--filter='+filt, 'foo.h']))
+                              cpp_style.parse_arguments(['--filter='+filt, 'foo.h']))
             self.assertEquals(['-', '+whitespace', '-whitespace/indent'],
-                              cpplint._cpplint_state.filters)
+                              cpp_style._cpp_style_state.filters)
 
             self.assertEquals((['foo.cpp', 'foo.h'], {}),
-                              cpplint.parse_arguments(['foo.cpp', 'foo.h']))
+                              cpp_style.parse_arguments(['foo.cpp', 'foo.h']))
 
             self.assertEquals((['foo.cpp'], {'--foo': ''}),
-                              cpplint.parse_arguments(['--foo', 'foo.cpp'], ['foo']))
+                              cpp_style.parse_arguments(['--foo', 'foo.cpp'], ['foo']))
             self.assertEquals((['foo.cpp'], {'--foo': 'bar'}),
-                              cpplint.parse_arguments(['--foo=bar', 'foo.cpp'], ['foo=']))
+                              cpp_style.parse_arguments(['--foo=bar', 'foo.cpp'], ['foo=']))
             self.assertEquals((['foo.cpp'], {}),
-                              cpplint.parse_arguments(['foo.cpp'], ['foo=']))
+                              cpp_style.parse_arguments(['foo.cpp'], ['foo=']))
             self.assertRaises(SystemExit,
-                              cpplint.parse_arguments,
+                              cpp_style.parse_arguments,
                               ['--footypo=bar', 'foo.cpp'], ['foo='])
         finally:
-            cpplint._USAGE = old_usage
-            cpplint._ERROR_CATEGORIES = old_error_categories
-            cpplint._cpplint_state.output_format = old_output_format
-            cpplint._cpplint_state.verbose_level = old_verbose_level
-            cpplint._cpplint_state.filters = old_filters
+            cpp_style._USAGE = old_usage
+            cpp_style._ERROR_CATEGORIES = old_error_categories
+            cpp_style._cpp_style_state.output_format = old_output_format
+            cpp_style._cpp_style_state.verbose_level = old_verbose_level
+            cpp_style._cpp_style_state.filters = old_filters
 
     def test_filter(self):
-        old_filters = cpplint._cpplint_state.filters
+        old_filters = cpp_style._cpp_style_state.filters
         try:
-            cpplint._cpplint_state.set_filters('-,+whitespace,-whitespace/indent')
+            cpp_style._cpp_style_state.set_filters('-,+whitespace,-whitespace/indent')
             self.assert_lint(
                 '// Hello there ',
                 'Line ends in whitespace.  Consider deleting these extra spaces.'
@@ -1560,25 +1560,25 @@ class CpplintTest(CpplintTestBase):
             self.assert_lint('int a = (int)1.0;', '')
             self.assert_lint(' weird opening space', '')
         finally:
-            cpplint._cpplint_state.filters = old_filters
+            cpp_style._cpp_style_state.filters = old_filters
 
     def test_default_filter(self):
-        default_filters = cpplint._DEFAULT_FILTERS
-        old_filters = cpplint._cpplint_state.filters
-        cpplint._DEFAULT_FILTERS = [ '-whitespace' ]
+        default_filters = cpp_style._DEFAULT_FILTERS
+        old_filters = cpp_style._cpp_style_state.filters
+        cpp_style._DEFAULT_FILTERS = [ '-whitespace' ]
         try:
             # Reset filters
-            cpplint._cpplint_state.set_filters('')
+            cpp_style._cpp_style_state.set_filters('')
             self.assert_lint('// Hello there ', '')
-            cpplint._cpplint_state.set_filters('+whitespace/end_of_line')
+            cpp_style._cpp_style_state.set_filters('+whitespace/end_of_line')
             self.assert_lint(
                 '// Hello there ',
                 'Line ends in whitespace.  Consider deleting these extra spaces.'
                 '  [whitespace/end_of_line] [4]')
             self.assert_lint(' weird opening space', '')
         finally:
-            cpplint._cpplint_state.filters = old_filters
-            cpplint._DEFAULT_FILTERS = default_filters
+            cpp_style._cpp_style_state.filters = old_filters
+            cpp_style._DEFAULT_FILTERS = default_filters
 
     def test_unnamed_namespaces_in_headers(self):
         self.assert_language_rules_check(
@@ -1647,7 +1647,7 @@ class CpplintTest(CpplintTestBase):
         # doesn't allow us to test the suggested header guard, but it does let us
         # test all the other header tests.
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h', [], error_collector)
+        cpp_style.process_file_data(file_path, 'h', [], error_collector)
         expected_guard = ''
         matcher = re.compile(
             'No \#ifndef header guard found\, suggested CPP variable is\: ([A-Z_0-9]+) ')
@@ -1662,8 +1662,8 @@ class CpplintTest(CpplintTestBase):
 
         # Wrong guard
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef FOO_H', '#define FOO_H'], error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef FOO_H', '#define FOO_H'], error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(
@@ -1673,8 +1673,8 @@ class CpplintTest(CpplintTestBase):
 
         # No define
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef %s' % expected_guard], error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef %s' % expected_guard], error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(
@@ -1684,10 +1684,10 @@ class CpplintTest(CpplintTestBase):
 
         # Mismatched define
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef %s' % expected_guard,
-                                   '#define FOO_H'],
-                                  error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef %s' % expected_guard,
+                                     '#define FOO_H'],
+                                    error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(
@@ -1697,10 +1697,10 @@ class CpplintTest(CpplintTestBase):
 
         # No endif
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef %s' % expected_guard,
-                                   '#define %s' % expected_guard],
-                                  error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef %s' % expected_guard,
+                                     '#define %s' % expected_guard],
+                                    error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(
@@ -1710,11 +1710,11 @@ class CpplintTest(CpplintTestBase):
 
         # Commentless endif
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef %s' % expected_guard,
-                                   '#define %s' % expected_guard,
-                                   '#endif'],
-                                  error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef %s' % expected_guard,
+                                     '#define %s' % expected_guard,
+                                     '#endif'],
+                                    error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(
@@ -1724,11 +1724,11 @@ class CpplintTest(CpplintTestBase):
 
         # Commentless endif for old-style guard
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef %s_' % expected_guard,
-                                   '#define %s_' % expected_guard,
-                                   '#endif'],
-                                  error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef %s_' % expected_guard,
+                                     '#define %s_' % expected_guard,
+                                     '#endif'],
+                                    error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(
@@ -1738,36 +1738,36 @@ class CpplintTest(CpplintTestBase):
 
         # No header guard errors
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef %s' % expected_guard,
-                                   '#define %s' % expected_guard,
-                                   '#endif  // %s' % expected_guard],
-                                  error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef %s' % expected_guard,
+                                     '#define %s' % expected_guard,
+                                     '#endif  // %s' % expected_guard],
+                                    error_collector)
         for line in error_collector.result_list():
             if line.find('build/header_guard') != -1:
                 self.fail('Unexpected error: %s' % line)
 
         # No header guard errors for old-style guard
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef %s_' % expected_guard,
-                                   '#define %s_' % expected_guard,
-                                   '#endif  // %s_' % expected_guard],
-                                  error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef %s_' % expected_guard,
+                                     '#define %s_' % expected_guard,
+                                     '#endif  // %s_' % expected_guard],
+                                    error_collector)
         for line in error_collector.result_list():
             if line.find('build/header_guard') != -1:
                 self.fail('Unexpected error: %s' % line)
 
-        old_verbose_level = cpplint._cpplint_state.verbose_level
+        old_verbose_level = cpp_style._cpp_style_state.verbose_level
         try:
-            cpplint._cpplint_state.verbose_level = 0
+            cpp_style._cpp_style_state.verbose_level = 0
             # Warn on old-style guard if verbosity is 0.
             error_collector = ErrorCollector(self.assert_)
-            cpplint.process_file_data(file_path, 'h',
-                                      ['#ifndef %s_' % expected_guard,
-                                       '#define %s_' % expected_guard,
-                                       '#endif  // %s_' % expected_guard],
-                                      error_collector)
+            cpp_style.process_file_data(file_path, 'h',
+                                        ['#ifndef %s_' % expected_guard,
+                                         '#define %s_' % expected_guard,
+                                         '#endif  // %s_' % expected_guard],
+                                        error_collector)
             self.assertEquals(
                 1,
                 error_collector.result_list().count(
@@ -1775,15 +1775,15 @@ class CpplintTest(CpplintTestBase):
                     '  [build/header_guard] [0]' % expected_guard),
                 error_collector.result_list())
         finally:
-            cpplint._cpplint_state.verbose_level = old_verbose_level
+            cpp_style._cpp_style_state.verbose_level = old_verbose_level
 
         # Completely incorrect header guard
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'h',
-                                  ['#ifndef FOO',
-                                   '#define FOO',
-                                   '#endif  // FOO'],
-                                  error_collector)
+        cpp_style.process_file_data(file_path, 'h',
+                                    ['#ifndef FOO',
+                                     '#define FOO',
+                                     '#endif  // FOO'],
+                                    error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(
@@ -1931,13 +1931,13 @@ class CpplintTest(CpplintTestBase):
 
         # There should be a copyright message in the first 10 lines
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'cpp', [], error_collector)
+        cpp_style.process_file_data(file_path, 'cpp', [], error_collector)
         self.assertEquals(
             1,
             error_collector.result_list().count(legal_copyright_message))
 
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(
+        cpp_style.process_file_data(
             file_path, 'cpp',
             ['' for unused_i in range(10)] + [copyright_line],
             error_collector)
@@ -1947,13 +1947,13 @@ class CpplintTest(CpplintTestBase):
 
         # Test that warning isn't issued if Copyright line appears early enough.
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(file_path, 'cpp', [copyright_line], error_collector)
+        cpp_style.process_file_data(file_path, 'cpp', [copyright_line], error_collector)
         for message in error_collector.result_list():
             if message.find('legal/copyright') != -1:
                 self.fail('Unexpected error: %s' % message)
 
         error_collector = ErrorCollector(self.assert_)
-        cpplint.process_file_data(
+        cpp_style.process_file_data(
             file_path, 'cpp',
             ['' for unused_i in range(9)] + [copyright_line],
             error_collector)
@@ -1973,7 +1973,7 @@ class CleansedLinesTest(unittest.TestCase):
                  'Line 3 // Comment test',
                  'Line 4 "foo"']
 
-        clean_lines = cpplint.CleansedLines(lines)
+        clean_lines = cpp_style.CleansedLines(lines)
         self.assertEquals(lines, clean_lines.raw_lines)
         self.assertEquals(4, clean_lines.num_lines())
 
@@ -1990,12 +1990,12 @@ class CleansedLinesTest(unittest.TestCase):
                           clean_lines.elided)
 
     def test_init_empty(self):
-        clean_lines = cpplint.CleansedLines([])
+        clean_lines = cpp_style.CleansedLines([])
         self.assertEquals([], clean_lines.raw_lines)
         self.assertEquals(0, clean_lines.num_lines())
 
     def test_collapse_strings(self):
-        collapse = cpplint.CleansedLines.collapse_strings
+        collapse = cpp_style.CleansedLines.collapse_strings
         self.assertEquals('""', collapse('""'))             # ""     (empty)
         self.assertEquals('"""', collapse('"""'))           # """    (bad)
         self.assertEquals('""', collapse('"xyz"'))          # "xyz"  (string)
@@ -2021,9 +2021,9 @@ class CleansedLinesTest(unittest.TestCase):
                           collapse('\'"\' "foo"'))
 
 
-class OrderOfIncludesTest(CpplintTestBase):
+class OrderOfIncludesTest(CppStyleTestBase):
     def setUp(self):
-        self.include_state = cpplint._IncludeState()
+        self.include_state = cpp_style._IncludeState()
 
         # Cheat os.path.abspath called in FileInfo class.
         self.os_path_abspath_orig = os.path.abspath
@@ -2033,21 +2033,21 @@ class OrderOfIncludesTest(CpplintTestBase):
         os.path.abspath = self.os_path_abspath_orig
 
     def test_try_drop_common_suffixes(self):
-        self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo-inl.h'))
+        self.assertEqual('foo/foo', cpp_style._drop_common_suffixes('foo/foo-inl.h'))
         self.assertEqual('foo/bar/foo',
-                         cpplint._drop_common_suffixes('foo/bar/foo_inl.h'))
-        self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo.cpp'))
+                         cpp_style._drop_common_suffixes('foo/bar/foo_inl.h'))
+        self.assertEqual('foo/foo', cpp_style._drop_common_suffixes('foo/foo.cpp'))
         self.assertEqual('foo/foo_unusualinternal',
-                         cpplint._drop_common_suffixes('foo/foo_unusualinternal.h'))
+                         cpp_style._drop_common_suffixes('foo/foo_unusualinternal.h'))
         self.assertEqual('',
-                         cpplint._drop_common_suffixes('_test.cpp'))
+                         cpp_style._drop_common_suffixes('_test.cpp'))
         self.assertEqual('test',
-                         cpplint._drop_common_suffixes('test.cpp'))
+                         cpp_style._drop_common_suffixes('test.cpp'))
 
 
-class OrderOfIncludesTest(CpplintTestBase):
+class OrderOfIncludesTest(CppStyleTestBase):
     def setUp(self):
-        self.include_state = cpplint._IncludeState()
+        self.include_state = cpp_style._IncludeState()
 
         # Cheat os.path.abspath called in FileInfo class.
         self.os_path_abspath_orig = os.path.abspath
@@ -2058,11 +2058,11 @@ class OrderOfIncludesTest(CpplintTestBase):
 
     def test_check_next_include_order__no_config(self):
         self.assertEqual('Header file should not contain WebCore config.h.',
-                         self.include_state.check_next_include_order(cpplint._CONFIG_HEADER, True))
+                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, True))
 
     def test_check_next_include_order__no_self(self):
         self.assertEqual('Header file should not contain itself.',
-                         self.include_state.check_next_include_order(cpplint._PRIMARY_HEADER, True))
+                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, True))
         # Test actual code to make sure that header types are correctly assigned.
         self.assert_language_rules_check('Foo.h',
                                          '#include "Foo.h"\n',
@@ -2074,22 +2074,22 @@ class OrderOfIncludesTest(CpplintTestBase):
 
     def test_check_next_include_order__likely_then_config(self):
         self.assertEqual('Found header this file implements before WebCore config.h.',
-                         self.include_state.check_next_include_order(cpplint._PRIMARY_HEADER, False))
+                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, False))
         self.assertEqual('Found WebCore config.h after a header this file implements.',
-                         self.include_state.check_next_include_order(cpplint._CONFIG_HEADER, False))
+                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, False))
 
     def test_check_next_include_order__other_then_config(self):
         self.assertEqual('Found other header before WebCore config.h.',
-                         self.include_state.check_next_include_order(cpplint._OTHER_HEADER, False))
+                         self.include_state.check_next_include_order(cpp_style._OTHER_HEADER, False))
         self.assertEqual('Found WebCore config.h after other header.',
-                         self.include_state.check_next_include_order(cpplint._CONFIG_HEADER, False))
+                         self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, False))
 
     def test_check_next_include_order__config_then_other_then_likely(self):
-        self.assertEqual('', self.include_state.check_next_include_order(cpplint._CONFIG_HEADER, False))
+        self.assertEqual('', self.include_state.check_next_include_order(cpp_style._CONFIG_HEADER, False))
         self.assertEqual('Found other header before a header this file implements.',
-                         self.include_state.check_next_include_order(cpplint._OTHER_HEADER, False))
+                         self.include_state.check_next_include_order(cpp_style._OTHER_HEADER, False))
         self.assertEqual('Found header this file implements after other header.',
-                         self.include_state.check_next_include_order(cpplint._PRIMARY_HEADER, False))
+                         self.include_state.check_next_include_order(cpp_style._PRIMARY_HEADER, False))
 
     def test_check_alphabetical_include_order(self):
         self.assert_language_rules_check('foo.h',
@@ -2201,29 +2201,29 @@ class OrderOfIncludesTest(CpplintTestBase):
                                          '  [build/include] [4]')
 
     def test_classify_include(self):
-        classify_include = cpplint._classify_include
-        include_state = cpplint._IncludeState()
-        self.assertEqual(cpplint._CONFIG_HEADER,
+        classify_include = cpp_style._classify_include
+        include_state = cpp_style._IncludeState()
+        self.assertEqual(cpp_style._CONFIG_HEADER,
                          classify_include('foo/foo.cpp',
                                           'config.h',
                                           False, include_state))
-        self.assertEqual(cpplint._PRIMARY_HEADER,
+        self.assertEqual(cpp_style._PRIMARY_HEADER,
                          classify_include('foo/internal/foo.cpp',
                                           'foo/public/foo.h',
                                           False, include_state))
-        self.assertEqual(cpplint._PRIMARY_HEADER,
+        self.assertEqual(cpp_style._PRIMARY_HEADER,
                          classify_include('foo/internal/foo.cpp',
                                           'foo/other/public/foo.h',
                                           False, include_state))
-        self.assertEqual(cpplint._OTHER_HEADER,
+        self.assertEqual(cpp_style._OTHER_HEADER,
                          classify_include('foo/internal/foo.cpp',
                                           'foo/other/public/foop.h',
                                           False, include_state))
-        self.assertEqual(cpplint._OTHER_HEADER,
+        self.assertEqual(cpp_style._OTHER_HEADER,
                          classify_include('foo/foo.cpp',
                                           'string',
                                           True, include_state))
-        self.assertEqual(cpplint._PRIMARY_HEADER,
+        self.assertEqual(cpp_style._PRIMARY_HEADER,
                          classify_include('fooCustom.cpp',
                                           'foo.h',
                                           False, include_state))
@@ -2244,31 +2244,31 @@ class OrderOfIncludesTest(CpplintTestBase):
                                          '  [build/include_order] [4]')
 
     def test_try_drop_common_suffixes(self):
-        self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo-inl.h'))
+        self.assertEqual('foo/foo', cpp_style._drop_common_suffixes('foo/foo-inl.h'))
         self.assertEqual('foo/bar/foo',
-                         cpplint._drop_common_suffixes('foo/bar/foo_inl.h'))
-        self.assertEqual('foo/foo', cpplint._drop_common_suffixes('foo/foo.cpp'))
+                         cpp_style._drop_common_suffixes('foo/bar/foo_inl.h'))
+        self.assertEqual('foo/foo', cpp_style._drop_common_suffixes('foo/foo.cpp'))
         self.assertEqual('foo/foo_unusualinternal',
-                         cpplint._drop_common_suffixes('foo/foo_unusualinternal.h'))
+                         cpp_style._drop_common_suffixes('foo/foo_unusualinternal.h'))
         self.assertEqual('',
-                         cpplint._drop_common_suffixes('_test.cpp'))
+                         cpp_style._drop_common_suffixes('_test.cpp'))
         self.assertEqual('test',
-                         cpplint._drop_common_suffixes('test.cpp'))
+                         cpp_style._drop_common_suffixes('test.cpp'))
         self.assertEqual('test',
-                         cpplint._drop_common_suffixes('test.cpp'))
+                         cpp_style._drop_common_suffixes('test.cpp'))
 
-class CheckForFunctionLengthsTest(CpplintTestBase):
+class CheckForFunctionLengthsTest(CppStyleTestBase):
     def setUp(self):
         # Reducing these thresholds for the tests speeds up tests significantly.
-        self.old_normal_trigger = cpplint._FunctionState._NORMAL_TRIGGER
-        self.old_test_trigger = cpplint._FunctionState._TEST_TRIGGER
+        self.old_normal_trigger = cpp_style._FunctionState._NORMAL_TRIGGER
+        self.old_test_trigger = cpp_style._FunctionState._TEST_TRIGGER
 
-        cpplint._FunctionState._NORMAL_TRIGGER = 10
-        cpplint._FunctionState._TEST_TRIGGER = 25
+        cpp_style._FunctionState._NORMAL_TRIGGER = 10
+        cpp_style._FunctionState._TEST_TRIGGER = 25
 
     def tearDown(self):
-        cpplint._FunctionState._NORMAL_TRIGGER = self.old_normal_trigger
-        cpplint._FunctionState._TEST_TRIGGER = self.old_test_trigger
+        cpp_style._FunctionState._NORMAL_TRIGGER = self.old_normal_trigger
+        cpp_style._FunctionState._TEST_TRIGGER = self.old_test_trigger
 
     def assert_function_lengths_check(self, code, expected_message):
         """Check warnings for long function bodies are as expected.
@@ -2284,32 +2284,32 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
         """Return number of lines needed to trigger a function length warning.
 
         Args:
-          error_level: --v setting for cpplint.
+          error_level: --v setting for cpp_style.
 
         Returns:
           Number of lines needed to trigger a function length warning.
         """
-        return cpplint._FunctionState._NORMAL_TRIGGER * 2 ** error_level
+        return cpp_style._FunctionState._NORMAL_TRIGGER * 2 ** error_level
 
     def trigger_test_lines(self, error_level):
         """Return number of lines needed to trigger a test function length warning.
 
         Args:
-          error_level: --v setting for cpplint.
+          error_level: --v setting for cpp_style.
 
         Returns:
           Number of lines needed to trigger a test function length warning.
         """
-        return cpplint._FunctionState._TEST_TRIGGER * 2 ** error_level
+        return cpp_style._FunctionState._TEST_TRIGGER * 2 ** error_level
 
     def assert_function_length_check_definition(self, lines, error_level):
         """Generate long function definition and check warnings are as expected.
 
         Args:
           lines: Number of lines to generate.
-          error_level:  --v setting for cpplint.
+          error_level:  --v setting for cpp_style.
         """
-        trigger_level = self.trigger_lines(cpplint._verbose_level())
+        trigger_level = self.trigger_lines(cpp_style._verbose_level())
         self.assert_function_lengths_check(
             'void test(int x)' + self.function_body(lines),
             ('Small and focused functions are preferred: '
@@ -2332,7 +2332,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
         """Generate and check function at the trigger level for --v setting.
 
         Args:
-          error_level: --v setting for cpplint.
+          error_level: --v setting for cpp_style.
         """
         self.assert_function_length_check_definition(self.trigger_lines(error_level),
                                                      error_level)
@@ -2341,7 +2341,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
         """Generate and check function just below the trigger level for --v setting.
 
         Args:
-          error_level: --v setting for cpplint.
+          error_level: --v setting for cpp_style.
         """
         self.assert_function_length_check_definition(self.trigger_lines(error_level) - 1,
                                                      error_level - 1)
@@ -2350,7 +2350,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
         """Generate and check function just above the trigger level for --v setting.
 
         Args:
-          error_level: --v setting for cpplint.
+          error_level: --v setting for cpp_style.
         """
         self.assert_function_length_check_definition(self.trigger_lines(error_level) + 1,
                                                      error_level)
@@ -2392,29 +2392,29 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
             '')
 
     def test_function_length_check_definition_below_severity0(self):
-        old_verbosity = cpplint._set_verbose_level(0)
+        old_verbosity = cpp_style._set_verbose_level(0)
         self.assert_function_length_check_definition_ok(self.trigger_lines(0) - 1)
-        cpplint._set_verbose_level(old_verbosity)
+        cpp_style._set_verbose_level(old_verbosity)
 
     def test_function_length_check_definition_at_severity0(self):
-        old_verbosity = cpplint._set_verbose_level(0)
+        old_verbosity = cpp_style._set_verbose_level(0)
         self.assert_function_length_check_definition_ok(self.trigger_lines(0))
-        cpplint._set_verbose_level(old_verbosity)
+        cpp_style._set_verbose_level(old_verbosity)
 
     def test_function_length_check_definition_above_severity0(self):
-        old_verbosity = cpplint._set_verbose_level(0)
+        old_verbosity = cpp_style._set_verbose_level(0)
         self.assert_function_length_check_above_error_level(0)
-        cpplint._set_verbose_level(old_verbosity)
+        cpp_style._set_verbose_level(old_verbosity)
 
     def test_function_length_check_definition_below_severity1v0(self):
-        old_verbosity = cpplint._set_verbose_level(0)
+        old_verbosity = cpp_style._set_verbose_level(0)
         self.assert_function_length_check_below_error_level(1)
-        cpplint._set_verbose_level(old_verbosity)
+        cpp_style._set_verbose_level(old_verbosity)
 
     def test_function_length_check_definition_at_severity1v0(self):
-        old_verbosity = cpplint._set_verbose_level(0)
+        old_verbosity = cpp_style._set_verbose_level(0)
         self.assert_function_length_check_at_error_level(1)
-        cpplint._set_verbose_level(old_verbosity)
+        cpp_style._set_verbose_level(old_verbosity)
 
     def test_function_length_check_definition_below_severity1(self):
         self.assert_function_length_check_definition_ok(self.trigger_lines(1) - 1)
@@ -2428,7 +2428,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
     def test_function_length_check_definition_severity1_plus_blanks(self):
         error_level = 1
         error_lines = self.trigger_lines(error_level) + 1
-        trigger_level = self.trigger_lines(cpplint._verbose_level())
+        trigger_level = self.trigger_lines(cpp_style._verbose_level())
         self.assert_function_lengths_check(
             'void test_blanks(int x)' + self.function_body(error_lines),
             ('Small and focused functions are preferred: '
@@ -2440,7 +2440,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
     def test_function_length_check_complex_definition_severity1(self):
         error_level = 1
         error_lines = self.trigger_lines(error_level) + 1
-        trigger_level = self.trigger_lines(cpplint._verbose_level())
+        trigger_level = self.trigger_lines(cpp_style._verbose_level())
         self.assert_function_lengths_check(
             ('my_namespace::my_other_namespace::MyVeryLongTypeName*\n'
              'my_namespace::my_other_namespace::MyFunction(int arg1, char* arg2)'
@@ -2455,7 +2455,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
     def test_function_length_check_definition_severity1_for_test(self):
         error_level = 1
         error_lines = self.trigger_test_lines(error_level) + 1
-        trigger_level = self.trigger_test_lines(cpplint._verbose_level())
+        trigger_level = self.trigger_test_lines(cpp_style._verbose_level())
         self.assert_function_lengths_check(
             'TEST_F(Test, Mutator)' + self.function_body(error_lines),
             ('Small and focused functions are preferred: '
@@ -2467,7 +2467,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
     def test_function_length_check_definition_severity1_for_split_line_test(self):
         error_level = 1
         error_lines = self.trigger_test_lines(error_level) + 1
-        trigger_level = self.trigger_test_lines(cpplint._verbose_level())
+        trigger_level = self.trigger_test_lines(cpp_style._verbose_level())
         self.assert_function_lengths_check(
             ('TEST_F(GoogleUpdateRecoveryRegistryProtectedTest,\n'
              '    FixGoogleUpdate_AllValues_MachineApp)'  # note: 4 spaces
@@ -2482,7 +2482,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
     def test_function_length_check_definition_severity1_for_bad_test_doesnt_break(self):
         error_level = 1
         error_lines = self.trigger_test_lines(error_level) + 1
-        trigger_level = self.trigger_test_lines(cpplint._verbose_level())
+        trigger_level = self.trigger_test_lines(cpp_style._verbose_level())
         self.assert_function_lengths_check(
             ('TEST_F('
              + self.function_body(error_lines)),
@@ -2495,7 +2495,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
     def test_function_length_check_definition_severity1_with_embedded_no_lints(self):
         error_level = 1
         error_lines = self.trigger_lines(error_level) + 1
-        trigger_level = self.trigger_lines(cpplint._verbose_level())
+        trigger_level = self.trigger_lines(cpp_style._verbose_level())
         self.assert_function_lengths_check(
             'void test(int x)' + self.function_body_with_no_lints(error_lines),
             ('Small and focused functions are preferred: '
@@ -2567,7 +2567,7 @@ class CheckForFunctionLengthsTest(CpplintTestBase):
             '  [readability/fn_size] [5]')
 
 
-class NoNonVirtualDestructorsTest(CpplintTestBase):
+class NoNonVirtualDestructorsTest(CppStyleTestBase):
 
     def test_no_error(self):
         self.assert_multi_line_lint(
@@ -2694,17 +2694,17 @@ class NoNonVirtualDestructorsTest(CpplintTestBase):
              'virtual method(s), one declared at line 2.  [runtime/virtual] [4]'])
 
 
-class CppLintStateTest(unittest.TestCase):
+class CppStyleStateTest(unittest.TestCase):
     def test_error_count(self):
-        self.assertEquals(0, cpplint.error_count())
-        cpplint._cpplint_state.increment_error_count()
-        cpplint._cpplint_state.increment_error_count()
-        self.assertEquals(2, cpplint.error_count())
-        cpplint._cpplint_state.reset_error_count()
-        self.assertEquals(0, cpplint.error_count())
+        self.assertEquals(0, cpp_style.error_count())
+        cpp_style._cpp_style_state.increment_error_count()
+        cpp_style._cpp_style_state.increment_error_count()
+        self.assertEquals(2, cpp_style.error_count())
+        cpp_style._cpp_style_state.reset_error_count()
+        self.assertEquals(0, cpp_style.error_count())
 
 
-class WebKitStyleTest(CpplintTestBase):
+class WebKitStyleTest(CppStyleTestBase):
 
     # for http://webkit.org/coding/coding-style.html
     def test_indentation(self):
@@ -3332,7 +3332,7 @@ class WebKitStyleTest(CpplintTestBase):
             '  [readability/null] [4]',
             'foo.cpp')
         self.assert_lint(
-            '"A string with NULL"  // and a comment with NULL is tricky to flag correctly in cpplint.',
+            '"A string with NULL"  // and a comment with NULL is tricky to flag correctly in cpp_style.',
             'Use 0 instead of NULL.'
             '  [readability/null] [4]',
             'foo.cpp')

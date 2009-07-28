@@ -59,7 +59,7 @@ import unicodedata
 
 
 _USAGE = """
-Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
+Syntax: %(program_name)s [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
         <file> [file] ...
 
   The style guidelines this tries to follow are those in
@@ -96,14 +96,14 @@ Syntax: cpplint.py [--verbose=#] [--output=vs7] [--filter=-x,+y,...]
                 --filter=whitespace,runtime/printf,+runtime/printf_format
                 --filter=-,+build/include_what_you_use
 
-      To see a list of all the categories used in cpplint, pass no arg:
+      To see a list of all the categories used in %(program_name)s, pass no arg:
          --filter=
-"""
+""" % {'program_name': sys.argv[0]}
 
 # We categorize each error message we print.  Here are the categories.
-# We want an explicit list so we can list them all in cpplint --filter=.
+# We want an explicit list so we can list them all in cpp_style --filter=.
 # If you add a new error message with a new category, add it to the list
-# here!  cpplint_unittest.py should tell you if you forget to do this.
+# here!  cpp_style_unittest.py should tell you if you forget to do this.
 # \ used for clearer layout -- pylint: disable-msg=C6013
 _ERROR_CATEGORIES = '''\
     build/class
@@ -347,7 +347,7 @@ class _IncludeState(dict):
         return error_message
 
 
-class _CppLintState(object):
+class _CppStyleState(object):
     """Maintains module-wide state.."""
 
     def __init__(self):
@@ -405,32 +405,32 @@ class _CppLintState(object):
         self.error_count += 1
 
 
-_cpplint_state = _CppLintState()
+_cpp_style_state = _CppStyleState()
 
 
 def _output_format():
     """Gets the module's output format."""
-    return _cpplint_state.output_format
+    return _cpp_style_state.output_format
 
 
 def _set_output_format(output_format):
     """Sets the module's output format."""
-    _cpplint_state.set_output_format(output_format)
+    _cpp_style_state.set_output_format(output_format)
 
 
 def _verbose_level():
     """Returns the module's verbosity setting."""
-    return _cpplint_state.verbose_level
+    return _cpp_style_state.verbose_level
 
 
 def _set_verbose_level(level):
     """Sets the module's verbosity, and returns the previous setting."""
-    return _cpplint_state.set_verbose_level(level)
+    return _cpp_style_state.set_verbose_level(level)
 
 
 def _filters():
     """Returns the module's list of output filters, as a list."""
-    return _cpplint_state.filters
+    return _cpp_style_state.filters
 
 
 def _set_filters(filters):
@@ -443,12 +443,12 @@ def _set_filters(filters):
       filters: A string of comma-separated filters (eg "whitespace/indent").
                Each filter should start with + or -; else we die.
     """
-    _cpplint_state.set_filters(filters)
+    _cpp_style_state.set_filters(filters)
 
 
 def error_count():
     """Returns the global count of reported errors."""
-    return _cpplint_state.error_count
+    return _cpp_style_state.error_count
 
 
 class _FunctionState(object):
@@ -602,7 +602,7 @@ def _should_print_error(category, confidence):
     """Returns true iff confidence >= verbose, and category passes filter."""
     # There are two ways we might decide not to print an error message:
     # the verbosity level isn't high enough, or the filters filter it out.
-    if confidence < _cpplint_state.verbose_level:
+    if confidence < _cpp_style_state.verbose_level:
         return False
 
     is_filtered = False
@@ -642,8 +642,8 @@ def error(filename, line_number, category, confidence, message):
     # There are two ways we might decide not to print an error message:
     # the verbosity level isn't high enough, or the filters filter it out.
     if _should_print_error(category, confidence):
-        _cpplint_state.increment_error_count()
-        if _cpplint_state.output_format == 'vs7':
+        _cpp_style_state.increment_error_count()
+        if _cpp_style_state.output_format == 'vs7':
             sys.stderr.write('%s(%s):  %s  [%s] [%d]\n' % (
                 filename, line_number, message, category, confidence))
         else:
@@ -1109,7 +1109,7 @@ class _ClassState(object):
         if self.classinfo_stack:
             # Note: This test can result in false positives if #ifdef constructs
             # get in the way of brace matching. See the testBuildClass test in
-            # cpplint_unittest.py for an example of this.
+            # cpp_style_unittest.py for an example of this.
             error(filename, self.classinfo_stack[0].line_number, 'build/class', 5,
                   'Failed to find complete declaration of class %s' %
                   self.classinfo_stack[0].name)
@@ -2225,7 +2225,7 @@ def _classify_include(filename, include, is_system, include_state):
     """Figures out what kind of header 'include' is.
 
     Args:
-      filename: The current file cpplint is running over.
+      filename: The current file cpp_style is running over.
       include: The path to a #included file.
       is_system: True if the #include used <> rather than "".
       include_state: An _IncludeState instance in which the headers are inserted.
@@ -2826,7 +2826,7 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error,
     abs_filename = os.path.abspath(filename)
 
     # For Emacs's flymake.
-    # If cpplint is invoked from Emacs's flymake, a temporary file is generated
+    # If cpp_style is invoked from Emacs's flymake, a temporary file is generated
     # by flymake and that file name might end with '_flymake.cpp'. In that case,
     # restore original file name here so that the corresponding header file can be
     # found.
@@ -2937,7 +2937,7 @@ def process_file_data(filename, file_extension, lines, error):
 
 
 def process_file(filename, error=error):
-    """Performs cpplint on a single file.
+    """Performs cpp_style on a single file.
 
     Args:
       filename: The name of the file to parse.
@@ -2977,7 +2977,7 @@ def process_file(filename, error=error):
     # Note, if no dot is found, this will give the entire filename as the ext.
     file_extension = filename[filename.rfind('.') + 1:]
 
-    # When reading from stdin, the extension is unknown, so no cpplint tests
+    # When reading from stdin, the extension is unknown, so no cpp_style tests
     # should rely on the extension.
     if (filename != '-' and file_extension != 'h' and file_extension != 'cpp'
         and file_extension != 'c'):
@@ -3121,11 +3121,11 @@ that you notice that it flags incorrectly.
                                            codecs.getwriter('utf8'),
                                            'replace')
 
-    _cpplint_state.reset_error_count()
+    _cpp_style_state.reset_error_count()
     for filename in filenames:
         process_file(filename)
-    sys.stderr.write('Total errors found: %d\n' % _cpplint_state.error_count)
-    sys.exit(_cpplint_state.error_count > 0)
+    sys.stderr.write('Total errors found: %d\n' % _cpp_style_state.error_count)
+    sys.exit(_cpp_style_state.error_count > 0)
 
 
 if __name__ == '__main__':

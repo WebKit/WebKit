@@ -1,3 +1,22 @@
+2009-07-28  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Treat.
+
+        cpplint* should be named cpp_style*
+        https://bugs.webkit.org/show_bug.cgi?id=27752
+
+        The files were renamed. A few renames were done:
+          CppLint -> CppStyle
+          cpplint -> cpp_style
+
+        * Scripts/check-webkit-style:
+        * Scripts/modules/cpp_style.py: Copied from cpplint.py and
+          did name fix ups.
+        * Scripts/modules/cpp_style_unittest.py: Copied from cpplint_unittest.py and
+          did name fix ups.
+        * Scripts/modules/cpplint.py: Removed.
+        * Scripts/modules/cpplint_unittest.py: Removed.
+
 2009-07-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Rubber-stamped by Holger Freyther.

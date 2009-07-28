@@ -34,13 +34,13 @@ import os
 import os.path
 import sys
 
-import modules.cpplint as cpplint
+import modules.cpp_style as cpp_style
 from modules.diff_parser import DiffParser
 from modules.scm import detect_scm_system
 
 
 # Override the usage of the lint tool.
-cpplint._USAGE = """
+cpp_style._USAGE = """
 Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7] [--filter=-x,+y,...]
 
   The style guidelines this tries to follow are those in
@@ -102,7 +102,7 @@ def process_patch(patch_string):
             line_numbers = set()
 
             def error_for_patch(filename, line_number, category, confidence, message):
-                """Wrapper function of cpplint.error for patches.
+                """Wrapper function of cpp_style.error for patches.
 
                 This function outputs errors only if the line number
                 corresponds to lines which are modified or added.
@@ -115,17 +115,17 @@ def process_patch(patch_string):
                             line_numbers.add(line[1])
 
                 if line_number in line_numbers:
-                    cpplint.error(filename, line_number, category, confidence, message)
+                    cpp_style.error(filename, line_number, category, confidence, message)
 
-            cpplint.process_file(filename, error=error_for_patch)
+            cpp_style.process_file(filename, error=error_for_patch)
 
 
 def main():
-    cpplint.use_webkit_styles()
+    cpp_style.use_webkit_styles()
 
-    (args, flags) = cpplint.parse_arguments(sys.argv[1:], ["git-commit="])
+    (args, flags) = cpp_style.parse_arguments(sys.argv[1:], ["git-commit="])
     if args:
-        sys.stderr.write("ERROR: We don't support files as arguments for now.\n" + cpplint._USAGE)
+        sys.stderr.write("ERROR: We don't support files as arguments for now.\n" + cpp_style._USAGE)
         sys.exit(1)
 
     cwd = os.path.abspath('.')
@@ -136,8 +136,8 @@ def main():
     else:
         process_patch(scm.create_patch())
 
-    sys.stderr.write('Total errors found: %d\n' % cpplint.error_count())
-    sys.exit(cpplint.error_count() > 0)
+    sys.stderr.write('Total errors found: %d\n' % cpp_style.error_count())
+    sys.exit(cpp_style.error_count() > 0)
 
 
 if __name__ == "__main__":
