@@ -1,3 +1,15 @@
+2009-07-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Dave Levin.
+
+        Make check-webkit-style support files as arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=27549
+
+        * Scripts/check-webkit-style:
+        Support files as argument. Change documentation and use basename
+        on the binary name when used in the documentation. Also do not
+        die when printing something containing non-ASCII characters.
+
 2009-07-29  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/27119> bugzilla-tool: Add create-bug command

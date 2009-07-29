@@ -30,6 +30,7 @@
 
 """Script to run the linter for source code of WebKit."""
 
+import codecs
 import os
 import os.path
 import sys
@@ -41,7 +42,8 @@ from modules.scm import detect_scm_system
 
 # Override the usage of the lint tool.
 cpp_style._USAGE = """
-Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7] [--filter=-x,+y,...]
+Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7]
+        [--filter=-x,+y,...] [file] ...
 
   The style guidelines this tries to follow are those in
     http://webkit.org/coding/coding-style.html
@@ -54,6 +56,10 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7]
   end of the line.
 
   Linted extensions are .cpp, .c and .h.  Other file types will be ignored.
+
+  The file parameter is optional and multiple files to scan be passed in.
+  Leaving out the file parameter will apply the check to the files changed
+  according to the scm system.
 
   Flags:
 
@@ -85,7 +91,7 @@ Syntax: %(program_name)s [--verbose=#] [--git-commit=<COMMITISH>] [--output=vs7]
 
       To see a list of all the categories used in %(program_name)s, pass no arg:
          --filter=
-""" % {'program_name': sys.argv[0]}
+""" % {'program_name': os.path.basename(sys.argv[0])}
 
 
 def process_patch(patch_string):
@@ -123,18 +129,32 @@ def process_patch(patch_string):
 def main():
     cpp_style.use_webkit_styles()
 
-    (args, flags) = cpp_style.parse_arguments(sys.argv[1:], ["git-commit="])
-    if args:
-        sys.stderr.write("ERROR: We don't support files as arguments for now.\n" + cpp_style._USAGE)
+    (files, flags) = cpp_style.parse_arguments(sys.argv[1:], ["git-commit="])
+
+    # Change stderr to write with replacement characters so we don't die
+    # if we try to print something containing non-ASCII characters.
+    sys.stderr = codecs.StreamReaderWriter(sys.stderr,
+                                           codecs.getreader('utf8'),
+                                           codecs.getwriter('utf8'),
+                                           'replace')
+
+    if files and "--git-commit" in flags:
+        sys.stderr.write("ERROR: It is not possible to check files "
+                          "and a specific commit at the same time.\n" + cpp_style._USAGE)
         sys.exit(1)
 
-    cwd = os.path.abspath('.')
-    scm = detect_scm_system(cwd)
+    if files:
+        for filename in files:
+            cpp_style.process_file(filename)
 
-    if "--git-commit" in flags:
-        process_patch(scm.create_patch_from_local_commit(flags["--git-commit"]))
     else:
-        process_patch(scm.create_patch())
+        cwd = os.path.abspath('.')
+        scm = detect_scm_system(cwd)
+
+        if "--git-commit" in flags:
+            process_patch(scm.create_patch_from_local_commit(flags["--git-commit"]))
+        else:
+            process_patch(scm.create_patch())
 
     sys.stderr.write('Total errors found: %d\n' % cpp_style.error_count())
     sys.exit(cpp_style.error_count() > 0)
