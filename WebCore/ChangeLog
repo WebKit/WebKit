@@ -1,3 +1,17 @@
+2009-07-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Illegal values for <ol start> cause list numbering start at 0 (should start at 1)
+        https://bugs.webkit.org/show_bug.cgi?id=27810
+
+        Test: fast/lists/ol-start-parsing.html
+
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::parseMappedAttribute): Check the result of toInt
+        and use the value 1 if it failed to parse. Before we were getting toInt's default
+        behavior, which is to return 0.
+
 2009-07-29  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin Adler.
