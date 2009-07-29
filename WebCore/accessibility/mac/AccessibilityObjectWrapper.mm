@@ -176,66 +176,21 @@ typedef unsigned NSUInteger;
 
 static WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition& visiblePos)
 {
-    if (visiblePos.isNull())
-        return nil;
-
-    Position deepPos = visiblePos.deepEquivalent();
-    Node* domNode = deepPos.node();
-    ASSERT(domNode);
-    if (!domNode)
-        return nil;
-
-    if (domNode->isHTMLElement()) {
-        InputElement* inputElement = toInputElement(static_cast<Element*>(domNode));
-        if (inputElement && inputElement->isPasswordField())
-            return nil;
-    }
-
-    // locate the renderer, which must exist for a visible dom node
-    RenderObject* renderer = domNode->renderer();
-    ASSERT(renderer);
-
-    // find or create an accessibility object for this renderer
-    AXObjectCache* cache = renderer->document()->axObjectCache();
-    RefPtr<AccessibilityObject> obj = cache->getOrCreate(renderer);
-
-    // create a text marker, adding an ID for the AccessibilityObject if needed
     TextMarkerData textMarkerData;
+    AXObjectCache::textMarkerDataForVisiblePosition(textMarkerData, visiblePos);
+    if (!textMarkerData.axID)
+        return nil;
     
-    // The compiler can add padding to this struct. 
-    // This memory must be bzero'd so instances of TextMarkerData can be tested for byte-equivalence.
-    bzero(&textMarkerData, sizeof(TextMarkerData));
-    textMarkerData.axID = obj.get()->axObjectID();
-    textMarkerData.node = domNode;
-    textMarkerData.offset = deepPos.deprecatedEditingOffset();
-    textMarkerData.affinity = visiblePos.affinity();
     return [[WebCoreViewFactory sharedFactory] textMarkerWithBytes:&textMarkerData length:sizeof(textMarkerData)];
 }
 
 static VisiblePosition visiblePositionForTextMarker(WebCoreTextMarker* textMarker)
 {
     TextMarkerData textMarkerData;
-    
     if (![[WebCoreViewFactory sharedFactory] getBytes:&textMarkerData fromTextMarker:textMarker length:sizeof(textMarkerData)])
         return VisiblePosition();
-
-    VisiblePosition visiblePos = VisiblePosition(textMarkerData.node, textMarkerData.offset, textMarkerData.affinity);
-    Position deepPos = visiblePos.deepEquivalent();
-    if (deepPos.isNull())
-        return VisiblePosition();
     
-    RenderObject* renderer = deepPos.node()->renderer();
-    if (!renderer)
-        return VisiblePosition();
-    
-    AXObjectCache* cache = renderer->document()->axObjectCache();
-    if (!cache->isIDinUse(textMarkerData.axID))
-        return VisiblePosition();
-
-    if (deepPos.node() != textMarkerData.node || deepPos.deprecatedEditingOffset() != textMarkerData.offset)
-        return VisiblePosition();
-    
-    return visiblePos;
+    return AXObjectCache::visiblePositionForTextMarkerData(textMarkerData);
 }
 
 static VisiblePosition visiblePositionForStartOfTextMarkerRange(WebCoreTextMarkerRange* textMarkerRange)
@@ -437,24 +392,6 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
         [attrString removeAttribute:@"AXHeadingLevel" range:range];
 }
 
-static AccessibilityObject* AXLinkElementForNode(Node* node)
-{
-    RenderObject* obj = node->renderer();
-    if (!obj)
-        return 0;
-
-    RefPtr<AccessibilityObject> axObj = obj->document()->axObjectCache()->getOrCreate(obj);
-    Element* anchor = axObj->anchorElement();
-    if (!anchor)
-        return 0;
-
-    RenderObject* anchorRenderer = anchor->renderer();
-    if (!anchorRenderer)
-        return 0;
-    
-    return anchorRenderer->document()->axObjectCache()->getOrCreate(anchorRenderer);
-}
-
 static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, NSString* attribute, AccessibilityObject* object, NSRange range)
 {
     if (object && object->isAccessibilityRenderObject()) {
@@ -505,7 +442,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetHeadingLevel(attrString, node->renderer(), attrStringRange);
     AXAttributeStringSetBlockquoteLevel(attrString, node->renderer(), attrStringRange);
-    AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AXLinkElementForNode(node), attrStringRange);
+    AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), attrStringRange);
     
     // do spelling last because it tends to break up the range
     AXAttributeStringSetSpelling(attrString, node, offset, attrStringRange);

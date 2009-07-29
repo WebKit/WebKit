@@ -1,3 +1,30 @@
+2009-07-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        Bug 27807 - AX: move re-usable code into more common areas for other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=27807
+
+        Moves some accessibility code that was in the Mac file to a more common place so 
+        it can be used by other platforms. 
+        This includes:
+           Making TextMarkerData from a VisiblePosition.
+           Making a VisiblePosition from TextMarkerData.
+           Finding the anchor accessibility object for an arbitrary Node.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::anchorElementForNode):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::visiblePositionForIndex):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (textMarkerForVisiblePosition):
+        (visiblePositionForTextMarker):
+        (AXAttributedStringAppendText):
+
 2009-07-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

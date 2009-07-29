@@ -657,6 +657,24 @@ void AccessibilityObject::clearChildren()
     m_children.clear();
 }
 
+AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
+{
+    RenderObject* obj = node->renderer();
+    if (!obj)
+        return 0;
+    
+    RefPtr<AccessibilityObject> axObj = obj->document()->axObjectCache()->getOrCreate(obj);
+    Element* anchor = axObj->anchorElement();
+    if (!anchor)
+        return 0;
+    
+    RenderObject* anchorRenderer = anchor->renderer();
+    if (!anchorRenderer)
+        return 0;
+    
+    return anchorRenderer->document()->axObjectCache()->getOrCreate(anchorRenderer);
+}
+    
 const String& AccessibilityObject::actionVerb() const
 {
     // FIXME: Need to add verbs for select elements.

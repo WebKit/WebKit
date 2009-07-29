@@ -294,6 +294,7 @@ public:
     unsigned axObjectID() const { return m_id; }
     void setAXObjectID(unsigned axObjectID) { m_id = axObjectID; }
     
+    static AccessibilityObject* anchorElementForNode(Node*);
     virtual Element* anchorElement() const { return 0; }
     virtual Element* actionElement() const { return 0; }
     virtual IntRect boundingBoxRect() const { return IntRect(); }
@@ -373,8 +374,7 @@ public:
     VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const;
     VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const;
     VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const;
-    virtual VisiblePosition visiblePositionForIndex(unsigned, bool /*
-lastIndexOK */) const { return VisiblePosition(); }
+    virtual VisiblePosition visiblePositionForIndex(unsigned, bool /*lastIndexOK */) const { return VisiblePosition(); }
     
     virtual VisiblePosition visiblePositionForIndex(int) const { return VisiblePosition(); }
     virtual int indexForVisiblePosition(const VisiblePosition&) const { return 0; }
