@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-    struct HashEntry;
+    class HashEntry;
     struct HashTable;
 
     struct ClassInfo {

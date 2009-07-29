@@ -33,7 +33,7 @@
 namespace JSC {
 
     class JSByteArray : public JSObject {
-        friend class VPtrSet;
+        friend struct VPtrSet;
     public:
         bool canAccessIndex(unsigned i) { return i < m_storage->length(); }
         JSValue getIndex(ExecState* exec, unsigned i)

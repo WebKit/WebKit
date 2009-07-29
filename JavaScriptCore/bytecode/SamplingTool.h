@@ -136,7 +136,7 @@ namespace JSC {
 
     class SamplingTool {
     public:
-        friend class CallRecord;
+        friend struct CallRecord;
         friend class HostCallRecord;
         
 #if ENABLE(OPCODE_SAMPLING)

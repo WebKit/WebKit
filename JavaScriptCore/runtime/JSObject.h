@@ -42,11 +42,11 @@ namespace JSC {
             return value.asCell();
         return 0;
     }
-
+    
+    class HashEntry;
     class InternalFunction;
     class PropertyNameArray;
     class Structure;
-    struct HashEntry;
     struct HashTable;
 
     // ECMA 262-3 8.6.1

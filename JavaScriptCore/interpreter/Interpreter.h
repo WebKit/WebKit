@@ -44,7 +44,6 @@ namespace JSC {
     class CodeBlock;
     class EvalNode;
     class FunctionBodyNode;
-    class Instruction;
     class InternalFunction;
     class JSFunction;
     class JSGlobalObject;
@@ -54,7 +53,8 @@ namespace JSC {
     class SamplingTool;
     struct CallFrameClosure;
     struct HandlerInfo;
-
+    struct Instruction;
+    
     enum DebugHookID {
         WillExecuteProgram,
         DidExecuteProgram,

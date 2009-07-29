@@ -33,11 +33,11 @@
 
 namespace JSC {
 
-    class CallIdentifier;
     class ExecState;
     class Profile;
     class ProfileNode;
     class UString;
+    struct CallIdentifier;    
 
     class ProfileGenerator : public RefCounted<ProfileGenerator>  {
     public:

@@ -47,7 +47,6 @@ namespace JSC {
     class CommonIdentifiers;
     class FunctionBodyNode;
     class IdentifierTable;
-    class Instruction;
     class Interpreter;
     class JSGlobalObject;
     class JSObject;
@@ -59,6 +58,7 @@ namespace JSC {
     class UString;
 
     struct HashTable;
+    struct Instruction;    
     struct VPtrSet;
 
     class JSGlobalData : public RefCounted<JSGlobalData> {
