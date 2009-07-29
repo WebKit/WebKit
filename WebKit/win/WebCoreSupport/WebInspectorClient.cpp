@@ -29,6 +29,7 @@
 #include "config.h"
 #include "WebInspectorClient.h"
 
+#include "NotImplemented.h"
 #include "WebInspectorDelegate.h"
 #include "WebKit.h"
 #include "WebMutableURLRequest.h"
