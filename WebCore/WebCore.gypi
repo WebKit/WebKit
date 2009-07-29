@@ -3315,6 +3315,8 @@
             'workers/AbstractWorker.h',
             'workers/DedicatedWorkerContext.cpp',
             'workers/DedicatedWorkerContext.h',
+            'workers/DedicatedWorkerThread.cpp',
+            'workers/DedicatedWorkerThread.h',
             'workers/GenericWorkerTask.h',
             'workers/SharedWorker.cpp',
             'workers/SharedWorker.h',

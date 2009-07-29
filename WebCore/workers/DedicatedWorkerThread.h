@@ -27,76 +27,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#include "config.h"
+#ifndef DedicatedWorkerThread_h
+#define DedicatedWorkerThread_h
 
 #if ENABLE(WORKERS)
 
-#include "WorkerScriptController.h"
-
-#include <v8.h>
-
-#include "ScriptSourceCode.h"
-#include "ScriptValue.h"
-#include "DOMTimer.h"
-#include "V8DOMMap.h"
-#include "V8Proxy.h"
-#include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
-#include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
 
 namespace WebCore {
 
-WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
-    : m_workerContext(workerContext)
-    , m_proxy(new WorkerContextExecutionProxy(workerContext))
-    , m_executionForbidden(false)
-{
-}
+    class WorkerObjectProxy;
 
-WorkerScriptController::~WorkerScriptController()
-{
-    removeAllDOMObjectsInCurrentThread();
-}
+    class DedicatedWorkerThread : public WorkerThread {
+    public:
+        static PassRefPtr<DedicatedWorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&);
+        WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
+        ~DedicatedWorkerThread();
 
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
-{
-    return evaluate(sourceCode, 0);
-}
+    protected:
+        virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL& url, const String& userAgent);
+        virtual void runEventLoop();
 
-ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
-{
-    {
-        MutexLocker lock(m_sharedDataMutex);
-        if (m_executionForbidden)
-            return ScriptValue();
-    }
+    private:
+        DedicatedWorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&);
 
-    WorkerContextExecutionState state;
-    ScriptValue result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startLine() - 1, &state);
-    if (state.hadException) {
-        if (exception)
-            *exception = state.exception;
-        else
-            m_workerContext->reportException(state.errorMessage, state.lineNumber, state.sourceURL);
-    }
-
-    return result;
-}
-
-void WorkerScriptController::forbidExecution()
-{
-    // This function is called from another thread.
-    MutexLocker lock(m_sharedDataMutex);
-    m_executionForbidden = true;
-}
-
-void WorkerScriptController::setException(ScriptValue exception)
-{
-    throwError(*exception.v8Value());
-}
-
+        WorkerObjectProxy& m_workerObjectProxy;
+    };
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)
+
+#endif // DedicatedWorkerThread_h

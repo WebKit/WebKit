@@ -35,15 +35,23 @@
 
 namespace WebCore {
 
+    class DedicatedWorkerThread;
+
     class DedicatedWorkerContext : public WorkerContext {
     public:
-        static PassRefPtr<DedicatedWorkerContext> create(const KURL& url, const String& userAgent, WorkerThread* thread)
+        typedef WorkerContext Base;
+        static PassRefPtr<DedicatedWorkerContext> create(const KURL& url, const String& userAgent, DedicatedWorkerThread* thread)
         {
             return adoptRef(new DedicatedWorkerContext(url, userAgent, thread));
         }
         virtual ~DedicatedWorkerContext();
 
+        // WorkerUtils
+        virtual void importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode&);
+
+        // ScriptExecutionContext
         virtual void reportException(const String& errorMessage, int lineNumber, const String& sourceURL);
+        virtual void addMessage(MessageDestination, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
         // EventTarget
         virtual DedicatedWorkerContext* toDedicatedWorkerContext() { return this; }
@@ -54,8 +62,9 @@ namespace WebCore {
 
         void dispatchMessage(const String&, PassRefPtr<MessagePort>);
 
+        DedicatedWorkerThread* thread();
     private:
-        DedicatedWorkerContext(const KURL&, const String&, WorkerThread*);
+        DedicatedWorkerContext(const KURL&, const String&, DedicatedWorkerThread*);
         RefPtr<EventListener> m_onmessageListener;
     };
 

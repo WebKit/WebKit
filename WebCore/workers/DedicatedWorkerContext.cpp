@@ -34,14 +34,14 @@
 
 #include "DedicatedWorkerContext.h"
 
+#include "DedicatedWorkerThread.h"
 #include "DOMWindow.h"
 #include "MessageEvent.h"
 #include "WorkerObjectProxy.h"
-#include "WorkerThread.h"
 
 namespace WebCore {
 
-DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& userAgent, WorkerThread* thread)
+DedicatedWorkerContext::DedicatedWorkerContext(const KURL& url, const String& userAgent, DedicatedWorkerThread* thread)
     : WorkerContext(url, userAgent, thread)
 {
 }
@@ -61,6 +61,11 @@ void DedicatedWorkerContext::reportException(const String& errorMessage, int lin
 
     if (!errorHandled)
         thread()->workerObjectProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
+}
+
+void DedicatedWorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+{
+    thread()->workerObjectProxy().postConsoleMessageToWorkerObject(destination, source, type, level, message, lineNumber, sourceURL);
 }
 
 void DedicatedWorkerContext::postMessage(const String& message, ExceptionCode& ec)
@@ -94,6 +99,17 @@ void DedicatedWorkerContext::dispatchMessage(const String& message, PassRefPtr<M
     ExceptionCode ec = 0;
     dispatchEvent(evt.release(), ec);
     ASSERT(!ec);
+}
+
+void DedicatedWorkerContext::importScripts(const Vector<String>& urls, const String& callerURL, int callerLine, ExceptionCode& ec)
+{
+    Base::importScripts(urls, callerURL, callerLine, ec);
+    thread()->workerObjectProxy().reportPendingActivity(hasPendingActivity());
+}
+
+DedicatedWorkerThread* DedicatedWorkerContext::thread()
+{
+    return static_cast<DedicatedWorkerThread*>(Base::thread());
 }
 
 } // namespace WebCore

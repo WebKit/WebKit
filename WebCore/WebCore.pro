@@ -2029,6 +2029,8 @@ HEADERS += \
     wml/WMLTimerElement.h \
     wml/WMLVariables.h \
     workers/AbstractWorker.h \
+    workers/DedicatedWorkerContext.h \
+    workers/DedicatedWorkerThread.h \
     workers/SharedWorker.h \
     workers/WorkerContext.h \
     workers/Worker.h \

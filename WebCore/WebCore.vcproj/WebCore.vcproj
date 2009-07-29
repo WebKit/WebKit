@@ -24080,6 +24080,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\DedicatedWorkerThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\workers\DedicatedWorkerThread.h"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\GenericWorkerTask.h"
 				>
 			</File>

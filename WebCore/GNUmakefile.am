@@ -2345,6 +2345,8 @@ webcore_sources += \
 	WebCore/workers/AbstractWorker.h \
 	WebCore/workers/DedicatedWorkerContext.cpp \
 	WebCore/workers/DedicatedWorkerContext.h \
+	WebCore/workers/DedicatedWorkerThread.cpp \
+	WebCore/workers/DedicatedWorkerThread.h
 	WebCore/workers/GenericWorkerTask.h \
 	WebCore/workers/Worker.cpp \
 	WebCore/workers/Worker.h \

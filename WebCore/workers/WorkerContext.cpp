@@ -138,11 +138,6 @@ bool WorkerContext::hasPendingActivity() const
     return false;
 }
 
-void WorkerContext::addMessage(MessageDestination destination, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
-{
-    m_thread->workerObjectProxy().postConsoleMessageToWorkerObject(destination, source, type, level, message, lineNumber, sourceURL);
-}
-
 void WorkerContext::resourceRetrievedByXMLHttpRequest(unsigned long, const ScriptString&)
 {
     // FIXME: The implementation is pending the fixes in https://bugs.webkit.org/show_bug.cgi?id=23175

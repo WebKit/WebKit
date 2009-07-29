@@ -673,6 +673,8 @@
 		418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */; };
 		418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 418F88030FF957AE0080F045 /* JSAbstractWorker.h */; };
 		419536510F68222400D0C679 /* ScriptObjectQuarantine.h in Headers */ = {isa = PBXBuildFile; fileRef = 419536500F68222400D0C679 /* ScriptObjectQuarantine.h */; };
+		41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */; };
+		41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */; };
 		41BF700B0FE86F49005E8DEC /* MessagePortChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41BF70090FE86F49005E8DEC /* MessagePortChannel.cpp */; };
 		41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */; };
 		41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */; };
@@ -5644,6 +5646,8 @@
 		418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractWorker.cpp; sourceTree = "<group>"; };
 		418F88030FF957AE0080F045 /* JSAbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbstractWorker.h; sourceTree = "<group>"; };
 		419536500F68222400D0C679 /* ScriptObjectQuarantine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptObjectQuarantine.h; sourceTree = "<group>"; };
+		41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DedicatedWorkerThread.cpp; path = workers/DedicatedWorkerThread.cpp; sourceTree = "<group>"; };
+		41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DedicatedWorkerThread.h; path = workers/DedicatedWorkerThread.h; sourceTree = "<group>"; };
 		41BF70090FE86F49005E8DEC /* MessagePortChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessagePortChannel.cpp; sourceTree = "<group>"; };
 		41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagePortChannel.h; sourceTree = "<group>"; };
 		41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformMessagePortChannel.cpp; path = default/PlatformMessagePortChannel.cpp; sourceTree = "<group>"; };
@@ -9928,6 +9932,8 @@
 		2E4346310F546A6800B0F1BA /* workers */ = {
 			isa = PBXGroup;
 			children = (
+				41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */,
+				41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */,
 				4162A44D101145AE00DFF3ED /* DedicatedWorkerContext.cpp */,
 				4162A44E101145AE00DFF3ED /* DedicatedWorkerContext.h */,
 				4162A44F101145AE00DFF3ED /* DedicatedWorkerContext.idl */,
@@ -17056,6 +17062,7 @@
 				CE54FD381016D9A6008B44C8 /* ScriptSourceProvider.h in Headers */,
 				7A74ECBB101839A600BF939E /* InspectorBackend.h in Headers */,
 				7A1E88F6101CC384000C4DF5 /* ScriptArray.h in Headers */,
+				41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19097,6 +19104,7 @@
 				7A74ECBA101839A600BF939E /* InspectorBackend.cpp in Sources */,
 				7A74ECBD101839DA00BF939E /* JSInspectorBackendCustom.cpp in Sources */,
 				7A1E88F5101CC384000C4DF5 /* ScriptArray.cpp in Sources */,
+				41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

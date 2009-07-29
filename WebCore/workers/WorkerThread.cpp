@@ -35,7 +35,6 @@
 #include "PlatformString.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-#include "WorkerObjectProxy.h"
 
 #include <utility>
 #include <wtf/Noncopyable.h>
@@ -62,15 +61,9 @@ WorkerThreadStartupData::WorkerThreadStartupData(const KURL& scriptURL, const St
 {
 }
 
-PassRefPtr<WorkerThread> WorkerThread::create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy)
-{
-    return adoptRef(new WorkerThread(scriptURL, userAgent, sourceCode, workerLoaderProxy, workerObjectProxy));
-}
-
-WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerObjectProxy& workerObjectProxy)
+WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy)
     : m_threadID(0)
     , m_workerLoaderProxy(workerLoaderProxy)
-    , m_workerObjectProxy(workerObjectProxy)
     , m_startupData(WorkerThreadStartupData::create(scriptURL, userAgent, sourceCode))
 {
 }
@@ -101,7 +94,8 @@ void* WorkerThread::workerThread()
 {
     {
         MutexLocker lock(m_threadCreationMutex);
-        m_workerContext = DedicatedWorkerContext::create(m_startupData->m_scriptURL, m_startupData->m_userAgent, this);
+        m_workerContext = createWorkerContext(m_startupData->m_scriptURL, m_startupData->m_userAgent);
+
         if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,
             // forbidExecution() couldn't be called from stop().
@@ -116,10 +110,7 @@ void* WorkerThread::workerThread()
     // WorkerThread::~WorkerThread happens on a different thread where it was created.
     m_startupData.clear();
 
-    m_workerObjectProxy.reportPendingActivity(m_workerContext->hasPendingActivity());
-
-    // Blocks until terminated.
-    m_runLoop.run(m_workerContext.get());
+    runEventLoop();
 
     ThreadIdentifier threadID = m_threadID;
 
@@ -134,6 +125,12 @@ void* WorkerThread::workerThread()
     detachThread(threadID);
 
     return 0;
+}
+
+void WorkerThread::runEventLoop()
+{
+    // Does not return until terminated.
+    m_runLoop.run(m_workerContext.get());
 }
 
 void WorkerThread::stop()

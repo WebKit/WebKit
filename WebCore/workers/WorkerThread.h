@@ -40,13 +40,11 @@ namespace WebCore {
     class String;
     class WorkerContext;
     class WorkerLoaderProxy;
-    class WorkerObjectProxy;
     struct WorkerThreadStartupData;
 
     class WorkerThread : public RefCounted<WorkerThread> {
     public:
-        static PassRefPtr<WorkerThread> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&);
-        ~WorkerThread();
+        virtual ~WorkerThread();
 
         bool start();
         void stop();
@@ -54,18 +52,26 @@ namespace WebCore {
         ThreadIdentifier threadID() const { return m_threadID; }
         WorkerRunLoop& runLoop() { return m_runLoop; }
         WorkerLoaderProxy& workerLoaderProxy() const { return m_workerLoaderProxy; }
-        WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
+
+    protected:
+        WorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&);
+
+        // Factory method for creating a new worker context for the thread.
+        virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL& url, const String& userAgent) = 0;
+
+        // Executes the event loop for the worker thread. Derived classes can override to perform actions before/after entering the event loop.
+        virtual void runEventLoop();
+
+        WorkerContext* workerContext() { return m_workerContext.get(); }
 
     private:
-        WorkerThread(const KURL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&);
-
+        // Static function executed as the core routine on the new thread. Passed a pointer to a WorkerThread object.
         static void* workerThreadStart(void*);
         void* workerThread();
 
         ThreadIdentifier m_threadID;
         WorkerRunLoop m_runLoop;
         WorkerLoaderProxy& m_workerLoaderProxy;
-        WorkerObjectProxy& m_workerObjectProxy;
 
         RefPtr<WorkerContext> m_workerContext;
         Mutex m_threadCreationMutex;
