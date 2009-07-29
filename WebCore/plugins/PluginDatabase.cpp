@@ -165,8 +165,13 @@ PluginPackage* PluginDatabase::pluginForMIMEType(const String& mimeType)
     Vector<PluginPackage*, 2> pluginChoices;
 
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
-        if ((*it)->mimeToDescriptions().contains(key))
-            pluginChoices.append((*it).get());
+        PluginPackage* plugin = (*it).get();
+
+        if (!plugin->isEnabled())
+            continue;
+
+        if (plugin->mimeToDescriptions().contains(key))
+            pluginChoices.append(plugin);
     }
 
     if (pluginChoices.isEmpty())
@@ -188,6 +193,9 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
     HashMap<PluginPackage*, String> mimeTypeForPlugin;
 
     for (PluginSet::const_iterator it = m_plugins.begin(); it != end; ++it) {
+        if (!(*it)->isEnabled())
+            continue;
+
         MIMEToExtensionsMap::const_iterator mime_end = (*it)->mimeToExtensions().end();
 
         for (MIMEToExtensionsMap::const_iterator mime_it = (*it)->mimeToExtensions().begin(); mime_it != mime_end; ++mime_it) {

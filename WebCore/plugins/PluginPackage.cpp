@@ -100,7 +100,8 @@ int PluginPackage::compare(const PluginPackage& compareTo) const
 }
 
 PluginPackage::PluginPackage(const String& path, const time_t& lastModified)
-    : m_isLoaded(false)
+    : m_isEnabled(true)
+    , m_isLoaded(false)
     , m_loadCount(0)
     , m_path(path)
     , m_moduleVersion(0)
@@ -142,6 +143,11 @@ void PluginPackage::unloadWithoutShutdown()
     freeLibrarySoon();
 
     m_isLoaded = false;
+}
+
+void PluginPackage::setEnabled(bool enabled)
+{
+    m_isEnabled = enabled;
 }
 
 PassRefPtr<PluginPackage> PluginPackage::createPackage(const String& path, const time_t& lastModified)
