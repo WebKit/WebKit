@@ -109,6 +109,7 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
 
     text-align: right;
     font-family: Arial;
+    font-size: 16px;
     font-weight: bold;
     color: white;
 }
@@ -133,6 +134,7 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 
     text-align: right;
     font-family: Arial;
+    font-size: 16px;
     font-weight: bold;
     color: white;
 }
