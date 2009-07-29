@@ -150,6 +150,7 @@ zoom
 -webkit-animation-duration
 -webkit-animation-iteration-count
 -webkit-animation-name
+-webkit-animation-play-state
 -webkit-animation-timing-function
 -webkit-appearance
 -webkit-backface-visibility

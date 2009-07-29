@@ -29,11 +29,13 @@ Function parameters:
     If the CSS property name is "webkitTransform.N", expected value must be a number corresponding to the Nth element of the matrix
 
 */
-function runAnimationTest(expected, callback, event)
+function runAnimationTest(expected, callback, event, disablePauseAnimationAPI)
 {
     var result = "";
     var hasPauseAnimationAPI = ('layoutTestController' in window) && ('pauseAnimationAtTimeOnElementWithId' in layoutTestController);
-    
+    if (disablePauseAnimationAPI)
+        hasPauseAnimationAPI = false;
+
     function isCloseEnough(actual, desired, tolerance)
     {
         var diff = Math.abs(actual - desired);

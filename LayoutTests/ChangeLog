@@ -1,3 +1,22 @@
+2009-07-29  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Adding -webkit-animation-play-state back in
+        https://bugs.webkit.org/show_bug.cgi?id=26867
+
+        This tests play-state for both hardware and software animations. I also
+        added the ability to disable the use of the pauseAnimation API because
+        that API interferes with the operation of play-state. I also fixed some
+        tests which now print out the -webkit-animation-play-state property
+
+        * animations/animation-test-helpers.js:
+        * animations/play-state-expected.txt: Added.
+        * animations/play-state.html: Added.
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2009-07-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Adam Treat.
