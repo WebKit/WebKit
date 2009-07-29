@@ -161,6 +161,18 @@ WebInspector.DataGrid.prototype = {
         return this._dataTableBody;
     },
 
+    addCreationNode: function(hasChildren)
+    {
+        if (this.creationNode)
+            this.creationNode.makeNormal();
+
+        var emptyData = {};
+        for (var column in this.columns)
+            emptyData[column] = '';
+        this.creationNode = new WebInspector.CreationDataGridNode(emptyData, hasChildren);
+        this.appendChild(this.creationNode);
+    },
+
     appendChild: function(child)
     {
         this.insertChild(child, this.children.length);
@@ -883,3 +895,19 @@ WebInspector.DataGridNode.prototype = {
 }
 
 WebInspector.DataGridNode.prototype.__proto__ = WebInspector.Object.prototype;
+
+WebInspector.CreationDataGridNode = function(data, hasChildren)
+{
+    WebInspector.DataGridNode.call(this, data, hasChildren);
+    this.isCreationNode = true;
+}
+
+WebInspector.CreationDataGridNode.prototype = {
+    makeNormal: function()
+    {
+        delete this.isCreationNode;
+        delete this.makeNormal;
+    }
+}
+
+WebInspector.CreationDataGridNode.prototype.__proto__ = WebInspector.DataGridNode.prototype;

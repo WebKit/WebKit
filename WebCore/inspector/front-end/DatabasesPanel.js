@@ -395,6 +395,7 @@ WebInspector.DatabasesPanel.prototype = {
         var length = nodes.length;
         for (var i = 0; i < length; ++i)
             dataGrid.appendChild(nodes[i]);
+        dataGrid.addCreationNode(false);
         if (length > 0)
             nodes[0].selected = true;
         return dataGrid;
