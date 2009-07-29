@@ -1,3 +1,12 @@
+2009-07-28  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Follow-on fix to r35582.  Replace main thread assertions with WebCoreObjCScheduleDeallocateOnMainThread
+        in -dealloc overrides in DOMObject subclasses.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+
 2009-07-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
 
         Reviewed by Adam Treat.
