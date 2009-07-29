@@ -79,7 +79,7 @@ const AtomicString& HTMLOptionElement::formControlType() const
 
 String HTMLOptionElement::text() const
 {
-    return OptionElement::collectOptionText(m_data, this);
+    return OptionElement::collectOptionLabelOrText(m_data, this);
 }
 
 void HTMLOptionElement::setText(const String &text, ExceptionCode& ec)

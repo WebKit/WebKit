@@ -67,7 +67,7 @@ int OptionElement::optionIndex(SelectElement* selectElement, const Element* elem
     return 0;
 }
 
-String OptionElement::collectOptionText(const OptionElementData& data, const Element* element)
+String OptionElement::collectOptionLabelOrText(const OptionElementData& data, const Element* element)
 {
     Document* document = element->document();
     String text;
@@ -75,22 +75,31 @@ String OptionElement::collectOptionText(const OptionElementData& data, const Ele
     // WinIE does not use the label attribute, so as a quirk, we ignore it.
     if (!document->inCompatMode())
         text = data.label();
+    if (text.isEmpty())
+        text = collectOptionInnerText(element);
+    return normalizeText(document, text);
+}
 
-    if (text.isEmpty()) {
-        Node* n = element->firstChild();
-        while (n) {
-            if (n->nodeType() == Node::TEXT_NODE || n->nodeType() == Node::CDATA_SECTION_NODE)
-                text += n->nodeValue();
+String OptionElement::collectOptionInnerText(const Element* element)
+{
+    String text;
+    Node* n = element->firstChild();
+    while (n) {
+        if (n->nodeType() == Node::TEXT_NODE || n->nodeType() == Node::CDATA_SECTION_NODE)
+            text += n->nodeValue();
 
-            // skip script content
-            if (n->isElementNode() && toScriptElement(static_cast<Element*>(n)))
-                n = n->traverseNextSibling(element);
-            else
-                n = n->traverseNextNode(element);
-        }
+        // skip script content
+        if (n->isElementNode() && toScriptElement(static_cast<Element*>(n)))
+            n = n->traverseNextSibling(element);
+        else
+            n = n->traverseNextNode(element);
     }
+    return text;
+}
 
-    text = document->displayStringModifiedByEncoding(text);
+String OptionElement::normalizeText(const Document* document, const String& src)
+{
+    String text = document->displayStringModifiedByEncoding(src);
 
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
     text = text.stripWhiteSpace();
@@ -104,9 +113,9 @@ String OptionElement::collectOptionTextRespectingGroupLabel(const OptionElementD
 {
     Element* parentElement = static_cast<Element*>(element->parentNode());
     if (parentElement && toOptionGroupElement(parentElement))
-        return "    " + collectOptionText(data, element);
+        return "    " + collectOptionLabelOrText(data, element);
 
-    return collectOptionText(data, element);
+    return collectOptionLabelOrText(data, element);
 }
 
 String OptionElement::collectOptionValue(const OptionElementData& data, const Element* element)
@@ -116,7 +125,7 @@ String OptionElement::collectOptionValue(const OptionElementData& data, const El
         return value;
 
     // Use the text if the value wasn't set.
-    return collectOptionText(data, element).stripWhiteSpace();
+    return collectOptionInnerText(element).stripWhiteSpace();
 }
 
 // OptionElementData
