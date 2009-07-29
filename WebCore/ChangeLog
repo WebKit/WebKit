@@ -1,5 +1,15 @@
 2009-07-29  Chris Fleizach  <cfleizach@apple.com>
 
+        Build fix for windows after landing
+        Bug 27807 - AX: move re-usable code into more common areas for other platforms
+   
+        Apparently bzero doesn't exist on windows.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+
+2009-07-29  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Justin Garcia.
 
         Bug 27807 - AX: move re-usable code into more common areas for other platforms

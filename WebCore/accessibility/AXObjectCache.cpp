@@ -364,7 +364,7 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
 {
     // This memory must be bzero'd so instances of TextMarkerData can be tested for byte-equivalence.
     // This also allows callers to check for failure by looking at textMarkerData upon return.
-    bzero(&textMarkerData, sizeof(TextMarkerData));
+    memset(&textMarkerData, 0, sizeof(TextMarkerData));
     
     if (visiblePos.isNull())
         return;
