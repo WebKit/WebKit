@@ -60,19 +60,22 @@ void WMLOnEventElement::parseMappedAttribute(MappedAttribute* attr)
         WMLElement::parseMappedAttribute(attr);
 }
 
+static inline WMLEventHandlingElement* eventHandlingParent(Node* parent)
+{
+    ASSERT(parent);
+    if (!parent || !parent->isWMLElement())
+        return 0;
+
+    return toWMLEventHandlingElement(static_cast<WMLElement*>(parent));
+}
+
 void WMLOnEventElement::registerTask(WMLTaskElement* task)
 {
     if (m_type == WMLIntrinsicEventUnknown)
         return;
 
     // Register intrinsic event to the event handler of the owner of onevent element 
-    Node* parent = parentNode();
-    ASSERT(parent);
-
-    if (!parent || !parent->isWMLElement())
-        return;
-
-    WMLEventHandlingElement* eventHandlingElement = toWMLEventHandlingElement(static_cast<WMLElement*>(parent));
+    WMLEventHandlingElement* eventHandlingElement = eventHandlingParent(parentNode());
     if (!eventHandlingElement)
         return;
 
@@ -81,6 +84,15 @@ void WMLOnEventElement::registerTask(WMLTaskElement* task)
     RefPtr<WMLIntrinsicEvent> event = WMLIntrinsicEvent::createWithTask(task);
     if (!eventHandlingElement->eventHandler()->registerIntrinsicEvent(m_type, event))
         reportWMLError(document(), WMLErrorConflictingEventBinding);
+}
+
+void WMLOnEventElement::deregisterTask(WMLTaskElement*)
+{
+    WMLEventHandlingElement* eventHandlingElement = eventHandlingParent(parentNode());
+    if (!eventHandlingElement)
+        return;
+
+    eventHandlingElement->eventHandler()->deregisterIntrinsicEvent(m_type);
 }
 
 }

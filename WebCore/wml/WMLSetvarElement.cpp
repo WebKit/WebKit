@@ -65,6 +65,19 @@ void WMLSetvarElement::insertedIntoDocument()
         static_cast<WMLTaskElement*>(parent)->registerVariableSetter(this);
 }
 
+void WMLSetvarElement::removedFromDocument()
+{
+    Node* parent = parentNode();
+    ASSERT(parent);
+
+    if (parent && parent->isWMLElement()) {
+        if (static_cast<WMLElement*>(parent)->isWMLTaskElement())
+            static_cast<WMLTaskElement*>(parent)->deregisterVariableSetter(this);
+    }
+
+    WMLElement::removedFromDocument(); 
+}
+
 String WMLSetvarElement::name() const
 {
     return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::nameAttr), WMLErrorInvalidVariableName);

@@ -38,6 +38,12 @@ bool WMLIntrinsicEventHandler::registerIntrinsicEvent(WMLIntrinsicEventType type
     return true;
 }
 
+void WMLIntrinsicEventHandler::deregisterIntrinsicEvent(WMLIntrinsicEventType type)
+{
+    if (m_events.contains(type))
+        m_events.remove(type);
+}
+
 void WMLIntrinsicEventHandler::triggerIntrinsicEvent(WMLIntrinsicEventType type) const
 {
     RefPtr<WMLIntrinsicEvent> event = m_events.get(type);

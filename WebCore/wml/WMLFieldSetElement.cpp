@@ -66,8 +66,8 @@ void WMLFieldSetElement::insertedIntoDocument()
 
 void WMLFieldSetElement::removedFromDocument()
 {
-    WMLElement::removedFromDocument();
     m_insertedLegendElement.clear();
+    WMLElement::removedFromDocument();
 }
 
 RenderObject* WMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyle*)

@@ -61,10 +61,34 @@ void WMLTaskElement::insertedIntoDocument()
         static_cast<WMLOnEventElement*>(parent)->registerTask(this);
 }
 
+void WMLTaskElement::removedFromDocument()
+{
+    Node* parent = parentNode();
+    ASSERT(parent);
+
+    if (parent && parent->isWMLElement()) {
+        if (parent->hasTagName(anchorTag))
+            static_cast<WMLAnchorElement*>(parent)->deregisterTask(this);
+        else if (parent->hasTagName(doTag))
+            static_cast<WMLDoElement*>(parent)->deregisterTask(this);
+        else if (parent->hasTagName(oneventTag))
+            static_cast<WMLOnEventElement*>(parent)->deregisterTask(this);
+    }
+
+    WMLElement::removedFromDocument();
+}
+
 void WMLTaskElement::registerVariableSetter(WMLSetvarElement* element)
 {
-    ASSERT(element);
-    m_variableSetterElements.add(element);
+    ASSERT(m_variableSetterElements.find(element) == WTF::notFound);
+    m_variableSetterElements.append(element);
+}
+
+void WMLTaskElement::deregisterVariableSetter(WMLSetvarElement* element)
+{
+    size_t position = m_variableSetterElements.find(element);
+    ASSERT(position != WTF::notFound);
+    m_variableSetterElements.remove(position);
 }
 
 void WMLTaskElement::storeVariableState(WMLPageState* pageState)
@@ -73,8 +97,8 @@ void WMLTaskElement::storeVariableState(WMLPageState* pageState)
         return;
 
     WMLVariableMap variables;
-    HashSet<WMLSetvarElement*>::iterator it = m_variableSetterElements.begin();
-    HashSet<WMLSetvarElement*>::iterator end = m_variableSetterElements.end();
+    Vector<WMLSetvarElement*>::iterator it = m_variableSetterElements.begin();
+    Vector<WMLSetvarElement*>::iterator end = m_variableSetterElements.end();
 
     for (; it != end; ++it) {
         WMLSetvarElement* setterElement = (*it);

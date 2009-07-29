@@ -37,7 +37,8 @@ public:
 
 private:
     friend class WMLTaskElement;
-    void registerTask(WMLTaskElement* task) { m_task = task; }
+    void registerTask(WMLTaskElement*);
+    void deregisterTask(WMLTaskElement*);
 
     WMLTaskElement* m_task;
 };

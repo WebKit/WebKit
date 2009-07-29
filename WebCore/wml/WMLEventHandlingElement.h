@@ -42,6 +42,7 @@ public:
 
     Vector<WMLDoElement*>& doElements() { return m_doElements; }
     void registerDoElement(WMLDoElement*, Document*);
+    void deregisterDoElement(WMLDoElement*);
 
 private:
     OwnPtr<WMLIntrinsicEventHandler> m_eventHandler;

@@ -36,6 +36,7 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
 
     void registerTask(WMLTaskElement*);
+    void deregisterTask(WMLTaskElement*);
 
 private:
     WMLIntrinsicEventType m_type;

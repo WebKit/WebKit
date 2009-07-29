@@ -31,6 +31,7 @@ public:
     WMLPostfieldElement(const QualifiedName& tagName, Document*);
 
     virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
     String name() const;
     String value() const;

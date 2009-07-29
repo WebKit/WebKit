@@ -50,7 +50,15 @@ WMLGoElement::WMLGoElement(const QualifiedName& tagName, Document* doc)
  
 void WMLGoElement::registerPostfieldElement(WMLPostfieldElement* postfield)
 {
+    ASSERT(m_postfieldElements.find(postfield) == WTF::notFound);
     m_postfieldElements.append(postfield);
+}
+ 
+void WMLGoElement::deregisterPostfieldElement(WMLPostfieldElement* postfield)
+{
+    size_t position = m_postfieldElements.find(postfield);
+    ASSERT(position != WTF::notFound);
+    m_postfieldElements.remove(position);
 }
 
 void WMLGoElement::parseMappedAttribute(MappedAttribute* attr)

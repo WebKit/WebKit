@@ -24,7 +24,7 @@
 #if ENABLE(WML)
 #include "WMLElement.h"
 
-#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -39,15 +39,17 @@ public:
     virtual bool isWMLTaskElement() const { return true; }
 
     virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
     virtual void executeTask(Event*) = 0;
 
     void registerVariableSetter(WMLSetvarElement*);
+    void deregisterVariableSetter(WMLSetvarElement*);
 
 protected:
     void storeVariableState(WMLPageState*);
 
 private:
-    HashSet<WMLSetvarElement*> m_variableSetterElements;
+    Vector<WMLSetvarElement*> m_variableSetterElements;
 };
 
 }

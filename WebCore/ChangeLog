@@ -1,3 +1,59 @@
+2009-07-28  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        [WML] WML*Element classes mostly implement insertedIntoDocument(), not removedFromDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=27786
+
+        WML*Element classes mostly implement insertedIntoDocument(), not removedFromDocument().
+        The only case where this is relevant in WML is error handling. The parsed WML
+        tree fragment is inserted in an XHTML compound error document. This requires
+        removedFromDocument() to be correctly implemented otherwhise we run into
+        trouble (visible when using run-webkit-tests fast/wml --random).
+
+        * wml/WMLAnchorElement.cpp:
+        (WebCore::WMLAnchorElement::registerTask):
+        (WebCore::WMLAnchorElement::deregisterTask):
+        * wml/WMLAnchorElement.h:
+        * wml/WMLDoElement.cpp:
+        (WebCore::WMLDoElement::removedFromDocument):
+        (WebCore::WMLDoElement::registerTask):
+        (WebCore::WMLDoElement::deregisterTask):
+        * wml/WMLDoElement.h:
+        * wml/WMLEventHandlingElement.cpp:
+        (WebCore::WMLEventHandlingElement::registerDoElement):
+        (WebCore::WMLEventHandlingElement::deregisterDoElement):
+        * wml/WMLEventHandlingElement.h:
+        * wml/WMLFieldSetElement.cpp:
+        (WebCore::WMLFieldSetElement::removedFromDocument):
+        * wml/WMLGoElement.cpp:
+        (WebCore::WMLGoElement::registerPostfieldElement):
+        (WebCore::WMLGoElement::deregisterPostfieldElement):
+        * wml/WMLGoElement.h:
+        * wml/WMLIntrinsicEventHandler.cpp:
+        (WebCore::WMLIntrinsicEventHandler::deregisterIntrinsicEvent):
+        * wml/WMLIntrinsicEventHandler.h:
+        * wml/WMLOnEventElement.cpp:
+        (WebCore::eventHandlingParent):
+        (WebCore::WMLOnEventElement::registerTask):
+        (WebCore::WMLOnEventElement::deregisterTask):
+        * wml/WMLOnEventElement.h:
+        * wml/WMLPostfieldElement.cpp:
+        (WebCore::WMLPostfieldElement::removedFromDocument):
+        * wml/WMLPostfieldElement.h:
+        * wml/WMLSetvarElement.cpp:
+        (WebCore::WMLSetvarElement::removedFromDocument):
+        * wml/WMLSetvarElement.h:
+        * wml/WMLTaskElement.cpp:
+        (WebCore::WMLTaskElement::removedFromDocument):
+        (WebCore::WMLTaskElement::registerVariableSetter):
+        (WebCore::WMLTaskElement::deregisterVariableSetter):
+        (WebCore::WMLTaskElement::storeVariableState):
+        * wml/WMLTaskElement.h:
+        * wml/WMLTimerElement.cpp:
+        (WebCore::WMLTimerElement::removedFromDocument):
+        * wml/WMLTimerElement.h:
+
 2009-07-28  David Levin  <levin@chromium.org>
 
         Suggested by Drew Wilson.

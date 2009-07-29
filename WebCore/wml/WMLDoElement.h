@@ -35,12 +35,14 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
     virtual void attach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void recalcStyle(StyleChange);
 
-    void registerTask(WMLTaskElement* task) { m_task = task; }
+    void registerTask(WMLTaskElement*);
+    void deregisterTask(WMLTaskElement*);
 
     bool isActive() const { return m_isActive; }
     String label() const;

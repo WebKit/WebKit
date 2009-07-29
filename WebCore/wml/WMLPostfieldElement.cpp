@@ -52,6 +52,17 @@ void WMLPostfieldElement::insertedIntoDocument()
     static_cast<WMLGoElement*>(parent)->registerPostfieldElement(this);
 }
 
+void WMLPostfieldElement::removedFromDocument()
+{
+    Node* parent = parentNode();
+    ASSERT(parent);
+
+    if (parent->hasTagName(goTag))
+        static_cast<WMLGoElement*>(parent)->deregisterPostfieldElement(this);
+
+    WMLElement::removedFromDocument();
+}
+
 String WMLPostfieldElement::name() const
 {
     return parseValueSubstitutingVariableReferences(getAttribute(HTMLNames::nameAttr));

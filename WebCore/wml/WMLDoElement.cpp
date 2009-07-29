@@ -122,6 +122,19 @@ void WMLDoElement::insertedIntoDocument()
         eventHandlingElement->registerDoElement(this, document());
 }
 
+void WMLDoElement::removedFromDocument()
+{
+    Node* parent = parentNode();
+    ASSERT(parent);
+
+    if (parent  && parent->isWMLElement()) {
+        if (WMLEventHandlingElement* eventHandlingElement = toWMLEventHandlingElement(static_cast<WMLElement*>(parent)))
+            eventHandlingElement->deregisterDoElement(this);
+    }
+
+    WMLElement::removedFromDocument();
+}
+
 void WMLDoElement::attach()
 {
     WMLElement::attach();
@@ -152,6 +165,18 @@ void WMLDoElement::recalcStyle(StyleChange change)
 
     if (renderer())
         renderer()->updateFromElement();
+}
+
+void WMLDoElement::registerTask(WMLTaskElement* task)
+{
+    ASSERT(!m_task);
+    m_task = task;
+}
+
+void WMLDoElement::deregisterTask(WMLTaskElement* task)
+{
+    ASSERT(m_task == task);
+    m_task = 0;
 }
 
 String WMLDoElement::label() const

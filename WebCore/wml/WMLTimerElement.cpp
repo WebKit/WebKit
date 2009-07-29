@@ -70,6 +70,21 @@ void WMLTimerElement::insertedIntoDocument()
     }
 }
 
+void WMLTimerElement::removedFromDocument()
+{
+    Node* parent = parentNode();
+    ASSERT(parent);
+
+    if (parent && parent->isWMLElement()) {
+        if (parent->hasTagName(cardTag)) {
+            m_card->setIntrinsicEventTimer(0);
+            m_card = 0;
+        }
+    }
+
+    WMLElement::removedFromDocument();
+}
+
 void WMLTimerElement::timerFired(Timer<WMLTimerElement>*)
 {
     if (!m_card)

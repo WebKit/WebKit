@@ -61,8 +61,20 @@ void WMLEventHandlingElement::registerDoElement(WMLDoElement* doElement, Documen
         }
     }
 
+    ASSERT(m_doElements.find(doElement) == WTF::notFound);
     m_doElements.append(doElement);
     doElement->setActive(true);
+}
+
+void WMLEventHandlingElement::deregisterDoElement(WMLDoElement* doElement)
+{
+    doElement->setActive(false);
+
+    size_t position = m_doElements.find(doElement);
+    if (position == WTF::notFound)
+        return;
+
+    m_doElements.remove(position);
 }
 
 WMLEventHandlingElement* toWMLEventHandlingElement(WMLElement* element)
