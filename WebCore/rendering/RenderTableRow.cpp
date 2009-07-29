@@ -147,6 +147,11 @@ void RenderTableRow::layout()
 
 IntRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
+    ASSERT(parent());
+
+    if (repaintContainer == this)
+        return RenderBox::clippedOverflowRectForRepaint(repaintContainer);
+
     // For now, just repaint the whole table.
     // FIXME: Find a better way to do this, e.g., need to repaint all the cells that we
     // might have propagated a background color into.
