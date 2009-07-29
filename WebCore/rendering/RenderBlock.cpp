@@ -553,10 +553,11 @@ void RenderBlock::removeChild(RenderObject* oldChild)
 int RenderBlock::overflowHeight(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
-        int shadowHeight = 0;
-        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
-            shadowHeight = max(boxShadow->y + boxShadow->blur + boxShadow->spread, shadowHeight);
-        int inflatedHeight = height() + shadowHeight;
+        int shadowTop;
+        int shadowBottom;
+        style()->getBoxShadowVerticalExtent(shadowTop, shadowBottom);
+
+        int inflatedHeight = height() + shadowBottom;
         if (hasReflection())
             inflatedHeight = max(inflatedHeight, reflectionBox().bottom());
         return inflatedHeight;
@@ -567,10 +568,11 @@ int RenderBlock::overflowHeight(bool includeInterior) const
 int RenderBlock::overflowWidth(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
-        int shadowWidth = 0;
-        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
-            shadowWidth = max(boxShadow->x + boxShadow->blur + boxShadow->spread, shadowWidth);
-        int inflatedWidth = width() + shadowWidth;
+        int shadowLeft;
+        int shadowRight;
+        style()->getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
+
+        int inflatedWidth = width() + shadowRight;
         if (hasReflection())
             inflatedWidth = max(inflatedWidth, reflectionBox().right());
         return inflatedWidth;
@@ -581,9 +583,10 @@ int RenderBlock::overflowWidth(bool includeInterior) const
 int RenderBlock::overflowLeft(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
-        int shadowLeft = 0;
-        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
-            shadowLeft = min(boxShadow->x - boxShadow->blur - boxShadow->spread, shadowLeft);
+        int shadowLeft;
+        int shadowRight;
+        style()->getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
+
         int left = shadowLeft;
         if (hasReflection())
             left = min(left, reflectionBox().x());
@@ -595,9 +598,10 @@ int RenderBlock::overflowLeft(bool includeInterior) const
 int RenderBlock::overflowTop(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
-        int shadowTop = 0;
-        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next)
-            shadowTop = min(boxShadow->y - boxShadow->blur - boxShadow->spread, shadowTop);
+        int shadowTop;
+        int shadowBottom;
+        style()->getBoxShadowVerticalExtent(shadowTop, shadowBottom);
+
         int top = shadowTop;
         if (hasReflection())
             top = min(top, reflectionBox().y());
@@ -610,17 +614,12 @@ IntRect RenderBlock::overflowRect(bool includeInterior) const
 {
     if (!includeInterior && hasOverflowClip()) {
         IntRect box = borderBoxRect();
-        int shadowLeft = 0;
-        int shadowRight = 0;
-        int shadowTop = 0;
-        int shadowBottom = 0;
 
-        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-            shadowLeft = min(boxShadow->x - boxShadow->blur - boxShadow->spread, shadowLeft);
-            shadowRight = max(boxShadow->x + boxShadow->blur + boxShadow->spread, shadowRight);
-            shadowTop = min(boxShadow->y - boxShadow->blur - boxShadow->spread, shadowTop);
-            shadowBottom = max(boxShadow->y + boxShadow->blur + boxShadow->spread, shadowBottom);
-        }
+        int shadowLeft;
+        int shadowRight;
+        int shadowTop;
+        int shadowBottom;
+        style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
 
         box.move(shadowLeft, shadowTop);
         box.setWidth(box.width() - shadowLeft + shadowRight);
@@ -870,13 +869,17 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     m_overflowHeight = max(m_overflowHeight, height());
 
     if (!hasOverflowClip()) {
-        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-            m_overflowLeft = min(m_overflowLeft, boxShadow->x - boxShadow->blur - boxShadow->spread);
-            m_overflowWidth = max(m_overflowWidth, width() + boxShadow->x + boxShadow->blur + boxShadow->spread);
-            m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur - boxShadow->spread);
-            m_overflowHeight = max(m_overflowHeight, height() + boxShadow->y + boxShadow->blur + boxShadow->spread);
-        }
-        
+        int shadowLeft;
+        int shadowRight;
+        int shadowTop;
+        int shadowBottom;
+        style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
+
+        m_overflowLeft = min(m_overflowLeft, shadowLeft);
+        m_overflowWidth = max(m_overflowWidth, width() + shadowRight);
+        m_overflowTop = min(m_overflowTop, shadowTop);
+        m_overflowHeight = max(m_overflowHeight, height() + shadowBottom);
+
         if (hasReflection()) {
             m_overflowTop = min(m_overflowTop, reflectionBox().y());
             m_overflowHeight = max(m_overflowHeight, reflectionBox().bottom());

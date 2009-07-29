@@ -331,6 +331,8 @@ void RenderReplaced::adjustOverflowForBoxShadowAndReflect()
 {
     IntRect overflow;
     for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
+        if (boxShadow->style == Inset)
+            continue;
         IntRect shadow = borderBoxRect();
         shadow.move(boxShadow->x, boxShadow->y);
         shadow.inflate(boxShadow->blur + boxShadow->spread);

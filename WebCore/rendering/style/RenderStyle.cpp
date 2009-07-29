@@ -695,7 +695,7 @@ void RenderStyle::addBindingURI(StringImpl* uri)
 
 void RenderStyle::setTextShadow(ShadowData* val, bool add)
 {
-    ASSERT(!val || !val->spread);
+    ASSERT(!val || !val->spread && val->style == Normal);
 
     StyleRareInheritedData* rareData = rareInheritedData.access();
     if (!add) {
@@ -904,6 +904,55 @@ void RenderStyle::setBlendedFontSize(int size)
     desc.setComputedSize(size);
     setFontDescription(desc);
     font().update(font().fontSelector());
+}
+
+void RenderStyle::getBoxShadowExtent(int &top, int &right, int &bottom, int &left) const
+{
+    top = 0;
+    right = 0;
+    bottom = 0;
+    left = 0;
+
+    for (ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
+        if (boxShadow->style == Inset)
+            continue;
+        int blurAndSpread = boxShadow->blur + boxShadow->spread;
+
+        top = min(top, boxShadow->y - blurAndSpread);
+        right = max(right, boxShadow->x + blurAndSpread);
+        bottom = max(bottom, boxShadow->y + blurAndSpread);
+        left = min(left, boxShadow->x - blurAndSpread);
+    }
+}
+
+void RenderStyle::getBoxShadowHorizontalExtent(int &left, int &right) const
+{
+    left = 0;
+    right = 0;
+
+    for (ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
+        if (boxShadow->style == Inset)
+            continue;
+        int blurAndSpread = boxShadow->blur + boxShadow->spread;
+
+        left = min(left, boxShadow->x - blurAndSpread);
+        right = max(right, boxShadow->x + blurAndSpread);
+    }
+}
+
+void RenderStyle::getBoxShadowVerticalExtent(int &top, int &bottom) const
+{
+    top = 0;
+    bottom = 0;
+
+    for (ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
+        if (boxShadow->style == Inset)
+            continue;
+        int blurAndSpread = boxShadow->blur + boxShadow->spread;
+
+        top = min(top, boxShadow->y - blurAndSpread);
+        bottom = max(bottom, boxShadow->y + blurAndSpread);
+    }
 }
 
 } // namespace WebCore

@@ -1,3 +1,47 @@
+2009-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Inset box shadows are incorrectly accounted for in visual overflow
+        computations
+        https://bugs.webkit.org/show_bug.cgi?id=27811
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally): Use
+            getBoxShadowHorizontalExtent().
+        (WebCore::InlineFlowBox::placeBoxesVertically): Use
+            getBoxShadowVerticalExtent(). Removed duplicate code to get the
+            text-shadow overflow.
+        (WebCore::InlineFlowBox::paint): Use getBoxShadowHorizontalExtent().
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::overflowHeight): Use
+            getBoxShadowVerticalExtent().
+        (WebCore::RenderBlock::overflowWidth): Use
+            getBoxShadowHorizontalExtent().
+        (WebCore::RenderBlock::overflowLeft): Ditto.
+        (WebCore::RenderBlock::overflowTop): Use getBoxShadowVerticalExtent().
+        (WebCore::RenderBlock::overflowRect): Use getBoxShadowExtent().
+        (WebCore::RenderBlock::layoutBlock): Ditto.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Ditto.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateRects): Exclude inset shadows.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded): Use
+            getBoxShadowHorizontalExtent() and getBoxShadowVerticalExtent().
+        (WebCore::RenderObject::adjustRectForOutlineAndShadow): Exclude inset
+            shadows.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::adjustOverflowForBoxShadowAndReflect): Ditto.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow): Also assert that text-shadows are
+            not inset.
+        (WebCore::RenderStyle::getBoxShadowExtent): Added. Excludes inset
+            shadows.
+        (WebCore::RenderStyle::getBoxShadowHorizontalExtent): Ditto.
+        (WebCore::RenderStyle::getBoxShadowVerticalExtent): Ditto.
+        * rendering/style/RenderStyle.h:
+
 2009-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -606,7 +606,12 @@ public:
     unsigned int boxOrdinalGroup() const { return rareNonInheritedData->flexibleBox->ordinal_group; }
     EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(rareNonInheritedData->flexibleBox->orient); }
     EBoxAlignment boxPack() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->pack); }
+
     ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
+    void getBoxShadowExtent(int &top, int &right, int &bottom, int &left) const;
+    void getBoxShadowHorizontalExtent(int &left, int &right) const;
+    void getBoxShadowVerticalExtent(int &top, int &bottom) const;
+
     StyleReflection* boxReflect() const { return rareNonInheritedData->m_boxReflect.get(); }
     EBoxSizing boxSizing() const { return static_cast<EBoxSizing>(box->boxSizing); }
     Length marqueeIncrement() const { return rareNonInheritedData->marquee->increment; }

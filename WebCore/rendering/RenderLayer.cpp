@@ -2707,10 +2707,13 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
         if (ShadowData* boxShadow = renderer()->style()->boxShadow()) {
             IntRect overflow = layerBounds;
             do {
-                IntRect shadowRect = layerBounds;
-                shadowRect.move(boxShadow->x, boxShadow->y);
-                shadowRect.inflate(boxShadow->blur + boxShadow->spread);
-                overflow.unite(shadowRect);
+                if (boxShadow->style == Normal) {
+                    IntRect shadowRect = layerBounds;
+                    shadowRect.move(boxShadow->x, boxShadow->y);
+                    shadowRect.inflate(boxShadow->blur + boxShadow->spread);
+                    overflow.unite(shadowRect);
+                }
+
                 boxShadow = boxShadow->next;
             } while (boxShadow);
             backgroundRect.intersect(overflow);

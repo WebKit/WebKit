@@ -253,12 +253,10 @@ int InlineFlowBox::placeBoxesHorizontally(int xPos, int& leftPosition, int& righ
     // Set our x position.
     setX(xPos);
 
-    int boxShadowLeft = 0;
-    int boxShadowRight = 0;
-    for (ShadowData* boxShadow = renderer()->style(m_firstLine)->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-        boxShadowLeft = min(boxShadow->x - boxShadow->blur - boxShadow->spread, boxShadowLeft);
-        boxShadowRight = max(boxShadow->x + boxShadow->blur + boxShadow->spread, boxShadowRight);
-    }
+    int boxShadowLeft;
+    int boxShadowRight;
+    renderer()->style(m_firstLine)->getBoxShadowHorizontalExtent(boxShadowLeft, boxShadowRight);
+
     leftPosition = min(xPos + boxShadowLeft, leftPosition);
 
     int startX = xPos;
@@ -523,15 +521,7 @@ void InlineFlowBox::placeBoxesVertically(int yPos, int maxHeight, int maxAscent,
             const Font& font = curr->renderer()->style(m_firstLine)->font();
             newY += curr->baselinePosition(false) - font.ascent();
 
-            for (ShadowData* shadow = curr->renderer()->style()->textShadow(); shadow; shadow = shadow->next) {
-                overflowTop = min(overflowTop, shadow->y - shadow->blur);
-                overflowBottom = max(overflowBottom, shadow->y + shadow->blur);
-            }
-
-            for (ShadowData* boxShadow = curr->renderer()->style(m_firstLine)->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-                overflowTop = min(overflowTop, boxShadow->y - boxShadow->blur - boxShadow->spread);
-                overflowBottom = max(overflowBottom, boxShadow->y + boxShadow->blur + boxShadow->spread);
-            }
+            curr->renderer()->style(m_firstLine)->getBoxShadowVerticalExtent(overflowTop, overflowBottom);
 
             for (ShadowData* textShadow = curr->renderer()->style(m_firstLine)->textShadow(); textShadow; textShadow = textShadow->next) {
                 overflowTop = min(overflowTop, textShadow->y - textShadow->blur);
@@ -598,16 +588,16 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
 {
     int xPos = tx + m_x - renderer()->maximalOutlineSize(paintInfo.phase);
     int w = width() + 2 * renderer()->maximalOutlineSize(paintInfo.phase);
-    int shadowLeft = 0;
-    int shadowRight = 0;
-    for (ShadowData* boxShadow = renderer()->style(m_firstLine)->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-        shadowLeft = min(boxShadow->x - boxShadow->blur - boxShadow->spread, shadowLeft);
-        shadowRight = max(boxShadow->x + boxShadow->blur + boxShadow->spread, shadowRight);
-    }
+    int shadowLeft;
+    int shadowRight;
+
+    renderer()->style(m_firstLine)->getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
+
     for (ShadowData* textShadow = renderer()->style(m_firstLine)->textShadow(); textShadow; textShadow = textShadow->next) {
         shadowLeft = min(textShadow->x - textShadow->blur, shadowLeft);
         shadowRight = max(textShadow->x + textShadow->blur, shadowRight);
     }
+
     xPos += shadowLeft;
     w += -shadowLeft + shadowRight;
     bool intersectsDamageRect = xPos < paintInfo.rect.right() && xPos + w > paintInfo.rect.x();

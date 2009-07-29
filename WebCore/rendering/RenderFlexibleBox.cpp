@@ -279,13 +279,17 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
         m_overflowWidth = width();
 
     if (!hasOverflowClip()) {
-        for (ShadowData* boxShadow = style()->boxShadow(); boxShadow; boxShadow = boxShadow->next) {
-            m_overflowLeft = min(m_overflowLeft, boxShadow->x - boxShadow->blur - boxShadow->spread);
-            m_overflowWidth = max(m_overflowWidth, width() + boxShadow->x + boxShadow->blur + boxShadow->spread);
-            m_overflowTop = min(m_overflowTop, boxShadow->y - boxShadow->blur - boxShadow->spread);
-            m_overflowHeight = max(m_overflowHeight, height() + boxShadow->y + boxShadow->blur + boxShadow->spread);
-        }
-        
+        int shadowLeft;
+        int shadowRight;
+        int shadowTop;
+        int shadowBottom;
+        style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
+
+        m_overflowLeft = min(m_overflowLeft, shadowLeft);
+        m_overflowWidth = max(m_overflowWidth, width() + shadowRight);
+        m_overflowTop = min(m_overflowTop, shadowTop);
+        m_overflowHeight = max(m_overflowHeight, height() + shadowBottom);
+
         if (hasReflection()) {
             IntRect reflection(reflectionBox());
             m_overflowTop = min(m_overflowTop, reflection.y());
