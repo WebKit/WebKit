@@ -108,22 +108,6 @@ namespace WebCore {
             return reinterpret_cast<C*>(object->GetPointerFromInternalField(V8Custom::kDOMWrapperObjectIndex));
         }
 
-        // Create a V8 wrapper for a C pointer
-        static v8::Handle<v8::Value> wrapCPointer(void* cptr)
-        {
-            // Represent void* as int
-            int addr = reinterpret_cast<int>(cptr);
-            ASSERT(!(addr & 0x01)); // The address must be aligned.
-            return v8::Integer::New(addr >> 1);
-        }
-
-        // Take C pointer out of a v8 wrapper.
-        template <class C>
-        static C* extractCPointer(v8::Handle<v8::Value> obj)
-        {
-            return static_cast<C*>(extractCPointerImpl(obj));
-        }
-
         template <class C>
         static C* convertDOMWrapperToNode(v8::Handle<v8::Object> object)
         {
@@ -245,14 +229,6 @@ namespace WebCore {
     private:
         // Set hidden references in a DOMWindow object of a frame.
         static void setHiddenWindowReference(Frame*, const int internalIndex, v8::Handle<v8::Object>);
-
-        // Take C pointer out of a v8 wrapper.
-        static void* extractCPointerImpl(v8::Handle<v8::Value> object)
-        {
-            ASSERT(object->IsNumber());
-            int addr = object->Int32Value();
-            return reinterpret_cast<void*>(addr << 1);
-        }
 
         static V8ClassIndex::V8WrapperType htmlElementType(HTMLElement*);
 #if ENABLE(SVG)
