@@ -271,6 +271,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
                  "enable-html5-local-storage", TRUE,
                  "enable-xss-auditor", FALSE,
                  "javascript-can-open-windows-automatically", TRUE,
+                 "enable-offline-web-application-cache", TRUE,
                  NULL);
 
     webkit_web_frame_clear_main_frame_name(mainFrame);

@@ -92,6 +92,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_xss_auditor;
     gchar* user_agent;
     gboolean javascript_can_open_windows_automatically;
+    gboolean enable_offline_web_application_cache;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -128,7 +129,8 @@ enum {
     PROP_ENABLE_HTML5_LOCAL_STORAGE,
     PROP_ENABLE_XSS_AUDITOR,
     PROP_USER_AGENT,
-    PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY
+    PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY,
+    PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE
 };
 
 // Create a default user agent string
@@ -578,6 +580,24 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether JavaScript can open windows automatically"),
                                                          FALSE,
                                                          flags));
+    /**
+    * WebKitWebSettings:enable-offline-web-application-cache
+    *
+    * Whether to enable HTML5 offline web application cache support. Offline
+    * Web Application Cache ensures web applications are available even when
+    * the user is not connected to the network.
+    *
+    * Since 1.1.13
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE,
+                                    g_param_spec_boolean("enable-offline-web-application-cache",
+                                                         _("Enable offline web application cache"),
+                                                         _("Whether to enable offline web application cache"),
+                                                         TRUE,
+                                                         flags));
+
+
 
     g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
@@ -756,6 +776,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
         priv->javascript_can_open_windows_automatically = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE:
+        priv->enable_offline_web_application_cache = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -858,6 +881,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
         g_value_set_boolean(value, priv->javascript_can_open_windows_automatically);
         break;
+   case PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE:
+        g_value_set_boolean(value, priv->enable_offline_web_application_cache);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -919,6 +945,7 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
                  "enable-xss-auditor", priv->enable_xss_auditor,
                  "user-agent", webkit_web_settings_get_user_agent(web_settings),
                  "javascript-can-open-windows-automatically", priv->javascript_can_open_windows_automatically,
+                 "enable-offline-web-application-cache", priv->enable_offline_web_application_cache,
                  NULL));
 
     return copy;

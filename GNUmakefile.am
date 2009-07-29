@@ -353,6 +353,7 @@ webkitgtk_sources += \
 	WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h \
+	WebKit/gtk/webkit/webkitapplicationcache.cpp \
 	WebKit/gtk/webkit/webkitdownload.cpp \
 	WebKit/gtk/webkit/webkiterror.cpp \
 	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
