@@ -64,6 +64,8 @@ namespace WebCore {
         virtual void populateSetting(const String& key, InspectorController::Setting&);
         virtual void storeSetting(const String& key, const InspectorController::Setting&);
         virtual void removeSetting(const String& key);
+
+        virtual void inspectorWindowObjectCleared();
     };
 } // namespace WebCore
 

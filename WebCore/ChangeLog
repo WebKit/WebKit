@@ -1,3 +1,17 @@
+2009-07-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added foundation work to allow a testing infrastructure for the Web
+        Inspector.
+
+        * inspector/InspectorClient.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::scriptObjectReady): Tell the testing
+        harness that the window object is ready.
+        * loader/EmptyClients.h: Empty class support for SVG.
+        (WebCore::EmptyInspectorClient::inspectorWindowObjectCleared):
+
 2009-07-29  Chris Fleizach  <cfleizach@apple.com>
 
         Build fix for windows after landing

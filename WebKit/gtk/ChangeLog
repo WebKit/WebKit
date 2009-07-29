@@ -1,3 +1,14 @@
+2009-07-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added foundation work to allow a testing infrastructure for the Web
+        Inspector.
+ 
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::inspectorWindowObjectCleared):
+        * WebCoreSupport/InspectorClientGtk.h:
+
 2009-07-29  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Eric Seidel and Xan Lopez.

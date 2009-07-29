@@ -1,3 +1,19 @@
+2009-07-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added foundation work to allow a testing infrastructure for the Web
+        Inspector.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::inspectorWindowObjectCleared): Send the delegate
+        callback.
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+        * WebView/WebViewPrivate.h: The delegate SPI.
+
 2009-07-27  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

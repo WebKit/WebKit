@@ -29,6 +29,7 @@
 #import "WebInspectorClient.h"
 
 #import "DOMNodeInternal.h"
+#import "WebDelegateImplementationCaching.h"
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebInspector.h"
@@ -148,6 +149,16 @@ void WebInspectorClient::updateWindowTitle() const
 {
     NSString *title = [NSString stringWithFormat:UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_inspectedURL];
     [[m_windowController.get() window] setTitle:title];
+}
+
+void WebInspectorClient::inspectorWindowObjectCleared()
+{
+    WebFrame *frame = [m_webView mainFrame];
+    
+    WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(m_webView);
+    if (implementations->didClearInspectorWindowObjectForFrameFunc)
+        CallFrameLoadDelegate(implementations->didClearInspectorWindowObjectForFrameFunc, m_webView,
+          @selector(webView:didClearInspectorWindowObject:forFrame:), [frame windowObject], frame);
 }
 
 #pragma mark -

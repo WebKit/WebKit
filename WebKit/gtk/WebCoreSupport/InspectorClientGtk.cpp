@@ -176,6 +176,12 @@ void InspectorClient::inspectedURLChanged(const String& newURL)
     webkit_web_inspector_set_inspected_uri(m_webInspector, newURL.utf8().data());
 }
 
+void InspectorClient::inspectorWindowObjectCleared()
+{
+    notImplemented();
+}
+
+
 void InspectorClient::populateSetting(const String& key, InspectorController::Setting& setting)
 {
     notImplemented();

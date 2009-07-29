@@ -469,6 +469,8 @@ public:
     virtual void populateSetting(const String&, InspectorController::Setting&) { }
     virtual void storeSetting(const String&, const InspectorController::Setting&) { }
     virtual void removeSetting(const String&) { }
+
+    virtual void inspectorWindowObjectCleared() { }
 };
 
 }

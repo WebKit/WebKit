@@ -1,0 +1,11 @@
+2009-07-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added foundation work to allow a testing infrastructure for the Web
+        Inspector.
+
+        * WebCoreSupport/InspectorClientHaiku.cpp:
+        (WebCore::InspectorClientHaiku::inspectorWindowObjectCleared):
+        * WebCoreSupport/InspectorClientHaiku.h:
+

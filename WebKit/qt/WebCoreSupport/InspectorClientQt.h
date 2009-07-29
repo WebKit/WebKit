@@ -71,6 +71,8 @@ namespace WebCore {
         virtual void storeSetting(const String& key, const InspectorController::Setting&);
         virtual void removeSetting(const String& key);
 
+        virtual void inspectorWindowObjectCleared();
+
     private:
         void updateWindowTitle();
         QWebPage* m_inspectedWebPage;

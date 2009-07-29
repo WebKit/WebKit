@@ -307,6 +307,11 @@ void WebInspectorClient::inspectedURLChanged(const String& newURL)
     updateWindowTitle();
 }
 
+void WebInspectorClient::inspectorWindowObjectCleared()
+{
+    notImplemented();
+}
+
 void WebInspectorClient::closeWindowWithoutNotifications()
 {
     if (!m_hwnd)
