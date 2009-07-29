@@ -51,7 +51,7 @@ V8AbstractEventListener::V8AbstractEventListener(Frame* frame, bool isAttribute)
     // We might be called directly from the parser.
     v8::HandleScope handleScope;
 
-    m_context.set(V8DOMWrapper::getWrapperContext(m_frame));
+    m_context.set(V8Proxy::context(m_frame));
     m_context.makeWeak();
 
     // Get the position in the source if any.

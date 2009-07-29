@@ -1,3 +1,11 @@
+2009-07-29  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed build fix for Chromium.  Those last two patches weren't
+        independent despite the clean merge.
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener):
+
 2009-07-29  Avi Drissman  <avi@chromium.org>
 
         Reviewed by Darin Adler.
