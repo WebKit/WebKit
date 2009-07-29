@@ -1,5 +1,15 @@
 2009-07-29  Brady Eidson  <beidson@apple.com>
 
+        Rubber-stamped by Jon Honeycutt
+
+        Check in Tiger-specific results for the new test, as it is known they send willCacheResponse 
+        callbacks in a different order.
+
+        * platform/mac-tiger/http/tests/loading: Added.
+        * platform/mac-tiger/http/tests/loading/redirect-methods-expected.txt: Added.
+
+2009-07-29  Brady Eidson  <beidson@apple.com>
+
         Adding my new test to the Windows skipped list until I can figure out what's going on.
 
         * platform/win/Skipped:
