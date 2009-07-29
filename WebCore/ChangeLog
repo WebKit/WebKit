@@ -1,3 +1,17 @@
+2009-07-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Speculative fix for <rdar://problem/7005077> WER: Crash in
+        WebCore::PluginStream::destroyStream+279 (1310510882)
+
+        Reviewed by Oliver Hunt.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::destroyStream):
+        Move the "protector" RefPtr out of the block that dispatches
+        notifications and into the function level; if NPN_DestroyStream were
+        called from NPP_NewStream as the comment warns, we would be deleted at
+        the end of the block.
+
 2009-07-28  Joseph Pecoraro  <joepeck02@gmail.com>
 
         Inspector: Tab Through the DOM Storage DataGrid when Editing

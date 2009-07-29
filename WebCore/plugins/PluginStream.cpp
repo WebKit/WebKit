@@ -248,6 +248,11 @@ void PluginStream::destroyStream()
 
     bool newStreamCalled = m_stream.ndata;
 
+    // Protect from destruction if:
+    //  NPN_DestroyStream is called from NPP_NewStream or
+    //  PluginStreamClient::streamDidFinishLoading() removes the last reference
+    RefPtr<PluginStream> protect(this);
+
     if (newStreamCalled) {
         if (m_reason == NPRES_DONE && (m_transferMode == NP_ASFILE || m_transferMode == NP_ASFILEONLY)) {
             ASSERT(!m_path.isNull());
@@ -281,9 +286,6 @@ void PluginStream::destroyStream()
             m_loader->setDefersLoading(true);
         if (!newStreamCalled && m_quirks.contains(PluginQuirkFlashURLNotifyBug) &&
             equalIgnoringCase(m_resourceRequest.httpMethod(), "POST")) {
-            // Protect the stream if NPN_DestroyStream is called from NPP_NewStream
-            RefPtr<PluginStream> protect(this);
-
             m_transferMode = NP_NORMAL;
             m_stream.url = "";
             m_stream.notifyData = m_notifyData;
@@ -303,8 +305,6 @@ void PluginStream::destroyStream()
 
     m_streamState = StreamStopped;
 
-    // streamDidFinishLoading can cause us to be deleted.
-    RefPtr<PluginStream> protect(this);
     if (!m_loadManually)
         m_client->streamDidFinishLoading(this);
 
