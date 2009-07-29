@@ -502,7 +502,7 @@ v8::Local<v8::Function> V8DOMWrapper::getConstructor(V8ClassIndex::V8WrapperType
     if (!frame)
         return v8::Local<v8::Function>();
 
-    v8::Handle<v8::Context> context = getWrapperContext(frame);
+    v8::Handle<v8::Context> context = V8Proxy::context(frame);
     if (context.IsEmpty())
         return v8::Local<v8::Function>();
     // Enter the scope for this DOMWindow to get the correct constructor.
@@ -641,7 +641,7 @@ void V8DOMWrapper::setHiddenWindowReference(Frame* frame, const int internalInde
     // Get DOMWindow
     if (!frame)
         return; // Object might be detached from window
-    v8::Handle<v8::Context> context = getWrapperContext(frame);
+    v8::Handle<v8::Context> context = V8Proxy::context(frame);
     if (context.IsEmpty())
         return;
 
@@ -1165,7 +1165,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertNodeToV8Object(Node* node)
 
     v8::Handle<v8::Context> context;
     if (proxy)
-        context = getWrapperContext(proxy->frame());
+        context = V8Proxy::context(proxy->frame());
 
     // Enter the node's context and create the wrapper in that context.
     if (!context.IsEmpty())
@@ -1425,28 +1425,13 @@ v8::Handle<v8::Value> V8DOMWrapper::convertWindowToV8Object(DOMWindow* window)
     }
 
     // Otherwise, return the global object associated with this frame.
-    v8::Handle<v8::Context> context = getWrapperContext(frame);
+    v8::Handle<v8::Context> context = V8Proxy::context(frame);
     if (context.IsEmpty())
         return v8::Handle<v8::Object>();
 
     v8::Handle<v8::Object> global = context->Global();
     ASSERT(!global.IsEmpty());
     return global;
-}
-
-v8::Handle<v8::Context> V8DOMWrapper::getWrapperContext(Frame* frame)
-{
-    v8::Handle<v8::Context> context = V8Proxy::context(frame);
-    if (context.IsEmpty())
-        return v8::Handle<v8::Context>();
-
-    if (V8IsolatedWorld* world = V8IsolatedWorld::getEntered()) {
-       context = world->context();
-       if (frame != V8Proxy::retrieveFrame(context))
-          return v8::Handle<v8::Context>();
-    }
-
-    return context;
 }
 
 }  // namespace WebCore

@@ -112,6 +112,8 @@ void V8AbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
     v8::HandleScope handleScope;
 
+    // FIXME: This context might be in the wrong world!
+    //        See https://bugs.webkit.org/show_bug.cgi?id=27533
     v8::Handle<v8::Context> v8Context = V8Proxy::context(m_frame);
     if (v8Context.IsEmpty())
         return;

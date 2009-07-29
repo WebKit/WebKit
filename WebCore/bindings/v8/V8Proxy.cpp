@@ -1096,6 +1096,21 @@ v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message)
 
 v8::Local<v8::Context> V8Proxy::context(Frame* frame)
 {
+    v8::Local<v8::Context> context = V8Proxy::mainWorldContext(frame);
+    if (context.IsEmpty())
+        return v8::Local<v8::Context>();
+
+    if (V8IsolatedWorld* world = V8IsolatedWorld::getEntered()) {
+        context = v8::Local<v8::Context>::New(world->context());
+        if (frame != V8Proxy::retrieveFrame(context))
+            return v8::Local<v8::Context>();
+    }
+
+    return context;
+}
+
+v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
+{
     V8Proxy* proxy = retrieve(frame);
     if (!proxy)
         return v8::Local<v8::Context>();
@@ -1120,7 +1135,7 @@ v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
 void V8Proxy::bindJsObjectToWindow(Frame* frame, const char* name, int type, v8::Handle<v8::FunctionTemplate> descriptor, void* impl)
 {
     // Get environment.
-    v8::Handle<v8::Context> v8Context = V8Proxy::context(frame);
+    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(frame);
     if (v8Context.IsEmpty())
         return; // JS not enabled.
 
