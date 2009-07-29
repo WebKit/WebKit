@@ -2349,7 +2349,6 @@ contains(DEFINES, ENABLE_DOM_STORAGE=1) {
         storage/LocalStorageTask.cpp \
         storage/LocalStorageThread.cpp \
         storage/Storage.cpp \
-        storage/StorageArea.cpp \
         storage/StorageAreaImpl.cpp \
         storage/StorageAreaSync.cpp \
         storage/StorageEvent.cpp \
