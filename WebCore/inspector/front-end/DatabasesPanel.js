@@ -145,6 +145,32 @@ WebInspector.DatabasesPanel.prototype = {
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
     },
 
+    selectDatabase: function(db)
+    {
+        var database;
+        for (var i = 0, len = this._databases.length; i < len; ++i) {
+            database = this._databases[i];
+            if ( db === database.database ) {
+                this.showDatabase(database);
+                database._databasesTreeElement.select();
+                return;
+            }
+        }
+    },
+
+    selectDOMStorage: function(s)
+    {
+        var isLocalStorage = (s === InspectorController.inspectedWindow().localStorage);
+        for (var i = 0, len = this._domStorage.length; i < len; ++i) {
+            var storage = this._domStorage[i];
+            if ( isLocalStorage === storage.isLocalStorage ) {
+                this.showDOMStorage(storage);
+                storage._domStorageTreeElement.select();
+                return;
+            }
+        }
+    },
+
     showDatabase: function(database, tableName)
     {
         if (!database)
@@ -175,7 +201,7 @@ WebInspector.DatabasesPanel.prototype = {
         this.visibleView = view;
 
         this.storageViewStatusBarItemsContainer.removeChildren();
-        var statusBarItems = view.statusBarItems;
+        var statusBarItems = view.statusBarItems || [];
         for (var i = 0; i < statusBarItems.length; ++i)
             this.storageViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },

@@ -422,6 +422,30 @@ WebInspector.Console.prototype = {
             };");
 
             inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(this.clearMessages.bind(this));
+            inspectedWindow._inspectorCommandLineAPI.inspect = InspectorController.wrapCallback(inspectObject.bind(this));
+
+            function inspectObject(o)
+            {
+                if (arguments.length === 0)
+                    return;
+
+                InspectorController.inspectedWindow().console.log(o);
+                if (Object.type(o, InspectorController.inspectedWindow()) === "node") {
+                    WebInspector.showElementsPanel();
+                    WebInspector.panels.elements.treeOutline.revealAndSelectNode(o);
+                } else {
+                    switch (Object.describe(o)) {
+                        case "Database":
+                            WebInspector.showDatabasesPanel();
+                            WebInspector.panels.databases.selectDatabase(o);
+                            break;
+                        case "Storage":
+                            WebInspector.showDatabasesPanel();
+                            WebInspector.panels.databases.selectDOMStorage(o);
+                            break;
+                    }
+                }
+            }
         }
     },
 
