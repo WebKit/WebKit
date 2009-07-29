@@ -400,7 +400,7 @@ class PostDiffAsPatchToBug(Command):
         diff = tool.scm().create_patch()
         diff_file = StringIO.StringIO(diff) # add_patch_to_bug expects a file-like object
 
-        description = options.description or "patch"
+        description = options.description or "Patch v1"
         tool.bugs.add_patch_to_bug(bug_id, diff_file, description, mark_for_review=options.review)
 
 
@@ -411,6 +411,7 @@ class PostCommitsAsPatchesToBug(Command):
             make_option("--no-comment", action="store_false", dest="comment", default=True, help="Do not use commit log message as a comment for the patch."),
             make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting new ones."),
             make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
+            make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment (default: 'patch')"),
         ]
         Command.__init__(self, 'Attaches a range of local commits to bugs as patch files.', 'COMMITISH', options=options, requires_local_commits=True)
 
@@ -442,7 +443,7 @@ class PostCommitsAsPatchesToBug(Command):
                 PostDiffAsPatchToBug.obsolete_patches_on_bug(bug_id, tool.bugs)
                 have_obsoleted_patches.update(bug_id)
 
-            description = commit_message.description(lstrip=True, strip_url=True)
+            description = options.description or commit_message.description(lstrip=True, strip_url=True)
             comment_text = None
             if (options.comment):
                 comment_text = commit_message.body(lstrip=True)

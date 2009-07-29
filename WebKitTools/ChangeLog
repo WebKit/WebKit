@@ -1,3 +1,18 @@
+2009-07-29  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/27815> bugzilla-tool: add -m/--description to post-commits command
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/bugzilla-tool:
+        (PostDiffAsPatchToBug.execute): Changed default patch name from
+        "patch" to "Patch v1".
+        (PostCommitsAsPatchesToBug.__init__): Added -m/--description
+        switch.
+        (PostCommitsAsPatchesToBug.execute): Use description provided by
+        -m/--description switch first, else fall back to the commit
+        message.
+
 2009-07-29  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Dave Levin.
