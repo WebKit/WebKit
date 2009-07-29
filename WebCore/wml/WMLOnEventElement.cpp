@@ -62,7 +62,6 @@ void WMLOnEventElement::parseMappedAttribute(MappedAttribute* attr)
 
 static inline WMLEventHandlingElement* eventHandlingParent(Node* parent)
 {
-    ASSERT(parent);
     if (!parent || !parent->isWMLElement())
         return 0;
 

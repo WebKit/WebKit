@@ -44,20 +44,14 @@ void WMLPostfieldElement::insertedIntoDocument()
     WMLElement::insertedIntoDocument();
 
     Node* parent = parentNode();
-    ASSERT(parent);
-
-    if (!parent->hasTagName(goTag))
-        return;
-
-    static_cast<WMLGoElement*>(parent)->registerPostfieldElement(this);
+    if (parent && parent->hasTagName(goTag))
+        static_cast<WMLGoElement*>(parent)->registerPostfieldElement(this);
 }
 
 void WMLPostfieldElement::removedFromDocument()
 {
     Node* parent = parentNode();
-    ASSERT(parent);
-
-    if (parent->hasTagName(goTag))
+    if (parent && parent->hasTagName(goTag))
         static_cast<WMLGoElement*>(parent)->deregisterPostfieldElement(this);
 
     WMLElement::removedFromDocument();

@@ -9,32 +9,24 @@ function createWMLElement(name) {
     return testDocument.createElementNS(wmlNS, "wml:" + name);
 }
 
-function createWMLTestCase(testDescription, substitutesVariables, testName, executeImmediately, needsReset) {
+function createWMLTestCase(testDescription, substitutesVariables, testName, executeImmediately) {
     // Setup default test options
-    if (substitutesVariables == null) {
+    if (substitutesVariables == null)
         substitutesVariables = true;
-    }
 
     // Setup default test name
     if (testName == null) {
         executeImmediately = false; // Only honored, when testName != null
         testName = relativePathToLayoutTests + "/wml/resources/test-document.wml";
-    } else if (executeImmediately == null) {
+    } else if (executeImmediately == null)
         executeImmediately = true;
-    }
-
-    // Some tests may want to handle resetting the page state themselves
-    if (needsReset == null) {
-        needsReset = true;
-    }
 
     // Initialize JS test
     description(testDescription);
     bodyElement = document.getElementsByTagName("body")[0];
 
     // Clear variable state & history
-    if (needsReset)
-        document.resetWMLPageState();
+    document.resetWMLPageState();
 
     // Setup DRT specific settings
     if (window.layoutTestController) {

@@ -56,8 +56,6 @@ void WMLSetvarElement::insertedIntoDocument()
     WMLElement::insertedIntoDocument();
  
     Node* parent = parentNode();
-    ASSERT(parent);
-
     if (!parent || !parent->isWMLElement())
         return;
 
@@ -68,8 +66,6 @@ void WMLSetvarElement::insertedIntoDocument()
 void WMLSetvarElement::removedFromDocument()
 {
     Node* parent = parentNode();
-    ASSERT(parent);
-
     if (parent && parent->isWMLElement()) {
         if (static_cast<WMLElement*>(parent)->isWMLTaskElement())
             static_cast<WMLTaskElement*>(parent)->deregisterVariableSetter(this);

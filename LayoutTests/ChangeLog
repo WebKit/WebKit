@@ -1,3 +1,20 @@
+2009-07-29  Nikolas Zimmermann  <nikolas.zimmermann@torchmobile.com>
+
+        Reviewed by Adam Treat.
+
+        [WML] Running WML tests in random order multiple times exposes subtle bugs
+        https://bugs.webkit.org/show_bug.cgi?id=27801
+
+        Some changes to fix random order WML tests, simplilfy WMLTestCase.js and reset testDocument
+        properly in enter-first-card-with-events.js. fast/wml/err-multi-access.wml still creates a layout
+        test difference on consecutive runs, though that's related to bug 27721, which has to be fixed first.
+
+        * wml/resources/WMLTestCase.js:
+        * wml/resources/enter-first-card-with-events.js:
+        (setupTestDocument):
+        (prepareTest):
+        (executeTest):
+
 2009-07-29  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Eric Seidel and Xan Lopez.

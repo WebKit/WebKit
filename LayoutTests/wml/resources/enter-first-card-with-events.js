@@ -1,23 +1,22 @@
 /// [Name] enter-first-card-with-events.js
 
-createWMLTestCase("Tests entering first card backwards that has intrinsic events set", false, "resources/enter-first-card-with-events.wml", false, false);
-
-var ranOnce = false;
-var resultIndicatorElement;
+createWMLTestCase("Tests entering first card backwards that has intrinsic events set", false, "resources/enter-first-card-with-events.wml", false);
 
 function setupTestDocument() {
-    resultIndicatorElement = testDocument.getElementById("resultIndicator");
+    var resultIndicatorElement = testDocument.getElementById("resultIndicator");
+    if (resultIndicatorElement.textContent == "DONE")
+        completeTest();
 }
 
 function prepareTest() {
-    if (resultIndicatorElement.textContent == "DONE")
-        completeTest();
-    else
-        executeTest();
+    startTest(25, 15);
 }
 
 function executeTest() {
     startTest(25, 15);
+
+    // Force re-setup of the test document, as we check for completion upon setupTestDocument()
+    testDocument = undefined;
 }
 
 var successfullyParsed = true;
