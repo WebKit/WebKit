@@ -298,6 +298,58 @@ class Bugzilla:
         self.browser.add_file(patch_file_object, "text/plain", "bug-%s-%s.patch" % (bug_id, timestamp()))
         self.browser.submit()
 
+    def prompt_for_component(self, components):
+        log("Please pick a component:")
+        i = 0
+        for name in components:
+            i += 1
+            log("%2d. %s" % (i, name))
+        result = int(raw_input("Enter a number: ")) - 1
+        return components[result]
+
+    def _check_create_bug_response(self, response_html):
+        match = re.search("<title>Bug (?P<bug_id>\d+) Submitted</title>", response_html)
+        if match:
+            return match.group('bug_id')
+
+        match = re.search('<div id="bugzilla-body">(?P<error_message>.+)<div id="footer">', response_html, re.DOTALL)
+        error_message = "FAIL"
+        if match:
+            text_lines = BeautifulSoup(match.group('error_message')).findAll(text=True)
+            error_message = "\n" + '\n'.join(["  " + line.strip() for line in text_lines if line.strip()])
+        error("Bug not created: %s" % error_message)
+
+    def create_bug_with_patch(self, bug_title, bug_description, component, patch_file_object, patch_description, cc, mark_for_review=False):
+        self.authenticate()
+
+        log('Creating bug with patch description "%s"' % patch_description)
+        if self.dryrun:
+            log(bug_description)
+            return
+
+        self.browser.open(self.bug_server_url + "enter_bug.cgi?product=WebKit")
+        self.browser.select_form(name="Create")
+        component_items = self.browser.find_control('component').items
+        component_names = map(lambda item: item.name, component_items)
+        if not component or component not in component_names:
+            component = self.prompt_for_component(component_names)
+        self.browser['component'] = [component]
+        self.browser['cc'] = cc
+        self.browser['short_desc'] = bug_title
+        if bug_description:
+            log(bug_description)
+            self.browser['comment'] = bug_description
+        self.browser['description'] = patch_description
+        self.browser['ispatch'] = ("1",)
+        self.browser['flag_type-1'] = ('?',) if mark_for_review else ('X',)
+        self.browser.add_file(patch_file_object, "text/plain", "%s.patch" % timestamp(), 'data')
+        response = self.browser.submit()
+
+        bug_id = self._check_create_bug_response(response.read())
+        log("Bug %s created." % bug_id)
+        log(self.bug_server_url + "show_bug.cgi?id=" + bug_id)
+        return bug_id
+
     def obsolete_attachment(self, attachment_id, comment_text = None):
         self.authenticate()
 

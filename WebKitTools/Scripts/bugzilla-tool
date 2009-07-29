@@ -454,6 +454,76 @@ class PostCommitsAsPatchesToBug(Command):
             tool.bugs.add_patch_to_bug(bug_id, diff_file, description, comment_text, mark_for_review=options.review)
 
 
+class CreateBug(Command):
+    def __init__(self):
+        options = [
+            make_option("--cc", action="store", type="string", dest="cc", help="Comma-separated list of email addresses to carbon-copy."),
+            make_option("--component", action="store", type="string", dest="component", help="Component for the new bug."),
+            make_option("--no-prompt", action="store_false", dest="prompt", default=True, help="Do not prompt for bug title and comment; use commit log instead."),
+            make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review."),
+        ]
+        Command.__init__(self, 'Create a bug from local changes or local commits.', '[COMMITISH]', options=options)
+
+    def create_bug_from_commit(self, options, args, tool):
+        commit_ids = tool.scm().commit_ids_from_range_arguments(args, cherry_pick=True)
+
+        if len(commit_ids) > 3:
+            error("Are you sure you want to create one bug with %s patches?" % len(commit_ids))
+
+        commit_id = commit_ids[0]
+
+        bug_title = ""
+        comment_text = ""
+        if options.prompt:
+            (bug_title, comment_text) = self.prompt_for_bug_title_and_comment()
+        else:
+            commit_message = tool.scm().commit_message_for_local_commit(commit_id)
+            bug_title = commit_message.description(lstrip=True, strip_url=True)
+            comment_text = commit_message.body(lstrip=True)
+            comment_text += "---\n"
+            comment_text += tool.scm().files_changed_summary_for_commit(commit_id)
+
+        diff = tool.scm().create_patch_from_local_commit(commit_id)
+        diff_file = StringIO.StringIO(diff) # create_bug_with_patch expects a file-like object
+        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch v1", cc=options.cc, mark_for_review=options.review)
+
+        if bug_id and len(commit_ids) > 1:
+            options.bug_id = bug_id
+            options.obsolete_patches = False
+            # FIXME: We should pass through --no-comment switch as well.
+            PostCommitsAsPatchesToBug.execute(self, options, commit_ids[1:], tool)
+
+    def create_bug_from_patch(self, options, args, tool):
+        bug_title = ""
+        comment_text = ""
+        if options.prompt:
+            (bug_title, comment_text) = self.prompt_for_bug_title_and_comment()
+        else:
+            commit_message = commit_message_for_this_commit(tool.scm())
+            bug_title = commit_message.description(lstrip=True, strip_url=True)
+            comment_text = commit_message.body(lstrip=True)
+
+        diff = tool.scm().create_patch()
+        diff_file = StringIO.StringIO(diff) # create_bug_with_patch expects a file-like object
+        bug_id = tool.bugs.create_bug_with_patch(bug_title, comment_text, options.component, diff_file, "Patch v1", cc=options.cc, mark_for_review=options.review)
+
+    def prompt_for_bug_title_and_comment(self):
+        bug_title = raw_input("Bug title: ")
+        print("Bug comment (hit ^D on blank line to end):")
+        lines = sys.stdin.readlines()
+        sys.stdin.seek(0, os.SEEK_END)
+        comment_text = ''.join(lines)
+        return (bug_title, comment_text)
+
+    def execute(self, options, args, tool):
+        if len(args):
+            if (not tool.scm().supports_local_commits()):
+                error("Extra arguments not supported; patch is taken from working directory.")
+            self.create_bug_from_commit(options, args, tool)
+        else:
+            self.create_bug_from_patch(options, args, tool)
+
+
 class NonWrappingEpilogIndentedHelpFormatter(IndentedHelpFormatter):
     def __init__(self):
         IndentedHelpFormatter.__init__(self)
@@ -481,6 +551,7 @@ class BugzillaTool:
             { 'name' : 'bugs-to-commit', 'object' : BugsInCommitQueue() },
             { 'name' : 'patches-to-commit', 'object' : PatchesInCommitQueue() },
             { 'name' : 'reviewed-patches', 'object' : ReviewedPatchesOnBug() },
+            { 'name' : 'create-bug', 'object' : CreateBug() },
             { 'name' : 'apply-patches', 'object' : ApplyPatchesFromBug() },
             { 'name' : 'land-diff', 'object' : LandAndUpdateBug() },
             { 'name' : 'land-patches', 'object' : LandPatchesFromBugs() },

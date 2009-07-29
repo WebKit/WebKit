@@ -1,3 +1,23 @@
+2009-07-29  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/27119> bugzilla-tool: Add create-bug command
+
+        Reviewed by David Levin.
+
+        Implement "create-bug" command for bugzilla-tool.
+
+        * Scripts/bugzilla-tool: Added CreateBug class.
+        (CreateBug.__init__): Added.
+        (CreateBug.create_bug_from_commit): Added.
+        (CreateBug.create_bug_from_patch): Added.
+        (CreateBug.prompt_for_bug_title_and_comment): Added.
+        (CreateBug.execute): Added.
+        (BugzillaTool.__init__): Added create-bug command.
+        * Scripts/modules/bugzilla.py:
+        (Bugzilla.prompt_for_component): Added.
+        (Bugzilla.check_create_bug_response_returning_bug_id_on_success): Added.
+        (Bugzilla.create_bug_with_patch): Added.
+
 2009-07-29  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Eric Seidel and Xan Lopez.
