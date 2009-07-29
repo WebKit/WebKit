@@ -630,7 +630,7 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-bool ResourceHandle::willLoadFromCache(ResourceRequest&)
+bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
 {
     // Not having this function means that we'll ask the user about re-posting a form
     // even when we go back to a page that's still in the cache.

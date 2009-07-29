@@ -4520,7 +4520,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                 // have the item vanish when we try to use it in the ensuing nav.  This should be
                 // extremely rare, but in that case the user will get an error on the navigation.
                 
-                if (ResourceHandle::willLoadFromCache(request))
+                if (ResourceHandle::willLoadFromCache(request, m_frame))
                     action = NavigationAction(itemURL, loadType, false);
                 else {
                     request.setCachePolicy(ReloadIgnoringCacheData);
