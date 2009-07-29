@@ -572,3 +572,6 @@ http/tests/security/isolatedWorld/number-prototype.html
 http/tests/security/isolatedWorld/object-prototype.html
 http/tests/security/isolatedWorld/string-prototype.html
 http/tests/security/isolatedWorld/window-properties.html
+
+# <rdar://problem/7102793> http/tests/loading/redirect-methods.html fails on Windows (no didReceiveResponse callback after a redirect)
+http/tests/loading/redirect-methods.html
