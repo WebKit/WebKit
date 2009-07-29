@@ -1,3 +1,12 @@
+2009-07-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Update getComputedStyle expected results on Windows to match updated Mac results.
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        
 2009-07-29  Brady Eidson  <beidson@apple.com>
 
         Rubber-stamped by Mark Rowe
