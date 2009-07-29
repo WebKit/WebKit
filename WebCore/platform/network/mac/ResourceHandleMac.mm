@@ -567,6 +567,15 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     
     LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:%p", m_handle, connection, [newRequest description], redirectResponse);
 
+    if (redirectResponse && [redirectResponse isKindOfClass:[NSHTTPURLResponse class]] && [(NSHTTPURLResponse *)redirectResponse statusCode] == 307) {
+        String originalMethod = m_handle->request().httpMethod();
+        if (!equalIgnoringCase(originalMethod, String([newRequest HTTPMethod]))) {
+            NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
+            [mutableRequest setHTTPMethod:originalMethod];
+            newRequest = [mutableRequest autorelease];
+        }
+    }
+
     CallbackGuard guard;
     ResourceRequest request = newRequest;
     m_handle->willSendRequest(request, redirectResponse);

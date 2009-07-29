@@ -1,0 +1,57 @@
+<html>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpResourceLoadCallbacks();
+    layoutTestController.waitUntilDone();
+}
+
+function startTest()
+{
+    window.setTimeout("createFrame(0);", 0);
+}
+
+var testCodes = [301, 302, 303, 307];
+
+function createFrame(index)
+{
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("testCode", testCodes[index]);
+    iframe.setAttribute("id", index);
+    document.body.appendChild(iframe);
+    iframe.src="resources/redirect-methods-form.html";
+    iframe.setAttribute("onload", "iframeLoaded(" + index + ");");
+}
+
+function iframeLoaded(frameID)
+{
+    var iframe = document.getElementById(frameID);
+    if (iframe.hasAttribute("submitted")) {
+        if (++frameID == testCodes.length) {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+            return;
+        }
+        createFrame(frameID);
+    } else {
+        submitFormForFrame(iframe);
+    }
+}
+
+function submitFormForFrame(iframe)
+{
+    var testInput = iframe.contentDocument.getElementById("testFormInput");
+    testInput.value = iframe.getAttribute("testCode");
+    var testForm = iframe.contentDocument.getElementById("testForm");
+    iframe.setAttribute("submitted", "true");
+    testForm.submit();
+}
+
+</script>
+</head>
+<body onload="startTest();">
+This test checks to see what HTTP method is used to fetch the final resource in the case where the first request results in a redirect.<br>
+301, 302, 303, and 307 http redirects are all tested.<br>
+
+</body>
+</html>
