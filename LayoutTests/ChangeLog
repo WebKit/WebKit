@@ -1,5 +1,13 @@
 2009-07-28  Dan Bernstein  <mitz@apple.com>
 
+        Update Window-specific results with the non-prefixed border-radius
+        properties
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
+2009-07-28  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Simon Fraser.
 
         New test, updated test, and updated test results for:
