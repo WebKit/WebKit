@@ -2976,6 +2976,7 @@ fast/lists/markers-in-selection.html
 fast/lists/numeric-markers-outside-list.html
 fast/lists/ol-display-types.html
 fast/lists/ol-start-dynamic.html
+fast/lists/ol-start-parsing.html
 fast/lists/olstart.html
 fast/lists/ordered-list-with-no-ol-tag.html
 fast/lists/scrolled-marker-paint.html

@@ -1,5 +1,9 @@
 2009-07-29  Darin Adler  <darin@apple.com>
 
+        * platform/gtk/Skipped: Added ol-start-parsing.html since it has no result yet.
+
+2009-07-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Illegal values for <ol start> cause list numbering start at 0 (should start at 1)
