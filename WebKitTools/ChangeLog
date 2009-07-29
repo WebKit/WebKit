@@ -1,5 +1,21 @@
 2009-07-29  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/27082> bugzilla-tool: Add --no-close switch to land-patches
+
+        Reviewed by David Levin.
+
+        * Scripts/bugzilla-tool:
+        (LandPatchesFromBugs.__init__): Added --no-close switch.
+        (LandPatchesFromBugs.land_patches): Don't close the bug if the
+        --no-close switch was used.  Always clear the review+ flag on
+        every landed patch using the commit_text message when cleared.
+        This prevents patches from showing up in the commit queue if
+        reopened and provides consistency with all landed patches.
+        * Scripts/modules/bugzilla.py:
+        (Bugzilla.clear_attachment_review_flag): Added.
+
+2009-07-29  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/27815> bugzilla-tool: add -m/--description to post-commits command
 
         Reviewed by Eric Seidel.

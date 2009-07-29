@@ -350,6 +350,23 @@ class Bugzilla:
         log(self.bug_server_url + "show_bug.cgi?id=" + bug_id)
         return bug_id
 
+    def clear_attachment_review_flag(self, attachment_id, additional_comment_text=None):
+        self.authenticate()
+
+        comment_text = "Clearing review flag on attachment: %s" % attachment_id
+        if additional_comment_text:
+            comment_text += "\n\n" + additional_comment_text
+        log(comment_text)
+
+        if self.dryrun:
+            return
+
+        self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
+        self.browser.select_form(nr=1)
+        self.browser['comment'] = comment_text
+        self.browser.find_control(type='select', nr=0).value = ("X",)
+        self.browser.submit()
+
     def obsolete_attachment(self, attachment_id, comment_text = None):
         self.authenticate()
 

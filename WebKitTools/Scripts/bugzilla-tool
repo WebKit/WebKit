@@ -269,6 +269,7 @@ class LandPatchesFromBugs(Command):
         options = [
             make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)"),
             make_option("--no-clean", action="store_false", dest="clean", default=True, help="Don't check if the working directory is clean before applying patches"),
+            make_option("--no-close", action="store_false", dest="close_bug", default=True, help="Leave bug open after landing."),
             make_option("--no-build", action="store_false", dest="build", default=True, help="Commit without building first, implies --no-test."),
             make_option("--no-test", action="store_false", dest="test", default=True, help="Commit without running run-webkit-tests."),
         ]
@@ -319,15 +320,10 @@ class LandPatchesFromBugs(Command):
                 tool.scm().update_webkit() # Update before every patch in case the tree has changed
                 tool.scm().apply_patch(patch)
                 comment_text = cls.build_and_commit(tool.scm(), options)
+                tool.bugs.clear_attachment_review_flag(patch['id'], comment_text)
 
-                # If we're commiting more than one patch, update the bug as we go.
-                if len(patches) > 1:
-                    tool.bugs.obsolete_attachment(patch['id'], comment_text)
-
-            if len(patches) > 1:
-                comment_text = "All reviewed patches landed, closing."
-
-            tool.bugs.close_bug_as_fixed(bug_id, comment_text)
+            if options.close_bug:
+                tool.bugs.close_bug_as_fixed(bug_id, "All reviewed patches have been landed.  Closing bug.")
         except ScriptError, e:
             # We should add a comment to the bug, and r- the patch on failure
             error(e)
