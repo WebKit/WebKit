@@ -1,3 +1,27 @@
+2009-07-28  Ada Chan  <adachan@apple.com>        
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27236
+        - Implement TCMalloc_SystemRelease and TCMalloc_SystemCommit for Windows.
+        - Use a background thread to periodically scavenge memory to release back to the system.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::init):
+        (WTF::TCMalloc_PageHeap::runScavengerThread):
+        (WTF::TCMalloc_PageHeap::scavenge):
+        (WTF::TCMalloc_PageHeap::shouldContinueScavenging):
+        (WTF::TCMalloc_PageHeap::New):
+        (WTF::TCMalloc_PageHeap::AllocLarge):
+        (WTF::TCMalloc_PageHeap::Delete):
+        (WTF::TCMalloc_PageHeap::GrowHeap):
+        (WTF::sleep):
+        (WTF::TCMalloc_PageHeap::scavengerThread):
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemRelease):
+        (TCMalloc_SystemCommit):
+        * wtf/TCSystemAlloc.h:
+
 2009-07-28  Xan Lopez  <xlopez@igalia.com>
 
         Add new files, fixes distcheck.

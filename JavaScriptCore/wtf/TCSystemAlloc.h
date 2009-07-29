@@ -64,7 +64,7 @@ extern void TCMalloc_SystemRelease(void* start, size_t length);
 
 extern void TCMalloc_SystemCommit(void* start, size_t length);
 
-#if !HAVE(MADV_FREE_REUSE) && !HAVE(MADV_DONTNEED) && !HAVE(MMAP)
+#if !HAVE(MADV_FREE_REUSE) && !HAVE(MADV_DONTNEED) && !HAVE(MMAP) && !HAVE(VIRTUALALLOC)
 inline void TCMalloc_SystemRelease(void*, size_t) { }
 #endif
 
