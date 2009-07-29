@@ -66,6 +66,7 @@ WebInspector.TextPrompt.prototype = {
                 this._tabKeyPressed(event);
                 break;
             case "Right":
+            case "End":
                 if (!this.acceptAutoComplete())
                     this.autoCompleteSoon();
                 break;
