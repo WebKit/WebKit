@@ -1,5 +1,12 @@
 2009-07-29  Brady Eidson  <beidson@apple.com>
 
+        Rubber-stamped by Mark Rowe
+
+        * platform/gtk/Skipped: Disable the new test on GTK, as they don't dump resource load callbacks
+          in their DumpRenderTree.
+
+2009-07-29  Brady Eidson  <beidson@apple.com>
+
         Rubber-stamped by Jon Honeycutt
 
         Check in Tiger-specific results for the new test, as it is known they send willCacheResponse 

@@ -5967,3 +5967,5 @@ http/tests/security/isolatedWorld/window-properties.html
 # Missing DRT ability return a null request for willSendRequest redirect calls
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 
+# Missing resource load callback ability in DRT
+http/tests/loading/redirect-methods.html
