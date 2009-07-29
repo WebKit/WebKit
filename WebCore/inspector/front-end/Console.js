@@ -414,12 +414,6 @@ WebInspector.Console.prototype = {
                 profile: function() { return console.profile.apply(console, arguments) }, \
                 profileEnd: function() { return console.profileEnd.apply(console, arguments) }, \
                 _inspectedNodes: [], \
-                _addInspectedNode: function(node) { \
-                    var inspectedNodes = _inspectorCommandLineAPI._inspectedNodes; \
-                    inspectedNodes.unshift(node); \
-                    if (inspectedNodes.length >= 5) \
-                        inspectedNodes.pop(); \
-                }, \
                 get $0() { return _inspectorCommandLineAPI._inspectedNodes[0] }, \
                 get $1() { return _inspectorCommandLineAPI._inspectedNodes[1] }, \
                 get $2() { return _inspectorCommandLineAPI._inspectedNodes[2] }, \
@@ -435,7 +429,10 @@ WebInspector.Console.prototype = {
     {
         var inspectedWindow = InspectorController.inspectedWindow();
         this._ensureCommandLineAPIInstalled(inspectedWindow);
-        inspectedWindow._inspectorCommandLineAPI._addInspectedNode(node);
+        var inspectedNodes = inspectedWindow._inspectorCommandLineAPI._inspectedNodes;
+        inspectedNodes.unshift(node);
+        if (inspectedNodes.length >= 5)
+            inspectedNodes.pop();
     },
 
     doEvalInWindow: function(expression, callback)
