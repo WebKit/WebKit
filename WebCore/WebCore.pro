@@ -2395,6 +2395,7 @@ contains(DEFINES, ENABLE_WORKERS=1) {
         page/WorkerNavigator.cpp \
         workers/AbstractWorker.cpp \
         workers/DedicatedWorkerContext.cpp \
+        workers/DedicatedWorkerThread.cpp \
         workers/Worker.cpp \
         workers/WorkerContext.cpp \
         workers/WorkerLocation.cpp \
