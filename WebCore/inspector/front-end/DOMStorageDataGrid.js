@@ -39,6 +39,17 @@ WebInspector.DOMStorageDataGrid.prototype = {
         this._startEditing(event);
     },
 
+    _startEditingColumnOfDataGridNode: function(node, column)
+    {
+        this._editing = true;
+        this._editingNode = node;
+        this._editingNode.select();
+
+        var element = this._editingNode._element.children[column];
+        WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
+        window.getSelection().setBaseAndExtent(element, 0, element, 1);
+    },
+
     _startEditing: function(event)
     {
         var element = event.target.enclosingNodeOrSelfWithNodeName("td");
@@ -51,23 +62,57 @@ WebInspector.DOMStorageDataGrid.prototype = {
                 return;
             this._editingNode = this.creationNode;
         }
+
+        // Force editing the "Key" column when editing the creation node
+        if (this._editingNode.isCreationNode)
+            return this._startEditingColumnOfDataGridNode(this._editingNode, 0);
+
         this._editing = true;
-
-        if (this._editingNode.isCreationNode) {
-            this._editingNode.select();
-            element = this._editingNode._element.children[0]; // Create a new node by providing a Key First
-        }
-
         WebInspector.startEditing(element, this._editingCommitted.bind(this), this._editingCancelled.bind(this), element.textContent);
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
 
-    _editingCommitted: function(element, newText)
+    _editingCommitted: function(element, newText, oldText, context, moveDirection)
     {
         var columnIdentifier = (element.hasStyleClass("0-column") ? 0 : 1);
         var textBeforeEditing = this._editingNode.data[columnIdentifier];
+        var currentEditingNode = this._editingNode;
+
+        function moveToNextIfNeeded(wasChange) {
+            if (!moveDirection)
+                return;
+
+            if (moveDirection === "forward") {
+                if (currentEditingNode.isCreationNode && columnIdentifier === 0 && !wasChange)
+                    return;
+
+                if (columnIdentifier === 0)
+                    return this._startEditingColumnOfDataGridNode(currentEditingNode, 1);
+
+                var nextDataGridNode = currentEditingNode.traverseNextNode(true, null, true);
+                if (nextDataGridNode)
+                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, 0);
+                if (currentEditingNode.isCreationNode && wasChange) {
+                    addCreationNode(false);
+                    return this._startEditingColumnOfDataGridNode(this.creationNode, 0);
+                }
+                return;
+            }
+
+            if (moveDirection === "backward") {
+                if (columnIdentifier === 1)
+                    return this._startEditingColumnOfDataGridNode(currentEditingNode, 0);
+                    var nextDataGridNode = currentEditingNode.traversePreviousNode(true, null, true);
+
+                if (nextDataGridNode)
+                    return this._startEditingColumnOfDataGridNode(nextDataGridNode, 1);
+                return;
+            }
+        }
+
         if (textBeforeEditing == newText) {
             this._editingCancelled(element);
+            moveToNextIfNeeded.call(this, false);
             return;
         }
 
@@ -77,6 +122,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
                 if (domStorage.getItem(newText) != null) {
                     element.textContent = this._editingNode.data[0];
                     this._editingCancelled(element);
+                    moveToNextIfNeeded.call(this, false);
                     return;
                 }
                 domStorage.removeItem(this._editingNode.data[0]);
@@ -92,6 +138,7 @@ WebInspector.DOMStorageDataGrid.prototype = {
             this.addCreationNode(false);
 
         this._editingCancelled(element);
+        moveToNextIfNeeded.call(this, true);
     },
 
     _editingCancelled: function(element, context)
