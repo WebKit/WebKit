@@ -1147,11 +1147,10 @@ bool CSSParser::parseValue(int propId, bool important)
             }
         }
         break;
-    case CSSPropertyWebkitBorderTopRightRadius:
-    case CSSPropertyWebkitBorderTopLeftRadius:
-    case CSSPropertyWebkitBorderBottomLeftRadius:
-    case CSSPropertyWebkitBorderBottomRightRadius:
-    case CSSPropertyWebkitBorderRadius: {
+    case CSSPropertyBorderTopRightRadius:
+    case CSSPropertyBorderTopLeftRadius:
+    case CSSPropertyBorderBottomLeftRadius:
+    case CSSPropertyBorderBottomRightRadius: {
         if (num != 1 && num != 2)
             return false;
         valid_primitive = validUnit(value, FLength, m_strict);
@@ -1167,20 +1166,15 @@ bool CSSParser::parseValue(int propId, bool important)
             parsedValue2 = CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
         } else
             parsedValue2 = parsedValue1;
-        
+
         RefPtr<Pair> pair = Pair::create(parsedValue1.release(), parsedValue2.release());
         RefPtr<CSSPrimitiveValue> val = CSSPrimitiveValue::create(pair.release());
-        if (propId == CSSPropertyWebkitBorderRadius) {
-            const int properties[4] = { CSSPropertyWebkitBorderTopRightRadius,
-                                        CSSPropertyWebkitBorderTopLeftRadius,
-                                        CSSPropertyWebkitBorderBottomLeftRadius,
-                                        CSSPropertyWebkitBorderBottomRightRadius };
-            for (int i = 0; i < 4; i++)
-                addProperty(properties[i], val.get(), important);
-        } else
-            addProperty(propId, val.release(), important);
+        addProperty(propId, val.release(), important);
         return true;
     }
+    case CSSPropertyBorderRadius:
+    case CSSPropertyWebkitBorderRadius:
+        return parseBorderRadius(propId, important);
     case CSSPropertyOutlineOffset:
         valid_primitive = validUnit(value, FLength, m_strict);
         break;
@@ -3895,6 +3889,75 @@ bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& r
     return false;
 }
 
+static void completeBorderRadii(RefPtr<CSSPrimitiveValue> radii[4])
+{
+    if (radii[3])
+        return;
+    if (!radii[2]) {
+        if (!radii[1])
+            radii[1] = radii[0];
+        radii[2] = radii[0];
+    }
+    radii[3] = radii[1];
+}
+
+bool CSSParser::parseBorderRadius(int propId, bool important)
+{
+    unsigned num = m_valueList->size();
+    if (num > 9)
+        return false;
+
+    RefPtr<CSSPrimitiveValue> radii[2][4];
+
+    unsigned indexAfterSlash = 0;
+    for (unsigned i = 0; i < num; ++i) {
+        CSSParserValue* value = m_valueList->valueAt(i);
+        if (value->unit == CSSParserValue::Operator) {
+            if (value->iValue != '/')
+                return false;
+
+            if (!i || indexAfterSlash || i + 1 == num || num > i + 5)
+                return false;
+
+            indexAfterSlash = i + 1;
+            completeBorderRadii(radii[0]);
+            continue;
+        }
+
+        if (i - indexAfterSlash >= 4)
+            return false;
+
+        if (!validUnit(value, FLength, m_strict))
+            return false;
+
+        RefPtr<CSSPrimitiveValue> radius = CSSPrimitiveValue::create(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));
+
+        if (!indexAfterSlash) {
+            radii[0][i] = radius;
+
+            // Legacy syntax: -webkit-border-radius: l1 l2; is equivalent to border-radius: l1 / l2;
+            if (num == 2 && propId == CSSPropertyWebkitBorderRadius) {
+                indexAfterSlash = 1;
+                completeBorderRadii(radii[0]);
+            }
+        } else
+            radii[1][i - indexAfterSlash] = radius.release();
+    }
+
+    if (!indexAfterSlash) {
+        completeBorderRadii(radii[0]);
+        for (unsigned i = 0; i < 4; ++i)
+            radii[1][i] = radii[0][i];
+    } else
+        completeBorderRadii(radii[1]);
+
+    addProperty(CSSPropertyBorderTopLeftRadius, CSSPrimitiveValue::create(Pair::create(radii[0][0].release(), radii[1][0].release())), important);
+    addProperty(CSSPropertyBorderTopRightRadius, CSSPrimitiveValue::create(Pair::create(radii[0][1].release(), radii[1][1].release())), important);
+    addProperty(CSSPropertyBorderBottomRightRadius, CSSPrimitiveValue::create(Pair::create(radii[0][2].release(), radii[1][2].release())), important);
+    addProperty(CSSPropertyBorderBottomLeftRadius, CSSPrimitiveValue::create(Pair::create(radii[0][3].release(), radii[1][3].release())), important);
+    return true;
+}
+
 bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
 {
     enum { ID, VAL } state = ID;
@@ -4988,6 +5051,16 @@ static int cssPropertyID(const UChar* propertyName, unsigned length)
                 const char* const boxShadow = "box-shadow";
                 name = boxShadow;
                 length = strlen(boxShadow);
+            } else if (hasPrefix(buffer + 7, length - 7, "-border-")) {
+                // -webkit-border-*-*-radius worked in Safari 4 and earlier. -webkit-border-radius syntax
+                // differs from border-radius, so it is remains as a distinct property.
+                if (!strcmp(buffer + 15, "top-left-radius")
+                        || !strcmp(buffer + 15, "top-right-radius")
+                        || !strcmp(buffer + 15, "bottom-right-radius")
+                        || !strcmp(buffer + 15, "bottom-left-radius")) {
+                    name = buffer + 8;
+                    length -= 8;
+                }
             }
         }
     }

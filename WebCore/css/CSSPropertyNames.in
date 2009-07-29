@@ -21,6 +21,8 @@ background-repeat
 border
 border-bottom
 border-bottom-color
+border-bottom-left-radius
+border-bottom-right-radius
 border-bottom-style
 border-bottom-width
 border-collapse
@@ -29,6 +31,7 @@ border-left
 border-left-color
 border-left-style
 border-left-width
+border-radius
 border-right
 border-right-color
 border-right-style
@@ -37,6 +40,8 @@ border-spacing
 border-style
 border-top
 border-top-color
+border-top-left-radius
+border-top-right-radius
 border-top-style
 border-top-width
 border-width
@@ -153,14 +158,14 @@ zoom
 -webkit-background-origin
 -webkit-background-size
 -webkit-binding
--webkit-border-bottom-left-radius
--webkit-border-bottom-right-radius
 -webkit-border-fit
 -webkit-border-horizontal-spacing
 -webkit-border-image
+
+# -webkit-border-radius differs from border-radius only in the interpretation of
+# a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
+# to "border-radius: l1 / l2;"
 -webkit-border-radius
--webkit-border-top-left-radius
--webkit-border-top-right-radius
 -webkit-border-vertical-spacing
 -webkit-box-align
 -webkit-box-direction

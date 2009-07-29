@@ -152,11 +152,12 @@ static void initShorthandMap(ShorthandMap& shorthandMap)
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyOverflow, overflowProperties);
 
     static const int borderRadiusProperties[] = {
-        CSSPropertyWebkitBorderTopRightRadius,
-        CSSPropertyWebkitBorderTopLeftRadius,
-        CSSPropertyWebkitBorderBottomLeftRadius,
-        CSSPropertyWebkitBorderBottomRightRadius
+        CSSPropertyBorderTopRightRadius,
+        CSSPropertyBorderTopLeftRadius,
+        CSSPropertyBorderBottomLeftRadius,
+        CSSPropertyBorderBottomRightRadius
     };
+    SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyBorderRadius, borderRadiusProperties);
     SET_SHORTHAND_MAP_ENTRY(shorthandMap, CSSPropertyWebkitBorderRadius, borderRadiusProperties);
 
     static const int maskPositionProperties[] = { CSSPropertyWebkitMaskPositionX, CSSPropertyWebkitMaskPositionY };

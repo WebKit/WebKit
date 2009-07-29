@@ -14,6 +14,10 @@ rect: style.getPropertyValue(background-repeat) : repeat
 rect: style.getPropertyCSSValue(background-repeat) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-bottom-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(border-bottom-color) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(border-bottom-left-radius) : 0px
+rect: style.getPropertyCSSValue(border-bottom-left-radius) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(border-bottom-right-radius) : 0px
+rect: style.getPropertyCSSValue(border-bottom-right-radius) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-bottom-style) : none
 rect: style.getPropertyCSSValue(border-bottom-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-bottom-width) : 0px
@@ -34,6 +38,10 @@ rect: style.getPropertyValue(border-right-width) : 0px
 rect: style.getPropertyCSSValue(border-right-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-top-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(border-top-color) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(border-top-left-radius) : 0px
+rect: style.getPropertyCSSValue(border-top-left-radius) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(border-top-right-radius) : 0px
+rect: style.getPropertyCSSValue(border-top-right-radius) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-top-style) : none
 rect: style.getPropertyCSSValue(border-top-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-top-width) : 0px
@@ -198,20 +206,12 @@ rect: style.getPropertyValue(-webkit-background-origin) : padding-box
 rect: style.getPropertyCSSValue(-webkit-background-origin) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-size) : auto auto
 rect: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
-rect: style.getPropertyValue(-webkit-border-bottom-left-radius) : 0px
-rect: style.getPropertyCSSValue(-webkit-border-bottom-left-radius) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-border-bottom-right-radius) : 0px
-rect: style.getPropertyCSSValue(-webkit-border-bottom-right-radius) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-fit) : border
 rect: style.getPropertyCSSValue(-webkit-border-fit) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 rect: style.getPropertyCSSValue(-webkit-border-horizontal-spacing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-image) : none
 rect: style.getPropertyCSSValue(-webkit-border-image) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-border-top-left-radius) : 0px
-rect: style.getPropertyCSSValue(-webkit-border-top-left-radius) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-border-top-right-radius) : 0px
-rect: style.getPropertyCSSValue(-webkit-border-top-right-radius) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 rect: style.getPropertyCSSValue(-webkit-border-vertical-spacing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-align) : stretch
@@ -418,6 +418,10 @@ g: style.getPropertyValue(background-repeat) : repeat
 g: style.getPropertyCSSValue(background-repeat) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-bottom-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(border-bottom-color) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(border-bottom-left-radius) : 0px
+g: style.getPropertyCSSValue(border-bottom-left-radius) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(border-bottom-right-radius) : 0px
+g: style.getPropertyCSSValue(border-bottom-right-radius) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-bottom-style) : none
 g: style.getPropertyCSSValue(border-bottom-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-bottom-width) : 0px
@@ -438,6 +442,10 @@ g: style.getPropertyValue(border-right-width) : 0px
 g: style.getPropertyCSSValue(border-right-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-top-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(border-top-color) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(border-top-left-radius) : 0px
+g: style.getPropertyCSSValue(border-top-left-radius) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(border-top-right-radius) : 0px
+g: style.getPropertyCSSValue(border-top-right-radius) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-top-style) : none
 g: style.getPropertyCSSValue(border-top-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-top-width) : 0px
@@ -602,20 +610,12 @@ g: style.getPropertyValue(-webkit-background-origin) : padding-box
 g: style.getPropertyCSSValue(-webkit-background-origin) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-size) : auto auto
 g: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
-g: style.getPropertyValue(-webkit-border-bottom-left-radius) : 0px
-g: style.getPropertyCSSValue(-webkit-border-bottom-left-radius) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-border-bottom-right-radius) : 0px
-g: style.getPropertyCSSValue(-webkit-border-bottom-right-radius) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-fit) : border
 g: style.getPropertyCSSValue(-webkit-border-fit) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 g: style.getPropertyCSSValue(-webkit-border-horizontal-spacing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-image) : none
 g: style.getPropertyCSSValue(-webkit-border-image) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-border-top-left-radius) : 0px
-g: style.getPropertyCSSValue(-webkit-border-top-left-radius) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-border-top-right-radius) : 0px
-g: style.getPropertyCSSValue(-webkit-border-top-right-radius) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 g: style.getPropertyCSSValue(-webkit-border-vertical-spacing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-align) : stretch

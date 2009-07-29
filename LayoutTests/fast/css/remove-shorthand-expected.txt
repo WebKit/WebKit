@@ -12,7 +12,8 @@ Removing border-left removes border-left-width, border-left-style, border-left-c
 Removing border-color removes border-top-color, border-right-color, border-bottom-color, border-left-color.
 Removing border-style removes border-top-style, border-right-style, border-bottom-style, border-left-style.
 Removing border-width removes border-top-width, border-right-width, border-bottom-width, border-left-width.
-Removing -webkit-border-radius removes -webkit-border-top-right-radius, -webkit-border-top-left-radius, -webkit-border-bottom-left-radius, -webkit-border-bottom-right-radius.
+Removing border-radius removes border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius.
+Removing -webkit-border-radius removes border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius.
 Removing border-spacing removes -webkit-border-horizontal-spacing, -webkit-border-vertical-spacing.
 Removing -webkit-columns removes -webkit-column-width, -webkit-column-count.
 Removing -webkit-column-rule removes -webkit-column-rule-width, -webkit-column-rule-style, -webkit-column-rule-color.

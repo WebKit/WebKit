@@ -1,0 +1,31 @@
+Testing border-radius: 10px;
+SUCCESS
+Testing border-radius: 10px 20px;
+SUCCESS
+Testing -webkit-border-radius: 10px 20px;
+SUCCESS
+Testing border-radius: 10px 20px 30px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px 50px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px / 15px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px / 15px 25px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px / 15px 25px 35px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px / 15px 25px 35px 45px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px / 15px 25px 35px 45px 55px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px / 15px 25px 35px 45px /;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px / / 25px 35px 45px;
+SUCCESS
+Testing border-radius: / 10px 20px 30px 40px;
+SUCCESS
+Testing border-radius: 10px / 20px 30px 40px;
+SUCCESS
+

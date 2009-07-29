@@ -1,3 +1,46 @@
+2009-07-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        [CSS3 Backgrounds and Borders] Drop the prefix from the border-radius
+        properties
+        https://bugs.webkit.org/show_bug.cgi?id=27578
+
+        [CSS3 Backgrounds and Borders] Handle the / and 4 values in
+        border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=27584
+
+        Test: fast/borders/border-radius-parsing.html
+
+        Dropped the -webkit- prefix from the individual corner border-radius
+        properties. Added border-radius with the / and 4-value syntax, and
+        maintained -webkit-border-radius with legacy 2-value syntax.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (computedProperties): Removed Webkit prefix.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Ditto.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Removed Webkit prefix from the
+            single-corner properties. Call out to parseBorderRadius() to parse
+            border-radius and -webkit-border-radius. 
+        (WebCore::completeBorderRadii): Added this helper function that
+            completes the values for all four corners when fewer than four are
+            specified.
+        (WebCore::CSSParser::parseBorderRadius): Added.
+        (WebCore::cssPropertyID): Map -webkit-border-*-*-radius to the
+            unprefixed property.
+        * css/CSSParser.h:
+        * css/CSSPropertyLonghand.cpp:
+        (WebCore::initShorthandMap): Removed the Webkit prefix. Added an entry
+            for border-radius. Kept the entry for -webkit-border-radius.
+        * css/CSSPropertyNames.in: Removed the -webkit- prefix from the
+            single-corenr properties. Added border-radius. Kept
+            -webkit-border-radius because of its conflicting syntax.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Removed the Webkit prefix.
+        * page/animation/AnimationBase.cpp:
+        (WebCore::ensurePropertyMap): Ditto.
+
 2009-07-28  Drew Wilson  <atwilson@google.com>
 
         Reviewed by David Levin.
