@@ -1,5 +1,17 @@
 2009-07-29  Jakub Wieczorek  <faw217@gmail.com>
 
+        Reviewed by Simon Hausmann.
+
+        Expose the PluginDatabase::pluginForMIMEType() function as public API.
+        https://bugs.webkit.org/show_bug.cgi?id=27651
+
+        It can be used to determine the appropriate plugin for a mime type,
+        without guessing the mimetype from the extension.
+
+        * plugins/PluginDatabase.h:
+
+2009-07-29  Jakub Wieczorek  <faw217@gmail.com>
+
         Reviewed by Adam Treat.
 
         Allow to enable/disable particular plugin packages.
