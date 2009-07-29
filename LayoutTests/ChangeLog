@@ -1,3 +1,10 @@
+2009-07-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Update Qt-specific results for computed-style tests, like in r46512.
+
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2009-07-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Nikolas Zimmermann.

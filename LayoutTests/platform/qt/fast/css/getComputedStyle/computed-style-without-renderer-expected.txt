@@ -7,6 +7,8 @@ Computed style of an element whose parent's 'display' value is 'none':
     background-position: 0% 0%
     background-repeat: repeat
     border-bottom-color: rgb(0, 0, 0)
+    border-bottom-left-radius: 0px
+    border-bottom-right-radius: 0px
     border-bottom-style: none
     border-bottom-width: 0px
     border-collapse: separate
@@ -17,6 +19,8 @@ Computed style of an element whose parent's 'display' value is 'none':
     border-right-style: none
     border-right-width: 0px
     border-top-color: rgb(0, 0, 0)
+    border-top-left-radius: 0px
+    border-top-right-radius: 0px
     border-top-style: solid
     border-top-width: 13px
     bottom: auto
@@ -99,13 +103,9 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-background-composite: source-over
     -webkit-background-origin: padding-box
     -webkit-background-size: auto auto
-    -webkit-border-bottom-left-radius: 0px
-    -webkit-border-bottom-right-radius: 0px
     -webkit-border-fit: border
     -webkit-border-horizontal-spacing: 0px
     -webkit-border-image: none
-    -webkit-border-top-left-radius: 0px
-    -webkit-border-top-right-radius: 0px
     -webkit-border-vertical-spacing: 0px
     -webkit-box-align: stretch
     -webkit-box-direction: normal
