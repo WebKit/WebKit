@@ -94,13 +94,17 @@ Object.describe = function(obj, abbreviated)
     }
 }
 
-Object.sortedProperties = function(obj, sortFunc)
+Object.properties = function(obj)
 {
     var properties = [];
     for (var prop in obj)
         properties.push(prop);
-    properties.sort(sortFunc);
     return properties;
+}
+
+Object.sortedProperties = function(obj, sortFunc)
+{
+    return Object.properties(obj).sort(sortFunc);
 }
 
 Function.prototype.bind = function(thisObject)

@@ -272,7 +272,17 @@ WebInspector.Console.prototype = {
         }
 
         var results = [];
-        var properties = Object.sortedProperties(result);
+        var properties = Object.properties(result);
+        if (!dotNotation && !bracketNotation && result._inspectorCommandLineAPI) {
+            var commandLineAPI = Object.properties(result._inspectorCommandLineAPI);
+            for (var i = 0; i < commandLineAPI.length; ++i) {
+                var property = commandLineAPI[i];
+                if (property.charAt(0) !== "_")
+                    properties.push(property);
+            }
+        }
+        properties.sort();
+
         for (var i = 0; i < properties.length; ++i) {
             var property = properties[i];
 
