@@ -84,7 +84,7 @@ PopupMenu::~PopupMenu()
     if (m_bmp)
         ::DeleteObject(m_bmp);
     if (m_DC)
-        ::DeleteObject(m_DC);
+        ::DeleteDC(m_DC);
     if (m_popup)
         ::DestroyWindow(m_popup);
 }
@@ -525,10 +525,12 @@ void PopupMenu::paint(const IntRect& damageRect, HDC hdc)
     if (m_scrollbar)
         m_scrollbar->paint(&context, damageRect);
 
-    if (!hdc)
-        hdc = ::GetDC(m_popup);
+    HDC localDC = hdc ? hdc : ::GetDC(m_popup);
 
-    ::BitBlt(hdc, damageRect.x(), damageRect.y(), damageRect.width(), damageRect.height(), m_DC, damageRect.x(), damageRect.y(), SRCCOPY);
+    ::BitBlt(localDC, damageRect.x(), damageRect.y(), damageRect.width(), damageRect.height(), m_DC, damageRect.x(), damageRect.y(), SRCCOPY);
+
+    if (!hdc)
+        ::ReleaseDC(m_popup, localDC);
 }
 
 void PopupMenu::valueChanged(Scrollbar* scrollBar)
