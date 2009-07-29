@@ -72,6 +72,7 @@ http/tests/security/isolatedWorld/all-window-properties.html
 http/tests/security/isolatedWorld/all-window-prototypes.html
 http/tests/security/isolatedWorld/body-properties.html
 http/tests/security/isolatedWorld/body-prototype.html
+http/tests/security/isolatedWorld/click-event.html
 http/tests/security/isolatedWorld/document-open.html
 http/tests/security/isolatedWorld/document-properties.html
 http/tests/security/isolatedWorld/document-prototype.html

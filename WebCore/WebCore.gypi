@@ -677,6 +677,7 @@
             'bindings/v8/MainThreadDOMData.h',
             'bindings/v8/NPV8Object.cpp',
             'bindings/v8/NPV8Object.h',
+            'bindings/v8/OwnHandle.h',
             'bindings/v8/ScheduledAction.cpp',
             'bindings/v8/ScheduledAction.h',
             'bindings/v8/ScopedDOMDataStore.cpp',

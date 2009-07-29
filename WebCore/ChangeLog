@@ -69,6 +69,37 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [V8] Fix isolated world wrappers for event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=27533
+
+        Instead of getting the context from the frame, we cache the context
+        when the listener is created so that we get the context for the right
+        world.
+
+        Test: http/tests/security/isolatedWorld/click-event.html
+
+        * WebCore.gypi:
+        * bindings/v8/OwnHandle.h: Added.
+        (WebCore::OwnHandle::OwnHandle):
+        (WebCore::OwnHandle::~OwnHandle):
+        (WebCore::OwnHandle::get):
+        (WebCore::OwnHandle::set):
+        (WebCore::OwnHandle::release):
+        (WebCore::OwnHandle::adopt):
+        (WebCore::OwnHandle::swap):
+        (WebCore::OwnHandle::clear):
+        (WebCore::OwnHandle::makeWeak):
+        (WebCore::OwnHandle::weakCallback):
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener):
+        (WebCore::V8AbstractEventListener::handleEvent):
+        * bindings/v8/V8AbstractEventListener.h:
+        * bindings/v8/V8DOMWrapper.h:
+
+2009-07-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
         [V8] Teach V8Proxy::context about isolated worlds
         https://bugs.webkit.org/show_bug.cgi?id=27701
 
