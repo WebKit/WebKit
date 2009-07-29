@@ -29,7 +29,6 @@
 #include "config.h"
 #include "WebInspectorClient.h"
 
-#include "NotImplemented.h"
 #include "WebInspectorDelegate.h"
 #include "WebKit.h"
 #include "WebMutableURLRequest.h"
@@ -42,6 +41,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/WindowMessageBroadcaster.h>

@@ -1,5 +1,11 @@
 2009-07-29  Brian Weinstein  <bweinstein@apple.com>
 
+        Was doing the build fix wrong, NotImplemented.h is in WebCore.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+
+2009-07-29  Brian Weinstein  <bweinstein@apple.com>
+
         Windows build fix.
 
         * WebCoreSupport/WebInspectorClient.cpp:
