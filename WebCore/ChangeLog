@@ -1,3 +1,27 @@
+2009-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Animation with a timing function property in a keyframe eats CPU
+        https://bugs.webkit.org/show_bug.cgi?id=27856
+        <rdar://problem/7104476> Animation demo uses lots of CPU
+        
+        Don't include animation-timing-function in the list of properties to
+        animate in a keyframe animation, because this property is not animated;
+        instead, it describes the timing function to apply to this keyframe.
+        
+        This prevents the animation code from thinking that there's a property
+        that it has to software-animate, and thus firing the animation timer frequently.
+        
+        Not testable because there is no visible impact.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation): Don't add
+        CSSPropertyWebkitAnimationTimingFunction to the list of properties to animate.
+
+        * page/animation/KeyframeAnimation.cpp
+        (WebCore::KeyframeAnimation::getKeyframeAnimationInterval): Add a comment
+
 2009-07-30  Mike Fenton  <mike.fenton@torchmobile.com>
 
          Reviewed by Adam Treat.

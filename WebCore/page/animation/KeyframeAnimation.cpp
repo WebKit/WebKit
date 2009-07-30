@@ -93,8 +93,10 @@ void KeyframeAnimation::getKeyframeAnimationInterval(const RenderStyle*& fromSty
         return;
 
     const TimingFunction* timingFunction = 0;
-    if (fromStyle->animations() && fromStyle->animations()->size() > 0)
+    if (fromStyle->animations() && fromStyle->animations()->size() > 0) {
+        // We get the timing function from the first animation, because we've synthesized a RenderStyle for each keyframe.
         timingFunction = &(fromStyle->animations()->animation(0)->timingFunction());
+    }
 
     prog = progress(scale, offset, timingFunction);
 }
