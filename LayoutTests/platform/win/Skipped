@@ -575,6 +575,3 @@ http/tests/security/isolatedWorld/window-properties.html
 
 # <rdar://problem/7102793> http/tests/loading/redirect-methods.html fails on Windows (no didReceiveResponse callback after a redirect)
 http/tests/loading/redirect-methods.html
-
-# Need new generated results
-fast/forms/button-style-color.html
