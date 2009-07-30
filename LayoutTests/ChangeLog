@@ -1,3 +1,19 @@
+2009-07-30  Mike Fenton  <mike.fenton@torchmobile.com>
+
+         Reviewed by Adam Treat.
+
+         Add Button Colour style test and results for Qt based upon fix for bug.
+         Unskip tables/mozilla/bugs/bug92647-2.html which passes with bug fix.
+         Update expected results for qt for test fast/dom/HTMLTableColElement/resize-table-using-col-width-expected
+         which also passes with the the bug fix.
+
+         https://bugs.webkit.org/show_bug.cgi?id=27814
+
+         * fast/forms/button-style-color.html: Added.
+         * platform/qt/Skipped:
+         * platform/qt/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt:
+         * platform/qt/fast/forms/button-style-color-expected.txt: Added.
+
 2009-07-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Simon Fraser.
