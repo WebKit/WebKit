@@ -138,11 +138,14 @@ namespace WebCore {
 
     const int kMaxRecursionDepth = 20;
 
-    // Information about an extension that is registered for use with V8. If scheme
-    // is non-empty, it contains the URL scheme the extension should be used with.
-    // Otherwise, the extension is used with all schemes.
+    // Information about an extension that is registered for use with V8. If
+    // scheme is non-empty, it contains the URL scheme the extension should be
+    // used with. If group is non-zero, the extension will only be loaded into
+    // script contexts that belong to that group. Otherwise, the extension is
+    // used with all schemes and contexts.
     struct V8ExtensionInfo {
         String scheme;
+        int group;
         v8::Extension* extension;
     };
     typedef std::list<V8ExtensionInfo> V8ExtensionList;
@@ -211,12 +214,12 @@ namespace WebCore {
         // global scope, its own prototypes for intrinsic JavaScript objects (String,
         // Array, and so-on), and its own wrappers for all DOM nodes and DOM
         // constructors.
-        void evaluateInNewWorld(const Vector<ScriptSourceCode>& sources);
+        void evaluateInNewWorld(const Vector<ScriptSourceCode>& sources, int extensionGroup);
 
         // Evaluate JavaScript in a new context. The script gets its own global scope
         // and its own prototypes for intrinsic JavaScript objects (String, Array,
         // and so-on). It shares the wrappers for all DOM nodes and DOM constructors.
-        void evaluateInNewContext(const Vector<ScriptSourceCode>&);
+        void evaluateInNewContext(const Vector<ScriptSourceCode>&, int extensionGroup);
 
         // Evaluate a script file in the current execution environment.
         // The caller must hold an execution context.
@@ -339,14 +342,18 @@ namespace WebCore {
         // WARNING: Call |installHiddenObjectPrototype| only on fresh contexts!
         static void installHiddenObjectPrototype(v8::Handle<v8::Context>);
 
-        // Registers an extension to be available on webpages with a particular scheme
-        // If the scheme argument is empty, the extension is available on all pages.
-        // Will only affect v8 contexts initialized after this call. Takes ownership
-        // of the v8::Extension object passed.
+        // Registers a v8 extension to be available on webpages. The two forms
+        // offer various restrictions on what types of contexts the extension is
+        // loaded into. If a scheme is provided, only pages whose URL has the given
+        // scheme will match. If extensionGroup is provided, the extension will
+        // only be loaded into scripts run via evaluateInNewWorld with the
+        // matching group.  Will only affect v8 contexts initialized after this
+        // call. Takes ownership of the v8::Extension object passed.
         static void registerExtension(v8::Extension*, const String& schemeRestriction);
+        static void registerExtension(v8::Extension*, int extensionGroup);
 
         // FIXME: Separate these concerns from V8Proxy?
-        v8::Persistent<v8::Context> createNewContext(v8::Handle<v8::Object> global);
+        v8::Persistent<v8::Context> createNewContext(v8::Handle<v8::Object> global, int extensionGroup);
         static bool installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* window);
 
         void initContextIfNeeded();
@@ -394,6 +401,8 @@ namespace WebCore {
                 createUtilityContext();
             return v8::Local<v8::Context>::New(m_utilityContext);
         }
+
+        static void registerExtensionWithV8(v8::Extension*);
 
         Frame* m_frame;
 

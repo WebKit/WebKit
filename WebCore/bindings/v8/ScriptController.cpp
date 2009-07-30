@@ -180,14 +180,14 @@ bool ScriptController::processingUserGesture() const
     return false;
 }
 
-void ScriptController::evaluateInNewWorld(const Vector<ScriptSourceCode>& sources)
+void ScriptController::evaluateInNewWorld(const Vector<ScriptSourceCode>& sources, int extensionGroup)
 {
-    m_proxy->evaluateInNewWorld(sources);
+    m_proxy->evaluateInNewWorld(sources, extensionGroup);
 }
 
-void ScriptController::evaluateInNewContext(const Vector<ScriptSourceCode>& sources)
+void ScriptController::evaluateInNewContext(const Vector<ScriptSourceCode>& sources, int extensionGroup)
 {
-    m_proxy->evaluateInNewContext(sources);
+    m_proxy->evaluateInNewContext(sources, extensionGroup);
 }
 
 // Evaluate a script file in the environment of this proxy.

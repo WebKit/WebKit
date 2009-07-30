@@ -61,7 +61,7 @@ namespace WebCore {
 
         // Evaluate JavaScript in a new isolated world.  The script has access
         // to the DOM of the document associated with |proxy|.
-        static void evaluate(const Vector<ScriptSourceCode>& sources, V8Proxy* proxy);
+        static void evaluate(const Vector<ScriptSourceCode>& sources, V8Proxy* proxy, int extensionGroup);
 
         // Returns the isolated world associated with
         // v8::Context::GetEntered().  Because worlds are isolated, the entire
