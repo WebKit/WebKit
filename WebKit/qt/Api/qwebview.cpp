@@ -86,7 +86,7 @@ public:
     \image qwebview-url.png
 
     A web site can be loaded onto QWebView with the load() function. Like all
-    Qt Widgets, the show() function must be invoked in order to display
+    Qt widgets, the show() function must be invoked in order to display
     QWebView. The snippet below illustrates this:
 
     \snippet webkitsnippets/simple/main.cpp Using QWebView
@@ -146,7 +146,8 @@ public:
     if you do not require QWidget attributes. Nevertheless, QtWebKit depends
     on QtGui, so you should use a QApplication instead of QCoreApplication.
 
-    \sa {Previewer Example}, {Browser}, {Form Extractor}, {Google Chat}, {Fancy Browser}
+    \sa {Previewer Example}, {Web Browser}, {Form Extractor Example},
+    {Google Chat Example}, {Fancy Browser Example}
 */
 
 /*!
