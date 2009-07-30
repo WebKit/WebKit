@@ -1,3 +1,16 @@
+2009-07-29  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/27788> Don't export WebPluginController.h as a private header
+
+        Reviewed by Mark Rowe.
+
+        WebPluginController.h includes WebPluginContainerCheck.h, which
+        is not a private header.  Since WebPluginController.h doesn't
+        appear to be used anywhere, remove its private header status.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove private header
+        attribute from WebPluginController.h.
+
 2009-07-28  Maxime Simon  <simon.maxime@gmail.com>
 
         Reviewed by David Levin.

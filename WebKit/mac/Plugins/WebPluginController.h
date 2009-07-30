@@ -27,7 +27,7 @@
  */
 
 #import <WebKit/WebBasePluginPackage.h>
-#import "WebPluginContainerCheck.h"
+#import <WebKit/WebPluginContainerCheck.h>
 
 @class WebFrame;
 @class WebHTMLView;
