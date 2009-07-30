@@ -69,6 +69,21 @@ private:
     int m_refCount;
 };
 
+inline RenderWidget* toRenderWidget(RenderObject* o)
+{
+    ASSERT(!o || o->isWidget());
+    return static_cast<RenderWidget*>(o);
+}
+
+inline const RenderWidget* toRenderWidget(const RenderObject* o)
+{
+    ASSERT(!o || o->isWidget());
+    return static_cast<const RenderWidget*>(o);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderWidget(const RenderWidget*);
+
 } // namespace WebCore
 
 #endif // RenderWidget_h

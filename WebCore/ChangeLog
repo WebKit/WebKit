@@ -1,3 +1,91 @@
+2009-07-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Levin.
+
+        Use checked casts for render tree
+        https://bugs.webkit.org/show_bug.cgi?id=23522
+
+        Next step: Add new toRenderWidget cast and use it everywhere.
+
+        Use checked casts in all the places that were using static_cast
+        but there is a checked cast available.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::widget):
+        (WebCore::AccessibilityRenderObject::widgetForAttachmentView):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getPangoLayoutForAtk):
+        * dom/Document.cpp:
+        (WebCore::widgetForNode):
+        (WebCore::Document::setFocusedNode):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::findWidgetRenderer):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::defaultEventHandler):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSubframe):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+        (WebCore::subframeForTargetNode):
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/Frame.cpp:
+        (WebCore::isFrameElement):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computePageRects):
+        * page/android/EventHandlerAndroid.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/chromium/FrameChromium.cpp:
+        (WebCore::computePageRectsForFrame):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/haiku/EventHandlerHaiku.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        * page/win/FrameWin.cpp:
+        (WebCore::computePageRectsForFrame):
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::getCachedImage):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::getCachedImage):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::getCachedImage):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::boxModelObject):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::addChildToContinuation):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateImageContents):
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::RenderTextControlInnerBlock::positionForPoint):
+        Use checked cast instead of static_cast.
+        
+        * rendering/RenderWidget.h: Added toRenderWidget.
+
 2009-07-30  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by George Staikos.

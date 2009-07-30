@@ -60,10 +60,10 @@ HTMLObjectElement::~HTMLObjectElement()
 
 RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
 {
-    RenderWidget* renderWidget = (renderer() && renderer()->isWidget()) ? static_cast<RenderWidget*>(renderer()) : 0;
+    RenderWidget* renderWidget = (renderer() && renderer()->isWidget()) ? toRenderWidget(renderer()) : 0;
     if (renderWidget && !renderWidget->widget()) {
         document()->updateLayoutIgnorePendingStylesheets();
-        renderWidget = (renderer() && renderer()->isWidget()) ? static_cast<RenderWidget*>(renderer()) : 0;
+        renderWidget = (renderer() && renderer()->isWidget()) ? toRenderWidget(renderer()) : 0;
     }
     return renderWidget;
 }

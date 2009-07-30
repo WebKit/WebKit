@@ -229,7 +229,7 @@ static CachedImage* getCachedImage(Element* element)
     if (!renderer || !renderer->isImage())
         return 0;
 
-    RenderImage* image = static_cast<RenderImage*>(renderer);
+    RenderImage* image = toRenderImage(renderer);
     if (image->cachedImage() && !image->cachedImage()->errorOccurred())
         return image->cachedImage();
 

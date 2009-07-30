@@ -564,7 +564,7 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     AccessibilityRenderObject* accObject = static_cast<AccessibilityRenderObject*>(coreObject);
     if (!accObject)
         return 0;
-    RenderText* renderText = static_cast<RenderText*>(accObject->renderer());
+    RenderText* renderText = toRenderText(accObject->renderer());
     if (!renderText)
         return 0;
 

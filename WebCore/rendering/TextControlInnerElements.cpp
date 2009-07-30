@@ -69,7 +69,7 @@ VisiblePosition RenderTextControlInnerBlock::positionForPoint(const IntPoint& po
     // Multiline text controls have the scroll on shadowAncestorNode, so we need to take that
     // into account here.
     if (m_multiLine) {
-        RenderTextControl* renderer = static_cast<RenderTextControl*>(node()->shadowAncestorNode()->renderer());
+        RenderTextControl* renderer = toRenderTextControl(node()->shadowAncestorNode()->renderer());
         if (renderer->hasOverflowClip())
             renderer->layer()->addScrolledContentOffset(contentsX, contentsY);
     }

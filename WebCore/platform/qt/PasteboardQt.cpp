@@ -138,7 +138,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     ASSERT(node && node->renderer() && node->renderer()->isImage());
 
 #ifndef QT_NO_CLIPBOARD
-    CachedImage* cachedImage = static_cast<RenderImage*>(node->renderer())->cachedImage();
+    CachedImage* cachedImage = toRenderImage(node->renderer())->cachedImage();
     ASSERT(cachedImage);
 
     Image* image = cachedImage->image();

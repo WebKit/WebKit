@@ -177,9 +177,10 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
     RenderObject* r = renderer();
     if (!r || !r->isWidget())
         return;
-
-    if (Widget* widget = static_cast<RenderWidget*>(r)->widget())
-        widget->handleEvent(event);
+    Widget* widget = toRenderWidget(r)->widget();
+    if (!widget)
+        return;
+    widget->handleEvent(event);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

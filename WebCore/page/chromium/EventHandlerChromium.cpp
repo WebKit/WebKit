@@ -105,8 +105,7 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
     // Figure out which view to send the event to.
     if (!event.targetNode() || !event.targetNode()->renderer() || !event.targetNode()->renderer()->isWidget())
         return false;
-
-    return passMouseDownEventToWidget(static_cast<RenderWidget*>(event.targetNode()->renderer())->widget());
+    return passMouseDownEventToWidget(toRenderWidget(event.targetNode()->renderer())->widget());
 }
 
 bool EventHandler::passMouseDownEventToWidget(Widget* widget)

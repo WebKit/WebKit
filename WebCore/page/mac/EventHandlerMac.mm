@@ -232,7 +232,7 @@ bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestR
     // just pass currentEvent down to the widget, we don't want to call it for events that
     // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
     // part of the pressed/released handling.
-    return passMouseDownEventToWidget(static_cast<RenderWidget*>(target)->widget());
+    return passMouseDownEventToWidget(toRenderWidget(target)->widget());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
@@ -449,10 +449,10 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
             RenderObject* renderer = node->renderer();
             if (!renderer || !renderer->isWidget())
                 return false;
-            Widget* widget = static_cast<RenderWidget*>(renderer)->widget();
+            Widget* widget = toRenderWidget(renderer)->widget();
             if (!widget || !widget->isFrameView())
                 return false;
-            if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget*>(renderer)))
+            if (!passWidgetMouseDownEventToWidget(toRenderWidget(renderer)))
                 return false;
             m_mouseDownWasInSubframe = true;
             return true;

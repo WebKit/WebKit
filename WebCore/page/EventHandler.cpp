@@ -764,7 +764,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         Node* n = result.innerNode();
         if (!result.isOverWidget() || !n || !n->renderer() || !n->renderer()->isWidget())
             break;
-        RenderWidget* renderWidget = static_cast<RenderWidget*>(n->renderer());
+        RenderWidget* renderWidget = toRenderWidget(n->renderer());
         Widget* widget = renderWidget->widget();
         if (!widget || !widget->isFrameView())
             break;
@@ -914,7 +914,7 @@ Frame* subframeForTargetNode(Node* node)
     if (!renderer || !renderer->isWidget())
         return 0;
 
-    Widget* widget = static_cast<RenderWidget*>(renderer)->widget();
+    Widget* widget = toRenderWidget(renderer)->widget();
     if (!widget || !widget->isFrameView())
         return 0;
 
@@ -1771,8 +1771,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         RenderObject* target = node->renderer();
         
         if (isOverWidget && target && target->isWidget()) {
-            Widget* widget = static_cast<RenderWidget*>(target)->widget();
-
+            Widget* widget = toRenderWidget(target)->widget();
             if (widget && passWheelEventToWidget(e, widget)) {
                 e.accept();
                 return true;

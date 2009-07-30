@@ -61,7 +61,7 @@ static inline RenderWidget* findWidgetRenderer(const Node* n)
         while (n && !n->hasTagName(objectTag));
 
     if (n && n->renderer() && n->renderer()->isWidget())
-        return static_cast<RenderWidget*>(n->renderer());
+        return toRenderWidget(n->renderer());
 
     return 0;
 }

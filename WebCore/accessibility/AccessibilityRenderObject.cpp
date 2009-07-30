@@ -775,7 +775,7 @@ String AccessibilityRenderObject::stringValue() const
         return static_cast<RenderListMarker*>(m_renderer)->text();
     
     if (m_renderer->isRenderButton())
-        return static_cast<RenderButton*>(m_renderer)->text();
+        return toRenderButton(m_renderer)->text();
 
     if (isWebArea()) {
         if (m_renderer->document()->frame())
@@ -1603,8 +1603,7 @@ Widget* AccessibilityRenderObject::widget() const
 {
     if (!m_renderer->isWidget())
         return 0;
-    
-    return static_cast<RenderWidget*>(m_renderer)->widget();
+    return toRenderWidget(m_renderer)->widget();
 }
 
 AXObjectCache* AccessibilityRenderObject::axObjectCache() const
@@ -1675,7 +1674,7 @@ Widget* AccessibilityRenderObject::widgetForAttachmentView() const
 {
     if (!isAttachment())
         return 0;
-    return static_cast<RenderWidget*>(m_renderer)->widget();
+    return toRenderWidget(m_renderer)->widget();
 }
 
 FrameView* AccessibilityRenderObject::frameViewIfRenderView() const
@@ -1880,7 +1879,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
             break;
         
         // descend into widget (FRAME, IFRAME, OBJECT...)
-        Widget* widget = static_cast<RenderWidget*>(renderer)->widget();
+        Widget* widget = toRenderWidget(renderer)->widget();
         if (!widget || !widget->isFrameView())
             break;
         Frame* frame = static_cast<FrameView*>(widget)->frame();

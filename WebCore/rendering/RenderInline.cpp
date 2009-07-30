@@ -258,7 +258,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     // We have been reparented and are now under the fromBlock.  We need
     // to walk up our inline parent chain until we hit the containing block.
     // Once we hit the containing block we're done.
-    RenderBoxModelObject* curr = static_cast<RenderBoxModelObject*>(parent());
+    RenderBoxModelObject* curr = toRenderBoxModelObject(parent());
     RenderBoxModelObject* currChild = this;
     
     // FIXME: Because splitting is O(n^2) as tags nest pathologically, we cap the depth at which we're willing to clone.
@@ -302,7 +302,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         
         // Keep walking up the chain.
         currChild = curr;
-        curr = static_cast<RenderBoxModelObject*>(curr->parent());
+        curr = toRenderBoxModelObject(curr->parent());
         splitDepth++;
     }
 
@@ -384,7 +384,7 @@ void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* 
     ASSERT(!beforeChild || beforeChild->parent()->isRenderBlock() || beforeChild->parent()->isRenderInline());
     RenderBoxModelObject* beforeChildParent = 0;
     if (beforeChild)
-        beforeChildParent = static_cast<RenderBoxModelObject*>(beforeChild->parent());
+        beforeChildParent = toRenderBoxModelObject(beforeChild->parent());
     else {
         RenderBoxModelObject* cont = nextContinuation(flow);
         if (cont)

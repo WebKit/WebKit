@@ -559,7 +559,7 @@ static bool isFrameElement(const Node *n)
     RenderObject *renderer = n->renderer();
     if (!renderer || !renderer->isWidget())
         return false;
-    Widget* widget = static_cast<RenderWidget*>(renderer)->widget();
+    Widget* widget = toRenderWidget(renderer)->widget();
     return widget && widget->isFrameView();
 }
 

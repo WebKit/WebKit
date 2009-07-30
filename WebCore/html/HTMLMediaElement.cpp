@@ -1615,7 +1615,7 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
     if (!r || !r->isWidget())
         return;
 
-    Widget* widget = static_cast<RenderWidget*>(r)->widget();
+    Widget* widget = toRenderWidget(r)->widget();
     if (widget)
         widget->handleEvent(event);
 #else
