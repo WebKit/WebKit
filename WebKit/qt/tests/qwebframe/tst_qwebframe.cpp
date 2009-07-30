@@ -2209,6 +2209,8 @@ private slots:
 };
 
 class FakeNetworkManager : public QNetworkAccessManager {
+    Q_OBJECT
+
 public:
     FakeNetworkManager(QObject* parent) : QNetworkAccessManager(parent) { }
 

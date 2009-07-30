@@ -2,6 +2,14 @@
 
         Reviewed by Adam Treat.
 
+        Add missing Q_OBJECT to class inheriting from QObject.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
+2009-07-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Treat.
+
         Fix indentation.
 
         * tests/qwebframe/tst_qwebframe.cpp:
