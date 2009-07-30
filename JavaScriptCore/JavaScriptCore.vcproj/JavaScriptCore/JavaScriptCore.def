@@ -140,8 +140,6 @@ EXPORTS
     ?getSlice@ArgList@JSC@@QBEXHAAV12@@Z
     ?getString@JSCell@JSC@@QBE?AVUString@2@XZ
     ?getString@JSCell@JSC@@QBE_NAAVUString@2@@Z
-    ?getTruncatedInt32@JSCell@JSC@@UBE_NAAH@Z
-    ?getTruncatedUInt32@JSCell@JSC@@UBE_NAAI@Z
     ?getUInt32@JSCell@JSC@@UBE_NAAI@Z
     ?globalExec@JSGlobalObject@JSC@@UAEPAVExecState@2@XZ
     ?globalObjectCount@Heap@JSC@@QAEIXZ
@@ -161,7 +159,6 @@ EXPORTS
     ?isHostFunction@FunctionBodyNode@JSC@@QBE_NXZ
     ?isMainThread@WTF@@YA_NXZ
     ?isVariableObject@JSVariableObject@JSC@@UBE_NXZ
-    ?jsAPIMangledNumber@JSC@@YA?AVJSValue@1@PAVExecState@1@N@Z
     ?jsNumberCell@JSC@@YA?AVJSValue@1@PAVExecState@1@N@Z
     ?jsOwnedString@JSC@@YAPAVJSString@1@PAVJSGlobalData@1@ABVUString@1@@Z
     ?jsRegExpCompile@@YAPAUJSRegExp@@PB_WHW4JSRegExpIgnoreCaseOption@@W4JSRegExpMultilineOption@@PAIPAPBD@Z
@@ -178,7 +175,6 @@ EXPORTS
     ?mark@JSWrapperObject@JSC@@UAEXXZ
     ?materializePropertyMap@Structure@JSC@@AAEXXZ
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVJSGlobalData@2@@Z
-    ?nonInlineNaN@JSImmediate@JSC@@CANXZ
     ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI?AVJSValue@1@PAVExecState@1@PAVJSObject@1@V21@ABVArgList@1@@Z
     ?parse@Parser@JSC@@AAEXPAVJSGlobalData@2@PAHPAVUString@2@@Z
@@ -241,7 +237,6 @@ EXPORTS
     ?toObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
     ?toPrimitive@JSString@JSC@@EBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toStrictUInt32@UString@JSC@@QBEIPA_N@Z
-    ?toString@JSImmediate@JSC@@CA?AVUString@2@VJSValue@2@@Z
     ?toString@JSObject@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
     ?toString@StringObject@JSC@@EBE?AVUString@2@PAVExecState@2@@Z

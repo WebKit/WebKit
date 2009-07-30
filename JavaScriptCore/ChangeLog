@@ -1,3 +1,10 @@
+2009-07-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows build fix: removed stale symbols on Windows.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
 === End merge of nitro-extreme branch 2009-07-30 ===
 
 2009-07-20  Geoffrey Garen  <ggaren@apple.com>
