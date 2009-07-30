@@ -587,7 +587,7 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
             handled = true;
         }
         
-        if (handled && listIndex >= 0 && listIndex < listItems.size())
+        if (handled && listIndex >= 0 && (unsigned)listIndex < listItems.size())
             setSelectedIndex(data, element, listToOptionIndex(data, element, listIndex));
 #endif
         if (handled)
