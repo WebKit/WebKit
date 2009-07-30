@@ -307,9 +307,9 @@ extern "C" {
     JSObject* JIT_STUB cti_op_put_by_id_transition_realloc(STUB_ARGS_DECLARATION);
     JSPropertyNameIterator* JIT_STUB cti_op_get_pnames(STUB_ARGS_DECLARATION);
     VoidPtrPair JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
-    bool JIT_STUB cti_op_eq(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_eq(STUB_ARGS_DECLARATION);
 #if USE(JSVALUE32_64)
-    bool JIT_STUB cti_op_eq_strings(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_eq_strings(STUB_ARGS_DECLARATION);
 #endif
     int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jlesseq(STUB_ARGS_DECLARATION);

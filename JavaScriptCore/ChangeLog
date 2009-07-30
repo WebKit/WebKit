@@ -1,5 +1,18 @@
 2009-07-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Fixed failing tests seen on Windows buildbot.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::): Use "int" instead of "bool" to guarantee a 32-bit result,
+        regardless of compiler. gcc on mac uses 32-bit values for bool,
+        but gcc on linux and MSVC on Windows use 8-bit values.
+
+2009-07-30  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix: added missing symbols on Windows.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
