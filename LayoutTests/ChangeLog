@@ -2,6 +2,12 @@
 
         Add expected results file for new test.
 
+        * platform/gtk/fast/forms/button-style-color-expected.txt: Added.
+
+2009-07-30  Adam Treat  <adam.treat@torchmobile.com>
+
+        Add expected results file for new test.
+
         * platform/mac/fast/forms/button-style-color-expected.txt: Added.
 
 2009-07-30  Adam Treat  <adam.treat@torchmobile.com>
