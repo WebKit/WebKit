@@ -234,7 +234,7 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
 void HTMLMediaElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-    if (!src().isEmpty())
+    if (!src().isEmpty() && m_networkState == NETWORK_EMPTY)
         scheduleLoad();
 }
 
