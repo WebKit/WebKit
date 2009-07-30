@@ -230,6 +230,14 @@ namespace JSC {
             static_cast<Arguments*>(arguments)->setActivation(this);
     }
 
+    ALWAYS_INLINE Arguments* Register::arguments() const
+    {
+        if (jsValue() == JSValue())
+            return 0;
+        return asArguments(jsValue());
+    }
+    
+
 } // namespace JSC
 
 #endif // Arguments_h

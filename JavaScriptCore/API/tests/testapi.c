@@ -383,8 +383,12 @@ static JSValueRef EvilExceptionObject_convertToType(JSContextRef context, JSObje
     if (!function)
         return NULL;
     JSValueRef value = JSObjectCallAsFunction(context, function, object, 0, NULL, exception);
-    if (!value)
-        return (JSValueRef)JSStringCreateWithUTF8CString("convertToType failed");
+    if (!value) {
+        JSStringRef errorString = JSStringCreateWithUTF8CString("convertToType failed"); 
+        JSValueRef errorStringRef = JSValueMakeString(context, errorString);
+        JSStringRelease(errorString);
+        return errorStringRef;
+    }
     return value;
 }
 

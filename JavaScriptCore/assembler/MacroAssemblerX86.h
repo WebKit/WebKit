@@ -51,6 +51,8 @@ public:
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::branch32;
     using MacroAssemblerX86Common::call;
+    using MacroAssemblerX86Common::loadDouble;
+    using MacroAssemblerX86Common::convertInt32ToDouble;
 
     void add32(Imm32 imm, RegisterID src, RegisterID dest)
     {
@@ -85,6 +87,17 @@ public:
     void load32(void* address, RegisterID dest)
     {
         m_assembler.movl_mr(address, dest);
+    }
+
+    void loadDouble(void* address, FPRegisterID dest)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.movsd_mr(address, dest);
+    }
+
+    void convertInt32ToDouble(AbsoluteAddress src, FPRegisterID dest)
+    {
+        m_assembler.cvtsi2sd_mr(src.m_ptr, dest);
     }
 
     void store32(Imm32 imm, void* address)

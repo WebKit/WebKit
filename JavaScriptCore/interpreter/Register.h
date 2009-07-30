@@ -52,24 +52,12 @@ namespace JSC {
     public:
         Register();
         Register(JSValue);
-        Register(Arguments*);
 
         JSValue jsValue() const;
 
         bool marked() const;
         void mark();
         
-        int32_t i() const;
-        void* v() const;
-
-    private:
-        friend class ExecState;
-        friend class Interpreter;
-
-        // Only CallFrame, Interpreter, and JITStubs should use these functions.
-
-        Register(intptr_t);
-
         Register(JSActivation*);
         Register(CallFrame*);
         Register(CodeBlock*);
@@ -78,6 +66,7 @@ namespace JSC {
         Register(ScopeChainNode*);
         Register(Instruction*);
 
+        int32_t i() const;
         JSActivation* activation() const;
         Arguments* arguments() const;
         CallFrame* callFrame() const;
@@ -87,13 +76,19 @@ namespace JSC {
         ScopeChainNode* scopeChain() const;
         Instruction* vPC() const;
 
+        static Register withInt(int32_t i)
+        {
+            return Register(i);
+        }
+
+    private:
+        Register(int32_t);
+
         union {
-            intptr_t i;
-            void* v;
+            int32_t i;
             EncodedJSValue value;
 
             JSActivation* activation;
-            Arguments* arguments;
             CallFrame* callFrame;
             CodeBlock* codeBlock;
             JSFunction* function;
@@ -132,11 +127,6 @@ namespace JSC {
     
     // Interpreter functions
 
-    ALWAYS_INLINE Register::Register(Arguments* arguments)
-    {
-        u.arguments = arguments;
-    }
-
     ALWAYS_INLINE Register::Register(JSActivation* activation)
     {
         u.activation = activation;
@@ -172,33 +162,19 @@ namespace JSC {
         u.propertyNameIterator = propertyNameIterator;
     }
 
-    ALWAYS_INLINE Register::Register(intptr_t i)
+    ALWAYS_INLINE Register::Register(int32_t i)
     {
-        // See comment on 'i()' below.
-        ASSERT(i == static_cast<int32_t>(i));
         u.i = i;
     }
 
-    // Read 'i' as a 32-bit integer; we only use it to hold 32-bit values,
-    // and we only write 32-bits when writing the arg count from JIT code.
     ALWAYS_INLINE int32_t Register::i() const
     {
-        return static_cast<int32_t>(u.i);
+        return u.i;
     }
     
-    ALWAYS_INLINE void* Register::v() const
-    {
-        return u.v;
-    }
-
     ALWAYS_INLINE JSActivation* Register::activation() const
     {
         return u.activation;
-    }
-    
-    ALWAYS_INLINE Arguments* Register::arguments() const
-    {
-        return u.arguments;
     }
     
     ALWAYS_INLINE CallFrame* Register::callFrame() const

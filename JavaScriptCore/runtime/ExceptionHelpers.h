@@ -29,7 +29,6 @@
 #ifndef ExceptionHelpers_h
 #define ExceptionHelpers_h
 
-#include "JSImmediate.h"
 
 namespace JSC {
 

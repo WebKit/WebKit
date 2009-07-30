@@ -708,6 +708,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\JSAPIValueWrapper.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSAPIValueWrapper.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\JSArray.cpp"
 				>
 			</File>

@@ -22,7 +22,6 @@
 #ifndef ArgList_h
 #define ArgList_h
 
-#include "JSImmediate.h"
 #include "Register.h"
 
 #include <wtf/HashSet.h>

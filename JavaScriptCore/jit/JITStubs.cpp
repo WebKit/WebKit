@@ -62,12 +62,267 @@ using namespace std;
 
 namespace JSC {
 
-
 #if PLATFORM(DARWIN) || PLATFORM(WIN_OS)
 #define SYMBOL_STRING(name) "_" #name
 #else
 #define SYMBOL_STRING(name) #name
 #endif
+
+#if USE(JSVALUE32_64)
+
+#if COMPILER(GCC) && PLATFORM(X86)
+
+// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
+// need to change the assembly trampolines below to match.
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) % 16 == 0x0, JITStackFrame_maintains_16byte_stack_alignment);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, savedEBX) == 0x3c, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x58, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x50, JITStackFrame_code_offset_matches_ctiTrampoline);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "pushl %ebp" "\n"
+    "movl %esp, %ebp" "\n"
+    "pushl %esi" "\n"
+    "pushl %edi" "\n"
+    "pushl %ebx" "\n"
+    "subl $0x3c, %esp" "\n"
+    "movl $512, %esi" "\n"
+    "movl 0x58(%esp), %edi" "\n"
+    "call *0x50(%esp)" "\n"
+    "addl $0x3c, %esp" "\n"
+    "popl %ebx" "\n"
+    "popl %edi" "\n"
+    "popl %esi" "\n"
+    "popl %ebp" "\n"
+    "ret" "\n"
+);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+#if !USE(JIT_STUB_ARGUMENT_VA_LIST)
+    "movl %esp, %ecx" "\n"
+#endif
+    "call " SYMBOL_STRING(cti_vm_throw) "\n"
+    "addl $0x3c, %esp" "\n"
+    "popl %ebx" "\n"
+    "popl %edi" "\n"
+    "popl %esi" "\n"
+    "popl %ebp" "\n"
+    "ret" "\n"
+);
+    
+asm volatile (
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "addl $0x3c, %esp" "\n"
+    "popl %ebx" "\n"
+    "popl %edi" "\n"
+    "popl %esi" "\n"
+    "popl %ebp" "\n"
+    "ret" "\n"
+);
+    
+#elif COMPILER(GCC) && PLATFORM(X86_64)
+
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+#error "JIT_STUB_ARGUMENT_VA_LIST not supported on x86-64."
+#endif
+
+// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
+// need to change the assembly trampolines below to match.
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) % 32 == 0x0, JITStackFrame_maintains_32byte_stack_alignment);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x48, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x90, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x80, JITStackFrame_code_offset_matches_ctiTrampoline);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "pushq %rbp" "\n"
+    "movq %rsp, %rbp" "\n"
+    "pushq %r12" "\n"
+    "pushq %r13" "\n"
+    "pushq %r14" "\n"
+    "pushq %r15" "\n"
+    "pushq %rbx" "\n"
+    "subq $0x48, %rsp" "\n"
+    "movq $512, %r12" "\n"
+    "movq $0xFFFF000000000000, %r14" "\n"
+    "movq $0xFFFF000000000002, %r15" "\n"
+    "movq 0x90(%rsp), %r13" "\n"
+    "call *0x80(%rsp)" "\n"
+    "addq $0x48, %rsp" "\n"
+    "popq %rbx" "\n"
+    "popq %r15" "\n"
+    "popq %r14" "\n"
+    "popq %r13" "\n"
+    "popq %r12" "\n"
+    "popq %rbp" "\n"
+    "ret" "\n"
+);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+    "movq %rsp, %rdi" "\n"
+    "call " SYMBOL_STRING(cti_vm_throw) "\n"
+    "addq $0x48, %rsp" "\n"
+    "popq %rbx" "\n"
+    "popq %r15" "\n"
+    "popq %r14" "\n"
+    "popq %r13" "\n"
+    "popq %r12" "\n"
+    "popq %rbp" "\n"
+    "ret" "\n"
+);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "addq $0x48, %rsp" "\n"
+    "popq %rbx" "\n"
+    "popq %r15" "\n"
+    "popq %r14" "\n"
+    "popq %r13" "\n"
+    "popq %r12" "\n"
+    "popq %rbp" "\n"
+    "ret" "\n"
+);
+
+#elif COMPILER(GCC) && PLATFORM_ARM_ARCH(7)
+
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+#error "JIT_STUB_ARGUMENT_VA_LIST not supported on ARMv7."
+#endif
+
+asm volatile (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+".thumb" "\n"
+".thumb_func " SYMBOL_STRING(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "sub sp, sp, #0x3c" "\n"
+    "str lr, [sp, #0x20]" "\n"
+    "str r4, [sp, #0x24]" "\n"
+    "str r5, [sp, #0x28]" "\n"
+    "str r6, [sp, #0x2c]" "\n"
+    "str r1, [sp, #0x30]" "\n"
+    "str r2, [sp, #0x34]" "\n"
+    "str r3, [sp, #0x38]" "\n"
+    "cpy r5, r2" "\n"
+    "mov r6, #512" "\n"
+    "blx r0" "\n"
+    "ldr r6, [sp, #0x2c]" "\n"
+    "ldr r5, [sp, #0x28]" "\n"
+    "ldr r4, [sp, #0x24]" "\n"
+    "ldr lr, [sp, #0x20]" "\n"
+    "add sp, sp, #0x3c" "\n"
+    "bx lr" "\n"
+);
+
+asm volatile (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+".thumb" "\n"
+".thumb_func " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+    "cpy r0, sp" "\n"
+    "bl " SYMBOL_STRING(cti_vm_throw) "\n"
+    "ldr r6, [sp, #0x2c]" "\n"
+    "ldr r5, [sp, #0x28]" "\n"
+    "ldr r4, [sp, #0x24]" "\n"
+    "ldr lr, [sp, #0x20]" "\n"
+    "add sp, sp, #0x3c" "\n"
+    "bx lr" "\n"
+);
+
+asm volatile (
+".text" "\n"
+".align 2" "\n"
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+".thumb" "\n"
+".thumb_func " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "ldr r6, [sp, #0x2c]" "\n"
+    "ldr r5, [sp, #0x28]" "\n"
+    "ldr r4, [sp, #0x24]" "\n"
+    "ldr lr, [sp, #0x20]" "\n"
+    "add sp, sp, #0x3c" "\n"
+    "bx lr" "\n"
+);
+
+#elif COMPILER(MSVC)
+
+#if USE(JIT_STUB_ARGUMENT_VA_LIST)
+#error "JIT_STUB_ARGUMENT_VA_LIST configuration not supported on MSVC."
+#endif
+
+// These ASSERTs remind you that, if you change the layout of JITStackFrame, you
+// need to change the assembly trampolines below to match.
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) % 16 == 0x0, JITStackFrame_maintains_16byte_stack_alignment);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, savedEBX) == 0x3c, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x58, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x50, JITStackFrame_code_offset_matches_ctiTrampoline);
+
+extern "C" {
+
+    __declspec(naked) EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, JSValue* exception, Profiler**, JSGlobalData*)
+    {
+        __asm {
+            push ebp;
+            mov ebp, esp;
+            push esi;
+            push edi;
+            push ebx;
+            sub esp, 0x3c;
+            mov esi, 512;
+            mov ecx, esp;
+            mov edi, [esp + 0x58];
+            call [esp + 0x50];
+            add esp, 0x3c;
+            pop ebx;
+            pop edi;
+            pop esi;
+            pop ebp;
+            ret;
+        }
+    }
+
+    __declspec(naked) void ctiVMThrowTrampoline()
+    {
+        __asm {
+            mov ecx, esp;
+            call cti_vm_throw;
+            add esp, 0x3c;
+            pop ebx;
+            pop edi;
+            pop esi;
+            pop ebp;
+            ret;
+        }
+    }
+
+    __declspec(naked) void ctiOpThrowNotCaught()
+    {
+        __asm {
+            add esp, 0x3c;
+            pop ebx;
+            pop edi;
+            pop esi;
+            pop ebp;
+            ret;
+        }
+    }
+}
+
+#endif // COMPILER(GCC) && PLATFORM(X86)
+
+#else // USE(JSVALUE32_64)
 
 #if COMPILER(GCC) && PLATFORM(X86)
 
@@ -293,7 +548,7 @@ extern "C" {
     {
         __asm {
             mov ecx, esp;
-            call JITStubs::cti_vm_throw;
+            call cti_vm_throw;
             add esp, 0x1c;
             pop ebx;
             pop edi;
@@ -316,7 +571,9 @@ extern "C" {
      }
 }
 
-#endif
+#endif // COMPILER(GCC) && PLATFORM(X86)
+
+#endif // USE(JSVALUE32_64)
 
 #if ENABLE(OPCODE_SAMPLING)
     #define CTI_SAMPLER stackFrame.globalData->interpreter->sampler()
@@ -326,7 +583,7 @@ extern "C" {
 
 JITThunks::JITThunks(JSGlobalData* globalData)
 {
-    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiArrayLengthTrampoline, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallPreLink, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
+    JIT::compileCTIMachineTrampolines(globalData, &m_executablePool, &m_ctiStringLengthTrampoline, &m_ctiVirtualCallPreLink, &m_ctiVirtualCallLink, &m_ctiVirtualCall, &m_ctiNativeCallThunk);
 
 #if PLATFORM_ARM_ARCH(7)
     // Unfortunate the arm compiler does not like the use of offsetof on JITStackFrame (since it contains non POD types),
@@ -358,7 +615,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(JITStubs::cti_op_put_by_id_generic));
+        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_put_by_id_generic));
         return;
     }
     
@@ -366,13 +623,13 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
     Structure* structure = baseCell->structure();
 
     if (structure->isDictionary()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(JITStubs::cti_op_put_by_id_generic));
+        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_put_by_id_generic));
         return;
     }
 
     // If baseCell != base, then baseCell must be a proxy for another object.
     if (baseCell != slot.base()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(JITStubs::cti_op_put_by_id_generic));
+        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_put_by_id_generic));
         return;
     }
 
@@ -384,7 +641,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
     if (slot.type() == PutPropertySlot::NewProperty) {
         StructureChain* prototypeChain = structure->prototypeChain(callFrame);
         if (!prototypeChain->isCacheable()) {
-            ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(JITStubs::cti_op_put_by_id_generic));
+            ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_put_by_id_generic));
             return;
         }
         stubInfo->initPutByIdTransition(structure->previousID(), structure, prototypeChain);
@@ -404,7 +661,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
     // FIXME: Cache property access for immediates.
     if (!baseValue.isCell()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(JITStubs::cti_op_get_by_id_generic));
+        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_get_by_id_generic));
         return;
     }
     
@@ -424,7 +681,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(JITStubs::cti_op_get_by_id_generic));
+        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_get_by_id_generic));
         return;
     }
 
@@ -432,7 +689,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     Structure* structure = baseCell->structure();
 
     if (structure->isDictionary()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(JITStubs::cti_op_get_by_id_generic));
+        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_get_by_id_generic));
         return;
     }
 
@@ -475,14 +732,14 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
 
     StructureChain* prototypeChain = structure->prototypeChain(callFrame);
     if (!prototypeChain->isCacheable()) {
-        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(JITStubs::cti_op_get_by_id_generic));
+        ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_get_by_id_generic));
         return;
     }
     stubInfo->initGetByIdChain(structure, prototypeChain);
     JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, prototypeChain, count, slot.cachedOffset(), returnAddress);
 }
 
-#endif
+#endif // ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
 #if USE(JIT_STUB_ARGUMENT_VA_LIST)
 #define SETUP_VA_LISTL_ARGS va_list vl_args; va_start(vl_args, args)
@@ -559,23 +816,21 @@ static NEVER_INLINE void throwStackOverflowError(CallFrame* callFrame, JSGlobalD
 
 #define CHECK_FOR_EXCEPTION() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception != JSValue())) \
+        if (UNLIKELY(stackFrame.globalData->exception)) \
             VM_THROW_EXCEPTION(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_AT_END() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception != JSValue())) \
+        if (UNLIKELY(stackFrame.globalData->exception)) \
             VM_THROW_EXCEPTION_AT_END(); \
     } while (0)
 #define CHECK_FOR_EXCEPTION_VOID() \
     do { \
-        if (UNLIKELY(stackFrame.globalData->exception != JSValue())) { \
+        if (UNLIKELY(stackFrame.globalData->exception)) { \
             VM_THROW_EXCEPTION_AT_END(); \
             return; \
         } \
     } while (0)
-
-namespace JITStubs {
 
 #if PLATFORM_ARM_ARCH(7)
 
@@ -601,7 +856,7 @@ namespace JITStubs {
 #define DEFINE_STUB_FUNCTION(rtype, op) rtype JIT_STUB cti_##op(STUB_ARGS_DECLARATION)
 #endif
 
-DEFINE_STUB_FUNCTION(JSObject*, op_convert_this)
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_convert_this)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
@@ -610,7 +865,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_convert_this)
 
     JSObject* result = v1.toThisObject(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
-    return result;
+    return JSValue::encode(result);
 }
 
 DEFINE_STUB_FUNCTION(void, op_end)
@@ -650,8 +905,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_add)
     }
 
     if (rightIsNumber & leftIsString) {
-        RefPtr<UString::Rep> value = v2.isInt32Fast() ?
-            concatenate(asString(v1)->value().rep(), v2.getInt32Fast()) :
+        RefPtr<UString::Rep> value = v2.isInt32() ?
+            concatenate(asString(v1)->value().rep(), v2.asInt32()) :
             concatenate(asString(v1)->value().rep(), right);
 
         if (UNLIKELY(!value)) {
@@ -805,19 +1060,19 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_fail)
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_put_by_id_transition_realloc)
+DEFINE_STUB_FUNCTION(JSObject*, op_put_by_id_transition_realloc)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     JSValue baseValue = stackFrame.args[0].jsValue();
-    int32_t oldSize = stackFrame.args[1].int32();
-    int32_t newSize = stackFrame.args[2].int32();
+    int32_t oldSize = stackFrame.args[3].int32();
+    int32_t newSize = stackFrame.args[4].int32();
 
     ASSERT(baseValue.isObject());
-    asObject(baseValue)->allocatePropertyStorage(oldSize, newSize);
+    JSObject* base = asObject(baseValue);
+    base->allocatePropertyStorage(oldSize, newSize);
 
-    return JSValue::encode(baseValue);
+    return base;
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id)
@@ -1116,7 +1371,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_string_fail)
     return JSValue::encode(result);
 }
 
-#endif
+#endif // ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_instanceof)
 {
@@ -1263,6 +1518,7 @@ DEFINE_STUB_FUNCTION(VoidPtrPair, op_call_arityCheck)
     RETURN_POINTER_PAIR(newCodeBlock, callFrame);
 }
 
+#if ENABLE(JIT_OPTIMIZE_CALL)
 DEFINE_STUB_FUNCTION(void*, vm_dontLazyLinkCall)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -1293,6 +1549,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
 
     return jitCode.addressForCall().executableAddress();
 }
+#endif // !ENABLE(JIT_OPTIMIZE_CALL)
 
 DEFINE_STUB_FUNCTION(JSObject*, op_push_activation)
 {
@@ -1358,7 +1615,7 @@ DEFINE_STUB_FUNCTION(void, op_create_arguments)
 
     Arguments* arguments = new (stackFrame.globalData) Arguments(stackFrame.callFrame);
     stackFrame.callFrame->setCalleeArguments(arguments);
-    stackFrame.callFrame[RegisterFile::ArgumentsRegister] = arguments;
+    stackFrame.callFrame[RegisterFile::ArgumentsRegister] = JSValue(arguments);
 }
 
 DEFINE_STUB_FUNCTION(void, op_create_arguments_no_params)
@@ -1367,7 +1624,7 @@ DEFINE_STUB_FUNCTION(void, op_create_arguments_no_params)
 
     Arguments* arguments = new (stackFrame.globalData) Arguments(stackFrame.callFrame, Arguments::NoParameters);
     stackFrame.callFrame->setCalleeArguments(arguments);
-    stackFrame.callFrame[RegisterFile::ArgumentsRegister] = arguments;
+    stackFrame.callFrame[RegisterFile::ArgumentsRegister] = JSValue(arguments);
 }
 
 DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
@@ -1519,8 +1776,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
 
     JSValue result;
 
-    if (LIKELY(subscript.isUInt32Fast())) {
-        uint32_t i = subscript.getUInt32Fast();
+    if (LIKELY(subscript.isUInt32())) {
+        uint32_t i = subscript.asUInt32();
         if (isJSArray(globalData, baseValue)) {
             JSArray* jsArray = asArray(baseValue);
             if (jsArray->canGetIndex(i))
@@ -1558,8 +1815,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_string)
     
     JSValue result;
     
-    if (LIKELY(subscript.isUInt32Fast())) {
-        uint32_t i = subscript.getUInt32Fast();
+    if (LIKELY(subscript.isUInt32())) {
+        uint32_t i = subscript.asUInt32();
         if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i))
             result = asString(baseValue)->getIndex(stackFrame.globalData, i);
         else {
@@ -1576,7 +1833,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_string)
     return JSValue::encode(result);
 }
     
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_byte_array)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -1589,8 +1845,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_byte_array)
     
     JSValue result;
 
-    if (LIKELY(subscript.isUInt32Fast())) {
-        uint32_t i = subscript.getUInt32Fast();
+    if (LIKELY(subscript.isUInt32())) {
+        uint32_t i = subscript.asUInt32();
         if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
             return JSValue::encode(asByteArray(baseValue)->getIndex(callFrame, i));
@@ -1606,50 +1862,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val_byte_array)
     
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_func)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    ScopeChainNode* scopeChain = callFrame->scopeChain();
-
-    ScopeChainIterator iter = scopeChain->begin();
-    ScopeChainIterator end = scopeChain->end();
-
-    // FIXME: add scopeDepthIsZero optimization
-
-    ASSERT(iter != end);
-
-    Identifier& ident = stackFrame.args[0].identifier();
-    JSObject* base;
-    do {
-        base = *iter;
-        PropertySlot slot(base);
-        if (base->getPropertySlot(callFrame, ident, slot)) {            
-            // ECMA 11.2.3 says that if we hit an activation the this value should be null.
-            // However, section 10.2.3 says that in the case where the value provided
-            // by the caller is null, the global object should be used. It also says
-            // that the section does not apply to internal functions, but for simplicity
-            // of implementation we use the global object anyway here. This guarantees
-            // that in host objects you always get a valid object for this.
-            // We also handle wrapper substitution for the global object at the same time.
-            JSObject* thisObj = base->toThisObject(callFrame);
-            JSValue result = slot.getValue(callFrame, ident);
-            CHECK_FOR_EXCEPTION_AT_END();
-
-            callFrame->registers()[stackFrame.args[1].int32()] = JSValue(thisObj);
-            return JSValue::encode(result);
-        }
-        ++iter;
-    } while (iter != end);
-
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned vPCIndex = codeBlock->getBytecodeIndex(callFrame, STUB_RETURN_ADDRESS);
-    stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
-    VM_THROW_EXCEPTION_AT_END();
-    return JSValue::encode(JSValue());
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_sub)
@@ -1681,8 +1893,8 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
     JSValue subscript = stackFrame.args[1].jsValue();
     JSValue value = stackFrame.args[2].jsValue();
 
-    if (LIKELY(subscript.isUInt32Fast())) {
-        uint32_t i = subscript.getUInt32Fast();
+    if (LIKELY(subscript.isUInt32())) {
+        uint32_t i = subscript.asUInt32();
         if (isJSArray(globalData, baseValue)) {
             JSArray* jsArray = asArray(baseValue);
             if (jsArray->canSetIndex(i))
@@ -1693,8 +1905,8 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
             JSByteArray* jsByteArray = asByteArray(baseValue);
             ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_val_byte_array));
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            if (value.isInt32Fast()) {
-                jsByteArray->setIndex(i, value.getInt32Fast());
+            if (value.isInt32()) {
+                jsByteArray->setIndex(i, value.asInt32());
                 return;
             } else {
                 double dValue = 0;
@@ -1732,14 +1944,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val_array)
     if (LIKELY(i >= 0))
         asArray(baseValue)->JSArray::put(callFrame, i, value);
     else {
-        // This should work since we're re-boxing an immediate unboxed in JIT code.
-        ASSERT(JSValue::makeInt32Fast(i));
-        Identifier property(callFrame, JSValue::makeInt32Fast(i).toString(callFrame));
-        // FIXME: can toString throw an exception here?
-        if (!stackFrame.globalData->exception) { // Don't put to an object if toString threw an exception.
-            PutPropertySlot slot;
-            baseValue.put(callFrame, property, value, slot);
-        }
+        Identifier property(callFrame, UString::from(i));
+        PutPropertySlot slot;
+        baseValue.put(callFrame, property, value, slot);
     }
 
     CHECK_FOR_EXCEPTION_AT_END();
@@ -1756,14 +1963,14 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val_byte_array)
     JSValue subscript = stackFrame.args[1].jsValue();
     JSValue value = stackFrame.args[2].jsValue();
     
-    if (LIKELY(subscript.isUInt32Fast())) {
-        uint32_t i = subscript.getUInt32Fast();
+    if (LIKELY(subscript.isUInt32())) {
+        uint32_t i = subscript.asUInt32();
         if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
             JSByteArray* jsByteArray = asByteArray(baseValue);
             
             // All fast byte array accesses are safe from exceptions so return immediately to avoid exception checks.
-            if (value.isInt32Fast()) {
-                jsByteArray->setIndex(i, value.getInt32Fast());
+            if (value.isInt32()) {
+                jsByteArray->setIndex(i, value.asInt32());
                 return;
             } else {
                 double dValue = 0;                
@@ -1814,6 +2021,7 @@ DEFINE_STUB_FUNCTION(int, op_loop_if_true)
 DEFINE_STUB_FUNCTION(int, op_load_varargs)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
+
     CallFrame* callFrame = stackFrame.callFrame;
     RegisterFile* registerFile = stackFrame.registerFile;
     int argsOffset = stackFrame.args[0].int32();
@@ -1828,7 +2036,7 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
             stackFrame.globalData->exception = createStackOverflowError(callFrame);
             VM_THROW_EXCEPTION();
         }
-        int32_t expectedParams = asFunction(callFrame->registers()[RegisterFile::Callee].jsValue())->body()->parameterCount();
+        int32_t expectedParams = callFrame->callee()->body()->parameterCount();
         int32_t inplaceArgs = min(providedParams, expectedParams);
         
         Register* inplaceArgsDst = callFrame->registers() + argsOffset;
@@ -1960,7 +2168,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_global)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSGlobalObject* globalObject = asGlobalObject(stackFrame.args[0].jsValue());
+    JSGlobalObject* globalObject = stackFrame.args[0].globalObject();
     Identifier& ident = stackFrame.args[1].identifier();
     unsigned globalResolveInfoIndex = stackFrame.args[2].int32();
     ASSERT(globalObject->isGlobalObject());
@@ -2084,7 +2292,117 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_post_inc)
     return JSValue::encode(number);
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_eq)
+#if USE(JSVALUE32_64)
+
+DEFINE_STUB_FUNCTION(bool, op_eq)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    JSValue src1 = stackFrame.args[0].jsValue();
+    JSValue src2 = stackFrame.args[1].jsValue();
+
+    start:
+    if (src2.isUndefined()) {
+        return src1.isNull() || 
+               (src1.isCell() && asCell(src1)->structure()->typeInfo().masqueradesAsUndefined()) ||
+               src1.isUndefined();
+    }
+    
+    if (src2.isNull()) {
+        return src1.isUndefined() || 
+               (src1.isCell() && asCell(src1)->structure()->typeInfo().masqueradesAsUndefined()) ||
+               src1.isNull();
+    }
+
+    if (src1.isInt32()) {
+        if (src2.isDouble())
+            return src1.asInt32() == src2.asDouble();
+        double d = src2.toNumber(stackFrame.callFrame);
+        CHECK_FOR_EXCEPTION();
+        return src1.asInt32() == d;
+    }
+
+    if (src1.isDouble()) {
+        if (src2.isInt32())
+            return src1.asDouble() == src2.asInt32();
+        double d = src2.toNumber(stackFrame.callFrame);
+        CHECK_FOR_EXCEPTION();
+        return src1.asDouble() == d;
+    }
+
+    if (src1.isTrue()) {
+        if (src2.isFalse())
+            return false;
+        double d = src2.toNumber(stackFrame.callFrame);
+        CHECK_FOR_EXCEPTION();
+        return d == 1.0;
+    }
+
+    if (src1.isFalse()) {
+        if (src2.isTrue())
+            return false;
+        double d = src2.toNumber(stackFrame.callFrame);
+        CHECK_FOR_EXCEPTION();
+        return d == 0.0;
+    }
+    
+    if (src1.isUndefined())
+        return src2.isCell() && asCell(src2)->structure()->typeInfo().masqueradesAsUndefined();
+    
+    if (src1.isNull())
+        return src2.isCell() && asCell(src2)->structure()->typeInfo().masqueradesAsUndefined();
+
+    ASSERT(src1.isCell());
+
+    JSCell* cell1 = asCell(src1);
+
+    if (cell1->isString()) {
+        if (src2.isInt32())
+            return static_cast<JSString*>(cell1)->value().toDouble() == src2.asInt32();
+            
+        if (src2.isDouble())
+            return static_cast<JSString*>(cell1)->value().toDouble() == src2.asDouble();
+
+        if (src2.isTrue())
+            return static_cast<JSString*>(cell1)->value().toDouble() == 1.0;
+
+        if (src2.isFalse())
+            return static_cast<JSString*>(cell1)->value().toDouble() == 0.0;
+
+        ASSERT(src2.isCell());
+        JSCell* cell2 = asCell(src2);
+        if (cell2->isString())
+            return static_cast<JSString*>(cell1)->value() == static_cast<JSString*>(cell2)->value();
+
+        ASSERT(cell2->isObject());
+        src2 = static_cast<JSObject*>(cell2)->toPrimitive(stackFrame.callFrame);
+        CHECK_FOR_EXCEPTION();
+        goto start;
+    }
+
+    ASSERT(cell1->isObject());
+    if (src2.isObject())
+        return static_cast<JSObject*>(cell1) == asObject(src2);
+    src1 = static_cast<JSObject*>(cell1)->toPrimitive(stackFrame.callFrame);
+    CHECK_FOR_EXCEPTION();
+    goto start;
+}
+
+DEFINE_STUB_FUNCTION(bool, op_eq_strings)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+
+    JSString* string1 = stackFrame.args[0].jsString();
+    JSString* string2 = stackFrame.args[1].jsString();
+
+    ASSERT(string1->isString());
+    ASSERT(string2->isString());
+    return string1->value() == string2->value();
+}
+
+#else // USE(JSVALUE32_64)
+
+DEFINE_STUB_FUNCTION(bool, op_eq)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
@@ -2093,11 +2411,12 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_eq)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    ASSERT(!JSValue::areBothInt32Fast(src1, src2));
-    JSValue result = jsBoolean(JSValue::equalSlowCaseInline(callFrame, src1, src2));
+    bool result = JSValue::equalSlowCaseInline(callFrame, src1, src2);
     CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
+    return result;
 }
+
+#endif // USE(JSVALUE32_64)
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_lshift)
 {
@@ -2105,13 +2424,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_lshift)
 
     JSValue val = stackFrame.args[0].jsValue();
     JSValue shift = stackFrame.args[1].jsValue();
-
-    int32_t left;
-    uint32_t right;
-    if (JSValue::areBothInt32Fast(val, shift))
-        return JSValue::encode(jsNumber(stackFrame.globalData, val.getInt32Fast() << (shift.getInt32Fast() & 0x1f)));
-    if (val.numberToInt32(left) && shift.numberToUInt32(right))
-        return JSValue::encode(jsNumber(stackFrame.globalData, left << (right & 0x1f)));
 
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber(stackFrame.globalData, (val.toInt32(callFrame)) << (shift.toUInt32(callFrame) & 0x1f));
@@ -2126,11 +2438,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_bitand)
     JSValue src1 = stackFrame.args[0].jsValue();
     JSValue src2 = stackFrame.args[1].jsValue();
 
-    int32_t left;
-    int32_t right;
-    if (src1.numberToInt32(left) && src2.numberToInt32(right))
-        return JSValue::encode(jsNumber(stackFrame.globalData, left & right));
-
+    ASSERT(!src1.isInt32() || !src2.isInt32());
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber(stackFrame.globalData, src1.toInt32(callFrame) & src2.toInt32(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
@@ -2144,15 +2452,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_rshift)
     JSValue val = stackFrame.args[0].jsValue();
     JSValue shift = stackFrame.args[1].jsValue();
 
-    int32_t left;
-    uint32_t right;
-    if (JSFastMath::canDoFastRshift(val, shift))
-        return JSValue::encode(JSFastMath::rightShiftImmediateNumbers(val, shift));
-    if (val.numberToInt32(left) && shift.numberToUInt32(right))
-        return JSValue::encode(jsNumber(stackFrame.globalData, left >> (right & 0x1f)));
-
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber(stackFrame.globalData, (val.toInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
+
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2163,10 +2465,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_bitnot)
 
     JSValue src = stackFrame.args[0].jsValue();
 
-    int value;
-    if (src.numberToInt32(value))
-        return JSValue::encode(jsNumber(stackFrame.globalData, ~value));
-
+    ASSERT(!src.isInt32());
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber(stackFrame.globalData, ~src.toInt32(callFrame));
     CHECK_FOR_EXCEPTION_AT_END();
@@ -2240,21 +2539,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_less)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_neq)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSValue src1 = stackFrame.args[0].jsValue();
-    JSValue src2 = stackFrame.args[1].jsValue();
-
-    ASSERT(!JSValue::areBothInt32Fast(src1, src2));
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = jsBoolean(!JSValue::equalSlowCaseInline(callFrame, src1, src2));
-    CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_post_dec)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2278,14 +2562,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_urshift)
     JSValue shift = stackFrame.args[1].jsValue();
 
     CallFrame* callFrame = stackFrame.callFrame;
-
-    if (JSFastMath::canDoFastUrshift(val, shift))
-        return JSValue::encode(JSFastMath::rightShiftImmediateNumbers(val, shift));
-    else {
-        JSValue result = jsNumber(stackFrame.globalData, (val.toUInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
-        CHECK_FOR_EXCEPTION_AT_END();
-        return JSValue::encode(result);
-    }
+    JSValue result = jsNumber(stackFrame.globalData, (val.toUInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
+    CHECK_FOR_EXCEPTION_AT_END();
+    return JSValue::encode(result);
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_bitxor)
@@ -2344,7 +2623,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_eval)
     if (thisValue == globalObject && funcVal == globalObject->evalFunction()) {
         JSValue exceptionValue;
         JSValue result = interpreter->callEval(callFrame, registerFile, argv, argCount, registerOffset, exceptionValue);
-        if (UNLIKELY(exceptionValue != JSValue())) {
+        if (UNLIKELY(exceptionValue)) {
             stackFrame.globalData->exception = exceptionValue;
             VM_THROW_EXCEPTION_AT_END();
         }
@@ -2582,8 +2861,8 @@ DEFINE_STUB_FUNCTION(void*, op_switch_imm)
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    if (scrutinee.isInt32Fast())
-        return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(scrutinee.getInt32Fast()).executableAddress();
+    if (scrutinee.isInt32())
+        return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(scrutinee.asInt32()).executableAddress();
     else {
         double value;
         int32_t intValue;
@@ -2736,8 +3015,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, vm_throw)
     STUB_SET_RETURN_ADDRESS(catchRoutine);
     return JSValue::encode(exceptionValue);
 }
-
-} // namespace JITStubs
 
 } // namespace JSC
 

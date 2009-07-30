@@ -72,15 +72,15 @@ JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode
 
 JSFunction::~JSFunction()
 {
-#if ENABLE(JIT) 
     // JIT code for other functions may have had calls linked directly to the code for this function; these links
     // are based on a check for the this pointer value for this JSFunction - which will no longer be valid once
     // this memory is freed and may be reused (potentially for another, different JSFunction).
+#if ENABLE(JIT_OPTIMIZE_CALL)
     if (m_body && m_body->isGenerated())
         m_body->generatedBytecode().unlinkCallers();
 #endif
     if (!isHostFunction())
-        scopeChain().~ScopeChain();
+        scopeChain().~ScopeChain(); // FIXME: Don't we need to do this in the interpreter too?
 }
 
 void JSFunction::mark()

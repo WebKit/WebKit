@@ -21,6 +21,8 @@
 #include "config.h"
 #include "JSImmediate.h"
 
+#if !USE(JSVALUE32_64)
+
 #include "BooleanConstructor.h"
 #include "BooleanPrototype.h"
 #include "Error.h"
@@ -69,35 +71,6 @@ JSObject* JSImmediate::prototype(JSValue v, ExecState* exec)
     return new (exec) JSNotAnObject(exec, exception);
 }
 
-UString JSImmediate::toString(JSValue v)
-{
-    ASSERT(isImmediate(v));
-    if (isIntegerNumber(v))
-        return UString::from(getTruncatedInt32(v));
-#if USE(ALTERNATE_JSIMMEDIATE)
-    if (isNumber(v)) {
-        ASSERT(isDoubleNumber(v));
-        double value = doubleValue(v);
-        if (value == 0.0) // +0.0 or -0.0
-            return "0";
-        return UString::from(value);
-    }
-#else
-        ASSERT(!isNumber(v));
-#endif
-    if (jsBoolean(false) == v)
-        return "false";
-    if (jsBoolean(true) == v)
-        return "true";
-    if (v.isNull())
-        return "null";
-    ASSERT(v.isUndefined());
-    return "undefined";
-}
-
-NEVER_INLINE double JSImmediate::nonInlineNaN()
-{
-    return std::numeric_limits<double>::quiet_NaN();
-}
-
 } // namespace JSC
+
+#endif // !USE(JSVALUE32_64)

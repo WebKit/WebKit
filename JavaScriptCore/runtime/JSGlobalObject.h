@@ -347,11 +347,16 @@ namespace JSC {
         if (typeInfo().type() == ObjectType)
             return m_prototype;
 
+#if USE(JSVALUE32)
         if (typeInfo().type() == StringType)
             return exec->lexicalGlobalObject()->stringPrototype();
 
         ASSERT(typeInfo().type() == NumberType);
         return exec->lexicalGlobalObject()->numberPrototype();
+#else
+        ASSERT(typeInfo().type() == StringType);
+        return exec->lexicalGlobalObject()->stringPrototype();
+#endif
     }
 
     inline StructureChain* Structure::prototypeChain(ExecState* exec) const

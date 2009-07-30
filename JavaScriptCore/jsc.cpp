@@ -443,14 +443,12 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
     return success;
 }
 
-static
-#if !HAVE(READLINE)
-NO_RETURN
-#endif
-void runInteractive(GlobalObject* globalObject)
+#define RUNNING_FROM_XCODE 0
+
+static void runInteractive(GlobalObject* globalObject)
 {
     while (true) {
-#if HAVE(READLINE)
+#if HAVE(READLINE) && !RUNNING_FROM_XCODE
         char* line = readline(interactivePrompt);
         if (!line)
             break;
@@ -459,7 +457,7 @@ void runInteractive(GlobalObject* globalObject)
         Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line, interpreterName));
         free(line);
 #else
-        puts(interactivePrompt);
+        printf("%s", interactivePrompt);
         Vector<char, 256> line;
         int c;
         while ((c = getchar()) != EOF) {
@@ -468,6 +466,8 @@ void runInteractive(GlobalObject* globalObject)
                 break;
             line.append(c);
         }
+        if (line.isEmpty())
+            break;
         line.append('\0');
         Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line.data(), interpreterName));
 #endif

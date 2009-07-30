@@ -23,7 +23,6 @@
 
 #include "Identifier.h"
 #include "JSValue.h"
-#include "JSImmediate.h"
 #include "Register.h"
 #include <wtf/Assertions.h>
 #include <wtf/NotFound.h>
@@ -39,16 +38,16 @@ namespace JSC {
     class PropertySlot {
     public:
         PropertySlot()
-            : m_offset(WTF::notFound)
         {
             clearBase();
+            clearOffset();
             clearValue();
         }
 
         explicit PropertySlot(const JSValue base)
             : m_slotBase(base)
-            , m_offset(WTF::notFound)
         {
+            clearOffset();
             clearValue();
         }
 
@@ -82,8 +81,9 @@ namespace JSC {
         void setValueSlot(JSValue* valueSlot) 
         {
             ASSERT(valueSlot);
-            m_getValue = JSC_VALUE_SLOT_MARKER;
             clearBase();
+            clearOffset();
+            m_getValue = JSC_VALUE_SLOT_MARKER;
             m_data.valueSlot = valueSlot;
         }
         
@@ -107,8 +107,9 @@ namespace JSC {
         void setValue(JSValue value)
         {
             ASSERT(value);
-            m_getValue = JSC_VALUE_SLOT_MARKER;
             clearBase();
+            clearOffset();
+            m_getValue = JSC_VALUE_SLOT_MARKER;
             m_value = value;
             m_data.valueSlot = &m_value;
         }
@@ -116,8 +117,9 @@ namespace JSC {
         void setRegisterSlot(Register* registerSlot)
         {
             ASSERT(registerSlot);
-            m_getValue = JSC_REGISTER_SLOT_MARKER;
             clearBase();
+            clearOffset();
+            m_getValue = JSC_REGISTER_SLOT_MARKER;
             m_data.registerSlot = registerSlot;
         }
 
@@ -147,13 +149,11 @@ namespace JSC {
         
         void setUndefined()
         {
-            clearBase();
             setValue(jsUndefined());
         }
 
         JSValue slotBase() const
         {
-            ASSERT(m_slotBase);
             return m_slotBase;
         }
 
@@ -176,6 +176,13 @@ namespace JSC {
 #ifndef NDEBUG
             m_value = JSValue();
 #endif
+        }
+
+        void clearOffset()
+        {
+            // Clear offset even in release builds, in case this PropertySlot has been used before.
+            // (For other data members, we don't need to clear anything because reuse would meaningfully overwrite them.)
+            m_offset = WTF::notFound;
         }
 
         unsigned index() const { return m_data.index; }

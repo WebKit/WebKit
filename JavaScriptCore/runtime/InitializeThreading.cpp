@@ -29,7 +29,6 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
-#include "JSImmediate.h"
 #include "Collector.h"
 #include "dtoa.h"
 #include "Identifier.h"

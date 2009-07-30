@@ -34,6 +34,7 @@
 #include "runtime/JSStaticScopeObject.cpp"
 #include "runtime/JSFunction.cpp"
 #include "runtime/Arguments.cpp"
+#include "runtime/JSAPIValueWrapper.cpp"
 #include "runtime/JSGlobalObjectFunctions.cpp"
 #include "runtime/PrototypeFunction.cpp"
 #include "runtime/GlobalEvalFunction.cpp"

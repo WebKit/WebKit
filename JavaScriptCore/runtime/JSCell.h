@@ -40,6 +40,7 @@ namespace JSC {
         friend class JSPropertyNameIterator;
         friend class JSString;
         friend class JSValue;
+        friend class JSAPIValueWrapper;
         friend struct VPtrSet;
 
     private:
@@ -48,11 +49,14 @@ namespace JSC {
 
     public:
         // Querying the type.
+#if USE(JSVALUE32)
         bool isNumber() const;
+#endif
         bool isString() const;
         bool isObject() const;
         virtual bool isGetterSetter() const;
         virtual bool isObject(const ClassInfo*) const;
+        virtual bool isAPIValueWrapper() const { return false; }
 
         Structure* structure() const;
 
@@ -68,8 +72,6 @@ namespace JSC {
         // Extracting integer values.
         // FIXME: remove these methods, can check isNumberCell in JSValue && then call asNumberCell::*.
         virtual bool getUInt32(uint32_t&) const;
-        virtual bool getTruncatedInt32(int32_t&) const;
-        virtual bool getTruncatedUInt32(uint32_t&) const;
 
         // Basic conversions.
         virtual JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const = 0;
@@ -124,10 +126,12 @@ namespace JSC {
     {
     }
 
+#if USE(JSVALUE32)
     inline bool JSCell::isNumber() const
     {
         return Heap::isNumber(const_cast<JSCell*>(this));
     }
+#endif
 
     inline bool JSCell::isObject() const
     {
@@ -154,12 +158,6 @@ namespace JSC {
         return Heap::markCell(this);
     }
 
-    ALWAYS_INLINE JSCell* JSValue::asCell() const
-    {
-        ASSERT(isCell());
-        return m_ptr;
-    }
-
     inline void* JSCell::operator new(size_t size, JSGlobalData* globalData)
     {
 #ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
@@ -173,57 +171,57 @@ namespace JSC {
 
     inline bool JSValue::isString() const
     {
-        return !JSImmediate::isImmediate(asValue()) && asCell()->isString();
+        return isCell() && asCell()->isString();
     }
 
     inline bool JSValue::isGetterSetter() const
     {
-        return !JSImmediate::isImmediate(asValue()) && asCell()->isGetterSetter();
+        return isCell() && asCell()->isGetterSetter();
     }
 
     inline bool JSValue::isObject() const
     {
-        return !JSImmediate::isImmediate(asValue()) && asCell()->isObject();
+        return isCell() && asCell()->isObject();
     }
 
     inline bool JSValue::getString(UString& s) const
     {
-        return !JSImmediate::isImmediate(asValue()) && asCell()->getString(s);
+        return isCell() && asCell()->getString(s);
     }
 
     inline UString JSValue::getString() const
     {
-        return JSImmediate::isImmediate(asValue()) ? UString() : asCell()->getString();
+        return isCell() ? asCell()->getString() : UString();
     }
 
     inline JSObject* JSValue::getObject() const
     {
-        return JSImmediate::isImmediate(asValue()) ? 0 : asCell()->getObject();
+        return isCell() ? asCell()->getObject() : 0;
     }
 
     inline CallType JSValue::getCallData(CallData& callData)
     {
-        return JSImmediate::isImmediate(asValue()) ? CallTypeNone : asCell()->getCallData(callData);
+        return isCell() ? asCell()->getCallData(callData) : CallTypeNone;
     }
 
     inline ConstructType JSValue::getConstructData(ConstructData& constructData)
     {
-        return JSImmediate::isImmediate(asValue()) ? ConstructTypeNone : asCell()->getConstructData(constructData);
+        return isCell() ? asCell()->getConstructData(constructData) : ConstructTypeNone;
     }
 
     ALWAYS_INLINE bool JSValue::getUInt32(uint32_t& v) const
     {
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::getUInt32(asValue(), v) : asCell()->getUInt32(v);
-    }
-
-    ALWAYS_INLINE bool JSValue::getTruncatedInt32(int32_t& v) const
-    {
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::getTruncatedInt32(asValue(), v) : asCell()->getTruncatedInt32(v);
-    }
-
-    inline bool JSValue::getTruncatedUInt32(uint32_t& v) const
-    {
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::getTruncatedUInt32(asValue(), v) : asCell()->getTruncatedUInt32(v);
+        if (isInt32()) {
+            int32_t i = asInt32();
+            v = static_cast<uint32_t>(i);
+            return i >= 0;
+        }
+        if (isDouble()) {
+            double d = asDouble();
+            v = static_cast<uint32_t>(d);
+            return v == d;
+        }
+        return false;
     }
 
     inline void JSValue::mark()
@@ -233,66 +231,123 @@ namespace JSC {
 
     inline bool JSValue::marked() const
     {
-        return JSImmediate::isImmediate(asValue()) || asCell()->marked();
+        return !isCell() || asCell()->marked();
     }
+
+#if !USE(JSVALUE32_64)
+    ALWAYS_INLINE JSCell* JSValue::asCell() const
+    {
+        ASSERT(isCell());
+        return m_ptr;
+    }
+#endif // !USE(JSVALUE32_64)
 
     inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
     {
-        return JSImmediate::isImmediate(asValue()) ? asValue() : asCell()->toPrimitive(exec, preferredType);
+        return isCell() ? asCell()->toPrimitive(exec, preferredType) : asValue();
     }
 
     inline bool JSValue::getPrimitiveNumber(ExecState* exec, double& number, JSValue& value)
     {
-        if (JSImmediate::isImmediate(asValue())) {
-            number = JSImmediate::toDouble(asValue());
-            value = asValue();
+        if (isInt32()) {
+            number = asInt32();
+            value = *this;
             return true;
         }
-        return asCell()->getPrimitiveNumber(exec, number, value);
+        if (isDouble()) {
+            number = asDouble();
+            value = *this;
+            return true;
+        }
+        if (isCell())
+            return asCell()->getPrimitiveNumber(exec, number, value);
+        if (isTrue()) {
+            number = 1.0;
+            value = *this;
+            return true;
+        }
+        if (isFalse() || isNull()) {
+            number = 0.0;
+            value = *this;
+            return true;
+        }
+        ASSERT(isUndefined());
+        number = nonInlineNaN();
+        value = *this;
+        return true;
     }
 
     inline bool JSValue::toBoolean(ExecState* exec) const
     {
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::toBoolean(asValue()) : asCell()->toBoolean(exec);
+        if (isInt32())
+            return asInt32() != 0;
+        if (isDouble())
+            return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
+        if (isCell())
+            return asCell()->toBoolean(exec);
+        return isTrue(); // false, null, and undefined all convert to false.
     }
 
     ALWAYS_INLINE double JSValue::toNumber(ExecState* exec) const
     {
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::toDouble(asValue()) : asCell()->toNumber(exec);
+        if (isInt32())
+            return asInt32();
+        if (isDouble())
+            return asDouble();
+        if (isCell())
+            return asCell()->toNumber(exec);
+        if (isTrue())
+            return 1.0;
+        return isUndefined() ? nonInlineNaN() : 0; // null and false both convert to 0.
     }
 
     inline UString JSValue::toString(ExecState* exec) const
     {
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::toString(asValue()) : asCell()->toString(exec);
-    }
-
-    inline JSObject* JSValue::toObject(ExecState* exec) const
-    {
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::toObject(asValue(), exec) : asCell()->toObject(exec);
-    }
-
-    inline JSObject* JSValue::toThisObject(ExecState* exec) const
-    {
-        if (UNLIKELY(JSImmediate::isImmediate(asValue())))
-            return JSImmediate::toThisObject(asValue(), exec);
-        return asCell()->toThisObject(exec);
+        if (isCell())
+            return asCell()->toString(exec);
+        if (isInt32())
+            return UString::from(asInt32());
+        if (isDouble())
+            return asDouble() == 0.0 ? "0" : UString::from(asDouble());
+        if (isTrue())
+            return "true";
+        if (isFalse())
+            return "false";
+        if (isNull())
+            return "null";
+        ASSERT(isUndefined());
+        return "undefined";
     }
 
     inline bool JSValue::needsThisConversion() const
     {
-        if (UNLIKELY(JSImmediate::isImmediate(asValue())))
+        if (UNLIKELY(!isCell()))
             return true;
         return asCell()->structure()->typeInfo().needsThisConversion();
     }
 
     inline UString JSValue::toThisString(ExecState* exec) const
     {
-        return JSImmediate::isImmediate(asValue()) ? JSImmediate::toString(asValue()) : asCell()->toThisString(exec);
+        return isCell() ? asCell()->toThisString(exec) : toString(exec);
     }
 
     inline JSValue JSValue::getJSNumber()
     {
-        return JSImmediate::isNumber(asValue()) ? asValue() : JSImmediate::isImmediate(asValue()) ? JSValue() : asCell()->getJSNumber();
+        if (isInt32() || isDouble())
+            return *this;
+        if (isCell())
+            return asCell()->getJSNumber();
+        return JSValue();
+    }
+
+    inline JSObject* JSValue::toObject(ExecState* exec) const
+    {
+        return isCell() ? asCell()->toObject(exec) : toObjectSlowCase(exec);
+    }
+
+    inline JSObject* JSValue::toThisObject(ExecState* exec) const
+    {
+        return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
     }
 
 } // namespace JSC

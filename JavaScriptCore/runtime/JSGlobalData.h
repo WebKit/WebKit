@@ -97,7 +97,7 @@ namespace JSC {
         RefPtr<Structure> stringStructure;
         RefPtr<Structure> notAnObjectErrorStubStructure;
         RefPtr<Structure> notAnObjectStructure;
-#if !USE(ALTERNATE_JSIMMEDIATE)
+#if USE(JSVALUE32)
         RefPtr<Structure> numberStructure;
 #endif
 

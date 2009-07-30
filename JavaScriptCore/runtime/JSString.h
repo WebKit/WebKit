@@ -23,8 +23,8 @@
 #ifndef JSString_h
 #define JSString_h
 
-#include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "CommonIdentifiers.h"
 #include "Identifier.h"
 #include "JSNumberCell.h"
 #include "PropertySlot.h"
@@ -208,7 +208,7 @@ namespace JSC {
 
     inline JSString* JSValue::toThisJSString(ExecState* exec)
     {
-        return JSImmediate::isImmediate(asValue()) ? jsString(exec, JSImmediate::toString(asValue())) : asCell()->toThisJSString(exec);
+        return isCell() ? asCell()->toThisJSString(exec) : jsString(exec, toString(exec));
     }
 
 } // namespace JSC

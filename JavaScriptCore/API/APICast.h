@@ -26,7 +26,7 @@
 #ifndef APICast_h
 #define APICast_h
 
-#include "JSNumberCell.h"
+#include "JSAPIValueWrapper.h"
 #include "JSValue.h"
 #include <wtf/Platform.h>
 #include <wtf/UnusedParam.h>
@@ -58,18 +58,18 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
     return reinterpret_cast<JSC::ExecState*>(c);
 }
 
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
+inline JSC::JSValue toJS(JSC::ExecState*, JSValueRef v)
 {
-    JSC::JSValue jsValue = JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
-#if USE(ALTERNATE_JSIMMEDIATE)
-    UNUSED_PARAM(exec);
+#if USE(JSVALUE32_64)
+    JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
+    if (!jsCell)
+        return JSC::JSValue();
+    if (jsCell->isAPIValueWrapper())
+        return static_cast<JSC::JSAPIValueWrapper*>(jsCell)->value();
+    return jsCell;
 #else
-    if (jsValue && jsValue.isNumber()) {
-        ASSERT(jsValue.isAPIMangledNumber());
-        return JSC::jsNumber(exec, jsValue.uncheckedGetNumber());
-    }
+    return JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
 #endif
-    return jsValue;
 }
 
 inline JSC::JSObject* toJS(JSObjectRef o)
@@ -89,15 +89,16 @@ inline JSC::JSGlobalData* toJS(JSContextGroupRef g)
 
 inline JSValueRef toRef(JSC::ExecState* exec, JSC::JSValue v)
 {
-#if USE(ALTERNATE_JSIMMEDIATE)
-    UNUSED_PARAM(exec);
+#if USE(JSVALUE32_64)
+    if (!v)
+        return 0;
+    if (!v.isCell())
+        return reinterpret_cast<JSValueRef>(asCell(JSC::jsAPIValueWrapper(exec, v)));
+    return reinterpret_cast<JSValueRef>(asCell(v));
 #else
-    if (v && v.isNumber()) {
-        ASSERT(!v.isAPIMangledNumber());
-        return reinterpret_cast<JSValueRef>(JSC::JSValue::encode(JSC::jsAPIMangledNumber(exec, v.uncheckedGetNumber())));
-    }
-#endif
+    UNUSED_PARAM(exec);
     return reinterpret_cast<JSValueRef>(JSC::JSValue::encode(v));
+#endif
 }
 
 inline JSObjectRef toRef(JSC::JSObject* o)

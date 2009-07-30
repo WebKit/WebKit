@@ -90,16 +90,6 @@ bool JSCell::getUInt32(uint32_t&) const
     return false;
 }
 
-bool JSCell::getTruncatedInt32(int32_t&) const
-{
-    return false;
-}
-
-bool JSCell::getTruncatedUInt32(uint32_t&) const
-{
-    return false;
-}
-
 bool JSCell::getString(UString&stringValue) const
 {
     if (!isString())

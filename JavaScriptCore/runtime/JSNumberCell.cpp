@@ -23,12 +23,12 @@
 #include "config.h"
 #include "JSNumberCell.h"
 
+#if USE(JSVALUE32)
+
 #include "NumberObject.h"
 #include "UString.h"
 
 namespace JSC {
-
-#if !USE(ALTERNATE_JSIMMEDIATE)
 
 JSValue JSNumberCell::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
@@ -82,22 +82,6 @@ bool JSNumberCell::getUInt32(uint32_t& uint32) const
     return uint32 == m_value;
 }
 
-bool JSNumberCell::getTruncatedInt32(int32_t& int32) const
-{
-    if (!(m_value >= -2147483648.0 && m_value < 2147483648.0))
-        return false;
-    int32 = static_cast<int32_t>(m_value);
-    return true;
-}
-
-bool JSNumberCell::getTruncatedUInt32(uint32_t& uint32) const
-{
-    if (!(m_value >= 0.0 && m_value < 4294967296.0))
-        return false;
-    uint32 = static_cast<uint32_t>(m_value);
-    return true;
-}
-
 JSValue JSNumberCell::getJSNumber()
 {
     return this;
@@ -113,12 +97,14 @@ JSValue jsNumberCell(JSGlobalData* globalData, double d)
     return new (globalData) JSNumberCell(globalData, d);
 }
 
-JSValue jsAPIMangledNumber(ExecState* exec, double d)
-{
-    return new (exec) JSNumberCell(JSNumberCell::APIMangled, d);
-}
+} // namespace JSC
 
-#else
+#else // USE(JSVALUE32)
+
+// Keep our exported symbols lists happy.
+namespace JSC {
+
+JSValue jsNumberCell(ExecState*, double);
 
 JSValue jsNumberCell(ExecState*, double)
 {
@@ -126,12 +112,6 @@ JSValue jsNumberCell(ExecState*, double)
     return JSValue();
 }
 
-JSValue jsAPIMangledNumber(ExecState*, double)
-{
-    ASSERT_NOT_REACHED();
-    return JSValue();
-}
-
-#endif
-
 } // namespace JSC
+
+#endif // USE(JSVALUE32)

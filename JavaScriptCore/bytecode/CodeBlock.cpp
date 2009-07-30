@@ -57,6 +57,9 @@ static UString escapeQuotes(const UString& str)
 
 static UString valueToSourceString(ExecState* exec, JSValue val)
 {
+    if (!val)
+        return "0";
+
     if (val.isString()) {
         UString result("\"");
         result += escapeQuotes(val.toString(exec)) + "\"";
@@ -595,6 +598,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_div: {
             printBinaryOp(location, it, "div");
+            ++it;
             break;
         }
         case op_mod: {
@@ -737,13 +741,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r1 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             printf("[%4d] resolve_with_base %s, %s, %s\n", location, registerName(r0).c_str(), registerName(r1).c_str(), idName(id0, m_identifiers[id0]).c_str());
-            break;
-        }
-        case op_resolve_func: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int id0 = (++it)->u.operand;
-            printf("[%4d] resolve_func\t %s, %s, %s\n", location, registerName(r0).c_str(), registerName(r1).c_str(), idName(id0, m_identifiers[id0]).c_str());
             break;
         }
         case op_get_by_id: {
@@ -1327,15 +1324,18 @@ CodeBlock::~CodeBlock()
         }
     }
 
+#if ENABLE(JIT_OPTIMIZE_CALL)
     unlinkCallers();
 #endif
+
+#endif // !ENABLE(JIT)
 
 #if DUMP_CODE_BLOCK_STATISTICS
     liveCodeBlockSet.remove(this);
 #endif
 }
 
-#if ENABLE(JIT) 
+#if ENABLE(JIT_OPTIMIZE_CALL)
 void CodeBlock::unlinkCallers()
 {
     size_t size = m_linkedCallerList.size();

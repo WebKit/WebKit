@@ -1,3 +1,2456 @@
+=== End merge of nitro-extreme branch 2009-07-30 ===
+
+2009-07-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed a post-review typo in r46066 that caused tons of test failures.
+        
+        SunSpider reports no change.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray): Initialize the full vector capacity, to avoid
+        uninitialized members at the end.
+
+2009-07-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Windows WebKit build fix: Added some missing exports.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def:
+
+2009-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Get the branch working on windows.
+        https://bugs.webkit.org/show_bug.cgi?id=27391
+        
+        SunSpider says 0.3% faster.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore_debug.def: Updated
+        MSVC export lists to fix linker errors.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Added / removed
+        new / old project files.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines): Used #pragma pack to tell
+        MSVC that these structures represent actual memory layout, and should not be
+        automatically aligned. Changed the return value load to load a 64bit quantity
+        into the canonical registers.
+
+        * jit/JIT.h: Moved OBJECT_OFFSETOF definition to StdLibExtras.h because
+        it's needed by more than just the JIT, and it supplements a standard library
+        macro (offsetof).
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame): Fixed an incorrectly signed
+        cast to resolve an MSVC warning.
+
+        * jit/JITStubs.h: Used #pragma pack to tell MSVC that these structures
+        represent actual memory layout, and should not be automatically aligned. 
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray): Replaced memset_pattern8 with a for loop, since
+        memset_pattern8 is not portable. (I verified that this version of the loop
+        gives the best performance / generated code in GCC.)
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::JSObject): Removed accidental usage of FIELD_OFFSET --
+        OBJECT_OFFSETOF is our new macro name. (FIELD_OFFSET conflicts with a
+        definition in winnt.h.)
+
+        * runtime/JSValue.cpp: Added some headers needed by non-all-in-one builds.
+        
+        * runtime/JSValue.h:
+        (JSC::JSValue::): Made the tag signed, to match MSVC's signed enum values.
+        (GCC doesn't seem to care one way or the other.)
+
+        * wtf/MainThread.cpp: Moved the StdLibExtras.h #include -- I did this a
+        while ago to resolve a conflict with winnt.h. I can't remember if it's truly
+        still needed, but what the heck.
+
+        * wtf/StdLibExtras.h: Moved OBJECT_OFFSETOF definition here.
+
+2009-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig (?).
+        
+        Fixed an assertion seen during the stress test.
+        
+        Don't assume that, if op1 is constant, op2 is not, and vice versa. Sadly,
+        not all constants get folded.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+
+2009-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Include op_convert_this in result caching.
+        
+        No change on SunSpider or v8.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_convert_this):
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC::): Made the op_convert_this JIT stub return an EncodedJSValue, so
+        to maintain the result caching contract that { tag, payload } can be
+        found in { regT1, regT0 }.
+
+2009-07-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Implemented result chaining.
+        
+        1% faster on SunSpider. 4%-5% faster on v8.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::move):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movl_rr): Added an optimization to eliminate
+        no-op mov instructions, to simplify chaining.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * jit/JIT.h: Added data members and helper functions for recording
+        chained results. We record both a mapping from virtual to machine register
+        and the opcode for which the mapping is valid, to help ensure that the
+        mapping isn't used after the mapped register has been stomped by other
+        instructions.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallVarargsSlowCase):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_construct_verify):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase): Chain function call results.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadTag):
+        (JSC::JIT::emitLoadPayload):
+        (JSC::JIT::emitLoad):
+        (JSC::JIT::emitLoad2):
+        (JSC::JIT::isLabeled):
+        (JSC::JIT::map):
+        (JSC::JIT::unmap):
+        (JSC::JIT::isMapped):
+        (JSC::JIT::getMappedPayload):
+        (JSC::JIT::getMappedTag): Use helper functions when loading virtual
+        registers into machine registers, in case the loads can be eliminated
+        by chaining.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_catch): Chain results from these opcodes.
+
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call): Load the profiler into regT2 to
+        avoid stomping a chained result.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_id): Chain results from these opcodes.
+
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::addArgument): Always use { regT1, regT0 }, to facilitate
+        chaining.
+
+        (JSC::JITStubCall::call): Unmap all mapped registers, since our callee
+        stub might stomp them.
+
+2009-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Don't reload values in emitBinaryDoubleOp.
+
+        SunSpider reports a 0.6% progression. 
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitBinaryDoubleOp):
+
+2009-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Convert op_div to load op1 and op2 up front.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_div):
+
+2009-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Don't emit code in emitBinaryDoubleOp if code is unreachable, observable
+        via an empty (unlinked) jumplist passed in.  This only effects op_jnless
+        and op_jnlesseq at present.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emitBinaryDoubleOp):
+
+2009-07-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Converted op_mod to put { tag, payload } in { regT1, regT0 }, and
+        tidied up its constant case.
+        
+        SunSpider reports a 0.2% regression, but a micro-benchmark of op_mod
+        shows a 12% speedup, and the SunSpider test that uses op_mod most should
+        benefit a lot from result caching in the end, since it almost always
+        performs (expression) % constant.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+
+2009-06-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Converted some more arithmetic ops to put { tag, payload } in
+        { regT1, regT0 }.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+
+2009-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Converted some more arithmetic ops to put { tag, payload } in
+        { regT1, regT0 }, and added a case for subtract constant.
+        
+        SunSpider says no change. v8 says 0.3% slower.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSub32Constant):
+        (JSC::JIT::emitSlow_op_sub):
+
+2009-06-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove more uses of addressFor(), load double constants directly from
+        the constantpool in the CodeBlock, rather than from the register file.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitBinaryDoubleOp):
+
+2009-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed a bug in postfix ops, where we would treat x = x++ and x = x--
+        as a no-op, even if x were not an int, and the ++/-- could have side-effects.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emitSlow_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emitSlow_op_post_dec):
+
+2009-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Converted some arithmetic ops to put { tag, payload } in
+        { regT1, regT0 }.
+        
+        SunSpider says 0.7% faster. v8 says no change.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::isOperandConstantImmediateInt):
+        (JSC::JIT::getOperandConstantImmediateInt):
+
+2009-06-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start removing cases of addressFor().
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_div):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadDouble):
+        (JSC::JIT::emitLoadInt32ToDouble):
+        (JSC::JIT::emitStoreDouble):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+
+2009-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in my last patch with regression fixed.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+
+2009-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out my last patch because it was a 2% SunSpider regression.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+
+2009-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin "Sam Weinig" Barraclough.
+        
+        Standardized the rest of our opcodes to put { tag, payload } in
+        { regT1, regT0 } where possible.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+
+2009-06-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Replace calls to store32(tagFor()) and store32(payloadFor())
+        with emitStoreInt32(), emitStoreBool(), and emitStoreCell().
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emitBitAnd32Constant):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emitBitOr32Constant):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emitBitXor32Constant):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSub32ConstantLeft):
+        (JSC::JIT::emitSub32ConstantRight):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mod):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_load_varargs):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitStoreInt32):
+        (JSC::JIT::emitStoreCell):
+        (JSC::JIT::emitStoreBool):
+        (JSC::JIT::emitStore):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::call):
+
+2009-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Standardized the rest of the property access instructions to put { tag,
+        payload } in { regT1, regT0 }.
+
+        Small v8 speedup, 0.2% SunSpider slowdown.
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoad):
+        (JSC::JIT::emitLoad2):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::patchPutByIdReplace):
+
+2009-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Various cleanups.
+        - Use fpRegT* instead of X86::xmm*.
+        - Use a switch statement in emitBinaryDoubleOp instead of a bunch of
+          if/elses.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_div):
+
+2009-06-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add inline code dealing with doubles for op_jfalse and op_jtrue.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::):
+        (JSC::MacroAssemblerX86Common::zeroDouble):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+
+2009-06-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Standardized op_get_by_id to put { tag, payload } in { regT1, regT0 }.
+        
+        SunSpider and v8 report maybe 0.2%-0.4% regressions, but the optimization
+        this enables will win much more than that back.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+
+2009-06-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Standardized op_call to put { tag, payload } in { regT1, regT0 }.
+        
+        SunSpider and v8 report no change.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCallVarargsSetupArgs):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+
+2009-06-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Handle multiplying by zero a little better by
+        inlining the case that both operands are non-negative
+        into the slowpath.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchOr32):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+
+2009-06-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Optimize x++ to ++x inside for loops.
+        
+        Sadly, no measurable speedup, but this should help with result chaining.
+
+        * parser/Nodes.cpp:
+        (JSC::ForNode::emitBytecode):
+
+2009-06-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Standardized some more opcodes to put { tag, payload } in { regT1, regT0 }.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_bitnot):
+        (JSC::JIT::emit_op_post_inc):
+
+2009-06-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Standardized some more opcodes to put { tag, payload } in { regT1, regT0 }.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emitSlow_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emitSlow_op_pre_dec):
+
+2009-06-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Standardized some more opcodes to put { tag, payload } in { regT1, regT0 }.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_construct_verify):
+        (JSC::JIT::emitSlow_op_construct_verify):
+
+2009-06-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Standardized some more opcodes to put { tag, payload } in { regT1, regT0 }.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_true):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+
+2009-06-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig (sort of, maybe).
+        
+        Fixed some ASSERTs in http/tests/security.
+        
+        These ASSERTs were introduced by http://trac.webkit.org/changeset/45057,
+        but the underlying problem was actually older. http://trac.webkit.org/changeset/45057
+        just exposed the problem by enabling optimization in more cases.
+        
+        The ASSERTs fired because we tested PropertySlot::slotBase() for validity,
+        but slotBase() ASSERTs if it's invalid, so we would ASSERT before
+        the test could happen. Solution: Remove the ASSERT. Maybe it was valid
+        once, but it clearly goes against a pattern we've deployed of late.
+        
+        The underlying problem was that WebCore would re-use a PropertySlot in
+        the case of a forwarding access, and the second use would not completely
+        overwrite the first use. Solution: Make sure to overwrite m_offset when
+        setting a value on a PropertySlot. (Other values already get implicitly
+        overwritten during reuse.)
+
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::setValueSlot):
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setRegisterSlot):
+        (JSC::PropertySlot::setUndefined):
+        (JSC::PropertySlot::slotBase):
+        (JSC::PropertySlot::clearOffset):
+
+2009-06-24  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Enable JIT_OPTIMIZE_METHOD_CALLS on the branch, implementation matches current implemenatation in ToT.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emitSlow_op_method_check):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::compileGetByIdSlowCase):
+
+2009-06-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bit off a tiny bit more of standardizing opcode behavior to help with result
+        caching.
+        
+        SunSpider reports no change, v8 maybe a tiny speedup.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emitSlow_op_to_jsnumber):
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emitSlow_op_convert_this):
+
+2009-06-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bit off a tiny bit more of standardizing opcode behavior to help with result
+        caching -- including removing my old enemy, op_resolve_function, because
+        it was non-standard, and removing it felt better than helping it limp along.
+        
+        SunSpider reports no change, v8 maybe a tiny speedup.
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emitSlow_op_to_primitive):
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * parser/Nodes.cpp:
+        (JSC::FunctionCallResolveNode::emitBytecode):
+
+2009-06-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Bit off a tiny bit of standardizing opcode behavior to help with result
+        caching.
+        
+        0.6% SunSpider speedup. 0.3% v8 speedup.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoad): Accomodate a base register that overlaps with payload
+        by loading tag before payload, to avoid stomping base/payload.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov): Abide by the standard "tag in regT1, payload in
+        regT0" semantics.
+
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var): Ditto. Also, removed some irrelevent
+        loads while I was at it. The global object's "d" pointer never changes
+        after construction.
+
+2009-06-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove 'arguments' field from Register union (again).
+        This time do so without breaking tests (radical, I know).
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::optionalCalleeArguments):
+        (JSC::ExecState::setArgumentCount):
+        (JSC::ExecState::init):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        * interpreter/Register.h:
+        (JSC::Register::withInt):
+        (JSC::Register::):
+        (JSC::Register::Register):
+        (JSC::Register::i):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_tear_off_arguments):
+        * runtime/Arguments.h:
+        (JSC::JSActivation::copyRegisters):
+        (JSC::Register::arguments):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+
+2009-06-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Removed some result register tracking cruft in preparation for a new
+        result tracking mechanism.
+        
+        SunSpider reports no change.
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::JmpDst::JmpDst): No need to track jump targets in
+        machine code; we already do this in bytecode.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::emitTimeoutCheck): Make sure to save and restore the result
+        registers, so an opcode with a timeout check can still benefit from result
+        register caching.
+
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases): Removed calls to killLastResultRegister()
+        in preparation for something new.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetFromCallFrameHeaderPtr):
+        (JSC::JIT::emitGetFromCallFrameHeader32):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jsr):
+        (JSC::JIT::emit_op_sret):
+        (JSC::JIT::emit_op_jmp_scopes): ditto
+
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::JITStubCall):
+        (JSC::JITStubCall::getArgument): added a mechanism for reloading an argument
+        you passed to a JIT stub, for use in emitTimeoutCheck.
+
+2009-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove now-useless inplace variants of binary ops.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emit_op_mul):
+
+2009-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Move off memory operands to aid in re-enabling result caching.
+
+        - No regression measured.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emitBitAnd32Constant):
+        (JSC::JIT::emitBitAnd32InPlace):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emitBitOr32Constant):
+        (JSC::JIT::emitBitOr32InPlace):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emitBitXor32Constant):
+        (JSC::JIT::emitBitXor32InPlace):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emitSlow_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emitSlow_op_pre_dec):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitAdd32InPlace):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlowAdd32Constant):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitSub32ConstantLeft):
+        (JSC::JIT::emitSub32ConstantRight):
+        (JSC::JIT::emitSub32InPlaceLeft):
+        (JSC::JIT::emitSub32InPlaceRight):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitMul32InPlace):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mod):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emit_op_to_jsnumber):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+
+2009-06-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed some missing and/or misplaced labels in bytecode generation, so
+        we don't have to work around them in JIT code generation.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpSubroutine):
+        * parser/Nodes.cpp:
+        (JSC::TryNode::emitBytecode):
+
+2009-06-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        For member function calls, emit "this" directly into the "this" slot
+        for the function call, instead of moving it there later. This reduces
+        time spent in op_mov during certain calls, like "a.b.c()".
+        
+        1%-2% speedup on v8, mostly richards and delta-blue.
+
+        * parser/Nodes.cpp:
+        (JSC::FunctionCallDotNode::emitBytecode):
+
+2009-06-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove 'arguments' field from Register union.  Having JSCell derived types in the union is
+        dangerous since it opens the possibility for the field to be written as a raw pointer but
+        then read as a JSValue.  This will lead to statle data being read for the tag, which may
+        be dangerous.  Having removed Arguments* types form Register, all arguments objects must
+        always explicitly be stored in the register file as JSValues.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::optionalCalleeArguments):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::privateExecute):
+        (JSC::Interpreter::retrieveArguments):
+        * interpreter/Register.h:
+        (JSC::Register::):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_tear_off_arguments):
+        * runtime/Arguments.h:
+        (JSC::JSActivation::copyRegisters):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h:
+
+2009-06-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add back known this value optimization by abstracting
+        slow case if not JSCell jumps.
+
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCallVarargsSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::linkSlowCaseIfNotJSCell):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+
+2009-06-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed some of the regression in crypto-aes.js. (8.5% speedup in
+        crypto-aes.js.)
+        
+        SunSpider reports no change overall.
+        
+        Division was producing double results, which took the slow path through
+        array access code.
+        
+        Strangely, all my attempts at versions of this patch that modified array
+        access code to accept ints encoded as doubles along the fast or slow paths
+        were regressions. So I did this instead.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_div): When dividing an int by an int, go ahead and try
+        to turn the result into an int. Don't just do int division, though, because
+        testing shows it to be slower than SSE double division, and the corner
+        cases are pretty complicated / lengthy on top of that. Also, don't try
+        to canonicalize division of known tiny numerators into ints, since that's a
+        waste of time.
+
+2009-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed a regression caused by my recent fix for NaN.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBinaryDoubleOp): Actually do the comparison in reverse
+        order, like the ChangeLog said we would, bokay?
+
+2009-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig and Oliver Hunt.
+        
+        Fixed two edge cases in %:
+        
+        - Don't do -2147483648 % x as a fast case, since you might do -2147483648 % -1,
+        which will signal a hardware exception due to overflow.
+
+        - In the case of a zero remainder, be sure to store negative zero if the
+        dividend was zero.
+        
+        SunSpider reports no change.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+
+2009-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed a regression when comparing to NaN.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBinaryDoubleOp): For op_jnless and op_jnless_eq, do the
+        comparison in reverse order, and jump if the result is below or 
+        below-or-equal. This ensures that we do jump in the case of NaN.
+
+2009-05-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        SunSpider says no change.
+        
+        Fixed regressions in fast/js/var-declarations-shadowing.html and
+        fast/js/equality.html, caused by recent == and != optimizations.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_eq): Don't treat "compare to string" as always
+        numeric or string comparison. If the second operand is an object, you
+        need to ToPrimitive it, and start all over again. Also, I wrote out each
+        of the possible cases explicitly, to cut down on redundant branching.
+
+2009-05-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix bug in fast/js/constant-folding.html where we were not negating
+        -0 properly.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+
+2009-05-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Refactored new slow case codegen for == and !=.
+        
+        SunSpider reports no change, maybe a tiny speedup.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq): Made a vptr comparison a *Ptr operation,
+        instead of *32, to make it portable to 64bit. Reorganized the string
+        and generic cases to make their control flow a little clearer.
+
+2009-05-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Optimized == and != for our new value representation -- especially for strings.
+        
+        14% speedup on date-format-tofte.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::JITStubCall):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_eq):
+        (JSC::JITStubs::cti_op_eq_strings):
+        (JSC::JITStubs::cti_op_call_eval):
+        * jit/JITStubs.h:
+        (JSC::):
+        * runtime/JSValue.h:
+
+2009-05-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix non-SSE enabled builds.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_add): Don't early return here, we still need to call the JIT stub.
+        (JSC::JIT::emitSlow_op_sub): Ditto.
+
+2009-05-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Here's a thought: let's not take a jit stub call just to multiply by 1,
+        bokay?
+        
+        imul doesn't set the zero flag, so to test for a zero result, we need
+        an explicit instruction. (Luckily, it does set the overflow flag, so
+        we can still use that.)
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitMul32InPlace):
+
+2009-05-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey "Premature Commit" Garen.
+
+        Add back constant integer cases for op_add.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlowAdd32Constant):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::getConstantOperandImmediateDouble):
+        (JSC::JIT::isOperandConstantImmediateDouble):
+
+2009-05-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added fast double cases for op_jnless and op_jnlesseq.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::JumpList::jumps): New accesor, used by
+        addSlowCase.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::ucomisd_rm): New method for comparing register to
+        memory.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_div): Modified emitBinaryDoubleOp to accept comparison/jump
+        operations in addition to operations with explicit result registers.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::addSlowCase): Added an "addSlowCase" for JumpLists, so clients
+        can track multiple jumps to the same slow case condition together.
+
+2009-05-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Implement op_negate inline fast cases.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::neg32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::negl_m):
+        (JSC::X86Assembler::xorpd_rr):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+
+2009-05-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Update the patchOffsetGetByIdSlowCaseCall constant for the
+        case that OPCODE_SAMPLING is enabled.
+
+        * jit/JIT.h:
+
+2009-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added support for inline subtraction of doubles.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitSlowSub32InPlaceLeft):
+        (JSC::JIT::emitBinaryDoubleOp):
+
+2009-05-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Added support for inline division.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::divsd_rr):
+        (JSC::X86Assembler::divsd_mr):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitBinaryOp):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emitSlow_op_div):
+
+2009-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added support for inline addition of doubles.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlowAdd32InPlace):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+
+2009-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Factored inline double operations into a helper function, so that we
+        can reuse this code for other math operations.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_mul):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+
+2009-05-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added support for inline multiplication of doubles.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cvtsi2sd_mr): New function, useful for loading an
+        int32 into a double register.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul): Filled out these cases for double arithmetic.
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::addressFor): New function, useful for addressing a JSValue's
+        full 64bits as a double.
+
+2009-05-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement and enable optimized calls.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines): Add ENABLE(JIT_OPTIMIZE_CALL) guards
+        around the the optimize call only trampolines (virtualCallPreLink and virtualCallLink).
+        Update the trampolines to account for the new JSValue representation.
+        (JSC::JIT::unlinkCall): Use NULL instead of JSValue noValue. 
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall): Update to account for the new JSValue representation
+        (JSC::JIT::compileOpCallSlowCase): Ditto.
+
+        * jit/JITStubs.h: Remove incorrect !ENABLE(JIT_OPTIMIZE_CALL) guard.
+
+        * wtf/Platform.h: Enable ENABLE_JIT_OPTIMIZE_CALL.
+
+2009-05-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement and enable optimized property access.
+
+        * assembler/AbstractMacroAssembler.h: Fix comment.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines): Remove array length trampoline
+        and implement the string length trampoline.
+        * jit/JIT.h: Add new constants for patch offsets.
+        * jit/JITInlineMethods.h: Remove FIELD_OFFSET which is now in StdLibExtras.h.
+        * jit/JITPropertyAccess.cpp: 
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::addArgument): Add version of addArgument that takes
+        two registers for the tag and payload.
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::JITStubs): Remove array length trampoline pointer.
+        (JSC::JITStubs::cti_op_get_by_id_self_fail): 
+        * jit/JITStubs.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::JSObject): Move m_inheritorID below the property storage
+        to align it to a 16 byte boundary.
+        * wtf/Platform.h: Enable ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS
+        * wtf/StdLibExtras.h: Move FIELD_OFFSET here.
+
+2009-05-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove unneeded ExecState parameter from the number JSValue constructors.
+
+        * runtime/JSValue.h:
+        (JSC::jsNumber):
+        (JSC::jsNaN):
+        (JSC::JSValue::JSValue):
+
+2009-05-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implemented fast path for op_put_by_val when putting to arrays.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+
+2009-05-15  Geoffrey Garen  <ggaren@apple.com> (Mostly by Sam)
+
+        Reviewed by Sam Weinig.
+        
+        Implemented fast path for op_get_by_val when accessing array.
+
+        * jit/JIT.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+
+2009-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed a failure in fast/js/math-transforms.html caused by failing to
+        preserve -0 in multiplication.
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::jz):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitMul32Constant):
+        (JSC::JIT::emitMul32InPlace): Check both for overflow and for zero when
+        doing multiplication. Use a slow case to get these right.
+
+2009-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed a bug in the varargs calling convention.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargs): Move the argument count into regT1,
+        since that's where ctiVirtualCall expects it to be.
+
+2009-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed a small bug in instanceof's looping code.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof): NULL means the object has no prototype,
+        so only loop when *not* equal to NULL.
+
+2009-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed a small bug in instanceof's result writing code.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof): Make sure to fill out the payload bits
+        in all cases.
+
+2009-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Removed an invalid assertion in cti_op_urshift which
+        depended on a fast path for op_urshift which has
+        never existed.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_urshift):
+
+2009-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed loop_if_true, which had the same reversed test that jtrue had.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_true):
+
+2009-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        In op_neq, we apparently want to check that one value
+        does *not* equal another.  Go figure.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_neq):
+
+2009-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        The slow case of op_mod should call op_mod's jit stub,
+        not op_mul.  That would be dumb.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_mod):
+
+2009-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed problems when using 'arguments' due to a half-initialized register.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::setCalleeArguments):
+        (JSC::ExecState::init): Require a full JSValue when setting up the 
+        'arguments' virtual register, since this register is accessible from JIT
+        code and bytecode, and needs to be a true JSValue.
+
+        * interpreter/CallFrameClosure.h:
+        (JSC::CallFrameClosure::resetCallFrame): ditto
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute): ditto
+
+        * interpreter/Register.h: Removed the constructor that allowed assignment
+        of a JSArguments* to a register. That is not safe. See above.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_create_arguments):
+        (JSC::JITStubs::cti_op_create_arguments_no_params): ditto
+
+2009-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        We really want to go to the slow case in op_jfalse and
+        op_jtrue if the value is *not* boolean. 
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+
+2009-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Flipped the condition when emitting a an op_loop_if_less or op_loop_if_lesseq
+        if the first operand is a constant.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+
+2009-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Added missing return in op_jnless and op_jnlesseq. 
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+
+2009-05-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Load constants into the the register file as a temporary measure to
+        aid bring up.  This allows us to use to treat constants like any
+        other virtual register.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emit_op_enter_with_activation):
+
+2009-05-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Implemented op_strict_eq. Original patch by Snowy, by way of Sam and Gavin.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::set8): Added set8, since it's slightly
+        faster than set32, and the new value representation usually doesn't
+        need set32.
+
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadTag):
+        (JSC::JIT::emitLoadPayload): Added helper functions for dealing with
+        constants. Eventually, we should write special cases for all constants,
+        but these are helpful in the short term.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq): teh opcodez.
+
+        * runtime/JSValue.h:
+        (JSC::JSValue::):
+        (JSC::JSValue::isDouble): Added a LowestTag for clarity.
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Fixed some bugs in host function calls.
+        
+        testapi now passes!
+
+        * jit/JIT.cpp: Changed some registers around to avoid overwriting edx:eax,
+        which is how JSValues are now returned. Also changed the code that
+        passes thisValue to pass the full 64bits of the value. Also added
+        an #error compiler directive to other platform builds, since the JSValue
+        return signature probably won't return in edx:eax on those platforms,
+        and we'll have to investigate a solution.
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Removed parameters from functions that are intended never to use their
+        parameters.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Ported op_instance_of from TOT. It's basically the same, but some register
+        stuff changed to memory stuff.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutJITStubArgFromVirtualRegister):
+        (JSC::JIT::emitStore): Changed to use helper functions.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof): Ported from TOT.
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+        
+        Added a comment to explain an exception-handling subtelty that we found
+        hard to remember when reviewing my last patch.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Implemented try/catch.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw): Updated to use JITStackFrame abstraction.
+        (JSC::JIT::emit_op_catch): Filled out.
+
+2009-05-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implemented op_loop_if_true, op_jfalse, op_jtrue, op_jeq_null and op_jneq_null
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_instanceof): Moved from below to be next to its
+        fast brother.
+
+        (JSC::JIT::emit_op_loop_if_true): Similar to the old version
+        in that it tries to do the integer case first and reduce the
+        number of jumps you might need to take.
+        (JSC::JIT::emitSlow_op_loop_if_true):
+
+        (JSC::JIT::emit_op_jfalse): Very similar to op_loop_if_true, only
+        the inverse and without a timeout check.
+        (JSC::JIT::emitSlow_op_jfalse):
+
+        (JSC::JIT::emit_op_jtrue): Very similar to op_loop_if_true except
+        without the timeout check.
+        (JSC::JIT::emitSlow_op_jtrue):
+
+        (JSC::JIT::emit_op_jeq_null): Very similar to the implementation
+        of op_eq, except it takes jumps instead of copying the condition
+        to a dst.
+        (JSC::JIT::emit_op_jneq_null): Ditto but for op_neq.
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Implemented op_call_varargs.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargsSetupArgs):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::emit_op_call):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_load_varargs):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_construct):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jneq_ptr):
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Implemented op_call_eval.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargsSetupArgs):
+        (JSC::JIT::compileOpCall):
+        * jit/JITStubCall.h:
+        (JSC::CallEvalJITStub::CallEvalJITStub):
+
+2009-05-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Implemented op_not. (Gavin did most of the work!)
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emitSlow_op_not):
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Implemented op_global_resolve.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq): Added back accidentally removed
+        early returns. 
+
+        (JSC::JIT::emit_op_resolve_global):
+        * jit/JITStubs.cpp:
+        (JSC::JITStubs::cti_op_resolve_global): Pretty similar to the old code,
+        but we need two reads and a TimesEight step in order to account for the
+        64bit value size.
+
+        * jit/JITStubs.h:
+        (JSC::): Slightly tweaked this code to specialize for a JSGlobalObject*,
+        to avoid having to pass an irrelevant tag pointer to the stub.
+
+2009-05-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implemented op_to_jsnumber.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emitSlow_op_to_jsnumber):
+
+2009-05-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implemented op_convert_this.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emitSlow_op_convert_this):
+
+2009-05-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Got basic JS function and constructor calls working.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSetupArgs):
+        (JSC::JIT::compileOpCallVarargsSetupArgs):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_construct_verify):
+        (JSC::JIT::emitSlow_op_construct_verify):
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_construct):
+        (JSC::JIT::compileOpCall): Filled out these cases, with call_eval #if'd out.
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutJITStubArgFromVirtualRegister):
+        (JSC::JIT::emitLoad): Restored some legacy "*CTIArg*" functions,
+        since I wanted to avoid the complexity of revamping the API here while
+        trying to bring it up. Eventually, we should re-remove all of these functions.
+
+        (JSC::JIT::recordJumpTarget): Removed unnecessary macro cruft. You will
+        not silence me, Sam Weinig! The world will know that you are a crufty,
+        crufty, crufty programmer!!!
+
+        * jit/JITOpcodes.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::):
+        * jit/JITStubs.h: Changed up some offsets in the JITStackFrame class, since
+        and off-by-one error was causing stack misalignment.
+
+2009-05-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement op_eq_null and op_neq_null.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::set8):
+        (JSC::MacroAssemblerX86Common::setTest8):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_stricteq):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emit_op_nstricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jsc.cpp:
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement op_new_error.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_error):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::addArgument): Add a version of addArgument
+        that takes a constant JSValue.
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove now unused emitGetVariableObjectRegister and emitPutVariableObjectRegister.
+
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement op_to_primitive and op_next_pname.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_construct_verify):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emitSlow_op_loop_if_true):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_next_pname):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add op_get_global_var, op_put_global_var, emit_op_get_scoped_var, emit_op_put_scoped_var and
+        op_unexpected_load.
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::tagFor):
+        (JSC::JIT::payloadFor):
+        (JSC::JIT::emitLoad):
+        (JSC::JIT::emitStore):
+        (JSC::JIT::emitLoadReturnValue):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_unexpected_load):
+
+2009-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Added overflow handling to op_sub.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitSlowSub32InPlaceLeft):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove a function call by folding op_get_by_id and op_put_by_id into
+        their respective compile functions.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Make JITStubCall work in 64bit by making the stack index
+        step dependent on the size of void*.
+
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::JITStubCall):
+        (JSC::JITStubCall::addArgument):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement simple version of property access opcodes
+        which just call a stub functions.
+
+        * jit/JITOpcodes.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_index):
+        (JSC::JIT::emit_op_put_getter):
+        (JSC::JIT::emit_op_put_setter):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::addArgument):
+        * jsc.cpp:
+
+2009-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added work-around for XCode debugging echo problem.
+
+        * jsc.cpp:
+        (runInteractive):
+
+2009-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added overflow handling to op_add.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlowAdd32InPlace):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add slow cases for op_jnless or emit_op_jnlesseq.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add implementations for op_jnless, emit_op_jnlesseq, op_loop_if_less and op_loop_if_lesseq.
+        No slow cases for op_jnless or emit_op_jnlesseq yet.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emitSlow_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emitSlow_op_loop_if_lesseq):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Turn the RECORD_JUMP_TARGET macro into an inline function.
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::recordJumpTarget):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_jsr):
+        (JSC::JIT::emit_op_jmp_scopes):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Add MacroAssemblerX86Common::set8 to fix the build.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::set8):
+
+2009-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Added overflow recovery for pre_inc and pre_dec.
+        
+        Turned some short-circuit code into early returns, as is the WebKit style.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emitSlow_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emitSlow_op_post_dec):
+        (JSC::JIT::emitSlow_op_pre_inc):
+        (JSC::JIT::emitSlow_op_pre_dec):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement op_jmp, op_loop, op_eq and op_neq.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_loop):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emit_op_enter_with_activation):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement the slow cases for arithmetic opcodes.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitSlow_op_bitnot):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitSlow_op_mod):
+        (JSC::JIT::emit_op_mod):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement op_bitnot.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::not32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::notl_m):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_bitnot):
+
+2009-05-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add arithmetic opcode implementations from the old nitro-extreme branch.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emitBitAnd32Constant):
+        (JSC::JIT::emitBitAnd32InPlace):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitBitOr32Constant):
+        (JSC::JIT::emitBitOr32InPlace):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitBitXor32Constant):
+        (JSC::JIT::emitBitXor32InPlace):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emitSlow_op_bitnot):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emitSlow_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emitSlow_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emitSlow_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emitSlow_op_pre_dec):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitAdd32InPlace):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitSub32ConstantLeft):
+        (JSC::JIT::emitSub32ConstantRight):
+        (JSC::JIT::emitSub32InPlaceLeft):
+        (JSC::JIT::emitSub32InPlaceRight):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitMul32Constant):
+        (JSC::JIT::emitMul32InPlace):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITOpcodes.cpp:
+
+2009-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed JIT_OPTIMIZE_ARITHMETIC setting, since it was all about 32bit
+        value representations.
+        
+        Added JSAPIValueWrapper to the repository.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        * runtime/JSAPIValueWrapper.cpp: Added.
+        (JSC::JSAPIValueWrapper::toPrimitive):
+        (JSC::JSAPIValueWrapper::getPrimitiveNumber):
+        (JSC::JSAPIValueWrapper::toBoolean):
+        (JSC::JSAPIValueWrapper::toNumber):
+        (JSC::JSAPIValueWrapper::toString):
+        (JSC::JSAPIValueWrapper::toObject):
+        * runtime/JSAPIValueWrapper.h: Added.
+        (JSC::JSAPIValueWrapper::value):
+        (JSC::JSAPIValueWrapper::isAPIValueWrapper):
+        (JSC::JSAPIValueWrapper::JSAPIValueWrapper):
+        (JSC::jsAPIValueWrapper):
+        * wtf/Platform.h:
+
+2009-05-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Turned on the JIT and got it building and running the most trivial of
+        programs.
+        
+        All configurable optimizations are turned off, and a few opcodes are ad
+        hoc #if'd out.
+        
+        So far, I've only merged op_mov and op_end, but some stub-reliant
+        opcodes work as-is from TOT.
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        * bytecode/CodeBlock.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jnlesseq):
+        (JSC::JIT::emitSlow_op_jnlesseq):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emitSlow_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emitSlow_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emitSlow_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emitSlow_op_pre_dec):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlow_op_mul):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallInitializeCallFrame):
+        (JSC::JIT::compileOpConstructSetupArgs):
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::getConstantOperandImmediateInt):
+        (JSC::JIT::isOperandConstantImmediateInt):
+        (JSC::JIT::emitInitRegister):
+        (JSC::JIT::addSlowCase):
+        (JSC::JIT::addJump):
+        (JSC::JIT::emitJumpSlowToHot):
+        (JSC::JIT::tagFor):
+        (JSC::JIT::payloadFor):
+        (JSC::JIT::emitLoad):
+        (JSC::JIT::emitLoadReturnValue):
+        (JSC::JIT::emitStore):
+        (JSC::JIT::emitStoreReturnValue):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_jmp):
+        (JSC::JIT::emit_op_loop):
+        (JSC::JIT::emit_op_loop_if_less):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_construct_verify):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_loop_if_true):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_unexpected_load):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_push_scope):
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_push_new_scope):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_new_error):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emit_op_profile_will_call):
+        (JSC::JIT::emit_op_profile_did_call):
+        (JSC::JIT::emitSlow_op_construct_verify):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitSlow_op_loop_if_less):
+        (JSC::JIT::emitSlow_op_loop_if_lesseq):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_index):
+        (JSC::JIT::emit_op_put_getter):
+        (JSC::JIT::emit_op_put_setter):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compilePutByIdHotPath):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::JITStubCall):
+        (JSC::JITStubCall::addArgument):
+        (JSC::JITStubCall::call):
+        (JSC::JITStubCall::):
+        (JSC::CallEvalJITStub::CallEvalJITStub):
+        * jit/JITStubs.cpp:
+        (JSC::):
+        (JSC::JITStubs::cti_op_add):
+        (JSC::JITStubs::cti_op_pre_inc):
+        (JSC::JITStubs::cti_op_mul):
+        (JSC::JITStubs::cti_op_get_by_val):
+        (JSC::JITStubs::cti_op_get_by_val_string):
+        (JSC::JITStubs::cti_op_get_by_val_byte_array):
+        (JSC::JITStubs::cti_op_sub):
+        (JSC::JITStubs::cti_op_put_by_val):
+        (JSC::JITStubs::cti_op_put_by_val_array):
+        (JSC::JITStubs::cti_op_put_by_val_byte_array):
+        (JSC::JITStubs::cti_op_negate):
+        (JSC::JITStubs::cti_op_div):
+        (JSC::JITStubs::cti_op_pre_dec):
+        (JSC::JITStubs::cti_op_post_inc):
+        (JSC::JITStubs::cti_op_eq):
+        (JSC::JITStubs::cti_op_lshift):
+        (JSC::JITStubs::cti_op_bitand):
+        (JSC::JITStubs::cti_op_rshift):
+        (JSC::JITStubs::cti_op_bitnot):
+        (JSC::JITStubs::cti_op_mod):
+        (JSC::JITStubs::cti_op_neq):
+        (JSC::JITStubs::cti_op_post_dec):
+        (JSC::JITStubs::cti_op_urshift):
+        (JSC::JITStubs::cti_op_bitxor):
+        (JSC::JITStubs::cti_op_bitor):
+        (JSC::JITStubs::cti_op_switch_imm):
+        * jit/JITStubs.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::~JSFunction):
+        * runtime/JSValue.h:
+        (JSC::JSValue::payload):
+        * wtf/Platform.h:
+
+2009-05-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add some new MacroAssembler and assembler functions that will be needed shortly.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::and32):
+        (JSC::MacroAssemblerX86Common::mul32):
+        (JSC::MacroAssemblerX86Common::neg32):
+        (JSC::MacroAssemblerX86Common::or32):
+        (JSC::MacroAssemblerX86Common::sub32):
+        (JSC::MacroAssemblerX86Common::xor32):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::branchMul32):
+        (JSC::MacroAssemblerX86Common::branchSub32):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::addl_rm):
+        (JSC::X86Assembler::andl_mr):
+        (JSC::X86Assembler::andl_rm):
+        (JSC::X86Assembler::andl_im):
+        (JSC::X86Assembler::negl_r):
+        (JSC::X86Assembler::notl_r):
+        (JSC::X86Assembler::orl_rm):
+        (JSC::X86Assembler::orl_im):
+        (JSC::X86Assembler::subl_rm):
+        (JSC::X86Assembler::xorl_mr):
+        (JSC::X86Assembler::xorl_rm):
+        (JSC::X86Assembler::xorl_im):
+        (JSC::X86Assembler::imull_mr):
+
+2009-05-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Remove the NumberHeap.
+
+        * JavaScriptCore.exp:
+        * runtime/Collector.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::recordExtraCost):
+        (JSC::Heap::heapAllocate):
+        (JSC::Heap::markConservatively):
+        (JSC::Heap::sweep):
+        (JSC::Heap::collect):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::statistics):
+        (JSC::typeName):
+        (JSC::Heap::isBusy):
+        * runtime/Collector.h:
+        (JSC::Heap::globalData):
+        * runtime/JSCell.h:
+
+2009-05-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Land initial commit of new number representation for 32 bit platforms,
+        with JIT disabled.
+
+        * API/APICast.h:
+        (toJS):
+        (toRef):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::hasInstance):
+        (JSC::::toNumber):
+        (JSC::::toString):
+        * API/tests/testapi.c:
+        (EvilExceptionObject_convertToType):
+        * AllInOneFile.cpp:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::valueToSourceString):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::emitUnexpectedLoad):
+        (JSC::keyForImmediateSwitch):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::privateExecute):
+        * parser/Nodes.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        (JSC::processClauseList):
+        * runtime/ArgList.h:
+        * runtime/Collector.h:
+        (JSC::sizeof):
+        * runtime/DateMath.cpp:
+        * runtime/ExceptionHelpers.h:
+        * runtime/InitializeThreading.cpp:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        (JSC::JSCell::isAPIValueWrapper):
+        (JSC::JSValue::isString):
+        (JSC::JSValue::isGetterSetter):
+        (JSC::JSValue::isObject):
+        (JSC::JSValue::getString):
+        (JSC::JSValue::getObject):
+        (JSC::JSValue::getCallData):
+        (JSC::JSValue::getConstructData):
+        (JSC::JSValue::getUInt32):
+        (JSC::JSValue::marked):
+        (JSC::JSValue::toPrimitive):
+        (JSC::JSValue::getPrimitiveNumber):
+        (JSC::JSValue::toBoolean):
+        (JSC::JSValue::toNumber):
+        (JSC::JSValue::toString):
+        (JSC::JSValue::needsThisConversion):
+        (JSC::JSValue::toThisString):
+        (JSC::JSValue::getJSNumber):
+        (JSC::JSValue::toObject):
+        (JSC::JSValue::toThisObject):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::Structure::prototypeForLookup):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt):
+        * runtime/JSImmediate.h:
+        * runtime/JSNumberCell.cpp: Removed.
+        * runtime/JSNumberCell.h: Removed.
+        * runtime/JSObject.h:
+        (JSC::JSValue::get):
+        (JSC::JSValue::put):
+        * runtime/JSString.h:
+        (JSC::JSValue::toThisJSString):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toInteger):
+        (JSC::JSValue::toIntegerPreserveNaN):
+        (JSC::JSValue::toObjectSlowCase):
+        (JSC::JSValue::toThisObjectSlowCase):
+        (JSC::JSValue::synthesizeObject):
+        (JSC::JSValue::synthesizePrototype):
+        (JSC::JSValue::description):
+        (JSC::nonInlineNaN):
+        * runtime/JSValue.h:
+        (JSC::JSValue::):
+        (JSC::EncodedJSValueHashTraits::emptyValue):
+        (JSC::jsNaN):
+        (JSC::operator==):
+        (JSC::operator!=):
+        (JSC::toInt32):
+        (JSC::toUInt32):
+        (JSC::JSValue::encode):
+        (JSC::JSValue::decode):
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::operator bool):
+        (JSC::JSValue::operator==):
+        (JSC::JSValue::operator!=):
+        (JSC::JSValue::isUndefined):
+        (JSC::JSValue::isNull):
+        (JSC::JSValue::isUndefinedOrNull):
+        (JSC::JSValue::isCell):
+        (JSC::JSValue::isInt32):
+        (JSC::JSValue::isUInt32):
+        (JSC::JSValue::isDouble):
+        (JSC::JSValue::isTrue):
+        (JSC::JSValue::isFalse):
+        (JSC::JSValue::tag):
+        (JSC::JSValue::asInt32):
+        (JSC::JSValue::asUInt32):
+        (JSC::JSValue::asDouble):
+        (JSC::JSValue::asCell):
+        (JSC::JSValue::isNumber):
+        (JSC::JSValue::isBoolean):
+        (JSC::JSValue::getBoolean):
+        (JSC::JSValue::uncheckedGetNumber):
+        (JSC::JSValue::toJSNumber):
+        (JSC::JSValue::getNumber):
+        (JSC::JSValue::toInt32):
+        (JSC::JSValue::toUInt32):
+        * runtime/Operations.h:
+        (JSC::JSValue::equal):
+        (JSC::JSValue::equalSlowCaseInline):
+        (JSC::JSValue::strictEqual):
+        (JSC::JSValue::strictEqualSlowCaseInline):
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        (JSC::jsAdd):
+        * runtime/PropertySlot.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncIndexOf):
+        * wtf/Platform.h:
+
+=== Start merge of nitro-extreme branch 2009-07-30 ===
+
 2009-07-29  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by George Staikos.

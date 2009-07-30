@@ -114,10 +114,12 @@ private:
         OP_OR_GvEv                      = 0x0B,
         OP_2BYTE_ESCAPE                 = 0x0F,
         OP_AND_EvGv                     = 0x21,
+        OP_AND_GvEv                     = 0x23,
         OP_SUB_EvGv                     = 0x29,
         OP_SUB_GvEv                     = 0x2B,
         PRE_PREDICT_BRANCH_NOT_TAKEN    = 0x2E,
         OP_XOR_EvGv                     = 0x31,
+        OP_XOR_GvEv                     = 0x33,
         OP_CMP_EvGv                     = 0x39,
         OP_CMP_GvEv                     = 0x3B,
 #if PLATFORM(X86_64)
@@ -169,6 +171,8 @@ private:
         OP2_ADDSD_VsdWsd    = 0x58,
         OP2_MULSD_VsdWsd    = 0x59,
         OP2_SUBSD_VsdWsd    = 0x5C,
+        OP2_DIVSD_VsdWsd    = 0x5E,
+        OP2_XORPD_VpdWpd    = 0x57,
         OP2_MOVD_VdEd       = 0x6E,
         OP2_MOVD_EdVd       = 0x7E,
         OP2_JCC_rel32       = 0x80,
@@ -205,6 +209,7 @@ private:
 
         GROUP3_OP_TEST = 0,
         GROUP3_OP_NOT  = 2,
+        GROUP3_OP_NEG  = 3,
         GROUP3_OP_IDIV = 7,
 
         GROUP5_OP_CALLN = 2,
@@ -319,6 +324,11 @@ public:
         m_formatter.oneByteOp(OP_ADD_GvEv, dst, base, offset);
     }
 
+    void addl_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_ADD_EvGv, src, base, offset);
+    }
+
     void addl_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -386,6 +396,16 @@ public:
         m_formatter.oneByteOp(OP_AND_EvGv, src, dst);
     }
 
+    void andl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_AND_GvEv, dst, base, offset);
+    }
+
+    void andl_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_AND_EvGv, src, base, offset);
+    }
+
     void andl_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -437,9 +457,24 @@ public:
     }
 #endif
 
+    void negl_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_NEG, dst);
+    }
+
+    void negl_m(int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_NEG, base, offset);
+    }
+
     void notl_r(RegisterID dst)
     {
         m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_NOT, dst);
+    }
+
+    void notl_m(int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_NOT, base, offset);
     }
 
     void orl_rr(RegisterID src, RegisterID dst)
@@ -450,6 +485,11 @@ public:
     void orl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.oneByteOp(OP_OR_GvEv, dst, base, offset);
+    }
+
+    void orl_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_OR_EvGv, src, base, offset);
     }
 
     void orl_ir(int imm, RegisterID dst)
@@ -513,6 +553,11 @@ public:
         m_formatter.oneByteOp(OP_SUB_GvEv, dst, base, offset);
     }
 
+    void subl_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_SUB_EvGv, src, base, offset);
+    }
+
     void subl_ir(int imm, RegisterID dst)
     {
         if (CAN_SIGN_EXTEND_8_32(imm)) {
@@ -567,6 +612,27 @@ public:
     void xorl_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp(OP_XOR_EvGv, src, dst);
+    }
+
+    void xorl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_XOR_GvEv, dst, base, offset);
+    }
+
+    void xorl_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_XOR_EvGv, src, base, offset);
+    }
+
+    void xorl_im(int imm, int offset, RegisterID base)
+    {
+        if (CAN_SIGN_EXTEND_8_32(imm)) {
+            m_formatter.oneByteOp(OP_GROUP1_EvIb, GROUP1_OP_XOR, base, offset);
+            m_formatter.immediate8(imm);
+        } else {
+            m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_XOR, base, offset);
+            m_formatter.immediate32(imm);
+        }
     }
 
     void xorl_ir(int imm, RegisterID dst)
@@ -649,7 +715,12 @@ public:
     {
         m_formatter.twoByteOp(OP2_IMUL_GvEv, dst, src);
     }
-    
+
+    void imull_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_IMUL_GvEv, dst, base, offset);
+    }
+
     void imull_i32r(RegisterID src, int32_t value, RegisterID dst)
     {
         m_formatter.oneByteOp(OP_IMUL_GvEvIz, dst, src);
@@ -1154,6 +1225,11 @@ public:
         return m_formatter.immediateRel32();
     }
     
+    JmpSrc jz()
+    {
+        return je();
+    }
+
     JmpSrc jl()
     {
         m_formatter.twoByteOp(jccRel32(ConditionL));
@@ -1246,6 +1322,20 @@ public:
         m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, src);
     }
 
+    void cvtsi2sd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, base, offset);
+    }
+
+#if !PLATFORM(X86_64)
+    void cvtsi2sd_mr(void* address, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, address);
+    }
+#endif
+
     void cvttsd2si_rr(XMMRegisterID src, RegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
@@ -1284,6 +1374,14 @@ public:
         m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, base, offset);
     }
 
+#if !PLATFORM(X86_64)
+    void movsd_mr(void* address, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, address);
+    }
+#endif
+
     void mulsd_rr(XMMRegisterID src, XMMRegisterID dst)
     {
         m_formatter.prefix(PRE_SSE_F2);
@@ -1319,6 +1417,30 @@ public:
     {
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_UCOMISD_VsdWsd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void ucomisd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_UCOMISD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void divsd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_DIVSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void divsd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_DIVSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void xorpd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_XORPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
     }
 
     // Misc instructions:
@@ -1604,6 +1726,16 @@ private:
             m_buffer.putByteUnchecked(opcode);
             memoryModRM(reg, base, index, scale, offset);
         }
+
+#if !PLATFORM(X86_64)
+        void twoByteOp(TwoByteOpcodeID opcode, int reg, void* address)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, address);
+        }
+#endif
 
 #if PLATFORM(X86_64)
         // Quad-word-sized operands:

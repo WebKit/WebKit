@@ -53,6 +53,7 @@ namespace JSC {
     class RegisterFile;
     class FuncDeclNode;
     class FuncExprNode;
+    class JSGlobalObject;
     class RegExp;
 
     union JITStubArg {
@@ -68,13 +69,16 @@ namespace JSC {
         FuncExprNode* funcExprNode() { return static_cast<FuncExprNode*>(asPointer); }
         RegExp* regExp() { return static_cast<RegExp*>(asPointer); }
         JSPropertyNameIterator* propertyNameIterator() { return static_cast<JSPropertyNameIterator*>(asPointer); }
+        JSGlobalObject* globalObject() { return static_cast<JSGlobalObject*>(asPointer); }
+        JSString* jsString() { return static_cast<JSString*>(asPointer); }
         ReturnAddressPtr returnAddress() { return ReturnAddressPtr(asPointer); }
     };
 
 #if PLATFORM(X86_64)
     struct JITStackFrame {
-        JITStubArg padding; // Unused
-        JITStubArg args[8];
+        void* reserved; // Unused
+        JITStubArg args[6];
+        void* padding[2]; // Maintain 32-byte stack alignment (possibly overkill).
 
         void* savedRBX;
         void* savedR15;
@@ -95,9 +99,16 @@ namespace JSC {
         ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }
     };
 #elif PLATFORM(X86)
+#if COMPILER(MSVC)
+#pragma pack(push)
+#pragma pack(4)
+#endif // COMPILER(MSVC)
     struct JITStackFrame {
-        JITStubArg padding; // Unused
+        void* reserved; // Unused
         JITStubArg args[6];
+#if USE(JSVALUE32_64)
+        void* padding[2]; // Maintain 16-byte stack alignment.
+#endif
 
         void* savedEBX;
         void* savedEDI;
@@ -115,10 +126,16 @@ namespace JSC {
         // When JIT code makes a call, it pushes its return address just below the rest of the stack.
         ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }
     };
+#if COMPILER(MSVC)
+#pragma pack(pop)
+#endif // COMPILER(MSVC)
 #elif PLATFORM_ARM_ARCH(7)
     struct JITStackFrame {
-        JITStubArg padding; // Unused
+        void* reserved; // Unused
         JITStubArg args[6];
+#if USE(JSVALUE32_64)
+        void* padding[2]; // Maintain 16-byte stack alignment.
+#endif
 
         ReturnAddressPtr thunkReturnAddress;
 
@@ -198,7 +215,6 @@ namespace JSC {
         static void tryCacheGetByID(CallFrame*, CodeBlock*, ReturnAddressPtr returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
         static void tryCachePutByID(CallFrame*, CodeBlock*, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot&);
         
-        MacroAssemblerCodePtr ctiArrayLengthTrampoline() { return m_ctiArrayLengthTrampoline; }
         MacroAssemblerCodePtr ctiStringLengthTrampoline() { return m_ctiStringLengthTrampoline; }
         MacroAssemblerCodePtr ctiVirtualCallPreLink() { return m_ctiVirtualCallPreLink; }
         MacroAssemblerCodePtr ctiVirtualCallLink() { return m_ctiVirtualCallLink; }
@@ -208,7 +224,6 @@ namespace JSC {
     private:
         RefPtr<ExecutablePool> m_executablePool;
 
-        MacroAssemblerCodePtr m_ctiArrayLengthTrampoline;
         MacroAssemblerCodePtr m_ctiStringLengthTrampoline;
         MacroAssemblerCodePtr m_ctiVirtualCallPreLink;
         MacroAssemblerCodePtr m_ctiVirtualCallLink;
@@ -216,8 +231,94 @@ namespace JSC {
         MacroAssemblerCodePtr m_ctiNativeCallThunk;
     };
 
-namespace JITStubs { extern "C" {
-
+extern "C" {
+    EncodedJSValue JIT_STUB cti_op_add(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_bitand(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_bitnot(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_bitor(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_bitxor(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_call_NotJSFunction(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_call_eval(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_del_by_id(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_del_by_val(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_div(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_array_fail(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_generic(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_method_check(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_method_check_second(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_proto_fail(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_proto_list(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_proto_list_full(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_second(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_self_fail(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_id_string_fail(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_val(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_val_byte_array(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_get_by_val_string(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_in(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_instanceof(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_is_boolean(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_is_function(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_is_number(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_is_object(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_is_string(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_is_undefined(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_less(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_lesseq(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_lshift(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_mod(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_mul(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_negate(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_next_pname(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_not(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_nstricteq(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_post_dec(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_post_inc(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_pre_dec(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_pre_inc(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_resolve(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_resolve_base(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_resolve_global(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_resolve_skip(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_strcat(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_sub(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_throw(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_to_jsnumber(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_to_primitive(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_typeof(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_urshift(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_construct_JSConstruct(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_new_array(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_new_error(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_new_func(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_new_func_exp(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_new_object(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_new_regexp(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_push_activation(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_push_new_scope(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_push_scope(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_put_by_id_transition_realloc(STUB_ARGS_DECLARATION);
+    JSPropertyNameIterator* JIT_STUB cti_op_get_pnames(STUB_ARGS_DECLARATION);
+    VoidPtrPair JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
+    bool JIT_STUB cti_op_eq(STUB_ARGS_DECLARATION);
+#if USE(JSVALUE32_64)
+    bool JIT_STUB cti_op_eq_strings(STUB_ARGS_DECLARATION);
+#endif
+    int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_jlesseq(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_loop_if_less(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_loop_if_true(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_debug(STUB_ARGS_DECLARATION);
@@ -240,100 +341,13 @@ namespace JITStubs { extern "C" {
     void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_register_file_check(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_jlesseq(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_loop_if_less(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_loop_if_true(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_call_JSFunction(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_switch_char(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_switch_imm(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_switch_string(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_vm_dontLazyLinkCall(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_vm_lazyLinkCall(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_construct_JSConstruct(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_new_array(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_new_error(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_new_func(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_new_func_exp(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_new_object(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_new_regexp(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_push_activation(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_push_new_scope(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_push_scope(STUB_ARGS_DECLARATION);
-    JSPropertyNameIterator* JIT_STUB cti_op_get_pnames(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_add(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_bitand(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_bitnot(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_bitor(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_bitxor(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_call_NotJSFunction(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_call_eval(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_del_by_id(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_del_by_val(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_div(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_eq(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_method_check(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_method_check_second(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_array_fail(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_generic(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_proto_fail(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_proto_list(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_proto_list_full(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_second(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_self_fail(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_id_string_fail(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_val(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_val_byte_array(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_get_by_val_string(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_put_by_id_transition_realloc(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_in(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_instanceof(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_is_boolean(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_is_function(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_is_number(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_is_object(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_is_string(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_is_undefined(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_less(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_lesseq(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_lshift(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_mod(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_mul(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_negate(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_neq(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_next_pname(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_not(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_nstricteq(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_pre_dec(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_pre_inc(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_resolve(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_resolve_base(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_resolve_global(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_resolve_skip(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_strcat(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_sub(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_throw(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_to_jsnumber(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_to_primitive(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_typeof(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_urshift(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_post_dec(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_post_inc(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_resolve_func(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION);
-    VoidPtrPair JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
-
-}; } // extern "C" namespace JITStubs
+} // extern "C"
 
 } // namespace JSC
 

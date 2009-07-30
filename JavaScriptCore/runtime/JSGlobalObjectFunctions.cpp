@@ -303,14 +303,18 @@ JSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec, JSObject*, JSValue, co
     JSValue value = args.at(0);
     int32_t radix = args.at(1).toInt32(exec);
 
-    if (value.isNumber() && (radix == 0 || radix == 10)) {
-        if (value.isInt32Fast())
-            return value;
-        double d = value.uncheckedGetNumber();
+    if (radix != 0 && radix != 10)
+        return jsNumber(exec, parseInt(value.toString(exec), radix));
+
+    if (value.isInt32())
+        return value;
+
+    if (value.isDouble()) {
+        double d = value.asDouble();
         if (isfinite(d))
             return jsNumber(exec, (d > 0) ? floor(d) : ceil(d));
         if (isnan(d) || isinf(d))
-            return jsNaN(&exec->globalData());
+            return jsNaN(exec);
         return jsNumber(exec, 0);
     }
 

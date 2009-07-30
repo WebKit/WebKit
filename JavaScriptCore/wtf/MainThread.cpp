@@ -29,9 +29,9 @@
 #include "config.h"
 #include "MainThread.h"
 
+#include "StdLibExtras.h"
 #include "CurrentTime.h"
 #include "Deque.h"
-#include "StdLibExtras.h"
 #include "Threading.h"
 
 namespace WTF {

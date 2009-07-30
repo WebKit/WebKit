@@ -1182,8 +1182,10 @@ static const char* typeName(JSCell* cell)
 {
     if (cell->isString())
         return "string";
+#if USE(JSVALUE32)
     if (cell->isNumber())
         return "number";
+#endif
     if (cell->isGetterSetter())
         return "gettersetter";
     ASSERT(cell->isObject());
