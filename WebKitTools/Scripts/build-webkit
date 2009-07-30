@@ -42,6 +42,7 @@ chdirWebKit();
 
 my $showHelp = 0;
 my $clean = 0;
+my $minimal = 0;
 my $makeArgs;
 
 my ($threeDRenderingSupport, $channelMessagingSupport, $databaseSupport, $domStorageSupport,
@@ -140,8 +141,16 @@ if (isQt()) {
 }
 
 # Initialize values from defaults
+foreach (@ARGV) {
+    if ($_ eq '--minimal') {
+        $minimal = 1;
+        last;
+    }
+}
+
+# Initialize values from defaults
 foreach (@features) {
-    ${$_->{value}} = $_->{default} || 0;
+    ${$_->{value}} = ($_->{default} && !$minimal) || 0;
 }
 
 $svgSupport = $svgSupport || $svgAnimationSupport || $svgAsImageSupport
@@ -162,19 +171,22 @@ Usage: $programName [options] [options to pass to build system]
 
   --makeargs=<arguments>            Optional Makefile flags
 
+  --minimal                         No optional features, unless explicitly enabled.
+
 EOF
 
 my %options = (
     'help' => \$showHelp,
     'clean' => \$clean,
     'makeargs=s' => \$makeArgs,
+    'minimal' => \$minimal,
 );
 
 # Build usage text and options list from features
 foreach (@features) {
     my $opt = sprintf("%-35s", "  --[no-]$_->{option}");
-    $usage .= "$opt $_->{desc} (default: ${$_->{value}})\n";
-    $options{"$_->{option}!"} =  $_->{value};
+    $usage .= "$opt $_->{desc} (default: $_->{default})\n";
+    $options{"$_->{option}!"} = $_->{value};
 }
 
 GetOptions(%options);
