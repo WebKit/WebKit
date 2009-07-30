@@ -43,13 +43,15 @@
 
 #include "NotImplemented.h"
 
+#if QT_VERSION >= 0x040500
+#include <QAbstractNetworkCache>
+#endif
 #include <QCoreApplication>
 #include <QUrl>
 #if QT_VERSION >= 0x040400
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QAbstractNetworkCache>
 #else
 #include "qwebnetworkinterface_p.h"
 #endif
