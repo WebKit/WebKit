@@ -108,7 +108,7 @@ namespace WebCore {
         HashSet<AXID> m_idsInUse;
         
         Timer<AXObjectCache> m_notificationPostTimer;
-        Vector<pair<AccessibilityObject*, const String> > m_notificationsToPost;
+        Vector<pair<RefPtr<AccessibilityObject>, const String> > m_notificationsToPost;
         void notificationPostTimerFired(Timer<AXObjectCache>*);
         
         AXID getAXID(AccessibilityObject*);

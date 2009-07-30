@@ -261,7 +261,7 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
 
     unsigned i = 0, count = m_notificationsToPost.size();
     for (i = 0; i < count; ++i) {
-        AccessibilityObject* obj = m_notificationsToPost[i].first;
+        AccessibilityObject* obj = m_notificationsToPost[i].first.get();
 #ifndef NDEBUG
         // Make sure none of the render views are in the process of being layed out.
         // Notifications should only be sent after the renderer has finished
@@ -308,7 +308,7 @@ void AXObjectCache::postNotification(RenderObject* renderer, const String& messa
     if (!obj)
         return;
 
-    m_notificationsToPost.append(make_pair(obj.get(), message));
+    m_notificationsToPost.append(make_pair(obj, message));
     if (!m_notificationPostTimer.isActive())
         m_notificationPostTimer.startOneShot(0);
 }
