@@ -1784,6 +1784,8 @@ sub recordActualResultsAndDiff($$)
     my ($expectedResultFileNameMinusExtension, $expectedResultDirectoryPath, $expectedResultExtension) = fileparse($expectedResultPath, qr{\.[^.]+$});
     my $actualResultsPath = "$testResultsDirectory/$base-$actualTag$expectedResultExtension";
     my $copiedExpectedResultsPath = "$testResultsDirectory/$base-$expectedTag$expectedResultExtension";
+
+    mkpath($expectedResultDirectoryPath);
     writeToFile("$actualResultsPath", $actualResults);
 
     if (-f $expectedResultPath) {

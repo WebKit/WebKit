@@ -1,5 +1,12 @@
 2009-07-30  Mark Rowe  <mrowe@apple.com>
 
+        Ensure that the path exists before writing results to it.
+        Hopefully this will make the Windows build bot happy.
+
+        * Scripts/run-webkit-tests:
+
+2009-07-30  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Adam Treat and Jon Honeycutt.
 
         Teach run-webkit-tests to always store the actual results in the results directory for new tests.
