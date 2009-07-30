@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
+ * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,6 +114,10 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
     QString str(reinterpret_cast<const QChar*>(characters), length);
     str = str.normalized(QString::NormalizationForm_C);
     return newTextCodec(*this)->encode(reinterpret_cast<const UChar *>(str.utf16()), str.length(), handling);
+#elif PLATFORM(WINCE)
+    // normalization will be done by Windows CE API
+    OwnPtr<TextCodec> textCodec = newTextCodec(*this);
+    return textCodec.get() ? textCodec->encode(characters, length, handling) : CString();
 #endif
 }
 
