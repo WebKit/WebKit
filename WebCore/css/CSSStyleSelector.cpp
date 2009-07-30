@@ -1323,7 +1323,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
             // Timing-function within keyframes is special, because it is not animated; it just
             // describes the timing function between this keyframe and the next.
             if (property != CSSPropertyWebkitAnimationTimingFunction)
-                list.addProperty((*it).id());
+                list.addProperty(property);
         }
         
         // Add this keyframe style to all the indicated key times

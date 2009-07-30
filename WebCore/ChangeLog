@@ -15,6 +15,14 @@
 
 2009-07-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Minor change to earlier commit suggested by Darin Adler.
+        Use the variable rather than dereferencing 'it' again.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+
+2009-07-30  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Animation with a timing function property in a keyframe eats CPU
