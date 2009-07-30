@@ -62,7 +62,12 @@ static JSObject* constructWorker(ExecState* exec, JSObject* constructor, const A
     // See section 4.8.2 step 14 of WebWorkers for why this is the lexicalGlobalObject. 
     DOMWindow* window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
 
-    RefPtr<Worker> worker = Worker::create(scriptURL, window->document());
+    ExceptionCode ec = 0;
+    RefPtr<Worker> worker = Worker::create(scriptURL, window->document(), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return 0;
+    }
 
     return asObject(toJS(exec, jsConstructor->globalObject(), worker.release()));
 }

@@ -51,7 +51,7 @@ namespace WebCore {
 
     class Worker : public AbstractWorker, private WorkerScriptLoaderClient {
     public:
-        static PassRefPtr<Worker> create(const String& url, ScriptExecutionContext* context) { return adoptRef(new Worker(url, context)); }
+        static PassRefPtr<Worker> create(const String& url, ScriptExecutionContext* context, ExceptionCode& ec) { return adoptRef(new Worker(url, context, ec)); }
         ~Worker();
 
         virtual Worker* toWorker() { return this; }
@@ -72,7 +72,7 @@ namespace WebCore {
         EventListener* onmessage() const { return m_onMessageListener.get(); }
 
     private:
-        Worker(const String&, ScriptExecutionContext*);
+        Worker(const String&, ScriptExecutionContext*, ExceptionCode&);
 
         virtual void notifyFinished();
 

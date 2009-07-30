@@ -50,12 +50,28 @@
 
 namespace WebCore {
 
-Worker::Worker(const String& url, ScriptExecutionContext* context)
+Worker::Worker(const String& url, ScriptExecutionContext* context, ExceptionCode& ec)
     : AbstractWorker(context)
     , m_contextProxy(WorkerContextProxy::create(this))
 {
+    if (url.isEmpty()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    KURL scriptURL = context->completeURL(url);
+    if (!scriptURL.isValid()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    if (!context->securityOrigin()->canAccess(SecurityOrigin::create(scriptURL).get())) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
     m_scriptLoader = new WorkerScriptLoader();
-    m_scriptLoader->loadAsynchronously(scriptExecutionContext(), url, CompleteURL, DenyCrossOriginLoad, this);
+    m_scriptLoader->loadAsynchronously(scriptExecutionContext(), scriptURL, DenyCrossOriginRedirect, this);
     setPendingActivity(this);  // The worker context does not exist while loading, so we must ensure that the worker object is not collected, as well as its event listeners.
 }
 

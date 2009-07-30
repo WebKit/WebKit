@@ -78,7 +78,10 @@ CALLBACK_FUNC_DECL(WorkerConstructor)
 
     // Create the worker object.
     // Note: it's OK to let this RefPtr go out of scope because we also call setDOMWrapper(), which effectively holds a reference to obj.
-    RefPtr<Worker> obj = Worker::create(toWebCoreString(scriptUrl), context);
+    ExceptionCode ec = 0;
+    RefPtr<Worker> obj = Worker::create(toWebCoreString(scriptUrl), context, ec);
+    if (ec)
+        return throwError(ec);
 
     // Setup the standard wrapper object internal fields.
     v8::Handle<v8::Object> wrapperObject = args.Holder();

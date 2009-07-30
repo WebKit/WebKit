@@ -50,55 +50,33 @@ WorkerScriptLoader::WorkerScriptLoader()
 {
 }
 
-static CrossOriginRedirectPolicy toCrossOriginRedirectPolicy(CrossOriginLoadPolicy crossOriginLoadPolicy)
+void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const KURL& url, CrossOriginRedirectPolicy crossOriginRedirectPolicy)
 {
-    return (crossOriginLoadPolicy == DenyCrossOriginLoad) ? DenyCrossOriginRedirect : AllowCrossOriginRedirect;
-}
+    m_url = url;
 
-void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, URLCompletionPolicy urlCompletionPolicy, CrossOriginLoadPolicy crossOriginLoadPolicy)
-{
-    OwnPtr<ResourceRequest> request(createResourceRequest(scriptExecutionContext, url, urlCompletionPolicy, crossOriginLoadPolicy));
+    OwnPtr<ResourceRequest> request(createResourceRequest());
     if (!request)
         return;
 
     ASSERT(scriptExecutionContext->isWorkerContext());
-    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), *request, *this, AllowStoredCredentials, toCrossOriginRedirectPolicy(crossOriginLoadPolicy));
+    WorkerThreadableLoader::loadResourceSynchronously(static_cast<WorkerContext*>(scriptExecutionContext), *request, *this, AllowStoredCredentials, crossOriginRedirectPolicy);
 }
     
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const String& url, URLCompletionPolicy urlCompletionPolicy, CrossOriginLoadPolicy crossOriginLoadPolicy, WorkerScriptLoaderClient* client)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecutionContext, const KURL& url, CrossOriginRedirectPolicy crossOriginRedirectPolicy, WorkerScriptLoaderClient* client)
 {
     ASSERT(client);
     m_client = client;
+    m_url = url;
 
-    OwnPtr<ResourceRequest> request(createResourceRequest(scriptExecutionContext, url, urlCompletionPolicy, crossOriginLoadPolicy));
+    OwnPtr<ResourceRequest> request(createResourceRequest());
     if (!request)
         return;
 
-    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, *request, DoNotSendLoadCallbacks, DoNotSniffContent, AllowStoredCredentials, toCrossOriginRedirectPolicy(crossOriginLoadPolicy));
+    m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, *request, DoNotSendLoadCallbacks, DoNotSniffContent, AllowStoredCredentials, crossOriginRedirectPolicy);
 }
 
-static void notifyLoadErrorTask(ScriptExecutionContext* context, WorkerScriptLoader* loader)
+PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
-    UNUSED_PARAM(context);
-    loader->notifyError();
-}
-
-PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest(ScriptExecutionContext* scriptExecutionContext, const String& url, URLCompletionPolicy urlCompletionPolicy, CrossOriginLoadPolicy crossOriginLoadPolicy)
-{
-    if (urlCompletionPolicy == CompleteURL) {
-        m_url = scriptExecutionContext->completeURL(url);
-        if (url.isEmpty() || !m_url.isValid()) {
-            scriptExecutionContext->postTask(createCallbackTask(&notifyLoadErrorTask, this));
-            return 0;
-        }
-    } else
-        m_url = KURL(url);
-
-    if (crossOriginLoadPolicy == DenyCrossOriginLoad && !scriptExecutionContext->securityOrigin()->canAccess(SecurityOrigin::create(m_url).get())) {
-        scriptExecutionContext->postTask(createCallbackTask(&notifyLoadErrorTask, this));
-        return 0;
-    }
-
     OwnPtr<ResourceRequest> request(new ResourceRequest(m_url));
     request->setHTTPMethod("GET");
 

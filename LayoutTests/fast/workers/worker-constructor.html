@@ -72,11 +72,11 @@ function testEmptyScriptUrl()
     try {
         var worker = new Worker("");
         worker.onerror = function() {
-            log("PASS: onerror invoked for an empty script URL.");
+            log("FAIL: onerror invoked for an empty script URL.");
             runNextTest();
         }
     } catch (ex) {
-        log("FAIL: unexpected exception " + ex);
+        log("PASS: invoking Worker constructor with empty script URL resulted in an exception (" + ex + ")");
         runNextTest();
     }
 }
@@ -84,13 +84,13 @@ function testEmptyScriptUrl()
 function testInvalidScriptUrl()
 {
     try {
-        var worker = new Worker("invalidurl://");
+        var worker = new Worker("http://invalid:123$");
         worker.onerror = function() {
-            log("PASS: onerror invoked for an invalid script URL.");
+            log("FAIL: onerror invoked for an invalid script URL.");
             runNextTest();
         }
     } catch (ex) {
-        log("FAIL: unexpected exception " + ex);
+        log("PASS: invoking Worker constructor with invalid script URL resulted in an exception (" + ex + ")");
         runNextTest();
     }
 }
