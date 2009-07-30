@@ -27,6 +27,7 @@
 package CodeGeneratorV8;
 
 use File::stat;
+use Digest::MD5;
 
 my $module = "";
 my $outputDir = "";
@@ -593,7 +594,10 @@ END
             }
         } else {
             if ($implClassIsAnimatedType) {
-                my $wrapper = "V8SVGDynamicPODTypeWrapperCache<$nativeType, $implClassName>::lookupOrCreateWrapper(imp, &${implClassName}::$getter, &${implClassName}::$setter)";
+                # We can't hash member function pointers, so instead generate
+                # some hashing material based on the names of the methods.
+                my $hashhex = substr(Digest::MD5::md5_hex("${implClassName}::$getter ${implClassName}::$setter)"), 0, 8);
+                my $wrapper = "V8SVGDynamicPODTypeWrapperCache<$nativeType, $implClassName>::lookupOrCreateWrapper(imp, &${implClassName}::$getter, &${implClassName}::$setter, 0x$hashhex)";
                 push(@implContentDecls, "    RefPtr<V8SVGPODTypeWrapper<" . $nativeType . "> > wrapper = $wrapper;\n");
             } else {
                 my $wrapper = GenerateSVGStaticPodTypeWrapper($returnType, $getterString);

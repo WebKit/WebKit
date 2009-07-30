@@ -30,11 +30,14 @@
 
 #if ENABLE(SVG)
 
+#include <utility>
+
 #include "SVGElement.h"
 #include "SVGList.h"
 #include "V8Proxy.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
@@ -251,6 +254,7 @@ struct PODTypeWrapperCacheInfo {
         : creator(0)
         , getter(0)
         , setter(0)
+        , fieldHash(0)
     { }
 
     // Deleted value
@@ -258,6 +262,7 @@ struct PODTypeWrapperCacheInfo {
         : creator(reinterpret_cast<PODTypeCreator*>(-1))
         , getter(0)
         , setter(0)
+        , fieldHash(0)
     {
     }
 
@@ -266,10 +271,11 @@ struct PODTypeWrapperCacheInfo {
         return creator == reinterpret_cast<PODTypeCreator*>(-1);
     }
 
-    PODTypeWrapperCacheInfo(PODTypeCreator* _creator, GetterMethod _getter, SetterMethod _setter)
+    PODTypeWrapperCacheInfo(PODTypeCreator* _creator, GetterMethod _getter, SetterMethod _setter, unsigned _fieldHash)
         : creator(_creator)
         , getter(_getter)
         , setter(_setter)
+        , fieldHash(_fieldHash)
     {
         ASSERT(creator);
         ASSERT(getter);
@@ -277,22 +283,23 @@ struct PODTypeWrapperCacheInfo {
 
     bool operator==(const PODTypeWrapperCacheInfo& other) const
     {
-        return creator == other.creator && getter == other.getter && setter == other.setter;
+        return creator == other.creator && fieldHash == other.fieldHash && getter == other.getter && setter == other.setter;
     }
 
     PODTypeCreator* creator;
     GetterMethod getter;
     SetterMethod setter;
+    unsigned fieldHash;
 };
 
 template<typename PODType, typename PODTypeCreator>
 struct PODTypeWrapperCacheInfoHash {
     static unsigned hash(const PODTypeWrapperCacheInfo<PODType, PODTypeCreator>& info)
     {
-        unsigned creator = reinterpret_cast<unsigned>(info.creator);
-        unsigned getter = reinterpret_cast<unsigned>(*(void**)&info.getter);
-        unsigned setter = reinterpret_cast<unsigned>(*(void**)&info.setter);
-        return (creator * 13) + getter ^ (setter >> 2);
+        // We can't hash member function pointers, but we have enough material
+        // to hash the pointer and field identifier, and on a collision
+        // operator== will still differentiate the member function pointers.
+        return WTF::PairHash<void*, unsigned>::hash(std::pair<void*, unsigned>(info.creator, info.fieldHash));
     }
 
     static bool equal(const PODTypeWrapperCacheInfo<PODType, PODTypeCreator>& a, const PODTypeWrapperCacheInfo<PODType, PODTypeCreator>& b)
@@ -350,10 +357,10 @@ public:
     }
 
     // Used for readwrite attributes only
-    static PassRefPtr<WrapperBase> lookupOrCreateWrapper(PODTypeCreator* creator, GetterMethod getter, SetterMethod setter)
+    static PassRefPtr<WrapperBase> lookupOrCreateWrapper(PODTypeCreator* creator, GetterMethod getter, SetterMethod setter, unsigned fieldHash)
     {
         DynamicWrapperHashMap& map(dynamicWrapperHashMap());
-        CacheInfo info(creator, getter, setter);
+        CacheInfo info(creator, getter, setter, fieldHash);
 
         if (map.contains(info))
             return map.get(info);
