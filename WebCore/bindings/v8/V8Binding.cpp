@@ -35,7 +35,10 @@
 #include "CString.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
+#include "StdLibExtras.h"
 #include "StringBuffer.h"
+#include "StringHash.h"
+#include "Threading.h"
 
 #include <v8.h>
 
@@ -142,16 +145,72 @@ AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> v8String)
 
 v8::Handle<v8::String> v8String(const String& string)
 {
-    if (!string.length())
-        return v8::String::Empty();
-    return v8::String::NewExternal(new WebCoreStringResource(string));
+    return v8ExternalString(string);
+}
+
+static bool stringImplCacheEnabled = false;
+
+void enableStringImplCache()
+{
+    stringImplCacheEnabled = true;
+}
+
+static v8::Local<v8::String> makeExternalString(const String& string)
+{
+    WebCoreStringResource* stringResource = new WebCoreStringResource(string);
+    v8::Local<v8::String> newString = v8::String::NewExternal(stringResource);
+    if (newString.IsEmpty())
+        delete stringResource;
+
+    return newString;
+}
+
+typedef HashMap<StringImpl*, v8::String*> StringCache;
+
+static StringCache& getStringCache()
+{
+    ASSERT(WTF::isMainThread());
+    DEFINE_STATIC_LOCAL(StringCache, mainThreadStringCache, ());
+    return mainThreadStringCache;
+}
+
+static void cachedStringCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
+{
+    ASSERT(WTF::isMainThread());
+    StringImpl* stringImpl = static_cast<StringImpl*>(parameter);
+    ASSERT(getStringCache().contains(stringImpl));
+    getStringCache().remove(stringImpl);
+    wrapper.Dispose();
+    stringImpl->deref();
 }
 
 v8::Local<v8::String> v8ExternalString(const String& string)
 {
     if (!string.length())
         return v8::String::Empty();
-    return v8::String::NewExternal(new WebCoreStringResource(string));
+
+    if (!stringImplCacheEnabled)
+        return makeExternalString(string);
+
+    StringImpl* stringImpl = string.impl();
+    StringCache& stringCache = getStringCache();
+    v8::String* cachedV8String = stringCache.get(stringImpl);
+    if (cachedV8String)
+        return v8::Local<v8::String>(cachedV8String);
+
+    v8::Local<v8::String> newString = makeExternalString(string);
+    if (newString.IsEmpty())
+        return newString;
+
+    v8::Persistent<v8::String> wrapper = v8::Persistent<v8::String>::New(newString);
+    if (wrapper.IsEmpty())
+        return newString;
+
+    stringImpl->ref();
+    wrapper.MakeWeak(stringImpl, cachedStringCallback);
+    stringCache.set(stringImpl, *wrapper);
+
+    return newString;
 }
 
 } // namespace WebCore

@@ -61,6 +61,11 @@ namespace WebCore {
     // underlying buffer alive while the string is still live in the V8 engine.
     v8::Local<v8::String> v8ExternalString(const String&);
 
+    // Enables caching v8 wrappers created for WebCore::StringImpl.  Currently this cache requires
+    // all the calls (both to convert WebCore::String to v8::String and to GC the handle)
+    // to be performed on the main thread.
+    void enableStringImplCache();
+
     // Convert a value to a 32-bit integer.  The conversion fails if the
     // value cannot be converted to an integer or converts to nan or to an infinity.
     inline int toInt32(v8::Handle<v8::Value> value, bool& ok)
