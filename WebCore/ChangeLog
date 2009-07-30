@@ -2,6 +2,18 @@
 
         Reviewed by Gustavo Noronha.
 
+        [Gtk] Code cleanup in MediaPlayerPrivateGStreamer.cpp|h and VideoSinkGStreamer.cpp|h (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=27651
+
+        Removed unneeded includes (gdk.h and gtk.h) and added glib.h and cairo.h instead.
+
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
+
+2009-07-30  Antonio Gomes   <antonio.gomes@openbossa.org>
+
+        Reviewed by Gustavo Noronha.
+
         [Gtk] Code cleanup in MediaPlayerPrivateGStreamer.cpp|h and VideoSinkGStreamer.cpp|h (Part 1)
         https://bugs.webkit.org/show_bug.cgi?id=27651
 

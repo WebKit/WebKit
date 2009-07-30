@@ -27,7 +27,8 @@
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 
-#include <gtk/gtk.h>
+#include <cairo.h>
+#include <glib.h>
 
 typedef struct _GstElement GstElement;
 typedef struct _GstMessage GstMessage;

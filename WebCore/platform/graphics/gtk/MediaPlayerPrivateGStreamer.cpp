@@ -36,7 +36,6 @@
 #include "VideoSinkGStreamer.h"
 #include "Widget.h"
 
-#include <gdk/gdkx.h>
 #include <gst/base/gstbasesrc.h>
 #include <gst/gst.h>
 #include <gst/interfaces/mixer.h>
