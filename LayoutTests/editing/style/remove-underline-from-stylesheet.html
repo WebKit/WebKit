@@ -14,6 +14,8 @@
 <script>
 
 function editingTest() {
+    if (window.layoutTestController)
+         layoutTestController.dumpAsText();
     for (i = 0; i < 6; i++)
         typeCharacterCommand();
     typeCharacterCommand(' ');
@@ -26,6 +28,7 @@ function editingTest() {
     moveSelectionBackwardByWordCommand();
     extendSelectionForwardByWordCommand();
     underlineCommand();
+    document.body.appendChild(document.createTextNode(document.getElementById('root').innerHTML));
 }
 
 </script>
@@ -33,6 +36,7 @@ function editingTest() {
 <title>Editing Test</title> 
 </head> 
 <body>
+<p>This tests removing underline from stylesheet.  For consistency, underline should NOT be removed (see bug 27809).</p>
 <div contenteditable id="root" class="editing">
 <span id="test"></span>
 </div>

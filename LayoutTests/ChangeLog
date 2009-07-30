@@ -1,3 +1,27 @@
+2009-07-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        REGRESSION(r46370-46426): /editing/style/remove-underline-from-stylesheet.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=27809
+
+        Since new behavior is consistent with Firefox, we rebaseline the test cases.
+        The patch converts remove-underline-from-stylesheet and remove-underline-in-bold to dumpAsText tests
+        with markup printed explicitly because pixel tests did not detect the disappearance of underline.
+
+        * editing/style/remove-underline-from-stylesheet-expected.txt: Added.
+        * editing/style/remove-underline-from-stylesheet.html:
+        * editing/style/remove-underline-in-bold-expected.txt: Added.
+        * editing/style/remove-underline-in-bold.html:
+        * platform/mac/editing/style/remove-underline-from-stylesheet-expected.checksum: Removed.
+        * platform/mac/editing/style/remove-underline-from-stylesheet-expected.png: Removed.
+        * platform/mac/editing/style/remove-underline-from-stylesheet-expected.txt: Removed.
+        * platform/mac/editing/style/remove-underline-in-bold-expected.checksum: Removed.
+        * platform/mac/editing/style/remove-underline-in-bold-expected.png: Removed.
+        * platform/mac/editing/style/remove-underline-in-bold-expected.txt: Removed.
+        * platform/qt/editing/style/remove-underline-from-stylesheet-expected.txt: Removed.
+        * platform/qt/editing/style/remove-underline-in-bold-expected.txt: Removed.
+
 2009-07-29  Darin Adler  <darin@apple.com>
 
         * platform/gtk/Skipped: Added ol-start-parsing.html since it has no result yet.

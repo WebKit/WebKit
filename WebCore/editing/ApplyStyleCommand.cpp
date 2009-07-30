@@ -231,8 +231,11 @@ bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *prop
     RefPtr<CSSValue> value;
     if (property->id() == CSSPropertyFontSize)
         value = style->getFontSizeCSSValuePreferringKeyword();
+    // We need to use -webkit-text-decorations-in-effect to take care of text decorations set by u, s, and strike
+    else if (property->id() == CSSPropertyTextDecoration)
+        value = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
     else
-        value = style->getPropertyCSSValue(property->id(), DoNotUpdateLayout);
+        value = style->getPropertyCSSValue(property->id());
     if (!value)
         return false;
     return equalIgnoringCase(value->cssText(), property->value()->cssText());

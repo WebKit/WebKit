@@ -1,3 +1,18 @@
+2009-07-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Justin Garcia.
+
+        REGRESSION(r46370-46426): /editing/style/remove-underline-from-stylesheet.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=27809
+
+        The patch primarily rebaselines the tests but also fixes the bug in currentlyHasStyle.
+        To determine that a particular text decoration is present, currentlyHasStyle should refer to
+        -webkit-text-decorations-in-effect to take care of styles set by u, s, strike tags and ancestors' CSS.
+        We also need to update layout to accommodate the changes made within ApplyStyleCommand.
+
+        * editing/ApplyStyleCommand.cpp: ditto
+        (WebCore::StyleChange::currentlyHasStyle): ditto
+
 2009-07-29  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by George Staikos.

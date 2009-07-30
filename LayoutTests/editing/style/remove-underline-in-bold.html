@@ -13,6 +13,8 @@
 <script>
 
 function editingTest() {
+    if (window.layoutTestController)
+         layoutTestController.dumpAsText();
     underlineCommand();
     boldCommand();
     for (i = 0; i < 6; i++)
@@ -27,6 +29,7 @@ function editingTest() {
     moveSelectionBackwardByWordCommand();
     extendSelectionForwardByWordCommand();
     underlineCommand();
+    document.body.appendChild(document.createTextNode(document.getElementById('root').innerHTML));
 }
 
 </script>
