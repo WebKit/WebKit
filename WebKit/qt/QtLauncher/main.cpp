@@ -440,12 +440,12 @@ int main(int argc, char **argv)
             qDebug() << "Usage: QtLauncher -r listfile";
             exit(0);
         }
-        MainWindow window;
-        QWebView *view = window.webView();
+        MainWindow* window = new MainWindow;
+        QWebView *view = window->webView();
         URLLoader loader(view, listFile);
         QObject::connect(view, SIGNAL(loadFinished(bool)), &loader, SLOT(loadNext()));
         loader.loadNext();
-        window.show();
+        window->show();
         return app.exec();
     } else {
         if (args.count() > 1)
