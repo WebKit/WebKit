@@ -765,6 +765,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagShowColors:
         case ContextMenuItemTagSpeechMenu:
         case ContextMenuItemTagStartSpeaking:
+        case ContextMenuItemTagStopSpeaking:
         case ContextMenuItemTagWritingDirectionMenu:
         case ContextMenuItemTagTextDirectionMenu:
         case ContextMenuItemTagPDFSinglePageScrolling:
