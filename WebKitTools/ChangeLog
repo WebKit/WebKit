@@ -1,5 +1,15 @@
 2009-07-30  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Adam Treat and Jon Honeycutt.
+
+        Teach run-webkit-tests to always store the actual results in the results directory for new tests.
+        This allows us to give a working link to the results from the result summary page, even if we're
+        not generating new results in to the tree.
+
+        * Scripts/run-webkit-tests:
+
+2009-07-30  Mark Rowe  <mrowe@apple.com>
+
         Add a Qt Linux build bot.
 
         * BuildSlaveSupport/build.webkit.org-config/config.json:

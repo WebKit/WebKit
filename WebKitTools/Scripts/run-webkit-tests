@@ -822,7 +822,8 @@ for my $test (@tests) {
             writeToFile("$expectedDir/$expectedFileName", $actual);
         }
         deleteExpectedAndActualResults($base);
-        if ($generateNewResults && !$resetResults) {
+        recordActualResultsAndDiff($base, $actual);
+        if (!$resetResults) {
             # Always print the file name for new tests, as they will probably need some manual inspection.
             # in verbose mode we already printed the test case, so no need to do it again.
             unless ($verbose) {
@@ -830,7 +831,11 @@ for my $test (@tests) {
                 print "$test -> ";
             }
             my $resultsDir = catdir($expectedDir, dirname($base));
-            print "new (results generated in $resultsDir)\n";
+            if ($generateNewResults) {
+                print "new (results generated in $resultsDir)\n";
+            } else {
+                print "new\n";
+            }
             $atLineStart = 1;
         }
     } elsif ($actual eq $expected && $diffResult eq "passed") {
@@ -1748,12 +1753,13 @@ sub linksForNewTest
     my @links = ();
 
     my $base = stripExtension($test);
-    my $expectedResultPath = $expectedResultPaths{$base};
-    my $expectedResultPathMinusExtension = stripExtension($expectedResultPath);
 
-    push @links, { href => toURL($expectedResultPath), text => "results" };
-    if ($pixelTests && -f "$expectedResultPathMinusExtension.png") {
-        push @links, { href => toURL("$expectedResultPathMinusExtension.png"), text => "image" };
+    my $expectedResultPath = $expectedResultPaths{$base};
+    my ($expectedResultFileName, $expectedResultsDirectory, $expectedResultExtension) = fileparse($expectedResultPath, qr{\.[^.]+$});
+
+    push @links, { href => "$base-$actualTag$expectedResultExtension", text => "result" };
+    if ($pixelTests && $imagesPresent{$base}) {
+        push @links, { href => "$base-$expectedTag.png", text => "image" };
     }
 
     return \@links;
@@ -1779,7 +1785,13 @@ sub recordActualResultsAndDiff($$)
     my $actualResultsPath = "$testResultsDirectory/$base-$actualTag$expectedResultExtension";
     my $copiedExpectedResultsPath = "$testResultsDirectory/$base-$expectedTag$expectedResultExtension";
     writeToFile("$actualResultsPath", $actualResults);
-    copy("$expectedResultPath", "$copiedExpectedResultsPath");
+
+    if (-f $expectedResultPath) {
+        copy("$expectedResultPath", "$copiedExpectedResultsPath");
+    } else {
+        open EMPTY, ">$copiedExpectedResultsPath";
+        close EMPTY;
+    }
 
     my $diffOuputBasePath = "$testResultsDirectory/$base";
     my $diffOutputPath = "$diffOuputBasePath-$diffsTag.txt";
