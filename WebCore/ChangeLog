@@ -1,5 +1,12 @@
 2009-07-30  Xan Lopez  <xlopez@igalia.com>
 
+        Forgot the 'break'.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::checkOrEnableIfNeeded):
+
+2009-07-30  Xan Lopez  <xlopez@igalia.com>
+
         Try to fix Mac build.
 
         * platform/ContextMenu.cpp:
