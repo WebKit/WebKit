@@ -93,6 +93,7 @@ sub determineBaseProductDir
 {
     return if defined $baseProductDir;
     determineSourceDir();
+
     if (isAppleMacWebKit()) {
         # Silently remove ~/Library/Preferences/xcodebuild.plist which can
         # cause build failure. The presence of
@@ -120,38 +121,36 @@ sub determineBaseProductDir
                 undef $baseProductDir unless $baseProductDir =~ /^\//;
             }
         }
-    } else {
-        $baseProductDir = $ENV{"WEBKITOUTPUTDIR"};
-        if (isAppleWinWebKit() && $baseProductDir) {
-            my $unixBuildPath = `cygpath --unix \"$baseProductDir\"`;
-            chomp $unixBuildPath;
-            $baseProductDir = $unixBuildPath;
-        }
     }
 
-    if ($baseProductDir && isAppleMacWebKit()) {
+    if (!defined($baseProductDir)) { # Port-spesific checks failed, use default
+        $baseProductDir = $ENV{"WEBKITOUTPUTDIR"} || "$sourceDir/WebKitBuild";
+    }
+
+    if (isGit() && isGitBranchBuild()) {
+        my $branch = gitBranch();
+        $baseProductDir = "$baseProductDir/$branch";
+    }
+
+    if (isAppleMacWebKit()) {
         $baseProductDir =~ s|^\Q$(SRCROOT)/..\E$|$sourceDir|;
         $baseProductDir =~ s|^\Q$(SRCROOT)/../|$sourceDir/|;
         $baseProductDir =~ s|^~/|$ENV{HOME}/|;
         die "Can't handle Xcode product directory with a ~ in it.\n" if $baseProductDir =~ /~/;
         die "Can't handle Xcode product directory with a variable in it.\n" if $baseProductDir =~ /\$/;
-        @baseProductDirOption = ();
+        @baseProductDirOption = ("SYMROOT=$baseProductDir", "OBJROOT=$baseProductDir");
     }
 
-    if (!defined($baseProductDir)) {
-        $baseProductDir = "$sourceDir/WebKitBuild";
+    if (isCygwin()) {
+        my $dosBuildPath = `cygpath --windows \"$baseProductDir\"`;
+        chomp $dosBuildPath;
+        $ENV{"WEBKITOUTPUTDIR"} = $dosBuildPath;
+    }
 
-        if (isGit() && isGitBranchBuild()) {
-            my $branch = gitBranch();
-            $baseProductDir = "$baseProductDir/$branch";
-        }
-
-        @baseProductDirOption = ("SYMROOT=$baseProductDir", "OBJROOT=$baseProductDir") if (isAppleMacWebKit());
-        if (isCygwin()) {
-            my $dosBuildPath = `cygpath --windows \"$baseProductDir\"`;
-            chomp $dosBuildPath;
-            $ENV{"WEBKITOUTPUTDIR"} = $dosBuildPath;
-        }
+    if (isAppleWinWebKit()) {
+        my $unixBuildPath = `cygpath --unix \"$baseProductDir\"`;
+        chomp $unixBuildPath;
+        $baseProductDir = $unixBuildPath;
     }
 }
 
