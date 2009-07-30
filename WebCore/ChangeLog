@@ -1,3 +1,17 @@
+2009-07-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Improve efficiency by rewriting code doing three hash table
+        lookups, which can be replaced by just one as pointed out
+        by Darin Adler.
+
+        Though being slightly less clear, this should be considerable
+        faster.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::remove):
+
 2009-07-30  Antonio Gomes   <antonio.gomes@openbossa.org>
 
         Reviewed by Gustavo Noronha.

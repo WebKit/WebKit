@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+typedef HashMap<String, RefPtr<PluginPackage> > PluginPackageByNameMap;
+
 PluginDatabase* PluginDatabase::installedPlugins(bool populate)
 {
     static PluginDatabase* plugins = 0;
@@ -292,8 +294,9 @@ void PluginDatabase::remove(PluginPackage* package)
     MIMEToExtensionsMap::const_iterator it = package->mimeToExtensions().begin();
     MIMEToExtensionsMap::const_iterator end = package->mimeToExtensions().end();
     for ( ; it != end; ++it) {
-        if (m_preferredPlugins.contains(it->first) && m_preferredPlugins.get(it->first) == package)
-            m_preferredPlugins.remove(it->first);
+        PluginPackageByNameMap::iterator packageInMap = m_preferredPlugins.find(it->first);
+        if (packageInMap != m_preferredPlugins.end() && packageInMap->second == package)
+            m_preferredPlugins.remove(packageInMap);
     }
 
     m_plugins.remove(package);
