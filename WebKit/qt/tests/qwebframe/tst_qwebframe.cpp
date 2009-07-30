@@ -2167,43 +2167,45 @@ void tst_QWebFrame::domCycles()
 class FakeReply : public QNetworkReply {
     Q_OBJECT
 
-    public:
-        FakeReply(const QNetworkRequest& request, QObject* parent = 0)
-            : QNetworkReply(parent)
-        {
-            setOperation(QNetworkAccessManager::GetOperation);
-            setRequest(request);
-            if (request.url() == QUrl("qrc:/test1.html")) {
-                setHeader(QNetworkRequest::LocationHeader, QString("qrc:/test2.html"));
-                setAttribute(QNetworkRequest::RedirectionTargetAttribute, QUrl("qrc:/test2.html"));
-            } else
-                setError(QNetworkReply::HostNotFoundError, tr("Invalid URL"));
+public:
+    FakeReply(const QNetworkRequest& request, QObject* parent = 0)
+        : QNetworkReply(parent)
+    {
+        setOperation(QNetworkAccessManager::GetOperation);
+        setRequest(request);
+        if (request.url() == QUrl("qrc:/test1.html")) {
+            setHeader(QNetworkRequest::LocationHeader, QString("qrc:/test2.html"));
+            setAttribute(QNetworkRequest::RedirectionTargetAttribute, QUrl("qrc:/test2.html"));
+        } else
+            setError(QNetworkReply::HostNotFoundError, tr("Invalid URL"));
 
-            open(QIODevice::ReadOnly);
-            QTimer::singleShot(0, this, SLOT(timeout()));
-        }
-        ~FakeReply()
-        {
-            close();
-        }
-        virtual void abort() {}
-        virtual void close() {}
-    protected:
-        qint64 readData(char*, qint64)
-        {
-            return 0;
-        }
-    private slots:
-        void timeout()
-        {
-            if (request().url() == QUrl("qrc://test1.html"))
-                emit error(this->error());
-            else if (request().url() == QUrl("http://abcdef.abcdef/"))
-                emit metaDataChanged();
+        open(QIODevice::ReadOnly);
+        QTimer::singleShot(0, this, SLOT(timeout()));
+    }
+    ~FakeReply()
+    {
+        close();
+    }
+    virtual void abort() {}
+    virtual void close() {}
 
-            emit readyRead();
-            emit finished();
-        }
+protected:
+    qint64 readData(char*, qint64)
+    {
+        return 0;
+    }
+
+private slots:
+    void timeout()
+    {
+        if (request().url() == QUrl("qrc://test1.html"))
+            emit error(this->error());
+        else if (request().url() == QUrl("http://abcdef.abcdef/"))
+            emit metaDataChanged();
+
+        emit readyRead();
+        emit finished();
+    }
 };
 
 class FakeNetworkManager : public QNetworkAccessManager {
