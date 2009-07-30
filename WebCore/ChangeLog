@@ -1,3 +1,119 @@
+2009-07-30  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27821
+
+        ApplicationCacheHost refactoring.
+        
+        1) Better encapsulate the interfaces between webcore common code
+        and the appcache system within a new class ApplicationCacheHost.
+
+        2) Use that interface throughout the loader system, replacing inline appcache logic.
+
+        3) Implement the interface in terms of webcore's appcache system.
+
+        4) Add the new files to various makefiles.
+
+        5) Implement protocolHostAndPortAreEqual() in KURLGoogle.cpp
+
+        No new features, no new tests. The existing layout tests all pass.
+
+        * GNUmakefile.am:
+        * WebCore.base.exp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedIntoDocument):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::mainReceivedError):
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::setPrimaryLoadComplete):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::applicationCacheHost):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canCachePageContainingThisFrame):
+        (WebCore::FrameLoader::logCanCacheFrameDecision):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::didFail):
+        (WebCore::MainResourceLoader::load):
+        * loader/MainResourceLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::load):
+        (WebCore::ResourceLoader::willSendRequest):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didFail):
+        * loader/ResourceLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource):
+        (WebCore::ApplicationCacheGroup::disassociateDocumentLoader):
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::manifestNotFound):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        (WebCore::ApplicationCacheGroup::associateDocumentLoaderWithCache):
+        (WebCore::CallCacheListenerTask::create):
+        (WebCore::CallCacheListenerTask::performTask):
+        (WebCore::CallCacheListenerTask::CallCacheListenerTask):
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheHost.cpp: Added.
+        * loader/appcache/ApplicationCacheHost.h: Added.
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::transferApplicationCache):
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::DOMApplicationCache):
+        (WebCore::DOMApplicationCache::disconnectFrame):
+        (WebCore::DOMApplicationCache::applicationCacheHost):
+        (WebCore::DOMApplicationCache::status):
+        (WebCore::DOMApplicationCache::update):
+        (WebCore::DOMApplicationCache::swapCache):
+        (WebCore::DOMApplicationCache::addEventListener):
+        (WebCore::DOMApplicationCache::removeEventListener):
+        (WebCore::DOMApplicationCache::dispatchEvent):
+        (WebCore::DOMApplicationCache::callListener):
+        (WebCore::DOMApplicationCache::toEventName):
+        (WebCore::DOMApplicationCache::toEventType):
+        * loader/appcache/DOMApplicationCache.h:
+        (WebCore::DOMApplicationCache::):
+        (WebCore::DOMApplicationCache::setAttributeEventListener):
+        (WebCore::DOMApplicationCache::getAttributeEventListener):
+        (WebCore::DOMApplicationCache::clearAttributeEventListener):
+        (WebCore::DOMApplicationCache::callEventListener):
+        (WebCore::DOMApplicationCache::setOnchecking):
+        (WebCore::DOMApplicationCache::onchecking):
+        (WebCore::DOMApplicationCache::setOnerror):
+        (WebCore::DOMApplicationCache::onerror):
+        (WebCore::DOMApplicationCache::setOnnoupdate):
+        (WebCore::DOMApplicationCache::onnoupdate):
+        (WebCore::DOMApplicationCache::setOndownloading):
+        (WebCore::DOMApplicationCache::ondownloading):
+        (WebCore::DOMApplicationCache::setOnprogress):
+        (WebCore::DOMApplicationCache::onprogress):
+        (WebCore::DOMApplicationCache::setOnupdateready):
+        (WebCore::DOMApplicationCache::onupdateready):
+        (WebCore::DOMApplicationCache::setOncached):
+        (WebCore::DOMApplicationCache::oncached):
+        (WebCore::DOMApplicationCache::setOnobsolete):
+        (WebCore::DOMApplicationCache::onobsolete):
+        (WebCore::DOMApplicationCache::~DOMApplicationCache):
+        * platform/KURLGoogle.cpp:
+        (WebCore::protocolHostAndPortAreEqual):
+
 2009-07-30  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

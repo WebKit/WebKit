@@ -957,6 +957,32 @@ inline bool KURL::protocolIs(const String& string, const char* protocol)
     return WebCore::protocolIs(string, protocol);
 }
 
+bool protocolHostAndPortAreEqual(const KURL& a, const KURL& b)
+{
+    if (a.parsed().scheme.end() != b.parsed().scheme.end())
+        return false;
+
+    int hostStartA = a.hostStart();
+    int hostStartB = b.hostStart();
+    if (a.hostEnd() - hostStartA != b.hostEnd() - hostStartB)
+        return false;
+
+    // Check the scheme
+    for (int i = 0; i < a.parsed().scheme.end(); ++i)
+        if (a.string()[i] != b.string()[i])
+            return false;
+    
+    // And the host
+    for (int i = hostStartA; i < static_cast<int>(a.hostEnd()); ++i)
+        if (a.string()[i] != b.string()[i])
+            return false;
+    
+    if (a.port() != b.port())
+        return false;
+
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // USE(GOOGLEURL)

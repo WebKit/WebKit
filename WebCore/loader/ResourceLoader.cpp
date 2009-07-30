@@ -30,6 +30,9 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "ApplicationCacheHost.h"
+#endif
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -119,7 +122,7 @@ bool ResourceLoader::load(const ResourceRequest& r)
         return true;
     
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (m_documentLoader->scheduleApplicationCacheLoad(this, clientRequest, r.url()))
+    if (m_documentLoader->applicationCacheHost()->maybeLoadResource(this, clientRequest, r.url()))
         return true;
 #endif
 
@@ -189,17 +192,6 @@ void ResourceLoader::clearResourceData()
     if (m_resourceData)
         m_resourceData->clear();
 }
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-bool ResourceLoader::scheduleLoadFallbackResourceFromApplicationCache(ApplicationCache* cache)
-{
-    if (documentLoader()->scheduleLoadFallbackResourceFromApplicationCache(this, m_request, cache)) {
-        handle()->cancel();
-        return true;
-    }
-    return false;
-}
-#endif
 
 void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
@@ -382,10 +374,8 @@ ResourceError ResourceLoader::cannotShowURLError()
 void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (!redirectResponse.isNull() && !protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
-        if (scheduleLoadFallbackResourceFromApplicationCache())
-            return;
-    }
+    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForRedirect(this, request, redirectResponse))
+        return;
 #endif
     willSendRequest(request, redirectResponse);
 }
@@ -398,10 +388,8 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
 void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (response.httpStatusCode() / 100 == 4 || response.httpStatusCode() / 100 == 5) {
-        if (scheduleLoadFallbackResourceFromApplicationCache())
-            return;
-    }
+    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(this, response))
+        return;
 #endif
     didReceiveResponse(response);
 }
@@ -419,10 +407,8 @@ void ResourceLoader::didFinishLoading(ResourceHandle*)
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (!error.isCancellation()) {
-        if (documentLoader()->scheduleLoadFallbackResourceFromApplicationCache(this, m_request))
-            return;
-    }
+    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForError(this, error))
+        return;
 #endif
     didFail(error);
 }

@@ -39,9 +39,6 @@
 
 namespace WebCore {
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    class ApplicationCache;
-#endif
     class FormState;
     struct ResourceRequest;
 
@@ -70,10 +67,6 @@ namespace WebCore {
         void handleDataLoadNow(MainResourceLoaderTimer*);
 
         bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        ApplicationCache* applicationCache() const { return m_applicationCache.get(); }
-#endif
 
     private:
         MainResourceLoader(Frame*);
@@ -104,11 +97,6 @@ namespace WebCore {
         SubstituteData m_substituteData;
 
         MainResourceLoaderTimer m_dataLoadTimer;
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        // The application cache that the main resource was loaded from (if any).
-        RefPtr<ApplicationCache> m_applicationCache;
-#endif
 
         bool m_loadingMultipartContent;
         bool m_waitingForContentPolicy;

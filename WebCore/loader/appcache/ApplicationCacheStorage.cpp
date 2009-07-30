@@ -29,6 +29,7 @@
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 
 #include "ApplicationCache.h"
+#include "ApplicationCacheHost.h"
 #include "ApplicationCacheGroup.h"
 #include "ApplicationCacheResource.h"
 #include "CString.h"
@@ -936,6 +937,14 @@ void ApplicationCacheStorage::empty()
     for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it)
         it->second->clearStorageID();
 }    
+
+bool ApplicationCacheStorage::transferApplicationCache(const String& cacheDirectory, ApplicationCacheHost* cacheHost)
+{
+    ApplicationCache* cache = cacheHost->applicationCache();
+    if (!cache)
+        return true;
+    return ApplicationCacheStorage::storeCopyOfCache(cacheDirectory, cache);
+}
 
 bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, ApplicationCache* cache)
 {

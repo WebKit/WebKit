@@ -1425,6 +1425,8 @@
             'loader/appcache/ApplicationCache.h',
             'loader/appcache/ApplicationCacheGroup.cpp',
             'loader/appcache/ApplicationCacheGroup.h',
+            'loader/appcache/ApplicationCacheHost.cpp',
+            'loader/appcache/ApplicationCacheHost.h',
             'loader/appcache/ApplicationCacheResource.cpp',
             'loader/appcache/ApplicationCacheResource.h',
             'loader/appcache/ApplicationCacheStorage.cpp',

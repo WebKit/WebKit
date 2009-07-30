@@ -1,0 +1,128 @@
+/*
+ * Copyright (c) 2009, Google Inc.  All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ * 
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef ApplicationCacheHost_h
+#define ApplicationCacheHost_h
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+
+#include "DOMApplicationCache.h"
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+    class ApplicationCache;
+    class ApplicationCacheGroup;
+    class ApplicationCacheResource;
+    class ApplicationCacheStorage;
+    class DocumentLoader;
+    class KURL;
+    class ResourceLoader;
+    class ResourceError;
+    class ResourceRequest;
+    class ResourceResponse;
+    class SubstituteData;
+
+    class ApplicationCacheHost {
+    public:
+        ApplicationCacheHost(DocumentLoader*);
+        ~ApplicationCacheHost();
+
+        void selectCacheWithoutManifest();
+        void selectCacheWithManifest(const KURL& manifestURL);
+
+        void maybeLoadMainResource(ResourceRequest&, SubstituteData&);
+        bool maybeLoadFallbackForMainResponse(const ResourceRequest&, const ResourceResponse&);
+        bool maybeLoadFallbackForMainError(const ResourceRequest&, const ResourceError&);
+        void mainResourceDataReceived(const char* data, int length, long long lengthReceived, bool allAtOnce);
+        void finishedLoadingMainResource();
+        void failedLoadingMainResource();
+
+        bool maybeLoadResource(ResourceLoader*, ResourceRequest&, const KURL& originalURL);
+        bool maybeLoadFallbackForRedirect(ResourceLoader*, ResourceRequest&, const ResourceResponse&);
+        bool maybeLoadFallbackForResponse(ResourceLoader*, const ResourceResponse&);
+        bool maybeLoadFallbackForError(ResourceLoader*, const ResourceError&);
+
+        bool maybeLoadSynchronously(ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
+        void maybeLoadFallbackSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
+
+        bool canCacheInPageCache() const;
+
+        DOMApplicationCache::Status status() const;  
+        bool update();
+        bool swapCache();
+
+        void setDOMApplicationCache(DOMApplicationCache* domApplicationCache)
+        {
+            ASSERT(!m_DOMApplicationCache || !domApplicationCache);
+            m_DOMApplicationCache = domApplicationCache;
+        }
+
+        void notifyEventListener(DOMApplicationCache::EventType eventType)
+        {
+            if (m_DOMApplicationCache)
+                m_DOMApplicationCache->callEventListener(eventType);
+        }
+        
+    private:
+        friend class ApplicationCacheGroup;
+        friend class ApplicationCacheStorage;
+
+        bool scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader*, ApplicationCache* = 0);
+        bool shouldLoadResourceFromApplicationCache(const ResourceRequest&, ApplicationCacheResource*&);
+        bool getApplicationCacheFallbackResource(const ResourceRequest&, ApplicationCacheResource*&, ApplicationCache* = 0);
+        void setCandidateApplicationCacheGroup(ApplicationCacheGroup* group);
+        ApplicationCacheGroup* candidateApplicationCacheGroup() const { return m_candidateApplicationCacheGroup; }
+        void setApplicationCache(PassRefPtr<ApplicationCache> applicationCache);
+        ApplicationCache* applicationCache() const { return m_applicationCache.get(); }
+        ApplicationCache* mainResourceApplicationCache() const { return m_mainResourceApplicationCache.get(); }
+
+        bool isApplicationCacheEnabled();
+        DocumentLoader* documentLoader() { return m_documentLoader; }
+
+        DOMApplicationCache* m_DOMApplicationCache;
+        DocumentLoader* m_documentLoader;
+
+        // The application cache that the document loader is associated with (if any).
+        RefPtr<ApplicationCache> m_applicationCache;
+
+        // Before an application cache has finished loading, this will be the candidate application
+        // group that the document loader is associated with.
+        ApplicationCacheGroup* m_candidateApplicationCacheGroup;
+
+        // This is the application cache the main resource was loaded from (if any).
+        RefPtr<ApplicationCache> m_mainResourceApplicationCache;
+    };
+
+}  // namespace WebCore
+
+#endif  // ENABLE(APPLICATION_CACHE)
+#endif  // ApplicationCacheFrontend_h

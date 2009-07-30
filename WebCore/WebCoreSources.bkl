@@ -676,6 +676,7 @@ This file contains the list of files needed to build WebCore.
     <set append="1" var="WEBCORE_SOURCES_LOADER">
         loader/appcache/ApplicationCache.cpp
         loader/appcache/ApplicationCacheGroup.cpp
+        loader/appcache/ApplicationCacheHost.cpp
         loader/appcache/ApplicationCacheResource.cpp
         loader/appcache/DOMApplicationCache.cpp
         loader/appcache/ManifestParser.cpp

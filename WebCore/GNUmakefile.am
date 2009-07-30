@@ -2006,6 +2006,8 @@ webcore_sources += \
 	WebCore/loader/appcache/ApplicationCache.h \
 	WebCore/loader/appcache/ApplicationCacheGroup.cpp \
 	WebCore/loader/appcache/ApplicationCacheGroup.h \
+	WebCore/loader/appcache/ApplicationCacheHost.cpp \
+	WebCore/loader/appcache/ApplicationCacheHost.h \
 	WebCore/loader/appcache/ApplicationCacheResource.cpp \
 	WebCore/loader/appcache/ApplicationCacheResource.h \
 	WebCore/loader/appcache/ApplicationCacheStorage.cpp \

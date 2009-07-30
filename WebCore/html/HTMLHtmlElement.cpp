@@ -23,8 +23,13 @@
 #include "config.h"
 #include "HTMLHtmlElement.h"
 
-#include "ApplicationCacheGroup.h"
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "ApplicationCacheHost.h"
+#endif
+
 #include "Document.h"
+#include "DocumentLoader.h"
+#include "Frame.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -68,12 +73,16 @@ void HTMLHtmlElement::insertedIntoDocument()
     if (!document()->frame())
         return;
 
+    DocumentLoader* documentLoader = document()->frame()->loader()->documentLoader();
+    if (!documentLoader)
+        return;
+
     // Check the manifest attribute
     AtomicString manifest = getAttribute(manifestAttr);
-    if (manifest.isNull())
-        ApplicationCacheGroup::selectCacheWithoutManifestURL(document()->frame());
+    if (manifest.isEmpty())
+        documentLoader->applicationCacheHost()->selectCacheWithoutManifest();
     else
-        ApplicationCacheGroup::selectCache(document()->frame(), document()->completeURL(manifest));
+        documentLoader->applicationCacheHost()->selectCacheWithManifest(document()->completeURL(manifest));
 }
 #endif
 

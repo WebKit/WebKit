@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class ApplicationCache;
+class ApplicationCacheHost;
 class AtomicStringImpl;
 class Frame;
 class KURL;
@@ -47,6 +47,8 @@ class String;
 class DOMApplicationCache : public RefCounted<DOMApplicationCache>, public EventTarget {
 public:
     static PassRefPtr<DOMApplicationCache> create(Frame* frame) { return adoptRef(new DOMApplicationCache(frame)); }
+    ~DOMApplicationCache() { ASSERT(!m_frame); }
+
     void disconnectFrame();
 
     enum Status {
@@ -58,15 +60,33 @@ public:
         OBSOLETE = 5
     };
 
+    enum EventType {
+        CHECKING_EVENT = 0,
+        ERROR_EVENT,
+        NOUPDATE_EVENT,
+        DOWNLOADING_EVENT,
+        PROGRESS_EVENT,
+        UPDATEREADY_EVENT,
+        CACHED_EVENT,
+        OBSOLETE_EVENT
+    };
+
     unsigned short status() const;
-    
     void update(ExceptionCode&);
     void swapCache(ExceptionCode&);
-    
-    virtual void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-    virtual void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
+
+    // Event listener attributes by EventType
+
+    void setAttributeEventListener(EventType type, PassRefPtr<EventListener> eventListener) { m_attributeEventListeners[type] = eventListener; }
+    EventListener* getAttributeEventListener(EventType type) const { return m_attributeEventListeners[type].get(); }
+    void clearAttributeEventListener(EventType type) { m_attributeEventListeners[type] = 0; }
+    void callEventListener(EventType type) { callListener(toEventName(type), getAttributeEventListener(type)); }
+
+    // EventTarget impl
+
+    virtual void addEventListener(const AtomicString& eventName, PassRefPtr<EventListener>, bool useCapture);
+    virtual void removeEventListener(const AtomicString& eventName, EventListener*, bool useCapture);
     virtual bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
-    
     typedef Vector<RefPtr<EventListener> > ListenerVector;
     typedef HashMap<AtomicString, ListenerVector> EventListenersMap;
     EventListenersMap& eventListeners() { return m_eventListeners; }
@@ -74,61 +94,51 @@ public:
     using RefCounted<DOMApplicationCache>::ref;
     using RefCounted<DOMApplicationCache>::deref;
 
-    void setOnchecking(PassRefPtr<EventListener> eventListener) { m_onCheckingListener = eventListener; }
-    EventListener* onchecking() const { return m_onCheckingListener.get(); }
+    // Explicitly named attribute event listener helpers
 
-    void setOnerror(PassRefPtr<EventListener> eventListener) { m_onErrorListener = eventListener; }
-    EventListener* onerror() const { return m_onErrorListener.get(); }
+    void setOnchecking(PassRefPtr<EventListener> listener) { setAttributeEventListener(CHECKING_EVENT, listener); }
+    EventListener* onchecking() const { return getAttributeEventListener(CHECKING_EVENT); }
 
-    void setOnnoupdate(PassRefPtr<EventListener> eventListener) { m_onNoUpdateListener = eventListener; }
-    EventListener* onnoupdate() const { return m_onNoUpdateListener.get(); }
+    void setOnerror(PassRefPtr<EventListener> listener) { setAttributeEventListener(ERROR_EVENT, listener);}
+    EventListener* onerror() const { return getAttributeEventListener(ERROR_EVENT); }
 
-    void setOndownloading(PassRefPtr<EventListener> eventListener) { m_onDownloadingListener = eventListener; }
-    EventListener* ondownloading() const { return m_onDownloadingListener.get(); }
-    
-    void setOnprogress(PassRefPtr<EventListener> eventListener) { m_onProgressListener = eventListener; }
-    EventListener* onprogress() const { return m_onProgressListener.get(); }
+    void setOnnoupdate(PassRefPtr<EventListener> listener) { setAttributeEventListener(NOUPDATE_EVENT, listener); }
+    EventListener* onnoupdate() const { return getAttributeEventListener(NOUPDATE_EVENT); }
 
-    void setOnupdateready(PassRefPtr<EventListener> eventListener) { m_onUpdateReadyListener = eventListener; }
-    EventListener* onupdateready() const { return m_onUpdateReadyListener.get(); }
+    void setOndownloading(PassRefPtr<EventListener> listener) { setAttributeEventListener(DOWNLOADING_EVENT, listener); }
+    EventListener* ondownloading() const { return getAttributeEventListener(DOWNLOADING_EVENT); }
 
-    void setOncached(PassRefPtr<EventListener> eventListener) { m_onCachedListener = eventListener; }
-    EventListener* oncached() const { return m_onCachedListener.get(); }
+    void setOnprogress(PassRefPtr<EventListener> listener) { setAttributeEventListener(PROGRESS_EVENT, listener); }
+    EventListener* onprogress() const { return getAttributeEventListener(PROGRESS_EVENT); }
 
-    void setOnobsolete(PassRefPtr<EventListener> eventListener) { m_onObsoleteListener = eventListener; }
-    EventListener* onobsolete() const { return m_onObsoleteListener.get(); }
+    void setOnupdateready(PassRefPtr<EventListener> listener) { setAttributeEventListener(UPDATEREADY_EVENT, listener); }
+    EventListener* onupdateready() const { return getAttributeEventListener(UPDATEREADY_EVENT); }
+
+    void setOncached(PassRefPtr<EventListener> listener) { setAttributeEventListener(CACHED_EVENT, listener); }
+    EventListener* oncached() const { return getAttributeEventListener(CACHED_EVENT); }
+
+    void setOnobsolete(PassRefPtr<EventListener> listener) { setAttributeEventListener(OBSOLETE_EVENT, listener); }
+    EventListener* onobsolete() const { return getAttributeEventListener(OBSOLETE_EVENT); }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     DOMApplicationCache* toDOMApplicationCache() { return this; }
 
-    void callCheckingListener();
-    void callErrorListener();    
-    void callNoUpdateListener();    
-    void callDownloadingListener();
-    void callProgressListener();
-    void callUpdateReadyListener();
-    void callCachedListener();
-    void callObsoleteListener();
-    
+    static const AtomicString& toEventName(EventType eventType);
+    static EventType toEventType(const AtomicString& eventName);
+
 private:
     DOMApplicationCache(Frame*);
-    void callListener(const AtomicString& eventType, EventListener*);
+
+    void callListener(const AtomicString& eventName, EventListener*);
     
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
-    ApplicationCache* associatedCache() const;
+    ApplicationCacheHost* applicationCacheHost() const;
     bool swapCache();
     
-    RefPtr<EventListener> m_onCheckingListener;
-    RefPtr<EventListener> m_onErrorListener;
-    RefPtr<EventListener> m_onNoUpdateListener;
-    RefPtr<EventListener> m_onDownloadingListener;
-    RefPtr<EventListener> m_onProgressListener;
-    RefPtr<EventListener> m_onUpdateReadyListener;
-    RefPtr<EventListener> m_onCachedListener;
-    RefPtr<EventListener> m_onObsoleteListener;
-    
+    RefPtr<EventListener> m_attributeEventListeners[OBSOLETE_EVENT + 1];
+
     EventListenersMap m_eventListeners;
 
     Frame* m_frame;

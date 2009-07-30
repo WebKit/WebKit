@@ -1513,6 +1513,7 @@ HEADERS += \
     inspector/JavaScriptProfile.h \
     inspector/JavaScriptProfileNode.h \
     loader/appcache/ApplicationCacheGroup.h \
+    loader/appcache/ApplicationCacheHost.h \
     loader/appcache/ApplicationCache.h \
     loader/appcache/ApplicationCacheResource.h \
     loader/appcache/ApplicationCacheStorage.h \
@@ -3033,6 +3034,7 @@ IDL_BINDINGS += \
 SOURCES += \
     loader/appcache/ApplicationCache.cpp \
     loader/appcache/ApplicationCacheGroup.cpp \
+    loader/appcache/ApplicationCacheHost.cpp \
     loader/appcache/ApplicationCacheStorage.cpp \
     loader/appcache/ApplicationCacheResource.cpp \
     loader/appcache/DOMApplicationCache.cpp \

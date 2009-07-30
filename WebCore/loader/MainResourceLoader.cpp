@@ -42,9 +42,7 @@
 #include "Settings.h"
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-#include "ApplicationCache.h"
-#include "ApplicationCacheGroup.h"
-#include "ApplicationCacheResource.h"
+#include "ApplicationCacheHost.h"
 #endif
 
 // FIXME: More that is in common with SubresourceLoader should move up into ResourceLoader.
@@ -283,15 +281,8 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction policy)
 void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (r.httpStatusCode() / 100 == 4 || r.httpStatusCode() / 100 == 5) {
-        ASSERT(!m_applicationCache);
-        if (m_frame->settings() && m_frame->settings()->offlineWebApplicationCacheEnabled()) {
-            m_applicationCache = ApplicationCacheGroup::fallbackCacheForMainRequest(request(), documentLoader());
-
-            if (scheduleLoadFallbackResourceFromApplicationCache(m_applicationCache.get()))
-                return;
-        }
-    }
+    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainResponse(request(), r))
+        return;
 #endif
 
     HTTPHeaderMap::const_iterator it = r.httpHeaderFields().find(AtomicString("x-frame-options"));
@@ -353,6 +344,10 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
     ASSERT(!defersLoading());
 #endif
  
+ #if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    documentLoader()->applicationCacheHost()->mainResourceDataReceived(data, length, lengthReceived, allAtOnce);
+#endif
+
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
@@ -380,27 +375,15 @@ void MainResourceLoader::didFinishLoading()
     ResourceLoader::didFinishLoading();
     
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    ApplicationCacheGroup* group = dl->candidateApplicationCacheGroup();
-    if (!group && dl->applicationCache() && !dl->mainResourceApplicationCache())
-        group = dl->applicationCache()->group();
-    
-    if (group)
-        group->finishedLoadingMainResource(dl.get());
+    dl->applicationCacheHost()->finishedLoadingMainResource();
 #endif
 }
 
 void MainResourceLoader::didFail(const ResourceError& error)
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (!error.isCancellation()) {
-        ASSERT(!m_applicationCache);
-        if (m_frame->settings() && m_frame->settings()->offlineWebApplicationCacheEnabled()) {
-            m_applicationCache = ApplicationCacheGroup::fallbackCacheForMainRequest(request(), documentLoader());
-
-            if (scheduleLoadFallbackResourceFromApplicationCache(m_applicationCache.get()))
-                return;
-        }
-    }
+    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainError(request(), error))
+        return;
 #endif
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
@@ -495,27 +478,15 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
 
     m_substituteData = substituteData;
 
+    ResourceRequest request(r);
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    // Check if this request should be loaded from the application cache
-    if (!m_substituteData.isValid() && frameLoader()->frame()->settings() && frameLoader()->frame()->settings()->offlineWebApplicationCacheEnabled()) {
-        ASSERT(!m_applicationCache);
-
-        m_applicationCache = ApplicationCacheGroup::cacheForMainRequest(r, m_documentLoader.get());
-
-        if (m_applicationCache) {
-            // Get the resource from the application cache. By definition, cacheForMainRequest() returns a cache that contains the resource.
-            ApplicationCacheResource* resource = m_applicationCache->resourceForRequest(r);
-            m_substituteData = SubstituteData(resource->data(), 
-                                              resource->response().mimeType(),
-                                              resource->response().textEncodingName(), KURL());
-        }
-    }
+    documentLoader()->applicationCacheHost()->maybeLoadMainResource(request, m_substituteData);
 #endif
 
-    ResourceRequest request(r);
     bool defer = defersLoading();
     if (defer) {
-        bool shouldLoadEmpty = shouldLoadAsEmptyDocument(r.url());
+        bool shouldLoadEmpty = shouldLoadAsEmptyDocument(request.url());
         if (shouldLoadEmpty)
             defer = false;
     }

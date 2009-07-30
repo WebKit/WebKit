@@ -17296,6 +17296,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\loader\appcache\ApplicationCacheHost.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\appcache\ApplicationCacheHost.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\appcache\ApplicationCacheResource.cpp"
 					>
 				</File>
