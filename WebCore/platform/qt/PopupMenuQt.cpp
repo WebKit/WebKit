@@ -38,6 +38,7 @@
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QPoint>
+#include <QStandardItemModel>
 #include <QWidgetAction>
 
 namespace WebCore {
@@ -63,12 +64,22 @@ void PopupMenu::populate(const IntRect& r)
     clear();
     Q_ASSERT(client());
 
+    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(m_popup->model());
+    Q_ASSERT(model);
+
     int size = client()->listSize();
     for (int i = 0; i < size; i++) {
         if (client()->itemIsSeparator(i))
             m_popup->insertSeparator(i);
-        else
+        else {
             m_popup->insertItem(i, client()->itemText(i));
+
+            if (model && !client()->itemIsEnabled(i))
+                model->item(i)->setEnabled(false);
+
+            if (client()->itemIsSelected(i))
+                m_popup->setCurrentIndex(i);
+        }
     }
 }
 
