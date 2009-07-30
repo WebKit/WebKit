@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2008 Torch Mobile Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +64,9 @@ static MouseEventType messageToEventType(UINT message)
         case WM_MBUTTONUP:
             return MouseEventReleased;
 
+#if !PLATFORM(WINCE)
         case WM_MOUSELEAVE:
+#endif
         case WM_MOUSEMOVE:
             return MouseEventMoved;
 
@@ -104,7 +107,9 @@ PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, L
             m_button = MiddleButton;
             break;
         case WM_MOUSEMOVE:
+#if !PLATFORM(WINCE)
         case WM_MOUSELEAVE:
+#endif
             if (wParam & MK_LBUTTON)
                 m_button = LeftButton;
             else if (wParam & MK_MBUTTON)

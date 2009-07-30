@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,9 +88,13 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
+#if PLATFORM(WINCE)
+    return 0;
+#else
     COMPtr<WCDataObject> dataObject;
     WCDataObject::createInstance(&dataObject);
     return ClipboardWin::create(true, dataObject.get(), ClipboardWritable);
+#endif
 }
 
 void EventHandler::focusDocumentView()
