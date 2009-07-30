@@ -1,5 +1,6 @@
 /*
 * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+* Copyright (C) 2007-2009 Torch Mobile, Inc.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Library General Public
@@ -25,6 +26,11 @@
 #include "PlatformString.h"
 #include <tchar.h>
 #include <windows.h>
+
+#if PLATFORM(WINCE)
+// SHGFI_SHELLICONSIZE is not available on WINCE
+#define SHGFI_SHELLICONSIZE         0
+#endif
 
 namespace WebCore {
 
@@ -55,6 +61,9 @@ PassRefPtr<Icon> Icon::createIconForFile(const String& filename)
 
 PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>&)
 {
+#if PLATFORM(WINCE)
+    return 0;
+#else
     TCHAR buffer[MAX_PATH];    
     UINT length = ::GetSystemDirectory(buffer, ARRAYSIZE(buffer));
     if (!length)
@@ -67,6 +76,7 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>&)
     if (!::ExtractIconEx(buffer, shell32MultipleFileIconIndex, 0, &hIcon, 1))
         return 0;
     return adoptRef(new Icon(hIcon));
+#endif
 }
 
 void Icon::paint(GraphicsContext* context, const IntRect& r)
@@ -74,11 +84,15 @@ void Icon::paint(GraphicsContext* context, const IntRect& r)
     if (context->paintingDisabled())
         return;
 
+#if PLATFORM(WINCE)
+    context->drawIcon(m_hIcon, r, DI_NORMAL);
+#else
     HDC hdc = context->getWindowsContext(r);
 
     DrawIconEx(hdc, r.x(), r.y(), m_hIcon, r.width(), r.height(), 0, 0, DI_NORMAL);
 
     context->releaseWindowsContext(hdc, r);
+#endif
 }
 
 }

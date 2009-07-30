@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -160,7 +161,7 @@ protected:
     virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator);
 #endif
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
-#if PLATFORM(WX)
+#if PLATFORM(WX) || PLATFORM(WINCE)
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const TransformationMatrix& patternTransform,
                              const FloatPoint& phase, CompositeOperator, const FloatRect& destRect);
 #endif    
@@ -220,7 +221,11 @@ protected:
     {
         if (!m_checkedForSolidColor && frameCount() > 0) {
             checkForSolidColor();
+            // WINCE PORT: checkForSolidColor() doesn't set m_checkedForSolidColor until
+            // it gets enough information to make final decision.
+#if !PLATFORM(WINCE)
             ASSERT(m_checkedForSolidColor);
+#endif
         }
         return m_isSolidColor && m_currentFrame == 0;
     }

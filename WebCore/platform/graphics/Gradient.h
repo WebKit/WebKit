@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,8 +74,17 @@ namespace WebCore {
 
         void getColor(float value, float* r, float* g, float* b, float* a) const;
 
+#if PLATFORM(WINCE) && !PLATFORM(QT)
+        const FloatPoint& p0() const { return m_p0; }
+        const FloatPoint& p1() const { return m_p1; }
+        float r0() const { return m_r0; }
+        float r1() const { return m_r1; }
+        bool isRadial() const { return m_radial; }
+        struct ColorStop;
+        const Vector<ColorStop>& getStops() const;
+#else
         PlatformGradient platformGradient();
-
+#endif
         struct ColorStop {
             float stop;
             float red;

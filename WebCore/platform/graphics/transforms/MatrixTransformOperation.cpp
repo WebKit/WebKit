@@ -43,7 +43,7 @@ PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOp
     }
     
     if (blendToIdentity)
-        swap(fromT, toT);
+        std::swap(fromT, toT);
 
     toT.blend(fromT, progress);
     return MatrixTransformOperation::create(toT.a(), toT.b(), toT.c(), toT.d(), toT.e(), toT.f());

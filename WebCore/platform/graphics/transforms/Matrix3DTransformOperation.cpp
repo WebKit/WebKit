@@ -47,7 +47,7 @@ PassRefPtr<TransformOperation> Matrix3DTransformOperation::blend(const Transform
     apply(toT, size);
 
     if (blendToIdentity)
-        swap(fromT, toT);
+        std::swap(fromT, toT);
 
     toT.blend(fromT, progress);
     return Matrix3DTransformOperation::create(toT);

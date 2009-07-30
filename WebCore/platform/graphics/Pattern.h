@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +53,8 @@ typedef wxGraphicsBrush* PlatformPatternPtr;
 class wxBrush;
 typedef wxBrush* PlatformPatternPtr;
 #endif // USE(WXGC)
+#elif PLATFORM(WINCE)
+typedef void* PlatformPatternPtr;
 #endif
 
 namespace WebCore {
