@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLInputElement.h"
 
+#include "AXObjectCache.h"
 #include "CSSPropertyNames.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -971,6 +972,12 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
 
     if (renderer() && renderer()->style()->hasAppearance())
         renderer()->theme()->stateChanged(renderer(), CheckedState);
+
+    // Ideally we'd do this from the render tree (matching
+    // RenderTextView), but it's not possible to do it at the moment
+    // because of the way the code is structured.
+    if (renderer() && AXObjectCache::accessibilityEnabled())
+        renderer()->document()->axObjectCache()->postNotification(renderer(), "AXCheckedStateChanged", true);
 
     // Only send a change event for items in the document (avoid firing during
     // parsing) and don't send a change event for a radio button that's getting
