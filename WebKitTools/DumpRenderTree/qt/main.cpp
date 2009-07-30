@@ -138,6 +138,9 @@ int main(int argc, char* argv[])
 
     WebCore::DumpRenderTree dumper;
 
+    if (args.contains("--pixel-tests"))
+        dumper.setDumpPixels(true);
+
     QString dbDir = QDesktopServices::storageLocation(QDesktopServices::DataLocation) + QDir::separator() + "qtwebkitdrt";
     QWebSettings::setOfflineStoragePath(dbDir);
     QWebDatabase::removeAllDatabases();

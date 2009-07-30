@@ -62,6 +62,8 @@ public:
     // Initialize in single-file mode.
     void open(const QUrl& url);
 
+    void setDumpPixels(bool);
+
     void resetJSObjects();
 
     LayoutTestController *layoutTestController() const { return m_controller; }
@@ -72,6 +74,7 @@ public:
     int windowCount() const;
 
     QWebPage *webPage() const { return m_page; }
+
 
 #if defined(Q_WS_X11)
     static void initializeFonts();
@@ -92,6 +95,9 @@ private:
     QString dumpFramesAsText(QWebFrame* frame);
     QString dumpBackForwardList();
     LayoutTestController *m_controller;
+
+    bool m_dumpPixels;
+    QString m_expectedHash;
 
     QWebPage *m_page;
 

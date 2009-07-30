@@ -33,6 +33,8 @@
 #include "jsobjects.h"
 #include "testplugin.h"
 
+#include <QBuffer>
+#include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
 #include <QTimer>
@@ -141,7 +143,8 @@ bool WebPage::javaScriptPrompt(QWebFrame*, const QString& msg, const QString& de
 }
 
 DumpRenderTree::DumpRenderTree()
-    : m_stdin(0)
+    : m_dumpPixels(false)
+    , m_stdin(0)
     , m_notifier(0)
 {
     qt_drt_overwritePluginDirectories();
@@ -196,8 +199,21 @@ void DumpRenderTree::open()
     }
 }
 
-void DumpRenderTree::open(const QUrl& url)
+void DumpRenderTree::open(const QUrl& aurl)
 {
+    QUrl url = aurl;
+    m_expectedHash = QString();
+    if (m_dumpPixels) {
+        // single quote marks the pixel dump hash
+        QString str = url.toString();
+        int i = str.indexOf('\'');
+        if (i > -1) {
+            m_expectedHash = str.mid(i + 1, str.length());
+            str.remove(i, str.length());
+            url = QUrl(str);
+        }
+    }
+
     // W3C SVG tests expect to be 480x360
     bool isW3CTest = url.toString().contains("svg/W3C-SVG-1.1");
     int width = isW3CTest ? 480 : maxViewWidth;
@@ -245,6 +261,11 @@ void DumpRenderTree::readStdin(int /* socket */)
     }
 
     fflush(stdout);
+}
+
+void DumpRenderTree::setDumpPixels(bool dump)
+{
+    m_dumpPixels = dump;
 }
 
 void DumpRenderTree::resetJSObjects()
@@ -331,16 +352,54 @@ void DumpRenderTree::dump()
 
     // signal end of text block
     fprintf(stdout, "#EOF\n");
-
-    // Since pixel tests are currently unsupported by Qt's DRT,
-    // just signal an empty pixel test block to run-webkit-tests
-    fprintf(stdout, "#EOF\n");
-
     fflush(stdout);
-
     fprintf(stderr, "#EOF\n");
-
     fflush(stderr);
+
+    if (m_dumpPixels) {
+
+        QImage image(m_page->viewportSize(), QImage::Format_ARGB32);
+        image.fill(Qt::white);
+        QPainter painter(&image);
+        m_page->mainFrame()->render(&painter);
+        painter.end();
+
+        QCryptographicHash hash(QCryptographicHash::Md5);
+        for (int row = 0; row < image.height(); ++row)
+            hash.addData(reinterpret_cast<const char*>(image.scanLine(row)), image.width() * 4);
+        QString actualHash = hash.result().toHex();
+
+        fprintf(stdout, "\nActualHash: %s\n", qPrintable(actualHash));
+
+        if (!m_expectedHash.isEmpty()) {
+            Q_ASSERT(m_expectedHash.length() == 32);
+            fprintf(stdout, "\nExpectedHash: %s\n", qPrintable(m_expectedHash));
+
+            QBuffer buffer;
+            buffer.open(QBuffer::WriteOnly);
+            image.save(&buffer, "PNG");
+            buffer.close();
+            const QByteArray &data = buffer.data();
+
+            printf("Content-Type: %s\n", "image/png");
+            printf("Content-Length: %lu\n", static_cast<unsigned long>(data.length()));
+
+            const char *ptr = data.data();
+            for(quint32 left = data.length(); left; ) {
+                quint32 block = qMin(left, quint32(1 << 15));
+                quint32 written = fwrite(ptr, 1, block, stdout);
+                ptr += written;
+                left -= written;
+                if (written == block)
+                    break;
+            }
+        }
+
+        fflush(stdout);
+    }
+
+    fprintf(stdout, "#EOF\n");
+    fflush(stdout);
 
     if (!m_notifier) {
         // Exit now in single file mode...
