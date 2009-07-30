@@ -288,7 +288,11 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         DocLoader* docLoader = request->docLoader();
         bool resourceIsCacheValidator = request->cachedResource()->isCacheValidator();
 
-        if (m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
+        // For named hosts - which are only http(s) hosts - we should always enforce the connection limit.
+        // For non-named hosts - everything but http(s) - we should only enforce the limit if the document isn't done parsing 
+        // and we don't know all stylesheets yet.
+        bool shouldLimitRequests = !m_name.isNull() || docLoader->doc()->parsing() || !docLoader->doc()->haveStylesheetsLoaded();
+        if (shouldLimitRequests && m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
             serveLowerPriority = false;
             return;
         }

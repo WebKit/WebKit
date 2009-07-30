@@ -1,3 +1,14 @@
+2009-07-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        (REGRESSION: r46039) Should restore previous connections-per-host limit for non-http(s) hosts
+        https://bugs.webkit.org/show_bug.cgi?id=27822 and <rdar://problem/7091659>
+
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::servePendingRequests): For non-http(s) hosts, restore the previous behavior of 
+          only limiting connections while parsing and still trying to figure out stylesheet urls.
+
 2009-07-29  Yong Li  <yong.li@torchmobile.com>
 
         Reviewed by George Staikos.
