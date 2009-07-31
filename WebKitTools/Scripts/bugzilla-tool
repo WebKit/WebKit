@@ -437,7 +437,7 @@ class PostCommitsAsPatchesToBug(Command):
 
             if options.obsolete_patches and bug_id not in have_obsoleted_patches:
                 PostDiffAsPatchToBug.obsolete_patches_on_bug(bug_id, tool.bugs)
-                have_obsoleted_patches.update(bug_id)
+                have_obsoleted_patches.add(bug_id)
 
             description = options.description or commit_message.description(lstrip=True, strip_url=True)
             comment_text = None
