@@ -386,9 +386,9 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 // These ASSERTs remind you that, if you change the layout of JITStackFrame, you
 // need to change the assembly trampolines below to match.
-COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x90, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x80, JITStackFrame_code_offset_matches_ctiTrampoline);
-COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x48, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, callFrame) == 0x58, JITStackFrame_callFrame_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, code) == 0x48, JITStackFrame_code_offset_matches_ctiTrampoline);
+COMPILE_ASSERT(offsetof(struct JITStackFrame, savedRBX) == 0x78, JITStackFrame_stub_argument_space_matches_ctiTrampoline);
 
 asm volatile (
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
@@ -400,13 +400,20 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushq %r14" "\n"
     "pushq %r15" "\n"
     "pushq %rbx" "\n"
+    // Form the JIT stubs area
+    "pushq %r9" "\n"
+    "pushq %r8" "\n"
+    "pushq %rcx" "\n"
+    "pushq %rdx" "\n"
+    "pushq %rsi" "\n"
+    "pushq %rdi" "\n"
     "subq $0x48, %rsp" "\n"
     "movq $512, %r12" "\n"
     "movq $0xFFFF000000000000, %r14" "\n"
     "movq $0xFFFF000000000002, %r15" "\n"
-    "movq 0x90(%rsp), %r13" "\n"
-    "call *0x80(%rsp)" "\n"
-    "addq $0x48, %rsp" "\n"
+    "movq %rdx, %r13" "\n"
+    "call *%rdi" "\n"
+    "addq $0x78, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r15" "\n"
     "popq %r14" "\n"
@@ -421,7 +428,7 @@ asm volatile (
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "movq %rsp, %rdi" "\n"
     "call " SYMBOL_STRING(cti_vm_throw) "\n"
-    "addq $0x48, %rsp" "\n"
+    "addq $0x78, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r15" "\n"
     "popq %r14" "\n"
@@ -434,7 +441,7 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 asm volatile (
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
-    "addq $0x48, %rsp" "\n"
+    "addq $0x78, %rsp" "\n"
     "popq %rbx" "\n"
     "popq %r15" "\n"
     "popq %r14" "\n"

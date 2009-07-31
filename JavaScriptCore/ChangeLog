@@ -1,3 +1,21 @@
+2009-07-30  John McCall  <rjmccall@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Optimize the X86_64 trampolines: avoid the need for filler arguments
+        and move the stub-args area closer to the stack pointer.
+
+        * jit/JIT.h: adjust patch offsets because of slight code-size change 
+        * jit/JITCode.h:
+        (JSC::JITCode::execute): don't pass filler args
+        * jit/JITStubs.cpp:
+        (ctiTrampoline): (X86_64): push args onto stack, use args directly
+        (ctiVMThrowTrampoline): (X86_64): adjust %rsp by correct displacement
+        (ctiOpThrowNotCaught): (X86_64): adjust %rsp by correct displacement
+        * jit/JITStubs.h:
+        (JITStackFrame): (X86_64): move args area earlier
+        (ctiTrampoline): remove filler args from prototype
+
 2009-07-30  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by NOBODY (build fix).

@@ -511,9 +511,9 @@ namespace JSC {
         static const int patchOffsetGetByIdPropertyMapOffset = 31;
         static const int patchOffsetGetByIdPutResult = 31;
 #if ENABLE(OPCODE_SAMPLING)
-        static const int patchOffsetGetByIdSlowCaseCall = 66;
+        static const int patchOffsetGetByIdSlowCaseCall = 63;
 #else
-        static const int patchOffsetGetByIdSlowCaseCall = 44;
+        static const int patchOffsetGetByIdSlowCaseCall = 41;
 #endif
         static const int patchOffsetOpCallCompareToJump = 9;
 
