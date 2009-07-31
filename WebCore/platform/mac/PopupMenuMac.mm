@@ -91,6 +91,7 @@ void PopupMenu::populate()
             NSMenuItem* menuItem = [m_popup.get() lastItem];
             [menuItem setAttributedTitle:string];
             [menuItem setEnabled:client()->itemIsEnabled(i)];
+            [menuItem setToolTip:client()->itemToolTip(i)];
             [string release];
         }
     }
