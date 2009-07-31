@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="resources/clearLocalStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById('logger').appendChild(document.createTextNode(a));
+    document.getElementById('logger').appendChild(document.createElement("br"));
+}
+
+function runTest()
+{
+    if (!window.localStorage) {
+        log("window.localStorage DOES NOT exist");
+        return;
+    }
+    
+    log("foo (before anything) is: " + localStorage.foo);
+    localStorage.foo = "bar";
+    log("foo (after an implicit settter set) is: " + localStorage.foo);
+    localStorage.removeItem("foo");
+    log("foo (after a removeItem)is: " + localStorage.foo);
+    localStorage["foo"] = "bar";
+    log("foo (after an indexed setter set) is: " + localStorage.foo);
+    localStorage.removeItem("FOO");
+    log("foo (after a removeItem('FOO') (not foo)) is: " + localStorage.foo);
+    localStorage.removeItem("foo");
+    log("foo (after a removeItem) is: " + localStorage.foo);
+    localStorage.setItem("foo", "bar");
+    log("foo (after an explicit setter set) is: " + localStorage.foo);
+    localStorage.removeItem("foo");
+    log("foo (after a removeItem) is: " + localStorage.foo);
+    localStorage.removeItem("foo");
+    log("foo (after a redundant removeItem) is: " + localStorage.foo);
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test verifies removeItem's behavior in localStorage.<br><hr>
+<div id="logger"></div>
+</body>
+</html>

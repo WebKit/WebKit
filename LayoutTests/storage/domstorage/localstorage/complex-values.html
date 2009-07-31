@@ -1,0 +1,75 @@
+<html>
+<head>
+<script src="resources/clearLocalStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function runTest()
+{
+    if (!window.localStorage) {
+        log("window.localStorage DOES NOT exist");
+        return;
+    }
+
+    log("Length is " + localStorage.length);
+    log("Type of foo with indexed getter is " + (typeof localStorage["foo"]));
+    log("Value for foo with indexed getter is " + localStorage["foo"]);
+    log("Type of foo with named property getter is " + (typeof localStorage.foo));
+    log("Value for foo with named property getter is " + localStorage.foo);
+    log("Type of foo with getItem is " + (typeof localStorage.getItem("foo")));
+    log("Value for foo with getItem is " + localStorage.getItem("foo"));
+
+    log("Length is " + localStorage.length);
+    log("Setting foo to null");
+    localStorage.setItem("foo", null);
+    log("Type of foo is " + (typeof localStorage["foo"]));
+    log("Value for foo is " + localStorage["foo"]);
+    log("Setting foo to undefined");
+    localStorage.foo = undefined;
+    log("Type of foo is " + (typeof localStorage.getItem("foo")));
+    log("Value for foo is " + localStorage.getItem("foo"));
+    log("Setting foo to 2");
+    localStorage.setItem["foo"] = 2;
+    log("Type of foo is " + (typeof localStorage.foo));
+    log("Value for foo is " + localStorage.foo);
+
+    log("Setting foo to bar with setItem");
+    localStorage.setItem("foo", "bar");
+    log("Setting foo to BAR with setItem");
+    localStorage.setItem("foo", "BAR");
+    log("Value for foo is " + localStorage.foo);
+
+    log("Setting foo to bar with indexed setter");
+    localStorage["foo"] = "bar";
+    log("Setting foo to BAR with indexed setter");
+    localStorage["foo"] = "BAR";
+    log("Value for foo is " + localStorage.foo);
+
+    log("Setting foo to bar with named property setter");
+    localStorage.foo = "bar";
+    log("Setting foo to BAR with named property setter");
+    localStorage.foo = "BAR";
+    log("Value for foo is " + localStorage.foo);
+
+    v = String.fromCharCode(255425) + String.fromCharCode(255) + String.fromCharCode(2554252321) + String.fromCharCode(0) + 'hello';
+    log("Setting foo to a non-ascii string");
+    localStorage.foo = v;
+    log("Value for foo is " + localStorage.foo);
+    log("Value is the same: " + (localStorage.foo == v));
+    log("Length is " + localStorage.length);
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test feeds a variety of corner case values into localStorage.<br>
+<div id="logger"></div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<html>
+<head>
+<script src="resources/clearLocalStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function runTest()
+{
+    if (!window.localStorage) {
+        log("window.localStorage DOES NOT exist");
+        return;
+    }
+
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage.getItem("FOO"));
+    log("Setting FOO to BAR");
+    localStorage.setItem("FOO", "BAR");
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage.getItem("FOO"));
+    log("Value for foo is " + localStorage.getItem("foo"));
+    log("Value for foo is " + localStorage.foo);
+    log("Value for foo is " + localStorage["foo"]);
+    log("Setting foo to bar with all three setter types");
+    localStorage.foo = "bar";
+    localStorage["foo"] = "bar";
+    localStorage.setItem("foo", "bar");
+    log("Value for FOO is " + localStorage.getItem("FOO"));
+    log("Value for FOO is " + localStorage.FOO);
+    log("Value for FOO is " + localStorage["FOO"]);
+    log("Length is " + localStorage.length);
+
+    log("Setting null to foo");
+    localStorage.setItem(null, "foo");
+    log("Value for null is " + localStorage.getItem(null));
+    log("Value for null is " + localStorage[null]);
+    log("Value for 'null' is " + localStorage.getItem("null"));
+    log("Value for 'null' is " + localStorage["null"]);
+    log("Setting undefined to foo");
+    localStorage[undefined] = "foo";
+    log("Value for undefined is " + localStorage.getItem(undefined));
+    log("Value for undefined is " + localStorage[undefined]);
+    log("Value for 'undefined' is " + localStorage.getItem("undefined"));
+    log("Value for 'undefined' is " + localStorage["undefined"]);
+    log("Setting 2 to foo");
+    localStorage[2] = "foo";
+    log("Value for 2 is " + localStorage[2]);
+    log("Value for 2 is " + localStorage.getItem(2));
+    log("Value for '2' is " + localStorage["2"]);
+    log("Value for '2' is " + localStorage.getItem("2"));
+
+    log("Setting foo to bar");
+    localStorage.setItem("foo", "bar");
+    log("Setting FOO to BAR with setItem");
+    localStorage.setItem("FOO", "BAR");
+    log("Value for foo is " + localStorage.foo);
+
+    log("Setting foo to bar");
+    localStorage.setItem("foo", "bar");
+    log("Setting FOO to BAR with indexed setter");
+    localStorage["FOO"] = "BAR";
+    log("Value for foo is " + localStorage.foo);
+
+    log("Setting foo to bar");
+    localStorage.setItem("foo", "bar");
+    log("Setting FOO to BAR with named property setter");
+    localStorage.FOO = "BAR";
+    log("Value for foo is " + localStorage.foo);
+
+    var k = String.fromCharCode(255425) + String.fromCharCode(255) + String.fromCharCode(2554252321) + String.fromCharCode(0) + 'hello';
+    log("Setting a non-ascii string to foo");
+    localStorage[k] = "foo";
+    log("Value for the key is " + localStorage.getItem(k));
+    log("[the key] is the same as getItem(the key): " + (localStorage[k] == localStorage.getItem(k)));
+
+    log("Length is " + localStorage.length);
+    log("Length is " + localStorage["length"]);
+    log("Length is " + localStorage.getItem("length"));
+    log("Setting length property to 0");
+    localStorage.length = 0;
+    log("Length is " + localStorage.length);
+    log("Setting length to 0 with indexed setter");
+    localStorage["length"] = 0;
+    log("Length is " + localStorage.length);
+    log("Setting length to 0 with setItem");
+    localStorage.setItem("length", 0);
+    log("Length is " + localStorage.length);
+    log("Length is " + localStorage["length"]);
+    log("Length is " + localStorage.getItem("length"));
+    log("Call removeItem on length");
+    localStorage.removeItem("length");
+    log("Length is " + localStorage.length);
+    log("Length is " + localStorage["length"]);
+    log("Length is " + localStorage.getItem("length"));
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test feeds a variety of corner case keys into localStorage<br>
+<div id="logger"></div>
+</body>
+</html>

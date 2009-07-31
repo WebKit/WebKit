@@ -1,0 +1,11 @@
+This test verifies removeItem's behavior in localStorage.
+foo (before anything) is: undefined
+foo (after an implicit settter set) is: bar
+foo (after a removeItem)is: undefined
+foo (after an indexed setter set) is: bar
+foo (after a removeItem('FOO') (not foo)) is: bar
+foo (after a removeItem) is: undefined
+foo (after an explicit setter set) is: bar
+foo (after a removeItem) is: undefined
+foo (after a redundant removeItem) is: undefined
+

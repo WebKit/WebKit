@@ -1,0 +1,57 @@
+This test feeds a variety of corner case keys into localStorage
+Length is 0
+Value for FOO is null
+Setting FOO to BAR
+Length is 1
+Value for FOO is BAR
+Value for foo is null
+Value for foo is undefined
+Value for foo is undefined
+Setting foo to bar with all three setter types
+Value for FOO is BAR
+Value for FOO is BAR
+Value for FOO is BAR
+Length is 2
+Setting null to foo
+Value for null is foo
+Value for null is foo
+Value for 'null' is foo
+Value for 'null' is foo
+Setting undefined to foo
+Value for undefined is foo
+Value for undefined is foo
+Value for 'undefined' is foo
+Value for 'undefined' is foo
+Setting 2 to foo
+Value for 2 is foo
+Value for 2 is foo
+Value for '2' is foo
+Value for '2' is foo
+Setting foo to bar
+Setting FOO to BAR with setItem
+Value for foo is bar
+Setting foo to bar
+Setting FOO to BAR with indexed setter
+Value for foo is bar
+Setting foo to bar
+Setting FOO to BAR with named property setter
+Value for foo is bar
+Setting a non-ascii string to foo
+Value for the key is foo
+[the key] is the same as getItem(the key): true
+Length is 6
+Length is 6
+Length is null
+Setting length property to 0
+Length is 6
+Setting length to 0 with indexed setter
+Length is 6
+Setting length to 0 with setItem
+Length is 7
+Length is 7
+Length is 0
+Call removeItem on length
+Length is 6
+Length is 6
+Length is null
+

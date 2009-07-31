@@ -1,0 +1,32 @@
+This test feeds a variety of corner case values into localStorage.
+Length is 0
+Type of foo with indexed getter is undefined
+Value for foo with indexed getter is undefined
+Type of foo with named property getter is undefined
+Value for foo with named property getter is undefined
+Type of foo with getItem is object
+Value for foo with getItem is null
+Length is 0
+Setting foo to null
+Type of foo is string
+Value for foo is null
+Setting foo to undefined
+Type of foo is string
+Value for foo is undefined
+Setting foo to 2
+Type of foo is string
+Value for foo is undefined
+Setting foo to bar with setItem
+Setting foo to BAR with setItem
+Value for foo is BAR
+Setting foo to bar with indexed setter
+Setting foo to BAR with indexed setter
+Value for foo is BAR
+Setting foo to bar with named property setter
+Setting foo to BAR with named property setter
+Value for foo is BAR
+Setting foo to a non-ascii string
+Value for foo is ÿ찡hello
+Value is the same: true
+Length is 1
+
