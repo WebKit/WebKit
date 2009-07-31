@@ -415,19 +415,15 @@ class PostCommitsAsPatchesToBug(Command):
         if not args:
             error("%s argument is required" % self.argument_names)
 
-        commit_ids = []
-        for commitish in args:
-            results = tool.scm().commit_ids_from_range_arguments([commitish], cherry_pick=True)
-            if not results or len(results) < 1:
-                error("unable to parse commit from '%s'" % commitish)
-            commit_ids += results
-
+        commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
         if len(commit_ids) > 10:
             error("Are you sure you want to attach %s patches?" % (pluralize('patch', len(commit_ids))))
             # Could add a --patches-limit option.
 
         have_obsoleted_patches = set()
         for commit_id in commit_ids:
+            # FIXME: commit_message is the wrong place to look for the bug_id
+            # the ChangeLogs should have the bug id, but the local commit message might not.
             commit_message = tool.scm().commit_message_for_local_commit(commit_id)
 
             bug_id = options.bug_id or commit_message.parse_bug_id()
@@ -462,8 +458,7 @@ class CreateBug(Command):
         Command.__init__(self, 'Create a bug from local changes or local commits.', '[COMMITISH]', options=options)
 
     def create_bug_from_commit(self, options, args, tool):
-        commit_ids = tool.scm().commit_ids_from_range_arguments(args, cherry_pick=True)
-
+        commit_ids = tool.scm().commit_ids_from_commitish_arguments(args)
         if len(commit_ids) > 3:
             error("Are you sure you want to create one bug with %s patches?" % len(commit_ids))
 
