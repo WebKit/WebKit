@@ -1,3 +1,79 @@
+2009-07-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Make get_by_id/put_by_id/method_check/call defer optimization using a data flag rather than a code modification.
+        ( https://bugs.webkit.org/show_bug.cgi?id=27635 )
+
+        This improves performance of ENABLE(ASSEMBLER_WX_EXCLUSIVE) builds by 2-2.5%, reducing the overhead to about 2.5%.
+        (No performance impact with ASSEMBLER_WX_EXCLUSIVE disabled).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::printStructureStubInfo):
+            - Make StructureStubInfo store the type as an integer, rather than an OpcodeID.
+
+        * bytecode/CodeBlock.h:
+        (JSC::):
+        (JSC::CallLinkInfo::seenOnce):
+        (JSC::CallLinkInfo::setSeen):
+        (JSC::MethodCallLinkInfo::seenOnce):
+        (JSC::MethodCallLinkInfo::setSeen):
+            - Change a pointer in CallLinkInfo/MethodCallLinkInfo to use a PtrAndFlags, use a flag to track when an op has been executed once.
+
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+            - Make StructureStubInfo store the type as an integer, rather than an OpcodeID.
+
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initGetByIdProto):
+        (JSC::StructureStubInfo::initGetByIdChain):
+        (JSC::StructureStubInfo::initGetByIdSelfList):
+        (JSC::StructureStubInfo::initGetByIdProtoList):
+        (JSC::StructureStubInfo::initPutByIdTransition):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::seenOnce):
+        (JSC::StructureStubInfo::setSeen):
+            - Make StructureStubInfo store the type as an integer, rather than an OpcodeID, add a flag to track when an op has been executed once.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+            - Make StructureStubInfo store the type as an integer, rather than an OpcodeID.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::unlinkCall):
+            - Remove the "don't lazy link" stage of calls.
+
+        * jit/JIT.h:
+        (JSC::JIT::compileCTIMachineTrampolines):
+            - Remove the "don't lazy link" stage of calls.
+
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallSlowCase):
+            - Remove the "don't lazy link" stage of calls.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::JITThunks):
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::JITStubs::DEFINE_STUB_FUNCTION):
+        (JSC::JITStubs::getPolymorphicAccessStructureListSlot):
+            - Remove the "don't lazy link" stage of calls, and the "_second" stage of get_by_id/put_by_id/method_check.
+
+        * jit/JITStubs.h:
+        (JSC::JITThunks::ctiStringLengthTrampoline):
+        (JSC::JITStubs::):
+            - Remove the "don't lazy link" stage of calls, and the "_second" stage of get_by_id/put_by_id/method_check.
+
+        * wtf/PtrAndFlags.h:
+        (WTF::PtrAndFlags::PtrAndFlags):
+        (WTF::PtrAndFlags::operator!):
+        (WTF::PtrAndFlags::operator->):
+            - Add ! and -> operators, add constuctor with pointer argument.
+
 2009-07-30  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough.

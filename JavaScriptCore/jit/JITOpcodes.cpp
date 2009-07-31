@@ -39,7 +39,7 @@ namespace JSC {
 
 #if USE(JSVALUE32_64)
 
-void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallPreLink, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk)
+void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk)
 {
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     // (1) This function provides fast property access for string length
@@ -61,54 +61,9 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     ret();
 #endif
 
-    // (2) Trampolines for the slow cases of op_call / op_call_eval / op_construct.
+    // (2) Trampoline for the slow cases of op_call / op_call_eval / op_construct.
 
 #if ENABLE(JIT_OPTIMIZE_CALL)
-    /* VirtualCallPreLink Trampoline */
-    Label virtualCallPreLinkBegin = align();
-
-    // regT0 holds callee, regT1 holds argCount.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_body)), regT2);
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT2);
-    Jump hasCodeBlock1 = branchTestPtr(NonZero, regT2);
-
-    // Lazily generate a CodeBlock.
-    preserveReturnAddressAfterCall(regT3); // return address
-    restoreArgumentReference();
-    Call callJSFunction1 = call();
-    move(regT0, regT2);
-    emitGetJITStubArg(1, regT0); // callee
-    emitGetJITStubArg(5, regT1); // argCount
-    restoreReturnAddressBeforeReturn(regT3); // return address
-    hasCodeBlock1.link(this);
-
-    // regT2 holds codeBlock.
-    Jump isNativeFunc1 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(CodeBlock, m_codeType)), Imm32(NativeCode));
-
-    // Check argCount matches callee arity.
-    Jump arityCheckOkay1 = branch32(Equal, Address(regT2, OBJECT_OFFSETOF(CodeBlock, m_numParameters)), regT1);
-    preserveReturnAddressAfterCall(regT3);
-    emitPutJITStubArg(regT3, 3); // return address
-    emitPutJITStubArg(regT2, 7); // codeBlock
-    restoreArgumentReference();
-    Call callArityCheck1 = call();
-    move(regT1, callFrameRegister);
-    emitGetJITStubArg(1, regT0); // callee
-    emitGetJITStubArg(5, regT1); // argCount
-    restoreReturnAddressBeforeReturn(regT3); // return address
-
-    arityCheckOkay1.link(this);
-    isNativeFunc1.link(this);
-    
-    compileOpCallInitializeCallFrame();
-
-    preserveReturnAddressAfterCall(regT3);
-    emitPutJITStubArg(regT3, 3);
-    restoreArgumentReference();
-    Call callDontLazyLinkCall = call();
-    restoreReturnAddressBeforeReturn(regT3);
-    jump(regT0);
-
     /* VirtualCallLink Trampoline */
     Label virtualCallLinkBegin = align();
 
@@ -355,11 +310,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(string_failureCases3Call, FunctionPtr(cti_op_get_by_id_string_fail));
 #endif
 #if ENABLE(JIT_OPTIMIZE_CALL)
-    patchBuffer.link(callArityCheck1, FunctionPtr(cti_op_call_arityCheck));
-    patchBuffer.link(callJSFunction1, FunctionPtr(cti_op_call_JSFunction));
     patchBuffer.link(callArityCheck2, FunctionPtr(cti_op_call_arityCheck));
     patchBuffer.link(callJSFunction2, FunctionPtr(cti_op_call_JSFunction));
-    patchBuffer.link(callDontLazyLinkCall, FunctionPtr(cti_vm_dontLazyLinkCall));
     patchBuffer.link(callLazyLinkCall, FunctionPtr(cti_vm_lazyLinkCall));
 #endif
     patchBuffer.link(callArityCheck3, FunctionPtr(cti_op_call_arityCheck));
@@ -376,7 +328,6 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     UNUSED_PARAM(ctiStringLengthTrampoline);
 #endif
 #if ENABLE(JIT_OPTIMIZE_CALL)
-    *ctiVirtualCallPreLink = trampolineAt(finalCode, virtualCallPreLinkBegin);
     *ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
 #else
     UNUSED_PARAM(ctiVirtualCallPreLink);
@@ -1509,7 +1460,7 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 #define RECORD_JUMP_TARGET(targetOffset) \
    do { m_labels[m_bytecodeIndex + (targetOffset)].used(); } while (false)
 
-void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallPreLink, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk)
+void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executablePool, JSGlobalData* globalData, CodePtr* ctiStringLengthTrampoline, CodePtr* ctiVirtualCallLink, CodePtr* ctiVirtualCall, CodePtr* ctiNativeCallThunk)
 {
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     // (2) The second function provides fast property access for string length
@@ -1531,49 +1482,8 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     ret();
 #endif
 
-    // (3) Trampolines for the slow cases of op_call / op_call_eval / op_construct.
+    // (3) Trampoline for the slow cases of op_call / op_call_eval / op_construct.
     COMPILE_ASSERT(sizeof(CodeType) == 4, CodeTypeEnumMustBe32Bit);
-
-    Label virtualCallPreLinkBegin = align();
-
-    // Load the callee CodeBlock* into eax
-    loadPtr(Address(regT2, OBJECT_OFFSETOF(JSFunction, m_body)), regT3);
-    loadPtr(Address(regT3, OBJECT_OFFSETOF(FunctionBodyNode, m_code)), regT0);
-    Jump hasCodeBlock1 = branchTestPtr(NonZero, regT0);
-    preserveReturnAddressAfterCall(regT3);
-    restoreArgumentReference();
-    Call callJSFunction1 = call();
-    emitGetJITStubArg(1, regT2);
-    emitGetJITStubArg(3, regT1);
-    restoreReturnAddressBeforeReturn(regT3);
-    hasCodeBlock1.link(this);
-
-    Jump isNativeFunc1 = branch32(Equal, Address(regT0, OBJECT_OFFSETOF(CodeBlock, m_codeType)), Imm32(NativeCode));
-
-    // Check argCount matches callee arity.
-    Jump arityCheckOkay1 = branch32(Equal, Address(regT0, OBJECT_OFFSETOF(CodeBlock, m_numParameters)), regT1);
-    preserveReturnAddressAfterCall(regT3);
-    emitPutJITStubArg(regT3, 2);
-    emitPutJITStubArg(regT0, 4);
-    restoreArgumentReference();
-    Call callArityCheck1 = call();
-    move(regT1, callFrameRegister);
-    emitGetJITStubArg(1, regT2);
-    emitGetJITStubArg(3, regT1);
-    restoreReturnAddressBeforeReturn(regT3);
-    arityCheckOkay1.link(this);
-    isNativeFunc1.link(this);
-    
-    compileOpCallInitializeCallFrame();
-
-    preserveReturnAddressAfterCall(regT3);
-    emitPutJITStubArg(regT3, 2);
-    restoreArgumentReference();
-    Call callDontLazyLinkCall = call();
-    emitGetJITStubArg(1, regT2);
-    restoreReturnAddressBeforeReturn(regT3);
-
-    jump(regT0);
 
     Label virtualCallLinkBegin = align();
 
@@ -1840,19 +1750,15 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases3Call, FunctionPtr(cti_op_get_by_id_string_fail));
 #endif
-    patchBuffer.link(callArityCheck1, FunctionPtr(cti_op_call_arityCheck));
     patchBuffer.link(callArityCheck2, FunctionPtr(cti_op_call_arityCheck));
     patchBuffer.link(callArityCheck3, FunctionPtr(cti_op_call_arityCheck));
-    patchBuffer.link(callJSFunction1, FunctionPtr(cti_op_call_JSFunction));
     patchBuffer.link(callJSFunction2, FunctionPtr(cti_op_call_JSFunction));
     patchBuffer.link(callJSFunction3, FunctionPtr(cti_op_call_JSFunction));
-    patchBuffer.link(callDontLazyLinkCall, FunctionPtr(cti_vm_dontLazyLinkCall));
     patchBuffer.link(callLazyLinkCall, FunctionPtr(cti_vm_lazyLinkCall));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
     *executablePool = finalCode.m_executablePool;
 
-    *ctiVirtualCallPreLink = trampolineAt(finalCode, virtualCallPreLinkBegin);
     *ctiVirtualCallLink = trampolineAt(finalCode, virtualCallLinkBegin);
     *ctiVirtualCall = trampolineAt(finalCode, virtualCallBegin);
     *ctiNativeCallThunk = trampolineAt(finalCode, nativeCallThunk);
