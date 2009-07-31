@@ -259,7 +259,7 @@ void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction poli
         webkit_web_policy_decision_ignore (policyDecision);
 }
 
-static WebKitWebNavigationAction* getNavigationAction(const NavigationAction& action)
+static WebKitWebNavigationAction* getNavigationAction(const NavigationAction& action, const char* targetFrame)
 {
     gint button = -1;
 
@@ -289,10 +289,11 @@ static WebKitWebNavigationAction* getNavigationAction(const NavigationAction& ac
                                                      "original-uri", action.url().string().utf8().data(),
                                                      "button", button,
                                                      "modifier-state", modifierFlags,
+                                                     "target-frame", targetFrame,
                                                      NULL));
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String& s)
+void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String& frameName)
 {
     ASSERT(policyFunction);
     if (!policyFunction)
@@ -311,7 +312,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
     WebKitNetworkRequest* request = webkit_network_request_new(resourceRequest.url().string().utf8().data());
-    WebKitWebNavigationAction* navigationAction = getNavigationAction(action);
+    WebKitWebNavigationAction* navigationAction = getNavigationAction(action, frameName.utf8().data());
     gboolean isHandled = false;
 
     g_signal_emit_by_name(webView, "new-window-policy-decision-requested", m_frame, request, navigationAction, policyDecision, &isHandled);
@@ -359,7 +360,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
         g_object_unref(m_policyDecision);
     m_policyDecision = policyDecision;
 
-    WebKitWebNavigationAction* navigationAction = getNavigationAction(action);
+    WebKitWebNavigationAction* navigationAction = getNavigationAction(action, NULL);
     gboolean isHandled = false;
     g_signal_emit_by_name(webView, "navigation-policy-decision-requested", m_frame, request, navigationAction, policyDecision, &isHandled);
 

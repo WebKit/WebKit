@@ -1,3 +1,24 @@
+2009-07-30  Martin Robinson  <mrobinson@appcelerator.com>
+
+        Reviewed by Xan Lopez, Gustavo Noronha and Jan Alonzo.
+
+        [GTK] new-window-policy-decision-requested provides no information about the target frame
+        https://bugs.webkit.org/show_bug.cgi?id=27792
+
+        Add frameName property to the WebKitWebNavigation object.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::getNavigationAction):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * webkit/webkitwebnavigationaction.cpp:
+        (webkit_web_navigation_action_get_property):
+        (webkit_web_navigation_action_set_property):
+        (webkit_web_navigation_action_class_init):
+        (webkit_web_navigation_action_get_target_frame):
+        (webkit_web_navigation_action_set_target_frame):
+        * webkit/webkitwebnavigationaction.h:
+
 2009-07-29  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin Adler.
