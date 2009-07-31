@@ -72,4 +72,4 @@ NAMED_PROPERTY_GETTER(DataGridColumnList)
     
 } // namespace WebCore
 
-#endif ENABLE(DATAGRID)
+#endif // ENABLE(DATAGRID)

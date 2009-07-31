@@ -1,3 +1,14 @@
+2009-07-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by David Levin.
+
+        Guard needs //'s between #endif and ENABLE(DATAGRID)
+        https://bugs.webkit.org/show_bug.cgi?id=27862
+
+        Compiling this file causes a build break without this change.
+
+        * bindings/v8/custom/V8DataGridColumnListCustom.cpp:
+
 2009-07-31  Greg Bolsinga  <bolsinga@apple.com>
 
         Reviewed by George Staikos.
