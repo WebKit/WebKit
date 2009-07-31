@@ -252,44 +252,30 @@ if (isGtk()) {
     }
 
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
-    my $srcLib = "WebKitLibraries/libWebKitSystemInterfaceTiger.a";
-    my $lib = "$productDir/libWebKitSystemInterfaceTiger.a";
-    if (!-e $lib || -M $lib > -M $srcLib) {
-        print "Updating $lib\n";
-        system "ditto", $srcLib, $lib;
-        system "ranlib", $lib;
+
+    my @librariesToCopy = (
+        "libWebKitSystemInterfaceTiger.a",
+        "libWebKitSystemInterfaceLeopard.a",
+        "libWebKitSystemInterfaceSnowLeopard.a",
+        "libWebCoreSQLite3.a",
+    );
+    foreach my $libName (@librariesToCopy) {
+        my $srcLib = "WebKitLibraries/" . $libName;
+        my $lib = "$productDir/" . $libName;
+        if (!-e $lib || -M $lib > -M $srcLib) {
+            print "Updating $lib\n";
+            system "ditto", $srcLib, $lib;
+            system "ranlib", $lib;
+        }
     }
 
-    $srcLib = "WebKitLibraries/libWebKitSystemInterfaceLeopard.a";
-    $lib = "$productDir/libWebKitSystemInterfaceLeopard.a";
-    if (!-e $lib || -M $lib > -M $srcLib) {
-        print "Updating $lib\n";
-        system "ditto", $srcLib, $lib;
-        system "ranlib", $lib;
-    }
-
-    $srcLib = "WebKitLibraries/libWebKitSystemInterfaceSnowLeopard.a";
-    $lib = "$productDir/libWebKitSystemInterfaceSnowLeopard.a";
-    if (!-e $lib || -M $lib > -M $srcLib) {
-        print "Updating $lib\n";
-        system "ditto", $srcLib, $lib;
-        system "ranlib", $lib;
-    }
-
+    # FIXME: This code should be abstracted to not be copy/paste.
     my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
     my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
     if (!-e $header || -M $header > -M $srcHeader) {
         print "Updating $header\n";
         system "mkdir", "-p", "$productDir/usr/local/include";
         system "ditto", $srcHeader, $header;
-    }
-
-    $srcLib = "WebKitLibraries/libWebCoreSQLite3.a";
-    $lib = "$productDir/libWebCoreSQLite3.a";
-    if (!-e $lib || -M $lib > -M $srcLib) {
-        print "Updating $lib\n";
-        system "ditto", $srcLib, $lib;
-        system "ranlib", $lib;
     }
 
     my $srcHeaderDir = "WebKitLibraries/WebCoreSQLite3";
@@ -362,19 +348,6 @@ print "\n";
 print "===========================================================\n";
 print " WebKit is now built. To run $launcherName with this newly-built\n";
 print " code, use the \"$launcherPath\" script.\n";
-if ($svgSupport) {
-    print "\n NOTE: WebKit has been built with SVG support enabled.\n";
-    print " $launcherName will have SVG viewing capabilities.\n";
-}
-if ($svgAnimationSupport or $svgAsImageSupport or $svgDOMObjCBindingsSupport or $svgFontsSupport or $svgForeignObjectSupport or $svgUseSupport) {
-    print " Your build supports the following (optional) SVG features: \n";
-    print "  * Basic SVG animation.\n" if $svgAnimationSupport;
-    print "  * SVG as image.\n" if $svgAsImageSupport;
-    print "  * SVG DOM Objective-C bindings.\n" if $svgDOMObjCBindingsSupport;
-    print "  * SVG fonts.\n" if $svgFontsSupport;
-    print "  * SVG foreign object.\n" if $svgForeignObjectSupport;
-    print "  * SVG <use> support.\n" if $svgUseSupport;
-}
 print "===========================================================\n";
 
 exit 0;
