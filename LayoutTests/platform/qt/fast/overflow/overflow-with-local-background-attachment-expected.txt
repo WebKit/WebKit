@@ -1,0 +1,60 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x283
+  RenderBlock {HTML} at (0,0) size 800x283
+    RenderBody {BODY} at (8,13) size 784x262
+      RenderBlock {UL} at (0,0) size 784x51 [color=#000080]
+        RenderListItem {LI} at (40,0) size 744x17
+          RenderListMarker at (-16,0) size 6x17: bullet
+          RenderText {#text} at (0,0) size 307x17
+            text run at (0,0) width 307: "You should not see the background under the border."
+        RenderListItem {LI} at (40,17) size 744x17
+          RenderListMarker at (-16,0) size 6x17: bullet
+          RenderText {#text} at (0,0) size 318x17
+            text run at (0,0) width 318: "As you scroll the element below the cats should move."
+        RenderListItem {LI} at (40,34) size 744x17
+          RenderListMarker at (-16,0) size 6x17: bullet
+          RenderText {#text} at (0,0) size 272x17
+            text run at (0,0) width 272: "The cats should be on a light grey background."
+layer at (8,77) size 390x198 clip at (38,107) size 314x138 scrollHeight 420
+  RenderBlock {DIV} at (0,64) size 390x198 [bgcolor=#C0C0C0] [border: (30px dotted #000000)]
+    RenderText {#text} at (30,30) size 34x420
+      text run at (30,30) width 21: "   1"
+      text run at (51,30) width 0: " "
+      text run at (30,51) width 21: "   2"
+      text run at (51,51) width 0: " "
+      text run at (30,72) width 21: "   3"
+      text run at (51,72) width 0: " "
+      text run at (30,93) width 21: "   4"
+      text run at (51,93) width 0: " "
+      text run at (30,114) width 21: "   5"
+      text run at (51,114) width 0: " "
+      text run at (30,135) width 21: "   6"
+      text run at (51,135) width 0: " "
+      text run at (30,156) width 21: "   7"
+      text run at (51,156) width 0: " "
+      text run at (30,177) width 21: "   8"
+      text run at (51,177) width 0: " "
+      text run at (30,198) width 21: "   9"
+      text run at (51,198) width 0: " "
+      text run at (30,219) width 26: "  10"
+      text run at (56,219) width 0: " "
+      text run at (30,240) width 26: "  11"
+      text run at (56,240) width 0: " "
+      text run at (30,261) width 26: "  12"
+      text run at (56,261) width 0: " "
+      text run at (30,282) width 26: "  13"
+      text run at (56,282) width 0: " "
+      text run at (30,303) width 26: "  14"
+      text run at (56,303) width 0: " "
+      text run at (30,324) width 26: "  15"
+      text run at (56,324) width 0: " "
+      text run at (30,345) width 26: "  16"
+      text run at (56,345) width 0: " "
+      text run at (30,366) width 26: "  17"
+      text run at (56,366) width 0: " "
+      text run at (30,387) width 26: "  18"
+      text run at (56,387) width 0: " "
+      text run at (30,408) width 26: "  19"
+      text run at (56,408) width 0: " "
+      text run at (30,429) width 34: "  20  "

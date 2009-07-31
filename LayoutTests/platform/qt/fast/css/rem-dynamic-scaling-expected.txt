@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x93
+        RenderText {#text} at (0,0) size 761x92
+          text run at (0,0) width 444: "This is a test of dynamic rem unit scaling. "
+          text run at (444,0) width 317: "Changes to the root element's"
+          text run at (0,31) width 717: "font size need to cause dependent elements in the document tree to"
+          text run at (0,62) width 158: "update as well."
+      RenderBlock {DIV} at (0,93) size 784x44
+        RenderBlock (anonymous) at (0,0) size 784x13
+          RenderText {#text} at (0,0) size 117x13
+            text run at (0,0) width 117: "This text should be small."
+        RenderBlock {DIV} at (0,13) size 784x31
+          RenderText {#text} at (0,0) size 487x30
+            text run at (0,0) width 487: "This text should match the root (and be 24px)."
