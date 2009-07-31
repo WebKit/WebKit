@@ -125,7 +125,7 @@ bool BMPImageDecoder::processFileHeader(size_t* imgDataOffset)
 
     // See if this is a bitmap filetype we understand.
     enum {
-        BMAP = 'BM',
+        BMAP = 0x424D, // 'BM'
         // The following additional OS/2 2.x header values (see
         // http://www.fileformat.info/format/os2bmp/egff.htm ) aren't widely
         // decoded, and are unlikely to be in much use.
